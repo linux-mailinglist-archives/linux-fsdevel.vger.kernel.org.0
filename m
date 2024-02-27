@@ -1,87 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-13019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA61786A35C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 00:12:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EE186A3C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 00:33:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E701F2D61A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 23:12:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C6D1C243B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 23:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFD756442;
-	Tue, 27 Feb 2024 23:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A5555C2E;
+	Tue, 27 Feb 2024 23:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VmMtuxBz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XDjQQ6kE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VmMtuxBz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XDjQQ6kE"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xQ8f1Ns3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="L0Kim+WT";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xQ8f1Ns3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="L0Kim+WT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F3D55C27;
-	Tue, 27 Feb 2024 23:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7654F5576E;
+	Tue, 27 Feb 2024 23:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709075523; cv=none; b=WpZhNrkyd+98SSxh340QJ2OJh+FO6wkw9Rtcb2RpELOFVLH6ASwrUOjLI1Mw7BLTWXKRZEX9p9ShsmeP6DIFpYiXva0G/30OLJjAge5i9V1mx1L2K+Aok2PnfCLhmeAUFHcO442EV39ceRncQPvPOAUSYWJI7ojr0mPQ2wF0hdM=
+	t=1709076787; cv=none; b=Yq4Hsi5aJHlqD01tDC3k1KX03tDZzYbss3s//flxfVLIhL4pQiekeTf19EI1WtUjtflI7SQtVA1LnQt2KHfm+JtbzuPHdCbcy9r53TBjlEUuuUA1Ciy5RroxOtHGOJdRSMl9o3sN5ihpBNVRctlGuLRnwnqZBoHkIM+0yPr6U0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709075523; c=relaxed/simple;
-	bh=tA3/vEEEu8QXoYbYcy3pyT4OI+U5YXiY4BAU2ShoSHE=;
+	s=arc-20240116; t=1709076787; c=relaxed/simple;
+	bh=rVI+xSd8FYJi7TzLJ7Ikl21QrMCLhmodA6y/Pc5d06c=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SpPDzaF3UXAvvPs69w+a+4xtrwlSFnTL4XVeynVgAaSGZJYvqeudEnJDO3lbO9riQmxCz0H+CuMTPRIeanwzjZNVc0+LdlMXAF3dde84K6M/Z+jzKvtRxNSkZbxXlMumJEV2WEQNLv3/QeQkOABnHgOuzed0NdGBYLOMVvmxlaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VmMtuxBz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XDjQQ6kE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VmMtuxBz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XDjQQ6kE; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version:Content-Type; b=bCq+/UhVc8L83hMLqsDdoop5LF5//pGWoarW+v3V55ACQv2QqT+28qvb+faroTgb/HeROI/e6tD3x7EjYHjorz3ZPYZFzUCewyQ2qQKpeLH2A3/befSOLPfvKt9gzJZBzJObxW0twbFt4nFEAzXITLfpj1agDD/8bHbTK1Ty8KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xQ8f1Ns3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=L0Kim+WT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xQ8f1Ns3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=L0Kim+WT; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 08D3E1FD99;
-	Tue, 27 Feb 2024 23:11:59 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7055022299;
+	Tue, 27 Feb 2024 23:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709075519; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1709076783; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AZ6SQ2yaAw2hiYYQZNRKqMsoRQXaHuKM2VBBZj5Sx+0=;
-	b=VmMtuxBzz+Hbuqi3byFtqCXkjCQ/pLKGaigzIMDpLAEhyCn3FQXgkdPQ04NPP5SDJed1Rr
-	/3Pxe8ptRgUXQGJgrwcH7cAzwKznboS6SEI9xtml5kTrUwQyB3ok3llMUheGpKidw4vCMP
-	gIOZYdSZoyMwDndThPFxGVWecu+fNxo=
+	bh=1XcCT6OIixHhjBjRbIEMhs9CTkZAbGq3CBxIJeInpl0=;
+	b=xQ8f1Ns3iGPxbm0Sj6jv30DtRJppv+f317F+9awYDiAjwjn6FnIlWRA+vNCxa1HCGUxm3s
+	yJX0sbF3PYVO+9O7EZE3/moFHfstEPKxL2U0wA8RpMg+JeGc6f3fwppTTVwaq0vTJbZ4s8
+	Ubz4zZTKdqnPkfmJ+w0spkoaKiY/nUw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709075519;
+	s=susede2_ed25519; t=1709076783;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AZ6SQ2yaAw2hiYYQZNRKqMsoRQXaHuKM2VBBZj5Sx+0=;
-	b=XDjQQ6kEKgAQGUkbGDeXysZ2CROqCpbNV2SXcFLKRdq3PVtWI2z89yrsCxzwGyHxZ9LJoS
-	cTUwCOWuPr8QmJBw==
+	bh=1XcCT6OIixHhjBjRbIEMhs9CTkZAbGq3CBxIJeInpl0=;
+	b=L0Kim+WTB0aMM3EOz4MBC7ESAUEX7JhLQSDLvgTuYYlWjODdBE2wVs3fpr1RIkTGn+dn5H
+	pbN0FK3QlGkx17Aw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709075519; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1709076783; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AZ6SQ2yaAw2hiYYQZNRKqMsoRQXaHuKM2VBBZj5Sx+0=;
-	b=VmMtuxBzz+Hbuqi3byFtqCXkjCQ/pLKGaigzIMDpLAEhyCn3FQXgkdPQ04NPP5SDJed1Rr
-	/3Pxe8ptRgUXQGJgrwcH7cAzwKznboS6SEI9xtml5kTrUwQyB3ok3llMUheGpKidw4vCMP
-	gIOZYdSZoyMwDndThPFxGVWecu+fNxo=
+	bh=1XcCT6OIixHhjBjRbIEMhs9CTkZAbGq3CBxIJeInpl0=;
+	b=xQ8f1Ns3iGPxbm0Sj6jv30DtRJppv+f317F+9awYDiAjwjn6FnIlWRA+vNCxa1HCGUxm3s
+	yJX0sbF3PYVO+9O7EZE3/moFHfstEPKxL2U0wA8RpMg+JeGc6f3fwppTTVwaq0vTJbZ4s8
+	Ubz4zZTKdqnPkfmJ+w0spkoaKiY/nUw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709075519;
+	s=susede2_ed25519; t=1709076783;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AZ6SQ2yaAw2hiYYQZNRKqMsoRQXaHuKM2VBBZj5Sx+0=;
-	b=XDjQQ6kEKgAQGUkbGDeXysZ2CROqCpbNV2SXcFLKRdq3PVtWI2z89yrsCxzwGyHxZ9LJoS
-	cTUwCOWuPr8QmJBw==
+	bh=1XcCT6OIixHhjBjRbIEMhs9CTkZAbGq3CBxIJeInpl0=;
+	b=L0Kim+WTB0aMM3EOz4MBC7ESAUEX7JhLQSDLvgTuYYlWjODdBE2wVs3fpr1RIkTGn+dn5H
+	pbN0FK3QlGkx17Aw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B601113ABA;
-	Tue, 27 Feb 2024 23:11:58 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 32DF213ABA;
+	Tue, 27 Feb 2024 23:33:03 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id H0veJT5s3mUPMgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 27 Feb 2024 23:11:58 +0000
+	id DCM3Bi9x3mUnNgAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 27 Feb 2024 23:33:03 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: Eugen Hristev <eugen.hristev@collabora.com>
 Cc: tytso@mit.edu,  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
@@ -89,17 +89,16 @@ Cc: tytso@mit.edu,  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
   linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
   linux-kernel@vger.kernel.org,  kernel@collabora.com,
   viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
- Krisman Bertazi <krisman@collabora.com>,  Eric Biggers
- <ebiggers@google.com>
-Subject: Re: [PATCH v12 2/8] f2fs: Simplify the handling of cached
- insensitive names
-In-Reply-To: <20240220085235.71132-3-eugen.hristev@collabora.com> (Eugen
-	Hristev's message of "Tue, 20 Feb 2024 10:52:29 +0200")
+ Krisman Bertazi <krisman@collabora.com>
+Subject: Re: [PATCH v12 3/8] libfs: Introduce case-insensitive string
+ comparison helper
+In-Reply-To: <20240220085235.71132-4-eugen.hristev@collabora.com> (Eugen
+	Hristev's message of "Tue, 20 Feb 2024 10:52:30 +0200")
 Organization: SUSE
 References: <20240220085235.71132-1-eugen.hristev@collabora.com>
-	<20240220085235.71132-3-eugen.hristev@collabora.com>
-Date: Tue, 27 Feb 2024 18:11:53 -0500
-Message-ID: <87cysh5wp2.fsf@mailhost.krisman.be>
+	<20240220085235.71132-4-eugen.hristev@collabora.com>
+Date: Tue, 27 Feb 2024 18:32:58 -0500
+Message-ID: <875xy95vpx.fsf@mailhost.krisman.be>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -108,172 +107,174 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=VmMtuxBz;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=XDjQQ6kE
-X-Spamd-Result: default: False [-6.81 / 50.00];
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -4.29
+X-Spamd-Result: default: False [-4.29 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
 	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
 	 MIME_GOOD(-0.10)[text/plain];
-	 DWL_DNSWL_HI(-3.50)[suse.de:dkim];
 	 HAS_ORG_HEADER(0.00)[];
 	 RCVD_COUNT_THREE(0.00)[3];
 	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_TWELVE(0.00)[15];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 NEURAL_HAM_SHORT(-0.19)[-0.965];
+	 RCPT_COUNT_TWELVE(0.00)[14];
 	 FUZZY_BLOCKED(0.00)[rspamd.com];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
 	 RCVD_TLS_ALL(0.00)[];
 	 BAYES_HAM(-3.00)[100.00%]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 08D3E1FD99
-X-Spam-Level: 
-X-Spam-Score: -6.81
 X-Spam-Flag: NO
 
 Eugen Hristev <eugen.hristev@collabora.com> writes:
 
 > From: Gabriel Krisman Bertazi <krisman@collabora.com>
 >
-> Keeping it as qstr avoids the unnecessary conversion in f2fs_match
+> generic_ci_match can be used by case-insensitive filesystems to compare
+> strings under lookup with dirents in a case-insensitive way.  This
+> function is currently reimplemented by each filesystem supporting
+> casefolding, so this reduces code duplication in filesystem-specific
+> code.
+
+Just a note that this conflicts with the other patchset to generic
+helpers that I just applied.  The conflict is trivial, If you could base
+the next iteration on top of my for-next, it would be helpful.
+
 >
-> Reviewed-by: Eric Biggers <ebiggers@google.com>
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> [eugen.hristev@collabora.com: port to 6.8-rc3]
+> [eugen.hristev@collabora.com: rework to first test the exact match]
 > Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
 > ---
->  fs/f2fs/dir.c      | 53 ++++++++++++++++++++++++++--------------------
->  fs/f2fs/f2fs.h     | 17 ++++++++++++++-
->  fs/f2fs/recovery.c |  5 +----
->  3 files changed, 47 insertions(+), 28 deletions(-)
+>  fs/libfs.c         | 85 ++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/fs.h |  4 +++
+>  2 files changed, 89 insertions(+)
 >
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index 3f20d94e12f9..f5b65cf36393 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -42,35 +42,49 @@ static unsigned int bucket_blocks(unsigned int level)
->  		return 4;
->  }
->  
-> +#if IS_ENABLED(CONFIG_UNICODE)
->  /* If @dir is casefolded, initialize @fname->cf_name from @fname->usr_fname. */
->  int f2fs_init_casefolded_name(const struct inode *dir,
->  			      struct f2fs_filename *fname)
->  {
-> -#if IS_ENABLED(CONFIG_UNICODE)
->  	struct super_block *sb = dir->i_sb;
-> +	unsigned char *buf;
-> +	int len;
->  
->  	if (IS_CASEFOLDED(dir) &&
->  	    !is_dot_dotdot(fname->usr_fname->name, fname->usr_fname->len)) {
-> -		fname->cf_name.name = f2fs_kmem_cache_alloc(f2fs_cf_name_slab,
-> -					GFP_NOFS, false, F2FS_SB(sb));
-> -		if (!fname->cf_name.name)
-> +		buf = f2fs_kmem_cache_alloc(f2fs_cf_name_slab,
-> +					    GFP_NOFS, false, F2FS_SB(sb));
-> +		if (!buf)
->  			return -ENOMEM;
-> -		fname->cf_name.len = utf8_casefold(sb->s_encoding,
-> -						   fname->usr_fname,
-> -						   fname->cf_name.name,
-> -						   F2FS_NAME_LEN);
-> -		if ((int)fname->cf_name.len <= 0) {
-> -			kmem_cache_free(f2fs_cf_name_slab, fname->cf_name.name);
-> -			fname->cf_name.name = NULL;
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index bb18884ff20e..65e2fb17a2b6 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1773,6 +1773,91 @@ static const struct dentry_operations generic_ci_dentry_ops = {
+>  	.d_hash = generic_ci_d_hash,
+>  	.d_compare = generic_ci_d_compare,
+>  };
 > +
-> +		len = utf8_casefold(sb->s_encoding, fname->usr_fname,
-> +				    buf, F2FS_NAME_LEN);
-> +		if (len <= 0) {
-> +			kmem_cache_free(f2fs_cf_name_slab, buf);
->  			if (sb_has_strict_encoding(sb))
->  				return -EINVAL;
->  			/* fall back to treating name as opaque byte sequence */
-> +			return 0;
->  		}
-> +		fname->cf_name.name = buf;
-> +		fname->cf_name.len = len;
->  	}
-> -#endif
-> +
->  	return 0;
->  }
->  
-> +void f2fs_free_casefolded_name(struct f2fs_filename *fname)
+> +/**
+> + * generic_ci_match() - Match a name (case-insensitively) with a dirent.
+> + * This is a filesystem helper for comparison with directory entries.
+> + * generic_ci_d_compare should be used in VFS' ->d_compare instead.
+> + *
+> + * @parent: Inode of the parent of the dirent under comparison
+> + * @name: name under lookup.
+> + * @folded_name: Optional pre-folded name under lookup
+> + * @de_name: Dirent name.
+> + * @de_name_len: dirent name length.
+> + *
+> + * Test whether a case-insensitive directory entry matches the filename
+> + * being searched.  If @folded_name is provided, it is used instead of
+> + * recalculating the casefold of @name.
+> + *
+> + * Return: > 0 if the directory entry matches, 0 if it doesn't match, or
+> + * < 0 on error.
+> + */
+> +int generic_ci_match(const struct inode *parent,
+> +		     const struct qstr *name,
+> +		     const struct qstr *folded_name,
+> +		     const u8 *de_name, u32 de_name_len)
 > +{
-> +	unsigned char *buf = (unsigned char *)fname->cf_name.name;
+> +	const struct super_block *sb = parent->i_sb;
+> +	const struct unicode_map *um = sb->s_encoding;
+> +	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
+> +	struct qstr dirent = QSTR_INIT(de_name, de_name_len);
+> +	int res, match = 0;
 > +
-> +	if (buf) {
-> +		kmem_cache_free(f2fs_cf_name_slab, buf);
-> +		fname->cf_name.name = NULL;
+> +	if (IS_ENCRYPTED(parent)) {
+> +		const struct fscrypt_str encrypted_name =
+> +			FSTR_INIT((u8 *) de_name, de_name_len);
+> +
+> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
+> +			return -EINVAL;
+> +
+> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
+> +		if (!decrypted_name.name)
+> +			return -ENOMEM;
+> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
+> +						&decrypted_name);
+> +		if (res < 0)
+> +			goto out;
+> +		dirent.name = decrypted_name.name;
+> +		dirent.len = decrypted_name.len;
 > +	}
+> +
+> +	/*
+> +	 * Attempt a case-sensitive match first. It is cheaper and
+> +	 * should cover most lookups, including all the sane
+> +	 * applications that expect a case-sensitive filesystem.
+
+> +	 * This comparison is safe under RCU because the caller
+> +	 * guarantees the consistency between str and len. See
+> +	 * __d_lookup_rcu_op_compare() for details.
+
+As I mentioned in the previous review, there's no RCU here. This comment
+makes no sense here.
+
+> +	 */
+> +	if (folded_name->name) {
+> +		if (dirent.len == folded_name->len &&
+> +		    !memcmp(folded_name->name, dirent.name, dirent.len)) {
+> +			match = 1;
+> +			goto out;
+> +		}
+> +		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
+> +	} else {
+> +		if (dirent.len == name->len &&
+> +		    !memcmp(name->name, dirent.name, dirent.len) &&
+> +		    (!sb_has_strict_encoding(sb) || !utf8_validate(um, name))) {
+> +			match = 1;
+> +			goto out;
+> +		}
+> +		res = utf8_strncasecmp(um, name, &dirent);
+> +	}
+> +
+> +out:
+
+> +	kfree(decrypted_name.name);
+> +	if (match) /* matched by direct comparison */
+> +		return 1;
+> +	else if (!res) /* matched by utf8 comparison */
+> +		return 1;
+> +	else if (res < 0) /* error on utf8 comparison */
+> +		return res;
+> +	return 0; /* no match */
 > +}
 
-If we use kfree here, we can drop the buf !=NULL check.
+It can be simplified to
 
-> +#endif /* CONFIG_UNICODE */
-> +
->  static int __f2fs_setup_filename(const struct inode *dir,
->  				 const struct fscrypt_name *crypt_name,
->  				 struct f2fs_filename *fname)
-> @@ -142,12 +156,7 @@ void f2fs_free_filename(struct f2fs_filename *fname)
->  	kfree(fname->crypto_buf.name);
->  	fname->crypto_buf.name = NULL;
->  #endif
-> -#if IS_ENABLED(CONFIG_UNICODE)
-> -	if (fname->cf_name.name) {
-> -		kmem_cache_free(f2fs_cf_name_slab, fname->cf_name.name);
-> -		fname->cf_name.name = NULL;
-> -	}
-> -#endif
-> +	f2fs_free_casefolded_name(fname);
->  }
->  
->  static unsigned long dir_block_index(unsigned int level,
-> @@ -235,11 +244,9 @@ static inline int f2fs_match_name(const struct inode *dir,
->  	struct fscrypt_name f;
->  
->  #if IS_ENABLED(CONFIG_UNICODE)
-> -	if (fname->cf_name.name) {
-> -		struct qstr cf = FSTR_TO_QSTR(&fname->cf_name);
-> -
-> -		return f2fs_match_ci_name(dir, &cf, de_name, de_name_len);
-> -	}
-> +	if (fname->cf_name.name)
-> +		return f2fs_match_ci_name(dir, &fname->cf_name,
-> +					  de_name, de_name_len);
->  #endif
->  	f.usr_fname = fname->usr_fname;
->  	f.disk_name = fname->disk_name;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 84c9fead3ad4..2ff8e52642ec 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -530,7 +530,7 @@ struct f2fs_filename {
->  	 * internal operation where usr_fname is also NULL.  In all these cases
->  	 * we fall back to treating the name as an opaque byte sequence.
->  	 */
-> -	struct fscrypt_str cf_name;
-> +	struct qstr cf_name;
->  #endif
->  };
->  
-> @@ -3533,8 +3533,23 @@ int f2fs_get_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
->  /*
->   * dir.c
->   */
-> +unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de);
+if (res < 0)
+   return res;
+return (match || !res);
 
-This is not part of the original patch and doesn't make sense here. It
-seems to be included by a bad rebase?
-
+>  
+>  #ifdef CONFIG_FS_ENCRYPTION
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 820b93b2917f..7af691ff8d44 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3296,6 +3296,10 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
+>  extern int generic_check_addressable(unsigned, u64);
+>  
+>  extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
+> +extern int generic_ci_match(const struct inode *parent,
+> +			    const struct qstr *name,
+> +			    const struct qstr *folded_name,
+> +			    const u8 *de_name, u32 de_name_len);
+>  
+>  static inline bool sb_has_encoding(const struct super_block *sb)
+>  {
 
 -- 
 Gabriel Krisman Bertazi
