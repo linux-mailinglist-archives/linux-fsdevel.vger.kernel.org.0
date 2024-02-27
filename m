@@ -1,194 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-13006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F8F86A205
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 23:01:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B0A86A1B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 22:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A324FB236A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 22:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5411C2919D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 21:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD39914F98E;
-	Tue, 27 Feb 2024 22:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8558C154BF5;
+	Tue, 27 Feb 2024 21:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l4vBZT7i";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zmtl8qHB";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l4vBZT7i";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zmtl8qHB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0E85B1E2;
-	Tue, 27 Feb 2024 22:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE73D153BEF;
+	Tue, 27 Feb 2024 21:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709071241; cv=none; b=uPqV36e/n6XHEsesm7rwC8RZPTKpgrGiopUigAnrShoGzYQEuT1SYdsehtlhA8WJnoBrYjrQDv3z37tcL9U+mlMpIWHJtKI5TS0oGBrercFKSkY/xdGxD/fRBpP/9YKKQFgAyPTfQef3h4oBlmetQmeuvfHaBMk5fnoCG1Bp8sY=
+	t=1709069308; cv=none; b=oT3WEqBOVCJFHYJCacmOqR9iAMIwtBJ9wSNV+Gmc8VAdOtaiB+Cji7gx3XxbH0gIEd7rJtxTJDKLxXqYC1NMyf4Bx7Xo7ac1yz9uL7cjVx3uL5Xl8+Iati1t/QszeZrw6INnEse0xbakOIIemcmgC9mo+N3xO6JtLBkIIJLuoPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709071241; c=relaxed/simple;
-	bh=yeJ0MC8KxBfrdQDP7vNN2S+oQaA2gBifiUKEeJ00/l8=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=H3cl4PmA6DX4nGbVM7Rg76YkLYjLxzGr2Kv2bKPxfKBpMICae2Q0tv989DkAamY7ow40jrGI+NHUuhhatDrMYWYmuBgivbGWzMIRTNOGzUbkLEdoPW0RW7zEZmUZuB+dSzHMkK8nFOmWrqqNJEp0csX9vxZyaD/IgwO6RYYI8ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:59646)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1rf4Yo-004V6I-Ik; Tue, 27 Feb 2024 14:00:22 -0700
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:42108 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1rf4Yn-005Syx-8G; Tue, 27 Feb 2024 14:00:22 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: Jan Bujak <j@exia.io>,  Pedro Falcato <pedro.falcato@gmail.com>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  viro@zeniv.linux.org.uk,  brauner@kernel.org,
-  linux-fsdevel@vger.kernel.org
-References: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
-	<CAKbZUD2=W0Ng=rFVDn3UwSxtGQ5c13tRwkpqm54pPCJO0BraWA@mail.gmail.com>
-	<f2ee9602-0a32-4f0c-a69b-274916abe27f@exia.io>
-	<202402261821.F2812C9475@keescook>
-	<878r35rkc4.fsf@email.froward.int.ebiederm.org>
-	<202402270911.961702D7D6@keescook>
-Date: Tue, 27 Feb 2024 14:59:54 -0600
-In-Reply-To: <202402270911.961702D7D6@keescook> (Kees Cook's message of "Tue,
-	27 Feb 2024 09:22:35 -0800")
-Message-ID: <87v869pqr9.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1709069308; c=relaxed/simple;
+	bh=Q2Y6vBk1Le9pCisVKdF1YWPazcSd0f9HIiA0VPoszYs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z2/vFFaTkyI06RvCdfx70QK9W5AV6gK9mam91T4999rNuEzDd6hZ8MlWmrT5/KV+ot981bVS9TWL6Bhq5j9CgcdV5fPcmQLpdP75W+SA/W+3sL02uYptjKa6OcOIGvpRxWQzVSl73nV6hNiAY1/HrweDqFFr/S8cdJZITCcv5UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l4vBZT7i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zmtl8qHB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l4vBZT7i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zmtl8qHB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BBE171FD92;
+	Tue, 27 Feb 2024 21:28:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709069304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idN97xqKgdpGpjCD/ggWuEREFt+8JtJCxbC+SceKShg=;
+	b=l4vBZT7i8u70lV2TrPudoBzr/q0TNxKxaaG3sHE2uANRrCToECWXrI/7+OEbjJXTODGMy8
+	fy414AJcAON8u+pE30eQOcUCd4RDl0t43bURTOrtCM3qw7gzXs+WOIjg8vj7nsZiZ3Rygz
+	p3BonInGGKqE/iE8pwTZ9LCxSiNCZ6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709069304;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idN97xqKgdpGpjCD/ggWuEREFt+8JtJCxbC+SceKShg=;
+	b=zmtl8qHB06Ce+bk6C6JIQwJ2knV4oay5i8p7wz6/mzwXnD4Oa9mJWsRSGQhYnMfgFnbmaq
+	+GwNLTAaUOmvLOCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709069304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idN97xqKgdpGpjCD/ggWuEREFt+8JtJCxbC+SceKShg=;
+	b=l4vBZT7i8u70lV2TrPudoBzr/q0TNxKxaaG3sHE2uANRrCToECWXrI/7+OEbjJXTODGMy8
+	fy414AJcAON8u+pE30eQOcUCd4RDl0t43bURTOrtCM3qw7gzXs+WOIjg8vj7nsZiZ3Rygz
+	p3BonInGGKqE/iE8pwTZ9LCxSiNCZ6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709069304;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idN97xqKgdpGpjCD/ggWuEREFt+8JtJCxbC+SceKShg=;
+	b=zmtl8qHB06Ce+bk6C6JIQwJ2knV4oay5i8p7wz6/mzwXnD4Oa9mJWsRSGQhYnMfgFnbmaq
+	+GwNLTAaUOmvLOCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80C0713ABA;
+	Tue, 27 Feb 2024 21:28:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MfkhGfhT3mXQHAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 27 Feb 2024 21:28:24 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: viro@zeniv.linux.org.uk,  jaegeuk@kernel.org,  tytso@mit.edu,
+  amir73il@gmail.com,  linux-ext4@vger.kernel.org,
+  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
+  brauner@kernel.org
+Subject: Re: [PATCH v7 00/10] Set casefold/fscrypt dentry operations through
+ sb->s_d_op
+In-Reply-To: <20240227063614.GB1126@sol.localdomain> (Eric Biggers's message
+	of "Mon, 26 Feb 2024 22:36:14 -0800")
+Organization: SUSE
+References: <20240221171412.10710-1-krisman@suse.de>
+	<20240227063614.GB1126@sol.localdomain>
+Date: Tue, 27 Feb 2024 16:28:23 -0500
+Message-ID: <87o7c161hk.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-XM-SPF: eid=1rf4Yn-005Syx-8G;;;mid=<87v869pqr9.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/DoQz7QJlvV3QX3of0uD+sm/D2JNl8PBs=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+Content-Type: text/plain
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=l4vBZT7i;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zmtl8qHB
+X-Spamd-Result: default: False [-4.81 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
+	 HAS_ORG_HEADER(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[9];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,mit.edu,gmail.com,vger.kernel.org,lists.sourceforge.net];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:106:10:150:64:167:received]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: BBE171FD92
 X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
-	*      [score: 0.1979]
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 536 ms - load_scoreonly_sql: 0.05 (0.0%),
-	signal_user_changed: 12 (2.2%), b_tie_ro: 10 (1.9%), parse: 1.11
-	(0.2%), extract_message_metadata: 26 (4.9%), get_uri_detail_list: 8
-	(1.5%), tests_pri_-2000: 28 (5.3%), tests_pri_-1000: 3.0 (0.6%),
-	tests_pri_-950: 1.41 (0.3%), tests_pri_-900: 1.13 (0.2%),
-	tests_pri_-90: 146 (27.3%), check_bayes: 145 (27.0%), b_tokenize: 20
-	(3.7%), b_tok_get_all: 12 (2.3%), b_comp_prob: 3.7 (0.7%),
-	b_tok_touch_all: 103 (19.3%), b_finish: 1.42 (0.3%), tests_pri_0: 298
-	(55.7%), check_dkim_signature: 0.94 (0.2%), check_dkim_adsp: 3.1
-	(0.6%), poll_dns_idle: 0.97 (0.2%), tests_pri_10: 1.86 (0.3%),
-	tests_pri_500: 11 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: Recent-ish changes in binfmt_elf made my program segfault
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-Spam-Score: -4.81
+X-Spam-Flag: NO
 
-Kees Cook <keescook@chromium.org> writes:
+Eric Biggers <ebiggers@kernel.org> writes:
 
-> On Tue, Feb 27, 2024 at 09:35:39AM -0600, Eric W. Biederman wrote:
->> Kees Cook <keescook@chromium.org> writes:
->>=20
->> > On Tue, Jan 23, 2024 at 12:23:27AM +0900, Jan Bujak wrote:
->> >> On 1/22/24 23:54, Pedro Falcato wrote:
->> >> > Hi!
->> >> >=20
->> >> > Where did you get that linker script?
->> >> >=20
->> >> > FWIW, I catched this possible issue in review, and this was already
->> >> > discussed (see my email and Eric's reply):
->> >> > https://lore.kernel.org/all/CAKbZUD3E2if8Sncy+M2YKncc_Zh08-86W6U5wR=
-0ZMazShxbHHA@mail.gmail.com/
->> >> >=20
->> >> > This was my original testcase
->> >> > (https://github.com/heatd/elf-bug-questionmark), which convinced the
->> >> > loader to map .data over a cleared .bss. Your bug seems similar, but
->> >> > does the inverse: maps .bss over .data.
->> >> >=20
->> >>=20
->> >> I wrote the linker script myself from scratch.
->> >
->> > Do you still need this addressed, or have you been able to adjust the
->> > linker script? (I ask to try to assess the priority of needing to fix
->> > this behavior change...)
->>=20
->> Kees, I haven't had a chance to test this yet but it occurred to me
->> that there is an easy way to handle this.  In our in-memory copy
->> of the elf program headers we can just merge the two segments
->> together.
->>=20
->> I believe the diff below accomplishes that, and should fix issue.
->>=20
->> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->>=20
->> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
->> index 5397b552fbeb..01df7dd1f3b4 100644
->> --- a/fs/binfmt_elf.c
->> +++ b/fs/binfmt_elf.c
->> @@ -924,6 +926,31 @@ static int load_elf_binary(struct linux_binprm *bpr=
-m)
->>  	elf_ppnt =3D elf_phdata;
->>  	for (i =3D 0; i < elf_ex->e_phnum; i++, elf_ppnt++)
->>  		switch (elf_ppnt->p_type) {
->> +		case PT_LOAD:
->> +		{
->> +			/*
->> +			 * Historically linux ignored all but the
->> +			 * final .bss segment.  Now that linux honors
->> +			 * all .bss segments, a .bss segment that
->> +			 * logically is not overlapping but is
->> +			 * overlapping when it's edges are rounded up
->> +			 * to page size causes programs to fail.
->> +			 *
->> +			 * Handle that case by merging .bss segments
->> +			 * into the segment they follow.
->> +			 */
->> +			if (((i + 1) >=3D elf_ex->e_phnum) ||
->> +			    (elf_ppnt[1].p_type !=3D PT_LOAD) ||
->> +			    (elf_ppnt[1].p_filesz !=3D 0))
->> +				continue;
->> +			unsigned long end =3D
->> +				elf_ppnt[0].p_vaddr + elf_ppnt[0].p_memsz;
->> +			if (elf_ppnt[1].p_vaddr !=3D end)
->> +				continue;
->> +			elf_ppnt[0].p_memsz +=3D elf_ppnt[1].p_memsz;
->> +			elf_ppnt[1].p_type =3D PT_NULL;
->> +			break;
->> +		}
->>  		case PT_GNU_STACK:
->>  			if (elf_ppnt->p_flags & PF_X)
->>  				executable_stack =3D EXSTACK_ENABLE_X;
+> On Wed, Feb 21, 2024 at 12:14:02PM -0500, Gabriel Krisman Bertazi wrote:
+>> 
+>> When case-insensitive and fscrypt were adapted to work together, we moved the
+>> code that sets the dentry operations for case-insensitive dentries(d_hash and
+>> d_compare) to happen from a helper inside ->lookup.  This is because fscrypt
+>> wants to set d_revalidate only on some dentries, so it does it only for them in
+>> d_revalidate.
+>> 
+>> But, case-insensitive hooks are actually set on all dentries in the filesystem,
+>> so the natural place to do it is through s_d_op and let d_alloc handle it [1].
+>> In addition, doing it inside the ->lookup is a problem for case-insensitive
+>> dentries that are not created through ->lookup, like those coming
+>> open-by-fhandle[2], which will not see the required d_ops.
+>> 
+>> This patchset therefore reverts to using sb->s_d_op to set the dentry operations
+>> for case-insensitive filesystems.  In order to set case-insensitive hooks early
+>> and not require every dentry to have d_revalidate in case-insensitive
+>> filesystems, it introduces a patch suggested by Al Viro to disable d_revalidate
+>> on some dentries on the fly.
+>> 
+>> It survives fstests encrypt and quick groups without regressions.  Based on
+>> v6.7-rc1.
+>> 
+>> [1] https://lore.kernel.org/linux-fsdevel/20231123195327.GP38156@ZenIV/
+>> [2] https://lore.kernel.org/linux-fsdevel/20231123171255.GN38156@ZenIV/
+>> 
+>> Gabriel Krisman Bertazi (10):
+>>   ovl: Always reject mounting over case-insensitive directories
+>>   fscrypt: Factor out a helper to configure the lookup dentry
+>>   fscrypt: Drop d_revalidate for valid dentries during lookup
+>>   fscrypt: Drop d_revalidate once the key is added
+>>   libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+>>   libfs: Add helper to choose dentry operations at mount-time
+>>   ext4: Configure dentry operations at dentry-creation time
+>>   f2fs: Configure dentry operations at dentry-creation time
+>>   ubifs: Configure dentry operations at dentry-creation time
+>>   libfs: Drop generic_set_encrypted_ci_d_ops
+>> 
+>>  fs/crypto/hooks.c       | 15 ++++------
+>>  fs/ext4/namei.c         |  1 -
+>>  fs/ext4/super.c         |  1 +
+>>  fs/f2fs/namei.c         |  1 -
+>>  fs/f2fs/super.c         |  1 +
+>>  fs/libfs.c              | 62 +++++++++++---------------------------
+>>  fs/overlayfs/params.c   | 14 +++++++--
+>>  fs/ubifs/dir.c          |  1 -
+>>  fs/ubifs/super.c        |  1 +
+>>  include/linux/fs.h      | 11 ++++++-
+>>  include/linux/fscrypt.h | 66 ++++++++++++++++++++++++++++++++++++-----
+>>  11 files changed, 105 insertions(+), 69 deletions(-)
+>> 
 >
-> I don't think this is safe -- it isn't looking at flags, etc. e.g.,
-> something like this could break:
+> Looks good,
 >
-> =C2=A0 Type=C2=A0 Offset=C2=A0=C2=A0 VirtAddr=C2=A0 PhysAddr=C2=A0 FileSi=
-z=C2=A0 MemSiz=C2=A0=C2=A0 Flg Align
-> =C2=A0 LOAD=C2=A0 0x003000 0x12000=C2=A0=C2=A0 0x12000=C2=A0=C2=A0 0x0010=
-00 0x001000 R E 0x1000
-> =C2=A0 LOAD=C2=A0 0x004000 0x13000=C2=A0=C2=A0 0x13000=C2=A0=C2=A0 0x0000=
-00 0x001000 RW=C2=A0 0x1000
+> Reviewed-by: Eric Biggers <ebiggers@google.com>
 
-Yes.  I think it should be modified to only do something is the break
-is not on a page boundary (which will automatically limit it's effect
-to where we need to do something for backwards compatibility).
+Thank you for you reviews, Eric. I really appreciate them.
 
-Still with a few tweaks and testing I think that is a good path forward
-for dealing with the ``regression'' case.
+Since this been on the list for a while, I pushed it to get some
+linux-next testing and, should nothing arise or no one else comments,
+will get to Linus soon.
 
-Eric
+Thanks,
 
+-- 
+Gabriel Krisman Bertazi
 
