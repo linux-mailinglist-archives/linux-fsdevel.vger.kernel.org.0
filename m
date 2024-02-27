@@ -1,138 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-12908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4474A86858A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 02:08:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2620C86858B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 02:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1238287AEF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 01:08:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48CB51C22753
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 01:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D5F4A1E;
-	Tue, 27 Feb 2024 01:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bdE0yncu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07BE4A31;
+	Tue, 27 Feb 2024 01:09:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF2B23B1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 01:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BF623B1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 01:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708996107; cv=none; b=NaYMt8/K8SxdWzw8KF10x2wc57CrOu5BXnrCdkje2NGPmA0sPXyfbB2JJ28yAj1BxEscVIK1FeVZLDEPGsx4E5TPs6O7cHBIbBJjTLeQ8FaqyZuswBBGqGu3oZgxpsUsY1tV/PWnBzQgibAkEDbCcCnSnQdcxYOcA3EoTrc+9Tc=
+	t=1708996144; cv=none; b=OY+f2l6s3qfr3XESnjbEcD1k4+EK3eqeu26ybk5p5o5HQ9eMhed09intxzqFrnpdcBRWWFBgTt59eyWasrOgrnbxg4DBNd6xJgjBDL491L44fDg/xn38N8XIymZyIfFY8Buvmpk1y/jbJPxT6k4kVe98GwHGCrqX9oG4t0QDiUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708996107; c=relaxed/simple;
-	bh=NflAfhdHKW+PtBOiWx8oS0ttGZ3mUGpfK5gTK9aLZ6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J9ePCr7paLngoq3Qg7+45tQo7yDwIp880x7slpdgZB3fep8YjphbNvIlHGLP/9rgspza31GEQLcKxNHRBgmtcKZFSUvSza4xPGq/VsmflM0bW4ZUZtJpM5Wo7uYoqNiRwrB9Wey1rkzm4c9HzgBgNMfNsFIkgXPH4FwIp+oU6fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bdE0yncu; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 26 Feb 2024 20:08:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708996103;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LDqTcIZQa3Py6GKquioM//Kg1mkaTH/E6XkLDhhVkKA=;
-	b=bdE0yncuc7HxxM4Jlh2IsKA/P41J/BHIakFTP9fe3EbJEfWD3lWcaNP0YpNT1nhBXSBMym
-	FJaTltOEZ80h8T35T1nxpEP2+WT53DjHCaGoXNfnGCSvnhfkBfFDigAXDD4OYP0emAY0Cd
-	p4TF/x13QfiYhshHe7c0dMiNVOcqlHo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
-	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
-	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
-	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <ldpltrnfmf4a3xs43hfjnhrfidrbd7t5k6i5i3ysuzken2zeql@wm2ivk45hitj>
-References: <Zdv8dujdOg0dD53k@duke.home>
- <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
- <Zdz9p_Kn0puI1KEL@casper.infradead.org>
- <znixgiqxzoksfwwzggmzsu6hwpqfszigjh5k6hx273qil7dx5t@5dxcovjdaypk>
- <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
- <fb4d944e-fde7-423b-a376-25db0b317398@paulmck-laptop>
- <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
- <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
- <oraht3mt3iu7u6q22pvb3du3xjpgei5cncbu4a22mz5scamsq5@fooyqelkfy6u>
- <49354148-4dea-4c89-b591-76b21ed4a5d1@paulmck-laptop>
+	s=arc-20240116; t=1708996144; c=relaxed/simple;
+	bh=kzoRrXh08bElKHfj1aPeK5wEZBKK/c9vqPFeUCMIWnA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oafhKke5pJp6TLJlcoYU+tK0pU6TaZ9oux9uDCVppAOkgaAawzfr5b87i/K3ek5JGwqlFHziD3ufvy/IIawM5DkFKw4eeDEwMENSVq5Go9Y0sA2An+6378r0Tn6uhvnKv8eTMORlBsLqKLwJCaFE1chyDUJBhUF+PzjNUEcPLEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-363b161279aso33896635ab.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 17:09:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708996142; x=1709600942;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aktuv2KRKCqLRwq94WSyQgX3rAr6mzRgiYzRkrGsztc=;
+        b=wCdMVaoc7m/rQehldJNAk13u/eTTzwoEfJysK/Fhm4xFnl2a6OobVyBh/DGRKcMA0W
+         5pafK1E1PVV9Aho/uQ8BiJKnZEgeFPJFdModmBkNZV+DcLruZZ754MmxM2lBAHokZoZ2
+         LWoQbcg+FPyr0niXFAslwIFIRbD1XbUP53xLHUWaJJ966A1ui6R1pzZlEwkWBTEBWWRI
+         +79z07tnkM/Mw402imkwctV4SKBFkzgor6CKqVKf8ZCP564ZKd7X1iEkC6nq8rnYmapk
+         lE3Lp5GDxjS3ZUU+LZvwpem0JGY5O5kzpXRT5LaX1g2rW9NLIwZOz5BcUaKpvRFmrJQh
+         Og7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWIRTGpi+VW/7830eh+vXGfhQ+O7PXBUGPblECnu/V8IcPjhW8fqh5u/4B5bTbwtJfPgnXLSVzoZ+smDBb7qOm8FsI0sQbsVBPaLAgWhA==
+X-Gm-Message-State: AOJu0Ywg2zk1i8nlTR4iRwqdkLCbTCiPMTOJBMOZuRFpc8cUGaEYp8mT
+	+Pn4N0A48z6QzCEgXC9YpAH+ssx0eSAc1M9jxr6TSv3oG9iNFVRu8tj7N+JENka+hBpwa0jr3iA
+	NoyWLrknCeAmRAMShoTdEOWebmb8JP9Lw1rIzMvY5xV1JD1k9QPaN+3s=
+X-Google-Smtp-Source: AGHT+IE1wkVsYou1Utkg829CH1m2uRacrTIEQTXsrl5dubL6Fav7LdHQpDU/SJebyUC6BahX5BA+F53OQcjQF6i4WPT/D5AWRTlZ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <49354148-4dea-4c89-b591-76b21ed4a5d1@paulmck-laptop>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6638:358a:b0:474:96f7:a3a1 with SMTP id
+ v10-20020a056638358a00b0047496f7a3a1mr45049jal.0.1708996142473; Mon, 26 Feb
+ 2024 17:09:02 -0800 (PST)
+Date: Mon, 26 Feb 2024 17:09:02 -0800
+In-Reply-To: <000000000000cc261105f10682eb@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fea5b1061252ab7d@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: use-after-free Read in ntfs_lookup_inode_by_name
+From: syzbot <syzbot+3625b78845a725e80f61@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
+	axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 26, 2024 at 04:55:29PM -0800, Paul E. McKenney wrote:
-> On Mon, Feb 26, 2024 at 07:29:04PM -0500, Kent Overstreet wrote:
-> > On Mon, Feb 26, 2024 at 04:05:37PM -0800, Paul E. McKenney wrote:
-> > > On Mon, Feb 26, 2024 at 06:29:43PM -0500, Kent Overstreet wrote:
-> > > > Well, we won't want it getting hammered on continuously - we should be
-> > > > able to tune reclaim so that doesn't happen.
-> > > > 
-> > > > I think getting numbers on the amount of memory stranded waiting for RCU
-> > > > is probably first order of business - minor tweak to kfree_rcu() et all
-> > > > for that; there's APIs they can query to maintain that counter.
-> > > 
-> > > We can easily tell you the number of blocks of memory waiting to be freed.
-> > > But RCU does not know their size.  Yes, we could ferret this on each
-> > > call to kmem_free_rcu(), but that might not be great for performance.
-> > > We could traverse the lists at runtime, but such traversal must be done
-> > > with interrupts disabled, which is also not great.
-> > > 
-> > > > then, we can add a heuristic threshhold somewhere, something like 
-> > > > 
-> > > > if (rcu_stranded * multiplier > reclaimable_memory)
-> > > > 	kick_rcu()
-> > > 
-> > > If it is a heuristic anyway, it sounds best to base the heuristic on
-> > > the number of objects rather than their aggregate size.
-> > 
-> > I don't think that'll really work given that object size can very from <
-> > 100 bytes all the way up to 2MB hugepages. The shrinker API works that
-> > way and I positively hate it; it's really helpful for introspection and
-> > debugability later to give good human understandable units to this
-> > stuff.
-> 
-> You might well be right, but let's please try it before adding overhead to
-> kfree_rcu() and friends.  I bet it will prove to be good and sufficient.
-> 
-> > And __ksize() is pretty cheap, and I think there might be room in struct
-> > slab to stick the object size there instead of getting it from the slab
-> > cache - and folio_size() is cheaper still.
-> 
-> On __ksize():
-> 
->  * This should only be used internally to query the true size of allocations.
->  * It is not meant to be a way to discover the usable size of an allocation
->  * after the fact. Instead, use kmalloc_size_roundup().
-> 
-> Except that kmalloc_size_roundup() doesn't look like it is meant for
-> this use case.  On __ksize() being used only internally, I would not be
-> at all averse to kfree_rcu() and friends moving to mm.
+syzbot suspects this issue was fixed by commit:
 
-__ksize() is the right helper to use for this; ksize() is "how much
-usable memory", __ksize() is "how much does this occupy".
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-> The idea is for kfree_rcu() to invoke __ksize() when given slab memory
-> and folio_size() when given vmalloc() memory?
+    fs: Block writes to mounted block devices
 
-__ksize() for slab memory, but folio_size() would be for page
-allocations - actually, I think compound_order() is more appropriate
-here, but that's willy's area. IOW, for free_pages_rcu(), which AFAIK we
-don't have yet but it looks like we're going to need.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16ae7a30180000
+start commit:   cc3c44c9fda2 Merge tag 'drm-fixes-2023-05-12' of git://ano..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=38526bf24c8d961b
+dashboard link: https://syzkaller.appspot.com/bug?extid=3625b78845a725e80f61
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16eae776280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d273ea280000
 
-I'm scanning through vmalloc.c and I don't think we have a helper yet to
-query the allocation size - I can write one tomorrow, giving my brain a
-rest today :)
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
