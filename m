@@ -1,177 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-12900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB98A8684CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 00:55:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9DD8684D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 01:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CB81F23394
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 23:55:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DC0E1C21D1F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 00:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED849135A65;
-	Mon, 26 Feb 2024 23:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14622641;
+	Tue, 27 Feb 2024 00:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UqG8LT/2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFwjYlkX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05BE1E878
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 23:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F2036E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 00:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708991751; cv=none; b=RjGMCu+G0J433vIBBzN/heB+bR3ep/sKo6VpgLrzu5Ue5hucVh7zAkEbfHIklC7z/RFPPZscAC7lie10aSTfAJyjgqpZGseCizpkt46uk/7lK8efCT+Y2t683HzlS5a1J25bd1VIdavOocKNf9WLSa465LHB5szhQcWzZHWVOWA=
+	t=1708992338; cv=none; b=BBeeLDdg1SCFBrhp/8P509CtYo2r0F3v8rI4GWYYtjDQkuvhN19oV56ekrIa1pECrq6SXOgKazsS2lgs94gCuqv8r4Qqt8IBOcTvGdTjs6LLZejdvOTZXrSu3NyFR79DBv2I8DFBpd4LrzPgwWlK4U5SNdrNZwds58UGDspxEV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708991751; c=relaxed/simple;
-	bh=pd6yrnTC+hRr0/Z0yLyCvqH0hBN/UOqqiHViIEB2PNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dv0KCPAmu1OvPTeTE90TMrqELe7kYo/8LRY8Jo0MengJ6pi9HhqBdnd4yCbXlCHUVH1vJXqZLPKBFY2q0aHn2hJi6poNcCuHlEKwiS/EHiOuuP8d/6XPUl2w3L7jM6okRB6HAZCpFl2LQ+2yKOrjagLX/W3Eiq64jBCZ9rkPIM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UqG8LT/2; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a3f4464c48dso430297366b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 15:55:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1708991745; x=1709596545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ra7j2veHt8ckgDfEUqJ6n9hg5jJXbYYJjjFPbVavXog=;
-        b=UqG8LT/2wFgBZPJqSyp1CcgOHdKnmjwsUG0S84n2y9IxSUyglFMdqtb8PsL9h6agIW
-         08jEZnwpZGp3AwFaryvTkZE/wif9JOy2LYRJBLLvyp8CK0VX1pJc2fGZCsJVQqWJqr+l
-         TEs5YL2DJFyyC7gmlbIrZPWW0xxLkNC0sjDUI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708991745; x=1709596545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ra7j2veHt8ckgDfEUqJ6n9hg5jJXbYYJjjFPbVavXog=;
-        b=hWdC9pg/2zI3fec6Gvc78/jUKPMfccBEcGNeFva6ptO1SoPTUVADp94whnVgRVE6i0
-         Sm4Ffj6Tz5ME2FLB20fm1Mpr4fx/aprn+Rkxd5wpjdkdxu7ZTxSqJscWlD5amecUNylB
-         iwFrlQSAkFiMIGZB9ijjcG8VqUKebbYq2BdC1oL2qlJe9482qFo5de+HJ6xoAXSrjHM2
-         6fB1m1q01HZgMtYnKukhlEUUFZkguAWf93c0kPMbCY6bqiloyxdvuRc4vBkKR4dmW7Y5
-         VnVEkR95H6GxMiustbrqAcEf5v3rjwV7Yj0CdELQwF3wyrs6PAL3foXIQTvs/DFi8zrz
-         Pb2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWfkVmqqmxGxw6IBh3vuQS5KqOKCop+jadiyj5gKFPt4PuaO2dIwekz6EUCaY9XwAM5NlEgMkRE/Y2058c/0vl9zrhLha2zT4Ft1ANv2Q==
-X-Gm-Message-State: AOJu0YxdO2v3qEbvqCBo67KSAa09kWB9wmPr5otXWBXoiEUOEGmEyZZC
-	i3gK8cHBUxAYB/djNc+LemlPIENchpA6JNbF6AoYa4Za6HYXiEDplWT03hwy7DMlQRYttuaHYte
-	Kp0JX
-X-Google-Smtp-Source: AGHT+IEe/AVFUfb6LYweWrP6PGzthPiOhukqbyMdBoMKBjqG83tn5jhBAQYnsC8l934ZSBMWOCwgMQ==
-X-Received: by 2002:a17:906:48c7:b0:a43:4eba:d008 with SMTP id d7-20020a17090648c700b00a434ebad008mr2687484ejt.73.1708991745187;
-        Mon, 26 Feb 2024 15:55:45 -0800 (PST)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
-        by smtp.gmail.com with ESMTPSA id lu4-20020a170906fac400b00a3ecdd0ba23sm209334ejb.52.2024.02.26.15.55.43
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Feb 2024 15:55:44 -0800 (PST)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-412a9f272f4so20315e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 15:55:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW2yBcjjHOVwjU12jc7fYsbdVZGaehTwARFQ+WdWfle9AzQjfaeq8awBolf0mwrWDABt03l/HDH9L0ZqdGHO0IM2bem5o5hnl9LH+ggQQ==
-X-Received: by 2002:a05:600c:501f:b0:412:5616:d3d with SMTP id
- n31-20020a05600c501f00b0041256160d3dmr41903wmr.7.1708991743417; Mon, 26 Feb
- 2024 15:55:43 -0800 (PST)
+	s=arc-20240116; t=1708992338; c=relaxed/simple;
+	bh=uZAUfeDeYjXvYFMuuU+6QykzFfW+1MdoQowQgG6Q+BA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oCTguiNq5jNQGBP90HIeV5AH+c/EaXgioCv1p8IZ2Kqb+Yhn0CkqtOOokxE49KUIoUyPtBnwphODlpJIH0Zk4OdIQq9UoLPjBKxtv72lnM2wlxAfpcHjV2RvbkEbCLRu53z13F6AA9s8S59V5txtAsN8i4e1dkWzLQQeWOw8Dcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFwjYlkX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B22C433C7;
+	Tue, 27 Feb 2024 00:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708992337;
+	bh=uZAUfeDeYjXvYFMuuU+6QykzFfW+1MdoQowQgG6Q+BA=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=EFwjYlkX+y7TrXDex+Gb+6NTgOPclhut2C9eFtRk4GdfAIFJlbHKBifKFgnOjSUFv
+	 nyUufzncsLlWhNnVCdNFDjv0AicqL7R8/BgNW5lchiElxQ6qZR7ELEzgulQVHn5PCO
+	 10ppgdZwr2Xse79G/4ddA9b0lO4HoLfFMkihXjOs1dEU3ZdwP9Icrd2Jgo9hHN8C88
+	 drEKlJ0JttosTQa4RqpJv9v6yYrrs/TOt4+R9pvGC4jeLBRAE0gZy722jtwe/gQCZV
+	 vLdra8OyhoLGecsgLJyuOZKqF2OXDgbMXUxb39Y8OBodP4pYX8VmtdmeF4vZHPBpAI
+	 vE88WTNBbgjqQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 73EE1CE098C; Mon, 26 Feb 2024 16:05:37 -0800 (PST)
+Date: Mon, 26 Feb 2024 16:05:37 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+Message-ID: <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
+ <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
+ <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com>
+ <Zdv8dujdOg0dD53k@duke.home>
+ <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
+ <Zdz9p_Kn0puI1KEL@casper.infradead.org>
+ <znixgiqxzoksfwwzggmzsu6hwpqfszigjh5k6hx273qil7dx5t@5dxcovjdaypk>
+ <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
+ <fb4d944e-fde7-423b-a376-25db0b317398@paulmck-laptop>
+ <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240205092626.v2.1.Id9ad163b60d21c9e56c2d686b0cc9083a8ba7924@changeid>
-In-Reply-To: <20240205092626.v2.1.Id9ad163b60d21c9e56c2d686b0cc9083a8ba7924@changeid>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 26 Feb 2024 15:55:28 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WgGuJLBWmXBOU5oHMvWP2M1cSMS201K8HpyXSYiBPJXQ@mail.gmail.com>
-Message-ID: <CAD=FV=WgGuJLBWmXBOU5oHMvWP2M1cSMS201K8HpyXSYiBPJXQ@mail.gmail.com>
-Subject: Re: [PATCH v2] regset: use kvzalloc() for regset_get_alloc()
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Dave Martin <Dave.Martin@arm.com>, Oleg Nesterov <oleg@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org, Matthew Wilcox <willy@infradead.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
 
-Hi,
+On Mon, Feb 26, 2024 at 06:29:43PM -0500, Kent Overstreet wrote:
+> On Mon, Feb 26, 2024 at 01:55:10PM -0800, Paul E. McKenney wrote:
+> > On Mon, Feb 26, 2024 at 04:19:14PM -0500, Kent Overstreet wrote:
+> > > +cc Paul
+> > > 
+> > > On Mon, Feb 26, 2024 at 04:17:19PM -0500, Kent Overstreet wrote:
+> > > > On Mon, Feb 26, 2024 at 09:07:51PM +0000, Matthew Wilcox wrote:
+> > > > > On Mon, Feb 26, 2024 at 09:17:33AM -0800, Linus Torvalds wrote:
+> > > > > > Willy - tangential side note: I looked closer at the issue that you
+> > > > > > reported (indirectly) with the small reads during heavy write
+> > > > > > activity.
+> > > > > > 
+> > > > > > Our _reading_ side is very optimized and has none of the write-side
+> > > > > > oddities that I can see, and we just have
+> > > > > > 
+> > > > > >   filemap_read ->
+> > > > > >     filemap_get_pages ->
+> > > > > >         filemap_get_read_batch ->
+> > > > > >           folio_try_get_rcu()
+> > > > > > 
+> > > > > > and there is no page locking or other locking involved (assuming the
+> > > > > > page is cached and marked uptodate etc, of course).
+> > > > > > 
+> > > > > > So afaik, it really is just that *one* atomic access (and the matching
+> > > > > > page ref decrement afterwards).
+> > > > > 
+> > > > > Yep, that was what the customer reported on their ancient kernel, and
+> > > > > we at least didn't make that worse ...
+> > > > > 
+> > > > > > We could easily do all of this without getting any ref to the page at
+> > > > > > all if we did the page cache release with RCU (and the user copy with
+> > > > > > "copy_to_user_atomic()").  Honestly, anything else looks like a
+> > > > > > complete disaster. For tiny reads, a temporary buffer sounds ok, but
+> > > > > > really *only* for tiny reads where we could have that buffer on the
+> > > > > > stack.
+> > > > > > 
+> > > > > > Are tiny reads (handwaving: 100 bytes or less) really worth optimizing
+> > > > > > for to that degree?
+> > > > > > 
+> > > > > > In contrast, the RCU-delaying of the page cache might be a good idea
+> > > > > > in general. We've had other situations where that would have been
+> > > > > > nice. The main worry would be low-memory situations, I suspect.
+> > > > > > 
+> > > > > > The "tiny read" optimization smells like a benchmark thing to me. Even
+> > > > > > with the cacheline possibly bouncing, the system call overhead for
+> > > > > > tiny reads (particularly with all the mitigations) should be orders of
+> > > > > > magnitude higher than two atomic accesses.
+> > > > > 
+> > > > > Ah, good point about the $%^&^*^ mitigations.  This was pre mitigations.
+> > > > > I suspect that this customer would simply disable them; afaik the machine
+> > > > > is an appliance and one interacts with it purely by sending transactions
+> > > > > to it (it's not even an SQL system, much less a "run arbitrary javascript"
+> > > > > kind of system).  But that makes it even more special case, inapplicable
+> > > > > to the majority of workloads and closer to smelling like a benchmark.
+> > > > > 
+> > > > > I've thought about and rejected RCU delaying of the page cache in the
+> > > > > past.  With the majority of memory in anon memory & file memory, it just
+> > > > > feels too risky to have so much memory waiting to be reused.  We could
+> > > > > also improve gup-fast if we could rely on RCU freeing of anon memory.
+> > > > > Not sure what workloads might benefit from that, though.
+> > > > 
+> > > > RCU allocating and freeing of memory can already be fairly significant
+> > > > depending on workload, and I'd expect that to grow - we really just need
+> > > > a way for reclaim to kick RCU when needed (and probably add a percpu
+> > > > counter for "amount of memory stranded until the next RCU grace
+> > > > period").
+> > 
+> > There are some APIs for that, though the are sharp-edged and mainly
+> > intended for rcutorture, and there are some hooks for a CI Kconfig
+> > option called RCU_STRICT_GRACE_PERIOD that could be organized into
+> > something useful.
+> > 
+> > Of course, if there is a long-running RCU reader, there is nothing
+> > RCU can do.  By definition, it must wait on all pre-existing readers,
+> > no exceptions.
+> > 
+> > But my guess is that you instead are thinking of memory-exhaustion
+> > emergencies where you would like RCU to burn more CPU than usual to
+> > reduce grace-period latency, there are definitely things that can be done.
+> > 
+> > I am sure that there are more questions that I should ask, but the one
+> > that comes immediately to mind is "Is this API call an occasional thing,
+> > or does RCU need to tolerate many CPUs hammering it frequently?"
+> > Either answer is fine, I just need to know.  ;-)
+> 
+> Well, we won't want it getting hammered on continuously - we should be
+> able to tune reclaim so that doesn't happen.
+> 
+> I think getting numbers on the amount of memory stranded waiting for RCU
+> is probably first order of business - minor tweak to kfree_rcu() et all
+> for that; there's APIs they can query to maintain that counter.
 
-On Mon, Feb 5, 2024 at 9:27=E2=80=AFAM Douglas Anderson <dianders@chromium.=
-org> wrote:
->
-> While browsing through ChromeOS crash reports, I found one with an
-> allocation failure that looked like this:
->
->   chrome: page allocation failure: order:7,
->           mode:0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO),
->           nodemask=3D(null),cpuset=3Durgent,mems_allowed=3D0
->   CPU: 7 PID: 3295 Comm: chrome Not tainted
->           5.15.133-20574-g8044615ac35c #1 (HASH:1162 1)
->   Hardware name: Google Lazor (rev3 - 8) with KB Backlight (DT)
->   Call trace:
->   ...
->   warn_alloc+0x104/0x174
->   __alloc_pages+0x5f0/0x6e4
->   kmalloc_order+0x44/0x98
->   kmalloc_order_trace+0x34/0x124
->   __kmalloc+0x228/0x36c
->   __regset_get+0x68/0xcc
->   regset_get_alloc+0x1c/0x28
->   elf_core_dump+0x3d8/0xd8c
->   do_coredump+0xeb8/0x1378
->   get_signal+0x14c/0x804
->   ...
->
-> An order 7 allocation is (1 << 7) contiguous pages, or 512K. It's not
-> a surprise that this allocation failed on a system that's been running
-> for a while.
->
-> More digging showed that it was fairly easy to see the order 7
-> allocation by just sending a SIGQUIT to chrome (or other processes) to
-> generate a core dump. The actual amount being allocated was 279,584
-> bytes and it was for "core_note_type" NT_ARM_SVE.
->
-> There was quite a bit of discussion [1] on the mailing lists in
-> response to my v1 patch attempting to switch to vmalloc. The overall
-> conclusion was that we could likely reduce the 279,584 byte allocation
-> by quite a bit and Mark Brown has sent a patch to that effect [2].
-> However even with the 279,584 byte allocation gone there are still
-> 65,552 byte allocations. These are just barely more than the 65,536
-> bytes and thus would require an order 5 allocation.
->
-> An order 5 allocation is still something to avoid unless necessary and
-> nothing needs the memory here to be contiguous. Change the allocation
-> to kvzalloc() which should still be efficient for small allocations
-> but doesn't force the memory subsystem to work hard (and maybe fail)
-> at getting a large contiguous chunk.
->
-> [1] https://lore.kernel.org/r/20240201171159.1.Id9ad163b60d21c9e56c2d686b=
-0cc9083a8ba7924@changeid
-> [2] https://lore.kernel.org/r/20240203-arm64-sve-ptrace-regset-size-v1-1-=
-2c3ba1386b9e@kernel.org
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->
-> Changes in v2:
-> - Use kvzalloc() instead of vmalloc().
-> - Update description based on v1 discussion.
->
->  fs/binfmt_elf.c | 2 +-
->  kernel/regset.c | 6 +++---
->  2 files changed, 4 insertions(+), 4 deletions(-)
+We can easily tell you the number of blocks of memory waiting to be freed.
+But RCU does not know their size.  Yes, we could ferret this on each
+call to kmem_free_rcu(), but that might not be great for performance.
+We could traverse the lists at runtime, but such traversal must be done
+with interrupts disabled, which is also not great.
 
-Just wanted to check in to see if there's anything else that I need to
-do here. Mark's patch to avoid the order 7 allocations [1] has landed,
-but we still want this kvzalloc() because the order 5 allocations
-can't really be avoided. I'm happy to sit tight for longer but just
-wanted to make sure it was clear that we still want my patch _in
-addition_ to Mark's patch and to see if there was anything else you
-needed me to do.
+> then, we can add a heuristic threshhold somewhere, something like 
+> 
+> if (rcu_stranded * multiplier > reclaimable_memory)
+> 	kick_rcu()
 
-Thanks!
+If it is a heuristic anyway, it sounds best to base the heuristic on
+the number of objects rather than their aggregate size.
 
-[1] https://lore.kernel.org/r/20240213-arm64-sve-ptrace-regset-size-v2-1-c7=
-600ca74b9b@kernel.org
+							Thanx, Paul
 
