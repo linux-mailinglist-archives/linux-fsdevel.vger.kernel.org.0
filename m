@@ -1,264 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-12962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1272D869A71
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 16:32:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE66869A7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 16:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E8AC28F215
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 15:32:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7643A1C234EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 15:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B88145350;
-	Tue, 27 Feb 2024 15:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0pHnAJA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1FA145B2A;
+	Tue, 27 Feb 2024 15:36:21 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380AE14264A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 15:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D521DFF5;
+	Tue, 27 Feb 2024 15:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709047953; cv=none; b=mRERslYdrf08th0OhF9hGyNN0Nz5aKlGDaFFaPRhiEkBZqx/FC9ZXqRv2mhmtlDRR2HR2PfgDVcuAvOcSdN0ZYkqpeOnSsTkEgR/u3xfYqKZBX2d1J6vsPVrQSyZznN2B/jvWPngjwlTT7JHgcnbf6xFsA6k0VpDkZvURCAQVcU=
+	t=1709048181; cv=none; b=GCbw7/sUvCs7pE/3C50YKCxPshVEqqe9uuiUrMHlfpeWkNcjXeN/JP6boFaVKncCMRa9VJ9rX9e+GuBhPqQALd8VR7AXoMpTPWt9GypzLZFxg1MamPmjoUBGmvoBxWsmWklWHv18foZKX19vmcj5gh9Wt4D63BYGIp8eFxaF8Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709047953; c=relaxed/simple;
-	bh=FA7ZtZfv5sV94KpinvJfx2SRQfk/VJW3SQxQPoBgN50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fkmGaWMG4MGp78kc2WQuVxs9cLdGEAtl7SlC351CJHtkwJBlk+GffCc5cRyKRTP7MRqtXDzMBpRMLdsg45rlI6r/S9vFFbGQII9CCsAt3/Nw5yWRjFooUq4yiA2hq0hw/tRK5M8ycuOQcNeVoOFyNPI4kr5GEnyWJrIfX+RM1so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0pHnAJA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6179C433C7;
-	Tue, 27 Feb 2024 15:32:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709047952;
-	bh=FA7ZtZfv5sV94KpinvJfx2SRQfk/VJW3SQxQPoBgN50=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=B0pHnAJAuoKAOY2I+Wzr6JIeZQFHX5Ly8AOHVqFVrkOtF/Y5vJVILr+NJCnC0btPK
-	 D9rGchZBRYDddoLwua7LGOEqEL+yxlT8IUV4VfkXxYLsc/UarMTz9DJikBVpyqBI/b
-	 g6TKidxpL4NjPBx1VqGhUEi/kqC0hJu5SU5LexROr3Ps/ldiIWfWQKK2hLt6ulDdPJ
-	 pteUgoI8DzLbnmngubPRHRF0quoCn5+Zx3kOVtdu5842Msv/BoXwTGl7TdJMHefOIj
-	 uJ3mmkvDvvflOO1zwtUnEMjTAvsrT/UYqWkuLFaaNZzDvCEh5K6lcyUIMefl3dgWC9
-	 /D6kXeSaYWsqw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 4F414CE0F12; Tue, 27 Feb 2024 07:32:32 -0800 (PST)
-Date: Tue, 27 Feb 2024 07:32:32 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <ff8c0f56-6778-47e4-b365-d9c1ef75bbae@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <znixgiqxzoksfwwzggmzsu6hwpqfszigjh5k6hx273qil7dx5t@5dxcovjdaypk>
- <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
- <fb4d944e-fde7-423b-a376-25db0b317398@paulmck-laptop>
- <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
- <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
- <oraht3mt3iu7u6q22pvb3du3xjpgei5cncbu4a22mz5scamsq5@fooyqelkfy6u>
- <49354148-4dea-4c89-b591-76b21ed4a5d1@paulmck-laptop>
- <ldpltrnfmf4a3xs43hfjnhrfidrbd7t5k6i5i3ysuzken2zeql@wm2ivk45hitj>
- <df68c44e-1ab3-485d-a0d6-0c37a06ab4ff@paulmck-laptop>
- <6xpyltamnbd7q7nesntqspyfjfq3jexkmfyj2fekrk2mrhktcr@73vij67d5vne>
+	s=arc-20240116; t=1709048181; c=relaxed/simple;
+	bh=YrHLHMpFjmFGzgowBWH/3W3TMycwyDVhBWgkPqBFGzY=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=t+ovZnKI8wQLto50ZC2p5GcKfxjDNLs1NVXswxwQjoGgi+8Y9fJEgBYtaL/0qmcwaqb6d1lEXaQJKJTdQm0JBjGYkz54HZQT5ky1E9UyqZfr2IQVS1wlVN6h2/UpgL1Ixjf5DOnjOxVIFEZA3QBx6zozRIft2QiJ04iyWSaLpWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:55678)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1rezV2-008pdi-Mz; Tue, 27 Feb 2024 08:36:08 -0700
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:42208 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1rezV1-009PTZ-Ga; Tue, 27 Feb 2024 08:36:08 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Jan Bujak <j@exia.io>,  Pedro Falcato <pedro.falcato@gmail.com>,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+  viro@zeniv.linux.org.uk,  brauner@kernel.org,
+  linux-fsdevel@vger.kernel.org
+References: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
+	<CAKbZUD2=W0Ng=rFVDn3UwSxtGQ5c13tRwkpqm54pPCJO0BraWA@mail.gmail.com>
+	<f2ee9602-0a32-4f0c-a69b-274916abe27f@exia.io>
+	<202402261821.F2812C9475@keescook>
+Date: Tue, 27 Feb 2024 09:35:39 -0600
+In-Reply-To: <202402261821.F2812C9475@keescook> (Kees Cook's message of "Mon,
+	26 Feb 2024 18:23:15 -0800")
+Message-ID: <878r35rkc4.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6xpyltamnbd7q7nesntqspyfjfq3jexkmfyj2fekrk2mrhktcr@73vij67d5vne>
+Content-Type: text/plain
+X-XM-SPF: eid=1rezV1-009PTZ-Ga;;;mid=<878r35rkc4.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+N1hetAe26OvEK48+xJsS4k19zKBNTClY=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: 
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4092]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 392 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 4.0 (1.0%), b_tie_ro: 2.8 (0.7%), parse: 0.65
+	(0.2%), extract_message_metadata: 11 (2.7%), get_uri_detail_list: 1.43
+	(0.4%), tests_pri_-2000: 17 (4.3%), tests_pri_-1000: 1.85 (0.5%),
+	tests_pri_-950: 0.99 (0.3%), tests_pri_-900: 0.75 (0.2%),
+	tests_pri_-90: 112 (28.5%), check_bayes: 110 (28.0%), b_tokenize: 6
+	(1.4%), b_tok_get_all: 8 (2.1%), b_comp_prob: 1.76 (0.4%),
+	b_tok_touch_all: 91 (23.1%), b_finish: 0.75 (0.2%), tests_pri_0: 232
+	(59.2%), check_dkim_signature: 0.37 (0.1%), check_dkim_adsp: 4.9
+	(1.2%), poll_dns_idle: 3.2 (0.8%), tests_pri_10: 2.6 (0.7%),
+	tests_pri_500: 7 (1.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: Recent-ish changes in binfmt_elf made my program segfault
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 
-On Tue, Feb 27, 2024 at 01:21:05AM -0500, Kent Overstreet wrote:
-> On Mon, Feb 26, 2024 at 09:17:41PM -0800, Paul E. McKenney wrote:
-> > On Mon, Feb 26, 2024 at 08:08:17PM -0500, Kent Overstreet wrote:
-> > > On Mon, Feb 26, 2024 at 04:55:29PM -0800, Paul E. McKenney wrote:
-> > > > On Mon, Feb 26, 2024 at 07:29:04PM -0500, Kent Overstreet wrote:
-> > > > > On Mon, Feb 26, 2024 at 04:05:37PM -0800, Paul E. McKenney wrote:
-> > > > > > On Mon, Feb 26, 2024 at 06:29:43PM -0500, Kent Overstreet wrote:
-> > > > > > > Well, we won't want it getting hammered on continuously - we should be
-> > > > > > > able to tune reclaim so that doesn't happen.
-> > > > > > > 
-> > > > > > > I think getting numbers on the amount of memory stranded waiting for RCU
-> > > > > > > is probably first order of business - minor tweak to kfree_rcu() et all
-> > > > > > > for that; there's APIs they can query to maintain that counter.
-> > > > > > 
-> > > > > > We can easily tell you the number of blocks of memory waiting to be freed.
-> > > > > > But RCU does not know their size.  Yes, we could ferret this on each
-> > > > > > call to kmem_free_rcu(), but that might not be great for performance.
-> > > > > > We could traverse the lists at runtime, but such traversal must be done
-> > > > > > with interrupts disabled, which is also not great.
-> > > > > > 
-> > > > > > > then, we can add a heuristic threshhold somewhere, something like 
-> > > > > > > 
-> > > > > > > if (rcu_stranded * multiplier > reclaimable_memory)
-> > > > > > > 	kick_rcu()
-> > > > > > 
-> > > > > > If it is a heuristic anyway, it sounds best to base the heuristic on
-> > > > > > the number of objects rather than their aggregate size.
-> > > > > 
-> > > > > I don't think that'll really work given that object size can very from <
-> > > > > 100 bytes all the way up to 2MB hugepages. The shrinker API works that
-> > > > > way and I positively hate it; it's really helpful for introspection and
-> > > > > debugability later to give good human understandable units to this
-> > > > > stuff.
-> > > > 
-> > > > You might well be right, but let's please try it before adding overhead to
-> > > > kfree_rcu() and friends.  I bet it will prove to be good and sufficient.
-> > > > 
-> > > > > And __ksize() is pretty cheap, and I think there might be room in struct
-> > > > > slab to stick the object size there instead of getting it from the slab
-> > > > > cache - and folio_size() is cheaper still.
-> > > > 
-> > > > On __ksize():
-> > > > 
-> > > >  * This should only be used internally to query the true size of allocations.
-> > > >  * It is not meant to be a way to discover the usable size of an allocation
-> > > >  * after the fact. Instead, use kmalloc_size_roundup().
-> > > > 
-> > > > Except that kmalloc_size_roundup() doesn't look like it is meant for
-> > > > this use case.  On __ksize() being used only internally, I would not be
-> > > > at all averse to kfree_rcu() and friends moving to mm.
-> > > 
-> > > __ksize() is the right helper to use for this; ksize() is "how much
-> > > usable memory", __ksize() is "how much does this occupy".
-> > > 
-> > > > The idea is for kfree_rcu() to invoke __ksize() when given slab memory
-> > > > and folio_size() when given vmalloc() memory?
-> > > 
-> > > __ksize() for slab memory, but folio_size() would be for page
-> > > allocations - actually, I think compound_order() is more appropriate
-> > > here, but that's willy's area. IOW, for free_pages_rcu(), which AFAIK we
-> > > don't have yet but it looks like we're going to need.
-> > > 
-> > > I'm scanning through vmalloc.c and I don't think we have a helper yet to
-> > > query the allocation size - I can write one tomorrow, giving my brain a
-> > > rest today :)
-> > 
-> > Again, let's give the straight count of blocks a try first.  I do see
-> > that you feel that the added overhead is negligible, but zero added
-> > overhead is even better.
-> 
-> How are you going to write a heuristic that works correctly both when
-> the system is cycling through nothing but 2M hugepages, and nothing but
-> 128 byte whatevers?
+Kees Cook <keescook@chromium.org> writes:
 
-I could simply use the same general approach that I use within RCU
-itself, which currently has absolutely no idea how much memory (if any)
-that each callback will free.  Especially given that some callbacks
-free groups of memory blocks, while other free nothing.  ;-)
+> On Tue, Jan 23, 2024 at 12:23:27AM +0900, Jan Bujak wrote:
+>> On 1/22/24 23:54, Pedro Falcato wrote:
+>> > Hi!
+>> > 
+>> > Where did you get that linker script?
+>> > 
+>> > FWIW, I catched this possible issue in review, and this was already
+>> > discussed (see my email and Eric's reply):
+>> > https://lore.kernel.org/all/CAKbZUD3E2if8Sncy+M2YKncc_Zh08-86W6U5wR0ZMazShxbHHA@mail.gmail.com/
+>> > 
+>> > This was my original testcase
+>> > (https://github.com/heatd/elf-bug-questionmark), which convinced the
+>> > loader to map .data over a cleared .bss. Your bug seems similar, but
+>> > does the inverse: maps .bss over .data.
+>> > 
+>> 
+>> I wrote the linker script myself from scratch.
+>
+> Do you still need this addressed, or have you been able to adjust the
+> linker script? (I ask to try to assess the priority of needing to fix
+> this behavior change...)
 
-Alternatively, we could gather statistics on the amount of memory freed
-by each callback and use that as an estimate.
+Kees, I haven't had a chance to test this yet but it occurred to me
+that there is an easy way to handle this.  In our in-memory copy
+of the elf program headers we can just merge the two segments
+together.
 
-But we should instead step back and ask exactly what we are trying to
-accomplish here, which just might be what Dave Chinner was getting at.
+I believe the diff below accomplishes that, and should fix issue.
 
-At a ridiculously high level, reclaim is looking for memory to free.
-Some read-only memory can often be dropped immediately on the grounds
-that its data can be read back in if needed.  Other memory can only be
-dropped after being written out, which involves a delay.  There are of
-course many other complications, but this will do for a start.
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-So, where does RCU fit in?
-
-RCU fits in between the two.  With memory awaiting RCU, there is no need
-to write anything out, but there is a delay.  As such, memory waiting
-for an RCU grace period is similar to memory that is to be reclaimed
-after its I/O completes.
-
-One complication, and a complication that we are considering exploiting,
-is that, unlike reclaimable memory waiting for I/O, we could often
-(but not always) have some control over how quickly RCU's grace periods
-complete.  And we already do this programmatically by using the choice
-between sychronize_rcu() and synchronize_rcu_expedited().  The question
-is whether we should expedite normal RCU grace periods during reclaim,
-and if so, under what conditions.
-
-You identified one potential condition, namely the amount of memory
-waiting to be reclaimed.  One complication with this approach is that RCU
-has no idea how much memory each callback represents, and for call_rcu(),
-there is no way for it to find out.  For kfree_rcu(), there are ways,
-but as you know, I am questioning whether those ways are reasonable from
-a performance perspective.  But even if they are, we would be accepting
-more error from the memory waiting via call_rcu() than we would be
-accepting if we just counted blocks instead of bytes for kfree_rcu().
-
-Let me reiterate that:  The estimation error that you are objecting to
-for kfree_rcu() is completely and utterly unavoidable for call_rcu().
-RCU callback functions do whatever their authors want, and we won't be
-analyzing their code to estimate bytes freed without some serious advances
-in code-analysis technology.  Hence my perhaps otherwise inexplicable
-insistence on starting with block counts rather than byte counts.
-
-Another complication surrounding estimating memory to be freed is that
-this memory can be in any of the following states:
-
-1.	Not yet associated with a specific grace period.  Its CPU (or
-	its rcuog kthread, as the case may be) must interact with the
-	RCU core and assign a grace period.  There are a few costly
-	RCU_STRICT_GRACE_PERIOD tricks that can help here, usually
-	involving IPIing a bunch of CPUs or awakening a bunch of rcuog
-	kthreads.
-
-2.	Associated with a grace period that has not yet started.
-	This grace period must of course be started, which usually
-	cannot happen until the previous grace period completes.
-	Which leads us to...
-
-3.	Associated with the current grace period.  This is where
-	the rcutorture forcing of quiescent states comes in.
-
-4.	Waiting to be invoked.	This happens from either RCU_SOFTIRQ
-	context or from rcuoc kthread context, and is of course impeded
-	by any of the aforementioned measures to speed things up.
-	Perhaps we could crank up the priority of the relevant ksoftirq
-	or rcuog/rcuoc kthreads, though this likely has some serious
-	side effects.  Besides, as far as I know, we don't mess with
-	other process priorities for the benefit of reclaim, so why
-	would we start with RCU?
-
-Of these, #3 and #4 are normally the slowest, with #3 often being the
-slowest under light call_rcu()/kfree_rcu() load (or in the presence of
-slow RCU readers) and #4 often being the slowest under callback-flooding
-conditions.  Now reclaim might cause callback flooding, but I don't
-recall seeing this.  At least not to the extent as userspace-induced
-callback flooding, for example, during "rm -rf" of a big filesystem tree
-with lots of small files on a fast device.  So we likely focus on #3.
-
-So we can speed RCU up, and we could use some statistics on quantity
-of whatever waiting for RCU.  But is that the right approach?
-
-Keep in mind that reclaim via writeback involves I/O delays.  Now these
-delays are often much shorter than the used to be, courtesy of SSDs.
-But queueing is still a thing, as are limitations on write bandwidth,
-so those delays are still consequential.  My experience is that reclaim
-spans seconds rather than milliseconds, let alone microseconds, and RCU
-grace periods are in the tens to hundreds of milliseconds.  Or am I yet
-again showing my age?
-
-So perhaps we should instead make RCU take "ongoing reclaim" into account
-when prodding reluctant grace periods.  For example, RCU normally scans
-for idle CPUs every 3 milliseconds.  Maybe it should speed that up to
-once per millisecond when reclaim is ongoing.  And likelwise for RCU's
-other grace-period-prodding heuristics.
-
-In addition, RCU uses the number of callbacks queued on a particular
-CPU to instigate grace-period prodding.  Maybe these heuristics should
-also depend on whether or not a reclaim is in progress.
-
-Is there an easy, fast, and reliable way for RCU to determine whether or
-not a reclaim is ongoing?  It might be both easier and more effective
-for RCU to simply unconditionally react to the existence of a relaim
-than for the reclaim process to try to figure out when to prod RCU.
-
-							Thanx, Paul
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 5397b552fbeb..01df7dd1f3b4 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -924,6 +926,31 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	elf_ppnt = elf_phdata;
+ 	for (i = 0; i < elf_ex->e_phnum; i++, elf_ppnt++)
+ 		switch (elf_ppnt->p_type) {
++		case PT_LOAD:
++		{
++			/*
++			 * Historically linux ignored all but the
++			 * final .bss segment.  Now that linux honors
++			 * all .bss segments, a .bss segment that
++			 * logically is not overlapping but is
++			 * overlapping when it's edges are rounded up
++			 * to page size causes programs to fail.
++			 *
++			 * Handle that case by merging .bss segments
++			 * into the segment they follow.
++			 */
++			if (((i + 1) >= elf_ex->e_phnum) ||
++			    (elf_ppnt[1].p_type != PT_LOAD) ||
++			    (elf_ppnt[1].p_filesz != 0))
++				continue;
++			unsigned long end =
++				elf_ppnt[0].p_vaddr + elf_ppnt[0].p_memsz;
++			if (elf_ppnt[1].p_vaddr != end)
++				continue;
++			elf_ppnt[0].p_memsz += elf_ppnt[1].p_memsz;
++			elf_ppnt[1].p_type = PT_NULL;
++			break;
++		}
+ 		case PT_GNU_STACK:
+ 			if (elf_ppnt->p_flags & PF_X)
+ 				executable_stack = EXSTACK_ENABLE_X;
 
