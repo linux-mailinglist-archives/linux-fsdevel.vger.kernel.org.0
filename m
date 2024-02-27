@@ -1,136 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-12931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6CF868C56
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 10:33:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 094B3868CA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 10:46:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04D51C22330
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 09:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27F4C1C2102F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 09:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD481369B0;
-	Tue, 27 Feb 2024 09:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089281369BC;
+	Tue, 27 Feb 2024 09:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="GMTPJcrf"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bnFZzcs8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A291369A4;
-	Tue, 27 Feb 2024 09:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA059136999
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 09:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709026411; cv=none; b=pcrgCPezf3N72MM+txGNLL83F/7rp023GMuo7b+uJzGXvbKpD0/V7RrwgYKN3L1W2OcxE3sfKBwOElKfKZPSkIwT0zpto9AAHC9dW7fiKJjvnOI1BoY+yZ76ZJylz8ISksKB3r9sILZbYRG1iXe6Ed6bH0d61jEmRR9tAc7vF70=
+	t=1709027168; cv=none; b=p5mJine9T/ir9HRzZXwIO3DIcDYi0E1xrp3nMam/TFa1tCJb7akPSnQr2L26UBAydLvkklxxgz/GrssEIgMhXVJB0FHUqmButb6D3vTMRPByCv9lETYW7g5x+NoQ2MzNipLfqWl7FcOS7nL1oMhkP/+hP9ZDN82/l2Sl8WrI28Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709026411; c=relaxed/simple;
-	bh=ihSb31MveA511qLCYqgRAbr0VwITsxdL+t6Pn6z4hzI=;
+	s=arc-20240116; t=1709027168; c=relaxed/simple;
+	bh=+ytKwk3NacclcWujYuHxkN3+LNPa8DzWTEDtglex9XI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oag7/HPqWDCCPT9X9XjGfmTe4lFScqsvg1/RYGnuvav0skgRFPMaypq5EI/XtXZpYPxbk00+5p83DYltmtkXqvl5+baGzynrmdmmDcQ9x/wE4oAAZ0JwoRJOlySGZ5cHFTWBh/AqrP4QwjivoMdJzvnY2mU1mLAjLRVion0hw28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=GMTPJcrf; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4TkXNP5Jv6z9smD;
-	Tue, 27 Feb 2024 10:33:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1709026405;
+	 Content-Type:Content-Disposition:In-Reply-To; b=tIGIcL9CLG3ASvK6Lt1JAcNRZ5E9o4UMjmSPsB2xzzSl25nzG6WFrjmNuin/1is3m6j+dVCVfphyce5/JNMD6olu4kpf9DOQ4yW7Egh5dfY5y2qGze0B2/NXgSdX6dKI0qnl26J2tXr+ppHXlEa1Je2JJhvskrw5m2RAv0IhDv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bnFZzcs8; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 27 Feb 2024 04:45:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1709027164;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=50P6BtmSu6TZY3fumWs04okJUU6PUrVTmELjj8/MjQM=;
-	b=GMTPJcrfqTMcvvlrwwI/f3bHzERGH6KsPCu9OUPYazsskmeLvpmeO2lKMnMCcfDSSOAL/R
-	dvmZqZmKX3dpt0/QjiDz34yjHWSWM4GA9r3AYl9RpAD3SGErX8Nxkx2bkbWZTV5mIHcmE8
-	5gXSdvlqZLUCp3JKTKITpHBav6Ci6w6NNuL96JeCu8vQUDzSLs0RN533WXRkPxFnEZFlBr
-	6spw7PuDKhZl5kqWFsLeXR4kLcSs98VHR4rxMlaeTg/OpZvqxllaR/OfDKv5fiD59OKo60
-	a6E2UIlHVi6c4Wy5PW8/I/+BcTT4z41Myx2eckvXAhAtwQeMCWJk3mF0tQzk0w==
-Date: Tue, 27 Feb 2024 10:33:21 +0100
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, david@fromorbit.com, chandan.babu@oracle.com, 
-	akpm@linux-foundation.org, mcgrof@kernel.org, ziy@nvidia.com, hare@suse.de, 
-	djwong@kernel.org, gost.dev@samsung.com, linux-mm@kvack.org, 
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 10/13] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <3pqmgrlewo6ctcwakdvbvjqixac5en6irlipe5aiz6vkylfyni@2luhrs36ke5r>
-References: <20240226094936.2677493-1-kernel@pankajraghav.com>
- <20240226094936.2677493-11-kernel@pankajraghav.com>
- <ZdzRU0sMqFYlNC01@casper.infradead.org>
+	bh=9nlWS0taAPbDFSntCaJ2TVsOBW7I3UD2z/xphXUPlTY=;
+	b=bnFZzcs8sYgZ/WAdp0TCl6iE8mORl4n3jkZU5UpN+8Yhyt3ppzRDI0kT83L14Ajo+/3/GK
+	cZPS6F/lDYPzAIXE3bk0+iyBp+ia2OM22CiV0C1VfGZKHiyciWdHzAc5YyzQQOOBpcszQR
+	zOdtNjr321Tq148zhVLstoxTE62xRfM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
+	mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, 
+	peterx@redhat.com, david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, 
+	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, tj@kernel.org, 
+	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, hughd@google.com, 
+	andreyknvl@gmail.com, keescook@chromium.org, ndesaulniers@google.com, 
+	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com, 
+	ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, 
+	cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, minchan@google.com, 
+	kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
+	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 15/36] lib: introduce support for page allocation
+ tagging
+Message-ID: <z3uitmi57ccg2iifn5nb3pav6skh4zjfvemhuxqdlmwdij3242@wx2lbakzwrxc>
+References: <20240221194052.927623-1-surenb@google.com>
+ <20240221194052.927623-16-surenb@google.com>
+ <d6141a99-3409-447b-88ac-16c24b0a892e@suse.cz>
+ <CAJuCfpGZ6W-vjby=hWd5F3BOCLjdeda2iQx_Tz-HcyjCAsmKVg@mail.gmail.com>
+ <72cc5f0b-90cc-48a8-a026-412fa1186acd@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZdzRU0sMqFYlNC01@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <72cc5f0b-90cc-48a8-a026-412fa1186acd@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-> I thought we were going to use the huge_zero_page for this?
+On Tue, Feb 27, 2024 at 10:30:53AM +0100, Vlastimil Babka wrote:
+> 
+> 
+> On 2/26/24 18:11, Suren Baghdasaryan wrote:
+> > On Mon, Feb 26, 2024 at 9:07 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+> >>
+> >> On 2/21/24 20:40, Suren Baghdasaryan wrote:
+> >>> Introduce helper functions to easily instrument page allocators by
+> >>> storing a pointer to the allocation tag associated with the code that
+> >>> allocated the page in a page_ext field.
+> >>>
+> >>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> >>> Co-developed-by: Kent Overstreet <kent.overstreet@linux.dev>
+> >>> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> >>
+> >> The static key usage seems fine now. Even if the page_ext overhead is still
+> >> always paid when compiled in, you mention in the cover letter there's a plan
+> >> for boot-time toggle later, so
+> > 
+> > Yes, I already have a simple patch for that to be included in the next
+> > revision: https://github.com/torvalds/linux/commit/7ca367e80232345f471b77b3ea71cf82faf50954
+> 
+> This opt-out logic would require a distro kernel with allocation
+> profiling compiled-in to ship together with something that modifies
+> kernel command line to disable it by default, so it's not very
+> practical. Could the CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT be
+> turned into having 3 possible choices, where one of them would
+> initialize mem_profiling_enabled to false?
+> 
+> Or, taking a step back, is it going to be a common usecase to pay the
+> memory overhead unconditionally, but only enable the profiling later
+> during runtime? Also what happens if someone would enable and disable it
+> multiple times during one boot? Would the statistics get all skewed
+> because some frees would be not accounted while it's disabled?
 
-Yes. We discussed that huge_zero_page might fail, so we concluded that
-we needed an api that can return arbitrary folio order that will not
-fail:
-```
-your point about it possibly failing is correct.  so i think we need an
-api which definitely returns a folio, but it might be of arbitrary
-order.
-```
+I already wrote the code for fast lookup from codetag index -> codetag -
+i.e. pointer compression - so this is all going away shortly.
 
-I couldn't come up with implementing your latter suggestion, so I
-informed darrick that let's use this patch for now, and add the
-arbitrary folio order with zero as a later enhancement.
-
-If we want to use mm_huge_zero_page, then this should work:
-
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 04f6c5548136..b6a3f52f48da 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -237,10 +237,17 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
- {
-        struct inode *inode = file_inode(dio->iocb->ki_filp);
-        struct page *page = ZERO_PAGE(0);
-+       struct folio *folio = NULL;
-        struct bio *bio;
- 
-        WARN_ON_ONCE(len > (BIO_MAX_VECS * PAGE_SIZE));
- 
-+       if (len > PAGE_SIZE) {
-+               page = mm_get_huge_zero_page(current->mm);
-+               if (!page)
-+                       page = ZERO_PAGE(0);
-+       }
-+
-        bio = iomap_dio_alloc_bio(iter, dio, BIO_MAX_VECS,
-                                  REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
-        fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
-@@ -249,13 +256,15 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-        bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
-        bio->bi_private = dio;
-        bio->bi_end_io = iomap_dio_bio_end_io;
-+       folio = page_folio(page);
- 
-        while (len) {
--               unsigned int io_len = min_t(unsigned int, len, PAGE_SIZE);
-+               size_t size = min(len, folio_size(folio));
- 
--               __bio_add_page(bio, page, io_len, 0);
--               len -= io_len;
-+               bio_add_folio_nofail(bio, folio, size, 0);
-+               len -= size;
-        }
-+
-        iomap_dio_submit_bio(iter, dio, bio, pos);
- }
-
-Let me know if we should go for this or let's keep the original patch
-and add a ZERO_FOLIO_ORDER API that will not fail and use it as a later
-enhancement.
+It just won't be in the initial pull request because of other
+dependencies (it requires my eytzinger code, which I was already lifting
+from fs/bcachefs/ for 6.9), but it can still probably make 6.9 in a
+second smaller pull.
 
