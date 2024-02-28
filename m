@@ -1,113 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-13086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7578C86B16B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 15:14:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E711086B1D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 15:33:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 053FBB29D6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:14:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CE1A1C21806
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3D81534F4;
-	Wed, 28 Feb 2024 14:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D85D15B0FD;
+	Wed, 28 Feb 2024 14:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="NyZCX3T7"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Cutyhdiy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28A214F998
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 14:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F26715AADD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 14:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709129656; cv=none; b=gyCiXFh46DRVkBEZZ2ozoSqvm5fnNTTs9PQ/oz8h7uu9+kCuSNYKlMej+BjQpuLQHG8unMcZK/jBY06TbC0Q7DGdNkPur6McbC/noLBBD4oEuSHFp4QrzZZZ0zvc+j/9cspfpX0u/o0pMfPug+FpISOVzDoeLnXlVMLHss0UN2I=
+	t=1709130769; cv=none; b=Q9lBg8j3pyN0cfnPC1ABQ47ZYvV9Zft8Tyq995/KxDqVqmRRl4qmYzVR+6PoNBWLK4U/SEz8SMOmYth1J2h+6KD2I/UFFXxShnXh+4O66kbT5lPQ6MroswqVlAvo2kTWsmyGsWnjZ1eNrhQ6o99gKcarQZ4gInSyUu7yO9ad2L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709129656; c=relaxed/simple;
-	bh=StE3BNfMnJAiSX82OpAC0iLGH3GLzMtbBwqWYw4IZGg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OMIEekFp1PSxgv8w6pejw2CvG2X3BLlo9eTVp2Hk7IqcR5+4ZKutVE20LQ4EKMvDiPHNH4vg2qjNB1102f2onYMwJE03Dh2SPEmdztVjDP4FwLIFhqd7jafxpGCTOWpJ/7i4T+0MiEvPLxNuZpzqrmJ9wDo7664FLST9DRxYNZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=NyZCX3T7; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-564fd9eea75so7091922a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 06:14:13 -0800 (PST)
+	s=arc-20240116; t=1709130769; c=relaxed/simple;
+	bh=Z4/OtHVgP88SJVmMhlRSzEu+uUc+4K+vaFN0dJgQ/Y8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U3Tu/v/dKMZChCk4Uep84lS8MW7c9I1o7ClL/x0Kaf/JEPEXOtSx26Ee2+yLhsi9o8HRFntJF5WoHB8o/+gDEhM9lCH06GKt9bzDtlGrkz9iL02kEg/sAH6LtSSpwolNJC21SPVDdTC+c0ctlOYuAMOYsOxd7UzqXwfs1slnJc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Cutyhdiy; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7bf3283c18dso84269739f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 06:32:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1709129652; x=1709734452; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xWvy1mHzaknU/IiKBwn07x/YhG/st3p6ekUL3X/i25g=;
-        b=NyZCX3T7Gz2aTctmz+4YZ53hzBYlk47uNQf9qWNBU2yBi2gDFThxRLbY+cxMBqlu9e
-         CMl3gDNU9gJsR2SbUURXPnDwJ4EYR3FIC+JKMbWb2wuYFdh7AuS5iiEsnvjkP9vnIETC
-         29j5b+W458BaZJ9oAA3kNMgdBZFa0skuPqNIY=
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709130766; x=1709735566; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P5AWaBgGMJ+Egc0FydP29vm1V1HTAxeYlVmY0RHDDGQ=;
+        b=CutyhdiySQwAYULDY9Ov4OEO6Ule0v5XfBsO6tjjD78QCdCV3J5ER8AYKJMJf3OP9D
+         HRIq+8Kf4epXy54GLJnEyrFwbtiNp0zGtvmJmBOJ+tdfcDAWEWOy663JaCtrFJebVLLI
+         eZogVPgystZOOzr2N+XDKAyKFGnmxkKJLzCaUXlTXMAhlwpH1fUkk+5xtKrMSg60uw41
+         KvgiceyDJTkFAJV8RI1DsgXKLpKmYIHqg1JqtwXCVtRSkNzE/gZpUqLaelRKHNjj4OU+
+         L4rEEEAMxJ+Biu3ELmqWms5BUEHxZ29HK1z4ULW/o8/Ezi+EPY0C6gQ3WIw6RVJ5Xblx
+         K1nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709129652; x=1709734452;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xWvy1mHzaknU/IiKBwn07x/YhG/st3p6ekUL3X/i25g=;
-        b=Ym9rfJb03BHc6HbINvDL/tWfPBa+TRxnLcRVAY4TRDDKpOxY+hTBxSVFgbaQns7Zwk
-         yOMngcbcFbBTdbFG3sOOx24xknh5M/cvM+sZ1wpFLm+irA7qp0VCsGmbtLQVcvmIXLPV
-         pcRDtUO1Ee4jSkyeLZjHuaRAcjcblwlgu7d91MLCaBZeTjx9i6lHsarkLkFa7/ie2Z0f
-         E4rD6k9/xzxrWlBWe9ErgCLlkv3q52Nk0ev+Eu3TFIrcWdPDmehhVKbGZi2rlcXslUBN
-         tNsVx4nh5pLIJtZVoukqzC/sJeipqnqIHymndJ/hbx1hhXQvZWd63fw/zhl/4HUH9rHk
-         /xcw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0NTbDjWEhpfr5grPhbMxoOs0J5W+cORMBTagvn4CxiqlrswseSs2l9/ATqNwRMxvAnDWMbN0tp6Vna841HVCUhecoK+dL++6hX7GGaw==
-X-Gm-Message-State: AOJu0YzLNjgxPuCOdA8PXTzUQRMK7wx6n4Ig+PHwfOlrZ0kXecKS06Y7
-	UoleKI+wOirttoMF29889wU31DSDd54cKBs91o2MCNXY12QSmXlGqocLswEkbWoDhENsCiDixQ7
-	e9r8KIobUIwGPcXOaiW00pIO5C0QEtv7LqvF34Q==
-X-Google-Smtp-Source: AGHT+IFxcZKbsOEf105oI9QjZ62D6juPbzWv6rx1u9zzEAkNL7EHk6N3EnwfwPOpuIlkQtAHQIv8taBk8QkjphR2xE8=
-X-Received: by 2002:a17:906:6805:b0:a44:12b9:3762 with SMTP id
- k5-20020a170906680500b00a4412b93762mr929379ejr.10.1709129651932; Wed, 28 Feb
- 2024 06:14:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709130766; x=1709735566;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P5AWaBgGMJ+Egc0FydP29vm1V1HTAxeYlVmY0RHDDGQ=;
+        b=MxDkQzjlgnhFAYdgBfhIBA+AiFs8h9UlKBoEqUXpmzbt/DScYozhd63sbx31THZp45
+         8ihlmy3N64Og4n8AXHn/bsKOURL9FRZ/D48kRGleqipXTdQSEs0ubNm/vF55EPUY0dgt
+         7KQymRTb1kU3ngpoYJn6ssvk0tqTNwVjQrQ+DGA36IKAitykihCKuuvP7XE0gLaIYRxe
+         d5KL6cVBXYz1pg7qH3VStP1QU9kFh7iT/uC0Jt/DcZnC6Th7T6ORnCWsCLLs/BefLfIL
+         Ernu4rV1bvARsvbXrqMDLi/aP+NC2Ow2hfflqpkH/snDibc+ncH80vv8kQWcaHNi+dx5
+         8c7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUH6qgIvBqUvS/MZ8aSTiNk3foh0bCjWbkcvittkG3qS7I/pFLm26oYnP/XIFVyIJdBv+lvNgAU975K9n7qlJB690u4WYcEn4nr31MQkw==
+X-Gm-Message-State: AOJu0Ywq6hdTg15sOR2JAtc3/gePJXR160a+bLSTAh5GIBrImHGmvCA6
+	o6ZX9OovYzTVc3IJojMHSqtMtXr+TOhhscMb7c7NYrLW28L6wW5t4GdlkQq1XJ8=
+X-Google-Smtp-Source: AGHT+IEOva8/VcA0S3pCJqoDZDi/f+PQ6LlXWSd1zbUYjUE88BUIeGN3Cm0MHY37p9ejCegRNybMkg==
+X-Received: by 2002:a05:6e02:152b:b0:365:5dbd:ba43 with SMTP id i11-20020a056e02152b00b003655dbdba43mr13141860ilu.1.1709130766277;
+        Wed, 28 Feb 2024 06:32:46 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id r6-20020aa79886000000b006e466369645sm7872706pfl.132.2024.02.28.06.32.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Feb 2024 06:32:45 -0800 (PST)
+Message-ID: <4e3d80ad-3c61-4adf-b74f-0c62e468eb54@kernel.dk>
+Date: Wed, 28 Feb 2024 07:32:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link>
- <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm> <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link>
- <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
- <5b7139d5-52fd-4fd0-8fa0-df0a38d96a33@spawn.link> <CAJfpeguvX1W2M9kY-4Tx9oJhSYE2+nHQuGXDNPw+1_9jtMO7zA@mail.gmail.com>
- <CAJfpegssrySj4Yssu4roFHZn1jSPZ-FLfb=HX4VDsTP2jY5BLA@mail.gmail.com>
- <6fb38202-4017-4acd-8fb8-673eee7182b9@spawn.link> <CAJfpegscxYn9drVRkbVhRztL-+V0+oge8ZqPhgt4BAnvzaPzwQ@mail.gmail.com>
- <f70732f8-4d67-474a-a4b8-320f78c3394d@spawn.link> <9b9aab6f-ee29-441b-960d-a95d99ba90d8@spawn.link>
- <CAJfpegsz_R9ELzXnWaFrdNqy5oU8phwAtg0shJhKuJCBhvku9Q@mail.gmail.com> <f246e9ce-32bd-40df-a407-7a01c7d8939b@fastmail.fm>
-In-Reply-To: <f246e9ce-32bd-40df-a407-7a01c7d8939b@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 28 Feb 2024 15:14:00 +0100
-Message-ID: <CAJfpegu-6WP2nDOh18NMY1Cg3QJ19+tWXfHUax7qp5EUxAe76A@mail.gmail.com>
-Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Antonio SJ Musumeci <trapexit@spawn.link>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	fuse-devel <fuse-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 3/9] fuse: implement ioctls to manage backing files
+Content-Language: en-US
+To: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org,
+ Alessio Balsini <balsini@android.com>, Christian Brauner <brauner@kernel.org>
+References: <20240206142453.1906268-1-amir73il@gmail.com>
+ <20240206142453.1906268-4-amir73il@gmail.com>
+ <450d8b2d-c1d0-4d53-b998-74495e9eca3f@linux.alibaba.com>
+ <CAOQ4uxhAY1m7ubJ3p-A3rSufw_53WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com>
+ <CAJfpegu3_sUtTC1uCD7kFehJWTivkN_OjcQGsSAMkzEdub=XTw@mail.gmail.com>
+ <CAOQ4uxji-yzWFeQYP9FKvVXg473GP6tC2pyHUbEPoYxT+qDYsA@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAOQ4uxji-yzWFeQYP9FKvVXg473GP6tC2pyHUbEPoYxT+qDYsA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 28 Feb 2024 at 14:16, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+On 2/28/24 4:28 AM, Amir Goldstein wrote:
+> On Wed, Feb 28, 2024 at 1:14?PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>>
+>> On Wed, 28 Feb 2024 at 12:08, Amir Goldstein <amir73il@gmail.com> wrote:
+>>
+>>> I don't think so, because it will allow unprivileged user to exceed its
+>>> nested rlimits and hide open files that are invisble to lsof.
+>>
+>> How does io_uring deal with the similar problem of "fixed files"?
+>>
+> 
+> Good question.
+> 
+> Jens, Chritian,
+> Are fixed files visible to lsof?
 
-> Could you still apply your previous patch? I think that definitely makes
-> sense as well.
+lsof won't show them, but you can read the fdinfo of the io_uring fd to
+see them. Would probably be possible to make lsof find and show them
+too, but haven't looked into that.
 
-Half of it is trivial (s/make_bad_inode/fuse_make_bad/).
+> Do they have to remain open in the files table of process that set them
+> in addition to being registered as fixed files?
 
-The other half is probably broken in that form (see 775c5033a0d1
-("fuse: fix live lock in fuse_iget()")).
+No, in fact they never have to be there in the first place. You can open
+a normal file and then register it, now it's in both. Then you can close
+the normal fd, and now it's not in the normal process file table
+anymore, just in the direct list.
 
-Things get complicated, though, because the root of submounts can have
-nodeid != FUSE_ROOT_ID, yet they should have the same rules as the
-original root.   Needs more thought...
+Or you can instantiate it as a direct descriptor to begin with, and then
+it'll never have been in the normal file table.
 
-> I think what we also need is notification message from kernel to server
-> that it does something wrong - instead of going to kernel logs, such
-> messages should go to server side logs.
+> Do they get accounted in rlimit? of which user?
 
-That's generally not possible.  We can return -EIO to the application,
-but not the server.  In this case I think it's better to just fall
-back to old behavior of ignoring the generation.
+The fixed file table is limited in size by RLIMIT_NOFILE by the user
+that registers it.
 
-Thanks,
-Miklos
+-- 
+Jens Axboe
+
 
