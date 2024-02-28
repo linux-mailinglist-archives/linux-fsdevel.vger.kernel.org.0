@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-13092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE31586B1FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 15:41:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11ECD86B1FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 15:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D79D1C21C8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 329641C21589
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D9515CD5C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE7F15CD7A;
 	Wed, 28 Feb 2024 14:40:50 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D12B15A4BA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2B415AADD;
 	Wed, 28 Feb 2024 14:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709131249; cv=none; b=jZKQY3iMpuAKbYr1iyC/hrV+gwvtU02b/DRk2oVN3CDy0cPZD6FBNeIZL4mvz93DkRWqyB7Z0yeXyxVZL1hmqTvLVef85IbAXHLp+e2ryN7Mqm5gICnSy6cuQX5+D2101gVozO082qGxsDiEdEvmFw4ULZNo/XbRMEQHkSvLGHo=
+	t=1709131249; cv=none; b=k6tUObvYpDv2VPHSnwhndFJ4BawoCg92Z0lVxVl0zhiGkVUe+BsldCKTqxudZ2hlIG19A1zaYaLZJD5r4DpNxuvOGVODnQFezHGMYAnrxML8eBwPKC2vvmZmWL/bwp9BYN+ntijjDpgwUUj+u1wP1FnM0wPpFjdCe7GCbgEQo88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1709131249; c=relaxed/simple;
-	bh=gGrqqWhOprABAylbdHf6d3Bgw6OyAPvbcs/3s/7xVEs=;
+	bh=5tKZoLoQHsYKSVgtcARv6ya8kA/+8jNNy0nuW/K4E4Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M53DM6yh8G3ytdjXlJb9tmli41yWyG1ON0crpdB8xy8nZwUceX6+VeAGDdQ2dRKzHYmB71cRh7YowtO9493J5Jspze0Ahxf8Ap5tDjRsIGbXkIiqg0uj1dwhJF7mEiEl8D/axYkjdKMWA4f0mrBt3WzmVypISKaZXIerz9Pjdeo=
+	 MIME-Version; b=jaT2Hm8dY5KDfkyEPM4x2EhSna98zYmKGMuofjiNns3t8pkF53lboEjhrZpCk8OayDfFHOXyxBUoLwoNdU9Jbi+jV3fcotHm0nYg3aFnJyyK/OHWdfBWatdnkinFEyRs+wAX7SEDC9VqED5GMzdxiX1zQ94QL8w74E9ZenDDr+A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TlH8S4ZRtz4f3kK1;
-	Wed, 28 Feb 2024 22:40:40 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TlH8P0yqxz4f3m75;
+	Wed, 28 Feb 2024 22:40:37 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 0377C1A0172;
+	by mail.maildlp.com (Postfix) with ESMTP id 75E491A0232;
 	Wed, 28 Feb 2024 22:40:44 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP1 (Coremail) with SMTP id cCh0CgBnOBHkRd9lwGKzFQ--.18779S8;
-	Wed, 28 Feb 2024 22:40:43 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBHkRd9lwGKzFQ--.18779S9;
+	Wed, 28 Feb 2024 22:40:44 +0800 (CST)
 From: Hou Tao <houtao@huaweicloud.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: Miklos Szeredi <miklos@szeredi.hu>,
@@ -50,9 +50,9 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>,
 	linux-kernel@vger.kernel.org,
 	virtualization@lists.linux.dev,
 	houtao1@huawei.com
-Subject: [PATCH v2 4/6] virtiofs: support bounce buffer backed by scattered pages
-Date: Wed, 28 Feb 2024 22:41:24 +0800
-Message-Id: <20240228144126.2864064-5-houtao@huaweicloud.com>
+Subject: [PATCH v2 5/6] virtiofs: use scattered bounce buffer for ITER_KVEC dio
+Date: Wed, 28 Feb 2024 22:41:25 +0800
+Message-Id: <20240228144126.2864064-6-houtao@huaweicloud.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20240228144126.2864064-1-houtao@huaweicloud.com>
 References: <20240228144126.2864064-1-houtao@huaweicloud.com>
@@ -63,285 +63,183 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBnOBHkRd9lwGKzFQ--.18779S8
-X-Coremail-Antispam: 1UD129KBjvJXoW3GrW5XFyxKFWrJr1rJw1fWFg_yoW3Gr1xpF
-	4Fyw15JrWfJrW7Kry8GF48AF1Skws3uw1xGrZ3X3sIkw1UXw4xXFyUAry0vrnxJrykCF1x
-	JF1FqF18Wr4q9aUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+X-CM-TRANSID:cCh0CgBnOBHkRd9lwGKzFQ--.18779S9
+X-Coremail-Antispam: 1UD129KBjvJXoWxKF4UZry3tr17ur43Gr4kJFb_yoW7ArW5pr
+	47t3W5XFWftFZrWryfKw45GFySyrsaka18KrWfJ3sxKF17Z39rXFy0ya45ZFsIqrykAF4x
+	uF1FqF1DWF48ZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
 	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-	WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
-	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFgAwUUUUU
+	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
+	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
+	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
+	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU13l1DUUUUU==
 X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
 From: Hou Tao <houtao1@huawei.com>
 
-When reading a file kept in virtiofs from kernel (e.g., insmod a kernel
-module), if the cache of virtiofs is disabled, the read buffer will be
-passed to virtiofs through out_args[0].value instead of pages. Because
-virtiofs can't get the pages for the read buffer, virtio_fs_argbuf_new()
-will create a bounce buffer for the read buffer by using kmalloc() and
-copy the read buffer into bounce buffer. If the read buffer is large
-(e.g., 1MB), the allocation will incur significant stress on the memory
-subsystem.
-
-So instead of allocating bounce buffer by using kmalloc(), allocate a
-bounce buffer which is backed by scattered pages. The original idea is
-to use vmap(), but the use of GFP_ATOMIC is no possible for vmap(). To
-simplify the copy operations in the bounce buffer, use a bio_vec flex
-array to represent the argbuf. Also add an is_flat field in struct
-virtio_fs_argbuf to distinguish between kmalloc-ed and scattered bounce
-buffer.
+To prevent unnecessary request for large contiguous physical memory
+chunk, use bounce buffer backed by scattered pages for ITER_KVEC
+direct-io read/write when the total size of its args is greater than
+PAGE_SIZE.
 
 Signed-off-by: Hou Tao <houtao1@huawei.com>
 ---
- fs/fuse/virtio_fs.c | 163 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 149 insertions(+), 14 deletions(-)
+ fs/fuse/virtio_fs.c | 78 ++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 59 insertions(+), 19 deletions(-)
 
 diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index f10fff7f23a0f..ffea684bd100d 100644
+index ffea684bd100d..34b9370beba6d 100644
 --- a/fs/fuse/virtio_fs.c
 +++ b/fs/fuse/virtio_fs.c
-@@ -86,10 +86,27 @@ struct virtio_fs_req_work {
- 	struct work_struct done_work;
- };
- 
--struct virtio_fs_argbuf {
-+struct virtio_fs_flat_argbuf {
- 	DECLARE_FLEX_ARRAY(u8, buf);
- };
- 
-+struct virtio_fs_scattered_argbuf {
-+	unsigned int size;
-+	unsigned int nr;
-+	DECLARE_FLEX_ARRAY(struct bio_vec, bvec);
-+};
-+
-+struct virtio_fs_argbuf {
-+	bool is_flat;
-+	/* There is flexible array in the end of these two struct
-+	 * definitions, so they must be the last field.
-+	 */
-+	union {
-+		struct virtio_fs_flat_argbuf f;
-+		struct virtio_fs_scattered_argbuf s;
-+	};
-+};
-+
- static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 				 struct fuse_req *req, bool in_flight);
- 
-@@ -408,42 +425,143 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
- 	}
- }
- 
-+static unsigned int virtio_fs_argbuf_len(unsigned int in_args_len,
-+					 unsigned int out_args_len,
-+					 bool is_flat)
-+{
-+	if (is_flat)
-+		return in_args_len + out_args_len;
-+
-+	/*
-+	 * Align in_args_len with PAGE_SIZE to reduce the total number of
-+	 * sg entries when the value of out_args_len (e.g., the length of
-+	 * read buffer) is page-aligned.
-+	 */
-+	return round_up(in_args_len, PAGE_SIZE) +
-+	       round_up(out_args_len, PAGE_SIZE);
-+}
-+
- static void virtio_fs_argbuf_free(struct virtio_fs_argbuf *argbuf)
- {
-+	unsigned int i;
-+
-+	if (!argbuf)
-+		return;
-+
-+	if (argbuf->is_flat)
-+		goto free_argbuf;
-+
-+	for (i = 0; i < argbuf->s.nr; i++)
-+		__free_page(argbuf->s.bvec[i].bv_page);
-+
-+free_argbuf:
+@@ -458,20 +458,15 @@ static void virtio_fs_argbuf_free(struct virtio_fs_argbuf *argbuf)
  	kfree(argbuf);
  }
  
- static struct virtio_fs_argbuf *virtio_fs_argbuf_new(struct fuse_args *args,
--						     gfp_t gfp)
-+						     gfp_t gfp, bool is_flat)
+-static struct virtio_fs_argbuf *virtio_fs_argbuf_new(struct fuse_args *args,
++static struct virtio_fs_argbuf *virtio_fs_argbuf_new(unsigned int in_len,
++						     unsigned int out_len,
+ 						     gfp_t gfp, bool is_flat)
  {
  	struct virtio_fs_argbuf *argbuf;
- 	unsigned int numargs;
--	unsigned int len;
-+	unsigned int in_len, out_len, len;
-+	unsigned int i, nr;
+-	unsigned int numargs;
+-	unsigned int in_len, out_len, len;
++	unsigned int len;
+ 	unsigned int i, nr;
  
- 	numargs = args->in_numargs - args->in_pages;
--	len = fuse_len_args(numargs, (struct fuse_arg *) args->in_args);
-+	in_len = fuse_len_args(numargs, (struct fuse_arg *) args->in_args);
- 	numargs = args->out_numargs - args->out_pages;
--	len += fuse_len_args(numargs, args->out_args);
-+	out_len = fuse_len_args(numargs, args->out_args);
-+	len = virtio_fs_argbuf_len(in_len, out_len, is_flat);
-+
-+	if (is_flat) {
-+		argbuf = kmalloc(struct_size(argbuf, f.buf, len), gfp);
-+		if (argbuf)
-+			argbuf->is_flat = true;
-+
-+		return argbuf;
-+	}
-+
-+	nr = len >> PAGE_SHIFT;
-+	argbuf = kmalloc(struct_size(argbuf, s.bvec, nr), gfp);
-+	if (!argbuf)
-+		return NULL;
-+
-+	argbuf->is_flat = false;
-+	argbuf->s.size = len;
-+	argbuf->s.nr = 0;
-+	for (i = 0; i < nr; i++) {
-+		struct page *page;
-+
-+		page = alloc_page(gfp);
-+		if (!page) {
-+			virtio_fs_argbuf_free(argbuf);
-+			return NULL;
-+		}
-+		bvec_set_page(&argbuf->s.bvec[i], page, PAGE_SIZE, 0);
-+		argbuf->s.nr++;
-+	}
-+
-+	/* Zero the unused space for in_args */
-+	if (in_len & ~PAGE_MASK) {
-+		struct iov_iter iter;
-+		unsigned int to_zero;
-+
-+		iov_iter_bvec(&iter, ITER_DEST, argbuf->s.bvec, argbuf->s.nr,
-+			      argbuf->s.size);
-+		iov_iter_advance(&iter, in_len);
- 
--	argbuf = kmalloc(struct_size(argbuf, buf, len), gfp);
-+		to_zero = PAGE_SIZE - (in_len & ~PAGE_MASK);
-+		iov_iter_zero(to_zero, &iter);
-+	}
- 
- 	return argbuf;
+-	numargs = args->in_numargs - args->in_pages;
+-	in_len = fuse_len_args(numargs, (struct fuse_arg *) args->in_args);
+-	numargs = args->out_numargs - args->out_pages;
+-	out_len = fuse_len_args(numargs, args->out_args);
+ 	len = virtio_fs_argbuf_len(in_len, out_len, is_flat);
+-
+ 	if (is_flat) {
+ 		argbuf = kmalloc(struct_size(argbuf, f.buf, len), gfp);
+ 		if (argbuf)
+@@ -1222,14 +1217,17 @@ static unsigned int sg_count_fuse_pages(struct fuse_page_desc *page_descs,
  }
  
- static unsigned int virtio_fs_argbuf_setup_sg(struct virtio_fs_argbuf *argbuf,
- 					      unsigned int offset,
--					      unsigned int len,
-+					      unsigned int *len,
- 					      struct scatterlist *sg)
+ /* Return the number of scatter-gather list elements required */
+-static unsigned int sg_count_fuse_req(struct fuse_req *req)
++static unsigned int sg_count_fuse_req(struct fuse_req *req,
++				      unsigned int in_args_len,
++				      unsigned int out_args_len,
++				      bool flat_argbuf)
  {
--	sg_init_one(sg, argbuf->buf + offset, len);
--	return 1;
-+	struct bvec_iter bi = {
-+		.bi_size = offset + *len,
-+	};
-+	struct scatterlist *cur;
-+	struct bio_vec bv;
-+
-+	if (argbuf->is_flat) {
-+		sg_init_one(sg, argbuf->f.buf + offset, *len);
-+		return 1;
+ 	struct fuse_args *args = req->args;
+ 	struct fuse_args_pages *ap = container_of(args, typeof(*ap), args);
+ 	unsigned int size, total_sgs = 1 /* fuse_in_header */;
++	unsigned int num_in, num_out;
+ 
+-	if (args->in_numargs - args->in_pages)
+-		total_sgs += 1;
++	num_in = args->in_numargs - args->in_pages;
+ 
+ 	if (args->in_pages) {
+ 		size = args->in_args[args->in_numargs - 1].size;
+@@ -1237,20 +1235,25 @@ static unsigned int sg_count_fuse_req(struct fuse_req *req)
+ 						 size);
+ 	}
+ 
+-	if (!test_bit(FR_ISREPLY, &req->flags))
+-		return total_sgs;
++	if (!test_bit(FR_ISREPLY, &req->flags)) {
++		num_out = 0;
++		goto done;
 +	}
-+
-+	cur = sg;
-+	bvec_iter_advance(argbuf->s.bvec, &bi, offset);
-+	for_each_bvec(bv, argbuf->s.bvec, bi, bi) {
-+		sg_init_table(cur, 1);
-+		sg_set_page(cur, bv.bv_page, bv.bv_len, bv.bv_offset);
-+		cur++;
-+	}
-+	*len = round_up(*len, PAGE_SIZE);
-+
-+	return cur - sg;
+ 
+ 	total_sgs += 1 /* fuse_out_header */;
+-
+-	if (args->out_numargs - args->out_pages)
+-		total_sgs += 1;
++	num_out = args->out_numargs - args->out_pages;
+ 
+ 	if (args->out_pages) {
+ 		size = args->out_args[args->out_numargs - 1].size;
+ 		total_sgs += sg_count_fuse_pages(ap->descs, ap->num_pages,
+ 						 size);
+ 	}
+-
++done:
++	if (flat_argbuf)
++		total_sgs += !!num_in + !!num_out;
++	else
++		total_sgs += virtio_fs_argbuf_len(in_args_len, out_args_len,
++						  false) >> PAGE_SHIFT;
+ 	return total_sgs;
  }
  
- static void virtio_fs_argbuf_copy_from_in_arg(struct virtio_fs_argbuf *argbuf,
- 					      unsigned int offset,
- 					      const void *src, unsigned int len)
- {
--	memcpy(argbuf->buf + offset, src, len);
-+	struct iov_iter iter;
-+	unsigned int copied;
+@@ -1302,6 +1305,31 @@ static unsigned int sg_init_fuse_args(struct scatterlist *sg,
+ 	return total_sgs;
+ }
+ 
++static bool use_scattered_argbuf(struct fuse_req *req)
++{
++	struct fuse_args *args = req->args;
 +
-+	if (argbuf->is_flat) {
-+		memcpy(argbuf->f.buf + offset, src, len);
-+		return;
++	/*
++	 * To prevent unnecessary request for contiguous physical memory chunk,
++	 * use argbuf backed by scattered pages for ITER_KVEC direct-io
++	 * read/write when the total size of its args is greater than PAGE_SIZE.
++	 */
++	if ((req->in.h.opcode == FUSE_WRITE && !args->in_pages) ||
++	    (req->in.h.opcode == FUSE_READ && !args->out_pages)) {
++		unsigned int numargs;
++		unsigned int len;
++
++		numargs = args->in_numargs - args->in_pages;
++		len = fuse_len_args(numargs, (struct fuse_arg *)args->in_args);
++		numargs = args->out_numargs - args->out_pages;
++		len += fuse_len_args(numargs, args->out_args);
++		if (len > PAGE_SIZE)
++			return true;
 +	}
 +
-+	iov_iter_bvec(&iter, ITER_DEST, argbuf->s.bvec,
-+		      argbuf->s.nr, argbuf->s.size);
-+	iov_iter_advance(&iter, offset);
++	return false;
++}
 +
-+	copied = _copy_to_iter(src, len, &iter);
-+	WARN_ON_ONCE(copied != len);
- }
+ /* Add a request to a virtqueue and kick the device */
+ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 				 struct fuse_req *req, bool in_flight)
+@@ -1317,13 +1345,24 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 	unsigned int out_sgs = 0;
+ 	unsigned int in_sgs = 0;
+ 	unsigned int total_sgs;
++	unsigned int numargs;
++	unsigned int in_args_len;
++	unsigned int out_args_len;
+ 	unsigned int i;
+ 	int ret;
+ 	bool notify;
++	bool flat_argbuf;
+ 	struct fuse_pqueue *fpq;
  
- static unsigned int
-@@ -451,15 +569,32 @@ virtio_fs_argbuf_out_args_offset(struct virtio_fs_argbuf *argbuf,
- 				 const struct fuse_args *args)
- {
- 	unsigned int num_in = args->in_numargs - args->in_pages;
-+	unsigned int offset = fuse_len_args(num_in,
-+					    (struct fuse_arg *)args->in_args);
- 
--	return fuse_len_args(num_in, (struct fuse_arg *)args->in_args);
-+	if (argbuf->is_flat)
-+		return offset;
-+	return round_up(offset, PAGE_SIZE);
- }
- 
- static void virtio_fs_argbuf_copy_to_out_arg(struct virtio_fs_argbuf *argbuf,
- 					     unsigned int offset, void *dst,
- 					     unsigned int len)
- {
--	memcpy(dst, argbuf->buf + offset, len);
-+	struct iov_iter iter;
-+	unsigned int copied;
++	flat_argbuf = !use_scattered_argbuf(req);
++	numargs = args->in_numargs - args->in_pages;
++	in_args_len = fuse_len_args(numargs, (struct fuse_arg *) args->in_args);
++	numargs = args->out_numargs - args->out_pages;
++	out_args_len = fuse_len_args(numargs, args->out_args);
 +
-+	if (argbuf->is_flat) {
-+		memcpy(dst, argbuf->f.buf + offset, len);
-+		return;
-+	}
-+
-+	iov_iter_bvec(&iter, ITER_SOURCE, argbuf->s.bvec,
-+		      argbuf->s.nr, argbuf->s.size);
-+	iov_iter_advance(&iter, offset);
-+
-+	copied = _copy_from_iter(dst, len, &iter);
-+	WARN_ON_ONCE(copied != len);
- }
- 
- /*
-@@ -1154,7 +1289,7 @@ static unsigned int sg_init_fuse_args(struct scatterlist *sg,
- 	len = fuse_len_args(numargs - argpages, args);
- 	if (len)
- 		total_sgs += virtio_fs_argbuf_setup_sg(req->argbuf, *len_used,
--						       len, &sg[total_sgs]);
-+						       &len, &sg[total_sgs]);
- 
- 	if (argpages)
- 		total_sgs += sg_init_fuse_pages(&sg[total_sgs],
-@@ -1199,7 +1334,7 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 	/* Does the sglist fit on the stack? */
+-	total_sgs = sg_count_fuse_req(req);
++	total_sgs = sg_count_fuse_req(req, in_args_len, out_args_len,
++				      flat_argbuf);
+ 	if (total_sgs > ARRAY_SIZE(stack_sgs)) {
+ 		sgs = kmalloc_array(total_sgs, sizeof(sgs[0]), GFP_ATOMIC);
+ 		sg = kmalloc_array(total_sgs, sizeof(sg[0]), GFP_ATOMIC);
+@@ -1334,7 +1373,8 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
  	}
  
  	/* Use a bounce buffer since stack args cannot be mapped */
--	req->argbuf = virtio_fs_argbuf_new(args, GFP_ATOMIC);
-+	req->argbuf = virtio_fs_argbuf_new(args, GFP_ATOMIC, true);
+-	req->argbuf = virtio_fs_argbuf_new(args, GFP_ATOMIC, true);
++	req->argbuf = virtio_fs_argbuf_new(in_args_len, out_args_len,
++					   GFP_ATOMIC, flat_argbuf);
  	if (!req->argbuf) {
  		ret = -ENOMEM;
  		goto out;
