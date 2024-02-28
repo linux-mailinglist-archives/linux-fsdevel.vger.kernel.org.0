@@ -1,255 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-13057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBDD86AAF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 10:10:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7730C86ABCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 10:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2457628A535
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 09:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76DB287125
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 09:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFF736AE0;
-	Wed, 28 Feb 2024 09:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306A4364C0;
+	Wed, 28 Feb 2024 09:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="mb4bANLr"
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="icAGfAtG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D29736123;
-	Wed, 28 Feb 2024 09:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08CE36123
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 09:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709111440; cv=none; b=E+/vlE8tcBauuy5WRAu+snBHxqRSqH/v685RFETRKKUytnUqC/K6OvdLuygNa7qpSM+p4f1aN/ndvvlQIDOTRVset8yaiWBfAzb3m2kd+4lHgbVr98VnEnLuX84z6muxyN8oS782zPpKTL0Psl82LEH7W+YbeXmtpmKnjuMgdew=
+	t=1709114337; cv=none; b=QlvFsNE3m6wQE9QfJ6Odf5+ql7GKnLIbZHDKNug7GEjuDYZlf7rSvSeDDMo7AGOowJXNHVhQzMKniW6+ig9Fnl3t/fAARpP4NMr4u61l1RHdAVBK+lw2EUttylJVHVoYR+3jAlcA/1Sa4YFQ3IKcbZOlFEi6jl910umI3hCruxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709111440; c=relaxed/simple;
-	bh=b061BB84RuQChn7pUehWqftMh9aaeENZVLuDae0z2o0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9OiLbfniZ+68c6SDnqOPX085qCb4mvb9j3bG7FMG/sG/ArIlM+fXG2QSbqHLOI8GXkNZfNXgp6MwerDTR1qvdA/f3Z89bjnoJygvxesgsA1gFJWWjATcU7qmKAxH2b/ofs0VOm6MUTdEvIdMtwZc8dsLpmcia6VDHz7li2nyQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=mb4bANLr; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=JZmRRC7+giq784NiX7u9sjbmk2jcEFr5UJNkwN1hGJM=; b=mb4bANLrw0bUApx6+o5xL7scG8
-	VEy5AiLGiStvnDJCUJ3fWXZwFXxyEOKmbye8S9rhMvpQOR+lNNsq6FuztXl5b/a3oj+0/fgSY5Ukr
-	QSEKt0JU8BeaSrIIr7iN25fvnz4uLDT3xyk9HO4qwoJFTZ2ZeqeYAtXuoQzWSWzRQZS1/2z9pzPsv
-	4VpW/k7/4do/cPp+LhdF4UMZsTTVHt/rT+vpFG1SsIq/QkQoLDa4giZQMb/nzmGXonfU3qlDVYb5c
-	BIS7a2m2hL75mdZsd6jKrs9/JfE/AHTgLHVANrxpKUVm7Ze98TeMB1r3e5dkxUHrEABgRrjltd+NY
-	0pDwW7Zw==;
-Received: from [179.93.184.120] (helo=quatroqueijos.cascardo.eti.br)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1rfFxM-004CV8-VS; Wed, 28 Feb 2024 10:10:29 +0100
-Date: Wed, 28 Feb 2024 06:10:22 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Gwendal Grignou <gwendal@chromium.org>, dlunev@chromium.org
-Subject: Re: [PATCH] fat: ignore .. subdir and always add a link to dirs
-Message-ID: <Zd74fjlVJZic8UxI@quatroqueijos.cascardo.eti.br>
-References: <20240222203013.2649457-1-cascardo@igalia.com>
- <87bk88oskz.fsf@mail.parknet.co.jp>
- <Zdf8qPN5h74MzCQh@quatroqueijos.cascardo.eti.br>
- <874jdzpov7.fsf@mail.parknet.co.jp>
- <87zfvroa1c.fsf@mail.parknet.co.jp>
- <ZdhsYAUCe9GVMnYE@quatroqueijos.cascardo.eti.br>
- <87v86fnz2o.fsf@mail.parknet.co.jp>
- <Zd6PdxOC8Gs+rX+j@quatroqueijos.cascardo.eti.br>
- <87le75s1fg.fsf@mail.parknet.co.jp>
+	s=arc-20240116; t=1709114337; c=relaxed/simple;
+	bh=sleA26mV/tde50MP5rnI4lqz6QKoKHWgsEtYcy8hAeQ=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=u5MXzDXPyttpd1BVgPaYxudOHuAvB2DJPgJKL+dYnioKj72nO2ES2j/058WgnOHdp884zbp8ZCFY6V/sp1dtUsvgVBOjoIhIiZhEVMn6YUTpJlHYlIjlHD+7kjQ93eCWb1/8nYzPPEPJc36JcLfABsc1QqG1YXhSZOGmM7WgbkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=icAGfAtG; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a293f2280c7so802937566b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 01:58:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1709114332; x=1709719132; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9tZSFA9TNC8Nuqr5EXNMkcxxuNUWYaw6b2s8R1XXBEs=;
+        b=icAGfAtGBoyiuE+sXv/sfMoq5UqBO7EDQuP9lHWh3F4JAGfOaRcLrSeoOJqqKCpS9W
+         mA/JiyD66pDLWyA0SQ53xr7TZChPtdp2HZFXQK0Oid37TgW/6bIufypipa/4T0u5Syb8
+         4jbEUuwbtluIVPhDzICyNtUXbJRZ80KzmFPWY2upLHiKLt9ox7pawZQ2FZqXWOB/iH4g
+         hoPKtfFPX8lt9RZhhf6eA9cpzQz5ZkzfDLs82QoymcmF7aOaT4UCHeWUBqC0L/Hwc9Wq
+         sgPwsYt4VyWfHxaBK9tmIgfoC4Q2ay1FgRtf7IrhFyJBM0QjaKkhwo/YuCIWrQxOX+y1
+         YYSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709114332; x=1709719132;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9tZSFA9TNC8Nuqr5EXNMkcxxuNUWYaw6b2s8R1XXBEs=;
+        b=SSk5wZ/4r2C+u9B0y8kxLNVx3S3gQX2aWjD4Zbkm22IMf2iXNSOpkjz047pAkeNuFT
+         NFBxmw1ydXXP2i/NZH6SDHH1U6TwQXKo0DfTC9+uFwWUyovHfW9ehWCfCT9H27nahZLl
+         /nD6b4WxrhB4DiLd6bBngBIEfmIvwewHTEQBXluzGIENs5pIqeLnuQ3J+VE+/oqVam9P
+         VqP2RBzijr7ifJOr4YOdfbgStPNmsUBN4/U7pM3a1bD3nBzsNXX6QUGg/jB7y7kgAHno
+         2wtaLcpjMeheiaMdm36oP0YxFR/OSzbFQheKQ6hpJvGxqNyD2+NqSpo943U57SFuxiZ6
+         qIFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpTfISziijLh4Dl/UVNq++VpYFuDzXtF5u0Il+yGCudLortUakAZgrmVA0OJ/oHgZubH679Izq7cuystf6Di8tiw6cyEjcMx6cC7QyTA==
+X-Gm-Message-State: AOJu0Yw1zaAQ6x3i1eB4Wo//0fJY7cDsbIrtTlNcm+eGmOv0w+4oO/vC
+	Na62S95kCzjWSNNfjXgMXN2Zw9x79eNw+NUeZKW5IjSwYTOmspe9wTMTLhB1IyLPUhWzCkYnTUS
+	g
+X-Google-Smtp-Source: AGHT+IFXvcS3SdW+x9XVkAFE4CV7oMvqgtzV0IZUMaJ7OLxvJfmzwEJF8ZwFxnNeHHgrppTXGMcNyQ==
+X-Received: by 2002:a17:906:882:b0:a43:5dbc:4c04 with SMTP id n2-20020a170906088200b00a435dbc4c04mr4818890eje.48.1709114331601;
+        Wed, 28 Feb 2024 01:58:51 -0800 (PST)
+Received: from localhost ([79.142.230.34])
+        by smtp.gmail.com with ESMTPSA id f8-20020a170906c08800b00a434b5fcab6sm1671082ejz.221.2024.02.28.01.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Feb 2024 01:58:51 -0800 (PST)
+References: <20240209223201.2145570-2-mcanal@igalia.com>
+ <20240209223201.2145570-4-mcanal@igalia.com> <87plwi9waq.fsf@metaspace.dk>
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Andreas Hindborg <nmi@metaspace.dk>
+To: Andreas Hindborg <nmi@metaspace.dk>
+Cc: =?utf-8?Q?Ma=C3=ADra?= Canal <mcanal@igalia.com>, Asahi Lina
+ <lina@asahilina.net>, Miguel
+ Ojeda <ojeda@kernel.org>, Alex  Gaynor <alex.gaynor@gmail.com>, Wedson
+ Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy  Baron
+ <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ Matthew Wilcox <willy@infradead.org>, rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com
+Subject: Re: [PATCH v7 2/2] rust: xarray: Add an abstraction for XArray
+Date: Wed, 28 Feb 2024 10:56:41 +0100
+In-reply-to: <87plwi9waq.fsf@metaspace.dk>
+Message-ID: <87cysgap0u.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ZF9ulUaRrLXtqq3l"
-Content-Disposition: inline
-In-Reply-To: <87le75s1fg.fsf@mail.parknet.co.jp>
-
-
---ZF9ulUaRrLXtqq3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Feb 28, 2024 at 12:38:43PM +0900, OGAWA Hirofumi wrote:
-> Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
-> 
-> >> There are many corrupted images, and attacks. Allowing too wide is
-> >> danger for fs.
-> >> 
-> >> BTW, this image works and pass fsck on windows? When I quickly tested
-> >> ev3fs.zip (https://github.com/microsoft/pxt-ev3/issues/980) on windows
-> >> on qemu, it didn't seem recognized as FAT. I can wrongly tested though.
-> >> 
-> >> Thanks.
-> >> -- 
-> >> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-> >
-> > The test image I managed to create mounts just fine on Windows. New
-> > subdirectories can be created there just as well.
-> 
-> Can you share the image somehow? And fsck (chkdsk, etc.) works without
-> any complain?
-> 
-> Thanks.
-> -- 
-> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-
-Checking the filesystem on Windows runs without any complains, but it turns the
-directory into an useless lump of data. Without checking the filesystem,
-creating and reading files from that directory works just fine.
-
-I tried to use gzip or xz to compress the very sparse filesystem image that I
-got, but they made it larger on disk than it really was. So here is a script
-and pieces of the filesystem that will create a sparse 8GB image.
-
-Thank you for looking into this.
-Cascardo.
-
---ZF9ulUaRrLXtqq3l
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="vfat2.img_1"
-Content-Transfer-Encoding: base64
-
-61iQbWtmcy5mYXQAAgggAAIAAAAA+AAAPgD3AAAIAACWg+4AiDsAAAAAAAACAAAAAQAGAAAA
-AAAAAAAAAAAAAIAAKeSRpvVOTyBOQU1FICAgIEZBVDMyICAgDh++d3ysIsB0C1a0DrsHAM0Q
-XuvwMuTNFs0Z6/5UaGlzIGlzIG5vdCBhIGJvb3RhYmxlIGRpc2suICBQbGVhc2UgaW5zZXJ0
-IGEgYm9vdGFibGUgZmxvcHB5IGFuZA0KcHJlc3MgYW55IGtleSB0byB0cnkgYWdhaW4gLi4u
-IA0KAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVapSUmFBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcnJBYYrBHQADAAAAAAAAAAAAAAAAAAAAAABVqgAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA61iQbWtm
-cy5mYXQAAgggAAIAAAAA+AAAPgD3AAAIAACWg+4AiDsAAAAAAAACAAAAAQAGAAAAAAAAAAAA
-AAAAAIAAKeSRpvVOTyBOQU1FICAgIEZBVDMyICAgDh++d3ysIsB0C1a0DrsHAM0QXuvwMuTN
-Fs0Z6/5UaGlzIGlzIG5vdCBhIGJvb3RhYmxlIGRpc2suICBQbGVhc2UgaW5zZXJ0IGEgYm9v
-dGFibGUgZmxvcHB5IGFuZA0KcHJlc3MgYW55IGtleSB0byB0cnkgYWdhaW4gLi4uIA0KAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAVapSUmFBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAcnJBYYvBHQACAAAAAAAAAAAAAAAAAAAAAABVqg==
-
---ZF9ulUaRrLXtqq3l
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="vfat2.img_2"
-Content-Transfer-Encoding: base64
-
-+P//D////w/4//8P////DwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-
---ZF9ulUaRrLXtqq3l
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="vfat2.img_3"
-Content-Transfer-Encoding: base64
-
-+P//D////w/4//8P////DwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-
---ZF9ulUaRrLXtqq3l
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="vfat2.img_4"
-Content-Transfer-Encoding: base64
-
-QkFERElSICAgICAQAMNFRFxYXFgAAEVEXFgDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-
---ZF9ulUaRrLXtqq3l
-Content-Type: application/x-sh
-Content-Disposition: attachment; filename="vfat.sh"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-dd if=3Dvfat2.img_1 of=3Dvfat2.img=0Add if=3Dvfat2.img_2 of=3Dvfat2.img see=
-k=3D32=0Add if=3Dvfat2.img_3 of=3Dvfat2.img seek=3D15272=0Add if=3Dvfat2.im=
-g_4 of=3Dvfat2.img seek=3D30512=0Atruncate --size 8003224064 vfat2.img=0A
---ZF9ulUaRrLXtqq3l--
+
+Andreas Hindborg <nmi@metaspace.dk> writes:
+
+> Ma=C3=ADra Canal <mcanal@igalia.com> writes:
+>
+>> From: Asahi Lina <lina@asahilina.net>
+>>
+>> The XArray is an abstract data type which behaves like a very large
+>> array of pointers. Add a Rust abstraction for this data type.
+>>
+>> The initial implementation uses explicit locking on get operations and
+>> returns a guard which blocks mutation, ensuring that the referenced
+>> object remains alive. To avoid excessive serialization, users are
+>> expected to use an inner type that can be efficiently cloned (such as
+>> Arc<T>), and eagerly clone and drop the guard to unblock other users
+>> after a lookup.
+>>
+>> Future variants may support using RCU instead to avoid mutex locking.
+>>
+>> This abstraction also introduces a reservation mechanism, which can be
+>> used by alloc-capable XArrays to reserve a free slot without immediately
+>> filling it, and then do so at a later time. If the reservation is
+>> dropped without being filled, the slot is freed again for other users,
+>> which eliminates the need for explicit cleanup code.
+>>
+>> Signed-off-by: Asahi Lina <lina@asahilina.net>
+>> Co-developed-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+>> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+>> ---
+>
+>
+> Reviewed-by: Andreas Hindborg <a.hindborg@samsung.com>
+
+Actually clippy complains about use of the name `foo` for a variable in
+the example. Fix:
+
+diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
+index 849915ea633c..aba09cf28c4b 100644
+--- a/rust/kernel/xarray.rs
++++ b/rust/kernel/xarray.rs
+@@ -185,8 +185,8 @@ fn drop(&mut self) {
+ /// let arr =3D Box::pin_init(XArray::<Arc<Foo>>::new(flags::ALLOC1))
+ ///                        .expect("Unable to allocate XArray");
+ ///
+-/// let foo =3D Arc::try_new(Foo { a : 1, b: 2 }).expect("Unable to alloca=
+te Foo");
+-/// let index =3D arr.alloc(foo).expect("Error allocating Index");
++/// let item =3D Arc::try_new(Foo { a : 1, b: 2 }).expect("Unable to alloc=
+ate Foo");
++/// let index =3D arr.alloc(item).expect("Error allocating Index");
+ ///
+ /// if let Some(guard) =3D arr.get_locked(index) {
+ ///     assert_eq!(guard.borrow().a, 1);
+@@ -195,8 +195,8 @@ fn drop(&mut self) {
+ ///     pr_info!("No value found in index {}", index);
+ /// }
+ ///
+-/// let foo =3D Arc::try_new(Foo { a : 3, b: 4 }).expect("Unable to alloca=
+te Foo");
+-/// let index =3D arr.alloc(foo).expect("Error allocating Index");
++/// let item =3D Arc::try_new(Foo { a : 3, b: 4 }).expect("Unable to alloc=
+ate Foo");
++/// let index =3D arr.alloc(item).expect("Error allocating Index");
+ ///
+ /// if let Some(removed_data) =3D arr.remove(index) {
+ ///     assert_eq!(removed_data.a, 3);
+
+
+BR Andreas
 
