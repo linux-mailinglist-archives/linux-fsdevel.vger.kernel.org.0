@@ -1,519 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-13077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57D086AFB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F5486AFE3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:06:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041F91C23F0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 13:01:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7811C22173
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 13:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3722A149DE2;
-	Wed, 28 Feb 2024 13:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5523BBCB;
+	Wed, 28 Feb 2024 13:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPh3/8Dh"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="X5c+gvCJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980D373508;
-	Wed, 28 Feb 2024 13:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE9F73508
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 13:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709125304; cv=none; b=LNHJvEmCDEHTn3YhICu1+lsQMS8+ETkAWwKLB0XVGzNODuhjwp9xweVaU2GU2bCFIMwPgKp99UJ158EuxJ5wurJRYSPrIZF3I+iD3wiBcrlZd7rfcaYMwDo5K5i7e3eScpjV0LBSdf78zz/SHj2QWt3+DoyWXcr/9jAdsOfjpYc=
+	t=1709125608; cv=none; b=N4qDaPwFd4pDJSWpxhkpnePQbv6+ZPTRfiTj0mjaVdujiLR4JVvZyHMqvHxeZzZJf3cZ8vCxS+hnAzD/SBl9x9S3wGnnUmoFK7jkKOrC93B3e8iGfvr/Zt/0s/9O7asZQgMWKHm0tWVKTfXUQtCUtD6DgWkdxevhFjNdefceGdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709125304; c=relaxed/simple;
-	bh=dvKQXhNDsRdDuMi3T+MEGZB+PIdc0k+ecNP7SiCFNTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yosw6ywDymmU/qLxNyoT7PUN2lMnrF0tcoVADeOMgknzlrFO9UTGg5ZlCJhMbC3JGopjK+ayXOVgUTumrXbG0Ip5hso4/fJGncJX3K64cxqeYsJIQsC/HJGhEM7KechjV1b+FiVQQVGWf/VznKDBLIDl9fQDRw/OgBRLp6hDKBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPh3/8Dh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E367C433F1;
-	Wed, 28 Feb 2024 13:01:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709125304;
-	bh=dvKQXhNDsRdDuMi3T+MEGZB+PIdc0k+ecNP7SiCFNTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cPh3/8DhWAftWtR+uyJREppas0HQ/Vr82ebvLRUdNdSKX4cMlacl3bOgPnfWZ+o1y
-	 TAijMTaV0SP0KmAe6l7U3HW08A8HMNARa+gSztjbs7pV7N54XHOio9C2CfHbiW6XZo
-	 NlwTTRTJX4UFRDqO6Jva+EiHyJ0wye3a8vDkc2/MHjnt2TSEICDZnS5rpoZxqdOVOH
-	 lO50nPnII1AFvOj0M2lqQIcYal3s21OlE/yaNska3TiLTadz8UECKL+nacrHkgx3K8
-	 hStqNAC5NejAsWQQZRxw63AKN4OPnfmbEN90fOuHL+6Ho2bysdQrbmyjIVQaniNpBd
-	 WyGSRsKOdeITA==
-Date: Wed, 28 Feb 2024 08:02:59 -0500
-From: Al Viro <viro@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][v4] documentation on filesystem exposure to RCU pathwalk from
- fs maintainers' POV
-Message-ID: <Zd8vA3VCEXS7MyuN@duke.home>
-References: <Zdu58Jevui1ySBqa@duke.home>
- <ZdzZ4LVrCie2MF3H@duke.home>
- <Zd2XqwmAtNFe1Is9@duke.home>
+	s=arc-20240116; t=1709125608; c=relaxed/simple;
+	bh=Y/RsrfUmJnCAYk9v/aUYrsMlV3XktMUAupKq4GcEL64=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i1mFArAo4xK/uM8BJ7o9z+pQXAzpcGz6+Slg21mjjzrYXSJhR5rLca9/0+Y5bj/WVEidOE5GzNZ9DGEpn2RN+3HuLfoRyYfAf6h9CYiGePb+0wXIcfruPR+qrGRYKB+o8k/PIRriamLrkih5kitVYa5qmME0pMzndpqlQIkISbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=X5c+gvCJ; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-565a3910f86so6264892a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 05:06:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1709125604; x=1709730404; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Nlzv6k7NWhG0+QPE7xvOqaQ6udeSJAp8XgDPXueUu0=;
+        b=X5c+gvCJ2+uK0CWOPx4d7ziaeoz+l30Jsuc5NkVxiUiUh9fndghxhK2SdIn4n7ONLN
+         vlewwfSFHf39/rNlc17rl7S1/sMQ9VnNg4CZjnZNImI4Oytdw0fxF3k2O17SLFL05cns
+         4n+HHzvkKezLfL+OOUw6HwNCBxU/E/h9tlGug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709125604; x=1709730404;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6Nlzv6k7NWhG0+QPE7xvOqaQ6udeSJAp8XgDPXueUu0=;
+        b=XE6BPPN3dQmTClkKRVo4JhZr7LWJIaDkwkeL9WMbDXrvTKDKQoKO024GMQ92H7lPIc
+         V1PBwZG0yDZLRvPuTtOz2UqeZLEEaRF5TGS5tnNc32TR1GvCWi+jI2/ModTQ24MdNg6N
+         uN8o9n1XbVnJVW6YM8H4qkH7imVTlUv6DxZ5xQGO3Tj6kQJFWs/gJziWmbQtCeBMO9nC
+         VBvVISCe9Dyv02szDwajCmEM6ShDx03H7i6tJXX+3/iAgajVj4k9/7QCiM4gJU4kYSTE
+         5ErhlA2Oyv/Iq5yMOyD0hdqo2L0UF16gWuTUuNQFhVAn5dEK6GrjIRCTgI5LF5naWvfU
+         UnCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGRarQsf6N4JODAGAfGrccx9+JwaL/4X9g4WB7RrNGoWljgiQKBBWSDO7WeDytmpTOdfv6a3fX1Hw20v+6fMqRwukbGAgzZA3ipqeR0g==
+X-Gm-Message-State: AOJu0YxUDDtveNbw3eJgRMQAewHW4TjIDw87mJJHfmzaEbVHSV7uDDyA
+	Vp4vTgCiX84fa6tqYd/TJJBGo3+PjSasCDBzt5OR/0nt3rdnpTFB+ufEYQnaBfRYfXIBJ8g2Gve
+	NMl0uA+M08nbVQhi66wcZBPhRBZVsNSqNNmRzJHh0f1En+VAL
+X-Google-Smtp-Source: AGHT+IHFFdYXMnvX1v7DFvLdleH9r4Dr/nn0IIlezE4UsoEcQBuAmsD7fzOAOu8aHnus+VD4738X5cyX5yHLuq/zk9A=
+X-Received: by 2002:a17:906:1183:b0:a3e:e869:a151 with SMTP id
+ n3-20020a170906118300b00a3ee869a151mr8503461eja.45.1709125604513; Wed, 28 Feb
+ 2024 05:06:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zd2XqwmAtNFe1Is9@duke.home>
-
-On Tue, Feb 27, 2024 at 03:04:59AM -0500, Al Viro wrote:
-> On Mon, Feb 26, 2024 at 01:35:12PM -0500, Al Viro wrote:
-> > On Sun, Feb 25, 2024 at 05:06:40PM -0500, Al Viro wrote:
-> > > 	The text below is a rough approximation to what should, IMO,
-> > > end up in Documentation/filesystems/rcu-exposure.rst.  It started
-> > > as a part of audit notes.  Intended target audience of the text is
-> > > filesystem maintainers and/or folks who are reviewing fs code;
-> > > I hope the current contents is already useful to an extent, but
-> > > I'm pretty certain that it needs more massage before it could
-> > > go into the tree.
-> > > 
-> > > 	Please, read and review - comments and suggestions would be
-> > > very welcome, both for contents and for markup - I'm *not* familiar
-> > > with ReST or the ways it's used in the kernel (in particular, footnotes
-> > > seem to get lost in PDF).
-> > 
-> > Updated variant follows.  Changes since the previous:
-> > * beginning has been rewritten
-> > * typos spotted by Randy should be fixed
-> > * dumb braino in "opt out" part fixed (->d_automount is irrelevant, it's
-> > ->d_manage one needs to watch out for)
-> > * a stale bit in discussion of ->permission() ("currently (6.5) run afoul")
-> > updated (to "did (prior to 6.8-rc6) run afoul").
-> > * I gave up on ReST footnotes and did something similar manually.
-> 
-> Hopefully that one is better - the introductory part should be less handwavy
-> and easier to follow now...
-
-Changes since v3:
-* used the suggestion by Akira Yokosawa re fixing the footnotes
-* another rewrite of introductory part.
-
-Please, review.
-
-===================================================================
-The ways in which RCU pathwalk can ruin filesystem maintainer's day
-===================================================================
-
-Pathname resolution fast path: the scarier conditions for filesystem code
-=========================================================================
-
-The basic safety assumption for any multithreaded OO code is that
-objects passed to a function will not have been already destroyed by
-another thread.  It may guaranteed by various mechanisms (refcounting,
-some form of exclusion, not having pointers to the object visible to other
-threads, etc.), but no matter how it's done, the caller is expected to
-have done that.
-
-Usually one wants a stronger warranty - that destructors of any objects
-passed to a function would not be called by other threads until the
-function has either done something that explicitly allows that to happen
-(e.g. dropped a reference to refcounted object that had been passed
-to it, stored a pointer in a shared data structure, etc.) or finished
-its execution.
-
-Filesystem methods **usually** can count upon such warranties regarding
-the lifetime of objects they are called to act upon.
-
-However, there is one important case where providing such warranties
-is rather costly.  On the fast path in pathname resolution (the case
-when everything we need is in VFS caches), grabbing and dropping dentry
-references for every visited directory would cause unpleasant scalability
-issues.
-
-The problem is that access patterns are heavily biased; every system call
-getting an absolute pathname will have to start at root directory, etc.
-Having each of them in effect write "I'd been here" on the same memory
-objects would cost quite a bit.
-
-To deal with that we try to keep the fast path stores-free, bumping
-no refcounts and taking no locks.  Details are described elsewhere
-(Documentation/filesystems/path-lookup.txt), but the bottom line for
-filesystems is that the methods involved in fast path of pathname
-resolution may be called with much looser warranties than usual.
-The caller deliberately does *not* take the steps that would normally
-protect the object from being torn down by another thread while the
-method is trying to work with it.  This applies not just to dentries -
-associated inodes and even the filesystem instance the object belongs
-to could be in process of getting torn down (yes, really).\ [#f0]_
-Of course, from the filesystem point of view, every call like that is
-a potential source of headache.
-
-Such unsafe method calls do get *some* warranties.  Before going into
-the details, keep in mind that
-
-* few methods are affected, and their defaults (i.e. what we get if the
-  method is left NULL) are safe.  If your filesystem does not need to
-  override any of those defaults, you are fine (there is a minor nit
-  regarding the cached fast symlinks, but that's easy to take care of).
-
-* for most of those methods there is a way to bail out and tell VFS to
-  leave the fast path and switch to holding proper references from
-  that point on.  That's what has to happen when an instance sees that it
-  can't go on without a blocking operation, but you can use the same
-  mechanism to bail out as soon as you see an unsafe call.
-
-
-Which methods are affected?
-===========================
-
-	The list of the methods that could run into that fun:
-
-========================	==================================	===================	====================
-	method			indication that the call is unsafe	unprotected objects	bailout return value
-========================	==================================	===================	====================
-->d_hash(d, ...) 		none - any call might be		d
-->d_compare(d, ...)		none - any call might be		d
-->d_revalidate(d, f)		f & LOOKUP_RCU				d			-ECHILD
-->d_manage(d, f)		f					d			-ECHILD
-->permission(i, m)		m & MAY_NOT_BLOCK			i			-ECHILD
-->get_link(d, i, ...)		d == NULL				i			ERR_PTR(-ECHILD)
-->get_inode_acl(i, t, f)	f == LOOKUP_RCU				i			ERR_PTR(-ECHILD)
-========================	==================================	===================	====================
-
-Additionally, callback set by set_delayed_call() from unsafe call of
-->get_link() will be run in the same environment; that one is usually not
-a problem, though.
-
-For the sake of completeness, three of LSM methods
-(->inode_permission(), ->inode_follow_link() and ->task_to_inode())
-might be called in similar environment, but that's a problem for LSM
-crowd, not for filesystem folks.
-
-
-Opting out
-==========
-
-To large extent a filesystem can opt out of RCU pathwalk; that loses all
-scalability benefits whenever your filesystem gets involved in pathname
-resolution, though.  If that's the way you choose to go, just make sure
-that
-
-1. any non-default ->d_revalidate(), ->permission(), ->get_link() and
-   ->get_inode_acl() instance bails out if called by RCU pathwalk (see
-   below for details).  Costs a couple of lines of boilerplate in each.
-
-2. if some symlink inodes have ->i_link set to a dynamically allocated
-   object, that object won't be freed without an RCU delay.  Anything
-   coallocated with inode is fine, so's anything freed from ->free_inode().
-   Usually comes for free, just remember to avoid freeing directly
-   from ->destroy_inode().
-
-3. any ->d_hash() and ->d_compare() instances (if you have those) do
-   not access any filesystem objects.
-
-4. there's no ->d_manage() instances in your filesystem.
-
-If your case does not fit the above, the easy opt-out is not for you.
-If so, you'll have to keep reading...
-
-
-What is guaranteed and what is required?
-========================================
-
-Any method call is, of course, required not to crash - no stepping on
-freed memory, etc.  All of the unsafe calls listed above are done under
-rcu_read_lock(), so they are not allowed to block.  Further requirements
-vary between the methods.
-
-Before going through the list of affected methods, several notes on
-the things that *are* guaranteed:
-
-* if a reference to struct dentry is passed to such call, it will
-  not be freed until the method returns.  The same goes for a reference to
-  struct inode and to struct super_block pointed to by ->d_sb or ->i_sb
-  members of dentry and inode respectively.  Any of those might be in
-  process of being torn down or enter such state right under us;
-  the entire point of those unsafe calls is that we make them without
-  telling anyone they'd need to wait for us.
-
-* following ->d_parent and ->d_inode of such dentries is fine,
-  provided that it's done by READ_ONCE() (for ->d_inode the preferred
-  form is d_inode_rcu(dentry)).  The value of ->d_parent is never going
-  to be NULL and it will again point to a struct dentry that will not be
-  freed until the method call finishes.  The value of ->d_inode might
-  be NULL; if non-NULL, it'll be pointing to a struct inode that will
-  not be freed until the method call finishes.
-
-* none of the inodes passed to an unsafe call could have reached
-  fs/inode.c:evict() before the caller grabbed rcu_read_lock().
-
-* for inodes 'not freed' means 'not entered ->free_inode()', so
-  anything that won't be destroyed until ->free_inode() is safe to access.
-  Anything synchronously destroyed in ->evict_inode() or ->destroy_inode()
-  is not safe; however, one can count upon the call_rcu() callbacks
-  issued in those yet to be entered.  Note that unlike dentries and
-  superblocks, inodes are embedded into filesystem-private objects;
-  anything stored directly in the containing object is safe to access.
-
-* for dentries anything destroyed by ->d_prune() (synchronously or
-  not) is not safe; the same goes for the things synchronously destroyed
-  by ->d_release().  However, call_rcu() callbacks issued in ->d_release()
-  are yet to be entered.
-
-* for superblocks we can count upon call_rcu() callbacks issued
-  from inside the ->kill_sb() (including the ones issued from
-  ->put_super()) yet to be entered.  You can also count upon
-  ->s_user_ns still being pinned and ->s_security still not
-  freed.
-
-* NOTE: we **can not** count upon the things like ->d_parent
-  being positive (or a directory); a race with rename()+rmdir()+mknod()
-  and you might find a FIFO as parent's inode.  NULL is even easier -
-  just have the dentry and its ex-parent already past dentry_kill()
-  (which is a normal situation for eviction on memory pressure) and there
-  you go.  Normally such pathologies are prevented by the locking (and
-  dentry refcounting), but... the entire point of that stuff is to avoid
-  informing anyone that we are there, so those mechanisms are bypassed.
-  What's more, if dentry is not pinned by refcount, grabbing its ->d_lock
-  will *not* suffice to prevent that kind of mess - the scenario with
-  eviction by memory pressure won't be prevented by that; you might have
-  grabbed ->d_lock only after the dentry_kill() had released it, and
-  at that point ->d_parent still points to what used to be the parent,
-  but there's nothing to prevent its eviction.
-
-
-->d_compare()
--------------
-
-For ->d_compare() we just need to make sure it won't crash when called
-for dying dentry - an incorrect return value won't harm the caller in
-such case.  False positives and false negatives alike - the callers take
-care of that.  To be pedantic, make that "false positives do not cause
-problems unless they have ->d_manage()", but ->d_manage() is present
-only on autofs and there's no autofs ->d_compare() instances.\ [#f1]_
-
-There is no indication that ->d_compare() is called in RCU mode;
-the majority of callers are such, anyway, so we need to cope with that.
-VFS guarantees that dentry won't be freed under us; the same goes for
-the superblock pointed to by its ->d_sb.  Name points to memory object
-that won't get freed under us and length does not exceed the size of
-that object.  The contents of that object is *NOT* guaranteed to be
-stable; d_move() might race with us, modifying the name.  However, in
-that case we are free to return an arbitrary result - the callers will
-take care of both false positives and false negatives in such case.
-The name we are comparing dentry with (passed in qstr) is stable,
-thankfully...
-
-If we need to access any other data, it's up to the filesystem
-to protect it.  In practice it means that destruction of fs-private part
-of superblock (and possibly unicode tables hanging off it, etc.) might
-need to be RCU-delayed.
-
-*IF* you want the behaviour that varies depending upon the parent
-directory, you get to be very careful with READ_ONCE() and watch out
-for the object lifetimes.
-
-Basically, if the things get that tricky, ask for help.
-Currently there are two such instances in the tree - proc_sys_compare()
-and generic_ci_d_compare().  Both are... special.
-
-
-->d_hash()
-----------
-
-For ->d_hash() on a dying dentry we are free to report any hash
-value; the only extra requirement is that we should not return stray
-hard errors.  In other words, if we return anything other than 0 or
--ECHILD, we'd better make sure that this error would've been correct
-before the parent started dying.  Since ->d_hash() error reporting is
-usually done to reject unacceptable names (too long, contain unsuitable
-characters for this filesystem, etc.), that's really not a problem -
-hard errors depend only upon the name, not the parent.
-
-Again, VFS guarantees that freeing of dentry and of the superblock
-pointed to by dentry->d_sb won't happen under us.  The name passed to
-us (in qstr) is stable.  If you need anything beyond that, you are
-in the same situation as with ->d_compare().  Might want to RCU-delay
-freeing private part of superblock (if that's what we need to access),
-might want the same for some objects hanging off that (unicode tables,
-etc.).  If you need something beyond that - ask for help.
-
-
-->d_revalidate()
-----------------
-
-For this one we do have an indication of call being unsafe -
-flags & LOOKUP_RCU.  With ->d_revalidate we are always allowed to bail
-out and return -ECHILD; that will have the caller drop out of RCU mode.
-We definitely need to do that if revalidate would require any kind of IO,
-mutex-taking, etc.; we can't block in RCU mode.
-
-Quite a few instances of ->d_revalidate() simply treat LOOKUP_RCU
-in flags as "return -ECHILD and be done with that"; it's guaranteed to
-do the right thing, but you lose the benefits of RCU pathwalks whenever
-you run into such dentry.
-
-Same as with the previous methods, we are guaranteed that
-dentry and dentry->d_sb won't be freed under us.  We are also guaranteed
-that ->d_parent (which is *not* stable, so use READ_ONCE) points to a
-struct dentry that won't get freed under us.  As always with ->d_parent,
-it's not NULL - for a detached dentry it will point to dentry itself.
-d_inode_rcu() of dentry and its parent will be either NULL or will
-point to a struct inode that won't get freed under us.  Anything beyond
-than that is not guaranteed.  We may find parent to be negative - it can
-happen if we race with d_move() and removal of old parent.  In that case
-just return -ECHILD and be done with that.
-
-On non-RCU side you could use dget_parent() instead - that
-would give a positive dentry and its ->d_inode would remain stable.
-dget_parent() has to be paired with dput(), though, so it's not usable
-in RCU mode.
-
-If you need fs-private objects associated with dentry, its parent
-inode(s) or superblock - see the general notes above on how to access
-those.
-
-
-->d_manage()
-------------
-
-Can be called in RCU mode; gets an argument telling it if it has
-been called so.  Pretty much autofs-only; for everyone's sanity sake,
-don't inflict more of those on the kernel.  Definitely don't do that
-without asking first...
-
-
-->permission()
---------------
-
-Can be called in RCU mode; that is indicated by MAY_NOT_BLOCK
-in mask, and it can only happen for MAY_EXEC checks on directories.
-In RCU mode it is not allowed to block, and it is allowed to bail out
-by returning -ECHILD.  It might be called for an inode that is getting
-torn down, possibly along with its filesystem.  Errors other than -ECHILD
-should only be returned if they would've been returned in non-RCU mode;
-several instances in procfs did (prior to 6.8-rc6) run afoul of that one.
-That's an instructive example, BTW - what happens is that proc_pid_permission()
-uses proc_get_task() to find the relevant process.  proc_get_task()
-uses PID reference stored in struct proc_inode our inode is embedded
-into; inode can't have been freed yet, so fetching ->pid member in that
-is safe.  However, using the value you've fetched is a different story
-- proc_evict_inode() would have passed it to put_pid() and replaced
-it with NULL.  Unsafe caller has no way to tell if that is happening
-right under it.  Solution: stop zeroing ->pid in proc_evict_inode()
-and move put_pid() from proc_pid_evict_inode() to proc_free_inode().
-That's not all that is needed (there's access to procfs-private part of
-superblock as well), but it does make a good example of how such stuff
-can be dealt with.
-
-Note that idmap argument is safe on all calls - its destruction
-is rcu-delayed.
-
-The amount of headache is seriously reduced (for now) by the fact
-that a lot of instances boil down to generic_permission() (which will
-do the right thing in RCU mode) when mask is MAY_EXEC | MAY_NOT_BLOCK.
-If we ever extend RCU mode to other ->permission() callers, the thing will
-get interesting; that's not likely to happen, though, unless access(2)
-goes there [this is NOT a suggestion, folks].
-
-
-->get_link()
-------------
-
-Again, this can be called in RCU mode.  Even if your ->d_revalidate()
-always returns -ECHILD in RCU mode and kicks the pathwalk out of it,
-you can't assume that ->get_link() won't be reached.\ [#f2]_
-
-NULL dentry argument is an indicator of unsafe call; if you can't handle
-it, just return ERR_PTR(-ECHILD).  Any allocations you need to do (and
-with this method you really might need that) should be done with GFP_ATOMIC
-in the unsafe case.
-
-Whatever you pass to set_delayed_call() is going to be called
-in the same mode as ->get_link() itself; not a problem for most of the
-instances.  The string you return needs to stay there until the
-callback gets called or, if no callback is set, until at least the
-freeing of inode.  As usual, for an unsafe call the inode might be
-in process of teardown, possibly along with the hosting filesystem.
-The usual considerations apply.  The same, BTW, applies to whatever
-you set in ->i_link - it must stay around at least until ->free_inode().
-
-
-->get_inode_acl()
------------------
-
-Very limited exposure for that one - unsafe call is possible
-only if you explicitly set ACL_DONT_CACHE as cached ACL value.
-Only two filesystems (fuse and overlayfs) even bother.  Unsafe call
-is indicated by explicit flag (the third argument of the method),
-bailout is done by returning ERR_PTR(-CHILD) and the usual considerations
-apply for any access to data structures you might need to do.
-
-.. rubric:: Footnotes                                                                                                              
-
-.. [#f0]
-
-  The fast path of pathname resolution really can run into a dentry on
-  a filesystem that is getting shut down.
-
-  Here's one of the scenarios for that to happen:
-
-	1. have two threads sharing fs_struct chdir'ed on that filesystem.
-	2. lazy-umount it, so that the only thing holding it alive is
-	   cwd of these threads.
-	3. the first thread does relative pathname resolution
-	   and gets to e.g. ->d_hash().  It's holding rcu_read_lock().
-	4. at the same time the second thread does fchdir(), moving to
-	   different directory.
-
-  In fchdir(2) we get to set_fs_pwd(), which set the current directory
-  to the new place and does mntput() on the old one.  No RCU delays here,
-  we calculate the refcount of that mount and see that we are dropping
-  the last reference.  We make sure that the pathwalk in progress in
-  the first thread will fail when it comes to legitimize_mnt() and do this
-  (in mntput_no_expire())::
-
-	init_task_work(&mnt->mnt_rcu, __cleanup_mnt);
-	if (!task_work_add(task, &mnt->mnt_rcu, TWA_RESUME))
-		return;
-
-  As we leave the syscall, we have __cleanup_mnt() run; it calls
-  cleanup_mnt() on our mount, which hits deactivate_super().  That was
-  the last reference to superblock.
-
-  Voila - we have a filesystem shutdown right under the nose of
-  a thread running in ->d_hash() of something on that filesystem.
-  Mutatis mutandis, one can arrange the same for other methods called
-  by rcu pathwalk.
-
-  It's not easy to hit (especially if you want to get through the
-  entire ->kill_sb() before the first thread gets through ->d_hash()),
-  and it's probably impossible on the real hardware; on KVM it might be
-  borderline doable.  However, it is possible and I would not swear that
-  other ways of arranging the same thing are equally hard to hit.
-
-  The bottom line: methods that can be called in RCU mode need to be
-  careful about the per-superblock objects destruction.
-
-.. [#f1]
-
-  Some callers prevent being called for dying dentry (holding ->d_lock
-  and having verified !d_unhashed() or finding it in the list of inode's
-  aliases under ->i_lock).  For those the scenario in question simply
-  cannot arise.
-
-  Some follow the match with lockref_get_not_dead() and treat the failure
-  as mismatch.  That takes care of false positives, and false negatives
-  on dying dentry are still correct - we simply pretend to have lost
-  the race.
-
-  The only caller that does not fit into the classes above is
-  __d_lookup_rcu_op_compare().  There we sample ->d_seq and verify
-  !d_unhashed() before calling ->d_compare().  That is not enough to
-  prevent dentry from starting to die right under us; however, the
-  sampled value of ->d_seq will be rechecked when the caller gets to
-  step_into(), so for a false positive we will end up with a mismatch.
-  The corner case around ->d_manage() is due to the handle_mounts()
-  done before step_into() gets to ->d_seq validation...
-
-.. [#f2]
-
-  binding a symlink on top of a regular file on another filesystem is
-  possible and that's all it takes for RCU pathwalk to get there.
+References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link>
+ <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm> <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link>
+ <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
+ <5b7139d5-52fd-4fd0-8fa0-df0a38d96a33@spawn.link> <CAJfpeguvX1W2M9kY-4Tx9oJhSYE2+nHQuGXDNPw+1_9jtMO7zA@mail.gmail.com>
+ <CAJfpegssrySj4Yssu4roFHZn1jSPZ-FLfb=HX4VDsTP2jY5BLA@mail.gmail.com>
+ <6fb38202-4017-4acd-8fb8-673eee7182b9@spawn.link> <CAJfpegscxYn9drVRkbVhRztL-+V0+oge8ZqPhgt4BAnvzaPzwQ@mail.gmail.com>
+ <f70732f8-4d67-474a-a4b8-320f78c3394d@spawn.link> <9b9aab6f-ee29-441b-960d-a95d99ba90d8@spawn.link>
+In-Reply-To: <9b9aab6f-ee29-441b-960d-a95d99ba90d8@spawn.link>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 28 Feb 2024 14:06:32 +0100
+Message-ID: <CAJfpegsz_R9ELzXnWaFrdNqy5oU8phwAtg0shJhKuJCBhvku9Q@mail.gmail.com>
+Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
+To: Antonio SJ Musumeci <trapexit@spawn.link>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	fuse-devel <fuse-devel@lists.sourceforge.net>
+Content-Type: multipart/mixed; boundary="00000000000088fcbb061270d041"
+
+--00000000000088fcbb061270d041
+Content-Type: text/plain; charset="UTF-8"
+
+On Sun, 25 Feb 2024 at 21:58, Antonio SJ Musumeci <trapexit@spawn.link> wrote:
+
+> I've resolved the issue and I believe I know why I couldn't reproduce
+> with current libfuse examples. The fact root node has a generation of 0
+> is implicit in the examples and as a result when the request came in the
+> lookup on ".." of a child node to root it would return 0. However, in my
+> server I start the generation value of everything at different non-zero
+> value per instance of the server as at one point I read that ensuring
+> different nodeid + gen pairs for different filesystems was better/needed
+> for NFS support. I'm guessing the increase in reports I've had was
+> happenstance of people upgrading to kernels past 5.14.
+>
+> In retrospect it makes sense that the nodeid and gen are assumed to be 1
+> and 0 respectively, and don't change, but due to the symptoms I had it
+> wasn't clicking till I saw the stale check.
+>
+> Not sure if there is any changes to the kernel code that would make
+> sense. A log entry indicating root was tagged as bad and why would have
+> helped but not sure it needs more than a note in some docs. Which I'll
+> likely add to libfuse.
+>
+> Thanks for everyone's help. Sorry for the goose chase.
+
+Looking deeper this turned out to be a regression, introduced in v5.14
+by commit 15db16837a35 ("fuse: fix illegal access to inode with reused
+nodeid").  Prior to this commit the generation number would be ignored
+and things would work fine.
+
+The attached patch reverts this behavior for the root inode (which
+wasn't intended, since the generation number is not supplied by the
+server), but with an added warn_on_once() so this doesn't remain
+hidden in the future.
+
+Can you please test with both the fixed and unfixed server?
+
+Thanks,
+Miklos
+
+--00000000000088fcbb061270d041
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="fuse-fix-lookup-root-with-nonzero-generation.patch"
+Content-Disposition: attachment; 
+	filename="fuse-fix-lookup-root-with-nonzero-generation.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lt5t6bw70>
+X-Attachment-Id: f_lt5t6bw70
+
+RnJvbTogTWlrbG9zIFN6ZXJlZGkgPG1zemVyZWRpQHJlZGhhdC5jb20+ClN1YmplY3Q6IGZ1c2U6
+IGZpeCByb290IGxvb2t1cCB3aXRoIG5vbnplcm8gZ2VuZXJhdGlvbgoKVGhlIHJvb3QgaW5vZGUg
+aGFzIGEgZml4ZWQgbm9kZWlkIGFuZCBnZW5lcmF0aW9uICgxLCAwKS4KClByaW9yIHRvIHRoZSBj
+b21taXQgMTVkYjE2ODM3YTM1ICgiZnVzZTogZml4IGlsbGVnYWwgYWNjZXNzIHRvIGlub2RlIHdp
+dGgKcmV1c2VkIG5vZGVpZCIpIGdlbmVyYXRpb24gbnVtYmVyIG9uIGxvb2t1cCB3YXMgaWdub3Jl
+ZC4gIEFmdGVyIHRoaXMgY29tbWl0Cmxvb2t1cCB3aXRoIHRoZSB3cm9uZyBnZW5lcmF0aW9uIG51
+bWJlciByZXN1bHRlZCBpbiB0aGUgaW5vZGUgYmVpbmcKdW5oYXNoZWQuICBUaGlzIGlzIGNvcnJl
+Y3QgZm9yIG5vbi1yb290IGlub2RlcywgYnV0IHJlcGxhY2luZyB0aGUgcm9vdAppbm9kZSBpcyB3
+cm9uZyBhbmQgcmVzdWx0cyBpbiB3ZWlyZCBiZWhhdmlvci4KCkZpeCBieSByZXZlcnRpbmcgdG8g
+dGhlIG9sZCBiZWhhdmlvciBpZiBpZ25vcmluZyB0aGUgZ2VuZXJhdGlvbiBmb3IgdGhlCnJvb3Qg
+aW5vZGUsIGJ1dCBpc3N1aW5nIGEgd2FybmluZyBpbiBkbWVzZy4KClJlcG9ydGVkLWJ5OiBBbnRv
+bmlvIFNKIE11c3VtZWNpIDx0cmFwZXhpdEBzcGF3bi5saW5rPgpGaXhlczogMTVkYjE2ODM3YTM1
+ICgiZnVzZTogZml4IGlsbGVnYWwgYWNjZXNzIHRvIGlub2RlIHdpdGggcmV1c2VkIG5vZGVpZCIp
+CkNjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4gIyB2NS4xNApTaWduZWQtb2ZmLWJ5OiBNaWts
+b3MgU3plcmVkaSA8bXN6ZXJlZGlAcmVkaGF0LmNvbT4KLS0tCiBmcy9mdXNlL2Rpci5jICAgIHwg
+ICAgNCArKysrCiBmcy9mdXNlL2Z1c2VfaS5oIHwgICAgMiArKwogMiBmaWxlcyBjaGFuZ2VkLCA2
+IGluc2VydGlvbnMoKykKCi0tLSBhL2ZzL2Z1c2UvZGlyLmMKKysrIGIvZnMvZnVzZS9kaXIuYwpA
+QCAtMzkxLDYgKzM5MSwxMCBAQCBpbnQgZnVzZV9sb29rdXBfbmFtZShzdHJ1Y3Qgc3VwZXJfYmxv
+Y2sKIAllcnIgPSAtRUlPOwogCWlmIChmdXNlX2ludmFsaWRfYXR0cigmb3V0YXJnLT5hdHRyKSkK
+IAkJZ290byBvdXRfcHV0X2ZvcmdldDsKKwlpZiAob3V0YXJnLT5ub2RlaWQgPT0gRlVTRV9ST09U
+X0lEICYmIG91dGFyZy0+Z2VuZXJhdGlvbiAhPSAwKSB7CisJCXByX3dhcm5fb25jZSgicm9vdCBn
+ZW5lcmF0aW9uIHNob3VsZCBiZSB6ZXJvXG4iKTsKKwkJb3V0YXJnLT5nZW5lcmF0aW9uID0gMDsK
+Kwl9CiAKIAkqaW5vZGUgPSBmdXNlX2lnZXQoc2IsIG91dGFyZy0+bm9kZWlkLCBvdXRhcmctPmdl
+bmVyYXRpb24sCiAJCQkgICAmb3V0YXJnLT5hdHRyLCBBVFRSX1RJTUVPVVQob3V0YXJnKSwK
+--00000000000088fcbb061270d041--
 
