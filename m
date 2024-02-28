@@ -1,66 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-13140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A8686BC1E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 00:22:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C08286BC25
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 00:24:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6478282E32
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 23:22:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 412F5B2224C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 23:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745B376EFA;
-	Wed, 28 Feb 2024 23:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A6713D316;
+	Wed, 28 Feb 2024 23:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vh9jhLEA"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="ZZMtG4hA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6B82261D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 23:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593DF13D2EE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 23:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709162508; cv=none; b=DUarzime2s1mF9hDLGOPVufGdIYzk36zuJLE1oKMcKkLMpe9q6k1p/2nr/dlrSUkjpjOMhtCZKkal/58+h83+e4ddaPuQ+fzLVOyxwvkXXJL/NUnI2A780dDsDKbBRKTQagSEaDbZg7vMPQVMYQgnp2QyoOinQi2nHgcW0TE9oo=
+	t=1709162670; cv=none; b=A9riMS+EKy2jW/Vuk4VGAyEqv/oY7V1tiBoYwbqG/ocJ1OLjUnVEdM7LvP66FScJVI5KWHWX/9q9WySYMFeflwrwxtTPZq/d/3Us1ji3VyltoNizJgz8Er4xHYoit6ioRqDXsMDepOws5m4xKICz47YFJqkAhKklUeG92jZTt/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709162508; c=relaxed/simple;
-	bh=XXMlSmdPcKCBNYEC5ni4wZ7lE5m6PMF7OgTyKEFpHhI=;
+	s=arc-20240116; t=1709162670; c=relaxed/simple;
+	bh=FgKJ8Nr8dXhQAliq0DvjYyHS+0VtzZFmVxXs5XQA3/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kp57BeC9J2SspAePL6YAraOBvWpn9S3r0hQg3GQ65gdNRcyNflKydO5s6qc1BIddzBHaE0JupwvfuORIrSr6vs8i5j84trP33P9oy962Pg8OYQxWWo/v1SzQ9ElcVO3Z1tIhS1TVf8ZovSStAzS8JQZeicYG5SCAeNtjlbsoDTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vh9jhLEA; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 28 Feb 2024 18:21:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709162504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GhXgUfHYdW3CUzoOL4/AC9rsi+BkTI4tCn2fBpQOL0c=;
-	b=vh9jhLEAk3RPjg1RRjS9elSh6Uo7W0u3FrB5freJr9NhYgknj9a4mP6F0C2wQrbXDwc62Q
-	r0XmfKkLzKI0SOe8S192Cy7kbFi1qHOM44y4WFOgn4R+Suq198o0jShK8P4MYB0YS8lPPx
-	wOxuoNWP5H6O+ZozQdkiu/T5ZDpTZvw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Chinner <david@fromorbit.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>, 
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <w7incr52m75dfwbwcblrfivlgxdr3apsgyvloqmw3yejsmibis@mldv3ywv3ljh>
-References: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
- <xhymmlbragegxvgykhaddrkkhc7qn7soapca22ogbjlegjri35@ffqmquunkvxw>
- <Zd5ecZbF5NACZpGs@dread.disaster.area>
- <d2zbdldh5l6flfwzcwo6pnhjpoihfiaafl7lqeqmxdbpgoj77y@fjpx3tcc4oev>
- <CAHk-=wjXu68Fs4gikqME1FkbcxBcGQxStXyBevZGOy+NX9BMJg@mail.gmail.com>
- <4uiwkuqkx3lt7cbqlqchhxjq4pxxb3kdt6foblkkhxxpohlolb@iqhjdbz2oy22>
- <CAHk-=wiMf=W68wKXXnONVc9U+W7mfuhuHMHcowoZwh0b6SXPNg@mail.gmail.com>
- <amsqvy3aq5mzyk7esf5mzzgdjl32gosq5fgphjv5qzp6r25dke@sadcguvzo26m>
- <CAHk-=wgZAhEAK=POkKaUJP6_g4VUMUaiTM+PPH5jELy-JAyo8g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tGB3xZ61YaAImAWh/kX/0dPsq2ZcF7EEFQ4CGt3jIvsGXtmpiC9BETkY0O/cMUHglLplE1yURy8Apz8FofpSF2DBymLtilPo3eIQ0kYCqbVbQBPD3RqZNYhe8Wv0cIjjFUsxMmGkD1NUbjkZ3rkq5e7KkU/HKFz/zPOuU777KC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=ZZMtG4hA; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (c-73-8-226-230.hsd1.il.comcast.net [73.8.226.230])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 41SNOFnH004196
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Feb 2024 18:24:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1709162658; bh=aLpaKC/xGwoHgFdGHg3o2dOEfRFF5USt86hoOxmf/NA=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=ZZMtG4hAt+6zTQfKlkdJHAVcfAbrF+z9GlpdchJesS0W8mipd9Zcm0zzB8vYTbc7V
+	 Azy7YCyorU4FuPCKjFVL5wtgZOpCgHM3aGb4AaV9RCJkBtL6t2blun/G6P9N068ALk
+	 jgfcXbwOBYvIiI3VyizoGq7Txcz06uAQ1nSpA9zYq2xCexkBxuBkYZxELHeP+7g8ga
+	 Gu9AbFQoCSEeS9cWUZxCSmwY72X5zt+3e8NxDWVsIpKfpKcdnuCUvY9I7uv8a1/P7G
+	 nCDdnfzqqmOM/6BP4k74gRAmZympygLitxB0Wca6D5pUJMH2/wp1Ur4LMkh9NwYi1G
+	 m4ltjvSU0Ko1Q==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 8B0913404B0; Wed, 28 Feb 2024 17:24:15 -0600 (CST)
+Date: Wed, 28 Feb 2024 17:24:15 -0600
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: John Garry <john.g.garry@oracle.com>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>
+Subject: Re: [LSF/MM/BPF TOPIC] untorn buffered writes
+Message-ID: <20240228232415.GB177082@mit.edu>
+References: <20240228061257.GA106651@mit.edu>
+ <b184a072-86ef-462b-a6da-c2537299aa59@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,151 +65,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgZAhEAK=POkKaUJP6_g4VUMUaiTM+PPH5jELy-JAyo8g@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <b184a072-86ef-462b-a6da-c2537299aa59@oracle.com>
 
-On Wed, Feb 28, 2024 at 12:17:50PM -0800, Linus Torvalds wrote:
-> On Wed, 28 Feb 2024 at 11:29, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> >
-> > The more concerning sitution to me would be if breaking write atomicity
-> > means that we end up with data in the file that doesn't correspond to an
-> > total ordering of writes; e.g. part of write a, then write b, then the
-> > rest of write a overlaying part of write b.
-> >
-> > Maybe that can't happen as long as writes are always happening in
-> > ascending folio order?
+On Wed, Feb 28, 2024 at 04:06:43PM +0000, John Garry wrote:
 > 
-> So that was what my suggestion about just overlapping one lock at a
-> time was about - we always do writes in ascending order, and
-> contiguously (even if the data source obviously isn't necessarily some
-> contiguous thing).
+> Note that the initial RFC for my series did propose an interface that does
+> allow a write to be split in the kernel on a boundary, and that boundary was
+> evaluated on a per-write basis by the length and alignment of the write
+> along with any extent alignment granularity.
 > 
-> And I think that's actually fundamental and not something we're likely
-> to get out of. If you do non-contiguous writes, you'll always treat
-> them as separate things.
-> 
-> Then just the "lock the next folio before unlocking the previous one"
-> would already give some relevant guarantees, in that at least you
-> wouldn't get overlapping writes where the write data would be mixed
-> up.
-> 
-> So you'd get *some* ordering, and while I wouldn't call it "total
-> ordering" (and I think with readers not taking locks you can't get
-> that anyway because readers will *always* see partial writes), I think
-> it's much better than some re-write model.
+> We decided not to pursue that, and instead require a write per 16K page, for
+> the example above.
 
-Well, the re-write model is for the case where we have to bail out, drop
-locks and re-fault, and that's no different here. But that's a side
-issue.
+Yes, I did see that.  And that leads to the problem where if you do an
+RWF_ATOMIC write which is 32k, then we are promising that it will be
+sent as a single 32k SCSI or NVMe request --- even though that isn't
+required by the database, the API is *promising* that we will honor
+it.  But that leads to the problem where for buffered writes, we need
+to track which dirty pages are part of write #1, where we had promised
+a 32k "atomic" write, which pages were part of writes #2, and #3,
+which were each promised to be 16k "atomic writes", and which pages
+were part of write #4, which was promised to be a 64k write.  If the
+pages dirtied by writes #1, #2, and #3, and #4 are all contiguous, how
+do we know what promise we had made about which pages should be
+atomically sent together in a single write request?  Do we have to
+store all of this information somewhere in the struct page or struct
+folio?
 
-The "just take the next lock before dropping the previous lock" approach
-- I agree that works just as well. I'm still trying to come up with a
-satisfying proof as to why - but one writer can't pass another writer,
-it's basically that.
+And if we use Matthew's suggestion that we treat each folio as the
+atomic write unit, does that mean that we have to break part or join
+folios together depending on which writes were sent with an RWF_ATOMIC
+write flag and by their size?
+
+You see?  This is why I think the RWF_ATOMIC flag, which was mostly
+harmless when it over-promised unneeded semantics for Direct I/O, is
+actively harmful and problematic for buffered I/O.
 
 > 
-> However, the "lock consecutive pages as you go along" does still have
-> the issue of "you have to be able to take a page fault in the middle".
+> If you check the latest discussion on XFS support we are proposing something
+> along those lines:
+> https://lore.kernel.org/linux-fsdevel/Zc1GwE%2F7QJisKZCX@dread.disaster.area/
 > 
-> And right now that actually depends on us always dropping the page
-> lock in between iterations.
+> There FS_IOC_FSSETXATTR would be used to set extent size w/ fsx.fsx_extsize
+> and new flag FS_XGLAG_FORCEALIGN to guarantee extent alignment, and this
+> alignment would be the largest untorn write granularity.
 > 
-> This issue is solvable - if you get a partial read while you hold a
-> page lock, you can always just see "are the pages I hold locks on not
-> up-to-date?" And decide to do the read yourself (and mark them
-> up-to-date). We don't do that right now because it's simpler not to,
-> but it's not conceptually a huge problem.
+> Note that I already got push back on using fcntl for this.
 
-Hang on, I think you're talking about two different issues. The "oops,
-copying from the _user_ buffer faulted" is the more annoying one here.
-If the destination folio wasn't uptodate, we just read that inline, we
-don't drop locks for that (at least my code doesn't; I'd have to have a
-look at filemap.c and iomap for those versions).
+There are two separable untorn write granularity that you might need to
+set, One is specifying the constraints that must be required for all
+block allocations associated with the file.  This needs to be
+persistent, and stored with the file or directory (or for the entire
+file system; I'll talk about this option in a moment) so that we know
+that a particular file has blocks allocated in contiguous chunks with
+the correct alignment so we can make the untorn write guarantee.
+Since this needs to be persistent, and set when the file is first
+created, that's why I could imagine that someone pushed back on using
+fcntl(2) --- since fcntl is a property of the file descriptor, not of
+the inode, and when you close the file descriptor, nothing that you
+set via fcntl(2) is persisted.
 
-There is another funny corner case where the destination folio wasn't
-uptodate, and we decided we didn't need to read it in because we were
-going to be fully overwriting it, but then we _didn't_ fully overwrite
-it - then we have to revert that part of the write.
+However, the second untorn write granularity which is required for
+writes using a particular file descriptor.  And please note that these
+two values don't necessarily need to be the same.  For example, if the
+first granularity is 32k, such that block allocations are done in 32k
+clusters, aligned on 32k boundaries, then you can provide untorn write
+guarantees of 8k, 16k, or 32k ---- so long as (a) the file or block
+device has the appropriate alignment guarantees, and (b) the hardware
+can support untorn write guarantees of the requested size.
 
-But if that happened it was because the useer copy didn't copy as much
-as we expected, i.e. it would've needed to take a page fault, so we have
-to bail out, drop locks and refault anyways.
+And for some file systems, and for block devices, you might not need
+to set the first untorn write granularity size at all.  For example,
+if the block device represents the entire disk, or represents a
+partition which is aligned on a 1MB boundary (which tends to be case
+for GPT partitions IIRC), then we don't need to set any kind of magic
+persistent granularity size, because it's a fundamental propert of the
+partition.  As another example, ext4 has the bigalloc file system
+feature, which allows you to set at file system creation time, a
+cluster allocation size which is a power of two multiple of the
+blocksize.  So for example, if you have a block size of 4k, and
+block/cluster ratio is 16, then the cluster size is 64k, and all data
+blocks will be done in aligned 64k chunks.
 
-As an aside, the "copy_to_(from|user) may recurse into arbitrary code
-and take arbitrary locks" is some scary stuff, and I very much doubt
-it's handled correctly everywhere. If I ever do the ioctl v2 proposal I
-wrote up awhile back, I think part of that should be doubble buffering
-approximately at the syscall layer so that we're not doing that from
-within rando driver/fs code holding rando locks; the 1% of cases that
-care about performance can do something special, but most shouldn't.
+The ext4 bigalloc feature has been around since 2011, so it's
+something that can be enabled even for a really ancient distro kernel.
+:-) Hence, we don't actually *need* any file system format changes.
+If there was a way that we could set a requeted untorn write
+granularity size associated with all writes to a particular file
+descriptor, via fcntl(2), that's all we actually need.  That is, we
+just need the non-persistent, file descriptor-specific write
+granularity parameter which applies to writes; and this would work for
+raw block devices, where we wouldn't have any *place* to store file
+attribute.  And like with ext4 bigalloc file systems, we don't need
+any file system format changes in order to support untorn writes for
+block devices, so long as the starting offset of the block device
+(zero if it's the whole disk) is appropriately aligned.
 
-> It *is* a practical problem, though.
-> 
-> For example, in generic_perform_write(), we've left page locking on
-> writes to the filesystems (ie it's done by
-> "->write_begin/->write_end"), so I think in reality that "don't
-> release the lock on folio N until after you've taken the lock on folio
-> N+1" isn't actually wonderful. It has some really nasty practical
-> issues.
+Cheers,
 
-yeah, write_begin and write_end are... odd, to say the least.
-
-> And yes, those practical issues are because of historical mistakes
-> (some of them very much by yours truly). Having one single "page lock"
-> was probably one of those historical mistakes. If we use a different
-> bit for serializing page writers, the above problem would go away as
-> an issue.
-
-well, it's a difficult situation, a _lot_ of different code ends up
-wanting to communicate state machine style through page flags.
-
-but yeah, we're not clear on whether folio lock protects
- - the data within the folio?
- - is it used for signalling read completion? (sometimes!)
- - is it used for guarding against against truncate/invalidate? There's
-   multiple different truncate/invalidate paths, for doing different
-   things based on folio dirty/writeback and perhaps locked
- - does it protect other filesystem state hanging off folio->private?
-   you might thing so, but I came to the conclusion that that was a bad
-   idea
-
-> ANYWAY.
-> 
-> At least with the current setup we literally depend on that "one page
-> at a time" behavior right now, and even XFS - which takes the inode
-> lock shared for reading - does *not* do it for reading a page during a
-> page fault for all these reasons.
-> 
-> XFS uses iomap_write_iter() instead of generic_perform_write(), but
-> the solution there is exactly the same, and the issue is fairly
-> fundamental (unless you want to always read in pages that you are
-> going to overwrite first).
-> 
-> This is also one of the (many) reasons I think the POSIX atomicity
-> model is complete garbage. I think the whole "reads are atomic with
-> respect to writes" is a feel-good bedtime story. It's simplistic, and
-> it's just not *real*, because it's basically not compatible with mmap.
-
-oh, I wouldn't go that far.
-
-I think the real problem is just undocumented behaviour that differs
-across filesystems, and we've got too many filesystems doing their own
-thing where their smart stuff should've been lifted up to the vfs (and
-yes, I am a guilty party here too).
-
-And another part of what makes this stuff hard is that it's always such
-a goddamn hassle to extend userspace interfaces, even just to add a
-couple flags. People have a real fear of that stuff, and when things are
-proposed they end up getting bikeshed to death, and then we _overdesign_
-stuff so that we don't have to repeat that process... no. Make it easy
-to add new userspace interfaces, do it in small bite sized chunks, one
-thing at a time, learn from our mistakes, depracate and add new
-revisions for the stuff that turned out to be crap.
-
-...What we really want here is just some flags so that userspace can
-specify what locking model they want. We're clearly capable of
-implementing multiple locking models, and the real nightmare scenario is
-some userspace program depending on stupidly subtle atomicity guarantees
-that only one filesystem implements AND THERE'S NOTHING TO GREP FOR IN
-THE CODE TO FIND IT.
+						- Ted
 
