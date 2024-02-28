@@ -1,135 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-13087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E711086B1D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 15:33:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAFF286B1FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 15:41:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CE1A1C21806
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:33:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9112B1F2469D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D85D15B0FD;
-	Wed, 28 Feb 2024 14:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Cutyhdiy"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A85115B992;
+	Wed, 28 Feb 2024 14:40:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F26715AADD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 14:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6809415A4AE;
+	Wed, 28 Feb 2024 14:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709130769; cv=none; b=Q9lBg8j3pyN0cfnPC1ABQ47ZYvV9Zft8Tyq995/KxDqVqmRRl4qmYzVR+6PoNBWLK4U/SEz8SMOmYth1J2h+6KD2I/UFFXxShnXh+4O66kbT5lPQ6MroswqVlAvo2kTWsmyGsWnjZ1eNrhQ6o99gKcarQZ4gInSyUu7yO9ad2L8=
+	t=1709131249; cv=none; b=Mu7arhBW387g8vlpSgPZOsQipCOfa81PQE8+1uexYuDhSdqpkjYxvjop5FRerFzi4/ozqcHoui286mn0yOJCPoSQJ0pxqPcm7pr/4UKb2zvOj/f0RdHdDVGFVrGETfnPmPwaMY1jpzjJ6gtCtYw7OyvGzli6aiB/LsZcCV/WKMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709130769; c=relaxed/simple;
-	bh=Z4/OtHVgP88SJVmMhlRSzEu+uUc+4K+vaFN0dJgQ/Y8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U3Tu/v/dKMZChCk4Uep84lS8MW7c9I1o7ClL/x0Kaf/JEPEXOtSx26Ee2+yLhsi9o8HRFntJF5WoHB8o/+gDEhM9lCH06GKt9bzDtlGrkz9iL02kEg/sAH6LtSSpwolNJC21SPVDdTC+c0ctlOYuAMOYsOxd7UzqXwfs1slnJc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Cutyhdiy; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7bf3283c18dso84269739f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 06:32:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709130766; x=1709735566; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P5AWaBgGMJ+Egc0FydP29vm1V1HTAxeYlVmY0RHDDGQ=;
-        b=CutyhdiySQwAYULDY9Ov4OEO6Ule0v5XfBsO6tjjD78QCdCV3J5ER8AYKJMJf3OP9D
-         HRIq+8Kf4epXy54GLJnEyrFwbtiNp0zGtvmJmBOJ+tdfcDAWEWOy663JaCtrFJebVLLI
-         eZogVPgystZOOzr2N+XDKAyKFGnmxkKJLzCaUXlTXMAhlwpH1fUkk+5xtKrMSg60uw41
-         KvgiceyDJTkFAJV8RI1DsgXKLpKmYIHqg1JqtwXCVtRSkNzE/gZpUqLaelRKHNjj4OU+
-         L4rEEEAMxJ+Biu3ELmqWms5BUEHxZ29HK1z4ULW/o8/Ezi+EPY0C6gQ3WIw6RVJ5Xblx
-         K1nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709130766; x=1709735566;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P5AWaBgGMJ+Egc0FydP29vm1V1HTAxeYlVmY0RHDDGQ=;
-        b=MxDkQzjlgnhFAYdgBfhIBA+AiFs8h9UlKBoEqUXpmzbt/DScYozhd63sbx31THZp45
-         8ihlmy3N64Og4n8AXHn/bsKOURL9FRZ/D48kRGleqipXTdQSEs0ubNm/vF55EPUY0dgt
-         7KQymRTb1kU3ngpoYJn6ssvk0tqTNwVjQrQ+DGA36IKAitykihCKuuvP7XE0gLaIYRxe
-         d5KL6cVBXYz1pg7qH3VStP1QU9kFh7iT/uC0Jt/DcZnC6Th7T6ORnCWsCLLs/BefLfIL
-         Ernu4rV1bvARsvbXrqMDLi/aP+NC2Ow2hfflqpkH/snDibc+ncH80vv8kQWcaHNi+dx5
-         8c7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUH6qgIvBqUvS/MZ8aSTiNk3foh0bCjWbkcvittkG3qS7I/pFLm26oYnP/XIFVyIJdBv+lvNgAU975K9n7qlJB690u4WYcEn4nr31MQkw==
-X-Gm-Message-State: AOJu0Ywq6hdTg15sOR2JAtc3/gePJXR160a+bLSTAh5GIBrImHGmvCA6
-	o6ZX9OovYzTVc3IJojMHSqtMtXr+TOhhscMb7c7NYrLW28L6wW5t4GdlkQq1XJ8=
-X-Google-Smtp-Source: AGHT+IEOva8/VcA0S3pCJqoDZDi/f+PQ6LlXWSd1zbUYjUE88BUIeGN3Cm0MHY37p9ejCegRNybMkg==
-X-Received: by 2002:a05:6e02:152b:b0:365:5dbd:ba43 with SMTP id i11-20020a056e02152b00b003655dbdba43mr13141860ilu.1.1709130766277;
-        Wed, 28 Feb 2024 06:32:46 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id r6-20020aa79886000000b006e466369645sm7872706pfl.132.2024.02.28.06.32.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Feb 2024 06:32:45 -0800 (PST)
-Message-ID: <4e3d80ad-3c61-4adf-b74f-0c62e468eb54@kernel.dk>
-Date: Wed, 28 Feb 2024 07:32:44 -0700
+	s=arc-20240116; t=1709131249; c=relaxed/simple;
+	bh=XHXeXaJRpFl8dTOB0fKC2pb2+NvmS7IshikIKOOpEW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=No1rggB2K1hloGbW2mKR+maCalv4l2SHjGABmNvOZN0l+NE/D2wW+LeX1YfpR3+oUzWpCrAvX+SWpE1tOjGTCfkU9A+ISWm8C+46cD7FMIU+4SRHI7alz0wE08L/9tMZHI6vARTu0Huz2AvhVe++6CgVPghKVx6iR9PSAE2oi3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TlH8L6K18z4f3l1V;
+	Wed, 28 Feb 2024 22:40:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 393841A0568;
+	Wed, 28 Feb 2024 22:40:42 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBHkRd9lwGKzFQ--.18779S4;
+	Wed, 28 Feb 2024 22:40:37 +0800 (CST)
+From: Hou Tao <houtao@huaweicloud.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Bernd Schubert <bernd.schubert@fastmail.fm>,
+	"Michael S . Tsirkin" <mst@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Benjamin Coddington <bcodding@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	houtao1@huawei.com
+Subject: [PATCH v2 0/6] virtiofs: fix the warning for ITER_KVEC dio
+Date: Wed, 28 Feb 2024 22:41:20 +0800
+Message-Id: <20240228144126.2864064-1-houtao@huaweicloud.com>
+X-Mailer: git-send-email 2.29.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 3/9] fuse: implement ioctls to manage backing files
-Content-Language: en-US
-To: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jingbo Xu <jefflexu@linux.alibaba.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org,
- Alessio Balsini <balsini@android.com>, Christian Brauner <brauner@kernel.org>
-References: <20240206142453.1906268-1-amir73il@gmail.com>
- <20240206142453.1906268-4-amir73il@gmail.com>
- <450d8b2d-c1d0-4d53-b998-74495e9eca3f@linux.alibaba.com>
- <CAOQ4uxhAY1m7ubJ3p-A3rSufw_53WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com>
- <CAJfpegu3_sUtTC1uCD7kFehJWTivkN_OjcQGsSAMkzEdub=XTw@mail.gmail.com>
- <CAOQ4uxji-yzWFeQYP9FKvVXg473GP6tC2pyHUbEPoYxT+qDYsA@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAOQ4uxji-yzWFeQYP9FKvVXg473GP6tC2pyHUbEPoYxT+qDYsA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBnOBHkRd9lwGKzFQ--.18779S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZryxAw4xAF45KF1kZry8uFg_yoW5Ar1xpr
+	WfKw45XrsxJFy7Ar93C3Z8Gw1rCws5JFy7W393Ww1UCa15X3W7uryqvFyYqry7ArykAFy8
+	tr1Fqa4v9w1qv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
+	0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
+	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
+	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
+	CF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-On 2/28/24 4:28 AM, Amir Goldstein wrote:
-> On Wed, Feb 28, 2024 at 1:14?PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->>
->> On Wed, 28 Feb 2024 at 12:08, Amir Goldstein <amir73il@gmail.com> wrote:
->>
->>> I don't think so, because it will allow unprivileged user to exceed its
->>> nested rlimits and hide open files that are invisble to lsof.
->>
->> How does io_uring deal with the similar problem of "fixed files"?
->>
-> 
-> Good question.
-> 
-> Jens, Chritian,
-> Are fixed files visible to lsof?
+From: Hou Tao <houtao1@huawei.com>
 
-lsof won't show them, but you can read the fdinfo of the io_uring fd to
-see them. Would probably be possible to make lsof find and show them
-too, but haven't looked into that.
+Hi,
 
-> Do they have to remain open in the files table of process that set them
-> in addition to being registered as fixed files?
+The patch set aims to fix the warning related to an abnormal size
+parameter of kmalloc() in virtiofs. The warning occurred when attempting
+to insert a 10MB sized kernel module kept in a virtiofs with cache
+disabled. As analyzed in patch #1, the root cause is that the length of
+the read buffer is no limited, and the read buffer is passed directly to
+virtiofs through out_args[0].value. Therefore patch #1 limits the
+length of the read buffer passed to virtiofs by using max_pages. However
+it is not enough, because now the maximal value of max_pages is 256.
+Consequently, when reading a 10MB-sized kernel module, the length of the
+bounce buffer in virtiofs will be 40 + (256 * 4096), and kmalloc will
+try to allocate 2MB from memory subsystem. The request for 2MB of
+physically contiguous memory significantly stress the memory subsystem
+and may fail indefinitely on hosts with fragmented memory. To address
+this, patch #2~#5 use scattered pages in a bio_vec to replace the
+kmalloc-allocated bounce buffer when the length of the bounce buffer for
+KVEC_ITER dio is larger than PAGE_SIZE. The final issue with the
+allocation of the bounce buffer and sg array in virtiofs is that
+GFP_ATOMIC is used even when the allocation occurs in a kworker context.
+Therefore the last patch uses GFP_NOFS for the allocation of both sg
+array and bounce buffer when initiated by the kworker. For more details,
+please check the individual patches.
 
-No, in fact they never have to be there in the first place. You can open
-a normal file and then register it, now it's in both. Then you can close
-the normal fd, and now it's not in the normal process file table
-anymore, just in the direct list.
+As usual, comments are always welcome.
 
-Or you can instantiate it as a direct descriptor to begin with, and then
-it'll never have been in the normal file table.
+Change Log:
 
-> Do they get accounted in rlimit? of which user?
+v2:
+  * limit the length of ITER_KVEC dio by max_pages instead of the
+    newly-introduced max_nopage_rw. Using max_pages make the ITER_KVEC
+    dio being consistent with other rw operations.
+  * replace kmalloc-allocated bounce buffer by using a bounce buffer
+    backed by scattered pages when the length of the bounce buffer for
+    KVEC_ITER dio is larger than PAG_SIZE, so even on hosts with
+    fragmented memory, the KVEC_ITER dio can be handled normally by
+    virtiofs. (Bernd Schubert)
+  * merge the GFP_NOFS patch [1] into this patch-set and use
+    memalloc_nofs_{save|restore}+GFP_KERNEL instead of GFP_NOFS
+    (Benjamin Coddington)
 
-The fixed file table is limited in size by RLIMIT_NOFILE by the user
-that registers it.
+v1: https://lore.kernel.org/linux-fsdevel/20240103105929.1902658-1-houtao@huaweicloud.com/
+
+[1]: https://lore.kernel.org/linux-fsdevel/20240105105305.4052672-1-houtao@huaweicloud.com/
+
+Hou Tao (6):
+  fuse: limit the length of ITER_KVEC dio by max_pages
+  virtiofs: move alloc/free of argbuf into separated helpers
+  virtiofs: factor out more common methods for argbuf
+  virtiofs: support bounce buffer backed by scattered pages
+  virtiofs: use scattered bounce buffer for ITER_KVEC dio
+  virtiofs: use GFP_NOFS when enqueuing request through kworker
+
+ fs/fuse/file.c      |  12 +-
+ fs/fuse/virtio_fs.c | 336 +++++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 296 insertions(+), 52 deletions(-)
 
 -- 
-Jens Axboe
+2.29.2
 
 
