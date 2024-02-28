@@ -1,91 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-13058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7730C86ABCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 10:59:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAAE86ABDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 11:07:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76DB287125
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 09:59:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7D51F238BF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 10:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306A4364C0;
-	Wed, 28 Feb 2024 09:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374BD364D2;
+	Wed, 28 Feb 2024 10:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="icAGfAtG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WuM1xVIX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08CE36123
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 09:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8213A249F7;
+	Wed, 28 Feb 2024 10:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709114337; cv=none; b=QlvFsNE3m6wQE9QfJ6Odf5+ql7GKnLIbZHDKNug7GEjuDYZlf7rSvSeDDMo7AGOowJXNHVhQzMKniW6+ig9Fnl3t/fAARpP4NMr4u61l1RHdAVBK+lw2EUttylJVHVoYR+3jAlcA/1Sa4YFQ3IKcbZOlFEi6jl910umI3hCruxg=
+	t=1709114849; cv=none; b=HmlLx4Kmsmx2AgkhYnHDgFHQVKHY6bFiljo72t0ORGV84fwTp+fIq3Lr3F2VTo0o5MeorhiflKMWU22zL8LxIzD0rDM5AiPaHnZtB1cz5FdwpNz13Xh+9H5/oJrW1gvB0iTNpTdGDJnzdN3abxa9gUDDvVENuLPhTVbFLZudpVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709114337; c=relaxed/simple;
-	bh=sleA26mV/tde50MP5rnI4lqz6QKoKHWgsEtYcy8hAeQ=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=u5MXzDXPyttpd1BVgPaYxudOHuAvB2DJPgJKL+dYnioKj72nO2ES2j/058WgnOHdp884zbp8ZCFY6V/sp1dtUsvgVBOjoIhIiZhEVMn6YUTpJlHYlIjlHD+7kjQ93eCWb1/8nYzPPEPJc36JcLfABsc1QqG1YXhSZOGmM7WgbkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=icAGfAtG; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a293f2280c7so802937566b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 01:58:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1709114332; x=1709719132; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9tZSFA9TNC8Nuqr5EXNMkcxxuNUWYaw6b2s8R1XXBEs=;
-        b=icAGfAtGBoyiuE+sXv/sfMoq5UqBO7EDQuP9lHWh3F4JAGfOaRcLrSeoOJqqKCpS9W
-         mA/JiyD66pDLWyA0SQ53xr7TZChPtdp2HZFXQK0Oid37TgW/6bIufypipa/4T0u5Syb8
-         4jbEUuwbtluIVPhDzICyNtUXbJRZ80KzmFPWY2upLHiKLt9ox7pawZQ2FZqXWOB/iH4g
-         hoPKtfFPX8lt9RZhhf6eA9cpzQz5ZkzfDLs82QoymcmF7aOaT4UCHeWUBqC0L/Hwc9Wq
-         sgPwsYt4VyWfHxaBK9tmIgfoC4Q2ay1FgRtf7IrhFyJBM0QjaKkhwo/YuCIWrQxOX+y1
-         YYSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709114332; x=1709719132;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9tZSFA9TNC8Nuqr5EXNMkcxxuNUWYaw6b2s8R1XXBEs=;
-        b=SSk5wZ/4r2C+u9B0y8kxLNVx3S3gQX2aWjD4Zbkm22IMf2iXNSOpkjz047pAkeNuFT
-         NFBxmw1ydXXP2i/NZH6SDHH1U6TwQXKo0DfTC9+uFwWUyovHfW9ehWCfCT9H27nahZLl
-         /nD6b4WxrhB4DiLd6bBngBIEfmIvwewHTEQBXluzGIENs5pIqeLnuQ3J+VE+/oqVam9P
-         VqP2RBzijr7ifJOr4YOdfbgStPNmsUBN4/U7pM3a1bD3nBzsNXX6QUGg/jB7y7kgAHno
-         2wtaLcpjMeheiaMdm36oP0YxFR/OSzbFQheKQ6hpJvGxqNyD2+NqSpo943U57SFuxiZ6
-         qIFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpTfISziijLh4Dl/UVNq++VpYFuDzXtF5u0Il+yGCudLortUakAZgrmVA0OJ/oHgZubH679Izq7cuystf6Di8tiw6cyEjcMx6cC7QyTA==
-X-Gm-Message-State: AOJu0Yw1zaAQ6x3i1eB4Wo//0fJY7cDsbIrtTlNcm+eGmOv0w+4oO/vC
-	Na62S95kCzjWSNNfjXgMXN2Zw9x79eNw+NUeZKW5IjSwYTOmspe9wTMTLhB1IyLPUhWzCkYnTUS
-	g
-X-Google-Smtp-Source: AGHT+IFXvcS3SdW+x9XVkAFE4CV7oMvqgtzV0IZUMaJ7OLxvJfmzwEJF8ZwFxnNeHHgrppTXGMcNyQ==
-X-Received: by 2002:a17:906:882:b0:a43:5dbc:4c04 with SMTP id n2-20020a170906088200b00a435dbc4c04mr4818890eje.48.1709114331601;
-        Wed, 28 Feb 2024 01:58:51 -0800 (PST)
-Received: from localhost ([79.142.230.34])
-        by smtp.gmail.com with ESMTPSA id f8-20020a170906c08800b00a434b5fcab6sm1671082ejz.221.2024.02.28.01.58.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Feb 2024 01:58:51 -0800 (PST)
-References: <20240209223201.2145570-2-mcanal@igalia.com>
- <20240209223201.2145570-4-mcanal@igalia.com> <87plwi9waq.fsf@metaspace.dk>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: Andreas Hindborg <nmi@metaspace.dk>
-Cc: =?utf-8?Q?Ma=C3=ADra?= Canal <mcanal@igalia.com>, Asahi Lina
- <lina@asahilina.net>, Miguel
- Ojeda <ojeda@kernel.org>, Alex  Gaynor <alex.gaynor@gmail.com>, Wedson
- Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy  Baron
- <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
- Matthew Wilcox <willy@infradead.org>, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com
-Subject: Re: [PATCH v7 2/2] rust: xarray: Add an abstraction for XArray
-Date: Wed, 28 Feb 2024 10:56:41 +0100
-In-reply-to: <87plwi9waq.fsf@metaspace.dk>
-Message-ID: <87cysgap0u.fsf@metaspace.dk>
+	s=arc-20240116; t=1709114849; c=relaxed/simple;
+	bh=rZo0ydXrxvyEza4GJeAVdGqsDl2NljfQHPEeT26VUQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aUgnjmyzpRTsITJcMIIpFq4ong/dcOt/WzfbgG/arbP+9vbhoQfId0H0QqQ0fGQqg+yooxZdaeNIjlWYDlg02OXiaeDqPNNwThi6PE1bvAILSxbZW3cMpQTh8zMG2bqx5s2W7irqtWAtmH96k2elRX/DYWwOwi9TJzfSkVjS4Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WuM1xVIX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 187EBC433C7;
+	Wed, 28 Feb 2024 10:07:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709114849;
+	bh=rZo0ydXrxvyEza4GJeAVdGqsDl2NljfQHPEeT26VUQ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WuM1xVIXTrnvPCUNb1upoTRr6ZnMNWc28k/bJOaWRcgrBqQN9L8bhr8QcnlVpxmig
+	 UU5d/n7Jv9j4xry3qIvV6rFL1KMlE80Dph11hGAdHsRBFr2V6vxAvafZ5CDvVfNC9c
+	 aY6CoJwHd/x76McxmCzal+7v3iHJCSgei6rh9XCtVfIwQ3EydBzYjTTzr2y9twVqFS
+	 DhDnBwjWSerNtKR7iyS3Oupd8PSDPe+dylGQmN9ZrvPhUU291xSzDz+AT4epFE9eEM
+	 OsbLXdQb28XUZ1cunSl1Kn0mr3b3U/AwiXOc8I+U0QzhO2FhBIMjBLXtpkyjk7qod0
+	 vChwXxkI40VPQ==
+Date: Wed, 28 Feb 2024 11:07:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: John Groves <John@groves.net>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, john@jagalactic.com, Dave Chinner <david@fromorbit.com>, 
+	Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com, gregory.price@memverge.com
+Subject: Re: [RFC PATCH 11/20] famfs: Add fs_context_operations
+Message-ID: <20240228-zecken-zonen-d07e89c6f536@brauner>
+References: <a645646f071e7baa30ef37ea46ea1330ac2eb63f.1708709155.git.john@groves.net>
+ <20240227-mammut-tastatur-d791ca2f556b@brauner>
+ <6jrtl2vc4dmi5b6db6tte2ckiyjmiwezbtlwrtmm464v65wkhj@znzv2mwjfgsk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,75 +63,216 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <6jrtl2vc4dmi5b6db6tte2ckiyjmiwezbtlwrtmm464v65wkhj@znzv2mwjfgsk>
 
+> I wasn't aware of the new fsconfig interface. Is there documentation or a
+> file sytsem that already uses it that I should refer to? I didn't find an
+> obvious candidate, but it might be me. If it should be obvious from the
+> example above, tell me and I'll try harder.
+> 
+> My famfs code above was copied from ramfs. If you point me to 
 
-Andreas Hindborg <nmi@metaspace.dk> writes:
+Ok, but that's the wrong filesystem to use as a model imho. Because it
+really doesn't deal with devices at all. That's why it uses
+get_tree_nodev() with "nodev" as in "no device" kinda. So ramfs doesn't
+have any of these issues. Whereas your filesystems is dealing with
+devices dax (or pmem).
 
-> Ma=C3=ADra Canal <mcanal@igalia.com> writes:
->
->> From: Asahi Lina <lina@asahilina.net>
->>
->> The XArray is an abstract data type which behaves like a very large
->> array of pointers. Add a Rust abstraction for this data type.
->>
->> The initial implementation uses explicit locking on get operations and
->> returns a guard which blocks mutation, ensuring that the referenced
->> object remains alive. To avoid excessive serialization, users are
->> expected to use an inner type that can be efficiently cloned (such as
->> Arc<T>), and eagerly clone and drop the guard to unblock other users
->> after a lookup.
->>
->> Future variants may support using RCU instead to avoid mutex locking.
->>
->> This abstraction also introduces a reservation mechanism, which can be
->> used by alloc-capable XArrays to reserve a free slot without immediately
->> filling it, and then do so at a later time. If the reservation is
->> dropped without being filled, the slot is freed again for other users,
->> which eliminates the need for explicit cleanup code.
->>
->> Signed-off-by: Asahi Lina <lina@asahilina.net>
->> Co-developed-by: Ma=C3=ADra Canal <mcanal@igalia.com>
->> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
->> ---
->
->
-> Reviewed-by: Andreas Hindborg <a.hindborg@samsung.com>
+> documentation I might send you a ramfs fsconfig patch too :D.
 
-Actually clippy complains about use of the name `foo` for a variable in
-the example. Fix:
+So the manpages are at:
 
-diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
-index 849915ea633c..aba09cf28c4b 100644
---- a/rust/kernel/xarray.rs
-+++ b/rust/kernel/xarray.rs
-@@ -185,8 +185,8 @@ fn drop(&mut self) {
- /// let arr =3D Box::pin_init(XArray::<Arc<Foo>>::new(flags::ALLOC1))
- ///                        .expect("Unable to allocate XArray");
- ///
--/// let foo =3D Arc::try_new(Foo { a : 1, b: 2 }).expect("Unable to alloca=
-te Foo");
--/// let index =3D arr.alloc(foo).expect("Error allocating Index");
-+/// let item =3D Arc::try_new(Foo { a : 1, b: 2 }).expect("Unable to alloc=
-ate Foo");
-+/// let index =3D arr.alloc(item).expect("Error allocating Index");
- ///
- /// if let Some(guard) =3D arr.get_locked(index) {
- ///     assert_eq!(guard.borrow().a, 1);
-@@ -195,8 +195,8 @@ fn drop(&mut self) {
- ///     pr_info!("No value found in index {}", index);
- /// }
- ///
--/// let foo =3D Arc::try_new(Foo { a : 3, b: 4 }).expect("Unable to alloca=
-te Foo");
--/// let index =3D arr.alloc(foo).expect("Error allocating Index");
-+/// let item =3D Arc::try_new(Foo { a : 3, b: 4 }).expect("Unable to alloc=
-ate Foo");
-+/// let index =3D arr.alloc(item).expect("Error allocating Index");
- ///
- /// if let Some(removed_data) =3D arr.remove(index) {
- ///     assert_eq!(removed_data.a, 3);
+https://github.com/brauner/man-pages-md
 
+But really, there shouldn't be anything that needs to change for ramfs.
 
-BR Andreas
+> > What errno is EALREADY? Isn't that socket stuff. In any case, it seems
+> > you want EBUSY?
+> 
+> Thanks... That should probaby be EBUSY. But the whole famfs_context_list
+> should probably also be removed. More below...
+> 
+> > 
+> > But bigger picture I'm lost. And why do you keep that list based on
+> > strings? What if I do:
+> > 
+> > mount -t famfs /dev/pmem1234 /mnt # succeeds
+> > 
+> > mount -t famfs /dev/pmem1234 /opt # ah, fsck me, this fails.. But wait a minute....
+> > 
+> > mount --bind /dev/pmem1234 /evil-masterplan
+> > 
+> > mount -t famfs /evil-masterplan /opt # succeeds. YAY
+> > 
+> > I believe that would trivially defeat your check.
+> > 
+> 
+> And I suspect this is related to the get_tree issue you noticed below.
+> 
+> This famfs code was working in 6.5 without keeping the linked list of devices,
+> but in 6.6/6.7/6.8 it works provided you don't try to repeat a mount command
+> that has already succeeded. I'm not sure why 6.5 protected me from that,
+> but the later versions don't. In 6.6+ That hits a BUG_ON (have specifics on 
+> that but not handy right now).
+
+get_tree_nodev() by default will always allocate a new superblock. This
+is how tmpfs and ramfs work. If you do:
+
+mount -t tmpfs tmpfs /mnt
+mount -t tmpfs tmpfs /opt
+
+You get two new, independent superblocks. This is what you want for
+these multi-instance filesystems: each new mount creates a new instance.
+
+If famfs doesn't want to allow reusing devices - which I very much think
+it wants to prevent - then it cannot use get_tree_nodev() directly
+without having a hack like you did. Because you'll get a new superblock
+no problem. So the fact that it did work somehow likely was a bug in
+your code.
+
+The reason your code causes crashes is very likely this:
+
+struct famfs_fs_info *fsi = sb->s_fs_info;
+handlep = bdev_open_by_path(fc->source, FAMFS_BLKDEV_MODE, fsi, &fs_holder_ops);
+
+If you look at Documentation/filesystems/porting.rst you should see that
+if you use @fs_holder_ops then your holder should be the struct
+super_block, not your personal fsinfo.
+
+> So for a while we just removed repeated mount requests from the famfs smoke
+> tests, but eventually I implemented the list above, which - though you're right
+> it would be easy to circumvent and therefore is not right - it did solve the
+> problem that we were testing for.
+> 
+> I suspect that correctly handling get_tree might solve this problem.
+> 
+> Please assume that linked list will be removed - it was not the right solution.
+> 
+> More below...
+> 
+> > > +		}
+> > > +	}
+> > > +
+> > > +	list_add(&fsi->fsi_list, &famfs_context_list);
+> > > +	mutex_unlock(&famfs_context_mutex);
+> > > +
+> > > +	return get_tree_nodev(fc, famfs_fill_super);
+> > 
+> > So why isn't this using get_tree_bdev()? Note that a while ago I
+> > added FSCONFIG_CMD_CREAT_EXCL which prevents silent superblock reuse. To
+> > implement that I added fs_context->exclusive. If you unconditionally set
+> > fc->exclusive = 1 in your famfs_init_fs_context() and use
+> > get_tree_bdev() it will give you EBUSY if fc->source is already in use -
+> > including other famfs instances.
+> > 
+> > I also fail to yet understand how that function which actually opens the block
+> > device and gets the dax device figures into this. It's a bit hard to follow
+> > what's going on since you add all those unused functions and types so there's
+> > never a wider context to see that stuff in.
+> 
+> Clearly that's a bug in my code. That get_tree_nodev() is from ramfs, which
+> was the starting point for famfs.
+> 
+> I'm wondering if doing this correctly (get_tree_bdev() when it's pmem) would
+> have solved my double mount problem on 6.6 onward.
+> 
+> However, there's another wrinkle: I'm concluding
+> (see https://lore.kernel.org/linux-fsdevel/ups6cvjw6bx5m3hotn452brbbcgemnarsasre6ep2lbe4tpjsy@ezp6oh5c72ur/)
+> that famfs should drop block support and just work with /dev/dax. So famfs 
+> may be the first file system to be hosted on a character device? Certainly 
+> first on character dax. 
+
+Ugh, ok. I defer to others whether that makes sense or not. It would be
+a lot easier for you if you used pmem block devices, I guess because it
+would be easy to detect reuse in common infrastructure.
+
+But also, I'm looking at your code a bit closer. There's a bit of a
+wrinkle the way it's currently written...
+
+Say someone went a bit weird and did:
+
+mount -t xfs xfs /dev/sda /my/xfs-filesystem
+mknod DAX_DEVICE /my/xfs-filesystem/dax1234
+
+and then did:
+
+mount -t famfs famfs /my/xfs-filesystem/dax1234 /mnt
+
+Internally in famfs you do:
+
+fsi->dax_filp = filp_open(fc->source, O_RDWR, 0);
+
+and you stash that file... Which means that you are pinning that xfs
+filesystems implicitly. IOW, if someone does:
+
+umount /my/xfs-filesystem
+
+they get EBUSY for completely opaque reasons. And if they did:
+
+umount -l /my/xfs-filesystem
+
+followed by mounting that xfs filesystem again they'd get the same
+superblock for that xfs filesystem.
+
+What I'm trying to say is that I think you cannot pin another filesystem
+like this when you open that device.
+
+IOW, you either need to stash the plain dax device or dax needs to
+become it's own tiny internal pseudo fs such that we can open dax
+devices internally just like files. Which might actually also be worth
+doing. But I'm not the maintainer of that.
+
+> 
+> Given that, what variant of get_tree() should it call? Should it add 
+> get_tree_dax()? I'm not yet familiar enough with that code to have a worthy 
+> opinion on this.
+
+I don't think we need a common helper if famfs would be the only user of this.
+But maybe I'm wrong. But roughly you'd need something similar to what we
+do for block devices, I'd reckon. So lookup_daxdev() which is similar to
+lookup_bdev() and allows you to translate from path to dax device
+number maybe.
+
+lookup_daxdev(const char *name, struct dax_dev? *daxdev)
+{
+	/* Don't actually open the dax device pointlessly */
+	kern_path(fc->source, LOOKUP_FOLLOW, path);
+	if (!S_ISCHR(inode->i_mode))
+		// fail
+	if (!may_open_dev(&path))
+		// fail
+
+	// check dax device and pin
+
+	// get rid of path references
+	path_put(&path);
+}
+
+famfs_get_tree(/* broken broken broken */)
+{
+
+	lookup_daxdev(fc->source, &ddev);
+
+	sb = sget_fc(fc, famfs_test_super, set_anon_super_fc)
+	if (IS_ERR(sb))
+		// Error here may mean (aside from memory):
+		// * superblock incompatible bc of read-write vs read-only
+		// * non-matching user namespace
+		// * FSCONFIG_CMD_CREATE_EXCL requested by mounter
+
+	if (!sb->s_root) {
+		// fill_super; new sb; dax device currently not used.
+	} else {
+		// A superblock for that dax device already exists and
+		// may be reused. Any additional rejection reasons for
+		// such an sb are up to the filesystem.
+	}
+
+	// Now really open or claim the dax device.
+	// If you fail get rid of the superblock
+	// (deactivate_locked_super()).
+
+All handwavy, I know and probably I forgot details. But for you to fill
+that in. ;)
 
