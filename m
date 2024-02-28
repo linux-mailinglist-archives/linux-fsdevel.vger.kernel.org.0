@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-13031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B321586A4F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 02:23:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF5186A4F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 02:26:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E41941C22DA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 01:23:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92739B2C8C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 01:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6041DDF1;
-	Wed, 28 Feb 2024 01:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D632031E;
+	Wed, 28 Feb 2024 01:23:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957DFFBEA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B441170F;
 	Wed, 28 Feb 2024 01:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709083395; cv=none; b=YFfTV2aGjVda5esK1rfU+5FzsTVj0zTV+9jAxhIBCpuOhonJ1DAUDG2rkiGjVPU6TZJ0Ldi/jAMnTfX7It/7w9DOTDlzs5J9WaeEuSh7kNXMIt1wGuPELbygg+/mRqR5Y70H61e/9myZQLzk4iu1hO3R8OMrxqDWJIkjJ9LBOdk=
+	t=1709083395; cv=none; b=uYOpAnveepAsoGxiyxLeBBfsSRSjc03+Hxy9fPf98vYIo+L9zQgMWBJL0oEkK6NuC/9hOHETmn/ubtDEYzUz2aqbzhwfhEr1r8Qedb0rUzJWJ/y8hG7wbmn2kGfU2yLwNi9MTiTpHD6hVyGSL/LsKgCTXQnMYRaSKGAUCYHH3NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1709083395; c=relaxed/simple;
-	bh=T+yVge9mGzkBG9/MMKYIx3R2pe6wng5e7vxmjci1zjY=;
+	bh=70fgOT0vFPjiubuyATTULGAqEv4jfeGA/T40KZH9Jt8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AHQx0WvIj/IcQHGB8KYJCEzf9FsZnyvznc6CKNUj7eCRANggemOSCbj4b3wOLAMV/y9jqsTAspMd2sEr6vRPKAK8EzlFwYt13lbbkb5UW4iFrI2whQxlZ8ClM+wm6XFKuwbSxMPs1UZ4uscoFxQOCsF+309fyNnIXK1rV8+SbEY=
+	 MIME-Version; b=evkXuxo8zNdVDUUCzUxSUF+EKK7L0EqSpKkV2c5C43w5cwDRgRNL04aT3qQ+5VjiNRXOGj//ugD0rEiiW5abjzt6rd9YXSXMSgWpu8rRvXz2KUbdO8PO8IPPwGT4vcJSueZVbUIe/CRqGMzNctEkM7tsqYctRsP8Udu3B0e9Rkg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TkxS94jBdz4f3kFH;
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TkxSB013Rz4f3kFQ;
 	Wed, 28 Feb 2024 09:23:05 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id DB3F61A0283;
-	Wed, 28 Feb 2024 09:23:10 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 39A701A0283;
+	Wed, 28 Feb 2024 09:23:11 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP1 (Coremail) with SMTP id cCh0CgDX8gv7it5lqQx6FQ--.57137S7;
-	Wed, 28 Feb 2024 09:23:10 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgDX8gv7it5lqQx6FQ--.57137S8;
+	Wed, 28 Feb 2024 09:23:11 +0800 (CST)
 From: Kemeng Shi <shikemeng@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -45,9 +45,9 @@ To: viro@zeniv.linux.org.uk,
 	tim.c.chen@linux.intel.com
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/6] fs/writeback: correct comment of __wakeup_flusher_threads_bdi
-Date: Wed, 28 Feb 2024 17:19:57 +0800
-Message-Id: <20240228091958.288260-6-shikemeng@huaweicloud.com>
+Subject: [PATCH v2 6/6] fs/writeback: remove unnecessary return in writeback_inodes_sb
+Date: Wed, 28 Feb 2024 17:19:58 +0800
+Message-Id: <20240228091958.288260-7-shikemeng@huaweicloud.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20240228091958.288260-1-shikemeng@huaweicloud.com>
 References: <20240228091958.288260-1-shikemeng@huaweicloud.com>
@@ -58,10 +58,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDX8gv7it5lqQx6FQ--.57137S7
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFy8Zw4kZr4xXr45ZFykAFb_yoWfZwb_XF
-	W8tr4DCrZI9Fn8Ja4xZ3Z3tFyvg3ykCF15uF4fKF98J3WY9rn7Zr4kZFWDGr1j9ayUuFWx
-	G3srXr4jyrZI9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID:cCh0CgDX8gv7it5lqQx6FQ--.57137S8
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jry8Cw4UGw18KF45Kr4kJFb_yoW3WFb_XF
+	15JFs2yFsFqF4xA3y8ZasxtF4v9F1rCF1rJF1akas8J3WY9r97Zr4vyw4DJryv9a47ZFWD
+	Gw1fXrW2yrZY9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
 	9fnUUIcSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
 	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl82
 	xGYIkIc2x26280x7IE14v26r126s0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC
@@ -77,31 +77,28 @@ X-Coremail-Antispam: 1UD129KBjvdXoWrZFy8Zw4kZr4xXr45ZFykAFb_yoWfZwb_XF
 	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jstxDUUUUU=
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Commit e8e8a0c6c9bfc ("writeback: move nr_pages == 0 logic to one
-location") removed parameter nr_pages of __wakeup_flusher_threads_bdi
-and we try to writeback all dirty pages in __wakeup_flusher_threads_bdi
-now. Just correct stale comment.
+writeback_inodes_sb doesn't have return value, just remove unnecessary
+return in it.
 
 Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/fs-writeback.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/fs-writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index c98684e9e6ba..7e344a4e727e 100644
+index 7e344a4e727e..362a5409f92e 100644
 --- a/fs/fs-writeback.c
 +++ b/fs/fs-writeback.c
-@@ -2332,8 +2332,7 @@ void wb_workfn(struct work_struct *work)
- }
- 
- /*
-- * Start writeback of `nr_pages' pages on this bdi. If `nr_pages' is zero,
-- * write back the whole world.
-+ * Start writeback of all dirty pages on this bdi.
+@@ -2735,7 +2735,7 @@ EXPORT_SYMBOL(writeback_inodes_sb_nr);
   */
- static void __wakeup_flusher_threads_bdi(struct backing_dev_info *bdi,
- 					 enum wb_reason reason)
+ void writeback_inodes_sb(struct super_block *sb, enum wb_reason reason)
+ {
+-	return writeback_inodes_sb_nr(sb, get_nr_dirty_pages(), reason);
++	writeback_inodes_sb_nr(sb, get_nr_dirty_pages(), reason);
+ }
+ EXPORT_SYMBOL(writeback_inodes_sb);
+ 
 -- 
 2.30.0
 
