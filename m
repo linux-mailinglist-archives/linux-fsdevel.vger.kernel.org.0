@@ -1,109 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-13072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876F186AD89
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 12:37:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD64886ADE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 12:46:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 417D828EFAC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 11:37:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08431C21320
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 11:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831DE137C21;
-	Wed, 28 Feb 2024 11:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E389145FF9;
+	Wed, 28 Feb 2024 11:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUJuaWOr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UOXPevuP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC5213699F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 11:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78227145B2C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 11:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709119730; cv=none; b=U7tdPcneKMWBFfGnx5djkSNhUTb8Jgde9BXoolDwLt9Dba3FISsnU+4z7l4Ha3dMlhZd09VD7bxHA+0Pcsl4xKjQUqhXzGxgMgmA83duYqD13g4igd+fUBCG6P8eBokIyNwxcfCQJQTyAO5l6nba9/SWLo+9Fd7E7ISlzanhVk4=
+	t=1709120338; cv=none; b=efpWt12nksoel6KMgPi3KNgL1SAMYoFpuKXTC6RaOsFvSJZiSZWEfzG0WBKcMeKhL42zy5fW3/j8mY5LSO/56W8Ouxu8vT4iJfFTAfPBdpULz7c7cwO7smJ27FLl8dOC+4Qr3CiVS8fcy8GwcXiGBwIw+1X9Yj45XU7BboO29Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709119730; c=relaxed/simple;
-	bh=17LS05FsEPOKKmcq77qovsK2s+U7wevbqPjjHS4JS/E=;
+	s=arc-20240116; t=1709120338; c=relaxed/simple;
+	bh=hjtQESQxE6xGy5oUhCMEFsopxmFAGFC649c68eiRlQ0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SrU9ZUK1euq40854RHLWLE8LY9bQBuHncYS/9xmbHtXDUE+FO2qAZ2Cq9N25GeGS3hFhBwTUuIrcuQUcBpcRwW3a42UV5cYiuqJg4yY8p/OkFQwRogn1ursKdqTqxO4bv71ASCTPT1/3eVsCtQLS9Zjk2K6Zn/qYU4wTxUeU4is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nUJuaWOr; arc=none smtp.client-ip=209.85.128.178
+	 To:Cc:Content-Type; b=bvvbD0PXDK/Rs1CCNBgPfLOsz2KbikmVB5kIZpMtxVaKFd4tIoCbTJmxPAOKqpDu89nCWVIn8g8Yp4wWy2qQD3mXBvUmAIbYKnT9/Lmg6sznxMPKChAdbdVJttJBI/m/29puE0hlyL522Tm+gYsJeEq7zWnH4xSAQkXIGHoiTF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UOXPevuP; arc=none smtp.client-ip=209.85.219.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-608cf2e08f9so49241537b3.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 03:28:48 -0800 (PST)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dcbd1d4904dso5410459276.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 03:38:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709119727; x=1709724527; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1709120335; x=1709725135; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=17LS05FsEPOKKmcq77qovsK2s+U7wevbqPjjHS4JS/E=;
-        b=nUJuaWOr/KxE/lGc+9kGGYFe7wCktw3cCD6i/Ced1QyLaZQJzGK7J9pUPj7fEvRaCc
-         0ghZH7Kt2xk/Wbe9kMSwR0FvOQb2OUdAWv0VVdNS/w1mB1+Q5ehW9Unff4RBsUTo+D2i
-         9KHhJr+rr+kPJOccBEVatS4D6QgznxC/O7ROd39saCVIK2KeEW6snH7WWCAqvvKJdS6e
-         WRL92RrC6DKjfRi/cSsnav+uE1xY+jCXVvRqndCLFLD7EzFPpDt4D6Wx/+t0ew2hyQqN
-         gLQ5VV+GIH3GMZai3Eovp9Q9wVDLQ6hoMZK/0SwJAeV8JAJToOs7XGxHTTpLQHJ7ACLO
-         GnQw==
+        bh=3cVHkaT8lHsHCD4Yo8gLGFh4Q3p0H7qbn5bB00yB0OU=;
+        b=UOXPevuPQkwGpLiDb+yTNlMhtS1iURw3/B8tZ5vELVAYgdCEP+kPHRrKZa4U1W22y1
+         psQOx/vXEv8ICejQMap8DbR9Sw7VmAWhtP3//V8DFnxWtjYg0wOYo8AAmI8kXbCIi6gk
+         TT1iLY5JdqPFL5AfjJvGnfbFlpZdjMbVlKgso6oGh7i9vQM763C3j4InwMK2Pe/qNxCt
+         dnuOaMXFNv5lJ19Ey6uOqpbkI5O1qJu4Bwcx0IDSk0ZPba2w98pnxoU8MTmf4mPhGAAc
+         9BTwG2nEyFrZgUqhFE4eIokiyLG5bfy6shdcxOrPT/d0Ns3RY7FMxvmzmG6TingAq7k3
+         zyDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709119727; x=1709724527;
+        d=1e100.net; s=20230601; t=1709120335; x=1709725135;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=17LS05FsEPOKKmcq77qovsK2s+U7wevbqPjjHS4JS/E=;
-        b=IU8Ow6VJ965wAE/003gs8rPLxq55uDwdTfOxvOKSzn7zGLGgYi/11Rn8IIbofHioXn
-         IHaZ69f7xx98+XwGnH/9sa5b1WQH6iKcHfqvCXMmbOzzf78SRLxyHt3M6kTixJNYgJNP
-         gdDGx0Q9qTBFNsjKweiyHdP10u7JBDXs5ICirtPgA+EUJPgyKOGaKN9NyOCd7PP2BykS
-         vf0pc0pQXHSI5EInLWQ/4o/0clfdgHMz0ybTN72JGIRU1xVS+Li9ja7upM2a15A5fPBf
-         dE1jb4zOQvctVjiKbpa6LDWmH7C7ZeVrJDFb+TSm/+PI1vnV9nN4Ezgqhx0pThnhCA2B
-         0teA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsnMl3M1VrDwkk3ep/CXM0/GFRbpUZGYOeDFpsWmYQPwJZdm47NXxidiDZDW6zRJ66/lEn0mRdsHJPCVfUWhaW5B8GogadJn7HIu4RCw==
-X-Gm-Message-State: AOJu0Yw0T1dH2XjMqFbL4fcQUoeCVF47rTPHtursKfzBZIHOQRAOMQFX
-	0VJWvI4awMn79B2FP6HLttLoXnIpf+oTDgtneRDN4aewVPg7BIy63cF7Tgf8pzBDd9U1WjtfsTJ
-	q1cr5fgy5sybvB9gQ5cgAKPoS8m4=
-X-Google-Smtp-Source: AGHT+IE/YCiRnPFxVP+LTkJXH83zETMjih3olj/Mjp3S9flaUJKerODFRGZUx+frduYi4G6h1Jv4ALxRD+Pc1StHU7g=
-X-Received: by 2002:a81:ae24:0:b0:608:1b7a:4984 with SMTP id
- m36-20020a81ae24000000b006081b7a4984mr4903991ywh.17.1709119727553; Wed, 28
- Feb 2024 03:28:47 -0800 (PST)
+        bh=3cVHkaT8lHsHCD4Yo8gLGFh4Q3p0H7qbn5bB00yB0OU=;
+        b=UL8j1YuYSu23brsrMcla9VLfBE2opXmv5dajxky3/yIbqfQ/XfnCZTbWRvoWGUfnXK
+         iAkJFiXhx1scfVWwcBEYgKEB/pvhZ/3YZ1mCJiW2XkRlTxl0D4p+u6v+Mg7N3l7l5ye2
+         HV/OTymCTtc8Ym+rsQd9Dd/KZ08VpJDMGoRv0sQhMsdWjKE2ihv8K/zNs/oeEU0/2/s6
+         8+1nKDBwOy0Y8D/cBbdn3BObDO/Thy4QKdI+zCbtaF2DQ28ru3ixeqhURq1Ton0/cH5G
+         KsvGXk6ubi1bJLWrHXvyC3Ec+VZak+WNJEOWMHQRDSjogoRnzMh1C7+Q4z8dGYD3XeS0
+         j7ug==
+X-Forwarded-Encrypted: i=1; AJvYcCX8/QNIN+wEq7Qoyp1eRGDi2caWHIVT2tAx3KBkzLkmtYWeBicqHCtf6HOcjqzKGMkCBgiWuhD0J3CuINkv+GoFLAG9SPYe1XFNOl2KKg==
+X-Gm-Message-State: AOJu0YypfhX7UF2d/bZkd0C/a1Y4zGRRSpaI9Gcy/QeyPdv+rL+IbhgM
+	miBJn2lH9A6XDZrT0/6AZrstxLd7FrtMswA8W6JkvmDYlXv8He/Udtt2ciBruv69cxDf90TDilw
+	qFztmrMXTySe4hZYcXQQZB9lyKEE=
+X-Google-Smtp-Source: AGHT+IHY0wrUSlOw9WyRdPBNGyDCMr47R2OPgqsNZgMSxECHTeFCqFgwVKMDSze3nopO0Zj5d+T7xSEwl6jXiMijfes=
+X-Received: by 2002:a25:8685:0:b0:dcc:44d7:5c7f with SMTP id
+ z5-20020a258685000000b00dcc44d75c7fmr2082491ybk.62.1709120335333; Wed, 28 Feb
+ 2024 03:38:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240206142453.1906268-1-amir73il@gmail.com> <20240206142453.1906268-4-amir73il@gmail.com>
- <450d8b2d-c1d0-4d53-b998-74495e9eca3f@linux.alibaba.com> <CAOQ4uxhAY1m7ubJ3p-A3rSufw_53WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com>
- <CAJfpegu3_sUtTC1uCD7kFehJWTivkN_OjcQGsSAMkzEdub=XTw@mail.gmail.com>
-In-Reply-To: <CAJfpegu3_sUtTC1uCD7kFehJWTivkN_OjcQGsSAMkzEdub=XTw@mail.gmail.com>
+References: <20240228061257.GA106651@mit.edu>
+In-Reply-To: <20240228061257.GA106651@mit.edu>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 28 Feb 2024 13:28:36 +0200
-Message-ID: <CAOQ4uxji-yzWFeQYP9FKvVXg473GP6tC2pyHUbEPoYxT+qDYsA@mail.gmail.com>
-Subject: Re: [PATCH v15 3/9] fuse: implement ioctls to manage backing files
-To: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>
-Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	linux-fsdevel@vger.kernel.org, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>
+Date: Wed, 28 Feb 2024 13:38:44 +0200
+Message-ID: <CAOQ4uxhZ5KOTdi01C87wYwvB_K=HDYdLy7LHzXnC-C3U_OFEnQ@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] untorn buffered writes
+To: "Theodore Ts'o" <tytso@mit.edu>, "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 28, 2024 at 1:14=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
+On Wed, Feb 28, 2024 at 8:13=E2=80=AFAM Theodore Ts'o <tytso@mit.edu> wrote=
+:
 >
-> On Wed, 28 Feb 2024 at 12:08, Amir Goldstein <amir73il@gmail.com> wrote:
+> Last year, I talked about an interest to provide database such as
+> MySQL with the ability to issue writes that would not be torn as they
+> write 16k database pages[1].
 >
-> > I don't think so, because it will allow unprivileged user to exceed its
-> > nested rlimits and hide open files that are invisble to lsof.
+> [1] https://lwn.net/Articles/932900/
 >
-> How does io_uring deal with the similar problem of "fixed files"?
+> There is a patch set being worked on by John Garry which provides
+> stronger guarantees than what is actually required for this use case,
+> called "atomic writes".  The proposed interface for this facility
+> involves passing a new flag to pwritev2(2), RWF_ATOMIC, which requests
+> that the specific write be written to the storage device in an
+> all-or-nothing fashion, and if it can not be guaranteed, that the
+> write should fail.  In this interface, if the userspace sends an 128k
+> write with the RWF_ATOMIC flag, if the storage device will support
+> that an all-or-nothing write with the given size and alignment the
+> kernel will guarantee that it will be sent as a single 128k request
+> --- although from the database perspective, if it is using 16k
+> database pages, it only needs to guarantee that if the write is torn,
+> it only happen on a 16k boundary.  That is, if the write is split into
+> 32k and 96k request, that would be totally fine as far as the database
+> is concerned --- and so the RWF_ATOMIC interface is a stronger
+> guarantee than what might be needed.
+>
+> So far, the "atomic write" patchset has only focused on Direct I/O,
+> where this stronger guarantee is mostly harmless, even if it is
+> unneeded for the original motivating use case.  Which might be OK,
+> since perhaps there might be other future use cases where they might
+> want some 32k writes to be "atomic", while other 128k writes might
+> want to be "atomic" (that is to say, persisted with all-or-nothing
+> semantics), and the proposed RWF_ATOMIC interface might permit that
+> --- even though no one can seem top come up with a credible use case
+> that would require this.
+>
+>
+> However, this proposed interface is highly problematic when it comes
+> to buffered writes, and Postgress database uses buffered, not direct
+> I/O writes.   Suppose the database performs a 16k write, followed by a
+> 64k write, followed by a 128k write --- and these writes are done
+> using a file descriptor that does not have O_DIRECT enable, and let's
+> suppose they are written using the proposed RWF_ATOMIC flag.   In
+> order to provide the (stronger than we need) RWF_ATOMIC guarantee, the
+> kernel would need to store the fact that certain pages in the page
+> cache were dirtied as part of a 16k RWF_ATOMIC write, and other pages
+> were dirtied as part of a 32k RWF_ATOMIC write, etc, so that the
+> writeback code knows what the "atomic" guarantee that was made at
+> write time.   This very quickly becomes a mess.
+>
+> Another interface that one be much simpler to implement for buffered
+> writes would be one the untorn write granularity is set on a per-file
+> descriptor basis, using fcntl(2).  We validate whether the untorn
+> write granularity is one that can be supported when fcntl(2) is
+> called, and we also store in the inode the largest untorn write
+> granularity that has been requested by a file descriptor for that
+> inode.  (When the last file descriptor opened for writing has been
+> closed, the largest untorn write granularity for that inode can be set
+> back down to zero.)
+>
+> The write(2) system call will check whether the size and alignment of
+> the write are valid given the requested untorn write granularity.  And
+> in the writeback path, the writeback will detect if there are
+> contiguous (aligned) dirty pages, and make sure they are sent to the
+> storage device in multiples of the largest requested untorn write
+> granularity.  This provides only the guarantees required by databases,
+> and obviates the need to track which pages were dirtied by an
+> RWF_ATOMIC flag, and the size of the RWF_ATOMIC write.
+>
+> I'd like to discuss at LSF/MM what the best interface would be for
+> buffered, untorn writes (I am deliberately avoiding the use of the
+> word "atomic" since that presumes stronger guarantees than what we
+> need, and because it has led to confusion in previous discussions),
+> and what might be needed to support it.
 >
 
-Good question.
 
-Jens, Chritian,
-Are fixed files visible to lsof?
-Do they have to remain open in the files table of process that set them
-in addition to being registered as fixed files?
-Do they get accounted in rlimit? of which user?
+Seems a duplicate of this topic proposed by Luis?
+
+https://lore.kernel.org/linux-fsdevel/ZdfDxN26VOFaT_Tv@bombadil.infradead.o=
+rg/
+
+Maybe you guys want to co-lead this session?
 
 Thanks,
 Amir.
