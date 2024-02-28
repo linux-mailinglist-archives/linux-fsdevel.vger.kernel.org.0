@@ -1,208 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-13044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882D286A79E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 05:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B5286A83D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 07:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F79A1F24E68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 04:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361691F229EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 06:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B4C208CF;
-	Wed, 28 Feb 2024 04:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="AhMEiNXp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F421A22098;
+	Wed, 28 Feb 2024 06:09:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A919200B7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 04:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360D5219E4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 06:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709094546; cv=none; b=kU3iarTOvOAiXWaTd/yo5UeIovtq8J1944ejkpic7ljf6OzMw2BcRs+MK9trVc5ikYhG1/KP3xtVmUkRd6669z5rKamwkhDqcgXCZgqrCE8s00oO+71QIuxowm30tsD73qK3CEUsoRNO/JpPL6e824KJcbgZe90GOmeNeleBnjA=
+	t=1709100546; cv=none; b=PjZpqdXg8bfGKhOeZI4ZctCLq3vjqmueI0h8PF+/uBO5wgBxK3VbnK8506UxG8xmyFkUvYI42yfDvnZkpgeLBmKEL9ds3BGWq53BIKx29jJRuS+Po85hdwg8qVqOV/t+werqkA10qFFnF7qeFcVjXhLUX9nXJLV60un02v48Pxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709094546; c=relaxed/simple;
-	bh=RnJbLG/wCSkflRTJ9DXhmGmjhg+znrGK9pG1gnnWZYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fwQNF6qarwvBe1C+Nw7vGsYet0bQFK265pMgHg6VinYDN+lwNFiC38QcY0PtV91cAjc3CwEdwqjCoDCP3UUkvITaOhoaZgdHFIQDj0O4BUrRn4PPEB+42PdINZTubQ3XSz2kh51vU5G9Ipcbz3w46Y+cYJj302JFfmS5vhQFifY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=AhMEiNXp; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6e55731af5cso743534b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 20:29:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709094543; x=1709699343; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GvLGVDkXeXw8ikqc8FjmbAfxHoB2MC+jPP1CVgaet+0=;
-        b=AhMEiNXp7v91JBCAj4iUjFXE55EOMk+6JS8JLjUygRiADj/AwgGDoccMsiuTQf+DAG
-         yv3ZpXDxT1KnEW4rcrZQQNP+Ow6qmNrSCE7XOcPco2dao6vhGEAyvqIMaIUR48bsJc8F
-         VakkQTMPvN6U2hdsBwSQlZyV2ZDessKTa8WxzCFjIeTWNeoz+d6fR2HPecd9V25ANPi+
-         gXOVoTpKMMDAthR8TpB1xwvE3SP5jxWOMIxJcbe56UQrri6mfd5/a8yuaFHXgByirNYT
-         iYMyALHz0G3T2fJxN+MT7sK086w+wdUWPHqY76wlupRGOXSMFmteU1te2eA0/NTYilE9
-         zapg==
+	s=arc-20240116; t=1709100546; c=relaxed/simple;
+	bh=abFXQnDiYBj25XYqxfq/Rfluiqv8Lo1I1Hyuf+oVNSk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=N+azJsxWpI8ZG+exX0A2MtdfH/7gq5/R1sQ/e6RbkBo6tkOLsZwJuYI1EAfsB4rlYqAQBAMWEEQ+KxI4Z5g7aE+z0LUgtsgylJ41UEz/XUdp3TRMyBGZr1MgFSKFTX/rlq0pyEmT9Bk7M3Coc8CZsz1ho/62EonhFpXPeFaX8bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c7a733ce70so356673739f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 22:09:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709094543; x=1709699343;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GvLGVDkXeXw8ikqc8FjmbAfxHoB2MC+jPP1CVgaet+0=;
-        b=K069DJfbqdrac9kpHfk4hEP73B8wiKKQyDhAO2alq7MfGn8uE+a+tdzhFaLmiGGogM
-         c6v+xoIdDvXAbPVHeICVt3S8AoL/76t4GzYTmQCT+HrFlOGNoBe4eCw0B+KRT9LM8MzD
-         iiPpc1BCsBdQbCAj+ZC1xF1gS7ODN+1PL+N4ws16SnwIOCeic0GWoDVJ9ej7CQ7ICGqh
-         CkWEHDBemYSKbIk+/Q4Lv4gvJMTfmS8jybzLDSRywA1WAupPL/bwgCn3uchV2B43m+bK
-         kM/vKyjaXkkGefCQ1V5FBy1NGjJMleESmQ3ATvykWqWRkGfYUvWtd10WUQei/F9Lf52l
-         g61w==
-X-Forwarded-Encrypted: i=1; AJvYcCUbTxUKZRR8qijfV1YAifXWQpT6qJnqihj8Nf6mTfC+saBTSgyqqD9UvNUxS4rW1sTb7ZgPTdsG75WvVWoyCE+/b+tB686IhjK9auCiYw==
-X-Gm-Message-State: AOJu0Yxt1U375Bq7NEx6C8QE003+HFnX8SiOloouaUIOMtgAoPQOcT/9
-	viHBy+9jdzwoSjCEUGZIZwFQwv8J+l9HZaxk0NsjJhy1mtYtss2bzVK3RwkLO5w=
-X-Google-Smtp-Source: AGHT+IHGltB03n+8ycK0QOrhos4kvlvRUvr4hRXHQgj7JMMy/aENjVTtsGay5RSsDGC2fJ6Qcd4f4w==
-X-Received: by 2002:a05:6a00:80df:b0:6e5:571d:a60a with SMTP id ei31-20020a056a0080df00b006e5571da60amr2148696pfb.5.1709094542767;
-        Tue, 27 Feb 2024 20:29:02 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
-        by smtp.gmail.com with ESMTPSA id i2-20020a056a00004200b006e558416202sm861787pfk.148.2024.02.27.20.29.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Feb 2024 20:29:02 -0800 (PST)
-Received: from [192.168.253.23] (helo=devoid.disaster.area)
-	by dread.disaster.area with esmtp (Exim 4.96)
-	(envelope-from <dave@fromorbit.com>)
-	id 1rfBYy-00CVVl-0F;
-	Wed, 28 Feb 2024 15:28:59 +1100
-Received: from dave by devoid.disaster.area with local (Exim 4.97)
-	(envelope-from <dave@devoid.disaster.area>)
-	id 1rfBYx-00000003Wwm-2O5b;
-	Wed, 28 Feb 2024 15:28:59 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: linux-xfs@vger.kernel.org
-Cc: djwong@kernel.org,
-	jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] xfs: stop advertising SB_I_VERSION
-Date: Wed, 28 Feb 2024 15:28:59 +1100
-Message-ID: <20240228042859.841623-1-david@fromorbit.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1709100544; x=1709705344;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WvbhFmYG3Hl0zJaQNnUCZb9RV12RO5xJllqs34cJFVU=;
+        b=cAFEVyNVKw2DtVW4+V0/o9eqfFhkzRh7pPrRLynUHPyte+vZhsKjxn7xRU4oFa08jp
+         ZuLMN+JgrzWV/CCeEhWg0MwLiCfz6Ney/DC/nUrysppp6XDHpXhFZhnrEnallr2czEVn
+         Bw0HOKkoOndQex7wAuZkSu+TAj9kLTnX/m/254quIBz8XRrFRv1mRCFe9XwxETwaXcjS
+         qCU3+8bO3Il5w+yIItwvvluVL1WR8TX+A018NBjRqyMQeTfJvHt2F/d6WbwH90A334h8
+         WHt7QCe+ytD5LD2aKTCBKWIxgloCMIVyCYYvhfsx4DB0UheFkQzONGAvztSE6T4yCoO6
+         zXRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsTR6jTvMtAxEJ1dyibs/RZZFJgIxpP7JybdCd+qyayhlpJBX5NtWNXjgDSlWJk8tSXCsZ1xrAI9LeVqMrY0+F8xKSXqSlGAATBuLnEQ==
+X-Gm-Message-State: AOJu0Yz3i0Fn3434VCUVGCBk4pGypYCRSUpeSM0IImACNqVxPmrBJ+qz
+	S7FlUb7D8UdRWALXzjqV3QWDSaQ6TrwDN1hDglxQ7DtgpkM68M3EXhZb/vGho8Dwpkf2LzhMKCJ
+	q5j9UbE/aUoDAXh10Pg4qCvSnAJHNXWnHpgxMfweHLgZyjQ4aqM8C3iQ=
+X-Google-Smtp-Source: AGHT+IHA2oKF9Yzw50FyKsGXiUIyRwFWO8Tky0w0Ujw64VYWlHYtYe29AY9cNSZ8GLIVv72i6dQ5C8t0KPELS5B/i1ZUsMrjq0Xq
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:411e:b0:474:7c04:29bf with SMTP id
+ ay30-20020a056638411e00b004747c0429bfmr547122jab.3.1709100544403; Tue, 27 Feb
+ 2024 22:09:04 -0800 (PST)
+Date: Tue, 27 Feb 2024 22:09:04 -0800
+In-Reply-To: <0000000000004e88ee0601947922@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d5af3006126afaeb@google.com>
+Subject: Re: [syzbot] [reiserfs?] kernel BUG in reiserfs_rename
+From: syzbot <syzbot+d843d85655e23f0f643b@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Dave Chinner <dchinner@redhat.com>
+syzbot suspects this issue was fixed by commit:
 
-The redefinition of how NFS wants inode->i_version to be updated is
-incomaptible with the XFS i_version mechanism. The VFS now wants
-inode->i_version to only change when ctime changes (i.e. it has
-become a ctime change counter, not an inode change counter). XFS has
-fine grained timestamps, so it can just use ctime for the NFS change
-cookie like it still does for V4 XFS filesystems.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-We still want XFS to update the inode change counter as it currently
-does, so convert all the code that checks SB_I_VERSION to check for
-v5 format support. Then we can remove the SB_I_VERSION flag from the
-VFS superblock to indicate that inode->i_version is not a valid
-change counter and should not be used as such.
+    fs: Block writes to mounted block devices
 
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
- fs/xfs/libxfs/xfs_trans_inode.c | 15 +++++----------
- fs/xfs/xfs_iops.c               | 16 +++-------------
- fs/xfs/xfs_super.c              |  8 --------
- 3 files changed, 8 insertions(+), 31 deletions(-)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=164b3816180000
+start commit:   bee0e7762ad2 Merge tag 'for-linus-iommufd' of git://git.ke..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b45dfd882e46ec91
+dashboard link: https://syzkaller.appspot.com/bug?extid=d843d85655e23f0f643b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117e7af2e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=109af986e80000
 
-diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-index 70e97ea6eee7..8071aefad728 100644
---- a/fs/xfs/libxfs/xfs_trans_inode.c
-+++ b/fs/xfs/libxfs/xfs_trans_inode.c
-@@ -97,17 +97,12 @@ xfs_trans_log_inode(
- 
- 	/*
- 	 * First time we log the inode in a transaction, bump the inode change
--	 * counter if it is configured for this to occur. While we have the
--	 * inode locked exclusively for metadata modification, we can usually
--	 * avoid setting XFS_ILOG_CORE if no one has queried the value since
--	 * the last time it was incremented. If we have XFS_ILOG_CORE already
--	 * set however, then go ahead and bump the i_version counter
--	 * unconditionally.
-+	 * counter if it is configured for this to occur.
- 	 */
--	if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags)) {
--		if (IS_I_VERSION(inode) &&
--		    inode_maybe_inc_iversion(inode, flags & XFS_ILOG_CORE))
--			flags |= XFS_ILOG_IVERSION;
-+	if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags) &&
-+	    xfs_has_crc(ip->i_mount)) {
-+		inode->i_version++;
-+		flags |= XFS_ILOG_IVERSION;
- 	}
- 
- 	iip->ili_dirty_flags |= flags;
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index be102fd49560..97e792d9d79a 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -584,11 +584,6 @@ xfs_vn_getattr(
- 		}
- 	}
- 
--	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
--		stat->change_cookie = inode_query_iversion(inode);
--		stat->result_mask |= STATX_CHANGE_COOKIE;
--	}
--
- 	/*
- 	 * Note: If you add another clause to set an attribute flag, please
- 	 * update attributes_mask below.
-@@ -1044,16 +1039,11 @@ xfs_vn_update_time(
- 	struct timespec64	now;
- 
- 	trace_xfs_update_time(ip);
-+	ASSERT(!(flags & S_VERSION));
- 
- 	if (inode->i_sb->s_flags & SB_LAZYTIME) {
--		if (!((flags & S_VERSION) &&
--		      inode_maybe_inc_iversion(inode, false))) {
--			generic_update_time(inode, flags);
--			return 0;
--		}
--
--		/* Capture the iversion update that just occurred */
--		log_flags |= XFS_ILOG_CORE;
-+		generic_update_time(inode, flags);
-+		return 0;
- 	}
- 
- 	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 6ce1e6deb7ec..657ce0423f1d 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1692,10 +1692,6 @@ xfs_fs_fill_super(
- 
- 	set_posix_acl_flag(sb);
- 
--	/* version 5 superblocks support inode version counters. */
--	if (xfs_has_crc(mp))
--		sb->s_flags |= SB_I_VERSION;
--
- 	if (xfs_has_dax_always(mp)) {
- 		error = xfs_setup_dax_always(mp);
- 		if (error)
-@@ -1917,10 +1913,6 @@ xfs_fs_reconfigure(
- 	int			flags = fc->sb_flags;
- 	int			error;
- 
--	/* version 5 superblocks always support version counters. */
--	if (xfs_has_crc(mp))
--		fc->sb_flags |= SB_I_VERSION;
--
- 	error = xfs_fs_validate_params(new_mp);
- 	if (error)
- 		return error;
--- 
-2.43.0
+If the result looks correct, please mark the issue as fixed by replying with:
 
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
