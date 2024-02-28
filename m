@@ -1,105 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-13034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF5186A4F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 02:26:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D393886A740
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 04:39:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92739B2C8C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 01:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108891C26B1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 03:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D632031E;
-	Wed, 28 Feb 2024 01:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033C2200D2;
+	Wed, 28 Feb 2024 03:38:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B441170F;
-	Wed, 28 Feb 2024 01:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7879200AE;
+	Wed, 28 Feb 2024 03:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709083395; cv=none; b=uYOpAnveepAsoGxiyxLeBBfsSRSjc03+Hxy9fPf98vYIo+L9zQgMWBJL0oEkK6NuC/9hOHETmn/ubtDEYzUz2aqbzhwfhEr1r8Qedb0rUzJWJ/y8hG7wbmn2kGfU2yLwNi9MTiTpHD6hVyGSL/LsKgCTXQnMYRaSKGAUCYHH3NE=
+	t=1709091536; cv=none; b=pQp6tIycDgldsSPR1spbbiTE6o0CTaoonYFlldgVJ5qSuH+pIDEnCkJaTiqjoefg8HYYp+JHRDdEGzRTOKr/i5DGTgucqGH04Ozf7oYmF8rLab7zdzz+ZiD6yd2o34ZhHOXPPJaxpmDzY8vIS5q2ixEjhYatFEcSZD4am5YKF5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709083395; c=relaxed/simple;
-	bh=70fgOT0vFPjiubuyATTULGAqEv4jfeGA/T40KZH9Jt8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=evkXuxo8zNdVDUUCzUxSUF+EKK7L0EqSpKkV2c5C43w5cwDRgRNL04aT3qQ+5VjiNRXOGj//ugD0rEiiW5abjzt6rd9YXSXMSgWpu8rRvXz2KUbdO8PO8IPPwGT4vcJSueZVbUIe/CRqGMzNctEkM7tsqYctRsP8Udu3B0e9Rkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TkxSB013Rz4f3kFQ;
-	Wed, 28 Feb 2024 09:23:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 39A701A0283;
-	Wed, 28 Feb 2024 09:23:11 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP1 (Coremail) with SMTP id cCh0CgDX8gv7it5lqQx6FQ--.57137S8;
-	Wed, 28 Feb 2024 09:23:11 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	tim.c.chen@linux.intel.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] fs/writeback: remove unnecessary return in writeback_inodes_sb
-Date: Wed, 28 Feb 2024 17:19:58 +0800
-Message-Id: <20240228091958.288260-7-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240228091958.288260-1-shikemeng@huaweicloud.com>
-References: <20240228091958.288260-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1709091536; c=relaxed/simple;
+	bh=66pK7h/am21d6FIDhREV3IGN95EvFDSuL+CsDkHepgs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gAYwzg87su0LM4fOTjx7+0GSS210SpJ0sVKv/U63SVJIFJbs0hOYKBzOxxFDC/iTETFLxz0fJlw7qD3kYqaaxbWsoKDfNULR8nbeMCZ3yrmCET7Eg3G+8TZAK0/GhfZaZ7HGJW6mX6+e0lNw02s2o13VBXOsyDl8OA86WL9H0UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id E4E482055FA1;
+	Wed, 28 Feb 2024 12:38:45 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-1) with ESMTPS id 41S3ciHC284101
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 28 Feb 2024 12:38:45 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-1) with ESMTPS id 41S3cign1670619
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 28 Feb 2024 12:38:44 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 41S3chq11670618;
+	Wed, 28 Feb 2024 12:38:43 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gwendal
+ Grignou <gwendal@chromium.org>, dlunev@chromium.org
+Subject: Re: [PATCH] fat: ignore .. subdir and always add a link to dirs
+In-Reply-To: <Zd6PdxOC8Gs+rX+j@quatroqueijos.cascardo.eti.br> (Thadeu Lima de
+	Souza Cascardo's message of "Tue, 27 Feb 2024 22:42:15 -0300")
+References: <20240222203013.2649457-1-cascardo@igalia.com>
+	<87bk88oskz.fsf@mail.parknet.co.jp>
+	<Zdf8qPN5h74MzCQh@quatroqueijos.cascardo.eti.br>
+	<874jdzpov7.fsf@mail.parknet.co.jp>
+	<87zfvroa1c.fsf@mail.parknet.co.jp>
+	<ZdhsYAUCe9GVMnYE@quatroqueijos.cascardo.eti.br>
+	<87v86fnz2o.fsf@mail.parknet.co.jp>
+	<Zd6PdxOC8Gs+rX+j@quatroqueijos.cascardo.eti.br>
+Date: Wed, 28 Feb 2024 12:38:43 +0900
+Message-ID: <87le75s1fg.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDX8gv7it5lqQx6FQ--.57137S8
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jry8Cw4UGw18KF45Kr4kJFb_yoW3WFb_XF
-	15JFs2yFsFqF4xA3y8ZasxtF4v9F1rCF1rJF1akas8J3WY9r97Zr4vyw4DJryv9a47ZFWD
-	Gw1fXrW2yrZY9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl82
-	xGYIkIc2x26280x7IE14v26r126s0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC
-	64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM2
-	8EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq
-	3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jstxDUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Type: text/plain
 
-writeback_inodes_sb doesn't have return value, just remove unnecessary
-return in it.
+Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/fs-writeback.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> There are many corrupted images, and attacks. Allowing too wide is
+>> danger for fs.
+>> 
+>> BTW, this image works and pass fsck on windows? When I quickly tested
+>> ev3fs.zip (https://github.com/microsoft/pxt-ev3/issues/980) on windows
+>> on qemu, it didn't seem recognized as FAT. I can wrongly tested though.
+>> 
+>> Thanks.
+>> -- 
+>> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+>
+> The test image I managed to create mounts just fine on Windows. New
+> subdirectories can be created there just as well.
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 7e344a4e727e..362a5409f92e 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2735,7 +2735,7 @@ EXPORT_SYMBOL(writeback_inodes_sb_nr);
-  */
- void writeback_inodes_sb(struct super_block *sb, enum wb_reason reason)
- {
--	return writeback_inodes_sb_nr(sb, get_nr_dirty_pages(), reason);
-+	writeback_inodes_sb_nr(sb, get_nr_dirty_pages(), reason);
- }
- EXPORT_SYMBOL(writeback_inodes_sb);
- 
+Can you share the image somehow? And fsck (chkdsk, etc.) works without
+any complain?
+
+Thanks.
 -- 
-2.30.0
-
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
