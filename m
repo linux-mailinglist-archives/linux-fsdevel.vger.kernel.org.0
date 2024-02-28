@@ -1,138 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-13132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596FB86B8FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 21:21:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A8586B9C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 22:21:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1B82883E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 20:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85EB61F23484
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 21:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE487443A;
-	Wed, 28 Feb 2024 20:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EF170020;
+	Wed, 28 Feb 2024 21:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Hf7KAHht"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B+m69ozj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8B27442A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 20:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AB486270
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 21:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709151692; cv=none; b=BgjFt+w25PrJgJPGzsW5nFbgzwFt4UKILpMufCW5E7Ezu/9kINekoxO1rTW+OtrAKgIAAAN6z3XhUe+3WPfuh/eMHr2nUb52IbUtbjVCv49fq3NyyLLIWPAP0KIxPBTKsrV1ya+E+op4U5Ed6aW/GkFfh9jfn51yullmCjbdopA=
+	t=1709155289; cv=none; b=BtUo+rPFKVwLFp7U5SKsnPsC3+kHNt7dUwR8z8hKqWRLDv2ABsX+//44UilT2hprojrGFWyp1PJjzUiIDZ4g8HexgO5Jj17oot/xDXhJx2QY5ZwWQ2RZmkQP5sPlklwGJicut/IHmpwwmct4I8fx50kfJS90T627Jf1UUKEiYw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709151692; c=relaxed/simple;
-	bh=RnArb3GOWvctmw7HzKHUkf0Eg+Rv20xlWOeCvPw5fww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bL9i1oN9bT14q+0Z1pBBKSiyAIhNZ5gZKIYizlTi3Jg4IBLr/FbuUfB5/2E+Fs8aAQTBL4W8vbsBQlA6SBOwUfPvZksJhVatAZ4gByyYxoc8IKJsRWnDI7jCjg1tVMuOHYUm/64CR9g0OdkKLrf7oLNhpwOFS23XcG/62GC6XCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Hf7KAHht; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (c-73-8-226-230.hsd1.il.comcast.net [73.8.226.230])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 41SKL4as019146
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Feb 2024 15:21:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1709151667; bh=cgjdDx6fKehdNQxWaNb/qHiXdMwxlGu5vAXf/Nz+i4I=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=Hf7KAHhtNtaSzNEGskWU2VWPTlInxZNfliMVR74RR8YPJq2f/dmuDFJV91ZGqx63P
-	 +b//LyXhRrUT0CedQSjeSr3s9JIPKMxWdoDBLznUvpNioKuAFSnmG3NCAgoDpTAVFw
-	 oqGK4E2DKjrarZ/YDlPaLamjhsO78xh6BCdYuajWb76vS4fA6wdDEuBcHLY0bOpyW9
-	 3VN80LnMAU/CY7jrHqQJg/GMkiPX6FbwFmqBRtoKdTCGhw0sknD18toFSUMtY2JRmr
-	 vMQ6xsyBZObvb1riqSQagD+F9xkNkzOxhC+eHB8auAYnqd4bpfI/hRENrOkZamBWnE
-	 Kb81dDqS5vnWg==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 015653404B0; Wed, 28 Feb 2024 14:21:03 -0600 (CST)
-Date: Wed, 28 Feb 2024 14:21:03 -0600
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] untorn buffered writes
-Message-ID: <20240228202103.GA177082@mit.edu>
-References: <20240228061257.GA106651@mit.edu>
- <CAOQ4uxhZ5KOTdi01C87wYwvB_K=HDYdLy7LHzXnC-C3U_OFEnQ@mail.gmail.com>
+	s=arc-20240116; t=1709155289; c=relaxed/simple;
+	bh=1MRLxMSSbDaZOoH74gZrRBxdj01ORAzox/zNSSQV35k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RfGJAABd50qa1FSVemCndudSUfoynYWE8NFsCFgdyAZNxibWvI7C5aej15ajQFEB0vcCoUb1WfKvf0LIYBufqVf34vzX1CtHia00ueRHc4wfSRAsXOoIHJ12b1wNnNlRO/WPBnSbqnb33ybW3A/m+7FhE1GMHjKsEjdJlNTlYVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=B+m69ozj; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5656e5754ccso361059a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 13:21:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1709155286; x=1709760086; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ibURPhL0TwbuNHb2Ue6c1VsEM5dnOByPcep2Xd5k/OA=;
+        b=B+m69ozjwNePNGkNIqZxY5cYxPT5xZkc2iYa3mL8hTrYFU1YOYVnRJsPkJqCi2ymQp
+         hTWjmaksS/HCeGz5kk/DM0ms6EkmbZ5//kAhxkq4/NA3lQz8y8UqCP2WwQMif4pCIbFR
+         Ue6ZGIY3ca0Oo0WS8pFOfA50DMxhF4102kkC8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709155286; x=1709760086;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ibURPhL0TwbuNHb2Ue6c1VsEM5dnOByPcep2Xd5k/OA=;
+        b=vpon1nFFLrHpZ3fiP+3Ir4i9YkGfPbYzOmOgN3mBgqMZTbFX+693fKWyLI5aVb2+3w
+         Fb5TVdPERVy/nuoiPZXhUzUdIkjbdNI5JJ72Qv4aY/owtzAY3rqD+cpYpThtuKUndnEq
+         b92MDI/lnoMQ4x2eN9W5FY/LKe4UhFT2HvVgYb6bNjF4LJcQlaxaxAU6TDlVl8RxCGpb
+         ADJ9/kKEF3A9a5GKPG2QgHJkcVrCs/t7WVe7Dx5gfJNItRFLAkfXQz/RbnvvQRU/IBqB
+         BxTFa5SR26f+8cGnj3E6XueUKi9aGotv3IgG0X6YRFFBZ/XNmwYsYlAUhFFKuWupDTEX
+         mekg==
+X-Forwarded-Encrypted: i=1; AJvYcCVanil6jgpY7KiP9agt7IC3tmPHGgyUP/3M1F/4gPbJS2gS+e8dBbADcXnwT9PfDM8YBuMEl4wE2K5lUR51RtbdDaOYgEa9NNuguABE7Q==
+X-Gm-Message-State: AOJu0YxKZfnZ28TUICQcIQ1x54N+Oz5X/DNh8RATM4FelgWn+VDZUY+O
+	emPYSLQVmlg/k3iDC0qMgsXcBarm9U+4GRdws7zOImooW3I0LukwbT4vcsd/L4k+SDOIp8iU/mB
+	rmxo7vg==
+X-Google-Smtp-Source: AGHT+IGkkgi5rTRsXoQ4X32dAp4OseK+JAdi0zy2PSp/i3hkm2dZtT8bcmTuZj0pv5Ve7L8qlvZ1qw==
+X-Received: by 2002:a17:906:548:b0:a43:f587:d428 with SMTP id k8-20020a170906054800b00a43f587d428mr82109eja.76.1709155285947;
+        Wed, 28 Feb 2024 13:21:25 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id ss15-20020a170907c00f00b00a43f0dff8dcsm1143238ejc.53.2024.02.28.13.21.24
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Feb 2024 13:21:24 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a3fb8b0b7acso36017466b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 13:21:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXotVdj8sTY2vzg6sRoVepI8XcGlvilY7nbxj467gs2IE9jDdFcuX0aET+eGemz3QVVMEsMC99uan2FidOiHf5tJJTxymqjoMx8qPddgg==
+X-Received: by 2002:a17:906:a291:b0:a44:234:e621 with SMTP id
+ i17-20020a170906a29100b00a440234e621mr129720ejz.10.1709155284453; Wed, 28 Feb
+ 2024 13:21:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhZ5KOTdi01C87wYwvB_K=HDYdLy7LHzXnC-C3U_OFEnQ@mail.gmail.com>
+References: <20230925120309.1731676-1-dhowells@redhat.com> <20230925120309.1731676-8-dhowells@redhat.com>
+ <4e80924d-9c85-f13a-722a-6a5d2b1c225a@huawei.com>
+In-Reply-To: <4e80924d-9c85-f13a-722a-6a5d2b1c225a@huawei.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 28 Feb 2024 13:21:07 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whG+4ag+QLU9RJn_y47f1DBaK6b0qYq_6_eLkO=J=Mkmw@mail.gmail.com>
+Message-ID: <CAHk-=whG+4ag+QLU9RJn_y47f1DBaK6b0qYq_6_eLkO=J=Mkmw@mail.gmail.com>
+Subject: Re: [bug report] dead loop in generic_perform_write() //Re: [PATCH v7
+ 07/12] iov_iter: Convert iterate*() to inline funcs
+To: Tong Tiangen <tongtiangen@huawei.com>
+Cc: David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, 
+	Christian Brauner <christian@brauner.io>, David Laight <David.Laight@aculab.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 28, 2024 at 01:38:44PM +0200, Amir Goldstein wrote:
-> 
-> Seems a duplicate of this topic proposed by Luis?
-> 
-> https://lore.kernel.org/linux-fsdevel/ZdfDxN26VOFaT_Tv@bombadil.infradead.org/
+On Sat, 17 Feb 2024 at 19:13, Tong Tiangen <tongtiangen@huawei.com> wrote:
+>
+> After this patch:
+>    copy_page_from_iter_atomic()
+>      -> iterate_and_advance2()
+>        -> iterate_bvec()
+>          -> remain = step()
+>
+> With CONFIG_ARCH_HAS_COPY_MC, the step() is copy_mc_to_kernel() which
+> return "bytes not copied".
+>
+> When a memory error occurs during step(), the value of "left" equal to
+> the value of "part" (no one byte is copied successfully). In this case,
+> iterate_bvec() returns 0, and copy_page_from_iter_atomic() also returns
+> 0. The callback shmem_write_end()[2] also returns 0. Finally,
+> generic_perform_write() goes to "goto again"[3], and the loop restarts.
+> 4][5] cannot enter and exit the loop, then deadloop occurs.
 
-Maybe.  I did see Luis's topic, but it seemed to me to be largely
-orthogonal to what I was interested in talking about.  Maybe I'm
-missing something, but my observations were largely similar to Dave
-Chinner's comments here:
+Hmm. If the copy doesn't succeed and make any progress at all, then
+the code in generic_perform_write() after the "goto again"
 
-https://lore.kernel.org/r/ZdvXAn1Q%2F+QX5sPQ@dread.disaster.area/
+                //[4]
+                if (unlikely(fault_in_iov_iter_readable(i, bytes) ==
+                              bytes)) {
+                        status = -EFAULT;
+                        break;
+                }
 
-To wit, there are two cases here; either the desired untorn write
-granularity is smaller than the large block size, in which case there
-really nothing that needs to be done from an API perspective.
-Alternatively, if the desired untorn granularity is *larger* than the
-large block size, then the API considerations are the same with or
-without LBS support.
+should break out of the loop.
 
-From the implementation perspective, yes, there is a certain amount of
-commonality, but that to me is relatively trivial --- or at least, it
-isn't a particular subtle design.  That is, in the writeback code, it
-needs to know what the desired write granularity, whether it is
-required by the device because the logical sector size is larger than
-the page size, or because there is an untorn write granularity
-requested by the userspace process doing the writing (in practice,
-pretty much always 16k for databases).  In terms of what the writeback
-code needs to do, it needs to make sure that gathers up pages
-respecting the alignment and required size, and if a page is locked,
-we have to wait until it is available, instead of skipping that page
-in the case of a non-data-integrity writeback.
+So either your analysis looks a bit flawed, or I'm missing something.
+Likely I'm missing something really obvious.
 
-As far as tooling/testing is concerned, against, it appears to me that
-the requirements of LBA and the desire for untorn writes in units of
-granularity larger than the block size are quite orthogonal.  For LBA,
-all you need is some kind of synthetic/debug device which has a
-logical block size larger than the page size.  This could be done a
-number of ways:
+Why does the copy_mc_to_kernel() fail, but the
+fault_in_iov_iter_readable() succeeds?
 
-    * via the VMM --- e.g., a QEMU block device that has a 64k logical
-      sector size.
-    * via loop device that exports a larger logical sector size
-    * via blktrace (or its ebpf or ftrace) and making sure that size of every
-      write request is the right multiple of 512 byte sectors
-
-For testing untorn writes, life is a bit tricker, because not all
-writes will be larger than the page size.  For example, we might have
-an ext4 file system with a 4k blocksize, so metadata writes to the
-inode table, etc., will be in 4k writes.  However, when writing to the
-database file, *those* writes need to be in multiples of 16k, with 16k
-alignment required, and if a write needs to be broken up it must be at
-a 16k boundary.
-
-The tooling for this, which is untorn write specific, and completely
-irrelevant for the LBS case, needs to know which parts of the storage
-device are assigned to the database file --- and which are not.  If
-the database file is not getting deleted or truncated, it's relatively
-easy to take a blktrace (or ebpf or ftrace equivalent) and validate
-all of the I/O's, after the fact.  The tooling to do this isn't
-terribly complicated, would involve using filefrag -v if the file
-system is already mounted, and a file system specific tool (i.e.,
-debugfs for ext4, or xfs_db for xfs) if the file system is not mounted.
-
-Cheers,
-
-					- Ted
+              Linus
 
