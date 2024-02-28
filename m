@@ -1,240 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-13074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D3986AE95
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 13:01:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 267EA86AED9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 13:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 697921C213AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 12:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 924FD1F24822
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 12:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F7E7352C;
-	Wed, 28 Feb 2024 12:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974602560C;
+	Wed, 28 Feb 2024 12:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDUJKwhh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ou57I/JX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B0A73508;
-	Wed, 28 Feb 2024 12:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047A373529
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 12:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709121667; cv=none; b=sYZfEvx1HdS5q9kp5KREqRmIoO3IMdQKVD7eUEEC0OeQjd5/C8veV1MNYPwfr444T6/XPXELdbKOnmB5QzUiSv7PxuNMGaDJ8moMOfaq4wgFWeXUmaylmhWSQ1brgQ17OFjzVJ5Uke4h5+tOjHjJRTprJBbBWV5hjSekjzx3xUw=
+	t=1709122264; cv=none; b=MvB7CpdNnZPPGyDLxcqukfPNEncAQRRDpqYmva6T2g8jd6rgpDNCHbgEBGvaEgx4D4Rf31wMtbEoleeF5WQ/m/VpIw3QycWtWMuJofJwIGDaeXK9U1dUCL3ESU5Na78PC9bv6sTRgqyFP916SNBidTns61E8y93C/yg/3W7Wb+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709121667; c=relaxed/simple;
-	bh=hVazY1d0emHvRzCxZNwlYR6F4hA5Q4Ce9ItobThStms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=egFztu75g4dC8mIE2bWAVtP7JGPjJDb7Tr4iedJLLoOlA2i5HQhpNzsZWo55YnlwELaAf9ADvRuTo8603PVbh48JdzOLYWXobMWLQ6fTjOtuMkqpneYcbbM/TpRLzzT8g/3iOW+bFM/HjgKJ8BQGPEF3OMIe16vWtzZ5Pk7OBic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pDUJKwhh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C6B3C43390;
-	Wed, 28 Feb 2024 12:01:03 +0000 (UTC)
+	s=arc-20240116; t=1709122264; c=relaxed/simple;
+	bh=mU1+Bp1Q38H0/zJMPy1+Gqlp5uuFxCoeEDhsvj7Yf7g=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=qt3vcjhfbraj5XaootJWZpk2nM+vyrfrEeai1aqH7IivRoluETso9vOUqZs7EJw9BYPAAqx8khCBbKRO0xPGQiH06P86X7gPrKYeB8Qc5rSfdPbTdZew3s+NA+6q7pk8KDZa5Id9nzTUMQK5A23ovLyZDTiDJuOIb/e4xD9Dhyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ou57I/JX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F138C433C7;
+	Wed, 28 Feb 2024 12:11:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709121667;
-	bh=hVazY1d0emHvRzCxZNwlYR6F4hA5Q4Ce9ItobThStms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pDUJKwhhKseNNVOjdrlsmPQPiJ++lTrAIQqDZXBG+d4rvgIbZuSpnc5/O3c/Z0S7q
-	 7Jc/8DOerepy5EaPgL2EUKQJZnfYmh8m5MCrdhNvONr+j8sUGGTTHZ81Jyfd9R8zM6
-	 oWFPnTjVY5L929WIvi55tZj3xGQdCl6/ez/puCQl6+vH0s201+ch+MCPjefRinotX3
-	 A30wdbNluJuXIWCKVawgCxJQvEs0DINtET7p/5VGsvLWBLvRMN61u9+r3gyLEDG412
-	 42iff7Tp0hcQPgPt6h/sFsHCP4hxEDa0DWVxpiKPSDEvD1voUgxZq39MYt0Qpr3wMq
-	 K/vmdMilz5Zkg==
-Date: Wed, 28 Feb 2024 13:01:00 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: John Groves <John@groves.net>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, john@jagalactic.com, Dave Chinner <david@fromorbit.com>, 
-	Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com, gregory.price@memverge.com
-Subject: Re: [RFC PATCH 11/20] famfs: Add fs_context_operations
-Message-ID: <20240228-entworfen-verkabeln-a036afc976ec@brauner>
-References: <a645646f071e7baa30ef37ea46ea1330ac2eb63f.1708709155.git.john@groves.net>
- <20240227-mammut-tastatur-d791ca2f556b@brauner>
- <6jrtl2vc4dmi5b6db6tte2ckiyjmiwezbtlwrtmm464v65wkhj@znzv2mwjfgsk>
- <20240228-zecken-zonen-d07e89c6f536@brauner>
+	s=k20201202; t=1709122263;
+	bh=mU1+Bp1Q38H0/zJMPy1+Gqlp5uuFxCoeEDhsvj7Yf7g=;
+	h=Subject:From:To:Cc:Date:From;
+	b=ou57I/JXZYVI0gUZrXUjX45IY5nd2I0HZj5GI2pvqp79BGBBSucuEysCkNy7JOyKL
+	 D0pfoYoVnm3bgyEB31H4wV2MvXqvYIg5ytnwUmodZQrkf43nT9Xwts5L9j4GkmhUoc
+	 oxd5QNcdu5dn3XwFfu2pq6LUR0wtI6/YK2hWLQWtjeHUrw7fNWIk6VzPA79W08nK7J
+	 wfiXxM/FH06YZBwfVqEwt6zDNo3hLKA3zB0u+WHBeLTWiEuQyyuqMxAWsfkAwSKtfX
+	 P9lzaXy7x3uaT4rKhGCZF4wP/vrQrhribuk3OfgVSGxrhRNofGtFwuwmcz14OM1F5p
+	 vwEl1VGK1zG6A==
+Message-ID: <d16f4e3ca5dcf272316914312e531a484c8a5fcc.camel@kernel.org>
+Subject: [LSF/MM/BPF TOPIC] inode timestamps and change cookie
+From: Jeff Layton <jlayton@kernel.org>
+To: lsf-pc <lsf-pc@lists.linux-foundation.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Amir Goldstein
+	 <amir73il@gmail.com>
+Date: Wed, 28 Feb 2024 07:11:02 -0500
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+	kZWuOsJdJQdmwlWC5L5ln9xgfr/4mOY38B0U=
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240228-zecken-zonen-d07e89c6f536@brauner>
 
-On Wed, Feb 28, 2024 at 11:07:20AM +0100, Christian Brauner wrote:
-> > I wasn't aware of the new fsconfig interface. Is there documentation or a
-> > file sytsem that already uses it that I should refer to? I didn't find an
-> > obvious candidate, but it might be me. If it should be obvious from the
-> > example above, tell me and I'll try harder.
-> > 
-> > My famfs code above was copied from ramfs. If you point me to 
-> 
-> Ok, but that's the wrong filesystem to use as a model imho. Because it
-> really doesn't deal with devices at all. That's why it uses
-> get_tree_nodev() with "nodev" as in "no device" kinda. So ramfs doesn't
-> have any of these issues. Whereas your filesystems is dealing with
-> devices dax (or pmem).
-> 
-> > documentation I might send you a ramfs fsconfig patch too :D.
-> 
-> So the manpages are at:
-> 
-> https://github.com/brauner/man-pages-md
-> 
-> But really, there shouldn't be anything that needs to change for ramfs.
-> 
-> > > What errno is EALREADY? Isn't that socket stuff. In any case, it seems
-> > > you want EBUSY?
-> > 
-> > Thanks... That should probaby be EBUSY. But the whole famfs_context_list
-> > should probably also be removed. More below...
-> > 
-> > > 
-> > > But bigger picture I'm lost. And why do you keep that list based on
-> > > strings? What if I do:
-> > > 
-> > > mount -t famfs /dev/pmem1234 /mnt # succeeds
-> > > 
-> > > mount -t famfs /dev/pmem1234 /opt # ah, fsck me, this fails.. But wait a minute....
-> > > 
-> > > mount --bind /dev/pmem1234 /evil-masterplan
-> > > 
-> > > mount -t famfs /evil-masterplan /opt # succeeds. YAY
-> > > 
-> > > I believe that would trivially defeat your check.
-> > > 
-> > 
-> > And I suspect this is related to the get_tree issue you noticed below.
-> > 
-> > This famfs code was working in 6.5 without keeping the linked list of devices,
-> > but in 6.6/6.7/6.8 it works provided you don't try to repeat a mount command
-> > that has already succeeded. I'm not sure why 6.5 protected me from that,
-> > but the later versions don't. In 6.6+ That hits a BUG_ON (have specifics on 
-> > that but not handy right now).
-> 
-> get_tree_nodev() by default will always allocate a new superblock. This
-> is how tmpfs and ramfs work. If you do:
-> 
-> mount -t tmpfs tmpfs /mnt
-> mount -t tmpfs tmpfs /opt
-> 
-> You get two new, independent superblocks. This is what you want for
-> these multi-instance filesystems: each new mount creates a new instance.
-> 
-> If famfs doesn't want to allow reusing devices - which I very much think
-> it wants to prevent - then it cannot use get_tree_nodev() directly
-> without having a hack like you did. Because you'll get a new superblock
-> no problem. So the fact that it did work somehow likely was a bug in
-> your code.
-> 
-> The reason your code causes crashes is very likely this:
-> 
-> struct famfs_fs_info *fsi = sb->s_fs_info;
-> handlep = bdev_open_by_path(fc->source, FAMFS_BLKDEV_MODE, fsi, &fs_holder_ops);
-> 
-> If you look at Documentation/filesystems/porting.rst you should see that
-> if you use @fs_holder_ops then your holder should be the struct
-> super_block, not your personal fsinfo.
-> 
-> > So for a while we just removed repeated mount requests from the famfs smoke
-> > tests, but eventually I implemented the list above, which - though you're right
-> > it would be easy to circumvent and therefore is not right - it did solve the
-> > problem that we were testing for.
-> > 
-> > I suspect that correctly handling get_tree might solve this problem.
-> > 
-> > Please assume that linked list will be removed - it was not the right solution.
-> > 
-> > More below...
-> > 
-> > > > +		}
-> > > > +	}
-> > > > +
-> > > > +	list_add(&fsi->fsi_list, &famfs_context_list);
-> > > > +	mutex_unlock(&famfs_context_mutex);
-> > > > +
-> > > > +	return get_tree_nodev(fc, famfs_fill_super);
-> > > 
-> > > So why isn't this using get_tree_bdev()? Note that a while ago I
-> > > added FSCONFIG_CMD_CREAT_EXCL which prevents silent superblock reuse. To
-> > > implement that I added fs_context->exclusive. If you unconditionally set
-> > > fc->exclusive = 1 in your famfs_init_fs_context() and use
-> > > get_tree_bdev() it will give you EBUSY if fc->source is already in use -
-> > > including other famfs instances.
-> > > 
-> > > I also fail to yet understand how that function which actually opens the block
-> > > device and gets the dax device figures into this. It's a bit hard to follow
-> > > what's going on since you add all those unused functions and types so there's
-> > > never a wider context to see that stuff in.
-> > 
-> > Clearly that's a bug in my code. That get_tree_nodev() is from ramfs, which
-> > was the starting point for famfs.
-> > 
-> > I'm wondering if doing this correctly (get_tree_bdev() when it's pmem) would
-> > have solved my double mount problem on 6.6 onward.
-> > 
-> > However, there's another wrinkle: I'm concluding
-> > (see https://lore.kernel.org/linux-fsdevel/ups6cvjw6bx5m3hotn452brbbcgemnarsasre6ep2lbe4tpjsy@ezp6oh5c72ur/)
-> > that famfs should drop block support and just work with /dev/dax. So famfs 
-> > may be the first file system to be hosted on a character device? Certainly 
-> > first on character dax. 
-> 
-> Ugh, ok. I defer to others whether that makes sense or not. It would be
-> a lot easier for you if you used pmem block devices, I guess because it
-> would be easy to detect reuse in common infrastructure.
-> 
-> But also, I'm looking at your code a bit closer. There's a bit of a
-> wrinkle the way it's currently written...
-> 
-> Say someone went a bit weird and did:
-> 
-> mount -t xfs xfs /dev/sda /my/xfs-filesystem
-> mknod DAX_DEVICE /my/xfs-filesystem/dax1234
-> 
-> and then did:
-> 
-> mount -t famfs famfs /my/xfs-filesystem/dax1234 /mnt
-> 
-> Internally in famfs you do:
-> 
-> fsi->dax_filp = filp_open(fc->source, O_RDWR, 0);
-> 
-> and you stash that file... Which means that you are pinning that xfs
-> filesystems implicitly. IOW, if someone does:
-> 
-> umount /my/xfs-filesystem
-> 
-> they get EBUSY for completely opaque reasons. And if they did:
-> 
-> umount -l /my/xfs-filesystem
-> 
-> followed by mounting that xfs filesystem again they'd get the same
-> superblock for that xfs filesystem.
-> 
-> What I'm trying to say is that I think you cannot pin another filesystem
-> like this when you open that device.
-> 
-> IOW, you either need to stash the plain dax device or dax needs to
-> become it's own tiny internal pseudo fs such that we can open dax
-> devices internally just like files. Which might actually also be worth
-> doing. But I'm not the maintainer of that.
+Last year, I led a discussion at LSF about the inode change cookie value
+(aka i_version).
 
-Ah, I see it's already like that and I was looking at the wrong file.
-Great! So in that case you could add helper to open dax devices as
-files:
+The original impetus for this work was the fact that all 3 mainstream
+local filesystems (btrfs, ext4 and xfs) updated the value for different
+sorts of activity, which can cause wildly different behavior when the
+filesystem is exported via NFS. My hope last year was that we could fix
+this with multigrain timestamps [1], but that didn't pan out.
 
-struct file *dax_file_open(struct dax_device *dev, int flags, /* other stuff */)
-{
-	/* open that thing */
-        dax_file = alloc_file_pseudo(dax_inode, dax_vfsmnt, "", flags | O_LARGEFILE, &something_fops);
-}
+At LSF, I'd like to give a brief overview of state of i_version work,
+and lead a discussion on what work remains.
 
-and then you can treat them as regular files without running into the
-issues I pointed out.
+[1]: https://lwn.net/Articles/938240/
+
+Thanks!
+--=20
+Jeff Layton <jlayton@kernel.org>
 
