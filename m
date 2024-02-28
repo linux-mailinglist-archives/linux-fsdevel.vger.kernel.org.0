@@ -1,124 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-13126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3C486B81B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 20:24:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1221586B81F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 20:26:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C831F2465D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 19:24:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 359DD1C225A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 19:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EFC15E5D7;
-	Wed, 28 Feb 2024 19:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F957441F;
+	Wed, 28 Feb 2024 19:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Ikh1klkC"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aB4VxPfe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F012074435
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 19:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FCA34CDE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 19:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709148260; cv=none; b=BNw6SxX/3N2Oa3R2Q7V/ff1yDdY5hxLjf6zIP3XPpSeOqFEXV+k8GoCi+ldjgeOYAAUJYv27cMaLdMFMxCiMwyw8Ideonzt3jKUbWPRbB/H/zREk0yHQ/T4Mm1i7tNsOaPNhuR5daFBkQrzFwW9wYm/bK7c5Hra49RVyQr02aDA=
+	t=1709148382; cv=none; b=Po9cjj0EguQBQSONtZL3HVw96LbiCPOw8dY0K2XSCyvg4iCmKz6KIgjaRCVconTabVmf/jYVOfeocGvPiIHptdTVkM21MQJu1rYV5fmfLrEm9Vv1j2vu/0/jfniZcmK4pfXsvUvE2+/GvyHN9z0SaIP1arlZbElbn6bZLSND/Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709148260; c=relaxed/simple;
-	bh=16yvQGF4TqEul7uf//Z255JvkU2yThlRubF/gIw3PP8=;
+	s=arc-20240116; t=1709148382; c=relaxed/simple;
+	bh=A/wKTs25P2h+C0/iIm+ViouQFJW7MRQ3etRuF2hNBTc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nweSDAUc4VkONv4HwrrGA5OR8LTLPkIRWNdw8JWTkL9LjAyTb3vcTo2weVLT2at8fEmF8fIV0rdESz/FABMOAzBl3bON/lsCOaAC7Wr6deKPYPLvndV53O4OtTXgSfHNNOvWmavtEZQwKurTHoUlXRIufPLY9waqSoMZdNzf6uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Ikh1klkC; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a3d5e77cfbeso22044566b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 11:24:16 -0800 (PST)
+	 To:Cc:Content-Type; b=aEXqVJbPuewNyHe5d1A8W6PIUlTMUfvliRtDcA992DCV6bn4TWahvaidQBqO7NTHzlx3dM8pPs4w8nqCD3uEc+h2bCOKMX0dUDKH4vqQEcHgmtbgODQkHuHiuYrVvvAylsW8KwytehYYJBfIwMBZQH7XUpz0POrGNgWfizvJVl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aB4VxPfe; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-299a2456948so29083a91.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 11:26:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1709148255; x=1709753055; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LUlsH9mwlheftjt1VnERMRGr0XlA6bQ63sK+GJc4YIY=;
-        b=Ikh1klkCY1zX01MpbathS0jr5xmUPfXw+nhtIAqA0gp14WP6M2Y8qOcOzL3KUz2YTl
-         U1oWaps0IAUQ86QGkQ/D3/01wgVNchPlvidnNcCb7n0vcrT2X7z3/wYmU+EgaTJuEZIr
-         /mJ/sgUv2/R4aDEuEMRK9Kyf0ZzmTLDyaipBI=
+        d=linaro.org; s=google; t=1709148380; x=1709753180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bzu726Ai+TBY59G18muQwvBjEx5EepyiU/9T7B11GAA=;
+        b=aB4VxPfe+YlsayFt7jmytzM6MrxpKcV7d4AM4C+Px4OJ6lTcus97cSb/rHydnjD0ec
+         3DD3qSZ3FLH3ZNEEWcun0PSInwlYY5HibiYCSlPm25FyLq9cIDsmWmL4PTR6EjHbFzRY
+         Xkzg/C0I0XY1SwtC4W48QmSQJOviX0fclpRnczIp69enfW+qYApJJLotUQlc+DTjk66y
+         115qZIcns0S6ktlbEgzjwhOTyiBYFKliz9jytuUeSVYRINRghR6d0BcHIPV9S4Kas7Ry
+         nDIgLjP2+1YkiSHNZFZgO5te5wJY3gmDu4iHQQ5WI0u+vO9VWa/V0KTfd1Z0n7foMYPZ
+         hzEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709148255; x=1709753055;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LUlsH9mwlheftjt1VnERMRGr0XlA6bQ63sK+GJc4YIY=;
-        b=ES7qCrdcKNENUC0JncV92wUWxyrQtBOr0wvuB/DfgCW+makMqJITHNpeoVzxUby+7w
-         XIm5hyEXkW0hrtVrBq9vNIUy5QtzUnDxBmj1gJO8UwT2xQulbLmk1XCMyznS6jYz9LCr
-         PGhR2Z+/15hIACVRq9mKPDTXfUh/pg8vEYLw6i8DNfBQvDuJm7BJxDMBgyFX+OJvQm7o
-         ONmu1upH2oaFMV0xSqUCBBkPS2y2HXF0p6pWcZj9QQ48pm7qj14K8p5HXajbrvpl4E/b
-         flo3yQjCpGV2eM9hyoO7nuooqxrgmOXDFqZLg5SY7nk29oT+JxQ4lIIyq69NQQJn81SY
-         tMSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWSQNTq4m8gs6v6E9CelTzJL+JSpuqfVrBAUathleUVnox4d/brs4+0/j5N7xlUqCuLZ3qhF/Ud1XuEKqe16l1ks9PLQEQVxH23m5Rrg==
-X-Gm-Message-State: AOJu0YwSrw4Hx1+4QJbQWa5W+RY9HlOL04yEjt7LWWHL7dQaDqYjrula
-	DZE0MydPjKPv+g73F8U33ynCz6vn2E+PbPth1BgOPq4bbT+obh6FRvf/3GWPSA6ZSefmWNOHjuN
-	dN+oDo3+daflddapu4WMn27DqOY2qU1DSdEcCWQ==
-X-Google-Smtp-Source: AGHT+IE6IVFHssB3O0XoXNS1Yv6t0hxMflNes0j90lzSJqxQAEvvhPaRuCXLQGSbgCL9X4N+SNOny3EQNZ61LoixIq8=
-X-Received: by 2002:a17:906:27d7:b0:a3c:5e17:1635 with SMTP id
- k23-20020a17090627d700b00a3c5e171635mr287940ejc.30.1709148255326; Wed, 28 Feb
- 2024 11:24:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709148380; x=1709753180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bzu726Ai+TBY59G18muQwvBjEx5EepyiU/9T7B11GAA=;
+        b=TRkZKi8MMjAQMPLu4jwlIULYvgmsW2yF3mnzaHrl3axPgAAnGQb6dsh+tiwdYV1trt
+         J7/ZrWheVDipzO98dktH9ZSGGqj2BGDZNTz6vB84NqYuHCN3K7rArg47+sXZUvsOV4Ic
+         BjcrWxNlVT14fg3iShMWMNOCux2EjNV8zWf9YKP08J/yf6QU8pqHRExpbCb++mJHgoOu
+         89cY7egW8Y0sQyKS96zYi9fAURwc23yvWnP2BLNFP+vq9cv0lFMbrxleWCAuW8Ro2QYs
+         gPs0AvlE07WSfXFHgoby0NowzkXHrDzfB8ocYo0+lhqCVvJqd05LIDwKSvKgMZ+Tky6I
+         EF8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWYVpf/cqPgxsRGcM+Vo/Cfb6Q/uubIxcz23Sq2rkFP+BIQIaivQTC03Uq8etZPvTSmwTL/HH/cGjxigMty/t733RUyMFd+RbsbDoICoA==
+X-Gm-Message-State: AOJu0YwL9Kaab2QPataMLojHwOorhFJRaztrdDIiIIwW1YPYzZv+T4JY
+	ctiK9T5gZOpasTgv3geOOTU1DUCC822tvRuk35F68L1MDAOHrd30/pmXHiKJGfwfxi0uGDxGm6C
+	11lXAtOleJlY+UfQwgm9OfSfLquRgrSGlCM4gvsd79SbyC9PwbuUNgA==
+X-Google-Smtp-Source: AGHT+IHTS9N1iSPObTmgV9ohsjg2Tk/XgOveZ2b1BxdAL4F8Qrbrt+SBVO0cj4z1Jp4dgkTzLRzo2DRMmsDTgOeAOGU=
+X-Received: by 2002:a17:90a:d58b:b0:29a:1351:59c8 with SMTP id
+ v11-20020a17090ad58b00b0029a135159c8mr117187pju.22.1709148380358; Wed, 28 Feb
+ 2024 11:26:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240228160213.1988854-1-mszeredi@redhat.com> <20240228160213.1988854-3-mszeredi@redhat.com>
- <fa6cd2cc-252c-492f-adb5-7a0d09c20799@fastmail.fm>
-In-Reply-To: <fa6cd2cc-252c-492f-adb5-7a0d09c20799@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 28 Feb 2024 20:24:03 +0100
-Message-ID: <CAJfpegsDo-P+tb8BQdhdLeNAKwJnxUnnQoJ=eT3Yd260AxUuJw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] fuse: don't unhash root
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, stable@vger.kernel.org
+References: <CA+G9fYvnjDcmVBPwbPwhFDMewPiFj6z69iiPJrjjCP4Z7Q4AbQ@mail.gmail.com>
+In-Reply-To: <CA+G9fYvnjDcmVBPwbPwhFDMewPiFj6z69iiPJrjjCP4Z7Q4AbQ@mail.gmail.com>
+From: =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>
+Date: Wed, 28 Feb 2024 13:26:09 -0600
+Message-ID: <CAEUSe79PhGgg4-3ucMAzSE4fgXqgynAY_t8Xp+yiuZsw4Aj1jg@mail.gmail.com>
+Subject: Re: ext4_mballoc_test: Internal error: Oops: map_id_range_down (kernel/user_namespace.c:318)
+To: Naresh Kamboju <naresh.kamboju@linaro.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: open list <linux-kernel@vger.kernel.org>, linux-ext4 <linux-ext4@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org, 
+	Jan Kara <jack@suse.cz>, Andreas Dilger <adilger.kernel@dilger.ca>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Christian Brauner <brauner@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, shikemeng@huaweicloud.com, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 28 Feb 2024 at 17:34, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+Hello!
+
+On Wed, 28 Feb 2024 at 12:19, Naresh Kamboju <naresh.kamboju@linaro.org> wr=
+ote:
+> Kunit ext4_mballoc_test tests found following kernel oops on Linux next.
+> All ways reproducible on all the architectures and steps to reproduce sha=
+red
+> in the bottom of this email.
 >
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 >
+> Test log:
+> ---------
+> <6>[   14.297909]     KTAP version 1
+> <6>[   14.298306]     # Subtest: ext4_mballoc_test
+> <6>[   14.299114]     # module: ext4
+> <6>[   14.300048]     1..6
+> <6>[   14.301204]         KTAP version 1
+> <6>[   14.301853]         # Subtest: test_new_blocks_simple
+> <1>[   14.308203] Unable to handle kernel paging request at virtual
+> address dfff800000000000
+> <1>[   14.309700] KASAN: null-ptr-deref in range
+> [0x0000000000000000-0x0000000000000007]
+> <1>[   14.310671] Mem abort info:
+> <1>[   14.311141]   ESR =3D 0x0000000096000004
+> <1>[   14.312969]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+> <1>[   14.313566]   SET =3D 0, FnV =3D 0
+> <1>[   14.314228]   EA =3D 0, S1PTW =3D 0
+> <1>[   14.314750]   FSC =3D 0x04: level 0 translation fault
+> <1>[   14.316382] Data abort info:
+> <1>[   14.316838]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
+> <1>[   14.317742]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
+> <1>[   14.318637]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
+> <1>[   14.319975] [dfff800000000000] address between user and kernel
+> address ranges
+> <0>[   14.322307] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> <4>[   14.324184] Modules linked in:
+> <4>[   14.326693] CPU: 1 PID: 104 Comm: kunit_try_catch Tainted: G
+>             N 6.8.0-rc6-next-20240228 #1
+> <4>[   14.327913] Hardware name: linux,dummy-virt (DT)
+> <4>[   14.329173] pstate: 11400009 (nzcV daif +PAN -UAO -TCO +DIT
+> -SSBS BTYPE=3D--)
+> <4>[ 14.330117] pc : map_id_range_down (kernel/user_namespace.c:318)
+> <4>[ 14.331618] lr : make_kuid (kernel/user_namespace.c:415)
+> <trim>
+> <4>[   14.344145] Call trace:
+> <4>[ 14.344565] map_id_range_down (kernel/user_namespace.c:318)
+> <4>[ 14.345378] make_kuid (kernel/user_namespace.c:415)
+> <4>[ 14.345998] inode_init_always (include/linux/fs.h:1375 fs/inode.c:174=
+)
+> <4>[ 14.346696] alloc_inode (fs/inode.c:268)
+> <4>[ 14.347353] new_inode_pseudo (fs/inode.c:1007)
+> <4>[ 14.348016] new_inode (fs/inode.c:1033)
+> <4>[ 14.348644] ext4_mb_init (fs/ext4/mballoc.c:3404 fs/ext4/mballoc.c:37=
+19)
+> <4>[ 14.349312] mbt_kunit_init (fs/ext4/mballoc-test.c:57
+> fs/ext4/mballoc-test.c:314)
+> <4>[ 14.349983] kunit_try_run_case (lib/kunit/test.c:388 lib/kunit/test.c=
+:443)
+> <4>[ 14.350696] kunit_generic_run_threadfn_adapter (lib/kunit/try-catch.c=
+:30)
+> <4>[ 14.351530] kthread (kernel/kthread.c:388)
+> <4>[ 14.352168] ret_from_fork (arch/arm64/kernel/entry.S:861)
+> <0>[ 14.353385] Code: 52808004 b8236ae7 72be5e44 b90004c4 (38e368a1)
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0: 52808004 mov w4, #0x400                  // #1024
+>    4: b8236ae7 str w7, [x23, x3]
+>    8: 72be5e44 movk w4, #0xf2f2, lsl #16
+>    c: b90004c4 str w4, [x6, #4]
+>   10:* 38e368a1 ldrsb w1, [x5, x3] <-- trapping instruction
 >
-> On 2/28/24 17:02, Miklos Szeredi wrote:
-> > The root inode is assumed to be always hashed.  Do not unhash the root
-> > inode even if it is marked BAD.
-> >
-> > Fixes: 5d069dbe8aaf ("fuse: fix bad inode")
-> > Cc: <stable@vger.kernel.org> # v5.11
-> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > ---
-> >  fs/fuse/fuse_i.h | 1 -
-> >  fs/fuse/inode.c  | 7 +++++--
-> >  2 files changed, 5 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index 7bd3552b1e80..4ef6087f0e5c 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -994,7 +994,6 @@ static inline bool fuse_stale_inode(const struct inode *inode, int generation,
-> >
-> >  static inline void fuse_make_bad(struct inode *inode)
-> >  {
-> > -     remove_inode_hash(inode);
-> >       set_bit(FUSE_I_BAD, &get_fuse_inode(inode)->state);
-> >  }
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0: 38e368a1 ldrsb w1, [x5, x3]
+> <4>[   14.354545] ---[ end trace 0000000000000000 ]---
 >
-> Hmm, what about callers like fuse_direntplus_link? It now never removes
-> the inode hash for these? Depend on lookup/revalidate?
+> Links:
+>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-202402=
+28/testrun/22877850/suite/log-parser-test/test/check-kernel-bug/log
+>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-202402=
+28/testrun/22877850/suite/log-parser-test/tests/
+>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-202402=
+28/testrun/22877850/suite/log-parser-test/test/check-kernel-bug-43e0665fdb2=
+d5768ac093e1634e6d9a7c65ff1b6a66af7d0c12b3bce5ca7e717/details/
+>
+> Steps to reproduce:
+>  - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2czN4=
+PCDk4BIKg76qUnQE4WkNny/reproducer
 
-Good questions.
++Guenter. Just the thing we were talking about, at about the same time.
 
-In that case the dentry will be unhashed, and after retrying it will
-go through fuse_iget(), which will unhash the inode.
+Greetings!
 
-So AFAICS the only place the inode needs to be unhashed is in
-fuse_iget(), which is the real fix in 775c5033a0d1 ("fuse: fix live
-lock in fuse_iget()").
-
-Thanks,
-Miklos
+Daniel D=C3=ADaz
+daniel.diaz@linaro.org
 
