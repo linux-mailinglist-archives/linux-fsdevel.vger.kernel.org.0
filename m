@@ -1,114 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-13085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D1E86B155
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 15:11:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7578C86B16B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 15:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0CB9B22981
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:11:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 053FBB29D6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 14:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06178157E96;
-	Wed, 28 Feb 2024 14:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3D81534F4;
+	Wed, 28 Feb 2024 14:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K3ajiALY"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="NyZCX3T7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B20D1552F8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 14:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28A214F998
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 14:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709129473; cv=none; b=tkxQRrPYrX7pt1fD6lK1PsbtVoniKgBaRyLhycbfZgnHTreGQySKO8uME5/EZXnK7JtBomy2idBxsRBEPqX8DE+w/PrD5/T6b0lNYIcozENKjprStUiJ0gH60R8R9RgcJHuCmTKfDV7xsRhjl1aM8AgCn0NWPCAuluLeG6Crr0A=
+	t=1709129656; cv=none; b=gyCiXFh46DRVkBEZZ2ozoSqvm5fnNTTs9PQ/oz8h7uu9+kCuSNYKlMej+BjQpuLQHG8unMcZK/jBY06TbC0Q7DGdNkPur6McbC/noLBBD4oEuSHFp4QrzZZZ0zvc+j/9cspfpX0u/o0pMfPug+FpISOVzDoeLnXlVMLHss0UN2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709129473; c=relaxed/simple;
-	bh=NOeZg7n1rnLpDAaUysHN0n+UFwvBRYQQUMKyrvYERqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OzjDPDX/FPem/tK+VJpiUpLQgjNKBg61id9oiLIzjXmpYUOYwshDBxfQA8tPfg+msmozww7oI17uK1dqBkmgOM5p9L5hzjCnALoI3hHEvjPWGfhbONczAUBFEax6H0GTOnxszi1u8gISe9G96CysT4J/nue3IplmfEQR2NzwuLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K3ajiALY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ozXeuEKBhGwaFu6uAoSEhqyiFnOGYyJ9Gq3+N2ervuc=; b=K3ajiALYn1JYBFPyeMEp/AIWVz
-	ik3x94iFUKM5Rnzi+wN5jK9fk7TBBAKdAh9/hDq5g9McWLV5Qf49GBUVcRJdA7AUbjhjg+a8Ul8oU
-	88l8BjTJcQ6K8hOYBSrWkVv6dfVcihesOJdMT6rxM49N1i3pZ8xNlFL4/mUMNLxwUAKXiA0Z9+zLV
-	rs1U3oVd6hYSmXRWHYVrl401PP46H51L171Ivn4WqgHqzoC/f3O7RTlOQPSLsCbZ2XqiuyzbELoix
-	5IVw+m583dfnZkN6qCY7yh3ul9vsOVkIkTit+u/LtotLfYh9isSp2PYirWU8KSmCHVCiI8qFiPA3I
-	p/p39FxA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rfKeI-00000005NjY-3Qpj;
-	Wed, 28 Feb 2024 14:11:06 +0000
-Date: Wed, 28 Feb 2024 14:11:06 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm <linux-mm@kvack.org>
-Subject: Re: [LSF/MM/BPF TOPIC] untorn buffered writes
-Message-ID: <Zd8--pYHdnjefncj@casper.infradead.org>
-References: <20240228061257.GA106651@mit.edu>
+	s=arc-20240116; t=1709129656; c=relaxed/simple;
+	bh=StE3BNfMnJAiSX82OpAC0iLGH3GLzMtbBwqWYw4IZGg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OMIEekFp1PSxgv8w6pejw2CvG2X3BLlo9eTVp2Hk7IqcR5+4ZKutVE20LQ4EKMvDiPHNH4vg2qjNB1102f2onYMwJE03Dh2SPEmdztVjDP4FwLIFhqd7jafxpGCTOWpJ/7i4T+0MiEvPLxNuZpzqrmJ9wDo7664FLST9DRxYNZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=NyZCX3T7; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-564fd9eea75so7091922a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 06:14:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1709129652; x=1709734452; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xWvy1mHzaknU/IiKBwn07x/YhG/st3p6ekUL3X/i25g=;
+        b=NyZCX3T7Gz2aTctmz+4YZ53hzBYlk47uNQf9qWNBU2yBi2gDFThxRLbY+cxMBqlu9e
+         CMl3gDNU9gJsR2SbUURXPnDwJ4EYR3FIC+JKMbWb2wuYFdh7AuS5iiEsnvjkP9vnIETC
+         29j5b+W458BaZJ9oAA3kNMgdBZFa0skuPqNIY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709129652; x=1709734452;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xWvy1mHzaknU/IiKBwn07x/YhG/st3p6ekUL3X/i25g=;
+        b=Ym9rfJb03BHc6HbINvDL/tWfPBa+TRxnLcRVAY4TRDDKpOxY+hTBxSVFgbaQns7Zwk
+         yOMngcbcFbBTdbFG3sOOx24xknh5M/cvM+sZ1wpFLm+irA7qp0VCsGmbtLQVcvmIXLPV
+         pcRDtUO1Ee4jSkyeLZjHuaRAcjcblwlgu7d91MLCaBZeTjx9i6lHsarkLkFa7/ie2Z0f
+         E4rD6k9/xzxrWlBWe9ErgCLlkv3q52Nk0ev+Eu3TFIrcWdPDmehhVKbGZi2rlcXslUBN
+         tNsVx4nh5pLIJtZVoukqzC/sJeipqnqIHymndJ/hbx1hhXQvZWd63fw/zhl/4HUH9rHk
+         /xcw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0NTbDjWEhpfr5grPhbMxoOs0J5W+cORMBTagvn4CxiqlrswseSs2l9/ATqNwRMxvAnDWMbN0tp6Vna841HVCUhecoK+dL++6hX7GGaw==
+X-Gm-Message-State: AOJu0YzLNjgxPuCOdA8PXTzUQRMK7wx6n4Ig+PHwfOlrZ0kXecKS06Y7
+	UoleKI+wOirttoMF29889wU31DSDd54cKBs91o2MCNXY12QSmXlGqocLswEkbWoDhENsCiDixQ7
+	e9r8KIobUIwGPcXOaiW00pIO5C0QEtv7LqvF34Q==
+X-Google-Smtp-Source: AGHT+IFxcZKbsOEf105oI9QjZ62D6juPbzWv6rx1u9zzEAkNL7EHk6N3EnwfwPOpuIlkQtAHQIv8taBk8QkjphR2xE8=
+X-Received: by 2002:a17:906:6805:b0:a44:12b9:3762 with SMTP id
+ k5-20020a170906680500b00a4412b93762mr929379ejr.10.1709129651932; Wed, 28 Feb
+ 2024 06:14:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240228061257.GA106651@mit.edu>
+References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link>
+ <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm> <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link>
+ <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
+ <5b7139d5-52fd-4fd0-8fa0-df0a38d96a33@spawn.link> <CAJfpeguvX1W2M9kY-4Tx9oJhSYE2+nHQuGXDNPw+1_9jtMO7zA@mail.gmail.com>
+ <CAJfpegssrySj4Yssu4roFHZn1jSPZ-FLfb=HX4VDsTP2jY5BLA@mail.gmail.com>
+ <6fb38202-4017-4acd-8fb8-673eee7182b9@spawn.link> <CAJfpegscxYn9drVRkbVhRztL-+V0+oge8ZqPhgt4BAnvzaPzwQ@mail.gmail.com>
+ <f70732f8-4d67-474a-a4b8-320f78c3394d@spawn.link> <9b9aab6f-ee29-441b-960d-a95d99ba90d8@spawn.link>
+ <CAJfpegsz_R9ELzXnWaFrdNqy5oU8phwAtg0shJhKuJCBhvku9Q@mail.gmail.com> <f246e9ce-32bd-40df-a407-7a01c7d8939b@fastmail.fm>
+In-Reply-To: <f246e9ce-32bd-40df-a407-7a01c7d8939b@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 28 Feb 2024 15:14:00 +0100
+Message-ID: <CAJfpegu-6WP2nDOh18NMY1Cg3QJ19+tWXfHUax7qp5EUxAe76A@mail.gmail.com>
+Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Antonio SJ Musumeci <trapexit@spawn.link>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	fuse-devel <fuse-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 28, 2024 at 12:12:57AM -0600, Theodore Ts'o wrote:
-> However, this proposed interface is highly problematic when it comes
-> to buffered writes, and Postgress database uses buffered, not direct
-> I/O writes.   Suppose the database performs a 16k write, followed by a
-> 64k write, followed by a 128k write --- and these writes are done
-> using a file descriptor that does not have O_DIRECT enable, and let's
-> suppose they are written using the proposed RWF_ATOMIC flag.   In
-> order to provide the (stronger than we need) RWF_ATOMIC guarantee, the
-> kernel would need to store the fact that certain pages in the page
-> cache were dirtied as part of a 16k RWF_ATOMIC write, and other pages
-> were dirtied as part of a 32k RWF_ATOMIC write, etc, so that the
-> writeback code knows what the "atomic" guarantee that was made at
-> write time.   This very quickly becomes a mess.
+On Wed, 28 Feb 2024 at 14:16, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
 
-I'm not entirely sure that it does become a mess.  If our implementation
-of this ensures that each write ends up in a single folio (even if the
-entire folio is larger than the write), then we will have satisfied the
-semantics of the flag.
+> Could you still apply your previous patch? I think that definitely makes
+> sense as well.
 
-That's not to say that such an implementation would be easy.  We'd have
-to be able to allocate a folio of the correct size (or fail the I/O),
-and we'd have to cope with already-present smaller-than-needed folios
-in the page cache, but it seems like a SMOP.
+Half of it is trivial (s/make_bad_inode/fuse_make_bad/).
 
-> Another interface that one be much simpler to implement for buffered
-> writes would be one the untorn write granularity is set on a per-file
-> descriptor basis, using fcntl(2).  We validate whether the untorn
-> write granularity is one that can be supported when fcntl(2) is
-> called, and we also store in the inode the largest untorn write
-> granularity that has been requested by a file descriptor for that
-> inode.  (When the last file descriptor opened for writing has been
-> closed, the largest untorn write granularity for that inode can be set
-> back down to zero.)
+The other half is probably broken in that form (see 775c5033a0d1
+("fuse: fix live lock in fuse_iget()")).
 
-I'm not opposed to this API either.
+Things get complicated, though, because the root of submounts can have
+nodeid != FUSE_ROOT_ID, yet they should have the same rules as the
+original root.   Needs more thought...
 
-> The write(2) system call will check whether the size and alignment of
-> the write are valid given the requested untorn write granularity.  And
-> in the writeback path, the writeback will detect if there are
-> contiguous (aligned) dirty pages, and make sure they are sent to the
-> storage device in multiples of the largest requested untorn write
-> granularity.  This provides only the guarantees required by databases,
-> and obviates the need to track which pages were dirtied by an
-> RWF_ATOMIC flag, and the size of the RWF_ATOMIC write.
+> I think what we also need is notification message from kernel to server
+> that it does something wrong - instead of going to kernel logs, such
+> messages should go to server side logs.
 
-I think we'd be better off treating RWF_ATOMIC like it's a bs>PS device.
-That takes two somewhat special cases and makes them use the same code
-paths, which probably means fewer bugs as both camps will be testing
-the same code.
+That's generally not possible.  We can return -EIO to the application,
+but not the server.  In this case I think it's better to just fall
+back to old behavior of ignoring the generation.
+
+Thanks,
+Miklos
 
