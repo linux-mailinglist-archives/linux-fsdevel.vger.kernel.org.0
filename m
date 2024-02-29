@@ -1,149 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-13224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1CA386D6CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 23:24:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F0286D6F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 23:43:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B841F24775
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 22:24:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20FB2B22DD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 22:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B2175806;
-	Thu, 29 Feb 2024 22:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE23381DE;
+	Thu, 29 Feb 2024 22:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gDgB8B9J"
+	dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b="i3J82juf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="azm3luIO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797B074BF1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 22:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C5722318;
+	Thu, 29 Feb 2024 22:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.111.4.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709245470; cv=none; b=AsdkjcsvrerqGI+sBl8jwyULMvq1MG2EjW/zY/vYJdHfmAMg62iasWd3ODaYLQ2IIY+2L32L0CCjgTwjVaPiWeh6uVQ93GxYvKNWX702sumK9QsdYeSX3VY491lWNmI+HeO1ukPTl7xnM1zRNcobtJZ6YwXAS3BYR4Fr9Vm8zPs=
+	t=1709246626; cv=none; b=HAHxQy6Vaye1FbdspLtLPpWGWREKXxr2fAHpQcSQZGUPIU+n2EzsY+Ps6oIZ3Bz1Z0kFbR8b5Ta9YmaofsPEaNrEMJ5/wYUVZgok8GoNMaWpZGKbeDZodpuE51atOwJAUfVPvB5wsF6zXsDb9csuLxehYJZv140XkBYI9QZwDgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709245470; c=relaxed/simple;
-	bh=A78cnYeT5c8A7dqzL5kDfZeFAAc9jJVdn7MAkGWqX00=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=urzWoObRdk3ex+Z2rufvIm1CcnZ92O00KzuOPhb/Vpb87xx7TsGf4rHwL6vSCZkN2/nnwa3kHNUjph2/OMOTsoKa3moqYF7VQ8NC3hBxCmDGtXwFnH/5023wqb0VZEdsXSBvlN20vsfAzNYwEX6DWPImF35cxWVx8bRq4RJMWrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gDgB8B9J; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709245467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fH53wpixgZdMNHSX3Pn8Num8rbA2ozCUf7uf0bZJ4JU=;
-	b=gDgB8B9J26XCzko3cE8hKCSoIMTCS3HuBj0idkfWRcfhkowu0TVHBI3emRhJdiWPk3GUPL
-	/4DzETMJsqZwruaHWWFSfnrezcAsTy5X4JNYvKHqnP0YuvIPsl/G8KlHN5dk/02pqdeGFu
-	W08uC+1Qqdrr6oUKy+ffqwaXTnoMcDI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-576-iFyMGc5FMDSQ3ZiDnqT9xw-1; Thu, 29 Feb 2024 17:24:23 -0500
-X-MC-Unique: iFyMGc5FMDSQ3ZiDnqT9xw-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B77B088F4C7;
-	Thu, 29 Feb 2024 22:24:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.114])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 1C7EC492BC6;
-	Thu, 29 Feb 2024 22:24:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Marc Dionne <marc.dionne@auristor.com>
-cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Fix occasional rmdir-then-VNOVNODE with generic/011
+	s=arc-20240116; t=1709246626; c=relaxed/simple;
+	bh=9XSGUMRxz0sE0T4ckvyeXP3yYfhB9m1rrvjoyxGiCbk=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=ti5uBlO0htImlOsQRF5BtYjwEMJsdrtztIBrE6QO3RbwY1hGzTRsziGrYJm5Q2uL9pVFbPdLBTzO/jcXcKaVt76ps/cQxmXCU6h/rd6vFq4zwSyTxXggLIseauwe1rcGmzUrpmWFNQUx+S6BO6UKumO/qIKQRZ9U/c6l28CgTos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org; spf=pass smtp.mailfrom=verbum.org; dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b=i3J82juf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=azm3luIO; arc=none smtp.client-ip=66.111.4.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verbum.org
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailout.nyi.internal (Postfix) with ESMTP id 318A35C0049;
+	Thu, 29 Feb 2024 17:43:42 -0500 (EST)
+Received: from imap46 ([10.202.2.96])
+  by compute2.internal (MEProxy); Thu, 29 Feb 2024 17:43:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verbum.org; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1709246622; x=1709333022; bh=NKAcUD0tyU
+	b9nMY+LNYg26qTHsO4yEgMmPCWFlV5e0o=; b=i3J82juftyqETEw0mTaAIZKnT2
+	N7htheRuh6rPvQ3bh7EOFMvMTUpmAA9YGHF5Q/khBKcvWUDSgWnj0e3fY7oHpQHo
+	hVMNAQKW5MM2XNeXSnnq97w9f7rEGzetwuTEA5BSXPnieyLQYkmD06ge2G99uG8x
+	mhsXaoZYvwiL/AbU3IJSCrmCSCtE+N6YmfHceovZSTKu7lpRXikolddM5NeivJdr
+	slfM5WwTcuHemxxZzyIevtMXtS+2OtEHXtT/DE0gtmTyPVqXIfoA5We+MjyUXW64
+	O62IEXZ6azUl94pYh/ZsjFCdRGHPm3xPdFlacF2a8McURTKKiKfgy2KTpPvA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1709246622; x=1709333022; bh=NKAcUD0tyUb9nMY+LNYg26qTHsO4
+	yEgMmPCWFlV5e0o=; b=azm3luIOFXl4nKMajVF9d4wmSaTUQ/W+yiWPEv9AI4sw
+	RKozh6NI/NUasPiZdVOPnAbEkn1wq5QiPs5xNloCwB3xZ1R3sXs8vdlN0LzW6GS6
+	XFglX69kD7sm27hHSJgZEbhODGWQs2et/GzLvb8bqxUPHlK93UhvNhH609lpXrT7
+	46M0GeqF4up6tEyA5zIsVELeaqFfNoDNzLsGmKaYBEzmmfkeMx8lJZIpQyUf9jA8
+	YYmpGl0ZblpE40VlU17PJ42Jd0xE/lN631avP/dh6sa/xk/QzPLjxtPJLcvCq1Ou
+	nWMFYfuR7173I2493RYYNVIDYch8WRovAnwOGYabpA==
+X-ME-Sender: <xms:nQjhZQBiKnAIt0MbZv0S305drlEwifto-czuL-_zlIDlSYEZL8T2bg>
+    <xme:nQjhZSjWDXZZcdO5qWswJZTLoQUjKbFqLzyO-PB9OyBWqZa71BWP38eA7Ce6a6YLz
+    cteNp5x1j-zKc5Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrgeelgdduiedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfveho
+    lhhinhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpedvtdfhffdufeffueejgeevkeeggedtudekteetlefgteeujeeg
+    ffelgffhueegveenucffohhmrghinhepthhoohdrhhhofienucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpeifrghlthgvrhhssehvvghrsghumhdr
+    ohhrgh
+X-ME-Proxy: <xmx:nQjhZTl3jMbMdVXLx7BZQG3cY-HoqcRuQKxQkhiPZ6Z2mBrwL8QQiA>
+    <xmx:nQjhZWxlW1hqy64mApb442ELYYV33w3JxcQH6rT9YSnCcR9t8Z4TTQ>
+    <xmx:nQjhZVT73B8of-OJg_pHrvQnC8Mh2xrr9qCDOl-9iPgYWNPBGjyzcQ>
+    <xmx:ngjhZQefhJfaAw95CwfPcl7zwBy0MAlgwajgKdIs9wh1DXbpgk3kew>
+Feedback-ID: ibe7c40e9:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id C5F822A2008B; Thu, 29 Feb 2024 17:43:41 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-204-gba07d63ee1-fm-20240229.003-gba07d63e
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <196424.1709245455.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Feb 2024 22:24:15 +0000
-Message-ID: <196425.1709245455@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+Message-Id: <7282e2c3-f44a-4425-b0f7-24d1182e5499@app.fastmail.com>
+In-Reply-To: <20240229201840.GC1927156@frogsfrogsfrogs>
+References: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
+ <87961163-a4b9-4032-aa06-f5126c9c8ca2@app.fastmail.com>
+ <20240229201840.GC1927156@frogsfrogsfrogs>
+Date: Thu, 29 Feb 2024 17:43:21 -0500
+From: "Colin Walters" <walters@verbum.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
+ "Christoph Hellwig" <hch@lst.de>
+Subject: Re: [PATCHSET v29.4 03/13] xfs: atomic file content exchanges
+Content-Type: text/plain
 
-Sometimes generic/011 causes kafs to follow up an FS.RemoveDir RPC call by
-spending around a second sending a slew of FS.FetchStatus RPC calls to the
-directory just deleted that then abort with VNOVNODE, indicating deletion
-of the target directory.
 
-This seems to stem from userspace attempting to stat the directory or
-something in it:
 
-    afs_select_fileserver+0x46d/0xaa2
-    afs_wait_for_operation+0x12/0x17e
-    afs_fetch_status+0x56/0x75
-    afs_validate+0xfb/0x240
-    afs_permission+0xef/0x1b0
-    inode_permission+0x90/0x139
-    link_path_walk.part.0.constprop.0+0x6f/0x2f0
-    path_lookupat+0x4c/0xfa
-    filename_lookup+0x63/0xd7
-    vfs_statx+0x62/0x13f
-    vfs_fstatat+0x72/0x8a
+On Thu, Feb 29, 2024, at 3:18 PM, Darrick J. Wong wrote:
+>
+> Correct, there's no built-in dedupe.  For small files you'll probably
+> end up with a single allocation anyway, which is ideal in terms of
+> ondisk metadata overhead.
 
-The issue appears to be that afs_dir_remove_subdir() marks the callback
-promise as being cancelled by setting the expiry time to AFS_NO_CB_PROMISE
-- which then confuses afs_validate() which sends the FetchStatus to try an=
-d
-get a new one before it checks for the AFS_VNODE_DELETED flag which
-indicates that we know the directory got deleted.
+Makes sense.
 
-Fix this by moving the AFS_VNODE_DELETED check up above the expiration
-check, and even above the locking.
+> though I would bet that extending linkat (or rename, or
+> whatever) is going to be the only workable solution for old / simple
+> filesystems (e.g. fat32).
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
----
- fs/afs/validation.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Ah, right; that too.
 
-diff --git a/fs/afs/validation.c b/fs/afs/validation.c
-index 46b37f2cce7d..850f5287107d 100644
---- a/fs/afs/validation.c
-+++ b/fs/afs/validation.c
-@@ -391,6 +391,11 @@ int afs_validate(struct afs_vnode *vnode, struct key =
-*key)
- 	if (afs_check_validity(vnode))
- 		return 0;
- =
+> How /does/ dconf handle those changes?  Does it rename the file and
+> signal all the other dconf threads to reopen the file?  And then those
+> threads get the new file contents?
 
-+	if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
-+		_debug("file already deleted");
-+		return -ESTALE;
-+	}
-+
- 	ret =3D down_write_killable(&vnode->validate_lock);
- 	if (ret < 0)
- 		goto error;
-@@ -448,12 +453,6 @@ int afs_validate(struct afs_vnode *vnode, struct key =
-*key)
- 	vnode->cb_ro_snapshot =3D cb_ro_snapshot;
- 	vnode->cb_scrub =3D cb_scrub;
- =
+I briefly skimmed the code and couldn't find it, but yes I believe it's basically that clients have an inotify watch that gets handled from the mainloop and clients close and reopen and re-mmap - it's probably nonexistent to have non-mainloop threads reading things from the mmap, so there's no races with any other threads.
 
--	if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
--		_debug("file already deleted");
--		ret =3D -ESTALE;
--		goto error_unlock;
--	}
--
- 	/* if the vnode's data version number changed then its contents are
- 	 * different */
- 	zap |=3D test_and_clear_bit(AFS_VNODE_ZAP_DATA, &vnode->flags);
+>
+> Huurrrh hurrrh.  That's right, I don't see how exchange can mesh well
+> with mmap without actual flock()ing. :(
+>
+> fsnotify will send a message out to userspace after the exchange
+> finishes, which means that userspace could watch for the notifications
+> via fanotify.  However, that's still a bit racy... :/
 
+Right.  However...it's not just about mmap.  Sorry this is a minor rant but...near my top ten list of changes to make with a time machine for Unix would be the concept of a contents-immutable file, like all the seals that work on memfd with F_ADD_SEALS (and outside of fsverity, which is good but can be a bit of a heavier hammer).
+
+A few times I've been working on shell script in my editor on my desktop, and these shell scripts are tests because shell script is so tempting.  I'm sure this familiar, given (x)fstests.
+
+And if you just run the tests (directly from source in git), and then notice a bug, and start typing in your editor, save the changes, and then and your editor happens to do a generic "open(O_TRUNC), save" instead of an atomic rename.  This happens to be what `nano` and VSCode do, although at least the `vi` I have here does an atomic rename.  (One could say all editors that don't are broken...but...)
+
+And now because the way bash works (and I assume other historical Unix shells) is that they interpret the file *as they're reading it* in this scenario you can get completely undefined behavior.  It could do *anything*.
+
+At least one of those times, I got an error from an `rm -rf` invocation that happened to live in one of those test scripts...that could have in theory just gone off and removed anything.
+
+Basically the contents-immutable is really what you *always* want for executables and really anything that can be parsed without locking (like, almost all config files in /etc too).  With ELF files there's EXTBUSY if it *happens* to be in use, but that's just a hack.  Also in that other thread about racing writes to suid executables...well, there'd be no possibility for races if we just denied writing because again - it makes no sense to just make random writes in-place to an executable.  (OK I did see the zig folks are trying an incremental linker, but still I would just assume reflinks are available for that)
+
+Now this is relevant here because, I don't think anything like dpkg/rpm and all those things could ever use this ioctl for this reason.
+
+So, it seems to me like it should really be more explicitly targeted at
+- Things that are using open()+write() today and it's safe for that use case
+- The database cases
+
+And not talk about replacing the general open(O_TMPFILE) + rename() path.
 
