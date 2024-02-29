@@ -1,93 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-13179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8324486C605
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 10:50:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22B586C673
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 11:10:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25BED1F24DFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 09:50:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BA4128ABA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 10:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD6F629E7;
-	Thu, 29 Feb 2024 09:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21038651AC;
+	Thu, 29 Feb 2024 10:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBFjhK5d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D18627FD
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 09:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7722164A8E;
+	Thu, 29 Feb 2024 10:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709200205; cv=none; b=q7FKuDXfJTwTDU6zXQ30ulr8JyhlDWIDvHcJ7OuoWy1nMVwDsfH2In+Z7ixD6aPBeuCnxf0WSM7lNfKcK6axQQbouSlaFFBvxqqW5eXJ3E64tlmhumxKr/SiBLjiXEBIltoKYKG4sjjt17M/BC87nUgdXD0dzGEgs47XLrkkjhU=
+	t=1709201371; cv=none; b=tulC48sAA9mM+la66TubO7m9fLoUObm8ODtBY+ZT6uDCZkwcUvHRh/C/5pJJK7tSPehrq9/jNjLw/DcvMzkqZbE79fvsnuZSN6nMNs0VzyMejqxW0h3hE0rUvXeYP2Y27LBp4IYMq4rmVGzjl0Xl7unvsaGHvTwcCwqDZVm2PVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709200205; c=relaxed/simple;
-	bh=xi6HIJAD+eeBu9LW7f4Hh3oqUUXdFVpYzkHwowOaOQU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=s8jwgTfOq4JcRX7AynByCl5+M7cu9C1gkITg2Mn3N4qkRoAbKsqwq/QXKMTbp090TrJENF6mw0BSG0vzhRIiqj4mIbI6XpLYvoa805YFc2/N7ugjVgW2D5KEA124Huq8aBumyQEilEieuE/JL+dyUv8R04MnzA9flnuy6MeOpTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36576ec006aso7680285ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 01:50:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709200203; x=1709805003;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zDGmgKlqgwk985gGaF2O6kw62GJaKE8V/tYQe0mxx8U=;
-        b=d6dmEEcPNQxOlqhNrHEywBi8cCrtvZTtiS3w69vH7+xT0bQWBC8Cnyr7KRfKfbgjDR
-         yMnn0VtCY11jkwDbYILQWS/hH5uIAdr6dJvqFJom/G3hUunACRfl2lFku9+3tdKQv8vW
-         A1wtSU6lBYh3vZPYAruPM/UIFGmRYg5ISfx2HDmpQgZnW6/m8OWtc+oMnJ81j9xg6+3Y
-         AT//f0Hwkh2J7yE66I1AGaWhGZJYRGA5AACDJlUihdUp8vZWjh5Em1mMES9xA1PnDWQo
-         G6F+jEi4Qtt/QO22iM7CTHB8L1fYvlzUUDnlbCPV6MlUGPOtXM19EszFJPircylSO684
-         PZDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCjPSnAF2e9rqNgz2n360uX0SlT2jivTKujd3vxmErL0bXaDl4k0KtlfHeJgwnV1FAraMpZV6WigHycqiJ/L2ap7gCNMKCrBwVLTyjsQ==
-X-Gm-Message-State: AOJu0YydWCNITUSuF9iB6QwX6ksSAvfBS9dJTXz+wTK6wrJM7EdahrfI
-	EGas3HoP3LDPRvk63rN/Ye4sK8FCv0Z0C/ABtuw/3rHOLYsLo9xCOk3ICmqPYqIsi5NDhvPQKLx
-	+3tHf9w2EGRTTilaV0LGlHG8h7R32osvhDfxERA76UAqQAfSPkVxhtz8=
-X-Google-Smtp-Source: AGHT+IG4QI0KeghT/04h1y+qObg0of7pbkvKUpoiyWTfn6I+VKPKB7VJiBDBfJC6+j8HBzzrx2DohQ/EipLv3inF8Xn6oz88XXxK
+	s=arc-20240116; t=1709201371; c=relaxed/simple;
+	bh=jTspB3iUz57ARAjdinxW+/Q91yDRnm3gqja4T9fxZTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WrsTKjF96HJg9LsuOEf9iM8DPCUw7ftyD5DjIfnF9N71rtx7kO4DJjCgPx/wzCNFJP7+KfJ9nS4RSXO4XdgE9oetLb29/R4b6pQFobMgvFTTvJWWa4QV7LhkhKpTe/4xVVOWZLf5GYtGfn552X3lNcuA8X369E/+grAN3nLIlHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBFjhK5d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F695C433F1;
+	Thu, 29 Feb 2024 10:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709201371;
+	bh=jTspB3iUz57ARAjdinxW+/Q91yDRnm3gqja4T9fxZTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mBFjhK5d7fJpVw/6bDbc5tkU6ElHDTpzVkK/jIbuftZBarsoqfd0J/td4ycX7Y0NI
+	 OwuwPlDbj8ZtIqnlCXOF2pG3huqmMUj5GBAof4EEoDRc9P6XPkyLOZ8+aLsqxoP9yI
+	 E+m7pUJjav8Pn5m1m75Em6T0UBx+RyRZKKV0gXMgKErQBBb2lSrjaJ6CNubQUijnjS
+	 Dck5QGzkyUjQu7qNjOmf68ZPRsSaTKxIdhCuhIRwbtTaqNBpNuQDQRK4HppSWMejtG
+	 bsu5gpSsPoHrMRolGv5LGA7fro/ZxAwUPx7adyrYyWYoONQWysvfvvefct3/hkMK84
+	 UhWf04m39lTrg==
+Date: Thu, 29 Feb 2024 11:09:24 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Daniel =?utf-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
+	linux-ext4 <linux-ext4@vger.kernel.org>, linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org, 
+	Jan Kara <jack@suse.cz>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Theodore Ts'o <tytso@mit.edu>, Randy Dunlap <rdunlap@infradead.org>, shikemeng@huaweicloud.com, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: ext4_mballoc_test: Internal error: Oops: map_id_range_down
+ (kernel/user_namespace.c:318)
+Message-ID: <20240229-stapfen-eistee-9d946b4a3a9d@brauner>
+References: <CA+G9fYvnjDcmVBPwbPwhFDMewPiFj6z69iiPJrjjCP4Z7Q4AbQ@mail.gmail.com>
+ <CAEUSe79PhGgg4-3ucMAzSE4fgXqgynAY_t8Xp+yiuZsw4Aj1jg@mail.gmail.com>
+ <7e1c18e3-7523-4fe6-affe-d3f143ad79e3@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26e:0:b0:365:1c10:9cfa with SMTP id
- h14-20020a92c26e000000b003651c109cfamr129745ild.5.1709200203621; Thu, 29 Feb
- 2024 01:50:03 -0800 (PST)
-Date: Thu, 29 Feb 2024 01:50:03 -0800
-In-Reply-To: <000000000000e2c68a05ff02fe43@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fcae190612822e30@google.com>
-Subject: Re: [syzbot] [reiserfs?] kernel panic: corrupted stack end in do_sys_ftruncate
-From: syzbot <syzbot+3e32db5854a2dc0011ff@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, luto@kernel.org, 
-	peterz@infradead.org, reiserfs-devel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7e1c18e3-7523-4fe6-affe-d3f143ad79e3@roeck-us.net>
 
-syzbot suspects this issue was fixed by commit:
+On Wed, Feb 28, 2024 at 11:33:36AM -0800, Guenter Roeck wrote:
+> On 2/28/24 11:26, Daniel Díaz wrote:
+> > Hello!
+> > 
+> > On Wed, 28 Feb 2024 at 12:19, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > > Kunit ext4_mballoc_test tests found following kernel oops on Linux next.
+> > > All ways reproducible on all the architectures and steps to reproduce shared
+> > > in the bottom of this email.
+> > > 
+> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > 
+> 
+> [ ... ]
+> 
+> > +Guenter. Just the thing we were talking about, at about the same time.
+> > 
+> 
+> Good that others see the same problem. Thanks a lot for reporting!
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Hm...
 
-    fs: Block writes to mounted block devices
+static struct super_block *mbt_ext4_alloc_super_block(void)
+{                                                                                                                                                                                                       struct ext4_super_block *es = kzalloc(sizeof(*es), GFP_KERNEL);
+        struct ext4_sb_info *sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
+        struct mbt_ext4_super_block *fsb = kzalloc(sizeof(*fsb), GFP_KERNEL);
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12203874180000
-start commit:   a92b7d26c743 Merge tag 'drm-fixes-2023-06-23' of git://ano..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2cbd298d0aff1140
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e32db5854a2dc0011ff
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a44d50a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10bee4cb280000
+        if (fsb == NULL || sbi == NULL || es == NULL)
+                goto out;
 
-If the result looks correct, please mark the issue as fixed by replying with:
+        sbi->s_es = es;
+        fsb->sb.s_fs_info = sbi;
+        return &fsb->sb;
 
-#syz fix: fs: Block writes to mounted block devices
+out:
+        kfree(fsb);
+        kfree(sbi);
+        kfree(es);
+        return NULL;
+}
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+That VFS level struct super_block that is returned from this function is
+never really initialized afaict? Therefore, sb->s_user_ns == NULL:
+
+i_uid_write(sb, ...)
+-> NULL = i_user_ns(sb)
+   -> make_kuid(NULL)
+      -> map_id_range_down(NULL)
+
+Outside of this test this can never be the case. See alloc_super() in
+fs/super.c. So to stop the bleeding this needs something like:
+
+static struct super_block *mbt_ext4_alloc_super_block(void)
+{
+        struct ext4_super_block *es = kzalloc(sizeof(*es), GFP_KERNEL);
+        struct ext4_sb_info *sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
+        struct mbt_ext4_super_block *fsb = kzalloc(sizeof(*fsb), GFP_KERNEL);
+
+        if (fsb == NULL || sbi == NULL || es == NULL)
+                goto out;
+
+        sbi->s_es = es;
+        fsb->sb.s_fs_info = sbi;
++       fsb.sb.s_user_ns = &init_user_ns;
+        return &fsb->sb;
+
+out:
+        kfree(fsb);
+        kfree(sbi);
+        kfree(es);
+        return NULL;
+}
 
