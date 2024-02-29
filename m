@@ -1,92 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-13183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC92386C6BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 11:22:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDEC586C6E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 11:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D962B25BE2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 10:22:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80FC21F230AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 10:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9DC64A98;
-	Thu, 29 Feb 2024 10:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8UPH3zx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2893964CFC;
+	Thu, 29 Feb 2024 10:29:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6FE50243;
-	Thu, 29 Feb 2024 10:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B65164CC9
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 10:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709202145; cv=none; b=WjsuzylpDYT9DA6j82g/VQbndydkKtBgTH3N8KYR4B1Aw7Um/Htq6gLW38thrEmFwx3ejC1NTGMleA++hQS1yw129UQQ/FIlSO98kjmHrJTVi5Roa0rj9kiHT0uW1MZq/kMr/3a58SPvfDiaiyX4k0sD1PzmWrJ1rRpf/VwycgY=
+	t=1709202545; cv=none; b=KepVvBPpfkcyyanhf7ave6OsD03JOqFxw76PUUAAdZSRZnUXLKGyii4qvVoBR5YhzWjuocKmksEf0gVJiv5mqGm38I30A+foLOCB7zcUyx3ni5EQtUM/1d/6B1JLDpaickoi0Q+ECbr4jNABq5iztGOPS79MO1Ai/QBphLswdww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709202145; c=relaxed/simple;
-	bh=xqYoVbQrzxJrVmuFu8YWAVBO11aFSukfR6rHY30u3Xc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WjMrjWqvcwygy5EFjU8lj2JbXffeJJCezR9/PuI97ILO7GSiZieyBXmQvVMQFkgk4gWgEBB+9c0t2SxoXVnZ96JLX0wG4+YPWzrqrwoAvFj5sCFXu4pNf+2j2AFEQ38TyxPWpMW7XyjU5DxUg4qi629eAuNxekXNXoz46Za9zf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8UPH3zx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C9F9C433F1;
-	Thu, 29 Feb 2024 10:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709202145;
-	bh=xqYoVbQrzxJrVmuFu8YWAVBO11aFSukfR6rHY30u3Xc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=o8UPH3zxxxnGbKQ7YoLoRElSx2Xc469vLkUxNDvl0ubOfumLXbHjTH721kp1zxGdF
-	 vAaU+P1McRiwO2/xEMG5pJiywbapkYsJRfUg7l5wFPYhxIzV0NEP5tV405y72wli9W
-	 cRZlqKLwGLa5SRZN8adsxyify4/pfEW1X1qxjTnyK1Sbto1xBAlngQcPMVh4yDKMKS
-	 a3gD+PUdRVbpL3FiZyn0RGAgqKrrfnMJwvSX6i8WL3cBXHWbQcgs39RggpKZu3N+iN
-	 bQDxDBJwzDJPaNn0n5m6+q7jZsVOOWgPRQwREOrccT5d+JZB1kdjl2tFPkKddCWyig
-	 4h2QBnJ52nbAQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Nguyen Dinh Phi <phind.uet@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: use inode_set_ctime_to_ts to set inode ctime to current time
-Date: Thu, 29 Feb 2024 11:22:15 +0100
-Message-ID: <20240229-benachbarten-zunutze-5302698c7317@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240228173031.3208743-1-phind.uet@gmail.com>
-References: <20240228173031.3208743-1-phind.uet@gmail.com>
+	s=arc-20240116; t=1709202545; c=relaxed/simple;
+	bh=G/v8tih04oAC4s//9EOGB31fFEFCAiSTHed4T5BB2i4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hYImIQO5wYtogmlSkhvct2cg07m7WCaMCY/EWjuAaHbkBFjDAJi9p59ce5NjRgZUvxBp5CXTMp9Iw1MrZyAnw1GPWes0U9fkCvu84UEi6dsXv23XF9TEjd5vHFp2uzyp8w+XdqiLIMjyEUj1N4PmW64p9g9pAAjrVDZNYHyDXmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c76a65a4aaso53565539f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 02:29:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709202543; x=1709807343;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=due3BSO2Q9QQy1tfU+DhYvgI9lxf7h7yLmfxg2bj9yE=;
+        b=nRQ44oYgmVADnsT7D3ZNGmJ8Sfv8TATsbfgiOOUavcb6O0glnys3HMBDcSTlV3kgh4
+         Zcwhaj2NATPTYF5PssVBfsXlfZggGE06XlwyskeM5OtOLihq0ij4aJkXuaRsw97byQBW
+         2MTqGjcbMhHtbVqmBGd/rAfNcnaSpsh9mhIbnBWebpc23ZQWlor4aMmRr4yEjPEA5fWH
+         c3XswmD3Ri1B9Xjp/JGlVOf0o9CfBPd2eJKgFiNToYA47Kx8K+h6HFhI2s+qYBINZ1jI
+         RzsSQSVugDP7z2AB9EpDsoof/TVt4Y6vv7ffMe95kLLesZXUU8CmZ9vbZyWOrynikyvE
+         xI+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWnPN9xaMeHdrtbaCEs7XIO7/pXTM2K1LlElTMdoaU16VVJ0N5dAKfhynerYjXYj+XhG3wRkncrFkU/bwPo6Tc9Ug5vIytZJCr762Seqw==
+X-Gm-Message-State: AOJu0Yx7ItXUHaH1I/ifcth0/tLRJOoy02hNGIDXa/in0o6dMNo1YTgk
+	Emd0SmwftLikgzr6BxI3LVlrcuNdOwI00oJM/+75m24odcjYQxCrw9O3i+swv91O7NXP+5CqkfP
+	XIR90YrAl7dbUR0Owy6YoSylQCbfOMIQryzX82zL5GpDQU0HkP7Iqpiw=
+X-Google-Smtp-Source: AGHT+IG2pzGB/bSL5lyIW4of4SnG2AETh2eVcWNY2PjmAky9W70Ne3ilD1c0bgJEXD2NQSMBqAVmrCjpUxXXw1IVIbbE8VsD2goT
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1070; i=brauner@kernel.org; h=from:subject:message-id; bh=xqYoVbQrzxJrVmuFu8YWAVBO11aFSukfR6rHY30u3Xc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ+iLrR9TxTiE15ktBu46fX7uc9q3CINP2sHvX7emz4v TNe/BHPOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbSZsHI0MBYekX6XVuS7PJf jOrdy96ezVWUYWwUWrH0ttfUKuujBgy/WVe+al/cvOvlt0l6l6ruJ7pdrv/3pDg0z1BlQ1B7Anc NDwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:3c45:b0:474:ba84:8ded with SMTP id
+ bg5-20020a0566383c4500b00474ba848dedmr69269jab.0.1709202543676; Thu, 29 Feb
+ 2024 02:29:03 -0800 (PST)
+Date: Thu, 29 Feb 2024 02:29:03 -0800
+In-Reply-To: <000000000000602c0e05f55d793c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007717e5061282baa0@google.com>
+Subject: Re: [syzbot] [ntfs3?] kernel BUG in ntfs_iget
+From: syzbot <syzbot+d62e6bd2a2d05103d105@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
+	axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 29 Feb 2024 01:30:31 +0800, Nguyen Dinh Phi wrote:
-> The function inode_set_ctime_current simply retrieves the current time
-> and assigns it to the field __i_ctime without any alterations. Therefore,
-> it is possible to set ctime to now directly using inode_set_ctime_to_ts
-> 
-> 
+syzbot suspects this issue was fixed by commit:
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+    fs: Block writes to mounted block devices
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=105d5a6a180000
+start commit:   2639772a11c8 get_maintainer: remove stray punctuation when..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f8e72bae38c079e4
+dashboard link: https://syzkaller.appspot.com/bug?extid=d62e6bd2a2d05103d105
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1358d65ee80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10dbbe45e80000
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+#syz fix: fs: Block writes to mounted block devices
 
-[1/1] fs: use inode_set_ctime_to_ts to set inode ctime to current time
-      https://git.kernel.org/vfs/vfs/c/6adf169c32c2
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
