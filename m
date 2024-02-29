@@ -1,126 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-13206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B2686D235
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 19:27:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFB786D188
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 19:10:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A85BEB27485
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 18:27:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AEA6B2664D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 18:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6467A15A;
-	Thu, 29 Feb 2024 18:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F2B7828D;
+	Thu, 29 Feb 2024 18:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="EHNEAJpH"
+	dkim=pass (1024-bit key) header.d=alarsen.net header.i=@alarsen.net header.b="JlCKzFPq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+Received: from mail.alarsen.net (mail.alarsen.net [144.76.18.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315487A159
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 18:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5A97828A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 18:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.18.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709231238; cv=none; b=tnFtamNHNsFQP4Wj90wC/b0ok69XKJWKibq2oBsCk4wZLCkaqD0yMsuSv51DATs71eCEkUwvHpka2aaVUayEQPPLCHnHxCWeUR2+Cp2/1JBWTV+SKIqgZLIT4SUXmLYzYvg/siI5+6mBxDNXQIQXe3JBpwZFG7QYUGtpH9a43wY=
+	t=1709230127; cv=none; b=HfmgvAVxxe2hTdstLOOnwh98JE1vV06iyDV1obSRsg48luXluDC4hsWgCZvgdhraozmO/G5+B0QZ4uHy9OOdQZNcKeHO/d1HluL/k/VbupcAQOxr+u6ZBBzYoZi8X2jCHA8N2rw04NILs5in59si7D6q0jWJV5LxfAgwZ4o0jkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709231238; c=relaxed/simple;
-	bh=0ujY1W7EPTMDMv8Qjd/XFEAXcyl4EZ0O06CzvoVFYCc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=uwpQm0vw66nnO+cxAydzvS8hR8XppX6YV4cskIEUjFpBKWRAJ74Jbc0eGN86h4U6Lmipa6JzSJH58E5O5fjDmWkAYBKH57vNjaORpAaNi/9/04puBVA0nyv20OoWIG5jg1tCmJ4aJAgRzdDRKpzZFV1IT7FYlkTKvM3VUZbPKM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=EHNEAJpH; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-X-ASG-Debug-ID: 1709230070-1cf4391a1c4fcf0002-kl68QG
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id OKH4L5BwQIJxnplq; Thu, 29 Feb 2024 13:08:13 -0500 (EST)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=GyTYh7rZxyuaZxAK4E6INt0hy/oXnF2VsS983Qgm9WI=;
-	h=Content-Transfer-Encoding:Content-Type:Subject:From:Cc:To:Content-Language:
-	MIME-Version:Date:Message-ID; b=EHNEAJpH9NO6DGJeblalbgxMQVo9ZjLHP5lNuDo0CY5z+
-	3qRP6j8BSOQ1clNEfFa8V1xd1wyAxTkw7gIdJuf4r5DcXWB08/uQ/7qeVuc70mLwffJnHoNaXO4ro
-	5M6b7FYErqw/nqlHndEyRgwppLhJ5Aw8n43zpvTRnqCKTu0iA=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate Pro SMTP 7.1.1)
-  with ESMTPS id 13108803; Thu, 29 Feb 2024 13:08:10 -0500
-Message-ID: <86e592a9-98d4-4cff-a646-0c0084328356@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Thu, 29 Feb 2024 13:08:09 -0500
+	s=arc-20240116; t=1709230127; c=relaxed/simple;
+	bh=avE4HEyQXq7lv4N7LDCr8WnLr3pHRL2DRKJrWUJgBiw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mtmNrC3SyPUaAWVECjRbaT8+6aG3R9jGYIaB0uzERtMEBGTwSSNIYOlewambaM9pNf/3zzY7/XUuOWMfGFuUru3LgQthi+LegV9onqCN+jHa8PkPcQg0OJyM3OZTCAMAFFZgTorhkCLlH0H465xt5Y+C/+9LdeYjNTgy3nrJBIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alarsen.net; spf=pass smtp.mailfrom=alarsen.net; dkim=pass (1024-bit key) header.d=alarsen.net header.i=@alarsen.net header.b=JlCKzFPq; arc=none smtp.client-ip=144.76.18.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alarsen.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alarsen.net
+Received: from oscar.alarsen.net (unknown [IPv6:fd8b:531:bccf:96:c713:57f7:beab:ac7f])
+	by joe.alarsen.net (Postfix) with ESMTPS id E7343181432;
+	Thu, 29 Feb 2024 19:08:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alarsen.net; s=joe;
+	t=1709230111; bh=f45qG9k9n+UrPSj5kSJLgLTC+jmEFstnN8C9k/JrcJ4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JlCKzFPqCQqD6HSbPxMMwx+fepc4m7yxKrt6r6vUROeDFR4WwFydVhiYRXbq+njZQ
+	 Ah/lZXf97yHlIIf6mwQbszUhapmkAey7U9g9E8g9RvOuWUIxiRRwSzKUvP03Xy19ev
+	 kpHCrkT630xwSVVoumLXBs29OMylxdI7zb23RIyk=
+Received: from oscar.localnet (localhost [IPv6:::1])
+	by oscar.alarsen.net (Postfix) with ESMTPS id CFD24E4D;
+	Thu, 29 Feb 2024 19:08:31 +0100 (CET)
+From: Anders Larsen <al@alarsen.net>
+To: linux-fsdevel@vger.kernel.org, Bill O'Donnell <bodonnel@redhat.com>
+Cc: brauner@kernel.org, sandeen@redhat.com, Bill O'Donnell <bodonnel@redhat.com>
+Subject: Re: [PATCH v2] qnx4: convert qnx4 to use the new mount api
+Date: Thu, 29 Feb 2024 19:08:31 +0100
+Message-ID: <2870477.mvXUDI8C0e@oscar>
+In-Reply-To: <20240229161649.800957-1-bodonnel@redhat.com>
+References: <20240229161649.800957-1-bodonnel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Jens Axboe <axboe@kernel.dk>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Hugh Dickins <hughd@google.com>, Hannes Reinecke <hare@suse.de>,
- Keith Busch <kbusch@kernel.org>, linux-mm <linux-mm@kvack.org>,
- linux-block@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Tony Battersby <tonyb@cybernetics.com>
-Subject: [PATCH] block: Fix page refcounts for unaligned buffers in
- __bio_release_pages()
-Content-Type: text/plain; charset=UTF-8
-X-ASG-Orig-Subj: [PATCH] block: Fix page refcounts for unaligned buffers in
- __bio_release_pages()
-Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1709230093
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 1347
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Fix an incorrect number of pages being released for buffers that do not
-start at the beginning of a page.
+On 2024-02-29 17:15 Bill O'Donnell wrote:
+> Convert the qnx4 filesystem to use the new mount API.
+> 
+> Tested mount, umount, and remount using a qnx4 boot image.
+> 
+> Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
+> ---
+> 
+> v2: Remove redundant initialization of qs in qnx4_reconfigure().
+> 
+> ---
+>  fs/qnx4/inode.c | 47 ++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 30 insertions(+), 17 deletions(-)
+> 
+> diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
+> index 6eb9bb369b57..7b5711f76709 100644
+> --- a/fs/qnx4/inode.c
+> +++ b/fs/qnx4/inode.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/buffer_head.h>
+>  #include <linux/writeback.h>
+>  #include <linux/statfs.h>
+> +#include <linux/fs_context.h>
+>  #include "qnx4.h"
+> 
+>  #define QNX4_VERSION  4
+> @@ -30,28 +31,33 @@ static const struct super_operations qnx4_sops;
+> 
+>  static struct inode *qnx4_alloc_inode(struct super_block *sb);
+>  static void qnx4_free_inode(struct inode *inode);
+> -static int qnx4_remount(struct super_block *sb, int *flags, char *data);
+>  static int qnx4_statfs(struct dentry *, struct kstatfs *);
+> +static int qnx4_get_tree(struct fs_context *fc);
+> 
+>  static const struct super_operations qnx4_sops =
+>  {
+>  	.alloc_inode	= qnx4_alloc_inode,
+>  	.free_inode	= qnx4_free_inode,
+>  	.statfs		= qnx4_statfs,
+> -	.remount_fs	= qnx4_remount,
+>  };
+> 
+> -static int qnx4_remount(struct super_block *sb, int *flags, char *data)
+> +static int qnx4_reconfigure(struct fs_context *fc)
+>  {
+> +	struct super_block *sb = fc->root->d_sb;
+>  	struct qnx4_sb_info *qs;
+> 
+>  	sync_filesystem(sb);
+>  	qs = qnx4_sb(sb);
+>  	qs->Version = QNX4_VERSION;
+> -	*flags |= SB_RDONLY;
+> +	fc->sb_flags |= SB_RDONLY;
+>  	return 0;
+>  }
+> 
+> +static const struct fs_context_operations qnx4_context_opts = {
+> +	.get_tree	= qnx4_get_tree,
+> +	.reconfigure	= qnx4_reconfigure,
+> +};
+> +
+>  static int qnx4_get_block( struct inode *inode, sector_t iblock, struct
+> buffer_head *bh, int create ) {
+>  	unsigned long phys;
+> @@ -183,12 +189,13 @@ static const char *qnx4_checkroot(struct super_block
+> *sb, return "bitmap file not found.";
+>  }
+> 
+> -static int qnx4_fill_super(struct super_block *s, void *data, int silent)
+> +static int qnx4_fill_super(struct super_block *s, struct fs_context *fc)
+>  {
+>  	struct buffer_head *bh;
+>  	struct inode *root;
+>  	const char *errmsg;
+>  	struct qnx4_sb_info *qs;
+> +	int silent = fc->sb_flags & SB_SILENT;
+> 
+>  	qs = kzalloc(sizeof(struct qnx4_sb_info), GFP_KERNEL);
+>  	if (!qs)
+> @@ -216,7 +223,7 @@ static int qnx4_fill_super(struct super_block *s, void
+> *data, int silent) errmsg = qnx4_checkroot(s, (struct qnx4_super_block *)
+> bh->b_data); brelse(bh);
+>  	if (errmsg != NULL) {
+> - 		if (!silent)
+> +		if (!silent)
+>  			printk(KERN_ERR "qnx4: %s\n", errmsg);
+>  		return -EINVAL;
+>  	}
+> @@ -235,6 +242,18 @@ static int qnx4_fill_super(struct super_block *s, void
+> *data, int silent) return 0;
+>  }
+> 
+> +static int qnx4_get_tree(struct fs_context *fc)
+> +{
+> +	return get_tree_bdev(fc, qnx4_fill_super);
+> +}
+> +
+> +static int qnx4_init_fs_context(struct fs_context *fc)
+> +{
+> +	fc->ops = &qnx4_context_opts;
+> +
+> +	return 0;
+> +}
+> +
+>  static void qnx4_kill_sb(struct super_block *sb)
+>  {
+>  	struct qnx4_sb_info *qs = qnx4_sb(sb);
+> @@ -376,18 +395,12 @@ static void destroy_inodecache(void)
+>  	kmem_cache_destroy(qnx4_inode_cachep);
+>  }
+> 
+> -static struct dentry *qnx4_mount(struct file_system_type *fs_type,
+> -	int flags, const char *dev_name, void *data)
+> -{
+> -	return mount_bdev(fs_type, flags, dev_name, data, qnx4_fill_super);
+> -}
+> -
+>  static struct file_system_type qnx4_fs_type = {
+> -	.owner		= THIS_MODULE,
+> -	.name		= "qnx4",
+> -	.mount		= qnx4_mount,
+> -	.kill_sb	= qnx4_kill_sb,
+> -	.fs_flags	= FS_REQUIRES_DEV,
+> +	.owner			= THIS_MODULE,
+> +	.name			= "qnx4",
+> +	.kill_sb		= qnx4_kill_sb,
+> +	.fs_flags		= FS_REQUIRES_DEV,
+> +	.init_fs_context	= qnx4_init_fs_context,
+>  };
+>  MODULE_ALIAS_FS("qnx4");
 
-Fixes: 1b151e2435fc ("block: Remove special-casing of compound pages")
-Cc: stable@vger.kernel.org
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
+Acked-by: Anders Larsen <al@alarsen.net>
 
-Tested with 6.1.79.  The 6.1 backport can just use
-folio_put_refs(fi.folio, nr_pages) instead of do {...} while.
 
- block/bio.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index b9642a41f286..b52b56067e79 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1152,7 +1152,7 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty)
- 
- 	bio_for_each_folio_all(fi, bio) {
- 		struct page *page;
--		size_t done = 0;
-+		size_t nr_pages;
- 
- 		if (mark_dirty) {
- 			folio_lock(fi.folio);
-@@ -1160,10 +1160,11 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty)
- 			folio_unlock(fi.folio);
- 		}
- 		page = folio_page(fi.folio, fi.offset / PAGE_SIZE);
-+		nr_pages = (fi.offset + fi.length - 1) / PAGE_SIZE -
-+			   fi.offset / PAGE_SIZE + 1;
- 		do {
- 			bio_release_page(bio, page++);
--			done += PAGE_SIZE;
--		} while (done < fi.length);
-+		} while (--nr_pages != 0);
- 	}
- }
- EXPORT_SYMBOL_GPL(__bio_release_pages);
-
-base-commit: d206a76d7d2726f3b096037f2079ce0bd3ba329b
--- 
-2.25.1
 
 
