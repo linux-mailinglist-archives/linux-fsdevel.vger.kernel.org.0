@@ -1,291 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-13208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BAFF86D2EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 20:13:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41C486D334
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 20:31:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76BC284A01
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 19:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6AB81C20F3C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 19:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837811350C9;
-	Thu, 29 Feb 2024 19:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BB613C9D5;
+	Thu, 29 Feb 2024 19:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rzch/62w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0QK7iMm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9ED651A1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 19:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203D2405F9
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 19:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709234018; cv=none; b=LvYSmeUQXRqmYbEKHao29lttxrtXunLSE8UzWotBYyd22vmm3Ou75bS0aB0f5G7fIa4Abs+sQeAhesYdEplMjov0oSW2vuNi4tHClNJYVXlNVv4Ie64YL7YpxUyC7f/Pi8Z1mFGrs0PuqsRm7voZXXvcmH68rcmKbuIY8JRaEMc=
+	t=1709235088; cv=none; b=dtxkl45yrXCMOEZBQ8yQxECTJ5odHX5vuaiJESNDSWqYYa9brdGeaqbPMU3tCYY52gF11LNWSCxFd5k9HiVHCvymk/1XuVo3xJCRnEpeK4OJTPP6/gqDP2O+vphLZJEHJ38quv5qoH7QDwBTPXM2WUFZrH8mCEqQRJuNyAXhyRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709234018; c=relaxed/simple;
-	bh=jzAjBzYwjQCaMCxhY9c4BPfh5Iep1cX0HB50e8M3DxA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MGuNvdi9KWYIiqKifJo/p6iXIUTdDKt+OOAmGMR+6SS1J935o6TabN8HSvb+8nIionve5/gzZ21QgOGl9uOckdARjEUgUQSRU6Ar+dPsSuDYj9GZlN/mJqzWno7pI4/+mczS1fELM36FP5Zwmgq6So5QbH4JuARwqU97TNL2q4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rzch/62w; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709234010;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=pBU9aaCZRVWX7dwAKnRH6SzJxBW43aw3vUL1jSPw90Q=;
-	b=Rzch/62wgvWFAHRxIapqv7mrrlIp5YOfqDMif8Hw5uJZK6xRMJ1Y1hNzxKOkFSOD8LmW4s
-	1MBWoWUypiSWIiBT6H9roXyUcV0H004nivGJs0eO4DOJ/7waqFoga4tdNW9aawrg2EzJYu
-	TgGuEhMfdeK8PqFCoey06KU3nWadEAA=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-283-UhtaMt8oNq2OKlp7cb7hoA-1; Thu,
- 29 Feb 2024 14:13:28 -0500
-X-MC-Unique: UhtaMt8oNq2OKlp7cb7hoA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 141311C05AEC;
-	Thu, 29 Feb 2024 19:13:28 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.9.199])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 7CB3E2166AE2;
-	Thu, 29 Feb 2024 19:13:27 +0000 (UTC)
-From: Bill O'Donnell <bodonnel@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: al@alarsen.net,
-	brauner@kernel.org,
-	sandeen@redhat.com,
-	Bill O'Donnell <bodonnel@redhat.com>
-Subject: [PATCH] qnx6: convert qnx6 to use the new mount api
-Date: Thu, 29 Feb 2024 13:13:01 -0600
-Message-ID: <20240229191317.805034-1-bodonnel@redhat.com>
+	s=arc-20240116; t=1709235088; c=relaxed/simple;
+	bh=vWkgBUl9V8zzq+Ocdi7IrYcPtFJi2zw+v1JOHzEqo48=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S5zUFeCKgFEMXGckWskHSW/+KMaKQUhJotyUF9FkqLV89O5eHjFWtodd3/+hA0P8m3kuR5nBJT7rZFj+eou+bJXBPyvN+DRbkTLoo2KxPgz9EXRFwagGC+ESvNgRLlxHfqA4n7QddDy+SFXw0VlJFBALGIRdTZP5Za9HUmtTWEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0QK7iMm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA51EC433F1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 19:31:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709235087;
+	bh=vWkgBUl9V8zzq+Ocdi7IrYcPtFJi2zw+v1JOHzEqo48=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=T0QK7iMmnIMQAAzwQQYUdE6gKmyi6z+bzapH7Rl4ZjO6AdOAkSzrDIjtDqDueVEUe
+	 FgiPdNifjWHFscJTf6mjxVn7B0n9XTNkU2ZpC5bfunTMN7sl/pnvhyY6NNX8dMozuO
+	 rZfhptBM6IAdk/3tj++AM3ZgarLM9eupUSoGzQBUYp5EPVgnlL9iSVwD1EPTDc3tNs
+	 X7EsXXZna1CuAXGyQ5bmmVhkqZNkef2/AfXOPMzz4HxS2F7ky0mVXyUGpzPsPEW7xm
+	 /pXEzWAuSxApAPBNUa88UrHb0vnFpwoIgxPVVquDLFrgp43braaCsi+JSup7KUMML1
+	 ZMjlq0FIbrSuA==
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3651edae0a1so5047735ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 11:31:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXNoC219kYKqy+C+hiWqof0PbY+TN04XZPAZXiUh6/0FWC9lBYcYQEjjkuO10KtA7VKe1TXdzB98wGjhj5tYicR12SxQKTl2N1zX75pkw==
+X-Gm-Message-State: AOJu0YwEjYQ/YBeFrELJVmyKKabDuFREZZ7CJZscxBvvJJz0sayx6al3
+	SbeW54Ffai/KvBSU+jbuoxdMQBq0XNWnBF4p839/vwAvQfQYsAOX6tEV12b1m5RKE+qwrn2EZU2
+	uHauP8eNk+8ei0+e/ef2AHoDSwYVwqWoKwnX/
+X-Google-Smtp-Source: AGHT+IH6o1VRdbbDzmd2S/3gNApCVNErtkJIbssEMM6NS3pyBNfgv/MJuH86kMdZTJwgpBlSB1Gkw+XY38lp47zNsTc=
+X-Received: by 2002:a92:c245:0:b0:365:1b7c:670 with SMTP id
+ k5-20020a92c245000000b003651b7c0670mr11943ilo.8.1709235086020; Thu, 29 Feb
+ 2024 11:31:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+References: <2701740.1706864989@warthog.procyon.org.uk> <Zbz8VAKcO56rBh6b@casper.infradead.org>
+In-Reply-To: <Zbz8VAKcO56rBh6b@casper.infradead.org>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 29 Feb 2024 11:31:12 -0800
+X-Gmail-Original-Message-ID: <CAF8kJuNtbE3qEf=of1KQj=tNobWCz4A48FpVRUU6osvtt88jPw@mail.gmail.com>
+Message-ID: <CAF8kJuNtbE3qEf=of1KQj=tNobWCz4A48FpVRUU6osvtt88jPw@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Large folios, swap and fscache
+To: Matthew Wilcox <willy@infradead.org>
+Cc: David Howells <dhowells@redhat.com>, lsf-pc@lists.linux-foundation.org, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the qnx6 filesystem to use the new mount API.
+Hi Matthew,
 
-Untested, since there is no qnx6 fs image readily available.
+On Fri, Feb 2, 2024 at 6:29=E2=80=AFAM Matthew Wilcox <willy@infradead.org>=
+ wrote:
+>
+> On Fri, Feb 02, 2024 at 09:09:49AM +0000, David Howells wrote:
+> > The topic came up in a recent discussion about how to deal with large f=
+olios
+> > when it comes to swap as a swap device is normally considered a simple =
+array
+> > of PAGE_SIZE-sized elements that can be indexed by a single integer.
+> >
+> > With the advent of large folios, however, we might need to change this =
+in
+> > order to be better able to swap out a compound page efficiently.  Swap
+> > fragmentation raises its head, as does the need to potentially save mul=
+tiple
+> > indices per folio.  Does swap need to grow more filesystem features?
+>
+> I didn't mention this during the meeting, but there are more reasons
+> to do something like this.  For example, even with large folios, it
+> doesn't make sense to drive writing to swap on a per-folio basis.  We
+> should be writing out large chunks of virtual address space in a single
+> write to the swap device, just like we do large chunks of files in
+> ->writepages.
 
-Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
----
- fs/qnx6/inode.c | 119 +++++++++++++++++++++++++++++-------------------
- 1 file changed, 72 insertions(+), 47 deletions(-)
+I have thought about your proposal after the THP meeting. One
+observation is that the swap write and swap read has some asymmetries.
+For swap read, you always know which vma you are reading into.
+However, the swap write that is based on the LRU list,
+(shrink_folio_list) does not have the vma information in hand.
+Actually the same folio might map by two different processes. It would
+need to do the rmap walk to find out the VMA. So organizing the swap
+write around VMA mapping is not convenient for the LRU reclaim write
+back case.
 
-diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-index a286c545717f..0df5a92a8b65 100644
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -19,11 +19,12 @@
- #include <linux/buffer_head.h>
- #include <linux/writeback.h>
- #include <linux/statfs.h>
--#include <linux/parser.h>
- #include <linux/seq_file.h>
- #include <linux/mount.h>
- #include <linux/crc32.h>
- #include <linux/mpage.h>
-+#include <linux/fs_parser.h>
-+#include <linux/fs_context.h>
- #include "qnx6.h"
- 
- static const struct super_operations qnx6_sops;
-@@ -31,7 +32,7 @@ static const struct super_operations qnx6_sops;
- static void qnx6_put_super(struct super_block *sb);
- static struct inode *qnx6_alloc_inode(struct super_block *sb);
- static void qnx6_free_inode(struct inode *inode);
--static int qnx6_remount(struct super_block *sb, int *flags, char *data);
-+static int qnx6_reconfigure(struct fs_context *fc);
- static int qnx6_statfs(struct dentry *dentry, struct kstatfs *buf);
- static int qnx6_show_options(struct seq_file *seq, struct dentry *root);
- 
-@@ -40,7 +41,6 @@ static const struct super_operations qnx6_sops = {
- 	.free_inode	= qnx6_free_inode,
- 	.put_super	= qnx6_put_super,
- 	.statfs		= qnx6_statfs,
--	.remount_fs	= qnx6_remount,
- 	.show_options	= qnx6_show_options,
- };
- 
-@@ -54,10 +54,12 @@ static int qnx6_show_options(struct seq_file *seq, struct dentry *root)
- 	return 0;
- }
- 
--static int qnx6_remount(struct super_block *sb, int *flags, char *data)
-+static int qnx6_reconfigure(struct fs_context *fc)
- {
-+	struct super_block *sb = fc->root->d_sb;
-+
- 	sync_filesystem(sb);
--	*flags |= SB_RDONLY;
-+	fc->sb_flags |= SB_RDONLY;
- 	return 0;
- }
- 
-@@ -222,35 +224,36 @@ enum {
- 	Opt_err
- };
- 
--static const match_table_t tokens = {
--	{Opt_mmifs, "mmi_fs"},
--	{Opt_err, NULL}
-+struct qnx6_context {
-+	unsigned long s_mount_opts;
-+};
-+
-+static const struct fs_parameter_spec qnx6_param_spec[] = {
-+	fsparam_flag	("mmi_fs",	Opt_mmifs),
-+	{}
- };
- 
--static int qnx6_parse_options(char *options, struct super_block *sb)
-+static int qnx6_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
--	char *p;
--	struct qnx6_sb_info *sbi = QNX6_SB(sb);
--	substring_t args[MAX_OPT_ARGS];
--
--	if (!options)
--		return 1;
--
--	while ((p = strsep(&options, ",")) != NULL) {
--		int token;
--		if (!*p)
--			continue;
--
--		token = match_token(p, tokens, args);
--		switch (token) {
--		case Opt_mmifs:
--			set_opt(sbi->s_mount_opt, MMI_FS);
--			break;
--		default:
--			return 0;
--		}
-+	struct qnx6_context *ctx = fc->fs_private;
-+	struct fs_parse_result result;
-+	int opt;
-+
-+	opt = fs_parse(fc, qnx6_param_spec, param, &result);
-+	if (opt < 0)
-+		return opt;
-+
-+	switch (opt) {
-+	case Opt_err:
-+		ctx->s_mount_opts |= result.uint_32;
-+		break;
-+	case Opt_mmifs:
-+		ctx->s_mount_opts |= QNX6_MOUNT_MMI_FS;
-+		break;
-+	default:
-+		return -EINVAL;
- 	}
--	return 1;
-+	return 0;
- }
- 
- static struct buffer_head *qnx6_check_first_superblock(struct super_block *s,
-@@ -293,22 +296,24 @@ static struct buffer_head *qnx6_check_first_superblock(struct super_block *s,
- static struct inode *qnx6_private_inode(struct super_block *s,
- 					struct qnx6_root_node *p);
- 
--static int qnx6_fill_super(struct super_block *s, void *data, int silent)
-+static int qnx6_fill_super(struct super_block *s, struct fs_context *fc)
- {
- 	struct buffer_head *bh1 = NULL, *bh2 = NULL;
- 	struct qnx6_super_block *sb1 = NULL, *sb2 = NULL;
- 	struct qnx6_sb_info *sbi;
-+
- 	struct inode *root;
- 	const char *errmsg;
- 	struct qnx6_sb_info *qs;
- 	int ret = -EINVAL;
- 	u64 offset;
- 	int bootblock_offset = QNX6_BOOTBLOCK_SIZE;
-+	int silent = fc->sb_flags & SB_SILENT;
- 
--	qs = kzalloc(sizeof(struct qnx6_sb_info), GFP_KERNEL);
--	if (!qs)
-+	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
-+	if (!sbi)
- 		return -ENOMEM;
--	s->s_fs_info = qs;
-+	s->s_fs_info = sbi;
- 
- 	/* Superblock always is 512 Byte long */
- 	if (!sb_set_blocksize(s, QNX6_SUPERBLOCK_SIZE)) {
-@@ -316,11 +321,6 @@ static int qnx6_fill_super(struct super_block *s, void *data, int silent)
- 		goto outnobh;
- 	}
- 
--	/* parse the mount-options */
--	if (!qnx6_parse_options((char *) data, s)) {
--		pr_err("invalid mount options.\n");
--		goto outnobh;
--	}
- 	if (test_opt(s, MMI_FS)) {
- 		sb1 = qnx6_mmi_fill_super(s, silent);
- 		if (sb1)
-@@ -632,18 +632,43 @@ static void destroy_inodecache(void)
- 	kmem_cache_destroy(qnx6_inode_cachep);
- }
- 
--static struct dentry *qnx6_mount(struct file_system_type *fs_type,
--	int flags, const char *dev_name, void *data)
-+static int qnx6_get_tree(struct fs_context *fc)
- {
--	return mount_bdev(fs_type, flags, dev_name, data, qnx6_fill_super);
-+	return get_tree_bdev(fc, qnx6_fill_super);
-+}
-+
-+static void qnx6_free_fc(struct fs_context *fc)
-+{
-+	kfree(fc->fs_private);
-+}
-+
-+static const struct fs_context_operations qnx6_context_ops = {
-+	.parse_param	= qnx6_parse_param,
-+	.get_tree	= qnx6_get_tree,
-+	.reconfigure	= qnx6_reconfigure,
-+	.free		= qnx6_free_fc,
-+};
-+
-+static int qnx6_init_fs_context(struct fs_context *fc)
-+{
-+	struct qnx6_context *ctx;
-+
-+	ctx = kzalloc(sizeof(struct qnx6_context), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+	fc->ops = &qnx6_context_ops;
-+	fc->fs_private = ctx;
-+
-+	return 0;
- }
- 
- static struct file_system_type qnx6_fs_type = {
--	.owner		= THIS_MODULE,
--	.name		= "qnx6",
--	.mount		= qnx6_mount,
--	.kill_sb	= kill_block_super,
--	.fs_flags	= FS_REQUIRES_DEV,
-+	.owner			= THIS_MODULE,
-+	.name			= "qnx6",
-+	.kill_sb		= kill_block_super,
-+	.fs_flags		= FS_REQUIRES_DEV,
-+	.init_fs_context	= qnx6_init_fs_context,
-+	.parameters		= qnx6_param_spec,
- };
- MODULE_ALIAS_FS("qnx6");
- 
--- 
-2.43.2
+Chris
 
+
+> Another reason to do something different is that we're starting to see
+> block devices with bs>PS.  That means we'll _have_ to write out larger
+> chunks than a single page.  For reads, we can discard the extra data,
+> but it'd be better to swap back in the entire block rather than
+> individual pages.
+>
+> So my modest proposal is that we completely rearchitect how we handle
+> swap.  Instead of putting swp entries in the page tables (and in shmem's
+> case in the page cache), we turn swap into an (object, offset) lookup
+> (just like a filesystem).  That means that each anon_vma becomes its
+> own swap object and each shmem inode becomes its own swap object.
+> The swap system can then borrow techniques from whichever filesystem
+> it likes to do (object, offset, length) -> n x (device, block) mappings.
+>
+> > Further to this, we have at least two ways to cache data on disk/flash/=
+etc. -
+> > swap and fscache - and both want to set aside disk space for their oper=
+ation.
+> > Might it be possible to combine the two?
+> >
+> > One thing I want to look at for fscache is the possibility of switching=
+ from a
+> > file-per-object-based approach to a tagged cache more akin to the way O=
+penAFS
+> > does things.  In OpenAFS, you have a whole bunch of small files, each
+> > containing a single block (e.g. 256K) of data, and an index that maps a
+> > particular {volume,file,version,block} to one of these files in the cac=
+he.
+>
+> I think my proposal above works for you?  For each file you want to cache=
+,
+> create a swap object, and then tell swap when you want to read/write to
+> the local swap object.  What you do need is to persist the objects over
+> a power cycle.  That shouldn't be too hard ... after all, filesystems
+> manage to do it.  All we need to do is figure out how to name the
+> lookup (I don't think we need to use strings to name the swap object,
+> but obviously we could).  Maybe it's just a stream of bytes.
+>
 
