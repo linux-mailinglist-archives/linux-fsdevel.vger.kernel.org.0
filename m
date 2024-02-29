@@ -1,148 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-13165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5839186C15E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 07:52:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC43986C20E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 08:23:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1083B2869F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 06:52:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 672F1287B8D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 07:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49B239FD1;
-	Thu, 29 Feb 2024 06:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E05535BE;
+	Thu, 29 Feb 2024 07:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdZO2z78"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QbwcDjEI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFAD8F4A;
-	Thu, 29 Feb 2024 06:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7187D52F60
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 07:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709189566; cv=none; b=A3waFE6a/NK6qzjc29dLXPBmSJePzB2DMYRB4Eu1JWJQKe7L+q9VqE7aXLiSRepJdgAbYGr7ICKrfUPngrWXcCbCnyBBK+HMYzSXIwWzVsbdSuYtR7Qpd0RmMraMe1GfMx4VLDTtP41cdMKoxBVVZOlBo5wmiD82u6gmv6Q475Q=
+	t=1709191267; cv=none; b=FKwS7SsRB7lx9Kx66161KDuf3+sQJs1dgE1SS/phy7MiNcfnEjMXtgm02UsZ1ZRnPt150K/1jzy8Se7Mq8fWdse7vZJdXoID1OrI8niONj29XdoxulDGx4WgmR8goQ5ew91XC9YFrhqso1VmqtbBwkxpxm0vOsZwTwKSgzyXTKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709189566; c=relaxed/simple;
-	bh=QEJAoHeT2wh90dI+ZjoF1ZHx+LcAYE5U/em2XDUBioM=;
+	s=arc-20240116; t=1709191267; c=relaxed/simple;
+	bh=4BWkix83xa69Td6GkY4u4awSoBX+UEzZGygqWJSpHls=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=atALxQJHlNUCOMFuP3B8F7t8lQcteFeA4/+hI/nZzZ837GXor4FByfQ2NKljMTvF5CgtM/BdvbLMfMocOUgkU+PHeL6VjCd6HHmVPEu6cWuAIH8f5E3M4Un9WNxQvFdzjpYr6NxTsCWi2UHnfbdoBiN4kCYI4xj5puvv56ROQ7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdZO2z78; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-42e8758fd52so4332761cf.1;
-        Wed, 28 Feb 2024 22:52:44 -0800 (PST)
+	 To:Cc:Content-Type; b=uN2DWfa9jJStMkKks/ulxDg6IQXOEBwAgvUtk0kRNv5by9UP2oyfX8LqxiYn/zJJUI463gi3cPMTBZzx/00nSI9NfdL9T6PpciqKREKhWkHYoYHl70VcPgnn1mid5jPYFOmF5Vi+LslHh8dkd+BVbiZEDGKGlkyO3cedUCv3nNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QbwcDjEI; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-565c6cf4819so2818700a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 23:21:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709189564; x=1709794364; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iPX1yFcE2Qv3sy/mqTmODI/j9a9JW9C8YeAhgYmhLGs=;
-        b=QdZO2z78FLEY4RWdjVmUdbrKoq0N/fYM+uC5aG9e6ZJmCKek53xR3UVmADzlUwOLDO
-         0iBOf6bXHyV01JkM2zJzFHb8bKVhsB8s38YRrrvk2sgrbA+vndWnP86CWUOx44UcvRa3
-         gAI9IhZLtJi89nlvmaE1yGQ+S7Y3208HzgJylGPszXl84JeLy7N81pzYM1W70jF6mPUa
-         t+kMHNiUb6lzQHrGrYzQ7CnAT0H1lZ7gJh68GFElWJGU1DXh5naQWJFqp/QYvc/tMx+6
-         G2GSrQRboLWvQAf9z74/RRxegpLpCW1i8fUo6VtRdLCbNFyMWzFmN7QKqFrzAw0SFXfg
-         XRMQ==
+        d=linux-foundation.org; s=google; t=1709191263; x=1709796063; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GEAakXwp+X35NpPg8nElFXY9Bau6mxbRPajKEZaxeiQ=;
+        b=QbwcDjEIBITPcuAGwuwCtVwcMv0cKekSfml+cTZPU9Rc6ZfHlWkGX0fSaaEAk9dJ05
+         ZBYaMinD3R5ZYewVb41lqDjQ/RIuVyV/8VddIj7igDBmQtN1EZ5zSGNxpc48modOTJ6c
+         B8QdeqQdv3OhBLbwKuxEc+/CgtwccMnukvkUw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709189564; x=1709794364;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iPX1yFcE2Qv3sy/mqTmODI/j9a9JW9C8YeAhgYmhLGs=;
-        b=d7qDmIclWJrCQsb6+dBgVnj8sI/SrJZAo7vNQW5pnyrxQMTqwD/+RShwRXj2P/IpYt
-         Zv9yN0AIBZFEDJoGQVcUvLrIxSPDdv4gfHM3AkDpu6YZP6PDh+n6S/UyYou/1gswljoH
-         QFh1eR7jEP7ezi1TIeHp6Oqcm7dDxK3hocQSioEr2w4fCGm2Iij9A4AtOYHth8tlNEZA
-         JthQdmjaI3qJW32ctRXsldx4JzLqqInEER1A1RRcYHPRv7mnxB7yK9KszWcp0XsHGess
-         N+Zg1IdNPSjJ+qSJDXPX6ykHAK9No9T4N/1LfXaCFsQxNpLD0KPxPb7cLBGNaYpWMKUu
-         rTYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVr4zRzWPu3iYMXgfM5TETbOozfb4d0Ch1BvjNcSq6dfd40P7HLNGiNNN7zVCTVH4AjPIph63xKb0zqRpIEgiJILBL6QvjLllEMVQuJUezZPYDMfkzFQjoI/YiOuAE8eGNTmLgju/Fl+QK9oLMYfamIfijAsFaEFurew1kNYdOpw4seeuU8Czn1h0h2hk2aY4bfz8GXBX9KnChX8GR4cUbIjA==
-X-Gm-Message-State: AOJu0YzFCvZPqENBTpu15bNMO4Q7ZVZBFNZ0n9WXZLBvm60a+617cdCs
-	3KXbkbXVoTLkcEL8Zox3IyLw/kf1evhb2tOBjYdrV/+21vuNQsoWoC5tvSeXubUZQdrTuq7nGcr
-	Dun4i/FjXah7NM81MiCjWmTDomRs=
-X-Google-Smtp-Source: AGHT+IFn20kiezhjvNWVPNWkvhcd3j6u19avlEPGAe1WEmIZ6yWLp27W9XetikSPB9EKVwpdSFz5h3OKt1KsGriybmc=
-X-Received: by 2002:ac8:7f82:0:b0:42e:8c8f:42f6 with SMTP id
- z2-20020ac87f82000000b0042e8c8f42f6mr1421021qtj.40.1709189563696; Wed, 28 Feb
- 2024 22:52:43 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709191263; x=1709796063;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GEAakXwp+X35NpPg8nElFXY9Bau6mxbRPajKEZaxeiQ=;
+        b=q3Zuq1aDAfNei8v2DjV2VMkeMbeQQb2uYgSXcT1W1PFV5+z7Uj5rtsZTvlUl7Y+ICh
+         cHgi80H5FcqWlVL0fJR3hcQaGaTbgwaNzyP7GfX3nVqYenteMUB8fy2erVElq6szTy6Z
+         Wwe19Fw6mcrNa90I19PIXHI6fwK706YFeVKNmqgoAELGRYJiKHVwfAASswo4j48giUjB
+         SnI8eeKOJeHuiS5vedhE0WLJLnnH6goIH4C3WGC3R2+rvVbR09K8+n/h7/Z559H1bZAT
+         4lAZRbpfS13+OCL+/rIRLpP7EPnDW9h88p7hFIOaRbjVZwCUdfyIpFd0C9dxCew24ehG
+         TTLA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9xFpHOEWG/gYZwZf7frYv8+IRSG+Q+tSXV0bvG54jOwzGjWhYe9mmZvsFWZMVXXbiS6h3CjEmFzDS+qvKEshfaRkYqAf64k+d6lZO2Q==
+X-Gm-Message-State: AOJu0Yx1f1kVHOqeNtxegF0ZMutLjiPdu6bpV6CqTLsUE1Rjew6N6v2G
+	rYJrMNQuaR1sqm/cxJLgs4mcZffFCkLXUkDx1pBkeVpt5g2uvRHO0cpheJbonCVAl85YVhUQ17x
+	e9hj9Fg==
+X-Google-Smtp-Source: AGHT+IEX2YQU/MRe9U4Ei4OUxplDc0wss+h6mBLHtgSChez2rbDTbUnl2XhuL5E/GYj+/jCkymR9Kg==
+X-Received: by 2002:a17:906:3689:b0:a43:e812:fbc8 with SMTP id a9-20020a170906368900b00a43e812fbc8mr850823ejc.18.1709191263505;
+        Wed, 28 Feb 2024 23:21:03 -0800 (PST)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id cx10-20020a170907168a00b00a3cf9b832eesm380599ejd.40.2024.02.28.23.21.02
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Feb 2024 23:21:02 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5655c7dd3b1so3194994a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 23:21:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVgJduUI665/kBWQzfDh78cVZu/zWfCIqI9jGIFKfXSyRyeWn9fBzcAYCkGMDNohCfmfGW3TOQEK/xFUZs6R/zWaZ3unV73B31Z6WehSw==
+X-Received: by 2002:a17:907:aa9:b0:a44:2cc3:2ba8 with SMTP id
+ bz9-20020a1709070aa900b00a442cc32ba8mr685150ejc.27.1709191261969; Wed, 28 Feb
+ 2024 23:21:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1708709155.git.john@groves.net>
-In-Reply-To: <cover.1708709155.git.john@groves.net>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 29 Feb 2024 08:52:32 +0200
-Message-ID: <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-To: John Groves <John@groves.net>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, john@jagalactic.com, 
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com, 
-	gregory.price@memverge.com, Miklos Szeredi <miklos@szeredi.hu>, 
-	Vivek Goyal <vgoyal@redhat.com>
+References: <20240229063010.68754-1-kent.overstreet@linux.dev> <20240229063010.68754-3-kent.overstreet@linux.dev>
+In-Reply-To: <20240229063010.68754-3-kent.overstreet@linux.dev>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 28 Feb 2024 23:20:44 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whf9HsM6BP3L4EYONCjGawAV=X0aBDoUHXkND4fpqB2Ww@mail.gmail.com>
+Message-ID: <CAHk-=whf9HsM6BP3L4EYONCjGawAV=X0aBDoUHXkND4fpqB2Ww@mail.gmail.com>
+Subject: Re: [PATCH 2/2] bcachefs: Buffered write path now can avoid the inode lock
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	david@fromorbit.com, mcgrof@kernel.org, hch@lst.de, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 23, 2024 at 7:42=E2=80=AFPM John Groves <John@groves.net> wrote=
-:
+On Wed, 28 Feb 2024 at 22:30, Kent Overstreet <kent.overstreet@linux.dev> wrote:
 >
-> This patch set introduces famfs[1] - a special-purpose fs-dax file system
-> for sharable disaggregated or fabric-attached memory (FAM). Famfs is not
-> CXL-specific in anyway way.
->
-> * Famfs creates a simple access method for storing and sharing data in
->   sharable memory. The memory is exposed and accessed as memory-mappable
->   dax files.
-> * Famfs supports multiple hosts mounting the same file system from the
->   same memory (something existing fs-dax file systems don't do).
-> * A famfs file system can be created on either a /dev/pmem device in fs-d=
-ax
->   mode, or a /dev/dax device in devdax mode (the latter depending on
->   patches 2-6 of this series).
->
-> The famfs kernel file system is part the famfs framework; additional
-> components in user space[2] handle metadata and direct the famfs kernel
-> module to instantiate files that map to specific memory. The famfs user
-> space has documentation and a reasonably thorough test suite.
->
+> Non append, non extending buffered writes can now avoid taking the inode
+> lock.
 
-So can we say that Famfs is Fuse specialized for DAX?
+I think this is buggy.
 
-I am asking because you seem to have asked it first:
-https://lore.kernel.org/linux-fsdevel/0100018b2439ebf3-a442db6f-f685-4bc4-b=
-4b0-28dc333f6712-000000@email.amazonses.com/
-I guess that you did not get your answers to your questions before or at LP=
-C?
+I think you still need to take the inode lock *shared* for the writes,
+because otherwise you can have somebody else that truncates the file
+and now you will do a write past the end of the size of the file. That
+will cause a lot of issues.
 
-I did not see your question back in October.
-Let me try to answer your questions and we can discuss later if a new dedic=
-ated
-kernel driver + userspace API is really needed, or if FUSE could be used as=
- is
-extended for your needs.
+So it's not a "inode_lock or not" situation. I think it's a
+"inode_lock vs inode_locks_shared" situation.
 
-You wrote:
-"...My naive reading of the existence of some sort of fuse/dax support
-for virtiofs
-suggested that there might be a way of doing this - but I may be wrong
-about that."
+Note that the reading side isn't all that critical - if a read races
+with a truncate, at worst it will read some zeroes because we used the
+old length and the page cache got cleared in the meantime.
 
-I'm not virtiofs expert, but I don't think that you are wrong about this.
-IIUC, virtiofsd could map arbitrary memory region to any fuse file mmaped
-by virtiofs client.
+But the writing side ends up having actual consistency issues on disk.
+You don't want to have a truncate that removes the pages past the end
+of the new size and clears the end of the new last page, and race with
+another write that used the old size and *thought* it was writing to
+the middle of the file, but is now actually accessing a folio that is
+past the end of the whole file and writing to it.
 
-So what are the gaps between virtiofs and famfs that justify a new filesyst=
-em
-driver and new userspace API?
+There may be some reason that I'm missing that would make this a
+non-issue, but I really think you want to get the inode lock at least
+shared for the duration of the write.
 
-Thanks,
-Amir.
+Also note that for similar reasons, you can't just look at "will I
+extend the file" and take the lock non-shared. No, in order to
+actually trust the size, you need to *hold* the lock, so the logic
+needs to be something like
+
+ - take the lock exclusively if O_APPEND or if it *looks* like you
+might extend the file size.
+
+ - otherwise, take the shared lock, and THEN RE-CHECK. The file size
+might have changed, so now you need to double-check that you're really
+not going to extend the size of the file, and if you are, you need to
+go back and take the inode lock exclusively after all.
+
+Again - I haven't thought a ton about this, so maybe there's some
+trick to it, but the above is what my naive thinking says the rule has
+to be. Writes are different from reads.
+
+              Linus
 
