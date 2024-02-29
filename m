@@ -1,201 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-13214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4E386D40A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 21:18:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA8886D4FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 21:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9581F24A8F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 20:18:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06171C22463
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 20:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A476CC09;
-	Thu, 29 Feb 2024 20:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5445E74C11;
+	Thu, 29 Feb 2024 20:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="diU+V4Th"
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="oND8RtnD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9779A2E410;
-	Thu, 29 Feb 2024 20:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D0813E7DE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 20:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709237922; cv=none; b=DAoU9ax9G2dF6GZzGBfYTV5PlWdx4pXHbJ+Kd1VnA1WkGFRdySyEwRGJhyOfeqTR3oUWNCSuj3EjiHiD3YRIRMM8pGpaP0a1F6ytOnVz2yEMd/ndghBTFLaVReEW0Xwu0/8PqUlQ1Qe6cQry8dCbBpzTBG4oSKWyeTfaphUOR7k=
+	t=1709239238; cv=none; b=GtkReUhqtfzMIqKRMzfdC/aqhiuEaTowN7AXWSH5AGCfjRk8JNvQak16FjD4m/9eBCs/DNWsPi1oXqneVG1d1pGTmdSXbTLEN6kUhKPFiOXdE4EjFCxq/zTWIl9nTpinsqcKggVj6m3VND9KSKZp+tDXJAY02MPDLny4rhv+CFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709237922; c=relaxed/simple;
-	bh=b/iUEhuGwZIlSsVnb6MBaptGvHOkdwDsH2T5H3Lxydo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QTQN852vAl2UDdUPtJF8Clx1DcDi59Gc3k8wgUTKOcuvMUznWBjiDaMMSrlx70SctdfKTbaffV6/la/LJKit9fG/PSlIr4u6+t5t80YWzvZonMw6hVOzAgmB/JCc2ay6ffuLJPB8JcrBe3nyius9cpcWKtqQmAKh59j3E64Y5pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=diU+V4Th; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09ECC433C7;
-	Thu, 29 Feb 2024 20:18:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709237920;
-	bh=b/iUEhuGwZIlSsVnb6MBaptGvHOkdwDsH2T5H3Lxydo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=diU+V4ThMF7itixmLUEptHBFI1uoIo3WcV2nTfCJPxPa4ljT15j1vGeJT5aYsXZzE
-	 MooXJ0drDuP7CuGfbvnSOZpDAwGIsu64BCoUP6Fw4FK/pkneQt+zsW1HIta5JcDVTp
-	 lro9iC53vXetK721EtLXoOWC6CCcbo+5wjP2CVzjTZH8jj9vZGFJwLMW26AgfebDqn
-	 Ny4/tgXDTNjQUNQrIC5nO30IpYcOKfO+7TQ9bY6/JZVWMz1Z0IIqFq3RFGAThQyiWD
-	 CCIDGxzreeBedq6LFLi1fRUXnkw5SPU1OZfkFQEwnJzSpfI0f7qLwlzv1o+znL9CXA
-	 F0IEAZz7f+lOQ==
-Date: Thu, 29 Feb 2024 12:18:40 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Colin Walters <walters@verbum.org>
-Cc: linux-fsdevel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCHSET v29.4 03/13] xfs: atomic file content exchanges
-Message-ID: <20240229201840.GC1927156@frogsfrogsfrogs>
-References: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
- <87961163-a4b9-4032-aa06-f5126c9c8ca2@app.fastmail.com>
+	s=arc-20240116; t=1709239238; c=relaxed/simple;
+	bh=d2Jnd4yjkGkEApv48eNzr6PHo1ck9eCm1SggiXIqMu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HorlnkVJpwB/3SpWOA4WwLKBLVqAYpKiEkzIIZdAM8qUUc/Oiz/x5e3dfEXfqjCI9bDPljtmtbxsI11cxBDD/we9cPbkMLTOG2IdCoT+i6euiHJPXO64wBWk/NRoLSztSNim5OlATp7cVp3UaFdsWkBLrd+A1qPak5HVZ7zw3MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=oND8RtnD; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+X-ASG-Debug-ID: 1709239210-1cf4391a1c513a0001-kl68QG
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id HEvayFu8xC0yrdsC; Thu, 29 Feb 2024 15:40:32 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=KGdwz7goRECtYGm5sOnk6GBz6zSl4J5s0wT/cSLJdMw=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=oND8RtnDJqAi9sA80RB4
+	sb4XkMRRCvNMjh6iERzlbrwrBvsjIOrbs14Fav2aVqBlrnTByQSS+hxqeGim5/aVdLcGaeyzzFjAt
+	NXzreOxVb4kMcqOJ2IsQTScZkRwbiu5reQ7c8yHiEMiU44bqKuGSJgsmQLeCuBABcbFTPk8IMY=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate Pro SMTP 7.1.1)
+  with ESMTPS id 13109217; Thu, 29 Feb 2024 15:40:10 -0500
+Message-ID: <2dbe097c-a4b8-4f22-8c39-1bdecbee4581@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Thu, 29 Feb 2024 15:40:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: Fix page refcounts for unaligned buffers in
+ __bio_release_pages()
+Content-Language: en-US
+X-ASG-Orig-Subj: Re: [PATCH] block: Fix page refcounts for unaligned buffers in
+ __bio_release_pages()
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Hugh Dickins <hughd@google.com>, Hannes Reinecke <hare@suse.de>,
+ Keith Busch <kbusch@kernel.org>, linux-mm <linux-mm@kvack.org>,
+ linux-block@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <86e592a9-98d4-4cff-a646-0c0084328356@cybernetics.com>
+ <ZeDguZujxets0KtD@casper.infradead.org>
+From: Tony Battersby <tonyb@cybernetics.com>
+In-Reply-To: <ZeDguZujxets0KtD@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87961163-a4b9-4032-aa06-f5126c9c8ca2@app.fastmail.com>
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1709239232
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1861
+X-Barracuda-BRTS-Status: 0
 
-On Tue, Feb 27, 2024 at 08:50:20PM -0500, Colin Walters wrote:
-> 
-> 
-> On Mon, Feb 26, 2024, at 9:18 PM, Darrick J. Wong wrote:
-> > Hi all,
-> >
-> > This series creates a new FIEXCHANGE_RANGE system call to exchange
-> > ranges of bytes between two files atomically.  This new functionality
-> > enables data storage programs to stage and commit file updates such that
-> > reader programs will see either the old contents or the new contents in
-> > their entirety, with no chance of torn writes.  A successful call
-> > completion guarantees that the new contents will be seen even if the
-> > system fails.
-> >
-> > The ability to exchange file fork mappings between files in this manner
-> > is critical to supporting online filesystem repair, which is built upon
-> > the strategy of constructing a clean copy of a damaged structure and
-> > committing the new structure into the metadata file atomically.
-> >
-> > User programs will be able to update files atomically by opening an
-> > O_TMPFILE, reflinking the source file to it, making whatever updates
-> > they want to make, and exchange the relevant ranges of the temp file
-> > with the original file. 
-> 
-> It's probably worth noting that the "reflinking the source file" here
-> is optional, right?  IOW one can just:
-> 
-> - open(O_TMPFILE)
-> - write()
-> - ioctl(FIEXCHANGE_RANGE)
+On 2/29/24 14:53, Matthew Wilcox wrote:
+> On Thu, Feb 29, 2024 at 01:08:09PM -0500, Tony Battersby wrote:
+>> Fix an incorrect number of pages being released for buffers that do not
+>> start at the beginning of a page.
+> Oh, I see what I did.  Wouldn't a simpler fix be to just set "done" to
+> offset_in_page(fi.offset)?
 
-If the write() rewrites the entire file, then yes, that'll also work.
+Actually it would be:
 
-> I suspect the "simpler" non-database cases (think e.g. editors
-> operating on plain text files) are going to be operating on an
-> in-memory copy; in theory of course we could identify common ranges
-> and reflink, but it's not clear to me it's really worth it at the
-> tiny scale most source files are.
+ssize_t done = -offset_in_page(offset);
 
-Correct, there's no built-in dedupe.  For small files you'll probably
-end up with a single allocation anyway, which is ideal in terms of
-ondisk metadata overhead.
+But then you have signed vs. unsigned comparison in the while(), or you
+could rearrange the loop to avoid the negative, but then it gets clunky.
 
-One advantage that EXCHANGE_RANGE has over the rename dance is that the
-calling application doesn't have to copy all the file attributes and
-xattrs to the temporary file before the switch.
+>
+>> @@ -1152,7 +1152,7 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty)
+>>  
+>>  	bio_for_each_folio_all(fi, bio) {
+>>  		struct page *page;
+>> -		size_t done = 0;
+>> +		size_t nr_pages;
+>>  
+>>  		if (mark_dirty) {
+>>  			folio_lock(fi.folio);
+>> @@ -1160,10 +1160,11 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty)
+>>  			folio_unlock(fi.folio);
+>>  		}
+>>  		page = folio_page(fi.folio, fi.offset / PAGE_SIZE);
+>> +		nr_pages = (fi.offset + fi.length - 1) / PAGE_SIZE -
+>> +			   fi.offset / PAGE_SIZE + 1;
+>>  		do {
+>>  			bio_release_page(bio, page++);
+>> -			done += PAGE_SIZE;
+>> -		} while (done < fi.length);
+>> +		} while (--nr_pages != 0);
+>>  	}
+>>  }
+>>  EXPORT_SYMBOL_GPL(__bio_release_pages);
+> The long-term path here, I think, is to replace this bio_release_page()
+> with a bio_release_folio(folio, offset, length) which calls into
+> a new unpin_user_folio(folio, nr) which calls gup_put_folio().
 
-> > The intent behind this new userspace functionality is to enable atomic
-> > rewrites of arbitrary parts of individual files.  For years, application
-> > programmers wanting to ensure the atomicity of a file update had to
-> > write the changes to a new file in the same directory
-> 
-> More sophisticated tools already are using O_TMPFILE I would say,
-> just with a final last step of materializing it with a name,
-> and then rename() into place.  So if this also
-> obviates the need for
-> https://lore.kernel.org/linux-fsdevel/364531.1579265357@warthog.procyon.org.uk/
-> that seems good.
+I developed the patch with the 6.1 stable series, which just has:
 
-It would, though I would bet that extending linkat (or rename, or
-whatever) is going to be the only workable solution for old / simple
-filesystems (e.g. fat32).
+nr_pages = (fi.offset + fi.length - 1) / PAGE_SIZE -
+	   fi.offset / PAGE_SIZE + 1;
+folio_put_refs(fi.folio, nr_pages);
 
-> >        Exchanges  are  atomic  with  regards to concurrent file opera‐
-> >        tions, so no userspace-level locks need to be taken  to  obtain
-> >        consistent  results.  Implementations must guarantee that read‐
-> >        ers see either the old contents or the new  contents  in  their
-> >        entirety, even if the system fails.
-> 
-> But given that we're reusing the same inode, I don't think that can
-> *really* be true...at least, not without higher level serialization.
+Which is another reason that I went for the direct nr_pages
+calculation.  Would you still prefer the negative offset_in_page() approach?
 
-Higher level coordination is required, yes.  It doesn't have to be
-serialization, though.  The committing thread could signal all the other
-readers that they should invalidate and restart whatever they're working
-on if that work depends on the file that was COMMIT_RANGE'd.  The
-readers could detect unexpected data and resample mtime of the files
-they've read and restart if it's changed.
+Tony
 
-> A classic case today is dconf in GNOME is a basic memory-mapped
-> database file that is atomically replaced by the "create new file,
-> rename into place" model.  Clients with mmap() view just see the old
-> data until they reload explicitly.  But with this, clients with mmap'd
-> view *will* immediately see the new contents (because it's the same
-> inode, right?)
-
-Correct, they'll start seeing the new contents as soon as they access
-the affected pages.
-
-How /does/ dconf handle those changes?  Does it rename the file and
-signal all the other dconf threads to reopen the file?  And then those
-threads get the new file contents?
-
->                and that's just going to lead to possibly split reads
-> and undefined behavior - without extra userspace serialization or
-> locking (that more proper databases) are going to be doing.
-
-Huurrrh hurrrh.  That's right, I don't see how exchange can mesh well
-with mmap without actual flock()ing. :(
-
-fsnotify will send a message out to userspace after the exchange
-finishes, which means that userspace could watch for the notifications
-via fanotify.  However, that's still a bit racy... :/
-
-> Arguably of course, dconf is too simple and more sophisticated tools
-> like sqlite or LMDB could make use of this.  (There's some special
-> atomic write that got added to f2fs for sqlite last I saw...I'm
-> curious if this could replace it)
-
-I think so:
-
-F2FS_IOC_START_ATOMIC_WRITE -> XFS_IOC_START_COMMIT,
-F2FS_IOC_COMMIT_ATOMIC_WRITE -> XFS_IOC_COMMIT_RANGE, and
-F2FS_IOC_ABORT_VOLATILE_WRITE merely turns into close(temp_fd);
-
-> But still...it seems to me like there's going to be quite a lot of the
-> "potentially concurrent reader, atomic replace desired" pattern and
-> since this can't replace that, we should call that out explicitly in
-> the man page.  And also if so, then there's still a need for the
-> linkat(AT_REPLACE) etc.
-
-Hmm, I think I'll shrink that paragraph of the manpage:
-
-"Exchanges are atomic with regards to concurrent file operations.
-Implementations must guarantee that readers see either the old contents
-or the new contents in their entirety, even if the system fails."
-
-> 
-> >            XFS_EXCHRANGE_TO_EOF
-> 
-> I kept reading this as some sort of typo...would it really be too
-> onerous to spell it out as XFS_EXCHANGE_RANGE_TO_EOF e.g.?  Echoes of
-> unix "creat" here =)
-
-Yeah, I've expanded that to XFS_EXCHANGE_RANGE_TO_EOF for v29.5.
-
---D
 
