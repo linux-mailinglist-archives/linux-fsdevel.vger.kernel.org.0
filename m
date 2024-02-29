@@ -1,164 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-13202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BAF86D0F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 18:40:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90F386D128
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 18:53:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3348D1F25DDC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 17:40:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC8031C20B72
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 17:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F1878270;
-	Thu, 29 Feb 2024 17:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98312757EF;
+	Thu, 29 Feb 2024 17:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P+chWfKN"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hVW2ydcj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB1F78266
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 17:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB8770AEF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 17:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709228419; cv=none; b=lHxnGEQP6Rs75rY4K9WGTlDTLDNe/pDSaamWVveHgR0FRrfsZKPVk0NY2E5jPXnhacoH5A1SGwewkd5XbZmmJq9xBtDlqh75oAYyA1Aa57WcvsX9cEhLiPvR2OYCsbVrsjKLFbI6ngZcz3KdlPs5JSGwyf5cRx1HFi4tyFrjVnE=
+	t=1709229209; cv=none; b=e0B89tAjhnrhEF728x1S2pFFSS0dZ+ejgBqKKAJHO3rdfme2Ch4hMGt3vBR/eh2+PCzRY2FH5BzlxDTaN8arbUNbTMOnKfr/SKUlWLhteR6fVYc/gLbYo+U8BAjl3Y88ZMhbu/dOdTYuXM0ZLr9mSC6LrS8YHNGS39ZFkh1TC7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709228419; c=relaxed/simple;
-	bh=jzGj5I4LRuYklOQyJfNOnG7oivOkxoCVa97TajgQgCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z1fGHt5GBz+Nw7WFNFwBGAml93yAGyU/d+6i7827FVnjyuUaJLrG4luJtqh35NEmi20xMURCbktyIIPA2aEV82Ok6ChiwGHjJsjisCylhQVMp2NtMkGNlg5XF+zzin7977G3Q8pGM9AO/Gw2eV//6Q1QsOx+n+0uYQzVL5YtJCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P+chWfKN; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2d24a727f78so13938411fa.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 09:40:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1709228415; x=1709833215; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JQrqXSOy2jKpIC5hjgybMDfk5pI8gvMKo0UOhxnaCp0=;
-        b=P+chWfKNSk4UXwlT4ROlIiyAXRgGgnU4cPu7d0xnA3pZG1fOtUE05So4SZI6cbTsuc
-         hrL2VvdsAm1NqrrxV7Bejm+nsYC2SaFwZucFzZj9Bgbq7P2R8UokaSvpE3D1Lfng/nuH
-         OzXRIGHHZ3i6rKSELbopyCWOJVpA4b6lWlvBA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709228415; x=1709833215;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JQrqXSOy2jKpIC5hjgybMDfk5pI8gvMKo0UOhxnaCp0=;
-        b=MuLD+h6U0b1GWumy7QEQrthwqQ5aRTOei+RbFOfRumVFTM0YN9SLkxPAxnCK3T1qvj
-         HzIWOnIfYzo6LcLCdA9tVeljlhYKR11k5JDhFhwMrZMJ9U0j7XIemevcs/xPD9lFFVZr
-         RnSIP0kFOzYB8yZsrvH7ugRRYAyCxzNH0WeUJTfTTIzEDt3/NALawnw6iTFeTkqcoNnQ
-         BIsdadcpLFJdicmUcA+uAKvx5vnZ51urS12ntz3lONJ1TkNwjU78GnLgs6ojZikoHChy
-         tWsI9xzFHMsKJLCI9TFNfk2mYb4RaGEx8/ZFnkV5Sb+0QP/+W4x0jMKYNzTXkNrehpBK
-         wSuw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7VZoTe9EJ7T9zO2G8sZMcVB4ZGabBr8Pq3KkpjFniU2JhoPpLWKgqsEvaslU69kk5vwKhfN4a382K3+8dcqF7ipVd6O92Cl0Nyx5FWQ==
-X-Gm-Message-State: AOJu0YxDpV/AFx1FeA7BHtYpC+a0cEkdZUSB3e/tn0C+Fi+y4x62b4+g
-	DejI86giu8GTiJNro2ZgiX99B3mcuVbFsNJk6bwEGPaiFsQd2xKybPsWp/yBdytdhPVngSOeXhb
-	MwiTPiQ==
-X-Google-Smtp-Source: AGHT+IEqbvE63XNnyepVwgFtT4ImfES1a/noPwQkUZQm3tHO5c16M6ZhkOIN50NCy94g7nWXmV/hUw==
-X-Received: by 2002:a2e:b536:0:b0:2d2:a433:b5de with SMTP id z22-20020a2eb536000000b002d2a433b5demr1601387ljm.44.1709228414731;
-        Thu, 29 Feb 2024 09:40:14 -0800 (PST)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id y3-20020a2eb003000000b002d2ded7f592sm275589ljk.30.2024.02.29.09.40.14
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Feb 2024 09:40:14 -0800 (PST)
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2d220e39907so15699581fa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 09:40:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUi0OzZgPEioMOlMpMg9QCqsZ0QRlgpH1q7ZMJGVKj16TcXpi4rC67ay4xXlvjag4VwzDSYre62pzFWLan7U8QtXfl2kZd8gtixRBzKIw==
-X-Received: by 2002:a17:906:b78e:b0:a44:176e:410c with SMTP id
- dt14-20020a170906b78e00b00a44176e410cmr2046490ejb.5.1709227968058; Thu, 29
- Feb 2024 09:32:48 -0800 (PST)
+	s=arc-20240116; t=1709229209; c=relaxed/simple;
+	bh=jOIe08W4YaLqbo4X/2OKlnmLamFrWQtOjh6Pu2GtBRg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KUuXg7TbSbz626OlfdEHON3+iIxfHCQvuOrfjb6DTrzxUd0nchNfu3VLJEK73Qm5La9qYSTYmyghpW6CzZf/BywabBiHSOqGW4JJfa8a6upxkwlXAyYMWBF845AgIUMjnsywDoxHyYrCC8sClCYBKljA4uZRI6WD0V1+dS/smK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hVW2ydcj; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41THqKhl010993;
+	Thu, 29 Feb 2024 17:53:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=E4UJ8yaKzXNqCIlNVz+jay0nuZFsWnm/q8thL43VsjQ=;
+ b=hVW2ydcjWqA+s5b2bTly/h/YwTjpJ2PBirfqzYz68oA5cmE5IknXwx4oznXqjU3Gx811
+ c6h2xlCqQo6VnScs4JuZen59Qm03NJEEPhZS9FWLsaf3pYISD2fc6fHka7FaoPdJxZS1
+ yLwW/whgFVbOz/zf4ZBVlvAoJNKylmAKsgIHLttwZOKi6z35HiwfyTY9FWxzE05ZI4Mg
+ erPoFvJZocDzEs9q94/oMLNJbgBn7lN+u/la0pvebQ3tpQZmmbIiHFWSpx+rDP0aoxyD
+ O8roDyXamlz8ozQQB17nflVJbiT7oI2e8FaJlzLePXtwQS/Y3fmBjReNOVBTxiu7+WkF jQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wjxpyr0na-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Feb 2024 17:53:22 +0000
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41THWPbW007937;
+	Thu, 29 Feb 2024 17:45:50 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wjxdhre9u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Feb 2024 17:45:50 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41THd87e023910;
+	Thu, 29 Feb 2024 17:41:49 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3wfw0kps33-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Feb 2024 17:41:49 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41THfjli42468000
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 29 Feb 2024 17:41:47 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7E1AE20040;
+	Thu, 29 Feb 2024 17:41:45 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 668E220043;
+	Thu, 29 Feb 2024 17:41:45 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 29 Feb 2024 17:41:45 +0000 (GMT)
+From: Mete Durlu <meted@linux.ibm.com>
+To: jack@suse.cz
+Cc: amir73il@gmail.com, repnop@google.com, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fanotify: move path permission and security check
+Date: Thu, 29 Feb 2024 18:41:45 +0100
+Message-Id: <20240229174145.3405638-1-meted@linux.ibm.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230925120309.1731676-1-dhowells@redhat.com> <20230925120309.1731676-8-dhowells@redhat.com>
- <4e80924d-9c85-f13a-722a-6a5d2b1c225a@huawei.com> <CAHk-=whG+4ag+QLU9RJn_y47f1DBaK6b0qYq_6_eLkO=J=Mkmw@mail.gmail.com>
- <CAHk-=wjSjuDrS9gc191PTEDDow7vHy6Kd3DKDaG+KVH0NQ3v=w@mail.gmail.com> <e985429e-5fc4-a175-0564-5bb4ca8f662c@huawei.com>
-In-Reply-To: <e985429e-5fc4-a175-0564-5bb4ca8f662c@huawei.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 29 Feb 2024 09:32:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh06M-1c9h7wZzZ=1KqooAmazy_qESh2oCcv7vg-sY6NQ@mail.gmail.com>
-Message-ID: <CAHk-=wh06M-1c9h7wZzZ=1KqooAmazy_qESh2oCcv7vg-sY6NQ@mail.gmail.com>
-Subject: Re: [bug report] dead loop in generic_perform_write() //Re: [PATCH v7
- 07/12] iov_iter: Convert iterate*() to inline funcs
-To: Tong Tiangen <tongtiangen@huawei.com>, Al Viro <viro@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Christian Brauner <christian@brauner.io>, David Laight <David.Laight@aculab.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>
-Content-Type: multipart/mixed; boundary="000000000000e07d49061288a5ca"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 2IK5dUFocWAupmL4Yp_EnhuHl6Gt9SUx
+X-Proofpoint-ORIG-GUID: LC4RpRogoppT9Qj6M57U-cgBl0Zz3EeE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-29_04,2024-02-29_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 impostorscore=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=680
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402290138
 
---000000000000e07d49061288a5ca
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In current state do_fanotify_mark() does path permission and security
+checking before doing the event configuration checks. In the case
+where user configures mount and sb marks with kernel internal pseudo
+fs, security_path_notify() yields an EACESS and causes an earlier
+exit. Instead, this particular case should have been handled by
+fanotify_events_supported() and exited with an EINVAL.
+Move path perm and security checks under the event validation to
+prevent this from happening.
+Simple reproducer;
 
-On Thu, 29 Feb 2024 at 00:13, Tong Tiangen <tongtiangen@huawei.com> wrote:
->
-> See the logic before this patch, always success (((void)(K),0)) is
-> returned for three types: ITER_BVEC, ITER_KVEC and ITER_XARRAY.
+	fan_d = fanotify_init(FAN_CLASS_NOTIF, O_RDONLY);
+	pipe2(pipes, O_CLOEXEC);
+        fanotify_mark(fan_d,
+		      FAN_MARK_ADD |
+		      FAN_MARK_MOUNT,
+		      FAN_ACCESS,
+		      pipes[0],
+		      NULL);
+	// expected: EINVAL (22), produces: EACCES (13)
+        printf("mark errno: %d\n", errno);
 
-No, look closer.
+Another reproducer;
+ltp/testcases/kernel/syscalls/fanotify/fanotify14
 
-Yes, the iterate_and_advance() macro does that "((void)(K),0)" to make
-the compiler generate better code for those cases (because then the
-compiler can see that the return value is a compile-time zero), but
-notice how _copy_mc_to_iter() didn't use that macro back then. It used
-the unvarnished __iterate_and_advance() exactly so that the MC copy
-case would *not* get that "always return zero" behavior.
+Fixes: 69562eb0bd3e ("fanotify: disallow mount/sb marks on kernel internal pseudo fs")
 
-That goes back to (in a different form) at least commit 1b4fb5ffd79b
-("iov_iter: teach iterate_{bvec,xarray}() about possible short
-copies").
+Signed-off-by: Mete Durlu <meted@linux.ibm.com>
+---
+ fs/notify/fanotify/fanotify_user.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
-But hardly anybody ever tests this machine-check special case code, so
-who knows when it broke again.
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index fbdc63cc10d9..14121ad0e10d 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1015,7 +1015,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+ 			fdput(f);
+ 			goto out;
+ 		}
+-
++		ret = 0;
+ 		*path = f.file->f_path;
+ 		path_get(path);
+ 		fdput(f);
+@@ -1028,21 +1028,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+ 			lookup_flags |= LOOKUP_DIRECTORY;
+ 
+ 		ret = user_path_at(dfd, filename, lookup_flags, path);
+-		if (ret)
+-			goto out;
+ 	}
+-
+-	/* you can only watch an inode if you have read permissions on it */
+-	ret = path_permission(path, MAY_READ);
+-	if (ret) {
+-		path_put(path);
+-		goto out;
+-	}
+-
+-	ret = security_path_notify(path, mask, obj_type);
+-	if (ret)
+-		path_put(path);
+-
+ out:
+ 	return ret;
+ }
+@@ -1894,6 +1880,14 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 		if (ret)
+ 			goto path_put_and_out;
+ 	}
++	/* you can only watch an inode if you have read permissions on it */
++	ret = path_permission(&path, MAY_READ);
++	if (ret)
++		goto path_put_and_out;
++
++	ret = security_path_notify(&path, mask, obj_type);
++	if (ret)
++		goto path_put_and_out;
+ 
+ 	if (fid_mode) {
+ 		ret = fanotify_test_fsid(path.dentry, flags, &__fsid);
+-- 
+2.40.1
 
-I'm just looking at the source code, and with all the macro games it's
-*really* hard to follow, so I may well be missing something.
-
-> Maybe we're all gonna fix it back? as follows=EF=BC=9A
-
-No. We could do it for the kvec and xarray case, just to get better
-code generation again (not that I looked at it, so who knows), but the
-one case that actually uses memcpy_from_iter_mc() needs to react to a
-short write.
-
-One option might be to make a failed memcpy_from_iter_mc() set another
-flag in the iter, and then make fault_in_iov_iter_readable() test that
-flag and return 'len' if that flag is set.
-
-Something like that (wild handwaving) should get the right error handling.
-
-The simpler alternative is maybe something like the attached.
-COMPLETELY UNTESTED. Maybe I've confused myself with all the different
-indiraction mazes in the iov_iter code.
-
-                     Linus
-
---000000000000e07d49061288a5ca
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lt7i5gtw0>
-X-Attachment-Id: f_lt7i5gtw0
-
-IGxpYi9pb3ZfaXRlci5jIHwgNSArKysrLQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygr
-KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2xpYi9pb3ZfaXRlci5jIGIvbGliL2lvdl9p
-dGVyLmMKaW5kZXggZTBhYTZiNDQwY2E1Li41MjM2YzE2NzM0ZTAgMTAwNjQ0Ci0tLSBhL2xpYi9p
-b3ZfaXRlci5jCisrKyBiL2xpYi9pb3ZfaXRlci5jCkBAIC0yNDgsNyArMjQ4LDEwIEBAIHN0YXRp
-YyBfX2Fsd2F5c19pbmxpbmUKIHNpemVfdCBtZW1jcHlfZnJvbV9pdGVyX21jKHZvaWQgKml0ZXJf
-ZnJvbSwgc2l6ZV90IHByb2dyZXNzLAogCQkJICAgc2l6ZV90IGxlbiwgdm9pZCAqdG8sIHZvaWQg
-KnByaXYyKQogewotCXJldHVybiBjb3B5X21jX3RvX2tlcm5lbCh0byArIHByb2dyZXNzLCBpdGVy
-X2Zyb20sIGxlbik7CisJc2l6ZV90IG4gPSBjb3B5X21jX3RvX2tlcm5lbCh0byArIHByb2dyZXNz
-LCBpdGVyX2Zyb20sIGxlbik7CisJaWYgKG4pCisJCW1lbXNldCh0byArIHByb2dyZXNzIC0gbiwg
-MCwgbik7CisJcmV0dXJuIDA7CiB9CiAKIHN0YXRpYyBzaXplX3QgX19jb3B5X2Zyb21faXRlcl9t
-Yyh2b2lkICphZGRyLCBzaXplX3QgYnl0ZXMsIHN0cnVjdCBpb3ZfaXRlciAqaSkK
---000000000000e07d49061288a5ca--
 
