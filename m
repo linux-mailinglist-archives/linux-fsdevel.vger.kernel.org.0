@@ -1,193 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-13223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D993486D6B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 23:16:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CA386D6CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 23:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E121F244AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 22:16:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B841F24775
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 22:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06D674BF1;
-	Thu, 29 Feb 2024 22:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B2175806;
+	Thu, 29 Feb 2024 22:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BhuE7cZa"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gDgB8B9J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D2B74BF0;
-	Thu, 29 Feb 2024 22:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797B074BF1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 22:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709244999; cv=none; b=qq8OySrIZrB9tbBs+fQy4ESASjh2vciAJnfbfqzdT8mBWu+FS87aI8mFmiDFaVmOr15Y/uqP8Dml+qs/ymWY/Q0nnrETEtOykmmNhNZS64Rw8Q3dYF0uVmJayJwIggeU0YO6LIDSIZszkxLJlO+YDonh8W4Iw9LiPGznlu4fuV8=
+	t=1709245470; cv=none; b=AsdkjcsvrerqGI+sBl8jwyULMvq1MG2EjW/zY/vYJdHfmAMg62iasWd3ODaYLQ2IIY+2L32L0CCjgTwjVaPiWeh6uVQ93GxYvKNWX702sumK9QsdYeSX3VY491lWNmI+HeO1ukPTl7xnM1zRNcobtJZ6YwXAS3BYR4Fr9Vm8zPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709244999; c=relaxed/simple;
-	bh=ACzWMSBVSbROvAz/KF0+OOhAKUBYt21796gDCX9IvxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BjX7TVFaKJiINyFQa4E1Arn2BSeGh3wgDrmg3xy/lfFnlPM72RKyuArZmJ/+BJVd9PNKO7BP2Qllihm7dLwP9SZGWti3YlqETJqgPLGsOlXpCoNyJxN2WMFk+jY58Q2xwqkIzIWj7SFrIPtBcgqeW1qhiUuElJifXc/eZOOMBqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BhuE7cZa; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-21fa97a9c53so662780fac.3;
-        Thu, 29 Feb 2024 14:16:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709244996; x=1709849796; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5jX/0FGNYJgzcsBn/SznB4/DvBP9JHSAGQHtl/qEj9o=;
-        b=BhuE7cZanAF1sKFrDrNrZdFojfQ386Psy8w0FFRn6GPUgnwidWYdgfPIyqrKfz7bZ+
-         /54adNoGV6VTxcCqbseRcgFBWSJ0beKI605OMtWUS9CQgAsMVF2gvnNJ0XvBnC/vtXHe
-         GYm4yde8wefGueFdEtvqFNHJUgHDMtHWGV36R7W29LE85yFZDzpaEocrm3bvG0359QKZ
-         kqrC4z40qVUiYBmHyy5dKHSBeObAUz6EOsGNkDpEtGdGi0/G7TBZSB8EplNsjeAghmZc
-         D78qa9wUFGjKEit/oM2YCqiWHllgNmTAUk5lsyb73vx8nAXs2zGSdfHvaDMzCZk0XXP/
-         XNTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709244996; x=1709849796;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5jX/0FGNYJgzcsBn/SznB4/DvBP9JHSAGQHtl/qEj9o=;
-        b=MjWYFDJViLTWNPE2y1Suum+BAuJhTYccjlxrQPlEXO5/l6Evxle9SHha3e7o4YTZOD
-         JbTQ6GInASfq2g1xN8ecqxXbQiVNXu5ulahxVeqmkhgIFAd6/lRC8J00ZaR8irzRlEN7
-         NLv0oUBhh0YSE+T2nu8u2uFzuUPMYUXMjKZfqrrWRoOrLFhftX8U6OqIYS1WOYB7j5Bg
-         gR6jKTaufXJK/G/RM6R+jdYw8F9AECYerPYioEtEXlnHY9G7XAEGsZgf35jVCMRl1ozP
-         RPEq71GkverUS8KTko9csWVlbwUF2z4/F910AZWmCBher+UkK0q5Anyj1TPfZuNTM7cV
-         0kvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcGmayLn7CTHFeOr2kTQ4cwzm1vz6nDO063sdhBHWtLycRVhaOAVp7DQXfhGhWwbH5quUkOA+Ak7JuIdnizWmHrHXVrSAKtwxWb+F4Vh46je7hHK6Wz3EhRnsOyeuyYsDESj+Rs3uoSDOuIg1YIURIqJR3kZcK5fsfmr4CFMfZ37dSk0KnwfuAjSvOnLT9hxWJPgkN2hgol5RX3rfTTtbHMg==
-X-Gm-Message-State: AOJu0Yxgs4gzy4aRqEbacKVknGqCp5dyR89RirYNdW4Ugkq5fGrjRNhb
-	uz0CadkSwTM321ZZ0KF+qqOlWWS6sTAiNNjbbfaGkkswJYyf4V97
-X-Google-Smtp-Source: AGHT+IFyGPwgD+94e5jiTNKG6OD6umzOYBwkvbAB5UKUevYwym/Dgn02nynUh8GFXuJUSfHgSNy1AA==
-X-Received: by 2002:a05:6870:6112:b0:220:88b7:5145 with SMTP id s18-20020a056870611200b0022088b75145mr3500762oae.41.1709244996533;
-        Thu, 29 Feb 2024 14:16:36 -0800 (PST)
-Received: from Borg-9.local (070-114-203-196.res.spectrum.com. [70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id s20-20020a0568302a9400b006e4ad2edb1bsm446693otu.8.2024.02.29.14.16.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Feb 2024 14:16:36 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Thu, 29 Feb 2024 16:16:33 -0600
-From: John Groves <John@groves.net>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com, 
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
-	dave.hansen@linux.intel.com, gregory.price@memverge.com, Miklos Szeredi <miklos@szeredi.hu>, 
-	Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-Message-ID: <3jwluwrqj6rwsxdsksfvdeo5uccgmnkh7rgefaeyxf2gu75344@ybhwncywkftx>
-References: <cover.1708709155.git.john@groves.net>
- <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
+	s=arc-20240116; t=1709245470; c=relaxed/simple;
+	bh=A78cnYeT5c8A7dqzL5kDfZeFAAc9jJVdn7MAkGWqX00=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=urzWoObRdk3ex+Z2rufvIm1CcnZ92O00KzuOPhb/Vpb87xx7TsGf4rHwL6vSCZkN2/nnwa3kHNUjph2/OMOTsoKa3moqYF7VQ8NC3hBxCmDGtXwFnH/5023wqb0VZEdsXSBvlN20vsfAzNYwEX6DWPImF35cxWVx8bRq4RJMWrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gDgB8B9J; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709245467;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fH53wpixgZdMNHSX3Pn8Num8rbA2ozCUf7uf0bZJ4JU=;
+	b=gDgB8B9J26XCzko3cE8hKCSoIMTCS3HuBj0idkfWRcfhkowu0TVHBI3emRhJdiWPk3GUPL
+	/4DzETMJsqZwruaHWWFSfnrezcAsTy5X4JNYvKHqnP0YuvIPsl/G8KlHN5dk/02pqdeGFu
+	W08uC+1Qqdrr6oUKy+ffqwaXTnoMcDI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-576-iFyMGc5FMDSQ3ZiDnqT9xw-1; Thu, 29 Feb 2024 17:24:23 -0500
+X-MC-Unique: iFyMGc5FMDSQ3ZiDnqT9xw-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B77B088F4C7;
+	Thu, 29 Feb 2024 22:24:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.114])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 1C7EC492BC6;
+	Thu, 29 Feb 2024 22:24:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Marc Dionne <marc.dionne@auristor.com>
+cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix occasional rmdir-then-VNOVNODE with generic/011
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <196424.1709245455.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 29 Feb 2024 22:24:15 +0000
+Message-ID: <196425.1709245455@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-On 24/02/29 08:52AM, Amir Goldstein wrote:
-> On Fri, Feb 23, 2024 at 7:42 PM John Groves <John@groves.net> wrote:
-> >
-> > This patch set introduces famfs[1] - a special-purpose fs-dax file system
-> > for sharable disaggregated or fabric-attached memory (FAM). Famfs is not
-> > CXL-specific in anyway way.
-> >
-> > * Famfs creates a simple access method for storing and sharing data in
-> >   sharable memory. The memory is exposed and accessed as memory-mappable
-> >   dax files.
-> > * Famfs supports multiple hosts mounting the same file system from the
-> >   same memory (something existing fs-dax file systems don't do).
-> > * A famfs file system can be created on either a /dev/pmem device in fs-dax
-> >   mode, or a /dev/dax device in devdax mode (the latter depending on
-> >   patches 2-6 of this series).
-> >
-> > The famfs kernel file system is part the famfs framework; additional
-> > components in user space[2] handle metadata and direct the famfs kernel
-> > module to instantiate files that map to specific memory. The famfs user
-> > space has documentation and a reasonably thorough test suite.
-> >
-> 
-> So can we say that Famfs is Fuse specialized for DAX?
-> 
-> I am asking because you seem to have asked it first:
-> https://lore.kernel.org/linux-fsdevel/0100018b2439ebf3-a442db6f-f685-4bc4-b4b0-28dc333f6712-000000@email.amazonses.com/
-> I guess that you did not get your answers to your questions before or at LPC?
+Sometimes generic/011 causes kafs to follow up an FS.RemoveDir RPC call by
+spending around a second sending a slew of FS.FetchStatus RPC calls to the
+directory just deleted that then abort with VNOVNODE, indicating deletion
+of the target directory.
 
-Thanks for paying attention Amir. I think there is some validity to thinking
-of famfs as Fuse for DAX. Administration / metadata originating in user space
-is similar (but doing it this way also helps reduce RAS exposure to memory 
-that might have a more complex connection path).
+This seems to stem from userspace attempting to stat the directory or
+something in it:
 
-One way it differs from fuse is that famfs is very much aimed at use
-cases that require performance. *Accessing* files must run at full
-memory speeds.
+    afs_select_fileserver+0x46d/0xaa2
+    afs_wait_for_operation+0x12/0x17e
+    afs_fetch_status+0x56/0x75
+    afs_validate+0xfb/0x240
+    afs_permission+0xef/0x1b0
+    inode_permission+0x90/0x139
+    link_path_walk.part.0.constprop.0+0x6f/0x2f0
+    path_lookupat+0x4c/0xfa
+    filename_lookup+0x63/0xd7
+    vfs_statx+0x62/0x13f
+    vfs_fstatat+0x72/0x8a
 
-> 
-> I did not see your question back in October.
-> Let me try to answer your questions and we can discuss later if a new dedicated
-> kernel driver + userspace API is really needed, or if FUSE could be used as is
-> extended for your needs.
-> 
-> You wrote:
-> "...My naive reading of the existence of some sort of fuse/dax support
-> for virtiofs
-> suggested that there might be a way of doing this - but I may be wrong
-> about that."
-> 
-> I'm not virtiofs expert, but I don't think that you are wrong about this.
-> IIUC, virtiofsd could map arbitrary memory region to any fuse file mmaped
-> by virtiofs client.
-> 
-> So what are the gaps between virtiofs and famfs that justify a new filesystem
-> driver and new userspace API?
+The issue appears to be that afs_dir_remove_subdir() marks the callback
+promise as being cancelled by setting the expiry time to AFS_NO_CB_PROMISE
+- which then confuses afs_validate() which sends the FetchStatus to try an=
+d
+get a new one before it checks for the AFS_VNODE_DELETED flag which
+indicates that we know the directory got deleted.
 
-I have a lot of thoughts here, and an actual conversation might be good
-sooner rather than later. I hope to be at LSFMM to discuss this - if you agree,
-put in a vote for my topic ;). But if you want to talk sooner than that, I'm
-interested.
+Fix this by moving the AFS_VNODE_DELETED check up above the expiration
+check, and even above the locking.
 
-I think one piece of evidence that this isn't possible with Fuse today is that
-I had to plumb the iomap interface for /dev/dax in this patch set. That is the
-way that fs-dax file systems communicate with the dax layer for fault 
-resolution. If fuse/virtiofs handles dax somehow without the iomap interface,
-I suspect it's doing something somehow simpler, /and/ that might need to get 
-reconciled with the fs-dax methodology. Or maybe I don't know what I'm talking
-about (in which case, please help :D).
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+---
+ fs/afs/validation.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-I think one thing that might make sense would be to bring up this functionality
-as a standalone file system, and then consider merging it into fuse when &
-if the time seems right. 
+diff --git a/fs/afs/validation.c b/fs/afs/validation.c
+index 46b37f2cce7d..850f5287107d 100644
+--- a/fs/afs/validation.c
++++ b/fs/afs/validation.c
+@@ -391,6 +391,11 @@ int afs_validate(struct afs_vnode *vnode, struct key =
+*key)
+ 	if (afs_check_validity(vnode))
+ 		return 0;
+ =
 
-Famfs doesn't currently have any up-calls. User space plays the log and tells
-the kmod to instantiate files with extent lists to dax. Access happens with
-zero user space involvement.
++	if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
++		_debug("file already deleted");
++		return -ESTALE;
++	}
++
+ 	ret =3D down_write_killable(&vnode->validate_lock);
+ 	if (ret < 0)
+ 		goto error;
+@@ -448,12 +453,6 @@ int afs_validate(struct afs_vnode *vnode, struct key =
+*key)
+ 	vnode->cb_ro_snapshot =3D cb_ro_snapshot;
+ 	vnode->cb_scrub =3D cb_scrub;
+ =
 
-The important thing, the thing I'm currently paid for, is making it
-practical to use disaggregated shared memory - it's ultimately not important 
-which mechanism is used to enable a filesystem access method for memory.
-
-But caching metadata in the kernel for efficient fault handling is the
-only way to get it to perform at "memory speeds" so that appears critical.
-
-One final observation: famfs has significantly more code in user space than
-in kernel space, and it's the user side that is likely to grow over time.
-That logic is at least theoretically independent of the kernel ABI.
-
-> 
-> Thanks,
-> Amir.
-
-Thanks!
-John
+-	if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
+-		_debug("file already deleted");
+-		ret =3D -ESTALE;
+-		goto error_unlock;
+-	}
+-
+ 	/* if the vnode's data version number changed then its contents are
+ 	 * different */
+ 	zap |=3D test_and_clear_bit(AFS_VNODE_ZAP_DATA, &vnode->flags);
 
 
