@@ -1,88 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-13182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F59886C6AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 11:17:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC92386C6BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 11:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB0B1F21D96
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 10:17:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D962B25BE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 10:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E2263CB5;
-	Thu, 29 Feb 2024 10:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9DC64A98;
+	Thu, 29 Feb 2024 10:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZU48I2Eq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8UPH3zx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFA86350A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 10:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6FE50243;
+	Thu, 29 Feb 2024 10:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709201859; cv=none; b=NYu6Sa2aSmtnVU27uj1sDllSVENAMzELqVzPBjza4HscCP6vTznrb5FymmvwcXVJXsxMmpOobehunHT+nRHmXrgEb054ABliRRXSqcFz70LaJwE+IisgZSBwO6/YMLCXtMhVOWnGNGvKYvGt0cwnsUmbbumupIm7t+sumNmUU9M=
+	t=1709202145; cv=none; b=WjsuzylpDYT9DA6j82g/VQbndydkKtBgTH3N8KYR4B1Aw7Um/Htq6gLW38thrEmFwx3ejC1NTGMleA++hQS1yw129UQQ/FIlSO98kjmHrJTVi5Roa0rj9kiHT0uW1MZq/kMr/3a58SPvfDiaiyX4k0sD1PzmWrJ1rRpf/VwycgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709201859; c=relaxed/simple;
-	bh=S5ZtlJqORiasu6+RsdBJFuaWBJ9xitRRVyVHPr+O7Nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n9kJtoel5eOqA4goxnCktqX0vZuYCmdXRmjHpcRjf1/E1/Tk7jYrSn1LxzbpmOGXE7saMR5wcLfFVweK6dU/04maLhTZ9P2kJ/I0D7e3gzP1mgR3/g6ZTtGnmW7RV4OhmuaFBpsUpwOR7RoC/FSK0YNrGvve3vC4x2e5a0J173Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZU48I2Eq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 984E0C433C7;
-	Thu, 29 Feb 2024 10:17:37 +0000 (UTC)
+	s=arc-20240116; t=1709202145; c=relaxed/simple;
+	bh=xqYoVbQrzxJrVmuFu8YWAVBO11aFSukfR6rHY30u3Xc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WjMrjWqvcwygy5EFjU8lj2JbXffeJJCezR9/PuI97ILO7GSiZieyBXmQvVMQFkgk4gWgEBB+9c0t2SxoXVnZ96JLX0wG4+YPWzrqrwoAvFj5sCFXu4pNf+2j2AFEQ38TyxPWpMW7XyjU5DxUg4qi629eAuNxekXNXoz46Za9zf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8UPH3zx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C9F9C433F1;
+	Thu, 29 Feb 2024 10:22:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709201859;
-	bh=S5ZtlJqORiasu6+RsdBJFuaWBJ9xitRRVyVHPr+O7Nw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZU48I2EqWbGwQ9KWV7D2Al4iFpHCu/dqcNfTzpHQBpP958l0dZeKl/jo2QijANN8G
-	 kbURApcqlZkdP27LxyaMfukAY+aF8T24aH2Td4MPovi5dJi30UeuiLEDZapM6QI+ga
-	 HlfQ6g5TPgc05CpWy8Gfwoh8ILngIJJMqGG2XWNN9ScVPcpzhbvYIkEvS5IcbzHGId
-	 D2viQKkNKoss6Yb7O+9gkL6gf8KLv0XmJW6kE5rc9aZLldF7JDrLheTdQnH6+rqaw4
-	 xUBs1ZZYQzRsRUrpC615Egfgn8+TnwhsGehvvNRN/L4YZJ9c/kKEByqxEwOPsJFCsf
-	 MPIZcoL+qUJcw==
-Date: Thu, 29 Feb 2024 11:17:34 +0100
+	s=k20201202; t=1709202145;
+	bh=xqYoVbQrzxJrVmuFu8YWAVBO11aFSukfR6rHY30u3Xc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=o8UPH3zxxxnGbKQ7YoLoRElSx2Xc469vLkUxNDvl0ubOfumLXbHjTH721kp1zxGdF
+	 vAaU+P1McRiwO2/xEMG5pJiywbapkYsJRfUg7l5wFPYhxIzV0NEP5tV405y72wli9W
+	 cRZlqKLwGLa5SRZN8adsxyify4/pfEW1X1qxjTnyK1Sbto1xBAlngQcPMVh4yDKMKS
+	 a3gD+PUdRVbpL3FiZyn0RGAgqKrrfnMJwvSX6i8WL3cBXHWbQcgs39RggpKZu3N+iN
+	 bQDxDBJwzDJPaNn0n5m6+q7jZsVOOWgPRQwREOrccT5d+JZB1kdjl2tFPkKddCWyig
+	 4h2QBnJ52nbAQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, Amir Goldstein <amir73il@gmail.com>, 
-	Jingbo Xu <jefflexu@linux.alibaba.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	linux-fsdevel@vger.kernel.org, Alessio Balsini <balsini@android.com>
-Subject: Re: [PATCH v15 3/9] fuse: implement ioctls to manage backing files
-Message-ID: <20240229-stochern-fachsimpeln-ad8227434069@brauner>
-References: <20240206142453.1906268-1-amir73il@gmail.com>
- <20240206142453.1906268-4-amir73il@gmail.com>
- <450d8b2d-c1d0-4d53-b998-74495e9eca3f@linux.alibaba.com>
- <CAOQ4uxhAY1m7ubJ3p-A3rSufw_53WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com>
- <CAJfpegu3_sUtTC1uCD7kFehJWTivkN_OjcQGsSAMkzEdub=XTw@mail.gmail.com>
- <CAOQ4uxji-yzWFeQYP9FKvVXg473GP6tC2pyHUbEPoYxT+qDYsA@mail.gmail.com>
- <4e3d80ad-3c61-4adf-b74f-0c62e468eb54@kernel.dk>
- <CAJfpegsAs3V8jU2UWyJUB33FCbmoFiOSp9Cjzrgc9+XcomN0Uw@mail.gmail.com>
- <20240229-ausrollen-verebben-ea5597a9cfa0@brauner>
+To: Nguyen Dinh Phi <phind.uet@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: use inode_set_ctime_to_ts to set inode ctime to current time
+Date: Thu, 29 Feb 2024 11:22:15 +0100
+Message-ID: <20240229-benachbarten-zunutze-5302698c7317@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240228173031.3208743-1-phind.uet@gmail.com>
+References: <20240228173031.3208743-1-phind.uet@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240229-ausrollen-verebben-ea5597a9cfa0@brauner>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1070; i=brauner@kernel.org; h=from:subject:message-id; bh=xqYoVbQrzxJrVmuFu8YWAVBO11aFSukfR6rHY30u3Xc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ+iLrR9TxTiE15ktBu46fX7uc9q3CINP2sHvX7emz4v TNe/BHPOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbSZsHI0MBYekX6XVuS7PJf jOrdy96ezVWUYWwUWrH0ttfUKuujBgy/WVe+al/cvOvlt0l6l6ruJ7pdrv/3pDg0z1BlQ1B7Anc NDwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 29, 2024 at 11:15:35AM +0100, Christian Brauner wrote:
-> On Wed, Feb 28, 2024 at 04:01:17PM +0100, Miklos Szeredi wrote:
-> > On Wed, 28 Feb 2024 at 15:32, Jens Axboe <axboe@kernel.dk> wrote:
-> > >
-> > > On 2/28/24 4:28 AM, Amir Goldstein wrote:
-> > 
-> > > > Are fixed files visible to lsof?
-> > >
-> > > lsof won't show them, but you can read the fdinfo of the io_uring fd to
-> > > see them. Would probably be possible to make lsof find and show them
-> > > too, but haven't looked into that.
+On Thu, 29 Feb 2024 01:30:31 +0800, Nguyen Dinh Phi wrote:
+> The function inode_set_ctime_current simply retrieves the current time
+> and assigns it to the field __i_ctime without any alterations. Therefore,
+> it is possible to set ctime to now directly using inode_set_ctime_to_ts
 > 
-> I actually wrote about this before when I suggested IORING_OP_FIXED_FD_INSTALL:
-> https://patchwork.kernel.org/project/io-uring/patch/df0e24ff-f3a0-4818-8282-2a4e03b7b5a6@kernel.dk/#25629935
+> 
 
-I think that it shouldn't be a problem as long as userspace has some way
-of figuring this out. So extending lsof might just be enough for this.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs: use inode_set_ctime_to_ts to set inode ctime to current time
+      https://git.kernel.org/vfs/vfs/c/6adf169c32c2
 
