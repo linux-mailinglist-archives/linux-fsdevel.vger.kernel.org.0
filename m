@@ -1,151 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-13225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F0286D6F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 23:43:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5331B86D708
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 23:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20FB2B22DD7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 22:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C99C287976
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 22:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE23381DE;
-	Thu, 29 Feb 2024 22:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3F460EEA;
+	Thu, 29 Feb 2024 22:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b="i3J82juf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="azm3luIO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KG3THHXW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C5722318;
-	Thu, 29 Feb 2024 22:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.111.4.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEA016FF47;
+	Thu, 29 Feb 2024 22:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709246626; cv=none; b=HAHxQy6Vaye1FbdspLtLPpWGWREKXxr2fAHpQcSQZGUPIU+n2EzsY+Ps6oIZ3Bz1Z0kFbR8b5Ta9YmaofsPEaNrEMJ5/wYUVZgok8GoNMaWpZGKbeDZodpuE51atOwJAUfVPvB5wsF6zXsDb9csuLxehYJZv140XkBYI9QZwDgI=
+	t=1709247102; cv=none; b=leCUTGzlcz0KQVNycH15hSryZGacKXtTnOYlzDuyaKdK0eXhap7gT9kM39h3wZfTFVKbrOeTRoszvpgmaO3Gzs8Cz4COLeUMy2cH7TbBN91cSfytTxsLhxpzhOBhxDHg0F81P/J3FjSzzzamm6wMTlFHqOt9kptqgatDJZNEBRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709246626; c=relaxed/simple;
-	bh=9XSGUMRxz0sE0T4ckvyeXP3yYfhB9m1rrvjoyxGiCbk=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=ti5uBlO0htImlOsQRF5BtYjwEMJsdrtztIBrE6QO3RbwY1hGzTRsziGrYJm5Q2uL9pVFbPdLBTzO/jcXcKaVt76ps/cQxmXCU6h/rd6vFq4zwSyTxXggLIseauwe1rcGmzUrpmWFNQUx+S6BO6UKumO/qIKQRZ9U/c6l28CgTos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org; spf=pass smtp.mailfrom=verbum.org; dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b=i3J82juf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=azm3luIO; arc=none smtp.client-ip=66.111.4.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verbum.org
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailout.nyi.internal (Postfix) with ESMTP id 318A35C0049;
-	Thu, 29 Feb 2024 17:43:42 -0500 (EST)
-Received: from imap46 ([10.202.2.96])
-  by compute2.internal (MEProxy); Thu, 29 Feb 2024 17:43:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verbum.org; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1709246622; x=1709333022; bh=NKAcUD0tyU
-	b9nMY+LNYg26qTHsO4yEgMmPCWFlV5e0o=; b=i3J82juftyqETEw0mTaAIZKnT2
-	N7htheRuh6rPvQ3bh7EOFMvMTUpmAA9YGHF5Q/khBKcvWUDSgWnj0e3fY7oHpQHo
-	hVMNAQKW5MM2XNeXSnnq97w9f7rEGzetwuTEA5BSXPnieyLQYkmD06ge2G99uG8x
-	mhsXaoZYvwiL/AbU3IJSCrmCSCtE+N6YmfHceovZSTKu7lpRXikolddM5NeivJdr
-	slfM5WwTcuHemxxZzyIevtMXtS+2OtEHXtT/DE0gtmTyPVqXIfoA5We+MjyUXW64
-	O62IEXZ6azUl94pYh/ZsjFCdRGHPm3xPdFlacF2a8McURTKKiKfgy2KTpPvA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1709246622; x=1709333022; bh=NKAcUD0tyUb9nMY+LNYg26qTHsO4
-	yEgMmPCWFlV5e0o=; b=azm3luIOFXl4nKMajVF9d4wmSaTUQ/W+yiWPEv9AI4sw
-	RKozh6NI/NUasPiZdVOPnAbEkn1wq5QiPs5xNloCwB3xZ1R3sXs8vdlN0LzW6GS6
-	XFglX69kD7sm27hHSJgZEbhODGWQs2et/GzLvb8bqxUPHlK93UhvNhH609lpXrT7
-	46M0GeqF4up6tEyA5zIsVELeaqFfNoDNzLsGmKaYBEzmmfkeMx8lJZIpQyUf9jA8
-	YYmpGl0ZblpE40VlU17PJ42Jd0xE/lN631avP/dh6sa/xk/QzPLjxtPJLcvCq1Ou
-	nWMFYfuR7173I2493RYYNVIDYch8WRovAnwOGYabpA==
-X-ME-Sender: <xms:nQjhZQBiKnAIt0MbZv0S305drlEwifto-czuL-_zlIDlSYEZL8T2bg>
-    <xme:nQjhZSjWDXZZcdO5qWswJZTLoQUjKbFqLzyO-PB9OyBWqZa71BWP38eA7Ce6a6YLz
-    cteNp5x1j-zKc5Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrgeelgdduiedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfveho
-    lhhinhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpedvtdfhffdufeffueejgeevkeeggedtudekteetlefgteeujeeg
-    ffelgffhueegveenucffohhmrghinhepthhoohdrhhhofienucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpeifrghlthgvrhhssehvvghrsghumhdr
-    ohhrgh
-X-ME-Proxy: <xmx:nQjhZTl3jMbMdVXLx7BZQG3cY-HoqcRuQKxQkhiPZ6Z2mBrwL8QQiA>
-    <xmx:nQjhZWxlW1hqy64mApb442ELYYV33w3JxcQH6rT9YSnCcR9t8Z4TTQ>
-    <xmx:nQjhZVT73B8of-OJg_pHrvQnC8Mh2xrr9qCDOl-9iPgYWNPBGjyzcQ>
-    <xmx:ngjhZQefhJfaAw95CwfPcl7zwBy0MAlgwajgKdIs9wh1DXbpgk3kew>
-Feedback-ID: ibe7c40e9:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id C5F822A2008B; Thu, 29 Feb 2024 17:43:41 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-204-gba07d63ee1-fm-20240229.003-gba07d63e
+	s=arc-20240116; t=1709247102; c=relaxed/simple;
+	bh=gENCS1RwyKGGjAJ+g0H0xutNIpNay1XIcumfYiGBmXk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dlRIuT1meW1BTL2rb9fOM3lCHb2JVgvGQfCRm9HRrkERxMjXFAyzCV8vMltX60Qz1scPRk0VHCXcbXdRGlW0na618CRBqxi8mnL0WeZ2Kr5VMMjLG2cqRiILV+kasXQA7wYPviJMrYR9v8o9UVJqBO1fzTFfP7IW6ii/HMqAh68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KG3THHXW; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-33e1692fb02so360303f8f.0;
+        Thu, 29 Feb 2024 14:51:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709247099; x=1709851899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3L9ixUueiI05jpi7f65YJ28x09hBlNI3L5Dn4dXdhtw=;
+        b=KG3THHXWTlwmOz7fRdMrOyf7QTI6SBz1zlS3vhVSk/wBOrlp3rkaqvL5/0NQ/84A+T
+         x4VjIxidH42trSgnvKBoDhoqJDyd2RsNP8F4Ibb0b+ECdgKkn8wbRuLjF8ePTI3BYivX
+         mZf1uKnTg2pqLn0dtU9iRUNy/inbG5uXGdj287jJUf96tzLpzKKe9chF2hkmHw5u6r4Z
+         +WBy5C8ZHXTkQW8zArf4rqEI2ENshY+i8Kl6XvCyZ1uk67V7M2MFDLc2YqeQp7kcLJpk
+         DT8hX3Ay2VGMulaqoLzepfnqhuHAdeuDV3QxGBZphSqQ6eHmY6qTJinDRgLyxlVuPjq7
+         qHfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709247099; x=1709851899;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3L9ixUueiI05jpi7f65YJ28x09hBlNI3L5Dn4dXdhtw=;
+        b=VTB0vI/WniSkuUbqmTu6x3UvyzQI7JjRWM3i/1bnIRdlWR1FLdo4/9mQZ59o+af5bT
+         n/+Qb3iX0fFfBaJVdjH8KkLIKN+9Z6TTNJ48A2A7OY1P56mbCXyc6TvW2StycJYJf8Gw
+         hKv0H5l/v9satJvekSelFBGCNEyOR0FsgtNTl6bCeGCiHV7jRruyGqQ0k1PbUwAblhUj
+         5Fc59LmpHNnUOe5Fku7ydkrQ4mTumrUQKtTy2PHgtba33nLNZZ4ZHl2amptZIXpvFVwZ
+         d2mbVCvgU2o9QZsL541o+oi/jKhbjGBnlb93kVfddecCXJEXb1edSGhgecQNeWomTz2H
+         tyyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaI1TJT9Vv68cT3XpD/m2qttwP6lIHjfgR83jLx7a1g8Xjvhc65C3ExZ+tBJ5giKJ1ddTOzcmFLzCxtrr64XYgCXJB0gZqsQCuToqN8zWOZ0Oj4+MCcPW1+949t3AX3o/KAy7ntCzxyqm4Ww==
+X-Gm-Message-State: AOJu0YxQIqJciZgh6pdWl6MLARXK9Z92ejKj03BlnWt4zqjMoZW4g3uN
+	fYSsecpjQeqTLIEXSni30b/C2+IU1qDVTnnYiQXTBI7B/341emr+
+X-Google-Smtp-Source: AGHT+IGuz0LwrlRo/C7GfS+teQBq2Sq2iggdwk8ap0kAYWevKtiR09uv8paoPiASXzl3JLqzfZYY6A==
+X-Received: by 2002:a5d:498c:0:b0:33d:e2d9:8401 with SMTP id r12-20020a5d498c000000b0033de2d98401mr239007wrq.51.1709247099315;
+        Thu, 29 Feb 2024 14:51:39 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id q13-20020adfcb8d000000b0033ce06c303csm2861408wrh.40.2024.02.29.14.51.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Feb 2024 14:51:38 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] vboxsf: remove redundant variable out_len
+Date: Thu, 29 Feb 2024 22:51:38 +0000
+Message-Id: <20240229225138.351909-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <7282e2c3-f44a-4425-b0f7-24d1182e5499@app.fastmail.com>
-In-Reply-To: <20240229201840.GC1927156@frogsfrogsfrogs>
-References: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
- <87961163-a4b9-4032-aa06-f5126c9c8ca2@app.fastmail.com>
- <20240229201840.GC1927156@frogsfrogsfrogs>
-Date: Thu, 29 Feb 2024 17:43:21 -0500
-From: "Colin Walters" <walters@verbum.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
- "Christoph Hellwig" <hch@lst.de>
-Subject: Re: [PATCHSET v29.4 03/13] xfs: atomic file content exchanges
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+The variable out_len is being used to accumulate the number of
+bytes but it is not being used for any other purpose. The variable
+is redundant and can be removed.
 
+Cleans up clang scan build warning:
+fs/vboxsf/utils.c:443:9: warning: variable 'out_len' set but not
+used [-Wunused-but-set-variable]
 
-On Thu, Feb 29, 2024, at 3:18 PM, Darrick J. Wong wrote:
->
-> Correct, there's no built-in dedupe.  For small files you'll probably
-> end up with a single allocation anyway, which is ideal in terms of
-> ondisk metadata overhead.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/vboxsf/utils.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Makes sense.
+diff --git a/fs/vboxsf/utils.c b/fs/vboxsf/utils.c
+index 72ac9320e6a3..9515bbf0b54c 100644
+--- a/fs/vboxsf/utils.c
++++ b/fs/vboxsf/utils.c
+@@ -440,7 +440,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
+ {
+ 	const char *in;
+ 	char *out;
+-	size_t out_len;
+ 	size_t out_bound_len;
+ 	size_t in_bound_len;
+ 
+@@ -448,7 +447,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
+ 	in_bound_len = utf8_len;
+ 
+ 	out = name;
+-	out_len = 0;
+ 	/* Reserve space for terminating 0 */
+ 	out_bound_len = name_bound_len - 1;
+ 
+@@ -469,7 +467,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
+ 
+ 		out += nb;
+ 		out_bound_len -= nb;
+-		out_len += nb;
+ 	}
+ 
+ 	*out = 0;
+-- 
+2.39.2
 
-> though I would bet that extending linkat (or rename, or
-> whatever) is going to be the only workable solution for old / simple
-> filesystems (e.g. fat32).
-
-Ah, right; that too.
-
-> How /does/ dconf handle those changes?  Does it rename the file and
-> signal all the other dconf threads to reopen the file?  And then those
-> threads get the new file contents?
-
-I briefly skimmed the code and couldn't find it, but yes I believe it's basically that clients have an inotify watch that gets handled from the mainloop and clients close and reopen and re-mmap - it's probably nonexistent to have non-mainloop threads reading things from the mmap, so there's no races with any other threads.
-
->
-> Huurrrh hurrrh.  That's right, I don't see how exchange can mesh well
-> with mmap without actual flock()ing. :(
->
-> fsnotify will send a message out to userspace after the exchange
-> finishes, which means that userspace could watch for the notifications
-> via fanotify.  However, that's still a bit racy... :/
-
-Right.  However...it's not just about mmap.  Sorry this is a minor rant but...near my top ten list of changes to make with a time machine for Unix would be the concept of a contents-immutable file, like all the seals that work on memfd with F_ADD_SEALS (and outside of fsverity, which is good but can be a bit of a heavier hammer).
-
-A few times I've been working on shell script in my editor on my desktop, and these shell scripts are tests because shell script is so tempting.  I'm sure this familiar, given (x)fstests.
-
-And if you just run the tests (directly from source in git), and then notice a bug, and start typing in your editor, save the changes, and then and your editor happens to do a generic "open(O_TRUNC), save" instead of an atomic rename.  This happens to be what `nano` and VSCode do, although at least the `vi` I have here does an atomic rename.  (One could say all editors that don't are broken...but...)
-
-And now because the way bash works (and I assume other historical Unix shells) is that they interpret the file *as they're reading it* in this scenario you can get completely undefined behavior.  It could do *anything*.
-
-At least one of those times, I got an error from an `rm -rf` invocation that happened to live in one of those test scripts...that could have in theory just gone off and removed anything.
-
-Basically the contents-immutable is really what you *always* want for executables and really anything that can be parsed without locking (like, almost all config files in /etc too).  With ELF files there's EXTBUSY if it *happens* to be in use, but that's just a hack.  Also in that other thread about racing writes to suid executables...well, there'd be no possibility for races if we just denied writing because again - it makes no sense to just make random writes in-place to an executable.  (OK I did see the zig folks are trying an incremental linker, but still I would just assume reflinks are available for that)
-
-Now this is relevant here because, I don't think anything like dpkg/rpm and all those things could ever use this ioctl for this reason.
-
-So, it seems to me like it should really be more explicitly targeted at
-- Things that are using open()+write() today and it's safe for that use case
-- The database cases
-
-And not talk about replacing the general open(O_TMPFILE) + rename() path.
 
