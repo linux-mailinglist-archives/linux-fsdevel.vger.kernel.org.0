@@ -1,101 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-13156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCBB86BFF3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 05:44:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A3686BFF4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 05:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A9D28786B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 04:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36EF1F2596B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 04:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB1F38F80;
-	Thu, 29 Feb 2024 04:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O8h4leuX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A08C39840;
+	Thu, 29 Feb 2024 04:46:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2FE37700
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 04:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEF437700
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 04:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709181852; cv=none; b=HxuXtZKedfAuMUyCOUx4l7fQy6aWl27KHGo5KL1xGYWf78/i/wmrCe8QcEcOPIvaTPjq14s+nkoW1JgZtQbpmqooxlWckEBCFbM1m/ZFQIDdNebSjn/znBQmfwv3kiBEK6AjzGNEmu9U7gofRQaHkaE1GDGkIqZ/xU/g09HBweo=
+	t=1709181965; cv=none; b=N2QctIzjBbMsqcc+hdXdA7I1B32DaPEvbpPKmXRIwdVpwJE61GNr5Gw/C8VhVXcgkK7GVRKG4Gw5yl9AOmD+RGexfzfVi5QAvCGSeQzhBhl0+BusUBkwuhmpi0EEZ4ovMirNv/wRbWm1LqnJL3hHqWc5EFRVmzJ5iauIvQZn18g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709181852; c=relaxed/simple;
-	bh=H2jVPetb2Jm2Mc7E4QMsjUfJ8L8qSwggNRkUKXHvSLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bWAkeBtxgxwSCf3LDzVQC3h1wHWban1yS0kf+MC3bxgFJVaU8y0UMB+7DH+pqkvqSuf1cOgB7/vson/83NJ0ZTH0B3LeTIL9HBPpNOI7YalAKVuYqy0cb+kL/L6rJezSAoop4e0402eOdJal7GCZ+1c5xvJYabOHZZE8eAVyK6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O8h4leuX; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 28 Feb 2024 23:44:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709181848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5hpfWgC5IYjIxXvFKtiaQ0NzJ+pS3LY6ypvLK/34uy0=;
-	b=O8h4leuXrMp2skvrLwTkhIn/YdbeKVHiJxWWOtkilZ3MyW4SP2+PIddtMq25DNQZWfprOa
-	rQKE/PLjOevz761Tq3Tk206du11zIhqifpZf7KOc+1SceMoOOcy02wulvvURx2x1OSZSz+
-	5JqEcYFBCVSQ2J7mSw2NXiQ7KKVQh2I=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org, 
-	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
-Message-ID: <nhyvkpz6bhk7ocqzyhj73wr7kbqay4oipso56r6dzwmlvdpb35@hc4af4i6uwnf>
-References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>
- <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>
- <Zd-LljY351NCrrCP@casper.infradead.org>
- <sd7cximu7qzguhtstpc4xhgwwvfjg3zttwhy7oz7gzrgrmov6t@gjy2wplad6vy>
- <ZeAHFL3dOFrxA586@casper.infradead.org>
+	s=arc-20240116; t=1709181965; c=relaxed/simple;
+	bh=uyjOIENxq69Mlcc4mc+sqUi2mtkubLj29ms1NoSVQk8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qGd7N+LCeUFr7XWeU91RIS8/XG7xRMzARGVeNJ/nqqBenFLl2EdJu9yUe7vpgd05LiWdQittuR94xl4i7BTOJ4r1IX6Yobt+cV4NkOVtdlL+KYxw2WE/QrumtFxCo0MVBhXDI7fUjgNvayR5Ztm5u3nvBVa23GT7aJe1RkZp2hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3651fd50053so6857185ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 20:46:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709181963; x=1709786763;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FEjUJh9OkG09y0YRlfLvgKOC1GUAUaQDR1N3zpLExVA=;
+        b=EgA3DveDmFZI6LEI1/8MT1bCTsi0IVotK3Iu6R5GLCWjzJX4f8Pw9/LZXbuJ6dzv5u
+         V6ektkisUR9lP/0vMn48GEvCjWas3IInlSX9wJqP4l7yGQv5bruxb4psc65Tqg5NXEwa
+         9xMTSXe2p6UJ4NtQxgf4CFruDh+EeF2e9WF+/Uu6q5ONiYh6VwWLUvLp+u3a0JIXCnyk
+         tG5rffa43rUuva/C+7H55XbtyJ/v8JXzAw+dzXk4m+aBpRgmCdXJIfryNNnkqzlVtbpT
+         A1cuo2qWaA34QYfM6OEgUhJd2+SgesZvJLJU5GAdwwrJdQM9ud27Rvu4dE7mCVhugQex
+         91VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPp6dKVB/wfVctYGPHyrKLZTuIJVjfQd/5Yfz6/7Wc+QvBX05ZN+LNcCvn9Mjw37jVoRsds9eLy7gm6QW6d69nePDOFlsVLHi0PnIttg==
+X-Gm-Message-State: AOJu0Yz2TbKkPY9E99TUVBX2e2QJxOfa3d3QJe7kNXXEgR9AcGWt/AXU
+	QwP7pD8tbG1EHhlz+RhjOmz/ACepW0O14ijOarCNt4MLJI4gFSkuaWC75CGUR5nzB82Owy7P9nj
+	wwwYYuL1B5BX6ds6NJNDL/y3NPos2qJoZuL3/eswO9K/GZs++mqBJp7Y=
+X-Google-Smtp-Source: AGHT+IEdCtFwvSTo9IsVW4KKbhjExbFAmwCruc2QMMuLHxCBRQbrllGS6/9TC1/gdsUCxxkl5OaeSLKpXGOdphGqQzZ98gXSHGHl
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZeAHFL3dOFrxA586@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1cad:b0:365:1f8b:d103 with SMTP id
+ x13-20020a056e021cad00b003651f8bd103mr66821ill.6.1709181963802; Wed, 28 Feb
+ 2024 20:46:03 -0800 (PST)
+Date: Wed, 28 Feb 2024 20:46:03 -0800
+In-Reply-To: <00000000000029b00c05ef9c1802@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cf2d2d06127def32@google.com>
+Subject: Re: [syzbot] [gfs2?] WARNING in gfs2_check_blk_type
+From: syzbot <syzbot+092b28923eb79e0f3c41@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, axboe@kernel.dk, brauner@kernel.org, 
+	cluster-devel@redhat.com, gfs2@lists.linux.dev, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rpeterso@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 29, 2024 at 04:24:52AM +0000, Matthew Wilcox wrote:
-> On Wed, Feb 28, 2024 at 11:17:33PM -0500, Kent Overstreet wrote:
-> > On Wed, Feb 28, 2024 at 07:37:58PM +0000, Matthew Wilcox wrote:
-> > > Perhaps broaden this slightly.  On the THP Cabal call we just had a
-> > > conversation about the requirements on filesystems in the writeback
-> > > path.  We currently tell filesystem authors that the entire writeback
-> > > path must avoid allocating memory in order to prevent deadlock (or use
-> > > GFP_MEMALLOC).  Is this appropriate?  It's a lot of work to assure that
-> > > writing pagecache back will not allocate memory in, eg, the network stack,
-> > > the device driver, and any other layers the write must traverse.
-> > 
-> > Why would you not simply mark the writeback path with
-> > memalloc_nofs_save()?
-> 
-> It's not about preventing recursion, it's about guaranteeing forward
-> progres.  If you can't allocate a bio, you can't clean memory.
+syzbot suspects this issue was fixed by commit:
 
-Err, what? We have to be able to allocate bios in order to do writeback,
-_period_. And not just bios, sometimes we have to bounce the entire IO.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-I keep noticing the mm people developing weird, crazy ideas about it
-being "unsafe" to allocate memory in various contexts. That's wrong;
-attempting to allocate memory is always a _safe_ operation, provided you
-tell the allocator what it's allowed to do. The allocation might fail,
-and that's ok.
+    fs: Block writes to mounted block devices
 
-If code must succeed for the system to operate it must have fallbacks if
-allocations fail, but we don't limit ourselves to those fallbacks
-("avoid allocating memory") because then performance would be shit.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=108aa9ba180000
+start commit:   861deac3b092 Linux 6.7-rc7
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=10c7857ed774dc3e
+dashboard link: https://syzkaller.appspot.com/bug?extid=092b28923eb79e0f3c41
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1440171ae80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b1205ee80000
 
-The PF_MEMALLOC suggestion is even weirder.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-mm people are high on something...
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
