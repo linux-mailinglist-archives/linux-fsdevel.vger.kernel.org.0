@@ -1,104 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-13178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940F186C5F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 10:47:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8324486C605
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 10:50:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499D82842F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 09:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25BED1F24DFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 09:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0596662164;
-	Thu, 29 Feb 2024 09:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HB68wjE3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD6F629E7;
+	Thu, 29 Feb 2024 09:50:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639E96168B;
-	Thu, 29 Feb 2024 09:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D18627FD
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 09:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709200014; cv=none; b=DdKbMf7Q5rYMI+epl4+6SXafn9FouRRUzeSP1Gdqyymz7k9stFiirFfmc0YyUK6ZParRFg1NQ0Nv3ADjK//R/rzmQe7qJ532/XjI2f4hFOQTr08WQ04dtlVHG2kvF9H/H6l1Isc4UKcfbZLV60nmSshRnc0LNuf5aP/zo4g4SBw=
+	t=1709200205; cv=none; b=q7FKuDXfJTwTDU6zXQ30ulr8JyhlDWIDvHcJ7OuoWy1nMVwDsfH2In+Z7ixD6aPBeuCnxf0WSM7lNfKcK6axQQbouSlaFFBvxqqW5eXJ3E64tlmhumxKr/SiBLjiXEBIltoKYKG4sjjt17M/BC87nUgdXD0dzGEgs47XLrkkjhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709200014; c=relaxed/simple;
-	bh=cXB+1KQBDiO549Ym19+tDwi+Lf7+X4p0nhnrCu5uIBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n9YkplkDXFRp3YF4KOK1B5nG1q3VfxG1ob77z05vguz7z9Vd7spI01lNGNI1V+8qvFXk9UGo/0fZ1D5tc9Jchi6bg7mFf+2Crb9IQVQPbOO3Bt8lxnMZvSx3Ow6dkgodIDQRIKBa1LFGHELEKFEPTuV/A3INgAiOnMApdLBF/Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HB68wjE3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFA60C433F1;
-	Thu, 29 Feb 2024 09:46:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709200013;
-	bh=cXB+1KQBDiO549Ym19+tDwi+Lf7+X4p0nhnrCu5uIBo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HB68wjE3jve/pX4a+Wxrr9yrEohPUGdi+5baHx3HHSaFNPT+F9vm/qG+hw/s0jqUh
-	 61eJyVKjHdKybq3MBkiHFVmsf5XfgBZdXTLqsQDCECtvR0Hd5zo+LkWdeHJJ9hkmMX
-	 br+WZKW2ZeG2BT67ygZT/3uWjk1MMhShZX1UqyGhg+Ob5RSIJrU5UhK5Y7cAUdDzPe
-	 m6HpemhTW30eB5Rf5kfsxft25I8Zw3C17hR8UjX8YC0VoefFxUjGuyyDOC0TXJoHrF
-	 RtJQ42G0/jVhms//d90jr9t84R1bfcz3UG8xDBr9lvBXBnhYtA3DL5pGBwmH3fUctR
-	 aGy6sOs6+LbAA==
-Date: Thu, 29 Feb 2024 10:46:48 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, david@fromorbit.com, 
-	mcgrof@kernel.org, hch@lst.de, willy@infradead.org
-Subject: Re: [PATCH 2/2] bcachefs: Buffered write path now can avoid the
- inode lock
-Message-ID: <20240229-gestrafft-waage-157c1c4ee225@brauner>
-References: <20240229063010.68754-1-kent.overstreet@linux.dev>
- <20240229063010.68754-3-kent.overstreet@linux.dev>
- <CAHk-=whf9HsM6BP3L4EYONCjGawAV=X0aBDoUHXkND4fpqB2Ww@mail.gmail.com>
- <CAHk-=wg96Rt-SuUeRb-xev1KdwqX0GLFjf2=qnRsyLimx6-xzw@mail.gmail.com>
+	s=arc-20240116; t=1709200205; c=relaxed/simple;
+	bh=xi6HIJAD+eeBu9LW7f4Hh3oqUUXdFVpYzkHwowOaOQU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=s8jwgTfOq4JcRX7AynByCl5+M7cu9C1gkITg2Mn3N4qkRoAbKsqwq/QXKMTbp090TrJENF6mw0BSG0vzhRIiqj4mIbI6XpLYvoa805YFc2/N7ugjVgW2D5KEA124Huq8aBumyQEilEieuE/JL+dyUv8R04MnzA9flnuy6MeOpTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36576ec006aso7680285ab.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 01:50:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709200203; x=1709805003;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zDGmgKlqgwk985gGaF2O6kw62GJaKE8V/tYQe0mxx8U=;
+        b=d6dmEEcPNQxOlqhNrHEywBi8cCrtvZTtiS3w69vH7+xT0bQWBC8Cnyr7KRfKfbgjDR
+         yMnn0VtCY11jkwDbYILQWS/hH5uIAdr6dJvqFJom/G3hUunACRfl2lFku9+3tdKQv8vW
+         A1wtSU6lBYh3vZPYAruPM/UIFGmRYg5ISfx2HDmpQgZnW6/m8OWtc+oMnJ81j9xg6+3Y
+         AT//f0Hwkh2J7yE66I1AGaWhGZJYRGA5AACDJlUihdUp8vZWjh5Em1mMES9xA1PnDWQo
+         G6F+jEi4Qtt/QO22iM7CTHB8L1fYvlzUUDnlbCPV6MlUGPOtXM19EszFJPircylSO684
+         PZDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCjPSnAF2e9rqNgz2n360uX0SlT2jivTKujd3vxmErL0bXaDl4k0KtlfHeJgwnV1FAraMpZV6WigHycqiJ/L2ap7gCNMKCrBwVLTyjsQ==
+X-Gm-Message-State: AOJu0YydWCNITUSuF9iB6QwX6ksSAvfBS9dJTXz+wTK6wrJM7EdahrfI
+	EGas3HoP3LDPRvk63rN/Ye4sK8FCv0Z0C/ABtuw/3rHOLYsLo9xCOk3ICmqPYqIsi5NDhvPQKLx
+	+3tHf9w2EGRTTilaV0LGlHG8h7R32osvhDfxERA76UAqQAfSPkVxhtz8=
+X-Google-Smtp-Source: AGHT+IG4QI0KeghT/04h1y+qObg0of7pbkvKUpoiyWTfn6I+VKPKB7VJiBDBfJC6+j8HBzzrx2DohQ/EipLv3inF8Xn6oz88XXxK
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg96Rt-SuUeRb-xev1KdwqX0GLFjf2=qnRsyLimx6-xzw@mail.gmail.com>
+X-Received: by 2002:a92:c26e:0:b0:365:1c10:9cfa with SMTP id
+ h14-20020a92c26e000000b003651c109cfamr129745ild.5.1709200203621; Thu, 29 Feb
+ 2024 01:50:03 -0800 (PST)
+Date: Thu, 29 Feb 2024 01:50:03 -0800
+In-Reply-To: <000000000000e2c68a05ff02fe43@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fcae190612822e30@google.com>
+Subject: Re: [syzbot] [reiserfs?] kernel panic: corrupted stack end in do_sys_ftruncate
+From: syzbot <syzbot+3e32db5854a2dc0011ff@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, luto@kernel.org, 
+	peterz@infradead.org, reiserfs-devel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 28, 2024 at 11:27:05PM -0800, Linus Torvalds wrote:
-> On Wed, 28 Feb 2024 at 23:20, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> >
-> >  - take the lock exclusively if O_APPEND or if it *looks* like you
-> > might extend the file size.
-> >
-> >  - otherwise, take the shared lock, and THEN RE-CHECK. The file size
-> > might have changed, so now you need to double-check that you're really
-> > not going to extend the size of the file, and if you are, you need to
-> > go back and take the inode lock exclusively after all.
-> 
-> Same goes for the suid/sgid checks. You need to take the inode lock
-> shared to even have the i_mode be stable, and at that point you might
-> decide "oh, I need to clear suid/sgid after all" and have to go drop
-> the lock and retake it for exclusive access after all.
+syzbot suspects this issue was fixed by commit:
 
-I agree. And this is how we've done it in xfs as well. The inode lock is
-taken shared, then check for IS_NOSEC(inode) and if that's true keep the
-shared lock, otherwise upgrade to an exclusive lock. Note that this
-whole check also checks filesystem capability xattrs.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-I think you'd also get potential security issues or at least very subtle
-behavior. Someone could make a binary setuid and a concurrent write
-happens. chmod is taking the exclusive lock and there's a concurrent
-write going on changing the contents to something unsafe without being
-forced to remove the set*id bits.
+    fs: Block writes to mounted block devices
 
-Similar for {g,u}id changes. Someone starts a chown() taking inode lock
-while someone issues a concurrent write. The chown changes the group
-ownership so that a writer would be forced to drop the sgid bit. But the
-writer proceeds keeping that bit.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12203874180000
+start commit:   a92b7d26c743 Merge tag 'drm-fixes-2023-06-23' of git://ano..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2cbd298d0aff1140
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e32db5854a2dc0011ff
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a44d50a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10bee4cb280000
 
-So that's all potentially pretty subtle side-effects we'd allow. And
-I've removed so many bugs in that area the last couple of years as well.
-So let's please use the shared lock.
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
