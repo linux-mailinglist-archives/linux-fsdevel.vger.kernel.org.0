@@ -1,236 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-13146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D39186BCC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 01:25:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F415E86BCD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 01:26:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5405B288B6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 00:25:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B66DB22331
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 00:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B22320335;
-	Thu, 29 Feb 2024 00:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93276101C8;
+	Thu, 29 Feb 2024 00:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J64noYs2"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="mP2o/Ld8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E364B101C8;
-	Thu, 29 Feb 2024 00:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575D58F5A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 00:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709166026; cv=none; b=RwahxRjvDIkHSyN0hX4Y/UsnKLTe2KWaFn+EBtD3YkYeBznEcp3mL8Pzmq3k8IBS3oAYRO8fSOVuZuDGl+Dp6zMuUYzjmZnpF1oGTqxMcyZMsdtlhojvtI+ho4WlogspZpq06RQgHxtrEP6uHIgZg/SnwWij/n1lyEQYvs0aCwE=
+	t=1709166339; cv=none; b=XFc9tKGYdEWzTetjjFfR4RuIWWCc8Jl+VMj9f7GfkvQnyv/B3RXwprdjpCqaz1Qt2sNELXHXV1fftXxkdI3X+Dn7ZWHfbsci8tou3mK6MPKx/frw3v/OzYftzBNB9SdxBGBYA83N30bDtnuABs/lP2Rsxqu0pTQwuLYZmsDuV04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709166026; c=relaxed/simple;
-	bh=BvdAVAaadK3QwHaal211fg0PskV4RkLz4NBeTDVh3Ig=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ueifhf84ysAGWD/vWtmmmQBb535iH3yhzvO9bO4wET5jogDNPYfdypbLVmCW/IvkKFGXl4++SiRx8xcCaJDthZeqSfNCE1BOKJAlmqC8u3Pz8q6HgTGSMoHECDawzyiHolccRq86pFlGQ59zueO3q23PJlK3+PtQxhQSpcUhGJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J64noYs2; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6e47a3202f0so113862a34.2;
-        Wed, 28 Feb 2024 16:20:24 -0800 (PST)
+	s=arc-20240116; t=1709166339; c=relaxed/simple;
+	bh=kdGjzkjhRlijxWSQUk8OYXREJH6OWoiRQl5SpysflX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HY2EdocD9dUVD557cqGLxj5OP/5DpvDuDPCFftazhz6yiA4F/c1K5tupopHJZMiAzryUgAcRmS+GxGNo6VO2N6+mV2VlGsI/lCIGtBDm96b0OqknUw0B5OSZR3MFRE7dPgPipaMNqb5ShkxHKo+Dy3N0h5XNwTqUSvsfcoUj9RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=mP2o/Ld8; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-5e152c757a5so204661a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Feb 2024 16:25:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709166024; x=1709770824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=w393zCdu0xHlp2PBB/YtzlCDvLqiNOOGgXpK5V2Qh88=;
-        b=J64noYs2ThWbXJcemtmJ+2qYS1xG5yGuPifKnDCt9cak6tJ/b0gjbk/dMc+BWYplTQ
-         4+yM52VIJN9cYaaw8EgAt2bO4Tr9oNKfNXiWaEQZmRNJ5Nf6Hgn2L2dhu71LL9VCnULC
-         iq8AdSKSQ85RtE1Vv25F2ESgmZA75DCS9q8FjrXpQahCCikUixEuvj2aj8Zr+e7mAkxC
-         HhwgcT/D57p7pfVv50GV9whB6qu/aoT3qtOYoaY0FCjDADSnufqhRdLXvQDrgBhFpBVy
-         LSu3zCIm0U7J2kTg87Ux+7DqagvA5Aj1uSTP3Gjfmuu/+FUwQsqoNOaiTMN51eSh6GBx
-         R1hg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709166336; x=1709771136; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PkwCQ+L+1Ki8bGzt9VpkqtwgfzwkziGikLVOEPKGous=;
+        b=mP2o/Ld8U0z+VqFrIcu5TW/ONH5/1SLCx9VjTFJgNghpAplX2yaQ6ATEd3XVwGxlFX
+         /A0GyiUUMGFgrGMANT4vKCAGD1Nj2hOh3w9nJ4gnOOgQPsJKzDBsVOfkROS4o5sW6jAY
+         p//EsJzLioabAaQgGEN/v2oBCdN0WZRWBBQKWSoBSTnIcX4g/BWrjEM07EOnwv35/IWI
+         4SLeqyt+vOjNy22Fq+SEbdyXkIeGmc7yGLqM/n8xm4wr7WVXqErH5KjqW79YfmYsahYV
+         hvzfZipKExjAa5GLdwJmoBUuF+gemUydXXDIRRH4AU26hGnDYcaVjDZixOIGXK5EgPi5
+         0VfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709166024; x=1709770824;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w393zCdu0xHlp2PBB/YtzlCDvLqiNOOGgXpK5V2Qh88=;
-        b=U5y0V4bdXn6s//b+P5pXkf5cxB6KsP9dWV0QMvG0eT/HVZYqzLSzDP7jzlxjuJIU/F
-         hzEvZnmdEtbQW13l+RsBkNfm5eZ3oivC6KWkK5TTg0cLxiPnnQPu1esuBJO5MrqdFkU4
-         gsCzY4ODEMnx+455cj2/oEgT/SBn839BKCBh3owEXJg8zzyeqKdfPNJ9LjguwbpiPkoU
-         35qP9aOmvT2LS3aEd9phRDBgWQqCo1EVzXN/ahzi9POPp2u9FJQWS7hD81ZqKhV9YGHD
-         f7c1Mo5JzFHF5QnHqNG92a97h+w4BOSvNuKG1oNlxzk6X+V1fo3F6beN6PSgtcQRGQyZ
-         ssng==
-X-Forwarded-Encrypted: i=1; AJvYcCWGtyXxtn1fsRwR3Bxf/5pGhtrHh5zVLCLjUhC9mYFk24EN3dUo1vrN4KzYbCM0Jq1ihxx2avGCnLEZ7d9Jg8QtzLTOK7PYvm9aMK3WUbdIVVGJ9LUI0Yp5c5UEgTq7FYg3DiMiBmsuRQ==
-X-Gm-Message-State: AOJu0YxgG0blEgo7XzHN9oR9HVcxY6D4NvE2Zfgzq/rWJtXybME4Pzxk
-	Tsxigt1DmBK/ZjML0A/Nhxnx8FKOVvdPs2nK+y4LGWTEvR0cALoj
-X-Google-Smtp-Source: AGHT+IFvFMvwDpZbAKYi3GrDuwDqqFPdGia4/8Y/ma96atLSvwHu/ThBLUGHswkqbeFZWAUmvnClRQ==
-X-Received: by 2002:a05:6871:3404:b0:21f:a649:dc65 with SMTP id nh4-20020a056871340400b0021fa649dc65mr608151oac.6.1709166023805;
-        Wed, 28 Feb 2024 16:20:23 -0800 (PST)
-Received: from localhost.localdomain (070-114-203-196.res.spectrum.com. [70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id re4-20020a056871628400b002205bc51bfbsm93194oab.14.2024.02.28.16.20.21
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 28 Feb 2024 16:20:23 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-From: John Groves <John@Groves.net>
-X-Google-Original-From: John Groves <john@groves.net>
-To: lsf-pc@lists.linux-foundation.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Cc: John Groves <John@Groves.net>,
-	John Groves <jgroves@micron.com>,
-	john@jagalactic.com,
-	Dave Chinner <david@fromorbit.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	dave.hansen@linux.intel.com,
-	gregory.price@memverge.com,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jerome Glisse <jglisse@google.com>,
-	David Rientjes <rientjes@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Bharata B Rao <bharata@amd.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jon Grimm <jon.grimm@amd.com>,
-	Brian Morris <bsmorris@google.com>,
-	Wei Xu <weixugc@google.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	mykolal@meta.com,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>,
-	Eishan Mirakhur <emirakhur@micron.com>,
-	Ravi Shankar <venkataravis@micron.com>,
-	Srinivasulu Thanneeru <sthanneeru@micron.com>
-Subject: [LSF/MM/BPF TOPIC] Famfs: shared memory file system for disaggregated memory [LSF/MM/BPF ATTEND]
-Date: Wed, 28 Feb 2024 18:20:20 -0600
-Message-Id: <20240229002020.85535-1-john@groves.net>
-X-Mailer: git-send-email 2.39.3 (Apple Git-145)
+        d=1e100.net; s=20230601; t=1709166336; x=1709771136;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PkwCQ+L+1Ki8bGzt9VpkqtwgfzwkziGikLVOEPKGous=;
+        b=MJxM3Y84+lDkZAQ9D2E3zwpCNInb/hYf4iWkaujBMhQmktk9xUcvuK/7e/QnpvZ2+p
+         LbqrMuZu9H9IqHaIKzwaFa+MXe27iU9vK1LUNaJTkA+fnMh8Xqe753sfGlIqJtPGXRaW
+         IHK4EHw8Rs/LN/OiT44AjhJHsQ61bN2Er/eUrD8TnXnraMqtJl+Z6MnahedFk9ao9CSK
+         qEghXpWUKE4Ibhvqzd0QZam1d8A+xP4W0t8xRV/VdzsDLsyMq4YwHzdiOI72KOUoQ9zR
+         vpS6XN4x+l7URPNqrkX98A9jfiCx5QJMRZGq4k31t8DW8zF8gCyz4g3FU8pFKdESTJZ6
+         Ncqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXY+LQmqk6n/vZ4sPBNBa+T0CedwLSuY7Ah2j2N/2TOJH7sgOb7NicUQ8G8UccIzi6T8mx/QawaIAF5bbzYosWSLlog+VEkEJszgGGUZg==
+X-Gm-Message-State: AOJu0YzxQC2JY75epKAX0yjbnTUYV1kBmlYkFMEc9nR3guCUzCJmhTRL
+	40w0KDYR1x9JMJXA6ZBDKV2mq0m6qQ4vOgbp3xfuEI9/BaCWtujg1KVF5YIajIk=
+X-Google-Smtp-Source: AGHT+IG5iHfnEZ0ZTUMTkFT7V8xoIOLlz9zatX9Mo2lGdrUibfGpeoC/7fy6clFiU6QZBPq0550Qpg==
+X-Received: by 2002:a05:6a21:910c:b0:1a0:e475:c0ac with SMTP id tn12-20020a056a21910c00b001a0e475c0acmr1240744pzb.53.1709166336631;
+        Wed, 28 Feb 2024 16:25:36 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
+        by smtp.gmail.com with ESMTPSA id l14-20020a170902f68e00b001c407fac227sm55795plg.41.2024.02.28.16.25.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Feb 2024 16:25:36 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rfUEv-00CsoP-2H;
+	Thu, 29 Feb 2024 11:25:33 +1100
+Date: Thu, 29 Feb 2024 11:25:33 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+	Chris Mason <clm@fb.com>, Matthew Wilcox <willy@infradead.org>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-mm <linux-mm@kvack.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>, linux-fsdevel@vger.kernel.org,
+	lsf-pc@lists.linux-foundation.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Josef Bacik <josef@toxicpanda.com>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Measuring limits and enhancing
+ buffered IO
+Message-ID: <Zd/O/S3rdvZ8OxZJ@dread.disaster.area>
+References: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
+ <xhymmlbragegxvgykhaddrkkhc7qn7soapca22ogbjlegjri35@ffqmquunkvxw>
+ <Zd5ecZbF5NACZpGs@dread.disaster.area>
+ <d2zbdldh5l6flfwzcwo6pnhjpoihfiaafl7lqeqmxdbpgoj77y@fjpx3tcc4oev>
+ <Zd5lORiOCUsARPWq@dread.disaster.area>
+ <CAOQ4uxi=fdjXq7q0_+0mDovmBd6Afb=xteFBSnE-rUmQMJYgRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxi=fdjXq7q0_+0mDovmBd6Afb=xteFBSnE-rUmQMJYgRQ@mail.gmail.com>
 
-John Groves, Micron
+On Wed, Feb 28, 2024 at 09:48:46AM +0200, Amir Goldstein wrote:
+> On Wed, Feb 28, 2024 at 12:42 AM Dave Chinner via Lsf-pc
+> <lsf-pc@lists.linux-foundation.org> wrote:
+> >
+> > On Tue, Feb 27, 2024 at 05:21:20PM -0500, Kent Overstreet wrote:
+> > > On Wed, Feb 28, 2024 at 09:13:05AM +1100, Dave Chinner wrote:
+> > > > On Tue, Feb 27, 2024 at 05:07:30AM -0500, Kent Overstreet wrote:
+> > > > > AFAIK every filesystem allows concurrent direct writes, not just xfs,
+> > > > > it's _buffered_ writes that we care about here.
+> > > >
+> > > > We could do concurrent buffered writes in XFS - we would just use
+> > > > the same locking strategy as direct IO and fall back on folio locks
+> > > > for copy-in exclusion like ext4 does.
+> > >
+> > > ext4 code doesn't do that. it takes the inode lock in exclusive mode,
+> > > just like everyone else.
+> >
+> > Uhuh. ext4 does allow concurrent DIO writes. It's just much more
+> > constrained than XFS. See ext4_dio_write_checks().
+> >
+> > > > The real question is how much of userspace will that break, because
+> > > > of implicit assumptions that the kernel has always serialised
+> > > > buffered writes?
+> > >
+> > > What would break?
+> >
+> > Good question. If you don't know the answer, then you've got the
+> > same problem as I have. i.e. we don't know if concurrent
+> > applications that use buffered IO extensively (eg. postgres) assume
+> > data coherency because of the implicit serialisation occurring
+> > during buffered IO writes?
+> >
+> > > > > If we do a short write because of a page fault (despite previously
+> > > > > faulting in the userspace buffer), there is no way to completely prevent
+> > > > > torn writes an atomicity breakage; we could at least try a trylock on
+> > > > > the inode lock, I didn't do that here.
+> > > >
+> > > > As soon as we go for concurrent writes, we give up on any concept of
+> > > > atomicity of buffered writes (esp. w.r.t reads), so this really
+> > > > doesn't matter at all.
+> > >
+> > > We've already given up buffered write vs. read atomicity, have for a
+> > > long time - buffered read path takes no locks.
+> >
+> > We still have explicit buffered read() vs buffered write() atomicity
+> > in XFS via buffered reads taking the inode lock shared (see
+> > xfs_file_buffered_read()) because that's what POSIX says we should
+> > have.
+> >
+> > Essentially, we need to explicitly give POSIX the big finger and
+> > state that there are no atomicity guarantees given for write() calls
+> > of any size, nor are there any guarantees for data coherency for
+> > any overlapping concurrent buffered IO operations.
+> >
+> 
+> I have disabled read vs. write atomicity (out-of-tree) to make xfs behave
+> as the other fs ever since Jan has added the invalidate_lock and I believe
+> that Meta kernel has done that way before.
+> 
+> > Those are things we haven't completely given up yet w.r.t. buffered
+> > IO, and enabling concurrent buffered writes will expose to users.
+> > So we need to have explicit policies for this and document them
+> > clearly in all the places that application developers might look
+> > for behavioural hints.
+> 
+> That's doable - I can try to do that.
+> What is your take regarding opt-in/opt-out of legacy behavior?
 
-Micron recently released the first RFC for famfs [1]. Although famfs is not
-CXL-specific in any way, it aims to enable hosts to share data sets in shared
-memory (such as CXL) by providing a memory-mappable fs-dax file system
-interface to the memory.
+Screw the legacy code, don't even make it an option. No-one should
+be relying on large buffered writes being atomic anymore, and with
+high order folios in the page cache most small buffered writes are
+going to be atomic w.r.t. both reads and writes anyway.
 
-Sharable disaggregated memory already exists in the lab, and will be possible
-in the wild soon. Famfs aims to do the following:
+> At the time, I have proposed POSIX_FADV_TORN_RW API [1]
+> to opt-out of the legacy POSIX behavior, but I guess that an xfs mount
+> option would make more sense for consistent and clear semantics across
+> the fs - it is easier if all buffered IO to inode behaved the same way.
 
-* Provide an access method that provides isolation between files, and does not
-  tempt developers to mmap all the memory writable on every host.
-* Provide an an access method that can be used by unmodified apps.
+No mount options, just change the behaviour. Applications already
+have to avoid concurrent overlapping buffered reads and writes if
+they care about data integrity and coherency, so making buffered
+writes concurrent doesn't change anything.
 
-Without something like famfs, enabling the use of sharable memory will involve
-the temptation to do things that may destabilize systems, such as
-mapping large shared, writable global memory ranges and hooking allocators to
-use it (potentially sacrificing isolation), and forcing the same virtual
-address ranges in every host/process (compromising security).
-
-The most obvious candidate app categories are data analytics and data lakes.
-Both make heavy use of "zero-copy" data frames - column oriented data that
-is laid out for efficient use via (MAP_SHARED) mmap. Moreover, these use case
-categories are generally driven by python code that wrangles data into
-appropriate data frames - making it straightforward to put the data frames
-into famfs. Furthermore, these use cases usually involve the shared data being
-read-only during computation or query jobs - meaning they are often free of
-cache coherency concerns.
-
-Workloads such as these often deal with data sets that are too large to fit
-in a single server's memory, so the data gets sharded - requiring movement via
-a network. Sharded apps also sometimes have to do expensive reshuffling -
-moving data to nodes with available compute resources. Avoiding the sharding
-overheads by accessing such data sets in disaggregated shared memory looks
-promising to make make better use of memory and compute resources, and by
-effectively de-duplicating data sets in memory.
-
-About sharable memory
-
-* Shared memory is pmem-like, in that hosts will connect in order to access
-  pre-existing contents
-* Onlining sharable memory as system-ram is nonsense; system-ram gets zeroed...
-* CXL 3 provides for optionally-supported hardware-managed cache coherency
-* But "multiple-readers, no writers" use cases don't need hardware support
-  for coherency
-* CXL 3.1 dynamic capacity devices (DCDs) should be thought of as devices with
-  an allocator built in.
-* When sharable capacity is allocated, each host that has access will see a
-  /dev/dax device that can be found by the "tag" of the allocation. The tag is
-  just a uuid.
-* CXL 3.1 also allows the capacity associated with any allocated tag to be
-  provided to each host (or host group) as either writable or read-only.
-
-About famfs
-
-Famfs is an append-only log-structured file system that places many limits
-on what can be done. This allows famfs to tolerate clients with a stale copy
-of metadata. All memory allocation and log maintenance is performed from user
-space, but file extent lists are cached in the kernel for fast fault
-resolution. The current limitations are fairly extreme, but many can be relaxed
-by writing more code, managing Byzantine generals, etc. ;)
-
-A famfs-enabled kernel can be cloned at [3], and the user space repo can be
-cloned at [4]. Even with major functional limitations in its current form
-(e.g. famfs does not currently support deleting files), it is sufficient to
-use in data analytics workloads - in which you 1) create a famfs file system,
-2) dump data sets into it, 3) run clustered jobs that consume the shared data
-sets, and 4) dismount and deallocate the memory containing the file system.
-
-Famfs Open Issues
-
-* Volatile CXL memory is exposed as character dax devices; the famfs patch
-  set adds the iomap API, which is required for fs-dax but until now missing
-  from character dax.
-* (/dev/pmem devices are block, and support the iomap api for fs-dax file
-  systems)
-* /dev/pmem devices can be converted to /dev/dax mode, but native /dev/dax
-  devices cannot be converted to pmem mode.
-* /dev/dax devices lack the iomap api that fs-dax uses with pmem, so the famfs
-  patch set adds that.
-* VFS layer hooks for a file system on a character device may be needed.
-* Famfs has uncovered some previously latent bugs in the /dev/dax mmap
-  machinery that probably require attention.
-* Famfs currently works with either pmem or devdax devices, but our
-  inclination is to drop pmem support to, reduce the complexity of supporting
-  two different underlying device types - particularly since famfs is not
-  intended for actual pmem.
-
-
-Required :-
-Dan Williams
-Christian Brauner
-Jonathan Cameron
-Dave Hansen
-
-[LSF/MM + BPF ATTEND]
-
-I am the author of the famfs file system. Famfs was first introduced at LPC
-2023 [2]. I'm also Micron's voting member on the Software and Systems Working
-Group (SSWG) of the CXL Consortium, and a co-author of the CXL 3.1
-specification.
-
-
-References
-
-[1] https://lore.kernel.org/linux-fsdevel/cover.1708709155.git.john@groves.net/#t
-[2] https://lpc.events/event/17/contributions/1455/
-[3] https://www.computeexpresslink.org/download-the-specification
-[4] https://github.com/cxl-micron-reskit/famfs-linux
-
-Best regards,
-John Groves
-Micron
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
