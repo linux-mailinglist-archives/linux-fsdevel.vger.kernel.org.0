@@ -1,185 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-13203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90F386D128
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 18:53:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B2686D235
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 19:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC8031C20B72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 17:53:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A85BEB27485
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Feb 2024 18:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98312757EF;
-	Thu, 29 Feb 2024 17:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6467A15A;
+	Thu, 29 Feb 2024 18:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hVW2ydcj"
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="EHNEAJpH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB8770AEF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 17:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315487A159
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 18:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709229209; cv=none; b=e0B89tAjhnrhEF728x1S2pFFSS0dZ+ejgBqKKAJHO3rdfme2Ch4hMGt3vBR/eh2+PCzRY2FH5BzlxDTaN8arbUNbTMOnKfr/SKUlWLhteR6fVYc/gLbYo+U8BAjl3Y88ZMhbu/dOdTYuXM0ZLr9mSC6LrS8YHNGS39ZFkh1TC7k=
+	t=1709231238; cv=none; b=tnFtamNHNsFQP4Wj90wC/b0ok69XKJWKibq2oBsCk4wZLCkaqD0yMsuSv51DATs71eCEkUwvHpka2aaVUayEQPPLCHnHxCWeUR2+Cp2/1JBWTV+SKIqgZLIT4SUXmLYzYvg/siI5+6mBxDNXQIQXe3JBpwZFG7QYUGtpH9a43wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709229209; c=relaxed/simple;
-	bh=jOIe08W4YaLqbo4X/2OKlnmLamFrWQtOjh6Pu2GtBRg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KUuXg7TbSbz626OlfdEHON3+iIxfHCQvuOrfjb6DTrzxUd0nchNfu3VLJEK73Qm5La9qYSTYmyghpW6CzZf/BywabBiHSOqGW4JJfa8a6upxkwlXAyYMWBF845AgIUMjnsywDoxHyYrCC8sClCYBKljA4uZRI6WD0V1+dS/smK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hVW2ydcj; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41THqKhl010993;
-	Thu, 29 Feb 2024 17:53:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=E4UJ8yaKzXNqCIlNVz+jay0nuZFsWnm/q8thL43VsjQ=;
- b=hVW2ydcjWqA+s5b2bTly/h/YwTjpJ2PBirfqzYz68oA5cmE5IknXwx4oznXqjU3Gx811
- c6h2xlCqQo6VnScs4JuZen59Qm03NJEEPhZS9FWLsaf3pYISD2fc6fHka7FaoPdJxZS1
- yLwW/whgFVbOz/zf4ZBVlvAoJNKylmAKsgIHLttwZOKi6z35HiwfyTY9FWxzE05ZI4Mg
- erPoFvJZocDzEs9q94/oMLNJbgBn7lN+u/la0pvebQ3tpQZmmbIiHFWSpx+rDP0aoxyD
- O8roDyXamlz8ozQQB17nflVJbiT7oI2e8FaJlzLePXtwQS/Y3fmBjReNOVBTxiu7+WkF jQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wjxpyr0na-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Feb 2024 17:53:22 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41THWPbW007937;
-	Thu, 29 Feb 2024 17:45:50 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wjxdhre9u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Feb 2024 17:45:50 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41THd87e023910;
-	Thu, 29 Feb 2024 17:41:49 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3wfw0kps33-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Feb 2024 17:41:49 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41THfjli42468000
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 Feb 2024 17:41:47 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7E1AE20040;
-	Thu, 29 Feb 2024 17:41:45 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 668E220043;
-	Thu, 29 Feb 2024 17:41:45 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 29 Feb 2024 17:41:45 +0000 (GMT)
-From: Mete Durlu <meted@linux.ibm.com>
-To: jack@suse.cz
-Cc: amir73il@gmail.com, repnop@google.com, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fanotify: move path permission and security check
-Date: Thu, 29 Feb 2024 18:41:45 +0100
-Message-Id: <20240229174145.3405638-1-meted@linux.ibm.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1709231238; c=relaxed/simple;
+	bh=0ujY1W7EPTMDMv8Qjd/XFEAXcyl4EZ0O06CzvoVFYCc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=uwpQm0vw66nnO+cxAydzvS8hR8XppX6YV4cskIEUjFpBKWRAJ74Jbc0eGN86h4U6Lmipa6JzSJH58E5O5fjDmWkAYBKH57vNjaORpAaNi/9/04puBVA0nyv20OoWIG5jg1tCmJ4aJAgRzdDRKpzZFV1IT7FYlkTKvM3VUZbPKM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=EHNEAJpH; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+X-ASG-Debug-ID: 1709230070-1cf4391a1c4fcf0002-kl68QG
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id OKH4L5BwQIJxnplq; Thu, 29 Feb 2024 13:08:13 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=GyTYh7rZxyuaZxAK4E6INt0hy/oXnF2VsS983Qgm9WI=;
+	h=Content-Transfer-Encoding:Content-Type:Subject:From:Cc:To:Content-Language:
+	MIME-Version:Date:Message-ID; b=EHNEAJpH9NO6DGJeblalbgxMQVo9ZjLHP5lNuDo0CY5z+
+	3qRP6j8BSOQ1clNEfFa8V1xd1wyAxTkw7gIdJuf4r5DcXWB08/uQ/7qeVuc70mLwffJnHoNaXO4ro
+	5M6b7FYErqw/nqlHndEyRgwppLhJ5Aw8n43zpvTRnqCKTu0iA=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate Pro SMTP 7.1.1)
+  with ESMTPS id 13108803; Thu, 29 Feb 2024 13:08:10 -0500
+Message-ID: <86e592a9-98d4-4cff-a646-0c0084328356@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Thu, 29 Feb 2024 13:08:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 2IK5dUFocWAupmL4Yp_EnhuHl6Gt9SUx
-X-Proofpoint-ORIG-GUID: LC4RpRogoppT9Qj6M57U-cgBl0Zz3EeE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-29_04,2024-02-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 impostorscore=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=680
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402290138
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Jens Axboe <axboe@kernel.dk>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Hugh Dickins <hughd@google.com>, Hannes Reinecke <hare@suse.de>,
+ Keith Busch <kbusch@kernel.org>, linux-mm <linux-mm@kvack.org>,
+ linux-block@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Tony Battersby <tonyb@cybernetics.com>
+Subject: [PATCH] block: Fix page refcounts for unaligned buffers in
+ __bio_release_pages()
+Content-Type: text/plain; charset=UTF-8
+X-ASG-Orig-Subj: [PATCH] block: Fix page refcounts for unaligned buffers in
+ __bio_release_pages()
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1709230093
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1347
 
-In current state do_fanotify_mark() does path permission and security
-checking before doing the event configuration checks. In the case
-where user configures mount and sb marks with kernel internal pseudo
-fs, security_path_notify() yields an EACESS and causes an earlier
-exit. Instead, this particular case should have been handled by
-fanotify_events_supported() and exited with an EINVAL.
-Move path perm and security checks under the event validation to
-prevent this from happening.
-Simple reproducer;
+Fix an incorrect number of pages being released for buffers that do not
+start at the beginning of a page.
 
-	fan_d = fanotify_init(FAN_CLASS_NOTIF, O_RDONLY);
-	pipe2(pipes, O_CLOEXEC);
-        fanotify_mark(fan_d,
-		      FAN_MARK_ADD |
-		      FAN_MARK_MOUNT,
-		      FAN_ACCESS,
-		      pipes[0],
-		      NULL);
-	// expected: EINVAL (22), produces: EACCES (13)
-        printf("mark errno: %d\n", errno);
-
-Another reproducer;
-ltp/testcases/kernel/syscalls/fanotify/fanotify14
-
-Fixes: 69562eb0bd3e ("fanotify: disallow mount/sb marks on kernel internal pseudo fs")
-
-Signed-off-by: Mete Durlu <meted@linux.ibm.com>
+Fixes: 1b151e2435fc ("block: Remove special-casing of compound pages")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
 ---
- fs/notify/fanotify/fanotify_user.c | 24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index fbdc63cc10d9..14121ad0e10d 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1015,7 +1015,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
- 			fdput(f);
- 			goto out;
+Tested with 6.1.79.  The 6.1 backport can just use
+folio_put_refs(fi.folio, nr_pages) instead of do {...} while.
+
+ block/bio.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/block/bio.c b/block/bio.c
+index b9642a41f286..b52b56067e79 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1152,7 +1152,7 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty)
+ 
+ 	bio_for_each_folio_all(fi, bio) {
+ 		struct page *page;
+-		size_t done = 0;
++		size_t nr_pages;
+ 
+ 		if (mark_dirty) {
+ 			folio_lock(fi.folio);
+@@ -1160,10 +1160,11 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty)
+ 			folio_unlock(fi.folio);
  		}
--
-+		ret = 0;
- 		*path = f.file->f_path;
- 		path_get(path);
- 		fdput(f);
-@@ -1028,21 +1028,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
- 			lookup_flags |= LOOKUP_DIRECTORY;
- 
- 		ret = user_path_at(dfd, filename, lookup_flags, path);
--		if (ret)
--			goto out;
+ 		page = folio_page(fi.folio, fi.offset / PAGE_SIZE);
++		nr_pages = (fi.offset + fi.length - 1) / PAGE_SIZE -
++			   fi.offset / PAGE_SIZE + 1;
+ 		do {
+ 			bio_release_page(bio, page++);
+-			done += PAGE_SIZE;
+-		} while (done < fi.length);
++		} while (--nr_pages != 0);
  	}
--
--	/* you can only watch an inode if you have read permissions on it */
--	ret = path_permission(path, MAY_READ);
--	if (ret) {
--		path_put(path);
--		goto out;
--	}
--
--	ret = security_path_notify(path, mask, obj_type);
--	if (ret)
--		path_put(path);
--
- out:
- 	return ret;
  }
-@@ -1894,6 +1880,14 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 		if (ret)
- 			goto path_put_and_out;
- 	}
-+	/* you can only watch an inode if you have read permissions on it */
-+	ret = path_permission(&path, MAY_READ);
-+	if (ret)
-+		goto path_put_and_out;
-+
-+	ret = security_path_notify(&path, mask, obj_type);
-+	if (ret)
-+		goto path_put_and_out;
- 
- 	if (fid_mode) {
- 		ret = fanotify_test_fsid(path.dentry, flags, &__fsid);
+ EXPORT_SYMBOL_GPL(__bio_release_pages);
+
+base-commit: d206a76d7d2726f3b096037f2079ce0bd3ba329b
 -- 
-2.40.1
+2.25.1
 
 
