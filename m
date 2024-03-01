@@ -1,175 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-13256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D09186DE96
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 10:51:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4B886DE9C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 10:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B45451C20D63
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 09:51:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416C9282EDE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 09:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C2C6A8C9;
-	Fri,  1 Mar 2024 09:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B546A8C4;
+	Fri,  1 Mar 2024 09:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnffSj1r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FDA6995C;
-	Fri,  1 Mar 2024 09:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB426995C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Mar 2024 09:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709286686; cv=none; b=kLz9yNTPmjS7bsUORvbu0yNAu/mEsmfXoiJUTqTexh8srPmeA3hrgG3vQrJa0ipmiE5e20Vigs1grmjtFbEpu+ls/ZyNZxaSUNKlUDpTWbv54BDCQwIdwAkiWvSqpxGSmCQL/JvGe43Y/BMRQIXZwE69tYhx4FyGq3sWiBbSkL8=
+	t=1709286750; cv=none; b=Y4uLN9aTsw3uBsBLOghFmnAaoaWI1SoxLE9tCZWe2WQCbgLdJB/fwayYs8GlQhLJiSYw/IMkQ9xda47x1Lbw7ekdzctONl2noLYdH2BmaoIQ7NqMBg/9aegO+Yvs6mR2A88zIESGrWJkFg9GWj0tL0xZGb/A3looEInD/Eyv7c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709286686; c=relaxed/simple;
-	bh=IXPS1YTOuSXz2bhI7nEjXLQQJhT3X+YyX8FgPiHLd2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UvsW3yISRazAi5bfZo5JkODacgjBb5P9Z1YdZpoJG4cynJfxQhV8N2JG0XMLR5fhy1xA9lSlvsmuGqs8huDudQ9iAZjmyS2Eh2q9wdjkpRmuwYpEyJlyW/QnbWHud5WaZQer9Kp7359QlxLIbyyU1X/+m1Mpx5caN1d+96oBPMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7515F1FB;
-	Fri,  1 Mar 2024 01:52:02 -0800 (PST)
-Received: from [10.57.10.152] (unknown [10.57.10.152])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 474DD3F762;
-	Fri,  1 Mar 2024 01:51:21 -0800 (PST)
-Message-ID: <082e48c8-71b7-4937-a5da-7a37b4be16ba@arm.com>
-Date: Fri, 1 Mar 2024 09:51:19 +0000
+	s=arc-20240116; t=1709286750; c=relaxed/simple;
+	bh=70YbMc0tPPivVPoU5OCuiFVI/rhyopnVhRsOoZL7ejo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GkR7OFq8HjqAhmuRHkQNb6cYeD34ngUjl5LA6b8o4+nA4kJIqX7W+MJ/AZoViI1Bd8RIc9dRIBACR7SSeKCVLELvAR5oNFMy3PrsUegJ8RIutXJxRHIp+4Axx9O8F8R0CPUh0jdY2Xk2xjobPQS5asteFhc9h2vTt4oPOZohx0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnffSj1r; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-42a029c8e76so12961881cf.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Mar 2024 01:52:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709286748; x=1709891548; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1XwZ4goGECdt4sHwCK0DrAmVReil2KaqmKBfOUYvHlU=;
+        b=ZnffSj1r+A5C0/01rC7rvU3OTh/i3W6E8MzzI6b5Fen2RLNER4UX/IEJPkOUd1MByQ
+         PUfo4VhX0sJGFGrZ3be4Mi90mHBti2MmDlLwJrEXRofc93Ll+fMqQd7Jk50fInzJ4ocl
+         PYK2C235igx8K06pxGAo/khLvTY4LibvTWDoUId0E3dgi3KC/hCrb7kJjxRagJGwPuS6
+         rFirqQP7oKfT3nk/1dBK4tJXf8sC9W1/N9+sRrZwGalxqM0J3DTPynUfoSjKEr49g/sg
+         dhj24gOt7CULduBDLEs/kYTRMi6g2YUfqsBhHT97an8vaMzAgYeKkQQQR9lMFKNOpE+s
+         jQ7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709286748; x=1709891548;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1XwZ4goGECdt4sHwCK0DrAmVReil2KaqmKBfOUYvHlU=;
+        b=rYg4VQaa8i14NxlvFt+1P/b4Y+OEjkvAab2MjeGcMlm1eXvaCie4WtQsJZYuwT7Y6n
+         cH5cXWd+5bz8a+1f0hd9jDFp7qOmX5TZc2M/SomZdKsE4cT/0Gp2g96Y7HcfmelYL9Qs
+         K3BohOUGaUt2CScwq9yRSjToRSwqI8ZWKSmlR3gxzne8RtWIMgYNbvzP3WqgvxWamzWF
+         VAURGViExyys0D0x0H0u591xsp0A/rUiQf3Ts2QaezQ/3np1WWd6KA7SyEp/X/ik/Qa3
+         520mllMZLcvUsOHUPEpy+Lcpv52/JZChmitakAbMiEEe+MQfSV5blLjeadOXpEtjszv9
+         /S3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQxihSxGG3dNsBTXa6MTfNO4gSwbGkTH3/0dVRjPzomA2NPI9fT7pWfiHs8RfsjUDaUeFG/TT2rjSHA4XCG8aXkGivQ6NCXIIgeMsYaA==
+X-Gm-Message-State: AOJu0YyoMVT2BQm3xKzwOvW9FiToU4fo5+ELGO0H3WLhZeBzmyhzTw2j
+	jCnBxNzAOM3ICpyvUfd8I2DLC6GB+KJBJ4zvIEADGyc6HCjmuTECS9KJILyqc7OiBGTKRTY6eMW
+	LH6h5Wctgy7r1maUFAQEisPQefYQ=
+X-Google-Smtp-Source: AGHT+IE+PABUaMZGTzO1Ic2R4/Zf79nkvHkPE67cDM+Eo69lD3b4k0IW7tPqYJ+2g7o3G1C3bPAPVF4I5kd1+J0bCSk=
+X-Received: by 2002:a05:622a:1d5:b0:42e:bb8d:c297 with SMTP id
+ t21-20020a05622a01d500b0042ebb8dc297mr1044349qtw.31.1709286747871; Fri, 01
+ Mar 2024 01:52:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 8/8] mm: huge_memory: enable debugfs to split huge
- pages to any order.
-To: Zi Yan <ziy@nvidia.com>, "Pankaj Raghav (Samsung)"
- <kernel@pankajraghav.com>, linux-mm@kvack.org
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Yang Shi <shy828301@gmail.com>,
- Yu Zhao <yuzhao@google.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>,
- Zach O'Keefe <zokeefe@google.com>, Hugh Dickins <hughd@google.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <20240226205534.1603748-1-zi.yan@sent.com>
- <20240226205534.1603748-9-zi.yan@sent.com>
-Content-Language: en-US
-From: Aishwarya TCV <aishwarya.tcv@arm.com>
-In-Reply-To: <20240226205534.1603748-9-zi.yan@sent.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240229174145.3405638-1-meted@linux.ibm.com>
+In-Reply-To: <20240229174145.3405638-1-meted@linux.ibm.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 1 Mar 2024 11:52:16 +0200
+Message-ID: <CAOQ4uxh+Od_+ZuLDorbFw6nOnsuabOreH4OE=uP_JE53f0rotA@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: move path permission and security check
+To: Mete Durlu <meted@linux.ibm.com>
+Cc: jack@suse.cz, repnop@google.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Feb 29, 2024 at 7:53=E2=80=AFPM Mete Durlu <meted@linux.ibm.com> wr=
+ote:
+>
+> In current state do_fanotify_mark() does path permission and security
+> checking before doing the event configuration checks. In the case
+> where user configures mount and sb marks with kernel internal pseudo
+> fs, security_path_notify() yields an EACESS and causes an earlier
+> exit. Instead, this particular case should have been handled by
+> fanotify_events_supported() and exited with an EINVAL.
+
+What makes you say that this is the expected outcome?
+I'd say that the expected outcome is undefined and we have no reason
+to commit to either  EACCESS or EINVAL outcome.
+
+I don't really mind the change of outcome, but to me it seems
+nicer that those tests are inside fanotify_find_path(), so I will
+want to get a good reason for moving them out.
 
 
-
-On 26/02/2024 20:55, Zi Yan wrote:
-> From: Zi Yan <ziy@nvidia.com>
-> 
-> It is used to test split_huge_page_to_list_to_order for pagecache THPs.
-> Also add test cases for split_huge_page_to_list_to_order via both
-> debugfs.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Move path perm and security checks under the event validation to
+> prevent this from happening.
+> Simple reproducer;
+>
+>         fan_d =3D fanotify_init(FAN_CLASS_NOTIF, O_RDONLY);
+>         pipe2(pipes, O_CLOEXEC);
+>         fanotify_mark(fan_d,
+>                       FAN_MARK_ADD |
+>                       FAN_MARK_MOUNT,
+>                       FAN_ACCESS,
+>                       pipes[0],
+>                       NULL);
+>         // expected: EINVAL (22), produces: EACCES (13)
+>         printf("mark errno: %d\n", errno);
+>
+> Another reproducer;
+> ltp/testcases/kernel/syscalls/fanotify/fanotify14
+>
+> Fixes: 69562eb0bd3e ("fanotify: disallow mount/sb marks on kernel interna=
+l pseudo fs")
+>
+> Signed-off-by: Mete Durlu <meted@linux.ibm.com>
 > ---
->  mm/huge_memory.c                              |  34 ++++--
->  .../selftests/mm/split_huge_page_test.c       | 115 +++++++++++++++++-
->  2 files changed, 131 insertions(+), 18 deletions(-)
-> 
+>  fs/notify/fanotify/fanotify_user.c | 24 +++++++++---------------
+>  1 file changed, 9 insertions(+), 15 deletions(-)
+>
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
+tify_user.c
+> index fbdc63cc10d9..14121ad0e10d 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1015,7 +1015,7 @@ static int fanotify_find_path(int dfd, const char _=
+_user *filename,
+>                         fdput(f);
+>                         goto out;
+>                 }
+> -
+> +               ret =3D 0;
 
-Hi Zi,
+Better convert all gotos in this helper to return.
+There is nothing in the out label.
 
-When booting the kernel against next-master(20240228)with Arm64 on
-Marvell Thunder X2 (TX2), the kselftest-mm test 'split_huge_page_test'
-is failing in our CI (with rootfs over NFS). I can send the full logs if
-required.
+>                 *path =3D f.file->f_path;
+>                 path_get(path);
+>                 fdput(f);
+> @@ -1028,21 +1028,7 @@ static int fanotify_find_path(int dfd, const char =
+__user *filename,
+>                         lookup_flags |=3D LOOKUP_DIRECTORY;
+>
+>                 ret =3D user_path_at(dfd, filename, lookup_flags, path);
+> -               if (ret)
+> -                       goto out;
+>         }
+> -
+> -       /* you can only watch an inode if you have read permissions on it=
+ */
+> -       ret =3D path_permission(path, MAY_READ);
+> -       if (ret) {
+> -               path_put(path);
+> -               goto out;
+> -       }
+> -
+> -       ret =3D security_path_notify(path, mask, obj_type);
+> -       if (ret)
+> -               path_put(path);
+> -
+>  out:
+>         return ret;
+>  }
+> @@ -1894,6 +1880,14 @@ static int do_fanotify_mark(int fanotify_fd, unsig=
+ned int flags, __u64 mask,
+>                 if (ret)
+>                         goto path_put_and_out;
+>         }
+> +       /* you can only watch an inode if you have read permissions on it=
+ */
+> +       ret =3D path_permission(&path, MAY_READ);
+> +       if (ret)
+> +               goto path_put_and_out;
+> +
+> +       ret =3D security_path_notify(&path, mask, obj_type);
+> +       if (ret)
+> +               goto path_put_and_out;
+>
+>         if (fid_mode) {
+>                 ret =3D fanotify_test_fsid(path.dentry, flags, &__fsid);
 
-A bisect (full log below) identified this patch as introducing the
-failure. Bisected it on the tag "next-20240228" at repo
-"https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git".
+If we do accept your argument that security_path_notify() should be
+after fanotify_events_supported(). Why not also after fanotify_test_fsid()
+and fanotify_test_fid()?
 
-This works fine on  Linux version 6.8.0-rc6
-
-
-Sample log from failure against run on TX2:
-------
-07:17:34.056125  # # ------------------------------
-07:17:34.056543  # # running ./split_huge_page_test
-07:17:34.056839  # # ------------------------------
-07:17:34.057114  # # TAP version 13
-07:17:34.058564  # # 1..12
-07:17:34.156822  # # ok 1 Split huge pages successful
-07:17:34.214074  # # ok 2 Split PTE-mapped huge pages successful
-07:17:34.215630  # # # Please enable pr_debug in
-split_huge_pages_in_file() for more info.
-07:17:34.225503  # # # Please check dmesg for more information
-07:17:34.225862  # # ok 3 File-backed THP split test done
-07:17:34.236944  # # Bail out! Failed to create a file at /mnt/thp_fs#
-Planned tests != run tests (12 != 3)
-07:17:34.237307  # # # Totals: pass:3 fail:0 xfail:0 xpass:0 skip:0 error:0
-07:17:34.237620  # # [FAIL]
-07:17:34.246430  # not ok 51 split_huge_page_test # exit=1
-
-
-Bisect log:
-------
-git bisect start
-# good: [d206a76d7d2726f3b096037f2079ce0bd3ba329b] Linux 6.8-rc6
-git bisect good d206a76d7d2726f3b096037f2079ce0bd3ba329b
-# bad: [20af1ca418d2c0b11bc2a1fe8c0c88f67bcc2a7e] Add linux-next
-specific files for 20240228
-git bisect bad 20af1ca418d2c0b11bc2a1fe8c0c88f67bcc2a7e
-# bad: [1322f1801e59dddce10591d602d246c1bf49990c] Merge branch 'main' of
-git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-git bisect bad 1322f1801e59dddce10591d602d246c1bf49990c
-# bad: [a82f70041487790b7b09fe4bb45436e1b57021d3] Merge branch 'dev' of
-git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
-git bisect bad a82f70041487790b7b09fe4bb45436e1b57021d3
-# bad: [ce90480b9352ba2bebe8946dad9223e3f24c6e9a] Merge branch
-'for-next' of
-git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
-git bisect bad ce90480b9352ba2bebe8946dad9223e3f24c6e9a
-# bad: [5daac92ed3881fd0c656478a301a4e1d124100ee] Merge branch
-'mm-everything' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-git bisect bad 5daac92ed3881fd0c656478a301a4e1d124100ee
-# good: [acc2643d9e988c63dd4629a9af380ad9ac69c54a] Merge branch
-'mm-stable' into mm-unstable
-git bisect good acc2643d9e988c63dd4629a9af380ad9ac69c54a
-# good: [0294de8fe7d7c1a7eddc979cbf4c1886406e36b7] Merge branch 'fixes'
-of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
-git bisect good 0294de8fe7d7c1a7eddc979cbf4c1886406e36b7
-# good: [83e0c8f0e777a1ef0977b2f8189101765703b32d] Merge branch
-'mm-nonmm-stable' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-git bisect good 83e0c8f0e777a1ef0977b2f8189101765703b32d
-# good: [a739cbe236e0dd3b6ff26a01fa1d31c73d4fac93] mm: memcg: make memcg
-huge page split support any order split
-git bisect good a739cbe236e0dd3b6ff26a01fa1d31c73d4fac93
-# bad: [efb520aa333b2f11daaaaa13f4a598b5ae4ae823] mm: allow non-hugetlb
-large folios to be batch processed
-git bisect bad efb520aa333b2f11daaaaa13f4a598b5ae4ae823
-# bad: [2258bdebb55e3ad3d30fd3849ddb955ff36825de] mm/zsmalloc: don't
-hold locks of all pages when free_zspage()
-git bisect bad 2258bdebb55e3ad3d30fd3849ddb955ff36825de
-# bad: [7fc0be45acf2878cbacc4dba56923c34c3fd8b1e] mm: remove
-total_mapcount()
-git bisect bad 7fc0be45acf2878cbacc4dba56923c34c3fd8b1e
-# good: [d55fac55da2f87ad5a99178e107df09770bbc411] mm: thp: split huge
-page to any lower order pages
-git bisect good d55fac55da2f87ad5a99178e107df09770bbc411
-# bad: [4050d591c1aaf9336c08511fa5984827186e9ad1] mm/memfd: refactor
-memfd_tag_pins() and memfd_wait_for_pins()
-git bisect bad 4050d591c1aaf9336c08511fa5984827186e9ad1
-# bad: [c0ba89c29ef559c95273feb481b049f622c43c17] mm: huge_memory:
-enable debugfs to split huge pages to any order
-git bisect bad c0ba89c29ef559c95273feb481b049f622c43c17
-# first bad commit: [c0ba89c29ef559c95273feb481b049f622c43c17] mm:
-huge_memory: enable debugfs to split huge pages to any order
-
+The suggested change of behavior seems arbitrary to me.
 
 Thanks,
-Aishwarya
+Amir.
 
