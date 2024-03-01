@@ -1,181 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-13295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296D386E401
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 16:05:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB3E886E42D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 16:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FB81F221F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 15:05:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDB8A1C22ADA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 15:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDE86D1D8;
-	Fri,  1 Mar 2024 15:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C54A6EB69;
+	Fri,  1 Mar 2024 15:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lfeFeRf2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2076.outbound.protection.outlook.com [40.107.223.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7EC3A8E3;
-	Fri,  1 Mar 2024 15:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709305484; cv=none; b=BLoij6TMLFgbmqEKDy9aK0Dz47jqORXmLxmTpoFab/73Jh3Ei6FJmsEqRkQtPQlGbYtxpHxtLyPjyXfU0TEJXGRHCnwTgUSIzzBaSIl05+AeMNbKCdYON/p03XC3VJ2OOHD7kt1vP82zdlun9ouAu1+yU2RPiNwtF3PP28F7daw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709305484; c=relaxed/simple;
-	bh=CLfHGgV8g9ikDXr41EpApqiaZGI0K8iTSgXJt1K3S6Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PIaPpuxN0nniTwyZEFoAaLJeGZXT5GUdAzRcE5cxQdMb9LUVtExx3OdN1wxuTQtD5yj6imY9/fazALaszKzmGRGnJJk9z3GTi8u+EuV+Whl90u3nSOULXPm/1FpdSUrFTLI+HJMJwg4dtCykAMWomrLCtgKQ5Hle6FjTYgTjYA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TmWF93hfZz9y4Sq;
-	Fri,  1 Mar 2024 22:49:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id B87D4140D09;
-	Fri,  1 Mar 2024 23:04:31 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAH9Cdu7uFlW217Aw--.47273S2;
-	Fri, 01 Mar 2024 16:04:31 +0100 (CET)
-Message-ID: <f1b1b5a46fb07cd64e095bb4a224adbf2e6baab6.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 14/25] evm: add support for fscaps security hooks
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>,
-  Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, James
- Morris <jmorris@namei.org>,  Alexander Viro <viro@zeniv.linux.org.uk>, Jan
- Kara <jack@suse.cz>, Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,  Casey Schaufler
- <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>,  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi
- <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
- selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Date: Fri, 01 Mar 2024 16:04:11 +0100
-In-Reply-To: <ZeHotBrI0aYd2HeA@do-x1extreme>
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
-	 <20240221-idmap-fscap-refactor-v2-14-3039364623bd@kernel.org>
-	 <15a69385b49c4f8626f082bc9b957132388414fb.camel@huaweicloud.com>
-	 <ZeHotBrI0aYd2HeA@do-x1extreme>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E256E69E18;
+	Fri,  1 Mar 2024 15:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709306482; cv=fail; b=EEEgZQoq+7JuJeNhVDxqnXbUr71LZEd6eTMNTVNI+4E/fsQsYh4eQTJlZvM0Xnhs6xVZYLGayvQ/z5hYTG8fi9T15UBxeC7ngSMz4TRt5QGsTpJhRHTcQpLb/ky2gMZpVeYo1SCGV4m1NGvwkFjEFb79XaNdipOwu5IvH8ObulA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709306482; c=relaxed/simple;
+	bh=/Bd9SzRX/puTQtifDuMCeuZGB1zgWRhLxxXbe7u7IDQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PPgveCnqN6uTe/lj48K6ff949WjGK9kurHRR/d0v7dBWhsnvYoVpNkAf7NejOMjRITvuF7n6NnqgLQlBU5hwNbj+qZAo/M8gBvsEiXyZeOI2hItahZtxLXz2znPd9kL8J6ftwp1r+OR1Woxtzd5FNXdhKwkqo/CKMZYTQT08QrQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lfeFeRf2; arc=fail smtp.client-ip=40.107.223.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l9Erdmkc2PwwuaFt6+VyRxMfbH2dzmO+eS8QQMCTQI3ULcd4OCVuvphyUAu9eJsDzBKeQ0x3CoWwoUNL1VzAq8CQYd1qD4aF3d0JvSQktBDvepMtJvwP8n3RhC+I93yHGYuH+epehXOajpmNzj8ZaEl8gzlDNn1UROurvvu1LoWhkWEMLOOVjjYJ+vi39NR99KoS9NJ1e7352jqBmHxbW2xhxZWiIGUmM58Um0WFHqUApFfVzMArxRJIIFvfPdcE8cAzhA5SP0Nu/mxtqbEA0w8PT9YHZ2Vdu8Y5sEzF73YIT/xeohEblw+BXgSH+zZDGXLBr2v59QF/8jaXkqG1KQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U7pHyotvhZtWWPF1OhIbvo4DxHzvinTeALrcjhkphh0=;
+ b=Xaq3swSzMteWOOE9oewtut6GglA1rqY4IUi/qtfL7YGT3XoP3tmdNTbGJTXj2DucGRGMVckQbx4Kxi3AxwbJa2U1wgiATfnW4XvnfU+plT2YW6B6BKArdjMIgHAPIYB7R9fJRTR+QNkKnunsQMOeQ4SOVgfZ1KD29jkK5Dh6Do3XXtBUZYcBPt9W7v50FjWrC8ym7Q/e6dq5L6mubGVFYk7CuOB1Ze6/ZlcQxuuWaJs2U0mAcKtyNldfvFvd+qRMG1dXN9ZGfL6ZU7znu3eAZ9I8/S6wgvVkq2ZfN+XUVg/rznMd49DDWQclWrimTw84222m+UDofHqMPxQfOYI0PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U7pHyotvhZtWWPF1OhIbvo4DxHzvinTeALrcjhkphh0=;
+ b=lfeFeRf2He14JSIk+A/0vMeS3HyEN8uh20ZC+De/hMDk3UyZZCdl7zdIfFuGkmgMd37ba95tYbvPbVmdHTktT7q/8cSxNvSyTrmJV56UW3YRrRIRriBF1V3bIFXx9nv1Dk0ie24ju2xjMVUsxe96erSADoS9Yr5ICcYtThXXEaCax1T7HM8lpktb5Pwaxa6ZL0iEsOcO422hq2PUgy4UBMY3MTaQXJwlD7gG+u0+raKw6c7YmDxy8KX0e17s0M0QkQzJjTJWs5jc+2my0HrYdFfJbUyzGRyMm5+aAzvPcNDCQwiLQkZah0CxfDdtoi7vTRpt+rLd5DRWbWSW9kb+qQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
+ PH7PR12MB9221.namprd12.prod.outlook.com (2603:10b6:510:2e8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.32; Fri, 1 Mar
+ 2024 15:21:17 +0000
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::dc5c:2cf1:d5f5:9753]) by DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::dc5c:2cf1:d5f5:9753%6]) with mapi id 15.20.7339.033; Fri, 1 Mar 2024
+ 15:21:13 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+ Aishwarya TCV <aishwarya.tcv@arm.com>,
+ "\"Pankaj Raghav (Samsung)\"" <kernel@pankajraghav.com>, linux-mm@kvack.org,
+ "\"Matthew Wilcox (Oracle)\"" <willy@infradead.org>,
+ David Hildenbrand <david@redhat.com>, Yang Shi <shy828301@gmail.com>,
+ Yu Zhao <yuzhao@google.com>,
+ "\"Kirill A . Shutemov\"" <kirill.shutemov@linux.intel.com>,
+ =?utf-8?q?=22Michal_Koutn=C3=BD=22?= <mkoutny@suse.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ "\"Zach O'Keefe\"" <zokeefe@google.com>, Hugh Dickins <hughd@google.com>,
+ Luis Chamberlain <mcgrof@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 8/8] mm: huge_memory: enable debugfs to split huge
+ pages to any order.
+Date: Fri, 01 Mar 2024 10:21:10 -0500
+X-Mailer: MailMate (1.14r6018)
+Message-ID: <D1EB6EA5-205B-4448-BCE0-1D26F3EB34B6@nvidia.com>
+In-Reply-To: <dda99ee0-87a2-482d-bf28-bd5e5a97b46e@sirena.org.uk>
+References: <20240226205534.1603748-1-zi.yan@sent.com>
+ <20240226205534.1603748-9-zi.yan@sent.com>
+ <082e48c8-71b7-4937-a5da-7a37b4be16ba@arm.com>
+ <0dab0c69-2eac-4e65-9efe-e0b037499abc@arm.com>
+ <08703C70-DD6E-446A-9ABC-BC2C8E33B8CD@nvidia.com>
+ <f7a3d07d-290b-46d6-884e-fa288901c3c6@arm.com>
+ <3D5A5D18-0A20-4BB3-B667-0CB5799BA665@nvidia.com>
+ <6003865f-2c85-4dd4-9803-6204f9018f50@arm.com>
+ <dda99ee0-87a2-482d-bf28-bd5e5a97b46e@sirena.org.uk>
+Content-Type: multipart/signed;
+ boundary="=_MailMate_E641C6CC-D60B-45F0-983E-9E8525B120B2_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+X-ClientProxiedBy: BL1PR13CA0009.namprd13.prod.outlook.com
+ (2603:10b6:208:256::14) To DS7PR12MB5744.namprd12.prod.outlook.com
+ (2603:10b6:8:73::18)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAH9Cdu7uFlW217Aw--.47273S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF18ZFykGFyDJw4rXr17Awb_yoW5uF1xpF
-	WfC3ZYkrn5Jry3Jr97A3yDX3WF93yrJrW7Kr95X34kua4DCF1fCrWxKFW5uFs3ZwnxGr1q
-	qw47tr1DGFsIv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBF1jj5bh2gABsS
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|PH7PR12MB9221:EE_
+X-MS-Office365-Filtering-Correlation-Id: 76acbbe1-99ac-4f31-ee0f-08dc3a033b60
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	iq+jSs+upxx8VxUk0tznzQTA3995dl0//a/kk4S91hqtjzKLCWkv0YnyDrhA70OAFCJYB6rWDINh3uocUWEWCi5hDDbkyZmxGNAGKpzVaTp6S3Rs8e0dkwwDClBOm3KneCB/d2q3IjMjl6QLRtabfsfaxisj1NKc3E41W3ekGTi1CZaGTfebTKNP+5ZgPyyCpfdSvARaE8dwXAs4uCUI5sCoET++eg2EqRqrEA1/G3aIE05zfnzrVjqHl4OEz4FIKmsluQgM31tdsqrXhs3kXxwmw1dNOOrSfBrbywlqz+9RHHQDFhv8fzk/1gZmOjOsN71bdK3Fqhmrftie0CxZJvCx4XFuFJs530Jrsf4ZPMEtIt04YzO4avmq24gvqm7PGyFh+C8thsyp4WsaPI1T8J2CVhj/0Quu1XTbsPOZnjDM4xfopTi/747o0BDemyZWzpqKR4Bx9NujKwlJGcduItlMT+LRXhjDJwSeNeDWo7IkC+tRwFf0eyZcDYiR5d04J+ae8c3eCvrs9vGn6D9z/VVaaCAHTnGb7G4oFl1WovlQu458EumKQ/gxGmtTTN6CJkCDKbOAn4vOl5RMDKsqqfzpwCAHeVrtB1s+fX/588hoFP5GxAUHxGdoT61QrgbgnthOSXznBooUBRkyMzvkDA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6C6nidi/TaABiftOhzJ/3eJp0pSjpL0ngs7EK4pod8Ntpeaz/h/s0x7A4EBH?=
+ =?us-ascii?Q?wulCxF8fneNIbHRuLkaaP7TrQ3aWs/3uh65StduxbOiaZnH5QUtMLwOek/hV?=
+ =?us-ascii?Q?U+LoDa6tgs8OQ22M8zny5Oajvg/0D0kW318y0otOdl61yN03BnTeEGU2Qt4R?=
+ =?us-ascii?Q?gF3mguaXxomRCaWZvuMQJaG4URdalbDEZAjAv7H5sMhNhUnrQ/p/faIt4K+6?=
+ =?us-ascii?Q?R6BhOFFXjhpzSqQzMH6u+gjV5ClhmMVslHZA3ovboml1BcO4e6a3xLImKRGb?=
+ =?us-ascii?Q?824LNmAq/0MNXz0//0aEwEcjaC/3CZgfK9vfBXd76Huueyq8JhOTQH9VQ6+O?=
+ =?us-ascii?Q?Hx4+iuCBT7A7CKYZOJZNoXqd9I7ZuEqoP+shxJCMTAkDk3naVFv7S0NBUhGV?=
+ =?us-ascii?Q?tSwuUNcUlmZ/ptOy7a4aCkN/vO1yNfd/78TYbs0ow5s4LSshl5jSFeN++4N1?=
+ =?us-ascii?Q?i1U7CSMolccQpf2+M6E4GTnB4T6zOqhFpwAdNlyESWTZ/NtodiRGGif8/kI8?=
+ =?us-ascii?Q?+97BegPSX/y4Xq647shmnUtyJayKldUbXefRuZmhEMdP6Ba1AgSCxuyY7FUW?=
+ =?us-ascii?Q?8cQWtYgicZ7Z4uCZZLP1szhLU4OI5IloLKsxr6Vnko957xAXNXMWFwHp6Jxt?=
+ =?us-ascii?Q?KA+6ikwQZem1tGZRKpsrpe2Zv5wbk4bGqZOgpdzrI/iUkgI7HjMF8ATKxhxx?=
+ =?us-ascii?Q?oqViV5DHsls2clE8tFMas2CmLku9ve6EJtFAwdQbyp2bz7S2Fj7y2w+zpQkI?=
+ =?us-ascii?Q?IwxHYL66lM7fTYBjQym1opNtjueHH51TPu4S3YGJh1MaNbPUXzDU3hhfPTui?=
+ =?us-ascii?Q?xQlrbi+qlHOYru4NOkBaBjFdE5aRSiBovKr7tgQ1KbpZ0oGT+/+uL9FDZbqp?=
+ =?us-ascii?Q?yxRkSC2+Mfac4Wc5UNY6NflvY+dHKf55M8pPwrssdp8ipVXvBKLGLa/RaOs4?=
+ =?us-ascii?Q?5OoYH0XJMBLZaWZiCpmgp+J4UPJ+77ZArry8LsYia2aqbAvsIy1jHqcSIHlX?=
+ =?us-ascii?Q?4xzvzN8qwHA+50QtCwOoL3YgrapaehWFeQnqpmgJk11o1X6kMvL14yIOf/5F?=
+ =?us-ascii?Q?OGwIcj4XRxUnv0+d5QJGD9KfrOe8WnfI5D8Htmsi+WivvupwV1h33hLwAPPZ?=
+ =?us-ascii?Q?72AtGFy5oZixydwJxYnUhLdnjfc/Je/uwupYm3SZLb7iQMduLP0FgyZMmEcM?=
+ =?us-ascii?Q?dmEdoijyn9L/dJ8glNsf9M2IF7Lv0vPV2MOATT+7HAogg1fSXFHLyP5FSQgE?=
+ =?us-ascii?Q?IhDn0+Sd2yFHqPx5eDRYnvCFjz71tWImNiXtBvqy7tFIKiKNRCB0tkAbdzMo?=
+ =?us-ascii?Q?bLvwtT25e0g+iHRJoIiPDY8TbC9mbG4zIY38hqCQtrkomTmgAZCTq9KonPEr?=
+ =?us-ascii?Q?JP4DNtZVQgxJrjVD3MgG0AitRKdQGho5zomaiWUh4jw92Lys5nHhmMg0JfOJ?=
+ =?us-ascii?Q?io+xgmpONv2NCQCw3/7S+Ln12iQBftKbW3F+22o+0TDuRvAyN28ACxzlS5WF?=
+ =?us-ascii?Q?vqa3lUDMXBewMA6vzQFqlSowxT3twkBwTYbRWxbDFKmnQ1gLmNvQOt34psnk?=
+ =?us-ascii?Q?6HN8rpd+eiDW7r3qW81iU83sEnw3tYMm5uDnWN2m?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76acbbe1-99ac-4f31-ee0f-08dc3a033b60
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2024 15:21:13.7329
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: b8s1Guk530pZCb8vrm1LGEa3r6NAu9i64hIbJ3x4IWwmvLblFbeu8ClBisD6GXkN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9221
 
-On Fri, 2024-03-01 at 08:39 -0600, Seth Forshee (DigitalOcean) wrote:
-> On Fri, Mar 01, 2024 at 10:19:13AM +0100, Roberto Sassu wrote:
-> > On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) wrote:
-> > > Support the new fscaps security hooks by converting the vfs_caps to r=
-aw
-> > > xattr data and then handling them the same as other xattrs.
-> >=20
-> > Hi Seth
-> >=20
-> > I started looking at this patch set.
-> >=20
-> > The first question I have is if you are also going to update libcap
-> > (and also tar, I guess), since both deal with the raw xattr.
->=20
-> There are no changes needed for userspace; it will still deal with raw
-> xattrs. As I mentioned in the cover letter, capabilities tests from
-> libcap2, libcap-ng, ltp, and xfstests all pass against this sereies.
-> That's with no modifications to userspace.
+--=_MailMate_E641C6CC-D60B-45F0-983E-9E8525B120B2_=
+Content-Type: text/plain
 
-Yes, figured it out after applying the patch set. Then yes, IMA/EVM
-tests should work too.
+On 1 Mar 2024, at 9:27, Mark Brown wrote:
 
-> > From IMA/EVM perspective (Mimi will add on that), I guess it is
-> > important that files with a signature/HMAC continue to be accessible
-> > after applying this patch set.
-> >=20
-> > Looking at the code, it seems the case (if I understood correctly,
-> > vfs_getxattr_alloc() is still allowed).
->=20
-> So this is something that would change based on Christian's request to
-> stop using the xattr handlers entirely for fscaps as was done for acls.
-> I see how this would impact EVM, but we should be able to deal with it.
->=20
-> I am a little curious now about this code in evm_calc_hmac_or_hash():
->=20
-> 		size =3D vfs_getxattr_alloc(&nop_mnt_idmap, dentry, xattr->name,
-> 					  &xattr_value, xattr_size, GFP_NOFS);
-> 		if (size =3D=3D -ENOMEM) {
-> 			error =3D -ENOMEM;
-> 			goto out;
-> 		}
-> 		if (size < 0)
-> 			continue;
->=20
-> 		user_space_size =3D vfs_getxattr(&nop_mnt_idmap, dentry,
-> 					       xattr->name, NULL, 0);
-> 		if (user_space_size !=3D size)
-> 			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
-> 				 dentry->d_name.name, xattr->name, size,
-> 				 user_space_size);
->=20
-> Because with the current fscaps code you actually could end up getting
-> different sizes from these two interfaces, as vfs_getxattr_alloc() reads
-> the xattr directly from disk but vfs_getxattr() goes through
-> cap_inode_getsecurity(), which may do conversion between v2 and v3
-> formats which are different sizes.
+> On Fri, Mar 01, 2024 at 02:18:16PM +0000, Ryan Roberts wrote:
+>
+>> Although I agree it might be a tall order create and mount an XFS fs in
+>> run_vmtests.sh. Perhaps it might be good enough to add an optional param to the
+>> test to pass a path when running the test manually, and if that's not provided,
+>> just try to create a temp file in the current dir and skip if its not the right
+>> sort of fs?
+>
+> Yeah, if it needs to be a specific kind of on disk filesystem then that
+> needs a lot more integration with CI systems (a lot of them run entirely
+> from nfsroot by default!).  Being able to specify the location via an
+> environment variable would also be good, it could fall back to the
+> current directory if one isn't set up.
 
-Yes, that was another source of confusion. It happened that
-security.selinux in the disk was without '\0', and the one from
-vfs_getxattr() had it (of course the HMAC wouldn't match).
+Sure. lkp creates a XFS image and mount it. I will give it a try. If it is too
+hard to do, I will do what Ryan suggested above.
 
-So, basically, you set something in user space and you get something
-different.
+--
+Best Regards,
+Yan, Zi
 
-Example:
+--=_MailMate_E641C6CC-D60B-45F0-983E-9E8525B120B2_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
 
-# setfattr -n security.selinux -v "unconfined_u:object_r:admin_home_t:s0" t=
-est-file
+-----BEGIN PGP SIGNATURE-----
 
-SELinux active:
-# getfattr -m - -d -e hex test-file
-security.selinux=3D0x756e636f6e66696e65645f753a6f626a6563745f723a61646d696e=
-5f686f6d655f743a733000
+iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmXh8mYPHHppeUBudmlk
+aWEuY29tAAoJEOJ/noEUByhU14sQAKYQi8sSbnKIs9nvnVnu4v/HZpBn4e4K3BWB
+PrGhuZU5ucgjSJpjvN8ajatmlK2JpitWgrXn6m5/Zk3ZZPjdprC3i43fmFMXAf/f
+ookaAjLLmKSXy9m9zG2SlYMMLw387q1pMIKfjunrUhH6r7P1RHPAWBqQXerWn7H9
+QNkGWHr+v2YzMvJ9ulmkWgm8Il080U9B9wvYhI2FPbxYaEp1PRpJlxmMj+QH4cUs
+cVEay0T2TkJF3Ei0nYPea7q+fnJJl1SSsaABMmOe9acAMXTxOaVzPrlMZVwQIaN8
+pyUqOOVh7hEAeDB+1JhMjOi/VORdinX37Ar3Xtsgj4k4I6cIk0nC1TL/KfdfK/AN
+Q2CDyluzIMFTC3L82x5nez0NZwwoXWM7ieKXThvB29AX7IbsUnYqjv3tPbfzxknP
+i/MtvXDki+pgBzpfHxtLw3u7PPXJ4mCdL3wQv7qZQ00xdidrkLFSlksdGaVTUm7q
+fZNTjWhwEiT4fH/AMEvXvlcuNGkQnaNMj3ogFspkJWFMqixyXPWgnz5rjCvWyYy8
+FYeRKfrykFUgrVRlyvGtmEUCnhXsCIejqiMBYM0OI9sKfnqWLzX/4EvoA0kfCvQ/
+/IU3x38FV/fvI/XuQdVtDTDsnRMIpvcUjLUAGq46BTo2VJujBtOdn66R3lSB6gDQ
+miUaV0VB
+=4pv2
+-----END PGP SIGNATURE-----
 
-Smack active:
-# getfattr -m - -d -e hex test-file
-security.selinux=3D0x756e636f6e66696e65645f753a6f626a6563745f723a61646d696e=
-5f686f6d655f743a7330
-
-
-evmctl (will) allow to provide a hex xattr value for fscaps. That
-should be the one to be used (and vfs_getxattr_alloc() does that).
-However, I guess if the conversion happens, evmctl cannot correctly
-verify anymore the file, unless the same string is specified for
-verification (otherwise it reads the xattr through vfs_getxattr(),
-which would be different).
-
-Roberto
-
+--=_MailMate_E641C6CC-D60B-45F0-983E-9E8525B120B2_=--
 
