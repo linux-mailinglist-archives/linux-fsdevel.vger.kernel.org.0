@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-13287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A08186E32F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 15:18:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C6F86E33D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 15:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19385B22D47
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 14:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1361D283E0E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 14:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC14C6F08A;
-	Fri,  1 Mar 2024 14:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6EB6F50A;
+	Fri,  1 Mar 2024 14:23:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911556E5EB;
-	Fri,  1 Mar 2024 14:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7266F074;
+	Fri,  1 Mar 2024 14:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709302706; cv=none; b=AnPEKidOdivE2UyCwQbzItp3OGx29Swtyet99USNH12wpGwVU5ZJtWPhA71snrwFP75z2rjZs7jF3bDIPeck2LP5IbY//4WaZd6B3dj+DBuCpaHvmi19T/D6WEikAuAVBCEE+sJyhN/1DR/MFQrYJAbuba/wJa9CL6vvOPk9yEY=
+	t=1709303009; cv=none; b=POBmKRVAJuhPcm9Rkd+cHhfboccoPf8s1V4f60cVgFUt7JPemwjvzgY8bEhFQmD0uhtxf7uytxg3omcLAUVvbi/E7a8DgmI3i4H+/dMO925UE5IHOnrYUuUo9YxeVgZ0UlLW0aW5XvbeIgnaNITvHVheW9PmYj81mSOrum/otCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709302706; c=relaxed/simple;
-	bh=ZvI1YlA3ee12MtJInccXFGBcSOZydNmVXpUF4JrT+9o=;
+	s=arc-20240116; t=1709303009; c=relaxed/simple;
+	bh=YeW9orSlRtIML5TQ1wHKvJlrXnf90wDa5Uj1qZDj71M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bJlaf6b+ZlQGJrHZsJJzeKGFHa7MGTSskI5+KD8SSnohNezE2LMOVrCnJ5Lid3zL/DPfNu2sE8W8FfOhS1Kaz8Z5TKhfEJq8l9lYPHdHR9mRfoZvek+ppsOtL5bq/y1Y2mHyyPEhiiK9/KEda+50CBTBJwPILKq6uK6GE/+SVi4=
+	 In-Reply-To:Content-Type; b=jG4/2BzxhuZI5L0gnV84xdM02k/OieOEAF1zcT+RDYhzV48nvuhEPIAICRt/fcSEMmnW4R71yOf+CrBN63It4YvjTvGhop2YljibMia7IP8KrQLokP+odiOrmQ4jHnFed2X7WBdH6rAw24yHBShHcSlaNaAVN4VOFPtSgC4/9RY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBC7A1FB;
-	Fri,  1 Mar 2024 06:19:00 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7E271FB;
+	Fri,  1 Mar 2024 06:24:03 -0800 (PST)
 Received: from [10.57.68.58] (unknown [10.57.68.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C29753F73F;
-	Fri,  1 Mar 2024 06:18:18 -0800 (PST)
-Message-ID: <6003865f-2c85-4dd4-9803-6204f9018f50@arm.com>
-Date: Fri, 1 Mar 2024 14:18:16 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DA013F73F;
+	Fri,  1 Mar 2024 06:23:22 -0800 (PST)
+Message-ID: <6645287e-d069-4c37-823b-d1b814ec0efe@arm.com>
+Date: Fri, 1 Mar 2024 14:23:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -45,9 +45,8 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v5 8/8] mm: huge_memory: enable debugfs to split huge
  pages to any order.
 Content-Language: en-GB
-To: Zi Yan <ziy@nvidia.com>
-Cc: Aishwarya TCV <aishwarya.tcv@arm.com>,
- "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, linux-mm@kvack.org,
+To: Zi Yan <ziy@nvidia.com>, Aishwarya TCV <aishwarya.tcv@arm.com>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, linux-mm@kvack.org,
  "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  David Hildenbrand <david@redhat.com>, Yang Shi <shy828301@gmail.com>,
  Yu Zhao <yuzhao@google.com>,
@@ -62,207 +61,94 @@ Cc: Aishwarya TCV <aishwarya.tcv@arm.com>,
 References: <20240226205534.1603748-1-zi.yan@sent.com>
  <20240226205534.1603748-9-zi.yan@sent.com>
  <082e48c8-71b7-4937-a5da-7a37b4be16ba@arm.com>
- <0dab0c69-2eac-4e65-9efe-e0b037499abc@arm.com>
- <08703C70-DD6E-446A-9ABC-BC2C8E33B8CD@nvidia.com>
- <f7a3d07d-290b-46d6-884e-fa288901c3c6@arm.com>
- <3D5A5D18-0A20-4BB3-B667-0CB5799BA665@nvidia.com>
+ <2ED5C25C-FDB2-490F-B740-E413E8186C12@nvidia.com>
 From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <3D5A5D18-0A20-4BB3-B667-0CB5799BA665@nvidia.com>
+In-Reply-To: <2ED5C25C-FDB2-490F-B740-E413E8186C12@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01/03/2024 13:53, Zi Yan wrote:
-> On 1 Mar 2024, at 8:09, Ryan Roberts wrote:
+On 01/03/2024 14:00, Zi Yan wrote:
+> On 1 Mar 2024, at 4:51, Aishwarya TCV wrote:
 > 
->> On 01/03/2024 12:52, Zi Yan wrote:
->>> On 1 Mar 2024, at 5:33, Ryan Roberts wrote:
+>> On 26/02/2024 20:55, Zi Yan wrote:
+>>> From: Zi Yan <ziy@nvidia.com>
 >>>
->>>> On 01/03/2024 09:51, Aishwarya TCV wrote:
->>>>>
->>>>>
->>>>> On 26/02/2024 20:55, Zi Yan wrote:
->>>>>> From: Zi Yan <ziy@nvidia.com>
->>>>>>
->>>>>> It is used to test split_huge_page_to_list_to_order for pagecache THPs.
->>>>>> Also add test cases for split_huge_page_to_list_to_order via both
->>>>>> debugfs.
->>>>>>
->>>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
->>>>>> ---
->>>>>>  mm/huge_memory.c                              |  34 ++++--
->>>>>>  .../selftests/mm/split_huge_page_test.c       | 115 +++++++++++++++++-
->>>>>>  2 files changed, 131 insertions(+), 18 deletions(-)
->>>>>>
->>>>>
->>>>> Hi Zi,
->>>>>
->>>>> When booting the kernel against next-master(20240228)with Arm64 on
->>>>> Marvell Thunder X2 (TX2), the kselftest-mm test 'split_huge_page_test'
->>>>> is failing in our CI (with rootfs over NFS). I can send the full logs if
->>>>> required.
->>>>
->>>> Just to add, I took a quick eyeball and I think there a couple of potential issues:
->>>>
->>>>   - In create_pagecache_thp_and_fd() you do *fd = open(testfile, O_CREAT ...);
->>>>     where testfile is /mnt/thp_fs/testfile. So if /mnt/thp_fs doesn't exist,
->>>>     then the open will fail I think? I'm pretty sure that's what's happening on
->>>>     our CI. Suggest the test needs to setup this dir itself. Is thp_fs a mounted
->>>>     fs or just a dir? If the latter can you just mktemp()?
+>>> It is used to test split_huge_page_to_list_to_order for pagecache THPs.
+>>> Also add test cases for split_huge_page_to_list_to_order via both
+>>> debugfs.
 >>>
->>> The former. the page cache folio split tests require a file system supporting
->>> large folio and I used XFS.
+>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>>> ---
+>>>  mm/huge_memory.c                              |  34 ++++--
+>>>  .../selftests/mm/split_huge_page_test.c       | 115 +++++++++++++++++-
+>>>  2 files changed, 131 insertions(+), 18 deletions(-)
+>>>
 >>
->> OK got it.
+>> Hi Zi,
 >>
->>>
->>>>   - Later in create_pagecache_thp_and_fd() you fail the test if you don't have a
->>>>     filesystem that supports large folios. Can we turn that into a skip? That
->>>>     would reduce noise on the CI.
->>>
->>> I can do that. But is this a new requirement that self tests have to be finish
->>> in CI/CD environment? Can you provide a guideline for it?
+>> When booting the kernel against next-master(20240228)with Arm64 on
+>> Marvell Thunder X2 (TX2), the kselftest-mm test 'split_huge_page_test'
+>> is failing in our CI (with rootfs over NFS). I can send the full logs if
+>> required.
 >>
->> I'm not sure what's written down, but certainly anyone should be able to run the
->> selftests with as little knowledge as possible, and they should only fail if
->> they detect a real problem. By convention a test should be skipped if the
->> environment (or kernel) isn't compatible. There are lots of examples of that in
->> mm selftests (just grep ksft_test_result_skip). mm selftests also has
->> run_vmtests.sh which does a lot of environment setup (e.g. reserving hugetlb
->> pages, etc) before actually running the tests.
+>> A bisect (full log below) identified this patch as introducing the
+>> failure. Bisected it on the tag "next-20240228" at repo
+>> "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git".
+>>
+>> This works fine on  Linux version 6.8.0-rc6
 > 
-> Got it. I will send a fixup to skip the page cache split test when the mount
-> is not ready, then send a separate patch to set up XFS in run_vmtests.sh and
-> pass it to this test.
+> Hi Aishwarya,
+> 
+> I am trying to fix the issue. When I am compiling selftests/mm, I encountered
+> the error below when I run make under the folder. Am I missing any configuration?
+> Since you are able to run the test, I assume you know what is happening. Thanks.
 
-Thanks - appeciated!
+for what its worth, I usually compile from the top level directory with:
 
-Although I agree it might be a tall order create and mount an XFS fs in
-run_vmtests.sh. Perhaps it might be good enough to add an optional param to the
-test to pass a path when running the test manually, and if that's not provided,
-just try to create a temp file in the current dir and skip if its not the right
-sort of fs?
+# make headers_install
+# make -C tools/testing/selftests TARGETS=mm install INSTALL_PATH=~/kself
+
+Perhaps the below is due to the headers not being exported properly. Bad things definitely happen if you omit the headers_install step.
 
 > 
->>
->>> Since I always assume
->>> selftests are just ran by human who can set up environment.
->>
->> I believe kernelci have been running mm skeftests on x86 for a long time. We
->> have started running them against arm64 on our CI for the last couple of months
->> and it had found a number of real issues in the kernel in -next, so this is
->> helping find and fix things early. So there is definitely benefit to keeping
->> these tests clean and robust.
-> 
-> Got it. Make sense.
-> 
->>
->>> In addition, I do
->>> not think it is realistic to make the test file to set up all the environment,
->>> since everyone's machine is different. It is much easier to make the CI/CD
->>> environment to make the mount.
->>
->> That's reasonable, but then the requirements should be documented and you
->> probably would want to be able to optionally pass the mount on the command line.
-> 
-> Will do.
-> 
-> Thank you for the explanation.
-> 
->>>>
->>>> Thanks,
->>>> Ryan
->>>>
->>>>>
->>>>> A bisect (full log below) identified this patch as introducing the
->>>>> failure. Bisected it on the tag "next-20240228" at repo
->>>>> "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git".
->>>>>
->>>>> This works fine on  Linux version 6.8.0-rc6
->>>>>
->>>>>
->>>>> Sample log from failure against run on TX2:
->>>>> ------
->>>>> 07:17:34.056125  # # ------------------------------
->>>>> 07:17:34.056543  # # running ./split_huge_page_test
->>>>> 07:17:34.056839  # # ------------------------------
->>>>> 07:17:34.057114  # # TAP version 13
->>>>> 07:17:34.058564  # # 1..12
->>>>> 07:17:34.156822  # # ok 1 Split huge pages successful
->>>>> 07:17:34.214074  # # ok 2 Split PTE-mapped huge pages successful
->>>>> 07:17:34.215630  # # # Please enable pr_debug in
->>>>> split_huge_pages_in_file() for more info.
->>>>> 07:17:34.225503  # # # Please check dmesg for more information
->>>>> 07:17:34.225862  # # ok 3 File-backed THP split test done
->>>>> 07:17:34.236944  # # Bail out! Failed to create a file at /mnt/thp_fs#
->>>>> Planned tests != run tests (12 != 3)
->>>>> 07:17:34.237307  # # # Totals: pass:3 fail:0 xfail:0 xpass:0 skip:0 error:0
->>>>> 07:17:34.237620  # # [FAIL]
->>>>> 07:17:34.246430  # not ok 51 split_huge_page_test # exit=1
->>>>>
->>>>>
->>>>> Bisect log:
->>>>> ------
->>>>> git bisect start
->>>>> # good: [d206a76d7d2726f3b096037f2079ce0bd3ba329b] Linux 6.8-rc6
->>>>> git bisect good d206a76d7d2726f3b096037f2079ce0bd3ba329b
->>>>> # bad: [20af1ca418d2c0b11bc2a1fe8c0c88f67bcc2a7e] Add linux-next
->>>>> specific files for 20240228
->>>>> git bisect bad 20af1ca418d2c0b11bc2a1fe8c0c88f67bcc2a7e
->>>>> # bad: [1322f1801e59dddce10591d602d246c1bf49990c] Merge branch 'main' of
->>>>> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
->>>>> git bisect bad 1322f1801e59dddce10591d602d246c1bf49990c
->>>>> # bad: [a82f70041487790b7b09fe4bb45436e1b57021d3] Merge branch 'dev' of
->>>>> git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
->>>>> git bisect bad a82f70041487790b7b09fe4bb45436e1b57021d3
->>>>> # bad: [ce90480b9352ba2bebe8946dad9223e3f24c6e9a] Merge branch
->>>>> 'for-next' of
->>>>> git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
->>>>> git bisect bad ce90480b9352ba2bebe8946dad9223e3f24c6e9a
->>>>> # bad: [5daac92ed3881fd0c656478a301a4e1d124100ee] Merge branch
->>>>> 'mm-everything' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->>>>> git bisect bad 5daac92ed3881fd0c656478a301a4e1d124100ee
->>>>> # good: [acc2643d9e988c63dd4629a9af380ad9ac69c54a] Merge branch
->>>>> 'mm-stable' into mm-unstable
->>>>> git bisect good acc2643d9e988c63dd4629a9af380ad9ac69c54a
->>>>> # good: [0294de8fe7d7c1a7eddc979cbf4c1886406e36b7] Merge branch 'fixes'
->>>>> of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
->>>>> git bisect good 0294de8fe7d7c1a7eddc979cbf4c1886406e36b7
->>>>> # good: [83e0c8f0e777a1ef0977b2f8189101765703b32d] Merge branch
->>>>> 'mm-nonmm-stable' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->>>>> git bisect good 83e0c8f0e777a1ef0977b2f8189101765703b32d
->>>>> # good: [a739cbe236e0dd3b6ff26a01fa1d31c73d4fac93] mm: memcg: make memcg
->>>>> huge page split support any order split
->>>>> git bisect good a739cbe236e0dd3b6ff26a01fa1d31c73d4fac93
->>>>> # bad: [efb520aa333b2f11daaaaa13f4a598b5ae4ae823] mm: allow non-hugetlb
->>>>> large folios to be batch processed
->>>>> git bisect bad efb520aa333b2f11daaaaa13f4a598b5ae4ae823
->>>>> # bad: [2258bdebb55e3ad3d30fd3849ddb955ff36825de] mm/zsmalloc: don't
->>>>> hold locks of all pages when free_zspage()
->>>>> git bisect bad 2258bdebb55e3ad3d30fd3849ddb955ff36825de
->>>>> # bad: [7fc0be45acf2878cbacc4dba56923c34c3fd8b1e] mm: remove
->>>>> total_mapcount()
->>>>> git bisect bad 7fc0be45acf2878cbacc4dba56923c34c3fd8b1e
->>>>> # good: [d55fac55da2f87ad5a99178e107df09770bbc411] mm: thp: split huge
->>>>> page to any lower order pages
->>>>> git bisect good d55fac55da2f87ad5a99178e107df09770bbc411
->>>>> # bad: [4050d591c1aaf9336c08511fa5984827186e9ad1] mm/memfd: refactor
->>>>> memfd_tag_pins() and memfd_wait_for_pins()
->>>>> git bisect bad 4050d591c1aaf9336c08511fa5984827186e9ad1
->>>>> # bad: [c0ba89c29ef559c95273feb481b049f622c43c17] mm: huge_memory:
->>>>> enable debugfs to split huge pages to any order
->>>>> git bisect bad c0ba89c29ef559c95273feb481b049f622c43c17
->>>>> # first bad commit: [c0ba89c29ef559c95273feb481b049f622c43c17] mm:
->>>>> huge_memory: enable debugfs to split huge pages to any order
->>>>>
->>>>>
->>>>> Thanks,
->>>>> Aishwarya
->>>
->>>
->>> --
->>> Best Regards,
->>> Yan, Zi
-> 
+> vm_util.c: In function ‘__pagemap_scan_get_categories’:
+> vm_util.c:34:28: error: storage size of ‘arg’ isn’t known
+>    34 |         struct pm_scan_arg arg;
+>       |                            ^~~
+> vm_util.c:41:27: error: invalid application of ‘sizeof’ to incomplete type ‘struct pm_scan_arg’
+>    41 |         arg.size = sizeof(struct pm_scan_arg);
+>       |                           ^~~~~~
+> vm_util.c:45:35: error: ‘PAGE_IS_WPALLOWED’ undeclared (first use in this function)
+>    45 |         arg.category_anyof_mask = PAGE_IS_WPALLOWED | PAGE_IS_WRITTEN | PAGE_IS_FILE |
+>       |                                   ^~~~~~~~~~~~~~~~~
+> vm_util.c:45:35: note: each undeclared identifier is reported only once for each function it appears in
+> vm_util.c:45:55: error: ‘PAGE_IS_WRITTEN’ undeclared (first use in this function)
+>    45 |         arg.category_anyof_mask = PAGE_IS_WPALLOWED | PAGE_IS_WRITTEN | PAGE_IS_FILE |
+>       |                                                       ^~~~~~~~~~~~~~~
+> vm_util.c:45:73: error: ‘PAGE_IS_FILE’ undeclared (first use in this function)
+>    45 |         arg.category_anyof_mask = PAGE_IS_WPALLOWED | PAGE_IS_WRITTEN | PAGE_IS_FILE |
+>       |                                                                         ^~~~~~~~~~~~
+> vm_util.c:46:35: error: ‘PAGE_IS_PRESENT’ undeclared (first use in this function); did you mean ‘PAGEMAP_PRESENT’?
+>    46 |                                   PAGE_IS_PRESENT | PAGE_IS_SWAPPED | PAGE_IS_PFNZERO |
+>       |                                   ^~~~~~~~~~~~~~~
+>       |                                   PAGEMAP_PRESENT
+> vm_util.c:46:53: error: ‘PAGE_IS_SWAPPED’ undeclared (first use in this function)
+>    46 |                                   PAGE_IS_PRESENT | PAGE_IS_SWAPPED | PAGE_IS_PFNZERO |
+>       |                                                     ^~~~~~~~~~~~~~~
+> vm_util.c:46:71: error: ‘PAGE_IS_PFNZERO’ undeclared (first use in this function)
+>    46 |                                   PAGE_IS_PRESENT | PAGE_IS_SWAPPED | PAGE_IS_PFNZERO |
+>       |                                                                       ^~~~~~~~~~~~~~~
+> vm_util.c:47:35: error: ‘PAGE_IS_HUGE’ undeclared (first use in this function)
+>    47 |                                   PAGE_IS_HUGE | PAGE_IS_SOFT_DIRTY;
+>       |                                   ^~~~~~~~~~~~
+> vm_util.c:47:50: error: ‘PAGE_IS_SOFT_DIRTY’ undeclared (first use in this function); did you mean ‘PM_SOFT_DIRTY’?
+>    47 |                                   PAGE_IS_HUGE | PAGE_IS_SOFT_DIRTY;
+>       |                                                  ^~~~~~~~~~~~~~~~~~
+>       |                                                  PM_SOFT_DIRTY
+> vm_util.c:50:26: error: ‘PAGEMAP_SCAN’ undeclared (first use in this function); did you mean ‘PAGEMAP_PFN’?
+>    50 |         return ioctl(fd, PAGEMAP_SCAN, &arg);
+>       |                          ^~~~~~~~~~~~
+>       |                          PAGEMAP_PFN
 > 
 > --
 > Best Regards,
