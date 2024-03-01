@@ -1,71 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-13327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2655086E8CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 19:54:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F6A86E905
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 20:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95D9283DA7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 18:54:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6DBA1F28E09
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 19:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E2339FDA;
-	Fri,  1 Mar 2024 18:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1477B3D0BC;
+	Fri,  1 Mar 2024 19:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gn7rELY1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOzLd2kh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7815811C88
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Mar 2024 18:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462C939AE3;
+	Fri,  1 Mar 2024 19:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709319231; cv=none; b=XjxWgWFdGZmxrorPdOyjlDUATfAnMGU25K98GYxtXDeJ2fchLEixw/x9S1qaLLUM7Pw+stREo7TzgOwaqst1eEK+1ZjI8c4x5zb5zIN9CwXs/NABZCCiA569ddcVfxs4keSZIlCnZvA01WGOhYiqkzVzSiVh04p0L//Nm15Oh6o=
+	t=1709319620; cv=none; b=rRX421dCvk8ouUT7ONm5vuQ5nVvt50sVR017btgFztnQzcXooqsNr2rFGjz9gDu9/1emkN5wCUtYGyg8/fl1MVsz0O+07rD0bt7IaLVLO6sEkcOEiW6TfBSfyBd7+wezlzR+Pz0a7PcDj/lUtAq+pPbvKu/7j2xZl8wsd28F0vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709319231; c=relaxed/simple;
-	bh=+xh/f4G1lcC7OOYBLDSVnmlxyJIX8rUdOfve7xEoQZo=;
+	s=arc-20240116; t=1709319620; c=relaxed/simple;
+	bh=CxB7W6l1Tq9Zrm8obA30+CBf87HBfjcY2NxOsDja4tc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZGLcM9EIW7y7TQhN6Xt2Pe2fRx/mAMU3HGYw15vKGQ5d4yyJtOV48G4ej/+ljObQg2PIF3f58nI22Ng78kbAOnlF7/LreZk8k/gE/tTvw+CP5SLXjF5geQ7ZhgNSrCl4wbPaOYB7uS6cdZTwDsDgG7jGF7BloSS1XTOo3vJg5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gn7rELY1; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 1 Mar 2024 10:53:30 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709319226;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IWBU7wfenw5GY8snfrhpUtl/VpqnsNlazcQskb2ijoE=;
-	b=gn7rELY1u3fct2iRcbLSiaFrreySSkXP5ifRGFhjrkx+a6/PEGsm66m4/fEeeq1Sngh7QT
-	xWzEkkTe12Sb7X25cK2QB2o8B5n+ye/j01hRxqXPVJqzXs7JRk52awHqGmMGKP2DkTyqgI
-	fw7Z2bVSVnnZdJa7ObS6mxnFMPy11Rk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>, Kees Cook <kees@kernel.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Shakeel Butt <shakeelb@google.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 4/4] UNFINISHED mm, fs: use kmem_cache_charge() in
- path_openat()
-Message-ID: <ZeIkKrS7HK6ENwbw@P9FQF9L96D.corp.robot.car>
-References: <20240301-slab-memcg-v1-0-359328a46596@suse.cz>
- <20240301-slab-memcg-v1-4-359328a46596@suse.cz>
- <CAHk-=whgFtbTxCAg2CWQtDj7n6CEyzvdV1wcCj2qpMfpw0=m1A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vu4ezvRaMxoNnCPf6sHt/NnWAjtHzqAbwX7OScTb66ZqymeY/UFGmiwEQpZNiCzK5yizlWWggyLM4jR2QoGD/Sqhwn0u94KLu2BVa8/wk89U8f0V+fzFRAj2SguXl31QQlHUEet7C4kfGk9PXQWIkV4gZJEXQbqXhWO4D1fpToE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOzLd2kh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5540C433F1;
+	Fri,  1 Mar 2024 19:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709319619;
+	bh=CxB7W6l1Tq9Zrm8obA30+CBf87HBfjcY2NxOsDja4tc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pOzLd2khb4RM9yVRZBKtLsYAGgslVXJE6WX7uusLNOBVMlWp/y1vL0AyGGMGGPI59
+	 7mdOWXRG2QEB6ScIwCwvk3UMV5Hw3R1Ti69/5V4cG6dq+MiM5W6kBBYCdwldHSQOc8
+	 UBmEm8x3eAFkhucdMQ/yXh3PXBtY21uVlYTtl3IA8RF4YuttFqeGPexqSuJmNXzY6r
+	 Boyj3E93hWzyEJmqqPdZopzPGxAdAIgSPQ3FMVxtZmpe0bJzuL+9XhRGvampdbny/D
+	 7TGVxPidmAJOjzynDBXwd/RddfG4tO9kMY7DH4C8cyANeS22JuQjTjhL7KouXmpwwF
+	 W70yLAG0DXNYA==
+Date: Fri, 1 Mar 2024 13:00:18 -0600
+From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>,
+	Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+	James Morris <jmorris@namei.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
+	selinux@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v2 06/25] capability: provide helpers for converting
+ between xattrs and vfs_caps
+Message-ID: <ZeIlwkUx5lNBrdS9@do-x1extreme>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
+ <20240221-idmap-fscap-refactor-v2-6-3039364623bd@kernel.org>
+ <7633ab5d5359116a602cdc8f85afd2561047960e.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,90 +77,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whgFtbTxCAg2CWQtDj7n6CEyzvdV1wcCj2qpMfpw0=m1A@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <7633ab5d5359116a602cdc8f85afd2561047960e.camel@huaweicloud.com>
 
-On Fri, Mar 01, 2024 at 09:51:18AM -0800, Linus Torvalds wrote:
-> On Fri, 1 Mar 2024 at 09:07, Vlastimil Babka <vbabka@suse.cz> wrote:
-> >
-> > This is just an example of using the kmem_cache_charge() API.  I think
-> > it's placed in a place that's applicable for Linus's example [1]
-> > although he mentions do_dentry_open() - I have followed from strace()
-> > showing openat(2) to path_openat() doing the alloc_empty_file().
+On Fri, Mar 01, 2024 at 05:30:55PM +0100, Roberto Sassu wrote:
+> > +/*
+> > + * Inner implementation of vfs_caps_to_xattr() which does not return an
+> > + * error if the rootid does not map into @dest_userns.
+> > + */
+> > +static ssize_t __vfs_caps_to_xattr(struct mnt_idmap *idmap,
+> > +				   struct user_namespace *dest_userns,
+> > +				   const struct vfs_caps *vfs_caps,
+> > +				   void *data, size_t size)
+> > +{
+> > +	struct vfs_ns_cap_data *ns_caps = data;
+> > +	struct vfs_cap_data *caps = (struct vfs_cap_data *)ns_caps;
+> > +	kuid_t rootkuid;
+> > +	uid_t rootid;
+> > +
+> > +	memset(ns_caps, 0, size);
 > 
-> Thanks. This is not the right patch,  but yes, patches 1-3 look very nice to me.
-> 
-> > The idea is that filp_cachep stops being SLAB_ACCOUNT. Allocations that
-> > want to be accounted immediately can use GFP_KERNEL_ACCOUNT. I did that
-> > in alloc_empty_file_noaccount() (despite the contradictory name but the
-> > noaccount refers to something else, right?) as IIUC it's about
-> > kernel-internal opens.
-> 
-> Yeah, the "noaccount" function is about not accounting it towards nr_files.
-> 
-> That said, I don't think it necessarily needs to do the memory
-> accounting either - it's literally for cases where we're never going
-> to install the file descriptor in any user space.
-> 
-> Your change to use GFP_KERNEL_ACCOUNT isn't exactly wrong, but I don't
-> think it's really the right thing either, because
-> 
-> > Why is this unfinished:
-> >
-> > - there are other callers of alloc_empty_file() which I didn't adjust so
-> >   they simply became memcg-unaccounted. I haven't investigated for which
-> >   ones it would make also sense to separate the allocation and accounting.
-> >   Maybe alloc_empty_file() would need to get a parameter to control
-> >   this.
-> 
-> Right. I think the natural and logical way to deal with this is to
-> just say "we account when we add the file to the fdtable".
-> 
-> IOW, just have fd_install() do it. That's the really natural point,
-> and also makes it very logical why alloc_empty_file_noaccount()
-> wouldn't need to do the GFP_KERNEL_ACCOUNT.
-> 
-> > - I don't know how to properly unwind the accounting failure case. It
-> >   seems like a new case because when we succeed the open, there's no
-> >   further error path at least in path_openat().
-> 
-> Yeah, let me think about this part. Becasue fd_install() is the right
-> point, but that too does not really allow for error handling.
-> 
-> Yes, we could close things and fail it, but it really is much too late
-> at this point.
-> 
-> What I *think* I'd want for this case is
-> 
->  (a) allow the accounting to go over by a bit
-> 
->  (b) make sure there's a cheap way to ask (before) about "did we go
-> over the limit"
-> 
-> IOW, the accounting never needed to be byte-accurate to begin with,
-> and making it fail (cheaply and early) on the next file allocation is
-> fine.
-> 
-> Just make it really cheap. Can we do that?
-> 
-> For example, maybe don't bother with the whole "bytes and pages"
-> stuff. Just a simple "are we more than one page over?" kind of
-> question. Without the 'stock_lock' mess for sub-page bytes etc
-> 
-> How would that look? Would it result in something that can be done
-> cheaply without locking and atomics and without excessive pointer
-> indirection through many levels of memcg data structures?
+> size -> sizeof(*ns_caps) (or an equivalent change)
 
-I think it's possible and I'm currently looking into batching charge,
-objcg refcnt management and vmstats using per-task caching. It should
-speed up things for the majority of allocations.
-For allocations from an irq context and targeted allocations
-(where the target memcg != memcg of the current task) we'd probably need to
-keep the old scheme. I hope to post some patches relatively soon.
+This is zeroing out the passed buffer, so it should use the size passed
+for the buffer. sizeof(*ns_caps) could potentially be more than the size
+of the buffer.
 
-I tried to optimize the current implementation but failed to get any
-significant gains. It seems that the overhead is very evenly spread across
-objcg pointer access, charge management, objcg refcnt management and vmstats.
+Maybe it would be clearer if it was memset(data, 0, size)?
 
-Thanks!
+> I was zeroing more (the size of the buffer passed to vfs_getxattr()).
+> 
+> Roberto
 
