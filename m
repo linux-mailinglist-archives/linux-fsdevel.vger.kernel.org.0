@@ -1,211 +1,278 @@
-Return-Path: <linux-fsdevel+bounces-13298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E18186E4A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 16:48:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1047486E4DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 17:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE5DB1C22C05
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 15:47:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B41FD284D97
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 16:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B247F70CBB;
-	Fri,  1 Mar 2024 15:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZUYjZh2B";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Njz2vMVw";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZUYjZh2B";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Njz2vMVw"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF41F70027;
+	Fri,  1 Mar 2024 15:59:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8571241A92;
-	Fri,  1 Mar 2024 15:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A3D70044;
+	Fri,  1 Mar 2024 15:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709308063; cv=none; b=V0MPvh6ZjLTluoNvyIh/bk7NqysHSzGzffjAmIOFe5ajhnUlrHebbbWLl4ZiBWUdShVNJcvnNS0T0/hIgWFfQ/TVF1g1piwq5432xf6iizRaabdh13862IBcquRJTrNEiMLn9AaNWVJvH+/Voh/8IbKVdfkwJQbw42Qd6UV60L0=
+	t=1709308799; cv=none; b=pw067gSUKma0wrBzPHtb4MkklevLVHpzd/eUPM7bIM+9T/IbsWIgMYrnYbfQyl21tiSXvoGNKY4+qXT9OHAfTSyFltG8iDrWFjjVFHbtoE1YIi08z5ERQz693CobfSOT8Z8akxuISJoLGGyRHn8e/111l50bP5AxFaK2IH5Ngnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709308063; c=relaxed/simple;
-	bh=UbKKEL1rphpwXYNJhxPqYWQmsVIuTy1Je/zhOiQE+rg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XgqNCvHhIBSDlOhDt71LbtBiUiYlgTGUqMdpslAatpe200XsutdNORtWsTjBMkYVeCbmdG2zPh8uj9coeUvK5QXRWUIAwLJMfKvcZqmMI7NP9oKM1egoJxoJcCsbr5rgUGKk5so1UE1jBnIN0lHWuzFHVovq/Q0U13qt851OLQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZUYjZh2B; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Njz2vMVw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZUYjZh2B; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Njz2vMVw; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1AA6333C1D;
-	Fri,  1 Mar 2024 15:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709308059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=52/83A0/AWTduQELOCqefhOgT0I/R+gHx6/VTGttMF0=;
-	b=ZUYjZh2BNJSW5AkzZ3ZlouuZvUyfyvNHSf76o50yzJGSqAgYF7/jAqx0HgvRnOtkGurRqy
-	Cj/eKp67j8S4yh++P4XCMAzf8yyxUkhYZrWfnG6i9e21vJRufqmD9qLH5pcp2/vxuoUTNx
-	Y2fDfdTErUhz8BhkDvgOaJqif3ZbX2U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709308059;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=52/83A0/AWTduQELOCqefhOgT0I/R+gHx6/VTGttMF0=;
-	b=Njz2vMVwxy+5Ywh8aIY6fbVt941PiO8oEpQSFaXtp5Ano/7yQ/49L3FMQ/U3v8gLtL+8ZL
-	jheXYJCjYGR271AA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709308059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=52/83A0/AWTduQELOCqefhOgT0I/R+gHx6/VTGttMF0=;
-	b=ZUYjZh2BNJSW5AkzZ3ZlouuZvUyfyvNHSf76o50yzJGSqAgYF7/jAqx0HgvRnOtkGurRqy
-	Cj/eKp67j8S4yh++P4XCMAzf8yyxUkhYZrWfnG6i9e21vJRufqmD9qLH5pcp2/vxuoUTNx
-	Y2fDfdTErUhz8BhkDvgOaJqif3ZbX2U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709308059;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=52/83A0/AWTduQELOCqefhOgT0I/R+gHx6/VTGttMF0=;
-	b=Njz2vMVwxy+5Ywh8aIY6fbVt941PiO8oEpQSFaXtp5Ano/7yQ/49L3FMQ/U3v8gLtL+8ZL
-	jheXYJCjYGR271AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 504D513A80;
-	Fri,  1 Mar 2024 15:47:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kmlFEJr44WUbBAAAD6G6ig
-	(envelope-from <lhenriques@suse.de>); Fri, 01 Mar 2024 15:47:38 +0000
-Received: from localhost (brahms.olymp [local])
-	by brahms.olymp (OpenSMTPD) with ESMTPA id f956f462;
-	Fri, 1 Mar 2024 15:47:37 +0000 (UTC)
-From: Luis Henriques <lhenriques@suse.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger
- <adilger.kernel@dilger.ca>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Jan Kara <jack@suse.cz>,  Miklos Szeredi <miklos@szeredi.hu>,  Amir
- Goldstein <amir73il@gmail.com>,  linux-ext4@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  linux-unionfs@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] ext4: fix mount parameters check for empty values
-In-Reply-To: <20240301-spalten-impfschutz-4118b8fcf5b3@brauner> (Christian
-	Brauner's message of "Fri, 1 Mar 2024 14:36:55 +0100")
-References: <20240229163011.16248-1-lhenriques@suse.de>
-	<20240229163011.16248-3-lhenriques@suse.de>
-	<20240301-spalten-impfschutz-4118b8fcf5b3@brauner>
-Date: Fri, 01 Mar 2024 15:47:37 +0000
-Message-ID: <87edcu9co6.fsf@suse.de>
+	s=arc-20240116; t=1709308799; c=relaxed/simple;
+	bh=kDTvRc/rJJuZ/ZVMznCa0bNE9fhdVJ07LePSL3ijCaM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pQNjjRmEACJuZcSTbj3vxSEotkGBW4gC8JRhtjceWx2ET5IYyQpQdWry13gT/wi5u+zyGnESrU2O+D5+uHI/VdjhTf9S+ZAyEKQmyHGd3+BuDdfCYbX2EwoOPe6ILZz23dZ4ZJOtRj4immUaHt5qmNkTHPHulOCV4nZQlomFOA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4TmXND29r2z9xGXC;
+	Fri,  1 Mar 2024 23:40:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 610721405A2;
+	Fri,  1 Mar 2024 23:59:37 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAXBChY++Fl5Qt8Aw--.52748S2;
+	Fri, 01 Mar 2024 16:59:36 +0100 (CET)
+Message-ID: <c5b496e53dac2b4b5402cc5aa9a09178d63323b7.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 11/25] security: add hooks for set/get/remove of
+ fscaps
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, Christian Brauner
+ <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, Paul Moore
+ <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, James Morris
+ <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara
+ <jack@suse.cz>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej
+ Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
+ <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi
+ <miklos@szeredi.hu>,  Amir Goldstein <amir73il@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
+Date: Fri, 01 Mar 2024 16:59:16 +0100
+In-Reply-To: <20240221-idmap-fscap-refactor-v2-11-3039364623bd@kernel.org>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
+	 <20240221-idmap-fscap-refactor-v2-11-3039364623bd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZUYjZh2B;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Njz2vMVw
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-6.51 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[4];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_LAST(0.00)[];
-	 FREEMAIL_CC(0.00)[mit.edu,dilger.ca,zeniv.linux.org.uk,suse.cz,szeredi.hu,gmail.com,vger.kernel.org];
-	 MID_RHS_MATCH_FROM(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Score: -6.51
-X-Rspamd-Queue-Id: 1AA6333C1D
-X-Spam-Flag: NO
+X-CM-TRANSID:GxC2BwAXBChY++Fl5Qt8Aw--.52748S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jw1fWw1DtF1DKF4xGw45Wrg_yoWxXFWfpF
+	4rt3ZxGw4SqFyagr18tF45u39a9FyfC3y7ArW2gwnIyFnrtr15KFsa9FyUCryfCrWUGr90
+	qFnIyrs8Cw13JrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBF1jj5biNgABs9
 
-Christian Brauner <brauner@kernel.org> writes:
+On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) wrote:
+> In preparation for moving fscaps out of the xattr code paths, add new
+> security hooks. These hooks are largely needed because common kernel
+> code will pass around struct vfs_caps pointers, which EVM will need to
+> convert to raw xattr data for verification and updates of its hashes.
+>=20
+> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> ---
+>  include/linux/lsm_hook_defs.h |  7 +++++
+>  include/linux/security.h      | 33 +++++++++++++++++++++
+>  security/security.c           | 69 +++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 109 insertions(+)
+>=20
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index 76458b6d53da..7b3c23f9e4a5 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -152,6 +152,13 @@ LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *id=
+map,
+>  	 struct dentry *dentry, const char *acl_name)
+>  LSM_HOOK(int, 0, inode_remove_acl, struct mnt_idmap *idmap,
+>  	 struct dentry *dentry, const char *acl_name)
+> +LSM_HOOK(int, 0, inode_set_fscaps, struct mnt_idmap *idmap,
+> +	 struct dentry *dentry, const struct vfs_caps *caps, int flags);
+> +LSM_HOOK(void, LSM_RET_VOID, inode_post_set_fscaps, struct mnt_idmap *id=
+map,
+> +	 struct dentry *dentry, const struct vfs_caps *caps, int flags);
+> +LSM_HOOK(int, 0, inode_get_fscaps, struct mnt_idmap *idmap, struct dentr=
+y *dentry);
+> +LSM_HOOK(int, 0, inode_remove_fscaps, struct mnt_idmap *idmap,
+> +	 struct dentry *dentry);
 
-> On Thu, Feb 29, 2024 at 04:30:09PM +0000, Luis Henriques wrote:
->> Now that parameters that have the flag 'fs_param_can_be_empty' set and
->> their value is NULL are handled as 'flag' type, we need to properly check
->> for empty (NULL) values.
->>=20
->> Signed-off-by: Luis Henriques <lhenriques@suse.de>
->> ---
->>  fs/ext4/super.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->> index 0f931d0c227d..44ba2212dfb3 100644
->> --- a/fs/ext4/super.c
->> +++ b/fs/ext4/super.c
->> @@ -2183,12 +2183,12 @@ static int ext4_parse_param(struct fs_context *f=
-c, struct fs_parameter *param)
->>  	switch (token) {
->>  #ifdef CONFIG_QUOTA
->>  	case Opt_usrjquota:
->> -		if (!*param->string)
->> +		if (!param->string)
->>  			return unnote_qf_name(fc, USRQUOTA);
->
-> I fail to understand how that can happen. Currently both of these
-> options are parsed as strings via:
->
-> #define fsparam_string_empty(NAME, OPT) \
->         __fsparam(fs_param_is_string, NAME, OPT, fs_param_can_be_empty, N=
-ULL)
->
->
-> So if someone sets fsconfig(..., FSCONFIG_SET_STRING, "usrquota", NULL, .=
-..)
-> we give an immediate
->
->         case FSCONFIG_SET_STRING:
->                 if (!_key || !_value || aux) return -EINVAL;
->
-> from fsconfig() so we know that param->string cannot be NULL. If that
-> were the case we'd NULL deref in fs_param_is_string():
->
-> int fs_param_is_string(struct p_log *log, const struct fs_parameter_spec =
-*p,
->                        struct fs_parameter *param, struct fs_parse_result=
- *result)
-> {
->         if (param->type !=3D fs_value_is_string ||
->             (!*param->string && !(p->flags & fs_param_can_be_empty)))
->
-> So you're check above seems wrong. If I'm mistaken, please explain, how
-> this can happen in detail.
+Uhm, there should not be semicolons here.
 
-I hope my reply to the previous patch helps clarifying this issue (which
-is quite confusing, and I'm probably  the confused one!).  To summarize,
-fsconfig() will (or can) get this parameter as a flag, not as string.
+Roberto
 
-Cheers,
---=20
-Lu=C3=ADs
+>  LSM_HOOK(int, 0, inode_need_killpriv, struct dentry *dentry)
+>  LSM_HOOK(int, 0, inode_killpriv, struct mnt_idmap *idmap,
+>  	 struct dentry *dentry)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index d0eb20f90b26..40be548e5e12 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -378,6 +378,13 @@ int security_inode_getxattr(struct dentry *dentry, c=
+onst char *name);
+>  int security_inode_listxattr(struct dentry *dentry);
+>  int security_inode_removexattr(struct mnt_idmap *idmap,
+>  			       struct dentry *dentry, const char *name);
+> +int security_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry *de=
+ntry,
+> +			      const struct vfs_caps *caps, int flags);
+> +void security_inode_post_set_fscaps(struct mnt_idmap *idmap,
+> +				    struct dentry *dentry,
+> +				    const struct vfs_caps *caps, int flags);
+> +int security_inode_get_fscaps(struct mnt_idmap *idmap, struct dentry *de=
+ntry);
+> +int security_inode_remove_fscaps(struct mnt_idmap *idmap, struct dentry =
+*dentry);
+>  int security_inode_need_killpriv(struct dentry *dentry);
+>  int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dent=
+ry);
+>  int security_inode_getsecurity(struct mnt_idmap *idmap,
+> @@ -935,6 +942,32 @@ static inline int security_inode_removexattr(struct =
+mnt_idmap *idmap,
+>  	return cap_inode_removexattr(idmap, dentry, name);
+>  }
+> =20
+> +static inline int security_inode_set_fscaps(struct mnt_idmap *idmap,
+> +					    struct dentry *dentry,
+> +					    const struct vfs_caps *caps,
+> +					    int flags)
+> +{
+> +	return 0;
+> +}
+> +static void security_inode_post_set_fscaps(struct mnt_idmap *idmap,
+> +					   struct dentry *dentry,
+> +					   const struct vfs_caps *caps,
+> +					   int flags)
+> +{
+> +}
+> +
+> +static int security_inode_get_fscaps(struct mnt_idmap *idmap,
+> +				     struct dentry *dentry)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int security_inode_remove_fscaps(struct mnt_idmap *idmap,
+> +					struct dentry *dentry)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline int security_inode_need_killpriv(struct dentry *dentry)
+>  {
+>  	return cap_inode_need_killpriv(dentry);
+> diff --git a/security/security.c b/security/security.c
+> index 3aaad75c9ce8..0d210da9862c 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2351,6 +2351,75 @@ int security_inode_remove_acl(struct mnt_idmap *id=
+map,
+>  	return evm_inode_remove_acl(idmap, dentry, acl_name);
+>  }
+> =20
+> +/**
+> + * security_inode_set_fscaps() - Check if setting fscaps is allowed
+> + * @idmap: idmap of the mount
+> + * @dentry: file
+> + * @caps: fscaps to be written
+> + * @flags: flags for setxattr
+> + *
+> + * Check permission before setting the file capabilities given in @vfs_c=
+aps.
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry *de=
+ntry,
+> +			      const struct vfs_caps *caps, int flags)
+> +{
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> +		return 0;
+> +	return call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps, flags);
+> +}
+> +
+> +/**
+> + * security_inode_post_set_fscaps() - Update the inode after setting fsc=
+aps
+> + * @idmap: idmap of the mount
+> + * @dentry: file
+> + * @caps: fscaps to be written
+> + * @flags: flags for setxattr
+> + *
+> + * Update inode security field after successfully setting fscaps.
+> + *
+> + */
+> +void security_inode_post_set_fscaps(struct mnt_idmap *idmap,
+> +				    struct dentry *dentry,
+> +				    const struct vfs_caps *caps, int flags)
+> +{
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> +		return;
+> +	call_void_hook(inode_post_set_fscaps, idmap, dentry, caps, flags);
+> +}
+> +
+> +/**
+> + * security_inode_get_fscaps() - Check if reading fscaps is allowed
+> + * @dentry: file
+> + *
+> + * Check permission before getting fscaps.
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_inode_get_fscaps(struct mnt_idmap *idmap, struct dentry *de=
+ntry)
+> +{
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> +		return 0;
+> +	return call_int_hook(inode_get_fscaps, 0, idmap, dentry);
+> +}
+> +
+> +/**
+> + * security_inode_remove_fscaps() - Check if removing fscaps is allowed
+> + * @idmap: idmap of the mount
+> + * @dentry: file
+> + *
+> + * Check permission before removing fscaps.
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_inode_remove_fscaps(struct mnt_idmap *idmap, struct dentry =
+*dentry)
+> +{
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> +		return 0;
+> +	return call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
+> +}
+> +
+>  /**
+>   * security_inode_post_setxattr() - Update the inode after a setxattr op=
+eration
+>   * @dentry: file
+>=20
+
 
