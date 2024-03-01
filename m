@@ -1,357 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-13232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A305686D841
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 01:16:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B12B86D86B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 01:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68411C20B55
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 00:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89411F2398A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 00:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A27622;
-	Fri,  1 Mar 2024 00:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFF15C81;
+	Fri,  1 Mar 2024 00:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="enbJKUxL"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="RUc4p1qK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DB6193
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Mar 2024 00:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9144C86
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Mar 2024 00:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709252169; cv=none; b=lJEUbUduxxNXCtJcy/NUgFE3erc0jfUVRy79FvYtt3gqa1DnoTAAAF2hE6jQDa7Eex+JWGrRHG0FiN37UjYYkEPjWdV9ejU8Fi9MelQUml4cCFrugi4PH69aLkNxixIuwef//gSaLVFZvNwaZ3Fn7nI5QkM6Iin5gOZSvFW9VN0=
+	t=1709253658; cv=none; b=YsPLA0GPBLPzetNPiTvNL3phO97di3+8cfqZyeLB+/IyvZgRqJdhA5UWLJCSw63rKR68hRfNVGpmSY9SbOYohhYNGI6BbQxpU7zCvxe1Jtc6bUNDEjfJY57CiQtC9+fLo6wyu38rQJ05nquhKiplhkvIaJLWdi/ZYrOxQzPstQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709252169; c=relaxed/simple;
-	bh=65P9PDS7E5AkUmHnQIE8Y9IKjd96NlmVkV1ln3OPtqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UOAQWTbtpFSCU1C/a6Gjh/x8covbJ9xaeFauCg1erA2IJrnbmt83wwKuuNDEl86cHeCNqNRufjkOZY3Q2OfGfCYSDxDO4zjNjeqRD7c+T8Vy+hZfVe1+F/kj7FuvfTQAY2YtNHQ+q1GV7ARQW6DqdBDU66BssZKxsFQkMYZ5zVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=enbJKUxL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709252166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BMNf8GeVYKIL640A/NSletvr9BoIxy8WmTXXpn1NJWo=;
-	b=enbJKUxLAEd0uWg18iks42nQJEGMlT0PHY5XY/ckj16HovgEjhKfNIwB69TbCeD/iysNMi
-	P8A72vwM/1/ZMepAMH9WnDRTAcHZkDLtHtmhXyivROUY4ORrwtQ6klQWOQLSAzEgJcYYn8
-	zHcI3cB7UEq2JT36KuTZVCDJAbCdtck=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-377-571euNIsM_iI1GJUBDumow-1; Thu, 29 Feb 2024 19:16:05 -0500
-X-MC-Unique: 571euNIsM_iI1GJUBDumow-1
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c79b0aac56so161230639f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 16:16:05 -0800 (PST)
+	s=arc-20240116; t=1709253658; c=relaxed/simple;
+	bh=Jd55ktx7sIvEBT3eIFkfgxP4nZ+VdQo972+ClU6asOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYK9IlskpVcvXWLN7mc8GXtTwjiiZp8EmdHBRyt3ngotr+SRvZVVnpilJH/sKQRnwxdf9RNB8Zz2SOHlD8LsqgqE8bL3qDdm9RSBrF77vzrvAsz2+kr/gMS0PXJEtZGKtN+dr7c7KC+3Wr+RMjsT4SjhwBOhK8NwYuXkN1fGZOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=RUc4p1qK; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6e5a50d91b4so937996b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 16:40:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709253656; x=1709858456; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kfSdJtng8toNd1HcgJhNo8INQxZO5f83GRD0aHxNifg=;
+        b=RUc4p1qKmj962PYnox1SZNSUSj04bVdEguBT5lWMAAeHx7mLna89MVimkGihnnwevq
+         jbX0lNdIilTcfxbkGrnwUGGMbrKNrz7T/UGyNt3/Sm4Ee1l6CizK9IDuPIcvyt+58wVK
+         ecR7/VbKL4IaHEg7JgxjdpKTusOHtwMN9xINjoRaWz0o6EiwExSnNE/nRloezuzi8auo
+         PG4K+EGGnbSgq74Y9/g6wTxCBfTpbIxS3zGEDpCh1S19Z0cpyoeXSw66XSD4iy3XN8DL
+         F0bSZPdDQzC6aXIoJOyTD043jONo9zWrVsdRdPRnCNvPnAPpPmhLOClXbYCF9HWrmVp5
+         sNLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709252164; x=1709856964;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BMNf8GeVYKIL640A/NSletvr9BoIxy8WmTXXpn1NJWo=;
-        b=eDORhnMukOTRAAMQ2r+ebFQxUCy6T4/PUxIirgNDuMyRYiAMVfLJajOpQAu5jr5i7L
-         UQGKoeRtdi4/MrQZhrEL2h4JGML4O62AwoSdbDrlb/OPjv0dWIagUOuokgJiYE1IMU36
-         DDTq8eC+3mWbUIH+IAj1f9T5eZSknUod9JwqzDWQS0MEK0FIvfQYz8rFnN94lpl9Owt7
-         hEmmIj2o/6usdRnvrWiFO0xniQmkHqOpya75DkLpu3Cm+/Dsb+nw4KW7fiUd1+RbE5d7
-         oNONpBt3lkf1zeWJlnWxDR0Uu4v6BilpCl9WWlK1K6lv6G/U91ky/f0uwqjqkxVYxFfT
-         R89Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU832v1w2kWBySgpyjTHC1pp2tDqxRmNliLCOW2CIDaIUh9+EBMa6VYxEAeL8/6JfI/zMn3qMaD0Cm3YLPMp4QzqtyNub8264X1gHcStQ==
-X-Gm-Message-State: AOJu0Yy/XH1FtUYx8pODTpK+aY8RVK2wbGoXOq9St2jvlKBd+OIpYRJq
-	IUwbLMhtczY7PK4OrKA2tGfvvrIcCjLhmbXVUO1o32vxJC9C2t0BW43a4BEkizAzz/kHzwUANBa
-	6Re72M6WYSm8ZCynZ+7VW6LmDXICpqkXSTtxs1XvrW96uEicYJ+F42IPSwpp1GlNwhvmsBq8=
-X-Received: by 2002:a92:c24f:0:b0:365:27e7:4b60 with SMTP id k15-20020a92c24f000000b0036527e74b60mr275690ilo.21.1709252164120;
-        Thu, 29 Feb 2024 16:16:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFjBN+xXcqq+5a+EmH8odfKUA67Y/nVEXdlykKhOr4CArbqLxCCI7ob+CPByDP0BXhT1C9EbA==
-X-Received: by 2002:a92:c24f:0:b0:365:27e7:4b60 with SMTP id k15-20020a92c24f000000b0036527e74b60mr275670ilo.21.1709252163729;
-        Thu, 29 Feb 2024 16:16:03 -0800 (PST)
-Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
-        by smtp.gmail.com with ESMTPSA id a16-20020a92d110000000b00365843633bcsm602448ilb.83.2024.02.29.16.16.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Feb 2024 16:16:03 -0800 (PST)
-Message-ID: <68be6a82-f093-41d4-9467-4b4694e8c5f3@redhat.com>
-Date: Thu, 29 Feb 2024 18:16:02 -0600
+        d=1e100.net; s=20230601; t=1709253656; x=1709858456;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kfSdJtng8toNd1HcgJhNo8INQxZO5f83GRD0aHxNifg=;
+        b=G7v8/1LlsvA3/VSD1rIYgV1F0sWlWTSxTWl0KHcuwPyjbhKX9jP01SgYTnMLyNsAuy
+         9EEK1UtvHqeDxBOa8zGzqzkC/UyLk/qHY2abfmItulE/wkrt4X91QWXHEvZySXIw64md
+         NaGArVIoCkBdLqxJscCGVB9mKLqGNvV2fyVxZ5U2lGDdzc9vtelwdpbuC4oxig0H9Ea8
+         JIyPP4qDLSRp0jZOBWIHPw8ztvzQi+2JZsgF6uGQ0tbM8UobUif9mDflWvimnmSwbi6L
+         7Dnx6xijz2ZXZUiyCyHLPSvDo0YHELPDJRbfu0+S/B+BTJbY5cpIBnnPOpD4tjtlaeMs
+         r1fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhQEtcGUh8Y+DtV7VZ5CUjcHPBXoK9a2WRbaKWO6DGXsdjbzKJlesojJ9pAietyIstIox/KyuaiRjNvQsZdOb551hbXokKdG7araOegA==
+X-Gm-Message-State: AOJu0Yyak8e9dqb/3RFOI7N+MDIUTMplqFgv5Ea/iLnQBjGnGB5cIiWe
+	JYFtbpgIrAxCjYUP1OUapHId/AatZotdjE+1STJ8a+NaMUmTM+cZ5hAY0MuF/9c=
+X-Google-Smtp-Source: AGHT+IG9nkRVk+NgGLMyPlKdjw+Y3IsswCmGwjGEj2FO0wwKgpYsp4rScEINGBD3rE4r1rC3yAQIBg==
+X-Received: by 2002:a05:6a00:4f94:b0:6e4:ea68:633f with SMTP id ld20-20020a056a004f9400b006e4ea68633fmr366985pfb.20.1709253656373;
+        Thu, 29 Feb 2024 16:40:56 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
+        by smtp.gmail.com with ESMTPSA id y13-20020aa7854d000000b006e56cc934b8sm1837363pfn.154.2024.02.29.16.40.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Feb 2024 16:40:55 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rfqxJ-00DKr4-1Q;
+	Fri, 01 Mar 2024 11:40:53 +1100
+Date: Fri, 1 Mar 2024 11:40:53 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: brauner@kernel.org, djwong@kernel.org, jack@suse.cz, tytso@mit.edu,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	yi.zhang@huawei.com
+Subject: Re: [PATCH RFC 1/2] iomap: Add a IOMAP_DIO_MAY_INLINE_COMP flag
+Message-ID: <ZeEkFUCUQ4eR7AlX@dread.disaster.area>
+References: <20240229113849.2222577-1-chengzhihao1@huawei.com>
+ <20240229113849.2222577-2-chengzhihao1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] qnx6: convert qnx6 to use the new mount api
-Content-Language: en-US
-To: Bill O'Donnell <bodonnel@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc: al@alarsen.net, brauner@kernel.org
-References: <20240229191317.805034-1-bodonnel@redhat.com>
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <20240229191317.805034-1-bodonnel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240229113849.2222577-2-chengzhihao1@huawei.com>
 
-On 2/29/24 1:13 PM, Bill O'Donnell wrote:
-> Convert the qnx6 filesystem to use the new mount API.
+On Thu, Feb 29, 2024 at 07:38:48PM +0800, Zhihao Cheng wrote:
+> It will be more efficient to execute quick endio process(eg. non-sync
+> overwriting case) under irq process rather than starting a worker to
+> do it.
+> Add a flag to control DIO to be finished inline(under irq context), which
+> can be used for non-sync overwriting case.
+> Besides, skip invalidating pages if DIO is finished inline, which will
+> keep the same logic with dio_bio_end_aio in non-sync overwriting case.
 > 
-> Untested, since there is no qnx6 fs image readily available.
-> 
-> Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
-> ---
->  fs/qnx6/inode.c | 119 +++++++++++++++++++++++++++++-------------------
->  1 file changed, 72 insertions(+), 47 deletions(-)
-> 
-> diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-> index a286c545717f..0df5a92a8b65 100644
-> --- a/fs/qnx6/inode.c
-> +++ b/fs/qnx6/inode.c
-> @@ -19,11 +19,12 @@
->  #include <linux/buffer_head.h>
->  #include <linux/writeback.h>
->  #include <linux/statfs.h>
-> -#include <linux/parser.h>
->  #include <linux/seq_file.h>
->  #include <linux/mount.h>
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 
-I *think* you can lose this include too but not a big deal.
+A nice idea, but I don't think an ext4 specific API flag is the
+right way to go about enabling this. The iomap dio code knows if
+the write is pure overwrite already - we have the IOMAP_F_DIRTY flag
+for that, and we combine this with IOMAP_DIO_WRITE_THROUGH to do the
+pure overwrite FUA optimisations.
 
->  #include <linux/crc32.h>
->  #include <linux/mpage.h>
-> +#include <linux/fs_parser.h>
-> +#include <linux/fs_context.h>
->  #include "qnx6.h"
->  
->  static const struct super_operations qnx6_sops;
-> @@ -31,7 +32,7 @@ static const struct super_operations qnx6_sops;
->  static void qnx6_put_super(struct super_block *sb);
->  static struct inode *qnx6_alloc_inode(struct super_block *sb);
->  static void qnx6_free_inode(struct inode *inode);
-> -static int qnx6_remount(struct super_block *sb, int *flags, char *data);
-> +static int qnx6_reconfigure(struct fs_context *fc);
->  static int qnx6_statfs(struct dentry *dentry, struct kstatfs *buf);
->  static int qnx6_show_options(struct seq_file *seq, struct dentry *root);
->  
-> @@ -40,7 +41,6 @@ static const struct super_operations qnx6_sops = {
->  	.free_inode	= qnx6_free_inode,
->  	.put_super	= qnx6_put_super,
->  	.statfs		= qnx6_statfs,
-> -	.remount_fs	= qnx6_remount,
->  	.show_options	= qnx6_show_options,
->  };
->  
-> @@ -54,10 +54,12 @@ static int qnx6_show_options(struct seq_file *seq, struct dentry *root)
->  	return 0;
->  }
->  
-> -static int qnx6_remount(struct super_block *sb, int *flags, char *data)
-> +static int qnx6_reconfigure(struct fs_context *fc)
->  {
-> +	struct super_block *sb = fc->root->d_sb;
-> +
->  	sync_filesystem(sb);
-> -	*flags |= SB_RDONLY;
-> +	fc->sb_flags |= SB_RDONLY;
->  	return 0;
->  }
->  
-> @@ -222,35 +224,36 @@ enum {
->  	Opt_err
->  };
->  
-> -static const match_table_t tokens = {
-> -	{Opt_mmifs, "mmi_fs"},
-> -	{Opt_err, NULL}
-> +struct qnx6_context {
-> +	unsigned long s_mount_opts;
-> +};
+That is:
 
-s_mount_opts seems to be a write-only variable. It's set in 
-qnx6_parse_param() but nothing ever reads it?
+		/*
+                 * Use a FUA write if we need datasync semantics, this is a pure
+                 * data IO that doesn't require any metadata updates (including
+                 * after IO completion such as unwritten extent conversion) and
+                 * the underlying device either supports FUA or doesn't have
+                 * a volatile write cache. This allows us to avoid cache flushes
+                 * on IO completion. If we can't use writethrough and need to
+                 * sync, disable in-task completions as dio completion will
+                 * need to call generic_write_sync() which will do a blocking
+                 * fsync / cache flush call.
+                 */
+                if (!(iomap->flags & (IOMAP_F_SHARED|IOMAP_F_DIRTY)) &&
+                    (dio->flags & IOMAP_DIO_WRITE_THROUGH) &&
+                    (bdev_fua(iomap->bdev) || !bdev_write_cache(iomap->bdev)))
+                        use_fua = true;
 
-> +
-> +static const struct fs_parameter_spec qnx6_param_spec[] = {
-> +	fsparam_flag	("mmi_fs",	Opt_mmifs),
-> +	{}
->  };
->  
-> -static int qnx6_parse_options(char *options, struct super_block *sb)
-> +static int qnx6_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  {
-> -	char *p;
-> -	struct qnx6_sb_info *sbi = QNX6_SB(sb);
-> -	substring_t args[MAX_OPT_ARGS];
-> -
-> -	if (!options)
-> -		return 1;
-> -
-> -	while ((p = strsep(&options, ",")) != NULL) {
-> -		int token;
-> -		if (!*p)
-> -			continue;
-> -
-> -		token = match_token(p, tokens, args);
-> -		switch (token) {
-> -		case Opt_mmifs:
-> -			set_opt(sbi->s_mount_opt, MMI_FS);
-> -			break;
-> -		default:
-> -			return 0;
-> -		}
-> +	struct qnx6_context *ctx = fc->fs_private;
-> +	struct fs_parse_result result;
-> +	int opt;
-> +
-> +	opt = fs_parse(fc, qnx6_param_spec, param, &result);
-> +	if (opt < 0)
-> +		return opt;
-> +
-> +	switch (opt) {
-> +	case Opt_err:
-> +		ctx->s_mount_opts |= result.uint_32;
-> +		break;
+Hence if we want to optimise pure overwrites that have no data sync
+requirements, we already have the detection and triggers in place to
+do this. We just need to change the way we set up the IO flags to
+allow write-through (i.e. non-blocking IO completions) to use inline
+completions.
 
-Not sure what's going on here. Opt_err is not associated with any
-valid mount option.
+In __iomap_dio_rw():
 
-> +	case Opt_mmifs:
-> +		ctx->s_mount_opts |= QNX6_MOUNT_MMI_FS;
-> +		break;
++	/* Always try to complete inline. */
++	dio->flags |= IOMAP_DIO_INLINE_COMP;
+	if (iov_iter_rw(iter) == READ) {                                         
+-               /* reads can always complete inline */                           
+-               dio->flags |= IOMAP_DIO_INLINE_COMP;
+....
 
-This sets QNX6_MOUNT_MMI_FS into ctx->s_mount_opts but it looks like
-nothing ever reads it back out of the context.
+	} else {
++		/* Always try write-through semantics. If we can't
++		 * use writethough, it will be disabled along with
++		 * IOMAP_DIO_INLINE_COMP before dio completion is run
++		 * so it can be deferred to a task completion context
++		 * appropriately.
++		 */
++               dio->flags |= IOMAP_DIO_WRITE | IOMAP_DIO_WRITE_THROUGH;
+		iomi.flags |= IOMAP_WRITE;
+-               dio->flags |= IOMAP_DIO_WRITE;
+.....
+		/* for data sync or sync, we need sync completion processing */
+                if (iocb_is_dsync(iocb)) {
+                        dio->flags |= IOMAP_DIO_NEED_SYNC;
 
-In qnx6_fill_super uptream, this handles the case where the mmi_fs option
-was set:
+-                      /*
+-                       * For datasync only writes, we optimistically try using
+-                       * WRITE_THROUGH for this IO. This flag requires either
+-                       * FUA writes through the device's write cache, or a
+-                       * normal write to a device without a volatile write
+-                       * cache. For the former, Any non-FUA write that occurs
+-                       * will clear this flag, hence we know before completion
+-                       * whether a cache flush is necessary.
+-                       */
+-                       if (!(iocb->ki_flags & IOCB_SYNC))
+-                               dio->flags |= IOMAP_DIO_WRITE_THROUGH;
++			* For sync writes we know we are going to need
++			* blocking completion processing, so turn off
++			* writethrough now.
++			*/
+			if (iocb->ki_flags & IOCB_SYNC) {
+				dio->flags &= ~(IOMAP_DIO_WRITE_THROUGH |
+						IOMAP_DIO_INLINE_COMP);
+			}
+                }
 
-         if (test_opt(s, MMI_FS)) {
-                sb1 = qnx6_mmi_fill_super(s, silent);
-                if (sb1)
-                        goto mmi_success;
-                else
-                        goto outnobh;
-        }       
+This then sets up iomap_dio_bio_iter() to be able to determine if
+the iomap returned is for a pure overwrite and allow for the use of
+inline write completions.
 
-Under the new mount api, the mmi_fs state needs to be saved in the
-filesystem context when it's parsed, then tested here, to do the right
-thing in fill_super when that option has been set.
+	/*
+	 * If we have a pure overwrite, we know that IO completion
+	 * will not block and so we can use write through completion
+	 * semantics and complete the write inline. If it's not a
+	 * pure overwrite, make sure that we always defer
+	 * completions to a task context.
+	 */
+	if (dio->flags & IOMAP_DIO_WRITE_THROUGH) {
+		if (iomap->flags & (IOMAP_F_SHARED|IOMAP_F_DIRTY)) {
+			dio->flags &= ~(IOMAP_DIO_WRITE_THROUGH |
+					IOMAP_DIO_INLINE_COMP);
+		} else if ((dio->flags & IOMAP_DIO_NEED_SYNC) &&
+			   (bdev_fua(iomap->bdev) ||
+			    !bdev_write_cache(iomap->bdev))) {
+			/*
+			 * Use REQ_FUA for datasync overwrites to
+			 * avoid cache flushes on IO completion on
+			 * devices that support FUA or don't have
+			 * volatile caches.
+			 */
+			use_fua = true;
+		}
+	}
 
-> +	default:
-> +		return -EINVAL;
->  	}
-> -	return 1;
-> +	return 0;
->  }
->  
->  static struct buffer_head *qnx6_check_first_superblock(struct super_block *s,
-> @@ -293,22 +296,24 @@ static struct buffer_head *qnx6_check_first_superblock(struct super_block *s,
->  static struct inode *qnx6_private_inode(struct super_block *s,
->  					struct qnx6_root_node *p);
->  
-> -static int qnx6_fill_super(struct super_block *s, void *data, int silent)
-> +static int qnx6_fill_super(struct super_block *s, struct fs_context *fc)
->  {
->  	struct buffer_head *bh1 = NULL, *bh2 = NULL;
->  	struct qnx6_super_block *sb1 = NULL, *sb2 = NULL;
->  	struct qnx6_sb_info *sbi;
-> +
->  	struct inode *root;
->  	const char *errmsg;
->  	struct qnx6_sb_info *qs;
->  	int ret = -EINVAL;
->  	u64 offset;
->  	int bootblock_offset = QNX6_BOOTBLOCK_SIZE;
-> +	int silent = fc->sb_flags & SB_SILENT;
->  
-> -	qs = kzalloc(sizeof(struct qnx6_sb_info), GFP_KERNEL);
-> -	if (!qs)
-> +	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
-> +	if (!sbi)
->  		return -ENOMEM;
-> -	s->s_fs_info = qs;
-> +	s->s_fs_info = sbi;
 
-Not sure what this change is for. The existing code is a little odd, it
-allocates *qs as a struct qnx6_sb_info and assigns it to s->s_fs_info, then
-reads it back out of s->s_fs_info via QNX6_SB(s) and assigns that to *sbi;
-I don't see any real reason for that dance, it's 2 pointers w/ the same value.
- 
-But, with your change *qs is never initialized, and yet this:
+and iomap_dio_bio_opflags() gets changed to also clear
+IOMAP_DIO_INLINE_COMP when it clears IOMAP_DIO_WRITE_THROUGH....
 
-outnobh:
-        kfree(qs);
+That then makes all pure overwrites for every filesystem do inline
+completions without changing calling conventions. i.e. it's up to
+the filesystem ->iomap_begin callouts to indicate whether the write
+mapping returned requires blocking operations to be done in IO
+completion (i.e. set the IOMAP_F_DIRTY flag) appropriately.
 
-remains, which would free the uninitialized pointer variable.
+However, this does mean that any spinlock taken in the ->end_io()
+callbacks now needs to be irq safe. e.g. in xfs_dio_write_end_io()
+the spinlock protection around inode size updates will need to use
+an irq safe locking, as will the locking in the DIO submission path
+that it serialises against in xfs_file_write_checks(). That probably
+is best implemented as a separate spinlock.
 
-I don't think any of the above needs to change for this conversion.
+There will also be other filesystems that need to set IOMAP_F_DIRTY
+unconditionally (e.g. zonefs) because they always take blocking
+locks in their ->end_io callbacks and so must always run in task
+context...
 
--Eric
+Cheers,
 
->  	/* Superblock always is 512 Byte long */
->  	if (!sb_set_blocksize(s, QNX6_SUPERBLOCK_SIZE)) {
-> @@ -316,11 +321,6 @@ static int qnx6_fill_super(struct super_block *s, void *data, int silent)
->  		goto outnobh;
->  	}
->  
-> -	/* parse the mount-options */
-> -	if (!qnx6_parse_options((char *) data, s)) {
-> -		pr_err("invalid mount options.\n");
-> -		goto outnobh;
-> -	}
->  	if (test_opt(s, MMI_FS)) {
->  		sb1 = qnx6_mmi_fill_super(s, silent);
->  		if (sb1)
-> @@ -632,18 +632,43 @@ static void destroy_inodecache(void)
->  	kmem_cache_destroy(qnx6_inode_cachep);
->  }
->  
-> -static struct dentry *qnx6_mount(struct file_system_type *fs_type,
-> -	int flags, const char *dev_name, void *data)
-> +static int qnx6_get_tree(struct fs_context *fc)
->  {
-> -	return mount_bdev(fs_type, flags, dev_name, data, qnx6_fill_super);
-> +	return get_tree_bdev(fc, qnx6_fill_super);
-> +}
-> +
-> +static void qnx6_free_fc(struct fs_context *fc)
-> +{
-> +	kfree(fc->fs_private);
-> +}
-> +
-> +static const struct fs_context_operations qnx6_context_ops = {
-> +	.parse_param	= qnx6_parse_param,
-> +	.get_tree	= qnx6_get_tree,
-> +	.reconfigure	= qnx6_reconfigure,
-> +	.free		= qnx6_free_fc,
-> +};
-> +
-> +static int qnx6_init_fs_context(struct fs_context *fc)
-> +{
-> +	struct qnx6_context *ctx;
-> +
-> +	ctx = kzalloc(sizeof(struct qnx6_context), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +	fc->ops = &qnx6_context_ops;
-> +	fc->fs_private = ctx;
-> +
-> +	return 0;
->  }
->  
->  static struct file_system_type qnx6_fs_type = {
-> -	.owner		= THIS_MODULE,
-> -	.name		= "qnx6",
-> -	.mount		= qnx6_mount,
-> -	.kill_sb	= kill_block_super,
-> -	.fs_flags	= FS_REQUIRES_DEV,
-> +	.owner			= THIS_MODULE,
-> +	.name			= "qnx6",
-> +	.kill_sb		= kill_block_super,
-> +	.fs_flags		= FS_REQUIRES_DEV,
-> +	.init_fs_context	= qnx6_init_fs_context,
-> +	.parameters		= qnx6_param_spec,
->  };
->  MODULE_ALIAS_FS("qnx6");
->  
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
