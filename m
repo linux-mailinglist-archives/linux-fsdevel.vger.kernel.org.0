@@ -1,186 +1,357 @@
-Return-Path: <linux-fsdevel+bounces-13231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DAB86D81C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 01:03:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A305686D841
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 01:16:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EC9A1F22D1E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 00:03:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68411C20B55
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 00:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4369A63C;
-	Fri,  1 Mar 2024 00:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A27622;
+	Fri,  1 Mar 2024 00:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Us1rVkPG"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="enbJKUxL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEE717E;
-	Fri,  1 Mar 2024 00:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DB6193
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Mar 2024 00:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709251410; cv=none; b=rAE+Ir+cNmBgELYUOARQG8e9JEDua54JE8uCh6zh8gzXd/QJWInmxQ/boFQMRJ1MhMZLLEwPMhz1rXipgIKy3nahXd4tgJWuYR5iEE2LQbaH/lrb8lvgGy0uE70BGQEVI3Z80VW7z07m8y+VRVlPCZCPVhjzKZWmomgHyzlylcE=
+	t=1709252169; cv=none; b=lJEUbUduxxNXCtJcy/NUgFE3erc0jfUVRy79FvYtt3gqa1DnoTAAAF2hE6jQDa7Eex+JWGrRHG0FiN37UjYYkEPjWdV9ejU8Fi9MelQUml4cCFrugi4PH69aLkNxixIuwef//gSaLVFZvNwaZ3Fn7nI5QkM6Iin5gOZSvFW9VN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709251410; c=relaxed/simple;
-	bh=QHvk9C3U20n8u+vI2eeOPtcTBK0DSoLTgny0C/YbSBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sOqvpuG5CWs4GeHEJxJBhm1m3IAPmY/3tcuxdjOKjM8DRLMdEuaUqzjQFymK+VDRT30i55v8gjmR6tRxl9CDlaTUTqYZ9LNJeKKUYWp2+b2bl4f6GkRGFkGI3QuZWv0JiZTeto9VTPbH0i6ATBlkU2HGwKLlNgq2h0JvxXo7GsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Us1rVkPG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27474C433F1;
-	Fri,  1 Mar 2024 00:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709251410;
-	bh=QHvk9C3U20n8u+vI2eeOPtcTBK0DSoLTgny0C/YbSBg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Us1rVkPG5lB1uXCGaXOEK1G6T7lhXsQ9LwCiT5DFoTjU8wJwlsbR2jEYhfnmTLjJt
-	 1Q6KaWeDHb2SmXqc9d9BrGGx1sS+aUtOMxwTYN6uLLjI0tzbT2jPt41lkj6ASpBrAK
-	 yRcP+Qom7WLON4YDD4MxzzSc92G0IYoIzteakZuf5OktA+JJpN/jYHwAFI1oU41XP9
-	 skf9PcGABG29+B/9FbxoZYxp1h5WvTfGPBaBmQDxJJRnKPVF97v6VG05xmolYjTV9A
-	 6oIrq6w0tfOWLfSbIjq6lhch+C9rvtSNz2fNsIFH0BMId2TrG45QThjFeS1vUahO49
-	 JS9KRPripv5jw==
-Date: Thu, 29 Feb 2024 16:03:29 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Colin Walters <walters@verbum.org>
-Cc: linux-fsdevel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCHSET v29.4 03/13] xfs: atomic file content exchanges
-Message-ID: <20240301000329.GF1927156@frogsfrogsfrogs>
-References: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
- <87961163-a4b9-4032-aa06-f5126c9c8ca2@app.fastmail.com>
- <20240229201840.GC1927156@frogsfrogsfrogs>
- <7282e2c3-f44a-4425-b0f7-24d1182e5499@app.fastmail.com>
+	s=arc-20240116; t=1709252169; c=relaxed/simple;
+	bh=65P9PDS7E5AkUmHnQIE8Y9IKjd96NlmVkV1ln3OPtqU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UOAQWTbtpFSCU1C/a6Gjh/x8covbJ9xaeFauCg1erA2IJrnbmt83wwKuuNDEl86cHeCNqNRufjkOZY3Q2OfGfCYSDxDO4zjNjeqRD7c+T8Vy+hZfVe1+F/kj7FuvfTQAY2YtNHQ+q1GV7ARQW6DqdBDU66BssZKxsFQkMYZ5zVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=enbJKUxL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709252166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BMNf8GeVYKIL640A/NSletvr9BoIxy8WmTXXpn1NJWo=;
+	b=enbJKUxLAEd0uWg18iks42nQJEGMlT0PHY5XY/ckj16HovgEjhKfNIwB69TbCeD/iysNMi
+	P8A72vwM/1/ZMepAMH9WnDRTAcHZkDLtHtmhXyivROUY4ORrwtQ6klQWOQLSAzEgJcYYn8
+	zHcI3cB7UEq2JT36KuTZVCDJAbCdtck=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-377-571euNIsM_iI1GJUBDumow-1; Thu, 29 Feb 2024 19:16:05 -0500
+X-MC-Unique: 571euNIsM_iI1GJUBDumow-1
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c79b0aac56so161230639f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Feb 2024 16:16:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709252164; x=1709856964;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BMNf8GeVYKIL640A/NSletvr9BoIxy8WmTXXpn1NJWo=;
+        b=eDORhnMukOTRAAMQ2r+ebFQxUCy6T4/PUxIirgNDuMyRYiAMVfLJajOpQAu5jr5i7L
+         UQGKoeRtdi4/MrQZhrEL2h4JGML4O62AwoSdbDrlb/OPjv0dWIagUOuokgJiYE1IMU36
+         DDTq8eC+3mWbUIH+IAj1f9T5eZSknUod9JwqzDWQS0MEK0FIvfQYz8rFnN94lpl9Owt7
+         hEmmIj2o/6usdRnvrWiFO0xniQmkHqOpya75DkLpu3Cm+/Dsb+nw4KW7fiUd1+RbE5d7
+         oNONpBt3lkf1zeWJlnWxDR0Uu4v6BilpCl9WWlK1K6lv6G/U91ky/f0uwqjqkxVYxFfT
+         R89Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU832v1w2kWBySgpyjTHC1pp2tDqxRmNliLCOW2CIDaIUh9+EBMa6VYxEAeL8/6JfI/zMn3qMaD0Cm3YLPMp4QzqtyNub8264X1gHcStQ==
+X-Gm-Message-State: AOJu0Yy/XH1FtUYx8pODTpK+aY8RVK2wbGoXOq9St2jvlKBd+OIpYRJq
+	IUwbLMhtczY7PK4OrKA2tGfvvrIcCjLhmbXVUO1o32vxJC9C2t0BW43a4BEkizAzz/kHzwUANBa
+	6Re72M6WYSm8ZCynZ+7VW6LmDXICpqkXSTtxs1XvrW96uEicYJ+F42IPSwpp1GlNwhvmsBq8=
+X-Received: by 2002:a92:c24f:0:b0:365:27e7:4b60 with SMTP id k15-20020a92c24f000000b0036527e74b60mr275690ilo.21.1709252164120;
+        Thu, 29 Feb 2024 16:16:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFjBN+xXcqq+5a+EmH8odfKUA67Y/nVEXdlykKhOr4CArbqLxCCI7ob+CPByDP0BXhT1C9EbA==
+X-Received: by 2002:a92:c24f:0:b0:365:27e7:4b60 with SMTP id k15-20020a92c24f000000b0036527e74b60mr275670ilo.21.1709252163729;
+        Thu, 29 Feb 2024 16:16:03 -0800 (PST)
+Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
+        by smtp.gmail.com with ESMTPSA id a16-20020a92d110000000b00365843633bcsm602448ilb.83.2024.02.29.16.16.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Feb 2024 16:16:03 -0800 (PST)
+Message-ID: <68be6a82-f093-41d4-9467-4b4694e8c5f3@redhat.com>
+Date: Thu, 29 Feb 2024 18:16:02 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7282e2c3-f44a-4425-b0f7-24d1182e5499@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] qnx6: convert qnx6 to use the new mount api
+Content-Language: en-US
+To: Bill O'Donnell <bodonnel@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: al@alarsen.net, brauner@kernel.org
+References: <20240229191317.805034-1-bodonnel@redhat.com>
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <20240229191317.805034-1-bodonnel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 29, 2024 at 05:43:21PM -0500, Colin Walters wrote:
+On 2/29/24 1:13 PM, Bill O'Donnell wrote:
+> Convert the qnx6 filesystem to use the new mount API.
 > 
+> Untested, since there is no qnx6 fs image readily available.
 > 
-> On Thu, Feb 29, 2024, at 3:18 PM, Darrick J. Wong wrote:
-> >
-> > Correct, there's no built-in dedupe.  For small files you'll probably
-> > end up with a single allocation anyway, which is ideal in terms of
-> > ondisk metadata overhead.
+> Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
+> ---
+>  fs/qnx6/inode.c | 119 +++++++++++++++++++++++++++++-------------------
+>  1 file changed, 72 insertions(+), 47 deletions(-)
 > 
-> Makes sense.
-> 
-> > though I would bet that extending linkat (or rename, or
-> > whatever) is going to be the only workable solution for old / simple
-> > filesystems (e.g. fat32).
-> 
-> Ah, right; that too.
-> 
-> > How /does/ dconf handle those changes?  Does it rename the file and
-> > signal all the other dconf threads to reopen the file?  And then those
-> > threads get the new file contents?
-> 
-> I briefly skimmed the code and couldn't find it, but yes I believe
-> it's basically that clients have an inotify watch that gets handled
-> from the mainloop and clients close and reopen and re-mmap - it's
-> probably nonexistent to have non-mainloop threads reading things from
-> the mmap, so there's no races with any other threads.
+> diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
+> index a286c545717f..0df5a92a8b65 100644
+> --- a/fs/qnx6/inode.c
+> +++ b/fs/qnx6/inode.c
+> @@ -19,11 +19,12 @@
+>  #include <linux/buffer_head.h>
+>  #include <linux/writeback.h>
+>  #include <linux/statfs.h>
+> -#include <linux/parser.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/mount.h>
 
-Hrmm.  IIRC inotify and fanotify both use the same fsnotify backend.
-fsnotify events are emitted after i_rwsem drops, which (if I read
-read_write.c correctly) means this is technically racy.
+I *think* you can lose this include too but not a big deal.
 
-That said if they're mostly waiting around in the inotify loop then it
-probably doesn't matter.
+>  #include <linux/crc32.h>
+>  #include <linux/mpage.h>
+> +#include <linux/fs_parser.h>
+> +#include <linux/fs_context.h>
+>  #include "qnx6.h"
+>  
+>  static const struct super_operations qnx6_sops;
+> @@ -31,7 +32,7 @@ static const struct super_operations qnx6_sops;
+>  static void qnx6_put_super(struct super_block *sb);
+>  static struct inode *qnx6_alloc_inode(struct super_block *sb);
+>  static void qnx6_free_inode(struct inode *inode);
+> -static int qnx6_remount(struct super_block *sb, int *flags, char *data);
+> +static int qnx6_reconfigure(struct fs_context *fc);
+>  static int qnx6_statfs(struct dentry *dentry, struct kstatfs *buf);
+>  static int qnx6_show_options(struct seq_file *seq, struct dentry *root);
+>  
+> @@ -40,7 +41,6 @@ static const struct super_operations qnx6_sops = {
+>  	.free_inode	= qnx6_free_inode,
+>  	.put_super	= qnx6_put_super,
+>  	.statfs		= qnx6_statfs,
+> -	.remount_fs	= qnx6_remount,
+>  	.show_options	= qnx6_show_options,
+>  };
+>  
+> @@ -54,10 +54,12 @@ static int qnx6_show_options(struct seq_file *seq, struct dentry *root)
+>  	return 0;
+>  }
+>  
+> -static int qnx6_remount(struct super_block *sb, int *flags, char *data)
+> +static int qnx6_reconfigure(struct fs_context *fc)
+>  {
+> +	struct super_block *sb = fc->root->d_sb;
+> +
+>  	sync_filesystem(sb);
+> -	*flags |= SB_RDONLY;
+> +	fc->sb_flags |= SB_RDONLY;
+>  	return 0;
+>  }
+>  
+> @@ -222,35 +224,36 @@ enum {
+>  	Opt_err
+>  };
+>  
+> -static const match_table_t tokens = {
+> -	{Opt_mmifs, "mmi_fs"},
+> -	{Opt_err, NULL}
+> +struct qnx6_context {
+> +	unsigned long s_mount_opts;
+> +};
 
-> > Huurrrh hurrrh.  That's right, I don't see how exchange can mesh well
-> > with mmap without actual flock()ing. :(
-> >
-> > fsnotify will send a message out to userspace after the exchange
-> > finishes, which means that userspace could watch for the notifications
-> > via fanotify.  However, that's still a bit racy... :/
-> 
-> Right.  However...it's not just about mmap.  Sorry this is a minor
-> rant but...near my top ten list of changes to make with a time machine
-> for Unix would be the concept of a contents-immutable file, like all
-> the seals that work on memfd with F_ADD_SEALS (and outside of
-> fsverity, which is good but can be a bit of a heavier hammer).
+s_mount_opts seems to be a write-only variable. It's set in 
+qnx6_parse_param() but nothing ever reads it?
 
-You and me both. :)
+> +
+> +static const struct fs_parameter_spec qnx6_param_spec[] = {
+> +	fsparam_flag	("mmi_fs",	Opt_mmifs),
+> +	{}
+>  };
+>  
+> -static int qnx6_parse_options(char *options, struct super_block *sb)
+> +static int qnx6_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  {
+> -	char *p;
+> -	struct qnx6_sb_info *sbi = QNX6_SB(sb);
+> -	substring_t args[MAX_OPT_ARGS];
+> -
+> -	if (!options)
+> -		return 1;
+> -
+> -	while ((p = strsep(&options, ",")) != NULL) {
+> -		int token;
+> -		if (!*p)
+> -			continue;
+> -
+> -		token = match_token(p, tokens, args);
+> -		switch (token) {
+> -		case Opt_mmifs:
+> -			set_opt(sbi->s_mount_opt, MMI_FS);
+> -			break;
+> -		default:
+> -			return 0;
+> -		}
+> +	struct qnx6_context *ctx = fc->fs_private;
+> +	struct fs_parse_result result;
+> +	int opt;
+> +
+> +	opt = fs_parse(fc, qnx6_param_spec, param, &result);
+> +	if (opt < 0)
+> +		return opt;
+> +
+> +	switch (opt) {
+> +	case Opt_err:
+> +		ctx->s_mount_opts |= result.uint_32;
+> +		break;
 
-Also I want a persistent file contents write counter; and a
-file-anything write counter.
+Not sure what's going on here. Opt_err is not associated with any
+valid mount option.
 
-Oh, and a conditional read where you pass in the file contents write
-counter and returns an error if the file has been changed since sampling
-time.  The changecookie thing mentioned elsewhere gets us towards that,
-if onlty the issues w/ XFS get resolved.
+> +	case Opt_mmifs:
+> +		ctx->s_mount_opts |= QNX6_MOUNT_MMI_FS;
+> +		break;
 
-> A few times I've been working on shell script in my editor on my
-> desktop, and these shell scripts are tests because shell script is so
-> tempting.  I'm sure this familiar, given (x)fstests.
-> 
-> And if you just run the tests (directly from source in git), and then
-> notice a bug, and start typing in your editor, save the changes, and
-> then and your editor happens to do a generic "open(O_TRUNC), save"
-> instead of an atomic rename.  This happens to be what `nano` and
-> VSCode do, although at least the `vi` I have here does an atomic
-> rename.  (One could say all editors that don't are broken...but...)
+This sets QNX6_MOUNT_MMI_FS into ctx->s_mount_opts but it looks like
+nothing ever reads it back out of the context.
 
-I think they do O_TRUNC because it saves them from having to copy the
-file attrs and xattrs.  Too bad it severely screws up a program running
-in another terminal that just happens to hit the zero-byte file.
+In qnx6_fill_super uptream, this handles the case where the mmi_fs option
+was set:
 
-> And now because the way bash works (and I assume other historical Unix
-> shells) is that they interpret the file *as they're reading it* in
-> this scenario you can get completely undefined behavior.  It could do
-> *anything*.
-> 
-> At least one of those times, I got an error from an `rm -rf`
-> invocation that happened to live in one of those test scripts...that
-> could have in theory just gone off and removed anything.
-> 
-> Basically the contents-immutable is really what you *always* want for
-> executables and really anything that can be parsed without locking
-> (like, almost all config files in /etc too).  With ELF files there's
+         if (test_opt(s, MMI_FS)) {
+                sb1 = qnx6_mmi_fill_super(s, silent);
+                if (sb1)
+                        goto mmi_success;
+                else
+                        goto outnobh;
+        }       
 
-Yes.
+Under the new mount api, the mmi_fs state needs to be saved in the
+filesystem context when it's parsed, then tested here, to do the right
+thing in fill_super when that option has been set.
 
-> EXTBUSY if it *happens* to be in use, but that's just a hack.  Also in
+> +	default:
+> +		return -EINVAL;
+>  	}
+> -	return 1;
+> +	return 0;
+>  }
+>  
+>  static struct buffer_head *qnx6_check_first_superblock(struct super_block *s,
+> @@ -293,22 +296,24 @@ static struct buffer_head *qnx6_check_first_superblock(struct super_block *s,
+>  static struct inode *qnx6_private_inode(struct super_block *s,
+>  					struct qnx6_root_node *p);
+>  
+> -static int qnx6_fill_super(struct super_block *s, void *data, int silent)
+> +static int qnx6_fill_super(struct super_block *s, struct fs_context *fc)
+>  {
+>  	struct buffer_head *bh1 = NULL, *bh2 = NULL;
+>  	struct qnx6_super_block *sb1 = NULL, *sb2 = NULL;
+>  	struct qnx6_sb_info *sbi;
+> +
+>  	struct inode *root;
+>  	const char *errmsg;
+>  	struct qnx6_sb_info *qs;
+>  	int ret = -EINVAL;
+>  	u64 offset;
+>  	int bootblock_offset = QNX6_BOOTBLOCK_SIZE;
+> +	int silent = fc->sb_flags & SB_SILENT;
+>  
+> -	qs = kzalloc(sizeof(struct qnx6_sb_info), GFP_KERNEL);
+> -	if (!qs)
+> +	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
+> +	if (!sbi)
+>  		return -ENOMEM;
+> -	s->s_fs_info = qs;
+> +	s->s_fs_info = sbi;
 
-A hack that doesn't work for scripts.  Either interpreters have to read
-the entire script into memory before execution, or I guess they can do
-the insane thing that the DOS batch interpreter did, where before each
-statement it would save the file pos, close it, execute the command,
-reopen the batch file, and seek back to that line.
+Not sure what this change is for. The existing code is a little odd, it
+allocates *qs as a struct qnx6_sb_info and assigns it to s->s_fs_info, then
+reads it back out of s->s_fs_info via QNX6_SB(s) and assigns that to *sbi;
+I don't see any real reason for that dance, it's 2 pointers w/ the same value.
+ 
+But, with your change *qs is never initialized, and yet this:
 
-> that other thread about racing writes to suid executables...well,
-> there'd be no possibility for races if we just denied writing because
-> again - it makes no sense to just make random writes in-place to an
-> executable.  (OK I did see the zig folks are trying an incremental
-> linker, but still I would just assume reflinks are available for that)
-> 
-> Now this is relevant here because, I don't think anything like
-> dpkg/rpm and all those things could ever use this ioctl for this
-> reason.
+outnobh:
+        kfree(qs);
 
-Right.  dpkg executable file replacement really doesn't make much sense
-for exchange range.  That's also wasn't the usecase I was targetting
-though admittedly I'm only using this ioctl to test functionality that
-online fsck requires.
+remains, which would free the uninitialized pointer variable.
 
-> So, it seems to me like it should really be more explicitly targeted at
-> - Things that are using open()+write() today and it's safe for that use case
-> - The database cases
-> 
-> And not talk about replacing the general open(O_TMPFILE) + rename() path.
+I don't think any of the above needs to change for this conversion.
 
-I think I'll change the cover letter to talk about what it does, what
-problems it solves, and what problems it introduces.  Figuring out how
-to take advantage of it is an exercise for application writers.
+-Eric
 
---D
+>  	/* Superblock always is 512 Byte long */
+>  	if (!sb_set_blocksize(s, QNX6_SUPERBLOCK_SIZE)) {
+> @@ -316,11 +321,6 @@ static int qnx6_fill_super(struct super_block *s, void *data, int silent)
+>  		goto outnobh;
+>  	}
+>  
+> -	/* parse the mount-options */
+> -	if (!qnx6_parse_options((char *) data, s)) {
+> -		pr_err("invalid mount options.\n");
+> -		goto outnobh;
+> -	}
+>  	if (test_opt(s, MMI_FS)) {
+>  		sb1 = qnx6_mmi_fill_super(s, silent);
+>  		if (sb1)
+> @@ -632,18 +632,43 @@ static void destroy_inodecache(void)
+>  	kmem_cache_destroy(qnx6_inode_cachep);
+>  }
+>  
+> -static struct dentry *qnx6_mount(struct file_system_type *fs_type,
+> -	int flags, const char *dev_name, void *data)
+> +static int qnx6_get_tree(struct fs_context *fc)
+>  {
+> -	return mount_bdev(fs_type, flags, dev_name, data, qnx6_fill_super);
+> +	return get_tree_bdev(fc, qnx6_fill_super);
+> +}
+> +
+> +static void qnx6_free_fc(struct fs_context *fc)
+> +{
+> +	kfree(fc->fs_private);
+> +}
+> +
+> +static const struct fs_context_operations qnx6_context_ops = {
+> +	.parse_param	= qnx6_parse_param,
+> +	.get_tree	= qnx6_get_tree,
+> +	.reconfigure	= qnx6_reconfigure,
+> +	.free		= qnx6_free_fc,
+> +};
+> +
+> +static int qnx6_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct qnx6_context *ctx;
+> +
+> +	ctx = kzalloc(sizeof(struct qnx6_context), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +	fc->ops = &qnx6_context_ops;
+> +	fc->fs_private = ctx;
+> +
+> +	return 0;
+>  }
+>  
+>  static struct file_system_type qnx6_fs_type = {
+> -	.owner		= THIS_MODULE,
+> -	.name		= "qnx6",
+> -	.mount		= qnx6_mount,
+> -	.kill_sb	= kill_block_super,
+> -	.fs_flags	= FS_REQUIRES_DEV,
+> +	.owner			= THIS_MODULE,
+> +	.name			= "qnx6",
+> +	.kill_sb		= kill_block_super,
+> +	.fs_flags		= FS_REQUIRES_DEV,
+> +	.init_fs_context	= qnx6_init_fs_context,
+> +	.parameters		= qnx6_param_spec,
+>  };
+>  MODULE_ALIAS_FS("qnx6");
+>  
+
 
