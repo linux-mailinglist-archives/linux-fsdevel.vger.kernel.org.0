@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-13303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47DE286E626
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 17:51:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C22286E62A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 17:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 683621C23115
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 16:51:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB484B27CBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 16:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3313D0CD;
-	Fri,  1 Mar 2024 16:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AF33D570;
+	Fri,  1 Mar 2024 16:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="fNWUnrtg"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="bL8wu3wN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A533C6AB;
-	Fri,  1 Mar 2024 16:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60884417;
+	Fri,  1 Mar 2024 16:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709311498; cv=none; b=jnxHloGLxVVW1yufFbYq7XhiofYah7DobjG1/ST2Vh49aSTBf6caa72Egx2s/7fobEyYuA8Euef9MKTofxa40wY29VOX6AooFdvIHpYiRACzYA7NzL86AXu30jC1wjR1mCMUsWpBzqY90Wk+QmTy+E4n/FbNVz+0oK1+sN4nAfk=
+	t=1709311506; cv=none; b=C4EzVsTNWKU8W7QvHDp6QAWvwICcHQlrrmnqk3LTkzZINnOG0TEba9UxrftdlPO8Fpnd2vjMCAkQzfykviBstFGBcjCxISOGRp/kUKcSQQR9TZ6pTdKTbc34R/UhHvDAlEnvxghi+jEyXuxsEa3B8LBzhsYeMYku8PaCBMnmzXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709311498; c=relaxed/simple;
-	bh=BY0+lJrnKbexBUzETPtFYZ+OJuge9ZodiUfVOjc2hK8=;
+	s=arc-20240116; t=1709311506; c=relaxed/simple;
+	bh=FOON1o0mymLuX2IKmggEuVP3QW7GlR7Lcz6UZhHnvAM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JNpmBsdIldQP6TrDGtY+HVWfCGW7e7ZbHLBRFn3bfSuWdWIgUdNDVuEt70gOqyMx0bF/5C1v8lg0OylWNFQWgDxpPVsmBjkdSRNdUwdwSaCV6ChNvee8/XgMmXQl4TqMt9nnAKNFQhTsz6D0qC/Oq018jwjzzvnjGw+F/7vY+Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=fNWUnrtg; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=HiH6kncvim5OTZS67pd7kkp6SOW9MmWg9GnEbEvcS9NnhwqvUatbNRUcx3Bs9R7w3K67OBgEMQQq+MpLhnqzEg/iNu2deWqZto0qP4hCr3po7Oa0wDJexgaTTTArh6h/HSn6inwNmFzGtBtGPZBxuummtz5xnElczYjgFLgg4Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=bL8wu3wN; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4TmYpr21J9z9t8W;
-	Fri,  1 Mar 2024 17:44:52 +0100 (CET)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4TmYpv5Blmz9tW4;
+	Fri,  1 Mar 2024 17:44:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1709311492;
+	s=MBO0001; t=1709311495;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=O82T73AIK6qGhlYorGzOupTzei7wEk6+FPA8o3URJUE=;
-	b=fNWUnrtgSvHwlKswQCDBdMZ99aHEG9IE0hNSW5jexFvvQkpzgpzjuETR588Aq25oYo7zKm
-	8/eeN0UkSi/gyP8pjyFHWVKgnqR3ti1wvcPmdX3uCpNLcdx7pAw4DTQ/lkD/MWS4JI7jCc
-	lWQn7nG2EGhY3dAQjA0kSFrC6IVJyl6Kx/V1NZAN5ZMSUU8rpTjjNQ68eAgTbbYXLDlU+D
-	nunEh6RLwLQd9tGcIVuB9KmtTSEiCFBkw/cg0DX8LZECOWq5I6YzTySOTqCL7PStVsWUB/
-	V3TcSHJAm7jDZ6M3hPNRYHqx5COZfIg5tVkt5O731DxQR8wWHdF2+4rgwYKw7A==
+	bh=1cELEozXOYCd1Af2ZXfddDuv3Odm1CWuSBqyYDa15DQ=;
+	b=bL8wu3wNKf1pmc8SzUQPy23UfUZ0BwEQ8+fDKjHUH8N+j2+VBUy1OSkewMRkC5mKZ/EWvp
+	rQuqv1J8e6Vp3ePcwqreNd8Np8dNup0i92iIQy96VkqcjsyAawLjiJLYav4gsGGdCUNmcA
+	2lGI++nSQTqWERFoQA7n7WWLsY9t5UfQJiaX3aM0PHMZ1pJ+ckJtG93Tf9a5Cm/n06wnT9
+	r0yuN/PlrhcScbNCXn5iUOCg5Nt2ipmOpo8lK8BVQhqzgMJWClHr3TjBA7+wIS08h+1l3a
+	s22J69b1C9/Y8dEvw0GLItEqLOMZw1U5cE+ygJdpzWGZ+pPT5Kpw6pzwE1ZHZA==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
@@ -61,10 +61,11 @@ Cc: djwong@kernel.org,
 	gost.dev@samsung.com,
 	linux-kernel@vger.kernel.org,
 	chandan.babu@oracle.com,
-	willy@infradead.org
-Subject: [PATCH v2 01/13] mm: Support order-1 folios in the page cache
-Date: Fri,  1 Mar 2024 17:44:32 +0100
-Message-ID: <20240301164444.3799288-2-kernel@pankajraghav.com>
+	willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH v2 02/13] fs: Allow fine-grained control of folio sizes
+Date: Fri,  1 Mar 2024 17:44:33 +0100
+Message-ID: <20240301164444.3799288-3-kernel@pankajraghav.com>
 In-Reply-To: <20240301164444.3799288-1-kernel@pankajraghav.com>
 References: <20240301164444.3799288-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -74,150 +75,166 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4TmYpr21J9z9t8W
+X-Rspamd-Queue-Id: 4TmYpv5Blmz9tW4
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Folios of order 1 have no space to store the deferred list.  This is
-not a problem for the page cache as file-backed folios are never
-placed on the deferred list.  All we need to do is prevent the core
-MM from touching the deferred list for order 1 folios and remove the
-code which prevented us from allocating order 1 folios.
+Some filesystems want to be able to ensure that folios that are added to
+the page cache are at least a certain size.
+Add mapping_set_folio_min_order() to allow this level of control.
 
-Link: https://lore.kernel.org/linux-mm/90344ea7-4eec-47ee-5996-0c22f42d6a6a@google.com/
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Co-developed-by: Pankaj Raghav <p.raghav@samsung.com>
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- include/linux/huge_mm.h |  7 +++++--
- mm/filemap.c            |  2 --
- mm/huge_memory.c        | 23 ++++++++++++++++++-----
- mm/internal.h           |  4 +---
- mm/readahead.c          |  3 ---
- 5 files changed, 24 insertions(+), 15 deletions(-)
+ include/linux/pagemap.h | 100 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 80 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 5adb86af35fc..916a2a539517 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -263,7 +263,7 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
- unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
- 		unsigned long len, unsigned long pgoff, unsigned long flags);
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 2df35e65557d..fc8eb9c94e9c 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -202,13 +202,18 @@ enum mapping_flags {
+ 	AS_EXITING	= 4, 	/* final truncate in progress */
+ 	/* writeback related tags are not used */
+ 	AS_NO_WRITEBACK_TAGS = 5,
+-	AS_LARGE_FOLIO_SUPPORT = 6,
+-	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
+-	AS_STABLE_WRITES,	/* must wait for writeback before modifying
++	AS_RELEASE_ALWAYS = 6,	/* Call ->release_folio(), even if no private data */
++	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
+ 				   folio contents */
+-	AS_UNMOVABLE,		/* The mapping cannot be moved, ever */
++	AS_FOLIO_ORDER_MIN = 8,
++	AS_FOLIO_ORDER_MAX = 13, /* Bit 8-17 are used for FOLIO_ORDER */
++	AS_UNMOVABLE = 18,		/* The mapping cannot be moved, ever */
+ };
  
--void folio_prep_large_rmappable(struct folio *folio);
-+struct folio *folio_prep_large_rmappable(struct folio *folio);
- bool can_split_folio(struct folio *folio, int *pextra_pins);
- int split_huge_page_to_list(struct page *page, struct list_head *list);
- static inline int split_huge_page(struct page *page)
-@@ -410,7 +410,10 @@ static inline unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
- 	return 0;
++#define AS_FOLIO_ORDER_MIN_MASK 0x00001f00
++#define AS_FOLIO_ORDER_MAX_MASK 0x0003e000
++#define AS_FOLIO_ORDER_MASK (AS_FOLIO_ORDER_MIN_MASK | AS_FOLIO_ORDER_MAX_MASK)
++
+ /**
+  * mapping_set_error - record a writeback error in the address_space
+  * @mapping: the mapping in which an error should be set
+@@ -344,9 +349,47 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+ 	m->gfp_mask = mask;
  }
  
--static inline void folio_prep_large_rmappable(struct folio *folio) {}
-+static inline struct folio *folio_prep_large_rmappable(struct folio *folio)
++/*
++ * There are some parts of the kernel which assume that PMD entries
++ * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
++ * limit the maximum allocation order to PMD size.  I'm not aware of any
++ * assumptions about maximum order if THP are disabled, but 8 seems like
++ * a good order (that's 1MB if you're using 4kB pages)
++ */
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
++#else
++#define MAX_PAGECACHE_ORDER	8
++#endif
++
++/*
++ * mapping_set_folio_min_order() - Set the minimum folio order
++ * @mapping: The address_space.
++ * @min: Minimum folio order (between 0-MAX_PAGECACHE_ORDER inclusive).
++ *
++ * The filesystem should call this function in its inode constructor to
++ * indicate which base size of folio the VFS can use to cache the contents
++ * of the file.  This should only be used if the filesystem needs special
++ * handling of folio sizes (ie there is something the core cannot know).
++ * Do not tune it based on, eg, i_size.
++ *
++ * Context: This should not be called while the inode is active as it
++ * is non-atomic.
++ */
++static inline void mapping_set_folio_min_order(struct address_space *mapping,
++					       unsigned int min)
 +{
-+	return folio;
++	if (min > MAX_PAGECACHE_ORDER)
++		min = MAX_PAGECACHE_ORDER;
++
++	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
++			 (min << AS_FOLIO_ORDER_MIN) |
++			 (MAX_PAGECACHE_ORDER << AS_FOLIO_ORDER_MAX);
 +}
- 
- #define transparent_hugepage_flags 0UL
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 750e779c23db..2b00442b9d19 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1912,8 +1912,6 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 			gfp_t alloc_gfp = gfp;
- 
- 			err = -ENOMEM;
--			if (order == 1)
--				order = 0;
- 			if (order > 0)
- 				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
- 			folio = filemap_alloc_folio(alloc_gfp, order);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 94c958f7ebb5..81fd1ba57088 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -788,11 +788,15 @@ struct deferred_split *get_deferred_split_queue(struct folio *folio)
- }
- #endif
- 
--void folio_prep_large_rmappable(struct folio *folio)
-+struct folio *folio_prep_large_rmappable(struct folio *folio)
- {
--	VM_BUG_ON_FOLIO(folio_order(folio) < 2, folio);
--	INIT_LIST_HEAD(&folio->_deferred_list);
-+	if (!folio || !folio_test_large(folio))
-+		return folio;
-+	if (folio_order(folio) > 1)
-+		INIT_LIST_HEAD(&folio->_deferred_list);
- 	folio_set_large_rmappable(folio);
 +
-+	return folio;
- }
- 
- static inline bool is_transparent_hugepage(struct folio *folio)
-@@ -3082,7 +3086,8 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 	/* Prevent deferred_split_scan() touching ->_refcount */
- 	spin_lock(&ds_queue->split_queue_lock);
- 	if (folio_ref_freeze(folio, 1 + extra_pins)) {
--		if (!list_empty(&folio->_deferred_list)) {
-+		if (folio_order(folio) > 1 &&
-+		    !list_empty(&folio->_deferred_list)) {
- 			ds_queue->split_queue_len--;
- 			list_del(&folio->_deferred_list);
- 		}
-@@ -3133,6 +3138,9 @@ void folio_undo_large_rmappable(struct folio *folio)
- 	struct deferred_split *ds_queue;
- 	unsigned long flags;
- 
-+	if (folio_order(folio) <= 1)
-+		return;
-+
- 	/*
- 	 * At this point, there is no one trying to add the folio to
- 	 * deferred_list. If folio is not in deferred_list, it's safe
-@@ -3158,7 +3166,12 @@ void deferred_split_folio(struct folio *folio)
- #endif
- 	unsigned long flags;
- 
--	VM_BUG_ON_FOLIO(folio_order(folio) < 2, folio);
-+	/*
-+	 * Order 1 folios have no space for a deferred list, but we also
-+	 * won't waste much memory by not adding them to the deferred list.
-+	 */
-+	if (folio_order(folio) <= 1)
-+		return;
- 
- 	/*
- 	 * The try_to_unmap() in page reclaim path might reach here too,
-diff --git a/mm/internal.h b/mm/internal.h
-index f309a010d50f..5174b5b0c344 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -419,9 +419,7 @@ static inline struct folio *page_rmappable_folio(struct page *page)
+ /**
+  * mapping_set_large_folios() - Indicate the file supports large folios.
+- * @mapping: The file.
++ * @mapping: The address_space.
+  *
+  * The filesystem should call this function in its inode constructor to
+  * indicate that the VFS can use large folios to cache the contents of
+@@ -357,7 +400,37 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+  */
+ static inline void mapping_set_large_folios(struct address_space *mapping)
  {
- 	struct folio *folio = (struct folio *)page;
- 
--	if (folio && folio_order(folio) > 1)
--		folio_prep_large_rmappable(folio);
--	return folio;
-+	return folio_prep_large_rmappable(folio);
+-	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
++	mapping_set_folio_min_order(mapping, 0);
++}
++
++static inline unsigned int mapping_max_folio_order(struct address_space *mapping)
++{
++	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
++}
++
++static inline unsigned int mapping_min_folio_order(struct address_space *mapping)
++{
++	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
++}
++
++static inline unsigned long mapping_min_folio_nrpages(struct address_space *mapping)
++{
++	return 1UL << mapping_min_folio_order(mapping);
++}
++
++/**
++ * mapping_align_start_index() - Align starting index based on the min
++ * folio order of the page cache.
++ * @mapping: The address_space.
++ *
++ * Ensure the index used is aligned to the minimum folio order when adding
++ * new folios to the page cache by rounding down to the nearest minimum
++ * folio number of pages.
++ */
++static inline pgoff_t mapping_align_start_index(struct address_space *mapping,
++						pgoff_t index)
++{
++	return round_down(index, mapping_min_folio_nrpages(mapping));
  }
  
- static inline void prep_compound_head(struct page *page, unsigned int order)
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 2648ec4f0494..369c70e2be42 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -516,9 +516,6 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 		/* Don't allocate pages past EOF */
- 		while (index + (1UL << order) - 1 > limit)
- 			order--;
--		/* THP machinery does not support order-1 */
--		if (order == 1)
--			order = 0;
- 		err = ra_alloc_folio(ractl, index, mark, order, gfp);
- 		if (err)
- 			break;
+ /*
+@@ -367,7 +440,7 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
+ static inline bool mapping_large_folio_support(struct address_space *mapping)
+ {
+ 	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+-		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
++	       (mapping_max_folio_order(mapping) > 0);
+ }
+ 
+ static inline int filemap_nr_thps(struct address_space *mapping)
+@@ -528,19 +601,6 @@ static inline void *detach_page_private(struct page *page)
+ 	return folio_detach_private(page_folio(page));
+ }
+ 
+-/*
+- * There are some parts of the kernel which assume that PMD entries
+- * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
+- * limit the maximum allocation order to PMD size.  I'm not aware of any
+- * assumptions about maximum order if THP are disabled, but 8 seems like
+- * a good order (that's 1MB if you're using 4kB pages)
+- */
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
+-#else
+-#define MAX_PAGECACHE_ORDER	8
+-#endif
+-
+ #ifdef CONFIG_NUMA
+ struct folio *filemap_alloc_folio(gfp_t gfp, unsigned int order);
+ #else
 -- 
 2.43.0
 
