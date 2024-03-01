@@ -1,102 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-13266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1195986E167
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 13:57:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C398A86E16A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 13:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED6031C2166F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 12:57:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45019B216A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Mar 2024 12:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035EB4087A;
-	Fri,  1 Mar 2024 12:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7762F40BE4;
+	Fri,  1 Mar 2024 12:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdrD36i5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QuBR6vEY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667643E47F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Mar 2024 12:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC25B3E47F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Mar 2024 12:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709297846; cv=none; b=lbrgMjRf9VVIf8H7k0EethQ+Wo11Arj52kbTrEuI+S1r700smAOV6WbDxzhHt21ReW4p2YPsNVJboim5qpOjduNhajavtZOuyc0raofy7bWScvAlpCB+HhEjrcMnHOLFy7MnSjPvpS9U3YK0v8Q7/aedhJ5lDfs1rBvFceWtstI=
+	t=1709297961; cv=none; b=OrGpytvUC/PrP+rklAXa7jetHsQXhwO9+NJ/g0p1hQcgHY7jmISrH8pjrjpVgfVeUy89Jn+RrM3nRc33zfBsoHhOzN8B7q6pvsKDjrCfgOA602dbTtrxwMPvuyYOqNV5P3TogCxtyxyGQft85/4g80Qz4W9gSel2Jeo4epm9/t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709297846; c=relaxed/simple;
-	bh=RpJahEMw+xWp8TA56IwROuaIMUIWozptg7WJ3K0KL4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tijhOF0kbGrb+NrsZjRm86KQg3d5cDrLAS90BfqKgpHB8pX3qDa4OUZjkhsRzF/uYm56J0UT5JdZtRWCL/6RoVKrxT9KGx8L7/itJFjZjKVNY9mHXU9VaaUEriUONWlXWddtggJGvrWMZoBEOoOdjIfi1pgqvnWYF4lakAAOLXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdrD36i5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E2CC433C7;
-	Fri,  1 Mar 2024 12:57:23 +0000 (UTC)
+	s=arc-20240116; t=1709297961; c=relaxed/simple;
+	bh=rx6vJUMXPtWXfv/Vw/HMW3iy86HgXLf7+KS5j6rCpVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aXwXEYnRbOvjsPRsH6z+PV58ajMIwaR7cscpjDG91IHUuOFu1xz5MU+qsucQttC2v0aG98AdMwU7uelj4i9sKklc5btFHkABZHaTR8a1IBeyBSrAQU2fgxQydXe0IGBIt5JCyfJtHxqL0iw7cndaFVXsg2Bt5Io1RNPcoE/qFfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QuBR6vEY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06CACC433F1;
+	Fri,  1 Mar 2024 12:59:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709297845;
-	bh=RpJahEMw+xWp8TA56IwROuaIMUIWozptg7WJ3K0KL4I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hdrD36i5y5Q5OcwZatJ2B5ewU5YbcbBWeO592qSbA1hQgIT8QMD9whqqoGUDbbp7Z
-	 GzG3U0QF4up0kAl8NapgY5sUjWATKoWH3q/xr/7JOvTWJHNHJtRpK51wvr/qCw6ewg
-	 OUaJPp9/E3ZZoVq2ZL6l9au5p2W/Yq+WuQQC9q24CpGLGgJ+18NUQQ1CwEpJTZTu0O
-	 0NLmMhirhM3WHhJFsOeXS3Kk7sDHMAlQgUrxrPngHHzDybsCdfpiAEpBbeuWEdf6LR
-	 sCwQ8SQqiW5bRfvx1AJ9tFFJv/60Se9NW9Xm0ISArc+rPab4qSizEA+EDfBsQ9pRLb
-	 t9CD9CuZ3dlNg==
-Date: Fri, 1 Mar 2024 13:57:21 +0100
+	s=k20201202; t=1709297961;
+	bh=rx6vJUMXPtWXfv/Vw/HMW3iy86HgXLf7+KS5j6rCpVc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QuBR6vEYoNlzTnXOexP8VO8uv0vHLgRwgXRktIQ/oPIB3+pyJ4arGlAi0Ud9+gXCB
+	 VUlo0gMMvzEep/itb+PI6HVvZJxGTIYUCjkk9LjOSa1s2UrEH2yXFnttWQuuLuHmf8
+	 0oV8zTjkXa/jkEQ/sfHXkw53CjpDW7deD8/zOyxbpsxwadNxsiSmhwxB9wzKlZVKOu
+	 MXTpl1Ifushtg/Skg6iqiElHnTjvITXBX2hRPQtpDJgCbw02BzQs++t85i9DlPWbJw
+	 Lnwh3dejEUONWbczAZbDPpA6wd6YwJj0caacCupfup/hTlTYr0pDTvVaVNHb31s7fc
+	 r2Mf7EKOfrFNQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Muchun Song <muchun.song@linux.dev>
-Cc: Giuseppe Scrivano <gscrivan@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	rodrigo@sdfg.com.ar
-Subject: Re: [PATCH] hugetlbfs: support idmapped mounts
-Message-ID: <20240301-wedel-lenkung-db380eb1e90f@brauner>
-References: <20240229152405.105031-1-gscrivan@redhat.com>
- <1B974CF9-C919-48F5-AC0F-7F296EC5364F@linux.dev>
- <87ttlq5q6g.fsf@redhat.com>
- <B8C52AAA-C8B5-4DF9-B9B2-A7DC1270E0AF@linux.dev>
+To: linux-fsdevel@vger.kernel.org,
+	Bill O'Donnell <bodonnel@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	al@alarsen.net,
+	sandeen@redhat.com
+Subject: Re: [PATCH v2] qnx4: convert qnx4 to use the new mount api
+Date: Fri,  1 Mar 2024 13:59:10 +0100
+Message-ID: <20240301-handwagen-loslassen-1669ef4d91c4@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240229161649.800957-1-bodonnel@redhat.com>
+References: <20240229161649.800957-1-bodonnel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <B8C52AAA-C8B5-4DF9-B9B2-A7DC1270E0AF@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=945; i=brauner@kernel.org; h=from:subject:message-id; bh=rx6vJUMXPtWXfv/Vw/HMW3iy86HgXLf7+KS5j6rCpVc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ+vKj0fnKo9s2AvasrPHbq13WkbI4LX6gs/+TtX56bT Ff9VznrdJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykMoOR4VvQfNuyiQr5tukG c31WVtxfvMyPo7PxlpJBdVP5EoFvMQz/Kx6dvBpUOolp11v7XeYiZw0atHdw+SsFX65X+fiUiec HPwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 01, 2024 at 04:47:30PM +0800, Muchun Song wrote:
+On Thu, 29 Feb 2024 10:15:38 -0600, Bill O'Donnell wrote:
+> Convert the qnx4 filesystem to use the new mount API.
+> 
+> Tested mount, umount, and remount using a qnx4 boot image.
 > 
 > 
-> > On Mar 1, 2024, at 16:09, Giuseppe Scrivano <gscrivan@redhat.com> wrote:
-> > 
-> > Muchun Song <muchun.song@linux.dev> writes:
-> > 
-> >>> On Feb 29, 2024, at 23:24, Giuseppe Scrivano <gscrivan@redhat.com> wrote:
-> >>> 
-> >>> pass down the idmapped mount information to the different helper
-> >>> functions.
-> >>> 
-> >>> Differently, hugetlb_file_setup() will continue to not have any
-> >>> mapping since it is only used from contexts where idmapped mounts are
-> >>> not used.
-> >> 
-> >> Sorry, could you explain more why you want this changes? What's the
-> >> intention?
-> > 
-> > we are adding user namespace support to Kubernetes to run each
-> > pod (a group of containers) without overlapping IDs.  We need idmapped
-> > mounts for any mount shared among multiple pods.
-> > 
-> > It was reported both for crun and containerd:
-> > 
-> > - https://github.com/containers/crun/issues/1380
-> > - https://github.com/containerd/containerd/issues/9585
-> 
-> It is helpful and really should go into commit log to explain why it
-> is necessary (those information will useful for others). The changes
-> are straightforward, but I am not familiar with Idmappings (I am not
-> sure if there are more things to be considered).
 
-Fwiw, I've reviewed this before and it should be fine. I'll take another
-close look at it but last time I didn't see anything obvious that would
-be problematic so I'd be tempted to apply it unless there's specific
-objections.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] qnx4: convert qnx4 to use the new mount api
+      https://git.kernel.org/vfs/vfs/c/6b91bfa1651d
 
