@@ -1,94 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-13344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A5786EDF9
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 02:51:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640B886EE17
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 03:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD07E2851BC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 01:51:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1FEBB21AF9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 02:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925B77483;
-	Sat,  2 Mar 2024 01:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797AD7490;
+	Sat,  2 Mar 2024 02:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dpk2Es87"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06816D39
-	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Mar 2024 01:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29FE63AE
+	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Mar 2024 02:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709344265; cv=none; b=mLkUVDvqu+rlkQvRD2QjLbgTSgnXIjUvdW4OGZjkXcMzf+XLZkCkp5ivvUyb+1AGWh1P+66RGynXCImYoPP59TjN0H19czA28LVTeHxyeqy5g7EhT6C1nqszcIX0n/EG8DuFpU7lE9RGJocQ7D79u3X22yXGX2xgvlLkuHk3PfI=
+	t=1709345699; cv=none; b=TEUC6m4pypx22fsIbknLe7XjQXnQGn5NdLmzOUOoPkyhRcZud0/wcqhuXxTbdmstKcMNVYHzg27fGXnS6AjA8F/O0beIUaPvLUSNyLnCj3P5Nx4UBeyeHMbEk8aP5aDY6OZkaNFiMwBgZK2sjmTVES/w6+0DLzR19uWLyxG7yIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709344265; c=relaxed/simple;
-	bh=j/JB2jyENDKPMzsPZBblzk98S3i8gV/N1pLSReCqPhY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Y09nSqkQs3fzMXdljVLIdVsfbvPsYB2SSFmRqQoZKN+HrRD2eibphMvn2LPO9Zw6uwXkWMBEXDxKwO6mcruHGiygWdeBUeU5HlkVnbn29+L26A9r+NacibErS0Jwxszf+GkI6WxuXMKATwZL6PyZ6suZgcg9a1sfKD2BAXIXN6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c495649efdso360981239f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Mar 2024 17:51:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709344263; x=1709949063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LvJsx84GDRR3sGeQWUlw8maTlVsrsS8sB6uzDnbyywA=;
-        b=CIG2a+onXe4ncv+hMBus2v/ZM7icKzKd/lX9Q3NTfHxfMo3EqD2KEmdsdrTmPY2ezs
-         XCGLMBfbm4igCAzDdYoSmPi6H3zQyQCXkUx29pvqcLioYw1PoT6PXOiJv53egefe01iU
-         Co/QM8KFqS+k5DKESC2X8c10ONedJXEwotF5usNIQ77Zm6IicrI6rtBurmqpEp93ISY/
-         A87oaEzm27DckXRXXM6Gyhd4FcFFVgGJpk+RRaMGWbXicTjvH5+U4O8SsoPsmlRs5AiN
-         pA2ohPSD96ocTIg/k9vHSO/qshuTYisWL0H/qzDlVgSLxkmlLK/Yd+P6MQGkd34IlnQv
-         lvaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxrHI/mEp1pu5URJ3065lu4akgRrgr9KgDYxmqi2/DvZYqADqSua24F+WDQp1U2OasFGWCmNX6SkiUr55aDqPkC2SWm63Yxovp+yLy5w==
-X-Gm-Message-State: AOJu0Yy7AB83CY2+4YZSnfYcZaMc25vfuK87tlGLIQlPfXHzH/Fc2Gr4
-	+veNplUvrAXJ0Zs6Jk5ZRtynEGROQEr0xwRxcvo1EetrwxdOL6lrnr3TCfXzIGUMNVyHKOH0ZpB
-	lar0k/nRUPeIVlJLamKCefqMospeATZ7CmCKMWj692oBtZqBHdDk6dKo=
-X-Google-Smtp-Source: AGHT+IHuZLEai30Vbe4B0f25cUi3TWUjAJVlZiXgrG7JjlW0Eoir/37IyGI70zz2FHDwFteKbxHcLXnIYeVoRrWtAVl2bbv76tjQ
+	s=arc-20240116; t=1709345699; c=relaxed/simple;
+	bh=xdUH8yt56H1yrlX9btyLfY5jD2X0MPDmpzirbToSkN0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DU+qaO2jrXb5g8itbv1yVy5fkgxSCQ8SqW1Dx8x/dGNGQ93GDU4eBoYlVyG7R2VFFGWFPWYEwvPTwONnSkCxNXt5AUUbHwqlkLSxpzS4fIyz9qlcyrQYulf2a83hhunzmMSZPaym89rnU+IPCdLfegQeeQAAomQenQxYrgBbmgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dpk2Es87; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 1 Mar 2024 21:14:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1709345695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=SLhMFb9RPBAVJDy0ylhiUFPZYEbcZieEIC/CfKQNaUQ=;
+	b=Dpk2Es87o5cb0ruLrDNl0GHFI1Zz8TwMOVzXb8YkI7CBIisdANsCZ8u0BSWo2Q0+ppxECs
+	Wm2o8+aLXxhWQ+tbLhUnYjuAAAJlTMUWxhoVby4PDR++QkiSS3351AlhLScgGojZtqz4Jw
+	GiGM0j6VboSzMFx5mr4kE+9NIrtooLs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [WIP] bcachefs fs usage update
+Message-ID: <gajhq3iyluwmr44ee2fzacfpgpxmr2jurwqg6aeiab4lfila3p@b3l7bywr3yed>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:629a:b0:474:8177:31c9 with SMTP id
- fh26-20020a056638629a00b00474817731c9mr111536jab.5.1709344263133; Fri, 01 Mar
- 2024 17:51:03 -0800 (PST)
-Date: Fri, 01 Mar 2024 17:51:03 -0800
-In-Reply-To: <00000000000094d9bd05eb190572@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009a64380612a3b99e@google.com>
-Subject: Re: [syzbot] [reiserfs?] kernel BUG in reiserfs_in_journal
-From: syzbot <syzbot+79bf80830388272ba2f9@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
-	bvanassche@acm.org, jack@suse.cz, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, neilb@suse.de, 
-	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	willy@infradead.org, yi.zhang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-syzbot suspects this issue was fixed by commit:
+I'm currently updating the 'bcachefs fs usage' command for the disk
+accounting rewrite, and looking for suggestions on any improements we
+could make - ways to present the output that would be clearer and more
+useful, possibly ideas on on new things to count...
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+I think a shorter form of the per-device section is in order, a table
+with data type on the x axis and the device on the y axis; we also want
+percentages.
 
-    fs: Block writes to mounted block devices
+The big thing I'm trying to figure out is how to present the snapshots
+counters in a useful way.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16e80bba180000
-start commit:   611da07b89fd Merge tag 'acpi-6.6-rc8' of git://git.kernel...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=174a257c5ae6b4fd
-dashboard link: https://syzkaller.appspot.com/bug?extid=79bf80830388272ba2f9
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ca8c63680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16dae351680000
+Snapshot IDs form trees, where subvolumes correspond to leaf nodes in
+snapshot trees and interior nodes represent data shared between multiple
+subvolumes.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+That means it's straightforward to print how much data each subvolumme
+is using directly - look up the subvolume for a given snapshot ID, look
+up the filesystem path of that subvolume - but I haven't come up with a
+good way of presenting how data is shared; these trees can be
+arbitrarily large.
 
-#syz fix: fs: Block writes to mounted block devices
+Thoughts?
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Filesystem: 77d3a40d-58b6-46c9-a4d2-e59c8681e152
+Size:                       11.0 GiB
+Used:                       4.96 GiB
+Online reserved:                 0 B
+Inodes:                            4
+
+Persistent reservations:
+2x                          5.00 MiB
+
+Data type       Required/total  Durability    Devices
+btree:          1/2             2             [vdb vdc]           14.0 MiB
+btree:          1/2             2             [vdb vdd]           17.8 MiB
+btree:          1/2             2             [vdc vdd]           14.3 MiB
+user:           1/2             2             [vdb vdc]           1.64 GiB
+user:           1/2             2             [vdb vdd]           1.63 GiB
+user:           1/2             2             [vdc vdd]           1.64 GiB
+
+Compression:      compressed    uncompressed     average extent size
+lz4                 4.63 GiB        6.57 GiB                 112 KiB
+incompressible       328 MiB         328 MiB                 113 KiB
+
+Snapshots:
+4294967295          4.91 GiB
+
+Btrees:
+extents             12.0 MiB
+inodes               256 KiB
+dirents              256 KiB
+alloc               10.8 MiB
+subvolumes           256 KiB
+snapshots            256 KiB
+lru                  256 KiB
+freespace            256 KiB
+need_discard         256 KiB
+backpointers        20.5 MiB
+bucket_gens          256 KiB
+snapshot_trees       256 KiB
+logged_ops           256 KiB
+accounting           256 KiB
+
+(no label) (device 0):           vdb              rw
+                                data         buckets    fragmented
+  free:                     2.27 GiB           18627
+  sb:                       3.00 MiB              25       124 KiB
+  journal:                  32.0 MiB             256
+  btree:                    15.9 MiB             127
+  user:                     1.64 GiB           13733      41.1 MiB
+  cached:                        0 B               0
+  parity:                        0 B               0
+  stripe:                        0 B               0
+  need_gc_gens:                  0 B               0
+  need_discard:                  0 B               0
+  capacity:                 4.00 GiB           32768
+
+(no label) (device 1):           vdc              rw
+                                data         buckets    fragmented
+  free:                     2.28 GiB           18652
+  sb:                       3.00 MiB              25       124 KiB
+  journal:                  32.0 MiB             256
+  btree:                    14.1 MiB             113
+  user:                     1.64 GiB           13722      38.5 MiB
+  cached:                        0 B               0
+  parity:                        0 B               0
+  stripe:                        0 B               0
+  need_gc_gens:                  0 B               0
+  need_discard:                  0 B               0
+  capacity:                 4.00 GiB           32768
+
+(no label) (device 2):           vdd              rw
+                                data         buckets    fragmented
+  free:                     2.28 GiB           18640
+  sb:                       3.00 MiB              25       124 KiB
+  journal:                  32.0 MiB             256
+  btree:                    16.0 MiB             128
+  user:                     1.64 GiB           13719      38.6 MiB
+  cached:                        0 B               0
+  parity:                        0 B               0
+  stripe:                        0 B               0
+  need_gc_gens:                  0 B               0
+  need_discard:                  0 B               0
+  capacity:                 4.00 GiB           32768
 
