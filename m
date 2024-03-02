@@ -1,205 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-13359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5C986EF47
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 08:45:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300C586EFDD
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 10:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8741C20DF9
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 07:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9C351F21DF7
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 09:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E8C225A6;
-	Sat,  2 Mar 2024 07:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fm123pWv"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783D714F75;
+	Sat,  2 Mar 2024 09:37:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A3B24A0E;
-	Sat,  2 Mar 2024 07:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E25168BD;
+	Sat,  2 Mar 2024 09:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709365382; cv=none; b=Sl1EU2gNlYpVyZ4vv98ffrFr1xrbhqkp5SP5sDjIAWZX8lMvtDZ9drRgslnKL1dV02rBjWDpQmmB9hKAPjmwkUopHopRm2fvxRNQYQsnC5cJAhRUtBvqbqZTabdXcgC2shDuDKuRKdLvUL11tXzuLoIzvz3Zjr1Q5+zvOg8N/H0=
+	t=1709372243; cv=none; b=ay+sf4gXQzDgzoAChcsjEdyG4G+9vrsXGdzkKdNNQgPvu/NC1PT+Y43cgcimCn3pgl8tQ6p5u4LIYWVZlctomoIE7fOgtdhc0A/Twf2HYW4PZzpetc2kD2HNdFw8YULo9v/UB3Kw7/sd9SXWP+nWq5bh75VPXFJpleylbuFk358=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709365382; c=relaxed/simple;
-	bh=4GgXxZs/mglWIRYd9/bl71jA6REtfHyAlcztG0gdRX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CudLb6oUBEuYQ+8IoXDgfdMs4qGYUgKR+IixDJQyEZ4d9HIgaIl/fRzIp3D+pngXwQkdxW2JA/Gk/CxLZ9eZus+SxM5v+Q0Eup/qAVgqKxlTK9oSn30kpcw1Mr+EybkW73tWvtiM0JocFCUnlCtYyRO6WBOdHqR1wBB/LcILUYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fm123pWv; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6e5d7f1f15bso863636b3a.2;
-        Fri, 01 Mar 2024 23:43:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709365379; x=1709970179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iROnnUQAIrn8DnCE9YGkqkSmP3qnk0ncEloJYBFiPVY=;
-        b=fm123pWvIxbYCJCah26aQGuboZ93+hVunMqnSIXQ4lr3fLAEi6Yn+uKS64CA80Z/dO
-         PoBV0+p088i8HXpKkKMWoA04fTRYDMivD8n+U7VeMCJj0vTIBg4540Nxz3tBjf7amHlQ
-         bOeOudMdAbGR92DdyVf+KhRXetd2yULG5rIRYfovLLemSgYrxxoiL1XpDQMaXZbUa9pT
-         Mh8Iq1MMkYU9tSsPVzjw5o5lLzVIWmDVhMWY1OVxk39FGnwA4+NwwkYk6fDcEnUjqovW
-         88ZBbGJmP+YDBcSSWqxA2Vl3eVUYniLJAMt552l93nAuwBVot/C5GTxEpjquvBc+41jn
-         6LZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709365379; x=1709970179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iROnnUQAIrn8DnCE9YGkqkSmP3qnk0ncEloJYBFiPVY=;
-        b=V8XgKrkDOpE7qP8xwGrQortvzhIj/QMeCBP3cq2HI0WXm+2URaeeSR+D2h2QXHOwPd
-         ngP65cpSWfTKpLn8F11gVWdTbVKEKjNXQFghYLIO3J7mOrmMAvIS9ZxXby1gYWn2e+w4
-         CmjKk9yoApZLI0mDbKnuPcygOiOUpAQR6e3no8MKnj7EaHyT4P0MfO6Rk2N9fWOAEgKj
-         hC3MR5bAgJTU5ZxmpercpbherJFyYD4v7doGJbePwIjhGsajPjjrWjHWJilm/tx/DCuK
-         U07kcmWFrWXVPKyWujvQ4CBUVTIxiB2EVDSgzO7WAbPEsWVdNdjMP1tMzH1En4WOiIi0
-         eOkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl1Ncu8T9rDMt7mqpgGvUf9DjWSi1tI1g+wSSEiNfaNZiyhVSdGRAWG2NoD/WcD9UkdWU3PnhbxVXPf/Q2sZ8m3Mvbpee2tCzJEkhpM56U5oOTL2yscaswgFZawX2OvivcZRJvtjH+vw==
-X-Gm-Message-State: AOJu0YzS74zH2fqTuR5WGeM2i7p+bAisXjOjENEowzQoL6vj09+pXCir
-	znGXN59lK89zyUadzIM276PMCjxmoK0ADuif4Gygl0rP0cBZLPlaa9dBQ1K4
-X-Google-Smtp-Source: AGHT+IFPpIE1yMNr/ZCVoN5pvHpYmcwWC5rH1/HSKdLic7af17QTNikWfEa+xeGlN1Lyzwgs/tWXjA==
-X-Received: by 2002:a05:6a00:852:b0:6e5:736e:cc8 with SMTP id q18-20020a056a00085200b006e5736e0cc8mr4513372pfk.33.1709365379431;
-        Fri, 01 Mar 2024 23:42:59 -0800 (PST)
-Received: from dw-tp.. ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id x11-20020aa784cb000000b006e45c5d7720sm4138206pfn.93.2024.03.01.23.42.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 23:42:58 -0800 (PST)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Jan Kara <jack@suse.cz>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Matthew Wilcox <willy@infradead.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	John Garry <john.g.garry@oracle.com>,
-	linux-kernel@vger.kernel.org,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFC 9/9] e2fsprogs/chattr: Supports atomic writes attribute
-Date: Sat,  2 Mar 2024 13:12:06 +0530
-Message-ID: <646de2f0f9ba8fb8a486dc388ae0748999d1ed2d.1709356319.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1709356594.git.ritesh.list@gmail.com>
-References: <cover.1709356594.git.ritesh.list@gmail.com>
+	s=arc-20240116; t=1709372243; c=relaxed/simple;
+	bh=8kiw5+UWs4a9+DdGKdL4oMotwww+LKy0HwEZtFqYFjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fgcLco1fYD7WvY4YxgQUNFK0LR6MO5nnBzvcO1hfqB5bo8n0ontevk+iih/HjAFm2FZFNU64fbVCejfnzag9zaavgoKks8gMH1oZXENW4QQ9L5rRx4lFOy9h1t4+dBhhOppiPy4NtDOl0wOJHI1BxdIY9CdCTiveTVmdr03tqfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Tn0Gx2Hwtz1FLPY;
+	Sat,  2 Mar 2024 17:37:13 +0800 (CST)
+Received: from kwepemm600017.china.huawei.com (unknown [7.193.23.234])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0DE711A016B;
+	Sat,  2 Mar 2024 17:37:17 +0800 (CST)
+Received: from [10.174.179.234] (10.174.179.234) by
+ kwepemm600017.china.huawei.com (7.193.23.234) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Sat, 2 Mar 2024 17:37:15 +0800
+Message-ID: <f914a48b-741c-e3fe-c971-510a07eefb91@huawei.com>
+Date: Sat, 2 Mar 2024 17:37:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [bug report] dead loop in generic_perform_write() //Re: [PATCH v7
+ 07/12] iov_iter: Convert iterate*() to inline funcs
+To: Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@kernel.org>
+CC: David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Christian Brauner <christian@brauner.io>,
+	David Laight <David.Laight@aculab.com>, Matthew Wilcox <willy@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-block@vger.kernel.org>, <linux-mm@kvack.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Kefeng Wang
+	<wangkefeng.wang@huawei.com>
+References: <20230925120309.1731676-1-dhowells@redhat.com>
+ <20230925120309.1731676-8-dhowells@redhat.com>
+ <4e80924d-9c85-f13a-722a-6a5d2b1c225a@huawei.com>
+ <CAHk-=whG+4ag+QLU9RJn_y47f1DBaK6b0qYq_6_eLkO=J=Mkmw@mail.gmail.com>
+ <CAHk-=wjSjuDrS9gc191PTEDDow7vHy6Kd3DKDaG+KVH0NQ3v=w@mail.gmail.com>
+ <e985429e-5fc4-a175-0564-5bb4ca8f662c@huawei.com>
+ <CAHk-=wh06M-1c9h7wZzZ=1KqooAmazy_qESh2oCcv7vg-sY6NQ@mail.gmail.com>
+ <CAHk-=wiBJRgA3iNqihR7uuft=5rog425X_b3uvgroG3fBhktwQ@mail.gmail.com>
+From: Tong Tiangen <tongtiangen@huawei.com>
+In-Reply-To: <CAHk-=wiBJRgA3iNqihR7uuft=5rog425X_b3uvgroG3fBhktwQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600017.china.huawei.com (7.193.23.234)
 
-This adds 'W' which is atomic write attribute to chattr.
 
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- lib/e2p/pf.c         |  1 +
- lib/ext2fs/ext2_fs.h |  2 +-
- misc/chattr.1.in     | 18 ++++++++++++++----
- misc/chattr.c        |  3 ++-
- 4 files changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/lib/e2p/pf.c b/lib/e2p/pf.c
-index 81e3bb26..9b311477 100644
---- a/lib/e2p/pf.c
-+++ b/lib/e2p/pf.c
-@@ -45,6 +45,7 @@ static struct flags_name flags_array[] = {
- 	{ EXT4_EXTENTS_FL, "e", "Extents" },
- 	{ FS_NOCOW_FL, "C", "No_COW" },
- 	{ FS_DAX_FL, "x", "DAX" },
-+	{ FS_ATOMICWRITES_FL, "W", "ATOMIC_WRITES" },
- 	{ EXT4_CASEFOLD_FL, "F", "Casefold" },
- 	{ EXT4_INLINE_DATA_FL, "N", "Inline_Data" },
- 	{ EXT4_PROJINHERIT_FL, "P", "Project_Hierarchy" },
-diff --git a/lib/ext2fs/ext2_fs.h b/lib/ext2fs/ext2_fs.h
-index 0fc9c09a..f9dcf71f 100644
---- a/lib/ext2fs/ext2_fs.h
-+++ b/lib/ext2fs/ext2_fs.h
-@@ -346,7 +346,7 @@ struct ext2_dx_tail {
- #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
- /* EXT4_EOFBLOCKS_FL 0x00400000 was here */
- #define FS_NOCOW_FL			0x00800000 /* Do not cow file */
--#define EXT4_SNAPFILE_FL		0x01000000  /* Inode is a snapshot */
-+#define FS_ATOMICWRITES_FL		0x01000000  /* Inode can do atomic writes */
- #define FS_DAX_FL			0x02000000 /* Inode is DAX */
- #define EXT4_SNAPFILE_DELETED_FL	0x04000000  /* Snapshot is being deleted */
- #define EXT4_SNAPFILE_SHRUNK_FL		0x08000000  /* Snapshot shrink has completed */
-diff --git a/misc/chattr.1.in b/misc/chattr.1.in
-index 50c54e7d..22757123 100644
---- a/misc/chattr.1.in
-+++ b/misc/chattr.1.in
-@@ -26,7 +26,7 @@ changes the file attributes on a Linux file system.
- The format of a symbolic
- .I mode
- is
--.BR +-= [ aAcCdDeFijmPsStTux ].
-+.BR +-= [ aAcCdDeFijmPsStTuxW ].
- .PP
- The operator
- .RB ' + '
-@@ -38,7 +38,7 @@ causes them to be removed; and
- causes them to be the only attributes that the files have.
- .PP
- The letters
--.RB ' aAcCdDeFijmPsStTux '
-+.RB ' aAcCdDeFijmPsStTuxW '
- select the new attributes for the files:
- append only
- .RB ( a ),
-@@ -74,8 +74,10 @@ top of directory hierarchy
- .RB ( T ),
- undeletable
- .RB ( u ),
--and direct access for files
--.RB ( x ).
-+direct access for files
-+.RB ( x ),
-+and atomic writes for files.
-+.RB ( W ).
- .PP
- The following attributes are read-only, and may be listed by
- .BR lsattr (1)
-@@ -263,6 +265,14 @@ directory.  If an existing directory has contained some files and
- subdirectories, modifying the attribute on the parent directory doesn't
- change the attributes on these files and subdirectories.
- .TP
-+.B W
-+The 'W' attribute can only be set on a regular file. A file which has this
-+attribute set can do untorn writes i.e. if an atomic write is requested by
-+user with proper alignment and atomic flags set (such as RWF_ATOMIC), then
-+a subsequent read to that block(s) will either read entire new data or entire
-+old data (in case of a power failure). The block(s) written can never contain
-+mix of both.
-+.TP
- .B V
- A file with the 'V' attribute set has fs-verity enabled.  It cannot be
- written to, and the file system will automatically verify all data read
-diff --git a/misc/chattr.c b/misc/chattr.c
-index c7382a37..24db790e 100644
---- a/misc/chattr.c
-+++ b/misc/chattr.c
-@@ -86,7 +86,7 @@ static unsigned long sf;
- static void usage(void)
- {
- 	fprintf(stderr,
--		_("Usage: %s [-RVf] [-+=aAcCdDeijPsStTuFx] [-p project] [-v version] files...\n"),
-+		_("Usage: %s [-RVf] [-+=aAcCdDeijPsStTuFxW] [-p project] [-v version] files...\n"),
- 		program_name);
- 	exit(1);
- }
-@@ -114,6 +114,7 @@ static const struct flags_char flags_array[] = {
- 	{ EXT2_TOPDIR_FL, 'T' },
- 	{ FS_NOCOW_FL, 'C' },
- 	{ FS_DAX_FL, 'x' },
-+	{ FS_ATOMICWRITES_FL, 'W' },
- 	{ EXT4_CASEFOLD_FL, 'F' },
- 	{ 0, 0 }
- };
---
-2.39.2
+在 2024/3/2 10:59, Linus Torvalds 写道:
+> On Thu, 29 Feb 2024 at 09:32, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> One option might be to make a failed memcpy_from_iter_mc() set another
+>> flag in the iter, and then make fault_in_iov_iter_readable() test that
+>> flag and return 'len' if that flag is set.
+>>
+>> Something like that (wild handwaving) should get the right error handling.
+>>
+>> The simpler alternative is maybe something like the attached.
+>> COMPLETELY UNTESTED. Maybe I've confused myself with all the different
+>> indiraction mazes in the iov_iter code.
+> 
+> Actually, I think the right model is to get rid of that horrendous
+> .copy_mc field entirely.
+> 
+> We only have one single place that uses it - that nasty core dumping
+> code. And that code is *not* performance critical.
+> 
+> And not only isn't it performance-critical, it already does all the
+> core dumping one page at a time because it doesn't want to write pages
+> that were never mapped into user space.
+> 
+> So what we can do is
+> 
+>   (a) make the core dumping code *copy* the page to a good location
+> with copy_mc_to_kernel() first
+> 
+>   (b) remove this horrendous .copy_mc crap entirely from iov_iter
 
+I think this solution has two impacts:
+1. Although it is not a performance-critical path, the CPU usage may be
+affected by one more memory copy in some large-memory applications.
+2. If a hardware memory error occurs in "good location" and the
+".copy_mc" is removed, the kernel will panic.
+
+I would prefer to use the previous solution(modify the implementation of
+memcpy_from_iter_mc()).
+
+Thanks,
+Tong.
+
+> 
+> This is slightly complicated by the fact that copy_mc_to_kernel() may
+> not even exist, and architectures that don't have it don't want the
+> silly extra copy. So we need to abstract the "copy to temporary page"
+> code a bit. But that's probably a good thing anyway in that it forces
+> us to have nice interfaces.
+> 
+> End result: something like the attached.
+> 
+> AGAIN: THIS IS ENTIRELY UNTESTED.
+> 
+> But hey, so was clearly all the .copy_mc code too that this removes, so...
+> 
+>                 Linus
 
