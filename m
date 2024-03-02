@@ -1,146 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-13380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4609086F2A8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 23:02:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BDA186F324
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 00:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B4A1C20A09
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 22:02:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 508471C20F7A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 23:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E857D45941;
-	Sat,  2 Mar 2024 22:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mJf2tL9q"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343FC54725;
+	Sat,  2 Mar 2024 23:34:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AD844C7C
-	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Mar 2024 22:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAD544C85
+	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Mar 2024 23:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709416938; cv=none; b=u7MY5Nn+URnkMNuVTbCGwA4fLyfcu6hj28pK75VpKoIzZGy+3xOC2OzFsUzUjjEWT2G6t1ykO0hfagWyHZG4gcEyb6WnQGYYEindPVcKrihOfaf4lS8AIr51JlpjZxLi6NVF18UaF2lJpx3gkpQ+itX06Lf4ZSonwD7sGotXWhg=
+	t=1709422463; cv=none; b=d4atw66QG9vgL0H2JE+TAFUQlllX4xKb2QqYv9zlbL0dACNgXyUVpV1H6EJ///wEo+hNVxylDLyi4MeP0huZHn9rnPXcNTMdzLEPMYGSKWbZGJvOXny5kA2xdDqDlr6D7SxBtLLzuOIOO0CdMOJeaetuXnxUKuARGLJplqdWTzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709416938; c=relaxed/simple;
-	bh=D3XN16M6Y57uWxVwLnlF9xADST6YeevavrFwllCfXWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EawjLdOeNW554ZUBhT4zMDGIy6n6IYf5uwKYYO1YLwJvUZ4L6k/QskkilCoKyWAM6J+AgWqlm5P1YP2j6cjwsRNRGqcPMFECPVUgLYKTPWp95xOJzKVbkuKTgyoUNbykXp77hwm052YFp/zt/PYZOWz0s7SCAu5KEINSe1yTUU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mJf2tL9q; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709416934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aqe1bsXqpWMOsaSaAwaBLUQoehzaMA/zwKYXylUSUEI=;
-	b=mJf2tL9qJVNFMI5UHcD3vg9GZUQH6OCyFLF9wtJHzwJPuNkRtKo5Pz4nagtiMAa6kNdzMy
-	hHC7/Teu0KO0RxPW0Yo9pwdNixmvQmt9Xs3KeGDhSZ44q7Da5CZMNbgBHmM3S36Vt5V27V
-	C29Oodz0kJ7tlOMG9Bq3eu8FoWPmQBw=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>
-Subject: [PATCH] statx: stx_vol
-Date: Sat,  2 Mar 2024 17:02:03 -0500
-Message-ID: <20240302220203.623614-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1709422463; c=relaxed/simple;
+	bh=6PZPyZuJdSMqkug1hsGSq24Xi//ToATAhXUILGMcENk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bMRsCThEnx/kCZMLHuqbrdvFDWvFMJaycpPifUUmzUxnNTPPplJB5/EN/KgcaUvEU+le5OgNrzF1tbdKoWx1UYN/mrRP/M96JxuSE6Y94tb0HQAdpu8eiM1M40hHWXx/LkUgWpAzcIrjWUvioCumJgL7RNNHrpvZmxwUeREtAZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7c7857e6cb8so455505739f.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Mar 2024 15:34:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709422461; x=1710027261;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WIzFmH0YBizjIO8ZRQOccZP2IZa33IlKny7K5qjbqrg=;
+        b=Crh/7PSnZ2b88dhhpfBO3KRWL5uWh91odWY3Zz0vRWQ1Eq20C3rZ8YXAkza+RQiRLJ
+         otHwMg04jE7E21gTUtpAseguVX+fUZvym2x6Avz7H8n464QyJ+jDoBMGPb+MDVVNzi6+
+         6/P+gty06Z1iSdhunYyye+UyURnG3c6g4as9uRjceXoCO/x7y6GhB3HCU/mfpatB3McU
+         5fQ9dZfLq5K5wK4Z9e7YRtKeH3RU1/LwmIqK5ELziOtZtOp9TVhRbFn30MmHYbNH7yPe
+         5xbFKsE71kxyaYykm8tAUy4FP2+9pFIr4nBlm/+ql8aRQe+VYfxYT45DI9oZISf+NOiy
+         7nFA==
+X-Gm-Message-State: AOJu0YyvEAPqGMTfgQxsbIQ7TPNYV+lDkg6ZICvQ+0Xksul0D+V3I6Ms
+	hQEUa9tkVUlJCCI+B0phObxQWs0HMwnzSVWU1n0sT1qufybbah0mhh1eJeUDuQ1IaiebsJWsRp0
+	bHVC19nMRvAQKJxWDFR0WWn0EQS0gVFe+vrQ3jbz3+Y7n1HLoBjTPNtTANg==
+X-Google-Smtp-Source: AGHT+IGh9LEyiTbPAqJx8bYBmip5EndG+8B/OVOYErXDx4fRGuIxR/mL5D39RcT04pgP+SqkaMaKui9KHcAFueUx1ZGJjnYhjQn9
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1a68:b0:365:1f2b:7be8 with SMTP id
+ w8-20020a056e021a6800b003651f2b7be8mr449997ilv.5.1709422461627; Sat, 02 Mar
+ 2024 15:34:21 -0800 (PST)
+Date: Sat, 02 Mar 2024 15:34:21 -0800
+In-Reply-To: <0000000000004d5e29060e94b998@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000098b3700612b5ee0f@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_cat_keycmp (2)
+From: syzbot <syzbot+04486d87f6240a004c85@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add a new statx field for (sub)volume identifiers.
+syzbot has found a reproducer for the following issue on:
 
-This includes bcachefs support; we'll definitely want btrfs support as
-well.
+HEAD commit:    5ad3cb0ed525 Merge tag 'for-v6.8-rc2' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14fa7b8c180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=80c7a82a572c0de3
+dashboard link: https://syzkaller.appspot.com/bug?extid=04486d87f6240a004c85
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116f5a6a180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16cb9306180000
 
-Link: https://lore.kernel.org/linux-fsdevel/2uvhm6gweyl7iyyp2xpfryvcu2g3padagaeqcbiavjyiis6prl@yjm725bizncq/
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: David Howells <dhowells@redhat.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a148235ac5b1/disk-5ad3cb0e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4b06f4d02ad6/vmlinux-5ad3cb0e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7fff06beed25/bzImage-5ad3cb0e.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/0c762eef88b9/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+04486d87f6240a004c85@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 64
+hfs: filesystem is marked locked, mounting read-only.
+=====================================================
+BUG: KMSAN: uninit-value in hfs_cat_keycmp+0x154/0x210 fs/hfs/catalog.c:178
+ hfs_cat_keycmp+0x154/0x210 fs/hfs/catalog.c:178
+ __hfs_brec_find+0x250/0x820 fs/hfs/bfind.c:75
+ hfs_brec_find+0x436/0x970 fs/hfs/bfind.c:138
+ hfs_brec_read+0x3f/0x1a0 fs/hfs/bfind.c:165
+ hfs_cat_find_brec+0xe6/0x400 fs/hfs/catalog.c:194
+ hfs_fill_super+0x1f27/0x23c0 fs/hfs/super.c:419
+ mount_bdev+0x38f/0x510 fs/super.c:1658
+ hfs_mount+0x4d/0x60 fs/hfs/super.c:456
+ legacy_get_tree+0x110/0x290 fs/fs_context.c:662
+ vfs_get_tree+0xa5/0x560 fs/super.c:1779
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
+ path_mount+0x73d/0x1f20 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x725/0x810 fs/namespace.c:3875
+ __x64_sys_mount+0xe4/0x140 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3819 [inline]
+ slab_alloc_node mm/slub.c:3860 [inline]
+ __do_kmalloc_node mm/slub.c:3980 [inline]
+ __kmalloc+0x919/0xf80 mm/slub.c:3994
+ kmalloc include/linux/slab.h:594 [inline]
+ hfs_find_init+0x91/0x250 fs/hfs/bfind.c:21
+ hfs_fill_super+0x1eb9/0x23c0 fs/hfs/super.c:416
+ mount_bdev+0x38f/0x510 fs/super.c:1658
+ hfs_mount+0x4d/0x60 fs/hfs/super.c:456
+ legacy_get_tree+0x110/0x290 fs/fs_context.c:662
+ vfs_get_tree+0xa5/0x560 fs/super.c:1779
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
+ path_mount+0x73d/0x1f20 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x725/0x810 fs/namespace.c:3875
+ __x64_sys_mount+0xe4/0x140 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+CPU: 1 PID: 5019 Comm: syz-executor380 Not tainted 6.8.0-rc6-syzkaller-00238-g5ad3cb0ed525 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
+=====================================================
+
+
 ---
- fs/bcachefs/fs.c          | 3 +++
- fs/stat.c                 | 1 +
- include/linux/stat.h      | 1 +
- include/uapi/linux/stat.h | 4 +++-
- 4 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index 3f073845bbd7..d82f7f3f0670 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -840,6 +840,9 @@ static int bch2_getattr(struct mnt_idmap *idmap,
- 	stat->blksize	= block_bytes(c);
- 	stat->blocks	= inode->v.i_blocks;
- 
-+	stat->vol	= inode->ei_subvol;
-+	stat->result_mask |= STATX_VOL;
-+
- 	if (request_mask & STATX_BTIME) {
- 		stat->result_mask |= STATX_BTIME;
- 		stat->btime = bch2_time_to_timespec(c, inode->ei_inode.bi_otime);
-diff --git a/fs/stat.c b/fs/stat.c
-index 77cdc69eb422..80d5f7502d99 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -658,6 +658,7 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
- 	tmp.stx_mnt_id = stat->mnt_id;
- 	tmp.stx_dio_mem_align = stat->dio_mem_align;
- 	tmp.stx_dio_offset_align = stat->dio_offset_align;
-+	tmp.stx_vol = stat->vol;
- 
- 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
- }
-diff --git a/include/linux/stat.h b/include/linux/stat.h
-index 52150570d37a..9dc1b493ef1f 100644
---- a/include/linux/stat.h
-+++ b/include/linux/stat.h
-@@ -53,6 +53,7 @@ struct kstat {
- 	u32		dio_mem_align;
- 	u32		dio_offset_align;
- 	u64		change_cookie;
-+	u64		vol;
- };
- 
- /* These definitions are internal to the kernel for now. Mainly used by nfsd. */
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 2f2ee82d5517..ae090d67946d 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -126,8 +126,9 @@ struct statx {
- 	__u64	stx_mnt_id;
- 	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
- 	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
-+	__u64	stx_vol;	/* Subvolume identifier */
- 	/* 0xa0 */
--	__u64	__spare3[12];	/* Spare space for future expansion */
-+	__u64	__spare3[11];	/* Spare space for future expansion */
- 	/* 0x100 */
- };
- 
-@@ -155,6 +156,7 @@ struct statx {
- #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
- #define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
- #define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
-+#define STATX_VOL		0x00008000U	/* Want/got stx_vol */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
--- 
-2.43.0
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
