@@ -1,345 +1,282 @@
-Return-Path: <linux-fsdevel+bounces-13374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D8E86F185
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 17:59:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B6A86F1C7
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 18:57:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9451C20B12
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 16:59:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF5D1F220DE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 17:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0162424A0E;
-	Sat,  2 Mar 2024 16:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8C92C86A;
+	Sat,  2 Mar 2024 17:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WQbBgWU5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svPxXjRh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810B722F0A
-	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Mar 2024 16:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDD72B9DC;
+	Sat,  2 Mar 2024 17:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709398753; cv=none; b=bvw6QLzjSIzopmYrNBgD8MfJ9l9bV1VaevLnNZ02oFf/LJ4wL1hxYk5ZRVmRXC4S/4HqgA8K+XFa2lewiFvDzcLdj1wYY1lqMNj5hGvs5BCgRe6CUEJBgLqFtCp1tzMzhovC2RRjOiPEeiVRjQ7o8DW2wbQJY1khHMKB6SiyhXo=
+	t=1709402218; cv=none; b=Lgxeur9KjDdy5ydRiuhY4ev33huSTs1jfWLunTMq8rOY5w9AAfbZE4mxtU4a5+S767DTGKbqItOz8v+QOR9hUGSA3kKbQO1FE4M1ezMKaa3EY8N3xNJlGbNe5m05uFd9/MMTTf6yUktny6U2BYr0CVPJK3driRY+abtdRC8qY0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709398753; c=relaxed/simple;
-	bh=guA++MTUgy4ebAkTLo/2XYvVGJuvrbX5Miq8/ZmZuW0=;
+	s=arc-20240116; t=1709402218; c=relaxed/simple;
+	bh=efKYKPI74pku34t18RPgkBg9wk+E2mY4YniXXUzA3sg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B7SojgnjGCHDOXI2eVhWjcDiyztdcg0D6ZjHUoACICV+BQTHE7BaHDsMrlXF44jl11SUwWlBYNBsoxPMn20wqslIMTVtcG0vWXQOqVVthYboMdTPZ58xYl8XPi447Ox5/fnEQqPD0cFT+Y530+n3xgvPFkl8tjURvj/s13wQgsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WQbBgWU5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709398749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+EIX1AZp6exxCDeijUxIebuaaLxBDXyc0bmAhlfZ5PA=;
-	b=WQbBgWU5SsjCbN2rOeUyWzqbttbvpma8Qmfx636Vtk0ztGWXisETrNGCTAGsjltZ/8GrUE
-	G8xIWQHUeDjd/udFjCljvOnIc3lnNCPhiJe93VtRy2+JexJRDkVPwA08JAZUO+Mz9atnZR
-	uJ4nH1bzBpBh3yMDQG+Pi21w3itnsIs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-135-eRitKrq1MFW9wilNQTl6Zw-1; Sat, 02 Mar 2024 11:59:07 -0500
-X-MC-Unique: eRitKrq1MFW9wilNQTl6Zw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 97CC5108BCA1;
-	Sat,  2 Mar 2024 16:59:07 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.32.76])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F39BF96E9;
-	Sat,  2 Mar 2024 16:59:06 +0000 (UTC)
-Date: Sat, 2 Mar 2024 10:59:05 -0600
-From: Bill O'Donnell <bodonnel@redhat.com>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, al@alarsen.net, brauner@kernel.org
-Subject: Re: [PATCH] qnx6: convert qnx6 to use the new mount api
-Message-ID: <ZeNa2Q6Z9h4egudd@redhat.com>
-References: <20240229191317.805034-1-bodonnel@redhat.com>
- <68be6a82-f093-41d4-9467-4b4694e8c5f3@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jaBOg87ofyDSfICWVac0D5Ak0gBTK65aTMhxExRrL2FyUdCpEQp9G1PdvRDa2UhNZP3yxWefxid5EDLidTEsP3E4URl/SoSUt4LhiMahoXBZ/qbVaRMKfFGeg3Fpqz3rYd2sI/Nou9jHINMhmL9VFSsjK/cJngCG5RXhARu7EKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svPxXjRh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE4A5C433C7;
+	Sat,  2 Mar 2024 17:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709402217;
+	bh=efKYKPI74pku34t18RPgkBg9wk+E2mY4YniXXUzA3sg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=svPxXjRhhd7PqmrQljRQeiPfVQIVoPY4UIzQ0T3ZYsegJ483PzjIVu98p5GRy1HJL
+	 OZbZvvsiwZkyhkKOIEbauYzxO30tFuPkl7vNf7g/ml8YL9Y8/C+5O4DgmZ27HYEDi8
+	 B7iE08u8cfHfJNElWfDPLprtopPCtdrlDFF7uDwsNkeSssrSXXiHp23u/9HJBzJZBT
+	 m8Uy0GxC/YZowpkhxDi9NB9pevjT5xs5H1x9UpEP0KIJ9qeVfdBNaFq0AlDbLqEAzy
+	 7XKx6T4jEttr9PVdUHwS+3HqJyYq7CMZYVe6C+rdIDAEyAnZpoI2KBzoS+i5CICCKF
+	 hbR2mZtXKymoA==
+Date: Sat, 2 Mar 2024 18:56:51 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Luis Henriques <lhenriques@suse.de>, 
+	Eric Sandeen <sandeen@sandeen.net>
+Cc: Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Amir Goldstein <amir73il@gmail.com>, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fs_parser: handle parameters that can be empty and
+ don't have a value
+Message-ID: <20240302-lamellen-hauskatze-b36d3207d73d@brauner>
+References: <20240229163011.16248-1-lhenriques@suse.de>
+ <20240229163011.16248-2-lhenriques@suse.de>
+ <20240301-gegossen-seestern-683681ea75d1@brauner>
+ <87il269crs.fsf@suse.de>
+ <20240302-avancieren-sehtest-90eb364bfcd5@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <68be6a82-f093-41d4-9467-4b4694e8c5f3@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+In-Reply-To: <20240302-avancieren-sehtest-90eb364bfcd5@brauner>
 
-On Thu, Feb 29, 2024 at 06:16:02PM -0600, Eric Sandeen wrote:
-> On 2/29/24 1:13 PM, Bill O'Donnell wrote:
-> > Convert the qnx6 filesystem to use the new mount API.
+On Sat, Mar 02, 2024 at 12:46:41PM +0100, Christian Brauner wrote:
+> On Fri, Mar 01, 2024 at 03:45:27PM +0000, Luis Henriques wrote:
+> > Christian Brauner <brauner@kernel.org> writes:
 > > 
-> > Untested, since there is no qnx6 fs image readily available.
+> > > On Thu, Feb 29, 2024 at 04:30:08PM +0000, Luis Henriques wrote:
+> > >> Currently, only parameters that have the fs_parameter_spec 'type' set to
+> > >> NULL are handled as 'flag' types.  However, parameters that have the
+> > >> 'fs_param_can_be_empty' flag set and their value is NULL should also be
+> > >> handled as 'flag' type, as their type is set to 'fs_value_is_flag'.
+> > >> 
+> > >> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> > >> ---
+> > >>  fs/fs_parser.c | 3 ++-
+> > >>  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >> 
+> > >> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> > >> index edb3712dcfa5..53f6cb98a3e0 100644
+> > >> --- a/fs/fs_parser.c
+> > >> +++ b/fs/fs_parser.c
+> > >> @@ -119,7 +119,8 @@ int __fs_parse(struct p_log *log,
+> > >>  	/* Try to turn the type we were given into the type desired by the
+> > >>  	 * parameter and give an error if we can't.
+> > >>  	 */
+> > >> -	if (is_flag(p)) {
+> > >> +	if (is_flag(p) ||
+> > >> +	    (!param->string && (p->flags & fs_param_can_be_empty))) {
+> > >>  		if (param->type != fs_value_is_flag)
+> > >>  			return inval_plog(log, "Unexpected value for '%s'",
+> > >>  				      param->key);
+> > >
+> > > If the parameter was derived from FSCONFIG_SET_STRING in fsconfig() then
+> > > param->string is guaranteed to not be NULL. So really this is only
+> > > about:
+> > >
+> > > FSCONFIG_SET_FD
+> > > FSCONFIG_SET_BINARY
+> > > FSCONFIG_SET_PATH
+> > > FSCONFIG_SET_PATH_EMPTY
+> > >
+> > > and those values being used without a value. What filesystem does this?
+> > > I don't see any.
+> > >
+> > > The tempting thing to do here is to to just remove fs_param_can_be_empty
+> > > from every helper that isn't fs_param_is_string() until we actually have
+> > > a filesystem that wants to use any of the above as flags. Will lose a
+> > > lot of code that isn't currently used.
 > > 
-> > Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
-> > ---
-> >  fs/qnx6/inode.c | 119 +++++++++++++++++++++++++++++-------------------
-> >  1 file changed, 72 insertions(+), 47 deletions(-)
+> > Right, I find it quite confusing and I may be fixing the issue in the
+> > wrong place.  What I'm seeing with ext4 when I mount a filesystem using
+> > the option '-o usrjquota' is that fs_parse() will get:
 > > 
-> > diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-> > index a286c545717f..0df5a92a8b65 100644
-> > --- a/fs/qnx6/inode.c
-> > +++ b/fs/qnx6/inode.c
-> > @@ -19,11 +19,12 @@
-> >  #include <linux/buffer_head.h>
-> >  #include <linux/writeback.h>
-> >  #include <linux/statfs.h>
-> > -#include <linux/parser.h>
-> >  #include <linux/seq_file.h>
-> >  #include <linux/mount.h>
+> >  * p->type is set to fs_param_is_string
+> >    ('p' is a struct fs_parameter_spec, ->type is a function)
+> >  * param->type is set to fs_value_is_flag
+> >    ('param' is a struct fs_parameter, ->type is an enum)
+> > 
+> > This is because ext4 will use the __fsparam macro to set define a
+> > fs_param_spec as a fs_param_is_string but will also set the
+> > fs_param_can_be_empty; and the fsconfig() syscall will get that parameter
+> > as a flag.  That's why param->string will be NULL in this case.
 > 
-> I *think* you can lose this include too but not a big deal.
+> Thanks for the details. Let me see if I get this right. So you're saying that
+> someone is doing:
 > 
-> >  #include <linux/crc32.h>
-> >  #include <linux/mpage.h>
-> > +#include <linux/fs_parser.h>
-> > +#include <linux/fs_context.h>
-> >  #include "qnx6.h"
-> >  
-> >  static const struct super_operations qnx6_sops;
-> > @@ -31,7 +32,7 @@ static const struct super_operations qnx6_sops;
-> >  static void qnx6_put_super(struct super_block *sb);
-> >  static struct inode *qnx6_alloc_inode(struct super_block *sb);
-> >  static void qnx6_free_inode(struct inode *inode);
-> > -static int qnx6_remount(struct super_block *sb, int *flags, char *data);
-> > +static int qnx6_reconfigure(struct fs_context *fc);
-> >  static int qnx6_statfs(struct dentry *dentry, struct kstatfs *buf);
-> >  static int qnx6_show_options(struct seq_file *seq, struct dentry *root);
-> >  
-> > @@ -40,7 +41,6 @@ static const struct super_operations qnx6_sops = {
-> >  	.free_inode	= qnx6_free_inode,
-> >  	.put_super	= qnx6_put_super,
-> >  	.statfs		= qnx6_statfs,
-> > -	.remount_fs	= qnx6_remount,
-> >  	.show_options	= qnx6_show_options,
-> >  };
-> >  
-> > @@ -54,10 +54,12 @@ static int qnx6_show_options(struct seq_file *seq, struct dentry *root)
-> >  	return 0;
-> >  }
-> >  
-> > -static int qnx6_remount(struct super_block *sb, int *flags, char *data)
-> > +static int qnx6_reconfigure(struct fs_context *fc)
-> >  {
-> > +	struct super_block *sb = fc->root->d_sb;
-> > +
-> >  	sync_filesystem(sb);
-> > -	*flags |= SB_RDONLY;
-> > +	fc->sb_flags |= SB_RDONLY;
-> >  	return 0;
-> >  }
-> >  
-> > @@ -222,35 +224,36 @@ enum {
-> >  	Opt_err
-> >  };
-> >  
-> > -static const match_table_t tokens = {
-> > -	{Opt_mmifs, "mmi_fs"},
-> > -	{Opt_err, NULL}
-> > +struct qnx6_context {
-> > +	unsigned long s_mount_opts;
-> > +};
+> fsconfig(..., FSCONFIG_SET_FLAG, "usrjquota", NULL, 0); // [1]
 > 
-> s_mount_opts seems to be a write-only variable. It's set in 
-> qnx6_parse_param() but nothing ever reads it?
+> ? Is so that is a vital part of the explanation. So please put that in the
+> commit message.
 > 
-> > +
-> > +static const struct fs_parameter_spec qnx6_param_spec[] = {
-> > +	fsparam_flag	("mmi_fs",	Opt_mmifs),
-> > +	{}
-> >  };
-> >  
-> > -static int qnx6_parse_options(char *options, struct super_block *sb)
-> > +static int qnx6_parse_param(struct fs_context *fc, struct fs_parameter *param)
-> >  {
-> > -	char *p;
-> > -	struct qnx6_sb_info *sbi = QNX6_SB(sb);
-> > -	substring_t args[MAX_OPT_ARGS];
-> > -
-> > -	if (!options)
-> > -		return 1;
-> > -
-> > -	while ((p = strsep(&options, ",")) != NULL) {
-> > -		int token;
-> > -		if (!*p)
-> > -			continue;
-> > -
-> > -		token = match_token(p, tokens, args);
-> > -		switch (token) {
-> > -		case Opt_mmifs:
-> > -			set_opt(sbi->s_mount_opt, MMI_FS);
-> > -			break;
-> > -		default:
-> > -			return 0;
-> > -		}
-> > +	struct qnx6_context *ctx = fc->fs_private;
-> > +	struct fs_parse_result result;
-> > +	int opt;
-> > +
-> > +	opt = fs_parse(fc, qnx6_param_spec, param, &result);
-> > +	if (opt < 0)
-> > +		return opt;
-> > +
-> > +	switch (opt) {
-> > +	case Opt_err:
-> > +		ctx->s_mount_opts |= result.uint_32;
-> > +		break;
+> Then ext4 defines:
 > 
-> Not sure what's going on here. Opt_err is not associated with any
-> valid mount option.
+> 	fsparam_string_empty ("usrjquota",		Opt_usrjquota),
 > 
-> > +	case Opt_mmifs:
-> > +		ctx->s_mount_opts |= QNX6_MOUNT_MMI_FS;
-> > +		break;
+> So [1] gets us:
 > 
-> This sets QNX6_MOUNT_MMI_FS into ctx->s_mount_opts but it looks like
-> nothing ever reads it back out of the context.
+>         param->type == fs_value_is_flag
+>         param->string == NULL
 > 
-> In qnx6_fill_super uptream, this handles the case where the mmi_fs option
-> was set:
+> Now we enter into
+> fs_parse()
+> -> __fs_parse()
+>    -> fs_lookup_key() for @param and that does:
 > 
->          if (test_opt(s, MMI_FS)) {
->                 sb1 = qnx6_mmi_fill_super(s, silent);
->                 if (sb1)
->                         goto mmi_success;
->                 else
->                         goto outnobh;
->         }       
+>         bool want_flag = param->type == fs_value_is_flag;
 > 
-> Under the new mount api, the mmi_fs state needs to be saved in the
-> filesystem context when it's parsed, then tested here, to do the right
-> thing in fill_super when that option has been set.
+>         *negated = false;
+>         for (p = desc; p->name; p++) {
+>                 if (strcmp(p->name, name) != 0)
+>                         continue;
+>                 if (likely(is_flag(p) == want_flag))
+>                         return p;
+>                 other = p;
+>         }
 > 
-> > +	default:
-> > +		return -EINVAL;
-> >  	}
-> > -	return 1;
-> > +	return 0;
-> >  }
-> >  
-> >  static struct buffer_head *qnx6_check_first_superblock(struct super_block *s,
-> > @@ -293,22 +296,24 @@ static struct buffer_head *qnx6_check_first_superblock(struct super_block *s,
-> >  static struct inode *qnx6_private_inode(struct super_block *s,
-> >  					struct qnx6_root_node *p);
-> >  
-> > -static int qnx6_fill_super(struct super_block *s, void *data, int silent)
-> > +static int qnx6_fill_super(struct super_block *s, struct fs_context *fc)
-> >  {
-> >  	struct buffer_head *bh1 = NULL, *bh2 = NULL;
-> >  	struct qnx6_super_block *sb1 = NULL, *sb2 = NULL;
-> >  	struct qnx6_sb_info *sbi;
-> > +
-> >  	struct inode *root;
-> >  	const char *errmsg;
-> >  	struct qnx6_sb_info *qs;
-> >  	int ret = -EINVAL;
-> >  	u64 offset;
-> >  	int bootblock_offset = QNX6_BOOTBLOCK_SIZE;
-> > +	int silent = fc->sb_flags & SB_SILENT;
-> >  
-> > -	qs = kzalloc(sizeof(struct qnx6_sb_info), GFP_KERNEL);
-> > -	if (!qs)
-> > +	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
-> > +	if (!sbi)
-> >  		return -ENOMEM;
-> > -	s->s_fs_info = qs;
-> > +	s->s_fs_info = sbi;
+> So we don't have a flag parameter defined so the only real match we get is
+> @other for:
 > 
-> Not sure what this change is for. The existing code is a little odd, it
-> allocates *qs as a struct qnx6_sb_info and assigns it to s->s_fs_info, then
-> reads it back out of s->s_fs_info via QNX6_SB(s) and assigns that to *sbi;
-> I don't see any real reason for that dance, it's 2 pointers w/ the same value.
->  
-> But, with your change *qs is never initialized, and yet this:
+>         fsparam_string_empty ("usrjquota",		Opt_usrjquota),
 > 
-> outnobh:
->         kfree(qs);
+> What happens now is that you call p->type == fs_param_is_string() and that
+> rejects it as bad parameter because param->type == fs_value_is_flag !=
+> fs_value_is_string as required. So you dont end up getting Opt_userjquota
+> called with param->string NULL, right? So there's not NULL deref or anything,
+> right?
 > 
-> remains, which would free the uninitialized pointer variable.
+> You just fail to set usrjquota. Ok, so I think the correct fix is to do
+> something like the following in ext4:
 > 
-> I don't think any of the above needs to change for this conversion.
+>         fsparam_string_empty ("usrjquota",      Opt_usrjquota),
+>         fs_param_flag        ("usrjquota",      Opt_usrjquota_flag),
 > 
-> -Eric
+> and then in the switch you can do:
+> 
+> switch (opt)
+> case Opt_usrjquota:
+>         // string thing
+> case Opt_usrjquota_flag:
+>         // flag thing
+> 
+> And I really think we should kill all empty handling for non-string types and
+> only add that when there's a filesystem that actually needs it.
 
-v2 patch sent.
-Thanks-
-Bill
+So one option is to do the following:
 
-> 
-> >  	/* Superblock always is 512 Byte long */
-> >  	if (!sb_set_blocksize(s, QNX6_SUPERBLOCK_SIZE)) {
-> > @@ -316,11 +321,6 @@ static int qnx6_fill_super(struct super_block *s, void *data, int silent)
-> >  		goto outnobh;
-> >  	}
-> >  
-> > -	/* parse the mount-options */
-> > -	if (!qnx6_parse_options((char *) data, s)) {
-> > -		pr_err("invalid mount options.\n");
-> > -		goto outnobh;
-> > -	}
-> >  	if (test_opt(s, MMI_FS)) {
-> >  		sb1 = qnx6_mmi_fill_super(s, silent);
-> >  		if (sb1)
-> > @@ -632,18 +632,43 @@ static void destroy_inodecache(void)
-> >  	kmem_cache_destroy(qnx6_inode_cachep);
-> >  }
-> >  
-> > -static struct dentry *qnx6_mount(struct file_system_type *fs_type,
-> > -	int flags, const char *dev_name, void *data)
-> > +static int qnx6_get_tree(struct fs_context *fc)
-> >  {
-> > -	return mount_bdev(fs_type, flags, dev_name, data, qnx6_fill_super);
-> > +	return get_tree_bdev(fc, qnx6_fill_super);
-> > +}
-> > +
-> > +static void qnx6_free_fc(struct fs_context *fc)
-> > +{
-> > +	kfree(fc->fs_private);
-> > +}
-> > +
-> > +static const struct fs_context_operations qnx6_context_ops = {
-> > +	.parse_param	= qnx6_parse_param,
-> > +	.get_tree	= qnx6_get_tree,
-> > +	.reconfigure	= qnx6_reconfigure,
-> > +	.free		= qnx6_free_fc,
-> > +};
-> > +
-> > +static int qnx6_init_fs_context(struct fs_context *fc)
-> > +{
-> > +	struct qnx6_context *ctx;
-> > +
-> > +	ctx = kzalloc(sizeof(struct qnx6_context), GFP_KERNEL);
-> > +	if (!ctx)
-> > +		return -ENOMEM;
-> > +	fc->ops = &qnx6_context_ops;
-> > +	fc->fs_private = ctx;
-> > +
-> > +	return 0;
-> >  }
-> >  
-> >  static struct file_system_type qnx6_fs_type = {
-> > -	.owner		= THIS_MODULE,
-> > -	.name		= "qnx6",
-> > -	.mount		= qnx6_mount,
-> > -	.kill_sb	= kill_block_super,
-> > -	.fs_flags	= FS_REQUIRES_DEV,
-> > +	.owner			= THIS_MODULE,
-> > +	.name			= "qnx6",
-> > +	.kill_sb		= kill_block_super,
-> > +	.fs_flags		= FS_REQUIRES_DEV,
-> > +	.init_fs_context	= qnx6_init_fs_context,
-> > +	.parameters		= qnx6_param_spec,
-> >  };
-> >  MODULE_ALIAS_FS("qnx6");
-> >  
-> 
+From 8bfb142e6caba70704998be072222d6a31d8b97b Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Sat, 2 Mar 2024 18:54:35 +0100
+Subject: [PATCH] [UNTESTED]
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/ext4/super.c           | 32 ++++++++++++++++++--------------
+ include/linux/fs_parser.h |  3 +++
+ 2 files changed, 21 insertions(+), 14 deletions(-)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index ebd97442d1d4..bd625f06ec0f 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1724,10 +1724,6 @@ static const struct constant_table ext4_param_dax[] = {
+ 	{}
+ };
+ 
+-/* String parameter that allows empty argument */
+-#define fsparam_string_empty(NAME, OPT) \
+-	__fsparam(fs_param_is_string, NAME, OPT, fs_param_can_be_empty, NULL)
+-
+ /*
+  * Mount option specification
+  * We don't use fsparam_flag_no because of the way we set the
+@@ -1768,10 +1764,8 @@ static const struct fs_parameter_spec ext4_param_specs[] = {
+ 	fsparam_enum	("data",		Opt_data, ext4_param_data),
+ 	fsparam_enum	("data_err",		Opt_data_err,
+ 						ext4_param_data_err),
+-	fsparam_string_empty
+-			("usrjquota",		Opt_usrjquota),
+-	fsparam_string_empty
+-			("grpjquota",		Opt_grpjquota),
++	fsparam_string_or_flag ("usrjquota",	Opt_usrjquota),
++	fsparam_string_or_flag ("grpjquota",	Opt_grpjquota),
+ 	fsparam_enum	("jqfmt",		Opt_jqfmt, ext4_param_jqfmt),
+ 	fsparam_flag	("grpquota",		Opt_grpquota),
+ 	fsparam_flag	("quota",		Opt_quota),
+@@ -2183,15 +2177,25 @@ static int ext4_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 	switch (token) {
+ #ifdef CONFIG_QUOTA
+ 	case Opt_usrjquota:
+-		if (!param->string)
+-			return unnote_qf_name(fc, USRQUOTA);
+-		else
++		if (param->type == fs_value_is_string) {
++			if (!*param->string)
++				return unnote_qf_name(fc, USRQUOTA);
++
+ 			return note_qf_name(fc, USRQUOTA, param);
++		}
++
++		// param->type == fs_value_is_flag
++		return note_qf_name(fc, USRQUOTA, param);
+ 	case Opt_grpjquota:
+-		if (!param->string)
+-			return unnote_qf_name(fc, GRPQUOTA);
+-		else
++		if (param->type == fs_value_is_string) {
++			if (!*param->string)
++				return unnote_qf_name(fc, GRPQUOTA);
++
+ 			return note_qf_name(fc, GRPQUOTA, param);
++		}
++
++		// param->type == fs_value_is_flag
++		return note_qf_name(fc, GRPQUOTA, param);
+ #endif
+ 	case Opt_sb:
+ 		if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index 01542c4b87a2..4f45141bea95 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -131,5 +131,8 @@ static inline bool fs_validate_description(const char *name,
+ #define fsparam_bdev(NAME, OPT)	__fsparam(fs_param_is_blockdev, NAME, OPT, 0, NULL)
+ #define fsparam_path(NAME, OPT)	__fsparam(fs_param_is_path, NAME, OPT, 0, NULL)
+ #define fsparam_fd(NAME, OPT)	__fsparam(fs_param_is_fd, NAME, OPT, 0, NULL)
++#define fsparam_string_or_flag(NAME, OPT) \
++	__fsparam(fs_param_is_string, NAME, OPT, fs_param_can_be_empty, NULL), \
++	fsparam_flag(NAME, OPT)
+ 
+ #endif /* _LINUX_FS_PARSER_H */
+-- 
+2.43.0
 
 
