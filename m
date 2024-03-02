@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-13355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D8B86EF3B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 08:44:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05EE986EF3F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 08:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EC671F2336D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 07:44:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7068DB2514C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 07:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035F018657;
-	Sat,  2 Mar 2024 07:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377CC1B971;
+	Sat,  2 Mar 2024 07:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPoK+sXQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lbMtpa69"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D703218059;
-	Sat,  2 Mar 2024 07:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0311B263;
+	Sat,  2 Mar 2024 07:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709365367; cv=none; b=LduN4ABZ7QPeLyuWnaNM6Fd9V0tDe+qj2ArUMFS+FyySUeNVO4Zt6tJdQ/Prap70nMjcDms5UWcwGYtW4VDIoibINT3nwRg6XuZUwcS6PKqb8XZmH3DBlLsVPCU55PtaAEmro9XCDHoOILU0KdvC+pNup+JrvdElU8AQxNrVZzA=
+	t=1709365370; cv=none; b=sbxbR9kLf+qmrDozH0yXvmDvxu3KlX9SAdOm9PKz8WiJ11cR8YkAdfnh1K6AOEbbKe88EIbOq8pwobIO8Jq/Z297O56wwjWIx/GqSjUvp1ltSv0QaQiXc0zuLS6bweBklGMlljcw9yBY1+u4ZQfkp5UmD4MU15uZxsvCQYWdvkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709365367; c=relaxed/simple;
-	bh=XccdQgbUgEfTrYjCxrgPLToybofUT8Nn97GdxSvqImc=;
+	s=arc-20240116; t=1709365370; c=relaxed/simple;
+	bh=UEhxsrf39s3LpCg+dRj/c9p+DSGoMMdYusEHuKqzBcY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=euFd6ucb+Yg7+BUygYNh+zE0Z3hHAoTcnLbOWgzRjwcezAP3fNeB0QlI0wXDmZECGJVN1pqk2kwjvo6S0dAomOaFDvUFT5HfGMFOuYOfH69Qc5WP0veNUVNdN5g3jopwlBpsQyD6sPhl7zig89zhIAPW9i4vA8DmxsaWsECKL/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPoK+sXQ; arc=none smtp.client-ip=209.85.160.43
+	 MIME-Version; b=ejN+oBd11xPyrT9imu8W5TT/EOtaYQL8YJbOiHxg9eFnRxnec7GqT/guNKX5oViyqXwrgV9SdqKmBlVdKRinoCEKMn1SmI9SFNUGfiEUJYECOUiZQlrDkPNqLCgjAOcWsN9Oc3dY0bwNvd+AaKsMO+Sml7C4RWAykz7s95f7vHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lbMtpa69; arc=none smtp.client-ip=209.85.160.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-21fa872dce3so1203047fac.2;
-        Fri, 01 Mar 2024 23:42:45 -0800 (PST)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-21f70f72fb5so1934679fac.1;
+        Fri, 01 Mar 2024 23:42:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709365364; x=1709970164; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1709365368; x=1709970168; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MmvvXS9J0hotjKmd7nXk3BFkDw31hUfZsHqAnm1NWAk=;
-        b=HPoK+sXQwBYyISFknHPxG2QoERx2lq6Z6PW8pXOvNowJfSN7lx1bi8iUCrwsLc6798
-         wPtk3zfoVD5J+m/+tCi97AWAzm1fM7meGU11Ibi9tIc8wWa8qiZ2Uy4tyS5WjkDXm3H6
-         AX6cck9M89+rpOGqVXC8azvLZXMVLLmLAT8YKHlkOybREroH1bbtSVCemXdQI1t6BvxC
-         CtWkmGZVUHhS4jFmcikCKEc2pQaThBm+PlJTcnw0M80svpnH6r+LNA3G/uwbkTqg1+Tq
-         cqUuUqrBzollsz9pn4/MUPkxOY2GXbV4FyBYJP/HqMkHR9MrWpJ8yG+vDaicMIFrW2zh
-         KTMg==
+        bh=RPDq+e7qZZNUe2lBOgjexuQEg62+2SvW8S4Hg2hx7P8=;
+        b=lbMtpa69SB34xQc7612j38A4KBcghi3XwxfJuYqEoBio6bKBzhX8/7X186gvXVsmj0
+         oxdkpNr/6i9/I0qRdBso528lWFWv3V77X5BwnE6ZJwuFJcPuzk/ShQkDjqTAlg5H+/xo
+         GgASx3zz+DYzztxJZuf4237ms96FPYSL33ZMlyu+hN5KwkgweeT2bl12F5COJM7/D8qD
+         uu0zKCc0bqjuVHo78w72bKrurLgFWT8br5Ih/oIfAryM1vJ0tJdxrP4HIpMj2AJKT/+c
+         DSjb+robR+Opc9AwbPJC0lVYsR+OqaMaSLGg+wZ8qvZCLsxOtHpHa7laf6amk11VuThS
+         mCGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709365364; x=1709970164;
+        d=1e100.net; s=20230601; t=1709365368; x=1709970168;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MmvvXS9J0hotjKmd7nXk3BFkDw31hUfZsHqAnm1NWAk=;
-        b=bbbHZlhrRZuFvtCn4+L1klm9C/l7Zsqzm1htGL0ZAkjGOKa2lqXVlZanu3uj/IePki
-         Y2o0J14RkCoEgoxMgQQ+JvvjsoQQCIApYC13mfoWHItoKWLuMUcAWkvGkmCcg3HuXgDY
-         5Vk3IpNo9xXMuMjJvqLhniNSGI78UobEvUp0XHKjRqVIWnbsDhhL+ezObwRg4EsuZlWp
-         FFKyNwNkKyT74iomZTmYYVXLE6iS+oSpPTF9UdMurXuIVNi1UgIyZwOu9ZTNxkrirPhs
-         CFNxuP49b+D5/fTRETD3f225rhgl681X9WgdRW3LUbjacOtq0wSUDbNI88T075R8Pv+2
-         MMMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJbF9GyZP5xAvVrZfcLakDkOhLu3ggy9z91aZChNng5dLcOhNL4O8uDMEwLXAZ2ASfVqbHt4NxqzcC8HUD0Bb067MMtitKsnMSjb5YKJgvdG5nmzgdNxP3hALQIjPiTsQfXh72wI3Vcg==
-X-Gm-Message-State: AOJu0YxX/kTkiwqBu7sB1jzBnsG6HotwOuG4Yc8wT3BIraQ8NuH5JAGB
-	s+c0QYXKsD1iMxSRXIzxG04kwwtC7c5Y82dKOUiieWZAfk5QB+GfRMEremw/
-X-Google-Smtp-Source: AGHT+IE4CpBbtufy+ckAJgMRWpOhMbygbFmtOeQHTozWUAdYrfg6HSglZMY1fvBiYVpFNVc5rALKcA==
-X-Received: by 2002:a05:6870:c142:b0:220:bf55:b12a with SMTP id g2-20020a056870c14200b00220bf55b12amr3871797oad.38.1709365364048;
-        Fri, 01 Mar 2024 23:42:44 -0800 (PST)
+        bh=RPDq+e7qZZNUe2lBOgjexuQEg62+2SvW8S4Hg2hx7P8=;
+        b=mha9MbGDZe/9RMCqsa2hOruBEZKz78UBTO2fIhXv65uXN9L7IO68UVGq0Mi7ZS9bf0
+         NwycfR/RvkI3Q43SX1YXXrxrBMPkjKe3AYRBto0t0eBQJYBMfOBU/jGunBcC9FkQUEHe
+         lEZ9Yx/VC2cOnp2UQ6bhSrNiGUjXIOF0wl7CwA2m20Sb+Ej2hVCsSfNMFFHrb3oIJNIR
+         /EA3uYcmPJOvn54Dc3wX7KhuquPKx7LVMxpGiO9ZdpDjitt8iBtAn/WO7lfYIuar4Ywr
+         4IvZQSC3uHjJbeY82MruK9dvo2p5ZFmSaKRLmsn7d/bNsHk/KC/CX0GMrM2EySk2uYSz
+         wMnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcWqLW1imGthmURhTzjLpVP/lcTSGvy+y4d29JijkP9XNO6wWNEfJdXtBkWzqa402R6EWtSovdQf7GUw2ZoplvAp+8G0xUB1GpD+q55vfgeQi1g52ErgVgGL2eUHj0fmPrEsEKQBMxkQ==
+X-Gm-Message-State: AOJu0Yz0AvGlNoJ02Irh15q1w4pXWUh1tvWpZs7ue7mLW2HsICpjbSAX
+	APup1yNOlymPvHRARCSD1odgswx0wnQeDbxAuynoM/k0PIzyFi9c+qFB089P
+X-Google-Smtp-Source: AGHT+IE/m6H6F0kQKihprUz16XWVJsMaLAmr+GMFaQJzjx0uRY+iUh55PiV4LGG2omEAlU5HzeKCqA==
+X-Received: by 2002:a05:6870:e305:b0:21e:e583:25e1 with SMTP id z5-20020a056870e30500b0021ee58325e1mr4359058oad.32.1709365367792;
+        Fri, 01 Mar 2024 23:42:47 -0800 (PST)
 Received: from dw-tp.. ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id x11-20020aa784cb000000b006e45c5d7720sm4138206pfn.93.2024.03.01.23.42.40
+        by smtp.gmail.com with ESMTPSA id x11-20020aa784cb000000b006e45c5d7720sm4138206pfn.93.2024.03.01.23.42.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 23:42:43 -0800 (PST)
+        Fri, 01 Mar 2024 23:42:47 -0800 (PST)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-ext4@vger.kernel.org
@@ -79,9 +79,9 @@ Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>,
 	John Garry <john.g.garry@oracle.com>,
 	linux-kernel@vger.kernel.org,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFC 5/8] ext4: Adds direct-io atomic writes checks
-Date: Sat,  2 Mar 2024 13:12:02 +0530
-Message-ID: <e332979deb70913c2c476a059b09015904a5b007.1709361537.git.ritesh.list@gmail.com>
+Subject: [RFC 6/8] ext4: Add an inode flag for atomic writes
+Date: Sat,  2 Mar 2024 13:12:03 +0530
+Message-ID: <33e9dc5cd81f85d86e3b2eb95df4f7831e4f96a6.1709361537.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <555cc3e262efa77ee5648196362f415a1efc018d.1709361537.git.ritesh.list@gmail.com>
 References: <555cc3e262efa77ee5648196362f415a1efc018d.1709361537.git.ritesh.list@gmail.com>
@@ -93,88 +93,73 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch adds ext4 specific checks for supporting atomic writes
-using fsawu (filesystem atomic write unit). We can enable this support
-with either -
-1. bigalloc on a 4k pagesize system or
-2. bs < ps system with -b <BS>
-3. filesystems with LBS (large block size) support (future)
-
-Let's use generic_atomic_write_valid() helper for alignment
-restrictions checking.
+This patch adds an inode atomic writes flag to ext4
+(EXT4_ATOMICWRITES_FL which uses FS_ATOMICWRITES_FL flag).
+Also add support for setting of this flag via ioctl.
 
 Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/ext4/file.c | 34 +++++++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
+ fs/ext4/ext4.h  |  6 ++++++
+ fs/ext4/ioctl.c | 11 +++++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 54d6ff22585c..8e309a9a0bd6 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -400,6 +400,21 @@ static const struct iomap_dio_ops ext4_dio_write_ops = {
- 	.end_io = ext4_dio_write_end_io,
- };
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 1d2bce26e616..aa7fff2d6f96 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -495,8 +495,12 @@ struct flex_groups {
+ #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+ /* 0x00400000 was formerly EXT4_EOFBLOCKS_FL */
  
-+static bool ext4_dio_atomic_write_checks(struct kiocb *iocb,
-+					 struct iov_iter *from)
-+{
-+	struct super_block *sb = file_inode(iocb->ki_filp)->i_sb;
-+	loff_t pos = iocb->ki_pos;
-+	unsigned int fsawu_min, fsawu_max;
-+
-+	if (!ext4_can_atomic_write_fsawu(sb))
-+		return false;
-+
-+	ext4_atomic_write_fsawu(sb, &fsawu_min, &fsawu_max);
-+
-+	return generic_atomic_write_valid(pos, from, fsawu_min, fsawu_max);
-+}
-+
- /*
-  * The intention here is to start with shared lock acquired then see if any
-  * condition requires an exclusive inode lock. If yes, then we restart the
-@@ -427,13 +442,19 @@ static ssize_t ext4_dio_write_checks(struct kiocb *iocb, struct iov_iter *from,
- 	loff_t offset;
- 	size_t count;
- 	ssize_t ret;
--	bool overwrite, unaligned_io;
-+	bool overwrite, unaligned_io, atomic_write;
++#define EXT4_ATOMICWRITES_FL		FS_ATOMICWRITES_FL /* Inode supports atomic writes */
+ #define EXT4_DAX_FL			0x02000000 /* Inode is DAX */
  
- restart:
- 	ret = ext4_generic_write_checks(iocb, from);
- 	if (ret <= 0)
- 		goto out;
++/* 0x04000000 unused for now */
++/* 0x08000000 unused for now */
++
+ #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+ #define EXT4_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+ #define EXT4_CASEFOLD_FL		0x40000000 /* Casefolded directory */
+@@ -519,6 +523,7 @@ struct flex_groups {
+ 					 0x00400000 /* EXT4_EOFBLOCKS_FL */ | \
+ 					 EXT4_DAX_FL | \
+ 					 EXT4_PROJINHERIT_FL | \
++					 EXT4_ATOMICWRITES_FL | \
+ 					 EXT4_CASEFOLD_FL)
  
-+	atomic_write = iocb->ki_flags & IOCB_ATOMIC;
-+	if (atomic_write && !ext4_dio_atomic_write_checks(iocb, from)) {
-+		ret = -EINVAL;
-+		goto out;
+ /* User visible flags */
+@@ -593,6 +598,7 @@ enum {
+ 	EXT4_INODE_VERITY	= 20,	/* Verity protected inode */
+ 	EXT4_INODE_EA_INODE	= 21,	/* Inode used for large EA */
+ /* 22 was formerly EXT4_INODE_EOFBLOCKS */
++	EXT4_INODE_ATOMIC_WRITE	= 24,	/* file does ATOMIC WRITE */
+ 	EXT4_INODE_DAX		= 25,	/* Inode is DAX */
+ 	EXT4_INODE_INLINE_DATA	= 28,	/* Data in inode. */
+ 	EXT4_INODE_PROJINHERIT	= 29,	/* Create with parents projid */
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index 7160a71044c8..03d0b501cbc8 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -632,6 +632,17 @@ static int ext4_ioctl_setflags(struct inode *inode,
+ 		}
+ 	}
+ 
++	if (flags & EXT4_ATOMICWRITES_FL) {
++		if (!ext4_can_atomic_write_fsawu(sb))
++			return -EOPNOTSUPP;
++
++		/* TODO: Do we need locks to check i_reserved_data_blocks */
++		if (!S_ISREG(inode->i_mode) || ext4_has_inline_data(inode) ||
++				READ_ONCE(ei->i_disksize) ||
++				EXT4_I(inode)->i_reserved_data_blocks)
++			return -EOPNOTSUPP;
 +	}
 +
- 	offset = iocb->ki_pos;
- 	count = ret;
- 
-@@ -576,8 +597,15 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		iomap_ops = &ext4_iomap_overwrite_ops;
- 	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
- 			   dio_flags, NULL, 0);
--	if (ret == -ENOTBLK)
--		ret = 0;
-+
-+	/* Fallback to buffered-io for non-atomic DIO */
-+	if (ret == -ENOTBLK) {
-+		if (iocb->ki_flags & IOCB_ATOMIC)
-+			ret = -EIO;
-+		else
-+			ret = 0;
-+	}
-+
- 	if (extend) {
- 		/*
- 		 * We always perform extending DIO write synchronously so by
+ 	/*
+ 	 * Wait for all pending directio and then flush all the dirty pages
+ 	 * for this file.  The flush marks all the pages readonly, so any
 -- 
 2.43.0
 
