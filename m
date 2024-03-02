@@ -1,190 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-13364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044AD86F054
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 12:46:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED3C86F068
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 13:14:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA161F22113
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 11:46:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06844B242FF
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 12:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C4017561;
-	Sat,  2 Mar 2024 11:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4tMOrHK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02DD1756D;
+	Sat,  2 Mar 2024 12:14:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23436171BF;
-	Sat,  2 Mar 2024 11:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0E616439
+	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Mar 2024 12:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709380008; cv=none; b=XN9ResLvqMm4Lo1fntqb8x6+4WydDF+XYjpmWeyabBKinN5J3VeVvInFVjB1mt/dhZ/VXVbCAl5dVSVEa6dy9KwjcP84lW5hTxg7vQhUGDc058YEng2swVNIvC+1DgUx+G90k3UBcr0BDfneAU55rAv7pNfcMPt1HrZTayapFFQ=
+	t=1709381646; cv=none; b=rU21QkgAO6eBrolK6m+y88beckWqOI7wFaFRCVse+TXVJsWY+mrmuzxgthXipHFQb2a6ydCMtDGJIyAzw3D7HFhS6ti8Umke65Yds9Cqb/sBUZPTYr5nUdL2MGCqExsPnf3Elpy6b6WoWkdouEsHf215P/Ctz5r2zdNRJ0bUUyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709380008; c=relaxed/simple;
-	bh=6ybbMazjaeBS8YeBDGv/Cm5reWpCfIW0IWKWohJFMZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y4XaGO742MEBw9qxHOudVocV3Vxdv8RpwJ6fwPYKW9ijR3hcJaoifXtYEMMz5Z6yN6oGsyDUs++I1Rhaq0odDgdNvalDXWVeK6b/IM1UQDN7apNm+BRAF/Pntt1Q7B8n07Mb2VR9C/lqKBO2A+s8N+FV0cZGsShkrXunlpaLGWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4tMOrHK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5DB5C433F1;
-	Sat,  2 Mar 2024 11:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709380007;
-	bh=6ybbMazjaeBS8YeBDGv/Cm5reWpCfIW0IWKWohJFMZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I4tMOrHK23Pkkn1kDxMqBt0gfVxve00K9dk6+AN7WC3lM5MEh6L9QJj2Ghj7A42fz
-	 k93yrwr8rXsSvSP7EkDVl5Epmtup3GeBjC35GAxnbDpu4xLUFBf9uAvkn2feBhZwIQ
-	 muSESoyxAg6humaLYqA2iY/RR92SFJB0HRUeKGgI7bhSEQHvvVcG051dpZnvAwyCUr
-	 AI6G/4ttXvFbcbRF7sT1CFgpDv0ZakY1kyXw6MdB9AbWnf/MmYP8eIHzRNgELWV2L7
-	 /0amtXNG6C1bOELcdUltZ73hN3XPrrhoViHwgQ6vlV9l5z5mjdVwwtaZK4MOUDiNvp
-	 nxPXRM9P3mpEQ==
-Date: Sat, 2 Mar 2024 12:46:41 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Luis Henriques <lhenriques@suse.de>, 
-	Eric Sandeen <sandeen@sandeen.net>
-Cc: Theodore Ts'o <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fs_parser: handle parameters that can be empty and
- don't have a value
-Message-ID: <20240302-avancieren-sehtest-90eb364bfcd5@brauner>
-References: <20240229163011.16248-1-lhenriques@suse.de>
- <20240229163011.16248-2-lhenriques@suse.de>
- <20240301-gegossen-seestern-683681ea75d1@brauner>
- <87il269crs.fsf@suse.de>
+	s=arc-20240116; t=1709381646; c=relaxed/simple;
+	bh=bFd8eX4Us0/YjmKzSKzjGwgIDpnWpg6gP95kNMPOmz4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oOB7HhOVj6p1U+TeOyzWeFmm3QVmTjrlH1WH3nBHfjeQGjZtspmDl/qJ79novlnUMgGzC5dWNmL/w3rw8YVOzhvdmfOqi+OsddYnXKGK7zJhy4DZ51AWRK5SofyVycYrVxw9pUPB36gCNkUDq5K7AL7NKjbkpUN/E5IHXCHAUms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3657cf730a0so38294925ab.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Mar 2024 04:14:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709381644; x=1709986444;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uYoaaKFkoOiUzi2l6hHhIz7YnyXz41iQ7tjdGLqGYME=;
+        b=nEKtmZ/LCRJH8Be0xmh5r35850DE/FGqDcEhGVQeo9zoGLH7ornBPmBQGCaNlhLedV
+         WGZ2uLYoA5ixYls8xzHZ6s4/UqiKUe6wp258i1BG+YVt+I8YPuns4BI83CGzdoFKcesv
+         sV+GdyxN2gUCzwrcaLDNxQMxSy5DHRq0zBif26YhJOSjBELZAJDEJ+PP9lLC7xvclSfF
+         hWXWl84xvuEJFZaUKwl6YZQV2yFj3FnxvYVetzE4gwTUPEOBErfeWhsljDDXuTQSgZe/
+         oPtU7QoVAmIH9eJtDsYvwfrsocENlZ//0onK9A5HOk5fbJz+VOoN+iRdgc8inTmCscjl
+         hLrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMYqkCaU8YMPWgLwUOe4mgheV4zvlOLvDKNIQCh6FSZDPIn9wJwvJPgQfPgWpLe3jus/kArqW92qCASLyHNiwvkO6efidWYveMgWmXqQ==
+X-Gm-Message-State: AOJu0YxTuoZ9/eHvUyxQOZZGyt1I0NJ/FCZuUrfBvgX0o+YvQwhkyUFn
+	p8HtcSWl1hntNWiGrKLE66EE0Z+OqjNI9CtelG9lNRxaIGd76VP+nXHQpSWvO32+xMG60njKxRO
+	r4OM0gZ/6/m/37KFD7cIffzH+Hx8foTT1OD3XJ39FiLubmE9MZxKjB4E=
+X-Google-Smtp-Source: AGHT+IGzYKGUPBAnHpRKFUS/Ttvbm9t92JKxhV3NxYE8TwRbo6Ol9O0X8ysMfiGCvGBL2jOGpG2Igxb5fqxTso+TPijHwSAYOSTK
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87il269crs.fsf@suse.de>
+X-Received: by 2002:a05:6e02:b25:b0:365:26e3:6e51 with SMTP id
+ e5-20020a056e020b2500b0036526e36e51mr147746ilu.0.1709381644143; Sat, 02 Mar
+ 2024 04:14:04 -0800 (PST)
+Date: Sat, 02 Mar 2024 04:14:04 -0800
+In-Reply-To: <000000000000eccdc505f061d47f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000af5c290612ac6d86@google.com>
+Subject: Re: [syzbot] [udf] WARNING in invalidate_bh_lru
+From: syzbot <syzbot+9743a41f74f00e50fc77@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
+	hch@infradead.org, hch@lst.de, jack@suse.com, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	liushixin2@huawei.com, nogikh@google.com, syzkaller-bugs@googlegroups.com, 
+	tytso@mit.edu, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Mar 01, 2024 at 03:45:27PM +0000, Luis Henriques wrote:
-> Christian Brauner <brauner@kernel.org> writes:
-> 
-> > On Thu, Feb 29, 2024 at 04:30:08PM +0000, Luis Henriques wrote:
-> >> Currently, only parameters that have the fs_parameter_spec 'type' set to
-> >> NULL are handled as 'flag' types.  However, parameters that have the
-> >> 'fs_param_can_be_empty' flag set and their value is NULL should also be
-> >> handled as 'flag' type, as their type is set to 'fs_value_is_flag'.
-> >> 
-> >> Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> >> ---
-> >>  fs/fs_parser.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> >> index edb3712dcfa5..53f6cb98a3e0 100644
-> >> --- a/fs/fs_parser.c
-> >> +++ b/fs/fs_parser.c
-> >> @@ -119,7 +119,8 @@ int __fs_parse(struct p_log *log,
-> >>  	/* Try to turn the type we were given into the type desired by the
-> >>  	 * parameter and give an error if we can't.
-> >>  	 */
-> >> -	if (is_flag(p)) {
-> >> +	if (is_flag(p) ||
-> >> +	    (!param->string && (p->flags & fs_param_can_be_empty))) {
-> >>  		if (param->type != fs_value_is_flag)
-> >>  			return inval_plog(log, "Unexpected value for '%s'",
-> >>  				      param->key);
-> >
-> > If the parameter was derived from FSCONFIG_SET_STRING in fsconfig() then
-> > param->string is guaranteed to not be NULL. So really this is only
-> > about:
-> >
-> > FSCONFIG_SET_FD
-> > FSCONFIG_SET_BINARY
-> > FSCONFIG_SET_PATH
-> > FSCONFIG_SET_PATH_EMPTY
-> >
-> > and those values being used without a value. What filesystem does this?
-> > I don't see any.
-> >
-> > The tempting thing to do here is to to just remove fs_param_can_be_empty
-> > from every helper that isn't fs_param_is_string() until we actually have
-> > a filesystem that wants to use any of the above as flags. Will lose a
-> > lot of code that isn't currently used.
-> 
-> Right, I find it quite confusing and I may be fixing the issue in the
-> wrong place.  What I'm seeing with ext4 when I mount a filesystem using
-> the option '-o usrjquota' is that fs_parse() will get:
-> 
->  * p->type is set to fs_param_is_string
->    ('p' is a struct fs_parameter_spec, ->type is a function)
->  * param->type is set to fs_value_is_flag
->    ('param' is a struct fs_parameter, ->type is an enum)
-> 
-> This is because ext4 will use the __fsparam macro to set define a
-> fs_param_spec as a fs_param_is_string but will also set the
-> fs_param_can_be_empty; and the fsconfig() syscall will get that parameter
-> as a flag.  That's why param->string will be NULL in this case.
+syzbot suspects this issue was fixed by commit:
 
-Thanks for the details. Let me see if I get this right. So you're saying that
-someone is doing:
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-fsconfig(..., FSCONFIG_SET_FLAG, "usrjquota", NULL, 0); // [1]
+    fs: Block writes to mounted block devices
 
-? Is so that is a vital part of the explanation. So please put that in the
-commit message.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14a093ce180000
+start commit:   9a3dad63edbe Merge tag '6.6-rc5-ksmbd-server-fixes' of git..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=11e478e28144788c
+dashboard link: https://syzkaller.appspot.com/bug?extid=9743a41f74f00e50fc77
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ebc3c5680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122e8275680000
 
-Then ext4 defines:
+If the result looks correct, please mark the issue as fixed by replying with:
 
-	fsparam_string_empty ("usrjquota",		Opt_usrjquota),
+#syz fix: fs: Block writes to mounted block devices
 
-So [1] gets us:
-
-        param->type == fs_value_is_flag
-        param->string == NULL
-
-Now we enter into
-fs_parse()
--> __fs_parse()
-   -> fs_lookup_key() for @param and that does:
-
-        bool want_flag = param->type == fs_value_is_flag;
-
-        *negated = false;
-        for (p = desc; p->name; p++) {
-                if (strcmp(p->name, name) != 0)
-                        continue;
-                if (likely(is_flag(p) == want_flag))
-                        return p;
-                other = p;
-        }
-
-So we don't have a flag parameter defined so the only real match we get is
-@other for:
-
-        fsparam_string_empty ("usrjquota",		Opt_usrjquota),
-
-What happens now is that you call p->type == fs_param_is_string() and that
-rejects it as bad parameter because param->type == fs_value_is_flag !=
-fs_value_is_string as required. So you dont end up getting Opt_userjquota
-called with param->string NULL, right? So there's not NULL deref or anything,
-right?
-
-You just fail to set usrjquota. Ok, so I think the correct fix is to do
-something like the following in ext4:
-
-        fsparam_string_empty ("usrjquota",      Opt_usrjquota),
-        fs_param_flag        ("usrjquota",      Opt_usrjquota_flag),
-
-and then in the switch you can do:
-
-switch (opt)
-case Opt_usrjquota:
-        // string thing
-case Opt_usrjquota_flag:
-        // flag thing
-
-And I really think we should kill all empty handling for non-string types and
-only add that when there's a filesystem that actually needs it.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
