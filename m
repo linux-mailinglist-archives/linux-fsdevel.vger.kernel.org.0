@@ -1,163 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-13345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 640B886EE17
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 03:15:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11F086EE2F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 03:48:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1FEBB21AF9
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 02:15:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10A5B1C21BAE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 02:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797AD7490;
-	Sat,  2 Mar 2024 02:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C006FCA;
+	Sat,  2 Mar 2024 02:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dpk2Es87"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOHMLjfU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29FE63AE
-	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Mar 2024 02:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C39D110A;
+	Sat,  2 Mar 2024 02:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709345699; cv=none; b=TEUC6m4pypx22fsIbknLe7XjQXnQGn5NdLmzOUOoPkyhRcZud0/wcqhuXxTbdmstKcMNVYHzg27fGXnS6AjA8F/O0beIUaPvLUSNyLnCj3P5Nx4UBeyeHMbEk8aP5aDY6OZkaNFiMwBgZK2sjmTVES/w6+0DLzR19uWLyxG7yIQ=
+	t=1709347712; cv=none; b=gYGyaZ6cY/7FSZj0YENG88WiCGu5ifXvt9GTzWUb5SfgmWiHLynQxOrMYf+NpNOVOH4zcLeRjy6vDwnfG1w2ifeypbNYixUwAPLEz22VNQoa8Sg0wFCzNRsbYaAf6JJ9PjGTrShe8F+MDeDJyMmpzWaFcb4z6wDaR6UZAuOWWmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709345699; c=relaxed/simple;
-	bh=xdUH8yt56H1yrlX9btyLfY5jD2X0MPDmpzirbToSkN0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DU+qaO2jrXb5g8itbv1yVy5fkgxSCQ8SqW1Dx8x/dGNGQ93GDU4eBoYlVyG7R2VFFGWFPWYEwvPTwONnSkCxNXt5AUUbHwqlkLSxpzS4fIyz9qlcyrQYulf2a83hhunzmMSZPaym89rnU+IPCdLfegQeeQAAomQenQxYrgBbmgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dpk2Es87; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 1 Mar 2024 21:14:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709345695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=SLhMFb9RPBAVJDy0ylhiUFPZYEbcZieEIC/CfKQNaUQ=;
-	b=Dpk2Es87o5cb0ruLrDNl0GHFI1Zz8TwMOVzXb8YkI7CBIisdANsCZ8u0BSWo2Q0+ppxECs
-	Wm2o8+aLXxhWQ+tbLhUnYjuAAAJlTMUWxhoVby4PDR++QkiSS3351AlhLScgGojZtqz4Jw
-	GiGM0j6VboSzMFx5mr4kE+9NIrtooLs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [WIP] bcachefs fs usage update
-Message-ID: <gajhq3iyluwmr44ee2fzacfpgpxmr2jurwqg6aeiab4lfila3p@b3l7bywr3yed>
+	s=arc-20240116; t=1709347712; c=relaxed/simple;
+	bh=rSzHh+yf3pqOy0q5p0puXfA0m9yhsfFdIwnXmfsDPTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQmYKSQClx5smNSrr6vqxc2njpuflHEOkmRNu5sBMymLBQKm4ya9YY7G5buxyQl/AJkjA+FYoifghWl5fNyZUWbCyWdNU4UhmbV4OEMR9JJGPNFGXLd2VrPLMCieQgChyW/hxukwG/CklGA5l8ITyN41kriG93ZPZ1qSjZgblMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOHMLjfU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30097C433C7;
+	Sat,  2 Mar 2024 02:48:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709347712;
+	bh=rSzHh+yf3pqOy0q5p0puXfA0m9yhsfFdIwnXmfsDPTM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mOHMLjfUhJlAmUo61hDrJCebD0hImIyLXHc/sPNGhNepmi1J4GtHDEhEuBb4nClht
+	 ehPLIo+DnVRLq8IglnDew0FyBYKZofkyJHlczsNaziZpsb5+6I+ZzN6yUcmblqq5GL
+	 0zJkju8Gy4FbpCHup0EXlpfRNS2hoxwrUN9nZcjydiirTDfjTArD0A9iwKgrNwI09q
+	 i2CrzZmA1pd3TOBjzIIMl1/MRZUsMt1klTvU0TULU3hCakR94OyNEkTEnMq+Tk70+C
+	 qaWPeLuFcXRia4g2LGTDlcsEkBGnxkQ07GSlOyz9PC0x9/z9zg/oCYchy/Ti1Kh8lQ
+	 l5YmbFmACbiZA==
+Date: Fri, 1 Mar 2024 18:48:31 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, hch@lst.de
+Subject: Re: [PATCH 14/13] xfs: make XFS_IOC_COMMIT_RANGE freshness data
+ opaque
+Message-ID: <20240302024831.GL1927156@frogsfrogsfrogs>
+References: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
+ <20240227174649.GL6184@frogsfrogsfrogs>
+ <CAOQ4uxiPfno-Hx+fH3LEN_4D6HQgyMAySRNCU=O2R_-ksrxSDQ@mail.gmail.com>
+ <20240229232724.GD1927156@frogsfrogsfrogs>
+ <bf2f4a0e7033091d34139540737674dc998fe010.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bf2f4a0e7033091d34139540737674dc998fe010.camel@kernel.org>
 
-I'm currently updating the 'bcachefs fs usage' command for the disk
-accounting rewrite, and looking for suggestions on any improements we
-could make - ways to present the output that would be clearer and more
-useful, possibly ideas on on new things to count...
+On Fri, Mar 01, 2024 at 08:31:21AM -0500, Jeff Layton wrote:
+> On Thu, 2024-02-29 at 15:27 -0800, Darrick J. Wong wrote:
+> > On Tue, Feb 27, 2024 at 08:52:58PM +0200, Amir Goldstein wrote:
+> > > On Tue, Feb 27, 2024 at 7:46 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > 
+> > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > > 
+> > > > To head off bikeshedding about the fields in xfs_commit_range, let's
+> > > > make it an opaque u64 array and require the userspace program to call
+> > > > a third ioctl to sample the freshness data for us.  If we ever converge
+> > > > on a definition for i_version then we can use that; for now we'll just
+> > > > use mtime/ctime like the old swapext ioctl.
+> > > 
+> > > This addresses my concerns about using mtime/ctime.
+> > 
+> > Oh good! :)
+> > 
+> > > I have to say, Darrick, that I think that referring to this concern as
+> > > bikeshedding is not being honest.
+> > > 
+> > > I do hate nit picking reviews and I do hate "maybe also fix the world"
+> > > review comments, but I think the question about using mtime/ctime in
+> > > this new API was not out of place
+> > 
+> > I agree, your question about mtime/ctime:
+> > 
+> > "Maybe a stupid question, but under which circumstances would mtime
+> > change and ctime not change? Why are both needed?"
+> > 
+> > was a very good question.  But perhaps that statement referred to the
+> > other part of that thread.
+> > 
+> > >                                   and I think that making the freshness
+> > > data opaque is better for everyone in the long run and hopefully, this will
+> > > help you move to the things you care about faster.
+> > 
+> > I wish you'd suggested an opaque blob that the fs can lay out however it
+> > wants instead of suggesting specifically the change cookie.  I'm very
+> > much ok with an opaque freshness blob that allows future flexibility in
+> > how we define the blob's contents.
+> > 
+> > I was however very upset about the Jeff's suggestion of using i_version.
+> > I apologize for using all caps in that reply, and snarling about it in
+> > the commit message here.  The final version of this patch will not have
+> > that.
+> > 
+> > That said, I don't think it is at all helpful to suggest using a file
+> > attribute whose behavior is as yet unresolved.  Multigrain timestamps
+> > were a clever idea, regrettably reverted.  As far as I could tell when I
+> > wrote my reply, neither had NFS implemented a better behavior and
+> > quietly merged it; nor have Jeff and Dave produced any sort of candidate
+> > patchset to fix all the resulting issues in XFS.
+> >
+> > Reading "I realize that STATX_CHANGE_COOKIE is currently kernel
+> > internal" made me think "OH $deity, they wants me to do that work
+> > too???"
+> > 
+> > A better way to have woreded that might've been "How about switching
+> > this to a fs-determined structure so that we can switch the freshness
+> > check to i_version when that's fully working on XFS?"
+> > 
+> > The problem I have with reading patch review emails is that I can't
+> > easily tell whether an author's suggestion is being made in a casual
+> > offhand manner?  Or if it reflects something they feel strongly needs
+> > change before merging.
+> > 
+> > In fairness to you, Amir, I don't know how much you've kept on top of
+> > that i_version vs. XFS discussion.  So I have no idea if you were aware
+> > of the status of that work.
+> > 
+> 
+> Sorry, I didn't mean to trigger anyone, but I do have real concerns
+> about any API that attempts to use timestamps to detect whether
+> something has changed.
+> 
+> We learned that lesson in NFS in the 90's. VFS timestamp resolution is
+> just not enough to show whether there was a change to a file -- full
+> stop.
+> 
+> I get the hand-wringing over i_version definitions and I don't care to
+> rehash that discussion here, but I'll point out that this is a
+> (proposed) XFS-private interface:
+> 
+> What you could do is expose the XFS change counter (the one that gets
+> bumped for everything, even atime updates, possibly via different
+> ioctl), and use that for your "freshness" check.
+> 
+> You'd unfortunately get false negative freshness checks after read
+> operations, but you shouldn't get any false positives (which is real
+> danger with timestamps).
 
-I think a shorter form of the per-device section is in order, a table
-with data type on the x axis and the device on the y axis; we also want
-percentages.
+I don't see how would that work for this usecase?  You have to sample
+file2 before reflinking file2's contents to file1, writing the changes
+to file1, and executing COMMIT_RANGE.  Setting the xfs-private REFLINK
+inode flag on file2 will trigger an iversion update even though it won't
+change mtime or ctime.  The COMMIT then fails due to the inode flags
+change.
 
-The big thing I'm trying to figure out is how to present the snapshots
-counters in a useful way.
+Worse yet, applications aren't going to know if a particular access is
+actually the one that will trigger an atime update.  So this will just
+fail unpredictably.
 
-Snapshot IDs form trees, where subvolumes correspond to leaf nodes in
-snapshot trees and interior nodes represent data shared between multiple
-subvolumes.
+If iversion was purely a write counter then I would switch the freshness
+implementation to use it.  But it's not, and I know this to be true
+because I tried that and could not get COMMIT_RANGE to work reliably.
+I suppose the advantage of the blob thing is that we actually /can/
+switch over whenever it's ready.
 
-That means it's straightforward to print how much data each subvolumme
-is using directly - look up the subvolume for a given snapshot ID, look
-up the filesystem path of that subvolume - but I haven't come up with a
-good way of presenting how data is shared; these trees can be
-arbitrarily large.
+--D
 
-Thoughts?
-
-Filesystem: 77d3a40d-58b6-46c9-a4d2-e59c8681e152
-Size:                       11.0 GiB
-Used:                       4.96 GiB
-Online reserved:                 0 B
-Inodes:                            4
-
-Persistent reservations:
-2x                          5.00 MiB
-
-Data type       Required/total  Durability    Devices
-btree:          1/2             2             [vdb vdc]           14.0 MiB
-btree:          1/2             2             [vdb vdd]           17.8 MiB
-btree:          1/2             2             [vdc vdd]           14.3 MiB
-user:           1/2             2             [vdb vdc]           1.64 GiB
-user:           1/2             2             [vdb vdd]           1.63 GiB
-user:           1/2             2             [vdc vdd]           1.64 GiB
-
-Compression:      compressed    uncompressed     average extent size
-lz4                 4.63 GiB        6.57 GiB                 112 KiB
-incompressible       328 MiB         328 MiB                 113 KiB
-
-Snapshots:
-4294967295          4.91 GiB
-
-Btrees:
-extents             12.0 MiB
-inodes               256 KiB
-dirents              256 KiB
-alloc               10.8 MiB
-subvolumes           256 KiB
-snapshots            256 KiB
-lru                  256 KiB
-freespace            256 KiB
-need_discard         256 KiB
-backpointers        20.5 MiB
-bucket_gens          256 KiB
-snapshot_trees       256 KiB
-logged_ops           256 KiB
-accounting           256 KiB
-
-(no label) (device 0):           vdb              rw
-                                data         buckets    fragmented
-  free:                     2.27 GiB           18627
-  sb:                       3.00 MiB              25       124 KiB
-  journal:                  32.0 MiB             256
-  btree:                    15.9 MiB             127
-  user:                     1.64 GiB           13733      41.1 MiB
-  cached:                        0 B               0
-  parity:                        0 B               0
-  stripe:                        0 B               0
-  need_gc_gens:                  0 B               0
-  need_discard:                  0 B               0
-  capacity:                 4.00 GiB           32768
-
-(no label) (device 1):           vdc              rw
-                                data         buckets    fragmented
-  free:                     2.28 GiB           18652
-  sb:                       3.00 MiB              25       124 KiB
-  journal:                  32.0 MiB             256
-  btree:                    14.1 MiB             113
-  user:                     1.64 GiB           13722      38.5 MiB
-  cached:                        0 B               0
-  parity:                        0 B               0
-  stripe:                        0 B               0
-  need_gc_gens:                  0 B               0
-  need_discard:                  0 B               0
-  capacity:                 4.00 GiB           32768
-
-(no label) (device 2):           vdd              rw
-                                data         buckets    fragmented
-  free:                     2.28 GiB           18640
-  sb:                       3.00 MiB              25       124 KiB
-  journal:                  32.0 MiB             256
-  btree:                    16.0 MiB             128
-  user:                     1.64 GiB           13719      38.6 MiB
-  cached:                        0 B               0
-  parity:                        0 B               0
-  stripe:                        0 B               0
-  need_gc_gens:                  0 B               0
-  need_discard:                  0 B               0
-  capacity:                 4.00 GiB           32768
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
 
