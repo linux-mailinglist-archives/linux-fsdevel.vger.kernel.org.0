@@ -1,75 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-13368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D0A86F0A5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 15:13:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F52186F0C0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 16:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9464284A59
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 14:13:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53CB128383B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Mar 2024 15:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C22217BB2;
-	Sat,  2 Mar 2024 14:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Su287Q3U"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3701D17C71;
+	Sat,  2 Mar 2024 15:03:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E87A13FFA
-	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Mar 2024 14:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+Received: from port70.net (port70.net [81.7.13.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7488713FFA;
+	Sat,  2 Mar 2024 15:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.7.13.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709388813; cv=none; b=fbrickNWSWW8o7GDgcDloN7pkj8DufrmSyoohKny0cLLXKtClBDiIgoEQLIPiWtnprsLLMnNBytQextJPbhWIFGaVSJSmBf+z0tGv2g25IXjG+55bWJgu4qDZbD6b88I/101NnjgJv6eLuzH1WapaCKBbDhzlkkRgDeGHynmQx8=
+	t=1709391795; cv=none; b=AMYLg8N/4qrCqPw9ORGMPbZKu1LN5Sj6BdazhNyb8woUDMZAxjiSGspc+v8Ui5RMNu2eaLVacXZ2tLjjPjQqXlyMefomQ8Xw6+cuV1pk4Ut+2CirNqFKLMNypLKrk0898DM233sZizazGYmzwPN1393SOHfw9oXfc8Y9s3JemcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709388813; c=relaxed/simple;
-	bh=iNN0MzPkf2CGDRv5J7QwEfALJ4wP7Net/HGNTZTtLJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BEZfSGPu+mu96GpE1FkUBnXjjVwu0DX/Z69+MkVbI2enaj7Gl9AT21jmuA/bWPCRqKg9icsBaYOP+xWTNkX9jHCwobER5zmBZ7N4gi4G2Yv2f/SixXEGuMYQUOcvw5xVMU4cnlrygm2JnvCV/QaMW5vRrTdfNC6KqDQfeBxlvPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Su287Q3U; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1d7232dcb3eso23674665ad.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Mar 2024 06:13:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709388811; x=1709993611; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VKI5tRpZgcrp7k5E6TILzW0nYoavjh3k4z8aUf1JO/Y=;
-        b=Su287Q3UhpzbOnCK4ZJrNFY1lpDRzq2nhwIiJl9L5jQKfrmJN0vakY8FcuCbWC5M/B
-         enW9Q5EqltjXTkwDgZ4Q/GJaoyJn72pmlelVyqwMZ3dcyJ71Bs6WhrskTEluEWw2FQ9r
-         CnKZRz6/zECKm87ys3E/h9M2lOdpeez/GXKOWcw4suyRTmkn5kwtwV56Gfr2/87HQj5s
-         Oqn3Xtpb+58NCkKRgTfIFmqm+/002b85VgMw+PoOBy974otRBsYno9Gyq+Gzb+/YMTax
-         2lBx3jivZ/HAwa1RU2jk229rA8jUwXee/CJljmk3ayBi3w1XnkaDVjY39CstPrG4b66H
-         QPKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709388811; x=1709993611;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VKI5tRpZgcrp7k5E6TILzW0nYoavjh3k4z8aUf1JO/Y=;
-        b=qqWhumYpwSN2kiY6M3B3C7qeWAyFPIQlGxyf/8x5N2t6IzEjGL8pPkhVNwfXCsSqWG
-         4arraIFBJHOjUi6gTBwNGW4A89Ec1HobF1Di6p/57yc1jXub7nWquoq5oivNfKwywgpP
-         DzY4ohQcnS518J7qp5/ONUGJmIW7Zvun+mkzBpJstDwGhvZVRF0A80BLiOZ7pSaY2YxM
-         irg+E7aXlFZuHFHvbvFQMtAav3Ks1wNc2fRvFGd1xWapRrNDOLZrodptOLbWQ2mJB27m
-         gprv87ZQRxyOmXm+YMh0hDsc87BVOq9TwoVrWOJUrVU/UJ4Gg1NqgVKPV9+a+zR7B9IO
-         lQyA==
-X-Gm-Message-State: AOJu0YyhdEFSCwfb5W3uzDHpMMjOgHNdI1mzxKSHKA0M2a2L3bx9ATeg
-	Lu1CY13WAwMtcdm6SgjkKS1yoZmHp/hUiCOdt8SV0o4rjxyU3Zhw1SogH+ORB2Y=
-X-Google-Smtp-Source: AGHT+IEZ/KqmUwvewLOwkH82KgRvGrAEGvstYqbBA7/ivLIGKULeWJqsF5GQ/91QoJocp3L8w8ykDA==
-X-Received: by 2002:a17:903:950:b0:1db:de79:8664 with SMTP id ma16-20020a170903095000b001dbde798664mr5417732plb.60.1709388811132;
-        Sat, 02 Mar 2024 06:13:31 -0800 (PST)
-Received: from desktop-cluster-2 ([137.132.216.132])
-        by smtp.gmail.com with ESMTPSA id h12-20020a170902f7cc00b001dcac08a360sm5306328plw.175.2024.03.02.06.13.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Mar 2024 06:13:30 -0800 (PST)
-Date: Sat, 2 Mar 2024 22:13:28 +0800
-From: Han Xing Yi <hxingyi104@gmail.com>
-To: willy@infradead.org, akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [PATCH] Xarray: Fix race in xa_get_order()
-Message-ID: <ZeM0CBHF3mfz847s@desktop-cluster-2.tailce565.ts.net>
+	s=arc-20240116; t=1709391795; c=relaxed/simple;
+	bh=F+Ft9ySflUOsjYRoTJD/SuxsOSEZzbIMaYW9w/glpJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a0bMNapnZQa0/quYl7TDYybdZwf7CKj/0H0By6h7DqP9XawkWoSR+aIAMtq+XjSHGR1rjjEv7UbIHlii3pDBhvTZ+9nv5StBR3EHYqegB8MTHSfmLOJ6yzI5bt7hKDvjcTu39UnB1emDFSOJCsxwqSL1njDZSzUwlJnIcGug/gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=port70.net; spf=pass smtp.mailfrom=port70.net; arc=none smtp.client-ip=81.7.13.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=port70.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=port70.net
+Received: by port70.net (Postfix, from userid 1002)
+	id 691CEABEC0C7; Sat,  2 Mar 2024 15:57:02 +0100 (CET)
+Date: Sat, 2 Mar 2024 15:57:02 +0100
+From: Szabolcs Nagy <nsz@port70.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: "dalias@libc.org" <dalias@libc.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"musl@lists.openwall.com" <musl@lists.openwall.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"arnd@arndb.de" <arnd@arndb.de>, "maz@kernel.org" <maz@kernel.org>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"keescook@chromium.org" <keescook@chromium.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"sorear@fastmail.com" <sorear@fastmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [musl] Re: [PATCH v8 00/38] arm64/gcs: Provide support for GCS
+ in userspace
+Message-ID: <20240302145702.GD1884416@port70.net>
+Mail-Followup-To: Mark Brown <broonie@kernel.org>,
+	"dalias@libc.org" <dalias@libc.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"musl@lists.openwall.com" <musl@lists.openwall.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"arnd@arndb.de" <arnd@arndb.de>, "maz@kernel.org" <maz@kernel.org>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"keescook@chromium.org" <keescook@chromium.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"sorear@fastmail.com" <sorear@fastmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <22a53b78-10d7-4a5a-a01e-b2f3a8c22e94@app.fastmail.com>
+ <4c7bdf8fde9cc45174f10b9221fa58ffb450b755.camel@intel.com>
+ <20240220185714.GO4163@brightrain.aerifal.cx>
+ <9fc9c45ff6e14df80ad023e66ff7a978bd4ec91c.camel@intel.com>
+ <20240220235415.GP4163@brightrain.aerifal.cx>
+ <a57d6c7eada4b9a7c35addbc8556f5b53a0c3e6f.camel@intel.com>
+ <20240221012736.GQ4163@brightrain.aerifal.cx>
+ <d18f060d-37ac-48b1-9f67-a5c5db79b34e@sirena.org.uk>
+ <20240221145800.GR4163@brightrain.aerifal.cx>
+ <4a3809e8-61b2-4341-a868-292ba6e64e8a@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,90 +124,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <4a3809e8-61b2-4341-a868-292ba6e64e8a@sirena.org.uk>
 
-Hello! This is my first patch ever, so please bear with me if I make some rookie
-mistakes. I've tried my best to follow the documentation :) 
+* Mark Brown <broonie@kernel.org> [2024-02-21 17:36:12 +0000]:
 
-KCSAN detects data-race in xa_get_order:1779 / xas_store:819. xas_store() uses
-rcu_assign_pointer() for the slots pointer, but xa_get_order() does not
-use rcu to access the same pointer, resulting in a value change from 
-0x0000000000000000 -> 0xffffea0000488f00.
+> On Wed, Feb 21, 2024 at 09:58:01AM -0500, dalias@libc.org wrote:
+> > On Wed, Feb 21, 2024 at 01:53:10PM +0000, Mark Brown wrote:
+> > > On Tue, Feb 20, 2024 at 08:27:37PM -0500, dalias@libc.org wrote:
+> > > > On Wed, Feb 21, 2024 at 12:35:48AM +0000, Edgecombe, Rick P wrote:
+> 
+> > > > > (INCSSP, RSTORSSP, etc). These are a collection of instructions that
+> > > > > allow limited control of the SSP. When shadow stack gets disabled,
+> > > > > these suddenly turn into #UD generating instructions. So any other
+> > > > > threads executing those instructions when shadow stack got disabled
+> > > > > would be in for a nasty surprise.
+> 
+> > > > This is the kernel's problem if that's happening. It should be
+> > > > trapping these and returning immediately like a NOP if shadow stack
+> > > > has been disabled, not generating SIGILL.
+> 
+> > > I'm not sure that's going to work out well, all it takes is some code
+> > > that's looking at the shadow stack and expecting something to happen as
+> > > a result of the instructions it's executing and we run into trouble.  A
+> 
+> > I said NOP but there's no reason it strictly needs to be a NOP. It
+> > could instead do something reasonable to convey the state of racing
+> > with shadow stack being disabled.
+> 
+> This feels like it's getting complicated and I fear it may be an uphill
+> struggle to get such code merged, at least for arm64.  My instinct is
 
-Use rcu_dereference() to access the rcu slots pointer in xa_get_order() to
-avoid KCSAN warnings. 
+the aarch64 behaviour is already nop
+for gcs instructions when gcs is disabled.
+the isa was designed so async disable is
+possible.
 
-Full bug report:
-==================================================================
-BUG: KCSAN: data-race in xa_get_order / xas_store
+only x86 linux would have to emulate this.
 
-write (marked) to 0xffff88800b4cb150 of 8 bytes by task 239 on cpu 1:
- xas_store+0x6c8/0x11d0 lib/xarray.c:819
- __filemap_add_folio+0x61a/0xb30 mm/filemap.c:898
- filemap_add_folio+0x69/0x160 mm/filemap.c:937
- page_cache_ra_unbounded+0x134/0x3b0 mm/readahead.c:250
- do_page_cache_ra mm/readahead.c:299 [inline]
- page_cache_ra_order+0xc4/0xe0 mm/readahead.c:546
- do_sync_mmap_readahead mm/filemap.c:3150 [inline]
- filemap_fault+0xe45/0x1960 mm/filemap.c:3242
- __do_fault+0x8e/0x2c0 mm/memory.c:4266
- do_read_fault mm/memory.c:4629 [inline]
- do_fault mm/memory.c:4763 [inline]
- do_pte_missing mm/memory.c:3731 [inline]
- handle_pte_fault mm/memory.c:5039 [inline]
- __handle_mm_fault+0xd96/0x1df0 mm/memory.c:5180
- handle_mm_fault+0x227/0x6a0 mm/memory.c:5345
- do_user_addr_fault+0x2d5/0xf30 arch/x86/mm/fault.c:1364
- handle_page_fault arch/x86/mm/fault.c:1507 [inline]
- exc_page_fault+0xa9/0x330 arch/x86/mm/fault.c:1563
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+> that it's going to be much more robust and generally tractable to let
+> things run to some suitable synchronisation point and then disable
+> there, but if we're going to do that then userspace can hopefully
+> arrange to do the disabling itself through the standard disable
+> interface anyway.  Presumably it'll want to notice things being disabled
+> at some point anyway?  TBH that's been how all the prior proposals for
+> process wide disable I've seen were done.
 
-read to 0xffff88800b4cb150 of 8 bytes by task 235 on cpu 0:
- xa_get_order+0x1a2/0x400 lib/xarray.c:1779
- __filemap_add_folio+0x44c/0xb30 mm/filemap.c:870
- filemap_add_folio+0x69/0x160 mm/filemap.c:937
- page_cache_ra_unbounded+0x134/0x3b0 mm/readahead.c:250
- do_page_cache_ra mm/readahead.c:299 [inline]
- page_cache_ra_order+0xc4/0xe0 mm/readahead.c:546
- do_sync_mmap_readahead mm/filemap.c:3150 [inline]
- filemap_fault+0xe45/0x1960 mm/filemap.c:3242
- __do_fault+0x8e/0x2c0 mm/memory.c:4266
- do_read_fault mm/memory.c:4629 [inline]
- do_fault mm/memory.c:4763 [inline]
- do_pte_missing mm/memory.c:3731 [inline]
- handle_pte_fault mm/memory.c:5039 [inline]
- __handle_mm_fault+0xd96/0x1df0 mm/memory.c:5180
- handle_mm_fault+0x227/0x6a0 mm/memory.c:5345
- do_user_addr_fault+0x2d5/0xf30 arch/x86/mm/fault.c:1364
- handle_page_fault arch/x86/mm/fault.c:1507 [inline]
- exc_page_fault+0xa9/0x330 arch/x86/mm/fault.c:1563
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
-
-value changed: 0x0000000000000000 -> 0xffffea0000488f00
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 235 Comm: gcc Not tainted 6.7.0-g65c265174d11-dirty #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-==================================================================
-
-Signed-off-by: Han Xing Yi <hxingyi104@gmail.com>
----
- lib/xarray.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 39f07bfc4dcc..7fc225f3cf4e 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1776,7 +1776,7 @@ int xa_get_order(struct xarray *xa, unsigned long index)
- 
- 		if (slot >= XA_CHUNK_SIZE)
- 			break;
--		if (!xa_is_sibling(xas.xa_node->slots[slot]))
-+		if (!xa_is_sibling(rcu_dereference(xas.xa_node->slots[slot])))
- 			break;
- 		order++;
- 	}
--- 
-2.34.1
 
 
