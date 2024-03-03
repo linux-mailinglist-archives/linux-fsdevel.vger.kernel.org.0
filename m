@@ -1,479 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-13404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA9D86F747
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 22:48:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7DC86F77E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 23:46:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8446F1F21069
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 21:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA9E2815BB
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 22:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51EF7BAED;
-	Sun,  3 Mar 2024 21:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825C97AE4F;
+	Sun,  3 Mar 2024 22:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smile-fr.20230601.gappssmtp.com header.i=@smile-fr.20230601.gappssmtp.com header.b="ZiQSv6Xl"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ePRFfgZw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="V4xIMvt5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="x3sXYsH8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6hPNgHEP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5897AE49
-	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Mar 2024 21:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1601E51E
+	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Mar 2024 22:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709502441; cv=none; b=e/VoPX1QiIedkrV76rokbmfZIydvcitp+zZdb1cHmZUPA1ZlaePKZrxT7GVK/pdyMf7t0lj/dDjYUe+97DQQ/Am9jp9BJ+ayH9I/YkM601uwDj8WCN5ETlMxJ2blekXHmsFLmC2Y4VUpubvkuYciHVvK6TEmrML7NjHPGeHMdUY=
+	t=1709505960; cv=none; b=IGmvNwsNCNHK09tuVj63cX0sxx6U4y4CzMo/GvamaUhzXttELMhZCFauB66jEnpEZaY5CiEAPAvXrCT7KCk0wH3QYFeX+kQmmB+5iwNSTXwWhZXXjZlYLKdLtynT51uyDZ5SZQ3CEJjMatk8v/eQd6B1dFORVfLSOiMWfZ6z0FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709502441; c=relaxed/simple;
-	bh=qLHHve/IJsVJlqgF6Jk70C+/XLkpF6P4w2riD0m3DKo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a6Pwh1Kzty/q7/CMUgbmljA5cyXpllZ6BMoQRz1w5D0CE7gu45O/N3AkEgL9gHJiQv9VYCcPf5vPZDAXkms3PeXr1DSPM5WfHgjQ0Vq82dDmYQGej6jwBx1p2uAmf4HcyQrIr7MtIx4dh5N0C3nbTOVSIT+RU1qLNkDdOynNtD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (2048-bit key) header.d=smile-fr.20230601.gappssmtp.com header.i=@smile-fr.20230601.gappssmtp.com header.b=ZiQSv6Xl; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smile.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-33e3e8eb8a0so173002f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Mar 2024 13:47:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile-fr.20230601.gappssmtp.com; s=20230601; t=1709502437; x=1710107237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FD+6MDmKRX3rBNbRNBvTaUK966jMpDDoNcEIpOuczko=;
-        b=ZiQSv6XlP7hxl3FBe0G9CmETmipYotNTqP7KaqBE4jSO58YbdYz5dXUxZpdn4bPrV8
-         rFuNbL4HaqiXdSshnv3SDJlKcJKeoVU3J4yEM+pclPiDj3atV2njbnXvTvIif4XnK6fO
-         LYmmGy0cAjpCm0Ek1sRWtsWeVXyjDfz+skzlLcWB9W3uoGotAd4vbvLk43PblTbAi8dw
-         LB2rgOGgrhLyMv6pg6sNGj6gBhyS2LVzhkBcrq6Xb6xvTe1Lff8xUCK5Ms9/jqBhIi98
-         0TDC6uIJ1dmelQITP9XOrzsvvt2nIWCje5FDg74DtT8g/st9fX1qGvKS1wIdPDtxP3zn
-         fPoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709502437; x=1710107237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FD+6MDmKRX3rBNbRNBvTaUK966jMpDDoNcEIpOuczko=;
-        b=MRDluQ7toauJTFqTFH7xaeeOudaY5E9O433IAg+cnEiB3/L1QjfPb6yZJunia6BBv+
-         j1CPBbSxaFajGInWcDZyLUIs4WUS/oXzwpaUmXuKeGgapLOYqcBqVyMbMj3jP8elkG7O
-         okS+Vgtprm9cca18Y8nEy5/Gm6XmbgNbVRwyrBwcEH50lSHE9/OZXsLohZmS7pxirUZl
-         qi1Etxnhv+9wk1/Q2AN0NembNUHvnII+biY9tkqoFzAwdupUB/ySTAGd8JAAGXAQOUhx
-         a2BmBwU690XCrXfBV7ZsLOLyLItvlhKkmftKc5SCuVUEgBXBMlQJGNQ6EfjJShyj95Tm
-         SUpA==
-X-Gm-Message-State: AOJu0YwuOFLBx1dyN2sts/qGp6BfGVbpmsZH8YtIr/Vqyt1pLpxl66J3
-	+/IV28tfB/RPJ7OoZcp/be2DohQiJ/PWDQjya1jcCqvYsAuzq6AnONTgP+XSGAnYe98ajgDhySt
-	1W637rw==
-X-Google-Smtp-Source: AGHT+IGznqr/wt4dtduea4dIZTe9E+kioM4CSved/7ZHQdDUAuqkwksDJT4LqAvpVGrM69Yv7U63uA==
-X-Received: by 2002:a05:6000:90d:b0:33d:4fca:b7dc with SMTP id cw13-20020a056000090d00b0033d4fcab7dcmr5288160wrb.62.1709502436851;
-        Sun, 03 Mar 2024 13:47:16 -0800 (PST)
-Received: from P-ASN-ECS-830T8C3.numericable.fr ([89.159.1.53])
-        by smtp.gmail.com with ESMTPSA id bu16-20020a056000079000b0033dc3f3d689sm10525236wrb.93.2024.03.03.13.47.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Mar 2024 13:47:16 -0800 (PST)
-From: Yoann Congal <yoann.congal@smile.fr>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	x86@kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Darren Hart <dvhart@infradead.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Yoann Congal <yoann.congal@smile.fr>
-Subject: [PATCH v6 3/3] printk: Remove redundant CONFIG_BASE_FULL
-Date: Sun,  3 Mar 2024 22:46:52 +0100
-Message-Id: <20240303214652.727140-4-yoann.congal@smile.fr>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240303214652.727140-1-yoann.congal@smile.fr>
-References: <20240303214652.727140-1-yoann.congal@smile.fr>
+	s=arc-20240116; t=1709505960; c=relaxed/simple;
+	bh=TEAPtJASiHy+NtL4dtXQx6+wDMIG6Qp52WTbp2aVG9I=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=DwEdN79+ijrlaRK3dpGkiBYeRVeAPYKkdEtdFZKFnqxEBccqpuw2/GiQ2bRD7nFM0CPtyFwQBSjLOrlrsiyVQjVGKoiyRewWGNRpsB+pfbBNInR1BoK/mcENHa6iscHXt9AxATXmzi2bofQsIzm9AlTFzJ24jK8HhQHsyXjBDhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ePRFfgZw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=V4xIMvt5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=x3sXYsH8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6hPNgHEP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E99B5674D9;
+	Sun,  3 Mar 2024 22:45:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709505956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hY8gqozPNICnDT7ZJFqvwxo0ZIvUuWJmYwRNFcx2kHc=;
+	b=ePRFfgZwlYlxlo1hCf7sE/BCXE6Ms4fyhvRKM/bilahK2B5bg9FHv+DScdS9GcROAwBt6J
+	YzZXOrOBV7MsH7pV0fxCrV8rW3983t+GBoDSNS/jMdU1FUjC1pXXT/OjQvsIfuiDK7lCrs
+	EZG9aaKnNmlmpEoJM+hecjHA5KrqyUw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709505956;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hY8gqozPNICnDT7ZJFqvwxo0ZIvUuWJmYwRNFcx2kHc=;
+	b=V4xIMvt5bIqFh0iUjPqdwfa0xvxTlLxLR7//CfEQ8FQd0gIvnyaOgbcjRv5l2N7ISHY2N3
+	7Wt/Nf9to2uBLICQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709505955; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hY8gqozPNICnDT7ZJFqvwxo0ZIvUuWJmYwRNFcx2kHc=;
+	b=x3sXYsH8U5HpI+E8FjUOlpsAHkbNtOZY34Oksdpxwknzy1r7JKLqvgtn+3+75aHOtGmj+s
+	4EDw2SpDhR62pxLRfvO/sbGIFBaEwPjw+BA9mD+hSC2WOwzs+T9URmEBELqCXe3l5UTFt5
+	2BWuaZ2bDVcg+6L889eaAEl+CSD7qQU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709505955;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hY8gqozPNICnDT7ZJFqvwxo0ZIvUuWJmYwRNFcx2kHc=;
+	b=6hPNgHEPfs6p+HXcXzwp/3Ba96qCGnCt2K5uqhzgb8aJUSvQb5+oyraGVYUhU5QZPYGZEG
+	RQvlpvfkjvlNYpDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33CF91379D;
+	Sun,  3 Mar 2024 22:45:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HFEFMZ/95GWFZQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Sun, 03 Mar 2024 22:45:51 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Kent Overstreet" <kent.overstreet@linux.dev>
+Cc: "Dave Chinner" <david@fromorbit.com>,
+ "Matthew Wilcox" <willy@infradead.org>, "Amir Goldstein" <amir73il@gmail.com>,
+ paulmck@kernel.org, lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+ "linux-fsdevel" <linux-fsdevel@vger.kernel.org>, "Jan Kara" <jack@suse.cz>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
+In-reply-to: <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>
+References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>,
+ <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>,
+ <Zd-LljY351NCrrCP@casper.infradead.org>,
+ <170925937840.24797.2167230750547152404@noble.neil.brown.name>,
+ <ZeFtrzN34cLhjjHK@dread.disaster.area>,
+ <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>,
+ <170933687972.24797.18406852925615624495@noble.neil.brown.name>,
+ <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>
+Date: Mon, 04 Mar 2024 09:45:48 +1100
+Message-id: <170950594802.24797.17587526251920021411@noble.neil.brown.name>
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=x3sXYsH8;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=6hPNgHEP
+X-Spamd-Result: default: False [-3.31 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[9];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[fromorbit.com,infradead.org,gmail.com,kernel.org,lists.linux-foundation.org,kvack.org,vger.kernel.org,suse.cz];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: E99B5674D9
+X-Spam-Level: 
+X-Spam-Score: -3.31
+X-Spam-Flag: NO
 
-CONFIG_BASE_FULL is equivalent to !CONFIG_BASE_SMALL and is enabled by
-default: CONFIG_BASE_SMALL is the special case to take care of.
-So, remove CONFIG_BASE_FULL and move the config choice to
-CONFIG_BASE_SMALL (which defaults to 'n')
+On Sat, 02 Mar 2024, Kent Overstreet wrote:
+> On Sat, Mar 02, 2024 at 10:47:59AM +1100, NeilBrown wrote:
+> > On Sat, 02 Mar 2024, Kent Overstreet wrote:
+> > > On Fri, Mar 01, 2024 at 04:54:55PM +1100, Dave Chinner wrote:
+> > > > On Fri, Mar 01, 2024 at 01:16:18PM +1100, NeilBrown wrote:
+> > > > > While we are considering revising mm rules, I would really like to
+> > > > > revised the rule that GFP_KERNEL allocations are allowed to fail.
+> > > > > I'm not at all sure that they ever do (except for large allocations=
+ - so
+> > > > > maybe we could leave that exception in - or warn if large allocatio=
+ns
+> > > > > are tried without a MAY_FAIL flag).
+> > > > >=20
+> > > > > Given that GFP_KERNEL can wait, and that the mm can kill off proces=
+ses
+> > > > > and clear cache to free memory, there should be no case where failu=
+re is
+> > > > > needed or when simply waiting will eventually result in success.  A=
+nd if
+> > > > > there is, the machine is a gonner anyway.
+> > > >=20
+> > > > Yes, please!
+> > > >=20
+> > > > XFS was designed and implemented on an OS that gave this exact
+> > > > guarantee for kernel allocations back in the early 1990s.  Memory
+> > > > allocation simply blocked until it succeeded unless the caller
+> > > > indicated they could handle failure. That's what __GFP_NOFAIL does
+> > > > and XFS is still heavily dependent on this behaviour.
+> > >=20
+> > > I'm not saying we should get rid of __GFP_NOFAIL - actually, I'd say
+> > > let's remove the underscores and get rid of the silly two page limit.
+> > > GFP_NOFAIL|GFP_KERNEL is perfectly safe for larger allocations, as long
+> > > as you don't mind possibly waiting a bit.
+> > >=20
+> > > But it can't be the default because, like I mentioned to Neal, there are
+> > > a _lot_ of different places where we allocate memory in the kernel, and
+> > > they have to be able to fail instead of shoving everything else out of
+> > > memory.
+> > >=20
+> > > > This is the sort of thing I was thinking of in the "remove
+> > > > GFP_NOFS" discussion thread when I said this to Kent:
+> > > >=20
+> > > > 	"We need to start designing our code in a way that doesn't require
+> > > > 	extensive testing to validate it as correct. If the only way to
+> > > > 	validate new code is correct is via stochastic coverage via error
+> > > > 	injection, then that is a clear sign we've made poor design choices
+> > > > 	along the way."
+> > > >=20
+> > > > https://lore.kernel.org/linux-fsdevel/ZcqWh3OyMGjEsdPz@dread.disaster=
+.area/
+> > > >=20
+> > > > If memory allocation doesn't fail by default, then we can remove the
+> > > > vast majority of allocation error handling from the kernel. Make the
+> > > > common case just work - remove the need for all that code to handle
+> > > > failures that is hard to exercise reliably and so are rarely tested.
+> > > >=20
+> > > > A simple change to make long standing behaviour an actual policy we
+> > > > can rely on means we can remove both code and test matrix overhead -
+> > > > it's a win-win IMO.
+> > >=20
+> > > We definitely don't want to make GFP_NOIO/GFP_NOFS allocations nofail by
+> > > default - a great many of those allocations have mempools in front of
+> > > them to avoid deadlocks, and if you do that you've made the mempools
+> > > useless.
+> > >=20
+> >=20
+> > Not strictly true.  mempool_alloc() adds __GFP_NORETRY so the allocation
+> > will certainly fail if that is appropriate.
+>=20
+> *nod*=20
+>=20
+> > I suspect that most places where there is a non-error fallback already
+> > use NORETRY or RETRY_MAYFAIL or similar.
+>=20
+> NORETRY and RETRY_MAYFAIL actually weren't on my radar, and I don't see
+> _tons_ of uses for either of them - more for NORETRY.
+>=20
+> My go-to is NOWAIT in this scenario though; my common pattern is "try
+> nonblocking with locks held, then drop locks and retry GFP_KERNEL".
+> =20
+> > But I agree that changing the meaning of GFP_KERNEL has a potential to
+> > cause problems.  I support promoting "GFP_NOFAIL" which should work at
+> > least up to PAGE_ALLOC_COSTLY_ORDER (8 pages).
+>=20
+> I'd support this change.
+>=20
+> > I'm unsure how it should be have in PF_MEMALLOC_NOFS and
+> > PF_MEMALLOC_NOIO context.  I suspect Dave would tell me it should work in
+> > these contexts, in which case I'm sure it should.
+> >=20
+> > Maybe we could then deprecate GFP_KERNEL.
+>=20
+> What do you have in mind?
 
-For defconfigs explicitely disabling BASE_FULL, explicitely enable
-BASE_SMALL.
-For defconfigs explicitely enabling BASE_FULL, drop it as it is the
-default.
+I have in mind a more explicit statement of how much waiting is
+acceptable.
 
-Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
----
- arch/arm/configs/collie_defconfig                    |  2 +-
- arch/arm/configs/keystone_defconfig                  |  2 +-
- arch/arm/configs/lpc18xx_defconfig                   |  2 +-
- arch/arm/configs/moxart_defconfig                    |  2 +-
- arch/arm/configs/mps2_defconfig                      |  2 +-
- arch/arm/configs/omap1_defconfig                     |  2 +-
- arch/arm/configs/stm32_defconfig                     |  2 +-
- arch/microblaze/configs/mmu_defconfig                |  2 +-
- arch/mips/configs/rs90_defconfig                     |  2 +-
- arch/powerpc/configs/adder875_defconfig              |  2 +-
- arch/powerpc/configs/ep88xc_defconfig                |  2 +-
- arch/powerpc/configs/mpc866_ads_defconfig            |  2 +-
- arch/powerpc/configs/mpc885_ads_defconfig            |  2 +-
- arch/powerpc/configs/tqm8xx_defconfig                |  2 +-
- arch/riscv/configs/nommu_k210_defconfig              |  2 +-
- arch/riscv/configs/nommu_k210_sdcard_defconfig       |  2 +-
- arch/riscv/configs/nommu_virt_defconfig              |  2 +-
- arch/sh/configs/edosk7705_defconfig                  |  2 +-
- arch/sh/configs/se7619_defconfig                     |  2 +-
- arch/sh/configs/se7712_defconfig                     |  2 +-
- arch/sh/configs/se7721_defconfig                     |  2 +-
- arch/sh/configs/shmin_defconfig                      |  2 +-
- init/Kconfig                                         | 10 +++-------
- tools/testing/selftests/wireguard/qemu/kernel.config |  1 -
- 24 files changed, 25 insertions(+), 30 deletions(-)
+GFP_NOFAIL - wait indefinitely
+GFP_KILLABLE - wait indefinitely unless fatal signal is pending.
+GFP_RETRY - may retry but deadlock, though unlikely, is possible.  So
+            don't wait indefinitely.  May abort more quickly if fatal
+            signal is pending.
+GFP_NO_RETRY - only try things once.  This may sleep, but will give up
+            fairly quickly.  Either deadlock is a significant
+            possibility, or alternate strategy is fairly cheap.
+GFP_ATOMIC - don't sleep - same as current.
 
-diff --git a/arch/arm/configs/collie_defconfig b/arch/arm/configs/collie_defconfig
-index 01b5a5a73f037..42cb1c8541188 100644
---- a/arch/arm/configs/collie_defconfig
-+++ b/arch/arm/configs/collie_defconfig
-@@ -3,7 +3,7 @@ CONFIG_LOG_BUF_SHIFT=14
- CONFIG_BLK_DEV_INITRD=y
- # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
- CONFIG_EXPERT=y
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_EPOLL is not set
- CONFIG_ARCH_MULTI_V4=y
- # CONFIG_ARCH_MULTI_V7 is not set
-diff --git a/arch/arm/configs/keystone_defconfig b/arch/arm/configs/keystone_defconfig
-index 59c4835ffc977..c1291ca290b23 100644
---- a/arch/arm/configs/keystone_defconfig
-+++ b/arch/arm/configs/keystone_defconfig
-@@ -12,7 +12,7 @@ CONFIG_CGROUP_DEVICE=y
- CONFIG_CGROUP_CPUACCT=y
- CONFIG_BLK_DEV_INITRD=y
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- CONFIG_KALLSYMS_ALL=y
- CONFIG_EXPERT=y
- CONFIG_PROFILING=y
-diff --git a/arch/arm/configs/lpc18xx_defconfig b/arch/arm/configs/lpc18xx_defconfig
-index d169da9b2824d..f55c231e08708 100644
---- a/arch/arm/configs/lpc18xx_defconfig
-+++ b/arch/arm/configs/lpc18xx_defconfig
-@@ -8,7 +8,7 @@ CONFIG_BLK_DEV_INITRD=y
- # CONFIG_RD_LZ4 is not set
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- # CONFIG_UID16 is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_EPOLL is not set
- # CONFIG_SIGNALFD is not set
-diff --git a/arch/arm/configs/moxart_defconfig b/arch/arm/configs/moxart_defconfig
-index 1d41e73f4903c..34d079e03b3c5 100644
---- a/arch/arm/configs/moxart_defconfig
-+++ b/arch/arm/configs/moxart_defconfig
-@@ -6,7 +6,7 @@ CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_EXPERT=y
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_SIGNALFD is not set
- # CONFIG_TIMERFD is not set
- # CONFIG_EVENTFD is not set
-diff --git a/arch/arm/configs/mps2_defconfig b/arch/arm/configs/mps2_defconfig
-index 3ed73f184d839..e995e50537efd 100644
---- a/arch/arm/configs/mps2_defconfig
-+++ b/arch/arm/configs/mps2_defconfig
-@@ -5,7 +5,7 @@ CONFIG_LOG_BUF_SHIFT=16
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- CONFIG_EXPERT=y
- # CONFIG_UID16 is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_EPOLL is not set
- # CONFIG_SIGNALFD is not set
-diff --git a/arch/arm/configs/omap1_defconfig b/arch/arm/configs/omap1_defconfig
-index 729ea8157e2a5..025b595dd8375 100644
---- a/arch/arm/configs/omap1_defconfig
-+++ b/arch/arm/configs/omap1_defconfig
-@@ -9,7 +9,7 @@ CONFIG_LOG_BUF_SHIFT=14
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_EXPERT=y
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_SHMEM is not set
- # CONFIG_KALLSYMS is not set
- CONFIG_PROFILING=y
-diff --git a/arch/arm/configs/stm32_defconfig b/arch/arm/configs/stm32_defconfig
-index b9fe3fbed5aec..3baec075d1efd 100644
---- a/arch/arm/configs/stm32_defconfig
-+++ b/arch/arm/configs/stm32_defconfig
-@@ -6,7 +6,7 @@ CONFIG_BLK_DEV_INITRD=y
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- CONFIG_EXPERT=y
- # CONFIG_UID16 is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_EPOLL is not set
- # CONFIG_SIGNALFD is not set
-diff --git a/arch/microblaze/configs/mmu_defconfig b/arch/microblaze/configs/mmu_defconfig
-index 4da7bc4ac4a37..176314f3c9aac 100644
---- a/arch/microblaze/configs/mmu_defconfig
-+++ b/arch/microblaze/configs/mmu_defconfig
-@@ -4,7 +4,7 @@ CONFIG_AUDIT=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_EXPERT=y
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- CONFIG_KALLSYMS_ALL=y
- CONFIG_XILINX_MICROBLAZE0_USE_MSR_INSTR=1
- CONFIG_XILINX_MICROBLAZE0_USE_PCMP_INSTR=1
-diff --git a/arch/mips/configs/rs90_defconfig b/arch/mips/configs/rs90_defconfig
-index 4b9e36d6400e0..a53dd66e9b864 100644
---- a/arch/mips/configs/rs90_defconfig
-+++ b/arch/mips/configs/rs90_defconfig
-@@ -9,7 +9,7 @@ CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y
- # CONFIG_SGETMASK_SYSCALL is not set
- # CONFIG_SYSFS_SYSCALL is not set
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_TIMERFD is not set
- # CONFIG_AIO is not set
- # CONFIG_IO_URING is not set
-diff --git a/arch/powerpc/configs/adder875_defconfig b/arch/powerpc/configs/adder875_defconfig
-index 7f35d5bc12299..97f4d48517356 100644
---- a/arch/powerpc/configs/adder875_defconfig
-+++ b/arch/powerpc/configs/adder875_defconfig
-@@ -4,7 +4,7 @@ CONFIG_SYSVIPC=y
- CONFIG_LOG_BUF_SHIFT=14
- CONFIG_EXPERT=y
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_VM_EVENT_COUNTERS is not set
- # CONFIG_BLK_DEV_BSG is not set
-diff --git a/arch/powerpc/configs/ep88xc_defconfig b/arch/powerpc/configs/ep88xc_defconfig
-index a98ef6a4abef6..50cc59eb36cf1 100644
---- a/arch/powerpc/configs/ep88xc_defconfig
-+++ b/arch/powerpc/configs/ep88xc_defconfig
-@@ -6,7 +6,7 @@ CONFIG_HIGH_RES_TIMERS=y
- CONFIG_LOG_BUF_SHIFT=14
- CONFIG_EXPERT=y
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_VM_EVENT_COUNTERS is not set
- # CONFIG_BLK_DEV_BSG is not set
-diff --git a/arch/powerpc/configs/mpc866_ads_defconfig b/arch/powerpc/configs/mpc866_ads_defconfig
-index 5c56d36cdfc5c..6f449411abf7b 100644
---- a/arch/powerpc/configs/mpc866_ads_defconfig
-+++ b/arch/powerpc/configs/mpc866_ads_defconfig
-@@ -6,7 +6,7 @@ CONFIG_HIGH_RES_TIMERS=y
- CONFIG_LOG_BUF_SHIFT=14
- CONFIG_EXPERT=y
- # CONFIG_BUG is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_EPOLL is not set
- # CONFIG_VM_EVENT_COUNTERS is not set
- # CONFIG_BLK_DEV_BSG is not set
-diff --git a/arch/powerpc/configs/mpc885_ads_defconfig b/arch/powerpc/configs/mpc885_ads_defconfig
-index 56b876e418e91..77306be62e9ee 100644
---- a/arch/powerpc/configs/mpc885_ads_defconfig
-+++ b/arch/powerpc/configs/mpc885_ads_defconfig
-@@ -7,7 +7,7 @@ CONFIG_VIRT_CPU_ACCOUNTING_NATIVE=y
- CONFIG_LOG_BUF_SHIFT=14
- CONFIG_EXPERT=y
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- CONFIG_PERF_EVENTS=y
- # CONFIG_VM_EVENT_COUNTERS is not set
-diff --git a/arch/powerpc/configs/tqm8xx_defconfig b/arch/powerpc/configs/tqm8xx_defconfig
-index 083c2e57520a0..383c0966e92fd 100644
---- a/arch/powerpc/configs/tqm8xx_defconfig
-+++ b/arch/powerpc/configs/tqm8xx_defconfig
-@@ -6,7 +6,7 @@ CONFIG_HIGH_RES_TIMERS=y
- CONFIG_LOG_BUF_SHIFT=14
- CONFIG_EXPERT=y
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_VM_EVENT_COUNTERS is not set
- CONFIG_MODULES=y
-diff --git a/arch/riscv/configs/nommu_k210_defconfig b/arch/riscv/configs/nommu_k210_defconfig
-index 146c46d0525b4..51ba0d1683383 100644
---- a/arch/riscv/configs/nommu_k210_defconfig
-+++ b/arch/riscv/configs/nommu_k210_defconfig
-@@ -11,7 +11,7 @@ CONFIG_BLK_DEV_INITRD=y
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- # CONFIG_SYSFS_SYSCALL is not set
- # CONFIG_FHANDLE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_EPOLL is not set
- # CONFIG_SIGNALFD is not set
-diff --git a/arch/riscv/configs/nommu_k210_sdcard_defconfig b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-index 95d8d1808f194..762aea9127ae4 100644
---- a/arch/riscv/configs/nommu_k210_sdcard_defconfig
-+++ b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-@@ -3,7 +3,7 @@ CONFIG_LOG_BUF_SHIFT=13
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- # CONFIG_SYSFS_SYSCALL is not set
- # CONFIG_FHANDLE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_EPOLL is not set
- # CONFIG_SIGNALFD is not set
-diff --git a/arch/riscv/configs/nommu_virt_defconfig b/arch/riscv/configs/nommu_virt_defconfig
-index b794e2f8144e6..ab6d618c1828f 100644
---- a/arch/riscv/configs/nommu_virt_defconfig
-+++ b/arch/riscv/configs/nommu_virt_defconfig
-@@ -10,7 +10,7 @@ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- CONFIG_EXPERT=y
- # CONFIG_SYSFS_SYSCALL is not set
- # CONFIG_FHANDLE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_EPOLL is not set
- # CONFIG_SIGNALFD is not set
- # CONFIG_TIMERFD is not set
-diff --git a/arch/sh/configs/edosk7705_defconfig b/arch/sh/configs/edosk7705_defconfig
-index 9ee35269bee26..ab3bf72264df4 100644
---- a/arch/sh/configs/edosk7705_defconfig
-+++ b/arch/sh/configs/edosk7705_defconfig
-@@ -6,7 +6,7 @@
- # CONFIG_PRINTK is not set
- # CONFIG_BUG is not set
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_EPOLL is not set
- # CONFIG_SIGNALFD is not set
-diff --git a/arch/sh/configs/se7619_defconfig b/arch/sh/configs/se7619_defconfig
-index 14d0f5ead502f..4765966fec99c 100644
---- a/arch/sh/configs/se7619_defconfig
-+++ b/arch/sh/configs/se7619_defconfig
-@@ -4,7 +4,7 @@ CONFIG_LOG_BUF_SHIFT=14
- # CONFIG_KALLSYMS is not set
- # CONFIG_HOTPLUG is not set
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_EPOLL is not set
- # CONFIG_VM_EVENT_COUNTERS is not set
-diff --git a/arch/sh/configs/se7712_defconfig b/arch/sh/configs/se7712_defconfig
-index dc854293da435..20f07aee5bde7 100644
---- a/arch/sh/configs/se7712_defconfig
-+++ b/arch/sh/configs/se7712_defconfig
-@@ -7,7 +7,7 @@ CONFIG_LOG_BUF_SHIFT=14
- # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
- CONFIG_KALLSYMS_ALL=y
- # CONFIG_BUG is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_SHMEM is not set
- CONFIG_MODULES=y
- # CONFIG_BLK_DEV_BSG is not set
-diff --git a/arch/sh/configs/se7721_defconfig b/arch/sh/configs/se7721_defconfig
-index c891945b8a900..00862d3c030d2 100644
---- a/arch/sh/configs/se7721_defconfig
-+++ b/arch/sh/configs/se7721_defconfig
-@@ -7,7 +7,7 @@ CONFIG_LOG_BUF_SHIFT=14
- # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
- CONFIG_KALLSYMS_ALL=y
- # CONFIG_BUG is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_SHMEM is not set
- CONFIG_MODULES=y
- # CONFIG_BLK_DEV_BSG is not set
-diff --git a/arch/sh/configs/shmin_defconfig b/arch/sh/configs/shmin_defconfig
-index e078b193a78a8..bfeb004f130ec 100644
---- a/arch/sh/configs/shmin_defconfig
-+++ b/arch/sh/configs/shmin_defconfig
-@@ -5,7 +5,7 @@ CONFIG_LOG_BUF_SHIFT=14
- # CONFIG_HOTPLUG is not set
- # CONFIG_BUG is not set
- # CONFIG_ELF_CORE is not set
--# CONFIG_BASE_FULL is not set
-+CONFIG_BASE_SMALL=y
- # CONFIG_FUTEX is not set
- # CONFIG_EPOLL is not set
- # CONFIG_SHMEM is not set
-diff --git a/init/Kconfig b/init/Kconfig
-index 182f2671a49dd..2a8203628d212 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1590,11 +1590,10 @@ config PCSPKR_PLATFORM
- 	  This option allows to disable the internal PC-Speaker
- 	  support, saving some memory.
- 
--config BASE_FULL
--	default y
--	bool "Enable full-sized data structures for core" if EXPERT
-+config BASE_SMALL
-+	bool "Enable smaller-sized data structures for core" if EXPERT
- 	help
--	  Disabling this option reduces the size of miscellaneous core
-+	  Enabling this option reduces the size of miscellaneous core
- 	  kernel data structures. This saves memory on small machines,
- 	  but may reduce performance.
- 
-@@ -1949,9 +1948,6 @@ config RT_MUTEXES
- 	bool
- 	default y if PREEMPT_RT
- 
--config BASE_SMALL
--	def_bool !BASE_FULL
--
- config MODULE_SIG_FORMAT
- 	def_bool n
- 	select SYSTEM_DATA_VERIFICATION
-diff --git a/tools/testing/selftests/wireguard/qemu/kernel.config b/tools/testing/selftests/wireguard/qemu/kernel.config
-index 507555714b1d8..f314d3789f175 100644
---- a/tools/testing/selftests/wireguard/qemu/kernel.config
-+++ b/tools/testing/selftests/wireguard/qemu/kernel.config
-@@ -41,7 +41,6 @@ CONFIG_KALLSYMS=y
- CONFIG_BUG=y
- CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
- CONFIG_JUMP_LABEL=y
--CONFIG_BASE_FULL=y
- CONFIG_FUTEX=y
- CONFIG_SHMEM=y
- CONFIG_SLUB=y
--- 
-2.39.2
+I don't see how "GFP_KERNEL" fits into that spectrum.  The definition of
+"this will try really hard, but might fail and we can't really tell you
+what circumstances it might fail in" isn't fun to work with.
+
+Thanks,
+NeilBrown
+
+
+>=20
+> Deprecating GFP_NOFS and GFP_NOIO would be wonderful - those should
+> really just be PF_MEMALLOC_NOFS and PF_MEMALLOC_NOIO, now that we're
+> pushing for memalloc_flags_(save|restore) more.
+>=20
+> Getting rid of those would be a really nice cleanup beacuse then gfp
+> flags would mostly just be:
+>  - the type of memory to allocate (highmem, zeroed, etc.)
+>  - how hard to try (don't block at all, block some, block forever)
+>=20
 
 
