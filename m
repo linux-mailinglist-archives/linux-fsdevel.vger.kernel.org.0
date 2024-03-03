@@ -1,123 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-13393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C07986F58F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 15:40:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFEF86F5CB
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 16:23:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59FB1F22B45
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 14:40:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B2C0B25021
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 15:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AD18473;
-	Sun,  3 Mar 2024 14:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7pv2FWh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0753D67C47;
+	Sun,  3 Mar 2024 15:23:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFF567A0C
-	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Mar 2024 14:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4699667A19
+	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Mar 2024 15:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709476845; cv=none; b=FlCPzlne+FKEiisPhlphoaeXK6QS++M7+GK08XX2CMQs1KuSSLIe8STAtEroWvQHv53gDoQDE3BspHdbFkePvJdEnyVfnecx49AUugN2oDQsl+TmDPUfKuTb87Q7CSAeT8OjR11Pw3f1MWcIIf2E2Wp2QQxlgaGhnXAzgWaByYY=
+	t=1709479385; cv=none; b=X5ctavZRaqL6Hut5koyLaBeeCbFkfRjIpQ39HNKZivelF79ms3J3iZ3RG+Ba11D0DhZ9ddLtniEmXMDcDX+LM7Y7VBleaejm7jJq+9cVPE8T+KVxY+LBU5b+YihgOx50s7CZDQpp+tBmPBf+MnhrwUZ4ejkCh5VDmHJxiLcq+gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709476845; c=relaxed/simple;
-	bh=LKXtvi2GbUg24k5GH13WXIduLeQOXvN8DwdbcPiIFe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbcJcueoriKqWvfTh/C58AEh7XR4C7fxD+bqSvhgm/cG4z67ArynDdvv2l3j8+BLr5anHIHiMBZYTS+sqTQkd8lLxsWSiRtD0GDru3kZK+KOEv8ZQGmrT/0X8oPnils8qGhE1/L0mWpkQF61+mc3ZfqdfvlRuFh2Z9GQET9tgc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7pv2FWh; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1dc96f64c10so33513605ad.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Mar 2024 06:40:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709476843; x=1710081643; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tTSvD1+bysWnBBVVUOpiyXASEgIOf7/EpxqRyWfY6DQ=;
-        b=h7pv2FWh3fJq5DBHG//RBH2gHvWo90lSLZYnqD1M9X4nKyd4sxRualusXp4PfdMprR
-         59R8CEeGinyNYJQGkDA8rSiFa7fQZ2bwwLIIxKkJ4ujrdwddkHp+Hd8z0ESXdjNkkks7
-         a+qejBLNldxWr4Q6mu6U6TQuwzi6QnednTP/6DKaWMCGWBM+aBJxxYDoU0wALLcMkqSw
-         aV1e2sQwXzS5vUwrqmnsVGAVy5K8Z1xOoeZz8ilwTs7xP3c/2lGtopJ/tIDQtbBQTlLU
-         iRcdYn8MNnfRhS4NJyVIyL6hge8gUOr3OuiI1ra/giw2MvwxM5Lih9F4C2WX32N7ARtU
-         hl2g==
+	s=arc-20240116; t=1709479385; c=relaxed/simple;
+	bh=4r/pjpMXv+vUuSNFuhQ9aG3uP3ZYK8F7/vMguHAvzac=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ue3lxnUKNLiHoNpaBVLBQc9OSA+1uS+gbb7PP216zC9K8NWWF+2YXL+E03HjLwvNp6cDYxhRPp8CcGiaSywure1uOCdAm4L6KR4dzo2uGLSIna8iRG6xln4ZtIkRDqXeXq5Ih1g1a2U71aggibtqlCj/AEfigP37YUwtSS7IWas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c855240d74so3673039f.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Mar 2024 07:23:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709476843; x=1710081643;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tTSvD1+bysWnBBVVUOpiyXASEgIOf7/EpxqRyWfY6DQ=;
-        b=ZvgamUUmOPKLqOaLKVQv1pUs0CojY8uGA7KtybOcyjrK5IRAq/k2IMv3lSrB3wfo1Y
-         lD/ToobYu4Lua5go5EDzgKApj3a+hrQXfEjSu81w2VW2bqvB4V05v5gfLQIORnTPPUB4
-         92tmtHHZAoFbrD3w3zreUlyuBJ/sSWLFQgt99hopPJX+6CYzEr7/soBXMsvhU+znyzx2
-         jsLuiqc4lWx+ILpUbqcNOp4nmKFTbscaIna+sZcwZnhmWGAbMwo50baCsq38+65iqQzT
-         RoVTVbJzJwn0BAothFRW/fY6uLb4akB1+d+AD9o627sJoKvX3xyOUacm/H5ubcX58utt
-         OA9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWffvoMSDfVm6Ko0wjqgobnYT12fpazmOItif1Wr3FZEqDBqfRlx8WhSV5Sv9gM/+UekGroAZRgCzZIw7UsLUdPrTSeJKy2hJZMz6bFOQ==
-X-Gm-Message-State: AOJu0YyPQ/KVeBHaWQrXCEMzGHl1680X1rjGFTKtTllD4is3gWuHN/L3
-	3butaqoamxFkSmzmiOXgJ4kqtGLHOFs9lx9GBhhLcvlJzGhf988beJe4eKgVT2Q=
-X-Google-Smtp-Source: AGHT+IFGXmte6TUh6I01+ykyb/kiBMn/QZnevyic/Y1oQbL+1s9cSIoiuzxZZ3J28VHZsLhdY6OZbQ==
-X-Received: by 2002:a17:902:e841:b0:1dc:c93e:f5f5 with SMTP id t1-20020a170902e84100b001dcc93ef5f5mr9337953plg.12.1709476843443;
-        Sun, 03 Mar 2024 06:40:43 -0800 (PST)
-Received: from desktop-cluster-2.tailce565.ts.net ([137.132.216.132])
-        by smtp.gmail.com with ESMTPSA id u12-20020a170902b28c00b001dc94fde843sm6699059plr.177.2024.03.03.06.40.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Mar 2024 06:40:43 -0800 (PST)
-Date: Sun, 3 Mar 2024 22:40:39 +0800
-From: Han Xing Yi <hxingyi104@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] Xarray: Fix race in xa_get_order()
-Message-ID: <ZeSL553Gwajt7dPE@desktop-cluster-2.tailce565.ts.net>
-References: <ZeM0CBHF3mfz847s@desktop-cluster-2.tailce565.ts.net>
- <ZeRo2Y_RKEZ2op4i@casper.infradead.org>
+        d=1e100.net; s=20230601; t=1709479383; x=1710084183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y2dolGX8lN9vIwo+jPRD948sICXcwQTFKCQ2jT8zcK0=;
+        b=kPHzGMX/VrBHJv04UuJ/2UtGiu0ZULE7cO1u0VsRjsHfJjfF9oF5xYBg65n3KFk1qn
+         frWtT0vd4h+U8L8M7wrSzJ8q5pWTK/6SUrcQBPrWHUlvTpcgIkZuJjHSD1h9559OIRKt
+         lTM9Gys3QRE8b6K9OjHtPO79xwQQHCRB7YqwiYBsq8HKrWcjkyJDVFYChauoe5ihrbWN
+         fXmG+/AMQWBzakQVPc+nq2wLNSWcmDcSqd4ADg+ibxb4bbFZ0Kai5jdpjs60gMVLTPAq
+         wJRYGU/uhD8vhGIlcBBEZy+70RNcQ+48N8fF8p2UyBoeWgykXMIb2fx3V6B/V2FUnXBK
+         9BTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaCDfnDz+WJ/9EZ5Y59SkjINxNm61Boie/4LHaAdUZZoPpn3jTL9pIypZ3B9eHUvmXXNlTuWKvd0lP+RW2OVOrlHSbc6LnjdUUeFjGzQ==
+X-Gm-Message-State: AOJu0Yx18XmBsJL+8jypI4Wb+gl+fNkMghLVZ+zCL883X4x/5io8BlIH
+	cHihtQYKZ3yP70fHdBndotJsPRBVXutHjIzTprrtMJsfN0TUHhTerBtOGsQglXhPhTozvMVaah0
+	ENQr3FRuZQxtf8IkTFcFXS8nP5KB33WBv9IpBpLKhdEqqOZwrCuNhlOg=
+X-Google-Smtp-Source: AGHT+IFzHZd7RM8yH3KL7k0MA9PZACOPNm8lvtJ9xyqAE32YyTytIcecm/mi22z95pQbMVo9034e/Kg3RnqF7EYcTHBFgASo6zkb
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZeRo2Y_RKEZ2op4i@casper.infradead.org>
+X-Received: by 2002:a05:6e02:b26:b0:363:d7d2:1ddd with SMTP id
+ e6-20020a056e020b2600b00363d7d21dddmr343423ilu.0.1709479383496; Sun, 03 Mar
+ 2024 07:23:03 -0800 (PST)
+Date: Sun, 03 Mar 2024 07:23:03 -0800
+In-Reply-To: <000000000000c801280606a82e95@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006786560612c32ff9@google.com>
+Subject: Re: [syzbot] [jfs?] INFO: trying to register non-static key in txEnd
+From: syzbot <syzbot+ca4b16c6465dca321d40@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
+	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Mar 03, 2024 at 12:11:05PM +0000, Matthew Wilcox wrote:
-> On Sat, Mar 02, 2024 at 10:13:28PM +0800, Han Xing Yi wrote:
-> > Hello! This is my first patch ever, so please bear with me if I make some rookie
-> > mistakes. I've tried my best to follow the documentation :) 
-> 
-> Thanks!  This is indeed a mistake.  Probably a harmless one, but worth
-> fixing to silence the warning.
+syzbot suspects this issue was fixed by commit:
 
-Yeah, it is probably harmless since the RCU write means that either the
-old or new value will be read, but not a temporary value. Thanks for
-pointing this out!
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-> Annoyingly, building with C=1 (sparse) finds the problem:
-> 
->   CHECK   ../lib/xarray.c
-> ../lib/xarray.c:1779:54: warning: incorrect type in argument 1 (different address spaces)
-> ../lib/xarray.c:1779:54:    expected void const *entry
-> ../lib/xarray.c:1779:54:    got void [noderef] __rcu *
-> 
-> so that means I got out of the habit of running sparse, and for some
-> reason none of the build bots notified me of the new warning (or I
-> missed that email).
+    fs: Block writes to mounted block devices
 
-I'm so sorry for this mistake, I did not build the kernel with sparse
-when testing the patch. I'll be sure to do that next time around. 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14e0e374180000
+start commit:   c7402612e2e6 Merge tag 'net-6.7-rc6' of git://git.kernel.o..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b6602324d4e5a4a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca4b16c6465dca321d40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16941c8ae80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d9c3c1e80000
 
-> This is such a common thing to do that I have a helper for it.
-> So what I'll actually commit is:
-> 
-> -               if (!xa_is_sibling(xas.xa_node->slots[slot]))
-> +               if (!xa_is_sibling(xa_entry(xas.xa, xas.xa_node, slot)))
-> 
-> but I'll leave your name on it since you did the actual work.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Thank you so much for fixing my mistakes and your quick response on
-this, I really appreciate it :)
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
