@@ -1,150 +1,252 @@
-Return-Path: <linux-fsdevel+bounces-13395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8D586F5F7
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 16:51:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC7186F69B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 19:54:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9731FB21DCE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 15:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 715462814F5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 18:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5FB67C61;
-	Sun,  3 Mar 2024 15:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BB1768E1;
+	Sun,  3 Mar 2024 18:54:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E2767C52
-	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Mar 2024 15:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8935A4C4;
+	Sun,  3 Mar 2024 18:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709481077; cv=none; b=eOVQS38cS41YkDhzOlvvCXXhu5vG8v5YO/fzI2a3ZNCLiBfiqwOUNNbVGTtQOdMqtOYZrz3/sdTA0JHBFHGSW6KLcInHsbNk2ffZUK0BNNLLOEfVJoKhJFNkB4cdgycEZBj6sFLxUpFPW3glLVsnr8P3J/KIgYgk4SsTKmp9Diw=
+	t=1709492070; cv=none; b=iV5JYbg5D+Sh52n5APlE80eyBxJs/k5aHqm2jYiiqkHxE2ZRKQEv17xOTPG9YEJqrXfwaB5IWMr0YVX5vDZjObTse2YVyPpGWe3PXjSwYU1rFZqG0T4+XBYnfx6ZQBEoZitLtDdKWbWoFOLEufsuHpwsSCISMCoajSBWNe+50tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709481077; c=relaxed/simple;
-	bh=8aYiyaGFXCLaXkhRzG6EvSN7OeV6ZdYdG/gRflj4/iQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oOvKVrSOGOClaa+ZHvYpycmGKwmgdyauU3DU6itWUWCBcw5a31b2F6SqKnZeXB64WHQvZGy/Q3ILLZrAZUGexlfMrqxnz6HWLqd8N/ovVnN39NKeN2i5hKSkBwTW2xK3wCicw9aSDT3yGSVkrW9GYZUFJ0TTrj2tRuXMntYfq5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-365761d483aso34189085ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Mar 2024 07:51:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709481075; x=1710085875;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j0WfFVpCpCPboe1ePdcUuron3PP3a5v/P9we/dRVjCk=;
-        b=kf+8ERxs+jHUePRMBFLYbug77rVM2O3BFXX48EYylMPx1AbOvzcRcO8zRVzDyb0c5q
-         Rcn9+UgzzXmHy2Gy8fHTg8csyRau76NYfy92aTYlSidZuFNlB+WkMHgvI3ff/Yfjz31r
-         9SM8bJ4ajTMzItW8WRmXAVyggABRzCGzaBwAX5XYhcRGgRr714tZ8i0X3Cqv0WpAu8Mj
-         f2/PXlhmJVOlu9COv+nqKdBx0EzXyTgt11hzUBUFTlJtmtoi17be0kjG9cK+FGr7KEJv
-         /6tZZIAIzdyNVJyRfM5vHCt22w5lwI0Yayntkw0Pb6trsfXi7ao81uJ8EAi3I5dGPfJU
-         6fPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjGCCb4znJQ8t117ECELikFx5RuiA0MmXsld//FTsbRnyMzBJ/ygQDT7WbK/zkouneom9uqWnUWKH2WWU+Lbzs2Wzk0iydHr2OF+kxgQ==
-X-Gm-Message-State: AOJu0YxVMCTOJcJjZgIxC+wZAPW+FdiUxkD0oTD5eUa9vyWP75YYw6AB
-	lCJMhIIV57c/sG3QSVyw0aGSsFBof/PlOaPL8uE2GKt5B91zPgKNOjalTsUb+CRd4z028cfknlZ
-	jFC9XHl5yWaOG9e+innnt32gT56/A1bmZi1I0jA+XLMXTRlzDhQLuSvE=
-X-Google-Smtp-Source: AGHT+IECP7/6+A28HKut/GL1QdQhF0UBY7K0TwrhxVRRN4e4e/LjpVswDvQ0TtG9NTUpBoJ3qPV4F9PKanHWbnQ6u3/3qg1KMV5J
+	s=arc-20240116; t=1709492070; c=relaxed/simple;
+	bh=2UqK2j6vVOoliTUmf+W/IeA2W13MoqKCKlNIsi7Ey9k=;
+	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
+	 In-Reply-To:References; b=kXgUcnU9Q1DXvyz27x9PI5TFYAQVdbVy5iBrjTShcZNMi563VaHrGm5NhK4AaacW1cfH7a/95kh9G+FyFYEiofs4aNXggBnoKxflNWVpqIPYCwSksgsSIvJeCTWOssGkm1XMNAZPIg9RFLFNyQUi/fUC/ZiU/uyGcmFzTFxpAUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; arc=none smtp.client-ip=172.104.24.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
+Received: from quad.stoffel.org (097-095-183-072.res.spectrum.com [97.95.183.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by mail.stoffel.org (Postfix) with ESMTPSA id BE1FC1E12B;
+	Sun,  3 Mar 2024 13:49:00 -0500 (EST)
+Received: by quad.stoffel.org (Postfix, from userid 1000)
+	id 6FA90A0255; Sun,  3 Mar 2024 13:49:00 -0500 (EST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1525:b0:365:cbd9:ac92 with SMTP id
- i5-20020a056e02152500b00365cbd9ac92mr486466ilu.6.1709481074834; Sun, 03 Mar
- 2024 07:51:14 -0800 (PST)
-Date: Sun, 03 Mar 2024 07:51:14 -0800
-In-Reply-To: <000000000000d60fa905ee84ff8d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000037444e0612c39434@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
-From: syzbot <syzbot+c6d8e1bffb0970780d5c@syzkaller.appspotmail.com>
-To: glider@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-ID: <26084.50716.415474.905903@quad.stoffel.home>
+Date: Sun, 3 Mar 2024 13:49:00 -0500
+From: "John Stoffel" <john@stoffel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org
+Subject: Re: [WIP] bcachefs fs usage update
+In-Reply-To: <gajhq3iyluwmr44ee2fzacfpgpxmr2jurwqg6aeiab4lfila3p@b3l7bywr3yed>
+References: <gajhq3iyluwmr44ee2fzacfpgpxmr2jurwqg6aeiab4lfila3p@b3l7bywr3yed>
+X-Mailer: VM 8.2.0b under 28.2 (x86_64-pc-linux-gnu)
 
-syzbot has found a reproducer for the following issue on:
+>>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
 
-HEAD commit:    04b8076df253 Merge tag 'firewire-fixes-6.8-rc7' of git://g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=175aa96a180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=80c7a82a572c0de3
-dashboard link: https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=173516ee180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12fd7bba180000
+> I'm currently updating the 'bcachefs fs usage' command for the disk
+> accounting rewrite, and looking for suggestions on any improements we
+> could make - ways to present the output that would be clearer and more
+> useful, possibly ideas on on new things to count...
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a4610b1ff2a7/disk-04b8076d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/991e9d902d39/vmlinux-04b8076d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a5b8e8e98121/bzImage-04b8076d.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/111a30273774/mount_0.gz
+I've been meaning to play with bcachefs but haven't found the
+time... but as a long time IT admin with a concentration in storage
+and such, I've got some opinions to share... :-)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c6d8e1bffb0970780d5c@syzkaller.appspotmail.com
+> I think a shorter form of the per-device section is in order, a
+> table with data type on the x axis and the device on the y axis; we
+> also want percentages.
 
-loop0: detected capacity change from 0 to 1024
-=====================================================
-BUG: KMSAN: uninit-value in hfsplus_attr_bin_cmp_key+0xf1/0x190 fs/hfsplus/attributes.c:42
- hfsplus_attr_bin_cmp_key+0xf1/0x190 fs/hfsplus/attributes.c:42
- hfs_find_rec_by_key+0xb0/0x240 fs/hfsplus/bfind.c:100
- __hfsplus_brec_find+0x26b/0x7b0 fs/hfsplus/bfind.c:135
- hfsplus_brec_find+0x445/0x970 fs/hfsplus/bfind.c:195
- hfsplus_find_attr+0x30c/0x390
- hfsplus_attr_exists+0x1c6/0x260 fs/hfsplus/attributes.c:182
- __hfsplus_setxattr+0x510/0x3580 fs/hfsplus/xattr.c:336
- hfsplus_setxattr+0x129/0x1e0 fs/hfsplus/xattr.c:434
- hfsplus_trusted_setxattr+0x55/0x70 fs/hfsplus/xattr_trusted.c:30
- __vfs_setxattr+0x7aa/0x8b0 fs/xattr.c:201
- __vfs_setxattr_noperm+0x24f/0xa30 fs/xattr.c:235
- __vfs_setxattr_locked+0x441/0x480 fs/xattr.c:296
- vfs_setxattr+0x294/0x650 fs/xattr.c:322
- do_setxattr fs/xattr.c:630 [inline]
- setxattr+0x45f/0x540 fs/xattr.c:653
- path_setxattr+0x1f5/0x3c0 fs/xattr.c:672
- __do_sys_setxattr fs/xattr.c:688 [inline]
- __se_sys_setxattr fs/xattr.c:684 [inline]
- __x64_sys_setxattr+0xf7/0x180 fs/xattr.c:684
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+So how can we make it so that the output is all on one line per-volume
+(or sub-volume) so that we can more easily parse the results for our
+own use?  
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3819 [inline]
- slab_alloc_node mm/slub.c:3860 [inline]
- __do_kmalloc_node mm/slub.c:3980 [inline]
- __kmalloc+0x919/0xf80 mm/slub.c:3994
- kmalloc include/linux/slab.h:594 [inline]
- hfsplus_find_init+0x91/0x250 fs/hfsplus/bfind.c:21
- hfsplus_attr_exists+0xde/0x260 fs/hfsplus/attributes.c:178
- __hfsplus_setxattr+0x510/0x3580 fs/hfsplus/xattr.c:336
- hfsplus_setxattr+0x129/0x1e0 fs/hfsplus/xattr.c:434
- hfsplus_trusted_setxattr+0x55/0x70 fs/hfsplus/xattr_trusted.c:30
- __vfs_setxattr+0x7aa/0x8b0 fs/xattr.c:201
- __vfs_setxattr_noperm+0x24f/0xa30 fs/xattr.c:235
- __vfs_setxattr_locked+0x441/0x480 fs/xattr.c:296
- vfs_setxattr+0x294/0x650 fs/xattr.c:322
- do_setxattr fs/xattr.c:630 [inline]
- setxattr+0x45f/0x540 fs/xattr.c:653
- path_setxattr+0x1f5/0x3c0 fs/xattr.c:672
- __do_sys_setxattr fs/xattr.c:688 [inline]
- __se_sys_setxattr fs/xattr.c:684 [inline]
- __x64_sys_setxattr+0xf7/0x180 fs/xattr.c:684
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+Can there be a way to export the data in CSV or (shudder) JSON format?
+Or to change the output format ourselves to only show the columns
+we're interested in using "-o <format>" type of specifications?
 
-CPU: 0 PID: 5013 Comm: syz-executor247 Not tainted 6.8.0-rc6-syzkaller-00250-g04b8076df253 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-=====================================================
+> The big thing I'm trying to figure out is how to present the snapshots
+> counters in a useful way.
+
+Think of it in terms of what the end user cares about, which is how
+much space is taken up (and would be free'd if the snapshot was
+deleted).  And how that space relates to the overall volume.
+
+I realize this is hard to do when you have dedupe, compression, etc
+all in play.  But so many people like to run close to the limits, and
+when they have to delete a snapshot to make space on the main volume,
+giving them an indication of how much space they will save is good.
+
+Now I realize that if you have five snapshots from oldest to newest:
+
+    a.        400mb
+    b.        10mb
+    c.        1g
+    d.        10g
+    e.        1g
+
+deleting snapshot d will not free space because snapshot e depends on
+it.  So it might be enough to note this in the docs and the help of
+the commands.  But if I delete snapshot e (the most recent one) I
+should get back 1g pretty quickly, right? 
+
+> Snapshot IDs form trees, where subvolumes correspond to leaf nodes
+> in snapshot trees and interior nodes represent data shared between
+> multiple subvolumes.
+
+Ugh... so this is a surprise in some ways, but probably only shows my
+ignorance of bcachefs.  If I have a sub-volume, and it's created after
+snapshot "c" given above and mounted.  Does it now go into the
+space used for snapshots "d" and "e"?  So if so, then there needs to
+be a way to show this.  
+
+> That means it's straightforward to print how much data each
+> subvolumme is using directly - look up the subvolume for a given
+> snapshot ID, look up the filesystem path of that subvolume - but I
+> haven't come up with a good way of presenting how data is shared;
+> these trees can be arbitrarily large.
+
+Well, be default I'd show the data in human readable format (ideally
+with a way to sort by snapshot size!) where each volume lists it's
+snapshots and sub-volumes (can there be sub-sub-...-volumes?)
+intermixed by age, so you can see how much is used.
+
+> Thoughts?
+
+I'd love to see some example outputs, but I could also get off my ass
+and actually setup my own test volumes and play around and make
+comments.
+
+but my core arguement stands, which is to make the output be concise.
+The examples below are kinda way too verbose and way too long.  If I'm
+in a terminal window, trying to keep it to as few lines as possible if
+nice.  
+
+> Filesystem: 77d3a40d-58b6-46c9-a4d2-e59c8681e152
+> Size:                       11.0 GiB
+> Used:                       4.96 GiB
+> Online reserved:                 0 B
+> Inodes:                            4
+
+Why can't this be:
+
+      Filesystem        Size        Used        Reserved        Inodes
+      xxxxx             11.0 Gib    4.96 Gib    0 B             4
+
+> Persistent reservations:
+> 2x                          5.00 MiB
+
+What does this mean to the end user?  
+
+> Data type       Required/total  Durability    Devices
+> btree:          1/2             2             [vdb vdc]           14.0 MiB
+> btree:          1/2             2             [vdb vdd]           17.8 MiB
+> btree:          1/2             2             [vdc vdd]           14.3 MiB
+> user:           1/2             2             [vdb vdc]           1.64 GiB
+> user:           1/2             2             [vdb vdd]           1.63 GiB
+> user:           1/2             2             [vdc vdd]           1.64 GiB
+
+How is this usedful?  What does it tell me?  Why do I care about
+durability?  Especially in a summary output?  
+
+> Compression:      compressed    uncompressed     average extent size
+> lz4                 4.63 GiB        6.57 GiB                 112 KiB
+> incompressible       328 MiB         328 MiB                 113 KiB
+
+These are useful, but maybe only the comp/uncomp values.  
+
+> Snapshots:
+> 4294967295          4.91 GiB
+
+There should be a count of the number of snapshots this space is used
+in. 
+
+> Btrees:
+> extents             12.0 MiB
+> inodes               256 KiB
+> dirents              256 KiB
+> alloc               10.8 MiB
+> subvolumes           256 KiB
+> snapshots            256 KiB
+> lru                  256 KiB
+> freespace            256 KiB
+> need_discard         256 KiB
+> backpointers        20.5 MiB
+> bucket_gens          256 KiB
+> snapshot_trees       256 KiB
+> logged_ops           256 KiB
+> accounting           256 KiB
+
+Again, how does this help the end user?  What can they do to even
+change these values?  They're great for debugging and info on the
+filesystem, but for an end user that's just so much garbage and don't
+tell you what you need to know.
+
+> (no label) (device 0):           vdb              rw
+>                                 data         buckets    fragmented
+>   free:                     2.27 GiB           18627
+>   sb:                       3.00 MiB              25       124 KiB
+>   journal:                  32.0 MiB             256
+>   btree:                    15.9 MiB             127
+>   user:                     1.64 GiB           13733      41.1 MiB
+>   cached:                        0 B               0
+>   parity:                        0 B               0
+>   stripe:                        0 B               0
+>   need_gc_gens:                  0 B               0
+>   need_discard:                  0 B               0
+>   capacity:                 4.00 GiB           32768
+
+Again, just the first line might be usedful, but why would I care?
+And it's a total pain to parse as well.  
+
+> (no label) (device 1):           vdc              rw
+>                                 data         buckets    fragmented
+>   free:                     2.28 GiB           18652
+>   sb:                       3.00 MiB              25       124 KiB
+>   journal:                  32.0 MiB             256
+>   btree:                    14.1 MiB             113
+>   user:                     1.64 GiB           13722      38.5 MiB
+>   cached:                        0 B               0
+>   parity:                        0 B               0
+>   stripe:                        0 B               0
+>   need_gc_gens:                  0 B               0
+>   need_discard:                  0 B               0
+>   capacity:                 4.00 GiB           32768
+
+> (no label) (device 2):           vdd              rw
+>                                 data         buckets    fragmented
+>   free:                     2.28 GiB           18640
+>   sb:                       3.00 MiB              25       124 KiB
+>   journal:                  32.0 MiB             256
+>   btree:                    16.0 MiB             128
+>   user:                     1.64 GiB           13719      38.6 MiB
+>   cached:                        0 B               0
+>   parity:                        0 B               0
+>   stripe:                        0 B               0
+>   need_gc_gens:                  0 B               0
+>   need_discard:                  0 B               0
+>   capacity:                 4.00 GiB           32768
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+How can you shrink this down to be much more terse and useful?
+Something like:
+
+        device  label      free      user       capacity
+        vda     (none)     x         y          Z               
+        vdb     "foo bar"  x1        y1         Z1
+        vdb     "foo"      x2        y2         Z2
 
