@@ -1,97 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-13389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E9A86F4B8
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 13:11:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B27E86F4CC
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 13:21:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 822671F21C25
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 12:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153F9281FAF
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 12:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83D3BE5D;
-	Sun,  3 Mar 2024 12:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE61E111B7;
+	Sun,  3 Mar 2024 12:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vFfsujZi"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="VIo9HtUj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A96B664
-	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Mar 2024 12:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F872111A4;
+	Sun,  3 Mar 2024 12:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709467872; cv=none; b=isd/KfPGmVcIaPuvCrWXZk89dnn4ECcg5ao3MqiUZ1Y+rkFHO3CRe79pAk4AXV4dmw1oJAZinyaDfNz9e8fk7Wuyrf1NWHfgRLBsnIYw4TnIvM1jpMWsG/0w9y4WOTA9kAAm+K2k51pEtSMfIae6mapSthxfyCf42RMGoaHi0wg=
+	t=1709468489; cv=none; b=ClyFoxwSxWlV0C7vnyFSyD0fy/cLodeevB7G4n7PPk3X2Ln/TYxHVkOcVnpQDzsLkv9RBO7ZdXHi0bRYojLSQshsZmwfFaiA8MtOu2OGFSVB9nRIrVCuvrBNHq1QNzaoDLqaJ3Jmdm38h0EawkVAO4WI43cvwB/l075vTSFse5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709467872; c=relaxed/simple;
-	bh=y4R0ma/4jgneJjaSi47/qC5JEaLvNahh3mUVztDZPSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L/7bFKxP4tEKNcJy2iTKxwy3AIwOKlisC6l2AJmPpSsqhLSRoqGXBO9CpWm1JyfoGPApL02AqfAejHZtRL4k8Z1x6F4st9DtfWT5LzvAKVVAzcn5yIELfZDCTjPq71CX7Mq561+p75+i1IhLgXNfEOXPXVgii9foXNxgf1tHpeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vFfsujZi; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rRMzJ2qW9tbebcVqWb7w64Bb3KLmYdAsPFUAA9R/RGw=; b=vFfsujZixI0Jym0abK7Zh4/FH6
-	gUEFU+dAUhq0W+aHCZ/G0LSR7g3pkxS556vkgQ43mI/abPQRFxv8dNML98ia2OPeM8WU7KHieKdaz
-	9UMGhX5+nD6lJFtbYYayjpgsUGB4cl0yMD9tF1BtaC1HH0jbHgxCcDUPfkCxRsU+fpxitBevc6iVt
-	PBbl5hSlY8pqM6WjG53pqrUgy2xHy57pShWkzKB0Lx4RP2pS459StqAI31P0lThbx75cMC9vfPDuT
-	zg2lJn0KdYGJ7IWMwMdNTqIvrNMfs5xX3mz7RjSPd7isLVgEopYBmVdteM2v2mjpsdryaiR9Z8BYc
-	/GYzfsfA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rgkgM-0000000GHAM-0Li9;
-	Sun, 03 Mar 2024 12:11:06 +0000
-Date: Sun, 3 Mar 2024 12:11:05 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Han Xing Yi <hxingyi104@gmail.com>
-Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] Xarray: Fix race in xa_get_order()
-Message-ID: <ZeRo2Y_RKEZ2op4i@casper.infradead.org>
-References: <ZeM0CBHF3mfz847s@desktop-cluster-2.tailce565.ts.net>
+	s=arc-20240116; t=1709468489; c=relaxed/simple;
+	bh=zwHRSE399zvO14wNCoVjD2Iw+mMHJViGTEUJcbdJnik=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ovw3PwFp515fRhZ1vVDK2j8O+3mBtkKNbmCRFIdApkJwBqLUbP5cPNQeJgiDwwzYKIXuJzG1Qu5r53DOwRMnopOY1VWHQ3V5mtlGQXi+0MKuYTP0V+TCnYUKogFn8496RdB74GfFxu74BG4Mo1/780RK9be7ADbXqoWGPpZI1yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=VIo9HtUj; arc=none smtp.client-ip=203.205.221.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1709468483; bh=CgOhE/dgm6I4NvX+ZRJHniVtwsR+cz4XQAYa5Q04GXQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=VIo9HtUjTt2SL3G60KSGA0CcI8eO0dXszUBceelOlP4/dLNXxnI+IyUdnSWcn7dxJ
+	 hOVKto/t7GX3O6q7+icP8Z8SHPz6Tdw3rtDD/ZsQwlt9ybtAUf7aIA4k4nf42WPr4C
+	 Ip+MYMHsusGbb61vyWj1O9tNhv/JZhNTu4qCT34s=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.140])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 54012E0D; Sun, 03 Mar 2024 20:21:00 +0800
+X-QQ-mid: xmsmtpt1709468460t50or4z1m
+Message-ID: <tencent_DC4C9767C786D2D2FDC64F099FAEFDEEC106@qq.com>
+X-QQ-XMAILINFO: N26DAMVpW7UEwL1zQa/2t7K3v/lWcNbP/+of6Pr07iOWZgvklSOgghBMArXiS4
+	 ZNScbdHzEdlndADc81nmIU73JFwuquPw9n9VOOj0T62/OwbVOGkFu1gGeafReejV87r8cM/+wkcU
+	 c6+8dp5I9vFOgDKDaSjmCR7wN6UHBhF4FqaIBYhaVDpt0gp7MhBNq0EH67CVMwz0F7KyN1L/NLeb
+	 9d7Kh1cMEhslvO09j8mcYV05ov7lQDj5bcCxiql0XpfOh58Ysq9k9H78Idxs19Bb8nFgGxjfT8m0
+	 zzbk0fIKtLQIxsnar3NgOkm9L1zqAO/g4TTUUbBgZUEVVLJNcswqnJcVNYZ79V2bqL3fO5703zRY
+	 o9HZFkOeSwDEK/+66pKf8Ty2Y1TlExBsFFH/cBkmJrh/14FM2mqNwC9ghpUZPkLvFnXpmSafEyu+
+	 wFuygUAQ+7pqtYPv6PcZHlM8bPozmxQeireOb80IPPgTzQtncomRD7H4HqQWNQZL+e4AEJ+5I5B1
+	 E3r1WR8v1EIvIwmA5HcDmzmr5X/Gv5/bVuKaFrOhPhkmsAJLNS2iZod35H3Z5ltYD+LIrDUIAFi1
+	 IUI2fyyPj+j4VIihbj6YevNWLINXTuQl47nXwXumzKrACXZ1KE5A9LRALucTZeTMuPG6QsRPhaKT
+	 sqJixTDwT5I3JC7pQBTK41+D/ovv+ove2ab758yzLxZedcl2IivD23KX//933zGgP1VkgfdP6Qp7
+	 OcLOf8aXRvGaM0ifmy/SfpNKdialIAi6/ly4cn2u7tCcru849zTa41FAomTMp1PlCPchxVkWF+t9
+	 8gB9dMmqdXTsEQfnpIYohn8Jw0A0wa7z/LSsHeKh8csTzoxcifyMXURxvbGLJGI8PwC9ynjOHqPb
+	 yQ6u+WJii/nHjx6JLjwclHCrLdIHXKcWXshJ7Qvjs4tNt6D0Rictts5BAku2VonGESkfMC2kUhb7
+	 8fUVjqntw=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+b91eb2ed18f599dd3c31@syzkaller.appspotmail.com
+Cc: bcrl@kvack.org,
+	brauner@kernel.org,
+	bvanassche@acm.org,
+	jack@suse.cz,
+	linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH] fs/aio: fix uaf in sys_io_cancel
+Date: Sun,  3 Mar 2024 20:21:00 +0800
+X-OQ-MSGID: <20240303122059.579229-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000006945730612bc9173@google.com>
+References: <0000000000006945730612bc9173@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZeM0CBHF3mfz847s@desktop-cluster-2.tailce565.ts.net>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 02, 2024 at 10:13:28PM +0800, Han Xing Yi wrote:
-> Hello! This is my first patch ever, so please bear with me if I make some rookie
-> mistakes. I've tried my best to follow the documentation :) 
+The aio poll work aio_poll_complete_work() need to be synchronized with syscall
+io_cancel(). Otherwise, when poll work executes first, syscall may access the
+released aio_kiocb object.
 
-Thanks!  This is indeed a mistake.  Probably a harmless one, but worth
-fixing to silence the warning.
+Fixes: 54cbc058d86b ("fs/aio: Make io_cancel() generate completions again")
+Reported-and-tested-by: syzbot+b91eb2ed18f599dd3c31@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/aio.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Annoyingly, building with C=1 (sparse) finds the problem:
+diff --git a/fs/aio.c b/fs/aio.c
+index 28223f511931..0fed22ed9eb8 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1762,9 +1762,8 @@ static void aio_poll_complete_work(struct work_struct *work)
+ 	} /* else, POLLFREE has freed the waitqueue, so we must complete */
+ 	list_del_init(&iocb->ki_list);
+ 	iocb->ki_res.res = mangle_poll(mask);
+-	spin_unlock_irq(&ctx->ctx_lock);
+-
+ 	iocb_put(iocb);
++	spin_unlock_irq(&ctx->ctx_lock);
+ }
+ 
+ /* assumes we are called with irqs disabled */
+@@ -2198,7 +2197,6 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
+ 			break;
+ 		}
+ 	}
+-	spin_unlock_irq(&ctx->ctx_lock);
+ 
+ 	/*
+ 	 * The result argument is no longer used - the io_event is always
+@@ -2206,6 +2204,7 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
+ 	 */
+ 	if (ret == 0 && kiocb->rw.ki_flags & IOCB_AIO_RW)
+ 		aio_complete_rw(&kiocb->rw, -EINTR);
++	spin_unlock_irq(&ctx->ctx_lock);
+ 
+ 	percpu_ref_put(&ctx->users);
+ 
+-- 
+2.43.0
 
-  CHECK   ../lib/xarray.c
-../lib/xarray.c:1779:54: warning: incorrect type in argument 1 (different address spaces)
-../lib/xarray.c:1779:54:    expected void const *entry
-../lib/xarray.c:1779:54:    got void [noderef] __rcu *
-
-so that means I got out of the habit of running sparse, and for some
-reason none of the build bots notified me of the new warning (or I
-missed that email).
-
-> +++ b/lib/xarray.c
-> @@ -1776,7 +1776,7 @@ int xa_get_order(struct xarray *xa, unsigned long index)
->  
->  		if (slot >= XA_CHUNK_SIZE)
->  			break;
-> -		if (!xa_is_sibling(xas.xa_node->slots[slot]))
-> +		if (!xa_is_sibling(rcu_dereference(xas.xa_node->slots[slot])))
-
-This is such a common thing to do that I have a helper for it.
-So what I'll actually commit is:
-
--               if (!xa_is_sibling(xas.xa_node->slots[slot]))
-+               if (!xa_is_sibling(xa_entry(xas.xa, xas.xa_node, slot)))
-
-but I'll leave your name on it since you did the actual work.
 
