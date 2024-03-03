@@ -1,96 +1,303 @@
-Return-Path: <linux-fsdevel+bounces-13453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC058701F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 14:02:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B4FA8775CD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 09:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D1528249E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 13:02:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5205282531
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 08:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7883D3BD;
-	Mon,  4 Mar 2024 13:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018F71CD09;
+	Sun, 10 Mar 2024 08:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqTAsr9x"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gI5Ost35"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5D33B797
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 13:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D658410A1C;
+	Sun, 10 Mar 2024 08:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709557372; cv=none; b=Kqe6luQ6IvfuLzP7AKQuNFq0i449nnEHlw40yyZW+NUiuWDJVN1c5kNOXb6mz86AP754SUY2+bWX4UqM4rH2V6d7t00G4vdSd1CM5mOx7es7EjYVf3xmVifrJzOgd0nQJU/qjMAmuR9cwV0++ZO4e1oJk8C3/LJ1gWFkKKxt4bU=
+	t=1710059519; cv=none; b=qtRhq8h0rsGzrkcbBw2Q9rhXPF0osbt6Dh/vApdJvss4MB+8VwAFXGPAk297LyVcuRExdbN0EApXtihKSbi+7q1ERlACgw2rc5PRke4ceov/NpkVmg6DHrA6DjK38zDt+8UB+MIaqqjGYNghZxNisWzT9EXpvZCYjEVWx87PTqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709557372; c=relaxed/simple;
-	bh=Ud2/HlilqpxkTNisE2/i2YL7+VoKCR1+WWnDQnQ5h9g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N5HGNZgLa/8Z8235qIBSFmRxShh/z9aYyMVBwAtjGcNDCyW2BsZ0LRpVbuIwWbvOppbcP9UFGoIaTro7VNT/QPH3J17Yido9hvHNqheLs66+NyTQ/o/5+XVGPBQuJprx15wPuNruoGN/29lpqOdjrawZpwalngLBN28lP6G7ako=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqTAsr9x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FBCEC433C7;
-	Mon,  4 Mar 2024 13:02:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709557372;
-	bh=Ud2/HlilqpxkTNisE2/i2YL7+VoKCR1+WWnDQnQ5h9g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DqTAsr9x6wcImairg3YBjjnj2RsaR1RatJAYzhXfg+II2Gkyfjl7ufTLFRqLVI19Y
-	 GEywVhzMJd8MjRZO9QXTwq8c9lWQYFHiTPt6UPLm9on6rnJpr4bXok9BPAJI3H3Z9S
-	 P95zI6nqrSIIz63zX/WuCvQm7jQj3b12C1cSPO9x79esDu6AMg2GtjvxHI4j2Evh0m
-	 m7fJuF1DcIw5Heoa8eSXJVeU9psWtlTQwDA1lgyu7wdcq2VTJ/3EHhDr4hgnzRZasn
-	 PtHLqnQzBN6grkKI3SKv/JgB06JWku1ycmUpm+PO0wLY8fjPecla0+Rfu8/Z5p7CjU
-	 oVBbbU3GZldWA==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Eric Sandeen <sandeen@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Bill O'Donnell <billodo@redhat.com>,
-	Krzysztof Blaszkowski <kb@sysmikro.com.pl>
-Subject: Re: [PATCH] freevxfs: Convert freevxfs to the new mount API.
-Date: Mon,  4 Mar 2024 14:02:43 +0100
-Message-ID: <20240304-grasen-fehlen-6ca8c1bd6f8e@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <b0d1a423-4b8e-4bc1-a021-a1078aee915f@redhat.com>
-References: <b0d1a423-4b8e-4bc1-a021-a1078aee915f@redhat.com>
+	s=arc-20240116; t=1710059519; c=relaxed/simple;
+	bh=GLXQcFukMZ/tWAFDK1k8T7exP/WHkxREN+6d+etClTQ=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=mXuQKUy/a70EfOQWt9zThWwFxtUOVTJLo2f5jde28y7rA0374mBjxdZDuaplOvv1M6aKzWNBWXTErdhuVlmRF8IIEzMYxcu8AcAu7khQWZ33nWTmUBznVfFujwyNfpW6jVykmhHlWeDXWHHfYhLZWFrg0A4J68fFv8tE6Ll3kCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gI5Ost35; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240310082504euoutp012f9b7f9435bbb0b5a3dd47e9343c3516~7WbHvV7tM1596715967euoutp01Z;
+	Sun, 10 Mar 2024 08:25:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240310082504euoutp012f9b7f9435bbb0b5a3dd47e9343c3516~7WbHvV7tM1596715967euoutp01Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1710059104;
+	bh=fSFfoLc3DfjlM0yn26NfvlNreAK+fQ3XZGtduReUWtk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=gI5Ost35hpjzM80ww1b7UrxpiC119RgpVOvZDWZd1zYM408aJvEbE1XDwVS4eFNlh
+	 6/G6bWNV9CuL+Y1bxSnXwA3gL9+hT5SIoIdExiXP/T7eAMaGQevE7Pe1N+aWdWJC3b
+	 1yMv+8GkT4Edb/+zydK4NvLnxe3//roaJ2ibYgnY=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240310082504eucas1p1221d3e1e1caed57c937b34d2c0c97709~7WbHipjHy1186111861eucas1p12;
+	Sun, 10 Mar 2024 08:25:04 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 8F.48.09552.F5E6DE56; Sun, 10
+	Mar 2024 08:25:03 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240310082503eucas1p13e9255dee8b6b22269821815eae5c033~7WbG6Ww_O3114831148eucas1p1D;
+	Sun, 10 Mar 2024 08:25:03 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240310082503eusmtrp13d00f5af6ad9b7cdb4599f73140b95ab~7WbG5bhav2181421814eusmtrp1x;
+	Sun, 10 Mar 2024 08:25:03 +0000 (GMT)
+X-AuditID: cbfec7f5-83dff70000002550-5b-65ed6e5fe46d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id FC.38.09146.F5E6DE56; Sun, 10
+	Mar 2024 08:25:03 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240310082503eusmtip22544492af56202aeeb3ddb94d36f48b9~7WbGtcM560318103181eusmtip2R;
+	Sun, 10 Mar 2024 08:25:03 +0000 (GMT)
+Received: from localhost (106.210.248.173) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Sun, 10 Mar 2024 08:25:01 +0000
+Date: Sun, 3 Mar 2024 15:34:08 +0100
+From: Joel Granados <j.granados@samsung.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<netdev@vger.kernel.org>
+Subject: Re: [PATCH v2] sysctl: treewide: constify
+ ctl_table_root::permissions
+Message-ID: <20240303143408.sxrbd7pykmyhwu5f@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1111; i=brauner@kernel.org; h=from:subject:message-id; bh=Ud2/HlilqpxkTNisE2/i2YL7+VoKCR1+WWnDQnQ5h9g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ+PVaaavNwHm/a/nstj175HTkStmwH84nbevO4puqsz JfuNPoQ2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRRSsZGS4E6Ltc5zriIPY3 0Pfa93w7xW3TogQatxZ/SP6+ZNbslGWMDP8MZl+qU/vIK305ZF7zFpWVamb+CRaGGz8FFz3rrbm czwcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="qqan5da6s22ibigg"
+Content-Disposition: inline
+In-Reply-To: <20240223-sysctl-const-permissions-v2-1-0f988d0a6548@weissschuh.net>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCKsWRmVeSWpSXmKPExsWy7djP87rxeW9TDdonmFvMOd/CYvH02CN2
+	izPduRYXtvWxWuzZe5LF4vKuOWwWv388Y7K4MeEpo8WxBWIW306/YXTg8pjdcJHFY8vKm0we
+	CzaVemxa1cnm8X7fVTaPz5vkPPq7j7EHsEdx2aSk5mSWpRbp2yVwZSy/epGxoEO3YuG720wN
+	jMdUuxg5OSQETCSeLbjD3sXIxSEksIJR4v/9u8wgCSGBL4wSF5aGQyQ+M0osfLKBBabj3/tv
+	rBCJ5YwSa8+cYISruj3/IpSzlVFix7f9jCAtLAIqEid69oLZbAI6Euff3AHbISJgI7Hy22ew
+	5cwC+5gkPl5sYwdJCAsESMy78BTI5uDgFXCQOLdUDSTMKyAocXLmE7AzmAUqJHYuewJWwiwg
+	LbH8HwdImFMgUGL+vmdQlypLfJ30kQ3CrpU4teUWE8gqCYH9nBL7bk5lhEi4SCyfOReqQVji
+	1fEt7BC2jMTpyT0sEA2TGSX2//vADuGsZpRY1viVCaLKWqLlyhOoDkeJl7cnMYJcJCHAJ3Hj
+	rSDEoXwSk7ZNZ4YI80p0tAlBVKtJrL73hmUCo/IsJK/NQvLaLITXIMJ6EjemTmHDENaWWLbw
+	NTOEbSuxbt17lgWM7KsYxVNLi3PTU4uN81LL9YoTc4tL89L1kvNzNzECE9/pf8e/7mBc8eqj
+	3iFGJg7GQ4wqQM2PNqy+wCjFkpefl6okwvta522qEG9KYmVValF+fFFpTmrxIUZpDhYlcV7V
+	FPlUIYH0xJLU7NTUgtQimCwTB6dUA1O7IcPMxVnij89ZiR602i3wxM020vDf+eNpKjxHCh1W
+	uyc1t3+/KS3yxGeGx9G339/cL9LXcBKJYn2j93A/m33jXBNjuwkMK3nVFIsdv2zf8iSofbmP
+	Ytf/t9O4OEPO3JbtOR8ldvpjx8e3v3cwfr2ziVnKslapLo73/I4gBbGzWvKHC376q0f+4Dbt
+	6c5ZlDtx+p/6q4yOe5g+FZ+6dbRhpv92jwXdgcdE8w+/2Sb98uO6rVtE7CZPEOVqUbT67Rap
+	kTeji+9D/FrpxPqwc8uWFX07X7OnjelWcHjxojapo7PU8txvP9q+aKr1ZndNI76FEyf9srks
+	wBg8w/1H6fy8Beq6ml1KrYyvs4JFriuxFGckGmoxFxUnAgAVidKg9wMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgleLIzCtJLcpLzFFi42I5/e/4Pd34vLepBs3tghZzzrewWDw99ojd
+	4kx3rsWFbX2sFnv2nmSxuLxrDpvF7x/PmCxuTHjKaHFsgZjFt9NvGB24PGY3XGTx2LLyJpPH
+	gk2lHptWdbJ5vN93lc3j8yY5j/7uY+wB7FF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqG
+	xuaxVkamSvp2NimpOZllqUX6dgl6GV0v+lgK2nQrbu5dx9TAeES1i5GTQ0LAROLf+2+sXYxc
+	HEICSxklGn7eYIFIyEhs/HKVFcIWlvhzrYsNougjo8S/T8eYQRJCAlsZJb694QexWQRUJE70
+	7GUEsdkEdCTOv7kDViMiYCOx8ttndpBmZoF9TBIfL7axgySEBfwkXi2fALSBg4NXwEHi3FI1
+	iAVLGCXufL0PtplXQFDi5MwnYBcxC5RJHN/4iwWknllAWmL5Pw6QMKdAoMT8fc+gjlaW+Drp
+	IxuEXSvx+e8zxgmMwrOQTJqFZNIshEkQYR2JnVvvsGEIa0ssW/iaGcK2lVi37j3LAkb2VYwi
+	qaXFuem5xYZ6xYm5xaV56XrJ+bmbGIHRv+3Yz807GOe9+qh3iJGJg/EQowpQ56MNqy8wSrHk
+	5eelKonwvtZ5myrEm5JYWZValB9fVJqTWnyI0RQYihOZpUST84FpKa8k3tDMwNTQxMzSwNTS
+	zFhJnNezoCNRSCA9sSQ1OzW1ILUIpo+Jg1OqgannwX9e/nWrD+cvlj78Imj+p1uf/kxbEy0V
+	uNPgzi3OgNfz2fx3Zs9eE7svKWTC2QmllVNfFL3UMyn63FG/pe3CHadNmmr1UnIzvkisUKjw
+	sN7lnMxp8+ZyYSH7W34rh92/JNnkl55bavnxwDTmOZ1PWWY4Nu6VTK/l6zW7E//EIeflqaWr
+	eM8/iTeZFJMZsoG/9u0zX/Y1u4vfBvPN6i4Q43saeLD2ibGHWXPtwr3FnELa+/pyD6y7k+P2
+	pSOuScThxHYT12BX+ZwHV4oOzF3zY+0K3sb4nKfWl/7eVkj7cmRCrNO2qvz1YYmmYq+213Cm
+	5GR2c17Xt3R9vJb/gunJsDnSGfZnPjO13amwZldiKc5INNRiLipOBAAypaXckwMAAA==
+X-CMS-MailID: 20240310082503eucas1p13e9255dee8b6b22269821815eae5c033
+X-Msg-Generator: CA
+X-RootMTR: 20240223155229eucas1p24a18fa79cda02a703bcceff3bd38c2ba
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240223155229eucas1p24a18fa79cda02a703bcceff3bd38c2ba
+References: <CGME20240223155229eucas1p24a18fa79cda02a703bcceff3bd38c2ba@eucas1p2.samsung.com>
+	<20240223-sysctl-const-permissions-v2-1-0f988d0a6548@weissschuh.net>
 
-On Fri, 01 Mar 2024 17:04:31 -0600, Eric Sandeen wrote:
-> Convert the freevxfs filesystem to the new mount API.
-> 
-> 
+--qqan5da6s22ibigg
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-@Krzysztof, sorry I had to butcher your last name. But git send-email
-keeps breaking the mail headers for me here. This isn't the first time
-this has happened but I haven't found a remedy for this yet.
+Hey Thomas
 
----
+Just to be sure I'm following. This is V2 of "[PATCH] sysctl: treewide:
+constify ctl_table_root::set_ownership". Right? I ask, because the
+subject changes slightly.
 
-Applied to the vfs.mount.api branch of the vfs/vfs.git tree.
-Patches in the vfs.mount.api branch should appear in linux-next soon.
+Best
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+On Fri, Feb 23, 2024 at 04:52:16PM +0100, Thomas Wei=DFschuh wrote:
+> The permissions callback is not supposed to modify the ctl_table.
+> Enforce this expectation via the typesystem.
+>=20
+> The patch was created with the following coccinelle script:
+>=20
+>   @@
+>   identifier func, head, ctl;
+>   @@
+>=20
+>   int func(
+>     struct ctl_table_header *head,
+>   - struct ctl_table *ctl)
+>   + const struct ctl_table *ctl)
+>   { ... }
+>=20
+> (insert_entry() from fs/proc/proc_sysctl.c is a false-positive)
+>=20
+> The three changed locations were validated through manually inspection
+> and compilation.
+>=20
+> In addition a search for '.permissions =3D' was done over the full tree to
+> look for places that were missed by coccinelle.
+> None were found.
+>=20
+> This change also is a step to put "struct ctl_table" into .rodata
+> throughout the kernel.
+>=20
+> Signed-off-by: Thomas Wei=DFschuh <linux@weissschuh.net>
+> ---
+> To: Luis Chamberlain <mcgrof@kernel.org>
+> To: Kees Cook <keescook@chromium.org>
+> To: Joel Granados <j.granados@samsung.com>
+> To: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Thomas Wei=DFschuh <linux@weissschuh.net>
+>=20
+> Changes in v2:
+> - flesh out commit messages
+> - Integrate changes to set_ownership and ctl_table_args into a single
+>   series
+> - Link to v1: https://lore.kernel.org/r/20231226-sysctl-const-permissions=
+-v1-1-5cd3c91f6299@weissschuh.net
+> ---
+> The patch is meant to be merged via the sysctl tree.
+>=20
+> There is an upcoming series that will introduce a new implementation of
+> .permission which would need to be adapted [0].
+> The adaption would be trivial as the 'table' parameter also not modified
+> there.
+>=20
+> This change was originally part of the sysctl-const series [1].
+> To slim down that series and reduce the message load on other
+> maintainers to a minimumble, submit this patch on its own.
+>=20
+> [0] https://lore.kernel.org/lkml/20240222160915.315255-1-aleksandr.mikhal=
+itsyn@canonical.com/
+> [1] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-2-7a5060b11447@=
+weissschuh.net/
+> ---
+>  include/linux/sysctl.h | 2 +-
+>  ipc/ipc_sysctl.c       | 2 +-
+>  kernel/ucount.c        | 2 +-
+>  net/sysctl_net.c       | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+> index ee7d33b89e9e..0a55b5aade16 100644
+> --- a/include/linux/sysctl.h
+> +++ b/include/linux/sysctl.h
+> @@ -207,7 +207,7 @@ struct ctl_table_root {
+>  	void (*set_ownership)(struct ctl_table_header *head,
+>  			      struct ctl_table *table,
+>  			      kuid_t *uid, kgid_t *gid);
+> -	int (*permissions)(struct ctl_table_header *head, struct ctl_table *tab=
+le);
+> +	int (*permissions)(struct ctl_table_header *head, const struct ctl_tabl=
+e *table);
+>  };
+> =20
+>  #define register_sysctl(path, table)	\
+> diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+> index 8c62e443f78b..b087787f608f 100644
+> --- a/ipc/ipc_sysctl.c
+> +++ b/ipc/ipc_sysctl.c
+> @@ -190,7 +190,7 @@ static int set_is_seen(struct ctl_table_set *set)
+>  	return &current->nsproxy->ipc_ns->ipc_set =3D=3D set;
+>  }
+> =20
+> -static int ipc_permissions(struct ctl_table_header *head, struct ctl_tab=
+le *table)
+> +static int ipc_permissions(struct ctl_table_header *head, const struct c=
+tl_table *table)
+>  {
+>  	int mode =3D table->mode;
+> =20
+> diff --git a/kernel/ucount.c b/kernel/ucount.c
+> index 4aa6166cb856..90300840256b 100644
+> --- a/kernel/ucount.c
+> +++ b/kernel/ucount.c
+> @@ -38,7 +38,7 @@ static int set_is_seen(struct ctl_table_set *set)
+>  }
+> =20
+>  static int set_permissions(struct ctl_table_header *head,
+> -				  struct ctl_table *table)
+> +			   const struct ctl_table *table)
+>  {
+>  	struct user_namespace *user_ns =3D
+>  		container_of(head->set, struct user_namespace, set);
+> diff --git a/net/sysctl_net.c b/net/sysctl_net.c
+> index 051ed5f6fc93..ba9a49de9600 100644
+> --- a/net/sysctl_net.c
+> +++ b/net/sysctl_net.c
+> @@ -40,7 +40,7 @@ static int is_seen(struct ctl_table_set *set)
+> =20
+>  /* Return standard mode bits for table entry. */
+>  static int net_ctl_permissions(struct ctl_table_header *head,
+> -			       struct ctl_table *table)
+> +			       const struct ctl_table *table)
+>  {
+>  	struct net *net =3D container_of(head->set, struct net, sysctls);
+> =20
+>=20
+> ---
+> base-commit: ffd2cb6b718e189e7e2d5d0c19c25611f92e061a
+> change-id: 20231226-sysctl-const-permissions-d7cfd02a7637
+>=20
+> Best regards,
+> --=20
+> Thomas Wei=DFschuh <linux@weissschuh.net>
+>=20
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+--=20
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Joel Granados
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.mount.api
+--qqan5da6s22ibigg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1/1] freevxfs: Convert freevxfs to the new mount API.
-      https://git.kernel.org/vfs/vfs/c/f65b9daeb55b
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmXkik0ACgkQupfNUreW
+QU9rSwv7B1/Znla2Bxl973JJ28LEIA+WnUyU2NKROljS41pBxiSjMK8lNqbhRRZR
+Uu4a1VkqIeIH6OHWdFUnaVA8XaiHZkwxzba+Ub7U6eHznH0ysjSAQE9PsTagFHrf
+gsaiE7kA9rzpw5DYWHwvplF1qcezr1b3eO5dMMaSfr4xUb4BxvCX7+HJPO6x1bLj
+DHhbbQNnaQCie3L2yl2V4VOxafV8sWR4Vnbmp8we9GKkWJ1vvztKNisYFwefMt7h
+10ITailxrVPvbJeQIajnxRFZe/tVwXU19IKWw8R32ghlELLuHgnQMMt1q6MHjZ4s
+Jmiqhg+75YEFgOHi3fmRR0BBcC7DuL2gb4xzb9k2fTHWjmj22hudDChXH9Zehck6
+LsCbP2YfcbN9rEYa6WxxBPprEfQEYMt3VxL2qYTJR4qGCykBJVavrp7ozV6L9ifR
+ymKnJAhphprGBx5VmEWFby90DueGoiEuh61hhFdTBPDbuOFLD47YplHNIi3SH5DJ
+306eCaf1
+=oGDK
+-----END PGP SIGNATURE-----
+
+--qqan5da6s22ibigg--
 
