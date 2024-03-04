@@ -1,95 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-13449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 502F68701A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 13:37:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E16508701CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 13:48:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B99B285D9F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 12:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 991BD286891
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 12:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CE63D0DD;
-	Mon,  4 Mar 2024 12:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C713D3B4;
+	Mon,  4 Mar 2024 12:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVj0626x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEFB24B26
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 12:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783301D53F;
+	Mon,  4 Mar 2024 12:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709555824; cv=none; b=Be66A2TzkCqFkRaxa4qfNm0KHXFz/AJYOdrAha0PgtwoXY2NBlPRAOLqze7e1STD5c3ewEr4HSFTae/S/K/dKapS2Kx1JCOx+NoM8T3VnZLuZSmq+71D7f0ub9iIkof4b9oYgfQ7QPECZZ2kvQWMSHcZakNCF99pzj9Dw2Mt/EQ=
+	t=1709556473; cv=none; b=LUZkiTibTgtQ31ShzGJCPoPpkkTkf6mVCIBxlB5iqbmjCIHyXaKQq+mai2NmwCPt78I6Qje0gFHBZILXmSZyL0M/Ng3Vkmq78E4bfh8uUuzFSqAYR88V87Cry9hkgcTueCxXjrcxnP7kw2yPOPyxmt9hcTbkTw99Dw7Gkhs7ZWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709555824; c=relaxed/simple;
-	bh=eylvi3XlKAQDcDq2lF5jwYNjHDysndBP8IqQugOeCVA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hopZHbBVZ0Gg65eyh6d03aTSPCq28A3qB7+dK96ERrG8dtjO+0P8kVfYBgAZXyIfbTG7lRMMbOraFt7yQ2OyibNwkmcwKOvIFGlojkubXrvBfBGzGOuRjFEFQWPLL8YHt3S+2PSb31qVU9L26WOequiYMcvkJZg15iw5bKx+0Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7c8440b33b6so148390339f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Mar 2024 04:37:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709555822; x=1710160622;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3NbNnyhd/B5XCppDwpIFPOlZsSIrkjocsr4QA1pmJsU=;
-        b=LlTciwyRM+UtcBdHhciAfuRE0f0f6smK8NwOAqkVWnhMOTnSLRv91qXVZqo9m1Ginu
-         4Z5faPg0EP1R5DqJlAIIAzmgYbp/yFr/+rBtXNf6ifGA+pXm22wx7XvDlwFl+mANSY8d
-         C+M37wlJMVviJGW0nykYTvLZScdfxaKw1p9Hx1S1IBYmCpSAmbUiDxlgWrkxC2KNlaAz
-         xJK/vFKT0BEmAzyGrLKBBYnK/f8YRJlH5I7N+Hth2pxoRwoypuYB3cvEvEuUO9fl3zC8
-         Sxj3Nx01huY+yZUsQokuicUHC7s+Gsrry1RUVBOyIbIGKHAwBFaQka/4Pd+9jqtiMGHz
-         H8pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVS5VngZZDSJycEoy2jXO9NtJ7SuDg7C9U3b+f9in4R1W8ehA0vL6vPid0KP1o31Kmn2nIwrLh1/+InA82TinHKkEnzlPKGaJy+K5Lj4w==
-X-Gm-Message-State: AOJu0Yzpg2QyP89PVHBqupZaBTMkD3QJOB2hrPXeGZHLu58/Z+zPtKzw
-	8mfIVfA5SFE6ITq2kQ5OwEjKCt8BMf3MNx7ouXgD6wwmaigJZO6MJ6RMNUIzvJIkLHUZp7mTzPr
-	Ou6y6lvCW65QmEZhEth7MCL36kzVVvvADhGYjg+U2bR2xYLiqXIuqRVg=
-X-Google-Smtp-Source: AGHT+IFU4f03ZjvncZbdrXzXkVo0rpMKA/5FLqVUEdHywCy6BHCHtXYsDtg0Q9xCSX48Dp1C+/EwiWItU9BDpYG49ks9cOYOlbX2
+	s=arc-20240116; t=1709556473; c=relaxed/simple;
+	bh=jLz5ELcfTObaRFcBiCY6jXqzV+/2ipsEzVEnweNaefw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WkAxw353/ZNWQeKpoRy3EZu84Q8lrhc4uuPBn0EqRiJxnnW5UDtC9cA81O+W1ASATxdRF3sEnh87AiYuenEJ9if+zHUkc/mVWWsyH688x3lziNdQa/DkSsNxu3tCcDY7Qkj74jt/aT3IRD63j4dDTvLsvOiGCPaTMlhYLkJ0RlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVj0626x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D93EC433C7;
+	Mon,  4 Mar 2024 12:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709556473;
+	bh=jLz5ELcfTObaRFcBiCY6jXqzV+/2ipsEzVEnweNaefw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NVj0626xPWKm6oCku+qVbL1lqwYTouqrHQCaH3UFjNpYcgerz8YrBQAxVLMUMDzVu
+	 5A3CY7dLUz10f/4pLRxilXh7LkoOU5E2AhJfEuDr5r0NsZ2QULjgK/AEX/4cVXO15z
+	 N/4d3xLgdzIl3Oo5SDDPOMTzc1uRRm7QmCHgibWDu2Wf+49YC0k9fSXY9b/VuLgIO4
+	 LKshwUAICdZjbWyf0jSR2lECh+l3LDWx2FvJrYzJI+ObQIdmxJobd6UUaVCRr5uPjO
+	 kfCzAaA7gtshaoPK6wL6Kviuof0JMnw+vaX3Tc7QJ4gco6EsYOO0hhOUVlJsSyOvMN
+	 RjXYJoVDPbZMg==
+Date: Mon, 4 Mar 2024 13:47:44 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Kees Cook <kees@kernel.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeelb@google.com>, Muchun Song <muchun.song@linux.dev>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 4/4] UNFINISHED mm, fs: use kmem_cache_charge() in
+ path_openat()
+Message-ID: <20240304-pendant-implantat-4e19caa87151@brauner>
+References: <20240301-slab-memcg-v1-0-359328a46596@suse.cz>
+ <20240301-slab-memcg-v1-4-359328a46596@suse.cz>
+ <CAHk-=whgFtbTxCAg2CWQtDj7n6CEyzvdV1wcCj2qpMfpw0=m1A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:40a3:b0:474:ecf8:1f55 with SMTP id
- m35-20020a05663840a300b00474ecf81f55mr190193jam.4.1709555821881; Mon, 04 Mar
- 2024 04:37:01 -0800 (PST)
-Date: Mon, 04 Mar 2024 04:37:01 -0800
-In-Reply-To: <0000000000009dc57505fd85ceb9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007cb7130612d4fb95@google.com>
-Subject: Re: [syzbot] [reiserfs?] general protection fault in rcu_core (2)
-From: syzbot <syzbot+b23c4c9d3d228ba328d7@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, dvyukov@google.com, jack@suse.cz, 
-	lenb@kernel.org, linux-acpi@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
-	rafael@kernel.org, reiserfs-devel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, yukuai1@huaweicloud.com, 
-	yukuai3@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whgFtbTxCAg2CWQtDj7n6CEyzvdV1wcCj2qpMfpw0=m1A@mail.gmail.com>
 
-syzbot suspects this issue was fixed by commit:
+On Fri, Mar 01, 2024 at 09:51:18AM -0800, Linus Torvalds wrote:
+> On Fri, 1 Mar 2024 at 09:07, Vlastimil Babka <vbabka@suse.cz> wrote:
+> >
+> > This is just an example of using the kmem_cache_charge() API.  I think
+> > it's placed in a place that's applicable for Linus's example [1]
+> > although he mentions do_dentry_open() - I have followed from strace()
+> > showing openat(2) to path_openat() doing the alloc_empty_file().
+> 
+> Thanks. This is not the right patch,  but yes, patches 1-3 look very nice to me.
+> 
+> > The idea is that filp_cachep stops being SLAB_ACCOUNT. Allocations that
+> > want to be accounted immediately can use GFP_KERNEL_ACCOUNT. I did that
+> > in alloc_empty_file_noaccount() (despite the contradictory name but the
+> > noaccount refers to something else, right?) as IIUC it's about
+> > kernel-internal opens.
+> 
+> Yeah, the "noaccount" function is about not accounting it towards nr_files.
+> That said, I don't think it necessarily needs to do the memory
+> accounting either - it's literally for cases where we're never going
+> to install the file descriptor in any user space.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Exactly.
 
-    fs: Block writes to mounted block devices
+> Your change to use GFP_KERNEL_ACCOUNT isn't exactly wrong, but I don't
+> think it's really the right thing either, because
+> 
+> > Why is this unfinished:
+> >
+> > - there are other callers of alloc_empty_file() which I didn't adjust so
+> >   they simply became memcg-unaccounted. I haven't investigated for which
+> >   ones it would make also sense to separate the allocation and accounting.
+> >   Maybe alloc_empty_file() would need to get a parameter to control
+> >   this.
+> 
+> Right. I think the natural and logical way to deal with this is to
+> just say "we account when we add the file to the fdtable".
+> IOW, just have fd_install() do it. That's the really natural point,
+> and also makes it very logical why alloc_empty_file_noaccount()
+> wouldn't need to do the GFP_KERNEL_ACCOUNT.
+> 
+> > - I don't know how to properly unwind the accounting failure case. It
+> >   seems like a new case because when we succeed the open, there's no
+> >   further error path at least in path_openat().
+> 
+> Yeah, let me think about this part. Becasue fd_install() is the right
+> point, but that too does not really allow for error handling.
+> 
+> Yes, we could close things and fail it, but it really is much too late
+> at this point.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14e58b32180000
-start commit:   e8f75c0270d9 Merge tag 'x86_sgx_for_v6.5' of git://git.ker..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a98ec7f738e43bd4
-dashboard link: https://syzkaller.appspot.com/bug?extid=b23c4c9d3d228ba328d7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d6dfc0a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161de580a80000
+It would also mean massaging 100+ callsites. And having a non-subsystems
+specific failure step between file allocation, fd reservation and
+fd_install() would be awkward and an invitation for bugs.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> What I *think* I'd want for this case is
+> 
+>  (a) allow the accounting to go over by a bit
+> 
+>  (b) make sure there's a cheap way to ask (before) about "did we go
+> over the limit"
+> 
+> IOW, the accounting never needed to be byte-accurate to begin with,
+> and making it fail (cheaply and early) on the next file allocation is
+> fine.
 
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I think that's a good idea.
 
