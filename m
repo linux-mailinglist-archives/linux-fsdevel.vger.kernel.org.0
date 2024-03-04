@@ -1,257 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-13417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7166586F825
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 02:17:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B218786F824
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 02:17:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3F9AB20B51
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 01:17:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FC0A1F2005B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 01:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA15443D;
-	Mon,  4 Mar 2024 01:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F171870;
+	Mon,  4 Mar 2024 01:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RgsW7pz7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PR4QviNL";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rT7LfeyB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="piU5ZQ4A"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Lq4kxYHr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC953C39
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 01:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1772917C9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 01:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709515028; cv=none; b=H1NPGxAy+/wfuhPu6OjGGYrzx9P/OG/eRrXHt/JfTwVKU8tiNEGbCzKwpFNmgS2r4nrcFxtBH917J5VbgIwEF5Ao5btyFsX7g15ImJKjqRsmOB9jd21Ko68Gh+4oacF5vETsoYzC5yOYnjVmnLHru99ezX3E+gzIArW7OsSErWs=
+	t=1709515023; cv=none; b=Cn87PRhRhlk6DyCZ52cJHT0TB8Qo74H8aVJmYmuN1HJEBsUWErvyKsu7tN7XR1N8N6q+MXIRcHz/ysaPCSP1plOv1cHeDNFmweNZmt3TjIj5p9rb+YKAj8teyC6V100O9SWLM8oNbRteGq0pLeDSmLnd0RXIzNz5WNeCSF4zjsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709515028; c=relaxed/simple;
-	bh=1Aq5/mIoxS2d/PxL35bmJseWMxsFTTehB+gbQ++C5NM=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=hrVB8C4m27C3Dr06E4nUZkD/Ltgak6wonSzGePgQQDmK4XBawaYFaiYzGx9yFs+NmwlozxJqYGhntGgkIjR04fPP/jkylIvuuahj3If6q3QcdqrJAiw/wOMsS8MbUS3Aaid3J+/k6EC9t7DNWA3MmzVH/gou7aDmtTpp0PEm7iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RgsW7pz7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PR4QviNL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rT7LfeyB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=piU5ZQ4A; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 39915679F2;
-	Mon,  4 Mar 2024 01:17:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709515024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6BhzHrZUvZkmoqepVbNm6BaBGGtxilY+mLB34SlnSCI=;
-	b=RgsW7pz7L5xMrxarCi99vh37/2Z7LDBkMaqbnouG4pCtGA15RJeMdk4HpQh1P00CTfaHC1
-	K4GJIg37Hi1hZml8TQ4eEtxU/whLoAZaoMPQs4pXMnVRODE1meW/CTRybm1/AO2mRl69fQ
-	jU9IQehD+Q/C8o0xmyto2oPfHv6mX7Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709515024;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6BhzHrZUvZkmoqepVbNm6BaBGGtxilY+mLB34SlnSCI=;
-	b=PR4QviNL9fW30QNqvLsAZQ/S1sUgB/xQ+1K1vZOaAYrOD+eGfoi1aCZGQ/V0Xr1Bx26WU+
-	Ss32xY8itzt7zODA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709515022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6BhzHrZUvZkmoqepVbNm6BaBGGtxilY+mLB34SlnSCI=;
-	b=rT7LfeyBDW84bizhefCkStI4Je4X8OvbixyA+HTFHQaCSJfe7dOdRbOglKT7mxCmaAbzFg
-	Hk2pvl3gq3RB6q2NAbwuuf0U+dVbaUqMPlB4UtjAZLjeMvbFfgstN821Ee23NyMpZI1Ira
-	cVwpHPMOVBFrMs1HLaS0M18ySSbVVyM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709515022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6BhzHrZUvZkmoqepVbNm6BaBGGtxilY+mLB34SlnSCI=;
-	b=piU5ZQ4ACgESro3kyVjdBM0JD8GzsUeaTBqAo/yRPoauS5zxDAHlvofhIfLlFxNn34hG6e
-	0PQCmosrdRqBvwCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 784BC1379D;
-	Mon,  4 Mar 2024 01:16:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id J6U2Bwoh5WU8CgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 04 Mar 2024 01:16:58 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1709515023; c=relaxed/simple;
+	bh=b7SSYspclds0BRCRMLVbMDZF22HsnPgTIN5c8uq/atE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MbYnBQPHICq4aoxrVSgPCJ7sf8grF1BAJ4WyKCPgFnni5edAQyz5jTLEuT6/AYEiBSw5vTsiHOnRoy2UBUb/laXAJWtACekduhtPSDFjjuGnCrxUppcaVnEfLzZGxG4pz5Me54Uxi1fpc3pVDx+pjYJ+3XhOVoqEBWC9yslxSL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Lq4kxYHr; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1dc75972f25so32120605ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Mar 2024 17:17:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709515020; x=1710119820; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Et25xNcaZ8dKVZKTWn3ytnYkOD3/9xAeQVIkCIdPgRA=;
+        b=Lq4kxYHrOyTGL47PBBXiJG8XXdzo0/uX8eXP0kHhIJfwf2AlR8Zcyf8rNo8CgVnNqb
+         S8IIClAUqJv2o8QopaZ2tUnw6Z368GMsO00A9t0xzMBboFLmV3UcpSNuYFKx+Wt9L7Lc
+         wtGmmuSUecSQZV7OtQ9EWwgj4RF++jztkPFAkPpELXI/0zVuh0obYHIrbf1e5gLkwK0s
+         Dh/lB681niDMxwwDI7wXVnhIr/RL+qBs8iEv/zrlgq3MuifpFT4xQZAYGBPUbqk+w5a/
+         Cwsla5vIOREsYwfyggz7WN3SXUCL7gFu0MQpyLryFsMY1E8brRUzuO/rWqgtGF8SpXf3
+         CVEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709515020; x=1710119820;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Et25xNcaZ8dKVZKTWn3ytnYkOD3/9xAeQVIkCIdPgRA=;
+        b=Hr7a+rfJtSysWciYdIJz3Vh4RI6LwvW5U1ykEkgEd6tAHa1VFWWwY9v7doA4F1JTlh
+         vcAwYOTTkssVTvfRdNlC5HbxXWZx+zxXee23cgCEeMeVLfRjl4xgp1bIiSkcK2Z+93ET
+         LyXp9KdGJhwW/6ZTHBIviqnSXTg2yLs+3Klqr540g34+0Q49+ZhmFqm79vPIXvLCWjs2
+         lNr81DeQ3SDcqedHaPqHOh4npAfCAOiP1UdOGwpGWIpjhUt58G9b79ONnEDrv6aWbjfK
+         hgETJNBIIM03X3RTWEyEf76p/VUrAhP1S0M2Y8YTsrfxfdZzf9iUuHcTyLPKenYuDeaj
+         5A6g==
+X-Gm-Message-State: AOJu0YzI40EXB8lTGwd2FbXdEjcBhUMnOdZpllt8M4tZWgKPSSl0xpYd
+	DyFqHTvgqRNKXjcbJZc7882TLjEs7cWbYgwiRo/ws9+//TbY+4cOnwlACkA+KCw=
+X-Google-Smtp-Source: AGHT+IHkP92HVlEQaJyjtxeGimyAxRhgYGP3Nf+sZvScwD+toU1xyj8AIK7lAKdqqqFDTXgrXsgkbA==
+X-Received: by 2002:a17:903:298e:b0:1dc:7fb4:20cb with SMTP id lm14-20020a170903298e00b001dc7fb420cbmr8978654plb.62.1709515020106;
+        Sun, 03 Mar 2024 17:17:00 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
+        by smtp.gmail.com with ESMTPSA id p8-20020a170902e74800b001dd091cbc4esm1598569plf.181.2024.03.03.17.16.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Mar 2024 17:16:59 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rgwwr-00Egwg-18;
+	Mon, 04 Mar 2024 12:16:57 +1100
+Date: Mon, 4 Mar 2024 12:16:57 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>,
+	Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	John Garry <john.g.garry@oracle.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 3/8] iomap: Add atomic write support for direct-io
+Message-ID: <ZeUhCbT4sbucOT3L@dread.disaster.area>
+References: <555cc3e262efa77ee5648196362f415a1efc018d.1709361537.git.ritesh.list@gmail.com>
+ <6a09654d152d3d1a07636174f5abcfce9948c20c.1709361537.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Dave Chinner" <david@fromorbit.com>
-Cc: "Kent Overstreet" <kent.overstreet@linux.dev>,
- "Matthew Wilcox" <willy@infradead.org>, "Amir Goldstein" <amir73il@gmail.com>,
- paulmck@kernel.org, lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
- "linux-fsdevel" <linux-fsdevel@vger.kernel.org>, "Jan Kara" <jack@suse.cz>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
-In-reply-to: <ZeUTyxYFS6kGoM1h@dread.disaster.area>
-References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>,
- <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>,
- <Zd-LljY351NCrrCP@casper.infradead.org>,
- <170925937840.24797.2167230750547152404@noble.neil.brown.name>,
- <ZeFtrzN34cLhjjHK@dread.disaster.area>,
- <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>,
- <170933687972.24797.18406852925615624495@noble.neil.brown.name>,
- <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>,
- <170950594802.24797.17587526251920021411@noble.neil.brown.name>,
- <ZeUTyxYFS6kGoM1h@dread.disaster.area>
-Date: Mon, 04 Mar 2024 12:16:50 +1100
-Message-id: <170951501074.24797.10807279234722357224@noble.neil.brown.name>
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=rT7LfeyB;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=piU5ZQ4A
-X-Spamd-Result: default: False [-3.31 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[9];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[fromorbit.com:email,suse.de:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 FREEMAIL_CC(0.00)[linux.dev,infradead.org,gmail.com,kernel.org,lists.linux-foundation.org,kvack.org,vger.kernel.org,suse.cz];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 39915679F2
-X-Spam-Level: 
-X-Spam-Score: -3.31
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a09654d152d3d1a07636174f5abcfce9948c20c.1709361537.git.ritesh.list@gmail.com>
 
-On Mon, 04 Mar 2024, Dave Chinner wrote:
-> On Mon, Mar 04, 2024 at 09:45:48AM +1100, NeilBrown wrote:
-> > I have in mind a more explicit statement of how much waiting is
-> > acceptable.
-> >=20
-> > GFP_NOFAIL - wait indefinitely
->=20
-> Make this the default, and we don't need a flag for it at all.
+On Sat, Mar 02, 2024 at 01:12:00PM +0530, Ritesh Harjani (IBM) wrote:
+> This adds direct-io atomic writes support in iomap. This adds -
+> 1. IOMAP_ATOMIC flag for iomap iter.
+> 2. Sets REQ_ATOMIC to bio opflags.
+> 3. Adds necessary checks in iomap_dio code to ensure a single bio is
+>    submitted for an atomic write request. (since we only support ubuf
+>    type iocb). Otherwise return an error EIO.
+> 4. Adds a common helper routine iomap_dio_check_atomic(). It helps in
+>    verifying mapped length and start/end physical offset against the hw
+>    device constraints for supporting atomic writes.
+> 
+> This patch is based on a patch from John Garry <john.g.garry@oracle.com>
+> which adds such support of DIO atomic writes to iomap.
+> 
+> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+>  fs/iomap/direct-io.c  | 75 +++++++++++++++++++++++++++++++++++++++++--
+>  fs/iomap/trace.h      |  3 +-
+>  include/linux/iomap.h |  1 +
+>  3 files changed, 75 insertions(+), 4 deletions(-)
 
-These aren't meant to be flags - those start with __.
-They are ..  "flag combinations" to use the term description from
-gfp_types.h
+Ugh. Now we have two competing sets of changes to bring RWF_ATOMIC
+support to iomap. One from John here:
 
-There could only be a "default" if we used macro magic to allow the GFP_
-argument to be omitted.
+https://lore.kernel.org/linux-fsdevel/20240124142645.9334-1-john.g.garry@oracle.com/
 
->=20
-> > GFP_KILLABLE - wait indefinitely unless fatal signal is pending.
-> > GFP_RETRY - may retry but deadlock, though unlikely, is possible.  So
-> >             don't wait indefinitely.  May abort more quickly if fatal
-> >             signal is pending.
->=20
-> KILLABLE and RETRY are the same thing from the caller POV.
-> Effectively "GFP_MAY_FAIL", where it will try really hard, but if it
-> there is a risk of deadlock or a fatal signal pending, it will fail.
->=20
-> > GFP_NO_RETRY - only try things once.  This may sleep, but will give up
-> >             fairly quickly.  Either deadlock is a significant
-> >             possibility, or alternate strategy is fairly cheap.
-> > GFP_ATOMIC - don't sleep - same as current.
->=20
-> We're talking about wait semantics, so GFP_ATOMIC should be named
-> GFP_NO_WAIT and described as "same as NO_RETRY but will not sleep".
->=20
-> That gives us three modifying flags to the default behaviour of
-> sleeping until success: GFP_MAY_FAIL, GFP_NO_RETRY and GFP_NO_WAIT.
+and now this one.
 
+Can the two of you please co-ordinate your efforts and based your
+filesysetm work off the same iomap infrastructure changes?
 
-We currently have both __GFP_NORETRY and __GFP_RETRY_MAYFAIL which
-differ in how many retries (1 or a few) and are both used (the former
-about twice as much as the latter).
-Do we need both?
+.....
 
-Commit dcda9b04713c ("mm, tree wide: replace __GFP_REPEAT by __GFP_RETRY_MAYF=
-AIL with more useful semantic")
+> @@ -356,6 +360,11 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	if (need_zeroout) {
+>  		/* zero out from the start of the block to the write offset */
+>  		pad = pos & (fs_block_size - 1);
+> +		if (unlikely(pad && atomic_write)) {
+> +			WARN_ON_ONCE("pos not atomic write aligned\n");
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
 
-might be useful in understanding the RETRY_MAYFAIL semantic.
+This atomic IO should have been rejected before it even got to
+the layers where the bios are being built. If the IO alignment is
+such that it does not align to filesystem allocation constraints, it
+should be rejected at the filesystem ->write_iter() method and not
+even get to the iomap layer.
 
-I think the intent is that RETRY_MAYFAIL doesn't trigger the oom killer.
-That seems like it could be a useful distinction.
+.....
 
-GFP_NOFAIL - retry indefinitely
-GFP_NOOOM  - retry until fatal signal or OOM condition
-GFP_NORETRY - sleep if needed, but don't retry
-GFP_NOSLEEP - AKA GFP_ATOMIC
+> @@ -516,6 +535,44 @@ static loff_t iomap_dio_iter(const struct iomap_iter *iter,
+>  	}
+>  }
+>  
+> +/*
+> + * iomap_dio_check_atomic:	DIO Atomic checks before calling bio submission.
+> + * @iter:			iomap iterator
+> + * This function is called after filesystem block mapping and before bio
+> + * formation/submission. This is the right place to verify hw device/block
+> + * layer constraints to be followed for doing atomic writes. Hence do those
+> + * common checks here.
+> + */
+> +static bool iomap_dio_check_atomic(struct iomap_iter *iter)
+> +{
+> +	struct block_device *bdev = iter->iomap.bdev;
+> +	unsigned long long map_len = iomap_length(iter);
+> +	unsigned long long start = iomap_sector(&iter->iomap, iter->pos)
+> +						<< SECTOR_SHIFT;
+> +	unsigned long long end = start + map_len - 1;
+> +	unsigned int awu_min =
+> +			queue_atomic_write_unit_min_bytes(bdev->bd_queue);
+> +	unsigned int awu_max =
+> +			queue_atomic_write_unit_max_bytes(bdev->bd_queue);
+> +	unsigned long boundary =
+> +			queue_atomic_write_boundary_bytes(bdev->bd_queue);
+> +	unsigned long mask = ~(boundary - 1);
+> +
+> +
+> +	/* map_len should be same as user specified iter->len */
+> +	if (map_len < iter->len)
+> +		return false;
+> +	/* start should be aligned to block device min atomic unit alignment */
+> +	if (!IS_ALIGNED(start, awu_min))
+> +		return false;
+> +	/* If top bits doesn't match, means atomic unit boundary is crossed */
+> +	if (boundary && ((start | mask) != (end | mask)))
+> +		return false;
+> +
+> +	return true;
+> +}
 
-We might need a better name than GFP_NOOOM :-)
+I think you are re-implementing stuff that John has already done at
+higher layers and in a generic manner. i.e.
+generic_atomic_write_valid() in this patch:
 
-Thanks,
-NeilBrown
+https://lore.kernel.org/linux-fsdevel/20240226173612.1478858-4-john.g.garry@oracle.com/
 
+We shouldn't be getting anywhere near the iomap layer if the IO is
+not properly aligned to atomic IO constraints...
 
->=20
-> I will note there is one more case callers might really want to
-> avoid: direct reclaim. That sort of behaviour might be worth folding
-> into GFP_NO_WAIT, as there are cases where we want the allocation
-> attempt to fail without trying to reclaim memory because it's *much*
-> faster to simply use the fallback mechanism than it is to attempt
-> memory reclaim (e.g.  xlog_kvmalloc()).
->=20
-> > I don't see how "GFP_KERNEL" fits into that spectrum.
->=20
-> Agreed.
->=20
-> > The definition of
-> > "this will try really hard, but might fail and we can't really tell you
-> > what circumstances it might fail in" isn't fun to work with.
->=20
-> Yup, XFS was designed for NO_FAIL and MAY_FAIL behaviour, and in more
-> recent times we also use NO_RECLAIM to provide our own kvmalloc
-> semantics because the current kvmalloc API really only supports
-> "GFP_KERNEL" allocation.
->=20
-> > > Deprecating GFP_NOFS and GFP_NOIO would be wonderful - those should
-> > > really just be PF_MEMALLOC_NOFS and PF_MEMALLOC_NOIO, now that we're
-> > > pushing for memalloc_flags_(save|restore) more.
->=20
-> This is largely now subsystem maintenance work - the infrastructure
-> is there, and some subsystems have been converted over entirely to
-> use it. The remaining work either needs to be mandated or have
-> someone explicitly tasked with completing that work.
->=20
-> IOWs, the process in which we change APIs and then leave the long
-> tail of conversions to subsystem maintainers is just a mechanism for
-> creating technical debt that takes forever to clean up...
->=20
-> > > Getting rid of those would be a really nice cleanup beacuse then gfp
-> > > flags would mostly just be:
-> > >  - the type of memory to allocate (highmem, zeroed, etc.)
-> > >  - how hard to try (don't block at all, block some, block forever)
->=20
-> Yup, would be a very good improvement.
->=20
-> -Dave.
-> --=20
-> Dave Chinner
-> david@fromorbit.com
->=20
+So, yeah, can you please co-ordinate the development of this
+patchset with John and the work that has already been done to
+support this functionality on block devices and XFS?
 
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
