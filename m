@@ -1,69 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-13563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFDDD87111A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 00:37:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7ED871135
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 00:39:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536B628325D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 23:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D97A1C2244C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 23:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29997CF33;
-	Mon,  4 Mar 2024 23:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31907D3E8;
+	Mon,  4 Mar 2024 23:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JdRGt6z8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0RTTDEr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611B61E4A2;
-	Mon,  4 Mar 2024 23:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376327C0B8;
+	Mon,  4 Mar 2024 23:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709595455; cv=none; b=N2hhXzTp+LZyxAwctwB5eqqsf8wlYrZYVA3kfFRJUU4uhKyxOcvaC0P1dw5eW2qNveenNJfTEt+ygz7KvHAOi1Irp2CgKxbkYMRLgr+JEzERF9Z4bU3iH6dGtw/JqzfAUrFx4hsFEHmnlpFQzgmP363sHfs1DmRNjEx7aMwJRmo=
+	t=1709595569; cv=none; b=Gt9rL5QxGB8F8GMVLCHVFDPlA2fELGZViQH7MUEbok2yhIkE3mj6LcAazW7CIAPVUX4JSHoAZjKqfRCbBzPHaiAFD4CtBYsAEnZKB76xsx7kL0ra+bpHmWkrc8K5aGCE+xXYLL8Jqkluxx9EvSEiwunzzUsp63dXFSxj0W+jEfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709595455; c=relaxed/simple;
-	bh=+rEQ1y9VkSnTHwSogsWbOYliPcdNnsQLMPnehdv2m7I=;
+	s=arc-20240116; t=1709595569; c=relaxed/simple;
+	bh=AGfHjrEdVXmKbi3OhCMHmeeCkz52cPwQAGWc0u6ypCo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIbO1yyehgMO1j4DfL2uRg5JzLofJYVAAk5QqNM1g2B9zTnHCUm0oH97C0GHS2Wz3EUQ1SK35vyAcyICcIK2LW4E4cGy/uzhew6i/tyy1mncEi+ztBB9g+gRcSn6HRauJ4jf63OYL97+FDN9iEsrWppuFfTGcQxV5ctZ6hdg8uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JdRGt6z8; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=7DsSMFlL5qg2azIH7l+MCgrvgUctaUBWbPa4DPjIV08=; b=JdRGt6z8KhZlxvQ8lBZ0Ci6gbA
-	DWSuQ5Zf0s+tchkJ6LPQkEUSWzGAQ58CBGFK4+ZWB2tP2B53MzSca/cEuV14E5gV9NFtvhHAmR5Yf
-	gWgSq931e4lJcZlyzmTE+sSbm7/wwzVjcJzPPZiUAc0duUZLhWUUhDziAaCzYUvyw94f9HO8GTGP9
-	kCn3YSbnxqzCh6+puXV3nbm3JWwxYH5WHAVRNCbP1Kr/UFjyO6JRI6tK0gn5+XB5smSuh4wfU0NDe
-	iCEXKgcP+cKkfnVdkuyAOqKSDQudycXGYehBTQndjshnYKcUieoig7+dL553ygWXjF6VBtj/c5Iwj
-	46gMeFGA==;
-Received: from [179.93.184.120] (helo=quatroqueijos.cascardo.eti.br)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1rhHs6-0062J8-Nw; Tue, 05 Mar 2024 00:37:27 +0100
-Date: Mon, 4 Mar 2024 20:37:21 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Gwendal Grignou <gwendal@chromium.org>, dlunev@chromium.org
-Subject: Re: [PATCH] fat: ignore .. subdir and always add a link to dirs
-Message-ID: <ZeZbMVenoDNOFVik@quatroqueijos.cascardo.eti.br>
-References: <20240222203013.2649457-1-cascardo@igalia.com>
- <87bk88oskz.fsf@mail.parknet.co.jp>
- <Zdf8qPN5h74MzCQh@quatroqueijos.cascardo.eti.br>
- <874jdzpov7.fsf@mail.parknet.co.jp>
- <87zfvroa1c.fsf@mail.parknet.co.jp>
- <ZdhsYAUCe9GVMnYE@quatroqueijos.cascardo.eti.br>
- <87v86fnz2o.fsf@mail.parknet.co.jp>
- <Zd6PdxOC8Gs+rX+j@quatroqueijos.cascardo.eti.br>
- <87le75s1fg.fsf@mail.parknet.co.jp>
- <Zd74fjlVJZic8UxI@quatroqueijos.cascardo.eti.br>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XHOZJI5o1MryDKN/69zACpUAvlMmmIbc/k007BhIxAT8cIK3PC6CErxT9Z2i9ocgDNyFX9jGgdIM3FrJ+avhxXu6MpANVYgIQ60DIGLW3ELPFaMcp69c7JWp/l4YRTKSSdTgQi6BJVt8sMYbIH9lOxf2jMF5iVAEPGIFMjkcymc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0RTTDEr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D352EC433C7;
+	Mon,  4 Mar 2024 23:39:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709595569;
+	bh=AGfHjrEdVXmKbi3OhCMHmeeCkz52cPwQAGWc0u6ypCo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R0RTTDEr6Mjid65RUentJf2uDwOxYZpXt37AadSybwjibdbja56+PVXr87jhGun4O
+	 TXL15DcfrD+jhswBovJJ81G4O0xoNC50fwV/a5nVH6e2aUz0b7ks5m7niMt75R+LT5
+	 hJNtrKlGRBWbAqiujOemmMMkW69W5WXk1AKAwLoih1HJBKf0/Ib65UZz8L3yO+M3fu
+	 9uSvJTa6R3kGmYoIGxo9Fqg8co6JtjzdeIkGc34YosdOV3+HDQFE26boSSBBBmY1lJ
+	 IFv+GLihk+iBU6dkLOii10UUv1P+T7XT6utpkM3zsRJNwVX2P5mT/9P25AyiOna9PY
+	 iYG1cJ3eK8pEA==
+Date: Mon, 4 Mar 2024 15:39:27 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, chandan.babu@oracle.com,
+	djwong@kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v5 10/24] iomap: integrate fs-verity verification into
+ iomap's read path
+Message-ID: <20240304233927.GC17145@sol.localdomain>
+References: <20240304191046.157464-2-aalbersh@redhat.com>
+ <20240304191046.157464-12-aalbersh@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,49 +60,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zd74fjlVJZic8UxI@quatroqueijos.cascardo.eti.br>
+In-Reply-To: <20240304191046.157464-12-aalbersh@redhat.com>
 
-On Wed, Feb 28, 2024 at 06:10:29AM -0300, Thadeu Lima de Souza Cascardo wrote:
-> On Wed, Feb 28, 2024 at 12:38:43PM +0900, OGAWA Hirofumi wrote:
-> > Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
-> > 
-> > >> There are many corrupted images, and attacks. Allowing too wide is
-> > >> danger for fs.
-> > >> 
-> > >> BTW, this image works and pass fsck on windows? When I quickly tested
-> > >> ev3fs.zip (https://github.com/microsoft/pxt-ev3/issues/980) on windows
-> > >> on qemu, it didn't seem recognized as FAT. I can wrongly tested though.
-> > >> 
-> > >> Thanks.
-> > >> -- 
-> > >> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-> > >
-> > > The test image I managed to create mounts just fine on Windows. New
-> > > subdirectories can be created there just as well.
-> > 
-> > Can you share the image somehow? And fsck (chkdsk, etc.) works without
-> > any complain?
-> > 
-> > Thanks.
-> > -- 
-> > OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-> 
-> Checking the filesystem on Windows runs without any complains, but it turns the
-> directory into an useless lump of data. Without checking the filesystem,
-> creating and reading files from that directory works just fine.
-> 
-> I tried to use gzip or xz to compress the very sparse filesystem image that I
-> got, but they made it larger on disk than it really was. So here is a script
-> and pieces of the filesystem that will create a sparse 8GB image.
-> 
-> Thank you for looking into this.
-> Cascardo.
+On Mon, Mar 04, 2024 at 08:10:33PM +0100, Andrey Albershteyn wrote:
+> +#ifdef CONFIG_FS_VERITY
+> +struct iomap_fsverity_bio {
+> +	struct work_struct	work;
+> +	struct bio		bio;
+> +};
 
-Hi, OGAWA Hirofumi.
+Maybe leave a comment above that mentions that bio must be the last field.
 
-What are your thoughts here? Should we make it possible to read such
-filesystems? Is the proposed approach acceptable?
+> @@ -471,6 +529,7 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
+>   * iomap_readahead - Attempt to read pages from a file.
+>   * @rac: Describes the pages to be read.
+>   * @ops: The operations vector for the filesystem.
+> + * @wq: Workqueue for post-I/O processing (only need for fsverity)
 
-Thanks.
-Cascardo.
+This should not be here.
+
+> +#define IOMAP_POOL_SIZE		(4 * (PAGE_SIZE / SECTOR_SIZE))
+> +
+>  static int __init iomap_init(void)
+>  {
+> -	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+> -			   offsetof(struct iomap_ioend, io_inline_bio),
+> -			   BIOSET_NEED_BVECS);
+> +	int error;
+> +
+> +	error = bioset_init(&iomap_ioend_bioset, IOMAP_POOL_SIZE,
+> +			    offsetof(struct iomap_ioend, io_inline_bio),
+> +			    BIOSET_NEED_BVECS);
+> +#ifdef CONFIG_FS_VERITY
+> +	if (error)
+> +		return error;
+> +
+> +	error = bioset_init(&iomap_fsverity_bioset, IOMAP_POOL_SIZE,
+> +			    offsetof(struct iomap_fsverity_bio, bio),
+> +			    BIOSET_NEED_BVECS);
+> +	if (error)
+> +		bioset_exit(&iomap_ioend_bioset);
+> +#endif
+> +	return error;
+>  }
+>  fs_initcall(iomap_init);
+
+This makes all kernels with CONFIG_FS_VERITY enabled start preallocating memory
+for these bios, regardless of whether they end up being used or not.  When
+PAGE_SIZE==4096 it comes out to about 134 KiB of memory total (32 bios at just
+over 4 KiB per bio, most of which is used for the BIO_MAX_VECS bvecs), and it
+scales up with PAGE_SIZE such that with PAGE_SIZE==65536 it's about 2144 KiB.
+
+How about allocating the pool when it's known it's actually going to be used,
+similar to what fs/crypto/ does for fscrypt_bounce_page_pool?  For example,
+there could be a flag in struct fsverity_operations that says whether filesystem
+wants the iomap fsverity bioset, and when fs/verity/ sets up the fsverity_info
+for any file for the first time since boot, it could call into fs/iomap/ to
+initialize the iomap fsverity bioset if needed.
+
+BTW, errors from builtin initcalls such as iomap_init() get ignored.  So the
+error handling logic above does not really work as may have been intended.
+
+- Eric
 
