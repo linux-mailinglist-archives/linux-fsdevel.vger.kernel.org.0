@@ -1,99 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-13419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78FF86F860
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 03:05:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4643586F919
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 04:53:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABAE28125C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 02:05:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8940281609
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 03:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD1815A4;
-	Mon,  4 Mar 2024 02:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cUcPAWph"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94B56117;
+	Mon,  4 Mar 2024 03:53:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFF3A31
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 02:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1345733C5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 03:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709517947; cv=none; b=OgPx4QvxVA37mqSYtffGLCY2Xt6oZmQUooUJgsppLVrOCfOgdoIHr4Kw3ILzuzlCc353Ei/LXkNZKkASKplBZ3K/U6NYj+h8+oE4fgRc/cCJe0Aau9VyxBK0BH6sij42cjdXaJznbmWGSeJz+1WVl/WKQQ1n/wF6KBT0flzb3HQ=
+	t=1709524385; cv=none; b=IY8NCo340p/CsM5Kcgdjy768ij/Gpo6CHlmEo5X5XlXgmViZMhHsjmOXXrIgfbu7jieeYkGhDSHoZvvp9jeB9O6L/LVeO7DOjHz/KP++gMhmAGKVKKaDEb9X/wAPzw3fMd44lk0EwBQM02eK102AzMXmji5BFXatiopS2bVPU+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709517947; c=relaxed/simple;
-	bh=QDEiyj1Gw7lJuMO5DcTNxMBdImFaxzH7eHO+CzuYE8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aPNypWtzCEga+VfRD4nB6IOtynrilHmNhi4oSHiG2/hoVu8E46EDhPYhYIQ7AJ0GGBV8T0md1AL8O84kTojKspjd23atVh982Tw8v3UIQ/Y3ZiSnnHmQAosKse/6bTlwOxhrzIUDMHNhLcK56Be6GO/lyowiglcJegRuZJA9WjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cUcPAWph; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 3 Mar 2024 21:05:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709517942;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vph5zV8BojZG/Eey/x8beKInPqbVGdlUS9KjbKDpABk=;
-	b=cUcPAWphB5N53yW7UErEl3bPxraTqPezC66q2j9xRvH2HQKk4Vjx0txjJuH8h/GN9JIt4K
-	rmcc8s2fJGLeGpeo5FbhLh76WLgpA6aypWChe9NKjllEkzFArS3hfhXnH31WTV90jm5HQ7
-	fLsNzMOhZ2+Ibi6UT7EFbigTS2MXjTk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: NeilBrown <neilb@suse.de>, Dave Chinner <david@fromorbit.com>, 
-	Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org, lsf-pc@lists.linux-foundation.org, 
-	linux-mm@kvack.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
-Message-ID: <muyyaqiewmvv3dzxzyaxl4lvtsgsn7552rpyqechxbn6qfaaj7@53gm6einncwx>
-References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>
- <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>
- <Zd-LljY351NCrrCP@casper.infradead.org>
- <170925937840.24797.2167230750547152404@noble.neil.brown.name>
- <ZeFtrzN34cLhjjHK@dread.disaster.area>
- <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>
- <170933687972.24797.18406852925615624495@noble.neil.brown.name>
- <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>
- <170950594802.24797.17587526251920021411@noble.neil.brown.name>
- <ZeUXORziOwkuB-tP@casper.infradead.org>
+	s=arc-20240116; t=1709524385; c=relaxed/simple;
+	bh=uCao/3zQohutQJFrXJ4zAEdnX96pTBSjuB8emCOtld8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=i72Px0o6B7d0f9aiLpCkj9W/aoLdS7AKdGCbr7tqus97uiLUQJms3lpFwFPZZ0qUVCuLfZJ+9kIq1L/VbH6worPWX3xFx8klO4gsWv4EQXXMostiiaGeY7vTXOHhW0L2ADWn+yO6+46Be3p1qy0cFgU01S3zRJPuf4HeDasZLIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c84ad0cc57so66458339f.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Mar 2024 19:53:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709524383; x=1710129183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pHuPhokO987LIWAMy07DocWUyewbBZBGwrDGi0YLBU8=;
+        b=PJT502JDC7u6znktruqt+equmHA58SgUNuhXWSSFy01OKixo1w9fhbr92ZoYPdt1z+
+         RzFotXuf7oGMKAtO+k0eEgCaroy+Z0QcCzFHC/0MwPDsCd3lgOqrHHCNt6uBBXzw23ar
+         Q3fiWhn8xNvstIRSbE7YmrDI0cRF6rJBnkDgzpBeD3XA3Y9pQ++BmaJpbcIsP6oEnBn4
+         GHLp7RIZJYyj7/RhUdjmM2PwcAui8MHstGOGVnoDW+6D+vIXlCOziE5OFl7EMzRLw+Yn
+         cV7Ext/Ox9oGL2Pky5c8FfbWpTUlSfAj2cgW7Ngt6i642ACfBS9VcP4Tw6ZTk2HvFqy0
+         /qBA==
+X-Forwarded-Encrypted: i=1; AJvYcCV60nwhvFk2+cs0DMZrFn8BLCkaLl3TLJpn6a/v1/AD14WsEt2xb7kanOdcRugVsWEGRAbhYNzzxIPvdaQ9XClVpQBHfUrzhOM0HQHR+A==
+X-Gm-Message-State: AOJu0YybvCqgrXwxLFw1FssbRvYnFRNWm4lDpT0wlh38gtRPrira2cFM
+	6WqXxVMV+mudNkt6XHROYBC5RcSxIoTVF+sgiQWXqsZjIjKh84D7s0pLP5b3zZvhfV1Bnbw/Kk9
+	K0QHY8o0H6cJ9P6RwUsmKRzIf/52KrsXJtpzonpjNsbM4sbZCqCQn5go=
+X-Google-Smtp-Source: AGHT+IF9zvXhtrwSgWUyTLSDHia5IEtUT+1Q17mqnVWSZXWM+MCcZ0pl6JK5Cu3dBEVjYHpwmsL47a2htool8caNNzxL6reCqKqu
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZeUXORziOwkuB-tP@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6638:22c4:b0:474:bc7d:544b with SMTP id
+ j4-20020a05663822c400b00474bc7d544bmr226076jat.6.1709524383299; Sun, 03 Mar
+ 2024 19:53:03 -0800 (PST)
+Date: Sun, 03 Mar 2024 19:53:03 -0800
+In-Reply-To: <000000000000c4c9f105f2107386@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000099ff3f0612cda952@google.com>
+Subject: Re: [syzbot] [jfs?] KASAN: slab-out-of-bounds Read in jfs_readdir
+From: syzbot <syzbot+f328fbf8718edb712341@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
+	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 04, 2024 at 12:35:05AM +0000, Matthew Wilcox wrote:
-> On Mon, Mar 04, 2024 at 09:45:48AM +1100, NeilBrown wrote:
-> > I have in mind a more explicit statement of how much waiting is
-> > acceptable.
-> > 
-> > GFP_NOFAIL - wait indefinitely
-> > GFP_KILLABLE - wait indefinitely unless fatal signal is pending.
-> > GFP_RETRY - may retry but deadlock, though unlikely, is possible.  So
-> >             don't wait indefinitely.  May abort more quickly if fatal
-> >             signal is pending.
-> > GFP_NO_RETRY - only try things once.  This may sleep, but will give up
-> >             fairly quickly.  Either deadlock is a significant
-> >             possibility, or alternate strategy is fairly cheap.
-> > GFP_ATOMIC - don't sleep - same as current.
-> 
-> I don't think these should be GFP flags.  Rather, these should be
-> context flags (and indeed, they're mutually exclusive, so this is a
-> small integer to represent where we are on the spectrum).  That is
-> we want code to do
+syzbot suspects this issue was fixed by commit:
 
-Why?
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Context flags are for /context/, i.e. the scope where you take a lock
-that's GFP_FS unsafe. These really are callsite specific - "how bad is
-it if we have to deal with an allocation failure here?"
+    fs: Block writes to mounted block devices
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16b9e3ca180000
+start commit:   2772d7df3c93 Merge tag 'riscv-for-linus-6.5-rc2' of git://..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d0f369ef5fb88c9
+dashboard link: https://syzkaller.appspot.com/bug?extid=f328fbf8718edb712341
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10233f38a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d35c1aa80000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
