@@ -1,319 +1,261 @@
-Return-Path: <linux-fsdevel+bounces-13480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65448704A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 15:58:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540168704B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 16:02:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95CD92822A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 14:58:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0E29B257AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 15:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71AC46450;
-	Mon,  4 Mar 2024 14:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gYdXVTTo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F310C46B8B;
+	Mon,  4 Mar 2024 15:01:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2050.outbound.protection.outlook.com [40.107.94.50])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD8FBE4C;
-	Mon,  4 Mar 2024 14:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709564315; cv=fail; b=QZrs+IWsz5wWnZYxpORQy2v4OyyP1AXg1V0c9qpye0LmVIcG4KaElIUk4jQMciwrTokWgbYv5W6nwUs4mHDZBEueKz8HgpYghVr2XUgrUQVwEbJYVeZhAT9Q2JBj6YyzTtrKbiUSkdJ57ETYlGVOj2+M+vGBBerxmbDG12HaK6I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709564315; c=relaxed/simple;
-	bh=w9Q2JMbJ94fEdVeVrgLB2cKkMJftxYsyUYvXp2WSBXA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pzlu4fEIj2a0dvgKVtH8ilyXR5YNTFA8F/O/1aPS5Cahb7u48SZ4Svgvn7zQwpVB6k7kQvoCEcHeXl3gXcLA7kOYqwS4KmfNaHmetycDmY6dOsQ2zvLWi1zRMCyDEAcHTkZ3s4AtvejNiESfn4eVZJ+Tdmbw3mi640Xn8d5Pz1k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gYdXVTTo; arc=fail smtp.client-ip=40.107.94.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AcoIA6HP3nfmM8LDW7WU8qlEDmBmkkx7wVHVKym27Jz0hTnT4tYbTBa6Q6M2/ROfh4o/pCbbIVhMvm8ofPDzUZS7E6s8w2OOkUwvXwdxOpKfm6dmuL7fELxdfIVEeCEF0o0APFBw/9usfd6GqMNjJeLyWxvwVrtx6URHMB5QxaSo0lUBWqpvgkxFi4vj9fyBjrl+seFJNz1RmOTc27BvBQfg1+taMXwqn4efl4qivX52AyHiRdHRIE/kK4fzVKeqoMIIOKo8RIEua9dSCgXwOmZgmWgULPepVYDQr3/gXC8hynNKA/ac+L8bYtHWeAbrQb4tb6n8ae16srjrsxSqVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N4NSrZuHTXnlgE17NK3DNEpsXeINXHPPpCRMhtWZpOs=;
- b=G8wFFfLwY2xz/1Sq8BKc8vQOM7++d2oeYE6mjCtDwF0HFcOr5WJJNoV/9c0u+kJOQzBkhDeDbWQ4J2nHq4xxafJlM8ATM8N8t/RBuWMyitLLhcln0OFPybVKpHsYp5fmu6Mv7xUwKe6GZ5mtBgiDpRs1fftLTApZ+dan7uPmby8GQ6EAIHZebVKJaKPVLCAahYG2bTwIJNhE1xrBuzNPhfOATa9O+Yx5HGuSf8MCDw7yUhkgx8GMOTVBIk8uTcLy+XKOT9wx7gjmjlGQUYKwTSBP0SWfCHij7GZVpMZBJJIkC1v6pGd4+RcSU3YSCP8QEucdhHhz/+Yq1YCZemdq9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N4NSrZuHTXnlgE17NK3DNEpsXeINXHPPpCRMhtWZpOs=;
- b=gYdXVTToePdIQMbyDHI80theWkYrSP43KJauPDhhK+HzfZEBLXeO/LChJknsyn3Gx3zL8XyVpzCFPRXtKZLuTt8ZtUEZgMKokLz1Egt4m9jUoMtr/LKEsz8ztqdxmxvmnDXsKwl2AZtkDBnR1z1yfgC6kYOcpboA1VWLdCyPE/fhpS58Zz2NDVKcHvKQmVf4M+gWfTVq3Fh2LROeqqRhzMv98Pk73dOMC55A9LYebdWdRrg2Gt8R443cH8xKi3BSXYF3X+j8q2zdKCxlwuODK7aDfrBZSXZBuX/yaQ6p68bkd3+ei3WNBAEyIaTnZiwsvDPdaxUzV4+6JUVg65spig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
- SJ2PR12MB7941.namprd12.prod.outlook.com (2603:10b6:a03:4d3::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.38; Mon, 4 Mar
- 2024 14:58:30 +0000
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::dc5c:2cf1:d5f5:9753]) by DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::dc5c:2cf1:d5f5:9753%6]) with mapi id 15.20.7339.035; Mon, 4 Mar 2024
- 14:58:30 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Aishwarya TCV <aishwarya.tcv@arm.com>
-Cc: "\"Pankaj Raghav (Samsung)\"" <kernel@pankajraghav.com>,
- linux-mm@kvack.org, "\"Matthew Wilcox (Oracle)\"" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Yang Shi <shy828301@gmail.com>,
- Yu Zhao <yuzhao@google.com>,
- "\"Kirill A . Shutemov\"" <kirill.shutemov@linux.intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>,
- =?utf-8?q?=22Michal_Koutn=C3=BD=22?= <mkoutny@suse.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- "\"Zach O'Keefe\"" <zokeefe@google.com>, Hugh Dickins <hughd@google.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v5 8/8] mm: huge_memory: enable debugfs to split huge
- pages to any order.
-Date: Mon, 04 Mar 2024 09:58:26 -0500
-X-Mailer: MailMate (1.14r6018)
-Message-ID: <1829EABB-7966-4686-A5E0-F6B6D26C510E@nvidia.com>
-In-Reply-To: <0be630f0-ce8e-4a80-b42f-697ea603cfc6@arm.com>
-References: <20240226205534.1603748-1-zi.yan@sent.com>
- <20240226205534.1603748-9-zi.yan@sent.com>
- <082e48c8-71b7-4937-a5da-7a37b4be16ba@arm.com>
- <A111EB95-0AF5-4715-82A4-70B8AD900A93@nvidia.com>
- <7E498B77-6CC9-4FC6-B980-D79EEC548CD0@nvidia.com>
- <0685EC19-CDB8-4CD3-BC39-82DE59B5D10C@nvidia.com>
- <0be630f0-ce8e-4a80-b42f-697ea603cfc6@arm.com>
-Content-Type: multipart/signed;
- boundary="=_MailMate_0E4A5337-559B-4F0D-8587-2225B84783C8_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
-X-ClientProxiedBy: MN2PR04CA0010.namprd04.prod.outlook.com
- (2603:10b6:208:d4::23) To DS7PR12MB5744.namprd12.prod.outlook.com
- (2603:10b6:8:73::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0843FB02;
+	Mon,  4 Mar 2024 15:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709564516; cv=none; b=hN6BQM1BRCEh2A/KxLOsYEcRyv/v+XbhhTHkF9a0V1m/1uoMN60lTV8PgEMPOwKaX6sehhcLnUbxj7wTPWIMRITtXaD/1O3aHR0fE0cs+26d34Cq1pN0tBmb1O6Xn15HiSxmaLaaYmjHB/XBnSn/BPyJUUFaEnk1LfNlxrOzoJY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709564516; c=relaxed/simple;
+	bh=qQLeHyzP/10SUVh0HKe6LCuS9vd0k0BXoiQvBK31dsc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aYHifAzRVSIQ1PKY7ccL/uvP6KTFkxPLgdsoks1UEG9Fe1SsGiCEk5g8lNXLfzZJC9Ah/uqha9R132NxyD739zm4SJM8H39w0woMiwzWQaNHNC3UhoPr5wgxWMDntBeqImj5H9gWxKpIGnQ8tpC478ajIJDYlLNtcFF6Jr59AyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4TpM2Y1fS9z9v7H0;
+	Mon,  4 Mar 2024 22:46:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 424BD140E86;
+	Mon,  4 Mar 2024 23:01:43 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDn2hNG4uVlYQC0Aw--.59338S2;
+	Mon, 04 Mar 2024 16:01:42 +0100 (CET)
+Message-ID: <60bdae79a059fe8fd4eaff68ccae6eb2207591bf.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 14/25] evm: add support for fscaps security hooks
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, Christian Brauner
+ <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, Paul Moore
+ <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, James Morris
+ <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara
+ <jack@suse.cz>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej
+ Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
+ <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi
+ <miklos@szeredi.hu>,  Amir Goldstein <amir73il@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
+Date: Mon, 04 Mar 2024 16:01:22 +0100
+In-Reply-To: <20240221-idmap-fscap-refactor-v2-14-3039364623bd@kernel.org>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
+	 <20240221-idmap-fscap-refactor-v2-14-3039364623bd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|SJ2PR12MB7941:EE_
-X-MS-Office365-Filtering-Correlation-Id: 140de327-70ee-451d-c920-08dc3c5b8da2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	CarvptaIiVdxch/vlwztkPnrNyNEk8Px4FDu2rc3kdhX+zLJJYOu77PZmxMBeJ1tTkrPhN9VXYSXqjZbyMQ+lcPFqqU5CYX6JtfHxgdF7ACez0fazEGRMBKpHL1y+vpJaRpOFwDXCiCcyhMNZ3TdelFrifwKSZ9hYLegRQ44TlK6AJsg9xhaf2i02KBXQmh8X63R325DNMeY5SVDjSS8hhLtajcPx29qXR9PNxpPGQVBUalIHXCHpoAxcSvZGYpwbmbcPbJPwzpWNieVeoyEcHVIjZHHILJ0Hj25W4RG8wqnPSzxzXadlEvSgfbgEXFGj6Dvs3c1OveLi6wPpj5/ueHoLgjAmgomW4AL2pN0bTpAxjQST5AJqAaddLT/Ae2KfF/WUvd89+/7NqLipSp2pfmhD0FOr8B0pWJH+tYCUAT6JcoHHcMz3YcLzSTgf+4G/sVcVxPLraDPg3OQp6X1jCSxge1fMhAH0U0MWyG1IFjJof+zPsMCN48yon6MJqcuVnC8wV0ZcLtHgtcoc+uRFBNdomo/RB+DTrDGq2r1QXi/tOvX1HBabLlGzPIPq0Ejx3wO37uW/NM0mqjCpZTznd+QC2a/EItDFaySHD+94yTAHxGh2GAffk34eAUSGLel9MrXm6DEY8EhetKv5mt96ewkJHeo2D152Rh/sHfBj8A=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JruCp0Wr/W8IMoIA1ldBRJc7GXY+SWhlUparEiWGk4d62j2ofKnYzaqIdnWk?=
- =?us-ascii?Q?pBt1szFjIgP8SOUMFSsr5SqffbcyViTbB+JM7RLU/jqNpjebqs9wszqIy3lm?=
- =?us-ascii?Q?c1gj820pecrcGoB2DdagWX+wjBGadxgco8zqo1End9nAC82lqBpECmYu0ce8?=
- =?us-ascii?Q?H5pYxLWpNSLpnlaRnBCFNmlLzCnqR3PP6Lx/2mLE29XfuyAybifb0HIK9KXt?=
- =?us-ascii?Q?FwouhxZrZbzH5IOAXNFEHrW2vGPqoIZy9suJugBHEEqfAUwy/jUSWJd4qsmY?=
- =?us-ascii?Q?Xit6IfDYYFDM3Doqu81VlfBOgDfLflubrnEu9PqY/1XrSRKI5Y3vat61Pqmf?=
- =?us-ascii?Q?8Htu/IW2qSkq+DSahHkvBpLQdlw1PjGuZR4nV1U9YS9XijiGKcjQpgw6t2Xs?=
- =?us-ascii?Q?ujrulmNSQxIznq3b5bMpIHRprIkhx1i9flo74W7Fe4934U9HdAa8Lp3Fbidm?=
- =?us-ascii?Q?7JbKbu7aOkEChHMOtbgxDni2MVdPfbx16uEc+OTTq/pLUicFi+BWGJDbgKww?=
- =?us-ascii?Q?R+w0tBYnTxvOrl07rw1qZb6KcNcZ6YhB333UGiTPb1xDZ2La2sWgW32O546o?=
- =?us-ascii?Q?R6M9ADzV8xGQtTrTvMK0e/OFWdcwxSlAIwRjfqQlv5+XW7GjAWs//ReP3z30?=
- =?us-ascii?Q?E1FBGHmLCDDz7bqc+xhEcTRPzZanP83LKlWfSYdB70wnlnHqIB0lGZV93U1r?=
- =?us-ascii?Q?rFA6G5x4Q5UXRURXHDSKfUMvwgm98o7W8KDBdrJI6Z97md+4gna5b1O/7wsB?=
- =?us-ascii?Q?EItAtqnpWIsc4Bi6GV+NBf0b2NNhYBw0YeXvE7D86l5LjrnU097zbcrdD3u+?=
- =?us-ascii?Q?SkWz534Z/lWi0t/qo3Y5LO/Vao0L3txDaEfDeg3crncTh8B8qAPYFDvtxxwu?=
- =?us-ascii?Q?BA1iwDCG5lvVaStPdDqcylnv9Qv4mC7uh9+8arycTNiYKeZIWw4zy4cMCN/7?=
- =?us-ascii?Q?HfumAfi/a/+inEFI7P5uR/IC/DSL6p2AdRkxWxzQ5C5SrrCTTBJxBo+cGNMF?=
- =?us-ascii?Q?3+TBqba1uuoYRSZ/wiw5Qv4TNqhruWACJmbpWhcV5zWgfGsWyvpW2bDzkC/n?=
- =?us-ascii?Q?48mf3nH+WOePAzS7r2KBGLqldzu/bbRjKmfaCLC7fWMuoCdEpfIOfu7D9ZJY?=
- =?us-ascii?Q?bf/0vwHTIi7r5EHFfgdGobMD2x5g4lRVG0j2ZQRNDvrtMfEiR7p9u+CNOByx?=
- =?us-ascii?Q?PuHYUosNRwEWRTxuWRDvLUbYlzuaGbVB15fJNTXNrwURz/kxQ8tfjM4qi3OI?=
- =?us-ascii?Q?saAMwK8OU2ATZNBWAruB4SR38fvvQcbjKYXx/PLREn1ZVvloMPe2/0at0czy?=
- =?us-ascii?Q?q5bwo9jXribsFIgDw1CXkl2ASiU2OrY2yXpe2C/uNQb8t44Bu3rXPzdpDhYZ?=
- =?us-ascii?Q?4HCqNOcav49WITh5sslVCAn8fnsSW++TfbwMLhXiMtERoZAFcWWPe8uZDiNL?=
- =?us-ascii?Q?Jsc4hJn4GB+qe7MRYNXsUgqeqEdUF2765JEbopNykMXYH/89wlKgwvV7LUDJ?=
- =?us-ascii?Q?AZCuFs65JZk4NxLJSG2i++u/kMhyC0n0nlCvOFL/nePexJy2MfrSQ8H1aP85?=
- =?us-ascii?Q?HJJdkmJ7qwIxzWNl6sM=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 140de327-70ee-451d-c920-08dc3c5b8da2
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2024 14:58:29.7972
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X2I6ocpT5nxVrv2MNBuSRZRIrK+gitnHlf4J9qAn5xsg3mfjxeK3dr2k63DGMD9f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7941
+X-CM-TRANSID:LxC2BwDn2hNG4uVlYQC0Aw--.59338S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAr15GFy5XF4DGw1rtryxKrg_yoW7Gr43pF
+	45J3Z5Cw45Jry3WryFqF4UZa4S9F1fW3yUZaySg34SyFnxKr4rtF1I9ryjyryfJrW8Grn0
+	qF1Ygrn5Cw47t3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBF1jj5bz5AABs7
 
---=_MailMate_0E4A5337-559B-4F0D-8587-2225B84783C8_=
-Content-Type: text/plain
+On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) wrote:
+> Support the new fscaps security hooks by converting the vfs_caps to raw
+> xattr data and then handling them the same as other xattrs.
 
-On 4 Mar 2024, at 4:50, Aishwarya TCV wrote:
+I realized that you need to register hooks for IMA too.
 
-> On 01/03/2024 21:10, Zi Yan wrote:
->> On 1 Mar 2024, at 15:02, Zi Yan wrote:
->>
->>> On 1 Mar 2024, at 14:37, Zi Yan wrote:
->>>
->>>> On 1 Mar 2024, at 4:51, Aishwarya TCV wrote:
->>>>
->>>>> On 26/02/2024 20:55, Zi Yan wrote:
->>>>>> From: Zi Yan <ziy@nvidia.com>
->>>>>>
->>>>>> It is used to test split_huge_page_to_list_to_order for pagecache THPs.
->>>>>> Also add test cases for split_huge_page_to_list_to_order via both
->>>>>> debugfs.
->>>>>>
->>>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
->>>>>> ---
->>>>>>  mm/huge_memory.c                              |  34 ++++--
->>>>>>  .../selftests/mm/split_huge_page_test.c       | 115 +++++++++++++++++-
->>>>>>  2 files changed, 131 insertions(+), 18 deletions(-)
->>>>>>
->>>>>
->>>>> Hi Zi,
->>>>>
->>>>> When booting the kernel against next-master(20240228)with Arm64 on
->>>>> Marvell Thunder X2 (TX2), the kselftest-mm test 'split_huge_page_test'
->>>>> is failing in our CI (with rootfs over NFS). I can send the full logs if
->>>>> required.
->>>>>
->>>>> A bisect (full log below) identified this patch as introducing the
->>>>> failure. Bisected it on the tag "next-20240228" at repo
->>>>> "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git".
->>>>>
->>>>> This works fine on  Linux version 6.8.0-rc6
->>>>
->>>> Hi Aishwarya,
->>>>
->>>> Can you try the attached patch and see if it fixes the failure? I changed
->>>> the test to accept XFS dev as input, mount XFS on a temp folder under /tmp,
->>>> and skip if no XFS is mounted.
->>>
->>> Please try this updated one. It allows you to specify a XFS device path
->>> in SPLIT_HUGE_PAGE_TEST_XFS_PATH env variable, which is passed to
->>> split_huge_page_test in run_vmtests.sh. It at least allow CI/CD to run
->>> the test without too much change.
->>
->> OK. This hopefully will be my last churn. Now split_huge_page_test accepts
->> a path that is backed by XFS and run_vmtest.sh creates a XFS image in /tmp,
->> mounts it in /tmp, and gives the path to split_huge_page_test. I tested
->> it locally and it works. Let me know if you have any issue. Thanks.
->>
->> --
->> Best Regards,
->> Yan, Zi
->
-> Hi Zi,
->
-> Tested the patch by applying it on next-20240304. Logs from our CI with
-> rootfs over nfs is attached below. "Bail out! cannot remove tmp dir:
-> Directory not empty" is still observed.
+This should be the content to add in ima_appraise.c:
 
-Hi Aishwarya,
+int ima_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
+                         const struct vfs_caps *caps, int flags)
+{
+       if (evm_revalidate_status(XATTR_NAME_CAPS))
+               ima_reset_appraise_flags(d_backing_inode(dentry), false);
 
-Do you have the config file for the CI kernel? And /tmp is also on nfs?
-Any detailed information about CI machine environment? I cannot reproduce
-the error locally, either on bare metal or VM. Maybe because my /tmp is
-not NFS mounted?
+       return 0;
+}
 
->
->
-> Test run log:
-> # # ------------------------------
-> # # running ./split_huge_page_test
-> # # ------------------------------
-> # # TAP version 13
-> # # 1..12
-> # # ok 1 Split huge pages successful
-> # # ok 2 Split PTE-mapped huge pages successful
-> # # # Please enable pr_debug in split_huge_pages_in_file() for more info.
-> # # # Please check dmesg for more information
-> # # ok 3 File-backed THP split test done
-> <6>[  639.821657] split_huge_page (111099): drop_caches: 3
-> <6>[  639.821657] split_huge_page (111099): drop_caches: 3
-> # # # No large pagecache folio generated, please provide a filesystem
-> supporting large folio
-> # # ok 4 # SKIP Pagecache folio split skipped
-> <6>[  645.392184] split_huge_page (111099): drop_caches: 3
-> <6>[  645.392184] split_huge_page (111099): drop_caches: 3
-> # # # No large pagecache folio generated, please provide a filesystem
-> supporting large folio
-> # # ok 5 # SKIP Pagecache folio split skipped
-> <6>[  650.938248] split_huge_page (111099): drop_caches: 3
-> <6>[  650.938248] split_huge_page (111099): drop_caches: 3
-> # # # No large pagecache folio generated, please provide a filesystem
-> supporting large folio
-> # # ok 6 # SKIP Pagecache folio split skipped
-> <6>[  656.500149] split_huge_page (111099): drop_caches: 3
-> <6>[  656.500149] split_huge_page (111099): drop_caches: 3
-> # # # No large pagecache folio generated, please provide a filesystem
-> supporting large folio
-> # # ok 7 # SKIP Pagecache folio split skipped
-> <6>[  662.044085] split_huge_page (111099): drop_caches: 3
-> <6>[  662.044085] split_huge_page (111099): drop_caches: 3
-> # # # No large pagecache folio generated, please provide a filesystem
-> supporting large folio
-> # # ok 8 # SKIP Pagecache folio split skipped
-> <6>[  667.591841] split_huge_page (111099): drop_caches: 3
-> <6>[  667.591841] split_huge_page (111099): drop_caches: 3
-> # # # No large pagecache folio generated, please provide a filesystem
-> supporting large folio
-> # # ok 9 # SKIP Pagecache folio split skipped
-> <6>[  673.172441] split_huge_page (111099): drop_caches: 3
-> <6>[  673.172441] split_huge_page (111099): drop_caches: 3
-> # # # No large pagecache folio generated, please provide a filesystem
-> supporting large folio
-> # # ok 10 # SKIP Pagecache folio split skipped
-> <6>[  678.726263] split_huge_page (111099): drop_caches: 3
-> <6>[  678.726263] split_huge_page (111099): drop_caches: 3
-> # # # No large pagecache folio generated, please provide a filesystem
-> supporting large folio
-> # # ok 11 # SKIP Pagecache folio split skipped
-> <6>[  684.272851] split_huge_page (111099): drop_caches: 3
-> <6>[  684.272851] split_huge_page (111099): drop_caches: 3
-> # # # No large pagecache folio generated, please provide a filesystem
-> supporting large folio
-> # # ok 12 # SKIP Pagecache folio split skipped
-> # # Bail out! cannot remove tmp dir: Directory not empty
-> # # # Totals: pass:3 fail:0 xfail:0 xpass:0 skip:9 error:0
-> # # [FAIL]
-> # not ok 51 split_huge_page_test # exit=1
-> # # ------------------
->
-> Thanks,
-> Aishwarya
+int ima_inode_remove_fscaps(struct mnt_idmap *idmap, struct dentry *dentry)
+{
+       return ima_inode_set_fscaps(idmap, dentry, NULL, XATTR_REPLACE);
+}
 
+Thanks
 
---
-Best Regards,
-Yan, Zi
+Roberto
 
---=_MailMate_0E4A5337-559B-4F0D-8587-2225B84783C8_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
+> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> ---
+>  include/linux/evm.h               | 39 +++++++++++++++++++++++++
+>  security/integrity/evm/evm_main.c | 60 +++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 99 insertions(+)
+>=20
+> diff --git a/include/linux/evm.h b/include/linux/evm.h
+> index 36ec884320d9..aeb9ff52ad22 100644
+> --- a/include/linux/evm.h
+> +++ b/include/linux/evm.h
+> @@ -57,6 +57,20 @@ static inline void evm_inode_post_set_acl(struct dentr=
+y *dentry,
+>  {
+>  	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
+>  }
+> +extern int evm_inode_set_fscaps(struct mnt_idmap *idmap,
+> +				struct dentry *dentry,
+> +				const struct vfs_caps *caps, int flags);
+> +static inline int evm_inode_remove_fscaps(struct dentry *dentry)
+> +{
+> +	return evm_inode_set_fscaps(&nop_mnt_idmap, dentry, NULL, XATTR_REPLACE=
+);
+> +}
+> +extern void evm_inode_post_set_fscaps(struct mnt_idmap *idmap,
+> +				      struct dentry *dentry,
+> +				      const struct vfs_caps *caps, int flags);
+> +static inline void evm_inode_post_remove_fscaps(struct dentry *dentry)
+> +{
+> +	return evm_inode_post_set_fscaps(&nop_mnt_idmap, dentry, NULL, 0);
+> +}
+> =20
+>  int evm_inode_init_security(struct inode *inode, struct inode *dir,
+>  			    const struct qstr *qstr, struct xattr *xattrs,
+> @@ -164,6 +178,31 @@ static inline void evm_inode_post_set_acl(struct den=
+try *dentry,
+>  	return;
+>  }
+> =20
+> +static inline int evm_inode_set_fscaps(struct mnt_idmap *idmap,
+> +				       struct dentry *dentry,
+> +				       const struct vfs_caps *caps, int flags)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline int evm_inode_remove_fscaps(struct dentry *dentry)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void evm_inode_post_set_fscaps(struct mnt_idmap *idmap,
+> +					     struct dentry *dentry,
+> +					     const struct vfs_caps *caps,
+> +					     int flags)
+> +{
+> +	return;
+> +}
+> +
+> +static inline void evm_inode_post_remove_fscaps(struct dentry *dentry)
+> +{
+> +	return;
+> +}
+> +
+>  static inline int evm_inode_init_security(struct inode *inode, struct in=
+ode *dir,
+>  					  const struct qstr *qstr,
+>  					  struct xattr *xattrs,
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/e=
+vm_main.c
+> index cc7956d7878b..ecf4634a921a 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -805,6 +805,66 @@ void evm_inode_post_removexattr(struct dentry *dentr=
+y, const char *xattr_name)
+>  	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
+>  }
+> =20
+> +int evm_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
+> +			 const struct vfs_caps *caps, int flags)
+> +{
+> +	struct inode *inode =3D d_inode(dentry);
+> +	struct vfs_ns_cap_data nscaps;
+> +	const void *xattr_data =3D NULL;
+> +	int size =3D 0;
+> +
+> +	/* Policy permits modification of the protected xattrs even though
+> +	 * there's no HMAC key loaded
+> +	 */
+> +	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
+> +		return 0;
+> +
+> +	if (caps) {
+> +		size =3D vfs_caps_to_xattr(idmap, i_user_ns(inode), caps, &nscaps,
+> +					 sizeof(nscaps));
+> +		if (size < 0)
+> +			return size;
+> +		xattr_data =3D &nscaps;
+> +	}
+> +
+> +	return evm_protect_xattr(idmap, dentry, XATTR_NAME_CAPS, xattr_data, si=
+ze);
+> +}
+> +
+> +void evm_inode_post_set_fscaps(struct mnt_idmap *idmap, struct dentry *d=
+entry,
+> +			       const struct vfs_caps *caps, int flags)
+> +{
+> +	struct inode *inode =3D d_inode(dentry);
+> +	struct vfs_ns_cap_data nscaps;
+> +	const void *xattr_data =3D NULL;
+> +	int size =3D 0;
+> +
+> +	if (!evm_revalidate_status(XATTR_NAME_CAPS))
+> +		return;
+> +
+> +	evm_reset_status(dentry->d_inode);
+> +
+> +	if (!(evm_initialized & EVM_INIT_HMAC))
+> +		return;
+> +
+> +	if (is_unsupported_fs(dentry))
+> +		return;
+> +
+> +	if (caps) {
+> +		size =3D vfs_caps_to_xattr(idmap, i_user_ns(inode), caps, &nscaps,
+> +					 sizeof(nscaps));
+> +		/*
+> +		 * The fscaps here should have been converted to an xattr by
+> +		 * evm_inode_set_fscaps() already, so a failure to convert
+> +		 * here is a bug.
+> +		 */
+> +		if (WARN_ON_ONCE(size < 0))
+> +			return;
+> +		xattr_data =3D &nscaps;
+> +	}
+> +
+> +	evm_update_evmxattr(dentry, XATTR_NAME_CAPS, xattr_data, size);
+> +}
+> +
+>  static int evm_attr_change(struct mnt_idmap *idmap,
+>  			   struct dentry *dentry, struct iattr *attr)
+>  {
+>=20
 
------BEGIN PGP SIGNATURE-----
-
-iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmXl4ZIPHHppeUBudmlk
-aWEuY29tAAoJEOJ/noEUByhUXzEP/iiQ7nzdiYwswAYzlikNg7xdo8ol94aDks0m
-6N3gJ7RW8AQlYsNofqWpwmvIac02v9YS+9kMtKooVAX90OOEDmLFt/0rC7SyTTqH
-uK21xTwbVHAoff4nmAcaUoNgLSMysDXahfLC+sz9APaEoFNFPy5Xo+WM+Z20yVOG
-Nm+ChkiY0aksFUbsgiDwenAu5//gAF1sQEog9O8bJfw0cOhkZAPeJeSvGzGydJVT
-r5trclr8D9XWHnXpmGP9I8tLYQQyTC5JAR5oz8pRabQbTllwyxDss9COMG+Q4445
-jGjwFHoTVmJeVzedri4dHOJ9ig/7dmShnPDOGdHf00eMHQEXArYhjFtLF1Rqr80H
-1G+r1dxSSRNuF2aC8cgnFvF90WvLjFvfKj7GN4sWgVZE9Pw71qOxpzF6D71cTMrk
-vDVEsIVifUH6p2Cfm33ChXTJu0AhUzx+vlKRrotI9wzxvYbY7r8PF0uYizGMx01Q
-OmtV2HuV1RfZnRh/Q+0dCU1KKh0UThVDii8LGoBnoHdG5cExBvr2DGeAHi9WwXUI
-bzmtQXvtw3xwmul70UV8k1r0c/MDROKNGQlQK3fLeCiqkIBZxmk2CeUAP1REL3un
-jWp3ipQP0S4tiN6SzkRYLBrxH2AEOm3BpaxrD4DttvET/7bxog5k6S20mTJkO6Sk
-VFyrYNgu
-=M0Km
------END PGP SIGNATURE-----
-
---=_MailMate_0E4A5337-559B-4F0D-8587-2225B84783C8_=--
 
