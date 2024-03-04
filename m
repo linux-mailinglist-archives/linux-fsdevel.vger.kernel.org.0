@@ -1,192 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-13472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E335870319
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 14:45:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F49870332
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 14:48:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34E4282646
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 13:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A94CD2855B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 13:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCC33EA72;
-	Mon,  4 Mar 2024 13:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XZo5KEJq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD583F8C7;
+	Mon,  4 Mar 2024 13:48:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995A03E47B
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 13:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450393D542;
+	Mon,  4 Mar 2024 13:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709559893; cv=none; b=n8I4+0fAt9f0HXRL/EBO67ykQSPR81XOnYNh0RAoB1I+fTC3nxKADon7Zh/v58LvDDOw0/Y6Jbqx0AYja5FUYDJOIB2uxvxw08egHZcZjQUNtQRVHy3rfBllDJCQdZTjLVE+4hbFOu9VKb/pSzv04QsD+HIYadKMZ43+Yg4fwYs=
+	t=1709560104; cv=none; b=NZ4wGWay5OyfG9mn1BjWWmRUwzkeNlael8Rp7WU7pUcVMxW4Kacglsj8gHesCbafT1A7U21vkk4Zbd9RX4cZ5+fZkGpjfULmIT3mG0Du4Uq81pQ65V6tsl72ZiDY+qqGugLXYAc1uyiKlePlIQrq0dcmS6lDsaOgmgAGjcivAUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709559893; c=relaxed/simple;
-	bh=WYatNNPv1dfXR9HApUaPLck/xdTS5uci2N4HpAiipls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mQYG6cKAisjW3cYzrPsOKdMITM0NUnhcPmRuZw+yd2gVS4SiUiGiJoYwOjs6r+ZI01F06gKSAUqGHau+AcFkxdnaoU2j0hCiLXlMySXZCa1NlmJsh/DlwCIGkyHLkxJ2Z6FIKsz7fQcm2HOTY3yhXV5Eg1rWdtV92r0Ohfz7EEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XZo5KEJq; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-42ef8193ae6so73161cf.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Mar 2024 05:44:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1709559890; x=1710164690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=edjrhenNqonpGUDHiZU8SAS1zKy2+Rf2zjdCiAXt36Y=;
-        b=XZo5KEJqgOl2q7HsYLlHM2nMU17F7Vbx3+QeFZjH2QiLrqN6aJwoJFfB8qhYa/pEkS
-         +n0AygkD1SAyEv7pPNOhLmmAD7752pwJLOqTVKa+aJ3jsgQUqhYA0bpeN7WwcGrOyvmE
-         GDLaxgsafVFD1124nh4dfZ93J0ePomRQ6tVdqK4xPvwoN5pojmfwyN8ztrhr0qHoXf1u
-         bxxnFNAjmgRqXQB6QGMjj7LUpqnNgggXS5i9TDKWh/zbY3sV4vujXbRJJ/OFF75HnVhR
-         6jTZ1knUej6dhO5HPhNj1zdl5l964p4Y6hklyrplcXxPLpQU6m0wHXOkIN+CW3mIcSNM
-         OZ7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709559890; x=1710164690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=edjrhenNqonpGUDHiZU8SAS1zKy2+Rf2zjdCiAXt36Y=;
-        b=U59W5XrNZWGDGfbyBO7eGMEybptlyEGXgL2u6bFrXyZPNwUhltqRtsHRFN2L/eX9fk
-         6x60WC5LbhqqGxoicHS8psH/KWhbPWqdM5lv32mcEDpvtYXEG1SEo+hCcGH/rm/OKYjP
-         s+bKI1dEuEZ4987QZ7cRlwG9b0J9gr3FOolTwAfA399jJ/2iKukwH/03+h0kvnKlc26+
-         P4F8V1nzGMLMw3B19FpV+sIIpvXnTkTOh+vALFKCrnmcFfCwzklYcH55BGmtpcwhxuhh
-         E94zUMsm0cKlRTOGZQj1OaRgfN/FgVH5nYqrekz2yAs0kE/6gI/xBe1ygajZkbL7WLuw
-         bYrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVobGNRY6egNA1ITmpVmQGwuiThy2YlxxzbwvTZK0Q4AVBwkmZ1XqkrbOCBoL4QqpK9kxUppjHxoqETekKGrsf8pAoUNWtuD6/Js3gqA==
-X-Gm-Message-State: AOJu0YxhsTJICnbBsX2oYzUM0xEwp0y6nr8rAtlpTHHQmzRyzF6Zu46o
-	wwVWUM5pUvduTnzHS6SmIfhhk3c6YWuXffMKIW+Q5U2VuFAFeRhkSER8DkQyzUFGwC6yE0e8TL6
-	IOWifMYunSV8yc7Jp3aWDX/N16ye9FMqD5ek1
-X-Google-Smtp-Source: AGHT+IERiVdZBoyn/IdfDoiVMAiiLMXBzhpIjtI8VIsf4pFNU+BDe+32SPFMQxPMD/HEiSxXeMpZUlBDxl+M3aCXveo=
-X-Received: by 2002:ac8:1090:0:b0:42e:6de9:cd13 with SMTP id
- a16-20020ac81090000000b0042e6de9cd13mr507236qtj.3.1709559890450; Mon, 04 Mar
- 2024 05:44:50 -0800 (PST)
+	s=arc-20240116; t=1709560104; c=relaxed/simple;
+	bh=uby7Z8vhLTiM08+HxX4A1oBn8GHa+JawYv/Et6sp3js=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=aR/a0pmAvSnBolDXygbJNcdHEIL5R8gXfCXsW6sLYKQIRd4m8qpfBr5Z+foGZekGMZ9DTn0g4VKORgg2fzWG4g1C/r1iU5X9/pVH/Iykduvs0uCOBEvkw5D2xmoi49T+R5yw0WNNbVIIll3rRfnGnLYzvuOj7Rt1SY0rj/EkRj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 76E8C37820CB;
+	Mon,  4 Mar 2024 13:48:19 +0000 (UTC)
+From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
+In-Reply-To: <20240304-zugute-abtragen-d499556390b3@brauner>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240301213442.198443-1-adrian.ratiu@collabora.com> <20240304-zugute-abtragen-d499556390b3@brauner>
+Date: Mon, 04 Mar 2024 13:48:19 +0000
+Cc: linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, "Guenter Roeck" <groeck@chromium.org>, "Doug Anderson" <dianders@chromium.org>, "Kees Cook" <keescook@chromium.org>, "Jann Horn" <jannh@google.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Randy Dunlap" <rdunlap@infradead.org>, "Mike Frysinger" <vapier@chromium.org>
+To: "Christian Brauner" <brauner@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <gajhq3iyluwmr44ee2fzacfpgpxmr2jurwqg6aeiab4lfila3p@b3l7bywr3yed>
- <26085.7607.331602.673876@quad.stoffel.home> <apot5wnom6wqdvjb6hfforcooxuqonmjl7z6morjyhdbgi6isq@5fcb3hld62xu>
- <2199336.irdbgypaU6@lichtvoll.de> <CAMT0RQRsdLd9dg5jkpQ+gRTn0XJe=cU5Umsjs2npyvz6pCU61g@mail.gmail.com>
-In-Reply-To: <CAMT0RQRsdLd9dg5jkpQ+gRTn0XJe=cU5Umsjs2npyvz6pCU61g@mail.gmail.com>
-From: Hannu Krosing <hannuk@google.com>
-Date: Mon, 4 Mar 2024 14:44:39 +0100
-Message-ID: <CAMT0RQQp5mdRpgJ9ae=YF1uiSr-xMHe1rAA3OnAVDnqh8Jc0HA@mail.gmail.com>
-Subject: Re: [WIP] bcachefs fs usage update
-To: Martin Steigerwald <martin@lichtvoll.de>
-Cc: John Stoffel <john@stoffel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <39e47-65e5d100-1-5e37bd0@176022561>
+Subject: =?utf-8?q?Re=3A?= [PATCH v2] =?utf-8?q?proc=3A?= allow restricting 
+ /proc/pid/mem writes
+User-Agent: SOGoMail 5.10.0
 Content-Transfer-Encoding: quoted-printable
 
-Can we have an option to get the output in JSON format so that it can
-then be processed by whatever is doing the monitoring ?
+On Monday, March 04, 2024 15:20 EET, Christian Brauner <brauner@kernel.=
+org> wrote:
 
-Cheers
-Hannu
-
-
-On Mon, Mar 4, 2024 at 2:37=E2=80=AFPM Hannu Krosing <hannuk@google.com> wr=
-ote:
->
-> Can we have an option to get the output in JSON format so that it can the=
-n be processed by whatever is doing the monitoring ?
->
-> Cheers
-> Hannu
->
-> On Mon, Mar 4, 2024 at 9:22=E2=80=AFAM Martin Steigerwald <martin@lichtvo=
-ll.de> wrote:
->>
->> Kent Overstreet - 04.03.24, 02:08:44 CET:
->> > > This is not the same level of detail needed by a filesystem develope=
-r,
->> > > and I _never_ said it was.  I'm looking for the inforation
->> > > needed/wanted by a SysAdmin when an end user comes whining about
->> > > needing more space.  And then being able to examine the system
->> > > holistically to give them an answer.  Which usually means "delete
->> > > something!"  *grin*
->> >
->> > 'bcachefs fs usage' needs to show _all_ disk accounting information
->> > bcachefs has, because we need there to be one single tool that shows a=
-ll
->> > the information we have - that's this tool.
->> >
->> > If we're collecting information, it needs to be available.
->> >
->> > There will no doubt be switches and options for providing reduced form=
-s,
->> > but for now I'm mainly concerned with making sure all the information
->> > that we have is there in a reasonably understandable way.
->>
->> From a sysadmin view I totally get what John is writing.
->>
->> I know "btrfs filesystem usage" also shows a lot of information, but sti=
-ll
->> with some learning it is quite understandable. At least I can explain it
->> nicely enough in one of my Linux Performance Analysis & Tuning courses.
->>
->> Commands like "lspci" do not show all the information by default. You ne=
-ed
->> to add "-v" even several times to show it all.
->>
->> So I am with you that it is good to have a tool that shows *all* the
->> information. I am just not so sure whether showing *all* the information
->> by default is wise.
->>
->> No one was asking for the lowest common denominator. But there is a
->> balance between information that is useful in daily usage of BCacheFS an=
-d
->> information that is more aimed at debugging purposes and filesystem
->> developers. That "df -hT" is not really enough to understand what is goi=
-ng
->> on in a filesystem like BCacheFS and BTRFS is clear.
->>
->> So what I'd argue for is a middle ground by default and adding more with
->> "-v" or "--detail" or an option like that. In the end if I consider who
->> will be wanting to use the information, my bet would be it would be over
->> 95% sysadmins and Linux users at home. It would be less, I bet way less
->> than 5% Linux filesystem developers. And that's generous. So "what targe=
-t
->> audience are you aiming at?" is an important question as well.
->>
->> What also improves the utility of the displayed information is explainin=
-g
->> it. In a man page preferably.
->>
->> If there then is also a way to retrieve the information as JSON for
->> something like that=E2=80=A6 it makes monitoring the usage state by 3rd =
-party
->> tools easier.
->>
->> Another approach would be something like "free -m" versus "cat /proc/
->> meminfo" and "cat /proc/vmstat". I.e. provide all the details via SysFS
->> and a part of it by "bcachefs filesystem usage".
->>
->> You indeed asked for feedback about "bcachefs fs usage". So there you ha=
-ve
->> it. As usual do with it what you want. You can even outright dismiss it
->> without even considering it. But then I wonder why you asked for feedbac=
-k
->> to begin with. See, John just did what you asked for: John gave feedback=
+> On Fri, Mar 01, 2024 at 11:34:42PM +0200, Adrian Ratiu wrote:
+> > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
+> > after which it got allowed in commit 198214a7ee50 ("proc: enable
+> > writing to /proc/pid/mem"). Famous last words from that patch:
+> > "no longer a security hazard". :)
+> >=20
+> > Afterwards exploits appeared started causing drama like [1]. The
+> > /proc/*/mem exploits can be rather sophisticated like [2] which
+> > installed an arbitrary payload from noexec storage into a running
+> > process then exec'd it, which itself could include an ELF loader
+> > to run arbitrary code off noexec storage.
+> >=20
+> > As part of hardening against these types of attacks, distrbutions
+> > can restrict /proc/*/mem to only allow writes when they makes sense=
+,
+> > like in case of debuggers which have ptrace permissions, as they
+> > are able to access memory anyway via PTRACE=5FPOKEDATA and friends.
+> >=20
+> > Dropping the mode bits disables write access for non-root users.
+> > Trying to `chmod` the paths back fails as the kernel rejects it.
+> >=20
+> > For users with CAP=5FDAC=5FOVERRIDE (usually just root) we have to
+> > disable the mem=5Fwrite callback to avoid bypassing the mode bits.
+> >=20
+> > Writes can be used to bypass permissions on memory maps, even if a
+> > memory region is mapped r-x (as is a program's executable pages),
+> > the process can open its own /proc/self/mem file and write to the
+> > pages directly.
+> >=20
+> > Even if seccomp filters block mmap/mprotect calls with W|X perms,
+> > they often cannot block open calls as daemons want to read/write
+> > their own runtime state and seccomp filters cannot check file paths=
 .
->>
->> I planned to go into detail of your example output and tell you what I
->> think about each part of what you propose and ask questions for deeper
->> understanding. If you are open to at least consider the feedback, only
->> consider, of course you can still decline everything and all of it after
->> consideration, then I'd be willing to spend the time to do it.
->>
->> Best,
->> --
->> Martin
->>
->>
->>
+> > Write calls also can't be blocked in general via seccomp.
+> >=20
+> > Since the mem file is part of the dynamic /proc/<pid>/ space, we
+> > can't run chmod once at boot to restrict it (and trying to react
+> > to every process and run chmod doesn't scale, and the kernel no
+> > longer allows chmod on any of these paths).
+> >=20
+> > SELinux could be used with a rule to cover all /proc/*/mem files,
+> > but even then having multiple ways to deny an attack is useful in
+> > case on layer fails.
+> >=20
+> > [1] https://lwn.net/Articles/476947/
+> > [2] https://issues.chromium.org/issues/40089045
+> >=20
+> > Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
+> >=20
+> > Cc: Guenter Roeck <groeck@chromium.org>
+> > Cc: Doug Anderson <dianders@chromium.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Co-developed-by: Mike Frysinger <vapier@chromium.org>
+> > Signed-off-by: Mike Frysinger <vapier@chromium.org>
+> > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> > ---
+> > Changes in v2:
+> >  * Added boot time parameter with default kconfig option
+> >  * Moved check earlier in mem=5Fopen() instead of mem=5Fwrite()
+> >  * Simplified implementation branching
+> >  * Removed dependency on CONFIG=5FMEMCG
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |  4 ++
+> >  fs/proc/base.c                                | 47 +++++++++++++++=
++++-
+> >  security/Kconfig                              | 22 +++++++++
+> >  3 files changed, 71 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Docu=
+mentation/admin-guide/kernel-parameters.txt
+> > index 460b97a1d0da..0647e2f54248 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -5618,6 +5618,10 @@
+> >  	reset=5Fdevices	[KNL] Force drivers to reset the underlying devic=
+e
+> >  			during initialization.
+> > =20
+> > +	restrict=5Fproc=5Fmem=5Fwrite=3D [KNL]
+> > +			Enable or disable write access to /proc/*/mem files.
+> > +			Default is SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE=5FDEFAULT=5F=
+ON.
+> > +
+> >  	resume=3D		[SWSUSP]
+> >  			Specify the partition device for software suspend
+> >  			Format:
+> > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > index 98a031ac2648..92f668191312 100644
+> > --- a/fs/proc/base.c
+> > +++ b/fs/proc/base.c
+> > @@ -152,6 +152,30 @@ struct pid=5Fentry {
+> >  		NULL, &proc=5Fpid=5Fattr=5Foperations,	\
+> >  		{ .lsmid =3D LSMID })
+> > =20
+> > +#ifdef CONFIG=5FSECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE
+> > +DEFINE=5FSTATIC=5FKEY=5FMAYBE=5FRO(CONFIG=5FSECURITY=5FPROC=5FMEM=5F=
+RESTRICT=5FWRITE=5FDEFAULT=5FON,
+> > +			   restrict=5Fproc=5Fmem=5Fwrite);
+> > +static int =5F=5Finit early=5Frestrict=5Fproc=5Fmem=5Fwrite(char *=
+buf)
+> > +{
+> > +	int ret;
+> > +	bool bool=5Fresult;
+> > +
+> > +	ret =3D kstrtobool(buf, &bool=5Fresult);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (bool=5Fresult)
+> > +		static=5Fbranch=5Fenable(&restrict=5Fproc=5Fmem=5Fwrite);
+> > +	else
+> > +		static=5Fbranch=5Fdisable(&restrict=5Fproc=5Fmem=5Fwrite);
+> > +	return 0;
+> > +}
+> > +early=5Fparam("restrict=5Fproc=5Fmem=5Fwrite", early=5Frestrict=5F=
+proc=5Fmem=5Fwrite);
+> > +# define PROC=5FPID=5FMEM=5FMODE S=5FIRUSR
+> > +#else
+> > +# define PROC=5FPID=5FMEM=5FMODE (S=5FIRUSR|S=5FIWUSR)
+> > +#endif
+> > +
+> >  /*
+> >   * Count the number of hardlinks for the pid=5Fentry table, exclud=
+ing the .
+> >   * and .. links.
+> > @@ -829,6 +853,25 @@ static int mem=5Fopen(struct inode *inode, str=
+uct file *file)
+> >  {
+> >  	int ret =3D =5F=5Fmem=5Fopen(inode, file, PTRACE=5FMODE=5FATTACH)=
+;
+> > =20
+> > +#ifdef CONFIG=5FSECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE
+> > +	struct mm=5Fstruct *mm =3D file->private=5Fdata;
+> > +	struct task=5Fstruct *task =3D get=5Fproc=5Ftask(inode);
+> > +
+> > +	if (mm && task) {
+> > +		/* Only allow writes by processes already ptracing the target ta=
+sk */
+> > +		if (file->f=5Fmode & FMODE=5FWRITE &&
+> > +		    static=5Fbranch=5Fmaybe(CONFIG=5FSECURITY=5FPROC=5FMEM=5FRES=
+TRICT=5FWRITE=5FDEFAULT=5FON,
+> > +					&restrict=5Fproc=5Fmem=5Fwrite)) {
+> > +			rcu=5Fread=5Flock();
+> > +			if (!ptracer=5Fcapable(current, mm->user=5Fns) ||
+> > +			    current !=3D ptrace=5Fparent(task))
+> > +				ret =3D -EACCES;
+>=20
+> Uhm, this will break the seccomp notifier, no? So you can't turn on
+> SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE when you want to use the sec=
+comp
+> notifier to do system call interception and rewrite memory locations =
+of
+> the calling task, no? Which is very much relied upon in various
+> container managers and possibly other security tools.
+>=20
+> Which means that you can't turn this on in any of the regular distros=
+.
+>=20
+> So you need to either account for the calling task being a seccomp
+> supervisor for the task whose memory it is trying to access or you ne=
+ed
+> to provide a migration path by adding an api that let's caller's perf=
+orm
+> these writes through the seccomp notifier.
+
+Thanks for raising this!
+
+I did test seccomp filtering/blocking functionality which seemed to wor=
+k but I'll make sure to also test syscall interception before sending v=
+3, to confirm whether it breaks.
+
+The simplest solution is to add an exception for seccomp supervisors ju=
+st like we did for tracers, yes, so I'm inclined to go with that if nee=
+ded. :)
+
+Ideally we find all exceptions and fix them before defaulting this to o=
+n -- unforeseen breakages is why I want to default it to OFF, at least =
+initially, until we can be reasonably sure all cases have been covered.
+
 
