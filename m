@@ -1,104 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-13498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F6D87086E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 18:40:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0866F87087D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 18:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59A47B239A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 17:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A38A1C21A9D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 17:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D116612F6;
-	Mon,  4 Mar 2024 17:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26BC61670;
+	Mon,  4 Mar 2024 17:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UREnqlSD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A76845942;
-	Mon,  4 Mar 2024 17:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2335612F7
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 17:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709574038; cv=none; b=TAZqSr8DBndGaHQIETl6zvhrEqO8046Jl6hEaHryyex5+2qVGeedHIq28PnCVms8umqSoKuxpihwbqayvePKbRNiqZqtTQTxgDREcueHXWz/jcrQSLsPTxoZe00vdT+OXUwIig4PTFkhyrVF8D/S3MZTv39Qy80GbFN6AtdmkNI=
+	t=1709574123; cv=none; b=B5tv1ZrN1CPpkX4bU2TuQlg47AFoS0t9wwb2ZvsfsjytbwUX0gpho+CBCWJ33bj70c5Uvj+5a7XMUXVFF67OteMVQXcxEZb1mIvLlNnQO4h2CkykZmqb/7d+NhX5xiyTGbixbXu5pMmrz+ojbEfh1ByHnSlPTrX9mINr2sJYrC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709574038; c=relaxed/simple;
-	bh=X/Ethjfe+JY3oNLWV/PNylcKo8ikihPe+TaMsAbUXVw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nuTZLqrsGX3+ypHQlPMeD0GNoe/lBLWlcws5OcWkWk/hpShzURXVsTHJxkhhLgFEtpkAel8NltJdCSzVcrUYHgaBoRgyptHV/5blyC7sQz2zMuuwpiYnkBqcgvXGg7DHfvRzRVSYF7iL/O4Dtni7OSrpvAD9bi99nySWjCt7Cxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1dd0d46ecc3so9920605ad.2;
-        Mon, 04 Mar 2024 09:40:37 -0800 (PST)
+	s=arc-20240116; t=1709574123; c=relaxed/simple;
+	bh=hU2yLMJMJXbgNEPYfx2RPR8hYlJGjYJqjcguiRszWgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTNVfvYuNASarJcj5e1J5648GU4YOn41cruMD09yh0TUo261j61vL4tM9IZGFXB4iyXDcwsgPumEybjMeeyC3D34cmsClUbwu3FJb470BGLbtBwj9lAdeZCFL6LvlJuNeEOl15WDLTH9MCbh8ICZ3mS+VLdpgu59P+NytcwJDtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UREnqlSD; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1dca3951ad9so45655485ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Mar 2024 09:42:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1709574121; x=1710178921; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M7401r6D2cA71znQdJzF80EF2KfSktKnOfloCrndmE8=;
+        b=UREnqlSD958HTAgmrhBip/bfGztwZ8eypIZwaQlGTuInTcMW9AqA9D5Y+G3lR8O+k3
+         iLRb64wLgf61g6ucctVm/oMVRqC16j+sIhcBLSQBFW0q5g+VkRoclbb0mWfpzl4WHqfa
+         V8+lnGHSWFIqmVAf7zS7nUuwlJRJ3lR2h1eVE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709574037; x=1710178837;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X/Ethjfe+JY3oNLWV/PNylcKo8ikihPe+TaMsAbUXVw=;
-        b=ZwlJBBDD2On4AUgBIC4qx2I5Yw8o356to/ijyueE79Ardk4LgcHzsVGg6AS377WA5L
-         nfkVpQ54YhzoJJbRL1B4j67Y1qpEAQPOfL16ef4zXvo8tGetyYGNR6Ulz8nS669ndtys
-         DxLugOiLqlq+UKOGSjrwRS9ygG6AHJ2fxcIwqpoDcktxT4r1pCEY74SZft9qef8Q9aSE
-         Spgp0jj6IMcl8B0OHydZcouOXtW3yAFxkCrxyymZ/b+ML5uMJzBQ2W6oytx3VeVh4XQj
-         mwfX4PtmDTFkc/duFj0vX66Er0rcUnzAfB0kPwyDZyZVfn47y3Fx0xvoghVwIFiyW4Vf
-         yv0g==
-X-Forwarded-Encrypted: i=1; AJvYcCV1wkmz7LHIfUOo0IEcMbUnE2hnanQ3hOuv2z9RCOQEq307D+ycmIApROeJbQUSb8ZGQj/+6XjTG30xuTn4OmOWrKQ4ctGkoDPtJnGdDQ3eRxOPSynvZ7UGtlfacscr7w+LjNLl3F4tq/zrhQ==
-X-Gm-Message-State: AOJu0YzZmpnNYGtteHi9J/tyumW+AStTusvPQcEn4gXF+GLqqWaup5NT
-	EFvl2qpKx8n/h8ELXC4i24nEpXU84BiSq+Cdyt0nlFs6ZrPgH9UNb4PFQzGO
-X-Google-Smtp-Source: AGHT+IGu3LDThYeYk4PX+avPOIf1uV1UhQlneWUKBbsMXYIPqC+Zl7ZPTjFlYIhMhWIO6PhHXDbB7Q==
-X-Received: by 2002:a17:902:e5cb:b0:1dd:138:4e0b with SMTP id u11-20020a170902e5cb00b001dd01384e0bmr7646451plf.40.1709574036633;
-        Mon, 04 Mar 2024 09:40:36 -0800 (PST)
-Received: from ?IPV6:2620:0:1000:8411:9ba8:35e8:4ec5:44d1? ([2620:0:1000:8411:9ba8:35e8:4ec5:44d1])
-        by smtp.gmail.com with ESMTPSA id l5-20020a170903120500b001dca68b97d3sm8778640plh.44.2024.03.04.09.40.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Mar 2024 09:40:36 -0800 (PST)
-Message-ID: <5ee4df86-458f-4544-85db-81dc82c2df4c@acm.org>
-Date: Mon, 4 Mar 2024 09:40:35 -0800
+        d=1e100.net; s=20230601; t=1709574121; x=1710178921;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M7401r6D2cA71znQdJzF80EF2KfSktKnOfloCrndmE8=;
+        b=isUwIuVY+ib/BFmDdcsr0C4zA+Jt0K9VhUgzkhHE+ZlZ7rniHHhd+0DLwygVeRjIDV
+         GOtkIlQ+cyvuux9JzbtZ5ZDpkxQBr8tet+syeCiOrK+A8BvUd2BfN7xqEKc1FUK7Lb+E
+         qJJNydJbSH8AX7j8UmaWNBG4heHEVf1yayMCpoGYF9XK5JBfRPinaNWIXc+QAEExLLl7
+         6+h3wWOd/jmW+f3VcCk+jHe3ErCaTwmCb0KJ2LlDkp8Qr36ss9s+CMQs9H9/v39Cy6bG
+         ASAvUbsLya7tY/IHsmdEXjUWhHAXr8zdKKLvkZDbYfQ+4SsE2ygFiySwW/G8IALZI2Ol
+         1z2Q==
+X-Gm-Message-State: AOJu0Yx2JVFELce56iGIn7A5EqhuQ0D24kuxz1Zs7i+JLuJkDmr5TaGt
+	stvsc6pscGR5JWRG6GmkAF4QvVxJm05WjZoOk3oJRsmxFD+s2wOe27DH7v1D6Q==
+X-Google-Smtp-Source: AGHT+IGbjTF4ZKwzOe0VNjsw6UtT/zASPWXIHtUxjXFZsMlGN7NGI8dA/FI7NCmH8IqvtDTQ74pfsQ==
+X-Received: by 2002:a17:902:6f17:b0:1dc:540f:c5eb with SMTP id w23-20020a1709026f1700b001dc540fc5ebmr9727288plk.51.1709574121089;
+        Mon, 04 Mar 2024 09:42:01 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id u2-20020a17090341c200b001dd0d0d26a4sm2963663ple.147.2024.03.04.09.42.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Mar 2024 09:42:00 -0800 (PST)
+Date: Mon, 4 Mar 2024 09:42:00 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Mike Frysinger <vapier@chromium.org>
+Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
+Message-ID: <202403040940.BAFD26EA4@keescook>
+References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
+ <202403011451.C236A38@keescook>
+ <39f23-65e5d580-3-638b0780@155677577>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/aio: fix uaf in sys_io_cancel
-Content-Language: en-US
-To: Benjamin LaHaise <ben@communityfibre.ca>
-Cc: Edward Adam Davis <eadavis@qq.com>,
- syzbot+b91eb2ed18f599dd3c31@syzkaller.appspotmail.com, brauner@kernel.org,
- jack@suse.cz, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- viro@zeniv.linux.org.uk
-References: <0000000000006945730612bc9173@google.com>
- <tencent_DC4C9767C786D2D2FDC64F099FAEFDEEC106@qq.com>
- <14f85d0c-8303-4710-b8b1-248ce27a6e1f@acm.org>
- <20240304170343.GO20455@kvack.org>
- <73949a4d-6087-4d8c-bae0-cda60e733442@acm.org>
- <20240304173120.GP20455@kvack.org>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240304173120.GP20455@kvack.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39f23-65e5d580-3-638b0780@155677577>
 
-On 3/4/24 09:31, Benjamin LaHaise wrote:
-> A revert is justified when a series of patches is buggy and had
-> insufficient review prior to merging.
+On Mon, Mar 04, 2024 at 02:06:43PM +0000, Adrian Ratiu wrote:
+> On Saturday, March 02, 2024 01:55 EET, Kees Cook <keescook@chromium.org> wrote:
+> > On Fri, Mar 01, 2024 at 11:34:42PM +0200, Adrian Ratiu wrote:
+> > > [...]
+> > > +# define PROC_PID_MEM_MODE S_IRUSR
+> > > +#else
+> > > +# define PROC_PID_MEM_MODE (S_IRUSR|S_IWUSR)
+> > > +#endif
+> > 
+> > PROC_PID_MEM_MODE will need to be a __ro_after_init variable, set by
+> > early_restrict_proc_mem_write, otherwise the mode won't change based on
+> > the runtime setting. e.g.:
+> > 
+> > #ifdef CONFIG_SECURITY_PROC_MEM_RESTRICT_WRITE_DEFAULT_ON
+> > mode_t proc_pid_mem_mode __ro_after_init = S_IRUSR;
+> > #else
+> > mode_t proc_pid_mem_mode __ro_after_init = (S_IRUSR|S_IWUSR);
+> > #endif
+> > 
+> > DEFINE_STATIC_KEY_MAYBE_RO(CONFIG_SECURITY_PROC_MEM_RESTRICT_WRITE_DEFAULT_ON,
+> > 			   restrict_proc_mem_write);
+> > ...
+> > 	if (bool_result) {
+> > 		static_branch_enable(&restrict_proc_mem_write);
+> > 		proc_pid_mem_mode = S_IRUSR;
+> > 	} else {
+> > 		static_branch_disable(&restrict_proc_mem_write);
+> > 		proc_pid_mem_mode = (S_IRUSR|S_IWUSR);
+> > 	}
+> > ...
+> > 	REG("mem",        proc_pid_mem_mode, proc_mem_operations),
+> 
+> I'm having trouble implementing this because the proc_pid_mem_mode initializer needs to be a compile-time constant, so I can't set a runtime value in the REG() definition like suggested above.
 
-That's not how Linux kernel development works. If a bug can get fixed
-easily, a fix is preferred instead of reverting + reapplying a patch.
+Ah. Yeah, so I guess just drop the perms change -- you're already
+checking the behavior in the open(), so you can just leave the perms
+alone.
 
-> Using the "a kernel warning hit" approach for work on cancellation is
-> very much a sign that the patches were half baked.
-Is there perhaps a misunderstanding? My patches fix a kernel warning and
-did not introduce any new WARN*() statements.
-
-> Why are you touching the kiocb after ownership has already been
-> passed on to another entity?
-Touching the kiocb after ownership has been passed is the result of an
-oversight. Whether or not kiocb->ki_cancel() transfers ownership depends
-on the I/O type. The use-after-free was not introduced on purpose.
-
-Bart.
-
+-- 
+Kees Cook
 
