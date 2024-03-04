@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-13535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E74B870A55
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 20:14:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAB1870A58
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 20:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC1801F22E71
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 19:14:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386EB281537
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 19:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4E07CF21;
-	Mon,  4 Mar 2024 19:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFBA7CF37;
+	Mon,  4 Mar 2024 19:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RCQigQNm"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jMPB+RBk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA917C09E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 19:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8DB7D07F
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 19:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709579550; cv=none; b=Hxb4AGV0oJ2WhChFemBQt772N7ONCGdsGaDXTpkZ1Xusyf+Fz2qPaJID9AX1Sj5VDry5umq8Q3Wy8QZtqzy3Yh+Hw4lwMyprrURkGrKeYfSusnL7r2baDeudnOy+zutZIxyp99EZQPqZGsvbIOAwv8AScTAYEHn89/c6MUtoRMU=
+	t=1709579552; cv=none; b=T8DCoRfJjX+M8NLa/M+1jTNl+iWNeMMQlTC7qOPYzu/mDiPxP7mwhpf06yBZESSOWEqayK673WE/nIbKAQaGsRMmEY+EUmzoCbywadWS/KszeuTUvseop5xEZENdNG8MmWM4t7j164vtmxZRxwnXCSAIsfS69aWVR5XjrV4jltU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709579550; c=relaxed/simple;
-	bh=o9W4znw5NysKxZeHeBecA5SEITer/EW1DME955Sy8Po=;
+	s=arc-20240116; t=1709579552; c=relaxed/simple;
+	bh=iCYfKJ0kFYzgtrazzboyA1nOY5OMP0Y0MHu/TR1n9Eg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=shbHv9aQ/cOFC02xdQXOhOH6ukyK4glh7ShUWGKVaYB0z+D23b0pp7gFFvQu2HZUOQkz7DPOXaK7iOX1By9vL1ij5GnKoPYKpxCi1JKO1AvHKWSwlVyVzrrMZxO+vyyXP5bqAj28XWd78S4wj+KYEkYQl7fAZOcNEKdcNTo+p6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RCQigQNm; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=CRtBQi1O6KebduWGxWHJR/M/8KrktYKkkqqUJSZNilqAoW09tXBjPmH/AOW5jCvetQuhREczFavxCZn1BCIJqVC8wY0CRCQorciM/riS+V9M7nD0b/VMV6iBtIySMwXe9BO5QdSd7llKr7vPjxcvKgTep/zJ9FYUvUNfDS3WEgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jMPB+RBk; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709579548;
+	s=mimecast20190719; t=1709579549;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Tg5FMjI6Vh1hHz8JgRcKgKGDcYt6qlitx1KNeKNRQZY=;
-	b=RCQigQNmfNEV02Z2xV6b7hc+LtSdIp+JLQez1koIP+GHBBZukfeEI9GsO6Q9vAp7tU90Fq
-	t3Q7n2X0KoLF+fHoFbFVoxo1U/NHsPrtlrbjKPhsGA1NFe/dzvOCRfXVfdb2U6ed8IzdJo
-	9bv8BaTMBOfJIxNzj1FRA5cBNMUJQEc=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=XIjyGj3ThYRh+HmmhdifsZuAaDeDolxvDOaonPSFEQw=;
+	b=jMPB+RBkFTJor/JHBJ2WtvdyvFUFpC6Ux8ltuq03iUEVkgivYWzDiv5pHDBdC9HhhsddN0
+	qV8G3/s/Vrmk4XPv6Hy/OMPIGbX7u5TSl9RFtZhuTmQyxYlJhkGkg7Bp81QyugJV+VaQA7
+	1atjUih46wFqhduY4aCWN2RwNQntqhQ=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-377-g6vkhmUmMougM1wzDbpy7Q-1; Mon, 04 Mar 2024 14:12:27 -0500
-X-MC-Unique: g6vkhmUmMougM1wzDbpy7Q-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-513182f4018so3373362e87.1
+ us-mta-527-EnNaJWs7M22Ocsq_QKHOAg-1; Mon, 04 Mar 2024 14:12:28 -0500
+X-MC-Unique: EnNaJWs7M22Ocsq_QKHOAg-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-5133f0f1b9bso1694270e87.2
         for <linux-fsdevel@vger.kernel.org>; Mon, 04 Mar 2024 11:12:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709579545; x=1710184345;
+        d=1e100.net; s=20230601; t=1709579546; x=1710184346;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tg5FMjI6Vh1hHz8JgRcKgKGDcYt6qlitx1KNeKNRQZY=;
-        b=CCNUCHFOmjB6I/mc0wGswjNwIbUi8Ia+5240iVbhXvAEvY9UY3seXw2ihk1ACrHXFz
-         YJWqfkxb48dAwVEcsF8PON8AbTzOJ0FoqNKBmoDzqzU40Fneic2yTLUPeyvSXS0pD//+
-         KAmRjXzqkQFLQP2QVjiRrLpomQPIg0lNVlZu2MBBJB3gjLfXzL7jQ2wXSFYZ7yauD0EA
-         FhWDKLSVGmEUU5rOQnozHdajhGi8r5gmoXW//bzm6QAl+hiEZ5dUSeSYMX2NfMtoNX42
-         QrUA1waYja/OH9CfHKFOIHPcs/DNcyaXBhj4dSaSNd5BzDjcO3zbRajOr8NCoUQirsks
-         Hdew==
-X-Forwarded-Encrypted: i=1; AJvYcCU61abOmVYbHXon+ou1eaKPE31tn78PKLabtikeef/rOj3J689wfDyB4xp8L4prpVETRnKYYGjX1VNV4TXkDY9CdhWh0n+mXpXuC69zIQ==
-X-Gm-Message-State: AOJu0YyCbUIHACDxayKx9AnkTGcaDKD5K9YBibN7VojcWpX9nO0pr7AZ
-	sojMCTC1u6EPWrUs6doCWdvtqBRb2+5zBUlW9ca4VTLSA56x3ACcfh1eR3PXL0nYAyE7S1qkfrd
-	VkL3qz70NMJdkACZKnzHipYN8/VkRsSPrYQaMUOKJ4GKN01tsdfBDEAWwQn9ezKj0zY0X3g==
-X-Received: by 2002:ac2:5593:0:b0:513:23da:9766 with SMTP id v19-20020ac25593000000b0051323da9766mr6540040lfg.55.1709579545472;
-        Mon, 04 Mar 2024 11:12:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGhcwdoaV6bOY0QfPY8E83kkcNTDRmjuWUE3Tlj+pjRh88ZfaSKm1Si1pEnq8D5WakLwp7t0g==
-X-Received: by 2002:ac2:5593:0:b0:513:23da:9766 with SMTP id v19-20020ac25593000000b0051323da9766mr6540028lfg.55.1709579545252;
-        Mon, 04 Mar 2024 11:12:25 -0800 (PST)
+        bh=XIjyGj3ThYRh+HmmhdifsZuAaDeDolxvDOaonPSFEQw=;
+        b=ntCBqJUVkuMF+Rto7wZnEnDSG0jZqYGg9Xa7HKxb+3QXUpx7sho3f9u/8wAPgxemUG
+         FiYTtkTDoI4YRGltzjGFT4pn/xG0bEc0mI3/fOOO+fAB59ziCG6bdKJXlpdiDz35IKgC
+         /0GO9iaXVGN7Nud6sFfcWrT7d3aY4A8bdirs3tzUJaQkwiv0aWHFGBSpb4QMwz3sltvp
+         khMO2RdIC769P7uXYmWmwNNVPcsR64R75igLMzjZUlYUt+YeqQwJ14NuOEzjR9jtkbzG
+         QfoqaQFRqZCJVDxDwLGI2g9tvMwUlVQ14NPq0YYFYsOPKST7hF5hIbuhJ8LomyoVT+ax
+         gZfw==
+X-Forwarded-Encrypted: i=1; AJvYcCV117a6f1PnIpZVEGDeZzhqS071ToQR1lTVQufdUMw2tnIJZ2wX+JPfMnT7p8gDShOC+LTNip+19fy5k0+z2FTRN7RN6EY0CQMonOWz0g==
+X-Gm-Message-State: AOJu0YxgSHC0iTyJQCVwZJLf1ruioRS/6ISom0RP0lOx4JDP2zv8fF4C
+	H/4zmRGRDmMFgUqvBoNGNkyTI3D8ddWijzVy/uaOnpqLGAIWwfOMmw6947hRdJrfjnv1colQMW0
+	aQ/oOM6VW8CRdqX+2WKNwgQF2vGARzvBDrT/NtFiQG/gfDvNm7Z+ef44L7kne+g==
+X-Received: by 2002:ac2:55bc:0:b0:512:bb33:2eab with SMTP id y28-20020ac255bc000000b00512bb332eabmr6263983lfg.58.1709579546702;
+        Mon, 04 Mar 2024 11:12:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFsWhH2n6f8sGCcVRKP+Ql2DOsPvlPsXH0xMAYeWcoI/5BOIZnj57KeeBn8GBeEsExnNwHY0A==
+X-Received: by 2002:ac2:55bc:0:b0:512:bb33:2eab with SMTP id y28-20020ac255bc000000b00512bb332eabmr6263977lfg.58.1709579546458;
+        Mon, 04 Mar 2024 11:12:26 -0800 (PST)
 Received: from thinky.redhat.com ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id a11-20020a1709064a4b00b00a44a04aa3cfsm3783319ejv.225.2024.03.04.11.12.24
+        by smtp.gmail.com with ESMTPSA id a11-20020a1709064a4b00b00a44a04aa3cfsm3783319ejv.225.2024.03.04.11.12.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 11:12:24 -0800 (PST)
+        Mon, 04 Mar 2024 11:12:25 -0800 (PST)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 To: fsverity@lists.linux.dev,
 	linux-xfs@vger.kernel.org,
@@ -81,9 +81,9 @@ To: fsverity@lists.linux.dev,
 	djwong@kernel.org,
 	ebiggers@kernel.org
 Cc: Andrey Albershteyn <aalbersh@redhat.com>
-Subject: [PATCH v5 16/24] xfs: add fs-verity ro-compat flag
-Date: Mon,  4 Mar 2024 20:10:39 +0100
-Message-ID: <20240304191046.157464-18-aalbersh@redhat.com>
+Subject: [PATCH v5 17/24] xfs: add inode on-disk VERITY flag
+Date: Mon,  4 Mar 2024 20:10:40 +0100
+Message-ID: <20240304191046.157464-19-aalbersh@redhat.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20240304191046.157464-2-aalbersh@redhat.com>
 References: <20240304191046.157464-2-aalbersh@redhat.com>
@@ -95,63 +95,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To mark inodes with fs-verity enabled the new XFS_DIFLAG2_VERITY flag
-will be added in further patch. This requires ro-compat flag to let
-older kernels know that fs with fs-verity can not be modified.
+Add flag to mark inodes which have fs-verity enabled on them (i.e.
+descriptor exist and tree is built).
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/libxfs/xfs_format.h | 1 +
- fs/xfs/libxfs/xfs_sb.c     | 2 ++
- fs/xfs/xfs_mount.h         | 2 ++
- 3 files changed, 5 insertions(+)
+ fs/xfs/libxfs/xfs_format.h | 4 +++-
+ fs/xfs/xfs_inode.c         | 2 ++
+ fs/xfs/xfs_iops.c          | 2 ++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-index 2b2f9050fbfb..93d280eb8451 100644
+index 93d280eb8451..3ce2902101bc 100644
 --- a/fs/xfs/libxfs/xfs_format.h
 +++ b/fs/xfs/libxfs/xfs_format.h
-@@ -353,6 +353,7 @@ xfs_sb_has_compat_feature(
- #define XFS_SB_FEAT_RO_COMPAT_RMAPBT   (1 << 1)		/* reverse map btree */
- #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
- #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
-+#define XFS_SB_FEAT_RO_COMPAT_VERITY   (1 << 4)		/* fs-verity */
- #define XFS_SB_FEAT_RO_COMPAT_ALL \
- 		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
- 		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
-diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
-index a25949843d8d..1c68785e60cc 100644
---- a/fs/xfs/libxfs/xfs_sb.c
-+++ b/fs/xfs/libxfs/xfs_sb.c
-@@ -163,6 +163,8 @@ xfs_sb_version_to_features(
- 		features |= XFS_FEAT_REFLINK;
- 	if (sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_INOBTCNT)
- 		features |= XFS_FEAT_INOBTCNT;
-+	if (sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_VERITY)
-+		features |= XFS_FEAT_VERITY;
- 	if (sbp->sb_features_incompat & XFS_SB_FEAT_INCOMPAT_FTYPE)
- 		features |= XFS_FEAT_FTYPE;
- 	if (sbp->sb_features_incompat & XFS_SB_FEAT_INCOMPAT_SPINODES)
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index e880aa48de68..f198d7c82552 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -292,6 +292,7 @@ typedef struct xfs_mount {
- #define XFS_FEAT_BIGTIME	(1ULL << 24)	/* large timestamps */
- #define XFS_FEAT_NEEDSREPAIR	(1ULL << 25)	/* needs xfs_repair */
- #define XFS_FEAT_NREXT64	(1ULL << 26)	/* large extent counters */
-+#define XFS_FEAT_VERITY		(1ULL << 27)	/* fs-verity */
+@@ -1085,16 +1085,18 @@ static inline void xfs_dinode_put_rdev(struct xfs_dinode *dip, xfs_dev_t rdev)
+ #define XFS_DIFLAG2_COWEXTSIZE_BIT   2  /* copy on write extent size hint */
+ #define XFS_DIFLAG2_BIGTIME_BIT	3	/* big timestamps */
+ #define XFS_DIFLAG2_NREXT64_BIT 4	/* large extent counters */
++#define XFS_DIFLAG2_VERITY_BIT	5	/* inode sealed by fsverity */
  
- /* Mount features */
- #define XFS_FEAT_NOATTR2	(1ULL << 48)	/* disable attr2 creation */
-@@ -355,6 +356,7 @@ __XFS_HAS_FEAT(inobtcounts, INOBTCNT)
- __XFS_HAS_FEAT(bigtime, BIGTIME)
- __XFS_HAS_FEAT(needsrepair, NEEDSREPAIR)
- __XFS_HAS_FEAT(large_extent_counts, NREXT64)
-+__XFS_HAS_FEAT(verity, VERITY)
+ #define XFS_DIFLAG2_DAX		(1 << XFS_DIFLAG2_DAX_BIT)
+ #define XFS_DIFLAG2_REFLINK     (1 << XFS_DIFLAG2_REFLINK_BIT)
+ #define XFS_DIFLAG2_COWEXTSIZE  (1 << XFS_DIFLAG2_COWEXTSIZE_BIT)
+ #define XFS_DIFLAG2_BIGTIME	(1 << XFS_DIFLAG2_BIGTIME_BIT)
+ #define XFS_DIFLAG2_NREXT64	(1 << XFS_DIFLAG2_NREXT64_BIT)
++#define XFS_DIFLAG2_VERITY	(1 << XFS_DIFLAG2_VERITY_BIT)
  
- /*
-  * Mount features
+ #define XFS_DIFLAG2_ANY \
+ 	(XFS_DIFLAG2_DAX | XFS_DIFLAG2_REFLINK | XFS_DIFLAG2_COWEXTSIZE | \
+-	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64)
++	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64 | XFS_DIFLAG2_VERITY)
+ 
+ static inline bool xfs_dinode_has_bigtime(const struct xfs_dinode *dip)
+ {
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index ea48774f6b76..59446e9e1719 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -607,6 +607,8 @@ xfs_ip2xflags(
+ 			flags |= FS_XFLAG_DAX;
+ 		if (ip->i_diflags2 & XFS_DIFLAG2_COWEXTSIZE)
+ 			flags |= FS_XFLAG_COWEXTSIZE;
++		if (ip->i_diflags2 & XFS_DIFLAG2_VERITY)
++			flags |= FS_XFLAG_VERITY;
+ 	}
+ 
+ 	if (xfs_inode_has_attr_fork(ip))
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 66f8c47642e8..0e5cdb82b231 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1241,6 +1241,8 @@ xfs_diflags_to_iflags(
+ 		flags |= S_NOATIME;
+ 	if (init && xfs_inode_should_enable_dax(ip))
+ 		flags |= S_DAX;
++	if (xflags & FS_XFLAG_VERITY)
++		flags |= S_VERITY;
+ 
+ 	/*
+ 	 * S_DAX can only be set during inode initialization and is never set by
 -- 
 2.42.0
 
