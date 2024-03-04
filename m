@@ -1,152 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-13547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C688870ABE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 20:32:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C37870AD9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 20:43:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347681F231DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 19:32:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A13C81C21506
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 19:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A2779948;
-	Mon,  4 Mar 2024 19:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HL9BNOn9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7098379B6A;
+	Mon,  4 Mar 2024 19:43:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09A37869E;
-	Mon,  4 Mar 2024 19:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55E4653A;
+	Mon,  4 Mar 2024 19:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709580716; cv=none; b=m2JJ0HJANmG4TMHPQwkO1lxcp/CaNgNxaNVtSNzfE5J0FpRAib8HG+28GUoHvMaO/EPzmCmeGFOwmsv7ks/VyUuVRXt9k8t7fTDP7CDBtSvGgf3o34xzvv1KkTGX8+f7M9ue642UqsQu6tOBvK22XReRlWQw4F2X2bGtS+dGTfE=
+	t=1709581393; cv=none; b=klvcMObzAuu0H/RCJLTwHegnsClStLQ3LvRWyu6mslb/9P8fGQYVb0Eg0sbF5hDb2L6oKuZw+E2Yo2hmazTO5k9XPkHyZjWzp4sOFNWa/1NUK8YmfHThZwGUOIg+XJRBKB1eeqCfMsSR/w5SNkuux9BEKNphMhm8j86yandpY8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709580716; c=relaxed/simple;
-	bh=/7r2yABS70a2BV6XpcMn72U5TYLEICOD6PuGQ6u/XDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o6iwOTnYHru8fzzwBX9NpESVwJjLpAXWAOqSqqqpnnTDU25EpFz71VqEX4QmsohL/pepiYyfdhyig/64ezUIIrRukFXc4ovWICQvitLKLMgQanETjDU4F62rM+I8WnvjLoL0a2L12+oNJwdXwoX5lNTLcNQ+cmT1IO1AVldRj9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HL9BNOn9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206BFC433F1;
-	Mon,  4 Mar 2024 19:31:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709580715;
-	bh=/7r2yABS70a2BV6XpcMn72U5TYLEICOD6PuGQ6u/XDI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HL9BNOn9j3nsV+vEwAQlzNMLVlrtDdXS4J70mNXFp/uhEqJNvhwYWN/WvW4mZzKHG
-	 UIXYq+hr5UgxJAoLvD7sSeWUOP438JXs/NOicgbWXu8zeLCtLyjIJRGU5918hNnMmb
-	 SXLFapzROq83bPtEHBJUGBY3RLgCJQjxchAmRLbrDybSp4r/pNdBqAVXN1nF3WrYfi
-	 YGVPJ3xN46B9mZ1LQHMh4yWUfJY5SMwpoNxJZf2+AsJTCjuCvhhy/J8Gnph+tl+tw/
-	 jmDhc5fk/Ep3wMIUNS7vQSP9ruXaT9W2VgfT43DjOD0v4003LRSn/W7pzwIC61xhof
-	 judK6rA9UFsiw==
-Date: Mon, 4 Mar 2024 11:31:53 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Benjamin LaHaise <ben@communityfibre.ca>,
-	Avi Kivity <avi@scylladb.com>, Sandeep Dhavale <dhavale@google.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>, stable@vger.kernel.org,
-	syzbot+b91eb2ed18f599dd3c31@syzkaller.appspotmail.com
-Subject: Re: [PATCH] Revert "fs/aio: Make io_cancel() generate completions
- again"
-Message-ID: <20240304193153.GC1195@sol.localdomain>
-References: <20240304182945.3646109-1-bvanassche@acm.org>
+	s=arc-20240116; t=1709581393; c=relaxed/simple;
+	bh=g4BE9SgKCtefxG89FH1WH3YUWls3hEfAM41n89RBJ9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pCvN5WZlfXxhO1Bevp+N6z+RU4L705Bt5o/t/soFCk4wARL8W/Px/Adai/iy1fL8UGFtA3ZlqOzrnLPZeTPW6aQ4awlNml875mYBKChGSykvax3KQR/eCpNTpTDTmL9TaWBuKyZ1/LYdkmenXRmZ3FL7xUVjUTzAYnjdZXNkS8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-5cf2d73a183so4304549a12.1;
+        Mon, 04 Mar 2024 11:43:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709581391; x=1710186191;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lOJxNPPzSVXqD3aagskQD2Ydr+bCaePzg4Tv2ZpuDdI=;
+        b=a6dRe+O2iO/xo0I4zZftI8VSoSQwvAAIm6cGqFpz3Uqsazyqr4szsDGwdHxtfMrOMB
+         vkKjoZC3QEkdrOAX9vDNvaWnn2OepigTR62bxfRpl1kFqqlXGeUXtD6YGnBJaz306iff
+         gy2yH7AUaFj3MHpzk7IvruJd3ADZr1IxtrOsCrlHu9dm83F+MGS7S8k5DOcV4cLMMdXC
+         iaCh2TrwkGLlXgTfdpEuO4LN/zFQLqhDdmS0Bf7YsuqXVTbr4NiWbzyOeqo6GCXc33H/
+         5NR9Geb06HCSGnbRDFGhdUj6S0bbmUiHfYj8aKhAB4725QnyVd8NyXjlAB7TRU/GA6ue
+         NYjw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6/xO1eeFQQWDjMSsKw66l+GOyrDLV5rY2+9awfAVnrWbZRq/JcSNgjW7wTCGvqky/imtayW1Pdom1puiPJmts+hRRUMiisEzwsT8u+pGlSOzCmmMEtRWn4IevoDzX6Txh2I8F+Q==
+X-Gm-Message-State: AOJu0YzrgzwIibl/k4xTWifk05agWMtEegnk6AhC9V1qgeed70Jl0J0b
+	7ZCHWXKZtHHHmsj5I80BoGJkH3Lk+0x9xucRdK+IH2PhfLmqxqFB
+X-Google-Smtp-Source: AGHT+IGGtb3+zcEUDFEGBym9/lHtcgKiWmjGgpb4yuKXaoo3nJv91szPGYzRL8fLTXFcrSHtJ1OziA==
+X-Received: by 2002:a17:90a:b107:b0:29a:f199:1647 with SMTP id z7-20020a17090ab10700b0029af1991647mr555668pjq.1.1709581390965;
+        Mon, 04 Mar 2024 11:43:10 -0800 (PST)
+Received: from ?IPV6:2620:0:1000:8411:9ba8:35e8:4ec5:44d1? ([2620:0:1000:8411:9ba8:35e8:4ec5:44d1])
+        by smtp.gmail.com with ESMTPSA id kn11-20020a17090b480b00b00299101c1341sm8326806pjb.18.2024.03.04.11.43.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Mar 2024 11:43:10 -0800 (PST)
+Message-ID: <90c96981-cd7a-4a4c-aade-7a5cfc3fd617@acm.org>
+Date: Mon, 4 Mar 2024 11:43:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240304182945.3646109-1-bvanassche@acm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O
+ submitted via libaio
+Content-Language: en-US
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+ Avi Kivity <avi@scylladb.com>, Sandeep Dhavale <dhavale@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>, stable@vger.kernel.org
+References: <20240215204739.2677806-1-bvanassche@acm.org>
+ <20240215204739.2677806-2-bvanassche@acm.org>
+ <20240304191047.GB1195@sol.localdomain>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240304191047.GB1195@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 04, 2024 at 10:29:44AM -0800, Bart Van Assche wrote:
-> Patch "fs/aio: Make io_cancel() generate completions again" is based on the
-> assumption that calling kiocb->ki_cancel() does not complete R/W requests.
-> This is incorrect: the two drivers that call kiocb_set_cancel_fn() callers
-> set a cancellation function that calls usb_ep_dequeue(). According to its
-> documentation, usb_ep_dequeue() calls the completion routine with status
-> -ECONNRESET. Hence this revert.
+On 3/4/24 11:10, Eric Biggers wrote:
+> If I understand correctly, this patch is supposed to fix a memory safety bug
+> when kiocb_set_cancel_fn() is called on a kiocb that is owned by io_uring
+> instead of legacy AIO.  However, the kiocb still gets accessed as an aio_kiocb
+> at the very beginning of the function, so it's still broken:
 > 
-> Cc: Benjamin LaHaise <ben@communityfibre.ca>
-> Cc: Eric Biggers <ebiggers@google.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Avi Kivity <avi@scylladb.com>
-> Cc: Sandeep Dhavale <dhavale@google.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: stable@vger.kernel.org
-> Reported-by: syzbot+b91eb2ed18f599dd3c31@syzkaller.appspotmail.com
-> Fixes: 54cbc058d86b ("fs/aio: Make io_cancel() generate completions again")
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> ---
->  fs/aio.c | 27 ++++++++++++++++-----------
->  1 file changed, 16 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 28223f511931..da18dbcfcb22 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -2165,11 +2165,14 @@ COMPAT_SYSCALL_DEFINE3(io_submit, compat_aio_context_t, ctx_id,
->  #endif
->  
->  /* sys_io_cancel:
-> - *	Attempts to cancel an iocb previously passed to io_submit(). If the
-> - *	operation is successfully cancelled 0 is returned. May fail with
-> - *	-EFAULT if any of the data structures pointed to are invalid. May
-> - *	fail with -EINVAL if aio_context specified by ctx_id is invalid. Will
-> - *	fail with -ENOSYS if not implemented.
-> + *	Attempts to cancel an iocb previously passed to io_submit.  If
-> + *	the operation is successfully cancelled, the resulting event is
-> + *	copied into the memory pointed to by result without being placed
-> + *	into the completion queue and 0 is returned.  May fail with
-> + *	-EFAULT if any of the data structures pointed to are invalid.
-> + *	May fail with -EINVAL if aio_context specified by ctx_id is
-> + *	invalid.  May fail with -EAGAIN if the iocb specified was not
-> + *	cancelled.  Will fail with -ENOSYS if not implemented.
->   */
->  SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
->  		struct io_event __user *, result)
-> @@ -2200,12 +2203,14 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
->  	}
->  	spin_unlock_irq(&ctx->ctx_lock);
->  
-> -	/*
-> -	 * The result argument is no longer used - the io_event is always
-> -	 * delivered via the ring buffer.
-> -	 */
-> -	if (ret == 0 && kiocb->rw.ki_flags & IOCB_AIO_RW)
-> -		aio_complete_rw(&kiocb->rw, -EINTR);
-> +	if (!ret) {
-> +		/*
-> +		 * The result argument is no longer used - the io_event is
-> +		 * always delivered via the ring buffer. -EINPROGRESS indicates
-> +		 * cancellation is progress:
-> +		 */
-> +		ret = -EINPROGRESS;
-> +	}
+> 	struct aio_kiocb *req = container_of(iocb, struct aio_kiocb, rw);
+> 	struct kioctx *ctx = req->ki_ctx;
 
-Acked-by: Eric Biggers <ebiggers@google.com>
+Hi Eric,
 
-It does look like all the ->ki_cancel functions complete the request already, so
-this patch was unnecessary and just introduced a bug.
+Thanks for having reported this. I agree that this needs to be fixed.
 
-Note that IOCB_CMD_POLL installs a ->ki_cancel function too, and that's how
-syzbot hit the use-after-free so easily.
+> I'm also wondering why "ignore" is the right fix.  The USB gadget driver sees
+> that it has asynchronous I/O (kiocb::ki_complete != NULL) and then tries to set
+> a cancellation function.  What is the expected behavior when the I/O is owned by
+> io_uring?  Should it perhaps call into io_uring to set a cancellation function
+> with io_uring?  Or is the concept of cancellation functions indeed specific to
+> legacy AIO, and nothing should be done with io_uring I/O?
 
-I assume that the patch just wasn't tested?  Or did you find that it actually
-fixed something (how)?
+As far as I know no Linux user space interface for submitting I/O 
+supports cancellation of read or write requests other than the AIO
+io_cancel() system call.
 
-By the way, libaio (https://pagure.io/libaio) has a test suite for these system
-calls.  How about adding a test case that cancels an IOCB_CMD_POLL request and
-verifies that the completion event is received?
+It would make it easier to maintain the kernel if I/O cancellation
+support would be removed. However, there is existing user space code
+that depends on USB I/O cancellation so I'm not sure how to proceed to 
+remove AIO io_cancel() support from the kernel.
 
-- Eric
+Thanks,
+
+Bart.
 
