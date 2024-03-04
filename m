@@ -1,102 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-13421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1BB86F91B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 04:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA7F86F99C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 06:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377002815ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 03:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F8F2810CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 05:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639F453A6;
-	Mon,  4 Mar 2024 03:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E4253A6;
+	Mon,  4 Mar 2024 05:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="inTuET2+"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vjxF6Otp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BF779C5;
-	Mon,  4 Mar 2024 03:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE454C64
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 05:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709524433; cv=none; b=a8pfdDHNONRj4Dx47OEiFabhBbdTJ075V4rMZgST9NMnWRjlgrDAHVYi8WTNsL+zoaEEo+TmZYBvllBlBDzCZgCggeK6SRebe1echkyor6Cuuh3tv/ll3rZpMrqZWM4vZ8/aW83NTg6LmxaQDlBkDvEBHIv7uhiApo0srxFjHqI=
+	t=1709530473; cv=none; b=Ixm0dFDUGTY/62p1dCNfmR4Sl2PwnS4LqZsNPaQzU95noRLgU19008XpUhgeZVTZdfggA8HXi5DkYzF3QcYcVd7KNk9tuPCpNJshzJL6OSSXbwS8XEwU+VHvggm7Nzarkvx66VI9imVA6i5JdZ39/rJ+CQiXSPYI05wQU2A78K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709524433; c=relaxed/simple;
-	bh=QKe2AxQ/+t/EQnE1vD/TQouAhYU7yxxiqzEWgcoRQiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ALNOWgFrZqKzmUAz2P/FRi+Ver8/coU5St2w1HBbmX948G650Nl3aE/6UZd5C6sjQZf3onZmYltK4+AqIVk5Ajfnmcl9cnoq8GgyC0CSB1750AdknOGfS30q0nmM3SfjrZYMKIH45n3tT9SSqweGRzhK8K7a1KCegPR7ERg5XBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=inTuET2+; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1709524427; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=tWOaTiza0KnzciAsTzWfF+Y4WXogwxZOxLtOTQabvJ4=;
-	b=inTuET2+qMGADqrwQuYcNSAZJj382UhLKjb2IzT1WXiUZJlVKsUGSRKhLHsAud+5HnBO6UgXLn6sCXY85suDOMpfJ1id1EfvyMFFNrvNxTj1jRsv6+9IW13TFqLHf+guPWK3YKch/E6rsP8qDk8c7oTafzSv8FVUmfTOKqPFJ00=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0W1iD3p9_1709524421;
-Received: from e69b19392.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W1iD3p9_1709524421)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Mar 2024 11:53:47 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	syzkaller-bugs@googlegroups.com,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	syzbot+7bc44a489f0ef0670bd5@syzkaller.appspotmail.com
-Subject: [PATCH] erofs: fix uninitialized page cache reported by KMSAN
-Date: Mon,  4 Mar 2024 11:53:39 +0800
-Message-Id: <20240304035339.425857-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <ab2a337d-c2dd-437d-9ab8-e3b837f1ff1a@I-love.SAKURA.ne.jp>
-References: <ab2a337d-c2dd-437d-9ab8-e3b837f1ff1a@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1709530473; c=relaxed/simple;
+	bh=i1SKxi1xr4fmO02OcvcqNgS+Gogn9Vcq3DXB7CeY8wY=;
+	h=Mime-Version:Subject:From:To:CC:Message-ID:Date:Content-Type:
+	 References; b=o98FiMirj9zoI6ZlQHToTa9m1cqYdKiLd2lVtFZpeKYd4i3lsn07jn5/8PmfTxVWKlQ88n5uvDJJP24Ok8lGvS9Cr45ihLfXE4FeOQKo+MJC3xF1vVp/gMH5LIsyZ04JOLv+C+zd8X3WxRoI2rd45iEdOhsitTfCak8rcfxjtcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vjxF6Otp; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240304052802epoutp0136750e738a58899d72bc21ae285ef0ac~5eI2DqoCj0607106071epoutp01C
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 05:28:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240304052802epoutp0136750e738a58899d72bc21ae285ef0ac~5eI2DqoCj0607106071epoutp01C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1709530082;
+	bh=i1SKxi1xr4fmO02OcvcqNgS+Gogn9Vcq3DXB7CeY8wY=;
+	h=Subject:Reply-To:From:To:CC:Date:References:From;
+	b=vjxF6OtpvdA/MDkbufDdTMGrDok9CM9aSfw45n/vij5qP71ehc4isP+isSKKOLDSb
+	 dx3nkp9xMHTAkgP9UvKWfN/ldJt9S92L/ctFQl7fFA+jiWw86LARBkwYRhwQBpG/go
+	 /JuWMM5Ks8vrp/i12XGBCjTy62nt+Zy7CT3+zne0=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240304052802epcas1p1c5ec6239e0a6edd99f2750bccad70401~5eI1W1FE21232312323epcas1p1U;
+	Mon,  4 Mar 2024 05:28:02 +0000 (GMT)
+Received: from epcpadp4 (unknown [182.195.40.18]) by epsnrtp4.localdomain
+	(Postfix) with ESMTP id 4Tp6fT6hn8z4x9QC; Mon,  4 Mar 2024 05:28:01 +0000
+	(GMT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Subject: RE: [PATCH v2 02/10] exfat: add exfat_get_empty_dentry_set() helper
+Reply-To: sj1557.seo@samsung.com
+Sender: =?UTF-8?B?7ISc7ISx7KKF?= <sj1557.seo@samsung.com>
+From: =?UTF-8?B?7ISc7ISx7KKF?= <sj1557.seo@samsung.com>
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>, "linkinjeon@kernel.org"
+	<linkinjeon@kernel.org>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"Andy.Wu@sony.com" <Andy.Wu@sony.com>, "Wataru.Aoyama@sony.com"
+	<Wataru.Aoyama@sony.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <1891546521.01709530081906.JavaMail.epsvc@epcpadp4>
+Date: Mon, 04 Mar 2024 13:43:15 +0900
+X-CMS-MailID: 20240304044315epcms1p103d43bd4cfac0cdae0c17a5fd75d1527
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+X-ArchiveUser: EV
+X-Hop-Count: 3
+X-CMS-RootMailID: 20231228065938epcas1p3112d227f22639ca54849441146d9bdbf
+References: <CGME20231228065938epcas1p3112d227f22639ca54849441146d9bdbf@epcms1p1>
 
-syzbot reports a KMSAN reproducer [1] which generates a crafted
-filesystem image and causes IMA to read uninitialized page cache.
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0for (i =3D 0; i < es->num_entries; i++) =
+{
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ep =3D exfat=
+_get_dentry_cached(es, i);
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (ep->type=
+ =3D=3D EXFAT_UNUSED)
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0unused_hit =3D true;
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0else if (IS_=
+EXFAT_DELETED(ep->type)) {
+> >
+> > Although it violates the specification for a deleted entry to follow
+> > an unused entry, some exFAT implementations could work like this.
+> >
+> > Therefore, to improve compatibility, why don't we allow this?
+> > I believe there will be no functional problem even if this is allowed.
+>
+> This check existed before this patch set.
+Do you mean the part that will be deleted by the patch [7/10] mentioned bel=
+ow?
+If so, I think you may be misunderstanding it.
 
-Later, (rq->outputsize > rq->inputsize) will be formally supported
-after either large uncompressed pclusters (> block size) or big
-lclusters are landed.  However, currently there is no way to generate
-such filesystems by using mkfs.erofs.
+>
+> This patch set is intended to improve the performance of sync dentry, I
+> don't think it is a good idea to change other logic in this patch set.
+Yeah, as you said, this patch set should keep the original logic except
+for the sync related parts. The reason I left a review comment is because
+the code before this patch set allows deleted dentries to follow unused
+dentries.
 
-Thus, let's mark this condition as unsupported for now.
+Please let me know if I missed anything.
 
-[1] https://lore.kernel.org/r/0000000000002be12a0611ca7ff8@google.com
-
-Reported-by: syzbot+7bc44a489f0ef0670bd5@syzkaller.appspotmail.com
-Fixes: 1ca01520148a ("erofs: refine z_erofs_transform_plain() for sub-page block support")
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/decompressor.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
-index d4cee95af14c..2ec9b2bb628d 100644
---- a/fs/erofs/decompressor.c
-+++ b/fs/erofs/decompressor.c
-@@ -323,7 +323,8 @@ static int z_erofs_transform_plain(struct z_erofs_decompress_req *rq,
- 	unsigned int cur = 0, ni = 0, no, pi, po, insz, cnt;
- 	u8 *kin;
- 
--	DBG_BUGON(rq->outputsize > rq->inputsize);
-+	if (rq->outputsize > rq->inputsize)
-+		return -EOPNOTSUPP;
- 	if (rq->alg == Z_EROFS_COMPRESSION_INTERLACED) {
- 		cur = bs - (rq->pageofs_out & (bs - 1));
- 		pi = (rq->pageofs_in + rq->inputsize - cur) & ~PAGE_MASK;
--- 
-2.39.3
-
+> Patch [7/10] moves the check from exfat_search_empty_slot() to
+> exfat_validate_empty_dentry_set().
+>
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (hint_femp->eidx !=3D EXFAT_HIN=
+T_NONE &&
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0 hint_femp->count =3D=
+=3D CNT_UNUSED_HIT) {
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* unu=
+sed empty group means
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * an =
+empty group which includes
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * unu=
+sed dentry
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 */
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0exfat_=
+fs_error(sb,
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0"found bogus dentry(%d) beyond
+> unused empty group(%d) (start_clu : %u, cur_clu : %u)",
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0dentry, hint_femp->eidx,
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0p_dir->dir, clu.dir);
+>
+> >
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0if (unused_hit)
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto out;
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0} else {
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0if (unused_hit)
+> > > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto out;
+> > Label "out" does not look like an error situation.
+> > Let's use "out_err" instead of "out".
+>
+> Makes sense, I will rename the label to "err_deleted_after_unused".
+Sounds good :)
 
