@@ -1,129 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-13545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED817870A6D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 20:14:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F68870A22
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 20:11:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8ABC280E45
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 19:14:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 986C3B23BE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 19:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301737E0F1;
-	Mon,  4 Mar 2024 19:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDA778B5A;
+	Mon,  4 Mar 2024 19:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XzW4L2+J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGp6x3/u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272DD7E10E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 19:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8915278B50;
+	Mon,  4 Mar 2024 19:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709579559; cv=none; b=dIJBEeyEhEfjr9X+TkAlAvM+ph9I/t3S4SfCUceR35WKxV5l+a5ri+5/CjUzl7O9WSv+WvlqW+1dXSclTfAAMUC94ApEqllDHPlDtxNXpP2M6sPVXmyQuO4FbkWWYjlTB38aPE8znLRKOkBQ5swg61vtVDrUNc4r6EGpvhEOYqs=
+	t=1709579449; cv=none; b=iSkCV8zksgKr++fpBtz8BQ0yuOyLhODEAVLuYLRAwIgzOxGEyqN6BOw9hxj9ofBZtCwgNAChda4CFLHpBRB69gKexJbioM1b1AlEYv4JbsdgyMj1D5vgmv7GVHUjZ9Rhlq+t113Nwfo55I0S7wekZPOe2YS7DlISAiPZG3mIktA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709579559; c=relaxed/simple;
-	bh=Vv6pshJlKGTE98xSJNd6Xk8HKI+ZQ4JRPxzDEoR1Lmg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yw0YsDfU6QtyVEEtppzQY4wgLuF2ijTnRUd88SFK76Le02JchfZiIBJaRX3zm+MnH8bP0/jrW3+SgBQ8K6jYHuWDZHt/0eMnmqBwTeO9LvEMqtJjFMYjcU/+tlrb5QeQd+6Lf6m++stO47VW/rTYo2fZEqAPJpvh5+c7fmkhqXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XzW4L2+J; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709579557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZV6cPRqKx5ix6M5gdtJYtyedkYWhw05+92IPp1Ctzuk=;
-	b=XzW4L2+JTIf+Pffe8MwWmFgZyEdu6PvWTow+HgGdjsUta5DP15k17e362Oln+5lTquBEC5
-	RSb/JhOLZVPfpHcmLteFXKu1z16B9NirY8Q4qLcvxoHtqqddUKGSRVfkBcJ4bexXjNV4Nv
-	9k9kNsUcd5Q2jFO7eiEAoqmFAVBp6kA=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-643-_eiujDMNO1qDGzdbbFHR0g-1; Mon, 04 Mar 2024 14:12:36 -0500
-X-MC-Unique: _eiujDMNO1qDGzdbbFHR0g-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a357c92f241so345844166b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Mar 2024 11:12:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709579554; x=1710184354;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZV6cPRqKx5ix6M5gdtJYtyedkYWhw05+92IPp1Ctzuk=;
-        b=vryQ4l0sX7Jc1WZgXYxw+NK0MfgoyTSJL7+wpR0m1kFWm8psDeKq2uWVXdG05xwM4m
-         j6eQ7PfO39KtNWiUq3wqnOWYsobzerBoOidseIJhOgEBqTvbP+Tg2WgYWOcR6eZs6PpT
-         bGjQbxTN09PqQJa5g8HsHvBWH4/2kDbYeCUDPUol94aCGGgi5WNm4pBwtbUheI68jm76
-         xUu/+EGMxCmiXDaENtZrSU2h/7ohzXU1dR6oTmNUsr429Wl4ll3NIuvutaEASg3+RXdE
-         LiA+4lEE2fn0oPOdu45IFECeF7lTMT8y5Ow+GyyNWwzQsbwkygbsLTHqZDdpdALwgzSp
-         NY6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXChIXv/rS+jo6pycciEBIEpdcIRTehaXLkDzfSqRXYbFT7ktwhj1+vXLM4TWCtZgCZ5Z8xF20yzxkq2T7wWHOeyIyomt29UDFWVDLXhw==
-X-Gm-Message-State: AOJu0YyrwKRVKc0E9JowbSvJqNSVQd+kQZGY6WlUDiA/D8ES42pnH9Ua
-	SBH4eOjZpnVfnvNlsGY1fSWxAgIxVfcJoXTNhPQVhq68tuGLxT+0nGp0Etqo8UxA5wOFdto2tup
-	kKMk3uSPlJUGtLX+dG1EhqkUSrVC9womMZjAKFiAjbQOl2057SaEXm1oVJX+Efw==
-X-Received: by 2002:a17:906:a3cd:b0:a45:1f03:4f23 with SMTP id ca13-20020a170906a3cd00b00a451f034f23mr3215552ejb.52.1709579554822;
-        Mon, 04 Mar 2024 11:12:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEr0NI1aFj9SyMPj6KLK6wqTh72eLYmQdqNJLscKrLdEp90sMnUKsBE06KkZVd9YcuteqLjDA==
-X-Received: by 2002:a17:906:a3cd:b0:a45:1f03:4f23 with SMTP id ca13-20020a170906a3cd00b00a451f034f23mr3215547ejb.52.1709579554621;
-        Mon, 04 Mar 2024 11:12:34 -0800 (PST)
-Received: from thinky.redhat.com ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id a11-20020a1709064a4b00b00a44a04aa3cfsm3783319ejv.225.2024.03.04.11.12.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 11:12:33 -0800 (PST)
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	chandan.babu@oracle.com,
-	djwong@kernel.org,
-	ebiggers@kernel.org
-Cc: Andrey Albershteyn <aalbersh@redhat.com>
-Subject: [PATCH v5 24/24] xfs: enable ro-compat fs-verity flag
-Date: Mon,  4 Mar 2024 20:10:47 +0100
-Message-ID: <20240304191046.157464-26-aalbersh@redhat.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20240304191046.157464-2-aalbersh@redhat.com>
-References: <20240304191046.157464-2-aalbersh@redhat.com>
+	s=arc-20240116; t=1709579449; c=relaxed/simple;
+	bh=qDXQZV9g9URQJWyf/qmL5My5YsfLz7i43QNkKvtw1Iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sSJeQiJlPY5bmeYFl1AuvN6QgcKBgfjASzpzdQ3/OoOMaUBHYjqHWxNArZ1I2xfl7LZoQYLOisBya6f7/k5dPKuym5P6IBAxG0ly8LdtXeQ8Xy5fvXO8qOyBW3IhK8nRLA3xwEVXMQ7wEOee7y5FqByLijzJUmSED0ZgUlp9gKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGp6x3/u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B40E1C433F1;
+	Mon,  4 Mar 2024 19:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709579449;
+	bh=qDXQZV9g9URQJWyf/qmL5My5YsfLz7i43QNkKvtw1Iw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PGp6x3/uLvlmb5CN7G5MkD2WZTAWvOBAYCnC8/o/rcttSM8T+XxQhQChN3t1nyXG9
+	 EEPMCisBP4jqkLXLHX5w10LihtiVZSzjL5YDpDNPJ67Fw4g4xiQb/zg4ZSDuhvz/xx
+	 URJ7RrtDJq+6eWhBpxkrFFEtVDWMilctbl9ufDI6q/uy+19tetf0tZ0Orjc81Ndc1m
+	 00hKxDapZ95pbhPuyp51eHONqaqD/92KmWK01NL9q1L/lAEyJbQZ/PILFWq11Iyx5C
+	 zMH9zqf75rUCSuFz25at/HVRzASmvUQWnBo1062nOzrCFXkSBeQL3Hxd/xdzts11m3
+	 UPJaOVlcB/tNw==
+Date: Mon, 4 Mar 2024 11:10:47 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>, Avi Kivity <avi@scylladb.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>, stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O
+ submitted via libaio
+Message-ID: <20240304191047.GB1195@sol.localdomain>
+References: <20240215204739.2677806-1-bvanassche@acm.org>
+ <20240215204739.2677806-2-bvanassche@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240215204739.2677806-2-bvanassche@acm.org>
 
-Finalize fs-verity integration in XFS by making kernel fs-verity
-aware with ro-compat flag.
+On Thu, Feb 15, 2024 at 12:47:38PM -0800, Bart Van Assche wrote:
+> void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
+> {
+>	struct aio_kiocb *req = container_of(iocb, struct aio_kiocb, rw);
+>	struct kioctx *ctx = req->ki_ctx;
+>	unsigned long flags;
+>  
+> +	/*
+> +	 * kiocb didn't come from aio or is neither a read nor a write, hence
+> +	 * ignore it.
+> +	 */
+> +	if (!(iocb->ki_flags & IOCB_AIO_RW))
+> +		return;
+> +
+>  	if (WARN_ON_ONCE(!list_empty(&req->ki_list)))
+>  		return;
+>  
 
-Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
----
- fs/xfs/libxfs/xfs_format.h | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+If I understand correctly, this patch is supposed to fix a memory safety bug
+when kiocb_set_cancel_fn() is called on a kiocb that is owned by io_uring
+instead of legacy AIO.  However, the kiocb still gets accessed as an aio_kiocb
+at the very beginning of the function, so it's still broken:
 
-diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-index 3ce2902101bc..be66f0ab20cb 100644
---- a/fs/xfs/libxfs/xfs_format.h
-+++ b/fs/xfs/libxfs/xfs_format.h
-@@ -355,10 +355,11 @@ xfs_sb_has_compat_feature(
- #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
- #define XFS_SB_FEAT_RO_COMPAT_VERITY   (1 << 4)		/* fs-verity */
- #define XFS_SB_FEAT_RO_COMPAT_ALL \
--		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
--		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
--		 XFS_SB_FEAT_RO_COMPAT_REFLINK| \
--		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT)
-+		(XFS_SB_FEAT_RO_COMPAT_FINOBT  | \
-+		 XFS_SB_FEAT_RO_COMPAT_RMAPBT  | \
-+		 XFS_SB_FEAT_RO_COMPAT_REFLINK | \
-+		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT| \
-+		 XFS_SB_FEAT_RO_COMPAT_VERITY)
- #define XFS_SB_FEAT_RO_COMPAT_UNKNOWN	~XFS_SB_FEAT_RO_COMPAT_ALL
- static inline bool
- xfs_sb_has_ro_compat_feature(
--- 
-2.42.0
+	struct aio_kiocb *req = container_of(iocb, struct aio_kiocb, rw);
+	struct kioctx *ctx = req->ki_ctx;
 
+I'm also wondering why "ignore" is the right fix.  The USB gadget driver sees
+that it has asynchronous I/O (kiocb::ki_complete != NULL) and then tries to set
+a cancellation function.  What is the expected behavior when the I/O is owned by
+io_uring?  Should it perhaps call into io_uring to set a cancellation function
+with io_uring?  Or is the concept of cancellation functions indeed specific to
+legacy AIO, and nothing should be done with io_uring I/O?
+
+- Eric
 
