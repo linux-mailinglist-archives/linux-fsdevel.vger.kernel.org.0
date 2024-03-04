@@ -1,166 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-13555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622BC870C3C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 22:16:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464B8870C9D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 22:27:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C442A1F216AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 21:16:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0222628613D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 21:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3251CAA9;
-	Mon,  4 Mar 2024 21:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="dz/v6tqK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FCF7BAE2;
+	Mon,  4 Mar 2024 21:27:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23331118C
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 21:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316DB7B3F9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 21:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709586997; cv=none; b=Xuxq4Bkqdkq2SSHDeiVT86DOixjKiHZtJEkfgjYADJqoQ8nHTywojZ0V8qKBi2ngpiyP1v8zzGgEbQtdjMYh3ymt2r39UxepnyLK6R1z+Oq6H+/QwLHYk7HDQdHE1C1sBKCp6i/Qj2Ty5Pe8vSpoOfkpJLQ2jOFLX+6e1ur3AEc=
+	t=1709587624; cv=none; b=lAOq2nMcHVWFff+vY2sCXzbtlQPv2Mjd2MpWD+0SmlV/Gr9vmR3ROz+TpWh8ur/5jGJFEa6KwsdwAYo+Xapu/0SESmlfh3h5zeKJqIx3eOCnJhqj0npW1C4y4636/Sy8X+V0zadz1ch2Jcb9CTwigouWkuV5C/y/JYdsW/u2fkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709586997; c=relaxed/simple;
-	bh=DwGDQUhSCU7Y4nG/PPFIcs2jOQysKOkH+7ODTg8yZRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nPyZHHF1Bb4UuRVhcjwM7TzOcVRV27TEZ24UOCBxfmhv0l/2SRf3kL1mcJNaiBbNKIIkEMOGYmm0hUxzK1n0Nt4pCEjkQjD/MHJb5+p7sXtnG+8K759gWsVfBCyknHH6oNCq4Ma7Bm/WbyXYBRbV6nw7Izjqbb7MRYPBEEhuPdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=dz/v6tqK; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1dcad814986so44731445ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Mar 2024 13:16:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709586995; x=1710191795; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ht77Rh9chZwrT9wMUxlqK6jHiux3/iT7+lTeKLVMP6A=;
-        b=dz/v6tqKCY/UBYsAxcRU13l3FFHsgxgNNzFAc97en43I2g8vM34ha173ymmwCH+fMR
-         nwLi31MUF6Z97c29W7lT5pPo6HrYFYOpNofnsxeZY/rMwG/9pTRnie1fnPscPLHYIY52
-         4WNLglGM7/YmcRLLriu4ZV1r/wvgyqC9lZo32wnp4KE05BEg9H7LngJz2p2uzQBizIpD
-         Ki3nqsnmWqVmfklmdR6YnugKCNs9Fs/r1OsNuhcYksiUr5S949HKNYZNR/fssGq1lqTt
-         vMuvNSDl9cJdo7eXefXgWVTgQkGE68FOHEenRuv4XeEFpsQcJx0TXh3Wr/gfBYfZslbS
-         KvdQ==
+	s=arc-20240116; t=1709587624; c=relaxed/simple;
+	bh=7OIRGJZUwt4n9PdtYeKoGZSG9ijxy+x04qpKy/W6QxI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sSInRZtmMZHgPaGes0BxHdF/YYoICcJfpFBOHqJsFztd1FXcKE5nRiR/6VdI9Vpx6T8of3auL1YXyfnIuPBGdUAFA7YBjcZaFbETYskBJkPipwj2pVJdx18TFpWuCW7oKtBk6vV6RN/qlJH2ATt50QfCBL38TTICA/83YFSnPGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7c7857e6cb8so678120639f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Mar 2024 13:27:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709586995; x=1710191795;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ht77Rh9chZwrT9wMUxlqK6jHiux3/iT7+lTeKLVMP6A=;
-        b=P7NmKJ4iiJ/PzEwFE9IvLlyVC2dHoGKGxeU2thOuPKt4J4D2RlP8a6qKOy4l1vCNMi
-         HoKVrlspwvqN3FUxxPNO+u7bKWG9zUKB54HrNKHZWw+aBqqBkJd9WM9Prw/uK2zQravT
-         d0IB80x3nQ14I6F+48nfmjpXwa706QI14hV1O/+KX3Jg0f1h7IFMTHFBvcdcXB03s/GP
-         r/Jeqb6mqraiwz0tjrWYL0Q3iMWy+Sm5hU/JK6bOoxbZgxzjeyTRFfd6yD6AGwbSD0Wy
-         y4DXXnBdno9CJcoK3tct/zk3070culpu5BV4a7x+VqZXabzQoTiWIWbAVMhfm7fr0VJi
-         wwQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsIxYu3x9sZMXLgd88FCmk3MRoc0JO7NaJgITZjhmFOSCKx4lb+40no4R3CwwPk69oR+xDuVlYTveQD8sRxPXgFll6u2fTllJ2d68ikA==
-X-Gm-Message-State: AOJu0YydUgdzW9wQIA72kfftmUF+RECZNHAtSBnF1WT5QkTLlztQRUuH
-	nZTa1GtSy5Ls6ND617gqSZUlBIOOZsRI41hj7ktv4UdtrvENpHF+Pom33o/GHdI=
-X-Google-Smtp-Source: AGHT+IFtDdeII6LXDpO349Taby8wKoqZ7HHSL+QvN62Uu9JmHDBN1LAtjB0yvQGqN54fIdfCkUYpGA==
-X-Received: by 2002:a17:903:246:b0:1db:fa72:25eb with SMTP id j6-20020a170903024600b001dbfa7225ebmr11770883plh.52.1709586994977;
-        Mon, 04 Mar 2024 13:16:34 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-192-230.pa.nsw.optusnet.com.au. [49.181.192.230])
-        by smtp.gmail.com with ESMTPSA id e5-20020a17090301c500b001dc11f90512sm8953929plh.126.2024.03.04.13.16.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 13:16:34 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rhFfi-00F4GR-3C;
-	Tue, 05 Mar 2024 08:16:31 +1100
-Date: Tue, 5 Mar 2024 08:16:30 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 3/4] xattr: Use dedicated slab buckets for setxattr()
-Message-ID: <ZeY6Lv4rfUyFHgOr@dread.disaster.area>
-References: <20240304184252.work.496-kees@kernel.org>
- <20240304184933.3672759-3-keescook@chromium.org>
+        d=1e100.net; s=20230601; t=1709587622; x=1710192422;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ieJ7vArxQ23QAB9KZQ2E29yL0CVdR5bt1wIM+GBalqk=;
+        b=XfxZgCp2WvCKgi+aPq0R1kbiXwMziO74tZmwO7lM1DIs82aE9LRzyEBcdhYUUVg3Is
+         83vR1Gr+oC4krG7rDfLq510JNqgar6HztRRqwrXin5MxsBAcMfw1dMqfR1DBztgLO4rH
+         tyzlwxTAOsgISeVFWooEDp6StWESkpyK52qrt3GbD5r3mOTpFQcql91i6GhjGcsNeCbo
+         xC9Ve7I4hEboRIQ0Qh14n8atPmitHabOmqgWICEB12Tv8WAMBmP0Wcs/i8pSA+c+xAwe
+         fw3ZWIfv68e6sNE9bc/FspLabITCZpZwQtGX2Au1vYmifhzB90L6FzfQSNfomfxGJ8pz
+         /beA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO1dKxzFnNOPvL12RPYbBzdRkWyTm1IGH9ltNkargtnwtyqLJavlrQZ0S7v/RK2PbyhdM4mbbVrNtN4TsrwFqVzmxxyZwJsZAphpWoVA==
+X-Gm-Message-State: AOJu0YwZ3jNoOdDYW+pWZk5HKa6L1AoO7uEQrPiWVBiVQj1Umi0ZlJci
+	h8q4Dhs6ysTh39LYiZ7d+N04I9D5Xa3FHaCrgv3WaDA2VEn76c10uN6OYlBiz2DLNqwrLY1dr7s
+	CcZ6RXFeY9FMhfe5o5lr5ZvI4GwC3yRPGZ8ctIg6d9WNuGvlWnuFz3PA=
+X-Google-Smtp-Source: AGHT+IGAT78R2FREye2VSHhSfsYgwamzc4aqFcA1RseDZztivUY+ue7QdldxXl8TLQ4eDahQCC0D/+koCyYRLRemElzpP/fMAgiT
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240304184933.3672759-3-keescook@chromium.org>
+X-Received: by 2002:a05:6638:4114:b0:474:f9e1:6d6f with SMTP id
+ ay20-20020a056638411400b00474f9e16d6fmr145821jab.1.1709587622420; Mon, 04 Mar
+ 2024 13:27:02 -0800 (PST)
+Date: Mon, 04 Mar 2024 13:27:02 -0800
+In-Reply-To: <00000000000084090905fe7d22bb@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f279ea0612dc62cd@google.com>
+Subject: Re: [syzbot] [udf?] KASAN: use-after-free Read in udf_finalize_lvid
+From: syzbot <syzbot+46073c22edd7f242c028@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.com, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 04, 2024 at 10:49:31AM -0800, Kees Cook wrote:
-> The setxattr() API can be used for exploiting[1][2][3] use-after-free
-> type confusion flaws in the kernel. Avoid having a user-controlled size
-> cache share the global kmalloc allocator by using a separate set of
-> kmalloc buckets.
-> 
-> Link: https://duasynt.com/blog/linux-kernel-heap-spray [1]
-> Link: https://etenal.me/archives/1336 [2]
-> Link: https://github.com/a13xp0p0v/kernel-hack-drill/blob/master/drill_exploit_uaf.c [3]
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/xattr.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 09d927603433..2b06316f1d1f 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -821,6 +821,16 @@ SYSCALL_DEFINE4(fgetxattr, int, fd, const char __user *, name,
->  	return error;
->  }
->  
-> +static struct kmem_buckets *xattr_buckets;
-> +static int __init init_xattr_buckets(void)
-> +{
-> +	xattr_buckets = kmem_buckets_create("xattr", 0, 0, 0,
-> +					    XATTR_LIST_MAX, NULL);
-> +
-> +	return 0;
-> +}
-> +subsys_initcall(init_xattr_buckets);
-> +
->  /*
->   * Extended attribute LIST operations
->   */
-> @@ -833,7 +843,7 @@ listxattr(struct dentry *d, char __user *list, size_t size)
->  	if (size) {
->  		if (size > XATTR_LIST_MAX)
->  			size = XATTR_LIST_MAX;
-> -		klist = kvmalloc(size, GFP_KERNEL);
-> +		klist = kmem_buckets_alloc(xattr_buckets, size, GFP_KERNEL);
+syzbot suspects this issue was fixed by commit:
 
-There's a reason this uses kvmalloc() - allocations can be up to
-64kB in size and it's not uncommon for large slab allocation to
-fail on long running machines. hence this needs to fall back to
-vmalloc() to ensure that large xattrs can always be read.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Essentially, you're trading a heap spraying vector that almost
-no-one will ever see for a far more frequent -ENOMEM denial of
-service that will be seen on production systems where large xattrs
-are used.
+    fs: Block writes to mounted block devices
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1495d341180000
+start commit:   861deac3b092 Linux 6.7-rc7
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e118a9228c45d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=46073c22edd7f242c028
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a44d79e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130b99e9e80000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
