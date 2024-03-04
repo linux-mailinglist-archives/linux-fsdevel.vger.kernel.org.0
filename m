@@ -1,241 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-13488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86FAE870657
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 16:59:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5844870A76
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 20:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D64A6B2F084
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 15:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD611F23556
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 19:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C152450279;
-	Mon,  4 Mar 2024 15:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347467A158;
+	Mon,  4 Mar 2024 19:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QErDKXHo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60255481AA;
-	Mon,  4 Mar 2024 15:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B91E79DC2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 19:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709567094; cv=none; b=I40aq04RlO6guk0qUenvPYoz/zdGV8rjYd1UPfokbEuLyN9VqdUnynv2uAWjpEbCKbRinIX1aoRiGG6X+07k9zYkn1rho1zLcdN9fZkP0sYEVKNSBxsd7TGbq8XwjXtdBQPgelSOVciHl+aLglU05hjjGsf/3gLsm7mtbPDhT2M=
+	t=1709579637; cv=none; b=C0vAge5gwRsiMIwsaQJBvEQ/hlNH3BwCTo0QkaqCqksDVAFF57D23qmHcKc3jgSf8dYYx1x2bi8dqp8J5tCCdMlarpiYQxgZRGrR/CHoBcozBQPQE3HehIFZESYSSXMHuw+p6EDWwmJbVeMXCb+jFEpoOgMhkwij2+etM9MXiX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709567094; c=relaxed/simple;
-	bh=fKPNp1+Rr8iirFvyQf/tnK31uFxjPIs1AXXdgnGOw9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DBFxPyYGnU5R5MyQX8ijn56/DfzOX50Ez9A0lqGx13xCmAPB5/+P3AYkfrnw/I48sXZWJZTzh0P4Cz15SIWclGAL2biKsz1Q+ymOiX7lu/nh80tyT8Gt0dLh0SB8Qj3RFLX7iOvadqxQlCgGTcA/ggxtOSdz1Bef76aX8k7IHOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E43BDFEC;
-	Mon,  4 Mar 2024 07:45:27 -0800 (PST)
-Received: from [10.57.10.152] (unknown [10.57.10.152])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5448A3F73F;
-	Mon,  4 Mar 2024 07:44:48 -0800 (PST)
-Message-ID: <bd51b366-60b3-4ca5-9634-95dfbc3d1829@arm.com>
-Date: Mon, 4 Mar 2024 15:44:47 +0000
+	s=arc-20240116; t=1709579637; c=relaxed/simple;
+	bh=Yvp3SBF6+8zPzJgMF4RTTYUtctszJUGlguQC1VX4iyg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X+qfI0jMMkUReS480toWUL6HXU1FQ/Yei8f11MV9S4LauSlOlV+LxDFiDcm9KDfjx16ApjzyETnQ36+FGfmTNR+/PfSAEMcd96kNUPHifrvzY26LjnznNNYVDzwyP8ZBoCJOKsPeWVM1/wQLL7PxE1kaaUVf8gU95YeFauoT1wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QErDKXHo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709579635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vvUt/Be8Gcd/hjdzGuVqAyt+8YqkryL5Dumkd6mCSo8=;
+	b=QErDKXHojoPynCkrHzJ3U6CmtfC6l70vXWpCKTciPkgf8tX3+Apf+L2wAOMaHS1x8prv0r
+	MT29gRqPy4FoZD8+FcDz+M6wghmKem7/qewIz5ff45BZvWuc5bg4F/ox3WL/gigrDBB1Tv
+	Q73q4qVIyddMygq85xpRvUwTovhCp+w=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-180-wxHMBpG3N_iwhNcWtm15qQ-1; Mon, 04 Mar 2024 14:13:53 -0500
+X-MC-Unique: wxHMBpG3N_iwhNcWtm15qQ-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a44143c8908so453826866b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Mar 2024 11:13:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709579632; x=1710184432;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vvUt/Be8Gcd/hjdzGuVqAyt+8YqkryL5Dumkd6mCSo8=;
+        b=hpas+Qd51D6SraPw1gkSBIUrK2Kh4miIjLfXWUJgG4bTzoIOIyBbE5gG+feL8S0kto
+         ysBMSQdOL19masIFM0cpTXwGc99zUIziZTjlok0dbQtk6K7IUZMBLmylcGDHOuYe52O7
+         MM3jHU5LhpDAJihekWDZea6bvxU/XdY3AHI3Iwhoy5oNsnAfCvn2zZGsyD5xesgfgbFD
+         a8HT1mk5M4EiIZlWtyTRM3V9vW+7KhxeLr9bTSb9FoEcVMNVJmR0Gx06kHltOYv2scxt
+         U0K/JuJiJE/yB5xJ/hSPCrasnt89qkHbznuUlmD06BZUmXPag3RoFufQ62IYYsD7SfEZ
+         bvJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4B+SSiuPGHZRGYf15aiYXj54ewfDLOyUsrjdjYqTAZeqCBTTYy/reQ4fRKH5Wvao1RaFttfG1a6K3KkkBM+1Ek54RKq3FKuDih9OdJw==
+X-Gm-Message-State: AOJu0Yyn7+row53S441EV4Bw/w8fYWXEOcNJOs6AKCE5BPJRoMKqKlnF
+	BEATw7qJonlalwG9nP1uy7V1GRz6ASMFcN826cESRTpj6tVBhQfzTLlyfmCmSZPLR7dCfDtjvuU
+	ECVd7DwTAzrqDbTxu4gXcPBfXDm5lAnrNdh6tqNG1aAV9oO5C5cAP7qGn1vFu/xDN89sbkQ==
+X-Received: by 2002:a17:906:4ac4:b0:a44:52ec:b9e7 with SMTP id u4-20020a1709064ac400b00a4452ecb9e7mr388132ejt.16.1709579632440;
+        Mon, 04 Mar 2024 11:13:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFQbsKnmCO2v9c3n5rWiSsG93Fzu0C8g8BYXFgADgUetrMCVvdkY/V3EQ4xBS9gjIDqDhD9GQ==
+X-Received: by 2002:a17:906:4ac4:b0:a44:52ec:b9e7 with SMTP id u4-20020a1709064ac400b00a4452ecb9e7mr388110ejt.16.1709579632033;
+        Mon, 04 Mar 2024 11:13:52 -0800 (PST)
+Received: from thinky.redhat.com ([109.183.6.197])
+        by smtp.gmail.com with ESMTPSA id tj10-20020a170907c24a00b00a444526962asm5091450ejc.128.2024.03.04.11.13.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Mar 2024 11:13:51 -0800 (PST)
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	chandan.babu@oracle.com,
+	djwong@kernel.org
+Cc: Andrey Albershteyn <aalbersh@redhat.com>
+Subject: [PATCH] xfs: allow cross-linking special files without project quota
+Date: Mon,  4 Mar 2024 16:50:14 +0100
+Message-ID: <20240304155013.115334-2-aalbersh@redhat.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 8/8] mm: huge_memory: enable debugfs to split huge
- pages to any order.
-Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, linux-mm@kvack.org,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Yang Shi <shy828301@gmail.com>,
- Yu Zhao <yuzhao@google.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>,
- Zach O'Keefe <zokeefe@google.com>, Hugh Dickins <hughd@google.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <20240226205534.1603748-1-zi.yan@sent.com>
- <20240226205534.1603748-9-zi.yan@sent.com>
- <082e48c8-71b7-4937-a5da-7a37b4be16ba@arm.com>
- <A111EB95-0AF5-4715-82A4-70B8AD900A93@nvidia.com>
- <7E498B77-6CC9-4FC6-B980-D79EEC548CD0@nvidia.com>
- <0685EC19-CDB8-4CD3-BC39-82DE59B5D10C@nvidia.com>
- <0be630f0-ce8e-4a80-b42f-697ea603cfc6@arm.com>
- <1829EABB-7966-4686-A5E0-F6B6D26C510E@nvidia.com>
-From: Aishwarya TCV <aishwarya.tcv@arm.com>
-In-Reply-To: <1829EABB-7966-4686-A5E0-F6B6D26C510E@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+There's an issue that if special files is created before quota
+project is enabled, then it's not possible to link this file. This
+works fine for normal files. This happens because xfs_quota skips
+special files (no ioctls to set necessary flags). The check for
+having the same project ID for source and destination then fails as
+source file doesn't have any ID.
 
+mkfs.xfs -f /dev/sda
+mount -o prjquota /dev/sda /mnt/test
 
-On 04/03/2024 14:58, Zi Yan wrote:
-> On 4 Mar 2024, at 4:50, Aishwarya TCV wrote:
-> 
->> On 01/03/2024 21:10, Zi Yan wrote:
->>> On 1 Mar 2024, at 15:02, Zi Yan wrote:
->>>
->>>> On 1 Mar 2024, at 14:37, Zi Yan wrote:
->>>>
->>>>> On 1 Mar 2024, at 4:51, Aishwarya TCV wrote:
->>>>>
->>>>>> On 26/02/2024 20:55, Zi Yan wrote:
->>>>>>> From: Zi Yan <ziy@nvidia.com>
->>>>>>>
->>>>>>> It is used to test split_huge_page_to_list_to_order for pagecache THPs.
->>>>>>> Also add test cases for split_huge_page_to_list_to_order via both
->>>>>>> debugfs.
->>>>>>>
->>>>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
->>>>>>> ---
->>>>>>>  mm/huge_memory.c                              |  34 ++++--
->>>>>>>  .../selftests/mm/split_huge_page_test.c       | 115 +++++++++++++++++-
->>>>>>>  2 files changed, 131 insertions(+), 18 deletions(-)
->>>>>>>
->>>>>>
->>>>>> Hi Zi,
->>>>>>
->>>>>> When booting the kernel against next-master(20240228)with Arm64 on
->>>>>> Marvell Thunder X2 (TX2), the kselftest-mm test 'split_huge_page_test'
->>>>>> is failing in our CI (with rootfs over NFS). I can send the full logs if
->>>>>> required.
->>>>>>
->>>>>> A bisect (full log below) identified this patch as introducing the
->>>>>> failure. Bisected it on the tag "next-20240228" at repo
->>>>>> "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git".
->>>>>>
->>>>>> This works fine on  Linux version 6.8.0-rc6
->>>>>
->>>>> Hi Aishwarya,
->>>>>
->>>>> Can you try the attached patch and see if it fixes the failure? I changed
->>>>> the test to accept XFS dev as input, mount XFS on a temp folder under /tmp,
->>>>> and skip if no XFS is mounted.
->>>>
->>>> Please try this updated one. It allows you to specify a XFS device path
->>>> in SPLIT_HUGE_PAGE_TEST_XFS_PATH env variable, which is passed to
->>>> split_huge_page_test in run_vmtests.sh. It at least allow CI/CD to run
->>>> the test without too much change.
->>>
->>> OK. This hopefully will be my last churn. Now split_huge_page_test accepts
->>> a path that is backed by XFS and run_vmtest.sh creates a XFS image in /tmp,
->>> mounts it in /tmp, and gives the path to split_huge_page_test. I tested
->>> it locally and it works. Let me know if you have any issue. Thanks.
->>>
->>> --
->>> Best Regards,
->>> Yan, Zi
->>
->> Hi Zi,
->>
->> Tested the patch by applying it on next-20240304. Logs from our CI with
->> rootfs over nfs is attached below. "Bail out! cannot remove tmp dir:
->> Directory not empty" is still observed.
-> 
-> Hi Aishwarya,
-> 
-> Do you have the config file for the CI kernel? And /tmp is also on nfs?
-> Any detailed information about CI machine environment? I cannot reproduce
-> the error locally, either on bare metal or VM. Maybe because my /tmp is
-> not NFS mounted?
-> 
+mkdir /mnt/test/foo
+mkfifo /mnt/test/foo/fifo1
 
-Hi Zi,
+xfs_quota -xc "project -sp /mnt/test/foo 9" /mnt/test
+> Setting up project 9 (path /mnt/test/foo)...
+> xfs_quota: skipping special file /mnt/test/foo/fifo1
+> Processed 1 (/etc/projects and cmdline) paths for project 9 with recursion depth infinite (-1).
 
-Please find the details below. Hope it helps.
+ln /mnt/test/foo/fifo1 /mnt/test/foo/fifo1_link
+> ln: failed to create hard link '/mnt/test/testdir/fifo1_link' => '/mnt/test/testdir/fifo1': Invalid cross-device link
 
-Do you have the config file for the CI kernel?
-- We are using:
-defconfig+https://github.com/torvalds/linux/blob/master/tools/testing/selftests/mm/config
+mkfifo /mnt/test/foo/fifo2
+ln /mnt/test/foo/fifo2 /mnt/test/foo/fifo2_link
 
-And /tmp is also on nfs?
-- Yes
+Fix this by allowing linking of special files to the project quota
+if special files doesn't have any ID set (ID = 0).
 
-Any detailed information about CI machine environment?
-- We are running the test using LAVA device Cavium Thunder X2 (TX2),
-- We have very similar rootfs as - nfsrootfs:
-https://storage.kernelci.org/images/rootfs/debian/bullseye-kselftest/20240129.0/arm64/full.rootfs.tar.xz
-- We are using grub boot method over nfs
-- Additionally Ryan mentioned "Looks like it is failing because he is
-trying to delete the temp dir with rmdir() but rmdir() requires the
-directory to be empty, which it is not."
+Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+---
+ fs/xfs/xfs_inode.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Thanks,
-Aishwarya
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 5ca561634164..641270f4d794 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -1232,11 +1232,24 @@ xfs_link(
+ 	 * the tree quota mechanism could be circumvented.
+ 	 */
+ 	if (unlikely((tdp->i_diflags & XFS_DIFLAG_PROJINHERIT) &&
++		     !special_file(VFS_I(sip)->i_mode) &&
+ 		     tdp->i_projid != sip->i_projid)) {
+ 		error = -EXDEV;
+ 		goto error_return;
+ 	}
+ 
++	/*
++	 * Don't allow cross-linking of special files. However, allow
++	 * cross-linking if original file doesn't have any project.
++	 */
++	if (unlikely((tdp->i_diflags & XFS_DIFLAG_PROJINHERIT) &&
++				special_file(VFS_I(sip)->i_mode) &&
++				sip->i_projid != 0 &&
++				tdp->i_projid != sip->i_projid)) {
++		error = -EXDEV;
++		goto error_return;
++	}
++
+ 	if (!resblks) {
+ 		error = xfs_dir_canenter(tp, tdp, target_name);
+ 		if (error)
+-- 
+2.42.0
 
->>
->>
->> Test run log:
->> # # ------------------------------
->> # # running ./split_huge_page_test
->> # # ------------------------------
->> # # TAP version 13
->> # # 1..12
->> # # ok 1 Split huge pages successful
->> # # ok 2 Split PTE-mapped huge pages successful
->> # # # Please enable pr_debug in split_huge_pages_in_file() for more info.
->> # # # Please check dmesg for more information
->> # # ok 3 File-backed THP split test done
->> <6>[  639.821657] split_huge_page (111099): drop_caches: 3
->> <6>[  639.821657] split_huge_page (111099): drop_caches: 3
->> # # # No large pagecache folio generated, please provide a filesystem
->> supporting large folio
->> # # ok 4 # SKIP Pagecache folio split skipped
->> <6>[  645.392184] split_huge_page (111099): drop_caches: 3
->> <6>[  645.392184] split_huge_page (111099): drop_caches: 3
->> # # # No large pagecache folio generated, please provide a filesystem
->> supporting large folio
->> # # ok 5 # SKIP Pagecache folio split skipped
->> <6>[  650.938248] split_huge_page (111099): drop_caches: 3
->> <6>[  650.938248] split_huge_page (111099): drop_caches: 3
->> # # # No large pagecache folio generated, please provide a filesystem
->> supporting large folio
->> # # ok 6 # SKIP Pagecache folio split skipped
->> <6>[  656.500149] split_huge_page (111099): drop_caches: 3
->> <6>[  656.500149] split_huge_page (111099): drop_caches: 3
->> # # # No large pagecache folio generated, please provide a filesystem
->> supporting large folio
->> # # ok 7 # SKIP Pagecache folio split skipped
->> <6>[  662.044085] split_huge_page (111099): drop_caches: 3
->> <6>[  662.044085] split_huge_page (111099): drop_caches: 3
->> # # # No large pagecache folio generated, please provide a filesystem
->> supporting large folio
->> # # ok 8 # SKIP Pagecache folio split skipped
->> <6>[  667.591841] split_huge_page (111099): drop_caches: 3
->> <6>[  667.591841] split_huge_page (111099): drop_caches: 3
->> # # # No large pagecache folio generated, please provide a filesystem
->> supporting large folio
->> # # ok 9 # SKIP Pagecache folio split skipped
->> <6>[  673.172441] split_huge_page (111099): drop_caches: 3
->> <6>[  673.172441] split_huge_page (111099): drop_caches: 3
->> # # # No large pagecache folio generated, please provide a filesystem
->> supporting large folio
->> # # ok 10 # SKIP Pagecache folio split skipped
->> <6>[  678.726263] split_huge_page (111099): drop_caches: 3
->> <6>[  678.726263] split_huge_page (111099): drop_caches: 3
->> # # # No large pagecache folio generated, please provide a filesystem
->> supporting large folio
->> # # ok 11 # SKIP Pagecache folio split skipped
->> <6>[  684.272851] split_huge_page (111099): drop_caches: 3
->> <6>[  684.272851] split_huge_page (111099): drop_caches: 3
->> # # # No large pagecache folio generated, please provide a filesystem
->> supporting large folio
->> # # ok 12 # SKIP Pagecache folio split skipped
->> # # Bail out! cannot remove tmp dir: Directory not empty
->> # # # Totals: pass:3 fail:0 xfail:0 xpass:0 skip:9 error:0
->> # # [FAIL]
->> # not ok 51 split_huge_page_test # exit=1
->> # # ------------------
->>
->> Thanks,
->> Aishwarya
-> 
-> 
-> --
-> Best Regards,
-> Yan, Zi
 
