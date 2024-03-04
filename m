@@ -1,85 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-13408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCA986F7E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 00:36:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20A986F7F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 01:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2430FB20A4D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Mar 2024 23:36:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1721F2117E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 00:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62EE7A715;
-	Sun,  3 Mar 2024 23:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352D739B;
+	Mon,  4 Mar 2024 00:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Kv/it71G"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="iB0iIaaT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8B77AE4F
-	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Mar 2024 23:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8E919A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 00:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709508960; cv=none; b=U7CDiw5jeiiG9V2/vGbzRrbkjLfb6T2PLk6mGBBHC65fheAJSQhyB5GZVVN/uH+9Bl4o257vGAvvDDusminGjGH3MbEA2xa3RziZ944XuETKD5DLrmoswTZbCtTuaK7sxDTr+nkYKCEaDn3iQTdSq1fFv76N4PpXJEBNMwntFwc=
+	t=1709511633; cv=none; b=HVSbz0MQUpfz2wy6vjVtyFGMBNoUP0HuPL85Kbfd/Z9kfYjm1NDTCm+5jSoy4xAYWB3kCVZneYwO8/gXXqiPU6Nsf+tWHxW38TVw9gvUuM8BJ7a+aLFVmAgxYuPKOjS9Pt8YvM8VUanZgXQJmTQZZ51Tm53IpxclXeVSUQlot4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709508960; c=relaxed/simple;
-	bh=Ti9X/FXMtXdtuklTuMvWh2IRJi0XWj0Xg42tOKGD9hs=;
+	s=arc-20240116; t=1709511633; c=relaxed/simple;
+	bh=jbz/t0FGNIlndJAFHHzGsafV2kRcP0Hs2QghqcKZZqQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogqFxYwQaNdx8h7IsMDC+Zp2K2MaMf9ZXY0XbEk3r/ponlr+1Dd8WPQiRZLXBbVfiYWMYW9XZidA8gZqwx37kH29DqkrYO5ChCBXF11Ka6x0n+kE3fE+aa0Wwr1vzimFlB5kpJCwsX+r4KYkaSfHcpZT6kEQ2R6LNkiU1sBsEkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Kv/it71G; arc=none smtp.client-ip=209.85.214.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZ/2iSZ+BIjhaNBdc1jpnHaXQkYS2pjZDDizMpYx4OKs8ivJ0nmemuEksyaLq5xPv3PnxjHsvzkbY3FD+7h/QqdzLVTMGrzuInCRVIDCG45GD8aPUAGujzsZArB+XuuiUsXNhNjyJVTsMWJqC9PD3rEr7Xw78Y/pazynOG8B5N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=iB0iIaaT; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1dd178fc492so1350165ad.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Mar 2024 15:35:58 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1dc75972f25so31927025ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Mar 2024 16:20:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709508958; x=1710113758; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709511631; x=1710116431; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L50ZscUmxGgE9iPP8Ug5iQ6+RFUl71GujpMGxH2pRSA=;
-        b=Kv/it71Gp3ffo/PeJd8EmRO2p6bfpwku/a+6aUxHqiA6+VmvzhVu1U5FMjcHEdU5DY
-         ua2vnXDxTIAy5WDch05tm0AXjaLh3QwjwWdivBePJv5GyXL3IztgcspV62vfllFpQC35
-         pJVi5rB7qbHbDofk0l/wuwEo5n69TwF/VcTLdPNkD2GkLVbX8CagAS4nTnu6VjAPwiSb
-         qY0BAGxlArfR9lHLwp60s+CPuaeCoYRBPqlKo3k+qml1oqkA/2r1ssJ6fqJWi5mgCgCM
-         hCkI/ABYyXp5u+oY6tBY5eruXmfSdqBnf5CMmEF1no5q21cxpb9N+kHydiyn98KsBFpk
-         I7QA==
+        bh=n7+u96xPcBF8UnwMQsi6zps3kKJmqNLYGPjj0sLBatY=;
+        b=iB0iIaaTuMCKAXoD1p4LtpZ/zxucJ8NMAwqhIkikG8udxXJYOYG8u7CvQM0Z4fm+7G
+         4pgDZvlk0PW42YmcoF6sP3Hr0AlvNNTa8XK6tc+SItkd0Eb+uChqskqat3bmEdH9WUfe
+         /l46ROYGSLtcwIueG3qGviBGO3NwEcHGdcThoquwNltQi41mW2vbfryifyoJtSFPKCI5
+         ZFn0LGbYe36j5V1IelKLrULjAHkqTDr4kU/c+nEMU8HFpd0TYgAwTosolfBt+LR0OQrY
+         cBTNVY6DL6ozHL0HQk++Uz4LMmyxVgK4ZLVhUDU2nA+ye0tghxMm0SIBRgfAMc8S8xHY
+         OwPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709508958; x=1710113758;
+        d=1e100.net; s=20230601; t=1709511631; x=1710116431;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L50ZscUmxGgE9iPP8Ug5iQ6+RFUl71GujpMGxH2pRSA=;
-        b=hxGpWGsX4J717WZejNou8D8BWmbqWUn1N1zR3aqzlmorceBdvfwj8TXganYn1dsd+5
-         ObT9heQEldx6RrCOiQGDnlZrWJCa0sm9jHqGdCTM/WqeY7mFQJkBcEnv9DIzWjlZnvoO
-         3ESZtzbH8F1Yaw212GzwaJeZFyA3ojXKaj0NGXldIuT+OEpAX7DGgRN2V855KVnOHC+c
-         sDslu7OC/QChorCeX9dmDysT1TqoJkhgf63r9McL8hVe1/Mwf9l1UmEN3zcU2UbLBrE3
-         TFa8NJs3PzgnVbIMKM1Syf3reuSqf7VQ8v6YtXN2ND8Rqaa+GwCZdHRjaKju/Tu0waPY
-         oezA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGTxw7L8mC1ZdEkoTkiuohAsYTZ6K57Ui+CwMjD/Ex5yGoCH4XlEa0TtgJKps8TyhJi1wXVxl3C3Y9KNbNERR69om3FQk1h/sY+I+H4Q==
-X-Gm-Message-State: AOJu0YwsF1PGyVA0xNHUZqYRuMkgjmB98Jk1bF7DN3V8xv2sLPrilOmU
-	nyLHd5gDppxb6NtpCxJbgxBjGrRm+j1+NYmAnjfIZuhthAuZeXk7o8i4sCwNkdxS3CLPurn6jm1
-	m
-X-Google-Smtp-Source: AGHT+IF4RZyHgKHM9fsl+rIVxIHTZH6T4VoeOXKZYPJoGWFDqqasplhyEot9OhnGwKfPC1VTE1IhEQ==
-X-Received: by 2002:a17:902:e5d2:b0:1dd:7b2:3b19 with SMTP id u18-20020a170902e5d200b001dd07b23b19mr3130999plf.9.1709508958144;
-        Sun, 03 Mar 2024 15:35:58 -0800 (PST)
+        bh=n7+u96xPcBF8UnwMQsi6zps3kKJmqNLYGPjj0sLBatY=;
+        b=Um2p6MnGkMe35zhHkn+M/jx6k3MniXzIWT82lgJyDQFpsUkmN/NfVQAaH7o1Dt4Lh/
+         f/IZ8lwniQhbfGTuPcwy3QruH6bK3RWKI3dkpd9h9YO4I5a823fu8HEOc99J7lDcr4/Z
+         Ddl9gcpFbSIjcSoEwT78krREWJXqpWsrwxWk3i4I74LJZJU9U+slMDYE0an6NilcVxQC
+         8vL9y/9eEolwk2J7OnSbHES3yduW7WG0TdsmA3p1AnD6hhtVX10/IDU+OG76yT7HpdIk
+         N56asbG2HK2zpjK/P1UNKdKCdAFanD7m7Z5hxVOYkqQJcWKaD1Z+zZMDTZyEeZ27uYUh
+         Z6cw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZO8BXnvvAfBfbhNHv4HMmQd8bROOYNcT5efsTpA3p8mPZcLhWb9rSU9gMC+XOW+pTe3afCuSFWLeCg41Fr+YGWvDwmHFSwEAzQQ8UkQ==
+X-Gm-Message-State: AOJu0Yyr2N1HHWeHGPBnDt83pos5/wC9FNbc8HO3B+I+DdCYVHvn2s7T
+	MvDmyCI6uELSeT2IINbno1WIbYvrfZYo3OTLsWcaGqGdQwP9OiM7ANgZdfzujP8=
+X-Google-Smtp-Source: AGHT+IHHqRVwbzhDqGZzQPZTKp/5e8rUMV/ODbLbXFp89J0IezoxnX3dyYeolNS6GNZvX2KpejwDhQ==
+X-Received: by 2002:a17:902:e746:b0:1db:7052:2f45 with SMTP id p6-20020a170902e74600b001db70522f45mr9138784plf.61.1709511631245;
+        Sun, 03 Mar 2024 16:20:31 -0800 (PST)
 Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
-        by smtp.gmail.com with ESMTPSA id jv11-20020a170903058b00b001dc96c5fa13sm7107930plb.295.2024.03.03.15.35.57
+        by smtp.gmail.com with ESMTPSA id d10-20020a170902ceca00b001db9c3d6506sm7119202plg.209.2024.03.03.16.20.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Mar 2024 15:35:57 -0800 (PST)
+        Sun, 03 Mar 2024 16:20:30 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1rgvN4-00Ef2o-1m;
-	Mon, 04 Mar 2024 10:35:54 +1100
-Date: Mon, 4 Mar 2024 10:35:54 +1100
+	id 1rgw4B-00Efo9-39;
+	Mon, 04 Mar 2024 11:20:27 +1100
+Date: Mon, 4 Mar 2024 11:20:27 +1100
 From: Dave Chinner <david@fromorbit.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-xfs@vger.kernel.org, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] xfs: stop advertising SB_I_VERSION
-Message-ID: <ZeUJWuO8TkuoodIx@dread.disaster.area>
-References: <20240228042859.841623-1-david@fromorbit.com>
- <726abff82e992e3e0765e8711e90bf0accb37b2a.camel@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Matthew Wilcox <willy@infradead.org>,
+	Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org,
+	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
+Message-ID: <ZeUTyxYFS6kGoM1h@dread.disaster.area>
+References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>
+ <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>
+ <Zd-LljY351NCrrCP@casper.infradead.org>
+ <170925937840.24797.2167230750547152404@noble.neil.brown.name>
+ <ZeFtrzN34cLhjjHK@dread.disaster.area>
+ <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>
+ <170933687972.24797.18406852925615624495@noble.neil.brown.name>
+ <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>
+ <170950594802.24797.17587526251920021411@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,54 +98,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <726abff82e992e3e0765e8711e90bf0accb37b2a.camel@kernel.org>
+In-Reply-To: <170950594802.24797.17587526251920021411@noble.neil.brown.name>
 
-On Fri, Mar 01, 2024 at 08:42:17AM -0500, Jeff Layton wrote:
-> On Wed, 2024-02-28 at 15:28 +1100, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > The redefinition of how NFS wants inode->i_version to be updated is
-> > incomaptible with the XFS i_version mechanism. The VFS now wants
-> > inode->i_version to only change when ctime changes (i.e. it has
-> > become a ctime change counter, not an inode change counter). XFS has
-> > fine grained timestamps, so it can just use ctime for the NFS change
-> > cookie like it still does for V4 XFS filesystems.
-> > 
+On Mon, Mar 04, 2024 at 09:45:48AM +1100, NeilBrown wrote:
+> I have in mind a more explicit statement of how much waiting is
+> acceptable.
 > 
-> Are you saying that XFS has timestamp granularity finer than
-> current_time() reports?
+> GFP_NOFAIL - wait indefinitely
 
-No.
+Make this the default, and we don't need a flag for it at all.
 
-> I thought XFS used the same clocksource as
-> everyone else.
+> GFP_KILLABLE - wait indefinitely unless fatal signal is pending.
+> GFP_RETRY - may retry but deadlock, though unlikely, is possible.  So
+>             don't wait indefinitely.  May abort more quickly if fatal
+>             signal is pending.
 
-It does.
+KILLABLE and RETRY are the same thing from the caller POV.
+Effectively "GFP_MAY_FAIL", where it will try really hard, but if it
+there is a risk of deadlock or a fatal signal pending, it will fail.
 
-> At LPC, you mentioned you had some patches in progress to use the unused
-> bits in the tv_nsec field as a change counter to track changes that
-> occurred within the same timer tick.
+> GFP_NO_RETRY - only try things once.  This may sleep, but will give up
+>             fairly quickly.  Either deadlock is a significant
+>             possibility, or alternate strategy is fairly cheap.
+> GFP_ATOMIC - don't sleep - same as current.
 
-Still a possibility, but I wasn't going to do anything in that
-direction because it still seemed like you were still trying to make
-progress down the path of generic timestamp granularity
-improvements.
+We're talking about wait semantics, so GFP_ATOMIC should be named
+GFP_NO_WAIT and described as "same as NO_RETRY but will not sleep".
 
-> Did that not pan out for some reason? I'd like to understand why if so.
-> It sounded like a reasonable solution to the problem.
+That gives us three modifying flags to the default behaviour of
+sleeping until success: GFP_MAY_FAIL, GFP_NO_RETRY and GFP_NO_WAIT.
 
-Time. And the fact that ctime granularity isn't SB_I_VERSION at all,
-so whilst we might support statx change cookies in the future, that
-will not be via a SB_I_VERSION mechanism.
+I will note there is one more case callers might really want to
+avoid: direct reclaim. That sort of behaviour might be worth folding
+into GFP_NO_WAIT, as there are cases where we want the allocation
+attempt to fail without trying to reclaim memory because it's *much*
+faster to simply use the fallback mechanism than it is to attempt
+memory reclaim (e.g.  xlog_kvmalloc()).
 
-i.e. statx doesn't require us to support SB_I_VERSION for the change
-cookies, so until we are in a position to present a higher
-resolution change cookie via ctime we're just going to remove
-support for both.
+> I don't see how "GFP_KERNEL" fits into that spectrum.
 
-> Acked-by: Jeff Layton <jlayton@kernel.org>
+Agreed.
 
-Thanks!
+> The definition of
+> "this will try really hard, but might fail and we can't really tell you
+> what circumstances it might fail in" isn't fun to work with.
+
+Yup, XFS was designed for NO_FAIL and MAY_FAIL behaviour, and in more
+recent times we also use NO_RECLAIM to provide our own kvmalloc
+semantics because the current kvmalloc API really only supports
+"GFP_KERNEL" allocation.
+
+> > Deprecating GFP_NOFS and GFP_NOIO would be wonderful - those should
+> > really just be PF_MEMALLOC_NOFS and PF_MEMALLOC_NOIO, now that we're
+> > pushing for memalloc_flags_(save|restore) more.
+
+This is largely now subsystem maintenance work - the infrastructure
+is there, and some subsystems have been converted over entirely to
+use it. The remaining work either needs to be mandated or have
+someone explicitly tasked with completing that work.
+
+IOWs, the process in which we change APIs and then leave the long
+tail of conversions to subsystem maintainers is just a mechanism for
+creating technical debt that takes forever to clean up...
+
+> > Getting rid of those would be a really nice cleanup beacuse then gfp
+> > flags would mostly just be:
+> >  - the type of memory to allocate (highmem, zeroed, etc.)
+> >  - how hard to try (don't block at all, block some, block forever)
+
+Yup, would be a very good improvement.
 
 -Dave.
 -- 
