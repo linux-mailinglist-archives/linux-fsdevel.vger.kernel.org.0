@@ -1,238 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-13443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1905F8700C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 12:50:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 621B08700DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 12:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B0B31C21DF0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 11:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0219E1F22AFE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 11:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7533C070;
-	Mon,  4 Mar 2024 11:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEFC3C070;
+	Mon,  4 Mar 2024 11:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzGHvWxx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LbRSOz/U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A873BB3C;
-	Mon,  4 Mar 2024 11:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757B13B296
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 11:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709553018; cv=none; b=Qn3bddGKlZ/0tKIqf7PyFTGOLEwkEVnliqYLyOVBuyfnzg+P35mFTnrhry77DFiqh2E2DioS3wcuXA1plA98kCT6lgmY/DyLsY01lwfyAeDWbp3mU9WbS82csfLXg8VcyFk98Q06PKWhurkIQcVg4oDs6D/urn8gA/icFcL1bF8=
+	t=1709553379; cv=none; b=U9V415OXHzZX3SODOYArCnnNt3z3f/iq01f8H55xaH2XUr1cXBG63SlGZHRYs5KnNuAZak96awH1PzBa5oU5X8kCMI1keTuKBvC+fomf1fMh7MXSp49zoo032ZONQd0oBRG7qSkWS4PB6gujwT0yt3ZciKdybfR0SVJwn8PW6Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709553018; c=relaxed/simple;
-	bh=XkbCUCRqV3KcB+2Bv3a7cUeUG2SDUrYB6chZBEC1yjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9ALZIGh97SD8RTKhXxSpwobO9IBS1ufNPJcC9L6lkY1RH8ghfboz5xlU/AL1hyS/NS5Sl9dWVAy/K2PQ/SxQF7fKXbmnDZLNtASHl3DdgEkeFrA6Zn8bIuL07AZg9OuO3wTz8oCT1bNMZxIgcmwfmWfVzKN00aSietOyMbtt8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzGHvWxx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9813C433C7;
-	Mon,  4 Mar 2024 11:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709553017;
-	bh=XkbCUCRqV3KcB+2Bv3a7cUeUG2SDUrYB6chZBEC1yjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mzGHvWxx2STz1OSpL4oukwIHBTpA7atjg1ik8wGT/Eo8mlj46lEmhQWUReIAAvQTz
-	 Sq3wPedD8pzyFPszgghEklCVdXJgqjGMzqDdrHI4rFbBAdllJvHVr4TRtTKp+nlDh5
-	 hFGLo6euaQfxAf+4eygNjzRvp8TVnzYQXNGkS/+vr1UQXVG8jw4T2f9zk8Ld77cvX2
-	 Jzs+BhxDUHrOnCB4YEj/dSASMsOGtdQ/wiezLOdr58SpatVNHcu7/U4+rjMAxWpM2k
-	 rorPKdpHEpsRZXRBfMig/JC1bFdTpBpLDBLFV3hDi1ZMfoWdN95joEd/PhOgZoIWzT
-	 MvQnvMtiBdOLw==
-Date: Mon, 4 Mar 2024 12:50:12 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: xingwei lee <xrivendell7@gmail.com>
-Cc: linux-kernel@vger.kernel.org, samsun1006219@gmail.com, 
-	linux-fsdevel@vger.kernel.org, syzkaller@googlegroups.com, jack@suse.cz, 
-	viro@zeniv.linux.org.uk, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Dominique Martinet <asmadeus@codewreck.org>, v9fs@lists.linux.dev
-Subject: Re: WARNING in vfs_getxattr_alloc
-Message-ID: <20240304-stuhl-appetit-656a443d78a5@brauner>
-References: <CABOYnLwY5Y499j=JgWtk9ksRneOzLoH_G9dYZTwXi=UvLbUsSg@mail.gmail.com>
+	s=arc-20240116; t=1709553379; c=relaxed/simple;
+	bh=1pxGewzqlg410BVrMDyNZyMJwDst5u/9e4GvFoWghQ8=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=aLiJXMioA2K0UX29FAgrEtlBeQVBegCFeR3rUoA4m2wyabKKKmzM8T3JDS6LAyty+pIZ2DzjgzJD+XjCAUefk8ouUEiHnQOyLtWv0VMj4DKdpxi4RvDzgCKetFSUqW6AOdTjXfcZjkWvpd6SRDHi2GCCsX9WNqFBmgO7ejosL3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LbRSOz/U; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709553376;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GqekJtMmWl332KPa2AiO9KOFfmzHxStTJwB9RAe/2jE=;
+	b=LbRSOz/UltpRgIpCmjtKjvn8G2b/DEZx1hX5crOhXbM0W16z4RyIoijCWroZEuPdM9Nf4v
+	SmHYp8IQ12dcqVp7HHtVhIyVtjSxQGkdErRPTtoVof8PKYbPGULgYaKA7hmvsMpttrOy2z
+	ugyBLnNkk4xlyEgYA/E3WZy7otQxLk8=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-636-08FLQKdmPZGagpUscxRpgQ-1; Mon,
+ 04 Mar 2024 06:56:12 -0500
+X-MC-Unique: 08FLQKdmPZGagpUscxRpgQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 36E213816B4B;
+	Mon,  4 Mar 2024 11:56:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.114])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id A53AA40C6EBA;
+	Mon,  4 Mar 2024 11:56:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wiBJRgA3iNqihR7uuft=5rog425X_b3uvgroG3fBhktwQ@mail.gmail.com>
+References: <CAHk-=wiBJRgA3iNqihR7uuft=5rog425X_b3uvgroG3fBhktwQ@mail.gmail.com> <20230925120309.1731676-1-dhowells@redhat.com> <20230925120309.1731676-8-dhowells@redhat.com> <4e80924d-9c85-f13a-722a-6a5d2b1c225a@huawei.com> <CAHk-=whG+4ag+QLU9RJn_y47f1DBaK6b0qYq_6_eLkO=J=Mkmw@mail.gmail.com> <CAHk-=wjSjuDrS9gc191PTEDDow7vHy6Kd3DKDaG+KVH0NQ3v=w@mail.gmail.com> <e985429e-5fc4-a175-0564-5bb4ca8f662c@huawei.com> <CAHk-=wh06M-1c9h7wZzZ=1KqooAmazy_qESh2oCcv7vg-sY6NQ@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dhowells@redhat.com, Tong Tiangen <tongtiangen@huawei.com>,
+    Al Viro <viro@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+    Christoph Hellwig <hch@lst.de>,
+    Christian Brauner <christian@brauner.io>,
+    David Laight <David.Laight@aculab.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
+    linux-block@vger.kernel.org, linux-mm@kvack.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+    Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: Re: [bug report] dead loop in generic_perform_write() //Re: [PATCH v7 07/12] iov_iter: Convert iterate*() to inline funcs
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CABOYnLwY5Y499j=JgWtk9ksRneOzLoH_G9dYZTwXi=UvLbUsSg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <769020.1709553367.1@warthog.procyon.org.uk>
+Date: Mon, 04 Mar 2024 11:56:07 +0000
+Message-ID: <769021.1709553367@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-On Mon, Mar 04, 2024 at 04:51:13PM +0800, xingwei lee wrote:
-> Hello I found a issue in latest linux 6.7.rc8 titled "WARNING in
-> vfs_getxattr_alloc".
-> 
-> If you fix this issue, please add the following tag to the commit:
-> Reported-by: xingwei lee <xrivendell7@gmail.com>
-> Reported-by: sam sun <samsun1006219@gmail.com>
-> 
-> kernel: lastest linux 6.7.rc8 90d35da658da8cff0d4ecbb5113f5fac9d00eb72
-> kernel config: https://syzkaller.appspot.com/text?tag=KernelConfig&x=4a65fa9f077ead01
-> with KASAN enabled
-> compiler: gcc (GCC) 12.2.0
-> 
-> TITLE: WARNING in vfs_getxattr_alloc------------[ cut here ]------------
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Very likely a bug in 9p. Report it on that mailing list. It seems that
-p9_client_xattrwalk() returns questionable values for attr_size:
-748310584784038656
-That's obviously a rather problematic allocation request.
+> Actually, I think the right model is to get rid of that horrendous
+> .copy_mc field entirely.
+> 
+> We only have one single place that uses it - that nasty core dumping
+> code. And that code is *not* performance critical.
+> 
+> And not only isn't it performance-critical, it already does all the
+> core dumping one page at a time because it doesn't want to write pages
+> that were never mapped into user space.
+> 
+> So what we can do is
+> 
+>  (a) make the core dumping code *copy* the page to a good location
+> with copy_mc_to_kernel() first
+> 
+>  (b) remove this horrendous .copy_mc crap entirely from iov_iter
+> 
+> This is slightly complicated by the fact that copy_mc_to_kernel() may
+> not even exist, and architectures that don't have it don't want the
+> silly extra copy. So we need to abstract the "copy to temporary page"
+> code a bit. But that's probably a good thing anyway in that it forces
+> us to have nice interfaces.
+> 
+> End result: something like the attached.
+> 
+> AGAIN: THIS IS ENTIRELY UNTESTED.
+> 
+> But hey, so was clearly all the .copy_mc code too that this removes, so...
 
+I like it:-)
 
-> WARNING: CPU: 1 PID: 8212 at mm/page_alloc.c:4543
-> __alloc_pages+0x3ab/0x4a0 mm/page_alloc.c:4543
-> Modules linked in:
-> CPU: 1 PID: 8212 Comm: 586 Not tainted 6.8.0-rc7 #18
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-> 1.16.2-1.fc38 04/01/2014
-> RIP: 0010:__alloc_pages+0x3ab/0x4a0 mm/page_alloc.c:4543
-> Code: ff ff 00 0f 84 2f fe ff ff 80 ce 01 e9 27 fe ff ff 83 fe 0a 0f
-> 86 3a fd ff ff 80 3d 66 9d 73 0c 00 75 09 cf
-> RSP: 0018:ffffc90010f7f7f0 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000040c40 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000011 RDI: 0000000000040c40
-> RBP: 1ffff920021efeff R08: 0000000000000001 R09: ffffed100376f8a4
-> R10: ffffc90010f7f9b0 R11: 0000000000000000 R12: 0000000000000011
-> R13: 0000000000000000 R14: 0000000000000c40 R15: 00000000ffffffff
-> FS: 0000000000cbc380(0000) GS:ffff88823bc00000(0000) knlGS:0000000000000000
-> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000200012c0 CR3: 0000000016f84000 CR4: 0000000000750ef0
-> PKRU: 55555554
-> Call Trace:
-> <TASK>
-> __alloc_pages_node include/linux/gfp.h:238 [inline]
-> alloc_pages_node include/linux/gfp.h:261 [inline]
-> __kmalloc_large_node+0x7f/0x1a0 mm/slub.c:3926
-> __do_kmalloc_node mm/slub.c:3969 [inline]
-> __kmalloc_node_track_caller.cold+0x5/0xe2 mm/slub.c:4001
-> __do_krealloc mm/slab_common.c:1187 [inline]
-> krealloc+0x5d/0x100 mm/slab_common.c:1220
-> vfs_getxattr_alloc+0x1d1/0x300 fs/xattr.c:399
-> cap_inode_getsecurity+0xc8/0x700 security/commoncap.c:402
-> security_inode_getsecurity+0xaa/0x100 security/security.c:2502
-> xattr_getsecurity fs/xattr.c:346 [inline]
-> vfs_getxattr+0x170/0x1b0 fs/xattr.c:446
-> do_getxattr+0x1a7/0x330 fs/xattr.c:739
-> getxattr+0xeb/0x150 fs/xattr.c:772
-> path_getxattr+0xd2/0x150 fs/xattr.c:788
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0x78/0x1c0 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x63/0x6b
-> RIP: 0033:0x431869
-> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48
-> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 48
-> RSP: 002b:00007fff81cc9318 EFLAGS: 00000246 ORIG_RAX: 00000000000000c0
-> RAX: ffffffffffffffda RBX: 00007fff81cc9508 RCX: 0000000000431869
-> RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000020000000
-> RBP: 00007fff81cc9330 R08: 0000000000003928 R09: 0000000000003928
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00007fff81cc94f8 R14: 0000000000000001 R15: 0000000000000001
-> </TASK>
-> 
-> 
-> =* repro.c =*
-> #define _GNU_SOURCE
-> 
-> #include <endian.h>
-> #include <stdint.h>
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <string.h>
-> #include <sys/syscall.h>
-> #include <sys/types.h>
-> #include <unistd.h>
-> 
-> uint64_t r[4] = {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff,
->                  0xffffffffffffffff};
-> 
-> int main(void) {
->   syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul,
->           /*flags=*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
->   syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul, /*prot=*/7ul,
->           /*flags=*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
->   syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul,
->           /*flags=*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
->   intptr_t res = 0;
->   memcpy((void*)0x200002c0, "./file0\000", 8);
->   syscall(__NR_mkdir, /*path=*/0x200002c0ul, /*mode=*/0ul);
->   memcpy((void*)0x20000280, "security.capability\000", 20);
->   syscall(__NR_setxattr, /*path=*/0ul, /*name=*/0x20000280ul, /*val=*/0ul,
->           /*size=*/0ul, /*flags=*/0ul);
->   res = syscall(__NR_pipe2, /*pipefd=*/0x20000240ul, /*flags=*/0ul);
->   if (res != -1) {
->     r[0] = *(uint32_t*)0x20000240;
->     r[1] = *(uint32_t*)0x20000244;
->   }
->   memcpy((void*)0x20000080,
->          "\x15\x00\x00\x00\x65\xff\xff\x09\x7b\x00\x00\x08\x00\x39\x50\x32\x30"
->          "\x30\x30\x2e\x4c",
->          21);
->   syscall(__NR_write, /*fd=*/r[1], /*data=*/0x20000080ul, /*size=*/0x15ul);
->   res = syscall(__NR_dup, /*oldfd=*/r[1]);
->   if (res != -1)
->     r[2] = res;
->   *(uint32_t*)0x20000100 = 0x18;
->   *(uint32_t*)0x20000104 = 0;
->   *(uint64_t*)0x20000108 = 0;
->   *(uint64_t*)0x20000110 = 0;
->   syscall(__NR_write, /*fd=*/r[2], /*arg=*/0x20000100ul, /*len=*/0x18ul);
->   memset((void*)0x200012c0, 176, 1);
->   syscall(__NR_write, /*fd=*/r[2], /*arg=*/0x200012c0ul, /*len=*/0xb0ul);
->   res = syscall(__NR_getresuid, /*ruid=*/0x20000440ul, /*euid=*/0x20000480ul,
->                 /*suid=*/0x200004c0ul);
->   if (res != -1)
->     r[3] = *(uint32_t*)0x200004c0;
->   memcpy((void*)0x200000c0,
->          "\x10\x00\x00\x00\x00\x00\x00\x00\xab\xb7\x1b\x83\x88\x62\x0a\xa1\x53"
->          "\xa4\xcb\x6d\x9e\x9e\xb0\x4d\x13\x52\xf4\x1b\xf1\x2c\x22\x04\x9a\xd4"
->          "\x34\xcb\x2d\xb6\x63\x7e\x0c\x13",
->          42);
->   *(uint64_t*)0x200000ea = 0;
->   syscall(__NR_write, /*fd=*/r[2], /*arg=*/0x200000c0ul, /*len=*/0x10ul);
->   memcpy((void*)0x20000040, "./file0\000", 8);
->   memcpy((void*)0x20000b80, "9p\000", 3);
->   memcpy((void*)0x20000580, "trans=fd,rfdno=", 15);
->   sprintf((char*)0x2000058f, "0x%016llx", (long long)r[0]);
->   memcpy((void*)0x200005a1, ",wfdno=", 7);
->   sprintf((char*)0x200005a8, "0x%016llx", (long long)r[2]);
->   memcpy((void*)0x200005ba, ",privport,access=", 17);
->   sprintf((char*)0x200005cb, "%020llu", (long long)r[3]);
->   syscall(__NR_mount, /*src=*/0ul, /*dst=*/0x20000040ul, /*type=*/0x20000b80ul,
->           /*flags=*/0ul, /*opts=*/0x20000580ul);
->   memcpy((void*)0x20000000, "./file0\000", 8);
->   syscall(__NR_lgetxattr, /*path=*/0x20000000ul, /*name=*/0x20000280ul,
->           /*val=*/0ul, /*size=*/0ul);
->   return 0;
-> }
-> 
-> 
-> =* repro.txt =*
-> mkdir(&(0x7f00000002c0)='./file0\x00', 0x0)
-> setxattr$security_capability(0x0, &(0x7f0000000280), 0x0, 0x0, 0x0)
-> pipe2$9p(&(0x7f0000000240)={<r0=>0xffffffffffffffff,
-> <r1=>0xffffffffffffffff}, 0x0)
-> write$P9_RVERSION(r1,
-> &(0x7f0000000080)=ANY=[@ANYBLOB="1500000065ffff097b000008003950323030302e4c"],
-> 0x15)
-> r2 = dup(r1)
-> write$FUSE_BMAP(r2, &(0x7f0000000100)={0x18}, 0x18)
-> write$FUSE_DIRENTPLUS(r2, &(0x7f00000012c0)=ANY=[@ANYBLOB="b0"], 0xb0)
-> getresuid(&(0x7f0000000440), &(0x7f0000000480), &(0x7f00000004c0)=<r3=>0x0)
-> write$FUSE_DIRENTPLUS(r2,
-> &(0x7f00000000c0)=ANY=[@ANYBLOB="1000000000000000abb71b8388620aa153a4cb6d9e9eb04d1352f41bf12c22049ad434cb2db6637e0c13",
-> @ANYRES64=0x0], 0x10)
-> mount$9p_fd(0x0, &(0x7f0000000040)='./file0\x00', &(0x7f0000000b80),
-> 0x0, &(0x7f0000000580)=ANY=[@ANYBLOB='trans=fd,rfdno=', @ANYRESHEX=r0,
-> @ANYBLOB=',wfdno=', @ANYRESHEX=r2, @ANYBLOB=',privport,access=',
-> @ANYRESDEC=r3])
-> lgetxattr(&(0x7f0000000000)='./file0\x00', &(0x7f0000000280)=ANY=[], 0x0, 0x0)
-> 
-> Aslo see https://gist.github.com/xrivendell7/1487d0ffb0bc3836c9202da1dd7cff06.
-> 
-> I hope it helps.
-> Best regards.
-> xingwei Lee
+I've tested it by SIGQUIT'ing a number of processes and using gdb to examine
+the coredumps - which seems to work - at least without the production of any
+MCEs.  I'm not sure how I could test it with MCEs.
+
+Feel free to add:
+
+Reviewed-by: David Howells <dhowells@redhat.com>
+Tested-by: David Howells <dhowells@redhat.com>
+
+That said, I wonder if:
+
+	#ifdef copy_mc_to_kernel
+
+should be:
+
+	#ifdef CONFIG_ARCH_HAS_COPY_MC
+
+and whether it's possible to find out dynamically if MCEs can occur at all.
+
+David
+
 
