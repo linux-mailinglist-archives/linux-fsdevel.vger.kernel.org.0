@@ -1,93 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-13429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF6E86FB5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 09:12:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B4F86FBBD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 09:22:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF661C21B02
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 08:12:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B35C1C21BDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 08:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409C5171CE;
-	Mon,  4 Mar 2024 08:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9616E17C60;
+	Mon,  4 Mar 2024 08:21:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.lichtvoll.de (luna.lichtvoll.de [194.150.191.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FC979DF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 08:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EB418E10;
+	Mon,  4 Mar 2024 08:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.150.191.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709539924; cv=none; b=m0mcewq7JelpAuWwrFhA+zYRHgZFViN3YeXcLNm4sNGAh8SVErTeBiYEsUF91rdVyHMVeaXapDqhqKkuAfY0XSv5YeUeCLybwrn5s3VrapDBr5fIAPeMPAr9Z2x4PdpkPQMxp6QIympSt4ay7e5aaOVJYmdkNTFDt1lHK/bRYLA=
+	t=1709540496; cv=none; b=snx1le37KHFfuKCwZ7twvCsQxvDt+mm98w+7r/o8EBSpk5W4Ggh1+vTsWC+9TaQJyCn6+iDQ8Az6fa0B1+g87x24+Nd4xz8+vMb+yP9AxmLBWPhPnHb73JgFfKHLo0pptjARU7jR77m8lTRJ4ll3FbK+HdN1uTA28ZkR7zLfIEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709539924; c=relaxed/simple;
-	bh=05Zg3Yfh5R7PIlbPjhsaPvx4ut1XAWO/IPGktUKBJgg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MGud0US5ZICvKbJQbAZ2VaW5k5dhKF7rdYDLZVqHqggTQu6T5mWlzrOJvbqmXAoDifttLT0CiQ5KNh9cLCPIaRJ2LvhLuuTRyLefiogd63pMfHwirig0u5o2/y701oIBQQlcMffSApqQSErQJdeJ0Y/XrbTGiCEk8gRLMhcFDLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c7c9831579so506260339f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Mar 2024 00:12:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709539922; x=1710144722;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=egdYmnZntij2p3DhMY51S6LIFFVV0i12cJm24YKgZOc=;
-        b=xT6ozOAbQYwcrAkx3U/MNT8Q9LOEmIaZynuG2S27Lr9tis42jHPCtsXTcPdsSFU+Kd
-         PrmPoXx8MV6XiAcIoVnhF8sQdXn+OCsxSowiysMGh0zr5zXLTli36LS3DLiQ+9mFxMbh
-         pKtqQz0bvEf057LEi6Qo5s95sRk1NDcUwhHYKMOWDiAc6qH7pP6pYJLTrd9BkJ/tVRWU
-         CSj5FSUjtp8SJKBePNLCvlzvmUZi7i2le9MhoIFBpeE0ciBmyGGW0rdSKOEWv97/jsDn
-         CUmO1W5D/fAoB3NqcuMYHL20RmrIaZO9d0vSRLJ4b+hg0R6l+3Nld0F/gvOozdK+x4FX
-         k5nw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvwSRN1sKsXHMDoTAGrPI0Cj2xUh36FMh5kscU4lHQnrUJDqlY6nA3ZOcxqNdqg4sNWNTK4jEi1AkUJYFpM2GqsHmdPO5vLY1RbZQNMg==
-X-Gm-Message-State: AOJu0YwfQzLizbaPtt0gqr8M3AOBPOjh0nhzS60p4QgfP8N1RxPNWe/6
-	6teMIk9xCIJcDtCIH0FR3YEVx+ePsgcVTEJ7+77x1xWvjK/+3x8Nn4sThuXzG42YW0kHTSTZUXS
-	3/vwmBMefo/b+TvkiSun5DD/htV+vfNtjI0sK9N06plpALWvqiBregSk=
-X-Google-Smtp-Source: AGHT+IHd++C0mIqHIx4KMRWW4LIbs1lu5uiKyHeoLqXPiG35XwNNd2mAtRYPPjUcgSTA9cOGPnHrQzdR41PAlHTfXw2JfxIWyGgv
+	s=arc-20240116; t=1709540496; c=relaxed/simple;
+	bh=rQistqTUrGOlKZBaVskLCJfYvitC30s8IkMeYcZYZWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M62l2gbpe1+rFxChRdoJiqeJseU32iOBs/ep5ytWoWV/RnZEcC4pXGQtntEaxqf0EuoT7uVpO5zCG46umfl+ZOQYO2tE+LQ3lBwD1eO0ba2YK7Mm/p5XhxQVn29yJ3sIwtJBO+sgQBYbyJrQ+af5o/dKVKoZSJP5tmmxnUvb658=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=194.150.191.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by mail.lichtvoll.de (Postfix) with ESMTPSA id 830728B1959;
+	Mon,  4 Mar 2024 09:16:19 +0100 (CET)
+Authentication-Results: mail.lichtvoll.de;
+	auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: John Stoffel <john@stoffel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [WIP] bcachefs fs usage update
+Date: Mon, 04 Mar 2024 09:16:18 +0100
+Message-ID: <2199336.irdbgypaU6@lichtvoll.de>
+In-Reply-To: <apot5wnom6wqdvjb6hfforcooxuqonmjl7z6morjyhdbgi6isq@5fcb3hld62xu>
+References:
+ <gajhq3iyluwmr44ee2fzacfpgpxmr2jurwqg6aeiab4lfila3p@b3l7bywr3yed>
+ <26085.7607.331602.673876@quad.stoffel.home>
+ <apot5wnom6wqdvjb6hfforcooxuqonmjl7z6morjyhdbgi6isq@5fcb3hld62xu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:144e:b0:474:ebfd:1749 with SMTP id
- l14-20020a056638144e00b00474ebfd1749mr138087jad.0.1709539922680; Mon, 04 Mar
- 2024 00:12:02 -0800 (PST)
-Date: Mon, 04 Mar 2024 00:12:02 -0800
-In-Reply-To: <000000000000751c0305f19b3faa@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d225a60612d1476b@google.com>
-Subject: Re: [syzbot] [reiserfs?] general protection fault in prepare_for_delete_or_cut
-From: syzbot <syzbot+e621a445f96fd0e94be4@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
-	bvanassche@acm.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yi.zhang@huawei.com
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot suspects this issue was fixed by commit:
+Kent Overstreet - 04.03.24, 02:08:44 CET:
+> > This is not the same level of detail needed by a filesystem developer,
+> > and I _never_ said it was.  I'm looking for the inforation
+> > needed/wanted by a SysAdmin when an end user comes whining about
+> > needing more space.  And then being able to examine the system
+> > holistically to give them an answer.  Which usually means "delete
+> > something!"  *grin*
+>=20
+> 'bcachefs fs usage' needs to show _all_ disk accounting information
+> bcachefs has, because we need there to be one single tool that shows all
+> the information we have - that's this tool.
+>=20
+> If we're collecting information, it needs to be available.
+>=20
+> There will no doubt be switches and options for providing reduced forms,
+> but for now I'm mainly concerned with making sure all the information
+> that we have is there in a reasonably understandable way.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+=46rom a sysadmin view I totally get what John is writing.
 
-    fs: Block writes to mounted block devices
+I know "btrfs filesystem usage" also shows a lot of information, but still=
+=20
+with some learning it is quite understandable. At least I can explain it=20
+nicely enough in one of my Linux Performance Analysis & Tuning courses.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13493754180000
-start commit:   4f82870119a4 Merge tag 'mm-hotfixes-stable-2023-10-24-09-4..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=174a257c5ae6b4fd
-dashboard link: https://syzkaller.appspot.com/bug?extid=e621a445f96fd0e94be4
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1382cf0b680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136a5849680000
+Commands like "lspci" do not show all the information by default. You need=
+=20
+to add "-v" even several times to show it all.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+So I am with you that it is good to have a tool that shows *all* the=20
+information. I am just not so sure whether showing *all* the information=20
+by default is wise.
 
-#syz fix: fs: Block writes to mounted block devices
+No one was asking for the lowest common denominator. But there is a=20
+balance between information that is useful in daily usage of BCacheFS and=20
+information that is more aimed at debugging purposes and filesystem=20
+developers. That "df -hT" is not really enough to understand what is going=
+=20
+on in a filesystem like BCacheFS and BTRFS is clear.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+So what I'd argue for is a middle ground by default and adding more with=20
+"-v" or "--detail" or an option like that. In the end if I consider who=20
+will be wanting to use the information, my bet would be it would be over=20
+95% sysadmins and Linux users at home. It would be less, I bet way less=20
+than 5% Linux filesystem developers. And that's generous. So "what target=20
+audience are you aiming at?" is an important question as well.
+
+What also improves the utility of the displayed information is explaining=20
+it. In a man page preferably.
+
+If there then is also a way to retrieve the information as JSON for=20
+something like that=E2=80=A6 it makes monitoring the usage state by 3rd par=
+ty=20
+tools easier.
+
+Another approach would be something like "free -m" versus "cat /proc/
+meminfo" and "cat /proc/vmstat". I.e. provide all the details via SysFS=20
+and a part of it by "bcachefs filesystem usage".
+
+You indeed asked for feedback about "bcachefs fs usage". So there you have=
+=20
+it. As usual do with it what you want. You can even outright dismiss it=20
+without even considering it. But then I wonder why you asked for feedback=20
+to begin with. See, John just did what you asked for: John gave feedback.
+
+I planned to go into detail of your example output and tell you what I=20
+think about each part of what you propose and ask questions for deeper=20
+understanding. If you are open to at least consider the feedback, only=20
+consider, of course you can still decline everything and all of it after=20
+consideration, then I'd be willing to spend the time to do it.
+
+Best,
+=2D-=20
+Martin
+
+
 
