@@ -1,86 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-13409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D20A986F7F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 01:20:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0F986F7FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 01:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1721F2117E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 00:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B27FD1C20AB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 00:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352D739B;
-	Mon,  4 Mar 2024 00:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EC438B;
+	Mon,  4 Mar 2024 00:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="iB0iIaaT"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EivKppns"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8E919A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 00:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48007385
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 00:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709511633; cv=none; b=HVSbz0MQUpfz2wy6vjVtyFGMBNoUP0HuPL85Kbfd/Z9kfYjm1NDTCm+5jSoy4xAYWB3kCVZneYwO8/gXXqiPU6Nsf+tWHxW38TVw9gvUuM8BJ7a+aLFVmAgxYuPKOjS9Pt8YvM8VUanZgXQJmTQZZ51Tm53IpxclXeVSUQlot4c=
+	t=1709512526; cv=none; b=Xl5VGuGtgSv4kbT6UHhyQIAMoqt2j2CNC/fzhKWtC2QiQnhVoKXWZe87BCeGn22ZT4rFAqoIY907GFFOioV7IAsJ0R1Q3sqAb+exY8IwTnGymNRo/qFaNfxO4SFGmD113Ha0nZnjKbYfuyP62CRT3frNh8EInVhPw3EJSR8KDXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709511633; c=relaxed/simple;
-	bh=jbz/t0FGNIlndJAFHHzGsafV2kRcP0Hs2QghqcKZZqQ=;
+	s=arc-20240116; t=1709512526; c=relaxed/simple;
+	bh=arvYeDpUORR1cZFLl/VuzxXtTl0IBxmrbd5derRF8yg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZ/2iSZ+BIjhaNBdc1jpnHaXQkYS2pjZDDizMpYx4OKs8ivJ0nmemuEksyaLq5xPv3PnxjHsvzkbY3FD+7h/QqdzLVTMGrzuInCRVIDCG45GD8aPUAGujzsZArB+XuuiUsXNhNjyJVTsMWJqC9PD3rEr7Xw78Y/pazynOG8B5N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=iB0iIaaT; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1dc75972f25so31927025ad.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Mar 2024 16:20:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709511631; x=1710116431; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n7+u96xPcBF8UnwMQsi6zps3kKJmqNLYGPjj0sLBatY=;
-        b=iB0iIaaTuMCKAXoD1p4LtpZ/zxucJ8NMAwqhIkikG8udxXJYOYG8u7CvQM0Z4fm+7G
-         4pgDZvlk0PW42YmcoF6sP3Hr0AlvNNTa8XK6tc+SItkd0Eb+uChqskqat3bmEdH9WUfe
-         /l46ROYGSLtcwIueG3qGviBGO3NwEcHGdcThoquwNltQi41mW2vbfryifyoJtSFPKCI5
-         ZFn0LGbYe36j5V1IelKLrULjAHkqTDr4kU/c+nEMU8HFpd0TYgAwTosolfBt+LR0OQrY
-         cBTNVY6DL6ozHL0HQk++Uz4LMmyxVgK4ZLVhUDU2nA+ye0tghxMm0SIBRgfAMc8S8xHY
-         OwPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709511631; x=1710116431;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n7+u96xPcBF8UnwMQsi6zps3kKJmqNLYGPjj0sLBatY=;
-        b=Um2p6MnGkMe35zhHkn+M/jx6k3MniXzIWT82lgJyDQFpsUkmN/NfVQAaH7o1Dt4Lh/
-         f/IZ8lwniQhbfGTuPcwy3QruH6bK3RWKI3dkpd9h9YO4I5a823fu8HEOc99J7lDcr4/Z
-         Ddl9gcpFbSIjcSoEwT78krREWJXqpWsrwxWk3i4I74LJZJU9U+slMDYE0an6NilcVxQC
-         8vL9y/9eEolwk2J7OnSbHES3yduW7WG0TdsmA3p1AnD6hhtVX10/IDU+OG76yT7HpdIk
-         N56asbG2HK2zpjK/P1UNKdKCdAFanD7m7Z5hxVOYkqQJcWKaD1Z+zZMDTZyEeZ27uYUh
-         Z6cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZO8BXnvvAfBfbhNHv4HMmQd8bROOYNcT5efsTpA3p8mPZcLhWb9rSU9gMC+XOW+pTe3afCuSFWLeCg41Fr+YGWvDwmHFSwEAzQQ8UkQ==
-X-Gm-Message-State: AOJu0Yyr2N1HHWeHGPBnDt83pos5/wC9FNbc8HO3B+I+DdCYVHvn2s7T
-	MvDmyCI6uELSeT2IINbno1WIbYvrfZYo3OTLsWcaGqGdQwP9OiM7ANgZdfzujP8=
-X-Google-Smtp-Source: AGHT+IHHqRVwbzhDqGZzQPZTKp/5e8rUMV/ODbLbXFp89J0IezoxnX3dyYeolNS6GNZvX2KpejwDhQ==
-X-Received: by 2002:a17:902:e746:b0:1db:7052:2f45 with SMTP id p6-20020a170902e74600b001db70522f45mr9138784plf.61.1709511631245;
-        Sun, 03 Mar 2024 16:20:31 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
-        by smtp.gmail.com with ESMTPSA id d10-20020a170902ceca00b001db9c3d6506sm7119202plg.209.2024.03.03.16.20.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Mar 2024 16:20:30 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rgw4B-00Efo9-39;
-	Mon, 04 Mar 2024 11:20:27 +1100
-Date: Mon, 4 Mar 2024 11:20:27 +1100
-From: Dave Chinner <david@fromorbit.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkkrMU8oqF3eVL8m6yKNU6GzlBtdQgunt9wrpxoK303oNTEt2XzFgNt1ts7wM08+hWFnc6mWyIyYqk18/Pr6oWJ3xvjnXZnP+/tdUGM8JEvj8Y+qmpGnf4siFXEv21s8P1VRArlgZ6IyVRBTbs/+U6PwkF0juOrW9LK+zUMs+y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EivKppns; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zaZmGutyO121MYVQQw/hfLZRSJAhEIRFLCywTeF9lFg=; b=EivKppnsAWxl4MrnKX2BtjzwLj
+	VFHLQG4M9oSpAznJnRkVCFqZbNYbXMELlYpU0Ydi1rFwr8alOj7FD4jYp1DhqA3riXnQwaz5XTYl+
+	Li1DggJVDIzcvzBHhIU3NUEv9GfYNRSLT3+wxCn2I1YcsnnuheEJfWypgRazZeLcptTNYBT7Pt5mQ
+	1F5rOCvVME6wV7GKhCG8/7CvKntNpkg8TG/NvqyzwFfOIs6j3Xxirr4aW+GeSDkNu6OzZzl8rSXlY
+	N7ey3tlYQoQoAItzWFdlc+//CXsuguGf9lmr3aTu0nrLOArFIIt4nvujR+T4HluLN20lK+jnvo9sm
+	XZx+t+pw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rgwIL-000000003UI-1QdC;
+	Mon, 04 Mar 2024 00:35:05 +0000
+Date: Mon, 4 Mar 2024 00:35:05 +0000
+From: Matthew Wilcox <willy@infradead.org>
 To: NeilBrown <neilb@suse.de>
 Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Matthew Wilcox <willy@infradead.org>,
+	Dave Chinner <david@fromorbit.com>,
 	Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org,
 	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
 	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
 	Jan Kara <jack@suse.cz>
 Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
-Message-ID: <ZeUTyxYFS6kGoM1h@dread.disaster.area>
+Message-ID: <ZeUXORziOwkuB-tP@casper.infradead.org>
 References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>
  <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>
  <Zd-LljY351NCrrCP@casper.infradead.org>
@@ -105,71 +79,41 @@ On Mon, Mar 04, 2024 at 09:45:48AM +1100, NeilBrown wrote:
 > acceptable.
 > 
 > GFP_NOFAIL - wait indefinitely
-
-Make this the default, and we don't need a flag for it at all.
-
 > GFP_KILLABLE - wait indefinitely unless fatal signal is pending.
 > GFP_RETRY - may retry but deadlock, though unlikely, is possible.  So
 >             don't wait indefinitely.  May abort more quickly if fatal
 >             signal is pending.
-
-KILLABLE and RETRY are the same thing from the caller POV.
-Effectively "GFP_MAY_FAIL", where it will try really hard, but if it
-there is a risk of deadlock or a fatal signal pending, it will fail.
-
 > GFP_NO_RETRY - only try things once.  This may sleep, but will give up
 >             fairly quickly.  Either deadlock is a significant
 >             possibility, or alternate strategy is fairly cheap.
 > GFP_ATOMIC - don't sleep - same as current.
 
-We're talking about wait semantics, so GFP_ATOMIC should be named
-GFP_NO_WAIT and described as "same as NO_RETRY but will not sleep".
+I don't think these should be GFP flags.  Rather, these should be
+context flags (and indeed, they're mutually exclusive, so this is a
+small integer to represent where we are on the spectrum).  That is
+we want code to do
 
-That gives us three modifying flags to the default behaviour of
-sleeping until success: GFP_MAY_FAIL, GFP_NO_RETRY and GFP_NO_WAIT.
+void *alloc_foo(void)
+{
+	return init_foo(kmalloc(256, GFP_MOVABLE));
+}
 
-I will note there is one more case callers might really want to
-avoid: direct reclaim. That sort of behaviour might be worth folding
-into GFP_NO_WAIT, as there are cases where we want the allocation
-attempt to fail without trying to reclaim memory because it's *much*
-faster to simply use the fallback mechanism than it is to attempt
-memory reclaim (e.g.  xlog_kvmalloc()).
+void submit_foo(void)
+{
+	spin_lock(&submit_lock);
+	flags = memalloc_set_atomic();
+	__submit_foo(alloc_foo());
+	memalloc_restore_flags(flags);
+	spin_unlock(&submit_lock);
+}
 
-> I don't see how "GFP_KERNEL" fits into that spectrum.
+struct foo *prealloc_foo(void)
+{
+	return alloc_foo();
+}
 
-Agreed.
-
-> The definition of
-> "this will try really hard, but might fail and we can't really tell you
-> what circumstances it might fail in" isn't fun to work with.
-
-Yup, XFS was designed for NO_FAIL and MAY_FAIL behaviour, and in more
-recent times we also use NO_RECLAIM to provide our own kvmalloc
-semantics because the current kvmalloc API really only supports
-"GFP_KERNEL" allocation.
-
-> > Deprecating GFP_NOFS and GFP_NOIO would be wonderful - those should
-> > really just be PF_MEMALLOC_NOFS and PF_MEMALLOC_NOIO, now that we're
-> > pushing for memalloc_flags_(save|restore) more.
-
-This is largely now subsystem maintenance work - the infrastructure
-is there, and some subsystems have been converted over entirely to
-use it. The remaining work either needs to be mandated or have
-someone explicitly tasked with completing that work.
-
-IOWs, the process in which we change APIs and then leave the long
-tail of conversions to subsystem maintainers is just a mechanism for
-creating technical debt that takes forever to clean up...
-
-> > Getting rid of those would be a really nice cleanup beacuse then gfp
-> > flags would mostly just be:
-> >  - the type of memory to allocate (highmem, zeroed, etc.)
-> >  - how hard to try (don't block at all, block some, block forever)
-
-Yup, would be a very good improvement.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+... for various degrees of complexity.  That is, the _location_ of memory
+is allocation site knowledge, but how hard to try is _path_ dependent,
+and not known at the allocation site because it doesn't know what locks
+are held.
 
