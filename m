@@ -1,66 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-13486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE4D87060B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 16:44:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE9D870607
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 16:43:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AA2DB2BE86
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 15:42:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A72287AD0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 15:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78465B5B8;
-	Mon,  4 Mar 2024 15:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F374481A5;
+	Mon,  4 Mar 2024 15:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="XZ213hoq"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="nCigb0N+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2AB5A78D;
-	Mon,  4 Mar 2024 15:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F348F47A6A;
+	Mon,  4 Mar 2024 15:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709566608; cv=none; b=iTTKjiOF6LV2U//ADmS1sd9nsPixaxTlQCyU+/D47WppTVUd+41QcZmgI0X9WK89YpJxQ2bEcmoCFiS1Ro4RtATq3mZ+AfdTI4PvzZ0v/XO8ai1wzENK+bTPcR35DCIb0TETicy3euiNQjMKOYtD0b9n2iVQC/oEs0NSbyTvCPE=
+	t=1709566721; cv=none; b=WJQTydNlpKA/nHlz31ABJHLnVuKbmbbjwioUb+xilvYQdie9pYBDZVQ8cPZ3S80GbpDBz29B56IJKSZtUzk2Y/KZlE0jL6Mj2tPKuymkRJZxU1RTLoMBpXWmyTtrFqqZqbCurWzXwXRetawaCFBkQk7v9q8JN91rmpyF/X4e8PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709566608; c=relaxed/simple;
-	bh=27ZEQY1OYJTwJ8N3KSiYrgwBNlU92bOu1XfV8mj6bjw=;
+	s=arc-20240116; t=1709566721; c=relaxed/simple;
+	bh=TrOySHR04QLD5g+v5qamK3nqWEg+PYHQLIH2Ny/A5bc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FHINNEVD3A1ERsxFmtsc//vvMBCwTWAAqYOte6xDBSP+xSn7+uU731yRUkp0utNEwxs63k+G+dbZ2asCFsGB11jCB1d/7hpOXlWCLDJrH1G1R5nzP39ujMUocEHlP6qE0ez2MIfE84ZHBZtMQY9X7q8yIzNRZ9Do/zLYXChxnvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=XZ213hoq; arc=none smtp.client-ip=80.241.56.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5IQZi1PTc+HYJw3f9CbTfnebR98E7Di42mTHc4D15UF4tMR3RgenNHesZv22Tt4jx++bm2WfTHjkX6V5KkjoB/Z6BoTc9i07Q5P5W5ECrnLuIFQPgi8UHnTNA3MeAhf2uuNdyk+Iq0wjStMtC253NhxpbYefZHxMVrdyd+OVPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=nCigb0N+; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4TpN8p4q7Hz9tYJ;
-	Mon,  4 Mar 2024 16:36:42 +0100 (CET)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4TpNC02CXpz9t2x;
+	Mon,  4 Mar 2024 16:38:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1709566602;
+	s=MBO0001; t=1709566716;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FOKwtz1OnhAxtbDBuKtXT/Xq4RMrHi4ST4yvlFkJb6g=;
-	b=XZ213hoq4xNhbJ19fxAiIm/ZtWfY3ZX1T/O9/2/Ay1pSrdChz8dUXG/AtOfjGdeat5jUtM
-	Do7WVRj1j03L4mGyucjrLhQw+ECx47fs23dV1ZEkD+hquLfaRdbcnzX8NH7YsFnivM9e99
-	QOFFPeuEGMvpzKunQZ+J8fTwnxPu41I3Zdi8oPf4Rw7+gPdEPrIW0DBLgAi8zAVIpCuA6m
-	cCk8r1R3THOPf8RMrYg4/h/lz7Fzk8jkjjABH+jvkIiOJV9sgxYCaFZzoS7HOTjmb0Htf4
-	gP/oRdR9nNXp7xHWfxLr2shVCvljt0tkeOZtFepA866Vd+HiqV8AU1oZZ/BUIQ==
-Date: Mon, 4 Mar 2024 16:36:34 +0100
+	bh=SCUZrMhv+Ip6AlhQv9o/ZyuuqgJYxTQNgNIIwuFAJhg=;
+	b=nCigb0N+NOC/Z7x7NK4bJ7M9+yqmc8/b9bw3lzKhp0Hwd9ojAausgLTzVrc1WS0moifMpl
+	5Dyx7gEheOypByjZutu8yfpfcMISQamT9Fr+aLVBl4A/v3ye/jUtGJla2D5HT68lqkx/yA
+	y9rCCQXBZe4IbOeNFWnHwBtrDLfGDqAW/zjonKERsI/7jMqAHmoxd9AQ8mW46gHr4j/pOE
+	xlMj5xGeBQ5bHBk7MgyfcadTXw9pNn5mb61xaMpNl87L/6uPrfIS5WbJaDSMbihfkmW9bD
+	95zSya837PM4+vyODLRrA8Coka9IfQLAqxh1txUNOl8nSkIDS5yamMvj7NXUmQ==
+Date: Mon, 4 Mar 2024 16:38:31 +0100
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	djwong@kernel.org, mcgrof@kernel.org, linux-mm@kvack.org, hare@suse.de, 
-	david@fromorbit.com, akpm@linux-foundation.org, gost.dev@samsung.com, 
-	linux-kernel@vger.kernel.org, chandan.babu@oracle.com, Pankaj Raghav <p.raghav@samsung.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, djwong@kernel.org, mcgrof@kernel.org, linux-mm@kvack.org, 
+	hare@suse.de, david@fromorbit.com, akpm@linux-foundation.org, 
+	gost.dev@samsung.com, linux-kernel@vger.kernel.org, chandan.babu@oracle.com, 
+	Pankaj Raghav <p.raghav@samsung.com>
 Subject: Re: [PATCH v2 03/13] filemap: align the index to mapping_min_order
  in the page cache
-Message-ID: <ofna2ao4w5aywviupntdz6m5xos6qb5btdxxixkyosfw45exwp@iuuexfq62qhr>
+Message-ID: <mu5ajujhqqlriqow5nehawhtr2ywqi67xjisgcxd5p2lacmsrp@jurev3lqvopc>
 References: <20240301164444.3799288-1-kernel@pankajraghav.com>
  <20240301164444.3799288-4-kernel@pankajraghav.com>
  <ZeIr_2fiEpWLgmsv@casper.infradead.org>
+ <c5rw63nyg2tdkgeuvriu74jjv2vszy2luorhmv3gb4uz2z4msz@2ktshazjwc2n>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,49 +71,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZeIr_2fiEpWLgmsv@casper.infradead.org>
+In-Reply-To: <c5rw63nyg2tdkgeuvriu74jjv2vszy2luorhmv3gb4uz2z4msz@2ktshazjwc2n>
+X-Rspamd-Queue-Id: 4TpNC02CXpz9t2x
 
-On Fri, Mar 01, 2024 at 07:26:55PM +0000, Matthew Wilcox wrote:
-> On Fri, Mar 01, 2024 at 05:44:34PM +0100, Pankaj Raghav (Samsung) wrote:
-> > +#define DEFINE_READAHEAD_ALIGNED(ractl, f, r, m, i)			\
-> > +	struct readahead_control ractl = {				\
-> > +		.file = f,						\
-> > +		.mapping = m,						\
-> > +		.ra = r,						\
-> > +		._index = mapping_align_start_index(m, i),		\
-> > +	}
+On Fri, Mar 01, 2024 at 03:04:33PM -0500, Kent Overstreet wrote:
+> On Fri, Mar 01, 2024 at 07:26:55PM +0000, Matthew Wilcox wrote:
+> > On Fri, Mar 01, 2024 at 05:44:34PM +0100, Pankaj Raghav (Samsung) wrote:
+> > > +#define DEFINE_READAHEAD_ALIGNED(ractl, f, r, m, i)			\
+> > > +	struct readahead_control ractl = {				\
+> > > +		.file = f,						\
+> > > +		.mapping = m,						\
+> > > +		.ra = r,						\
+> > > +		._index = mapping_align_start_index(m, i),		\
+> > > +	}
+> > 
+> > My point was that you didn't need to do any of this.
+> > 
+> > Look, I've tried to give constructive review, but I feel like I'm going
+> > to have to be blunt.  There is no evidence of design or understanding
+> > in these patches or their commit messages.  You don't have a coherent
+> > message about "These things have to be aligned; these things can be at
+> > arbitrary alignment".  If you have thought about it, it doesn't show.
 > 
-> My point was that you didn't need to do any of this.
+> Don't you think you might be going off a bit much? I looked over these
+> patches after we talked privately, and they looked pretty sensible to
+> me...
 > 
-Got it. I probably didn't understand your old comment properly.
+> Yes, we _always_ want more thorough commit messages that properly
+> explain the motivations for changes, but in my experience that's the
+> thing that takes the longest to learn how to do well as an engineer...
+> ease up abit.
+> 
+> > So, let's start off: Is the index in ractl aligned or not, and why do
+> > you believe that's the right approach?  And review each of the patches
+> > in this series with the answer to that question in mind because you are
+> > currently inconsistent.
+> 
+> ^ this is a real point though, DEFINE_READAHEAD_ALIGNED() feels off to
+> me.
 
-> Look, I've tried to give constructive review, but I feel like I'm going
-> to have to be blunt.  There is no evidence of design or understanding
-> in these patches or their commit messages.  You don't have a coherent
-> message about "These things have to be aligned; these things can be at
-> arbitrary alignment".  If you have thought about it, it doesn't show.
-> 
-> Maybe you just need to go back over the patches and read them as a series,
-> but it feels like "Oh, there's a hole here, patch it; another hole here,
-> patch it" without thinking about what's going on and why.
-> 
-> I want to help, but it feels like it'd be easier to do all the work myself
-> at this point, and that's not good for me, and it's not good for you.
-> 
-> So, let's start off: Is the index in ractl aligned or not, and why do
-> you believe that's the right approach?  And review each of the patches
-> in this series with the answer to that question in mind because you are
-> currently inconsistent.
-
-Thanks for the feedback, and I get your comment about inconsistentency,
-especially in the part where we align the index probably in places where
-it doesn't even matter. As someone who is a bit new to the inner
-workings of the page cache, I was a bit unsure about choosing the right
-abstracation to enforce alignment.
-
-I am going through all the patches now based on your feedback and
-changing the commit messages to clarify the intent.
-
---
-Pankaj
+Thanks Kent. I am going over the patches again and changing it based on
+the feedback.
 
