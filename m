@@ -1,98 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-13452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2608701E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 13:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4308701F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 14:03:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126A31C22592
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 12:59:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7141C2191D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 13:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048FA3D3B4;
-	Mon,  4 Mar 2024 12:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECD23D55F;
+	Mon,  4 Mar 2024 13:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKweJZFP"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="J775hL3H";
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="FPwlQoLT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB9024B26
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Mar 2024 12:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829593D542;
+	Mon,  4 Mar 2024 13:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.121.71.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709557158; cv=none; b=E1QASUCb6sd74njRyK2ncXlKvOdGRaTkNjGyRIh+/Pv+hhpJooVHsaohc4/LQiNEX4agpqlGL+Tlic/CFXyQ5KVNESrv5OCGcR5PpZQY6O4TgD1+ZNEZ+qx6Nu3M0zjaMrtbdcDShb4WKv4McWAtQpPGoSCv7Kth7aD5FTSqBes=
+	t=1709557375; cv=none; b=U49Fg7Uu3GC1pyVbMLUH9S2knRsYvxhD956dKBjIoqeYRTgAG/zVl3CzOZcgBwnPWUoHFo3u4cvd281WvZFbNxm33VVPEMZWHoT264J7CqR5k0EKHNY+Qq4kBEZEFtE5GBRiMoVEA/3Xr6afTjeQJcqMugVR8SwqhKPGOrT271Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709557158; c=relaxed/simple;
-	bh=JnCFbq+RIl8695Cmp7WXOoB3eReYnOBWpVgc4qEECFo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FU4i0zbVmRlMtWIgONia8cPWjcOQ7xLQq2vYGyi4QoAj4U+jGLB6hNaOJ0piyUwqPyrUknvl6s6k7wmR1szHE1tb99DQdltA5/kKznM3pTDEKjfr5PLcttCODGbKg9IW+AmTrSv05DCMBOjyW5WX4dsuP2rXLPIo1Mm82kDMYbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKweJZFP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F11C433F1;
-	Mon,  4 Mar 2024 12:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709557157;
-	bh=JnCFbq+RIl8695Cmp7WXOoB3eReYnOBWpVgc4qEECFo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EKweJZFPWPoMbL1psiWcvZ5oOKyGKClIApk5HPXMXPkV8aST91wkWtY/LOE5h3yAO
-	 pcIxBK8j7hLll6MKdbrd3+f2ILmGq/NZua+SmzWHwbd8gJ4hHHuoUZuhQb9Jy5OVC6
-	 a7wT2wv4S2GZYJLB66TYgnYQBKrlkLiu0m043YBkxVoRwSYrKG3XXDljK4QIeIgc+4
-	 8cYcqpLbBZgUUsSkiJ+acQxdghzdmtJwXlR2moRu7F9SGkcUIe57/uEcag+0WBZRVH
-	 3uV1Ugmxdh+dWK6RDUy+FY7Nn68iDvrM9fd71VW+2XXllWMtGZm0W4j5XhWfPAF/2L
-	 o1hWG7Tcrik8w==
-From: Christian Brauner <brauner@kernel.org>
-To: Bill O'Donnell <bodonnel@redhat.com>,
-	sandeen@redhat.com
-Cc: Christian Brauner <brauner@kernel.org>,
-	al@alarsen.net,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] qnx6: convert qnx6 to use the new mount api
-Date: Mon,  4 Mar 2024 13:57:01 +0100
-Message-ID: <20240304-infostand-befrieden-7ea1414c5b73@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240302165714.859504-1-bodonnel@redhat.com>
-References: <20240302165714.859504-1-bodonnel@redhat.com>
+	s=arc-20240116; t=1709557375; c=relaxed/simple;
+	bh=B3K21OgLoz1W5sfrl2E27+1K7ioRlos5ZCdVDYriGdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PhpjWOzOlG1tkPfGG8/U1i/c+LPPQFGo1euiBoxxWP8IrUy+kO7vcNXc9sVipZcEsbtJXP2pZFkMHSLNZhXVzIhX4rJy6yH2weBjWOyW/AWdnCzQSp+0QEbSC07qgwbhke0D54GjZN/DCCOo9wx3JrhAAkxO+sYC0fgpU9hULGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=J775hL3H; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=FPwlQoLT; arc=none smtp.client-ip=91.121.71.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: by nautica.notk.org (Postfix, from userid 108)
+	id 2D2E7C01A; Mon,  4 Mar 2024 14:02:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+	t=1709557372; bh=8rQDbUg4RJu/7k91VfbHeq15VU8NDHILv/3Ta8lMlPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J775hL3H666TqcYafAW6nPLUlBwCi5BPIgQGaRMNENlN9ZxRMIl4NkyE6828ENO//
+	 3UtRFgfqc9kjt2i0et95Y4VVq/giBtAAqVlITPkbgUT+MyI6TcQ8F5doWclmzbOoZ+
+	 0j2CMxby+i71kzPIaeJXMC+MBUcq+/kSIHLIwiJ2HgFKWBESfh7mUO3HtOkWPE0R2W
+	 41TiYBY2lgkV9blyfJMkDwmkEaBGjWwp0xkZSfON7dHcJOsAYLaT/X41ADHHZ4uidh
+	 q8+fD9iKBYvY0YyYK8pNZsFZHCnW/jQaZkyKzxYH3C9rM8cABs54cXIuRGUuq6o0ob
+	 BlFrLUNw4MYuA==
+X-Spam-Level: 
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by nautica.notk.org (Postfix) with ESMTPS id 9D91BC009;
+	Mon,  4 Mar 2024 14:02:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+	t=1709557371; bh=8rQDbUg4RJu/7k91VfbHeq15VU8NDHILv/3Ta8lMlPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FPwlQoLTbRX1K7l+u0Ctk3mgREi6ZbFt+BJ72Fkor1L122gf3OZtU0UmEzyX7GIWd
+	 QnCtvmqLNkbq7LqoKcptWW0WXpnWBcmgTuzGn/ykKgAlQZJW9XS2pzfuA/4hLwIWwN
+	 3gKlMKl+GS2Szu+gfg/jns+UTybgpmhTR37r8ikiqZF0fvPjfxQsLf1bVuvzghnH+M
+	 wqZvuwOTQnGYdvZOh9VuUIDGWfOcWK3bSBJ7qj+BaKIi+Corxg9wWvK6l+bicANhhl
+	 U4cpe3/ohhioj5HUh2Z2yQwOfpPxUghBAO5Cr9jwFKZg6sPk2lU5j4OGy2+rZGEBQ7
+	 TmaANxm+Yf0Cg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id affe790f;
+	Mon, 4 Mar 2024 13:02:44 +0000 (UTC)
+Date: Mon, 4 Mar 2024 22:02:29 +0900
+From: asmadeus@codewreck.org
+To: ericvh@kernel.org
+Cc: Lizhi Xu <lizhi.xu@windriver.com>,
+	syzbot+7a3d75905ea1a830dbe5@syzkaller.appspotmail.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com, lucho@ionkov.net,
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Subject: Re: [PATCH next] fs/9p: fix uaf in in v9fs_stat2inode_dotl
+Message-ID: <ZeXGZS1-X8_CYCUz@codewreck.org>
+References: <00000000000055ecb906105ed669@google.com>
+ <20240202121531.2550018-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1239; i=brauner@kernel.org; h=from:subject:message-id; bh=JnCFbq+RIl8695Cmp7WXOoB3eReYnOBWpVgc4qEECFo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ+PbqgQvLPQtbpKzs/WznXOU1+Kv/10L4TOz6UN559L Nqnd8FyV0cpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEnv9gZOjmfTdnzuIjgUaz uPfy6Vqwr5b6ZBje5/yuporpW76dXwzDP6XMM/sSQkLlS/O/vLU/pxp+4Kf/v0v1hS85vEuWNC+ 5wgMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240202121531.2550018-1-lizhi.xu@windriver.com>
 
-On Sat, 02 Mar 2024 10:48:34 -0600, Bill O'Donnell wrote:
-> Convert the qnx6 filesystem to use the new mount API.
+Lizhi Xu wrote on Fri, Feb 02, 2024 at 08:15:31PM +0800:
+> The incorrect logical order of accessing the st object code in v9fs_fid_iget_dotl
+> is causing this uaf.
+
+Thanks for the fix!
+
+Eric, this is also for your tree.
+
 > 
-> Mostly untested, since there is no qnx6 fs image readily available.
-> Testing did include parsing of the mmi_fs option.
-> 
-> 
+> Fixes: 724a08450f74 ("fs/9p: simplify iget to remove unnecessary paths")
 
-Thanks for all the work! I've added a new branch vfs.mount.api where
-we'll continue to collect these conversions. Everything in there is for
-next cycle. As we're getting too close to the merge window now.
+(careful if you rebase your tree as this commit isn't merged yet)
 
----
+> Reported-and-tested-by: syzbot+7a3d75905ea1a830dbe5@syzkaller.appspotmail.com
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 
-Applied to the vfs.mount.api branch of the vfs/vfs.git tree.
-Patches in the vfs.mount.api branch should appear in linux-next soon.
+Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.mount.api
-
-[1/1] qnx6: convert qnx6 to use the new mount api
-      https://git.kernel.org/vfs/vfs/c/af96d3456445
+-- 
+Dominique Martinet | Asmadeus
 
