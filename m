@@ -1,197 +1,321 @@
-Return-Path: <linux-fsdevel+bounces-13647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062F187264C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 19:09:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED308872658
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 19:13:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 826EE1F27860
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 18:09:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5419289ED6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 18:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871F518038;
-	Tue,  5 Mar 2024 18:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA29182BD;
+	Tue,  5 Mar 2024 18:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gOCKkhhD";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="tkJY8wqQ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0mRPyIU+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B14717BAB;
-	Tue,  5 Mar 2024 18:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709662143; cv=fail; b=kmguqhkmkDBwPfamd3AiR6qh6KufYCsK/7Mz9LPfhpyq2UM3655A5ETJP5sX6q2bYbCltW1C6UrHX2TC+Tb43oaAx2xnoNl7DXS2ZlkW5QAX2cs+IDFeVdbM7KcerEN9fna/1q9IQUKcAkNqhHxrlBME46E0scuh/CheSDaO8jw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709662143; c=relaxed/simple;
-	bh=KSA/Ntoqe9LyoNO4N8fS2tE7NAxmstwOVR1F5hHeSmE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=G1oBm/JU+SbJOTm4QzoQsnNz+oovJm3BPcgG0KAxxMSqHt9gwxQQZ5YMarPFcs04GfPC09iotrycMRWYuNZF6GDzhIR71Fpf2DSuje3B5mHcjhqM5E0KlDvsobmM2a1MTmQOS9zOjNEaiH/K8rghXs6k61UdHJtiz7PxCFBL3lw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gOCKkhhD; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=tkJY8wqQ; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 425G1LjY012579;
-	Tue, 5 Mar 2024 18:08:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=KSA/Ntoqe9LyoNO4N8fS2tE7NAxmstwOVR1F5hHeSmE=;
- b=gOCKkhhDxWT3B2pmv2LdBXda+1kvASIwgswv70JoGuJV6eT1VIEXcingTu4X3IcxAjKc
- ZxYFjhCM5G52/Y8S4cKpEemUHBRtRPSwW0R4+xQFN7qwgVNQw6RyawsD1vExASwz6tX0
- WL3Pd+PNnfiJNe4fdch8WqsDLInP4ABXij4UrntyiZJDugHha2BrRezj0GmPMnUTpQNi
- jxEH1JObGqO5lx86orO8Y8UTVTD0mnTpNc7J7WEJyGnnTw4ly2v1Vzp3hMp/zyGQNot8
- tGl95KyPVwo9C48pPrwwd4LCi7UEJhs9u/u3zD5ezdgURyFQ/R5+QNVKf1oNqznRx/Aw UA== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3wkv0bev83-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 05 Mar 2024 18:08:56 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 425Hmf2b016004;
-	Tue, 5 Mar 2024 18:08:55 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3wktj899w1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 05 Mar 2024 18:08:55 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WUQZmtHfVTqA+cAHjzIGzsw/mDi39119Ma4aW9k9aS8tPFaLkDQs/Z/qf0L1NPgcQAfXkGOD58S/GXD4DXw4aH3Xpb5hmUlzzFBNnSHE2qADMvYJWpvCoV2M07HDPuRhm/SHj4YPEXsnWgRjAOZbPGwnoxGGaBQjXsUYFMBzhmyStBgFNMq8sD3ZjIKj0ftrAH+W5WjOQyFy0uNM7gl215TXtjECXsQNe7o1YfznlcwwLaJyvNW76hMgX61SkDVO4Dbe17ipHAdxg5P8vHl+s+pJCs5JwunhZFfJxP3lDqa4sbJxb0mb1Jdj9FwikEL2YyP4GUairOuboUhnbBvKcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KSA/Ntoqe9LyoNO4N8fS2tE7NAxmstwOVR1F5hHeSmE=;
- b=Dvk/xbCUY0WCkBke9khmXDwWkzAIxysW3t8OUMhEyGOMAH9bNvxaSChTeSjEr2+ITjRoKiCZXivYjSNb4fuCIzTCOR6+7D25kH/IDrTkPNoGuZbm9/PsIQfSrQj5UWbVHpRnqUtzG/eGHnAV7SLC9HXBKAn6YIAi3ijOfXXkzaMN5piASI5ledbpCFTkjrB7v0q54g+2SSSqzTdz8lf3JU3/YqfpTxmXYWHTuDbrDisCpc0WkNVWfzNF/M2VVNbLIHoU/M5wlUFaN09NvWBdSOlefXCfHyUChc/QL6VJgRPamiTyjo86WWfI2iiyecJtcM2UKOvGjG3uwIzclmYe2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985E217BCF
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 18:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709662420; cv=none; b=DPndduW85SSzYnMRwzhCNj1xEKuhpVSIJjeOqoUnmvQXBdvKGNa8+9uOx3cEVVP+64zkU6/rLF8Mxj6gkrM3V01ezfYqj/tSugkWd3DgbtYrd9twIHkrM2k3ou/A4dxY00pShDU86sjJIOYQwTurTTHVw+EKQqP78v8HS4seqTc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709662420; c=relaxed/simple;
+	bh=CyJ+JVpGoJ4qDpCfYN+TgGsjupl/TFtO0j1iKddU+ZY=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Cc:Content-Type; b=ukCg9WZaTfmr/37n6dqOD6/K8d0QiAQK5FAeyau7Dg+OzddHSkZddx9+5l7+zrnCQFRqjfmvjbLzOn4rLruZlqXqIYFjjviWHEldzvW/jUHXa6XBYhAjOSZ8jmTOcyor1jUoj9NnyZRq+BIjpz8jHd1w5LlLoKM86kuM162g0pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0mRPyIU+; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc64f63d768so1660658276.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 10:13:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KSA/Ntoqe9LyoNO4N8fS2tE7NAxmstwOVR1F5hHeSmE=;
- b=tkJY8wqQRmL9BrCMDWznyah+4rfOnHD9RjaD2QopZQiZ44uNa+RVgk3u+Hy5p33x/RRBqgfp0ZHYKn8s1yUNWXcDcEUeYqGy8cBJZdKLQaycI3N/l3HebR334XdUsFuBPmhn/P51JxfMwU7aJLw2NS4P4jDhzuEqmRJkPrgGaaQ=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by IA1PR10MB6242.namprd10.prod.outlook.com (2603:10b6:208:3a2::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.39; Tue, 5 Mar
- 2024 18:08:53 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::ad12:a809:d789:a25b]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::ad12:a809:d789:a25b%4]) with mapi id 15.20.7362.019; Tue, 5 Mar 2024
- 18:08:53 +0000
-From: Chuck Lever III <chuck.lever@oracle.com>
-To: Dominique Martinet <asmadeus@codewreck.org>
-CC: Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov
-	<lucho@ionkov.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "kdevops@lists.linux.dev" <kdevops@lists.linux.dev>
-Subject: Re: 9p KASAN splat
-Thread-Topic: 9p KASAN splat
-Thread-Index: AQHablmA13qhcWhJA0SMUXVJZjmp/LEoRpIAgAEtCgA=
-Date: Tue, 5 Mar 2024 18:08:53 +0000
-Message-ID: <504E0570-C4D2-4BE4-8E4B-D6AD86769734@oracle.com>
-References: <D56DE98B-F6F1-4B38-A736-20B7E8B247FE@oracle.com>
- <ZeZjInbYNkpLPPkz@codewreck.org>
-In-Reply-To: <ZeZjInbYNkpLPPkz@codewreck.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3774.400.31)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN0PR10MB5128:EE_|IA1PR10MB6242:EE_
-x-ms-office365-filtering-correlation-id: b9416d55-477a-4ee1-3d7d-08dc3d3f513c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- HOXhlWyWWS0YnKM0rPYnCzJcs6pT7Uq2tehe12GXvf3yjeA9ZHoLpNY5IjW1rrbH+I42GqLMtYRJmUjlh44xbmYzMgMaJCqwFMuMdeCNqjfOOYBeUXy3OQBwMqBoHj8Tu53JZL6wvpbDuOuFbGq3F64avdDkvAAi1XRza07+4R7M69xW4FdMVRJSnZj7jSFXCgEk1yYi8o993dr+9rjprGofPiAj3UvtN4AtjKgKh70LtdThA1sENl0YHcO8NxRdpeJVNqZ+eVTHOJ1e21SHKji7kcK0vmn1YHrRwNgSaPpdpv6/74ggkbYon3JHUV7pQvstDD2PINc4jPeeerg5kwDcyZbcSfNWs79jXMuk9VvFFyhQxRKRu38G6ULfZ86sbwpx3SSV2EMpf8YDXkirVZchhT2ivRapd/IHxeQxxU+MISPXasJFjq9jwL1ukn1hrLhPEJgp4sM6hxR9QaOmPlBzS7LiT6XqkOn2rPJWtrn+WX4ORaNRlce0HKZZKQqBEGpjknpAlGB5nt4d8DJikfyy8KJRvnSoKighbUcLtGJQsbnhSPP9svEOOeWM4D143A8EWEYyhMswEFA4fGn2T8r0P10arhDumN7nHmuQ8r601vqikw+W7o/Ingau8dhtEkqTCcd2o2CrMNFqTNIQDxNurEfXCbvRpnhZAlbL+RA=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?MUhZTjhhNGlmSnc1UHdnQUFDamVsb2ZHdWdUamFaMUpiWmpjQ1U5QTMxUldF?=
- =?utf-8?B?MkZQWUprUmVIR3RRbUduV25iQmJBMXE2M2loeTFldkNYN25adWJTSndLQXpO?=
- =?utf-8?B?aXVybU9RNlllYVdOYkt3VWw4a3N0aTRXSGtqZE9lNVJrOWNYUWp3LzJTS2Zy?=
- =?utf-8?B?WnVaNjNXSHZIRk5qRENjbGxTTGI5bHh3YmEwV2xpU3RmdnB3K2pEcU1GenVY?=
- =?utf-8?B?ZHdYY1hISzNzdnE5L0x6bVJWZVQwMGFqOFZXQmUzS0dzM0s4RmJxWWk5d2xw?=
- =?utf-8?B?aTVBRElkSGEzRmxGVDk0NG53RTcvUnMxYXFTeU5wQktEdkhCSFVsdzZ5bUhn?=
- =?utf-8?B?VFArek1lMXN0S0FOWklab0ZIY0lnYkNOZ04vRXRpNWZRZG1RMlRRekRtdjB2?=
- =?utf-8?B?d3hOS05ud0ZZYndCS0NuUENWb0IrSFpPSlBJdzJNeXNYRW9TZ1R5cGdjOURv?=
- =?utf-8?B?NUxYbm1uZGZMZUVRaG45OUtKR1B5WlpRVjFDUSt1U0lOQkc2S2xSYUtRSWVF?=
- =?utf-8?B?Rlk3TGJRa3VURnlBaG54VGEyUmhDYlZ5SVhUcllRc044M2U4eE9LS2E0Tng2?=
- =?utf-8?B?b3QveGxsUXF4b0VVTHp6dkNTSDErRk9hbDhES0pxWHUxdHlSa2VaWmNVUGFI?=
- =?utf-8?B?Tk1PazVraVdZcUJhckFqTXY3cTVUUHUvYnQvVlUvSWdHS0VCNmJwV2lFUFk3?=
- =?utf-8?B?TkdxbzRMd3dvbHU2TkJBeDlaZXJzeHM2clhiaE1xS3pvaWlhZU4xZWdTOXo3?=
- =?utf-8?B?ZE0vZUZhUzROTVFqZnRZcjRFQ3BwSWFEZGgvQ3owNFlOZXFxZXFzdFB0R1Vt?=
- =?utf-8?B?amZiTThXUWFTc25SRmNFSHBJekoxV0VQTUJxRjRJdjdoVk44dDNmcHpiZXJo?=
- =?utf-8?B?cTlhSmRVajJmMXBtUUJOc0h2d3pLZUd5dTZvc3lqV0IvaTJydHBXcEl3R3gy?=
- =?utf-8?B?bVl6YVhqQTI2VWM1SGFxcWdyU0MzLzVUU2ZXeHl0WXgzM2ZaRzZRVEM2eit6?=
- =?utf-8?B?cEE3TTJZTTBIRFUxOFVaQXp0Q0FaNm5hMDNuMHdweEhsbFQ2OWFtbzdmMFBK?=
- =?utf-8?B?R2FieWJWcjFvUVpTM0piRzBCSmc2TVR2NUxwTEdtRmJNUmcyM3hNVk1iTDdG?=
- =?utf-8?B?bHY0SDFBTmxlUlRtUjY1Z1JxUG0xY1JSMmd0eTVjTzAzT3B5V3lJR1pRZzBz?=
- =?utf-8?B?QlpFdWxFaU1KcHBGOWx0b2hyM014Q2dDeXFFWmJHZGEvVlZNb0x3QWZDTTZj?=
- =?utf-8?B?NmxKYWpSR2JWb1F0TUpRMU04VEhpbC9ZREFtVHlMSjZCbVpoQ2VtVmQ1WTV6?=
- =?utf-8?B?a282Ri8zdmNUOUtXRzg3QTVBM2k3LysyaHE4VFlsSExGVFlFNGRacnFNNks1?=
- =?utf-8?B?L3AyYm9BTjltR0l5RlJqa0FUWUFsUXV1cW1jYWxaNXFrNXlJTHVFRWF0Sy8y?=
- =?utf-8?B?NnlLMUNxNzBOK0JYZU9wUTJTNmtVS0tsemRId2JPY0l4ZURWKzRmU0NLVTRZ?=
- =?utf-8?B?a3hqUEZQNlJuQXQzQytxZCt2NExBK2EwdlpaWXlUNy81SDhlMVV3NUdwMUZZ?=
- =?utf-8?B?cUY0ZG43M1FLTjg1WjhuRk9NU2pJTi9VRDRDKzNXeDRZOXZJdTF0Q1JTWnR0?=
- =?utf-8?B?NXNROVRTMXNndW5mVTd1bnZZYmhFUE9qMXpBaHBJTk42Vk5iZXhMMnVJTWtT?=
- =?utf-8?B?YmxZM0lQblZrUGZ6ay8xTXY2Y050a1NmK0tZaVVyMUVmRzQ3ZjI2U3A2aUlZ?=
- =?utf-8?B?Ty9MOERNdStBcS9IaEtSc2krL0ZzSzg0ZlExd1hyZWlBa1dpMHNmQmpmMm85?=
- =?utf-8?B?L1NnbGNKd1pxbnQrc1VsSmcxVThjVVpIYWNaMGlzWlVrWktkUmRaaWZmU0hh?=
- =?utf-8?B?bHNGbHNVdVhjVXlyMm5YTmR0NWptUU1xUC9DUEN5di85eWxXUmdVV0ZteExS?=
- =?utf-8?B?dDZkRTIrb2d5bUNleEJSd240cTRoSUltaUVSdWRINHcvTUFNUEg3QlptRU83?=
- =?utf-8?B?UVFMVkNQQXliZlBtTWdRT0ZhNUZQdHhTV3ZyUldBcEdWWEwzQ3N3TmRFWDhu?=
- =?utf-8?B?bnIyeTBLMy9uV0VXZXlUNlU2bUVFTEI1SjRaSkpoWXp4V3ViWEJISEZLYmc4?=
- =?utf-8?B?Q2tDbFhML0dlcmxMOW5qb2FscmZJLzh4QVVkZHFZV1MrR1Y3TjJQKzNCOHpt?=
- =?utf-8?B?VEE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4B349E2A7083FE419FB0DBCA321FB7A5@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20230601; t=1709662416; x=1710267216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3PGdbsMXUiUuSsiQWp5Jqqrn2fXA5rzGMtAum3VRSFA=;
+        b=0mRPyIU+kSE6PlGTrbhQceT7nigp1dlHdeEWS+s3kM4a9v7kD+oIdQ8x4b4lA3I3oo
+         bwloyGO+/NeBHm/4DvfXSthgirSKKgFmegkdqHgQClNZu/DN1SH0GEbu/yXCmH97yjsR
+         3WJID2IF30bFyPU7xrcS3af3EYu/PCTtd4cyuTK4/s+NCKekz8g/YM3r1uQ4HC8cBJeh
+         Uk7ywsBDjbGy2y6YxQ1ZsmBhOwjc/wm063sCJIlVY/buWAcGT6MxX7E0dKRs0LcaVh2d
+         neuSoQbtb+tw/dw1qy/SGbZ9M36J8qmO0oxCI8H3IIg7eRvPcCe8E0CEKcC2I+M/A4VO
+         QgzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709662416; x=1710267216;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3PGdbsMXUiUuSsiQWp5Jqqrn2fXA5rzGMtAum3VRSFA=;
+        b=QTgydHX0++B5rIZpTK88p8T5CJp27XTl2gAJPfRm0OK+XTxzSB7qKSKfOR2j0AVIWE
+         f4HSksFwK0P8ONWJ9qwZ4iTSAvyytC6LAT/A4N5OoUObV5wEvxKXuuTOJrkyBxG/hfbr
+         tQUIKvJD25PaXXnEJNhn2WqG4p7w0ZVL2t4oEOH5rg4gPYlH9qabyzjV+O19r525sZbx
+         a/6Cu9omKdNgUtDwQDskY2y9j+c5+XIyoLL5YLrCDhaep+zblJqQH2oxz0dsHWV3Io0X
+         qGkhQEL84K8Ki4MxxZoN/HB7vowwD+2I0eIclHN4UW76sfdqxAV7awReM7J2NPwxIRB5
+         6ukw==
+X-Forwarded-Encrypted: i=1; AJvYcCUerqDZuvK9KScaQ++kZ5rBwSExeEeAQ3QLbyJ5n3r4vifXD4yDislkbjpXfDmL5seqsiiCxfVAa8zOmaAQY2iNeNZLwMu0SIHoXMdq1g==
+X-Gm-Message-State: AOJu0YyDkIPFdle5wymxtyLWrXRigJv2Hrm3jbR1TVWv8N0mOSbsJaK6
+	UOiAjj6RR6bbL5oMabVzVFg0QKLSnSWF64ApkHZ6Tyd/xK2tSEyCyvA15znjRiVy7wf4dpU/I3A
+	THA==
+X-Google-Smtp-Source: AGHT+IF6z+F2YOlwKgoVBTrvWxNMHsOF8Ll7r5c+S4i+fsZtpxIxP/lO6puQn10mOk+wsifGwq1vHUdZF6M=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:bb98:7678:19cd:5dec])
+ (user=gnoack job=sendgmr) by 2002:a05:6902:18c4:b0:dcc:c57c:8873 with SMTP id
+ ck4-20020a05690218c400b00dccc57c8873mr3464476ybb.9.1709662416601; Tue, 05 Mar
+ 2024 10:13:36 -0800 (PST)
+Date: Tue, 5 Mar 2024 19:13:33 +0100
+In-Reply-To: <20240219183539.2926165-1-mic@digikod.net>
+Message-Id: <ZedgzRDQaki2B8nU@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	63n5fdbDC7iu2S2rLIrJsE218Qh++a5cpeTeHf54okIk2RexY8nRjg6nYUBzYxcpNwTNRQ6IdeMr6iHzwJ3+31Ppom4FEziLYjvqnkHfZD6UN79W8d3p6R1/fswGcPLyYtpoU17HidaBIMw9n/cXZ3YL1E8Eoy8hRcNFv6iAFmaeQZzEZmp6/idBskVL2+5nY3jbw+L5B4IFVHQkoeCwe8+FEBgrLGN7q9wwfw2afdmVVRZBYnjiqBVXhRSKcUgk7f+xrlxI+FzaYPnQHqnsKDPBjgHKui3Y/69z0+0hVdgRGD8bDM7zz0+Hke+NVaGOuWgd56Duvto5sSbk4eQDHMFP60qm5F8O8kqFYtIxFenbxeLwvt2ENDogyry+ZBHoDRg5+J1kc3kjMjoBXpzBnXUWF0GI+rMf0u2+gEnnmqLcmyPGK22J1Iw9gAFdHszHVZ1/yXGja2icNbwDprMob/Dhx7oTlGURl16r9sswsTWk6CDh3TR8OKgq/66CDNgzbz8tcH4+Kt+bFoGpSPSzZCOtP0CjIkp1TNPtdDvJ5diQztQbGRJep8wp2pHVxcSsdGCnPwuLGE+GFwKntcN8LgeV+1E413vANuFAGObd5A0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9416d55-477a-4ee1-3d7d-08dc3d3f513c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2024 18:08:53.4539
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: O7P0ibjGjkG3vfQ3qq/KU/SyfbGL0FArH7r2qp4l7FUkwilssZd/MuSDpYasqgvyviJV+SIB85zdj3S0tSJ50Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6242
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-05_15,2024-03-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0
- mlxlogscore=999 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2403050145
-X-Proofpoint-ORIG-GUID: oyvB2VtysGObRPrFGiZMb7aeKC_u2rwB
-X-Proofpoint-GUID: oyvB2VtysGObRPrFGiZMb7aeKC_u2rwB
+Mime-Version: 1.0
+References: <20240219.chu4Yeegh3oo@digikod.net> <20240219183539.2926165-1-mic@digikod.net>
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gT24gTWFyIDQsIDIwMjQsIGF0IDc6MTHigK9QTSwgRG9taW5pcXVlIE1hcnRpbmV0IDxh
-c21hZGV1c0Bjb2Rld3JlY2sub3JnPiB3cm90ZToNCj4gDQo+IEhpIENodWNrLA0KPiANCj4gQ2h1
-Y2sgTGV2ZXIgSUlJIHdyb3RlIG9uIE1vbiwgTWFyIDA0LCAyMDI0IGF0IDA1OjI5OjI0UE0gKzAw
-MDA6DQo+PiBXaGlsZSB0ZXN0aW5nIGxpbnV4LW5leHQgKDIwMjQwMzA0KSB1bmRlciBrZGV2b3Bz
-LCBJIHNlZQ0KPj4gdGhpcyBLQVNBTiBzcGxhdCwgc2VlbXMgMTAwJSByZXByb2R1Y2libGU6DQo+
-IA0KPiBUaGFua3MgZm9yIHRoZSByZXBvcnQgLS0gdGhlcmUncyBhbHJlYWR5IGEgZml4IGZvciBp
-dCBidXQgd2UndmUgYmVlbg0KPiBzaXR0aW5nIG9uIGl0IGZvciBhIHdoaWxlLCBzb3JyeToNCj4g
-aHR0cHM6Ly9sa21sLmtlcm5lbC5vcmcvci8yMDI0MDIwMjEyMTUzMS4yNTUwMDE4LTEtbGl6aGku
-eHVAd2luZHJpdmVyLmNvbQ0KPiANCj4gSSd2ZSBwaW5nZWQgRXJpYyB5ZXN0ZXJkYXkgdG8gdGFr
-ZSB0aGUgcGF0Y2ggYXMgdGhlIHByb2JsZW0gaXMgaW4gaGlzDQo+IC1uZXh0IHRyZWU7IGhvcGVm
-dWxseSBoZSdsbCBiZSBhYmxlIHRvIGhhdmUgYSBsb29rIHNvb24gYnV0IHVudGlsIHRoZW4NCj4g
-cGxlYXNlIGFwcGx5IHRoZSBwYXRjaCBkaXJlY3RseS4NCg0KVGhhbmsgeW91LCBEb21pbmlxdWUh
-DQoNCi0tDQpDaHVjayBMZXZlcg0KDQoNCg==
+Hello!
+
+More questions than answers in this code review, but maybe this discusison =
+will
+help to get a clearer picture about what we are going for here.
+
+On Mon, Feb 19, 2024 at 07:35:39PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> vfs_masks_device_ioctl() and vfs_masks_device_ioctl_compat() are useful
+> to differenciate between device driver IOCTL implementations and
+> filesystem ones.  The goal is to be able to filter well-defined IOCTLs
+> from per-device (i.e. namespaced) IOCTLs and control such access.
+>=20
+> Add a new ioctl_compat() helper, similar to vfs_ioctl(), to wrap
+> compat_ioctl() calls and handle error conversions.
+>=20
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: G=C3=BCnther Noack <gnoack@google.com>
+> ---
+>  fs/ioctl.c         | 101 +++++++++++++++++++++++++++++++++++++++++----
+>  include/linux/fs.h |  12 ++++++
+>  2 files changed, 105 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 76cf22ac97d7..f72c8da47d21 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -763,6 +763,38 @@ static int ioctl_fssetxattr(struct file *file, void =
+__user *argp)
+>  	return err;
+>  }
+> =20
+> +/*
+> + * Safeguard to maintain a list of valid IOCTLs handled by do_vfs_ioctl(=
+)
+> + * instead of def_blk_fops or def_chr_fops (see init_special_inode).
+> + */
+> +__attribute_const__ bool vfs_masked_device_ioctl(const unsigned int cmd)
+> +{
+> +	switch (cmd) {
+> +	case FIOCLEX:
+> +	case FIONCLEX:
+> +	case FIONBIO:
+> +	case FIOASYNC:
+> +	case FIOQSIZE:
+> +	case FIFREEZE:
+> +	case FITHAW:
+> +	case FS_IOC_FIEMAP:
+> +	case FIGETBSZ:
+> +	case FICLONE:
+> +	case FICLONERANGE:
+> +	case FIDEDUPERANGE:
+> +	/* FIONREAD is forwarded to device implementations. */
+> +	case FS_IOC_GETFLAGS:
+> +	case FS_IOC_SETFLAGS:
+> +	case FS_IOC_FSGETXATTR:
+> +	case FS_IOC_FSSETXATTR:
+> +	/* file_ioctl()'s IOCTLs are forwarded to device implementations. */
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +EXPORT_SYMBOL(vfs_masked_device_ioctl);
+
+[
+Technical implementation notes about this function: the list of IOCTLs here=
+ are
+the same ones which do_vfs_ioctl() implements directly.
+
+There are only two cases in which do_vfs_ioctl() does more complicated hand=
+ling:
+
+(1) FIONREAD falls back to the device's ioctl implemenetation.
+    Therefore, we omit FIONREAD in our own list - we do not want to allow t=
+hat.
+(2) The default case falls back to the file_ioctl() function, but *only* fo=
+r
+    S_ISREG() files, so it does not matter for the Landlock case.
+]
+
+
+## What we are actually trying to do (?)
+
+Let me try to take a step back and paraphrase what I think we are *actually=
+*
+trying to do here -- please correct me if I am wrong about that:
+
+I think what we *really* are trying to do is to control from the Landlock L=
+SM
+whether the filp->f_op->unlocked_ioctl() or filp->f_op->ioctl_compat()
+operations are getting called for device files.
+
+So in a world where we cared only about correctness, we could create a new =
+LSM
+hook security_file_vfs_ioctl(), which gets checked just before these two f_=
+op
+operations get called.  With that, we could permit all IOCTLs that are
+implemented in fs/ioctl.c, and we could deny all IOCTL commands that are
+implemented in the device implementation.
+
+I guess the reasons why we are not using that approach are performance, and=
+ that
+it might mess up the LSM hook interface with special cases that only Landlc=
+ok
+needs?  But it seems like it would be easier to reason about..?  Or maybe w=
+e can
+find a middle ground, where we have the existing hook return a special valu=
+e
+with the meaning "permit this IOCTL, but do not invoke the f_op hook"?
+
+
+## What we implemented
+
+Of course, the existing security_file_ioctl LSM hook works differently, and=
+ so
+with that hook, we need to make our blocking decision purely based on the s=
+truct
+file*, the IOCTL command number and the IOCTL argument.
+
+So in order to make that decision correctly based on that information, we e=
+nd up
+listing all the IOCTLs which are directly(!) implemented in do_vfs_ioctl(),
+because for Landlock, this is the list of IOCTL commands which is safe to p=
+ermit
+on device files.  And we need to keep that list in sync with fs/ioctl.c, wh=
+ich
+is why it ended up in the same place in this commit.
+
+
+(Is it maybe possible to check with a KUnit test whether such lists are in =
+sync?
+It sounds superficially like it should be feasible to create a device file =
+which
+records whether its ioctl implementation was called.  So we could at least =
+check
+that the Landlock command list is a subset of the do_vfs_ioctl() one.)
+
+
+> +
+>  /*
+>   * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBO=
+L()'d.
+>   * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
+> @@ -858,6 +890,8 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int=
+, cmd, unsigned long, arg)
+>  {
+>  	struct fd f =3D fdget(fd);
+>  	int error;
+> +	const struct inode *inode;
+> +	bool is_device;
+> =20
+>  	if (!f.file)
+>  		return -EBADF;
+> @@ -866,9 +900,18 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned in=
+t, cmd, unsigned long, arg)
+>  	if (error)
+>  		goto out;
+> =20
+> +	inode =3D file_inode(f.file);
+> +	is_device =3D S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
+> +	if (is_device && !vfs_masked_device_ioctl(cmd)) {
+> +		error =3D vfs_ioctl(f.file, cmd, arg);
+> +		goto out;
+> +	}
+> +
+>  	error =3D do_vfs_ioctl(f.file, fd, cmd, arg);
+> -	if (error =3D=3D -ENOIOCTLCMD)
+> +	if (error =3D=3D -ENOIOCTLCMD) {
+> +		WARN_ON_ONCE(is_device);
+>  		error =3D vfs_ioctl(f.file, cmd, arg);
+> +	}
+
+It is not obvious at first that adding this list requires a change to the i=
+octl
+syscall implementations.  If I understand this right, the idea is that you =
+want
+to be 100% sure that we are not calling vfs_ioctl() for the commands in tha=
+t
+list.  And there is a scenario where this could potentially happen:
+
+do_vfs_ioctl() implements most things like this:
+
+static int do_vfs_ioctl(...) {
+	switch (cmd) {
+	/* many cases like the following: */
+	case FITHAW:
+		return ioctl_fsthaw(filp);
+	/* ... */
+	}
+	return -ENOIOCTLCMD;
+}
+
+So I believe the scenario you want to avoid is the one where ioctl_fsthaw()=
+ or
+one of the other functions return -ENOIOCTLCMD by accident, and where that =
+will
+then make the surrounding syscall implementation fall back to vfs_ioctl()
+despite the cmd being listed as safe for Landlock?  Is that right?
+
+Looking at do_vfs_ioctl() and its helper functions, I am getting the impres=
+sion
+that -ENOIOCTLCMD is only supposed to be returned at the very end of it, bu=
+t not
+by any of the helper functions?  If that were the case, we could maybe just=
+ as
+well just solve that problem local to do_vfs_ioctl()?
+
+A bit inelegant maybe, but just to get the idea across:
+
+static int sanitize_enoioctlcmd(int res) {
+	if (res =3D=3D -ENOIOCTLCMD)
+		return ENOTTY;
+	return res;
+}
+
+static int do_vfs_ioctl(...) {
+	switch (cmd) {
+	/* many cases like the following: */
+	case FITHAW:
+		return sanitize_enoioctlcmd(ioctl_fsthaw(filp));
+	/* ... */
+	}
+	return -ENOIOCTLCMD;
+}
+
+Would that be better?
+
+=E2=80=94G=C3=BCnther
+
 
