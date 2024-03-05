@@ -1,143 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-13571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9215871236
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 02:08:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D1287137B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 03:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268351C221D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 01:08:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F8B1F2404E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 02:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDE011718;
-	Tue,  5 Mar 2024 01:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4594D18040;
+	Tue,  5 Mar 2024 02:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAt9nOnC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjZgwG0h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3226D28F1;
-	Tue,  5 Mar 2024 01:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5129C10A39;
+	Tue,  5 Mar 2024 02:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709600887; cv=none; b=YQzXErHG84WVBwYH27QKxEmew5xPahPIK1fCx9Zd4c27p6P8X+fvAaxjrhCyZqr4kYheH5R7fdQc0ZyAf3u2xc9OM/hOjnUHO031SlCF841XDiySLotiBJjhuaj6fItds6spVLb40Acsoav+a3xOoMtJZDVez6YwmjhaWbD088E=
+	t=1709605071; cv=none; b=SflFwTLY3t5OYm3aLRlnSWDbIC3ZH4UfKdVt7hgjmz1XRLi1waT8dmZYjBY9RK+G25mYxTYMsN/zbwFKg/z4rI6Pk8n78syQGX9kDA5iYQ4KQmyqxJSusQVJ1cKUcPelegog0pdMxQtZfyhicIKcmlvhgNRTG5WZgVt190duchA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709600887; c=relaxed/simple;
-	bh=jdjo5rKYG4ZK3OODkKBuqmFXqRUFZ7x80BI7gRk+kAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=livEFFgCSKZcFLcJsQyV+l/jBJIhjxfIIE4M0aOBerYiCXYSwXvZvHhH3akUw0OyZ4KJ2dCFbtGnZpgVC4ihIBxvfpftqLaf4sYORYFJgBdqteCfcqjwejE21M9Ob1LGQdJyO22DVxYu6F+lDV0exwkT8H8pLu2rb1FqlZ+X3po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAt9nOnC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C11B9C433F1;
-	Tue,  5 Mar 2024 01:08:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709600887;
-	bh=jdjo5rKYG4ZK3OODkKBuqmFXqRUFZ7x80BI7gRk+kAw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fAt9nOnCGZn1AB9GlC9o3THgO6pMf/c7Qk4kP0u2kc9idoUBcGnsqR7c6udRGKPvY
-	 x12ZchO8e75B0TCMV6QYrhZ2IAKP295rMTPknSVRtXSdIt0MO5Aq4A3TGp0FdwDjeG
-	 mi1U/qX6ar31MRHceIrDQ3CxniYNp3YTojcV0R+SawacxlbKLmYw5UspcK0WbpjfAl
-	 iiYGLkMfh/1PUvseFhrDw3AgcccLaG9oCRXpDQ2M+yS/fNyH+nGgU11Ch932a0s2rb
-	 fy+TRP2L6JwnO8kG8KQQHf5hyGo57suM9Wy6mE1KdcdwQkH5zDa4xPA2z8pnTRUPY2
-	 1GSwlvOGgv0pQ==
-Date: Mon, 4 Mar 2024 17:08:05 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, chandan.babu@oracle.com,
-	djwong@kernel.org
-Subject: Re: [PATCH v5 08/24] fsverity: add per-sb workqueue for post read
- processing
-Message-ID: <20240305010805.GF17145@sol.localdomain>
-References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-10-aalbersh@redhat.com>
+	s=arc-20240116; t=1709605071; c=relaxed/simple;
+	bh=mZ+cF6bQtTgVKW3RQ7HEBaJGWu8tdS6ZvNSVk1b+WvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lCZeXY+AdMNWAL9DHrBOROVaP03lHRS1U2jgKR2YoBMTB5ZL8/RRKC5gLppdm+eco41s6O70W3EJ+JcHAAMB/YjYD6qaqnzIjGdLopz2DsI4oNe2GwDQQSUCip/eNFyvlYhtO3RGKKd2UWej7eA3uoTlv2RvWo/V/14O5hEFMKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjZgwG0h; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1dbd32cff0bso43630505ad.0;
+        Mon, 04 Mar 2024 18:17:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709605069; x=1710209869; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vf7ga+69rktGnQ6MLiBZYdtLAPO5MhkKVAzEKIflNBs=;
+        b=QjZgwG0hjfy5EHdRKFZw3d7DfmKYYP5aopSVcwK6DamfDs9Rsb7lCLNfRJxKFPbbgx
+         PI9HY9y5mBWJDTYPQUfEXWv/NPu5qqZ+9Zxr6w4q6kW6eslEDBZIpfKSivYiOqIFmcss
+         m6XwzM60rdfrQag62klMcsbZPY0dUc8ozWMr/61awwOv6xDeTQ0drIz521bAmDeIDxBz
+         F/fCrNI+RFBQRuNvITACVNyxw/tF9YqzIEpXUF4IWsZIr8kn0n6qBe0nninj0Yfh4Z4/
+         owxK0aHzLbF48WUPXLJ6H7+lvIgyCP21+JWRIHFBK4lddANf97qjcnL271McLoagvPVm
+         bJIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709605069; x=1710209869;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vf7ga+69rktGnQ6MLiBZYdtLAPO5MhkKVAzEKIflNBs=;
+        b=Ir917vNcrTKnpwtik6TvAS1AvrhyIpFgoXA+zEaQyUZGFeCwsTL9liET0YWlxJPTC8
+         rNcl6em/a8vTr3qaiWJ8FnqFTuQRMAfeHo5zMXDFx1hR29Qq1NeUf9Ql4ZW6EYM5kazM
+         VyN9EEf9+XeoZ0b88/8vKYh6hAX7QTh4TbsHHnk4MErNYt+ygz/EHfBsxZVfIRngg9NH
+         Gy96qP2Y9lVtsg8E0DNLhQ3O1goUGl8A6lp9VTqMtC4HOyH3QZsSGS/k44pJ8AQmUbvn
+         s44MxiEu8N+un8vB29KTo+HVIjvZmr1yYPhIRzuXuroepXqWm7D+OqHAhmMakldw1R2m
+         PTTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjUT8hDiEWfbsequythCu/yiwPm/UsUP8CVGRjImOd1AvBD5hAqnxzgCoyL2IERdsfVFJ/oyVzjPK11PJtUBtJVlM3PxYq6LzjLeenR0yjx7OfZ4wD8aOMRbetyk/ymh1lt44n58jekC9BJA==
+X-Gm-Message-State: AOJu0Yy29OyiepFo129dDVrMltmxHHNDoK7BdjS7UYUTCYZfkJGjJ99E
+	8JQMsJiMa6QPEqsodmJjpzrGuzUZfl4E/8JOMMWMFfveJ5oEIA8rEGx2wim9
+X-Google-Smtp-Source: AGHT+IGj91Tjm/MnkW5aSDTuzFIKSk2jQBVxLcoidGuaAUEyy+/l3qywApWVvfEwjCDRFw40NxhyAQ==
+X-Received: by 2002:a17:903:120e:b0:1dc:ca74:7018 with SMTP id l14-20020a170903120e00b001dcca747018mr656911plh.36.1709605069283;
+        Mon, 04 Mar 2024 18:17:49 -0800 (PST)
+Received: from localhost ([156.236.96.164])
+        by smtp.gmail.com with ESMTPSA id y9-20020a1709027c8900b001db717d2dbbsm9153781pll.210.2024.03.04.18.17.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Mar 2024 18:17:49 -0800 (PST)
+Date: Tue, 5 Mar 2024 10:17:42 +0800
+From: Yue Hu <zbestahu@gmail.com>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org,
+ syzbot+7bc44a489f0ef0670bd5@syzkaller.appspotmail.com, Tetsuo Handa
+ <penguin-kernel@I-love.SAKURA.ne.jp>, syzkaller-bugs@googlegroups.com, LKML
+ <linux-kernel@vger.kernel.org>, Roberto Sassu
+ <roberto.sassu@huaweicloud.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] erofs: fix uninitialized page cache reported by KMSAN
+Message-ID: <20240305101742.00000a0a.zbestahu@gmail.com>
+In-Reply-To: <20240304035339.425857-1-hsiangkao@linux.alibaba.com>
+References: <ab2a337d-c2dd-437d-9ab8-e3b837f1ff1a@I-love.SAKURA.ne.jp>
+	<20240304035339.425857-1-hsiangkao@linux.alibaba.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240304191046.157464-10-aalbersh@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 04, 2024 at 08:10:31PM +0100, Andrey Albershteyn wrote:
-> For XFS, fsverity's global workqueue is not really suitable due to:
+On Mon,  4 Mar 2024 11:53:39 +0800
+Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+
+> syzbot reports a KMSAN reproducer [1] which generates a crafted
+> filesystem image and causes IMA to read uninitialized page cache.
 > 
-> 1. High priority workqueues are used within XFS to ensure that data
->    IO completion cannot stall processing of journal IO completions.
->    Hence using a WQ_HIGHPRI workqueue directly in the user data IO
->    path is a potential filesystem livelock/deadlock vector.
+> Later, (rq->outputsize > rq->inputsize) will be formally supported
+> after either large uncompressed pclusters (> block size) or big
+> lclusters are landed.  However, currently there is no way to generate
+> such filesystems by using mkfs.erofs.
 > 
-> 2. The fsverity workqueue is global - it creates a cross-filesystem
->    contention point.
+> Thus, let's mark this condition as unsupported for now.
 > 
-> This patch adds per-filesystem, per-cpu workqueue for fsverity
-> work. This allows iomap to add verification work in the read path on
-> BIO completion.
+> [1] https://lore.kernel.org/r/0000000000002be12a0611ca7ff8@google.com
 > 
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-
-Should ext4 and f2fs switch over to this by converting
-fsverity_enqueue_verify_work() to use it?  I'd prefer not to have to maintain
-two separate workqueue strategies as part of the fs/verity/ infrastructure.
-
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 1fbc72c5f112..5863519ffd51 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1223,6 +1223,8 @@ struct super_block {
->  #endif
->  #ifdef CONFIG_FS_VERITY
->  	const struct fsverity_operations *s_vop;
-> +	/* Completion queue for post read verification */
-> +	struct workqueue_struct *s_read_done_wq;
->  #endif
-
-Maybe s_verity_wq?  Or do you anticipate this being used for other purposes too,
-such as fscrypt?  Note that it's behind CONFIG_FS_VERITY and is allocated by an
-fsverity_* function, so at least at the moment it doesn't feel very generic.
-
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index 0973b521ac5a..45b7c613148a 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -241,6 +241,22 @@ void fsverity_enqueue_verify_work(struct work_struct *work);
->  void fsverity_invalidate_block(struct inode *inode,
->  		struct fsverity_blockbuf *block);
+> Reported-by: syzbot+7bc44a489f0ef0670bd5@syzkaller.appspotmail.com
+> Fixes: 1ca01520148a ("erofs: refine z_erofs_transform_plain() for sub-page block support")
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> ---
+>  fs/erofs/decompressor.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
+> index d4cee95af14c..2ec9b2bb628d 100644
+> --- a/fs/erofs/decompressor.c
+> +++ b/fs/erofs/decompressor.c
+> @@ -323,7 +323,8 @@ static int z_erofs_transform_plain(struct z_erofs_decompress_req *rq,
+>  	unsigned int cur = 0, ni = 0, no, pi, po, insz, cnt;
+>  	u8 *kin;
 >  
-> +static inline int fsverity_set_ops(struct super_block *sb,
-> +				   const struct fsverity_operations *ops)
+> -	DBG_BUGON(rq->outputsize > rq->inputsize);
+> +	if (rq->outputsize > rq->inputsize)
+> +		return -EOPNOTSUPP;
+>  	if (rq->alg == Z_EROFS_COMPRESSION_INTERLACED) {
+>  		cur = bs - (rq->pageofs_out & (bs - 1));
+>  		pi = (rq->pageofs_in + rq->inputsize - cur) & ~PAGE_MASK;
 
-This doesn't just set the ops, but also allocates a workqueue too.  A better
-name for this function might be fsverity_init_sb.
-
-Also this shouldn't really be an inline function.
-
-> +{
-> +	sb->s_vop = ops;
-> +
-> +	/* Create per-sb workqueue for post read bio verification */
-> +	struct workqueue_struct *wq = alloc_workqueue(
-> +		"pread/%s", (WQ_FREEZABLE | WQ_MEM_RECLAIM), 0, sb->s_id);
-
-"pread" is short for "post read", I guess?  Should it really be this generic?
-
-> +static inline int fsverity_set_ops(struct super_block *sb,
-> +				   const struct fsverity_operations *ops)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-
-I think it would be better to just not have a !CONFIG_FS_VERITY stub for this.
-
-You *could* make it work like fscrypt_set_ops(), which the ubifs folks added,
-where it can be called unconditionally if the filesystem has a declaration for
-the operations (but not necessarily a definition).  In that case it would need
-to return 0, rather than an error.  But I think I prefer just omitting the stub
-and having filesystems guard the call to this by CONFIG_FS_VERITY, as you've
-already done in XFS.
-
-- Eric
+Reviewed-by: Yue Hu <huyue2@coolpad.com>
 
