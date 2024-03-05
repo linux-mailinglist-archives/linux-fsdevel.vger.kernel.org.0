@@ -1,169 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-13603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39C3871B42
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:32:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E92871BEF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D74AB222BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:32:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B8CB1F250B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8537D5787B;
-	Tue,  5 Mar 2024 10:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22784369A;
+	Tue,  5 Mar 2024 10:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Bt/FREMA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4qmZ1kr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F74771727;
-	Tue,  5 Mar 2024 10:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB535733D;
+	Tue,  5 Mar 2024 10:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709633820; cv=none; b=JTNr7DwCFS7ci1Mvf6W+QQuQT/MIRYaWBgKLrUrkxlfyTrYD0uLPBHIt7ZMljODcvyykDk/94o2BNJcXHtJ5uWw6oNj8U/TLbGzTq+ZmpV7oiznQI2mTHqlH208CFNBgda6BTyk5600VMUd1ItM3itJZlGLuH5jk0P4UrS//kTI=
+	t=1709634731; cv=none; b=jzVmgHqvdYBWOWG7JErV5MuTjGX/mpJtEEDQ7L16GJ2Ol+aW1eJd/NkTSzeuLUosAfVGGZjY6G+PR94mgEd8T72iUGs0gKQffPmTN91No1cY48p/SdnjKjD7FENBPC+/IbEHptaDiy6qTv9gwwLrsBngFin7LpxvWz3nRu42Wb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709633820; c=relaxed/simple;
-	bh=NYwDnN28mEZsfcXBv2JU5FVxAioxdPfAjfdUmE66h5Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GC1rneuIEuwT4mjhpx7TnANSLucsyxMO1Ry5JPZtQ1tX3klPJawYQJz5Z6vfYuSkXWhaaxJwLl1tjyUxiGayEhY2JkY2KN0lJ64I57uwrM0qbRCSS0KjY0TSZkGqAS6KjlmsUnku388iy4v5T5qNdA++9WlsigXs+Wax9XopvMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Bt/FREMA; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1709633816;
-	bh=NYwDnN28mEZsfcXBv2JU5FVxAioxdPfAjfdUmE66h5Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bt/FREMAL0HqwPUkQMtRGZU0ZlRcmCJTc9ece5rQ6Rl8+/loCBt8sZp+qEG9FNjVS
-	 Yw7A7tsUfqbTY/TiSo25eS46LbkDSKvfYpfEEfjkctbogHmgAX/fetOPPEyx51mAuC
-	 I3rwBvBnHJsF3Sm4kbZQO9KAukPZ7vTPv8m1TSRfXqSkcRiWP1fulzpk9ZGIJ+h1dB
-	 W4qa6LhnhW+tuiItlGyyXqGVVl+j3MxYBObYgfQtExSti3bgTmEuF3n2h7Zp0mRB5p
-	 rsmgSVOS/oyxwl/2S/DRhRD3lWDWV2xoT+vWxTJ/T3sRU9Qg7pWkM/x46RbN8tm5Ke
-	 qg7kz3pmyF5OQ==
-Received: from eugen-station.domain.com (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 78E7A37820F1;
-	Tue,  5 Mar 2024 10:16:53 +0000 (UTC)
-From: Eugen Hristev <eugen.hristev@collabora.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	jaegeuk@kernel.org,
-	chao@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	eugen.hristev@collabora.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	krisman@suse.de,
-	Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH v13 9/9] f2fs: Move CONFIG_UNICODE defguards into the code flow
-Date: Tue,  5 Mar 2024 12:16:08 +0200
-Message-Id: <20240305101608.67943-10-eugen.hristev@collabora.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240305101608.67943-1-eugen.hristev@collabora.com>
-References: <20240305101608.67943-1-eugen.hristev@collabora.com>
+	s=arc-20240116; t=1709634731; c=relaxed/simple;
+	bh=bT/P5l+f4khig/abXkPdAzw4QrPxZvOmunHaLy7aIfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GL4QPYCe4C+qc1YGJJO9fuDclC0lXpYSJr4p4lGy64bwhksnkMCwMf89YChJN9L45Lkiiw4JUh8hMPPXg3HRzh29TQ4MIjscfjd6uoEOkBr90rMtK1NufiDXjctc26M6k7I4zB962bjXGi2Rdu1WDB8nke0jQ+atVOxcIB42yng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4qmZ1kr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94AB8C433F1;
+	Tue,  5 Mar 2024 10:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709634729;
+	bh=bT/P5l+f4khig/abXkPdAzw4QrPxZvOmunHaLy7aIfM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o4qmZ1kry8QF5u2cGGcJHGekJvO4LVp9gJLHiDMyZeKrrsHxru9kyszflA3PBqstS
+	 4g5BFDTk6xNNSSFDeYhH1sbYNg2SQgmN1RLWNNQ13/rGp1+Ga8wJ7K4/CrnjR4+Pkf
+	 HNlvApkNpiVxttOI+rZyV6s+131ljOWIaZpAtFHM2vk11vhhH4YE7CMqOvSlSTLk13
+	 bVw9CzxuvfyNZ/tTCsrARaNWO6RUOa7eQiENZ0CrdeZLImqb6QLgSY32bo8Gfv1ToT
+	 OwY3LokMeSo7FuwmGXDz2jYrOEfYXdwnLZ4Ea/5/V8N5xilm+ijVC1wJL0PIHbLUmx
+	 wZS029d7LJcgA==
+Date: Tue, 5 Mar 2024 11:32:04 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, 
+	linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Guenter Roeck <groeck@chromium.org>, 
+	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Mike Frysinger <vapier@chromium.org>
+Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
+Message-ID: <20240305-brotkrumen-vorbild-9709ce924d25@brauner>
+References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
+ <20240304-zugute-abtragen-d499556390b3@brauner>
+ <202403040943.9545EBE5@keescook>
+ <20240305-attentat-robust-b0da8137b7df@brauner>
+ <202403050134.784D787337@keescook>
+ <20240305-kontakt-ticken-77fc8f02be1d@brauner>
+ <202403050211.86A44769@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202403050211.86A44769@keescook>
 
-From: Gabriel Krisman Bertazi <krisman@collabora.com>
+On Tue, Mar 05, 2024 at 02:12:26AM -0800, Kees Cook wrote:
+> On Tue, Mar 05, 2024 at 10:58:25AM +0100, Christian Brauner wrote:
+> > Since the write handler for /proc/<pid>/mem does raise FOLL_FORCE
+> > unconditionally it likely would implicitly. But I'm not familiar enough
+> > with FOLL_FORCE to say for sure.
+> 
+> I should phrase the question better. :) Is the supervisor writing into
+> read-only regions of the child process?
 
-Instead of a bunch of ifdefs, make the unicode built checks part of the
-code flow where possible, as requested by Torvalds.
+Hm... I suspect we don't. Let's take two concrete examples so you can
+tell me.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-[eugen.hristev@collabora.com: port to 6.8-rc3]
-Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
----
- fs/f2fs/namei.c | 10 ++++------
- fs/f2fs/super.c |  8 ++++----
- 2 files changed, 8 insertions(+), 10 deletions(-)
+Incus intercepts the sysinfo() syscall. It prepares a struct sysinfo
+with cgroup aware values for the supervised process and then does:
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index f7f63a567d86..5da1aae7d23a 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -576,8 +576,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		goto out_iput;
- 	}
- out_splice:
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (!inode && IS_CASEFOLDED(dir)) {
-+	if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
- 		/* Eventually we want to call d_add_ci(dentry, NULL)
- 		 * for negative dentries in the encoding case as
- 		 * well.  For now, prevent the negative dentry
-@@ -586,7 +585,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		trace_f2fs_lookup_end(dir, dentry, ino, err);
- 		return NULL;
- 	}
--#endif
-+
- 	new = d_splice_alias(inode, dentry);
- 	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
- 				ino, IS_ERR(new) ? PTR_ERR(new) : err);
-@@ -639,16 +638,15 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 	f2fs_delete_entry(de, page, dir, inode);
- 	f2fs_unlock_op(sbi);
- 
--#if IS_ENABLED(CONFIG_UNICODE)
- 	/* VFS negative dentries are incompatible with Encoding and
- 	 * Case-insensitiveness. Eventually we'll want avoid
- 	 * invalidating the dentries here, alongside with returning the
- 	 * negative dentries at f2fs_lookup(), when it is better
- 	 * supported by the VFS for the CI case.
- 	 */
--	if (IS_CASEFOLDED(dir))
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
- 		d_invalidate(dentry);
--#endif
-+
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
- fail:
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 313024f5c90c..c4325cc066c6 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -306,7 +306,7 @@ struct kmem_cache *f2fs_cf_name_slab;
- static int __init f2fs_create_casefold_cache(void)
- {
- 	f2fs_cf_name_slab = f2fs_kmem_cache_create("f2fs_casefolded_name",
--							F2FS_NAME_LEN);
-+						   F2FS_NAME_LEN);
- 	return f2fs_cf_name_slab ? 0 : -ENOMEM;
- }
- 
-@@ -1354,13 +1354,13 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		return -EINVAL;
- 	}
- #endif
--#if !IS_ENABLED(CONFIG_UNICODE)
--	if (f2fs_sb_has_casefold(sbi)) {
-+
-+	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
- 		f2fs_err(sbi,
- 			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
- 		return -EINVAL;
- 	}
--#endif
-+
- 	/*
- 	 * The BLKZONED feature indicates that the drive was formatted with
- 	 * zone alignment optimization. This is optional for host-aware
--- 
-2.34.1
+unix.Pwrite(siov.memFd, &sysinfo, sizeof(struct sysinfo), seccomp_data.args[0]))
 
+It also intercepts some bpf system calls attaching bpf programs for the
+caller. If that fails we update the log buffer for the supervised
+process:
+
+union bpf_attr attr = {}, new_attr = {};
+
+// read struct bpf_attr from mem_fd
+ret = pread(mem_fd, &attr, attr_len, req->data.args[1]);
+if (ret < 0)
+        return -errno;
+
+// Do stuff with attr. Stuff fails. Update log buffer for supervised process:
+if ((new_attr.log_size) > 0 && (pwrite(mem_fd, new_attr.log_buf, new_attr.log_size, attr.log_buf) != new_attr.log_size))
+
+But I'm not sure if there are other use-cases that would require this.
 
