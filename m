@@ -1,166 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-13622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59511872134
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 15:13:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B247872144
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 15:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ABC51C20CB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 14:13:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEFD1B271E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 14:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3380B5676A;
-	Tue,  5 Mar 2024 14:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC69386639;
+	Tue,  5 Mar 2024 14:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d7rLGd78";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2NeXmf8h";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d7rLGd78";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2NeXmf8h"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="q0gH49ay"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4D08662E;
-	Tue,  5 Mar 2024 14:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5041086634
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 14:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709647970; cv=none; b=Qyqbf6vpaixfPAmMkZCIHIBG/E57r+JwSrlZPYJZefQad/EzPNVVwpeVVEL/iY5WgZykNBOriNSCW+rqQOzuPA/f3cpzOlJ7OWT38sZCPCWsVzRjTKWxAaxMJDl16ZVg/sdPOgiZBXqcYC2ocjF9v5/+qbSfXlrf9wX/WuZVsT4=
+	t=1709648126; cv=none; b=PU2u4vkae1fZxy+Lqq8bbbh2aT1oNPLQXmmXiyx3cUgpNT6bLvBtD23oMlaWD+vtw80mDru3x3E/3z1f4Ffk6yFL8Fk/DvAODFKx4AX/Pg6CEkFlcS5UdKJP7aJBiP6YdMxMxcJ0el1RWtChArtei6I8XyOssBTQgGPKTD8rllg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709647970; c=relaxed/simple;
-	bh=jAvBGKZkDK+DJCXMX8Lptx599t3OO3/6NY//gbhJ8ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYBGaKFlkWMvcLdHX8Q+rILQZIwA4pGRjE33m+9DC56w0YZHaM37rlFB1Mq+05hreH7b5Z2ndFXmVPY/1goD5ru3uyWCFfEhWP/yqbJ1oL5q93ARKx0RJuCIxVkoHAkJjlMEZt8EDaX5tW8qBz0sfeyZ09bSf9ugRYNj0U3pYmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d7rLGd78; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2NeXmf8h; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d7rLGd78; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2NeXmf8h; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C51DA6B3AB;
-	Tue,  5 Mar 2024 14:12:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1709647966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F9/7CluG7BEEDZ/l4zmtYN6IZ3U75GnXdcDIdLJHyjQ=;
-	b=d7rLGd78mS8+FyfvMuPzfhnaNyDUU8T3D/lvmb+lKa5jChNJ9V58hMzOYowp+SFRr+2idK
-	YJrdvK+jMg+PeIt32R+Y2mzanoHDbJU/PVv59y/Hs8kt5AR5XU2UgomTFCHiP3mSJhfL0w
-	jRirKuwM/Fx6U9uyuTYfPWlymjs/sWc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1709647966;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F9/7CluG7BEEDZ/l4zmtYN6IZ3U75GnXdcDIdLJHyjQ=;
-	b=2NeXmf8h7ijEs65Ra//CRJj1L5/wmxKjgtDrfOYp8WPbBYMR4dHEOql5vBVrkqYbbgX4nx
-	rNPGyR6oKY0rPLDA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1709647966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F9/7CluG7BEEDZ/l4zmtYN6IZ3U75GnXdcDIdLJHyjQ=;
-	b=d7rLGd78mS8+FyfvMuPzfhnaNyDUU8T3D/lvmb+lKa5jChNJ9V58hMzOYowp+SFRr+2idK
-	YJrdvK+jMg+PeIt32R+Y2mzanoHDbJU/PVv59y/Hs8kt5AR5XU2UgomTFCHiP3mSJhfL0w
-	jRirKuwM/Fx6U9uyuTYfPWlymjs/sWc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1709647966;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F9/7CluG7BEEDZ/l4zmtYN6IZ3U75GnXdcDIdLJHyjQ=;
-	b=2NeXmf8h7ijEs65Ra//CRJj1L5/wmxKjgtDrfOYp8WPbBYMR4dHEOql5vBVrkqYbbgX4nx
-	rNPGyR6oKY0rPLDA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id B6B0813A5D;
-	Tue,  5 Mar 2024 14:12:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id CgaQLF4o52WSQwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Tue, 05 Mar 2024 14:12:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6AA6AA0650; Tue,  5 Mar 2024 15:12:46 +0100 (CET)
-Date: Tue, 5 Mar 2024 15:12:46 +0100
-From: Jan Kara <jack@suse.cz>
-To: chengming.zhou@linux.dev
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, vbabka@suse.cz,
-	roman.gushchin@linux.dev, Xiongwei.Song@windriver.com,
-	Chengming Zhou <zhouchengming@bytedance.com>
-Subject: Re: [PATCH] isofs: remove SLAB_MEM_SPREAD flag usage
-Message-ID: <20240305141246.p6bspc65seemkqyt@quack3>
-References: <20240224134901.829591-1-chengming.zhou@linux.dev>
+	s=arc-20240116; t=1709648126; c=relaxed/simple;
+	bh=QsdGzhL+fCOCO8FhB0FNlu0id910oc2XXzXXLl0NfRg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d7BJQxp3faJSthMdKdkuxRqoMMwXJTI0xAKGBDcgSzSEpbrph6PyCnm97R7VLfClvs/2Wn8Kivh93rHI21plV4z2gbt0sVAabmSNelbc2jSgs1kyyJT5QUeokJ53X7mXKbA9mnw/FcxM56yLzhazVwc6C9YhTs8yD+aNR+j9EaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=q0gH49ay; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a4429c556efso772389166b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 06:15:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1709648123; x=1710252923; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+qN6o+pBuUZiE6aW8wZJuPXv9S9i537FwCR0xXcOtJo=;
+        b=q0gH49ayauNQVQfuRM2PD7VrY4hPnd5YvT/WsipEqiY1YmdX5sNmvH974Q74mXSN/p
+         1NYsPIim69+5rlMfCNP//lEbZ2BScnTMC8L3+WdDN+nAoL8VpzDAVzJqS51aYAg5d5E7
+         ytaNXXeQHwDezH+sfqo4TXnEK3Qqn7C2+Rx4Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709648123; x=1710252923;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+qN6o+pBuUZiE6aW8wZJuPXv9S9i537FwCR0xXcOtJo=;
+        b=mrKuTV/jbQ5pb1IksnwuzoOeH5QouvBj38QPwS3aKbuPHHX1O9tEkwMePasD/EGKUa
+         Q3Z7XRUMKtOxVEXEJL5ZbhCfPoOHBdn6YVJZP+cYmvu0dfxPpFqb/+yjsjs+OLA1J0tc
+         HYEj0RmWV8NtSXocNvCmogJ/52U9ivMq+Ipa04xFpI32XRrE86CeKT40WEqpoXuPwlSR
+         IGuf94EFt0D6vNrO7wlpYtxExJKZZmn9eLeqIfGjaNYIEvR0e56OAK/ICGDD+JFo42/J
+         Mrc/H1sU7v2H0fGZeaTxetQvUexgNfSK5jrWrFAQGF72BaFSVWWIL2a7OLJekrCKNvif
+         CkQQ==
+X-Gm-Message-State: AOJu0YxY5I9Bc8WpzQFR0nWLgBTIj/ZhBMOCbL2DlS7YF76VzZDd7vT6
+	qdhSnpy+bV9ILIo69UkQuawRQ3y4T9kpfFpGpkCN+0POIFvam9oA0EDVey7QUAfaX7sGluo7Zu1
+	e/miTKPWszjI9i3Xxkes4CuEhOLfUgPh9ousk7g==
+X-Google-Smtp-Source: AGHT+IEQVz8FQCPWncPk36eLLeFDG6gTV0TEt2FP9R9DY8ila7vunYnOfw1bEabhUhgzlLm+DAa539/xD4fqYLGv9J8=
+X-Received: by 2002:a17:906:b291:b0:a45:a0c4:4bc1 with SMTP id
+ q17-20020a170906b29100b00a45a0c44bc1mr1657951ejz.69.1709648122771; Tue, 05
+ Mar 2024 06:15:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240224134901.829591-1-chengming.zhou@linux.dev>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.73
-X-Spamd-Result: default: False [-3.73 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[9];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-2.93)[99.70%]
-X-Spam-Flag: NO
+References: <20240228182940.1404651-1-willy@infradead.org>
+In-Reply-To: <20240228182940.1404651-1-willy@infradead.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 5 Mar 2024 15:15:11 +0100
+Message-ID: <CAJfpegtDz3f1df7ioSHo-Rhc7G0cwec_wTh4XU=h_6vG6V6otQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fuse: Remove fuse_writepage
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat 24-02-24 13:49:01, chengming.zhou@linux.dev wrote:
-> From: Chengming Zhou <zhouchengming@bytedance.com>
-> 
-> The SLAB_MEM_SPREAD flag is already a no-op as of 6.8-rc1, remove
-> its usage so we can delete it from slab. No functional change.
-> 
-> Signed-off-by: Chengming Zhou <zhouchengming@bytedance.com>
+On Wed, 28 Feb 2024 at 19:29, Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
+>
+> The writepage operation is deprecated as it leads to worse performance
+> under high memory pressure due to folios being written out in LRU order
+> rather than sequentially within a file.  Use filemap_migrate_folio() to
+> support dirty folio migration instead of writepage.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Thanks. I've added the patch to my tree.
+Applied series, thanks.
 
-								Honza
-
-> ---
->  fs/isofs/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-> index 379c9edc907c..2a616a9f289d 100644
-> --- a/fs/isofs/inode.c
-> +++ b/fs/isofs/inode.c
-> @@ -93,7 +93,7 @@ static int __init init_inodecache(void)
->  	isofs_inode_cachep = kmem_cache_create("isofs_inode_cache",
->  					sizeof(struct iso_inode_info),
->  					0, (SLAB_RECLAIM_ACCOUNT|
-> -					SLAB_MEM_SPREAD|SLAB_ACCOUNT),
-> +					SLAB_ACCOUNT),
->  					init_once);
->  	if (!isofs_inode_cachep)
->  		return -ENOMEM;
-> -- 
-> 2.40.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Miklos
 
