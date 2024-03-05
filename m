@@ -1,94 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-13589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4508719E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:48:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F59871A15
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:58:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CDCCB22F12
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 09:48:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5F61F21B7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 09:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F08537E9;
-	Tue,  5 Mar 2024 09:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BADA54750;
+	Tue,  5 Mar 2024 09:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ambo0nUm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4B45339E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 09:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B1350246;
+	Tue,  5 Mar 2024 09:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709632086; cv=none; b=rTvbCoOk8Yt5rONlWFkF5oBbvWuSoT4AfHV1smr2jZ1FOw57XQmz614rmMFb1gMAp1zLW316vfmw6woMycrO6h7XI2FuLFSfHtqQJCavtWtiRVuI16+Hbc7XC8HocWwnaXNlSAbQUuEYG29ddfL2YAMgcH4HVmTVN6ARBxRH2xE=
+	t=1709632711; cv=none; b=CZm/byPVCrE7BAz9czEqel7T0PEV9pOn72RCAwPdgNx72Lq6MuvanT6jsnCsYc/WMTAz1GgiDtNEStQc5eJESl0Phh5N48HsrbDRQJzhWaZoMvIiOTuv9uRpBsJm83yz5O3/LwQ9sl0v5vaIRXY5E4VBfCNN580FhH7D+qVouJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709632086; c=relaxed/simple;
-	bh=FUV2UfMDI7InnPdcCSNJGtUvjpOsTPaChu2eym3FVR8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZaZlbP6Bb1Gg8HdfscsJgVnGi8iVsde6vS38/etLNJdsjG85bThA8zHySxGtRinCfGGirLhtVlhnKC7kxY/mDcCjhRbHFKW/Zw9hbujt0Cu6waZNpUSEmfzZQIrUSAPK5+mFMU55+VoKoirZEdQwzWa+om8Ol/huJknozJcQVMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c7f57fa5eeso486664339f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 01:48:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709632083; x=1710236883;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F/PW67TWH8skqmU8vKJwkoq7t3qUI1ZITrOnwecy99Q=;
-        b=oQJtuKg/T+59+S20ymF2myDEmxKsil3hnWa2Kl/z9NF7sTOeqOXt6Vct4KShFhKMip
-         doq1GkwGANbG0kplB0bHzclAb/shpXeDwpRhqmgNtDtGSNyHm8WGvfhD6rethWPGHJ5i
-         M/6yOOwUdZAUukfVXKa490MZEwL6do361RYY6dN4YXcMrro9L0mLTDI1d4yo0j5KW0yP
-         QS0iPdmbHBxbIpD8HeEJknk4JzVi4kUklkKXpll77vhTFg2otuNCWxikzda28h3guCuE
-         ILVEtn+9HWXEo8uDXvTKhDzd4JXGM1MNKr6rVMMbCqsAKG/A/uBhnId3Z+0YdGDFizmy
-         TZgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2gBjWn29H6A66fCepK40xFb1HIeFjzboFQu1Wjn0Aw1kQLrPGpTmf1Dw4uoRhAVrZJ5ibzv/uK0BwguIQUkFJSGdfpmfx7FZAHcRDoQ==
-X-Gm-Message-State: AOJu0YyPMlHdXFy53O5pOwnxNMEBggUHnEXUZSNpdrKiFVnG9ZRwvYx2
-	Nr/JM5rpb27zESZtBad18D/rIYhkHFfAE8qoG6MzHL4NaOfhubpHWRK2wP+cYqfG/y0iQKYoWCZ
-	ldjbo9Siv2oKa7/hMh5tIaUvG8MZyGiHzZN4oApQvxWBTP8X1pB423GU=
-X-Google-Smtp-Source: AGHT+IG6l3HNMZupoKsS/1gWkPsOulXpjgLde5BhCiJPeE6FXHMXeTqCfcGSOQh3Xyp9sknk0aj3dTMHR9Y5+rBXctugU6xVy/Vs
+	s=arc-20240116; t=1709632711; c=relaxed/simple;
+	bh=/4mH6blz+OXbyiAZdJXapeZYAAHshdm8yjRhaiNohG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gp/aF+TASY7rqHsTMYY146WTc+ex4CyBR4AjTaBkNKT8OF/EIXK1D4NbujjPqzCGUu/muqOfw5FkDUjM3ghMx1rXx9+5qKjJWxYYphrGq+wSUozqsEbQ5DQrp2Nj9ipN/WsRc5I4WhTfqJr5T8ilmhMZES6e/9zJsosBJ2Rv+wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ambo0nUm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D4ECC433F1;
+	Tue,  5 Mar 2024 09:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709632711;
+	bh=/4mH6blz+OXbyiAZdJXapeZYAAHshdm8yjRhaiNohG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ambo0nUmKbxaZC2hyphDe3+VrmUQkQMnghESDL91tOcycm/8gzmlrBxbmyuP7owm5
+	 9YdNAqmjdAcc91XJxDV4+GSTpoMBy557B6lF1np0wFkis1b2oUxWzzblBu+PeJbVih
+	 D5UtafeVnQTOaeQnFhjMjm38EswV2h+tuACEpWbiVmiENBzotksuhpGJd6TZQvFwJH
+	 hevskSUIRUI/fA/8aYM6Mdwjoe4fmcKCgs/Ebu9xHYfOgc4U8Rm9CJLxAPnu9jkvSb
+	 Xld6fNHXfA5lIuwIetidOy9YqB3qUZiDx/ZN+bzC5WAfyXcAm7h8wruFJtRjicoy//
+	 ddcLizSRVMCxw==
+Date: Tue, 5 Mar 2024 10:58:25 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, 
+	linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Guenter Roeck <groeck@chromium.org>, 
+	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Mike Frysinger <vapier@chromium.org>
+Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
+Message-ID: <20240305-kontakt-ticken-77fc8f02be1d@brauner>
+References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
+ <20240304-zugute-abtragen-d499556390b3@brauner>
+ <202403040943.9545EBE5@keescook>
+ <20240305-attentat-robust-b0da8137b7df@brauner>
+ <202403050134.784D787337@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1611:b0:474:edd2:24d5 with SMTP id
- x17-20020a056638161100b00474edd224d5mr360168jas.4.1709632083746; Tue, 05 Mar
- 2024 01:48:03 -0800 (PST)
-Date: Tue, 05 Mar 2024 01:48:03 -0800
-In-Reply-To: <000000000000c925dc0604f9e2ef@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000c6e0a0612e6bd58@google.com>
-Subject: Re: [syzbot] [gfs2?] BUG: sleeping function called from invalid
- context in gfs2_withdraw
-From: syzbot <syzbot+577d06779fa95206ba66@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, axboe@kernel.dk, brauner@kernel.org, 
-	gfs2@lists.linux.dev, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rpeterso@redhat.com, 
-	syzkaller-bugs@googlegroups.com, yuran.pereira@hotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202403050134.784D787337@keescook>
 
-syzbot suspects this issue was fixed by commit:
+On Tue, Mar 05, 2024 at 01:41:29AM -0800, Kees Cook wrote:
+> On Tue, Mar 05, 2024 at 09:59:47AM +0100, Christian Brauner wrote:
+> > > > Uhm, this will break the seccomp notifier, no? So you can't turn on
+> > > > SECURITY_PROC_MEM_RESTRICT_WRITE when you want to use the seccomp
+> > > > notifier to do system call interception and rewrite memory locations of
+> > > > the calling task, no? Which is very much relied upon in various
+> > > > container managers and possibly other security tools.
+> > > > 
+> > > > Which means that you can't turn this on in any of the regular distros.
+> > > 
+> > > FWIW, it's a run-time toggle, but yes, let's make sure this works
+> > > correctly.
+> > > 
+> > > > So you need to either account for the calling task being a seccomp
+> > > > supervisor for the task whose memory it is trying to access or you need
+> > > > to provide a migration path by adding an api that let's caller's perform
+> > > > these writes through the seccomp notifier.
+> > > 
+> > > How do seccomp supervisors that use USER_NOTIF do those kinds of
+> > > memory writes currently? I thought they were actually using ptrace?
+> > > Everything I'm familiar with is just using SECCOMP_IOCTL_NOTIF_ADDFD,
+> > > and not doing fancy memory pokes.
+> > 
+> > For example, incus has a seccomp supervisor such that each container
+> > gets it's own goroutine that is responsible for handling system call
+> > interception.
+> > 
+> > If a container is started the container runtime connects to an AF_UNIX
+> > socket to register with the seccomp supervisor. It stays connected until
+> > it stops. Everytime a system call is performed that is registered in the
+> > seccomp notifier filter the container runtime will send a AF_UNIX
+> > message to the seccomp supervisor. This will include the following fds:
+> > 
+> > - the pidfd of the task that performed the system call (we should
+> >   actually replace this with SO_PEERPIDFD now that we have that)
+> > - the fd of the task's memory to /proc/<pid>/mem
+> > 
+> > The seccomp supervisor will then perform the system call interception
+> > including the required memory reads and writes.
+> 
+> Okay, so the patch would very much break that. Some questions, though:
+> - why not use process_vm_writev()?
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Because it's inherently racy as I've explained in an earlier mail in
+this thread. Opening /proc/<pid>/mem we can guard via:
 
-    fs: Block writes to mounted block devices
+// Assume we hold @pidfd for supervised process
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119f927a180000
-start commit:   6465e260f487 Linux 6.6-rc3
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8d7d7928f78936aa
-dashboard link: https://syzkaller.appspot.com/bug?extid=577d06779fa95206ba66
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10dbcdc1680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a367b6680000
+int fd_mem = open("/proc/$pid/mem", O_RDWR);:
 
-If the result looks correct, please mark the issue as fixed by replying with:
+if (pidfd_send_signal(pidfd, 0, ...) == 0)
+        write(fd_mem, ...);
 
-#syz fix: fs: Block writes to mounted block devices
+But we can't exactly do:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+process_vm_writev(pid, WRITE_TO_MEMORY, ...);
+if (pidfd_send_signal(pidfd, 0, ...) == 0)
+        write(fd_mem, ...);
+
+That's always racy. The process might have been reaped before we even
+call pidfd_send_signal() and we're writing to some random process
+memory.
+
+If we wanted to support this we'd need to implement a proposal I had a
+while ago:
+
+#define PROCESS_VM_RW_PIDFD (1 << 0)
+
+process_vm_readv(pidfd,  ..., PROCESS_VM_RW_PIDFD);
+process_vm_writev(pidfd, ..., PROCESS_VM_RW_PIDFD);
+
+which is similar to what we did for waitid(pidfd, P_PIDFD, ...)
+
+That would make it possible to use a pidfd instead of a pid in the two
+system calls. Then we can get rid of the raciness and actually use those
+system calls. As they are now, we can't.
+
+> - does the supervisor depend on FOLL_FORCE?
+
+Since the write handler for /proc/<pid>/mem does raise FOLL_FORCE
+unconditionally it likely would implicitly. But I'm not familiar enough
+with FOLL_FORCE to say for sure.
+
+> Perhaps is is sufficient to block the use of FOLL_FORCE?
+> 
+> I took a look at the Chrome OS exploit, and I _think_ it is depending
+> on the FOLL_FORCE behavior (it searches for a symbol to overwrite that
+> if I'm following correctly is in a read-only region), but some of the
+> binaries don't include source code, so I couldn't easily see what was
+> being injected. Mike or Adrian can you confirm this?
 
