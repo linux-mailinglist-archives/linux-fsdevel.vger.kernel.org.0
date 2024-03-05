@@ -1,106 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-13593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C969871A51
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:13:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B8F871AFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18ED928271A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:13:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259B21F22062
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACC7548E0;
-	Tue,  5 Mar 2024 10:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79017612C2;
+	Tue,  5 Mar 2024 10:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gT9lMjiE"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hIASFsMv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3609154794
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 10:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5907F60DF7;
+	Tue,  5 Mar 2024 10:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709633549; cv=none; b=UahSABCmIT5hrjsFyxxFwItu0c2OjmdUOLMGjLs+7xj+vmOf+79ZyQoEZEjrQopJp39XgXXYSYUUH+7bc/5gYczjrTYY7agik2ceG2DlBNns1I/FU8KJpKHRk/qxVrAMlF2zxXYvNRZQS3BXRWMF2ojfFOXO4mSM92JAQFh7fBA=
+	t=1709633786; cv=none; b=ceF6LcZmqkznQHPw/RgExQaMsx/pQrZa85y8uS8Y9QbwGN/xmdMROSzcyU6RZvHUamoBjXqIZf5+EfLj8MK5a2LFZXEwyH1uXEEAla/GS5Ao49dAaeJuQdDcMEsXARykjzMOYsE00uqp08E5psqqYw77VvXUv5C5PzMOwTTMeek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709633549; c=relaxed/simple;
-	bh=qX84Qr8Rjx3k1Qrrec1tOKVgxK5Rdtm5/Yv88GrB3xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0XVn1ECQ1M6tNqj9+rUZHZw4mA2dejL8kb0ykoryXx20JT3IexklV7/s+wfr6tJ9UYiRusU0LUY5GPmoYPhub6gEGOjKK/hysK+qywO3C4ldDzT8DIAp0In+eCOXbJ+nCurFT7BsYyT3F5F1tmMGyfMEUn4jZi0TVoFp5wITOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gT9lMjiE; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1dd01ea35b5so15233375ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 02:12:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1709633547; x=1710238347; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=90GoPmdoNB7qy/Rz4aKAQpu8I3w30a6c5BBckmqB0YE=;
-        b=gT9lMjiETrAheaS14Ym8qIZ1UybbiLc8FoP+cq4pXprpgq/K3ae6Hyavcrr8ezOnEf
-         EwlHVc5SET4LNV4m+8tMcvR3Zo/b4atkP34fMI3c2vMsw4bzu4er7OssbexTHiQy/VDR
-         vW9HcMeHMi4+K2iC4Vwe57ZpMV6TfQjgCtOeM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709633547; x=1710238347;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=90GoPmdoNB7qy/Rz4aKAQpu8I3w30a6c5BBckmqB0YE=;
-        b=JqXcr7QGlDMLGwWerXSSaYpvy2LetPoBkEIXWz8clisO8GYRtSEzwgV80ljWWNUmi/
-         6E+uxDE6lxdL5BzmezqvJkb9I3LipeGen6/7lfuwQ8F1dR9LIfCivEjEWrKeZlQr4kC6
-         eACdRLH0kit1rzkBPvOGAfPaO++8rMvoEf9laN4fBX+qeOJoCcnfvG/BOLPC3orv5o0a
-         f4t4SAeyslq/7MhdLKKHGmkii1WC+T4CO1aOY1Jjb31gHNoSjPgQyKzWDuD3NGvScl5F
-         nWl6a9c7exYZTD7igJjM8+gMlMTSdkTR3NVM04KJlcnUA63wlhhGTbkhSRz2xlv2sAsj
-         9MTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxTOjFcJbtFomAgOG+PtISeMRTUrG8fGzprTmwqL+YUtp/zs2Guv68WAESNvoaNVnyYmSgWLfKztO/gRh6Xb2p8hbr8e7Bhx4nid+uFg==
-X-Gm-Message-State: AOJu0Yx/d/DB5ynTO/KX/0sIOqeIwxfK54Inmp6JGKO5D+Rjx6Ao0Cnc
-	OGh3xavJXS6wUoWJE8DGNZINiRsF/r8HCg+2JGPFgQaCT682gpGe7m96YpjbwJfNJRo4kJmAB1A
-	=
-X-Google-Smtp-Source: AGHT+IHivF51UPX1N5OEzkfKJUGVPso4IRPc5xLAaCXRGUd0otijzh2wsjGTeXcfAY79j5YppLpA7g==
-X-Received: by 2002:a17:902:8a83:b0:1d7:2e86:fb2a with SMTP id p3-20020a1709028a8300b001d72e86fb2amr1109359plo.65.1709633547547;
-        Tue, 05 Mar 2024 02:12:27 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id mm12-20020a1709030a0c00b001dc96d1a662sm10134092plb.197.2024.03.05.02.12.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 02:12:26 -0800 (PST)
-Date: Tue, 5 Mar 2024 02:12:26 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>,
-	linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Mike Frysinger <vapier@chromium.org>
-Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
-Message-ID: <202403050211.86A44769@keescook>
-References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
- <20240304-zugute-abtragen-d499556390b3@brauner>
- <202403040943.9545EBE5@keescook>
- <20240305-attentat-robust-b0da8137b7df@brauner>
- <202403050134.784D787337@keescook>
- <20240305-kontakt-ticken-77fc8f02be1d@brauner>
+	s=arc-20240116; t=1709633786; c=relaxed/simple;
+	bh=i/9ZW+kNqpZnJVbMsf5b8+hAV2dVj/G+FqywABYCn2o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hgVdTT077j5Lcufn/jcEexBl4meETuJJrt8rtTjFuBrh5ImsuZ82hKRr+zk7pBFCiQ4cjWNSCPEoIiRRr1qgIISsi0g/cY1psfq1bE5zgmOKOfBR16Az5de5bhXPADBNXKa2eWJ21n/saTQi454+Z+mN8VPFUwXYgkmc/CW7GDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hIASFsMv; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1709633783;
+	bh=i/9ZW+kNqpZnJVbMsf5b8+hAV2dVj/G+FqywABYCn2o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hIASFsMvENDZkfwrWl7aEgXOJK9SjbtAmPR07fRshhtuD4+jt406NG79i5DYiWELf
+	 Xghf/2KavoY3OIpydipg6j2iPOav0POFQALRPe2b6KL9SqfIkjMnhal0MOooaKAz3X
+	 VVy452exObbp+l5etRpn4D7aeBGDLeeVWGIrBIZOCHpgE+hhVB/9oS3m86etzuSuPD
+	 ILWevtXYjMl1kkw3yXnqC02zM1pt+jg5UfZfrcuHK5Tbn9549J+sOGID56mgnk3nk/
+	 gD3KKHQf0fVPxu9lo3KdqF9ur4kdK856U/2dS1h3R8oBvKifVOmpARUqEOOyJ+jLS0
+	 oFFRcSeC5P6EQ==
+Received: from eugen-station.domain.com (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ehristev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 355D9378045F;
+	Tue,  5 Mar 2024 10:16:20 +0000 (UTC)
+From: Eugen Hristev <eugen.hristev@collabora.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel@collabora.com,
+	eugen.hristev@collabora.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	krisman@suse.de
+Subject: [PATCH v13 0/9] Cache insensitive cleanup for ext4/f2fs
+Date: Tue,  5 Mar 2024 12:15:59 +0200
+Message-Id: <20240305101608.67943-1-eugen.hristev@collabora.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240305-kontakt-ticken-77fc8f02be1d@brauner>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 05, 2024 at 10:58:25AM +0100, Christian Brauner wrote:
-> Since the write handler for /proc/<pid>/mem does raise FOLL_FORCE
-> unconditionally it likely would implicitly. But I'm not familiar enough
-> with FOLL_FORCE to say for sure.
+Hello,
 
-I should phrase the question better. :) Is the supervisor writing into
-read-only regions of the child process?
+I am trying to respin the series here :
+https://www.spinics.net/lists/linux-ext4/msg85081.html
+
+I resent some of the v9 patches and got some reviews from Gabriel,
+I did changes as requested and here is v13.
+
+Changes in v13:
+- removed stray wrong line in 2/8
+- removed old R-b as it's too long since they were given
+- removed check for null buff in 2/8
+- added new patch `f2fs: Log error when lookup of encoded dentry fails` as suggested
+- rebased on unicode.git for-next branch
+
+Changes in v12:
+- revert to v10 comparison with propagating the error code from utf comparison
+
+Changes in v11:
+- revert to the original v9 implementation for the comparison helper.
+
+Changes in v10:
+- reworked a bit the comparison helper to improve performance by
+first performing the exact lookup.
+
+
+* Original commit letter
+
+The case-insensitive implementations in f2fs and ext4 have quite a bit
+of duplicated code.  This series simplifies the ext4 version, with the
+goal of extracting ext4_ci_compare into a helper library that can be
+used by both filesystems.  It also reduces the clutter from many
+codeguards for CONFIG_UNICODE; as requested by Linus, they are part of
+the codeflow now.
+
+While there, I noticed we can leverage the utf8 functions to detect
+encoded names that are corrupted in the filesystem. Therefore, it also
+adds an ext4 error on that scenario, to mark the filesystem as
+corrupted.
+
+This series survived passes of xfstests -g quick.
+
+Eugen Hristev (1):
+  f2fs: Log error when lookup of encoded dentry fails
+
+Gabriel Krisman Bertazi (8):
+  ext4: Simplify the handling of cached insensitive names
+  f2fs: Simplify the handling of cached insensitive names
+  libfs: Introduce case-insensitive string comparison helper
+  ext4: Reuse generic_ci_match for ci comparisons
+  f2fs: Reuse generic_ci_match for ci comparisons
+  ext4: Log error when lookup of encoded dentry fails
+  ext4: Move CONFIG_UNICODE defguards into the code flow
+  f2fs: Move CONFIG_UNICODE defguards into the code flow
+
+ fs/ext4/crypto.c   |  19 ++-----
+ fs/ext4/ext4.h     |  35 +++++++-----
+ fs/ext4/namei.c    | 129 ++++++++++++++++-----------------------------
+ fs/ext4/super.c    |   4 +-
+ fs/f2fs/dir.c      | 112 ++++++++++++++-------------------------
+ fs/f2fs/f2fs.h     |  16 +++++-
+ fs/f2fs/namei.c    |  10 ++--
+ fs/f2fs/recovery.c |   5 +-
+ fs/f2fs/super.c    |   8 +--
+ fs/libfs.c         |  81 ++++++++++++++++++++++++++++
+ include/linux/fs.h |   4 ++
+ 11 files changed, 219 insertions(+), 204 deletions(-)
 
 -- 
-Kees Cook
+2.34.1
+
 
