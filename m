@@ -1,167 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-13666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A55872A10
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 23:19:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00477872ACF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 00:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 332D8B24359
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 22:19:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93DA81F22695
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 23:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8FF12E1E3;
-	Tue,  5 Mar 2024 22:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65EE12D20C;
+	Tue,  5 Mar 2024 23:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdimvUrN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O1T4gKni"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B8912E1C5;
-	Tue,  5 Mar 2024 22:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4375E41760
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 23:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709677129; cv=none; b=X9vFW1pQR32BkkEx6tCoyujsBdQ0FKpoG2vJjN1VVvovUqc/ClqN0p9oTf/zmd/9SJUUhQPH0DGPsXD7IwPdDykM21okjmdMaD5ZRum6zgYUMLFPZWuqkEOMEpZJnL1KJinR00oZejReQJhA/dOpBetznb7IdiYnH8TMr9MmINo=
+	t=1709680065; cv=none; b=Uy6pCP6aPRR/dj7gfj8mpcnthhWYJbneKLY1TwTF9RR79XrZtXuKuebPBU5RWouAnkbhCqyuHd/Ok5hqZKo73X0l2ubbCMEa4kQIFY0PTxlZZ4QSZrqFYAca1RErGixi+G4GzZNO6o6GD+FicCDbqE/skgXsbHDvY0WMC+5HKUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709677129; c=relaxed/simple;
-	bh=iTV6eJf8dPD4YV3fq9RsQkZcP6Jo/J8HHPmDs3eIbuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ea/URaHRxAzGBbs3E5zvvZvsFDmp9uC4VSdMKJJ8CVs8Bu6NSR5kkObGU3AaxnqXDTpaG5Z4t0XH3qLMkfA0WtRrXXEQXiFt8ZcVJGhfkmncgOpJCD1YJUEcz9Z+RdOFy7Nl7+sgkFatO81mlG3NKhQNFGXtLToOkt4pz38dk4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdimvUrN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 451E6C43394;
-	Tue,  5 Mar 2024 22:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709677129;
-	bh=iTV6eJf8dPD4YV3fq9RsQkZcP6Jo/J8HHPmDs3eIbuA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IdimvUrNFp9Jf7lRs7ECBbFx7mh+9YgqxFqBEfQKxNR8viJm6rZnc/RTYXac8Diu1
-	 63Itc3bLl3E6o3lqXS8sBG4g9gzajZmRm/IusPKLHEn72SIdpBtls1VcTquwyIgi0H
-	 TWHbNNbjjsOimHLa11fUe5RwjF+lJAMpr785GQ/rULMiqVcsACg5StUYC6ye6/BLK7
-	 VLea6ydfrvu4qjqyLJ775bq7aYR7mZqX7tu8C7JNkGtTQosUUxrPs8fveKr1QTTZuJ
-	 aUsNydoBRNU05f4/1UHhIBl6I2D0c5XQD3M/aov/ynUqC7RCInxq2KzsNdbDdXREcz
-	 yroGEG5ulIthQ==
-Date: Tue, 5 Mar 2024 16:18:46 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: [PATCH][next] fsnotify: Avoid -Wflex-array-member-not-at-end warning
-Message-ID: <ZeeaRuTpuxInH6ZB@neat>
+	s=arc-20240116; t=1709680065; c=relaxed/simple;
+	bh=z4f2CZATeqJZnfe8/ysWbi4qu/Qrqmb1Zwyfv2N2sjs=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=b7kw3HE3CgBX+XnO8xaymIOephf3PxrToMPY8U3RO/a1vBbRL68FWD2bofd2cWR+3eCU10bRTUv0Os9o3YMjzjW5X/jLrUnrroDbK/zcfGaePsPYqd2g+XvZ/4X+XaO5rjlPeg+Eiq9Vx2Dn6qD3VGZzt07D0aM17XP5TSCyg3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O1T4gKni; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709680062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=z4f2CZATeqJZnfe8/ysWbi4qu/Qrqmb1Zwyfv2N2sjs=;
+	b=O1T4gKni1yYONnZ42y6LM6RAO30VFLZ2LImnrRAX/Qr0PxBl8ZOfCP0t6mNViB3eTLQisG
+	mLQ5RsmFyPce9QEjzgm3Gi8pTirOFjHvUJMXxnWiSAB0IBlhfss0IhsMkzuFa4i5fAfwWc
+	nf5eZ0qilqz4N8Xkhtf2Z4xluyPzQJQ=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-625-YX0nPDbIORuQ38n_yvMAig-1; Tue, 05 Mar 2024 18:07:35 -0500
+X-MC-Unique: YX0nPDbIORuQ38n_yvMAig-1
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3657bb7b9d2so93167855ab.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 15:07:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709680051; x=1710284851;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=z4f2CZATeqJZnfe8/ysWbi4qu/Qrqmb1Zwyfv2N2sjs=;
+        b=ePmrwccjYDGLxIrUpBpJFxZLJkOnJfEjcrXnPdT8lFA2Q2ffbQah5EiDGuWwqgj88E
+         PxCGA8up5IL8IZODmPz8+P92WLgAZG7LIQHzvAmZNCIg+osOoexykuGurKjSh65PkTHA
+         xo/fBE9ctL5G9X6RFguJTZhvOSbWaotp2upHXa9+OzDIuHt96S6fu7YdjiPKCn6zG6aA
+         /3xODeLBstLzboJVuq/08yOa7I22Udnl602tmPoHgr31Iyi8bH816it3jNceN0YZI2Gl
+         I3bvvCxsiF0LfPM/bsP8UZPmJ2ifekin7FHsGie7RBiJUWnE4wZQ27hAszvNiS5Ox4ta
+         UT7Q==
+X-Gm-Message-State: AOJu0YxOCHdtCkqY042M+9FO65VIi6hrIKGKld9SaNA2KPXLBXw4J8Uv
+	07JypeSsMqmoP9CTUEsrQGKT/6zOudKSD6M9PDSYQp6di3fVgzZM2cdLqGB42r0ZMsgVK2O5DlL
+	6NPycp/eVfQ0RUpsL4AKtYuoaJA2X6RMd+9tX4LSx5Sj1QQIj8xd9yQzhBV15MJZT/izrawgiG8
+	bZQkfL5wOVMUZH3vuvq51LlRIpYYzFS4MnFMpGx7sHqh2JwN1y
+X-Received: by 2002:a05:6e02:b47:b0:365:b485:734c with SMTP id f7-20020a056e020b4700b00365b485734cmr18843419ilu.25.1709680051035;
+        Tue, 05 Mar 2024 15:07:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGkk92D6XweRyTSc2xdRt+EtvJ1VY812coIYxj7wMnujUyxCTTBRjA7E9zhGeX2JDEoPjHLlQ==
+X-Received: by 2002:a05:6e02:b47:b0:365:b485:734c with SMTP id f7-20020a056e020b4700b00365b485734cmr18843395ilu.25.1709680050672;
+        Tue, 05 Mar 2024 15:07:30 -0800 (PST)
+Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
+        by smtp.gmail.com with ESMTPSA id u11-20020a92d1cb000000b0036600aa51dbsm390770ilg.47.2024.03.05.15.07.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Mar 2024 15:07:30 -0800 (PST)
+Message-ID: <cfdebcc3-b9de-4680-a764-6bdf37c0accb@redhat.com>
+Date: Tue, 5 Mar 2024 17:07:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-fsdevel@vger.kernel.org
+From: Eric Sandeen <sandeen@redhat.com>
+Subject: [PATCH 0/2] vfs: convert debugfs & tracefs to the new mount API
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Bill O'Donnell <billodo@redhat.com>,
+ David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
--Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
-ready to enable it globally.
+Since debugfs and tracefs are cut & pasted one way or the other,
+do these at the same time.
 
-There is currently a local structure `f` that is using a flexible
-`struct file_handle` as header for an on-stack place-holder for the
-flexible-array member `unsigned char f_handle[];`.
+Both of these patches originated in dhowells' tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=mount-api-viro
 
-struct {
-	struct file_handle handle;
-	u8 pad[MAX_HANDLE_SZ];
-} f;
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=mount-api-viro&id=ec14be9e2aa76f63458466bba86256e123ec4e51
+and
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=mount-api-viro&id=c4f2e60465859e02a6e36ed618dbaea16de8c8e0
 
-However, we are deprecating flexible arrays in the middle of another
-struct. So, in order to avoid this, we use the `struct_group_tagged()`
-helper to separate the flexible array from the rest of the members in
-the flexible structure:
+I've forward-ported them to the mount API that landed, and
+fixed up remounting; ->reconfigure() needed to copy the
+parsed context options into the current superblock options
+to effect any remount changes.
 
-struct file_handle {
-        struct_group_tagged(file_handle_hdr, hdr,
-		... the rest of the members
-        );
-        unsigned char f_handle[];
-};
+While these do use the invalf() functions for some errors, they
+are new messages, not messages that used to go to dmesg that
+would be lost if userspace isn't listening.
 
-With the change described above, we can now declare an object of the
-type of the tagged struct, without embedding the flexible array in the
-middle of another struct:
+I've done minimal testing - booting with the patches, testing
+some of the remount behavior for mode & uid.
+Oh, and I built it too. </brown_paper_bag>
 
-struct {
-        struct file_handle_hdr handle;
-        u8 pad[MAX_HANDLE_SZ];
-} f;
-
-We also use `container_of()` whenever we need to retrieve a pointer to
-the flexible structure, through which the flexible-array member can be
-accessed, as in this case.
-
-So, with these changes, fix the following warning:
-
-fs/notify/fdinfo.c: In function ‘show_mark_fhandle’:
-fs/notify/fdinfo.c:45:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-   45 |                 struct file_handle handle;
-      |                                    ^~~~~~
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- fs/notify/fdinfo.c | 8 +++++---
- include/linux/fs.h | 6 ++++--
- 2 files changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-index 5c430736ec12..740f5e68b397 100644
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -42,15 +42,17 @@ static void show_fdinfo(struct seq_file *m, struct file *f,
- static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
- {
- 	struct {
--		struct file_handle handle;
-+		struct file_handle_hdr handle;
- 		u8 pad[MAX_HANDLE_SZ];
- 	} f;
-+	struct file_handle *handle = container_of(&f.handle,
-+						  struct file_handle, hdr);
- 	int size, ret, i;
- 
- 	f.handle.handle_bytes = sizeof(f.pad);
- 	size = f.handle.handle_bytes >> 2;
- 
--	ret = exportfs_encode_fid(inode, (struct fid *)f.handle.f_handle, &size);
-+	ret = exportfs_encode_fid(inode, (struct fid *)handle->f_handle, &size);
- 	if ((ret == FILEID_INVALID) || (ret < 0)) {
- 		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
- 		return;
-@@ -63,7 +65,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
- 		   f.handle.handle_bytes, f.handle.handle_type);
- 
- 	for (i = 0; i < f.handle.handle_bytes; i++)
--		seq_printf(m, "%02x", (int)f.handle.f_handle[i]);
-+		seq_printf(m, "%02x", (int)handle->f_handle[i]);
- }
- #else
- static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 00fc429b0af0..7c131bcd948f 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1030,8 +1030,10 @@ struct file {
-   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
- 
- struct file_handle {
--	__u32 handle_bytes;
--	int handle_type;
-+	struct_group_tagged(file_handle_hdr, hdr,
-+		__u32 handle_bytes;
-+		int handle_type;
-+	);
- 	/* file identifier */
- 	unsigned char f_handle[];
- };
--- 
-2.34.1
+thanks,
+-Eric
 
 
