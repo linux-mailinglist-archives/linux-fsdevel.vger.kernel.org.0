@@ -1,231 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-13644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CEC5872567
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 18:12:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58118872578
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 18:15:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 066C8283974
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 17:12:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80772B21B9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 17:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB4516415;
-	Tue,  5 Mar 2024 17:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAE51758F;
+	Tue,  5 Mar 2024 17:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aanUvFDM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D866DF5B;
-	Tue,  5 Mar 2024 17:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCFB17583
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 17:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709658735; cv=none; b=bWt8wFKjyzzbGaoyXoEBlPyDp4fNacDpOb+NFQTd5az0J/H3iyusKyQ9sjmdKgNUgdXmIApCXWvC+LBQxZzFF15qKh6GOHBGKbH9VJeK1kafVyrul3UOBiEskEEQc5h9zR4fwS3HK4iZTsy6WviGDVuJmXDZjZ6d0ftpD7haOr0=
+	t=1709658862; cv=none; b=BOXpS2Sa+xHoBR8psZbWBVoORMhsAm6sSTvlt9nkhRPEoM38NkJEFZ92nz89rrzTdJ5az6n5M6e4TMCSRezuxlfyLWyYUVYejjni8fSnpqoqtF2H/PuGQAut51SEru0q2IN8CjIShqu5imWc/69eegx6lDQz+mXvHBxnALE4zLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709658735; c=relaxed/simple;
-	bh=Q8PaurBFrppbrqEEOgrIENl2HwLshHsmzS0Oq1dK20k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DZ5fZMNnabvamCgpSVjl73kvv8+Bpu8w0+0qiiMOjEcN4QZ6ckwITMiKqQWBSyrEWqIwrS26HvvjRl/bM1pZiDhpLHGnXtewhiwiQldVLt+xj1SQxyHnv7+gYIH4kQB2KGwisbdhyVKm1WHgqvHrCd4ehADYXuhBw8K2Dg/Dq4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Tq1tR1BFrz9yMLR;
-	Wed,  6 Mar 2024 00:56:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id CE1D914066A;
-	Wed,  6 Mar 2024 01:12:03 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCHehNTUudld77FAw--.63538S2;
-	Tue, 05 Mar 2024 18:12:03 +0100 (CET)
-Message-ID: <7058e2f93d16f910336a5380877b14a2e069ee9d.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 24/25] commoncap: use vfs fscaps interfaces
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Christian Brauner <brauner@kernel.org>, "Seth Forshee (DigitalOcean)"
-	 <sforshee@kernel.org>
-Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Eric
- Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Stephen Smalley
- <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
- Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,  Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jonathan Corbet
- <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein
- <amir73il@gmail.com>,  linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,  linux-security-module@vger.kernel.org,
- audit@vger.kernel.org,  selinux@vger.kernel.org,
- linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
- linux-unionfs@vger.kernel.org
-Date: Tue, 05 Mar 2024 18:11:45 +0100
-In-Reply-To: <3098aef3e5f924e5717b4ba4a34817d9f22ec479.camel@huaweicloud.com>
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
-	 <20240221-idmap-fscap-refactor-v2-24-3039364623bd@kernel.org>
-	 <dcbd9e7869d2fcce69546b53851d694b8ebad54e.camel@huaweicloud.com>
-	 <ZeXpbOsdRTbLsYe9@do-x1extreme>
-	 <a7124afa6bed2fcadcb66efa08e256828cd6f8ab.camel@huaweicloud.com>
-	 <ZeX9MRhU/EGhHkCY@do-x1extreme>
-	 <20240305-fachjargon-abmontieren-75b1d6c67a83@brauner>
-	 <3098aef3e5f924e5717b4ba4a34817d9f22ec479.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1709658862; c=relaxed/simple;
+	bh=wc8h8ElvELoqiIs99dRWA9TPub+31Jl541MIwckqRx8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ASZKY1x4sUt48h6lkniTo7lELSR2Ft1fexJxFrQtJ4vaB6YUuTi8ATFUYU74xZac2MVoVDn6NRJ4ailKOzaiA9a1fMUCle3tdjMLcFg9kCj2J5PIeRLXzUwf8fmfwXk7BaXP9X1JF6lUx6ftwywt4zj5fm8q8XKM4fDoY6wQUQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aanUvFDM; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-42ed3bdd680so17960101cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 09:14:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709658860; x=1710263660; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FzO6p1wDOtrZv3xxgkOAAE38ISSfe9uB/wFAD09RgmE=;
+        b=aanUvFDMYVvTuXzudwct/sSE0SA/rENy8tMr2ih1gVWjOt09McFmBvDryfNYatNhrD
+         rHjM1R7QmqIlOFXRlPqfaccFGmj4e6uXMDlVgQ9LsJanGSHjOrXJMurctEulssV+Y+93
+         9eFDPbXQ6Uv5fzpcTQILGAvNPjoODzn5vdyw//k1F/9dL1q5UJXcBf26a7f3RUz0IxgX
+         Kp8AkOyUGS9fKIUTJvJF2pPms1jBVC35qNydOUklWQQUUBYVW2H9ajDa++sj8TugFQD4
+         P8ebSvJ8ALGFZlQo66mgpToxFiMdEeRJZJKebuQ7cgSdrKMZaRWhrKKmJ2PEPOMpLin7
+         JjiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709658860; x=1710263660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FzO6p1wDOtrZv3xxgkOAAE38ISSfe9uB/wFAD09RgmE=;
+        b=txFWRgc7uqC08r0QHo0+FqkUUTDB+K39IunxNlLzJc4XCLn+XMiV4mbEEwujOdUNQL
+         GM7LEiaMYTyUGyB1uiLCThe7AgtrHd2lDQik3R8RGR8hloH5xxNVjLV5XLLZkb2AimO1
+         3f8VjEUTjA/99izxbNJStgc0xNGb1SnzmieepDlilCpG2xLb8NyTwrXOktoWwkDed4am
+         42eylLrpmadgDTqvypz93hJrJz3Xem+WVKSMAG8x6LyeTNLZuFEYKih8XzzHVKQEljx5
+         Afq5JL2SUl4muACv49Xqx3mKVV8XElwoOkz/BwXsXUuNX7mTiQAWmFxqOvhsKeZokpGt
+         NKBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2QfrxDftzTSAnfUg1AtuKNu0uim0vqp/LDhAAUBPowmIXljo0wKR3uIHvGkM7eGyidDUzskRPopjtOlz4JDoQqLhOPIDq8cVQIGftTg==
+X-Gm-Message-State: AOJu0Yw5DKC2gM88LF62PA1aR/vXd9oUSgn6em0UZ8hW2Y9UQmyBICSc
+	2EtOYFHHZORKwQ04uAZ6taiD0MgYn455o3PaVy0nCk4wPx7DV6e1QdVcND2xpw9WOmYdVeP/HpM
+	IwsppdH9KhT+0oRexUsxDuPyi0Ls=
+X-Google-Smtp-Source: AGHT+IGb4N9lNzUzj8heqiwU42ylZZY49XgpTxbB7CLRdg/QJKbeHDM1sd4/+4Jq17y6jt5IB3yP5dAlllKsGeCH4t0=
+X-Received: by 2002:ac8:5ad3:0:b0:42e:6de7:35e2 with SMTP id
+ d19-20020ac85ad3000000b0042e6de735e2mr2675683qtd.25.1709658860028; Tue, 05
+ Mar 2024 09:14:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCHehNTUudld77FAw--.63538S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWrWrGF4xWw15JFyxWr1UAwb_yoWrtr47pF
-	W5GFn8Krs5Xr17Jrn7tr1DX3WFy3yfJF4UXrykG3y0vr1qyr1fKr4Skr17uF98ur1xJr1Y
-	vF1jya43Wrn8AwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkCb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
-	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
-	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
-	0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
-	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkvb40E47kJMIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F
-	4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUg7GYDU
-	UUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQANBF1jj5sCpAAAsE
+References: <20240229174145.3405638-1-meted@linux.ibm.com> <CAOQ4uxh+Od_+ZuLDorbFw6nOnsuabOreH4OE=uP_JE53f0rotA@mail.gmail.com>
+ <fc1ac345-6ec5-49dc-81db-c46aa62c8ae1@linux.ibm.com> <CAOQ4uxje7JGvSrrsBC=wLugjqtGMfADMqUBKPhcOULErZQjmGA@mail.gmail.com>
+ <1423c8eb-4646-4998-8e6a-43f9f8dd8be5@linux.ibm.com>
+In-Reply-To: <1423c8eb-4646-4998-8e6a-43f9f8dd8be5@linux.ibm.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 5 Mar 2024 19:14:08 +0200
+Message-ID: <CAOQ4uxgRFVK70c7Pquq_1iqM4Q7XdT7w_Dk0U+WGaeuA3wXrTg@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: move path permission and security check
+To: Mete Durlu <meted@linux.ibm.com>
+Cc: jack@suse.cz, repnop@google.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-03-05 at 13:46 +0100, Roberto Sassu wrote:
-> On Tue, 2024-03-05 at 10:12 +0100, Christian Brauner wrote:
-> > On Mon, Mar 04, 2024 at 10:56:17AM -0600, Seth Forshee (DigitalOcean) w=
-rote:
-> > > On Mon, Mar 04, 2024 at 05:17:57PM +0100, Roberto Sassu wrote:
-> > > > On Mon, 2024-03-04 at 09:31 -0600, Seth Forshee (DigitalOcean) wrot=
-e:
-> > > > > On Mon, Mar 04, 2024 at 11:19:54AM +0100, Roberto Sassu wrote:
-> > > > > > On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) =
-wrote:
-> > > > > > > Use the vfs interfaces for fetching file capabilities for kil=
-lpriv
-> > > > > > > checks and from get_vfs_caps_from_disk(). While there, update=
- the
-> > > > > > > kerneldoc for get_vfs_caps_from_disk() to explain how it is d=
-ifferent
-> > > > > > > from vfs_get_fscaps_nosec().
-> > > > > > >=20
-> > > > > > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.o=
-rg>
-> > > > > > > ---
-> > > > > > >  security/commoncap.c | 30 +++++++++++++-----------------
-> > > > > > >  1 file changed, 13 insertions(+), 17 deletions(-)
-> > > > > > >=20
-> > > > > > > diff --git a/security/commoncap.c b/security/commoncap.c
-> > > > > > > index a0ff7e6092e0..751bb26a06a6 100644
-> > > > > > > --- a/security/commoncap.c
-> > > > > > > +++ b/security/commoncap.c
-> > > > > > > @@ -296,11 +296,12 @@ int cap_capset(struct cred *new,
-> > > > > > >   */
-> > > > > > >  int cap_inode_need_killpriv(struct dentry *dentry)
-> > > > > > >  {
-> > > > > > > -	struct inode *inode =3D d_backing_inode(dentry);
-> > > > > > > +	struct vfs_caps caps;
-> > > > > > >  	int error;
-> > > > > > > =20
-> > > > > > > -	error =3D __vfs_getxattr(dentry, inode, XATTR_NAME_CAPS, NU=
-LL, 0);
-> > > > > > > -	return error > 0;
-> > > > > > > +	/* Use nop_mnt_idmap for no mapping here as mapping is unim=
-portant */
-> > > > > > > +	error =3D vfs_get_fscaps_nosec(&nop_mnt_idmap, dentry, &cap=
-s);
-> > > > > > > +	return error =3D=3D 0;
-> > > > > > >  }
-> > > > > > > =20
-> > > > > > >  /**
-> > > > > > > @@ -323,7 +324,7 @@ int cap_inode_killpriv(struct mnt_idmap *=
-idmap, struct dentry *dentry)
-> > > > > > >  {
-> > > > > > >  	int error;
-> > > > > > > =20
-> > > > > > > -	error =3D __vfs_removexattr(idmap, dentry, XATTR_NAME_CAPS)=
-;
-> > > > > > > +	error =3D vfs_remove_fscaps_nosec(idmap, dentry);
-> > > > > >=20
-> > > > > > Uhm, I see that the change is logically correct... but the orig=
-inal
-> > > > > > code was not correct, since the EVM post hook is not called (th=
-us the
-> > > > > > HMAC is broken, or an xattr change is allowed on a portable sig=
-nature
-> > > > > > which should be not).
-> > > > > >=20
-> > > > > > For completeness, the xattr change on a portable signature shou=
-ld not
-> > > > > > happen in the first place, so cap_inode_killpriv() would not be=
- called.
-> > > > > > However, since EVM allows same value change, we are here.
-> > > > >=20
-> > > > > I really don't understand EVM that well and am pretty hesitant to=
- try an
-> > > > > change any of the logic around it. But I'll hazard a thought: sho=
-uld EVM
-> > > > > have a inode_need_killpriv hook which returns an error in this
-> > > > > situation?
-> > > >=20
-> > > > Uhm, I think it would not work without modifying
-> > > > security_inode_need_killpriv() and the hook definition.
-> > > >=20
-> > > > Since cap_inode_need_killpriv() returns 1, the loop stops and EVM w=
-ould
-> > > > not be invoked. We would need to continue the loop and let EVM know
-> > > > what is the current return value. Then EVM can reject the change.
-> > > >=20
-> > > > An alternative way would be to detect that actually we are setting =
-the
-> > > > same value for inode metadata, and maybe not returning 1 from
-> > > > cap_inode_need_killpriv().
-> > > >=20
-> > > > I would prefer the second, since EVM allows same value change and w=
-e
-> > > > would have an exception if there are fscaps.
-> > > >=20
-> > > > This solves only the case of portable signatures. We would need to
-> > > > change cap_inode_need_killpriv() anyway to update the HMAC for muta=
-ble
-> > > > files.
-> > >=20
-> > > I see. In any case this sounds like a matter for a separate patch
-> > > series.
-> >=20
-> > Agreed.
->=20
-> Christian, how realistic is that we don't kill priv if we are setting
-> the same owner?
->=20
-> Serge, would we be able to replace __vfs_removexattr() (or now
-> vfs_get_fscaps_nosec()) with a security-equivalent alternative?
+On Tue, Mar 5, 2024 at 3:57=E2=80=AFPM Mete Durlu <meted@linux.ibm.com> wro=
+te:
+>
+> On 3/2/24 10:58, Amir Goldstein wrote:
+> > On Fri, Mar 1, 2024 at 3:16=E2=80=AFPM Mete Durlu <meted@linux.ibm.com>=
+ wrote:
+> >>
+> >> On 3/1/24 10:52, Amir Goldstein wrote:
+> >>> On Thu, Feb 29, 2024 at 7:53=E2=80=AFPM Mete Durlu <meted@linux.ibm.c=
+om> wrote:
+> >>>>
+> >>>> In current state do_fanotify_mark() does path permission and securit=
+y
+> >>>> checking before doing the event configuration checks. In the case
+> >>>> where user configures mount and sb marks with kernel internal pseudo
+> >>>> fs, security_path_notify() yields an EACESS and causes an earlier
+> >>>> exit. Instead, this particular case should have been handled by
+> >>>> fanotify_events_supported() and exited with an EINVAL.
+> >>>
+> >>> What makes you say that this is the expected outcome?
+> >>> I'd say that the expected outcome is undefined and we have no reason
+> >>> to commit to either  EACCESS or EINVAL outcome.
+> >>
+> >> TLDR; I saw the failing ltp test(fanotify14) started investigating, re=
+ad
+> >> the comments on the related commits and noticed that the fanotify
+> >> documentation does not mention any EACESS as an errno. For these reaso=
+ns
+> >> I made an attempt to provide a fix. The placement of the checks aim
+> >> minimal change, I just tried not to alter the logic more than needed.
+> >> Thanks for the feedback, will apply suggestions.
+> >>
+> >
+> > Generally speaking, the reasons above themselves are good enough
+> > reasons for fixing the documentation and fixing the test code, but not
+> > enough reasons to change the code.
+> >
+> > There may be other good reasons for changing the code, but I am not
+> > sure they apply here.
+> >
+>
+> I understand the concerns and the reasoning. My findings and suggestions
+> are below.
+>
+> >>
+> >> The main reason is the following commit;
+> >> * linux: 69562eb0bd3e ("fanotify: disallow mount/sb marks on kernel
+> >> internal pseudo fs")
+> >>
+> >> fanotify_user: fanotify_events_supported()
+> >>       /*
+> >>        * mount and sb marks are not allowed on kernel internal pseudo
+> >>            * fs, like pipe_mnt, because that would subscribe to events=
+ on
+> >>            * all the anonynous pipes in the system.
+> >>        */
+> >>       if (mark_type !=3D FAN_MARK_INODE &&
+> >>           path->mnt->mnt_sb->s_flags & SB_NOUSER)
+> >>           return -EINVAL;
+> >>
+> >> It looks to me as, when configuring fanotify_mark with pipes and
+> >> FAN_MARK_MOUNT or FAN_MARK_FILESYSTEM, the path above should be taken
+> >> instead of an early return with EACCES.
+> >>
+> >
+> > It is a subjective opinion. I do not agree with it, but it does not mat=
+ter if
+> > I agree with this statement or not, what matters it that there is no cl=
+ear
+> > definition across system calls of what SHOULD happen in this case
+> > and IMO there is no reason for us to commit to this behavior or the oth=
+er.
+> >
+> >> Also the following commit on linux test project(ltp) expects EINVAL as
+> >> expected errno.
+> >>
+> >> * ltp: 8e897008c ("fanotify14: Test disallow sb/mount mark on anonymou=
+s
+> >> pipe")
+> >>
+> >> To be honest, the test added on above commit is the main reason why I
+> >> started investigating this.
+> >>
+> >
+> > This is something that I don't understand.
+> > If you are running LTP in a setup that rejects fanotify_mark() due to
+> > security policy, how do the rest of the fanotify tests pass?
+> > I feel like I am missing information about the test regression report.
+> > I never test with a security policy applied so I have no idea what
+> > might be expected.
+> >
+> Ah, I always run with defconfig which has SELINUX enabled and by default
+> SELINUX is configured to `enforcing` (so far I tested with x86 and s390x
+> but a quick grep shows most other architectures also have it enabled on
+> their defconfigs). With SELINUX enabled LTP's fanotify14 shows failures
+> on
+>
+> fanotify14.c:284: TINFO: Testing FAN_MARK_MOUNT with anonymous pipe
+> fanotify14.c:284: TINFO: Testing FAN_MARK_FILESYSTEM with anonymous pipe
+>
+> since they return -EACCES instead of -EINVAL.Other test cases pass.
+> Once I disable SELINUX, ALL test cases pass.
+>
+> >>>
+> >>> If we do accept your argument that security_path_notify() should be
+> >>> after fanotify_events_supported(). Why not also after fanotify_test_f=
+sid()
+> >>> and fanotify_test_fid()?
+> >>
+> >> I tried to place the checks as close as possible to their original
+> >> position, that is why I placed them right after
+> >> fanotify_events_supported(). I wanted to keep the ordering as close as
+> >> possible to original to not break any other check. I am open to
+> >> suggestions regarding this.
+> >>
+> >
+> > It is a matter of principle IMO.
+> > If you argue that access permission errors have priority over validity
+> > of API arguments, then  fanotify_test_{fsid,fid}() are not that much
+> > different (priority-wise) from fanotify_events_supported().
+> >
+> > My preference is to not change the code, but maybe Jan will
+> > have a different opinion.
+>
+> I understand the argument, then I propose patching the LTP and appending
+> the documentation. My first idea is to send a patch for LTP so that,
+> fanotify14 could check if SELINUX is enforcing and change the testcases
+> expected errno accordingly. How does that sound?
 
-It seems it is not necessary.
+LTP patch sounds good to me.
+How to fix the test to support SELINUX it will be up to LTP maintainers
+to comment.
 
-security.capability removal occurs between evm_inode_setattr() and
-evm_inode_post_setattr(), after the HMAC has been verified and before
-the new HMAC is recalculated (without security.capability).
-
-So, all good.
-
-Christian, Seth, I pushed the kernel and the updated tests (all patches
-are WIP):
-
-https://github.com/robertosassu/linux/commits/evm-fscaps-v2/
-
-https://github.com/robertosassu/ima-evm-utils/commits/evm-fscaps-v2/
-
-
-The tests are passing:
-
-https://github.com/robertosassu/ima-evm-utils/actions/runs/8159877004/job/2=
-2305521359
-
-Roberto
-
+Thanks,
+Amir.
 
