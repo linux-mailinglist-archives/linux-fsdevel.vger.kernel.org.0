@@ -1,167 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-13638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C850887244F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 17:28:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22EB872461
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 17:33:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2855AB24C0A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 16:28:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C868287963
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 16:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5140412D1E7;
-	Tue,  5 Mar 2024 16:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E0E9454;
+	Tue,  5 Mar 2024 16:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCLAEoGx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eiM/+xGV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9322C128374;
-	Tue,  5 Mar 2024 16:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F89E8BF7;
+	Tue,  5 Mar 2024 16:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709655976; cv=none; b=tLQb6OR32SGRSRbNL+Hcrpz6XiQflvAIyZUCTOQCIf2TDwdr4DwiP7UODbY4HNfk1zxQ2rBRe0+HingJE7i6COXog1D7p6xfMquaa2/Mwu/q7VIUwihKXFkDDW3ubhD9JSX1vkeGOPrPcEe/c4ZLMA3Uk+r4BWPFOw/6bVsjjTg=
+	t=1709656409; cv=none; b=lGKOocaQ364404TdSTOK6kmmcggI0bNC9POx4AU4BPvq4gT+cT+aM0suI24/NaRIYQbLajzxUmiGcSh6dBiH/W4Eoo6BLgq0Mx0O2LJRxqP375Z7zLmvhUAvq1SH3l3Jri9myiumj6NdQeXylXWEfkfM1PH5fjRYigflFgueZ+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709655976; c=relaxed/simple;
-	bh=rJDCbsppxsCZ/6gOdhGNkAd2bfvRU7iE7Ysglyc+jqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tL5PWemt8F36jDiMAtRRraxUQRq61Ts5un1xrfMXeTTL3jWbQ5VwscrAMWPcmwuZ8ohUAAXRx9QqxFafzT5ec+uONlH3ZRLvwsfP2/XBWeIJ0EfH3S6AEd9Yb7k5JzG01OonA78SbP5voYwOgWbVEtqUexRh7KrPY9r1+W7iSpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCLAEoGx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBE78C43390;
-	Tue,  5 Mar 2024 16:26:10 +0000 (UTC)
+	s=arc-20240116; t=1709656409; c=relaxed/simple;
+	bh=8ZYP/7MwdqiNvcPoMantYVW6jsePrsovyNrL/k8U4FU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=so3PNCuvefNV9swf9RuucAU5GOIi6+UkLaYwBOEJC2WyYnyq76Z0OafFLZ4++WESYaUGUPxyOvZ/FXN9752LuyNlcnYy/p73j0BDzJ1FUNtNsnzNe7BHez8tyS9KSNUO3sTjNZjTRQObz2neHKySP6wWRr+BgPMPUh2Zm/SE7W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eiM/+xGV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A2A3C433F1;
+	Tue,  5 Mar 2024 16:33:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709655976;
-	bh=rJDCbsppxsCZ/6gOdhGNkAd2bfvRU7iE7Ysglyc+jqA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mCLAEoGxZC5006mHitJaoWtcNzJEIHdHVyzoN4RrD2KkYX82tM0YjFhucIxLOnwf+
-	 hEbkkIh3icM7xU2GQ6hSzfWnuB8lmInH+goeDYWbitDBOVG+8NFpMYyvgLST0sGqd6
-	 ZYfFGVSaUp/2ITdxhKmnshuznERdD47lSMOomdXMtv6/o7cMEYTlEKvS9mYgXJfylJ
-	 QZU39f1XRVlKhQepG1YHi/6JSsIYzCBGfdcmlimq3k88R0HjtUeTmjyaRmLIJaCo2b
-	 oXdnxvxOZUTCdi6kxcVU/YrQgedb+YZr7SPnX7kNkczD+9BqpHQicydKkG3tWmjMcO
-	 93N6jg6WAXBmQ==
-Date: Tue, 5 Mar 2024 17:26:08 +0100
+	s=k20201202; t=1709656409;
+	bh=8ZYP/7MwdqiNvcPoMantYVW6jsePrsovyNrL/k8U4FU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eiM/+xGVUBR7Hm7arb/ZDBR7gbqkbtT9lsm1U66ZKiapEN4GXQhf2UVTTGXKZqO81
+	 pK3NYXDZHX2242ccHULVL8YU8YlRMKxp6IPa5jw/u0+O02NB+jfmtBzLp6XTB6M+mp
+	 07d/Wg8dvMlVp1bCf7TUXKSW4ru8tZxNscRjAE9lB4ZvAAwjLWlI1klaMxLzni7hDy
+	 lI2ZvPw5kT0mvPHR38oWAojTDBWLg+co42OyS7gfIKonVqHudunQAO7RTdJg/9z6/t
+	 opjICPCEDIVxjKUwmt2oApPqxbVuoZg8IwvF1KeSbrdbVAf8b6njCjGelECuQfgL7c
+	 6ts9SXcUXRE2g==
 From: Christian Brauner <brauner@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, 
-	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, 
-	James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v2 24/25] commoncap: use vfs fscaps interfaces
-Message-ID: <20240305-zyklisch-halluzinationen-98b782666cf8@brauner>
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
- <20240221-idmap-fscap-refactor-v2-24-3039364623bd@kernel.org>
- <dcbd9e7869d2fcce69546b53851d694b8ebad54e.camel@huaweicloud.com>
- <ZeXpbOsdRTbLsYe9@do-x1extreme>
- <a7124afa6bed2fcadcb66efa08e256828cd6f8ab.camel@huaweicloud.com>
- <ZeX9MRhU/EGhHkCY@do-x1extreme>
- <20240305-fachjargon-abmontieren-75b1d6c67a83@brauner>
- <3098aef3e5f924e5717b4ba4a34817d9f22ec479.camel@huaweicloud.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Tong Tiangen <tongtiangen@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wangkefeng.wang@huawei.com,
+	Guohanjun <guohanjun@huawei.com>,
+	David Howells <dhowells@redhat.com>,
+	Al Viro <viro@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] coredump: get machine check errors early rather than during iov_iter
+Date: Tue,  5 Mar 2024 17:33:20 +0100
+Message-ID: <20240305-staatenlos-vergolden-5c67aef6e2bd@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240305133336.3804360-1-tongtiangen@huawei.com>
+References: <20240305133336.3804360-1-tongtiangen@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3098aef3e5f924e5717b4ba4a34817d9f22ec479.camel@huaweicloud.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1508; i=brauner@kernel.org; h=from:subject:message-id; bh=8ZYP/7MwdqiNvcPoMantYVW6jsePrsovyNrL/k8U4FU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ+9wyUiOiW+7iabV/PY8FJZubV28M0e+o+rprXMdPhX eADHTP5jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk05TAyrNLk4WVaVKp/yzCW 2b+/q9t0z42mk28440S3bMosPf4ggZHhS0LbRQObGrMiF66n6onKzsIbqv5lR57JbklmKTH1ncs NAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 05, 2024 at 01:46:56PM +0100, Roberto Sassu wrote:
-> On Tue, 2024-03-05 at 10:12 +0100, Christian Brauner wrote:
-> > On Mon, Mar 04, 2024 at 10:56:17AM -0600, Seth Forshee (DigitalOcean) wrote:
-> > > On Mon, Mar 04, 2024 at 05:17:57PM +0100, Roberto Sassu wrote:
-> > > > On Mon, 2024-03-04 at 09:31 -0600, Seth Forshee (DigitalOcean) wrote:
-> > > > > On Mon, Mar 04, 2024 at 11:19:54AM +0100, Roberto Sassu wrote:
-> > > > > > On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) wrote:
-> > > > > > > Use the vfs interfaces for fetching file capabilities for killpriv
-> > > > > > > checks and from get_vfs_caps_from_disk(). While there, update the
-> > > > > > > kerneldoc for get_vfs_caps_from_disk() to explain how it is different
-> > > > > > > from vfs_get_fscaps_nosec().
-> > > > > > > 
-> > > > > > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > > > > > > ---
-> > > > > > >  security/commoncap.c | 30 +++++++++++++-----------------
-> > > > > > >  1 file changed, 13 insertions(+), 17 deletions(-)
-> > > > > > > 
-> > > > > > > diff --git a/security/commoncap.c b/security/commoncap.c
-> > > > > > > index a0ff7e6092e0..751bb26a06a6 100644
-> > > > > > > --- a/security/commoncap.c
-> > > > > > > +++ b/security/commoncap.c
-> > > > > > > @@ -296,11 +296,12 @@ int cap_capset(struct cred *new,
-> > > > > > >   */
-> > > > > > >  int cap_inode_need_killpriv(struct dentry *dentry)
-> > > > > > >  {
-> > > > > > > -	struct inode *inode = d_backing_inode(dentry);
-> > > > > > > +	struct vfs_caps caps;
-> > > > > > >  	int error;
-> > > > > > >  
-> > > > > > > -	error = __vfs_getxattr(dentry, inode, XATTR_NAME_CAPS, NULL, 0);
-> > > > > > > -	return error > 0;
-> > > > > > > +	/* Use nop_mnt_idmap for no mapping here as mapping is unimportant */
-> > > > > > > +	error = vfs_get_fscaps_nosec(&nop_mnt_idmap, dentry, &caps);
-> > > > > > > +	return error == 0;
-> > > > > > >  }
-> > > > > > >  
-> > > > > > >  /**
-> > > > > > > @@ -323,7 +324,7 @@ int cap_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry)
-> > > > > > >  {
-> > > > > > >  	int error;
-> > > > > > >  
-> > > > > > > -	error = __vfs_removexattr(idmap, dentry, XATTR_NAME_CAPS);
-> > > > > > > +	error = vfs_remove_fscaps_nosec(idmap, dentry);
-> > > > > > 
-> > > > > > Uhm, I see that the change is logically correct... but the original
-> > > > > > code was not correct, since the EVM post hook is not called (thus the
-> > > > > > HMAC is broken, or an xattr change is allowed on a portable signature
-> > > > > > which should be not).
-> > > > > > 
-> > > > > > For completeness, the xattr change on a portable signature should not
-> > > > > > happen in the first place, so cap_inode_killpriv() would not be called.
-> > > > > > However, since EVM allows same value change, we are here.
-> > > > > 
-> > > > > I really don't understand EVM that well and am pretty hesitant to try an
-> > > > > change any of the logic around it. But I'll hazard a thought: should EVM
-> > > > > have a inode_need_killpriv hook which returns an error in this
-> > > > > situation?
-> > > > 
-> > > > Uhm, I think it would not work without modifying
-> > > > security_inode_need_killpriv() and the hook definition.
-> > > > 
-> > > > Since cap_inode_need_killpriv() returns 1, the loop stops and EVM would
-> > > > not be invoked. We would need to continue the loop and let EVM know
-> > > > what is the current return value. Then EVM can reject the change.
-> > > > 
-> > > > An alternative way would be to detect that actually we are setting the
-> > > > same value for inode metadata, and maybe not returning 1 from
-> > > > cap_inode_need_killpriv().
-> > > > 
-> > > > I would prefer the second, since EVM allows same value change and we
-> > > > would have an exception if there are fscaps.
-> > > > 
-> > > > This solves only the case of portable signatures. We would need to
-> > > > change cap_inode_need_killpriv() anyway to update the HMAC for mutable
-> > > > files.
-> > > 
-> > > I see. In any case this sounds like a matter for a separate patch
-> > > series.
-> > 
-> > Agreed.
+On Tue, 05 Mar 2024 21:33:36 +0800, Tong Tiangen wrote:
+> The commit f1982740f5e7 ("iov_iter: Convert iterate*() to inline funcs")
+> leads to deadloop in generic_perform_write()[1], due to return value of
+> copy_page_from_iter_atomic() changed from non-zero value to zero.
 > 
-> Christian, how realistic is that we don't kill priv if we are setting
-> the same owner?
+> The code logic of the I/O performance-critical path of the iov_iter is
+> mixed with machine check[2], actually, there's no need to complicate it,
+> a more appropriate method is to get the error as early as possible in
+> the coredump process instead of during the I/O process. In addition,
+> the iov_iter performance-critical path can have clean logic.
+> 
+> [...]
 
-Uhm, I would need to see the wider context of the proposed change. But
-iiuc then you would be comparing current and new fscaps and if they are
-identical you don't kill privs? I think that would work. But again, I
-would need to see the actual context/change to say something meaningful.
+I'll send this together with two other fixes we have pending.
+
+---
+
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] coredump: get machine check errors early rather than during iov_iter
+      https://git.kernel.org/vfs/vfs/c/da1085a16551
 
