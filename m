@@ -1,92 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-13626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA43D87217C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 15:32:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB03E872181
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 15:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181961C21A30
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 14:32:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C5BC1F23241
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 14:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FD05B5BD;
-	Tue,  5 Mar 2024 14:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697DC5C610;
+	Tue,  5 Mar 2024 14:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fxEdGatf"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FPvfMNsO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EA141C6B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 14:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518481F95E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 14:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709649131; cv=none; b=m1592u1RdV8rDxK00xfWNDlYtAuvbGCsNrKcnZxuvrFqfGoL5e9z0YJ+EZ8Z3JNNgK/AHTNapBCo4liHFc9hYgMmkMO26bc8g3HHK75JPAvg4hwZmwSo//vEwK6ZXFts1F46nZ7KOv/nrYyvQrlExzmJcXoTDpI7ZrDVHmwxzwM=
+	t=1709649188; cv=none; b=ZK7AYb7gv9FfXEwq3+X0/yBQndQgWsye1GSOqeIYvnwL/QYxDS5OvNXopERDXveGR9ZI7NwSScEI5RoLwVydipDQfFTw04m/QVyG9qzK97vK4bg+KZ2NqGo4961QXoFUFNtiLM2z4oD6ggmrfky/abfJH4JcGtnCQ5jDP0/ZSSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709649131; c=relaxed/simple;
-	bh=m4gwp8Brrok6cSY1uv1i8iyUlUiai0KjLje5iF+z1Ys=;
+	s=arc-20240116; t=1709649188; c=relaxed/simple;
+	bh=X3osxuXjIttKURCzFETBwIDv2CVhPf8fUO7rGAAuMv4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RWP8+WqOlOcJusgfZC00rPxGyL3xhx3p8VtGZrDdMX0qErC5COWGMz/pvBmb7QMRSYbATzvnd1bRRdz8IyM4EMco5qrsJNorjXQ/wg59bHrsAC4ET/D8MX9jpTvu4IykCgM2ab6b+EMUM5fombHqvGp+MJFJd3zXiE08eUhjW+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=fxEdGatf; arc=none smtp.client-ip=209.85.218.45
+	 To:Cc:Content-Type; b=OJ6ontEFOoH3Okuu+VI+CUrDwqYS6DsekUw03UFTsyTkvauR9ZHDZtSKqtDVtGUkg4v8+vSUECtDGXN9MbP2A6TMSHSVMDJPd+nCrzKbE0V9HHmdpgkSp7o659ocZykJXLLrpC/6Udk0EdjxCSdgM66jsgIv1ey7vWH9XrateYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=FPvfMNsO; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a45606c8444so255131566b.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 06:32:09 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a3ddc13bbb3so1123922066b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 06:33:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1709649128; x=1710253928; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1709649186; x=1710253986; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m4gwp8Brrok6cSY1uv1i8iyUlUiai0KjLje5iF+z1Ys=;
-        b=fxEdGatfJG0Lyf4faOdQf+X1B3ERlfeRuda+H8bokVyJQ7jLnTsIEoUdQ3yrwUs4Vx
-         N9Be5PBUSRsiynBhgOPsemDMkTHAuwy73q+dQAPIEOQQpxYb/Nu/elloioQsPrEUlCvB
-         W0RH3IJLLEj1EMqav3vlSrM2Ff5Fij94WTdfk=
+        bh=X3osxuXjIttKURCzFETBwIDv2CVhPf8fUO7rGAAuMv4=;
+        b=FPvfMNsOtB2Z04cVXUt4lkuOcORgCN8ZJMgo9ohvhQol0M2ql3gFNKR8Z6b5xqBPVS
+         BumeQ7TYedeFieKXznOVkqYSDj1gQaV3VxQpIwA0PxfxThu12TUZyXMcKEyMqCjRF2Wy
+         2BXf9GRPNUpdncJbpYrc4GuyjAGCSFk+2YP9s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709649128; x=1710253928;
+        d=1e100.net; s=20230601; t=1709649186; x=1710253986;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m4gwp8Brrok6cSY1uv1i8iyUlUiai0KjLje5iF+z1Ys=;
-        b=RtHSQOi134bj5xpOyJBKrLMnkb9xqa6/R0X1bePRABtaCuCGpOgsXGRY5CWnMOfLdo
-         vM0SVTZ7wb3VjCa+Umt8L4mJbCfYpguWHRkV2RRI0gHDVvsGlCo3SUGK3Bge4IOJ1kMJ
-         LSYLCRiyQR9M4hlTJi657OEJ3U6JRKB/HQWn9hO8O8+M3TVI6KU7+uMmTJ6mqsKaU/oC
-         wLONZI6i42bejhISCELj9CwR+UQ1IEWogEr3DjU8I50d+CK+JibMTvGQSxGSsSxQWI2m
-         MEAEZypLFpkZ4gITU4bnlYsubz8hN5xV6Y8ZP0bskWZg4hdCr0uZ0m44wyauYbJtrhzd
-         vR2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXCn5Yo6N3mK1BAV+bsaxumPSPw4IVQsF/vhJ0PwWBiwj9sYIYpj7hOwa9Iq6tlItn+924lBLC4tGTNO8YbRMiPeAv176EvbQboeHv9Dg==
-X-Gm-Message-State: AOJu0Yw9InVXJJCz5sRIjIEanVpCnLmFZcFoW1ehv+xsuo45Wha2kItW
-	ey5l0T7fKQsTeLKzK3t/fJFqYEzDOUCgEx8FwU9aUreKJo9Km/LWE10Dzo18dtCro2jDx4fatYE
-	KicWdKpCo3rtIr8JsJnAO18nbGyZPT53zPqKOVQ==
-X-Google-Smtp-Source: AGHT+IH74N86OpW+SCu9HB+VdyGPJtDL2TD+L4UUv0iiCACiyZphJleePA1BBASnlVYeN04Cq5uHAMBZ1lSh4QA6w3Q=
-X-Received: by 2002:a17:906:8309:b0:a40:46f1:7263 with SMTP id
- j9-20020a170906830900b00a4046f17263mr7553753ejx.22.1709649128288; Tue, 05 Mar
- 2024 06:32:08 -0800 (PST)
+        bh=X3osxuXjIttKURCzFETBwIDv2CVhPf8fUO7rGAAuMv4=;
+        b=kOI7uiyhO2tAggVv/Qs+uV+br2rPsQLWhgezfhEOv+otH20/XMfs4bZQBE+I7Ve/Jm
+         yq802YPLDwjytnMQ5kwQCqOLZkPPEUqfhn1mm1FjUPRfWS1dwcchatr5DtCyPDX1xzuX
+         dyxEhlEqiAC02uKeWGCw+26SUCHYJMxtna+3TwF9JvUzb0B6sRcbeZU4Wjr2xZgGhtnC
+         T2EB11z8lVNzFlUuHkdYLDV5tKJSQSs4sdK7Jo6maYwzIrLHAfJkJCvhsvWgxpLP3vA2
+         6XcxbCdK+ldzXUNqghcytqqw7d6h5SvJei4d3de3T64Hukp/msO4BMd6NRQ/x9AIoFR6
+         XjgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXQS+l2Hbhk93DPUwIV4HE+PiMFC0V34vJomcW9V25hFtK48NLh5oQrnWlCLCMIaSx2GCCk+cHF0ZCTYziWiOLh08+ylzvqPmP7xY5pQ==
+X-Gm-Message-State: AOJu0Yz+4XSgSSPy51rks1G4XNskoWmncbmdep+1Hftxsp1Vu1ZEFsr0
+	bNHCwA2wCx5MVs4pU3fDS4jGeAYUUKgsNMA3xmtWn8UYbEP9FaZ9UtbmO8nAIei0ZIFwwhfih7S
+	rRI06QTwdC2YTN1mJFxZ8nf/UqPF0vFHm2ix+YA==
+X-Google-Smtp-Source: AGHT+IE3S+29C0ctynYJjZWRQvHHk0cRS3is4y8AM+jGqB69PffROPblGdFzMf6mbswY4nMzrWZg6x+FQKY9VOtDgxM=
+X-Received: by 2002:a17:907:764b:b0:a3f:f8a7:e1f7 with SMTP id
+ kj11-20020a170907764b00b00a3ff8a7e1f7mr2681846ejc.5.1709649185848; Tue, 05
+ Mar 2024 06:33:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240105152129.196824-1-aleksandr.mikhalitsyn@canonical.com> <20240105152129.196824-2-aleksandr.mikhalitsyn@canonical.com>
-In-Reply-To: <20240105152129.196824-2-aleksandr.mikhalitsyn@canonical.com>
+References: <20240105152129.196824-1-aleksandr.mikhalitsyn@canonical.com> <20240105152129.196824-4-aleksandr.mikhalitsyn@canonical.com>
+In-Reply-To: <20240105152129.196824-4-aleksandr.mikhalitsyn@canonical.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 5 Mar 2024 15:31:57 +0100
-Message-ID: <CAJfpegvhLx0v=kPhFFXg5p+0AaSUfeqDRZTyYnFLvGiaY6HrJw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] fuse: fix typo for fuse_permission comment
+Date: Tue, 5 Mar 2024 15:32:54 +0100
+Message-ID: <CAJfpegvPkLuU6n_4twNkVDfKNj9MUSAv0usrswBs2AhKnFudDg@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] fuse: __kuid_val/__kgid_val helpers in fuse_fill_attr_from_inode()
 To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: mszeredi@redhat.com, linux-fsdevel@vger.kernel.org, 
+Cc: mszeredi@redhat.com, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 5 Jan 2024 at 16:21, Alexander Mikhalitsyn
+On Fri, 5 Jan 2024 at 16:22, Alexander Mikhalitsyn
 <aleksandr.mikhalitsyn@canonical.com> wrote:
 >
-> Found by chance while working on support for idmapped mounts in fuse.
+> For the sake of consistency, let's use these helpers to extract
+> {u,g}id_t values from k{u,g}id_t ones.
 >
+> There are no functional changes, just to make code cleaner.
+>
+> Cc: Christian Brauner <brauner@kernel.org>
 > Cc: Miklos Szeredi <miklos@szeredi.hu>
 > Cc: <linux-fsdevel@vger.kernel.org>
 > Cc: <linux-kernel@vger.kernel.org>
 > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
 Applied, thanks.
+
+Miklos
 
