@@ -1,150 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-13634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016C28722F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 16:38:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BD087239F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 17:05:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 335331C22F15
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 15:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 791CE1C236C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 16:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C70127B53;
-	Tue,  5 Mar 2024 15:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D2C12B168;
+	Tue,  5 Mar 2024 16:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fsDjqMKw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD7B1272B7;
-	Tue,  5 Mar 2024 15:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3CF12A17D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 16:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709653114; cv=none; b=PBiVXoV3ooAzvIXipj11i9k7Cw9+fFzzqBr9UUGXxQDg9Ii6ccxKYTTUErNEgPX/L8hLe3u+f0BmJTScCP0FypeCOYuSGYECMaL6vlpLnyUvWhCfxcOilT8INl/hhby94sOd49Xfq5q9wZaVlXTJjX9B37gWEGgBi42URrLQ/qc=
+	t=1709654688; cv=none; b=NvQUF3fPBeaaGvbTwIm9bUnNseH6ZqmsWT857UnO9+D02SGaTiWDLw7RPIbbo/e0mck4w4eiijkFBoPos391fU/Fws+coNMQaTxqI8Da9d5KFDtgEimD7EzrOV9psnsJnV5v1Na3gBMS4+7PzQ9PApJUbsNdWSWo9dwmu9ghZUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709653114; c=relaxed/simple;
-	bh=D5pJEtWFcbrQJzHq8eXEwOZZKupXoLaKjU5YgHvZuN0=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=oZW1f8N6kgYdlKsMNbwBfBXAvHWbcE7qUEa99LhNYjwY/pAZ69dj/jjwFSyWUOcvsbEp08MqghuZqVy2KkXtmgOOWapJAHq4Ib1vDnEKm1u+XhTLRmpn4MIez5BL9cMfbsIn+MwQlBY7WxxFAHojOWEMsznvj+zK0egc2iCH+Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 6863737813B5;
-	Tue,  5 Mar 2024 15:38:30 +0000 (UTC)
-From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
-In-Reply-To: <202403050134.784D787337@keescook>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
- <20240304-zugute-abtragen-d499556390b3@brauner>
- <202403040943.9545EBE5@keescook>
- <20240305-attentat-robust-b0da8137b7df@brauner> <202403050134.784D787337@keescook>
-Date: Tue, 05 Mar 2024 15:38:30 +0000
-Cc: "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, "Guenter Roeck" <groeck@chromium.org>, "Doug Anderson" <dianders@chromium.org>, "Jann Horn" <jannh@google.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Randy Dunlap" <rdunlap@infradead.org>, "Mike Frysinger" <vapier@chromium.org>
-To: "Kees Cook" <keescook@chromium.org>, vapier@chromium.org
+	s=arc-20240116; t=1709654688; c=relaxed/simple;
+	bh=q0H2NcD59dhHTfKo451ZTlcHqhnaVKga21S64KdL2as=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ga5nAZOh1jT9rmC2fwupuIC3PoNdV9UTagvv0a7qrLYGa9JCWtLO0530qhDQCJkfmwc5TuMsf1uj6PqYTx2sGHua1ZN4lnPsgaKnJPdHZHUGMMFfBxy0wxqrLIP3NGuTNmRqdUl9q7ENgOJyzSM6LRDkhq/FF9eWSicm8r0y3UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=fsDjqMKw; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a4499ef8b5aso447769466b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 08:04:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1709654683; x=1710259483; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q0H2NcD59dhHTfKo451ZTlcHqhnaVKga21S64KdL2as=;
+        b=fsDjqMKwWJOFnPCn0DCnKFaEXpI7vkz3ut9smwncEpR/tO3vbOQimuSlebJM2I54O0
+         q89FiTfVOvqty18mCYkPThQef1eW/YFx+oxoNQAjRGr5pKfOna+UXWNtf78ZNxkgNwWo
+         +K8JsnhaI3QiDSN932uo3EDNNJDp9nOlQIPtc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709654683; x=1710259483;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q0H2NcD59dhHTfKo451ZTlcHqhnaVKga21S64KdL2as=;
+        b=buXRf2LWBD4I/xw92Q6P3cqolqiduhnsAV7Q952wHsz9ZcH1y7KRLZHGnOf0tdpxL3
+         B+bNRMKiqLJRCn9JD/kDr/MuT2c0EUuqxcbyn6RDXFGEk0rBDRSYppv3i3Q5Zl4L1Woa
+         Ss4Gll/wEKPMq7Y8W143J4dcaN478Toa/aqDuAwQ6uJ6cuMo1D76oc1dQvBH6uUb7pMx
+         KAXISTS6ZzTButvrbr+M2SGxD3TP/vu6WY1ijV90lIbvxmkv5lfzs+fLOdMxU47LeYwo
+         dg6kbodNLvbcIb2fa3j1PdQtcjdSniV1CPN+UIJWu0C1hmkHQluLuo/QYA/dq/fIhDr6
+         grKQ==
+X-Gm-Message-State: AOJu0YyZLgJP8e31m6Q7BXNCjPu7KrRasWcE4yrXLh4EvFxrAxp2h3Hw
+	Gjzqu7buQn0Y5tz99O1Juh8sElZVva5cUfgpaQrnVPAS3BCejH9bLSjIrPOk4BEHgBFCH/a4FzM
+	eUHLFhXBjxbT8IUUb8cwPBTOwkacfmzFuvlb+5w06v5cZDSKJ
+X-Google-Smtp-Source: AGHT+IFMZIwMXMwn9b1NuGmsElo9IYaOZRWc5K/okKG3s2qc3CABtigMHxo2c25ZIM++4Um6Tc+NwcUVMUZHUl0pEDU=
+X-Received: by 2002:a17:906:ff53:b0:a43:f9ff:2571 with SMTP id
+ zo19-20020a170906ff5300b00a43f9ff2571mr8629999ejb.45.1709654683091; Tue, 05
+ Mar 2024 08:04:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <44043-65e73c80-15-1c4f8760@112682428>
-Subject: =?utf-8?q?Re=3A?= [PATCH v2] =?utf-8?q?proc=3A?= allow restricting 
- /proc/pid/mem writes
-User-Agent: SOGoMail 5.10.0
+References: <20231028065912.6084-1-zhoujifeng@kylinos.com.cn> <20231107081350.14472-1-zhoujifeng@kylinos.com.cn>
+In-Reply-To: <20231107081350.14472-1-zhoujifeng@kylinos.com.cn>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 5 Mar 2024 17:04:30 +0100
+Message-ID: <CAJfpegtK_52EO51FANkp4=3-BcrLo0eP94=7es5AvjS4R1vvjA@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: Track process write operations in both direct
+ and writethrough modes
+To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tuesday, March 05, 2024 11:41 EET, Kees Cook <keescook@chromium.org>=
- wrote:
+On Tue, 7 Nov 2023 at 09:14, Zhou Jifeng <zhoujifeng@kylinos.com.cn> wrote:
+>
+> Due to the fact that fuse does not count the write IO of processes in the
+> direct and writethrough write modes, user processes cannot track
+> write_bytes through the =E2=80=9C/proc/[pid]/io=E2=80=9D path. For exampl=
+e, the system
+> tool iotop cannot count the write operations of the corresponding process=
+.
+>
+> Signed-off-by: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
 
-> On Tue, Mar 05, 2024 at 09:59:47AM +0100, Christian Brauner wrote:
-> > > > Uhm, this will break the seccomp notifier, no? So you can't tur=
-n on
-> > > > SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE when you want to use t=
-he seccomp
-> > > > notifier to do system call interception and rewrite memory loca=
-tions of
-> > > > the calling task, no? Which is very much relied upon in various
-> > > > container managers and possibly other security tools.
-> > > >=20
-> > > > Which means that you can't turn this on in any of the regular d=
-istros.
-> > >=20
-> > > FWIW, it's a run-time toggle, but yes, let's make sure this works
-> > > correctly.
-> > >=20
-> > > > So you need to either account for the calling task being a secc=
-omp
-> > > > supervisor for the task whose memory it is trying to access or =
-you need
-> > > > to provide a migration path by adding an api that let's caller'=
-s perform
-> > > > these writes through the seccomp notifier.
-> > >=20
-> > > How do seccomp supervisors that use USER=5FNOTIF do those kinds o=
-f
-> > > memory writes currently? I thought they were actually using ptrac=
-e?
-> > > Everything I'm familiar with is just using SECCOMP=5FIOCTL=5FNOTI=
-F=5FADDFD,
-> > > and not doing fancy memory pokes.
-> >=20
-> > For example, incus has a seccomp supervisor such that each containe=
-r
-> > gets it's own goroutine that is responsible for handling system cal=
-l
-> > interception.
-> >=20
-> > If a container is started the container runtime connects to an AF=5F=
-UNIX
-> > socket to register with the seccomp supervisor. It stays connected =
-until
-> > it stops. Everytime a system call is performed that is registered i=
-n the
-> > seccomp notifier filter the container runtime will send a AF=5FUNIX
-> > message to the seccomp supervisor. This will include the following =
-fds:
-> >=20
-> > - the pidfd of the task that performed the system call (we should
-> >   actually replace this with SO=5FPEERPIDFD now that we have that)
-> > - the fd of the task's memory to /proc/<pid>/mem
-> >=20
-> > The seccomp supervisor will then perform the system call intercepti=
-on
-> > including the required memory reads and writes.
->=20
-> Okay, so the patch would very much break that. Some questions, though=
-:
-> - why not use process=5Fvm=5Fwritev()?
-> - does the supervisor depend on FOLL=5FFORCE?
->=20
-> Perhaps is is sufficient to block the use of FOLL=5FFORCE?
->=20
-> I took a look at the Chrome OS exploit, and I =5Fthink=5F it is depen=
-ding
-> on the FOLL=5FFORCE behavior (it searches for a symbol to overwrite t=
-hat
-> if I'm following correctly is in a read-only region), but some of the
-> binaries don't include source code, so I couldn't easily see what was
-> being injected. Mike or Adrian can you confirm this?
+Applied, thanks.
 
-I can't speak for what is acceptable for ChromeOS security because=20
-I'm not part of that project, so I'll let Mike answer whether blocking
-writes is mandatory for them or blocking FOLL=5FFORCE is enough.
-
-From a design perspective, the question is whether to
-1. block writes and allow known good exceptions=20
-or
-2. allow writes and block known bad/exploitable exceptions.=20
-=20
-I am looking into reproducing and adding an exception for the
-container syscall intercept use-case raised by Christian, because
-I think it's easier to justify allowing known good exceptions from
-a security perspective.
-
-Otherwise I'm fine with both approaches.
-
-@Mike WDYT ?
-
+Miklos
 
