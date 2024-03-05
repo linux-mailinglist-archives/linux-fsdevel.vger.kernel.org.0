@@ -1,65 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-13670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6264872AD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 00:11:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D10C872B4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 00:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE111F21CA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 23:11:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E543EB2565F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 23:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4582812D754;
-	Tue,  5 Mar 2024 23:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2838112DDA3;
+	Tue,  5 Mar 2024 23:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ALzypJ1Y"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hWQNwmko"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC0C1862F;
-	Tue,  5 Mar 2024 23:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F23012DD9C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 23:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709680250; cv=none; b=i1tHi4ayq1XS0Nd35eeJzQGIls0Q5KLCL2LDUxhgfh00XSH/kbiyQ81FUwW7btrL6ijeIhhelG8FKFNNg3kM729et8dEo6orwM5nsUZAR+ISdCvRcJ571jiOLDrUx+uUoxgA7V1cMmCviPqjNugaVgkcwGITfKbAomcBdeaMh8M=
+	t=1709682735; cv=none; b=R2/JaDHT7cY4vUeFTMjeXE3BVUB60M02xyfBofx4qLLdohBHq8eJbOV/oLTXTAhQdBj6O5k1ptLtXgvxjwQegx1GYn1ZpInZcQpmdXDaVSp+kK5po11miSOM++Wbb8hXoktkhqeDQhmV5NuCU1iYgkwKJnZX/jd+BPR5Z0K4IxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709680250; c=relaxed/simple;
-	bh=Fnc41JWcp8TTwdV5+CSs8TOdfZ7zF3uSK0ml0Rjhis8=;
+	s=arc-20240116; t=1709682735; c=relaxed/simple;
+	bh=jad1ZTuPBnQnVhyAUaIXJ0sj2KmNN+XpvGPh1Z8NAiU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRcHEyBZh0+9Nz3kAIYT6xcNQ2wYrbzI460DEtOYJqYNyE6o4no3bwATB7WE8QRo8X80uZc4i0CDgOXZEmu+2ihwcDE5Szmo1UQoKYspnOlGcSTmZba+O/BUhaSogJYDXMKkI/yfut3zBtghTNvdEudnH+xGIH6OPuU/OAp8LhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ALzypJ1Y; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AzfcVf2MD8/p0Amw/4NcH7l9FF7lH9l9bZ/XM70hcPY=; b=ALzypJ1YFStiacKMqydGBmTVlP
-	YTUVF1xHkoLghzjq7E/lbRgZid3uLJgiw49Sp1jQSAbYyCKb/gHZMWM7rMZZ/ONKXA2F5NEYs1r5D
-	8rRucP/IpKNjKJvvm/ETL/0cyT38RtE/zLgQMIkzWtVsfvdDVbGQOR6RbD6iml2tFlK5drIE+zn3u
-	HDMMCHitk0ECIe6gGAct543Vsjs58lZLCwbCkHGfUwjkxVC8Llrg7L34j7VDvW8OtAtTaNNVNAALm
-	vAUi8qtmJCzc4FlJFblT4FQx2Ur6z8c4WsYyG0tZ8NsFvpA010d5uBs3He6ENJnN7GLLTUPdpFV0N
-	hTuYo/4w==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rhdvh-00000005Saj-2rlV;
-	Tue, 05 Mar 2024 23:10:37 +0000
-Date: Tue, 5 Mar 2024 23:10:37 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v5 00/10] block atomic writes
-Message-ID: <ZeembVG-ygFal6Eb@casper.infradead.org>
-References: <20240226173612.1478858-1-john.g.garry@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIE9RL6FEKg9xmEUInQgd0XBzrZnIzuwS5c9QVRVwoGB+wmA/7Wls8+TSMP9dxDI82w57eOYDv6gqZYwhyzBkYvNiLzPkkchisXLLmRD0o/nV7ppbLbSvnI+uGmb5vaIYsyjj9cI8IqEBXuWSxCG8G9/+KykfWJ9DJcitTTNUZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hWQNwmko; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1dc5d0162bcso54397945ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 15:52:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1709682733; x=1710287533; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jyoc6sqBdOY+7wLmmpdaiPXTvskeQaEAskb3Q12WvtU=;
+        b=hWQNwmkoP6X9trL+mOxnNbMVV5ZgU4F4xTCcdQhzKJqixqNrhe/FaY7XPOdBZH3Wfl
+         sZ6wD2ubgEZpJnJNcab0ofM/vJ4mW3tPl+Eojwwm/m7YFpU6nE63s6Yi2AQqYGPU7tk0
+         KIfQUPpcg0mZ8Bd8PXd+LPnMZvYWnhgE6gu7c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709682733; x=1710287533;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jyoc6sqBdOY+7wLmmpdaiPXTvskeQaEAskb3Q12WvtU=;
+        b=lK/uQxlJmZGB/gO1NT3TlT6KTh4iPyhsuzkaGJEs0a4RuthAlaXT4Fe8cVq170mqoY
+         F7rkG9HgJQcLSwpFJQzlyvTaX2f3ksksTDOoQ6ueCUTs9v0YhWpE4o9tr2jrAQ+F/9jU
+         P4C9O6HJL3wkIuurHGnoKFb/MBmEkWAqvY0SAY7UZZ/9t74UdYRkurFJiMC7955nqAKQ
+         Go9ONF5941CzKxirJc87ajxspaKJ6k2xSH2JIGTG/ehrI7PMk98Pn5gmmn1vP1D8s09Y
+         fmkcQwg0/lGxjkDymkdllpdGf+Xy5tCKpTI4lL+SD2F4prLg4GbO9vwq/dNoqJiGutwE
+         zGbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtZxGX9qbxhBDWPbqfaz3OJ9zlh9MT6Qa1IMBiXNHWaf8dmPomnBmljGyl4Ape5dOCI1osG/6rA89A9sm+CBrCt4ujSrBR4H5ZfVY/MA==
+X-Gm-Message-State: AOJu0YyV9WTwuaisF8hawm7Eypdf3+QYgECDMoJTVPP47ju19oB8i9Z7
+	zU5ixIB5UaLZrCmXk9wfEI8mXV6xOGDYs2AZ0usH0Kyz/9Ak/oHEMxfjT6M3Bg==
+X-Google-Smtp-Source: AGHT+IHSAi/R0Z+FnSnYEll+Jdzr9evRXwkkfto2W7u2LIJBRhmtHvsvuWPYgTohLmHE92SmGPwJxg==
+X-Received: by 2002:a17:902:a514:b0:1d9:7095:7e3c with SMTP id s20-20020a170902a51400b001d970957e3cmr3152769plq.57.1709682733364;
+        Tue, 05 Mar 2024 15:52:13 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id k23-20020a170902ba9700b001da105d6a83sm11089065pls.224.2024.03.05.15.52.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Mar 2024 15:52:12 -0800 (PST)
+Date: Tue, 5 Mar 2024 15:52:12 -0800
+From: Kees Cook <keescook@chromium.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] fsnotify: Avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <202403051548.045B16BF@keescook>
+References: <ZeeaRuTpuxInH6ZB@neat>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,24 +83,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240226173612.1478858-1-john.g.garry@oracle.com>
+In-Reply-To: <ZeeaRuTpuxInH6ZB@neat>
 
-On Mon, Feb 26, 2024 at 05:36:02PM +0000, John Garry wrote:
-> This series introduces a proposal to implementing atomic writes in the
-> kernel for torn-write protection.
+On Tue, Mar 05, 2024 at 04:18:46PM -0600, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
+> ready to enable it globally.
+> 
+> There is currently a local structure `f` that is using a flexible
+> `struct file_handle` as header for an on-stack place-holder for the
+> flexible-array member `unsigned char f_handle[];`.
+> 
+> struct {
+> 	struct file_handle handle;
+> 	u8 pad[MAX_HANDLE_SZ];
+> } f;
 
-The API as documented will be unnecessarily complicated to implement
-for buffered writes, I believe.  What I would prefer is a chattr (or, I
-guess, setxattr these days) that sets the tearing boundary for the file.
-The page cache can absorb writes of arbitrary size and alignment, but
-will be able to guarantee that (if the storage supports it), the only
-write tearing will happen on the specified boundary.
+This code pattern is "put a flex array struct on the stack", but we have
+a macro for this now:
 
-We _can_ support arbitrary power-of-two write sizes to the page cache,
-but if the requirement is no tearing inside a single write, then we
-will have to do a lot of work to make that true.  It isn't clear to me
-that anybody is asking for this; the databases I'm aware of are willing
-to submit 128kB writes and accept that there may be tearing at 16kB
-boundaries (or whatever).
+DEFINE_FLEX(struct file_handle, handle, f_handle, MAX_HANDLE_SZ);
 
+And you can even include the initializer:
+
+_DEFINE_FLEX(struct file_handle, handle, f_handle, MAX_HANDLE_SZ,
+	     = { .handle_bytes = MAX_HANDLE_SZ });
+
+I think this would be a simpler conversion.
+
+Also, this could use a __counted_by tag...
+
+I need to improve the DEFINE_FLEX macro a bit, though, to take advantage
+of __counted_by.
+
+-- 
+Kees Cook
 
