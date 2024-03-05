@@ -1,97 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-13657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B1F872878
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 21:21:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736498728BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 21:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52936B25896
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 20:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C641F2B657
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 20:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CCE128817;
-	Tue,  5 Mar 2024 20:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1477129A66;
+	Tue,  5 Mar 2024 20:29:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B0D127B70
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 20:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D739460;
+	Tue,  5 Mar 2024 20:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709670065; cv=none; b=hdJzA495eoR23ZxNoI7GA5QFC+5RghwLIABRKxaiTOvld0FdGBs4Ndbv4feUFDBnYmUWlheI7Va79wKdS4oMMrjzfWUxoN7oeoeTisALT6fpuK7n7Wp56/B0eBT4trTp7ir6XgyVF2dHmOTulDT23LcmAGYNICMQ2xFNgZG10ZY=
+	t=1709670549; cv=none; b=Z0CxSkidmkdEWdtpF1x76f+/vr8Qbq+/hjy0lpegk5XJaBtqm22Czy4wSL4ecF9b0sYJ7FDo4HbjInNXq9nGV9XoIBiDmOWGBV+NPx+J4kZpLOkILDOuggkRuLKltix/7RmhhWiPSTRRn0v0kwiQsmt9mBXW7blopOMQ5Fhw944=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709670065; c=relaxed/simple;
-	bh=6/AYUfzDqzkrxKkZjplJh9OD3V2IdKBUYScD8zp5YJg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=V/iCzzHiUmzFlRlSHViWJOY73J0RnOheFfQ2yzHzbO4lXGyK23OJeTNJNHUfWb4cNCp9jvMqdeB2TpUGt3z3Pbpa7IpsenqGKD1ZtQ2o/BHA4arkPidbxmTJVNRjEOrEZChWa42j0Erz/sbeChwUwr0OcPj91pzaY6QiDq/s0/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36516d55c5fso70132675ab.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 12:21:03 -0800 (PST)
+	s=arc-20240116; t=1709670549; c=relaxed/simple;
+	bh=oe2J97hfiCUqd8RBj/oWDlSveRaG9vwVNseRd0cTLKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YN+8oNVtZOWeMbAWwxgszDETsbsNVLpzgbIR2yVRpb8vtAGsLF7KsJNuhxx1b/1ScedJZWpeWmPrHpp60GDUUD949PxzLiSOMgE1s+DB3rh/xavCmSz0Vx3RXKWuJvCFIPeqoKWV9JWWm//n4fJrOzqbte5CqtN275fGiGUlFvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1dd01ea35b5so19716985ad.0;
+        Tue, 05 Mar 2024 12:29:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709670062; x=1710274862;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1709670547; x=1710275347;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yUtUYHZsCEOa7X6Z+H+o0TaVUl7jsvxTuXTfFKtx4Og=;
-        b=lkBtWmRcjJ+mv+g3PG9iaefrCMi7IbAplbDAjF9jgKRqTr91Ix/4I0GBBJithe1ets
-         hdyb/WHAjxP4BKR/Z6r2t2r7QWy39fdrY7HouZkDSav2QNLmixVcTgpEPK8geo1KNBvc
-         y4HAj4936cLubLy/1OvFa2i/5ACM+HykiUtmYnNsEFHCTai55Vs4+vPyJahtb46HLlaA
-         js9sdeYLiM1WQu39aMr3AosBQzyxJJlxmr4E8mz0vSW5TW7pjPvAq+ENmaA00q3tTkMM
-         OJ5+LkDts5rHmqhYtu+0KFbVMdryg8PeLPeiedH1ZDjPWIH5fJCpjkdsAJ69KwIOdQnV
-         SRrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLdbqzAcKSY3HK6HvJDVktGsgJxj3mbb2RL42eieMRbqWdXHzk6jn7nh6H4n2gBMnuxHVr/bz7DIE7WH+aETzOCvuUnDYpojWZVPeNYw==
-X-Gm-Message-State: AOJu0YzyKUlfG1bcz1EgAkgjiAeqSt9zjv3tZZWUa6ncjHP8ZXFY9ofQ
-	Ve7rMavF9Q0Z09ZgubtK9CEJ7rbZQgjVzh+eD9/4O3zTBOsdrJT78CDrmDmOhPdIwJRcqdKcKPe
-	BAEr/njKlKbAJrRGBDtoea/Sek3uklQLJoajAvx6BLwla4CCkg4eDRI0=
-X-Google-Smtp-Source: AGHT+IG0HrTjf9tSzpW5mhEYahI6I+CdKvynp0WSCF6pQbzs6aTIrDo95uQZixM6D1ufLCf+gnTifAlBvx8apq0D07TCgFJ6wpLj
+        bh=xXq7pFAKK69JkeekroRzoD2aGhQy0QdXJGytui7Sb+Q=;
+        b=B1GBHJa4S2bBwfdALIiXMiM/5J3idVW/mX+3aQbz1FAgfb2MRNu8olvmgBEJvB862s
+         LQbMGCu4JelFDBxANfMQkuO3JO693oKqfwwU0/LbgzTzSAK5K8Y/hX+auZDcyHMtQFrI
+         Rs6kR03WqWxRnrcpH4/DZBksldxmyxwSjoe1e8R2Q4FZyhj5lAT7/NvT6eYIIQFrrhCZ
+         N6kcOvhlmcilNVhXTg5fzu2bDaQmin2ZGU5to3B7B6/uDanayPZzYQjmKacUU9BwLh7A
+         krPMak3xvAkKfZaLVOPxYJt9WKldRgzPlg5YZFHsATrK1FPX8JtDRRrsRdZ7dxLrXtkK
+         3QYg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0YywZ6ZkDP7NC+jj8s8nCY3SSaWyDXtOfsb06rqR/1DsemxrEHbD0KroLXxLEYxPQ9A9dscE+hqPpEEG/aW2qqrDljblM
+X-Gm-Message-State: AOJu0Yx9pEOzKXQrHp3iFHocxIi9Nne/vxSuWFZIyalPd6EvgGmZ2MNJ
+	bOUANJVAO4IRCKzrfF3V0HwM/oAV5EMbkGy0gTuGZNyH12L/GYt7icQ+mb4g
+X-Google-Smtp-Source: AGHT+IETxGKGf4oNCsiF0ugeq/oWFzeRGXyo+6AW6CukFPu5toWGC9tmAJCslyrUxa4UkmJCypV7bw==
+X-Received: by 2002:a17:902:8a83:b0:1d7:2e86:fb2a with SMTP id p3-20020a1709028a8300b001d72e86fb2amr2569921plo.65.1709670547210;
+        Tue, 05 Mar 2024 12:29:07 -0800 (PST)
+Received: from ?IPV6:2620:0:1000:8411:3e11:2c1a:c1ee:7fe1? ([2620:0:1000:8411:3e11:2c1a:c1ee:7fe1])
+        by smtp.gmail.com with ESMTPSA id a6-20020a170902ecc600b001dcc2847655sm11005035plh.176.2024.03.05.12.29.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Mar 2024 12:29:06 -0800 (PST)
+Message-ID: <bce48abd-8e8c-4ee9-b49f-1595e6aa8f8a@acm.org>
+Date: Tue, 5 Mar 2024 12:29:05 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:6f0b:0:b0:365:fe09:6450 with SMTP id
- k11-20020a926f0b000000b00365fe096450mr104480ilc.4.1709670062725; Tue, 05 Mar
- 2024 12:21:02 -0800 (PST)
-Date: Tue, 05 Mar 2024 12:21:02 -0800
-In-Reply-To: <0000000000000424f205fcf9a132@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c5b2ae0612ef94a9@google.com>
-Subject: Re: [syzbot] [ntfs3?] UBSAN: shift-out-of-bounds in ntfs_iget
-From: syzbot <syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
-	axboe@kernel.dk, brauner@kernel.org, ghandatmanas@gmail.com, 
-	gregkh@linuxfoundation.org, jack@suse.cz, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, 
-	lkp@intel.com, llvm@lists.linux.dev, ntfs3@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
-	syzkaller@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "fs/aio: Make io_cancel() generate completions
+ again"
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>, Eric Biggers <ebiggers@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+ Benjamin LaHaise <ben@communityfibre.ca>, Avi Kivity <avi@scylladb.com>,
+ Sandeep Dhavale <dhavale@google.com>, Jens Axboe <axboe@kernel.dk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>, stable@vger.kernel.org,
+ syzbot+b91eb2ed18f599dd3c31@syzkaller.appspotmail.com
+References: <20240304182945.3646109-1-bvanassche@acm.org>
+ <20240304193153.GC1195@sol.localdomain>
+ <20240305-hinunter-atempause-5a3784811337@brauner>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240305-hinunter-atempause-5a3784811337@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+On 3/5/24 00:50, Christian Brauner wrote:
+> We've been wrestling aio cancellations for a while now and aimed to
+> actually remove it but apparently it's used in the wild. I still very
+> much prefer if we could finally nuke this code.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+io_cancel() is being used by at least the Android user space code for
+cancelling pending USB writes. As far as I know we (Linux kernel
+developers) are not allowed to break existing user space code. See also:
+* 
+https://android.googlesource.com/platform/frameworks/av/+/refs/heads/main/media/mtp/MtpFfsHandle.cpp
+* 
+https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/main/daemon/usb.cpp
 
-    fs: Block writes to mounted block devices
+Thanks,
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12be09f2180000
-start commit:   afead42fdfca Merge tag 'perf-tools-fixes-for-v6.4-2-2023-0..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=162cf2103e4a7453
-dashboard link: https://syzkaller.appspot.com/bug?extid=4768a8f039aa677897d0
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12da9bbd280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=174e8115280000
+Bart.
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
