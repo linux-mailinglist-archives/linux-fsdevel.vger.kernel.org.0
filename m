@@ -1,216 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-13665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07DA2872A07
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 23:18:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A55872A10
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 23:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8174A1F24F2B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 22:18:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 332D8B24359
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 22:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9D212D1FE;
-	Tue,  5 Mar 2024 22:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8FF12E1E3;
+	Tue,  5 Mar 2024 22:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="BFS4jd69"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdimvUrN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C88B12D1F4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 22:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B8912E1C5;
+	Tue,  5 Mar 2024 22:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709677104; cv=none; b=s/AGSKsrF5snnxDxSaLW//4rckDyyBDWKiAXvhwQ59m5HpOH4NmPLsXbEKvkFhbrRQfmVQc/GI35Dwq8dOCG/fZciKMO3nDtL0iUBdnHWipSRCzl/8tDNq0bbQkPh6OUGt1hrPsoNXl4lEEDQ11bElihPDOC/QNd240REi2c9mM=
+	t=1709677129; cv=none; b=X9vFW1pQR32BkkEx6tCoyujsBdQ0FKpoG2vJjN1VVvovUqc/ClqN0p9oTf/zmd/9SJUUhQPH0DGPsXD7IwPdDykM21okjmdMaD5ZRum6zgYUMLFPZWuqkEOMEpZJnL1KJinR00oZejReQJhA/dOpBetznb7IdiYnH8TMr9MmINo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709677104; c=relaxed/simple;
-	bh=9LNA1jHQRqYIJJpk0uYCr8Kb8Les4QGDI28QnUsM6eE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Or+k2gLvq3eEW2oLi2OsDtQE7Zugv4oSEpQRukGzxVMPcoS/NbxYdfHF8Hw93hsqCmQ677DhXHNZKw0/bq1f911P78GDWaE27f/hbaz3Mzqu5VLAO4Gbva+HUp3LCH9XVNkBj9p37i+SUPAnM4X5E9xWqlsXcBQCITIMog7Yov4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=BFS4jd69; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6e6092a84f4so2467850b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 14:18:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709677102; x=1710281902; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZT0E+xfE6Is1penOGXY7BgtiBNf+i2fC3qJWRmlk8Ss=;
-        b=BFS4jd69etiy8e+I6URSYA682Vny1Eddas5uxxFrFsP8LcbOMt1pFtmBH9uzxIuTHx
-         7x+PvE4SR1iRwFONHSkrPHAXScC75P0VuKGdvpZcmQPimXzDdoJp9WRhvx1lF3udrImb
-         OJpuAwIuIIGU1VNlA7FT2AXLg2s/1AgOwbB1824T0Y6ZMvCzCCoUMNAZpVCSY6IQCXmv
-         PGEStm1wYoz7gQOCV5dk7nIqvgObyAHsbOrgvKn8TSCJpvobil+Wl6eSaV4pwo/oJopJ
-         jcjp460CW/wgTx4KheUjWdtgtAcfPRCR6AJ09bHL1mjuPOQfdWB9g5Joz9aGflNErJnY
-         Dtkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709677102; x=1710281902;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZT0E+xfE6Is1penOGXY7BgtiBNf+i2fC3qJWRmlk8Ss=;
-        b=AGF/crRcGEXABYW0zDKgaeZHz3rZBlVVocVnwy+CQGw4pRDMgpSrqja6f6suyxZzdf
-         MU0GYWvqS2mwRq17gF/5H43y3wrWIPk/feSZVOlil+5MJxWONfzDFLmvKzq95Dihs6Pj
-         t9/3m3QP8pdpt6NRXhFahabNcYvb8a/DJa/1N+wAba5maf/Kfjh17hIbwSvsm/rpE9fC
-         ksxdIOG4wgVFSM1uDhvg0U4+iZunM4b4MfUSgRz4qozOTyHe6P/1p4ItAzo/mo9/6V0Q
-         riQuJ977GCzB9H7s6XUEtbjEJfigKQcainfaL2x4oG5qGtOO9AGR86zo9oLTYWgmREfW
-         sswA==
-X-Forwarded-Encrypted: i=1; AJvYcCWa/qA6vZUfYi3CNFfAqG1KXxQ0f7bQs7+FkNrqbbfF9DyqdtsA+XEpIlZi3SZK8fk7XTYes/rEMV6j3f8mSjNF70y6FWtvudFPV139gA==
-X-Gm-Message-State: AOJu0YwMtEnysvaKYpOo7+PlHYTY8sfYXSoPft3UALNeDAJlV98994ce
-	SasL4JTirKIe5eHFBQN6UPl4UtTj77sDnoMhQrIsBJ/gyUfqFhoX8oJ5Ke8uqMk=
-X-Google-Smtp-Source: AGHT+IHR0bYfjZNZ+IVZC/CMhYRQ0wwfWcjs6kg5rLZEnSmP6gWN+dGMC1lld5Hoz8sE/FQ74qoRFw==
-X-Received: by 2002:aa7:88c1:0:b0:6e5:5425:d914 with SMTP id k1-20020aa788c1000000b006e55425d914mr14317350pff.2.1709677101467;
-        Tue, 05 Mar 2024 14:18:21 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-192-230.pa.nsw.optusnet.com.au. [49.181.192.230])
-        by smtp.gmail.com with ESMTPSA id fb26-20020a056a002d9a00b006e647059cccsm621041pfb.33.2024.03.05.14.18.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 14:18:21 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rhd74-00FXJ3-0b;
-	Wed, 06 Mar 2024 09:18:18 +1100
-Date: Wed, 6 Mar 2024 09:18:18 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, chandan.babu@oracle.com,
-	axboe@kernel.dk, martin.petersen@oracle.com,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 04/14] fs: xfs: Make file data allocations observe the
- 'forcealign' flag
-Message-ID: <ZeeaKrmVEkcXYjbK@dread.disaster.area>
-References: <20240304130428.13026-1-john.g.garry@oracle.com>
- <20240304130428.13026-5-john.g.garry@oracle.com>
- <ZeZq0hRLeEV0PNd6@dread.disaster.area>
- <f569d971-222a-4824-b5fe-2e0d8dc400cc@oracle.com>
+	s=arc-20240116; t=1709677129; c=relaxed/simple;
+	bh=iTV6eJf8dPD4YV3fq9RsQkZcP6Jo/J8HHPmDs3eIbuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ea/URaHRxAzGBbs3E5zvvZvsFDmp9uC4VSdMKJJ8CVs8Bu6NSR5kkObGU3AaxnqXDTpaG5Z4t0XH3qLMkfA0WtRrXXEQXiFt8ZcVJGhfkmncgOpJCD1YJUEcz9Z+RdOFy7Nl7+sgkFatO81mlG3NKhQNFGXtLToOkt4pz38dk4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdimvUrN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 451E6C43394;
+	Tue,  5 Mar 2024 22:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709677129;
+	bh=iTV6eJf8dPD4YV3fq9RsQkZcP6Jo/J8HHPmDs3eIbuA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IdimvUrNFp9Jf7lRs7ECBbFx7mh+9YgqxFqBEfQKxNR8viJm6rZnc/RTYXac8Diu1
+	 63Itc3bLl3E6o3lqXS8sBG4g9gzajZmRm/IusPKLHEn72SIdpBtls1VcTquwyIgi0H
+	 TWHbNNbjjsOimHLa11fUe5RwjF+lJAMpr785GQ/rULMiqVcsACg5StUYC6ye6/BLK7
+	 VLea6ydfrvu4qjqyLJ775bq7aYR7mZqX7tu8C7JNkGtTQosUUxrPs8fveKr1QTTZuJ
+	 aUsNydoBRNU05f4/1UHhIBl6I2D0c5XQD3M/aov/ynUqC7RCInxq2KzsNdbDdXREcz
+	 yroGEG5ulIthQ==
+Date: Tue, 5 Mar 2024 16:18:46 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: [PATCH][next] fsnotify: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <ZeeaRuTpuxInH6ZB@neat>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f569d971-222a-4824-b5fe-2e0d8dc400cc@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 05, 2024 at 03:22:52PM +0000, John Garry wrote:
-> On 05/03/2024 00:44, Dave Chinner wrote:
-> > On Mon, Mar 04, 2024 at 01:04:18PM +0000, John Garry wrote:
-....
-> > IOWs, these are static geometry constraints and so should be checked
-> > and rejected at the point where alignments are specified (i.e.
-> > mkfs, mount and ioctls). Then the allocator can simply assume that
-> > forced inode alignments are always stripe alignment compatible and
-> > we don't need separate handling of two possibly incompatible
-> > alignments.
-> 
-> ok, makes sense.
-> 
-> Please note in case missed, I am mandating extsize hint for forcealign needs
-> to be a power-of-2. It just makes life easier for all the sub-extent
-> zero'ing later on.
+-Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
+ready to enable it globally.
 
-That's fine - that will need to be documented in the xfsctl man
-page...
+There is currently a local structure `f` that is using a flexible
+`struct file_handle` as header for an on-stack place-holder for the
+flexible-array member `unsigned char f_handle[];`.
 
-> Also we need to enforce that the AG count to be compliant with the extsize
-                                      ^^^^^ size?
+struct {
+	struct file_handle handle;
+	u8 pad[MAX_HANDLE_SZ];
+} f;
 
-> hint for forcealign; but since the extsize hint for forcealign needs to be
-> compliant with stripe unit, above, and stripe unit would be compliant wth AG
-> count (right?), then this would be a given.
+However, we are deprecating flexible arrays in the middle of another
+struct. So, in order to avoid this, we use the `struct_group_tagged()`
+helper to separate the flexible array from the rest of the members in
+the flexible structure:
 
-We already align AG size to stripe unit when a stripe unit is set,
-and ensure that we don't place all the AG headers on the same stripe
-unit.
+struct file_handle {
+        struct_group_tagged(file_handle_hdr, hdr,
+		... the rest of the members
+        );
+        unsigned char f_handle[];
+};
 
-However, if there is no stripe unit we don't align the AG to
-anything. So, yes, AG sizing by mkfs will need to ensure that all
-AGs are correctly aligned to the underlying storage (integer
-multiple of the max atomic write size, right?)...
+With the change described above, we can now declare an object of the
+type of the tagged struct, without embedding the flexible array in the
+middle of another struct:
 
-> > More below....
-> > 
-> > > +	} else {
-> > > +		args->alignment = 1;
-> > > +	}
-> > 
-> > Just initialise the allocation args structure with a value of 1 like
-> > we already do?
-> 
-> It was being done in this way to have just a single place where the value is
-> initialised. It can easily be kept as is.
+struct {
+        struct file_handle_hdr handle;
+        u8 pad[MAX_HANDLE_SZ];
+} f;
 
-I'd prefer it as is, because then the value is always initialised
-correctly and we only override in the special cases....
+We also use `container_of()` whenever we need to retrieve a pointer to
+the flexible structure, through which the flexible-array member can be
+accessed, as in this case.
 
-> > >   	args.minleft = ap->minleft;
-> > > @@ -3484,6 +3496,7 @@ xfs_bmap_btalloc_at_eof(
-> > >   {
-> > >   	struct xfs_mount	*mp = args->mp;
-> > >   	struct xfs_perag	*caller_pag = args->pag;
-> > > +	int			orig_alignment = args->alignment;
-> > >   	int			error;
-> > >   	/*
-> > > @@ -3558,10 +3571,10 @@ xfs_bmap_btalloc_at_eof(
-> > >   	/*
-> > >   	 * Allocation failed, so turn return the allocation args to their
-> > > -	 * original non-aligned state so the caller can proceed on allocation
-> > > -	 * failure as if this function was never called.
-> > > +	 * original state so the caller can proceed on allocation failure as
-> > > +	 * if this function was never called.
-> > >   	 */
-> > > -	args->alignment = 1;
-> > > +	args->alignment = orig_alignment;
-> > >   	return 0;
-> > >   }
-> > 
-> > As I said above, we can't set an alignment of > 1 here if we haven't
-> > accounted for that alignment in args->minalignslop above. This leads
-> > to unexpected ENOSPC conditions and filesystem shutdowns.
-> > 
-> > I suspect what we need to do is get rid of the separate stripe_align
-> > variable altogether and always just set args->alignment to what we
-> > need the extent start alignment to be, regardless of whether it is
-> > from stripe alignment or forced alignment.
-> 
-> ok, it sounds a bit simpler at least
-> 
-> > 
-> > Then the code in xfs_bmap_btalloc_at_eof() doesn't need to know what
-> > 'stripe_align' is - the exact EOF block allocation can simply save
-> > and restore the args->alignment value and use it for minalignslop
-> > calculations for the initial exact block allocation.
-> > 
-> > Then, if xfs_bmap_btalloc_at_eof() fails and xfs_inode_forcealign()
-> > is true, we can abort allocation immediately, and not bother to fall
-> > back on further aligned/unaligned attempts that will also fail or do
-> > the wrong them.
-> 
-> ok
-> 
-> > 
-> > Similarly, if we aren't doing EOF allocation, having args->alignment
-> > set means it will do the right thing for the first allocation
-> > attempt. Again, if that fails, we can check if
-> > xfs_inode_forcealign() is true and fail the aligned allocation
-> > instead of running the low space algorithm. This now makes it clear
-> > that we're failing the allocation because of the forced alignment
-> > requirement, and now the low space allocation code can explicitly
-> > turn off start alignment as it isn't required...
-> 
-> are you saying that low-space allocator can set args->alignment = 1 to be
-> explicit?
+So, with these changes, fix the following warning:
 
-Yes.
+fs/notify/fdinfo.c: In function ‘show_mark_fhandle’:
+fs/notify/fdinfo.c:45:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+   45 |                 struct file_handle handle;
+      |                                    ^~~~~~
 
--Dave.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ fs/notify/fdinfo.c | 8 +++++---
+ include/linux/fs.h | 6 ++++--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index 5c430736ec12..740f5e68b397 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -42,15 +42,17 @@ static void show_fdinfo(struct seq_file *m, struct file *f,
+ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+ {
+ 	struct {
+-		struct file_handle handle;
++		struct file_handle_hdr handle;
+ 		u8 pad[MAX_HANDLE_SZ];
+ 	} f;
++	struct file_handle *handle = container_of(&f.handle,
++						  struct file_handle, hdr);
+ 	int size, ret, i;
+ 
+ 	f.handle.handle_bytes = sizeof(f.pad);
+ 	size = f.handle.handle_bytes >> 2;
+ 
+-	ret = exportfs_encode_fid(inode, (struct fid *)f.handle.f_handle, &size);
++	ret = exportfs_encode_fid(inode, (struct fid *)handle->f_handle, &size);
+ 	if ((ret == FILEID_INVALID) || (ret < 0)) {
+ 		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
+ 		return;
+@@ -63,7 +65,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+ 		   f.handle.handle_bytes, f.handle.handle_type);
+ 
+ 	for (i = 0; i < f.handle.handle_bytes; i++)
+-		seq_printf(m, "%02x", (int)f.handle.f_handle[i]);
++		seq_printf(m, "%02x", (int)handle->f_handle[i]);
+ }
+ #else
+ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 00fc429b0af0..7c131bcd948f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1030,8 +1030,10 @@ struct file {
+   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
+ 
+ struct file_handle {
+-	__u32 handle_bytes;
+-	int handle_type;
++	struct_group_tagged(file_handle_hdr, hdr,
++		__u32 handle_bytes;
++		int handle_type;
++	);
+ 	/* file identifier */
+ 	unsigned char f_handle[];
+ };
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.1
+
 
