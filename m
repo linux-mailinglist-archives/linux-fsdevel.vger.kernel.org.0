@@ -1,208 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-13660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C0E872921
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 22:09:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A4C87294C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 22:19:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343B11F22B03
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 21:09:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65B8CB2D416
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 21:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42F612A173;
-	Tue,  5 Mar 2024 21:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7537112B177;
+	Tue,  5 Mar 2024 21:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UD2tw1qa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwhoyyrR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851D014012
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 21:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D133612A16C;
+	Tue,  5 Mar 2024 21:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709672928; cv=none; b=ECfdZiovVZ9EChukvxLJL57Nod/pL0BfpXWHZjQTRydYVf8C87og6hLQuwloC/IRvi2rnBa8dYBx/xf5/xAzqd9J6zhydzz4A2M43N3reGwSJqdlS4oc7J7Fkka37+XkCMVRsd0AY9u+baHF3Nsj3VkrZIXgtEIaojJFp2ZYEIo=
+	t=1709673442; cv=none; b=doeirI0Lmtd2wBDPT+3OCfyPrdoisH3uk4DtGfCvXUej7pOMOeHuf23Flx9WdttwZ9v9Cuzlilh5T1z7Yd3H7aBBIrFFEW1Xwvv95qv3cE7yzvx27mI/JV2vr2Sc50S5j6rVYVD6c7vW3hFvGNfwO3PythBMNX7FVDYbXSYHwWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709672928; c=relaxed/simple;
-	bh=hxcf9uP0aEOXNq7qUgJSy+IvdHTpTc5eZnnjD0eh7II=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eKRqPodgQeCZGoEjtkCLvxrZj9oPllgzuT4l62AuYUlMcPRVc/SH9yiIUKvzGEhynscoBlO/anmGsn4CWEb5L9zh/kcDt6Q7XBSwgk/dVZ+cBFxisFv8gXh7HsTXFK3y3Qxwtf4N/J5mDG0YGE85YSI4SpMNC9AE76zuchhyaEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UD2tw1qa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709672925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KpvmWkvcSNBDny0fBaZJcu0KNQdPAMGp2g8e+vi2M7g=;
-	b=UD2tw1qa6TTM7SXIJRITykeLJRfgG410s1gP8nBD1Qve32uuz1nq37FsBR+iI0Vkbaz95b
-	txL0xzj1tk+7aSANcj83xedHEfQ0LQG6TDNvAGFLp/l/QUBqT8nbwfVBRugJnUV6/M2Gm1
-	oqkzePx93QpACrkHZmKQyuwUvTI0OhY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-537-Q3QpTukwMdO93Wmpg4p3lA-1; Tue, 05 Mar 2024 16:08:44 -0500
-X-MC-Unique: Q3QpTukwMdO93Wmpg4p3lA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A7A09800267;
-	Tue,  5 Mar 2024 21:08:43 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.32.76])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 049F94073598;
-	Tue,  5 Mar 2024 21:08:42 +0000 (UTC)
-From: Bill O'Donnell <bodonnel@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org,
-	sandeen@redhat.com,
-	Bill O'Donnell <bodonnel@redhat.com>
-Subject: [PATCH] minix: convert minix to use the new mount api
-Date: Tue,  5 Mar 2024 15:08:18 -0600
-Message-ID: <20240305210829.943737-1-bodonnel@redhat.com>
+	s=arc-20240116; t=1709673442; c=relaxed/simple;
+	bh=QRXH/8lE9leyc3TMSPftFHr6I8X4mVKYeHcAzXHHCAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AWzSjLHGPLMybipamQMcjVKcmb9MSIS50CdKwD+lvG/caHvonuqhSUN2Z5b7DUrU5YCaecocmx1GE272PW3qs+DkH+iyY33oCFODqW7Pi1v/oEHhW4BajwPGy4kGySuAdTTMiZjn+9bNuWH4oKTka5CbngvNL2gwIFbHgy44B8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FwhoyyrR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52701C433F1;
+	Tue,  5 Mar 2024 21:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709673442;
+	bh=QRXH/8lE9leyc3TMSPftFHr6I8X4mVKYeHcAzXHHCAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FwhoyyrR+vVycbZa7TIxMaLpC6rGRiP2VO1S5gAASloZMPCTvJDvebT6kls70aoxu
+	 6/BAhB57kRXv8KkaND6Y1D9VCw3fEYgJTjiuohiNwFesCR3FRnQHDi8NtjNUgTDiAl
+	 IBEQz+GSAYLg9kqwgmRpsNfs9lIVh8y6bN3rogMpR1CfYbdA7lxeL+21M55e7hFozL
+	 de3Z+N+5f/PZfe/F1IgN4MmXU4YN45KGYu8k1CPPTgntUNIsIMSF4idkSghmxoL4d9
+	 sJD4tACESoAZW0wvMDiVt4sJTbEbmtT9/mDQt8biDQ0zaGQaAF8DZVTR53/ps7E37J
+	 OOxT0P7Mq3Rdw==
+Date: Tue, 5 Mar 2024 13:17:20 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Benjamin LaHaise <ben@communityfibre.ca>,
+	Avi Kivity <avi@scylladb.com>, Sandeep Dhavale <dhavale@google.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>, stable@vger.kernel.org
+Subject: Re: [PATCH] fs/aio: Check IOCB_AIO_RW before the struct aio_kiocb
+ conversion
+Message-ID: <20240305211720.GB1202@sol.localdomain>
+References: <20240304235715.3790858-1-bvanassche@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240304235715.3790858-1-bvanassche@acm.org>
 
-Convert the minix filesystem to use the new mount API.
+On Mon, Mar 04, 2024 at 03:57:15PM -0800, Bart Van Assche wrote:
+> The first kiocb_set_cancel_fn() argument may point at a struct kiocb
+> that is not embedded inside struct aio_kiocb. With the current code,
+> depending on the compiler, the req->ki_ctx read happens either before
+> the IOCB_AIO_RW test or after that test. Move the req->ki_ctx read such
+> that it is guaranteed that the IOCB_AIO_RW test happens first.
+> 
+> Reported-by: Eric Biggers <ebiggers@kernel.org>
+> Cc: Benjamin LaHaise <ben@communityfibre.ca>
+> Cc: Eric Biggers <ebiggers@google.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Avi Kivity <avi@scylladb.com>
+> Cc: Sandeep Dhavale <dhavale@google.com>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: stable@vger.kernel.org
+> Fixes: b820de741ae4 ("fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted via libaio")
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> ---
+>  fs/aio.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index da18dbcfcb22..9cdaa2faa536 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -589,8 +589,8 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+>  
+>  void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
+>  {
+> -	struct aio_kiocb *req = container_of(iocb, struct aio_kiocb, rw);
+> -	struct kioctx *ctx = req->ki_ctx;
+> +	struct aio_kiocb *req;
+> +	struct kioctx *ctx;
+>  	unsigned long flags;
+>  
+>  	/*
+> @@ -600,9 +600,13 @@ void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
+>  	if (!(iocb->ki_flags & IOCB_AIO_RW))
+>  		return;
+>  
+> +	req = container_of(iocb, struct aio_kiocb, rw);
+> +
+>  	if (WARN_ON_ONCE(!list_empty(&req->ki_list)))
+>  		return;
+>  
+> +	ctx = req->ki_ctx;
+> +
+>  	spin_lock_irqsave(&ctx->ctx_lock, flags);
+>  	list_add_tail(&req->ki_list, &ctx->active_reqs);
+>  	req->ki_cancel = cancel;
 
-Tested using mount and remount on minix device.
+Reviewed-by: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
----
- fs/minix/inode.c | 64 ++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 46 insertions(+), 18 deletions(-)
-
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index 73f37f298087..248e78a118e7 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -20,11 +20,11 @@
- #include <linux/mpage.h>
- #include <linux/vfs.h>
- #include <linux/writeback.h>
-+#include <linux/fs_context.h>
- 
- static int minix_write_inode(struct inode *inode,
- 		struct writeback_control *wbc);
- static int minix_statfs(struct dentry *dentry, struct kstatfs *buf);
--static int minix_remount (struct super_block * sb, int * flags, char * data);
- 
- static void minix_evict_inode(struct inode *inode)
- {
-@@ -111,19 +111,19 @@ static const struct super_operations minix_sops = {
- 	.evict_inode	= minix_evict_inode,
- 	.put_super	= minix_put_super,
- 	.statfs		= minix_statfs,
--	.remount_fs	= minix_remount,
- };
- 
--static int minix_remount (struct super_block * sb, int * flags, char * data)
-+static int minix_reconfigure(struct fs_context *fc)
- {
--	struct minix_sb_info * sbi = minix_sb(sb);
- 	struct minix_super_block * ms;
-+	struct super_block *sb = fc->root->d_sb;
-+	struct minix_sb_info * sbi = sb->s_fs_info;
- 
- 	sync_filesystem(sb);
- 	ms = sbi->s_ms;
--	if ((bool)(*flags & SB_RDONLY) == sb_rdonly(sb))
-+	if ((bool)(fc->sb_flags & SB_RDONLY) == sb_rdonly(sb))
- 		return 0;
--	if (*flags & SB_RDONLY) {
-+	if (fc->sb_flags & SB_RDONLY) {
- 		if (ms->s_state & MINIX_VALID_FS ||
- 		    !(sbi->s_mount_state & MINIX_VALID_FS))
- 			return 0;
-@@ -170,7 +170,7 @@ static bool minix_check_superblock(struct super_block *sb)
- 	return true;
- }
- 
--static int minix_fill_super(struct super_block *s, void *data, int silent)
-+static int minix_fill_super(struct super_block *s, struct fs_context *fc)
- {
- 	struct buffer_head *bh;
- 	struct buffer_head **map;
-@@ -180,6 +180,7 @@ static int minix_fill_super(struct super_block *s, void *data, int silent)
- 	struct inode *root_inode;
- 	struct minix_sb_info *sbi;
- 	int ret = -EINVAL;
-+	int silent = fc->sb_flags & SB_SILENT;
- 
- 	sbi = kzalloc(sizeof(struct minix_sb_info), GFP_KERNEL);
- 	if (!sbi)
-@@ -371,6 +372,39 @@ static int minix_fill_super(struct super_block *s, void *data, int silent)
- 	return ret;
- }
- 
-+static int minix_get_tree(struct fs_context *fc)
-+{
-+	 return get_tree_bdev(fc, minix_fill_super);
-+}
-+
-+static void minix_free_fc(struct fs_context *fc)
-+{
-+	kfree(fc->fs_private);
-+}
-+
-+struct minix_context {
-+	unsigned long s_mount_opts;
-+};
-+
-+static const struct fs_context_operations minix_context_ops = {
-+	.get_tree	= minix_get_tree,
-+	.reconfigure	= minix_reconfigure,
-+	.free		= minix_free_fc,
-+};
-+
-+static int minix_init_fs_context(struct fs_context *fc)
-+{
-+	struct minix_context *ctx;
-+
-+	ctx = kzalloc(sizeof(struct minix_context), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+	fc->ops = &minix_context_ops;
-+	fc->fs_private = ctx;
-+
-+	return 0;
-+}
-+
- static int minix_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
- 	struct super_block *sb = dentry->d_sb;
-@@ -680,18 +714,12 @@ void minix_truncate(struct inode * inode)
- 		V2_minix_truncate(inode);
- }
- 
--static struct dentry *minix_mount(struct file_system_type *fs_type,
--	int flags, const char *dev_name, void *data)
--{
--	return mount_bdev(fs_type, flags, dev_name, data, minix_fill_super);
--}
--
- static struct file_system_type minix_fs_type = {
--	.owner		= THIS_MODULE,
--	.name		= "minix",
--	.mount		= minix_mount,
--	.kill_sb	= kill_block_super,
--	.fs_flags	= FS_REQUIRES_DEV,
-+	.owner			= THIS_MODULE,
-+	.name			= "minix",
-+	.kill_sb		= kill_block_super,
-+	.fs_flags		= FS_REQUIRES_DEV,
-+	.init_fs_context	= minix_init_fs_context,
- };
- MODULE_ALIAS_FS("minix");
- 
--- 
-2.44.0
-
+- Eric
 
