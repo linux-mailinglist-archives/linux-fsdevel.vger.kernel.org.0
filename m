@@ -1,88 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-13610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45591871D2F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 12:15:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B43871E13
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 12:38:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A0791C21F86
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560461C239BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E415490D;
-	Tue,  5 Mar 2024 11:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1BE57326;
+	Tue,  5 Mar 2024 11:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kg099sgr"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="eRA4T9XF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8538710A1B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 11:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20681C6AD;
+	Tue,  5 Mar 2024 11:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709637353; cv=none; b=hsEKKdva0JOmZjMgvVpJEkpNd8nXLCrUR6ZjjkLekF6ixmZ4IuoqUyNmT/RY86exgv7p+poGucqrQl6+wxOlC98OlbG3H6XvYAFroxqWp6bzznIAUGuNxi9315zfTyB/sOyZ7GMAhEPAKbSyZSh0IwElIHX+rhwjLpZjGcT1ARE=
+	t=1709638702; cv=none; b=uq/GbijIZW/aOZc+48sbYqHx3FqurbcMJEJxl4FGUmzBVBqO6MtPXyxTQ1IHg/tUEULKiYTngpFnb5S2VDkiGnOQSSiu2MX5kR2paKI6i9+3nCYUsSuX4gB9bUiUuFnxDEJj6703WG9jMANDGF81GMvbtB77wNLUL7eeoP1dzec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709637353; c=relaxed/simple;
-	bh=a8NhojM4xPbeewQG/DK7rze+Q6TFD6PRKp1fcAGVJmg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wh12JqS6Cl4qwThMH9EIZGgBVPpjiEeOvYQ7Zf0P+8kBiiOphl5zYLT0GXrdDNlpWqNDghvNhk1N6+H1LBa3Pb4jzliRLcFNn6QuY4nSE+suJl2xBBIlnGEb5e1327j9f/byi5ah26qOPnAn7/4Fh7Pw6JtUP9ReD8ZH/an6BAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kg099sgr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C977FC433C7;
-	Tue,  5 Mar 2024 11:15:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709637353;
-	bh=a8NhojM4xPbeewQG/DK7rze+Q6TFD6PRKp1fcAGVJmg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Kg099sgrOvwAXv/UIwYkzncQOYAPzFXGmscPs+5FZNxBBpM2dHyMX7PY5WuQbXzqq
-	 MvsJNifcjbKKrYC7sT/TZNIZN28ckaUrsga6pAz9OvkwkulRSbzKjtjLoyK65lPIXs
-	 mUGtVvM0aP2XMz2MmHzx96rgbL5eVwsd3NdfOo7uLqP82qFQcOj5g/Bmc7PURbqNR3
-	 bWcjintbqymTlY7NznnIlxLYaoAeK6ycO2YXsaVO4SZsis6k37nmEj2p9rxkdI1s+l
-	 YS4eAmxqoYN5ZodNjfh0MNTIYqZcxz4vuRVHLWHgREWlyHPgrL1TW2YGeziNSM+mKh
-	 nSIwMtpy+GgMw==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Bill O'Donnell <bodonnel@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	sandeen@redhat.com
-Subject: Re: [PATCH v3] efs: convert efs to use the new mount api
-Date: Tue,  5 Mar 2024 12:15:43 +0100
-Message-ID: <20240305-jobangebote-fettgehalt-e729d2d59e68@brauner>
+	s=arc-20240116; t=1709638702; c=relaxed/simple;
+	bh=QzYHOd+dyVh7UrO6ChjHVt3V649waC8Wk+j1KEBrJfc=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=hjNqKagWssBgbauqbVLqOLWdwWfTboaMSH7hfO/UFoobaSwHVkneDk4vhX7fwwGb6RkELomQkX1Zp4Z3tCKfwGfKqhDLW8/yL7JMMBpZFqTAPPgvD7Eg7QIoEmUi657Yerckgyza0gMNgo8YQmL1dhtfopxhtHXWk/cy8Gb9kzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=eRA4T9XF; arc=none smtp.client-ip=203.205.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1709638697; bh=N0nDmVEf6cg/5KEdeUPOw3ez2Rj/dBiw4YqbMxTZuvA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=eRA4T9XFgmozE5Z5y8j8RaNVwuiEKYjyQGM8NVsyFlRCNHCZ4XLJUSXHv919Zcz3S
+	 gRVvxqNxFva/ZPcYpSqQOlwYSwOM5mVv5EWZl54DZhduy1/xfN5bmYo/Cf/cQoJELe
+	 R4QwRWcRiP6VIc6hgEAxrrxzX4v1dbOur8TnHm/0=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.140])
+	by newxmesmtplogicsvrszc5-0.qq.com (NewEsmtp) with SMTP
+	id 98F1DE68; Tue, 05 Mar 2024 19:38:15 +0800
+X-QQ-mid: xmsmtpt1709638695t7z4ovnkd
+Message-ID: <tencent_11194B111B6F25CEBA5FBB71336B9E9D1B08@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntujILhsONvPruo4uQ7+ppvZHX8EdiXAigos8aJey6DeGYUnmDConM
+	 DSFl654zgZ/AFCiGSsXgceYX6ctfWdajefqhCi6QaMO4jtxV1ab8Qb7uEktCPjCnVdEEkZCTvFhj
+	 PvKzoG1cA2A7/FVd5n+QWjiNl+Q62SU30vB7vTWA8mMS/hNTTsG5p6SnC597aGMahc8BGvcZacVw
+	 +VyHdQu4pO/XfSQa5OxzyvRM+tMs4WkZQC5Y/HaxOq8X2BZFb5QjiBtSiM7Qsh/nOxAp7/N5XA8a
+	 AXeTG4RNzDqDmcMIeUQh5hijdGHHvcYIK9mF44IYTWNW2e27fq3nRjte48VVmjBPjM5K49o2gaU2
+	 Dx8irZ111mdzT0u272QCl+CADUumLwDRaKl1hf7CzJWYwitlZy92LRxOTEDaeAxvhFQEYCCY0LAX
+	 b9DaMqFayvfNF4XOblTUnJz+rW9CyKy6s/xiQLkep3hFu4MHULnbJBWfTsIqnDdM5vsOcRNB0GsA
+	 eA4ZvU1n7mEsC52sQf9HGUSB3OQ/JgeBB0nsVp0pCWyV0Tvy1qQvZ88Rtij1aIufsog0Yut74l7w
+	 tYCPZ72fotajgMMXC2Q5inRjCGEPTaWEROLrK3DKgOqr92Ndrdy6MMGbPP/t9poAyV5PQAVAO90n
+	 RG5Wv/MdC585WYronqW8gNGGc4Oolu1VCj3fxfz1o8SSE5Uo8iO266zJaZb3M1NR8g3HNccfIzo+
+	 WgJuZo3AuULLtk+o5t58X7SsnGPzx0JdsKxfkwaBuj5tJu60JEcfiRvJHv92lM13ZNGtTcNxFaqC
+	 vNtC3wUL2jQJIdc6MkiaialzmwAG4kCvclajAhvq9mGVQhOb0HL8v7uBf3N0yYo3QF4kCswZz0YR
+	 IUlJcUgIdO0co3lkH7DqCfKX4OaQ8Wp34IoYj7dWh8jwolZmnvTn9mVO89td8/O+erHrlhmaHXyL
+	 7wE66pJqI=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+02e64be5307d72e9c309@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] mm/pagemap: fix null ptr deref in do_pagemap_cmd
+Date: Tue,  5 Mar 2024 19:38:16 +0800
+X-OQ-MSGID: <20240305113815.2950328-2-eadavis@qq.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240304161526.909415-1-bodonnel@redhat.com>
-References: <20240304161526.909415-1-bodonnel@redhat.com>
+In-Reply-To: <0000000000001bc4a00612d9a7f4@google.com>
+References: <0000000000001bc4a00612d9a7f4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=891; i=brauner@kernel.org; h=from:subject:message-id; bh=a8NhojM4xPbeewQG/DK7rze+Q6TFD6PRKp1fcAGVJmg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ++/d4YoFeglm6soed12qbyQcf7L05k31S6kSNl6L67 F23YrpNO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaiI8bw33OnVdzztixure6l rl0v7l+8vjnRbvPkpXHOHjFCPtsehjH8LztwobGGI2VPR7V9vk/gCwbthxe/OjjvnvvbJdU+tO4 kLwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 04 Mar 2024 10:03:06 -0600, Bill O'Donnell wrote:
-> Convert the efs filesystem to use the new mount API.
-> 
-> 
+When pagemap_open() runs in the kernel thread context, task->mm is NULL, it will
+causes the pagemap file object's file->private_date to be NULL when the pagemap
+file is opened, this will ultimately result in do_pagemap_cmd() referencing a 
+null pointer.
 
-Applied to the vfs.mount.api branch of the vfs/vfs.git tree.
-Patches in the vfs.mount.api branch should appear in linux-next soon.
+So, before PAGEMAP_SCAN ioctl() call do_pagemap_scan(), need check mm first.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
+Reported-and-tested-by: syzbot+02e64be5307d72e9c309@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/proc/task_mmu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 3f78ebbb795f..ab28666956d0 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -2510,6 +2510,8 @@ static long do_pagemap_cmd(struct file *file, unsigned int cmd,
+ 
+ 	switch (cmd) {
+ 	case PAGEMAP_SCAN:
++		if (!mm)
++			return -EINVAL;
+ 		return do_pagemap_scan(mm, arg);
+ 
+ 	default:
+-- 
+2.43.0
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.mount.api
-
-[1/1] efs: convert efs to use the new mount api
-      https://git.kernel.org/vfs/vfs/c/d5b1a5042b4a
 
