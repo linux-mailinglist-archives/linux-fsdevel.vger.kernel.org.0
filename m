@@ -1,109 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-13584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483968718E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:05:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD9387192C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:11:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03FAF28410D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 09:05:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F6211F2411A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 09:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EB45491F;
-	Tue,  5 Mar 2024 09:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301CE50272;
+	Tue,  5 Mar 2024 09:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIc4DOlQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uc/+uHGp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E06B5490E;
-	Tue,  5 Mar 2024 09:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF164DA1F;
+	Tue,  5 Mar 2024 09:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709629393; cv=none; b=teEpeBLLyHTUgcvIG3jEYIbcbreuylVlZa2glsAPLkzXY/LfAll7HtqlbBxlkvGsZ3btkgCYvIdO66OVoEurgdW2YFe1s1e5HIXw3rnKry3W33qoG1sqW2n02HcLL8/qM0NxSDEqlRm4ETbh8FZwaN5JufxfrIfrX8m4YIz3S6s=
+	t=1709629867; cv=none; b=EFSYKlUrb5NB6IntO3KA3jW9t9DzE2UZ5Ukjk9DOsauzE2JKe7hCgHAeDwRN7fu1Gy6xezIBq7ax/a7uV4S7ADWTeWvUS6QegrQ1JW2ZkOvRQwoLpprkYYfr3/ctUTw0LLYpNXIUNvB+czPAaLtcPLHivBcqUnowjwNchP35X1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709629393; c=relaxed/simple;
-	bh=0z3ZfR7fH8MNjZhZhjSXXycCjPoCP8KMQwydlho5Ss0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uGX+NgdGC8AQyJqQBHaVxUYKheHo4aSCfG7xZBGCC4Osqd/zYWkqmHfHFPGB/+a2IJImQwr8f0v/QYf6B86LSRGroGYnjoO3dnBycYflsjbjSbfy4mIJXLdWl6a1n/M5e6svRh0aFYGTx825TRtxo3oEgvchwNUu1pOzelxEj8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIc4DOlQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEEA2C433F1;
-	Tue,  5 Mar 2024 09:03:09 +0000 (UTC)
+	s=arc-20240116; t=1709629867; c=relaxed/simple;
+	bh=H+2wlslZkHG5WJTMkedhIAxZ71n6oHIBbYXZAqgOaZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VAsrFsyVEKkRlIfVyWYBcIGu7AwL5vqX85jLGMczSQW29Lpkaq/f/kwd0PCqeah80YDyt1DAOe4+CizJB7xafSGQ2a++5r44zqsD7px0s1o4qvomlck5/yqT6RTR/vxYe3WsaQt4UaFHstfPQGUI/YcGMyR57QnVA0eM6ZrdZbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uc/+uHGp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D16C43394;
+	Tue,  5 Mar 2024 09:11:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709629393;
-	bh=0z3ZfR7fH8MNjZhZhjSXXycCjPoCP8KMQwydlho5Ss0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UIc4DOlQj7dQchzqZueCPmUNmZZYha0RNvJnu4rRL0c67/MvVpGM4K5wkF4P/ZzG+
-	 dJEU0hIYKXOz9dnJVO7XBwfJZmHkJ9KdM2L1P78pHqF9QT3mvpf572538gveRMJBOH
-	 hQMOMTWw+KfW1w8N5/smmNUcuEsP4D7ffBfVlkX8+xS9ZXdP//yE1uh1rAfqehFb6u
-	 Zo0z42efKBtF7aoeFKk33NEo+UTHCHm0HyEEnhM8ks5skSHs3+0L3lly3mF+sZEF4y
-	 7bVZZvFwn6QNbeL4KKrVUn/xfqF7uG14oWBu9ife8B8nDHD7RpCEf9MU8yKq8prCjB
-	 ptPJMDSvauQCA==
+	s=k20201202; t=1709629867;
+	bh=H+2wlslZkHG5WJTMkedhIAxZ71n6oHIBbYXZAqgOaZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Uc/+uHGpnp1P2VH3AWg0LLYN1WK+jtpThZcZpatgIWyYJqafxriuAeORhX2Tb/oF/
+	 JISu5NenwDGh1LqcXMIPJx0/rHkMLoPhtI5mNmed7b6TIeMti00+c/FobEZSqc6JXu
+	 RKUE5ptAnoDyy5vQXRWPWzuTSQ+T4y3/sJK3UwlVOsIBc/fnTMogrmFF11HzGd3o5B
+	 vZ8jBUnhGPTdQPTEXDOzv5s5F4+uZxuznlV/U9zZP3x7cf0adx9fgfxQ/K3imMS01v
+	 pnBnHTpAu8xgi8wqikA7GHev5BBoUKvOUXXhiUh2xOPjEmogOazBinXeTjxSV5R0wn
+	 9nE2tj92VH72A==
+Date: Tue, 5 Mar 2024 10:11:01 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Benjamin LaHaise <ben@communityfibre.ca>,
-	Eric Biggers <ebiggers@google.com>,
-	Avi Kivity <avi@scylladb.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	stable@vger.kernel.org,
-	syzbot+b91eb2ed18f599dd3c31@syzkaller.appspotmail.com
-Subject: Re: [PATCH] Revert "fs/aio: Make io_cancel() generate completions again"
-Date: Tue,  5 Mar 2024 10:01:21 +0100
-Message-ID: <20240305-querbalken-bewarben-8cd446ceed55@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240304182945.3646109-1-bvanassche@acm.org>
-References: <20240304182945.3646109-1-bvanassche@acm.org>
+To: Bart Van Assche <bvanassche@acm.org>, 
+	Eric Biggers <ebiggers@kernel.org>, Benjamin LaHaise <ben@communityfibre.ca>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, 
+	Eric Biggers <ebiggers@google.com>, Avi Kivity <avi@scylladb.com>, 
+	Sandeep Dhavale <dhavale@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] fs/aio: Check IOCB_AIO_RW before the struct aio_kiocb
+ conversion
+Message-ID: <20240305-leerlauf-hinauf-b44c47f26f4e@brauner>
+References: <20240304235715.3790858-1-bvanassche@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1514; i=brauner@kernel.org; h=from:subject:message-id; bh=0z3ZfR7fH8MNjZhZhjSXXycCjPoCP8KMQwydlho5Ss0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ+u3+i6KTk+vXX3z6d4rc5g9fYbgp7plDw9FeXjXRDG n6Gq1Wwd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkLgvDP9P9MYcLuzMXqc6J f9OzZvaRpeoJWfuyxKt3SF51ePFh+UFGhnNz/rx6w7txtZsDw0P5nAzzR+eclBLnNGkGPs+O8v7 znhkA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240304235715.3790858-1-bvanassche@acm.org>
 
-On Mon, 04 Mar 2024 10:29:44 -0800, Bart Van Assche wrote:
-> Patch "fs/aio: Make io_cancel() generate completions again" is based on the
-> assumption that calling kiocb->ki_cancel() does not complete R/W requests.
-> This is incorrect: the two drivers that call kiocb_set_cancel_fn() callers
-> set a cancellation function that calls usb_ep_dequeue(). According to its
-> documentation, usb_ep_dequeue() calls the completion routine with status
-> -ECONNRESET. Hence this revert.
+On Mon, Mar 04, 2024 at 03:57:15PM -0800, Bart Van Assche wrote:
+> The first kiocb_set_cancel_fn() argument may point at a struct kiocb
+> that is not embedded inside struct aio_kiocb. With the current code,
+> depending on the compiler, the req->ki_ctx read happens either before
+> the IOCB_AIO_RW test or after that test. Move the req->ki_ctx read such
+> that it is guaranteed that the IOCB_AIO_RW test happens first.
 > 
-> [...]
+> Reported-by: Eric Biggers <ebiggers@kernel.org>
+> Cc: Benjamin LaHaise <ben@communityfibre.ca>
+> Cc: Eric Biggers <ebiggers@google.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Avi Kivity <avi@scylladb.com>
+> Cc: Sandeep Dhavale <dhavale@google.com>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: stable@vger.kernel.org
+> Fixes: b820de741ae4 ("fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted via libaio")
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> ---
 
-I'm not enthusiastic about how we handled this. There was apparently
-more guesswork involved than anything else and I had asked multiple
-times whether that patch is really required. So please, let's be more
-careful going forward.
+Can I please get a review from Eric and/or Benjamin, please?
 
----
-
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] Revert "fs/aio: Make io_cancel() generate completions again"
-      https://git.kernel.org/vfs/vfs/c/d435ca3d38eb
+>  fs/aio.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index da18dbcfcb22..9cdaa2faa536 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -589,8 +589,8 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+>  
+>  void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
+>  {
+> -	struct aio_kiocb *req = container_of(iocb, struct aio_kiocb, rw);
+> -	struct kioctx *ctx = req->ki_ctx;
+> +	struct aio_kiocb *req;
+> +	struct kioctx *ctx;
+>  	unsigned long flags;
+>  
+>  	/*
+> @@ -600,9 +600,13 @@ void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
+>  	if (!(iocb->ki_flags & IOCB_AIO_RW))
+>  		return;
+>  
+> +	req = container_of(iocb, struct aio_kiocb, rw);
+> +
+>  	if (WARN_ON_ONCE(!list_empty(&req->ki_list)))
+>  		return;
+>  
+> +	ctx = req->ki_ctx;
+> +
+>  	spin_lock_irqsave(&ctx->ctx_lock, flags);
+>  	list_add_tail(&req->ki_list, &ctx->active_reqs);
+>  	req->ki_cancel = cancel;
 
