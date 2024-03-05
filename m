@@ -1,164 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-13607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DCC871CD3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 12:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F59871D10
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 12:10:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88468285D44
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3EF28619E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA89758ADE;
-	Tue,  5 Mar 2024 11:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52964548F6;
+	Tue,  5 Mar 2024 11:09:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB7158222
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 11:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5297F548F3
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 11:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709636611; cv=none; b=bdwASNMU1LHEuSpc5bM33dPvb9BkGAHyOHEhsWs9DtKa7Q7WA38l8fQRxQk0ckbBFjj3kM3jvdoVXx+DqGBmHwuXOIAiGbB/Njn0q+hbEfEZllszAhbXN65m4JPJTALHce2Vrl1/E//5nUcdZqDRTEBSuY6HAtX4tlG0p7Ydvl0=
+	t=1709636966; cv=none; b=FK0xiOH6Nrhn/wo3NxYSDisJ4U9IZpq3995pxMzz+q9BwF3nSYH7WrZaAM3Wlt7oOR9QHPWvcSCTyDdox0huhHUKHhj85ENuopRrff6K//mTFii6884R8ah5+7UeTX52uEtifKGJTASbT1vPhEge7z7RgcX8Zb7+ZNo5MjT43sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709636611; c=relaxed/simple;
-	bh=F6CCUVJjzFeMM02fSLem8/HHQsC/x2Ttc9fdcPJ/3WI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Qzc7LJtTLFC+zWPz55eD3/TJIoC8Hg8o2TyU6YuJql2cHlvmmya6zCbTHXxUsfhJYIQSjWxmM0GtJng3few20sW+sJY6dKkcJl9gje33ZdVH2Ad+DuuPdJvGqt7CtlFVAia+heovGyJF+Cs7sGRnzbjmZwnIBxPcrahFgGa966g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+	s=arc-20240116; t=1709636966; c=relaxed/simple;
+	bh=YGFkNFR6BVT4HzZEwFfHVNLmz3rtTFWjnXbYP88kSxk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qgODXqfy8J+suO2oWbmrxnYG/C+4Hta+bFAOZGZE62KXzSYW/JsImTcpAc4byaEyrMDYLzv/XAzEvC6Rlh4E9GUIPXl/llG8eUbYdRhpDKUqcYVrtvG+Vj37W5J8xGL4A6boq7vQIcvLhlYdwnUoA+pV4DUkF9PRbETEMPu40bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c8440b33b6so263168539f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 03:03:29 -0800 (PST)
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7c85571a980so138415239f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 03:09:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709636609; x=1710241409;
+        d=1e100.net; s=20230601; t=1709636964; x=1710241764;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=61smrnQbOZotuakrMyfB8Rzk7rp+E0dZL4oOdtQON7w=;
-        b=Rtnh6t10R5KVGkFjRoY+Jn7UNKGMJHDeNn20GTGF97zbFNBNq4DR1kI+ieqAwalLRb
-         8eaW4Hwobkk3XBippanOMKpjOM8R9uy2LxHs6lxv29MDKnZFlEM3gHhiBd80hGMtJlOM
-         tl57DH1CGnQheUrNjO8xINVgTIaJFBd9RzNnqQ1iU5x2Ws+EZTSHyhxPtMKJ8VaCbtrC
-         uIqksZ5DLfFZnalKaz5WwJ5+K3wxY51nLprAONDMwU7xt8uIvXtFmzp3N+UzvrVX8HL8
-         UA7fpVrjdCK8aRQJo0CX+LdTBoYLBzeTY7tg+/ko3IA6wUtZWP3Bjf4jNbqLAhZDn7Vf
-         3XBw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/BbJSKjbA6LR76830Y9hF6ZPXWQhLs73wfAnkxwyL8eggNaFWJ/S41LCKQxqijNHOAygXwAI3wEqPQLw8OKZ2BKvYF0rWLQQIzxobMA==
-X-Gm-Message-State: AOJu0YzVAR4t+JpWeXIr4nXH8thJUZd01FT61v/gppsVY/WljL1rVHaj
-	R/EMsQWUwBzftxx+u2j0F27hLsxSbp2Sd/riSKbrcIvW7C2lFDOahW0lZk0VbFjKAqWfEM/CwBX
-	uLS3+wzwULeS6jWw2GtTcTh/qp414S+2aGDcqZXDsdjdMKASGAAjcYiI=
-X-Google-Smtp-Source: AGHT+IGgh9KUvpUSaCh3JUfC4N2IL69Gm5j634ufd+1IjISlPa1TgEQyqU69uqmEcoVB5GrFpmtzAlZM8qoNczAqZ9Eryh1ULJ6F
+        bh=NINenztmi1JIDOL7+T+uX7S56DXuTaxMwu0U9sYeZh8=;
+        b=amX4fpk4nFdU9GNGb2bgaLWBUzCIYJs1QUmjzjDUV5Fg9PySpYQTLeZXCWDwb3rkck
+         3+pXUtix2qlkJLsdFObNq/GsHe5iBtFyCAo/7N2r50MXq1S9SMpacf2ZMLBt0xjlfqfD
+         cUTQLyFKUN+1kFOV3/7xDHAN0gvKjkEx18239Wsnie4JlcqVq4iah3d2BLywctPFZHHJ
+         TD+sOPeYoyEsa9cqsHUZK4o/NXycW2BjPWzmkHxGM7pZUxjTUqEApesUKPpBpnb1poMJ
+         1g27gyDTa/WkjUetLirV9l8Vtt/DdoiS2L9URVvtPKEpYlcfVjtvtEhbm5KNmg7jKZu5
+         RhZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7QROw2ZWAL5f/XD0Fle1HvF8/SU46piUhM2mxxXuFGC1wmEEukvJx/dbkNWxzYm2qMuNFN8MRfFppylM6XT1lucINE6PooxwcSXVwig==
+X-Gm-Message-State: AOJu0Yy0vkDNUTnaCYiUbur3ijk18dSsZhPEG9A9I8iWRUDz1OypJ5h/
+	AlpsBiIYB9X+1Q1OoKqZSfL6sTkc1tJpNg62C2xRAuK4gvdTii7s5UIXSxRNeJdSu61TCIw0uPP
+	ZyOV4aZwL1/H9HOd81GpxbNO/63gKGGrrXgWUTECyXHckLMbJ8ABnmrQ=
+X-Google-Smtp-Source: AGHT+IE8tLV4V8t6SSMxemP9bmpaV+de9LW7kK6fYoUBrxgLrKYcz39WotJL8USLPdsfzWA0LRuRhuqaoYh+S/SiAs0RcNxheZBZ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1486:b0:7c8:3577:2a50 with SMTP id
- a6-20020a056602148600b007c835772a50mr402750iow.0.1709636609275; Tue, 05 Mar
- 2024 03:03:29 -0800 (PST)
-Date: Tue, 05 Mar 2024 03:03:29 -0800
+X-Received: by 2002:a05:6638:35a7:b0:474:d2f6:f0d1 with SMTP id
+ v39-20020a05663835a700b00474d2f6f0d1mr71197jal.1.1709636964623; Tue, 05 Mar
+ 2024 03:09:24 -0800 (PST)
+Date: Tue, 05 Mar 2024 03:09:24 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca86690612e7cacd@google.com>
-Subject: [syzbot] [gfs2?] WARNING in gfs2_check_blk_type (2)
-From: syzbot <syzbot+26e96d7e92eed8a21405@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000f8b0ab0612e7dffa@google.com>
+Subject: [syzbot] Monthly ntfs3 report (Mar 2024)
+From: syzbot <syzbot+list6abea8b8591745b4404a@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Hello ntfs3 maintainers/developers,
 
-syzbot found the following issue on:
+This is a 31-day syzbot report for the ntfs3 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ntfs3
 
-HEAD commit:    90d35da658da Linux 6.8-rc7
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10bb48e4180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=119d08814b43915b
-dashboard link: https://syzkaller.appspot.com/bug?extid=26e96d7e92eed8a21405
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17fcb02e180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1028a27a180000
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 47 issues are still open and 41 have been fixed so far.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/821deeb51f0a/disk-90d35da6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9a7d492f89d7/vmlinux-90d35da6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/78bfac3e2f5d/bzImage-90d35da6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a2629006a328/mount_0.gz
+Some of the still happening issues:
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=130748e4180000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=108748e4180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=170748e4180000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+26e96d7e92eed8a21405@syzkaller.appspotmail.com
-
-gfs2: fsid=syz:syz.0: first mount done, others may mount
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5058 at fs/gfs2/rgrp.c:2630 gfs2_check_blk_type+0x44e/0x680 fs/gfs2/rgrp.c:2630
-Modules linked in:
-CPU: 1 PID: 5058 Comm: syz-executor354 Not tainted 6.8.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-RIP: 0010:gfs2_check_blk_type+0x44e/0x680 fs/gfs2/rgrp.c:2630
-Code: d4 01 00 00 8b 1b 89 df 44 89 f6 e8 4c 49 bd fd 4c 89 74 24 10 44 39 f3 76 23 e8 7d 47 bd fd 45 31 ed eb 70 e8 73 47 bd fd 90 <0f> 0b 90 41 bf f9 ff ff ff 48 8b 5c 24 18 e9 46 01 00 00 e8 5a 47
-RSP: 0018:ffffc900040d78c0 EFLAGS: 00010293
-RAX: ffffffff83d6242c RBX: ffff88802ee40028 RCX: ffff8880779e0000
-RDX: 0000000000000000 RSI: 0000000000000012 RDI: 0000000000000013
-RBP: ffffc900040d79d0 R08: ffffffff83d62422 R09: 1ffff1100f3b75dc
-R10: dffffc0000000000 R11: ffffed100f3b75dd R12: 1ffff11005dc8006
-R13: ffff88802ee40000 R14: 0000000000000012 R15: 0000000000000013
-FS:  000055555631c380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000066c7e0 CR3: 000000002aba0000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- gfs2_inode_lookup+0xb05/0xc60 fs/gfs2/inode.c:178
- gfs2_lookup_by_inum+0x51/0xf0 fs/gfs2/inode.c:251
- gfs2_get_dentry fs/gfs2/export.c:139 [inline]
- gfs2_fh_to_dentry+0x13a/0x1f0 fs/gfs2/export.c:160
- exportfs_decode_fh_raw+0x152/0x5f0 fs/exportfs/expfs.c:444
- exportfs_decode_fh+0x3c/0x80 fs/exportfs/expfs.c:584
- do_handle_to_path fs/fhandle.c:155 [inline]
- handle_to_path fs/fhandle.c:210 [inline]
- do_handle_open+0x494/0x650 fs/fhandle.c:226
- do_syscall_64+0xf9/0x240
- entry_SYSCALL_64_after_hwframe+0x6f/0x77
-RIP: 0033:0x7f87a993d839
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff387ac1f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000130
-RAX: ffffffffffffffda RBX: 00007fff387ac3c8 RCX: 00007f87a993d839
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000004
-RBP: 00007f87a99c3610 R08: 0000000000000000 R09: 00007fff387ac3c8
-R10: 00007f87a9978bf3 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff387ac3b8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
+Ref  Crashes Repro Title
+<1>  11885   Yes   VFS: Busy inodes after unmount (use-after-free)
+                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
+<2>  3848    Yes   kernel BUG at fs/ntfs/aops.c:LINE!
+                   https://syzkaller.appspot.com/bug?extid=6a5a7672f663cce8b156
+<3>  2589    Yes   possible deadlock in ni_fiemap
+                   https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
+<4>  2164    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
+                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
+<5>  2136    Yes   KMSAN: uninit-value in longest_match_std (2)
+                   https://syzkaller.appspot.com/bug?extid=08d8956768c96a2c52cf
+<6>  1940    Yes   kernel BUG in __ntfs_grab_cache_pages
+                   https://syzkaller.appspot.com/bug?extid=01b3ade7c86f7dd584d7
+<7>  1785    Yes   possible deadlock in attr_data_get_block
+                   https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
+<8>  1003    Yes   possible deadlock in mi_read
+                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
+<9>  672     Yes   possible deadlock in ntfs_fiemap
+                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
+<10> 645     Yes   possible deadlock in filemap_fault
+                   https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
 
 ---
 This report is generated by a bot. It may contain errors.
 See https://goo.gl/tpsmEJ for more information about syzbot.
 syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+You may send multiple commands in a single email message.
 
