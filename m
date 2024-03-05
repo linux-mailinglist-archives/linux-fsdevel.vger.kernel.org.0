@@ -1,146 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-13588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF25A8719C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:41:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4508719E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 10:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A617428204D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 09:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CDCCB22F12
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 09:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA053537E9;
-	Tue,  5 Mar 2024 09:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RskWlH7X"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F08537E9;
+	Tue,  5 Mar 2024 09:48:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28D0537E6
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 09:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4B45339E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 09:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709631693; cv=none; b=EhG124r1I0N3CEUQBoTu9JiAt8c0YXYa+1XQgY1c3pwPkSCoCOYhZiQMHbVlnlY24k3d4DqUIgwiFmcH1FR8Nkn7hj3mguhchRBnAWi83MIw9FTEwxxXTwzHuvYAf49wSzcpBv8tY1al55tAfCGC2bRqtP1nqCMiISjbgT7j1YE=
+	t=1709632086; cv=none; b=rTvbCoOk8Yt5rONlWFkF5oBbvWuSoT4AfHV1smr2jZ1FOw57XQmz614rmMFb1gMAp1zLW316vfmw6woMycrO6h7XI2FuLFSfHtqQJCavtWtiRVuI16+Hbc7XC8HocWwnaXNlSAbQUuEYG29ddfL2YAMgcH4HVmTVN6ARBxRH2xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709631693; c=relaxed/simple;
-	bh=yNMRaUkoBUGzMo4lYC++zBwXHqvVQ2SDiAjTQi1KynE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNNySTYa5e19Qml8g0omh79i0/f1MRKEfDfCum6LloLbgoHDKpMCTRcqyY07D+6ZLTvK/q4orQnw6EEP4vLL9CZ5kIX7M+gWTU/0UexqF4MUivKwKrkYoCJt1msQUOBqJNEdetijyGCXvZ8W4i5j1EA4SCKJc1M/SJ5TRBdL81g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RskWlH7X; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6e5b1c6daa3so3880820b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 01:41:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1709631691; x=1710236491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=as9+lE8KnefmxAuKs+ZS/mXcrbxKlrRRgGu9dYI0Ql4=;
-        b=RskWlH7XdjX4qeIQWlvvNpjHTHq0o33PhnA/rXe58565YvM0zbizX0EACWfdw9sq45
-         kiTI44oQqKdLorR03MzTBG63Di9n4Zio+lzOVOGnlRZY0ejH5nudNqjCygIAcR+Ha+lq
-         WXxm8AI5OPheLbJAUvW1MnQDAP08WbmcINil0=
+	s=arc-20240116; t=1709632086; c=relaxed/simple;
+	bh=FUV2UfMDI7InnPdcCSNJGtUvjpOsTPaChu2eym3FVR8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZaZlbP6Bb1Gg8HdfscsJgVnGi8iVsde6vS38/etLNJdsjG85bThA8zHySxGtRinCfGGirLhtVlhnKC7kxY/mDcCjhRbHFKW/Zw9hbujt0Cu6waZNpUSEmfzZQIrUSAPK5+mFMU55+VoKoirZEdQwzWa+om8Ol/huJknozJcQVMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c7f57fa5eeso486664339f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 01:48:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709631691; x=1710236491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=as9+lE8KnefmxAuKs+ZS/mXcrbxKlrRRgGu9dYI0Ql4=;
-        b=bBVOyX4h9Z3Oqc10KiS3OUFHS28t/g2PHdlchn84PVm6QcsxUTmpMqNtPIH3+XqFc6
-         WS8S4IGrsFyMDctIx6C3YXUcHb++I9z9XJZMNOqfgCs8eXzQ0zJUdZZT9eyKyiwEsOAG
-         /ZhYZHbeD1HmuxtQbJIxB72doX8reTGtxW8NJ0LXmo58hEDN9TJFMVdh3L0OGnGYrG1d
-         1OqKjppe95ysjXDwBJrtKUdspO+7DAY4zr/qdStS9mgdJ0N8UvisYuebVB6EwsjWBgPJ
-         PU3t63AAVJsx85NtbQQJSRjT669GWOZ+CJI3RcT86ebfZx/Vo29EvXEN897bteot++PF
-         VW4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUZja6BYfE1Fx1cgEZ49gsSjDE3cmE2YTIxT81xAlQV3PAC+Z4eJ0MGWLDNf5G8iEZ6OjybdwLw5RCyZhdJKwXsslqBtyjspVsAl/P8Lw==
-X-Gm-Message-State: AOJu0YzxWNeHEkPG9z9b5Pi4KEYeeMSg7/jp61BKhw64DS5utzj6wqn8
-	BoSN4pGK6pvS2dOIko6HaNolcfuPF62xF0SDoWQBdHpjHREpVLBRcCEL4lLoxA==
-X-Google-Smtp-Source: AGHT+IHLWDn0ImiexmZH+l62XkhFStqZ8wnEDf2Edq3sxo8a271Wx6ORwR5cKmQu3cOMJO0RH2ld9w==
-X-Received: by 2002:a05:6a20:7489:b0:1a1:4b3f:5571 with SMTP id p9-20020a056a20748900b001a14b3f5571mr1546542pzd.13.1709631691058;
-        Tue, 05 Mar 2024 01:41:31 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id fb32-20020a056a002da000b006e6253bbcb7sm2882057pfb.61.2024.03.05.01.41.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 01:41:30 -0800 (PST)
-Date: Tue, 5 Mar 2024 01:41:29 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>,
-	linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Mike Frysinger <vapier@chromium.org>
-Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
-Message-ID: <202403050134.784D787337@keescook>
-References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
- <20240304-zugute-abtragen-d499556390b3@brauner>
- <202403040943.9545EBE5@keescook>
- <20240305-attentat-robust-b0da8137b7df@brauner>
+        d=1e100.net; s=20230601; t=1709632083; x=1710236883;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F/PW67TWH8skqmU8vKJwkoq7t3qUI1ZITrOnwecy99Q=;
+        b=oQJtuKg/T+59+S20ymF2myDEmxKsil3hnWa2Kl/z9NF7sTOeqOXt6Vct4KShFhKMip
+         doq1GkwGANbG0kplB0bHzclAb/shpXeDwpRhqmgNtDtGSNyHm8WGvfhD6rethWPGHJ5i
+         M/6yOOwUdZAUukfVXKa490MZEwL6do361RYY6dN4YXcMrro9L0mLTDI1d4yo0j5KW0yP
+         QS0iPdmbHBxbIpD8HeEJknk4JzVi4kUklkKXpll77vhTFg2otuNCWxikzda28h3guCuE
+         ILVEtn+9HWXEo8uDXvTKhDzd4JXGM1MNKr6rVMMbCqsAKG/A/uBhnId3Z+0YdGDFizmy
+         TZgA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2gBjWn29H6A66fCepK40xFb1HIeFjzboFQu1Wjn0Aw1kQLrPGpTmf1Dw4uoRhAVrZJ5ibzv/uK0BwguIQUkFJSGdfpmfx7FZAHcRDoQ==
+X-Gm-Message-State: AOJu0YyPMlHdXFy53O5pOwnxNMEBggUHnEXUZSNpdrKiFVnG9ZRwvYx2
+	Nr/JM5rpb27zESZtBad18D/rIYhkHFfAE8qoG6MzHL4NaOfhubpHWRK2wP+cYqfG/y0iQKYoWCZ
+	ldjbo9Siv2oKa7/hMh5tIaUvG8MZyGiHzZN4oApQvxWBTP8X1pB423GU=
+X-Google-Smtp-Source: AGHT+IG6l3HNMZupoKsS/1gWkPsOulXpjgLde5BhCiJPeE6FXHMXeTqCfcGSOQh3Xyp9sknk0aj3dTMHR9Y5+rBXctugU6xVy/Vs
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240305-attentat-robust-b0da8137b7df@brauner>
+X-Received: by 2002:a05:6638:1611:b0:474:edd2:24d5 with SMTP id
+ x17-20020a056638161100b00474edd224d5mr360168jas.4.1709632083746; Tue, 05 Mar
+ 2024 01:48:03 -0800 (PST)
+Date: Tue, 05 Mar 2024 01:48:03 -0800
+In-Reply-To: <000000000000c925dc0604f9e2ef@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000c6e0a0612e6bd58@google.com>
+Subject: Re: [syzbot] [gfs2?] BUG: sleeping function called from invalid
+ context in gfs2_withdraw
+From: syzbot <syzbot+577d06779fa95206ba66@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, axboe@kernel.dk, brauner@kernel.org, 
+	gfs2@lists.linux.dev, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rpeterso@redhat.com, 
+	syzkaller-bugs@googlegroups.com, yuran.pereira@hotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 05, 2024 at 09:59:47AM +0100, Christian Brauner wrote:
-> > > Uhm, this will break the seccomp notifier, no? So you can't turn on
-> > > SECURITY_PROC_MEM_RESTRICT_WRITE when you want to use the seccomp
-> > > notifier to do system call interception and rewrite memory locations of
-> > > the calling task, no? Which is very much relied upon in various
-> > > container managers and possibly other security tools.
-> > > 
-> > > Which means that you can't turn this on in any of the regular distros.
-> > 
-> > FWIW, it's a run-time toggle, but yes, let's make sure this works
-> > correctly.
-> > 
-> > > So you need to either account for the calling task being a seccomp
-> > > supervisor for the task whose memory it is trying to access or you need
-> > > to provide a migration path by adding an api that let's caller's perform
-> > > these writes through the seccomp notifier.
-> > 
-> > How do seccomp supervisors that use USER_NOTIF do those kinds of
-> > memory writes currently? I thought they were actually using ptrace?
-> > Everything I'm familiar with is just using SECCOMP_IOCTL_NOTIF_ADDFD,
-> > and not doing fancy memory pokes.
-> 
-> For example, incus has a seccomp supervisor such that each container
-> gets it's own goroutine that is responsible for handling system call
-> interception.
-> 
-> If a container is started the container runtime connects to an AF_UNIX
-> socket to register with the seccomp supervisor. It stays connected until
-> it stops. Everytime a system call is performed that is registered in the
-> seccomp notifier filter the container runtime will send a AF_UNIX
-> message to the seccomp supervisor. This will include the following fds:
-> 
-> - the pidfd of the task that performed the system call (we should
->   actually replace this with SO_PEERPIDFD now that we have that)
-> - the fd of the task's memory to /proc/<pid>/mem
-> 
-> The seccomp supervisor will then perform the system call interception
-> including the required memory reads and writes.
+syzbot suspects this issue was fixed by commit:
 
-Okay, so the patch would very much break that. Some questions, though:
-- why not use process_vm_writev()?
-- does the supervisor depend on FOLL_FORCE?
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Perhaps is is sufficient to block the use of FOLL_FORCE?
+    fs: Block writes to mounted block devices
 
-I took a look at the Chrome OS exploit, and I _think_ it is depending
-on the FOLL_FORCE behavior (it searches for a symbol to overwrite that
-if I'm following correctly is in a read-only region), but some of the
-binaries don't include source code, so I couldn't easily see what was
-being injected. Mike or Adrian can you confirm this?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119f927a180000
+start commit:   6465e260f487 Linux 6.6-rc3
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8d7d7928f78936aa
+dashboard link: https://syzkaller.appspot.com/bug?extid=577d06779fa95206ba66
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10dbcdc1680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a367b6680000
 
--- 
-Kees Cook
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
