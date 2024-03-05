@@ -1,122 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-13605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288AA871C8F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 12:01:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3957871CD1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 12:04:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9381C22CF8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:01:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69100285D08
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 11:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA205A118;
-	Tue,  5 Mar 2024 10:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915A25812B;
+	Tue,  5 Mar 2024 11:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="GukJuJeO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvBaNGpK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE57A59B54
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 10:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F9E1C6AD;
+	Tue,  5 Mar 2024 11:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709636268; cv=none; b=DxnwCycyFNhYtqYTcueZJT7KRmCY82v1MWiKoFZR+S+/aIaEWMY9vYUeo+pHMq5zfaFAOSPwDhlGtTkV6H259FTTalbXFVOjTGQ8w4/M1ALya3l1yvhOcHS1xMFYQl0zyf9g4wL+f3SUTskozucJT/fjgdL90pV3+FLS3GlakJg=
+	t=1709636608; cv=none; b=Pyrl6H2zxjTcrU+bL+W2Vy5+cq1mAIIqWYP1CPMFpTCnfhYreHr3T6Qu0bd3Mqwyth0wHR7F1xlqIX13MPuMJsym8tqGCIxA4gnJCjiQ3GkOcTjDahy5YzBUD0KMGde3/wy4N2U8VE3cDGi8/Vst7bOX5hEaMa1Hlo8PV0GVEyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709636268; c=relaxed/simple;
-	bh=W5nH/t7VJIrVAtMF9iJfdBXs0AEjnwK0LP0IMVBjv4Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=drL6w+6TUOo4r/rRlIwYqudfCDqL/kEwis++9vVT38ZCOcCXC8gPX339YkOlfn1sj2Q4R2qj3tOzs6s9Mrv5dqITFauKkbRbhHvpzaZlFyUGVlMHRvX2fKjf6rVqO/30BkxlGBodbLIcBKSinEtFum0x+7DxKf9plhScmLrv6Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=GukJuJeO; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a4429c556efso739645566b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 02:57:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1709636263; x=1710241063; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pVi6jrroLkoTY6YGhLQ6aIfOlmKSMEPfeYKlERsXkgU=;
-        b=GukJuJeO57+nuOQCBYC5yzqzWOeoFOYdnHmuRy6YumVG3YCoq54ThwMKFdUU9A9l/0
-         JaA+2aVyzZq93a9wkibmEjPILyEze7RAXYJ5pmE+gdIEM178G+PeN3jBlDW0Rxu00qYJ
-         TE4nFH6DNTvyhwT2cQ6H8H0Iudr2lJDPMuZTk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709636263; x=1710241063;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pVi6jrroLkoTY6YGhLQ6aIfOlmKSMEPfeYKlERsXkgU=;
-        b=UPXY+Cg9zVP4sAh0+TgsXqLnWVXUSU8d9PnABzHf/kd9ORQ/mw6szh2tsTP+LPjvDZ
-         l8DbrJso6ZPlfhq3BiH+6kH6yfMMnWFTsUjlTg+wtiFTPSf3sarp6/Sb3LvxCxQmPOQa
-         wCMpi/1cG230Vp8UvyfvXup3TUutJPSYSvlCOlM2mpdXyBirbC/nM7/U+/rMvlWmsxlh
-         Z7sJFAcQB14gYDWoxrhcZRyn8CggA+WYZiHlZX8yz7jPYsg52nnl0tm1OvdagQHIjzPt
-         PfcGT8vGRKxlWej90+B+oJyRO21p+tdDXRGAHz9I5Rr6nRyxyU3W21hrJdO2zJAZg+ZY
-         4fXw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0dU04cec7KgSC+JOJ3JSgQcsrSTHsw4X63nUyrX2QhcbWDPlH6xtb33vOTAb7AE9LX9q2FVqlUreQS8wS02+prawS8ezb6tFAN32LrA==
-X-Gm-Message-State: AOJu0YzbiWrEvqJ9X5sFttw1mar/SxmahOGdWV3ANWbTrTDrpNvjpt9g
-	8BIMHJzzNcj4TLwSiwNBCE/YrBdAo/Ssq5YBRPCr5qidA5BBvv2/baigapV2PmLRwZ51zu9IhTt
-	iSSLvbdWLoJdGQzddK/B65GrKX6R+8vsx9CnvXlws2s0gX49f
-X-Google-Smtp-Source: AGHT+IG8oj+Yyr+aeyaK7vVIVdQXYY3lp35///+Neq/VmWJaAPckYCAKH9/0vHtoiwpcD1wnOtLtmZIGyS4+KHMjDG4=
-X-Received: by 2002:a17:906:2411:b0:a44:2636:9965 with SMTP id
- z17-20020a170906241100b00a4426369965mr8189799eja.29.1709636262943; Tue, 05
- Mar 2024 02:57:42 -0800 (PST)
+	s=arc-20240116; t=1709636608; c=relaxed/simple;
+	bh=CWsbl+d48blGuvvq/hiJnHb8eCwdGeKP67OqIvqbKVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ot0DIbjPB4Aue9PVlYegehm+sEX+PIvaSejlrfuzk4+wiJLYiW5Nwz7nkDfy2zm/NARMjf6PhG/bcnmjdi7A3K+Xq4u3zgDUFJcrdISkwK/JxBIIv5pOWLjkLnR6ffSIyhZTgaK9yrdv6dZ4y+JZ1tcN+cPJ59cWeez3J9xN3F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvBaNGpK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E302C433C7;
+	Tue,  5 Mar 2024 11:03:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709636607;
+	bh=CWsbl+d48blGuvvq/hiJnHb8eCwdGeKP67OqIvqbKVs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lvBaNGpKF8VbnuFraQMyOVDjcZgCgt9N6u7Ba5VZKyfQsdEyYA0cX5A/9SD8FaRZ3
+	 3XFOhrmT0dsEU6YRaOGcrBWYag06ujtBruRZtZck2CIInZN+Y6rtwkRausBuDEkkOq
+	 JThj5M/gYoFEYO3N4sKpl+6FCQ3mQnIRmBgNN3CFJypU9bkf+2RJvcTX6xW2yAHaNS
+	 PxiQK7rq4fA1xBsKfffbmSYlDrrR/5ze1oF6fWYhYH+Lc/CsLXr1D6cvtzcISCiol+
+	 lngTlZ1QjFCTrGXTrzjh79aPrBY9P2KY2sFxtOYfLlWqBmFoqfvISthONRAyM681sC
+	 kMc+Knqd67ITA==
+Date: Tue, 5 Mar 2024 12:03:21 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <keescook@chromium.org>, 
+	Matthew Denton <mpdenton@chromium.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, 
+	linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Guenter Roeck <groeck@chromium.org>, 
+	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Mike Frysinger <vapier@chromium.org>
+Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
+Message-ID: <20240305-gremien-faucht-29973b61fb57@brauner>
+References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
+ <20240304-zugute-abtragen-d499556390b3@brauner>
+ <202403040943.9545EBE5@keescook>
+ <20240305-attentat-robust-b0da8137b7df@brauner>
+ <202403050134.784D787337@keescook>
+ <20240305-kontakt-ticken-77fc8f02be1d@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240206142453.1906268-1-amir73il@gmail.com> <20240206142453.1906268-4-amir73il@gmail.com>
- <450d8b2d-c1d0-4d53-b998-74495e9eca3f@linux.alibaba.com> <CAOQ4uxhAY1m7ubJ3p-A3rSufw_53WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com>
- <CAJfpegu3_sUtTC1uCD7kFehJWTivkN_OjcQGsSAMkzEdub=XTw@mail.gmail.com>
- <CAOQ4uxji-yzWFeQYP9FKvVXg473GP6tC2pyHUbEPoYxT+qDYsA@mail.gmail.com>
- <4e3d80ad-3c61-4adf-b74f-0c62e468eb54@kernel.dk> <CAJfpegsAs3V8jU2UWyJUB33FCbmoFiOSp9Cjzrgc9+XcomN0Uw@mail.gmail.com>
- <20240229-ausrollen-verebben-ea5597a9cfa0@brauner> <20240229-stochern-fachsimpeln-ad8227434069@brauner>
-In-Reply-To: <20240229-stochern-fachsimpeln-ad8227434069@brauner>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 5 Mar 2024 11:57:31 +0100
-Message-ID: <CAJfpegsyGwuVq_b4ytwr3wYYNri7Yedn+Fkoof=bCNJf0bcdmg@mail.gmail.com>
-Subject: Re: [PATCH v15 3/9] fuse: implement ioctls to manage backing files
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Amir Goldstein <amir73il@gmail.com>, 
-	Jingbo Xu <jefflexu@linux.alibaba.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	linux-fsdevel@vger.kernel.org, Alessio Balsini <balsini@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240305-kontakt-ticken-77fc8f02be1d@brauner>
 
-On Thu, 29 Feb 2024 at 11:17, Christian Brauner <brauner@kernel.org> wrote:
->
-> On Thu, Feb 29, 2024 at 11:15:35AM +0100, Christian Brauner wrote:
-> > On Wed, Feb 28, 2024 at 04:01:17PM +0100, Miklos Szeredi wrote:
-> > > On Wed, 28 Feb 2024 at 15:32, Jens Axboe <axboe@kernel.dk> wrote:
-> > > >
-> > > > On 2/28/24 4:28 AM, Amir Goldstein wrote:
-> > >
-> > > > > Are fixed files visible to lsof?
-> > > >
-> > > > lsof won't show them, but you can read the fdinfo of the io_uring fd to
-> > > > see them. Would probably be possible to make lsof find and show them
-> > > > too, but haven't looked into that.
-> >
-> > I actually wrote about this before when I suggested IORING_OP_FIXED_FD_INSTALL:
-> > https://patchwork.kernel.org/project/io-uring/patch/df0e24ff-f3a0-4818-8282-2a4e03b7b5a6@kernel.dk/#25629935
->
-> I think that it shouldn't be a problem as long as userspace has some way
-> of figuring this out. So extending lsof might just be enough for this.
+On Tue, Mar 05, 2024 at 10:58:31AM +0100, Christian Brauner wrote:
+> On Tue, Mar 05, 2024 at 01:41:29AM -0800, Kees Cook wrote:
+> > On Tue, Mar 05, 2024 at 09:59:47AM +0100, Christian Brauner wrote:
+> > > > > Uhm, this will break the seccomp notifier, no? So you can't turn on
+> > > > > SECURITY_PROC_MEM_RESTRICT_WRITE when you want to use the seccomp
+> > > > > notifier to do system call interception and rewrite memory locations of
+> > > > > the calling task, no? Which is very much relied upon in various
+> > > > > container managers and possibly other security tools.
+> > > > > 
+> > > > > Which means that you can't turn this on in any of the regular distros.
+> > > > 
+> > > > FWIW, it's a run-time toggle, but yes, let's make sure this works
+> > > > correctly.
+> > > > 
+> > > > > So you need to either account for the calling task being a seccomp
+> > > > > supervisor for the task whose memory it is trying to access or you need
+> > > > > to provide a migration path by adding an api that let's caller's perform
+> > > > > these writes through the seccomp notifier.
+> > > > 
+> > > > How do seccomp supervisors that use USER_NOTIF do those kinds of
+> > > > memory writes currently? I thought they were actually using ptrace?
+> > > > Everything I'm familiar with is just using SECCOMP_IOCTL_NOTIF_ADDFD,
+> > > > and not doing fancy memory pokes.
+> > > 
+> > > For example, incus has a seccomp supervisor such that each container
+> > > gets it's own goroutine that is responsible for handling system call
+> > > interception.
+> > > 
+> > > If a container is started the container runtime connects to an AF_UNIX
+> > > socket to register with the seccomp supervisor. It stays connected until
+> > > it stops. Everytime a system call is performed that is registered in the
+> > > seccomp notifier filter the container runtime will send a AF_UNIX
+> > > message to the seccomp supervisor. This will include the following fds:
+> > > 
+> > > - the pidfd of the task that performed the system call (we should
+> > >   actually replace this with SO_PEERPIDFD now that we have that)
+> > > - the fd of the task's memory to /proc/<pid>/mem
+> > > 
+> > > The seccomp supervisor will then perform the system call interception
+> > > including the required memory reads and writes.
+> > 
+> > Okay, so the patch would very much break that. Some questions, though:
+> > - why not use process_vm_writev()?
+> 
+> Because it's inherently racy as I've explained in an earlier mail in
+> this thread. Opening /proc/<pid>/mem we can guard via:
+> 
+> // Assume we hold @pidfd for supervised process
+> 
+> int fd_mem = open("/proc/$pid/mem", O_RDWR);:
+> 
+> if (pidfd_send_signal(pidfd, 0, ...) == 0)
+>         write(fd_mem, ...);
+> 
+> But we can't exactly do:
+> 
+> process_vm_writev(pid, WRITE_TO_MEMORY, ...);
+> if (pidfd_send_signal(pidfd, 0, ...) == 0)
+>         write(fd_mem, ...);
+> 
+> That's always racy. The process might have been reaped before we even
+> call pidfd_send_signal() and we're writing to some random process
+> memory.
+> 
+> If we wanted to support this we'd need to implement a proposal I had a
+> while ago:
+> 
+> #define PROCESS_VM_RW_PIDFD (1 << 0)
+> 
+> process_vm_readv(pidfd,  ..., PROCESS_VM_RW_PIDFD);
+> process_vm_writev(pidfd, ..., PROCESS_VM_RW_PIDFD);
+> 
+> which is similar to what we did for waitid(pidfd, P_PIDFD, ...)
+> 
+> That would make it possible to use a pidfd instead of a pid in the two
+> system calls. Then we can get rid of the raciness and actually use those
+> system calls. As they are now, we can't.
 
-Problem is fdinfo on io_uring fd just contains the last component names.
+What btw, is the Linux sandbox on Chromium doing? Did they finally move
+away from SECCOMP_RET_TRAP to SECCOMP_RET_USER_NOTIF? I see:
 
-Do we want full "magic symlink" semantics for these?  I'm not sure.
-But just the last component does seem too little.
+https://issues.chromium.org/issues/40145101
 
-I've advocated using xattr for querying virtual attributes like these.
-So I'll advocate again.   Does anyone see a problem with adding
-
-getxattr("/proc/$PID/fdinfo/$IO_URING_FD",
-"io_uring:fixed_files:$SLOT:path", buf, buflen);
-
-?
-
-Thanks,
-Miklos
+What ever became of this?
 
