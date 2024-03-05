@@ -1,132 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-13565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9026987115F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 00:57:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6279871162
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 01:00:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA8F1C2048A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Mar 2024 23:57:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DDE1C21AF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 00:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68627D3F0;
-	Mon,  4 Mar 2024 23:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F4A7D09D;
+	Tue,  5 Mar 2024 00:00:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039CC7CF18;
-	Mon,  4 Mar 2024 23:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9913D76;
+	Tue,  5 Mar 2024 00:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709596666; cv=none; b=dtLM1RP6oh80urEdVpWnitSNmiWxZPlDGpxHIENBIBctsnEyu54FncSvQGmfsLhmZ1TM9yQSy7zO/kMadHQiRVsvq6HIcozrQec50/nwVULhAnvqdLFJzPe68VtH7gs7Q8mU61f5C+DyBV3O4dOtX3sJrUzqJsEBZVo0KGYiI3I=
+	t=1709596847; cv=none; b=D6/626FxKUpLEGxM1vP4aOn5fEJX4WbD+b2+blWDzQHbVutsW+kZK2F+o9bSRje19RnitAceaEbm46T3w0KRNcpjp1PluNsIJp5NJ5/LbdXjT99YU3NtpSqMG3pF5gljyBfLKNBs+CLEcqwi5dS5ZTpiefy5ICaV8+qqYCPsiiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709596666; c=relaxed/simple;
-	bh=joY7OG7UIn3bqxbd1zB9uJBeqBt8fu89bKu/J05OF6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JPvwfnhuFJBrNRhnIVHeZogvvAgW45yviUasU7q3QX1UPjAckJmDeL0aQhHdT5yW/ZZYUZcLW011BSu/h4/XGuYwRMN5PZp/PEAZyq6xlrQbZJpMMh5ayY5om3VuJTYEJlk8VDUUtEFbiMOkpgSHtc8QpaA3RFo90u8gPoWX7Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-29a378040daso3380517a91.1;
-        Mon, 04 Mar 2024 15:57:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709596664; x=1710201464;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NNchAcLGNEoVQRiIQolT0ekrjSxf/xSsvda4T8WFAVg=;
-        b=XEQEt84GUDOHbzyW8NpHABYnVFJ/KLqX/wuEzHq9jsfkbhqzb+c8V+G2eO6gFktr50
-         thbwlo4HmS5HYc4Z90LKLwsYUiS3cQOTQ4+9AyY79YTo0qsfEYS/x2saO9YVy6wcnJvy
-         lTT4nPAwITrxI/QZlTTHAr+6eFYJ6VogkFlfX457R+3VtrTgiGUUnjgeiiC5SO9lDxOk
-         EfKaITfvmMxtYp2SuNq7zohWA1fQi6H2FAUR0Mdv4oVtpGQGktaZnirA3nqzVqFy+GDz
-         j8ujYB0Bho1Ra4zd4j3o7azejDVM/8wkl6JwRk9EuaWB5sSBGEcA3IpZKmBOisbEPhwd
-         6l/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXtIPW2a3I5GR1YYzx8sZwFAn3jrFVq14LnkdpG6WT7PNgHeifpDLe1WVsRU0DHqCvumaRAqYVTANLrIwWz7PuClt2KHRmw
-X-Gm-Message-State: AOJu0YwksWasXXgXQ+WJOGLPDWUJzj5IpSZzer+gap/UbABb6Fwotfym
-	G2YccKZNZq7y0OOZHE05CRp/0Wt/YMyP+rJH/hkFyDln2CsKM8qB
-X-Google-Smtp-Source: AGHT+IFTcbyAlas9hiaR2yPLZelINquCk/T2EmyChkVZIasuRGL+rZe9Tyc7IYgYR+fNxQp6beAOHA==
-X-Received: by 2002:a17:90b:4017:b0:29b:294c:831d with SMTP id ie23-20020a17090b401700b0029b294c831dmr8173282pjb.38.1709596664208;
-        Mon, 04 Mar 2024 15:57:44 -0800 (PST)
-Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:9ba8:35e8:4ec5:44d1])
-        by smtp.gmail.com with ESMTPSA id gb2-20020a17090b060200b0029acce2420asm8286417pjb.10.2024.03.04.15.57.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 15:57:43 -0800 (PST)
-From: Bart Van Assche <bvanassche@acm.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Benjamin LaHaise <ben@communityfibre.ca>,
-	Eric Biggers <ebiggers@google.com>,
-	Avi Kivity <avi@scylladb.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	stable@vger.kernel.org
-Subject: [PATCH] fs/aio: Check IOCB_AIO_RW before the struct aio_kiocb conversion
-Date: Mon,  4 Mar 2024 15:57:15 -0800
-Message-ID: <20240304235715.3790858-1-bvanassche@acm.org>
-X-Mailer: git-send-email 2.44.0.rc1.240.g4c46232300-goog
+	s=arc-20240116; t=1709596847; c=relaxed/simple;
+	bh=6/a9wDUr/QyQhXmw269lOeSTRqoP345aUD2SKTmwk6Y=;
+	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
+	 In-Reply-To:References; b=PbsdtK1KR9Ed+If0zLSyS4C3jBGW6gqUPV+mt+LQ4UD/F5qO5OLAbYCs6ZMQnI2ejDaCEr+XjHjGfmmBAdT04uHE7VicCqXwNofe2kkObI6U2iNa3QEdSrQNZItP4fNFzMsXAYpR5/AVvp3lF6xrX8XJISaASr7lDGkj53w2BuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; arc=none smtp.client-ip=172.104.24.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
+Received: from quad.stoffel.org (097-095-183-072.res.spectrum.com [97.95.183.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.stoffel.org (Postfix) with ESMTPSA id 4D60E1E727;
+	Mon,  4 Mar 2024 19:00:38 -0500 (EST)
+Received: by quad.stoffel.org (Postfix, from userid 1000)
+	id 1FF6CA0265; Mon,  4 Mar 2024 19:00:37 -0500 (EST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-ID: <26086.24741.103765.962843@quad.stoffel.home>
+Date: Mon, 4 Mar 2024 19:00:37 -0500
+From: "John Stoffel" <john@stoffel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: John Stoffel <john@stoffel.org>,
+    linux-bcachefs@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org
+Subject: Re: [WIP] bcachefs fs usage update
+In-Reply-To: <apot5wnom6wqdvjb6hfforcooxuqonmjl7z6morjyhdbgi6isq@5fcb3hld62xu>
+References: <gajhq3iyluwmr44ee2fzacfpgpxmr2jurwqg6aeiab4lfila3p@b3l7bywr3yed>
+	<26084.50716.415474.905903@quad.stoffel.home>
+	<tis2cx7vpb2qyywdwq6a74o2ryjmnn7skhsrcarix7v4sz7vad@7sf7bh2unloo>
+	<26085.7607.331602.673876@quad.stoffel.home>
+	<apot5wnom6wqdvjb6hfforcooxuqonmjl7z6morjyhdbgi6isq@5fcb3hld62xu>
+X-Mailer: VM 8.2.0b under 28.2 (x86_64-pc-linux-gnu)
 
-The first kiocb_set_cancel_fn() argument may point at a struct kiocb
-that is not embedded inside struct aio_kiocb. With the current code,
-depending on the compiler, the req->ki_ctx read happens either before
-the IOCB_AIO_RW test or after that test. Move the req->ki_ctx read such
-that it is guaranteed that the IOCB_AIO_RW test happens first.
+>>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
 
-Reported-by: Eric Biggers <ebiggers@kernel.org>
-Cc: Benjamin LaHaise <ben@communityfibre.ca>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Avi Kivity <avi@scylladb.com>
-Cc: Sandeep Dhavale <dhavale@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: stable@vger.kernel.org
-Fixes: b820de741ae4 ("fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted via libaio")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- fs/aio.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+> On Sun, Mar 03, 2024 at 08:02:47PM -0500, John Stoffel wrote:
+>> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+>> 
+>> > On Sun, Mar 03, 2024 at 01:49:00PM -0500, John Stoffel wrote:
+>> >> Again, how does this help the end user?  What can they do to even
+>> >> change these values?  They're great for debugging and info on the
+>> >> filesystem, but for an end user that's just so much garbage and don't
+>> >> tell you what you need to know.
+>> 
+>> > This is a recurring theme for you; information that you don't
+>> > understand, you think we can just delete... while you also say that you
+>> > haven't even gotten off your ass and played around with it.
+>> 
+>> Fair complaint.  But I'm also coming at this NOT from a filesystem
+>> developer point of view, but from the Sysadmin view, which is
+>> different.  
+>> 
+>> > So: these tools aren't for the lazy, I'm not a believer in the Gnome
+>> > 3 philosophy of "get rid of anything that's not for the lowest
+>> > common denominator".
+>> 
+>> Ok, I can see that, but I never was arguing for simple info, I was
+>> also arguing for parseable information dumps, for futher tooling.  I'm
+>> happy to write my own tools to parse this output if need be to give
+>> _me_ what I find useful.  
+>> 
+>> But you edlided that part of my comments.  Fine.  
+>> 
+>> > Rather - these tools will be used by people interested in learning more
+>> > about what their computers are doing under the hood, and they will
+>> > definitely be used when there's something to debug; I am a big believer
+>> > in tools that educate the user about how the system works, and tools
+>> > that make debugging easier.
+>> 
+>> > 'df -h' already exists if that's the level of detail you want :)
+>> 
+>> Sure, but when it comes to bcachefs, and sub-volumes (I'm following
+>> the discussion of statx and how to make sub-volumes distinct from
+>> their parent volumes) will df -h from gnu's coreutils package know how
+>> to display the extra useful information, like compression ratios,
+>> dedupe, etc.  And how snapshots are related to each other in terms of
+>> disk space usage.  
 
-diff --git a/fs/aio.c b/fs/aio.c
-index da18dbcfcb22..9cdaa2faa536 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -589,8 +589,8 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
- 
- void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
- {
--	struct aio_kiocb *req = container_of(iocb, struct aio_kiocb, rw);
--	struct kioctx *ctx = req->ki_ctx;
-+	struct aio_kiocb *req;
-+	struct kioctx *ctx;
- 	unsigned long flags;
- 
- 	/*
-@@ -600,9 +600,13 @@ void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
- 	if (!(iocb->ki_flags & IOCB_AIO_RW))
- 		return;
- 
-+	req = container_of(iocb, struct aio_kiocb, rw);
-+
- 	if (WARN_ON_ONCE(!list_empty(&req->ki_list)))
- 		return;
- 
-+	ctx = req->ki_ctx;
-+
- 	spin_lock_irqsave(&ctx->ctx_lock, flags);
- 	list_add_tail(&req->ki_list, &ctx->active_reqs);
- 	req->ki_cancel = cancel;
+> Getting subvolumes plumbed all the way into df -h is not on my short
+> term radar. I _am_ looking at, possibly, standardizing some APIs for
+> walking subvolumes - so depending on how that goes, perhaps.
+
+And that's fine.  Then maybe one answer is to have a 'bcachefs fs df'
+command which does show data like I'm asking for, but the focus is
+more on the end user, not the developer.  
+
+>> This is not the same level of detail needed by a filesystem developer,
+>> and I _never_ said it was.  I'm looking for the inforation
+>> needed/wanted by a SysAdmin when an end user comes whining about
+>> needing more space.  And then being able to examine the system
+>> holistically to give them an answer.  Which usually means "delete
+>> something!"  *grin*
+
+> 'bcachefs fs usage' needs to show _all_ disk accounting information
+> bcachefs has, because we need there to be one single tool that shows all
+> the information we have - that's this tool.
+
+Sure, but does it need to show all the information all the time?  
+
+> If we're collecting information, it needs to be available.
+
+Sure, but does it need to be shown by default?  
+
+> There will no doubt be switches and options for providing reduced forms,
+> but for now I'm mainly concerned with making sure all the information
+> that we have is there in a reasonably understandable way.
+
+That's an answer then.  So if I want less information, I have to step
+up and generate a patch bundle to propose such changes.  
+
+Whcih I know I won't get to any time soon since I've got other
+commitements first, and I'm not a strong developer, I'm a long time
+SysAdmin.
+
+
 
