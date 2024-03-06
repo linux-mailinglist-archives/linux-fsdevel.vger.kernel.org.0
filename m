@@ -1,120 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-13671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D10C872B4B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 00:52:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD70872C9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 03:18:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E543EB2565F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Mar 2024 23:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEAB41C21769
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 02:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2838112DDA3;
-	Tue,  5 Mar 2024 23:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BFAD53F;
+	Wed,  6 Mar 2024 02:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hWQNwmko"
+	dkim=pass (2048-bit key) header.d=endrift.com header.i=@endrift.com header.b="Sd1xb/lx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from endrift.com (endrift.com [173.255.198.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F23012DD9C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Mar 2024 23:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAD9D51D
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 02:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.255.198.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709682735; cv=none; b=R2/JaDHT7cY4vUeFTMjeXE3BVUB60M02xyfBofx4qLLdohBHq8eJbOV/oLTXTAhQdBj6O5k1ptLtXgvxjwQegx1GYn1ZpInZcQpmdXDaVSp+kK5po11miSOM++Wbb8hXoktkhqeDQhmV5NuCU1iYgkwKJnZX/jd+BPR5Z0K4IxA=
+	t=1709691482; cv=none; b=FnEObz7YArGxtjnoYMrij0rvzhLEgWWuFdkNiX6W/h/P9bqoUgLIRT7dfbadTleJCJGiqL8dlNy+XFiJsCS1TC3X94YRQnIic5ZzB/1BM181OS2i4QmcsM/HhJLJ8eTzTbVXcYChBRAkROxycaQIK4+GbRbWKjZqwp3Iry01HlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709682735; c=relaxed/simple;
-	bh=jad1ZTuPBnQnVhyAUaIXJ0sj2KmNN+XpvGPh1Z8NAiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIE9RL6FEKg9xmEUInQgd0XBzrZnIzuwS5c9QVRVwoGB+wmA/7Wls8+TSMP9dxDI82w57eOYDv6gqZYwhyzBkYvNiLzPkkchisXLLmRD0o/nV7ppbLbSvnI+uGmb5vaIYsyjj9cI8IqEBXuWSxCG8G9/+KykfWJ9DJcitTTNUZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hWQNwmko; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1dc5d0162bcso54397945ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 15:52:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1709682733; x=1710287533; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jyoc6sqBdOY+7wLmmpdaiPXTvskeQaEAskb3Q12WvtU=;
-        b=hWQNwmkoP6X9trL+mOxnNbMVV5ZgU4F4xTCcdQhzKJqixqNrhe/FaY7XPOdBZH3Wfl
-         sZ6wD2ubgEZpJnJNcab0ofM/vJ4mW3tPl+Eojwwm/m7YFpU6nE63s6Yi2AQqYGPU7tk0
-         KIfQUPpcg0mZ8Bd8PXd+LPnMZvYWnhgE6gu7c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709682733; x=1710287533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jyoc6sqBdOY+7wLmmpdaiPXTvskeQaEAskb3Q12WvtU=;
-        b=lK/uQxlJmZGB/gO1NT3TlT6KTh4iPyhsuzkaGJEs0a4RuthAlaXT4Fe8cVq170mqoY
-         F7rkG9HgJQcLSwpFJQzlyvTaX2f3ksksTDOoQ6ueCUTs9v0YhWpE4o9tr2jrAQ+F/9jU
-         P4C9O6HJL3wkIuurHGnoKFb/MBmEkWAqvY0SAY7UZZ/9t74UdYRkurFJiMC7955nqAKQ
-         Go9ONF5941CzKxirJc87ajxspaKJ6k2xSH2JIGTG/ehrI7PMk98Pn5gmmn1vP1D8s09Y
-         fmkcQwg0/lGxjkDymkdllpdGf+Xy5tCKpTI4lL+SD2F4prLg4GbO9vwq/dNoqJiGutwE
-         zGbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtZxGX9qbxhBDWPbqfaz3OJ9zlh9MT6Qa1IMBiXNHWaf8dmPomnBmljGyl4Ape5dOCI1osG/6rA89A9sm+CBrCt4ujSrBR4H5ZfVY/MA==
-X-Gm-Message-State: AOJu0YyV9WTwuaisF8hawm7Eypdf3+QYgECDMoJTVPP47ju19oB8i9Z7
-	zU5ixIB5UaLZrCmXk9wfEI8mXV6xOGDYs2AZ0usH0Kyz/9Ak/oHEMxfjT6M3Bg==
-X-Google-Smtp-Source: AGHT+IHSAi/R0Z+FnSnYEll+Jdzr9evRXwkkfto2W7u2LIJBRhmtHvsvuWPYgTohLmHE92SmGPwJxg==
-X-Received: by 2002:a17:902:a514:b0:1d9:7095:7e3c with SMTP id s20-20020a170902a51400b001d970957e3cmr3152769plq.57.1709682733364;
-        Tue, 05 Mar 2024 15:52:13 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id k23-20020a170902ba9700b001da105d6a83sm11089065pls.224.2024.03.05.15.52.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 15:52:12 -0800 (PST)
-Date: Tue, 5 Mar 2024 15:52:12 -0800
-From: Kees Cook <keescook@chromium.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] fsnotify: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <202403051548.045B16BF@keescook>
-References: <ZeeaRuTpuxInH6ZB@neat>
+	s=arc-20240116; t=1709691482; c=relaxed/simple;
+	bh=7QxPLaPJXKvedTsbmIe1O5pO0B3ttI5FE+itFDdHBBc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T0CVrZp/a1vhTCQvUEqyECdZS6K2lceR5DixtDb2v0z06zKNOH/QALjsZ8e+UiOV0BUUZpGPZ0KEVHcKK2ZQVAv5zjLXuOeJ5rmrswyjbTRg9bYA7hsJ+mbqacJM0zHzDWz0cOf04SHrXsgROLCA59Ia7G+cgC4No06oDAUH49c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endrift.com; spf=pass smtp.mailfrom=endrift.com; dkim=pass (2048-bit key) header.d=endrift.com header.i=@endrift.com header.b=Sd1xb/lx; arc=none smtp.client-ip=173.255.198.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endrift.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endrift.com
+Received: from nebulosa.vulpes.eutheria.net (71-212-26-68.tukw.qwest.net [71.212.26.68])
+	by endrift.com (Postfix) with ESMTPSA id C250EA0F7;
+	Tue,  5 Mar 2024 18:08:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=endrift.com; s=2020;
+	t=1709690925; bh=7QxPLaPJXKvedTsbmIe1O5pO0B3ttI5FE+itFDdHBBc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Sd1xb/lx5Ux38dux/DpdqBagiXHZvR5mbV2ZWeXkyt7maKqpBPJNjbMDSt4df94p4
+	 lGTNylnZpKLBEElCgppDCUEezxn6A7Oq70pmRCIjLdI3Y8Dz9EIfL/Uyvu+MUdJ7qS
+	 IThRWJJ/UQLLEk/5jZxdkEOseAYrnO2l0EajjCwbedV+NhE8hZJhy39zQ+8e4oX3Kd
+	 kn3Uwc0lY8CZm9Fmtl50fhjCUUP6ECY5ERaJRfTf1vaeEUOHwn/6LcPEebMi5Ot2u6
+	 4zRv6Gf0gNgULsHDaEn3lLBZ1a4AdT03RNCP2J1XNSAjWbqXtoMkAek2x5KhV0PUtw
+	 qQLBtNAJIH/5Q==
+From: Vicki Pfau <vi@endrift.com>
+To: Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org
+Cc: Vicki Pfau <vi@endrift.com>
+Subject: [PATCH 1/3] inotify: Fix misspelling of "writable"
+Date: Tue,  5 Mar 2024 18:08:26 -0800
+Message-ID: <20240306020831.1404033-1-vi@endrift.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZeeaRuTpuxInH6ZB@neat>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 05, 2024 at 04:18:46PM -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
-> ready to enable it globally.
-> 
-> There is currently a local structure `f` that is using a flexible
-> `struct file_handle` as header for an on-stack place-holder for the
-> flexible-array member `unsigned char f_handle[];`.
-> 
-> struct {
-> 	struct file_handle handle;
-> 	u8 pad[MAX_HANDLE_SZ];
-> } f;
+Several file system notification system headers have "writable" misspelled as
+"writtable" in the comments. This patch fixes it in the inotify header.
 
-This code pattern is "put a flex array struct on the stack", but we have
-a macro for this now:
+Signed-off-by: Vicki Pfau <vi@endrift.com>
+---
+ include/uapi/linux/inotify.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-DEFINE_FLEX(struct file_handle, handle, f_handle, MAX_HANDLE_SZ);
-
-And you can even include the initializer:
-
-_DEFINE_FLEX(struct file_handle, handle, f_handle, MAX_HANDLE_SZ,
-	     = { .handle_bytes = MAX_HANDLE_SZ });
-
-I think this would be a simpler conversion.
-
-Also, this could use a __counted_by tag...
-
-I need to improve the DEFINE_FLEX macro a bit, though, to take advantage
-of __counted_by.
-
+diff --git a/include/uapi/linux/inotify.h b/include/uapi/linux/inotify.h
+index b3e165853d5b..d94f20e38e5d 100644
+--- a/include/uapi/linux/inotify.h
++++ b/include/uapi/linux/inotify.h
+@@ -30,8 +30,8 @@ struct inotify_event {
+ #define IN_ACCESS		0x00000001	/* File was accessed */
+ #define IN_MODIFY		0x00000002	/* File was modified */
+ #define IN_ATTRIB		0x00000004	/* Metadata changed */
+-#define IN_CLOSE_WRITE		0x00000008	/* Writtable file was closed */
+-#define IN_CLOSE_NOWRITE	0x00000010	/* Unwrittable file closed */
++#define IN_CLOSE_WRITE		0x00000008	/* Writable file was closed */
++#define IN_CLOSE_NOWRITE	0x00000010	/* Unwritable file closed */
+ #define IN_OPEN			0x00000020	/* File was opened */
+ #define IN_MOVED_FROM		0x00000040	/* File was moved from X */
+ #define IN_MOVED_TO		0x00000080	/* File was moved to Y */
 -- 
-Kees Cook
+2.44.0
+
 
