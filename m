@@ -1,83 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-13818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9CD8740F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 21:00:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA198741A3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 22:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D1E1F23929
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 20:00:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B01F6B2137C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 21:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4128D13E7E7;
-	Wed,  6 Mar 2024 20:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1893E18EA1;
+	Wed,  6 Mar 2024 21:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="nxITYk6F"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="FAMISjV3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08ACF13E7DB
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 19:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4B418EAF
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 21:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709755200; cv=none; b=cStXN1aupUPNM/GZje4iRGFwrYBsgklguS4orjhCequCGtVIWcxOAXsebBNyz3Qj6rAga5vytZU/wIRk2dO49yordWSw58wZhdaSzmg6hk7+A9nHJ5na5eAghURpkGDQP1rzn0i5z6o83AI+arIzvfaBPfg0xuFEqsTk8FBGLOU=
+	t=1709759259; cv=none; b=Gs6IswfBjKrhSIs/EMgAdTgGDNNl/FYbuB+cBkOSdx3hSN7rP4pjJRzB/McEaDwvK1ctysEZjtVj/6rGGM53fyroldaYqcyqCkhC7i2C2nzqgFNlDz+OtynMdCmNniAG/e/LcUthmsj4wKCWhvxh1Q68UfzROxAfMgnkWjCpQFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709755200; c=relaxed/simple;
-	bh=MJQooKERrkO5M8FdxXsbgrCB1vQwZZRXngnYowa1Ucg=;
+	s=arc-20240116; t=1709759259; c=relaxed/simple;
+	bh=tOibHT3KCAP4BwPHg+4cB3sRbEspBT3plGcLvPC1OBA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pe65pBlBd1Bx0zKEmUyHbC4sM1rYEoyO+BbJg3S1oyZdcZwPBePSK2M0pIAQJjAYaRYSocl2a/asA0CRxqSaAIDA6TS06NUJF1HxrawZEFyRL1ngtP2b02AGP7wF92wdyzjfpaY/mj/1pUmDZkgJmtntDZCXsjIcWI/4EoLer1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=nxITYk6F; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6098a20ab22so888247b3.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 11:59:58 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHgpWxdMLUKPlgREc21TOtJlS3g46MHh1LDYNPch1+t1s/EC9jJio4Kbt68SqTYvrBZIESykMNFF6UQjy6GuUF1RCAqWfen7yrDiKkSguUhDpvxCtDvhdC6KY7OIU+KWEOMbEFFNNFnEbSvbSB5LZJ343v4fgDMlc5pjy6kTN/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=FAMISjV3; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1dc49afb495so1425855ad.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 13:07:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1709755198; x=1710359998; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709759257; x=1710364057; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nk0/J29KPf4TmmeCSNMEsRp4h+k2/fvkEQwAaLlHWxs=;
-        b=nxITYk6FUOJOhKf/sKhG47NLK2mwoGTzHmTNNhxNIk7Bj8T0g3ZXECO7EtcSbbER1L
-         XjxBYhZohxdwY4VBAYKuMI4JSwJEYP2iAigz9VB0licnoowBnxfUxJ9tGsxhL5sZow5+
-         sOkvA06fPJzle4rR3N4lrtCRMvFVd1tv6txgRiDRczMNjT3LuReoqnwbMQf7Yqx95zzO
-         mde9jwIbLHrz1zpSU52WxOFTXRGf9+TA0pTf5na5pOZvEySIAMVSz+RHkZHJFSTsoiwT
-         WJyfZSZrEu56E7OmanKvlynbnnJAqGBgJtm3YxTqt8khigdtDEZGkQq6smn02PrGzagD
-         k8zw==
+        bh=6cKpNpXZLRmjwKPyX505WV6iTHUPCFCbzUC5MpFQ4rY=;
+        b=FAMISjV3bcjanAguuoPgbKa/0d+P3FPoWbuNEfK15Ta5xCbx5pffQAqBIG5i+NEXUY
+         gOW5sk7Io3F+Rba7bZetTl2DoxWAUTXXZ4DcjLaA9EVWra6Ufpz7vuGmAO18Du8xYO6R
+         94/YGEM7PlAVdmNRcM2N+57AqrzEiOfvRumai8LNrWuwZe0LMrNlcRRyEJmNbmHeqUey
+         GSbO0gVufNKoQpTx3RPYrsntl6dd4DeJGesI+VRy+DgBQsV3jqthZMZiFsgzSh0s0xHw
+         Aac2hQrOvIOJHh7Qh5g4841L6yEWuJatdOwrToMZxP3qUevkYSwga8D530AHJBOw5xGh
+         Kesg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709755198; x=1710359998;
+        d=1e100.net; s=20230601; t=1709759257; x=1710364057;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nk0/J29KPf4TmmeCSNMEsRp4h+k2/fvkEQwAaLlHWxs=;
-        b=MmaEjhO1+HYUZo8sTfWxJMjVpPd8Baw02fVFV3qOvtv3ZeYGP9ZzlW+fZjX+8Rp0gb
-         /ZNqlBTsQ+b5V2jU0NHwFUeJEI3m1Ckcr6tpJHNUTDU7XIfvl1Kg2sDnyBqeoqhhLAeS
-         ongS+J0+pV2y2eWJr7G0RPNoq+s1jaLt2MdvkN1CTlCNqkLDTliTgoC/HxS50iHKlDOs
-         EcV0YA9Jr/kFNK8MGqOeynvHOt7vOKmlPEteIxNBxC2S1I/oawAN3duvIac+0jj0Ufk7
-         PrNOHNMHJApfACyVjCjpW2MuCAKYCudChApAgyee0oEgxju0mIrX1HKMJK7WkhBNV+Qp
-         C10w==
-X-Forwarded-Encrypted: i=1; AJvYcCX3jf2prrX5EpuZHfwnsf7Y4H492chYPJ0uToD4WQnjISyk+rRzXdWacgdgM2tOuH2FZbmSIU9lmT9jlybL4wCLJi0qQgy6aYYAF3v2AQ==
-X-Gm-Message-State: AOJu0YxvykIihr+xqh4asE8B4TcVRuG+JSECggf8p/gDUxstIqweeKOo
-	878v3mTkIBVGSNtK4mDKMGTRLxcXljRCwKVuYkUYFp+RAglTY4yZuqOmp0UnBHLsfZbUCKCUur+
-	B
-X-Google-Smtp-Source: AGHT+IEmVpurGUd31yZyHxSu4mjLVka0+r+yTrQMWzelFcoJ23tJQXn1JppRqRT3evd2Ke2EuGrRpg==
-X-Received: by 2002:a81:8784:0:b0:608:290d:9f1b with SMTP id x126-20020a818784000000b00608290d9f1bmr14538562ywf.49.1709755197926;
-        Wed, 06 Mar 2024 11:59:57 -0800 (PST)
-Received: from localhost (076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id r13-20020ac85e8d000000b0042f02284578sm1888194qtx.68.2024.03.06.11.59.57
+        bh=6cKpNpXZLRmjwKPyX505WV6iTHUPCFCbzUC5MpFQ4rY=;
+        b=RYkUA9NWBQrhx1/b5tZXHWkYQxGFouGZf6Trf5sk5Lm5pWhZ+iwtGGJgbj4xf2TKZu
+         emDlwl/iHZOwaXGVuxyB01t1Y6tsXNKLH5EHz32qXft2jlkKhc2KVRxYfoLZQ+EMQDHy
+         hahGfRooLD6mzkTEa8C/+HiH0cETVrA8ZfJkYKr2bCc++c8pGx0DtXqd5hxUzAcXQQek
+         Y448rrPb556yuSPbMF5pBmqPMj8hGRKSoRBebJcXos866JQvc4txV/KFAacd2kgtXPbV
+         RWKua/20iDsC8CzjKpo0dvMKj/Gb7DvHRUPh8kiKAbWg8uZAWU7rwq2Gt1/EEkEip0t5
+         vqug==
+X-Forwarded-Encrypted: i=1; AJvYcCWNkqj/CD+TT2c/xRsoAqatg9spxh7rP2O/tnFaWoFd3NoGECuw5v4PQtwMwakjFCdciCgqd0CKyHvIMleE02g95AnqQFA0GAQggtjMIA==
+X-Gm-Message-State: AOJu0Yxyjhx2ZsMnU4ZHZTboWlPYND74uws2lMwlTUjy2JzuEctiBDrW
+	l+YDv891WTcz6OAclgZfc7mP3DGB5CABGlyCyGa6/suPT6ureUBs0rJCpv1oAb0=
+X-Google-Smtp-Source: AGHT+IE/KKiwGtgTsCBG2SHhgsrJE+JCAYQSbIVE/BoI4o24/MkvgSRizsPTMOyQSO5zXN1P/mmluQ==
+X-Received: by 2002:a17:902:e9d4:b0:1d9:a609:dd7e with SMTP id 20-20020a170902e9d400b001d9a609dd7emr5812131plk.55.1709759257059;
+        Wed, 06 Mar 2024 13:07:37 -0800 (PST)
+Received: from dread.disaster.area (pa49-179-47-118.pa.nsw.optusnet.com.au. [49.179.47.118])
+        by smtp.gmail.com with ESMTPSA id l8-20020a170903120800b001dcc129cc2esm13009813plh.60.2024.03.06.13.07.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Mar 2024 11:59:57 -0800 (PST)
-Date: Wed, 6 Mar 2024 14:59:56 -0500
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-	David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH] statx: stx_vol
-Message-ID: <20240306195956.GA2420648@perftesting>
-References: <20240302220203.623614-1-kent.overstreet@linux.dev>
- <20240304-konfus-neugierig-5c7c9d5a8ad6@brauner>
+        Wed, 06 Mar 2024 13:07:36 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rhyUA-00Fy2T-0J;
+	Thu, 07 Mar 2024 08:07:34 +1100
+Date: Thu, 7 Mar 2024 08:07:34 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, chandan.babu@oracle.com,
+	axboe@kernel.dk, martin.petersen@oracle.com,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 06/14] fs: xfs: Do not free EOF blocks for forcealign
+Message-ID: <ZejbFuavNva4ut/3@dread.disaster.area>
+References: <20240304130428.13026-1-john.g.garry@oracle.com>
+ <20240304130428.13026-7-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,37 +92,92 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240304-konfus-neugierig-5c7c9d5a8ad6@brauner>
+In-Reply-To: <20240304130428.13026-7-john.g.garry@oracle.com>
 
-On Mon, Mar 04, 2024 at 10:18:22AM +0100, Christian Brauner wrote:
-> On Sat, Mar 02, 2024 at 05:02:03PM -0500, Kent Overstreet wrote:
-> > Add a new statx field for (sub)volume identifiers.
-> > 
-> > This includes bcachefs support; we'll definitely want btrfs support as
-> > well.
-> > 
-> > Link: https://lore.kernel.org/linux-fsdevel/2uvhm6gweyl7iyyp2xpfryvcu2g3padagaeqcbiavjyiis6prl@yjm725bizncq/
-> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: Josef Bacik <josef@toxicpanda.com>
-> > Cc: Miklos Szeredi <mszeredi@redhat.com>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: David Howells <dhowells@redhat.com>
-> > ---
+On Mon, Mar 04, 2024 at 01:04:20PM +0000, John Garry wrote:
+> For when forcealign is enabled, we want the EOF to be aligned as well, so
+> do not free EOF blocks.
 > 
-> As I've said many times before I'm supportive of this and would pick up
-> a patch like this. There's definitely a lot of userspace that would make
-> use of this that I'm aware of. If the btrfs people could provide an Ack
-> on this to express their support here that would be great.
+> Add helper function xfs_get_extsz() to get the guaranteed extent size
+> alignment for forcealign enabled. Since this code is only relevant to
+> forcealign and forcealign is not possible for RT yet, ignore RT.
 > 
-> And it would be lovely if we could expand the commit message a bit and
-> do some renaming/bikeshedding. Imho, STATX_SUBVOLUME_ID is great and
-> then stx_subvolume_id or stx_subvol_id. And then subvolume_id or
-> subvol_id for the field in struct kstat.
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/xfs_bmap_util.c |  7 ++++++-
+>  fs/xfs/xfs_inode.c     | 14 ++++++++++++++
+>  fs/xfs/xfs_inode.h     |  1 +
+>  3 files changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> index c2531c28905c..07bfb03c671a 100644
+> --- a/fs/xfs/xfs_bmap_util.c
+> +++ b/fs/xfs/xfs_bmap_util.c
+> @@ -542,8 +542,13 @@ xfs_can_free_eofblocks(
+>  	 * forever.
+>  	 */
+>  	end_fsb = XFS_B_TO_FSB(mp, (xfs_ufsize_t)XFS_ISIZE(ip));
+> -	if (XFS_IS_REALTIME_INODE(ip) && mp->m_sb.sb_rextsize > 1)
+> +
+> +	/* Do not free blocks when forcing extent sizes */
 
-Sorry I had my head down in some NFS problems.  This works for me, I agree with
-the naming suggestions you've made.  Kent, when you send a new version I'll
-review it and then followup with a btrfs patch.  Thanks for getting this ball
-rolling,
+That comment seems wrong - this just rounds up where we start
+trimming from to be aligned...
 
-Josef
+> +	if (xfs_get_extsz(ip) > 1)
+> +		end_fsb = roundup_64(end_fsb, xfs_get_extsz(ip));
+> +	else if (XFS_IS_REALTIME_INODE(ip) && mp->m_sb.sb_rextsize > 1)
+>  		end_fsb = xfs_rtb_roundup_rtx(mp, end_fsb);
+
+I think this would be better written as:
+
+	/*
+	 * Forced extent alignment requires us to round up where we
+	 * start trimming from so that result is correctly aligned.
+	 */
+	if (xfs_inode_forcealign(ip)) {
+		if (ip->i_extsize > 1)
+			end_fsb = roundup_64(end_fsb, ip->i_extsize);
+		else if (XFS_IS_REALTIME_INODE(ip) && mp->m_sb.sb_rextsize > 1)
+			end_fsb = xfs_rtb_roundup_rtx(mp, end_fsb);
+	}
+
+Because we only want end-fsb alignment when forced alignment is
+required.
+
+Which then makes me wonder: truncate needs this, too, doesn't it?
+And the various fallocate() ops like hole punching and extent
+shifting?
+
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index 2c439df8c47f..bbb8886f1d32 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -65,6 +65,20 @@ xfs_get_extsz_hint(
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Helper function to extract extent size. It will return a power-of-2,
+> + * as forcealign requires this.
+> + */
+> +xfs_extlen_t
+> +xfs_get_extsz(
+> +	struct xfs_inode	*ip)
+> +{
+> +	if (xfs_inode_forcealign(ip) && ip->i_extsize)
+> +		return ip->i_extsize;
+> +
+> +	return 1;
+> +}
+
+This can go away - if it is needed elsewhere, then I think it would
+be better open coded because it better documents what the code is
+doing...
+
+-Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
 
