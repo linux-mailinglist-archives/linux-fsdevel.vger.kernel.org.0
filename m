@@ -1,78 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-13685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CFC6872FD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 08:39:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D527872FD6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 08:39:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3E31F21522
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 07:39:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE2C0B24423
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 07:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2DA5C90C;
-	Wed,  6 Mar 2024 07:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AE95CDC3;
+	Wed,  6 Mar 2024 07:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lbN1VIbx"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IYX5Z56s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32B252F6B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 07:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635355C8F9
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 07:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709710764; cv=none; b=WK9s8xa2FG1o5dnGmERbPHX1WKecJScVUlBudv47nfkmnFJ4ij9oECJPnM+5jvZQLRTWTWham8Vo1wkeS4Hijd23FSau6i+261M4NKKFPSRcLU5A68Ela8sEI6R5Lcs25fNozLTjwLC6cpsxmcUY5VzQEsZc6cfbZmOAs5nOob0=
+	t=1709710770; cv=none; b=NcNEaA6qA7qJfCXgRF9AWovzmNdABPTUHKAtJ8mhrMVDpukRcxjNaV1jM4W7QHNLcxJInZvnC9umn4UPjMR2lO9p6ZSxqaRH6nRjrDJvLoZ8mD84grcIchZtBbIWsznOhF4b9c0A73biVzJUq7O1Jd+n73eEWkMRZn356IYolvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709710764; c=relaxed/simple;
-	bh=3zLyHQYTk50JqHGT0H8b7TxvnP4JF7JAmJRGihoWBck=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C2BO+6iF4KqsqBVpLMFXZZN+bTkMjhrrZXVjX+DtTW2cHua101WYbHhmZZXib3clD70OV7yYpnVVMebVth+ZI5bwtpkBh5KMbpK2G4e+n+fubJLKDT2MyXTHotiqaltcT24lHaEMLNJpz+ErqU1bPYeVcRfL4Ev93RQ7muI6UYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lbN1VIbx; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1709710770; c=relaxed/simple;
+	bh=T9wyGNUK/a5+R+4NnNzOvivl3qko5cvFamHSS6BHobU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NoSA460n8B7d8k6YBWqSnPwcx7aOaAXljzRtFCsxRfbb55O3wKGb3o+WMgyrmpPFHtIQ8WrdSxlsBWzs4cK1UuUVHdPxc9ekKAbMw9M2oM16jfLFQn5sT6uGoEXDaEcHosbwbO6cgylnn5pgS+p/D+9IHjWuAqZvL4jRJ9X0WVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IYX5Z56s; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a45bdf6e9c2so23095666b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 23:39:22 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a26ed1e05c7so1083138166b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 23:39:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1709710761; x=1710315561; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iK81biHTtD/Y+vOFBIjWOtHY+5xsEtWIIh90hV3rhZA=;
-        b=lbN1VIbxl5krAWpiIEzlRMVEfDx35YP9OXarEQSQVu3s6YPf6iusYXn5zEeItDhnU7
-         VY0C0zYWVS77MxqULXv5rKAE9f+sCes56QabDmub79AYl/ACzgdA0RKWbf/W/4Mw95QC
-         qBuKOGBuSc1DLKgZVqvmawHRMrW5ogBwbMoHqa/EYYDSVDCgxMSiEmijzz34hjnqS3uh
-         XyNVS+igJH2F80kX8FBY/i/6SGfhA77H1xOKxAm0c5yH/F8znrJZSFIpqGhr0Q3bfy/7
-         to/SWXD775ZVnDTpwUu/UNCMVm8dvPq6KFof8ZO0G1YqCtJV1mWj7oOBvRNafOEpBFS3
-         WEWw==
+        d=google.com; s=20230601; t=1709710767; x=1710315567; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lKGhvub9+e8WLvaTITikZYN5QDAVXk4MiuBB9Y8ZHfM=;
+        b=IYX5Z56sfNrUJZr1SUPtzFsaooQEAajkLF8knX6XCC7O3AyNfVORM4+v0GqpY57v34
+         b5K8M5hjbpKFB2Os9joZJnV5EQgeX8T9nNU7WHFCxZx1Jnq0Gy1v+8V6WWIQaNvklrIy
+         7O9JceoMuctbxkhzkkJ5PzRhd54YOIDR8aMz9QmLMOOPm9o/YbbbQXNsxdUbt6UCu4lO
+         tZGVafEa/BA9pgPLOKjprlqc2zAjkX685oEWZeOSiwn2kE3kTrNZdQbYXUxrjhFVYZib
+         tOG58K0xG2OO870EVgtYdeujJHcyscV5HMvHdRiw2KvOYBzMDX4YOdmLBqKEHBfMX1p2
+         OxCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709710761; x=1710315561;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iK81biHTtD/Y+vOFBIjWOtHY+5xsEtWIIh90hV3rhZA=;
-        b=aM/qx9C5Pq6ZJULPTpmvQ3XOJCDGu8HJaAvq3YTOKWtvaZA+n4CBH/iSDVbZMLlETb
-         V3EL5CX93MR5oJR/b6jKPRcJUuh1Hc5iIBWJpuBYF6FjSEDKFGXpm/fVvmdfFbTD+d+I
-         qfez2yAYUzuAyFozKmZgKJCuWaRKM1Y7K+vu2dPfZi52oFSlJtBUNcRfbtiA9Bf9GAsf
-         tc1VHIH5ddCR5pEX/vvd/mfL+Q3IEfgmXhz4mix/mXwyItDQqzQxApQQ2qZNAGaRAlcB
-         0PoKYYKjnlJqDp7ubl7FDghC4SIdqlJlMTynXFiLsWWUsIDHwaJzgdDvIjv8eXWUTXIo
-         p9/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVCcPnH8Loz6/nhH+x0TePINEBgBNY/bE97ZA2KDBtllzYHeLqKpW4vxRHy2WIUH/zlzzidH1bQfQIiaNzYCx6U6FSVLGQejnHubVY0Zw==
-X-Gm-Message-State: AOJu0YzOg+IRNDrq97gxPzu2KkdvmaPy4X0Sc1lAs6qqAzok4jSUbV63
-	igcpEFGrDFqEQRkQsxA7Awpu4mSwZAmSJxxc5ZWlvhemb9p6e0ziYfnanZxT1Q==
-X-Google-Smtp-Source: AGHT+IEAo/YHXhUCVcmg42ky0a9z+nrVmwu+zvZWzJ+uai0a1ygawoh3yDL8xN6bZ+CGtHjLKyyvTg==
-X-Received: by 2002:a17:907:11d9:b0:a44:1893:437d with SMTP id va25-20020a17090711d900b00a441893437dmr10155440ejb.7.1709710760964;
-        Tue, 05 Mar 2024 23:39:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709710767; x=1710315567;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lKGhvub9+e8WLvaTITikZYN5QDAVXk4MiuBB9Y8ZHfM=;
+        b=bLRtCwyM2KgyAvEydZv9X4hJDe4Cd0Ziijem/YSMtZJYmfua9zMOF+TRJxixvYjPro
+         1pcW6BQWbE0mvOb6bL9w/iJ4YhWBbUBg0+Q9laK8Z778U4ARzvb7xH+8WocBA+cY2GZD
+         S1StFfDSM1lJPLDgicrL452dIuHAZIondDON7mDOAVBR3oWtXwhjg6Ha6cnZyVQIiYVv
+         jCG2nNUtg+2AFZc39EhZGEUNjBNm0CmM8zNbAWDf+p0s3sHv5/jvAKS6F+2zA1FYCcFI
+         cGXzXZYfK14NWxyLhb69pIItcYZPYEgExA+v2MGYbWTmkzfEfifxrHX8UXRrzQCwB7he
+         TmsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJKhnfDuB4ujkv4fSivQ3kusM5Hx6XB2QG+JZ63JlNVc/XTSYW/UEjznwO/wZgaWg19CNWHldEtRBARXH6D3pmwNX90BuIxki5a8hjKw==
+X-Gm-Message-State: AOJu0Yyn7ri23IrXDDpbZ3Cd0tkBV+hZJat0iimM0zz/uodJWDVqVPPf
+	qp6U95kHRqGtUNZcSYMXJnPPcwv6I2bf6k6AS9OGDvmHQ2Qlb/RjN2P/C/pS6Q==
+X-Google-Smtp-Source: AGHT+IFucscsSNmNlMP+XPI0+EFS5ODgbdCNT788DnByzIdHvN/V1lhu7I+wjq6DDchyuikxQvNcYg==
+X-Received: by 2002:a17:906:4888:b0:a45:b1cf:42f6 with SMTP id v8-20020a170906488800b00a45b1cf42f6mr1523135ejq.9.1709710766566;
+        Tue, 05 Mar 2024 23:39:26 -0800 (PST)
 Received: from google.com (12.196.204.35.bc.googleusercontent.com. [35.204.196.12])
-        by smtp.gmail.com with ESMTPSA id wk15-20020a170907054f00b00a4519304f8bsm3833592ejb.14.2024.03.05.23.39.20
+        by smtp.gmail.com with ESMTPSA id wk16-20020a170907055000b00a4532d289edsm3429198ejb.116.2024.03.05.23.39.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 23:39:20 -0800 (PST)
-Date: Wed, 6 Mar 2024 07:39:14 +0000
+        Tue, 05 Mar 2024 23:39:26 -0800 (PST)
+Date: Wed, 6 Mar 2024 07:39:22 +0000
 From: Matt Bobrowski <mattbobrowski@google.com>
 To: bpf@vger.kernel.org
 Cc: ast@kernel.org, andrii@kernel.org, kpsingh@google.com, jannh@google.com,
 	jolsa@kernel.org, daniel@iogearbox.net, brauner@kernel.org,
 	torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-Message-ID: <cover.1709675979.git.mattbobrowski@google.com>
+Subject: [PATCH v2 bpf-next 1/9] bpf: rename fs_kfunc_set_ids to
+ lsm_kfunc_set_ids
+Message-ID: <18b6eeea5fa3db45a7a3faba0066b5635e998585.1709675979.git.mattbobrowski@google.com>
+References: <cover.1709675979.git.mattbobrowski@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,88 +84,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1709675979.git.mattbobrowski@google.com>
 
-G'day All,
+fs_kfunc_set_ids is rather specific to a single BPF kfunc at the
+moment. Rename it to something a little more generic such that other
+future BPF kfuncs that are also restricted to BPF LSM program types
+can reside in the same btf_kfunc_id_set and make use of the same
+btf_kfunc_filter_t.
 
-The original cover letter providing background context and motivating
-factors around the needs for the BPF kfuncs introduced within this
-patch series can be found here [0], so please do reference that if
-need be.
+Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
+---
+ kernel/trace/bpf_trace.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-Notably, one of the main contention points within v1 of this patch
-series was that we were effectively leaning on some preexisting
-in-kernel APIs such as get_task_exe_file() and get_mm_exe_file()
-within some of the newly introduced BPF kfuncs. As noted in my
-response here [1] though, I struggle to understand the technical
-reasoning behind why exposing such in-kernel helpers, specifically
-only to BPF LSM program types in the form of BPF kfuncs, is inherently
-a terrible idea. So, until someone provides me with a sound technical
-explanation as to why this cannot or should not be done, I'll continue
-to lean on them. The alternative is to reimplement the necessary
-in-kernel APIs within the BPF kfuncs, but that's just nonsensical IMO.
-
-Changes since v1:
-   * Dropped the probe-read related patches [2, 3], which focused on
-     retroactively fixing bpf_d_path() such that it's susceptability
-     to memory corruption issues is drastically reduced. Rightfully so
-     though, it was deemed that reimplementing a semi-functional
-     variant of d_path() that was effectively backed by
-     copy_from_kernel_nofault() is suboptimal.
-
-[0] https://lore.kernel.org/bpf/cover.1708377880.git.mattbobrowski@google.com/
-[1] https://lore.kernel.org/bpf/ZdX83H7rTEwMYvs2@google.com/
-[2] https://lore.kernel.org/bpf/5643840bd57d0c2345635552ae228dfb2ed3428c.1708377880.git.mattbobrowski@google.com/
-[3] https://lore.kernel.org/bpf/18c7b587d43bbc7e80593bf51ea9d3eb99e47bc1.1708377880.git.mattbobrowski@google.com/
-
-Matt Bobrowski (9):
-  bpf: rename fs_kfunc_set_ids to lsm_kfunc_set_ids
-  bpf: add new acquire/release BPF kfuncs for mm_struct
-  bpf/selftests: add selftests for mm_struct acquire/release BPF kfuncs
-  bpf: add new acquire/release based BPF kfuncs for exe_file
-  bpf/selftests: add selftests for exe_file acquire/release BPF kfuncs
-  bpf: add acquire/release based BPF kfuncs for fs_struct's paths
-  bpf/selftests: add selftests for root/pwd path based BPF kfuncs
-  bpf: add trusted d_path() based BPF kfunc bpf_path_d_path()
-  bpf/selftests: adapt selftests test_d_path for BPF kfunc
-    bpf_path_d_path()
-
- kernel/trace/bpf_trace.c                      | 248 +++++++++++++++++-
- .../testing/selftests/bpf/prog_tests/d_path.c |  80 ++++++
- .../selftests/bpf/prog_tests/exe_file_kfunc.c |  49 ++++
- .../selftests/bpf/prog_tests/mm_kfunc.c       |  48 ++++
- .../selftests/bpf/prog_tests/path_kfunc.c     |  48 ++++
- .../selftests/bpf/progs/d_path_common.h       |  35 +++
- .../bpf/progs/d_path_kfunc_failure.c          |  66 +++++
- .../bpf/progs/d_path_kfunc_success.c          |  25 ++
- .../bpf/progs/exe_file_kfunc_common.h         |  23 ++
- .../bpf/progs/exe_file_kfunc_failure.c        | 181 +++++++++++++
- .../bpf/progs/exe_file_kfunc_success.c        |  52 ++++
- .../selftests/bpf/progs/mm_kfunc_common.h     |  19 ++
- .../selftests/bpf/progs/mm_kfunc_failure.c    | 103 ++++++++
- .../selftests/bpf/progs/mm_kfunc_success.c    |  30 +++
- .../selftests/bpf/progs/path_kfunc_common.h   |  20 ++
- .../selftests/bpf/progs/path_kfunc_failure.c  | 114 ++++++++
- .../selftests/bpf/progs/path_kfunc_success.c  |  30 +++
- .../testing/selftests/bpf/progs/test_d_path.c |  20 +-
- .../bpf/progs/test_d_path_check_rdonly_mem.c  |   8 +-
- .../bpf/progs/test_d_path_check_types.c       |   8 +-
- 20 files changed, 1160 insertions(+), 47 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/exe_file_kfunc.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/mm_kfunc.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/path_kfunc.c
- create mode 100644 tools/testing/selftests/bpf/progs/d_path_common.h
- create mode 100644 tools/testing/selftests/bpf/progs/d_path_kfunc_failure.c
- create mode 100644 tools/testing/selftests/bpf/progs/d_path_kfunc_success.c
- create mode 100644 tools/testing/selftests/bpf/progs/exe_file_kfunc_common.h
- create mode 100644 tools/testing/selftests/bpf/progs/exe_file_kfunc_failure.c
- create mode 100644 tools/testing/selftests/bpf/progs/exe_file_kfunc_success.c
- create mode 100644 tools/testing/selftests/bpf/progs/mm_kfunc_common.h
- create mode 100644 tools/testing/selftests/bpf/progs/mm_kfunc_failure.c
- create mode 100644 tools/testing/selftests/bpf/progs/mm_kfunc_success.c
- create mode 100644 tools/testing/selftests/bpf/progs/path_kfunc_common.h
- create mode 100644 tools/testing/selftests/bpf/progs/path_kfunc_failure.c
- create mode 100644 tools/testing/selftests/bpf/progs/path_kfunc_success.c
-
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 241ddf5e3895..f639663ac339 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1435,7 +1435,7 @@ static int __init bpf_key_sig_kfuncs_init(void)
+ late_initcall(bpf_key_sig_kfuncs_init);
+ #endif /* CONFIG_KEYS */
+ 
+-/* filesystem kfuncs */
++/* A set of kfuncs that may only be called from BPF LSM program types. */
+ __bpf_kfunc_start_defs();
+ 
+ /**
+@@ -1475,31 +1475,33 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
+ 
+ __bpf_kfunc_end_defs();
+ 
+-BTF_KFUNCS_START(fs_kfunc_set_ids)
++BTF_KFUNCS_START(lsm_kfunc_set_ids)
+ BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
+-BTF_KFUNCS_END(fs_kfunc_set_ids)
++BTF_KFUNCS_END(lsm_kfunc_set_ids)
+ 
+-static int bpf_get_file_xattr_filter(const struct bpf_prog *prog, u32 kfunc_id)
++static int bpf_lsm_kfunc_filter(const struct bpf_prog *prog, u32 kfunc_id)
+ {
+-	if (!btf_id_set8_contains(&fs_kfunc_set_ids, kfunc_id))
++	if (!btf_id_set8_contains(&lsm_kfunc_set_ids, kfunc_id))
+ 		return 0;
+ 
+-	/* Only allow to attach from LSM hooks, to avoid recursion */
++	/* To avoid recursion, only permit kfuncs included within
++	 * lsm_kfunc_set_ids to be called from BPF LSM program types.
++	 */
+ 	return prog->type != BPF_PROG_TYPE_LSM ? -EACCES : 0;
+ }
+ 
+-static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
++static const struct btf_kfunc_id_set bpf_lsm_kfunc_set = {
+ 	.owner = THIS_MODULE,
+-	.set = &fs_kfunc_set_ids,
+-	.filter = bpf_get_file_xattr_filter,
++	.set = &lsm_kfunc_set_ids,
++	.filter = bpf_lsm_kfunc_filter,
+ };
+ 
+-static int __init bpf_fs_kfuncs_init(void)
++static int __init bpf_lsm_kfuncs_init(void)
+ {
+-	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc_set);
++	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_lsm_kfunc_set);
+ }
+ 
+-late_initcall(bpf_fs_kfuncs_init);
++late_initcall(bpf_lsm_kfuncs_init);
+ 
+ static const struct bpf_func_proto *
+ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
 -- 
 2.44.0.278.ge034bb2e1d-goog
 
