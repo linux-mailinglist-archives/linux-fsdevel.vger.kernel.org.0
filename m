@@ -1,96 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-13734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092608733F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 11:22:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B75A0873447
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 11:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91671F2A802
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 10:22:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E82DA1C212F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 10:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA13D5F86B;
-	Wed,  6 Mar 2024 10:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519D0605A4;
+	Wed,  6 Mar 2024 10:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="im4VRYw1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpmesp3C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31155F566
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 10:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CB35D8E5;
+	Wed,  6 Mar 2024 10:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709720511; cv=none; b=pITBS9ghXA0U1elikDy4c7wEwSryBG2bltM3/4fj49ebUJY0118/0o2J2HK1/lBsEcUdQsSWCFcgaQl2MzcClhJW5w2k4jYK5HQe5XpTVcv76nEsMz/PhHP+Z4qMWNbZQazasIGICzIw+DOC6gCCOWEP3Jt1PsdvNvLoCN4IiOc=
+	t=1709721119; cv=none; b=DL9LJcMA3lrKDJJhzJ0UIzrT/GZcsgGnTLBTq1aIJXo1u8GqwHINMyJruWmL3OOlvepTfzNUkqB+WQaGUFsym5KbwpAPKjYmChlKFhiikZEI/o7/9YNe3xekQNY7PByiMwEIjgRSoO/Nvg3QXQVLxW3aKJI4p+uZPxFpi79K03M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709720511; c=relaxed/simple;
-	bh=islZpyKykR9dbsXwEOJijkuEqDtFWjDv6ZULlFXB7QI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+riqjA4k6lexVausa2Ukb8gnwFZ2KwGYDyCFrMVo5P/JuYbLGl4OqGlwL7UYZkwHi1wsqYXvSfcRdvkzHBlhIvFPE4HGr+EFPlUz/Abr6QVww2bzNsFY1tj7p93q/hAsIFPApdXZ7U3VkBFmccDgatnLkucD6P2P7tMDFH1FmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=im4VRYw1; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a3ddc13bbb3so122972366b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 02:21:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1709720508; x=1710325308; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=islZpyKykR9dbsXwEOJijkuEqDtFWjDv6ZULlFXB7QI=;
-        b=im4VRYw1MPoISNm0Ckq24et4DqwCzZbCy8miBxT8XvvjMlTL9filJZMf6yEiG63aM0
-         8uL21LRRe0I6TDfZkFs7BjVZZepVfSOHHTmWRhY9fI8a/FFYrF5r+7Qw5MLw0t0CVPgx
-         sgHUkJ+2RRRxc/Ho556q0yMV23QSIkn6qm1J4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709720508; x=1710325308;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=islZpyKykR9dbsXwEOJijkuEqDtFWjDv6ZULlFXB7QI=;
-        b=MVlZdhXaPpKNj8qUa1hrs+X8adEldyR7KZIEZz2GIIBcZDqPkSVlzFs1jifV3xPbws
-         p+JcoPEFVzWqKc/Co1+/Y9+zQI5eo9KTUJkIgfwNuXssTb/2ErfXkb+hgoBXRnkrWlvY
-         KkMytilKCI2nD0Q6n5eCFK3StE2gBMtUNx7iwmE8qiSmrWj9Er674vd3vU0cQlY6BsuP
-         pkvDZIsKvzjuZGzFFdbKeWMvFYVK+QvwkYGz9QqWm7T4kl9t3OKUwNzrLy3nWZVw+KfG
-         0eB/8PgA0JUCdnVSDEK9fhZrsF4rVsBZc3T6AsE4+0bAcDOnEN/9Ay13pksrONlig3Uw
-         ICFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9hEimaNCnkkn4whpU+640HBs/SWCl6YCap9qOvQrpHmzPRq2GaUD32mHg0XL7EzOkWfsiUzpqOPRrCbgBRbdGH20LNh368e8DpOsG0Q==
-X-Gm-Message-State: AOJu0YxcE4WPx0yiMfS6MwaRXH3/uiZS2U32msZgWPUBW6h2uWo27qxO
-	ahDg6wR1I097iQFfe6746m7sdAJiFWw40jAIdnTKKdZCDKdCKMW86PHupsEKVHVkoOyisBmJixa
-	odLEfBDRhEiQvChtshdojqnFsv1NLofPclVCY0A==
-X-Google-Smtp-Source: AGHT+IFMx3l0hAdHQXbl39ioAGrKSQLW1v5lUEssZi0FdL3yGMLYZSjp6aM2eVuXdZXGTZOl1O5Fgiy0ny7XY06f99Q=
-X-Received: by 2002:a17:906:35ca:b0:a45:29f3:6cc8 with SMTP id
- p10-20020a17090635ca00b00a4529f36cc8mr5960498ejb.8.1709720508210; Wed, 06 Mar
- 2024 02:21:48 -0800 (PST)
+	s=arc-20240116; t=1709721119; c=relaxed/simple;
+	bh=V9dupUdmdDT6oqMU+vmjgEz0vS/DRI+SFGdX0PtriQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=loFToO6NXIfuxGBAkl+JOpq419XkiKQo/NAGC5FASkzqIE7JgWJN6IovV3/5wjJxfROpEQdefppWhflJUCDD3xJyUJ6EHJkvTnccyLPcHELHoJpSt55RCeE5sDaCdye519auo3rBsjEA5vx0NElllrpc8MMSfYJfLToq+cFq+Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpmesp3C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDC6AC433C7;
+	Wed,  6 Mar 2024 10:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709721119;
+	bh=V9dupUdmdDT6oqMU+vmjgEz0vS/DRI+SFGdX0PtriQ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bpmesp3Cf3UOtm/WOXArUNMhwaWIE02nRlh4xtXs3Lh+cjLxTwDyVb9a7EvRli1OH
+	 V3yOaOwtcial4MmChZfRxrsm5JPUEFQq6KidAXXVD09QgVJ8RxrvaMAYAVfdx4VkrH
+	 01uPTpsgVgwNB3vv3U4JgFPhbAfJ4UgBVO93iaCx3vdYAmvjAKcX4IKOBno+pfFc3a
+	 MlI41Sof4sfd5ivtkmsxMdrD02aBRPp7ctv6JnaTC/ItG8SYJaaLIiTmUFJ2W0VQVE
+	 SapT+bLxNol8QCCptrm5K0aM4EzjhsOUcDw0rsD+19VyhhKgHSb/2a9uRbqDmlS0JO
+	 /figxLtEqJODQ==
+Date: Wed, 6 Mar 2024 11:31:53 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, 
+	linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Guenter Roeck <groeck@chromium.org>, 
+	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Mike Frysinger <vapier@chromium.org>
+Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
+Message-ID: <20240306-titan-gerade-6e3bbb057213@brauner>
+References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
+ <20240304-zugute-abtragen-d499556390b3@brauner>
+ <202403040943.9545EBE5@keescook>
+ <20240305-attentat-robust-b0da8137b7df@brauner>
+ <202403050134.784D787337@keescook>
+ <20240305-kontakt-ticken-77fc8f02be1d@brauner>
+ <202403050211.86A44769@keescook>
+ <20240305-brotkrumen-vorbild-9709ce924d25@brauner>
+ <202403051033.9527DD75@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240204021436.GH2087318@ZenIV> <20240204021739.1157830-1-viro@zeniv.linux.org.uk>
- <20240204021739.1157830-11-viro@zeniv.linux.org.uk> <20240205-gesponnen-mahnmal-ad1aef11676a@brauner>
- <CAJfpegtJtrCTeRCT3w3qCLWsoDopePwUXmL5O9JtJfSJg17LNg@mail.gmail.com>
- <CAOQ4uxhBwmZ1LDcWD6jdaheUkDQAQUTeSNNMygRAg3v_0H5sDQ@mail.gmail.com>
- <CAJfpegtQ5+3Fn8gk_4o3uW6SEotZqy6pPxG3kRh8z-pfiF48ow@mail.gmail.com> <CAOQ4uxgi8sL3Dxznrq2tM76yMz_wTxh2PLzMd_Y-8ahWAhz=JQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgi8sL3Dxznrq2tM76yMz_wTxh2PLzMd_Y-8ahWAhz=JQ@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 6 Mar 2024 11:21:37 +0100
-Message-ID: <CAJfpegvdt_FDpsgJ5hb8r48r-NoxUn38p=-EoFoV5un7Hm4hpg@mail.gmail.com>
-Subject: Re: [PATCH 11/13] fuse: fix UAF in rcu pathwalks
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202403051033.9527DD75@keescook>
 
-On Wed, 6 Mar 2024 at 11:18, Amir Goldstein <amir73il@gmail.com> wrote:
+On Tue, Mar 05, 2024 at 10:37:20AM -0800, Kees Cook wrote:
+> On Tue, Mar 05, 2024 at 11:32:04AM +0100, Christian Brauner wrote:
+> > On Tue, Mar 05, 2024 at 02:12:26AM -0800, Kees Cook wrote:
+> > > On Tue, Mar 05, 2024 at 10:58:25AM +0100, Christian Brauner wrote:
+> > > > Since the write handler for /proc/<pid>/mem does raise FOLL_FORCE
+> > > > unconditionally it likely would implicitly. But I'm not familiar enough
+> > > > with FOLL_FORCE to say for sure.
+> > > 
+> > > I should phrase the question better. :) Is the supervisor writing into
+> > > read-only regions of the child process?
+> > 
+> > Hm... I suspect we don't. Let's take two concrete examples so you can
+> > tell me.
+> > 
+> > Incus intercepts the sysinfo() syscall. It prepares a struct sysinfo
+> > with cgroup aware values for the supervised process and then does:
+> > 
+> > unix.Pwrite(siov.memFd, &sysinfo, sizeof(struct sysinfo), seccomp_data.args[0]))
+> > 
+> > It also intercepts some bpf system calls attaching bpf programs for the
+> > caller. If that fails we update the log buffer for the supervised
+> > process:
+> > 
+> > union bpf_attr attr = {}, new_attr = {};
+> > 
+> > // read struct bpf_attr from mem_fd
+> > ret = pread(mem_fd, &attr, attr_len, req->data.args[1]);
+> > if (ret < 0)
+> >         return -errno;
+> > 
+> > // Do stuff with attr. Stuff fails. Update log buffer for supervised process:
+> > if ((new_attr.log_size) > 0 && (pwrite(mem_fd, new_attr.log_buf, new_attr.log_size, attr.log_buf) != new_attr.log_size))
+> 
+> This is almost certainly in writable memory (either stack or .data).
+> 
+> > But I'm not sure if there are other use-cases that would require this.
+> 
+> Maybe this option needs to be per-process (like no_new_privs), and with
+> a few access levels:
+> 
+> - as things are now
+> - no FOLL_FORCE unless by ptracer
+> - no writes unless by ptracer
+> - no FOLL_FORCE ever
+> - no writes ever
+> - no reads unless by ptracer
+> - no reads ever
 
-> If you move fuse_backing_files_free() to the start of the function,
-> I think merge conflict will be avoided:
-
-Yeah, but I don't think it's worth messing with this just to avoid a conflict.
-
-Thanks,
-Miklos
+Doing it as a prctl() would be fine.
 
