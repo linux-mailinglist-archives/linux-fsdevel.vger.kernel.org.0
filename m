@@ -1,166 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-13694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42E0872FEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 08:41:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442B48730A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 09:26:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB67287260
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 07:41:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9A8BB27542
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 08:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4945D720;
-	Wed,  6 Mar 2024 07:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xyeBSyxq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF435D754;
+	Wed,  6 Mar 2024 08:26:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D4A5BAF0
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 07:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8585C057;
+	Wed,  6 Mar 2024 08:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709710837; cv=none; b=fQZd2x0I+XsilIzGRmxtlESVwf9veowIpk/qFgEmxnN83aB+QS69ZVlwBWhRtHNJIJYxB23k13zup32qOhq51KPeXA06FQ+TZ9O0PnOEIQyfvpSmvzsKi1hqlLUISybjlwFBpuV42Mh5etGU2wWJD4CQICGMUBbYtaA2I88OpyQ=
+	t=1709713576; cv=none; b=XpVtk8IEmKm6HHMnlh9y8O1SyM5MgQlBVJWF/gI1Yd9fgQqYvJSEHVwOG9GBWCp7fPtH+LrdnoTaraSyf+wxlby0FAPBnHsilTthwh2BvxLohx/wuFEthlrWGlAB5v0Xs7CF4OZffjafSaZ6b+47bZPX2So+WgznxQjbPv5PEaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709710837; c=relaxed/simple;
-	bh=ddtC+uKArv7UdiqQfjewNtYRkzLuCLfgVvW+TGa7IBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pcMSe+u418kOT2Tdroyni9cV9503L2YqdfkTXav1vjXQAK3vtaxn2oMWYhljR/N0yyQPsVtz7VeWaWC9OaWneqgHbSo7LY/RopNn2loplwiaGHVUK/lVLIx+zX+NYJtp8+OKPv3XIU5dHOFWUhfxItLu7rJ1XcObGoh3JRNIfa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xyeBSyxq; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6e4efdf31c9so216062a34.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 23:40:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1709710835; x=1710315635; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dNwfyies9fK4BVkN1qpRBwPdhTsOnQT/qyn6MGfjNFo=;
-        b=xyeBSyxqnFnYSu96xjr+jh7LR1kANzKZclTL/89+Mq9eiLWbe+6VR1ub4GupusB+eW
-         Oa1IT7A1R5nckYfRqq6XFdNfdDAS8lPjXCGzbHgkqPz0ZvBbbgSM1Opwr3JF/aJ9Xf3z
-         PIcLZnbiXQvVdqhSo3ScBWhwH0udkKt0gcnFpu/ihs5Iuyi6EWJOsmKNrqZ/Y5z1sYGr
-         MUcOs6lJUsSz0rTwTK95G43LJHtvkW2nmiwCMVNpevCmL81fC684BNnHcpqe4vreRjgJ
-         YpEnruTud1zsYtskWYceqXelRcUBmxhiJHtlX7Zcc5ULsQecp059JiPxDz2ywUpPSEDv
-         IyVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709710835; x=1710315635;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dNwfyies9fK4BVkN1qpRBwPdhTsOnQT/qyn6MGfjNFo=;
-        b=BSqNbUca96VKa4aT2+lRQoax1UZ01N66VHT7QWwnUIh+IyJ3JTowvawzmpHRmDqTvI
-         IegzLRgp/Ojmo6N0otTXLEXIjNjCFbIhHxZ/wdLcqe8CUY8nn+pkesWgqQW7nWLeUmOL
-         pkiQatt8j0pKCN/I2/8tHKz3JOD8zrSOp9ptCj74Krf99qvQ2tQFrReW2D25BaFg8av+
-         JALkv+lOl2xGFBKmbv3Pp2P8wtvdFXTAwSSAv3/TIxFBt+7ugiOjA1kHRtCKfxW5WZXZ
-         w8SmKncpRS9WwKeUJE3pfZM2RY1pNd1fbV0YJm1wiIX+UNvGBja04b65XsG2iCnMt1s5
-         egFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXttobMemeS9Vd9UuIs+SfxJO4P64yJvtQwi15dRx5MYxSuErHBKuhP0CSQyhbbxLqPDzrX0GGAzrQ6ILqAs9NbIA3BMPpcJo/xZ1XYxQ==
-X-Gm-Message-State: AOJu0YxJp72BLNkKMSYjZ4Y/9Wsl3isPUrnPop89yCJtCG3beTFKmYNQ
-	ImyHRKKrkanOx8nFs2GHjqll6o6GaWXHXnuf+90hTuaZoGBkMb8GHW2JTJGhdQ==
-X-Google-Smtp-Source: AGHT+IHSF6r7pWyah8Vo6aI+WZxk3Tmzs3eaCRP+IhPTHK+o4locRRAwnyg28TbdpJHarx1oGzZZ5Q==
-X-Received: by 2002:a9d:6d94:0:b0:6e4:ae29:d77f with SMTP id x20-20020a9d6d94000000b006e4ae29d77fmr1908819otp.6.1709710834670;
-        Tue, 05 Mar 2024 23:40:34 -0800 (PST)
-Received: from google.com (12.196.204.35.bc.googleusercontent.com. [35.204.196.12])
-        by smtp.gmail.com with ESMTPSA id z9-20020a9d7a49000000b006e4b6013ab2sm2183069otm.15.2024.03.05.23.40.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 23:40:34 -0800 (PST)
-Date: Wed, 6 Mar 2024 07:40:27 +0000
-From: Matt Bobrowski <mattbobrowski@google.com>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org, andrii@kernel.org, kpsingh@google.com, jannh@google.com,
-	jolsa@kernel.org, daniel@iogearbox.net, brauner@kernel.org,
-	torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 bpf-next 8/9] bpf: add trusted d_path() based BPF kfunc
- bpf_path_d_path()
-Message-ID: <af87ec2e92b48a96ca556ec4e62eabde54d509e1.1709675979.git.mattbobrowski@google.com>
-References: <cover.1709675979.git.mattbobrowski@google.com>
+	s=arc-20240116; t=1709713576; c=relaxed/simple;
+	bh=IVbVUMXrP0pWnl6Gqzn7NDcqyyzsIK+2/AJi/qKsKYo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X3tk3uGjUu7Q8MwKc2un65xVgN9VPDb3VJGXsk42NLIXlnvwptnvt7wAvfX7xFG84hL3sXaoLwc6oQRiUrCqad+JNfutBZPMlTIGGmerOz8rUJSiNz/F1e2VFZ2D0oUeskwglbA6qySc0CYzcUV59Px2xB09xGl9SqI+baQLI6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TqQ8z72pQz9xrt5;
+	Wed,  6 Mar 2024 16:10:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 17A50140416;
+	Wed,  6 Mar 2024 16:26:04 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwBnoCSIKOhlyTjHAw--.13514S2;
+	Wed, 06 Mar 2024 09:26:03 +0100 (CET)
+Message-ID: <1217017cc1928842abfdb40a7fa50bad8ae5e99f.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 24/25] commoncap: use vfs fscaps interfaces
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, Christian Brauner
+ <brauner@kernel.org>,  "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Eric
+ Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Stephen Smalley
+ <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+ Casey Schaufler <casey@schaufler-ca.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>,  "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi
+ <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
+ selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
+Date: Wed, 06 Mar 2024 09:25:40 +0100
+In-Reply-To: <10773e5b90ec9378cbc69fa9cfeb61a84273edc2.camel@linux.ibm.com>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
+	 <20240221-idmap-fscap-refactor-v2-24-3039364623bd@kernel.org>
+	 <dcbd9e7869d2fcce69546b53851d694b8ebad54e.camel@huaweicloud.com>
+	 <ZeXpbOsdRTbLsYe9@do-x1extreme>
+	 <a7124afa6bed2fcadcb66efa08e256828cd6f8ab.camel@huaweicloud.com>
+	 <ZeX9MRhU/EGhHkCY@do-x1extreme>
+	 <20240305-fachjargon-abmontieren-75b1d6c67a83@brauner>
+	 <3098aef3e5f924e5717b4ba4a34817d9f22ec479.camel@huaweicloud.com>
+	 <7058e2f93d16f910336a5380877b14a2e069ee9d.camel@huaweicloud.com>
+	 <10773e5b90ec9378cbc69fa9cfeb61a84273edc2.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1709675979.git.mattbobrowski@google.com>
+X-CM-TRANSID:GxC2BwBnoCSIKOhlyTjHAw--.13514S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF4kAr4UGFyxXr45GFWfKrg_yoW7ZF1xpr
+	y5GF4UKr4DJr1UJrn7tr1UX3W0y3yfJF4UXrn8G34UAr1qyr13Gr1xCr17uFyDur18Gr1U
+	Zr1jyFy3Wr1UAwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkmb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6xAYrwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JV
+	WxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUguHqUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj5sG0gAAs1
 
-The legacy bpf_d_path() helper did not operate on trusted pointer
-arguments, therefore under certain circumstances was susceptible to
-memory corruption issues [0]. This new d_path() based BPF kfunc
-bpf_path_d_path() makes use of the trusted pointer argument constraint
-KF_TRUSTED_ARGS. Making use of the KF_TRUSTED_ARGS constraint will
-ensure that d_path() may only be called when and underlying BPF
-program holds a stable handle for a given path.
+On Tue, 2024-03-05 at 21:17 -0500, Mimi Zohar wrote:
+> On Tue, 2024-03-05 at 18:11 +0100, Roberto Sassu wrote:
+> > On Tue, 2024-03-05 at 13:46 +0100, Roberto Sassu wrote:
+> > > On Tue, 2024-03-05 at 10:12 +0100, Christian Brauner wrote:
+> > > > On Mon, Mar 04, 2024 at 10:56:17AM -0600, Seth Forshee (DigitalOcea=
+n)
+> > > > wrote:
+> > > > > On Mon, Mar 04, 2024 at 05:17:57PM +0100, Roberto Sassu wrote:
+> > > > > > On Mon, 2024-03-04 at 09:31 -0600, Seth Forshee (DigitalOcean) =
+wrote:
+> > > > > > > On Mon, Mar 04, 2024 at 11:19:54AM +0100, Roberto Sassu wrote=
+:
+> > > > > > > > On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOce=
+an)
+> > > > > > > > wrote:
+> > > > > > > > > Use the vfs interfaces for fetching file capabilities for
+> > > > > > > > > killpriv
+> > > > > > > > > checks and from get_vfs_caps_from_disk(). While there, up=
+date
+> > > > > > > > > the
+> > > > > > > > > kerneldoc for get_vfs_caps_from_disk() to explain how it =
+is
+> > > > > > > > > different
+> > > > > > > > > from vfs_get_fscaps_nosec().
+> > > > > > > > >=20
+> > > > > > > > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kern=
+el.org>
+> > > > > > > > > ---
+> > > > > > > > >  security/commoncap.c | 30 +++++++++++++-----------------
+> > > > > > > > >  1 file changed, 13 insertions(+), 17 deletions(-)
+> > > > > > > > >=20
+> > > > > > > > > diff --git a/security/commoncap.c b/security/commoncap.c
+> > > > > > > > > index a0ff7e6092e0..751bb26a06a6 100644
+> > > > > > > > > --- a/security/commoncap.c
+> > > > > > > > > +++ b/security/commoncap.c
+> > > > > > > > > @@ -296,11 +296,12 @@ int cap_capset(struct cred *new,
+> > > > > > > > >   */
+> > > > > > > > >  int cap_inode_need_killpriv(struct dentry *dentry)
+> > > > > > > > >  {
+> > > > > > > > > -	struct inode *inode =3D d_backing_inode(dentry);
+> > > > > > > > > +	struct vfs_caps caps;
+> > > > > > > > >  	int error;
+> > > > > > > > > =20
+> > > > > > > > > -	error =3D __vfs_getxattr(dentry, inode, XATTR_NAME_CAPS=
+,
+> > > > > > > > > NULL, 0);
+> > > > > > > > > -	return error > 0;
+> > > > > > > > > +	/* Use nop_mnt_idmap for no mapping here as mapping is
+> > > > > > > > > unimportant */
+> > > > > > > > > +	error =3D vfs_get_fscaps_nosec(&nop_mnt_idmap, dentry,
+> > > > > > > > > &caps);
+> > > > > > > > > +	return error =3D=3D 0;
+> > > > > > > > >  }
+> > > > > > > > > =20
+> > > > > > > > >  /**
+> > > > > > > > > @@ -323,7 +324,7 @@ int cap_inode_killpriv(struct mnt_idm=
+ap
+> > > > > > > > > *idmap, struct dentry *dentry)
+> > > > > > > > >  {
+> > > > > > > > >  	int error;
+> > > > > > > > > =20
+> > > > > > > > > -	error =3D __vfs_removexattr(idmap, dentry,
+> > > > > > > > > XATTR_NAME_CAPS);
+> > > > > > > > > +	error =3D vfs_remove_fscaps_nosec(idmap, dentry);
+> > > > > > > >=20
+> > > > > > > > Uhm, I see that the change is logically correct... but the
+> > > > > > > > original
+> > > > > > > > code was not correct, since the EVM post hook is not called=
+ (thus
+> > > > > > > > the
+> > > > > > > > HMAC is broken, or an xattr change is allowed on a portable
+> > > > > > > > signature
+> > > > > > > > which should be not).
+> > > > > > > >=20
+> > > > > > > > For completeness, the xattr change on a portable signature =
+should
+> > > > > > > > not
+> > > > > > > > happen in the first place, so cap_inode_killpriv() would no=
+t be
+> > > > > > > > called.
+> > > > > > > > However, since EVM allows same value change, we are here.
+> > > > > > >=20
+> > > > > > > I really don't understand EVM that well and am pretty hesitan=
+t to
+> > > > > > > try an
+> > > > > > > change any of the logic around it. But I'll hazard a thought:=
+ should
+> > > > > > > EVM
+> > > > > > > have a inode_need_killpriv hook which returns an error in thi=
+s
+> > > > > > > situation?
+> > > > > >=20
+> > > > > > Uhm, I think it would not work without modifying
+> > > > > > security_inode_need_killpriv() and the hook definition.
+> > > > > >=20
+> > > > > > Since cap_inode_need_killpriv() returns 1, the loop stops and E=
+VM
+> > > > > > would
+> > > > > > not be invoked. We would need to continue the loop and let EVM =
+know
+> > > > > > what is the current return value. Then EVM can reject the chang=
+e.
+> > > > > >=20
+> > > > > > An alternative way would be to detect that actually we are sett=
+ing the
+> > > > > > same value for inode metadata, and maybe not returning 1 from
+> > > > > > cap_inode_need_killpriv().
+> > > > > >=20
+> > > > > > I would prefer the second, since EVM allows same value change a=
+nd we
+> > > > > > would have an exception if there are fscaps.
+> > > > > >=20
+> > > > > > This solves only the case of portable signatures. We would need=
+ to
+> > > > > > change cap_inode_need_killpriv() anyway to update the HMAC for =
+mutable
+> > > > > > files.
+> > > > >=20
+> > > > > I see. In any case this sounds like a matter for a separate patch
+> > > > > series.
+> > > >=20
+> > > > Agreed.
+> > >=20
+> > > Christian, how realistic is that we don't kill priv if we are setting
+> > > the same owner?
+> > >=20
+> > > Serge, would we be able to replace __vfs_removexattr() (or now
+> > > vfs_get_fscaps_nosec()) with a security-equivalent alternative?
+> >=20
+> > It seems it is not necessary.
+> >=20
+> > security.capability removal occurs between evm_inode_setattr() and
+> > evm_inode_post_setattr(), after the HMAC has been verified and before
+> > the new HMAC is recalculated (without security.capability).
+> >=20
+> > So, all good.
+> >=20
+> > Christian, Seth, I pushed the kernel and the updated tests (all patches
+> > are WIP):
+> >=20
+> > https://github.com/robertosassu/linux/commits/evm-fscaps-v2/
+>=20
+> Resetting the IMA status flag is insufficient.  The EVM status needs to b=
+e reset
+> as well.  Stefan's "ima: re-evaluate file integrity on file metadata chan=
+ge"
+> patch does something similar for overlay.
 
-For now, we restrict bpf_path_d_path() to BPF LSM program types, but
-this may be relaxed in the future.
+Both the IMA and EVM status are reset. The IMA one is reset based on
+the evm_revalidate_status() call, similarly to ACLs.
 
-Notably, we are consciously not retroactively enforcing the
-KF_TRUSTED_ARGS constraint onto the legacy bpf_d_path() helper, as
-that would lead to wide-scale BPF program breakage.
+Roberto
 
-[0]
-https://lore.kernel.org/bpf/CAG48ez0ppjcT=QxU-jtCUfb5xQb3mLr=5FcwddF_VKfEBPs_Dg@mail.gmail.com/
+> Mimi
+>=20
+> https://lore.kernel.org/linux-integrity/20240223172513.4049959-8-stefanb@=
+linux.ibm.com/
+>=20
+> >=20
+> > https://github.com/robertosassu/ima-evm-utils/commits/evm-fscaps-v2/
+> >=20
+> >=20
+> > The tests are passing:
+> >=20
+> > https://github.com/robertosassu/ima-evm-utils/actions/runs/8159877004/j=
+ob/22305521359
+> >=20
+> > Roberto
+> >=20
+> >=20
+>=20
 
-Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
----
- kernel/trace/bpf_trace.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 84fd87ead20c..4989639153cd 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1647,6 +1647,37 @@ __bpf_kfunc void bpf_put_path(struct path *path)
- 	path_put(path);
- }
- 
-+/**
-+ * bpf_path_d_path - resolve the pathname for a given path
-+ * @path: path to resolve the pathname for
-+ * @buf: buffer to return the resolved path value in
-+ * @buflen: length of the supplied buffer
-+ *
-+ * Resolve the pathname for the supplied trusted *path* in *buf*. This kfunc is
-+ * the trusted/safer variant of the legacy bpf_d_path() helper and should be
-+ * used in place of bpf_d_path() whenever possible.
-+ *
-+ * Return: A strictly positive integer corresponding to the length of the string
-+ * representing the resolved pathname, including the NUL termination
-+ * character. On error, a negative integer is returned.
-+ */
-+__bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, int buflen)
-+{
-+	int len;
-+	char *ret;
-+
-+	if (buflen <= 0)
-+		return -EINVAL;
-+
-+	ret = d_path(path, buf, buflen);
-+	if (IS_ERR(ret))
-+		return PTR_ERR(ret);
-+
-+	len = buf + buflen - ret;
-+	memmove(buf, ret, len);
-+	return len;
-+}
-+
- __bpf_kfunc_end_defs();
- 
- BTF_KFUNCS_START(lsm_kfunc_set_ids)
-@@ -1663,6 +1694,7 @@ BTF_ID_FLAGS(func, bpf_get_task_fs_root,
- BTF_ID_FLAGS(func, bpf_get_task_fs_pwd,
- 	     KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL)
- BTF_ID_FLAGS(func, bpf_put_path, KF_RELEASE | KF_SLEEPABLE)
-+BTF_ID_FLAGS(func, bpf_path_d_path, KF_TRUSTED_ARGS | KF_SLEEPABLE)
- BTF_KFUNCS_END(lsm_kfunc_set_ids)
- 
- static int bpf_lsm_kfunc_filter(const struct bpf_prog *prog, u32 kfunc_id)
--- 
-2.44.0.278.ge034bb2e1d-goog
-
-/M
 
