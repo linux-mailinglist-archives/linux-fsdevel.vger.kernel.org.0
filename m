@@ -1,212 +1,452 @@
-Return-Path: <linux-fsdevel+bounces-13736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C365A8734CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 11:49:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD8F8734D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 11:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F16428291B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 10:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB671F2387D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 10:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E4C605B6;
-	Wed,  6 Mar 2024 10:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582C1605C9;
+	Wed,  6 Mar 2024 10:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JdmmeZGj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BY9JtzbD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F495FBB7
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 10:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06BD605B6
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 10:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709722177; cv=none; b=Iwbw9CTg/CDqejCv4hpazGTFHRDnlZhxnidg3jFTplciSitNPj+EfN/arEGk7BLNfic2FLIbVudSOLtZuRDRX2cQ/i3R5ht8PFgrQAoGcT8xW3QxwwRqTP9O2FLvW4KvJIUGAq9FIZt4nDV7Lddlgxs3e857Fea33mNCjByF+2I=
+	t=1709722208; cv=none; b=aSwTp7fIL1q8wNLwVdTFOh7UMotPdEJHKiuUERcTGN/hz9b0rV4OOBUiE5ry4bvNMH8O3JYHP8RclCp7J1P7jRlNI+hs3QNVvJtZFpNYdtGl7r8UGOQvrEu4iUK5m9BnPoQdc1f/UUfX4UPpGY18/jE+ys3Sr7lWF03Mxsl4cAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709722177; c=relaxed/simple;
-	bh=RASrq3LBTekIgSKG7TbLLKECG+SrNyOwLafAkERxv94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vGa/vqbInIKWFAjYlLCZYmasY15L6XoeVdFqeKKjVMB2cQ/RNh1qyxJcuw+GIwHcGi8N8wPfv4osGXLMYE519N347Wb2gv94Pe1KHNFbTCETu0xYrB38TFL1tKZULNTuckmQDLPFoEenXXmAjI50ZAUMEH6HwiA43m2efsnlFgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JdmmeZGj; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-33e2774bdc5so3663349f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 02:49:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1709722174; x=1710326974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GmiutPs420KSubfj+E41AV5jWZP3h7vvOSaBZaC9xL0=;
-        b=JdmmeZGjN6ACa8pcWynXSw/Sk3ibfpc+h/Nktcl9+z/Rjj50TCSRIGCKVBHsHTa6WU
-         L1X2Zhr8zeipNbM/iXMaowEFJl6gO/JW7yHi+giDQBboojZ6Y4N8n9Q+oSwekATJplMr
-         PVeXye5+MCLUud04JYqHiX8yTlwEJ9KbfIf8SY2sScr5uXbh8nWxSsicaTkO62EAa7UL
-         i55tuw8ix+2OdNcWgLGLwdOpGeQhF4tpB/WLmTRZ7wamzEUium3tL7Bom8Kh/fRHkqmX
-         NiGYKFp3v24j4psntFMDB1bUB3Vj5pm2Du9RdoErXLJi31TjL87bkgSNP40bD+i/8NE6
-         VN9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709722174; x=1710326974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GmiutPs420KSubfj+E41AV5jWZP3h7vvOSaBZaC9xL0=;
-        b=bTDibrHUJ2TCQ1MgAdZ4/F8LKpiC/frB93PKPEvlcNWwr5ZaM7qzW7nWDVekYNwrL4
-         3voMAN0DMLnJ95lNorHvNlcSBnwsE3bez/zIK5M4t5B7sZdxZ6ps5EqsMAHt/qwny8YK
-         SBu6hpkCTdHPolUjNPID8XWlvtzTAA1kkLlm3Aue5LPtS++rB447jhyzZ0JT+5s7zF/t
-         p0+qSZNLRglraPMsQxHz6ODbRcVBmE0VY2H68XXv6nbTh/b9z7eRHjtvoqXxhSZbkUae
-         nl5uculfqM7dx8Z6JmpDZfR+i4fjQSqh6ASi6P6eREpb7LwNieB1Lv56tQKgVLSGSDZI
-         JA7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXbE2bSe1jJ0Agw9Ogh5IzqmCe2PQm1T4E8v6ZgdIPBS/KgJgb5cCetlTCbmJw0gbDNI929K3VhsNYNd9R6tikYTK/eoqXn/rvmZLTVPQ==
-X-Gm-Message-State: AOJu0YznXiSCJRYzCjpKlae35Uebbdfe0FxjcLJsL21grWlrDpOa/ij2
-	kBWzvOI1zX9JlFD23vq+OB+4TLDoriDsWva+Z01pXF2NaGYpY4xrCeShsc/qga1KVNAvyJ0p1Ie
-	Sr6j7DDG9Zg8GsOsABTDosRpZ/xiXzdCunnI=
-X-Google-Smtp-Source: AGHT+IHuDffvn/pnnziaF4PScFMpADJINdhzS4hqx6J2YTbhZdXnevKvtPrPZgkBTOW92T27l1SGBqRt+5kxzCXiHsU=
-X-Received: by 2002:adf:e883:0:b0:33d:1720:8cfd with SMTP id
- d3-20020adfe883000000b0033d17208cfdmr10811564wrm.41.1709722174393; Wed, 06
- Mar 2024 02:49:34 -0800 (PST)
+	s=arc-20240116; t=1709722208; c=relaxed/simple;
+	bh=Xqh4B+sUDvJ3x+P/Nra1mgdos4mKkL6n6Q6KJJj5LS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c1r+BgLEa9Nwl/8OFS/k5U2eC1/yWJrJDctYuhzN2BlS1oni1i3cNHVFown6tU1J0kC0CGZ9v/MTDc259FGfafB/qCUoWjYdC7/JKWzkXtAcfWjij1ZcfaEsY+x4v5+uVPdZiMUTYJ4xirOHhu11Cr0CkyPCGVOskMOTYOqf8e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BY9JtzbD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C3CC433C7;
+	Wed,  6 Mar 2024 10:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709722208;
+	bh=Xqh4B+sUDvJ3x+P/Nra1mgdos4mKkL6n6Q6KJJj5LS0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BY9JtzbDUzRsNQt4EJopgg+AAYwwU82lsMaVLxc1eBvp25zBOKDks2MwdeAGlqwU7
+	 5LhIk6J1cwxuRdGr96+u76iTOk9r9V6lZmflK+4YLLzB1ZToRQT/FB49xhIpwVvsku
+	 K39Xrrq8r9nKt67G+cGYwnfxn8SsHKzmPX/dMYBrK2es7YWaiNJZ9YP68bWc1Af65s
+	 ZFOfa+jJWQ7pD0S+Ht2k4gx2EpTIkfOHvvrPzgq628wBoZsKC1FkoWaijRxzQVeDRA
+	 SMxwrgMXnfjAnaijIUqtcC9unt0d2TroMHwBq0OQbOecmeX6VIRADXKsOe5w59ngrW
+	 ZsuATFd1BM7jg==
+Date: Wed, 6 Mar 2024 11:50:03 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Bill O'Donnell <billodo@redhat.com>, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH 1/2] vfs: Convert debugfs to use the new mount API
+Message-ID: <20240306-beehrt-abweichen-a9124be7665a@brauner>
+References: <cfdebcc3-b9de-4680-a764-6bdf37c0accb@redhat.com>
+ <49d1f108-46e3-443f-85a3-6dd730c5d076@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
- <20240304-zugute-abtragen-d499556390b3@brauner> <202403040943.9545EBE5@keescook>
- <20240305-attentat-robust-b0da8137b7df@brauner> <202403050134.784D787337@keescook>
- <20240305-kontakt-ticken-77fc8f02be1d@brauner> <20240305-gremien-faucht-29973b61fb57@brauner>
-In-Reply-To: <20240305-gremien-faucht-29973b61fb57@brauner>
-From: Matt Denton <mpdenton@google.com>
-Date: Wed, 6 Mar 2024 02:49:21 -0800
-Message-ID: <CAFsT0xi1Dkv4eoG86vBHWvTzS=JjmrxBf0BNLDafi-Eq2H2tfw@mail.gmail.com>
-Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, Matthew Denton <mpdenton@chromium.org>, 
-	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-fsdevel@vger.kernel.org, 
-	kernel@collabora.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Guenter Roeck <groeck@chromium.org>, Doug Anderson <dianders@chromium.org>, 
-	Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Mike Frysinger <vapier@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <49d1f108-46e3-443f-85a3-6dd730c5d076@redhat.com>
 
-The SECCOMP_RET_USER_NOTIF sandbox is partially implemented but the
-reason we needed it (glibc blocking signals during certain syscalls we
-wanted to emulate) got reverted and we haven't had any important
-issues with the SECCOMP_RET_TRAP sandbox since then. /proc/pid/mem was
-always restricted on ChromeOS so the plan was to use
-process_vm_readv() and process_vm_writev() in the unsandboxed broker
-process. We knew about the pid race of course, but this would be far
-from the only place that Chrome would be potentially vulnerable to the
-race so it didn't seem any worse.
+On Tue, Mar 05, 2024 at 05:08:39PM -0600, Eric Sandeen wrote:
+> From: David Howells <dhowells@redhat.com>
+> 
+> Convert the debugfs filesystem to the new internal mount API as the old
+> one will be obsoleted and removed.  This allows greater flexibility in
+> communication of mount parameters between userspace, the VFS and the
+> filesystem.
+> 
+> See Documentation/filesystems/mount_api.txt for more information.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Co-developed-by: Eric Sandeen <sandeen@redhat.com>
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> [sandeen: forward port to modern kernel, fix remounting]
+> cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> ---
+>  fs/debugfs/inode.c | 198 +++++++++++++++++++++------------------------
+>  1 file changed, 93 insertions(+), 105 deletions(-)
+> 
+> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+> index 034a617cb1a5..c2adfb272da8 100644
+> --- a/fs/debugfs/inode.c
+> +++ b/fs/debugfs/inode.c
+> @@ -14,7 +14,8 @@
+>  
+>  #include <linux/module.h>
+>  #include <linux/fs.h>
+> -#include <linux/mount.h>
+> +#include <linux/fs_context.h>
+> +#include <linux/fs_parser.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/init.h>
+>  #include <linux/kobject.h>
+> @@ -23,7 +24,6 @@
+>  #include <linux/fsnotify.h>
+>  #include <linux/string.h>
+>  #include <linux/seq_file.h>
+> -#include <linux/parser.h>
+>  #include <linux/magic.h>
+>  #include <linux/slab.h>
+>  #include <linux/security.h>
+> @@ -77,7 +77,7 @@ static struct inode *debugfs_get_inode(struct super_block *sb)
+>  	return inode;
+>  }
+>  
+> -struct debugfs_mount_opts {
+> +struct debugfs_fs_info {
+>  	kuid_t uid;
+>  	kgid_t gid;
+>  	umode_t mode;
+> @@ -89,68 +89,51 @@ enum {
+>  	Opt_uid,
+>  	Opt_gid,
+>  	Opt_mode,
+> -	Opt_err
+>  };
+>  
+> -static const match_table_t tokens = {
+> -	{Opt_uid, "uid=%u"},
+> -	{Opt_gid, "gid=%u"},
+> -	{Opt_mode, "mode=%o"},
+> -	{Opt_err, NULL}
+> +static const struct fs_parameter_spec debugfs_param_specs[] = {
+> +	fsparam_u32	("gid",		Opt_gid),
+> +	fsparam_u32oct	("mode",	Opt_mode),
+> +	fsparam_u32	("uid",		Opt_uid),
+> +	{}
+>  };
+>  
+> -struct debugfs_fs_info {
+> -	struct debugfs_mount_opts mount_opts;
+> -};
+> -
+> -static int debugfs_parse_options(char *data, struct debugfs_mount_opts *opts)
+> +static int debugfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  {
+> -	substring_t args[MAX_OPT_ARGS];
+> -	int option;
+> -	int token;
+> +	struct debugfs_fs_info *opts = fc->s_fs_info;
+> +	struct fs_parse_result result;
+>  	kuid_t uid;
+>  	kgid_t gid;
+> -	char *p;
+> -
+> -	opts->opts = 0;
+> -	opts->mode = DEBUGFS_DEFAULT_MODE;
+> -
+> -	while ((p = strsep(&data, ",")) != NULL) {
+> -		if (!*p)
+> -			continue;
+> -
+> -		token = match_token(p, tokens, args);
+> -		switch (token) {
+> -		case Opt_uid:
+> -			if (match_int(&args[0], &option))
+> -				return -EINVAL;
+> -			uid = make_kuid(current_user_ns(), option);
+> -			if (!uid_valid(uid))
+> -				return -EINVAL;
+> -			opts->uid = uid;
+> -			break;
+> -		case Opt_gid:
+> -			if (match_int(&args[0], &option))
+> -				return -EINVAL;
+> -			gid = make_kgid(current_user_ns(), option);
+> -			if (!gid_valid(gid))
+> -				return -EINVAL;
+> -			opts->gid = gid;
+> -			break;
+> -		case Opt_mode:
+> -			if (match_octal(&args[0], &option))
+> -				return -EINVAL;
+> -			opts->mode = option & S_IALLUGO;
+> -			break;
+> -		/*
+> -		 * We might like to report bad mount options here;
+> -		 * but traditionally debugfs has ignored all mount options
+> -		 */
+> -		}
+> -
+> -		opts->opts |= BIT(token);
+> +	int opt;
+> +
+> +	opt = fs_parse(fc, debugfs_param_specs, param, &result);
+> +	if (opt < 0)
+> +		return opt;
+> +
+> +	switch (opt) {
+> +	case Opt_uid:
+> +		uid = make_kuid(current_user_ns(), result.uint_32);
+> +		if (!uid_valid(uid))
+> +			return invalf(fc, "Unknown uid");
 
-We did need to use process_vm_writev() for some syscalls, like
-emulating stat() required us to write into the supervised process.
+Fwiw, Opt_{g,u}d I would like to see that either moved completely to the
+VFS or we need to provide standardized helpers.
 
-On Tue, Mar 5, 2024 at 3:03=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Tue, Mar 05, 2024 at 10:58:31AM +0100, Christian Brauner wrote:
-> > On Tue, Mar 05, 2024 at 01:41:29AM -0800, Kees Cook wrote:
-> > > On Tue, Mar 05, 2024 at 09:59:47AM +0100, Christian Brauner wrote:
-> > > > > > Uhm, this will break the seccomp notifier, no? So you can't tur=
-n on
-> > > > > > SECURITY_PROC_MEM_RESTRICT_WRITE when you want to use the secco=
-mp
-> > > > > > notifier to do system call interception and rewrite memory loca=
-tions of
-> > > > > > the calling task, no? Which is very much relied upon in various
-> > > > > > container managers and possibly other security tools.
-> > > > > >
-> > > > > > Which means that you can't turn this on in any of the regular d=
-istros.
-> > > > >
-> > > > > FWIW, it's a run-time toggle, but yes, let's make sure this works
-> > > > > correctly.
-> > > > >
-> > > > > > So you need to either account for the calling task being a secc=
-omp
-> > > > > > supervisor for the task whose memory it is trying to access or =
-you need
-> > > > > > to provide a migration path by adding an api that let's caller'=
-s perform
-> > > > > > these writes through the seccomp notifier.
-> > > > >
-> > > > > How do seccomp supervisors that use USER_NOTIF do those kinds of
-> > > > > memory writes currently? I thought they were actually using ptrac=
-e?
-> > > > > Everything I'm familiar with is just using SECCOMP_IOCTL_NOTIF_AD=
-DFD,
-> > > > > and not doing fancy memory pokes.
-> > > >
-> > > > For example, incus has a seccomp supervisor such that each containe=
-r
-> > > > gets it's own goroutine that is responsible for handling system cal=
-l
-> > > > interception.
-> > > >
-> > > > If a container is started the container runtime connects to an AF_U=
-NIX
-> > > > socket to register with the seccomp supervisor. It stays connected =
-until
-> > > > it stops. Everytime a system call is performed that is registered i=
-n the
-> > > > seccomp notifier filter the container runtime will send a AF_UNIX
-> > > > message to the seccomp supervisor. This will include the following =
-fds:
-> > > >
-> > > > - the pidfd of the task that performed the system call (we should
-> > > >   actually replace this with SO_PEERPIDFD now that we have that)
-> > > > - the fd of the task's memory to /proc/<pid>/mem
-> > > >
-> > > > The seccomp supervisor will then perform the system call intercepti=
-on
-> > > > including the required memory reads and writes.
-> > >
-> > > Okay, so the patch would very much break that. Some questions, though=
-:
-> > > - why not use process_vm_writev()?
-> >
-> > Because it's inherently racy as I've explained in an earlier mail in
-> > this thread. Opening /proc/<pid>/mem we can guard via:
-> >
-> > // Assume we hold @pidfd for supervised process
-> >
-> > int fd_mem =3D open("/proc/$pid/mem", O_RDWR);:
-> >
-> > if (pidfd_send_signal(pidfd, 0, ...) =3D=3D 0)
-> >         write(fd_mem, ...);
-> >
-> > But we can't exactly do:
-> >
-> > process_vm_writev(pid, WRITE_TO_MEMORY, ...);
-> > if (pidfd_send_signal(pidfd, 0, ...) =3D=3D 0)
-> >         write(fd_mem, ...);
-> >
-> > That's always racy. The process might have been reaped before we even
-> > call pidfd_send_signal() and we're writing to some random process
-> > memory.
-> >
-> > If we wanted to support this we'd need to implement a proposal I had a
-> > while ago:
-> >
-> > #define PROCESS_VM_RW_PIDFD (1 << 0)
-> >
-> > process_vm_readv(pidfd,  ..., PROCESS_VM_RW_PIDFD);
-> > process_vm_writev(pidfd, ..., PROCESS_VM_RW_PIDFD);
-> >
-> > which is similar to what we did for waitid(pidfd, P_PIDFD, ...)
-> >
-> > That would make it possible to use a pidfd instead of a pid in the two
-> > system calls. Then we can get rid of the raciness and actually use thos=
-e
-> > system calls. As they are now, we can't.
->
-> What btw, is the Linux sandbox on Chromium doing? Did they finally move
-> away from SECCOMP_RET_TRAP to SECCOMP_RET_USER_NOTIF? I see:
->
-> https://issues.chromium.org/issues/40145101
->
-> What ever became of this?
+The issue is that for a userns mountable filesytems the validation done
+here isn't enough and that's easy to miss (Obviously, debugfs isn't
+relevant as it's not userns mountable but still.). For example, for
+in tmpfs I recently fixed a bug where validation was wrong:
+
+        case Opt_uid:
+                kuid = make_kuid(current_user_ns(), result.uint_32);
+                if (!uid_valid(kuid))
+                        goto bad_value;
+
+                /*
+                 * The requested uid must be representable in the
+                 * filesystem's idmapping.
+                 */
+                if (!kuid_has_mapping(fc->user_ns, kuid))
+                        goto bad_value;
+
+                ctx->uid = kuid;
+                break;
+
+The crucial step where the {g,u}id must also be representable in the
+superblock's namespace not just in the caller's was missing. So really
+we should have a generic helper that we can reycle for all Opt_{g,u}id
+mount options or move that Opt_{g,u}id to the VFS itself. There was some
+nastiness involved in this when I last looked at this though. And all
+that invalfc() reporting should then also be identical across
+filesystems.
+
+So that's a ToDo for the future.
+
+> +		opts->uid = uid;
+> +		break;
+> +	case Opt_gid:
+> +		gid = make_kgid(current_user_ns(), result.uint_32);
+> +		if (!gid_valid(gid))
+> +			return invalf(fc, "Unknown gid");
+> +		opts->gid = gid;
+> +		break;
+> +	case Opt_mode:
+> +		opts->mode = result.uint_32 & S_IALLUGO;
+> +		break;
+> +	/*
+> +	 * We might like to report bad mount options here;
+> +	 * but traditionally debugfs has ignored all mount options
+> +	 */
+>  	}
+
+We can actually differentiate this. During superblock creation and
+remount we're now setting fc->oldapi e.g., what I've done for btrfs in
+fs/btrfs/super.c:btrfs_reconfigure_for_mount() or what I did for
+fs/overlayfs/params.c:ovl_parse_param().
+
+There's a tiny wrinkle though. We currently have no way of letting
+userspace know whether a filesystem supports the new mount API or not
+(see that mount option probing systemd does we recently discussed). So
+if say mount(8) remounts debugfs with mount options that were ignored in
+the old mount api that are now rejected in the new mount api users now
+see failures they didn't see before.
+
+For the user it's completely intransparent why that failure happens. For
+them nothing changed from util-linux's perspective. So really, we should
+probably continue to ignore old mount options for backward compatibility.
+
+>  
+> +	opts->opts |= BIT(opt);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -158,23 +141,22 @@ static void _debugfs_apply_options(struct super_block *sb, bool remount)
+>  {
+>  	struct debugfs_fs_info *fsi = sb->s_fs_info;
+>  	struct inode *inode = d_inode(sb->s_root);
+> -	struct debugfs_mount_opts *opts = &fsi->mount_opts;
+>  
+>  	/*
+>  	 * On remount, only reset mode/uid/gid if they were provided as mount
+>  	 * options.
+>  	 */
+>  
+> -	if (!remount || opts->opts & BIT(Opt_mode)) {
+> +	if (!remount || fsi->opts & BIT(Opt_mode)) {
+>  		inode->i_mode &= ~S_IALLUGO;
+> -		inode->i_mode |= opts->mode;
+> +		inode->i_mode |= fsi->mode;
+>  	}
+>  
+> -	if (!remount || opts->opts & BIT(Opt_uid))
+> -		inode->i_uid = opts->uid;
+> +	if (!remount || fsi->opts & BIT(Opt_uid))
+> +		inode->i_uid = fsi->uid;
+>  
+> -	if (!remount || opts->opts & BIT(Opt_gid))
+> -		inode->i_gid = opts->gid;
+> +	if (!remount || fsi->opts & BIT(Opt_gid))
+> +		inode->i_gid = fsi->gid;
+>  }
+>  
+>  static void debugfs_apply_options(struct super_block *sb)
+> @@ -187,35 +169,33 @@ static void debugfs_apply_options_remount(struct super_block *sb)
+>  	_debugfs_apply_options(sb, true);
+>  }
+>  
+> -static int debugfs_remount(struct super_block *sb, int *flags, char *data)
+> +static int debugfs_reconfigure(struct fs_context *fc)
+>  {
+> -	int err;
+> -	struct debugfs_fs_info *fsi = sb->s_fs_info;
+> +	struct super_block *sb = fc->root->d_sb;
+> +	struct debugfs_fs_info *sb_opts = sb->s_fs_info;
+> +	struct debugfs_fs_info *new_opts = fc->s_fs_info;
+>  
+>  	sync_filesystem(sb);
+> -	err = debugfs_parse_options(data, &fsi->mount_opts);
+> -	if (err)
+> -		goto fail;
+>  
+> +	/* structure copy of new mount options to sb */
+> +	*sb_opts = *new_opts;
+>  	debugfs_apply_options_remount(sb);
+>  
+> -fail:
+> -	return err;
+> +	return 0;
+>  }
+>  
+>  static int debugfs_show_options(struct seq_file *m, struct dentry *root)
+>  {
+>  	struct debugfs_fs_info *fsi = root->d_sb->s_fs_info;
+> -	struct debugfs_mount_opts *opts = &fsi->mount_opts;
+>  
+> -	if (!uid_eq(opts->uid, GLOBAL_ROOT_UID))
+> +	if (!uid_eq(fsi->uid, GLOBAL_ROOT_UID))
+>  		seq_printf(m, ",uid=%u",
+> -			   from_kuid_munged(&init_user_ns, opts->uid));
+> -	if (!gid_eq(opts->gid, GLOBAL_ROOT_GID))
+> +			   from_kuid_munged(&init_user_ns, fsi->uid));
+> +	if (!gid_eq(fsi->gid, GLOBAL_ROOT_GID))
+>  		seq_printf(m, ",gid=%u",
+> -			   from_kgid_munged(&init_user_ns, opts->gid));
+> -	if (opts->mode != DEBUGFS_DEFAULT_MODE)
+> -		seq_printf(m, ",mode=%o", opts->mode);
+> +			   from_kgid_munged(&init_user_ns, fsi->gid));
+> +	if (fsi->mode != DEBUGFS_DEFAULT_MODE)
+> +		seq_printf(m, ",mode=%o", fsi->mode);
+>  
+>  	return 0;
+>  }
+> @@ -229,7 +209,6 @@ static void debugfs_free_inode(struct inode *inode)
+>  
+>  static const struct super_operations debugfs_super_operations = {
+>  	.statfs		= simple_statfs,
+> -	.remount_fs	= debugfs_remount,
+>  	.show_options	= debugfs_show_options,
+>  	.free_inode	= debugfs_free_inode,
+>  };
+> @@ -263,26 +242,14 @@ static const struct dentry_operations debugfs_dops = {
+>  	.d_automount = debugfs_automount,
+>  };
+>  
+> -static int debug_fill_super(struct super_block *sb, void *data, int silent)
+> +static int debugfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+>  	static const struct tree_descr debug_files[] = {{""}};
+> -	struct debugfs_fs_info *fsi;
+>  	int err;
+>  
+> -	fsi = kzalloc(sizeof(struct debugfs_fs_info), GFP_KERNEL);
+> -	sb->s_fs_info = fsi;
+> -	if (!fsi) {
+> -		err = -ENOMEM;
+> -		goto fail;
+> -	}
+> -
+> -	err = debugfs_parse_options(data, &fsi->mount_opts);
+> +	err = simple_fill_super(sb, DEBUGFS_MAGIC, debug_files);
+>  	if (err)
+> -		goto fail;
+> -
+> -	err  =  simple_fill_super(sb, DEBUGFS_MAGIC, debug_files);
+> -	if (err)
+> -		goto fail;
+> +		return err;
+>  
+>  	sb->s_op = &debugfs_super_operations;
+>  	sb->s_d_op = &debugfs_dops;
+> @@ -290,27 +257,48 @@ static int debug_fill_super(struct super_block *sb, void *data, int silent)
+>  	debugfs_apply_options(sb);
+>  
+>  	return 0;
+> -
+> -fail:
+> -	kfree(fsi);
+> -	sb->s_fs_info = NULL;
+> -	return err;
+>  }
+>  
+> -static struct dentry *debug_mount(struct file_system_type *fs_type,
+> -			int flags, const char *dev_name,
+> -			void *data)
+> +static int debugfs_get_tree(struct fs_context *fc)
+>  {
+>  	if (!(debugfs_allow & DEBUGFS_ALLOW_API))
+> -		return ERR_PTR(-EPERM);
+> +		return -EPERM;
+> +
+> +	return get_tree_single(fc, debugfs_fill_super);
+> +}
+> +
+> +static void debugfs_free_fc(struct fs_context *fc)
+> +{
+> +	kfree(fc->s_fs_info);
+> +}
+>  
+> -	return mount_single(fs_type, flags, data, debug_fill_super);
+> +static const struct fs_context_operations debugfs_context_ops = {
+> +	.free		= debugfs_free_fc,
+> +	.parse_param	= debugfs_parse_param,
+> +	.get_tree	= debugfs_get_tree,
+> +	.reconfigure	= debugfs_reconfigure,
+> +};
+> +
+> +static int debugfs_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct debugfs_fs_info *fsi;
+> +
+> +	fsi = kzalloc(sizeof(struct debugfs_fs_info), GFP_KERNEL);
+> +	if (!fsi)
+> +		return -ENOMEM;
+> +
+> +	fsi->mode = DEBUGFS_DEFAULT_MODE;
+> +
+> +	fc->s_fs_info = fsi;
+> +	fc->ops = &debugfs_context_ops;
+> +	return 0;
+>  }
+>  
+>  static struct file_system_type debug_fs_type = {
+>  	.owner =	THIS_MODULE,
+>  	.name =		"debugfs",
+> -	.mount =	debug_mount,
+> +	.init_fs_context = debugfs_init_fs_context,
+> +	.parameters =	debugfs_param_specs,
+>  	.kill_sb =	kill_litter_super,
+>  };
+>  MODULE_ALIAS_FS("debugfs");
+> -- 
+> 2.43.0
+> 
+> 
 
