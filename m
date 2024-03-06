@@ -1,165 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-13757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B22873712
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 13:56:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7A2873787
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 14:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B7028107D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 12:56:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800911F20641
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 13:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A80012C81D;
-	Wed,  6 Mar 2024 12:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0156B130E29;
+	Wed,  6 Mar 2024 13:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gcsgb1bL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3864383CBA
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 12:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C28412D743;
+	Wed,  6 Mar 2024 13:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709729780; cv=none; b=kzmkllW8ferLmz92XHX4GrwfRD10T3fxk6SQzD43sx7Dbzdg0JlHGCjY4yQpcc9nhwx+jcTD1LimecUPKdHw5QsmSifT7DvqQ44A/KUK7sptuWdZX8kQJEG0oyPcnJFS/ejz3uFGdI7VwogbYH0wC9uwFw8gk/O3PnItEVjAPlM=
+	t=1709730829; cv=none; b=u3XQWBwFDhiuofmcOTI21+FQ2nga3tJbdI9YuOaqra9KpX9V9f25fDpGl49ukEhv0JwJqki7kqixWw5WtAOwCsxtkBwm2ZWZKpQsQqwrOkZutoNXnVojj7pJk/gS/4cpE+/7GKzZH0z+at9y0yTknI5yKtKvT7EbvErs1GSsnSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709729780; c=relaxed/simple;
-	bh=iV+b2WCFfpAq36zmD0vXtSrw1Y2hWxPvV+XWX+9BGuw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qnN8W2meN4Gxe3XrMgdekIikFiG0UHNaprd7gxRGC9vS7viDIpPzQWBTv+al9mI+DZnFtUT29rMl31So4bvvmFW4+ZMhlvcBhpdlm32zIRzgH5dRXTezOjvx9Yp8c8vPVn/iltO+wQIPstil2JHHcHOpPTohgbk4qiLhg+fEEP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c8440b33b6so106674239f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 04:56:18 -0800 (PST)
+	s=arc-20240116; t=1709730829; c=relaxed/simple;
+	bh=zZTqZM1B1Da/pRYhOGZkJOmcUeVzEW4JS9modMCz4zw=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=bVo6RVZOYsQ7bAFhGYm8mwQmYvyp4V9goPp1BZ+XL2nR4evXDcaK/d9vgF/01Ugkqh8SQFW7GiPyRYi+hVm35bVvEZR2Xf40IT572UUsS3kGuuICkRgDhjk0AVVZGPccV+fl5u6vEku4HBB1BnBDcHOYHKfLzkFGMZB7DotMov4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gcsgb1bL; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-5ce07cf1e5dso6245280a12.2;
+        Wed, 06 Mar 2024 05:13:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709730827; x=1710335627; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uypOmawqOIrPwCriVHDF7rFN8Nbzv9NUbNdsbCE+5jI=;
+        b=Gcsgb1bLhfVTPJoyoPmfJCV7GP6SIKlqlaVIR6oVU+MWyXbO+acmyB+YkXRu96HAWs
+         HId5oV/mjGiCZZxuhrDH+dOCXAPPOijfc1hD9VyJFiHBWY4iEVfwPyMfavLOA/aIfM58
+         7S5tbZ5EYNKa90LM78XhfBMAUUIdtvFaXmLYtV+9K4FuslGFc+cf0d9Q5rmuIPABbwLp
+         Yjv1ofGP/JKJOh7Cx59C6lBBumtaIcEsIxRlbmdWGejNpuke399xqwCuPBfAgfEhl/I7
+         ThNpoBT6Kc1IToFnKheNNnUOIncPhWojg7SfaUxsT55d1RTmJexBAubYmsXIsaM1w9Pa
+         uEEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709729778; x=1710334578;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1709730827; x=1710335627;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IWMpILfk7U93cwoBQiReCwBHB6q77sTx0PV/rHUpa68=;
-        b=AsrYZNQl/8fKu0pc2QqO43e0UPzpoBzy4g3AlkZ1DKtIecYu7FPN2orhio2fxm6+rY
-         JJUVlgBk/Mam6fPFlaiMGhBmCiw3l+7snJUUIUOiPluTifPV85IJ4eNS1dBfKQY7CBpX
-         w5pUxDXS8aqhdklqwsT5UJ8OGlvX8xv714dsn5McI8+iqSsy0qZbE4SHp2V3X8w2ZWUW
-         qPsP+bpibyzD/q7eFphXPebVhAB/xhuhPu+HRIBcMpmn5jgNKo3qq0v5v9tVy83oHgXM
-         giVGGyRr1xOUb+3W54bldyfIhlfX15+ZieRpmkMACK7LdhqciuPi1sdtoMFqAlmGvl8s
-         pS3Q==
-X-Gm-Message-State: AOJu0YwDhP3xju5+KX/xwLEyLNF6SHirV4Cikj327VTAc8rb48cIBIaN
-	rx5JsetOLkPtJBwx0XkSkhkwq9N3KBBnBJFb0lLngP4yIjAJJIPcXx9vaCvQz6VPF11st4jNRUR
-	D3a0AJKQiBPS1huWoSRFKdwxzVW55w7HA3xg2RIuE3t38T1Sf2I9dNTFIGw==
-X-Google-Smtp-Source: AGHT+IH5+gVM7kgcXEzIZVhyrS8wtXgOYU/LtAfD3ZRdexn7TasWyN1Vc5KxzLwlLvg+wM6eeDgoQyRjekWXaaUkIv3Fwu+CkB0r
+        bh=uypOmawqOIrPwCriVHDF7rFN8Nbzv9NUbNdsbCE+5jI=;
+        b=A3TrrS7rEKU92C1wWQIQYCU2Gfsg1MVuqgI4ww5sn1Jrf6Ou1B+S0ey/ipueYZ/vAR
+         O38zaOtvZCf/kN2AH4vAMQXQ37GG24FVmbWVJsILIpO5NBOlfgRmu2xkQ3QKfKL8crK4
+         mHlvGseazRSvbFY2iyn3F2+c0HLTPt0Qj2kBYla1TjVkq2+3qBsqongxMIg6yFmAhsQn
+         gRWM+Hm9gutzKHiAsybbFChhlYsgoObrdxr1n4F7p56Sq3KEdFyUd1XvOUt7otelHltP
+         E5+oVl110m8VFfBNHusZlF5SnEQs7zK5WlL1wbw0+yf6SIwrVrmRmk6L0bpa6DUg36CD
+         XvqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7HFblxm5UykLZ8esNtUXOZVhUgl908mz2QsFk4ps21bQWBzq6WjMKXqFA2iG6viPJAmX+pWKTdXqslDxA7TPHt0MV/xWEKH44eJ70L7WAAivmCOtPWgpfGzDa+1/XNE5U4kMy4vu2tPlKByilCYKpYOZRfiQ4VDNldt6AwOqg13VL6DAM68k=
+X-Gm-Message-State: AOJu0YxnahSyAqderFvxRQ1HnGK2HGI4NR2K13DzWRsrWQS9UiV4Mxxd
+	E4yYSQ9XtiPi5cFQAokBGi8u/1me6o7lTHqCa/nxJjA9Fz0tWDjeTn9yZ7h/JaE=
+X-Google-Smtp-Source: AGHT+IG0wggrx1Jx+WY2aA3T8NsgKp7yzhb+H/WmreiPwQFQP+6Qv+dQze5BqQRo6TetqXDOxpZGwg==
+X-Received: by 2002:a05:6a20:2584:b0:1a1:6aa8:ee82 with SMTP id k4-20020a056a20258400b001a16aa8ee82mr620624pzd.42.1709730826433;
+        Wed, 06 Mar 2024 05:13:46 -0800 (PST)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id y26-20020aa793da000000b006e6500caa4esm984426pff.199.2024.03.06.05.13.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Mar 2024 05:13:45 -0800 (PST)
+Date: Wed, 06 Mar 2024 18:43:40 +0530
+Message-Id: <87il1zpkor.fsf@doe.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Dave Chinner <david@fromorbit.com>
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>, "Darrick J . Wong" <djwong@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/9] ext4: Add direct-io atomic write support using fsawu
+In-Reply-To: <e4bd58d4-723f-4c94-bf46-826bceeb6a8d@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:14c9:b0:474:f25a:6fb with SMTP id
- l9-20020a05663814c900b00474f25a06fbmr539563jak.3.1709729778517; Wed, 06 Mar
- 2024 04:56:18 -0800 (PST)
-Date: Wed, 06 Mar 2024 04:56:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001c59010612fd7c60@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_strcasecmp
-From: syzbot <syzbot+e126b819d8187b282d44@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+John Garry <john.g.garry@oracle.com> writes:
 
-syzbot found the following issue on:
+> On 02/03/2024 07:41, Ritesh Harjani (IBM) wrote:
+>> Hello all,
+>> 
+>> This RFC series adds support for atomic writes to ext4 direct-io using
+>> filesystem atomic write unit. It's built on top of John's "block atomic
+>> write v5" series which adds RWF_ATOMIC flag interface to pwritev2() and enables
+>> atomic write support in underlying device driver and block layer.
+>> 
+>> This series uses the same RWF_ATOMIC interface for adding atomic write support
+>> to ext4's direct-io path. One can utilize it by 2 of the methods explained below.
+>> ((1)mkfs.ext4 -b <BS>, (2) with bigalloc).
+>> 
+>> Filesystem atomic write unit (fsawu):
+>> ============================================
+>> Atomic writes within ext4 can be supported using below 3 methods -
+>> 1. On a large pagesize system (e.g. Power with 64k pagesize or aarch64 with 64k pagesize),
+>>     we can mkfs using different blocksizes. e.g. mkfs.ext4 -b <4k/8k/16k/32k/64k).
+>>     Now if the underlying HW device supports atomic writes, than a corresponding
+>>     blocksize can be chosen as a filesystem atomic write unit (fsawu) which
+>>     should be within the underlying hw defined [awu_min, awu_max] range.
+>>     For such filesystem, fsawu_[min|max] both are equal to blocksize (e.g. 16k)
+>> 
+>>     On a smaller pagesize system this can be utilized when support for LBS is
+>>     complete (on ext4).
+>> 
+>> 2. EXT4 already supports a feature called bigalloc. In that ext4 can handle
+>>     allocation in cluster size units. So for e.g. we can create a filesystem with
+>>     4k blocksize but with 64k clustersize. Such a configuration can also be used
+>>     to support atomic writes if the underlying hw device supports it.
+>>     In such case the fsawu_min will most likely be the filesystem blocksize and
+>>     fsawu_max will mostly likely be the cluster size.
+>> 
+>>     So a user can do an atomic write of any size between [fsawu_min, fsawu_max]
+>>     range as long as it satisfies other constraints being laid out by HW device
+>>     (or by software stack) to support atomic writes.
+>>     e.g. len should be a power of 2, pos % len should be naturally
+>>     aligned and [start | end] (phys offsets) should not straddle over
+>>     an atomic write boundary.
+>
+> JFYI, I gave this a quick try, and it seems to work ok. Naturally it 
 
-HEAD commit:    5ad3cb0ed525 Merge tag 'for-v6.8-rc2' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1687d706180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=80c7a82a572c0de3
-dashboard link: https://syzkaller.appspot.com/bug?extid=e126b819d8187b282d44
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+Thanks John for giving this a try!
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> suffers from the same issue discussed at 
+> https://lore.kernel.org/linux-fsdevel/434c570e-39b2-4f1c-9b49-ac5241d310ca@oracle.com/ 
+> with regards to writing to partially written extents, which I have tried 
+> to address properly in my v2 for that same series.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b865f2727884/disk-5ad3cb0e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b1c7b0d47f5c/vmlinux-5ad3cb0e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/21afab19a0ed/bzImage-5ad3cb0e.xz
+I did go through other revisions, but I guess I missed going through this series.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e126b819d8187b282d44@syzkaller.appspotmail.com
+Thanks Dave & John for your comments over the series.
+Let me go through the revisions I have missed and John's latest revision.
+I will update this series accordingly.
 
-=====================================================
-BUG: KMSAN: uninit-value in case_fold fs/hfsplus/unicode.c:23 [inline]
-BUG: KMSAN: uninit-value in hfsplus_strcasecmp+0x1ca/0x770 fs/hfsplus/unicode.c:47
- case_fold fs/hfsplus/unicode.c:23 [inline]
- hfsplus_strcasecmp+0x1ca/0x770 fs/hfsplus/unicode.c:47
- hfsplus_cat_case_cmp_key+0xde/0x190 fs/hfsplus/catalog.c:26
- hfs_find_rec_by_key+0xb0/0x240 fs/hfsplus/bfind.c:100
- __hfsplus_brec_find+0x26b/0x7b0 fs/hfsplus/bfind.c:135
- hfsplus_brec_find+0x445/0x970 fs/hfsplus/bfind.c:195
- hfsplus_brec_read+0x46/0x1a0 fs/hfsplus/bfind.c:222
- hfsplus_fill_super+0x199a/0x26f0 fs/hfsplus/super.c:531
- mount_bdev+0x38f/0x510 fs/super.c:1658
- hfsplus_mount+0x4d/0x60 fs/hfsplus/super.c:647
- legacy_get_tree+0x110/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa5/0x560 fs/super.c:1779
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
- path_mount+0x73d/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3875
- __ia32_sys_mount+0xe3/0x150 fs/namespace.c:3875
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb5/0x110 arch/x86/entry/common.c:321
- do_fast_syscall_32+0x37/0x70 arch/x86/entry/common.c:346
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:384
- entry_SYSENTER_compat_after_hwframe+0x70/0x7a
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3819 [inline]
- slab_alloc_node mm/slub.c:3860 [inline]
- __do_kmalloc_node mm/slub.c:3980 [inline]
- __kmalloc+0x919/0xf80 mm/slub.c:3994
- kmalloc include/linux/slab.h:594 [inline]
- hfsplus_find_init+0x91/0x250 fs/hfsplus/bfind.c:21
- hfsplus_fill_super+0x1688/0x26f0 fs/hfsplus/super.c:525
- mount_bdev+0x38f/0x510 fs/super.c:1658
- hfsplus_mount+0x4d/0x60 fs/hfsplus/super.c:647
- legacy_get_tree+0x110/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa5/0x560 fs/super.c:1779
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
- path_mount+0x73d/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3875
- __ia32_sys_mount+0xe3/0x150 fs/namespace.c:3875
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb5/0x110 arch/x86/entry/common.c:321
- do_fast_syscall_32+0x37/0x70 arch/x86/entry/common.c:346
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:384
- entry_SYSENTER_compat_after_hwframe+0x70/0x7a
-
-CPU: 0 PID: 5298 Comm: syz-executor.4 Not tainted 6.8.0-rc6-syzkaller-00238-g5ad3cb0ed525 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Appreciate your help!
+-ritesh
 
