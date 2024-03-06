@@ -1,138 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-13759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7A2873787
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 14:14:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDF28737BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 14:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800911F20641
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 13:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D3B1F24895
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 13:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0156B130E29;
-	Wed,  6 Mar 2024 13:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADF1131736;
+	Wed,  6 Mar 2024 13:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gcsgb1bL"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="m30iMKaL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C28412D743;
-	Wed,  6 Mar 2024 13:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1ED130E29;
+	Wed,  6 Mar 2024 13:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709730829; cv=none; b=u3XQWBwFDhiuofmcOTI21+FQ2nga3tJbdI9YuOaqra9KpX9V9f25fDpGl49ukEhv0JwJqki7kqixWw5WtAOwCsxtkBwm2ZWZKpQsQqwrOkZutoNXnVojj7pJk/gS/4cpE+/7GKzZH0z+at9y0yTknI5yKtKvT7EbvErs1GSsnSU=
+	t=1709731942; cv=none; b=DoMgjkmGGZZMFzaufmy2vut0AM+xZZsDN9eRPM4E/Yy9KGd7xz/20hK2P0ffgcXczkgpxB6VrbkqhTndvQ09qGW/AKOEB3b6D2E6keU6a8hurARR5I1id3Zn+OnaV9PXxEVU2pkAagfqZjaHNU5PQOrZ/Ug2mA4ODM2Jrd3Q8X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709730829; c=relaxed/simple;
-	bh=zZTqZM1B1Da/pRYhOGZkJOmcUeVzEW4JS9modMCz4zw=;
-	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=bVo6RVZOYsQ7bAFhGYm8mwQmYvyp4V9goPp1BZ+XL2nR4evXDcaK/d9vgF/01Ugkqh8SQFW7GiPyRYi+hVm35bVvEZR2Xf40IT572UUsS3kGuuICkRgDhjk0AVVZGPccV+fl5u6vEku4HBB1BnBDcHOYHKfLzkFGMZB7DotMov4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gcsgb1bL; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-5ce07cf1e5dso6245280a12.2;
-        Wed, 06 Mar 2024 05:13:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709730827; x=1710335627; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uypOmawqOIrPwCriVHDF7rFN8Nbzv9NUbNdsbCE+5jI=;
-        b=Gcsgb1bLhfVTPJoyoPmfJCV7GP6SIKlqlaVIR6oVU+MWyXbO+acmyB+YkXRu96HAWs
-         HId5oV/mjGiCZZxuhrDH+dOCXAPPOijfc1hD9VyJFiHBWY4iEVfwPyMfavLOA/aIfM58
-         7S5tbZ5EYNKa90LM78XhfBMAUUIdtvFaXmLYtV+9K4FuslGFc+cf0d9Q5rmuIPABbwLp
-         Yjv1ofGP/JKJOh7Cx59C6lBBumtaIcEsIxRlbmdWGejNpuke399xqwCuPBfAgfEhl/I7
-         ThNpoBT6Kc1IToFnKheNNnUOIncPhWojg7SfaUxsT55d1RTmJexBAubYmsXIsaM1w9Pa
-         uEEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709730827; x=1710335627;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uypOmawqOIrPwCriVHDF7rFN8Nbzv9NUbNdsbCE+5jI=;
-        b=A3TrrS7rEKU92C1wWQIQYCU2Gfsg1MVuqgI4ww5sn1Jrf6Ou1B+S0ey/ipueYZ/vAR
-         O38zaOtvZCf/kN2AH4vAMQXQ37GG24FVmbWVJsILIpO5NBOlfgRmu2xkQ3QKfKL8crK4
-         mHlvGseazRSvbFY2iyn3F2+c0HLTPt0Qj2kBYla1TjVkq2+3qBsqongxMIg6yFmAhsQn
-         gRWM+Hm9gutzKHiAsybbFChhlYsgoObrdxr1n4F7p56Sq3KEdFyUd1XvOUt7otelHltP
-         E5+oVl110m8VFfBNHusZlF5SnEQs7zK5WlL1wbw0+yf6SIwrVrmRmk6L0bpa6DUg36CD
-         XvqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7HFblxm5UykLZ8esNtUXOZVhUgl908mz2QsFk4ps21bQWBzq6WjMKXqFA2iG6viPJAmX+pWKTdXqslDxA7TPHt0MV/xWEKH44eJ70L7WAAivmCOtPWgpfGzDa+1/XNE5U4kMy4vu2tPlKByilCYKpYOZRfiQ4VDNldt6AwOqg13VL6DAM68k=
-X-Gm-Message-State: AOJu0YxnahSyAqderFvxRQ1HnGK2HGI4NR2K13DzWRsrWQS9UiV4Mxxd
-	E4yYSQ9XtiPi5cFQAokBGi8u/1me6o7lTHqCa/nxJjA9Fz0tWDjeTn9yZ7h/JaE=
-X-Google-Smtp-Source: AGHT+IG0wggrx1Jx+WY2aA3T8NsgKp7yzhb+H/WmreiPwQFQP+6Qv+dQze5BqQRo6TetqXDOxpZGwg==
-X-Received: by 2002:a05:6a20:2584:b0:1a1:6aa8:ee82 with SMTP id k4-20020a056a20258400b001a16aa8ee82mr620624pzd.42.1709730826433;
-        Wed, 06 Mar 2024 05:13:46 -0800 (PST)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id y26-20020aa793da000000b006e6500caa4esm984426pff.199.2024.03.06.05.13.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Mar 2024 05:13:45 -0800 (PST)
-Date: Wed, 06 Mar 2024 18:43:40 +0530
-Message-Id: <87il1zpkor.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>, "Darrick J . Wong" <djwong@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/9] ext4: Add direct-io atomic write support using fsawu
-In-Reply-To: <e4bd58d4-723f-4c94-bf46-826bceeb6a8d@oracle.com>
+	s=arc-20240116; t=1709731942; c=relaxed/simple;
+	bh=r3I412SG0b717r5olrqqgvwgsxovk3km8xIxHnC5rS8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h/7PnRK0Rbobv2w3CINGHasPXwmoZksWCQ8T7srghA5N6QE1InVLUenMAlkzQm8cdaP39PhjycGSzVHu7U9wRvxbruj2bvhqVxSwVioh2oUpsOq4gAdQ8WrU5vo1pQDVtkP5pTNzamiH8kMCwc34q/vIfnXqM2g0sFtFNQHCTX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=m30iMKaL; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1709731936; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=h81mR016RoIXcFQc6aGU9aYbZL1VGqlUD1p94No+yqI=;
+	b=m30iMKaL6rZYR39tTnpK7KAxo39if/gn8vky0ONoKv7ks+JSE0AAXRMpy1z/K/i4k8P2tTN/V3P62TmgTw50D1x63jgN/tiNYvrd1UXkH9H/wDOwsLAT/rNB34lUxH+ocSky+7O68ySS/P29rouLHm5ZDMMB8ggg0PXDsJyoolM=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W1xohh1_1709731935;
+Received: from 192.168.31.58(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W1xohh1_1709731935)
+          by smtp.aliyun-inc.com;
+          Wed, 06 Mar 2024 21:32:16 +0800
+Message-ID: <7e79a9fa-99a0-47e5-bc39-107f89852d8d@linux.alibaba.com>
+Date: Wed, 6 Mar 2024 21:32:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: increase FUSE_MAX_MAX_PAGES limit
+Content-Language: en-US
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhangjiachen.jaycee@bytedance.com
+References: <20240124070512.52207-1-jefflexu@linux.alibaba.com>
+ <CAJfpegs10SdtzNXJfj3=vxoAZMhksT5A1u5W5L6nKL-P2UOuLQ@mail.gmail.com>
+ <6e6bef3d-dd26-45ce-bc4a-c04a960dfb9c@linux.alibaba.com>
+ <b4e6b930-ed06-4e0d-b17d-61d05381ac92@linux.alibaba.com>
+ <27b34186-bc7c-4f3c-8818-ee73eb3f82ba@linux.alibaba.com>
+ <CAJfpegvLUrqkCkVc=yTXcjZyNNQEG4Z4c6TONEZHGGmjiQ5X2g@mail.gmail.com>
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CAJfpegvLUrqkCkVc=yTXcjZyNNQEG4Z4c6TONEZHGGmjiQ5X2g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-John Garry <john.g.garry@oracle.com> writes:
 
-> On 02/03/2024 07:41, Ritesh Harjani (IBM) wrote:
->> Hello all,
->> 
->> This RFC series adds support for atomic writes to ext4 direct-io using
->> filesystem atomic write unit. It's built on top of John's "block atomic
->> write v5" series which adds RWF_ATOMIC flag interface to pwritev2() and enables
->> atomic write support in underlying device driver and block layer.
->> 
->> This series uses the same RWF_ATOMIC interface for adding atomic write support
->> to ext4's direct-io path. One can utilize it by 2 of the methods explained below.
->> ((1)mkfs.ext4 -b <BS>, (2) with bigalloc).
->> 
->> Filesystem atomic write unit (fsawu):
->> ============================================
->> Atomic writes within ext4 can be supported using below 3 methods -
->> 1. On a large pagesize system (e.g. Power with 64k pagesize or aarch64 with 64k pagesize),
->>     we can mkfs using different blocksizes. e.g. mkfs.ext4 -b <4k/8k/16k/32k/64k).
->>     Now if the underlying HW device supports atomic writes, than a corresponding
->>     blocksize can be chosen as a filesystem atomic write unit (fsawu) which
->>     should be within the underlying hw defined [awu_min, awu_max] range.
->>     For such filesystem, fsawu_[min|max] both are equal to blocksize (e.g. 16k)
->> 
->>     On a smaller pagesize system this can be utilized when support for LBS is
->>     complete (on ext4).
->> 
->> 2. EXT4 already supports a feature called bigalloc. In that ext4 can handle
->>     allocation in cluster size units. So for e.g. we can create a filesystem with
->>     4k blocksize but with 64k clustersize. Such a configuration can also be used
->>     to support atomic writes if the underlying hw device supports it.
->>     In such case the fsawu_min will most likely be the filesystem blocksize and
->>     fsawu_max will mostly likely be the cluster size.
->> 
->>     So a user can do an atomic write of any size between [fsawu_min, fsawu_max]
->>     range as long as it satisfies other constraints being laid out by HW device
->>     (or by software stack) to support atomic writes.
->>     e.g. len should be a power of 2, pos % len should be naturally
->>     aligned and [start | end] (phys offsets) should not straddle over
->>     an atomic write boundary.
->
-> JFYI, I gave this a quick try, and it seems to work ok. Naturally it 
 
-Thanks John for giving this a try!
+On 3/5/24 10:26 PM, Miklos Szeredi wrote:
+> On Mon, 26 Feb 2024 at 05:00, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>
+>> Hi Miklos,
+>>
+>> On 1/26/24 2:29 PM, Jingbo Xu wrote:
+>>>
+>>>
+>>> On 1/24/24 8:47 PM, Jingbo Xu wrote:
+>>>>
+>>>>
+>>>> On 1/24/24 8:23 PM, Miklos Szeredi wrote:
+>>>>> On Wed, 24 Jan 2024 at 08:05, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>>>>>
+>>>>>> From: Xu Ji <laoji.jx@alibaba-inc.com>
+>>>>>>
+>>>>>> Increase FUSE_MAX_MAX_PAGES limit, so that the maximum data size of a
+>>>>>> single request is increased.
+>>>>>
+>>>>> The only worry is about where this memory is getting accounted to.
+>>>>> This needs to be thought through, since the we are increasing the
+>>>>> possible memory that an unprivileged user is allowed to pin.
+>>>
+>>> Apart from the request size, the maximum number of background requests,
+>>> i.e. max_background (12 by default, and configurable by the fuse
+>>> daemon), also limits the size of the memory that an unprivileged user
+>>> can pin.  But yes, it indeed increases the number proportionally by
+>>> increasing the maximum request size.
+>>>
+>>>
+>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>>
+>>>>>> This optimizes the write performance especially when the optimal IO size
+>>>>>> of the backend store at the fuse daemon side is greater than the original
+>>>>>> maximum request size (i.e. 1MB with 256 FUSE_MAX_MAX_PAGES and
+>>>>>> 4096 PAGE_SIZE).
+>>>>>>
+>>>>>> Be noted that this only increases the upper limit of the maximum request
+>>>>>> size, while the real maximum request size relies on the FUSE_INIT
+>>>>>> negotiation with the fuse daemon.
+>>>>>>
+>>>>>> Signed-off-by: Xu Ji <laoji.jx@alibaba-inc.com>
+>>>>>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+>>>>>> ---
+>>>>>> I'm not sure if 1024 is adequate for FUSE_MAX_MAX_PAGES, as the
+>>>>>> Bytedance floks seems to had increased the maximum request size to 8M
+>>>>>> and saw a ~20% performance boost.
+>>>>>
+>>>>> The 20% is against the 256 pages, I guess.
+>>>>
+>>>> Yeah I guess so.
+>>>>
+>>>>
+>>>>> It would be interesting to
+>>>>> see the how the number of pages per request affects performance and
+>>>>> why.
+>>>>
+>>>> To be honest, I'm not sure the root cause of the performance boost in
+>>>> bytedance's case.
+>>>>
+>>>> While in our internal use scenario, the optimal IO size of the backend
+>>>> store at the fuse server side is, e.g. 4MB, and thus if the maximum
+>>>> throughput can not be achieved with current 256 pages per request. IOW
+>>>> the backend store, e.g. a distributed parallel filesystem, get optimal
+>>>> performance when the data is aligned at 4MB boundary.  I can ask my folk
+>>>> who implements the fuse server to give more background info and the
+>>>> exact performance statistics.
+>>>
+>>> Here are more details about our internal use case:
+>>>
+>>> We have a fuse server used in our internal cloud scenarios, while the
+>>> backend store is actually a distributed filesystem.  That is, the fuse
+>>> server actually plays as the client of the remote distributed
+>>> filesystem.  The fuse server forwards the fuse requests to the remote
+>>> backing store through network, while the remote distributed filesystem
+>>> handles the IO requests, e.g. process the data from/to the persistent store.
+>>>
+>>> Then it comes the details of the remote distributed filesystem when it
+>>> process the requested data with the persistent store.
+>>>
+>>> [1] The remote distributed filesystem uses, e.g. a 8+3 mode, EC
+>>> (ErasureCode), where each fixed sized user data is split and stored as 8
+>>> data blocks plus 3 extra parity blocks. For example, with 512 bytes
+>>> block size, for each 4MB user data, it's split and stored as 8 (512
+>>> bytes) data blocks with 3 (512 bytes) parity blocks.
+>>>
+>>> It also utilize the stripe technology to boost the performance, for
+>>> example, there are 8 data disks and 3 parity disks in the above 8+3 mode
+>>> example, in which each stripe consists of 8 data blocks and 3 parity
+>>> blocks.
+>>>
+>>> [2] To avoid data corruption on power off, the remote distributed
+>>> filesystem commit a O_SYNC write right away once a write (fuse) request
+>>> received.  Since the EC described above, when the write fuse request is
+>>> not aligned on 4MB (the stripe size) boundary, say it's 1MB in size, the
+>>> other 3MB is read from the persistent store first, then compute the
+>>> extra 3 parity blocks with the complete 4MB stripe, and finally write
+>>> the 8 data blocks and 3 parity blocks down.
+>>>
+>>>
+>>> Thus the write amplification is un-neglectable and is the performance
+>>> bottleneck when the fuse request size is less than the stripe size.
+>>>
+>>> Here are some simple performance statistics with varying request size.
+>>> With 4MB stripe size, there's ~3x bandwidth improvement when the maximum
+>>> request size is increased from 256KB to 3.9MB, and another ~20%
+>>> improvement when the request size is increased to 4MB from 3.9MB.
+> 
+> I sort of understand the issue, although my guess is that this could
+> be worked around in the client by coalescing writes.  This could be
+> done by adding a small delay before sending a write request off to the
+> network.
+> 
+> Would that work in your case?
 
-> suffers from the same issue discussed at 
-> https://lore.kernel.org/linux-fsdevel/434c570e-39b2-4f1c-9b49-ac5241d310ca@oracle.com/ 
-> with regards to writing to partially written extents, which I have tried 
-> to address properly in my v2 for that same series.
+It's possible but I'm not sure. I've asked my colleagues who working on
+the fuse server and the backend store, though have not been replied yet.
+ But I guess it's not as simple as increasing the maximum FUSE request
+size directly and thus more complexity gets involved.
 
-I did go through other revisions, but I guess I missed going through this series.
+I can also understand the concern that this may increase the risk of
+pinning more memory footprint, and a more generic using scenario needs
+to be considered.  I can make it a private patch for our internal product.
 
-Thanks Dave & John for your comments over the series.
-Let me go through the revisions I have missed and John's latest revision.
-I will update this series accordingly.
+Thanks for the suggestions and discussion.
 
-Appreciate your help!
--ritesh
+
+-- 
+Thanks,
+Jingbo
 
