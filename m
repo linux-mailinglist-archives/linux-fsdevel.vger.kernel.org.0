@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-13691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7137872FE3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 08:40:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BD4872FE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 08:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD141C217DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 07:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAD21F21791
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 07:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645075CDD1;
-	Wed,  6 Mar 2024 07:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7AF5D489;
+	Wed,  6 Mar 2024 07:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TaMSQed7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B3U7IjL4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD9D5C907
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 07:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F065C60F
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 07:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709710821; cv=none; b=GiBZxKKM43ZItveUsazS79MW+/IOxwdedJHAD+kA302IqlCNUBvf8ORaSHKq3FDBQyzaRprMR1MpAlmYPPa7bsXUniubn3JPn8Xe/Fs9AXznU9VtHgoht977aAJxIyEz0+0M9bs+Sp5d8BJX8DAp1RW2JBzZD+eQsWT3OXxJ07Q=
+	t=1709710829; cv=none; b=BOzCcvd91O9BJ94N2xo0k7SKL31lr1dQjv6ZXfDXXK96b8Xfd56z0uEnqpHsyYjNHZvV90jIbkMLptGVqejBt8jQqv7r7ONgOKcHlsPnjC9B6/+wEpvQNYkvw5dbUAQzrERCTJeoGDuwZ+aLq0YwWsKe2EfTCwvlmI73KpZxybs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709710821; c=relaxed/simple;
-	bh=U4vPSgjo1MPCWnJXUOvvXXEqOMay8Ii8QfHFiSKW29s=;
+	s=arc-20240116; t=1709710829; c=relaxed/simple;
+	bh=iLwHbf1oA5JxBnipUArq42l7X5KO0sj3Xs/LCM1ozFQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=skYbofTassFeIJuvopEHGfOZTf/yMvjOJJR0KMmDGARDnCSyJuuzSjmBU5p3DZogJ8JSWWO2zMsUWP+hDMxfDukrJLdMEyAY+gynG/H/S6oJ4w/XVr+tIWO83AY/jxvdHd4iTI1p+7e9ECsDgyLI3+8g4m/A4a/cJhO/Cd6TTTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TaMSQed7; arc=none smtp.client-ip=209.85.161.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=kGEbyO0XvV2EdPBLT1aYB6FpScdKKUGXeQGA/4KY/scInAalmz02WMQ2e1OIRx4URPVWSMukQrxImG5NDWFa+4kkhyLIBfPZZhfbFFQCiI26t5llmsozqKjzFzXED09Wn4YQ0z0mPtm/68/S+cJpqhT9Cn+Hw7m8caian4UZdwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B3U7IjL4; arc=none smtp.client-ip=209.85.167.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5a0b1936400so3005474eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 23:40:19 -0800 (PST)
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3c1e992f060so1957029b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Mar 2024 23:40:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1709710819; x=1710315619; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1709710827; x=1710315627; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sm//KmoxbXbcsWPglbMLVIS1Px1eJWCW4kUeYbyxn5U=;
-        b=TaMSQed7tiLHZyrBlIazF8lhqDqw49F7ifTFDbVNEv7+Seqsw/i0yFKBj0myqTnc9O
-         I7vs9Q4PNyj4sLMqG1ZeZWS+dZhSGR8oDH6M3wMgdbI9zQ3ggkdgAFvIJrUg6qq6dZVR
-         v1nqyLj4sEYgxx3xnim0snw07/0g3C9sZ5b5CPmmplNk/Ow/SqBVnMxe3l+kyf25a34v
-         TQGPMumOXFtyOeicxzevF75amXdAItCLLPK57xqFjnSH4n0DhX12gPRGlvmY2/tXBLXA
-         bumuhKqVEd7/B+g3um+mD5TmK+u22jqbIq9oaP7sAUzdoTXMt8PyRBrRqS5pJ1o9HmPF
-         3LBg==
+        bh=4298WmfQQE8gZH7rXnLK/a7brfP51MJX0hKZlrVvaHE=;
+        b=B3U7IjL4ZRu4xEROnDLt1qZdriNC1IS6TKGWioMXq8AsDJ9WOS/rAd2Iudvu5amDmc
+         uHW1tPqNCC6vMTHL/j5W81O2OUsLEggF4useMqR9nuoijbaD2sqvoHcXgro+3L9wmlI4
+         ppKmE6sH2+WRqWL0bPnZIai9zanGnYzmwy6IfLt4SIq/7XyIsp8zMYfBQmiiCd+nskQq
+         7PNg4py/ufAKFukAO7rnUkT75lG3MtzmEXonYVJD2/AY562+KBKCCAyWUYklY1lGEb4e
+         2HENmACGfq5pFmNKOd0MNc7eahVF9lYcAunGXrt9mjPCxe/5iXL1VAUtfM5GIab+Hs+E
+         qVCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709710819; x=1710315619;
+        d=1e100.net; s=20230601; t=1709710827; x=1710315627;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Sm//KmoxbXbcsWPglbMLVIS1Px1eJWCW4kUeYbyxn5U=;
-        b=fviaJnCubS9bO4S9lhC4V0ROPNhI/VnLv8Fb90EpmYkjMUWaItB4ebdb8R7HD9vUKZ
-         vWzyZmU3gIyDshkJU3N+qaccy7emEdMsgb6o0jHDbX7jl8ZS7zaP0fqarqnig/4RXkEl
-         mXFowoW8n/VPioOj+N83zlf4BMks6Q/D4D/tnkveSKtvrQSK+Uph3+onuqxOftwZ2dkP
-         0YOWSdWdppt4AD3NE8ohIaVvxjkl6VJetQPtPXyd+w578SGo7fW7Xr3U5j1nHA8NFw74
-         ZGuTQoWSe2V5Osd1m2h6Oi3M+zMF121DaD7t2jm8npRbJWAy1UnaIDIOrSpb9FqY37z1
-         eLAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhaHanbCFvoKIvsf10jfyUySVeMG9C6y9+xSg2iwprtuvSjX+IT0YYy5X85DTdRQiwwyNkeEOx7SGvpvJZQoegG0j/iW+zQvJWb6C2og==
-X-Gm-Message-State: AOJu0Yys+yJwB/1Xb6uxkTInFqN7b5dLa2Qr/7rKkk+8LPsBB7yJYWSm
-	JpgjDe3yDzT6W8bGjfuwSkJt1oexBamsm/DWxbGrmBO0g57pipdhsWcNEakW/w==
-X-Google-Smtp-Source: AGHT+IHmnIO9igbiizDOpzZIlfa7wqIYlpixrrFhSdvfq8QmXqsdRfEMPj7zalWSN0v34SoSWoRlvg==
-X-Received: by 2002:a4a:354d:0:b0:5a0:ea46:ffe9 with SMTP id w13-20020a4a354d000000b005a0ea46ffe9mr3948384oog.7.1709710818904;
-        Tue, 05 Mar 2024 23:40:18 -0800 (PST)
+        bh=4298WmfQQE8gZH7rXnLK/a7brfP51MJX0hKZlrVvaHE=;
+        b=VDh4dg6hVdHMcwqqJanDA4L8RDv8CS5KVZACT7bWbvEcbjPR2ol042sgjc1I4HowVc
+         Z7y3/XDuu5hae6xAIa2ieWTEvLxRmvCutzu91CFr6xcNmYZfen/KzGmJuKF4mDYQYHaN
+         GF/w3orfLJIA3FiHfgiav1LfrF+jBcv0LE1gnsZ0PKkfq0AH3zICHdX87+7A5PYKkJaB
+         v7pmcynNe5/jHv1qRbo049NCu3J5Kn9aG7wYopjk2Q/JT/5XY9yrEIfwFOPGLmrxeF3t
+         9sZXWez/1eMuRcrXdC+jim4MfzWq5QbVUcx0IuIfWqirk/bKi4OY5+y2uQ+pzBGm8d44
+         2rwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXL1ElMs3qEnbSWB6m/9jWCvxmQyeHpac7rrBYwlbU3jB0xWi7BpuaKKNCJC6r+C81kvUGCY8Fn3rO13Ao3BPczyVUOUgVHCNjsqw3XYA==
+X-Gm-Message-State: AOJu0Yy09eLFtTaVVNVHFW9WQsQnW1j8i+uNR1N6ApxRiEoBfGBdr3bI
+	c6U0cNKGl1a9w9d/Dlr+EGVdqUu8KaB0hVvZGcg+22vw3WrVjg659A5RatxAAA==
+X-Google-Smtp-Source: AGHT+IH1U4Q9kPYH7jD7X3wue28RHo6quR1tW4i0OCfLWlq2VwwtJ4Wz34z03CLCwuJbGB3bvEGeKg==
+X-Received: by 2002:a05:6808:1a91:b0:3c1:f46c:e71f with SMTP id bm17-20020a0568081a9100b003c1f46ce71fmr3586316oib.46.1709710827080;
+        Tue, 05 Mar 2024 23:40:27 -0800 (PST)
 Received: from google.com (12.196.204.35.bc.googleusercontent.com. [35.204.196.12])
-        by smtp.gmail.com with ESMTPSA id e18-20020a9d6e12000000b006e4cd29aecbsm749390otr.47.2024.03.05.23.40.16
+        by smtp.gmail.com with ESMTPSA id n30-20020a0568080a1e00b003c1973dbca6sm1317273oij.2.2024.03.05.23.40.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 23:40:18 -0800 (PST)
-Date: Wed, 6 Mar 2024 07:40:12 +0000
+        Tue, 05 Mar 2024 23:40:26 -0800 (PST)
+Date: Wed, 6 Mar 2024 07:40:21 +0000
 From: Matt Bobrowski <mattbobrowski@google.com>
 To: bpf@vger.kernel.org
 Cc: ast@kernel.org, andrii@kernel.org, kpsingh@google.com, jannh@google.com,
 	jolsa@kernel.org, daniel@iogearbox.net, brauner@kernel.org,
 	torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 bpf-next 6/9] bpf: add acquire/release based BPF kfuncs
- for fs_struct's paths
-Message-ID: <458617e6f11863ecf8b3f83710a6606977c4c9cd.1709675979.git.mattbobrowski@google.com>
+Subject: [PATCH v2 bpf-next 7/9] bpf/selftests: add selftests for root/pwd
+ path based BPF kfuncs
+Message-ID: <1c7cdcb02209b99b92b1b006bad452c11d7ddd53.1709675979.git.mattbobrowski@google.com>
 References: <cover.1709675979.git.mattbobrowski@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -86,143 +86,262 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1709675979.git.mattbobrowski@google.com>
 
-Add the ability to obtain a reference on the root and pwd paths which
-are nested within the fs_struct associated with a supplied
-task_struct. Both fs_struct's root and pwd are commonly operated on in
-BPF LSM program types and at times are further handed off to BPF
-helpers and such. There needs to be a mechanism that supports BPF LSM
-program types the ability to obtain stable handles to such paths in
-order to avoid possible memory corruption bugs [0].
-
-We provide this mechanism through the introduction of the following
-new KF_ACQUIRE/KF_RELEASE BPF kfuncs:
+Add a new path_kfunc test suite that is responsible for verifiying the
+operability of the newly added root/pwd path based BPF kfuncs. This
+test suite covers the following BPF kfuncs:
 
 struct path *bpf_get_task_fs_root(struct task_struct *task);
 struct path *bpf_get_task_fs_pwd(struct task_struct *task);
 void bpf_put_path(struct path *path);
 
-Note that bpf_get_task_fs_root() and bpf_get_task_fs_pwd() are
-effectively open-coded variants of the in-kernel helpers get_fs_root()
-and get_fs_pwd(). We don't lean on these in-kernel helpers directly
-within the newly introduced BPF kfuncs as leaning on them would be
-rather awkward as we're wanting to return referenced path pointers
-directly BPF LSM program types.
-
-[0] https://lore.kernel.org/bpf/CAG48ez0ppjcT=QxU-jtCUfb5xQb3mLr=5FcwddF_VKfEBPs_Dg@mail.gmail.com/
-
 Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
 ---
- kernel/trace/bpf_trace.c | 83 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ .../selftests/bpf/prog_tests/path_kfunc.c     |  48 ++++++++
+ .../selftests/bpf/progs/path_kfunc_common.h   |  20 +++
+ .../selftests/bpf/progs/path_kfunc_failure.c  | 114 ++++++++++++++++++
+ .../selftests/bpf/progs/path_kfunc_success.c  |  30 +++++
+ 4 files changed, 212 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/path_kfunc.c
+ create mode 100644 tools/testing/selftests/bpf/progs/path_kfunc_common.h
+ create mode 100644 tools/testing/selftests/bpf/progs/path_kfunc_failure.c
+ create mode 100644 tools/testing/selftests/bpf/progs/path_kfunc_success.c
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 539c58db74d7..84fd87ead20c 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -10,6 +10,7 @@
- #include <linux/bpf_perf_event.h>
- #include <linux/btf.h>
- #include <linux/filter.h>
-+#include <linux/fs_struct.h>
- #include <linux/uaccess.h>
- #include <linux/ctype.h>
- #include <linux/kprobes.h>
-@@ -1569,6 +1570,83 @@ __bpf_kfunc void bpf_put_file(struct file *f)
- 	fput(f);
- }
- 
-+/**
-+ * bpf_get_task_fs_root - get a reference on the fs_struct's root path for the
-+ * 			  supplied task_struct
-+ * @Task: task_struct of which the fs_struct's root path to get a reference on
-+ *
-+ * Get a reference on the root path nested within the fs_struct of the
-+ * associated *task*. The referenced path retruned from this kfunc must be
-+ * released using bpf_put_path().
-+ *
-+ * Return: A referenced path pointer to the root path nested within the
-+ * fs_struct of the supplied *task*, or NULL.
-+ */
-+__bpf_kfunc struct path *bpf_get_task_fs_root(struct task_struct *task)
-+{
-+	struct path *root;
-+	struct fs_struct *fs;
+diff --git a/tools/testing/selftests/bpf/prog_tests/path_kfunc.c b/tools/testing/selftests/bpf/prog_tests/path_kfunc.c
+new file mode 100644
+index 000000000000..9a8701a7999c
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/path_kfunc.c
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Google LLC. */
 +
-+	task_lock(task);
-+	fs = task->fs;
-+	if (unlikely(fs)) {
-+		task_unlock(task);
-+		return NULL;
++#define _GNU_SOURCE
++#include <test_progs.h>
++
++#include "path_kfunc_failure.skel.h"
++#include "path_kfunc_success.skel.h"
++
++static void run_test(const char *prog_name)
++{
++	struct bpf_link *link;
++	struct bpf_program *prog;
++	struct path_kfunc_success *skel;
++
++	skel = path_kfunc_success__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "path_kfunc_success__open_and_load"))
++		return;
++
++	link = NULL;
++	prog = bpf_object__find_program_by_name(skel->obj, prog_name);
++	if (!ASSERT_OK_PTR(prog, "bpf_object__find_program_by_name"))
++		goto cleanup;
++
++	link = bpf_program__attach(prog);
++	ASSERT_OK_PTR(link, "bpf_program__attach");
++cleanup:
++	bpf_link__destroy(link);
++	path_kfunc_success__destroy(skel);
++}
++
++static const char * const success_tests[] = {
++	"get_task_fs_root_and_put_from_current",
++	"get_task_fs_pwd_and_put_from_current",
++};
++
++void test_path_kfunc(void)
++{
++	int i = 0;
++
++	for (; i < ARRAY_SIZE(success_tests); i++) {
++		if (!test__start_subtest(success_tests[i]))
++			continue;
++		run_test(success_tests[i]);
 +	}
 +
-+	spin_lock(&fs->lock);
-+	root = &fs->root;
-+	path_get(root);
-+	spin_unlock(&fs->lock);
-+	task_unlock(task);
-+
-+	return root;
++	RUN_TESTS(path_kfunc_failure);
 +}
+diff --git a/tools/testing/selftests/bpf/progs/path_kfunc_common.h b/tools/testing/selftests/bpf/progs/path_kfunc_common.h
+new file mode 100644
+index 000000000000..837dc03c136d
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/path_kfunc_common.h
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Google LLC. */
 +
-+/**
-+ * bpf_get_task_fs_pwd - get a reference on the fs_struct's pwd path for the
-+ * 			 supplied task_struct
-+ * @task: task_struct of which the fs_struct's pwd path to get a reference on
-+ *
-+ * Get a reference on the pwd path nested within the fs_struct of the associated
-+ * *task*. The referenced path retruned from this kfunc must be released using
-+ * bpf_put_path().
-+ *
-+ * Return: A referenced path pointer to the root path nested within the
-+ * fs_struct of the supplied *task*, or NULL.
-+ */
-+__bpf_kfunc struct path *bpf_get_task_fs_pwd(struct task_struct *task)
++#ifndef _PATH_KFUNC_COMMON_H
++#define _PATH_KFUNC_COMMON_H
++
++#include <vmlinux.h>
++#include <errno.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++#include "bpf_misc.h"
++
++char _license[] SEC("license") = "GPL";
++
++struct path *bpf_get_task_fs_root(struct task_struct *task) __ksym;
++struct path *bpf_get_task_fs_pwd(struct task_struct *task) __ksym;
++void bpf_put_path(struct path *path) __ksym;
++
++#endif /* _PATH_KFUNC_COMMON_H */
+diff --git a/tools/testing/selftests/bpf/progs/path_kfunc_failure.c b/tools/testing/selftests/bpf/progs/path_kfunc_failure.c
+new file mode 100644
+index 000000000000..a28797e245e3
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/path_kfunc_failure.c
+@@ -0,0 +1,114 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Google LLC. */
++
++#include "path_kfunc_common.h"
++
++SEC("lsm.s/file_open")
++__failure __msg("Possibly NULL pointer passed to trusted arg0")
++int BPF_PROG(get_task_fs_root_kfunc_null)
 +{
-+	struct path *pwd;
-+	struct fs_struct *fs;
++	struct path *acquired;
 +
-+	task_lock(task);
-+	fs = task->fs;
-+	if (unlikely(fs)) {
-+		task_unlock(task);
-+		return NULL;
-+	}
++	/* Can't pass a NULL pointer to bpf_get_task_fs_root(). */
++	acquired = bpf_get_task_fs_root(NULL);
++	if (!acquired)
++		return 0;
++	bpf_put_path(acquired);
 +
-+	spin_lock(&fs->lock);
-+	pwd = &fs->pwd;
-+	path_get(pwd);
-+	spin_unlock(&fs->lock);
-+	task_unlock(task);
-+
-+	return pwd;
++	return 0;
 +}
 +
-+/**
-+ * bpf_put_path - put a reference on the supplied path
-+ * @path: path of which to put a reference on
-+ *
-+ * Put a reference on the supplied *path*.
-+  */
-+__bpf_kfunc void bpf_put_path(struct path *path)
++SEC("lsm.s/file_open")
++__failure __msg("Possibly NULL pointer passed to trusted arg0")
++int BPF_PROG(get_task_fs_pwd_kfunc_null)
 +{
-+	path_put(path);
++	struct path *acquired;
++
++	/* Can't pass a NULL pointer to bpf_get_task_fs_pwd(). */
++	acquired = bpf_get_task_fs_pwd(NULL);
++	if (!acquired)
++		return 0;
++	bpf_put_path(acquired);
++
++	return 0;
 +}
 +
- __bpf_kfunc_end_defs();
- 
- BTF_KFUNCS_START(lsm_kfunc_set_ids)
-@@ -1580,6 +1658,11 @@ BTF_ID_FLAGS(func, bpf_get_task_exe_file,
- BTF_ID_FLAGS(func, bpf_get_mm_exe_file,
- 	     KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL)
- BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE | KF_SLEEPABLE)
-+BTF_ID_FLAGS(func, bpf_get_task_fs_root,
-+	     KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL)
-+BTF_ID_FLAGS(func, bpf_get_task_fs_pwd,
-+	     KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL)
-+BTF_ID_FLAGS(func, bpf_put_path, KF_RELEASE | KF_SLEEPABLE)
- BTF_KFUNCS_END(lsm_kfunc_set_ids)
- 
- static int bpf_lsm_kfunc_filter(const struct bpf_prog *prog, u32 kfunc_id)
++SEC("lsm.s/task_alloc")
++__failure __msg("R1 must be referenced or trusted")
++int BPF_PROG(get_task_fs_root_kfunc_untrusted, struct task_struct *task)
++{
++	struct path *acquired;
++	struct task_struct *parent;
++
++	/* Walking the struct task_struct will yield an untrusted pointer. */
++	parent = task->parent;
++	if (!parent)
++		return 0;
++
++	acquired = bpf_get_task_fs_root(parent);
++	if (!acquired)
++		return 0;
++	bpf_put_path(acquired);
++
++	return 0;
++}
++
++SEC("lsm.s/task_alloc")
++__failure __msg("R1 must be referenced or trusted")
++int BPF_PROG(get_task_fs_pwd_kfunc_untrusted, struct task_struct *task)
++{
++	struct path *acquired;
++	struct task_struct *parent;
++
++	/* Walking the struct task_struct will yield an untrusted pointer. */
++	parent = task->parent;
++	if (!parent)
++		return 0;
++
++	acquired = bpf_get_task_fs_pwd(parent);
++	if (!acquired)
++		return 0;
++	bpf_put_path(acquired);
++
++	return 0;
++}
++
++SEC("lsm.s/file_open")
++__failure __msg("Unreleased reference")
++int BPF_PROG(get_task_fs_root_kfunc_unreleased)
++{
++	struct path *acquired;
++
++	acquired = bpf_get_task_fs_root(bpf_get_current_task_btf());
++	if (!acquired)
++		return 0;
++	__sink(acquired);
++
++	/* Acquired but never released. */
++	return 0;
++}
++
++SEC("lsm.s/file_open")
++__failure __msg("Unreleased reference")
++int BPF_PROG(get_task_fs_pwd_kfunc_unreleased)
++{
++	struct path *acquired;
++
++	acquired = bpf_get_task_fs_pwd(bpf_get_current_task_btf());
++	if (!acquired)
++		return 0;
++	__sink(acquired);
++
++	/* Acquired but never released. */
++	return 0;
++}
++
++SEC("lsm.s/inode_getattr")
++__failure __msg("release kernel function bpf_put_path expects refcounted PTR_TO_BTF_ID")
++int BPF_PROG(put_path_kfunc_unacquired, struct path *path)
++{
++	/* Can't release an unacquired pointer. */
++	bpf_put_path(path);
++
++	return 0;
++}
+diff --git a/tools/testing/selftests/bpf/progs/path_kfunc_success.c b/tools/testing/selftests/bpf/progs/path_kfunc_success.c
+new file mode 100644
+index 000000000000..8fc8e3c51405
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/path_kfunc_success.c
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Google LLC. */
++
++#include "path_kfunc_common.h"
++
++SEC("lsm.s/file_open")
++int BPF_PROG(get_task_fs_root_and_put_from_current)
++{
++	struct path *acquired;
++
++	acquired = bpf_get_task_fs_root(bpf_get_current_task_btf());
++	if (!acquired)
++		return 0;
++	bpf_put_path(acquired);
++
++	return 0;
++}
++
++SEC("lsm.s/file_open")
++int BPF_PROG(get_task_fs_pwd_and_put_from_current)
++{
++	struct path *acquired;
++
++	acquired = bpf_get_task_fs_pwd(bpf_get_current_task_btf());
++	if (!acquired)
++		return 0;
++	bpf_put_path(acquired);
++
++	return 0;
++}
 -- 
 2.44.0.278.ge034bb2e1d-goog
 
