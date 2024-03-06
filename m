@@ -1,125 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-13766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70BC873A78
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 16:14:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C0C873A8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 16:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CD0E1F2C51B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 15:14:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B35B1C210BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 15:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB441350D6;
-	Wed,  6 Mar 2024 15:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E51580605;
+	Wed,  6 Mar 2024 15:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZBRJ4Nw5"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="clGU/OFl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cy92YTor"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B30132472
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 15:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8078D1EF1C;
+	Wed,  6 Mar 2024 15:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709738074; cv=none; b=UpIm2ZRjzhaKZMWQv95yTyqcoyL1OmbKfWqoxZ41Bq4dctlrLpBDKez5jqYVxtwj1263MMeXerx/wKTeNtOoVlKzOecRQcnUO/+zWGvnTtUWIesaSb8fAIGnsPtFcjH4rSG5iNVvRy7fGF3lwzWOIxK/A4s11CmkcgQA0B4OHcY=
+	t=1709738358; cv=none; b=fSSDdPHeXhu8Qhuqn08dQ3nLAxDFxetXfsMa3VD+VzPzHScQhIAZj05CH6XbL4BVdYVNgrm7FrS2BbU2uctwrHue+K7+Oyqc5M4B2rqYBlysYuE+nkxbm45Kfe0p+8IaSSgNj03YZFr7FtUBKEeLgNLX+++wS7yRXdVmYc7LRDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709738074; c=relaxed/simple;
-	bh=V3aJ+mDpXol1LnRkVd8frXu/5mxpgid0TGJDT/7qC6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WGQ/ewRScIGiu15/2UhhPMTckEqK/5IEbqUIftXehi/sYkLEn3JJ6L756d5ibpdeo8MDKzPFC9/VdnKhKCIcS9dh96jjfpvrZ+hZI0fxjzdTxIWAcC5lrw+sJWwcEj6z1tJN0WDX/wv+PkAV9ajUM1k6DFfBlOvjhLdcDKEbwsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZBRJ4Nw5; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-365c0dfc769so2115725ab.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 07:14:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709738070; x=1710342870; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WI8wnl72Fr4kYF1pJwPsFlO/0vFnIYu1hp3He8klX70=;
-        b=ZBRJ4Nw5kAKzT6hI1cTWI2uZxh8XH7Y2i+mBi+20T9bQa3MBPM2CcHYk3d2DXSLf1O
-         9MF9o2yE+qudRaFV75QWnAs2/jRaD2UyCjOX9VCsseIIqKjp6k04aB6YBD+irWxNbfE3
-         gjkPIY3iqf/uVuGV6D69c3UJYqfovaIqcMEjIyi7Gy1mTNzesJ9e1qmLFAAORaFY17wb
-         dyBm1u3+T9dNG5XezU+Pv544xkY/OgUNfBnrgTdvz+eOxy/BAQBZjdteghJJq6KmlJTt
-         yERTrgXkDQ9CtPo1qvmdJuSMWOIrzFbjjXYaXG0ZRDo3j+bTySPRtz/gDCvcX1cr28Qs
-         46Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709738070; x=1710342870;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WI8wnl72Fr4kYF1pJwPsFlO/0vFnIYu1hp3He8klX70=;
-        b=FEqVqpA3RZbhb798uVlnpHwdsjqI4T/5DFIgGH8bC7QmGuKi7RpRsT/99sC7xwHk0b
-         /3yh5/Ejmmo6cUcQKJ1wrWLupiE+R0o1zPPijFhWDOLbdpUm2rx+OeIDjPf2PuHJdo3l
-         OHAnP5vY+YBKW4nloyyqF89XkoN9iR9r0AkEZVS9GG42gx9SqimqH1Rs/ZRRl8vb50Ak
-         QMd8vyR6vC0RCWxU4fMldRFEI5zczEDTNWWZTqSdh3Q32fK3loVcyumwaA1beXBVLaL6
-         UuAKq0npYRgmb4Pxz4jKkNq/HPJP3uGO/lvRnBCQDaglt7ekkVeypGUi+S+dcCJ10/PO
-         PKpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVD5MrXMwG4i96ppyzABTk7u1WqmwXKomIW8AYfSgPD4gOO7SJvv9jQ3KPdCvCsZ9L1wkSC09MoMWhurUKJ/nw5lwzDWAb1TuTcOStZA==
-X-Gm-Message-State: AOJu0Yxt2EAsbHUmOHc+Dj+j9wz19l7OPZ+ApZ2Wtv/LHAataU+WY99V
-	9IANkA6Baap13MxOF5pfpZMR6YaTiUJLiYMehTH20iSfqoh4sxyWZFqadcmSeoA=
-X-Google-Smtp-Source: AGHT+IGUiMQGgwvlQMGKRXe7wCmRXYY4W7sYiKxMn4Ny9azh3Xt+7w7LX57Y2OOgwcaF/GvjESF0Sg==
-X-Received: by 2002:a6b:6611:0:b0:7c8:7471:2f59 with SMTP id a17-20020a6b6611000000b007c874712f59mr2532950ioc.0.1709738069617;
-        Wed, 06 Mar 2024 07:14:29 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id y16-20020a027310000000b004767d9bc182sm380434jab.139.2024.03.06.07.14.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Mar 2024 07:14:28 -0800 (PST)
-Message-ID: <74fd60ca-6284-4817-8ec1-7f1a6c203473@kernel.dk>
-Date: Wed, 6 Mar 2024 08:14:27 -0700
+	s=arc-20240116; t=1709738358; c=relaxed/simple;
+	bh=f+TDSr+XIaHaz0oSQ/iAhi2S0Quq8jl1leb5iAf+fIw=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=EDS7TURrpmutrT5mhok4yswuGJydXUOeN1yOr6CvbFPRYKrpxKmUjK3e+uYl33uvz7e5Bd4DGgM1Xjp4Dd8106XnIgQ03xquKU2GfOBQ+a852h6v0uS/jwxMt4LxPJToOXgtFzv9KjA72WzSt2v7SPOYs7J3BBeXhIzs7krJbkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=clGU/OFl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cy92YTor; arc=none smtp.client-ip=64.147.123.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 9392818000AA;
+	Wed,  6 Mar 2024 10:19:14 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 06 Mar 2024 10:19:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1709738354;
+	 x=1709824754; bh=5z53l5YZyT1JRwcbB0hXCVqeOpp7A9hrbEaesXr4t5k=; b=
+	clGU/OFlXJz8LTnBqEgcergEqyxHBEV3y3nydnkBKMpNI/AT13HoYi1ENz1sWdAJ
+	SxzrUEXxN4PCybHLnCGoAZch2bzWqhuQMyiSpRx8thRrAV0ELrrqhT0fjIZjnGWg
+	H7XXo3QYuz/hLvtDu3wZjv6o29o0zJRDsZZzsUg3x7Vq++LgNdO7qSRgx8xkEOgW
+	hNlowlxlbKUgeWx5SsfrXuZ812PB5V7HheXxBHhXwweWKIBT9upZyxS6ilYp2WbC
+	hD7Prrlgy8lmjGS1gfkB5gO+v5DhOftAwr9xXHaLFiOeOIQmQ3RCr+j02E+6zNPc
+	G7yTOWj+aPIxnMASUDb8HQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1709738354; x=
+	1709824754; bh=5z53l5YZyT1JRwcbB0hXCVqeOpp7A9hrbEaesXr4t5k=; b=c
+	y92YTorqFHF8gAaKdWzmHu2LFKLjWDqucCxpSbdE0NbLTJF76yj9VSfQF14xXarV
+	KOd5y2VnYF00bJaqUsoHmoHaSs+R2gOGa+RWIq5/YykPjuyeKLYG71lSWRrfpSWK
+	5CyViswlvHiO/sk3KRNO8/Yae/Z/R1YivHcFZgV9dQFanqK+dFFND3tXdG8aco7I
+	22JT5vOBmOr8isUYWKs+91Tts4E3jFq5hOKQCer+5quSP98e04/w2kh6Ebv6lvlE
+	M9QE5lGAzyc7mZRhhmXox+of/8vSUpvBUOls91Jjxv8nT+Cf+KIbHqVbF6ymfeKA
+	KTPjcBPuHwLQD5VKdfOUw==
+X-ME-Sender: <xms:cYnoZf9msN8LDmWA3naC5YVhBcpb-qmRS1rvvdqMOphUSWx1U5WvkA>
+    <xme:cYnoZbsQrxdBOMArkSEhp8e4eM5gVLRwTc_riwurF7WsYws01jNIEXnkW3ekg0GrU
+    BZUhOt-WXN1HyERIvw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledriedugdejvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
+    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:cYnoZdB5VuwHy-KKcxtNGkSFnEmZPA_b3Cdv2bmis5dfFkdpxLlOhA>
+    <xmx:cYnoZbcp5kLoHcTz_I1GEb1YJlKLecqEKKugCpXEB66Kd_eQDJ599Q>
+    <xmx:cYnoZUPxcai3hM6xNWn274Ep9xMSCOwdAJ8vhU699xnPNWgYAC0sCw>
+    <xmx:conoZdlCDCa0vUG40g7JY-Ta4YmlNTg1g7eGj7YLQRluDl8eemtXUZ2Ae7A>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 52D03B6008F; Wed,  6 Mar 2024 10:19:13 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-208-g3f1d79aedb-fm-20240301.002-g3f1d79ae
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: Fix page refcounts for unaligned buffers in
- __bio_release_pages()
-To: Tony Battersby <tonyb@cybernetics.com>, Greg Edwards <gedwards@ddn.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Hugh Dickins <hughd@google.com>, Hannes Reinecke <hare@suse.de>,
- Keith Busch <kbusch@kernel.org>, linux-mm <linux-mm@kvack.org>,
- linux-block@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <86e592a9-98d4-4cff-a646-0c0084328356@cybernetics.com>
- <20240229225630.GA460680@bobdog.home.arpa>
- <dd86cf53-d884-4a5c-b5b5-eefe1d7641d7@cybernetics.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <dd86cf53-d884-4a5c-b5b5-eefe1d7641d7@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-Id: <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+In-Reply-To: <20240306.zoochahX8xai@digikod.net>
+References: <20240219.chu4Yeegh3oo@digikod.net>
+ <20240219183539.2926165-1-mic@digikod.net> <ZedgzRDQaki2B8nU@google.com>
+ <20240306.zoochahX8xai@digikod.net>
+Date: Wed, 06 Mar 2024 16:18:53 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ "Paul Moore" <paul@paul-moore.com>, "Christian Brauner" <brauner@kernel.org>
+Cc: "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
+ "Jeff Xu" <jeffxu@google.com>, "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
+ "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
+ "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 3/6/24 8:03 AM, Tony Battersby wrote:
-> On 2/29/24 17:56, Greg Edwards wrote:
->> On Thu, Feb 29, 2024 at 01:08:09PM -0500, Tony Battersby wrote:
->>> Fix an incorrect number of pages being released for buffers that do not
->>> start at the beginning of a page.
->>>
->>> Fixes: 1b151e2435fc ("block: Remove special-casing of compound pages")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
->>> ---
->> This resolves the QEMU hugetlb issue I noted earlier today here [1].
->> I tested it on 6.1.79, 6.8-rc6 and linux-next-20240229.  Thank you!
->>
->> Feel free to add a:
->>
->> Tested-by: Greg Edwards <gedwards@ddn.com>
->>
->> [1] https://lore.kernel.org/linux-block/20240229182513.GA17355@bobdog.home.arpa/
-> 
-> Jens, can I get this added to 6.8 (or 6.9 if it is too late)?
+On Wed, Mar 6, 2024, at 14:47, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Tue, Mar 05, 2024 at 07:13:33PM +0100, G=C3=BCnther Noack wrote:
+>> On Mon, Feb 19, 2024 at 07:35:39PM +0100, Micka=C3=ABl Sala=C3=BCn wr=
+ote:
 
-Let's just go for 6.9 at this pount, we're almost there. I'll queue it
-up.
+>> > +	case FS_IOC_FSGETXATTR:
+>> > +	case FS_IOC_FSSETXATTR:
+>> > +	/* file_ioctl()'s IOCTLs are forwarded to device implementations.=
+ */
+>> > +		return true;
+>> > +	default:
+>> > +		return false;
+>> > +	}
+>> > +}
+>> > +EXPORT_SYMBOL(vfs_masked_device_ioctl);
+>>=20
+>> [
+>> Technical implementation notes about this function: the list of IOCTL=
+s here are
+>> the same ones which do_vfs_ioctl() implements directly.
+>>=20
+>> There are only two cases in which do_vfs_ioctl() does more complicate=
+d handling:
+>>=20
+>> (1) FIONREAD falls back to the device's ioctl implemenetation.
+>>     Therefore, we omit FIONREAD in our own list - we do not want to a=
+llow that.
 
--- 
-Jens Axboe
+>> (2) The default case falls back to the file_ioctl() function, but *on=
+ly* for
+>>     S_ISREG() files, so it does not matter for the Landlock case.
 
+How about changing do_vfs_ioctl() to return -ENOIOCTLCMD for
+FIONREAD on special files? That way, the two cases become the
+same.
+
+>> I guess the reasons why we are not using that approach are performanc=
+e, and that
+>> it might mess up the LSM hook interface with special cases that only =
+Landlcok
+>> needs?  But it seems like it would be easier to reason about..?  Or m=
+aybe we can
+>> find a middle ground, where we have the existing hook return a specia=
+l value
+>> with the meaning "permit this IOCTL, but do not invoke the f_op hook"?
+>
+> Your security_file_vfs_ioctl() approach is simpler and better, I like
+> it!  From a performance point of view it should not change much because
+> either an LSM would use the current IOCTL hook or this new one.  Using=
+ a
+> flag with the current IOCTL hook would be a missed opportunity for
+> performance improvements because this hook could be called even if it =
+is
+> not needed.
+>
+> I don't think it would be worth it to create a new hook for compat and
+> non-compat mode because we want to control these IOCTLs the same way f=
+or
+> now, so it would not have a performance impact, but for consistency wi=
+th
+> the current IOCTL hooks I guess Paul would prefer two new hooks:
+> security_file_vfs_ioctl() and security_file_vfs_ioctl_compat()?
+>
+> Another approach would be to split the IOCTL hook into two: one for the
+> VFS layer and another for the underlying implementations.  However, it
+> looks like a difficult and brittle approach according to the current
+> IOCTL implementations.
+>
+> Arnd, Christian, Paul, are you OK with this new hook proposal?
+
+I think this sounds better. It would fit more closely into
+the overall structure of the ioctl handlers with their multiple
+levels, where below vfs_ioctl() calling into f_ops->unlocked_ioctl,
+you have the same structure for sockets and blockdev, and
+then additional levels below that and some weirdness for
+things like tty, scsi or cdrom.
+
+>> And there is a scenario where this could potentially happen:
+>>=20
+>> do_vfs_ioctl() implements most things like this:
+>>=20
+>> static int do_vfs_ioctl(...) {
+>> 	switch (cmd) {
+>> 	/* many cases like the following: */
+>> 	case FITHAW:
+>> 		return ioctl_fsthaw(filp);
+>> 	/* ... */
+>> 	}
+>> 	return -ENOIOCTLCMD;
+>> }
+>>=20
+>> So I believe the scenario you want to avoid is the one where ioctl_fs=
+thaw() or
+>> one of the other functions return -ENOIOCTLCMD by accident, and where=
+ that will
+>> then make the surrounding syscall implementation fall back to vfs_ioc=
+tl()
+>> despite the cmd being listed as safe for Landlock?  Is that right?
+>
+> Yes
+
+This does go against the normal structure a bit then, where
+any of the commands is allowed to return -ENOIOCTLCMD specifically
+for the purpose of passing control to the next level of
+callbacks. Having the landlock hook explicitly at the
+place where the callback is entered, as G=C3=BCnther suggested makes
+much more sense to me then.
+
+      Arnd
 
