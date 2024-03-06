@@ -1,113 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-13768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D56873ABB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 16:35:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89037873AF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 16:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161422862AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 15:35:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D95284253
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 15:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD913135406;
-	Wed,  6 Mar 2024 15:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD401353F5;
+	Wed,  6 Mar 2024 15:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yiYpHRKB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="nuzQc7yM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2347FBBD
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 15:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911D1135A4A
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 15:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709739321; cv=none; b=syT0mQIGHp8A75k1iGcXWnUuSS7SXucfeIjIhF+mZBowUjjmRA3VelbL1Grce1K64Ivg7QIJvk921ZPrEg7i9XEZfB74LFrpwT/YK4YFehlcNUGnHtd5WCbaIcU6LNfuRU31sbMq8mMTfBgWUdRYbfMr7qrXxM9Nlq1p8JpGqUU=
+	t=1709739749; cv=none; b=A3gX7aCMbaV9630RDjGBDE5BC2QtXVPZa81kUjT/I0bloxEVmS0otUtLTX1Ho6Pi5LDsJxkyvPA4Ed9omgCFUejE7FJgMFdd1FjPUW/2B24jqgLmkwOAwMPVETvO/KLEIvOWTbsmh/d3u9XBymYeadERG6YzbkHqjL3bqD59HJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709739321; c=relaxed/simple;
-	bh=4XBA7h4gk9kZGoLHOXMtYY2N0kUearBB17+7pA7xfVU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qQrj70C0iwFrAqsCTB6mNWTZAdP2YB9vFcvvUFCNFEg4u9rpbuv4m84+XYN6t2Mul0VQpZi3EBa+KT75ZUdOpOPftiPflsFiaau2ZXSd3a3hMMoxtxHB1IkY2aQehpdgM0DzGlw/pGHtxlyrEgMzf8FqR8Es9ue5p0bTPcZyH6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yiYpHRKB; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7c876b9d070so12642239f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 07:35:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709739318; x=1710344118; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k+7aPckIbaw56xMg4x5zLxwpAKi5vUALOz1YbOan0kQ=;
-        b=yiYpHRKB8dxaTeWc9yaeQfLV0CfWjyB8SuSfqu83kzipnPId7gRpCul+My1wnfhrW4
-         WeSfOjc1biXB70d9M4Nw+Ml548ypNaxLsqZcGCqzytTtXClHL2XLV6iGUXvQTzXYr4s/
-         cbkP2BhCH3FJEF63wysr9C7zXY8XfR/+ZWClTOxWfXR5i8g7bF6Io9svq0Y1cCjQX5Da
-         mfmzHV9k13U4vQy4eBhOBBQEp6Rlnsjs4aJMJAs2WHM1PJvSLmHx3JGW9Lp4Sa8UMpwI
-         5/6AaD1VIFMMEp5eEtO4w+rXDZZ1p7kFgThU7KGEsU4h65MeP+Ur9GNC5Qy2ya8k8uyz
-         gl5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709739318; x=1710344118;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k+7aPckIbaw56xMg4x5zLxwpAKi5vUALOz1YbOan0kQ=;
-        b=gH5A+b9FkkS3+zCcCqsCOKqIwTlAQ06n4kpyU6bGA2mRJKpDe4WbqMXuN1ZXXiogfy
-         G7faKhTfQ3GBIDkBXiW8qLjc/OVw6ZUu7XpI2oYtETPju6bJepF+mHQPViHZ4OYk5y9m
-         eKiPg87ptpsF+USCoygXp7CJngRzd2TwOHA5O+eW+DdU+AsxP1lSRxFKbaPkxAAf/Bgk
-         wX+WV5Ib4whECjOTogCdvDxzhVIKH2g9TcV7RAgMwYwLZ1SLRKpo8kILE/m5J7HBvXHm
-         8yANLjQ3aSn/Q20KgYOL3iQYOnxgPtlDRITWko63yGYF/9n6lhJSQYUHkeP0vipwUPOS
-         KD9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVMzQHlqhOYqjhPXIABkLtcepNkD0ht2QVXyoyM2/YuZjyeXR+yYJh3x6MLx8wxpa08aX+u4ce5CSdYs5+FYMffjYiIQNDzQH26jonaGA==
-X-Gm-Message-State: AOJu0YyigbczkLxBbv7sXeURDu7Oxl9NjgS8QBvWtKZ2CqD0Nk2jDnBQ
-	ByyRDhP3ONp8BJaoUJ5AQa1j5IsG7oexJ/FXvZDsGO48mP4JvdAIUSttGNs1nIc=
-X-Google-Smtp-Source: AGHT+IE5F3k1D3gik/OwYN8x0TQzZJEWeyfDVo1rW4ITdbpkHe2CQWcwgqeqMBIIK+FUBeWV/a2ZZw==
-X-Received: by 2002:a05:6e02:1c46:b0:365:fe09:6431 with SMTP id d6-20020a056e021c4600b00365fe096431mr3732415ilg.3.1709739318559;
-        Wed, 06 Mar 2024 07:35:18 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id t2-20020a92cc42000000b003660612cf73sm324467ilq.49.2024.03.06.07.35.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Mar 2024 07:35:18 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Tony Battersby <tonyb@cybernetics.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, 
- Hugh Dickins <hughd@google.com>, Hannes Reinecke <hare@suse.de>, 
- Keith Busch <kbusch@kernel.org>, linux-mm <linux-mm@kvack.org>, 
- linux-block@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <86e592a9-98d4-4cff-a646-0c0084328356@cybernetics.com>
-References: <86e592a9-98d4-4cff-a646-0c0084328356@cybernetics.com>
-Subject: Re: [PATCH] block: Fix page refcounts for unaligned buffers in
- __bio_release_pages()
-Message-Id: <170973931770.23995.2545307873508420124.b4-ty@kernel.dk>
-Date: Wed, 06 Mar 2024 08:35:17 -0700
+	s=arc-20240116; t=1709739749; c=relaxed/simple;
+	bh=A6ejjzFnzfbN81Awuaf5GgmU1S8+eWIJJKABbBqLwdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e10YrlD3vTez8zR79uhi4Z3O7ypQLPP3rd4hNMh+3hN5KVaPGHSDKyghnCxZ7+5i1O96Q8L+g3zirDBuoGFXFPsTawVQn353AJd3DZi8wsXnpFj93SEk+kEwnJyRSlW41pNO8R7Bt+bnfrw8nl37EOyVKBqAWv/DHPMpxvtMBtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=nuzQc7yM; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id htDLrQuOltf2QhtPRrYJpv; Wed, 06 Mar 2024 15:42:21 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id htPPr1ZDQzW8khtPQrJfPs; Wed, 06 Mar 2024 15:42:20 +0000
+X-Authority-Analysis: v=2.4 cv=EebOQumC c=1 sm=1 tr=0 ts=65e88edc
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=VhncohosazJxI00KdYJ/5A==:17
+ a=IkcTkHD0fZMA:10 a=K6JAEmCyrfEA:10 a=wYkD_t78qR0A:10
+ a=mU1RsLrzvjGXDdw7Dd8A:9 a=QEXdDO2ut3YA:10
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cE2AQJoC9weqajQ/1asaazO4AMb6/FWugaonAa9OCjg=; b=nuzQc7yMPKokkq/Y37CgrQmVTv
+	lGbTJyaq+elcu/qhEweeSfrq7gR1s2RiKnrfQhmffv1Gl9ZzpMW7X27+41dmKsp9n2yggVOw845FM
+	CDgpoSccWDKm83pFPwaCOtq7lpdUOzRdm4i6TtmNmImW3z9O1gbWHIVtQV8eIBBcJ5MTv5rWCzyIi
+	1oFqt6ereO1z33gwU9yw77wteOSebmm7Z7RV8Cyg7iP9A0LdsdySsSprtXm53EYlyChCluxlae9pX
+	852Hs1ZtFOX9WdSjvZYZrNJre3xAF94WofPqZocbDrSAzz9FYa46KoNPw9JtKCcUEOF2K1UHLSnNL
+	jMYukrMg==;
+Received: from [201.172.172.225] (port=37704 helo=[192.168.15.10])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1rhtPP-000nwp-15;
+	Wed, 06 Mar 2024 09:42:19 -0600
+Message-ID: <00b30dee-59ed-4782-8d1a-64b66c38c901@embeddedor.com>
+Date: Wed, 6 Mar 2024 09:42:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] fsnotify: Avoid -Wflex-array-member-not-at-end
+ warning
+Content-Language: en-US
+To: Kees Cook <keescook@chromium.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZeeaRuTpuxInH6ZB@neat> <202403051548.045B16BF@keescook>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <202403051548.045B16BF@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.172.225
+X-Source-L: No
+X-Exim-ID: 1rhtPP-000nwp-15
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.10]) [201.172.172.225]:37704
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfIuvBZv2LmeiYf4BseP149l6uoEXfQ7SDpEBBoYQAC5wz09jUy4pdingGHs87R3sD02fZNuSJpELlbzeCGZnoRBMa5QqVxrSqZ/4A6552ASfWmcQzfLL
+ W6F3oAfm3vehG/nsOw+qDlUbywByWlty7cNmwuYvXWcAUtHyAERw6ESq7bTeus1Mt2AnHAmlvCLTJgB3s6X8BJaJNB9tYjV10VVRjJ1HGBPvsDuWkr96EC6v
 
 
-On Thu, 29 Feb 2024 13:08:09 -0500, Tony Battersby wrote:
-> Fix an incorrect number of pages being released for buffers that do not
-> start at the beginning of a page.
+
+On 3/5/24 17:52, Kees Cook wrote:
+> On Tue, Mar 05, 2024 at 04:18:46PM -0600, Gustavo A. R. Silva wrote:
+>> -Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
+>> ready to enable it globally.
+>>
+>> There is currently a local structure `f` that is using a flexible
+>> `struct file_handle` as header for an on-stack place-holder for the
+>> flexible-array member `unsigned char f_handle[];`.
+>>
+>> struct {
+>> 	struct file_handle handle;
+>> 	u8 pad[MAX_HANDLE_SZ];
+>> } f;
 > 
+> This code pattern is "put a flex array struct on the stack", but we have
+> a macro for this now:
+> 
+> DEFINE_FLEX(struct file_handle, handle, f_handle, MAX_HANDLE_SZ);
+> 
+> And you can even include the initializer:
+> 
+> _DEFINE_FLEX(struct file_handle, handle, f_handle, MAX_HANDLE_SZ,
+> 	     = { .handle_bytes = MAX_HANDLE_SZ });
+> 
+> I think this would be a simpler conversion.
+> 
+> Also, this could use a __counted_by tag...
+> 
+> I need to improve the DEFINE_FLEX macro a bit, though, to take advantage
+> of __counted_by.
 > 
 
-Applied, thanks!
+Yep, I like it.
 
-[1/1] block: Fix page refcounts for unaligned buffers in __bio_release_pages()
-      commit: 38b43539d64b2fa020b3b9a752a986769f87f7a6
+I'll go and hunt down all those on-stack -Wflex-array-member-not-at-end
+issues with this helper. :)
 
-Best regards,
--- 
-Jens Axboe
-
-
-
+Thanks
+--
+Gustavo
 
