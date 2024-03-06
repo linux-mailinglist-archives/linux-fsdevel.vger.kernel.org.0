@@ -1,203 +1,304 @@
-Return-Path: <linux-fsdevel+bounces-13760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDF28737BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 14:32:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DA1873817
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 14:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D3B1F24895
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 13:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C625286C6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 13:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADF1131736;
-	Wed,  6 Mar 2024 13:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D07131746;
+	Wed,  6 Mar 2024 13:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="m30iMKaL"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="cbKBBwnp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1ED130E29;
-	Wed,  6 Mar 2024 13:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF08130E5C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 13:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709731942; cv=none; b=DoMgjkmGGZZMFzaufmy2vut0AM+xZZsDN9eRPM4E/Yy9KGd7xz/20hK2P0ffgcXczkgpxB6VrbkqhTndvQ09qGW/AKOEB3b6D2E6keU6a8hurARR5I1id3Zn+OnaV9PXxEVU2pkAagfqZjaHNU5PQOrZ/Ug2mA4ODM2Jrd3Q8X8=
+	t=1709732858; cv=none; b=l405O6iJgISSVr3AwSIc2pN7xDoHgRJe8/g+D0yr6O0qiYBAcXLEO8wbnHGzMnfUIYjATEYy9EbDI3rOGRbOObqrMo+bsJpU7Dw9j/0lQ1i6L5yExxHQhkmBTJcas/8nzrOBGk94xVVOB+MNBcxQNLRMIU5jJegAOPxaXF8z8mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709731942; c=relaxed/simple;
-	bh=r3I412SG0b717r5olrqqgvwgsxovk3km8xIxHnC5rS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h/7PnRK0Rbobv2w3CINGHasPXwmoZksWCQ8T7srghA5N6QE1InVLUenMAlkzQm8cdaP39PhjycGSzVHu7U9wRvxbruj2bvhqVxSwVioh2oUpsOq4gAdQ8WrU5vo1pQDVtkP5pTNzamiH8kMCwc34q/vIfnXqM2g0sFtFNQHCTX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=m30iMKaL; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1709731936; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=h81mR016RoIXcFQc6aGU9aYbZL1VGqlUD1p94No+yqI=;
-	b=m30iMKaL6rZYR39tTnpK7KAxo39if/gn8vky0ONoKv7ks+JSE0AAXRMpy1z/K/i4k8P2tTN/V3P62TmgTw50D1x63jgN/tiNYvrd1UXkH9H/wDOwsLAT/rNB34lUxH+ocSky+7O68ySS/P29rouLHm5ZDMMB8ggg0PXDsJyoolM=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W1xohh1_1709731935;
-Received: from 192.168.31.58(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W1xohh1_1709731935)
-          by smtp.aliyun-inc.com;
-          Wed, 06 Mar 2024 21:32:16 +0800
-Message-ID: <7e79a9fa-99a0-47e5-bc39-107f89852d8d@linux.alibaba.com>
-Date: Wed, 6 Mar 2024 21:32:14 +0800
+	s=arc-20240116; t=1709732858; c=relaxed/simple;
+	bh=euG2eayje2LSWjIyg0xW/mCPVcyU6uIGUqDdjzCBxuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GeuRmkac1c24WdERpLJ5M9c4AlefGp0cuAcDZee1jVk+WotM9eu0e/YcknGwbFmYNJtenBAcJWt0dtaDnGDB2E+O+RlqRUpMM4S9SJH9a/RhBgdPCNOZJ+EBEL1NSXOMC8Q6brUG5au+MAI2taqFdrR/X8x1to2a8I4TSCRG3E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=cbKBBwnp; arc=none smtp.client-ip=84.16.66.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TqYdq4m8SzMrkvZ;
+	Wed,  6 Mar 2024 14:47:27 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TqYdp4zQBz3Z;
+	Wed,  6 Mar 2024 14:47:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709732847;
+	bh=euG2eayje2LSWjIyg0xW/mCPVcyU6uIGUqDdjzCBxuE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cbKBBwnpHunbHQMzZUqvltY7KD2XzA4fo5MJmtbFoylMzWnBffSalvrvjTGrJJFqQ
+	 l/NrsZklKi/Mhzh2OeyUkfVUQUac64oAqQp07vXEs7UYz30+ope6GmdR0OMOMjQQ1c
+	 U7UEKK8fGgOKanZfpVNLY6S5uBaBrcQlyUsbpotI=
+Date: Wed, 6 Mar 2024 14:47:13 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>
+Cc: Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Message-ID: <20240306.zoochahX8xai@digikod.net>
+References: <20240219.chu4Yeegh3oo@digikod.net>
+ <20240219183539.2926165-1-mic@digikod.net>
+ <ZedgzRDQaki2B8nU@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: increase FUSE_MAX_MAX_PAGES limit
-Content-Language: en-US
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhangjiachen.jaycee@bytedance.com
-References: <20240124070512.52207-1-jefflexu@linux.alibaba.com>
- <CAJfpegs10SdtzNXJfj3=vxoAZMhksT5A1u5W5L6nKL-P2UOuLQ@mail.gmail.com>
- <6e6bef3d-dd26-45ce-bc4a-c04a960dfb9c@linux.alibaba.com>
- <b4e6b930-ed06-4e0d-b17d-61d05381ac92@linux.alibaba.com>
- <27b34186-bc7c-4f3c-8818-ee73eb3f82ba@linux.alibaba.com>
- <CAJfpegvLUrqkCkVc=yTXcjZyNNQEG4Z4c6TONEZHGGmjiQ5X2g@mail.gmail.com>
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJfpegvLUrqkCkVc=yTXcjZyNNQEG4Z4c6TONEZHGGmjiQ5X2g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZedgzRDQaki2B8nU@google.com>
+X-Infomaniak-Routing: alpha
 
-
-
-On 3/5/24 10:26 PM, Miklos Szeredi wrote:
-> On Mon, 26 Feb 2024 at 05:00, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>
->> Hi Miklos,
->>
->> On 1/26/24 2:29 PM, Jingbo Xu wrote:
->>>
->>>
->>> On 1/24/24 8:47 PM, Jingbo Xu wrote:
->>>>
->>>>
->>>> On 1/24/24 8:23 PM, Miklos Szeredi wrote:
->>>>> On Wed, 24 Jan 2024 at 08:05, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>>>>>
->>>>>> From: Xu Ji <laoji.jx@alibaba-inc.com>
->>>>>>
->>>>>> Increase FUSE_MAX_MAX_PAGES limit, so that the maximum data size of a
->>>>>> single request is increased.
->>>>>
->>>>> The only worry is about where this memory is getting accounted to.
->>>>> This needs to be thought through, since the we are increasing the
->>>>> possible memory that an unprivileged user is allowed to pin.
->>>
->>> Apart from the request size, the maximum number of background requests,
->>> i.e. max_background (12 by default, and configurable by the fuse
->>> daemon), also limits the size of the memory that an unprivileged user
->>> can pin.  But yes, it indeed increases the number proportionally by
->>> increasing the maximum request size.
->>>
->>>
->>>>
->>>>>
->>>>>
->>>>>
->>>>>>
->>>>>> This optimizes the write performance especially when the optimal IO size
->>>>>> of the backend store at the fuse daemon side is greater than the original
->>>>>> maximum request size (i.e. 1MB with 256 FUSE_MAX_MAX_PAGES and
->>>>>> 4096 PAGE_SIZE).
->>>>>>
->>>>>> Be noted that this only increases the upper limit of the maximum request
->>>>>> size, while the real maximum request size relies on the FUSE_INIT
->>>>>> negotiation with the fuse daemon.
->>>>>>
->>>>>> Signed-off-by: Xu Ji <laoji.jx@alibaba-inc.com>
->>>>>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
->>>>>> ---
->>>>>> I'm not sure if 1024 is adequate for FUSE_MAX_MAX_PAGES, as the
->>>>>> Bytedance floks seems to had increased the maximum request size to 8M
->>>>>> and saw a ~20% performance boost.
->>>>>
->>>>> The 20% is against the 256 pages, I guess.
->>>>
->>>> Yeah I guess so.
->>>>
->>>>
->>>>> It would be interesting to
->>>>> see the how the number of pages per request affects performance and
->>>>> why.
->>>>
->>>> To be honest, I'm not sure the root cause of the performance boost in
->>>> bytedance's case.
->>>>
->>>> While in our internal use scenario, the optimal IO size of the backend
->>>> store at the fuse server side is, e.g. 4MB, and thus if the maximum
->>>> throughput can not be achieved with current 256 pages per request. IOW
->>>> the backend store, e.g. a distributed parallel filesystem, get optimal
->>>> performance when the data is aligned at 4MB boundary.  I can ask my folk
->>>> who implements the fuse server to give more background info and the
->>>> exact performance statistics.
->>>
->>> Here are more details about our internal use case:
->>>
->>> We have a fuse server used in our internal cloud scenarios, while the
->>> backend store is actually a distributed filesystem.  That is, the fuse
->>> server actually plays as the client of the remote distributed
->>> filesystem.  The fuse server forwards the fuse requests to the remote
->>> backing store through network, while the remote distributed filesystem
->>> handles the IO requests, e.g. process the data from/to the persistent store.
->>>
->>> Then it comes the details of the remote distributed filesystem when it
->>> process the requested data with the persistent store.
->>>
->>> [1] The remote distributed filesystem uses, e.g. a 8+3 mode, EC
->>> (ErasureCode), where each fixed sized user data is split and stored as 8
->>> data blocks plus 3 extra parity blocks. For example, with 512 bytes
->>> block size, for each 4MB user data, it's split and stored as 8 (512
->>> bytes) data blocks with 3 (512 bytes) parity blocks.
->>>
->>> It also utilize the stripe technology to boost the performance, for
->>> example, there are 8 data disks and 3 parity disks in the above 8+3 mode
->>> example, in which each stripe consists of 8 data blocks and 3 parity
->>> blocks.
->>>
->>> [2] To avoid data corruption on power off, the remote distributed
->>> filesystem commit a O_SYNC write right away once a write (fuse) request
->>> received.  Since the EC described above, when the write fuse request is
->>> not aligned on 4MB (the stripe size) boundary, say it's 1MB in size, the
->>> other 3MB is read from the persistent store first, then compute the
->>> extra 3 parity blocks with the complete 4MB stripe, and finally write
->>> the 8 data blocks and 3 parity blocks down.
->>>
->>>
->>> Thus the write amplification is un-neglectable and is the performance
->>> bottleneck when the fuse request size is less than the stripe size.
->>>
->>> Here are some simple performance statistics with varying request size.
->>> With 4MB stripe size, there's ~3x bandwidth improvement when the maximum
->>> request size is increased from 256KB to 3.9MB, and another ~20%
->>> improvement when the request size is increased to 4MB from 3.9MB.
+On Tue, Mar 05, 2024 at 07:13:33PM +0100, Günther Noack wrote:
+> Hello!
 > 
-> I sort of understand the issue, although my guess is that this could
-> be worked around in the client by coalescing writes.  This could be
-> done by adding a small delay before sending a write request off to the
-> network.
+> More questions than answers in this code review, but maybe this discusison will
+> help to get a clearer picture about what we are going for here.
 > 
-> Would that work in your case?
+> On Mon, Feb 19, 2024 at 07:35:39PM +0100, Mickaël Salaün wrote:
+> > vfs_masks_device_ioctl() and vfs_masks_device_ioctl_compat() are useful
+> > to differenciate between device driver IOCTL implementations and
+> > filesystem ones.  The goal is to be able to filter well-defined IOCTLs
+> > from per-device (i.e. namespaced) IOCTLs and control such access.
+> > 
+> > Add a new ioctl_compat() helper, similar to vfs_ioctl(), to wrap
+> > compat_ioctl() calls and handle error conversions.
+> > 
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Günther Noack <gnoack@google.com>
+> > ---
+> >  fs/ioctl.c         | 101 +++++++++++++++++++++++++++++++++++++++++----
+> >  include/linux/fs.h |  12 ++++++
+> >  2 files changed, 105 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/fs/ioctl.c b/fs/ioctl.c
+> > index 76cf22ac97d7..f72c8da47d21 100644
+> > --- a/fs/ioctl.c
+> > +++ b/fs/ioctl.c
+> > @@ -763,6 +763,38 @@ static int ioctl_fssetxattr(struct file *file, void __user *argp)
+> >  	return err;
+> >  }
+> >  
+> > +/*
+> > + * Safeguard to maintain a list of valid IOCTLs handled by do_vfs_ioctl()
+> > + * instead of def_blk_fops or def_chr_fops (see init_special_inode).
+> > + */
+> > +__attribute_const__ bool vfs_masked_device_ioctl(const unsigned int cmd)
+> > +{
+> > +	switch (cmd) {
+> > +	case FIOCLEX:
+> > +	case FIONCLEX:
+> > +	case FIONBIO:
+> > +	case FIOASYNC:
+> > +	case FIOQSIZE:
+> > +	case FIFREEZE:
+> > +	case FITHAW:
+> > +	case FS_IOC_FIEMAP:
+> > +	case FIGETBSZ:
+> > +	case FICLONE:
+> > +	case FICLONERANGE:
+> > +	case FIDEDUPERANGE:
+> > +	/* FIONREAD is forwarded to device implementations. */
+> > +	case FS_IOC_GETFLAGS:
+> > +	case FS_IOC_SETFLAGS:
+> > +	case FS_IOC_FSGETXATTR:
+> > +	case FS_IOC_FSSETXATTR:
+> > +	/* file_ioctl()'s IOCTLs are forwarded to device implementations. */
+> > +		return true;
+> > +	default:
+> > +		return false;
+> > +	}
+> > +}
+> > +EXPORT_SYMBOL(vfs_masked_device_ioctl);
+> 
+> [
+> Technical implementation notes about this function: the list of IOCTLs here are
+> the same ones which do_vfs_ioctl() implements directly.
+> 
+> There are only two cases in which do_vfs_ioctl() does more complicated handling:
+> 
+> (1) FIONREAD falls back to the device's ioctl implemenetation.
+>     Therefore, we omit FIONREAD in our own list - we do not want to allow that.
+> (2) The default case falls back to the file_ioctl() function, but *only* for
+>     S_ISREG() files, so it does not matter for the Landlock case.
+> ]
+> 
+> 
+> ## What we are actually trying to do (?)
+> 
+> Let me try to take a step back and paraphrase what I think we are *actually*
+> trying to do here -- please correct me if I am wrong about that:
+> 
+> I think what we *really* are trying to do is to control from the Landlock LSM
+> whether the filp->f_op->unlocked_ioctl() or filp->f_op->ioctl_compat()
+> operations are getting called for device files.
+> 
+> So in a world where we cared only about correctness, we could create a new LSM
+> hook security_file_vfs_ioctl(), which gets checked just before these two f_op
+> operations get called.  With that, we could permit all IOCTLs that are
+> implemented in fs/ioctl.c, and we could deny all IOCTL commands that are
+> implemented in the device implementation.
+> 
+> I guess the reasons why we are not using that approach are performance, and that
+> it might mess up the LSM hook interface with special cases that only Landlcok
+> needs?  But it seems like it would be easier to reason about..?  Or maybe we can
+> find a middle ground, where we have the existing hook return a special value
+> with the meaning "permit this IOCTL, but do not invoke the f_op hook"?
 
-It's possible but I'm not sure. I've asked my colleagues who working on
-the fuse server and the backend store, though have not been replied yet.
- But I guess it's not as simple as increasing the maximum FUSE request
-size directly and thus more complexity gets involved.
+Your security_file_vfs_ioctl() approach is simpler and better, I like
+it!  From a performance point of view it should not change much because
+either an LSM would use the current IOCTL hook or this new one.  Using a
+flag with the current IOCTL hook would be a missed opportunity for
+performance improvements because this hook could be called even if it is
+not needed.
 
-I can also understand the concern that this may increase the risk of
-pinning more memory footprint, and a more generic using scenario needs
-to be considered.  I can make it a private patch for our internal product.
+I don't think it would be worth it to create a new hook for compat and
+non-compat mode because we want to control these IOCTLs the same way for
+now, so it would not have a performance impact, but for consistency with
+the current IOCTL hooks I guess Paul would prefer two new hooks:
+security_file_vfs_ioctl() and security_file_vfs_ioctl_compat()?
 
-Thanks for the suggestions and discussion.
+Another approach would be to split the IOCTL hook into two: one for the
+VFS layer and another for the underlying implementations.  However, it
+looks like a difficult and brittle approach according to the current
+IOCTL implementations.
 
+Arnd, Christian, Paul, are you OK with this new hook proposal?
 
--- 
-Thanks,
-Jingbo
+> 
+> 
+> ## What we implemented
+> 
+> Of course, the existing security_file_ioctl LSM hook works differently, and so
+> with that hook, we need to make our blocking decision purely based on the struct
+> file*, the IOCTL command number and the IOCTL argument.
+> 
+> So in order to make that decision correctly based on that information, we end up
+> listing all the IOCTLs which are directly(!) implemented in do_vfs_ioctl(),
+> because for Landlock, this is the list of IOCTL commands which is safe to permit
+> on device files.  And we need to keep that list in sync with fs/ioctl.c, which
+> is why it ended up in the same place in this commit.
+> 
+> 
+> (Is it maybe possible to check with a KUnit test whether such lists are in sync?
+> It sounds superficially like it should be feasible to create a device file which
+> records whether its ioctl implementation was called.  So we could at least check
+> that the Landlock command list is a subset of the do_vfs_ioctl() one.)
+> 
+> 
+> > +
+> >  /*
+> >   * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL()'d.
+> >   * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
+> > @@ -858,6 +890,8 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
+> >  {
+> >  	struct fd f = fdget(fd);
+> >  	int error;
+> > +	const struct inode *inode;
+> > +	bool is_device;
+> >  
+> >  	if (!f.file)
+> >  		return -EBADF;
+> > @@ -866,9 +900,18 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
+> >  	if (error)
+> >  		goto out;
+> >  
+> > +	inode = file_inode(f.file);
+> > +	is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
+> > +	if (is_device && !vfs_masked_device_ioctl(cmd)) {
+> > +		error = vfs_ioctl(f.file, cmd, arg);
+> > +		goto out;
+> > +	}
+> > +
+> >  	error = do_vfs_ioctl(f.file, fd, cmd, arg);
+> > -	if (error == -ENOIOCTLCMD)
+> > +	if (error == -ENOIOCTLCMD) {
+> > +		WARN_ON_ONCE(is_device);
+> >  		error = vfs_ioctl(f.file, cmd, arg);
+> > +	}
+> 
+> It is not obvious at first that adding this list requires a change to the ioctl
+> syscall implementations.  If I understand this right, the idea is that you want
+> to be 100% sure that we are not calling vfs_ioctl() for the commands in that
+> list.
+
+Correct
+
+> And there is a scenario where this could potentially happen:
+> 
+> do_vfs_ioctl() implements most things like this:
+> 
+> static int do_vfs_ioctl(...) {
+> 	switch (cmd) {
+> 	/* many cases like the following: */
+> 	case FITHAW:
+> 		return ioctl_fsthaw(filp);
+> 	/* ... */
+> 	}
+> 	return -ENOIOCTLCMD;
+> }
+> 
+> So I believe the scenario you want to avoid is the one where ioctl_fsthaw() or
+> one of the other functions return -ENOIOCTLCMD by accident, and where that will
+> then make the surrounding syscall implementation fall back to vfs_ioctl()
+> despite the cmd being listed as safe for Landlock?  Is that right?
+
+Yes
+
+> 
+> Looking at do_vfs_ioctl() and its helper functions, I am getting the impression
+> that -ENOIOCTLCMD is only supposed to be returned at the very end of it, but not
+> by any of the helper functions?  If that were the case, we could maybe just as
+> well just solve that problem local to do_vfs_ioctl()?
+> 
+> A bit inelegant maybe, but just to get the idea across:
+> 
+> static int sanitize_enoioctlcmd(int res) {
+> 	if (res == -ENOIOCTLCMD)
+> 		return ENOTTY;
+> 	return res;
+> }
+> 
+> static int do_vfs_ioctl(...) {
+> 	switch (cmd) {
+> 	/* many cases like the following: */
+> 	case FITHAW:
+> 		return sanitize_enoioctlcmd(ioctl_fsthaw(filp));
+> 	/* ... */
+> 	}
+> 	return -ENOIOCTLCMD;
+> }
+> 
+> Would that be better?
+
+I guess so, but a bit more intrusive. Anyway, the new LSM hook would be
+much cleaner and would require less intrusive changes in fs/ioctl.c
+
+The ioctl_compat() helper from this patch could still be useful though.
+
+> 
+> —Günther
+> 
+> 
 
