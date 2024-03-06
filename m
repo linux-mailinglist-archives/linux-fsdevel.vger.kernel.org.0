@@ -1,125 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-13775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00AC6873C60
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 17:35:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11D2873CDE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 18:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 322ED1C243C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 16:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AF31F24162
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 17:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A23132482;
-	Wed,  6 Mar 2024 16:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A0760912;
+	Wed,  6 Mar 2024 17:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="KUwpBUpU"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XOtjBIP0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vs7Gi6T0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XOtjBIP0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vs7Gi6T0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sandeen.net (sandeen.net [63.231.237.45])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155A7D534
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 16:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.231.237.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709742913; cv=none; b=RfsYyTLY/dfhItKGSxHQp2aTVRnX618UcwyF5j3XQlpo/8rdpD9DI8YG+8S6hE4hnwZhowwKk0MsiLTY+LjsjyEBqyMYkBdHOATIIeDWsWO1MCWQUww2WpEE/kr/vSyXD73lpV7A66XxVbBCuwQsVyWChDThNq4lbdQAGqD/ohU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709742913; c=relaxed/simple;
-	bh=tO4U4nSmbcB3KDa13lvz7hm0EfA6Stm2Zg77UXfwdfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l7JJFA4s+UkuYtecar7sKtq9HviO6mphS1DYaIM2RO5RefCCVlKWoFoQxYET/E3cGVbGMHEDzZxBADexnl0qppjD72tt+Hk1HyB3UtrIOl1oFFMKMPkRFHGbl8FPus10Zj2A/4dZNlKgV5DHCIsl+qFGawTEyNebjvv/4uVqows=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=KUwpBUpU; arc=none smtp.client-ip=63.231.237.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from [10.0.0.71] (usg [10.0.0.1])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by sandeen.net (Postfix) with ESMTPSA id 40237328A01;
-	Wed,  6 Mar 2024 10:35:03 -0600 (CST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 sandeen.net 40237328A01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net;
-	s=default; t=1709742903;
-	bh=4lu66U4BmxG3ZL6YfCUweUycXcbcYvvPxoidjX9z99U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KUwpBUpUmuMD0LucIpJfkQ7nTH9NYaD0xMV05AmmleKJMpM51A0/XIHaTBPt1rrkf
-	 m2qk7eunQbIA/6FIIFsGDa4YtOsjPm0R/XeCWKvQK7bzNOJR0FnGis2w7T8chA7Cd2
-	 cmqrrdPQTBprbAWUP9xPJA6U+s3p3nkEVQwO2O7p6gVC84LmYqU6YTQlSdUIhCEqHK
-	 3aXm3YlnvJqA8URcbfJZd69xs2WClNCW/mxoYFln+NmEzNLlIA81DhQLJtiEWMhMTF
-	 o+VzkVVQc4B39wZXjL8D75cpWvzfcae7j45RCQuop1ykzKNuyBeQFcgKLv7WRzDuGj
-	 z66hG02oJlTwQ==
-Message-ID: <49751ee4-d2ce-4db9-af85-f9acf65a4b85@sandeen.net>
-Date: Wed, 6 Mar 2024 10:35:02 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1383A60250;
+	Wed,  6 Mar 2024 17:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709744697; cv=none; b=mKlBiNSeF76rHCjIqbUAVZJeupVrmjjDdOrzYWO80zXqBGN8iZurJ6SiPQxrCT22AbVBEwenxygmNvdupjo8JuTorql/gig8lOg80iVs8o2SNxgKIV8ZnSrc9k1gcVxYqrWnJaYtMjmLQSmJSW08E76U0D6KEP8BnkKU501DFf0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709744697; c=relaxed/simple;
+	bh=XLrlDpOXHe7T4pCX8rTTxilVvdwj055vNn3mEfO3djY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBq22JcY/PDDC4R1pk4oiihgoJOdByMoNHlcupiPN5vk4z7E3SQL1FRytMwAQrefrSVeirzeMsmfzKW+IWaxSwJ1fRDVea3QpEd/9/5z25ktzQ7p4b056aVoUMNPQO096pfsOfK8SMG3zBrbch/OrlmBq8I06GCP387Uks7FL74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XOtjBIP0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vs7Gi6T0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XOtjBIP0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vs7Gi6T0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 647254582;
+	Wed,  6 Mar 2024 17:04:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1709744687; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x4KelZJu8ci6w5fIk5guYKW0tSpTyxQbHEFdWP4uuNE=;
+	b=XOtjBIP0LFUAhmFY7hOQyaL2PC4cxJpjdnYaw4suysaIMz/x+ReJF73NPV8FAZqdX3l95E
+	eHXBulSx4BxrtXd/MoSPc633//Nfz8OzKPFmVd8wCmJ72G9nZY8OOYDUwnIPyPWXWe5H5O
+	BV5ml76ELYVL4LA2SCoEXWU1A76VNA0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1709744687;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x4KelZJu8ci6w5fIk5guYKW0tSpTyxQbHEFdWP4uuNE=;
+	b=Vs7Gi6T0iPGgZGqfF0IGL7EQhkPHlbZmHnEz2SFGsAXygMFxhJ/zFg0SRhpkgDmXPQjUj2
+	qN9fPkPwj3uho5BQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1709744687; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x4KelZJu8ci6w5fIk5guYKW0tSpTyxQbHEFdWP4uuNE=;
+	b=XOtjBIP0LFUAhmFY7hOQyaL2PC4cxJpjdnYaw4suysaIMz/x+ReJF73NPV8FAZqdX3l95E
+	eHXBulSx4BxrtXd/MoSPc633//Nfz8OzKPFmVd8wCmJ72G9nZY8OOYDUwnIPyPWXWe5H5O
+	BV5ml76ELYVL4LA2SCoEXWU1A76VNA0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1709744687;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x4KelZJu8ci6w5fIk5guYKW0tSpTyxQbHEFdWP4uuNE=;
+	b=Vs7Gi6T0iPGgZGqfF0IGL7EQhkPHlbZmHnEz2SFGsAXygMFxhJ/zFg0SRhpkgDmXPQjUj2
+	qN9fPkPwj3uho5BQ==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 56ED71377D;
+	Wed,  6 Mar 2024 17:04:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id z7HyFC+i6GUDEgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Wed, 06 Mar 2024 17:04:47 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 01A40A0803; Wed,  6 Mar 2024 18:04:46 +0100 (CET)
+Date: Wed, 6 Mar 2024 18:04:46 +0100
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+46073c22edd7f242c028@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, jack@suse.com, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [udf?] KASAN: use-after-free Read in udf_finalize_lvid
+Message-ID: <20240306170446.ohmpxz3r24t4wry7@quack3>
+References: <00000000000084090905fe7d22bb@google.com>
+ <000000000000f279ea0612dc62cd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] vfs: Convert debugfs to use the new mount API
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Eric Sandeen <sandeen@redhat.com>, linux-fsdevel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Bill O'Donnell
- <billodo@redhat.com>, David Howells <dhowells@redhat.com>
-References: <cfdebcc3-b9de-4680-a764-6bdf37c0accb@redhat.com>
- <49d1f108-46e3-443f-85a3-6dd730c5d076@redhat.com>
- <20240306-beehrt-abweichen-a9124be7665a@brauner>
- <CAJfpeguCKgMPBbD_ESD+Voxq5ChS9nGQFdYrA4+YWBz17yFADA@mail.gmail.com>
- <20240306-alimente-tierwelt-01d46f2b9de7@brauner>
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <20240306-alimente-tierwelt-01d46f2b9de7@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000f279ea0612dc62cd@google.com>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spamd-Result: default: False [2.82 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_HAM(-0.08)[63.96%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=e1e118a9228c45d7];
+	 TAGGED_RCPT(0.00)[46073c22edd7f242c028];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_SEVEN(0.00)[8];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[];
+	 SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Level: **
+X-Spam-Score: 2.82
+X-Spam-Flag: NO
 
-On 3/6/24 6:17 AM, Christian Brauner wrote:
-> On Wed, Mar 06, 2024 at 01:13:05PM +0100, Miklos Szeredi wrote:
->> On Wed, 6 Mar 2024 at 11:57, Christian Brauner <brauner@kernel.org> wrote:
->>
->>> There's a tiny wrinkle though. We currently have no way of letting
->>> userspace know whether a filesystem supports the new mount API or not
->>> (see that mount option probing systemd does we recently discussed). So
->>> if say mount(8) remounts debugfs with mount options that were ignored in
->>> the old mount api that are now rejected in the new mount api users now
->>> see failures they didn't see before.
-
-Oh, right - the problem is the new mount API rejects unknown options
-internally, right?
-
->>> For the user it's completely intransparent why that failure happens. For
->>> them nothing changed from util-linux's perspective. So really, we should
->>> probably continue to ignore old mount options for backward compatibility.
->>
->> The reject behavior could be made conditional on e.g. an fsopen() flag.
+On Mon 04-03-24 13:27:02, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
 > 
-> and fspick() which I think is more relevant.
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
 > 
->>
->> I.e. FSOPEN_REJECT_UNKNOWN would make unknown options be always
->> rejected.  Without this flag fsconfig(2) would behave identically
->> before/after the conversion.
+>     fs: Block writes to mounted block devices
 > 
-> Yeah, that would work. That would only make sense if we make all
-> filesystems reject unknown mount options by default when they're
-> switched to the new mount api imho. When we recognize the request comes
-> from the old mount api fc->oldapi we continue ignoring as we did before.
-> If it comes from the new mount api we reject unless
-> FSOPEN/FSPICK_REJECT_UKNOWN was specified.
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1495d341180000
+> start commit:   861deac3b092 Linux 6.7-rc7
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e118a9228c45d7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=46073c22edd7f242c028
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a44d79e80000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130b99e9e80000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with:
 
-Ok, good point. Just thinking out loud, I guess an fsopen/fspick flag does
-make more sense than i.e. each filesystem deciding whether it should reject
-unknown options in its ->init_fs_context(), for consistency?
+Looks good.
 
-Right now it looks like the majority of filesystems do reject unknown
-options internally, already.
+#syz fix: fs: Block writes to mounted block devices
 
-(To muddy the waters more, other inconsistencies I've thought about are
-re: how the fileystem handles remount. For example, which options are
-remountable and which are not, and should non-remountable options fail?
-Also whether the filesystem internally preserves the original set of
-options and applies the new set as a delta, or whether it treats the
-new set as the exact set of options requested post-remount, but that's
-probably a topic for another day.)
-
--Eric
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
