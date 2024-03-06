@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-13746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8905C8735DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 12:47:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1448735E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 12:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FC4B1F2143D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 11:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10AC42839AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 11:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712E07FBC1;
-	Wed,  6 Mar 2024 11:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0FB7FBB4;
+	Wed,  6 Mar 2024 11:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAzp6+e3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QodlTD1K"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FD17F7FC;
-	Wed,  6 Mar 2024 11:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4367F7E9;
+	Wed,  6 Mar 2024 11:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709725633; cv=none; b=nCt+6BXGavG/yrvjq+p60XRRDwD3sYcguoe5C1e9gNWpx0W9xfH2AF5NHtaEKoqNtSy4dGW7BdwYC0kwel2+l+Ovk22YOOvBwGeNPKr/9bJD9aBDqyYET+aXffEcUWrXpkinFkSHk+3fj1DhZwRaT8y8Y46Ce0KaIszxwAAhmWQ=
+	t=1709725861; cv=none; b=I6h4GQOOjlEqus/Tvd/D4E+0+Bcy0eF55IckKHj+UuUxuKx2ztG8X6uyo9cb9eRPH0cSJQqomR7KtywAF9jCvFJmYeq/szKkKIzZAgXFiP8eYu4KK9TwautGhP2wX6cFg+iYx4l14AyIiBGj4HotX5Zk1Jqeva4o/f376ASi0lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709725633; c=relaxed/simple;
-	bh=dMUjdKjTj+RHzTJn7EeiC5nAQml3X1bYXK4wvzEyszA=;
+	s=arc-20240116; t=1709725861; c=relaxed/simple;
+	bh=vwrURXpIMj1jqcUglQsFMJ0otRAl9PCvcW29Elk4VQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xh+GYH7g3IOKt6ZyjHJS2O4kdBmilsGsi2+2KN6Bb4Yf31/1IfCy2jpyurHhS6OhBEJh1/zTg2jmuoI+0CR+1W+POFzSKMh9TkvqDGN0HGy1sK6FYKhpjhIZp1DpFhmD3P1WgAzHVGK9VsZYtv/9q2bNXcSEaPRt7n7oTCI5Qxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAzp6+e3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B396AC433F1;
-	Wed,  6 Mar 2024 11:47:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSKaDfg4GKz202S5friGnTaSo8ADpskYpiAusLmt9J999aS974WY0cpP6kNBZ6xZ/vvFqqUVQuoIaoxxZ7DKG7p8MRvbcqeoAmal9fCl1AlyhFsgSMAXzkhmC+9qkJEXbA1CYTC5C8ugN836aDWLpm9r509fhpVa1DmYlK15LuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QodlTD1K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3EBAC433C7;
+	Wed,  6 Mar 2024 11:50:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709725633;
-	bh=dMUjdKjTj+RHzTJn7EeiC5nAQml3X1bYXK4wvzEyszA=;
+	s=k20201202; t=1709725860;
+	bh=vwrURXpIMj1jqcUglQsFMJ0otRAl9PCvcW29Elk4VQg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UAzp6+e3UZBg2JPvxIeFtqp4jSKQg4eSwfQV/fx/OHk5rlZOYh1I6Qlo257OM44dC
-	 CaoCNBx2C4WC5lzhypFwhhkruSl7h2v6k0cTcfyEqYChyfc0WOCJnOpW1wO84+m1LA
-	 QLFT8slMXxEnY8K4B64HR5ncaiLI7UmG7hgseuEA7SnkP7hQYi11h8eferGm+kVHxj
-	 J0jraHGttWjtCeClH4ce4mNa/OXw5MAjN1em7aJpX+j8FBZhSfwMwg33zPmt5cSi1G
-	 C/MeZ23BOfM+QsuD5AVFfrIBK918rtHUUyo6lA03SpD9QoYvDsicu3rH40ostZuplc
-	 ht8dBEvwkgVrg==
-Date: Wed, 6 Mar 2024 12:47:07 +0100
+	b=QodlTD1Kw4nB7/LLPdSYcRLIGU/ZePWrRHbgEtEgSdttv6euDxc5emr0NfD4Po0nr
+	 ST19Od/uUf0dps9orl7afeZ+Ke6bNByCLYmYpM9jJeyNhPMuBSblkKh2gkgxhzgdeZ
+	 /J+abL6OcwN1B4WWuvRUCnziOiia84akv9V5/phNQ1ys0BS5YjZ75fQHz83AkycC/H
+	 yiyi3rPwUo9+TKJ6N4gWbeYs0UjdmqCtPulPxKGoQbA8+vIqVNd0MFjKJkL2oJshoP
+	 W3JSs/wRO1l2+G0oF8gee6TSWFZ+flOxvQm5ZSDFQX4S3U+u+xp26f3p+1HhBM+KXd
+	 a3Ag7DxmX+wPA==
+Date: Wed, 6 Mar 2024 12:50:54 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Matt Bobrowski <mattbobrowski@google.com>
+To: Matt Bobrowski <mattbobrowski@google.com>, linux-mm@kvack.org
 Cc: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, 
 	kpsingh@google.com, jannh@google.com, jolsa@kernel.org, daniel@iogearbox.net, 
-	torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 bpf-next 6/9] bpf: add acquire/release based BPF
- kfuncs for fs_struct's paths
-Message-ID: <20240306-reitturnier-parolen-8589679861c8@brauner>
+	torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 bpf-next 2/9] bpf: add new acquire/release BPF kfuncs
+ for mm_struct
+Message-ID: <20240306-plazieren-schaben-e086ab1b92ef@brauner>
 References: <cover.1709675979.git.mattbobrowski@google.com>
- <458617e6f11863ecf8b3f83710a6606977c4c9cd.1709675979.git.mattbobrowski@google.com>
+ <eb9fb133d5611d40ab1f073cc2fcaa48cb581998.1709675979.git.mattbobrowski@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,137 +61,117 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <458617e6f11863ecf8b3f83710a6606977c4c9cd.1709675979.git.mattbobrowski@google.com>
+In-Reply-To: <eb9fb133d5611d40ab1f073cc2fcaa48cb581998.1709675979.git.mattbobrowski@google.com>
 
-On Wed, Mar 06, 2024 at 07:40:12AM +0000, Matt Bobrowski wrote:
-> Add the ability to obtain a reference on the root and pwd paths which
-> are nested within the fs_struct associated with a supplied
-> task_struct. Both fs_struct's root and pwd are commonly operated on in
-> BPF LSM program types and at times are further handed off to BPF
-> helpers and such. There needs to be a mechanism that supports BPF LSM
-> program types the ability to obtain stable handles to such paths in
-> order to avoid possible memory corruption bugs [0].
+On Wed, Mar 06, 2024 at 07:39:31AM +0000, Matt Bobrowski wrote:
+> A BPF LSM program will at times introspect the mm_struct that is
+> nested within a given task_struct. Such introspection performed by a
+> BPF LSM program may involve reading virtual addresses out from fields
+> like arg_start/arg_end and env_start/env_end, or reading fields
+> directly out from the backing exe_file. In order to perform reliable
+> reads against fields contained within mm_struct, we need to introduce
+> a new set of BPF kfuncs that have the ability to acquire and release
+> references on the mm_struct that is nested within a task_struct.
 > 
-> We provide this mechanism through the introduction of the following
-> new KF_ACQUIRE/KF_RELEASE BPF kfuncs:
+> The following BPF kfuncs have been added in order to support this
+> capability:
 > 
-> struct path *bpf_get_task_fs_root(struct task_struct *task);
-> struct path *bpf_get_task_fs_pwd(struct task_struct *task);
-> void bpf_put_path(struct path *path);
+> struct mm_struct *bpf_task_mm_grab(struct task_struct *task);
+> void bpf_mm_drop(struct mm_struct *mm);
 > 
-> Note that bpf_get_task_fs_root() and bpf_get_task_fs_pwd() are
-
-Right now all I'm seeing are requests for exporting a bunch of helpers
-with no clear explanation other than "This is common in BPF LSM
-programs.". So not going to happen if this is some private users pet bpf
-program. Where's that bpf lsm program that has to use this?
-
-> effectively open-coded variants of the in-kernel helpers get_fs_root()
-> and get_fs_pwd(). We don't lean on these in-kernel helpers directly
-> within the newly introduced BPF kfuncs as leaning on them would be
-> rather awkward as we're wanting to return referenced path pointers
-> directly BPF LSM program types.
+> These new BPF kfuncs are pretty self-explanatory, but in kernel terms
+> bpf_task_mm_grab() effectively allows you to get a reference on the
+> mm_struct nested within a supplied task_struct. Whereas, bpf_mm_drop()
+> allows you put a reference on a previously gotten mm_struct
+> reference. Both BPF kfuncs are also backed by BPF's respective
+> KF_ACQUIRE/KF_RELEASE semantics, ensuring that the BPF program behaves
+> in accordance to the constraints enforced upon it when operating on
+> reference counted in-kernel data structures.
 > 
-> [0] https://lore.kernel.org/bpf/CAG48ez0ppjcT=QxU-jtCUfb5xQb3mLr=5FcwddF_VKfEBPs_Dg@mail.gmail.com/
+> Notably, these newly added BPF kfuncs are simple wrappers around the
+> mmgrab() and mmdrop() in-kernel helpers. Both mmgrab() and mmdrop()
+> are used in favour of their somewhat similar counterparts mmget() and
+> mmput() as they're considered to be the more lightweight variants in
+> comparison, and there's no requirement to also pin the underlying
+> address spaces just yet.
 > 
 > Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
 > ---
->  kernel/trace/bpf_trace.c | 83 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 83 insertions(+)
+
+That's not something I can in any way ACK or NAK. That's clearly mm.
+And same question as in the other mail. What's the user of this? I find
+it extremly strange that the justification is "some LSM program" needs
+this. This is really an annoying justification when we can't even see
+the users. With LSMs we can at least see what they're doing with this in
+their hooks.
+
+>  kernel/trace/bpf_trace.c | 47 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
 > 
 > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index 539c58db74d7..84fd87ead20c 100644
+> index f639663ac339..801808b6efb0 100644
 > --- a/kernel/trace/bpf_trace.c
 > +++ b/kernel/trace/bpf_trace.c
-> @@ -10,6 +10,7 @@
->  #include <linux/bpf_perf_event.h>
->  #include <linux/btf.h>
->  #include <linux/filter.h>
-> +#include <linux/fs_struct.h>
->  #include <linux/uaccess.h>
->  #include <linux/ctype.h>
->  #include <linux/kprobes.h>
-> @@ -1569,6 +1570,83 @@ __bpf_kfunc void bpf_put_file(struct file *f)
->  	fput(f);
+> @@ -1473,10 +1473,57 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
+>  	return __vfs_getxattr(dentry, dentry->d_inode, name__str, value, value_len);
 >  }
 >  
 > +/**
-> + * bpf_get_task_fs_root - get a reference on the fs_struct's root path for the
-> + * 			  supplied task_struct
-> + * @Task: task_struct of which the fs_struct's root path to get a reference on
+> + * bpf_task_mm_grab - get a reference on the mm_struct nested within the
+> + * 		      supplied task_struct
+> + * @task: task_struct nesting the mm_struct that is to be referenced
 > + *
-> + * Get a reference on the root path nested within the fs_struct of the
-> + * associated *task*. The referenced path retruned from this kfunc must be
-> + * released using bpf_put_path().
+> + * Grab a reference on the mm_struct that is nested within the supplied
+> + * *task*. This kfunc will return NULL for threads that do not possess a valid
+> + * mm_struct. For example, those that are flagged as PF_KTHREAD. A reference on
+> + * a mm_struct acquired by this kfunc must be released using bpf_mm_drop().
 > + *
-> + * Return: A referenced path pointer to the root path nested within the
-> + * fs_struct of the supplied *task*, or NULL.
+> + * This helper only pins the mm_struct and not necessarily the address space
+> + * associated with the referenced mm_struct that is returned from this
+> + * kfunc. Internally, this kfunc leans on mmgrab(), such that calling
+> + * bpf_task_mm_grab() would be analogous to calling mmgrab() outside of BPF
+> + * program context.
+> + *
+> + * Return: A referenced pointer to the mm_struct nested within the supplied
+> + * *task*, or NULL.
 > + */
-> +__bpf_kfunc struct path *bpf_get_task_fs_root(struct task_struct *task)
+> +__bpf_kfunc struct mm_struct *bpf_task_mm_grab(struct task_struct *task)
 > +{
-> +	struct path *root;
-> +	struct fs_struct *fs;
+> +	struct mm_struct *mm;
 > +
 > +	task_lock(task);
-> +	fs = task->fs;
-> +	if (unlikely(fs)) {
-> +		task_unlock(task);
-> +		return NULL;
-> +	}
-> +
-> +	spin_lock(&fs->lock);
-> +	root = &fs->root;
-> +	path_get(root);
-> +	spin_unlock(&fs->lock);
+> +	mm = task->mm;
+> +	if (likely(mm))
+> +		mmgrab(mm);
 > +	task_unlock(task);
 > +
-> +	return root;
+> +	return mm;
 > +}
 > +
 > +/**
-> + * bpf_get_task_fs_pwd - get a reference on the fs_struct's pwd path for the
-> + * 			 supplied task_struct
-> + * @task: task_struct of which the fs_struct's pwd path to get a reference on
+> + * bpf_mm_drop - put a reference on the supplied mm_struct
+> + * @mm: mm_struct of which to put a reference on
 > + *
-> + * Get a reference on the pwd path nested within the fs_struct of the associated
-> + * *task*. The referenced path retruned from this kfunc must be released using
-> + * bpf_put_path().
-> + *
-> + * Return: A referenced path pointer to the root path nested within the
-> + * fs_struct of the supplied *task*, or NULL.
+> + * Put a reference on the supplied *mm*. This kfunc internally leans on
+> + * mmdrop(), such that calling bpf_mm_drop() would be analogous to calling
+> + * mmdrop() outside of BPF program context.
 > + */
-> +__bpf_kfunc struct path *bpf_get_task_fs_pwd(struct task_struct *task)
+> +__bpf_kfunc void bpf_mm_drop(struct mm_struct *mm)
 > +{
-> +	struct path *pwd;
-> +	struct fs_struct *fs;
-> +
-> +	task_lock(task);
-> +	fs = task->fs;
-> +	if (unlikely(fs)) {
-> +		task_unlock(task);
-> +		return NULL;
-> +	}
-> +
-> +	spin_lock(&fs->lock);
-> +	pwd = &fs->pwd;
-> +	path_get(pwd);
-> +	spin_unlock(&fs->lock);
-> +	task_unlock(task);
-> +
-> +	return pwd;
+> +	mmdrop(mm);
 > +}
 > +
-> +/**
-> + * bpf_put_path - put a reference on the supplied path
-> + * @path: path of which to put a reference on
-> + *
-> + * Put a reference on the supplied *path*.
-> +  */
-> +__bpf_kfunc void bpf_put_path(struct path *path)
-> +{
-> +	path_put(path);
-> +}
-
-Probably ok since it's exported to modules but same condition as
-mentioned in my earlier mail.
+>  __bpf_kfunc_end_defs();
+>  
+>  BTF_KFUNCS_START(lsm_kfunc_set_ids)
+>  BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
+> +BTF_ID_FLAGS(func, bpf_task_mm_grab, KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL);
+> +BTF_ID_FLAGS(func, bpf_mm_drop, KF_RELEASE);
+>  BTF_KFUNCS_END(lsm_kfunc_set_ids)
+>  
+>  static int bpf_lsm_kfunc_filter(const struct bpf_prog *prog, u32 kfunc_id)
+> -- 
+> 2.44.0.278.ge034bb2e1d-goog
+> 
+> /M
 
