@@ -1,218 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-13767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C0C873A8A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 16:19:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D56873ABB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 16:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B35B1C210BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 15:19:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161422862AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 15:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E51580605;
-	Wed,  6 Mar 2024 15:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD913135406;
+	Wed,  6 Mar 2024 15:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="clGU/OFl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cy92YTor"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yiYpHRKB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8078D1EF1C;
-	Wed,  6 Mar 2024 15:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2347FBBD
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 15:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709738358; cv=none; b=fSSDdPHeXhu8Qhuqn08dQ3nLAxDFxetXfsMa3VD+VzPzHScQhIAZj05CH6XbL4BVdYVNgrm7FrS2BbU2uctwrHue+K7+Oyqc5M4B2rqYBlysYuE+nkxbm45Kfe0p+8IaSSgNj03YZFr7FtUBKEeLgNLX+++wS7yRXdVmYc7LRDc=
+	t=1709739321; cv=none; b=syT0mQIGHp8A75k1iGcXWnUuSS7SXucfeIjIhF+mZBowUjjmRA3VelbL1Grce1K64Ivg7QIJvk921ZPrEg7i9XEZfB74LFrpwT/YK4YFehlcNUGnHtd5WCbaIcU6LNfuRU31sbMq8mMTfBgWUdRYbfMr7qrXxM9Nlq1p8JpGqUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709738358; c=relaxed/simple;
-	bh=f+TDSr+XIaHaz0oSQ/iAhi2S0Quq8jl1leb5iAf+fIw=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=EDS7TURrpmutrT5mhok4yswuGJydXUOeN1yOr6CvbFPRYKrpxKmUjK3e+uYl33uvz7e5Bd4DGgM1Xjp4Dd8106XnIgQ03xquKU2GfOBQ+a852h6v0uS/jwxMt4LxPJToOXgtFzv9KjA72WzSt2v7SPOYs7J3BBeXhIzs7krJbkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=clGU/OFl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cy92YTor; arc=none smtp.client-ip=64.147.123.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 9392818000AA;
-	Wed,  6 Mar 2024 10:19:14 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 06 Mar 2024 10:19:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1709738354;
-	 x=1709824754; bh=5z53l5YZyT1JRwcbB0hXCVqeOpp7A9hrbEaesXr4t5k=; b=
-	clGU/OFlXJz8LTnBqEgcergEqyxHBEV3y3nydnkBKMpNI/AT13HoYi1ENz1sWdAJ
-	SxzrUEXxN4PCybHLnCGoAZch2bzWqhuQMyiSpRx8thRrAV0ELrrqhT0fjIZjnGWg
-	H7XXo3QYuz/hLvtDu3wZjv6o29o0zJRDsZZzsUg3x7Vq++LgNdO7qSRgx8xkEOgW
-	hNlowlxlbKUgeWx5SsfrXuZ812PB5V7HheXxBHhXwweWKIBT9upZyxS6ilYp2WbC
-	hD7Prrlgy8lmjGS1gfkB5gO+v5DhOftAwr9xXHaLFiOeOIQmQ3RCr+j02E+6zNPc
-	G7yTOWj+aPIxnMASUDb8HQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1709738354; x=
-	1709824754; bh=5z53l5YZyT1JRwcbB0hXCVqeOpp7A9hrbEaesXr4t5k=; b=c
-	y92YTorqFHF8gAaKdWzmHu2LFKLjWDqucCxpSbdE0NbLTJF76yj9VSfQF14xXarV
-	KOd5y2VnYF00bJaqUsoHmoHaSs+R2gOGa+RWIq5/YykPjuyeKLYG71lSWRrfpSWK
-	5CyViswlvHiO/sk3KRNO8/Yae/Z/R1YivHcFZgV9dQFanqK+dFFND3tXdG8aco7I
-	22JT5vOBmOr8isUYWKs+91Tts4E3jFq5hOKQCer+5quSP98e04/w2kh6Ebv6lvlE
-	M9QE5lGAzyc7mZRhhmXox+of/8vSUpvBUOls91Jjxv8nT+Cf+KIbHqVbF6ymfeKA
-	KTPjcBPuHwLQD5VKdfOUw==
-X-ME-Sender: <xms:cYnoZf9msN8LDmWA3naC5YVhBcpb-qmRS1rvvdqMOphUSWx1U5WvkA>
-    <xme:cYnoZbsQrxdBOMArkSEhp8e4eM5gVLRwTc_riwurF7WsYws01jNIEXnkW3ekg0GrU
-    BZUhOt-WXN1HyERIvw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledriedugdejvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
-    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:cYnoZdB5VuwHy-KKcxtNGkSFnEmZPA_b3Cdv2bmis5dfFkdpxLlOhA>
-    <xmx:cYnoZbcp5kLoHcTz_I1GEb1YJlKLecqEKKugCpXEB66Kd_eQDJ599Q>
-    <xmx:cYnoZUPxcai3hM6xNWn274Ep9xMSCOwdAJ8vhU699xnPNWgYAC0sCw>
-    <xmx:conoZdlCDCa0vUG40g7JY-Ta4YmlNTg1g7eGj7YLQRluDl8eemtXUZ2Ae7A>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 52D03B6008F; Wed,  6 Mar 2024 10:19:13 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-208-g3f1d79aedb-fm-20240301.002-g3f1d79ae
+	s=arc-20240116; t=1709739321; c=relaxed/simple;
+	bh=4XBA7h4gk9kZGoLHOXMtYY2N0kUearBB17+7pA7xfVU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qQrj70C0iwFrAqsCTB6mNWTZAdP2YB9vFcvvUFCNFEg4u9rpbuv4m84+XYN6t2Mul0VQpZi3EBa+KT75ZUdOpOPftiPflsFiaau2ZXSd3a3hMMoxtxHB1IkY2aQehpdgM0DzGlw/pGHtxlyrEgMzf8FqR8Es9ue5p0bTPcZyH6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yiYpHRKB; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7c876b9d070so12642239f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 07:35:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709739318; x=1710344118; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k+7aPckIbaw56xMg4x5zLxwpAKi5vUALOz1YbOan0kQ=;
+        b=yiYpHRKB8dxaTeWc9yaeQfLV0CfWjyB8SuSfqu83kzipnPId7gRpCul+My1wnfhrW4
+         WeSfOjc1biXB70d9M4Nw+Ml548ypNaxLsqZcGCqzytTtXClHL2XLV6iGUXvQTzXYr4s/
+         cbkP2BhCH3FJEF63wysr9C7zXY8XfR/+ZWClTOxWfXR5i8g7bF6Io9svq0Y1cCjQX5Da
+         mfmzHV9k13U4vQy4eBhOBBQEp6Rlnsjs4aJMJAs2WHM1PJvSLmHx3JGW9Lp4Sa8UMpwI
+         5/6AaD1VIFMMEp5eEtO4w+rXDZZ1p7kFgThU7KGEsU4h65MeP+Ur9GNC5Qy2ya8k8uyz
+         gl5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709739318; x=1710344118;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k+7aPckIbaw56xMg4x5zLxwpAKi5vUALOz1YbOan0kQ=;
+        b=gH5A+b9FkkS3+zCcCqsCOKqIwTlAQ06n4kpyU6bGA2mRJKpDe4WbqMXuN1ZXXiogfy
+         G7faKhTfQ3GBIDkBXiW8qLjc/OVw6ZUu7XpI2oYtETPju6bJepF+mHQPViHZ4OYk5y9m
+         eKiPg87ptpsF+USCoygXp7CJngRzd2TwOHA5O+eW+DdU+AsxP1lSRxFKbaPkxAAf/Bgk
+         wX+WV5Ib4whECjOTogCdvDxzhVIKH2g9TcV7RAgMwYwLZ1SLRKpo8kILE/m5J7HBvXHm
+         8yANLjQ3aSn/Q20KgYOL3iQYOnxgPtlDRITWko63yGYF/9n6lhJSQYUHkeP0vipwUPOS
+         KD9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVMzQHlqhOYqjhPXIABkLtcepNkD0ht2QVXyoyM2/YuZjyeXR+yYJh3x6MLx8wxpa08aX+u4ce5CSdYs5+FYMffjYiIQNDzQH26jonaGA==
+X-Gm-Message-State: AOJu0YyigbczkLxBbv7sXeURDu7Oxl9NjgS8QBvWtKZ2CqD0Nk2jDnBQ
+	ByyRDhP3ONp8BJaoUJ5AQa1j5IsG7oexJ/FXvZDsGO48mP4JvdAIUSttGNs1nIc=
+X-Google-Smtp-Source: AGHT+IE5F3k1D3gik/OwYN8x0TQzZJEWeyfDVo1rW4ITdbpkHe2CQWcwgqeqMBIIK+FUBeWV/a2ZZw==
+X-Received: by 2002:a05:6e02:1c46:b0:365:fe09:6431 with SMTP id d6-20020a056e021c4600b00365fe096431mr3732415ilg.3.1709739318559;
+        Wed, 06 Mar 2024 07:35:18 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id t2-20020a92cc42000000b003660612cf73sm324467ilq.49.2024.03.06.07.35.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Mar 2024 07:35:18 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Tony Battersby <tonyb@cybernetics.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, 
+ Hugh Dickins <hughd@google.com>, Hannes Reinecke <hare@suse.de>, 
+ Keith Busch <kbusch@kernel.org>, linux-mm <linux-mm@kvack.org>, 
+ linux-block@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <86e592a9-98d4-4cff-a646-0c0084328356@cybernetics.com>
+References: <86e592a9-98d4-4cff-a646-0c0084328356@cybernetics.com>
+Subject: Re: [PATCH] block: Fix page refcounts for unaligned buffers in
+ __bio_release_pages()
+Message-Id: <170973931770.23995.2545307873508420124.b4-ty@kernel.dk>
+Date: Wed, 06 Mar 2024 08:35:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
-In-Reply-To: <20240306.zoochahX8xai@digikod.net>
-References: <20240219.chu4Yeegh3oo@digikod.net>
- <20240219183539.2926165-1-mic@digikod.net> <ZedgzRDQaki2B8nU@google.com>
- <20240306.zoochahX8xai@digikod.net>
-Date: Wed, 06 Mar 2024 16:18:53 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- "Paul Moore" <paul@paul-moore.com>, "Christian Brauner" <brauner@kernel.org>
-Cc: "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
- "Jeff Xu" <jeffxu@google.com>, "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
- "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
- "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On Wed, Mar 6, 2024, at 14:47, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Tue, Mar 05, 2024 at 07:13:33PM +0100, G=C3=BCnther Noack wrote:
->> On Mon, Feb 19, 2024 at 07:35:39PM +0100, Micka=C3=ABl Sala=C3=BCn wr=
-ote:
 
->> > +	case FS_IOC_FSGETXATTR:
->> > +	case FS_IOC_FSSETXATTR:
->> > +	/* file_ioctl()'s IOCTLs are forwarded to device implementations.=
- */
->> > +		return true;
->> > +	default:
->> > +		return false;
->> > +	}
->> > +}
->> > +EXPORT_SYMBOL(vfs_masked_device_ioctl);
->>=20
->> [
->> Technical implementation notes about this function: the list of IOCTL=
-s here are
->> the same ones which do_vfs_ioctl() implements directly.
->>=20
->> There are only two cases in which do_vfs_ioctl() does more complicate=
-d handling:
->>=20
->> (1) FIONREAD falls back to the device's ioctl implemenetation.
->>     Therefore, we omit FIONREAD in our own list - we do not want to a=
-llow that.
+On Thu, 29 Feb 2024 13:08:09 -0500, Tony Battersby wrote:
+> Fix an incorrect number of pages being released for buffers that do not
+> start at the beginning of a page.
+> 
+> 
 
->> (2) The default case falls back to the file_ioctl() function, but *on=
-ly* for
->>     S_ISREG() files, so it does not matter for the Landlock case.
+Applied, thanks!
 
-How about changing do_vfs_ioctl() to return -ENOIOCTLCMD for
-FIONREAD on special files? That way, the two cases become the
-same.
+[1/1] block: Fix page refcounts for unaligned buffers in __bio_release_pages()
+      commit: 38b43539d64b2fa020b3b9a752a986769f87f7a6
 
->> I guess the reasons why we are not using that approach are performanc=
-e, and that
->> it might mess up the LSM hook interface with special cases that only =
-Landlcok
->> needs?  But it seems like it would be easier to reason about..?  Or m=
-aybe we can
->> find a middle ground, where we have the existing hook return a specia=
-l value
->> with the meaning "permit this IOCTL, but do not invoke the f_op hook"?
->
-> Your security_file_vfs_ioctl() approach is simpler and better, I like
-> it!  From a performance point of view it should not change much because
-> either an LSM would use the current IOCTL hook or this new one.  Using=
- a
-> flag with the current IOCTL hook would be a missed opportunity for
-> performance improvements because this hook could be called even if it =
-is
-> not needed.
->
-> I don't think it would be worth it to create a new hook for compat and
-> non-compat mode because we want to control these IOCTLs the same way f=
-or
-> now, so it would not have a performance impact, but for consistency wi=
-th
-> the current IOCTL hooks I guess Paul would prefer two new hooks:
-> security_file_vfs_ioctl() and security_file_vfs_ioctl_compat()?
->
-> Another approach would be to split the IOCTL hook into two: one for the
-> VFS layer and another for the underlying implementations.  However, it
-> looks like a difficult and brittle approach according to the current
-> IOCTL implementations.
->
-> Arnd, Christian, Paul, are you OK with this new hook proposal?
+Best regards,
+-- 
+Jens Axboe
 
-I think this sounds better. It would fit more closely into
-the overall structure of the ioctl handlers with their multiple
-levels, where below vfs_ioctl() calling into f_ops->unlocked_ioctl,
-you have the same structure for sockets and blockdev, and
-then additional levels below that and some weirdness for
-things like tty, scsi or cdrom.
 
->> And there is a scenario where this could potentially happen:
->>=20
->> do_vfs_ioctl() implements most things like this:
->>=20
->> static int do_vfs_ioctl(...) {
->> 	switch (cmd) {
->> 	/* many cases like the following: */
->> 	case FITHAW:
->> 		return ioctl_fsthaw(filp);
->> 	/* ... */
->> 	}
->> 	return -ENOIOCTLCMD;
->> }
->>=20
->> So I believe the scenario you want to avoid is the one where ioctl_fs=
-thaw() or
->> one of the other functions return -ENOIOCTLCMD by accident, and where=
- that will
->> then make the surrounding syscall implementation fall back to vfs_ioc=
-tl()
->> despite the cmd being listed as safe for Landlock?  Is that right?
->
-> Yes
 
-This does go against the normal structure a bit then, where
-any of the commands is allowed to return -ENOIOCTLCMD specifically
-for the purpose of passing control to the next level of
-callbacks. Having the landlock hook explicitly at the
-place where the callback is entered, as G=C3=BCnther suggested makes
-much more sense to me then.
-
-      Arnd
 
