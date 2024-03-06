@@ -1,77 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-13820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A248741B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 22:15:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4AF48741E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 22:23:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32FEA1F223E1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 21:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70BB1284A82
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Mar 2024 21:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567341AAD3;
-	Wed,  6 Mar 2024 21:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194A51B59E;
+	Wed,  6 Mar 2024 21:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="a5QMrMSk"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="O6ypum9k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EE11A29A
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 21:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D1F199B8
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Mar 2024 21:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709759693; cv=none; b=ceUzMPI7qdCxZMKJ9QTuKzd3+h+J3RXmXcIsBuhseMPE30s84f89DcKD3fcCJTxRVjmLLuAAtcTReijP4CwbBKcdlt5Pt7X8BnI55/yechb6yCM5zKsCQ/UYdboNmD3GfgfbmW2KcnO3IyqoLwzFJ8KVlkz7smR5ITCDop/5SdQ=
+	t=1709760179; cv=none; b=KqCu9Oq/4bJMWCHDq54EZZb7BYC5Dm29ohriji15c8tBRcCAJDritxG6nQ/oz8DlSQrXwb8t1B1zX2FKg9I7IyVNHepGTnl3YxplkR+X5TiDoCM0FB53GFk5vkaOO0epBbCY4or/j6g2tvcQ1Sr42qm7KMcvLsql/FwwQtb5afw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709759693; c=relaxed/simple;
-	bh=HlvIehcW7DL2ZkTuZYSlHhQXYbpHC0zj0KWYZTviIpI=;
+	s=arc-20240116; t=1709760179; c=relaxed/simple;
+	bh=jDwU/FSgX0dPRWta9QWi+N1QVGUQfefYU1X1kDZhOeE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DSp5BXpmwaItDvVaXaFZtLgZ1ReL1v2hoFQqL5DDfa9pvYtoRaxXMJqK4dcddA07y8h49RNOg4WdPUB+pCB0+uS3Tm1V7gglomJXxT7IQv4ser5BFv3K/pT/J+r5ziW0dMr5WNpSjJCCbZdzYEsgSv7fyCiFV4bVh3DEOJO7puI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=a5QMrMSk; arc=none smtp.client-ip=209.85.210.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZA/mCPUTIroScMhF0hp4RjzGbk8sXcNkB4lWSTOXvRjwJp3+xM46Bgn33UIQxUXrHHNMb1a7en7kjNjNFqa2dbpbJuRLUORgjx43SCnT/p1s5xr/seN/zJOOegl4MApkV9DbniQoo47ZKbE7o3WYs+57n424PV6iOCVaoZd/73Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=O6ypum9k; arc=none smtp.client-ip=209.85.215.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6e64c3bb130so146467b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 13:14:52 -0800 (PST)
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-5ce2aada130so148234a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Mar 2024 13:22:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709759691; x=1710364491; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709760177; x=1710364977; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eqhjGVQ8jE8dziHNEPcBuEnJh6YM6o6ZWh6K+R5yz1M=;
-        b=a5QMrMSkCh6CKxSZp1aoMlsWOh1/LdslQA8sbOLyLO3ibrMd6x/h0JqfrHeUOgWa3J
-         L2KBWDgR/51+DeX0Bp/LE2FiKIAdtDpbfigFomyfaR48wFJxkh19s7Uz/Cvg6F/lpdLh
-         pfY3hnq6G4woDGNTNVlZ+kkcj5qJRCngnVAy+gkb868EWY5EU04VMoO1sIADCHOqt0pb
-         0dcvTCDjJerRPi3a5DXq74ZDszeyTNeI58Z29vZ1ArrGPUohsZW1UeNBPoG7+jIry6gX
-         hmB5veaCo5PFqElLML5tRN7hI14+AHMRiFkTvu8fBtN2WcUyHORPEkKzNvapQJQmCyad
-         L5vg==
+        bh=baJ4zqh9oXR7f9aDtD31POIXdOIpumdQpgWGwrDWDeI=;
+        b=O6ypum9kwu8eEa+C7YqI1RgmjFIG3Hlr3Yz7dsPyFPU7SICPtDYTCfgcz/SNtiY0EW
+         OibtuMacyl+TKwlOyrcqk/1QybUYVmR14QLeyqSc5aPKCrMlEZ9FvyRqwTP5Tb5fZTJL
+         yAT7zmOcDwlot74aMq1HGkdzKPmxgF6tWwXcv0g5XwZEcSkWPPwg/W5+BXOm86tWFMN2
+         FvJp8PEzXrt7AdbfoQqSDfUs908dtQ4pR/a3prrKjFysDsrRWA9I0WX3eF/WUxtW3ykN
+         KOIua7VimliVmg0lAPdBevVR6nrFCcejej6wOZNQRLcdZJr/6HmBQ78OhrOpGjo25mp8
+         d1eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709759691; x=1710364491;
+        d=1e100.net; s=20230601; t=1709760177; x=1710364977;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eqhjGVQ8jE8dziHNEPcBuEnJh6YM6o6ZWh6K+R5yz1M=;
-        b=ImXsHe6IR5vid6LzBJxos2nmMOCKV8Qt8DZO94fauYcd9HibQv4rK+Hf+h45p3aVyN
-         CKKevwiENijAjnT8M6ZFVjXTyq5QW7T/OM8Z4GwZeB4JYby0T7/n9id7KcbN8aLLSdW0
-         eyd3+QIBpK5wwSAcFXYCu0knmDBj598AfVbZlyA8HF5ET0PeHr0VSe6yN1l6KYyLeL/L
-         Y51Aaug7fE5LnzhBY5x5oDObg/Z+VOoPqTot+EHm6y0K2BSLQxU23IUEYfy6hakrrOrL
-         g75lMrFkDdj5yV+tf5pTwb9i/HXkcfNy0lK+kZrGC3zuk5IcVOnJImcLhfNh/IIP3tLD
-         a9lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxX+BD+20dEDYmZz/1Ozto8CN4FNyf1VC8y3BdSSxf6Hiy8HiL1ABvQxzFprIhrLQdZzH9B4CgDo8DMGTRNz41yPie20v5C6FrHHvB+Q==
-X-Gm-Message-State: AOJu0YxpgprbOL9uWaeGIY03C2b12L/8sfz6k9tO3WwkxMr3zM48Tw1d
-	ovhqR7jgIB6wd3Bs9+5ldJ9KIF4kC3d5Nwyz5uwCZ89JiqP5cCwQoH2obovMqMomMPE3qlVaZ5B
-	N
-X-Google-Smtp-Source: AGHT+IH/HqdsN5E4yHe5JC1g3zqWSwIIHXA5eCXfP7jkdLhyjmJz4hhQirNSqS0uE/Icr0g3GgFBXQ==
-X-Received: by 2002:aa7:88cd:0:b0:6e5:561b:4670 with SMTP id k13-20020aa788cd000000b006e5561b4670mr18155480pff.30.1709759691277;
-        Wed, 06 Mar 2024 13:14:51 -0800 (PST)
+        bh=baJ4zqh9oXR7f9aDtD31POIXdOIpumdQpgWGwrDWDeI=;
+        b=qf4DaoB4z2ip03EzIrZ3t8/G2WyDCIW+BhwObigD4RAnU7KWmuQmBeg2jopM/1WyWV
+         Jb4smSwu81Wi/pohyZQ8kXp/vq3XPGZRxLVmWFMPo3kJaa56neCJw6Twrs1Uymv0ZXkn
+         s3W8QhK8Rcr81NhXRw6rdE//Sxd0iei6Lb5eMQFnNVZHHCCML7AU4oHKx25TP5wur7mV
+         hQjRE4iEMYa4Z1nqwQxf3Yq2M9P3N8pRcbr6xV92YEodKgAujRK/r5Re6z8IDxPph+wO
+         un4Iye6yVawCMhfpge3C+jViQvjeFzIKbv06JGTKZOLMjZX8tiKtIHZNfP9ZKtl/2Rfl
+         9/Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXi0/9HJsVaRtr9JJfV6D+MM/MmaFQJ/nvUMGCKx3xQmVkpid40gzB7s2Nnr0Usu5bx8cNj6U3Ul0j40Pa6maIjhF0WtUQ1euN6SS+bsQ==
+X-Gm-Message-State: AOJu0YxGeUJqM0vRR3A2WRHLV4nnhMjeMF9hIlIczfBU0BxdWwhTWelL
+	0/NYazsjqXb+brgHAee5xKg3gIgZHGoTLki1jo32/WO20RlKs1Qh/pb7SjQpsCw=
+X-Google-Smtp-Source: AGHT+IHFP+3O78AL/mN2ueWeIh6787k23eU38trFCaaTH7ta+c0RSWosJj0XfeW0j9oTouH0cszArg==
+X-Received: by 2002:a05:6a20:80c3:b0:1a1:4d4d:ca8d with SMTP id d3-20020a056a2080c300b001a14d4dca8dmr4957747pza.50.1709760177149;
+        Wed, 06 Mar 2024 13:22:57 -0800 (PST)
 Received: from dread.disaster.area (pa49-179-47-118.pa.nsw.optusnet.com.au. [49.179.47.118])
-        by smtp.gmail.com with ESMTPSA id y133-20020a62ce8b000000b006e45a0101basm12036767pfg.99.2024.03.06.13.14.50
+        by smtp.gmail.com with ESMTPSA id b128-20020a62cf86000000b006e510c61d49sm11739679pfg.183.2024.03.06.13.22.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Mar 2024 13:14:50 -0800 (PST)
+        Wed, 06 Mar 2024 13:22:56 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1rhybA-00Fy7Q-1A;
-	Thu, 07 Mar 2024 08:14:48 +1100
-Date: Thu, 7 Mar 2024 08:14:48 +1100
+	id 1rhyj0-00FyDL-0T;
+	Thu, 07 Mar 2024 08:22:54 +1100
+Date: Thu, 7 Mar 2024 08:22:54 +1100
 From: Dave Chinner <david@fromorbit.com>
 To: John Garry <john.g.garry@oracle.com>
 Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
@@ -81,10 +80,10 @@ Cc: djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
 	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
 	linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 07/14] fs: iomap: Sub-extent zeroing
-Message-ID: <ZejcyPPX3bVdvJyV@dread.disaster.area>
+Subject: Re: [PATCH v2 13/14] fs: xfs: Validate atomic writes
+Message-ID: <ZejersjddMNdkDqz@dread.disaster.area>
 References: <20240304130428.13026-1-john.g.garry@oracle.com>
- <20240304130428.13026-8-john.g.garry@oracle.com>
+ <20240304130428.13026-14-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,58 +92,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240304130428.13026-8-john.g.garry@oracle.com>
+In-Reply-To: <20240304130428.13026-14-john.g.garry@oracle.com>
 
-On Mon, Mar 04, 2024 at 01:04:21PM +0000, John Garry wrote:
-> For FS_XFLAG_FORCEALIGN support, we want to treat any sub-extent IO like
-> sub-fsblock DIO, in that we will zero the sub-extent when the mapping is
-> unwritten.
-> 
-> This will be important for atomic writes support, in that atomically
-> writing over a partially written extent would mean that we would need to
-> do the unwritten extent conversion write separately, and the write could
-> no longer be atomic.
-> 
-> It is the task of the FS to set iomap.extent_shift per iter to indicate
-> sub-extent zeroing required.
-> 
-> Maybe a macro like i_blocksize() should be introduced for extent sizes,
-> instead of using extent_shift. It would also eliminate excessive use
-> of xfs_get_extss() for XFS in future.
+On Mon, Mar 04, 2024 at 01:04:27PM +0000, John Garry wrote:
+> Validate that an atomic write adheres to length/offset rules. Since we
+> require extent alignment for atomic writes, this effectively also enforces
+> that the BIO which iomap produces is aligned.
 > 
 > Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->  fs/iomap/direct-io.c  | 14 ++++++++------
->  include/linux/iomap.h |  1 +
->  2 files changed, 9 insertions(+), 6 deletions(-)
+>  fs/xfs/xfs_file.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index bcd3f8cf5ea4..733f83f839b6 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -277,7 +277,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index d0bd9d5f596c..cecc5428fd7c 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -709,11 +709,20 @@ xfs_file_dio_write(
+>  	struct kiocb		*iocb,
+>  	struct iov_iter		*from)
 >  {
->  	const struct iomap *iomap = &iter->iomap;
->  	struct inode *inode = iter->inode;
-> -	unsigned int fs_block_size = i_blocksize(inode), pad;
-> +	unsigned int zeroing_size, pad;
->  	loff_t length = iomap_length(iter);
->  	loff_t pos = iter->pos;
->  	blk_opf_t bio_opf;
-> @@ -288,6 +288,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  	size_t copied = 0;
->  	size_t orig_count;
+> -	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
+> +	struct inode		*inode = file_inode(iocb->ki_filp);
+> +	struct xfs_inode	*ip = XFS_I(inode);
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
+>  	size_t			count = iov_iter_count(from);
 >  
-> +	zeroing_size = i_blocksize(inode) << iomap->extent_shift;
+> +	if (iocb->ki_flags & IOCB_ATOMIC) {
+> +		if (!generic_atomic_write_valid(iocb->ki_pos, from,
+> +			i_blocksize(inode),
 
-The iomap interfaces use units of bytes for offsets, sizes, ranges,
-etc. Using shifts to define a granularity value seems like a
-throwback to decades old XFS code and just a bit weird nowdays.  Can
-we just pass this as a byte count? i.e.:
+a.k.a. mp->m_bsize. If you use that here, then the need for the VFS
+inode goes away, too.
 
-	zeroing_size = i_blocksize(inode);
-	if (iomap->extent_size)
-		zeroing_size = iomap->extent_size;
+> +			XFS_FSB_TO_B(mp, xfs_get_extsz(ip)))) {
+> +			return -EINVAL;
+> +		}
+> +	}
+
+Also, I think the checks are the wrong way around here. We can only
+do IOCB_ATOMIC IO on force aligned/atomic write inodes, so shouldn't
+we be checking that first, then basing the rest of the checks on the
+assumption that atomic writes are allowed and have been set up
+correctly on the inode? i.e.
+
+	if (iocb->ki_flags & IOCB_ATOMIC) {
+		if (!xfs_inode_has_atomicwrites(ip))
+			return -EINVAL;
+		if (!generic_atomic_write_valid(iocb->ki_pos, from,
+				mp->m_bsize, ip->i_extsize))
+			return -EINVAL;
+	}
+
+because xfs_inode_has_atomicwrites() implies ip->i_extsize has been
+set to the required atomic IO size?
 
 Cheers,
 
