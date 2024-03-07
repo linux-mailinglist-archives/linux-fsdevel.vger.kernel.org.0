@@ -1,91 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-13907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770B4875558
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 18:40:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA8C3875568
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 18:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8AEE1C22402
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 17:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4DD1F254D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 17:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E662130E53;
-	Thu,  7 Mar 2024 17:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977EA131E21;
+	Thu,  7 Mar 2024 17:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fIzF/9Wo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmvVsLmj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02DB12E1CF
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 17:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED74817722
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 17:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709833209; cv=none; b=MhEcD/bdBgqKEcplehPpxMeQjrAsVqTE5DrtD+mZ9Xx/iXnxLqNUXWVwK6Aq3SRKbgL5bovvxiHGihKzeQ9+Hl7o1+z4Pl8pD1r4FnXIxzJxNB2+4UNnp2Hgqhihs81blN3YgGXdjusk+shUazVjKbaS34ITqWVlc1oYm5Rn+EE=
+	t=1709833353; cv=none; b=tGQ4MXA7Gxa4ltmF339fPW8V77jmnX+zXfF0R0O7JRHSbv7oKPIzy3cWds16TElrOlqUiEE38+sh7Thn2iHT4ZHtIemWiRqjWyHGC3LAxh9GXmd+e4LwBUwvaxTXK6h7heidJ3GDBgNAzFLdgUDcidWAGXuhF/CDC+ZmG8z80Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709833209; c=relaxed/simple;
-	bh=hRSl+XEmM4fPNM12v3nNoTx7PNw2TGseWo3VuRaIdko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cMoYc8tp+8qIfmyo+KTsGtkkz57RLgpbZbFL3i55SQbL+2fqS7RfgUu069llOaIRiLIQmPN0NP9NAHVroK1fbtQHeJd7iFVhB8APmJ6Gzgt06O4l+xKB1k+QbEyi732t0q5+DiiXgf15M/SmF35qK1C9oNke+QCBJ/rvnt2g17c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fIzF/9Wo; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 7 Mar 2024 12:39:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709833205;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Saf0V459wjVI/LACMclGTIzYyUNjj1FKOP0tushsb8k=;
-	b=fIzF/9WoqVVDQVfK5OIIQsnwrnp4nKQCLhLc6Ex7PZuRVHUpvG+MG7OAWnrNk/UQ226T2I
-	zMuqiO3Nt8FDHMBvH/C/1QnWTAu1Xumqk4ZVMdbHnVPyQSXF73y+BeESa5PW552epgKYZ7
-	RDsqlCmxXcJsO45vFsxhg3hJMgfZ7NI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH] statx: stx_vol
-Message-ID: <xqazmch5ybt7fatipwkuk7lnouwwdn55cirvaiuypjmy3y4fte@6vwyvv3uurl5>
-References: <20240302220203.623614-1-kent.overstreet@linux.dev>
- <20240304-konfus-neugierig-5c7c9d5a8ad6@brauner>
+	s=arc-20240116; t=1709833353; c=relaxed/simple;
+	bh=jIQ/4k8vSjnqNzNcPnEy4vVGjsz9OnbEy/pl9GkP+mE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BgvDMNqGRd7pbvrfxq4mTEZTQnguIxCCige9I0ButZFpXliEmMzZDSNhsw6UCq1rdvSkqxnY0iwGNJ+s6Yz17XfGG1/Om0+YR0yISaUcCnSFlK0cC3Hp346b045uIYQm7SQIFZjmHXU+LCOc9E+s/J7syCZYhQtVkaXef1QzKGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmvVsLmj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 463D0C433C7;
+	Thu,  7 Mar 2024 17:42:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709833352;
+	bh=jIQ/4k8vSjnqNzNcPnEy4vVGjsz9OnbEy/pl9GkP+mE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YmvVsLmjo7y7QXkOgQvpAZZadKHZzDTUOL3YqOlrbTbhuIRgZr/0ij2x8bw3i1xMQ
+	 g6LOrx1rgC/s5mln95igvva1+0jrlJV9oS5v7lJZ+xX61pNcjiyCgC61Dm1Q2aJ+mt
+	 I2flh2fS+nkydQHvf4F7g+ZSAdjTZ9nHSvTDfXTKrICVH/HL1jbdjmmN5TeB0z8yUG
+	 AqlxYDMkKc1OeWem4v+UoSCszOqFTQXbPgGBpTN7n2H39Tig6Miicw5wLwPUl26fzA
+	 QRaBKxHZBp8+RS1LWdcRM1c0t4d+Lg7rOBEnRBws2gqQgwC4KttEf6Sx/uN/JB2KIo
+	 QKpVc0awCYwOA==
+From: cem@kernel.org
+To: hughd@google.com
+Cc: jack@suse.cz,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] tmpfs: Fix race on handling dquot rbtree
+Date: Thu,  7 Mar 2024 18:42:10 +0100
+Message-ID: <20240307174226.627962-1-cem@kernel.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240304-konfus-neugierig-5c7c9d5a8ad6@brauner>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 04, 2024 at 10:18:22AM +0100, Christian Brauner wrote:
-> On Sat, Mar 02, 2024 at 05:02:03PM -0500, Kent Overstreet wrote:
-> > Add a new statx field for (sub)volume identifiers.
-> > 
-> > This includes bcachefs support; we'll definitely want btrfs support as
-> > well.
-> > 
-> > Link: https://lore.kernel.org/linux-fsdevel/2uvhm6gweyl7iyyp2xpfryvcu2g3padagaeqcbiavjyiis6prl@yjm725bizncq/
-> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: Josef Bacik <josef@toxicpanda.com>
-> > Cc: Miklos Szeredi <mszeredi@redhat.com>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: David Howells <dhowells@redhat.com>
-> > ---
-> 
-> As I've said many times before I'm supportive of this and would pick up
-> a patch like this. There's definitely a lot of userspace that would make
-> use of this that I'm aware of. If the btrfs people could provide an Ack
-> on this to express their support here that would be great.
-> 
-> And it would be lovely if we could expand the commit message a bit and
-> do some renaming/bikeshedding. Imho, STATX_SUBVOLUME_ID is great and
-> then stx_subvolume_id or stx_subvol_id. And then subvolume_id or
-> subvol_id for the field in struct kstat.
+From: Carlos Maiolino <cem@kernel.org>
 
-_id is too redundant for me, can we just do STATX_SUBVOL/statx.subvol?
+A syzkaller reproducer found a race while attempting to remove dquot information
+from the rb tree.
+Fetching the rb_tree root node must also be protected by the dqopt->dqio_sem,
+otherwise, giving the right timing, shmem_release_dquot() will trigger a warning
+because it couldn't find a node in the tree, when the real reason was the root
+node changing before the search starts:
+
+Thread 1				Thread 2
+- shmem_release_dquot()			- shmem_{acquire,release}_dquot()
+
+- fetch ROOT				- Fetch ROOT
+
+					- acquire dqio_sem
+- wait dqio_sem
+
+					- do something, triger a tree rebalance
+					- release dqio_sem
+
+- acquire dqio_sem
+- start searching for the node, but
+  from the wrong location, missing
+  the node, and triggering a warning.
+
+Fixes: eafc474e202978 ("shmem: prepare shmem quota infrastructure")
+Reported-by: Ubisectech Sirius <bugreport@ubisectech.com>
+Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+---
+
+I had a chat with Aristeu Rozanski and Jan Kara about this issue, which made me
+stop pursuing the wrong direction and reach the root cause faster, thanks guys.
+ 
+ mm/shmem_quota.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/mm/shmem_quota.c b/mm/shmem_quota.c
+index 062d1c1097ae3..ce514e700d2f6 100644
+--- a/mm/shmem_quota.c
++++ b/mm/shmem_quota.c
+@@ -116,7 +116,7 @@ static int shmem_free_file_info(struct super_block *sb, int type)
+ static int shmem_get_next_id(struct super_block *sb, struct kqid *qid)
+ {
+ 	struct mem_dqinfo *info = sb_dqinfo(sb, qid->type);
+-	struct rb_node *node = ((struct rb_root *)info->dqi_priv)->rb_node;
++	struct rb_node *node;
+ 	qid_t id = from_kqid(&init_user_ns, *qid);
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	struct quota_id *entry = NULL;
+@@ -126,6 +126,7 @@ static int shmem_get_next_id(struct super_block *sb, struct kqid *qid)
+ 		return -ESRCH;
+ 
+ 	down_read(&dqopt->dqio_sem);
++	node = ((struct rb_root *)info->dqi_priv)->rb_node;
+ 	while (node) {
+ 		entry = rb_entry(node, struct quota_id, node);
+ 
+@@ -165,7 +166,7 @@ static int shmem_get_next_id(struct super_block *sb, struct kqid *qid)
+ static int shmem_acquire_dquot(struct dquot *dquot)
+ {
+ 	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
+-	struct rb_node **n = &((struct rb_root *)info->dqi_priv)->rb_node;
++	struct rb_node **n;
+ 	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
+ 	struct rb_node *parent = NULL, *new_node = NULL;
+ 	struct quota_id *new_entry, *entry;
+@@ -176,6 +177,8 @@ static int shmem_acquire_dquot(struct dquot *dquot)
+ 	mutex_lock(&dquot->dq_lock);
+ 
+ 	down_write(&dqopt->dqio_sem);
++	n = &((struct rb_root *)info->dqi_priv)->rb_node;
++
+ 	while (*n) {
+ 		parent = *n;
+ 		entry = rb_entry(parent, struct quota_id, node);
+@@ -264,7 +267,7 @@ static bool shmem_is_empty_dquot(struct dquot *dquot)
+ static int shmem_release_dquot(struct dquot *dquot)
+ {
+ 	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
+-	struct rb_node *node = ((struct rb_root *)info->dqi_priv)->rb_node;
++	struct rb_node *node;
+ 	qid_t id = from_kqid(&init_user_ns, dquot->dq_id);
+ 	struct quota_info *dqopt = sb_dqopt(dquot->dq_sb);
+ 	struct quota_id *entry = NULL;
+@@ -275,6 +278,7 @@ static int shmem_release_dquot(struct dquot *dquot)
+ 		goto out_dqlock;
+ 
+ 	down_write(&dqopt->dqio_sem);
++	node = ((struct rb_root *)info->dqi_priv)->rb_node;
+ 	while (node) {
+ 		entry = rb_entry(node, struct quota_id, node);
+ 
+-- 
+2.44.0
+
 
