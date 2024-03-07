@@ -1,47 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-13835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C8E87460B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 03:17:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 253448746A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 04:20:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498931F26062
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 02:17:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91A76B223B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 03:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE2963C8;
-	Thu,  7 Mar 2024 02:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D722417551;
+	Thu,  7 Mar 2024 03:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qkrRuHyi"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ychUmlpI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4246112;
-	Thu,  7 Mar 2024 02:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86869E555;
+	Thu,  7 Mar 2024 03:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709777818; cv=none; b=shYkCuo7hzSZW3vp3+Kp8GGkdB3uVE++dkPBkgUJVFs1YRBRPSYjDCQdq0jGZQWkZo6eP+yX2zkznflOQIiOHSMfIL4Tw4mH7gRYnLhp24ktav63tv2o4dPCb8huD9p+35cmPeK4pyATdAy5m87Vbnduqhe05BAjv38BbaXygkk=
+	t=1709781574; cv=none; b=Q/sVWaV6iZkLqPHHgDBiVAfKm1fV7y7DRQ5CIhoKMqhcm52GG0jbUWfHeEhzeuj67UtGZkOCao6j3rAX5Zj3spvZpn1MbT0BwGIOP9//ggOlK7H+TmyC3wnalJlI2Cd9IM9hZYJ6HNbIUNziA1fMGdoL1y4QlieqypY3rQ6HMaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709777818; c=relaxed/simple;
-	bh=bfJ35MNAVYKW9WdxzTCv4Pyuh8UGQUguY3ABojUGaZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j3T6GLHXWyqZsZH7m2esnSLWRl/xTRQF7G2dzOqlb9PYdHPsgABbG/Yfamn4U1Tnib7FUw0SCYKYUG3Ecu0HDqLBaFRDmbQDzyYVlQdU33xavdveoIej5ZVHtj8ye86n2AmfTLAUa5KQIfyxJ0al4fVoS9bpv7cZEynYI6ZpyQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qkrRuHyi; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1709777812; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=CQs4ZfNDP/+ljdLQ8ThiuXH2AP3pvQtRgImwbWsbeQQ=;
-	b=qkrRuHyi2VgJkB1UlCnYX634h88tdfOJ1EQj9rUPdUzidf6BnzZB1DBlQAVMB6jJ5w1mjzIZ8nL9meYoAeA+Jtpxu8VThLhd0c06bqikjVonD/Q5CfqiVbHOA44K/PhomJP/v3eP/deN349DUE+sVkBnJGQDjsV+VOjT4leMj5I=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R601e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W1z72Ti_1709777811;
-Received: from 30.221.148.124(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W1z72Ti_1709777811)
-          by smtp.aliyun-inc.com;
-          Thu, 07 Mar 2024 10:16:52 +0800
-Message-ID: <cb39ba49-eada-44b4-97fd-ea27ac8ba1f4@linux.alibaba.com>
-Date: Thu, 7 Mar 2024 10:16:49 +0800
+	s=arc-20240116; t=1709781574; c=relaxed/simple;
+	bh=hJ6fv3HI3NxvYP0IKsPxT4ASej2UnYY1+6Lcvw7UNHM=;
+	h=Content-Type:Message-ID:Date:MIME-Version:From:Subject:To:Cc:
+	 References:In-Reply-To; b=uw1MW/MKWD6s7tQw6yxQ3JMVMpc1HyPHLeG5H69y2O48AGYgqtJX7ZnOYMauM7fEr+tkgK0SNNBw2v4/J+26ZcAwtclUhppeyTq9iODj3cHz3bom1Ulbo2rD0FvHlzWDY1SWcyOiWyFv6BnWrIaSGQ7LMBHVsDElTTq2wOvspiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ychUmlpI; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:References:Cc:To:Subject:
+	From:MIME-Version:Date:Message-ID:Content-Type:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=K3TldHFnOYBYmyA+ZpDycxvkU6EpB6K91tOzErQkNoI=; b=ychUmlpIQkbhQ0W88gqlbMN+nk
+	N7kxwIp4Izr4S3lPCeFsCe0pWGa05MFzhPp2qPSYgcWyeCT567m7b6xEwRBOrMHS3lZSsqVyoUU4T
+	7y7F6/lnCPMAbpLWNT/KgSkRXbsb+WWVTPkheyVwlC0r9TITjgwaWMg0KgLhrms6g9S/ejbG7FBNm
+	SnHBJTcxh0jjHwmTLQ8nR9IGWHgPGEJJpwnf9Ij4MI5DdZHa+8y8x739teJjHUtKT2eoh77rLEGz6
+	MdP/Ix8fny+Mesi6BjfLkCNZ6bfubnyJsEeeVzha+mbjpED+NoQEjvZnt3DmNMWzWM6Xr/QhSH1JE
+	yw3U0gQw==;
+Received: from [50.53.50.0] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ri4Hf-00000002oO9-0yJC;
+	Thu, 07 Mar 2024 03:19:03 +0000
+Content-Type: multipart/mixed; boundary="------------oaFa8uBlfstuVB17zCaypWJR"
+Message-ID: <10a95079-86e4-41bf-8e82-e387936c437d@infradead.org>
+Date: Wed, 6 Mar 2024 19:18:57 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -49,174 +55,241 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: increase FUSE_MAX_MAX_PAGES limit
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v5 37/37] memprofiling: Documentation
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
+ hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
+ dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
+ penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com,
+ peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+ david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+ nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com, tj@kernel.org,
+ muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+ pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com,
+ dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com,
+ keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com,
+ gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+ penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+ glider@google.com, elver@google.com, dvyukov@google.com,
+ shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+ aliceryhl@google.com, rientjes@google.com, minchan@google.com,
+ kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-modules@vger.kernel.org,
+ kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+References: <20240306182440.2003814-1-surenb@google.com>
+ <20240306182440.2003814-38-surenb@google.com>
 Content-Language: en-US
-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
- Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhangjiachen.jaycee@bytedance.com
-References: <20240124070512.52207-1-jefflexu@linux.alibaba.com>
- <CAJfpegs10SdtzNXJfj3=vxoAZMhksT5A1u5W5L6nKL-P2UOuLQ@mail.gmail.com>
- <6e6bef3d-dd26-45ce-bc4a-c04a960dfb9c@linux.alibaba.com>
- <b4e6b930-ed06-4e0d-b17d-61d05381ac92@linux.alibaba.com>
- <27b34186-bc7c-4f3c-8818-ee73eb3f82ba@linux.alibaba.com>
- <CAJfpegvLUrqkCkVc=yTXcjZyNNQEG4Z4c6TONEZHGGmjiQ5X2g@mail.gmail.com>
- <7e79a9fa-99a0-47e5-bc39-107f89852d8d@linux.alibaba.com>
- <5343dc29-83cb-49b4-91ff-57bbd0eaa1df@fastmail.fm>
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <5343dc29-83cb-49b4-91ff-57bbd0eaa1df@fastmail.fm>
+In-Reply-To: <20240306182440.2003814-38-surenb@google.com>
+
+This is a multi-part message in MIME format.
+--------------oaFa8uBlfstuVB17zCaypWJR
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Bernd,
+Hi,
+This includes some editing suggestions and some doc build fixes.
 
-On 3/6/24 11:45 PM, Bernd Schubert wrote:
-> 
-> 
-> On 3/6/24 14:32, Jingbo Xu wrote:
->>
->>
->> On 3/5/24 10:26 PM, Miklos Szeredi wrote:
->>> On Mon, 26 Feb 2024 at 05:00, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>>>
->>>> Hi Miklos,
->>>>
->>>> On 1/26/24 2:29 PM, Jingbo Xu wrote:
->>>>>
->>>>>
->>>>> On 1/24/24 8:47 PM, Jingbo Xu wrote:
->>>>>>
->>>>>>
->>>>>> On 1/24/24 8:23 PM, Miklos Szeredi wrote:
->>>>>>> On Wed, 24 Jan 2024 at 08:05, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>>>>>>>
->>>>>>>> From: Xu Ji <laoji.jx@alibaba-inc.com>
->>>>>>>>
->>>>>>>> Increase FUSE_MAX_MAX_PAGES limit, so that the maximum data size of a
->>>>>>>> single request is increased.
->>>>>>>
->>>>>>> The only worry is about where this memory is getting accounted to.
->>>>>>> This needs to be thought through, since the we are increasing the
->>>>>>> possible memory that an unprivileged user is allowed to pin.
->>>>>
->>>>> Apart from the request size, the maximum number of background requests,
->>>>> i.e. max_background (12 by default, and configurable by the fuse
->>>>> daemon), also limits the size of the memory that an unprivileged user
->>>>> can pin.  But yes, it indeed increases the number proportionally by
->>>>> increasing the maximum request size.
->>>>>
->>>>>
->>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> This optimizes the write performance especially when the optimal IO size
->>>>>>>> of the backend store at the fuse daemon side is greater than the original
->>>>>>>> maximum request size (i.e. 1MB with 256 FUSE_MAX_MAX_PAGES and
->>>>>>>> 4096 PAGE_SIZE).
->>>>>>>>
->>>>>>>> Be noted that this only increases the upper limit of the maximum request
->>>>>>>> size, while the real maximum request size relies on the FUSE_INIT
->>>>>>>> negotiation with the fuse daemon.
->>>>>>>>
->>>>>>>> Signed-off-by: Xu Ji <laoji.jx@alibaba-inc.com>
->>>>>>>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
->>>>>>>> ---
->>>>>>>> I'm not sure if 1024 is adequate for FUSE_MAX_MAX_PAGES, as the
->>>>>>>> Bytedance floks seems to had increased the maximum request size to 8M
->>>>>>>> and saw a ~20% performance boost.
->>>>>>>
->>>>>>> The 20% is against the 256 pages, I guess.
->>>>>>
->>>>>> Yeah I guess so.
->>>>>>
->>>>>>
->>>>>>> It would be interesting to
->>>>>>> see the how the number of pages per request affects performance and
->>>>>>> why.
->>>>>>
->>>>>> To be honest, I'm not sure the root cause of the performance boost in
->>>>>> bytedance's case.
->>>>>>
->>>>>> While in our internal use scenario, the optimal IO size of the backend
->>>>>> store at the fuse server side is, e.g. 4MB, and thus if the maximum
->>>>>> throughput can not be achieved with current 256 pages per request. IOW
->>>>>> the backend store, e.g. a distributed parallel filesystem, get optimal
->>>>>> performance when the data is aligned at 4MB boundary.  I can ask my folk
->>>>>> who implements the fuse server to give more background info and the
->>>>>> exact performance statistics.
->>>>>
->>>>> Here are more details about our internal use case:
->>>>>
->>>>> We have a fuse server used in our internal cloud scenarios, while the
->>>>> backend store is actually a distributed filesystem.  That is, the fuse
->>>>> server actually plays as the client of the remote distributed
->>>>> filesystem.  The fuse server forwards the fuse requests to the remote
->>>>> backing store through network, while the remote distributed filesystem
->>>>> handles the IO requests, e.g. process the data from/to the persistent store.
->>>>>
->>>>> Then it comes the details of the remote distributed filesystem when it
->>>>> process the requested data with the persistent store.
->>>>>
->>>>> [1] The remote distributed filesystem uses, e.g. a 8+3 mode, EC
->>>>> (ErasureCode), where each fixed sized user data is split and stored as 8
->>>>> data blocks plus 3 extra parity blocks. For example, with 512 bytes
->>>>> block size, for each 4MB user data, it's split and stored as 8 (512
->>>>> bytes) data blocks with 3 (512 bytes) parity blocks.
->>>>>
->>>>> It also utilize the stripe technology to boost the performance, for
->>>>> example, there are 8 data disks and 3 parity disks in the above 8+3 mode
->>>>> example, in which each stripe consists of 8 data blocks and 3 parity
->>>>> blocks.
->>>>>
->>>>> [2] To avoid data corruption on power off, the remote distributed
->>>>> filesystem commit a O_SYNC write right away once a write (fuse) request
->>>>> received.  Since the EC described above, when the write fuse request is
->>>>> not aligned on 4MB (the stripe size) boundary, say it's 1MB in size, the
->>>>> other 3MB is read from the persistent store first, then compute the
->>>>> extra 3 parity blocks with the complete 4MB stripe, and finally write
->>>>> the 8 data blocks and 3 parity blocks down.
->>>>>
->>>>>
->>>>> Thus the write amplification is un-neglectable and is the performance
->>>>> bottleneck when the fuse request size is less than the stripe size.
->>>>>
->>>>> Here are some simple performance statistics with varying request size.
->>>>> With 4MB stripe size, there's ~3x bandwidth improvement when the maximum
->>>>> request size is increased from 256KB to 3.9MB, and another ~20%
->>>>> improvement when the request size is increased to 4MB from 3.9MB.
->>>
->>> I sort of understand the issue, although my guess is that this could
->>> be worked around in the client by coalescing writes.  This could be
->>> done by adding a small delay before sending a write request off to the
->>> network.
->>>
->>> Would that work in your case?
->>
->> It's possible but I'm not sure. I've asked my colleagues who working on
->> the fuse server and the backend store, though have not been replied yet.
->>  But I guess it's not as simple as increasing the maximum FUSE request
->> size directly and thus more complexity gets involved.
->>
->> I can also understand the concern that this may increase the risk of
->> pinning more memory footprint, and a more generic using scenario needs
->> to be considered.  I can make it a private patch for our internal product.
->>
->> Thanks for the suggestions and discussion.
-> 
-> It also gets kind of solved in my fuse-over-io-uring branch - as long as
-> there are enough free ring entries. I'm going to add in a flag there
-> that other CQEs might be follow up requests. Really time to post a new
-> version.
 
-Thanks for the information.  I've not read the fuse-over-io-uring branch
-yet, but sounds like it would be much helpful .  Would there be a flag
-in the FUSE request indicating it's one of the linked FUSE requests?  Is
-this feature, say linked FUSE requests, enabled only when io-uring is
-upon FUSE?
+On 3/6/24 10:24, Suren Baghdasaryan wrote:
+> From: Kent Overstreet <kent.overstreet@linux.dev>
+> 
+> Provide documentation for memory allocation profiling.
+> 
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  Documentation/mm/allocation-profiling.rst | 91 +++++++++++++++++++++++
+>  1 file changed, 91 insertions(+)
+>  create mode 100644 Documentation/mm/allocation-profiling.rst
+> 
+> diff --git a/Documentation/mm/allocation-profiling.rst b/Documentation/mm/allocation-profiling.rst
+> new file mode 100644
+> index 000000000000..8a862c7d3aab
+> --- /dev/null
+> +++ b/Documentation/mm/allocation-profiling.rst
+> @@ -0,0 +1,91 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +===========================
+> +MEMORY ALLOCATION PROFILING
+> +===========================
+> +
+> +Low overhead (suitable for production) accounting of all memory allocations,
+> +tracked by file and line number.
+> +
+> +Usage:
+> +kconfig options:
+> + - CONFIG_MEM_ALLOC_PROFILING
+> + - CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT
+> + - CONFIG_MEM_ALLOC_PROFILING_DEBUG
+> +   adds warnings for allocations that weren't accounted because of a
+> +   missing annotation
+> +
+> +Boot parameter:
+> +  sysctl.vm.mem_profiling=0|1|never
+> +
+> +  When set to "never", memory allocation profiling overheads is minimized and it
+
+                                                      overhead is
+
+> +  cannot be enabled at runtime (sysctl becomes read-only).
+> +  When CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y, default value is "1".
+> +  When CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=n, default value is "never".
+> +
+> +sysctl:
+> +  /proc/sys/vm/mem_profiling
+> +
+> +Runtime info:
+> +  /proc/allocinfo
+> +
+> +Example output:
+> +  root@moria-kvm:~# sort -g /proc/allocinfo|tail|numfmt --to=iec
+> +        2.8M    22648 fs/kernfs/dir.c:615 func:__kernfs_new_node
+> +        3.8M      953 mm/memory.c:4214 func:alloc_anon_folio
+> +        4.0M     1010 drivers/staging/ctagmod/ctagmod.c:20 [ctagmod] func:ctagmod_start
+> +        4.1M        4 net/netfilter/nf_conntrack_core.c:2567 func:nf_ct_alloc_hashtable
+> +        6.0M     1532 mm/filemap.c:1919 func:__filemap_get_folio
+> +        8.8M     2785 kernel/fork.c:307 func:alloc_thread_stack_node
+> +         13M      234 block/blk-mq.c:3421 func:blk_mq_alloc_rqs
+> +         14M     3520 mm/mm_init.c:2530 func:alloc_large_system_hash
+> +         15M     3656 mm/readahead.c:247 func:page_cache_ra_unbounded
+> +         55M     4887 mm/slub.c:2259 func:alloc_slab_page
+> +        122M    31168 mm/page_ext.c:270 func:alloc_page_ext
+> +===================
+> +Theory of operation
+> +===================
+> +
+> +Memory allocation profiling builds off of code tagging, which is a library for
+> +declaring static structs (that typcially describe a file and line number in
+
+                                  typically
+
+> +some way, hence code tagging) and then finding and operating on them at runtime
+
+                                                                        at runtime,
+
+> +- i.e. iterating over them to print them in debugfs/procfs.
+
+  i.e., iterating
+
+> +
+> +To add accounting for an allocation call, we replace it with a macro
+> +invocation, alloc_hooks(), that
+> + - declares a code tag
+> + - stashes a pointer to it in task_struct
+> + - calls the real allocation function
+> + - and finally, restores the task_struct alloc tag pointer to its previous value.
+> +
+> +This allows for alloc_hooks() calls to be nested, with the most recent one
+> +taking effect. This is important for allocations internal to the mm/ code that
+> +do not properly belong to the outer allocation context and should be counted
+> +separately: for example, slab object extension vectors, or when the slab
+> +allocates pages from the page allocator.
+> +
+> +Thus, proper usage requires determining which function in an allocation call
+> +stack should be tagged. There are many helper functions that essentially wrap
+> +e.g. kmalloc() and do a little more work, then are called in multiple places;
+> +we'll generally want the accounting to happen in the callers of these helpers,
+> +not in the helpers themselves.
+> +
+> +To fix up a given helper, for example foo(), do the following:
+> + - switch its allocation call to the _noprof() version, e.g. kmalloc_noprof()
+> + - rename it to foo_noprof()
+> + - define a macro version of foo() like so:
+> +   #define foo(...) alloc_hooks(foo_noprof(__VA_ARGS__))
+> +
+> +It's also possible to stash a pointer to an alloc tag in your own data structures.
+> +
+> +Do this when you're implementing a generic data structure that does allocations
+> +"on behalf of" some other code - for example, the rhashtable code. This way,
+> +instead of seeing a large line in /proc/allocinfo for rhashtable.c, we can
+> +break it out by rhashtable type.
+> +
+> +To do so:
+> + - Hook your data structure's init function, like any other allocation function
+
+maybe end the line above with a '.' like the following line.
+
+> + - Within your init function, use the convenience macro alloc_tag_record() to
+> +   record alloc tag in your data structure.
+> + - Then, use the following form for your allocations:
+> +   alloc_hooks_tag(ht->your_saved_tag, kmalloc_noprof(...))
+
+
+Finally, there are a number of documentation build warnings in this patch.
+I'm no ReST expert, but the attached patch fixes them for me.
 
 -- 
-Thanks,
-Jingbo
+#Randy
+--------------oaFa8uBlfstuVB17zCaypWJR
+Content-Type: text/x-patch; charset=UTF-8;
+ name="docum-mm-alloc-profiling-fix403.patch"
+Content-Disposition: attachment;
+ filename="docum-mm-alloc-profiling-fix403.patch"
+Content-Transfer-Encoding: base64
+
+U2lnbmVkLW9mZi1ieTogUmFuZHkgRHVubGFwIDxyZHVubGFwQGluZnJhZGVhZC5vcmc+Ci0t
+LQogRG9jdW1lbnRhdGlvbi9tbS9hbGxvY2F0aW9uLXByb2ZpbGluZy5yc3QgfCAgIDI4ICsr
+KysrKysrKystLS0tLS0tLS0tCiBEb2N1bWVudGF0aW9uL21tL2luZGV4LnJzdCAgICAgICAg
+ICAgICAgICB8ICAgIDEgCiAyIGZpbGVzIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKyksIDEz
+IGRlbGV0aW9ucygtKQoKZGlmZiAtLSBhL0RvY3VtZW50YXRpb24vbW0vYWxsb2NhdGlvbi1w
+cm9maWxpbmcucnN0IGIvRG9jdW1lbnRhdGlvbi9tbS9hbGxvY2F0aW9uLXByb2ZpbGluZy5y
+c3QKLS0tIGEvRG9jdW1lbnRhdGlvbi9tbS9hbGxvY2F0aW9uLXByb2ZpbGluZy5yc3QKKysr
+IGIvRG9jdW1lbnRhdGlvbi9tbS9hbGxvY2F0aW9uLXByb2ZpbGluZy5yc3QKQEAgLTksMTEg
+KzksMTEgQEAgdHJhY2tlZCBieSBmaWxlIGFuZCBsaW5lIG51bWJlci4KIAogVXNhZ2U6CiBr
+Y29uZmlnIG9wdGlvbnM6Ci0gLSBDT05GSUdfTUVNX0FMTE9DX1BST0ZJTElORwotIC0gQ09O
+RklHX01FTV9BTExPQ19QUk9GSUxJTkdfRU5BQkxFRF9CWV9ERUZBVUxUCi0gLSBDT05GSUdf
+TUVNX0FMTE9DX1BST0ZJTElOR19ERUJVRwotICAgYWRkcyB3YXJuaW5ncyBmb3IgYWxsb2Nh
+dGlvbnMgdGhhdCB3ZXJlbid0IGFjY291bnRlZCBiZWNhdXNlIG9mIGEKLSAgIG1pc3Npbmcg
+YW5ub3RhdGlvbgorLSBDT05GSUdfTUVNX0FMTE9DX1BST0ZJTElORworLSBDT05GSUdfTUVN
+X0FMTE9DX1BST0ZJTElOR19FTkFCTEVEX0JZX0RFRkFVTFQKKy0gQ09ORklHX01FTV9BTExP
+Q19QUk9GSUxJTkdfREVCVUcKK2FkZHMgd2FybmluZ3MgZm9yIGFsbG9jYXRpb25zIHRoYXQg
+d2VyZW4ndCBhY2NvdW50ZWQgYmVjYXVzZSBvZiBhCittaXNzaW5nIGFubm90YXRpb24KIAog
+Qm9vdCBwYXJhbWV0ZXI6CiAgIHN5c2N0bC52bS5tZW1fcHJvZmlsaW5nPTB8MXxuZXZlcgpA
+QCAtMjksNyArMjksOCBAQCBzeXNjdGw6CiBSdW50aW1lIGluZm86CiAgIC9wcm9jL2FsbG9j
+aW5mbwogCi1FeGFtcGxlIG91dHB1dDoKK0V4YW1wbGUgb3V0cHV0OjoKKwogICByb290QG1v
+cmlhLWt2bTp+IyBzb3J0IC1nIC9wcm9jL2FsbG9jaW5mb3x0YWlsfG51bWZtdCAtLXRvPWll
+YwogICAgICAgICAyLjhNICAgIDIyNjQ4IGZzL2tlcm5mcy9kaXIuYzo2MTUgZnVuYzpfX2tl
+cm5mc19uZXdfbm9kZQogICAgICAgICAzLjhNICAgICAgOTUzIG1tL21lbW9yeS5jOjQyMTQg
+ZnVuYzphbGxvY19hbm9uX2ZvbGlvCkBAIC00MiwyMSArNDMsMjIgQEAgRXhhbXBsZSBvdXRw
+dXQ6CiAgICAgICAgICAxNU0gICAgIDM2NTYgbW0vcmVhZGFoZWFkLmM6MjQ3IGZ1bmM6cGFn
+ZV9jYWNoZV9yYV91bmJvdW5kZWQKICAgICAgICAgIDU1TSAgICAgNDg4NyBtbS9zbHViLmM6
+MjI1OSBmdW5jOmFsbG9jX3NsYWJfcGFnZQogICAgICAgICAxMjJNICAgIDMxMTY4IG1tL3Bh
+Z2VfZXh0LmM6MjcwIGZ1bmM6YWxsb2NfcGFnZV9leHQKKwogPT09PT09PT09PT09PT09PT09
+PQogVGhlb3J5IG9mIG9wZXJhdGlvbgogPT09PT09PT09PT09PT09PT09PQogCiBNZW1vcnkg
+YWxsb2NhdGlvbiBwcm9maWxpbmcgYnVpbGRzIG9mZiBvZiBjb2RlIHRhZ2dpbmcsIHdoaWNo
+IGlzIGEgbGlicmFyeSBmb3IKIGRlY2xhcmluZyBzdGF0aWMgc3RydWN0cyAodGhhdCB0eXBj
+aWFsbHkgZGVzY3JpYmUgYSBmaWxlIGFuZCBsaW5lIG51bWJlciBpbgotc29tZSB3YXksIGhl
+bmNlIGNvZGUgdGFnZ2luZykgYW5kIHRoZW4gZmluZGluZyBhbmQgb3BlcmF0aW5nIG9uIHRo
+ZW0gYXQgcnVudGltZQotLSBpLmUuIGl0ZXJhdGluZyBvdmVyIHRoZW0gdG8gcHJpbnQgdGhl
+bSBpbiBkZWJ1Z2ZzL3Byb2Nmcy4KK3NvbWUgd2F5LCBoZW5jZSBjb2RlIHRhZ2dpbmcpIGFu
+ZCB0aGVuIGZpbmRpbmcgYW5kIG9wZXJhdGluZyBvbiB0aGVtIGF0IHJ1bnRpbWUsCitpLmUu
+LCBpdGVyYXRpbmcgb3ZlciB0aGVtIHRvIHByaW50IHRoZW0gaW4gZGVidWdmcy9wcm9jZnMu
+CiAKIFRvIGFkZCBhY2NvdW50aW5nIGZvciBhbiBhbGxvY2F0aW9uIGNhbGwsIHdlIHJlcGxh
+Y2UgaXQgd2l0aCBhIG1hY3JvCi1pbnZvY2F0aW9uLCBhbGxvY19ob29rcygpLCB0aGF0Ci0g
+LSBkZWNsYXJlcyBhIGNvZGUgdGFnCi0gLSBzdGFzaGVzIGEgcG9pbnRlciB0byBpdCBpbiB0
+YXNrX3N0cnVjdAotIC0gY2FsbHMgdGhlIHJlYWwgYWxsb2NhdGlvbiBmdW5jdGlvbgotIC0g
+YW5kIGZpbmFsbHksIHJlc3RvcmVzIHRoZSB0YXNrX3N0cnVjdCBhbGxvYyB0YWcgcG9pbnRl
+ciB0byBpdHMgcHJldmlvdXMgdmFsdWUuCitpbnZvY2F0aW9uLCBhbGxvY19ob29rcygpLCB0
+aGF0OgorLSBkZWNsYXJlcyBhIGNvZGUgdGFnCistIHN0YXNoZXMgYSBwb2ludGVyIHRvIGl0
+IGluIHRhc2tfc3RydWN0CistIGNhbGxzIHRoZSByZWFsIGFsbG9jYXRpb24gZnVuY3Rpb24K
+Ky0gYW5kIGZpbmFsbHksIHJlc3RvcmVzIHRoZSB0YXNrX3N0cnVjdCBhbGxvYyB0YWcgcG9p
+bnRlciB0byBpdHMgcHJldmlvdXMgdmFsdWUuCiAKIFRoaXMgYWxsb3dzIGZvciBhbGxvY19o
+b29rcygpIGNhbGxzIHRvIGJlIG5lc3RlZCwgd2l0aCB0aGUgbW9zdCByZWNlbnQgb25lCiB0
+YWtpbmcgZWZmZWN0LiBUaGlzIGlzIGltcG9ydGFudCBmb3IgYWxsb2NhdGlvbnMgaW50ZXJu
+YWwgdG8gdGhlIG1tLyBjb2RlIHRoYXQKZGlmZiAtLSBhL0RvY3VtZW50YXRpb24vbW0vaW5k
+ZXgucnN0IGIvRG9jdW1lbnRhdGlvbi9tbS9pbmRleC5yc3QKLS0tIGEvRG9jdW1lbnRhdGlv
+bi9tbS9pbmRleC5yc3QKKysrIGIvRG9jdW1lbnRhdGlvbi9tbS9pbmRleC5yc3QKQEAgLTI2
+LDYgKzI2LDcgQEAgc2VlIHRoZSA6ZG9jOmBhZG1pbiBndWlkZSA8Li4vYWRtaW4tZ3VpZAog
+ICAgcGFnZV9jYWNoZQogICAgc2htZnMKICAgIG9vbQorICAgYWxsb2NhdGlvbi1wcm9maWxp
+bmcKIAogTGVnYWN5IERvY3VtZW50YXRpb24KID09PT09PT09PT09PT09PT09PT09Cg==
+
+--------------oaFa8uBlfstuVB17zCaypWJR--
 
