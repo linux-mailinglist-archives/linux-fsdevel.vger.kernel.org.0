@@ -1,148 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-13884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD179875188
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 15:11:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA6948751EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 15:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBF6B25061
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 14:11:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EFA4B285A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 14:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC02A12E1F1;
-	Thu,  7 Mar 2024 14:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC7A1EB21;
+	Thu,  7 Mar 2024 14:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="RUIA9eXa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbC0xNQQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4F612E1D4
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 14:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462501C6AD;
+	Thu,  7 Mar 2024 14:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709820599; cv=none; b=sZVDCmffKis38enGbI4MdrewXCsCQua25BsYjBAXIS/T0AKBJtlCAPvYXVEiygw49jxTh0hmAzqdFOIUc9hO3p3aEVmhtIqI+sXYPhKxWDO9c4udvQGN0GC0ZJOW8FFaJTv90PoQMHbbGdA2y5XRWWpTkEuTzYQrEy49LBoczxU=
+	t=1709821878; cv=none; b=JLTMofrpG0vu0KdX45+x1wwonHgyZF4IzuzjASSQBXvZRbBVkJH8b6mIjX43wUI8P/TEYgE9WacgZHa7fk/SlnjnIXRzsd322fw8j9QxLnpJJwQVEOeIH91c3KRCRsbrEKbgy9lLTaKLsDxyZ0V//cURJhN2OUsXPMU9tgE8bzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709820599; c=relaxed/simple;
-	bh=2ED+9pdp+YlVQvsPdC3jIxYY6GPhCNFl2+qV+Rc3zPw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TX4gYvcOIA6CcU0ERGj0EuuCCm+IfsQFZoAtJvy3KGTup1xKTyWLmqGSIgM20TjrNttEcD9xe9Sxgzof9pnt5t8yVbkI4gf/jeH67YvjzpNUUFNw6pEtRIad6qiZfkRxdHVZzd/ERiQHe85CU+FYQIXecR/db6xGZF5nWBcb0z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=RUIA9eXa; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a452877ddcaso132641966b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Mar 2024 06:09:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1709820594; x=1710425394; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5k7ZkrPt1CzNbrUtsGIPmHNYMv0hYyJAkoPlVK0NqiY=;
-        b=RUIA9eXaZ/54p7xnPUJb5EOqvPuOyUBPHRpPghlkZVuDDVBTK2+5ksBKvHqZoTISXj
-         Dgo3sXOTU/tDjDyFILkY9aY0rm3NGQ9hLqHAeyAe61ky+mQlF6bb2/LOA31APpkHdykx
-         JArR8M5Fu484h2MeotpoTGZ/9oBIExoiY9eIw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709820594; x=1710425394;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5k7ZkrPt1CzNbrUtsGIPmHNYMv0hYyJAkoPlVK0NqiY=;
-        b=azs0ldQtYgbU73+mgBa07cU1rZ7gvJG6tGcctEqpb6jCPaXOXQTjG+2xgo/pwg7/II
-         bDfASwRj7PEHb/cATxR39jgWftowK5B3g6SUS+cJATVJnkOCt/2oyIxD3axBTxEq8grg
-         tju9GjDp69bPtLNR1gV1s9wo7fg4UbWgYd9TPmtaSTcJZrDrD1FTJLIgVrr4UJGzB0ej
-         /t5igFV4IEmt4rrMsKZwu/5rq9y1kYF7KfDa5V31xJXnvM68a6qqsuahX21BpbJoizsF
-         tE2ZUVkecXT7yTH8TCjUokOAEVf5e8lLv1M03eLr1gbGHz8f89NwNI2vYzYcOPC+YNKc
-         Y3Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIcWJa2JwperNbiQeChHv7jrOsDX8O9MgQmrJdI9b051Ci1lwLNxzimDk6Rw2QlPxlqHyFdxGT6tkQF9OgK+MI4Y1zHo7R3lOQDj4TPw==
-X-Gm-Message-State: AOJu0YxnVpElmnQEFNbFXqvWnBDiI8cIgh998y2i+yLDBkkH4U37xfO7
-	U9RCV7wm1bM1GeHouWLFK8bNa908EIbJDf/vObndoOxKbabnxDJzC9hx5DAABMNT0knU1rIKxKO
-	vRBwrYnaAZrYBTY1QQLYUSCDjNxh+/yLr5ysRNg==
-X-Google-Smtp-Source: AGHT+IHy9vEMpd5ryDhCr2qNIwpuQ3eni1u7LMwkl0/c3KSpoSzMmlX8V/S0jYfU9BwR9jOWmgDVsjfQsGejsR49dZw=
-X-Received: by 2002:a17:906:ae95:b0:a44:8f3a:794f with SMTP id
- md21-20020a170906ae9500b00a448f3a794fmr12076477ejb.42.1709820593816; Thu, 07
- Mar 2024 06:09:53 -0800 (PST)
+	s=arc-20240116; t=1709821878; c=relaxed/simple;
+	bh=BoCuQpnKvXZmgHfTbdIlDgZOctJUi4njjxRSp+4CH5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uGqIl3yr7+IWt1DEOeu9qZRzgggzbrGdPVNsXTsyzP5SHoMcUnVkb7aHoGlpksow2r0lUNbwsc6YM6of17o+JmCO7ieavRXPPo5Grx12tZO2IXM37QclyL8QT164n4JPmp68/8zauH5Dxt0Yi82UuFdlm/3n/tsA3KGaryrOp2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbC0xNQQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B15B7C433C7;
+	Thu,  7 Mar 2024 14:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709821877;
+	bh=BoCuQpnKvXZmgHfTbdIlDgZOctJUi4njjxRSp+4CH5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pbC0xNQQrGejHQ2bitaJqqjSkMc3ngNCgVrKc4lmct9ZugZ4DVuNDalUqhOcmAfoB
+	 6fb3JKk/IYaOyPrqxkA5sNEZYYIpkwxcT8jt1fbFlcadr4RyVWEI9mz0lih8Fp01Kd
+	 uZ6nzAfci7WUsMGdOgDiNZKFx4zD2j3t+FvGKStRleoiz5tPTH83HX5pxO6+P8CTtN
+	 0ujkoGBENcgy6n0Az2w3IC/eH0XBg3+MCgnpnVSsWwHPXBHZ3IAVDv8nm9/bdmBw6C
+	 /YawpO4sw+i+UQ8k7YDcO2dOMO4IJ/r10vfitQxgRLLcadLplEQujRsmwV+RBhqLVR
+	 oMu7jY1yZUVeA==
+Date: Thu, 7 Mar 2024 08:31:16 -0600
+From: Seth Forshee <sforshee@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>, stable@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] evm: Change vfs_getxattr() with __vfs_getxattr() in
+ evm_calc_hmac_or_hash()
+Message-ID: <ZenPtCfh6CyD2xz5@do-x1extreme>
+References: <20240307122240.3560688-1-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240307110217.203064-1-mszeredi@redhat.com> <20240307110217.203064-3-mszeredi@redhat.com>
- <CAOQ4uxh9sKB0XyKwzDt74MtaVcBGbZhVJMLZ3fyDTY-TUQo7VA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh9sKB0XyKwzDt74MtaVcBGbZhVJMLZ3fyDTY-TUQo7VA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 7 Mar 2024 15:09:42 +0100
-Message-ID: <CAJfpegsQrwuG7Cm=1WaMChUg_ZtBE9eK-jK1m_69THZEG3JkBQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] ovl: only lock readdir for accessing the cache
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240307122240.3560688-1-roberto.sassu@huaweicloud.com>
 
-On Thu, 7 Mar 2024 at 14:11, Amir Goldstein <amir73il@gmail.com> wrote:
+On Thu, Mar 07, 2024 at 01:22:39PM +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Use __vfs_getxattr() instead of vfs_getxattr(), in preparation for
+> deprecating using the vfs_ interfaces for retrieving fscaps.
+> 
+> __vfs_getxattr() is only used for debugging purposes, to check if kernel
+> space and user space see the same xattr value.
 
-> I did not see a cover letter, so I am assuming that the reason for this change
-> is to improve concurrent readdir.
+__vfs_getxattr() won't give you the value as seen by userspace though.
+Userspace goes through vfs_getxattr() -> xattr_getsecurity() ->
+cap_inode_getsecurity(), which does the conversion to the value
+userspace sees. __vfs_getxattr() just gives the raw disk data.
 
-That's a nice to have, but the real reason was just to get rid of the FIXME.
+I'm also currently working on changes to my fscaps series that will make
+it so that __vfs_getxattr() also cannot be used to read fscaps xattrs.
+I'll fix this and other code in EVM which will be broken by that change
+as part of the next version too.
 
-> If I am reading this correctly users can only iterate pure real dirs in parallel
-> but not merged and impure dirs. Right?
-
-Right.
-
-> Is there a reason why a specific cached readdir version cannot be iterated
-> in parallel?
-
-It could, but it would take more thought (ovl _cache_update() may
-modify a cache entry).
-
->
-> >
-> > Move lock/unlock to only protect the cache.  Exception is the refcount
-> > which now uses atomic ops.
-> >
-> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > ---
-> >  fs/overlayfs/readdir.c | 34 ++++++++++++++++++++--------------
-> >  1 file changed, 20 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> > index edee9f86f469..b98e0d17f40e 100644
-> > --- a/fs/overlayfs/readdir.c
-> > +++ b/fs/overlayfs/readdir.c
-> > @@ -245,8 +245,10 @@ static void ovl_cache_put(struct ovl_dir_file *od, struct inode *inode)
-> >         struct ovl_dir_cache *cache = od->cache;
-> >
-> >         if (refcount_dec_and_test(&cache->refcount)) {
->
-> What is stopping ovl_cache_get() to be called now, find a valid cache
-> and increment its refcount and use it while it is being freed?
->
-> Do we need refcount_inc_not_zero() in ovl_cache_get()?
-
-Yes.  But it would still be racy (winning ovl_cache_get() would set
-oi->cache, then losing ovl_cache_put() would reset it).  It would be a
-harmless race, but I find it ugly, so I'll just move the locking
-outside of the refcount_dec_and_test().  It's not a performance
-sensitive path.
-
-
->
-> > +               ovl_inode_lock(inode);
-> >                 if (ovl_dir_cache(inode) == cache)
-> >                         ovl_set_dir_cache(inode, NULL);
-> > +               ovl_inode_unlock(inode);
-> >
-> >                 ovl_cache_free(&cache->entries);
-> >                 kfree(cache);
->
-> P.S. A guard for ovl_inode_lock() would have been useful in this patch set,
-> but it's up to you if you want to define one and use it.
-
-Will look into it.
-
-Thanks for the review.
-
-Miklos
+> 
+> Cc: stable@vger.kernel.org # 5.14.x
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> Fixes: 907a399de7b0 ("evm: Check xattr size discrepancy between kernel and user")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/integrity/evm/evm_crypto.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index b1ffd4cc0b44..168d98c63513 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -278,8 +278,8 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+>  		if (size < 0)
+>  			continue;
+>  
+> -		user_space_size = vfs_getxattr(&nop_mnt_idmap, dentry,
+> -					       xattr->name, NULL, 0);
+> +		user_space_size = __vfs_getxattr(dentry, inode, xattr->name,
+> +						 NULL, 0);
+>  		if (user_space_size != size)
+>  			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
+>  				 dentry->d_name.name, xattr->name, size,
+> -- 
+> 2.34.1
+> 
 
