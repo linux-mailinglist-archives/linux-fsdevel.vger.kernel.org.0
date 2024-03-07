@@ -1,196 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-13900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053A9875434
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 17:34:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C552875445
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 17:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B35C328505A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 16:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2B21F22124
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 16:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A350F12F393;
-	Thu,  7 Mar 2024 16:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321B512FB26;
+	Thu,  7 Mar 2024 16:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M+V6DZGW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6vCzgPE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AB9347A2
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 16:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC83012F393;
+	Thu,  7 Mar 2024 16:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709829238; cv=none; b=OtcshJ7pXPJHaUn3rZUQUMzA3i/y19J6MIsjx/DnLDd6/yroX3CRsLC6OzSxHuj43qRlJAc3c+M1rvX+WW+Fxr2V5p5iuEqJ1dYwcEycLQL3VZSFQ5f4NIoa39M+B67uVUuj+IYFXiD19WxL2BsABJciosJNAU0qSNSrC+Xb+zA=
+	t=1709829448; cv=none; b=hmvvDPyC5ndn5yftEZ+Uy+gAbd6ke+L/KRzzxAZMSGvTtMy1v/9x2jZh0yiHm7VtF5+Nyg92BJt75ajSywa7YocnkPUa0xH370gERYKnblke0DBmFPcbrTeKyLt/sf220khyuIIE9kBkbklnZo/KJOylv85wpIkYYq6nksfdO4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709829238; c=relaxed/simple;
-	bh=X9Xq+n0wdkBc9af7pjBPYYWH/9rznF2thPgXbIY7C9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VtI1FavHC0E0n1OgvZ4pNiSq+w/kAqQodlIs01uapEcj+JRMtpw76VqXk/w0PDvLxqZKNagmLkuSvmwBWY97YdyVLr+FJsrajGw6EK7dHtRcnoCSAx9NH8zVbI8AOuiBBSjIPE/9ulPqJVl+NX/PF89HUq+fvR6j1hG6QKAjsIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M+V6DZGW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709829235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kOM2NiMGTSm9v68wD4LNA5KWs7+uOOVCGSM8emLa6Ts=;
-	b=M+V6DZGWWMJYU6Ai0prJqGu61ENN2gcR4qo5nwYRRy/kAYom/Te+NG+fcJK0N/VFLSKKsd
-	pHDpoKbGIibMbmb4erEm/TnVZyuMeLAoLk7GOVXt8rsVotlAJZyosvVUw04+kAXZYSRRyP
-	j/euQA6mTxIbChoppRTuQJFLPq5JemA=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-57-t4x3Xz7XO-ef3wZXCJ0J2g-1; Thu,
- 07 Mar 2024 11:33:52 -0500
-X-MC-Unique: t4x3Xz7XO-ef3wZXCJ0J2g-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DCFE81C54023;
-	Thu,  7 Mar 2024 16:33:51 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.32.76])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 676C236FF;
-	Thu,  7 Mar 2024 16:33:51 +0000 (UTC)
-From: Bill O'Donnell <bodonnel@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org,
-	sandeen@redhat.com,
-	Bill O'Donnell <bodonnel@redhat.com>
-Subject: [PATCH v2] minix: convert minix to use the new mount api
-Date: Thu,  7 Mar 2024 10:29:18 -0600
-Message-ID: <20240307163325.998723-1-bodonnel@redhat.com>
+	s=arc-20240116; t=1709829448; c=relaxed/simple;
+	bh=OHQtAzNP7NN1/bEJi+HrwemW4ZPqPBMods+fMhleOq8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SEl311TGeUZj8fHwGHsmMf+TrPsIzwc6aEsxoZXfEpi6VvUbI2uS2PXi1z1QVmV1FTTj5vv/QFwMiv9lgXOekQr60b1lguvWjVBwKQp9+lR47dCm8aSV98U7AX8Grd19hCL6+tK8TB4sLAqTYSCCZdXFb7AId08ck35CHXfHpJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6vCzgPE; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2d33986dbc0so11699801fa.2;
+        Thu, 07 Mar 2024 08:37:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709829445; x=1710434245; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wa8nE8b8SqGhZ4QI7aILjtKTfQn19EOeWHCgUsOwbGw=;
+        b=A6vCzgPEFgtJbEu9oBAVmPj/pT0CSLWmaZFKqjLyFJpML2SxRbMCtHL/hztyK+YMSH
+         2vK7VLcfiEV/g13+6M1aUyOqbsXns+KbkF0ZfNjrE9p3itu1s+1Mr2DWg+OABWxoK63U
+         7IHax2jHzkmxak8YJLIuR7c+SuKHv3Oq4kPNfAJDKRoNi4dcjz5TR+A9BRp2sXHoO7hL
+         hwslRuE8BVe4t5Lh04lJKqNF/gRrLN0+6sFLI1VGIuYBySXeZYxfg5AlBDCw+7FzUvoz
+         8ciZUEtnwgj2a8sIzaUM3/K+BR0ZcZaDZsfVGQU6hoG+VTwECo+Sdw/Xx+oePbclJa+1
+         aCdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709829445; x=1710434245;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wa8nE8b8SqGhZ4QI7aILjtKTfQn19EOeWHCgUsOwbGw=;
+        b=WG0x6d/kMDdtufe5Tj46FLsQXzXt2fPFh9ZNJ9Zw3i9ONk9xw7BBXrQlrG3TO5h+2E
+         Au5UW/+DC6NsxutgrWnz3cJ9Rwxdd1u5ti62helOU16hqleeUwmhujO/2KZ7aonUpxuo
+         yfOxu4pBsbd+C+SVDj1O0CVm5IgSJ7p828QLmjtCyNw7/2xM0NfFHalPC1Yf43aYQROD
+         E+vXmyQuEqCssdVwZNfJ9l3rRpCvz56wkfQkEf9hRjbHPRd4svssaSZinH4b5TzssrYZ
+         I1qBqSf69aGZB5UWym3hr9MLZ/qzcVTmX6LuiW2wCJz06oEV48ReEjT/SPRsKbFBrX4e
+         9uCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvrtXx+WKeZTC1ojRczNxroPzoKu9hHpAXqaWjRPFiDTvY/6jjVt524nj1p72fXeHXCq5Vu0PDUOp4gb1Yfvs471IIbbVz302mrvmLU33wt4FBDAybn7VyfMJHsFMJ0N/VKlDI9QxFU7U=
+X-Gm-Message-State: AOJu0YzQMUH0t7mSiwW4CW/kWDwIR/gR6NsW8xRMzGQRInlPehE54JHW
+	xGIC8DA9jeY3wrS6LFSRn/UnP9/0lGNFd4z3p2wQ3WGiNHwV8JclXuTLzAJSA8c4L9wj02gUFrB
+	RbEI9BJ3GE0pejIy9CCS/Usn/8wk=
+X-Google-Smtp-Source: AGHT+IGMWmggy9gl2hWKPZoIZmBitATbdUkOinib/daRk5QHwjzoxyiLosZnb+VyP2uYgps7e3EIF0J+yGEpNOc2u4k=
+X-Received: by 2002:a05:651c:1049:b0:2d2:4474:2e69 with SMTP id
+ x9-20020a05651c104900b002d244742e69mr1874237ljm.9.1709829444350; Thu, 07 Mar
+ 2024 08:37:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+References: <CAH2r5mutAn2G3eC7yRByF5YeCMokzo=Br0AdVRrre0AqRRmTEQ@mail.gmail.com>
+ <CAOQ4uxg8YbaYVU1ns5BMtbW8b0Wd8_k=eFWj7o36SkZ5Lokhpg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxg8YbaYVU1ns5BMtbW8b0Wd8_k=eFWj7o36SkZ5Lokhpg@mail.gmail.com>
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 7 Mar 2024 10:37:13 -0600
+Message-ID: <CAH2r5msvgB19yQsxJtTCeZN+1np3TGkSPnQvgu_C=VyyhT=_6Q@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] statx attributes
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: lsf-pc <lsf-pc@lists.linux-foundation.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	samba-technical <samba-technical@lists.samba.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>, 
+	Christian Brauner <brauner@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the minix filesystem to use the new mount API.
+> Which API is used in other OS to query the offline bit?
+> Do they use SMB specific API, as Windows does?
 
-Tested using mount and remount on minix device.
+No it is not smb specific - a local fs can also report this.  It is
+included in the attribute bits for files and directories, it also
+includes a few additional bits that are used by HSM software on local
+drives (e.g. FILE_ATTRIBUTE_PINNED when the file may not be taken
+offline by HSM software)
+ATTRIBUTE_HIDDEN
+ATTRIBUTE_SYSTEM
+ATTRIBUTE_DIRECTORY
+ATTRIGBUTE_ARCHIVE
+ATTRIBUTE_TEMPORARY
+ATTRIBUTE_SPARSE_FILE
+ATTRIBUTE_REPARE_POINT
+ATTRIBUTE_COMPRESSED
+ATTRIBUTE_NOT_CONTENT_INDEXED
+ATTRIBUTE_ENCRYPTED
+ATTRIBUTE_OFFLINE
 
-Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
----
+On Thu, Mar 7, 2024 at 2:54=E2=80=AFAM Amir Goldstein <amir73il@gmail.com> =
+wrote:
+>
+> On Thu, Mar 7, 2024 at 7:36=E2=80=AFAM Steve French <smfrench@gmail.com> =
+wrote:
+> >
+> > Following up on a discussion a few years ago about missing STATX
+> > attributes, I noticed a case recently where some tools on other OS
+> > have an option to skip offline files (e.g. the Windows equivalent of
+> > grep, "findstr", and some Mac tools also seem to do this).
+> >
+>
+> Which API is used in other OS to query the offline bit?
+> Do they use SMB specific API, as Windows does?
+>
+> > This reminded me that there are a few additional STATX attribute flags
+> > that could be helpful beyond the 8 that are currently defined (e.g.
+> > STATX_ATTR_COMPRESSED, STATX_ATTR_ENCRYPTED, STATX_ATTR_NO_DUMP,
+> > STATX_ATTR_VERITY) and that it be worthwhile revisiting which
+> > additional STATX attribute flags would be most useful.
+>
+> I agree that it would be interesting to talk about new STATX_ attributes,
+> but it should already be covered by this talk:
+> https://lore.kernel.org/linux-fsdevel/2uvhm6gweyl7iyyp2xpfryvcu2g3padagae=
+qcbiavjyiis6prl@yjm725bizncq/
+>
+> We have a recent example of what I see as a good process of
+> introducing new STATX_ attributes:
+> https://lore.kernel.org/linux-fsdevel/20240302220203.623614-1-kent.overst=
+reet@linux.dev/
+> 1. Kent needed stx_subvol_id for bcachefs, so he proposed a patch
+> 2. The minimum required bikeshedding on the name ;)
+> 3. Buy in by at least one other filesystem (btrfs)
+>
+> w.r.t attributes that only serve one filesystem, certainly a requirement =
+from
+> general purpose userspace tools will go a long way to help when introduci=
+ng
+> new attributes such as STATX_ATTR_OFFLINE, so if you get userspace
+> projects to request this functionality I think you should be good to go.
+>
+> >
+> > "offline" could be helpful for fuse and cifs.ko and probably multiple
+> > fs to be able to report,
+>
+> I am not sure why you think that "offline" will be useful to fuse?
+> Is there any other network fs that already has the concept of "offline"
+> attribute?
+>
+> > but there are likely other examples that could help various filesystems=
+.
+>
+> Maybe interesting for network fs that are integrated with fscache/netfs?
+> It may be useful for netfs to be able to raise the STATX_ATTR_OFFLINE
+> attribute for a certain cached file in some scenarios?
+>
+> As a developer of HSM API [1], where files on any fs could have an
+> "offline" status,
+> STATX_ATTR_OFFLINE is interesting to me, but only if local disk fs
+> will map it to
+> persistent inode flags.
+>
+> When I get to it, I may pick a victim local fs and write a patch for it.
+>
+> Thanks,
+> Amir.
+>
+> [1] https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-=
+Management-API
 
-v2: Remove unneeded minix_context struct and its allocation/freeing.
 
----
- fs/minix/inode.c | 48 ++++++++++++++++++++++++++++++------------------
- 1 file changed, 30 insertions(+), 18 deletions(-)
 
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index 73f37f298087..7b2b394a0799 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -20,11 +20,11 @@
- #include <linux/mpage.h>
- #include <linux/vfs.h>
- #include <linux/writeback.h>
-+#include <linux/fs_context.h>
- 
- static int minix_write_inode(struct inode *inode,
- 		struct writeback_control *wbc);
- static int minix_statfs(struct dentry *dentry, struct kstatfs *buf);
--static int minix_remount (struct super_block * sb, int * flags, char * data);
- 
- static void minix_evict_inode(struct inode *inode)
- {
-@@ -111,19 +111,19 @@ static const struct super_operations minix_sops = {
- 	.evict_inode	= minix_evict_inode,
- 	.put_super	= minix_put_super,
- 	.statfs		= minix_statfs,
--	.remount_fs	= minix_remount,
- };
- 
--static int minix_remount (struct super_block * sb, int * flags, char * data)
-+static int minix_reconfigure(struct fs_context *fc)
- {
--	struct minix_sb_info * sbi = minix_sb(sb);
- 	struct minix_super_block * ms;
-+	struct super_block *sb = fc->root->d_sb;
-+	struct minix_sb_info * sbi = sb->s_fs_info;
- 
- 	sync_filesystem(sb);
- 	ms = sbi->s_ms;
--	if ((bool)(*flags & SB_RDONLY) == sb_rdonly(sb))
-+	if ((bool)(fc->sb_flags & SB_RDONLY) == sb_rdonly(sb))
- 		return 0;
--	if (*flags & SB_RDONLY) {
-+	if (fc->sb_flags & SB_RDONLY) {
- 		if (ms->s_state & MINIX_VALID_FS ||
- 		    !(sbi->s_mount_state & MINIX_VALID_FS))
- 			return 0;
-@@ -170,7 +170,7 @@ static bool minix_check_superblock(struct super_block *sb)
- 	return true;
- }
- 
--static int minix_fill_super(struct super_block *s, void *data, int silent)
-+static int minix_fill_super(struct super_block *s, struct fs_context *fc)
- {
- 	struct buffer_head *bh;
- 	struct buffer_head **map;
-@@ -180,6 +180,7 @@ static int minix_fill_super(struct super_block *s, void *data, int silent)
- 	struct inode *root_inode;
- 	struct minix_sb_info *sbi;
- 	int ret = -EINVAL;
-+	int silent = fc->sb_flags & SB_SILENT;
- 
- 	sbi = kzalloc(sizeof(struct minix_sb_info), GFP_KERNEL);
- 	if (!sbi)
-@@ -371,6 +372,23 @@ static int minix_fill_super(struct super_block *s, void *data, int silent)
- 	return ret;
- }
- 
-+static int minix_get_tree(struct fs_context *fc)
-+{
-+	 return get_tree_bdev(fc, minix_fill_super);
-+}
-+
-+static const struct fs_context_operations minix_context_ops = {
-+	.get_tree	= minix_get_tree,
-+	.reconfigure	= minix_reconfigure,
-+};
-+
-+static int minix_init_fs_context(struct fs_context *fc)
-+{
-+	fc->ops = &minix_context_ops;
-+
-+	return 0;
-+}
-+
- static int minix_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
- 	struct super_block *sb = dentry->d_sb;
-@@ -680,18 +698,12 @@ void minix_truncate(struct inode * inode)
- 		V2_minix_truncate(inode);
- }
- 
--static struct dentry *minix_mount(struct file_system_type *fs_type,
--	int flags, const char *dev_name, void *data)
--{
--	return mount_bdev(fs_type, flags, dev_name, data, minix_fill_super);
--}
--
- static struct file_system_type minix_fs_type = {
--	.owner		= THIS_MODULE,
--	.name		= "minix",
--	.mount		= minix_mount,
--	.kill_sb	= kill_block_super,
--	.fs_flags	= FS_REQUIRES_DEV,
-+	.owner			= THIS_MODULE,
-+	.name			= "minix",
-+	.kill_sb		= kill_block_super,
-+	.fs_flags		= FS_REQUIRES_DEV,
-+	.init_fs_context	= minix_init_fs_context,
- };
- MODULE_ALIAS_FS("minix");
- 
--- 
-2.44.0
+--=20
+Thanks,
 
+Steve
 
