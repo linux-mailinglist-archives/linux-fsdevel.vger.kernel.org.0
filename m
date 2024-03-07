@@ -1,142 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-13887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3CC875204
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 15:37:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD53A875219
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 15:43:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B67AB2617F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 14:37:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDEA11C2287D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 14:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53D212BE97;
-	Thu,  7 Mar 2024 14:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2274082C60;
+	Thu,  7 Mar 2024 14:42:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72E941C65;
-	Thu,  7 Mar 2024 14:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E5A1B94D;
+	Thu,  7 Mar 2024 14:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709822205; cv=none; b=g7B2k/su1VDiRVUmy1+yzIa55goG7MeKx7TmEB8iFYpcmSrwdw2BKG85w3IV9vgxO+WXysoM9wPa2n9vegO1WNhNtzc1FrojK3t2is0PZNVXpWVrL+RSZNIsMEX7uGb1P0dmGguogzCsYmnvS3AnBlpNptBmDrQAm2xUkvdJyTA=
+	t=1709822576; cv=none; b=aRDVNX3o4agt4JmMBYLYAzj+MDpZqHQ8QoW++ZVF8wi9xBmDwAHmjSxQ4YBY8DpXFbs/ZynAswfbXA9N0XpeaUer6gLUJYPlZnkcL+uNK1LDZVM7tKF7KRlixeNaq8ZKpKxXC9+J8E+oE6wZ+1xCWfCI907c0l7xMXmlCGuEqDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709822205; c=relaxed/simple;
-	bh=fBgd/xX7Uh3OPchqwmFNdogp9X5rg4dHxjtoKMkjoqU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ehuXXjYUDTO6ExlxOwqnoxybXWhfB9uOBzfQogqlM8jreWd+CT1NA+3avsyHyv7r0k+pZY1hGdbcLCwzmvPahqpk25N8I7R8pIHrDKBV5KAdO6TdoPsW33yBBkRG7p5/DhqW8tutZkv1Vfmoc30o9s8q4a1HdZaAObGwnPqV9y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4TrBFK1KkJz9xFrK;
-	Thu,  7 Mar 2024 22:16:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 9CC6B14061B;
-	Thu,  7 Mar 2024 22:36:29 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDHvhfi0OllmZnkAw--.17428S2;
-	Thu, 07 Mar 2024 15:36:29 +0100 (CET)
-Message-ID: <5a08af42118541c87ce0b173d03217c3623adce2.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: Change vfs_getxattr() with __vfs_getxattr() in
- evm_calc_hmac_or_hash()
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Seth Forshee <sforshee@kernel.org>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com,  linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
- Roberto Sassu <roberto.sassu@huawei.com>,  stable@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Date: Thu, 07 Mar 2024 15:36:14 +0100
-In-Reply-To: <ZenPtCfh6CyD2xz5@do-x1extreme>
-References: <20240307122240.3560688-1-roberto.sassu@huaweicloud.com>
-	 <ZenPtCfh6CyD2xz5@do-x1extreme>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1709822576; c=relaxed/simple;
+	bh=Hriwqv1VafwSnAEQgWhG3BftPtOdGMoUT9XyeEe3nbQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=JPtZKRfQuQlJQbNPs930+AteCp/FadmERLyZHcNx4sHzxLiVPQ9BW8HyE8+VnkztBqh07Xv9j2zsLTG5XzZ9tjSIqm+oPCPCWtVs/m33UNDMbLiAHkarR5nnLCFPt04esQL4BWL7vfU50zIZAcdA8nFApxPojmUpsoAptRh2rb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id DAC1B644CE97;
+	Thu,  7 Mar 2024 15:42:50 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id CIhG1qGm-RNL; Thu,  7 Mar 2024 15:42:50 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 58EF0644CE96;
+	Thu,  7 Mar 2024 15:42:50 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 7EDauf2v-cth; Thu,  7 Mar 2024 15:42:50 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 1DE0A644CE90;
+	Thu,  7 Mar 2024 15:42:50 +0100 (CET)
+Date: Thu, 7 Mar 2024 15:42:49 +0100 (CET)
+From: Richard Weinberger <richard@nod.at>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
+	upstream+pagemap <upstream+pagemap@sigma-star.at>, 
+	adobriyan <adobriyan@gmail.com>, 
+	wangkefeng wang <wangkefeng.wang@huawei.com>, 
+	ryan roberts <ryan.roberts@arm.com>, hughd <hughd@google.com>, 
+	peterx <peterx@redhat.com>, avagin <avagin@google.com>, 
+	lstoakes <lstoakes@gmail.com>, vbabka <vbabka@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	usama anjum <usama.anjum@collabora.com>, 
+	Jonathan Corbet <corbet@lwn.net>
+Message-ID: <2055158015.23529.1709822569814.JavaMail.zimbra@nod.at>
+In-Reply-To: <a73c78be-8cdc-4f0e-b72f-e5255c906a5f@redhat.com>
+References: <20240306232339.29659-1-richard@nod.at> <d673247b-a67b-43e1-a947-18fdae5f0ea1@redhat.com> <1058679077.23275.1709809843605.JavaMail.zimbra@nod.at> <7d9321db-a3c1-4593-91fa-c7f97bd9eecd@redhat.com> <1525238492.23321.1709812267495.JavaMail.zimbra@nod.at> <0644814b-869b-4694-bdb1-bab4e6186136@redhat.com> <a73c78be-8cdc-4f0e-b72f-e5255c906a5f@redhat.com>
+Subject: Re: [PATCH 1/2] [RFC] proc: pagemap: Expose whether a PTE is
+ writable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDHvhfi0OllmZnkAw--.17428S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KrWkZFyrZryUuw43ZFy3twb_yoW8tr1fpF
-	WYkanrKrn5Jry5Cas5GF4DAayF93y5Xr4jkrsFv340v3ZrXrn7Zr93Wr13uryF9r1xtwn5
-	tw4qqFyYywnxA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBF1jj5cYAAAAs3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
+Thread-Topic: proc: pagemap: Expose whether a PTE is writable
+Thread-Index: ALtl01Wd8Zr0Arr/iwJcm8Sl/cTDKQ==
 
-On Thu, 2024-03-07 at 08:31 -0600, Seth Forshee wrote:
-> On Thu, Mar 07, 2024 at 01:22:39PM +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Use __vfs_getxattr() instead of vfs_getxattr(), in preparation for
-> > deprecating using the vfs_ interfaces for retrieving fscaps.
-> >=20
-> > __vfs_getxattr() is only used for debugging purposes, to check if kerne=
-l
-> > space and user space see the same xattr value.
+----- Urspr=C3=BCngliche Mail -----
+> Von: "David Hildenbrand" <david@redhat.com>
+>> One destructive way to find out in a writable mapping if the page would
+>> actually get remapped:
+>>=20
+>> a) Read the PFN of a virtual address using pagemap
+>> b) Write to the virtual address using /proc/pid/mem
+>> c) Read the PFN of a virtual address using pagemap to see if it changed
+>>=20
+>> If the application can be paused, you could read+write a single byte,
+>> turning it non-destructive.
+
+I'm not so sure whether this works well if a mapping is device memory or su=
+ch.
+=20
+>> But that would still "hide" the remap-writable-type faults.
+
+Xenomai will tell me anyway when there was a page fault while a real time t=
+hread
+had the CPU.
+My idea was having a tool to check before the applications enters the criti=
+cal phase.
+
+>>> I fully understand that my use case is a corner case and anything but m=
+ainline.
+>>> While developing my debug tool I thought that improving the pagemap int=
+erface
+>>> might help others too.
+>>=20
+>> I'm fine with this (can be a helpful debugging tool for some other cases
+>> as well, and IIRC we don't have another interface to introspect this),
+>> as long as we properly document the corner case that there could still
+>> be writefaults on some architectures when the page would not be
+>> accessed/dirty yet.
+
+Cool. :)
+=20
 >=20
-> __vfs_getxattr() won't give you the value as seen by userspace though.
-> Userspace goes through vfs_getxattr() -> xattr_getsecurity() ->
-> cap_inode_getsecurity(), which does the conversion to the value
-> userspace sees. __vfs_getxattr() just gives the raw disk data.
->=20
-> I'm also currently working on changes to my fscaps series that will make
-> it so that __vfs_getxattr() also cannot be used to read fscaps xattrs.
-> I'll fix this and other code in EVM which will be broken by that change
-> as part of the next version too.
+> [and I just recall, there are some other corner cases. For example,
+> pages in a shadow stack can be pte_write(), but they can only be written
+> by HW indirectly when modifying the stack, and ordinary write access
+> would still fault]
 
-You are right, thank you!
+Yeah, I noticed this while browsing through various pte_write() implementat=
+ions.
+That's a tradeoff I can live with.
 
-Roberto
-
-> >=20
-> > Cc: stable@vger.kernel.org # 5.14.x
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > Fixes: 907a399de7b0 ("evm: Check xattr size discrepancy between kernel =
-and user")
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/integrity/evm/evm_crypto.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/e=
-vm/evm_crypto.c
-> > index b1ffd4cc0b44..168d98c63513 100644
-> > --- a/security/integrity/evm/evm_crypto.c
-> > +++ b/security/integrity/evm/evm_crypto.c
-> > @@ -278,8 +278,8 @@ static int evm_calc_hmac_or_hash(struct dentry *den=
-try,
-> >  		if (size < 0)
-> >  			continue;
-> > =20
-> > -		user_space_size =3D vfs_getxattr(&nop_mnt_idmap, dentry,
-> > -					       xattr->name, NULL, 0);
-> > +		user_space_size =3D __vfs_getxattr(dentry, inode, xattr->name,
-> > +						 NULL, 0);
-> >  		if (user_space_size !=3D size)
-> >  			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n"=
-,
-> >  				 dentry->d_name.name, xattr->name, size,
-> > --=20
-> > 2.34.1
-> >=20
-
+Thanks,
+//richard
 
