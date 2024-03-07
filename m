@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-13867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E78874D2D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 12:15:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6DF874D47
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 12:20:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199A41C22CD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 11:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 337EEB22A2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 11:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76F0128390;
-	Thu,  7 Mar 2024 11:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E497EDDC9;
+	Thu,  7 Mar 2024 11:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U2XOefEo"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M5/6jdEp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967B686AC5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 11:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D572E128378
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 11:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709810146; cv=none; b=Zv6q3UjqSMwbdRku3aeQT/bx8EXI7k3YCZ4cyezqfin9dL/mtG1uM7Fpy1ak3QsI3Zi5alXRMsKZ3mokIctnXVBTIFxuPfVDYdGIZCHqE4yHXRCRzuvR1Lu6z2CNCM+RN+BuW+/Tvmuu8Yw+6nkolEC1oYMIsWmMzImBFfLq3gA=
+	t=1709810424; cv=none; b=urYIhR6YU1yZLUGnfziWQaRtrZWYJIO1ZSU30mab69Popzc4X8ejpIl8L7PtbCzb9NfryVHFXgMFhfZuHHvSeYEO9p40aug2wSjK7bjNnIjZLOjGv976eGPp1Pl1ZhNnSuaDB/VvuoPs5is2mn/I7XfOJCJ0U/JzFnlf5mSpKhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709810146; c=relaxed/simple;
-	bh=6EvlWT+S0R2V+54Ygt9FEE0KiWIaTf39AZarTMcYy8w=;
+	s=arc-20240116; t=1709810424; c=relaxed/simple;
+	bh=fJBOKVWu3kgpC3Rdw5yG6kODOEKg/+upYsBKSvbp+6I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YREN6rDcy1D6cVFMa5c01t4U+UY6LmMgJLX2xiPstMS/oM35EYIoWCrsNO+k77Sc6xZ/3uLBvVc1aNLcCcaM6iM5v7LWpvtCPJDCm1Kc64Lor/9jzZ6AdpLg7TUCvAJmSIdYvDrvf6eHgFgmcIL8mASnHrVpPib38Wx/khuBWK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U2XOefEo; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=HEmp9YMmKkerDmtDVm60tWq1wu+uHnPlr/6hEfKb+GdwDadU3psdoEGNrnt4P6jzTUHTX+6mHU0XGDZkkGkN8fpGLjxaO5Y+0NvHFCEN6g7f7HH/8RtnYTeIGBDBIfaCfPkbZKZ2NkzxKu1ItVwRyY/pbQhcxLTnXhm6W1H/6Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M5/6jdEp; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709810143;
+	s=mimecast20190719; t=1709810421;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3BsOQTb/Qz/4Q0ul9t6TVhJi7UErvuV0EjOwbLcAigo=;
-	b=U2XOefEoAJN36Maccq3KPYqj3za2iqGD5Jdqh+sqipLVoUX8qDLy0qpYTbCruwvpYauQo0
-	0tljCLjdv7e8VCXJPBcuS+dcqvy9l38T0aB+9gpIHrpbEmdsV/rh89KJiJ6R01CAYjNE4i
-	tYYY/wFSM2OFnT2PvWUyPeQGA0xTWPk=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=T3S+gBBiGC+cC9yPoPCyuB6+zTSWw3v8rgYOSL8U7bE=;
+	b=M5/6jdEpZsLqqGx+VmtfeQI3j11WaJZKtowbsJDL3BaBzBwx4BFZuUqu1zM72ke+47g45Z
+	WDY2WjEgFwpAedOIBLi150inoAilD/Xv+HPixYYpPyhwbuV06XrDoche0sDuFCJEXgY021
+	oW611QmkGvklgMk2w+b/bmo5vCfmfvo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-452-ldXc53vKMMmj3k3qXrDnmg-1; Thu, 07 Mar 2024 06:15:42 -0500
-X-MC-Unique: ldXc53vKMMmj3k3qXrDnmg-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-5135a84b942so847079e87.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Mar 2024 03:15:41 -0800 (PST)
+ us-mta-272-tqeXfnozP7uOkK95-T7IFw-1; Thu, 07 Mar 2024 06:20:20 -0500
+X-MC-Unique: tqeXfnozP7uOkK95-T7IFw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-412d433bba5so4543885e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Mar 2024 03:20:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709810140; x=1710414940;
+        d=1e100.net; s=20230601; t=1709810419; x=1710415219;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :references:cc:to:content-language:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3BsOQTb/Qz/4Q0ul9t6TVhJi7UErvuV0EjOwbLcAigo=;
-        b=IEUnAncnEc+Uqfd1zsR5mNHi+35Hs6ecxF9uEl/sOhPJUHzh9zmUMI9IHF+Lau1c6D
-         q3a4hCGNULSJBIQ6pdwqBpwYT1nzfHxgppdUshroL7ToSmNQxtkj8Q7Oknzi7+JEcTJW
-         2omrmQICLei6MUmeUnl9Y+ABmIbA4x9KYCpWa/To3diho9P55cAaIIrJQwwloXNXPmG4
-         RqvRYAAbS2NACVBXCEvlYKft2U13yHaD9q6G0ogQYaNTfNU5DUmruI+1Nzkx49ck0/M9
-         +lXtCxPmuO6v+q4VSQsMrYu5aFKmHe+OzIdOxg/r2KsQ431JRnnalZ7zWN73kybkUDiQ
-         o9kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZRa9ax4RhGi2JHHCE/OJ07okTSoxEr5jc9BLWeSFukq4Q+Gv3n579/0WKL+ZauSHQrqGjGZeqSQWmtBELkRVAWjiVp3AKoJFJ6SC6HA==
-X-Gm-Message-State: AOJu0Yy3Z3TfySJECgmQvBVOrA32Y/rWR4+pVKRgMZ48nlJkMpIp5ks2
-	wukNsAZx5rvuKC1keg3IRUjmmoitPbL7mXUbwDQcTHFUTphUMHvZO2pwbo6rwF5deEgoHtbX1AM
-	TrB5u7ftl9JslxXlL7pVgUJCHAlqrG2HmS2OHv54UPuJBi1MDV2/axOavWbTkUlo=
-X-Received: by 2002:a19:c218:0:b0:513:def:9c8a with SMTP id l24-20020a19c218000000b005130def9c8amr1031579lfc.69.1709810140656;
-        Thu, 07 Mar 2024 03:15:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGWiBMQvQsZXYkZpJ9/0SH18KKFWyY/LrnFAr8l9+dL5bmDLAOBPSjdoNpD0tQxR3Xgz6dK4g==
-X-Received: by 2002:a19:c218:0:b0:513:def:9c8a with SMTP id l24-20020a19c218000000b005130def9c8amr1031548lfc.69.1709810140173;
-        Thu, 07 Mar 2024 03:15:40 -0800 (PST)
+        bh=T3S+gBBiGC+cC9yPoPCyuB6+zTSWw3v8rgYOSL8U7bE=;
+        b=OCkpby7bETO5lEbeVzGOmL1Al6M72si7uziB/6d/5yfRHlUnQxO3Tzf//9OgEYFf5i
+         SrVPf/cvoX7ApAizrWUZ8Ot/VTN9eE3e4nI8bC7k8qhA0OW9MrO9wUPe0uBxdMNFDPpm
+         Oll+0ytmyvBcko4iDDV98SXKXZopuF8Bq9ZVjto4Q6KtBaICvgNGlCoKubAGHw/UYFu5
+         6hcw2sPtO03Bz+Vr9PiqiSRS2N9PrT+a5Ok0+3m+Nswn0aJR8ifIqM7CMyBUEhCSCH92
+         b9wQ02k9On7uifxHkb56bBKZrEVSW4pdYCe6oyUZLVrGPdwlv0arcVrilobZzDM2e1qc
+         XVRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmb+l1DrXr7x5OL8CxOKyVkfo5a2OUH6lexympwqUnw9fqHUhGZTaieXHNzrwcOJe0Fj5IhIehwsbhGBCDqix0dcJHoQDHw56la3iwlA==
+X-Gm-Message-State: AOJu0YwCJlXfN7LIQgBBiZDlygqwjLMfjtvD92baRdYa5db3uN1vljr/
+	gvGl6VzqW9T3PvIVPP2h0gwXDUKp94kQtckqrFSs2iudgdRDVIo1RxqEXZrQIhqZQgsl297vtZD
+	egQyMUJcTbV1PDYBJkpwfGxoUw5BszLXP+Jc2G39Uehdw5cDeJNai+kpwRfBct9E=
+X-Received: by 2002:a05:600c:34d4:b0:412:eddd:12ad with SMTP id d20-20020a05600c34d400b00412eddd12admr5559559wmq.33.1709810419386;
+        Thu, 07 Mar 2024 03:20:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH5DAdcAYEJic676KLzGOBvUMTYZ0gt2jHmHrLssTtgX9xQo7uLXszebrBAe+xRJuODn/1+lw==
+X-Received: by 2002:a05:600c:34d4:b0:412:eddd:12ad with SMTP id d20-20020a05600c34d400b00412eddd12admr5559532wmq.33.1709810418997;
+        Thu, 07 Mar 2024 03:20:18 -0800 (PST)
 Received: from ?IPV6:2003:cb:c74d:6400:4867:4ed0:9726:a0c9? (p200300cbc74d640048674ed09726a0c9.dip0.t-ipconnect.de. [2003:cb:c74d:6400:4867:4ed0:9726:a0c9])
-        by smtp.gmail.com with ESMTPSA id v12-20020a05600c470c00b00412b4dca795sm2376146wmo.7.2024.03.07.03.15.39
+        by smtp.gmail.com with ESMTPSA id r7-20020a05600c458700b0041312bdcd6fsm845702wmo.40.2024.03.07.03.20.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Mar 2024 03:15:39 -0800 (PST)
-Message-ID: <9ebc9faf-0bb0-4409-b93a-5beddfc4929b@redhat.com>
-Date: Thu, 7 Mar 2024 12:15:38 +0100
+        Thu, 07 Mar 2024 03:20:18 -0800 (PST)
+Message-ID: <7d9321db-a3c1-4593-91fa-c7f97bd9eecd@redhat.com>
+Date: Thu, 7 Mar 2024 12:20:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] [RFC] pagemap.rst: Document write bit
+Subject: Re: [PATCH 1/2] [RFC] proc: pagemap: Expose whether a PTE is writable
 Content-Language: en-US
 To: Richard Weinberger <richard@nod.at>
 Cc: linux-mm <linux-mm@kvack.org>,
@@ -97,9 +97,8 @@ Cc: linux-mm <linux-mm@kvack.org>,
  Andrew Morton <akpm@linux-foundation.org>,
  usama anjum <usama.anjum@collabora.com>, Jonathan Corbet <corbet@lwn.net>
 References: <20240306232339.29659-1-richard@nod.at>
- <20240306232339.29659-2-richard@nod.at>
- <db29666a-32b8-4bf6-ab13-7de3b09b0da1@redhat.com>
- <861682210.23281.1709809857201.JavaMail.zimbra@nod.at>
+ <d673247b-a67b-43e1-a947-18fdae5f0ea1@redhat.com>
+ <1058679077.23275.1709809843605.JavaMail.zimbra@nod.at>
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -146,33 +145,42 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <861682210.23281.1709809857201.JavaMail.zimbra@nod.at>
+In-Reply-To: <1058679077.23275.1709809843605.JavaMail.zimbra@nod.at>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 On 07.03.24 12:10, Richard Weinberger wrote:
 > ----- Ursprüngliche Mail -----
 >> Von: "David Hildenbrand" <david@redhat.com>
->> An: "richard" <richard@nod.at>, "linux-mm" <linux-mm@kvack.org>
->>> +   Bit 58 is useful to detect CoW mappings; however, it does not indicate
->>> +   whether the page mapping is writable or not. If an anonymous mapping is
->>> +   writable but the write bit is not set, it means that the next write access
->>> +   will cause a page fault, and copy-on-write will happen.
+>> But why is that required? What is the target use case? (I did not get
+>> the cover letter in my inbox)
 >>
->> That is not true.
+>> We're running slowly but steadily out of bits, so we better make wise
+>> decisions.
+>>
+>> Also, consider: Architectures where the dirty/access bit is not HW
+>> managed could indicate "writable" here although we *will* get a page
+>> fault to set the page dirty/accessed.
 > 
-> Can you please help me correct my obvious misunderstanding?
+> I'm currently investigating why a real-time application faces unexpected
+> page faults. Page faults are usually fatal for real-time work loads because
+> the latency constraints are no longer met.
 
-We'll perform a page copy of an anonymous page only if the page is not 
-detected as exclusive to the process.
+Are you concerned about any type of page fault, or are things like a 
+simple remapping of the same page from "read-only to writable" 
+acceptable? ("very minor fault")
 
-So a better description could be:
+> 
+> So, I wrote a small tool to inspect the memory mappings of a process to find
+> areas which are not correctly pre-faulted. While doing so I noticed that
+> there is currently no way to detect CoW mappings.
+> Exposing the writable property of a PTE seemed like a good start to me.
 
-"In an private mapping, having the writable bit clear can indicate that 
-next write access will result in copy-on-write during a page fault. Note 
-that exclusive anonymous pages can be mapped read-only, and they might 
-simply get remapped writable during the next write fault, avoiding a 
-page copy."
+Is it just about "detection" for debugging purposes or about "fixup" in 
+running applications?
+
+If it's the latter, MADV_POPULATE_WRITE might do what you want (in 
+writable mappings).
 
 -- 
 Cheers,
