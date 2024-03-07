@@ -1,124 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-13927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95AA88758CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 21:51:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1116B8758DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 21:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B69282336
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 20:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B461C213A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 20:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9C513A256;
-	Thu,  7 Mar 2024 20:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC43E13A865;
+	Thu,  7 Mar 2024 20:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KlgQVsJp"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TOvuaa/3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A8F20B38
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 20:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA2241C60;
+	Thu,  7 Mar 2024 20:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709844671; cv=none; b=fXHxOhsuid/agc3JanFMLSwzn0SrG7wY4a85xbT5yEx4J7F72wo3RfB5zBf0+R5qeI0ZyZII6qa8q+QVmrz3/Vgbq5YNhwy5KM7DemdGDgEwMNVoBq5w152taIvL9RUIbUU7EDhf3VMTGBaxW77a0IY2gC/v20kLccVU0XNY2XI=
+	t=1709844814; cv=none; b=SbthuC0hIbJk5ULBMM73nHqznkMageQiKXSgNG8B8we7RiUiJyyzqhu+zTmlQdl91/mCCmWAcOe0ck+vMPyPUGe7AFE+Y3DXD7ZUel3GNya5wUUXoAWdkZsvLw04WevsOHylRP/7N54c1gIFnqIpJX0xL8MNJB8/YXpyt5shmh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709844671; c=relaxed/simple;
-	bh=u7Y/NG8SjJXNGSItnstrI6/rukzMJzy+yekXdowwXGE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gyM8TTHbW4Idika9G3AqWbUjtyD0dqAVa9tGvWV54Ew/pUaIyApm2+L5Wb3N7NTsgTBE5E0q45u5YXZNgBfb4UcsleevBipaV+EgjithO4nalmVjgz5WAtLAYDzomX4g8ypQkvB6C7sMAbFN4YxDMrstRKrfpfbsE5e3F6jepzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KlgQVsJp; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-db4364ecd6aso235065276.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Mar 2024 12:51:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1709844669; x=1710449469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GiLNl3PvVRA0+tZJXmH2lrS7jOMXZFu6IHJfjoR5u/8=;
-        b=KlgQVsJpaoU/RRAD4ntJDOpRZq4I0H9yZRKehk5EIFzsJi7435yKBsEo6ehoqjYcgL
-         LBvSEc8St5whA7pQfQ+y0cf7HQHM/Hfye3R5KUaIcafBKCgN3UuG2L6rxsaPhwgI30Dp
-         DIDboKoZUORak3smo2f6raN15lSipugFP88Kid9cWOnPuGnyGH6U61tCk4XPIjqShWoG
-         MpigDuUfVf4GY1AZuDyea38jd24aP7oOM4AZoYCPXJzGXogcA8QXRHU7eha46QwbY9g/
-         MyD8g8WpzVkHlvdvCPI3dHG1K+IuVy81Ie/itxyaQLyD8+oHhXPIGG/A5+SPsDEA0KX7
-         HbtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709844669; x=1710449469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GiLNl3PvVRA0+tZJXmH2lrS7jOMXZFu6IHJfjoR5u/8=;
-        b=hrvJveOPjiOxmROqFy3EGi2o6dFWzAddWKWOeJm8jcuNAKnVEfs4xbv+JuFE6UqCAX
-         1h0XtkLtj9mf8NcPjmcZiZeRV29Pu8gFu1nMqlT9LxKsZEMsVd2Mb8WkpVgk5E1GKH1R
-         /942ULXrlYPoasf1YeTUb/GenkoUc3fYk6gSslcmIBZentBH5TrFh3OQRv4DLNHAKBlB
-         a06wvSYO1VDn32Z/lW9qTTDd9OzHLsYKOE5uTzPco2IQb8ij3NBD9hgNDwvNgV/60GLN
-         ZVeTL7B0a5NMfvx6Yh/GwfuAl8JEjn8a6IXjl9RZMi+TsJUdjfCbb0bJ3B08xzjzFitt
-         3fTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiw3MoL/JMllike49gHVStvJZAHTD2ubXJQPXRCVAJA/rwNMqZ6act8RmsaH7TJs1Bm6rMudAyjjbr1IogEBaO/nNKrzjNd3OuMJkDqA==
-X-Gm-Message-State: AOJu0YzNSlrfkl0z4qrK1WYr3Dim8j7MtkU7FOsmsGxbJD4UloGZYVwS
-	Ga1yZbz4KlN18VcVFISzjZXk20/GWq78MfPZA1BTWBpHEV+0wxdFytLnB6u5FbUOel3rDKYRtU2
-	Cz9Ej/UXflPLcTwkEnfrQZ0aZEoLG62wvFP7c
-X-Google-Smtp-Source: AGHT+IFdOq4811A1JsfV2pUrWH4aPW+V27XPXrThh32udqoQTvdjjnprX4glDvrh+sZ0krraTC9bWk2pOpSk01W6NV8=
-X-Received: by 2002:a5b:70a:0:b0:dcf:f525:2b81 with SMTP id
- g10-20020a5b070a000000b00dcff5252b81mr16864727ybq.46.1709844668892; Thu, 07
- Mar 2024 12:51:08 -0800 (PST)
+	s=arc-20240116; t=1709844814; c=relaxed/simple;
+	bh=zg0CO3XEyVe8+ghF9U9lAFrlk+J130/oBgEnLCNFpxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UMod/kNMMLh6EsPAzXly5odvvb2UQGA9+ucjiYucD+Bdb/kVIJSzQhF9AXx67L9jzFHK8xM+WoDQZs5uHKcM88ajEvUZjgt6n0UMfcRypr5tHLNY4yxawAHk55i8t9RkKsb2sV2ZJFnsTLIYYHIaz79xt82AJ7YkoDzGERiApew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TOvuaa/3; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=p08jq4TIBI4zazg51JnXnjGH5Lu+du6lZuf9B2Rz4QQ=; b=TOvuaa/3wlEt4HaASAp9xkKucG
+	+PY7MI+cX1hSmkmfFLvtR4JkMMdWfcVn8YtHQDGiMS3PJt7AA09NmwT0+GjU4w7EvTcYU989bq3lA
+	Sh6H3anq6UeJdG7s5+p9HZ3DirzhzdP4JpB9MphGl6IsZAH4dOfsdtbzZJkSRJLswWFYPpauuyfXA
+	Sfzyecd0rAcXOKsin/ZW2uEow+r/lYb/9BCfKH8o5Krry/ndFvOqVqSjHrnsABA9QpX6LO/lLNPn5
+	mwcOKE/wR1613yI+3HUvjJwhhHwu/dOn5jZGJybhQAfPSWpxxpf3MHsWmV/YP2TEMLCSl1X1YJmQp
+	aZy2ZdFg==;
+Received: from [50.53.50.0] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1riKjl-00000006Lv6-1biU;
+	Thu, 07 Mar 2024 20:53:09 +0000
+Message-ID: <25a03dba-8d6b-4072-beae-7ea477fccbcb@infradead.org>
+Date: Thu, 7 Mar 2024 12:53:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1709675979.git.mattbobrowski@google.com>
- <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
- <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com> <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
-In-Reply-To: <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 7 Mar 2024 15:50:58 -0500
-Message-ID: <CAHC9VhTbjzS88uU=7Pau7tzsYD+UW5=3TGw2qkqrA5a-GVunrQ@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, Jann Horn <jannh@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 37/37] memprofiling: Documentation
+Content-Language: en-US
+To: John Hubbard <jhubbard@nvidia.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+ mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+ roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+ willy@infradead.org, liam.howlett@oracle.com,
+ penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com,
+ peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+ david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+ nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
+ rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
+ yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+ hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+ ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
+ ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+ elver@google.com, dvyukov@google.com, shakeelb@google.com,
+ songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com,
+ rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+ kernel-team@android.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-modules@vger.kernel.org,
+ kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+References: <20240306182440.2003814-1-surenb@google.com>
+ <20240306182440.2003814-38-surenb@google.com>
+ <10a95079-86e4-41bf-8e82-e387936c437d@infradead.org>
+ <hsyclfp3ketwzkebjjrucpb56gmalixdgl6uld3oym3rvssyar@fmjlbpdkrczv>
+ <f12e83ef-5881-4df8-87ae-86f8ca5a6ab4@infradead.org>
+ <72bbe76c-fcf9-47c2-b583-63d5ad77b3c3@nvidia.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <72bbe76c-fcf9-47c2-b583-63d5ad77b3c3@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 7, 2024 at 4:55=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> There's one fundamental question here that we'll need an official answer =
-to:
->
-> Is it ok for an out-of-tree BPF LSM program, that nobody has ever seen
-> to request access to various helpers in the kernel?
 
-Phrased in a slightly different way, and a bit more generalized: do we
-treat out-of-tree BPF programs the same as we do with out-of-tree
-kernel modules?  I believe that's the real question, and if we answer
-that, we should also have our answer for the internal helper function
-question.
 
-> Because fundamentally this is what this patchset is asking to be done.
->
-> If the ZFS out-of-tree kernel module were to send us a similar patch
-> series asking us for a list of 9 functions that they'd like us to export
-> what would the answer to that be? It would be "no" - on principle alone.
->
-> So what is different between an out-of-tree BPF LSM program that no one
-> even has ever seen and an out-of-tree kernel module that one can at
-> least look at in Github? Why should we reject requests from the latter
-> but are supposed to accept requests from the former?
->
-> If we say yes to the BPF LSM program requests we would have to say yes
-> to ZFS as well.
+On 3/7/24 12:15, John Hubbard wrote:
+> On 3/7/24 12:03, Randy Dunlap wrote:
+>> On 3/7/24 10:17, Kent Overstreet wrote:
+>>> On Wed, Mar 06, 2024 at 07:18:57PM -0800, Randy Dunlap wrote:
+> ...
+>>>>> +- i.e. iterating over them to print them in debugfs/procfs.
+>>>>
+>>>>    i.e., iterating
+>>>
+>>> i.e. latin id est, that is: grammatically my version is fine
+>>>
+>>
+>> Some of my web search hits say that a comma is required after "i.e.".
+>> At least one of them says that it is optional.
+>> And one says that it is not required in British English.
+>>
+>> But writing it with "that is":
+>>
+>>
+>> hence code tagging) and then finding and operating on them at runtime
+>> - that is iterating over them to print them in debugfs/procfs.
+>>
+>> is not good IMO. But it's your document.
+>>
+> 
+> Technical writing often benefits from a small amount redundancy. Short
+> sentences and repetition of terms are helpful to most readers. And this
+> also stays out of the more advanced grammatical constructs, as a side
+> effect.
+> 
+> So, for example, something *approximately* like this, see what you
+> think:
+> 
+> Memory allocation profiling is based upon code tagging. Code tagging is
+> a library for declaring static structs (typically by associating a file
+> and line number with a descriptive string), and then finding and
+> operating on those structs at runtime. Memory allocation profiling's
+> runtime operation is simply: print the structs via debugfs/procfs.
 
---=20
-paul-moore.com
+Works for me.  Thanks.
+
+-- 
+#Randy
 
