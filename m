@@ -1,126 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-13918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9828757C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 20:59:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DEE38757CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 21:02:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1FA9B25717
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 19:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE760285FB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 20:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2040C137C52;
-	Thu,  7 Mar 2024 19:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F9B13790D;
+	Thu,  7 Mar 2024 20:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f3WrWocD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCrstuBN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C35512DDB6;
-	Thu,  7 Mar 2024 19:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBC11369BB;
+	Thu,  7 Mar 2024 20:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709841557; cv=none; b=RzzNJ4ziSd3TND7sBxkvxCecHfzLqr1PJwJAIg4YcrcC4sxNY7IQgKbamJ61UI1F/3qziEKSkyh91y2hUHYUmUTFSYu/ktvXk24JQyVYkODyZKCli9M2FBvB9Ba3fckcdRpWBP8O3+xCrCyYBlSWUbKHGzsyypB8IrDMkCRLceQ=
+	t=1709841710; cv=none; b=c71zHSjbB2L0f7cCV45sua/Hdo8Kst3sICzqAte9GHUaXV7mEmCIStc9beLMs52kj01voChPshVB1DARdKisb5jGYFCEGJUnOm3nMsp6GY8zE29Q8TILMgCl9yMe0CzUL//Kqrq45i+VH7OZZBJCu2kLsCQY1hjM3rMxFJ+X6uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709841557; c=relaxed/simple;
-	bh=eH7ts0q5onZGbRT1w1B9IvPr7bH0ysYwVmxguJ8VLyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AIfnk2ezrTX/jOYQ1dH83HvGL7Yc/c2ZtErIdSx1tyi4tsEmKY4E/b/W5nNEE9WuJJykLfZ7UKYX0A3s1G2CbC/Y1FmsVR0Qql8ZUplgoQWCqFH+MQqXE0LNkT7zTAYeFrVEqZ4OpMXePD5PQDxPkSh6AGS/9EI3bdZGiONlYIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f3WrWocD; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=KVaCyMJy+vYOeUyoSR5Mk9pa+MCPgO2uUL4D5SXL/4U=; b=f3WrWocD0YgDteVxzjrU8D0SOL
-	i6nsddeuB7BsTF/6Bk57YSNGFwHs5xN7nLFK/8A0vEldbFtlRrqHlHBwZXKMbZ/V+lRULmFaGKkP2
-	KmcmYY8ln1CsCtQzN+HNZBkzqQPvRHsl85eew0Cw+l1z7z8R+S0q+3mlnKAIzYdGPXeatqeje8nqo
-	qqxpITt1bjw+UbEfM/hpcJ0+04WQ+YwWc0ItpZUX31hvtv3ihrmMw8UhN2jOiHLs/2uCP9xQpbGGV
-	S31FHRUrFmwa1Qfe20oJaHcxYNP0lu42D9hN2gPZQGm4p5MY87QkeTQhqi1x2geuN6lbb+dW5nC9v
-	APJHYROA==;
-Received: from [50.53.50.0] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1riJtE-00000006Axx-2mZO;
-	Thu, 07 Mar 2024 19:58:52 +0000
-Message-ID: <299be3c9-4cf4-47ce-b53a-c9789af4f5ca@infradead.org>
-Date: Thu, 7 Mar 2024 11:58:49 -0800
+	s=arc-20240116; t=1709841710; c=relaxed/simple;
+	bh=hm84kKA+agsubOGm1+LlamcrcgNE0elQViO53M8e5vw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=megXHU0GLHsterQs3VHfm6Lc6YUOChqjyANH5g2XcSbLOTICbL5+w2rW0BkTd6Q//sZjhGKGgiglK/N3pCvCO3RyjSCimFT1SE5LrMWeyqBGH8r0XQJeGmmFWHmUr/oS2i6IgOkM8YE55v6oJMXm/NFHel2ToEeq0c54gqigE9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCrstuBN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC2E6C433F1;
+	Thu,  7 Mar 2024 20:01:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709841709;
+	bh=hm84kKA+agsubOGm1+LlamcrcgNE0elQViO53M8e5vw=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=nCrstuBNWGMyRdB5B1+AtiMquqTfz78AvfEfXy/Koy972kXN2U+kiun022JTjIW+Q
+	 I+Kvk9NNKcXq0jvNIaRJeBi0Rk1+y7YCSmv+5RhjmuGrPZDSZz7wDp2g0fYtvwS0gm
+	 URcMLyL3ypMC1bLDiCMdeG7TNW6nAi6KA7wvAtwfUXLnV4vhsp6JLXEiKp5STtodkb
+	 XtsbrEdh5FkFp+2d15RTRyRUMMBezn+z5Dh+51934xKArsgW0evGf/XGeD6K/JMKIY
+	 ECgYrlHl1dDovWyPlk1m64eGGiy1nMc8JaMccUrwKpDdZc6TohOvjNTwNb68RAtJlO
+	 c3RIlOLQxNXfg==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 37/37] memprofiling: Documentation
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
- vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
- mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
- liam.howlett@oracle.com, penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net,
- void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
- catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de,
- mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
- peterx@redhat.com, david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
- masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
- jhubbard@nvidia.com, tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
- paulmck@kernel.org, pasha.tatashin@soleen.com, yosryahmed@google.com,
- yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
- andreyknvl@gmail.com, keescook@chromium.org, ndesaulniers@google.com,
- vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com,
- ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
- vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
- elver@google.com, dvyukov@google.com, shakeelb@google.com,
- songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com,
- rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
- kernel-team@android.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-modules@vger.kernel.org,
- kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-References: <20240306182440.2003814-1-surenb@google.com>
- <20240306182440.2003814-38-surenb@google.com>
- <10a95079-86e4-41bf-8e82-e387936c437d@infradead.org>
- <CAJuCfpFN3BLsFOWB0huA==LVa2pNYdnf7bT_VXgDtPuJOxvWSQ@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <CAJuCfpFN3BLsFOWB0huA==LVa2pNYdnf7bT_VXgDtPuJOxvWSQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Thu, 07 Mar 2024 22:01:46 +0200
+Message-Id: <CZNSASBASJBK.R8MZW6X5VKMF@kernel.org>
+Cc: "Seth Forshee" <sforshee@kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] xattr: restrict vfs_getxattr_alloc() allocation size
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Christian Brauner" <brauner@kernel.org>,
+ <linux-fsdevel@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240305-effekt-luftzug-51913178f6cd@brauner>
+In-Reply-To: <20240305-effekt-luftzug-51913178f6cd@brauner>
 
+On Tue Mar 5, 2024 at 2:27 PM EET, Christian Brauner wrote:
+> The vfs_getxattr_alloc() interface is a special-purpose in-kernel api
+> that does a racy query-size+allocate-buffer+retrieve-data. It is used by
+> EVM, IMA, and fscaps to retrieve xattrs. Recently, we've seen issues
+> where 9p returned values that amount to allocating about 8000GB worth of
+> memory (cf. [1]). That's now fixed in 9p. But vfs_getxattr_alloc() has
+> no reason to allow getting xattr values that are larger than
+> XATTR_MAX_SIZE as that's the limit we use for setting and getting xattr
+> values and nothing currently goes beyond that limit afaict. Let it check
+> for that and reject requests that are larger than that.
+>
+> Link: https://lore.kernel.org/r/ZeXcQmHWcYvfCR93@do-x1extreme [1]
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/xattr.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 09d927603433..a53c930e3018 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -395,6 +395,9 @@ vfs_getxattr_alloc(struct mnt_idmap *idmap, struct de=
+ntry *dentry,
+>  	if (error < 0)
+>  		return error;
+> =20
+> +	if (error > XATTR_SIZE_MAX)
+> +		return -E2BIG;
+> +
+>  	if (!value || (error > xattr_size)) {
+>  		value =3D krealloc(*xattr_value, error + 1, flags);
+>  		if (!value)
 
+I wonder if this should even categorized as a bug fix and get
+backported. Good catch!
 
-On 3/7/24 08:51, Suren Baghdasaryan wrote:
-> On Thu, Mar 7, 2024 at 3:19 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> Hi,
->> This includes some editing suggestions and some doc build fixes.
->>
->>
-
-[snip]
-
->>
->>
->> Finally, there are a number of documentation build warnings in this patch.
->> I'm no ReST expert, but the attached patch fixes them for me.
-> 
-> Thanks Randy! I'll use your cleaned-up patch in the next submission.
-> Cheers,
-> Suren.
-
-Hi Suren,
-
-The patch did not include the grammar/punctuation changes, only the
-doc build changes.
-
-I can make a more complete patch if you like.
-
-thanks.
--- 
-#Randy
+BR, Jarkko
 
