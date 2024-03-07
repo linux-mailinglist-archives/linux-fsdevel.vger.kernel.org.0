@@ -1,141 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-13922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288178757DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 21:04:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979AE8757F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 21:09:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B2571C2186B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 20:04:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38B021F24AAD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 20:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6A51384A3;
-	Thu,  7 Mar 2024 20:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0zkhqM1U"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C23F13848C;
+	Thu,  7 Mar 2024 20:09:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1124A137C30;
-	Thu,  7 Mar 2024 20:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D131DA2F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 20:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709841855; cv=none; b=XMXX64AaHB8IhzwSiiBB1smFg1dNTvG7OnbD3vn3lY8+dB4tjclk2WZ1bzFhAiO8DA8JyR+jFb/FYiYqcucJvfgm8Tt8dp0Ml4g+XjubAaQbibpxtPh9V3rqN03rUM9RveHC/bvy8LReaO/7/zz+D45CMvnGq00TPMjQxfvExyk=
+	t=1709842144; cv=none; b=JZMYXukGHclk7stqTPdLSCRLCeuiLRG18OBf++PQDNg0AKjSLbnQb/UeTsmtVEDpSbMMJk6BB/SCwpgTC53P+WqKr7xXyBaGxXlO8HUviiyZPsS3JTBr2Wd2+dFxn33gxC4NGpNrvAk84hP5t05vFTvmWr7mJhgTrXU/9rn0CIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709841855; c=relaxed/simple;
-	bh=vmRA2zcTbEgN+gj7Iuf2t5fF5GJ0XZBhzsF7y/RhPJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fcKk0gKrBFktdiT7flm0sZ1e8sILoYABkfzK8qyM5oPjVjaRK4oShQluHCeyv63qpjSSn74PIE7AKYexJ54kvHsjxgDFLb72JDxxnWLHJumoddWsEAgKPRfBzGGXxPIwPhjq2BHhVn/ytWrbQA9vWIsf0u35iXnwUyDVSCqWZs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0zkhqM1U; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=SaP0wPXWBZG8b4HRDLlDNgk7gu+I9jcLT+KulgNLYzI=; b=0zkhqM1U6lVsrsNgtBsY5dv5rV
-	5XFxT2KzYbBohyMSuNEnlsTGejAHaJ2Y8Q5EIo8a1wmbaRR0LftydJAduTmr2VDL8PrMmdfKywY34
-	8m1RdoJUV/YH1zIcV+oQmCIlX75qb5v+Opa6Bt18zBVclIzpeY1VGlCP6klouMKDPt+szWBj200Ld
-	DQMR2+GGfFPE1qqgWcW752+i3BXsIMjRqdnA9UAVZaG0a5RfV6HXnymi7FNNauMDAFUgCWzDBRV+7
-	1QPdn9xnz4uNv6GI4ouUzmO/HM/OpkYYY9UfN7oh3ZddPqZnujSncFTGSGKkCku8AAHci6MpRYJwn
-	KFcmoSgQ==;
-Received: from [50.53.50.0] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1riJy9-00000006C66-0IYm;
-	Thu, 07 Mar 2024 20:03:57 +0000
-Message-ID: <f12e83ef-5881-4df8-87ae-86f8ca5a6ab4@infradead.org>
-Date: Thu, 7 Mar 2024 12:03:54 -0800
+	s=arc-20240116; t=1709842144; c=relaxed/simple;
+	bh=TSQ7AfrXLucKWQheLsgzlE+z8sjF6wEGYB6N+5YuKCA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QYgo8NTVHwHVamG0XSCHP9hlli3eHK5+rQ/sW2E3QAgvS/H4fdaDAV/3o/47UbBmlTP0GAixF2rLiO7d1tsR2KixGUMzLrCHjn9u215uwmnQ57KrcJ/jnIra6MQ5Gp0+IAkXwkW6qG8NpBaahOG+lLdXPCmIt7NHJJZXNtxLdOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c835b36ee2so12375639f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Mar 2024 12:09:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709842142; x=1710446942;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zPnadW8PWoeFYDGj+Rcds2yWxUTI+tugiFM477DcjnU=;
+        b=o9mLKw4GA1SUkmNQK8FDppo8DcNb/un6YS5a8fjX7nphqLgABJ1t+z1ztfoN5pdwcN
+         tXMINxYQRcfnrSExR4KxjNvmuRvoxyRESnMTB4j2LlWVsPmHWFKubKpZ+qipkUh5d+xU
+         hAWAzfVelJ2Sgsr32z7uZfl7Wx1xW5gajfNZfYMMjY/9Mjq23+I7X6B69yjt/ucPlz8c
+         z9SLFTVSe5ETDZiGgZPvI1IQm4YDgEbHYLOek6HRij7QUUOOY/DV4zRE5vZIehIjrvja
+         AOY0aOIPNvzuA81EGHeDmXdnPd1IPEnRsNHYclhYrcdqxfetwzp7Oup0WHTRz1dTJbUi
+         n+MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDrNwqRvrWtVr07biqE9YOHBSFphd8JdtLK7jYZDJ6DNAaPbUQLJbDC5vO8Kiq07FTHGaZb0XT33GaLOThkkm96sHzkrXNNkHyd58tHA==
+X-Gm-Message-State: AOJu0Yy9IoopeNaEWPXjD5DYZilpBOJ9HnU891UBJAlg5JUznwfzIhRH
+	l7wp0Wl3UlOt+J/1VNcz+WGbXIfHmA/ylVOWeMuCqOpHevgljqWLMm8MCj8Ui+zI0agwnvhRKer
+	qvHLvfYyWlXscmDzKLHKN+XzK/uwWRaC2UWdLEIddChAkHdTvNUqCI8A=
+X-Google-Smtp-Source: AGHT+IHf0A1bbJbf40iM9gk/Vn5lgktnauIGxNzkggiI77z84bps/c8Vlpz+R4jEIRrBIDzEioemWGSOafctG0M9EBFR/8AFCv2Q
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 37/37] memprofiling: Documentation
-Content-Language: en-US
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
- mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
- roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
- willy@infradead.org, liam.howlett@oracle.com,
- penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com,
- peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
- david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
- nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com, tj@kernel.org,
- muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
- pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com,
- dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com,
- keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com,
- gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
- penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
- glider@google.com, elver@google.com, dvyukov@google.com,
- shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
- aliceryhl@google.com, rientjes@google.com, minchan@google.com,
- kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-modules@vger.kernel.org,
- kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-References: <20240306182440.2003814-1-surenb@google.com>
- <20240306182440.2003814-38-surenb@google.com>
- <10a95079-86e4-41bf-8e82-e387936c437d@infradead.org>
- <hsyclfp3ketwzkebjjrucpb56gmalixdgl6uld3oym3rvssyar@fmjlbpdkrczv>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <hsyclfp3ketwzkebjjrucpb56gmalixdgl6uld3oym3rvssyar@fmjlbpdkrczv>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:cd8e:0:b0:363:de50:f7b5 with SMTP id
+ r14-20020a92cd8e000000b00363de50f7b5mr794885ilb.2.1709842141829; Thu, 07 Mar
+ 2024 12:09:01 -0800 (PST)
+Date: Thu, 07 Mar 2024 12:09:01 -0800
+In-Reply-To: <000000000000aa9b7405f261a574@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007c7392061317a56f@google.com>
+Subject: Re: [syzbot] [hfs?] INFO: task hung in hfs_mdb_commit
+From: syzbot <syzbot+4fec87c399346da35903@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, kch@nvidia.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	martin.petersen@oracle.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot suspects this issue was fixed by commit:
 
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-On 3/7/24 10:17, Kent Overstreet wrote:
-> On Wed, Mar 06, 2024 at 07:18:57PM -0800, Randy Dunlap wrote:
->> Hi,
->> This includes some editing suggestions and some doc build fixes.
->>
->>
+    fs: Block writes to mounted block devices
 
-[snip]
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=126c98ea180000
+start commit:   7475e51b8796 Merge tag 'net-6.7-rc2' of git://git.kernel.o..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d05dd66e2eb2c872
+dashboard link: https://syzkaller.appspot.com/bug?extid=4fec87c399346da35903
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1286c3c0e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=121cc388e80000
 
->>> +===================
->>> +Theory of operation
->>> +===================
->>> +
->>> +Memory allocation profiling builds off of code tagging, which is a library for
->>> +declaring static structs (that typcially describe a file and line number in
->>
->>                                   typically
->>
->>> +some way, hence code tagging) and then finding and operating on them at runtime
->>
->>                                                                         at runtime,
->>
->>> +- i.e. iterating over them to print them in debugfs/procfs.
->>
->>   i.e., iterating
-> 
-> i.e. latin id est, that is: grammatically my version is fine
-> 
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Some of my web search hits say that a comma is required after "i.e.".
-At least one of them says that it is optional.
-And one says that it is not required in British English.
+#syz fix: fs: Block writes to mounted block devices
 
-But writing it with "that is":
-
-
-hence code tagging) and then finding and operating on them at runtime
-- that is iterating over them to print them in debugfs/procfs.
-
-is not good IMO. But it's your document.
-
-
--- 
-#Randy
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
