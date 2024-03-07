@@ -1,143 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-13928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1116B8758DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 21:53:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57EF1875906
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 22:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B461C213A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 20:53:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54A94B210DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 21:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC43E13A865;
-	Thu,  7 Mar 2024 20:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBF313A268;
+	Thu,  7 Mar 2024 21:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TOvuaa/3"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VNYrZdkd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA2241C60;
-	Thu,  7 Mar 2024 20:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34ED41C60
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 21:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709844814; cv=none; b=SbthuC0hIbJk5ULBMM73nHqznkMageQiKXSgNG8B8we7RiUiJyyzqhu+zTmlQdl91/mCCmWAcOe0ck+vMPyPUGe7AFE+Y3DXD7ZUel3GNya5wUUXoAWdkZsvLw04WevsOHylRP/7N54c1gIFnqIpJX0xL8MNJB8/YXpyt5shmh0=
+	t=1709845684; cv=none; b=g3MFzEt43yVXU4wH3CkRlYGObqTGI+nGOqd3QZT+aUhMsOYm63BMZiTf/7D0KVQFWOEeQ6gtRueLTjc3zhuzwpdwR1IX6eGkgfEBtAZSkMRWpMzppYe1CMiSK4MpldJolSkHRdpY2KRWukGBY4+VEvg86Rlv9qvE8xsSLMr2ufE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709844814; c=relaxed/simple;
-	bh=zg0CO3XEyVe8+ghF9U9lAFrlk+J130/oBgEnLCNFpxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UMod/kNMMLh6EsPAzXly5odvvb2UQGA9+ucjiYucD+Bdb/kVIJSzQhF9AXx67L9jzFHK8xM+WoDQZs5uHKcM88ajEvUZjgt6n0UMfcRypr5tHLNY4yxawAHk55i8t9RkKsb2sV2ZJFnsTLIYYHIaz79xt82AJ7YkoDzGERiApew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TOvuaa/3; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=p08jq4TIBI4zazg51JnXnjGH5Lu+du6lZuf9B2Rz4QQ=; b=TOvuaa/3wlEt4HaASAp9xkKucG
-	+PY7MI+cX1hSmkmfFLvtR4JkMMdWfcVn8YtHQDGiMS3PJt7AA09NmwT0+GjU4w7EvTcYU989bq3lA
-	Sh6H3anq6UeJdG7s5+p9HZ3DirzhzdP4JpB9MphGl6IsZAH4dOfsdtbzZJkSRJLswWFYPpauuyfXA
-	Sfzyecd0rAcXOKsin/ZW2uEow+r/lYb/9BCfKH8o5Krry/ndFvOqVqSjHrnsABA9QpX6LO/lLNPn5
-	mwcOKE/wR1613yI+3HUvjJwhhHwu/dOn5jZGJybhQAfPSWpxxpf3MHsWmV/YP2TEMLCSl1X1YJmQp
-	aZy2ZdFg==;
-Received: from [50.53.50.0] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1riKjl-00000006Lv6-1biU;
-	Thu, 07 Mar 2024 20:53:09 +0000
-Message-ID: <25a03dba-8d6b-4072-beae-7ea477fccbcb@infradead.org>
-Date: Thu, 7 Mar 2024 12:53:06 -0800
+	s=arc-20240116; t=1709845684; c=relaxed/simple;
+	bh=1XEhhXER+l2py7E9A6l7j6RxKar9kt1AO4R3/fLlEHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TTa45kPp97VdKBWIYlKMOe8A9Bpnnor1yHExAkR8vtRII6ra0W2ivfU+3Q/QrXRuRrA/vxgyfKJ5PyIWV+75JyhlFb8XRBa80n//DR8q6TtK18Psg5HMbjv7N/Vlcc3JnqMQ6DI2+8t/dbUttBpzirO4glslag1t8X9hHh1S2Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VNYrZdkd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB008C433C7;
+	Thu,  7 Mar 2024 21:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1709845683;
+	bh=1XEhhXER+l2py7E9A6l7j6RxKar9kt1AO4R3/fLlEHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VNYrZdkduKoulmjgYXcPd7zXB0lUZ5TVAqK1ATS9r3Ou+zpw1c0OY7/3aYOdaxzJY
+	 KStYLhFboE28UNu3vCGWVkGcB6pxZJgDDuiCGmn2FWNzgm3EQUbpo7aEuVRLQ+yN5Z
+	 eqlJs51D37hLm4riz2yjDo2Fd3sqSEnpllC9gd04=
+Date: Thu, 7 Mar 2024 21:08:00 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Timur Tabi <ttabi@nvidia.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Michael Ellerman <michael@ellerman.id.au>, david@fromorbit.com,
+	djwong@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] [v2] debufgs: debugfs_create_blob can set the file size
+Message-ID: <2024030748-enclose-breeding-4473@gregkh>
+References: <20240207224607.3451276-1-ttabi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 37/37] memprofiling: Documentation
-Content-Language: en-US
-To: John Hubbard <jhubbard@nvidia.com>,
- Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
- mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
- roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
- willy@infradead.org, liam.howlett@oracle.com,
- penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com,
- peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
- david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
- nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
- rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
- yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
- hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
- ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
- ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
- elver@google.com, dvyukov@google.com, shakeelb@google.com,
- songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com,
- rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
- kernel-team@android.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-modules@vger.kernel.org,
- kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-References: <20240306182440.2003814-1-surenb@google.com>
- <20240306182440.2003814-38-surenb@google.com>
- <10a95079-86e4-41bf-8e82-e387936c437d@infradead.org>
- <hsyclfp3ketwzkebjjrucpb56gmalixdgl6uld3oym3rvssyar@fmjlbpdkrczv>
- <f12e83ef-5881-4df8-87ae-86f8ca5a6ab4@infradead.org>
- <72bbe76c-fcf9-47c2-b583-63d5ad77b3c3@nvidia.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <72bbe76c-fcf9-47c2-b583-63d5ad77b3c3@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240207224607.3451276-1-ttabi@nvidia.com>
 
-
-
-On 3/7/24 12:15, John Hubbard wrote:
-> On 3/7/24 12:03, Randy Dunlap wrote:
->> On 3/7/24 10:17, Kent Overstreet wrote:
->>> On Wed, Mar 06, 2024 at 07:18:57PM -0800, Randy Dunlap wrote:
-> ...
->>>>> +- i.e. iterating over them to print them in debugfs/procfs.
->>>>
->>>>    i.e., iterating
->>>
->>> i.e. latin id est, that is: grammatically my version is fine
->>>
->>
->> Some of my web search hits say that a comma is required after "i.e.".
->> At least one of them says that it is optional.
->> And one says that it is not required in British English.
->>
->> But writing it with "that is":
->>
->>
->> hence code tagging) and then finding and operating on them at runtime
->> - that is iterating over them to print them in debugfs/procfs.
->>
->> is not good IMO. But it's your document.
->>
+On Wed, Feb 07, 2024 at 04:46:07PM -0600, Timur Tabi wrote:
+> debugfs_create_blob() is given the size of the blob, so use it to
+> also set the size of the dentry.  For example, efi=debug previously
+> showed
 > 
-> Technical writing often benefits from a small amount redundancy. Short
-> sentences and repetition of terms are helpful to most readers. And this
-> also stays out of the more advanced grammatical constructs, as a side
-> effect.
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_code0
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_code1
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data0
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data1
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data2
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data3
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data4
 > 
-> So, for example, something *approximately* like this, see what you
-> think:
+> but with this patch it shows
 > 
-> Memory allocation profiling is based upon code tagging. Code tagging is
-> a library for declaring static structs (typically by associating a file
-> and line number with a descriptive string), and then finding and
-> operating on those structs at runtime. Memory allocation profiling's
-> runtime operation is simply: print the structs via debugfs/procfs.
+> -r-------- 1 root root  12783616 Feb  7 13:26 boot_services_code0
+> -r-------- 1 root root    262144 Feb  7 13:26 boot_services_code1
+> -r-------- 1 root root  41705472 Feb  7 13:26 boot_services_data0
+> -r-------- 1 root root  23187456 Feb  7 13:26 boot_services_data1
+> -r-------- 1 root root 110645248 Feb  7 13:26 boot_services_data2
+> -r-------- 1 root root   1048576 Feb  7 13:26 boot_services_data3
+> -r-------- 1 root root      4096 Feb  7 13:26 boot_services_data4
+> 
+> Signed-off-by: Timur Tabi <ttabi@nvidia.com>
+> ---
+>  fs/debugfs/file.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+> index c6f4a9a98b85..848deff11b7e 100644
+> --- a/fs/debugfs/file.c
+> +++ b/fs/debugfs/file.c
+> @@ -1152,7 +1152,14 @@ struct dentry *debugfs_create_blob(const char *name, umode_t mode,
+>  				   struct dentry *parent,
+>  				   struct debugfs_blob_wrapper *blob)
+>  {
+> -	return debugfs_create_file_unsafe(name, mode & 0644, parent, blob, &fops_blob);
+> +	struct dentry *dentry;
+> +
+> +	dentry = debugfs_create_file_unsafe(name, mode & 0644, parent, blob, &fops_blob);
+> +	if (!IS_ERR(dentry))
+> +		i_size_write(d_inode(dentry), blob->size);
+> +
+> +	return dentry;
+> +
+>  }
+>  EXPORT_SYMBOL_GPL(debugfs_create_blob);
+>  
+> -- 
+> 2.34.1
+> 
 
-Works for me.  Thanks.
+Hi,
 
--- 
-#Randy
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
