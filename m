@@ -1,132 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-13856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DCC874C9B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 11:44:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 121DB874CA4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 11:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C1728775A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 10:44:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA93283831
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 10:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877B68529A;
-	Thu,  7 Mar 2024 10:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1D5127B69;
+	Thu,  7 Mar 2024 10:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oK3hZtRn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACeHsAnb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759C61D699;
-	Thu,  7 Mar 2024 10:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC9D83CA9
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 10:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709808242; cv=none; b=IMChZ0DIZEv15P6G+5bVFIHftRgwogHD4OMHIiBlZw/Rgv3hhibx+7p1e3dSZ1xu7pkmff4d3ro94fpUD5ZQEYmt8HG3/he3Y4oJ/wnSS3Flrd8KC+dP8u5qA/zuQR9V4xpMRDzjWNHr981QHXqGi/BDQIHRKFP58gjy0kqNhXw=
+	t=1709808364; cv=none; b=WQ6AdqU0vCJcbK5kg/SZuX+ueTcaDgR/BWW/EYeqNyXCWU1gyt04XpJU5jXSojrv6isBeZ/F1YuwEmJptsuND0vPDlhGpTIXO2/GM6rQl8myl5o5sglts+gLx1Wf+h8ctb1oGi+d+oOE21aBWB2v848ABeEoxDBujsVs88XclLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709808242; c=relaxed/simple;
-	bh=k0wg7qIECji7q28HelXRDU1MuWYWt7ZKoT/fy2ixp8I=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FtL87WANMSEzqEvKN0qznI3b6ZICL6GYhyMIbaoz12Q0LV6a4FrpRvaMgsjFpQxmpxcQzPamvv0ILYEmDjG4Vatmk/vw+K8vz81Ek8ePAGhwovWWuQPgAFChPsIa6I76SHMdE8qFI1QP8mNPNBQHmJCe3z6+TlhXAQMh372R0qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oK3hZtRn; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1709808238;
-	bh=k0wg7qIECji7q28HelXRDU1MuWYWt7ZKoT/fy2ixp8I=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=oK3hZtRntHn5hpgtf/gZlqZNjgs9FVIGRX7PODR8hiBxLS2fG9ZXAiZ5M6BGlo4gK
-	 oT4oMtkNrUO52Au3E1PB9z/u3VzviqSAkf229UTWGz84wHqJs3DWBINPkFIpsj7MnZ
-	 HBOoA8u/UbRHRh1koH72lVaMVOoO5Y73NoEPyiJZ9N+Tykygq5DJy/LNR1veI7tKfL
-	 gkBRn4KEaJ5+oCFFK7/9N6r3aYHRsylGkM0Yih7zISIyvCdqctHEK/Y1gEVExefxLp
-	 OTeqg9bI5QuY3rgJABjonIPW0GYpVofKM3KzzsfjHnnhJzcH2I0AztdJhVNoiMi+/1
-	 QfwF4ugmFIKUg==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2CA0F3780EC6;
-	Thu,  7 Mar 2024 10:43:52 +0000 (UTC)
-Message-ID: <f5e8aee4-4985-48a1-849a-8837dfab07ea@collabora.com>
-Date: Thu, 7 Mar 2024 15:44:20 +0500
+	s=arc-20240116; t=1709808364; c=relaxed/simple;
+	bh=28T7aDiv+0JpHXnY5aFECCvvkSp0ZHPva8vQV4qDAHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ktwf3blZNgm9bZdRN+B15CvseTGtOGPF/1JMaM7C7iYutGPoMSHH3fLAV0jhDBoGwRNIRdmsOA8dWdmaPvHwStoMLDpr2l2+wMDEzbAhj7uptndr2I42JzEgYEYECgJ4f+o2kPQl/ONEOTgWUL3Q8H+C9eRka0WnDIo+zAYb6bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACeHsAnb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F7BC433C7;
+	Thu,  7 Mar 2024 10:46:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709808363;
+	bh=28T7aDiv+0JpHXnY5aFECCvvkSp0ZHPva8vQV4qDAHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ACeHsAnb3cwLoFnulFkcinhb7epPaF/c55XZj2m5nQJ1pJvzeLulMFiBH4TZHT1xC
+	 BJoT5emLpqWz8rWrQzPSJDnfARaCEscCgcqVewmk4olOZ9nt+pWkuyRpqTpW+17Bw1
+	 cfbFx9okRNJVSm7pNXg3bHWTKvJBX3w5vjFRzvYiPEuA7e7UShPJQR7YSJV6N9ALkj
+	 nfVtQ+E+lNq++WlX7/IV322774n49W9JIVTw+OKht02y5+W6fcdFQIQwJMtODkqUhE
+	 XJmSDJyelW5cCMvWEt/eLgONqafMJ67zo5V74YQgDldsTNlWxC7+MuuXMqnBhobyk0
+	 bOF00GwIg/Flg==
+Date: Thu, 7 Mar 2024 11:45:59 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] tmpfs: don't interrupt fallocate with EINTR
+Message-ID: <20240307-kultur-ankam-39d311604493@brauner>
+References: <ef5c3b-fcd0-db5c-8d4-eeae79e62267@redhat.com>
+ <20240305-abgas-tierzucht-1c60219b7839@brauner>
+ <20240306174911.ixwy2kto33cfjueq@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, upstream+pagemap@sigma-star.at,
- adobriyan@gmail.com, wangkefeng.wang@huawei.com, ryan.roberts@arm.com,
- hughd@google.com, peterx@redhat.com, david@redhat.com, avagin@google.com,
- lstoakes@gmail.com, vbabka@suse.cz, akpm@linux-foundation.org, corbet@lwn.net
-Subject: Re: [PATCH 1/2] [RFC] proc: pagemap: Expose whether a PTE is writable
-Content-Language: en-US
-To: Richard Weinberger <richard@nod.at>, linux-mm@kvack.org
-References: <20240306232339.29659-1-richard@nod.at>
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240306232339.29659-1-richard@nod.at>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240306174911.ixwy2kto33cfjueq@quack3>
 
-On 3/7/24 4:23 AM, Richard Weinberger wrote:
-> Is a PTE present and writable, bit 58 will be set.
-> This allows detecting CoW memory mappings and other mappings
-> where a write access will cause a page fault.
+On Wed, Mar 06, 2024 at 06:49:11PM +0100, Jan Kara wrote:
+> Hello,
 > 
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> ---
->  fs/proc/task_mmu.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> On Tue 05-03-24 09:42:27, Christian Brauner wrote:
+> > On Mon, Mar 04, 2024 at 07:43:39PM +0100, Mikulas Patocka wrote:
+> > > I have a program that sets up a periodic timer with 10ms interval. When
+> > > the program attempts to call fallocate on tmpfs, it goes into an infinite
+> > > loop. fallocate takes longer than 10ms, so it gets interrupted by a
+> > > signal and it returns EINTR. On EINTR, the fallocate call is restarted,
+> > > going into the same loop again.
+> > > 
+> > > fallocate(19, FALLOC_FL_KEEP_SIZE, 0, 206057565) = -1 EINTR (Přerušené volání systému)
+> > > --- SIGALRM {si_signo=SIGALRM, si_code=SI_TIMER, si_timerid=0, si_overrun=0, si_int=0, si_ptr=NULL} ---
+> > > sigreturn({mask=[]})                    = -1 EINTR (Přerušené volání systému)
+> > > fallocate(19, FALLOC_FL_KEEP_SIZE, 0, 206057565) = -1 EINTR (Přerušené volání systému)
+> > > --- SIGALRM {si_signo=SIGALRM, si_code=SI_TIMER, si_timerid=0, si_overrun=0, si_int=0, si_ptr=NULL} ---
+> > > sigreturn({mask=[]})                    = -1 EINTR (Přerušené volání systému)
+> > > fallocate(19, FALLOC_FL_KEEP_SIZE, 0, 206057565) = -1 EINTR (Přerušené volání systému)
+> > > --- SIGALRM {si_signo=SIGALRM, si_code=SI_TIMER, si_timerid=0, si_overrun=0, si_int=0, si_ptr=NULL} ---
+> > > sigreturn({mask=[]})                    = -1 EINTR (Přerušené volání systému)
+> > > fallocate(19, FALLOC_FL_KEEP_SIZE, 0, 206057565) = -1 EINTR (Přerušené volání systému)
+> > > --- SIGALRM {si_signo=SIGALRM, si_code=SI_TIMER, si_timerid=0, si_overrun=0, si_int=0, si_ptr=NULL} ---
+> > > sigreturn({mask=[]})                    = -1 EINTR (Přerušené volání systému)
+> > > 
+> > > Should there be fatal_signal_pending instead of signal_pending in the
+> > > shmem_fallocate loop?
+> > > 
+> > > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> > > 
+> > > ---
+> > >  mm/shmem.c |    2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > Index: linux-2.6/mm/shmem.c
+> > > ===================================================================
+> > > --- linux-2.6.orig/mm/shmem.c	2024-01-18 19:18:31.000000000 +0100
+> > > +++ linux-2.6/mm/shmem.c	2024-03-04 19:05:25.000000000 +0100
+> > > @@ -3143,7 +3143,7 @@ static long shmem_fallocate(struct file
+> > >  		 * Good, the fallocate(2) manpage permits EINTR: we may have
+> > >  		 * been interrupted because we are using up too much memory.
+> > >  		 */
+> > > -		if (signal_pending(current))
+> > > +		if (fatal_signal_pending(current))
+> > 
+> > I think that's likely wrong and probably would cause regressions as
+> > there may be users relying on this?
 > 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 3f78ebbb795f..7c7e0e954c02 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1341,6 +1341,7 @@ struct pagemapread {
->  #define PM_SOFT_DIRTY		BIT_ULL(55)
->  #define PM_MMAP_EXCLUSIVE	BIT_ULL(56)
->  #define PM_UFFD_WP		BIT_ULL(57)
-> +#define PM_WRITE		BIT_ULL(58)
-The name doesn't mention present from its "present and writable"
-definition. Maybe some other name like PM_PRESENT_WRITE?
+> I understand your concern about userspace regressions but is the EINTR
+> behavior that useful? Sure, something can be relying on terminating
 
->  #define PM_FILE			BIT_ULL(61)
->  #define PM_SWAP			BIT_ULL(62)
->  #define PM_PRESENT		BIT_ULL(63)
-> @@ -1417,6 +1418,8 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
->  			flags |= PM_SOFT_DIRTY;
->  		if (pte_uffd_wp(pte))
->  			flags |= PM_UFFD_WP;
-> +		if (pte_write(pte))
-> +			flags |= PM_WRITE;
->  	} else if (is_swap_pte(pte)) {
->  		swp_entry_t entry;
->  		if (pte_swp_soft_dirty(pte))
-> @@ -1483,6 +1486,8 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
->  				flags |= PM_SOFT_DIRTY;
->  			if (pmd_uffd_wp(pmd))
->  				flags |= PM_UFFD_WP;
-> +			if (pmd_write(pmd))
-> +				flags |= PM_WRITE;
->  			if (pm->show_pfn)
->  				frame = pmd_pfn(pmd) +
->  					((addr & ~PMD_MASK) >> PAGE_SHIFT);
-> @@ -1586,6 +1591,9 @@ static int pagemap_hugetlb_range(pte_t *ptep, unsigned long hmask,
->  		if (huge_pte_uffd_wp(pte))
->  			flags |= PM_UFFD_WP;
->  
-> +		if (pte_write(pte))
-> +			flags |= PM_WRITE;
-> +
->  		flags |= PM_PRESENT;
->  		if (pm->show_pfn)
->  			frame = pte_pfn(pte) +
+I don't know.
 
--- 
-BR,
-Muhammad Usama Anjum
+> fallocate(2) with any signal but since tmpfs is the only filesystem having
+
+Hugetlbfs has the same logic.
+
+> this behavior, it is fair to say there are even higher chances some
+> application will be surprised by this behavior when used on tmpfs as
+> Mikulas was? So I wouldn't be that opposed to this change. *But* tmpfs has
+> a comment explaining the signal_pending() check:
+> 
+>                 /*
+>                  * Good, the fallocate(2) manpage permits EINTR: we may have
+>                  * been interrupted because we are using up too much memory.
+>                  */
+> 
+> Now I'd expect the signal to be fatal in this case but we definitely need
+> to make sure this is the case if we want to consider changing the test.
+
+Right now fallocate() is restartable. You could get EINTR and then
+retry. Changing this to fatal_signal_pending() would mean that this
+property is lost. The task will have to be wiped.
+
+If this is only done for the sake of the OOM killer then we can probably
+try and change it. But then we'd need to also reflect that on the
+manpage.
 
