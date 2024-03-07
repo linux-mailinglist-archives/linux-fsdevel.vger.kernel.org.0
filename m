@@ -1,176 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-13864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB5E874CDF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 12:02:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B77B1875B40
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 00:55:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C2B1F237FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 11:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E82128369D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 23:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C041272DD;
-	Thu,  7 Mar 2024 11:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB8547F5C;
+	Thu,  7 Mar 2024 23:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JTxKS9Uq"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g/b0Yq9O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835F7126F3C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 11:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C47EF4FC
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 23:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709809352; cv=none; b=bod1zYzEQnnw/4U2fGAqE4ut54bwdxkQxLVGTzasLPp/KW8QuC7agUTq3YfAjQl1i17rTrRvcFMRTlfBNEfVOM3gK/KAPQxf40lGsJKqfg5nieJ+NW9MBLxDGDeER3jb114/vbk7Usx3U2KyzJ72/ikMD1KcgiycNIh7BQN7K04=
+	t=1709855714; cv=none; b=koFcrGOJztLGNovUIy1FmQJmGLhGFGhRN1yFi6A8A6pJAYzYTVPZGxLOGz8QOqeDJ/eUfmOmaeLHGZTKnxRZ+Kn/0dsBspUxpuOPrcsnhq6xHLDkq51GCOkeIU5uTNyQ7c2JcPBht/pUUuPbC/dfgimav8b/CHuLtVxfS37WZFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709809352; c=relaxed/simple;
-	bh=0QSQnxyjKd0GA5iCm7uDjwuB0eToFvjoyYNhhg6+cLM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H3Hneqyo58YUBmSkCHc23/sPEEwY34kOArAtsCCEkwzkBHPmjvRFgUVdzI1yd5oFcH4mLZUFiQEIfc+aXEqbMVA7CU5a2dACSak9S2zhuykefYTvay7wLpaDZp6JAnNnpV7bVh0xqAurrH1o6GlCff5iwNMP79XVwfWw3l94fH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JTxKS9Uq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709809349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sqEbdTxhH+AlXN0X2BsJ2SrYEHV0BB3bqwnGH/m+9AE=;
-	b=JTxKS9UqfjlgvJHrL8HKhkf+jomlLc/byYLGQxPO1zxfkxeeyd9bU1i3Y7uQm1Nmo6kKbt
-	e/TsYXjPcNUYxuEoSe5qG7g8CRSo+H5ftVIJGdcScAe6O+3p7EtxNi1zKM+f19wuxvDwJ6
-	zYlfXy0cakD0TautNxTCtLisnnY9WA0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-f4UVVnabNzWkrdvwIM7rYA-1; Thu, 07 Mar 2024 06:02:27 -0500
-X-MC-Unique: f4UVVnabNzWkrdvwIM7rYA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-412e992444eso3662365e9.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Mar 2024 03:02:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709809346; x=1710414146;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sqEbdTxhH+AlXN0X2BsJ2SrYEHV0BB3bqwnGH/m+9AE=;
-        b=bjkA4b1S3mikQ1+j+46Oh6gWVjb2j7ovz6JU4nFoZ13uU+q1OaGuc3A7Z7Vc0qqo9/
-         mgl5FOmbnuFeXyLqwfAArOJaWZdDSh4F1i57fHJfZn1y+QOjKQQF6hVj1npb/SaQvHxy
-         rdYu8j05ty7dvv1hN2EghmL3tNuzUGtSIngZF9lPkh661EULOgIQrjsMRKbBfuvqiE43
-         T30NbVTe8djQGowXjqGx9vyvBMQ5XRck6ORYFtenZNjaG2dgPcYcBl0azdVy16BvHufh
-         KWkz0LRL03AnrcfpX6LyeZZHoxezTLVdFVRCepEmoubOT2wKm8fpIOKkTqG0rQp2MLNH
-         FtzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXye6l1rbvU7CIn8Kei/u76ad3t9rXQ0qMuYiTSIAmbteTdn9EfHENEin9eDLlmWt2yKCczhNypn42KBYMFB5sWPDozkPLx+Q2gUQJgJA==
-X-Gm-Message-State: AOJu0Yy1hBradll7brE9wgaYXPJax+TwbsOrmBiJzpA9iXyU+q2mpIg+
-	/mDPd98ogiZ4qsAexOhPGQVVjVrg1kzlwOLAVVE6SUxnN0cbPRjaJcsUyd2dZ4NaXYsKhvA/Qix
-	SJsI3hrgCBs2mc5v4i+C7fGgU3g4hWo+hR7nTQbbXjr04RT5dVKo/xWbqvhsdskk=
-X-Received: by 2002:a05:600c:5185:b0:412:f6cd:ad8f with SMTP id fa5-20020a05600c518500b00412f6cdad8fmr3261506wmb.4.1709809345924;
-        Thu, 07 Mar 2024 03:02:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHtDWB/ZSmiASu9PIAgyOKOj+RelMGT3+2vbYtyDguf96RbKmQmpuXxyZtBIwzZwrxTs3pJ0A==
-X-Received: by 2002:a05:600c:5185:b0:412:f6cd:ad8f with SMTP id fa5-20020a05600c518500b00412f6cdad8fmr3261485wmb.4.1709809345487;
-        Thu, 07 Mar 2024 03:02:25 -0800 (PST)
-Received: from maszat.piliscsaba.szeredi.hu (92-249-208-180.pool.digikabel.hu. [92.249.208.180])
-        by smtp.gmail.com with ESMTPSA id v12-20020a05600c470c00b00412b4dca795sm2332625wmo.7.2024.03.07.03.02.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Mar 2024 03:02:23 -0800 (PST)
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/4] ovl: clean up struct ovl_dir_cache use outside readdir.c
-Date: Thu,  7 Mar 2024 12:02:08 +0100
-Message-ID: <20240307110217.203064-4-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240307110217.203064-1-mszeredi@redhat.com>
-References: <20240307110217.203064-1-mszeredi@redhat.com>
+	s=arc-20240116; t=1709855714; c=relaxed/simple;
+	bh=JWQz71f1//D9UCMTXGV7j2KbHG2h0DDPP+L3RA6F/nY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=cdd4i23aiVcK6TEI5UDYWlMQR1Boq/Q3CFHg4hCpX/KAOdlrduAln0XyeK6fXpWDNWShL7WqsRldlnKePUUNR1U69oiV1PEYinE0VO0u5UF5lLu9yxMKnk76v2izWYtS/TGGpxXR1Vq+z1yOIS+l7pVAZVIxYJrIyY+peuTmP+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=g/b0Yq9O; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240307235502epoutp047f9e301b9be93aaf79c7a5650465f962~6oLPQ-3ZZ2270722707epoutp040
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 23:55:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240307235502epoutp047f9e301b9be93aaf79c7a5650465f962~6oLPQ-3ZZ2270722707epoutp040
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1709855702;
+	bh=x/lMRkGh8cZSfb3n2xs7yp5rdBgxg7EAmjp1axwyya4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=g/b0Yq9Oa5EK6O3Dc06cQcWmNEB/+EHMUS/xTd3wzoR0EiRn+TsClQREmgidM5Cy4
+	 /oYOeY5853m1Xrf/BInYYzRoDaabZQ7nhU1mQR9Z+B9ZeVP83bk7aXvVTuMIT4Phq9
+	 uSCiYbFW4nJ6rX8OhB17qp9l14o359aZftj2N5G0=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240307235502epcas1p3664e5cdf7bd3e51bfc06a9fd66ca6f2d~6oLO_2f5U1850418504epcas1p3p;
+	Thu,  7 Mar 2024 23:55:02 +0000 (GMT)
+Received: from epcpadp3 (unknown [182.195.40.17]) by epsnrtp3.localdomain
+	(Postfix) with ESMTP id 4TrR4Q2dj5z4x9Q8; Thu,  7 Mar 2024 23:55:02 +0000
+	(GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240307110707epcas1p2b14e31d9b2efe1d187560762adbecd47~6dswePxPP1620516205epcas1p2q;
+	Thu,  7 Mar 2024 11:07:07 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240307110707epsmtrp2a836882d3bdd7eee169f8f16700edd49~6dswdoKJb0608306083epsmtrp2Z;
+	Thu,  7 Mar 2024 11:07:07 +0000 (GMT)
+X-AuditID: b6c32a29-fa1ff70000002233-c2-65e99fdb3da0
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	80.08.08755.BDF99E56; Thu,  7 Mar 2024 20:07:07 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240307110707epsmtip14da059ead3965ae2507244d72369c6af~6dswPVfju0927409274epsmtip1Y;
+	Thu,  7 Mar 2024 11:07:07 +0000 (GMT)
+From: "Sungjong Seo" <sj1557.seo@samsung.com>
+To: <Yuezhang.Mo@sony.com>, <linkinjeon@kernel.org>
+Cc: <linux-fsdevel@vger.kernel.org>, <Andy.Wu@sony.com>,
+	<Wataru.Aoyama@sony.com>
+In-Reply-To: <PUZPR04MB631617947452ADC288E8FD9281232@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Subject: RE: [PATCH v2 02/10] exfat: add exfat_get_empty_dentry_set() helper
+Date: Thu, 7 Mar 2024 20:07:07 +0900
+Message-ID: <664457955.21709855702359.JavaMail.epsvc@epcpadp3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQD1XOdcIp7+XJ9DfDES51wZq2IvPQHKtfRcAYc4wk4BNEtLYQK7uHResrwc2pA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnO7t+S9TDaYtk7ZoPbKP0eLlIU2L
+	idOWMlvs2XuSxWLLvyOsFh8f7Ga0uP7mIasDu8emVZ1sHn1bVjF6tE/YyezxeZNcAEsUl01K
+	ak5mWWqRvl0CV8anrx+YCn6LVxw5fIGlgfECXxcjJ4eEgInEowev2LoYuTiEBHYzSnzYeIyx
+	i5EDKCElcXCfJoQpLHH4cDFEyXNGiQ3TZjOB9LIJ6Eo8ufGTGcQWETCV+HL5BBuIzSwQKvHz
+	zi52EFtI4DaTRMduCRCbUyBWYv7+x6wgM4UFfCTO7PAHCbMIqEjMnrqREcTmFbCUmHrlFDOE
+	LShxcuYTFpByZgE9iTaIEmYBeYntb+cwQ1yvILH701FWiAv8JP696GeBqBGRmN3ZxjyBUXgW
+	kkmzECbNQjJpFpKOBYwsqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxgiNHS3MH4/ZV
+	H/QOMTJxMB5ilOBgVhLhZbF4mSrEm5JYWZValB9fVJqTWnyIUZqDRUmcV/xFb4qQQHpiSWp2
+	ampBahFMlomDU6qBSb9b2ZI9T8hxc83cziS9P8nLYn5mWH7Ye+H7tb1vqlpMoifVLMiZmDfF
+	MJKnK8ptsqLxtBWBTG3iS/auabU8G6EoVe1Z3zj56s3Tz3i7eK6x5Qs+2JzX1XIg1Sj18T7f
+	ru75BS7Z/+ITkhKNg9YW7vhZtkXfWudq09Jt2bdfbev+P/1i6Df70gv/WfdNqXbb2/4grPMq
+	j7LJoUdVcnMET39+/2Why9Qnx3y6Z+xfqJ/04NyyLbt3OTTlNpZcXDBxe+OV+U6X9puyL07l
+	ff7hcmepUUOn/yJLzjY5sY5vuVwBq1Ye/Fe51f4Wp3XyneLtNXrnU9ocS/femGt+57Zy7rPe
+	mdcyt8tt9GrYOb3aRYmlOCPRUIu5qDgRAJ8wxCQLAwAA
+X-CMS-MailID: 20240307110707epcas1p2b14e31d9b2efe1d187560762adbecd47
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+X-ArchiveUser: EV
+X-Hop-Count: 3
+X-CMS-RootMailID: 20231228065938epcas1p3112d227f22639ca54849441146d9bdbf
+References: <CGME20231228065938epcas1p3112d227f22639ca54849441146d9bdbf@epcms1p1>
+	<1891546521.01709530081906.JavaMail.epsvc@epcpadp4>
+	<PUZPR04MB63166D7502785B1D91C962D181232@PUZPR04MB6316.apcprd04.prod.outlook.com>
+	<1891546521.01709541901716.JavaMail.epsvc@epcpadp3>
+	<PUZPR04MB631617947452ADC288E8FD9281232@PUZPR04MB6316.apcprd04.prod.outlook.com>
 
-Remove unnecessary forward declaration in super.c and move helper functions
-that are only used inside readdir.c
+> Wataru.Aoyama@sony.com
+> Subject: RE: [PATCH v2 02/10] exfat: add exfat_get_empty_dentry_set()
+> helper
+> 
+> > From: Sungjong Seo <sj1557.seo@samsung.com>
+> > Sent: Monday, March 4, 2024 4:43 PM
+> > To: Mo, Yuezhang <Yuezhang.Mo@sony.com>; linkinjeon@kernel.org
+> >
+> > >
+> > > The following code still exists if without this patch set. It does
+> > > not allow deleted dentries to follow unused dentries.
+> >
+> > It may be the same part as the code you mentioned, but remember that
+> > the first if-statement handles both an unused dentry and a deleted
+> > dentry together.
+> 
+> Thanks for your detailed explanation.
+> 
+> I will update the code as follows, and I think it is very necessary to add
+> such comments.
+I think so :)
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/overlayfs/overlayfs.h |  2 --
- fs/overlayfs/readdir.c   | 10 ++++++++++
- fs/overlayfs/super.c     |  2 --
- fs/overlayfs/util.c      | 10 ----------
- 4 files changed, 10 insertions(+), 14 deletions(-)
+> 
+>         for (i = 0; i < es->num_entries; i++) {
+>                 ep = exfat_get_dentry_cached(es, i);
+>                 if (ep->type == EXFAT_UNUSED)
+>                         unused_hit = true;
+>                 else if (IS_EXFAT_DELETED(ep->type)) {
+>                         /*
+>                          * Although it violates the specification for a
+>                          * deleted entry to follow an unused entry, some
+>                          * exFAT implementations could work like this.
+>                          * Therefore, to improve compatibility, allow it.
+>                          */
+>                         if (unused_hit)
+However, I don't think it's good idea to check for unused_hit here.
+How about moving the comment at the start of the for-loop and changing
+the code as follows?
 
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index ee949f3e7c77..167dc37f804c 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -470,8 +470,6 @@ struct inode *ovl_inode_lowerdata(struct inode *inode);
- struct inode *ovl_inode_real(struct inode *inode);
- struct inode *ovl_inode_realdata(struct inode *inode);
- const char *ovl_lowerdata_redirect(struct inode *inode);
--struct ovl_dir_cache *ovl_dir_cache(struct inode *inode);
--void ovl_set_dir_cache(struct inode *inode, struct ovl_dir_cache *cache);
- void ovl_dentry_set_flag(unsigned long flag, struct dentry *dentry);
- void ovl_dentry_clear_flag(unsigned long flag, struct dentry *dentry);
- bool ovl_dentry_test_flag(unsigned long flag, struct dentry *dentry);
-diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-index b98e0d17f40e..4a20a44b34f2 100644
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -61,6 +61,16 @@ struct ovl_dir_file {
- 	struct file *upperfile;
- };
- 
-+static struct ovl_dir_cache *ovl_dir_cache(struct inode *inode)
-+{
-+	return inode && S_ISDIR(inode->i_mode) ? OVL_I(inode)->cache : NULL;
-+}
-+
-+static void ovl_set_dir_cache(struct inode *inode, struct ovl_dir_cache *cache)
-+{
-+	OVL_I(inode)->cache = cache;
-+}
-+
- static struct ovl_cache_entry *ovl_cache_entry_from_node(struct rb_node *n)
- {
- 	return rb_entry(n, struct ovl_cache_entry, node);
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 2eef6c70b2ae..2413d3107335 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -26,8 +26,6 @@ MODULE_DESCRIPTION("Overlay filesystem");
- MODULE_LICENSE("GPL");
- 
- 
--struct ovl_dir_cache;
--
- static struct dentry *ovl_d_real(struct dentry *dentry,
- 				 const struct inode *inode)
- {
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index a8e17f14d7a2..cfe625717c47 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -421,16 +421,6 @@ const char *ovl_lowerdata_redirect(struct inode *inode)
- 		OVL_I(inode)->lowerdata_redirect : NULL;
+/*
+ * ONLY UNUSED OR DELETED DENTRIES ARE ALLOWED:
+ * Although it violates the specification for a deleted entry to
+ * follow an unused entry, some exFAT implementations could work
+ * like this. Therefore, to improve compatibility, let's allow it.
+ */
+ for (i = 0; i < es->num_entries; i++) {
+         ep = exfat_get_dentry_cached(es, i);
+         if (ep->type == EXFAT_UNUSED) {
+                 unused_hit = true;
+                 continue;
+         }
+         if (IS_EXFAT_DELETED(ep->type))
+                 continue;
+         if (unused_hit)
+                 goto err_used_follow_unused;
+         i++;
+         goto count_skip_entries;
  }
- 
--struct ovl_dir_cache *ovl_dir_cache(struct inode *inode)
--{
--	return inode && S_ISDIR(inode->i_mode) ? OVL_I(inode)->cache : NULL;
--}
--
--void ovl_set_dir_cache(struct inode *inode, struct ovl_dir_cache *cache)
--{
--	OVL_I(inode)->cache = cache;
--}
--
- void ovl_dentry_set_flag(unsigned long flag, struct dentry *dentry)
- {
- 	set_bit(flag, OVL_E_FLAGS(dentry));
--- 
-2.44.0
+
+Or we could use if / else-if as follows.
+
+for (i = 0; i < es->num_entries; i++) {
+        ep = exfat_get_dentry_cached(es, i);
+        if (ep->type == EXFAT_UNUSED) {
+                unused_hit = true;
+        } else if (!IS_EXFAT_DELETED(ep->type)) {
+                if (unused_hit)
+                        goto err_used_follow_unused;
+                i++;
+                goto count_skip_entries;
+        }
+}
+
+>                                 continue;
+>                 } else {
+>                         /* Used entry are not allowed to follow unused
+entry */
+>                         if (unused_hit)
+>                                 goto err_used_follow_unused;
+> 
+>                         i++;
+>                         goto count_skip_entries;
+>                 }
+>         }
+
 
 
