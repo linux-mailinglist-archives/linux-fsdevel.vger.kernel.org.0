@@ -1,93 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-13905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04F78754E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 18:10:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8769E875C67
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 03:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887681F2360B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 17:10:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B990D1C2118A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 02:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4021E130AD5;
-	Thu,  7 Mar 2024 17:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0VDieRCE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KmbEfxau";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0VDieRCE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KmbEfxau"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DD028E0B;
+	Fri,  8 Mar 2024 02:45:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CF012DDBE;
-	Thu,  7 Mar 2024 17:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB6428DBF;
+	Fri,  8 Mar 2024 02:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709831438; cv=none; b=OsCTNYx8sEZK42zBfV+JuBmOQbdJUk4uQL/iNjo/Km3+CU/Q2l3b9h61hatHoAe74Y8Uuh+k2RgSXBItXpxSO8slZeyb7WJgUwcKGtMN2LKD8UoCdrcwzrfkP51Nl5X61zEoZyXPcLK4TaMKQOc1mcv3rdvydOhJluxBUmQM2jk=
+	t=1709865901; cv=none; b=pIgpABHboXKij2vOA4gNo7xOyWJK6ncWXcCJj18agw2PgMF72tAInOle8nxXyQnmYbC698v8l6q2kKUpQWqTQYH2VjnFd/OfdiWtxRdU5Oc2tZzmGipdY0pV/Kz0Kr8aLSV4cLx5eUGLvBHSNiL9G1/FnPWvMKdwOwIRs06+CbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709831438; c=relaxed/simple;
-	bh=ePRxzCU8k8EGnokZBB4+4ln+F7jpIw9Pac4V0NZBhg8=;
+	s=arc-20240116; t=1709865901; c=relaxed/simple;
+	bh=hewgVoh+8E19PToE5glPa2Raity2MreSYsiIMlWmWdM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eugG1rpA4GUOu2FVG6dL/jklqMz+rcoVq85qjNeM5n5aVs/l1fG6VxNP7rvHXVPK5bIpCkCFy8BY3doUaExCssdzyFqV12QoWu8c1gapE83RLPggNChqmHFHC4at/722InQAE4BsP6z5CknfcGJweZ1YOeOxqoEz2Sz2w592NCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0VDieRCE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KmbEfxau; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0VDieRCE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KmbEfxau; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=c5YMOps1kzneVf3WyOim/VEfcR4MFdPa1G96WdbBZqBUw3+imowvxG3LauwArTg6wWZFCxKj9mY7wUlVBjLs7FLweew0HOs7m7JstMc3LYM98RPO4NoByhrKOYNrGkZG7yj75R97cL1hM6rU2tpU4qzByfDcmOqMX0Mki+ruuuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A4AB45C6DB;
-	Thu,  7 Mar 2024 16:02:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709827351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vjrVxieXuRhTZiWnKCpH9d/jIcN0kC0d2yC48QLOibA=;
-	b=0VDieRCEz8N+eqziEuOrjkmp9rwnlUU6RmpL8KKW9YTtMiK4Pet04wWoVV/M9JWLdHf7/F
-	5YDfyx4RrhAjsaygNRf43qQzl0ZY7Ss7ueyPa8s5F+Big6p+BewIHJHDJb7ftcML9TeWO5
-	l6fcfT/OSoLdmEXNm8xbiMcUyFI9C3Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709827351;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vjrVxieXuRhTZiWnKCpH9d/jIcN0kC0d2yC48QLOibA=;
-	b=KmbEfxauWpnJYO0HstETm2VVp1i90gxDf8EetM7+IV5rNErjCxflVV6iWl0+6bTCLQjt32
-	OwHm1cEBa2y8LkDQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709827351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vjrVxieXuRhTZiWnKCpH9d/jIcN0kC0d2yC48QLOibA=;
-	b=0VDieRCEz8N+eqziEuOrjkmp9rwnlUU6RmpL8KKW9YTtMiK4Pet04wWoVV/M9JWLdHf7/F
-	5YDfyx4RrhAjsaygNRf43qQzl0ZY7Ss7ueyPa8s5F+Big6p+BewIHJHDJb7ftcML9TeWO5
-	l6fcfT/OSoLdmEXNm8xbiMcUyFI9C3Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709827351;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vjrVxieXuRhTZiWnKCpH9d/jIcN0kC0d2yC48QLOibA=;
-	b=KmbEfxauWpnJYO0HstETm2VVp1i90gxDf8EetM7+IV5rNErjCxflVV6iWl0+6bTCLQjt32
-	OwHm1cEBa2y8LkDQ==
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A04B24DA4A;
+	Thu,  7 Mar 2024 16:02:32 +0000 (UTC)
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D6B3A136CB;
-	Thu,  7 Mar 2024 16:02:30 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BB1F212FC5;
+	Thu,  7 Mar 2024 16:02:31 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aG4gMRbl6WXtcwAAD6G6ig
-	(envelope-from <lhenriques@suse.de>); Thu, 07 Mar 2024 16:02:30 +0000
+	id AOlpKhfl6WXtcwAAD6G6ig
+	(envelope-from <lhenriques@suse.de>); Thu, 07 Mar 2024 16:02:31 +0000
 Received: from localhost (brahms.olymp [local])
-	by brahms.olymp (OpenSMTPD) with ESMTPA id 48155153;
+	by brahms.olymp (OpenSMTPD) with ESMTPA id 1f0200b0;
 	Thu, 7 Mar 2024 16:02:29 +0000 (UTC)
 From: Luis Henriques <lhenriques@suse.de>
 To: Theodore Ts'o <tytso@mit.edu>,
@@ -102,9 +61,9 @@ Cc: linux-ext4@vger.kernel.org,
 	linux-unionfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Luis Henriques <lhenriques@suse.de>
-Subject: [PATCH v2 1/3] fs_parser: add helper to define parameters with string and flag types
-Date: Thu,  7 Mar 2024 16:02:23 +0000
-Message-ID: <20240307160225.23841-2-lhenriques@suse.de>
+Subject: [PATCH v2 2/3] ext4: fix the parsing of empty string mount parameters
+Date: Thu,  7 Mar 2024 16:02:24 +0000
+Message-ID: <20240307160225.23841-3-lhenriques@suse.de>
 In-Reply-To: <20240307160225.23841-1-lhenriques@suse.de>
 References: <20240307160225.23841-1-lhenriques@suse.de>
 Precedence: bulk
@@ -114,64 +73,94 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: smtp-out2.suse.de;
-	none
 X-Spam-Level: 
-X-Spam-Score: -0.30
-X-Spamd-Result: default: False [-0.30 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 R_MISSING_CHARSET(2.50)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 MIME_GOOD(-0.10)[text/plain];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 REPLY(-4.00)[];
-	 BROKEN_CONTENT_TYPE(1.50)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[4];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_TWELVE(0.00)[12];
-	 MID_CONTAINS_FROM(1.00)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
-	 FREEMAIL_TO(0.00)[mit.edu,dilger.ca,zeniv.linux.org.uk,kernel.org,suse.cz,szeredi.hu,gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_LAST(0.00)[];
-	 BAYES_HAM(-0.00)[27.00%]
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	 REPLY(-4.00)[]
+X-Spam-Score: -4.00
+X-Rspamd-Queue-Id: A04B24DA4A
 X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-Add a new helper macro that defines two new parameters, both with the same
-name, but one of type 'string' and another of type 'flag'.  The 'string'
-parameter may also be empty (i.e. without value).  In practice this helper
-allows a filesystem to easily define a parameter that can be empty (flag)
-or have a value (string).
+This patch fixes the usage of mount parameters that are defined as strings
+but which can be empty.  Currently, only 'usrjquota' and 'grpjquota'
+parameters are in this situation for ext4.  But since userspace can pass
+them in as 'flag' types (when they don't have a value), the parsing will
+fail because a 'string' type is assumed.
+
+This issue is fixed by using the new helper fsparam_string_or_flag() and by
+also taking the parameter type into account.
+
+While there, also remove the now unused fsparam_string_empty() macro and
+change the 'test_dummy_encryption' parameter to also use the new fs_parser
+helper.
 
 Suggested-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Luis Henriques <lhenriques@suse.de>
 ---
- include/linux/fs_parser.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/ext4/super.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
-index 01542c4b87a2..f582fb7bdc22 100644
---- a/include/linux/fs_parser.h
-+++ b/include/linux/fs_parser.h
-@@ -131,5 +131,13 @@ static inline bool fs_validate_description(const char *name,
- #define fsparam_bdev(NAME, OPT)	__fsparam(fs_param_is_blockdev, NAME, OPT, 0, NULL)
- #define fsparam_path(NAME, OPT)	__fsparam(fs_param_is_path, NAME, OPT, 0, NULL)
- #define fsparam_fd(NAME, OPT)	__fsparam(fs_param_is_fd, NAME, OPT, 0, NULL)
-+/*
-+ * Define two parameters with the same name, with types string and flag.  The
-+ * string parameter can be empty, and thus it effectively allows the parameter
-+ * to have a value or to be empty.
-+ */
-+#define fsparam_string_or_flag(NAME, OPT)				\
-+	__fsparam(fs_param_is_string, NAME, OPT, fs_param_can_be_empty, NULL), \
-+	fsparam_flag(NAME, OPT)
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 0f931d0c227d..5a2f178f8fe9 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1724,10 +1724,6 @@ static const struct constant_table ext4_param_dax[] = {
+ 	{}
+ };
  
- #endif /* _LINUX_FS_PARSER_H */
+-/* String parameter that allows empty argument */
+-#define fsparam_string_empty(NAME, OPT) \
+-	__fsparam(fs_param_is_string, NAME, OPT, fs_param_can_be_empty, NULL)
+-
+ /*
+  * Mount option specification
+  * We don't use fsparam_flag_no because of the way we set the
+@@ -1768,9 +1764,9 @@ static const struct fs_parameter_spec ext4_param_specs[] = {
+ 	fsparam_enum	("data",		Opt_data, ext4_param_data),
+ 	fsparam_enum	("data_err",		Opt_data_err,
+ 						ext4_param_data_err),
+-	fsparam_string_empty
++	fsparam_string_or_flag
+ 			("usrjquota",		Opt_usrjquota),
+-	fsparam_string_empty
++	fsparam_string_or_flag
+ 			("grpjquota",		Opt_grpjquota),
+ 	fsparam_enum	("jqfmt",		Opt_jqfmt, ext4_param_jqfmt),
+ 	fsparam_flag	("grpquota",		Opt_grpquota),
+@@ -1814,9 +1810,8 @@ static const struct fs_parameter_spec ext4_param_specs[] = {
+ 	fsparam_u32	("fc_debug_max_replay",	Opt_fc_debug_max_replay),
+ #endif
+ 	fsparam_u32	("max_dir_size_kb",	Opt_max_dir_size_kb),
+-	fsparam_flag	("test_dummy_encryption",
+-						Opt_test_dummy_encryption),
+-	fsparam_string	("test_dummy_encryption",
++	fsparam_string_or_flag
++			("test_dummy_encryption",
+ 						Opt_test_dummy_encryption),
+ 	fsparam_flag	("inlinecrypt",		Opt_inlinecrypt),
+ 	fsparam_flag	("nombcache",		Opt_nombcache),
+@@ -2183,15 +2178,15 @@ static int ext4_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 	switch (token) {
+ #ifdef CONFIG_QUOTA
+ 	case Opt_usrjquota:
+-		if (!*param->string)
+-			return unnote_qf_name(fc, USRQUOTA);
+-		else
++		if ((param->type == fs_value_is_string) &&
++		    (*param->string))
+ 			return note_qf_name(fc, USRQUOTA, param);
++		return unnote_qf_name(fc, USRQUOTA);
+ 	case Opt_grpjquota:
+-		if (!*param->string)
+-			return unnote_qf_name(fc, GRPQUOTA);
+-		else
++		if ((param->type == fs_value_is_string) &&
++		    (*param->string))
+ 			return note_qf_name(fc, GRPQUOTA, param);
++		return unnote_qf_name(fc, GRPQUOTA);
+ #endif
+ 	case Opt_sb:
+ 		if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
 
