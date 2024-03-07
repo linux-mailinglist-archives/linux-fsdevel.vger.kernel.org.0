@@ -1,106 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-13953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FDF875B18
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 00:26:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFD3875345
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 16:38:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89AF1C219D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 23:26:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B921B1F247C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 15:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6583A47F4A;
-	Thu,  7 Mar 2024 23:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D2112F36E;
+	Thu,  7 Mar 2024 15:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FZHUDU7z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hABcWakr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FZHUDU7z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hABcWakr"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="o+Ib6oVX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B45743AB8;
-	Thu,  7 Mar 2024 23:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD1C125D5
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 15:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709853953; cv=none; b=ZZX2Od0LiDYRUQO6IbX78HThm5fe/Kg0PkL9/BrreZ7oaLTV0z8LMjnKsXXpQLFnIBGJ34w6RI5QPS+ir/lqEk4hnUXOiYylgdB29rRLxjUNw8XFr6hb0FdWYSazIwxseo0uLnFo2mVKF1eKNQdVPob73MDWDr4r0huHwYHwrKM=
+	t=1709825890; cv=none; b=pC00QyL+Qa/mF+D8s0U+5KaTJKdRZ7sC+k4gEk2KtinhhV0BRDJShM7/hubIzitLXQ2/H78TddtbJa2pUquyhROO7Ce3E97LmiIn30rrtK/IO5Kg59idOV+dvFgy4HL9xcqmKtK5n6qRAYqC7F26UMwb9CL5tIqs671sEMMJQyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709853953; c=relaxed/simple;
-	bh=GATlIPdFbkYHI4oMWzU4gqRom870NR8qtqy/UKfD/Ks=;
+	s=arc-20240116; t=1709825890; c=relaxed/simple;
+	bh=Adr0FGv1v+m493hNL7KDB4IB1kzugTKE1tcoyKwg9aE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IkzjTkBGHlfRjeMoMSGL0vIHbtiQC7dx/snPOjJ62Z6uAJRp9wD2sOA7TwZKF9RIc5b9Q+09CovjPZSUMNbtWnpIiZyIiT4W5YcmCeNL2ZTmRCWGnlPOR4FgajrmQsr7gzlsvYaxQmtHwyabFkQI70sLANnejo1IxTKJxdYkyoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FZHUDU7z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hABcWakr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FZHUDU7z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hABcWakr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 55CA1244EE;
-	Thu,  7 Mar 2024 15:14:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1709824446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QDnFH5PDuD+7iaOO9R1QK2SDg/WUCJSzMjtRfphruZ4=;
-	b=FZHUDU7zThtrLO7c6vtPER4XCa89ByD9wWoLxK2kF4y89yAefGVVtYGRBcX18xQmPXGd0z
-	F6vqfYPiJahPVNv2VQfxeMLd74dJ3HD+FNGDTijKQqD/l56ms1caQpJPAPpNGNrCeM60oB
-	B4f/bt5hX8QZA4XE6uQulGFabG4Hneo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1709824446;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QDnFH5PDuD+7iaOO9R1QK2SDg/WUCJSzMjtRfphruZ4=;
-	b=hABcWakrX7D2nyn6sf/CWoDAz2yXp/IQtF2he/u15v5fx2G7Z9dycTozV2yScG2HEhNazP
-	QTKCY5P4LfT7KnCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1709824446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QDnFH5PDuD+7iaOO9R1QK2SDg/WUCJSzMjtRfphruZ4=;
-	b=FZHUDU7zThtrLO7c6vtPER4XCa89ByD9wWoLxK2kF4y89yAefGVVtYGRBcX18xQmPXGd0z
-	F6vqfYPiJahPVNv2VQfxeMLd74dJ3HD+FNGDTijKQqD/l56ms1caQpJPAPpNGNrCeM60oB
-	B4f/bt5hX8QZA4XE6uQulGFabG4Hneo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1709824446;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QDnFH5PDuD+7iaOO9R1QK2SDg/WUCJSzMjtRfphruZ4=;
-	b=hABcWakrX7D2nyn6sf/CWoDAz2yXp/IQtF2he/u15v5fx2G7Z9dycTozV2yScG2HEhNazP
-	QTKCY5P4LfT7KnCw==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 48D2E13997;
-	Thu,  7 Mar 2024 15:14:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id l6nAEb3Z6WWTaQAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 07 Mar 2024 15:14:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E82B8A0803; Thu,  7 Mar 2024 16:13:56 +0100 (CET)
-Date: Thu, 7 Mar 2024 16:13:56 +0100
-From: Jan Kara <jack@suse.cz>
-To: Luis Henriques <lhenriques@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fs_parser: handle parameters that can be empty and
- don't have a value
-Message-ID: <20240307151356.ishrtxrsge2i5mjn@quack3>
-References: <20240229163011.16248-1-lhenriques@suse.de>
- <20240229163011.16248-2-lhenriques@suse.de>
- <20240301-gegossen-seestern-683681ea75d1@brauner>
- <87il269crs.fsf@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWM5O6YI6buob06zZk/jisocXqrVFh1OxV3a9qqrQUGvd81rOrD63ME8OZmRAkpG5O/m1M7YNXrOR6yGW7MdC5yV6CK9iUr9t9zgyWI+wERh1wQMv5563p0OyBEQlLluNspnRYRfK5Z+gMaICvLepGXu9mqwpyd1ccCHvCIYOWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=o+Ib6oVX; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-102-198.bstnma.fios.verizon.net [173.48.102.198])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 427FbuDE011172
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Mar 2024 10:37:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1709825878; bh=CRtQBHIuXFe3xAx7BaoQJhCRbvelq6dpudFNfh2aH40=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=o+Ib6oVXe1HuE8IovIZOpcsfLeNCrCWDPR1WsaPm/JtEUuekfI3F3vxH3Jqp9zqwL
+	 gsHjNoObXidHn/f4ExMioJ3uTgg9SvktYQBf4Hp9SkS1OUh/90WPoYyLUja5yV22Oq
+	 tEhD/LNQIp03549NRexKTAt1W/zheJuecTCHO8EjPd1KVSg0kLLrC8qMHt2YndcBKM
+	 X4paTx0KRwV3w73RR+GrqjswX4dvau6HT3NZFNYWCN4N7v6uUj8AGe3p596gOP528Z
+	 FofQTD8b3Ws3rBhOzBsMdXyXunK1tU1K3xmabAaLrBS83Q/6gsi6sCYVmcJa3xOW/B
+	 7kcVp6iGjXkQQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id BCE9815C027D; Thu,  7 Mar 2024 10:37:56 -0500 (EST)
+Date: Thu, 7 Mar 2024 10:37:56 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Phillip Susi <phill@thesusis.net>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: Uneccesary flushes waking up suspended disks
+Message-ID: <20240307153756.GB26301@mit.edu>
+References: <877cieqhaw.fsf@vps.thesusis.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -109,104 +63,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87il269crs.fsf@suse.de>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_TWELVE(0.00)[12];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[kernel.org,mit.edu,dilger.ca,zeniv.linux.org.uk,suse.cz,szeredi.hu,gmail.com,vger.kernel.org];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Flag: NO
+In-Reply-To: <877cieqhaw.fsf@vps.thesusis.net>
 
-On Fri 01-03-24 15:45:27, Luis Henriques wrote:
-> Christian Brauner <brauner@kernel.org> writes:
+On Thu, Mar 07, 2024 at 08:53:43AM -0500, Phillip Susi wrote:
+> I have noticed that whenever you suspend to ram or shutdown the system,
+> runtime pm suspended disks are woken up only to be spun right back down
+> again.  This is because the kernel syncs all filesystems, and they issue
+> a cache flush.  Since the disk is suspended however, there is nothing in
+> the cache to flush, so this is wasteful.
 > 
-> > On Thu, Feb 29, 2024 at 04:30:08PM +0000, Luis Henriques wrote:
-> >> Currently, only parameters that have the fs_parameter_spec 'type' set to
-> >> NULL are handled as 'flag' types.  However, parameters that have the
-> >> 'fs_param_can_be_empty' flag set and their value is NULL should also be
-> >> handled as 'flag' type, as their type is set to 'fs_value_is_flag'.
-> >> 
-> >> Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> >> ---
-> >>  fs/fs_parser.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> >> index edb3712dcfa5..53f6cb98a3e0 100644
-> >> --- a/fs/fs_parser.c
-> >> +++ b/fs/fs_parser.c
-> >> @@ -119,7 +119,8 @@ int __fs_parse(struct p_log *log,
-> >>  	/* Try to turn the type we were given into the type desired by the
-> >>  	 * parameter and give an error if we can't.
-> >>  	 */
-> >> -	if (is_flag(p)) {
-> >> +	if (is_flag(p) ||
-> >> +	    (!param->string && (p->flags & fs_param_can_be_empty))) {
-> >>  		if (param->type != fs_value_is_flag)
-> >>  			return inval_plog(log, "Unexpected value for '%s'",
-> >>  				      param->key);
-> >
-> > If the parameter was derived from FSCONFIG_SET_STRING in fsconfig() then
-> > param->string is guaranteed to not be NULL. So really this is only
-> > about:
-> >
-> > FSCONFIG_SET_FD
-> > FSCONFIG_SET_BINARY
-> > FSCONFIG_SET_PATH
-> > FSCONFIG_SET_PATH_EMPTY
-> >
-> > and those values being used without a value. What filesystem does this?
-> > I don't see any.
-> >
-> > The tempting thing to do here is to to just remove fs_param_can_be_empty
-> > from every helper that isn't fs_param_is_string() until we actually have
-> > a filesystem that wants to use any of the above as flags. Will lose a
-> > lot of code that isn't currently used.
+> Should this be solved in the filesystems, or the block layer?
 > 
-> Right, I find it quite confusing and I may be fixing the issue in the
-> wrong place.  What I'm seeing with ext4 when I mount a filesystem using
-> the option '-o usrjquota' is that fs_parse() will get:
-> 
->  * p->type is set to fs_param_is_string
->    ('p' is a struct fs_parameter_spec, ->type is a function)
->  * param->type is set to fs_value_is_flag
->    ('param' is a struct fs_parameter, ->type is an enum)
-> 
-> This is because ext4 will use the __fsparam macro to set define a
-> fs_param_spec as a fs_param_is_string but will also set the
-> fs_param_can_be_empty; and the fsconfig() syscall will get that parameter
-> as a flag.  That's why param->string will be NULL in this case.
+> I first started trying to fix this in ext4, but now I am thinking this
+> is more of a generic issue that should be solved in the block layer.  I
+> am thinking that the block layer could keep a dirty flag that is set by
+> any write request, and cleared by a flush, or when the disk is
+> suspended.  As long as the dirty flag is not set, any flush requests can
+> just be discarded.
 
-So I'm a bit confused here. Valid variants of these quota options are like
-"usrjquota=<filename>" (to set quota file name) or "usrjquota=" (to clear
-quota file name). The variant "usrjquota" should ideally be rejected
-because it doesn't make a good sense and only adds to confusion. Now as far
-as I'm reading fs/ext4/super.c: parse_options() (and as far as my testing
-shows) this is what is happening so what is exactly the problem you're
-trying to fix?
+Another fix would be making sure that the kernel isues the file system
+syncs, and waits for them to be completed, *before* we freeze the
+disk.  That way, if there are any dirty pages, they can be flushed to
+stable store so that if the battery runs down while the laptop is
+suspended, the user won't see data loss.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+						- Ted
 
