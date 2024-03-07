@@ -1,207 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-13952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5935F875B15
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 00:25:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BA1875B28
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 00:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C701F229C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 23:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66819282400
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 23:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBE63FB2F;
-	Thu,  7 Mar 2024 23:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7A93D988;
+	Thu,  7 Mar 2024 23:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgukGQ/n"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BRGf41P8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7589F3F9C6;
-	Thu,  7 Mar 2024 23:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB723CF4E
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 23:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709853950; cv=none; b=ZIDDYHDoCELLoLvSFz4kmQqOl4vR7elrREioKsuKr/E+RZQwQzRV5rwF9UI+EeOsJVjgB0J92HWtXg9KYvdlPnaA0i+NwPJgdv1SXPw6nj7WHSdgyT6wrhy/xszsuufs9W15G2OS7aDqMWrxxbgEzN3tqD89td2KDCxSNK0VUHc=
+	t=1709854539; cv=none; b=GFlWHkM1h8l6DZC2ETbFYG/NpXYYAjzBeb7ofShnSZas2dektXaq7JZZOHtpRLU+evR2COthjVT+YnGAWKGmeXF9S/7ptSmIJXq7/OHy571TqNwP79t3xBkRpBe6El9E1ck0EcPkZlMtBoJ2eVStqls4MsYlJIdsCg2okP78+ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709853950; c=relaxed/simple;
-	bh=Q7EOO9sACNMTrdopkPP9b92/L32m5EGawjyCVMe2IE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k9h3GGLRSUtaCKRm+Ecn6EQfwOJ61ahltxAM6kVKecyt/KD+splded7uM1wbCcHZXbOcwvK4VG60etDVsR81XsUhkqlA9eme5nolXdASwvluMnDir62xjr6vCz6TZJ27ck0U8qnzfxAc+fh8HLmoGIW+l73nSBCeo3R1xV026D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgukGQ/n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA36C433C7;
-	Thu,  7 Mar 2024 23:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709853949;
-	bh=Q7EOO9sACNMTrdopkPP9b92/L32m5EGawjyCVMe2IE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SgukGQ/nGA6LPXD1upS/mbPTe9t8xNUARhOdM0FVIkEIKnJLFS4hR5XZOGfQsBqAH
-	 OceJhviayYDNkxZJMqGrXfkziWqnwsHmL+neEFbiZ2OFbmqacMSVSSLAP056mRMZU4
-	 AfWj+XoD3j2nET+AALXaznJx76K8h49N8PxW4+FKpx9GAkwKv5NguogIpNFy/HNy2N
-	 W2MwiQGsRlZI06fWYeBdcCYWs++crTUWrTJGQfw/X7G1A/WjlPUO+iPXJ1NK7PstV5
-	 99scHwd+ycB7SljR3HmIcsWMUZLz2/iAa6jdxdj8dDLK474mWm8rkJK0H2apJXhhFG
-	 ep7lN5GOYf6qw==
-Date: Thu, 7 Mar 2024 15:25:49 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, hch@lst.de
-Subject: Re: [PATCH 14/13] xfs: make XFS_IOC_COMMIT_RANGE freshness data
- opaque
-Message-ID: <20240307232549.GI1927156@frogsfrogsfrogs>
-References: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
- <20240227174649.GL6184@frogsfrogsfrogs>
- <CAOQ4uxiPfno-Hx+fH3LEN_4D6HQgyMAySRNCU=O2R_-ksrxSDQ@mail.gmail.com>
- <20240229232724.GD1927156@frogsfrogsfrogs>
- <bf2f4a0e7033091d34139540737674dc998fe010.camel@kernel.org>
- <20240302024831.GL1927156@frogsfrogsfrogs>
- <98b41ce0e577cffcc45c7d29781ca2d85ed19d5e.camel@kernel.org>
+	s=arc-20240116; t=1709854539; c=relaxed/simple;
+	bh=njY2lknGUPjlZ/Y4D816ZCYT5Nqe46D+l814JgKXZP4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ByBgxj/UvUbLMv7Rl/6ye/1jeFnHvKMyA24RZgctZhRrCVbDV7iSdK3HOZz9f8RL0EmynO6SzkMMTJMDMM/UIMxdTv2PZ1p2ZRCwyIt7IwlKLFtphLunlqKHYDGL6E3ngjQHa40uruwOG+NM3vjXNTuTUH8OaCbcB3xikjmR2lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BRGf41P8; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dc23bf7e5aaso1468754276.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Mar 2024 15:35:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1709854536; x=1710459336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hNtL5CD8puTpQSdVaD0jHpw+y7n9IUqqlnVoWEtCBL0=;
+        b=BRGf41P82HsTvkXyo2JNGJj+LB/0rs1SYZIqMsBlWlC7RZmh44lC652HQhSdV+keOd
+         XH4xcPqiGcvXvzV8dpYR05vth5BsmoNcndqgi3wdrm1fPvUoICxsai94UGJMFuyFJDHF
+         pQS5k3afj73Lk5eNQv8XRnKnP7n0AQnkhVUp+IBoc1ClMKlZeH7G1FKH4oGZ8sf7xug1
+         jihrRlDfL9gCD+pjVhl5TTBJXkwoQGhmN0gfn9NlzWnHVmofClPUj/qUKRXnRFQDd5nX
+         C1hXJ+/BlBKS+I9u1QkR878iVFataCO1lXP78+4gBLzTiIWUjEFELaD97x7SmPVlnKzp
+         euEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709854536; x=1710459336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hNtL5CD8puTpQSdVaD0jHpw+y7n9IUqqlnVoWEtCBL0=;
+        b=Th/+YeufCawFFCVf/69epyyl7tN0zThP6j4MonrLsjWZHPAQYVx0Q8ttIJoGZL0Qhf
+         l7+RkBk+FyAbFHPZ4zcAA/LWvBZcF4DT4roVW3QJ3hA1Mr2J/cClXjQIG8QUJh/Poe+0
+         b26+FtcrHkGeeGTdiPJe00q27JvlCJw8WwIPqsvISKkBA5C4AiBR1hYHDW4vPNuOlEmq
+         LpfpO31kJPo9+dCTeB7jT+pw0LVAj0utRlcABTegNqv6DeAsDyy6AmzII4oGa4lrCTJb
+         rst0YXvKpr5hdYZBINMtD1OY2ZPlvPatI39aYfHq22djTydm9Keigff5wsOG/GXizMO/
+         04Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCXOQRhpqcVo9TmcUktJTDvbhvZ4lLaLccOAW1iHhfSTshhjvsPnNZkyoOaVgDiJUNwzXkp1PD2weNKN9Dv6bwinwUEN+gxUPQvm4oRX+Q==
+X-Gm-Message-State: AOJu0YzyqIEkqmFQUyOuggqJgt6UNyO3FbrygInIQHH6f7PyyC6ApROS
+	TefHofDb20qcVnAX64ZkFSPPngyJEvjJTtrPX0wBKxzYx5p5MutJB5WGN/J0vwEyB4a+vc/Cd6Y
+	cxf2ESRKAqClDZjAWceXah1LoFs2Pn5xT9QYu
+X-Google-Smtp-Source: AGHT+IHkLUNDkeGWk2UDprvqJoyAAWj/+UG6z3dHHUumDjNkflGrkgzvjDHpcuCjMGR9LSonnO4t3xhJraJPxjHKlhE=
+X-Received: by 2002:a25:9f81:0:b0:dc6:c510:df6b with SMTP id
+ u1-20020a259f81000000b00dc6c510df6bmr17669276ybq.55.1709854536495; Thu, 07
+ Mar 2024 15:35:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <98b41ce0e577cffcc45c7d29781ca2d85ed19d5e.camel@kernel.org>
+References: <20240219.chu4Yeegh3oo@digikod.net> <20240219183539.2926165-1-mic@digikod.net>
+ <ZedgzRDQaki2B8nU@google.com> <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com> <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com> <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com> <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+In-Reply-To: <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 7 Mar 2024 18:35:25 -0500
+Message-ID: <CAHC9VhSMONVsPT0k0kJOaAWQzpx2JCLYYosCX+k9g0PN8NQyMw@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+To: Dave Chinner <david@fromorbit.com>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 02, 2024 at 07:43:53AM -0500, Jeff Layton wrote:
-> On Fri, 2024-03-01 at 18:48 -0800, Darrick J. Wong wrote:
-> > On Fri, Mar 01, 2024 at 08:31:21AM -0500, Jeff Layton wrote:
-> > > On Thu, 2024-02-29 at 15:27 -0800, Darrick J. Wong wrote:
-> > > > On Tue, Feb 27, 2024 at 08:52:58PM +0200, Amir Goldstein wrote:
-> > > > > On Tue, Feb 27, 2024 at 7:46 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > > > > > 
-> > > > > > From: Darrick J. Wong <djwong@kernel.org>
-> > > > > > 
-> > > > > > To head off bikeshedding about the fields in xfs_commit_range, let's
-> > > > > > make it an opaque u64 array and require the userspace program to call
-> > > > > > a third ioctl to sample the freshness data for us.  If we ever converge
-> > > > > > on a definition for i_version then we can use that; for now we'll just
-> > > > > > use mtime/ctime like the old swapext ioctl.
-> > > > > 
-> > > > > This addresses my concerns about using mtime/ctime.
-> > > > 
-> > > > Oh good! :)
-> > > > 
-> > > > > I have to say, Darrick, that I think that referring to this concern as
-> > > > > bikeshedding is not being honest.
-> > > > > 
-> > > > > I do hate nit picking reviews and I do hate "maybe also fix the world"
-> > > > > review comments, but I think the question about using mtime/ctime in
-> > > > > this new API was not out of place
-> > > > 
-> > > > I agree, your question about mtime/ctime:
-> > > > 
-> > > > "Maybe a stupid question, but under which circumstances would mtime
-> > > > change and ctime not change? Why are both needed?"
-> > > > 
-> > > > was a very good question.  But perhaps that statement referred to the
-> > > > other part of that thread.
-> > > > 
-> > > > >                                   and I think that making the freshness
-> > > > > data opaque is better for everyone in the long run and hopefully, this will
-> > > > > help you move to the things you care about faster.
-> > > > 
-> > > > I wish you'd suggested an opaque blob that the fs can lay out however it
-> > > > wants instead of suggesting specifically the change cookie.  I'm very
-> > > > much ok with an opaque freshness blob that allows future flexibility in
-> > > > how we define the blob's contents.
-> > > > 
-> > > > I was however very upset about the Jeff's suggestion of using i_version.
-> > > > I apologize for using all caps in that reply, and snarling about it in
-> > > > the commit message here.  The final version of this patch will not have
-> > > > that.
-> > > > 
-> > > > That said, I don't think it is at all helpful to suggest using a file
-> > > > attribute whose behavior is as yet unresolved.  Multigrain timestamps
-> > > > were a clever idea, regrettably reverted.  As far as I could tell when I
-> > > > wrote my reply, neither had NFS implemented a better behavior and
-> > > > quietly merged it; nor have Jeff and Dave produced any sort of candidate
-> > > > patchset to fix all the resulting issues in XFS.
-> > > > 
-> > > > Reading "I realize that STATX_CHANGE_COOKIE is currently kernel
-> > > > internal" made me think "OH $deity, they wants me to do that work
-> > > > too???"
-> > > > 
-> > > > A better way to have woreded that might've been "How about switching
-> > > > this to a fs-determined structure so that we can switch the freshness
-> > > > check to i_version when that's fully working on XFS?"
-> > > > 
-> > > > The problem I have with reading patch review emails is that I can't
-> > > > easily tell whether an author's suggestion is being made in a casual
-> > > > offhand manner?  Or if it reflects something they feel strongly needs
-> > > > change before merging.
-> > > > 
-> > > > In fairness to you, Amir, I don't know how much you've kept on top of
-> > > > that i_version vs. XFS discussion.  So I have no idea if you were aware
-> > > > of the status of that work.
-> > > > 
-> > > 
-> > > Sorry, I didn't mean to trigger anyone, but I do have real concerns
-> > > about any API that attempts to use timestamps to detect whether
-> > > something has changed.
-> > > 
-> > > We learned that lesson in NFS in the 90's. VFS timestamp resolution is
-> > > just not enough to show whether there was a change to a file -- full
-> > > stop.
-> > > 
-> > > I get the hand-wringing over i_version definitions and I don't care to
-> > > rehash that discussion here, but I'll point out that this is a
-> > > (proposed) XFS-private interface:
-> > > 
-> > > What you could do is expose the XFS change counter (the one that gets
-> > > bumped for everything, even atime updates, possibly via different
-> > > ioctl), and use that for your "freshness" check.
-> > > 
-> > > You'd unfortunately get false negative freshness checks after read
-> > > operations, but you shouldn't get any false positives (which is real
-> > > danger with timestamps).
-> > 
-> > I don't see how would that work for this usecase?  You have to sample
-> > file2 before reflinking file2's contents to file1, writing the changes
-> > to file1, and executing COMMIT_RANGE.  Setting the xfs-private REFLINK
-> > inode flag on file2 will trigger an iversion update even though it won't
-> > change mtime or ctime.  The COMMIT then fails due to the inode flags
-> > change.
-> > 
-> > Worse yet, applications aren't going to know if a particular access is
-> > actually the one that will trigger an atime update.  So this will just
-> > fail unpredictably.
-> > 
-> > If iversion was purely a write counter then I would switch the freshness
-> > implementation to use it.  But it's not, and I know this to be true
-> > because I tried that and could not get COMMIT_RANGE to work reliably.
-> > I suppose the advantage of the blob thing is that we actually /can/
-> > switch over whenever it's ready.
-> > 
-> 
-> Yeah, that's the other part -- you have to be willing to redrive the I/O
-> every time the freshness check fails, which can get expensive depending
-> on how active the file is. Again this is an XFS interface, so I don't
-> really have a dog in this fight. If you think timestamps are good
-> enough, then so be it.
-> 
-> All I can do is mention that it has been our experience in the NFS world
-> that relying on timestamps like this will eventually lead to data
-> corruption. The race conditions may be tight, and much of the time the
-> race may be benign, but if you do this enough you'll eventually get
-> bitten, and end up exchanging data when you shouldn't have.
-> 
-> All of that said, I think this is great discussion fodder for LSF this
-> year. I feel like the time is right to consider these sorts of
-> interfaces that do synchronized I/O without locking. I've already
-> proposed a discussion around the state of the i_version counter, so
-> maybe we can chat about it then?
+On Thu, Mar 7, 2024 at 6:09=E2=80=AFPM Dave Chinner <david@fromorbit.com> w=
+rote:
+> On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
+> > On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoack@googl=
+e.com> wrote:
+> > > On Thu, Mar 07, 2024 at 01:21:48PM +0100, Arnd Bergmann wrote:
+> > > > On Thu, Mar 7, 2024, at 13:15, Christian Brauner wrote:
+> > > > > On Wed, Mar 06, 2024 at 04:18:53PM +0100, Arnd Bergmann wrote:
+> > > > >> On Wed, Mar 6, 2024, at 14:47, Micka=C3=ABl Sala=C3=BCn wrote:
+> > > > >> >
+> > > > >> > Arnd, Christian, Paul, are you OK with this new hook proposal?
+> > > > >>
+> > > > >> I think this sounds better. It would fit more closely into
+> > > > >> the overall structure of the ioctl handlers with their multiple
+> > > > >> levels, where below vfs_ioctl() calling into f_ops->unlocked_ioc=
+tl,
+> > > > >> you have the same structure for sockets and blockdev, and
+> > > > >> then additional levels below that and some weirdness for
+> > > > >> things like tty, scsi or cdrom.
+> > > > >
+> > > > > So an additional security hook called from tty, scsi, or cdrom?
+> > > > > And the original hook is left where it is right now?
+> > > >
+> > > > For the moment, I think adding another hook in vfs_ioctl()
+> > > > and the corresponding compat path would do what Micka=C3=ABl
+> > > > wants. Beyond that, we could consider having hooks in
+> > > > socket and block ioctls if needed as they are easy to
+> > > > filter out based on inode->i_mode.
+> > > >
+> > > > The tty/scsi/cdrom hooks would be harder to do, let's assume
+> > > > for now that we don't need them.
+> > >
+> > > Thank you all for the help!
+> > >
+> > > Yes, tty/scsi/cdrom are just examples.  We do not need special featur=
+es for
+> > > these for Landlock right now.
+> > >
+> > > What I would do is to invoke the new LSM hook in the following two pl=
+aces in
+> > > fs/ioctl.c:
+> > >
+> > > 1) at the top of vfs_ioctl()
+> > > 2) at the top of ioctl_compat()
+> > >
+> > > (Both of these functions are just invoking the f_op->unlocked_ioctl()=
+ and
+> > > f_op->compat_ioctl() operations with a safeguard for that being a NUL=
+L pointer.)
+> > >
+> > > The intent is that the new hook gets called everytime before an ioctl=
+ is sent to
+> > > these IOCTL operations in f_op, so that the LSM can distinguish clean=
+ly between
+> > > the "safe" IOCTLs that are implemented fully within fs/ioctl.c and th=
+e
+> > > "potentially unsafe" IOCTLs which are implemented by these hooks (as =
+it is
+> > > unrealistic for us to holistically reason about the safety of all pos=
+sible
+> > > implementations).
+> > >
+> > > The alternative approach where we try to do the same based on the exi=
+sting LSM
+> > > IOCTL hook resulted in the patch further up in this mail thread - it =
+involves
+> > > maintaining a list of "safe" IOCTL commands, and it is difficult to g=
+uarantee
+> > > that these lists of IOCTL commands stay in sync.
+> >
+> > I need some more convincing as to why we need to introduce these new
+> > hooks, or even the vfs_masked_device_ioctl() classifier as originally
+> > proposed at the top of this thread.  I believe I understand why
+> > Landlock wants this, but I worry that we all might have different
+> > definitions of a "safe" ioctl list, and encoding a definition into the
+> > LSM hooks seems like a bad idea to me.
+>
+> I have no idea what a "safe" ioctl means here. Subsystems already
+> restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+> "safe" clearly means something different here.
 
-Yes.  I've gotten an invitation, so corporate approval and dumb injuries
-notwithstanding, I'll be there this year. :)
+That's the point I was trying to make.  I'm not sure exactly what
+G=C3=BCnther meant either (I was simply copying his idea of a "safe" ioctl,
+complete with all of the associations around the double quotes), which
+helps underscore the idea that different groups are likely to have
+different ideas of what ioctls they want to allow based on their
+security model, environment, etc.
 
---D
+> > At this point in time, I think I'd rather see LSMs that care about
+> > ioctls maintaining their own list of "safe" ioctls and after a while
+> > if it looks like everyone is in agreement (VFS folks, individual LSMs,
+> > etc.) we can look into either an ioctl classifier or multiple LSM
+> > ioctl hooks focused on different categories of ioctls.
+>
+> From the perspective of a VFS and subsystem developer, I really have
+> no clue what would make a "safe" ioctl from a LSM perspective ...
 
-> -- 
-> Jeff Layton <jlayton@kernel.org>
-> 
+We also need to keep in mind that we have multiple LSM implementations
+and we need to support different ideas around how to control access to
+ioctls, including which ioctls are "safe" for multiple definitions of
+the word.
+
+> ... and I
+> very much doubt an LSM developer has any clue whether deep, dark
+> subsystem ioctls are "safe" to allow, or even what would stop
+> working if they decided something was not "safe".
+
+... or for those LSMs with configurable security policies, which
+ioctls are allowed by the LSM's policy developer to fit their
+particular needs.
+
+> This just seems like a complex recipe for creating unusable and/or
+> impossible to configure/secure systems to me.
+
+FWIW, Android has been using the existing LSM ioctl controls for
+several years now to help increase the security of Android devices.
+
+https://security.googleblog.com/2016/07/protecting-android-with-more-linux.=
+html
+https://kernsec.org/files/lss2015/vanderstoep.pdf
+
+--=20
+paul-moore.com
 
