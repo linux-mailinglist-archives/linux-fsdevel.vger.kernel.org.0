@@ -1,100 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-13845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA61E874AB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 10:22:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BA2874AC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 10:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17A2D1C21048
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 09:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74A4285177
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 09:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F141B83CD7;
-	Thu,  7 Mar 2024 09:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F64839F5;
+	Thu,  7 Mar 2024 09:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fJmc6qZb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SglerI6A";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fJmc6qZb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SglerI6A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2ED83A01
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 09:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73874204B;
+	Thu,  7 Mar 2024 09:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709803324; cv=none; b=XN12gxJ/+vARalGITecu6Aq7SSD/VgX3HNKQ6ryI+hvkfPmSLuz5FM9Av4/zhI5fMeA9CoL/LzSApMAdLFy4mSzNe07Tf31ciaR5spI620fOSkJdxRDgZLmZ7gFge0z6WxgAFBaNohda+6ug7c3e+FB6G2bVu19A9Dp2UnDvwzk=
+	t=1709803457; cv=none; b=DIXSKHIxDcIUzTdP9GicLLCX59tA9hVxJN1W3mBfDm912EKuiY5lnCKfuwNLzO8XIOXAJSI2si4cBDFWbR10CgN4aknWSMxmZLRi363yVXORe51rWqolvosuRxwSEIrf6vZ58Kv80Fb/qWKgsWeE80Ahe4hzugeHcr6HzZmCEG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709803324; c=relaxed/simple;
-	bh=k6Z8Dy08v8JjctZT+zEqRAI+iDKakEThNIneji3WUs8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iLmFx0po5Wk788rQfimvDTc8lYii7xjafIq8uXr6VwO2vat3PlyXhYlOcKq2FDkYxrrHaSk53IP6UCbTnYnlE4P/lcc0AocUpj3RLYxLpbCIaK11LnOyF6DKvXlhbljjIcrQzblrseDijjV06i71fjfQYAJK79M/2XM2ETj4dI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c8414a39b7so56066739f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Mar 2024 01:22:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709803322; x=1710408122;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V4cB4mfgxxhOdGVz1qSSrC2aE19EtM0xTHQYqGcCbdk=;
-        b=uR3RYCrJEMmqMsz6zTrRJslgR28GVWQo95PDKqMBNttoJoWvo7NAO0+LZghkoIe9oV
-         pwMPZ3tlwReQSVsODaB8h0f9PwtbJiWkhFum4jxnFabRBWOiI8l4tb774LIdJ6J2kgrn
-         v6b+iEYk7IxwxcBKnaOM6eYGvts7asicmb+Fnuirkbt/s5S4a0gRmbAmWlvsF2ds0cJK
-         zg2QJuOG0Fz4Aiarhq34DPb8+SFIiaG4NgMUIyn9cK+pFgNmv4NkZhIjVX4Vls4no8ro
-         ZnghZADfcSiiYiDys2yt9MDHpWn5pbQs6mT+eZozNOdOkzMadC0spoLSgLR37Wl6A5O3
-         kAbA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/NxcOymGIMDHQfFR6X6fR7VXj8+ARoU+lxf+rrSWmIuAGvnqJioTHgqpp74uPc8/tbi3lkIYAS7RM7Mmw7rsMFMozcbMemCpQjWSZ9w==
-X-Gm-Message-State: AOJu0YxYaLd55f5kubrkSmJ2hKgF0viT6h7eRC5qePmqIVg3fDvBlbpR
-	RtZtuKwzaYEt7iyt+EiA2besWN3or3DYwCm47qT+iM1M9Bcyf+7xSB4gOCgmp4m4GdYp/EBo/Dy
-	bU85DLZbr50vHtSTxByG6UfBDCzmcwatTd5B7twGrmMoZ1HNqENhFKLE=
-X-Google-Smtp-Source: AGHT+IEMTxQCdUA6Dv7Lv6y16wV0knL7dKArp17Um7aS/ApI3W+O/xlDfqd9xlZ9X3uv+mg+dW+z3XFCb+N79t1rzwFiFjeKNebx
+	s=arc-20240116; t=1709803457; c=relaxed/simple;
+	bh=yW37Kc1UpA3hbeae5CgQgM4MmchTV80N94rODYfGi60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qmJhz+o4c9d9OecHZwCYq5C5xFPfy6iPU6LcDVJWUwoa/XsJO0wfFdOmHTAJ6t5l43C6cnHIcRAhqTl+j2v3b9aphBR8CRMzwVzYOcLF/vr8Dbaklg7Lg9UUqQP8tWixGfbqy6z4bzMwXtGQyNSMBABhifXMYsAWsBnuIHv522I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fJmc6qZb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SglerI6A; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fJmc6qZb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SglerI6A; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4DD4F1FF95;
+	Thu,  7 Mar 2024 09:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1709803389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WYee3vvx8iNxYyDDjv7WZtOBNxQUBAc3szMxS6nwQ9w=;
+	b=fJmc6qZbKhklZy8K+ek4ydHM/kvaXtxblM6a1IH2V3A5uz+U2sBwoZyFhyNqQtKpPRBqOz
+	6jxd7q/V0k0kNwGg21YU/fvQWOWKtAkJ7RfFm2+9avAOn8zm+HX+Zw8484n4h8EKXA5OVa
+	XlHJzTHNnv7CmC23zzTmh3XyhCG0hwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1709803389;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WYee3vvx8iNxYyDDjv7WZtOBNxQUBAc3szMxS6nwQ9w=;
+	b=SglerI6AhdKMNbyWGjOwfVpTztRjjFADkrkGOXWksAdyDqD8KFLoN58/JH2ATOPCZFHIJC
+	rKDHpAYhV6uM8gBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1709803389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WYee3vvx8iNxYyDDjv7WZtOBNxQUBAc3szMxS6nwQ9w=;
+	b=fJmc6qZbKhklZy8K+ek4ydHM/kvaXtxblM6a1IH2V3A5uz+U2sBwoZyFhyNqQtKpPRBqOz
+	6jxd7q/V0k0kNwGg21YU/fvQWOWKtAkJ7RfFm2+9avAOn8zm+HX+Zw8484n4h8EKXA5OVa
+	XlHJzTHNnv7CmC23zzTmh3XyhCG0hwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1709803389;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WYee3vvx8iNxYyDDjv7WZtOBNxQUBAc3szMxS6nwQ9w=;
+	b=SglerI6AhdKMNbyWGjOwfVpTztRjjFADkrkGOXWksAdyDqD8KFLoN58/JH2ATOPCZFHIJC
+	rKDHpAYhV6uM8gBw==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 3D73F132A4;
+	Thu,  7 Mar 2024 09:23:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id roWrDn2H6WWkGgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 07 Mar 2024 09:23:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D9212A0803; Thu,  7 Mar 2024 10:23:08 +0100 (CET)
+Date: Thu, 7 Mar 2024 10:23:08 +0100
+From: Jan Kara <jack@suse.cz>
+To: "Yin, Fengwei" <fengwei.yin@intel.com>
+Cc: Yujie Liu <yujie.liu@intel.com>, Jan Kara <jack@suse.cz>,
+	Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Guo Xuenan <guoxuenan@huawei.com>, linux-fsdevel@vger.kernel.org,
+	ying.huang@intel.com, feng.tang@intel.com
+Subject: Re: [linus:master] [readahead] ab4443fe3c: vm-scalability.throughput
+ -21.4% regression
+Message-ID: <20240307092308.u54fjngivmx23ty3@quack3>
+References: <202402201642.c8d6bbc3-oliver.sang@intel.com>
+ <20240221111425.ozdozcbl3konmkov@quack3>
+ <ZdakRFhEouIF5o6D@xsang-OptiPlex-9020>
+ <20240222115032.u5h2phfxpn77lu5a@quack3>
+ <20240222183756.td7avnk2srg4tydu@quack3>
+ <ZeVVN75kh9Ey4M4G@yujie-X299>
+ <dee823ca-7100-4289-8670-95047463c09d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2b18:b0:476:b3e5:4392 with SMTP id
- fm24-20020a0566382b1800b00476b3e54392mr44985jab.2.1709803321994; Thu, 07 Mar
- 2024 01:22:01 -0800 (PST)
-Date: Thu, 07 Mar 2024 01:22:01 -0800
-In-Reply-To: <0000000000009752a005fdc2d114@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a4bb3506130e9bc5@google.com>
-Subject: Re: [syzbot] [usb] INFO: rcu detected stall in newfstatat (3)
-From: syzbot <syzbot+96127c74434e19e4609d@syzkaller.appspotmail.com>
-To: brauner@kernel.org, davem@davemloft.net, edumazet@google.com, 
-	gregkh@linuxfoundation.org, jack@suse.cz, jiri@nvidia.com, jmorris@namei.org, 
-	kuba@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-usb@vger.kernel.org, mchehab@kernel.org, netdev@vger.kernel.org, 
-	oneukum@suse.com, pabeni@redhat.com, paul@paul-moore.com, 
-	penguin-kernel@i-love.sakura.ne.jp, sean@mess.org, serge@hallyn.com, 
-	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com, 
-	takedakn@nttdata.co.jp, tomoyo-dev-en-owner@lists.osdn.me, 
-	tomoyo-dev-en@lists.osdn.me, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dee823ca-7100-4289-8670-95047463c09d@intel.com>
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fJmc6qZb;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=SglerI6A
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-3.00)[100.00%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_TWELVE(0.00)[13];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 4DD4F1FF95
+X-Spam-Flag: NO
 
-syzbot has bisected this issue to:
+On Mon 04-03-24 13:35:10, Yin, Fengwei wrote:
+> Hi Jan,
+> 
+> On 3/4/2024 12:59 PM, Yujie Liu wrote:
+> >  From the perf profile, we can see that the contention of folio lru lock
+> > becomes more intense. We also did a simple one-file "dd" test. Looks
+> > like it is more likely that low-order folios are allocated after commit
+> > ab4443fe3c (Fengwei will help provide the data soon). Therefore, the
+> > average folio size decreases while the total folio amount increases,
+> > which leads to touching lru lock more often.
+> 
+> I did following testing:
+>   With a xfs image in tmpfs + mount it to /mnt and create 12G test file
+>   (sparse-file), use one process to read it on a Ice Lake machine with
+>   256G system memory. So we could make sure we are doing a sequential
+>   file read with no page reclaim triggered.
+> 
+>   At the same time, profiling the distribution of order parameter of
+>   filemap_alloc_folio() call to understand how the large folio order
+>   for page cache is generated.
+> 
+> Here is what we got:
+> 
+> - Commit f0b7a0d1d46625db:
+> $ dd bs=4k if=/mnt/sparse-file of=/dev/null
+> 3145728+0 records in
+> 3145728+0 records out
+> 12884901888 bytes (13 GB, 12 GiB) copied, 2.52208 s, 5.01 GB/s
+> 
+> filemap_alloc_folio
+>      page order    : count     distribution
+>         0          : 57       |                                        |
+>         1          : 0        |                                        |
+>         2          : 20       |                                        |
+>         3          : 2        |                                        |
+>         4          : 4        |                                        |
+>         5          : 98300    |****************************************|
+> 
+> - Commit ab4443fe3ca6:
+> $ dd bs=4k if=/mnt/sparse-file of=/dev/null
+> 3145728+0 records in
+> 3145728+0 records out
+> 12884901888 bytes (13 GB, 12 GiB) copied, 2.51469 s, 5.1 GB/s
+> 
+> filemap_alloc_folio
+>      page order    : count     distribution
+>         0          : 21       |                                        |
+>         1          : 0        |                                        |
+>         2          : 196615   |****************************************|
+>         3          : 98303    |*******************                     |
+>         4          : 98303    |*******************                     |
+> 
+> 
+> Even the file read throughput is almost same. But the distribution of
+> order looks like a regression with ab4443fe3ca6 (more smaller order
+> page cache is generated than parent commit). Thanks.
 
-commit c2368b19807affd7621f7c4638cd2e17fec13021
-Author: Jiri Pirko <jiri@nvidia.com>
-Date:   Fri Jul 29 07:10:35 2022 +0000
+Thanks for testing! This is an interesting result and certainly unexpected
+for me. The readahead code allocates naturally aligned pages so based on
+the distribution of allocations it seems that before commit ab4443fe3ca6
+readahead window was at least 32 pages (128KB) aligned and so we allocated
+order 5 pages. After the commit, the readahead window somehow ended up only
+aligned to 20 modulo 32. To follow natural alignment and fill 128KB
+readahead window we allocated order 2 page (got us to offset 24 modulo 32),
+then order 3 page (got us to offset 0 modulo 32), order 4 page (larger
+would not fit in 128KB readahead window now), and order 2 page to finish
+filling the readahead window.
 
-    net: devlink: introduce "unregistering" mark and use it during devlinks iteration
+Now I'm not 100% sure why the readahead window alignment changed with
+different rounding when placing readahead mark - probably that's some
+artifact when readahead window is tiny in the beginning before we scale it
+up (I'll verify by tracing whether everything ends up looking correctly
+with the current code). So I don't expect this is a problem in ab4443fe3ca6
+as such but it exposes the issue that readahead page insertion code should
+perhaps strive to achieve better readahead window alignment with logical
+file offset even at the cost of occasionally performing somewhat shorter
+readahead. I'll look into this once I dig out of the huge heap of email
+after vacation...
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14dc6736180000
-start commit:   29cd507cbec2 Merge tag 'integrity-v6.8-fix' of git://git.k..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16dc6736180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12dc6736180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=70429b75d4a1a401
-dashboard link: https://syzkaller.appspot.com/bug?extid=96127c74434e19e4609d
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11767d61180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15f691a6180000
-
-Reported-by: syzbot+96127c74434e19e4609d@syzkaller.appspotmail.com
-Fixes: c2368b19807a ("net: devlink: introduce "unregistering" mark and use it during devlinks iteration")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
