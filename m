@@ -1,179 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-13874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F91E874E8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 13:04:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7A3874EA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 13:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B907DB231D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 12:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AEF21C21D7A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Mar 2024 12:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E739A12AAFF;
-	Thu,  7 Mar 2024 12:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DA712A143;
+	Thu,  7 Mar 2024 12:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrAqheib"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ccOU10M4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5609112A170
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 12:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985AB129A75
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Mar 2024 12:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709813048; cv=none; b=iYkNTrSG6mRlOBQfrZR8YO8IWp5ti7NKOIrRXJ4HD/eOCZ0gHQPJCwDMaekFhSgoi7cx3DtEeO0dr97EwmAyTsSn08vAiso1mQCjFpvbW6RalU5WA2v40jceRHah3d2v0wvqd0YPP393WQpW/NM4q18e4yodAzRfKkOMJ7RUUlk=
+	t=1709813377; cv=none; b=AMRHxXYybGcp8XrkNy4boL46WhZkZZlOb6sN2Qpojn2Ou+VMUec4EhWkhkQJDz9Ri0VH90YgdxJZSCovp0g3jHB5RYvQOXR8dTwaZ1OKlh2b1yIVI+UBXVHJpWOL1MYo/bJylKmVmZB1OX8i1CnaviyMQ+sZj2nFaKlV+gggRT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709813048; c=relaxed/simple;
-	bh=VSFKkp0gSk6y/6V0qooLBHYbpXoyQbhtVNMOV6KC4Ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3uqXWDZRAArGd6iKxC2eQIIebLHTQjZ/icsbcXf1m9SZp/zlA2ebRe5FHNkmXbmHUSjg3qVnPp0trix337Mhfkd/GCC/3zEGmgczpXRldN+nM9pn512nIL3DMdbsCLVbRP9n8aMV9P3LNLBtBuYuRU1pAe8uVkpxdsk1nfFVV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrAqheib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AFAFC433C7;
-	Thu,  7 Mar 2024 12:04:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709813047;
-	bh=VSFKkp0gSk6y/6V0qooLBHYbpXoyQbhtVNMOV6KC4Ic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZrAqheibCeVyjZ96SpihtuK8b+DkJ1DcQosEQTc7Hh56wRBdRL1LrD3vwuRmaP5qt
-	 ZkPIrxFHcxiYFa5KehyHV3uXiNVyy8qe/5HIg4qAap6hewTB1rKnOJsyjT5AGCBcRO
-	 rrvnCJA62Lwe9dq9tyPQcXX4RfcvlOACZ104KnpzmqWku3pARn6Ue6kJGCIWePlLYs
-	 /puppnkpb9xoudmTHZXzDn5EVf07lSCK8QIKDREV8wxpIMmFBNiNk6HBJjW5xm6Yoo
-	 sbhZ6iIU0DTyV0wNVp8irHkCvw++u/3RGxHhQlk8iMR5YIvuNVPQE6p5mUkpQcFtOy
-	 GVwK1sSwBPaKg==
-Date: Thu, 7 Mar 2024 13:04:02 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Eric Sandeen <sandeen@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Bill O'Donnell <billodo@redhat.com>, David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 1/2] vfs: Convert debugfs to use the new mount API
-Message-ID: <20240307-winkelmesser-funkkontakt-845889326073@brauner>
-References: <cfdebcc3-b9de-4680-a764-6bdf37c0accb@redhat.com>
- <49d1f108-46e3-443f-85a3-6dd730c5d076@redhat.com>
- <20240306-beehrt-abweichen-a9124be7665a@brauner>
- <CAJfpeguCKgMPBbD_ESD+Voxq5ChS9nGQFdYrA4+YWBz17yFADA@mail.gmail.com>
- <20240306-alimente-tierwelt-01d46f2b9de7@brauner>
- <49751ee4-d2ce-4db9-af85-f9acf65a4b85@sandeen.net>
+	s=arc-20240116; t=1709813377; c=relaxed/simple;
+	bh=ZcbSxQHa64styGyObPAmI3FZxXzS+Ei0HMj7rBDGJks=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bo47ryrLtgG0slJyDoIJCVuR/mFa8Fu8kOwUkFWDkJHzdKij0R0EcvuEJ9C9DUEsdhJheNmvwabkpuWK2Z4yKeFhogzzXcgcAU6tV/w6RDBsT9eDS/wFoDpBjDa5FzL/G1+QW9JB2hRroHD4BLHPFUojeUFQhhi/SeHW/seVbl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ccOU10M4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709813374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sobtdTCw6g7Ovv2LKnqxm7QgwpUgMPOLE+MVJRQS8vw=;
+	b=ccOU10M4rDKrmi1kJz3UPiHV5ifdS3VelD3DYHZ6hc6Mj+bnDQ48VincrgbiEyfN63z/l4
+	eVsmOlsFcLlYzhV+Z//xyMlV2Nc61cdXTUy8r+AdXWKXtOb1L4lLBifjpc31kdmKpKvedR
+	O7CcW17Vd+vKzBKVqGtj+Gj9WO70VlY=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-186-81TIXGVZOTy5IGCFExBpHw-1; Thu, 07 Mar 2024 07:09:32 -0500
+X-MC-Unique: 81TIXGVZOTy5IGCFExBpHw-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2d2b256e617so5382581fa.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Mar 2024 04:09:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709813371; x=1710418171;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:from:content-language:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sobtdTCw6g7Ovv2LKnqxm7QgwpUgMPOLE+MVJRQS8vw=;
+        b=IrtZZkj7Bxf8LN7N5wr2BNcXrodBnZSB+T1D7ElNKgf51amdsEbVrBg4dFU3XG/Ly+
+         01TKt6bjGqCo1T2sQA7FSYQ5SHRTfmLL4nuuhJMMDW3gdtlXymqzlxW+K00RNFUUC8nH
+         q5QgA379+/sN6BsD4az+WHze5pAS2Ms4pfKp16WXf2Yv1a+XulFJKuIh6RynAkARoViL
+         CLX7XT1cX31g8oH1p5WHQD0Rnf4vj0PD+jw8ldiwoC7tooc3s7oYXxHOZpKMSfO30+5W
+         1K771smUGCBa5M0wm9EFs3aGnOQdefQORN36OzjYtF7qp9MCXAT74/4hz770lFi9+Uv8
+         RNmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoGmAOfssNhStIsfzN3QkuCXAl0i+aekZxob1k5HKoRl8+EYGa8fijE39IcN4zYQOB20nB18Z5/F9214TvOg0n7na2/MoslRZRVnV5HA==
+X-Gm-Message-State: AOJu0YwKUshXBraJdGyjALoZgfUpLlJMZUZaRN0kIc9kVUKlPSgrmrpq
+	8M0kVkn0Lqohr0hS/a84ASTRcNB7YWcIde/qrykvsZCEd4SZLEAyWvXZJuCSTAI1tRsVN/eczQh
+	HCcL9J5t+nzZbRJz3xHflB6psrH1x8Jh2YOrNO6MzoFpOrb3tzOmPLorSOxhSONw=
+X-Received: by 2002:a2e:a454:0:b0:2d3:f013:61d9 with SMTP id v20-20020a2ea454000000b002d3f01361d9mr1185948ljn.31.1709813371080;
+        Thu, 07 Mar 2024 04:09:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEGBqQrNg2/4YA5+A4tvNB+c5+9du3LnR6q5NsERUYIO5uu6WXY83AiEti24fQryCe6kaCZhA==
+X-Received: by 2002:a2e:a454:0:b0:2d3:f013:61d9 with SMTP id v20-20020a2ea454000000b002d3f01361d9mr1185932ljn.31.1709813370661;
+        Thu, 07 Mar 2024 04:09:30 -0800 (PST)
+Received: from ?IPV6:2003:cb:c74d:6400:4867:4ed0:9726:a0c9? (p200300cbc74d640048674ed09726a0c9.dip0.t-ipconnect.de. [2003:cb:c74d:6400:4867:4ed0:9726:a0c9])
+        by smtp.gmail.com with ESMTPSA id r12-20020adfe68c000000b0033df5710fabsm20100194wrm.44.2024.03.07.04.09.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Mar 2024 04:09:30 -0800 (PST)
+Message-ID: <a73c78be-8cdc-4f0e-b72f-e5255c906a5f@redhat.com>
+Date: Thu, 7 Mar 2024 13:09:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <49751ee4-d2ce-4db9-af85-f9acf65a4b85@sandeen.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] [RFC] proc: pagemap: Expose whether a PTE is writable
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-mm <linux-mm@kvack.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ upstream+pagemap <upstream+pagemap@sigma-star.at>,
+ adobriyan <adobriyan@gmail.com>, wangkefeng wang
+ <wangkefeng.wang@huawei.com>, ryan roberts <ryan.roberts@arm.com>,
+ hughd <hughd@google.com>, peterx <peterx@redhat.com>,
+ avagin <avagin@google.com>, lstoakes <lstoakes@gmail.com>,
+ vbabka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+ usama anjum <usama.anjum@collabora.com>, Jonathan Corbet <corbet@lwn.net>
+References: <20240306232339.29659-1-richard@nod.at>
+ <d673247b-a67b-43e1-a947-18fdae5f0ea1@redhat.com>
+ <1058679077.23275.1709809843605.JavaMail.zimbra@nod.at>
+ <7d9321db-a3c1-4593-91fa-c7f97bd9eecd@redhat.com>
+ <1525238492.23321.1709812267495.JavaMail.zimbra@nod.at>
+ <0644814b-869b-4694-bdb1-bab4e6186136@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <0644814b-869b-4694-bdb1-bab4e6186136@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 06, 2024 at 10:35:02AM -0600, Eric Sandeen wrote:
-> On 3/6/24 6:17 AM, Christian Brauner wrote:
-> > On Wed, Mar 06, 2024 at 01:13:05PM +0100, Miklos Szeredi wrote:
-> >> On Wed, 6 Mar 2024 at 11:57, Christian Brauner <brauner@kernel.org> wrote:
-> >>
-> >>> There's a tiny wrinkle though. We currently have no way of letting
-> >>> userspace know whether a filesystem supports the new mount API or not
-> >>> (see that mount option probing systemd does we recently discussed). So
-> >>> if say mount(8) remounts debugfs with mount options that were ignored in
-> >>> the old mount api that are now rejected in the new mount api users now
-> >>> see failures they didn't see before.
+On 07.03.24 12:59, David Hildenbrand wrote:
+> On 07.03.24 12:51, Richard Weinberger wrote:
+>> ----- Ursprüngliche Mail -----
+>>> Von: "David Hildenbrand" <david@redhat.com>
+>>>> I'm currently investigating why a real-time application faces unexpected
+>>>> page faults. Page faults are usually fatal for real-time work loads because
+>>>> the latency constraints are no longer met.
+>>>
+>>> Are you concerned about any type of page fault, or are things like a
+>>> simple remapping of the same page from "read-only to writable"
+>>> acceptable? ("very minor fault")
+>>
+>> Any page fault has to be avoided.
+>> To give you more background, the real time application runs on Xenomai,
+>> a real time extension for Linux.
+>> Xenomai applies already many tweaks to the kernel to trigger pre-faulting of
+>> memory areas. But sometimes the application does not use the Xenomai API
+>> correctly or there is an bug in Xenomai it self.
+>> Currently I'm suspecting the latter.
+>>    
 > 
-> Oh, right - the problem is the new mount API rejects unknown options
-> internally, right?
+> Thanks for the details!
 > 
-> >>> For the user it's completely intransparent why that failure happens. For
-> >>> them nothing changed from util-linux's perspective. So really, we should
-> >>> probably continue to ignore old mount options for backward compatibility.
-> >>
-> >> The reject behavior could be made conditional on e.g. an fsopen() flag.
-> > 
-> > and fspick() which I think is more relevant.
-> > 
-> >>
-> >> I.e. FSOPEN_REJECT_UNKNOWN would make unknown options be always
-> >> rejected.  Without this flag fsconfig(2) would behave identically
-> >> before/after the conversion.
-> > 
-> > Yeah, that would work. That would only make sense if we make all
-> > filesystems reject unknown mount options by default when they're
-> > switched to the new mount api imho. When we recognize the request comes
-> > from the old mount api fc->oldapi we continue ignoring as we did before.
-> > If it comes from the new mount api we reject unless
-> > FSOPEN/FSPICK_REJECT_UKNOWN was specified.
-
-I actually did misparse that I now realize. I read that as "ignore
-unknown" instead of "reject unknown".
-
+>>>>
+>>>> So, I wrote a small tool to inspect the memory mappings of a process to find
+>>>> areas which are not correctly pre-faulted. While doing so I noticed that
+>>>> there is currently no way to detect CoW mappings.
+>>>> Exposing the writable property of a PTE seemed like a good start to me.
+>>>
+>>> Is it just about "detection" for debugging purposes or about "fixup" in
+>>> running applications?
+>>
+>> It's only about debugging. If an application fails a test I want to have
+>> a tool which tells me what memory mappings are wonky or could cause a fault
+>> at runtime.
 > 
-> Ok, good point. Just thinking out loud, I guess an fsopen/fspick flag does
-> make more sense than i.e. each filesystem deciding whether it should reject
-> unknown options in its ->init_fs_context(), for consistency?
-
-Yes, I think so. The interesting case for util-linux according to Karel
-was remounting where mount(8) wants to gather all options from fstab and
-mountinfo, add new options from the command line and send it to the
-kernel without having to care about filesystems specific options that
-cannot be changed on remount.
-
-However, other users that do use the api programatically do care about
-this. They want to get an error when changing a mount property doesn't
-work.
-
-I think doing this on a per-fs basis just leads to more inconsistency.
-I'd rather have this be something we enforce on a higher level if we do
-it at all.
-
+> One destructive way to find out in a writable mapping if the page would
+> actually get remapped:
 > 
-> Right now it looks like the majority of filesystems do reject unknown
-> options internally, already.
-
-Yeah, it's mostly pseudo fses that don't, I reckon.
-
+> a) Read the PFN of a virtual address using pagemap
+> b) Write to the virtual address using /proc/pid/mem
+> c) Read the PFN of a virtual address using pagemap to see if it changed
 > 
-> (To muddy the waters more, other inconsistencies I've thought about are
-> re: how the fileystem handles remount. For example, which options are
-> remountable and which are not, and should non-remountable options fail?
+> If the application can be paused, you could read+write a single byte,
+> turning it non-destructive.
+> 
+> But that would still "hide" the remap-writable-type faults.
+> 
+>>
+>> I fully understand that my use case is a corner case and anything but mainline.
+>> While developing my debug tool I thought that improving the pagemap interface
+>> might help others too.
+> 
+> I'm fine with this (can be a helpful debugging tool for some other cases
+> as well, and IIRC we don't have another interface to introspect this),
+> as long as we properly document the corner case that there could still
+> be writefaults on some architectures when the page would not be
+> accessed/dirty yet.
+> 
 
-Yes, they should but similar to fsopen() we should have an fspick()
-flag. This was what I mentioned earlier in my response to Miklos.
+[and I just recall, there are some other corner cases. For example, 
+pages in a shadow stack can be pte_write(), but they can only be written 
+by HW indirectly when modifying the stack, and ordinary write access 
+would still fault]
 
-But I'm not yet clear whether FSOPEN/FSPICK_IGNORE_UNKNOWN wouldn't make
-more sense than FSOPEN/FSPICK_REJECT_UNKNOWN. IOW, invert the logic.
+-- 
+Cheers,
 
-Because as you said most filesystems do already reject unknown mount
-options and it's a few that don't. So I think we should focus on the
-remount case and for that I think we want FSOPEN_IGNORE_UNKNOWN
-otherwise default to rejecting unknown options if coming from the new
-mount api? I'm not sure.
+David / dhildenb
 
-> Also whether the filesystem internally preserves the original set of
-> options and applies the new set as a delta, or whether it treats the
-> new set as the exact set of options requested post-remount, but that's
-> probably a topic for another day.)
-
-For vfs mount properties it's a delta in the new mount api. The old
-mount api didn't have a concept of add or subtract. If you had a
-read-only mount and you wanted to also make it noexec then you'd have to
-specify "ro" again otherwise the mount would be made rw. mount(8) hides
-that behavior by retrieving the current mountflags from mountinfo and
-adding it to the remount call if the old mount api is used.
-mount_setattr() does that directly in the kernel and always does a
-delta.
-
-For filesystem specific properties it's probably irrelevant because
-remount already is effectively a delta for most filesystems. IOW, you
-don't suddenly get "usrquota" unset because you've changed the "dax"
-property on your xfs filesystem which would be worrisome. :)
-
-The thing is though that changing one mount option might implicitly
-change other mount options. But that's something that only the
-filesystem should decide. So I don't think this is something we need to
-worry about?
-
-The way I see mount(8) currently doing it is to change:
-
-(1) filesystem specific mount properties via fspick()+fsconfig()
-(2) generic mount properties via mount_setattr()
-
-during a remount call.
 
