@@ -1,146 +1,418 @@
-Return-Path: <linux-fsdevel+bounces-13986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6054087614D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 10:53:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAAD87618C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 11:10:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 196C82840CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 09:53:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241441F23265
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 10:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E825537FE;
-	Fri,  8 Mar 2024 09:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA6A54799;
+	Fri,  8 Mar 2024 10:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtH6iBRE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgIfvY78"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21F3535BC;
-	Fri,  8 Mar 2024 09:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701B0535DA;
+	Fri,  8 Mar 2024 10:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709891611; cv=none; b=PySgpcBlh6DCNMHyzvpl974gTy4VHGU9N2NTDBUxgn4hUl3TyD5QD5hWAfvFCoRSrYM2B4vjBLthLGPeobnGuRwIjXLmoT393YjiO+4Xu2Ne80ywSJKAJoN4dn4SENP1q2F1k8+5nR5WBVMdW1xZQki1d9sr2HwcXmCzCgSEFi0=
+	t=1709892587; cv=none; b=e35T97jny2E2knx+1d9jIEGCjY8kyw12/QfJnjZwzWc1lsKKuDsjW3kHm2sWlAMFvDBqxrwhWZebfIGLL/xnvLM7p5QgRxjozdkGQJTqrZkpxtnKAy51ekiZ2cuAdvO7QESZsFES4F1A6Rsy+VjCbDPpK+CH0orLPf2rMO7g1P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709891611; c=relaxed/simple;
-	bh=QmRLKVLKdt30yVzpTeSE0AYS+PV/cT94dyjGByHQZGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkG5ZmLzU7dlBOOFMZNfXgKaXHZLC2fISJRJS9z4sGZLzxMfBt8hvvRNl2JqEmugwYIVAnxoVqczBGT9CJEuGXRbPm5PiVktKuzMzOMp2MjPqg8MMhqiDu22Zsj9ImYWVBFqFJcs+8Dl8yIszRjlkSpATb03MN86bNdspdDnoL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtH6iBRE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F71FC43399;
-	Fri,  8 Mar 2024 09:53:28 +0000 (UTC)
+	s=arc-20240116; t=1709892587; c=relaxed/simple;
+	bh=4PxntLPNtz8agd+ceR6TCMkEKuqFoOzypV8NU1oyKk8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q1Dn2aj0q2n1zoIGGzaPN7/3YU3sZO4XO9iXY5ATop/KLmC09i0YWzzGkb2KkF06KQcG/DHHkwsZjUgztwi/KS8jJ+QxmabPs1TVKlf1tH/3bmDsBvyz7zogr+d01wNHBtIMUmk/9WlddzlJS9zQTsJOSsXVQfgdz/BWWzII9jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgIfvY78; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2CCC43330;
+	Fri,  8 Mar 2024 10:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709891611;
-	bh=QmRLKVLKdt30yVzpTeSE0AYS+PV/cT94dyjGByHQZGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XtH6iBREN3fVVbo0N98tpdhelBvJwfta1zM+gE/yvF18IO5iE87HFY4lXF56SGXBC
-	 kfA/twpwFNN6zkz9o5kHiYAIigkaQWNx1W625GlLF0ECkUajoYcHp+5D7ex0cpOEUd
-	 sEYKQ3DkTH72v7llSvb3nIRzJsR/IxsWbzs/xRevqAVtCc30bIc8TcGQUFjcwuWW27
-	 OHAKUnSrl2Vq3SBUSQXLvr2Op7avFBjDWLafKD56EP9l5GOtlMwkAs3Cz/C/qTaV7A
-	 iXKRr01hwuLcx5zDqGxrCDLJoW9eIw/4OwGCpqHmra+EUNn0rnVAQduOepaSxxcbHI
-	 SuzZNHn2+YKkA==
-Date: Fri, 8 Mar 2024 10:53:25 +0100
+	s=k20201202; t=1709892586;
+	bh=4PxntLPNtz8agd+ceR6TCMkEKuqFoOzypV8NU1oyKk8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CgIfvY78ff3FC1b3pnI2HTrQ6ywttEDj/+G1Az43MKONtwRdr/kP/rwHrGjahkUtl
+	 cVpgxzfrvVUH2vfsj6t8Ya91KExqIJUszHY7M9+J0bzF2yBul0CTLU2yJEv8+fMqGA
+	 Fw+k5JseUuxJUOyiywF6M8a9jC5rMLylfJIKHs+CuqhXCJYREGfg7ZqlNkrztlIB2k
+	 14XDxDiIsvjfFuESKBxb7e+lLLIc9FxmpQrcGYvaMs0Be49znqLi5TOfGugAUZ4boV
+	 0iuDDjI6pj60hZT/H4bFhsPCe/ThVpdZqV+KydKSK161pX/QRT8kB8k23PLNHfopxh
+	 yoRlarXWdbQ5w==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Luis Henriques <lhenriques@suse.de>, Theodore Ts'o <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fs_parser: handle parameters that can be empty and
- don't have a value
-Message-ID: <20240308-fahrdienst-torten-eae8f3eed3b4@brauner>
-References: <20240229163011.16248-1-lhenriques@suse.de>
- <20240229163011.16248-2-lhenriques@suse.de>
- <20240301-gegossen-seestern-683681ea75d1@brauner>
- <87il269crs.fsf@suse.de>
- <20240307151356.ishrtxrsge2i5mjn@quack3>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs misc
+Date: Fri,  8 Mar 2024 11:09:08 +0100
+Message-ID: <20240308-vfs-misc-a4e7c50ce769@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240307151356.ishrtxrsge2i5mjn@quack3>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=14587; i=brauner@kernel.org; h=from:subject:message-id; bh=4PxntLPNtz8agd+ceR6TCMkEKuqFoOzypV8NU1oyKk8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS+enzrVAiDsWsl35qJs/5JHLZs81G99Wl+g7jZzpmex pLytVmyHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNZs5qR4cZW+3eaHK2ystxT 354P+fNWRDlTb+3S+Ak5fjqvoi/HcDEyfJ9zQKak48v8eps5SfklpmFeVyXCtf684p2+N/LzJsO TvAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 07, 2024 at 04:13:56PM +0100, Jan Kara wrote:
-> On Fri 01-03-24 15:45:27, Luis Henriques wrote:
-> > Christian Brauner <brauner@kernel.org> writes:
-> > 
-> > > On Thu, Feb 29, 2024 at 04:30:08PM +0000, Luis Henriques wrote:
-> > >> Currently, only parameters that have the fs_parameter_spec 'type' set to
-> > >> NULL are handled as 'flag' types.  However, parameters that have the
-> > >> 'fs_param_can_be_empty' flag set and their value is NULL should also be
-> > >> handled as 'flag' type, as their type is set to 'fs_value_is_flag'.
-> > >> 
-> > >> Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> > >> ---
-> > >>  fs/fs_parser.c | 3 ++-
-> > >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >> 
-> > >> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> > >> index edb3712dcfa5..53f6cb98a3e0 100644
-> > >> --- a/fs/fs_parser.c
-> > >> +++ b/fs/fs_parser.c
-> > >> @@ -119,7 +119,8 @@ int __fs_parse(struct p_log *log,
-> > >>  	/* Try to turn the type we were given into the type desired by the
-> > >>  	 * parameter and give an error if we can't.
-> > >>  	 */
-> > >> -	if (is_flag(p)) {
-> > >> +	if (is_flag(p) ||
-> > >> +	    (!param->string && (p->flags & fs_param_can_be_empty))) {
-> > >>  		if (param->type != fs_value_is_flag)
-> > >>  			return inval_plog(log, "Unexpected value for '%s'",
-> > >>  				      param->key);
-> > >
-> > > If the parameter was derived from FSCONFIG_SET_STRING in fsconfig() then
-> > > param->string is guaranteed to not be NULL. So really this is only
-> > > about:
-> > >
-> > > FSCONFIG_SET_FD
-> > > FSCONFIG_SET_BINARY
-> > > FSCONFIG_SET_PATH
-> > > FSCONFIG_SET_PATH_EMPTY
-> > >
-> > > and those values being used without a value. What filesystem does this?
-> > > I don't see any.
-> > >
-> > > The tempting thing to do here is to to just remove fs_param_can_be_empty
-> > > from every helper that isn't fs_param_is_string() until we actually have
-> > > a filesystem that wants to use any of the above as flags. Will lose a
-> > > lot of code that isn't currently used.
-> > 
-> > Right, I find it quite confusing and I may be fixing the issue in the
-> > wrong place.  What I'm seeing with ext4 when I mount a filesystem using
-> > the option '-o usrjquota' is that fs_parse() will get:
-> > 
-> >  * p->type is set to fs_param_is_string
-> >    ('p' is a struct fs_parameter_spec, ->type is a function)
-> >  * param->type is set to fs_value_is_flag
-> >    ('param' is a struct fs_parameter, ->type is an enum)
-> > 
-> > This is because ext4 will use the __fsparam macro to set define a
-> > fs_param_spec as a fs_param_is_string but will also set the
-> > fs_param_can_be_empty; and the fsconfig() syscall will get that parameter
-> > as a flag.  That's why param->string will be NULL in this case.
-> 
-> So I'm a bit confused here. Valid variants of these quota options are like
-> "usrjquota=<filename>" (to set quota file name) or "usrjquota=" (to clear
-> quota file name). The variant "usrjquota" should ideally be rejected
-> because it doesn't make a good sense and only adds to confusion. Now as far
-> as I'm reading fs/ext4/super.c: parse_options() (and as far as my testing
-> shows) this is what is happening so what is exactly the problem you're
-> trying to fix?
+Hey Linus,
 
-mount(8) has no way of easily knowing that for something like
-mount -o usrjquota /dev/sda1 /mnt that "usrjquota" is supposed to be
-set as an empty string via FSCONFIG_SET_STRING. For mount(8) it is
-indistinguishable from a flag because it's specified without an
-argument. So mount(8) passes FSCONFIG_SET_FLAG and it seems strange that
-we should require mount(8) to know what mount options are strings or no.
-I've ran into this issue before myself when using the mount api
-programatically.
+/* Summary */
+This contains the usual miscellaneous features, cleanups, and fixes for vfs and
+individual fses.
+
+Features
+========
+
+* Support idmapped mounts for hugetlbfs.
+
+* Add RWF_NOAPPEND flag for pwritev2(). This allows to fix a bug where
+  the passed offset is ignored if the file is O_APPEND. The new flag
+  allows a caller to enforce that the offset is honored to conform to
+  posix even if the file was opened in append mode.
+
+* Move i_mmap_rwsem in struct address_space to avoid false sharing
+  between i_mmap and i_mmap_rwsem.
+
+* Convert efs, qnx4, and coda to use the new mount api.
+
+* Add a generic is_dot_dotdot() helper that's used by various
+  filesystems and the VFS code instead of open-coding it mutliple times.
+
+* Recently we've added stable offsets which allows stable ordering
+  when iterating directories exported through NFS on e.g., tmpfs
+  filesystems. Originally an xarray was used for the offset map but that
+  caused slab fragmentation issues over time. Tis switches the offset
+  map to the maple tree which has a dense mode that handles this
+  scenario a lot better. Includes tests.
+
+* Finally merge the case-insensitive improvement series Gabriel has been
+  working on for a long time. This cleanly propagates case insensitive
+  operations through ->s_d_op which in turn allows us to remove the
+  quite ugly generic_set_encrypted_ci_d_ops() operations. It also
+  improves performance by trying a case-sensitive comparison first and
+  then fallback to case-insensitive lookup if that fails. This also
+  fixes a bug where overlayfs would be able to be mounted over a case
+  insensitive directory which would lead to all sort of odd behaviors.
+
+Cleanups
+========
+
+* Make file_dentry() a simple accessor now that ->d_real() is
+  simplified because of the backing file work we did the last two
+  cycles.
+
+* Use the dedicated file_mnt_idmap helper in ntfs3.
+
+* Use smp_load_acquire/store_release() in the i_size_read/write helpers
+  and thus remove the hack to handle i_size reads in the filemap code.
+
+* The SLAB_MEM_SPREAD is a nop now. Remove it from various places in fs/
+
+* It's no longer necessary to perform a second built-in initramfs unpack
+  call because we retain the contents of the previous extraction. Remove it.
+
+* Now that we have removed various allocators kfree_rcu() always works
+  with kmem caches and kmalloc(). So simplify various places that only
+  use an rcu callback in order to handle the kmem cache case.
+
+* Convert the pipe code to use a lockdep comparison function instead of
+  open-coding the nesting making lockdep validation easier.
+
+* Move code into fs-writeback.c that was located in a header but can be
+  made static as it's only used in that one file.
+
+* Rewrite the alignment checking iterators for iovec and bvec to be
+  easier to read, and also significantly more compact in terms of
+  generated code. This saves 270 bytes of text on x86-64 (with clang-18)
+  and 224 bytes on arm64 (with gcc-13). In profiles it also saves a bit
+  of time for the same workload.
+
+* Switch various places to use KMEM_CACHE instead of kmem_cache_create().
+
+* Use inode_set_ctime_to_ts() in inode_set_ctime_current()
+
+* Use kzalloc() in name_to_handle_at() to avoid kernel infoleak.
+
+* Various smaller cleanups for eventfds.
+
+Fixes
+=====
+
+* Fix various comments and typos, and unneeded initializations.
+
+* Fix stack allocation hack for clang in the select code.
+
+* Improve dump_mapping() debug code on a best-effort basis.
+
+* Fix build errors in various selftests.
+
+* Avoid wrap-around instrumentation in various places.
+
+* Don't allow user namespaces without an an idmapping written to be used
+  for idmapped mounts.
+
+* Fix sysv sb_read() call.
+
+* Fix fallback implementation of the get_name() export operation.
+
+/* Testing */
+clang: Debian clang version 16.0.6 (19)
+gcc: (Debian 13.2.0-7) 13.2.0
+
+All patches are based on v6.8-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with other trees
+================================
+
+[1] linux-next: manual merge of the scsi-mkp tree with the vfs-brauner tree
+    https://lore.kernel.org/linux-next/20240227153716.43e5cbad@canb.auug.org.au
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
+
+  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9.misc
+
+for you to fetch changes up to 09406ad8e5105729291a7639160e0cd51c9e0c6c:
+
+  Merge tag 'for-next-6.9' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/krisman/unicode into vfs.misc (2024-03-07 11:55:41 +0100)
+
+Please consider pulling these changes from the signed vfs-6.9.misc tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.9.misc
+
+----------------------------------------------------------------
+Alexander Mikhalitsyn (1):
+      ntfs3: use file_mnt_idmap helper
+
+Amir Goldstein (2):
+      fs: make file_dentry() a simple accessor
+      fs: remove the inode argument to ->d_real() method
+
+Andreas Gruenbacher (1):
+      fs: Wrong function name in comment
+
+Arnd Bergmann (1):
+      fs/select: rework stack allocation hack for clang
+
+Baokun Li (3):
+      fs: make the i_size_read/write helpers be smp_load_acquire/store_release()
+      Revert "mm/filemap: avoid buffered read/write race to read inconsistent data"
+      asm-generic: remove extra type checking in acquire/release for non-SMP case
+
+Baolin Wang (1):
+      fs: improve dump_mapping() robustness
+
+Bill O'Donnell (2):
+      efs: convert efs to use the new mount api
+      qnx4: convert qnx4 to use the new mount api
+
+Chen Hanxiao (1):
+      __fs_parse: Correct a documentation comment
+
+Chengming Zhou (10):
+      vfs: remove SLAB_MEM_SPREAD flag usage
+      sysv: remove SLAB_MEM_SPREAD flag usage
+      romfs: remove SLAB_MEM_SPREAD flag usage
+      reiserfs: remove SLAB_MEM_SPREAD flag usage
+      qnx6: remove SLAB_MEM_SPREAD flag usage
+      proc: remove SLAB_MEM_SPREAD flag usage
+      openpromfs: remove SLAB_MEM_SPREAD flag usage
+      minix: remove SLAB_MEM_SPREAD flag usage
+      jfs: remove SLAB_MEM_SPREAD flag usage
+      efs: remove SLAB_MEM_SPREAD flag usage
+
+Christian Brauner (3):
+      Merge tag 'exportfs-6.9' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/cel/linux
+      Merge series 'Use Maple Trees for simple_offset utilities' of https://lore.kernel.org/r/170820083431.6328.16233178852085891453.stgit@91.116.238.104.host.secureserver.net
+      Merge tag 'for-next-6.9' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/krisman/unicode into vfs.misc
+
+Chuck Lever (6):
+      fs: Create a generic is_dot_dotdot() utility
+      libfs: Re-arrange locking in offset_iterate_dir()
+      libfs: Define a minimum directory offset
+      libfs: Add simple_offset_empty()
+      maple_tree: Add mtree_alloc_cyclic()
+      libfs: Convert simple directory offsets to use a Maple Tree
+
+David Disseldorp (1):
+      initramfs: remove duplicate built-in __initramfs_start unpacking
+
+David Howells (1):
+      Convert coda to use the new mount API
+
+Dmitry Antipov (2):
+      fs: prefer kfree_rcu() in fasync_remove_entry()
+      eventpoll: prefer kfree_rcu() in __ep_remove()
+
+Gabriel Krisman Bertazi (11):
+      libfs: Attempt exact-match comparison first during casefolded lookup
+      ovl: Always reject mounting over case-insensitive directories
+      fscrypt: Factor out a helper to configure the lookup dentry
+      fscrypt: Drop d_revalidate for valid dentries during lookup
+      fscrypt: Drop d_revalidate once the key is added
+      libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+      libfs: Add helper to choose dentry operations at mount-time
+      ext4: Configure dentry operations at dentry-creation time
+      f2fs: Configure dentry operations at dentry-creation time
+      ubifs: Configure dentry operations at dentry-creation time
+      libfs: Drop generic_set_encrypted_ci_d_ops
+
+Giuseppe Scrivano (1):
+      hugetlbfs: support idmapped mounts
+
+Hu Yadi (1):
+      selftests/filesystems:fix build error in overlayfs
+
+Hu.Yadi (1):
+      selftests/move_mount_set_group:Make tests build with old libc
+
+Huang Xiaojia (1):
+      epoll: Remove ep_scan_ready_list() in comments
+
+Jay (1):
+      fs: fix a typo in attr.c
+
+Jens Axboe (1):
+      iov_iter: streamline iovec/bvec alignment iteration
+
+JonasZhou (1):
+      fs/address_space: move i_mmap_rwsem to mitigate a false sharing with i_mmap.
+
+Kees Cook (2):
+      iov_iter: Avoid wrap-around instrumentation in copy_compat_iovec_from_user()
+      select: Avoid wrap-around instrumentation in do_sys_poll()
+
+Kemeng Shi (1):
+      writeback: move wb_wakeup_delayed defination to fs-writeback.c
+
+Kent Overstreet (1):
+      fs/pipe: Convert to lockdep_cmp_fn
+
+Kunwu Chan (3):
+      buffer: Use KMEM_CACHE instead of kmem_cache_create()
+      fs: Use KMEM_CACHE instead of kmem_cache_create
+      mbcache: Simplify the allocation of slab caches
+
+Li zeming (1):
+      libfs: Remove unnecessary ‘0’ values from ret
+
+Liam R. Howlett (1):
+      test_maple_tree: testing the cyclic allocation
+
+Nguyen Dinh Phi (1):
+      fs: use inode_set_ctime_to_ts to set inode ctime to current time
+
+Nikita Zhandarovich (1):
+      do_sys_name_to_handle(): use kzalloc() to fix kernel-infoleak
+
+Randy Dunlap (1):
+      fs/hfsplus: use better @opf description
+
+Rich Felker (1):
+      vfs: add RWF_NOAPPEND flag for pwritev2
+
+Taylor Jackson (1):
+      fs/mnt_idmapping.c: Return -EINVAL when no map is written
+
+Tetsuo Handa (1):
+      sysv: don't call sb_bread() with pointers_lock held
+
+Trond Myklebust (1):
+      exportfs: fix the fallback implementation of the get_name export operation
+
+Vincenzo Mezzela (1):
+      docs: filesystems: fix typo in docs
+
+Wen Yang (3):
+      eventfd: add a BUILD_BUG_ON() to ensure consistency between EFD_SEMAPHORE and the uapi
+      eventfd: move 'eventfd-count' printing out of spinlock
+      eventfd: strictly check the count parameter of eventfd_write to avoid inputting illegal strings
+
+ Documentation/filesystems/files.rst                |   2 +-
+ Documentation/filesystems/locking.rst              |   2 +-
+ Documentation/filesystems/vfs.rst                  |  16 +-
+ fs/attr.c                                          |   2 +-
+ fs/backing-file.c                                  |   4 +-
+ fs/buffer.c                                        |  10 +-
+ fs/coda/inode.c                                    | 143 ++++++++++-----
+ fs/crypto/fname.c                                  |   8 +-
+ fs/crypto/hooks.c                                  |  15 +-
+ fs/dcache.c                                        |   2 +-
+ fs/ecryptfs/crypto.c                               |  10 --
+ fs/efs/super.c                                     | 118 ++++++++----
+ fs/eventfd.c                                       |  16 +-
+ fs/eventpoll.c                                     |  16 +-
+ fs/exportfs/expfs.c                                |   2 +-
+ fs/ext4/namei.c                                    |   1 -
+ fs/ext4/super.c                                    |   1 +
+ fs/f2fs/f2fs.h                                     |  11 --
+ fs/f2fs/namei.c                                    |   1 -
+ fs/f2fs/super.c                                    |   1 +
+ fs/fcntl.c                                         |   8 +-
+ fs/fhandle.c                                       |   2 +-
+ fs/fs-writeback.c                                  |  25 +++
+ fs/fs_parser.c                                     |   4 +-
+ fs/hfsplus/wrapper.c                               |   2 +-
+ fs/hugetlbfs/inode.c                               |  23 ++-
+ fs/inode.c                                         |   7 +-
+ fs/jfs/super.c                                     |   2 +-
+ fs/libfs.c                                         | 200 +++++++++++----------
+ fs/mbcache.c                                       |   4 +-
+ fs/minix/inode.c                                   |   2 +-
+ fs/mnt_idmapping.c                                 |   2 +-
+ fs/namei.c                                         |   6 +-
+ fs/ntfs3/namei.c                                   |   2 +-
+ fs/openpromfs/inode.c                              |   2 +-
+ fs/overlayfs/params.c                              |  14 +-
+ fs/overlayfs/super.c                               |  52 +++---
+ fs/pipe.c                                          |  81 ++++-----
+ fs/proc/inode.c                                    |   2 +-
+ fs/qnx4/inode.c                                    |  47 +++--
+ fs/qnx6/inode.c                                    |   2 +-
+ fs/reiserfs/super.c                                |   1 -
+ fs/romfs/super.c                                   |   4 +-
+ fs/select.c                                        |  15 +-
+ fs/sysv/inode.c                                    |   2 +-
+ fs/sysv/itree.c                                    |  10 +-
+ fs/ubifs/dir.c                                     |   1 -
+ fs/ubifs/super.c                                   |   1 +
+ include/asm-generic/barrier.h                      |   2 -
+ include/linux/backing-dev.h                        |   1 -
+ include/linux/dcache.h                             |  18 +-
+ include/linux/fs.h                                 |  61 ++++++-
+ include/linux/fscrypt.h                            |  66 ++++++-
+ include/linux/maple_tree.h                         |   7 +
+ include/linux/poll.h                               |   4 -
+ include/uapi/linux/fs.h                            |   5 +-
+ init/initramfs.c                                   |   2 -
+ lib/iov_iter.c                                     |  60 ++++---
+ lib/maple_tree.c                                   |  93 ++++++++++
+ lib/test_maple_tree.c                              |  44 +++++
+ mm/backing-dev.c                                   |  25 ---
+ mm/filemap.c                                       |   9 -
+ mm/shmem.c                                         |   4 +-
+ .../selftests/filesystems/overlayfs/dev_in_maps.c  |  10 +-
+ .../move_mount_set_group_test.c                    |   4 +-
+ 65 files changed, 816 insertions(+), 503 deletions(-)
 
