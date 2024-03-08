@@ -1,197 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-13990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAB18761A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 11:12:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C338761A3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 11:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78111C21546
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 10:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242F71C20D4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 10:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501A554BF6;
-	Fri,  8 Mar 2024 10:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017D554656;
+	Fri,  8 Mar 2024 10:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4I7FSLz"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GaKzFj7I";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wENk/LPU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GaKzFj7I";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wENk/LPU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB14954BD6;
-	Fri,  8 Mar 2024 10:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5295B53E25;
+	Fri,  8 Mar 2024 10:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709892753; cv=none; b=eh3jUR93Wtx+b/Qqggmz5D5T/IdO04lR6sUIy04eCktU+I2HEEOtUNGi6Anm58WD1Swmg04zlA15yOny4gAKsz5ePoqRN2CGvTF49mgFUo6k0MKyFCKS8wgk/2patPFwA2EyAZmhAWlPrnzTz8RgCdmHN8utEdohbpjfVgj87Qk=
+	t=1709892740; cv=none; b=DkAyRcf3ABoKQ2AG0VqpYAqOOPAELhQNV18HSDk+vMjypF1CqcvStn1XyRRVZXf2Y9yX8dyzvs5YaQja3mG4SreUvHqEYgi3yJMkvx56S+mYxTKOAr558e+RUdZ2pCSaNhMHG/WJ/l7HNAboiLWs0/K6tZ3cypuY51DroGWRwiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709892753; c=relaxed/simple;
-	bh=2jQZxIFl4d6HhQOrEl3tjvuyOYix0Nhi5jV758z3jnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jjvrY1qaMNmLaUraLrwnPbEIFsAS4E1CdpCzgJ1ryb823R5iUxhEZ23YGCZA5cWMLa0pOGwdzIIr8ky+ILfKUm3cJdqwojoljrfGXgoD0aOsGyIsyYDgxFqitO0aywAn/tujMrg3d28yROmzCa03BszXxljAXziu3ds4Mb4htho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4I7FSLz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF3BEC433F1;
-	Fri,  8 Mar 2024 10:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709892751;
-	bh=2jQZxIFl4d6HhQOrEl3tjvuyOYix0Nhi5jV758z3jnU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=P4I7FSLzVfign3MPAA1epHe8LOlZWqwXPE7JO2SgwS/3Ddu2uKgP1gBWSUC5uymwi
-	 e+2XNlsc0b2xFwy/sRrwYpBPYWanH9zMgdfp475hPhSmlxV556416p6FEYTlD00n4x
-	 QuPPVBkCR+RXMpYYpkfe6S3GGR2t008uOS73gQVrGb7GgyQHlsu9juZXgf/7wlsg9a
-	 /DmelOjXDcePG5P6jZ0+dWrR3ptFXOf0H6AvazBaf0MHIcUYe66Bs1/1M3Vp1kDL+u
-	 LqDmEnbwZfIjOJBENrpKe8MTlT/6Y41v8DuQbVQ+bO/+8a69uNhBi0k2GOogYzsXHU
-	 hTpi1RP6XrdZA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs iomap
-Date: Fri,  8 Mar 2024 11:12:11 +0100
-Message-ID: <20240308-vfs-iomap-96ff9703338d@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1709892740; c=relaxed/simple;
+	bh=Wz2A9QM2895tOh012bS0E9vsQilm32L7GQVtgm+Jjys=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WRTvq6SCdR1DCwmCCWe6pHgsrCkTaRE81ONWWTOFEMXmQBVLeHtkdRt6Ew5eDRYxRCI/2wQsu0kgViMTrt4ainW3zh3QzoD7XCgndwYiYckeDV+IyV3iiKqEbhm/tkrxYwxfRvbkzGYBDc7wc4YK69JDAtAppx2uzXXqGmekyTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GaKzFj7I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wENk/LPU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GaKzFj7I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wENk/LPU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3C9535CD52;
+	Fri,  8 Mar 2024 10:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709892735; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F83dB1El6NnXAYCOZALOa4N69Sh5FR4UmucfTsrTsNo=;
+	b=GaKzFj7I81piiDDKlygc08CyYgB8NmdeIFW+oJR/kP2SIlKgF0mcc66AfQ8l7xLz1zUjyK
+	bIiD9V83I3+XL4cPoOCrTa2YHbvVo4BZTvzPGPBJ/RAUF0NDrtR/G8hO1Zu8rLBgUc4BRM
+	dg/RUQnOr55LzSZzGE/GPZdIbaH/Qwg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709892735;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F83dB1El6NnXAYCOZALOa4N69Sh5FR4UmucfTsrTsNo=;
+	b=wENk/LPU+jOKsKhv8KC+Go9ydZtF3RvlAJN55lm/1CR4YNlPcMRHdERz1yYh93Wz01jg0J
+	sh5iDz5Xn4oMorCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709892735; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F83dB1El6NnXAYCOZALOa4N69Sh5FR4UmucfTsrTsNo=;
+	b=GaKzFj7I81piiDDKlygc08CyYgB8NmdeIFW+oJR/kP2SIlKgF0mcc66AfQ8l7xLz1zUjyK
+	bIiD9V83I3+XL4cPoOCrTa2YHbvVo4BZTvzPGPBJ/RAUF0NDrtR/G8hO1Zu8rLBgUc4BRM
+	dg/RUQnOr55LzSZzGE/GPZdIbaH/Qwg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709892735;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F83dB1El6NnXAYCOZALOa4N69Sh5FR4UmucfTsrTsNo=;
+	b=wENk/LPU+jOKsKhv8KC+Go9ydZtF3RvlAJN55lm/1CR4YNlPcMRHdERz1yYh93Wz01jg0J
+	sh5iDz5Xn4oMorCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B67513310;
+	Fri,  8 Mar 2024 10:12:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /u7gGn7k6mWpagAAD6G6ig
+	(envelope-from <lhenriques@suse.de>); Fri, 08 Mar 2024 10:12:14 +0000
+Received: from localhost (brahms.olymp [local])
+	by brahms.olymp (OpenSMTPD) with ESMTPA id 3cdf35d3;
+	Fri, 8 Mar 2024 10:12:13 +0000 (UTC)
+From: Luis Henriques <lhenriques@suse.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>,  Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger
+ <adilger.kernel@dilger.ca>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein <amir73il@gmail.com>,
+  linux-ext4@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fs_parser: handle parameters that can be empty and
+ don't have a value
+In-Reply-To: <20240308-fahrdienst-torten-eae8f3eed3b4@brauner> (Christian
+	Brauner's message of "Fri, 8 Mar 2024 10:53:25 +0100")
+References: <20240229163011.16248-1-lhenriques@suse.de>
+	<20240229163011.16248-2-lhenriques@suse.de>
+	<20240301-gegossen-seestern-683681ea75d1@brauner>
+	<87il269crs.fsf@suse.de> <20240307151356.ishrtxrsge2i5mjn@quack3>
+	<20240308-fahrdienst-torten-eae8f3eed3b4@brauner>
+Date: Fri, 08 Mar 2024 10:12:13 +0000
+Message-ID: <87a5n9t4le.fsf@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5168; i=brauner@kernel.org; h=from:subject:message-id; bh=2jQZxIFl4d6HhQOrEl3tjvuyOYix0Nhi5jV758z3jnU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS+etKywW6H679l5R0uF7RWvw+IO3GiY0rSTY6iw/W1Z 5g/fuH53lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRl5cYGTZ7zS1zfVy5e5mc R1/PFdlF7yy8Zz25emWnJQtrdnTA516Gf5arSnbEPpvlOqGvc4Kz7BUBbxHXfouGwACrDmkNy0v 3WQE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spamd-Result: default: False [-3.10 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[4];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 RCPT_COUNT_SEVEN(0.00)[11];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_LAST(0.00)[];
+	 FREEMAIL_CC(0.00)[suse.cz,mit.edu,dilger.ca,zeniv.linux.org.uk,szeredi.hu,gmail.com,vger.kernel.org];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: -3.10
+X-Spam-Flag: NO
 
-Hey Linus,
+Christian Brauner <brauner@kernel.org> writes:
 
-/* Summary */
-This contains a few updates for the iomap code:
+> On Thu, Mar 07, 2024 at 04:13:56PM +0100, Jan Kara wrote:
+>> On Fri 01-03-24 15:45:27, Luis Henriques wrote:
+>> > Christian Brauner <brauner@kernel.org> writes:
+>> >=20
+>> > > On Thu, Feb 29, 2024 at 04:30:08PM +0000, Luis Henriques wrote:
+>> > >> Currently, only parameters that have the fs_parameter_spec 'type' s=
+et to
+>> > >> NULL are handled as 'flag' types.  However, parameters that have the
+>> > >> 'fs_param_can_be_empty' flag set and their value is NULL should als=
+o be
+>> > >> handled as 'flag' type, as their type is set to 'fs_value_is_flag'.
+>> > >>=20
+>> > >> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+>> > >> ---
+>> > >>  fs/fs_parser.c | 3 ++-
+>> > >>  1 file changed, 2 insertions(+), 1 deletion(-)
+>> > >>=20
+>> > >> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+>> > >> index edb3712dcfa5..53f6cb98a3e0 100644
+>> > >> --- a/fs/fs_parser.c
+>> > >> +++ b/fs/fs_parser.c
+>> > >> @@ -119,7 +119,8 @@ int __fs_parse(struct p_log *log,
+>> > >>  	/* Try to turn the type we were given into the type desired by the
+>> > >>  	 * parameter and give an error if we can't.
+>> > >>  	 */
+>> > >> -	if (is_flag(p)) {
+>> > >> +	if (is_flag(p) ||
+>> > >> +	    (!param->string && (p->flags & fs_param_can_be_empty))) {
+>> > >>  		if (param->type !=3D fs_value_is_flag)
+>> > >>  			return inval_plog(log, "Unexpected value for '%s'",
+>> > >>  				      param->key);
+>> > >
+>> > > If the parameter was derived from FSCONFIG_SET_STRING in fsconfig() =
+then
+>> > > param->string is guaranteed to not be NULL. So really this is only
+>> > > about:
+>> > >
+>> > > FSCONFIG_SET_FD
+>> > > FSCONFIG_SET_BINARY
+>> > > FSCONFIG_SET_PATH
+>> > > FSCONFIG_SET_PATH_EMPTY
+>> > >
+>> > > and those values being used without a value. What filesystem does th=
+is?
+>> > > I don't see any.
+>> > >
+>> > > The tempting thing to do here is to to just remove fs_param_can_be_e=
+mpty
+>> > > from every helper that isn't fs_param_is_string() until we actually =
+have
+>> > > a filesystem that wants to use any of the above as flags. Will lose a
+>> > > lot of code that isn't currently used.
+>> >=20
+>> > Right, I find it quite confusing and I may be fixing the issue in the
+>> > wrong place.  What I'm seeing with ext4 when I mount a filesystem using
+>> > the option '-o usrjquota' is that fs_parse() will get:
+>> >=20
+>> >  * p->type is set to fs_param_is_string
+>> >    ('p' is a struct fs_parameter_spec, ->type is a function)
+>> >  * param->type is set to fs_value_is_flag
+>> >    ('param' is a struct fs_parameter, ->type is an enum)
+>> >=20
+>> > This is because ext4 will use the __fsparam macro to set define a
+>> > fs_param_spec as a fs_param_is_string but will also set the
+>> > fs_param_can_be_empty; and the fsconfig() syscall will get that parame=
+ter
+>> > as a flag.  That's why param->string will be NULL in this case.
+>>=20
+>> So I'm a bit confused here. Valid variants of these quota options are li=
+ke
+>> "usrjquota=3D<filename>" (to set quota file name) or "usrjquota=3D" (to =
+clear
+>> quota file name). The variant "usrjquota" should ideally be rejected
+>> because it doesn't make a good sense and only adds to confusion. Now as =
+far
+>> as I'm reading fs/ext4/super.c: parse_options() (and as far as my testing
+>> shows) this is what is happening so what is exactly the problem you're
+>> trying to fix?
+>
+> mount(8) has no way of easily knowing that for something like
+> mount -o usrjquota /dev/sda1 /mnt that "usrjquota" is supposed to be
+> set as an empty string via FSCONFIG_SET_STRING. For mount(8) it is
+> indistinguishable from a flag because it's specified without an
+> argument. So mount(8) passes FSCONFIG_SET_FLAG and it seems strange that
+> we should require mount(8) to know what mount options are strings or no.
+> I've ran into this issue before myself when using the mount api
+> programatically.
 
-* Restore read-write hints in struct bio through the bi_write_hint member for
-  the sake of UFS devices in mobile applications. This can result in up to 40%
-  lower write amplification in UFS devices. The patch series that builds on
-  this will be coming in via the SCSI maintainers. (Bart)
+Right.  A simple usecase is to try to do:
 
-* Overhaul the iomap writeback code. Afterwards ->map_blocks() is able to map
-  multiple blocks at once as long as they're in the same folio. This
-  reduces CPU usage for buffered write workloads on e.g., xfs on systems
-  with lots of cores. (Christoph)
+  mount -t ext4 -o usrjquota=3D /dev/sda1 /mnt/
 
-* Record processed bytes in iomap_iter() trace event. (Kassey)
+It will fail, and this has been broken for a while.
 
-* Extend iomap_writepage_map() trace event after Christoph's ->map_block()
-  changes to map mutliple blocks at once. (Zhang)
+(And btw: email here is broken again -- I haven't received Jan's email
+yet.  And this reply will likely take a while to reach its recipients.)
 
-/* Testing */
-clang: Debian clang version 16.0.6 (19)
-gcc: (Debian 13.2.0-7) 13.2.0
-
-All patches are based on v6.8-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with other trees
-================================
-
-[1] linux-next: manual merge of the scsi-mkp tree with the vfs-brauner tree
-    https://lore.kernel.org/linux-next/20240227153436.33b48d59@canb.auug.org.au
-
-[2] There's a merge conflict between the vfs-6.9-misc pull request sent as
-    https://lore.kernel.org/r/20240308-vfs-misc-a4e7c50ce769@brauner
-    that can be resolved like this:
-
-    diff --cc include/linux/fs.h
-    index 2ba751d097c1,bdabda5dc364..000000000000
-    --- a/include/linux/fs.h
-    +++ b/include/linux/fs.h
-    @@@ -43,7 -43,7 +43,8 @@@
-      #include <linux/cred.h>
-      #include <linux/mnt_idmapping.h>
-      #include <linux/slab.h>
-     +#include <linux/maple_tree.h>
-    + #include <linux/rw_hint.h>
-    
-      #include <asm/byteorder.h>
-      #include <uapi/linux/fs.h>
-
-Merge conflicts with mainline
-=============================
-
-The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
-
-  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9.iomap
-
-for you to fetch changes up to 86835c39e08e6d92a9d66d51277b2676bc659743:
-
-  Merge tag 'vfs-6.9.rw_hint' of gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs (2024-03-04 18:35:21 +0100)
-
-Please consider pulling these changes from the signed vfs-6.9.iomap tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.9.iomap
-
-----------------------------------------------------------------
-Bart Van Assche (6):
-      fs: Fix rw_hint validation
-      fs: Verify write lifetime constants at compile time
-      fs: Split fcntl_rw_hint()
-      fs: Move enum rw_hint into a new header file
-      fs: Propagate write hints to the struct block_device inode
-      block, fs: Restore the per-bio/request data lifetime fields
-
-Christian Brauner (1):
-      Merge tag 'vfs-6.9.rw_hint' of gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs
-
-Christoph Hellwig (14):
-      iomap: clear the per-folio dirty bits on all writeback failures
-      iomap: treat inline data in iomap_writepage_map as an I/O error
-      iomap: move the io_folios field out of struct iomap_ioend
-      iomap: move the PF_MEMALLOC check to iomap_writepages
-      iomap: factor out a iomap_writepage_handle_eof helper
-      iomap: move all remaining per-folio logic into iomap_writepage_map
-      iomap: clean up the iomap_alloc_ioend calling convention
-      iomap: move the iomap_sector sector calculation out of iomap_add_to_ioend
-      iomap: don't chain bios
-      iomap: only call mapping_set_error once for each failed bio
-      iomap: factor out a iomap_writepage_map_block helper
-      iomap: submit ioends immediately
-      iomap: map multiple blocks at a time
-      iomap: pass the length of the dirty region to ->map_blocks
-
-Kassey Li (1):
-      iomap: Add processed for iomap_iter
-
-Zhang Yi (1):
-      iomap: add pos and dirty_len into trace_iomap_writepage_map
-
- block/bio.c                 |   2 +
- block/blk-crypto-fallback.c |   1 +
- block/blk-merge.c           |   8 +
- block/blk-mq.c              |   2 +
- block/bounce.c              |   1 +
- block/fops.c                |   5 +-
- fs/buffer.c                 |  12 +-
- fs/direct-io.c              |   2 +
- fs/f2fs/f2fs.h              |   1 +
- fs/fcntl.c                  |  64 +++--
- fs/gfs2/bmap.c              |   2 +-
- fs/inode.c                  |   1 +
- fs/iomap/buffered-io.c      | 579 ++++++++++++++++++++++----------------------
- fs/iomap/direct-io.c        |   1 +
- fs/iomap/trace.h            |  48 +++-
- fs/mpage.c                  |   1 +
- fs/xfs/xfs_aops.c           |   9 +-
- fs/zonefs/file.c            |   3 +-
- include/linux/blk-mq.h      |   2 +
- include/linux/blk_types.h   |   2 +
- include/linux/fs.h          |  16 +-
- include/linux/iomap.h       |  19 +-
- include/linux/rw_hint.h     |  24 ++
- 23 files changed, 455 insertions(+), 350 deletions(-)
- create mode 100644 include/linux/rw_hint.h
+Cheers,
+--=20
+Lu=C3=ADs
 
