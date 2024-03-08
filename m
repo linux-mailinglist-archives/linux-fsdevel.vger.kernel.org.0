@@ -1,127 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-13978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2EC875D37
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 05:40:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8ED875E29
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 08:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5681D282654
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 04:40:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024221F23B6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 07:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D6C2E642;
-	Fri,  8 Mar 2024 04:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2FA4EB3C;
+	Fri,  8 Mar 2024 07:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hm9KiPhf"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="pe4KXeOy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iSZA6nXd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCC32C1BF;
-	Fri,  8 Mar 2024 04:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CE21CFB2;
+	Fri,  8 Mar 2024 07:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709872820; cv=none; b=GawvuREtUywonFxQrOL7Fu5qgdNCrBlR8E8Yr37AbOYBTWhlOkjnjQZvMSlRaRi6V/ul6gcNfjPNxn63IfzB6ahQ7ui+5x/yzI3LrmnQKeJQchWlayqaiaOQRSSpHJDpyu3xueM3jw9Hc1M5jY8OI0vyKBEdhI2qo5jKyt6LuDY=
+	t=1709881433; cv=none; b=bf2BXuE06HQNPDnnfoOGSvNAhcYRv9vgO3we6x5wovHPjzaEZKqM9duA9Rpz4mE1LTNXP+1JzCRpXfeZIl+PvQJj7VStoRSwS3+hl6n1dvCgjF+mBLrTa8vkz70fE6e0ymI9J4lpAkGcZZDrofH013i1pZsp5YmII0Kh3IuFUHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709872820; c=relaxed/simple;
-	bh=77caZOBVxWdVjB7T0uqv6sdnKxKbhk1L6k5nDRBj+Yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ff+FGWidpQstPaK2f406a7o/y6FSr4uxRTdSZS4C8XFDVO81CIDqqhdsaRkM77FtvasW6KgLA5j/YfUnUTaDauUhcRG8Yg3GUKayxbYQyQ8XLQDOhJUjLrQ8fWivUlMdflEZ/26CVaE4IL7dn8M99sphXphFTPnxyw1Xk4LNCu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hm9KiPhf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3900BC433F1;
-	Fri,  8 Mar 2024 04:40:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709872819;
-	bh=77caZOBVxWdVjB7T0uqv6sdnKxKbhk1L6k5nDRBj+Yg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hm9KiPhfozyTAPShF3PtmQ5k2VQ6FJoH7+2EQqAgF2gU6N6zrTSff7zNNALAbIJWy
-	 rJwavwf5xw2+TtsQjrlbhNmQFVxeQtzFSWdcCQKkbdl06VAMoSU3zZlJ4SwMRFLXAC
-	 GeysXa4MoJN92PDt0SLRaVf3LicS68NvyzvUQxpoumyPIwxJON5w0GwPQxnyv2PmLV
-	 h27n+tNp7YWMrBdjxSsY10A5RUkFvPGtg3oGTuWZWTfJGpLbsD5rU6fV8D9SR4qNB3
-	 FMWP5mtjmfcfxfLQqg6EIeqgDKejecR6UvRI013HLVVqdIit4Cngvne4jdroItINSU
-	 DTHsy+QW4miTg==
-Date: Thu, 7 Mar 2024 20:40:17 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	chandan.babu@oracle.com
-Subject: Re: [PATCH v5 06/24] fsverity: pass tree_blocksize to
- end_enable_verity()
-Message-ID: <20240308044017.GC8111@sol.localdomain>
-References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-8-aalbersh@redhat.com>
- <20240305005242.GE17145@sol.localdomain>
- <20240306163000.GP1927156@frogsfrogsfrogs>
- <20240307220224.GA1799@sol.localdomain>
- <20240308034650.GK1927156@frogsfrogsfrogs>
+	s=arc-20240116; t=1709881433; c=relaxed/simple;
+	bh=1uqReeQKbaxkHZhzMByNGKVvUKOgE5HuK7lsF7HGm64=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=dtewXZVlx98J2IP9PijKsNW/4K72XtHq+nms6K4EucQ434ZNgv2OLG0hA3cGfCUO2ee9WTlxxctC/ywy1N1WAdWpAKaUfttstRLiY+X64l1sJPdMw9VOpejteDwv7uzvmlCr+qPqQtsay4EWH3g72MCFkSdO5K/GLQxQwz88e3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=pe4KXeOy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iSZA6nXd; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 1B17E1380174;
+	Fri,  8 Mar 2024 02:03:50 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 08 Mar 2024 02:03:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1709881430;
+	 x=1709967830; bh=11LkabzuvCJDFPJOJPUUSJoKDOL+7OwgTjYJVM+filQ=; b=
+	pe4KXeOygKcNKSWM5hmox4pfiU8kPMPCRfR5ZiYJ15j9paKTWuSHhdeRc2mzxNQe
+	8uzRhl7L1HQ5iOir2pUs6IXtuOFPrjpcWzPuJ5iUjsjNbX/UZ0hPm384VU2U3Qxe
+	ZZat52HklxhJQA68qWj+CFNlznMvZIw3KHhL/0PEFDHBjPgyN6fcDmct2sCDXe+x
+	SbHeZC29E5SFOj+MzfdiFgEAAAQVOkw7BrociwvCckRPBg6WMiQ+FovB4U8mqrXq
+	e6ZQXv3n48VFwee1ij6kC1TnQ5wI461NYGRxyYhno68XN02023HPvS6gMZ7FWhW7
+	ArirIcshWkKAoMpi92I0+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1709881430; x=
+	1709967830; bh=11LkabzuvCJDFPJOJPUUSJoKDOL+7OwgTjYJVM+filQ=; b=i
+	SZA6nXdAfFtih1ngbHWCqk0lZkUKVOd9/bIoUPcFiujle/y3GMSb+sGsy1oBn8Yp
+	3HtkKyFC4a1BdDYFsNcpNf1Yzb+LPC9LYZ6cSXEvJtz7wtE/vKPsGvQkMGhl8HGl
+	aC+DSEQuP5ZxvcJwu6ElJLtAxDtU9iNd3Br64ObiKXrO26KBV1oZS6O47Fan5qSP
+	rO9BSeeZ91rU3pcszszxYyG581Ohx8RMyDpO8IMd6JNoN6avnCv32LP5kSS5v9q9
+	25+RkaM8Zs2Xu8a7tUKux8GF2y7ZsRDKZjOnejJZ65qcKeBKTiC3mUPWGVbDEEmn
+	PaTrh84ICGA7/6osxAKcA==
+X-ME-Sender: <xms:VbjqZe16L7zdiA84zomB94jPsnUEf9tE2jES9hd_CwpKILxmI40tcg>
+    <xme:VbjqZRFhGumC61X13SPXi2hn-cKW4KJHwC7CO_Zr0_uJL4tbboyj9pdM74EvTwN58
+    07BUW_bg0WCN_iWWnA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrieeggddutdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:VbjqZW7yfCRePSqVUT0NUBlr8EnsxhcN7pBZooS2-jmqNt4XRsfGvw>
+    <xmx:VbjqZf14TfEDyIxvH1DoIM2CbXMT80mDgha9H52BpgXBz-votFhgkg>
+    <xmx:VbjqZRGWL4T4ZpuDtXKLKcqUvIUbQhg7HOQrYcQDgHhT4hLaCAJT9A>
+    <xmx:VrjqZQewIHWsqdcebM3l22gYnFxH8VW5T2PzH9KEcs4qbWslz3VqEQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 522C7B6008D; Fri,  8 Mar 2024 02:03:49 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-251-g8332da0bf6-fm-20240305.001-g8332da0b
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240308034650.GK1927156@frogsfrogsfrogs>
+Message-Id: <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+In-Reply-To: <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+References: <20240219.chu4Yeegh3oo@digikod.net>
+ <20240219183539.2926165-1-mic@digikod.net> <ZedgzRDQaki2B8nU@google.com>
+ <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+ <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+Date: Fri, 08 Mar 2024 08:02:13 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Dave Chinner" <david@fromorbit.com>, "Paul Moore" <paul@paul-moore.com>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
+ "Jeff Xu" <jeffxu@google.com>, "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
+ "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
+ "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 07, 2024 at 07:46:50PM -0800, Darrick J. Wong wrote:
-> > BTW, is xfs_repair planned to do anything about any such extra blocks?
-> 
-> Sorry to answer your question with a question, but how much checking is
-> $filesystem expected to do for merkle trees?
-> 
-> In theory xfs_repair could learn how to interpret the verity descriptor,
-> walk the merkle tree blocks, and even read the file data to confirm
-> intactness.  If the descriptor specifies the highest block address then
-> we could certainly trim off excess blocks.  But I don't know how much of
-> libfsverity actually lets you do that; I haven't looked into that
-> deeply. :/
-> 
-> For xfs_scrub I guess the job is theoretically simpler, since we only
-> need to stream reads of the verity files through the page cache and let
-> verity tell us if the file data are consistent.
-> 
-> For both tools, if something finds errors in the merkle tree structure
-> itself, do we turn off verity?  Or do we do something nasty like
-> truncate the file?
+On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
+> On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
+>> On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoack@goo=
+gle.com> wrote:
+>> I need some more convincing as to why we need to introduce these new
+>> hooks, or even the vfs_masked_device_ioctl() classifier as originally
+>> proposed at the top of this thread.  I believe I understand why
+>> Landlock wants this, but I worry that we all might have different
+>> definitions of a "safe" ioctl list, and encoding a definition into the
+>> LSM hooks seems like a bad idea to me.
+>
+> I have no idea what a "safe" ioctl means here. Subsystems already
+> restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+> "safe" clearly means something different here.
 
-As far as I know (I haven't been following btrfs-progs, but I'm familiar with
-e2fsprogs and f2fs-tools), there isn't yet any precedent for fsck actually
-validating the data of verity inodes against their Merkle trees.
+That was my problem with the first version as well, but I think
+drawing the line between "implemented in fs/ioctl.c" and
+"implemented in a random device driver fops->unlock_ioctl()"
+seems like a more helpful definition.
 
-e2fsck does delete the verity metadata of inodes that don't have the verity flag
-enabled.  That handles cleaning up after a crash during FS_IOC_ENABLE_VERITY.
+This won't just protect from calling into drivers that are lacking
+a CAP_SYS_ADMIN check, but also from those that end up being
+harmful regardless of the ioctl command code passed into them
+because of stupid driver bugs.
 
-I suppose that ideally, if an inode's verity metadata is invalid, then fsck
-should delete that inode's verity metadata and remove the verity flag from the
-inode.  Checking for a missing or obviously corrupt fsverity_descriptor would be
-fairly straightforward, but it probably wouldn't catch much compared to actually
-validating the data against the Merkle tree.  And actually validating the data
-against the Merkle tree would be complex and expensive.  Note, none of this
-would work on files that are encrypted.
-
-Re: libfsverity, I think it would be possible to validate a Merkle tree using
-libfsverity_compute_digest() and the callbacks that it supports.  But that's not
-quite what it was designed for.
-
-> Is there an ioctl or something that allows userspace to validate an
-> entire file's contents?  Sort of like what BLKVERIFY would have done for
-> block devices, except that we might believe its answers?
-
-Just reading the whole file and seeing whether you get an error would do it.
-
-Though if you want to make sure it's really re-reading the on-disk data, it's
-necessary to drop the file's pagecache first.
-
-> Also -- inconsistencies between the file data and the merkle tree aren't
-> something that xfs can self-heal, right?
-
-Similar to file data itself, only way to self-heal would be via mechanisms that
-provide redundancy.  There's been some interest in adding support forward error
-correction (FEC) to fsverity similar to what dm-verity has, but this would be
-complex, and it's not something that anyone has gotten around to yet.
-
-- Eric
+      Arnd
 
