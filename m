@@ -1,99 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-14022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C84876AF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 19:56:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D37D876B40
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 20:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182191C21483
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 18:56:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987002829C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 19:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D197D54672;
-	Fri,  8 Mar 2024 18:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7438C5A7B5;
+	Fri,  8 Mar 2024 19:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="Fr3jdjo8"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dVTCME5n";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uCH3Nep4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dVTCME5n";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uCH3Nep4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93902DF92;
-	Fri,  8 Mar 2024 18:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AF52C699;
+	Fri,  8 Mar 2024 19:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709924205; cv=none; b=jSsetAd1grzvmSqS3KBs8/mmKNJkwUlHzfWdOhfr1mbGf4lG+ko3zv6nrEa+f1XKbdcFyTiPVZrLrql0r5tM38c43r+cVmO0BUNTtDyMt1tXesqUb47dSxd/pUY0qXh7Cof4sc1nbzYsYk+SAMr6X6RzZeltthMtfUx7PGW8glc=
+	t=1709926635; cv=none; b=NsNf6kg3HEUbA9cJAculQEnvVC/tW2Ns90bz6bUd4OE6eJa8MJM8fwCPHbk1iIYelWmTKGR5OlGlUXjCOlK959Nv7J14f7gr+ZljGeFvN9yiAvvWydSWHB2aUtGwh4l+N8zBA/hqhk6K4wjDTxzT85rgZaVU3esHi+jsd2DYss0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709924205; c=relaxed/simple;
-	bh=m1gSWDGhOAmMvJJN4zC6tWoZplCX09QlxH0eeqoof+Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SsWNxymoXxY/MdICNEUNmji79NJrwW98ogupHh9yKgyHrIg2c25bqRIiY2+urO/hJM2KHqHRqRMSqCx5Ibw+YskMAoLJGioMZJrM2CknZ6WzNFLTjvnKTtTrNYxJvcZ89NA2DvtjrsFlxCLnU6OI+j7E9wIRTBjHvjeO1d1ER3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.com; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=Fr3jdjo8; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wpcBiUaBaPQQIxzHAFN2Kj+yFFh9wih3axC8gZA47FQ=; b=Fr3jdjo8JbgHm2Ys+D8EYSwPP8
-	yJgTFQ2fvP8c6RuOAaUJJXVwZnz0dGlIkTstiryvFT+N2+tnEVZbtf4hIUvxSCLHGVJE1cLiBfg0r
-	dBFzsMYUn513pPb42XJlonxxVgWKNMjxCB6jLDrOSPcG/dTMPGOHsjwAMGuR+c9+Jo0Eno00eFuRO
-	R44Zn17SKZ2/4vwLVdnGdAW6KUV0yHCmVrKSZaXhoKcMNgHXMhDoqZZ5qhsyiZR/HHFp1Oz8tyyJf
-	2BaSZN7T0unvBoLobhjpOUu8yQDAMv8lw93sgkbc7OzdbFeGGJj279ytu8dmwpOhsvqA76tutU0DT
-	Ui1vRU/g==;
-Received: from [167.98.27.226] (helo=rainbowdash)
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1rif10-00COsw-Vd; Fri, 08 Mar 2024 18:32:19 +0000
-Received: from ben by rainbowdash with local (Exim 4.97)
-	(envelope-from <ben@rainbowdash>)
-	id 1rif10-000000084bp-2CXU;
-	Fri, 08 Mar 2024 18:32:18 +0000
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: krisman@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH] unicode: make utf8 test count static
-Date: Fri,  8 Mar 2024 18:32:15 +0000
-Message-Id: <20240308183215.1924331-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.37.2.352.g3c44437643
+	s=arc-20240116; t=1709926635; c=relaxed/simple;
+	bh=AYGxzqtWFZzjVFm4jYl0RBSDkqII6yUctYob3MJlJGo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=r/d1wGfly6JsdJuRyP/XW7cWdLRlmCZfbnuRMMvX5fc8COCUZypOXbBanmLLx3hhAsHLr7yfGqLJtaRG8sIH0EOZ65oCEJ7WVQjUx3vS8ziaPilQRyIaDbgYht/RqRcU1gf3hFaeZGgxQVf6qFu6bDpHlmt1j35arMDmhlH4h2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dVTCME5n; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uCH3Nep4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dVTCME5n; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uCH3Nep4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 867BC5D4B8;
+	Fri,  8 Mar 2024 19:16:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709925398; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kab6475NNC9w/20248v/V/kqivMNMdqsH2NoWAUHlNA=;
+	b=dVTCME5npzzOIHDurrdqJrMn7ka+G5xyG2QtkbzwJn4Mbj8a7F8qmoIyVjOD3FZFZEHHrC
+	RObd999zwv7Bm9hpq8vl4/Moht2w/YgAw26gH2NtlsNO5BoTtgq0wbGSTWmiinYwC9kV7B
+	Zl8sRIg+pv/BJ6T7aBM9LssSle5rHj0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709925398;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kab6475NNC9w/20248v/V/kqivMNMdqsH2NoWAUHlNA=;
+	b=uCH3Nep4vF7IQHASNx+5tSLqMV6/MtzHFhRazpLudWfqhmuLnZySbRdMtPAgfULNWv/eqS
+	jSMcXAr6OMtXZRAA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709925398; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kab6475NNC9w/20248v/V/kqivMNMdqsH2NoWAUHlNA=;
+	b=dVTCME5npzzOIHDurrdqJrMn7ka+G5xyG2QtkbzwJn4Mbj8a7F8qmoIyVjOD3FZFZEHHrC
+	RObd999zwv7Bm9hpq8vl4/Moht2w/YgAw26gH2NtlsNO5BoTtgq0wbGSTWmiinYwC9kV7B
+	Zl8sRIg+pv/BJ6T7aBM9LssSle5rHj0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709925398;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kab6475NNC9w/20248v/V/kqivMNMdqsH2NoWAUHlNA=;
+	b=uCH3Nep4vF7IQHASNx+5tSLqMV6/MtzHFhRazpLudWfqhmuLnZySbRdMtPAgfULNWv/eqS
+	jSMcXAr6OMtXZRAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4E03B13310;
+	Fri,  8 Mar 2024 19:16:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QfALDRZk62VBDQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Fri, 08 Mar 2024 19:16:38 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: linux-fsdevel@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: krisman@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240308183215.1924331-1-ben.dooks@codethink.co.uk>
+References: <20240308183215.1924331-1-ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH] unicode: make utf8 test count static
+Message-Id: <170992539715.13713.18221873605558734700.b4-ty@suse.de>
+Date: Fri, 08 Mar 2024 14:16:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: srv_ts003@codethink.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.4
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -1.43
+X-Spamd-Result: default: False [-1.43 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-0.13)[67.35%];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 RCPT_COUNT_THREE(0.00)[4];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
 
-The variables failed_tests and total_tests are not used outside of the
-utf8-selftest.c file so make them static to avoid the following warnings:
 
-fs/unicode/utf8-selftest.c:17:14: warning: symbol 'failed_tests' was not declared. Should it be static?
-fs/unicode/utf8-selftest.c:18:14: warning: symbol 'total_tests' was not declared. Should it be static?
+On Fri, 08 Mar 2024 18:32:15 +0000, Ben Dooks wrote:
+> The variables failed_tests and total_tests are not used outside of the
+> utf8-selftest.c file so make them static to avoid the following warnings:
+> 
+> fs/unicode/utf8-selftest.c:17:14: warning: symbol 'failed_tests' was not declared. Should it be static?
+> fs/unicode/utf8-selftest.c:18:14: warning: symbol 'total_tests' was not declared. Should it be static?
+> 
+> 
+> [...]
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- fs/unicode/utf8-selftest.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied, thanks!
 
-diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
-index eb2bbdd688d7..c928e6007356 100644
---- a/fs/unicode/utf8-selftest.c
-+++ b/fs/unicode/utf8-selftest.c
-@@ -14,8 +14,8 @@
- 
- #include "utf8n.h"
- 
--unsigned int failed_tests;
--unsigned int total_tests;
-+static unsigned int failed_tests;
-+static unsigned int total_tests;
- 
- /* Tests will be based on this version. */
- #define UTF8_LATEST	UNICODE_AGE(12, 1, 0)
+[1/1] unicode: make utf8 test count static
+      commit: 0131c1f3cce7c01b0eb657a9e9e1a5e42c09a68b
+
+Best regards,
 -- 
-2.37.2.352.g3c44437643
+Gabriel Krisman Bertazi <krisman@suse.de>
 
 
