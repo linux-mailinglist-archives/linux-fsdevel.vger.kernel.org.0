@@ -1,142 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-13979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8ED875E29
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 08:04:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575AF875E5C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 08:20:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024221F23B6C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 07:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0A41C21C7B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 07:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2FA4EB3C;
-	Fri,  8 Mar 2024 07:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF914EB55;
+	Fri,  8 Mar 2024 07:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="pe4KXeOy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iSZA6nXd"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="L+rBuwGM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CE21CFB2;
-	Fri,  8 Mar 2024 07:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E8C4E1DC;
+	Fri,  8 Mar 2024 07:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709881433; cv=none; b=bf2BXuE06HQNPDnnfoOGSvNAhcYRv9vgO3we6x5wovHPjzaEZKqM9duA9Rpz4mE1LTNXP+1JzCRpXfeZIl+PvQJj7VStoRSwS3+hl6n1dvCgjF+mBLrTa8vkz70fE6e0ymI9J4lpAkGcZZDrofH013i1pZsp5YmII0Kh3IuFUHU=
+	t=1709882399; cv=none; b=k4cCYouyAFkGy1AhBPnSSUFJ+7YAEwx7EfG8ZOCqrluKOlwkcpsf6Xe+kMTxE8utWwXJeaRzkLIJBNNn5rz7CwswAWdJxYYs05qynIJfcdmkH/yxUCKwmWopbOTxI954XS/iz3k7njFPo6qGnBmpZgSkjTHL5jNuXoc866S1n2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709881433; c=relaxed/simple;
-	bh=1uqReeQKbaxkHZhzMByNGKVvUKOgE5HuK7lsF7HGm64=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=dtewXZVlx98J2IP9PijKsNW/4K72XtHq+nms6K4EucQ434ZNgv2OLG0hA3cGfCUO2ee9WTlxxctC/ywy1N1WAdWpAKaUfttstRLiY+X64l1sJPdMw9VOpejteDwv7uzvmlCr+qPqQtsay4EWH3g72MCFkSdO5K/GLQxQwz88e3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=pe4KXeOy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iSZA6nXd; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 1B17E1380174;
-	Fri,  8 Mar 2024 02:03:50 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 08 Mar 2024 02:03:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1709881430;
-	 x=1709967830; bh=11LkabzuvCJDFPJOJPUUSJoKDOL+7OwgTjYJVM+filQ=; b=
-	pe4KXeOygKcNKSWM5hmox4pfiU8kPMPCRfR5ZiYJ15j9paKTWuSHhdeRc2mzxNQe
-	8uzRhl7L1HQ5iOir2pUs6IXtuOFPrjpcWzPuJ5iUjsjNbX/UZ0hPm384VU2U3Qxe
-	ZZat52HklxhJQA68qWj+CFNlznMvZIw3KHhL/0PEFDHBjPgyN6fcDmct2sCDXe+x
-	SbHeZC29E5SFOj+MzfdiFgEAAAQVOkw7BrociwvCckRPBg6WMiQ+FovB4U8mqrXq
-	e6ZQXv3n48VFwee1ij6kC1TnQ5wI461NYGRxyYhno68XN02023HPvS6gMZ7FWhW7
-	ArirIcshWkKAoMpi92I0+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1709881430; x=
-	1709967830; bh=11LkabzuvCJDFPJOJPUUSJoKDOL+7OwgTjYJVM+filQ=; b=i
-	SZA6nXdAfFtih1ngbHWCqk0lZkUKVOd9/bIoUPcFiujle/y3GMSb+sGsy1oBn8Yp
-	3HtkKyFC4a1BdDYFsNcpNf1Yzb+LPC9LYZ6cSXEvJtz7wtE/vKPsGvQkMGhl8HGl
-	aC+DSEQuP5ZxvcJwu6ElJLtAxDtU9iNd3Br64ObiKXrO26KBV1oZS6O47Fan5qSP
-	rO9BSeeZ91rU3pcszszxYyG581Ohx8RMyDpO8IMd6JNoN6avnCv32LP5kSS5v9q9
-	25+RkaM8Zs2Xu8a7tUKux8GF2y7ZsRDKZjOnejJZ65qcKeBKTiC3mUPWGVbDEEmn
-	PaTrh84ICGA7/6osxAKcA==
-X-ME-Sender: <xms:VbjqZe16L7zdiA84zomB94jPsnUEf9tE2jES9hd_CwpKILxmI40tcg>
-    <xme:VbjqZRFhGumC61X13SPXi2hn-cKW4KJHwC7CO_Zr0_uJL4tbboyj9pdM74EvTwN58
-    07BUW_bg0WCN_iWWnA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrieeggddutdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:VbjqZW7yfCRePSqVUT0NUBlr8EnsxhcN7pBZooS2-jmqNt4XRsfGvw>
-    <xmx:VbjqZf14TfEDyIxvH1DoIM2CbXMT80mDgha9H52BpgXBz-votFhgkg>
-    <xmx:VbjqZRGWL4T4ZpuDtXKLKcqUvIUbQhg7HOQrYcQDgHhT4hLaCAJT9A>
-    <xmx:VrjqZQewIHWsqdcebM3l22gYnFxH8VW5T2PzH9KEcs4qbWslz3VqEQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 522C7B6008D; Fri,  8 Mar 2024 02:03:49 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-251-g8332da0bf6-fm-20240305.001-g8332da0b
+	s=arc-20240116; t=1709882399; c=relaxed/simple;
+	bh=357MfJ9e26p5+MssqPfVRuHaEyIQzNN1PO/smLcqBAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zq9EubZfkKpt9ek/UWNQVpiActjsFq6BBsOB8DQSNczspl/IxP+Spmpe38nE1QozcApiY4IoCeApLv3v6hpHf7xX8xxW751bSsXWYgwvouyWGfpiZREW2uumJKwkk1Q//UTyGfYwu9PSuli4RZrkCAxHykK+SrnYQ+5dnJvkMc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=L+rBuwGM; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4286vg73030867;
+	Fri, 8 Mar 2024 07:19:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=DacinbEWQALdubakrIQd7g1cRfgEMG5/c5O61RBr34s=;
+ b=L+rBuwGMcclW1MZj0Wo7aqYNQNaChMOlKYgEna3ROYhPw104ND/41SN6X/omwsh02T8l
+ i4WEwfUp2VZCI1UFQO6ijfL+Mt9eWmG/m0d7lLTMVrmiC/NkIC2PkCKNOCEEHscSK+M5
+ bXfKqwUqi3X11itNPjFQYRu+PlyhPRchzh7f45Z6jPIGjGFj5rAiuWe2bsPTdGzMUr3e
+ S8kzHvF9b387/yglX/pefHE6lijXv6Mg6pfhzSxvRekZaaCZK/wTlXCVKO2QS7i+3DGE
+ RJc+t/ROryg8denVCbS0C0hdW+MczvCmMZWyhIlXSSVmatNfUS/bzPH8234xlcXoCbnp hg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wqwv0g96d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Mar 2024 07:19:27 +0000
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4287CX5S002226;
+	Fri, 8 Mar 2024 07:19:27 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wqwv0g965-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Mar 2024 07:19:27 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4287F6vs010913;
+	Fri, 8 Mar 2024 07:19:26 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3wmh52tf7w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Mar 2024 07:19:26 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4287JM4S35651974
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 Mar 2024 07:19:24 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5E5CB2004B;
+	Fri,  8 Mar 2024 07:19:22 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 89AF92004D;
+	Fri,  8 Mar 2024 07:19:17 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  8 Mar 2024 07:19:17 +0000 (GMT)
+Date: Fri, 8 Mar 2024 12:49:13 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        John Garry <john.g.garry@oracle.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 2/8] fs: Reserve inode flag FS_ATOMICWRITES_FL for atomic
+ writes
+Message-ID: <Zeq78Ud5AJ+w2Atj@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <555cc3e262efa77ee5648196362f415a1efc018d.1709361537.git.ritesh.list@gmail.com>
+ <4c687c1c5322b4eaf0bb173f0b5d58b38fdaa847.1709361537.git.ritesh.list@gmail.com>
+ <ZeUc1ipKMrh+pOn6@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
-In-Reply-To: <ZepJDgvxVkhZ5xYq@dread.disaster.area>
-References: <20240219.chu4Yeegh3oo@digikod.net>
- <20240219183539.2926165-1-mic@digikod.net> <ZedgzRDQaki2B8nU@google.com>
- <20240306.zoochahX8xai@digikod.net>
- <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
- <20240307-hinspiel-leselust-c505bc441fe5@brauner>
- <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
- <Zem5tnB7lL-xLjFP@google.com>
- <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
- <ZepJDgvxVkhZ5xYq@dread.disaster.area>
-Date: Fri, 08 Mar 2024 08:02:13 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dave Chinner" <david@fromorbit.com>, "Paul Moore" <paul@paul-moore.com>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- "Christian Brauner" <brauner@kernel.org>,
- "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
- "Jeff Xu" <jeffxu@google.com>, "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
- "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
- "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZeUc1ipKMrh+pOn6@dread.disaster.area>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: QB3bg-oUgrbEE8YWM7dsSu48CL-Cpwms
+X-Proofpoint-ORIG-GUID: fayCa-oKvr-9Tqy4-stvhPAL3Ce9ibt-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-08_05,2024-03-06_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
+ adultscore=0 mlxlogscore=999 phishscore=0 impostorscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2403080056
 
-On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
-> On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
->> On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoack@goo=
-gle.com> wrote:
->> I need some more convincing as to why we need to introduce these new
->> hooks, or even the vfs_masked_device_ioctl() classifier as originally
->> proposed at the top of this thread.  I believe I understand why
->> Landlock wants this, but I worry that we all might have different
->> definitions of a "safe" ioctl list, and encoding a definition into the
->> LSM hooks seems like a bad idea to me.
->
-> I have no idea what a "safe" ioctl means here. Subsystems already
-> restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
-> "safe" clearly means something different here.
+On Mon, Mar 04, 2024 at 11:59:02AM +1100, Dave Chinner wrote:
+> On Sat, Mar 02, 2024 at 01:11:59PM +0530, Ritesh Harjani (IBM) wrote:
+> > This reserves FS_ATOMICWRITES_FL for flags and adds support in
+> > fileattr to support atomic writes flag & xflag needed for ext4
+> > and xfs.
+> > 
+> > Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > ---
+> >  fs/ioctl.c               | 4 ++++
+> >  include/linux/fileattr.h | 4 ++--
+> >  include/uapi/linux/fs.h  | 1 +
+> >  3 files changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ioctl.c b/fs/ioctl.c
+> > index 76cf22ac97d7..e0f7fae4777e 100644
+> > --- a/fs/ioctl.c
+> > +++ b/fs/ioctl.c
+> > @@ -481,6 +481,8 @@ void fileattr_fill_xflags(struct fileattr *fa, u32 xflags)
+> >  		fa->flags |= FS_DAX_FL;
+> >  	if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
+> >  		fa->flags |= FS_PROJINHERIT_FL;
+> > +	if (fa->fsx_xflags & FS_XFLAG_ATOMICWRITES)
+> > +		fa->flags |= FS_ATOMICWRITES_FL;
+> >  }
+> >  EXPORT_SYMBOL(fileattr_fill_xflags);
+> >  
+> > @@ -511,6 +513,8 @@ void fileattr_fill_flags(struct fileattr *fa, u32 flags)
+> >  		fa->fsx_xflags |= FS_XFLAG_DAX;
+> >  	if (fa->flags & FS_PROJINHERIT_FL)
+> >  		fa->fsx_xflags |= FS_XFLAG_PROJINHERIT;
+> > +	if (fa->flags & FS_ATOMICWRITES_FL)
+> > +		fa->fsx_xflags |= FS_XFLAG_ATOMICWRITES;
+> >  }
+> >  EXPORT_SYMBOL(fileattr_fill_flags);
+> >  
+> > diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
+> > index 47c05a9851d0..ae9329afa46b 100644
+> > --- a/include/linux/fileattr.h
+> > +++ b/include/linux/fileattr.h
+> > @@ -7,12 +7,12 @@
+> >  #define FS_COMMON_FL \
+> >  	(FS_SYNC_FL | FS_IMMUTABLE_FL | FS_APPEND_FL | \
+> >  	 FS_NODUMP_FL |	FS_NOATIME_FL | FS_DAX_FL | \
+> > -	 FS_PROJINHERIT_FL)
+> > +	 FS_PROJINHERIT_FL | FS_ATOMICWRITES_FL)
+> >  
+> >  #define FS_XFLAG_COMMON \
+> >  	(FS_XFLAG_SYNC | FS_XFLAG_IMMUTABLE | FS_XFLAG_APPEND | \
+> >  	 FS_XFLAG_NODUMP | FS_XFLAG_NOATIME | FS_XFLAG_DAX | \
+> > -	 FS_XFLAG_PROJINHERIT)
+> > +	 FS_XFLAG_PROJINHERIT | FS_XFLAG_ATOMICWRITES)
+> 
+> I'd much prefer that we only use a single user API to set/clear this
+> flag.
 
-That was my problem with the first version as well, but I think
-drawing the line between "implemented in fs/ioctl.c" and
-"implemented in a random device driver fops->unlock_ioctl()"
-seems like a more helpful definition.
+Hi Dave,
 
-This won't just protect from calling into drivers that are lacking
-a CAP_SYS_ADMIN check, but also from those that end up being
-harmful regardless of the ioctl command code passed into them
-because of stupid driver bugs.
+So right now we have 2 ways to mark this flag in ext4:
 
-      Arnd
+1. SETFLAGS ioctl() w/ FS_ATOMICWRITES_FL -> set EXT4_ATOMICWRITES_FL on inode
+2. SETXFLAGS ioctl() w/ FS_XFLAG_ATOMICWRITES -> translate to FS_ATOMICWRITES_FL -> set EXT4_ATOMICWRITES_FL on inode
+
+IIUC you want to only keep 2. and not support 1. so the user space only
+has a single ioctl to use, correct?
+
+One thing I see is that the ext4_fileattr_set() is not XFLAGS aware
+at all and right now it expects the XFLAGS to already be translated to 
+SETFLAG equivalent before setting it in the inode. Maybe we'll need
+to add that logic however it'll be more of an exception than the usual 
+pattern.
+
+> 
+> This functionality is going to be tied to using extent size hints on
+> XFS to indicate preferred atomic IO alignment/size, so applications
+> are going to have to use the FS_IOC_FS{G,S}ETXATTR APIs regardless
+> of whether it's added to the FS_IOC_{G,S}ETFLAGS API.
+
+Hmm that's right, I'm not sure how we'll handle it in ext4 yet since we
+don't have a per file extent size hint, the closest we have is bigalloc
+that is more of an mkfs time, FS wide feature. 
+
+Regards,
+ojasw
+> 
+> Also, there are relatively few flags left in the SETFLAGS 32-bit
+> space, so this duplication seems like a waste of the few flags
+> that are remaining.
+
+> 
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
 
