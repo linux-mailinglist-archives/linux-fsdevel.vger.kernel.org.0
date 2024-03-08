@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-13987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DAAD87618C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 11:10:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 960A987619B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 11:11:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241441F23265
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 10:10:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B952A1C21BFD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 10:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA6A54799;
-	Fri,  8 Mar 2024 10:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D018254BCB;
+	Fri,  8 Mar 2024 10:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgIfvY78"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgWe0Td6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701B0535DA;
-	Fri,  8 Mar 2024 10:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D96E5380F;
+	Fri,  8 Mar 2024 10:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709892587; cv=none; b=e35T97jny2E2knx+1d9jIEGCjY8kyw12/QfJnjZwzWc1lsKKuDsjW3kHm2sWlAMFvDBqxrwhWZebfIGLL/xnvLM7p5QgRxjozdkGQJTqrZkpxtnKAy51ekiZ2cuAdvO7QESZsFES4F1A6Rsy+VjCbDPpK+CH0orLPf2rMO7g1P0=
+	t=1709892649; cv=none; b=ZQWcWm5bP8Nipm7eQAVLjAhomtuxppZuWOkiUDkULX38cTL6nedmx7WV0adaOhS0i5+22u8mVo3DE96pxqiNuIRJ17Cx8sOnWlK0J8lRZpsDu9JyfCSlVOI9o+iZP49R9Oy5N+baBDP2N8/U4OWDmJfyPWWvMCWH4tXWuJpa/ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709892587; c=relaxed/simple;
-	bh=4PxntLPNtz8agd+ceR6TCMkEKuqFoOzypV8NU1oyKk8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q1Dn2aj0q2n1zoIGGzaPN7/3YU3sZO4XO9iXY5ATop/KLmC09i0YWzzGkb2KkF06KQcG/DHHkwsZjUgztwi/KS8jJ+QxmabPs1TVKlf1tH/3bmDsBvyz7zogr+d01wNHBtIMUmk/9WlddzlJS9zQTsJOSsXVQfgdz/BWWzII9jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgIfvY78; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2CCC43330;
-	Fri,  8 Mar 2024 10:09:45 +0000 (UTC)
+	s=arc-20240116; t=1709892649; c=relaxed/simple;
+	bh=1IxfkLaq7cSmoS4jM4ssep+B6tvqeRrJNySOpjgKp5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ht1x5z8z7Tm1Md4dKmUFRF+QcSpU3Vibx2Kg/cpac3zQkkY0cExMy+bP2icqM+GKDJ06b1Eod8VYh8wlGD9f5UW9nRjU2SGqNMHlx7/ogkBrSbNkUnSGk8NrCwhT8QVLzHru9Eroa998o2w/Kx4bLsG8JrZduksfdef+/KzrRkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgWe0Td6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 781FEC433F1;
+	Fri,  8 Mar 2024 10:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709892586;
-	bh=4PxntLPNtz8agd+ceR6TCMkEKuqFoOzypV8NU1oyKk8=;
+	s=k20201202; t=1709892648;
+	bh=1IxfkLaq7cSmoS4jM4ssep+B6tvqeRrJNySOpjgKp5k=;
 	h=From:To:Cc:Subject:Date:From;
-	b=CgIfvY78ff3FC1b3pnI2HTrQ6ywttEDj/+G1Az43MKONtwRdr/kP/rwHrGjahkUtl
-	 cVpgxzfrvVUH2vfsj6t8Ya91KExqIJUszHY7M9+J0bzF2yBul0CTLU2yJEv8+fMqGA
-	 Fw+k5JseUuxJUOyiywF6M8a9jC5rMLylfJIKHs+CuqhXCJYREGfg7ZqlNkrztlIB2k
-	 14XDxDiIsvjfFuESKBxb7e+lLLIc9FxmpQrcGYvaMs0Be49znqLi5TOfGugAUZ4boV
-	 0iuDDjI6pj60hZT/H4bFhsPCe/ThVpdZqV+KydKSK161pX/QRT8kB8k23PLNHfopxh
-	 yoRlarXWdbQ5w==
+	b=NgWe0Td6E/YZSr/8x4zEw3Rp2gJKk4VqzmxljuARcFYnO7QwxW6JDtqBojvANZw8A
+	 xgQHz2YZCj9jYzjRI1juB1vySRI1bFQUPqtBD3BI8hkhYkcno1//JmGfx1Rh5W6lGI
+	 3OcN+ywxJ7OKXGl2bO1ZUvaEa+wOKTn+NC6PkaVhCyZu0pBtJlc9bv2JB3/x+Y0qty
+	 qszsnn/PItGQLrI4AciWzpBWd7RBw9uDcbMa49bpNE/8EGFFLjRW7ZiG4Pof5t4SYB
+	 CsyVMS9Chqw1yPL2P1yyAGdg+5WPKgfZ4huayjRlQPqWF7ik69CwACEh+BNLe+xDt3
+	 X80jgxNTeFwRA==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs misc
-Date: Fri,  8 Mar 2024 11:09:08 +0100
-Message-ID: <20240308-vfs-misc-a4e7c50ce769@brauner>
+Subject: [GIT PULL] vfs ntfs
+Date: Fri,  8 Mar 2024 11:10:21 +0100
+Message-ID: <20240308-vfs-ntfs-ede727d2a142@brauner>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -55,111 +55,43 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14587; i=brauner@kernel.org; h=from:subject:message-id; bh=4PxntLPNtz8agd+ceR6TCMkEKuqFoOzypV8NU1oyKk8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS+enzrVAiDsWsl35qJs/5JHLZs81G99Wl+g7jZzpmex pLytVmyHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNZs5qR4cZW+3eaHK2ystxT 354P+fNWRDlTb+3S+Ak5fjqvoi/HcDEyfJ9zQKak48v8eps5SfklpmFeVyXCtf684p2+N/LzJsO TvAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7045; i=brauner@kernel.org; h=from:subject:message-id; bh=1IxfkLaq7cSmoS4jM4ssep+B6tvqeRrJNySOpjgKp5k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS+eiJ19uX1CyELz76I/LUqaN0tBQbfibXPn4WyuWmo9 Qd4Wj8/1VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRLXGMDFOyCxziSua/2xrv OMVb7IxUiE2Vr+W+ixbRKbWCjdknnBkZ3p25fPb516p3PXOa/3zsOx/Dy9YUYzbtw/wfvAs8V3q ZsQMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-This contains the usual miscellaneous features, cleanups, and fixes for vfs and
-individual fses.
+This removes the old ntfs driver. The new ntfs3 driver is a full
+replacement that was merged over two years ago. We've went through
+various userspace and either they use ntfs3 or they use the fuse version
+of ntfs and thus build neither ntfs nor ntfs3. I think that's a clear
+sign that we should risk removing the legacy ntfs driver.
 
-Features
-========
+Quoting from Arch Linux and Debian:
 
-* Support idmapped mounts for hugetlbfs.
+* Debian does neither build the legacy ntfs nor the new ntfs3:
 
-* Add RWF_NOAPPEND flag for pwritev2(). This allows to fix a bug where
-  the passed offset is ignored if the file is O_APPEND. The new flag
-  allows a caller to enforce that the offset is honored to conform to
-  posix even if the file was opened in append mode.
+  "Not currently built with Debian's kernel packages, "ntfs" has been
+  symlinked to "ntfs-3g" as it relates to fstab and mount commands.
 
-* Move i_mmap_rwsem in struct address_space to avoid false sharing
-  between i_mmap and i_mmap_rwsem.
+  Debian kernels are built without support of the ntfs3 driver developed
+  by Paragon Software."
+  (cf. [2])
 
-* Convert efs, qnx4, and coda to use the new mount api.
+* Archlinux provides ntfs3 as their default since 5.15:
 
-* Add a generic is_dot_dotdot() helper that's used by various
-  filesystems and the VFS code instead of open-coding it mutliple times.
+  "All officially supported kernels with versions 5.15 or newer are
+  built with CONFIG_NTFS3_FS=m and thus support it. Before 5.15, NTFS
+  read and write support is provided by the NTFS-3G FUSE file system."
+  (cf. [1]).
 
-* Recently we've added stable offsets which allows stable ordering
-  when iterating directories exported through NFS on e.g., tmpfs
-  filesystems. Originally an xarray was used for the offset map but that
-  caused slab fragmentation issues over time. Tis switches the offset
-  map to the maple tree which has a dense mode that handles this
-  scenario a lot better. Includes tests.
+It's unmaintained apart from various odd fixes as well. Worst case we
+have to reintroduce it if someone really has a valid dependency on it.
+But it's worth trying to see whether we can remove it.
 
-* Finally merge the case-insensitive improvement series Gabriel has been
-  working on for a long time. This cleanly propagates case insensitive
-  operations through ->s_d_op which in turn allows us to remove the
-  quite ugly generic_set_encrypted_ci_d_ops() operations. It also
-  improves performance by trying a case-sensitive comparison first and
-  then fallback to case-insensitive lookup if that fails. This also
-  fixes a bug where overlayfs would be able to be mounted over a case
-  insensitive directory which would lead to all sort of odd behaviors.
-
-Cleanups
-========
-
-* Make file_dentry() a simple accessor now that ->d_real() is
-  simplified because of the backing file work we did the last two
-  cycles.
-
-* Use the dedicated file_mnt_idmap helper in ntfs3.
-
-* Use smp_load_acquire/store_release() in the i_size_read/write helpers
-  and thus remove the hack to handle i_size reads in the filemap code.
-
-* The SLAB_MEM_SPREAD is a nop now. Remove it from various places in fs/
-
-* It's no longer necessary to perform a second built-in initramfs unpack
-  call because we retain the contents of the previous extraction. Remove it.
-
-* Now that we have removed various allocators kfree_rcu() always works
-  with kmem caches and kmalloc(). So simplify various places that only
-  use an rcu callback in order to handle the kmem cache case.
-
-* Convert the pipe code to use a lockdep comparison function instead of
-  open-coding the nesting making lockdep validation easier.
-
-* Move code into fs-writeback.c that was located in a header but can be
-  made static as it's only used in that one file.
-
-* Rewrite the alignment checking iterators for iovec and bvec to be
-  easier to read, and also significantly more compact in terms of
-  generated code. This saves 270 bytes of text on x86-64 (with clang-18)
-  and 224 bytes on arm64 (with gcc-13). In profiles it also saves a bit
-  of time for the same workload.
-
-* Switch various places to use KMEM_CACHE instead of kmem_cache_create().
-
-* Use inode_set_ctime_to_ts() in inode_set_ctime_current()
-
-* Use kzalloc() in name_to_handle_at() to avoid kernel infoleak.
-
-* Various smaller cleanups for eventfds.
-
-Fixes
-=====
-
-* Fix various comments and typos, and unneeded initializations.
-
-* Fix stack allocation hack for clang in the select code.
-
-* Improve dump_mapping() debug code on a best-effort basis.
-
-* Fix build errors in various selftests.
-
-* Avoid wrap-around instrumentation in various places.
-
-* Don't allow user namespaces without an an idmapping written to be used
-  for idmapped mounts.
-
-* Fix sysv sb_read() call.
-
-* Fix fallback implementation of the get_name() export operation.
+Link: https://wiki.archlinux.org/title/NTFS [1]
+Link: https://wiki.debian.org/NTFS [2]
 
 /* Testing */
 clang: Debian clang version 16.0.6 (19)
@@ -169,17 +101,9 @@ All patches are based on v6.8-rc1 and have been sitting in linux-next.
 No build failures or warnings were observed.
 
 /* Conflicts */
-
-Merge conflicts with other trees
-================================
-
-[1] linux-next: manual merge of the scsi-mkp tree with the vfs-brauner tree
-    https://lore.kernel.org/linux-next/20240227153716.43e5cbad@canb.auug.org.au
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with
+current mainline.
 
 The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
@@ -187,232 +111,125 @@ The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9.misc
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9.ntfs
 
-for you to fetch changes up to 09406ad8e5105729291a7639160e0cd51c9e0c6c:
+for you to fetch changes up to 06b8db3a7dde43cc7c412517c93c85d13a4557f8:
 
-  Merge tag 'for-next-6.9' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/krisman/unicode into vfs.misc (2024-03-07 11:55:41 +0100)
+  fs: remove NTFS classic from docum. index (2024-01-24 12:11:48 +0100)
 
-Please consider pulling these changes from the signed vfs-6.9.misc tag.
+Please consider pulling these changes from the signed vfs-6.9.ntfs tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.9.misc
+vfs-6.9.ntfs
 
 ----------------------------------------------------------------
-Alexander Mikhalitsyn (1):
-      ntfs3: use file_mnt_idmap helper
-
-Amir Goldstein (2):
-      fs: make file_dentry() a simple accessor
-      fs: remove the inode argument to ->d_real() method
-
-Andreas Gruenbacher (1):
-      fs: Wrong function name in comment
-
-Arnd Bergmann (1):
-      fs/select: rework stack allocation hack for clang
-
-Baokun Li (3):
-      fs: make the i_size_read/write helpers be smp_load_acquire/store_release()
-      Revert "mm/filemap: avoid buffered read/write race to read inconsistent data"
-      asm-generic: remove extra type checking in acquire/release for non-SMP case
-
-Baolin Wang (1):
-      fs: improve dump_mapping() robustness
-
-Bill O'Donnell (2):
-      efs: convert efs to use the new mount api
-      qnx4: convert qnx4 to use the new mount api
-
-Chen Hanxiao (1):
-      __fs_parse: Correct a documentation comment
-
-Chengming Zhou (10):
-      vfs: remove SLAB_MEM_SPREAD flag usage
-      sysv: remove SLAB_MEM_SPREAD flag usage
-      romfs: remove SLAB_MEM_SPREAD flag usage
-      reiserfs: remove SLAB_MEM_SPREAD flag usage
-      qnx6: remove SLAB_MEM_SPREAD flag usage
-      proc: remove SLAB_MEM_SPREAD flag usage
-      openpromfs: remove SLAB_MEM_SPREAD flag usage
-      minix: remove SLAB_MEM_SPREAD flag usage
-      jfs: remove SLAB_MEM_SPREAD flag usage
-      efs: remove SLAB_MEM_SPREAD flag usage
-
-Christian Brauner (3):
-      Merge tag 'exportfs-6.9' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/cel/linux
-      Merge series 'Use Maple Trees for simple_offset utilities' of https://lore.kernel.org/r/170820083431.6328.16233178852085891453.stgit@91.116.238.104.host.secureserver.net
-      Merge tag 'for-next-6.9' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/krisman/unicode into vfs.misc
-
-Chuck Lever (6):
-      fs: Create a generic is_dot_dotdot() utility
-      libfs: Re-arrange locking in offset_iterate_dir()
-      libfs: Define a minimum directory offset
-      libfs: Add simple_offset_empty()
-      maple_tree: Add mtree_alloc_cyclic()
-      libfs: Convert simple directory offsets to use a Maple Tree
-
-David Disseldorp (1):
-      initramfs: remove duplicate built-in __initramfs_start unpacking
-
-David Howells (1):
-      Convert coda to use the new mount API
-
-Dmitry Antipov (2):
-      fs: prefer kfree_rcu() in fasync_remove_entry()
-      eventpoll: prefer kfree_rcu() in __ep_remove()
-
-Gabriel Krisman Bertazi (11):
-      libfs: Attempt exact-match comparison first during casefolded lookup
-      ovl: Always reject mounting over case-insensitive directories
-      fscrypt: Factor out a helper to configure the lookup dentry
-      fscrypt: Drop d_revalidate for valid dentries during lookup
-      fscrypt: Drop d_revalidate once the key is added
-      libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
-      libfs: Add helper to choose dentry operations at mount-time
-      ext4: Configure dentry operations at dentry-creation time
-      f2fs: Configure dentry operations at dentry-creation time
-      ubifs: Configure dentry operations at dentry-creation time
-      libfs: Drop generic_set_encrypted_ci_d_ops
-
-Giuseppe Scrivano (1):
-      hugetlbfs: support idmapped mounts
-
-Hu Yadi (1):
-      selftests/filesystems:fix build error in overlayfs
-
-Hu.Yadi (1):
-      selftests/move_mount_set_group:Make tests build with old libc
-
-Huang Xiaojia (1):
-      epoll: Remove ep_scan_ready_list() in comments
-
-Jay (1):
-      fs: fix a typo in attr.c
-
-Jens Axboe (1):
-      iov_iter: streamline iovec/bvec alignment iteration
-
-JonasZhou (1):
-      fs/address_space: move i_mmap_rwsem to mitigate a false sharing with i_mmap.
-
-Kees Cook (2):
-      iov_iter: Avoid wrap-around instrumentation in copy_compat_iovec_from_user()
-      select: Avoid wrap-around instrumentation in do_sys_poll()
-
-Kemeng Shi (1):
-      writeback: move wb_wakeup_delayed defination to fs-writeback.c
-
-Kent Overstreet (1):
-      fs/pipe: Convert to lockdep_cmp_fn
-
-Kunwu Chan (3):
-      buffer: Use KMEM_CACHE instead of kmem_cache_create()
-      fs: Use KMEM_CACHE instead of kmem_cache_create
-      mbcache: Simplify the allocation of slab caches
-
-Li zeming (1):
-      libfs: Remove unnecessary ‘0’ values from ret
-
-Liam R. Howlett (1):
-      test_maple_tree: testing the cyclic allocation
-
-Nguyen Dinh Phi (1):
-      fs: use inode_set_ctime_to_ts to set inode ctime to current time
-
-Nikita Zhandarovich (1):
-      do_sys_name_to_handle(): use kzalloc() to fix kernel-infoleak
+Matthew Wilcox (Oracle) (1):
+      fs: Remove NTFS classic
 
 Randy Dunlap (1):
-      fs/hfsplus: use better @opf description
+      fs: remove NTFS classic from docum. index
 
-Rich Felker (1):
-      vfs: add RWF_NOAPPEND flag for pwritev2
-
-Taylor Jackson (1):
-      fs/mnt_idmapping.c: Return -EINVAL when no map is written
-
-Tetsuo Handa (1):
-      sysv: don't call sb_bread() with pointers_lock held
-
-Trond Myklebust (1):
-      exportfs: fix the fallback implementation of the get_name export operation
-
-Vincenzo Mezzela (1):
-      docs: filesystems: fix typo in docs
-
-Wen Yang (3):
-      eventfd: add a BUILD_BUG_ON() to ensure consistency between EFD_SEMAPHORE and the uapi
-      eventfd: move 'eventfd-count' printing out of spinlock
-      eventfd: strictly check the count parameter of eventfd_write to avoid inputting illegal strings
-
- Documentation/filesystems/files.rst                |   2 +-
- Documentation/filesystems/locking.rst              |   2 +-
- Documentation/filesystems/vfs.rst                  |  16 +-
- fs/attr.c                                          |   2 +-
- fs/backing-file.c                                  |   4 +-
- fs/buffer.c                                        |  10 +-
- fs/coda/inode.c                                    | 143 ++++++++++-----
- fs/crypto/fname.c                                  |   8 +-
- fs/crypto/hooks.c                                  |  15 +-
- fs/dcache.c                                        |   2 +-
- fs/ecryptfs/crypto.c                               |  10 --
- fs/efs/super.c                                     | 118 ++++++++----
- fs/eventfd.c                                       |  16 +-
- fs/eventpoll.c                                     |  16 +-
- fs/exportfs/expfs.c                                |   2 +-
- fs/ext4/namei.c                                    |   1 -
- fs/ext4/super.c                                    |   1 +
- fs/f2fs/f2fs.h                                     |  11 --
- fs/f2fs/namei.c                                    |   1 -
- fs/f2fs/super.c                                    |   1 +
- fs/fcntl.c                                         |   8 +-
- fs/fhandle.c                                       |   2 +-
- fs/fs-writeback.c                                  |  25 +++
- fs/fs_parser.c                                     |   4 +-
- fs/hfsplus/wrapper.c                               |   2 +-
- fs/hugetlbfs/inode.c                               |  23 ++-
- fs/inode.c                                         |   7 +-
- fs/jfs/super.c                                     |   2 +-
- fs/libfs.c                                         | 200 +++++++++++----------
- fs/mbcache.c                                       |   4 +-
- fs/minix/inode.c                                   |   2 +-
- fs/mnt_idmapping.c                                 |   2 +-
- fs/namei.c                                         |   6 +-
- fs/ntfs3/namei.c                                   |   2 +-
- fs/openpromfs/inode.c                              |   2 +-
- fs/overlayfs/params.c                              |  14 +-
- fs/overlayfs/super.c                               |  52 +++---
- fs/pipe.c                                          |  81 ++++-----
- fs/proc/inode.c                                    |   2 +-
- fs/qnx4/inode.c                                    |  47 +++--
- fs/qnx6/inode.c                                    |   2 +-
- fs/reiserfs/super.c                                |   1 -
- fs/romfs/super.c                                   |   4 +-
- fs/select.c                                        |  15 +-
- fs/sysv/inode.c                                    |   2 +-
- fs/sysv/itree.c                                    |  10 +-
- fs/ubifs/dir.c                                     |   1 -
- fs/ubifs/super.c                                   |   1 +
- include/asm-generic/barrier.h                      |   2 -
- include/linux/backing-dev.h                        |   1 -
- include/linux/dcache.h                             |  18 +-
- include/linux/fs.h                                 |  61 ++++++-
- include/linux/fscrypt.h                            |  66 ++++++-
- include/linux/maple_tree.h                         |   7 +
- include/linux/poll.h                               |   4 -
- include/uapi/linux/fs.h                            |   5 +-
- init/initramfs.c                                   |   2 -
- lib/iov_iter.c                                     |  60 ++++---
- lib/maple_tree.c                                   |  93 ++++++++++
- lib/test_maple_tree.c                              |  44 +++++
- mm/backing-dev.c                                   |  25 ---
- mm/filemap.c                                       |   9 -
- mm/shmem.c                                         |   4 +-
- .../selftests/filesystems/overlayfs/dev_in_maps.c  |  10 +-
- .../move_mount_set_group_test.c                    |   4 +-
- 65 files changed, 816 insertions(+), 503 deletions(-)
+ CREDITS                             |    5 +
+ Documentation/filesystems/index.rst |    1 -
+ Documentation/filesystems/ntfs.rst  |  466 -----
+ MAINTAINERS                         |   10 -
+ fs/Kconfig                          |    1 -
+ fs/Makefile                         |    1 -
+ fs/ntfs/Kconfig                     |   81 -
+ fs/ntfs/Makefile                    |   15 -
+ fs/ntfs/aops.c                      | 1744 -------------------
+ fs/ntfs/aops.h                      |   88 -
+ fs/ntfs/attrib.c                    | 2624 ----------------------------
+ fs/ntfs/attrib.h                    |  102 --
+ fs/ntfs/bitmap.c                    |  179 --
+ fs/ntfs/bitmap.h                    |  104 --
+ fs/ntfs/collate.c                   |  110 --
+ fs/ntfs/collate.h                   |   36 -
+ fs/ntfs/compress.c                  |  950 -----------
+ fs/ntfs/debug.c                     |  159 --
+ fs/ntfs/debug.h                     |   57 -
+ fs/ntfs/dir.c                       | 1540 -----------------
+ fs/ntfs/dir.h                       |   34 -
+ fs/ntfs/endian.h                    |   79 -
+ fs/ntfs/file.c                      | 1997 ----------------------
+ fs/ntfs/index.c                     |  440 -----
+ fs/ntfs/index.h                     |  134 --
+ fs/ntfs/inode.c                     | 3102 ---------------------------------
+ fs/ntfs/inode.h                     |  310 ----
+ fs/ntfs/layout.h                    | 2421 --------------------------
+ fs/ntfs/lcnalloc.c                  | 1000 -----------
+ fs/ntfs/lcnalloc.h                  |  131 --
+ fs/ntfs/logfile.c                   |  849 ----------
+ fs/ntfs/logfile.h                   |  295 ----
+ fs/ntfs/malloc.h                    |   77 -
+ fs/ntfs/mft.c                       | 2907 -------------------------------
+ fs/ntfs/mft.h                       |  110 --
+ fs/ntfs/mst.c                       |  189 ---
+ fs/ntfs/namei.c                     |  392 -----
+ fs/ntfs/ntfs.h                      |  150 --
+ fs/ntfs/quota.c                     |  103 --
+ fs/ntfs/quota.h                     |   21 -
+ fs/ntfs/runlist.c                   | 1893 ---------------------
+ fs/ntfs/runlist.h                   |   88 -
+ fs/ntfs/super.c                     | 3202 -----------------------------------
+ fs/ntfs/sysctl.c                    |   58 -
+ fs/ntfs/sysctl.h                    |   27 -
+ fs/ntfs/time.h                      |   89 -
+ fs/ntfs/types.h                     |   55 -
+ fs/ntfs/unistr.c                    |  384 -----
+ fs/ntfs/upcase.c                    |   73 -
+ fs/ntfs/usnjrnl.c                   |   70 -
+ fs/ntfs/usnjrnl.h                   |  191 ---
+ fs/ntfs/volume.h                    |  164 --
+ 52 files changed, 5 insertions(+), 29303 deletions(-)
+ delete mode 100644 Documentation/filesystems/ntfs.rst
+ delete mode 100644 fs/ntfs/Kconfig
+ delete mode 100644 fs/ntfs/Makefile
+ delete mode 100644 fs/ntfs/aops.c
+ delete mode 100644 fs/ntfs/aops.h
+ delete mode 100644 fs/ntfs/attrib.c
+ delete mode 100644 fs/ntfs/attrib.h
+ delete mode 100644 fs/ntfs/bitmap.c
+ delete mode 100644 fs/ntfs/bitmap.h
+ delete mode 100644 fs/ntfs/collate.c
+ delete mode 100644 fs/ntfs/collate.h
+ delete mode 100644 fs/ntfs/compress.c
+ delete mode 100644 fs/ntfs/debug.c
+ delete mode 100644 fs/ntfs/debug.h
+ delete mode 100644 fs/ntfs/dir.c
+ delete mode 100644 fs/ntfs/dir.h
+ delete mode 100644 fs/ntfs/endian.h
+ delete mode 100644 fs/ntfs/file.c
+ delete mode 100644 fs/ntfs/index.c
+ delete mode 100644 fs/ntfs/index.h
+ delete mode 100644 fs/ntfs/inode.c
+ delete mode 100644 fs/ntfs/inode.h
+ delete mode 100644 fs/ntfs/layout.h
+ delete mode 100644 fs/ntfs/lcnalloc.c
+ delete mode 100644 fs/ntfs/lcnalloc.h
+ delete mode 100644 fs/ntfs/logfile.c
+ delete mode 100644 fs/ntfs/logfile.h
+ delete mode 100644 fs/ntfs/malloc.h
+ delete mode 100644 fs/ntfs/mft.c
+ delete mode 100644 fs/ntfs/mft.h
+ delete mode 100644 fs/ntfs/mst.c
+ delete mode 100644 fs/ntfs/namei.c
+ delete mode 100644 fs/ntfs/ntfs.h
+ delete mode 100644 fs/ntfs/quota.c
+ delete mode 100644 fs/ntfs/quota.h
+ delete mode 100644 fs/ntfs/runlist.c
+ delete mode 100644 fs/ntfs/runlist.h
+ delete mode 100644 fs/ntfs/super.c
+ delete mode 100644 fs/ntfs/sysctl.c
+ delete mode 100644 fs/ntfs/sysctl.h
+ delete mode 100644 fs/ntfs/time.h
+ delete mode 100644 fs/ntfs/types.h
+ delete mode 100644 fs/ntfs/unistr.c
+ delete mode 100644 fs/ntfs/upcase.c
+ delete mode 100644 fs/ntfs/usnjrnl.c
+ delete mode 100644 fs/ntfs/usnjrnl.h
+ delete mode 100644 fs/ntfs/volume.h
 
