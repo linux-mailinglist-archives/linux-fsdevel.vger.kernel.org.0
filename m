@@ -1,92 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-13999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CC78762C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 12:10:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E45B876378
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 12:43:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9FC1C215FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 11:10:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFBEA1C20B41
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 11:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8043755E54;
-	Fri,  8 Mar 2024 11:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C7056761;
+	Fri,  8 Mar 2024 11:43:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C090C55C24
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Mar 2024 11:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9C256442;
+	Fri,  8 Mar 2024 11:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709896206; cv=none; b=ib45t6vPIF3kxJ7Yu0PR5Kfpz4931mAWzUqvUV6nHWM/UgSoSKqz/WhEY3hqrzLlbVy1Ih+qhctwBFLcQX2pGlAivhZDN7AvgBXGsmKba+hc+ALsoCWQlvhgoHYZOzpDXy+ElsBke65op23CIdocXRAQvA4GABcnMfkxUWFqLaw=
+	t=1709898188; cv=none; b=kC0tyEMVaaN21/enNfTZxSGXrUARFE/GVgtBRjM74MvyAKgFrBX0MejgCUoxjnxwHVwBlzj6cP2T5/ZcWlueeYEsqI2KTYaUGmA82ljxMcIBpPbOqglhgNJtzxOuTG3CVUhoL+UzTA18UBa/eGuIn2goY3ZpfQ5GR8Adligfuns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709896206; c=relaxed/simple;
-	bh=FrYzcEw0p+l4M5ctio1889wXMZgzFn5PhPC+9nAVQMQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=vGbpwUeF1wVsEQNyAQvjMob90ZIJmJvvlPu0Mk8wnAoow32vvAoNOp3m7HBU1OWrryy3GuUNvlrdLmPtjW9kREpAjpYZTAxCaeDQM6F2Qz8YYZMDdkJmzn39AQ8sJ5IC2QsqGJrxZ5co+7u48rws00HfBd1sMXYTkYWzyVxb8Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c83a903014so202501939f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Mar 2024 03:10:04 -0800 (PST)
+	s=arc-20240116; t=1709898188; c=relaxed/simple;
+	bh=WTPvxiS0Pg6ITS1Vn/YcEGXqyGDADSyjVlPQRD+qkaU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n/hBe9M21jQhzI83oBYPUTTFNmWhZqGmaQfxhu/gQQm1n9PAWhBHV8Hy9XmU7qYJFmaeyaVZFYHP+MvdkJjChP0solQqVcISOliHj1dzPir4H44GH+sSpD4UEHXf14vSPt+7QZcVkRYNi2OLGH48NSfOa6JtX8vScbZ6DokZx7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a2f22bfb4e6so307699366b.0;
+        Fri, 08 Mar 2024 03:43:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709896203; x=1710501003;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NQ8TufsD7KPXCcu0y//i8jXNAGtGghQ7YVU08pwafXc=;
-        b=uCfTHtVOEiEhtqgOHdgxCk0a6NlYGASU4qXWVqYuj7dkyMydSoXcm1Nc0VtQNiyote
-         yu/MghYEW5S5dmlerGrv/8Ims1ypbNHChrGeIb+oqSW6MhDOZbC3Vq7O2fYjETYHmz/i
-         80RKQEHFf0yQ/eZNXbHntbAjk3sRF+d9bwDxg6gb5SR8+fuiNhSUc3jMhQnVH67RPE7L
-         huXzgxMyQEfeHjeILPr67n66BeJT2w2LahOvlCBTLcEpHhqIvXbWYZPozzYGRCEEzHRM
-         hGiPgLrF49Du8VHNLDLuqSgHX2eBVLBqBGHOThUIEs6Tbqj5j3bF6VC73LM2ZGdeSuf+
-         l38Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXXqvMWTmZyyI83J1i9Gtffs2NPGmorYUQjby3sQUdlXwB9tKboDObMUfCekKg38aKe72hn6UlXrkRRc3xPS/P4h2RgjDY99VOz2Nt7/g==
-X-Gm-Message-State: AOJu0Yw/lmMCxOpI9Sf+ilL6kJKjo81i2ADmfeCLc+x6e136gBUL9sJa
-	5Jc0Zl6QkTRuvS0UGmCJEy4XlOgfIajbhDn/ubb/h+lelgDIf9pEenxBq5ZVNdx6AjEkm+vB7LV
-	FvbzugGCln2nyikgFZ83QI3NvBP7HVMEbAlamL/2SWGhLkM+epGqo23o=
-X-Google-Smtp-Source: AGHT+IGrLI/lkv//KLnRzr8N0GslKr2WdWvndoicXU9vRVvsv+s8NjyH+J4paVGfZOzRmFDKbXuH24vQEPpqDo/fnF7pqFuARKZw
+        d=1e100.net; s=20230601; t=1709898184; x=1710502984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tEeqI5MDotFb9rK23HKrypgCTWc+8alatdFbrADbmRM=;
+        b=AIKvBpcnoHbJ1KfnNfYjGnFEYwUvAEmtiqMEyxvtEWindIiNSnVWQJMoiQ82w+5B2+
+         KnI/V6HSomH7ZR0uicDWwfKXJkZFpazI9KS6aX25K7cbOB9r7J+wHVN8lOf32a8x9RSY
+         UBBB/DfInKLp7YUZNxlczxTbj45V6kGUvo8LvJEkC1u1NvO2cQ04cTza7sZdchpIic1a
+         +QkWx9aSOGEnvJCvyKIuB7lCpj40q1sVXir9u3tFeEVSizjbfbMQBtZiNIWf07VZxk70
+         55dgrEyhr25rq8/20JFluyd5s/vd0gCvhd/DtIZLix8/1mEKrUQ/0LJfug69MYtLp4eY
+         wZIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEn9PSlY4Gzmx69YBZMtnEtdxqk9FfBTaUP9Qq/mCqBJ3ODBHh7kiOkMyk8xygL3uvoqf3wjlsad+5iDXy8WscecB4cgMEgLXbnzMWsmMIuQE4kaLPBdc/+bds5Hh8D5+svKG6Xr2vCaKStjTAxR0hwtKQCpAh60Eb0691Qs93qYuelIbLURyV7Q==
+X-Gm-Message-State: AOJu0YyO4e3ICSKxvo3kBjVIoGhx+ki9F5iISUiryKoiferPM8cD8dGf
+	0WKaTso/q++RlLczPvH53OkWEKOu2fFOAUWtn9HmlxmZrkhP6N+mSqOdmuwDRuHbSA==
+X-Google-Smtp-Source: AGHT+IE3UmlIiSrN6kGt37gheJvIaN9i1n/e1DDihhUotOur3u44x9+yXyxyY24z6Or64iUDH6gLKg==
+X-Received: by 2002:a17:906:cc93:b0:a43:3f37:4d94 with SMTP id oq19-20020a170906cc9300b00a433f374d94mr14075198ejb.16.1709898184428;
+        Fri, 08 Mar 2024 03:43:04 -0800 (PST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id pv25-20020a170907209900b00a3ee9305b02sm9174088ejb.20.2024.03.08.03.43.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Mar 2024 03:43:04 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a3122b70439so263165966b.3;
+        Fri, 08 Mar 2024 03:43:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVdymFqckKDeVaAk+9+2ml6OoDpzcbT5z9V7qrC/sSY0GB0s6b/WnWsdnVlP/ajFvk0h57c1TMwL6DfiO/yHzrTkBimmJie8B32BsnWqNGZMo/jC2sff6r5Wvfb4StK28Di6pwLtSID1gbkNbVEDgDSnnHl0Zxj3GrYlHi9KXUN33G4735vcoCwgA==
+X-Received: by 2002:a17:907:a786:b0:a45:f33a:1382 with SMTP id
+ vx6-20020a170907a78600b00a45f33a1382mr881603ejc.9.1709898184163; Fri, 08 Mar
+ 2024 03:43:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:35a7:b0:475:402:bf46 with SMTP id
- v39-20020a05663835a700b004750402bf46mr413607jal.3.1709896203803; Fri, 08 Mar
- 2024 03:10:03 -0800 (PST)
-Date: Fri, 08 Mar 2024 03:10:03 -0800
-In-Reply-To: <000000000000fd56c405eabc7b6d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d4c7fb0613243b62@google.com>
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in path_openat (2)
-From: syzbot <syzbot+a844a888fbc0ba4829ce@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240308022914.196982-1-kent.overstreet@linux.dev>
+In-Reply-To: <20240308022914.196982-1-kent.overstreet@linux.dev>
+From: Neal Gompa <neal@gompa.dev>
+Date: Fri, 8 Mar 2024 06:42:27 -0500
+X-Gmail-Original-Message-ID: <CAEg-Je96OKs_LOXorNVj1a1=e+1f=-gw34v4VWNOmfKXc6PLSQ@mail.gmail.com>
+Message-ID: <CAEg-Je96OKs_LOXorNVj1a1=e+1f=-gw34v4VWNOmfKXc6PLSQ@mail.gmail.com>
+Subject: Re: [PATCH v2] statx: stx_subvol
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot suspects this issue was fixed by commit:
+On Thu, Mar 7, 2024 at 9:29=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> Add a new statx field for (sub)volume identifiers, as implemented by
+> btrfs and bcachefs.
+>
+> This includes bcachefs support; we'll definitely want btrfs support as
+> well.
+>
+> Link: https://lore.kernel.org/linux-fsdevel/2uvhm6gweyl7iyyp2xpfryvcu2g3p=
+adagaeqcbiavjyiis6prl@yjm725bizncq/
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Josef Bacik <josef@toxicpanda.com>
+> Cc: Miklos Szeredi <mszeredi@redhat.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> ---
+>  fs/bcachefs/fs.c          | 3 +++
+>  fs/stat.c                 | 1 +
+>  include/linux/stat.h      | 1 +
+>  include/uapi/linux/stat.h | 4 +++-
+>  4 files changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+> index 3f073845bbd7..6a542ed43e2c 100644
+> --- a/fs/bcachefs/fs.c
+> +++ b/fs/bcachefs/fs.c
+> @@ -840,6 +840,9 @@ static int bch2_getattr(struct mnt_idmap *idmap,
+>         stat->blksize   =3D block_bytes(c);
+>         stat->blocks    =3D inode->v.i_blocks;
+>
+> +       stat->subvol    =3D inode->ei_subvol;
+> +       stat->result_mask |=3D STATX_SUBVOL;
+> +
+>         if (request_mask & STATX_BTIME) {
+>                 stat->result_mask |=3D STATX_BTIME;
+>                 stat->btime =3D bch2_time_to_timespec(c, inode->ei_inode.=
+bi_otime);
+> diff --git a/fs/stat.c b/fs/stat.c
+> index 77cdc69eb422..70bd3e888cfa 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -658,6 +658,7 @@ cp_statx(const struct kstat *stat, struct statx __use=
+r *buffer)
+>         tmp.stx_mnt_id =3D stat->mnt_id;
+>         tmp.stx_dio_mem_align =3D stat->dio_mem_align;
+>         tmp.stx_dio_offset_align =3D stat->dio_offset_align;
+> +       tmp.stx_subvol =3D stat->subvol;
+>
+>         return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
+>  }
+> diff --git a/include/linux/stat.h b/include/linux/stat.h
+> index 52150570d37a..bf92441dbad2 100644
+> --- a/include/linux/stat.h
+> +++ b/include/linux/stat.h
+> @@ -53,6 +53,7 @@ struct kstat {
+>         u32             dio_mem_align;
+>         u32             dio_offset_align;
+>         u64             change_cookie;
+> +       u64             subvol;
+>  };
+>
+>  /* These definitions are internal to the kernel for now. Mainly used by =
+nfsd. */
+> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> index 2f2ee82d5517..67626d535316 100644
+> --- a/include/uapi/linux/stat.h
+> +++ b/include/uapi/linux/stat.h
+> @@ -126,8 +126,9 @@ struct statx {
+>         __u64   stx_mnt_id;
+>         __u32   stx_dio_mem_align;      /* Memory buffer alignment for di=
+rect I/O */
+>         __u32   stx_dio_offset_align;   /* File offset alignment for dire=
+ct I/O */
+> +       __u64   stx_subvol;     /* Subvolume identifier */
+>         /* 0xa0 */
+> -       __u64   __spare3[12];   /* Spare space for future expansion */
+> +       __u64   __spare3[11];   /* Spare space for future expansion */
+>         /* 0x100 */
+>  };
+>
+> @@ -155,6 +156,7 @@ struct statx {
+>  #define STATX_MNT_ID           0x00001000U     /* Got stx_mnt_id */
+>  #define STATX_DIOALIGN         0x00002000U     /* Want/got direct I/O al=
+ignment info */
+>  #define STATX_MNT_ID_UNIQUE    0x00004000U     /* Want/got extended stx_=
+mount_id */
+> +#define STATX_SUBVOL           0x00008000U     /* Want/got stx_subvol */
+>
+>  #define STATX__RESERVED                0x80000000U     /* Reserved for f=
+uture struct statx expansion */
+>
+> --
+> 2.43.0
+>
+>
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+I think it's generally expected that patches that touch different
+layers are split up. That is, we should have a patch that adds the
+capability and a separate patch that enables it in bcachefs. This also
+helps make it clearer to others how a new feature should be plumbed
+into a filesystem.
 
-    fs: Block writes to mounted block devices
+I would prefer it to be split up in this manner for this reason.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10a231de180000
-start commit:   833477fce7a1 Merge tag 'sound-6.1-rc1' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dd3623e135f4c106
-dashboard link: https://syzkaller.appspot.com/bug?extid=a844a888fbc0ba4829ce
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10dfb81a880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a68f24880000
 
-If the result looks correct, please mark the issue as fixed by replying with:
 
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+--
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
