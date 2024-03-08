@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-13971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C399C875CDC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 04:47:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475D9875CE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 04:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D3D6B21A0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 03:46:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 955D2B21CF2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 03:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0062F2C1BF;
-	Fri,  8 Mar 2024 03:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7952C861;
+	Fri,  8 Mar 2024 03:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bC+C2F2w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBlkqy4k"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCF42C684;
-	Fri,  8 Mar 2024 03:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AA82C692;
+	Fri,  8 Mar 2024 03:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709869611; cv=none; b=hj7D+llAjbjZp0aWC62NRVeHpSz0MlY9mfPwmt+Y01T2JC2cP+itGBu2b4y1waxGzQociuEvouAkhFR+MycBxPqDTnS6yphiiN2q9ANZmgSqi1yGfEjZRKbc9icMrELVT4wHIjSfpD1+5mDvJMJ/wgGOJHAVxJxFevlaqPuu8iE=
+	t=1709869837; cv=none; b=ZxPjWYJwmoGvB06aOVWSVfMA69e3v3PEIscr4HTy1WUvKFjETammwqE788Su8pqLgsQ5Ef5JuvsaP4Ddg72+9Y6a6hXcbnGiKWSV53N+cSiqL6dxOtUikMfQ9ktL0WG4QUL9MHifJy006mr85koKyIeWjULt0HxlusV8sYoPx48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709869611; c=relaxed/simple;
-	bh=oQk7cd/qHHyOv3KLFTmF8/QIv4fbVxWjplVBVoniVGA=;
+	s=arc-20240116; t=1709869837; c=relaxed/simple;
+	bh=YKRbsE8YUlEaXjdCmi1tzhosHMj7GSeoDSrvOdFyhq4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ugup/A7XCuear0BbKXBfnVrIoXiya041+4cpgXPn0GLQs0oFeskKwckk8rfWJgx0U9JtKSetuQJ1G7Syx5t6TVkfaBExkgnlreWmDj+NxTZ79dc9G1f3CMmAleJbCx5+BWbLyaz7FuBgyzZi0+7rtlPcRidwsjMq/Tix6ghICC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bC+C2F2w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D91A9C433C7;
-	Fri,  8 Mar 2024 03:46:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hf+aR83n2Ag5HzxHrEpB6E307bOJWISI0xeNtUWubJVam+cwzGR/w6NDdG9jtC3nzMglnt7k6o7E8v9XAVtDtZOhUwxufdCD1BJQGYOTYDv2017gOi63vLeP7poMWkAWe/RLAfCAseoCueUT50vIM8iMdrj590miU3DlrYbPxGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBlkqy4k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33467C433C7;
+	Fri,  8 Mar 2024 03:50:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709869610;
-	bh=oQk7cd/qHHyOv3KLFTmF8/QIv4fbVxWjplVBVoniVGA=;
+	s=k20201202; t=1709869837;
+	bh=YKRbsE8YUlEaXjdCmi1tzhosHMj7GSeoDSrvOdFyhq4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bC+C2F2wKb4s1byQ0FNOllz/fcGCssl6nguGqxS7U5Zxxi7XLUP/R524yyUleTcPA
-	 /H5TXbQgG7dXSgezwmqAocsCZ4OCOUKVEMeekgFjoCaqy8n0yLGzYdCJon1Yt7jfMn
-	 yfVTg1uEghbWBSJh7fme1SkgQvs8Cj6i0esmMinNAkNVzYFb0/eMgCcR5MxGdDDur6
-	 FuEFdsG3bfKRP7wjOLxY8zVmmz+33qnVYPX9cJQwsUQ6cOdTU1Pk777nMVCJ06Ynck
-	 iXEgIds13e0+mUOy06LgH1Fmbq2Lv/ibx/lSnwSNes++8LyM7hYffHVXJeA/mxrI1o
-	 hl/MKFKgk69Og==
-Date: Thu, 7 Mar 2024 19:46:50 -0800
+	b=XBlkqy4kD7yUJk8TAdpJZEZRQxAeqlkUYfIlvZwjzXJ11wkjIJSH5HLmbbrjn9joY
+	 iCyDaUxFxn6nr7KSYbedwvRn/gMRTF+h4JqoJ0N1OxKJGuAIi+5aweOxeNnos8JG7+
+	 4o5Ojdai5ZZnB3Q4v34cbdrlaIyD8B9O7NXgFd3BkowWwzpuVOdt75yk/DZHlJgQqo
+	 57lXKqg3TJCBD7TCsWzFWUPK+YuXh0Kz5onCt7rLPUo4x4T1jCHwGrL7LzKNZ3eSNZ
+	 /wYZLVydt++gOGxWUPw4qPgIFEcGt/KhdTJxOOjXA1x0bnLu4al7EkwxzRItwMB05m
+	 WlzILrgCUVm8g==
+Date: Thu, 7 Mar 2024 19:50:36 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
 	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	chandan.babu@oracle.com
-Subject: Re: [PATCH v5 06/24] fsverity: pass tree_blocksize to
- end_enable_verity()
-Message-ID: <20240308034650.GK1927156@frogsfrogsfrogs>
+Subject: Re: [PATCH v5 07/24] fsverity: support block-based Merkle tree
+ caching
+Message-ID: <20240308035036.GL1927156@frogsfrogsfrogs>
 References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-8-aalbersh@redhat.com>
- <20240305005242.GE17145@sol.localdomain>
- <20240306163000.GP1927156@frogsfrogsfrogs>
- <20240307220224.GA1799@sol.localdomain>
+ <20240304191046.157464-9-aalbersh@redhat.com>
+ <20240306035622.GA68962@sol.localdomain>
+ <20240307215401.GR1927156@frogsfrogsfrogs>
+ <20240307224903.GE1799@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,52 +63,136 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240307220224.GA1799@sol.localdomain>
+In-Reply-To: <20240307224903.GE1799@sol.localdomain>
 
-On Thu, Mar 07, 2024 at 02:02:24PM -0800, Eric Biggers wrote:
-> On Wed, Mar 06, 2024 at 08:30:00AM -0800, Darrick J. Wong wrote:
-> > Or you could leave the unfinished tree as-is; that will waste space, but
-> > if userspace tries again, the xattr code will replace the old merkle
-> > tree block contents with the new ones.  This assumes that we're not
-> > using XATTR_CREATE during FS_IOC_ENABLE_VERITY.
+On Thu, Mar 07, 2024 at 02:49:03PM -0800, Eric Biggers wrote:
+> On Thu, Mar 07, 2024 at 01:54:01PM -0800, Darrick J. Wong wrote:
+> > On Tue, Mar 05, 2024 at 07:56:22PM -0800, Eric Biggers wrote:
+> > > On Mon, Mar 04, 2024 at 08:10:30PM +0100, Andrey Albershteyn wrote:
+> > > > diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+> > > > index b3506f56e180..dad33e6ff0d6 100644
+> > > > --- a/fs/verity/fsverity_private.h
+> > > > +++ b/fs/verity/fsverity_private.h
+> > > > @@ -154,4 +154,12 @@ static inline void fsverity_init_signature(void)
+> > > >  
+> > > >  void __init fsverity_init_workqueue(void);
+> > > >  
+> > > > +/*
+> > > > + * Drop 'block' obtained with ->read_merkle_tree_block(). Calls out back to
+> > > > + * filesystem if ->drop_block() is set, otherwise, drop the reference in the
+> > > > + * block->context.
+> > > > + */
+> > > > +void fsverity_drop_block(struct inode *inode,
+> > > > +			 struct fsverity_blockbuf *block);
+> > > > +
+> > > >  #endif /* _FSVERITY_PRIVATE_H */
+> > > 
+> > > This should be paired with a helper function that reads a Merkle tree block by
+> > > calling ->read_merkle_tree_block or ->read_merkle_tree_page as needed.  Besides
+> > > being consistent with having a helper function for drop, this would prevent code
+> > > duplication between verify_data_block() and fsverity_read_merkle_tree().
+> > > 
+> > > I recommend that it look like this:
+> > > 
+> > > int fsverity_read_merkle_tree_block(struct inode *inode, u64 pos,
+> > > 				    unsigned long ra_bytes,
+> > > 				    struct fsverity_blockbuf *block);
+> > > 
+> > > 'pos' would be the byte position of the block in the Merkle tree, and 'ra_bytes'
+> > > would be the number of bytes for the filesystem to (optionally) readahead if the
+> > > block is not yet cached.  I think that things work out simpler if these values
+> > > are measured in bytes, not blocks.  'block' would be at the end because it's an
+> > > output, and it can be confusing to interleave inputs and outputs in parameters.
+> > 
+> > FWIW I don't really like 'pos' here because that's usually short for
+> > "file position", which is a byte, and this looks a lot more like a
+> > merkle tree block number.
+> > 
+> > u64 blkno?
+> > 
+> > Or better yet use a typedef ("merkle_blkno_t") to make it really clear
+> > when we're dealing with a tree block number.  Ignore checkpatch
+> > complaining about typeedefs. :)
 > 
-> This should work, though if the file was shrunk between the FS_IOC_ENABLE_VERITY
-> that was interrupted and the one that completed, there may be extra Merkle tree
-> blocks left over.
+> My suggestion is for 'pos' to be a byte position, in alignment with the
+> pagecache naming convention as well as ->write_merkle_tree_block which currently
+> uses a 'u64 pos' byte position too.
+> 
+> It would also work for it to be a block index, in which case it should be named
+> 'index' or 'blkno' and have type unsigned long.  I *think* that things work out
+> a bit cleaner if it's a byte position, but I could be convinced that it's
+> actually better for it to be a block index.
 
-What if ->enable_begin walked the xattrs and trimmed out any verity
-xattrs that were already there?  Though I think ->enable_end actually
-could do this since one of the args is the tree size, right?
+It's probably cleaner (or at least willy says so) to measure everything
+in bytes.  The only place that gets messy is if we want to cache merkle
+tree blocks in an xarray or something, in which case we'd want to >> by
+the block_shift to avoid leaving gaps.
 
-(Hmm that still wouldn't be any guarantee of success since those xattr
-remove calls are each separate transactions...)
+> > > How about changing the prototype to:
+> > > 
+> > > void fsverity_invalidate_merkle_tree_block(struct inode *inode, u64 pos);
+> > >
+> > > Also, is it a kernel bug for the pos to be beyond the end of the Merkle tree, or
+> > > can it happen in cases like filesystem corruption?  If it can only happen due to
+> > > kernel bugs, WARN_ON_ONCE() might be more appropriate than an error message.
+> > 
+> > I think XFS only passes to _invalidate_* the same pos that was passed to
+> > ->read_merkle_tree_block, so this is a kernel bug, not a fs corruption
+> > problem.
+> > 
+> > Perhaps this function ought to note that @pos is supposed to be the same
+> > value that was given to ->read_merkle_tree_block?
+> > 
+> > Or: make the implementations return 1 for "reloaded from disk", 0 for
+> > "still in cache", or a negative error code.  Then fsverity can call
+> > the invalidation routine itself and XFS doesn't have to worry about this
+> > part.
+> > 
+> > (I think?  I have questions about the xfs_invalidate_blocks function.)
+> 
+> It looks like XFS can invalidate blocks other than the one being read by
+> ->read_merkle_tree_block.
+> 
+> If it really was only a matter of the single block being read, then it would
+> indeed be simpler to just make it a piece of information returned from
+> ->read_merkle_tree_block.
+> 
+> If the generic invalidation function is needed, it needs to be clearly
+> documented when filesystems are expected to invalidate blocks.
 
-> BTW, is xfs_repair planned to do anything about any such extra blocks?
+I /think/ the generic invalidation is only necessary with the weird
+DOUBLE_ALLOC thing.  If the other two implementations (ext4/f2fs)
+haven't needed a "nuke from orbit" function then xfs shouldn't require
+one too.
 
-Sorry to answer your question with a question, but how much checking is
-$filesystem expected to do for merkle trees?
+> > > > +
+> > > > +	/**
+> > > > +	 * Release the reference to a Merkle tree block
+> > > > +	 *
+> > > > +	 * @block: the block to release
+> > > > +	 *
+> > > > +	 * This is called when fs-verity is done with a block obtained with
+> > > > +	 * ->read_merkle_tree_block().
+> > > > +	 */
+> > > > +	void (*drop_block)(struct fsverity_blockbuf *block);
+> > > 
+> > > drop_merkle_tree_block, so that it's clearly paired with read_merkle_tree_block
+> > 
+> > Yep.  I noticed that xfs_verity.c doesn't put them together, which made
+> > me wonder if the write_merkle_tree_block path made use of that.  It
+> > doesn't, AFAICT.
+> > 
+> > And I think the reason is that when we're setting up the merkle tree,
+> > we want to stream the contents straight to disk instead of ending up
+> > with a huge cache that might not all be necessary?
+> 
+> In the current patchset, fsverity_blockbuf isn't used for writes (despite the
+> comment saying it is).  I think that's fine and that it keeps things simpler.
+> Filesystems can still cache the blocks that are passed to
+> ->write_merkle_tree_block if they want to.  That already happens on ext4 and
+> f2fs; FS_IOC_ENABLE_VERITY results in the Merkle tree being in the pagecache.
 
-In theory xfs_repair could learn how to interpret the verity descriptor,
-walk the merkle tree blocks, and even read the file data to confirm
-intactness.  If the descriptor specifies the highest block address then
-we could certainly trim off excess blocks.  But I don't know how much of
-libfsverity actually lets you do that; I haven't looked into that
-deeply. :/
-
-For xfs_scrub I guess the job is theoretically simpler, since we only
-need to stream reads of the verity files through the page cache and let
-verity tell us if the file data are consistent.
-
-For both tools, if something finds errors in the merkle tree structure
-itself, do we turn off verity?  Or do we do something nasty like
-truncate the file?
-
-Is there an ioctl or something that allows userspace to validate an
-entire file's contents?  Sort of like what BLKVERIFY would have done for
-block devices, except that we might believe its answers?
-
-Also -- inconsistencies between the file data and the merkle tree aren't
-something that xfs can self-heal, right?
+Oh!  Maybe it should do that then.  At least the root block?
 
 --D
 
