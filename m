@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-13988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960A987619B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 11:11:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFAB18761A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 11:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B952A1C21BFD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 10:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78111C21546
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 10:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D018254BCB;
-	Fri,  8 Mar 2024 10:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501A554BF6;
+	Fri,  8 Mar 2024 10:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgWe0Td6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4I7FSLz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D96E5380F;
-	Fri,  8 Mar 2024 10:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB14954BD6;
+	Fri,  8 Mar 2024 10:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709892649; cv=none; b=ZQWcWm5bP8Nipm7eQAVLjAhomtuxppZuWOkiUDkULX38cTL6nedmx7WV0adaOhS0i5+22u8mVo3DE96pxqiNuIRJ17Cx8sOnWlK0J8lRZpsDu9JyfCSlVOI9o+iZP49R9Oy5N+baBDP2N8/U4OWDmJfyPWWvMCWH4tXWuJpa/ZI=
+	t=1709892753; cv=none; b=eh3jUR93Wtx+b/Qqggmz5D5T/IdO04lR6sUIy04eCktU+I2HEEOtUNGi6Anm58WD1Swmg04zlA15yOny4gAKsz5ePoqRN2CGvTF49mgFUo6k0MKyFCKS8wgk/2patPFwA2EyAZmhAWlPrnzTz8RgCdmHN8utEdohbpjfVgj87Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709892649; c=relaxed/simple;
-	bh=1IxfkLaq7cSmoS4jM4ssep+B6tvqeRrJNySOpjgKp5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ht1x5z8z7Tm1Md4dKmUFRF+QcSpU3Vibx2Kg/cpac3zQkkY0cExMy+bP2icqM+GKDJ06b1Eod8VYh8wlGD9f5UW9nRjU2SGqNMHlx7/ogkBrSbNkUnSGk8NrCwhT8QVLzHru9Eroa998o2w/Kx4bLsG8JrZduksfdef+/KzrRkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgWe0Td6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 781FEC433F1;
-	Fri,  8 Mar 2024 10:10:47 +0000 (UTC)
+	s=arc-20240116; t=1709892753; c=relaxed/simple;
+	bh=2jQZxIFl4d6HhQOrEl3tjvuyOYix0Nhi5jV758z3jnU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jjvrY1qaMNmLaUraLrwnPbEIFsAS4E1CdpCzgJ1ryb823R5iUxhEZ23YGCZA5cWMLa0pOGwdzIIr8ky+ILfKUm3cJdqwojoljrfGXgoD0aOsGyIsyYDgxFqitO0aywAn/tujMrg3d28yROmzCa03BszXxljAXziu3ds4Mb4htho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4I7FSLz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF3BEC433F1;
+	Fri,  8 Mar 2024 10:12:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709892648;
-	bh=1IxfkLaq7cSmoS4jM4ssep+B6tvqeRrJNySOpjgKp5k=;
+	s=k20201202; t=1709892751;
+	bh=2jQZxIFl4d6HhQOrEl3tjvuyOYix0Nhi5jV758z3jnU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=NgWe0Td6E/YZSr/8x4zEw3Rp2gJKk4VqzmxljuARcFYnO7QwxW6JDtqBojvANZw8A
-	 xgQHz2YZCj9jYzjRI1juB1vySRI1bFQUPqtBD3BI8hkhYkcno1//JmGfx1Rh5W6lGI
-	 3OcN+ywxJ7OKXGl2bO1ZUvaEa+wOKTn+NC6PkaVhCyZu0pBtJlc9bv2JB3/x+Y0qty
-	 qszsnn/PItGQLrI4AciWzpBWd7RBw9uDcbMa49bpNE/8EGFFLjRW7ZiG4Pof5t4SYB
-	 CsyVMS9Chqw1yPL2P1yyAGdg+5WPKgfZ4huayjRlQPqWF7ik69CwACEh+BNLe+xDt3
-	 X80jgxNTeFwRA==
+	b=P4I7FSLzVfign3MPAA1epHe8LOlZWqwXPE7JO2SgwS/3Ddu2uKgP1gBWSUC5uymwi
+	 e+2XNlsc0b2xFwy/sRrwYpBPYWanH9zMgdfp475hPhSmlxV556416p6FEYTlD00n4x
+	 QuPPVBkCR+RXMpYYpkfe6S3GGR2t008uOS73gQVrGb7GgyQHlsu9juZXgf/7wlsg9a
+	 /DmelOjXDcePG5P6jZ0+dWrR3ptFXOf0H6AvazBaf0MHIcUYe66Bs1/1M3Vp1kDL+u
+	 LqDmEnbwZfIjOJBENrpKe8MTlT/6Y41v8DuQbVQ+bO/+8a69uNhBi0k2GOogYzsXHU
+	 hTpi1RP6XrdZA==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs ntfs
-Date: Fri,  8 Mar 2024 11:10:21 +0100
-Message-ID: <20240308-vfs-ntfs-ede727d2a142@brauner>
+Subject: [GIT PULL] vfs iomap
+Date: Fri,  8 Mar 2024 11:12:11 +0100
+Message-ID: <20240308-vfs-iomap-96ff9703338d@brauner>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -55,43 +55,29 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7045; i=brauner@kernel.org; h=from:subject:message-id; bh=1IxfkLaq7cSmoS4jM4ssep+B6tvqeRrJNySOpjgKp5k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS+eiJ19uX1CyELz76I/LUqaN0tBQbfibXPn4WyuWmo9 Qd4Wj8/1VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRLXGMDFOyCxziSua/2xrv OMVb7IxUiE2Vr+W+ixbRKbWCjdknnBkZ3p25fPb516p3PXOa/3zsOx/Dy9YUYzbtw/wfvAs8V3q ZsQMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5168; i=brauner@kernel.org; h=from:subject:message-id; bh=2jQZxIFl4d6HhQOrEl3tjvuyOYix0Nhi5jV758z3jnU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS+etKywW6H679l5R0uF7RWvw+IO3GiY0rSTY6iw/W1Z 5g/fuH53lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRl5cYGTZ7zS1zfVy5e5mc R1/PFdlF7yy8Zz25emWnJQtrdnTA516Gf5arSnbEPpvlOqGvc4Kz7BUBbxHXfouGwACrDmkNy0v 3WQE=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-This removes the old ntfs driver. The new ntfs3 driver is a full
-replacement that was merged over two years ago. We've went through
-various userspace and either they use ntfs3 or they use the fuse version
-of ntfs and thus build neither ntfs nor ntfs3. I think that's a clear
-sign that we should risk removing the legacy ntfs driver.
+This contains a few updates for the iomap code:
 
-Quoting from Arch Linux and Debian:
+* Restore read-write hints in struct bio through the bi_write_hint member for
+  the sake of UFS devices in mobile applications. This can result in up to 40%
+  lower write amplification in UFS devices. The patch series that builds on
+  this will be coming in via the SCSI maintainers. (Bart)
 
-* Debian does neither build the legacy ntfs nor the new ntfs3:
+* Overhaul the iomap writeback code. Afterwards ->map_blocks() is able to map
+  multiple blocks at once as long as they're in the same folio. This
+  reduces CPU usage for buffered write workloads on e.g., xfs on systems
+  with lots of cores. (Christoph)
 
-  "Not currently built with Debian's kernel packages, "ntfs" has been
-  symlinked to "ntfs-3g" as it relates to fstab and mount commands.
+* Record processed bytes in iomap_iter() trace event. (Kassey)
 
-  Debian kernels are built without support of the ntfs3 driver developed
-  by Paragon Software."
-  (cf. [2])
-
-* Archlinux provides ntfs3 as their default since 5.15:
-
-  "All officially supported kernels with versions 5.15 or newer are
-  built with CONFIG_NTFS3_FS=m and thus support it. Before 5.15, NTFS
-  read and write support is provided by the NTFS-3G FUSE file system."
-  (cf. [1]).
-
-It's unmaintained apart from various odd fixes as well. Worst case we
-have to reintroduce it if someone really has a valid dependency on it.
-But it's worth trying to see whether we can remove it.
-
-Link: https://wiki.archlinux.org/title/NTFS [1]
-Link: https://wiki.debian.org/NTFS [2]
+* Extend iomap_writepage_map() trace event after Christoph's ->map_block()
+  changes to map mutliple blocks at once. (Zhang)
 
 /* Testing */
 clang: Debian clang version 16.0.6 (19)
@@ -101,9 +87,33 @@ All patches are based on v6.8-rc1 and have been sitting in linux-next.
 No build failures or warnings were observed.
 
 /* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with
-current mainline.
+
+Merge conflicts with other trees
+================================
+
+[1] linux-next: manual merge of the scsi-mkp tree with the vfs-brauner tree
+    https://lore.kernel.org/linux-next/20240227153436.33b48d59@canb.auug.org.au
+
+[2] There's a merge conflict between the vfs-6.9-misc pull request sent as
+    https://lore.kernel.org/r/20240308-vfs-misc-a4e7c50ce769@brauner
+    that can be resolved like this:
+
+    diff --cc include/linux/fs.h
+    index 2ba751d097c1,bdabda5dc364..000000000000
+    --- a/include/linux/fs.h
+    +++ b/include/linux/fs.h
+    @@@ -43,7 -43,7 +43,8 @@@
+      #include <linux/cred.h>
+      #include <linux/mnt_idmapping.h>
+      #include <linux/slab.h>
+     +#include <linux/maple_tree.h>
+    + #include <linux/rw_hint.h>
+    
+      #include <asm/byteorder.h>
+      #include <uapi/linux/fs.h>
+
+Merge conflicts with mainline
+=============================
 
 The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
@@ -111,125 +121,77 @@ The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9.ntfs
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9.iomap
 
-for you to fetch changes up to 06b8db3a7dde43cc7c412517c93c85d13a4557f8:
+for you to fetch changes up to 86835c39e08e6d92a9d66d51277b2676bc659743:
 
-  fs: remove NTFS classic from docum. index (2024-01-24 12:11:48 +0100)
+  Merge tag 'vfs-6.9.rw_hint' of gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs (2024-03-04 18:35:21 +0100)
 
-Please consider pulling these changes from the signed vfs-6.9.ntfs tag.
+Please consider pulling these changes from the signed vfs-6.9.iomap tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.9.ntfs
+vfs-6.9.iomap
 
 ----------------------------------------------------------------
-Matthew Wilcox (Oracle) (1):
-      fs: Remove NTFS classic
+Bart Van Assche (6):
+      fs: Fix rw_hint validation
+      fs: Verify write lifetime constants at compile time
+      fs: Split fcntl_rw_hint()
+      fs: Move enum rw_hint into a new header file
+      fs: Propagate write hints to the struct block_device inode
+      block, fs: Restore the per-bio/request data lifetime fields
 
-Randy Dunlap (1):
-      fs: remove NTFS classic from docum. index
+Christian Brauner (1):
+      Merge tag 'vfs-6.9.rw_hint' of gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs
 
- CREDITS                             |    5 +
- Documentation/filesystems/index.rst |    1 -
- Documentation/filesystems/ntfs.rst  |  466 -----
- MAINTAINERS                         |   10 -
- fs/Kconfig                          |    1 -
- fs/Makefile                         |    1 -
- fs/ntfs/Kconfig                     |   81 -
- fs/ntfs/Makefile                    |   15 -
- fs/ntfs/aops.c                      | 1744 -------------------
- fs/ntfs/aops.h                      |   88 -
- fs/ntfs/attrib.c                    | 2624 ----------------------------
- fs/ntfs/attrib.h                    |  102 --
- fs/ntfs/bitmap.c                    |  179 --
- fs/ntfs/bitmap.h                    |  104 --
- fs/ntfs/collate.c                   |  110 --
- fs/ntfs/collate.h                   |   36 -
- fs/ntfs/compress.c                  |  950 -----------
- fs/ntfs/debug.c                     |  159 --
- fs/ntfs/debug.h                     |   57 -
- fs/ntfs/dir.c                       | 1540 -----------------
- fs/ntfs/dir.h                       |   34 -
- fs/ntfs/endian.h                    |   79 -
- fs/ntfs/file.c                      | 1997 ----------------------
- fs/ntfs/index.c                     |  440 -----
- fs/ntfs/index.h                     |  134 --
- fs/ntfs/inode.c                     | 3102 ---------------------------------
- fs/ntfs/inode.h                     |  310 ----
- fs/ntfs/layout.h                    | 2421 --------------------------
- fs/ntfs/lcnalloc.c                  | 1000 -----------
- fs/ntfs/lcnalloc.h                  |  131 --
- fs/ntfs/logfile.c                   |  849 ----------
- fs/ntfs/logfile.h                   |  295 ----
- fs/ntfs/malloc.h                    |   77 -
- fs/ntfs/mft.c                       | 2907 -------------------------------
- fs/ntfs/mft.h                       |  110 --
- fs/ntfs/mst.c                       |  189 ---
- fs/ntfs/namei.c                     |  392 -----
- fs/ntfs/ntfs.h                      |  150 --
- fs/ntfs/quota.c                     |  103 --
- fs/ntfs/quota.h                     |   21 -
- fs/ntfs/runlist.c                   | 1893 ---------------------
- fs/ntfs/runlist.h                   |   88 -
- fs/ntfs/super.c                     | 3202 -----------------------------------
- fs/ntfs/sysctl.c                    |   58 -
- fs/ntfs/sysctl.h                    |   27 -
- fs/ntfs/time.h                      |   89 -
- fs/ntfs/types.h                     |   55 -
- fs/ntfs/unistr.c                    |  384 -----
- fs/ntfs/upcase.c                    |   73 -
- fs/ntfs/usnjrnl.c                   |   70 -
- fs/ntfs/usnjrnl.h                   |  191 ---
- fs/ntfs/volume.h                    |  164 --
- 52 files changed, 5 insertions(+), 29303 deletions(-)
- delete mode 100644 Documentation/filesystems/ntfs.rst
- delete mode 100644 fs/ntfs/Kconfig
- delete mode 100644 fs/ntfs/Makefile
- delete mode 100644 fs/ntfs/aops.c
- delete mode 100644 fs/ntfs/aops.h
- delete mode 100644 fs/ntfs/attrib.c
- delete mode 100644 fs/ntfs/attrib.h
- delete mode 100644 fs/ntfs/bitmap.c
- delete mode 100644 fs/ntfs/bitmap.h
- delete mode 100644 fs/ntfs/collate.c
- delete mode 100644 fs/ntfs/collate.h
- delete mode 100644 fs/ntfs/compress.c
- delete mode 100644 fs/ntfs/debug.c
- delete mode 100644 fs/ntfs/debug.h
- delete mode 100644 fs/ntfs/dir.c
- delete mode 100644 fs/ntfs/dir.h
- delete mode 100644 fs/ntfs/endian.h
- delete mode 100644 fs/ntfs/file.c
- delete mode 100644 fs/ntfs/index.c
- delete mode 100644 fs/ntfs/index.h
- delete mode 100644 fs/ntfs/inode.c
- delete mode 100644 fs/ntfs/inode.h
- delete mode 100644 fs/ntfs/layout.h
- delete mode 100644 fs/ntfs/lcnalloc.c
- delete mode 100644 fs/ntfs/lcnalloc.h
- delete mode 100644 fs/ntfs/logfile.c
- delete mode 100644 fs/ntfs/logfile.h
- delete mode 100644 fs/ntfs/malloc.h
- delete mode 100644 fs/ntfs/mft.c
- delete mode 100644 fs/ntfs/mft.h
- delete mode 100644 fs/ntfs/mst.c
- delete mode 100644 fs/ntfs/namei.c
- delete mode 100644 fs/ntfs/ntfs.h
- delete mode 100644 fs/ntfs/quota.c
- delete mode 100644 fs/ntfs/quota.h
- delete mode 100644 fs/ntfs/runlist.c
- delete mode 100644 fs/ntfs/runlist.h
- delete mode 100644 fs/ntfs/super.c
- delete mode 100644 fs/ntfs/sysctl.c
- delete mode 100644 fs/ntfs/sysctl.h
- delete mode 100644 fs/ntfs/time.h
- delete mode 100644 fs/ntfs/types.h
- delete mode 100644 fs/ntfs/unistr.c
- delete mode 100644 fs/ntfs/upcase.c
- delete mode 100644 fs/ntfs/usnjrnl.c
- delete mode 100644 fs/ntfs/usnjrnl.h
- delete mode 100644 fs/ntfs/volume.h
+Christoph Hellwig (14):
+      iomap: clear the per-folio dirty bits on all writeback failures
+      iomap: treat inline data in iomap_writepage_map as an I/O error
+      iomap: move the io_folios field out of struct iomap_ioend
+      iomap: move the PF_MEMALLOC check to iomap_writepages
+      iomap: factor out a iomap_writepage_handle_eof helper
+      iomap: move all remaining per-folio logic into iomap_writepage_map
+      iomap: clean up the iomap_alloc_ioend calling convention
+      iomap: move the iomap_sector sector calculation out of iomap_add_to_ioend
+      iomap: don't chain bios
+      iomap: only call mapping_set_error once for each failed bio
+      iomap: factor out a iomap_writepage_map_block helper
+      iomap: submit ioends immediately
+      iomap: map multiple blocks at a time
+      iomap: pass the length of the dirty region to ->map_blocks
+
+Kassey Li (1):
+      iomap: Add processed for iomap_iter
+
+Zhang Yi (1):
+      iomap: add pos and dirty_len into trace_iomap_writepage_map
+
+ block/bio.c                 |   2 +
+ block/blk-crypto-fallback.c |   1 +
+ block/blk-merge.c           |   8 +
+ block/blk-mq.c              |   2 +
+ block/bounce.c              |   1 +
+ block/fops.c                |   5 +-
+ fs/buffer.c                 |  12 +-
+ fs/direct-io.c              |   2 +
+ fs/f2fs/f2fs.h              |   1 +
+ fs/fcntl.c                  |  64 +++--
+ fs/gfs2/bmap.c              |   2 +-
+ fs/inode.c                  |   1 +
+ fs/iomap/buffered-io.c      | 579 ++++++++++++++++++++++----------------------
+ fs/iomap/direct-io.c        |   1 +
+ fs/iomap/trace.h            |  48 +++-
+ fs/mpage.c                  |   1 +
+ fs/xfs/xfs_aops.c           |   9 +-
+ fs/zonefs/file.c            |   3 +-
+ include/linux/blk-mq.h      |   2 +
+ include/linux/blk_types.h   |   2 +
+ include/linux/fs.h          |  16 +-
+ include/linux/iomap.h       |  19 +-
+ include/linux/rw_hint.h     |  24 ++
+ 23 files changed, 455 insertions(+), 350 deletions(-)
+ create mode 100644 include/linux/rw_hint.h
 
