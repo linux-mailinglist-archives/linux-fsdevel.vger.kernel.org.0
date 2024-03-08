@@ -1,218 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-13967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8AC8875CAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 04:22:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4609875CB0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 04:25:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C941F21DB8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 03:22:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57B951F21DCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 03:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBAD2C19A;
-	Fri,  8 Mar 2024 03:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF0C2C1A5;
+	Fri,  8 Mar 2024 03:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCeuW/vc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBfqqBdb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7342206E;
-	Fri,  8 Mar 2024 03:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACB45C99;
+	Fri,  8 Mar 2024 03:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709868157; cv=none; b=nKjp0UiI6F5Nax9hBdlTXmWkoosN8g1xdvdRjJx1GvszLZHvHaaWPUkNpjVXeo4C0QVBrUX1WLB4yM63Itdor2pvFTFWlbWk9bhIrdmKP3cr0HKqLKeaO/ZdXzGynWQa+Yk2S2vXtcHg1o49YudK7fIiZH1Zof8Fg2qV7+p3snE=
+	t=1709868320; cv=none; b=uBtxMIJd8ueH9aiUxHPnxmAffnZjtSHJdI0/vbQ8lGNuBmrhoqbT6X03A0jbK+QwZiIIM2Y6NIgxvk8XgdxjVkSZbTpGOOkv0WMiUr3toDJxXzDgJxBepYGYCs7emJrBd1Mjr7nazO/zQycUOs5bIYn4q7qg8LFsHNGsRcLykMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709868157; c=relaxed/simple;
-	bh=w9pClHroTQxBlOh8S8BxqWSGGwFeKv959LpHQAgLEGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FopOZNChgJ8WV4vfkv+N7RHplc/nnhn30+X3GM4nRL0r9aJ1NhjgNDsXPROJOs7epfeKAsgvX/rVq2PsN3IF/OLJidcFf1CPkGqTKW0T2HRAIHUwZvSZsoS4PUOam2vT4xUfcmjVYcPoRO0ywShUTtlrlZrw4tXd9TFYhMnlvmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCeuW/vc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ADF9C433F1;
-	Fri,  8 Mar 2024 03:22:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709868157;
-	bh=w9pClHroTQxBlOh8S8BxqWSGGwFeKv959LpHQAgLEGc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RCeuW/vc1ttYm4nYFicSpGFCrllGx74TAzfjJ2E4uKGC2Se0HeuANwXEyUO3yeH+E
-	 Pk9HDoOOLtGJtkPWaFWFbc/l2HQa2zOA2XzUXXhicC12gSrOySdq9NwfyBL26RtFq2
-	 a7ObpKhUq4osnJmMdmbcnICT+xU7mZH0ZYQZ8j2kKCbL9TO/iGjXxGUo8SijLQdDf+
-	 NnocmnrRs+HTGigH0YMspKVkJFvbGux6J29JLR9MrEW3js4xP3Tt/aY//33GhyMTQM
-	 cKN1i0U8nvXVLpjbcAP40lSLuXjs/9QCRNMe0kA/Hm2284UYxbPHf5OF74JKOtcKg6
-	 plD19RQlPdNtg==
-Date: Thu, 7 Mar 2024 19:22:36 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	chandan.babu@oracle.com, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 10/24] iomap: integrate fs-verity verification into
- iomap's read path
-Message-ID: <20240308032236.GM6184@frogsfrogsfrogs>
-References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-12-aalbersh@redhat.com>
- <20240304233927.GC17145@sol.localdomain>
- <ZepP3iAmvQhbbA2t@dread.disaster.area>
- <20240307235907.GA8111@sol.localdomain>
- <Zepn3ycweBrgwgDO@dread.disaster.area>
+	s=arc-20240116; t=1709868320; c=relaxed/simple;
+	bh=ljjWsD0mkDW6S5Z8l+KmzlJNgsYlODKfPIHn5+hvqcY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BcTMxG2QEEMcs/U/O3zSbytPF8xY1bk48Ydok51QIDqvstQ0hc25H7LTJ4pTJyEY1aEph6iTo95K0RLKFxGNdvVJ1DRk3JfNRG7UXZdYrEEu0fDzaHAs9J4RpNM9hrMGJTO4SBC+pTdUJCwlQhaCgKAwDDUqywPngR3Y4Txqdx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBfqqBdb; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d2ab9c5e83so14878571fa.2;
+        Thu, 07 Mar 2024 19:25:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709868317; x=1710473117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LPSiClXTZkXxOQQM7cnS4xIuIQY9WF4sDtVpHq+rPH4=;
+        b=nBfqqBdb+53k1lzUHcw+HWgK9LU1RS7wVFOOi5GnVRCNG0u5RU2xLOA4OqgCw4baHx
+         jDjOFxhZkjtwL5iDDX8yyEJCIYCEu4h+Ov4E7YzkpFr9/jQD1X9dwhsrPp9wxinzkxRc
+         46CFQ+SwXYRvrzQRsAmY628IWmqnNKkHmpQ+Xw51OzG3xvS/7YFBel07xH1kZMCj7fme
+         nEbL+tWv5lJwGa9TGqTZX8PMBqBPM5osOGoQBhRMmy23DKUib3Uk004LhIgmcLHrn2m/
+         FrEJRBuo5aY1mmkZrXsm3F4r+/U7086VbgleO8gQ1VX10iblcMmMXIHjbVxPNEzBF95m
+         pN7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709868317; x=1710473117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LPSiClXTZkXxOQQM7cnS4xIuIQY9WF4sDtVpHq+rPH4=;
+        b=KKMSq6FHO9zRAx2Q6n84ctpVQRajkvhB0F+bW7MR2nj4itP+Bm9wCl5quDmC8oaK5+
+         O66B31ezRjCW9VW9yFj901+OfNEIZhvVGfdyjYlRS09b0mfgP9UYe8Y9Q91ul2sXRfPo
+         l5LI/EtqVJShv9KRHAOwN8uH0RKcy+hq/ycO1z4/8wkuqncuEO9496idezrGSq51DeAk
+         xoQk9Kn6E2iCgdzkkEAUVyUpu1y3Nkjcu4pXzzMQN+LxrBW7VdPD057baPVt9D6tVOYK
+         qOQMUu3XnHftwcYbhu2NreeHMMCYcYHN09HtRuaUOdSWzcsv67pW6i8OjKKOQIp3+WQ4
+         cbBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTrAF3J8kkrg6Wmq+zIMgdh3ZeB71bM/+dHBTzGIaK5pCwBvQdF2kJl0IEY8Ghmn/54XAxI3vm7+JvOJ/4AflZjpHspvRkbWAnN3pNbLZdTS9nap4XtD6CITeCOIyEEEXboAeD15VGXmSEAzMNOjeAODPXmC8WnAjmaoF3SXL+9s9bafKZG2pd3Q==
+X-Gm-Message-State: AOJu0YznYp6zAsUa0Bv+PDAcIGgnEu+UlhEMVZTSQXq03SAOvmSB7OlQ
+	aM+q3r/piMJW8QN9sMeKQ72XAChj8OhxytKiE98guQHiswny0sq65YwHKWt8P8Em/pI44t+N+FQ
+	5kPOlpq+Irj7K0d+xnlbNcPr+ghU=
+X-Google-Smtp-Source: AGHT+IFSVbbuqmWwNNTZOd4k0Y+Frt5MCyeYjJjNoXLplH7e4td4X/jthidRHH/iK8DjOzl55b03fcskIUPEJP5DWjE=
+X-Received: by 2002:a05:6512:1250:b0:513:95b6:2e79 with SMTP id
+ fb16-20020a056512125000b0051395b62e79mr222993lfb.69.1709868316510; Thu, 07
+ Mar 2024 19:25:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zepn3ycweBrgwgDO@dread.disaster.area>
+References: <cover.1709675979.git.mattbobrowski@google.com>
+ <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
+ <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
+ <20240307-phosphor-entnahmen-8ef28b782abf@brauner> <CAHC9VhTbjzS88uU=7Pau7tzsYD+UW5=3TGw2qkqrA5a-GVunrQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhTbjzS88uU=7Pau7tzsYD+UW5=3TGw2qkqrA5a-GVunrQ@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 7 Mar 2024 19:25:05 -0800
+Message-ID: <CAADnVQLQ8uVaSKx-zth1HTT44T3ZC8C1cyNxxuhPMqywGVV9Pw@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, Jann Horn <jannh@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 08, 2024 at 12:20:31PM +1100, Dave Chinner wrote:
-> On Thu, Mar 07, 2024 at 03:59:07PM -0800, Eric Biggers wrote:
-> > On Fri, Mar 08, 2024 at 10:38:06AM +1100, Dave Chinner wrote:
-> > > > This makes all kernels with CONFIG_FS_VERITY enabled start preallocating memory
-> > > > for these bios, regardless of whether they end up being used or not.  When
-> > > > PAGE_SIZE==4096 it comes out to about 134 KiB of memory total (32 bios at just
-> > > > over 4 KiB per bio, most of which is used for the BIO_MAX_VECS bvecs), and it
-> > > > scales up with PAGE_SIZE such that with PAGE_SIZE==65536 it's about 2144 KiB.
-> > > 
-> > > Honestly: I don't think we care about this.
-> > > 
-> > > Indeed, if a system is configured with iomap and does not use XFS,
-> > > GFS2 or zonefs, it's not going to be using the iomap_ioend_bioset at
-> > > all, either. So by you definition that's just wasted memory, too, on
-> > > systems that don't use any of these three filesystems. But we
-> > > aren't going to make that one conditional, because the complexity
-> > > and overhead of checks that never trigger after the first IO doesn't
-> > > actually provide any return for the cost of ongoing maintenance.
-> > > 
-> > > Similarly, once XFS has fsverity enabled, it's going to get used all
-> > > over the place in the container and VM world. So we are *always*
-> > > going to want this bioset to be initialised on these production
-> > > systems, so it falls into the same category as the
-> > > iomap_ioend_bioset. That is, if you don't want that overhead, turn
-> > > the functionality off via CONFIG file options.
-> > 
-> > "We're already wasting memory, therefore it's fine to waste more" isn't a great
-> > argument.
-> 
-> Adding complexity just because -you- think the memory is wasted
-> isn't any better argument. I don't think the memory is wasted, and I
-> expect that fsverity will end up in -very- wide use across
-> enterprise production systems as container/vm image build
-> infrastructure moves towards composefs-like algorithms that have a
-> hard dependency on fsverity functionality being present in the host
-> filesytsems.
+On Thu, Mar 7, 2024 at 12:51=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Thu, Mar 7, 2024 at 4:55=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+> >
+> > There's one fundamental question here that we'll need an official answe=
+r to:
+> >
+> > Is it ok for an out-of-tree BPF LSM program, that nobody has ever seen
+> > to request access to various helpers in the kernel?
+>
+> Phrased in a slightly different way, and a bit more generalized: do we
+> treat out-of-tree BPF programs the same as we do with out-of-tree
+> kernel modules?  I believe that's the real question, and if we answer
+> that, we should also have our answer for the internal helper function
+> question.
 
-FWIW I would like to evaluate verity for certain things, such as bitrot
-detection on backup disks and the like.  My employers are probably much
-more interested in the same sealed rootfs blahdyblah that everyone else
-has spilt much ink over. :)
+From 10k ft view bpf programs may look like kernel modules,
+but looking closely they are very different.
 
-> > iomap_ioend_bioset is indeed also problematic, though it's also a bit different
-> > in that it's needed for basic filesystem functionality, not an optional feature.
-> > Yes, ext4 and f2fs don't actually use iomap for buffered reads, but IIUC at
-> > least there's a plan to do that.  Meanwhile there's no plan for fsverity to be
-> > used on every system that may be using a filesystem that supports it.
-> 
-> That's not the case I see coming for XFS - by the time we get this
-> merged and out of experimental support, the distro and application
-> support will already be there for endemic use of fsverity on XFS.
-> That's all being prototyped on ext4+fsverity right now, and you
-> probably don't see any of that happening.
-> 
-> > We should take care not to over-estimate how many users use optional features.
-> > Linux distros turn on most kconfig options just in case, but often the common
-> > case is that the option is on but the feature is not used.
-> 
-> I don't think that fsverity is going to be an optional feature in
-> future distros - we're already building core infrastructure based on
-> the data integrity guarantees that fsverity provides us with. IOWs,
-> I think fsverity support will soon become required core OS
-> functionality by more than one distro, and so we just don't careg
-> about this overhead because the extra read IO bioset will always be
-> necessary....
+Modules can read/write any data structure and can call any exported functio=
+n.
+All modules fall into two categories GPL or not.
+While bpf progs are divided by program type.
+Tracing progs can read any kernel memory safely via probe_read_kernel.
+Networking prog can read/write packets, but cannot read kernel memory.
+bpf_lsm programs can be called from lsm hooks and
+call only kfuncs that were explicitly allowlisted to bpf_lsm prog type.
+Furthermore kfuncs have acquire/release semantics enforced by
+the verifier.
+For example, bpf progs can do bpf_rcu_read_lock() which is
+a wrapper around rcu_read_lock() and the verifier will make sure
+that bpf_rcu_read_unlock() is called.
+Under bpf_rcu_read_lock() bpf programs can dereference __rcu tagged
+fields and the verifier will track them as rcu protected objects
+until bpf_rcu_read_unlock().
+In other words the verifier is doing sparse-on-steroids analysis
+and enforcing it.
+Kernel modules are not subject to such enforcement.
 
-Same here.
-
-> > > > How about allocating the pool when it's known it's actually going to be used,
-> > > > similar to what fs/crypto/ does for fscrypt_bounce_page_pool?  For example,
-> > > > there could be a flag in struct fsverity_operations that says whether filesystem
-> > > > wants the iomap fsverity bioset, and when fs/verity/ sets up the fsverity_info
-> > > > for any file for the first time since boot, it could call into fs/iomap/ to
-> > > > initialize the iomap fsverity bioset if needed.
-> > > > 
-> > > > BTW, errors from builtin initcalls such as iomap_init() get ignored.  So the
-> > > > error handling logic above does not really work as may have been intended.
-> > > 
-> > > That's not an iomap problem - lots of fs_initcall() functions return
-> > > errors because they failed things like memory allocation. If this is
-> > > actually problem, then fix the core init infrastructure to handle
-> > > errors properly, eh?
-> > 
-> > What does "properly" mean?
-> 
-> Having documented requirements and behaviour and then enforcing
-> them. There is no documentation for initcalls - they return an int,
-> so by convention it is expected that errors should be returned to
-> the caller.
-
-Agree.  I hated that weird thing that sync_filesystem did where it
-mostly ignored the return values.
-
-> There's *nothing* that says initcalls should panic() instead of
-> returning errors if they have a fatal error. There's nothing that
-> says "errors are ignored" - having them be declared as void would be
-> a good hint that errors can't be returned or handled.
-> 
-> Expecting people to cargo-cult other implementations and magically
-> get it right is almost guaranteed to ensure that nobody actually
-> gets it right the first time...
-
-Hrmm.  Should we have a iomap_init_succeeded() function that init_xfs_fs
-and the like can call to find out if the initcall failed and refuse to
-load?
-
-Or just make it a module and then the insmod(iomap) can fail.
-
-> > Even if init/main.c did something with the returned
-> > error code, individual subsystems still need to know what behavior they want and
-> > act accordingly.
-> 
-> "return an error only on fatal initialisation failure" and then the
-> core code can decide if the initcall level is high enough to warrant
-> panic()ing the machine.
-> 
-> > Do they want to panic the kernel, or do they want to fall back
-> > gracefully with degraded functionality.
-> 
-> If they can gracefully fall back to some other mechanism, then they
-> *haven't failed* and there's no need to return an error or panic.
-
-I'm not sure if insmod(xfs) bailing out is all that graceful, but I
-suppose it's less rude than a kernel panic :P
-
-> > If subsystems go with the panic (like
-> > fsverity_init() does these days), then there is no need for doing any cleanup on
-> > errors like this patchset does.
-> 
-> s/panic/BUG()/ and read that back.
-> 
-> Because that's essentially what it is - error handling via BUG()
-> calls. We get told off for using BUG() instead of correct error
-> handling, yet here we are with code that does correct error handling
-> and we're being told to replace it with BUG() because the errors
-> aren't handled by the infrastructure calling our code. Gross, nasty
-> and really, really needs to be documented.
-
-Log an error and invoke the autorepair to see if you can really let the
-smoke out? ;)
-
---D
-
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
+One more distinction: 99.9% of bpf features require a GPL-ed bpf program.
+All kfuncs are GPL only.
 
