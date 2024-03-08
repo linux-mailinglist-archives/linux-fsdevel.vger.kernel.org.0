@@ -1,137 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-13968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4609875CB0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 04:25:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B64875CBC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 04:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57B951F21DCA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 03:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC851F21B5A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Mar 2024 03:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF0C2C1A5;
-	Fri,  8 Mar 2024 03:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398782C1AA;
+	Fri,  8 Mar 2024 03:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBfqqBdb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETyy9AhG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACB45C99;
-	Fri,  8 Mar 2024 03:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D96823748;
+	Fri,  8 Mar 2024 03:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709868320; cv=none; b=uBtxMIJd8ueH9aiUxHPnxmAffnZjtSHJdI0/vbQ8lGNuBmrhoqbT6X03A0jbK+QwZiIIM2Y6NIgxvk8XgdxjVkSZbTpGOOkv0WMiUr3toDJxXzDgJxBepYGYCs7emJrBd1Mjr7nazO/zQycUOs5bIYn4q7qg8LFsHNGsRcLykMU=
+	t=1709868699; cv=none; b=gt+IIzHZ2wfPlvt8vj7pCJjFqWBofNeKYpjrVB+pedP/RHymzCEtoHTRYtofwxKu6oMkTqllDw5Q7ynkGetucnfAO4dzzR3Ho7OvZDDh9RLHQfxkob2AEWW0EWS8nDpmPbVrshRHPOKTe9TpFwhMPu7fhNKRmrHMg9NMD1n9b0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709868320; c=relaxed/simple;
-	bh=ljjWsD0mkDW6S5Z8l+KmzlJNgsYlODKfPIHn5+hvqcY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BcTMxG2QEEMcs/U/O3zSbytPF8xY1bk48Ydok51QIDqvstQ0hc25H7LTJ4pTJyEY1aEph6iTo95K0RLKFxGNdvVJ1DRk3JfNRG7UXZdYrEEu0fDzaHAs9J4RpNM9hrMGJTO4SBC+pTdUJCwlQhaCgKAwDDUqywPngR3Y4Txqdx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBfqqBdb; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d2ab9c5e83so14878571fa.2;
-        Thu, 07 Mar 2024 19:25:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709868317; x=1710473117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LPSiClXTZkXxOQQM7cnS4xIuIQY9WF4sDtVpHq+rPH4=;
-        b=nBfqqBdb+53k1lzUHcw+HWgK9LU1RS7wVFOOi5GnVRCNG0u5RU2xLOA4OqgCw4baHx
-         jDjOFxhZkjtwL5iDDX8yyEJCIYCEu4h+Ov4E7YzkpFr9/jQD1X9dwhsrPp9wxinzkxRc
-         46CFQ+SwXYRvrzQRsAmY628IWmqnNKkHmpQ+Xw51OzG3xvS/7YFBel07xH1kZMCj7fme
-         nEbL+tWv5lJwGa9TGqTZX8PMBqBPM5osOGoQBhRMmy23DKUib3Uk004LhIgmcLHrn2m/
-         FrEJRBuo5aY1mmkZrXsm3F4r+/U7086VbgleO8gQ1VX10iblcMmMXIHjbVxPNEzBF95m
-         pN7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709868317; x=1710473117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LPSiClXTZkXxOQQM7cnS4xIuIQY9WF4sDtVpHq+rPH4=;
-        b=KKMSq6FHO9zRAx2Q6n84ctpVQRajkvhB0F+bW7MR2nj4itP+Bm9wCl5quDmC8oaK5+
-         O66B31ezRjCW9VW9yFj901+OfNEIZhvVGfdyjYlRS09b0mfgP9UYe8Y9Q91ul2sXRfPo
-         l5LI/EtqVJShv9KRHAOwN8uH0RKcy+hq/ycO1z4/8wkuqncuEO9496idezrGSq51DeAk
-         xoQk9Kn6E2iCgdzkkEAUVyUpu1y3Nkjcu4pXzzMQN+LxrBW7VdPD057baPVt9D6tVOYK
-         qOQMUu3XnHftwcYbhu2NreeHMMCYcYHN09HtRuaUOdSWzcsv67pW6i8OjKKOQIp3+WQ4
-         cbBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTrAF3J8kkrg6Wmq+zIMgdh3ZeB71bM/+dHBTzGIaK5pCwBvQdF2kJl0IEY8Ghmn/54XAxI3vm7+JvOJ/4AflZjpHspvRkbWAnN3pNbLZdTS9nap4XtD6CITeCOIyEEEXboAeD15VGXmSEAzMNOjeAODPXmC8WnAjmaoF3SXL+9s9bafKZG2pd3Q==
-X-Gm-Message-State: AOJu0YznYp6zAsUa0Bv+PDAcIGgnEu+UlhEMVZTSQXq03SAOvmSB7OlQ
-	aM+q3r/piMJW8QN9sMeKQ72XAChj8OhxytKiE98guQHiswny0sq65YwHKWt8P8Em/pI44t+N+FQ
-	5kPOlpq+Irj7K0d+xnlbNcPr+ghU=
-X-Google-Smtp-Source: AGHT+IFSVbbuqmWwNNTZOd4k0Y+Frt5MCyeYjJjNoXLplH7e4td4X/jthidRHH/iK8DjOzl55b03fcskIUPEJP5DWjE=
-X-Received: by 2002:a05:6512:1250:b0:513:95b6:2e79 with SMTP id
- fb16-20020a056512125000b0051395b62e79mr222993lfb.69.1709868316510; Thu, 07
- Mar 2024 19:25:16 -0800 (PST)
+	s=arc-20240116; t=1709868699; c=relaxed/simple;
+	bh=rk+5S2glvhl5UtTnlSv4P5u39zdH7WyI0B3+TADgiAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WwVOcUZXuktmQMsfuT5o2s1nvLOgKAWo4/V9dQMq8BL1FXX7/jldhuYAckxQKwRT6XMUvvuXI21dwP4x7sBRRMhd52QW0q7GNMaoSn1tO4OGYuimSLKj0hiTtykFGlQJreAszDnhlFwZFgN1yl0v/fym+DtO/1o/ICm1MLwtcmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETyy9AhG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9663C433C7;
+	Fri,  8 Mar 2024 03:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709868699;
+	bh=rk+5S2glvhl5UtTnlSv4P5u39zdH7WyI0B3+TADgiAM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ETyy9AhGRNkcDTp+R2KPmZiKsdVN59ADJj+N1SyllijqBomf8q647B7mscMgobW/A
+	 n7sJVsomDRtEMB/jn3YnkJ7d/tFQUwYsFzlM+ZaC+fAVcPRRVMHBAACNxeoVnaV+lI
+	 ID4AnlBOY54M+gZ+8tDgCZMhXwjvemEwcPnhkGPPMpidtdhc/nDJuBH+1B8rP4pHrZ
+	 tYM+JFV1pzYMrResfawsUALCL8r3YizNq2BgRoChKif5RLhJSmaDpPS07kbfyK8p5V
+	 rzA1eMoP0eU180RT6LmKZR99U6yutOGFZgygTSjbGxtMY7VGtQ02ze21pelWw78++F
+	 4SvqRHkF+J0zg==
+Date: Thu, 7 Mar 2024 19:31:38 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	chandan.babu@oracle.com, ebiggers@kernel.org
+Subject: Re: [PATCH v5 11/24] xfs: add XBF_VERITY_SEEN xfs_buf flag
+Message-ID: <20240308033138.GN6184@frogsfrogsfrogs>
+References: <20240304191046.157464-2-aalbersh@redhat.com>
+ <20240304191046.157464-13-aalbersh@redhat.com>
+ <20240307224654.GB1927156@frogsfrogsfrogs>
+ <ZepxHObVLb3JLCl/@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1709675979.git.mattbobrowski@google.com>
- <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
- <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
- <20240307-phosphor-entnahmen-8ef28b782abf@brauner> <CAHC9VhTbjzS88uU=7Pau7tzsYD+UW5=3TGw2qkqrA5a-GVunrQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhTbjzS88uU=7Pau7tzsYD+UW5=3TGw2qkqrA5a-GVunrQ@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 7 Mar 2024 19:25:05 -0800
-Message-ID: <CAADnVQLQ8uVaSKx-zth1HTT44T3ZC8C1cyNxxuhPMqywGVV9Pw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, Jann Horn <jannh@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZepxHObVLb3JLCl/@dread.disaster.area>
 
-On Thu, Mar 7, 2024 at 12:51=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Thu, Mar 7, 2024 at 4:55=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
+On Fri, Mar 08, 2024 at 12:59:56PM +1100, Dave Chinner wrote:
+> On Thu, Mar 07, 2024 at 02:46:54PM -0800, Darrick J. Wong wrote:
+> > On Mon, Mar 04, 2024 at 08:10:34PM +0100, Andrey Albershteyn wrote:
+> > > One of essential ideas of fs-verity is that pages which are already
+> > > verified won't need to be re-verified if they still in page cache.
+> > > 
+> > > XFS will store Merkle tree blocks in extended file attributes. When
+> > > read extended attribute data is put into xfs_buf.
+> > > 
+> > > fs-verity uses PG_checked flag to track status of the blocks in the
+> > > page. This flag can has two meanings - page was re-instantiated and
+> > > the only block in the page is verified.
+> > > 
+> > > However, in XFS, the data in the buffer is not aligned with xfs_buf
+> > > pages and we don't have a reference to these pages. Moreover, these
+> > > pages are released when value is copied out in xfs_attr code. In
+> > > other words, we can not directly mark underlying xfs_buf's pages as
+> > > verified as it's done by fs-verity for other filesystems.
+> > > 
+> > > One way to track that these pages were processed by fs-verity is to
+> > > mark buffer as verified instead. If buffer is evicted the incore
+> > > XBF_VERITY_SEEN flag is lost. When the xattr is read again
+> > > xfs_attr_get() returns new buffer without the flag. The xfs_buf's
+> > > flag is then used to tell fs-verity this buffer was cached or not.
+> > > 
+> > > The second state indicated by PG_checked is if the only block in the
+> > > PAGE is verified. This is not the case for XFS as there could be
+> > > multiple blocks in single buffer (page size 64k block size 4k). This
+> > > is handled by fs-verity bitmap. fs-verity is always uses bitmap for
+> > > XFS despite of Merkle tree block size.
+> > > 
+> > > The meaning of the flag is that value of the extended attribute in
+> > > the buffer is processed by fs-verity.
+> > > 
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > ---
+> > >  fs/xfs/xfs_buf.h | 18 ++++++++++--------
+> > >  1 file changed, 10 insertions(+), 8 deletions(-)
+> > > 
+> > > diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
+> > > index 73249abca968..2a73918193ba 100644
+> > > --- a/fs/xfs/xfs_buf.h
+> > > +++ b/fs/xfs/xfs_buf.h
+> > > @@ -24,14 +24,15 @@ struct xfs_buf;
+> > >  
+> > >  #define XFS_BUF_DADDR_NULL	((xfs_daddr_t) (-1LL))
+> > >  
+> > > -#define XBF_READ	 (1u << 0) /* buffer intended for reading from device */
+> > > -#define XBF_WRITE	 (1u << 1) /* buffer intended for writing to device */
+> > > -#define XBF_READ_AHEAD	 (1u << 2) /* asynchronous read-ahead */
+> > > -#define XBF_NO_IOACCT	 (1u << 3) /* bypass I/O accounting (non-LRU bufs) */
+> > > -#define XBF_ASYNC	 (1u << 4) /* initiator will not wait for completion */
+> > > -#define XBF_DONE	 (1u << 5) /* all pages in the buffer uptodate */
+> > > -#define XBF_STALE	 (1u << 6) /* buffer has been staled, do not find it */
+> > > -#define XBF_WRITE_FAIL	 (1u << 7) /* async writes have failed on this buffer */
+> > > +#define XBF_READ		(1u << 0) /* buffer intended for reading from device */
+> > > +#define XBF_WRITE		(1u << 1) /* buffer intended for writing to device */
+> > > +#define XBF_READ_AHEAD		(1u << 2) /* asynchronous read-ahead */
+> > > +#define XBF_NO_IOACCT		(1u << 3) /* bypass I/O accounting (non-LRU bufs) */
+> > > +#define XBF_ASYNC		(1u << 4) /* initiator will not wait for completion */
+> > > +#define XBF_DONE		(1u << 5) /* all pages in the buffer uptodate */
+> > > +#define XBF_STALE		(1u << 6) /* buffer has been staled, do not find it */
+> > > +#define XBF_WRITE_FAIL		(1u << 7) /* async writes have failed on this buffer */
+> > > +#define XBF_VERITY_SEEN		(1u << 8) /* buffer was processed by fs-verity */
+> > 
+> > Yuck.  I still dislike this entire approach.
+> > 
+> > XBF_DOUBLE_ALLOC doubles the memory consumption of any xattr block that
+> > gets loaded on behalf of a merkle tree request, then uses the extra
+> > space to shadow the contents of the ondisk block.  AFAICT the shadow
+> > doesn't get updated even if the cached data does, which sounds like a
+> > landmine for coherency issues.
 > >
-> > There's one fundamental question here that we'll need an official answe=
-r to:
+> > XFS_DA_OP_BUFFER is a little gross, since I don't like the idea of
+> > exposing the low level buffering details of the xattr code to
+> > xfs_attr_get callers.
+> > 
+> > XBF_VERITY_SEEN is a layering violation because now the overall buffer
+> > cache can track file metadata state.  I think the reason why you need
+> > this state flag is because the datadev buffer target indexes based on
+> > physical xfs_daddr_t, whereas merkle tree blocks have their own internal
+> > block numbers.  You can't directly go from the merkle block number to an
+> > xfs_daddr_t, so you can't use xfs_buf_incore to figure out if the block
+> > fell out of memory.
 > >
-> > Is it ok for an out-of-tree BPF LSM program, that nobody has ever seen
-> > to request access to various helpers in the kernel?
->
-> Phrased in a slightly different way, and a bit more generalized: do we
-> treat out-of-tree BPF programs the same as we do with out-of-tree
-> kernel modules?  I believe that's the real question, and if we answer
-> that, we should also have our answer for the internal helper function
-> question.
+> > ISTR asking for a separation of these indices when I reviewed some
+> > previous version of this patchset.  At the time it seems to me that a
+> > much more efficient way to cache the merkle tree blocks would be to set
+> > up a direct (merkle tree block number) -> (blob of data) lookup table.
+> > That I don't see here.
+> >
+> > In the spirit of the recent collaboration style that I've taken with
+> > Christoph, I pulled your branch and started appending patches to it to
+> > see if the design that I'm asking for is reasonable.  As it so happens,
+> > I was working on a simplified version of the xfs buffer cache ("fsbuf")
+> > that could be used by simple filesystems to get them off of buffer
+> > heads.
+> > 
+> > (Ab)using the fsbuf code did indeed work (and passed all the fstests -g
+> > verity tests), so now I know the idea is reasonable.  Patches 11, 12,
+> > 14, and 15 become unnecessary.  However, this solution is itself grossly
+> > overengineered, since all we want are the following operations:
+> > 
+> > peek(key): returns an fsbuf if there's any data cached for key
+> > 
+> > get(key): returns an fsbuf for key, regardless of state
+> > 
+> > store(fsbuf, p): attach a memory buffer p to fsbuf
+> > 
+> > Then the xfs ->read_merkle_tree_block function becomes:
+> > 
+> > 	bp = peek(key)
+> > 	if (bp)
+> > 		/* return bp data up to verity */
+> > 
+> > 	p = xfs_attr_get(key)
+> > 	if (!p)
+> > 		/* error */
+> > 
+> > 	bp = get(key)
+> > 	store(bp, p)
+> 
+> Ok, that looks good - it definitely gets rid of a lot of the
+> nastiness, but I have to ask: why does it need to be based on
+> xfs_bufs?
 
-From 10k ft view bpf programs may look like kernel modules,
-but looking closely they are very different.
+(copying from IRC) It was still warm in my brain L2 after all the xfile
+buftarg cleaning and merging that just got done a few weeks ago.   So I
+went with the simplest thing I could rig up to test my ideas, and now
+we're at the madly iterate until exhaustion stage. ;)
 
-Modules can read/write any data structure and can call any exported functio=
-n.
-All modules fall into two categories GPL or not.
-While bpf progs are divided by program type.
-Tracing progs can read any kernel memory safely via probe_read_kernel.
-Networking prog can read/write packets, but cannot read kernel memory.
-bpf_lsm programs can be called from lsm hooks and
-call only kfuncs that were explicitly allowlisted to bpf_lsm prog type.
-Furthermore kfuncs have acquire/release semantics enforced by
-the verifier.
-For example, bpf progs can do bpf_rcu_read_lock() which is
-a wrapper around rcu_read_lock() and the verifier will make sure
-that bpf_rcu_read_unlock() is called.
-Under bpf_rcu_read_lock() bpf programs can dereference __rcu tagged
-fields and the verifier will track them as rcu protected objects
-until bpf_rcu_read_unlock().
-In other words the verifier is doing sparse-on-steroids analysis
-and enforcing it.
-Kernel modules are not subject to such enforcement.
+>            That's just wasting 300 bytes of memory on a handle to
+> store a key and a opaque blob in a rhashtable.
 
-One more distinction: 99.9% of bpf features require a GPL-ed bpf program.
-All kfuncs are GPL only.
+Yep.  The fsbufs implementation was a lot more slender, but a bunch more
+code.  I agree that I ought to go look at xarrays or something that's
+more of a direct mapping as a next step.  However, i wanted to get
+Andrey's feedback on this general approach first.
+
+> IIUC, the key here is a sequential index, so an xarray would be a
+> much better choice as it doesn't require internal storage of the
+> key.
+
+I wonder, what are the access patterns for merkle blobs?  Is it actually
+sequential, or is more like 0 -> N -> N*N as we walk towards leaves?
+
+Also -- the fsverity block interfaces pass in a "u64 pos" argument.  Was
+that done because merkle trees may some day have more than 2^32 blocks
+in them?  That won't play well with things like xarrays on 32-bit
+machines.
+
+(Granted we've been talking about deprecating XFS on 32-bit for a while
+now but we're not the whole world)
+
+> i.e.
+> 
+> 	p = xa_load(key);
+> 	if (p)
+> 		return p;
+> 
+> 	xfs_attr_get(key);
+> 	if (!args->value)
+> 		/* error */
+> 
+> 	/*
+> 	 * store the current value, freeing any old value that we
+> 	 * replaced at this key. Don't care about failure to store,
+> 	 * this is optimistic caching.
+> 	 */
+> 	p = xa_store(key, args->value, GFP_NOFS);
+> 	if (p)
+> 		kvfree(p);
+> 	return args->value;
+
+Attractive.  Will have to take a look at that tomorrow.
+
+--D
+
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
