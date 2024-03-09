@@ -1,136 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-14055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A6E877101
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 13:16:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D556A877193
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 15:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D70B5B21079
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 12:16:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A422281AE7
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 14:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042073A1B6;
-	Sat,  9 Mar 2024 12:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="and6M29Y"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDF440878;
+	Sat,  9 Mar 2024 14:09:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAF439850
-	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Mar 2024 12:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FA13FB9F
+	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Mar 2024 14:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709986558; cv=none; b=a+iJ8noDM1LLU83V1JCspJqd1Q8jg7wfmayrLRJ/bkI+W9k4Vncw5XM9xzPv1lJzIuDTWvXgm3L6jC9Bift9+6g2OJmADhpIlJvLbY2P+Ll9j/zi9XXFBNGJ5MV7qAGTbzxyFyr7XjByFxXlI/WtjPgRUV1b9WUgpiRxvmZd0b4=
+	t=1709993346; cv=none; b=WyvcLNx1Y32cGpYr6kkOZ9IWHhUFeVUOnyLM8xwzGDiERqGfhUhIW1sarl9iM0VEy02nA0QsJ1CFS0J8f+hv+6FDabDPAYRD6zcmkFx4DARtVXSnxUG1S+LeoGDEkLTe4SYDb4fmWAdLc8kYLkIAHScrXA87iCtjj9je6N3cLZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709986558; c=relaxed/simple;
-	bh=LLk+nM0K2NXga73NICfooQV982tp97pwncsTG7QQzso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vl8MK/5FPFFHzG7RLxz5lUqIPEXBcJBzOLWn6AmCMBGMJWSRqijRX7S2UTwI/fF50tuA6qTN4P14X+5KRu8M7VKRfDOiKU0G0nppPbJX5NxvBsoCcoBs8IGvpNP1j8ub9dJZyhL/8oSZt7OyPoGyJDoI+JM81M08VtMWCNLuyGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=and6M29Y; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 9 Mar 2024 07:15:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709986554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ztZwkYv2v4Kz4rLl8cXQntBezHYMi/iU5TaojHjCtJM=;
-	b=and6M29Y4UnPQ+rzg7Nxgqh1IeRjVdT3hbZWP0Ca6cKWf2x3vvO7E8n+QDrKYTIM/wnd/f
-	nAhaSj3gw47THDf7k9Odv0beydGzcubRy4GZ3pBWqkrDvZYe1P3I/NioyxOkhnql0BR1jO
-	OVYbbtbOnMF82SjTcrslweCY4lOTNwM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Neal Gompa <neal@gompa.dev>, 
-	linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v2] statx: stx_subvol
-Message-ID: <yi6fha4mz325222zfud5mlxypvl6clkkh7ko3eoyofiz3oltf2@5mhb6jqmiqtb>
-References: <20240308022914.196982-1-kent.overstreet@linux.dev>
- <CAEg-Je96OKs_LOXorNVj1a1=e+1f=-gw34v4VWNOmfKXc6PLSQ@mail.gmail.com>
- <i2oeask3rxxd5w4k7ikky6zddnr2qgflrmu52i7ah6n4e7va26@2qmghvmb732p>
- <CAEg-Je_URgYd6VJL5Pd=YDGQM=0T5tspfnTvgVTMG-Ec1fTt6g@mail.gmail.com>
- <2uk6u4w7dp4fnd3mrpoqybkiojgibjodgatrordacejlsxxmxz@wg5zymrst2td>
- <20240308165633.GO6184@frogsfrogsfrogs>
- <6czkpcm4gxcjik3drcy6eys6lannfk55oowdesem2qr3gfgobw@lblo3vzck43e>
- <4517677900bd6a29f4763abe868ab953b477772b.camel@kernel.org>
+	s=arc-20240116; t=1709993346; c=relaxed/simple;
+	bh=2+frEfNY9kCZ1DL3xeqyryfAD6b5yyHATCqZqM5CrB8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SNFKfUCcJYdi1nJ8kZCS7BNHpiwmJMpLm61F4mfvIuccgzbF7Ws//zjKoEiFjDQgX9Q2spsl7JFrskIaMzK76Z9Oql+PltA5/oG06lM8tKOvuG1oqQeMLgR/MbIufbjE5+Pb9bk0CptsR82BkTNttsBuWGDGL1efWgPAqp1/A+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c84b3570cfso299467539f.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Mar 2024 06:09:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709993344; x=1710598144;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2LGzq8t2cO0APm/rv1jJdipgtRW0jr2Ew9T+G34Z8Vk=;
+        b=UxF1/15x9yFDcTAt9bS2LV798YvXy5/icRBI6PwKiJOnFJVeaMmkbl6dB6NDIxAbnQ
+         ydPDrJMhEn2evyORpqpLWDz/TJAJEcSawG4AikPuzxb169MYUoWD2tsjtZ5vjOgpKznS
+         3wesmPMsDSmm6S6/Vw2YimbXgUjDm0VnOXYidkniZsvtCrfwm3t8MqH3f9uqcn64fRyy
+         /boc4+oLAelDer3Py1wz9V1C9N1TPtEpi1YpYMD2cOkekEjgGT4HfYFLgVOFFaqDV+rf
+         MRgiYpSiHr9KiFyWIGa7ZtaCieWS18810EUaBPoUvHeA5EY50l0MFQ4DFQ5/7bgvMUka
+         nm+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUw4TjyqPBpMJZL/DFNhhC4aNtS/jngDDvH0iNC0SxuD5toFtXW2VzWLN3hICfGukREHwz1lAZKAKqrWD0khHicIzkgyJCv2jTeFx+zw==
+X-Gm-Message-State: AOJu0YwTY2mRujotPCALSauhaTA15ca19KAR17By3b75rqhU0jZ2iSU6
+	hPPXo7tGA10+fBUHOOYG8JZ9IzGE/eNzalc9Yu4N7UAD78Dve9da24C7o6MajzjYLrJRpZpGPT8
+	RjnSPLbLYxfJjCu4eQOx5Fu+ko5jaKLOycNf4vgY++AVdGoap8wVI9Fc=
+X-Google-Smtp-Source: AGHT+IEwvoaxIjpkkmAaqdrdf8pyKru+spENnqat1cc0Qzw8RLRm6Fge27YlG5LX18apnrqnwtvO3b/C7CB8oBa7ib0ryoatqXZ2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4517677900bd6a29f4763abe868ab953b477772b.camel@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6638:1654:b0:476:d5dc:b729 with SMTP id
+ a20-20020a056638165400b00476d5dcb729mr79848jat.4.1709993344002; Sat, 09 Mar
+ 2024 06:09:04 -0800 (PST)
+Date: Sat, 09 Mar 2024 06:09:03 -0800
+In-Reply-To: <000000000000f250a605ec981d41@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d682ec06133ad9d2@google.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in mnt_want_write_file
+From: syzbot <syzbot+1047e42179f502f2b0a2@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, hdanton@sina.com, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Mar 09, 2024 at 06:46:54AM -0500, Jeff Layton wrote:
-> On Fri, 2024-03-08 at 12:13 -0500, Kent Overstreet wrote:
-> > On Fri, Mar 08, 2024 at 08:56:33AM -0800, Darrick J. Wong wrote:
-> > > On Fri, Mar 08, 2024 at 11:48:31AM -0500, Kent Overstreet wrote:
-> > > > It's a new feature, not a bugfix, this should never get backported. And
-> > > > I the bcachefs maintainer wrote the patch, and I'm submitting it to the
-> > > > VFS maintainer, so if it's fine with him it's fine with me.
-> > > 
-> > > But then how am I supposed to bikeshed the structure of the V2 patchset
-> > > by immediately asking you to recombine the patches and spit out a V3?
-> > > 
-> > > </sarcasm>
-> > > 
-> > > But, seriously, can you update the manpage too?
-> > 
-> > yeah, where's that at?
-> > 
-> 
->     https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git
-> 
-> 
-> > > Is stx_subvol a u64
-> > > cookie where userspace mustn't try to read anything into its contents?
-> > > Just like st_ino and st_dev are (supposed) to be?
-> > 
-> > Actually, that's up for debate. I'm considering having the readdir()
-> > equivalent for walking subvolumes return subvolume IDs, and then there'd
-> > be a separate call to open by ID.
-> > 
-> > Al's idea was to return open fds to child subvolumes, then userspace can
-> > get the path from /proc; that's also a possibility.
-> > 
-> > The key thing is that with subvolumes it's actually possible to do an
-> > open_by_id() call with correct security checks on pathwalking - because
-> > we don't have hardlinks so there's no ambiguity.
-> > 
-> > Or we might do it getdents() style and return the path directly.
-> > 
-> > But I think userspace is going to want to work with the volume
-> > identifiers directly, which is partly why I'm considering why other
-> > options might be cleaner.
-> > 
-> > Another thing to consider: where we're going with this is giving
-> > userspace a good efficient interrface for recursive tree traversal of
-> > subvolumes, but it might not be a bad idea to do that for mountpoints as
-> > well - similar problems, similar scalability issues that we might want
-> > to solve eventually.
-> > 
-> 
-> All of that's fine, but Darrick's question is about whether we should
-> ensure that these IDs are considered _opaque_. I think they should be.
-> 
-> We don't want to anyone to fall into the trap of trying to convey extra
-> info to userland about the volumes via this value. It should only be
-> good for uniquely identifying the volume.
-> 
-> We'll also need to document the scope of uniqueness. I assume we'll want
-> to define this as only being unique within a single filesystem? IOW, if
-> I have 2 bcachefs filesystems that are on independent devices, these
-> values may collide? Someone wanting to uniquely identify a subvolume on
-> a system will need to check both the st_dev and the st_vol, correct?
+syzbot suspects this issue was fixed by commit:
 
-they're small integers, not UUIDs, so yes
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
+
+    fs: Block writes to mounted block devices
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=164f208e180000
+start commit:   ac865f00af29 Merge tag 'pci-v6.7-fixes-2' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=655f8abe9fe69b3b
+dashboard link: https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116d8055e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15687d81e80000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
