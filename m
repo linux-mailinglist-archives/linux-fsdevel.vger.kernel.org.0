@@ -1,92 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-14056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D556A877193
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 15:09:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7580187722D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 17:19:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A422281AE7
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 14:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0384A1F2203B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 16:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDF440878;
-	Sat,  9 Mar 2024 14:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E616745949;
+	Sat,  9 Mar 2024 16:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhSnbF/p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FA13FB9F
-	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Mar 2024 14:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E640245957;
+	Sat,  9 Mar 2024 16:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709993346; cv=none; b=WyvcLNx1Y32cGpYr6kkOZ9IWHhUFeVUOnyLM8xwzGDiERqGfhUhIW1sarl9iM0VEy02nA0QsJ1CFS0J8f+hv+6FDabDPAYRD6zcmkFx4DARtVXSnxUG1S+LeoGDEkLTe4SYDb4fmWAdLc8kYLkIAHScrXA87iCtjj9je6N3cLZc=
+	t=1710001145; cv=none; b=RiILHNLxlUNLWtU+jp8DrxVjZ9pla1p4FCtWyJ8u0cPf1exmv+qRgmMBlN9k0Le+ARBLpp8hedmWasA2nv1KHkU1XqrkfvJPWS2apRqHYTTQNbGaHWg5hnIOl2vxD/cNjUMunpmU+5kyxRDw1HuKUz6UAY9gJus/a48hXDYXlko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709993346; c=relaxed/simple;
-	bh=2+frEfNY9kCZ1DL3xeqyryfAD6b5yyHATCqZqM5CrB8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SNFKfUCcJYdi1nJ8kZCS7BNHpiwmJMpLm61F4mfvIuccgzbF7Ws//zjKoEiFjDQgX9Q2spsl7JFrskIaMzK76Z9Oql+PltA5/oG06lM8tKOvuG1oqQeMLgR/MbIufbjE5+Pb9bk0CptsR82BkTNttsBuWGDGL1efWgPAqp1/A+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c84b3570cfso299467539f.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Mar 2024 06:09:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709993344; x=1710598144;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2LGzq8t2cO0APm/rv1jJdipgtRW0jr2Ew9T+G34Z8Vk=;
-        b=UxF1/15x9yFDcTAt9bS2LV798YvXy5/icRBI6PwKiJOnFJVeaMmkbl6dB6NDIxAbnQ
-         ydPDrJMhEn2evyORpqpLWDz/TJAJEcSawG4AikPuzxb169MYUoWD2tsjtZ5vjOgpKznS
-         3wesmPMsDSmm6S6/Vw2YimbXgUjDm0VnOXYidkniZsvtCrfwm3t8MqH3f9uqcn64fRyy
-         /boc4+oLAelDer3Py1wz9V1C9N1TPtEpi1YpYMD2cOkekEjgGT4HfYFLgVOFFaqDV+rf
-         MRgiYpSiHr9KiFyWIGa7ZtaCieWS18810EUaBPoUvHeA5EY50l0MFQ4DFQ5/7bgvMUka
-         nm+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUUw4TjyqPBpMJZL/DFNhhC4aNtS/jngDDvH0iNC0SxuD5toFtXW2VzWLN3hICfGukREHwz1lAZKAKqrWD0khHicIzkgyJCv2jTeFx+zw==
-X-Gm-Message-State: AOJu0YwTY2mRujotPCALSauhaTA15ca19KAR17By3b75rqhU0jZ2iSU6
-	hPPXo7tGA10+fBUHOOYG8JZ9IzGE/eNzalc9Yu4N7UAD78Dve9da24C7o6MajzjYLrJRpZpGPT8
-	RjnSPLbLYxfJjCu4eQOx5Fu+ko5jaKLOycNf4vgY++AVdGoap8wVI9Fc=
-X-Google-Smtp-Source: AGHT+IEwvoaxIjpkkmAaqdrdf8pyKru+spENnqat1cc0Qzw8RLRm6Fge27YlG5LX18apnrqnwtvO3b/C7CB8oBa7ib0ryoatqXZ2
+	s=arc-20240116; t=1710001145; c=relaxed/simple;
+	bh=A9czWoAPclIi3aNPvypvQTPoNROtlqDSEd4Q+nxmyos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXvrRt3YS0vdN1lISwt76IH6P1yp+87TNJr774zoV4hz7kvudz6YLLBgd/GrRzraqilae6vGoUBOeO2BJESIaxWT/cpVtN5U381fPFwfHzJNMLAVJf0FFwXKlFpk5xYnMPWBJsRUKJNbQRIr2vD/hjy9HgSoJOtTzycAR/v1q8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhSnbF/p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BEFC433F1;
+	Sat,  9 Mar 2024 16:19:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710001144;
+	bh=A9czWoAPclIi3aNPvypvQTPoNROtlqDSEd4Q+nxmyos=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VhSnbF/pHKAusicyM5vsnuzeSThwVva0SXXshUgbHtzIAQE0jjD7+A+KkVvJ8phZ5
+	 1zSnjjw8Pya8dbGF0FgUOlpdQsdnI/liT2OGjxE4pycguf3FICqCsj7CnXJQfTW0Dh
+	 H2vOpucKIfJZzIIdxBXIGj6CiwhxNF5ErwXA5z//YJPsQSSq71E+ij8yYXxjOrRP4E
+	 r7kQ6a0mjUVz4IPeyBLzJcXBdt4sFTWquubn6lg8UhfynvWA5PNUbZVZ9SnvdRiWHU
+	 q2rW9XfvwkYDoZFCw65hC/fzHsP5Pz9Zv5nXh2URRxvnzClF+8OkfwBT12/g4j3SMc
+	 C6GK6Yc3Tls6Q==
+Date: Sat, 9 Mar 2024 08:19:03 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Eric Biggers <ebiggers@kernel.org>,
+	Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	chandan.babu@oracle.com
+Subject: Re: [PATCH v5 06/24] fsverity: pass tree_blocksize to
+ end_enable_verity()
+Message-ID: <20240309161903.GO1927156@frogsfrogsfrogs>
+References: <20240304191046.157464-2-aalbersh@redhat.com>
+ <20240304191046.157464-8-aalbersh@redhat.com>
+ <20240305005242.GE17145@sol.localdomain>
+ <20240306163000.GP1927156@frogsfrogsfrogs>
+ <20240307220224.GA1799@sol.localdomain>
+ <20240308034650.GK1927156@frogsfrogsfrogs>
+ <ZeuEe7qpNYaIll7L@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1654:b0:476:d5dc:b729 with SMTP id
- a20-20020a056638165400b00476d5dcb729mr79848jat.4.1709993344002; Sat, 09 Mar
- 2024 06:09:04 -0800 (PST)
-Date: Sat, 09 Mar 2024 06:09:03 -0800
-In-Reply-To: <000000000000f250a605ec981d41@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d682ec06133ad9d2@google.com>
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in mnt_want_write_file
-From: syzbot <syzbot+1047e42179f502f2b0a2@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, hdanton@sina.com, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZeuEe7qpNYaIll7L@dread.disaster.area>
 
-syzbot suspects this issue was fixed by commit:
+On Sat, Mar 09, 2024 at 08:34:51AM +1100, Dave Chinner wrote:
+> On Thu, Mar 07, 2024 at 07:46:50PM -0800, Darrick J. Wong wrote:
+> > On Thu, Mar 07, 2024 at 02:02:24PM -0800, Eric Biggers wrote:
+> > > On Wed, Mar 06, 2024 at 08:30:00AM -0800, Darrick J. Wong wrote:
+> > > > Or you could leave the unfinished tree as-is; that will waste space, but
+> > > > if userspace tries again, the xattr code will replace the old merkle
+> > > > tree block contents with the new ones.  This assumes that we're not
+> > > > using XATTR_CREATE during FS_IOC_ENABLE_VERITY.
+> > > 
+> > > This should work, though if the file was shrunk between the FS_IOC_ENABLE_VERITY
+> > > that was interrupted and the one that completed, there may be extra Merkle tree
+> > > blocks left over.
+> > 
+> > What if ->enable_begin walked the xattrs and trimmed out any verity
+> > xattrs that were already there?  Though I think ->enable_end actually
+> > could do this since one of the args is the tree size, right?
+> 
+> If we are overwriting xattrs, it's effectively a remove then a new
+> create operation, so we may as well just add a XFS_ATTR_VERITY
+> namespace invalidation filter that removes any xattr in that
+> namespace in ->enable_begin...
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Yeah, that sounds like a good idea.  One nice aspect of the generic
+listxattr code (aka not the simplified one that scrub uses) is that the
+cursor tracking means that we could actually iterate-and-zap old merkle
+tree blocks.
 
-    fs: Block writes to mounted block devices
+If we know the size of the merkle tree ahead of time (say it's N blocks)
+then we just start zapping N, then N+1, etc. until we don't find any
+more.  That wouldn't be exhaustive, but it's good enough to catch most
+cases.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=164f208e180000
-start commit:   ac865f00af29 Merge tag 'pci-v6.7-fixes-2' of git://git.ker..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=655f8abe9fe69b3b
-dashboard link: https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116d8055e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15687d81e80000
+Online fsck should, however, have a way to call ensure_verity_info() so
+that it can scan the xattrs looking for merkle tree blocks beyond
+tree_size, missing merkle tree blocks within tree_size, missing
+descriptors, etc.  It looks like the merkle tree block contents are
+entirely hashes (no sibling/child/parent pointers, block headers, etc.)
+so there's not a lot to check in the tree structure.  It looks pretty
+similar to flattening a heap into a linear array.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> > > BTW, is xfs_repair planned to do anything about any such extra blocks?
+> > 
+> > Sorry to answer your question with a question, but how much checking is
+> > $filesystem expected to do for merkle trees?
+> > 
+> > In theory xfs_repair could learn how to interpret the verity descriptor,
+> > walk the merkle tree blocks, and even read the file data to confirm
+> > intactness.  If the descriptor specifies the highest block address then
+> > we could certainly trim off excess blocks.  But I don't know how much of
+> > libfsverity actually lets you do that; I haven't looked into that
+> > deeply. :/
+> 
+> Perhaps a generic fsverity userspace checking library we can link in
+> to fs utilities like e2fsck and xfs_repair is the way to go here.
+> That way any filesystem that supports fsverity can do offline
+> validation of the merkle tree after checking the metadata is OK if
+> desired.
 
-#syz fix: fs: Block writes to mounted block devices
+That'd be nice.  Does the above checking sound reasonable? :)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > For xfs_scrub I guess the job is theoretically simpler, since we only
+> > need to stream reads of the verity files through the page cache and let
+> > verity tell us if the file data are consistent.
+> 
+> *nod*
+
+I had another thought overnight -- regular read()s incur the cost of
+copying pagecache contents to userspace.  Do we really care about that,
+though?  In theory we could mmap verity file contents and then use
+MADV_POPULATE_READ to pull in the page cache and return error codes.  No
+copying, and fewer syscalls.
+
+> > For both tools, if something finds errors in the merkle tree structure
+> > itself, do we turn off verity?  Or do we do something nasty like
+> > truncate the file?
+> 
+> Mark it as "data corrupt" in terms of generic XFS health status, and
+> leave it up to the user to repair the data and/or recalc the merkle
+> tree, depending on what they find when they look at the corrupt file
+> status.
+
+Is there a way to forcibly read the file contents even if it fails
+verity validation?  I was assuming the only recourse in that case is to
+delete the file and restore from backup/package manager/etc.
+
+> > Is there an ioctl or something that allows userspace to validate an
+> > entire file's contents?  Sort of like what BLKVERIFY would have done for
+> > block devices, except that we might believe its answers?
+> > 
+> > Also -- inconsistencies between the file data and the merkle tree aren't
+> > something that xfs can self-heal, right?
+> 
+> Not that I know of - the file data has to be validated before we can
+> tell if the error is in the data or the merkle tree, and only the
+> user can validate the data is correct.
+
+<nod>
+
+--D
+
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
