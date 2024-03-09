@@ -1,155 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-14063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B350287740E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 22:48:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A640877418
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 23:20:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C42A91C217AD
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 21:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24241F21370
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 22:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05857524A6;
-	Sat,  9 Mar 2024 21:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="am4H5s3i"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0689524A6;
+	Sat,  9 Mar 2024 22:20:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ED550A70
-	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Mar 2024 21:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6ED51021
+	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Mar 2024 22:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710020916; cv=none; b=q8MFfl+CLF+krF9eOk+dGZ6QfL1lto0opJp/rexRRul1gOqLHENt3p4WBQAYhEQEjVoCG4ee3krlluH6yw7JC3dHCLah3PxATQd9b2TeVWBsvIMGryDeS3iJllmZg5qGWg8ZRqKZGWmzOZ11idz5KqaiOUKI/DwE36q8joqanQk=
+	t=1710022805; cv=none; b=K+WIFqezIBSIrIp0XGvKAMpzCx1XxX99GfbdUThPw2yYDnO85mCMZ2SFL4QBmPkO7BLzI1YzXY3hh9MuP9WvMJ5UL+bGBb94lQgXQYsbGTEB9Yn3DMYmd2VJQ3Wf8T2aBLowy/nWTJ8MilUYwFINfjM2HnRU1SG0fTFrNqhup+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710020916; c=relaxed/simple;
-	bh=TlbeLRS6KIxUGIuaEwI09g/BKrurDk428JKg+03aOWE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rqM0OTVG9Dq2tqjEFHz5YabKqEVv5i/o9tUbdwN5+/Ur63v2zs4t5OG3Hxw9D/rPLl+8Ltr8Yk+GrFe5iiv+tGu6aarl+cC+3Dm3XsYaY1WSYj1Tfke3f0gTs8GCyQgUKk06Im413lOBty1je3e8VwiPr4cc7Lgtdh6mD8y6PEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=am4H5s3i; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1dd5df90170so21056165ad.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Mar 2024 13:48:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1710020914; x=1710625714; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ij4dl6s+fU5V8GRSIdSDyUxEbjNq2rinUUwBlPc9zv8=;
-        b=am4H5s3i5gsv96Zqq4crWTeB9+EM8EF5wLsYzbI019n65LOBuVxM9Ji01cwmdX2qCC
-         glhU+chp+IG65qcPFmFp+HTM5vMw3TPuClv3qvnP2bSMyE+wPCBLcCeUadTiXN+mIuZF
-         VwbfjmCbNZWY6ndooJvFJ9fRi6w223DfhoG44=
+	s=arc-20240116; t=1710022805; c=relaxed/simple;
+	bh=zFhNXKbHLt203SwwQ+ckq7WpijojBJ+o7aN23dGfPCo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VOva9j2LXV6XohdKjJOzBG/wk2lmORTI7+1n06jV3RNa02O2zrjiISITOhQTwGFORUmVxN52cG6riDgteD9j+BC+DAWQUAyZ0QwBUXG8LcSrpXPEIRiwB4qjUXYlAQEkhCLBQpNQVT8vEVXo2xUsI1GGamYtcxUMQOOH7BE/F1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7c7c9831579so352048239f.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Mar 2024 14:20:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710020914; x=1710625714;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ij4dl6s+fU5V8GRSIdSDyUxEbjNq2rinUUwBlPc9zv8=;
-        b=QLyOzm0MqGVwlDLxUOEUsZB8JfZp2KeSwigkrsCZd4sViKNlfgwQWlw8zlWedNyxbZ
-         8bXkrdvpH/ngpPhIstjZXiw8APSGsk/FD3mxy46iac6niiFK8qdDYdMo7tBJtsDsvXe6
-         FXkH3Gvb+bDrE5rrDdbGviFficKUp19JJkA3CS770s8T6HorZXSS8AkV7Z43OEz7gQkJ
-         mow0udTC7A49naEDeIsZAV5pc1JHtftRKwKdb5Xc/VV1+Rj26gjK22VmFFM+tMGlIoGe
-         IzE8fNKW/NeEgBsszjfc0HnWNgmZa92U0h8nBcT7ZlBLIGDLmAdk+YumaH2Yz0hO9ub3
-         UmAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRET7Zar69a+B8vSiytcS3JJh3Jn/JHozf/VqQCTkjEEGgmXx3cvupD7ETyzcHGqoDIwkGUS5shQbJG2ggwX7B9RTsz9K94Q4aOKG2CQ==
-X-Gm-Message-State: AOJu0YwedGqKz21+lgwaFQnEsVPDaGLn/T7JeWZzaz4Y612YeOBMjhop
-	RNhKjLzZub7yt8J7XigAEwVGoob3hcXK4lOixsB1H/1V+bbeVfLPJjxnBZ6jgw==
-X-Google-Smtp-Source: AGHT+IE03Bnsaj7XifM5/uMKxOJjyFpeQ9/fOFvr/AdwuuzOscOuC+xbByKTNfiifwemz2iFWjiZxQ==
-X-Received: by 2002:a17:903:2305:b0:1dc:b64:13cd with SMTP id d5-20020a170903230500b001dc0b6413cdmr3672457plh.27.1710020913729;
-        Sat, 09 Mar 2024 13:48:33 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id i14-20020a17090332ce00b001dd621111e2sm1729518plr.194.2024.03.09.13.48.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Mar 2024 13:48:32 -0800 (PST)
-From: Kees Cook <keescook@chromium.org>
-To: Eric Biederman <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] exec: Simplify remove_arg_zero() error path
-Date: Sat,  9 Mar 2024 13:48:30 -0800
-Message-Id: <20240309214826.work.449-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1710022803; x=1710627603;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TPIQ5P+kw5ZjaCXLN4LFGtLM3L78K1ihJHtxoWuotIA=;
+        b=HWfGSyIxorjd7aD7tuuTxAW8ECVx7qZY1So/sQSl8fOmdbN916D6kXhyeua1RUhZ5S
+         gplPG3timVW0xmk2afitJe2oRRx67L4sf6+RH4oHcpd0ydEbqAXdf4ZtWBwWsVkvqpnn
+         q1+Klni4Z/61aywNAe9BPpgPjnS1mkT92kMEeH4aLvnlnfu++u/ghQiBOLqZuO86Y88h
+         lkFTP1xg2mM1wC64zMAymVqHE8gnriHU9qCjymJAmd7A/AUpSucYWQh3KYV6YgozX/fw
+         OxxThlRULgi9E1TyMdAWQTIBHT57JzVdUCmqbVlAAA3Tki0CaQeqLzdUjedYIIA2wPoz
+         xdsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBDlfvIS1DMfxJ56OSzi6QefroT0eXPdgRZom8vBH4vbIWNExDxpzlk9WXO2iO1lII7Sv5O/Ovf94ZgEZFQW0bxa+C3Z/3wka4Qc0qXw==
+X-Gm-Message-State: AOJu0Yx7L3tzhAKu4oW4X5OOax4l3JS2wzkOz9I2ROHbEGAcaa27QhSv
+	oM+Ed5kt+1GtNT5w7EGeOsqv0e0Ive0ndBm/4AbE0PXpmCqNGFu9Lz6nH2bNAJevYChL0Mfg7Lh
+	A7FC/h3Tspqi9N3g90ZpzN6wVeKTYAxqAqga8zgXi27uoVBu9RXErX9Y=
+X-Google-Smtp-Source: AGHT+IGSVfooHSgQwTj5YVYCcfxioZPTQ9PhJk3trwjRuYHiOmZVPRfAANHZslMUL0ge14sAYcOQNmNuc8GVHbuxjaDiEEOQB1Xi
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1307; i=keescook@chromium.org;
- h=from:subject:message-id; bh=TlbeLRS6KIxUGIuaEwI09g/BKrurDk428JKg+03aOWE=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBl7NkuHimbUFvP3Wujjd+L1DSMiaEMK4gLNVck8
- Sc0MmkSs/OJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZezZLgAKCRCJcvTf3G3A
- JgXtEACOtfBcv83tcJRDanJKvoKkTfWWrjQSKpdkksCWC6yENNwJql9scRvASM5S6DzURuhkq2d
- N7/W42guz9FpQ+L1UDXoskzaaVCzXOwq3YzF/xTmtrRyXE6GC9NIUJVtE+S3vQGA8WzDo6y8uT2
- WGHvgzK8ddIuVI4SkIr1K0hGRNUyu41RamOTeoLSdb8yQgF6x7Eew0Iukiloqi888aKm7Qpje+S
- +zM4zlnvwtVfmxZzVrszoxqrYJtldziDtD0Pfn9L5wU8lC5BeUw5Dj402JtJeKTP251+QY5MqH4
- NgFGPzm/+xgntTpVCtsqBuiqmqozIOfOPByEycZWnYGIaeA8ICgCkwQEdQbP5ynYqHikt1JG71Q
- 2z3rZHyt3ESV387UNCRVbmaPXWE1Erx0hLLfIppSPltc8zNi9wz8KsnRVdaSDKZ1stl3/IHCr7V
- pPGOf9pbrMW4J55FC7s8KbxiTMiUNjOLFb7a24F9HBB6zfnONbPDqkJKKTp/TfeFbr090JYw8lk
- reVExDRQdz8TVr756XON8JmKFpty+iaTzNDKtz/ip7qquwfy3PrgIwtIx6ESfGWJxDRQIsKBrBp
- QcPjLoqkeYf2/HHpBGOgv+3pgBWJtKdxqyiXbp8F5sc4dAVPZm+XFcfJshWtCQ8OHMM3D8pzAxk
- dFhwp4R FAveH4jg==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:2b09:b0:474:8aed:36d2 with SMTP id
+ fm9-20020a0566382b0900b004748aed36d2mr204238jab.2.1710022803352; Sat, 09 Mar
+ 2024 14:20:03 -0800 (PST)
+Date: Sat, 09 Mar 2024 14:20:03 -0800
+In-Reply-To: <0000000000007bedb605f119ed9f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c07a08061341b549@google.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in open_xa_dir
+From: syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, hdanton@sina.com, jack@suse.cz, 
+	jeffm@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mingo@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
+	reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, 
+	roberto.sassu@huaweicloud.com, syzkaller-bugs@googlegroups.com, 
+	will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-We don't need the "out" label any more, so remove "ret" and return
-directly on error.
+syzbot suspects this issue was fixed by commit:
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
----
- fs/exec.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 715e1a8aa4f0..e7d9d6ad980b 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1720,7 +1720,6 @@ static int prepare_binprm(struct linux_binprm *bprm)
-  */
- int remove_arg_zero(struct linux_binprm *bprm)
- {
--	int ret = 0;
- 	unsigned long offset;
- 	char *kaddr;
- 	struct page *page;
-@@ -1731,10 +1730,8 @@ int remove_arg_zero(struct linux_binprm *bprm)
- 	do {
- 		offset = bprm->p & ~PAGE_MASK;
- 		page = get_arg_page(bprm, bprm->p, 0);
--		if (!page) {
--			ret = -EFAULT;
--			goto out;
--		}
-+		if (!page)
-+			return -EFAULT;
- 		kaddr = kmap_local_page(page);
- 
- 		for (; offset < PAGE_SIZE && kaddr[offset];
-@@ -1748,8 +1745,7 @@ int remove_arg_zero(struct linux_binprm *bprm)
- 	bprm->p++;
- 	bprm->argc--;
- 
--out:
--	return ret;
-+	return 0;
- }
- EXPORT_SYMBOL(remove_arg_zero);
- 
--- 
-2.34.1
+    fs: Block writes to mounted block devices
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11c28556180000
+start commit:   5eff55d725a4 Merge tag 'platform-drivers-x86-v6.7-7' of gi..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=655f8abe9fe69b3b
+dashboard link: https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d80b99e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148cccdee80000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
