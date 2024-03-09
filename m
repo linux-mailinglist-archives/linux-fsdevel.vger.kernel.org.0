@@ -1,282 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-14051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCB63876F9F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 08:54:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9720876FC0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 09:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928ED282084
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 07:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E331281E6F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Mar 2024 08:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEA9383A3;
-	Sat,  9 Mar 2024 07:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA94374D1;
+	Sat,  9 Mar 2024 08:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a9lEBZjN"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gw7MIuSO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A652B38396
-	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Mar 2024 07:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F4B364C7
+	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Mar 2024 08:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709970829; cv=none; b=h1Nmsnaqpi2JiOn+hMsmzL4ExYQt00GYDAzMVBTZTFdyBsBFjS3dwUF4dcIfEQJoLZCoydoFLC+ACL6Xxl4VGO6TYodoFs727Hsq9G7jgIHxSpQj/Thc4wQ0/K1dL8NBgnJnDPp2MemAAb19bw/sjmbvpyemKnSbhbyYNi5mb8I=
+	t=1709972068; cv=none; b=RWM/zFEZsdCDPoKpN2RIVuayl4qv2IOdCUydgOU95MjdOZnvGV2VapzArtxjnfWEu3jDit6dq4ZIRG0SeO1meSxMDEP68dliiUPGK1p8qJfdl/nodgPi5n739/ShWOAPrVxkUzaudhov6YRHUGcDWJqb2YWb1ftMvgqjS8FGDBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709970829; c=relaxed/simple;
-	bh=iNASLIvdJe+G6gv4UkYZwtV4xslMi/uxI/J6OfYzLr4=;
+	s=arc-20240116; t=1709972068; c=relaxed/simple;
+	bh=Zj+BenKkxKHpalRXBQkHD9wRUn4EnSmK3ArIkneWNkk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BW4rm7fv3pDgov68HXuVkyLsLkzvjlLDcFHb0HzU3Kvhbpx1Me/cORYzv7sIvt7ex48SZRjsuS9lL6MZ+UFgHWpJ2i/eyoFHZeqXX3pun2gmk6+3hsG1WtGkxbCEvNIh2lphB85CokBSK9CHwcWag/KwBfb+kA8iq45+GzEEhVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a9lEBZjN; arc=none smtp.client-ip=209.85.208.74
+	 To:Cc:Content-Type; b=WuwqW9qADICYjdQWz65e+l/9b+H0ys9OXxwYum53/Ww3QRTW0aUEjLwyph5BaYEGDd5Nseh7U8hqXhzKtOE9of0KFRJ10ICCYdbkmftqdWB1hHY4pVCAfDKVGOLh1WQfXfxuqpzoOt+391Ea11Rqh6cEQD1l+MIf0sxGQ6WywCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gw7MIuSO; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-56800fe8d84so838090a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Mar 2024 23:53:47 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dcbee93a3e1so2784745276.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Mar 2024 00:14:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1709970826; x=1710575626; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1709972066; x=1710576866; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6xXJZ8Luy05jNZz1hxoLS/0EOiBPDRz4nsKqPpejmYo=;
-        b=a9lEBZjNLqLYqxlfU6QcctJoL42PqqBJG/wKXQqzvuPWkiZYDQlW4OKg4gcJcch5OF
-         f1eUg7Iz97s9wCTTkO+lyOZZlFom2d5VW2hpgq37yJ/3OQinVK0K/lLlavMhF09mK7ar
-         bmyjupsrq2cQCZvvVUUiF4jkOwHShqLUnCLzf62Q1E0hfdBSsq3Rxt3ZccgM2iVbfQO6
-         6Rd9hpjoYXNgpKcS/+XZF4FIvgpZ9N/A767hfNfLOaI6RG2HuKYXHoL7FpNwieWn2zn4
-         VnJxy0mLlcaikWdfEBMqPAnFGREaRjtqLD5WSMu7jOEUJhID68zcabGmlLjgAcDXSonD
-         GlQg==
+        bh=5zC0aLyXqPfGUviRMbp3VRFDq2l1kCoNPVOwtFgQkl8=;
+        b=gw7MIuSOhtUfBwWJFChlXrlzaXKGgVzMRzRPlnUGes994GjitB7dKMKrPNMkO2Extw
+         3dE95rQ6JT/SkV3C4Y7F4vKg8kTJEP5D+D2R37dtINDt1wqW25RW+39eiNWPPTvWctfO
+         nDXMhZRDWp8m5Xi6XPXx43iDWVZMrv0pWUBgu/MH4kUaULuQsb6N18Yz+zyG9q68TWI8
+         Gihbqea0bLB686/aRiro51tdmtChKWX5T27fDzOg/qJ21sFSld1qBpY4pAgRhGtqjgKO
+         dbvp4p4hpcY6h7VydQKaOw7dHkegjt9HSOn+9V5tGUos0hi/fMQfGkRHZu8IIOhnOiwk
+         1jCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709970826; x=1710575626;
+        d=1e100.net; s=20230601; t=1709972066; x=1710576866;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=6xXJZ8Luy05jNZz1hxoLS/0EOiBPDRz4nsKqPpejmYo=;
-        b=bIPf6xVou3PkT5JIDtokPr3raWLQkLHQKCrSN7gTWjIYQKs+cMIRy6NtbtX0djs+p9
-         Td/hq7jox2GcDGtETycnqqn/6xzNZwGwGerbOC4G22Qq1626mUGq+wGr6fFQ82IQCR0F
-         Us2bWaHY9AeM2WvzuIc1GCPxfJG4zkbmeZI0FZhj+glVA0n1Mf4LSI4gGWAPvzoxyfQ8
-         rHmjOnnmyzlDoZ6MhhypUGwPJg3HWDXPxyvytYmfvIDVG6O6NVvwpZGwmAreT1hx5M3e
-         Jf6KDViI9VckjEQvgbRxbNUInqmJgRn2Z6/o6iprjS5aSOErPEXBJv/YY1fDSfK0cf56
-         0+Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPlLOsWlKmVz8QNugwqQNw4QPwuTtl1U4hqx5qnTypvAXCKvAJLJiBdG6CwzdUr+y89kE1tmF7evDAEcF0dLmhf348vDYp1KteXoeesQ==
-X-Gm-Message-State: AOJu0YwQdPhyQWqhfgmevkd9ELD4oWDOyawItLa+u5I05nP2btmy+U8U
-	oxs45fmWLeZ4TYJRJQtVFuhM3r4/jtjyRftnxfA5CTQphab4tNIg1RTUJZM08pirDjLcPkygTQT
-	95A==
-X-Google-Smtp-Source: AGHT+IEB16Vl/CLO+9oSUIXkxJcIHM6QCLqVnsRZhcK17ONeugIEM3ZuOtBIVdNkYYAcgICZia0DsXcQOBc=
+        bh=5zC0aLyXqPfGUviRMbp3VRFDq2l1kCoNPVOwtFgQkl8=;
+        b=DDinFp7c77n5pksO4Pk6vVhsFmZ4GpUQuWQi91DrloL3HORcfF2FuYefPQMsf1pQxN
+         2bdUwUdXvaX+y7FjSAVHfccuhN268yrRuggEbE+JsNCtoIxwN95L7UGGcsKzS8B9OyMn
+         kYQZo7CfbX+UQVpik3vJPkbGod+IMKPWvUslbxQGcQmwZT+XsfDCcF5e9dQefzLpsNqR
+         U2kS1BA+lQKs6moogMNqdcypT0JDSUqS++YyVg7F/n9XWiRq4S6lus7cYyy0H2m5q5Ap
+         Q9fDX08yGzbUEHtf292KV4VIyolsMYqA0ieRhPCI+iHGy2f0GkUe52pCgFxV+qrHttby
+         63tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsR4zDYFL3FKlXDKftDpNfe8VZMrAfwC2aFqFJkmymQ90NIbqI/MVWE8Oh5voqYh2BMAVEQWFU1l5FDOVvRMBFUlnGTODzXLy7w8fivw==
+X-Gm-Message-State: AOJu0Yxa2I8nknm2Ij5oE4PwfMYrbRKIdZ4Fz9PlWO08r3FlViKY+snA
+	zNawrgK3jTY5gyXuaZzULk3+igMk+LpfCxTcPx5SOAzs8RBf0oRJKmEh92lNR1pEY5oMNXCO5mG
+	H2A==
+X-Google-Smtp-Source: AGHT+IGK6QYdafFcLyYsICEWWH+xVji7gs887JC1gWlCuYwUVKjZW7oa0Z5XEMTt/aixO0PA2Btn7+hrkDw=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6402:f0a:b0:566:c465:20cf with SMTP id
- i10-20020a0564020f0a00b00566c46520cfmr7206eda.1.1709970826003; Fri, 08 Mar
- 2024 23:53:46 -0800 (PST)
-Date: Sat,  9 Mar 2024 07:53:20 +0000
-In-Reply-To: <20240309075320.160128-1-gnoack@google.com>
+ (user=gnoack job=sendgmr) by 2002:a05:6902:f07:b0:dcf:f526:4cc6 with SMTP id
+ et7-20020a0569020f0700b00dcff5264cc6mr60502ybb.11.1709972066250; Sat, 09 Mar
+ 2024 00:14:26 -0800 (PST)
+Date: Sat, 9 Mar 2024 09:14:24 +0100
+In-Reply-To: <CAHC9VhRnUbu2jRwUhLGboAgus_oFEPyddu=mv-OMLg93HHk17w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240309075320.160128-1-gnoack@google.com>
-X-Mailer: git-send-email 2.44.0.278.ge034bb2e1d-goog
-Message-ID: <20240309075320.160128-10-gnoack@google.com>
-Subject: [PATCH v10 9/9] landlock: Document IOCTL support
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: linux-security-module@vger.kernel.org, 
-	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+References: <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com> <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area> <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+ <20240308.saiheoxai7eT@digikod.net> <CAHC9VhSjMLzfjm8re+3GN4PrAjO2qQW4Rf4o1wLchPDuqD-0Pw@mail.gmail.com>
+ <20240308.eeZ1uungeeSa@digikod.net> <CAHC9VhRnUbu2jRwUhLGboAgus_oFEPyddu=mv-OMLg93HHk17w@mail.gmail.com>
+Message-ID: <ZewaYKO073V7P6Qy@google.com>
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Arnd Bergmann <arnd@arndb.de>, Dave Chinner <david@fromorbit.com>, 
+	Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
 	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-In the paragraph above the fallback logic, use the shorter phrasing
-from the landlock(7) man page.
+On Fri, Mar 08, 2024 at 05:25:21PM -0500, Paul Moore wrote:
+> On Fri, Mar 8, 2024 at 3:12=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+> > On Fri, Mar 08, 2024 at 02:22:58PM -0500, Paul Moore wrote:
+> > > On Fri, Mar 8, 2024 at 4:29=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@=
+digikod.net> wrote:
+> > > > Let's replace "safe IOCTL" with "IOCTL always allowed in a Landlock
+> > > > sandbox".
+> > >
+> > > Which is a problem from a LSM perspective as we want to avoid hooks
+> > > which are tightly bound to a single LSM or security model.  It's okay
+> > > if a new hook only has a single LSM implementation, but the hook's
+> > > definition should be such that it is reasonably generalized to suppor=
+t
+> > > multiple LSM/models.
+> >
+> > As any new hook, there is a first user.  Obviously this new hook would
+> > not be restricted to Landlock, it is a generic approach.  I'm pretty
+> > sure a few hooks are only used by one LSM though. ;)
+>=20
+> Sure, as I said above, it's okay for there to only be a single LSM
+> implementation, but the basic idea behind the hook needs to have some
+> hope of being generic.  Your "let's redefine a safe ioctl as 'IOCTL
+> always allowed in a Landlock sandbox'" doesn't fill me with confidence
+> about the hook being generic; who knows, maybe it will be, but in the
+> absence of a patch, I'm left with descriptions like those.
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- Documentation/userspace-api/landlock.rst | 76 +++++++++++++++++++-----
- 1 file changed, 61 insertions(+), 15 deletions(-)
+FWIW, the existing IOCTL hook is used in the following places:
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index 838cc27db232..32391247f19a 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -76,7 +76,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
--            LANDLOCK_ACCESS_FS_TRUNCATE,
-+            LANDLOCK_ACCESS_FS_TRUNCATE |
-+            LANDLOCK_ACCESS_FS_IOCTL_DEV,
-         .handled_access_net =3D
-             LANDLOCK_ACCESS_NET_BIND_TCP |
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-@@ -85,10 +86,10 @@ to be explicit about the denied-by-default access right=
-s.
- Because we may not know on which kernel version an application will be
- executed, it is safer to follow a best-effort security approach.  Indeed, =
-we
- should try to protect users as much as possible whatever the kernel they a=
-re
--using.  To avoid binary enforcement (i.e. either all security features or
--none), we can leverage a dedicated Landlock command to get the current ver=
-sion
--of the Landlock ABI and adapt the handled accesses.  Let's check if we sho=
-uld
--remove access rights which are only supported in higher versions of the AB=
-I.
-+using.
-+
-+To be compatible with older Linux versions, we detect the available Landlo=
-ck ABI
-+version, and only use the available subset of access rights:
-=20
- .. code-block:: c
-=20
-@@ -114,6 +115,10 @@ remove access rights which are only supported in highe=
-r versions of the ABI.
-         ruleset_attr.handled_access_net &=3D
-             ~(LANDLOCK_ACCESS_NET_BIND_TCP |
-               LANDLOCK_ACCESS_NET_CONNECT_TCP);
-+        __attribute__((fallthrough));
-+    case 4:
-+        /* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
-+        ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
-     }
-=20
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -225,6 +230,7 @@ access rights per directory enables to change the locat=
-ion of such directory
- without relying on the destination directory access rights (except those t=
-hat
- are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
- documentation).
-+
- Having self-sufficient hierarchies also helps to tighten the required acce=
-ss
- rights to the minimal set of data.  This also helps avoid sinkhole directo=
-ries,
- i.e.  directories where data can be linked to but not linked from.  Howeve=
-r,
-@@ -318,18 +324,26 @@ It should also be noted that truncating files does no=
-t require the
- system call, this can also be done through :manpage:`open(2)` with the fla=
-gs
- ``O_RDONLY | O_TRUNC``.
-=20
--When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-``
--right is associated with the newly created file descriptor and will be use=
-d for
--subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavio=
-r is
--similar to opening a file for reading or writing, where permissions are ch=
-ecked
--during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)=
-` and
-+The truncate right is associated with the opened file (see below).
-+
-+Rights associated with file descriptors
-+---------------------------------------
-+
-+When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-`` and
-+``LANDLOCK_ACCESS_FS_IOCTL_DEV`` rights is associated with the newly creat=
-ed
-+file descriptor and will be used for subsequent truncation and ioctl attem=
-pts
-+using :manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is si=
-milar
-+to opening a file for reading or writing, where permissions are checked du=
-ring
-+:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
- :manpage:`write(2)` calls.
-=20
--As a consequence, it is possible to have multiple open file descriptors fo=
-r the
--same file, where one grants the right to truncate the file and the other d=
-oes
--not.  It is also possible to pass such file descriptors between processes,
--keeping their Landlock properties, even when these processes do not have a=
+* TOMOYO: seemingly configurable per IOCTL command?  (I did not dig deeper)
+* SELinux: has a hardcoded switch of IOCTL commands, some with special chec=
+ks.
+  These are also a subset of the do_vfs_ioctl() commands,
+  plus KDSKBENT, KDSKBSENT (from ioctl_console(2)).
+* Smack: Decomposes the IOCTL command number to look at the _IOC_WRITE and
+  _IOC_READ bits. (This is a known problematic approach, because (1) these =
+bits
+  describe whether the argument is getting read or written, not whether the
+  operation is a mutating one, and (2) some IOCTL commands do not adhere to=
+ the
+  convention and don't use these macros)
+
+AppArmor does not use the LSM IOCTL hook.
+
+
+> > > I understand that this makes things a bit more
+> > > complicated for Landlock's initial ioctl implementation, but
+> > > considering my thoughts above and the fact that Landlock's ioctl
+> > > protections are still evolving I'd rather not add a lot of extra hook=
+s
+> > > right now.
+> >
+> > Without this hook, we'll need to rely on a list of allowed IOCTLs, whic=
+h
+> > will be out-of-sync eventually.  It would be a maintenance burden and a=
 n
--enforced Landlock ruleset.
-+As a consequence, it is possible that a process has multiple open file
-+descriptors referring to the same file, but Landlock enforces different th=
-ings
-+when operating with these file descriptors.  This can happen when a Landlo=
-ck
-+ruleset gets enforced and the process keeps file descriptors which were op=
-ened
-+both before and after the enforcement.  It is also possible to pass such f=
-ile
-+descriptors between processes, keeping their Landlock properties, even whe=
-n some
-+of the involved processes do not have an enforced Landlock ruleset.
-=20
- Compatibility
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-@@ -458,6 +472,28 @@ Memory usage
- Kernel memory allocated to create rulesets is accounted and can be restric=
-ted
- by the Documentation/admin-guide/cgroup-v1/memory.rst.
-=20
-+IOCTL support
-+-------------
-+
-+The ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right restricts the use of
-+:manpage:`ioctl(2)`, but it only applies to *newly opened* device files.  =
-This
-+means specifically that pre-existing file descriptors like stdin, stdout a=
-nd
-+stderr are unaffected.
-+
-+Users should be aware that TTY devices have traditionally permitted to con=
-trol
-+other processes on the same TTY through the ``TIOCSTI`` and ``TIOCLINUX`` =
-IOCTL
-+commands.  Both of these require ``CAP_SYS_ADMIN`` on modern Linux systems=
-, but
-+the behavior is configurable for ``TIOCSTI``.
-+
-+On older systems, it is therefore recommended to close inherited TTY file
-+descriptors, or to reopen them from ``/proc/self/fd/*`` without the
-+``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right, if possible.
-+
-+Landlock's IOCTL support is coarse-grained at the moment, but may become m=
-ore
-+fine-grained in the future.  Until then, users are advised to establish th=
-e
-+guarantees that they need through the file hierarchy, by only allowing the
-+``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right on files where it is really require=
-d.
-+
- Previous limitations
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -495,6 +531,16 @@ bind and connect actions to only a set of allowed port=
-s thanks to the new
- ``LANDLOCK_ACCESS_NET_BIND_TCP`` and ``LANDLOCK_ACCESS_NET_CONNECT_TCP``
- access rights.
-=20
-+IOCTL (ABI < 5)
-+---------------
-+
-+IOCTL operations could not be denied before the fifth Landlock ABI, so
-+:manpage:`ioctl(2)` is always allowed when using a kernel that only suppor=
-ts an
-+earlier ABI.
-+
-+Starting with the Landlock ABI version 5, it is possible to restrict the u=
-se of
-+:manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` access =
-right.
-+
- .. _kernel_support:
-=20
- Kernel support
---=20
-2.44.0.278.ge034bb2e1d-goog
+> > hacky approach.
+>=20
+> Welcome to the painful world of a LSM developer, ioctls are not the
+> only place where this is a problem, and it should be easy enough to
+> watch for changes in the ioctl list and update your favorite LSM
+> accordingly.  Honestly, I think that is kinda the right thing anyway,
+> I'm skeptical that one could have a generic solution that would
+> automatically allow or disallow a new ioctl without potentially
+> breaking your favorite LSM's security model.  If a new ioctl is
+> introduced it seems like having someone manually review it's impact on
+> your LSM would be a good idea.
 
+We are concerned that we will miss a change in do_vfs_ioctl(), which we wou=
+ld
+like to reflect in the matching Landlock code.  Do other LSMs have any
+approaches for that which go beyond just watching the do_vfs_ioctl()
+implementation for changes?
+
+
+> > We're definitely open to new proposals, but until now this is the best
+> > approach we found from a maintenance, performance, and security point o=
+f
+> > view.
+>=20
+> At this point it's probably a good idea to post another RFC patch with
+> your revised idea, if nothing else it will help rule out any
+> confusion.  While I remain skeptical, perhaps I am misunderstanding
+> the design and you'll get my apology and an ACK, but be warned that as
+> of right now I'm not convinced.
+
+Thanks you for your feedback!
+
+Here is V10 with the approach where we use a new LSM hook:
+https://lore.kernel.org/all/20240309075320.160128-1-gnoack@google.com/
+
+I hope this helps to clarify the approach a bit.  I'm explaining it in more
+detail again in the commit which adds the LSM hook, including a call graph,=
+ and
+avoiding the word "safe" this time ;-)
+
+Let me know what you think!
+
+Thanks!
+=E2=80=94G=C3=BCnther
 
