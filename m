@@ -1,205 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-14075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C0887758D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 07:42:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8558775F0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 10:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B957B22519
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 06:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A675281E86
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 09:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2135AD2F5;
-	Sun, 10 Mar 2024 06:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049581EA8A;
+	Sun, 10 Mar 2024 09:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mgQLZR3a"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Yz1JSqQ9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0876015C9;
-	Sun, 10 Mar 2024 06:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710052911; cv=fail; b=QanVqQXpiu8/somKS3Z4qxi2KvAbURE0c//DYh/B4nj3WVNdvXe6g5lUQXFJ5jTXnie7QA22GSqYYInRI5BwSL1UA8U+Vo6+xQAxQvx8my7c+VpUabRPPT59vbS3UwsCcokAmD+jm2ZJRBO12RyYtpe7f+uygyIF7Yr+vaUxmr0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710052911; c=relaxed/simple;
-	bh=snycoDNGBqO5OcRQ9OgC4uFC2DVB6cpm6Ayk95DWXVc=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DYKp6hqR9p+7AeEDf85Ia30oUbXmDUjdWZJIJoxISjsjlpfEgLA3H9xR28Dae0hDWrVDiwTkPPmt41XHMg+maQF1TCFizqoUBSnAmY1FNB4vFJC32NY0Y094sYF0jV4TyS9aJ09B88evcjzqK2DO/kssn+S8sX6PwCzXatbkxXE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mgQLZR3a; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1710052911; x=1741588911;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=snycoDNGBqO5OcRQ9OgC4uFC2DVB6cpm6Ayk95DWXVc=;
-  b=mgQLZR3aOeJes+WQGRlV/Qj/UIf0h+3Ip+Fobpq6UexWi6M/5XJU2HAw
-   Gnjw/Dx9WRq4LdiLwEnYz4VweLH049hi3iCAwO0oexX6x4Imsvr5G/kqj
-   5CbBH+PpFG9ZhTFGYwaYbzxXqdvDC30l6N/NSXgY3A2p5afwqsi0EQse6
-   8+rO783RmIKueKQyWSwiwiKgQ0zYgthVWxsqnMsD+DRnMbTRg1RTMbZYU
-   YWwHgqGFkXTjhPxqRT4Ek14/odCjdnk8SAPfx3FisaJbTaD/kL9Ou/yEY
-   0UCXfe3XqcnEegh9kb/94jU1rTOY5G/EJyYP3JVTmHwQ7/j/5dRkuuSEP
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11008"; a="4617148"
-X-IronPort-AV: E=Sophos;i="6.07,114,1708416000"; 
-   d="scan'208";a="4617148"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2024 22:41:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,114,1708416000"; 
-   d="scan'208";a="11286968"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Mar 2024 22:41:50 -0800
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sat, 9 Mar 2024 22:41:48 -0800
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sat, 9 Mar 2024 22:41:48 -0800
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Sat, 9 Mar 2024 22:41:48 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.100)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Sat, 9 Mar 2024 22:41:48 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VKuGuJtF5TutjnaZCL4dyFOEiNRn9drcJyqgsZiUqoGafcxMXwWlOugt5va7ztZgQ986/756M8MNg4DowyJBHaVlTRtYcMT7Nbxc1mdjHqHyYiie8pQzGEPsaOHgXADEHCemeWfIWIffuSqhjWaTQif3A81PqVOFpTFhTAueahxfn2QXashRsO2T0xo4ElNsnaLcHcQywdbOr5eGBoTzMkG5gkvtmmoGkJyeOwOMLTe0iWs8//abU23tQTVveEi9FjCZGY4PiTZWJkLNftHm32xNfKv8IiATJVCFvw0iaBQiLHMwraAf0l+t9TRfbcANdyLaEV7mbI+6jAXbypqeoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bY/RvVtI+Ka5EaMslfQ5AOQPIeNSWYbdYbqGYJHKgaw=;
- b=fp8JjxVIJg0p+SNWkUj3itCU9boPCJRVkKgp0qcikRLOLTgMQiWCw4rBD017i4OXtA6c4NW/4gfxOTGW9KNe1WLIEGh/v84Rdn5brvJYUnwCNSMHe17Io3hYWU6YqMmXorJ2p8K6KdGKJ5wKHzhN+Vm8p3ImjVMH+xJ4LsfEGZ8RmXiIWtFwRGwakAYnu31VRHKm4mpEYF9xfNAB+bNdKNBwn2x4pW7RhBznnGTi/nvak37R0Zf+XQ62wSMKOrKz/Zel7KZqVFbp4mrUMLUKEwBWWd1156MZOBaYWb/e2tP1G+EDQOPTQ6CpCTPTeC+NMY+0beMCpSfObNmh/30MCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB4820.namprd11.prod.outlook.com (2603:10b6:303:6f::8)
- by DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7386.14; Sun, 10 Mar 2024 06:41:46 +0000
-Received: from CO1PR11MB4820.namprd11.prod.outlook.com
- ([fe80::65ce:9835:2c02:b61b]) by CO1PR11MB4820.namprd11.prod.outlook.com
- ([fe80::65ce:9835:2c02:b61b%7]) with mapi id 15.20.7386.013; Sun, 10 Mar 2024
- 06:41:46 +0000
-Message-ID: <d7ab3fd4-6c7a-4ff9-a870-535af51256e5@intel.com>
-Date: Sun, 10 Mar 2024 14:41:42 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [readahead] ab4443fe3c: vm-scalability.throughput
- -21.4% regression
-Content-Language: en-US
-To: Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
-CC: Yujie Liu <yujie.liu@intel.com>, Oliver Sang <oliver.sang@intel.com>,
-	<oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Guo Xuenan <guoxuenan@huawei.com>,
-	<linux-fsdevel@vger.kernel.org>, <ying.huang@intel.com>,
-	<feng.tang@intel.com>
-References: <202402201642.c8d6bbc3-oliver.sang@intel.com>
- <20240221111425.ozdozcbl3konmkov@quack3>
- <ZdakRFhEouIF5o6D@xsang-OptiPlex-9020>
- <20240222115032.u5h2phfxpn77lu5a@quack3>
- <20240222183756.td7avnk2srg4tydu@quack3> <ZeVVN75kh9Ey4M4G@yujie-X299>
- <dee823ca-7100-4289-8670-95047463c09d@intel.com>
- <20240307092308.u54fjngivmx23ty3@quack3>
- <ZeoFQnVYLLBLNL6J@casper.infradead.org>
-From: "Yin, Fengwei" <fengwei.yin@intel.com>
-In-Reply-To: <ZeoFQnVYLLBLNL6J@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR02CA0047.apcprd02.prod.outlook.com
- (2603:1096:4:196::14) To CO1PR11MB4820.namprd11.prod.outlook.com
- (2603:10b6:303:6f::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5985B1BC49;
+	Sun, 10 Mar 2024 09:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710062301; cv=none; b=LH7TbgeTK+PobWNjNM8G++T+82NlAsC4P8fKK4n2T70FP2MRRe7uhDuSxRjkkQ9SlTLuHjW1djan63GI1eVaz3qH24XghAi6A1npfqQ5u8oQr6QBSQyY5GpiPRnUKuGG8fOIuD1zwjRIJ2rHKJs89bcgYTkeWtq15CRVGTa2w8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710062301; c=relaxed/simple;
+	bh=4/Etg5IAaCmbmxqxtDclWTx/CGLXoTnwU28WEm0VocA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OTxbQfHt0OWwJ0v4onY154SHC08neG8jMlfidPfvjapcEOFalhqqVjNkCtRH5tZJu/9EzlyoJGV7E4pXgb7V1T2SVkMDfp2W+ey+JokDGaoaBzZXnYDXrsYJ/8KR452OM5063oyhAi8lmV3uhspmXFBBV1oA6n+7/ktkiMfrKVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Yz1JSqQ9; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1710062288;
+	bh=4/Etg5IAaCmbmxqxtDclWTx/CGLXoTnwU28WEm0VocA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yz1JSqQ9iMbvoFUbuHmRaYiRtps/bZUuKgWK0FcDrfCyxM4eFWcO5PeMGg4tbMZuf
+	 7WIWRQw5Hy1O2U9WjFbFjaVwcq3gJ4LSbMRy5C59qi0SYCwxediET+Xc+HJzZmtQo+
+	 pRLB2xl8ZxwSjYjL/Qd65Ff8HRV+o892y2pdAO4c=
+Date: Sun, 10 Mar 2024 10:18:07 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2] sysctl: treewide: constify ctl_table_root::permissions
+Message-ID: <e3198416-4d90-4984-88ee-d2fccf96c783@t-8ch.de>
+References: <CGME20240223155229eucas1p24a18fa79cda02a703bcceff3bd38c2ba@eucas1p2.samsung.com>
+ <20240223-sysctl-const-permissions-v2-1-0f988d0a6548@weissschuh.net>
+ <20240303143408.sxrbd7pykmyhwu5f@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB4820:EE_|DS0PR11MB6399:EE_
-X-MS-Office365-Filtering-Correlation-Id: bace1491-bbeb-4ba9-8586-08dc40cd27ba
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: FLixrIPdUwllgVKNwoIsZufrVKQTKUnBuu50J7mMa9sVpaPWDaqik5KozFPsblm7CyEEFjRY6oL3PbNOs7Biczm5CUm5hHZ07iG2Ffcculq1N5mC5taPBUbQDd9YXpt/62VXf+VSvAEQiVxjpeD9iNjDa2KxNKefQuxfs7VG5D+6aIvR5Pv6eCnctT7bDe1y1BSWWvZS2V6s8S84c8utIcNap69EjruIpL67RNNGEiLYc/LNtPdj44j1P9x1xsE9BVGXRwhZ8wuZNI90baY3oqLYzIbGGIB3iDWbDBATz4Giw6QtBO5WCuTRCBNscUg9pVFYiu6pZbjsZ8ly81C1zpWl5y3HvGywm9mEyXlZVKcZ0mGqYCnlnZyl9iLEc85UcjjWyK1b7WVZI4j1nYkkoecRjDHyVU8GuNXnwTX89jhfjcgoXG63GaNMowf6vO93ilMqD0hYwVV7GeUlgpLsLojjtgjWZYbXPlHIhid1xAzHhMj8qH0+qYR9+7zui2niDRIlXZ2r8PWmLtNJajPGF9bDcqijUUVYbebCdULsI7dNF1Ol2S8T4QaAB1+8WXpDn0cAgDK0oExftfLUrhojXQXOg4qEbG25c2Sxe3fO6u/dY9G1Qu8Kta5Z5Po7NjJm/SZCYaPUvb8ZH3IQW89GWPGAysckoQ8+Z50QuS/vlmw=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4820.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WjNjcVFyZnNSdWM3UVZKZWdLWmwvVUtZR000OU0zMW5LY3hadlpzbjlUelYv?=
- =?utf-8?B?M1E5d1FrMS8vbDRZZnAzOFhzWjZteGhDL0oxWXJIcmR3azMzSnpyUlVuRzQw?=
- =?utf-8?B?K25xT1FhY3JxdjlyRUZvMDFlSVlORTdxMm9TbEZWaFVwdFRHQVd2WVNZck8v?=
- =?utf-8?B?NUNGbk9ibVdOaEUyT1QvazBCWjdDZVpQS21WOGxjWEhtTTlXVVVRT2lLeUxF?=
- =?utf-8?B?UnA4RmdXQkd2NHc2ZE90VkN5U0FDN0o3cnlCdktCYUlTckFIM29CdnZDR0hk?=
- =?utf-8?B?YVlhdHQ5Z0hNZDBZQVpUbTRkV1dLODdBZlh1aFRUT1p5bTBQbEs2VW0yY2xV?=
- =?utf-8?B?UFlWbXJHNlZsRGsrTFJjMHErZTNFc3FOcm9Mc2ZDbjBmUW1RODZBZENUQ3ZI?=
- =?utf-8?B?dmlWNUtnamZzZE9RTXh6M0JyV0ZnRm9TWFBWOWExUzBoZ0VLZVlkWnJPb0Fs?=
- =?utf-8?B?Uy8wQ2dDeDlvdFN4YXZTVldzcENJZWd3WkVVK0h2MEVIeWVxWlg5cTdmWTZP?=
- =?utf-8?B?Z1lXTGNmcjFPNllVdE1qazg5K3NCa3I3SHJ1Y0lTNnlVblJCT1F0cEEyZ3NI?=
- =?utf-8?B?TnFJUUp4LzR4bDhYVkY4aEQzWXZ2cFJoMlNSTzVpaXJKMWdFa2VOREhGTVg0?=
- =?utf-8?B?blUyTVU5Q0lhcExvbExnRzBxWUhzTkpMV0lTV29XSkN0R2FacncxZU1PZjlr?=
- =?utf-8?B?Z2ExVGhOcjRxSEN6OHZ5czFkTXRmc2ZPRVcwTGZMU1FqRkpLNHhYV0xXei9l?=
- =?utf-8?B?ZEFvWDErbnQ2cUlMSlkxSDVrYkxXclZLQXk1bThyVVl6c3ZtbjFUR2NLZTI5?=
- =?utf-8?B?TjNkRitlSHJYY3VvL3BVRlQxNFRtOGJsUThqeTM1NEZ5TjRVR2tmMVVBME00?=
- =?utf-8?B?OGY1YW5kUGNxYytIdUNtNXdKNU8wSGZJUGZSUzFialVtK0t6Q3dQdUhzVkpE?=
- =?utf-8?B?aFdGcUxnK0dJTXNpUUdDbW42N1hzd05qbW1TQ2Q5L01GQ0craTZ1dXc5ZWQy?=
- =?utf-8?B?dlJsdm9rZ2lCODJBZEdzelJRRzlhOVRhcG5PMHIyMzhnSHdzbkhaSkcreVdi?=
- =?utf-8?B?eEU5QTZRa0FnQ1FBQ24zVWtEV2NKZnpEd3QyVFdMM1NTdW5yaDZHSHNRT0Uy?=
- =?utf-8?B?eHhPLyt2UnJCdUswd1JST2dKNEliRmZTUkNpS0FVY0RKeUlRNmtuOUQzb1p1?=
- =?utf-8?B?eVFWQ1p0R2FLdVNlcUVSNEdydGtWd3VtbmtaUEF6MytWc21GSjJwcmR4dVpL?=
- =?utf-8?B?SWI3TUlpSld6dm9rZEViUFdmVEpzcHFhTjdRVU5mUW1QRnViR01QVFlweSti?=
- =?utf-8?B?ZEpJQ0k5WDNmdGs1cXo3M0ZXaEk0OHB4dStTbzdZWXV3b3phMmdySUZlaEh5?=
- =?utf-8?B?a2Q5eDZ3S08yV0lNaUZFRExLRnp5UTBueTVMbW5mWVpHZnl6Njk4STlpWDZR?=
- =?utf-8?B?Y2JQVDVSVHNPenltVlo3aU1jR3FDSFFGdXJGMmsraUZwbnQvUGtnbG5QS0xH?=
- =?utf-8?B?cHlJUjl3ejFvd3hwTkJQWEs4czFRV0x2Y3ErYk5kMmtzYUNJc2hQNXNQT25h?=
- =?utf-8?B?c04rVGh1QnIzeVlhVHdZMHJtN3B5NDU4Y0tzYzQ4Zk5wVC9ZS1RtS05WaFd4?=
- =?utf-8?B?bkRUSHNFcjZuMXUvMUs5TEdkNEZQM1pWRUNtcWMyc09xVlZNajRpNm9Pbzhj?=
- =?utf-8?B?bGJYNk43cUtPZFFMUkdmSExzSXpCZEZxUC9aZC9JZEhuTm0wRzg3ZFlmNzZ0?=
- =?utf-8?B?T1JoVzU3eENJNGdaQjRDbWMxNENLejNTbWpYWVBJZ00wemZjTCs0NDNGTXhX?=
- =?utf-8?B?VjFPZ1I0Qk9temFZQTAvRkdxaFlvalROM29yZ2RGcCtzYnJDRUNjbzlHK0Fi?=
- =?utf-8?B?eHRzeHFuUzAzUWNlTXI2Ly9DL0FSemRNa0lWTE5sUEIrdjYyUFYvMXJlakVM?=
- =?utf-8?B?bnE5cE54NzhVbUxqOGU2aE50L2IyNXc4eW44VFI5K2laYWZNc3plVTlXZm8v?=
- =?utf-8?B?Q1lMQVY0ZmJ3Zm9qK3g1N0c2YWxSTkRxTjhzMW1NRW5iL3JyOFE3RzlaODk4?=
- =?utf-8?B?SXR0TzBYVk9jYkRaZGZSZVIyYldiR283WTRvWFhpQkY2YndGeWowV1hDVG5o?=
- =?utf-8?B?dGUyYmVoZm5YbGpzUVVFVlcwMUJ0OUZmNHZqcTRXNDNTZWFTbitkcmJmeGI4?=
- =?utf-8?B?d1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bace1491-bbeb-4ba9-8586-08dc40cd27ba
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4820.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2024 06:41:46.1470
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WnvTE5oWi8sO7nm72pRfhvQNiZIz5WU4/d3R4L0agYGaE0GoZ/6QFsJ0I5+nseVPzo9N/00KSQ2C5OJOCFmJYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6399
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240303143408.sxrbd7pykmyhwu5f@joelS2.panther.com>
 
-Hi Matthew,
+Hi!
 
-On 3/8/2024 2:19 AM, Matthew Wilcox wrote:
->   		/* Align with smaller pages if needed */
->   		if (index & ((1UL << order) - 1))
->   			order = __ffs(index);
-> +		/* Avoid wrap */
-> +		if (index + (1UL << order) == 0)
-> +			order--;
->   		/* Don't allocate pages past EOF */
-> -		while (index + (1UL << order) - 1 > limit)
-> +		while (index + (1UL << order) - 1 > last)
-The lockup is related with this line. When index == (last + 1),
-deadloop here.
+On 2024-03-03 15:34:08+0100, Joel Granados wrote:
+> Just to be sure I'm following. This is V2 of "[PATCH] sysctl: treewide:
+> constify ctl_table_root::set_ownership". Right? I ask, because the
+> subject changes slightly.
 
+No, the v1 of this patch is linked in the patch log below.
+
+The patches for ::set_ownership and ::permissions are changing two
+different callbacks and both of them are needed.
+
+The v2 for set_ownership is here:
+https://lore.kernel.org/lkml/20240223-sysctl-const-ownership-v2-1-f9ba1795aaf2@weissschuh.net/
 
 Regards
-Yin, Fengwei
 
->   			order--;
+> 
+> Best
+> 
+> On Fri, Feb 23, 2024 at 04:52:16PM +0100, Thomas Weißschuh wrote:
+> > The permissions callback is not supposed to modify the ctl_table.
+> > Enforce this expectation via the typesystem.
+> > 
+> > The patch was created with the following coccinelle script:
+> > 
+> >   @@
+> >   identifier func, head, ctl;
+> >   @@
+> > 
+> >   int func(
+> >     struct ctl_table_header *head,
+> >   - struct ctl_table *ctl)
+> >   + const struct ctl_table *ctl)
+> >   { ... }
+> > 
+> > (insert_entry() from fs/proc/proc_sysctl.c is a false-positive)
+> > 
+> > The three changed locations were validated through manually inspection
+> > and compilation.
+> > 
+> > In addition a search for '.permissions =' was done over the full tree to
+> > look for places that were missed by coccinelle.
+> > None were found.
+> > 
+> > This change also is a step to put "struct ctl_table" into .rodata
+> > throughout the kernel.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> > To: Luis Chamberlain <mcgrof@kernel.org>
+> > To: Kees Cook <keescook@chromium.org>
+> > To: Joel Granados <j.granados@samsung.com>
+> > To: David S. Miller <davem@davemloft.net>
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > 
+> > Changes in v2:
+> > - flesh out commit messages
+> > - Integrate changes to set_ownership and ctl_table_args into a single
+> >   series
+> > - Link to v1: https://lore.kernel.org/r/20231226-sysctl-const-permissions-v1-1-5cd3c91f6299@weissschuh.net
+> > ---
+> > The patch is meant to be merged via the sysctl tree.
+> > 
+> > There is an upcoming series that will introduce a new implementation of
+> > .permission which would need to be adapted [0].
+> > The adaption would be trivial as the 'table' parameter also not modified
+> > there.
+> > 
+> > This change was originally part of the sysctl-const series [1].
+> > To slim down that series and reduce the message load on other
+> > maintainers to a minimumble, submit this patch on its own.
+> > 
+> > [0] https://lore.kernel.org/lkml/20240222160915.315255-1-aleksandr.mikhalitsyn@canonical.com/
+> > [1] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-2-7a5060b11447@weissschuh.net/
+> > ---
+> >  include/linux/sysctl.h | 2 +-
+> >  ipc/ipc_sysctl.c       | 2 +-
+> >  kernel/ucount.c        | 2 +-
+> >  net/sysctl_net.c       | 2 +-
+> >  4 files changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+> > index ee7d33b89e9e..0a55b5aade16 100644
+> > --- a/include/linux/sysctl.h
+> > +++ b/include/linux/sysctl.h
+> > @@ -207,7 +207,7 @@ struct ctl_table_root {
+> >  	void (*set_ownership)(struct ctl_table_header *head,
+> >  			      struct ctl_table *table,
+> >  			      kuid_t *uid, kgid_t *gid);
+> > -	int (*permissions)(struct ctl_table_header *head, struct ctl_table *table);
+> > +	int (*permissions)(struct ctl_table_header *head, const struct ctl_table *table);
+> >  };
+> >  
+> >  #define register_sysctl(path, table)	\
+> > diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+> > index 8c62e443f78b..b087787f608f 100644
+> > --- a/ipc/ipc_sysctl.c
+> > +++ b/ipc/ipc_sysctl.c
+> > @@ -190,7 +190,7 @@ static int set_is_seen(struct ctl_table_set *set)
+> >  	return &current->nsproxy->ipc_ns->ipc_set == set;
+> >  }
+> >  
+> > -static int ipc_permissions(struct ctl_table_header *head, struct ctl_table *table)
+> > +static int ipc_permissions(struct ctl_table_header *head, const struct ctl_table *table)
+> >  {
+> >  	int mode = table->mode;
+> >  
+> > diff --git a/kernel/ucount.c b/kernel/ucount.c
+> > index 4aa6166cb856..90300840256b 100644
+> > --- a/kernel/ucount.c
+> > +++ b/kernel/ucount.c
+> > @@ -38,7 +38,7 @@ static int set_is_seen(struct ctl_table_set *set)
+> >  }
+> >  
+> >  static int set_permissions(struct ctl_table_header *head,
+> > -				  struct ctl_table *table)
+> > +			   const struct ctl_table *table)
+> >  {
+> >  	struct user_namespace *user_ns =
+> >  		container_of(head->set, struct user_namespace, set);
+> > diff --git a/net/sysctl_net.c b/net/sysctl_net.c
+> > index 051ed5f6fc93..ba9a49de9600 100644
+> > --- a/net/sysctl_net.c
+> > +++ b/net/sysctl_net.c
+> > @@ -40,7 +40,7 @@ static int is_seen(struct ctl_table_set *set)
+> >  
+> >  /* Return standard mode bits for table entry. */
+> >  static int net_ctl_permissions(struct ctl_table_header *head,
+> > -			       struct ctl_table *table)
+> > +			       const struct ctl_table *table)
+> >  {
+> >  	struct net *net = container_of(head->set, struct net, sysctls);
+> >  
+> > 
+> > ---
+> > base-commit: ffd2cb6b718e189e7e2d5d0c19c25611f92e061a
+> > change-id: 20231226-sysctl-const-permissions-d7cfd02a7637
+> > 
+> > Best regards,
+> > -- 
+> > Thomas Weißschuh <linux@weissschuh.net>
+> > 
+> 
+> -- 
+> 
+> Joel Granados
+
+
 
