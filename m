@@ -1,94 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-14079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A73877737
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 14:58:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D848A877763
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 15:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD99281593
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 13:58:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845901F21B8D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 14:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C5E2D60F;
-	Sun, 10 Mar 2024 13:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035CA376E4;
+	Sun, 10 Mar 2024 14:59:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBC212B89
-	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Mar 2024 13:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6967E10EB;
+	Sun, 10 Mar 2024 14:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710079084; cv=none; b=geecU8t0/Wa0JB3PJP/h7sGcezaD6IW7kcvGQdteYX+xRiYRraWFDJnh3UPmkXH/jspZR4Bu/KmTyeUhhrzodt1gjcdnx7ivQJCjGnmMiHHy2WUeVftpl8NQMBmjRMXmHEE91qMP4n79qnwMY4Dy9u63tARy+jvxJtCfbPcr5uE=
+	t=1710082781; cv=none; b=PdBKr3zeGvyEv9z+GHi2FqaPEeAv56ly5iLGZ7QoLZp8ICvW/1TMQu6DwvJxXx5Muo1G3P7CIbgDbEF1biJUzAAu+sOSjiwAhY9l2S3AFZNSich3g+RPYEhL8VvkwRTwFD1p98xcTBomqQMTLW41u0zdTdPwMG7kcQUaoLX77/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710079084; c=relaxed/simple;
-	bh=JyzhFgbDOx6Af7bUiMEd5wkx93ZXqSufoFai6eWCL4Y=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=et1JoEGn1u6SvBNxFwJzpS/gpk3ccgOrMHPM+wYs9qz5TsEDXr4035LpvIopXDjTH+DI4SesHb2YfhNz1z1JOObXMIA9rJvuT9tnIC+5pgd2sQyttEKMajiO6F4CpAfCWWcpuBtanpdZeLf8eB0Tgunxxie3lhyol4EWfxz7G9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3663022a5bdso22594445ab.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Mar 2024 06:58:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710079082; x=1710683882;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E7Pfnp5j39cfC/fSqSZPc3kGFvrwJmOZXFYwh42T5KY=;
-        b=MZ9LfXjJ7XNacDDrJJD8JeOWJXdFclrNr2AZ/yjWP0mRYxyvdCyMJ6Wb8pj7hMxi9R
-         dFb9ah7Ih0sahEV5HY7Z448lpa0ay2uPKaPzQaMCTje8pYu4fgjQQUYsKj40syINYsPl
-         vUrx7+ZUodk1lHc3BZKIPrjoHCe+1xR0Hclvw6m5uT+mR5vX+a8H7RqWAA16HDKxHSa9
-         r/IsuzfhuUJpv0xC+qDZW069wOmUykGXJ19DKLfblPTzVyvAWpd4KNlCT+14/ttSySch
-         hjDHHTDMqVHTutixaktlOcsmq+4LArMMPRnjspBdVrpLWxNwqFGey+E/z7vkEq9JWN1C
-         gflA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuWVonQzQDDQ/xRVoawXevy0DkvSRH6aY1D1aRii7Mu0tXAJxoNV2tAQdSjR1r8ioaCsoZyWEc+5Pj1TAq6YDOmbmoOcNrIFYnQ/521g==
-X-Gm-Message-State: AOJu0Yzv2AqLqy8bUEM0nMhsRCHnLsM7m8bCZTOSt7PG8EDlX3tB7Km8
-	KEzoosiDqJ1YRWxN/4+iu71UCZyfi61LNgnRGOkoGyUMXTsMEQmD5IgcjlYjFNqrgdsOhDh4F3+
-	W6z4V2HpkBeufVFvXTXJmOyR9w5HncvKkMaT3CujvZpXFrYgnN5NAgZo=
-X-Google-Smtp-Source: AGHT+IExp4lwXhNhAd5/3buXSf98psR5D7lEbmBh/I8nG3rHvlv7l+v7cW1K/yhJZmdwAlLr/Tjob2ioIYNPPYX5UR/n1ISmSGkT
+	s=arc-20240116; t=1710082781; c=relaxed/simple;
+	bh=5ch0BcEoY4QFgsjAL51akk8/crXIPVwzpgp1vVyzJCY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=T7RILc/dam3fT+uYMudzs5XmsdOW8eFt78gU9+fGUSClcvibrL76zXE9lWgJmNU1iIBlaWtONrIyFP7bv75Ojsx64sSLAvix4d1wv0UpNL8VnVrj87212wIiuKUYGHz8KXSoBTXDfiWXjQpUK9x5Ej7L0ne+OnWoeuUiMt+IOJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id E3B61205DB9A;
+	Sun, 10 Mar 2024 23:59:36 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-1) with ESMTPS id 42AExZDr143133
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sun, 10 Mar 2024 23:59:36 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-1) with ESMTPS id 42AExZkw775659
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sun, 10 Mar 2024 23:59:35 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 42AExYfT775658;
+	Sun, 10 Mar 2024 23:59:34 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gwendal
+ Grignou <gwendal@chromium.org>, dlunev@chromium.org
+Subject: Re: [PATCH] fat: ignore .. subdir and always add a link to dirs
+In-Reply-To: <Ze2IAnSX7lr1fZML@quatroqueijos.cascardo.eti.br> (Thadeu Lima de
+	Souza Cascardo's message of "Sun, 10 Mar 2024 07:14:26 -0300")
+References: <87bk88oskz.fsf@mail.parknet.co.jp>
+	<Zdf8qPN5h74MzCQh@quatroqueijos.cascardo.eti.br>
+	<874jdzpov7.fsf@mail.parknet.co.jp>
+	<87zfvroa1c.fsf@mail.parknet.co.jp>
+	<ZdhsYAUCe9GVMnYE@quatroqueijos.cascardo.eti.br>
+	<87v86fnz2o.fsf@mail.parknet.co.jp>
+	<Zd6PdxOC8Gs+rX+j@quatroqueijos.cascardo.eti.br>
+	<87le75s1fg.fsf@mail.parknet.co.jp>
+	<Zd74fjlVJZic8UxI@quatroqueijos.cascardo.eti.br>
+	<87h6hek50l.fsf@mail.parknet.co.jp>
+	<Ze2IAnSX7lr1fZML@quatroqueijos.cascardo.eti.br>
+Date: Sun, 10 Mar 2024 23:59:34 +0900
+Message-ID: <87cys2jfop.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214c:b0:363:b9d6:1261 with SMTP id
- d12-20020a056e02214c00b00363b9d61261mr309014ilv.0.1710079082223; Sun, 10 Mar
- 2024 06:58:02 -0700 (PDT)
-Date: Sun, 10 Mar 2024 06:58:02 -0700
-In-Reply-To: <0000000000007898e505e9971783@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003becc106134ed015@google.com>
-Subject: Re: [syzbot] [jfs?] BUG: unable to handle kernel NULL pointer
- dereference in dtInsertEntry
-From: syzbot <syzbot+c853277dcbfa2182e9aa@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-syzbot suspects this issue was fixed by commit:
+Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+>> If we really want to accept this image, we have to change the fat driver
+>> without affecting good image.  And your patch affects to good image,
+>> because that patch doesn't count directory correctly, so bad link count.
+>> 
+>
+> Well, it does behave the same on a correct image. It ignores the existence of
+> ".." when counting subdirs, but always adds an extra link count.
+>
+> So, images that have both "." and ".." subdirs, will have the 2 links, both
+> with the patch and without the patch.
 
-    fs: Block writes to mounted block devices
+You are forgetting to count about normal dirs other than "." and ".."?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16cb0da6180000
-start commit:   a4d7d7011219 Merge tag 'spi-fix-v6.4-rc5' of git://git.ker..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
-dashboard link: https://syzkaller.appspot.com/bug?extid=c853277dcbfa2182e9aa
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15cc622d280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1762cf83280000
+Thanks.
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> Images with neither dirs will be rejected before the patch and have a link
+> count of 1 after the patch. Still, creating and removing subdirs will work.
+> Removing the bad dir itself also works.
+>
+> Images with only "." or only ".." would have a link count of 1 and be rejected
+> without the patch.
+>
+> With the patch, directories with only ".." should behave the same as if they
+> had neither subdirs. That is, link count of 1. And directories with only "."
+> will have a link count of 2.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
