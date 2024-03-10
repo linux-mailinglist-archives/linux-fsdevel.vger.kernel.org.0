@@ -1,94 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-14071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE408774DA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 03:05:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63BAF877532
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 04:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54BE1C209F9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 02:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5137E1C21147
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Mar 2024 02:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6061FB9;
-	Sun, 10 Mar 2024 02:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2482A11187;
+	Sun, 10 Mar 2024 02:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hevEjtdC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA8115AB
-	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Mar 2024 02:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA306F503;
+	Sun, 10 Mar 2024 02:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710036306; cv=none; b=Rwia3XKu7x4uV3EVK45+GadWgfslIHkc7t6EvlF869Rp3a13sL6vB2hwe5rNhfc45EP5J9tQd1cCsFk7w/jf2i6Cl69jSpFmq34xRhnQ7wSDA2gDoaFADjB+S4Tj5SJyaP+0oYJukrceRLZnEUO3SZllMMNkSN9DEscn/a0jCjk=
+	t=1710039591; cv=none; b=j+xdQ4heKaNKY2ZSyDzKVra+VJE4EqlK4pKrrMSoHCdo5HRh6IJx1IxyqDHZ/8FvDxf/h78k8xNNN3hArrMwGHl1ESNJzUXY6sooGd9x6Ygl9T6rnul3FKe2NCLXufPGLLnwvx2r07e3emPBNPmhaqdhF+/mcPDU1RLPkwOyB5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710036306; c=relaxed/simple;
-	bh=AB9oIgX15HDPukZy2QrbAYWK+ICd94A+UY4Tldqk2xs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qSR/vJwHZmWrMger+0iDsGEPT5iRUaMahm4nMWM0BxWQfKfiCKPjC5y+qcM1lDbATQkGyhcAgdE838Hz+AnCz6pq6D72u/Pmp/PNHaO7/4kxGhRJrEe0J4YD7xOnmHiqIvveUA8p49Q4xXsUF8ExTMj9fXeTEPhHriB5ur9t6V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c874fb29a3so328109339f.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Mar 2024 18:05:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710036304; x=1710641104;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eAtcZ0jcmff76E8g+uUmd6ptddX0gjsk2MQCSo48DN0=;
-        b=S/f1WaeEktNLzU/p7yBSdIGiYB6ppUpB+GXI6YvyE3AOdrbQE2p6HkhiE8NPApIq03
-         baMOKyJ6JPPynGNh4OxSEQZ1mcxR/3fQyzWV+1JYeEsxFxiJgbU1/trQu3QM8eqehANE
-         qrhpyV3D2LUUYQCQkauw3G62Irenz6YY7kZGZNs+rfIruVzhhK7UcQ1UAwsdelBqugll
-         Kx/WuNFxx6yaU15jB721DGfwBZKh7VZGFmJtWxOQZYOB0JCQ+b1TfA6UcXkOJyQbYmSJ
-         WMNYzpNfSr0ASOmAL1dVI8UKSXwYpteMzMxqi1cMW7NU6dJuO5+9qcyo3uLLi7iN0rGn
-         4DhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWA6wAXv1PVkwx45k7G5I4mj9AOZM7LTiclxrBDMbVP6P7HferweMj228P5GMTH9jEGbDgKDlwN5QqgkoYVnUYoYcKAbdhDUVvkgAftOA==
-X-Gm-Message-State: AOJu0YzfTHubUjKef/UMSC0xZ5oQAfDy5Dr2FniP3arUF4RWZLgkoXGj
-	coU9T14/5iRFSg/okAYJ0xRzxiPU+fCQLHA70aAAF5tyVcCZBIyO5/nY9Ko/lRvdTb4QI2R/Nhn
-	7UJYaewxenQw8aYgQhODY5uK1F5HPd6TNxeEkuoPL8T1Bux5a40psyvw=
-X-Google-Smtp-Source: AGHT+IE6e/IIewGxQAV4bqB6X0atmmjTjDjRrTeEujE/9OhtcHQe4bLNbPc1G6ogefC3EoR0pjUbedvrrFrSIyeg1cQ727HyyOZJ
+	s=arc-20240116; t=1710039591; c=relaxed/simple;
+	bh=GfXW4C6GlijK82l5vOoVk6CS8xy/zjIX2B+QiJxYiv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DIx7thEx9dJ9wyAJfJK+Hcl5oDsB1eWqUioR1aubbJyis/MPJk68knxkhTcBkLJBweA8Q/0CEUSE4o40/g5NuFvxBKX4tzbyec0TKVckHPo8GSHzkj5LKyfA25JFKYs7tmvp5sI80di3++pAGEhwBHrVada+m3uLXzp5qGQ5hV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hevEjtdC; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1710039589; x=1741575589;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GfXW4C6GlijK82l5vOoVk6CS8xy/zjIX2B+QiJxYiv4=;
+  b=hevEjtdCJBvIuveH/5x50LH5PrXLfOFhU9x4PDE9yAJYYHYNXoBdfU3T
+   PUD2m4hQki75dSpKLK8AMWHUIoPNLVcvQ0YckOkceS6dTKxrE6p8CVD5l
+   M/CSitwOtaSM65sHxzb3HyKWYA61Q7h5RjtldcFaAiVYu3qO4pz3Jb7oc
+   VHUL7p6Y2zY4a45LgEKbHDvRFOti/lx3IvmrzUv7h1XnGkkZb63uqMMxC
+   dNjO9tApfS+Dgb01+ia9/lAQDGIj7UAn3Ac9/zd599MAfhBEFTaO5U89P
+   gqtB3Je3D4B4kXq6h6m1Q7NXo0s19SZcv05NkQn1tJ+I3wkgC0jq9A3A6
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11008"; a="4652779"
+X-IronPort-AV: E=Sophos;i="6.07,113,1708416000"; 
+   d="scan'208";a="4652779"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2024 18:59:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,113,1708416000"; 
+   d="scan'208";a="10922168"
+Received: from leihuan1-mobl.amr.corp.intel.com (HELO [10.0.2.15]) ([10.124.0.187])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2024 18:59:48 -0800
+Message-ID: <0fcdb6bc-68e6-639b-4710-7aaadda62ae1@linux.intel.com>
+Date: Sat, 9 Mar 2024 21:59:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2dc5:b0:7c8:b219:4547 with SMTP id
- l5-20020a0566022dc500b007c8b2194547mr3316iow.2.1710036304535; Sat, 09 Mar
- 2024 18:05:04 -0800 (PST)
-Date: Sat, 09 Mar 2024 18:05:04 -0800
-In-Reply-To: <0000000000002a6cba05eb5c7fbd@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007c3484061344da08@google.com>
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in map_mft_record
-From: syzbot <syzbot+cb1fdea540b46f0ce394@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
-	axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v1] fs/fuse: Fix missing FOLL_PIN for direct-io
+To: Miklos Szeredi <miklos@szeredi.hu>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <1693334193-7733-1-git-send-email-lei.huang@linux.intel.com>
+ <CAJfpegtX_XAHhHS4XN1-=cOHy0ZUSxuA_OQO5tdujLVJdE1EdQ@mail.gmail.com>
+ <a77853da-31e3-4a7c-9e1c-580a8136c3bf@fastmail.fm>
+ <CAJfpeguuRXO01hdmEr5ffMUNDyp5VPTYToOENjacYNAd1nu6Rw@mail.gmail.com>
+Content-Language: en-US
+From: Lei Huang <lei.huang@linux.intel.com>
+In-Reply-To: <CAJfpeguuRXO01hdmEr5ffMUNDyp5VPTYToOENjacYNAd1nu6Rw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+Thank you very much, Miklos!
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Yes. It is not easy to reproduce the issues in real applications. We 
+only observed the issue in our own testing tool which runs multiple 
+tests concurrently. We have not been able reproduce it with simple code yet.
 
-    fs: Block writes to mounted block devices
+-lei
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12b28b99180000
-start commit:   e4cf7c25bae5 Merge tag 'kbuild-fixes-v6.2' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=68e0be42c8ee4bb4
-dashboard link: https://syzkaller.appspot.com/bug?extid=cb1fdea540b46f0ce394
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151db82a480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10f0e670480000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On 3/6/24 07:05, Miklos Szeredi wrote:
+> On Wed, 6 Mar 2024 at 12:16, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>>
+>>
+>>
+>> On 3/6/24 11:01, Miklos Szeredi wrote:
+>>> On Tue, 29 Aug 2023 at 20:37, Lei Huang <lei.huang@linux.intel.com> wrote:
+>>>>
+>>>> Our user space filesystem relies on fuse to provide POSIX interface.
+>>>> In our test, a known string is written into a file and the content
+>>>> is read back later to verify correct data returned. We observed wrong
+>>>> data returned in read buffer in rare cases although correct data are
+>>>> stored in our filesystem.
+>>>>
+>>>> Fuse kernel module calls iov_iter_get_pages2() to get the physical
+>>>> pages of the user-space read buffer passed in read(). The pages are
+>>>> not pinned to avoid page migration. When page migration occurs, the
+>>>> consequence are two-folds.
+>>>>
+>>>> 1) Applications do not receive correct data in read buffer.
+>>>> 2) fuse kernel writes data into a wrong place.
+>>>>
+>>>> Using iov_iter_extract_pages() to pin pages fixes the issue in our
+>>>> test.
+>>>>
+>>>> An auxiliary variable "struct page **pt_pages" is used in the patch
+>>>> to prepare the 2nd parameter for iov_iter_extract_pages() since
+>>>> iov_iter_get_pages2() uses a different type for the 2nd parameter.
+>>>>
+>>>> Signed-off-by: Lei Huang <lei.huang@linux.intel.com>
+>>>
+>>> Applied, with a modification to only unpin if
+>>> iov_iter_extract_will_pin() returns true.
+>>
+>> Hi Miklos,
+>>
+>> do you have an idea if this needs to be back ported and to which kernel
+>> version?
+>> I had tried to reproduce data corruption with 4.18 - Lei wrote that he
+>> could see issues with older kernels as well, but I never managed to
+>> trigger anything on 4.18-RHEL. Typically I use ql-fstest
+>> (https://github.com/bsbernd/ql-fstest) and even added random DIO as an
+>> option - nothing report with weeks of run time. I could try again with
+>> more recent kernels that have folios.
+> 
+> I don't think that corruption will happen in real life.  So I'm not
+> sure we need to bother with backporting, and definitely not before
+> when the infrastructure was introduced.
+> 
+> Thanks,
+> Miklos
 
