@@ -1,205 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-14109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A91877B7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 08:55:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53542877B8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 09:12:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8CB1F21865
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 07:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089262822F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 08:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2771111AA;
-	Mon, 11 Mar 2024 07:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23B211711;
+	Mon, 11 Mar 2024 08:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Nl2U+CFZ";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="e7545sbr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C71F1C33;
-	Mon, 11 Mar 2024 07:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710143738; cv=none; b=TyESY5/3Gdc4xdXC//ilmlY9HnDz3AAtqh1i8EjBwGqs9wbI+HUkB9sGNE+5Q6n97+RPeQLXgHg7xCKSqb0K939Wii0JNyW+QeiBdOA4QrYsNfbOFYdhoMFCy+KDIv2P9fM9VgTiG4GO6ooCb++3QXTRoViWm9/84eVBJl6xXyU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710143738; c=relaxed/simple;
-	bh=/qk/PxlGm1WvdPUtKgJrgC5mcmmOT+1hrUu8hH8Vgts=;
-	h=Subject:From:To:CC:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=E4Z2PE1wAv1syUwA6UzdbbR61zS5RVPoXYm97MSlm0bPbm8ecOWPORlxl4I1qzg5Ii3OrI2qCFOrb24vQiBsLoZPB7ChZzHfDl+aG5R9+Q+8TEAAI+SsxQn0gCS7iI3QoAVQ8GplGnLWLISUiQXNv3zjtNR9C4bTcnU90reCR3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4TtTXf6503z1h1v9;
-	Mon, 11 Mar 2024 15:53:06 +0800 (CST)
-Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1043B1402E1;
-	Mon, 11 Mar 2024 15:55:32 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm600013.china.huawei.com (7.193.23.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 11 Mar 2024 15:55:31 +0800
-Subject: Re: [PATCH RFC 1/2] iomap: Add a IOMAP_DIO_MAY_INLINE_COMP flag
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-To: Dave Chinner <david@fromorbit.com>
-CC: <brauner@kernel.org>, <djwong@kernel.org>, <jack@suse.cz>,
-	<tytso@mit.edu>, <linux-xfs@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-ext4@vger.kernel.org>, <yi.zhang@huawei.com>
-References: <20240229113849.2222577-1-chengzhihao1@huawei.com>
- <20240229113849.2222577-2-chengzhihao1@huawei.com>
- <ZeEkFUCUQ4eR7AlX@dread.disaster.area>
- <3de3ede5-31e0-2b7b-f523-9fd22090401f@huawei.com>
-Message-ID: <8263025e-15e6-fbc7-2826-f6f9ac3d9043@huawei.com>
-Date: Mon, 11 Mar 2024 15:55:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D2C12B8D;
+	Mon, 11 Mar 2024 08:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.154.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710144765; cv=fail; b=jw/eS/UFv1tluY/7dY/OyzIgSfZ5bdYgz7XZXJ5mI1SQTunio/WRlYjNvnky2ATlwUeXVRjCeCz65hPSvnZxypfw9dPKK6nMieSflYWrdxUou08G5mNu8P7WGW+ctzmgI22zIw2sF+L4qgk09euNNu6M8Adi+F1gQl8fEWU8aow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710144765; c=relaxed/simple;
+	bh=Pa4mWPM5xGeEb+426mKJO+Tw23sS2KqlELMjyIdxB9I=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LWstkUCJMxf0WW0NAmKXf7MBrCxiVAcKsstMTEwqnav36UyuWmcRLussycPGgdu0/aJc6q51pZKB7iQbBNPKlxe/hBn58mrvxS+ZRQg6ZhqncHb5sOVIt6akD2W1rm7UbfzF7nydyqMOTZk1pjLmF71JAmn6hdZf058ezpPCHRw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=Nl2U+CFZ; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=e7545sbr; arc=fail smtp.client-ip=216.71.154.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1710144763; x=1741680763;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=Pa4mWPM5xGeEb+426mKJO+Tw23sS2KqlELMjyIdxB9I=;
+  b=Nl2U+CFZF+3qAgG0HgPqJfuOBsM+5Oa/mqtxa0WKLy/LU6D9y7UnRaPQ
+   2AvzptScSWE25QvBI1SfRHU/tmrkbaToCtyMUsvRQRMkwjSKOgbBXK6kr
+   ptOk43S60CHncdsshEHUFNUGcxHiir2FPaKX3l+BAXAzrZpwrLLUwiI0S
+   qZMzqE37zlMJFZyYw5dHdf2Tk80FPR//b4lQ4Mew0JiWoNi7QVKzVByHY
+   f5dPCRmpoDumtdttMM8A9uk8WtfqdLi44B+tb06IZsp/SoT8RvNP1/gPZ
+   X9bnQnFjVpOkZzcpkXF3xK9sq7p1JNpkgVuSpamEFvN7wPdYaw4BSVoO2
+   A==;
+X-CSE-ConnectionGUID: Jn48NFH3SsOpPBxAHfJEQQ==
+X-CSE-MsgGUID: Vxq4j1avTkeieudgT1X9HQ==
+X-IronPort-AV: E=Sophos;i="6.07,116,1708358400"; 
+   d="scan'208";a="10806332"
+Received: from mail-mw2nam10lp2100.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.100])
+  by ob1.hgst.iphmx.com with ESMTP; 11 Mar 2024 16:12:35 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KvAYmwqQah0vvVnm0VKgZEsA6U6uH5/m0g6SFCaMnsLWsO49Cty5k7aGMPx7HDFJLDLd6gKzR0b9ZvhU5k3z72wsliSP0hkYqBHGeAGc54WbzANt968zndP7UPjJ+8pHM4OS64ZEDWBlWPr4e/dNzTny7LGClXTeWBGk+vcK04O+QY5x/hFKXnj5Pq0ZpT/VoQP1FhuyBIZdNuEwW+TVQMNE5cGnaniN4W8FY3R+MLUDQ7xxoDFv4e6tmd/TRTqKdn8F0f791BkOWLElz2BBLz7DPArndmq21fs2eB+H4BmWlOJ4iUN+QG4iYZFC6Y6GH6c+oxTVxmenVDrLWeLUdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Pa4mWPM5xGeEb+426mKJO+Tw23sS2KqlELMjyIdxB9I=;
+ b=ZqkSaB79s0mi+H7e7/zZUNfnxVssXE6B6a8BSLoSGi/s09vOhDGtjN2rBG7y5LILenasbrWwHvTXwBEQBlgrDl1GQKptPaAHmepCTtVZzDl2+AqxcvNUlMPpFEEL3jvbUigICcJRvIu4dtv6bogxdWV1HT+0+nOMr9YvoYPMO0Qa09nE/aoA/PoPKPMOTsmisHrQoluDH9kBWJnLdIZbOIoRQCT41oa12JL0CdVX3tQwC5UR/KKOYDfYRkoefu5HJDBj6FJ/Znq1OJmE8S5fcEJ5j+Sb1W4PaguMm7o6pRMHWAfAjYPBQAKi9h4Y1RxpcsQnXvbf6B5eSNM5hZyBXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Pa4mWPM5xGeEb+426mKJO+Tw23sS2KqlELMjyIdxB9I=;
+ b=e7545sbrswtRaGBdY3xn56+XYC+Iew+gPmz8Gyx8LTYObWevUAIkKdYgI2a4d0tUv5/5nRvVfOOraNr8d2RYv38KSXOv1j+/Mq0jDycY0O57y0tqt7oS9iq+DcrHPfus9OxlFJ8n9D2RFfdJml3j6weovLBUymxBYQ7z/ZAWv3U=
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
+ by SA0PR04MB7450.namprd04.prod.outlook.com (2603:10b6:806:d9::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.35; Mon, 11 Mar
+ 2024 08:12:33 +0000
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::a814:67f1:24ab:508e]) by PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::a814:67f1:24ab:508e%7]) with mapi id 15.20.7362.035; Mon, 11 Mar 2024
+ 08:12:33 +0000
+From: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Josef Bacik
+	<josef@toxicpanda.com>, Miklos Szeredi <mszeredi@redhat.com>, Christian
+ Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v2] statx: stx_subvol
+Thread-Topic: [PATCH v2] statx: stx_subvol
+Thread-Index: AQHacQB7a0OzBoIW0EyYceG+9ps3fLEyNboA
+Date: Mon, 11 Mar 2024 08:12:33 +0000
+Message-ID: <2f598709-fccb-4364-bf15-f9c171b440aa@wdc.com>
+References: <20240308022914.196982-1-kent.overstreet@linux.dev>
+In-Reply-To: <20240308022914.196982-1-kent.overstreet@linux.dev>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|SA0PR04MB7450:EE_
+x-ms-office365-filtering-correlation-id: 565d7f92-9763-4950-859e-08dc41a3011c
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ lwGexL7GTiTjjyIdljOoQuciJTIonYMfiwnK57OZWo4Wxl1INfMGVB7759gQxhrOl+mxCBGxr1nRHyXC9hqhGsFYFyxP/yNnNYDLqYUEMkxY5vGAiT37vCLBq/VPaPE937d/yxNy+mqSIyacVi9K2CB1otNaHmTcDBIEjUYI6Hwt6LiHaYYJucAUtSCb8ezIARBnpz9gSNCOxs1+97JauRL5B3LXlSY+VJ7UM3f5f/GT11neokG/sj9hQzNV/Tqoz+VitXLMir04JZH+zNbZgCQrm0eHnjHsN02R277JiAhrI4rXe33MJiWv2DV2t+ZX8AHIm1RNJMmTe3S7jt5Bqs25/JB1JyS5eZIjtxRh1l05z14JRFwftApo5Pl4bNMphg/ylBn847IiAU5Y3kAk6q421sGExWF2BIOMsO6llxZe+QBsCvjyMYhFdS7T94O/geAR53dVVYnri9y9KJvRsGjuLC+ZJG6nEEmij3+t106iu2aSEbH9nNtZ0PjUin82QbYzm5PchMfFaVIKHeAjyAE8Iix7P89yT37Uk2Zd0FFPCW60mudhE5SkW+zUeloolXvB+472esOMX12tlozuviVxsS0sv0IwOnUD6QurZZhW6f1UVxDVWd7MYMPKpUv5SujuFB57tu/DETnbEMYP94y7LDnsvaN454L3XYvAonOtOee8SUvLzFhdJv9Y2yjq+XQ0/sqmf9z2jCI+1YctNRF1c5qc8APFedBk191ilmw=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TWxuVFJCckNtOXR2N3N1SUxRcFFMcEdqa0RqbjN3cGNKTUsyNUR4RTBEcUxi?=
+ =?utf-8?B?SndjSHE4b2E3Q0wybUpBdGx5ZmpqKzlsT09lODlLVXFxbjdjUWJCWHlUNkY2?=
+ =?utf-8?B?SlE3RExVRzNQN25CdUh2MUtaTjhJTmkrUFlHemwzRjg2cVVYRERCYlRtM01D?=
+ =?utf-8?B?bGxnVmE5NFZUUEhMcXpPOUJoUTV5aFBDNnhZSzNvY05MVW9ucFlSVWhUSk91?=
+ =?utf-8?B?cXJDWnprYW9zNU9UL3BWb0JSUktjTkRLNDBjTE55a2JTdmVsSWp5Ky9oWXhG?=
+ =?utf-8?B?Qnp2eUliTWFMN3lGU0w0VExHa0NNUllnNGl5ZWY5bzdRdEFxaVVPSUxzMnQ0?=
+ =?utf-8?B?TjhYSzJNam1mYW5sU0RUNVh4Y1M3UkhSTFBFd3F6KzdtOTZEaHpQenpwN0ph?=
+ =?utf-8?B?d3hIK04yRTFnMXBHMHVXbzhEV2NOeVBVMkRSS05Ba1BNUUNyYjhsMTkyMUhu?=
+ =?utf-8?B?SWQ1aTZKV3RNdGFUTzJLSkozNUtQWU5YRVRubGd2aUZYSDY1M1ViY01YbGVJ?=
+ =?utf-8?B?WWkrdDd5Z0RuOXdVeEsvK1cxazNFVldWNmhpbkNPUi9mR2dMRVkxM3hxSGpG?=
+ =?utf-8?B?V3FxQyttTGZjbTdSQWlveVBKa3pOV09rMWY4MERqNW9rQ0d2ekx5UU5YQ0hL?=
+ =?utf-8?B?NUdSbW9tdldETTQ1MW9pK3huWUh0bjRBckpoTW9aMFlVMUtaNXF4d1ExOTRR?=
+ =?utf-8?B?MTFKOGVKQTA2L2UvOEVDeDF3dU5uWTBCWlF6bG9DbE9pZUlzWkFxK0cwY1B4?=
+ =?utf-8?B?cVF0UmYyam50WHpuY1Y1WlRsMnU1QnMrbmRZSjRzUjhxa3VvYmFzbTRFMmdv?=
+ =?utf-8?B?eWo4ZVZZOFgycFB2WUtlU0VDMFgwUldWN003S2dhUG1jQ082Zm9xZlR6TzRV?=
+ =?utf-8?B?eTdEREdIemlmWUk5S2hkaXQwV21ORm1QZFk1eTQwQ2drSmI2MUIxQXhUQnhx?=
+ =?utf-8?B?Vm1pTjlGd2owSW45dTNKeDFIc3FlYU9GU096QldrZCt3Rzg3V1k3WVBMVVo1?=
+ =?utf-8?B?VWVJWGdVb2tvN0VNSm9GOFBnTnZoQVQ4d3hKS2Z1R3o4QlVFcW1WNkpObllM?=
+ =?utf-8?B?YUZVaER2MW02VmxOU29FVDUxRjlzYkJqa3pKbVpxajkvOHBqN0xoc1lJaUZs?=
+ =?utf-8?B?bDUySnNHWmlqbDBZUUVOakJNdXg2alYrTXQ5RXo5N2l4RHF0NUFaM3FtWThN?=
+ =?utf-8?B?SnhGb0M3ZFoyaysrYUhzZXJWeGlxVm5qOUZjZ1JjN25LazRidUFLU3R4UVA5?=
+ =?utf-8?B?czF4R3N0ZWlUOU9PeGQxVTJNa0xmMzJRTVNnVkZqd1lxakxTSmdxdUJUaDQx?=
+ =?utf-8?B?MW1tS2RTR2tOVEFlQUJRNWw4NmRCTWx0cG5qUVZmemwvNHllZzRWSVMvN2RJ?=
+ =?utf-8?B?WWR1d094WHVjK2JLU2VIS2ovRjJ3cEczWnczYjByQlVENmlab1lPTUFiOUJQ?=
+ =?utf-8?B?Wmx5Vm9MTFd5Z2ZMZGphUkNQUkVwWWFTZ0xkMXd5Y2ErTHBWWW9BOCtOTExS?=
+ =?utf-8?B?Q3oyd2ZZWmcyYXdrOFFWL2d5VVQ5OU1IZ0ZZb3JySC9LMDlUODZqMWx6SVRI?=
+ =?utf-8?B?cWczd2NpeXRiWXh6bG5DeWJYb2hrWSs0Ry9aMUxoK2dxdlBHSDljaHhwSDU2?=
+ =?utf-8?B?K1hNUHphVXBOYVEybnUxSjN4Q0FOeVQ5ZDRWT2sza2RpNkhhN09xV3I0RXIx?=
+ =?utf-8?B?R0s4ZCtseTd5VnUraHBLM1VkQ3E0K3JzQ0ErTm5UMW5TS0VSUWlQZ0wvWXll?=
+ =?utf-8?B?OTd0bEJaYXJRS3Q4c2NSWDZQUUJDRDJTZ3BkNmE1cFl2NGZWWVZRejM1d2x3?=
+ =?utf-8?B?cEhEVTl4N3FkemNPTkVxNy9GN25VL2EzcG1KMkl6UFRnRGNqMnlsMUROWVli?=
+ =?utf-8?B?L3N2UGs4Z0ZON0h0aHZ1YUxYODdLeVNhM1A1WVdtek5PRk5pNlJvSWt3enpr?=
+ =?utf-8?B?c2hVZDFlcEVNZVBjTzdibXI1cXVGY3U0ek93MlJvekR6Rm8zRW1BTFpJcThz?=
+ =?utf-8?B?RGxxeUE4THg2RGlZVHp6S215MHBKZElZQkdCTHlITXNIdno0VWlQUlpPUzBX?=
+ =?utf-8?B?UWdYM0VRYVBSNmoxQVcrY1VDMngveGdOSVRPQjgvRnRiY0d1anBEMmF1NGxy?=
+ =?utf-8?B?SEZXT3JkUnlIclIrNFhzRFNSbXhRM1lxcXZXbndjN0EydUhVNi82eHlLMXdS?=
+ =?utf-8?B?Vnc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FCF1A465172C4A4EB42FD170C7C55BC3@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <3de3ede5-31e0-2b7b-f523-9fd22090401f@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600013.china.huawei.com (7.193.23.68)
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	kRlsrMsusrUZUt/bQdUvslGcR8xQLROK1xcgOO+XVXB1nkxACnPKdZKK0hqtJNLiwKT2potaZJvJBAAkvu0Ccj7wri0jUuB0/A7wfBuP7KXz8YygsRSVh5QTpjKvB7Q32AQS7I5SazeiqIKlEk771dOOabOaW8QRrD1XD2PAnukYAzEQs9jON7XUXOpblm6bVvEw6af6ZS4egp8OFM1JPeEQ7gnCrefvfbpdvo92XtEvYw689lcC/JIvZC4MuM5/MZaUJfxgGjEnlnkNZ1ySrvU043s9FvXU/neHOtfvv5VtAeAidLmWdzgHS7itcNyWiCeYpkvYHVBi+ynz8LHXt3p6t7ThTjFr9WXZKj1udKXOTaMykdkQbL5k3A52nYmAvumE/R57B7blb+TpsAiip3mUcDNit6XNW/EzDxdvi0fm18ChalIEVuHHsr+ds0rxUZWD9+nprtuE/sUOSBz8oJeWCCi6jvc69IUkid2GZ4gGqFZ/xWl5FnVwxwnH/QWwmgwmswHdgLWdurhn3JinqZ+w6DEUAdngjcurz4/XaGrrMCuNFwdCJVptJzi8hMR066hxr7kw/nKpcb5cFMyxkwsBVqZ5yFB1PfZQLRHOmU+kUjapRAG9FG7e2Z9ClxsQ
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 565d7f92-9763-4950-859e-08dc41a3011c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2024 08:12:33.3430
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wDAg9FLRsIHoOdJbawczmGqClAbJ2bSvfc+a6aSkT7YkdFnjdq/jIYnsPMFxbC1LuLxjSt6rWxGkmtuq2urUtZMyQqAh5GR46+zwORlg9dI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR04MB7450
 
-在 2024/3/1 18:02, Zhihao Cheng 写道:
-> 在 2024/3/1 8:40, Dave Chinner 写道:
-> 
-Hi Dave. Friendly ping.
-> Hi Dave, thanks for your detailed and nice suggestions, I have a few 
-> questions below.
->> On Thu, Feb 29, 2024 at 07:38:48PM +0800, Zhihao Cheng wrote:
->>> It will be more efficient to execute quick endio process(eg. non-sync
->>> overwriting case) under irq process rather than starting a worker to
->>> do it.
->>> Add a flag to control DIO to be finished inline(under irq context), 
->>> which
->>> can be used for non-sync overwriting case.
->>> Besides, skip invalidating pages if DIO is finished inline, which will
->>> keep the same logic with dio_bio_end_aio in non-sync overwriting case.
->>>
->>> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
->>
->> A nice idea, but I don't think an ext4 specific API flag is the
->> right way to go about enabling this. The iomap dio code knows if
->> the write is pure overwrite already - we have the IOMAP_F_DIRTY flag
->> for that, and we combine this with IOMAP_DIO_WRITE_THROUGH to do the
->> pure overwrite FUA optimisations.
->>
->> That is:
->>
->>         /*
->>                   * Use a FUA write if we need datasync semantics, 
->> this is a pure
->>                   * data IO that doesn't require any metadata updates 
->> (including
->>                   * after IO completion such as unwritten extent 
->> conversion) and
->>                   * the underlying device either supports FUA or 
->> doesn't have
->>                   * a volatile write cache. This allows us to avoid 
->> cache flushes
->>                   * on IO completion. If we can't use writethrough and 
->> need to
->>                   * sync, disable in-task completions as dio 
->> completion will
->>                   * need to call generic_write_sync() which will do a 
->> blocking
->>                   * fsync / cache flush call.
->>                   */
->>                  if (!(iomap->flags & (IOMAP_F_SHARED|IOMAP_F_DIRTY)) &&
->>                      (dio->flags & IOMAP_DIO_WRITE_THROUGH) &&
->>                      (bdev_fua(iomap->bdev) || 
->> !bdev_write_cache(iomap->bdev)))
->>                          use_fua = true;
->>
->> Hence if we want to optimise pure overwrites that have no data sync
->> requirements, we already have the detection and triggers in place to
->> do this. We just need to change the way we set up the IO flags to
->> allow write-through (i.e. non-blocking IO completions) to use inline
->> completions.
->>
->> In __iomap_dio_rw():
->>
->> +    /* Always try to complete inline. */
->> +    dio->flags |= IOMAP_DIO_INLINE_COMP;
->>     if (iov_iter_rw(iter) == READ) {
->> -               /* reads can always complete inline */
->> -               dio->flags |= IOMAP_DIO_INLINE_COMP;
->> ....
->>
->>     } else {
->> +        /* Always try write-through semantics. If we can't
->> +         * use writethough, it will be disabled along with
->> +         * IOMAP_DIO_INLINE_COMP before dio completion is run
->> +         * so it can be deferred to a task completion context
->> +         * appropriately.
->> +         */
->> +               dio->flags |= IOMAP_DIO_WRITE | IOMAP_DIO_WRITE_THROUGH;
-> 
-> There is a behavior change here, if we set IOMAP_DIO_WRITE_THROUGH 
-> unconditionally, non-datasync IO will be set with REQ_FUA, which means 
-> that device will flush writecache for each IO, will it affect the 
-> performance in non-sync dio case?
->>         iomi.flags |= IOMAP_WRITE;
->> -               dio->flags |= IOMAP_DIO_WRITE;
->> .....
->>         /* for data sync or sync, we need sync completion processing */
->>                  if (iocb_is_dsync(iocb)) {
->>                          dio->flags |= IOMAP_DIO_NEED_SYNC;
->>
->> -                      /*
->> -                       * For datasync only writes, we optimistically 
->> try using
->> -                       * WRITE_THROUGH for this IO. This flag 
->> requires either
->> -                       * FUA writes through the device's write cache, 
->> or a
->> -                       * normal write to a device without a volatile 
->> write
->> -                       * cache. For the former, Any non-FUA write 
->> that occurs
->> -                       * will clear this flag, hence we know before 
->> completion
->> -                       * whether a cache flush is necessary.
->> -                       */
->> -                       if (!(iocb->ki_flags & IOCB_SYNC))
->> -                               dio->flags |= IOMAP_DIO_WRITE_THROUGH;
->> +            * For sync writes we know we are going to need
->> +            * blocking completion processing, so turn off
->> +            * writethrough now.
->> +            */
->>             if (iocb->ki_flags & IOCB_SYNC) {
->>                 dio->flags &= ~(IOMAP_DIO_WRITE_THROUGH |
->>                         IOMAP_DIO_INLINE_COMP);
->>             }
->>                  }
->>
-> 
-> [...]
->>
->> However, this does mean that any spinlock taken in the ->end_io()
->> callbacks now needs to be irq safe. e.g. in xfs_dio_write_end_io()
->> the spinlock protection around inode size updates will need to use
->> an irq safe locking, as will the locking in the DIO submission path
->> that it serialises against in xfs_file_write_checks(). That probably
->> is best implemented as a separate spinlock.
->>
->> There will also be other filesystems that need to set IOMAP_F_DIRTY
->> unconditionally (e.g. zonefs) because they always take blocking
->> locks in their ->end_io callbacks and so must always run in task
->> context...
-> Should we add a new flag(eg. IOMAP_F_ENDIO_IRQ ?) to indicate that the 
-> endio cannot be done under irq? Because I think IOMAP_F_DIRTY means that 
-> the metadata needs to be written, if we add a new semantics(endio must 
-> be done in defered work) for this flag, the code will looks a little 
-> complicated.
-> 
-> 
-> .
-
+T24gMDguMDMuMjQgMDM6MjksIEtlbnQgT3ZlcnN0cmVldCB3cm90ZToNCj4gQWRkIGEgbmV3IHN0
+YXR4IGZpZWxkIGZvciAoc3ViKXZvbHVtZSBpZGVudGlmaWVycywgYXMgaW1wbGVtZW50ZWQgYnkN
+Cj4gYnRyZnMgYW5kIGJjYWNoZWZzLg0KPiANCj4gVGhpcyBpbmNsdWRlcyBiY2FjaGVmcyBzdXBw
+b3J0OyB3ZSdsbCBkZWZpbml0ZWx5IHdhbnQgYnRyZnMgc3VwcG9ydCBhcw0KPiB3ZWxsLg0KDQpG
+b3IgYnRyZnMgeW91IGNhbiBhZGQgdGhlIGZvbGxvd2luZzoNCg0KDQogRnJvbSA4MjM0M2I3Y2Iy
+YTk0N2JjYTQzMjM0YzQ0M2I5YzIyMzM5MzY3ZjY4IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0K
+RnJvbTogSm9oYW5uZXMgVGh1bXNoaXJuIDxqb2hhbm5lcy50aHVtc2hpcm5Ad2RjLmNvbT4NCkRh
+dGU6IE1vbiwgMTEgTWFyIDIwMjQgMDk6MDk6MzYgKzAxMDANClN1YmplY3Q6IFtQQVRDSF0gYnRy
+ZnM6IHByb3ZpZGUgc3Vidm9sdW1lIGlkIGZvciBzdGF0eA0KDQpBZGQgdGhlIGlub2RlJ3Mgc3Vi
+dm9sdW1lIGlkIHRvIHRoZSBuZXdseSBwcm9wb3NlZCBzdGF0eCBzdWJ2b2wgZmllbGQuDQoNClNp
+Z25lZC1vZmYtYnk6IEpvaGFubmVzIFRodW1zaGlybiA8am9oYW5uZXMudGh1bXNoaXJuQHdkYy5j
+b20+DQotLS0NCiAgZnMvYnRyZnMvaW5vZGUuYyB8IDMgKysrDQogIDEgZmlsZSBjaGFuZ2VkLCAz
+IGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBhL2ZzL2J0cmZzL2lub2RlLmMgYi9mcy9idHJm
+cy9pbm9kZS5jDQppbmRleCAzNzcwMTUzMWVlYjEuLjhjZjY5MmM3MDhkNyAxMDA2NDQNCi0tLSBh
+L2ZzL2J0cmZzL2lub2RlLmMNCisrKyBiL2ZzL2J0cmZzL2lub2RlLmMNCkBAIC04Nzc5LDYgKzg3
+NzksOSBAQCBzdGF0aWMgaW50IGJ0cmZzX2dldGF0dHIoc3RydWN0IG1udF9pZG1hcCAqaWRtYXAs
+DQogIAlnZW5lcmljX2ZpbGxhdHRyKGlkbWFwLCByZXF1ZXN0X21hc2ssIGlub2RlLCBzdGF0KTsN
+CiAgCXN0YXQtPmRldiA9IEJUUkZTX0koaW5vZGUpLT5yb290LT5hbm9uX2RldjsNCg0KKwlzdGF0
+LT5zdWJ2b2wgPSBCVFJGU19JKGlub2RlKS0+cm9vdC0+cm9vdF9rZXkub2JqZWN0aWQ7DQorCXN0
+YXQtPnJlc3VsdF9tYXNrIHw9IFNUQVRYX1NVQlZPTDsNCisNCiAgCXNwaW5fbG9jaygmQlRSRlNf
+SShpbm9kZSktPmxvY2spOw0KICAJZGVsYWxsb2NfYnl0ZXMgPSBCVFJGU19JKGlub2RlKS0+bmV3
+X2RlbGFsbG9jX2J5dGVzOw0KICAJaW5vZGVfYnl0ZXMgPSBpbm9kZV9nZXRfYnl0ZXMoaW5vZGUp
+Ow0KLS0gDQoyLjM1LjMNCg0KDQo=
 
