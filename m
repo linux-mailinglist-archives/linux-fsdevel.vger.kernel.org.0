@@ -1,190 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-14168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28BE878A97
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 23:12:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B064A878AD3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 23:38:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D364B1C20DA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 22:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A98282234
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 22:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427E15732B;
-	Mon, 11 Mar 2024 22:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844825812A;
+	Mon, 11 Mar 2024 22:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="RTqI2Z48"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zc5NxIpL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194AB58229
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 22:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD34B482C1;
+	Mon, 11 Mar 2024 22:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710195154; cv=none; b=o9qJ2R4VLBXPoZeWdnFsqC60biTjOScPAl8xpzwGy+AsPILOXhtUpQTMhXzOmVpvgDVppvCGvE6Tfb+D5orJdBVnpUS5huS0LIJnyNKXq0rEJnrtnfJEFhdGt9xKWdIXHVcXCYBvC/lJ/A/tDyd2IP7gzc6cKTQWxIg3uSwZe9g=
+	t=1710196697; cv=none; b=CHN8DzBHot1AZJmH4zcrsYNaBhKlJK0xP+kY2nX9+76mKTZR/Tl/UTpPJznRWyd15s9BAw810oWNUJyVQ4gn+HMAOcZyCX+yNWNFpAYKjoTRPaQYSLHQxQ88er4iEEp/Rayy8uSzsUxwIlfzabW7pfHik6Hx9y9UfvS701taj9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710195154; c=relaxed/simple;
-	bh=osu0hSiORSyIZpQ3dd416kqvq4IzeIB1wejEPaBnlik=;
+	s=arc-20240116; t=1710196697; c=relaxed/simple;
+	bh=hJur/pDiHJhAry8SmKfQygvh/y7PJVKL8g1n94l4nyQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrnzPDTkFZ3D9es+aFwhmp8JyRM2Ev8VeVxA5qfaJwBMV0tFOrtp042pJkOgdkQQcA8ZhVWXpix2vxlRNcCDNf3eHTOqgJq3L6wtakOHY2aqhGNAR5Mpe4PsGHGHGKr8LlSi46CsASmtfZvdacg3+fHeI8jpDPGNirNSOY/ieys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=RTqI2Z48; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6e5d7f1f25fso2280442b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 15:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710195152; x=1710799952; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tQPLox6coVczJgg0u74CQV/by37pFi2dP23Pejr0Xzo=;
-        b=RTqI2Z48fG/ip5+diNjwq/s+3flD3Zi1Ba+u6B9tUK0U+f4YOtQqVKNXihqAaU7YVl
-         fw8qBk9pLqzudm4ajH6kL0u5vMvZfo01/pfQZDlGAtNgNzqF7ZjOQi4v4/bL3jjagXIa
-         nzNr8hJmnq3HLf61AAfpVz5bnPmE53Fg26iM8FfPEY/enQ+dGUfXmSYO4jkzCE6aHebo
-         zeQ0svAsR2kLl3PfLYvIduGP6lc4969a/lM4ogyClF0btiv0gNaIU9Sa45r7hM38OzR3
-         1P+q62gsHyXyQv+v+WZL0uUoSn8HkjR3b68xKKeJDkXb1bhNfEzOsuyDKkINae9rwcqU
-         YMGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710195152; x=1710799952;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tQPLox6coVczJgg0u74CQV/by37pFi2dP23Pejr0Xzo=;
-        b=cmF0ovoX8KKGLeO3xqi8zhjsGqD4cqB1jqD2RJF68wEqHGinAr4nNuevP+RaNZ4VtB
-         b5P8JznL4HPEf03BhfuMw0DvwDMsVEgGulhsW9LE54/RoKvWivqvxYCT+brUQoIilHR3
-         1BnElukHtKB50zPuS+8CLgzBtmdUABdMbgM2YtkhYXaFRwUWcb03xhgUAvzXvvpA7TNC
-         vouZ1Pk1H18mZP0k0wKvVjFwmltxQ0TkUbv5xX5MXC08wwX7LuCgBgKJKw2HTsgf8wNJ
-         dicCfJuIJ+EpyEvEoSxkiALpPUgI7U9LrXczez7JaOZA35DmtmLlZyvu0muVjhhIMj7L
-         jo8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVRqDPyHQwUq7ukOKgYj7OxciOl6ZHWALcgZEo3FmVdeOLnrE8E3CawhjUZZYVIFsK/OHYreX5qo6D+q/m5/iSqeZuYw+2EZG/Hu+ed3Q==
-X-Gm-Message-State: AOJu0Yzg5mkGKS3Q+/F+xexEhdU+4U+Z0Pnn5yUq5Sg9+bF8gKjDp0xb
-	exyhu8YYSTBGzdckqsjJ7s4UPRMMdVUr0Z8fRmssQYn9mU92Rkxuy3Lh8XgD2b0=
-X-Google-Smtp-Source: AGHT+IHsPrYogruVW4mJKMDgJ2q1LIJp88fe4SdPPockPPpcW/D/vyRq0hbPBBvNUvbjpoP/PYjXNg==
-X-Received: by 2002:a05:6a20:748c:b0:19e:ac58:7b0d with SMTP id p12-20020a056a20748c00b0019eac587b0dmr5917598pzd.5.1710195152095;
-        Mon, 11 Mar 2024 15:12:32 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-47-118.pa.nsw.optusnet.com.au. [49.179.47.118])
-        by smtp.gmail.com with ESMTPSA id a14-20020a62d40e000000b006e6629e6a76sm5055702pfh.137.2024.03.11.15.12.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Mar 2024 15:12:31 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rjnsi-000dQB-1R;
-	Tue, 12 Mar 2024 09:12:28 +1100
-Date: Tue, 12 Mar 2024 09:12:28 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Christian Brauner <brauner@kernel.org>,
-	Allen Webb <allenwebb@google.com>,
-	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@chromium.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-Message-ID: <Ze+BzMyBp1vRIDKv@dread.disaster.area>
-References: <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
- <20240307-hinspiel-leselust-c505bc441fe5@brauner>
- <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
- <Zem5tnB7lL-xLjFP@google.com>
- <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
- <ZepJDgvxVkhZ5xYq@dread.disaster.area>
- <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
- <ZervrVoHfZzAYZy4@google.com>
- <Ze5YUUUQqaZsPjql@dread.disaster.area>
- <Ze7IbSKzvCYRl2Ox@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ln6llg2fYCJcaFwOS+8PDWU5ayP6YpwmNe2nyv0DwcGdPYVsvqBJ69YPspPP5d52F1QAKB8l+hpo/LvwRFmgzdRSDKWK5rxlZWKO62jiX/Qd/inrj4UVNybKng7l+40VYwb4rzVno+c1TKti/BX/zW1fKKwn8/9udD5R32z0f+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zc5NxIpL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D870C43390;
+	Mon, 11 Mar 2024 22:38:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710196696;
+	bh=hJur/pDiHJhAry8SmKfQygvh/y7PJVKL8g1n94l4nyQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zc5NxIpLQhKwbRvhfYCZw5nNzCYgx8pGde02Jr+kqIsJ2Ya6IfzJxLXRLmqHVa/MS
+	 PnuRTFTd4GJ5ArL3Y1zv6GA92/Ugc9fzCiTpLObZDi7Foqo3HduW4a9/3GoK9rWHrR
+	 lXigdAJaXtyDSX5ZTBVZeWqh7doOG5Z0lXGC5sKkAG42SR0JDw0xE2LHsxbogyni/t
+	 Cxo3ZccaqAD2AOpLPQTeEwJ3i74ISBWRxe6hXwZbV6zMdUGAII5Xj6cqIYkqNxcZ0C
+	 UFODpOUC+2gOeL1TL0HEYpsvOIRtKBfKrnOYkBMC/uwTOx7W2tssR8OccyvqTpF4fN
+	 BRCOXZOSiWXDw==
+Date: Mon, 11 Mar 2024 15:38:15 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	chandan.babu@oracle.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org, Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH v5 06/24] fsverity: pass tree_blocksize to
+ end_enable_verity()
+Message-ID: <20240311223815.GW1927156@frogsfrogsfrogs>
+References: <20240304191046.157464-2-aalbersh@redhat.com>
+ <20240304191046.157464-8-aalbersh@redhat.com>
+ <20240305005242.GE17145@sol.localdomain>
+ <20240306163000.GP1927156@frogsfrogsfrogs>
+ <20240307220224.GA1799@sol.localdomain>
+ <20240308034650.GK1927156@frogsfrogsfrogs>
+ <20240308044017.GC8111@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Ze7IbSKzvCYRl2Ox@google.com>
+In-Reply-To: <20240308044017.GC8111@sol.localdomain>
 
-On Mon, Mar 11, 2024 at 10:01:33AM +0100, Günther Noack wrote:
-> On Mon, Mar 11, 2024 at 12:03:13PM +1100, Dave Chinner wrote:
-> > On Fri, Mar 08, 2024 at 12:03:01PM +0100, Günther Noack wrote:
-> > > On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
-> > > > On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
-> > > > > I have no idea what a "safe" ioctl means here. Subsystems already
-> > > > > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
-> > > > > "safe" clearly means something different here.
-> > > > 
-> > > > That was my problem with the first version as well, but I think
-> > > > drawing the line between "implemented in fs/ioctl.c" and
-> > > > "implemented in a random device driver fops->unlock_ioctl()"
-> > > > seems like a more helpful definition.
-> > > 
-> > > Yes, sorry for the confusion - that is exactly what I meant to say with "safe".:
-> > > 
-> > > Those are the IOCTL commands implemented in fs/ioctl.c which do not go through
-> > > f_ops->unlocked_ioctl (or the compat equivalent).
+[add willy and linux-mm]
+
+On Thu, Mar 07, 2024 at 08:40:17PM -0800, Eric Biggers wrote:
+> On Thu, Mar 07, 2024 at 07:46:50PM -0800, Darrick J. Wong wrote:
+> > > BTW, is xfs_repair planned to do anything about any such extra blocks?
 > > 
-> > Which means all the ioctls we wrequire for to manage filesystems are
-> > going to be considered "unsafe" and barred, yes?
+> > Sorry to answer your question with a question, but how much checking is
+> > $filesystem expected to do for merkle trees?
 > > 
-> > That means you'll break basic commands like 'xfs_info' that tell you
-> > the configuration of the filesystem. It will prevent things like
-> > online growing and shrinking, online defrag, fstrim, online
-> > scrubbing and repair, etc will not worki anymore. It will break
-> > backup utilities like xfsdump, and break -all- the device management
-> > of btrfs and bcachefs filesystems.
+> > In theory xfs_repair could learn how to interpret the verity descriptor,
+> > walk the merkle tree blocks, and even read the file data to confirm
+> > intactness.  If the descriptor specifies the highest block address then
+> > we could certainly trim off excess blocks.  But I don't know how much of
+> > libfsverity actually lets you do that; I haven't looked into that
+> > deeply. :/
 > > 
-> > Further, all the setup and management of -VFS functionality- like
-> > fsverity and fscrypt is actually done at the filesystem level (i.e
-> > through ->unlocked_ioctl, no do_vfs_ioctl()) so those are all going
-> > to get broken as well despite them being "vfs features".
+> > For xfs_scrub I guess the job is theoretically simpler, since we only
+> > need to stream reads of the verity files through the page cache and let
+> > verity tell us if the file data are consistent.
 > > 
-> > Hence from a filesystem perspective, this is a fundamentally
-> > unworkable definition of "safe".
+> > For both tools, if something finds errors in the merkle tree structure
+> > itself, do we turn off verity?  Or do we do something nasty like
+> > truncate the file?
 > 
-> As discussed further up in this thread[1], we want to only apply the IOCTL
-> command filtering to block and character devices.  I think this should resolve
-> your concerns about file system specific IOCTLs?  This is implemented in patch
-> V10 going forward[2].
+> As far as I know (I haven't been following btrfs-progs, but I'm familiar with
+> e2fsprogs and f2fs-tools), there isn't yet any precedent for fsck actually
+> validating the data of verity inodes against their Merkle trees.
+> 
+> e2fsck does delete the verity metadata of inodes that don't have the verity flag
+> enabled.  That handles cleaning up after a crash during FS_IOC_ENABLE_VERITY.
+> 
+> I suppose that ideally, if an inode's verity metadata is invalid, then fsck
+> should delete that inode's verity metadata and remove the verity flag from the
+> inode.  Checking for a missing or obviously corrupt fsverity_descriptor would be
+> fairly straightforward, but it probably wouldn't catch much compared to actually
+> validating the data against the Merkle tree.  And actually validating the data
+> against the Merkle tree would be complex and expensive.  Note, none of this
+> would work on files that are encrypted.
+> 
+> Re: libfsverity, I think it would be possible to validate a Merkle tree using
+> libfsverity_compute_digest() and the callbacks that it supports.  But that's not
+> quite what it was designed for.
+> 
+> > Is there an ioctl or something that allows userspace to validate an
+> > entire file's contents?  Sort of like what BLKVERIFY would have done for
+> > block devices, except that we might believe its answers?
+> 
+> Just reading the whole file and seeing whether you get an error would do it.
+> 
+> Though if you want to make sure it's really re-reading the on-disk data, it's
+> necessary to drop the file's pagecache first.
 
-I think you misunderstand. I used filesystem ioctls as an obvious
-counter argument to this "VFS-only ioctls are safe" proposal to show
-that it fundamentally breaks core filesystem boot and management
-interfaces. Operations to prepare filesystems for mount may require
-block device ioctls to be run. i.e. block device ioctls are required
-core boot and management interfaces.
+I tried a straight pagecache read and it worked like a charm!
 
-Disallowing ioctls on block devices will break udev rules that set
-up block devices on kernel device instantiation events. It will
-break partitioning tools that need to read/modify/rescan the
-partition table. This will prevent discard, block zeroing and
-*secure erase* operations. It may prevent libblkid from reporting
-optimal device IO parameters to filesystem utilities like mkfs. You
-won't be able to mark block devices as read only.  Management of
-zoned block devices will be impossible.
+But then I thought to myself, do I really want to waste memory bandwidth
+copying a bunch of data?  No.  I don't even want to incur system call
+overhead from reading a single byte every $pagesize bytes.
 
-Then stuff like DM and MD devices (e.g. LVM, RAID, etc) simply won't
-appear on the system because they can't be scanned, configured,
-assembled, etc.
+So I created 2M mmap areas and read a byte every $pagesize bytes.  That
+worked too, insofar as SIGBUSes are annoying to handle.  But it's
+annoying to take signals like that.
 
-And so on.
+Then I started looking at madvise.  MADV_POPULATE_READ looked exactly
+like what I wanted -- it prefaults in the pages, and "If populating
+fails, a SIGBUS signal is not generated; instead, an error is returned."
 
-The fundamental fact is that system critical block device ioctls are
-implemented by generic infrastructure below the VFS layer. They have
-their own generic ioctl layer - blkdev_ioctl() is equivalent of
-do_vfs_ioctl() for the block layer.  But if we cut off everything
-below ->unlocked_ioctl() at the VFS, then we simply can't run any
-of these generic block device ioctls.
+But then I tried rigging up a test to see if I could catch an EIO, and
+instead I had to SIGKILL the process!  It looks filemap_fault returns
+VM_FAULT_RETRY to __xfs_filemap_fault, which propagates up through
+__do_fault -> do_read_fault -> do_fault -> handle_pte_fault ->
+handle_mm_fault -> faultin_page -> __get_user_pages.  At faultin_pages,
+the VM_FAULT_RETRY is translated to -EBUSY.
 
-As I said: this proposal is fundamentally unworkable without
-extensive white- and black-listing of individual ioctls in the
-security policies. That's not really a viable situation, because
-we're going to change code and hence likely silently break those
-security policy lists regularly....
+__get_user_pages squashes -EBUSY to 0, so faultin_vma_page_range returns
+that to madvise_populate.  Unfortunately, madvise_populate increments
+its loop counter by the return value (still 0) so it runs in an
+infinite loop.  The only way out is SIGKILL.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+So I don't know what the correct behavior is here, other than the
+infinite loop seems pretty suspect.  Is it the correct behavior that
+madvise_populate returns EIO if __get_user_pages ever returns zero?
+That doesn't quite sound right if it's the case that a zero return could
+also happen if memory is tight.
+
+I suppose filemap_fault could return VM_FAULT_SIGBUS in this one
+scenario so userspace would get an -EFAULT.  That would solve this one
+case of weird behavior.  But I think that doesn't happen in the
+page_not_uptodate case because fpin is non-null?
+
+As for xfs_scrub validating data files, I suppose it's not /so/
+terrible to read one byte every $fsblocksize so that we can report
+exactly where fsverity and the file data became inconsistent.  The
+POPULATE_READ interface doesn't tell you how many pages it /did/ manage
+to load, so perhaps MADV_POPULATE_READ isn't workable anyway.
+
+(and now I'm just handwaving wildly about pagecache behaviors ;))
+
+--D
+
+> > Also -- inconsistencies between the file data and the merkle tree aren't
+> > something that xfs can self-heal, right?
+> 
+> Similar to file data itself, only way to self-heal would be via mechanisms that
+> provide redundancy.  There's been some interest in adding support forward error
+> correction (FEC) to fsverity similar to what dm-verity has, but this would be
+> complex, and it's not something that anyone has gotten around to yet.
+> 
+> - Eric
+> 
 
