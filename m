@@ -1,92 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-14093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276F38779E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 03:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B90D877A28
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 04:41:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D626328198A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 02:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1475A28195C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 03:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C0115A5;
-	Mon, 11 Mar 2024 02:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E0C23A0;
+	Mon, 11 Mar 2024 03:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MwlOgmeM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DB8637
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 02:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C1115B3;
+	Mon, 11 Mar 2024 03:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710124984; cv=none; b=g7vsKwsMDNl7fa3LwpQxoItuZmO7IG2kNchasnPs71MrJutqnGWMiCLslyVxDd3PIURbcH1//Rh+Lahyo1/XKoic6tFldGD2VM6OKh/zLczjlgQIMTrJ1iTFO4zUS8ed5QXk8r9P3E+ZCgdVkWJ4AeRpFJX06QLAYp0gK4zMLjg=
+	t=1710128508; cv=none; b=ddC9Wl62bGG6kJfMYEtyevfhIEVnUyZd5YAbtUvgISvfLJJEEvVEnJ5jkZt+8AqjBg0LybcApNmwWe21fNdJXE8uvXasidp86Aj5ntKXRqGP9q+nm/IJG02TfA7YJLoUcyRQMJVJGqufHQkPsnNT7NYEQJPCieXcvVAZiBaAUEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710124984; c=relaxed/simple;
-	bh=xCUFlySz/HJzwmMAGBTFTxjuuWHHUASmrs7xC9rWZPw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VIjX/hdhDVCpDb7EZrIuwuFxiyMS3uORBHEScqYm0d4MBXUqcetz9FFOcE9pzegni7N1LaBi28trRVSxhMzde34p7qgePwy0mM+4xuknXsmg6/UJtivKO19nF1b+PHdZcSmJjPrhzSQl3eafcOyXg35H6wRa+YQL5T7aC7CdzkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7c7f57fa5eeso271795639f.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Mar 2024 19:43:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710124982; x=1710729782;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lYcxoW7cD8kZbmcK9CYx64+UUR754gw2mSrSbnYLk3U=;
-        b=ZC+U+VfnsCg28SNeLM7RkK6g0jLdz/tlagpfLqdG1hH8gUt5dmkH/xVv1ypnfaF5UV
-         02RM0PT9EEvkwNqld0ih75dRn4YMYYFz1AmbaW1FQVLCUkyujOIaXyy3Ry/BHNBhF79k
-         GOB8Khpr87wReezRYbXb/+vn64W2rkAMN2puh6rbDO/7qZRo0Gq6d3aiFPLVQvQR75lL
-         rJgSgRExdT76bgWfFoPnZVVyAlt2HgJebVHHnr3axe+P4+j2C+/Mir11/K0hlVdudYAs
-         GYtjQh0unkhULosgBccnila91KnBxO1ZAaelPZiiaErTFbCmOGvi+B2FwQnnAJDPgRcc
-         1F3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Ir6X3VUlxgujXOownEMVHqaujKx8QIqK+0D9ZyBuMXjg38eveAHjRUiflw7A14o2dsRnK+eC0TOWlhXkx0+lgth6ElodUTGpCoWXQQ==
-X-Gm-Message-State: AOJu0YyCgl9fg+nyS93x1uI06juC06U8f4EHYsRRcFpu60VZgVVLOxuh
-	7HqhJNUoI2eNtP6dHemUQtK6Gi6WheAJL5khVXC+683MwwyE8RWZAUm0omEhl3KTv4NTFx24lO2
-	SofEqF+nlnOll3B0kmzeshcHzKArwY4tlVk1ssQWfkINhmuZ5lHYldM8=
-X-Google-Smtp-Source: AGHT+IFusFZ3cMvP6daHHhxIg1ZsGPjKlL68E2l1ow40+7e2ifpNBPt1WflepZ0E4AeJRGxuTr3IKFO2SzeuMxFXKz+Qf3Kkd3kN
+	s=arc-20240116; t=1710128508; c=relaxed/simple;
+	bh=IkVWhXDcD+dqXR0sg2CSh+0xLf+knakijimU2ebVXAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNajBsrNYwQo2gO3/BdwS6kiLrgQJnSBqMY1jfS2wLMqznfsZJB3hEr53ttUyO2i4n2GiIK+pgK6OjAqMJOgNOV/V3GhuIcWLIEiOwwwBqlWJFIqeY66WDDftvgYbwc3YM04/QkkFRZrqD/ioL6bg7F5sLt4yRgZ/tu7QW5ne48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MwlOgmeM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0IhkeUfnkckGUpoB8ltx//YeJvd8V+1fi/yffsV3/DE=; b=MwlOgmeMRShI7BYlx0kHstVhwm
+	hgt4enB2uKdIIl4DUlbLzZAgYM+QIr0KyS8j52ssOJiKK7PECYrI8ur2Yg5lhXRWltKMEAENneSrE
+	GHF2O/16j7srHcEfH1vx8OVCLBeawcyjEPMfWR5ILjY3IwDhtYunJROk/J/tl8BnjxKVlEZWsxgjS
+	/Dcp6AB0D3HSZ35TjxPeb3I+2/djM5Cb2ToUPaPhPiBtf+sa1MAWGDDGrh9ASCl4fblf2yqAt41AG
+	oKTvkpanedvcrvAYsgMMKbeDl8FCEstEYqcbWMyZohgNKPC1eaDyPE2cqGu+fFt4kOPYA90L6LhUm
+	Ta8tWEPg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rjWXf-0000000HKj2-0ofC;
+	Mon, 11 Mar 2024 03:41:35 +0000
+Date: Mon, 11 Mar 2024 03:41:35 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: On the optimum size of a batch
+Message-ID: <Ze59byUR80z42m8R@casper.infradead.org>
+References: <Zeoble0xJQYEAriE@casper.infradead.org>
+ <Ze5onaXsI+LT1+Be@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2187:b0:476:d30d:8d10 with SMTP id
- s7-20020a056638218700b00476d30d8d10mr369190jaj.6.1710124981946; Sun, 10 Mar
- 2024 19:43:01 -0700 (PDT)
-Date: Sun, 10 Mar 2024 19:43:01 -0700
-In-Reply-To: <0000000000001bd66b05fcec6d92@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000121d4f0613598092@google.com>
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in vfs_setxattr (2)
-From: syzbot <syzbot+c98692bac73aedb459c3@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, hdanton@sina.com, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ze5onaXsI+LT1+Be@dread.disaster.area>
 
-syzbot suspects this issue was fixed by commit:
+On Mon, Mar 11, 2024 at 01:12:45PM +1100, Dave Chinner wrote:
+> > Batch size      Cost of allocating 100          thousand        million
+> > 1               500 (5 * 100)                   5000            5M
+> > 2               300 (6 * 50)                    3000            3M
+> > 4               200 (8 * 25)                    2000            2M
+> > 8               156 (12 * 13)                   1500            1.5M
+> > 16              140 (20 * 7)                    1260            1.25M
+> > 32              144 (36 * 4)                    1152            1.13M
+> > 64              136 (68 * 2)                    1088            1.06M
+> > 128             132 (132 * 1)                   1056            1.03M
+> 
+> Isn't this just repeating the fundamental observation that SLUB is
+> based on?  i.e. it can use high-order pages so that it can
+> pre-allocate optimally sized batches of objects regardless of their
+> size? i.e.  it tries to size the backing page order to allocate in
+> chunks of 30-40 objects at a time?
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+What SLUB is currently doing is inefficient.  One of the conversations
+I had (off-list) about appropriate batch size is in relation to SLUB-ng
+where one of the participants claimed that the batch size of 32 was
+obviously too small (it wasn't; the performance problem was due to a
+bug).
 
-    fs: Block writes to mounted block devices
+What you're thinking about is the cost of allocating from the page
+allocator (which is now much cheaper than it used to be, but should
+be cheaper than it currently is).  But there is another inefficiency
+to consider, which is that the slab allocator has a per-slab lock,
+and while you can efficiently remove and add a number of objects to
+a single slab, you might only have one or two free objects per slab.
+To work around this some of the more performance sensitive parts of the
+kernel have implemented their own allocator in front of slab.  This is
+clearly a bad thing for all of us, and hence Vlastimil has been working
+on a better approach.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=124c2811180000
-start commit:   f5837722ffec Merge tag 'mm-hotfixes-stable-2023-12-27-15-0..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f8e72bae38c079e4
-dashboard link: https://syzkaller.appspot.com/bug?extid=c98692bac73aedb459c3
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167dba7ee80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=160cfe19e80000
+https://lore.kernel.org/linux-mm/20231129-slub-percpu-caches-v3-0-6bcf536772bc@suse.cz/
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> Except for SLUB we're actually allocating in the hundreds of
+> millions to billions of objects on machines with TBs of RAM. IOWs we
+> really want to be much further down the curve than 8 - batches of at
+> least 32-64 have significantly lower cost and that matters when
+> scaling to (and beyond) hundreds of millions of objects....
 
-#syz fix: fs: Block writes to mounted block devices
+But that doesn't necessarily mean that you want a larger batch size.
+Because you're not just allocating, you're also freeing and over a
+large enough timescale the number of objects allocated and freed is
+approximately equal.  In the SLUB case, your batch size needs to be
+large enough to absorb most of the allcation-vs-free bias jitter; that
+is if you know they always alternate AFAFAFAFAF a batch size of 2 would
+be fine.  If you know you get four allocations followed by four frees,
+having a batch size of 5 woud be fine.  We'd never go to the parent
+allocator if we got a AFAAFFAAAFFFAAAAFFFFAAFFAFAAFAAFFF pattern.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > This is a simple model for only one situation.  If we have a locking
+> > contention breakdown, the overhead cost might be much higher than 4 units,
+> > and that would lead us to a larger batch size.
+> > 
+> > Another consideration is how much of each object we have to touch.
+> > put_pages_list() is frequently called with batches of 500 pages.  In order
+> > to free a folio, we have to manipulate its contents, so touching at least
+> > one cacheline per object.
+> 
+> Right, that's simply the cost of the batch cache footprint issue
+> rather than a "fixed cost mitigation" described for allocation.
+
+No, it's not, it's an illustration that too large a batch size can
+actively harm you.
+
+> So I'm not sure what you're trying to say here? We've known about
+> these batch optimisation considerations for a long, long time and
+> that batch size optimisation is always algorithm and access pattern
+> dependent, so.... ???
+
+People forget these "things we've always known".  I went looking and
+couldn't find a good writeup of this, so did my own.  In addition to the
+percpu slub batch size, various people have opined that the folio_batch
+size (15 objects) is too small for doing things like writeback and
+readahead.  They're going to have to bring data to convince me.
+
+> > And we make multiple passes over the batch,
+> > first decrementing the refcount, removing it from the lru list; second
+> > uncharging the folios from the memcg (writes to folio->memcg_data);
+> > third calling free_pages_prepare which, eg, sets ->mapping to NULL;
+> > fourth putting the folio on the pcp list (writing to the list_head).
+> 
+> Sounds like "batch cache footprint" would be reduced by inverting
+> that algorithm and doing all the work on a single object in a single
+> pass, rahter than doing it in multiple passes.  That way the cache
+> footprint of the batch is determined entirely by the size of the
+> data structures accessed to process each object in the batch.
+
+Well, now you're just opining without having studied the problem, and
+I have, so I can say confidently that you're wrong.  You could read
+the code if you like.
+
 
