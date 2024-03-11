@@ -1,170 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-14161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39AB87887A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 20:04:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F83287893D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 21:05:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 330301F23056
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 19:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8C41F21DAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 20:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6CE40847;
-	Mon, 11 Mar 2024 19:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F0956772;
+	Mon, 11 Mar 2024 20:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fdHFbK8x"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BbJRN59W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452AF3F8F6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 19:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79AC55E75
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 20:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710183884; cv=none; b=KHfu1wBGxbZhjk+ykPkJSirO/OiTF75HMQykUXnKr/RrtDonpe66YFH2LOPAIGhg8sOmK4NGwkmUVN3dH0/uBcaug5FwyLfIvSEZmwF3OIyn9fZMH/P75iOvYY58tP4QCsU0HryFY/puj1AfqvOtBBwTQ/RklPCP/4SFHUoSi30=
+	t=1710187527; cv=none; b=u3Qcv1NBvhvi+YtPM8HlXcVzVvs1S5lpClqK2sRKvXjueCl4BQUQN4fVlWUFWMPks9nt5G91b2sAgHHnk4WnhkD5TZs65uAUPR/n14A3unMCisMtdiNMMWpS1q0mR9jqH8SCEuKfxOx+k37SBDAmX032+7pST4D636mzAwJs76Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710183884; c=relaxed/simple;
-	bh=a34c1W8UxJqLqwodwsx3ke0IIehjsmsB0sZpvh8qj64=;
+	s=arc-20240116; t=1710187527; c=relaxed/simple;
+	bh=mpT1sl1F0yF+bunGOpA/ynNHa11gaq+11+ZvHS6RJUE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FCd0UZB7H8vitkAbgAAB9uEL7M7nRXluDWVoRw4NEz8KcoeCrudhiFNlB87awFdhOw7wrxiRKKHIP7biRrHJofy+XMByRjOOA7e9ziTcvoRb9kw9iCtujqvHQp77q1ci7pvtFPPSIlgTlmisPzW+zI8qvIbMQkx+4J0G3e2UWTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fdHFbK8x; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dc238cb1b17so3357717276.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 12:04:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=J3UlC9CbQG51Daht2Lh+Qfv7ncY8fS4rD74IaWYPpVZTueTLC1u0r30D4jSLXclhTfRQDzSNqebZEp6bGay/QJxTAp46pQK9r90vMZSwlGmJz8ZVzddPHJUUfgOrxcl8HsUv21KNsRoiGYd88kmBM6MOxkQ5x6OJaTK2aaAJ9r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BbJRN59W; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a44f2d894b7so604272866b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 13:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1710183882; x=1710788682; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ip6FW2J49TWgHtgl/4Gc7SJljeLMdRFy5mwJ9+2h64Y=;
-        b=fdHFbK8xQ9AvsWL/UtBi7QjibUgrVRSUdEcyV1WWy9iOJOWMKt2uEGDMiGRGMkHVpR
-         Yx/0iOGJ5JkPV+YdUJmOIhIng5277NKRUZ66SWfbyqFIvbP7d88rAQdhZMkiG70oBwI7
-         Dx7Gw+9FIglqn2FeShQAQaP6xL0JtJYaH7z8hhbLgkAVy2tuWMrL/ZzoKJL9icSbRJSR
-         l98k/je7B4BByvcFA9jmbhnDYgjXVoeBm7GmPSdOypwAYfLhWGOMiBSNY8XTP44hEvdS
-         PbBOqfp7/R7YT9DdLBzGK17Nx74IS6EjMgcN0iu92xiBoaXUD9MMZFW/WLnxWycv4hOL
-         mjPQ==
+        d=linux-foundation.org; s=google; t=1710187524; x=1710792324; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4eiTO72xToSXf7fJMM1Ipdwyb9aIIUVWhtnvnxbKSBw=;
+        b=BbJRN59Wdeohaf6YrpklY7rI16pbNIMrqmAzlNaiGP5XyGbINr5ZlTEUMEfw1qjx3t
+         vVyMbGYYTpszeOEuLLJ0CvuTZCYGyge1Qe4Pv4ji66fFxaZujckKwbh7Gv9KB2u7x+vv
+         indxh/6dMWsg3uFB5oe7oWaXE938H3H6kLWws=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710183882; x=1710788682;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ip6FW2J49TWgHtgl/4Gc7SJljeLMdRFy5mwJ9+2h64Y=;
-        b=FKPaH42SOGDJPYH0OUW+vf7nsKnPBjHPILlv2YIOJm2KgSjjSO7EUWhV5EYrqmYSdd
-         c9KvWm7jPadSewdm2fH+lo2tYzKjMTqdZL3Za/QVYTbsXLnj06iYkLT4PwsrZbZTtJ6K
-         f0Lr16rz4x27KfXxMzYDgO6hNTyJDCb701oOPblBEnzFO/pQw6DCzLux4dn1SmzCGY0U
-         4CxFWR8TJKSLECyqfRCtETZZAE6OQU2EJCHLAgLYlnwjVbwQpv8fb94VOBezXI7/2AZC
-         nP9oyoRzA8Ee3Uafav3ZGzVKsmP+N0teIGxWZdOvbZ+gUhPd9SoQ+uW+tt++AFXfTTWs
-         AfZw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3A/dN4XoOhonZ/KGWd4pNb0XpoBogzHAjd+2VnmUC2upTh8k4T7H9eVkGwY2KlIe21OtQxZUukTUXyFMGHYz1WIL4UG+gKWGOzx5JBA==
-X-Gm-Message-State: AOJu0Yy31ckeyGfrVRhzDe00Q35O/f7TCxH99Bg7Kxf1+MRNgKZhqK1Z
-	XbCu9/qTcYYhFB1YfKr1N1eqigO/BATsSm8A61/OFXjhiu0C5+8EkvpcfDLbP/z/hfBrdSvtTFq
-	l0FlltNLVlnBrvPF5CLRdfMONpMO6kP2gChx1
-X-Google-Smtp-Source: AGHT+IFdbQG06mL4djqGnWfaVrxqq+mwF8rQ3ANrX5c4HMRCbMuXtKqYaZ70urXFF7iZEe1k85pBlEuWNtpXZ2J2Eg4=
-X-Received: by 2002:a5b:391:0:b0:dc2:398b:fa08 with SMTP id
- k17-20020a5b0391000000b00dc2398bfa08mr4965860ybp.31.1710183882181; Mon, 11
- Mar 2024 12:04:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710187524; x=1710792324;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4eiTO72xToSXf7fJMM1Ipdwyb9aIIUVWhtnvnxbKSBw=;
+        b=BWpVl8HzWimLulh78xWDqathyWARSdx7edgXppQa99xr/Edk2xcFmh4OaZUjTvHiq2
+         35wpwCwLnYeLPQNYYD1oGLsCyMvN8RJv3/y9XuMagUSWwni9QY1+FDHzTA7N3nwGLlY0
+         sP5e2zirXuxsOSZuLnCm8pWOWPVYNP5SLsKUS5qf1wCVeOSFYotJgv7eFzGFKqwb/3tT
+         5usIIZiNpPXGAcY/S/Ah8rFRDlpCca9dNuojbUz/2OZRDSFFOo1AltHZ7LBPteq77mYV
+         VwJHfviKYb7aA4dSAOO8Ig5PFOhcy3/oIghOCDWbGGAfTFCFFcsH4njR94TS4hekL8jI
+         Fosw==
+X-Gm-Message-State: AOJu0Yxb6h1erdZwEASNm6HdsrJtyrYxwv3o0vdIz/rfEhWyUpKLx5yQ
+	eqdDildl+7kpC5vaGJ6fCGZ0EtuQWpmUf0o8FkiUzlFUfPMfvfGzSV5kduRU4TgC5v8HY7MW1qD
+	j85I=
+X-Google-Smtp-Source: AGHT+IGUHjfwCMprvvmoSOJm+xy9h0680rzP7UCGNGV2R8VeI090aM5GZJLi65ZjJGLtlWzks0V/JA==
+X-Received: by 2002:a17:906:2bd5:b0:a44:8c1b:8877 with SMTP id n21-20020a1709062bd500b00a448c1b8877mr968200ejg.50.1710187523742;
+        Mon, 11 Mar 2024 13:05:23 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id w9-20020a17090652c900b00a461543ab87sm2270672ejn.205.2024.03.11.13.05.23
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Mar 2024 13:05:23 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5685d46b199so1995011a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 13:05:23 -0700 (PDT)
+X-Received: by 2002:a17:906:c34e:b0:a45:ab1a:4c31 with SMTP id
+ ci14-20020a170906c34e00b00a45ab1a4c31mr991274ejb.56.1710187522843; Mon, 11
+ Mar 2024 13:05:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240307-hinspiel-leselust-c505bc441fe5@brauner>
- <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com> <Zem5tnB7lL-xLjFP@google.com>
- <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
- <ZepJDgvxVkhZ5xYq@dread.disaster.area> <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
- <20240308.saiheoxai7eT@digikod.net> <CAHC9VhSjMLzfjm8re+3GN4PrAjO2qQW4Rf4o1wLchPDuqD-0Pw@mail.gmail.com>
- <20240308.eeZ1uungeeSa@digikod.net> <CAHC9VhRnUbu2jRwUhLGboAgus_oFEPyddu=mv-OMLg93HHk17w@mail.gmail.com>
- <ZewaYKO073V7P6Qy@google.com>
-In-Reply-To: <ZewaYKO073V7P6Qy@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 11 Mar 2024 15:04:31 -0400
-Message-ID: <CAHC9VhR45QyWj5+P67Y6M4BJ98ymLirGr724OEjb+8faLCkUzw@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Arnd Bergmann <arnd@arndb.de>, Dave Chinner <david@fromorbit.com>, 
-	Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20240308-vfs-pidfd-b106369f5406@brauner>
+In-Reply-To: <20240308-vfs-pidfd-b106369f5406@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 11 Mar 2024 13:05:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wigcyOxVQuQrmk2Rgn_-B=1+oQhCnTTjynQs0CdYekEYg@mail.gmail.com>
+Message-ID: <CAHk-=wigcyOxVQuQrmk2Rgn_-B=1+oQhCnTTjynQs0CdYekEYg@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs pidfd
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 9, 2024 at 3:14=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.co=
-m> wrote:
-> On Fri, Mar 08, 2024 at 05:25:21PM -0500, Paul Moore wrote:
-> > On Fri, Mar 8, 2024 at 3:12=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@di=
-gikod.net> wrote:
-> > > On Fri, Mar 08, 2024 at 02:22:58PM -0500, Paul Moore wrote:
-> > > > On Fri, Mar 8, 2024 at 4:29=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mi=
-c@digikod.net> wrote:
-> > > > > Let's replace "safe IOCTL" with "IOCTL always allowed in a Landlo=
-ck
-> > > > > sandbox".
-> > > >
-> > > > Which is a problem from a LSM perspective as we want to avoid hooks
-> > > > which are tightly bound to a single LSM or security model.  It's ok=
-ay
-> > > > if a new hook only has a single LSM implementation, but the hook's
-> > > > definition should be such that it is reasonably generalized to supp=
-ort
-> > > > multiple LSM/models.
-> > >
-> > > As any new hook, there is a first user.  Obviously this new hook woul=
-d
-> > > not be restricted to Landlock, it is a generic approach.  I'm pretty
-> > > sure a few hooks are only used by one LSM though. ;)
-> >
-> > Sure, as I said above, it's okay for there to only be a single LSM
-> > implementation, but the basic idea behind the hook needs to have some
-> > hope of being generic.  Your "let's redefine a safe ioctl as 'IOCTL
-> > always allowed in a Landlock sandbox'" doesn't fill me with confidence
-> > about the hook being generic; who knows, maybe it will be, but in the
-> > absence of a patch, I'm left with descriptions like those.
+On Fri, 8 Mar 2024 at 02:14, Christian Brauner <brauner@kernel.org> wrote:
 >
-> FWIW, the existing IOCTL hook is used in the following places:
->
-> * TOMOYO: seemingly configurable per IOCTL command?  (I did not dig deepe=
-r)
-> * SELinux: has a hardcoded switch of IOCTL commands, some with special ch=
-ecks.
->   These are also a subset of the do_vfs_ioctl() commands,
->   plus KDSKBENT, KDSKBSENT (from ioctl_console(2)).
+> * Move pidfds from the anonymous inode infrastructure to a tiny
+>   pseudo filesystem. This will unblock further work that we weren't able
+>   to do simply because of the very justified limitations of anonymous
+>   inodes. Moving pidfds to a tiny pseudo filesystem allows for statx on
+>   pidfds to become useful for the first time. They can now be compared
+>   by inode number which are unique for the system lifetime.
 
-One should be careful using the term "hardcoded" here as I believe it
-is misleading in the SELinux case.  SELinux has 11 explicitly defined
-ioctls, with an additional two configurable on a per-policy basis
-depending on the state of the SELinux IOCTL_SKIP_CLOEXEC policy
-capability.  The security policy associated with these explicit ioctl
-checks is not hardcoded into the kernel, it is defined as part of the
-greater SELinux security policy.  One could make an argument that
-FIONBIO and FIOASYNC look a bit hardcoded, but there is some subtlety
-there that is probably not worth exploring further in this context but
-I'm happy to discuss in a different thread if that is helpful.
+So I obviously pulled this already, but I did have one question - we
+don't make nsfs conditional, and I'm not convinced we should make
+pidfs conditional either.
 
-All the ioctls that are not explicitly defined in the SELinux code,
-are still subject to SELinux policy through both the file/ioctl
-permission and the extended permission (xperm) functionality.  The
-SELinux xperm functionality, when tied to an ioctl operation, allows
-policy developers to allow or deny specific ioctl operations on a
-per-domain basis.
+I think (and *hope*) all the semantic annoyances got sorted out, and I
+don't think there are any realistic size advantages to not enabling
+CONFIG_FS_PID.
 
-> * Smack: Decomposes the IOCTL command number to look at the _IOC_WRITE an=
-d
->   _IOC_READ bits. (This is a known problematic approach, because (1) thes=
-e bits
->   describe whether the argument is getting read or written, not whether t=
-he
->   operation is a mutating one, and (2) some IOCTL commands do not adhere =
-to the
->   convention and don't use these macros)
->
-> AppArmor does not use the LSM IOCTL hook.
+Is there some fundamental reason for that config entry to exist?
 
---=20
-paul-moore.com
+            Linus
 
