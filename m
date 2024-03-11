@@ -1,57 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-14171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E70B878B7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 00:23:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 191AC878B93
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 00:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65FF0B20C26
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 23:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33A41F21B3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 23:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E342258ACC;
-	Mon, 11 Mar 2024 23:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCA459154;
+	Mon, 11 Mar 2024 23:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aI8sNSmf"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ICS6mjMY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E3458AB2;
-	Mon, 11 Mar 2024 23:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C522358ABD
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 23:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710199372; cv=none; b=f7H4KctZtfW5gyHhN9jnI/x2Oh8GCdj1HRYgErv4DAamcF81DZS/WA5xM+HIKsiqRDXZtUdWKRGPITGCf0lGhXPbNro5RMlBsa21z/ndAEM+AWKtbg9H08/iZAymaB8FAfEmrV0r1qBF9seaOfIwWZKqlBYq8kpSqSNdcTeNZSQ=
+	t=1710200254; cv=none; b=tO0VOzlgAHUZ5x+veo4eFYd3LCrUEe48jm9Pzh37njzTx8yENCcli65QtCUjGvncV/1AHHqKGC9bl2bQLYkwAQzVw68ooiMVBZKUmXHce7y4obo6YVYu0OVF1Fp8qiNAyHUR0j7wSbxUCL47CluAx0BkC9M+G8jnOnodVnNcppY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710199372; c=relaxed/simple;
-	bh=++0gZ01phWcCIjanW8svUbK+/Zgcr1cOZTHwY/T9hFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tnv3iaaf7QDxQ/bTDhy3m4mvDBOXHZ3A5fPPgpPJoxFwYY7wYlm4JKOYs3jbiSm+H3DylQ6wCCp8bHhOH7Z+Ym38M49n6JuuX4H/88GXMctJ53J3Ams9dGg8R2OhgMtxUaiB+yetljgsQBNY6VrvHVqSuCd+sxzyBy6/QhsI0Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aI8sNSmf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8DB3C433F1;
-	Mon, 11 Mar 2024 23:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710199371;
-	bh=++0gZ01phWcCIjanW8svUbK+/Zgcr1cOZTHwY/T9hFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aI8sNSmfZ8PA4UB4eAvqxWxmHkjPe4B4GhP5vTL9NbX0iJNcUvAvSL/QvhYPyHQ0F
-	 vOYsYbR259J6mUVSd+Tyfpei2nRAkurRm9iDaFMiLt9shbaBBhh1PSC72JfOExRrCE
-	 UuNc2h5Qkr1LKkyG9cAKP0euzmhi5L1Wnd9a5GqlOr9CeEAiEHWLXGGOTvFJAnHYoP
-	 Q/qARWy4wK97fWUsWpJvnJnWnChyzZrPivhbcDBMbRan1uCtxo24r5jGW2HbqkzBC2
-	 yjnklgA+25uwTK0ad2UqmjRMMjQ9cbQVFHlcDqAajSbPgEe6xyNWPoLq0HJe+zrrRw
-	 y7+NahvSDTAcw==
-Date: Mon, 11 Mar 2024 16:22:51 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, chandan.babu@oracle.com,
-	ebiggers@kernel.org
-Subject: Re: [PATCH v5 07/24] fsverity: support block-based Merkle tree
- caching
-Message-ID: <20240311232251.GX1927156@frogsfrogsfrogs>
-References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-9-aalbersh@redhat.com>
+	s=arc-20240116; t=1710200254; c=relaxed/simple;
+	bh=UHDfEzsotiT9ePQ0y9StHgbMOf/lrrRURVo481jht18=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RLJiIrFmXx0JzI5QXP8yrjrmv3l4nOhCcPppAA3QinpAci7SsuWpcD7YRkvScl6/MPlGDvld8McaAhYegRooED8ddjot8q5GBYmh56Undxe4obk8lGvGAteU7GsHM8jE3LNgryKrWjQksAy3IHVrUHwunt+3opxmMjDDG7cURTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ICS6mjMY; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6e5dddd3b95so3597084b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 16:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1710200252; x=1710805052; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xm7ckg0f9VWSGYhP+vSFLa1BP8tcu5Wgr9BmHroe7cc=;
+        b=ICS6mjMYCTOwufVVhmEp2JHtDfE2EDE23slTRR32ea4HpM1JIOvTmxHhy6IDIp4Yvo
+         zPa5tbgk3owf/QpW4BcLKDWYKLDeRxoIl+P7K8AzOpKItmhV1jWAnKPxsLiRgrZaTAN3
+         FRMRUAmk92nV1waX6t5R5HviJZLILjxjKSqSA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710200252; x=1710805052;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xm7ckg0f9VWSGYhP+vSFLa1BP8tcu5Wgr9BmHroe7cc=;
+        b=Jcu8TxT/jRqjAdMNqZmlaocOD9JNmPyAu+RH2C6mQDY7ZuqZJX0FgEV+GJCRsKBwgC
+         ghq31msC8UyV5m5uZoRN4otpYHAR16yFLpW+J+dhAsm1+tpWEIvaciQIgLR+TJ2AN9lj
+         ukXcI0avuPcS9VmdNex4Jbn9NdDDaDyKwdguyhwVCjO1qc/rb1vWZeM9cHrsuzrTk+Cd
+         KtoEjqJplT/75WVHjFmgQJuvBbSltg/yLib4FgV2ele5yP4cVjmBalWB3G9MdXcTU0/v
+         l9LBsUpHb9z4egfeZ5KfsqeEt52ngbYPKTwSNds/SERTTKtPz+GoaOYJpL7WIcEeF1In
+         43qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpsrTp0wXtyn6tUOp0d0pWSpVT4aD6ZrBX9u/LoJW6k0tG7t6KFA5JEh7Y0+KknsG/WdQMT2S4fBODeThTPUty5a2XNPvto4DAkkkD8Q==
+X-Gm-Message-State: AOJu0YzTp3dJmfb3P/OOQJY1lGHcrpl78c9a7UW8TrJjcHlXHVmjv7eL
+	BLczbuFQjGa5qfMNn7zGPRsOoH94Qkr07tPw9OAXbe7ORapYb8BzT66BRK5/7g==
+X-Google-Smtp-Source: AGHT+IHD9UB7WtYdXSoqrw9ipbo6+l/ogripqDA2ow6WSs0p2YAHLpnIBCy3YZsyucMa8W5txpXHgQ==
+X-Received: by 2002:a05:6a00:2ea8:b0:6e6:758e:4ad6 with SMTP id fd40-20020a056a002ea800b006e6758e4ad6mr11969545pfb.17.1710200252063;
+        Mon, 11 Mar 2024 16:37:32 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id t23-20020a62d157000000b006e56277fd45sm5138302pfl.190.2024.03.11.16.37.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Mar 2024 16:37:31 -0700 (PDT)
+Date: Mon, 11 Mar 2024 16:37:31 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>,
+	Kees Cook <keescook@chromium.org>, Li kunyu <kunyu@nfschina.com>,
+	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, Mark Brown <broonie@kernel.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Shuah Khan <shuah@kernel.org>
+Subject: [GIT PULL] execve updates for v6.9-rc1
+Message-ID: <202403111637.203A9187C7@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,510 +84,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240304191046.157464-9-aalbersh@redhat.com>
 
-On Mon, Mar 04, 2024 at 08:10:30PM +0100, Andrey Albershteyn wrote:
-> In the current implementation fs-verity expects filesystem to
-> provide PAGEs filled with Merkle tree blocks. Then, when fs-verity
-> is done with processing the blocks, reference to PAGE is freed. This
-> doesn't fit well with the way XFS manages its memory.
-> 
-> To allow XFS integrate fs-verity this patch adds ability to
-> fs-verity verification code to take Merkle tree blocks instead of
-> PAGE reference. This way ext4, f2fs, and btrfs are still able to
-> pass PAGE references and XFS can pass reference to Merkle tree
-> blocks stored in XFS's buffer infrastructure.
-> 
-> Another addition is invalidation function which tells fs-verity to
-> mark part of Merkle tree as not verified. This function is used
-> by filesystem to tell fs-verity to invalidate block which was
-> evicted from memory.
-> 
-> Depending on Merkle tree block size fs-verity is using either bitmap
-> or PG_checked flag to track "verified" status of the blocks. With a
-> Merkle tree block caching (XFS) there is no PAGE to flag it as
-> verified. fs-verity always uses bitmap to track verified blocks for
-> filesystems which use block caching.
-> 
-> Further this patch allows filesystem to make additional processing
-> on verified pages via fsverity_drop_block() instead of just dropping
-> a reference. This will be used by XFS for internal buffer cache
-> manipulation in further patches. The btrfs, ext4, and f2fs just drop
-> the reference.
-> 
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> ---
->  fs/verity/fsverity_private.h |   8 +++
->  fs/verity/open.c             |   8 ++-
->  fs/verity/read_metadata.c    |  64 +++++++++++-------
->  fs/verity/verify.c           | 125 +++++++++++++++++++++++++++--------
->  include/linux/fsverity.h     |  65 ++++++++++++++++++
->  5 files changed, 217 insertions(+), 53 deletions(-)
-> 
-> diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-> index b3506f56e180..dad33e6ff0d6 100644
-> --- a/fs/verity/fsverity_private.h
-> +++ b/fs/verity/fsverity_private.h
-> @@ -154,4 +154,12 @@ static inline void fsverity_init_signature(void)
->  
->  void __init fsverity_init_workqueue(void);
->  
-> +/*
-> + * Drop 'block' obtained with ->read_merkle_tree_block(). Calls out back to
-> + * filesystem if ->drop_block() is set, otherwise, drop the reference in the
-> + * block->context.
-> + */
-> +void fsverity_drop_block(struct inode *inode,
-> +			 struct fsverity_blockbuf *block);
-> +
->  #endif /* _FSVERITY_PRIVATE_H */
-> diff --git a/fs/verity/open.c b/fs/verity/open.c
-> index fdeb95eca3af..6e6922b4b014 100644
-> --- a/fs/verity/open.c
-> +++ b/fs/verity/open.c
-> @@ -213,7 +213,13 @@ struct fsverity_info *fsverity_create_info(const struct inode *inode,
->  	if (err)
->  		goto fail;
->  
-> -	if (vi->tree_params.block_size != PAGE_SIZE) {
-> +	/*
-> +	 * If fs passes Merkle tree blocks to fs-verity (e.g. XFS), then
-> +	 * fs-verity should use hash_block_verified bitmap as there's no page
-> +	 * to mark it with PG_checked.
-> +	 */
-> +	if (vi->tree_params.block_size != PAGE_SIZE ||
-> +			inode->i_sb->s_vop->read_merkle_tree_block) {
->  		/*
->  		 * When the Merkle tree block size and page size differ, we use
->  		 * a bitmap to keep track of which hash blocks have been
-> diff --git a/fs/verity/read_metadata.c b/fs/verity/read_metadata.c
-> index f58432772d9e..5da40b5a81af 100644
-> --- a/fs/verity/read_metadata.c
-> +++ b/fs/verity/read_metadata.c
-> @@ -18,50 +18,68 @@ static int fsverity_read_merkle_tree(struct inode *inode,
->  {
->  	const struct fsverity_operations *vops = inode->i_sb->s_vop;
->  	u64 end_offset;
-> -	unsigned int offs_in_page;
-> +	unsigned int offs_in_block;
->  	pgoff_t index, last_index;
->  	int retval = 0;
->  	int err = 0;
-> +	const unsigned int block_size = vi->tree_params.block_size;
-> +	const u8 log_blocksize = vi->tree_params.log_blocksize;
->  
->  	end_offset = min(offset + length, vi->tree_params.tree_size);
->  	if (offset >= end_offset)
->  		return 0;
-> -	offs_in_page = offset_in_page(offset);
-> -	last_index = (end_offset - 1) >> PAGE_SHIFT;
-> +	offs_in_block = offset & (block_size - 1);
-> +	last_index = (end_offset - 1) >> log_blocksize;
->  
->  	/*
-> -	 * Iterate through each Merkle tree page in the requested range and copy
-> -	 * the requested portion to userspace.  Note that the Merkle tree block
-> -	 * size isn't important here, as we are returning a byte stream; i.e.,
-> -	 * we can just work with pages even if the tree block size != PAGE_SIZE.
-> +	 * Iterate through each Merkle tree block in the requested range and
-> +	 * copy the requested portion to userspace. Note that we are returning
-> +	 * a byte stream.
->  	 */
-> -	for (index = offset >> PAGE_SHIFT; index <= last_index; index++) {
-> +	for (index = offset >> log_blocksize; index <= last_index; index++) {
->  		unsigned long num_ra_pages =
->  			min_t(unsigned long, last_index - index + 1,
->  			      inode->i_sb->s_bdi->io_pages);
->  		unsigned int bytes_to_copy = min_t(u64, end_offset - offset,
-> -						   PAGE_SIZE - offs_in_page);
-> -		struct page *page;
-> -		const void *virt;
-> +						   block_size - offs_in_block);
-> +		struct fsverity_blockbuf block = {
-> +			.size = block_size,
-> +		};
->  
-> -		page = vops->read_merkle_tree_page(inode, index, num_ra_pages);
-> -		if (IS_ERR(page)) {
-> -			err = PTR_ERR(page);
-> +		if (!vops->read_merkle_tree_block) {
-> +			unsigned int blocks_per_page =
-> +				vi->tree_params.blocks_per_page;
-> +			unsigned long page_idx =
-> +				round_down(index, blocks_per_page);
-> +			struct page *page = vops->read_merkle_tree_page(inode,
-> +					page_idx, num_ra_pages);
-> +
-> +			if (IS_ERR(page)) {
-> +				err = PTR_ERR(page);
-> +			} else {
-> +				block.kaddr = kmap_local_page(page) +
-> +					((index - page_idx) << log_blocksize);
-> +				block.context = page;
-> +			}
-> +		} else {
-> +			err = vops->read_merkle_tree_block(inode,
-> +					index << log_blocksize,
-> +					&block, log_blocksize, num_ra_pages);
-> +		}
-> +
-> +		if (err) {
->  			fsverity_err(inode,
-> -				     "Error %d reading Merkle tree page %lu",
-> -				     err, index);
-> +				     "Error %d reading Merkle tree block %lu",
-> +				     err, index << log_blocksize);
->  			break;
->  		}
->  
-> -		virt = kmap_local_page(page);
-> -		if (copy_to_user(buf, virt + offs_in_page, bytes_to_copy)) {
-> -			kunmap_local(virt);
-> -			put_page(page);
-> +		if (copy_to_user(buf, block.kaddr + offs_in_block, bytes_to_copy)) {
-> +			fsverity_drop_block(inode, &block);
->  			err = -EFAULT;
->  			break;
->  		}
-> -		kunmap_local(virt);
-> -		put_page(page);
-> +		fsverity_drop_block(inode, &block);
->  
->  		retval += bytes_to_copy;
->  		buf += bytes_to_copy;
-> @@ -72,7 +90,7 @@ static int fsverity_read_merkle_tree(struct inode *inode,
->  			break;
->  		}
->  		cond_resched();
-> -		offs_in_page = 0;
-> +		offs_in_block = 0;
->  	}
->  	return retval ? retval : err;
->  }
-> diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-> index 4fcad0825a12..de71911d400c 100644
-> --- a/fs/verity/verify.c
-> +++ b/fs/verity/verify.c
-> @@ -13,14 +13,17 @@
->  static struct workqueue_struct *fsverity_read_workqueue;
->  
->  /*
-> - * Returns true if the hash block with index @hblock_idx in the tree, located in
-> - * @hpage, has already been verified.
-> + * Returns true if the hash block with index @hblock_idx in the tree has
-> + * already been verified.
->   */
-> -static bool is_hash_block_verified(struct fsverity_info *vi, struct page *hpage,
-> +static bool is_hash_block_verified(struct inode *inode,
-> +				   struct fsverity_blockbuf *block,
->  				   unsigned long hblock_idx)
->  {
->  	unsigned int blocks_per_page;
->  	unsigned int i;
-> +	struct fsverity_info *vi = inode->i_verity_info;
-> +	struct page *hpage = (struct page *)block->context;
->  
->  	/*
->  	 * When the Merkle tree block size and page size are the same, then the
-> @@ -34,6 +37,12 @@ static bool is_hash_block_verified(struct fsverity_info *vi, struct page *hpage,
->  	if (!vi->hash_block_verified)
->  		return PageChecked(hpage);
->  
-> +	/*
-> +	 * Filesystems which use block based caching (e.g. XFS) always use
-> +	 * bitmap.
-> +	 */
-> +	if (inode->i_sb->s_vop->read_merkle_tree_block)
-> +		return test_bit(hblock_idx, vi->hash_block_verified);
->  	/*
->  	 * When the Merkle tree block size and page size differ, we use a bitmap
->  	 * to indicate whether each hash block has been verified.
-> @@ -95,15 +104,15 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
->  	const struct merkle_tree_params *params = &vi->tree_params;
->  	const unsigned int hsize = params->digest_size;
->  	int level;
-> +	int err;
+Hi Linus,
 
-FWIW, Dan Carpenter complained that err can be used uninitialized
-here...
+Please pull these small execve updates for v6.9-rc1. Details below.
 
-> +	int num_ra_pages;
->  	u8 _want_hash[FS_VERITY_MAX_DIGEST_SIZE];
->  	const u8 *want_hash;
->  	u8 real_hash[FS_VERITY_MAX_DIGEST_SIZE];
->  	/* The hash blocks that are traversed, indexed by level */
->  	struct {
-> -		/* Page containing the hash block */
-> -		struct page *page;
-> -		/* Mapped address of the hash block (will be within @page) */
-> -		const void *addr;
-> +		/* Buffer containing the hash block */
-> +		struct fsverity_blockbuf block;
->  		/* Index of the hash block in the tree overall */
->  		unsigned long index;
->  		/* Byte offset of the wanted hash relative to @addr */
-> @@ -144,10 +153,11 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
->  		unsigned long next_hidx;
->  		unsigned long hblock_idx;
->  		pgoff_t hpage_idx;
-> +		u64 hblock_pos;
->  		unsigned int hblock_offset_in_page;
->  		unsigned int hoffset;
->  		struct page *hpage;
-> -		const void *haddr;
-> +		struct fsverity_blockbuf *block = &hblocks[level].block;
->  
->  		/*
->  		 * The index of the block in the current level; also the index
-> @@ -165,29 +175,49 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
->  		hblock_offset_in_page =
->  			(hblock_idx << params->log_blocksize) & ~PAGE_MASK;
->  
-> +		/* Offset of the Merkle tree block into the tree */
-> +		hblock_pos = hblock_idx << params->log_blocksize;
-> +
->  		/* Byte offset of the hash within the block */
->  		hoffset = (hidx << params->log_digestsize) &
->  			  (params->block_size - 1);
->  
-> -		hpage = inode->i_sb->s_vop->read_merkle_tree_page(inode,
-> -				hpage_idx, level == 0 ? min(max_ra_pages,
-> -					params->tree_pages - hpage_idx) : 0);
-> -		if (IS_ERR(hpage)) {
-> +		num_ra_pages = level == 0 ?
-> +			min(max_ra_pages, params->tree_pages - hpage_idx) : 0;
-> +
-> +		if (inode->i_sb->s_vop->read_merkle_tree_block) {
-> +			err = inode->i_sb->s_vop->read_merkle_tree_block(
-> +				inode, hblock_pos, block, params->log_blocksize,
-> +				num_ra_pages);
-> +		} else {
-> +			unsigned int blocks_per_page =
-> +				vi->tree_params.blocks_per_page;
-> +			hblock_idx = round_down(hblock_idx, blocks_per_page);
-> +			hpage = inode->i_sb->s_vop->read_merkle_tree_page(
-> +				inode, hpage_idx, (num_ra_pages << PAGE_SHIFT));
-> +
-> +			if (IS_ERR(hpage)) {
-> +				err = PTR_ERR(hpage);
-> +			} else {
-> +				block->kaddr = kmap_local_page(hpage) +
-> +					hblock_offset_in_page;
-> +				block->context = hpage;
+Thanks!
 
-...in the case where hpage is not an error.  I'll fix that in my tree.
+-Kees
 
-https://lore.kernel.org/oe-kbuild-all/f9e79efc-a16f-495d-8e53-d5a9eef5936e@moroto.mountain/T/#u
+The following changes since commit 41bccc98fb7931d63d03f326a746ac4d429c1dd3:
 
---D
+  Linux 6.8-rc2 (2024-01-28 17:01:12 -0800)
 
-> +			}
-> +		}
-> +
-> +		if (err) {
->  			fsverity_err(inode,
-> -				     "Error %ld reading Merkle tree page %lu",
-> -				     PTR_ERR(hpage), hpage_idx);
-> +				     "Error %d reading Merkle tree block %lu",
-> +				     err, hblock_idx);
->  			goto error;
->  		}
-> -		haddr = kmap_local_page(hpage) + hblock_offset_in_page;
-> -		if (is_hash_block_verified(vi, hpage, hblock_idx)) {
-> -			memcpy(_want_hash, haddr + hoffset, hsize);
-> +
-> +		if (is_hash_block_verified(inode, block, hblock_idx)) {
-> +			memcpy(_want_hash, block->kaddr + hoffset, hsize);
->  			want_hash = _want_hash;
-> -			kunmap_local(haddr);
-> -			put_page(hpage);
-> +			fsverity_drop_block(inode, block);
->  			goto descend;
->  		}
-> -		hblocks[level].page = hpage;
-> -		hblocks[level].addr = haddr;
->  		hblocks[level].index = hblock_idx;
->  		hblocks[level].hoffset = hoffset;
->  		hidx = next_hidx;
-> @@ -197,10 +227,11 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
->  descend:
->  	/* Descend the tree verifying hash blocks. */
->  	for (; level > 0; level--) {
-> -		struct page *hpage = hblocks[level - 1].page;
-> -		const void *haddr = hblocks[level - 1].addr;
-> +		struct fsverity_blockbuf *block = &hblocks[level - 1].block;
-> +		const void *haddr = block->kaddr;
->  		unsigned long hblock_idx = hblocks[level - 1].index;
->  		unsigned int hoffset = hblocks[level - 1].hoffset;
-> +		struct page *hpage = (struct page *)block->context;
->  
->  		if (fsverity_hash_block(params, inode, haddr, real_hash) != 0)
->  			goto error;
-> @@ -217,8 +248,7 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
->  			SetPageChecked(hpage);
->  		memcpy(_want_hash, haddr + hoffset, hsize);
->  		want_hash = _want_hash;
-> -		kunmap_local(haddr);
-> -		put_page(hpage);
-> +		fsverity_drop_block(inode, block);
->  	}
->  
->  	/* Finally, verify the data block. */
-> @@ -235,10 +265,8 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
->  		     params->hash_alg->name, hsize, want_hash,
->  		     params->hash_alg->name, hsize, real_hash);
->  error:
-> -	for (; level > 0; level--) {
-> -		kunmap_local(hblocks[level - 1].addr);
-> -		put_page(hblocks[level - 1].page);
-> -	}
-> +	for (; level > 0; level--)
-> +		fsverity_drop_block(inode, &hblocks[level - 1].block);
->  	return false;
->  }
->  
-> @@ -362,3 +390,42 @@ void __init fsverity_init_workqueue(void)
->  	if (!fsverity_read_workqueue)
->  		panic("failed to allocate fsverity_read_queue");
->  }
-> +
-> +/**
-> + * fsverity_invalidate_block() - invalidate Merkle tree block
-> + * @inode: inode to which this Merkle tree blocks belong
-> + * @block: block to be invalidated
-> + *
-> + * This function invalidates/clears "verified" state of Merkle tree block
-> + * in the fs-verity bitmap. The block needs to have ->offset set.
-> + */
-> +void fsverity_invalidate_block(struct inode *inode,
-> +		struct fsverity_blockbuf *block)
-> +{
-> +	struct fsverity_info *vi = inode->i_verity_info;
-> +	const unsigned int log_blocksize = vi->tree_params.log_blocksize;
-> +
-> +	if (block->offset > vi->tree_params.tree_size) {
-> +		fsverity_err(inode,
-> +"Trying to invalidate beyond Merkle tree (tree %lld, offset %lld)",
-> +			     vi->tree_params.tree_size, block->offset);
-> +		return;
-> +	}
-> +
-> +	clear_bit(block->offset >> log_blocksize, vi->hash_block_verified);
-> +}
-> +EXPORT_SYMBOL_GPL(fsverity_invalidate_block);
-> +
-> +void fsverity_drop_block(struct inode *inode,
-> +		struct fsverity_blockbuf *block)
-> +{
-> +	if (inode->i_sb->s_vop->drop_block)
-> +		inode->i_sb->s_vop->drop_block(block);
-> +	else {
-> +		struct page *page = (struct page *)block->context;
-> +
-> +		kunmap_local(block->kaddr);
-> +		put_page(page);
-> +	}
-> +	block->kaddr = NULL;
-> +}
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index ac58b19f23d3..0973b521ac5a 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -26,6 +26,33 @@
->  /* Arbitrary limit to bound the kmalloc() size.  Can be changed. */
->  #define FS_VERITY_MAX_DESCRIPTOR_SIZE	16384
->  
-> +/**
-> + * struct fsverity_blockbuf - Merkle Tree block buffer
-> + * @kaddr: virtual address of the block's data
-> + * @offset: block's offset into Merkle tree
-> + * @size: the Merkle tree block size
-> + * @context: filesystem private context
-> + *
-> + * Buffer containing single Merkle Tree block. These buffers are passed
-> + *  - to filesystem, when fs-verity is building merkel tree,
-> + *  - from filesystem, when fs-verity is reading merkle tree from a disk.
-> + * Filesystems sets kaddr together with size to point to a memory which contains
-> + * Merkle tree block. Same is done by fs-verity when Merkle tree is need to be
-> + * written down to disk.
-> + *
-> + * While reading the tree, fs-verity calls ->read_merkle_tree_block followed by
-> + * ->drop_block to let filesystem know that memory can be freed.
-> + *
-> + * The context is optional. This field can be used by filesystem to passthrough
-> + * state from ->read_merkle_tree_block to ->drop_block.
-> + */
-> +struct fsverity_blockbuf {
-> +	void *kaddr;
-> +	u64 offset;
-> +	unsigned int size;
-> +	void *context;
-> +};
-> +
->  /* Verity operations for filesystems */
->  struct fsverity_operations {
->  
-> @@ -107,6 +134,32 @@ struct fsverity_operations {
->  					      pgoff_t index,
->  					      unsigned long num_ra_pages);
->  
-> +	/**
-> +	 * Read a Merkle tree block of the given inode.
-> +	 * @inode: the inode
-> +	 * @pos: byte offset of the block within the Merkle tree
-> +	 * @block: block buffer for filesystem to point it to the block
-> +	 * @log_blocksize: log2 of the size of the expected block
-> +	 * @ra_bytes: The number of bytes that should be
-> +	 *		prefetched starting at @pos if the page at @pos
-> +	 *		isn't already cached.  Implementations may ignore this
-> +	 *		argument; it's only a performance optimization.
-> +	 *
-> +	 * This can be called at any time on an open verity file.  It may be
-> +	 * called by multiple processes concurrently.
-> +	 *
-> +	 * In case that block was evicted from the memory filesystem has to use
-> +	 * fsverity_invalidate_block() to let fsverity know that block's
-> +	 * verification state is not valid anymore.
-> +	 *
-> +	 * Return: 0 on success, -errno on failure
-> +	 */
-> +	int (*read_merkle_tree_block)(struct inode *inode,
-> +				      u64 pos,
-> +				      struct fsverity_blockbuf *block,
-> +				      unsigned int log_blocksize,
-> +				      u64 ra_bytes);
-> +
->  	/**
->  	 * Write a Merkle tree block to the given inode.
->  	 *
-> @@ -122,6 +175,16 @@ struct fsverity_operations {
->  	 */
->  	int (*write_merkle_tree_block)(struct inode *inode, const void *buf,
->  				       u64 pos, unsigned int size);
-> +
-> +	/**
-> +	 * Release the reference to a Merkle tree block
-> +	 *
-> +	 * @block: the block to release
-> +	 *
-> +	 * This is called when fs-verity is done with a block obtained with
-> +	 * ->read_merkle_tree_block().
-> +	 */
-> +	void (*drop_block)(struct fsverity_blockbuf *block);
->  };
->  
->  #ifdef CONFIG_FS_VERITY
-> @@ -175,6 +238,8 @@ int fsverity_ioctl_read_metadata(struct file *filp, const void __user *uarg);
->  bool fsverity_verify_blocks(struct folio *folio, size_t len, size_t offset);
->  void fsverity_verify_bio(struct bio *bio);
->  void fsverity_enqueue_verify_work(struct work_struct *work);
-> +void fsverity_invalidate_block(struct inode *inode,
-> +		struct fsverity_blockbuf *block);
->  
->  #else /* !CONFIG_FS_VERITY */
->  
-> -- 
-> 2.42.0
-> 
-> 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.9-rc1
+
+for you to fetch changes up to 725d50261285ccf02501f2a1a6d10b31ce014597:
+
+  exec: Simplify remove_arg_zero() error path (2024-03-09 13:46:30 -0800)
+
+----------------------------------------------------------------
+execve updates for v6.9-rc1
+
+- Drop needless error path code in remove_arg_zero() (Li kunyu, Kees Cook)
+
+- binfmt_elf_efpic: Don't use missing interpreter's properties (Max Filippov)
+
+- Use /bin/bash for execveat selftests
+
+----------------------------------------------------------------
+Kees Cook (2):
+      selftests/exec: Perform script checks with /bin/bash
+      exec: Simplify remove_arg_zero() error path
+
+Li kunyu (1):
+      exec: Delete unnecessary statements in remove_arg_zero()
+
+Max Filippov (1):
+      fs: binfmt_elf_efpic: don't use missing interpreter's properties
+
+ fs/binfmt_elf_fdpic.c                   |  2 +-
+ fs/exec.c                               | 11 +++--------
+ tools/testing/selftests/exec/execveat.c |  2 +-
+ 3 files changed, 5 insertions(+), 10 deletions(-)
+
+-- 
+Kees Cook
 
