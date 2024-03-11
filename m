@@ -1,75 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-14140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D48A87847B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 17:03:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D90287849D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 17:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543F62822B4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 16:03:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3511C2124E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 16:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3193F5026B;
-	Mon, 11 Mar 2024 16:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B2247F7F;
+	Mon, 11 Mar 2024 16:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDrEiu+m"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEEB4DA1A;
-	Mon, 11 Mar 2024 16:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8497A4436C;
+	Mon, 11 Mar 2024 16:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710172920; cv=none; b=S/h65tHWa+7fx5LQVIQgma62kXKqvwxKaNcCOeDlEgiJ6n53d1DIDC4kmtJrIYoS+7573Y/M8CagCZFdG7MMLr8homp7f0KEB35A0zQGcg83u5stDpBt9sgDRQBQVINcASK7HG1o9/aBWW3ZirULH8CnH8g5/Ir4IJzlkj9E/H0=
+	t=1710173260; cv=none; b=sK8/tedH1iBL9bKmzLq+JGGL973hXFsX8uV7O0EvbCtDWeDFRwl6Bkm/QV0EO46G7KhZw/vcixp6XY+SAVwAdXuybyjdnQUfjz9bA4mkZ9TdE5RtIKua4M3F1wZTjcVl/T2hnyG7Ccwyz7BtMq/e528Ddi5DNzxaUluFhWIDn4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710172920; c=relaxed/simple;
-	bh=X3GdXd5MdElqZ7SH6kkZIYIIS49/wbQOMBJNyVWcWws=;
+	s=arc-20240116; t=1710173260; c=relaxed/simple;
+	bh=Z3VLtbgSadjSI/x6kUu32ZF43oQcfZ5oMFjrp5In00U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aw56kK/j1oo9KDsf5cb/KlIsW/NaogSb8ym/BEGR1jv6J0FrnjBVwkJ9HQpREGZmEI51XKWRSB7AW6wYlAZHjju4OBdyp0AFecJhnTE5lNnKonQLGwb29cUCoDjLFZVHoFdOFATudqCmQiU+sAZ3WNQAfQ5rg67X4zia0OKhxHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 179A25C7EB;
-	Mon, 11 Mar 2024 16:01:51 +0000 (UTC)
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0C1DB1395F;
-	Mon, 11 Mar 2024 16:01:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LA3xAu8q72XkDQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 11 Mar 2024 16:01:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id ACDCDA0807; Mon, 11 Mar 2024 17:01:50 +0100 (CET)
-Date: Mon, 11 Mar 2024 17:01:50 +0100
-From: Jan Kara <jack@suse.cz>
-To: Luis Henriques <lhenriques@suse.de>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fs_parser: handle parameters that can be empty and
- don't have a value
-Message-ID: <20240311160150.kzlfbdrmgiynuteu@quack3>
-References: <20240229163011.16248-1-lhenriques@suse.de>
- <20240229163011.16248-2-lhenriques@suse.de>
- <20240301-gegossen-seestern-683681ea75d1@brauner>
- <87il269crs.fsf@suse.de>
- <20240307151356.ishrtxrsge2i5mjn@quack3>
- <20240308-fahrdienst-torten-eae8f3eed3b4@brauner>
- <87a5n9t4le.fsf@suse.de>
- <20240308230911.r5a4xn6f5vp24hil@quack3>
- <87r0gh6p4y.fsf@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDhvJKTJaClowQ+wvVWSAoog83RY6mfgeXkpDaXzw0+MS+XrTbpowy1SH0MVqa9Mv4kfxLkUl47v8ZojyDR0SekOH61x2tofO/dysejxABVQC/TvDd/2IJWS4dqiHmOicBMH2qNMeLqOQNQNCdVanFxBkdnp8xuJd6Y2o9cIMcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDrEiu+m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01203C433F1;
+	Mon, 11 Mar 2024 16:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710173260;
+	bh=Z3VLtbgSadjSI/x6kUu32ZF43oQcfZ5oMFjrp5In00U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YDrEiu+mrr/IeG+VuLb+GqeyONl++YsowQWctcdNqdrvnXZ6zxWSW+58mkrmFPXnA
+	 i8inmXsx+nlB9za6NxgaQRzMwVKQwyJRN381/3QiYzl5917n8yeW6AGUJGdM5O0LBm
+	 IHdssvWlau3Ses9J/gHshDr7r98Id5aGzswxUbFeLi5GgFWzUEz6jIuceNoPSLrnRA
+	 B4JD653vipyxVlrUYKByJbzu6lsdlLcCVTnH9i0SheyqbWxj4pAjtd3QkAswWhZWDk
+	 C7/vFPJwPrrIt/mPv5I+/vp9+QFw567EbZ8qnv3R7WbhlhmxfTH/NT0RjiCPmqo80P
+	 9f7nDvTOgO3vQ==
+Date: Mon, 11 Mar 2024 09:07:39 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+	david@fromorbit.com, tytso@mit.edu, jack@suse.cz,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH 4/4] iomap: cleanup iomap_write_iter()
+Message-ID: <20240311160739.GV1927156@frogsfrogsfrogs>
+References: <20240311122255.2637311-1-yi.zhang@huaweicloud.com>
+ <20240311122255.2637311-5-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,124 +60,133 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87r0gh6p4y.fsf@suse.de>
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	 REPLY(-4.00)[]
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 179A25C7EB
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+In-Reply-To: <20240311122255.2637311-5-yi.zhang@huaweicloud.com>
 
-On Mon 11-03-24 10:26:05, Luis Henriques wrote:
-> Jan Kara <jack@suse.cz> writes:
-> > On Fri 08-03-24 10:12:13, Luis Henriques wrote:
-> >> Christian Brauner <brauner@kernel.org> writes:
-> >> 
-> >> > On Thu, Mar 07, 2024 at 04:13:56PM +0100, Jan Kara wrote:
-> >> >> On Fri 01-03-24 15:45:27, Luis Henriques wrote:
-> >> >> > Christian Brauner <brauner@kernel.org> writes:
-> >> >> > 
-> >> >> > > On Thu, Feb 29, 2024 at 04:30:08PM +0000, Luis Henriques wrote:
-> >> >> > >> Currently, only parameters that have the fs_parameter_spec 'type' set to
-> >> >> > >> NULL are handled as 'flag' types.  However, parameters that have the
-> >> >> > >> 'fs_param_can_be_empty' flag set and their value is NULL should also be
-> >> >> > >> handled as 'flag' type, as their type is set to 'fs_value_is_flag'.
-> >> >> > >> 
-> >> >> > >> Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> >> >> > >> ---
-> >> >> > >>  fs/fs_parser.c | 3 ++-
-> >> >> > >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >> >> > >> 
-> >> >> > >> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> >> >> > >> index edb3712dcfa5..53f6cb98a3e0 100644
-> >> >> > >> --- a/fs/fs_parser.c
-> >> >> > >> +++ b/fs/fs_parser.c
-> >> >> > >> @@ -119,7 +119,8 @@ int __fs_parse(struct p_log *log,
-> >> >> > >>  	/* Try to turn the type we were given into the type desired by the
-> >> >> > >>  	 * parameter and give an error if we can't.
-> >> >> > >>  	 */
-> >> >> > >> -	if (is_flag(p)) {
-> >> >> > >> +	if (is_flag(p) ||
-> >> >> > >> +	    (!param->string && (p->flags & fs_param_can_be_empty))) {
-> >> >> > >>  		if (param->type != fs_value_is_flag)
-> >> >> > >>  			return inval_plog(log, "Unexpected value for '%s'",
-> >> >> > >>  				      param->key);
-> >> >> > >
-> >> >> > > If the parameter was derived from FSCONFIG_SET_STRING in fsconfig() then
-> >> >> > > param->string is guaranteed to not be NULL. So really this is only
-> >> >> > > about:
-> >> >> > >
-> >> >> > > FSCONFIG_SET_FD
-> >> >> > > FSCONFIG_SET_BINARY
-> >> >> > > FSCONFIG_SET_PATH
-> >> >> > > FSCONFIG_SET_PATH_EMPTY
-> >> >> > >
-> >> >> > > and those values being used without a value. What filesystem does this?
-> >> >> > > I don't see any.
-> >> >> > >
-> >> >> > > The tempting thing to do here is to to just remove fs_param_can_be_empty
-> >> >> > > from every helper that isn't fs_param_is_string() until we actually have
-> >> >> > > a filesystem that wants to use any of the above as flags. Will lose a
-> >> >> > > lot of code that isn't currently used.
-> >> >> > 
-> >> >> > Right, I find it quite confusing and I may be fixing the issue in the
-> >> >> > wrong place.  What I'm seeing with ext4 when I mount a filesystem using
-> >> >> > the option '-o usrjquota' is that fs_parse() will get:
-> >> >> > 
-> >> >> >  * p->type is set to fs_param_is_string
-> >> >> >    ('p' is a struct fs_parameter_spec, ->type is a function)
-> >> >> >  * param->type is set to fs_value_is_flag
-> >> >> >    ('param' is a struct fs_parameter, ->type is an enum)
-> >> >> > 
-> >> >> > This is because ext4 will use the __fsparam macro to set define a
-> >> >> > fs_param_spec as a fs_param_is_string but will also set the
-> >> >> > fs_param_can_be_empty; and the fsconfig() syscall will get that parameter
-> >> >> > as a flag.  That's why param->string will be NULL in this case.
-> >> >> 
-> >> >> So I'm a bit confused here. Valid variants of these quota options are like
-> >> >> "usrjquota=<filename>" (to set quota file name) or "usrjquota=" (to clear
-> >> >> quota file name). The variant "usrjquota" should ideally be rejected
-> >> >> because it doesn't make a good sense and only adds to confusion. Now as far
-> >> >> as I'm reading fs/ext4/super.c: parse_options() (and as far as my testing
-> >> >> shows) this is what is happening so what is exactly the problem you're
-> >> >> trying to fix?
-> >> >
-> >> > mount(8) has no way of easily knowing that for something like
-> >> > mount -o usrjquota /dev/sda1 /mnt that "usrjquota" is supposed to be
-> >> > set as an empty string via FSCONFIG_SET_STRING. For mount(8) it is
-> >> > indistinguishable from a flag because it's specified without an
-> >> > argument. So mount(8) passes FSCONFIG_SET_FLAG and it seems strange that
-> >> > we should require mount(8) to know what mount options are strings or no.
-> >> > I've ran into this issue before myself when using the mount api
-> >> > programatically.
-> >> 
-> >> Right.  A simple usecase is to try to do:
-> >> 
-> >>   mount -t ext4 -o usrjquota= /dev/sda1 /mnt/
-> >> 
-> >> It will fail, and this has been broken for a while.
-> >
-> > I see. But you have to have new enough mount that is using fsconfig, don't
-> > you? Because for me in my test VM this works just fine...
+On Mon, Mar 11, 2024 at 08:22:55PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Oh, interesting.  FTR I'm using mount from util-linux 2.39.3, but I
-> haven't tried this with older versions.
+> The status variable in iomap_write_iter() is confusing and
+> iomap_write_end() always return 0 or copied bytes, so replace it with a
+> new written variable to represent the written bytes in each cycle, and
+> also do some cleanup, no logic changes.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/iomap/buffered-io.c | 31 +++++++++++++++----------------
+>  1 file changed, 15 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 19f91324c690..767af6e67ed4 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -851,7 +851,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  	loff_t length = iomap_length(iter);
+>  	size_t chunk = PAGE_SIZE << MAX_PAGECACHE_ORDER;
+>  	loff_t pos = iter->pos;
+> -	ssize_t written = 0;
+> +	ssize_t total_written = 0;
+>  	long status = 0;
+>  	struct address_space *mapping = iter->inode->i_mapping;
+>  	unsigned int bdp_flags = (iter->flags & IOMAP_NOWAIT) ? BDP_ASYNC : 0;
+> @@ -862,6 +862,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  		size_t offset;		/* Offset into folio */
+>  		size_t bytes;		/* Bytes to write to folio */
+>  		size_t copied;		/* Bytes copied from user */
+> +		size_t written;		/* Bytes have been written */
+>  
+>  		bytes = iov_iter_count(i);
+>  retry:
+> @@ -906,7 +907,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  			flush_dcache_folio(folio);
+>  
+>  		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
+> -		status = iomap_write_end(iter, pos, bytes, copied, folio);
+> +		written = iomap_write_end(iter, pos, bytes, copied, folio);
+>  
+>  		/*
+>  		 * Update the in-memory inode size after copying the data into
+> @@ -915,28 +916,26 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  		 * no stale data is exposed.
+>  		 */
+>  		old_size = iter->inode->i_size;
+> -		if (pos + status > old_size) {
+> -			i_size_write(iter->inode, pos + status);
+> +		if (pos + written > old_size) {
+> +			i_size_write(iter->inode, pos + written);
+>  			iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
+>  		}
+> -		__iomap_put_folio(iter, pos, status, folio);
+> +		__iomap_put_folio(iter, pos, written, folio);
+>  
+>  		if (old_size < pos)
+>  			pagecache_isize_extended(iter->inode, old_size, pos);
+> -		if (status < bytes)
+> -			iomap_write_failed(iter->inode, pos + status,
+> -					   bytes - status);
+> -		if (unlikely(copied != status))
+> -			iov_iter_revert(i, copied - status);
 
-I'm using util-linux 2.37.2 and checking the changelogs indeed 2.39 started
-to use the new mount API from the kernel. Checking strace of the new mount
-I can indeed see mount(8) does:
+I wish you'd made the variable renaming and the function reorganization
+separate patches.  The renaming looks correct to me, but moving these
+calls adds a logic bomb.
 
-fsconfig(3, FSCONFIG_SET_FLAG, "usrjquota", NULL, 0) = -1 EINVAL (Invalid argument)
+If at some point iomap_write_end actually starts returning partial write
+completions (e.g. you wrote 250 bytes, but for some reason the pagecache
+only acknowledges 100 bytes were written) then this code no longer
+reverts the iter or truncates posteof pagecache correctly...
 
-So it is actually util-linux, not the kernel parser, that IMHO incorrectly
-parses the mount options and uses FSCONFIG_SET_FLAG instead of
-FSCONFIG_SET_STRING with an empty string.
+>  
+>  		cond_resched();
+> -		if (unlikely(status == 0)) {
+> +		if (unlikely(written == 0)) {
+>  			/*
+>  			 * A short copy made iomap_write_end() reject the
+>  			 * thing entirely.  Might be memory poisoning
+>  			 * halfway through, might be a race with munmap,
+>  			 * might be severe memory pressure.
+>  			 */
+> +			iomap_write_failed(iter->inode, pos, bytes);
+> +			iov_iter_revert(i, copied);
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+...because now we only do that if the pagecache refuses to acknowledge
+any bytes written at all.  I think it actually works correctly with
+today's kernel since __iomap_write_end only returns copied or 0, but the
+size_t return type implies that a short acknowledgement is theoretically
+possible.
+
+IOWs, doesn't this adds a logic bomb?
+
+--D
+
+> +
+>  			if (chunk > PAGE_SIZE)
+>  				chunk /= 2;
+>  			if (copied) {
+> @@ -944,17 +943,17 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  				goto retry;
+>  			}
+>  		} else {
+> -			pos += status;
+> -			written += status;
+> -			length -= status;
+> +			pos += written;
+> +			total_written += written;
+> +			length -= written;
+>  		}
+>  	} while (iov_iter_count(i) && length);
+>  
+>  	if (status == -EAGAIN) {
+> -		iov_iter_revert(i, written);
+> +		iov_iter_revert(i, total_written);
+>  		return -EAGAIN;
+>  	}
+> -	return written ? written : status;
+> +	return total_written ? total_written : status;
+>  }
+>  
+>  ssize_t
+> -- 
+> 2.39.2
+> 
+> 
 
