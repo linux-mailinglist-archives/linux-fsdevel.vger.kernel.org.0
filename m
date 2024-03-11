@@ -1,203 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-14087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A91D87794C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 01:26:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA12877963
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 02:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D6F11C20C31
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 00:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A691F2126B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Mar 2024 01:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D0E7EC;
-	Mon, 11 Mar 2024 00:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765BFA3F;
+	Mon, 11 Mar 2024 01:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="tTpsvZuv"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bfBxIIZ7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4AC628
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 00:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9607F8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Mar 2024 01:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710116793; cv=none; b=YPgKYgZVS+isAKDjaUxFsoBXMLaLewQ/iR647odNvseGl2Wg4pHGOgb6O6rNbEQgjbOyStcrYbc9NwQG8XbLv1AwkUZgi+aqsK2SkicEpPF/dbpY50YJ7/he4h/NslarbG3mhWbeoWSv2CK2VlKKr0ijIeUweuypBvyQwrAPo1A=
+	t=1710118998; cv=none; b=O7H9dPBkl6wqbNLrQzRi9Rf2aNWhT69DRLqwvqR33SerzculWQ08DLBFZBd/p0gVZy1ROz6+CB9rEWdren+Ap9F1B9B7dt8SrtiWiAu7nmi6XhA2E6jcUI5KkeflI4LuRADEqsVYcR7lfBwRfQPpeybjF6qrN0vtYPFn6jCBTTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710116793; c=relaxed/simple;
-	bh=iBKjjTrnOHzNOegJJQGLP50ZpI68uONSIDUMvj2s3Po=;
+	s=arc-20240116; t=1710118998; c=relaxed/simple;
+	bh=bTkYO6hpD+ws1aCivbIeq/S/RfBZgTdP0CbxFKJAUg4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XipWfqWFKaJFeCWfjhExj2Z/GndRKzUlYcFooNR/wAaG/Q9w3tSDi+jIGiB8FFolywpkZHK5OSYOqmg+yjAbwrqFQItYW6iVJ7g6PzU3EfyiV2u33tqmVFbxdjQsGptKSlD6GMdkAvVJ4HEWouIM2f85XhSTnqQ5IIyNoIhb/rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=tTpsvZuv; arc=none smtp.client-ip=209.85.214.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcY7hMYxJTpUAy2y9SzZm7r671CrcpMHm2Q8teJtr/xQosQU9y8IzmBJySL1WGMXPq/XGMamPq+VX1UKB0U10FgQgVCtLhxM1mec9GfXRHOo7cVCNyg/+yz81115UFz1OwFpLUzYDnBmD+PcVEz8rWJd0gDF/lN1qFyqdCgbqFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bfBxIIZ7; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1dd8f7d50c6so3513765ad.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Mar 2024 17:26:30 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1dd2dca2007so13828585ad.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Mar 2024 18:03:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710116788; x=1710721588; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r+ZDbxeIcvt8eupuU3iHpjDH4gBEwZMYuiYtlmL76Eo=;
-        b=tTpsvZuvNS81KlgYcgGMdbodetSb3JKjdc1wXrfhG/eXGZRPmZXw09rKKwcmC+jA8D
-         pyg3Ddyjv8xYnpIlbvWQ41zCoopZNhwpnf/blxPz+PUBzqaxLpt4QwCWsaJur5DxN4zz
-         UcDqe5vHJNzE9WUgLjtXJOjtc/j2syPP9PKnkOfnZqa5KXjnd5S6M0k5phMvLSQPYJ7F
-         rsg00rVvPyyGWtl1PkYLQNjD8KvquxSfrzB8WZZyFuldzKMTwacBjSGIBhvqPKkYzv90
-         kNXFiivwTNGOcLVeAHz+6MmZXaINwmJeDXLPZggQZCMp+JHaApD6DlL1a5pyfhIsFKx8
-         lUUg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710118997; x=1710723797; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Tb2TjIjGy7NO9Sxv5dfmBqswYG9vWza5A0iKXG81thU=;
+        b=bfBxIIZ7MvlZ3izZbMEcHmyPkXD8WUE696hx8vQBkQQhtv5uxQjZRsTANeGzePS3DD
+         QZQnXj77uAFenaoVxHGIbrs75rPbqQYRWiVfVfAB7luZ6MiGqhpvsTNsxAHNPeTWg2Oy
+         +EokU+NrlTniimyFx/OFoTd9cD0RrgSNO2foNbQ5vBEnxXwWDsk3/NwZ6dFg0ul6cKLj
+         lnmEzyG9agLaF0um1jWFBN4cw+QfAsch7DuYrCJF/Y40utPPlRkITHrOsZ+mOxCdUVS4
+         wQMNANlDdsrb4741b5IuHjtW5qhjU76wbQ695/HmdgjAvsdGm2LNbfwF22OMQgfe2p6V
+         05mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710116788; x=1710721588;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r+ZDbxeIcvt8eupuU3iHpjDH4gBEwZMYuiYtlmL76Eo=;
-        b=Lozgz30UvlhWrwIj61zSZXxS+wg0wPOYBKwI/Y+7Vn3fVLtFsWPZtz1wX5EJyFIo+Z
-         mraEak39maxWSMwRiGTrgeiAJmsq0QF+7k725/v/1gJm1noee8tFpjJw25YVkk9Zr5vP
-         IaQtAEbsPCAoi9BxDHQROKhqiNlolwcooHvNsE1j9QK0G8VRm3xk89BakjcqvxeEcICW
-         xkfF7ozHlndJG5bm0vh6+GbmVZmpMxTxv4MVgQNX7tMD706g8r3jJ/H23XYLlcSIf2Dh
-         u/muldi8/RYgYITM5/vNfChfhQctHMxAmfQ1mPzzeTufuegTlJcIoMnQZCIJq0tBv+/I
-         rm7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFgzKhSvVgDB0OJZ/z7ERKFMr2ZmXQuRyeNyuJU9Gj8YrrKaUe4/0IOQCpq01tfxUMDIG4kAl1BnJSGcziowmg8alqwuWihF9pLvZ9+Q==
-X-Gm-Message-State: AOJu0Yxe7XHKNERJeo5MVW6vRZ87nx2O6eATrX/5IAAn8UQxGVNcDuvC
-	G/IUgmjhK2blGezyXsreJteKIG1PzqMveUE2UnPx1CkD8L5jsFZ3L7VKRDlRey8=
-X-Google-Smtp-Source: AGHT+IHzV7FprUI1FoXB5iJZCu3Lbc002VzAsroztma0cmpHQA1DeV9d9zr30wWO4FIBCVe1xGGJhQ==
-X-Received: by 2002:a17:902:e88c:b0:1dd:4cb:cc57 with SMTP id w12-20020a170902e88c00b001dd04cbcc57mr6011101plg.0.1710116788118;
-        Sun, 10 Mar 2024 17:26:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710118997; x=1710723797;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tb2TjIjGy7NO9Sxv5dfmBqswYG9vWza5A0iKXG81thU=;
+        b=E1Ag++SQHW51VE7tw/vS/9olrtGVIWa8E5z+MnYIrg9yV4d5qnSoujFSxYwt53eIiH
+         +VUZgz1EKhUi7iwC4k+JSLq/VQlVInRPw/WrYKRJrRY2JuYOQAOVurqC6xX6tXaULXDu
+         TYSsn4a8U0EusJln13ecOGsejcRpvLrpa/PLPwkW57D0b+7RsFWSlE4dnTIybvXWBo1o
+         xFSUchP7zU7gsIubocyzGIz3zTdTfiKqSc5NvnZFHCDB8lePC+yDrxrvr1UVcVJ3nWYM
+         Rnbr7Oawxi/bZWMLMH2aDIXqUrFj9lfCptYC+wtjjCRmNnRrgdPhxAcGHxdrvPl1ljr8
+         iDuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPln6j9HXavRxvXuj7dKIC86Y+soPUPRZIpAACV+zwTXD6YLT5FoCrAidvSfyDHFb0YthvShartKjEzVbUONnZzOa+2CANfWxRlK+u3A==
+X-Gm-Message-State: AOJu0Yz83vMdE8LcS8mY/+w+AZvoD9xPwwF8pE0JHgkLzP4RhkqBLz79
+	+nC0E7rzg2C7x0d8NtUUHC2Xk7MhCctL8tCDK2YOBAIdXAVsq/SPSCrCNOogI8I=
+X-Google-Smtp-Source: AGHT+IHVMeGaLNgIl7cGC9cLhsHQQ9Vb1MhzR7xJX9IC8luYpveLWgo56KwgaJD1/3iikbO5Rs1wWQ==
+X-Received: by 2002:a17:902:b782:b0:1dc:b063:34ac with SMTP id e2-20020a170902b78200b001dcb06334acmr4224505pls.21.1710118996512;
+        Sun, 10 Mar 2024 18:03:16 -0700 (PDT)
 Received: from dread.disaster.area (pa49-179-47-118.pa.nsw.optusnet.com.au. [49.179.47.118])
-        by smtp.gmail.com with ESMTPSA id j6-20020a170902c3c600b001dd5f5b1ca4sm3232768plj.309.2024.03.10.17.26.26
+        by smtp.gmail.com with ESMTPSA id ks13-20020a170903084d00b001dcfc88ccf6sm3314847plb.263.2024.03.10.18.03.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Mar 2024 17:26:26 -0700 (PDT)
+        Sun, 10 Mar 2024 18:03:15 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1rjTUm-000EB4-1C;
-	Mon, 11 Mar 2024 11:26:24 +1100
-Date: Mon, 11 Mar 2024 11:26:24 +1100
+	id 1rjU4P-000Esf-1n;
+	Mon, 11 Mar 2024 12:03:13 +1100
+Date: Mon, 11 Mar 2024 12:03:13 +1100
 From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	chandan.babu@oracle.com, ebiggers@kernel.org
-Subject: Re: [PATCH v5 11/24] xfs: add XBF_VERITY_SEEN xfs_buf flag
-Message-ID: <Ze5PsMopkWqZZ1NX@dread.disaster.area>
-References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-13-aalbersh@redhat.com>
- <20240307224654.GB1927156@frogsfrogsfrogs>
- <ZepxHObVLb3JLCl/@dread.disaster.area>
- <20240308033138.GN6184@frogsfrogsfrogs>
- <20240309162828.GQ1927156@frogsfrogsfrogs>
+To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Allen Webb <allenwebb@google.com>,
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@chromium.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Message-ID: <Ze5YUUUQqaZsPjql@dread.disaster.area>
+References: <ZedgzRDQaki2B8nU@google.com>
+ <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+ <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+ <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+ <ZervrVoHfZzAYZy4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240309162828.GQ1927156@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZervrVoHfZzAYZy4@google.com>
 
-On Sat, Mar 09, 2024 at 08:28:28AM -0800, Darrick J. Wong wrote:
-> On Thu, Mar 07, 2024 at 07:31:38PM -0800, Darrick J. Wong wrote:
-> > On Fri, Mar 08, 2024 at 12:59:56PM +1100, Dave Chinner wrote:
-> > > > (Ab)using the fsbuf code did indeed work (and passed all the fstests -g
-> > > > verity tests), so now I know the idea is reasonable.  Patches 11, 12,
-> > > > 14, and 15 become unnecessary.  However, this solution is itself grossly
-> > > > overengineered, since all we want are the following operations:
-> > > > 
-> > > > peek(key): returns an fsbuf if there's any data cached for key
-> > > > 
-> > > > get(key): returns an fsbuf for key, regardless of state
-> > > > 
-> > > > store(fsbuf, p): attach a memory buffer p to fsbuf
-> > > > 
-> > > > Then the xfs ->read_merkle_tree_block function becomes:
-> > > > 
-> > > > 	bp = peek(key)
-> > > > 	if (bp)
-> > > > 		/* return bp data up to verity */
-> > > > 
-> > > > 	p = xfs_attr_get(key)
-> > > > 	if (!p)
-> > > > 		/* error */
-> > > > 
-> > > > 	bp = get(key)
-> > > > 	store(bp, p)
-> > > 
-> > > Ok, that looks good - it definitely gets rid of a lot of the
-> > > nastiness, but I have to ask: why does it need to be based on
-> > > xfs_bufs?
+On Fri, Mar 08, 2024 at 12:03:01PM +0100, Günther Noack wrote:
+> On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
+> > On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
+> > > On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
+> > >> On Thu, Mar 7, 2024 at 7:57 AM Günther Noack <gnoack@google.com> wrote:
+> > >> I need some more convincing as to why we need to introduce these new
+> > >> hooks, or even the vfs_masked_device_ioctl() classifier as originally
+> > >> proposed at the top of this thread.  I believe I understand why
+> > >> Landlock wants this, but I worry that we all might have different
+> > >> definitions of a "safe" ioctl list, and encoding a definition into the
+> > >> LSM hooks seems like a bad idea to me.
+> > >
+> > > I have no idea what a "safe" ioctl means here. Subsystems already
+> > > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+> > > "safe" clearly means something different here.
 > > 
-> > (copying from IRC) It was still warm in my brain L2 after all the xfile
-> > buftarg cleaning and merging that just got done a few weeks ago.   So I
-> > went with the simplest thing I could rig up to test my ideas, and now
-> > we're at the madly iterate until exhaustion stage. ;)
-> > 
-> > >            That's just wasting 300 bytes of memory on a handle to
-> > > store a key and a opaque blob in a rhashtable.
-> > 
-> > Yep.  The fsbufs implementation was a lot more slender, but a bunch more
-> > code.  I agree that I ought to go look at xarrays or something that's
-> > more of a direct mapping as a next step.  However, i wanted to get
-> > Andrey's feedback on this general approach first.
-> > 
-> > > IIUC, the key here is a sequential index, so an xarray would be a
-> > > much better choice as it doesn't require internal storage of the
-> > > key.
-> > 
-> > I wonder, what are the access patterns for merkle blobs?  Is it actually
-> > sequential, or is more like 0 -> N -> N*N as we walk towards leaves?
-
-I think the leaf level (i.e. individual record) access patterns
-largely match data access patterns, so I'd just treat it like as if
-it's a normal file being accessed....
-
-> > Also -- the fsverity block interfaces pass in a "u64 pos" argument.  Was
-> > that done because merkle trees may some day have more than 2^32 blocks
-> > in them?  That won't play well with things like xarrays on 32-bit
-> > machines.
-> > 
-> > (Granted we've been talking about deprecating XFS on 32-bit for a while
-> > now but we're not the whole world)
-> > 
-> > > i.e.
-> > > 
-> > > 	p = xa_load(key);
-> > > 	if (p)
-> > > 		return p;
-> > > 
-> > > 	xfs_attr_get(key);
-> > > 	if (!args->value)
-> > > 		/* error */
-> > > 
-> > > 	/*
-> > > 	 * store the current value, freeing any old value that we
-> > > 	 * replaced at this key. Don't care about failure to store,
-> > > 	 * this is optimistic caching.
-> > > 	 */
-> > > 	p = xa_store(key, args->value, GFP_NOFS);
-> > > 	if (p)
-> > > 		kvfree(p);
-> > > 	return args->value;
-> > 
-> > Attractive.  Will have to take a look at that tomorrow.
+> > That was my problem with the first version as well, but I think
+> > drawing the line between "implemented in fs/ioctl.c" and
+> > "implemented in a random device driver fops->unlock_ioctl()"
+> > seems like a more helpful definition.
 > 
-> Done.  I think.  Not sure that I actually got all the interactions
-> between the shrinker and the xarray correct though.  KASAN and lockdep
-> don't have any complaints running fstests, so that's a start.
+> Yes, sorry for the confusion - that is exactly what I meant to say with "safe".:
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fsverity-cleanups-6.9_2024-03-09
+> Those are the IOCTL commands implemented in fs/ioctl.c which do not go through
+> f_ops->unlocked_ioctl (or the compat equivalent).
 
-My initial impression is "over-engineered".
+Which means all the ioctls we wrequire for to manage filesystems are
+going to be considered "unsafe" and barred, yes?
 
-I personally would have just allocated the xattr value buffer with a
-little extra size and added all the external cache information (a
-reference counter is all we need as these are fixed sized blocks) to
-the tail of the blob we actually pass to fsverity. If we tag the
-inode in the radix tree as having verity blobs that can be freed, we
-can then just extend the existing fs sueprblock shrinker callout to
-also walk all the verity inodes with cached data to try to reclaim
-some objects...
+That means you'll break basic commands like 'xfs_info' that tell you
+the configuration of the filesystem. It will prevent things like
+online growing and shrinking, online defrag, fstrim, online
+scrubbing and repair, etc will not worki anymore. It will break
+backup utilities like xfsdump, and break -all- the device management
+of btrfs and bcachefs filesystems.
 
-But, if a generic blob cache is what it takes to move this forwards,
-so be it.
+Further, all the setup and management of -VFS functionality- like
+fsverity and fscrypt is actually done at the filesystem level (i.e
+through ->unlocked_ioctl, no do_vfs_ioctl()) so those are all going
+to get broken as well despite them being "vfs features".
+
+Hence from a filesystem perspective, this is a fundamentally
+unworkable definition of "safe".
+
+> We want to give people a way with Landlock so that they can restrict the use of
+> device-driver implemented IOCTLs, but where they can keep using the bulk of
+> more harmless IOCTLs in fs/ioctl.c.
+
+Hah! There's plenty of "harm" that can be done through those ioctls.
+It's the entry point for things like filesystem freeze/thaw, FIEMAP
+(returns physical data location information), file cloning,
+deduplication and per-inode feature manipulation. Lots of this stuff
+is under CAP_SYS_ADMIN because they aren't safe for to be exposed to
+general users...
+
+So, yeah, I don't think this definition of "safe" is actually useful
+in any way. It's arbitrary, and will require both widespread
+whitelisting of ioctls to maintain a useful working system and
+widespread blacklisting to create a secure system....
 
 -Dave.
 -- 
