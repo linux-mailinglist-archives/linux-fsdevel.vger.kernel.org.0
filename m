@@ -1,64 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-14238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A4E879C8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 21:04:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7310B879C9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 21:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F09E1B2181A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 20:04:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DAF4B229C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 20:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E182B1428E8;
-	Tue, 12 Mar 2024 20:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BB1142909;
+	Tue, 12 Mar 2024 20:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0UFOkfg"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fGa0rx+R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4555D14264A;
-	Tue, 12 Mar 2024 20:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5967CF01;
+	Tue, 12 Mar 2024 20:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710273865; cv=none; b=gKGkd1FaDC+tQHYZmkNtXWlTOT3clWajo7WvXEdyTpSTmqEobipqiSkAh/J8qQy+w5vLn3qaOXlXmzWkmH9swss3CEWBCicTGT/jc43FfB/oExvbalcMA24L/ppeIUlWrG4sKUhL89YAgdgs+TX4kNl5nakDZPi8BCA3d+RxR+k=
+	t=1710274094; cv=none; b=d8Lw3vmkFFuf+WG57R/t87CRxxbNV6Hz3MpvJCmj8sU8ZvjmNqfH8AnmcU/moETKyHJH7uByDLfXmfB0TBn3x3RCNjXl+xrgX6K9pxvkUSwJBOkSUWXU3Adz+qpP00BFvIyqXir3vCpwRMLhYERSM6CZyJtAZqkGLQg5SfxIglE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710273865; c=relaxed/simple;
-	bh=wGKWClSQQRwZy90nShMoXFRc7nVDMa4c4zEHzuS5hJM=;
+	s=arc-20240116; t=1710274094; c=relaxed/simple;
+	bh=RLEUuRERIJXBaD1m7rMV8MoNRD7PPHojZhDIQsbKve8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlNfmAEtxbIF4/M/vtIpgT9d+GSc4zWT0aDJrOhzUE7ndsu9/OK4HuqoV+zGNltR+X79ohLsUiY9nVl4Y+7h+3sVOkNPJtPA5rWPDJ91Q3bWw0EuEXNgUDj/iZHtKJMs3L10dBY58vwVgLkXK6txje1aidASP+gKjv4XNB5Ke0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0UFOkfg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B142AC433F1;
-	Tue, 12 Mar 2024 20:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710273864;
-	bh=wGKWClSQQRwZy90nShMoXFRc7nVDMa4c4zEHzuS5hJM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I0UFOkfgVLcQFOIoyLAkMKvtZb1tebcgwx77x0A61rz5z8m73KrqNWztlks9tFBA4
-	 AoISAlxtovLNTnk07oq26xIL+jMacN1Z/0Ps3yuGF3eOfpv/n7HUjLQQY68E2TQ++v
-	 I6rWnFLE/TF1JOn3mFj+NuMzil3d0mgE0ySZL7/ol8t9XwAKv65h4rto7DWmqFQM5C
-	 5TnHrBjHB2RqhjNPcvpMKS5LLp6aiwpDijK+eoI9YYRFAbkDHkfSiMZ2mGWjlVQxfz
-	 GItbDnAy5DDCctulxfB9AdZJKkmLGvabQZuf3lwxGcbVWSeuAe8fRPPM71gdHioSXm
-	 k5PWZXIZRW+zg==
-Date: Tue, 12 Mar 2024 13:04:24 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	chandan.babu@oracle.com, ebiggers@kernel.org
-Subject: Re: [PATCH v5 11/24] xfs: add XBF_VERITY_SEEN xfs_buf flag
-Message-ID: <20240312200424.GH1927156@frogsfrogsfrogs>
-References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-13-aalbersh@redhat.com>
- <20240307224654.GB1927156@frogsfrogsfrogs>
- <ZepxHObVLb3JLCl/@dread.disaster.area>
- <20240308033138.GN6184@frogsfrogsfrogs>
- <20240309162828.GQ1927156@frogsfrogsfrogs>
- <Ze5PsMopkWqZZ1NX@dread.disaster.area>
- <20240311152505.GR1927156@frogsfrogsfrogs>
- <20240312024507.GY1927156@frogsfrogsfrogs>
- <Ze/9rdVsnwyksHmi@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzuKsvE9Dzsw8Kmxbl6n0bFQg7NDiV/V+afbNHrs4UJUu2SnmCnKZMw1oeXhz4rZH8HPy/OM2jm0nr82nD3ffTGV78NUEAsTxillvrmCLD9XIZbjo/iYoQBBpcB6z/mGI7qvppANP84Rc7lLYSir1SsmVwctSzjukA3XFuFKe6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fGa0rx+R; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 12 Mar 2024 16:07:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1710274089;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yVCYd35eicxoyDwHWZ5Xnl3STwUduIDprFGFDUbtbK8=;
+	b=fGa0rx+RU9H7yzOC8eKrKFu17a+94OmM+4cytPi0Sy37phzuaEQ+GhJUBfxmO2TO/xIFcf
+	bikGmTAjXGkm74EXvCd4e8T8K55apzctaN+Uuym6RjHufYvesaQ3hOpfnYjJpKv9uZ5LaK
+	qVqU7WfUOZtpXPBVr1A9ajf9sgP3KCk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, mhocko@suse.com, hannes@cmpxchg.org, 
+	roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, 
+	liam.howlett@oracle.com, penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, 
+	void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, masahiroy@kernel.org, nathan@kernel.org, 
+	dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org, 
+	paulmck@kernel.org, pasha.tatashin@soleen.com, yosryahmed@google.com, 
+	yuzhao@google.com, dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
+	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, minchan@google.com, 
+	kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
+	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 13/36] lib: prevent module unloading if memory is not
+ freed
+Message-ID: <kjg5lzzgjuls4hmyz3ym3u5ff3pu2ran7e7azabinak6oa6vrh@2vq4e73ftekk>
+References: <20240221194052.927623-1-surenb@google.com>
+ <20240221194052.927623-14-surenb@google.com>
+ <a9ebb623-298d-4acf-bdd5-0025ccb70148@suse.cz>
+ <ZfCdsbPgiARPHUkw@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,67 +81,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Ze/9rdVsnwyksHmi@dread.disaster.area>
+In-Reply-To: <ZfCdsbPgiARPHUkw@bombadil.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 12, 2024 at 06:01:01PM +1100, Dave Chinner wrote:
-> On Mon, Mar 11, 2024 at 07:45:07PM -0700, Darrick J. Wong wrote:
-> > On Mon, Mar 11, 2024 at 08:25:05AM -0700, Darrick J. Wong wrote:
-> > > > But, if a generic blob cache is what it takes to move this forwards,
-> > > > so be it.
+On Tue, Mar 12, 2024 at 11:23:45AM -0700, Luis Chamberlain wrote:
+> On Mon, Feb 26, 2024 at 05:58:40PM +0100, Vlastimil Babka wrote:
+> > On 2/21/24 20:40, Suren Baghdasaryan wrote:
+> > > Skip freeing module's data section if there are non-zero allocation tags
+> > > because otherwise, once these allocations are freed, the access to their
+> > > code tag would cause UAF.
 > > > 
-> > > Not necessarily. ;)
+> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 > > 
-> > And here's today's branch, with xfs_blobcache.[ch] removed and a few
-> > more cleanups:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/tag/?h=fsverity-cleanups-6.9_2024-03-11
+> > I know that module unloading was never considered really supported etc.
 > 
-> Walking all the inodes counting all the verity blobs in the shrinker
-> is going to be -expensive-. Shrinkers are run very frequently and
-> with high concurrency under memory pressure by direct reclaim, and
-> every single shrinker execution is going to run that traversal even
-> if it is decided there is nothing that can be shrunk.
-> 
-> IMO, it would be better to keep a count of reclaimable objects
-> either on the inode itself (protected by the xa_lock when
-> adding/removing) to avoid needing to walk the xarray to count the
-> blocks on the inode. Even better would be a counter in the perag or
-> a global percpu counter in the mount of all caches objects. Both of
-> those pretty much remove all the shrinker side counting overhead.
+> If its not supported then we should not have it on modules. Module
+> loading and unloading should just work, otherwise then this should not
+> work with modules and leave them in a zombie state.
 
-I went with a global percpu counter, let's see if lockdep/kasan have
-anything to say about my new design. :P
-
-> Couple of other small things.
-> 
-> - verity shrinker belongs in xfs_verity.c, not xfs_icache.c. It
->   really has nothing to do with the icache other than calling
->   xfs_icwalk(). That gets rid of some of the config ifdefs.
-
-Done.
-
-> - SHRINK_STOP is what should be returned by the scan when
->   xfs_verity_shrinker_scan() wants the shrinker to immediately stop,
->   not LONG_MAX.
-
-Aha.  Ok, thanks for the tipoff. ;)
-
-> - In xfs_verity_cache_shrink_scan(), the nr_to_scan is a count of
->   how many object to try to free, not how many we must free. i.e.
->   even if we can't free objects, they are still objects that got
->   scanned and so should decement nr_to_scan...
-
-<nod>
-
-Is there any way for ->scan_objects to tell its caller how much memory
-it actually freed?  Or does it only know about objects?  I suppose
-"number of bytes freed" wouldn't be that helpful since someone else
-could allocate all the freed memory immediately anyway.
-
---D
-
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
+Not have memory allocation profiling on modules?
 
