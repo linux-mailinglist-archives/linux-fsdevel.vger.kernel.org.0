@@ -1,112 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-14190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33A98790FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 10:30:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D8287920E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 11:31:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 694B61F22F46
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 09:30:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48F828435E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 10:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA70478B49;
-	Tue, 12 Mar 2024 09:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CE65730A;
+	Tue, 12 Mar 2024 10:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sbpwajHY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bG8jPD7s";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sbpwajHY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bG8jPD7s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D3B7828B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 09:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86102572;
+	Tue, 12 Mar 2024 10:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710235771; cv=none; b=N+57mNm2Gl/WXvR5NAQFpYKOY18Z9vfiBfh7jiH2ALR6YdYCJ0XpdMVT+yH7SibTtQLIejdvUWvCWq6xARdAKMXw9CLqjF1cebOrVnMWa9yfaDiCl4y1fbuBYVOpwI79QeZaeWO7DMxT5mWnwqrVieHf0f0Vxw4vWhXpHg0UOEA=
+	t=1710239473; cv=none; b=lVVUzfn5nEI8zIREf4fUJ839D2H3YX3D1p6dQwzhsI0k2AbnSWVfV3uTK39EP8r1Hr0khHZ9rJ1xI83Wq+N/xo5e83MKnBV/OUn7MEsyF4GQxtnDuv+vOjN30V64cma6J64PtOaWA0nK4DkUdKr7O40rN17yW3kpoovk/9fAjoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710235771; c=relaxed/simple;
-	bh=mISnCRNrBVZrMYQ53f9k8mk7rmapdHLOM+rzryM25Bo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rlpIUSy505/LZErGciRG0gRJPmiUzPW9323MgEh1TfTETpWR7Y0fL4n3NklOHtcakeqw+FU1ahYJco+KvS+2Xr08ldJdiPcryoJ1pml9IYL7/4f3fNEs+4vJdRJsGYS3ZFlQH/na5IzCBIMsGl/9gw0kCChPIZJ8tBM0igFHHq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7c7c9831579so573199039f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 02:29:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710235769; x=1710840569;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Dd3z8i+orPF3QV/wl6xzqYgpXBy4YLJkGho4zyPcEx4=;
-        b=rLEgMXOuPcO312n+1OLrEloB9VRqlz1qE2Qp5vxGu1XaTQEZ8h9dflC3uqjQ6fqiXW
-         gqHKV9tJUhaPN3RoS4qlLlGtjGLpTpvpxK68rb78/JX2NDf5PYiw9WhkdY/JI77Q6xRH
-         mL0cW8WpHBIvsNTc+8s7umE7pGlHfX4yeQBtKvUnFg2CY7eNIojvbYE6jAzJFsiclqvK
-         3895dALCeoC7HPkBrnlTCHSl2VUIQsoTl3LQg0mNiXuYVvKSXKjjKdZlyPk5OOECp4TM
-         IhFVu6qbAdoXJ24ZiFwpzmA5wmXnn3grjx9QFAvBaO9MSsMbF5lqtRIE4tAbJVYSMvpI
-         Ve8Q==
-X-Gm-Message-State: AOJu0Yxv7ccdpa1VCdeaALEZDEcMusA3tBh4f8Jm7vZhnVuZHpoRdctg
-	e+s8ySknlu48pFlbucK+L9ieDv2iWUp3sj+HoP4SqNjjfwiJOHmzLnC5272rFvpkWvm3z2StMFU
-	5ZgeZMMJzN5tyFgIADVpunZQ8GgC64EchXSywCC9+mTB//o9h2QmfN3I2lQ==
-X-Google-Smtp-Source: AGHT+IGq98iCqsDnSQkeiNPaj5MNdKvAZDHjBnRfQO/Gcd11JCE0t91MQzR0PBrcK6viWODPyJBaCraxIt1VH9lML8OKHRdRqK4a
+	s=arc-20240116; t=1710239473; c=relaxed/simple;
+	bh=oVUL+dBKPkx7whFrUnaDiNXKFRtCaIYHoGoThqj/yr0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NkAFsc2E7tDGFW/5/am1lSMmXZ38+fsY4EaFP8wxjvelnmLRJ7JvCjF5TVYPgxNJOHPXMiGrYPscG39+eAryZup0JZMMGhunJoPazts+kUetWkLTlxRZF2vB+99AfalUU2KnH9rr+OJqrsze6U9Ui1g30m4p2eQ9LMafA8l4cyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sbpwajHY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bG8jPD7s; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sbpwajHY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bG8jPD7s; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0E2BA21B2F;
+	Tue, 12 Mar 2024 10:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710239470; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g+9XDNAwrGk3S9VJmZo4QqhJtERU4mDvEOCPEzW4NE=;
+	b=sbpwajHYnwHRMCqlSIkDUAN1/WurUClOQDc/Wj3aeyHJE+ihctUMvLjr9os6AMsVHeQxGM
+	oeN139zVyoSVrReO7S/OlhL1WKshW+Thq2auIK8Ef+12ym4hHx/9se9FFCjFVI5N1YhNqQ
+	NHo3tgCE66TadWUzcUb8VUxKw4Ggy5c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710239470;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g+9XDNAwrGk3S9VJmZo4QqhJtERU4mDvEOCPEzW4NE=;
+	b=bG8jPD7s+P/CqQVv0b+NqS7Z8e091PsGQdV+t2WV916clig/B0VUNGklGKBgcpy7BnPWvI
+	BRJuQxJmze0IKRCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710239470; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g+9XDNAwrGk3S9VJmZo4QqhJtERU4mDvEOCPEzW4NE=;
+	b=sbpwajHYnwHRMCqlSIkDUAN1/WurUClOQDc/Wj3aeyHJE+ihctUMvLjr9os6AMsVHeQxGM
+	oeN139zVyoSVrReO7S/OlhL1WKshW+Thq2auIK8Ef+12ym4hHx/9se9FFCjFVI5N1YhNqQ
+	NHo3tgCE66TadWUzcUb8VUxKw4Ggy5c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710239470;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g+9XDNAwrGk3S9VJmZo4QqhJtERU4mDvEOCPEzW4NE=;
+	b=bG8jPD7s+P/CqQVv0b+NqS7Z8e091PsGQdV+t2WV916clig/B0VUNGklGKBgcpy7BnPWvI
+	BRJuQxJmze0IKRCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 43E7613795;
+	Tue, 12 Mar 2024 10:31:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pxc0De0u8GW7TAAAD6G6ig
+	(envelope-from <lhenriques@suse.de>); Tue, 12 Mar 2024 10:31:09 +0000
+Received: from localhost (brahms.olymp [local])
+	by brahms.olymp (OpenSMTPD) with ESMTPA id a69ac89a;
+	Tue, 12 Mar 2024 10:31:08 +0000 (UTC)
+From: Luis Henriques <lhenriques@suse.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Theodore Ts'o <tytso@mit.edu>,
+  Andreas Dilger <adilger.kernel@dilger.ca>,  Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Jan Kara <jack@suse.cz>,  Amir Goldstein
+ <amir73il@gmail.com>,  linux-ext4@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  linux-unionfs@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] ovl: fix the parsing of empty string mount
+ parameters
+In-Reply-To: <20240312-orten-erbsen-2105c134762e@brauner> (Christian Brauner's
+	message of "Tue, 12 Mar 2024 09:47:52 +0100")
+References: <20240307160225.23841-1-lhenriques@suse.de>
+	<20240307160225.23841-4-lhenriques@suse.de>
+	<CAJfpegtQSi0GFzUEDqdeOAq7BN2KvDV8i3oBFvPOCKfJJOBd2g@mail.gmail.com>
+	<87le6p6oqe.fsf@suse.de>
+	<CAJfpeguN9nMJGJzx8sgwP=P9rJFVkYF5rVZOi_wNu7mj_jfBsA@mail.gmail.com>
+	<20240311-weltmeere-gesiegt-798c4201c3f8@brauner>
+	<CAJfpegsn-jMY2J8Wd2Q9qmZFqxR6fAwZ4auoK+-uyxaK+F-0rw@mail.gmail.com>
+	<20240312-orten-erbsen-2105c134762e@brauner>
+Date: Tue, 12 Mar 2024 10:31:08 +0000
+Message-ID: <87h6hbhhcj.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3710:b0:476:d11a:33f with SMTP id
- k16-20020a056638371000b00476d11a033fmr93027jav.6.1710235769055; Tue, 12 Mar
- 2024 02:29:29 -0700 (PDT)
-Date: Tue, 12 Mar 2024 02:29:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007f36a30613734ba8@google.com>
-Subject: [syzbot] Monthly hfs report (Mar 2024)
-From: syzbot <syzbot+list28302c815c5fd308cf50@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[4];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-0.997];
+	 RCPT_COUNT_SEVEN(0.00)[11];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_LAST(0.00)[];
+	 FREEMAIL_CC(0.00)[szeredi.hu,mit.edu,dilger.ca,zeniv.linux.org.uk,suse.cz,gmail.com,vger.kernel.org];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Flag: NO
 
-Hello hfs maintainers/developers,
+Christian Brauner <brauner@kernel.org> writes:
 
-This is a 31-day syzbot report for the hfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/hfs
+> On Mon, Mar 11, 2024 at 03:39:39PM +0100, Miklos Szeredi wrote:
+>> On Mon, 11 Mar 2024 at 14:25, Christian Brauner <brauner@kernel.org> wro=
+te:
+>>=20
+>> > Yeah, so with that I do agree. But have you read my reply to the other
+>> > thread? I'd like to hear your thoughs on that. The problem is that
+>> > mount(8) currently does:
+>> >
+>> > fsconfig(3, FSCONFIG_SET_FLAG, "usrjquota", NULL, 0) =3D -1 EINVAL (In=
+valid argument)
+>> >
+>> > for both -o usrjquota and -o usrjquota=3D
+>>=20
+>> For "-o usrjquota" this seems right.
+>>=20
+>> For "-o usrjquota=3D" it doesn't.  Flags should never have that "=3D", so
+>> this seems buggy in more than one ways.
+>>=20
+>> > So we need a clear contract with userspace or the in-kernel solution
+>> > proposed here. I see the following options:
+>> >
+>> > (1) Userspace must know that mount options such as "usrjquota" that can
+>> >     have no value must be specified as "usrjquota=3D" when passed to
+>> >     mount(8). This in turn means we need to tell Karel to update
+>> >     mount(8) to recognize this and infer from "usrjquota=3D" that it m=
+ust
+>> >     be passed as FSCONFIG_SET_STRING.
+>>=20
+>> Yes, this is what I'm thinking.  Of course this only works if there
+>> are no backward compatibility issues, if "-o usrjquota" worked in the
+>> past and some systems out there relied on this, then this is not
+>> sufficient.
+>
+> Ok, I spoke to Karel and filed:
+>
+> https://github.com/util-linux/util-linux/issues/2837
+>
+> So this should get sorted soon.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 43 issues are still open and 15 have been fixed so far.
+OK, so I if I understand it correctly I can drop all these changes as
+there's nothing else to be done from the kernel, right?
 
-Some of the still happening issues:
+(I'll still send out a patch to move the fsparam_string_empty() helper to
+a generic header.)
 
-Ref  Crashes Repro Title
-<1>  10200   Yes   KASAN: slab-out-of-bounds Read in generic_perform_write
-                   https://syzkaller.appspot.com/bug?extid=4a2376bc62e59406c414
-<2>  9548    Yes   possible deadlock in hfsplus_file_truncate
-                   https://syzkaller.appspot.com/bug?extid=6030b3b1b9bf70e538c4
-<3>  9352    Yes   possible deadlock in hfsplus_file_extend
-                   https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
-<4>  5365    Yes   possible deadlock in hfsplus_get_block
-                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
-<5>  3485    Yes   KMSAN: uninit-value in hfs_revalidate_dentry
-                   https://syzkaller.appspot.com/bug?extid=3ae6be33a50b5aae4dab
-<6>  2010    Yes   kernel BUG in __hfsplus_setxattr
-                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-<7>  884     Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
-                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
-<8>  791     Yes   kernel BUG in hfs_write_inode
-                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-<9>  694     Yes   KMSAN: uninit-value in hfsplus_delete_cat
-                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
-<10> 687     Yes   WARNING in hfs_bnode_create
-                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
+And thanks everyone for your reviews.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Cheers,
+--=20
+Lu=C3=ADs
 
