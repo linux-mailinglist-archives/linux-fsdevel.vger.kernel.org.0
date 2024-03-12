@@ -1,128 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-14228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B08879B34
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 19:18:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACFF879B43
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 19:22:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ACF61F22482
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 18:18:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2665B28320B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 18:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4801139574;
-	Tue, 12 Mar 2024 18:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442B813958E;
+	Tue, 12 Mar 2024 18:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="tSLgXOdq"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QqGwtO3T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from box.fidei.email (box.fidei.email [71.19.144.250])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7970213958E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 18:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F51273FC;
+	Tue, 12 Mar 2024 18:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710267533; cv=none; b=ImKhD8o/xVGlVh3e8xFaABw1RXJtF5qxmYFRDwa/d08haeZrqNXPkkYl4R2fcsgj1/H4x7ZmdIajnpmXbZVzE1UJZc/9U/9gZq6A6pPqE2yc/TTlBfc5BB1vOF5dICdHjCZHgSb8Y2CfjagFGMaj8LXeXQORG89t90QT9AO0GHM=
+	t=1710267767; cv=none; b=HNi6MpSe0LTqmjieTYAAj6xZG58OXg4fa1PncPyx4pnd4SgSBVJPz83x3XevVLLcj4idHIv4qTHL8qakNQk0TkbX3NsYSUCNLQDmRnXvepEk9MXAS0hRzTRdjiuMVk/MxQmvtQQ7Zn6fLfDOpgFzgcJYKCcKSU7/UUx4n8mQq7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710267533; c=relaxed/simple;
-	bh=FVI3Z/Sn68gd6SyV1Hm/Nkq8n0hhFJsGW02lMKd9bSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=shOX+mel2AatKx4WLoyzVhRCnvMs4E5gJA05eja89Z5aBi8hBncW74QAbmt4k8cM8u9uTaMFTIqkhhuieJ43uFUGiZoANgZUpXBvOG+8e/ZxYarUxA+HJ3hCS6VhevgOm35oe0jfhPZv+pMnZzFqbM9r+eBNuugJijqTN231olg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=tSLgXOdq; arc=none smtp.client-ip=71.19.144.250
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
-Received: from authenticated-user (box.fidei.email [71.19.144.250])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	by box.fidei.email (Postfix) with ESMTPSA id E1DE881199;
-	Tue, 12 Mar 2024 14:18:44 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
-	t=1710267525; bh=FVI3Z/Sn68gd6SyV1Hm/Nkq8n0hhFJsGW02lMKd9bSY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tSLgXOdqzaxTgrCd6ubk1FYTgTtnQimeTARZSaQesGgh6nzd2vSFLr40ogPtCMqJM
-	 cAIQ+ROxrjqwJIEul965bOm+V/BHFG0zLbf4FU4+FexLuhzkMEu5zZLrOPcrhddd8k
-	 pYlfMeDV+d90G9BUCA6I729QFoNF1DIY6lpHsQfK9bR8GxoNh0y0WFgPTyHvHIPwG7
-	 yoY4pZLEzK9SSM3e8Q1JRpAHu01vTuJMzBaLL3E2yYiVD9B9C9/go6RsuZoXDr1NDh
-	 0ZxB5gH8/6kAFIe7FAzaw2TRFRkm6R0hsTujt6ApRKBsnx1UYfx0KyHzLFLkLtlL/U
-	 xSNvlADiG9/jA==
-Message-ID: <4911426f-cf12-44f4-aef1-1000668ad3a0@dorminy.me>
-Date: Tue, 12 Mar 2024 14:18:43 -0400
+	s=arc-20240116; t=1710267767; c=relaxed/simple;
+	bh=YUc5IZWOe5T6YFtoM1+wQHxiKRB8D8X7e2HnId3ioaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q95rzI24UgbvRFo2ta4qFFRNTnERW1hCWn8X8dlJu1wAYDmos0ca+GbWVlDdSroYkSG2994xSUgP8ZOjLmuL6ZoUp+thO9rxVUpOWwQ5L0BlpsjmvQ37SSnbPtyNthsyPWJtRF8Gfhzt+uUWZrY133vIkybiyJYJ3Whbs6lHMK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QqGwtO3T; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dyIsdsMhrpRwB/lg1STothrgvq3zjNGfcwfAiy3Vmak=; b=QqGwtO3T5/xX63J1bb+PRK1e2Y
+	HCNI2/xOcbWZFosust02xhjQt3eLEU3w032AbMAKk5Q6Us/M2J5LhESewS88IykqWhlkGyIUup8qQ
+	eWnZym/zxsAPg6hPjXEpsxikgIGY6wWieBYp3/aMPXWS42WpM9BMOZODHKJR4rMZAbAc23ibPSQ2N
+	tsSpuc9c6pdvZ/fsZU2Zm+UXsZ15mWdicSuBqEX/ez9fyZ3EDtB8jGH03SSyDIrop2OtOfb2aEcT5
+	lAah57O7yF5dxZ/wVu6s+1BqyiE1TTE8BHL1uBVXRDvk+3wwqGHvEgsWdN+zXpv7A9F9QNQRmBwbu
+	3okmEohw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rk6lQ-00000007648-3mVp;
+	Tue, 12 Mar 2024 18:22:12 +0000
+Date: Tue, 12 Mar 2024 11:22:12 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
+	liam.howlett@oracle.com, penguin-kernel@i-love.sakura.ne.jp,
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+	david@redhat.com, axboe@kernel.dk, masahiroy@kernel.org,
+	nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com,
+	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+	paulmck@kernel.org, pasha.tatashin@soleen.com,
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+	ndesaulniers@google.com, vvvvvv@google.com,
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+	elver@google.com, dvyukov@google.com, shakeelb@google.com,
+	songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com,
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+	kernel-team@android.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-modules@vger.kernel.org,
+	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v5 12/37] lib: prevent module unloading if memory is not
+ freed
+Message-ID: <ZfCdVI464EqeI9YP@bombadil.infradead.org>
+References: <20240306182440.2003814-1-surenb@google.com>
+ <20240306182440.2003814-13-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] fuse: update size attr before doing IO
-Content-Language: en-US
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
- josef@toxicpanda.com, amir73il@gmail.com
-References: <9d71a4fd1f1d8d4cfc28480f01e5fe3dc5a7e3f0.1709821568.git.sweettea-kernel@dorminy.me>
- <CAJfpeguHZCkkY2MZjJJZ2HhvhQuMhmwqnqGoxV-+wjsKwijX6w@mail.gmail.com>
-From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-In-Reply-To: <CAJfpeguHZCkkY2MZjJJZ2HhvhQuMhmwqnqGoxV-+wjsKwijX6w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240306182440.2003814-13-surenb@google.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+
+On Wed, Mar 06, 2024 at 10:24:10AM -0800, Suren Baghdasaryan wrote:
+> Skip freeing module's data section if there are non-zero allocation tags
+> because otherwise, once these allocations are freed, the access to their
+> code tag would cause UAF.
+
+So you just let them linger?
+
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
 
+>  /* Free a module, remove from lists, etc. */
+>  static void free_module(struct module *mod)
+>  {
+> +	bool unload_codetags;
+> +
+>  	trace_module_free(mod);
+>  
+> -	codetag_unload_module(mod);
+> +	unload_codetags = codetag_unload_module(mod);
+> +	if (!unload_codetags)
+> +		pr_warn("%s: memory allocation(s) from the module still alive, cannot unload cleanly\n",
+> +			mod->name);
+> +
 
-On 3/11/24 06:01, Miklos Szeredi wrote:
-> On Thu, 7 Mar 2024 at 16:10, Sweet Tea Dorminy
-> <sweettea-kernel@dorminy.me> wrote:
->>
->> All calls into generic vfs functions need to make sure that the inode
->> attributes used by those functions are up to date, by calling
->> fuse_update_attributes() as appropriate.
->>
->> generic_write_checks() accesses inode size in order to get the
->> appropriate file offset for files opened with O_APPEND. Currently, in
->> some cases, fuse_update_attributes() is not called before
->> generic_write_checks(), potentially resulting in corruption/overwrite of
->> previously appended data if i_size is out of date in the cached inode.
-> 
-> While this all sounds good, I don't think it makes sense.
-> 
-> Why?  Because doing cached O_APPEND writes without any sort of
-> exclusion with remote writes is just not going to work.
-> 
-> Either the server ignores the current size and writes at the offset
-> that the kernel supplied (which will be the cached size of the file)
-> and executes the write at that position, or it appends the write to
-> the current EOF.  In the former case the cache will be consistent, but
-> append semantics are not observed, while in the latter case the append
-> semantics are observed, but the cache will be inconsistent.
-> 
-> Solution: either exclude remote writes or don't use the cache.
-> 
-> Updating the file size before the write does not prevent the race,
-> only makes the window smaller.
+Because this is not unwinding anything. Should'd we check if we can
+free all tags first, if we can't then we can't free the module. If we
+can then ensure we don't enter a state where we can't later?
 
-Definitely agree with you.
-
-The usecase at hand is a sort of NFS-like network filesystem, where 
-there's exclusion of remote writes while the file is open, but no 
-problem with remote writes while the file is closed.
-
-The alternative we considered was to add a fuse_update_attributes() call 
-to open.
-
-We thought about doing so during d_revalidate/lookup_fast(). But as far 
-as I understand, lookup_fast() is not just called during open, and will 
-use the cached inode if the dentry timeout hasn't expired. We tried 
-setting dentry timeout to 0, but that lost too much performance. So that 
-didn't seem to work.
-
-But updating attributes after giving the filesystem a chance to 
-invalidate them during open() would work, I think?
-
-That would also conveniently fix the issue where copy_file_range() 
-currently checks the size before calling into fuse at all, which I'd 
-been building a more elaborate changeset for.
-
-How does that sound?
-
-Thanks!
-
-Sweet Tea
+  Luis
 
