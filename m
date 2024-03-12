@@ -1,269 +1,329 @@
-Return-Path: <linux-fsdevel+bounces-14224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F07A87993C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 17:45:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11BC879A50
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 18:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67A7E2837BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 16:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283A81F243FE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 17:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239DB7E58C;
-	Tue, 12 Mar 2024 16:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B00013BAD4;
+	Tue, 12 Mar 2024 17:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4zgQ6no"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eXrvPo4C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805F17E562;
-	Tue, 12 Mar 2024 16:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF26013B2BE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 17:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710261885; cv=none; b=BVJb48y9vySE+29kdCro2xvdc+rLnJZwY2oH1wCd4bv97mWP44Ol/myHP1rNaDKYGIbrF5bN226b+EmYyFk6AG83zuDHVGaez9oE7dw0kWqun8M7nPUcz8f1qTseLwRtjuuX97oTxvkhKube6ZmNtujnHbI8kJ4HetMtjfdo4T8=
+	t=1710263210; cv=none; b=HXVsCBebBf5XSKGHEXga7bQVfkg5jyNom0XbTD6xdIdVsE+fFI1QcaXWQMVRtLTeiFIfXTTeCL4H0tW3KAaVk4Wx4GyxtoZSC6nWLTu+Z/up9ackoqb9kQBQ/ktknCLCZvZoQKHcOGfg7vdbFeNDNxJIdTKtcvAmghxC/W5NIwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710261885; c=relaxed/simple;
-	bh=I6muzZAlPFU73ezeQNc4Ie26UaC6Pt4x8gLjyUf/DM8=;
+	s=arc-20240116; t=1710263210; c=relaxed/simple;
+	bh=tp5GJDJhFlsY2bgmgdHUuBDT+vKAUmP0b5/gPSMSm8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nn0mEJuAVv2sgFk5Cv319nWnOxm+wEkEAuTs/eb0L+CgGIPaBOoD3k/Lhv8JJvoBnsVkJK+SBFn5qc01fDvs5gNoKd6k3pKNtJdeCN+ZERmP5ibNNvdeYt9G/EBEu01ElkEqwR3Q0+tD/Z/TVCHn5ERCChJ0+bh8XcVPUozqCe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4zgQ6no; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFBEC43390;
-	Tue, 12 Mar 2024 16:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710261885;
-	bh=I6muzZAlPFU73ezeQNc4Ie26UaC6Pt4x8gLjyUf/DM8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R4zgQ6noTbtMcjhK+KmyN7jQlPMYH955VeDUWyc7NnI7e0vm1tzTdTbqdPalp3hOS
-	 vkeMEKj11LXobwqrvsrqqaPh4aitP0DU31ZxNXglNN591a3nVHN2tzTJzl7XtK0bgV
-	 VYJx00wuYr0LFNhn3AVGt6mjj3+0pCpAE9K/+Sl/n/RAtV6x0VaGXo/QRCkXHjHPoC
-	 SFo0TdI63LPg41HN1qAO+2YJTp6Bjw53fWOaSfE5NvH/+zIT/h2cvDhWSUBkQMe4p8
-	 65BcDtL2KWhgA+VOUiAi/sYJ98iRVP3RBl3rjtJVhhDeA1Rykz0vNNGNDJkTbhY70B
-	 Owb3WcQiCQBgA==
-Date: Tue, 12 Mar 2024 09:44:44 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	chandan.babu@oracle.com, akpm@linux-foundation.org,
-	linux-mm@kvack.org, Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH v5 06/24] fsverity: pass tree_blocksize to
- end_enable_verity()
-Message-ID: <20240312164444.GG1927156@frogsfrogsfrogs>
-References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-8-aalbersh@redhat.com>
- <20240305005242.GE17145@sol.localdomain>
- <20240306163000.GP1927156@frogsfrogsfrogs>
- <20240307220224.GA1799@sol.localdomain>
- <20240308034650.GK1927156@frogsfrogsfrogs>
- <20240308044017.GC8111@sol.localdomain>
- <20240311223815.GW1927156@frogsfrogsfrogs>
- <9927568e-9f36-4417-9d26-c8a05c220399@redhat.com>
- <08905bcc-677d-4981-926d-7f407b2f6a4a@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=vEJgljSMXUWMg4slIFGuHd6Mh8jv+6SimSiIbiZVlRSy42ltp1Crf4drQ1imeA9HAlCocUKn339kVDKmCmNbRZBM0xjs3mzuaJC8B5+AFDO3FpjcBXd/7DTuSTqYyaSyZLTFK5RoZFJMrW03xUMjHrx1wuCkjnjq0zV8c6JUYo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eXrvPo4C; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5687feeb1feso141485a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 10:06:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1710263207; x=1710868007; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zB5OcsqYgooW+2YsYbicutHPTgoP7Ts7AFCJig6ZoKo=;
+        b=eXrvPo4C9sB00275h6/4v4IGJ4TlUUp5o8rlY3gWLjPB1/uG1AZLFA5li7a5cZaGTP
+         dbMKOUWgSAnD39CWIn+9zAKrHjcsbXN7DUSLsc+NDNVj7iBpewn/cQOc43fWLW+JiH1w
+         /5KqKZwF3NyjYirx8TvFsNR4nphHu1cBbMYS/t9fldPzmYnt4nlEgq4xsCRqWp44MWZg
+         1grsME6p56vBhKltx8W7/yjG43tsu61l0ELh6ePL2eBGGVekXqpvSyJZv4HDIkxiHGCr
+         1xKPxH/4AnSDAa42MzNYuPkNpBL3BeRTbU9YuBhe3KsaELWLOl/7jlt8A45Wo2rTjxBg
+         mfNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710263207; x=1710868007;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zB5OcsqYgooW+2YsYbicutHPTgoP7Ts7AFCJig6ZoKo=;
+        b=dhzgMtwiUvHbcM3oth6rA3qAUx25UiGfEgPsbnU4lpekE4UWVp4uMZnxVQu46KE86e
+         Qi0qcVm7pOilmm675yCUJiyByDGG0Gmcxa8epP+P98f54iZMM5kkUGdq5jI6FoLejrfo
+         ls/hlRIBX9Wfw38mZeBNzoIUj2RMq/3fEL8SAMv3qx1gtlswHPC8cE43byUdyfPZqHNf
+         TcnW8qSKGlnWyAVoUkHt28DfOy+Df4E+cwjeukdox0uVqO6wcom48uNkl6tn/EDHDZKA
+         EvDBtMqu8YPwAhIaS9jgbvo6gPrSh5KzMi8qJ/wTwx9/lrNPWq6sln8JbV5SJrOO4s4O
+         fpIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsqx4RG3FTaAVTssLR8HkMsT27Fd0VEU1LlJkNwBb+1top8itYdOWfBe0Upkhf/neY/4XiO0gdi8WuZqpnkpMvxMHdiX+/AUPYL+aTFw==
+X-Gm-Message-State: AOJu0YyIe0u7V1wUuLUTRGW2NS7rZefIJE9MoMN0nwLIQORXuGVOpSoE
+	O27eZ8Js4mEZ8IECIWll/XjggcwItQARoIkyiwoyFWmoj6cn4rWZ6F2wXHwaLA==
+X-Google-Smtp-Source: AGHT+IEI+5ZeRxyTNwgNp4mYtKX2fYjiH77MdAHaIh6CM5o8Vto9KrIbDxf7Shq7e5wuKr+g45z/+A==
+X-Received: by 2002:a50:c01b:0:b0:566:43ab:8b78 with SMTP id r27-20020a50c01b000000b0056643ab8b78mr6675907edb.30.1710263206888;
+        Tue, 12 Mar 2024 10:06:46 -0700 (PDT)
+Received: from google.com (12.196.204.35.bc.googleusercontent.com. [35.204.196.12])
+        by smtp.gmail.com with ESMTPSA id d23-20020a056402001700b0056857701bf5sm2379670edu.81.2024.03.12.10.06.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Mar 2024 10:06:46 -0700 (PDT)
+Date: Tue, 12 Mar 2024 17:06:36 +0000
+From: Matt Bobrowski <mattbobrowski@google.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>,
+	Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm <linux-mm@kvack.org>,
+	LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
+Message-ID: <ZfCLnOBDnBp2wcJy@google.com>
+References: <cover.1709675979.git.mattbobrowski@google.com>
+ <20240306-flach-tragbar-b2b3c531bf0d@brauner>
+ <20240306-sandgrube-flora-a61409c2f10c@brauner>
+ <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
+ <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
+ <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
+ <20240308-kleben-eindecken-73c993fb3ebd@brauner>
+ <CAADnVQJVNntnH=DLHwUioe9mEw0FzzdUvmtj3yx8SjL38daeXQ@mail.gmail.com>
+ <20240311-geglaubt-kursverfall-500a27578cca@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <08905bcc-677d-4981-926d-7f407b2f6a4a@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240311-geglaubt-kursverfall-500a27578cca@brauner>
 
-On Tue, Mar 12, 2024 at 04:33:14PM +0100, David Hildenbrand wrote:
-> On 12.03.24 16:13, David Hildenbrand wrote:
-> > On 11.03.24 23:38, Darrick J. Wong wrote:
-> > > [add willy and linux-mm]
-> > > 
-> > > On Thu, Mar 07, 2024 at 08:40:17PM -0800, Eric Biggers wrote:
-> > > > On Thu, Mar 07, 2024 at 07:46:50PM -0800, Darrick J. Wong wrote:
-> > > > > > BTW, is xfs_repair planned to do anything about any such extra blocks?
-> > > > > 
-> > > > > Sorry to answer your question with a question, but how much checking is
-> > > > > $filesystem expected to do for merkle trees?
-> > > > > 
-> > > > > In theory xfs_repair could learn how to interpret the verity descriptor,
-> > > > > walk the merkle tree blocks, and even read the file data to confirm
-> > > > > intactness.  If the descriptor specifies the highest block address then
-> > > > > we could certainly trim off excess blocks.  But I don't know how much of
-> > > > > libfsverity actually lets you do that; I haven't looked into that
-> > > > > deeply. :/
-> > > > > 
-> > > > > For xfs_scrub I guess the job is theoretically simpler, since we only
-> > > > > need to stream reads of the verity files through the page cache and let
-> > > > > verity tell us if the file data are consistent.
-> > > > > 
-> > > > > For both tools, if something finds errors in the merkle tree structure
-> > > > > itself, do we turn off verity?  Or do we do something nasty like
-> > > > > truncate the file?
-> > > > 
-> > > > As far as I know (I haven't been following btrfs-progs, but I'm familiar with
-> > > > e2fsprogs and f2fs-tools), there isn't yet any precedent for fsck actually
-> > > > validating the data of verity inodes against their Merkle trees.
-> > > > 
-> > > > e2fsck does delete the verity metadata of inodes that don't have the verity flag
-> > > > enabled.  That handles cleaning up after a crash during FS_IOC_ENABLE_VERITY.
-> > > > 
-> > > > I suppose that ideally, if an inode's verity metadata is invalid, then fsck
-> > > > should delete that inode's verity metadata and remove the verity flag from the
-> > > > inode.  Checking for a missing or obviously corrupt fsverity_descriptor would be
-> > > > fairly straightforward, but it probably wouldn't catch much compared to actually
-> > > > validating the data against the Merkle tree.  And actually validating the data
-> > > > against the Merkle tree would be complex and expensive.  Note, none of this
-> > > > would work on files that are encrypted.
-> > > > 
-> > > > Re: libfsverity, I think it would be possible to validate a Merkle tree using
-> > > > libfsverity_compute_digest() and the callbacks that it supports.  But that's not
-> > > > quite what it was designed for.
-> > > > 
-> > > > > Is there an ioctl or something that allows userspace to validate an
-> > > > > entire file's contents?  Sort of like what BLKVERIFY would have done for
-> > > > > block devices, except that we might believe its answers?
-> > > > 
-> > > > Just reading the whole file and seeing whether you get an error would do it.
-> > > > 
-> > > > Though if you want to make sure it's really re-reading the on-disk data, it's
-> > > > necessary to drop the file's pagecache first.
-> > > 
-> > > I tried a straight pagecache read and it worked like a charm!
-> > > 
-> > > But then I thought to myself, do I really want to waste memory bandwidth
-> > > copying a bunch of data?  No.  I don't even want to incur system call
-> > > overhead from reading a single byte every $pagesize bytes.
-> > > 
-> > > So I created 2M mmap areas and read a byte every $pagesize bytes.  That
-> > > worked too, insofar as SIGBUSes are annoying to handle.  But it's
-> > > annoying to take signals like that.
-> > > 
-> > > Then I started looking at madvise.  MADV_POPULATE_READ looked exactly
-> > > like what I wanted -- it prefaults in the pages, and "If populating
-> > > fails, a SIGBUS signal is not generated; instead, an error is returned."
-> > > 
+Hey Christian,
+
+On Mon, Mar 11, 2024 at 01:00:56PM +0100, Christian Brauner wrote:
+> On Fri, Mar 08, 2024 at 05:23:30PM -0800, Alexei Starovoitov wrote:
+> > On Fri, Mar 8, 2024 at 2:36 AM Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > >
+> > > These exports are specifically for an out-of-tree BPF LSM program that
+> > > is not accessible to the public. The question in the other mail stands.
 > > 
-> > Yes, these were the expected semantics :)
+> > The question was already answered. You just don't like the answer.
+> > bpf progs are not equivalent to kernel modules.
+> > They have completely different safety and visibility properties.
+> > The safety part I already talked about.
+> > Sounds like the visibility has to be explained.
+> > Kernel modules are opaque binary blobs.
+> > bpf programs are fully transparent. The intent is known
+> > to the verifier and to anyone with understanding
+> > of bpf assembly.
+> > Those that cannot read bpf asm can read C source code that is
+> > embedded in the bpf program in kernel memory.
+> > It's not the same as "llvm-dwarfdump module.ko" on disk.
+> > The bpf prog source code is loaded into the kernel
+> > at program verification time for debugging and visibility reasons.
+> > If there is a verifier bug and bpf manages to crash the kernel
+> > vmcore will have relevant lines of program C source code right there.
 > > 
-> > > But then I tried rigging up a test to see if I could catch an EIO, and
-> > > instead I had to SIGKILL the process!  It looks filemap_fault returns
-> > > VM_FAULT_RETRY to __xfs_filemap_fault, which propagates up through
-> > > __do_fault -> do_read_fault -> do_fault -> handle_pte_fault ->
-> > > handle_mm_fault -> faultin_page -> __get_user_pages.  At faultin_pages,
-> > > the VM_FAULT_RETRY is translated to -EBUSY.
-> > > 
-> > > __get_user_pages squashes -EBUSY to 0, so faultin_vma_page_range returns
-> > > that to madvise_populate.  Unfortunately, madvise_populate increments
-> > > its loop counter by the return value (still 0) so it runs in an
-> > > infinite loop.  The only way out is SIGKILL.
+> > Hence out-of-tree or in-tree bpf makes no practical difference.
+> > The program cannot hide its meaning and doesn't hamper debugging.
 > > 
-> > That's certainly unexpected. One user I know is QEMU, which primarily
-> > uses MADV_POPULATE_WRITE to prefault page tables. Prefaulting in QEMU is
-> > primarily used with shmem/hugetlb, where I haven't heard of any such
-> > endless loops.
+> > Hence adding EXPORT_SYMBOL == Brace for impact!
+> > Expect crashes, api misuse and what not.
 > > 
-> > > 
-> > > So I don't know what the correct behavior is here, other than the
-> > > infinite loop seems pretty suspect.  Is it the correct behavior that
-> > > madvise_populate returns EIO if __get_user_pages ever returns zero?
-> > > That doesn't quite sound right if it's the case that a zero return could
-> > > also happen if memory is tight.
+> > While adding bpf_kfunc is a nop for kernel development.
+> > If kfunc is in the way of code refactoring it can be removed
+> > (as we demonstrated several times).
+> > A kfunc won't cause headaches for the kernel code it is
+> > calling (assuming no verifier bugs).
+> > If there is a bug it's on us to fix it as we demonstrated in the past.
+> > For example: bpf_probe_read_kernel().
+> > It's a wrapper of copy_from_kernel_nofault() and over the years
+> > bpf users hit various bugs in copy_from_kernel_nofault(),
+> > reported them, and _bpf developers_ fixed them.
+> > Though copy_from_kernel_nofault() is as generic as it can get
+> > and the same bugs could have been reproduced without bpf
+> > we took care of fixing these parts of the kernel.
 > > 
-> > madvise_populate() ends up calling faultin_vma_page_range() in a loop.
-> > That one calls __get_user_pages().
+> > Look at path_put().
+> > It's EXPORT_SYMBOL and any kernel module can easily screw up
+> > reference counting, so that sooner or later distro folks
+> > will experience debug pains due to out-of-tree drivers.
 > > 
-> > __get_user_pages() documents: "0 return value is possible when the fault
-> > would need to be retried."
+> > kfunc that calls path_put() won't have such consequences.
+> > The verifier will prevent path_put() on a pointer that wasn't
+> > acquired by the same bpf program. No support pains.
+> > It's a nop for vfs folks.
 > > 
-> > So that's what the caller does. IIRC, there are cases where we really
-> > have to retry (at least once) and will make progress, so treating "0" as
-> > an error would be wrong.
+> > > > First of all, there is no such thing as get_task_fs_pwd/root
+> > > > in the kernel.
+> > >
+> > > Yeah, we'd need specific helpers for a never seen before out-of-tree BPF
+> > > LSM. I don't see how that's different from an out-of-tree kernel module.
 > > 
-> > Staring at other __get_user_pages() users, __get_user_pages_locked()
-> > documents: "Please note that this function, unlike __get_user_pages(),
-> > will not return 0 for nr_pages > 0, unless FOLL_NOWAIT is used.".
-> > 
-> > But there is some elaborate retry logic in there, whereby the retry will
-> > set FOLL_TRIED->FAULT_FLAG_TRIED, and I think we'd fail on the second
-> > retry attempt (there are cases where we retry more often, but that's
-> > related to something else I believe).
-> > 
-> > So maybe we need a similar retry logic in faultin_vma_page_range()? Or
-> > make it use __get_user_pages_locked(), but I recall when I introduced
-> > MADV_POPULATE_READ, there was a catch to it.
+> > Sorry, but you don't seem to understand what bpf can and cannot do,
+> > hence they look similar.
 > 
-> I'm trying to figure out who will be setting the VM_FAULT_SIGBUS in the
-> mmap()+access case you describe above.
+> Maybe. On the other hand you seem to ignore what I'm saying. You
+> currently don't have a clear set of rules for when it's ok for someone
+> to send patches and request access to bpf kfuncs to implement a new BPF
+> program. This patchset very much illustrates this point. The safety
+> properties of bpf don't matter for this. And again, your safety
+> properties very much didn't protect you from your bpf_d_path() mess.
 > 
-> Staring at arch/x86/mm/fault.c:do_user_addr_fault(), I don't immediately see
-> how we would transition from a VM_FAULT_RETRY loop to VM_FAULT_SIGBUS.
-> Because VM_FAULT_SIGBUS would be required for that function to call
-> do_sigbus().
+> We're not even clearly told where and how these helper are supposed to be
+> used. That's not ok and will never be ok. As long as there are no clear
+> criteria to operate under this is highly problematic. This may be fine
+> from a bpf perspective and one can even understand why because that's
+> apparently your model or promise to your users. But there's no reason to
+> expect the same level of laxness from any of the subsystems you're
+> requesting kfuncs from.
 
-The code I was looking at yesterday in filemap_fault was:
+You raise a completely fair point, and I truly do apologies for the
+lack of context and in depth explanations around the specific
+situations that the proposed BPF kfuncs are intended to be used
+from. Admittedly, that's a failure on my part, and I can completely
+understand why from a maintainers point of view there would be
+reservations around acknowledging requests for adding such invisible
+dependencies.
 
-page_not_uptodate:
-	/*
-	 * Umm, take care of errors if the page isn't up-to-date.
-	 * Try to re-read it _once_. We do this synchronously,
-	 * because there really aren't any performance issues here
-	 * and we need to check for errors.
-	 */
-	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-	error = filemap_read_folio(file, mapping->a_ops->read_folio, folio);
-	if (fpin)
-		goto out_retry;
-	folio_put(folio);
+Now, I'm in a little bit of a tough situation as I'm unable to point
+you to an open-source BPF LSM implementation that intends to make use
+of such newly proposed BPF kfuncs. That's just an unfortunate
+constraint and circumstance that I'm having to deal with, so I'm just
+going to have to provide heavily redacted and incomplete example to
+illustrate how these BPF kfuncs intend to be used from BPF LSM
+programs that I personally work on here at Google. Notably though, the
+contexts that I do share here may obviously be a nonholistic view on
+how these newly introduced BPF kfuncs end up getting used in practice
+by some other completely arbitrary open-source BPF LSM programs.
 
-	if (!error || error == AOP_TRUNCATED_PAGE)
-		goto retry_find;
-	filemap_invalidate_unlock_shared(mapping);
+Anyway, as Alexei had pointed out in one of the prior responses, the
+core motivating factor behind introducing these newly proposed BPF
+kfuncs purely stems from the requirement of needing to call
+bpf_d_path() safely on a struct path from the context of a BPF LSM
+program, specifically within the security_file_open() and
+security_mmap_file() LSM hooks. Now, as noted within the original bug
+report [0], it's currently not considered safe to pluck a struct path
+out from an arbitrary in-kernel data structure, which in our case was
+current->mm->exe_file->f_path, and have it passed to bpf_d_path() from
+the aforementioned LSM hook points, or any other LSM hook point for
+that matter.
 
-	return VM_FAULT_SIGBUS;
+So, without using these newly introduced BPF kfuncs, our BPF LSM
+program hanging off security_file_open() looks as follows:
 
-Wherein I /think/ fpin is non-null in this case, so if
-filemap_read_folio returns an error, we'll do this instead:
+```
+int BPF_PROG(file_open, struct file *file)
+{
+  // Perform a whole bunch of operations on the supplied file argument. This
+  // includes some form of policy evaluation, and if there's a violation against
+  // policy and auditing is enabled, then we eventually call bpf_d_path() on
+  // file->f_path. Calling bpf_d_path() on the file argument isn't problematic
+  // as we have a stable path here as the file argument is reference counted.
+  struct path *target = &file->f_path;
 
-out_retry:
-	/*
-	 * We dropped the mmap_lock, we need to return to the fault handler to
-	 * re-find the vma and come back and find our hopefully still populated
-	 * page.
-	 */
-	if (!IS_ERR(folio))
-		folio_put(folio);
-	if (mapping_locked)
-		filemap_invalidate_unlock_shared(mapping);
-	if (fpin)
-		fput(fpin);
-	return ret | VM_FAULT_RETRY;
+  // ...
 
-and since ret was 0 before the goto, the only return code is
-VM_FAULT_RETRY.  I had speculated that perhaps we could instead do:
+  struct task_struct *current = bpf_get_current_task_btf();
 
-	if (fpin) {
-		if (error)
-			ret |= VM_FAULT_SIGBUS;
-		goto out_retry;
-	}
+  // ...
+  
+  bpf_rcu_read_lock();
+  // Reserve a slot on the BPF ring buffer such that the actor's path can be
+  // passed back to userspace.
+  void *buf = bpf_ringbuf_reserve(&ringbuf, PATH_MAX, 0);
+  if (!buf) {
+    goto unlock;
+  }
 
-But I think the hard part here is that there doesn't seem to be any
-distinction between transient read errors (e.g. disk cable fell out) vs.
-semi-permanent errors (e.g. verity says the hash doesn't match).
-AFAICT, either the read(ahead) sets uptodate and callers read the page,
-or it doesn't set it and callers treat that as an error-retry
-opportunity.
+  // For contextual purposes when performing an audit we also call bpf_d_path()
+  // on the actor, being current->mm->exe_file->f_path.
+  struct path *actor = &current->mm->exe_file->f_path;
 
-For the transient error case VM_FAULT_RETRY makes perfect sense; for the
-second case I imagine we'd want something closer to _SIGBUS.
+  // Now perform the path resolution on the actor via bpf_d_path().
+  u64 ret = bpf_d_path(actor, buf, PATH_MAX);
+  if (ret > 0) {
+    bpf_ringbuf_submit(buf, BPF_RB_NO_WAKEUP);
+  } else {
+    bpf_ringbuf_discard(buf, 0);
+  }
 
-</handwave>
+unlock:
+  bpf_rcu_read_unlock();
+  return 0;
+}
+```
 
---D
+Post landing these BPF kfuncs, the BPF LSM program hanging off
+security_file_open() would be updated to make use of the
+acquire/release BPF kfuncs as below. Here I'm only making use of
+bpf_get_task_exe_file(), but similar usage also extends to
+bpf_get_task_fs_root() and bpf_get_task_fs_pwd().
 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
-> 
+```
+int BPF_PROG(file_open, struct file *file)
+{
+  // Perform a whole bunch of operations on the supplied file argument. This
+  // includes some form of policy evaluation, and if there's a violation against
+  // policy and auditing is enabled, then we eventually call bpf_path_d_path()
+  // on file->f_path. Calling bpf_path_d_path() on the file argument isn't
+  // problematic as we have a stable path here as the file argument is trusted
+  // and reference counted.
+  struct path *target = &file->f_path;
+
+  // ...
+
+  struct task_struct *current = bpf_get_current_task_btf();
+
+  // ...
+  
+  // Reserve a slot on the BPF ring buffer such that the actor's path can be
+  // passed back to userspace.
+  void *buf = bpf_ringbuf_reserve(&ringbuf, PATH_MAX, 0);
+  if (!buf) {
+    return 0;
+  }
+
+  // For contextual purposes when performing an audit we also call
+  // bpf_path_d_path() on the actor, being current->mm->exe_file->f_path.
+  // Here we're operating on a stable trused and reference counted file,
+  // thanks to bpf_get_task_exe_file().
+  struct file *exe_file = bpf_get_task_exe_file(current);
+  if (!exe_file) {
+    bpf_ringbuf_discard(buf, 0);
+    return 0;
+  }
+
+  // Now perform the path resolution on the actor via bpf_path_d_path(), which
+  // only accepts a trusted struct path.
+  u64 ret = bpf_path_d_path(&exe_file->f_path, buf, PATH_MAX);
+  if (ret > 0) {
+    bpf_ringbuf_submit(buf, BPF_RB_NO_WAKEUP);
+  } else {
+    bpf_ringbuf_discard(buf, 0);
+  }
+
+  // Drop the reference on exe_file.
+  bpf_put_file(exe_file);
+  return 0;
+}
+```
+
+This is rather incredibly straightforward, but the fundamental
+difference between the two implementations is that one allows us to
+work on stable file, whereas the other does not. That's really
+it. Similarly, we do more or less the same for our BPF LSM program
+that hangs off security_mmap_file().
+
+Do you need anything else which illustrates the proposed BPF kfunc
+usage?
+
+[0] https://lore.kernel.org/bpf/CAG48ez0ppjcT=QxU-jtCUfb5xQb3mLr=5FcwddF_VKfEBPs_Dg@mail.gmail.com/
+
+/M
 
