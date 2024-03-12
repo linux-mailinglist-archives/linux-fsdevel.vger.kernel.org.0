@@ -1,59 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-14222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A6587991B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 17:37:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4029487991E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 17:38:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C920AB228B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 16:37:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710651C21D7B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 16:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310DD7E586;
-	Tue, 12 Mar 2024 16:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E717E117;
+	Tue, 12 Mar 2024 16:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLEJEeKs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFXQ1qG+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD047E562;
-	Tue, 12 Mar 2024 16:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707B615BF;
+	Tue, 12 Mar 2024 16:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710261393; cv=none; b=KzRmMuwXEVTFvan/LFzod3lKJHkosf/dmRRALzGW/JF0BsUh33IpbwuN0R4pjh+IAvfC2uiLzwrag9gR+o9sj/kvc6/zDaaCprz1ejKrf/oUdoKo8pdMaAFjentHj6MmqxAqvsIIFJ+0Wakd+ptn9tQONkppeOM21GKvL7qhkGo=
+	t=1710261490; cv=none; b=rklIFKuXjTIQQYnXfR38lxQBml7tTP17JYvbgPoySzMgb+JZegEoBNWA0uMGGkF/0cw4Gx0G5kUEv1gjkNL5dxriVT5faJprEAmxyOAHXC3Gymunte8LkIDdlqPJFRbjRVx6oh15zurOLZb5mE4yOTiW8IzjVwOUg9i/Cs42QYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710261393; c=relaxed/simple;
-	bh=zsxbOvHfyLUuMu8xagpDsyR46O8ifg/IpPWSKsT3oos=;
+	s=arc-20240116; t=1710261490; c=relaxed/simple;
+	bh=B6ZUyeqO9XfV0ZY2luWJpItaxzGBN3tHZK5wVq+gwqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d37JKZp/r010W/0i2ZbtoWI+/O8W2lcaFaHsrNMWftkPJHkg9ipN0xoA8TRuO2PFOejoskupbIqHx9xMUAryLMLj+JAVIbYIwXcnNjKUAOXut88RDtJ0/99IZm7/mqcP3J1SZPxybBr2UuZzv+EBaONIrgMvxb2YoyuYKDkQBmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLEJEeKs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64BB0C433F1;
-	Tue, 12 Mar 2024 16:36:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rgJvnAJ1vMvXXup+PDSMmetig0mYdPX/mMnxGC173sP15DU0G/OVatlFUFhY4jnHX3kV7Sbmbkthd9RdiDzVmM86/58QM0eCLLEzTcJTdYv4HYPs/wh9aeeZd0LKTzF9A+ofUp3k30A3prFJzeAcTqTHCIgH0xd0geFRK06V9i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFXQ1qG+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E98B7C433C7;
+	Tue, 12 Mar 2024 16:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710261393;
-	bh=zsxbOvHfyLUuMu8xagpDsyR46O8ifg/IpPWSKsT3oos=;
+	s=k20201202; t=1710261490;
+	bh=B6ZUyeqO9XfV0ZY2luWJpItaxzGBN3tHZK5wVq+gwqw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QLEJEeKsHVccLEgiZriXl/WBg+4vic1e0IUnhMCI14r3tfXFSCbgbarkI2NqSxifT
-	 TnkUFutLSFRYMh03OdIadEV3DDVs7hEOCfYHhHSIxpy3REg9HKewvsy5IiSG5HrBXz
-	 SoSTXCKwFdh70pQvex5rd7LIZKHZ6YA6oYzZ/jU0jgyezulGU4nYtUgNonyCQPSetD
-	 k5ObdYop1X1M03gcljXQDRWZekQf5zOE8g+IipjeqXlkjV24f4HBQhhLdlZZkKswU6
-	 PkeoGFYTQMvJ4mR4UvJPcvMTgL/qsnYG0jTIU13Fb3sBvbiVA9zxFllo+D+j1Hyojo
-	 50uvQYkRf7Hdw==
-Date: Tue, 12 Mar 2024 09:36:32 -0700
+	b=aFXQ1qG+TQ3XsNBbF/+UW1liLGn1Oz24Mq7QtQDKmTdcEvzV5RdSQPxaKp9wAZTAC
+	 D/JHQ6CR7TtvaHhO65des0LXg7SNxAARNxgRAdBAc/aT+3tmNHxK455D4th8UuN2So
+	 dsVFTV1p3bXezT2Vr4g1ZzeYDCtOAgqhxH82UcN2GQHDMARq236B7CSF77vo5EWT6y
+	 boaeGgdRs/91G5kC6AS/IJLWp9sotjWBSZ2osEjt3XjMxYVoQcUhiAHdrXehmQUdaI
+	 fTjhBcXaYoRwAGKiQlsdrfmZsWw/B2tzIyn8Pqf4QrhryIR5a8kt888E5ZcHj2w+Pa
+	 WlTiRt9RUSG0g==
+Date: Tue, 12 Mar 2024 09:38:09 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Andrey Albershteyn <aalbersh@redhat.com>
 Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, chandan.babu@oracle.com,
 	ebiggers@kernel.org
-Subject: Re: [PATCH v5 20/24] xfs: disable direct read path for fs-verity
- files
-Message-ID: <20240312163632.GE1927156@frogsfrogsfrogs>
+Subject: Re: [PATCH v5 22/24] xfs: make scrub aware of verity dinode flag
+Message-ID: <20240312163809.GF1927156@frogsfrogsfrogs>
 References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-22-aalbersh@redhat.com>
- <20240307221108.GX1927156@frogsfrogsfrogs>
- <w23uzzjqhu7mt4qp532vwjd3c7triq6vfftzsmi6ofium34qic@fghx7nfarmke>
+ <20240304191046.157464-24-aalbersh@redhat.com>
+ <20240307221809.GA1927156@frogsfrogsfrogs>
+ <iag66iabauxkow5z2cn275gjtbaycumf3u6lsyljzuascylbto@d23xbll7dx6n>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,87 +61,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <w23uzzjqhu7mt4qp532vwjd3c7triq6vfftzsmi6ofium34qic@fghx7nfarmke>
+In-Reply-To: <iag66iabauxkow5z2cn275gjtbaycumf3u6lsyljzuascylbto@d23xbll7dx6n>
 
-On Tue, Mar 12, 2024 at 01:02:52PM +0100, Andrey Albershteyn wrote:
-> On 2024-03-07 14:11:08, Darrick J. Wong wrote:
-> > On Mon, Mar 04, 2024 at 08:10:43PM +0100, Andrey Albershteyn wrote:
-> > > The direct path is not supported on verity files. Attempts to use direct
-> > > I/O path on such files should fall back to buffered I/O path.
+On Tue, Mar 12, 2024 at 01:10:06PM +0100, Andrey Albershteyn wrote:
+> On 2024-03-07 14:18:09, Darrick J. Wong wrote:
+> > On Mon, Mar 04, 2024 at 08:10:45PM +0100, Andrey Albershteyn wrote:
+> > > fs-verity adds new inode flag which causes scrub to fail as it is
+> > > not yet known.
 > > > 
 > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 > > > ---
-> > >  fs/xfs/xfs_file.c | 15 ++++++++++++---
-> > >  1 file changed, 12 insertions(+), 3 deletions(-)
+> > >  fs/xfs/scrub/attr.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > > 
-> > > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> > > index 17404c2e7e31..af3201075066 100644
-> > > --- a/fs/xfs/xfs_file.c
-> > > +++ b/fs/xfs/xfs_file.c
-> > > @@ -281,7 +281,8 @@ xfs_file_dax_read(
-> > >  	struct kiocb		*iocb,
-> > >  	struct iov_iter		*to)
-> > >  {
-> > > -	struct xfs_inode	*ip = XFS_I(iocb->ki_filp->f_mapping->host);
-> > > +	struct inode		*inode = iocb->ki_filp->f_mapping->host;
-> > > +	struct xfs_inode	*ip = XFS_I(inode);
-> > >  	ssize_t			ret = 0;
-> > >  
-> > >  	trace_xfs_file_dax_read(iocb, to);
-> > > @@ -334,10 +335,18 @@ xfs_file_read_iter(
-> > >  
-> > >  	if (IS_DAX(inode))
-> > >  		ret = xfs_file_dax_read(iocb, to);
-> > > -	else if (iocb->ki_flags & IOCB_DIRECT)
-> > > +	else if (iocb->ki_flags & IOCB_DIRECT && !fsverity_active(inode))
-> > >  		ret = xfs_file_dio_read(iocb, to);
-> > > -	else
-> > > +	else {
+> > > diff --git a/fs/xfs/scrub/attr.c b/fs/xfs/scrub/attr.c
+> > > index 9a1f59f7b5a4..ae4227cb55ec 100644
+> > > --- a/fs/xfs/scrub/attr.c
+> > > +++ b/fs/xfs/scrub/attr.c
+> > > @@ -494,7 +494,7 @@ xchk_xattr_rec(
+> > >  	/* Retrieve the entry and check it. */
+> > >  	hash = be32_to_cpu(ent->hashval);
+> > >  	badflags = ~(XFS_ATTR_LOCAL | XFS_ATTR_ROOT | XFS_ATTR_SECURE |
+> > > -			XFS_ATTR_INCOMPLETE | XFS_ATTR_PARENT);
+> > > +			XFS_ATTR_INCOMPLETE | XFS_ATTR_PARENT | XFS_ATTR_VERITY);
 > > 
-> > I think the earlier cases need curly braces {} too.
-> > 
-> > > +		/*
-> > > +		 * In case fs-verity is enabled, we also fallback to the
-> > > +		 * buffered read from the direct read path. Therefore,
-> > > +		 * IOCB_DIRECT is set and need to be cleared (see
-> > > +		 * generic_file_read_iter())
-> > > +		 */
-> > > +		iocb->ki_flags &= ~IOCB_DIRECT;
-> > 
-> > I'm curious that you added this flag here; how have we gotten along
-> > this far without clearing it?
+> > Now that online repair can modify/discard/salvage broken xattr trees and
+> > is pretty close to merging, how can I make it invalidate all the incore
+> > merkle tree data after a repair?
 > > 
 > > --D
+> > 
 > 
-> Do you know any better place? Not sure if that should be somewhere
-> before. I've made it same as ext4 does it.
+> I suppose dropping all the xattr XFS_ATTR_VERITY buffers associated
+> with an inode should do the job.
 
-It's not the placement that I'm wondering about, it's /only/ the
-clearing of IOCB_DIRECT.
-
-Notice how directio writes (xfs_file_write_iter) fall back to buffered
-without clearing that flag:
-
-
-	if (iocb->ki_flags & IOCB_DIRECT) {
-		/*
-		 * Allow a directio write to fall back to a buffered
-		 * write *only* in the case that we're doing a reflink
-		 * CoW.  In all other directio scenarios we do not
-		 * allow an operation to fall back to buffered mode.
-		 */
-		ret = xfs_file_dio_write(iocb, from);
-		if (ret != -ENOTBLK)
-			return ret;
-	}
-
-	return xfs_file_buffered_write(iocb, from);
-
-Or is the problem here that generic_file_read_iter will trip over it?
-Oh, haha, yes it will.
-
-Maybe we should call filemap_read directly then?  But I guess this
-(clearing IOCB_DIRECT) is fine the way it is.
+Oh!  Yes, xfs_verity_cache_drop would handle that nicely.
 
 --D
 
