@@ -1,54 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-14176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7497C878CF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 03:19:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CA7878D14
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 03:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1853B1F21BED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 02:19:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E3A1C21197
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 02:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EF96FBF;
-	Tue, 12 Mar 2024 02:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6285779E0;
+	Tue, 12 Mar 2024 02:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfUtsh9v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lo5mtQDA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA18524F;
-	Tue, 12 Mar 2024 02:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB14020E3;
+	Tue, 12 Mar 2024 02:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710209951; cv=none; b=Wq23RK69qwoAgwJm0ZhC7Fx6gCSmqHYAkt2X0MTwfMgGnOMrJ+HhDT8XXhlSlrjGnRDXx6woA2NgB4mGRWzHIJzIyCV/eHBaW1kTEw4ZvLtXjB0pFcsa0y3ZQAeaakiJ+bYVl6mIuZ843WFjgx+qLcNoJSULGqRZARtj9gxpapY=
+	t=1710211402; cv=none; b=FAGmTaBCJ0gT309gxNM3ML+mM77BsNxowPzn9F/iwRavGKHnZqTFuflYh4noUoUTFGz2qucPz2iyJcEqdp4DS6WgichUPBwILRugp06g2+t618hNbt76EOsX3d0Dx580qXlZVJu5YmqaSTxA33BhUgmQK/g8dwvhuRfkwNysfhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710209951; c=relaxed/simple;
-	bh=x6OxTmBOpYLiXpS7yiSGSSB+jvhKldEjiX4FsMjhzgs=;
+	s=arc-20240116; t=1710211402; c=relaxed/simple;
+	bh=J/Q9UmRTh2v7P72a1vGw00fRzsPM7zb0R9gHTCovB/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FxymCyYF41nGAf9bAGDdwa2kifwSK+fGSjfAioIRJnoQA/zKkk8f1bP6+iVci/DVcSwS0vpt2YCrEDm0AmgJ5ltJHKqaYXlGwWGV2pr6+PhGBeR+Ke7V88pSVqMrkB1X6QexBpSta8aRt/YYJPHP5l63dJiniE2Ke+ddUM5IO80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfUtsh9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E520C43390;
-	Tue, 12 Mar 2024 02:19:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLCTiPsW0PLOgUyorNWlrqY7gAPqbLSQF99pJHWdwPVO3V+4v6aqLEyKJnvtKDpDlXHBv/QvWOqXTedwizqbllooXkVaKZKu8DU8r0Bpse8ANCmSZRA9pFcv535NMI5YX8WmIDXoMcCKdDjWCGJoeA8FKXd5vPZiKbkP8Q8KEO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lo5mtQDA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06EE6C433C7;
+	Tue, 12 Mar 2024 02:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710209950;
-	bh=x6OxTmBOpYLiXpS7yiSGSSB+jvhKldEjiX4FsMjhzgs=;
+	s=k20201202; t=1710211402;
+	bh=J/Q9UmRTh2v7P72a1vGw00fRzsPM7zb0R9gHTCovB/A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cfUtsh9vMMRxvLRW0Tq8pe1a8xSP/HmA0oGRRzXZ82n+DkT8i/ZBNXF8nxSyN0xOn
-	 s2axlqjkf8VG57U8TcdkURfnCudPPsOHndH+wGOb5unn7z9gzukHuFNwgBHtCBjlCI
-	 c4Ty1Qb9LmNtdkzYh2XUt3xlBGkVS2xDUEaH8eM8uYSRzrTmw7I87yRcGJ3+6+7Fuw
-	 ty8dN/ys5MZ0vj1AUeZ2YcCygMHXBgcjQ7Xt4+6DPDW+s9XgR25goedSvQTFCzt2mW
-	 rVOsz/lrUazIiIJX49t4GU7Em/2FNIH3YRNYp4wqhng/DcgrHvgxbuD4xBAYMBgjqb
-	 GBZSwOCUMPWOA==
-Date: Mon, 11 Mar 2024 19:19:08 -0700
+	b=Lo5mtQDAPz/VA2w3BPG+ICSUw3FcggcBh+FZ3l19QEtg9zTNAtQfc3msxuegOOams
+	 xkheFfFY+gA7OdUVHB5P3i8Fjw23Q34OkNp6+WLjKnFJqYrxAV0KnnnFRxAq0Ry+sQ
+	 mp/N2VRJtWN/xttig2AUocLQotICsu3NcBxT7JCMZoi1hs2nZtGd0Jh1DhUJdoU70m
+	 A9KNTfntDZmTXnbNRzeSOq9fqqdzsItUf2+F4TKNcn9+90+9KmBt4c2Wb5gqmbRTOz
+	 XKUGvBdm8DMZxnfT81IqQy9OFLCEFRCOQYWHyGeXfATqCaPiUhvlpNVXM4VfvDypH6
+	 ilqYpuovZyglA==
+Date: Mon, 11 Mar 2024 19:43:20 -0700
 From: Eric Biggers <ebiggers@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] statx.2: Document STATX_SUBVOL
-Message-ID: <20240312021908.GC1182@sol.localdomain>
-References: <20240311203221.2118219-1-kent.overstreet@linux.dev>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	chandan.babu@oracle.com
+Subject: Re: [PATCH v5 11/24] xfs: add XBF_VERITY_SEEN xfs_buf flag
+Message-ID: <20240312024320.GD1182@sol.localdomain>
+References: <20240304191046.157464-2-aalbersh@redhat.com>
+ <20240304191046.157464-13-aalbersh@redhat.com>
+ <20240307224654.GB1927156@frogsfrogsfrogs>
+ <ZepxHObVLb3JLCl/@dread.disaster.area>
+ <20240308033138.GN6184@frogsfrogsfrogs>
+ <20240309162828.GQ1927156@frogsfrogsfrogs>
+ <Ze5PsMopkWqZZ1NX@dread.disaster.area>
+ <20240311152505.GR1927156@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,54 +66,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240311203221.2118219-1-kent.overstreet@linux.dev>
+In-Reply-To: <20240311152505.GR1927156@frogsfrogsfrogs>
 
-On Mon, Mar 11, 2024 at 04:31:36PM -0400, Kent Overstreet wrote:
-> Document the new statxt.stx_subvol field.
+On Mon, Mar 11, 2024 at 08:25:05AM -0700, Darrick J. Wong wrote:
+> > > > I wonder, what are the access patterns for merkle blobs?  Is it actually
+> > > > sequential, or is more like 0 -> N -> N*N as we walk towards leaves?
+> > 
+> > I think the leaf level (i.e. individual record) access patterns
+> > largely match data access patterns, so I'd just treat it like as if
+> > it's a normal file being accessed....
 > 
-> This would be clearer if we had a proper API for walking subvolumes that
-> we could refer to, but that's still coming.
-> 
-> Link: https://lore.kernel.org/linux-fsdevel/20240308022914.196982-1-kent.overstreet@linux.dev/
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: Alejandro Colomar <alx@kernel.org>
-> Cc: linux-man@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
->  man2/statx.2 | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/man2/statx.2 b/man2/statx.2
-> index 0dcf7e20bb1f..480e69b46a89 100644
-> --- a/man2/statx.2
-> +++ b/man2/statx.2
-> @@ -68,6 +68,7 @@ struct statx {
->      /* Direct I/O alignment restrictions */
->      __u32 stx_dio_mem_align;
->      __u32 stx_dio_offset_align;
-> +    __u64 stx_subvol;      /* Subvolume identifier */
->  };
->  .EE
->  .in
-> @@ -255,6 +256,8 @@ STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
->  STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
->  STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
->  	(since Linux 6.1; support varies by filesystem)
-> +STATX_SUBVOL	Wants stx_subvol
-> +	(since Linux 6.9; support varies by filesystem)
+> <nod> The latest version of this tries to avoid letting reclaim take the
+> top of the tree.  Logically this makes sense to me to reduce read verify
+> latency, but I was hoping Eric or Andrey or someone with more
+> familiarity with fsverity would chime in on whether or not that made
+> sense.
 
-The other ones say "Want", not "Wants".
+The levels are stored ordered from root to leaf; they aren't interleaved.  So
+technically the overall access pattern isn't sequential, but it is sequential
+within each level, and the leaf level is over 99% of the accesses anyway
+(assuming the default parameters where each block has 128 children).
 
-> +.TP
-> +.I stx_subvolume
-
-It's stx_subvol, not stx_subvolume.
-
-> +Subvolume number of the current file.
-> +
-> +Subvolumes are fancy directories, i.e. they form a tree structure that may be walked recursively.
-
-How about documenting which filesystems support it?
+It makes sense to try to keep the top levels, i.e. the blocks with the lowest
+indices, cached.  (The other filesystems that support fsverity currently aren't
+doing anything special to treat them differently from other pagecache pages.)
 
 - Eric
 
