@@ -1,172 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-14184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E93878F90
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 09:18:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EF3878FC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 09:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38E4B1C216E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 08:18:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98E88B2155A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 08:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4DF69D0B;
-	Tue, 12 Mar 2024 08:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2F57765C;
+	Tue, 12 Mar 2024 08:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXuHJU+0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5D8D30B;
-	Tue, 12 Mar 2024 08:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C29577649
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 08:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710231528; cv=none; b=FcF241yVgTlNjZaBFNEbnRhtpbTyI1IB1qaEb80clHK2kXVUKCyUZhn6qVMqsD8mRFSTNII85GPFVAHBQC57H6LgNZZciDfosrR2S3bnYO7XdP+AK3AEccCPMlYJvvRIdCOExygrLV2WUorusm/VWbLMBoLafY9ivz4tV5/j6Rg=
+	t=1710232482; cv=none; b=DzO3DFjbj8G5rGsVHXGiIRLc9jrJkIZJYri8bK6LnYGjbxr6iJ85MRytUAdGW/2P6yJVE8gX3ZY1iwkDrWMPiX5FR5reNdp+rZq9LmuOqWqx01z2D1AsYPQnY+7jkSlHgJBRFd8/IarYSoDIVDwkftgAdxiwOPAdFbBlKGEYtlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710231528; c=relaxed/simple;
-	bh=hPd+xJ5jOSC8o1CG2r+WXG2uyyLrv5AmWrxsGZg+GLg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=EUXlMogEXL2ovJiojKypNOGRL5R5+89FqNZSc3qX8JCo2Nh0FO/1Jow95Jt7dwbUafTIhku9q+2XHWXgLP2D6+lgcgHLNdQKaFfzkpyrIarovWRLgSH4u8IcnBj8aqnVunv8tbtgXHqc4MfZ09UEKCs+npmMJwVoGdV8xXTIguY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Tv63W6RRPz4f3jqP;
-	Tue, 12 Mar 2024 16:18:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 8ADC71A0199;
-	Tue, 12 Mar 2024 16:18:35 +0800 (CST)
-Received: from [10.174.176.34] (unknown [10.174.176.34])
-	by APP1 (Coremail) with SMTP id cCh0CgBXKBHZD_BlXa7TGg--.10688S3;
-	Tue, 12 Mar 2024 16:18:35 +0800 (CST)
-Subject: Re: [PATCH 1/4] xfs: match lock mode in
- xfs_buffered_write_iomap_begin()
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
- david@fromorbit.com, tytso@mit.edu, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240311122255.2637311-1-yi.zhang@huaweicloud.com>
- <20240311122255.2637311-2-yi.zhang@huaweicloud.com>
- <20240311153415.GS1927156@frogsfrogsfrogs>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <04c14e02-9968-3fda-39a6-c3b44c78a2ba@huaweicloud.com>
-Date: Tue, 12 Mar 2024 16:18:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1710232482; c=relaxed/simple;
+	bh=dnUXV2BT0U/QHS1XqoridfxlcWnlBVFA9+slvCXLs9c=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p0nN3UlPTyOI+jLaSqOCeNzdsgNnVtM4bGr8sDOy0nLzmWf18BRl1S/3/yhsHWsOKOTk65PgO//S+4nzt4kFKy6WYtau6iWesnFM5XeFdxn0/JeUokfdPEKMFYTcQjMMvSBlINQ4uEYMeH+KPmvqRT0HzQ5AI8f2s6IL3WYddkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXuHJU+0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BFAAC43394
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 08:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710232481;
+	bh=dnUXV2BT0U/QHS1XqoridfxlcWnlBVFA9+slvCXLs9c=;
+	h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+	b=OXuHJU+0PaRguyLZ1eRHlk7a5WALSZtIa8r3hto9azSGZm0h/o+Qi/KYfh2A79hQ3
+	 8AgvLXVgT9k+NJbZLowA2nzNjrTWbbpTU9lvJbG7dGNfg/Cuw23UTetwUfCA1MZCUg
+	 jJ30gcCEovynpjIi+D4zMvzvgF4JVHMOBpjV5vxPUQ0ErfwoDKwsYOp2v8lbF3zcXM
+	 amPFACgbhU5CBFpHGYBxs1kVzzK4cdJbm8UsxjFvYM7udqKswq5DIrEjIO+rPlmWEe
+	 DpILkKNsMSd2jU9ggeFmoHxxQPAUiuJHdPLRJANfLX8vQQ53pcR3iUEz5M86++RVrI
+	 QoxjYRopWfpaA==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5a2295cd61fso127519eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 01:34:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXPoCJdlAz9TAX53ryOGE9C0l0lqyOX+mAqDQnUaFBiQZrtd4M44G3QeFGYMx5RwjJmX5evma0WVpH8GfA697oK4r3LHeLbrmKBLbdLVA==
+X-Gm-Message-State: AOJu0Yy1CP/ibOPlI/Pw8RqP44/jBmF4AdP3AiNw82j3Q5BJeIK/l0L5
+	9O0adxMZ7eTSei6HzKIt6IlyU48QMAINS4x1LHkX2srcIufygvUmtFWrOgllf1xgeWS7JUFdQ2u
+	X58eKFWl39MJVRR90dX3z0Qqvwc8=
+X-Google-Smtp-Source: AGHT+IGcQJiluaRkBMQJLLu1P3E1dvoxQ/H9QVNHboY0tWXioj8vMEiS1S+fn50Gccsi0dZHknKbTS1U8KCbL+pvZKY=
+X-Received: by 2002:a05:6870:472c:b0:221:8787:89f7 with SMTP id
+ b44-20020a056870472c00b00221878789f7mr8329293oaq.48.1710232480818; Tue, 12
+ Mar 2024 01:34:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240311153415.GS1927156@frogsfrogsfrogs>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgBXKBHZD_BlXa7TGg--.10688S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJFyUAr4xCr47JryDuFy8Zrb_yoW5XF15pr
-	n7KayqkrZ2vF1Yvr40qryYvF10g3W7Jw1UAr15Wan3uw1Dtr4fKr4093Wru3W8Ars2k34v
-	gF4UGr1ku34ayFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Received: by 2002:ac9:7bd4:0:b0:51e:5fb5:2f75 with HTTP; Tue, 12 Mar 2024
+ 01:34:40 -0700 (PDT)
+In-Reply-To: <1891546521.01710140401877.JavaMail.epsvc@epcpadp3>
+References: <CGME20240311042501epcas1p34655f4bf93feafb952ba35534b516c7e@epcas1p3.samsung.com>
+ <TY0PR04MB6328049134D3D769E12E607F81242@TY0PR04MB6328.apcprd04.prod.outlook.com>
+ <1891546521.01710140401877.JavaMail.epsvc@epcpadp3>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 12 Mar 2024 17:34:40 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_Ug-QjvPAyzkQQ+U47L1eRV1-O_x96o36Z_2kSmWep=Q@mail.gmail.com>
+Message-ID: <CAKYAXd_Ug-QjvPAyzkQQ+U47L1eRV1-O_x96o36Z_2kSmWep=Q@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] exfat: improve sync dentry
+To: Yuezhang.Mo@sony.com
+Cc: Sungjong Seo <sj1557.seo@samsung.com>, linux-fsdevel@vger.kernel.org, Andy.Wu@sony.com, 
+	Wataru.Aoyama@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/3/11 23:34, Darrick J. Wong wrote:
-> On Mon, Mar 11, 2024 at 08:22:52PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
+2024-03-11 15:21 GMT+09:00, Sungjong Seo <sj1557.seo@samsung.com>:
+>> This patch set changes sync dentry-by-dentry to sync dentrySet-by-
+>> dentrySet, and remove some syncs that do not cause data loss. It not only
+>> improves the performance of sync dentry, but also reduces the consumption
+>> of storage device life.
 >>
->> Commit 1aa91d9c9933 ("xfs: Add async buffered write support") replace
->> xfs_ilock(XFS_ILOCK_EXCL) with xfs_ilock_for_iomap() when locking the
->> writing inode, and a new variable lockmode is used to indicate the lock
->> mode. Although the lockmode should always be XFS_ILOCK_EXCL, it's still
->> better to use this variable instead of useing XFS_ILOCK_EXCL directly
->> when unlocking the inode.
+>> I used the following commands and blktrace to measure the improvements on
+>> a class 10 SDXC card.
 >>
->> Fixes: 1aa91d9c9933 ("xfs: Add async buffered write support")
-> 
-> AFAICT, xfs_ilock_for_iomap can change lockmode from SHARED->EXCL, but
-> never changed away from EXCL, right?  
-
-Yes.
-
-> And xfs_buffered_write_iomap_begin
-> sets it to EXCL (and never changes it), right?
-
-Yes.
-
-> 
-> This seems like more of a code cleanup/logic bomb removal than an actual
-> defect that someone could actually hit, correct?
-> 
-
-Yes, it's not a real problem.
-
-> If the answers are {yes, yes, yes} then:
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> 
-> --D
-> 
-> 
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/xfs/xfs_iomap.c | 10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
+>> rm -fr $mnt/dir; mkdir $mnt/dir; sync
+>> time (for ((i=0;i<1000;i++));do touch $mnt/dir/${prefix}$i;done;sync
+>> $mnt)
+>> time (for ((i=0;i<1000;i++));do rm $mnt/dir/${prefix}$i;done;sync $mnt)
 >>
->> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
->> index 18c8f168b153..ccf83e72d8ca 100644
->> --- a/fs/xfs/xfs_iomap.c
->> +++ b/fs/xfs/xfs_iomap.c
->> @@ -1149,13 +1149,13 @@ xfs_buffered_write_iomap_begin(
->>  	 * them out if the write happens to fail.
->>  	 */
->>  	seq = xfs_iomap_inode_sequence(ip, IOMAP_F_NEW);
->> -	xfs_iunlock(ip, XFS_ILOCK_EXCL);
->> +	xfs_iunlock(ip, lockmode);
->>  	trace_xfs_iomap_alloc(ip, offset, count, allocfork, &imap);
->>  	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, IOMAP_F_NEW, seq);
->>  
->>  found_imap:
->>  	seq = xfs_iomap_inode_sequence(ip, 0);
->> -	xfs_iunlock(ip, XFS_ILOCK_EXCL);
->> +	xfs_iunlock(ip, lockmode);
->>  	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0, seq);
->>  
->>  found_cow:
->> @@ -1165,17 +1165,17 @@ xfs_buffered_write_iomap_begin(
->>  		if (error)
->>  			goto out_unlock;
->>  		seq = xfs_iomap_inode_sequence(ip, IOMAP_F_SHARED);
->> -		xfs_iunlock(ip, XFS_ILOCK_EXCL);
->> +		xfs_iunlock(ip, lockmode);
->>  		return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags,
->>  					 IOMAP_F_SHARED, seq);
->>  	}
->>  
->>  	xfs_trim_extent(&cmap, offset_fsb, imap.br_startoff - offset_fsb);
->> -	xfs_iunlock(ip, XFS_ILOCK_EXCL);
->> +	xfs_iunlock(ip, lockmode);
->>  	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, 0, seq);
->>  
->>  out_unlock:
->> -	xfs_iunlock(ip, XFS_ILOCK_EXCL);
->> +	xfs_iunlock(ip, lockmode);
->>  	return error;
->>  }
->>  
->> -- 
->> 2.39.2
+>> | case | name len |       create          |        unlink          |
+>> |      |          | time     | write size | time      | write size |
+>> |------+----------+----------+------------+-----------+------------|
+>> |  1   | 15       | 10.260s  | 191KiB     | 9.829s    | 96KiB      |
+>> |  2   | 15       | 11.456s  | 562KiB     | 11.032s   | 562KiB     |
+>> |  3   | 15       | 30.637s  | 3500KiB    | 21.740s   | 2000KiB    |
+>> |  1   | 120      | 10.840s  | 644KiB     | 9.961s    | 315KiB     |
+>> |  2   | 120      | 13.282s  | 1092KiB    | 12.432s   | 752KiB     |
+>> |  3   | 120      | 45.393s  | 7573KiB    | 37.395s   | 5500KiB    |
+>> |  1   | 255      | 11.549s  | 1028KiB    | 9.994s    | 594KiB     |
+>> |  2   | 255      | 15.826s  | 2170KiB    | 13.387s   | 1063KiB    |
+>> |  3   | 255      | 1m7.211s | 12335KiB   | 0m58.517s | 10004KiB   |
 >>
+>> case 1. disable dirsync
+>> case 2. with this patch set and enable dirsync case 3. without this patch
+>> set and enable dirsync
 >>
-
+>> Changes for v3
+>>   - [2/10] Allow deleted entry follow unused entry
+>
+> looks good. Thanks for your patch.
+> Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+Applied them to #dev, Thanks for your patch!
 
