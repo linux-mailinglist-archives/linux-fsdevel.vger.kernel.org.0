@@ -1,55 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-14181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81EB878DC1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 05:17:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68556878DC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 05:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68CB21F21E85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 04:17:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B081C2170C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 04:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE65BE6F;
-	Tue, 12 Mar 2024 04:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1440BE47;
+	Tue, 12 Mar 2024 04:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rkqfbv9X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="idN/k94N"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C9DBA28;
-	Tue, 12 Mar 2024 04:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020FDB66F;
+	Tue, 12 Mar 2024 04:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710217051; cv=none; b=asogfDd7b6n/MtyVakIyIOIVXjNwTAMCeXF7gcwW5O16okuql2iyGa4EkQOjkb+Gb1kUSVHJ6m9rGXC0E61WIFilcIhiMd7Q5ytrjlHkiomVIFFos+DuD4aMACuIpRvAGw7ga78uw2W4tYISQ7XxUxx0YL1lhztd2Uu1WyRGomg=
+	t=1710217256; cv=none; b=b6+HPF+qJZux/nHdYEI8bbjRM2CHGbtfBw+ftgkXvf8ylMeyEclcAOyO1jTsmBnjudz293p+mo9dXDZFLRliAYAbHXKyYMGKd3g6VoMWzGmfMkijVMXERzDCj6fwhQLMFyCX0zw44F2xVCNF74epquqiE6AaioXmcF8YlM8sqDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710217051; c=relaxed/simple;
-	bh=xz4MHuhx7VqPi+LlvH2nWgdl9tQFPX/Y615FRl2yNns=;
+	s=arc-20240116; t=1710217256; c=relaxed/simple;
+	bh=6jUkBlOs8/qYxnY11jCaAhAjrJV89oOkFL8yos84uFQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rQqL5kVE7yZs0bdpbDfVzSfUWEQ0UyisBTnsOQM+cv5m4eEOxGoPgjA9Rvl1NoFAoH2YcHK0Wx3W6G6uLe6XGIpw1yR7okNYzh+jj5Yie6yRRJPldu198kUHYacIdrfQZD51crt6gi2sDY1pCFcOGG8ln4ULOCx1zu2pRzP5iLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rkqfbv9X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D976FC433F1;
-	Tue, 12 Mar 2024 04:17:30 +0000 (UTC)
+	 Content-Disposition; b=mwu2wSMa9RQL1p/B3QPvf9W/hTjUZj46mFzrAdGIWa5RGmZnh62unY65WyLJsZO16FDQRMxnkSu984Upjxie17WLew1Q2Ym518FLLWKjOJZm+2+jcDMpTtrVfX1Sf+AJaaNXMotQ/3XHsi81EHe8hVijeUjLIyb26oY+BfYXMic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=idN/k94N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 625E2C433C7;
+	Tue, 12 Mar 2024 04:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710217051;
-	bh=xz4MHuhx7VqPi+LlvH2nWgdl9tQFPX/Y615FRl2yNns=;
+	s=k20201202; t=1710217255;
+	bh=6jUkBlOs8/qYxnY11jCaAhAjrJV89oOkFL8yos84uFQ=;
 	h=Date:From:To:Cc:Subject:From;
-	b=Rkqfbv9X9ca6+V61cxRxsVeWTUIWcoFaMPWn7C4/hRsTFF7zMHtQsrF8R2TBIrlM1
-	 76w4fZQDomVGChmjKmR9E3C8WpVSwNQ8rc4go6fJ8vzQtvvVZeHgsfda4+WSmAaxjN
-	 tQAzmGy8v1zBVXTt/J3nVY9tFa+cIT/AjH645/25tikEgCZ4g1LLb7XaFLUmB0nmyC
-	 LMwGWRFYWlIDqLQMIgayZoWM6anydq0W9o9DxxNPkxvg1LK1T0PBoz8LoTlFV+jf22
-	 98Chwz7VgiO3vxsgQXEG29ftePq+KqAyGnFhGIRxT9cf07Zp0wqxolryn9qgOf/j7S
-	 vSJ6s4yWJbH8Q==
-Date: Mon, 11 Mar 2024 21:17:29 -0700
+	b=idN/k94NnT6596YAEgOX2Quo0sYcm1GHsfHDV7e4KnNxWCkGfBFfmOfirB/t9H0ln
+	 AfJlqrSd0UlL6rCHLjvn8mg+hsBgUuPcZWAZXSV3gG1/JMNc9MYIRZPQwJ0CrX1aRN
+	 NCmHZ0wZGJTO8/+y7ND9MXouOZmRWNvBxXHS3M1xHr7lZpRRjTe6Hni9mu6xkjRNjt
+	 swgz8BcmKdfOwpz+MqCpEbj505M8vQYzD+tbyIAOgU5MvIFwHNw01E1lqCUNVOvhBc
+	 KbrBU/vCghbyqap1UYtXr2QV2Yf2dHLDrMsu8bmWZLp6ALZCxtJaUgVYkhKNrq/yUj
+	 sLR3zK8aYy0Qw==
+Date: Mon, 11 Mar 2024 21:20:53 -0700
 From: Eric Biggers <ebiggers@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Luis Henriques <lhenriques@suse.de>, Xiubo Li <xiubli@redhat.com>
-Subject: [GIT PULL] fscrypt updates for 6.9
-Message-ID: <20240312041729.GH1182@sol.localdomain>
+	Andrey Albershteyn <aalbersh@redhat.com>
+Subject: [GIT PULL] fsverity updates for 6.9
+Message-ID: <20240312042053.GI1182@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,31 +64,23 @@ The following changes since commit 41bccc98fb7931d63d03f326a746ac4d429c1dd3:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
+  https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
 
-for you to fetch changes up to 8c62f31eddb71c6f6878258579318c1156045247:
+for you to fetch changes up to 8e43fb06e10d2c811797740dd578c5099a3e6378:
 
-  fscrypt: shrink the size of struct fscrypt_inode_info slightly (2024-02-23 22:03:48 -0800)
-
-----------------------------------------------------------------
-
-Fix flakiness in a test by releasing the quota synchronously when a key
-is removed, and other minor cleanups.
+  fsverity: remove hash page spin lock (2024-02-01 15:19:23 -0800)
 
 ----------------------------------------------------------------
-Eric Biggers (2):
-      fscrypt: write CBC-CTS instead of CTS-CBC
-      fscrypt: shrink the size of struct fscrypt_inode_info slightly
 
-Luis Henriques (1):
-      fscrypt: clear keyring before calling key_put()
+Slightly improve data verification performance by eliminating an
+unnecessary lock.
 
-Xiubo Li (1):
-      fscrypt: explicitly require that inode->i_blkbits be set
+----------------------------------------------------------------
+Andrey Albershteyn (1):
+      fsverity: remove hash page spin lock
 
- Documentation/filesystems/fscrypt.rst | 27 +++++++++++++++------------
- fs/crypto/fscrypt_private.h           | 14 ++++++++------
- fs/crypto/keyring.c                   |  8 ++++++--
- fs/crypto/keysetup.c                  | 11 +++++++----
- 4 files changed, 36 insertions(+), 24 deletions(-)
+ fs/verity/fsverity_private.h |  1 -
+ fs/verity/open.c             |  1 -
+ fs/verity/verify.c           | 48 ++++++++++++++++++++++----------------------
+ 3 files changed, 24 insertions(+), 26 deletions(-)
 
