@@ -1,195 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-14249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0C3879DF5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 22:55:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6213D879E39
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 23:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CAA01C20CFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 21:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2EB71F22C57
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 22:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94774143C4D;
-	Tue, 12 Mar 2024 21:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6BB143C50;
+	Tue, 12 Mar 2024 22:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="iL2F21DM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RAwXHMup"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WRBcpldV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+m1lanxo";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WRBcpldV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+m1lanxo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wfout7-smtp.messagingengine.com (wfout7-smtp.messagingengine.com [64.147.123.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB984AEEB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 21:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50277A730
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 22:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710280533; cv=none; b=GBeDFea3A6366W9LxDSDg7p9Q31he2OM+IbyHXWTocMN5Qw303CJC8Qe5uRd6SzceYf6g+U7TurrTqmXJwYHmkMhrAHibiOoDgBSLxqINlA5/sXrIKtYXg8LSjz/4lKEIgigMI3eWpP/+WRwZMA7pGenxUUQWeJY0q3yjVlb81w=
+	t=1710281400; cv=none; b=f4DspH595H7MytEw0Xb1LQKQrQkaBwBuyrLBl4S6goyZPZZRxDSuaVHnR9VmcFZaNbg07AVpA4yQMCD8PtAbJ6B3vT4N0ZrbE+Rg2REVXLVWvSpfOT9BxKWm9ou1ErNQZ+nP9GArHpbt1jfYZMZMMXbjhQKBlGGCMS+nnVBslEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710280533; c=relaxed/simple;
-	bh=yHX4+5DcPpWatpBUhVImzbpFssqO5NpVfFRrMEDS5nU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gv8d8HACocLNkIE/E2w3N/Zold+rlwUZ3y87agRTOMAKtNdSbqBGRs83y3XiY6XUN1miQYTh0K6J4DK3/zW4bOfbeRhKEX/9V5VsTUrxlkpuXqUZr1iysitl3/bW62CO92ACvyujdWM/6ZDHqlPutidObZAAFn3vScLu90HkFbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=iL2F21DM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RAwXHMup; arc=none smtp.client-ip=64.147.123.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.west.internal (Postfix) with ESMTP id 3A0481C00096;
-	Tue, 12 Mar 2024 17:55:30 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 12 Mar 2024 17:55:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1710280529;
-	 x=1710366929; bh=cyCXieIeAznG1M3EGMP/llScIKJc1qSszayzCheqv24=; b=
-	iL2F21DMZcG52sd4ImdiyG8DQZdi6+IhCyv6vZPLQGbWfO5rDy2i/f6r+LWh7VZC
-	SrqU1sHutFl5ba1wqSGf8Lnn1Z4lk72dWyux6Tn9ER7CMDNa4ZspWWKym5e6vTYA
-	IFGTIaAx88s6gquR6NMkds+HLM0l8BrAVmx5f2rJpeK0g2sSYaUHUDqIqjLW8lu5
-	Upb3lcgdaVy8Ro3NBg7tHKV/pYQwOnpaCudmVmjdli/Zoq+JwcDvHW8A4BwuftZ/
-	iPwvzeD1SmXeGKoKqtG4yv6/EE8IbVM64R1HP3/MG/yhVbThDlBaKC9OfseGSBE8
-	2BLoMMzfRJrEGxXua6TiDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1710280529; x=
-	1710366929; bh=cyCXieIeAznG1M3EGMP/llScIKJc1qSszayzCheqv24=; b=R
-	AwXHMupT/Rsgn9eSP10fdpybnN1L5ASmKgllHTul19BBxpx+GhsfbeDr2A/jnx5r
-	w6QNSRCIg5TGzA4dstiDh37lBbiB1gbI/SckdegpjZcUW3dyi/T+aq3t++n1WDI/
-	Rb19eJdyGEBPqDFSfLiDsixplAEuyOD202yRuxrYeyI2oupTfloEr4fLKXZ03Erj
-	3Z2DI+p+VRND8wLihATJ/XDotVTRdg2uSxhXQXKBXh3dzoYYJ51JI/J/cS5d09+B
-	NSOHPR5xg3U5Ddl+Uy4WIrNOqeQRe9t2AaIh73RqUgt7CbV76sdmtAvRrU9HWjMz
-	CbJz5Pwo508dQYblqZa2w==
-X-ME-Sender: <xms:Uc_wZdjij-LS5S6up9dwEPtgZiGOE81Zo06NXqSfE_AXD_2HJ9kXNA>
-    <xme:Uc_wZSDCJ3TecN29akWmxECdgb5-ejc7wcKE16HIUiBYaeUA_DnbzuNgrMhj5lzek
-    onvZu77xQSyeYtw>
-X-ME-Received: <xmr:Uc_wZdG_NtqmpHNSUroSS_zxuuNA7FqLVJxNsuN0XhI2MfEgY8g8ge0Olp80uSLluOFN8rfVfBo0-KcIuxhI7Hm2wLKYkZQDUhVk9rSHzSVo0mC_hayS>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrjeefgdduheegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudevleegleffffekudekgeev
-    lefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:Uc_wZSTeNHFtdwVpRc22ZvJkmeUXvg-9p-Pj2f6GblFkJ-Gwlal9TA>
-    <xmx:Uc_wZayxivCDjNJmfguvj_vqTdeWMMuwKe0KslUk8l7FRGF0FBL0zQ>
-    <xmx:Uc_wZY7KJHp_mUmqL8u1PJP43FbKeM5bSq4omzN9RUS_9ss6FbUCHg>
-    <xmx:Uc_wZfxjK2HWNQAjLOhLuyJan89PCTVav6KreyKqFJPZayMFQB6-zg>
-    <xmx:Uc_wZVwUhraBi2pgPsfXvcARvI0AADj6epauur8ed9paL9jMuqEFTR2ga9k>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Mar 2024 17:55:28 -0400 (EDT)
-Message-ID: <2172443f-8c83-4abf-a7bb-cc3ca252c7c5@fastmail.fm>
-Date: Tue, 12 Mar 2024 22:55:26 +0100
+	s=arc-20240116; t=1710281400; c=relaxed/simple;
+	bh=2zZDDPusHVtvuKY47+MZf+1hs1x9DqzNC73qRKOk8WE=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=EipURxplsq/fc5o/hoZc4dLLPgw11LKcHRKDxTjLBGXBCG7K097BrrLZUausD65mBu/3MBeKZJ7N2P/SnfkOnKgBJrcUKYrAyGYLjR+sVEkKxYUz2gofNRF8qfetl7mFzhohH5JKYgf2Cf7DEKYXtS2VBWX9ryUHE8ylv16LAPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WRBcpldV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+m1lanxo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WRBcpldV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+m1lanxo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B052221BF8;
+	Tue, 12 Mar 2024 22:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710281396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rnhnvuAguaShvZnqnUxmnsYkUTMmDsH7p0cA6XDgY/U=;
+	b=WRBcpldVLBNeFN/rOJ5oOkzmrfstQVpSJ8V1Re7qSwyXK4W98THjh5+slt3isMEYE7vai0
+	EcxNV5rBTGkL5kaH28V6naF7drLF9lGlgPNVPp3tQBFrV5bvBwfvJ5GxWt3uHnEjmXEPc2
+	tajOyKLYL4JdYd37MZQ+MkcJUjuxXQ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710281396;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rnhnvuAguaShvZnqnUxmnsYkUTMmDsH7p0cA6XDgY/U=;
+	b=+m1lanxoZbPHWDQLSDFeL9FMF23WRPwPKdTO8XjmZlayF1oGe2Ka2LpJbCuLoA1wXPBDNc
+	T7Ocf7tRrYQRSeAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710281396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rnhnvuAguaShvZnqnUxmnsYkUTMmDsH7p0cA6XDgY/U=;
+	b=WRBcpldVLBNeFN/rOJ5oOkzmrfstQVpSJ8V1Re7qSwyXK4W98THjh5+slt3isMEYE7vai0
+	EcxNV5rBTGkL5kaH28V6naF7drLF9lGlgPNVPp3tQBFrV5bvBwfvJ5GxWt3uHnEjmXEPc2
+	tajOyKLYL4JdYd37MZQ+MkcJUjuxXQ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710281396;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rnhnvuAguaShvZnqnUxmnsYkUTMmDsH7p0cA6XDgY/U=;
+	b=+m1lanxoZbPHWDQLSDFeL9FMF23WRPwPKdTO8XjmZlayF1oGe2Ka2LpJbCuLoA1wXPBDNc
+	T7Ocf7tRrYQRSeAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E4261364F;
+	Tue, 12 Mar 2024 22:09:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id n0CEDLDS8GVkNAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 12 Mar 2024 22:09:52 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: update size attr before doing IO
-To: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
- Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
- josef@toxicpanda.com, amir73il@gmail.com
-References: <9d71a4fd1f1d8d4cfc28480f01e5fe3dc5a7e3f0.1709821568.git.sweettea-kernel@dorminy.me>
- <CAJfpeguHZCkkY2MZjJJZ2HhvhQuMhmwqnqGoxV-+wjsKwijX6w@mail.gmail.com>
- <4911426f-cf12-44f4-aef1-1000668ad3a0@dorminy.me>
-Content-Language: en-US, de-DE, fr
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <4911426f-cf12-44f4-aef1-1000668ad3a0@dorminy.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Vlastimil Babka" <vbabka@suse.cz>
+Cc: "Kent Overstreet" <kent.overstreet@linux.dev>,
+ "Dave Chinner" <david@fromorbit.com>, "Matthew Wilcox" <willy@infradead.org>,
+ "Amir Goldstein" <amir73il@gmail.com>, paulmck@kernel.org,
+ lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+ "linux-fsdevel" <linux-fsdevel@vger.kernel.org>, "Jan Kara" <jack@suse.cz>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
+In-reply-to: <a7862cf1-1ed2-4c2c-8a27-f9d950ff4da5@suse.cz>
+References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>,
+ <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>,
+ <Zd-LljY351NCrrCP@casper.infradead.org>,
+ <170925937840.24797.2167230750547152404@noble.neil.brown.name>,
+ <ZeFtrzN34cLhjjHK@dread.disaster.area>,
+ <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>,
+ <170933687972.24797.18406852925615624495@noble.neil.brown.name>,
+ <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>,
+ <170950594802.24797.17587526251920021411@noble.neil.brown.name>,
+ <a7862cf1-1ed2-4c2c-8a27-f9d950ff4da5@suse.cz>
+Date: Wed, 13 Mar 2024 09:09:44 +1100
+Message-id: <171028138478.13576.3004333623297072625@noble.neil.brown.name>
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [-7.10 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 REPLY(-4.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 RCPT_COUNT_SEVEN(0.00)[10];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[linux.dev,fromorbit.com,infradead.org,gmail.com,kernel.org,lists.linux-foundation.org,kvack.org,vger.kernel.org,suse.cz];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: -7.10
+X-Spam-Flag: NO
 
+On Wed, 13 Mar 2024, Vlastimil Babka wrote:
+> On 3/3/24 23:45, NeilBrown wrote:
+> > On Sat, 02 Mar 2024, Kent Overstreet wrote:
+> >>=20
+> >> *nod*=20
+> >>=20
+> >> > I suspect that most places where there is a non-error fallback already
+> >> > use NORETRY or RETRY_MAYFAIL or similar.
+> >>=20
+> >> NORETRY and RETRY_MAYFAIL actually weren't on my radar, and I don't see
+> >> _tons_ of uses for either of them - more for NORETRY.
+> >>=20
+> >> My go-to is NOWAIT in this scenario though; my common pattern is "try
+> >> nonblocking with locks held, then drop locks and retry GFP_KERNEL".
+> >> =20
+> >> > But I agree that changing the meaning of GFP_KERNEL has a potential to
+> >> > cause problems.  I support promoting "GFP_NOFAIL" which should work at
+> >> > least up to PAGE_ALLOC_COSTLY_ORDER (8 pages).
+> >>=20
+> >> I'd support this change.
+> >>=20
+> >> > I'm unsure how it should be have in PF_MEMALLOC_NOFS and
+> >> > PF_MEMALLOC_NOIO context.  I suspect Dave would tell me it should work=
+ in
+> >> > these contexts, in which case I'm sure it should.
+> >> >=20
+> >> > Maybe we could then deprecate GFP_KERNEL.
+> >>=20
+> >> What do you have in mind?
+> >=20
+> > I have in mind a more explicit statement of how much waiting is
+> > acceptable.
+> >=20
+> > GFP_NOFAIL - wait indefinitely
+> > GFP_KILLABLE - wait indefinitely unless fatal signal is pending.
+> > GFP_RETRY - may retry but deadlock, though unlikely, is possible.  So
+> >             don't wait indefinitely.  May abort more quickly if fatal
+> >             signal is pending.
+> > GFP_NO_RETRY - only try things once.  This may sleep, but will give up
+> >             fairly quickly.  Either deadlock is a significant
+> >             possibility, or alternate strategy is fairly cheap.
+> > GFP_ATOMIC - don't sleep - same as current.
+> >=20
+> > I don't see how "GFP_KERNEL" fits into that spectrum.  The definition of
+> > "this will try really hard, but might fail and we can't really tell you
+> > what circumstances it might fail in" isn't fun to work with.
+>=20
+> The problem is if we set out to change everything from GFP_KERNEL to one of
+> the above, it will take many years. So I think it would be better to just
+> change the semantics of GFP_KERNEL too.
 
+It took a long time to completely remove the BKL too.  I don't think
+this is something we should be afraid of.  We can easily use tools to
+remind us about the work that needs doing and the progress being made.
 
-On 3/12/24 19:18, Sweet Tea Dorminy wrote:
-> 
-> 
-> On 3/11/24 06:01, Miklos Szeredi wrote:
->> On Thu, 7 Mar 2024 at 16:10, Sweet Tea Dorminy
->> <sweettea-kernel@dorminy.me> wrote:
->>>
->>> All calls into generic vfs functions need to make sure that the inode
->>> attributes used by those functions are up to date, by calling
->>> fuse_update_attributes() as appropriate.
->>>
->>> generic_write_checks() accesses inode size in order to get the
->>> appropriate file offset for files opened with O_APPEND. Currently, in
->>> some cases, fuse_update_attributes() is not called before
->>> generic_write_checks(), potentially resulting in corruption/overwrite of
->>> previously appended data if i_size is out of date in the cached inode.
->>
->> While this all sounds good, I don't think it makes sense.
->>
->> Why?  Because doing cached O_APPEND writes without any sort of
->> exclusion with remote writes is just not going to work.
->>
->> Either the server ignores the current size and writes at the offset
->> that the kernel supplied (which will be the cached size of the file)
->> and executes the write at that position, or it appends the write to
->> the current EOF.  In the former case the cache will be consistent, but
->> append semantics are not observed, while in the latter case the append
->> semantics are observed, but the cache will be inconsistent.
->>
->> Solution: either exclude remote writes or don't use the cache.
->>
->> Updating the file size before the write does not prevent the race,
->> only makes the window smaller.
-> 
-> Definitely agree with you.
-> 
-> The usecase at hand is a sort of NFS-like network filesystem, where
-> there's exclusion of remote writes while the file is open, but no
-> problem with remote writes while the file is closed.
-> 
-> The alternative we considered was to add a fuse_update_attributes() call
-> to open.
-> 
-> We thought about doing so during d_revalidate/lookup_fast(). But as far
-> as I understand, lookup_fast() is not just called during open, and will
-> use the cached inode if the dentry timeout hasn't expired. We tried
-> setting dentry timeout to 0, but that lost too much performance. So that
-> didn't seem to work.
-> 
-> But updating attributes after giving the filesystem a chance to
-> invalidate them during open() would work, I think?
+>=20
+> If we change it to remove the "too-small to fail" rule, we might suddenly
+> introduce crashes in unknown amount of places, so I don't think that's feas=
+ible.
 
-You mean something like this?
+I don't think anyone wants that.
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index d19cbf34c634..2723270323d9 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -204,7 +204,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
-        if (inode && fuse_is_bad(inode))
-                goto invalid;
-        else if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) ||
--                (flags & (LOOKUP_EXCL | LOOKUP_REVAL | LOOKUP_RENAME_TARGET))) {
-+                (flags & (LOOKUP_EXCL | LOOKUP_REVAL | LOOKUP_RENAME_TARGET | LOOKUP_OPEN))) {
-                struct fuse_entry_out outarg;
-                FUSE_ARGS(args);
-                struct fuse_forget_link *forget;
+>=20
+> But if we change it to effectively mean GFP_NOFAIL (for non-costly
+> allocations), there should be a manageable number of places to change to a
+> variant that allows failure. Also if these places are GFP_KERNEL by mistake
+> today, and should in fact allow failure, they would be already causing
+> problems today, as the circumstances where too-small-to-fail is violated are
+> quite rare (IIRC just being an oom victim, so somewhat close to
+> GFP_KILLABLE). So changing GFP_KERNEL to GFP_NOFAIL should be the lowest
+> risk (one could argue for GFP_KILLABLE but I'm afraid many places don't
+> really handle that as they assume the too-small-to-fail without exceptions
+> and are unaware of the oom victim loophole, and failing on any fatal signal
+> increases the chances of this happening).
 
+I think many uses of GFP_KERNEL should be changed to GFP_NOFAIL.
+But that ISN'T just changing the flag (or the meaning of the flag).  It
+also involves removing that code that handles failure.  That is, to me,
+a strong argument against redefining GFP_KERNEL to mean GFP_NOFAIL.  We (I)
+really do want that error handling code to be removed.  That needs to be
+done on a case-by-case basis.
 
-I think this would make sense and could be caught by the atomic-open/revalidate
-(once I get back to it).
-
-
-
-> 
-> That would also conveniently fix the issue where copy_file_range()
-> currently checks the size before calling into fuse at all, which I'd
-> been building a more elaborate changeset for.
-> 
-> How does that sound?
-> 
-> Thanks!
-> 
-> Sweet Tea
-> 
+Thanks,
+NeilBrown
 
