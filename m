@@ -1,75 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-14251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3AA879E79
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 23:24:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374C0879E7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 23:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BED61F231DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 22:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52D028409D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 22:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871EC1448E6;
-	Tue, 12 Mar 2024 22:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3594143C6F;
+	Tue, 12 Mar 2024 22:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tH3AduDt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D6K69teL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27EA14405D;
-	Tue, 12 Mar 2024 22:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5FE145347;
+	Tue, 12 Mar 2024 22:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710282246; cv=none; b=ajEmJa7oEnHOHBFE2xzF35Ru/q64dx5x2rwwyOgKD22XCZ3Nq3adjgKiTS4TII5xrHVmekXgLlo2NArr4idE8Zl4DC4ehGV7Igj4sOt8rcdBYXQBH92NVPi+C6axycltf5Z+k3//OriGNHGfLW10npvOyWy+jFDHVm5cTo4jK3I=
+	t=1710282250; cv=none; b=hlbTDJQuBWM+sYQ4CY1oYrj5DOiUbZrme6hFyt0qRLSEOYJkL/fUz9pilllloJHX80vDMqYoWwjMhepKYU9EIv4c7mx9hEYg05473lxBtwdu9UG35vBgSiZGyOxQQCbJuOypx7IGsdqPzQa/D0Pl05nuRlQmFM7MzzLOzgkK/K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710282246; c=relaxed/simple;
-	bh=7ylP2MCGeRgKNrINpixyJIZZaltZRUZoAjvZsLoPX9I=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DgNpNPp40v03Pju+uwHqVzXVBkn2Ymceje8CXkpcDeR+qrFK6TQjy8Gc9DBoYLn/qaBDXx9gq0dHRj0W/VjO3heIeABLGEzrB5MNAFZ2i85rrH7tHm8qwi7wtKxozitxd8qhYPUFj2QE4ULHlRRiQVunsMdjjdcMHoVLIm9XY4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tH3AduDt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C42A0C433F1;
-	Tue, 12 Mar 2024 22:24:05 +0000 (UTC)
+	s=arc-20240116; t=1710282250; c=relaxed/simple;
+	bh=t2gtJ1X5W1oOMAxCU6NeaLoCupy/l54YCrvf/09xULU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Fet3T4fzMaQIKL2W9/kXaaWri026g6943eC27O4+5hbSUCadm7WqvENfhmk+laNWiJa5AgO/h1sPM7Hu38mX7T0ncN5OvIrUt2Py5DwnxozoSaW4Hs624mh0pT7zsVytHmwC08vqeS/ZrVB1BBNjbt0W22JCFi4+Ajq9NH09OuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D6K69teL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 12F73C43390;
+	Tue, 12 Mar 2024 22:24:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710282245;
-	bh=7ylP2MCGeRgKNrINpixyJIZZaltZRUZoAjvZsLoPX9I=;
+	s=k20201202; t=1710282250;
+	bh=t2gtJ1X5W1oOMAxCU6NeaLoCupy/l54YCrvf/09xULU=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=tH3AduDtDzHoG5JcpnZQypUGLyRtLvrKKQv9m4B9JVGusN9C531vaza5sMNL/p0u2
-	 /4mCtHYPspn0N4bBMnd6XL7gGExsnTlNQwUjhGONnIOltTTJXdsT5hW6l9wGlSsaUI
-	 zLYiaRGLzDUflYHrRC+iZI+XiHy7LFjaSGrdEHdQQnaFAsQHuFjdb1inshrG404QYs
-	 s2pQ4tqMa1cbTQN8tWZ/Mz0NqIGbViI+5NSrNttBdyFrpn5W76hW0+6T5UkYZh8j8g
-	 iFnOJi6HFsVzlQ1V4H5JTVHrxe+LkOiG8nBAFuMnEKmlPZpn2VYCN2z5tGsZ1Av8Up
-	 1A9cFmITklpXQ==
+	b=D6K69teLlbTVJPlbz4cWnLlG2NInFt+tGHWaCO1jPuPVQHaGIlPQiOWExo4L5k0bT
+	 JEoVdOjT4km7BGXs31tu3SaJGeATM1Pqjem50KSs7t78xP5ZAcZfWqh1m0IYTvPsub
+	 VZhScT5LmsmbJOIKlmWFJ6wIc+fKAAw1yU32b5igM5Hwn5svbqLIWOqNR/O4OrA6pG
+	 rmaqCQ2I0MaiU3jyhurso+rmbhsfJYNHoALveoXo95Muvp+YERM/G3Cr8rvf2aCrKa
+	 Rs5EVCYoxQrxi8Boe3T9QBX19rcAxGIDPNo4y9ulH2qtZjthwPXVm+u2pcDe0IBSl8
+	 8+mt5LHbIHLRg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AB343D95053;
-	Tue, 12 Mar 2024 22:24:05 +0000 (UTC)
-Subject: Re: [GIT PULL] fsverity updates for 6.9
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 00CD0D95053;
+	Tue, 12 Mar 2024 22:24:10 +0000 (UTC)
+Subject: Re: [GIT PULL] execve updates for v6.9-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240312042053.GI1182@sol.localdomain>
-References: <20240312042053.GI1182@sol.localdomain>
-X-PR-Tracked-List-Id: <fsverity.lists.linux.dev>
-X-PR-Tracked-Message-Id: <20240312042053.GI1182@sol.localdomain>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
-X-PR-Tracked-Commit-Id: 8e43fb06e10d2c811797740dd578c5099a3e6378
+In-Reply-To: <202403111637.203A9187C7@keescook>
+References: <202403111637.203A9187C7@keescook>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <202403111637.203A9187C7@keescook>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.9-rc1
+X-PR-Tracked-Commit-Id: 725d50261285ccf02501f2a1a6d10b31ce014597
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d453cc5a278ddf8fd4f0a89815c5da2c6650bbea
-Message-Id: <171028224569.16151.576797111404404042.pr-tracker-bot@kernel.org>
-Date: Tue, 12 Mar 2024 22:24:05 +0000
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Andrey Albershteyn <aalbersh@redhat.com>
+X-PR-Merge-Commit-Id: b32273ee89a866b01b316b9a8de407efde01090c
+Message-Id: <171028224999.16151.4935834546999328523.pr-tracker-bot@kernel.org>
+Date: Tue, 12 Mar 2024 22:24:09 +0000
+To: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>, Li kunyu <kunyu@nfschina.com>, linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-mm@kvack.org, Mark Brown <broonie@kernel.org>, Max Filippov <jcmvbkbc@gmail.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, Shuah Khan <shuah@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 11 Mar 2024 21:20:53 -0700:
+The pull request you sent on Mon, 11 Mar 2024 16:37:31 -0700:
 
-> https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.9-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d453cc5a278ddf8fd4f0a89815c5da2c6650bbea
+https://git.kernel.org/torvalds/c/b32273ee89a866b01b316b9a8de407efde01090c
 
 Thank you!
 
