@@ -1,135 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-14237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031A2879C79
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 20:57:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A4E879C8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 21:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98FCE1F24CDA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 19:57:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F09E1B2181A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 20:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A451428ED;
-	Tue, 12 Mar 2024 19:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E182B1428E8;
+	Tue, 12 Mar 2024 20:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n9SkdvBC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0UFOkfg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB6C14264C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 19:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4555D14264A;
+	Tue, 12 Mar 2024 20:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710273431; cv=none; b=E5FpCT71PTJxQ0VAUop700uYS4uvsFHdjozqRbkAc2Wg36l7qipkR5F4CbU9gM9Sw61r3UOheIcOQVclQfcd/6R/iQ7VpXoOEulVVD5kTzZszS9yaYihrqtPfwa9uKm6HZ1lBCa9H8p0ENMsi4AzIw1bx+cAC0Yzf9hjRMeGHKQ=
+	t=1710273865; cv=none; b=gKGkd1FaDC+tQHYZmkNtXWlTOT3clWajo7WvXEdyTpSTmqEobipqiSkAh/J8qQy+w5vLn3qaOXlXmzWkmH9swss3CEWBCicTGT/jc43FfB/oExvbalcMA24L/ppeIUlWrG4sKUhL89YAgdgs+TX4kNl5nakDZPi8BCA3d+RxR+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710273431; c=relaxed/simple;
-	bh=0aWGvxVmbgp4kFphrT5DgrMJEPHTfdbj9FAM43oX9JA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aCXbmmHJBTQXbwndShUxvw3G4P7RWDi74ut+/JKclantp9TtU9tja05xW0JOw8+OMa65q0rd8rYG3Ls/QJjPciWqJPCk8oqMZj5Wuveu4Cde7mPJRMNjh/0chJuWqrNvSf70pC9zkuqAOeJfrHI9c/oXLEzApEvI1685DRKD5Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n9SkdvBC; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-60a434ea806so3642047b3.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 12:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1710273428; x=1710878228; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wT+2mjCDEB2wrTUTyTKLuab+xNoniRJZtNtidsDDPI8=;
-        b=n9SkdvBCP29jpiwunTx9H1BR2Ml5UNn8v5otShFLYbK7JyH9MubPTv36E75no1LqDL
-         F087Nx5gd76hBnyWnz1RKILaph74iezHR8dfxhvrNyu4hW+OvUANcVGR85oF6szeI66p
-         LehTfrQIsekB3y0zSlUlFw+k4rC27MANhiDGq5MWUDj0v7p8X/r6xuB6IfOk+yaiotpi
-         6PNsdZ7oDH/REX+V59tRksPbBVobOBRxA5gTKm3fkVWKTVvVvhW6qkyHeDff6HIEDksZ
-         NyymvyrhhQDYaBGvJfqmaPS8cnXSuEknUF0Um/xxxhDbr2bvMvHMcAwmZuBE64EiPD4M
-         sflQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710273428; x=1710878228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wT+2mjCDEB2wrTUTyTKLuab+xNoniRJZtNtidsDDPI8=;
-        b=WUF3FXuqxd5Ik7K+XiGE36G7BeB3nwA33Z5MCOIiznQ15TfVLyvYIYIczITZF0PLJx
-         DhtGYsD3zU42BOwRLEnbKWXuVGo7jSv9kRZyWdOPz8tCXSoR5r7beodltJC5e5JZJraz
-         IaVXdHpHr9uR2AW6jcEO0vaSzk66Rji6Tg8RBaFVFm33LX9QgIz4SX3vFOx/8jPbJOJe
-         f5PKA4DmdLswKjCIAUBSwL+PqkwKkhAnB3G2WmJLmy1MEIILw4H6P9IUxtpKr9NogKk2
-         TXrYgKVMMgkYFcHhYDOvRvOO5hMnxpgSu3lV6jV2WF0oJhFMAEYX3Ud9CX4ZJV0J6HiY
-         nHdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTkNHpbxAfVdA0ZWcGLlL5txWkd1B/F1mPEtHyTKxGpqaJnnl6YKJWGKvLsaHfQByEjJEqp2ALCXnNwt5C9OSk2yAmWLZKjls11Ba0iA==
-X-Gm-Message-State: AOJu0Yyu6rGSvZ1MLW9iS5BqmB4xKDiKhG1iPz17X64ifN0sz6qecSRw
-	DCP9lgMp88znrLK1OjPttvVOcJcVQ3fftTKVhKx+eZiciE675hpJcoZJwpGcIRTmO/5VLjescQB
-	uhv+7MSyg1QoarWDkRViqnm77n/xhj/KMkCRr
-X-Google-Smtp-Source: AGHT+IFrpwFQf6DsD+MDcouIBUBxz7xm6ZVbTg/EsBFYmgBgqnN4d7DhlPhedvQ2z/xYUtX9OCTiPw5W4WvHfMsUOCA=
-X-Received: by 2002:a0d:e885:0:b0:60a:67fb:146 with SMTP id
- r127-20020a0de885000000b0060a67fb0146mr551414ywe.17.1710273427660; Tue, 12
- Mar 2024 12:57:07 -0700 (PDT)
+	s=arc-20240116; t=1710273865; c=relaxed/simple;
+	bh=wGKWClSQQRwZy90nShMoXFRc7nVDMa4c4zEHzuS5hJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PlNfmAEtxbIF4/M/vtIpgT9d+GSc4zWT0aDJrOhzUE7ndsu9/OK4HuqoV+zGNltR+X79ohLsUiY9nVl4Y+7h+3sVOkNPJtPA5rWPDJ91Q3bWw0EuEXNgUDj/iZHtKJMs3L10dBY58vwVgLkXK6txje1aidASP+gKjv4XNB5Ke0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0UFOkfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B142AC433F1;
+	Tue, 12 Mar 2024 20:04:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710273864;
+	bh=wGKWClSQQRwZy90nShMoXFRc7nVDMa4c4zEHzuS5hJM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I0UFOkfgVLcQFOIoyLAkMKvtZb1tebcgwx77x0A61rz5z8m73KrqNWztlks9tFBA4
+	 AoISAlxtovLNTnk07oq26xIL+jMacN1Z/0Ps3yuGF3eOfpv/n7HUjLQQY68E2TQ++v
+	 I6rWnFLE/TF1JOn3mFj+NuMzil3d0mgE0ySZL7/ol8t9XwAKv65h4rto7DWmqFQM5C
+	 5TnHrBjHB2RqhjNPcvpMKS5LLp6aiwpDijK+eoI9YYRFAbkDHkfSiMZ2mGWjlVQxfz
+	 GItbDnAy5DDCctulxfB9AdZJKkmLGvabQZuf3lwxGcbVWSeuAe8fRPPM71gdHioSXm
+	 k5PWZXIZRW+zg==
+Date: Tue, 12 Mar 2024 13:04:24 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	chandan.babu@oracle.com, ebiggers@kernel.org
+Subject: Re: [PATCH v5 11/24] xfs: add XBF_VERITY_SEEN xfs_buf flag
+Message-ID: <20240312200424.GH1927156@frogsfrogsfrogs>
+References: <20240304191046.157464-2-aalbersh@redhat.com>
+ <20240304191046.157464-13-aalbersh@redhat.com>
+ <20240307224654.GB1927156@frogsfrogsfrogs>
+ <ZepxHObVLb3JLCl/@dread.disaster.area>
+ <20240308033138.GN6184@frogsfrogsfrogs>
+ <20240309162828.GQ1927156@frogsfrogsfrogs>
+ <Ze5PsMopkWqZZ1NX@dread.disaster.area>
+ <20240311152505.GR1927156@frogsfrogsfrogs>
+ <20240312024507.GY1927156@frogsfrogsfrogs>
+ <Ze/9rdVsnwyksHmi@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-14-surenb@google.com>
- <a9ebb623-298d-4acf-bdd5-0025ccb70148@suse.cz> <ZfCdsbPgiARPHUkw@bombadil.infradead.org>
-In-Reply-To: <ZfCdsbPgiARPHUkw@bombadil.infradead.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 12 Mar 2024 12:56:54 -0700
-Message-ID: <CAJuCfpErSnRK3TH-+keVF+2Vq-e1cSXrOcg8UAFke3btt2Y9+w@mail.gmail.com>
-Subject: Re: [PATCH v4 13/36] lib: prevent module unloading if memory is not freed
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org, kent.overstreet@linux.dev, 
-	mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, 
-	liam.howlett@oracle.com, penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, 
-	void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, 
-	peterx@redhat.com, david@redhat.com, axboe@kernel.dk, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
-	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
-	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
-	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ze/9rdVsnwyksHmi@dread.disaster.area>
 
-On Tue, Mar 12, 2024 at 11:23=E2=80=AFAM Luis Chamberlain <mcgrof@kernel.or=
-g> wrote:
->
-> On Mon, Feb 26, 2024 at 05:58:40PM +0100, Vlastimil Babka wrote:
-> > On 2/21/24 20:40, Suren Baghdasaryan wrote:
-> > > Skip freeing module's data section if there are non-zero allocation t=
-ags
-> > > because otherwise, once these allocations are freed, the access to th=
-eir
-> > > code tag would cause UAF.
-> > >
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> >
-> > I know that module unloading was never considered really supported etc.
->
-> If its not supported then we should not have it on modules. Module
-> loading and unloading should just work, otherwise then this should not
-> work with modules and leave them in a zombie state.
+On Tue, Mar 12, 2024 at 06:01:01PM +1100, Dave Chinner wrote:
+> On Mon, Mar 11, 2024 at 07:45:07PM -0700, Darrick J. Wong wrote:
+> > On Mon, Mar 11, 2024 at 08:25:05AM -0700, Darrick J. Wong wrote:
+> > > > But, if a generic blob cache is what it takes to move this forwards,
+> > > > so be it.
+> > > 
+> > > Not necessarily. ;)
+> > 
+> > And here's today's branch, with xfs_blobcache.[ch] removed and a few
+> > more cleanups:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/tag/?h=fsverity-cleanups-6.9_2024-03-11
+> 
+> Walking all the inodes counting all the verity blobs in the shrinker
+> is going to be -expensive-. Shrinkers are run very frequently and
+> with high concurrency under memory pressure by direct reclaim, and
+> every single shrinker execution is going to run that traversal even
+> if it is decided there is nothing that can be shrunk.
+> 
+> IMO, it would be better to keep a count of reclaimable objects
+> either on the inode itself (protected by the xa_lock when
+> adding/removing) to avoid needing to walk the xarray to count the
+> blocks on the inode. Even better would be a counter in the perag or
+> a global percpu counter in the mount of all caches objects. Both of
+> those pretty much remove all the shrinker side counting overhead.
 
-I replied on the v5 thread here:
-https://lore.kernel.org/all/20240306182440.2003814-13-surenb@google.com/
-. Let's continue the discussion in that thread. Thanks!
+I went with a global percpu counter, let's see if lockdep/kasan have
+anything to say about my new design. :P
 
->
->   Luis
+> Couple of other small things.
+> 
+> - verity shrinker belongs in xfs_verity.c, not xfs_icache.c. It
+>   really has nothing to do with the icache other than calling
+>   xfs_icwalk(). That gets rid of some of the config ifdefs.
+
+Done.
+
+> - SHRINK_STOP is what should be returned by the scan when
+>   xfs_verity_shrinker_scan() wants the shrinker to immediately stop,
+>   not LONG_MAX.
+
+Aha.  Ok, thanks for the tipoff. ;)
+
+> - In xfs_verity_cache_shrink_scan(), the nr_to_scan is a count of
+>   how many object to try to free, not how many we must free. i.e.
+>   even if we can't free objects, they are still objects that got
+>   scanned and so should decement nr_to_scan...
+
+<nod>
+
+Is there any way for ->scan_objects to tell its caller how much memory
+it actually freed?  Or does it only know about objects?  I suppose
+"number of bytes freed" wouldn't be that helpful since someone else
+could allocate all the freed memory immediately anyway.
+
+--D
+
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
