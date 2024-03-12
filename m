@@ -1,143 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-14183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3E8878EF8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 08:01:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E93878F90
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 09:18:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEB2E1C20F1B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 07:01:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38E4B1C216E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 08:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC01D69958;
-	Tue, 12 Mar 2024 07:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ZjrL+P11"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4DF69D0B;
+	Tue, 12 Mar 2024 08:18:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8976994F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 07:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5D8D30B;
+	Tue, 12 Mar 2024 08:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710226868; cv=none; b=S7NdEUkQvO9FYyPe+kED+tiL50VokQxNtldT1V+CyYgaXlx3mO6NdWM5snGk9cz1H4cN5Z/2UUFXvWcHqSYC+d+D94P3Y7wAr5u5demg4qVKVLEFZveEjTugKN8CUYpDYh/QSI/kBmChEhuk59wKiAltOLzK6TTw//Y9e7oPVMM=
+	t=1710231528; cv=none; b=FcF241yVgTlNjZaBFNEbnRhtpbTyI1IB1qaEb80clHK2kXVUKCyUZhn6qVMqsD8mRFSTNII85GPFVAHBQC57H6LgNZZciDfosrR2S3bnYO7XdP+AK3AEccCPMlYJvvRIdCOExygrLV2WUorusm/VWbLMBoLafY9ivz4tV5/j6Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710226868; c=relaxed/simple;
-	bh=tj8KK0D7LCHZt7E6i5hvVqiBxMjal+SFD/ZyzAWJDnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1ZYWsJtDYPAR/cqp8TKI90rYb+4mybzQSZxKzWjSu3MPmDzIlnv/Fb5+MZEj7y1FJOuiYhU60XtIktsdMhZM6H5D4Xik4MeulXKky/MNjybqxsyOrMccSGDDxWXhNxDlIxDsrGOcceev2FoK3mpKqT3GpnvtQcOwVf0DlFq+Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ZjrL+P11; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1dd8dd198d0so16941135ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 00:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710226866; x=1710831666; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iJQ+LsA4njrwtFoiuWbZG6N6ucnCdblOdJQaovZ8ZEo=;
-        b=ZjrL+P1190zsl03TFegsYfYK8jaXgqQs3TvfcoyrzY3CdGqAmoc+DX9OY5CDnylCAX
-         cizkfTLvqVKvZnaj8lhjpeRqA/ErwSqSGkn9ndmL86T2ehUlmdgKyJ+Zs6CUzt1PV4E4
-         Yh2tuCqgmld6p3hMJtRqT0D1Hq6QGue+DYWc5HQlWyK8ch80NQnHeJiymwiyvF6i0d3b
-         2+Xjliipqi5mqXWAbQAF/LkySPPUW71S9nXDk+5l349KzMkL+x9+/Y004DTnCRqSUbU9
-         BPuXxJCGli6peA+6x1xwHseDbZ4mHxLhGuepvnpAgbpu4OgW01ZOA1a1+XlIMSgxlUuN
-         Si+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710226866; x=1710831666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iJQ+LsA4njrwtFoiuWbZG6N6ucnCdblOdJQaovZ8ZEo=;
-        b=DVgJsug1HFH3IuwusBo5GBMmzzC2VcYxDk9bygerQS3O58E54rbuwfhiEatM1Di72M
-         WlrpBeNb/fLD5ONAlQoSZZlZhTsOuB219n3zdlwfMwHfsU171QTd142lTm6NhhUY/WcX
-         Nwrdke3LjyyjpJQS+lR4I6fsZwQ99wruE/WjZxr/WDBUHPgODm5GhmjaOAkLwkgyCHWm
-         /IyUm7sSVoTO//0CgSdNAxiLZOUYh1akv/Et9mDlvuSf68wt358UXzee9RnEchxfUE7n
-         p4cU1yXM13GDvT26IyCmnmXy/vkvCQy9o6XtfAxm4oO1/WI0l5sqZ2SBqLJhTWogg6Yh
-         1wxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIFj/DKETvyG1I9v0d2VF5WNlsaGq2q2meKHeJSoBYyaBSid0XCcE3d8fB6307w8wW6zt6ITS072j2RMQDfX6J3WfhC6D9ZYajdcjAeA==
-X-Gm-Message-State: AOJu0YwpV2kYfoHha9z8Tp3Dj5ZNio+IS8sDYBux1EilivAu/5DdcSFh
-	ZF1TsXj+3Zu937vhbuJFxeK9iVWBlz3Uz1hPSO05NKoskSIyBJPYnkAmgJIYbKc=
-X-Google-Smtp-Source: AGHT+IFfiBIZrzEHhDlB40WMpMIuhFhWXqA66uq2JH3j2quW4u+GTqwqvuflueaG7FnGq+PfIjC3uQ==
-X-Received: by 2002:a17:903:94e:b0:1dd:bf6c:8973 with SMTP id ma14-20020a170903094e00b001ddbf6c8973mr193652plb.68.1710226865312;
-        Tue, 12 Mar 2024 00:01:05 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-47-118.pa.nsw.optusnet.com.au. [49.179.47.118])
-        by smtp.gmail.com with ESMTPSA id k6-20020a170902c40600b001dd247e87aesm5889367plk.235.2024.03.12.00.01.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Mar 2024 00:01:04 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rjw8D-000ngZ-2g;
-	Tue, 12 Mar 2024 18:01:01 +1100
-Date: Tue, 12 Mar 2024 18:01:01 +1100
-From: Dave Chinner <david@fromorbit.com>
+	s=arc-20240116; t=1710231528; c=relaxed/simple;
+	bh=hPd+xJ5jOSC8o1CG2r+WXG2uyyLrv5AmWrxsGZg+GLg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=EUXlMogEXL2ovJiojKypNOGRL5R5+89FqNZSc3qX8JCo2Nh0FO/1Jow95Jt7dwbUafTIhku9q+2XHWXgLP2D6+lgcgHLNdQKaFfzkpyrIarovWRLgSH4u8IcnBj8aqnVunv8tbtgXHqc4MfZ09UEKCs+npmMJwVoGdV8xXTIguY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Tv63W6RRPz4f3jqP;
+	Tue, 12 Mar 2024 16:18:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 8ADC71A0199;
+	Tue, 12 Mar 2024 16:18:35 +0800 (CST)
+Received: from [10.174.176.34] (unknown [10.174.176.34])
+	by APP1 (Coremail) with SMTP id cCh0CgBXKBHZD_BlXa7TGg--.10688S3;
+	Tue, 12 Mar 2024 16:18:35 +0800 (CST)
+Subject: Re: [PATCH 1/4] xfs: match lock mode in
+ xfs_buffered_write_iomap_begin()
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	chandan.babu@oracle.com, ebiggers@kernel.org
-Subject: Re: [PATCH v5 11/24] xfs: add XBF_VERITY_SEEN xfs_buf flag
-Message-ID: <Ze/9rdVsnwyksHmi@dread.disaster.area>
-References: <20240304191046.157464-2-aalbersh@redhat.com>
- <20240304191046.157464-13-aalbersh@redhat.com>
- <20240307224654.GB1927156@frogsfrogsfrogs>
- <ZepxHObVLb3JLCl/@dread.disaster.area>
- <20240308033138.GN6184@frogsfrogsfrogs>
- <20240309162828.GQ1927156@frogsfrogsfrogs>
- <Ze5PsMopkWqZZ1NX@dread.disaster.area>
- <20240311152505.GR1927156@frogsfrogsfrogs>
- <20240312024507.GY1927156@frogsfrogsfrogs>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+ david@fromorbit.com, tytso@mit.edu, jack@suse.cz, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240311122255.2637311-1-yi.zhang@huaweicloud.com>
+ <20240311122255.2637311-2-yi.zhang@huaweicloud.com>
+ <20240311153415.GS1927156@frogsfrogsfrogs>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <04c14e02-9968-3fda-39a6-c3b44c78a2ba@huaweicloud.com>
+Date: Tue, 12 Mar 2024 16:18:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240312024507.GY1927156@frogsfrogsfrogs>
+In-Reply-To: <20240311153415.GS1927156@frogsfrogsfrogs>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgBXKBHZD_BlXa7TGg--.10688S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFyUAr4xCr47JryDuFy8Zrb_yoW5XF15pr
+	n7KayqkrZ2vF1Yvr40qryYvF10g3W7Jw1UAr15Wan3uw1Dtr4fKr4093Wru3W8Ars2k34v
+	gF4UGr1ku34ayFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Mon, Mar 11, 2024 at 07:45:07PM -0700, Darrick J. Wong wrote:
-> On Mon, Mar 11, 2024 at 08:25:05AM -0700, Darrick J. Wong wrote:
-> > > But, if a generic blob cache is what it takes to move this forwards,
-> > > so be it.
-> > 
-> > Not necessarily. ;)
+On 2024/3/11 23:34, Darrick J. Wong wrote:
+> On Mon, Mar 11, 2024 at 08:22:52PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Commit 1aa91d9c9933 ("xfs: Add async buffered write support") replace
+>> xfs_ilock(XFS_ILOCK_EXCL) with xfs_ilock_for_iomap() when locking the
+>> writing inode, and a new variable lockmode is used to indicate the lock
+>> mode. Although the lockmode should always be XFS_ILOCK_EXCL, it's still
+>> better to use this variable instead of useing XFS_ILOCK_EXCL directly
+>> when unlocking the inode.
+>>
+>> Fixes: 1aa91d9c9933 ("xfs: Add async buffered write support")
 > 
-> And here's today's branch, with xfs_blobcache.[ch] removed and a few
-> more cleanups:
-> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/tag/?h=fsverity-cleanups-6.9_2024-03-11
+> AFAICT, xfs_ilock_for_iomap can change lockmode from SHARED->EXCL, but
+> never changed away from EXCL, right?  
 
-Walking all the inodes counting all the verity blobs in the shrinker
-is going to be -expensive-. Shrinkers are run very frequently and
-with high concurrency under memory pressure by direct reclaim, and
-every single shrinker execution is going to run that traversal even
-if it is decided there is nothing that can be shrunk.
+Yes.
 
-IMO, it would be better to keep a count of reclaimable objects
-either on the inode itself (protected by the xa_lock when
-adding/removing) to avoid needing to walk the xarray to count the
-blocks on the inode. Even better would be a counter in the perag or
-a global percpu counter in the mount of all caches objects. Both of
-those pretty much remove all the shrinker side counting overhead.
+> And xfs_buffered_write_iomap_begin
+> sets it to EXCL (and never changes it), right?
 
-Couple of other small things.
+Yes.
 
-- verity shrinker belongs in xfs_verity.c, not xfs_icache.c. It
-  really has nothing to do with the icache other than calling
-  xfs_icwalk(). That gets rid of some of the config ifdefs.
+> 
+> This seems like more of a code cleanup/logic bomb removal than an actual
+> defect that someone could actually hit, correct?
+> 
 
-- SHRINK_STOP is what should be returned by the scan when
-  xfs_verity_shrinker_scan() wants the shrinker to immediately stop,
-  not LONG_MAX.
+Yes, it's not a real problem.
 
-- In xfs_verity_cache_shrink_scan(), the nr_to_scan is a count of
-  how many object to try to free, not how many we must free. i.e.
-  even if we can't free objects, they are still objects that got
-  scanned and so should decement nr_to_scan...
+> If the answers are {yes, yes, yes} then:
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> 
+> --D
+> 
+> 
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/xfs/xfs_iomap.c | 10 +++++-----
+>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+>> index 18c8f168b153..ccf83e72d8ca 100644
+>> --- a/fs/xfs/xfs_iomap.c
+>> +++ b/fs/xfs/xfs_iomap.c
+>> @@ -1149,13 +1149,13 @@ xfs_buffered_write_iomap_begin(
+>>  	 * them out if the write happens to fail.
+>>  	 */
+>>  	seq = xfs_iomap_inode_sequence(ip, IOMAP_F_NEW);
+>> -	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>> +	xfs_iunlock(ip, lockmode);
+>>  	trace_xfs_iomap_alloc(ip, offset, count, allocfork, &imap);
+>>  	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, IOMAP_F_NEW, seq);
+>>  
+>>  found_imap:
+>>  	seq = xfs_iomap_inode_sequence(ip, 0);
+>> -	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>> +	xfs_iunlock(ip, lockmode);
+>>  	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0, seq);
+>>  
+>>  found_cow:
+>> @@ -1165,17 +1165,17 @@ xfs_buffered_write_iomap_begin(
+>>  		if (error)
+>>  			goto out_unlock;
+>>  		seq = xfs_iomap_inode_sequence(ip, IOMAP_F_SHARED);
+>> -		xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>> +		xfs_iunlock(ip, lockmode);
+>>  		return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags,
+>>  					 IOMAP_F_SHARED, seq);
+>>  	}
+>>  
+>>  	xfs_trim_extent(&cmap, offset_fsb, imap.br_startoff - offset_fsb);
+>> -	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>> +	xfs_iunlock(ip, lockmode);
+>>  	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, 0, seq);
+>>  
+>>  out_unlock:
+>> -	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>> +	xfs_iunlock(ip, lockmode);
+>>  	return error;
+>>  }
+>>  
+>> -- 
+>> 2.39.2
+>>
+>>
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
