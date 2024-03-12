@@ -1,93 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-14214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 911C28796BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 15:46:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4448D879735
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 16:13:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7AE1C2152B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 14:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFAE0282E84
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 15:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C0D7AE7D;
-	Tue, 12 Mar 2024 14:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EC87BAEC;
+	Tue, 12 Mar 2024 15:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LswGAEql";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a6W/UZ0E";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LswGAEql";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a6W/UZ0E"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jNbT6hZy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C49C7AE64
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 14:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EDC7B3EF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 15:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710254797; cv=none; b=pdypQfJgqSNtu1IAmsCoKzw7eR/yp0w6bgzOherScQeOJJxaDyggo6OjFIKQP4cOx8rIJaPPIHeENm6ClHPr/J16+86XkbOtA5a2lp+/ZZo1MIif0ZBCiZpB6KODKGzvsL/va03x7vipjtZWTTCv+C/aWy5JlzcNIZ46W0zWuX4=
+	t=1710256402; cv=none; b=mpskyfNYJB74eFf/HTPGBoDd/Gb6iAjvUe7miluAG9MgZxwuUpwIXpkdUK11ibRbryw20hvW9nh0j1SdvBV0N/vXUbMyPnOxylzRu17D6ShUnsedYO4vPBPPLDyjawsy+Qiaq7UviWYdU0K1HummuGIXS8DTWAI85lhLsiGEpqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710254797; c=relaxed/simple;
-	bh=ABS/FEwcE58BLdCIEXhRvGcIbN15Vfw7dfSTP7qTF94=;
+	s=arc-20240116; t=1710256402; c=relaxed/simple;
+	bh=mEIaQ7DQuMHEvlFjUlwrGJqvco/CypBpDAvnBJ3J/SQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kPP5EilcSGanWrBknwaNLuaEPVE4Ao9YNKDmBxPk7VgzpTkasBMEgYs3CzKH2cddMwz6eVwDLoUy5hl5nPnBqauNg4hPn3jJkMCpuHdAAM6Arevxhj/Poxg61nV4gtt5DqjstYVekelffpu/yDe8HsYgpz8B2OTtah0fqQVXGYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LswGAEql; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a6W/UZ0E; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LswGAEql; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a6W/UZ0E; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3339F5D62C;
-	Tue, 12 Mar 2024 14:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710254793; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=hSLCGreKSFJK03yYzw4fdZDrDSADv2wbugEvg3yRYbPMr7dv94TCTdLlaT21E7jMt8jXm2Rnphyo1667AoeNHwAHNhoD+APwSCvcOSZKrDB81jvzY/ei2FaLWUR5xHghf3qIfi8AD2qsvaVf9oHtZT0ZqlQJGcMaDKIOx6TPxYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jNbT6hZy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1710256398;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1IbOynCtiL2PaA5IeWxQtG1SaOtxW/QcAtTtLspaTMY=;
-	b=LswGAEqlwL3PRqPZ6pHPHQBlSmRIjjbylp0N+EMYSffkhlSiGUvX7piYuFisGLGKP6fhTV
-	zJE79KVpaqFG5xOIwhp6o2hKytKM1bLDW02f0bXfdxOafL8WwqMwDi5r3RGXNB0lN1Il2h
-	JzmKva3sAyVmKJdA/DjWyGjIRZpJzUo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710254793;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1IbOynCtiL2PaA5IeWxQtG1SaOtxW/QcAtTtLspaTMY=;
-	b=a6W/UZ0EXMpxJ2eok5iYAeTFn6bf0ZUXhkmV09ZZXFyoY9x4+2UJJ3KinehsiGA669Yjku
-	NcdXQhrfX4o1h3BQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710254793; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1IbOynCtiL2PaA5IeWxQtG1SaOtxW/QcAtTtLspaTMY=;
-	b=LswGAEqlwL3PRqPZ6pHPHQBlSmRIjjbylp0N+EMYSffkhlSiGUvX7piYuFisGLGKP6fhTV
-	zJE79KVpaqFG5xOIwhp6o2hKytKM1bLDW02f0bXfdxOafL8WwqMwDi5r3RGXNB0lN1Il2h
-	JzmKva3sAyVmKJdA/DjWyGjIRZpJzUo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710254793;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1IbOynCtiL2PaA5IeWxQtG1SaOtxW/QcAtTtLspaTMY=;
-	b=a6W/UZ0EXMpxJ2eok5iYAeTFn6bf0ZUXhkmV09ZZXFyoY9x4+2UJJ3KinehsiGA669Yjku
-	NcdXQhrfX4o1h3BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A5D613795;
-	Tue, 12 Mar 2024 14:46:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hN8PBslq8GWDKAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 12 Mar 2024 14:46:33 +0000
-Message-ID: <a7862cf1-1ed2-4c2c-8a27-f9d950ff4da5@suse.cz>
-Date: Tue, 12 Mar 2024 15:46:32 +0100
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vqtymCGo7P9V/CIH9maAvyIB5O8JWTu4UWQygBzme10=;
+	b=jNbT6hZyxXowWlEZSHUW3KoNmVAlHgMhbKtRbFgBcNL/N9uAYym8jdK6xlP/NhuplJlXjk
+	SIxLcNzWfISJ+PwQA8UvZzX2Or+/lqWegWI846GY4lQk8UCS+QQB/6e2bDgrkyJiLTy4a/
+	DrVWmq/YNGVPOuO3rntg2KnuZTEae50=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-478-yYpe3H3yOdCrEMGKEs6WMg-1; Tue, 12 Mar 2024 11:13:17 -0400
+X-MC-Unique: yYpe3H3yOdCrEMGKEs6WMg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-40e40126031so23348965e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 08:13:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710256395; x=1710861195;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vqtymCGo7P9V/CIH9maAvyIB5O8JWTu4UWQygBzme10=;
+        b=aLtCc0xTMDI0nT5KBS869Iqc0vrru4dEtXnuYtpDkLMzcegWisxpG4wltdxRQ3AMCN
+         Ckqjkgfz782N4cdhjWSZpGjxdiDMXtxw4jy8FQhRklbxvm9xIjwnDk4QqBSdqLwgiAvC
+         wL2E39miwOpvjESa5DYzjF2pfxefGZSylEhQo/iyK8le69mNAs+4KnQ1B04hw4dMc3uD
+         r+4ibOD/VCO9a7cN/TTD/vlIIdjuY1s5hGZfzjdEktX2X6hk+zpftN1HYHP/9NKGz/U8
+         OJszqfnk8dNKFHrdDC5tws70WTnzPP1VDSAljsKilnzcyMbM95o2MyFrH5cRjgqZbYmB
+         88AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUp9tVNgd90ywzXzZIB6cXMhQET46baPYC6fUBEHUIOEXnvF6UXYQKTm/4Ve2bB48ZgBVbAoJIIg3MphXTszeTrka2f9NzYpXWY5GNrFQ==
+X-Gm-Message-State: AOJu0Yz6Z7/g15J8HU4imYks29dUFmrEZ3Ko1420XLlWWJBu/4dE44GZ
+	s91Bptby09efpvMVmUM/msHDxRvXaBqoYUoepYq1boH9nVKVArm/C1eHcruvDI+Ic0gja+q5sG+
+	VCr1AfrLfUnt2B6aI+URlNpAFKvbv+Xg3wA78oOe+y/Ni2p61ujik+CGmdgqzjAk=
+X-Received: by 2002:a05:600c:3149:b0:413:19ac:2a06 with SMTP id h9-20020a05600c314900b0041319ac2a06mr7114655wmo.28.1710256395104;
+        Tue, 12 Mar 2024 08:13:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEpWV1BbQ1Y/gMZoarI5awYwyPBJrzdQ2syfyKJ5IgmfeDApTHMPyRnF/GQ+5yzFkvCp9neQw==
+X-Received: by 2002:a05:600c:3149:b0:413:19ac:2a06 with SMTP id h9-20020a05600c314900b0041319ac2a06mr7114637wmo.28.1710256394606;
+        Tue, 12 Mar 2024 08:13:14 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:4f00:a44a:5ad6:765a:635? (p200300cbc7074f00a44a5ad6765a0635.dip0.t-ipconnect.de. [2003:cb:c707:4f00:a44a:5ad6:765a:635])
+        by smtp.gmail.com with ESMTPSA id f13-20020adfb60d000000b0033e43756d11sm9255478wre.85.2024.03.12.08.13.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Mar 2024 08:13:14 -0700 (PDT)
+Message-ID: <9927568e-9f36-4417-9d26-c8a05c220399@redhat.com>
+Date: Tue, 12 Mar 2024 16:13:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,130 +83,193 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
+Subject: Re: [PATCH v5 06/24] fsverity: pass tree_blocksize to
+ end_enable_verity()
 Content-Language: en-US
-To: NeilBrown <neilb@suse.de>, Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
- Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org,
- lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>
-References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>
- <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>
- <Zd-LljY351NCrrCP@casper.infradead.org>
- <170925937840.24797.2167230750547152404@noble.neil.brown.name>
- <ZeFtrzN34cLhjjHK@dread.disaster.area>
- <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>
- <170933687972.24797.18406852925615624495@noble.neil.brown.name>
- <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>
- <170950594802.24797.17587526251920021411@noble.neil.brown.name>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <170950594802.24797.17587526251920021411@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8
+To: "Darrick J. Wong" <djwong@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ chandan.babu@oracle.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+ Eric Biggers <ebiggers@kernel.org>
+References: <20240304191046.157464-2-aalbersh@redhat.com>
+ <20240304191046.157464-8-aalbersh@redhat.com>
+ <20240305005242.GE17145@sol.localdomain>
+ <20240306163000.GP1927156@frogsfrogsfrogs>
+ <20240307220224.GA1799@sol.localdomain>
+ <20240308034650.GK1927156@frogsfrogsfrogs>
+ <20240308044017.GC8111@sol.localdomain>
+ <20240311223815.GW1927156@frogsfrogsfrogs>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240311223815.GW1927156@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [-3.09 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 XM_UA_NO_VERSION(0.01)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 BAYES_HAM(-3.00)[100.00%];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[10];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 FREEMAIL_CC(0.00)[fromorbit.com,infradead.org,gmail.com,kernel.org,lists.linux-foundation.org,kvack.org,vger.kernel.org,suse.cz];
-	 RCVD_TLS_ALL(0.00)[];
-	 MID_RHS_MATCH_FROM(0.00)[]
-X-Spam-Score: -3.09
-X-Spam-Flag: NO
 
-On 3/3/24 23:45, NeilBrown wrote:
-> On Sat, 02 Mar 2024, Kent Overstreet wrote:
->> 
->> *nod* 
->> 
->> > I suspect that most places where there is a non-error fallback already
->> > use NORETRY or RETRY_MAYFAIL or similar.
->> 
->> NORETRY and RETRY_MAYFAIL actually weren't on my radar, and I don't see
->> _tons_ of uses for either of them - more for NORETRY.
->> 
->> My go-to is NOWAIT in this scenario though; my common pattern is "try
->> nonblocking with locks held, then drop locks and retry GFP_KERNEL".
->>  
->> > But I agree that changing the meaning of GFP_KERNEL has a potential to
->> > cause problems.  I support promoting "GFP_NOFAIL" which should work at
->> > least up to PAGE_ALLOC_COSTLY_ORDER (8 pages).
->> 
->> I'd support this change.
->> 
->> > I'm unsure how it should be have in PF_MEMALLOC_NOFS and
->> > PF_MEMALLOC_NOIO context.  I suspect Dave would tell me it should work in
->> > these contexts, in which case I'm sure it should.
->> > 
->> > Maybe we could then deprecate GFP_KERNEL.
->> 
->> What do you have in mind?
+On 11.03.24 23:38, Darrick J. Wong wrote:
+> [add willy and linux-mm]
 > 
-> I have in mind a more explicit statement of how much waiting is
-> acceptable.
+> On Thu, Mar 07, 2024 at 08:40:17PM -0800, Eric Biggers wrote:
+>> On Thu, Mar 07, 2024 at 07:46:50PM -0800, Darrick J. Wong wrote:
+>>>> BTW, is xfs_repair planned to do anything about any such extra blocks?
+>>>
+>>> Sorry to answer your question with a question, but how much checking is
+>>> $filesystem expected to do for merkle trees?
+>>>
+>>> In theory xfs_repair could learn how to interpret the verity descriptor,
+>>> walk the merkle tree blocks, and even read the file data to confirm
+>>> intactness.  If the descriptor specifies the highest block address then
+>>> we could certainly trim off excess blocks.  But I don't know how much of
+>>> libfsverity actually lets you do that; I haven't looked into that
+>>> deeply. :/
+>>>
+>>> For xfs_scrub I guess the job is theoretically simpler, since we only
+>>> need to stream reads of the verity files through the page cache and let
+>>> verity tell us if the file data are consistent.
+>>>
+>>> For both tools, if something finds errors in the merkle tree structure
+>>> itself, do we turn off verity?  Or do we do something nasty like
+>>> truncate the file?
+>>
+>> As far as I know (I haven't been following btrfs-progs, but I'm familiar with
+>> e2fsprogs and f2fs-tools), there isn't yet any precedent for fsck actually
+>> validating the data of verity inodes against their Merkle trees.
+>>
+>> e2fsck does delete the verity metadata of inodes that don't have the verity flag
+>> enabled.  That handles cleaning up after a crash during FS_IOC_ENABLE_VERITY.
+>>
+>> I suppose that ideally, if an inode's verity metadata is invalid, then fsck
+>> should delete that inode's verity metadata and remove the verity flag from the
+>> inode.  Checking for a missing or obviously corrupt fsverity_descriptor would be
+>> fairly straightforward, but it probably wouldn't catch much compared to actually
+>> validating the data against the Merkle tree.  And actually validating the data
+>> against the Merkle tree would be complex and expensive.  Note, none of this
+>> would work on files that are encrypted.
+>>
+>> Re: libfsverity, I think it would be possible to validate a Merkle tree using
+>> libfsverity_compute_digest() and the callbacks that it supports.  But that's not
+>> quite what it was designed for.
+>>
+>>> Is there an ioctl or something that allows userspace to validate an
+>>> entire file's contents?  Sort of like what BLKVERIFY would have done for
+>>> block devices, except that we might believe its answers?
+>>
+>> Just reading the whole file and seeing whether you get an error would do it.
+>>
+>> Though if you want to make sure it's really re-reading the on-disk data, it's
+>> necessary to drop the file's pagecache first.
 > 
-> GFP_NOFAIL - wait indefinitely
-> GFP_KILLABLE - wait indefinitely unless fatal signal is pending.
-> GFP_RETRY - may retry but deadlock, though unlikely, is possible.  So
->             don't wait indefinitely.  May abort more quickly if fatal
->             signal is pending.
-> GFP_NO_RETRY - only try things once.  This may sleep, but will give up
->             fairly quickly.  Either deadlock is a significant
->             possibility, or alternate strategy is fairly cheap.
-> GFP_ATOMIC - don't sleep - same as current.
+> I tried a straight pagecache read and it worked like a charm!
 > 
-> I don't see how "GFP_KERNEL" fits into that spectrum.  The definition of
-> "this will try really hard, but might fail and we can't really tell you
-> what circumstances it might fail in" isn't fun to work with.
+> But then I thought to myself, do I really want to waste memory bandwidth
+> copying a bunch of data?  No.  I don't even want to incur system call
+> overhead from reading a single byte every $pagesize bytes.
+> 
+> So I created 2M mmap areas and read a byte every $pagesize bytes.  That
+> worked too, insofar as SIGBUSes are annoying to handle.  But it's
+> annoying to take signals like that.
+> 
+> Then I started looking at madvise.  MADV_POPULATE_READ looked exactly
+> like what I wanted -- it prefaults in the pages, and "If populating
+> fails, a SIGBUS signal is not generated; instead, an error is returned."
+> 
 
-The problem is if we set out to change everything from GFP_KERNEL to one of
-the above, it will take many years. So I think it would be better to just
-change the semantics of GFP_KERNEL too.
+Yes, these were the expected semantics :)
 
-If we change it to remove the "too-small to fail" rule, we might suddenly
-introduce crashes in unknown amount of places, so I don't think that's feasible.
+> But then I tried rigging up a test to see if I could catch an EIO, and
+> instead I had to SIGKILL the process!  It looks filemap_fault returns
+> VM_FAULT_RETRY to __xfs_filemap_fault, which propagates up through
+> __do_fault -> do_read_fault -> do_fault -> handle_pte_fault ->
+> handle_mm_fault -> faultin_page -> __get_user_pages.  At faultin_pages,
+> the VM_FAULT_RETRY is translated to -EBUSY.
+> 
+> __get_user_pages squashes -EBUSY to 0, so faultin_vma_page_range returns
+> that to madvise_populate.  Unfortunately, madvise_populate increments
+> its loop counter by the return value (still 0) so it runs in an
+> infinite loop.  The only way out is SIGKILL.
 
-But if we change it to effectively mean GFP_NOFAIL (for non-costly
-allocations), there should be a manageable number of places to change to a
-variant that allows failure. Also if these places are GFP_KERNEL by mistake
-today, and should in fact allow failure, they would be already causing
-problems today, as the circumstances where too-small-to-fail is violated are
-quite rare (IIRC just being an oom victim, so somewhat close to
-GFP_KILLABLE). So changing GFP_KERNEL to GFP_NOFAIL should be the lowest
-risk (one could argue for GFP_KILLABLE but I'm afraid many places don't
-really handle that as they assume the too-small-to-fail without exceptions
-and are unaware of the oom victim loophole, and failing on any fatal signal
-increases the chances of this happening).
+That's certainly unexpected. One user I know is QEMU, which primarily 
+uses MADV_POPULATE_WRITE to prefault page tables. Prefaulting in QEMU is 
+primarily used with shmem/hugetlb, where I haven't heard of any such 
+endless loops.
 
-> Thanks,
-> NeilBrown
 > 
-> 
->> 
->> Deprecating GFP_NOFS and GFP_NOIO would be wonderful - those should
->> really just be PF_MEMALLOC_NOFS and PF_MEMALLOC_NOIO, now that we're
->> pushing for memalloc_flags_(save|restore) more.
->> 
->> Getting rid of those would be a really nice cleanup beacuse then gfp
->> flags would mostly just be:
->>  - the type of memory to allocate (highmem, zeroed, etc.)
->>  - how hard to try (don't block at all, block some, block forever)
->> 
-> 
-> 
+> So I don't know what the correct behavior is here, other than the
+> infinite loop seems pretty suspect.  Is it the correct behavior that
+> madvise_populate returns EIO if __get_user_pages ever returns zero?
+> That doesn't quite sound right if it's the case that a zero return could
+> also happen if memory is tight.
+
+madvise_populate() ends up calling faultin_vma_page_range() in a loop. 
+That one calls __get_user_pages().
+
+__get_user_pages() documents: "0 return value is possible when the fault 
+would need to be retried."
+
+So that's what the caller does. IIRC, there are cases where we really 
+have to retry (at least once) and will make progress, so treating "0" as 
+an error would be wrong.
+
+Staring at other __get_user_pages() users, __get_user_pages_locked() 
+documents: "Please note that this function, unlike __get_user_pages(), 
+will not return 0 for nr_pages > 0, unless FOLL_NOWAIT is used.".
+
+But there is some elaborate retry logic in there, whereby the retry will 
+set FOLL_TRIED->FAULT_FLAG_TRIED, and I think we'd fail on the second 
+retry attempt (there are cases where we retry more often, but that's 
+related to something else I believe).
+
+So maybe we need a similar retry logic in faultin_vma_page_range()? Or 
+make it use __get_user_pages_locked(), but I recall when I introduced 
+MADV_POPULATE_READ, there was a catch to it.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
