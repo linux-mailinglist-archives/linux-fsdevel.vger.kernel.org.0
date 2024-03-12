@@ -1,107 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-14197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417848793C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 13:09:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6C98793D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 13:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 222A6B252CF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 12:09:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DADD7B20A0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Mar 2024 12:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3846A7A131;
-	Tue, 12 Mar 2024 12:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0357A71C;
+	Tue, 12 Mar 2024 12:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BlDW88C6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a5Ox/Bbz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BlDW88C6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a5Ox/Bbz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bHET3Yqx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5451A7A121;
-	Tue, 12 Mar 2024 12:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AEE7A718
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 12:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710245224; cv=none; b=BfueA2e8+q7UCH8TPVFIorjfTnz73D6cksp59VOHH+n4xnD29tH4WUWZR7y3Yjd0w7qPnqMSGvNo82qvIbmteZbjvExPWUIn2e/iWO0ey0LJ8sE5Qhv46Q377G8rYcLuYtFRAtlzRaSAegrHLRrVxh5gSiHKTePI/7VGuTh9do4=
+	t=1710245414; cv=none; b=Z0AiWfd/To8GNtkn3myW9JBUQMGMXnVMug2zpaFQMIHWmzyQFdF+WYRPzR1J63iKTOnH/+dc1inCkfEF7evfIPC76xYWupBo1Ixy5rVqvRjZyQJN92NF/E1maM92mzjiTJxOLG03zS7SwYSPCO9+hPzarXDeFnKjpt1d5fqvd6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710245224; c=relaxed/simple;
-	bh=Vl6uNECXw+Bli4pbtWV6uER2p1NypHIO2iJeQFZu8Mk=;
+	s=arc-20240116; t=1710245414; c=relaxed/simple;
+	bh=QmejXV0WNaqWu+GRV+FolZ1Mzxp6Le/AUayQOP+glBk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gvPU9f6DrI27fvWrtwNybnFfAm8hwhTKrNwh8cIBSOutrIQ8a0+VoTteIY+aKI7W3BTFTAcBTE5b0cAcgF7th3HQe9aHUw3/eO/sUIkLdV4l6sxL4HVwaeFGSkvRKP5DId9FPV681zJj/Ak/zZm5aZHQhA3rLoQl1VIRKMpjIxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BlDW88C6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a5Ox/Bbz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BlDW88C6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a5Ox/Bbz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 602D73764C;
-	Tue, 12 Mar 2024 12:06:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710245219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mt7yEgDZxKrcnl2CXl3VQ8ytVCK5VWm4gflMHqN3wSacLcPNyOvPxqrT1VdBBZq2pplzvbAArpG2fL8ODvqyq/eq29gkqUijeNGVmykEKwp15U568xVDWXWn8AkRixRzWpdnNX6ue9n1QMlvBSend465RRPaR2gW2QQcGY0lOPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bHET3Yqx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1710245412;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WJfjWeNXVPT/qepjRfaCmAM72afs7cwXQz/2lur6DYY=;
-	b=BlDW88C6qDW8qPI/qYyjqlBqqSLuNnkovQpSqeHwBysb3v9cWTufR5lsAqU1AevnBVz65A
-	Kek+OEtJyldQ+vbMju6DtoAv4uNM1YlqIIzPkrywRkkF1ULVUPCmnl0aWCIBb0VXO2ksMw
-	tkrM9B2htN768A16b6mz5jsieoLHrlE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710245219;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WJfjWeNXVPT/qepjRfaCmAM72afs7cwXQz/2lur6DYY=;
-	b=a5Ox/BbzrR2BrYKPI19Ym7yP6y8MmBpiRq2brGEBZZqZprkD4SWnzBYLUix1ZBNMC2Thmw
-	B94217bIe5ZIEUCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710245219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WJfjWeNXVPT/qepjRfaCmAM72afs7cwXQz/2lur6DYY=;
-	b=BlDW88C6qDW8qPI/qYyjqlBqqSLuNnkovQpSqeHwBysb3v9cWTufR5lsAqU1AevnBVz65A
-	Kek+OEtJyldQ+vbMju6DtoAv4uNM1YlqIIzPkrywRkkF1ULVUPCmnl0aWCIBb0VXO2ksMw
-	tkrM9B2htN768A16b6mz5jsieoLHrlE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710245219;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WJfjWeNXVPT/qepjRfaCmAM72afs7cwXQz/2lur6DYY=;
-	b=a5Ox/BbzrR2BrYKPI19Ym7yP6y8MmBpiRq2brGEBZZqZprkD4SWnzBYLUix1ZBNMC2Thmw
-	B94217bIe5ZIEUCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5357B1379A;
-	Tue, 12 Mar 2024 12:06:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dJ5UFGNF8GVzbQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 12 Mar 2024 12:06:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 05BFDA07D9; Tue, 12 Mar 2024 13:06:58 +0100 (CET)
-Date: Tue, 12 Mar 2024 13:06:58 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>,
-	syzbot <syzbot+6ec38f7a8db3b3fb1002@syzkaller.appspotmail.com>,
-	almaz.alexandrovich@paragon-software.com, anton@tuxera.com,
-	axboe@kernel.dk, brauner@kernel.org, ebiederm@xmission.com,
-	keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu,
-	viro@zeniv.linux.org.uk, willy@infradead.org
-Subject: Re: [syzbot] [ntfs3?] WARNING in do_open_execat
-Message-ID: <20240312120658.os72hvnk5jedwbaw@quack3>
-References: <000000000000c74d44060334d476@google.com>
- <000000000000f67b790613665d7a@google.com>
- <20240311184800.d7nuzahhz36rlxpg@quack3>
- <CAGudoHGAzNkbgUsJwvTnmO2X5crtLfO47aaVmEMwZ=G2wWTQqA@mail.gmail.com>
+	bh=31/cMpUBlNq1dVo/GBGgzVo8ufDRVUmygq7sRPjG1Qc=;
+	b=bHET3YqxamXWzM+6S1DIGP3RQl78gEPgE7lvZl9IiRkFNgpK/7ywdGx0bSruJBfGoNb8mj
+	vu9pW6jJOcAy4Cdb2x6IQtAR9dPtDIrF+WYDcGfVRGB+Mi6P2wWgfzbRsXjZsvrZW75oON
+	TEixnOgKpxqkJTrFN+zUCUNct74Q2+U=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-557-mlhyefvwOlaK8rbGgwQo-Q-1; Tue, 12 Mar 2024 08:10:10 -0400
+X-MC-Unique: mlhyefvwOlaK8rbGgwQo-Q-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a3fcf5b93faso274193366b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Mar 2024 05:10:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710245409; x=1710850209;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=31/cMpUBlNq1dVo/GBGgzVo8ufDRVUmygq7sRPjG1Qc=;
+        b=LOA2tGLha0mJ81KsWFH/ZGsgZkuQVAv7l3Eut8WSm2yxGjGpvPWZXe5XXs8YJeIeIj
+         RqOzPBCrtu9pXYbFzUraiYCJHwnlaKyXrtskEvOYMej5wmtxx0U5s1ClSReWsTggtARV
+         ZKM5usblPsW4/DrDSgxkcHhns41YojNLcbWeMERAvppa/th1ao09CBy2jnlpUcbJOPus
+         36bGr+zEI+C1occ3ujF2XhCMVitN8OhqeewtXWMWOedWitfZV4OhfGs67SP22oHq3pEw
+         p2CYTdBzMqLnGGczVcwCTNAqPfO6jzL3CDgzZKscRX0CpEQB3TunFdYorxFLZ4EODMF3
+         qYWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFiZfzWd+XoBJC+F7nDVo5JGd+iFSGQITwdBYDCyP+07GSEi/sPFaj+HvMjw46V9uctdMPt/M/58nfzvI89J5hHerpsgzjU8PAZiYHFg==
+X-Gm-Message-State: AOJu0Yz0ZVUN3otxY949fIXlyBB4tR5rrDjeyE0JRo5YDbAJClr2V1Zo
+	dRhl191ikaYSku34fR8BwIOqZNDiAQ+vtZ6BiI1tDgZwtiDBRW4FHb30WtXxitcUIa+FIeBeVwt
+	4MXBhrDt5DrIISsyDXhtvXBFXvQwV6VnmT5vvDVTaJGCqmbzV57X6yJbdIbkOoQ==
+X-Received: by 2002:a17:906:f854:b0:a45:ab61:7a47 with SMTP id ks20-20020a170906f85400b00a45ab617a47mr110675ejb.16.1710245409325;
+        Tue, 12 Mar 2024 05:10:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcFKEllu/5Cbuy41Q4z4pVzuQCoPfYq9eSirKoM2GYu6wrbDVHhEhhps6AcIx6mCLMUFmsaA==
+X-Received: by 2002:a17:906:f854:b0:a45:ab61:7a47 with SMTP id ks20-20020a170906f85400b00a45ab617a47mr110620ejb.16.1710245407792;
+        Tue, 12 Mar 2024 05:10:07 -0700 (PDT)
+Received: from thinky ([109.183.6.197])
+        by smtp.gmail.com with ESMTPSA id t13-20020a170906a10d00b00a4605a343ffsm3384399ejy.21.2024.03.12.05.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Mar 2024 05:10:07 -0700 (PDT)
+Date: Tue, 12 Mar 2024 13:10:06 +0100
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, chandan.babu@oracle.com, ebiggers@kernel.org
+Subject: Re: [PATCH v5 22/24] xfs: make scrub aware of verity dinode flag
+Message-ID: <iag66iabauxkow5z2cn275gjtbaycumf3u6lsyljzuascylbto@d23xbll7dx6n>
+References: <20240304191046.157464-2-aalbersh@redhat.com>
+ <20240304191046.157464-24-aalbersh@redhat.com>
+ <20240307221809.GA1927156@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,98 +90,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGudoHGAzNkbgUsJwvTnmO2X5crtLfO47aaVmEMwZ=G2wWTQqA@mail.gmail.com>
-X-Spamd-Bar: /
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BlDW88C6;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="a5Ox/Bbz"
-X-Spamd-Result: default: False [-0.31 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-3.00)[100.00%];
-	 SUBJECT_HAS_QUESTION(0.00)[];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 URIBL_BLOCKED(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,syzkaller.appspot.com:url];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=bdf178b2f20f99b0];
-	 TAGGED_RCPT(0.00)[6ec38f7a8db3b3fb1002];
-	 MIME_GOOD(-0.10)[text/plain];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[18];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Spam-Level: 
-X-Spam-Score: -0.31
-X-Rspamd-Queue-Id: 602D73764C
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+In-Reply-To: <20240307221809.GA1927156@frogsfrogsfrogs>
 
-On Mon 11-03-24 20:01:14, Mateusz Guzik wrote:
-> On 3/11/24, Jan Kara <jack@suse.cz> wrote:
-> > On Mon 11-03-24 11:04:04, syzbot wrote:
-> >> syzbot suspects this issue was fixed by commit:
-> >>
-> >> commit 6f861765464f43a71462d52026fbddfc858239a5
-> >> Author: Jan Kara <jack@suse.cz>
-> >> Date:   Wed Nov 1 17:43:10 2023 +0000
-> >>
-> >>     fs: Block writes to mounted block devices
-> >>
-> >> bisection log:
-> >> https://syzkaller.appspot.com/x/bisect.txt?x=17e3f58e180000
-> >> start commit:   eb3479bc23fa Merge tag 'kbuild-fixes-v6.7' of
-> >> git://git.ke..
-> >> git tree:       upstream
-> >> kernel config:
-> >> https://syzkaller.appspot.com/x/.config?x=bdf178b2f20f99b0
-> >> dashboard link:
-> >> https://syzkaller.appspot.com/bug?extid=6ec38f7a8db3b3fb1002
-> >> syz repro:
-> >> https://syzkaller.appspot.com/x/repro.syz?x=15073fd4e80000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b20b8f680000
-> >>
-> >> If the result looks correct, please mark the issue as fixed by replying
-> >> with:
-> >
-> > #syz fix: fs: Block writes to mounted block devices
-> >
+On 2024-03-07 14:18:09, Darrick J. Wong wrote:
+> On Mon, Mar 04, 2024 at 08:10:45PM +0100, Andrey Albershteyn wrote:
+> > fs-verity adds new inode flag which causes scrub to fail as it is
+> > not yet known.
+> > 
+> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > ---
+> >  fs/xfs/scrub/attr.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/xfs/scrub/attr.c b/fs/xfs/scrub/attr.c
+> > index 9a1f59f7b5a4..ae4227cb55ec 100644
+> > --- a/fs/xfs/scrub/attr.c
+> > +++ b/fs/xfs/scrub/attr.c
+> > @@ -494,7 +494,7 @@ xchk_xattr_rec(
+> >  	/* Retrieve the entry and check it. */
+> >  	hash = be32_to_cpu(ent->hashval);
+> >  	badflags = ~(XFS_ATTR_LOCAL | XFS_ATTR_ROOT | XFS_ATTR_SECURE |
+> > -			XFS_ATTR_INCOMPLETE | XFS_ATTR_PARENT);
+> > +			XFS_ATTR_INCOMPLETE | XFS_ATTR_PARENT | XFS_ATTR_VERITY);
 > 
-> I don't think that's correct.
+> Now that online repair can modify/discard/salvage broken xattr trees and
+> is pretty close to merging, how can I make it invalidate all the incore
+> merkle tree data after a repair?
 > 
-> The bug is ntfs instantiating an inode with bogus type (based on an
-> intentionally corrupted filesystem), violating the api contract with
-> vfs, which in turn results in the warning way later.
+> --D
 > 
-> It may be someone sorted out ntfs doing this in the meantime, I have
-> not checked.
-> 
-> With this in mind I don't believe your patch fixed it, at best it
-> happened to neuter the reproducer.
 
-OK, I didn't dig deep into the bug. I've just seen there are no working
-reproducers and given this is ntfs3 which doesn't really have great
-maintenance effort put into it, I've opted for closing the bug. If there's
-a way to tickle the bug without writing to mounted block device, syzbot
-should eventually find it and create a new issue... But if you want to look
-into this feel free to :) Thanks for sharing the info.
-
-								Honza
+I suppose dropping all the xattr XFS_ATTR_VERITY buffers associated
+with an inode should do the job.
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+- Andrey
+
 
