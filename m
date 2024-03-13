@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-14334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74A187B1D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 20:31:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661E587B097
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A4F3B24BF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:57:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89FE81C264E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B7214405B;
-	Wed, 13 Mar 2024 17:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7C81448D4;
+	Wed, 13 Mar 2024 17:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ma9f8UYj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tqd8d32S"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EC358AB8;
-	Wed, 13 Mar 2024 17:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043C058AC5;
+	Wed, 13 Mar 2024 17:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710352543; cv=none; b=IC5SdNzj8v2NW+UY8waV8EkVfbX6L6b+SW/OhfnzI4gPMvQalyjaXIsOvk6ElLrWoVRN4XEXnBp16AIfd7TlHH0a/Lm0q0CB+KtmVJ8GYYh+rcNnFGdZd/67XNIjOmJ6+kwBXkhqyQQVYJE0YdMIyPVE5bRaCcx+py5tMB85XBE=
+	t=1710352559; cv=none; b=g6IE6fXSq4WHv4iiiHup5HfZHq9Ae7gFTeWjGvg5lsqGdQUQyPuQ91tOzUcZyd4A6pODxNFbsod1SbGxpuPoCfSkVOYfDIMCzzp5rotaFJtEvdBZf92znM1ZUt7igznxQ+lJLonxuIiw5yeFRQHFRa35LfPor8UXUySFRs8VU+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710352543; c=relaxed/simple;
-	bh=RWvS6hYxLBMDy+8cpkZisjZ45FWaV2WRXSY+F3T1zmE=;
+	s=arc-20240116; t=1710352559; c=relaxed/simple;
+	bh=kMdqz7RLV569ab/XXjmmU/XwIDmkNbuvXEq3UWvjaMk=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kafRXGfMPykSwSgRV4N9yvnGByW3U8VeqfpcI/cjydc04wi+gTLswmvGMIrfDCGP+Zz+Mp0dx3+EbaUf6r60BTghMbnuG9OYnmpCCUUAF1QZMvxAs/IxRmbJ5gh9yUwbOptefkGT5+MPhFVQyyrifoU6DqpiKBLyf6Ijl3hCGsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ma9f8UYj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4694C433F1;
-	Wed, 13 Mar 2024 17:55:42 +0000 (UTC)
+	 MIME-Version:Content-Type; b=nUk/4ASyBEl3SH3WOsKFqyR5Lp29/kzgrTRWZIdweFGif7AHZezRfXzT4WEZ1qeNzpsUyhCyFB7u5SuC6CCGgIQOKdxuzszZ7Chq65If4Q7r/CpDs2NN9qv0qNk6B9UyfukdTu85gYnQrE7wy+CCZEI8ogXM8k/SETIlbKZTnbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tqd8d32S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8049AC4166B;
+	Wed, 13 Mar 2024 17:55:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710352542;
-	bh=RWvS6hYxLBMDy+8cpkZisjZ45FWaV2WRXSY+F3T1zmE=;
+	s=k20201202; t=1710352558;
+	bh=kMdqz7RLV569ab/XXjmmU/XwIDmkNbuvXEq3UWvjaMk=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=ma9f8UYjbM2p5OIKh/5OmQn5uoCCqw/1W4xM7Ia5xB1JZOlDt/8F9pQ99o8LftnBO
-	 e+kOG50jhnIGE76FRoiSZEKdqIEiaWqC9hS4sN0DSco6WhUL54Ai/SCbl8viOb14WD
-	 HnTzuRxuceLnwwxZPzV2XHKlDFpRNDzayKJgK52SM6vBz+FwA9EmcQWlmtXKQExBod
-	 pNZsAUoPjh3QyDhirlie7wfxSNe29qge3kpKuXNqdYcvvdnAtkYQefds5joh5qyeCK
-	 DPqTRqOBJmNe65T8vzZQGyMZ4wyQSMX5lKw4S+R5vbEEA0hf6oPpCqNjyOZ4NvfBLY
-	 ZIaQaQJOQlg0w==
-Date: Wed, 13 Mar 2024 10:55:42 -0700
-Subject: [PATCH 12/29] fsverity: pass the new tree size and block size to
- ->begin_enable_verity
+	b=Tqd8d32SPrM/Q+9QfN+LaIUCtlJfaksXsZ0OsjGQBCMkzvmcfGKVeC+azvctN7qHP
+	 Ey5DdeL0CGSipalmGOhr0IRj7zjy1C9GHs0Kgxr0p/Z4Ex95ESIu3fZrflycLba78V
+	 7jA0REUdQsnJVQr7sOBqCbDqV/Y4G9kJQ1TeSaV8rNQqukqShsN7+9ZEztnn5MBiWE
+	 NPM4YVCH/a/5/PsBZmOwrJFREVRrFA/krRILQohStdtpW/GwY4pgSjbhcGGrv6Lygw
+	 GEHFUx33wBHAF1kJgoC167ic2NFUj2CZi/Ic08/fU6R3cw74BLVvybfxf2nC+oT8is
+	 kjJ+Epx5dBo9A==
+Date: Wed, 13 Mar 2024 10:55:58 -0700
+Subject: [PATCH 13/29] iomap: integrate fs-verity verification into iomap's
+ read path
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, aalbersh@redhat.com, ebiggers@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
- linux-xfs@vger.kernel.org
-Message-ID: <171035223552.2613863.13214675612130115848.stgit@frogsfrogsfrogs>
+Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+ fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
+Message-ID: <171035223568.2613863.4052027843522117859.stgit@frogsfrogsfrogs>
 In-Reply-To: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 References: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -61,101 +61,172 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-From: Darrick J. Wong <djwong@kernel.org>
+From: Andrey Albershteyn <aalbersh@redhat.com>
 
-When starting up the process of enabling fsverity on a file, pass the
-new size of the merkle tree and the merkle tree block size to the fs
-implementation.  XFS will want this information later to try to clean
-out a failed previous enablement attempt.
+This patch adds fs-verity verification into iomap's read path. After
+BIO's io operation is complete the data are verified against
+fs-verity's Merkle tree. Verification work is done in a separate
+workqueue.
 
+The read path ioend iomap_read_ioend are stored side by side with
+BIOs if FS_VERITY is enabled.
+
+Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+[djwong: fix doc warning]
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/btrfs/verity.c        |    3 ++-
- fs/ext4/verity.c         |    3 ++-
- fs/f2fs/verity.c         |    3 ++-
- fs/verity/enable.c       |    3 ++-
- include/linux/fsverity.h |    5 ++++-
- 5 files changed, 12 insertions(+), 5 deletions(-)
+ fs/iomap/buffered-io.c |   91 +++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 82 insertions(+), 9 deletions(-)
 
 
-diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
-index 966630523502..c52f32bd43c7 100644
---- a/fs/btrfs/verity.c
-+++ b/fs/btrfs/verity.c
-@@ -579,7 +579,8 @@ static int finish_verity(struct btrfs_inode *inode, const void *desc,
-  *
-  * Returns 0 on success, negative error code on failure.
-  */
--static int btrfs_begin_enable_verity(struct file *filp)
-+static int btrfs_begin_enable_verity(struct file *filp, u64 merkle_tree_size,
-+				     unsigned int tree_blocksize)
- {
- 	struct btrfs_inode *inode = BTRFS_I(file_inode(filp));
- 	struct btrfs_root *root = inode->root;
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index da2095a81349..a8ae8c912cb5 100644
---- a/fs/ext4/verity.c
-+++ b/fs/ext4/verity.c
-@@ -99,7 +99,8 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
- 	return 0;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 093c4515b22a..c708a93d6a02 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -6,6 +6,7 @@
+ #include <linux/module.h>
+ #include <linux/compiler.h>
+ #include <linux/fs.h>
++#include <linux/fsverity.h>
+ #include <linux/iomap.h>
+ #include <linux/pagemap.h>
+ #include <linux/uio.h>
+@@ -330,6 +331,56 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
+ 		pos >= i_size_read(iter->inode);
  }
  
--static int ext4_begin_enable_verity(struct file *filp)
-+static int ext4_begin_enable_verity(struct file *filp, u64 merkle_tree_size,
-+				    unsigned int tree_blocksize)
++#ifdef CONFIG_FS_VERITY
++struct iomap_fsverity_bio {
++	struct work_struct	work;
++	struct bio		bio;
++};
++static struct bio_set iomap_fsverity_bioset;
++
++static void
++iomap_read_fsverify_end_io_work(struct work_struct *work)
++{
++	struct iomap_fsverity_bio *fbio =
++		container_of(work, struct iomap_fsverity_bio, work);
++
++	fsverity_verify_bio(&fbio->bio);
++	iomap_read_end_io(&fbio->bio);
++}
++
++static void
++iomap_read_fsverity_end_io(struct bio *bio)
++{
++	struct iomap_fsverity_bio *fbio =
++		container_of(bio, struct iomap_fsverity_bio, bio);
++
++	INIT_WORK(&fbio->work, iomap_read_fsverify_end_io_work);
++	queue_work(bio->bi_private, &fbio->work);
++}
++#endif /* CONFIG_FS_VERITY */
++
++static struct bio *iomap_read_bio_alloc(struct inode *inode,
++		struct block_device *bdev, int nr_vecs, gfp_t gfp)
++{
++	struct bio *bio;
++
++#ifdef CONFIG_FS_VERITY
++	if (fsverity_active(inode)) {
++		bio = bio_alloc_bioset(bdev, nr_vecs, REQ_OP_READ, gfp,
++					&iomap_fsverity_bioset);
++		if (bio) {
++			bio->bi_private = inode->i_sb->s_read_done_wq;
++			bio->bi_end_io = iomap_read_fsverity_end_io;
++		}
++		return bio;
++	}
++#endif
++	bio = bio_alloc(bdev, nr_vecs, REQ_OP_READ, gfp);
++	if (bio)
++		bio->bi_end_io = iomap_read_end_io;
++	return bio;
++}
++
+ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 		struct iomap_readpage_ctx *ctx, loff_t offset)
  {
- 	struct inode *inode = file_inode(filp);
- 	const int credits = 2; /* superblock and inode for ext4_orphan_add() */
-diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-index b4461b9f47a3..f6ad6523ce95 100644
---- a/fs/f2fs/verity.c
-+++ b/fs/f2fs/verity.c
-@@ -115,7 +115,8 @@ struct fsverity_descriptor_location {
- 	__le64 pos;
- };
+@@ -353,6 +404,12 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
  
--static int f2fs_begin_enable_verity(struct file *filp)
-+static int f2fs_begin_enable_verity(struct file *filp, u64 merkle_tree_size,
-+				    unsigned int tree_blocksize)
+ 	if (iomap_block_needs_zeroing(iter, pos)) {
+ 		folio_zero_range(folio, poff, plen);
++		if (fsverity_active(iter->inode) &&
++		    !fsverity_verify_blocks(folio, plen, poff)) {
++			folio_set_error(folio);
++			goto done;
++		}
++
+ 		iomap_set_range_uptodate(folio, poff, plen);
+ 		goto done;
+ 	}
+@@ -370,28 +427,29 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
+ 		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
+ 		gfp_t orig_gfp = gfp;
+-		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
+ 
+ 		if (ctx->bio)
+ 			submit_bio(ctx->bio);
+ 
+ 		if (ctx->rac) /* same as readahead_gfp_mask */
+ 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
+-		ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
+-				     REQ_OP_READ, gfp);
++
++		ctx->bio = iomap_read_bio_alloc(iter->inode, iomap->bdev,
++				bio_max_segs(DIV_ROUND_UP(length, PAGE_SIZE)),
++				gfp);
++
+ 		/*
+ 		 * If the bio_alloc fails, try it again for a single page to
+ 		 * avoid having to deal with partial page reads.  This emulates
+ 		 * what do_mpage_read_folio does.
+ 		 */
+ 		if (!ctx->bio) {
+-			ctx->bio = bio_alloc(iomap->bdev, 1, REQ_OP_READ,
+-					     orig_gfp);
++			ctx->bio = iomap_read_bio_alloc(iter->inode,
++					iomap->bdev, 1, orig_gfp);
+ 		}
+ 		if (ctx->rac)
+ 			ctx->bio->bi_opf |= REQ_RAHEAD;
+ 		ctx->bio->bi_iter.bi_sector = sector;
+-		ctx->bio->bi_end_io = iomap_read_end_io;
+ 		bio_add_folio_nofail(ctx->bio, folio, plen, poff);
+ 	}
+ 
+@@ -1996,10 +2054,25 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+ }
+ EXPORT_SYMBOL_GPL(iomap_writepages);
+ 
++#define IOMAP_POOL_SIZE		(4 * (PAGE_SIZE / SECTOR_SIZE))
++
+ static int __init iomap_init(void)
  {
- 	struct inode *inode = file_inode(filp);
- 	int err;
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index 945eba0092ab..496a361c0a81 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -237,7 +237,8 @@ static int enable_verity(struct file *filp,
- 	if (IS_VERITY(inode))
- 		err = -EEXIST;
- 	else
--		err = vops->begin_enable_verity(filp);
-+		err = vops->begin_enable_verity(filp, params.tree_size,
-+				      params.block_size);
- 	inode_unlock(inode);
- 	if (err)
- 		goto out;
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index d12a95623614..c5f3564f2cb8 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -80,6 +80,8 @@ struct fsverity_operations {
- 	 * Begin enabling verity on the given file.
- 	 *
- 	 * @filp: a readonly file descriptor for the file
-+	 * @merkle_tree_size: total bytes the new Merkle tree will take up
-+	 * @tree_blocksize: the new Merkle tree block size
- 	 *
- 	 * The filesystem must do any needed filesystem-specific preparations
- 	 * for enabling verity, e.g. evicting inline data.  It also must return
-@@ -89,7 +91,8 @@ struct fsverity_operations {
- 	 *
- 	 * Return: 0 on success, -errno on failure
- 	 */
--	int (*begin_enable_verity)(struct file *filp);
-+	int (*begin_enable_verity)(struct file *filp, u64 merkle_tree_size,
-+				   unsigned int tree_blocksize);
- 
- 	/**
- 	 * End enabling verity on the given file.
+-	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+-			   offsetof(struct iomap_ioend, io_inline_bio),
+-			   BIOSET_NEED_BVECS);
++	int error;
++
++	error = bioset_init(&iomap_ioend_bioset, IOMAP_POOL_SIZE,
++			    offsetof(struct iomap_ioend, io_inline_bio),
++			    BIOSET_NEED_BVECS);
++#ifdef CONFIG_FS_VERITY
++	if (error)
++		return error;
++
++	error = bioset_init(&iomap_fsverity_bioset, IOMAP_POOL_SIZE,
++			    offsetof(struct iomap_fsverity_bio, bio),
++			    BIOSET_NEED_BVECS);
++	if (error)
++		bioset_exit(&iomap_ioend_bioset);
++#endif
++	return error;
+ }
+ fs_initcall(iomap_init);
 
 
