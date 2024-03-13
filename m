@@ -1,147 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-14358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8661487B305
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 21:48:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F278A87B30D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 21:55:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15BAEB22F81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 20:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD6AF286EBE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 20:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399B051C59;
-	Wed, 13 Mar 2024 20:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B01551C4B;
+	Wed, 13 Mar 2024 20:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OF7EDGDB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6V3JRfT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF03212E6C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 20:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DB220DDB;
+	Wed, 13 Mar 2024 20:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710362900; cv=none; b=QBRuCNglKp4+jBV+Tg9cnQ9kETRovO1Fvm6G9po99TsKeuWbDOTS49djqcJf5MD2ZhfV5IAj0x6CqE6NPFKa5kq1g4/8DwJpxY4fB/8ImD4EOQIYvRBBiNddKLlPnYFCjZ01pVKv9XtlIMdJsWOJLUGu6jVel7EXv1yWcR/2hwg=
+	t=1710363321; cv=none; b=FWztAtoYxZC80G2HiEdwP5O9xrCWIqA0YayqjWmKkzjthJgwCZuetYxXoJgUIaK87QhzuvMAtEc4Hgpqj7AB7Yb+opQ93F0Sc6ffKc0eJ/t/SYF2C1OYlBYYWJBACVDQJrnCud5gmz4ELXWZnWsTXa+Oi0uSnlacKmnJZXQJwDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710362900; c=relaxed/simple;
-	bh=Qs82lcXumefYXpExMq3K66hhPd5zaxuwF7JwqNXx9iQ=;
+	s=arc-20240116; t=1710363321; c=relaxed/simple;
+	bh=7am2RmdCi8uwcAW+cdVcqgn1jJuzcQg4Cm0ERpymKbI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t/98g8vYb39eJmP/UhSWoAVdUqnpt93ypMsdL6sWdq1g40P2xdJwE+bTjpcebAOGXPxhaZt5L+jOsZPAZ7MD8u49ulUwOco8Ek8T8flLkld0ST6ifOncNya4VzhVp/xKaMuEIeYfqIQMxLc+x3HIuU6Y6ZvcW2Ae3mmbXl5T824=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OF7EDGDB; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-55a179f5fa1so319490a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 13:48:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=GpJpWyn4jWhleqD8xTJVXWgExt7lUc1Jlv7C1PI5e8KI5YWcBCrVrDCfy2+z1KATtEotcfwg4zfn5FRGiQAcqVcjd2tzEMsMtCKqYrVp49DTYVpIwKSR8PGBpmKGqh7w+j8heqgmQ2CcjmRQj9iQuoqYkc2BtrP34irknDDnBKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6V3JRfT; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-690e2d194f6so2759236d6.0;
+        Wed, 13 Mar 2024 13:55:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1710362897; x=1710967697; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PPuXpkeGm2u0OvGSXHyAWpUcDKXz5BztlE6+aKXcrYM=;
-        b=OF7EDGDBmmuyTKI5wyvojDoVQbgQkPFxMtFPvlzVtQMfv04STtxyHTCY6ZI0mt2frT
-         1KimqT+tw1aJotnLGnPfqY0BAV3azV0zA6RPZ7Zc/FXC9NrvOgzcKahk/H9UgFdBkH9w
-         kG408dtdZTcwDA5xO5NGhW1nGL5qIlsYayKGo=
+        d=gmail.com; s=20230601; t=1710363317; x=1710968117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U+EyvDQPRu7FWvAd/ZnSMUNGQDH4f/Anl2JLfApoYgE=;
+        b=V6V3JRfTdRfpnqLqSDUgRQ3eKfMdWAdDQQWa/pIrYcthsWPfrT51DoczBHgsndluZt
+         738IPD39dBG4JoFQlotuRZQCriZAEwNjA/6ssS+vxysfxKf8EssvVmyOS+c0f6AdVhuz
+         OAodhF8o043BJZEEQKd54E9aEoiojBkOjlNZtDQEWgADxe67xrlUbgRyY6OONCVG7UWJ
+         sYYhxhwy8IiWL/MjWg8VTbWAiLl3lvBmtGImhU3pXj3Y0XnhBbfvm3P2aWiEAa1vCGEu
+         5aE440TYEYqyPbpghW490BmUSfQhoV0TJl5xjFYKbQk7dtZMMkKapPmSI+o64gAC4pqN
+         dZxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710362897; x=1710967697;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PPuXpkeGm2u0OvGSXHyAWpUcDKXz5BztlE6+aKXcrYM=;
-        b=hglRLJkpHzfNeqamjiD85AyWyeUg+zaV1TheQYmMIrI4IIpylSXsNBF1Mr0M8cviZk
-         8z3gSkd5C63rU4+u/QS4s6P+gq1sZRdQrDAtKbqO2W7XEDvD+s8X1IFyIlTaRd6mtk40
-         N6dnvvbGjR3vbdnJJStQkUc6AydTtPPbXuNX5gd1ZkFlsAEXodsJ13261Bu3y/1rdN4Y
-         yLqdAtyyVU14MCsHUSAZwSV4jEYxqlmaaD/Schpdd24QSrvt4KDBBwkxBO5uOwx7D9RR
-         VSpkbe78yIoe5W4NV8ArPOd4JgrV9GQucTinNcdwiopW3AqFkBErcSmGLD+tzRXPqw3x
-         y3Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMYd+uTCMeDvdhz3NuDUAZ3PMGprmU4yfGscUy/9Xg2U/iXdzoVjy7jcWIHTe0HW80JoDK4EqlWzAlP9WUtFIi4I/PLwiy5QTujXPuew==
-X-Gm-Message-State: AOJu0Yy24lkQyQRjlxJJRL5oz6Mz8tozNtul2CQyXU8HqbCMG8QRikKj
-	Th66c5YzxDgMuNYBK4SM8IiMnmKJXQeR9V030U9Iiv8ytt5iXHl+w9o5lPi86cPD/XMhOMeMAv4
-	dGI3OPg==
-X-Google-Smtp-Source: AGHT+IFsL1c7ZU6Eqq0QxAHlMuPUjsb0Xi5yxSno0T1hU52YxOwR+7ikACsee3te4paclx533YxogA==
-X-Received: by 2002:a50:d555:0:b0:565:faf5:225d with SMTP id f21-20020a50d555000000b00565faf5225dmr9598050edj.29.1710362897021;
-        Wed, 13 Mar 2024 13:48:17 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id c5-20020a0564021f8500b005648d0eebdbsm429986edc.96.2024.03.13.13.48.16
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Mar 2024 13:48:16 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a45f257b81fso37047666b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 13:48:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVnrer4qY7JP31jAsYQtMGSX9Z05Fjtf4EDp84UlDDxFCnw5iYBRTL7JxgmyJgrfOyS0mLrIooIXPimXeJ/PJClohjeOh3GoENmmNSvOA==
-X-Received: by 2002:a17:906:dacc:b0:a45:e270:609c with SMTP id
- xi12-20020a170906dacc00b00a45e270609cmr11079476ejb.23.1710362895736; Wed, 13
- Mar 2024 13:48:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710363317; x=1710968117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U+EyvDQPRu7FWvAd/ZnSMUNGQDH4f/Anl2JLfApoYgE=;
+        b=ataUyXCpQ74gO3ayRubNSx7dzTEbZdLabA8IGJ4pPNkwBvMFSbfRtFGhQD43bvC0zk
+         Bp+9JwK1jqmH1jNVYeWeYFoXegvtDKj9GLnzGPggu2fb7Ida3QGJ2/RUiElAw765ZLlF
+         FbCx25IZ0oeNerVMnQMUtj6QWSC/nL5CaVEZRvbFszz9bA26vn84SnDnswrQd3jibakf
+         mbIty6Ot+qvfI9K00OUijLcRn21kAK/6ADL7bCNypZmOdzjVHBZO/dFRJmZ5VU4O3Jwj
+         58Krrw3dceKdlf5Q9YF9Gt0OT6wZrnx8q/B96s5EPGYiiKkgCu0pUQ2xKdjuKE19mrT8
+         8soQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAP0uIXMHf5Zh8eZFOgr27+WugdVDlvqORRfq4O8TVcx043wgMGU5t0FeYNuWC10yp8y2sp7YJtD9zVxtG56Pj9ByieITrQhK96dv/MiMYSiFAyliyQyYocN3pdse8PhTxdwBz3qroacRsyQ==
+X-Gm-Message-State: AOJu0YzOeAFWR+EcIAn5RG9J+iQrC0qJtGmf9HmzbtY2m8TJ3Yckq+Oa
+	lrmlrKJf/jxIO/EjsgihOBcu+LlhKvYaA+Wvae0TP5HJqyNHMfPiKUGwk1rB6vRhAph45uU8WzQ
+	trWDahmcGy/YDzu+sHXGoaMP1aRI=
+X-Google-Smtp-Source: AGHT+IHTF+h1+fGos7bCc7R3HL2ZbcVNxqZnxjKMcM3sTuZvzckJskY7jWwNSZ7kwrWNGRn/OsHQlgfaefvRAH004X0=
+X-Received: by 2002:a05:6214:d0e:b0:690:9a8a:855b with SMTP id
+ 14-20020a0562140d0e00b006909a8a855bmr1375820qvh.29.1710363317121; Wed, 13 Mar
+ 2024 13:55:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <lfypw4vqq3rkohlh2iwhub3igjopdy26lfforfcjws2dfizk7d@32yk5dnemi4u>
-In-Reply-To: <lfypw4vqq3rkohlh2iwhub3igjopdy26lfforfcjws2dfizk7d@32yk5dnemi4u>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 13 Mar 2024 13:47:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg3djFJMeN3L_zx3P-6eN978Y1JTssxy81RhAbxB==L8Q@mail.gmail.com>
-Message-ID: <CAHk-=wg3djFJMeN3L_zx3P-6eN978Y1JTssxy81RhAbxB==L8Q@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs updates for 6.9
-To: Kent Overstreet <kent.overstreet@linux.dev>, "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <00000000000043c5e70613882ad1@google.com>
+In-Reply-To: <00000000000043c5e70613882ad1@google.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 13 Mar 2024 22:55:06 +0200
+Message-ID: <CAOQ4uxjtkRns4_EiradMnRUd6xAkqevTiYZZ61oVh7yDzBn_-g@mail.gmail.com>
+Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_copy_up_file
+To: miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	syzbot <syzbot+3abd99031b42acf367ef@syzkaller.appspotmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 12 Mar 2024 at 18:10, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+On Wed, Mar 13, 2024 at 12:23=E2=80=AFPM syzbot
+<syzbot+3abd99031b42acf367ef@syzkaller.appspotmail.com> wrote:
 >
-> Hi Linus, few patches for you - plus a simple merge conflict with VFS
-> changes:
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    707081b61156 Merge branch 'for-next/core', remote-trackin=
+g..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux=
+.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1785a85918000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dcaeac3f3565b0=
+57a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D3abd99031b42acf=
+367ef
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1115ada6180=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1626870a18000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/6cad68bf7532/dis=
+k-707081b6.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/1a27e5400778/vmlinu=
+x-707081b6.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/67dfc53755d0/I=
+mage-707081b6.gz.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+3abd99031b42acf367ef@syzkaller.appspotmail.com
+>
+> evm: overlay not supported
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 6187 at fs/overlayfs/copy_up.c:239 ovl_copy_up_file+=
+0x624/0x674 fs/overlayfs/copy_up.c:330
 
-The conflicts are trivial.
+Miklos,
 
-The "make random bcachefs code be a library function" stuff I looked
-at, decided is senseless, and ended up meaning that I'm not pulling
-this without a lot more explanation (and honestly, I don't think the
-explanations would hold water).
+The WARN_ON that I put in ovl_verify_area() may be too harsh.
+I think they can happen if lower file is changed (i_size) while file is bei=
+ng
+copied up after reading i_size into the copy length and this could be
+the case with this syzbot reproducer that keeps mounting overlayfs
+instances over same path.
 
-That "stdio_redirect_printf()" and darray_char stuff is just
-horrendous interfaces with no explanations. The interfaces are
-disgusting.
+Should probably demote those WARN_ON to just returning EIO?
 
-Keep it in your own code where it belongs, don't try to make it some
-generic library thing.
-
-And if you *do* make it a library thing, it needs to be
-
- (a) much more explained
-
- (b) have much saner naming, and fewer disgusting and completely
-nonsensical interfaces ("DARRAY()").
-
-And no, finding one other filesystem to share this kind of code is not
-sufficient to try to claim it's a sane interface and sane naming.
-
-But the main dealbreaker is the insane math.
-
-And dammit, we talked about the idiotic "mean and variance" garbage
-long ago. It was wrong back then, it's *still* wrong.
-
-You didn't explain why it couldn't use the *much* simpler MAD (median
-absolute deviation) instead of using variance.
-
-That bad decision directly results in that pointless use of overly
-complex 128-bit math.
-
-I called it insanely over-engineered back then, and as far as I can
-tell, absolutely *NOTHING* has changed apart from some slight type
-name details.
-
-As long as you made it some kind of bcachefs-only thing, I don't mind.
-
-But now you're trying to push this garbage as some kind of generic
-library code that others would use, and that immediately means that I
-*do* mind insanely overengineered interfaces.
-
-The time_stats stuff otherwise looks at leask like a sane interface
-with names and uses, but the use of that horrendous infrastructure
-scuttles it.
-
-              Linus
+Thanks,
+Amir.
 
