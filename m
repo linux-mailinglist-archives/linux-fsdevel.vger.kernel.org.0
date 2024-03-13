@@ -1,618 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-14360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84F287B333
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 22:04:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 647D787B339
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 22:05:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA3D289513
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 21:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9496289690
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 21:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049EF524DD;
-	Wed, 13 Mar 2024 21:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB2C537E3;
+	Wed, 13 Mar 2024 21:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VopNRU/D"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jc+8nY0g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157984D9F0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 21:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEAB4E1CE;
+	Wed, 13 Mar 2024 21:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710363837; cv=none; b=aUO1h4uHZWymGxucHSkbWjBJRJYLUcQWdyL3kPbT5GNpzBu+vzH/4T9beeE4ZPSNBHCBTPf8tmxc3hOA90q3ugPDj8pdu/AaWVx7j5RqUSvUPpsuSPPiEFY2nZE/41EILEDVse8qssZo7HJhs0KsiHGFBWBJVP9Z+a86/FsDDmc=
+	t=1710363929; cv=none; b=TpUMb+yN41rBy+UYyvVk95KfwaKQR2NcJsLV1zzkgBSB2havicQ+LDpBbV8OcEjldoBOTrgg4YVnd3e6n5ffoDLWzckSLcOubWRdExcMAwhpwyb3mIPpC63GEzYazueZNGEOYDx10TxVL02f+vvIWbczTsJwlkoJUGrHnxNTa5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710363837; c=relaxed/simple;
-	bh=qq9AvnPwtcIh3B2LWFf+Vb/BQLy50JVfqFpzluTr2xo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CX9hjAW6auuE+xW+zXWB4MYjDXo1DoA8pQMEwRypse/1g4xKNtRgQuPxF3joLs+Aw485lToABdm3ComAVVchEfTAvYdLp+omHSj+FyMm/sS40B9aRXtU/WWi+IUK+47el8G7lzstezcooUS9ZX3jUz1rMoBjA/HgjiSaCJOyydA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VopNRU/D; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710363834;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yxgHWb90ZWKYQUE/orvze+4Br1MUQq0Qr1IOu8OJ+tc=;
-	b=VopNRU/DdwhBg9cefHGuup7z9bk3/aP/AvbwEyV/ORX8EvyFHhe78vPBDJw5BAzZ22m88r
-	Pg2QFweuOgS4nmuwcMD7huiAG3JS57UhUUdoo7Frote4VwcLpPNW2cEB+RpQe9RytgOG9v
-	qB9M7aHnFOKhsr5799mvkMPGJDGKxFY=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-425-RVUGAlw6MJ-kXCUZldFL_g-1; Wed, 13 Mar 2024 17:03:52 -0400
-X-MC-Unique: RVUGAlw6MJ-kXCUZldFL_g-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-33dbbe709ffso83179f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 14:03:52 -0700 (PDT)
+	s=arc-20240116; t=1710363929; c=relaxed/simple;
+	bh=CH2rZ4PLi2IfM/uHiuMK9LdURXsrNx68tG+esLsv5Bw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kTQpwkcv41Mqlc3oEUFkQOzmC6vt0UoBs0ux66xDsbpvK2urSAb9YUCLq0sluV8V4RAGJStZa09i2+hEKbr92pRrb6xTofPp8r+DudlIVuiFSPkH0r/xdkHINfnQglmJWwL43/cLTp1RUQkP4rdNiuIGrc/sDL4bA7YsXHjhasA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jc+8nY0g; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-33e7ae72312so203013f8f.1;
+        Wed, 13 Mar 2024 14:05:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1710363926; x=1710968726; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yZzVp1B0o1fPUeYOWrqe1Q57q16dmLKhwAmLef5VA14=;
+        b=Jc+8nY0g+HgXorpBon5IbPHDFTq4f4avVkggDJJwl5h13KOUZQu6oMVfm9h/5ve63X
+         inQEginxALP4HZwdofFK4tJr6OEZR3v+VnAxqqIE6tpoLhz/LZmoff4LLldd7ZalLUtj
+         R5/jVBHKpzXKoTwHYHZ6PwcieUykDU8h+f4g1x0zegzklIXVKymBX7I1WkF4MhR3074U
+         0tfjXnXNlkRCH7/10OtZbUVT9kRxJDlUe/sFGEAOvuG2VeRYAvX5F7LxZ8HizC7/fPxB
+         WHtVS3vxLiHsY7Xsq+gRIFwLIVwP4VwZhyXMqM9L66Bzew5cEZeVt3kY2lDXmq4fQSi5
+         uqnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710363831; x=1710968631;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:from:content-language:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yxgHWb90ZWKYQUE/orvze+4Br1MUQq0Qr1IOu8OJ+tc=;
-        b=N11hqMblTH1TyvabaaGD8hYp7Iuamm/zlsGWQpJJ04iEhHe5WQy211e/nBdZ6upc73
-         5ptmh+orqXJMjz6Xg1A2RpGPsgWgWzMHq/7BeGdAQ2bP+6UxWYYq76sN2AlNeTvQpl+6
-         UCADeZH84/bPwvya739ZdGK7tcgvbbHhw+maQSUF9YaIChH8d2xhQN3UyFy5rb+Yjixq
-         hciyAu9gp8SFTAUOCOMfL1L4jFT+5eQJxWRHHfubZFgezOWgbyxzVecWvUyiCKg4xjTZ
-         1ngrqWaEUimHJOoVUP/tcKus2488MYMfHTWeboEW/UBlHcbJpdOZ+GozJqD1dwqE53K5
-         jLeA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3FcOqZFGMcx8/OzTcoKQtyzTJyy2ERX/qTdLaDQCt4JmBT6eAopq6LAB3M4lbRd9SQH3hEjHRgIfUrn5/4i07U2emxlfEuiOMw4YMNg==
-X-Gm-Message-State: AOJu0Yy1DWbqPCEi8wv2aHn0w80zKvPfpV6FBLHf7d/tcmQeYZrQUMEd
-	lvWjQqDJx2ytRzqszO+3MV+HeH0yj6TPPiMvBvVwRugCsaRY6K0MfjYSdggSC4wf6dUj3r0SHbw
-	FDmK7x5IsxHFYela6WQrRJxXe730aTH38eRWUG9+vRfd6kdFDknMsTGomdqKviKI=
-X-Received: by 2002:a5d:6651:0:b0:33e:a1e3:87b3 with SMTP id f17-20020a5d6651000000b0033ea1e387b3mr2802025wrw.41.1710363831191;
-        Wed, 13 Mar 2024 14:03:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJlIEzQjWatiYOTEuTJuL4fd2HqL2oyq+KTqgK2NFdPVEUMYTUVHuvkXeKw1VbTSL4FuG6pg==
-X-Received: by 2002:a5d:6651:0:b0:33e:a1e3:87b3 with SMTP id f17-20020a5d6651000000b0033ea1e387b3mr2802005wrw.41.1710363830651;
-        Wed, 13 Mar 2024 14:03:50 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70e:2600:cd60:7701:f644:b131? (p200300cbc70e2600cd607701f644b131.dip0.t-ipconnect.de. [2003:cb:c70e:2600:cd60:7701:f644:b131])
-        by smtp.gmail.com with ESMTPSA id q2-20020a5d5742000000b0033cf60e268fsm14070wrw.116.2024.03.13.14.03.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Mar 2024 14:03:50 -0700 (PDT)
-Message-ID: <2b794ff8-7805-44d5-9a4e-0870e270365f@redhat.com>
-Date: Wed, 13 Mar 2024 22:03:48 +0100
+        d=1e100.net; s=20230601; t=1710363926; x=1710968726;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yZzVp1B0o1fPUeYOWrqe1Q57q16dmLKhwAmLef5VA14=;
+        b=cNtSTjnbTtMQ5wkSpGnHMQWL2RRaBR+QpMVJwW9BjXuxwJq3oL1HUi1JDren+Lbx5f
+         BlvL5jt6Y2ss34638on6VqpdThkH/NngmV68QENcQyUoVJOgPz9Yw0Vl3GtwsKePmYWE
+         mMR3SfgDXVc5eVDhlS2OVoVNx9x6UlN/wXO2egibIimdEdB+3CjUjzvv9NEp0XuqPzq/
+         NZR0IW6mYepd5EFdvB8Ca72i4mFXBADbE5+HQ8ORLw9iEv4zBsntfTkyI/J0Cvx/USLO
+         1T+a8SdxBkQq0IAU5iG+zrF3CDpXKbN6gB4/tIF0HhJu6yScJjbqnwdaha6IN5g+4nPK
+         KJdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlyBEQ7s6KWa65C2N4jf68C3wnwB+MaTTy9NJjEtlzXKhV+yeDD075IMphfIVRWp3TNZC4+VLpMNXmQ1ZE/6Fcq824DSOFStIPC4m+Ftf9RMDLC0I8zbDdOOOnX1THzfWYYGluiwzMe/3zRuVDeteNZD9fu+/mqRDu3TWBABv0/Wky1sUh+5fLSw==
+X-Gm-Message-State: AOJu0YyrWTfM8Ady+fVQamnMBRfm7SEdGq/MDnXS+TOj3llSnnF4uHsr
+	xzLuZlaIDPoBkAWaG5oCvH+C3Xz3WIj85S3gNUrF1QrWOCLvYaNDaoDVFz3oZ3Qq0dlTZYvNHwa
+	UPHSH7fj38qunx6AEQJc4Zh4FhBU=
+X-Google-Smtp-Source: AGHT+IFDFscIvQkKhWL6uTHrhCEwdvqJ5pjqZbod6Uv4pkjnS2CrY1wfRH/QplSvK4c2Ab2/TnZ4YDaEDqej2LD7zf8=
+X-Received: by 2002:adf:ffcc:0:b0:33d:2775:1e63 with SMTP id
+ x12-20020adfffcc000000b0033d27751e63mr2732491wrs.41.1710363925428; Wed, 13
+ Mar 2024 14:05:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/24] fsverity: pass tree_blocksize to
- end_enable_verity()
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- chandan.babu@oracle.com, akpm@linux-foundation.org, linux-mm@kvack.org,
- Eric Biggers <ebiggers@kernel.org>
-References: <20240305005242.GE17145@sol.localdomain>
- <20240306163000.GP1927156@frogsfrogsfrogs>
- <20240307220224.GA1799@sol.localdomain>
- <20240308034650.GK1927156@frogsfrogsfrogs>
- <20240308044017.GC8111@sol.localdomain>
- <20240311223815.GW1927156@frogsfrogsfrogs>
- <9927568e-9f36-4417-9d26-c8a05c220399@redhat.com>
- <08905bcc-677d-4981-926d-7f407b2f6a4a@redhat.com>
- <20240312164444.GG1927156@frogsfrogsfrogs>
- <420b6d5f-adef-4415-b8cb-16c234dcec38@redhat.com>
- <20240313171936.GN1927156@frogsfrogsfrogs>
- <f529aa84-2bf6-44d5-8ba7-47bdb0eb3885@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f529aa84-2bf6-44d5-8ba7-47bdb0eb3885@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1709675979.git.mattbobrowski@google.com>
+ <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
+ <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
+ <20240307-phosphor-entnahmen-8ef28b782abf@brauner> <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
+ <20240308-kleben-eindecken-73c993fb3ebd@brauner> <CAADnVQJVNntnH=DLHwUioe9mEw0FzzdUvmtj3yx8SjL38daeXQ@mail.gmail.com>
+ <20240311-geglaubt-kursverfall-500a27578cca@brauner>
+In-Reply-To: <20240311-geglaubt-kursverfall-500a27578cca@brauner>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 13 Mar 2024 14:05:13 -0700
+Message-ID: <CAADnVQLnzrxyUM-EiorEP_qvfmdiSK5Kj1WtGjFoAogygHSvmA@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
+To: Christian Brauner <brauner@kernel.org>
+Cc: Matt Bobrowski <mattbobrowski@google.com>, bpf <bpf@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, 
+	Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13.03.24 20:10, David Hildenbrand wrote:
-> On 13.03.24 18:19, Darrick J. Wong wrote:
->> On Wed, Mar 13, 2024 at 01:29:12PM +0100, David Hildenbrand wrote:
->>> On 12.03.24 17:44, Darrick J. Wong wrote:
->>>> On Tue, Mar 12, 2024 at 04:33:14PM +0100, David Hildenbrand wrote:
->>>>> On 12.03.24 16:13, David Hildenbrand wrote:
->>>>>> On 11.03.24 23:38, Darrick J. Wong wrote:
->>>>>>> [add willy and linux-mm]
->>>>>>>
->>>>>>> On Thu, Mar 07, 2024 at 08:40:17PM -0800, Eric Biggers wrote:
->>>>>>>> On Thu, Mar 07, 2024 at 07:46:50PM -0800, Darrick J. Wong wrote:
->>>>>>>>>> BTW, is xfs_repair planned to do anything about any such extra blocks?
->>>>>>>>>
->>>>>>>>> Sorry to answer your question with a question, but how much checking is
->>>>>>>>> $filesystem expected to do for merkle trees?
->>>>>>>>>
->>>>>>>>> In theory xfs_repair could learn how to interpret the verity descriptor,
->>>>>>>>> walk the merkle tree blocks, and even read the file data to confirm
->>>>>>>>> intactness.  If the descriptor specifies the highest block address then
->>>>>>>>> we could certainly trim off excess blocks.  But I don't know how much of
->>>>>>>>> libfsverity actually lets you do that; I haven't looked into that
->>>>>>>>> deeply. :/
->>>>>>>>>
->>>>>>>>> For xfs_scrub I guess the job is theoretically simpler, since we only
->>>>>>>>> need to stream reads of the verity files through the page cache and let
->>>>>>>>> verity tell us if the file data are consistent.
->>>>>>>>>
->>>>>>>>> For both tools, if something finds errors in the merkle tree structure
->>>>>>>>> itself, do we turn off verity?  Or do we do something nasty like
->>>>>>>>> truncate the file?
->>>>>>>>
->>>>>>>> As far as I know (I haven't been following btrfs-progs, but I'm familiar with
->>>>>>>> e2fsprogs and f2fs-tools), there isn't yet any precedent for fsck actually
->>>>>>>> validating the data of verity inodes against their Merkle trees.
->>>>>>>>
->>>>>>>> e2fsck does delete the verity metadata of inodes that don't have the verity flag
->>>>>>>> enabled.  That handles cleaning up after a crash during FS_IOC_ENABLE_VERITY.
->>>>>>>>
->>>>>>>> I suppose that ideally, if an inode's verity metadata is invalid, then fsck
->>>>>>>> should delete that inode's verity metadata and remove the verity flag from the
->>>>>>>> inode.  Checking for a missing or obviously corrupt fsverity_descriptor would be
->>>>>>>> fairly straightforward, but it probably wouldn't catch much compared to actually
->>>>>>>> validating the data against the Merkle tree.  And actually validating the data
->>>>>>>> against the Merkle tree would be complex and expensive.  Note, none of this
->>>>>>>> would work on files that are encrypted.
->>>>>>>>
->>>>>>>> Re: libfsverity, I think it would be possible to validate a Merkle tree using
->>>>>>>> libfsverity_compute_digest() and the callbacks that it supports.  But that's not
->>>>>>>> quite what it was designed for.
->>>>>>>>
->>>>>>>>> Is there an ioctl or something that allows userspace to validate an
->>>>>>>>> entire file's contents?  Sort of like what BLKVERIFY would have done for
->>>>>>>>> block devices, except that we might believe its answers?
->>>>>>>>
->>>>>>>> Just reading the whole file and seeing whether you get an error would do it.
->>>>>>>>
->>>>>>>> Though if you want to make sure it's really re-reading the on-disk data, it's
->>>>>>>> necessary to drop the file's pagecache first.
->>>>>>>
->>>>>>> I tried a straight pagecache read and it worked like a charm!
->>>>>>>
->>>>>>> But then I thought to myself, do I really want to waste memory bandwidth
->>>>>>> copying a bunch of data?  No.  I don't even want to incur system call
->>>>>>> overhead from reading a single byte every $pagesize bytes.
->>>>>>>
->>>>>>> So I created 2M mmap areas and read a byte every $pagesize bytes.  That
->>>>>>> worked too, insofar as SIGBUSes are annoying to handle.  But it's
->>>>>>> annoying to take signals like that.
->>>>>>>
->>>>>>> Then I started looking at madvise.  MADV_POPULATE_READ looked exactly
->>>>>>> like what I wanted -- it prefaults in the pages, and "If populating
->>>>>>> fails, a SIGBUS signal is not generated; instead, an error is returned."
->>>>>>>
->>>>>>
->>>>>> Yes, these were the expected semantics :)
->>>>>>
->>>>>>> But then I tried rigging up a test to see if I could catch an EIO, and
->>>>>>> instead I had to SIGKILL the process!  It looks filemap_fault returns
->>>>>>> VM_FAULT_RETRY to __xfs_filemap_fault, which propagates up through
->>>>>>> __do_fault -> do_read_fault -> do_fault -> handle_pte_fault ->
->>>>>>> handle_mm_fault -> faultin_page -> __get_user_pages.  At faultin_pages,
->>>>>>> the VM_FAULT_RETRY is translated to -EBUSY.
->>>>>>>
->>>>>>> __get_user_pages squashes -EBUSY to 0, so faultin_vma_page_range returns
->>>>>>> that to madvise_populate.  Unfortunately, madvise_populate increments
->>>>>>> its loop counter by the return value (still 0) so it runs in an
->>>>>>> infinite loop.  The only way out is SIGKILL.
->>>>>>
->>>>>> That's certainly unexpected. One user I know is QEMU, which primarily
->>>>>> uses MADV_POPULATE_WRITE to prefault page tables. Prefaulting in QEMU is
->>>>>> primarily used with shmem/hugetlb, where I haven't heard of any such
->>>>>> endless loops.
->>>>>>
->>>>>>>
->>>>>>> So I don't know what the correct behavior is here, other than the
->>>>>>> infinite loop seems pretty suspect.  Is it the correct behavior that
->>>>>>> madvise_populate returns EIO if __get_user_pages ever returns zero?
->>>>>>> That doesn't quite sound right if it's the case that a zero return could
->>>>>>> also happen if memory is tight.
->>>>>>
->>>>>> madvise_populate() ends up calling faultin_vma_page_range() in a loop.
->>>>>> That one calls __get_user_pages().
->>>>>>
->>>>>> __get_user_pages() documents: "0 return value is possible when the fault
->>>>>> would need to be retried."
->>>>>>
->>>>>> So that's what the caller does. IIRC, there are cases where we really
->>>>>> have to retry (at least once) and will make progress, so treating "0" as
->>>>>> an error would be wrong.
->>>>>>
->>>>>> Staring at other __get_user_pages() users, __get_user_pages_locked()
->>>>>> documents: "Please note that this function, unlike __get_user_pages(),
->>>>>> will not return 0 for nr_pages > 0, unless FOLL_NOWAIT is used.".
->>>>>>
->>>>>> But there is some elaborate retry logic in there, whereby the retry will
->>>>>> set FOLL_TRIED->FAULT_FLAG_TRIED, and I think we'd fail on the second
->>>>>> retry attempt (there are cases where we retry more often, but that's
->>>>>> related to something else I believe).
->>>>>>
->>>>>> So maybe we need a similar retry logic in faultin_vma_page_range()? Or
->>>>>> make it use __get_user_pages_locked(), but I recall when I introduced
->>>>>> MADV_POPULATE_READ, there was a catch to it.
->>>>>
->>>>> I'm trying to figure out who will be setting the VM_FAULT_SIGBUS in the
->>>>> mmap()+access case you describe above.
->>>>>
->>>>> Staring at arch/x86/mm/fault.c:do_user_addr_fault(), I don't immediately see
->>>>> how we would transition from a VM_FAULT_RETRY loop to VM_FAULT_SIGBUS.
->>>>> Because VM_FAULT_SIGBUS would be required for that function to call
->>>>> do_sigbus().
->>>>
->>>> The code I was looking at yesterday in filemap_fault was:
->>>>
->>>> page_not_uptodate:
->>>> 	/*
->>>> 	 * Umm, take care of errors if the page isn't up-to-date.
->>>> 	 * Try to re-read it _once_. We do this synchronously,
->>>> 	 * because there really aren't any performance issues here
->>>> 	 * and we need to check for errors.
->>>> 	 */
->>>> 	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
->>>> 	error = filemap_read_folio(file, mapping->a_ops->read_folio, folio);
->>>> 	if (fpin)
->>>> 		goto out_retry;
->>>> 	folio_put(folio);
->>>>
->>>> 	if (!error || error == AOP_TRUNCATED_PAGE)
->>>> 		goto retry_find;
->>>> 	filemap_invalidate_unlock_shared(mapping);
->>>>
->>>> 	return VM_FAULT_SIGBUS;
->>>>
->>>> Wherein I /think/ fpin is non-null in this case, so if
->>>> filemap_read_folio returns an error, we'll do this instead:
->>>>
->>>> out_retry:
->>>> 	/*
->>>> 	 * We dropped the mmap_lock, we need to return to the fault handler to
->>>> 	 * re-find the vma and come back and find our hopefully still populated
->>>> 	 * page.
->>>> 	 */
->>>> 	if (!IS_ERR(folio))
->>>> 		folio_put(folio);
->>>> 	if (mapping_locked)
->>>> 		filemap_invalidate_unlock_shared(mapping);
->>>> 	if (fpin)
->>>> 		fput(fpin);
->>>> 	return ret | VM_FAULT_RETRY;
->>>>
->>>> and since ret was 0 before the goto, the only return code is
->>>> VM_FAULT_RETRY.  I had speculated that perhaps we could instead do:
->>>>
->>>> 	if (fpin) {
->>>> 		if (error)
->>>> 			ret |= VM_FAULT_SIGBUS;
->>>> 		goto out_retry;
->>>> 	}
->>>>
->>>> But I think the hard part here is that there doesn't seem to be any
->>>> distinction between transient read errors (e.g. disk cable fell out) vs.
->>>> semi-permanent errors (e.g. verity says the hash doesn't match).
->>>> AFAICT, either the read(ahead) sets uptodate and callers read the page,
->>>> or it doesn't set it and callers treat that as an error-retry
->>>> opportunity.
->>>>
->>>> For the transient error case VM_FAULT_RETRY makes perfect sense; for the
->>>> second case I imagine we'd want something closer to _SIGBUS.
->>>
->>>
->>> Agreed, it's really hard to judge when it's the right time to give up
->>> retrying. At least with MADV_POPULATE_READ we should try achieving the same
->>> behavior as with mmap()+read access. So if the latter manages to trigger
->>> SIGBUS, MADV_POPULATE_READ should return an error.
->>>
->>> Is there an easy way to for me to reproduce this scenario?
->>
->> Yes.  Take this Makefile:
->>
->> CFLAGS=-Wall -Werror -O2 -g -Wno-unused-variable
->>
->> all: mpr
->>
->> and this C program mpr.c:
->>
->> /* test MAP_POPULATE_READ on a file */
->> #include <stdio.h>
->> #include <errno.h>
->> #include <fcntl.h>
->> #include <unistd.h>
->> #include <string.h>
->> #include <sys/stat.h>
->> #include <sys/mman.h>
->>
->> #define min(a, b)	((a) < (b) ? (a) : (b))
->> #define BUFSIZE		(2097152)
->>
->> int main(int argc, char *argv[])
->> {
->> 	struct stat sb;
->> 	long pagesize = sysconf(_SC_PAGESIZE);
->> 	off_t read_sz, pos;
->> 	void *addr;
->> 	char c;
->> 	int fd, ret;
->>
->> 	if (argc != 2) {
->> 		printf("Usage: %s fname\n", argv[0]);
->> 		return 1;
->> 	}
->>
->> 	fd = open(argv[1], O_RDONLY);
->> 	if (fd < 0) {
->> 		perror(argv[1]);
->> 		return 1;
->> 	}
->>
->> 	ret = fstat(fd, &sb);
->> 	if (ret) {
->> 		perror("fstat");
->> 		return 1;
->> 	}
->>
->> 	/* Validate the file contents with regular reads */
->> 	for (pos = 0; pos < sb.st_size; pos += sb.st_blksize) {
->> 		ret = pread(fd, &c, 1, pos);
->> 		if (ret < 0) {
->> 			if (errno != EIO) {
->> 				perror("pread");
->> 				return 1;
->> 			}
->>
->> 			printf("%s: at offset %llu: %s\n", argv[1],
->> 					(unsigned long long)pos,
->> 					strerror(errno));
->> 			break;
->> 		}
->> 	}
->>
->> 	ret = pread(fd, &c, 1, sb.st_size);
->> 	if (ret < 0) {
->> 		if (errno != EIO) {
->> 			perror("pread");
->> 			return 1;
->> 		}
->>
->> 		printf("%s: at offset %llu: %s\n", argv[1],
->> 				(unsigned long long)sb.st_size,
->> 				strerror(errno));
->> 	}
->>
->> 	/* Validate the file contents with MADV_POPULATE_READ */
->> 	read_sz = ((sb.st_size + (pagesize - 1)) / pagesize) * pagesize;
->> 	printf("%s: read bytes %llu\n", argv[1], (unsigned long long)read_sz);
->>
->> 	for (pos = 0; pos < read_sz; pos += BUFSIZE) {
->> 		unsigned int mappos;
->> 		size_t maplen = min(read_sz - pos, BUFSIZE);
->>
->> 		addr = mmap(NULL, maplen, PROT_READ, MAP_SHARED, fd, pos);
->> 		if (addr == MAP_FAILED) {
->> 			perror("mmap");
->> 			return 1;
->> 		}
->>
->> 		ret = madvise(addr, maplen, MADV_POPULATE_READ);
->> 		if (ret) {
->> 			perror("madvise");
->> 			return 1;
->> 		}
->>
->> 		ret = munmap(addr, maplen);
->> 		if (ret) {
->> 			perror("munmap");
->> 			return 1;
->> 		}
->> 	}
->>
->> 	ret = close(fd);
->> 	if (ret) {
->> 		perror("close");
->> 		return 1;
->> 	}
->>
->> 	return 0;
->> }
->>
->> and this shell script mpr.sh:
->>
->> #!/bin/bash -x
->>
->> # Try to trigger infinite loop with regular IO errors and MADV_POPULATE_READ
->>
->> scriptdir="$(dirname "$0")"
->>
->> commands=(dmsetup mkfs.xfs xfs_io timeout strace "$scriptdir/mpr")
->> for cmd in "${commands[@]}"; do
->> 	if ! command -v "$cmd" &>/dev/null; then
->> 		echo "$cmd: Command required for this program."
->> 		exit 1
->> 	fi
->> done
->>
->> dev="${1:-/dev/sda}"
->> mnt="${2:-/mnt}"
->> dmtarget="dumbtarget"
->>
->> # Clean up any old mounts
->> umount "$dev" "$mnt"
->> dmsetup remove "$dmtarget"
->> rmmod xfs
->>
->> # Create dm linear mapping to block device and format filesystem
->> sectors="$(blockdev --getsz "$dev")"
->> tgt="/dev/mapper/$dmtarget"
->> echo "0 $sectors linear $dev 0" | dmsetup create "$dmtarget"
->> mkfs.xfs -f "$tgt"
->>
->> # Create a file that we'll read, then cycle mount to zap pagecache
->> mount "$tgt" "$mnt"
->> xfs_io -f -c "pwrite -S 0x58 0 1m" "$mnt/a"
->> umount "$mnt"
->> mount "$tgt" "$mnt"
->>
->> # Load file metadata
->> stat "$mnt/a"
->>
->> # Induce EIO errors on read
->> dmsetup suspend --noflush --nolockfs "$dmtarget"
->> echo "0 $sectors error" | dmsetup load "$dmtarget"
->> dmsetup resume "$dmtarget"
->>
->> # Try to provoke the kernel; kill the process after 10s so we can clean up
->> timeout -s KILL 10s strace -s99 -e madvise "$scriptdir/mpr" "$mnt/a"
->>
->> # Stop EIO errors so we can unmount
->> dmsetup suspend --noflush --nolockfs "$dmtarget"
->> echo "0 $sectors linear $dev 0" | dmsetup load "$dmtarget"
->> dmsetup resume "$dmtarget"
->>
->> # Unmount and clean up after ourselves
->> umount "$mnt"
->> dmsetup remove "$dmtarget"
->> <EOF>
->>
->> make the C program, then run ./mpr.sh <device> <mountpoint>.  It should
->> stall in the madvise call until timeout sends sigkill to the program;
->> you can crank the 10s timeout up if you want.
->>
->> <insert usual disclaimer that I run all these things in scratch VMs>
-> 
-> Yes, seems to work, nice!
-> 
-> 
-> [  452.455636] buffer_io_error: 6 callbacks suppressed
-> [  452.455638] Buffer I/O error on dev dm-0, logical block 16, async page read
-> [  452.456169] Buffer I/O error on dev dm-0, logical block 17, async page read
-> [  452.456456] Buffer I/O error on dev dm-0, logical block 18, async page read
-> [  452.456754] Buffer I/O error on dev dm-0, logical block 19, async page read
-> [  452.457061] Buffer I/O error on dev dm-0, logical block 20, async page read
-> [  452.457350] Buffer I/O error on dev dm-0, logical block 21, async page read
-> [  452.457639] Buffer I/O error on dev dm-0, logical block 22, async page read
-> [  452.457942] Buffer I/O error on dev dm-0, logical block 23, async page read
-> [  452.458242] Buffer I/O error on dev dm-0, logical block 16, async page read
-> [  452.458552] Buffer I/O error on dev dm-0, logical block 17, async page read
-> + timeout -s KILL 10s strace -s99 -e madvise ./mpr /mnt/tmp//a
-> /mnt/tmp//a: at offset 0: Input/output error
-> /mnt/tmp//a: read bytes 1048576
-> madvise(0x7f9393624000, 1048576, MADV_POPULATE_READ./mpr.sh: line 45:  2070 Killed                  tim"
-> 
-> 
-> And once I switch over to reading instead of MADV_POPULATE_READ:
-> 
-> [  753.940230] buffer_io_error: 6 callbacks suppressed
-> [  753.940233] Buffer I/O error on dev dm-0, logical block 8192, async page read
-> [  753.941402] Buffer I/O error on dev dm-0, logical block 8193, async page read
-> [  753.942084] Buffer I/O error on dev dm-0, logical block 8194, async page read
-> [  753.942738] Buffer I/O error on dev dm-0, logical block 8195, async page read
-> [  753.943412] Buffer I/O error on dev dm-0, logical block 8196, async page read
-> [  753.944088] Buffer I/O error on dev dm-0, logical block 8197, async page read
-> [  753.944741] Buffer I/O error on dev dm-0, logical block 8198, async page read
-> [  753.945415] Buffer I/O error on dev dm-0, logical block 8199, async page read
-> [  753.946105] Buffer I/O error on dev dm-0, logical block 8192, async page read
-> [  753.946661] Buffer I/O error on dev dm-0, logical block 8193, async page read
-> + timeout -s KILL 10s strace -s99 -e madvise ./mpr /mnt/tmp//a
-> /mnt/tmp//a: at offset 0: Input/output error
-> /mnt/tmp//a: read bytes 1048576
-> --- SIGBUS {si_signo=SIGBUS, si_code=BUS_ADRERR, si_addr=0x7f34f82d8000} ---
-> +++ killed by SIGBUS (core dumped) +++
-> timeout: the monitored command dumped core
-> ./mpr.sh: line 45:  2388 Bus error               timeout -s KILL 10s strace -s99 -e madvise "$scriptdir"
-> 
-> 
-> Let me dig how the fault handler is able to conclude SIGBUS here!
+On Mon, Mar 11, 2024 at 5:01=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> > > > One can argue that get_mm_exe_file() is not exported,
+> > > > but it's nothing but rcu_lock-wrap plus get_file_rcu()
+> > > > which is EXPORT_SYMBOL.
+> > >
+> > > Oh, good spot. That's an accident. get_file_rcu() definitely shouldn'=
+t
+> > > be exported. So that'll be removed asap.
+> >
+> > So, just to make a point that
+> > "Included in that set are functions that aren't currently even
+> > exported to modules"
+> > you want to un-export get_file_rcu() ?
+>
+> No. The reason it was exported was because of the drm subsystem and we
+> already quite disliked that. But it turned out that's not needed so in
+> commit 61d4fb0b349e ("file, i915: fix file reference for
+> mmap_singleton()") they were moved away from this helper.
 
-Might be as simple as this:
+Arguably that commit 61d4fb0b349e should have had
+Fixes: 0ede61d8589c ("file: convert to SLAB_TYPESAFE_BY_RCU")
+i915 was buggy before you touched it
+and safe_by_rcu exposed the bug.
+I can see why you guys looked at it, saw issues,
+and decided to look away.
+Though your guess in commit 61d4fb0b349e
+"
+    Now, there might be delays until
+    file->f_op->release::singleton_release() is called and
+    i915->gem.mmap_singleton is set to NULL.
+"
+feels unlikely.
+I suspect release() delay cannot be that long to cause rcu stall.
+In the log prior to the splat there are just two mmap related calls
+from selftests in i915_gem_mman_live_selftests():
+i915: Running i915_gem_mman_live_selftests/igt_mmap_offset_exhaustion
+i915: Running i915_gem_mman_live_selftests/igt_mmap
+1st mmap test passed, but 2nd failed.
+So it looks like it's not a race, but an issue with cleanup in that driver.
+And instead of getting to the bottom of the issue
+you've decided to paper over with get_file_active().
+I agree with that trade-off.
+But the bug in i915 is still there and it's probably an UAF.
+get_file_active() is probably operating on a broken 'struct file'
+that got to zero, but somehow it still around
+or it's just a garbage memory and file->f_count
+just happened to be zero.
 
-diff --git a/mm/gup.c b/mm/gup.c
-index df83182ec72d5..62df1548b7779 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1734,8 +1734,8 @@ long faultin_vma_page_range(struct vm_area_struct *vma, unsigned long start,
-         if (check_vma_flags(vma, gup_flags))
-                 return -EINVAL;
-  
--       ret = __get_user_pages(mm, start, nr_pages, gup_flags,
--                              NULL, locked);
-+       ret = __get_user_pages_locked(mm, start, nr_pages, NULL, locked,
-+                                     gup_flags);
-         lru_add_drain();
-         return ret;
-  }
+My point is that it's not ok to have such double standards.
+On one side you're arguing that we shouldn't introduce kfunc:
++__bpf_kfunc struct file *bpf_get_task_exe_file(struct task_struct *task)
++{
++ return get_task_exe_file(task);
++}
+that cleanly takes ref cnt on task->mm->exe_file and _not_ using lower
+level get_file/get_file_rcu/get_file_active api-s directly which
+are certainly problematic to expose anywhere, since safe_by_rcu
+protocol is delicate.
 
+But on the other side there is buggy i915 that does
+questionable dance with get_file_active().
+It's EXPORT_SYMBOL_GPL as well and out of tree driver can
+ruin safe_by_rcu file properties with hard to debug consequences.
 
-[   57.154542] Buffer I/O error on dev dm-0, logical block 16, async page read
-[   57.155276] Buffer I/O error on dev dm-0, logical block 17, async page read
-[   57.155911] Buffer I/O error on dev dm-0, logical block 18, async page read
-[   57.156568] Buffer I/O error on dev dm-0, logical block 19, async page read
-[   57.157245] Buffer I/O error on dev dm-0, logical block 20, async page read
-[   57.157880] Buffer I/O error on dev dm-0, logical block 21, async page read
-[   57.158539] Buffer I/O error on dev dm-0, logical block 22, async page read
-[   57.159197] Buffer I/O error on dev dm-0, logical block 23, async page read
-[   57.159838] Buffer I/O error on dev dm-0, logical block 16, async page read
-[   57.160492] Buffer I/O error on dev dm-0, logical block 17, async page read
-+ timeout -s KILL 10s strace -s99 -e madvise ./mpr /mnt/tmp//a
-[   57.190472] Retrying
-/mnt/tmp//a: at offset 0: Input/output error
-/mnt/tmp//a: read bytes 1048576
-madvise(0x7f0fa0384000, 1048576, MADV_POPULATE_READ) = -1 EFAULT (Bad address)
-madvise: Bad address
+> There is absolutely no way that any userspace will
+> get access to such low-level helpers. They have zero business to be
+> involved in the lifetimes of objects on this level just as no module has.
 
+correct, and kfuncs do not give bpf prog to do direct get_file*() access
+because we saw how tricky safe_by_rcu is.
+Hence kfuncs acquire file via get_task_exe_file or get_mm_exe_file
+and release via fput.
+That's the same pattern that security/tomoyo/util.c is doing:
+   exe_file =3D get_mm_exe_file(mm);
+   if (!exe_file)
+        return NULL;
 
-And -EFAULT is what MADV_POPULATE_READ is documented to return for SIGBUS.
+   cp =3D tomoyo_realpath_from_path(&exe_file->f_path);
+   fput(exe_file);
 
-(there are a couple of ways we could speedup MADV_POPULATE_READ, maybe
-at some point using VMA locks)
+in bpf_lsm case it will be:
 
--- 
-Cheers,
+   exe_file =3D bpf_get_mm_exe_file(mm);
+   if (!exe_file)
+   // the verifier will enforce that bpf prog has this NULL check here
+   // because we annotate kfunc as:
+BTF_ID_FLAGS(func, bpf_get_mm_exe_file, KF_ACQUIRE | KF_TRUSTED_ARGS |
+KF_RET_NULL)
 
-David / dhildenb
+ bpf_path_d_path(&exe_file->f_path, ...);
+ bpf_put_file(exe_file);
+// and the verifier will enforce that bpf_put_file() is called too.
+// and there is no path out of this bpf program that can take file refcnt
+// without releasing.
 
+So really these kfuncs are a nop from vfs pov.
+If there is a bug in the verifier we will debug it and we will fix it.
+
+You keep saying that bpf_d_path() is a mess.
+Right. It is a mess now and we're fixing it.
+When it was introduced 4 years ago it was safe at that time.
+The unrelated verifier "smartness" made it possible to use it in UAF.
+We found the issue now and we're fixing it.
+Over these years we didn't ask vfs folks to help fix such bugs,
+and not asking for help now.
+You're being cc-ed on the patches to be aware on how we plan to fix
+this bpf_d_path() mess. If you have a viable alternative please suggest.
+As it stands the new kfuncs are clean and safe way to solve this mess.
 
