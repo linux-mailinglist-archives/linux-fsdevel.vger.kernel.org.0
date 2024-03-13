@@ -1,56 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-14324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CFF87B073
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:55:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 588CA87B078
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 038DE1C2337F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3951C22FA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4358013D2FC;
-	Wed, 13 Mar 2024 17:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3865413E7D5;
+	Wed, 13 Mar 2024 17:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMsca0I7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yl63tgd+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B95357883;
-	Wed, 13 Mar 2024 17:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7164913DB9B;
+	Wed, 13 Mar 2024 17:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710352402; cv=none; b=t71GbVZ7mF+bMtSybpDyGSXUDIjggUISCBL2iX2+tYshVKhCnb7PBPcLgXokDwlRzDjkaQ6Al3OrMzAO9U2wI5zA9eA4brIDiI+du8PmQm5Dxop5RFMTqPR8DJoGW2r+QJ6n8Lij3BdVDHB/uPrGTQyAfCIjz8AeUIr5wffrJ/s=
+	t=1710352418; cv=none; b=g+Lt5WbMCJfs7uLAsHWcreV08diyC+XvZqF2cHe4nWR2niGhJsGJYlQQsoZDYqFMdgn00DVErE/TKCQvyc1eOspmv/l3lAeh9BEb/r3zW2j2nqWbbxWnqRz5XERFWPyM9naoeG5/30fpXNNK6eupG9ncKxpRNIyAZFn/ZV/zrqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710352402; c=relaxed/simple;
-	bh=3PiQWLCvQqjS7LPBm90t4SOaaoJMbpAwofTbsuxbe28=;
+	s=arc-20240116; t=1710352418; c=relaxed/simple;
+	bh=QlJAa+uqVG2dhy6hqzccOs4xjxALGADksKWeBhfsQ3U=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I7Vr6CdRG5XTci+X6J82NI/LvmjHino6hW7WLNN+OiTU6TzsitTt8c4T8dbLnPDR+uqIcgRkeM17AMxWtWCea2o+Sn2yCoytuAoNTk3keaPiWskIw6wBnqgyx5rMKekC/gi365vSVhwjCn8FQZSyD3AH3N8lUn6vByJIGtuuN4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMsca0I7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF46C433C7;
-	Wed, 13 Mar 2024 17:53:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZRQXz++aH7a1vU6EdqR307AYHmPWQ1dh5hDcp1eXS6Mo9QWuQMnFnzaiuVgZsj2+c2Qr3/MZMPClzROKm3jDFqgXxa+IHguMA2gDP3mbEW0BTZ7tfcstBSHuSFx4XqleIVwWqqS1gzGhZvi2K7b14odrZjrcIfMb0J1+BqEgD3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yl63tgd+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8025C433C7;
+	Wed, 13 Mar 2024 17:53:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710352402;
-	bh=3PiQWLCvQqjS7LPBm90t4SOaaoJMbpAwofTbsuxbe28=;
+	s=k20201202; t=1710352417;
+	bh=QlJAa+uqVG2dhy6hqzccOs4xjxALGADksKWeBhfsQ3U=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=uMsca0I7Y5RMuBVfUKrHGZhMro1DK1OYupPS0SqJZocjzX531WxM7unVMubz1gCi7
-	 VE3U0LkhKax6nlt5SIlkVW5gh7Re/pKrT1yVJ7OUF3Sgx8NE8rm9pOlKgfpT4w95KF
-	 PwUWLRVE3hOTIZfeRQFtCp4xjTo8Gsu/NVcCW112CuFzu/CyxPxJPbZc2EPme7gVKk
-	 uAHOrktJkK4RYDS4tcb94ffbk6PWtwYLYEadrzpgRJoEvXa4EXvo+xBbklW/AUNAli
-	 aIDnlzoQediGjsRlZEuNmTUEsNKAyMYllKsSRDtwgeHgglQjXlAe0UASihxI7Qh4fW
-	 In+djyAQfJinw==
-Date: Wed, 13 Mar 2024 10:53:21 -0700
-Subject: [PATCH 03/29] xfs: define parent pointer ondisk extended attribute
- format
+	b=Yl63tgd+CGSnWASffx+TqrUCAEgwkFrQ98E+lRVrEEOK6wrooQ1x1ogLiXj5MdeSh
+	 UV54F3ozrk5WCOHlxtXUKVNmLZqpuUExRVCdcm3qlp8+ZQqVZKAd8l8KaAZltnzWia
+	 0Kf8RxJw2hktd86Z1YfrlpplpuI38QK7UNsSPsKsLl/HaA5BuugJ1uC4z98e4Epqlz
+	 XedHxyw9y3I1Zqfm2xFv4tCvB+vIcJ7JQuiyio8ZkjQdShDW7zTHrz+fx+im710sCv
+	 SaaT4w6L0YFMcVzA1haw94LLwXcnN6ol+1OcImqxn3mX272pfnCFY7kLo0paNoxXYI
+	 59m2wdqaN/g7w==
+Date: Wed, 13 Mar 2024 10:53:37 -0700
+Subject: [PATCH 04/29] xfs: add parent pointer validator functions
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, aalbersh@redhat.com, ebiggers@kernel.org
-Cc: Dave Chinner <dchinner@redhat.com>,
- Allison Henderson <allison.henderson@oracle.com>,
+Cc: Allison Henderson <allison.henderson@oracle.com>,
  linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
  linux-xfs@vger.kernel.org
-Message-ID: <171035223408.2613863.9861308344244312301.stgit@frogsfrogsfrogs>
+Message-ID: <171035223424.2613863.10249525423420622979.stgit@frogsfrogsfrogs>
 In-Reply-To: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 References: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -65,69 +63,330 @@ Content-Transfer-Encoding: 7bit
 
 From: Allison Henderson <allison.henderson@oracle.com>
 
-We need to define the parent pointer attribute format before we start
-adding support for it into all the code that needs to use it. The EA
-format we will use encodes the following information:
+Attribute names of parent pointers are not strings.  So we need to
+modify attr_namecheck to verify parent pointer records when the
+XFS_ATTR_PARENT flag is set.  At the same time, we need to validate attr
+values during log recovery if the xattr is really a parent pointer.
 
-        name={parent inode #, parent inode generation, dirent namehash}
-        value={dirent name}
-
-The inode/gen gives all the information we need to reliably identify the
-parent without requiring child->parent lock ordering, and allows
-userspace to do pathname component level reconstruction without the
-kernel ever needing to verify the parent itself as part of ioctl calls.
-Storing the dirent name hash in the key reduces hash collisions if a
-file is hardlinked multiple times in the same directory.
-
-By using the NVLOOKUP mode in the extended attribute code to match
-parent pointers using both the xattr name and value, we can identify the
-exact parent pointer EA we need to modify/remove in rename/unlink
-operations without searching the entire EA space.
-
-By storing the dirent name, we have enough information to be able to
-validate and reconstruct damaged directory trees.  Earlier iterations of
-this patchset encoded the directory offset in the parent pointer key,
-but this format required repair to keep that in sync across directory
-rebuilds, which is unnecessary complexity.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
 Signed-off-by: Allison Henderson <allison.henderson@oracle.com>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-[djwong: replace diroffset with the namehash in the pptr key]
+[djwong: move functions to xfs_parent.c, adjust for new disk format]
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/libxfs/xfs_da_format.h |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ fs/xfs/Makefile               |    1 
+ fs/xfs/libxfs/xfs_attr.c      |   10 +++-
+ fs/xfs/libxfs/xfs_attr.h      |    3 +
+ fs/xfs/libxfs/xfs_da_format.h |    8 +++
+ fs/xfs/libxfs/xfs_parent.c    |  113 +++++++++++++++++++++++++++++++++++++++++
+ fs/xfs/libxfs/xfs_parent.h    |   19 +++++++
+ fs/xfs/scrub/attr.c           |    2 -
+ fs/xfs/xfs_attr_item.c        |    6 +-
+ fs/xfs/xfs_attr_list.c        |   14 +++--
+ 9 files changed, 165 insertions(+), 11 deletions(-)
+ create mode 100644 fs/xfs/libxfs/xfs_parent.c
+ create mode 100644 fs/xfs/libxfs/xfs_parent.h
 
 
+diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+index 76674ad5833e..f8845e65cac7 100644
+--- a/fs/xfs/Makefile
++++ b/fs/xfs/Makefile
+@@ -41,6 +41,7 @@ xfs-y				+= $(addprefix libxfs/, \
+ 				   xfs_inode_buf.o \
+ 				   xfs_log_rlimit.o \
+ 				   xfs_ag_resv.o \
++				   xfs_parent.o \
+ 				   xfs_rmap.o \
+ 				   xfs_rmap_btree.o \
+ 				   xfs_refcount.o \
+diff --git a/fs/xfs/libxfs/xfs_attr.c b/fs/xfs/libxfs/xfs_attr.c
+index ff67a684a452..f0b625d45aa4 100644
+--- a/fs/xfs/libxfs/xfs_attr.c
++++ b/fs/xfs/libxfs/xfs_attr.c
+@@ -26,6 +26,7 @@
+ #include "xfs_trace.h"
+ #include "xfs_attr_item.h"
+ #include "xfs_xattr.h"
++#include "xfs_parent.h"
+ 
+ struct kmem_cache		*xfs_attr_intent_cache;
+ 
+@@ -1515,9 +1516,14 @@ xfs_attr_node_get(
+ /* Returns true if the attribute entry name is valid. */
+ bool
+ xfs_attr_namecheck(
+-	const void	*name,
+-	size_t		length)
++	struct xfs_mount	*mp,
++	const void		*name,
++	size_t			length,
++	unsigned int		flags)
+ {
++	if (flags & XFS_ATTR_PARENT)
++		return xfs_parent_namecheck(mp, name, length, flags);
++
+ 	/*
+ 	 * MAXNAMELEN includes the trailing null, but (name/length) leave it
+ 	 * out, so use >= for the length check.
+diff --git a/fs/xfs/libxfs/xfs_attr.h b/fs/xfs/libxfs/xfs_attr.h
+index 81be9b3e4004..92711c8d2a9f 100644
+--- a/fs/xfs/libxfs/xfs_attr.h
++++ b/fs/xfs/libxfs/xfs_attr.h
+@@ -547,7 +547,8 @@ int xfs_attr_get(struct xfs_da_args *args);
+ int xfs_attr_set(struct xfs_da_args *args);
+ int xfs_attr_set_iter(struct xfs_attr_intent *attr);
+ int xfs_attr_remove_iter(struct xfs_attr_intent *attr);
+-bool xfs_attr_namecheck(const void *name, size_t length);
++bool xfs_attr_namecheck(struct xfs_mount *mp, const void *name, size_t length,
++		unsigned int flags);
+ int xfs_attr_calc_size(struct xfs_da_args *args, int *local);
+ void xfs_init_attr_trans(struct xfs_da_args *args, struct xfs_trans_res *tres,
+ 			 unsigned int *total);
 diff --git a/fs/xfs/libxfs/xfs_da_format.h b/fs/xfs/libxfs/xfs_da_format.h
-index 5434d4d5b551..67e8c33c4e82 100644
+index 67e8c33c4e82..839df0e5401b 100644
 --- a/fs/xfs/libxfs/xfs_da_format.h
 +++ b/fs/xfs/libxfs/xfs_da_format.h
-@@ -878,4 +878,24 @@ static inline unsigned int xfs_dir2_dirblock_bytes(struct xfs_sb *sbp)
- xfs_failaddr_t xfs_da3_blkinfo_verify(struct xfs_buf *bp,
- 				      struct xfs_da3_blkinfo *hdr3);
+@@ -757,6 +757,14 @@ xfs_attr3_leaf_name(xfs_attr_leafblock_t *leafp, int idx)
+ 	return &((char *)leafp)[be16_to_cpu(entries[idx].nameidx)];
+ }
  
++static inline int
++xfs_attr3_leaf_flags(xfs_attr_leafblock_t *leafp, int idx)
++{
++	struct xfs_attr_leaf_entry *entries = xfs_attr3_leaf_entryp(leafp);
++
++	return entries[idx].flags;
++}
++
+ static inline xfs_attr_leaf_name_remote_t *
+ xfs_attr3_leaf_name_remote(xfs_attr_leafblock_t *leafp, int idx)
+ {
+diff --git a/fs/xfs/libxfs/xfs_parent.c b/fs/xfs/libxfs/xfs_parent.c
+new file mode 100644
+index 000000000000..1d45f926c13a
+--- /dev/null
++++ b/fs/xfs/libxfs/xfs_parent.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Parent pointer attribute format definition
-+ *
-+ * The xattr name encodes the parent inode number, generation and the crc32c
-+ * hash of the dirent name.
-+ *
-+ * The xattr value contains the dirent name.
++ * Copyright (c) 2022-2024 Oracle.
++ * All rights reserved.
 + */
-+struct xfs_parent_name_rec {
-+	__be64	p_ino;
-+	__be32	p_gen;
-+	__be32	p_namehash;
-+};
++#include "xfs.h"
++#include "xfs_fs.h"
++#include "xfs_format.h"
++#include "xfs_da_format.h"
++#include "xfs_log_format.h"
++#include "xfs_shared.h"
++#include "xfs_trans_resv.h"
++#include "xfs_mount.h"
++#include "xfs_bmap_btree.h"
++#include "xfs_inode.h"
++#include "xfs_error.h"
++#include "xfs_trace.h"
++#include "xfs_trans.h"
++#include "xfs_da_btree.h"
++#include "xfs_attr.h"
++#include "xfs_dir2.h"
++#include "xfs_dir2_priv.h"
++#include "xfs_attr_sf.h"
++#include "xfs_bmap.h"
++#include "xfs_defer.h"
++#include "xfs_log.h"
++#include "xfs_xattr.h"
++#include "xfs_parent.h"
++#include "xfs_trans_space.h"
 +
 +/*
-+ * Maximum size of the dirent name that can be stored in a parent pointer.
-+ * This matches the maximum dirent name length.
++ * Parent pointer attribute handling.
++ *
++ * Because the attribute value is a filename component, it will never be longer
++ * than 255 bytes. This means the attribute will always be a local format
++ * attribute as it is xfs_attr_leaf_entsize_local_max() for v5 filesystems will
++ * always be larger than this (max is 75% of block size).
++ *
++ * Creating a new parent attribute will always create a new attribute - there
++ * should never, ever be an existing attribute in the tree for a new inode.
++ * ENOSPC behavior is problematic - creating the inode without the parent
++ * pointer is effectively a corruption, so we allow parent attribute creation
++ * to dip into the reserve block pool to avoid unexpected ENOSPC errors from
++ * occurring.
 + */
-+#define XFS_PARENT_DIRENT_NAME_MAX_SIZE		(MAXNAMELEN - 1)
 +
- #endif /* __XFS_DA_FORMAT_H__ */
++/* Return true if parent pointer EA name is valid. */
++bool
++xfs_parent_namecheck(
++	struct xfs_mount			*mp,
++	const struct xfs_parent_name_rec	*rec,
++	size_t					reclen,
++	unsigned int				attr_flags)
++{
++	if (!(attr_flags & XFS_ATTR_PARENT))
++		return false;
++
++	/* pptr updates use logged xattrs, so we should never see this flag */
++	if (attr_flags & XFS_ATTR_INCOMPLETE)
++		return false;
++
++	if (reclen != sizeof(struct xfs_parent_name_rec))
++		return false;
++
++	/* Only one namespace bit allowed. */
++	if (hweight32(attr_flags & XFS_ATTR_NSP_ONDISK_MASK) > 1)
++		return false;
++
++	return true;
++}
++
++/* Return true if parent pointer EA value is valid. */
++bool
++xfs_parent_valuecheck(
++	struct xfs_mount		*mp,
++	const void			*value,
++	size_t				valuelen)
++{
++	if (valuelen == 0 || valuelen > XFS_PARENT_DIRENT_NAME_MAX_SIZE)
++		return false;
++
++	if (value == NULL)
++		return false;
++
++	return true;
++}
++
++/* Return true if the ondisk parent pointer is consistent. */
++bool
++xfs_parent_hashcheck(
++	struct xfs_mount		*mp,
++	const struct xfs_parent_name_rec *rec,
++	const void			*value,
++	size_t				valuelen)
++{
++	struct xfs_name			dname = {
++		.name			= value,
++		.len			= valuelen,
++	};
++	xfs_ino_t			p_ino;
++
++	/* Valid dirent name? */
++	if (!xfs_dir2_namecheck(value, valuelen))
++		return false;
++
++	/* Valid inode number? */
++	p_ino = be64_to_cpu(rec->p_ino);
++	if (!xfs_verify_dir_ino(mp, p_ino))
++		return false;
++
++	/* Namehash matches name? */
++	return be32_to_cpu(rec->p_namehash) == xfs_dir2_hashname(mp, &dname);
++}
+diff --git a/fs/xfs/libxfs/xfs_parent.h b/fs/xfs/libxfs/xfs_parent.h
+new file mode 100644
+index 000000000000..fcfeddb645f6
+--- /dev/null
++++ b/fs/xfs/libxfs/xfs_parent.h
+@@ -0,0 +1,19 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2022-2024 Oracle.
++ * All Rights Reserved.
++ */
++#ifndef	__XFS_PARENT_H__
++#define	__XFS_PARENT_H__
++
++/* Metadata validators */
++bool xfs_parent_namecheck(struct xfs_mount *mp,
++		const struct xfs_parent_name_rec *rec, size_t reclen,
++		unsigned int attr_flags);
++bool xfs_parent_valuecheck(struct xfs_mount *mp, const void *value,
++		size_t valuelen);
++bool xfs_parent_hashcheck(struct xfs_mount *mp,
++		const struct xfs_parent_name_rec *rec, const void *value,
++		size_t valuelen);
++
++#endif /* __XFS_PARENT_H__ */
+diff --git a/fs/xfs/scrub/attr.c b/fs/xfs/scrub/attr.c
+index 49f91cc85a65..9a1f59f7b5a4 100644
+--- a/fs/xfs/scrub/attr.c
++++ b/fs/xfs/scrub/attr.c
+@@ -195,7 +195,7 @@ xchk_xattr_listent(
+ 	}
+ 
+ 	/* Does this name make sense? */
+-	if (!xfs_attr_namecheck(name, namelen)) {
++	if (!xfs_attr_namecheck(sx->sc->mp, name, namelen, flags)) {
+ 		xchk_fblock_set_corrupt(sx->sc, XFS_ATTR_FORK, args.blkno);
+ 		goto fail_xref;
+ 	}
+diff --git a/fs/xfs/xfs_attr_item.c b/fs/xfs/xfs_attr_item.c
+index 9b4c61e1c22e..703770cf1482 100644
+--- a/fs/xfs/xfs_attr_item.c
++++ b/fs/xfs/xfs_attr_item.c
+@@ -591,7 +591,8 @@ xfs_attr_recover_work(
+ 	 */
+ 	attrp = &attrip->attri_format;
+ 	if (!xfs_attri_validate(mp, attrp) ||
+-	    !xfs_attr_namecheck(nv->name.i_addr, nv->name.i_len))
++	    !xfs_attr_namecheck(mp, nv->name.i_addr, nv->name.i_len,
++				attrp->alfi_attr_filter))
+ 		return -EFSCORRUPTED;
+ 
+ 	attr = xfs_attri_recover_work(mp, dfp, attrp, &ip, nv);
+@@ -731,7 +732,8 @@ xlog_recover_attri_commit_pass2(
+ 		return -EFSCORRUPTED;
+ 	}
+ 
+-	if (!xfs_attr_namecheck(attr_name, attri_formatp->alfi_name_len)) {
++	if (!xfs_attr_namecheck(mp, attr_name, attri_formatp->alfi_name_len,
++				attri_formatp->alfi_attr_filter)) {
+ 		XFS_CORRUPTION_ERROR(__func__, XFS_ERRLEVEL_LOW, mp,
+ 				item->ri_buf[1].i_addr, item->ri_buf[1].i_len);
+ 		return -EFSCORRUPTED;
+diff --git a/fs/xfs/xfs_attr_list.c b/fs/xfs/xfs_attr_list.c
+index a6819a642cc0..fa74378577c5 100644
+--- a/fs/xfs/xfs_attr_list.c
++++ b/fs/xfs/xfs_attr_list.c
+@@ -59,6 +59,7 @@ xfs_attr_shortform_list(
+ 	struct xfs_attr_sf_sort		*sbuf, *sbp;
+ 	struct xfs_attr_sf_hdr		*sf = dp->i_af.if_data;
+ 	struct xfs_attr_sf_entry	*sfe;
++	struct xfs_mount		*mp = dp->i_mount;
+ 	int				sbsize, nsbuf, count, i;
+ 	int				error = 0;
+ 
+@@ -82,8 +83,9 @@ xfs_attr_shortform_list(
+ 	     (dp->i_af.if_bytes + sf->count * 16) < context->bufsize)) {
+ 		for (i = 0, sfe = xfs_attr_sf_firstentry(sf); i < sf->count; i++) {
+ 			if (XFS_IS_CORRUPT(context->dp->i_mount,
+-					   !xfs_attr_namecheck(sfe->nameval,
+-							       sfe->namelen))) {
++					   !xfs_attr_namecheck(mp, sfe->nameval,
++							       sfe->namelen,
++							       sfe->flags))) {
+ 				xfs_dirattr_mark_sick(context->dp, XFS_ATTR_FORK);
+ 				return -EFSCORRUPTED;
+ 			}
+@@ -177,8 +179,9 @@ xfs_attr_shortform_list(
+ 			cursor->offset = 0;
+ 		}
+ 		if (XFS_IS_CORRUPT(context->dp->i_mount,
+-				   !xfs_attr_namecheck(sbp->name,
+-						       sbp->namelen))) {
++				   !xfs_attr_namecheck(mp, sbp->name,
++						       sbp->namelen,
++						       sbp->flags))) {
+ 			xfs_dirattr_mark_sick(context->dp, XFS_ATTR_FORK);
+ 			error = -EFSCORRUPTED;
+ 			goto out;
+@@ -474,7 +477,8 @@ xfs_attr3_leaf_list_int(
+ 		}
+ 
+ 		if (XFS_IS_CORRUPT(context->dp->i_mount,
+-				   !xfs_attr_namecheck(name, namelen))) {
++				   !xfs_attr_namecheck(mp, name, namelen,
++						       entry->flags))) {
+ 			xfs_dirattr_mark_sick(context->dp, XFS_ATTR_FORK);
+ 			return -EFSCORRUPTED;
+ 		}
 
 
