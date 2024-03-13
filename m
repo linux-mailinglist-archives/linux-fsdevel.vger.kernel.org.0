@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-14346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0D987B0AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:59:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D57887B0D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 20:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BDD288E88
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:59:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5426FB221DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B175A0F8;
-	Wed, 13 Mar 2024 17:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1665A10F;
+	Wed, 13 Mar 2024 17:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgmwVkFu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuiBDpvm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08584D135;
-	Wed, 13 Mar 2024 17:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA4D5A103;
+	Wed, 13 Mar 2024 17:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710352730; cv=none; b=trvbXlBu03ABDQC+NE8g8Z6l5mtij9szwSeq2hn6McXqLVCZStiAmP5AIVc2W+TOKDa1YldXdmCok/g6+OlUlLnoKyyUls+lXpxm2UIVrPevjGuhdj65I3Z+XS4/AkAUnZ5CErLSfI99MuLFbu0jZV+eVyoaUhvwqG4LvgnloY4=
+	t=1710352746; cv=none; b=C6hqtUJ0D3e0ZzpBWhhso/meVx/XqlU1iUrriqbdMoml+99ppd5hWqJ1lPVj0qxP7afc41+2EUjP0xcVI2MUm6STw3ynzXgqfoOXanXqksNzkP73KqDJ6DytBMHQZi4W3w8RAahTvWA3taps+1Ncp9xrY+FYTDwb3yyDHcXMJdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710352730; c=relaxed/simple;
-	bh=DPAgxv3Q4uy9579uRuOaPirjLjDerwFfZUZuJEme2wU=;
+	s=arc-20240116; t=1710352746; c=relaxed/simple;
+	bh=494y+3iuQlrODS2eWZyrS+vexwRjyUKAwpufvVwqiUw=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dCwBERRn4pcq95G33k0KXNPjkogfQAdrF5oA/7tycl+129dl7OyK97+kYZJv8kjG9k7jqFAVMGyCv0F5WFr2/mm1CzUZWGSUk017OSa7svJS0LG05yXE4bJqhF1jrLliCh9091iqTGZB2PZsFZXexvZPUbGxKpL/0yn6FUu32/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgmwVkFu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D67C433F1;
-	Wed, 13 Mar 2024 17:58:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=plTPVRj7FxhG00dxii3M2bEwLl2qMQMxl6IbBjiVWbVWboTOM0OAN63R04Bn9XWoTp3E/LIZP9LLIzX80pEPDFwTjrxxqOxvfo3Agooag/n/A0iq0/FLOSl1EwvivOQrSi751h7RnkuV1zfgfyJbeWplbbDgCxTg4t9c68N1JIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuiBDpvm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB632C43390;
+	Wed, 13 Mar 2024 17:59:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710352730;
-	bh=DPAgxv3Q4uy9579uRuOaPirjLjDerwFfZUZuJEme2wU=;
+	s=k20201202; t=1710352745;
+	bh=494y+3iuQlrODS2eWZyrS+vexwRjyUKAwpufvVwqiUw=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=fgmwVkFu2aZK/Goijdzlg7qFfTIm96tn+sxO9YZmhdZB5ebLgxm5uZQn10xN1N6f2
-	 +mqPUa6aPhS4lLrHYivf9KaGOEmpJmXkHL+ExThJJmTsDsDrNTiWctlGw4GoA68I7C
-	 0HITK6iuA2GjB+Y6J6wBbp7stmTwtMDMxTnQu3xe2sv9WKMdX0Px7lfXIIuDb16ZLB
-	 uK2z1ZNPTU7qzUpINYHrzX0z4Vw+ztcIAPvCIOECzFWGWvhPyVNBWr9sp/U9Fsp0v6
-	 /dPsnyZ/mT853j7H+OTum5ow2OjkHslpqlLyXjzRmNSOeyidkuveyVqvbxpvHx7k5L
-	 Nc34MM4Ze31Cw==
-Date: Wed, 13 Mar 2024 10:58:49 -0700
-Subject: [PATCH 24/29] xfs: shrink verity blob cache
+	b=ZuiBDpvmBbndX8saE6/Vtv4H7ePrc7lZ/QtozgOMSbDT3yKBxHuzYKGhpe50IVR/V
+	 r88K7EPiEAiqUdpacXtpWeqBpHjWDliKL4J038LtMRUHuqZ6pOlb2rXqxqH3rM2blN
+	 ArGYYJ1twnZ0U21qcGXd9v3pJhDOcU8xso+obqwaqp3FI/v+UzMZh4mNsCB5rGFEGF
+	 kzJn6+KhA+eWXhzkI1FrMYzd2QE0tA+GXVmxxhxDlvtHRT9JuZ3A6ZdOtcy19NqOMd
+	 PFBmFKZYi8s1IZx0dQRkS5kXJ6K/huIAXHLz1q9UGyTeWCttMQsnk9oZ/BFzN5CAJD
+	 MoVsJ1WatydYw==
+Date: Wed, 13 Mar 2024 10:59:05 -0700
+Subject: [PATCH 25/29] xfs: clean up stale fsverity metadata before starting
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, aalbersh@redhat.com, ebiggers@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
  linux-xfs@vger.kernel.org
-Message-ID: <171035223742.2613863.15483199528192039477.stgit@frogsfrogsfrogs>
+Message-ID: <171035223758.2613863.14784213448726046229.stgit@frogsfrogsfrogs>
 In-Reply-To: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 References: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,187 +62,84 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add some shrinkers so that reclaim can free cached merkle tree blocks
-when memory is tight.  We add a shrinkref variable to bias reclaim
-against freeing the upper levels of the merkle tree in the hope of
-maintaining read performance.
+Before we let fsverity begin writing merkle tree blocks to the file,
+let's perform a minor effort to clean up any stale metadata from a
+previous attempt to enable fsverity.  This can only happen if the system
+crashes /and/ the file shrinks, which is unlikely.  But we could do a
+better job of cleaning up anyway.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/xfs_trace.h  |    1 +
- fs/xfs/xfs_verity.c |   86 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 87 insertions(+)
+ fs/xfs/xfs_verity.c |   42 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 40 insertions(+), 2 deletions(-)
 
 
-diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index 91a73399114e..37ea6822cca3 100644
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -4797,6 +4797,7 @@ DEFINE_EVENT(xfs_verity_cache_class, name, \
- DEFINE_XFS_VERITY_CACHE_EVENT(xfs_verity_cache_load);
- DEFINE_XFS_VERITY_CACHE_EVENT(xfs_verity_cache_store);
- DEFINE_XFS_VERITY_CACHE_EVENT(xfs_verity_cache_drop);
-+DEFINE_XFS_VERITY_CACHE_EVENT(xfs_verity_cache_reclaim);
- 
- TRACE_EVENT(xfs_verity_shrinker_count,
- 	TP_PROTO(struct xfs_mount *mp, unsigned long long count,
 diff --git a/fs/xfs/xfs_verity.c b/fs/xfs/xfs_verity.c
-index 5d698383ed21..bb4ca8716c34 100644
+index bb4ca8716c34..cfa50534bfc4 100644
 --- a/fs/xfs/xfs_verity.c
 +++ b/fs/xfs/xfs_verity.c
-@@ -42,6 +42,9 @@ struct xfs_merkle_blob {
- 	/* refcount of this item; the cache holds its own ref */
- 	refcount_t		refcount;
- 
-+	/* number of times the shrinker should ignore this item */
-+	atomic_t		shrinkref;
-+
- 	/* blob data, must be last! */
- 	unsigned char		data[];
- };
-@@ -97,8 +100,10 @@ xfs_verity_cache_drop(
- 	struct xfs_inode	*ip)
- {
- 	XA_STATE(xas, &ip->i_merkle_blocks, 0);
-+	struct xfs_mount	*mp = ip->i_mount;
- 	struct xfs_merkle_blob	*mk;
- 	unsigned long		flags;
-+	s64			freed = 0;
- 
- 	xas_lock_irqsave(&xas, flags);
- 	xas_for_each(&xas, mk, ULONG_MAX) {
-@@ -106,10 +111,13 @@ xfs_verity_cache_drop(
- 
- 		trace_xfs_verity_cache_drop(ip, xas.xa_index, _RET_IP_);
- 
-+		freed++;
- 		xas_store(&xas, NULL);
- 		xfs_merkle_blob_rele(mk);
- 	}
-+	percpu_counter_sub(&mp->m_verity_blocks, freed);
- 	xas_unlock_irqrestore(&xas, flags);
-+	xfs_inode_clear_verity_tag(ip);
+@@ -422,6 +422,44 @@ xfs_verity_get_descriptor(
+ 	return args.valuelen;
  }
  
- /* Destroy the merkle tree block cache */
-@@ -168,6 +176,7 @@ xfs_verity_cache_store(
- 	unsigned long		key,
- 	struct xfs_merkle_blob	*mk)
- {
-+	struct xfs_mount	*mp = ip->i_mount;
- 	struct xfs_merkle_blob	*old;
- 	unsigned long		flags;
- 
-@@ -182,6 +191,8 @@ xfs_verity_cache_store(
- 		old = __xa_cmpxchg(&ip->i_merkle_blocks, key, NULL, mk,
- 				GFP_KERNEL);
- 	} while (old && !refcount_inc_not_zero(&old->refcount));
-+	if (!old)
-+		percpu_counter_add(&mp->m_verity_blocks, 1);
- 	xa_unlock_irqrestore(&ip->i_merkle_blocks, flags);
- 
- 	if (old == NULL) {
-@@ -244,12 +255,73 @@ struct xfs_verity_scan {
- 	unsigned long		freed;
- };
- 
-+/* Reclaim inactive merkle tree blocks that have run out of second chances. */
-+static void
-+xfs_verity_cache_reclaim(
-+	struct xfs_inode	*ip,
-+	struct xfs_verity_scan	*vs)
++/*
++ * Clear out old fsverity metadata before we start building a new one.  This
++ * could happen if, say, we crashed while building fsverity data.
++ */
++static int
++xfs_verity_drop_old_metadata(
++	struct xfs_inode		*ip,
++	u64				new_tree_size,
++	unsigned int			tree_blocksize)
 +{
-+	XA_STATE(xas, &ip->i_merkle_blocks, 0);
-+	struct xfs_mount	*mp = ip->i_mount;
-+	struct xfs_merkle_blob	*mk;
-+	unsigned long		flags;
-+	s64			freed = 0;
-+
-+	xas_lock_irqsave(&xas, flags);
-+	xas_for_each(&xas, mk, ULONG_MAX) {
-+		/*
-+		 * Tell the shrinker that we scanned this merkle tree block,
-+		 * even if we don't remove it.
-+		 */
-+		vs->scanned++;
-+		if (vs->sc->nr_to_scan-- == 0)
-+			break;
-+
-+		/* Retain if there are active references */
-+		if (refcount_read(&mk->refcount) > 1)
-+			continue;
-+
-+		/* Ignore if the item still has lru refcount */
-+		if (atomic_add_unless(&mk->shrinkref, -1, 0))
-+			continue;
-+
-+		trace_xfs_verity_cache_reclaim(ip, xas.xa_index, _RET_IP_);
-+
-+		freed++;
-+		xas_store(&xas, NULL);
-+		xfs_merkle_blob_rele(mk);
-+	}
-+	percpu_counter_sub(&mp->m_verity_blocks, freed);
-+	xas_unlock_irqrestore(&xas, flags);
++	struct xfs_fsverity_merkle_key	name;
++	struct xfs_da_args		args = {
++		.dp			= ip,
++		.whichfork		= XFS_ATTR_FORK,
++		.attr_filter		= XFS_ATTR_VERITY,
++		.op_flags		= XFS_DA_OP_REMOVE,
++		.name			= (const uint8_t *)&name,
++		.namelen		= sizeof(struct xfs_fsverity_merkle_key),
++		/* NULL value make xfs_attr_set remove the attr */
++		.value			= NULL,
++	};
++	u64				offset;
++	int				error = 0;
 +
 +	/*
-+	 * Try to clear the verity tree tag if we reclaimed all the cached
-+	 * blocks.  On the flag setting side, we should have IOLOCK_SHARED.
++	 * Delete as many merkle tree blocks in increasing blkno order until we
++	 * don't find any more.  That ought to be good enough for avoiding
++	 * dead bloat without excessive runtime.
 +	 */
-+	xfs_ilock(ip, XFS_IOLOCK_EXCL);
-+	if (xa_empty(&ip->i_merkle_blocks))
-+		xfs_inode_clear_verity_tag(ip);
-+	xfs_iunlock(ip, XFS_IOLOCK_EXCL);
-+
-+	vs->freed += freed;
++	for (offset = new_tree_size; !error; offset += tree_blocksize) {
++		xfs_fsverity_merkle_key_to_disk(&name, offset);
++		error = xfs_attr_set(&args);
++	}
++	if (error == -ENOATTR)
++		return 0;
++	return error;
 +}
 +
- /* Scan an inode as part of a verity scan. */
- int
- xfs_verity_scan_inode(
- 	struct xfs_inode	*ip,
- 	struct xfs_icwalk	*icw)
+ static int
+ xfs_verity_begin_enable(
+ 	struct file		*filp,
+@@ -430,7 +468,6 @@ xfs_verity_begin_enable(
  {
-+	struct xfs_verity_scan	*vs;
-+
-+	vs = container_of(icw, struct xfs_verity_scan, icw);
-+
-+	if (vs->sc->nr_to_scan > 0)
-+		xfs_verity_cache_reclaim(ip, vs);
-+
-+	if (vs->sc->nr_to_scan == 0)
-+		xfs_icwalk_verity_stop(icw);
-+
- 	xfs_irele(ip);
- 	return 0;
+ 	struct inode		*inode = file_inode(filp);
+ 	struct xfs_inode	*ip = XFS_I(inode);
+-	int			error = 0;
+ 
+ 	xfs_assert_ilocked(ip, XFS_IOLOCK_EXCL);
+ 
+@@ -440,7 +477,8 @@ xfs_verity_begin_enable(
+ 	if (xfs_iflags_test_and_set(ip, XFS_VERITY_CONSTRUCTION))
+ 		return -EBUSY;
+ 
+-	return error;
++	return xfs_verity_drop_old_metadata(ip, merkle_tree_size,
++			tree_blocksize);
  }
-@@ -522,6 +594,13 @@ xfs_verity_read_merkle(
- 		 * Free the new cache blob and continue with the existing one.
- 		 */
- 		xfs_merkle_blob_rele(new_mk);
-+	} else {
-+		/*
-+		 * We added this merkle tree block to the cache; tag the inode
-+		 * so that reclaim will scan this inode.  The caller holds
-+		 * IOLOCK_SHARED this will not race with the shrinker.
-+		 */
-+		xfs_inode_set_verity_tag(ip);
- 	}
  
- 	/* We might have loaded this in from disk, fsverity must recheck */
-@@ -530,6 +609,13 @@ xfs_verity_read_merkle(
- out_hit:
- 	block->kaddr   = (void *)mk->data;
- 	block->context = mk;
-+
-+	/*
-+	 * Prioritize keeping the root-adjacent levels cached if this isn't a
-+	 * streaming read.
-+	 */
-+	if (req->level >= 0)
-+		atomic_set(&mk->shrinkref, req->level + 1);
- 	return 0;
- 
- out_new_mk:
+ static int
 
 
