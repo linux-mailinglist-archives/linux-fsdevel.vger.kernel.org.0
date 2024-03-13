@@ -1,194 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-14301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5924B87AA72
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 16:31:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FABD87AF9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C67FD1F23775
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 15:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9791F2B10A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D4F481C2;
-	Wed, 13 Mar 2024 15:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F95A76F0A;
+	Wed, 13 Mar 2024 17:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nHy1XTA7"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="YJ9ERQs9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B8F3E48C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 15:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3C01A38E7;
+	Wed, 13 Mar 2024 17:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710343894; cv=none; b=p/N1feYNz/TLsnEr4Jmz9M3E4weRdnoLR98mtowudWXT5kGzVhHNSjyORhTHTU9mufsSmFid09asxx+LrwRK2ZKLS+ZIFQVDlDAO4P+vanItDWGU40kVJ6rAcbJp1NrxPPt8UaMpjoQeckSTU+Jn/zH+3KzOg+ATkOOTcJiCYq4=
+	t=1710349726; cv=none; b=Yzb+4AxPgIKLawOinA8abmPMaYhgnQSQ7JZNqnvR4TBzRwsBAV7FxcQ9msyDKkGTFpX9Qp5JcZeTN7kP2IzFix/2ih6FDaRA5R/4GPISfFmt3pJGVd5VT7thhebUMlEOYuo+FLnTS5xrqDIG7YJCWtBJIwx2i3lnt1tBf9JFHrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710343894; c=relaxed/simple;
-	bh=Zq4RfZOjcqNtcLFUzAg0QuQxZvQrvC1IKPOXZvtCEr8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LEysbvoebXx6ousjOiN4WmVYY/VZ2idUA7CS9sSOHyw0Lwr4Vib8wrHhhp0mh5dYZqs4sCt/0fbyE0MLb6vBQ09uTOKQu+3ZvzknOaKDrLXJUn+iB3zjLBakGJ3bN5tff3maz0Lt/iFOKJqz3eMcGzyU6OpV+Nm66GtFn9FSCL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nHy1XTA7; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dcc7cdb3a98so1180173276.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 08:31:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1710343891; x=1710948691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JtMw74U66kmsHyXAV7bBZ7SbbkNSfFBApfqkzQBmCrI=;
-        b=nHy1XTA7EB89TkqAKPt3CSMUwffHkk/CAuX5IYEt3/EzeN/XRhGq2DKnf7K6hxBuX2
-         lizjW6ABzbMxvs9EVRQPfIEdfnzXbICsxanCJ313DaPFFsn3XgjJXutzC0m8X+uGp4Z5
-         Om3PINc9nBM2T9TOBrh3Fdfv+4E3X3TozhN1tc8/oU8w+/Zy+NQckLE5J7e2sPXxNlyr
-         Yg6YbyXesZbqI/nCi6EKIOgO914R0yfPTAzB91Id3Q95jZ4U6SQbdb1pjfCT0GK05Dcl
-         tPLny3Iv8ZJxV34iyTvblGo8lJ5DISojziQxMAi9f+np2LqJCj/YFpKveTEQzzcE0BjG
-         1ivg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710343891; x=1710948691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JtMw74U66kmsHyXAV7bBZ7SbbkNSfFBApfqkzQBmCrI=;
-        b=Xhc4b84DyF1/6YX1E8sierXM1ScUzAS1BABXi4JY8jl18QB8jmTTqrO6hDcIhgOBif
-         LRznx4ajO/NZxZZJjakog5sZ3XX5tsJTUWwdnbnedxD6KKftS2rwaNEgFWAnNqcI7odc
-         /vrtbK+pwEjJ+7MSBX/wcxLmV/RPnf+40/0ZSA8nZQAfwg2H0li2Ijn9cNoKI/Ktmn1w
-         +1tMylOUUYrOnTG8QNUowVQ2Paa6yoCbAUEHwuOaP7BUjX4SrkrsZt/6V3MINWgWQjgQ
-         VZH7DIHn5B2h6+LK+dD2Pgbwm8hC1yRtyrzx04CueRsOnRQhMu6Pd5l7f8toCWLygJDn
-         3xTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsG6XX690o1g+2kCqVHSvjkQsg/hS37RkjFKp1v+UC+NJ7Dp+7x+nG+cMOj9/0xAe+UwJpUH6otElzq6K3gT4KHr0A6roSRtIbJtR0wg==
-X-Gm-Message-State: AOJu0Yw9C4Fza0W6kEjS8DknWC3UPuOQVXnCbHWH00WgNQQr0C4JJRtO
-	lwopgD9TNzTIs7zGbHPcmzZcRCMrIkq2i5KVf6Fsi+M9yF0wOIQOsdhIR4I8/rOfZfyBzGnmjfn
-	mFehLg5cwXejFzVm4hM4hI0zIZP6ZHXc94QJK
-X-Google-Smtp-Source: AGHT+IFt/OYhWjwqlxyr/Zyxfa6nHqBBNGn1lVwocwLdvQz8oj2Fnp7dsALCjpYCUrb0E7Elvx8ovXgew43c6K/l7cs=
-X-Received: by 2002:a5b:706:0:b0:dcb:abbc:f597 with SMTP id
- g6-20020a5b0706000000b00dcbabbcf597mr2798485ybq.54.1710343891190; Wed, 13 Mar
- 2024 08:31:31 -0700 (PDT)
+	s=arc-20240116; t=1710349726; c=relaxed/simple;
+	bh=Z9LlQsF/EJRNh/l0qXkEZ9zchYi8EVtFMXy+4kSbnFM=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=r6SENM5ZwVaqvLiOuIw2c8Ei77U5f/dD95NrjTSsGhhFY9A/oJ2XI4DZiDihCQDw0tvv+weYFpyw1OP7PtTvR7OBiwnGLemFwgdCnODeHJGOUUMJEUVfrF7b6YEONhnWd3g0oaEEk+0vDln2N9MbHqbnqWTAHs6ctUvJzE4MoXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=YJ9ERQs9; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4TvxfB298rz9stG;
+	Wed, 13 Mar 2024 18:02:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1710349378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+31zPK3/xE4cPa56xvU1Q/V7CpxqVcLqveg5PJbjK2o=;
+	b=YJ9ERQs9DogTXCegYDcipGUl7yqugYFeg2RJ3nO8fuWPStMUU93hIsuUYrbTOzREBvY2py
+	331cM4G70BV4jZplXsArvi7jV0hGBGilWxeZ58S6ehvJgiAP6Q+eZYZ2RK5Xsl/D1mjg96
+	dttySmWJH/HQquMprjMLdz7MY8kVicKjKZDcCDhOEFjgZObUNdmq+fmFhcpIrGfcfUgs6S
+	ubRh2Vj1hiJcAyOHOOhtlK1xULZDVEThlmOV/wdPnPKaT9VNUcvBHzWpp4/E7FMDFKUdz+
+	vwRKicE0zXxIlE2PeidxjIsVd1PCrC/T0Fh2q8VKH0Z4929vqKW1F6KIrCAFZw==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: willy@infradead.org,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: gost.dev@samsung.com,
+	chandan.babu@oracle.com,
+	hare@suse.de,
+	mcgrof@kernel.org,
+	djwong@kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	david@fromorbit.com,
+	akpm@linux-foundation.org,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH v3 00/11] enable bs > ps in XFS
+Date: Wed, 13 Mar 2024 18:02:42 +0100
+Message-ID: <20240313170253.2324812-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240306182440.2003814-1-surenb@google.com> <20240306182440.2003814-21-surenb@google.com>
- <ZfHAcVwJ6w9b1x0Z@casper.infradead.org>
-In-Reply-To: <ZfHAcVwJ6w9b1x0Z@casper.infradead.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 13 Mar 2024 15:31:18 +0000
-Message-ID: <CAJuCfpFf2xrCA_Rq_-e5HsDMqeS87p0b28PkK+wgWco17mxyDQ@mail.gmail.com>
-Subject: Re: [PATCH v5 20/37] mm: fix non-compound multi-order memory
- accounting in __free_pages
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
-	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
-	dave@stgolabs.net, liam.howlett@oracle.com, 
-	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com, tj@kernel.org, 
-	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, 
-	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com, 
-	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
-	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
-	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
-	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
-	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com, 
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
-	kernel-team@android.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 13, 2024 at 3:04=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Wed, Mar 06, 2024 at 10:24:18AM -0800, Suren Baghdasaryan wrote:
-> > When a non-compound multi-order page is freed, it is possible that a
-> > speculative reference keeps the page pinned. In this case we free all
-> > pages except for the first page, which will be freed later by the last
-> > put_page(). However put_page() ignores the order of the page being free=
-d,
-> > treating it as a 0-order page. This creates a memory accounting imbalan=
-ce
-> > because the pages freed in __free_pages() do not have their own alloc_t=
-ag
-> > and their memory was accounted to the first page. To fix this the first
-> > page should adjust its allocation size counter when "tail" pages are fr=
-eed.
->
-> It's not "ignored".  It's not available!
->
-> Better wording:
->
-> However the page passed to put_page() is indisinguishable from an
-> order-0 page, so it cannot do the accounting, just as it cannot free
-> the subsequent pages.  Do the accounting here, where we free the pages.
->
-> (I'm sure further improvements are possible)
->
-> > +static inline void pgalloc_tag_sub_bytes(struct alloc_tag *tag, unsign=
-ed int order)
-> > +{
-> > +     if (mem_alloc_profiling_enabled() && tag)
-> > +             this_cpu_sub(tag->counters->bytes, PAGE_SIZE << order);
-> > +}
->
-> This is a terribly named function.  And it's not even good for what we
-> want to use it for.
->
-> static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned =
-int nr)
-> {
->         if (mem_alloc_profiling_enabled() && tag)
->                 this_cpu_sub(tag->counters->bytes, PAGE_SIZE * nr);
-> }
->
-> > +++ b/mm/page_alloc.c
-> > @@ -4697,12 +4697,21 @@ void __free_pages(struct page *page, unsigned i=
-nt order)
-> >  {
-> >       /* get PageHead before we drop reference */
-> >       int head =3D PageHead(page);
-> > +     struct alloc_tag *tag =3D pgalloc_tag_get(page);
-> >
-> >       if (put_page_testzero(page))
-> >               free_the_page(page, order);
-> >       else if (!head)
-> > -             while (order-- > 0)
-> > +             while (order-- > 0) {
-> >                       free_the_page(page + (1 << order), order);
-> > +                     /*
-> > +                      * non-compound multi-order page accounts all all=
-ocations
-> > +                      * to the first page (just like compound one), th=
-erefore
-> > +                      * we need to adjust the allocation size of the f=
-irst
-> > +                      * page as its order is ignored when put_page() f=
-rees it.
-> > +                      */
-> > +                     pgalloc_tag_sub_bytes(tag, order);
->
-> -       else if (!head
-> +       else if (!head) {
-> +               pgalloc_tag_sub_pages(1 << order - 1);
->                 while (order-- > 0)
->                         free_the_page(page + (1 << order), order);
-> +       }
->
-> It doesn't need a comment, it's obvious what you're doing.
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-All suggestions seem fine to me. I'll adjust the next version accordingly.
-Thanks for reviewing and the feedback!
+This is the third version of the series that enables block size > page size
+(Large Block Size) in XFS. The context and motivation can be seen in cover
+letter of the RFC v1[1]. We also recorded a talk about this effort at LPC [3],
+if someone would like more context on this effort.
 
->
+A lot of emphasis has been put on testing using kdevops. The testing has
+been split into regression and progression.
+
+Regression testing:
+In regression testing, we ran the whole test suite to check for
+*regression on existing profiles due to the page cache changes.
+
+No regression was found with the patches added on top.
+
+*Baseline for regression was created using SOAK_DURATION of 2.5 hours
+and having used about 7-8 XFS test clusters to test loop fstests over
+70 times. We then scraped for critical failures (crashes, XFS or page
+cache asserts, or hung tasks) and have reported these to the community
+as well.[4]
+
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.
+To compare it with existing support, an ARM VM with 64k base page system
+(without our patches) was used as a reference to check for actual failures
+due to LBS support in a 4k base page size system.
+
+There are some common failures upstream for bs=64k that needs to be
+fixed[5].
+There are also some tests that assumes block size < page size that needs to
+be fixed. I have a tree with fixes for xfstests here [6], which I will be
+sending soon to the list.
+
+No new failures were found with the LBS support.
+
+We've done some preliminary performance tests with fio on XFS on 4k block
+size against pmem and NVMe with buffered IO and Direct IO on vanilla
+v6.8-rc4 Vs v6.8-rc4 + these patches applied, and detected no regressions.
+
+We also wrote an eBPF tool called blkalgn [7] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
+
+Git tree:
+https://github.com/linux-kdevops/linux/tree/large-block-minorder-6.8
+
+[1] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[2] https://lore.kernel.org/linux-xfs/20240213093713.1753368-1-kernel@pankajraghav.com/
+[3] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[4] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[5] https://lore.kernel.org/linux-xfs/fe7fec1c-3b08-430f-9c95-ea76b237acf4@samsung.com/
+[6] https://github.com/Panky-codes/xfstests/tree/lbs-fixes
+[7] https://github.com/iovisor/bcc/pull/4813
+
+Changes since v2:
+- Simplified the filemap and readahead changes. (Thanks willy)
+- Removed DEFINE_READAHEAD_ALIGN.
+- Added minorder support to readahead_expand().
+
+Changes since v1:
+- Round up to nearest min nr pages in ra_init
+- Calculate index in filemap_create instead of doing in
+  filemap_get_pages
+- Remove unnecessary BUG_ONs in the delete path
+- Use check_shl_overflow instead of check_mul_overflow
+- Cast to uint32_t instead of unsigned long in xfs_stat_blksize
+
+Changes since RFC v2:
+- Move order 1 patch above the 1st patch
+- Remove order == 1 conditional in `fs: Allow fine-grained control of
+folio sizes`. This fixed generic/630 that was reported in the previous version.
+- Hide the max order and expose `mapping_set_folio_min_order` instead.
+- Add new helper mapping_start_index_align and DEFINE_READAHEAD_ALIGN
+- don't call `page_cache_ra_order` with min order in do_mmap_sync_readahead
+- simplify ondemand readahead with only aligning the start index at the end
+- Don't cap ra_pages based on bdi->io_pages
+- use `checked_mul_overflow` while calculating bytes in validate_fsb
+- Remove config lbs option
+- Add a warning while mounting a LBS kernel
+- Add Acked-by and Reviewed-by from Hannes and Darrick.
+
+Changes since RFC v1:
+- Added willy's patch to enable order-1 folios.
+- Unified common page cache effort from Hannes LBS work.
+- Added a new helper min_nrpages and added CONFIG_THP for enabling mapping_large_folio_support
+- Don't split a folio if it has minorder set. Remove the old code where we set extra pins if it has that requirement.
+- Split the code in XFS between the validation of mapping count. Put the icache code changes with enabling bs > ps.
+- Added CONFIG_XFS_LBS option
+- align the index in do_read_cache_folio()
+- Removed truncate changes
+- Fixed generic/091 with iomap changes to iomap_dio_zero function.
+- Took care of folio truncation scenario in page_cache_ra_unbounded() that happens after read_pages if a folio was found.
+- Sqaushed and moved commits around
+- Rebased on top of v6.8-rc4
+
+Hannes Reinecke (1):
+  readahead: rework loop in page_cache_ra_unbounded()
+
+Luis Chamberlain (2):
+  filemap: allocate mapping_min_order folios in the page cache
+  readahead: round up file_ra_state->ra_pages to mapping_min_nrpages
+
+Matthew Wilcox (Oracle) (2):
+  mm: Support order-1 folios in the page cache
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (6):
+  readahead: allocate folios with mapping_min_order in readahead
+  mm: do not split a folio if it has minimum folio order requirement
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/iomap/direct-io.c       |  13 ++++-
+ fs/xfs/libxfs/xfs_ialloc.c |   5 ++
+ fs/xfs/libxfs/xfs_shared.h |   3 ++
+ fs/xfs/xfs_icache.c        |   6 ++-
+ fs/xfs/xfs_iops.c          |   2 +-
+ fs/xfs/xfs_mount.c         |  10 +++-
+ fs/xfs/xfs_super.c         |  10 +---
+ include/linux/huge_mm.h    |   7 ++-
+ include/linux/pagemap.h    | 100 ++++++++++++++++++++++++++++--------
+ mm/filemap.c               |  26 ++++++----
+ mm/huge_memory.c           |  36 +++++++++++--
+ mm/internal.h              |   4 +-
+ mm/readahead.c             | 101 +++++++++++++++++++++++++++++--------
+ 13 files changed, 247 insertions(+), 76 deletions(-)
+
+
+base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
+-- 
+2.43.0
+
 
