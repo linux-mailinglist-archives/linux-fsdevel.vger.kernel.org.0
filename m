@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-14294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6157987A98A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 15:35:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0CD87A9B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 15:43:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84C941C208A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 14:35:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE297B2348A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 14:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD424A11;
-	Wed, 13 Mar 2024 14:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0987941744;
+	Wed, 13 Mar 2024 14:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ebqOZkqA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="orfYLnID";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YR/kwdkQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oK4wgZO5"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Nmf6Xm61";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K5ptLFKk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Nmf6Xm61";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K5ptLFKk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B4517C8;
-	Wed, 13 Mar 2024 14:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98914A07;
+	Wed, 13 Mar 2024 14:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710340514; cv=none; b=oINsbf0kwrqo0k6484JkRIZC+6Aym91t2KtRTqFNU0/oD/KmzTQGF6JZP+ZhSGQoWtjksowP5ea1g4flCkB53L4haj9B3LP/B4sdrP0pJwhSX5EKCzH2buccZd0LN7LUYFWYct09CCSqxNw9jf9S4mzWJDcm5zbXUi4ULf9z/QQ=
+	t=1710341012; cv=none; b=QBxoTDcuGJaUcekVQNqB0n0HzV2f/B9beE0lHAZX835I+avFjesQg1GSyIVdsXnill3pZt/jTdOmzp8sOWBu9kegYJ+a93eS1HowE8qjf7Zq5YBV01i+koKGv+IGPDIE3g6o4X0ahnlPYsrgL9AWxT4OnTRy4OWFs7h33P6PVFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710340514; c=relaxed/simple;
-	bh=7Ggb48mfmQd0gjOutcISKertiP5xCb7jo8IBrz/yYb4=;
+	s=arc-20240116; t=1710341012; c=relaxed/simple;
+	bh=kXgYc6OgRfqOOlSMEkHcIMjENoa2xrghhi5222Y1ADk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ELaSWbQXY/6gTGHr5gueBuWiOJXFHtM7SQ15p9n0R03j5gPkO/WpyqDvZ/IiQYzfScWbhKmx3WThXnrOJq8usqkjpHGCL10kRviAqzTPwFM5CGVULBFKRhg6vYJlRQeAsWWMBZDP9ugUGN6rioZuUILyECno8NI8GItTA8O6gA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ebqOZkqA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=orfYLnID; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YR/kwdkQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oK4wgZO5; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=HjjymBDsRXTrqRlaQPDget7KuR5FgQ5O7S8FsoAyoboLMzAN+aW/ONREdH3qFGoD15oE2PcnVMTs4tWUv5tYhLpMmon+5XhTXAcmpIvO2QpfcCUKR25ERlLNRRHmk9v73L0YP+WBmbj6HjPKVKy1NMXPOOf9USXiu8jXzSVLigE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Nmf6Xm61; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K5ptLFKk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Nmf6Xm61; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K5ptLFKk; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DBFE521C8A;
-	Wed, 13 Mar 2024 14:35:08 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B80CA21C91;
+	Wed, 13 Mar 2024 14:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710340509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1710341008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2RSlYwqGCgMw8Oen4eBYJ9RLkQu5lewBFTm9qigzA78=;
-	b=ebqOZkqAlbIlDLeZr4Wx03fKNo+nawtibfpLCg6+Q4I7xn3k08nxpk38v/9P/pN6HBlVLE
-	3oN18aptixVZ5j+P5h72hzEUzaXWZ656RUhLV1KaVn/ULJrY+obEL6+u6Z0V2ret8kxkwt
-	VHQD3v2is9dCEKZ3js1jUs5GFFcZTkw=
+	bh=O3ouuLw+tQrb8/EbRY+xlkqcLCuq786lUp+bYp4r2zU=;
+	b=Nmf6Xm61+zxcWS+I5r9U+P3gPHU2vCbG7ufrhgetyuVBRCFoAAp+EoXhy5xUB5Tmutzepl
+	7YmX4PfY5TaUAkjwOQpz9y+4LHQEPr3MY6QlMMsIFpMnXXofcmRb61UVwIlpEK3LPlPdr8
+	EojUYmzwXu4oWcfNFWwBYddlMSbm8uY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710340509;
+	s=susede2_ed25519; t=1710341008;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2RSlYwqGCgMw8Oen4eBYJ9RLkQu5lewBFTm9qigzA78=;
-	b=orfYLnIDxWPQOxAfsZDtFE7rUGJ7oQQsqo0/Mtoyh5mM9gWh6I8HNu8RMZE5fyxkhzYb7o
-	+afMySU81XMXiDCA==
+	bh=O3ouuLw+tQrb8/EbRY+xlkqcLCuq786lUp+bYp4r2zU=;
+	b=K5ptLFKkA01m4S7ajiM2r/a218s+QmeM+PIHTAAq79pyoH1Wrn2NfXTQLwjdD9JNIp1I+B
+	vI5NUhUMygRO1rDw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710340508; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1710341008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2RSlYwqGCgMw8Oen4eBYJ9RLkQu5lewBFTm9qigzA78=;
-	b=YR/kwdkQ7oo6g7nxLjQEGunx8N1zRLdauP7333MQMKOmV37zmdpkCuHXpEOFHPrfAZFfGZ
-	X549edAXo2lu//nDJxpSA2Qvk5PQ3E2f5gkbvL0/6Fyudo9p+tRUWFD7Ec0mUZvV7263xF
-	b/I66AohdibWQLMZ4PTajURL7FkKLT8=
+	bh=O3ouuLw+tQrb8/EbRY+xlkqcLCuq786lUp+bYp4r2zU=;
+	b=Nmf6Xm61+zxcWS+I5r9U+P3gPHU2vCbG7ufrhgetyuVBRCFoAAp+EoXhy5xUB5Tmutzepl
+	7YmX4PfY5TaUAkjwOQpz9y+4LHQEPr3MY6QlMMsIFpMnXXofcmRb61UVwIlpEK3LPlPdr8
+	EojUYmzwXu4oWcfNFWwBYddlMSbm8uY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710340508;
+	s=susede2_ed25519; t=1710341008;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2RSlYwqGCgMw8Oen4eBYJ9RLkQu5lewBFTm9qigzA78=;
-	b=oK4wgZO5wOrJ1EG1VHXjpbFCBihJFze1f72GbydqVyebG0uzplJ2FIO5uCcOLhU42giqBe
-	aQInfrj0PvfH4GCg==
+	bh=O3ouuLw+tQrb8/EbRY+xlkqcLCuq786lUp+bYp4r2zU=;
+	b=K5ptLFKkA01m4S7ajiM2r/a218s+QmeM+PIHTAAq79pyoH1Wrn2NfXTQLwjdD9JNIp1I+B
+	vI5NUhUMygRO1rDw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8145F13977;
-	Wed, 13 Mar 2024 14:35:08 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73FB413977;
+	Wed, 13 Mar 2024 14:43:28 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([10.150.64.162])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WfP0Hpy58WX6YwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 13 Mar 2024 14:35:08 +0000
-Message-ID: <ef836dd3-0b65-485e-84a2-dd5cb9ecdff1@suse.cz>
-Date: Wed, 13 Mar 2024 15:35:53 +0100
+	id IMkYHJC78WXjZgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 13 Mar 2024 14:43:28 +0000
+Message-ID: <76c84f17-8b99-4f68-a6ac-a0db22f5ace3@suse.cz>
+Date: Wed, 13 Mar 2024 15:44:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,8 +95,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 15/37] lib: introduce early boot parameter to avoid
- page_ext memory overhead
+Subject: Re: [PATCH v5 20/37] mm: fix non-compound multi-order memory
+ accounting in __free_pages
 Content-Language: en-US
 To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, mhocko@suse.com, hannes@cmpxchg.org,
@@ -125,62 +125,61 @@ Cc: kent.overstreet@linux.dev, mhocko@suse.com, hannes@cmpxchg.org,
  linux-mm@kvack.org, linux-modules@vger.kernel.org,
  kasan-dev@googlegroups.com, cgroups@vger.kernel.org
 References: <20240306182440.2003814-1-surenb@google.com>
- <20240306182440.2003814-16-surenb@google.com>
+ <20240306182440.2003814-21-surenb@google.com>
 From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20240306182440.2003814-16-surenb@google.com>
+In-Reply-To: <20240306182440.2003814-21-surenb@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Level: 
+X-Spamd-Bar: /
 Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [-1.59 / 50.00];
-	 ARC_NA(0.00)[];
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Nmf6Xm61;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=K5ptLFKk
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.03 / 50.00];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 XM_UA_NO_VERSION(0.01)[];
-	 FROM_HAS_DN(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	 TO_DN_SOME(0.00)[];
-	 URIBL_BLOCKED(0.00)[suse.cz:email];
-	 MID_RHS_MATCH_FROM(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 BAYES_HAM(-3.00)[100.00%];
 	 RCVD_COUNT_THREE(0.00)[3];
-	 TO_MATCH_ENVRCPT_SOME(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
 	 RCPT_COUNT_GT_50(0.00)[75];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 NEURAL_HAM_SHORT(-0.20)[-0.999];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-0.03)[56.09%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
 	 FREEMAIL_CC(0.00)[linux.dev,suse.com,cmpxchg.org,suse.de,stgolabs.net,infradead.org,oracle.com,i-love.sakura.ne.jp,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,nvidia.com,soleen.com,google.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
 	 RCVD_TLS_ALL(0.00)[];
 	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Score: -1.59
+X-Spam-Score: -0.03
+X-Rspamd-Queue-Id: B80CA21C91
 X-Spam-Flag: NO
 
+
+
 On 3/6/24 19:24, Suren Baghdasaryan wrote:
-> The highest memory overhead from memory allocation profiling comes from
-> page_ext objects. This overhead exists even if the feature is disabled
-> but compiled-in. To avoid it, introduce an early boot parameter that
-> prevents page_ext object creation. The new boot parameter is a tri-state
-> with possible values of 0|1|never. When it is set to "never" the
-> memory allocation profiling support is disabled, and overhead is minimized
-> (currently no page_ext objects are allocated, in the future more overhead
-> might be eliminated). As a result we also lose ability to enable memory
-> allocation profiling at runtime (because there is no space to store
-> alloctag references). Runtime sysctrl becomes read-only if the early boot
-> parameter was set to "never". Note that the default value of this boot
-> parameter depends on the CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT
-> configuration. When CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=n
-> the boot parameter is set to "never", therefore eliminating any overhead.
-> CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y results in boot parameter
-> being set to 1 (enabled). This allows distributions to avoid any overhead
-> by setting CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=n config and
-> with no changes to the kernel command line.
-> We reuse sysctl.vm.mem_profiling boot parameter name in order to avoid
-> introducing yet another control. This change turns it into a tri-state
-> early boot parameter.
+> When a non-compound multi-order page is freed, it is possible that a
+> speculative reference keeps the page pinned. In this case we free all
+> pages except for the first page, which will be freed later by the last
+> put_page(). However put_page() ignores the order of the page being freed,
+> treating it as a 0-order page. This creates a memory accounting imbalance
+> because the pages freed in __free_pages() do not have their own alloc_tag
+> and their memory was accounted to the first page. To fix this the first
+> page should adjust its allocation size counter when "tail" pages are freed.
 > 
+> Reported-by: Vlastimil Babka <vbabka@suse.cz>
 > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
