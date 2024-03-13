@@ -1,100 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-14355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E0487B263
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 20:58:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D482987B283
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 21:05:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D752B23ED8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:41:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042331C25A33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 20:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC0C4776A;
-	Wed, 13 Mar 2024 19:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317804D117;
+	Wed, 13 Mar 2024 20:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="akogPoff"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dmqc3m2h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BD733CE
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 19:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865B34776A;
+	Wed, 13 Mar 2024 20:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710358856; cv=none; b=P9SD5hNbQiVZutmotzv57Z0Sb/DglAYDK65ti8Wl6bLKepmz257nHAIqOICz4s+cmtBo6EXCLSaM3aA7aBydv0XPTLGQUAYSbP5QRoddJ9mXIJ5f6LZ+LNZ7899kuuju4aBoNDI3jujwR0uWMALMpsMYVYzTsvsazvzo6pBozQk=
+	t=1710360344; cv=none; b=u3x3FLiqRaNFmevNAluDq403TB5Z34cBkMH5ykJOPFiKbNVfk5Xc8ElqWBJ/qMyIQNyg57/itI0C5DfQ3+t6Aawd/VdWLv8pvvWFnCCFXkld+ushvXkSgZmMyH+3/b2qnUKpMiVlOaYfLDLaLGcTD9oJdVVodsGzmkJFHCQoTdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710358856; c=relaxed/simple;
-	bh=SyWLx/CLZ2dnkUztoF3Wet7Am+S0TMDdR5smm1pPw18=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r1N419ndy+1AGSW8hN3xsqEjRiVWsFvY3OXXFhXkEnVZFjA4nTq8AE1hsjGINE/kg1LoTkl6I5gV92xfyFrMueZ5OiTzfO+FtngvSpQcFNIi7Z1ANiVp0BYE1ZwSbHDuyrEnAVPWYeAsKepgde8a9kxA92px3IrIIY8mqewqGcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=akogPoff; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2d24a727f78so2307391fa.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 12:40:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1710358853; x=1710963653; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1Z+s/JMA2O1SWekv2eraMQ5ST+sYQkftPbTsPkksvk=;
-        b=akogPoffVqL+sikb5uUE4RQYyrPymud1Rwc7XP2ZT6lWAMagSNtGMo6iSycJwovjPT
-         IlzLUmIKSLyoHquno/LxnGHTFsoN85e/ySDwOYFMR3ZUSaE0dXnFcEEnqbGshDZJmcc+
-         ZkvR5pRxjmGrazYsXsmdVvHwkF25Fd0dttSjU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710358853; x=1710963653;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z1Z+s/JMA2O1SWekv2eraMQ5ST+sYQkftPbTsPkksvk=;
-        b=gau0UfB9AHWLBd3lLIzyBQu1deSip0Pd8IgU9Q4zYCKopM8FpjyERMKfne2PsOxcEN
-         J4jpOF6X35TWCmJ+ojeiZDut+WfU3NMtBvG0ccXMQhI6vr0oP4IIQYTpo1nbHA75tvVg
-         MrYQ9VCkQNAAwPbz3qrzZtPFlE37pXRes4ZNiPQpyMe+cnhQ91ki5FCPajtK/q9j+K8z
-         cuOuKJABGyGRoe3K/s90ODXzFkSvQExUaZvL8Bc0/QlpxEJjBwxj1e7ZK454S3PoCWZA
-         mP7kQDjXck7A1ehOLCsSRkXmEUotYHfODbi8CzM36jOYeaVNIMPV8Duz5ksjYakYpDay
-         Hpxw==
-X-Gm-Message-State: AOJu0YywbTF3+BBgUbq5GwYkRCf43mNanfq56iBrqyljm3prjF2LEiEV
-	kEVGLk73Y9Qy3vmbSks37+Kvnyk3YWQk1uOlG4WjtBafgEFhLT0//zOdOQN042jFqsQXQA6/+zR
-	X230ATw==
-X-Google-Smtp-Source: AGHT+IHMvZtXhwxJ+wxv2aeKogZRJqs79vVA3M7nOwBhE55XW3nCp93N1zmXLzIYnPYSue12t2Cq3A==
-X-Received: by 2002:a2e:9e10:0:b0:2d2:f5fa:f37e with SMTP id e16-20020a2e9e10000000b002d2f5faf37emr5053549ljk.51.1710358852822;
-        Wed, 13 Mar 2024 12:40:52 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id t33-20020a056402242100b00567c34d8a82sm5226896eda.85.2024.03.13.12.40.52
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Mar 2024 12:40:52 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-563c403719cso221886a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 12:40:52 -0700 (PDT)
-X-Received: by 2002:a17:907:160c:b0:a46:4548:aba6 with SMTP id
- cw12-20020a170907160c00b00a464548aba6mr5254063ejd.56.1710358851872; Wed, 13
- Mar 2024 12:40:51 -0700 (PDT)
+	s=arc-20240116; t=1710360344; c=relaxed/simple;
+	bh=FyZZ4q+d+Q1ohXVYZHtiX6vCSNssRAwVN8MMwSYtAvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dA3AncMIo6Wqd/CWgM3IxMI1x9LdwrA9LP+9+/pODuCPJh2Ah1SFH0W0vNqdY776EERU1jr0kF4pnyRUzDgbmkWyLnBn32nwSOuk/VQLFFTiVdCCG+mRi4lxrbsTQ3do/Q2/EDhQTQwAeIYwVhFvYevxhA6o4Z8JrgeY5qGNFLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dmqc3m2h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1343C433F1;
+	Wed, 13 Mar 2024 20:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710360344;
+	bh=FyZZ4q+d+Q1ohXVYZHtiX6vCSNssRAwVN8MMwSYtAvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dmqc3m2h0ZSod5dbmSaMMW9lUekMjVEuDZnqCPkoPVQu407cPhOyHPQvLgDwA2+Zu
+	 RypAILSwkkwl7YWr5uYHynGdcGs/Wu7Bw2LFPxyeP2/pxOJDdygkVcUpP6TIGR2/nf
+	 OEOcjsT0YIvGza/iKQtNpuU7WlKrb2WvyqI3Fc++7xuEWe09YNS5bpJjh2lSXSpgkD
+	 PoTB7G4jDpATaB9K0e4CtKjFpVIM1N0lRjoKdu6PreD3lIfWAJvtoXM1hDu+2iofXJ
+	 DCQLYGHk23+JbbawXba2/xMyudwuYjHeMdB9Z0Z//rypsp8WU/t1YUpfz336RkA3Hi
+	 zwc9lMGuJAFEA==
+Date: Wed, 13 Mar 2024 13:05:43 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+	david@fromorbit.com, tytso@mit.edu, jack@suse.cz,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yi.zhang@huawei.com
+Subject: Re: [PATCH 2/4] xfs: convert delayed extents to unwritten when
+ zeroing post eof blocks
+Message-ID: <20240313200543.GO1927156@frogsfrogsfrogs>
+References: <20240311122255.2637311-1-yi.zhang@huaweicloud.com>
+ <20240311122255.2637311-3-yi.zhang@huaweicloud.com>
+ <20240311153737.GT1927156@frogsfrogsfrogs>
+ <aab454d0-d8f3-61c8-0d14-a5ae4c35746e@huaweicloud.com>
+ <20240312162150.GB1927156@frogsfrogsfrogs>
+ <e29aa6df-5307-5c95-6471-fbaf3452d76f@huaweicloud.com>
+ <cde25a6b-b468-33be-d82f-0172b840b064@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240308-vfs-pidfd-b106369f5406@brauner> <CAHk-=wigcyOxVQuQrmk2Rgn_-B=1+oQhCnTTjynQs0CdYekEYg@mail.gmail.com>
- <20240312-dingo-sehnlich-b3ecc35c6de7@brauner> <CAHk-=wgsjaakq1FFOXEKAdZKrkTgGafW9BedmWMP2NNka4bU-w@mail.gmail.com>
- <20240312-pflug-sandalen-0675311c1ec5@brauner> <CAHk-=wjLkkGS=50D6hjCdGJjkTbNj73++CrRXDrw=o_on4RPAg@mail.gmail.com>
- <20240313-matschen-mutieren-283c6e07694b@brauner>
-In-Reply-To: <20240313-matschen-mutieren-283c6e07694b@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 13 Mar 2024 12:40:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whpQicLYSZwUw8gp8iW+QZQM8i4UJa1=O4Ww_D0aVBQtw@mail.gmail.com>
-Message-ID: <CAHk-=whpQicLYSZwUw8gp8iW+QZQM8i4UJa1=O4Ww_D0aVBQtw@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs pidfd
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cde25a6b-b468-33be-d82f-0172b840b064@huaweicloud.com>
 
-On Wed, 13 Mar 2024 at 10:10, Christian Brauner <brauner@kernel.org> wrote:
->
-> If you're fine with it I would ask you to please just apply it [..]
+On Wed, Mar 13, 2024 at 09:25:49PM +0800, Zhang Yi wrote:
+> On 2024/3/13 15:07, Zhang Yi wrote:
+> > On 2024/3/13 0:21, Darrick J. Wong wrote:
+> >> On Tue, Mar 12, 2024 at 08:31:58PM +0800, Zhang Yi wrote:
+> >>> On 2024/3/11 23:37, Darrick J. Wong wrote:
+> >>>> On Mon, Mar 11, 2024 at 08:22:53PM +0800, Zhang Yi wrote:
+> >>>>> From: Zhang Yi <yi.zhang@huawei.com>
+> >>>>>
+> >>>>> Current clone operation could be non-atomic if the destination of a file
+> >>>>> is beyond EOF, user could get a file with corrupted (zeroed) data on
+> >>>>> crash.
+> >>>>>
+> >>>>> The problem is about to pre-alloctions. If you write some data into a
+> >>>>> file [A, B) (the position letters are increased one by one), and xfs
+> >>>>> could pre-allocate some blocks, then we get a delayed extent [A, D).
+> >>>>> Then the writeback path allocate blocks and convert this delayed extent
+> >>>>> [A, C) since lack of enough contiguous physical blocks, so the extent
+> >>>>> [C, D) is still delayed. After that, both the in-memory and the on-disk
+> >>>>> file size are B. If we clone file range into [E, F) from another file,
+> >>>>> xfs_reflink_zero_posteof() would call iomap_zero_range() to zero out the
+> >>>>> range [B, E) beyond EOF and flush range. Since [C, D) is still a delayed
+> >>>>> extent, it will be zeroed and the file's in-memory && on-disk size will
+> >>>>> be updated to D after flushing and before doing the clone operation.
+> >>>>> This is wrong, because user can user can see the size change and read
+> >>>>> zeros in the middle of the clone operation.
+> >>>>>
+> >>>>> We need to keep the in-memory and on-disk size before the clone
+> >>>>> operation starts, so instead of writing zeroes through the page cache
+> >>>>> for delayed ranges beyond EOF, we convert these ranges to unwritten and
+> >>>>> invalidating any cached data over that range beyond EOF.
+> >>>>>
+> >>>>> Suggested-by: Dave Chinner <david@fromorbit.com>
+> >>>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> >>>>> ---
+> >>>>>  fs/xfs/xfs_iomap.c | 29 +++++++++++++++++++++++++++++
+> >>>>>  1 file changed, 29 insertions(+)
+> >>>>>
+> >>>>> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> >>>>> index ccf83e72d8ca..2b2aace25355 100644
+> >>>>> --- a/fs/xfs/xfs_iomap.c
+> >>>>> +++ b/fs/xfs/xfs_iomap.c
+> >>>>> @@ -957,6 +957,7 @@ xfs_buffered_write_iomap_begin(
+> >>>>>  	struct xfs_mount	*mp = ip->i_mount;
+> >>>>>  	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
+> >>>>>  	xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, count);
+> >>>>> +	xfs_fileoff_t		eof_fsb = XFS_B_TO_FSBT(mp, XFS_ISIZE(ip));
+> >>>>>  	struct xfs_bmbt_irec	imap, cmap;
+> >>>>>  	struct xfs_iext_cursor	icur, ccur;
+> >>>>>  	xfs_fsblock_t		prealloc_blocks = 0;
+> >>>>> @@ -1035,6 +1036,22 @@ xfs_buffered_write_iomap_begin(
+> >>>>>  	}
+> >>>>>  
+> >>>>>  	if (imap.br_startoff <= offset_fsb) {
+> >>>>> +		/*
+> >>>>> +		 * For zeroing out delayed allocation extent, we trim it if
+> >>>>> +		 * it's partial beyonds EOF block, or convert it to unwritten
+> >>>>> +		 * extent if it's all beyonds EOF block.
+> >>>>> +		 */
+> >>>>> +		if ((flags & IOMAP_ZERO) &&
+> >>>>> +		    isnullstartblock(imap.br_startblock)) {
+> >>>>> +			if (offset_fsb > eof_fsb)
+> >>>>> +				goto convert_delay;
+> >>>>> +			if (end_fsb > eof_fsb) {
+> >>>>> +				end_fsb = eof_fsb + 1;
+> >>>>> +				xfs_trim_extent(&imap, offset_fsb,
+> >>>>> +						end_fsb - offset_fsb);
+> >>>>> +			}
+> >>>>> +		}
+> >>>>> +
+> >>>>>  		/*
+> >>>>>  		 * For reflink files we may need a delalloc reservation when
+> >>>>>  		 * overwriting shared extents.   This includes zeroing of
+> >>>>> @@ -1158,6 +1175,18 @@ xfs_buffered_write_iomap_begin(
+> >>>>>  	xfs_iunlock(ip, lockmode);
+> >>>>>  	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0, seq);
+> >>>>>  
+> >>>>> +convert_delay:
+> >>>>> +	end_fsb = min(end_fsb, imap.br_startoff + imap.br_blockcount);
+> >>>>> +	xfs_iunlock(ip, lockmode);
+> >>>>> +	truncate_pagecache_range(inode, offset, XFS_FSB_TO_B(mp, end_fsb));
+> >>>>> +	error = xfs_iomap_write_direct(ip, offset_fsb, end_fsb - offset_fsb,
+> >>>>> +				       flags, &imap, &seq);
+> >>>>
+> >>>> I expected this to be a direct call to xfs_bmapi_convert_delalloc.
+> >>>> What was the reason not for using that?
+> >>>>
+> >>>
+> >>> It's because xfs_bmapi_convert_delalloc() isn't guarantee to convert
+> >>> enough blocks once a time, it may convert insufficient blocks since lack
+> >>> of enough contiguous free physical blocks. If we are going to use it, I
+> >>> suppose we need to introduce a new helper something like
+> >>> xfs_convert_blocks(), add a loop to do the conversion.
+> >>
+> >> I thought xfs_bmapi_convert_delalloc passes out (via @iomap) the extent
+> >> that xfs_bmapi_allocate (or anyone else) allocated (bma.got).  If that
+> >> mapping is shorter, won't xfs_buffered_write_iomap_begin pass the
+> >> shortened mapping out to the iomap machinery?  In which case that
+> >> iomap_iter loop will call ->iomap_begin on the unfinished delalloc
+> >> conversion work?
+> > 
+> > Yeah, make sense, it works, I forgot this loop in iomap_iter().
+> 
+> Sorry, I've found that it doesn't always work. Think about a special case,
+> If we have a file below:
+> 
+> 	A          B           C                    D
+> 	+wwwwwwwwww+DDDDDDDDDDD+dddddddddddddddddddd+
+> 	          EOF         EOF
+>                (on disk)  (in memory)
+> 
+> where 'd' is a delalloc block with no data and 'D' is a delalloc
+> block with dirty folios over it.
+> 
+> xfs_bmapi_convert_delalloc() might only convert some blocks from B to B',
+> 
+> 	A          B   B'       C                    D
+> 	+wwwwwwwwww+UUU+DDDDDDD+dddddddddddddddddddd+
+> 	          EOF         EOF
+>                (on disk)  (in memory)
+> 
+> After that, it will trigger below warning in iomap_iter_done():
+> 
+>  WARN_ON_ONCE(iter->iomap.offset + iter->iomap.length <= iter->pos);
+> 
+> So I guess the loop is still needed, I plane to revise and use
+> xfs_convert_blocks() here.
 
-I'll take it directly, no problem.
+Ah, sounds good to me.  Though, I wouldn't work too hard to hammer that
+writeback helper into a write helper.
 
-Thanks,
-             Linus
+--D
+
+> Yi.
+> 
+> 
 
