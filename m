@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-14306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C743487AF1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:17:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6EF87AF20
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:17:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F412E1C2433F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:17:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF50DB21B72
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8215F199191;
-	Wed, 13 Mar 2024 17:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A766A199885;
+	Wed, 13 Mar 2024 17:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="xM9JIwoX"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="L+OtKexa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1CF60898;
-	Wed, 13 Mar 2024 17:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861941991AA;
+	Wed, 13 Mar 2024 17:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710349409; cv=none; b=OkZ5t/FYPs2MQVKmaWdfHYLmcLGbTU7BODGYkBRuwXpIIFKHrvmrAL9HeR4ZHpybp7Z00TysvXvpsvI30ub34AkqJEsa/HkWrHkeXNdlC9xh9dQ1mqtwOFJJYJkO6xfbPA0y4eMO4R3djybPO57pdxTNbULN5ryVe5YiDI85WAA=
+	t=1710349412; cv=none; b=jZNQbjyKO6pRF57moZfmtko1tfFf/oETjMlksY5irOEsLu+bxr5fNtkTpfEC/are046OKlC7ABBdore2PQ1gNXjJjtC//ZJK9dKl6K6Y5fMnKC7HALkOOw46aVcUOO6THYT8k0Y0P9EfMYEUW6rp+WJaNyXHQQm3zJTs4sc3UAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710349409; c=relaxed/simple;
-	bh=N90HyHZVwwldCpPQycLW/AGlmNXwgHSjmbrwJecuTXA=;
+	s=arc-20240116; t=1710349412; c=relaxed/simple;
+	bh=RpGDv7xjt1Tn0NAFmnUJ4dRChi0PW0zUu2AGhx/ey2I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eZagKc4MvAh1DEFFOpCil3XzJq3d16ipzaGYbMbU4fRr8L7bgPf38+R+jlTLmf1Daoq8OvwvrEl3CDlPxXuHt4pkY4yk/QWwpdDEdQ6W3czXODbqdn+Mwc2hQDJjSHqpILAFRkrccs7YRS5gLg3UAshdZQIzzXj3AzaIcvRvbVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=xM9JIwoX; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=CzhHdJsNnl8c/nZ/MsTh7N7lX/K6Ndgf37fELRahci5woO2FL0VrRgRaKpCDAWaUFuo3V6G5UKaQHU8NCi7EwuiNDh3ECyfCsmrA54rQrNAFavMDuzhgCa7/CQxPHrl9bk0W4r4qA3sTCEaBXEZuelQX7JG3UHRcWPqSWCgt0fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=L+OtKexa; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Tvxfh15bQz9sZ1;
-	Wed, 13 Mar 2024 18:03:24 +0100 (CET)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Tvxfl1Ftrz9sqV;
+	Wed, 13 Mar 2024 18:03:27 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1710349404;
+	s=MBO0001; t=1710349407;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vHEsUd+FYkmqqyGjADf/C4ejcwO7DnLkDR82am0hB3M=;
-	b=xM9JIwoX5gfosfCIgrMHHI0lYvtdu6ZSdRS8udaibXJzPgqBiMrW7zluqYyjXMsntx79E6
-	2K2JqTPoFCW5ixCWR9tlqqjH1qKCyzUev3xHpZruPqOQHYPcZEKOxg8/ybdc4NAgczGzS4
-	7V9rgm9sX0lxn+RJdKbJpX7veZNi8RIO2ca6Eup7OaWjYAIdQZxeGzR8cRr5aDLlx9W379
-	0xvXMgN4k4w5usidPHXUIxwyv3at5dfBb6gkrUazd+wm7mrVE5lIkK4MCEp+J3yx8VzTUS
-	r/b+/UPiq17+WJUtpABU496d59OseFcfLk7VMFEAyx72tw59+MsrrQajyD6jHQ==
+	bh=F3Xg5bE7lOUEiWrLgvJkawBGempm7FqinU/8gfujPB8=;
+	b=L+OtKexa8lscvnV+tP6Qwfgscep0OokKJI+6VWJsVSvNCdYGHpjfa+oUx+M4CnU+flHItA
+	Z7biTY7xoXAJWfjX8BUdzqizkXIbR083jNK0fC/LUb0rJ1ZBAH9+6gYFAQuNpHE9vI7/wL
+	zbWzflaswuuxg1W3On8MRJaz9vHDwPBmneBEUngNZBU/bneNO4W9RdsLF/SuGWBcq4rFBL
+	EDyHiJ9W22Go64+oMoK0yj/4z70enqNwtiC/3W/sgqAhc0pY2QxwX3uOcaTcmNTYsts4WV
+	zcm5NCF1rZ91I8S3vS/p0psodGFJnSjvTeYE+LRQIBxvVmMN5SOOT2jfF38FPw==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: willy@infradead.org,
 	linux-xfs@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc: gost.dev@samsung.com,
 	david@fromorbit.com,
 	akpm@linux-foundation.org,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v3 06/11] readahead: round up file_ra_state->ra_pages to mapping_min_nrpages
-Date: Wed, 13 Mar 2024 18:02:48 +0100
-Message-ID: <20240313170253.2324812-7-kernel@pankajraghav.com>
+Subject: [PATCH v3 07/11] mm: do not split a folio if it has minimum folio order requirement
+Date: Wed, 13 Mar 2024 18:02:49 +0100
+Message-ID: <20240313170253.2324812-8-kernel@pankajraghav.com>
 In-Reply-To: <20240313170253.2324812-1-kernel@pankajraghav.com>
 References: <20240313170253.2324812-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -75,33 +75,45 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4Tvxfl1Ftrz9sqV
 
-From: Luis Chamberlain <mcgrof@kernel.org>
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-As we will be adding multiples of mapping_min_nrpages to the page cache,
-initialize file_ra_state->ra_pages with bdi->ra_pages rounded up to the
-nearest mapping_min_nrpages.
+As we don't have a way to split a folio to a any given lower folio
+order yet, avoid splitting the folio in split_huge_page_to_list() if it
+has a minimum folio order requirement.
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 ---
- mm/readahead.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/huge_memory.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 650834c033f0..50194fddecf1 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -138,7 +138,8 @@
- void
- file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
- {
--	ra->ra_pages = inode_to_bdi(mapping->host)->ra_pages;
-+	ra->ra_pages = round_up(inode_to_bdi(mapping->host)->ra_pages,
-+				mapping_min_folio_nrpages(mapping));
- 	ra->prev_pos = -1;
- }
- EXPORT_SYMBOL_GPL(file_ra_state_init);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 81fd1ba57088..6ec3417638a1 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3030,6 +3030,19 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+ 			goto out;
+ 		}
+ 
++		/*
++		 * Do not split if mapping has minimum folio order
++		 * requirement.
++		 *
++		 * XXX: Once we have support for splitting to any lower
++		 * folio order, then it could be split based on the
++		 * min_folio_order.
++		 */
++		if (mapping_min_folio_order(mapping)) {
++			ret = -EAGAIN;
++			goto out;
++		}
++
+ 		gfp = current_gfp_context(mapping_gfp_mask(mapping) &
+ 							GFP_RECLAIM_MASK);
+ 
 -- 
 2.43.0
 
