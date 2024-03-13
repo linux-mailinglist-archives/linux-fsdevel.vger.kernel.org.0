@@ -1,126 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-14298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4F987AA03
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 16:05:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D8787AA3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 16:16:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14FBD1F2602F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 15:05:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0A891F261BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 15:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC8647A6F;
-	Wed, 13 Mar 2024 15:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D0645BF3;
+	Wed, 13 Mar 2024 15:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="DX5ukTQk"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m6b/4oU9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from box.fidei.email (box.fidei.email [71.19.144.250])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFABB4778C;
-	Wed, 13 Mar 2024 15:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F02045978;
+	Wed, 13 Mar 2024 15:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710342317; cv=none; b=d8HZDPgaH9jRNlPUMWfZIQuBmy/GofwGh/m+X66BbJFFdFnJPWwzU/CEwkMyzOu7rjB1w9fP+BuOawt4QWU6p7EIgWWkPQJz69KTO5q/Zp5wsvwGnlxjnC8KAtQjERRcVwSIn2sA6lhV1NbomUNGk8TWg+P9A5FF7ZGStmBCV+g=
+	t=1710342982; cv=none; b=R3Qpf2asUOEQmjPdO5vt50u3KGS4myL2+0KHr300Oczxc84n39DydsBwpKAKnTzZWOqiI3uVBJadqI3+b7fH3fMPa2LkjlkVcuVxcGXf1VmkAGrtMwgd70UvT0lTak1pebGbyuCxWmH5PsMraKjTSw1jLxW3hO2PwZbWkvI6/0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710342317; c=relaxed/simple;
-	bh=iMnS8ZGEFpxUyyW9drRJ6JBVm+281k0oK57TGx+F1Qg=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=nesCinalHRI6dvnSG5y5Ev/C+HYa3kYHST5mofKpN2B/mRFe+8FfIaNkxV47A6nsQaNv/GExCyKEu3gcLWoEfxPP+NNApY/xCpweTyyzlBq047MKTwapq/BqIihm8xeCeyNYQNBieeFX0//yZpqASuUOFCfA3joFKTADOK2FSPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=DX5ukTQk; arc=none smtp.client-ip=71.19.144.250
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
-Received: from authenticated-user (box.fidei.email [71.19.144.250])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by box.fidei.email (Postfix) with ESMTPSA id 94DCA8043E;
-	Wed, 13 Mar 2024 11:05:10 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
-	t=1710342310; bh=iMnS8ZGEFpxUyyW9drRJ6JBVm+281k0oK57TGx+F1Qg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DX5ukTQk6tKvpEuCn0px4VNAaAVmncdYvgwtF6zi959+eFamyAPjH8ApYehtL6R+G
-	 P+O8ALWTyCJEOMEyWx1I6mCPmKCHJtXy//MPP+yJjI968LoheXSceWhAcD9dIg5xqs
-	 AuFfTl98Nrd1TYGkFAc8qL7FuiJlRUspSW5nhn7OCTPa5f/xhypc5OjvxdIDvm+xo1
-	 zI9zbcElOIsYxmp7Qtse7+ddQ5/0TnPS8yuKAZzjNQn9BDJNAGFEW2kY2BbQY8cY9L
-	 vSFnKZfH6TZNG03QQchl5XNdqp19tq9ELnR0uPuaRla6gF/aZzNg/QmBGmFqjG5QTL
-	 rXAs3VdfR8Idg==
+	s=arc-20240116; t=1710342982; c=relaxed/simple;
+	bh=RHS+XuMEn8kL1ufzPN0FvcSTJWpvFWqnB4jbHIZirIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BkS765UUAYTcMnuP+YiXq6ZfZvihlzcxzlV3gML1VYWoPjtfh92FKMdFDCBBjkUfODMA7S3xxfM0bKOv+XO7gpcQrGqQ2WkHHIFqo2fk1unEEafj+r22uoqCWx04YmYHz9SgyU48Eph3+bw9pb1x7HeZxv4OOXhnJwpEGKoErKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m6b/4oU9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=InxoltL9Z3LnNnWLek5uQ3+ekEQtIQzIj0k2w89gXSA=; b=m6b/4oU9b3E8nRGPfFAJTwbL7J
+	bzx2OXiXiT9ReRp2PT5fKFiCmb7d6tOKEzPMhAgJtq3Wghd1DSWPRh4rHqkfXkK5oZbgditGpddNh
+	X07m4SalA4M/fEChjCHVswhGiXzXsfEWlKSPpSKHxcD+yW/yyz2FFYaUxoifweocsyGAiNCTP7XU0
+	WmcfKU2xKsRD9lobRLOsO13hgIi3xTsjKuvSPgoyPr9WnVxV3QDC877eAxNqfPT0D7Iz7dbwcc9sT
+	hN4BAVp9V24q5Dwjhy8oVN/MlAoIEWtiOcHEyfT9QZ31cn2NfWTDzgL4wTH8qcpWJbF4k1NNeKexD
+	d6lBwFXQ==;
+Received: from [50.53.2.121] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rkQL3-0000000AZWr-3Xv4;
+	Wed, 13 Mar 2024 15:16:17 +0000
+Message-ID: <544d7b9d-ef15-463f-a11c-9a3cca3a49ea@infradead.org>
+Date: Wed, 13 Mar 2024 08:16:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 13 Mar 2024 11:05:10 -0400
-From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: corbet@lwn.net, Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-doc@vger.kernel.org,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-btrfs
- <linux-btrfs@vger.kernel.org>, Chris Mason <clm@meta.com>, David Sterba
- <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
- jbacik@toxicpanda.com, kernel-team@meta.com
-Subject: Re: [PATCH 1/3] add physical_length field to fiemap extents
-In-Reply-To: <D8407E1D-F188-4115-A963-9EFBB515C45D@dilger.ca>
-References: <cover.1709918025.git.sweettea-kernel@dorminy.me>
- <0b423d44538f3827a255f1f842b57b4a768b7629.1709918025.git.sweettea-kernel@dorminy.me>
- <D8407E1D-F188-4115-A963-9EFBB515C45D@dilger.ca>
-Message-ID: <d29c6482853ded9b1c14620c0523068a@dorminy.me>
-X-Sender: sweettea-kernel@dorminy.me
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] afs: Revert "afs: Hide silly-rename files from userspace"
+To: David Howells <dhowells@redhat.com>,
+ Marc Dionne <marc.dionne@auristor.com>,
+ Markus Suvanto <markus.suvanto@gmail.com>
+Cc: Jeffrey Altman <jaltman@auristor.com>,
+ Christian Brauner <brauner@kernel.org>, linux-afs@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <3085695.1710328121@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <3085695.1710328121@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024-03-11 20:22, Andreas Dilger wrote:
-> On Mar 8, 2024, at 11:03 AM, Sweet Tea Dorminy
-> <sweettea-kernel@dorminy.me> wrote:
->> 
->> Some filesystems support compressed extents which have a larger 
->> logical
->> size than physical, and for those filesystems, it can be useful for
->> userspace to know how much space those extents actually use. For
->> instance, the compsize [1] tool for btrfs currently uses 
->> btrfs-internal,
->> root-only ioctl to find the actual disk space used by a file; it would
->> be better and more useful for this information to require fewer
->> privileges and to be usable on more filesystems. Therefore, use one of
->> the padding u64s in the fiemap extent structure to return the actual
->> physical length; and, for now, return this as equal to the logical
->> length.
+
+
+On 3/13/24 04:08, David Howells wrote:
+>     
+> This reverts commit 57e9d49c54528c49b8bffe6d99d782ea051ea534.
 > 
-> Thank you for working on this patch.  Note that there was a patch from
-> David Sterba and a lengthy discussion about exactly this functionality
-> several years ago.  If you haven't already read the details, it would 
-> be
-> useful to do so. I think the thread had mostly come to good 
-> conclusions,
-> but the patch never made it into the kernel.
+> This undoes the hiding of .__afsXXXX silly-rename files.  The problem with
+> hiding them is that rm can't then manually delete them.
 > 
-> https://patchwork.ozlabs.org/project/linux-ext4/patch/4f8d5dc5b51a43efaf16c39398c23a6276e40a30.1386778303.git.dsterba@suse.cz/
+> This also reverts commit 5f7a07646655fb4108da527565dcdc80124b14c4 ("afs: Fix
+> endless loop in directory parsing") as that's a bugfix for the above.
 > 
-> One of those conclusions was that the kernel should always fill in the
-> fe_physical_length field in the returned extent, and set a flag:
+> Fixes: 57e9d49c5452 ("afs: Hide silly-rename files from userspace")
+> Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
+> Link: https://lists.infradead.org/pipermail/linux-afs/2024-February/008102html
+
+Not Found
+
+The requested URL was not found on this server.
+
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Marc Dionne <marc.dionne@auristor.com>
+> cc: linux-afs@lists.infradead.org
+> ---
+>  fs/afs/dir.c |   10 ----------
+>  1 file changed, 10 deletions(-)
 > 
-> #define FIEMAP_EXTENT_PHYS_LENGTH      0x00000010
+> diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+> index 8a67fc427e74..67afe68972d5 100644
+> --- a/fs/afs/dir.c
+> +++ b/fs/afs/dir.c
+> @@ -474,16 +474,6 @@ static int afs_dir_iterate_block(struct afs_vnode *dvnode,
+>  			continue;
+>  		}
+>  
+> -		/* Don't expose silly rename entries to userspace. */
+> -		if (nlen > 6 &&
+> -		    dire->u.name[0] == '.' &&
+> -		    ctx->actor != afs_lookup_filldir &&
+> -		    ctx->actor != afs_lookup_one_filldir &&
+> -		    memcmp(dire->u.name, ".__afs", 6) == 0) {
+> -			ctx->pos = blkoff + next * sizeof(union afs_xdr_dirent);
+> -			continue;
+> -		}
+> -
+>  		/* found the next entry */
+>  		if (!dir_emit(ctx, dire->u.name, nlen,
+>  			      ntohl(dire->u.vnode),
 > 
-> to indicate to userspace that the physical length field is valid.
 > 
-> There should also be a separate flag for extents that are compressed:
-> 
-> #define FIEMAP_EXTENT_DATA_COMPRESSED  0x00000040
-> 
-> Rename fe_length to fe_logical_length and #define fe_length 
-> fe_logical_length
-> so that it is more clear which field is which in the data structure, 
-> but
-> does not break compatibility.
-> 
-> I think this patch gets most of this right, except the presence of the
-> flags to indicate the PHYS_LENGTH and DATA_COMPRESSED state in the 
-> extent.
-> 
-> Cheers, Andreas
-> 
-I had not seen that; thank you for the pointers, I'll add the flags in 
-v2.
+
+-- 
+#Randy
 
