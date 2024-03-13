@@ -1,263 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-14375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3259487B51F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 00:10:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083D087B522
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 00:17:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C3DDB2211F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 23:10:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7647F1F23ACB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 23:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E79A5D734;
-	Wed, 13 Mar 2024 23:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119635D737;
+	Wed, 13 Mar 2024 23:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GqWrSyHq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="i9lzNmZ8";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GqWrSyHq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="i9lzNmZ8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404D25CDE5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 23:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A4741C6A;
+	Wed, 13 Mar 2024 23:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710371436; cv=none; b=irRDAZB/53ZNlKx0p/6x1jU7riYesosg/rDIct4OSAKr/0urE5pkKhEbCT0+/4dr2cYk6JEvveKzIxJIwIfY/WAlXgsSl/1KX+UDNg3hBJFhDFY52hjB+WI8E+gUhHnGr6/nQ2l7cLbydf/apGaAvZiAsQG0j9uMl6iAmmvaMW0=
+	t=1710371825; cv=none; b=XMNZMLFV9xIEKE/zu2VH0bN/KV3LHcSrg31E8dEZwO2oc+ODFsKM9jLPFXP7Vx5bnK8o8bwAnqJxaygz+bzLpgkV/BBGZIyFkA1wfyoGA/AEUf+/810O3yNtqT0wNmvO642pkyg+hrqj4+VEhmgW8/I/UGvIgHgWIwsFMzHQzuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710371436; c=relaxed/simple;
-	bh=W0n/ndiZEUEPasg9xeSEgOi6hRBR5hFqRQ+G/92EMig=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=p3dtPWWvdc5282n9l3f7Jn161Kmqi00YXLttb71otMWQ4uJL7x7UkkuyyA8oUwVXbgvYUqfRFmtG5z8quaAtUbTCKFJlO7NzuiOBfjm+Obe8msYJmjq8xQ/yUpaLPgP6UulmPEgGiMYU6zQX9t/7W63/oh7IJgmdBnWlGTGY0nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c8af56060aso25596839f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 16:10:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710371433; x=1710976233;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WgkzGBsBAW0nNMHj1XFYGOzyoZnb9rpcdvTvIXrFMAc=;
-        b=IsL5Bdo6Sa0kkCviZEWVoKKBROiWKYYz5WcZT8MMmBv/znpzGWoSf7uFtodyg6mvq5
-         N2m1J97/86+B41AoQ+mThcbIQgdJi3X9yg+f9ouWLFXZNnFmOaaUDRaf5gWHZc2rbHhJ
-         Vx95+nPoFBMTDOkayDFsqWExKXlLfvzrrINtl8fKP9tmtPHV0YlFq84RWApqxlj3v2qW
-         0ITB+qpuf+O3Q9wiucNh8f63SXlQrjIVT43wGfhy0pIhvFmKjg8RB99bxRYIvH3+MyGS
-         zSITZ5XtehLjxbeJj/iRieyP0+dpMY2eNX8cqvRrhcx5DAO0jsoRGAHGdvzWwC5qnKLO
-         RI3w==
-X-Forwarded-Encrypted: i=1; AJvYcCW5g6GwdJmZ4w439BlCJE6rzMRvGAwHIlM0z3YCz//aFmh06F9Yz152B87PjpZL+wyhj/T9osB/PepPFe+N1F8a1Dm4Gqh86ZDlG/1WuA==
-X-Gm-Message-State: AOJu0YxGyu4KsDw+L4tXGalXBW5DIkqvpygweTGGIJsx+pi8tffBn8a7
-	fXkPkrjyrV2E8oWmzdie7VyqYeFdREkl+JSw9wvtEyfOHpMB7QXBUrL2R4VO8RLJN2fSgeZ8AJB
-	+7Puok9CmZ2HBcM44Cf074D1Y4mdpzsoyb1VX7qWGJnx+hRwiYks33Ss=
-X-Google-Smtp-Source: AGHT+IHGGDhha+hmNL9jrW2oSJRpX5yZtSTmhFony7YGDN1cRA1eg4URiWavjg+Yp4DV46+Iy53T9Ja4qUfV5wTGsaWWs7JHJLqC
+	s=arc-20240116; t=1710371825; c=relaxed/simple;
+	bh=8lzW/AQHC+tREFa+aWy43EFhJt/UIZCWdjroRaubi+I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=P2Ze8fyoAq/ek7gTAxuPBaFPQmtMN5Sjeq4ZCRWDO+viSkSqbNkzsdNjzc4aVV8ijaC554Uuiw0Q7Ljsuideoll48+T2a85lBF7kOQnS8U0Mh/ntMmKyYkbpu5nRgr+2F3w/sKOW5qb0Gc0V0/+85Ltr8RzM4Eb3i0wsE304SG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GqWrSyHq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=i9lzNmZ8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GqWrSyHq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=i9lzNmZ8; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BAF6821C8B;
+	Wed, 13 Mar 2024 23:17:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710371821; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j7RbUqbuA7M29O8XyGy5jta6BO+8xzgDHtTQ2mM79V8=;
+	b=GqWrSyHqcJY1yQWvgbV+eS7TGk3R1eowFEWk8qH++wqW1XOoog8N1CRLbQ/5syORsdTWs2
+	E3Sw0PmY8ySJuHqw2q8llZjFUnrCE1+vOZZHrnVxpz8ejlZlK1C5janPKENqbus7Frm9lT
+	HFEJEruoNqLwoAeqYWOs99xStMyqLcQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710371821;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j7RbUqbuA7M29O8XyGy5jta6BO+8xzgDHtTQ2mM79V8=;
+	b=i9lzNmZ8JB8vdNSz3LV4JUZq2HVGHzkH69nJEdM9rL25pEZfNX8gmbKBMpZ68Bw6enKDBi
+	5e0qyiWiCOXTJoBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710371821; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j7RbUqbuA7M29O8XyGy5jta6BO+8xzgDHtTQ2mM79V8=;
+	b=GqWrSyHqcJY1yQWvgbV+eS7TGk3R1eowFEWk8qH++wqW1XOoog8N1CRLbQ/5syORsdTWs2
+	E3Sw0PmY8ySJuHqw2q8llZjFUnrCE1+vOZZHrnVxpz8ejlZlK1C5janPKENqbus7Frm9lT
+	HFEJEruoNqLwoAeqYWOs99xStMyqLcQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710371821;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j7RbUqbuA7M29O8XyGy5jta6BO+8xzgDHtTQ2mM79V8=;
+	b=i9lzNmZ8JB8vdNSz3LV4JUZq2HVGHzkH69nJEdM9rL25pEZfNX8gmbKBMpZ68Bw6enKDBi
+	5e0qyiWiCOXTJoBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80CC213977;
+	Wed, 13 Mar 2024 23:17:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3BhxGe0z8mU0BQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Wed, 13 Mar 2024 23:17:01 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: tytso@mit.edu,  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
+  jaegeuk@kernel.org,  chao@kernel.org,
+  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel@collabora.com,
+  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
+ Krisman Bertazi <krisman@collabora.com>
+Subject: Re: [PATCH v13 3/9] libfs: Introduce case-insensitive string
+ comparison helper
+In-Reply-To: <20240305101608.67943-4-eugen.hristev@collabora.com> (Eugen
+	Hristev's message of "Tue, 5 Mar 2024 12:16:02 +0200")
+Organization: SUSE
+References: <20240305101608.67943-1-eugen.hristev@collabora.com>
+	<20240305101608.67943-4-eugen.hristev@collabora.com>
+Date: Wed, 13 Mar 2024 19:16:56 -0400
+Message-ID: <87il1pk9hz.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2b15:b0:476:f8c5:4e19 with SMTP id
- fm21-20020a0566382b1500b00476f8c54e19mr366jab.1.1710371433550; Wed, 13 Mar
- 2024 16:10:33 -0700 (PDT)
-Date: Wed, 13 Mar 2024 16:10:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bb26fd061392e1a9@google.com>
-Subject: [syzbot] [overlayfs?] possible deadlock in iter_file_splice_write (3)
-From: syzbot <syzbot+e525d9be15a106e48379@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 HAS_ORG_HEADER(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_TWELVE(0.00)[14];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Flag: NO
 
-Hello,
+Eugen Hristev <eugen.hristev@collabora.com> writes:
 
-syzbot found the following issue on:
+> From: Gabriel Krisman Bertazi <krisman@collabora.com>
+>
+> generic_ci_match can be used by case-insensitive filesystems to compare
+> strings under lookup with dirents in a case-insensitive way.  This
+> function is currently reimplemented by each filesystem supporting
+> casefolding, so this reduces code duplication in filesystem-specific
+> code.
+>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> [eugen.hristev@collabora.com: rework to first test the exact match]
+> Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
+> ---
+>  fs/libfs.c         | 81 ++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/fs.h |  4 +++
+>  2 files changed, 85 insertions(+)
+>
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index c297953db948..c107c24f33b9 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1776,6 +1776,87 @@ static const struct dentry_operations generic_ci_dentry_ops = {
+>  	.d_revalidate = fscrypt_d_revalidate,
+>  #endif
+>  };
+> +
+> +/**
+> + * generic_ci_match() - Match a name (case-insensitively) with a dirent.
+> + * This is a filesystem helper for comparison with directory entries.
+> + * generic_ci_d_compare should be used in VFS' ->d_compare instead.
+> + *
+> + * @parent: Inode of the parent of the dirent under comparison
+> + * @name: name under lookup.
+> + * @folded_name: Optional pre-folded name under lookup
+> + * @de_name: Dirent name.
+> + * @de_name_len: dirent name length.
+> + *
+> + * Test whether a case-insensitive directory entry matches the filename
+> + * being searched.  If @folded_name is provided, it is used instead of
+> + * recalculating the casefold of @name.
+> + *
+> + * Return: > 0 if the directory entry matches, 0 if it doesn't match, or
+> + * < 0 on error.
+> + */
+> +int generic_ci_match(const struct inode *parent,
+> +		     const struct qstr *name,
+> +		     const struct qstr *folded_name,
+> +		     const u8 *de_name, u32 de_name_len)
+> +{
+> +	const struct super_block *sb = parent->i_sb;
+> +	const struct unicode_map *um = sb->s_encoding;
+> +	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
+> +	struct qstr dirent = QSTR_INIT(de_name, de_name_len);
+> +	int res, match = 0;
+> +
+> +	if (IS_ENCRYPTED(parent)) {
+> +		const struct fscrypt_str encrypted_name =
+> +			FSTR_INIT((u8 *) de_name, de_name_len);
+> +
+> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
+> +			return -EINVAL;
+> +
+> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
+> +		if (!decrypted_name.name)
+> +			return -ENOMEM;
+> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
+> +						&decrypted_name);
+> +		if (res < 0)
+> +			goto out;
+> +		dirent.name = decrypted_name.name;
+> +		dirent.len = decrypted_name.len;
+> +	}
+> +
+> +	/*
+> +	 * Attempt a case-sensitive match first. It is cheaper and
+> +	 * should cover most lookups, including all the sane
+> +	 * applications that expect a case-sensitive filesystem.
+> +	 */
+> +	if (folded_name->name) {
+> +		if (dirent.len == folded_name->len &&
+> +		    !memcmp(folded_name->name, dirent.name, dirent.len)) {
+> +			match = 1;
+> +			goto out;
+> +		}
+> +		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
+> +	} else {
+> +		if (dirent.len == name->len &&
+> +		    !memcmp(name->name, dirent.name, dirent.len) &&
+> +		    (!sb_has_strict_encoding(sb) || !utf8_validate(um, name))) {
+> +			match = 1;
+> +			goto out;
+> +		}
+> +		res = utf8_strncasecmp(um, name, &dirent);
+> +	}
+> +
+> +out:
+> +	kfree(decrypted_name.name);
 
-HEAD commit:    09e5c48fea17 Merge tag 'ceph-for-6.8-rc8' of https://githu..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=130a9a3e180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=44c92d6f247776b0
-dashboard link: https://syzkaller.appspot.com/bug?extid=e525d9be15a106e48379
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> +	if (match) /* matched by direct comparison */
+> +		return 1;
+> +	else if (!res) /* matched by utf8 comparison */
+> +		return 1;
+> +	else if (res < 0) /* error on utf8 comparison */
+> +		return res;
+> +	return 0; /* no match */
+> +}
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I think I've made this comment before, but I'd prefer this to be written
+in a much simpler way
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/be1396cce3c5/disk-09e5c48f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cd84fbdb0969/vmlinux-09e5c48f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/46bf297bd50b/bzImage-09e5c48f.xz
+if (res < 0)
+   return res;
+return (match || !res);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e525d9be15a106e48379@syzkaller.appspotmail.com
+Other than that, this looks good to me.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.8.0-rc7-syzkaller-00231-g09e5c48fea17 #0 Not tainted
-------------------------------------------------------
-syz-executor.2/10894 is trying to acquire lock:
-ffff8880434f8468 (&pipe->mutex/1){+.+.}-{3:3}, at: iter_file_splice_write+0x335/0x14e0 fs/splice.c:687
-
-but task is already holding lock:
-ffff88801e194420 (sb_writers#4){.+.+}-{0:0}, at: do_splice+0xcf0/0x1880 fs/splice.c:1353
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #4 (sb_writers#4){.+.+}-{0:0}:
-       lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1641 [inline]
-       sb_start_write+0x4d/0x1c0 include/linux/fs.h:1777
-       mnt_want_write+0x3f/0x90 fs/namespace.c:409
-       ovl_create_object+0x13b/0x370 fs/overlayfs/dir.c:629
-       lookup_open fs/namei.c:3500 [inline]
-       open_last_lookups fs/namei.c:3569 [inline]
-       path_openat+0x1424/0x3240 fs/namei.c:3799
-       do_filp_open+0x234/0x490 fs/namei.c:3829
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1404
-       do_sys_open fs/open.c:1419 [inline]
-       __do_sys_openat fs/open.c:1435 [inline]
-       __se_sys_openat fs/open.c:1430 [inline]
-       __x64_sys_openat+0x247/0x2a0 fs/open.c:1430
-       do_syscall_64+0xf9/0x240
-       entry_SYSCALL_64_after_hwframe+0x6f/0x77
-
--> #3 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}:
-       lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
-       inode_lock_shared include/linux/fs.h:814 [inline]
-       lookup_slow+0x45/0x70 fs/namei.c:1709
-       walk_component+0x2e1/0x410 fs/namei.c:2005
-       lookup_last fs/namei.c:2462 [inline]
-       path_lookupat+0x16f/0x450 fs/namei.c:2486
-       filename_lookup+0x255/0x610 fs/namei.c:2515
-       kern_path+0x35/0x50 fs/namei.c:2623
-       lookup_bdev+0xc5/0x290 block/bdev.c:1014
-       resume_store+0x1a0/0x710 kernel/power/hibernate.c:1183
-       kernfs_fop_write_iter+0x3a4/0x500 fs/kernfs/file.c:334
-       call_write_iter include/linux/fs.h:2087 [inline]
-       new_sync_write fs/read_write.c:497 [inline]
-       vfs_write+0xa81/0xcb0 fs/read_write.c:590
-       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
-       do_syscall_64+0xf9/0x240
-       entry_SYSCALL_64_after_hwframe+0x6f/0x77
-
--> #2 (&of->mutex){+.+.}-{3:3}:
-       lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       kernfs_seq_start+0x53/0x3b0 fs/kernfs/file.c:154
-       seq_read_iter+0x3d0/0xd60 fs/seq_file.c:225
-       call_read_iter include/linux/fs.h:2081 [inline]
-       new_sync_read fs/read_write.c:395 [inline]
-       vfs_read+0x978/0xb70 fs/read_write.c:476
-       ksys_read+0x1a0/0x2c0 fs/read_write.c:619
-       do_syscall_64+0xf9/0x240
-       entry_SYSCALL_64_after_hwframe+0x6f/0x77
-
--> #1 (&p->lock){+.+.}-{3:3}:
-       lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       seq_read_iter+0xb7/0xd60 fs/seq_file.c:182
-       proc_reg_read_iter+0x1c3/0x290 fs/proc/inode.c:299
-       call_read_iter include/linux/fs.h:2081 [inline]
-       copy_splice_read+0x661/0xb60 fs/splice.c:365
-       do_splice_read fs/splice.c:985 [inline]
-       splice_file_to_pipe+0x299/0x500 fs/splice.c:1295
-       do_sendfile+0x515/0xdc0 fs/read_write.c:1301
-       __do_sys_sendfile64 fs/read_write.c:1356 [inline]
-       __se_sys_sendfile64+0x100/0x1e0 fs/read_write.c:1348
-       do_syscall_64+0xf9/0x240
-       entry_SYSCALL_64_after_hwframe+0x6f/0x77
-
--> #0 (&pipe->mutex/1){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18ca/0x58e0 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1345/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       iter_file_splice_write+0x335/0x14e0 fs/splice.c:687
-       do_splice_from fs/splice.c:941 [inline]
-       do_splice+0xd77/0x1880 fs/splice.c:1354
-       __do_splice fs/splice.c:1436 [inline]
-       __do_sys_splice fs/splice.c:1652 [inline]
-       __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
-       do_syscall_64+0xf9/0x240
-       entry_SYSCALL_64_after_hwframe+0x6f/0x77
-
-other info that might help us debug this:
-
-Chain exists of:
-  &pipe->mutex/1 --> &ovl_i_mutex_dir_key[depth] --> sb_writers#4
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(sb_writers#4);
-                               lock(&ovl_i_mutex_dir_key[depth]);
-                               lock(sb_writers#4);
-  lock(&pipe->mutex/1);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.2/10894:
- #0: ffff88801e194420 (sb_writers#4){.+.+}-{0:0}, at: do_splice+0xcf0/0x1880 fs/splice.c:1353
-
-stack backtrace:
-CPU: 1 PID: 10894 Comm: syz-executor.2 Not tainted 6.8.0-rc7-syzkaller-00231-g09e5c48fea17 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2e0 lib/dump_stack.c:106
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18ca/0x58e0 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1345/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- iter_file_splice_write+0x335/0x14e0 fs/splice.c:687
- do_splice_from fs/splice.c:941 [inline]
- do_splice+0xd77/0x1880 fs/splice.c:1354
- __do_splice fs/splice.c:1436 [inline]
- __do_sys_splice fs/splice.c:1652 [inline]
- __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
- do_syscall_64+0xf9/0x240
- entry_SYSCALL_64_after_hwframe+0x6f/0x77
-RIP: 0033:0x7fa65fa7dda9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa6608b00c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
-RAX: ffffffffffffffda RBX: 00007fa65fbabf80 RCX: 00007fa65fa7dda9
-RDX: 0000000000000005 RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 00007fa65faca47a R08: 0000000000000009 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fa65fbabf80 R15: 00007ffc7c0d55f8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Gabriel Krisman Bertazi
 
