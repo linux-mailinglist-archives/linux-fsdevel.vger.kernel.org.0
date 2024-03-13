@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-14344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2775887B0A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:59:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE14F87B0AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8561F2A092
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:59:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75977288CE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB36F59B6E;
-	Wed, 13 Mar 2024 17:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56635A0EE;
+	Wed, 13 Mar 2024 17:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KH61lwNy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdINZqkG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315F659B63;
-	Wed, 13 Mar 2024 17:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1770059B4D;
+	Wed, 13 Mar 2024 17:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710352699; cv=none; b=N+i0LKBwn4Gs0Q1eibVVf3jgAwxaxKvR7kzes8UPBFlzvKjrpcnVLhLZI84Qqx9zn6515Hmd16LgECFkGRE15l45SbeA0YmUz71VXT5KzY2Xl0WMe2LmisW9ariCdZSOq2/BySG8OmfCpMYpsOs25Gp8ta5+duRVXSpQzyDCymo=
+	t=1710352715; cv=none; b=rKZBF+Ba6fS0xAqtmj/xi3Bt6RBmLp9Xrs/WJJ/t3Sw7wZQZ2Nsc/48PfTlw1FWr/enfdaxkRpt6Gb09M26+7XnzsNHsc3WkIdV9RQCiML4Q3iAi5ZHgdEN3YzUg0fJ/y7CAqM4wj0dQ1TaTmmallJBSLTWLImR0lns6ALeSsQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710352699; c=relaxed/simple;
-	bh=9aNnEIVecuTEfZ9EOGAhAn3k+OtIpt0Q6d1/0iL//H0=;
+	s=arc-20240116; t=1710352715; c=relaxed/simple;
+	bh=T5hhQLQ+6RvBs6vxLwsCHoMD6JXynzk5glvZrMbA04k=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sqFcd6Y75Q5rh4d2YzSyAWKr6nOJ8rPMSXJSeEVAGq0c2Dsr/5OnnGq07ORWfihRIjvoMLtAcXbwTK2nEmozQuMNQyrIp70tv1NF8dxQhZOztXEffNkrAsKTW1KcTNIuh5uko/+yBGAGAPTK/Z49kW37eb3i92nFUM0IaYkyqec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KH61lwNy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB79C433F1;
-	Wed, 13 Mar 2024 17:58:19 +0000 (UTC)
+	 MIME-Version:Content-Type; b=PHiDp4xewrAN+cntK9jSpdGvM2T/zrq4fgdRw4bWdvwubPQXQ9mwhJoCMy4io4QcjcqlzryI4MEYmTrEgtY9VAH6T2+yl8Vekp9czdOls5ouLb4xfnmysy1om2KQuokLN5AvI4OtZYbn/TP3BCHdsKJVmeyhCmwJFPrX3Q9U6L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdINZqkG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1272C433C7;
+	Wed, 13 Mar 2024 17:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710352699;
-	bh=9aNnEIVecuTEfZ9EOGAhAn3k+OtIpt0Q6d1/0iL//H0=;
+	s=k20201202; t=1710352714;
+	bh=T5hhQLQ+6RvBs6vxLwsCHoMD6JXynzk5glvZrMbA04k=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=KH61lwNyzfAIYMle/RCbOX/DSB5i2ZR6TJlJ8Nf3kWx7Bk7869LjJnHwiI3UgpNvO
-	 PAqAek987egO9bGA7g/kKIoXOeXcrGTwecleO+N+xtfwULWZON3uAfjdrB0zntvzXk
-	 vic9SvCR+pCQSHs8PXtzaVy/HSnWKfsgGrQClIRTJ+OHLgYV0BVcHNZGEebQG0TcF+
-	 Odq6OiHqaLKDauvfGnwSkmA4IxSsscsQmOYz5WCwj3Y4R+yTUGVc7Yt492f1SxyQRe
-	 jtHhxA+dcQ8dl+VjQ9m5mNDlPsjQDgKm/l731MPil+JHlCPcnqTdM//xOrOd0IK+Ny
-	 ZTprXzHaOXLgA==
-Date: Wed, 13 Mar 2024 10:58:18 -0700
-Subject: [PATCH 22/29] xfs: create a per-mount shrinker for verity inodes
- merkle tree blocks
+	b=HdINZqkGimy6+cXYl+Wc3+I2RHbBvhvHIVagDZYV1GC1g9EDPrng8VYF+Vsat4rpN
+	 AIBqd6ySC37NugudUD6M3ZanNGgc2AwseMVG6EDIKOFj/5jbgHzLtKAIQ/IW5OaNtt
+	 MllZvarxcxJoHoExH+eDii+Cfk6hUUjyRLtRrwn2/cx8jMqajVOIhFTaoaVnKe3rx1
+	 +g5Yj2EKtFYnqtRp5lUuifTj5YBhrpX4DVwW37xp0GwZSFuVhGda2JDqtM2O8hVkC/
+	 KdjtVyXkrcb6bVp+LOLKFIUm+ytoDGvr0VpaTupNX35JQPi/vNr0wYijPtqdODLfyl
+	 PfUawYmzGX3KQ==
+Date: Wed, 13 Mar 2024 10:58:34 -0700
+Subject: [PATCH 23/29] xfs: create an icache tag for files with cached merkle
+ tree blocks
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, aalbersh@redhat.com, ebiggers@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
  linux-xfs@vger.kernel.org
-Message-ID: <171035223710.2613863.3703735595488208587.stgit@frogsfrogsfrogs>
+Message-ID: <171035223726.2613863.11814486602875673946.stgit@frogsfrogsfrogs>
 In-Reply-To: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 References: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -63,231 +63,261 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Create a shrinker for an entire filesystem that will walk the inodes
-looking for inodes that are caching merkle tree blocks, and invoke
-shrink functions on that cache.  The actual details of shrinking merkle
-tree caches are left for subsequent patches.
+Create a radix tree tag for the inode cache so that merkle tree block
+shrinkers can find verity inodes quickly.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/xfs_mount.c  |   10 ++++++-
- fs/xfs/xfs_mount.h  |    6 ++++
- fs/xfs/xfs_trace.h  |   20 +++++++++++++
- fs/xfs/xfs_verity.c |   77 +++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_verity.h |    5 +++
- 5 files changed, 117 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_icache.c |   81 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_icache.h |    8 +++++
+ fs/xfs/xfs_trace.h  |   23 ++++++++++++++
+ fs/xfs/xfs_verity.c |   30 ++++++++++++++++++-
+ fs/xfs/xfs_verity.h |    4 +++
+ 5 files changed, 145 insertions(+), 1 deletion(-)
 
 
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index 7328034d42ed..4b5b74809cff 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -34,6 +34,7 @@
- #include "xfs_health.h"
- #include "xfs_trace.h"
- #include "xfs_ag.h"
-+#include "xfs_verity.h"
- #include "scrub/stats.h"
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index fef77938c718..ad02af0da843 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -35,6 +35,8 @@
+ #define XFS_ICI_RECLAIM_TAG	0
+ /* Inode has speculative preallocations (posteof or cow) to clean. */
+ #define XFS_ICI_BLOCKGC_TAG	1
++/* Inode has incore merkle tree blocks */
++#define XFS_ICI_VERITY_TAG	2
  
- static DEFINE_MUTEX(xfs_uuid_table_mutex);
-@@ -813,6 +814,10 @@ xfs_mountfs(
- 	if (error)
- 		goto out_fail_wait;
+ /*
+  * The goal for walking incore inodes.  These can correspond with incore inode
+@@ -44,6 +46,7 @@ enum xfs_icwalk_goal {
+ 	/* Goals directly associated with tagged inodes. */
+ 	XFS_ICWALK_BLOCKGC	= XFS_ICI_BLOCKGC_TAG,
+ 	XFS_ICWALK_RECLAIM	= XFS_ICI_RECLAIM_TAG,
++	XFS_ICWALK_VERITY	= XFS_ICI_VERITY_TAG,
+ };
  
-+	error = xfs_verity_register_shrinker(mp);
-+	if (error)
-+		goto out_inodegc_shrinker;
-+
- 	/*
- 	 * Log's mount-time initialization. The first part of recovery can place
- 	 * some items on the AIL, to be handled when recovery is finished or
-@@ -823,7 +828,7 @@ xfs_mountfs(
- 			      XFS_FSB_TO_BB(mp, sbp->sb_logblocks));
- 	if (error) {
- 		xfs_warn(mp, "log mount failed");
--		goto out_inodegc_shrinker;
-+		goto out_verity_shrinker;
+ static int xfs_icwalk(struct xfs_mount *mp,
+@@ -1606,6 +1609,7 @@ xfs_icwalk_igrab(
+ {
+ 	switch (goal) {
+ 	case XFS_ICWALK_BLOCKGC:
++	case XFS_ICWALK_VERITY:
+ 		return xfs_blockgc_igrab(ip);
+ 	case XFS_ICWALK_RECLAIM:
+ 		return xfs_reclaim_igrab(ip, icw);
+@@ -1634,6 +1638,9 @@ xfs_icwalk_process_inode(
+ 	case XFS_ICWALK_RECLAIM:
+ 		xfs_reclaim_inode(ip, pag);
+ 		break;
++	case XFS_ICWALK_VERITY:
++		error = xfs_verity_scan_inode(ip, icw);
++		break;
  	}
+ 	return error;
+ }
+@@ -1750,6 +1757,80 @@ xfs_icwalk_ag(
+ 	return last_error;
+ }
  
- 	/* Enable background inode inactivation workers. */
-@@ -1018,6 +1023,8 @@ xfs_mountfs(
- 	xfs_unmount_flush_inodes(mp);
-  out_log_dealloc:
- 	xfs_log_mount_cancel(mp);
-+ out_verity_shrinker:
-+	xfs_verity_unregister_shrinker(mp);
-  out_inodegc_shrinker:
- 	shrinker_free(mp->m_inodegc_shrinker);
-  out_fail_wait:
-@@ -1100,6 +1107,7 @@ xfs_unmountfs(
- #if defined(DEBUG)
- 	xfs_errortag_clearall(mp);
- #endif
-+	xfs_verity_unregister_shrinker(mp);
- 	shrinker_free(mp->m_inodegc_shrinker);
- 	xfs_free_perag(mp);
- 
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index f198d7c82552..855517583ce6 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -255,6 +255,12 @@ typedef struct xfs_mount {
- 
- 	/* Hook to feed dirent updates to an active online repair. */
- 	struct xfs_hooks	m_dir_update_hooks;
-+
 +#ifdef CONFIG_FS_VERITY
-+	/* shrinker and cached blocks count for merkle trees */
-+	struct shrinker		*m_verity_shrinker;
-+	struct percpu_counter	m_verity_blocks;
-+#endif
- } xfs_mount_t;
++/* Mark this inode as having cached merkle tree blocks */
++void
++xfs_inode_set_verity_tag(
++	struct xfs_inode	*ip)
++{
++	struct xfs_mount	*mp = ip->i_mount;
++	struct xfs_perag	*pag;
++
++	pag = xfs_perag_get(mp, XFS_INO_TO_AGNO(mp, ip->i_ino));
++	if (!pag)
++		return;
++
++	spin_lock(&pag->pag_ici_lock);
++	xfs_perag_set_inode_tag(pag, XFS_INO_TO_AGINO(mp, ip->i_ino),
++			XFS_ICI_VERITY_TAG);
++	spin_unlock(&pag->pag_ici_lock);
++	xfs_perag_put(pag);
++}
++
++/* Mark this inode as not having cached merkle tree blocks */
++void
++xfs_inode_clear_verity_tag(
++	struct xfs_inode	*ip)
++{
++	struct xfs_mount	*mp = ip->i_mount;
++	struct xfs_perag	*pag;
++
++	pag = xfs_perag_get(mp, XFS_INO_TO_AGNO(mp, ip->i_ino));
++	if (!pag)
++		return;
++
++	spin_lock(&pag->pag_ici_lock);
++	xfs_perag_clear_inode_tag(pag, XFS_INO_TO_AGINO(mp, ip->i_ino),
++			XFS_ICI_VERITY_TAG);
++	spin_unlock(&pag->pag_ici_lock);
++	xfs_perag_put(pag);
++}
++
++/* Walk all the verity inodes in the filesystem. */
++int
++xfs_icwalk_verity(
++	struct xfs_mount	*mp,
++	struct xfs_icwalk	*icw)
++{
++	struct xfs_perag	*pag;
++	xfs_agnumber_t		agno = 0;
++	int			error = 0;
++
++	for_each_perag_tag(mp, agno, pag, XFS_ICWALK_VERITY) {
++		error = xfs_icwalk_ag(pag, XFS_ICWALK_VERITY, icw);
++		if (error)
++			break;
++
++		if ((icw->icw_flags & XFS_ICWALK_FLAG_SCAN_LIMIT) &&
++		    icw->icw_scan_limit <= 0) {
++			xfs_perag_rele(pag);
++			break;
++		}
++	}
++
++	return error;
++}
++
++/* Stop a verity incore walk scan. */
++void
++xfs_icwalk_verity_stop(
++	struct xfs_icwalk	*icw)
++{
++	icw->icw_flags |= XFS_ICWALK_FLAG_SCAN_LIMIT;
++	icw->icw_scan_limit = -1;
++}
++#endif /* CONFIG_FS_VERITY */
++
+ /* Walk all incore inodes to achieve a given goal. */
+ static int
+ xfs_icwalk(
+diff --git a/fs/xfs/xfs_icache.h b/fs/xfs/xfs_icache.h
+index 905944dafbe5..621ce0078e08 100644
+--- a/fs/xfs/xfs_icache.h
++++ b/fs/xfs/xfs_icache.h
+@@ -81,4 +81,12 @@ void xfs_inodegc_stop(struct xfs_mount *mp);
+ void xfs_inodegc_start(struct xfs_mount *mp);
+ int xfs_inodegc_register_shrinker(struct xfs_mount *mp);
  
- #define M_IGEO(mp)		(&(mp)->m_ino_geo)
++#ifdef CONFIG_FS_VERITY
++int xfs_icwalk_verity(struct xfs_mount *mp, struct xfs_icwalk *icw);
++void xfs_icwalk_verity_stop(struct xfs_icwalk *icw);
++
++void xfs_inode_set_verity_tag(struct xfs_inode *ip);
++void xfs_inode_clear_verity_tag(struct xfs_inode *ip);
++#endif /* CONFIG_FS_VERITY */
++
+ #endif
 diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index 23abec742c3b..fa05122a7c4d 100644
+index fa05122a7c4d..91a73399114e 100644
 --- a/fs/xfs/xfs_trace.h
 +++ b/fs/xfs/xfs_trace.h
-@@ -4797,6 +4797,26 @@ DEFINE_EVENT(xfs_verity_cache_class, name, \
- DEFINE_XFS_VERITY_CACHE_EVENT(xfs_verity_cache_load);
- DEFINE_XFS_VERITY_CACHE_EVENT(xfs_verity_cache_store);
- DEFINE_XFS_VERITY_CACHE_EVENT(xfs_verity_cache_drop);
+@@ -4817,6 +4817,29 @@ TRACE_EVENT(xfs_verity_shrinker_count,
+ 		  __entry->count,
+ 		  __entry->caller_ip)
+ )
 +
-+TRACE_EVENT(xfs_verity_shrinker_count,
-+	TP_PROTO(struct xfs_mount *mp, unsigned long long count,
-+		 unsigned long caller_ip),
-+	TP_ARGS(mp, count, caller_ip),
++TRACE_EVENT(xfs_verity_shrinker_scan,
++	TP_PROTO(struct xfs_mount *mp, unsigned long scanned,
++		 unsigned long freed, unsigned long caller_ip),
++	TP_ARGS(mp, scanned, freed, caller_ip),
 +	TP_STRUCT__entry(
 +		__field(dev_t, dev)
-+		__field(unsigned long long, count)
++		__field(unsigned long, scanned)
++		__field(unsigned long, freed)
 +		__field(void *, caller_ip)
 +	),
 +	TP_fast_assign(
 +		__entry->dev = mp->m_super->s_dev;
-+		__entry->count = count;
++		__entry->scanned = scanned;
++		__entry->freed = freed;
 +		__entry->caller_ip = (void *)caller_ip;
 +	),
-+	TP_printk("dev %d:%d count %llu caller %pS",
++	TP_printk("dev %d:%d scanned %lu freed %lu caller %pS",
 +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  __entry->count,
++		  __entry->scanned,
++		  __entry->freed,
 +		  __entry->caller_ip)
 +)
  #endif /* CONFIG_XFS_VERITY */
  
  #endif /* _TRACE_XFS_H */
 diff --git a/fs/xfs/xfs_verity.c b/fs/xfs/xfs_verity.c
-index 9f3bcc9150d2..25d10e00698b 100644
+index 25d10e00698b..5d698383ed21 100644
 --- a/fs/xfs/xfs_verity.c
 +++ b/fs/xfs/xfs_verity.c
-@@ -18,6 +18,7 @@
- #include "xfs_trans.h"
- #include "xfs_attr_leaf.h"
- #include "xfs_trace.h"
-+#include "xfs_icache.h"
- #include <linux/fsverity.h>
- 
- /*
-@@ -217,6 +218,82 @@ xfs_fsverity_merkle_key_from_disk(
- 	return be64_to_cpu(key->merkleoff);
+@@ -236,18 +236,46 @@ xfs_verity_shrinker_count(
+ 	return min_t(s64, ULONG_MAX, count);
  }
  
-+/* Count the merkle tree blocks that we might be able to reclaim. */
-+static unsigned long
-+xfs_verity_shrinker_count(
-+	struct shrinker		*shrink,
-+	struct shrink_control	*sc)
-+{
-+	struct xfs_mount	*mp = shrink->private_data;
-+	s64			count;
++struct xfs_verity_scan {
++	struct xfs_icwalk	icw;
++	struct shrink_control	*sc;
 +
-+	if (!xfs_has_verity(mp))
-+		return SHRINK_EMPTY;
++	unsigned long		scanned;
++	unsigned long		freed;
++};
 +
-+	count = percpu_counter_sum_positive(&mp->m_verity_blocks);
-+
-+	trace_xfs_verity_shrinker_count(mp, count, _RET_IP_);
-+	return min_t(s64, ULONG_MAX, count);
-+}
-+
-+/* Actually try to reclaim merkle tree blocks. */
-+static unsigned long
-+xfs_verity_shrinker_scan(
-+	struct shrinker		*shrink,
-+	struct shrink_control	*sc)
-+{
-+	struct xfs_mount	*mp = shrink->private_data;
-+
-+	if (!xfs_has_verity(mp))
-+		return SHRINK_STOP;
-+
-+	return 0;
-+}
-+
-+/* Register a shrinker so we can release cached merkle tree blocks. */
++/* Scan an inode as part of a verity scan. */
 +int
-+xfs_verity_register_shrinker(
-+	struct xfs_mount	*mp)
++xfs_verity_scan_inode(
++	struct xfs_inode	*ip,
++	struct xfs_icwalk	*icw)
 +{
-+	int			error;
-+
-+	if (!xfs_has_verity(mp))
-+		return 0;
-+
-+	error = percpu_counter_init(&mp->m_verity_blocks, 0, GFP_KERNEL);
-+	if (error)
-+		return error;
-+
-+	mp->m_verity_shrinker = shrinker_alloc(0, "xfs-verity:%s",
-+			mp->m_super->s_id);
-+	if (!mp->m_verity_shrinker) {
-+		percpu_counter_destroy(&mp->m_verity_blocks);
-+		return -ENOMEM;
-+	}
-+
-+	mp->m_verity_shrinker->count_objects = xfs_verity_shrinker_count;
-+	mp->m_verity_shrinker->scan_objects = xfs_verity_shrinker_scan;
-+	mp->m_verity_shrinker->seeks = 0;
-+	mp->m_verity_shrinker->private_data = mp;
-+
-+	shrinker_register(mp->m_verity_shrinker);
-+
++	xfs_irele(ip);
 +	return 0;
 +}
 +
-+/* Unregister the merkle tree block shrinker. */
-+void
-+xfs_verity_unregister_shrinker(struct xfs_mount *mp)
-+{
-+	if (!xfs_has_verity(mp))
-+		return;
+ /* Actually try to reclaim merkle tree blocks. */
+ static unsigned long
+ xfs_verity_shrinker_scan(
+ 	struct shrinker		*shrink,
+ 	struct shrink_control	*sc)
+ {
++	struct xfs_verity_scan	vs = {
++		.sc		= sc,
++	};
+ 	struct xfs_mount	*mp = shrink->private_data;
++	int			error;
+ 
+ 	if (!xfs_has_verity(mp))
+ 		return SHRINK_STOP;
+ 
+-	return 0;
++	error = xfs_icwalk_verity(mp, &vs.icw);
++	if (error)
++		xfs_alert(mp, "%s: verity scan failed, error %d", __func__,
++				error);
 +
-+	ASSERT(percpu_counter_sum(&mp->m_verity_blocks) == 0);
-+
-+	shrinker_free(mp->m_verity_shrinker);
-+	percpu_counter_destroy(&mp->m_verity_blocks);
-+}
-+
- static int
- xfs_verity_get_descriptor(
- 	struct inode		*inode,
++	trace_xfs_verity_shrinker_scan(mp, vs.scanned, vs.freed, _RET_IP_);
++	return vs.freed;
+ }
+ 
+ /* Register a shrinker so we can release cached merkle tree blocks. */
 diff --git a/fs/xfs/xfs_verity.h b/fs/xfs/xfs_verity.h
-index 31d51482f7f7..0ec0a61bee65 100644
+index 0ec0a61bee65..e1980fc1f149 100644
 --- a/fs/xfs/xfs_verity.h
 +++ b/fs/xfs/xfs_verity.h
-@@ -10,11 +10,16 @@ void xfs_verity_cache_init(struct xfs_inode *ip);
- void xfs_verity_cache_drop(struct xfs_inode *ip);
- void xfs_verity_cache_destroy(struct xfs_inode *ip);
+@@ -13,6 +13,9 @@ void xfs_verity_cache_destroy(struct xfs_inode *ip);
+ int xfs_verity_register_shrinker(struct xfs_mount *mp);
+ void xfs_verity_unregister_shrinker(struct xfs_mount *mp);
  
-+int xfs_verity_register_shrinker(struct xfs_mount *mp);
-+void xfs_verity_unregister_shrinker(struct xfs_mount *mp);
++struct xfs_icwalk;
++int xfs_verity_scan_inode(struct xfs_inode *ip, struct xfs_icwalk *icw);
 +
  extern const struct fsverity_operations xfs_verity_ops;
  #else
  # define xfs_verity_cache_init(ip)		((void)0)
- # define xfs_verity_cache_drop(ip)		((void)0)
+@@ -20,6 +23,7 @@ extern const struct fsverity_operations xfs_verity_ops;
  # define xfs_verity_cache_destroy(ip)		((void)0)
-+# define xfs_verity_register_shrinker(mp)	(0)
-+# define xfs_verity_unregister_shrinker(mp)	((void)0)
+ # define xfs_verity_register_shrinker(mp)	(0)
+ # define xfs_verity_unregister_shrinker(mp)	((void)0)
++# define xfs_verity_scan_inode(ip, icw)		(0)
  #endif	/* CONFIG_FS_VERITY */
  
  #endif	/* __XFS_VERITY_H__ */
