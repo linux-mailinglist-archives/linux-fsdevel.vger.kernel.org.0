@@ -1,118 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-14286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C8887A7E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 13:56:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1BCB87A81A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 14:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10A39B23F50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 12:56:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39C61C20ECD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 13:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CD03E48C;
-	Wed, 13 Mar 2024 12:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B53E3FE55;
+	Wed, 13 Mar 2024 13:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Qhza5gW+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72FD2BB09;
-	Wed, 13 Mar 2024 12:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CD4225AD;
+	Wed, 13 Mar 2024 13:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710334558; cv=none; b=Kmid1jitbktOtsrymhJsjqaL6iHb1wy7hvm9V5Bix0wTVxQsVjGe1lrOciis7NkLrr0pjq/U4m8/M/klxhlmdRAUiMoGIG/N9mZ2Ed07DY0ehMX9XHXuLP8Ts+fby0ovEC1EsS0eub3nO9buI5QzRnEWt0a8CEKiBwhwG5BfuiY=
+	t=1710335556; cv=none; b=ZnZT9wlyFD4kMzg0pLEDqgh+klesV71azUVIEzJ3mUsjcbBX2rWMyfB1FK3htx21iqpvyxdutXoTJzUtiLXx7jydddyn4WkBLdGimVr+ihYtTHu36i6TVFT6AxS33u8DUAvf+ChteB9cuvQoeDEb10DfWpQ8EwzBcQTzAfugysU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710334558; c=relaxed/simple;
-	bh=2ZbXdNCF7VRaFuWddkKTBt2RjQgCB6ZAM6OU/+Eg7vQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SMmFuM4nxNVIUNoJM7I3OgmbWn/0ek3Tr7iSR8vygiiaGgv35YiHdTp1fQBoZsmY4FDbV7eIjudIVKGYDkj3cSeXkVp+9ihzepNYpZ3vmMgYrgPWIn9bwBoAbCTdjelWQMb4L59pR9MAhMY22F8SBAh9wowb5Ns+xm6/DIWIS9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a4649c6f040so198334066b.0;
-        Wed, 13 Mar 2024 05:55:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710334555; x=1710939355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0X0cdnFvvOmLgYMcXVX2p5itfqG06uErHXMYJpV+q+k=;
-        b=mlW/jrVxtEuZWaJr2gcIbbOxijphYYQX3DilPZdoGBtV0kxZMZzf4aFfE9C/vqURNP
-         izEsPnQ07WOXzbUHjkw7G7DpOhKge8fPOd6GaYpQTBbm+SzCo5EWun6DrgfX1WzMVOnB
-         Kxu26PqbSmZI5N9V9wLK9a05QZJ3Njf8ZaUAWFLT3kDV/2gtoxRVCyTnqx+f1LJWoke8
-         ud1wqQ5COeSoV43lCvAhD6ZpP9KSiPJ4Pm/6DEuMFhADx8qm/Spafdm+u415nPwCDCmG
-         7ZiV8IpsmDbt1D/KMPVG/CsoigQnphMvP1gM8V0S7vEi0JPsc5ivTt8rGnUqZzrJ0Ijy
-         QY3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWAuO5Rrq0pH6MZBP/BZcDjOmHa6BSKJgb5lJTxwOV4xNIlLqMq84qOyEhqm2IplvX+yu339oWWGlfcEhDt3DtoClOREYdUijtzuB/tVXBRWmB/r0DQ38iHa1H7m5oAArjc5DgSqeKBGsEC3Q==
-X-Gm-Message-State: AOJu0YxT00nI62Pf5tYgKgz4gCDA6HumpzLD5XTpyXa2wzUoaA9GHara
-	k3McggRfW5JRlcJ1S60rHM3ZC/LYgDz4b90R1GXbMq+qwzBfGhTqpp3Oa1BFOEU=
-X-Google-Smtp-Source: AGHT+IHcmzMf4OLtxvftcDvZVjJndOnSjSgMFnq10oH7Xqp3Ad7rSabGX2ggtOMK/TC7ZABJ9mJxIg==
-X-Received: by 2002:a17:907:2d11:b0:a45:abec:cff4 with SMTP id gs17-20020a1709072d1100b00a45abeccff4mr10042308ejc.32.1710334554617;
-        Wed, 13 Mar 2024 05:55:54 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id bp1-20020a17090726c100b00a46196a7faesm3682299ejc.57.2024.03.13.05.55.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Mar 2024 05:55:54 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-566e869f631so7933360a12.0;
-        Wed, 13 Mar 2024 05:55:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV+y+r959e6IZv211vXwFazGan2Ddk2I0veImwAyEYB2jT7iZis/F21GkcgbWee4WIV8ULO6Mpvcmg/aV3wRxhMUOu0WraSYrqTj8aq4pRp2wRYeB9SaU/rK1UPVPzZWOvPN4EVhT7AFw1Fng==
-X-Received: by 2002:a17:906:99d5:b0:a46:2fa:bbe9 with SMTP id
- s21-20020a17090699d500b00a4602fabbe9mr8816062ejn.45.1710334554072; Wed, 13
- Mar 2024 05:55:54 -0700 (PDT)
+	s=arc-20240116; t=1710335556; c=relaxed/simple;
+	bh=EIddhXL/hBKW+RNALtuYnMmsP6DjsCPpVs48fZbzdJc=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=PsfCAjEdTcZrumNrjHxVN0S/iT1iIo4oHbW4SIUorx9fHcAiVs8jUkzbeTlWIP9Whr0KmnmN+Y4QH7IX10+YawyTT9E9T47MEqketnAUbJVUfSOgKzsPzAXSMtUHOQEf2EvDPtekSqJRE4G1kwRrkEgry9p0b+Y/UVog0ruefoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Qhza5gW+; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1710335231; bh=RxP83Uir+gh2fkaF4ZBO/T3Fp1vZ98pgi+n34nEkhLA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Qhza5gW+BA1RHn7e4AZJoeT1gvAVNUNhuOBYca5Gl6/ODtZt4n80xVFWzzS6Qb934
+	 hb2WH1ZQhX0djNSu7s0dqN86NqSOeeSUSxYb7M+4YWYozNi5zjhefEx/8w53iwGAsc
+	 gonrtXLJGjN+CAxnovbM0oibQHSIcVvxwSOS2+w4=
+Received: from pek-lxu-l1.wrs.com ([2408:8409:ce0:12a0:a032:4bf1:303d:acae])
+	by newxmesmtplogicsvrszc5-1.qq.com (NewEsmtp) with SMTP
+	id 1C02DA4B; Wed, 13 Mar 2024 21:07:00 +0800
+X-QQ-mid: xmsmtpt1710335220t7y7fak82
+Message-ID: <tencent_938637BC4BA674C576F366443D5336109609@qq.com>
+X-QQ-XMAILINFO: NY/MPejODIJVt9wmOCP3xvkfrWcMJLkYT8gKu08MBlRe0mNe0uhXafEkyPldnd
+	 GQTtqyKiUna8/LnsnoteWmoOX94MOUhnS/3R9QPPfBn5nlVLMfIc+6QTlM7wA1Pfv0z3WpOb0Yiy
+	 FuacueNFL2uIBd15V0jpe9FA/5iDElNlgcsQgFZHDJOMhgVLEwa12l2sQ2PMAxm9R0PvatuRuJS/
+	 52SRFMVC9OyrXyR9QXjVEBgaLksQ96PeyfpifzFhQnLnRDEQOjDyaJZD/hythMxUENSobt84DWp7
+	 TDXParTfw4YftWL9zanyo+fHFSaERrNymhQ5P6C86C0+ayZNk8D0Tv88y1/At1GHqjc4W1WyIMZd
+	 xd/3WyuxqLg1TIwLmDEMIkipJSItxU9Lr8xuFrbVPstaWLwK1uUQsffxcRjRJ1aBUTscQF8o85lp
+	 bLCZiAmSDSwZsLmVjuYr+tOGpVu3ukCWeySolvO7jzB7EkGrQvIwRA1ra0WvQx/0KBX4yA9yI3Ne
+	 M78BibzWtkhaIdhOlYMlYeB0pLfffpRIKgTnXkOrWQOLaAKGo6o+q7NiJkDP+u1lkC2aREB0nyi1
+	 Wu9cyXW1NqfCosp31Sb/v50bj7L/FIF8pXOGWthC6Kf1fI0x0m9HuuF0dBySPxcZ83KAkQzKrEtH
+	 pbI2LyQC/HowEtlMoJmy///ImQqfSPBmlHDuNwuqsZ1ujpR6wAjO7FDBbQDS4ZRqRqUxvDJaFmdU
+	 SuK7vHNYOA+KjEhmAdUEK7/qhS58dNO1E82nWDbDZn0EkAbqHAflBKCXokEXp9gAW5a05lHkHrgT
+	 ACh2Ycz/uYFKt64r1kMzKanqcxcYeXpAF1eG1zkChIqoSD42ECzPjMyWAZxfzTtIywQiirCmHQL3
+	 PttSrfA+dwcyixrL8M8cUcfe3Lsq5YE6DcnzD1thbngm2BkVT0RjxGbB/L6IVCwQ==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+9b5ec5ccf7234cc6cb86@syzkaller.appspotmail.com
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH] libfs: fix warning in stashed_dentry_prune
+Date: Wed, 13 Mar 2024 21:07:00 +0800
+X-OQ-MSGID: <20240313130659.392488-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000003ea6ba0613882a96@google.com>
+References: <0000000000003ea6ba0613882a96@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240313081505.3060173-1-dhowells@redhat.com>
-In-Reply-To: <20240313081505.3060173-1-dhowells@redhat.com>
-From: Marc Dionne <marc.dionne@auristor.com>
-Date: Wed, 13 Mar 2024 09:55:42 -0300
-X-Gmail-Original-Message-ID: <CAB9dFdsYOJ4OyCPZL3ercCoSMHdAGwrXMp2Y2O7iKP2U0L9_bA@mail.gmail.com>
-Message-ID: <CAB9dFdsYOJ4OyCPZL3ercCoSMHdAGwrXMp2Y2O7iKP2U0L9_bA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] afs: Miscellaneous fixes
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, linux-afs@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 13, 2024 at 5:15=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Hi Marc,
->
-> Here are some fixes for afs, if you could look them over?
->
->  (1) Fix the caching of preferred address of a fileserver.  By doing that=
-, we
->      stick with whatever address we get a response back from first rather=
- then
->      obeying any preferences set.
->
->  (2) Fix an occasional FetchStatus-after-RemoveDir.  The FetchStatus then
->      fails with VNOVNODE (equivalent to -ENOENT) that confuses parts of t=
-he
->      driver that aren't expecting that.
->
-> The patches can be found here:
->
->         https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs=
-.git/log/?h=3Dafs-fixes
->
-> Thanks,
-> David
->
-> David Howells (2):
->   afs: Don't cache preferred address
->   afs: Fix occasional rmdir-then-VNOVNODE with generic/011
->
->  fs/afs/rotate.c     | 21 ++++-----------------
->  fs/afs/validation.c | 16 +++++++++-------
->  2 files changed, 13 insertions(+), 24 deletions(-)
+Initialize d_fsdata in advance to avoid warnings when recycling dentry due to
+inode allocation failures.
 
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+Fixes: 2558e3b23112 ("libfs: add stashed_dentry_prune()")
+Reported-and-tested-by: syzbot+9b5ec5ccf7234cc6cb86@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/libfs.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Marc
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 0d14ae808fcf..67dc503272eb 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -2013,6 +2013,8 @@ static struct dentry *prepare_anon_dentry(struct dentry **stashed,
+ 	if (!dentry)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	/* Store address of location where dentry's supposed to be stashed. */
++	dentry->d_fsdata = stashed;
+ 	inode = new_inode_pseudo(sb);
+ 	if (!inode) {
+ 		dput(dentry);
+@@ -2029,9 +2031,6 @@ static struct dentry *prepare_anon_dentry(struct dentry **stashed,
+ 	WARN_ON_ONCE(!S_ISREG(inode->i_mode));
+ 	WARN_ON_ONCE(!IS_IMMUTABLE(inode));
+ 
+-	/* Store address of location where dentry's supposed to be stashed. */
+-	dentry->d_fsdata = stashed;
+-
+ 	/* @data is now owned by the fs */
+ 	d_instantiate(dentry, inode);
+ 	return dentry;
+-- 
+2.43.0
+
 
