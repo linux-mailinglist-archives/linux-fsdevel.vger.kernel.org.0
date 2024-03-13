@@ -1,88 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-14296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A3287A9C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 15:50:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E96C487A9FE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 16:05:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A064B281B5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 14:50:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1E3AB2262E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 15:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06BA9444;
-	Wed, 13 Mar 2024 14:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8B746430;
+	Wed, 13 Mar 2024 15:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u4TINEae"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4CD4A0C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 14:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0983545BEC;
+	Wed, 13 Mar 2024 15:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710341405; cv=none; b=oFHdmCUY6HPPkAkfgZuOjzNwKuJ748SZf+/xILGLCD/3NN8AZSJXKsHF+3rRdWG3X50n6rukEh+EDZ5/G43Vm9mjK6B9Qs8Xx9y6tL9LYB817n1cS1sKtnp8qHYNFZ2MJjpgZZWZZG/HaolcpAsqnlQWUr4a8l6FVEL1qc2Cy0k=
+	t=1710342293; cv=none; b=Z3UkJ+6xAb5IrvtYOuGsHSiCeN13msux/dk2jGmepDpKojTCLFiufaU2APeGPHys8KaQmd5Zdpjrvfpww/TpoeoZnQuFEq7E2GEAtE+f5C4GIORA7AXShu7dZIT31xTGon54LNHtqyJEVVvmCv3dlDhSUKp/0MX5u5/RNsXHu60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710341405; c=relaxed/simple;
-	bh=H6AP99/+5wUD2f58Es09ZZ9Vhv5jul9GXOyCS3ukWcY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uaeURhdPtr7+URJhja2FPgN6tiV838tn9DYJtdjhpblKWOh9GHr8rwRgNZyZI68SSokbDif8pki/ttACdKia+Qv6IqpVYO64RCY667CaRQzRmIJY6LIXtgSELrHvvtYtToYdeEX12Mz1inv0ubS1XBosveJPpgzVX9/3ieWc4wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3663022a5bdso14659895ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 07:50:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710341403; x=1710946203;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pBqXF+FtEC98JPe7hVSSvBQgwR2DkFM1Y3dRr1bdJDs=;
-        b=rdjM62Xf7ry4PyaRSvn7/hpYEHOXws6mR/ig9v+HfoWGrMNI2CAKGSHA1grbyA02cC
-         flrpf+7DiOPbvWxVM8G90xHadCIzotrd+E95aZCzoSmQSBEkCC9HJfTwJEqt66iZO16T
-         z9Uc7t9qmGfa0s682mqqmM47351dkMIM9aZCtxlJYDIltV/XrUPY9MA2hZGXKm8OV/Sb
-         9P+x4clXb7pqxeJseuXnQivUJifo6wEzRGnq/kNRKJ+s+W87gDprEMpmTWslV6LolSCY
-         DorhfPlC0jl1mF+VmBZHD6qo573HV2lkL5VXZlo7l66VEFwOH0WjulGzisEumPYYCXtV
-         Gzxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgpcKqDoKZryyGyQ7opnytDeBEWKi6MvUo8Mq7HO5MpDu7jzdr+Pl6Rqu7HAHXpI/UDhQ0Ijueib4DYknFWZZKkCc35hk7r+fF9y7O4g==
-X-Gm-Message-State: AOJu0Yyf1C8AWpjKZDzXXVvRMFEMmXHX27s7fSiRMhs/+4vOJdHaUIdN
-	H5qL8nUx8mH6fvLYFp3ogdj0TcQlshD/UqmkP8p/myQD86/PWmAUFkqDRqfZBrUEDPr/pKZb0RX
-	h3WwZaMXCu5VbqzDEfhXV/SqeeDKrxoiYpCMUyMrLMwM2uknimgbjJRs=
-X-Google-Smtp-Source: AGHT+IE/nKeb60I7S1447N7p6nt1amMYQgnAkwkywJB8/ZNa7GHWQrU7DmYHP7hBdfeVeAYsfJKzbhQ3eGlGodGUdOWmyLZKDxOl
+	s=arc-20240116; t=1710342293; c=relaxed/simple;
+	bh=mEZSaX1JcOlnF+YV8hHDQGh4aTWrB0MRoLH9GvaDuc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=po5gPQFq0GVawbB5ul9QXVcg6V9Qx037T+Q1z5P2yALEpSTPj0xH/jaDn50emqYymGowRpW3Ofub+bZcadp1hSCNrly7YqCrycX4pjiNXLvR1a4kjuOGyiDwmcGAUvUrMmxdI4YyWUD6tZvsNApwNNk40y2OpaUQfYGuFyxEEXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u4TINEae; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BNxK5EuN2z1du2u9zHs8dUJAhvJjbhbwG8RbEiAeClc=; b=u4TINEaeR8pBfu92hqQSLLqbw1
+	brpvAqC+UAYMwivkfgs4750GbK7A0qwui27QEc2QH9iUDu5HAbvxzTVnDcFLyemP/XUIx9MpoFbPi
+	q4IVLXkwKfK0hyxYOhjsEbyDlhqHvslhIMnMIWKJYzFQxuE5veIEox3shpukVhJnJOi9hLp44r+EM
+	DfO73+5LdareoKzomTSUfKrn8QRIKkQrbx5fl0+DUtdOpn8MXP/hU/JOuGLEbRDpiIk2OiOzBuZml
+	hSNWxtuUjaxB+C0meEeMqttlRscGDUvIcxO795C5WNAIzRQjXMNkZ2PfpYOcF19WaReKmjCOY/R0S
+	0uWwi/1Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rkQ9R-00000005dNK-1tqa;
+	Wed, 13 Mar 2024 15:04:17 +0000
+Date: Wed, 13 Mar 2024 15:04:17 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+	mgorman@suse.de, dave@stgolabs.net, liam.howlett@oracle.com,
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net,
+	void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, peterx@redhat.com, david@redhat.com,
+	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+	nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com,
+	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+	paulmck@kernel.org, pasha.tatashin@soleen.com,
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+	ndesaulniers@google.com, vvvvvv@google.com,
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+	elver@google.com, dvyukov@google.com, shakeelb@google.com,
+	songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com,
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+	kernel-team@android.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-modules@vger.kernel.org,
+	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v5 20/37] mm: fix non-compound multi-order memory
+ accounting in __free_pages
+Message-ID: <ZfHAcVwJ6w9b1x0Z@casper.infradead.org>
+References: <20240306182440.2003814-1-surenb@google.com>
+ <20240306182440.2003814-21-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2a:b0:365:3e12:3eb1 with SMTP id
- m10-20020a056e021c2a00b003653e123eb1mr5642ilh.1.1710341403338; Wed, 13 Mar
- 2024 07:50:03 -0700 (PDT)
-Date: Wed, 13 Mar 2024 07:50:03 -0700
-In-Reply-To: <21fc3ed1-de3d-4027-b775-ef061eaca53d@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca7cd306138be344@google.com>
-Subject: Re: [syzbot] [f2fs?] KASAN: slab-use-after-free Read in f2fs_filemap_fault
-From: syzbot <syzbot+763afad57075d3f862f2@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240306182440.2003814-21-surenb@google.com>
 
-Hello,
+On Wed, Mar 06, 2024 at 10:24:18AM -0800, Suren Baghdasaryan wrote:
+> When a non-compound multi-order page is freed, it is possible that a
+> speculative reference keeps the page pinned. In this case we free all
+> pages except for the first page, which will be freed later by the last
+> put_page(). However put_page() ignores the order of the page being freed,
+> treating it as a 0-order page. This creates a memory accounting imbalance
+> because the pages freed in __free_pages() do not have their own alloc_tag
+> and their memory was accounted to the first page. To fix this the first
+> page should adjust its allocation size counter when "tail" pages are freed.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+It's not "ignored".  It's not available!
 
-Reported-and-tested-by: syzbot+763afad57075d3f862f2@syzkaller.appspotmail.com
+Better wording:
 
-Tested on:
+However the page passed to put_page() is indisinguishable from an
+order-0 page, so it cannot do the accounting, just as it cannot free
+the subsequent pages.  Do the accounting here, where we free the pages.
 
-commit:         51fc665a f2fs: fix to avoid use-after-free issue in f2..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
-console output: https://syzkaller.appspot.com/x/log.txt?x=113bf9fa180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1fcc0a6ff51770e5
-dashboard link: https://syzkaller.appspot.com/bug?extid=763afad57075d3f862f2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+(I'm sure further improvements are possible)
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+> +static inline void pgalloc_tag_sub_bytes(struct alloc_tag *tag, unsigned int order)
+> +{
+> +	if (mem_alloc_profiling_enabled() && tag)
+> +		this_cpu_sub(tag->counters->bytes, PAGE_SIZE << order);
+> +}
+
+This is a terribly named function.  And it's not even good for what we
+want to use it for.
+
+static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned int nr)
+{
+	if (mem_alloc_profiling_enabled() && tag)
+		this_cpu_sub(tag->counters->bytes, PAGE_SIZE * nr);
+}
+
+> +++ b/mm/page_alloc.c
+> @@ -4697,12 +4697,21 @@ void __free_pages(struct page *page, unsigned int order)
+>  {
+>  	/* get PageHead before we drop reference */
+>  	int head = PageHead(page);
+> +	struct alloc_tag *tag = pgalloc_tag_get(page);
+>  
+>  	if (put_page_testzero(page))
+>  		free_the_page(page, order);
+>  	else if (!head)
+> -		while (order-- > 0)
+> +		while (order-- > 0) {
+>  			free_the_page(page + (1 << order), order);
+> +			/*
+> +			 * non-compound multi-order page accounts all allocations
+> +			 * to the first page (just like compound one), therefore
+> +			 * we need to adjust the allocation size of the first
+> +			 * page as its order is ignored when put_page() frees it.
+> +			 */
+> +			pgalloc_tag_sub_bytes(tag, order);
+
+-	else if (!head
++	else if (!head) {
++		pgalloc_tag_sub_pages(1 << order - 1);
+		while (order-- > 0)
+			free_the_page(page + (1 << order), order);
++	}
+
+It doesn't need a comment, it's obvious what you're doing.
+
 
