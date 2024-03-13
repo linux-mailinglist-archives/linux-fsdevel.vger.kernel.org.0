@@ -1,53 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-14322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB67787B06F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:54:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B621C87B071
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 19:54:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71F4828C5EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F081C2105E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 18:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C43913C9F9;
-	Wed, 13 Mar 2024 17:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DB313D2F6;
+	Wed, 13 Mar 2024 17:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKjitK+z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKP3qDpJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B49D57314;
-	Wed, 13 Mar 2024 17:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFFF4D108;
+	Wed, 13 Mar 2024 17:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710352371; cv=none; b=mFk18p4MSTws4oWxLXUWq9JZ6vMoUiX2mBsqjv8B80CrPwvygcz5sEvbNPpsvAOmEuYXBjks+rEXZRW/+au9b/aTagSFKby9EGex8yyxX0+9XxITG4ImxYy/JYLQhKRvLhAuHkpExYok2EoezDOyo4FD3qb/mcn3JThuEfRW7pU=
+	t=1710352386; cv=none; b=ritQMXyQw4Kq8tnGyBbCq7swrzV5Sp5NChqe1YVJ5XeBY0QgzQeg0puewNr4MtQ3cb/SR9YbPyROnkn2hmyXu1LzQWtxSN5n6cXTqyIpBjjOVLv9cCGbtcIn6osh9sAnrHtfdv0jPGLsmH5AqFOO77O5/kHlq313qRoz3RAKh20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710352371; c=relaxed/simple;
-	bh=G2GRGQXP7Tmb/LqM7gCxfbjW3s4ehpMaBQYxFXH1REU=;
+	s=arc-20240116; t=1710352386; c=relaxed/simple;
+	bh=kJ2W8LeTyOMmKY5ie73ROB+4axcgcPYqLtLFh1tV8hw=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=grjNHlkvY1oSjqVHkdd0XJ7LQ6dJbxMB1+lZLLfgcHsxD3zKvKW0Y1Hg+IENU4kgzlXzvfJNLVfqk2fD1OsTPXWKLp1jrbbpAI0DbgEKN47N0i9j1mFyo9rJwwxUuuNueqUtNlWgccpeZ0hFIF/y5O6cotnapWT1rAJjZMdZrXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKjitK+z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAB7FC433C7;
-	Wed, 13 Mar 2024 17:52:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=TYN615C1/POqVEYUhOImyNY33QNO9OYJsKVp+Q5mPZSIHIZmZ9xVoVy9x0WXtlnwC6I3C2iP7v62iyJraCs6zzrV8mDhL2Ko2R+NvMLRBG+NIyTur3sAJ9SlEn2zACCr98/VWyCsEuZzlGgQCThCYKuLOd5ZxE0AI3YrCWZlJkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKP3qDpJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 737DFC433C7;
+	Wed, 13 Mar 2024 17:53:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710352370;
-	bh=G2GRGQXP7Tmb/LqM7gCxfbjW3s4ehpMaBQYxFXH1REU=;
+	s=k20201202; t=1710352386;
+	bh=kJ2W8LeTyOMmKY5ie73ROB+4axcgcPYqLtLFh1tV8hw=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=ZKjitK+zArH2GbUb1kY4WOM2VRzCx8Y29aZS+KrUr4IAVMclbhPCyCMhM6bmQvMBl
-	 G/f/B1YBhm774Lj2seSSyNBDnQNpEup7S/CU8D3gIcxVdphxFzNJFVvlSdoUUY1cjB
-	 5DL3SZYpOAudf3f61z9iaRjGVgR6p+aAj4m9XWHaHFj5hPs5dQsZlAwi3HOhBH9JBR
-	 elIbrvdwXqyaz6XJCmR6Q3mNtkOjH2YuvwGDcO2WSeHvfq8JkjbqXvcekcuEz8T0FX
-	 NB52AeYObHsvRoekOTH8leJhbyQ7HVeZ8w3ZT7T6DidZ2kX5xdOnepxVHW9PWLJq8L
-	 SZ3DWVgz+lFCw==
-Date: Wed, 13 Mar 2024 10:52:50 -0700
-Subject: [PATCH 01/29] fsverity: remove hash page spin lock
+	b=AKP3qDpJE4Dadehz0M9eUgLJwm/JwR9jLA8DIBYHBAPKH7duQgfDZ3OxnIXJ5RbfN
+	 Iso75j2/nUKHvB4bDciLF/StH3R7I29oGFcNnx4QlPosAx/Suw33dIjkzy4mPDYgvA
+	 8ymMmsevANDMHnaXtZ4fPChzR9+QqaECKEmz4smeyzpqucD92WsPSv0jQ0v6N0pHIV
+	 YZwqY4t8PiLnZzWhap9RflWsy/gDSamPhsIfCHeA898xzEcrXmjrGjOQ3EHQr1dSDT
+	 1Vjsy5lmZElkAs7QuCLEo06BumrctjOH+ziyx3bbKXaDSr4IHH0uWW+sFSRKJhyVJD
+	 pAj3AfqxaSCQA==
+Date: Wed, 13 Mar 2024 10:53:05 -0700
+Subject: [PATCH 02/29] xfs: add parent pointer support to attribute code
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, aalbersh@redhat.com, ebiggers@kernel.org
-Cc: Eric Biggers <ebiggers@google.com>, linux-fsdevel@vger.kernel.org,
- fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
-Message-ID: <171035223376.2613863.2659516201876217874.stgit@frogsfrogsfrogs>
+Cc: Mark Tinguely <tinguely@sgi.com>, Dave Chinner <dchinner@redhat.com>,
+ Allison Henderson <allison.henderson@oracle.com>,
+ linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-xfs@vger.kernel.org
+Message-ID: <171035223392.2613863.15143059690877826757.stgit@frogsfrogsfrogs>
 In-Reply-To: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 References: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -60,143 +62,98 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-From: Andrey Albershteyn <aalbersh@redhat.com>
+From: Allison Henderson <allison.henderson@oracle.com>
 
-The spin lock is not necessary here as it can be replaced with
-memory barrier which should be better performance-wise.
+Add the new parent attribute type. XFS_ATTR_PARENT is used only for parent pointer
+entries; it uses reserved blocks like XFS_ATTR_ROOT.
 
-When Merkle tree block size differs from page size, in
-is_hash_block_verified() two things are modified during check - a
-bitmap and PG_checked flag of the page.
-
-Each bit in the bitmap represent verification status of the Merkle
-tree blocks. PG_checked flag tells if page was just re-instantiated
-or was in pagecache. Both of this states are shared between
-verification threads. Page which was re-instantiated can not have
-already verified blocks (bit set in bitmap).
-
-The spin lock was used to allow only one thread to modify both of
-these states and keep order of operations. The only requirement here
-is that PG_Checked is set strictly after bitmap is updated.
-This way other threads which see that PG_Checked=1 (page cached)
-knows that bitmap is up-to-date. Otherwise, if PG_Checked is set
-before bitmap is cleared, other threads can see bit=1 and therefore
-will not perform verification of that Merkle tree block.
-
-However, there's still the case when one thread is setting a bit in
-verify_data_block() and other thread is clearing it in
-is_hash_block_verified(). This can happen if two threads get to
-!PageChecked branch and one of the threads is rescheduled before
-resetting the bitmap. This is fine as at worst blocks are
-re-verified in each thread.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
-Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+Signed-off-by: Mark Tinguely <tinguely@sgi.com>
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Allison Henderson <allison.henderson@oracle.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/verity/fsverity_private.h |    1 -
- fs/verity/open.c             |    1 -
- fs/verity/verify.c           |   48 +++++++++++++++++++++---------------------
- 3 files changed, 24 insertions(+), 26 deletions(-)
+ fs/xfs/libxfs/xfs_attr.c       |    3 ++-
+ fs/xfs/libxfs/xfs_da_format.h  |    5 ++++-
+ fs/xfs/libxfs/xfs_log_format.h |    1 +
+ fs/xfs/scrub/attr.c            |    2 +-
+ fs/xfs/xfs_trace.h             |    3 ++-
+ 5 files changed, 10 insertions(+), 4 deletions(-)
 
 
-diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index a6a6b2749241..b3506f56e180 100644
---- a/fs/verity/fsverity_private.h
-+++ b/fs/verity/fsverity_private.h
-@@ -69,7 +69,6 @@ struct fsverity_info {
- 	u8 file_digest[FS_VERITY_MAX_DIGEST_SIZE];
- 	const struct inode *inode;
- 	unsigned long *hash_block_verified;
--	spinlock_t hash_page_init_lock;
- };
- 
- #define FS_VERITY_MAX_SIGNATURE_SIZE	(FS_VERITY_MAX_DESCRIPTOR_SIZE - \
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 6c31a871b84b..fdeb95eca3af 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -239,7 +239,6 @@ struct fsverity_info *fsverity_create_info(const struct inode *inode,
- 			err = -ENOMEM;
- 			goto fail;
- 		}
--		spin_lock_init(&vi->hash_page_init_lock);
- 	}
- 
- 	return vi;
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index 904ccd7e8e16..4fcad0825a12 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -19,7 +19,6 @@ static struct workqueue_struct *fsverity_read_workqueue;
- static bool is_hash_block_verified(struct fsverity_info *vi, struct page *hpage,
- 				   unsigned long hblock_idx)
- {
--	bool verified;
- 	unsigned int blocks_per_page;
- 	unsigned int i;
- 
-@@ -43,12 +42,20 @@ static bool is_hash_block_verified(struct fsverity_info *vi, struct page *hpage,
- 	 * re-instantiated from the backing storage are re-verified.  To do
- 	 * this, we use PG_checked again, but now it doesn't really mean
- 	 * "checked".  Instead, now it just serves as an indicator for whether
--	 * the hash page is newly instantiated or not.
-+	 * the hash page is newly instantiated or not.  If the page is new, as
-+	 * indicated by PG_checked=0, we clear the bitmap bits for the page's
-+	 * blocks since they are untrustworthy, then set PG_checked=1.
-+	 * Otherwise we return the bitmap bit for the requested block.
- 	 *
--	 * The first thread that sees PG_checked=0 must clear the corresponding
--	 * bitmap bits, then set PG_checked=1.  This requires a spinlock.  To
--	 * avoid having to take this spinlock in the common case of
--	 * PG_checked=1, we start with an opportunistic lockless read.
-+	 * Multiple threads may execute this code concurrently on the same page.
-+	 * This is safe because we use memory barriers to ensure that if a
-+	 * thread sees PG_checked=1, then it also sees the associated bitmap
-+	 * clearing to have occurred.  Also, all writes and their corresponding
-+	 * reads are atomic, and all writes are safe to repeat in the event that
-+	 * multiple threads get into the PG_checked=0 section.  (Clearing a
-+	 * bitmap bit again at worst causes a hash block to be verified
-+	 * redundantly.  That event should be very rare, so it's not worth using
-+	 * a lock to avoid.  Setting PG_checked again has no effect.)
- 	 */
- 	if (PageChecked(hpage)) {
- 		/*
-@@ -58,24 +65,17 @@ static bool is_hash_block_verified(struct fsverity_info *vi, struct page *hpage,
- 		smp_rmb();
- 		return test_bit(hblock_idx, vi->hash_block_verified);
- 	}
--	spin_lock(&vi->hash_page_init_lock);
--	if (PageChecked(hpage)) {
--		verified = test_bit(hblock_idx, vi->hash_block_verified);
--	} else {
--		blocks_per_page = vi->tree_params.blocks_per_page;
--		hblock_idx = round_down(hblock_idx, blocks_per_page);
--		for (i = 0; i < blocks_per_page; i++)
--			clear_bit(hblock_idx + i, vi->hash_block_verified);
--		/*
--		 * A write memory barrier is needed here to give RELEASE
--		 * semantics to the below SetPageChecked() operation.
--		 */
--		smp_wmb();
--		SetPageChecked(hpage);
--		verified = false;
--	}
--	spin_unlock(&vi->hash_page_init_lock);
--	return verified;
-+	blocks_per_page = vi->tree_params.blocks_per_page;
-+	hblock_idx = round_down(hblock_idx, blocks_per_page);
-+	for (i = 0; i < blocks_per_page; i++)
-+		clear_bit(hblock_idx + i, vi->hash_block_verified);
-+	/*
-+	 * A write memory barrier is needed here to give RELEASE semantics to
-+	 * the below SetPageChecked() operation.
-+	 */
-+	smp_wmb();
-+	SetPageChecked(hpage);
-+	return false;
- }
+diff --git a/fs/xfs/libxfs/xfs_attr.c b/fs/xfs/libxfs/xfs_attr.c
+index 673a4b6d2e8d..ff67a684a452 100644
+--- a/fs/xfs/libxfs/xfs_attr.c
++++ b/fs/xfs/libxfs/xfs_attr.c
+@@ -925,7 +925,8 @@ xfs_attr_set(
+ 	struct xfs_inode	*dp = args->dp;
+ 	struct xfs_mount	*mp = dp->i_mount;
+ 	struct xfs_trans_res	tres;
+-	bool			rsvd = (args->attr_filter & XFS_ATTR_ROOT);
++	bool			rsvd = (args->attr_filter & (XFS_ATTR_ROOT |
++							     XFS_ATTR_PARENT));
+ 	int			error, local;
+ 	int			rmt_blks = 0;
+ 	unsigned int		total;
+diff --git a/fs/xfs/libxfs/xfs_da_format.h b/fs/xfs/libxfs/xfs_da_format.h
+index 060e5c96b70f..5434d4d5b551 100644
+--- a/fs/xfs/libxfs/xfs_da_format.h
++++ b/fs/xfs/libxfs/xfs_da_format.h
+@@ -714,12 +714,15 @@ struct xfs_attr3_leafblock {
+ #define	XFS_ATTR_LOCAL_BIT	0	/* attr is stored locally */
+ #define	XFS_ATTR_ROOT_BIT	1	/* limit access to trusted attrs */
+ #define	XFS_ATTR_SECURE_BIT	2	/* limit access to secure attrs */
++#define	XFS_ATTR_PARENT_BIT	3	/* parent pointer attrs */
+ #define	XFS_ATTR_INCOMPLETE_BIT	7	/* attr in middle of create/delete */
+ #define XFS_ATTR_LOCAL		(1u << XFS_ATTR_LOCAL_BIT)
+ #define XFS_ATTR_ROOT		(1u << XFS_ATTR_ROOT_BIT)
+ #define XFS_ATTR_SECURE		(1u << XFS_ATTR_SECURE_BIT)
++#define XFS_ATTR_PARENT		(1u << XFS_ATTR_PARENT_BIT)
+ #define XFS_ATTR_INCOMPLETE	(1u << XFS_ATTR_INCOMPLETE_BIT)
+-#define XFS_ATTR_NSP_ONDISK_MASK	(XFS_ATTR_ROOT | XFS_ATTR_SECURE)
++#define XFS_ATTR_NSP_ONDISK_MASK \
++			(XFS_ATTR_ROOT | XFS_ATTR_SECURE | XFS_ATTR_PARENT)
  
  /*
+  * Alignment for namelist and valuelist entries (since they are mixed
+diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
+index 16872972e1e9..9cbcba4bd363 100644
+--- a/fs/xfs/libxfs/xfs_log_format.h
++++ b/fs/xfs/libxfs/xfs_log_format.h
+@@ -974,6 +974,7 @@ struct xfs_icreate_log {
+  */
+ #define XFS_ATTRI_FILTER_MASK		(XFS_ATTR_ROOT | \
+ 					 XFS_ATTR_SECURE | \
++					 XFS_ATTR_PARENT | \
+ 					 XFS_ATTR_INCOMPLETE)
+ 
+ /*
+diff --git a/fs/xfs/scrub/attr.c b/fs/xfs/scrub/attr.c
+index 83c7feb38714..49f91cc85a65 100644
+--- a/fs/xfs/scrub/attr.c
++++ b/fs/xfs/scrub/attr.c
+@@ -494,7 +494,7 @@ xchk_xattr_rec(
+ 	/* Retrieve the entry and check it. */
+ 	hash = be32_to_cpu(ent->hashval);
+ 	badflags = ~(XFS_ATTR_LOCAL | XFS_ATTR_ROOT | XFS_ATTR_SECURE |
+-			XFS_ATTR_INCOMPLETE);
++			XFS_ATTR_INCOMPLETE | XFS_ATTR_PARENT);
+ 	if ((ent->flags & badflags) != 0)
+ 		xchk_da_set_corrupt(ds, level);
+ 	if (ent->flags & XFS_ATTR_LOCAL) {
+diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+index 56b07d8ed431..d4f1b2da21e7 100644
+--- a/fs/xfs/xfs_trace.h
++++ b/fs/xfs/xfs_trace.h
+@@ -86,7 +86,8 @@ struct xfs_bmap_intent;
+ #define XFS_ATTR_FILTER_FLAGS \
+ 	{ XFS_ATTR_ROOT,	"ROOT" }, \
+ 	{ XFS_ATTR_SECURE,	"SECURE" }, \
+-	{ XFS_ATTR_INCOMPLETE,	"INCOMPLETE" }
++	{ XFS_ATTR_INCOMPLETE,	"INCOMPLETE" }, \
++	{ XFS_ATTR_PARENT,	"PARENT" }
+ 
+ DECLARE_EVENT_CLASS(xfs_attr_list_class,
+ 	TP_PROTO(struct xfs_attr_list_context *ctx),
 
 
