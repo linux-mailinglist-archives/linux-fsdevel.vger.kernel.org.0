@@ -1,127 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-14280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCB387A6C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 12:10:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9991D87A6FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 12:17:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBF51C22B73
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 11:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 545C72881B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 11:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8129443AD5;
-	Wed, 13 Mar 2024 11:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CBF3F9D8;
+	Wed, 13 Mar 2024 11:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MA8R7KyK"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Wfa6A5Xw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5674205F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 11:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEF93F9C2;
+	Wed, 13 Mar 2024 11:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710328129; cv=none; b=sRiy7vtVM5QbbLbywy0iAuoRLVdFV2uWfi3je7qr0KQrGuE3XjsRqkygpRYR+WCOdD66IzRYqCgMXZu/MGOKYLE14O+Z42DOCD6n3AiL+MD4BQ/x6KDTTdngDQQluBFfs5u8GETDuEOHjl0eD4ju4E+kcxq1kkiR8ghxP/R4G74=
+	t=1710328623; cv=none; b=VTKKdDDkZDl9KDC3b5bMwYuAh94iD7QHeZvQGyqVrJe9bS7z4hNsxS4gU+/QrGwE4IylOp5OgU1BUCNYBReVND0FFDyeICDXdlKpRRH1jisb5G/hK7hvGI1Rs6Gvq9X4lHTxUsOGE2OwePUxPyu/oVUQ98wuou8hF4KsyiZAioo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710328129; c=relaxed/simple;
-	bh=luniAF9OyE9AxjoQ87oukSfN2nAfisuW4QkMcg5MzAo=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=fRDURdRsXBQ2EXbCiApDKs1lwLW0oi1v9ILBw6klFdnVLGSyIWmkETruIkgq83jcClGAup1fFqGbk04y6dYBe4KSZyqy7GMmh3wkZuZlt7Uwn0NdGx5Ph3aC/+IpF4G7qN7Xhn3VnXGEKSds4U6cAzWMrV/U4r2gi4xElx88EiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MA8R7KyK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710328126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QTP9uAHVPvXi9wcTkRv8pSjlNhXJ/YsIlYMbNyFLnuo=;
-	b=MA8R7KyK1I1up5YV3Ofbj4bbi0kQZELBJAa/DHnG9C7qnlgTxn814m1mVv5Mmxam8ggGhQ
-	PeYDjvYiAI7/UJejyPyGhfCAwRerCOlFvOBAYh+4QqQ81mEA0Yik5U/V23AY9zHRrK0e1D
-	fHMrepMJy7vdYbYuZ+zz2cuB4eYPwws=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-388-6Zq0fiNLPpuMq8oycQT-rA-1; Wed, 13 Mar 2024 07:08:43 -0400
-X-MC-Unique: 6Zq0fiNLPpuMq8oycQT-rA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2579487280B;
-	Wed, 13 Mar 2024 11:08:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.10])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 2D2DB492BC7;
-	Wed, 13 Mar 2024 11:08:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Marc Dionne <marc.dionne@auristor.com>,
-    Markus Suvanto <markus.suvanto@gmail.com>
-cc: dhowells@redhat.com, Jeffrey Altman <jaltman@auristor.com>,
-    Christian Brauner <brauner@kernel.org>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Revert "afs: Hide silly-rename files from userspace"
+	s=arc-20240116; t=1710328623; c=relaxed/simple;
+	bh=9xGC4SQpm4zfa3uEPVxx0x3Lkh/v6baabtSuFaG50Ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dODJkE35v417k3S7mgrAbHtsX0jZ7beSRATm6crk664tLBCNXYgAj3W0pptMKHQlYiQaycZp8iNAe3PsJO5ulAt9XPh2ad4GBS8L7B+w3NFyF029PVbpHrWOwTDzPhGLTy+NQ2ehxSjHfF3uDuYKm8qEkWw5oOY00up23ug3Np4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Wfa6A5Xw; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=yM2Z9vaSXa8HrhpKkEVTckQYcJBQU4Wl+RREtQMe3Ko=; b=Wfa6A5XwQ7fgzY/3vhYdJfpudb
+	PIc1E2SkpFaAIJV57oskRVfmokvr5A4VH4pHz9U7TepUqACgYemlFv33mX0oxBSINDE577R8dIWJE
+	NqxRq1pMXopMJ9nKdg0t9qIsb97C6imowZQ7fcTt02/gUTZyu64tG0EU6YOzVFcvmS5mL3S2rQbOL
+	z1tVjSyXUiaKxvJpDbIH+P69t5GFAHUD+6dWkQgYAyp9QyvAVXO1NZYAw0NMtUdx/C22cKkihrS4c
+	2XHyFugwirV5+eQe+b8xY83IzGuA27hef7lZ7RsggxFZFLRjIFW680jfu+8n94pc40xK5VW2Vqr0y
+	CJlbO9lA==;
+Received: from 179-125-71-247-dinamico.pombonet.net.br ([179.125.71.247] helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1rkMbP-009v3c-HN; Wed, 13 Mar 2024 12:16:56 +0100
+Date: Wed, 13 Mar 2024 08:16:50 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Gwendal Grignou <gwendal@chromium.org>, dlunev@chromium.org
+Subject: Re: [PATCH] fat: ignore .. subdir and always add a link to dirs
+Message-ID: <ZfGLIl7riu0w2pAm@quatroqueijos.cascardo.eti.br>
+References: <Zd6PdxOC8Gs+rX+j@quatroqueijos.cascardo.eti.br>
+ <87le75s1fg.fsf@mail.parknet.co.jp>
+ <Zd74fjlVJZic8UxI@quatroqueijos.cascardo.eti.br>
+ <87h6hek50l.fsf@mail.parknet.co.jp>
+ <Ze2IAnSX7lr1fZML@quatroqueijos.cascardo.eti.br>
+ <87cys2jfop.fsf@mail.parknet.co.jp>
+ <ZfFcpWRWdnWmtebd@quatroqueijos.cascardo.eti.br>
+ <878r2mk14a.fsf@mail.parknet.co.jp>
+ <ZfFmvGRlNR4ZiMMC@quatroqueijos.cascardo.eti.br>
+ <874jdajsqm.fsf@mail.parknet.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3085694.1710328121.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 13 Mar 2024 11:08:41 +0000
-Message-ID: <3085695.1710328121@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874jdajsqm.fsf@mail.parknet.co.jp>
 
-    =
+On Wed, Mar 13, 2024 at 08:06:41PM +0900, OGAWA Hirofumi wrote:
+> Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
+> 
+> >> So you break the mkdir/rmdir link counting, isn't it?
+> >> 
+> >
+> > It is off by one on those images with directories without ".." subdir.
+> > Otherwise, everything else works fine. mkdir/rmdir inside such directories work
+> > without any issues as rmdir that same directory.
+> 
+> mkdir() increase link count, rmdir decrease link count. Your change set
+> a dir link count always 2? So if there are 3 normal subdirs, and rmdir
+> all those normal dirs, link count underflow.
+> 
+> Thanks.
+> 
 
-This reverts commit 57e9d49c54528c49b8bffe6d99d782ea051ea534.
+No. The main change is as follows:
 
-This undoes the hiding of .__afsXXXX silly-rename files.  The problem with
-hiding them is that rm can't then manually delete them.
+int fat_subdirs(struct inode *dir)
+{
+[...]
+	int count = 0;
+[...]
+-		if (de->attr & ATTR_DIR)
++		if (de->attr & ATTR_DIR &&
++		    strncmp(de->name, MSDOS_DOTDOT, MSDOS_NAME))
+ 			count++;
+[...]
+	return count;
+}
 
-This also reverts commit 5f7a07646655fb4108da527565dcdc80124b14c4 ("afs: F=
-ix
-endless loop in directory parsing") as that's a bugfix for the above.
+int fat_fill_inode(struct inode *inode, struct msdos_dir_entry *de)
+{
+[...]
+	if ((de->attr & ATTR_DIR) && !IS_FREE(de->name)) {
+[...]
+-		set_nlink(inode, fat_subdirs(inode));
++		set_nlink(inode, fat_subdirs(inode) + 1);
+[...]
+}
 
-Fixes: 57e9d49c5452 ("afs: Hide silly-rename files from userspace")
-Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
-Link: https://lists.infradead.org/pipermail/linux-afs/2024-February/008102=
-.html
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
----
- fs/afs/dir.c |   10 ----------
- 1 file changed, 10 deletions(-)
+That is, when first instatiating a directory inode, its link count was set to
+the number of subdirs it had, including "." and "..". Now it is set to 1 + the
+number of subdirs it has ignoring "..".
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 8a67fc427e74..67afe68972d5 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -474,16 +474,6 @@ static int afs_dir_iterate_block(struct afs_vnode *dv=
-node,
- 			continue;
- 		}
- =
+mkdir and rmdir still increment and decrement the parent directory link count.
 
--		/* Don't expose silly rename entries to userspace. */
--		if (nlen > 6 &&
--		    dire->u.name[0] =3D=3D '.' &&
--		    ctx->actor !=3D afs_lookup_filldir &&
--		    ctx->actor !=3D afs_lookup_one_filldir &&
--		    memcmp(dire->u.name, ".__afs", 6) =3D=3D 0) {
--			ctx->pos =3D blkoff + next * sizeof(union afs_xdr_dirent);
--			continue;
--		}
--
- 		/* found the next entry */
- 		if (!dir_emit(ctx, dire->u.name, nlen,
- 			      ntohl(dire->u.vnode),
+Cascardo.
 
+
+> > If, on the other hand, we left everything as is and only skipped the
+> > validation, such directories would be created with a link count of 0. Then,
+> > doing a mkdir inside them would crash the kernel with a BUG as we cannot
+> > increment the link count of an inode with 0 links.
+> >
+> > So the idea of the fix here is that, independently of the existence of "..",
+> > the link count will always be at least 1.
+> 
+> -- 
+> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
