@@ -1,239 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-14300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868E387AA59
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 16:25:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5924B87AA72
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 16:31:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73061C2278C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 15:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C67FD1F23775
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 15:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9874654F;
-	Wed, 13 Mar 2024 15:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D4F481C2;
+	Wed, 13 Mar 2024 15:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="fg3L4yud"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nHy1XTA7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [208.125.0.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E5244C89
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 15:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B8F3E48C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 15:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710343524; cv=none; b=YsfLFR6r1y7mtzsA2v5yct9OIae/J4DREymbxM7CvySk7sGrKrtIuQ8TYC0xHbm4ir62y2S8cGVAQCys5vuw0CIaeKv0ieIpTAMXcs0+hMPApWS6HRARbWCLPhzr3AxmyXG5BSYjt/hj8fIrd10S3QvtNgK5cr3s1wJp3djXJUA=
+	t=1710343894; cv=none; b=p/N1feYNz/TLsnEr4Jmz9M3E4weRdnoLR98mtowudWXT5kGzVhHNSjyORhTHTU9mufsSmFid09asxx+LrwRK2ZKLS+ZIFQVDlDAO4P+vanItDWGU40kVJ6rAcbJp1NrxPPt8UaMpjoQeckSTU+Jn/zH+3KzOg+ATkOOTcJiCYq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710343524; c=relaxed/simple;
-	bh=u2UiTUNzRzzN+tDhfV0Ch39txOty+byM6JMOcKapi24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lr8yER9URc9VVuUck0L2FaeRVJ6+kAJU57Fy1PBgrgiQicHk/Dyg17eAWEGBKpyn7smxKbHc0GIDq1SnxWeAL6qIuFjMhGKecsKPdQrc/9mM0QAyHoUFgJNeIdG9R09aHbUaDS1vm8dzm7RMi66y2BOaAlP8YU6xv3tTJaK/yrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=fg3L4yud; arc=none smtp.client-ip=208.125.0.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
-	d=auristor.com; s=MDaemon; r=y; t=1710343267; x=1710948067;
-	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
-	MIME-Version:User-Agent:Subject:To:Cc:References:
-	Content-Language:From:Organization:In-Reply-To:Content-Type;
-	bh=F4Axnaki44w3H6nj7+hMRbaVtStbg/R7TWTnR0wNnhk=; b=fg3L4yudfB6gD
-	KflGpB917xyt3XrT7A4H0LoH7lZj27MWH4c5H+tZh4elPS0phvC8Xw0JBhsJgeyn
-	AlUWDCKk5QcYfCnygKlFYbcHR09UAFO/DiWYBgehS/FC2WTFSUB4CLWw+KhqG9Gx
-	X7BFpuZfuepWfoAEY9PxV4O2zWCfYE=
-X-MDAV-Result: clean
-X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Wed, 13 Mar 2024 11:21:07 -0400
-Received: from [IPV6:2603:7000:73c:bb00:b062:5568:3637:7b7c] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v23.5.3) 
-	with ESMTPSA id md5001003825496.msg; Wed, 13 Mar 2024 11:21:05 -0400
-X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Wed, 13 Mar 2024 11:21:05 -0400
-	(not processed: message from trusted or authenticated source)
-X-MDRemoteIP: 2603:7000:73c:bb00:b062:5568:3637:7b7c
-X-MDHelo: [IPV6:2603:7000:73c:bb00:b062:5568:3637:7b7c]
-X-MDArrival-Date: Wed, 13 Mar 2024 11:21:05 -0400
-X-MDOrigin-Country: US, NA
-X-Authenticated-Sender: jaltman@auristor.com
-X-Return-Path: prvs=180268576e=jaltman@auristor.com
-X-Envelope-From: jaltman@auristor.com
-X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
-Message-ID: <2c15fb50-85ed-44fd-a93e-2083bea93ac5@auristor.com>
-Date: Wed, 13 Mar 2024 11:20:59 -0400
+	s=arc-20240116; t=1710343894; c=relaxed/simple;
+	bh=Zq4RfZOjcqNtcLFUzAg0QuQxZvQrvC1IKPOXZvtCEr8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LEysbvoebXx6ousjOiN4WmVYY/VZ2idUA7CS9sSOHyw0Lwr4Vib8wrHhhp0mh5dYZqs4sCt/0fbyE0MLb6vBQ09uTOKQu+3ZvzknOaKDrLXJUn+iB3zjLBakGJ3bN5tff3maz0Lt/iFOKJqz3eMcGzyU6OpV+Nm66GtFn9FSCL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nHy1XTA7; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dcc7cdb3a98so1180173276.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 08:31:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1710343891; x=1710948691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JtMw74U66kmsHyXAV7bBZ7SbbkNSfFBApfqkzQBmCrI=;
+        b=nHy1XTA7EB89TkqAKPt3CSMUwffHkk/CAuX5IYEt3/EzeN/XRhGq2DKnf7K6hxBuX2
+         lizjW6ABzbMxvs9EVRQPfIEdfnzXbICsxanCJ313DaPFFsn3XgjJXutzC0m8X+uGp4Z5
+         Om3PINc9nBM2T9TOBrh3Fdfv+4E3X3TozhN1tc8/oU8w+/Zy+NQckLE5J7e2sPXxNlyr
+         Yg6YbyXesZbqI/nCi6EKIOgO914R0yfPTAzB91Id3Q95jZ4U6SQbdb1pjfCT0GK05Dcl
+         tPLny3Iv8ZJxV34iyTvblGo8lJ5DISojziQxMAi9f+np2LqJCj/YFpKveTEQzzcE0BjG
+         1ivg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710343891; x=1710948691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JtMw74U66kmsHyXAV7bBZ7SbbkNSfFBApfqkzQBmCrI=;
+        b=Xhc4b84DyF1/6YX1E8sierXM1ScUzAS1BABXi4JY8jl18QB8jmTTqrO6hDcIhgOBif
+         LRznx4ajO/NZxZZJjakog5sZ3XX5tsJTUWwdnbnedxD6KKftS2rwaNEgFWAnNqcI7odc
+         /vrtbK+pwEjJ+7MSBX/wcxLmV/RPnf+40/0ZSA8nZQAfwg2H0li2Ijn9cNoKI/Ktmn1w
+         +1tMylOUUYrOnTG8QNUowVQ2Paa6yoCbAUEHwuOaP7BUjX4SrkrsZt/6V3MINWgWQjgQ
+         VZH7DIHn5B2h6+LK+dD2Pgbwm8hC1yRtyrzx04CueRsOnRQhMu6Pd5l7f8toCWLygJDn
+         3xTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsG6XX690o1g+2kCqVHSvjkQsg/hS37RkjFKp1v+UC+NJ7Dp+7x+nG+cMOj9/0xAe+UwJpUH6otElzq6K3gT4KHr0A6roSRtIbJtR0wg==
+X-Gm-Message-State: AOJu0Yw9C4Fza0W6kEjS8DknWC3UPuOQVXnCbHWH00WgNQQr0C4JJRtO
+	lwopgD9TNzTIs7zGbHPcmzZcRCMrIkq2i5KVf6Fsi+M9yF0wOIQOsdhIR4I8/rOfZfyBzGnmjfn
+	mFehLg5cwXejFzVm4hM4hI0zIZP6ZHXc94QJK
+X-Google-Smtp-Source: AGHT+IFt/OYhWjwqlxyr/Zyxfa6nHqBBNGn1lVwocwLdvQz8oj2Fnp7dsALCjpYCUrb0E7Elvx8ovXgew43c6K/l7cs=
+X-Received: by 2002:a5b:706:0:b0:dcb:abbc:f597 with SMTP id
+ g6-20020a5b0706000000b00dcbabbcf597mr2798485ybq.54.1710343891190; Wed, 13 Mar
+ 2024 08:31:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] afs: Revert "afs: Hide silly-rename files from userspace"
-To: Randy Dunlap <rdunlap@infradead.org>, David Howells
- <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
- Markus Suvanto <markus.suvanto@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-afs@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <3085695.1710328121@warthog.procyon.org.uk>
- <544d7b9d-ef15-463f-a11c-9a3cca3a49ea@infradead.org>
-Content-Language: en-US
-From: Jeffrey E Altman <jaltman@auristor.com>
-Organization: AuriStor, Inc.
-In-Reply-To: <544d7b9d-ef15-463f-a11c-9a3cca3a49ea@infradead.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms040506040602050404040605"
-X-MDCFSigsAdded: auristor.com
+References: <20240306182440.2003814-1-surenb@google.com> <20240306182440.2003814-21-surenb@google.com>
+ <ZfHAcVwJ6w9b1x0Z@casper.infradead.org>
+In-Reply-To: <ZfHAcVwJ6w9b1x0Z@casper.infradead.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 13 Mar 2024 15:31:18 +0000
+Message-ID: <CAJuCfpFf2xrCA_Rq_-e5HsDMqeS87p0b28PkK+wgWco17mxyDQ@mail.gmail.com>
+Subject: Re: [PATCH v5 20/37] mm: fix non-compound multi-order memory
+ accounting in __free_pages
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, liam.howlett@oracle.com, 
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com, tj@kernel.org, 
+	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, 
+	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com, 
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a cryptographically signed message in MIME format.
-
---------------ms040506040602050404040605
-Content-Type: multipart/alternative;
- boundary="------------q9dKyk0AdsOVZQc5k7AhoZah"
-
---------------q9dKyk0AdsOVZQc5k7AhoZah
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 3/13/2024 11:16 AM, Randy Dunlap wrote:
-> On 3/13/24 04:08, David Howells wrote:
->>      
->> This reverts commit 57e9d49c54528c49b8bffe6d99d782ea051ea534.
->>
->> This undoes the hiding of .__afsXXXX silly-rename files.  The problem with
->> hiding them is that rm can't then manually delete them.
->>
->> This also reverts commit 5f7a07646655fb4108da527565dcdc80124b14c4 ("afs: Fix
->> endless loop in directory parsing") as that's a bugfix for the above.
->>
->> Fixes: 57e9d49c5452 ("afs: Hide silly-rename files from userspace")
->> Reported-by: Markus Suvanto<markus.suvanto@gmail.com>
->> Link:https://lists.infradead.org/pipermail/linux-afs/2024-February/008102html
-> Not Found
+On Wed, Mar 13, 2024 at 3:04=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
 >
-> The requested URL was not found on this server.
+> On Wed, Mar 06, 2024 at 10:24:18AM -0800, Suren Baghdasaryan wrote:
+> > When a non-compound multi-order page is freed, it is possible that a
+> > speculative reference keeps the page pinned. In this case we free all
+> > pages except for the first page, which will be freed later by the last
+> > put_page(). However put_page() ignores the order of the page being free=
+d,
+> > treating it as a 0-order page. This creates a memory accounting imbalan=
+ce
+> > because the pages freed in __free_pages() do not have their own alloc_t=
+ag
+> > and their memory was accounted to the first page. To fix this the first
+> > page should adjust its allocation size counter when "tail" pages are fr=
+eed.
+>
+> It's not "ignored".  It's not available!
+>
+> Better wording:
+>
+> However the page passed to put_page() is indisinguishable from an
+> order-0 page, so it cannot do the accounting, just as it cannot free
+> the subsequent pages.  Do the accounting here, where we free the pages.
+>
+> (I'm sure further improvements are possible)
+>
+> > +static inline void pgalloc_tag_sub_bytes(struct alloc_tag *tag, unsign=
+ed int order)
+> > +{
+> > +     if (mem_alloc_profiling_enabled() && tag)
+> > +             this_cpu_sub(tag->counters->bytes, PAGE_SIZE << order);
+> > +}
+>
+> This is a terribly named function.  And it's not even good for what we
+> want to use it for.
+>
+> static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned =
+int nr)
+> {
+>         if (mem_alloc_profiling_enabled() && tag)
+>                 this_cpu_sub(tag->counters->bytes, PAGE_SIZE * nr);
+> }
+>
+> > +++ b/mm/page_alloc.c
+> > @@ -4697,12 +4697,21 @@ void __free_pages(struct page *page, unsigned i=
+nt order)
+> >  {
+> >       /* get PageHead before we drop reference */
+> >       int head =3D PageHead(page);
+> > +     struct alloc_tag *tag =3D pgalloc_tag_get(page);
+> >
+> >       if (put_page_testzero(page))
+> >               free_the_page(page, order);
+> >       else if (!head)
+> > -             while (order-- > 0)
+> > +             while (order-- > 0) {
+> >                       free_the_page(page + (1 << order), order);
+> > +                     /*
+> > +                      * non-compound multi-order page accounts all all=
+ocations
+> > +                      * to the first page (just like compound one), th=
+erefore
+> > +                      * we need to adjust the allocation size of the f=
+irst
+> > +                      * page as its order is ignored when put_page() f=
+rees it.
+> > +                      */
+> > +                     pgalloc_tag_sub_bytes(tag, order);
+>
+> -       else if (!head
+> +       else if (!head) {
+> +               pgalloc_tag_sub_pages(1 << order - 1);
+>                 while (order-- > 0)
+>                         free_the_page(page + (1 << order), order);
+> +       }
+>
+> It doesn't need a comment, it's obvious what you're doing.
 
-The dot before the "html" extension is missing.
+All suggestions seem fine to me. I'll adjust the next version accordingly.
+Thanks for reviewing and the feedback!
 
---------------q9dKyk0AdsOVZQc5k7AhoZah
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body>
-    <div class="moz-cite-prefix">On 3/13/2024 11:16 AM, Randy Dunlap
-      wrote:<br>
-    </div>
-    <blockquote type="cite"
-      cite="mid:544d7b9d-ef15-463f-a11c-9a3cca3a49ea@infradead.org">
-      <pre class="moz-quote-pre" wrap="">On 3/13/24 04:08, David Howells wrote:
-</pre>
-      <blockquote type="cite">
-        <pre class="moz-quote-pre" wrap="">    
-This reverts commit 57e9d49c54528c49b8bffe6d99d782ea051ea534.
-
-This undoes the hiding of .__afsXXXX silly-rename files.  The problem with
-hiding them is that rm can't then manually delete them.
-
-This also reverts commit 5f7a07646655fb4108da527565dcdc80124b14c4 ("afs: Fix
-endless loop in directory parsing") as that's a bugfix for the above.
-
-Fixes: 57e9d49c5452 ("afs: Hide silly-rename files from userspace")
-Reported-by: Markus Suvanto <a class="moz-txt-link-rfc2396E" href="mailto:markus.suvanto@gmail.com">&lt;markus.suvanto@gmail.com&gt;</a>
-Link: <a class="moz-txt-link-freetext" href="https://lists.infradead.org/pipermail/linux-afs/2024-February/008102html">https://lists.infradead.org/pipermail/linux-afs/2024-February/008102html</a>
-</pre>
-      </blockquote>
-      <pre class="moz-quote-pre" wrap="">
-Not Found
-
-The requested URL was not found on this server.</pre>
-    </blockquote>
-    <p>The dot before the "html" extension is missing.</p>
-    <p><span style="white-space: pre-wrap">
-</span></p>
-  </body>
-</html>
-
---------------q9dKyk0AdsOVZQc5k7AhoZah--
-
---------------ms040506040602050404040605
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
-BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
-MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
-MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
-YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
-xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
-fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
-EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
-9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
-IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
-BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
-BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
-My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
-A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
-L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
-bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
-aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
-YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
-ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
-dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
-MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
-gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
-eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
-WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
-utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
-Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
-a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
-AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
-Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
-AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
-wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
-15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
-o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
-3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
-VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
-CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
-dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
-L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
-5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
-dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
-eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
-YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
-dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
-Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
-dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
-bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
-CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
-bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
-0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
-6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
-QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
-Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
-db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
-rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
-UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
-p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
-MDGCAxQwggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
-A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
-ggGXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDMxMzE1
-MjA1OVowLwYJKoZIhvcNAQkEMSIEIMEG7LOAjGZ5Oir+VRbiFpq8Rfd3viIXmVIAl4MfSUoQ
-MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
-MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
-AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
-dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZI
-AWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
-hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAhHYb
-QbAjDVIEADMVPkzq0gi05yb7+6lWFfn4bgQ3YLF6EA0oZhU5mvirNyMCDqRX8l2PlfXCiR9O
-fCONTgdiMYLKA4kPGIln3T/Ti2KsSHDqrOAwqlw9rLA3pzI6fDM2JrHZ2LwLjFZJRStBeddG
-virnp3HaaMrZNgWWVtgtrm85/RlexpzEG+32LIBX+FqCaDq5XW2q45p+VvI5eEcyGKMR6EuK
-oSu89juC470M16iNsm8y3D6jWsU15/kaTh6NDjDMJjWLGM1z53Da6ple/VRV1UE6wpAfAO97
-PV3UhDQdA3EYjuMIfhY9EG+bGdDoSKznQdzcv0vDZjHzaJhzVQAAAAAAAA==
---------------ms040506040602050404040605--
-
+>
 
