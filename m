@@ -1,218 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-14357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F19487B2F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 21:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8661487B305
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 21:48:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4C78B22EE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 20:40:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15BAEB22F81
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 20:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8FA54756;
-	Wed, 13 Mar 2024 20:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399B051C59;
+	Wed, 13 Mar 2024 20:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mforney.org header.i=@mforney.org header.b="oGg3g8eW"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OF7EDGDB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06675339D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 20:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF03212E6C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 20:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710362383; cv=none; b=Hd1jffpYOVYi2nrWk9HTzh1RGUj4w4xDJK+6QS09YppAY1tPmXf5ACUA2FXDhk6DBRQ8q4Fb6YfTV6YRUkxz1muJoK0yxfdqZwvLMlMGa+gOJnrSgWuswTBbIIHPlT8ZzQwLCaPukoxEICc38K2KugV0aD9vgVLKqkD7XwxiQKg=
+	t=1710362900; cv=none; b=QBRuCNglKp4+jBV+Tg9cnQ9kETRovO1Fvm6G9po99TsKeuWbDOTS49djqcJf5MD2ZhfV5IAj0x6CqE6NPFKa5kq1g4/8DwJpxY4fB/8ImD4EOQIYvRBBiNddKLlPnYFCjZ01pVKv9XtlIMdJsWOJLUGu6jVel7EXv1yWcR/2hwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710362383; c=relaxed/simple;
-	bh=5NYy5F9GaegC1adFOjJmjFtFKrgOGt8L8XjVO8/x/uA=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:Message-Id:
-	 MIME-Version:Content-Type; b=Mqhqj0vuw/DMNdysySqlm2Eo1TUwJjHuggkulyhZfVTuC7zO8QWMs/y40cEUsxU0Qkp8ClVWFddKLxfgZa0kAkzdgEzdOA/IA4XIs0q+7eL5M4TUKwbKCivCWG97R12wfXTtUemZjQamMFCS+xpRzqfRuSF6JbVp36ne0kT24+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mforney.org; spf=pass smtp.mailfrom=mforney.org; dkim=pass (2048-bit key) header.d=mforney.org header.i=@mforney.org header.b=oGg3g8eW; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mforney.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mforney.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1dd8f7d50c6so10560675ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 13:39:41 -0700 (PDT)
+	s=arc-20240116; t=1710362900; c=relaxed/simple;
+	bh=Qs82lcXumefYXpExMq3K66hhPd5zaxuwF7JwqNXx9iQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t/98g8vYb39eJmP/UhSWoAVdUqnpt93ypMsdL6sWdq1g40P2xdJwE+bTjpcebAOGXPxhaZt5L+jOsZPAZ7MD8u49ulUwOco8Ek8T8flLkld0ST6ifOncNya4VzhVp/xKaMuEIeYfqIQMxLc+x3HIuU6Y6ZvcW2Ae3mmbXl5T824=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OF7EDGDB; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-55a179f5fa1so319490a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 13:48:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mforney.org; s=google; t=1710362381; x=1710967181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:message-id
-         :in-reply-to:references:from:subject:cc:to:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JrhTyp84sWHbOiBAqJX2C5jIkkkaEpg/S6Nrn3IynAs=;
-        b=oGg3g8eW7Ecp6k8wTelqVv/haRgZlmM6e3mOz4fH3MX5P7S1NTqPknDMwduj0Pg/FZ
-         HobP8nODlrlprSh3M7un8SCqPHk7+oXlnQ1CFsofWx01Wg8Ng2kxzU1uZGWOe6WwOEFd
-         7i2wUNhZ7VM/pNrl6AgYhTjHRJ32pPr/5KpgfJk+uM8+xqTD6X+TfFwt2YHqa3S1oQ5h
-         Sy/cPOLRColvjjkGi6mUB6npaUbh3BkcVFFPBxQqvCjAeEaIT9IuEjjErb9j3zfo2cbx
-         7j3m18w5/KIZUz6Sh1I+HbVQAXODZmHU1BmUQI2RLnlW0kR15vHARi1uE11lZYmYjYlb
-         GJYQ==
+        d=linux-foundation.org; s=google; t=1710362897; x=1710967697; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PPuXpkeGm2u0OvGSXHyAWpUcDKXz5BztlE6+aKXcrYM=;
+        b=OF7EDGDBmmuyTKI5wyvojDoVQbgQkPFxMtFPvlzVtQMfv04STtxyHTCY6ZI0mt2frT
+         1KimqT+tw1aJotnLGnPfqY0BAV3azV0zA6RPZ7Zc/FXC9NrvOgzcKahk/H9UgFdBkH9w
+         kG408dtdZTcwDA5xO5NGhW1nGL5qIlsYayKGo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710362381; x=1710967181;
-        h=content-transfer-encoding:mime-version:user-agent:message-id
-         :in-reply-to:references:from:subject:cc:to:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JrhTyp84sWHbOiBAqJX2C5jIkkkaEpg/S6Nrn3IynAs=;
-        b=jgMyxJJeDt4axWxpschaH4ku7bdjjabJJ54/2RQNnG+EA8/q2eqihEzSiexQSBYxIr
-         lGHjbKYVSjcpIubJ9nCmbWB/Y2YawPEo5k108Ji25tuZU6R0SMt7nZ8xfHnTME5KlDIO
-         K2HOZm26dURd7svZjZSyTCuQ9uvAzPMXkPkHRwAQStsNawnAp3GszqwMdVJ46tkPCBhN
-         hnrNWw1+LFfeeI4ZF5lB4KuvIDm473SYYZYKFAhPohW2tAnvyupM1w9Dgbe0dGUvWr/7
-         WG8EDqfO7gr6/kkm2m5kWFtCrqIXLOsNXbZbxagrFhht3ARwTpuYATsRk+IWbgQi7rxG
-         lWVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjIPw8AVNsnH1ejQH+k4uXjKuhb+TLLmOoIgiHgQW/PtwBSOQ5VuOCxCIeFzwAFMFcTuDdbSU5TCap0MFt4xSJRN16ajTwPm0CpFxoig==
-X-Gm-Message-State: AOJu0YxUFoxs+WiPMof6WpI3uQNEnsWS3cbHLjKnQZUxZTB+Qs5AcwNE
-	wQFwwnqQjQQ5embrwx852D+WgURq6IgbVUH300FPmVAQ0nswzMvojelg6Q20rtI=
-X-Google-Smtp-Source: AGHT+IE/KQaRwJCmaxE7HGMWWWwC9HUvtwPSaTkkWMsQzRjSycKrqz980rtkW102JSTf6os/v9ns7A==
-X-Received: by 2002:a17:902:ea05:b0:1dd:a12e:15c8 with SMTP id s5-20020a170902ea0500b001dda12e15c8mr5302773plg.33.1710362380873;
-        Wed, 13 Mar 2024 13:39:40 -0700 (PDT)
-Received: from localhost ([2601:647:6400:20b0:16dd:a9ff:fee7:6b79])
-        by smtp.gmail.com with ESMTPSA id b6-20020a170902d50600b001db693d89fdsm22392plg.179.2024.03.13.13.39.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Mar 2024 13:39:40 -0700 (PDT)
-Date: Wed, 13 Mar 2024 13:40:46 -0700
-To: Jan Kara <jack@suse.cz>
-Cc: Theodore Ts'o <tytso@mit.edu>, Christian Brauner <brauner@kernel.org>,
- Max Kellermann <max.kellermann@ionos.com>, Xiubo Li <xiubli@redhat.com>,
- Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>, Jan
- Kara <jack@suse.com>, Dave Kleikamp <shaggy@kernel.org>,
- ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, Yang Xu
- <xuyang2018.jy@fujitsu.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
- support is disabled
-From: Michael Forney <mforney@mforney.org>
-References: <20231011100541.sfn3prgtmp7hk2oj@quack3>
- <CAKPOu+_xdFALt9sgdd5w66Ab6KTqiy8+Z0Yd3Ss4+92jh8nCwg@mail.gmail.com>
- <20231011120655.ndb7bfasptjym3wl@quack3>
- <CAKPOu+-hLrrpZShHh0o6uc_KMW91suEd0_V_uzp5vMf4NM-8yw@mail.gmail.com>
- <CAKPOu+_0yjg=PrwAR8jKok8WskjdDEJOBtu3uKR_4Qtp8b7H1Q@mail.gmail.com>
- <20231011135922.4bij3ittlg4ujkd7@quack3>
- <20231011-braumeister-anrufen-62127dc64de0@brauner>
- <20231011170042.GA267994@mit.edu> <20231011172606.mztqyvclq6hq2qa2@quack3>
- <20231012142918.GB255452@mit.edu> <20231012144246.h3mklfe52gwacrr6@quack3>
-In-Reply-To: <20231012144246.h3mklfe52gwacrr6@quack3>
-Message-Id: <28DSITL9912E1.2LSZUVTGTO52Q@mforney.org>
-User-Agent: mblaze/1.2
+        d=1e100.net; s=20230601; t=1710362897; x=1710967697;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PPuXpkeGm2u0OvGSXHyAWpUcDKXz5BztlE6+aKXcrYM=;
+        b=hglRLJkpHzfNeqamjiD85AyWyeUg+zaV1TheQYmMIrI4IIpylSXsNBF1Mr0M8cviZk
+         8z3gSkd5C63rU4+u/QS4s6P+gq1sZRdQrDAtKbqO2W7XEDvD+s8X1IFyIlTaRd6mtk40
+         N6dnvvbGjR3vbdnJJStQkUc6AydTtPPbXuNX5gd1ZkFlsAEXodsJ13261Bu3y/1rdN4Y
+         yLqdAtyyVU14MCsHUSAZwSV4jEYxqlmaaD/Schpdd24QSrvt4KDBBwkxBO5uOwx7D9RR
+         VSpkbe78yIoe5W4NV8ArPOd4JgrV9GQucTinNcdwiopW3AqFkBErcSmGLD+tzRXPqw3x
+         y3Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMYd+uTCMeDvdhz3NuDUAZ3PMGprmU4yfGscUy/9Xg2U/iXdzoVjy7jcWIHTe0HW80JoDK4EqlWzAlP9WUtFIi4I/PLwiy5QTujXPuew==
+X-Gm-Message-State: AOJu0Yy24lkQyQRjlxJJRL5oz6Mz8tozNtul2CQyXU8HqbCMG8QRikKj
+	Th66c5YzxDgMuNYBK4SM8IiMnmKJXQeR9V030U9Iiv8ytt5iXHl+w9o5lPi86cPD/XMhOMeMAv4
+	dGI3OPg==
+X-Google-Smtp-Source: AGHT+IFsL1c7ZU6Eqq0QxAHlMuPUjsb0Xi5yxSno0T1hU52YxOwR+7ikACsee3te4paclx533YxogA==
+X-Received: by 2002:a50:d555:0:b0:565:faf5:225d with SMTP id f21-20020a50d555000000b00565faf5225dmr9598050edj.29.1710362897021;
+        Wed, 13 Mar 2024 13:48:17 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id c5-20020a0564021f8500b005648d0eebdbsm429986edc.96.2024.03.13.13.48.16
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Mar 2024 13:48:16 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a45f257b81fso37047666b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 13:48:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVnrer4qY7JP31jAsYQtMGSX9Z05Fjtf4EDp84UlDDxFCnw5iYBRTL7JxgmyJgrfOyS0mLrIooIXPimXeJ/PJClohjeOh3GoENmmNSvOA==
+X-Received: by 2002:a17:906:dacc:b0:a45:e270:609c with SMTP id
+ xi12-20020a170906dacc00b00a45e270609cmr11079476ejb.23.1710362895736; Wed, 13
+ Mar 2024 13:48:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <lfypw4vqq3rkohlh2iwhub3igjopdy26lfforfcjws2dfizk7d@32yk5dnemi4u>
+In-Reply-To: <lfypw4vqq3rkohlh2iwhub3igjopdy26lfforfcjws2dfizk7d@32yk5dnemi4u>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 13 Mar 2024 13:47:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg3djFJMeN3L_zx3P-6eN978Y1JTssxy81RhAbxB==L8Q@mail.gmail.com>
+Message-ID: <CAHk-=wg3djFJMeN3L_zx3P-6eN978Y1JTssxy81RhAbxB==L8Q@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs updates for 6.9
+To: Kent Overstreet <kent.overstreet@linux.dev>, "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Jan Kara <jack@suse.cz> wrote:
-> On Thu 12-10-23 10:29:18, Theodore Ts'o wrote:
-> > On Wed, Oct 11, 2023 at 07:26:06PM +0200, Jan Kara wrote:
-> > > I don't think this is accurate. posix_acl_create() needs unmasked 'mo=
-de'
-> > > because instead of using current_umask() for masking it wants to use
-> > > whatever is stored in the ACLs as an umask.
-> > >=20
-> > > So I still think we need to keep umask handling in both posix_acl_cre=
-ate()
-> > > and vfs_prepare_mode(). But filesystem's only obligation would be to =
-call
-> > > posix_acl_create() if the inode is IS_POSIXACL. No more caring about =
-when
-> > > to apply umask and when not based on config or mount options.
-> >=20
-> > Ah, right, thanks for the clarification.  I *think* the following
-> > patch in the ext4 dev branch (not yet in Linus's tree, but it should
-> > be in linux-next) should be harmless, though, right?  And once we get
-> > the changes in vfs_prepare_mode() we can revert in ext4 --- or do
-> > folks I think I should just drop it from the ext4 dev branch now?
->=20
-> It definitely does no harm. As you say, you can revert it once the VFS
-> changes land if you want.
+On Tue, 12 Mar 2024 at 18:10, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+> Hi Linus, few patches for you - plus a simple merge conflict with VFS
+> changes:
 
-I've been debugging why flatpak was always considering its database
-corrupted, and found this commit to be the source of the issue.
+The conflicts are trivial.
 
-$ ostree --repo=3Drepo --mode=3Dbare-user-only init
-$ mkdir tree && umask 0 && ln -s target tree/symlink && umask 022
-$ ostree --repo=3Drepo commit --branch=3Dfoo tree/
-c508e0564267b376661889b9016f8438bd6d39412078838f78856383fdd8ac2f
-$ ostree --repo=3Drepo fsck
-Validating refs...
-Validating refs in collections...
-Enumerating commits...
-Verifying content integrity of 1 commit objects...
-fsck objects (1/4) [=3D=3D=3D          ]  25%
-error: In commits c508e0564267b376661889b9016f8438bd6d39412078838f78856383f=
-dd8ac2f: fsck content object a6b40a5400ed082fbe067d2c8397aab54046a089768651=
-c392a36db46d24c1cd: Corrupted file object; checksum expected=3D'a6b40a5400e=
-d082fbe067d2c8397aab54046a089768651c392a36db46d24c1cd'
-actual=3D'6bdc88f9722f96dbd51735e381f8a1b0e01363e1d7ee2edbb474c091f83c3987'=
+The "make random bcachefs code be a library function" stuff I looked
+at, decided is senseless, and ended up meaning that I'm not pulling
+this without a lot more explanation (and honestly, I don't think the
+explanations would hold water).
 
-$
+That "stdio_redirect_printf()" and darray_char stuff is just
+horrendous interfaces with no explanations. The interfaces are
+disgusting.
 
-Turns out that symlinks are inheriting umask on my system (which
-has CONFIG_EXT4_FS_POSIX_ACL=3Dn):
+Keep it in your own code where it belongs, don't try to make it some
+generic library thing.
 
-$ umask 022
-$ ln -s target symlink
-$ ls -l symlink
-lrwxr-xr-x    1 michael  michael           6 Mar 13 13:28 symlink -> target=
+And if you *do* make it a library thing, it needs to be
 
-$
+ (a) much more explained
 
-Looking at the referenced functions, posix_acl_create() returns
-early before applying umask for symlinks, but ext4_init_acl() now
-applies the umask unconditionally.
+ (b) have much saner naming, and fewer disgusting and completely
+nonsensical interfaces ("DARRAY()").
 
-After reverting this commit, it works correctly. I am also unable
-to reproduce the mentioned issue with O_TMPFILE after reverting the
-commit. It seems that the bug was fixed properly in ac6800e279a2
-('fs: Add missing umask strip in vfs_tmpfile'), and all branches
-that have this ext4_init_acl patch already had ac6800e279a2 backported.
+And no, finding one other filesystem to share this kind of code is not
+sufficient to try to claim it's a sane interface and sane naming.
 
-So I think this patch should be reverted, since the bug was already
-fixed and it breaks symlink modes. If not, it should at least be
-changed to not to apply the umask to symlinks.
+But the main dealbreaker is the insane math.
 
-> > commit 484fd6c1de13b336806a967908a927cc0356e312
-> > Author: Max Kellermann <max.kellermann@ionos.com>
-> > Date:   Tue Sep 19 10:18:23 2023 +0200
-> >=20
-> >     ext4: apply umask if ACL support is disabled
-> >    =20
-> >     The function ext4_init_acl() calls posix_acl_create() which is
-> >     responsible for applying the umask.  But without
-> >     CONFIG_EXT4_FS_POSIX_ACL, ext4_init_acl() is an empty inline functi=
-on,
-> >     and nobody applies the umask.
-> >    =20
-> >     This fixes a bug which causes the umask to be ignored with O_TMPFIL=
-E
-> >     on ext4:
-> >    =20
-> >      https://github.com/MusicPlayerDaemon/MPD/issues/558
-> >      https://bugs.gentoo.org/show_bug.cgi?id=3D686142#c3
-> >      https://bugzilla.kernel.org/show_bug.cgi?id=3D203625
-> >    =20
-> >     Reviewed-by: "J. Bruce Fields" <bfields@redhat.com>
-> >     Cc: stable@vger.kernel.org
-> >     Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-> >     Link: https://lore.kernel.org/r/20230919081824.1096619-1-max.keller=
-mann@ionos.com
-> >     Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> >=20
-> > diff --git a/fs/ext4/acl.h b/fs/ext4/acl.h
-> > index 0c5a79c3b5d4..ef4c19e5f570 100644
-> > --- a/fs/ext4/acl.h
-> > +++ b/fs/ext4/acl.h
-> > @@ -68,6 +68,11 @@ extern int ext4_init_acl(handle_t *, struct inode *,=
- struct inode *);
-> >  static inline int
-> >  ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir=
-)
-> >  {
-> > +	/* usually, the umask is applied by posix_acl_create(), but if
-> > +	   ext4 ACL support is disabled at compile time, we need to do
-> > +	   it here, because posix_acl_create() will never be called */
-> > +	inode->i_mode &=3D ~current_umask();
-> > +
-> >  	return 0;
-> >  }
-> >  #endif  /* CONFIG_EXT4_FS_POSIX_ACL */
+And dammit, we talked about the idiotic "mean and variance" garbage
+long ago. It was wrong back then, it's *still* wrong.
+
+You didn't explain why it couldn't use the *much* simpler MAD (median
+absolute deviation) instead of using variance.
+
+That bad decision directly results in that pointless use of overly
+complex 128-bit math.
+
+I called it insanely over-engineered back then, and as far as I can
+tell, absolutely *NOTHING* has changed apart from some slight type
+name details.
+
+As long as you made it some kind of bcachefs-only thing, I don't mind.
+
+But now you're trying to push this garbage as some kind of generic
+library code that others would use, and that immediately means that I
+*do* mind insanely overengineered interfaces.
+
+The time_stats stuff otherwise looks at leask like a sane interface
+with names and uses, but the use of that horrendous infrastructure
+scuttles it.
+
+              Linus
 
