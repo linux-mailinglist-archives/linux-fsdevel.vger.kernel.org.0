@@ -1,332 +1,354 @@
-Return-Path: <linux-fsdevel+bounces-14282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58D887A76B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 13:13:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2A887A78F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 13:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F9841F2463C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 12:13:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFE111C21301
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 12:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3E63FE2E;
-	Wed, 13 Mar 2024 12:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518EC4086B;
+	Wed, 13 Mar 2024 12:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E9V0VbxP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MvCsKceH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B8E3FB0F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 12:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2340405C7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 12:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710331991; cv=none; b=IlxnLCaFnf69BRO9BLmNMLtEJNSQuUvsmzsKf/gXBD4iVESgw3s93hYq20AQGYeV6Bhha2IjQOlgqNZnMUjiLJt0wlJtssQ9ijGXKA1W6OSiOFVTO/QXMrbfyOb1lm02GWPsNKFpcmFIq4QAgShBmaqEgOUcW21zAJXqUiReSSs=
+	t=1710332960; cv=none; b=WGX87Df8I+VqnHCXDvXAfQnokWVEY/t4S5CiV+yfKkuezpmRzyDAeCwRlC/ketvTsFrIccyhAkSatKl3IhYcu/KKaRJQXeuYOouqxuoeGGrgOzU1lMqk7dWO7gypAPfB1kuds9qDaC3iaL3j5ax8W4FvNdMqzUrhsiaOfmHxCPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710331991; c=relaxed/simple;
-	bh=KY3GmGiPcro3a+CAKfJWS6zbPB2AHWvN4QxteRVDrsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PdY+zIZ6NV1fB6CX0JUTPtBMBpEsB0HMEZ8+9yemD82Dz8nuSGTo1joAi6TR3OOIUPH4HUxbY5tH8M93H0zjJtLtB1ozSMI1bXzax/T/SbaYUEZs/4OHT04d16B6QL8SklGaHy/jJOZcJ0CCKAIJZwIszYZsGDJnGcOMWRrqHz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E9V0VbxP; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1710332960; c=relaxed/simple;
+	bh=oSqOOOQXVNftgsoUErcdOE2GsR+PW6IzXyyX4xJ/+gw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fqYjP0wLrB/Qbmtxj6H9mlGrOhMrDCOJQeGui6uB5PYKw3UhF3RkhpRsNyrhyTDjN9Nbo3edVXXoCuLnkR34OL8yaqIXIooIqN2kHaZVucGDy6WV5FM5OF8o3p2IFho77qQEidmE2KrJzvX4gAcCXCzjtBd/CmzhbDJ7td5DUYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MvCsKceH; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710331988;
+	s=mimecast20190719; t=1710332957;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FQcf1nOKlMmN0CZVH5a2pQzTSI6ZekOBuZjHd+HZgWU=;
-	b=E9V0VbxPV3ZzkkEJTuK/FJYBzWxWy5F9K/Y82vh56ab96hxG/DB/rzmxwW0rEvjexorMou
-	tqtKxfafI/dp05dSKEi3fv6VY01h4iweUVFviFLwjwz4UsrVqWIWgITrAar+vFqKhdTGjM
-	1qq6Ycip1/PAu8zGPyYyY9+LSXm0eGQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=k8x5ZSVtO603+A176kqypuw3h2+JLOydtLzQlaAOVxY=;
+	b=MvCsKceHoA1hFeVYQTjQP7FCm7KJ4Qcxhel7n61tRe/eQC3lG4JbjrXljQ3HbKX/UGKkHZ
+	I8mggqVDENJr00Hik0HKRMJfSQBLPNRTIYg5UIfufSukZICHfaOx7OCPvRFqd8W3CnS+oZ
+	aWaFihnWJ6p57BAnJpYyPl3G0ZCtf1w=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-97-bn3cwYwINeCfsO7QsZGFFA-1; Wed, 13 Mar 2024 08:13:04 -0400
-X-MC-Unique: bn3cwYwINeCfsO7QsZGFFA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1D2088007AF;
-	Wed, 13 Mar 2024 12:13:04 +0000 (UTC)
-Received: from bfoster (unknown [10.22.16.21])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 67E3C1121306;
-	Wed, 13 Mar 2024 12:13:02 +0000 (UTC)
-Date: Wed, 13 Mar 2024 08:14:44 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Hou Tao <houtao@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Bernd Schubert <bernd.schubert@fastmail.fm>,
-	"Michael S . Tsirkin" <mst@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Benjamin Coddington <bcodding@redhat.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	houtao1@huawei.com
-Subject: Re: [PATCH v2 4/6] virtiofs: support bounce buffer backed by
- scattered pages
-Message-ID: <ZfGYtAq01tPv7BNc@bfoster>
-References: <20240228144126.2864064-1-houtao@huaweicloud.com>
- <20240228144126.2864064-5-houtao@huaweicloud.com>
- <ZeCcV9Jo3mTRPsME@bfoster>
- <ef80346a-532a-c394-77f7-ec9f640e5b6f@huaweicloud.com>
+ us-mta-114-WIFKLmObPeCFrzvb4zXRBg-1; Wed, 13 Mar 2024 08:29:16 -0400
+X-MC-Unique: WIFKLmObPeCFrzvb4zXRBg-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-513cb05fcfdso434808e87.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Mar 2024 05:29:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710332954; x=1710937754;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k8x5ZSVtO603+A176kqypuw3h2+JLOydtLzQlaAOVxY=;
+        b=mArJOXhwaL38mMr+6AU0iMDfdJEF4+8hlrfhyveG4RT9omxrshtxFrPRJ52gHQhygm
+         OTVtMgOwlXMH4LvgfQZ67mbOtarMdM+LtPOQviRc9fawsu0uKFjNNQzMFNH75ixQXEn3
+         NOGaPXItcPg86kpcgeLT9qM+irzhlmBrPDu2bBiI4zkLSUDNRtmD/czgvgy0C+Poyyg2
+         l38tYCkuGyDRTGO7sd+MmyyVraKus4TlyO9OOTmO8Ij939DJ/Y/Tz9HPp3A1or2SZnZS
+         Qjsvf8wmmqBSILFUEHuNOwU8rAAhgQdczV4CIveq26kpXYDixiE9fYKKT81e8yYqFntY
+         /dAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkNb6WVig8aLgPqmXbxKIe98byRwpbHf7mFVzVomEaRhR3sCnVSlk/Tb6SKWg0fQRTc5Txc6dFJeMqPMq4wH8LzetIjJNowWYZFSvffg==
+X-Gm-Message-State: AOJu0YzCJV3tc2/+fmzjIHYI31bcZrfw2wh0uyWl5v1aN7neG/zF0oC6
+	+yyP3ljp49BJTSvwEwgc370HnfyyjJXTwruRAuKF71CKDzy9h7CDy8wxn1IAoaeg7FoLIRqSKN2
+	5eoXM6TlOAuwXlMJunvQIYvGRWJxpM6FyB/pIMTPDJsWsJ5PgXY20gxdMSDgmBkU=
+X-Received: by 2002:ac2:430b:0:b0:513:55ea:7e2e with SMTP id l11-20020ac2430b000000b0051355ea7e2emr3382720lfh.53.1710332954528;
+        Wed, 13 Mar 2024 05:29:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfsCGI3AFEG0mu84otxaoZ5vWsgSIsgkV4jPcCeSYNL14MUNICSC9ePLEwtBpr3UTge2H3bA==
+X-Received: by 2002:ac2:430b:0:b0:513:55ea:7e2e with SMTP id l11-20020ac2430b000000b0051355ea7e2emr3382706lfh.53.1710332954000;
+        Wed, 13 Mar 2024 05:29:14 -0700 (PDT)
+Received: from [10.32.64.142] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id q18-20020adf9dd2000000b0033e90e98886sm9006066wre.71.2024.03.13.05.29.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Mar 2024 05:29:13 -0700 (PDT)
+Message-ID: <420b6d5f-adef-4415-b8cb-16c234dcec38@redhat.com>
+Date: Wed, 13 Mar 2024 13:29:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef80346a-532a-c394-77f7-ec9f640e5b6f@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 06/24] fsverity: pass tree_blocksize to
+ end_enable_verity()
+Content-Language: en-US
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ chandan.babu@oracle.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+ Eric Biggers <ebiggers@kernel.org>
+References: <20240304191046.157464-2-aalbersh@redhat.com>
+ <20240304191046.157464-8-aalbersh@redhat.com>
+ <20240305005242.GE17145@sol.localdomain>
+ <20240306163000.GP1927156@frogsfrogsfrogs>
+ <20240307220224.GA1799@sol.localdomain>
+ <20240308034650.GK1927156@frogsfrogsfrogs>
+ <20240308044017.GC8111@sol.localdomain>
+ <20240311223815.GW1927156@frogsfrogsfrogs>
+ <9927568e-9f36-4417-9d26-c8a05c220399@redhat.com>
+ <08905bcc-677d-4981-926d-7f407b2f6a4a@redhat.com>
+ <20240312164444.GG1927156@frogsfrogsfrogs>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240312164444.GG1927156@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 09, 2024 at 12:14:23PM +0800, Hou Tao wrote:
-> Hi,
+On 12.03.24 17:44, Darrick J. Wong wrote:
+> On Tue, Mar 12, 2024 at 04:33:14PM +0100, David Hildenbrand wrote:
+>> On 12.03.24 16:13, David Hildenbrand wrote:
+>>> On 11.03.24 23:38, Darrick J. Wong wrote:
+>>>> [add willy and linux-mm]
+>>>>
+>>>> On Thu, Mar 07, 2024 at 08:40:17PM -0800, Eric Biggers wrote:
+>>>>> On Thu, Mar 07, 2024 at 07:46:50PM -0800, Darrick J. Wong wrote:
+>>>>>>> BTW, is xfs_repair planned to do anything about any such extra blocks?
+>>>>>>
+>>>>>> Sorry to answer your question with a question, but how much checking is
+>>>>>> $filesystem expected to do for merkle trees?
+>>>>>>
+>>>>>> In theory xfs_repair could learn how to interpret the verity descriptor,
+>>>>>> walk the merkle tree blocks, and even read the file data to confirm
+>>>>>> intactness.  If the descriptor specifies the highest block address then
+>>>>>> we could certainly trim off excess blocks.  But I don't know how much of
+>>>>>> libfsverity actually lets you do that; I haven't looked into that
+>>>>>> deeply. :/
+>>>>>>
+>>>>>> For xfs_scrub I guess the job is theoretically simpler, since we only
+>>>>>> need to stream reads of the verity files through the page cache and let
+>>>>>> verity tell us if the file data are consistent.
+>>>>>>
+>>>>>> For both tools, if something finds errors in the merkle tree structure
+>>>>>> itself, do we turn off verity?  Or do we do something nasty like
+>>>>>> truncate the file?
+>>>>>
+>>>>> As far as I know (I haven't been following btrfs-progs, but I'm familiar with
+>>>>> e2fsprogs and f2fs-tools), there isn't yet any precedent for fsck actually
+>>>>> validating the data of verity inodes against their Merkle trees.
+>>>>>
+>>>>> e2fsck does delete the verity metadata of inodes that don't have the verity flag
+>>>>> enabled.  That handles cleaning up after a crash during FS_IOC_ENABLE_VERITY.
+>>>>>
+>>>>> I suppose that ideally, if an inode's verity metadata is invalid, then fsck
+>>>>> should delete that inode's verity metadata and remove the verity flag from the
+>>>>> inode.  Checking for a missing or obviously corrupt fsverity_descriptor would be
+>>>>> fairly straightforward, but it probably wouldn't catch much compared to actually
+>>>>> validating the data against the Merkle tree.  And actually validating the data
+>>>>> against the Merkle tree would be complex and expensive.  Note, none of this
+>>>>> would work on files that are encrypted.
+>>>>>
+>>>>> Re: libfsverity, I think it would be possible to validate a Merkle tree using
+>>>>> libfsverity_compute_digest() and the callbacks that it supports.  But that's not
+>>>>> quite what it was designed for.
+>>>>>
+>>>>>> Is there an ioctl or something that allows userspace to validate an
+>>>>>> entire file's contents?  Sort of like what BLKVERIFY would have done for
+>>>>>> block devices, except that we might believe its answers?
+>>>>>
+>>>>> Just reading the whole file and seeing whether you get an error would do it.
+>>>>>
+>>>>> Though if you want to make sure it's really re-reading the on-disk data, it's
+>>>>> necessary to drop the file's pagecache first.
+>>>>
+>>>> I tried a straight pagecache read and it worked like a charm!
+>>>>
+>>>> But then I thought to myself, do I really want to waste memory bandwidth
+>>>> copying a bunch of data?  No.  I don't even want to incur system call
+>>>> overhead from reading a single byte every $pagesize bytes.
+>>>>
+>>>> So I created 2M mmap areas and read a byte every $pagesize bytes.  That
+>>>> worked too, insofar as SIGBUSes are annoying to handle.  But it's
+>>>> annoying to take signals like that.
+>>>>
+>>>> Then I started looking at madvise.  MADV_POPULATE_READ looked exactly
+>>>> like what I wanted -- it prefaults in the pages, and "If populating
+>>>> fails, a SIGBUS signal is not generated; instead, an error is returned."
+>>>>
+>>>
+>>> Yes, these were the expected semantics :)
+>>>
+>>>> But then I tried rigging up a test to see if I could catch an EIO, and
+>>>> instead I had to SIGKILL the process!  It looks filemap_fault returns
+>>>> VM_FAULT_RETRY to __xfs_filemap_fault, which propagates up through
+>>>> __do_fault -> do_read_fault -> do_fault -> handle_pte_fault ->
+>>>> handle_mm_fault -> faultin_page -> __get_user_pages.  At faultin_pages,
+>>>> the VM_FAULT_RETRY is translated to -EBUSY.
+>>>>
+>>>> __get_user_pages squashes -EBUSY to 0, so faultin_vma_page_range returns
+>>>> that to madvise_populate.  Unfortunately, madvise_populate increments
+>>>> its loop counter by the return value (still 0) so it runs in an
+>>>> infinite loop.  The only way out is SIGKILL.
+>>>
+>>> That's certainly unexpected. One user I know is QEMU, which primarily
+>>> uses MADV_POPULATE_WRITE to prefault page tables. Prefaulting in QEMU is
+>>> primarily used with shmem/hugetlb, where I haven't heard of any such
+>>> endless loops.
+>>>
+>>>>
+>>>> So I don't know what the correct behavior is here, other than the
+>>>> infinite loop seems pretty suspect.  Is it the correct behavior that
+>>>> madvise_populate returns EIO if __get_user_pages ever returns zero?
+>>>> That doesn't quite sound right if it's the case that a zero return could
+>>>> also happen if memory is tight.
+>>>
+>>> madvise_populate() ends up calling faultin_vma_page_range() in a loop.
+>>> That one calls __get_user_pages().
+>>>
+>>> __get_user_pages() documents: "0 return value is possible when the fault
+>>> would need to be retried."
+>>>
+>>> So that's what the caller does. IIRC, there are cases where we really
+>>> have to retry (at least once) and will make progress, so treating "0" as
+>>> an error would be wrong.
+>>>
+>>> Staring at other __get_user_pages() users, __get_user_pages_locked()
+>>> documents: "Please note that this function, unlike __get_user_pages(),
+>>> will not return 0 for nr_pages > 0, unless FOLL_NOWAIT is used.".
+>>>
+>>> But there is some elaborate retry logic in there, whereby the retry will
+>>> set FOLL_TRIED->FAULT_FLAG_TRIED, and I think we'd fail on the second
+>>> retry attempt (there are cases where we retry more often, but that's
+>>> related to something else I believe).
+>>>
+>>> So maybe we need a similar retry logic in faultin_vma_page_range()? Or
+>>> make it use __get_user_pages_locked(), but I recall when I introduced
+>>> MADV_POPULATE_READ, there was a catch to it.
+>>
+>> I'm trying to figure out who will be setting the VM_FAULT_SIGBUS in the
+>> mmap()+access case you describe above.
+>>
+>> Staring at arch/x86/mm/fault.c:do_user_addr_fault(), I don't immediately see
+>> how we would transition from a VM_FAULT_RETRY loop to VM_FAULT_SIGBUS.
+>> Because VM_FAULT_SIGBUS would be required for that function to call
+>> do_sigbus().
 > 
-> On 2/29/2024 11:01 PM, Brian Foster wrote:
-> > On Wed, Feb 28, 2024 at 10:41:24PM +0800, Hou Tao wrote:
-> >> From: Hou Tao <houtao1@huawei.com>
-> >>
-> >> When reading a file kept in virtiofs from kernel (e.g., insmod a kernel
-> >> module), if the cache of virtiofs is disabled, the read buffer will be
-> >> passed to virtiofs through out_args[0].value instead of pages. Because
-> >> virtiofs can't get the pages for the read buffer, virtio_fs_argbuf_new()
-> >> will create a bounce buffer for the read buffer by using kmalloc() and
-> >> copy the read buffer into bounce buffer. If the read buffer is large
-> >> (e.g., 1MB), the allocation will incur significant stress on the memory
-> >> subsystem.
-> >>
-> >> So instead of allocating bounce buffer by using kmalloc(), allocate a
-> >> bounce buffer which is backed by scattered pages. The original idea is
-> >> to use vmap(), but the use of GFP_ATOMIC is no possible for vmap(). To
-> >> simplify the copy operations in the bounce buffer, use a bio_vec flex
-> >> array to represent the argbuf. Also add an is_flat field in struct
-> >> virtio_fs_argbuf to distinguish between kmalloc-ed and scattered bounce
-> >> buffer.
-> >>
-> >> Signed-off-by: Hou Tao <houtao1@huawei.com>
-> >> ---
-> >>  fs/fuse/virtio_fs.c | 163 ++++++++++++++++++++++++++++++++++++++++----
-> >>  1 file changed, 149 insertions(+), 14 deletions(-)
-> >>
-> >> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> >> index f10fff7f23a0f..ffea684bd100d 100644
-> >> --- a/fs/fuse/virtio_fs.c
-> >> +++ b/fs/fuse/virtio_fs.c
-> > ...
-> >> @@ -408,42 +425,143 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
-> >>  	}
-> >>  }
-> >>  
-> > ...  
-> >>  static void virtio_fs_argbuf_copy_from_in_arg(struct virtio_fs_argbuf *argbuf,
-> >>  					      unsigned int offset,
-> >>  					      const void *src, unsigned int len)
-> >>  {
-> >> -	memcpy(argbuf->buf + offset, src, len);
-> >> +	struct iov_iter iter;
-> >> +	unsigned int copied;
-> >> +
-> >> +	if (argbuf->is_flat) {
-> >> +		memcpy(argbuf->f.buf + offset, src, len);
-> >> +		return;
-> >> +	}
-> >> +
-> >> +	iov_iter_bvec(&iter, ITER_DEST, argbuf->s.bvec,
-> >> +		      argbuf->s.nr, argbuf->s.size);
-> >> +	iov_iter_advance(&iter, offset);
-> > Hi Hou,
-> >
-> > Just a random comment, but it seems a little inefficient to reinit and
-> > readvance the iter like this on every copy/call. It looks like offset is
-> > already incremented in the callers of the argbuf copy helpers. Perhaps
-> > iov_iter could be lifted into the callers and passed down, or even just
-> > include it in the argbuf structure and init it at alloc time?
+> The code I was looking at yesterday in filemap_fault was:
 > 
-> Sorry for the late reply. Being busy with off-site workshop these days.
+> page_not_uptodate:
+> 	/*
+> 	 * Umm, take care of errors if the page isn't up-to-date.
+> 	 * Try to re-read it _once_. We do this synchronously,
+> 	 * because there really aren't any performance issues here
+> 	 * and we need to check for errors.
+> 	 */
+> 	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+> 	error = filemap_read_folio(file, mapping->a_ops->read_folio, folio);
+> 	if (fpin)
+> 		goto out_retry;
+> 	folio_put(folio);
 > 
-
-No worries.
-
-> I have tried a similar idea before in which iov_iter was saved directly
-> in argbuf struct, but it didn't work out well. The reason is that for
-> copy both in_args and out_args, an iov_iter is needed, but the direction
-> is different. Currently the bi-directional io_vec is not supported, so
-> the code have to initialize the iov_iter twice: one for copy from
-> in_args and another one for copy to out_args.
+> 	if (!error || error == AOP_TRUNCATED_PAGE)
+> 		goto retry_find;
+> 	filemap_invalidate_unlock_shared(mapping);
 > 
-
-Ok, seems reasonable enough.
-
-> For dio read initiated from kernel, both of its in_numargs and
-> out_numargs is 1, so there will be only one iov_iter_advance() in
-> virtio_fs_argbuf_copy_to_out_arg() and the offset is 64, so I think the
-> overhead will be fine. For dio write initiated from kernel, its
-> in_numargs is 2 and out_numargs is 1, so there will be two invocations
-> of iov_iter_advance(). The first one with offset=64, and the another one
-> with offset=round_up_page_size(64 + write_size), so the later one may
-> introduce extra overhead. But compared with the overhead of data copy, I
-> still think the overhead of calling iov_iter_advance() is fine.
+> 	return VM_FAULT_SIGBUS;
 > 
+> Wherein I /think/ fpin is non-null in this case, so if
+> filemap_read_folio returns an error, we'll do this instead:
+> 
+> out_retry:
+> 	/*
+> 	 * We dropped the mmap_lock, we need to return to the fault handler to
+> 	 * re-find the vma and come back and find our hopefully still populated
+> 	 * page.
+> 	 */
+> 	if (!IS_ERR(folio))
+> 		folio_put(folio);
+> 	if (mapping_locked)
+> 		filemap_invalidate_unlock_shared(mapping);
+> 	if (fpin)
+> 		fput(fpin);
+> 	return ret | VM_FAULT_RETRY;
+> 
+> and since ret was 0 before the goto, the only return code is
+> VM_FAULT_RETRY.  I had speculated that perhaps we could instead do:
+> 
+> 	if (fpin) {
+> 		if (error)
+> 			ret |= VM_FAULT_SIGBUS;
+> 		goto out_retry;
+> 	}
+> 
+> But I think the hard part here is that there doesn't seem to be any
+> distinction between transient read errors (e.g. disk cable fell out) vs.
+> semi-permanent errors (e.g. verity says the hash doesn't match).
+> AFAICT, either the read(ahead) sets uptodate and callers read the page,
+> or it doesn't set it and callers treat that as an error-retry
+> opportunity.
+> 
+> For the transient error case VM_FAULT_RETRY makes perfect sense; for the
+> second case I imagine we'd want something closer to _SIGBUS.
 
-I'm not claiming the overhead is some practical problem here, but rather
-that we shouldn't need to be concerned with it in the first place with
-some cleaner code. It's been a bit since I first looked at this. I was
-originally wondering about defining the iov_iter in the caller and pass
-as a param, but on another look, do the lowest level helpers really need
-to exist?
 
-If you don't anticipate further users, IMO something like the diff below
-is a bit more clean (compile tested only, but no reinits and less code
-overall). But that's just my .02, feel free to use it or not..
+Agreed, it's really hard to judge when it's the right time to give up 
+retrying. At least with MADV_POPULATE_READ we should try achieving the 
+same behavior as with mmap()+read access. So if the latter manages to 
+trigger SIGBUS, MADV_POPULATE_READ should return an error.
 
-Brian
+Is there an easy way to for me to reproduce this scenario?
 
---- 8< ---
+-- 
+Cheers,
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 9ee71051c89f..9de477e9ccd5 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -544,26 +544,6 @@ static unsigned int virtio_fs_argbuf_setup_sg(struct virtio_fs_argbuf *argbuf,
- 	return cur - sg;
- }
- 
--static void virtio_fs_argbuf_copy_from_in_arg(struct virtio_fs_argbuf *argbuf,
--					      unsigned int offset,
--					      const void *src, unsigned int len)
--{
--	struct iov_iter iter;
--	unsigned int copied;
--
--	if (argbuf->is_flat) {
--		memcpy(argbuf->f.buf + offset, src, len);
--		return;
--	}
--
--	iov_iter_bvec(&iter, ITER_DEST, argbuf->s.bvec,
--		      argbuf->s.nr, argbuf->s.size);
--	iov_iter_advance(&iter, offset);
--
--	copied = _copy_to_iter(src, len, &iter);
--	WARN_ON_ONCE(copied != len);
--}
--
- static unsigned int
- virtio_fs_argbuf_out_args_offset(struct virtio_fs_argbuf *argbuf,
- 				 const struct fuse_args *args)
-@@ -577,26 +557,6 @@ virtio_fs_argbuf_out_args_offset(struct virtio_fs_argbuf *argbuf,
- 	return round_up(offset, PAGE_SIZE);
- }
- 
--static void virtio_fs_argbuf_copy_to_out_arg(struct virtio_fs_argbuf *argbuf,
--					     unsigned int offset, void *dst,
--					     unsigned int len)
--{
--	struct iov_iter iter;
--	unsigned int copied;
--
--	if (argbuf->is_flat) {
--		memcpy(dst, argbuf->f.buf + offset, len);
--		return;
--	}
--
--	iov_iter_bvec(&iter, ITER_SOURCE, argbuf->s.bvec,
--		      argbuf->s.nr, argbuf->s.size);
--	iov_iter_advance(&iter, offset);
--
--	copied = _copy_from_iter(dst, len, &iter);
--	WARN_ON_ONCE(copied != len);
--}
--
- /*
-  * Returns 1 if queue is full and sender should wait a bit before sending
-  * next request, 0 otherwise.
-@@ -684,23 +644,41 @@ static void virtio_fs_hiprio_dispatch_work(struct work_struct *work)
- static void copy_args_to_argbuf(struct fuse_req *req)
- {
- 	struct fuse_args *args = req->args;
-+	struct virtio_fs_argbuf *argbuf = req->argbuf;
-+	struct iov_iter iter;
-+	unsigned int copied;
- 	unsigned int offset = 0;
- 	unsigned int num_in;
- 	unsigned int i;
- 
-+	if (!argbuf->is_flat) {
-+		iov_iter_bvec(&iter, ITER_DEST, argbuf->s.bvec, argbuf->s.nr,
-+			argbuf->s.size);
-+	}
-+
- 	num_in = args->in_numargs - args->in_pages;
- 	for (i = 0; i < num_in; i++) {
--		virtio_fs_argbuf_copy_from_in_arg(req->argbuf, offset,
--						  args->in_args[i].value,
--						  args->in_args[i].size);
--		offset += args->in_args[i].size;
-+		const void *src = args->in_args[i].value;
-+		unsigned int len = args->in_args[i].size;
-+
-+		if (argbuf->is_flat) {
-+			memcpy(argbuf->f.buf + offset, src, len);
-+			offset += len;
-+			continue;
-+		}
-+
-+		iov_iter_advance(&iter, len);
-+		copied = _copy_to_iter(src, len, &iter);
-+		WARN_ON_ONCE(copied != len);
- 	}
- }
- 
- /* Copy args out of req->argbuf */
- static void copy_args_from_argbuf(struct fuse_args *args, struct fuse_req *req)
- {
--	struct virtio_fs_argbuf *argbuf;
-+	struct virtio_fs_argbuf *argbuf = req->argbuf;
-+	struct iov_iter iter;
-+	unsigned int copied;
- 	unsigned int remaining;
- 	unsigned int offset;
- 	unsigned int num_out;
-@@ -711,10 +689,14 @@ static void copy_args_from_argbuf(struct fuse_args *args, struct fuse_req *req)
- 	if (!num_out)
- 		goto out;
- 
--	argbuf = req->argbuf;
-+	if (!argbuf->is_flat)
-+		iov_iter_bvec(&iter, ITER_SOURCE, argbuf->s.bvec,
-+		      argbuf->s.nr, argbuf->s.size);
-+
- 	offset = virtio_fs_argbuf_out_args_offset(argbuf, args);
- 	for (i = 0; i < num_out; i++) {
- 		unsigned int argsize = args->out_args[i].size;
-+		void *dst = args->out_args[i].value;
- 
- 		if (args->out_argvar &&
- 		    i == args->out_numargs - 1 &&
-@@ -722,10 +704,14 @@ static void copy_args_from_argbuf(struct fuse_args *args, struct fuse_req *req)
- 			argsize = remaining;
- 		}
- 
--		virtio_fs_argbuf_copy_to_out_arg(argbuf, offset,
--						 args->out_args[i].value,
--						 argsize);
--		offset += argsize;
-+		if (argbuf->is_flat) {
-+			memcpy(dst, argbuf->f.buf + offset, argsize);
-+			offset += argsize;
-+		} else {
-+			iov_iter_advance(&iter, argsize);
-+			copied = _copy_from_iter(dst, argsize, &iter);
-+			WARN_ON_ONCE(copied != argsize);
-+		}
- 
- 		if (i != args->out_numargs - 1)
- 			remaining -= argsize;
+David / dhildenb
 
 
