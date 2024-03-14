@@ -1,54 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-14409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99AC87C17C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 17:46:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6121387C1B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 17:59:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ECC628206A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 16:46:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E45AD1F21F60
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 16:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A0974421;
-	Thu, 14 Mar 2024 16:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D6D7441F;
+	Thu, 14 Mar 2024 16:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amqymsOp"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tyHOQG6q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yYUIpdRA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tyHOQG6q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yYUIpdRA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF272E410;
-	Thu, 14 Mar 2024 16:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668921EB34;
+	Thu, 14 Mar 2024 16:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710434756; cv=none; b=F3d7fIwRPmqzjq1wW2f4+Hyiyhs/YlW2LGdcT9w4lQRBX24LQDI1m/BYEmUHqghh5hkjKhqj11IiIxjn9bk+URNaJo+M6qo1xniJBUwlG0h11PjOtPg7UQ02BPbnxF20fdtcGu1gkUxykZngs+5NnwvLabmwLpuiUdK4s52X8EY=
+	t=1710435502; cv=none; b=e/vM0aLnZ2jAJXw4DnV6z+ZV9yEhbRpOM8UF5HKuhCj1Byudw+JgCJr8tl+Mu+TPt6atwQJeuq6vY/a2+bbnjJhpxZcsty364sh2GEi8QbGnLCyd8Zv9ylui1WaNrltU8+Da+J0oaurGgHa3Pki4wKm83Q1E0URZoIFoXk9MAVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710434756; c=relaxed/simple;
-	bh=NLxFUDFlSW048LSrziNhhj0DOcSDerk7IC7uGJ/zd0Q=;
+	s=arc-20240116; t=1710435502; c=relaxed/simple;
+	bh=QtsX1qLFto0OGSgzHpAdOZ4SpwjCIM7vRMltOostqec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=myxVF5ZBZlHgz3zYHQ7xH4t4VBzO/ifNXfQK7Vlz+7yNaPO4rV+YhjD6b23orJLyPyvBNa+E7RSe22LFBAAYUSM7gVlufYJ8N42LHpTYPYSSt6w1auCyrs5SD+os6Q7k5SRa5CuSkdxhW+/oidQ69JTqjVY01GDFTeiFxxXNUSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amqymsOp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D45A8C433F1;
-	Thu, 14 Mar 2024 16:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710434755;
-	bh=NLxFUDFlSW048LSrziNhhj0DOcSDerk7IC7uGJ/zd0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=amqymsOpC+ttCp/5WgGktKW7lf92iAmd5H4VKEpQXnKI2xZrdSxOyL6jx/g1ojUo6
-	 /PyKdNJBOR2updRw5z9oaDoPPRLf0AcsNxYHMbpbBRFvXuO9dx8n5trVkUUxXnuxTJ
-	 lhwJWj6yXjvg67wyz2iti9rsYDAHu1tlDtOqTHOA0nxjbewYaSaHIz3sOd/4hlKgA7
-	 oCdfRrYzmlLiO0zXS1TCkJ4yott0poISior6qOvrnSdpki6xDTIC/dE6NmG71cvchm
-	 HxVTKsEzc7jS7aaPmOVGZz/eIEn7xtE4by5KFKxx2kyEGAhy2VTKtaUoW2zFEKOGbv
-	 GTAdVxd76u2Sg==
-Date: Thu, 14 Mar 2024 17:45:50 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
-	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=QaYZJDrwAPgGZ+ZR/XPXAFEGZCtHvvGhbdfZQRqjeZc4VlKZvQfFV+GiiJ62hcQrhDb+Fy17ck/NSowctJNUDmCL6IqHugS9W/WjxsWyrU/oOAtsj4dkizgS7WYacECkA+pirUZrRUo7zeBCJUkR5Y4tRCXfxbC9nqqlBUxejdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tyHOQG6q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yYUIpdRA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tyHOQG6q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yYUIpdRA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8948E1F889;
+	Thu, 14 Mar 2024 16:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710435498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3OLCo7nYaa23ahcpGtoOTcFvKhCyIaoXgRgn5Ti+zZk=;
+	b=tyHOQG6qSajUmzGXrc6Z2EBRJFUr3p5e0idaGvLvAueFmq7um4XgkGb56B0PwVQdnB9HV+
+	hQt38lQaiQmmLC2bPORwDbRWc59ffAvyggOvMPQ9/YOiongEu+u19aKwlZimHfkg7zE+Cw
+	g5JJwR7WkepIrUdIiBqPYsps0HniW9w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710435498;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3OLCo7nYaa23ahcpGtoOTcFvKhCyIaoXgRgn5Ti+zZk=;
+	b=yYUIpdRAtubWv+k/34umkd+RJCsBMpx4DXzIfYR/Hgb17LG9vZbW8M4Pis2uW3tmfLrGdH
+	IQLdsI0XwTCsomCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710435498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3OLCo7nYaa23ahcpGtoOTcFvKhCyIaoXgRgn5Ti+zZk=;
+	b=tyHOQG6qSajUmzGXrc6Z2EBRJFUr3p5e0idaGvLvAueFmq7um4XgkGb56B0PwVQdnB9HV+
+	hQt38lQaiQmmLC2bPORwDbRWc59ffAvyggOvMPQ9/YOiongEu+u19aKwlZimHfkg7zE+Cw
+	g5JJwR7WkepIrUdIiBqPYsps0HniW9w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710435498;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3OLCo7nYaa23ahcpGtoOTcFvKhCyIaoXgRgn5Ti+zZk=;
+	b=yYUIpdRAtubWv+k/34umkd+RJCsBMpx4DXzIfYR/Hgb17LG9vZbW8M4Pis2uW3tmfLrGdH
+	IQLdsI0XwTCsomCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7BB651368C;
+	Thu, 14 Mar 2024 16:58:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GiksHqos82WsRwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 14 Mar 2024 16:58:18 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2510BA07D9; Thu, 14 Mar 2024 17:58:14 +0100 (CET)
+Date: Thu, 14 Mar 2024 17:58:14 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	"Darrick J. Wong" <djwong@kernel.org>,
 	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
 Subject: Re: [PATCH v2 01/34] bdev: open block device as files
-Message-ID: <20240314-tauben-hinkt-7e0bbd6d35fc@brauner>
+Message-ID: <20240314165814.tne3leyfmb4sqk2t@quack3>
 References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
  <20240123-vfs-bdev-file-v2-1-adbd023e19cc@kernel.org>
  <ZfEQQ9jZZVes0WCZ@infradead.org>
@@ -60,11 +104,35 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20240314-entbehren-folglich-8c8fef0cd49b@brauner>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[8];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Flag: NO
 
-On Thu, Mar 14, 2024 at 03:47:52PM +0100, Christian Brauner wrote:
+On Thu 14-03-24 15:47:52, Christian Brauner wrote:
 > On Thu, Mar 14, 2024 at 12:10:59PM +0100, Christian Brauner wrote:
 > > On Tue, Mar 12, 2024 at 07:32:35PM -0700, Christoph Hellwig wrote:
 > > > Now that this is in mainline it seems to cause blktests to crash
@@ -117,143 +185,11 @@ On Thu, Mar 14, 2024 at 03:47:52PM +0100, Christian Brauner wrote:
 > Personally, I think (2) is more desirable because we don't lose the
 > async property of fput() and we don't need to have a new FMODE_* flag.
 > I'd like to do some more testing with this. Thoughts?
-> 
-> [1.1]:
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  block/bdev.c       | 1 +
->  fs/file_table.c    | 5 +++++
->  include/linux/fs.h | 3 +++
->  3 files changed, 9 insertions(+)
-> 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index e7adaaf1c219..d0c208a04b04 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -969,6 +969,7 @@ struct file *bdev_file_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
->  		return bdev_file;
->  	}
->  	ihold(bdev->bd_inode);
-> +	bdev_file->f_mode |= FMODE_BLOCKDEV;
->  
->  	ret = bdev_open(bdev, mode, holder, hops, bdev_file);
->  	if (ret) {
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index 4f03beed4737..48d35dd67020 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -473,6 +473,11 @@ void fput(struct file *file)
->  	if (atomic_long_dec_and_test(&file->f_count)) {
->  		struct task_struct *task = current;
->  
-> +		if (unlikely((file->f_mode & FMODE_BLOCKDEV))) {
-> +			__fput(file);
-> +			return;
-> +		}
-> +
->  		if (unlikely(!(file->f_mode & (FMODE_BACKING | FMODE_OPENED)))) {
->  			file_free(file);
->  			return;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index d5d5a4ee24f0..ceac9c0316a6 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -121,6 +121,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define FMODE_PWRITE		((__force fmode_t)0x10)
->  /* File is opened for execution with sys_execve / sys_uselib */
->  #define FMODE_EXEC		((__force fmode_t)0x20)
-> +
-> +/* File is opened as block device. */
-> +#define FMODE_BLOCKDEV		((__force fmode_t)0x100)
->  /* 32bit hashes as llseek() offset (for directories) */
->  #define FMODE_32BITHASH         ((__force fmode_t)0x200)
->  /* 64bit hashes as llseek() offset (for directories) */
-> -- 
-> 2.43.0
-> 
-> [1.2]:
-> Sketched-by: Christian Brauner <brauner@kernel.org>
-> ---
->  block/bdev.c           |  4 ++++
->  fs/super.c             | 17 +++++++++++++++++
->  include/linux/blkdev.h |  3 +++
->  3 files changed, 24 insertions(+)
-> 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index e7adaaf1c219..a0d5960dc2b9 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -627,6 +627,8 @@ static void bd_end_claim(struct block_device *bdev, void *holder)
->  		whole->bd_holder = NULL;
->  	mutex_unlock(&bdev_lock);
->  
-> +	if (bdev->bd_holder_ops && bdev->bd_holder_ops->put_holder)
-> +		bdev->bd_holder_ops->put_holder(holder);
 
-That should move into bdev_release() obviously so it mirrors
-bdev_open(). Plus, currently it's a nop because we just NULLed
-bdev->bd_holder_ops above. But you get the idea, I hope.
+Yeah, 2) looks like the least painful solution to me as well.
 
->  	/*
->  	 * If this was the last claim, remove holder link and unblock evpoll if
->  	 * it was a write holder.
-> @@ -902,6 +904,8 @@ int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
->  		bdev_file->f_mode |= FMODE_NOWAIT;
->  	bdev_file->f_mapping = bdev->bd_inode->i_mapping;
->  	bdev_file->f_wb_err = filemap_sample_wb_err(bdev_file->f_mapping);
-> +	if (hops && hops->get_holder)
-> +		hops->get_holder(holder);
->  	bdev_file->private_data = holder;
->  
->  	return 0;
-> diff --git a/fs/super.c b/fs/super.c
-> index ee05ab6b37e7..64dbbdbed93a 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1515,11 +1515,28 @@ static int fs_bdev_thaw(struct block_device *bdev)
->  	return error;
->  }
->  
-> +static void fs_bdev_super_get(void *data)
-> +{
-> +	struct super_block *sb = data;
-> +
-> +	spin_lock(&sb_lock);
-> +	sb->s_count++;
-> +	spin_unlock(&sb_lock);
-> +}
-> +
-> +static void fs_bdev_super_put(void *data)
-> +{
-> +	struct super_block *sb = data;
-> +	put_super(sb);
-> +}
-> +
->  const struct blk_holder_ops fs_holder_ops = {
->  	.mark_dead		= fs_bdev_mark_dead,
->  	.sync			= fs_bdev_sync,
->  	.freeze			= fs_bdev_freeze,
->  	.thaw			= fs_bdev_thaw,
-> +	.get_holder		= fs_bdev_super_get,
-> +	.put_holder		= fs_bdev_super_put,
->  };
->  EXPORT_SYMBOL_GPL(fs_holder_ops);
->  
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index f9b87c39cab0..d919e8bcb2c1 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -1505,6 +1505,9 @@ struct blk_holder_ops {
->  	 * Thaw the file system mounted on the block device.
->  	 */
->  	int (*thaw)(struct block_device *bdev);
-> +
-> +	void (*get_holder)(void *holder);
-> +	void (*put_holder)(void *holder);
->  };
->  
->  /*
-> -- 
-> 2.43.0
-> 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
