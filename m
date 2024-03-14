@@ -1,105 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-14392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD93987BB95
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 11:55:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D3087BB9B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 11:57:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F5228642C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 10:55:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED7AE1C21B31
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 10:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BE16EB56;
-	Thu, 14 Mar 2024 10:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F0F6EB49;
+	Thu, 14 Mar 2024 10:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KZEmklKf"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fH4Ew/5E";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DoIgMTFu";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fH4Ew/5E";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DoIgMTFu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A444D6CDCE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Mar 2024 10:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BCE6DCE3;
+	Thu, 14 Mar 2024 10:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710413746; cv=none; b=KrRyNr+ugG33oPhL6K1E5dKgmKwOddfHhlJzDUHGIAM7GJDiNK/JD+e0nYctihuxjof28mD/ohEQEEk0CdYzGUYNTJkz8/t1E30oRXKm/Re482jX0YN9HdImUIwaDLFSqgdzHbZBdXY6IV4jx/8971ywPQbYOsWQDrKK8QwMzMA=
+	t=1710413849; cv=none; b=jInkzaAruBH4XkWioFQ93xA/szjPcQqKjsz7M4Lka97AfQjKj1wTed2Voj3/2HuCCSOVE4bQGbXY+zBiYCgnDa952cnuOnD7ABTNo3YCZIaWW6II9DO5bmMymr5V5opNHoPggKtuS0B5kJeIkPKIhqRaxDo5M2A6A08XhA0YG+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710413746; c=relaxed/simple;
-	bh=ww+Q4Z3TN7Zkf8AUEmHnJJZgYQfS+2qGhI9YQcA66HU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=e62wOuabfliAGXOW+w40owMte7ICyOJhd/KKrKP90P8QVsRHaMOF4cZm8eFeTBBILMH0wOtlToPeudqeMEp3I6WVbwErfGdvyV++OoiS5aM9A6c0jlS9fgiIp43hSXbzgB49qjChGi4HrVrS3erOeizME3wwg041pi8aTHQVWGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KZEmklKf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710413743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2gzZJrL9co+94ItPuR1/5KXAlp4bS/UQfJI3lmQi3hg=;
-	b=KZEmklKfajbprxtN2SMdOk50rjwRe9tSpZ0Y3NR9yMARuyyb1s7ON+deDYGcjIJXkiqWvg
-	F5zKqtlskCgGT8HB8oI9t77Dv8vtQhShDXvbaH7KEs+ahMyf/aZtA3LCDeqo6nIoDOpYt7
-	6xLYHhVO8p/4IztjT8eZ/RAtzzSasLo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-118-mMtlPRr8PrWZv3wqqdl8xw-1; Thu, 14 Mar 2024 06:55:40 -0400
-X-MC-Unique: mMtlPRr8PrWZv3wqqdl8xw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	s=arc-20240116; t=1710413849; c=relaxed/simple;
+	bh=lN+o+sy/b4sSQ0Euh7pwJ3UNsh94+te5f88NY5XA2j4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNEhITc2XzJdnKPusu749VLpgHh3Q9pd2TV89NWyh5KpU92AlEsGswZj/UI0TNdmCu4QKmS1BQEb4GBXc/0FpCQZL49UUI3w1Fqebee9pNUpZpEUzXk8Y27TCwuRX8VNXZ+qiX42MIDk+zmJjTs7BrloIraEEqLF3O/tyDsNq0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fH4Ew/5E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DoIgMTFu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fH4Ew/5E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DoIgMTFu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AB07E101A588;
-	Thu, 14 Mar 2024 10:55:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.10])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 95F5E111E3F3;
-	Thu, 14 Mar 2024 10:55:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <544d7b9d-ef15-463f-a11c-9a3cca3a49ea@infradead.org>
-References: <544d7b9d-ef15-463f-a11c-9a3cca3a49ea@infradead.org> <3085695.1710328121@warthog.procyon.org.uk>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    Markus Suvanto <markus.suvanto@gmail.com>,
-    Jeffrey Altman <jaltman@auristor.com>,
-    Christian Brauner <brauner@kernel.org>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs: Revert "afs: Hide silly-rename files from userspace"
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 20DE821C83;
+	Thu, 14 Mar 2024 10:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710413846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KB+QJfsxVWgzPlKw2RN08zlrokt0dFW1xGWyQPDlI34=;
+	b=fH4Ew/5ET4pOBiR/SnFatadpCoyGZ2KTrIV0HI1JUX7Hu1pJSHzyXanjnlmfxJV+yzFRyp
+	AfL9dEtyxPSBvUc+qn6cgq+bkMZEQ9vQW6jloKkmwLu2LiVLd+CrDlAiZcCEPMu9zMDPXa
+	DFrTBep2VtlZBfpYCvIOOTdZtxlv3Cw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710413846;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KB+QJfsxVWgzPlKw2RN08zlrokt0dFW1xGWyQPDlI34=;
+	b=DoIgMTFuqvgI1uwzc9/XXnQ/l45LOO5PtatGEcPX1L0fq5glKtc4Dux/OIwKjwEOhOyoi0
+	Ibdnys8bMtsdeSAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710413846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KB+QJfsxVWgzPlKw2RN08zlrokt0dFW1xGWyQPDlI34=;
+	b=fH4Ew/5ET4pOBiR/SnFatadpCoyGZ2KTrIV0HI1JUX7Hu1pJSHzyXanjnlmfxJV+yzFRyp
+	AfL9dEtyxPSBvUc+qn6cgq+bkMZEQ9vQW6jloKkmwLu2LiVLd+CrDlAiZcCEPMu9zMDPXa
+	DFrTBep2VtlZBfpYCvIOOTdZtxlv3Cw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710413846;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KB+QJfsxVWgzPlKw2RN08zlrokt0dFW1xGWyQPDlI34=;
+	b=DoIgMTFuqvgI1uwzc9/XXnQ/l45LOO5PtatGEcPX1L0fq5glKtc4Dux/OIwKjwEOhOyoi0
+	Ibdnys8bMtsdeSAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 118541386E;
+	Thu, 14 Mar 2024 10:57:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id r+ZBBBbY8mXTWAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 14 Mar 2024 10:57:26 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B6A0DA07D9; Thu, 14 Mar 2024 11:57:21 +0100 (CET)
+Date: Thu, 14 Mar 2024 11:57:21 +0100
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+d3cd38158cd7c8d1432c@syzkaller.appspotmail.com>
+Cc: almaz.alexandrovich@paragon-software.com, anton@tuxera.com,
+	axboe@kernel.dk, brauner@kernel.org, jack@suse.cz,
+	linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ntfs3?] KASAN: use-after-free Read in ntfs_read_folio
+Message-ID: <20240314105721.q2xd5zq3st7awjfh@quack3>
+References: <0000000000009146bb05f71b03a0@google.com>
+ <0000000000008414ba06125ba07f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3341491.1710413737.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 14 Mar 2024 10:55:37 +0000
-Message-ID: <3341492.1710413737@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000008414ba06125ba07f@google.com>
+X-Spam-Level: *
+X-Spamd-Bar: +
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="fH4Ew/5E";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=DoIgMTFu
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [1.37 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-0.20)[-0.997];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-0.12)[66.89%];
+	 SUBJECT_HAS_QUESTION(0.00)[];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=655f8abe9fe69b3b];
+	 TAGGED_RCPT(0.00)[d3cd38158cd7c8d1432c];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_TWELVE(0.00)[12];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,syzkaller.appspot.com:url];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[];
+	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Spam-Score: 1.37
+X-Rspamd-Queue-Id: 20DE821C83
+X-Spam-Flag: NO
 
-Randy Dunlap <rdunlap@infradead.org> wrote:
+On Tue 27-02-24 03:50:04, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+> 
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
+> 
+>     fs: Block writes to mounted block devices
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a70f4a180000
+> start commit:   ac865f00af29 Merge tag 'pci-v6.7-fixes-2' of git://git.ker..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=655f8abe9fe69b3b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d3cd38158cd7c8d1432c
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12769ba5e80000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c2b97ee80000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with:
 
-> > Link: https://lists.infradead.org/pipermail/linux-afs/2024-February/00=
-8102html
-> =
+No working reproducer so:
 
-> Not Found
-> =
+#syz fix: fs: Block writes to mounted block devices
 
-> The requested URL was not found on this server.
-
-Erm.  Not sure how you came by that.  You lost a dot somehow.  It's in the
-original submission:
-
-https://lore.kernel.org/linux-fsdevel/3085695.1710328121@warthog.procyon.o=
-rg.uk/
-
-David
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
