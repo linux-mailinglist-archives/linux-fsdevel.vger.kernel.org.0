@@ -1,261 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-14377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0326587B540
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 00:36:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C09487B660
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 03:19:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539BB1F2224A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Mar 2024 23:36:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0308E1F23A67
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 02:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E951D5DF30;
-	Wed, 13 Mar 2024 23:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AA9C157;
+	Thu, 14 Mar 2024 02:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bnd3kWsn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OJxKQlLh";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bnd3kWsn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OJxKQlLh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt53jStA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEEA5D737;
-	Wed, 13 Mar 2024 23:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FA2BA29;
+	Thu, 14 Mar 2024 02:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710372991; cv=none; b=YBBJwIA07jNmIfsfraRthCj2OpE33Uv4qGab0xwdU/835X6haRWm8lg7n1hrJttnBQfs5yBDxJTYuhtMZc9wrZiW73w/j73Z6cbDuMIeRYpSCQ4YyYk3fdQ6l4ZUn1pouQKdrR0O5FT488WgAbktHalm17ftM0kTxo4MlNB4Ous=
+	t=1710382762; cv=none; b=n8ZZgA8cFLFnU+Hmex/VUB3C7HRZGIYHwyUocMY9GohnGH61dNL9OimJMYcTWBwOm7hH+dbUGZH6FXrIUAubgtnUCH14H7ry4NwqPmCNlZ+7nDpcYlL/tX5Y7NLcxj+eaMNlEmOQVw+ihtwKS1L/Gk9aPgQ2n8i2bVPYeRralkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710372991; c=relaxed/simple;
-	bh=PEtIBk3Qox1A/f6L9nzM7j01pdfLXKimHCRyf6wX8kc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q/Rlt6b70Sbm09F5JX6HBlIs26YQQDelts74v1LDff+qPv3Hi1XmD+Kz8vFD0Xa/0E81R4V6d37CBFdf7vUx/eQ6tvnlJfdW9bctxcELA/d1+AZ4J3ijXpRA7HZTDaZInYmokhOWRR+HLboxu/EEnaiQdLIShc+GyQlHURIMd80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bnd3kWsn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OJxKQlLh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bnd3kWsn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OJxKQlLh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 776B31F7F8;
-	Wed, 13 Mar 2024 23:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1710372987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xZIOH1b0c2LE/iuLTWH0WnTuOq16yhQnSgF8iH0nLII=;
-	b=Bnd3kWsnYDr/3ubbhuA0F23HvEmHaKaADekrRDWkckJo9Z/ZtVPe95xkXOL3uBVO8BQbwZ
-	myA9JFd9BVM0i8RpdY3lezr6z/jKO5+Z4OTs16yWQbugA0mG/CMv7lkGI4yhu34yVOmRSF
-	1wAJsXiLeC4QAdk5Jh23U8n9tYgS5w8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1710372987;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xZIOH1b0c2LE/iuLTWH0WnTuOq16yhQnSgF8iH0nLII=;
-	b=OJxKQlLhwCXcC4Qtt1DfDFBjyFQt+Q13XqaIqQTJVV8EtNJY+S7UikYGFlrAB1QzHHvtRT
-	LMO7D2O//YY4XqCA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1710372987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xZIOH1b0c2LE/iuLTWH0WnTuOq16yhQnSgF8iH0nLII=;
-	b=Bnd3kWsnYDr/3ubbhuA0F23HvEmHaKaADekrRDWkckJo9Z/ZtVPe95xkXOL3uBVO8BQbwZ
-	myA9JFd9BVM0i8RpdY3lezr6z/jKO5+Z4OTs16yWQbugA0mG/CMv7lkGI4yhu34yVOmRSF
-	1wAJsXiLeC4QAdk5Jh23U8n9tYgS5w8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1710372987;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xZIOH1b0c2LE/iuLTWH0WnTuOq16yhQnSgF8iH0nLII=;
-	b=OJxKQlLhwCXcC4Qtt1DfDFBjyFQt+Q13XqaIqQTJVV8EtNJY+S7UikYGFlrAB1QzHHvtRT
-	LMO7D2O//YY4XqCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3165313977;
-	Wed, 13 Mar 2024 23:36:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DYIDBns48mXSCgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 13 Mar 2024 23:36:27 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: tytso@mit.edu,  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
-  jaegeuk@kernel.org,  chao@kernel.org,
-  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel@collabora.com,
-  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
- Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v13 2/9] f2fs: Simplify the handling of cached
- insensitive names
-In-Reply-To: <20240305101608.67943-3-eugen.hristev@collabora.com> (Eugen
-	Hristev's message of "Tue, 5 Mar 2024 12:16:01 +0200")
-Organization: SUSE
-References: <20240305101608.67943-1-eugen.hristev@collabora.com>
-	<20240305101608.67943-3-eugen.hristev@collabora.com>
-Date: Wed, 13 Mar 2024 19:36:25 -0400
-Message-ID: <87edcdk8li.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1710382762; c=relaxed/simple;
+	bh=oWUuvZfUPQK6oEv2SNRdLnr1fSGZ2Navf8pKF44wuBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qjTwEFWThWBzpS5vMIrHy9W2ETU6gSyMOlKw3bnHFF5Z89i0lN9ZnnjhAFIhl+fk7KPrAbWwPATgcRjLnjJlatXxcjctH2OQvPA3XimGpQ8BWBE+rpyb+SwTezef1uqcQcIc6cWxoeOrvRnBssWmI3aF3dhoJV0Q4AgFqisKvc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bt53jStA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96671C433F1;
+	Thu, 14 Mar 2024 02:19:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710382762;
+	bh=oWUuvZfUPQK6oEv2SNRdLnr1fSGZ2Navf8pKF44wuBQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bt53jStAim4HB6IcDu03MYHYMJ46PzUngLFBLd1oskRUuhq+UPXNBEQXlwlqcATb2
+	 pO/Rh27gNTPP3m/nQVRsUCmmJaXBqxKtOUgWOI2QnhDhoIBAtiNaebSdi1x+tRn11P
+	 UrDBYggUeiLL5JIxzttTUsQg2OVGcbqX3PhOrs54o3LbIQ0wRmvn0VX2c7A36ckn9x
+	 Qv+pPLcUjP355J4txuWdYKSk5eb0axbSHmNhT/bkD11ZjuZDhLGORWNJeeqWwp302c
+	 +HfaZ5mIfSQozoWmsOq0mhGhDrjhh3WpQYLMUCvCSsKgmj5PrnqDNAVxb/GsDUuTst
+	 Mb7RLvQpRhBHA==
+Message-ID: <cd89a151-76f6-4f73-a109-72e0a7b758d3@kernel.org>
+Date: Thu, 14 Mar 2024 10:19:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Bnd3kWsn;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=OJxKQlLh
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 HAS_ORG_HEADER(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Score: -4.51
-X-Rspamd-Queue-Id: 776B31F7F8
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [f2fs-dev] [syzbot] [f2fs?] KASAN: slab-use-after-free Read in
+ f2fs_filemap_fault
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>, "hdanton@sina.com" <hdanton@sina.com>,
+ =?UTF-8?B?RWQgVHNhaSAo6JSh5a6X6LuSKQ==?= <Ed.Tsai@mediatek.com>
+Cc: =?UTF-8?B?Q2h1bi1IdW5nIFd1ICjlt6vpp7/lro8p?= <Chun-hung.Wu@mediatek.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ =?UTF-8?B?TGlnaHQgSHNpZWggKOisneaYjueHiCk=?= <Light.Hsieh@mediatek.com>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ =?UTF-8?B?RnJlZGR5IEhzaW4gKOi+m+aBkuixkCk=?= <Freddy.Hsin@mediatek.com>
+References: <0000000000000b4e27060ef8694c@google.com>
+ <20240115120535.850-1-hdanton@sina.com>
+ <4bbab168407600a07e1a0921a1569c96e4a1df31.camel@mediatek.com>
+ <ZfEB3rPLQUjePNRz@google.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZfEB3rPLQUjePNRz@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+On 2024/3/13 9:31, Jaegeuk Kim wrote:
+> On 03/12, Ed Tsai (蔡宗軒) wrote:
+>> On Mon, 2024-01-15 at 20:05 +0800, Hillf Danton wrote:
+>>>
+>>> ...
+>>>
+>>> --- x/fs/f2fs/file.c
+>>> +++ y/fs/f2fs/file.c
+>>> @@ -39,6 +39,7 @@
+>>>   static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
+>>>   {
+>>>          struct inode *inode = file_inode(vmf->vma->vm_file);
+>>> +       vm_flags_t flags = vmf->vma->vm_flags;
+>>>          vm_fault_t ret;
+>>>   
+>>>          ret = filemap_fault(vmf);
+>>> @@ -46,7 +47,7 @@ static vm_fault_t f2fs_filemap_fault(str
+>>>                  f2fs_update_iostat(F2FS_I_SB(inode), inode,
+>>>                                          APP_MAPPED_READ_IO,
+>>> F2FS_BLKSIZE);
+>>>   
+>>> -       trace_f2fs_filemap_fault(inode, vmf->pgoff, vmf->vma-
+>>>> vm_flags, ret);
+>>> +       trace_f2fs_filemap_fault(inode, vmf->pgoff, flags, ret);
+>>>   
+>>>          return ret;
+>>>   }
+>>> --
+>>
+>> Hi Jaegeuk,
+>>
+>> We recently encountered this slabe-use-after-free issue in KASAN as
+>> well. Could you please review the patch above and merge it into f2fs?
+> 
+> Where is the patch?
 
-> +void f2fs_free_casefolded_name(struct f2fs_filename *fname)
-> +{
-> +	unsigned char *buf = (unsigned char *)fname->cf_name.name;
-> +
-> +	kmem_cache_free(f2fs_cf_name_slab, buf);
-> +	fname->cf_name.name = NULL;
+Hi, all,
 
-In my previous review, I mentioned you could drop the "if (buf)" check
-here *if and only if* you used kfree. By doing an unchecked kmem_cache_free
-like this, you will immediately hit an Oops in the first lookup (see below).
+I'd like to fix this issue in 6.9-rc1, so I submitted a formal patch based on
+above code, and the patch has been tested by syzbot.
 
-Please, make sure you actually stress test this patchset with fstests
-against both f2fs and ext4 before sending each new version.
+https://lore.kernel.org/linux-f2fs-devel/20240314020528.3051533-1-chao@kernel.org
+
+Hillf, may I change author of the patch to you? :)
 
 Thanks,
 
-
-[   74.202044] F2FS-fs (loop0): Using encoding defined by superblock: utf8-12.1.0 with flags 0x0
-[   74.206592] F2FS-fs (loop0): Found nat_bits in checkpoint
-[   74.221467] F2FS-fs (loop0): Mounted with checkpoint version = 3e684111
-FSTYP         -- f2fs
-PLATFORM      -- Linux/x86_64 sle15sp5 6.7.0-gf27274eae416 #8 SMP PREEMPT_DYNAMIC Thu Mar 14 00:22:47 CET 2024
-MKFS_OPTIONS  -- -O encrypt /dev/loop1
-MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop1 /root/work/scratch
-
-[   75.038385] F2FS-fs (loop1): Found nat_bits in checkpoint
-[   75.054311] F2FS-fs (loop1): Mounted with checkpoint version = 6b9fbccb
-[   75.176328] F2FS-fs (loop0): Using encoding defined by superblock: utf8-12.1.0 with flags 0x0
-[   75.179261] F2FS-fs (loop0): Found nat_bits in checkpoint
-[   75.194264] F2FS-fs (loop0): Mounted with checkpoint version = 3e684114
-f2fs/001 1s ... [   75.570867] run fstests f2fs/001 at 2024-03-14 00:24:33
-[   75.753604] BUG: unable to handle page fault for address: fffff14ad2000008
-[   75.754209] #PF: supervisor read access in kernel mode
-[   75.754647] #PF: error_code(0x0000) - not-present page
-[   75.755077] PGD 0 P4D 0 
-[   75.755300] Oops: 0000 [#1] PREEMPT SMP NOPTI
-[   75.755683] CPU: 0 PID: 2740 Comm: xfs_io Not tainted 6.7.0-gf27274eae416 #8
-[   75.756266] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 2/2/2022
-[   75.756911] RIP: 0010:kmem_cache_free+0x6a/0x320
-[   75.757309] Code: 80 48 01 d8 0f 82 b4 02 00 00 48 c7 c2 00 00 00 80 48 2b 15 f8 c2 18 01 48 01 d0 48 c1 e8 0c 48 c1 e0 06 48 03 05 d6 c2 18 01 <48> 8b 50 08 49 89 c6 f6 c2 01 0f 85 ea 01 00 00 0f 1f 44 00 00 49
-[   75.758834] RSP: 0018:ffffa59bc231bb10 EFLAGS: 00010286
-[   75.759270] RAX: fffff14ad2000000 RBX: 0000000000000000 RCX: 0000000000000000
-[   75.759860] RDX: 0000620400000000 RSI: 0000000000000000 RDI: ffff9dfc80043600
-[   75.760450] RBP: ffffa59bc231bb30 R08: ffffa59bc231b9a0 R09: 00000000000003fa
-[   75.761037] R10: 00000000000fd024 R11: 0000000000000107 R12: ffff9dfc80043600
-[   75.761626] R13: ffffffff8404dc7a R14: 0000000000000000 R15: ffff9dfc8f1aa000
-[   75.762221] FS:  00007f9601efb780(0000) GS:ffff9dfcfbc00000(0000) knlGS:0000000000000000
-[   75.762888] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   75.763372] CR2: fffff14ad2000008 CR3: 0000000111750000 CR4: 0000000000750ef0
-[   75.763962] PKRU: 55555554
-[   75.764194] Call Trace:
-[   75.764435]  <TASK>
-[   75.764677]  ? __die_body+0x1a/0x60
-[   75.764982]  ? page_fault_oops+0x154/0x440
-[   75.765335]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.765760]  ? search_module_extables+0x46/0x70
-[   75.766149]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.766548]  ? fixup_exception+0x22/0x300
-[   75.766892]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.767292]  ? exc_page_fault+0xa6/0x140
-[   75.767633]  ? asm_exc_page_fault+0x22/0x30
-[   75.767995]  ? f2fs_free_filename+0x2a/0x40
-[   75.768362]  ? kmem_cache_free+0x6a/0x320
-[   75.768703]  ? f2fs_free_filename+0x2a/0x40
-[   75.769061]  f2fs_free_filename+0x2a/0x40
-[   75.769403]  f2fs_lookup+0x19f/0x380
-[   75.769712]  __lookup_slow+0x8b/0x130
-[   75.770034]  walk_component+0xfc/0x170
-[   75.770353]  path_lookupat+0x69/0x140
-[   75.770664]  filename_lookup+0xe1/0x1c0
-[   75.770991]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.771393]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.771792]  ? do_wp_page+0x3f6/0xbf0
-[   75.772109]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.772523]  ? preempt_count_add+0x70/0xa0
-[   75.772902]  ? vfs_statx+0x89/0x180
-[   75.773224]  vfs_statx+0x89/0x180
-[   75.773530]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.773939]  vfs_fstatat+0x80/0xa0
-[   75.774237]  __do_sys_newfstatat+0x26/0x60
-[   75.774595]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.775021]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.775448]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.775878]  ? do_user_addr_fault+0x563/0x7c0
-[   75.776273]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   75.776699]  do_syscall_64+0x50/0x110
-[   75.777028]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
-[   75.777479] RIP: 0033:0x7f9601b07aea
-[   75.777793] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 41 89 ca b8 06 01 00 00 0f 05 <3d> 00 f0 ff ff 77 07 31 c0 c3 0f 1f 40 00 48 8b 15 01 23 0e 00 f7
-[   75.779391] RSP: 002b:00007ffc160eaae8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
-[   75.780050] RAX: ffffffffffffffda RBX: 0000000000000042 RCX: 00007f9601b07aea
-[   75.780663] RDX: 00007ffc160eab80 RSI: 00007ffc160ecb88 RDI: 00000000ffffff9c
-[   75.781278] RBP: 00007ffc160ead20 R08: 00007ffc160ead20 R09: 0000000000000000
-[   75.781902] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc160eae70
-[   75.782532] R13: 00007ffc160ecb88 R14: 00007ffc160eae70 R15: 0000000000000020
-[   75.783150]  </TASK>
-[   75.783349] Modules linked in:
-[   75.783628] CR2: fffff14ad2000008
-[   75.783918] ---[ end trace 0000000000000000 ]---
-[   75.784315] RIP: 0010:kmem_cache_free+0x6a/0x320
-[   75.784718] Code: 80 48 01 d8 0f 82 b4 02 00 00 48 c7 c2 00 00 00 80 48 2b 15 f8 c2 18 01 48 01 d0 48 c1 e8 0c 48 c1 e0 06 48 03 05 d6 c2 18 01 <48> 8b 50 08 49 89 c6 f6 c2 01 0f 85 ea 01 00 00 0f 1f 44 00 00 49
-[   75.786294] RSP: 0018:ffffa59bc231bb10 EFLAGS: 00010286
-[   75.786747] RAX: fffff14ad2000000 RBX: 0000000000000000 RCX: 0000000000000000
-[   75.787369] RDX: 0000620400000000 RSI: 0000000000000000 RDI: ffff9dfc80043600
-[   75.788016] RBP: ffffa59bc231bb30 R08: ffffa59bc231b9a0 R09: 00000000000003fa
-[   75.788672] R10: 00000000000fd024 R11: 0000000000000107 R12: ffff9dfc80043600
-[   75.789296] R13: ffffffff8404dc7a R14: 0000000000000000 R15: ffff9dfc8f1aa000
-[   75.789938] FS:  00007f9601efb780(0000) GS:ffff9dfcfbc00000(0000) knlGS:0000000000000000
-[   75.790677] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   75.791212] CR2: fffff14ad2000008 CR3: 0000000111750000 CR4: 0000000000750ef0
-[   75.791862] PKRU: 55555554
-[   75.792112] Kernel panic - not syncing: Fatal exception
-[   75.792797] Kernel Offset: 0x2a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-
-
--- 
-Gabriel Krisman Bertazi
+> 
+>>
+>> Best,
+>> Ed
+>>
+>> ==================================================================
+>> [29195.369964][T31720] BUG: KASAN: slab-use-after-free in
+>> f2fs_filemap_fault+0x50/0xe0
+>> [29195.370971][T31720] Read at addr f7ffff80454ebde0 by task AsyncTask
+>> #11/31720
+>> [29195.371881][T31720] Pointer tag: [f7], memory tag: [f1]
+>> [29195.372549][T31720]
+>> [29195.372838][T31720] CPU: 2 PID: 31720 Comm: AsyncTask #11 Tainted:
+>> G        W  OE      6.6.17-android15-0-gcb5ba718a525 #1
+>> [29195.374862][T31720] Call trace:
+>> [29195.375268][T31720]  dump_backtrace+0xec/0x138
+>> [29195.375848][T31720]  show_stack+0x18/0x24
+>> [29195.376365][T31720]  dump_stack_lvl+0x50/0x6c
+>> [29195.376943][T31720]  print_report+0x1b0/0x714
+>> [29195.377520][T31720]  kasan_report+0xc4/0x124
+>> [29195.378076][T31720]  __do_kernel_fault+0xb8/0x26c
+>> [29195.378694][T31720]  do_bad_area+0x30/0xdc
+>> [29195.379226][T31720]  do_tag_check_fault+0x20/0x34
+>> [29195.379834][T31720]  do_mem_abort+0x58/0x104
+>> [29195.380388][T31720]  el1_abort+0x3c/0x5c
+>> [29195.380899][T31720]  el1h_64_sync_handler+0x54/0x90
+>> [29195.381529][T31720]  el1h_64_sync+0x68/0x6c
+>> [29195.382069][T31720]  f2fs_filemap_fault+0x50/0xe0
+>> [29195.382678][T31720]  __do_fault+0xc8/0xfc
+>> [29195.383209][T31720]  handle_mm_fault+0xb44/0x10c4
+>> [29195.383816][T31720]  do_page_fault+0x294/0x48c
+>> [29195.384395][T31720]  do_translation_fault+0x38/0x54
+>> [29195.385023][T31720]  do_mem_abort+0x58/0x104
+>> [29195.385577][T31720]  el0_da+0x44/0x78
+>> [29195.386057][T31720]  el0t_64_sync_handler+0x98/0xbc
+>> [29195.386688][T31720]  el0t_64_sync+0x1a8/0x1ac
+>> [29195.387249][T31720]
+>> [29195.387534][T31720] Allocated by task 14784:
+>> [29195.388085][T31720]  kasan_save_stack+0x40/0x70
+>> [29195.388672][T31720]  save_stack_info+0x34/0x128
+>> [29195.389259][T31720]  kasan_save_alloc_info+0x14/0x20
+>> [29195.389901][T31720]  __kasan_slab_alloc+0x168/0x174
+>> [29195.390530][T31720]  slab_post_alloc_hook+0x88/0x3a4
+>> [29195.391168][T31720]  kmem_cache_alloc+0x18c/0x2c8
+>> [29195.391771][T31720]  vm_area_alloc+0x2c/0xe8
+>> [29195.392327][T31720]  mmap_region+0x440/0xa94
+>> [29195.392888][T31720]  do_mmap+0x3d0/0x524
+>> [29195.393399][T31720]  vm_mmap_pgoff+0x1a0/0x1f8
+>> [29195.393980][T31720]  ksys_mmap_pgoff+0x78/0xf4
+>> [29195.394557][T31720]  __arm64_sys_mmap+0x34/0x44
+>> [29195.395138][T31720]  invoke_syscall+0x58/0x114
+>> [29195.395727][T31720]  el0_svc_common+0x80/0xe0
+>> [29195.396292][T31720]  do_el0_svc+0x1c/0x28
+>> [29195.396812][T31720]  el0_svc+0x38/0x68
+>> [29195.397302][T31720]  el0t_64_sync_handler+0x68/0xbc
+>> [29195.397932][T31720]  el0t_64_sync+0x1a8/0x1ac
+>> [29195.398492][T31720]
+>> [29195.398778][T31720] Freed by task 0:
+>> [29195.399240][T31720]  kasan_save_stack+0x40/0x70
+>> [29195.399825][T31720]  save_stack_info+0x34/0x128
+>> [29195.400412][T31720]  kasan_save_free_info+0x18/0x28
+>> [29195.401043][T31720]  ____kasan_slab_free+0x254/0x25c
+>> [29195.401682][T31720]  __kasan_slab_free+0x10/0x20
+>> [29195.402278][T31720]  slab_free_freelist_hook+0x174/0x1e0
+>> [29195.402961][T31720]  kmem_cache_free+0xc4/0x348
+>> [29195.403544][T31720]  __vm_area_free+0x84/0xa4
+>> [29195.404103][T31720]  vm_area_free_rcu_cb+0x10/0x20
+>> [29195.404719][T31720]  rcu_do_batch+0x214/0x720
+>> [29195.405284][T31720]  rcu_core+0x1b0/0x408
+>> [29195.405800][T31720]  rcu_core_si+0x10/0x20
+>> [29195.406348][T31720]  __do_softirq+0x120/0x3f4
+>> [29195.406907][T31720]
+>> [29195.407191][T31720] The buggy address belongs to the object at
+>> ffffff80454ebdc0
+>> [29195.407191][T31720]  which belongs to the cache vm_area_struct of
+>> size 176
+>> [29195.408978][T31720] The buggy address is located 32 bytes inside of
+>> [29195.408978][T31720]  176-byte region [ffffff80454ebdc0,
+>> ffffff80454ebe70)
+>> [29195.410625][T31720]
+>> [29195.410911][T31720] The buggy address belongs to the physical page:
+>> [29195.411709][T31720] page:0000000058f0f2f1 refcount:1 mapcount:0
+>> mapping:0000000000000000 index:0x0 pfn:0xc54eb
+>> [29195.412980][T31720] anon flags:
+>> 0x4000000000000800(slab|zone=1|kasantag=0x0)
+>> [29195.413880][T31720] page_type: 0xffffffff()
+>> [29195.414418][T31720] raw: 4000000000000800 f6ffff8002904500
+>> fffffffe076fc8c0 dead000000000007
+>> [29195.415488][T31720] raw: 0000000000000000 0000000000170017
+>> 00000001ffffffff 0000000000000000
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
