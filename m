@@ -1,143 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-14416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B106587C24A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 18:56:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D1F87C3DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 20:56:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A925EB22234
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 17:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC2F1C22550
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 19:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FBD74BE4;
-	Thu, 14 Mar 2024 17:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419C475817;
+	Thu, 14 Mar 2024 19:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SMvXi7h9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hhACOGk4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B751374BE3
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Mar 2024 17:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061B174BE8;
+	Thu, 14 Mar 2024 19:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710438999; cv=none; b=OGwwfiQWjyljQSNY8OsbVJUtDZaoHRWaRqiH+Yvd0nieemvHylS1abmQmFgKCux7On4UaeoU+JUzA9ddEFOCLoPzO6J8G5OculCUxFxpVHb6dd1PQ9L52ad1j/C1prnp9/UJz/6aGhq71OZpx4JMvFliYDBK3wuBzinmQlhBCrk=
+	t=1710446165; cv=none; b=pYP8g86iXNUr56UqvfqWu/9RcFvfN1aC/PwQspALIf2bX4saqhXc2O19rKZyCvdTByk6G6J8Co5aQabqIiVtT1HsaECnPfV61t76tGPfnW/CDwP0X2oPoPjRgG8+NBrm0UnfTtZfWZ9cWALRYkpzla11ghDA1QCXWmhxr6JeqgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710438999; c=relaxed/simple;
-	bh=q6LSgzuTsEdBF9ut1bKQ2CFEToCK1i1nZUywiwE9Vpk=;
+	s=arc-20240116; t=1710446165; c=relaxed/simple;
+	bh=dMtdr+z4geWEk1nGxP9DZ1xFcbrcm4t9EL/q1iF77rM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZPfn0b0hE4qZwvWJKLHoOzTgh2Xhi680YpoNT+wl11sg7I4IuMYDxc79SaqHJB/h08HhiMStOdIrs/T6ATkY+ufoxYYf/BRD+I90DijG/QdbeZis06wio+p2GsXYn9Y2jBOp16XmTUqJcWToY4cpAaYqty6UsOqbnkGpa2XJJFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SMvXi7h9; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-60cbcd04de9so13816127b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Mar 2024 10:56:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=nDjzAQWVYB9T3ZLkBM+1PEfY7UhKlRgQMCMDGnHrefQCG+7MKsiudEyC7jljDRnAM7b7tdrodOFWaH5GKiKQ/8mWNofRu9JrvJADjPKL3o1jlFDfuQogDB/kp0T+Ma8tsFNLmGDr3y8wawPwfu00i5ooC0RiAv3AYRc6SXvn4lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hhACOGk4; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-513d4559fb4so1032029e87.3;
+        Thu, 14 Mar 2024 12:56:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1710438997; x=1711043797; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710446162; x=1711050962; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Rb6X5KMHfFiYteE+h25PpagvlyZNfqx6cWfVGc1cZ88=;
-        b=SMvXi7h9+WHXNA3c0I9UewVJcLqJL9luO3zH2w3n9nrRdJ3EyBgO6cAS9+ZHmLXpNW
-         /2LOFAEaVihnpSr5FKUOe66qs/2Z4ZtciJbOszV4FIDhYvzkEGXYMu/blXFiMr5WIUB4
-         VJ7Bj46+gLv8rnzEWR5DukAwRGFnQdUbqsv/S4ATIV5/nAqOOMT1FjhONXfAk4RG4Vfy
-         3LzZGsOyavE/4LXjkCW+PnzlipZiOdn8+cprLPR6+BhWsWcegfT4HY75jXU8jjlfncod
-         9yJ+Woge3Aa9EzfQ2u/lvwQIuWv1zTwAgqGnqD5fCFRUUDXKRWLjaYzDnSBbLAITDrmd
-         J0Vg==
+        bh=WmU5kHfUbvawQJQeqNyzZ92DSbRivWiIURaaWWNvTq0=;
+        b=hhACOGk4kNkVMdShtb6IDPmfV5idflHYDAkLrKsbt9G0xWvLfVqr226pUilH6Ig1wW
+         oodm39SfrPNyYHe96Jgsqe85SWj/2jmmC4sa69RR4xUI4YV95+/av/O+4LwLu/6UwpSF
+         6uZ9/IYsZsZQWuqxSuJc3IX0tgbt0Fsp9+m38NZ231EqKoUiRb6+RQY4L+NC8h1iO3+k
+         +hJI1owALr9BpQMY/XwVXIYxVvhzWkej/pXtKneVan2ZRIbM4y0bwfmout4/Lp0ME5wD
+         5IL9pNu+qetg9xMuzHj63VCMNNRp6oGnV/ncXxnUkshrI+C8qaIjTRtwB/PonhlYEQZy
+         2IUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710438997; x=1711043797;
+        d=1e100.net; s=20230601; t=1710446162; x=1711050962;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Rb6X5KMHfFiYteE+h25PpagvlyZNfqx6cWfVGc1cZ88=;
-        b=vqN89h6dOO8kH7jZugHBgWtwdEGL9ru2QsbeoVa41gRQzKt3ZpXw+8Ro8SFRjvddb8
-         nQEt4RGSwunQyypuNsiHoZ/5dtmiQvyPUFjQdRmZcABDext2QCl97QPeQutI0BC2imBh
-         xK4xq95qoKX6egv0z1KaYECKufzZyhcLt9b+z3Yi92vQL0iqCgVF89dW27cQkwjRxynK
-         d5tcf5vN35Tr/F2jjCN26sdnAy4+8CzOr5Hs2DkY1woFDnUOf1jCuUCA8DHYjvt9kviD
-         cd8P9NQmG8VE+gvnXpIuYfo7C4ah1k9FSq4ypPfy0Ex7fSkLlPbJDtxppfGxyWI4gNhK
-         wGzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsc699JpmeGxwBMB2kkKHGGyGnoNmJFCI7DEiH7mjvmqKHWq4flQI6Wd9J5icWPQVgZL3xt+MinOB/mM++rFsrT5bUAPyLfh/jxmWYWg==
-X-Gm-Message-State: AOJu0YxKgsu31rPnr9FplqK5D4sk97eW9ZoCAlZKKzjfUJOeHr8Tos57
-	g8GyIx7tThy3Bp/HpGuqjXSzLIX0zjN7koeqZazoxbj+8T/LwXm+MSlBY9m8SXiH/wfu5UxOQJT
-	KPH0wNCsd2eCod56Hu09HkcE8CF3ugilzlJaF
-X-Google-Smtp-Source: AGHT+IFSaY3KSxtTjzJoeT7Ux2PIH9a1le7b1LUgfoNjhfxRL1BHbUUMuJ4kF5c2cbU+yMftlKDHosl2AWYs6A7Rwlg=
-X-Received: by 2002:a81:a00f:0:b0:60a:66ac:84db with SMTP id
- x15-20020a81a00f000000b0060a66ac84dbmr2560993ywg.11.1710438996730; Thu, 14
- Mar 2024 10:56:36 -0700 (PDT)
+        bh=WmU5kHfUbvawQJQeqNyzZ92DSbRivWiIURaaWWNvTq0=;
+        b=aPegjSnqmFX3tzx5e0SRrD7Q7Gwr06AZ+tQc1ETzqpWH483w5MhNrtaqRLpuSq7Rkw
+         qvUEbo90RTzAa53hY68+gwtXExbxnckTbl66KD7PHZNHJIqQtDJFLatPv3XlV9u9o1Vu
+         NNVo/n54f0PQuoivT6DKWtbGPTcXJV1xc0wt17fPSxNaW35X6F0s2Gl6bNwGuEO7O5bC
+         uqYB62d4hqT617EZHP26/qTU19nIecYr5whan0uwn9tw1BccLSu5RGzkk026+qkXROua
+         b30iqA/LRB06gJRes8uuD+CJXQADv41BjTsJ7PGDh7jDT21vjOcpCvnZAoQxQSZ5Xxv6
+         gLtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVw8twsV9P8vUU/YBMAZ50vtH2zuVHtWX4hUw0TgMTstU9EDQNDZJMCMmL1uQwzztGvC0AEG0xX18a+PePzGHe6XrIWRzUaXXlZ/N9RAyAcuw7Z/dFchZ2tCoT4P3nGkJYKewR5NIbaCAk=
+X-Gm-Message-State: AOJu0YyJ2Qs7+N2w5coQuj7Oa8yzIK3AXLPFVgDF095F153fbn+FIik7
+	0CsN09K2rQe2RgmNaNxm6NRoK3/3v3Z7qm198FnwDpVanfbrEbS2NSqmvlz9g5Gna4fSaNDRfVg
+	FlE14UQhdSzgOLtBYKrQfGVLWdQc=
+X-Google-Smtp-Source: AGHT+IHVjuQkZFwa6Zwnan4Px4We41FJXhl7ioG9TTa71PGzxxVT7QOjctjDO9GawpmgI5YMmim5zZ1OQ0sDuixZmk0=
+X-Received: by 2002:a05:6512:469:b0:513:c9de:ee30 with SMTP id
+ x9-20020a056512046900b00513c9deee30mr2228965lfd.17.1710446161749; Thu, 14 Mar
+ 2024 12:56:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240309075320.160128-1-gnoack@google.com> <20240309075320.160128-2-gnoack@google.com>
-In-Reply-To: <20240309075320.160128-2-gnoack@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 14 Mar 2024 13:56:25 -0400
-Message-ID: <CAHC9VhRojXNSU9zi2BrP8z6JmOmT3DAqGNtinvvz=tL1XhVdyg@mail.gmail.com>
-Subject: Re: [PATCH v10 1/9] security: Create security_file_vfs_ioctl hook
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Dave Chinner <david@fromorbit.com>
+References: <20240308-vfs-uuid-f917b2acae70@brauner>
+In-Reply-To: <20240308-vfs-uuid-f917b2acae70@brauner>
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 14 Mar 2024 14:55:50 -0500
+Message-ID: <CAH2r5mvXYwLJbKJhAVd34zyDcM4YNM5_n4G-aUNjrjG3VT5KQQ@mail.gmail.com>
+Subject: Fwd: [GIT PULL] vfs uuid
+To: Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	Kent Overstreet <kent.overstreet@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 9, 2024 at 2:53=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.co=
-m> wrote:
->
-> This LSM hook gets called just before the fs/ioctl.c logic delegates
-> the requested IOCTL command to the file-specific implementation as
-> implemented by f_op->unlocked_ioctl (or f_op->ioctl_compat).
->
-> It is impractical for LSMs to make security guarantees about these
-> f_op operations without having intimate knowledge of how they are
-> implemented.
->
-> Therefore, depending on the enabled Landlock policy, Landlock aims to
-> block the calls to filp->f_op->unlocked_ioctl(), but permit the calls
-> to the IOCTL commands which are already implemented in fs/ioctl.c.
->
-> The current call graph is:
->
->   * ioctl syscall
->     * security_file_ioctl() LSM hook
->     * do_vfs_ioctl() - standard operations
->       * file_ioctl() - standard file operations
->     * vfs_ioctl() - delegate to file (if do_vfs_ioctl() is a no-op)
->       * filp->f_op->unlocked_ioctl()
->
-> Why not use the existing security_file_ioctl() hook?
->
-> With the existing security_file_ioctl() hook, it is technically
-> feasible to prevent the call to filp->f_op->unlocked_ioctl(), but it
-> would be difficult to maintain: security_file_ioctl() gets called
-> further up the call stack, so an implementation of it would need to
-> predict whether the logic further below will decide to call
-> f_op->unlocked_ioctl().  That can only be done by mirroring the logic
-> in do_vfs_ioctl() to some extent, and keeping this in sync.
+Do you have sample programs for these programs (or even better
+mini-xfstest programs) that we can use to make sure this e.g. works
+for cifs.ko (which has similar concept to FS UUID for most remote
+filesystems etc.)?
 
-Once again, I don't see this as an impossible task, and I would think
-that you would want to inspect each new ioctl command/op added in
-do_vfs_ioctl() anyway to ensure it doesn't introduce an unwanted
-behavior from a Landlock sandbox perspective.  Looking at the git
-log/blame, it also doesn't appear that new do_vfs_ioctl() ioctls are
-added very frequently, meaning that keeping Landlock sync'd with
-fs/ioctl.c shouldn't be a terrible task.
+---------- Forwarded message ---------
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, Mar 8, 2024 at 4:19=E2=80=AFAM
+Subject: [GIT PULL] vfs uuid
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 
-I'm also not excited about the overlap between the existing
-security_file_ioctl() hook and the proposed security_file_vfs_ioctl()
-hook.  There are some cases where we have no choice and we have to
-tolerate the overlap, but this doesn't look like one of those cases to
-me.
 
-I'm sorry, but I don't agree with this new hook.
+Hey Linus,
 
---=20
-paul-moore.com
+/* Summary */
+This adds two new ioctl()s for getting the filesystem uuid and
+retrieving the sysfs path based on the path of a mounted filesystem. The
+bcachefs pull request should include a merge of this as well as it
+depends on the two new ioctls. Getting the filesystem uuid has been
+implemented in filesystem specific code for a while it's now lifted as a
+generic ioctl.
+
+/* Testing */
+clang: Debian clang version 16.0.6 (19)
+gcc: (Debian 13.2.0-7) 13.2.0
+
+All patches are based on v6.8-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with
+current mainline.
+
+The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d=
+:
+
+  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9.uui=
+d
+
+for you to fetch changes up to 01edea1bbd1768be41729fd018a82556fa1810ec:
+
+  Merge series "filesystem visibility ioctls" of
+https://lore.kernel.org/r/20240207025624.1019754-1-kent.overstreet@linux.de=
+v
+(2024-02-12 13:14:21 +0100)
+
+Please consider pulling these changes from the signed vfs-6.9.uuid tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.9.uuid
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge series "filesystem visibility ioctls" of
+https://lore.kernel.org/r/20240207025624.1019754-1-kent.overstreet@linux.de=
+v
+
+Kent Overstreet (6):
+      fs: super_set_uuid()
+      ovl: convert to super_set_uuid()
+      fs: FS_IOC_GETUUID
+      fat: Hook up sb->s_uuid
+      fs: add FS_IOC_GETFSSYSFSPATH
+      xfs: add support for FS_IOC_GETFSSYSFSPATH
+
+ Documentation/userspace-api/ioctl/ioctl-number.rst |  3 +-
+ fs/ext4/super.c                                    |  2 +-
+ fs/f2fs/super.c                                    |  2 +-
+ fs/fat/inode.c                                     |  3 ++
+ fs/gfs2/ops_fstype.c                               |  2 +-
+ fs/ioctl.c                                         | 33 ++++++++++++++
+ fs/kernfs/mount.c                                  |  4 +-
+ fs/ocfs2/super.c                                   |  4 +-
+ fs/overlayfs/util.c                                | 18 +++++---
+ fs/ubifs/super.c                                   |  2 +-
+ fs/xfs/xfs_mount.c                                 |  4 +-
+ include/linux/fs.h                                 | 52 ++++++++++++++++++=
+++++
+ include/uapi/linux/fs.h                            | 25 +++++++++++
+ mm/shmem.c                                         |  4 +-
+ 14 files changed, 141 insertions(+), 17 deletions(-)
+
+
+
+--
+Thanks,
+
+Steve
 
