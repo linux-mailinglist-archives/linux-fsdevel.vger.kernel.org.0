@@ -1,95 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-14401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A9587BED3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 15:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA5187BF22
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 15:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D759C1C2139B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 14:24:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EBE41C223CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 14:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27056FE17;
-	Thu, 14 Mar 2024 14:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716D370CB7;
+	Thu, 14 Mar 2024 14:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dDnRk0Xh"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="h76XgWmU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VJUlb3WV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="h76XgWmU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VJUlb3WV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E66B58ACF;
-	Thu, 14 Mar 2024 14:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245E31A38EB;
+	Thu, 14 Mar 2024 14:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710426278; cv=none; b=R8xmT9Urici1tOS7R7C6r/rRp7bpW+6B0uaIaKG+pFilLetWaXhPK6EI70TSmnrjipDhgpv+R+gEYwrfgODJefdP4pDDxAkLg6QvQBeDeHu5gVZsoXPReyjQjg+jbls8gzmG4IQ5cOWj39vFzu77Xj9qOq2GSLGoGoeQnF/5o+I=
+	t=1710427275; cv=none; b=MOVW22AlfYWYwiZ8YfeC6PAxnVEfMv9hjNNNZDBOytGklCWamnVYO8D7CG5aPocI8m1v1IiqtYcWWpbjfhDz4ypgePtQ5tW/uswRQZZU45vvWuGT7kRh+WVvLe6soBNIwVKgY2z9KBbCFORjZSc6sKoVZyXxFGgq8K11RG+rJGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710426278; c=relaxed/simple;
-	bh=UNQ3Nf1flabD2MoV69eJ0hCAVp+9WHaurahsKUJFxD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZXg2uu5cwYG9mIOUNsXaBHA5xMo8UIJSQJW1jhi3vwyugMefIC2U1HnkXcTNttEUkOS0shhUz0UJYX7fqfqa7jipTdhtd6aAsJUAm/tpA5QYg8vZyf1WL4b1yjaHpiv9HqgeLZ93wRa/9YZMiXR0y6KX96uAy/uRD951mvx3fP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dDnRk0Xh; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=ZiuvoYsNbOuxMT8EwGr6wSm8sPv1upTE63Mx09JCoFo=; b=dDnRk0XhoMo9OmzcS3ZT8tZJBt
-	GEO82FAzcjUGQAzEmEPN7PDlhdZ+OLCgMX3R7AHI67K5y7G84v5MHswGNGtD8xmuYtVbnx/vLWb9M
-	y+9vFhnTV7If5pWonxtXEIU3XI1z4te8VX+UI5WzPZHvF/gFo0yoz/1LmnX8WJ6IeQOstL3p+0xCd
-	TwWq7dYS5aGLpb4XeCQaFUhqB5uZ747jOmUgDUR2BmSndd3TfBJQDjV+NDmwuh0htyL9E0fRZmuN3
-	TCw2UwJp45Raz2fTcCGIzrWXo2gj2twWpuGngAu4da9y5g8uYFeqXBrBjLPBM44lmMvFKAQ7T9sdw
-	HP7r1X3Q==;
-Received: from [50.53.2.121] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rkm0X-0000000Ecg7-2G0a;
-	Thu, 14 Mar 2024 14:24:33 +0000
-Message-ID: <7ea2aec2-cfca-4d78-9164-8be7821a168c@infradead.org>
-Date: Thu, 14 Mar 2024 07:24:31 -0700
+	s=arc-20240116; t=1710427275; c=relaxed/simple;
+	bh=ELF+f59TJxIixei3mfagGQm1K4qILIyFUQQgSq9dK7c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bM1b7DCmElVWRszV/9xFyZbFHq4xyUrdJmhjmZMmfmzNAPP1GwSbpObji1sY3nUqfLRSyH95Sf5BAjEnV4mKsfmZPpwySCFJveSxZBDcxBmPQ6S8r0fki9RZRCEbo1NCKgJN24qGMpiBqTx4uum2D8tR7JEiaY4Ap0Q8rfYWtsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=h76XgWmU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VJUlb3WV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=h76XgWmU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VJUlb3WV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 25C1621C9E;
+	Thu, 14 Mar 2024 14:41:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710427272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wG9JWTLr5OXP9cpOv1POjmlWyamPW2vvqR6gpOJQVKc=;
+	b=h76XgWmUuxD9NXfXtIABjc5MVcushaKkbp0RLa2pms+DJzgvB31t8KJVU0rWB/x5cxLsgL
+	KABCxIEL4knvNdzp/A6HzmKl/D80cWe5XlqlyuoPvf4sWj2K74Yq7M6HSXDdrt7KmS2iCQ
+	StrF15jx+2qnyO91mhz4PR2lY4kvC+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710427272;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wG9JWTLr5OXP9cpOv1POjmlWyamPW2vvqR6gpOJQVKc=;
+	b=VJUlb3WVZyBIo1LiKEClrxGqh+X6nWYh7RohFOX/imEfxp0zFRsZb6b43gJ0aph1QknH/0
+	bSEU6/FVoLybigDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710427272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wG9JWTLr5OXP9cpOv1POjmlWyamPW2vvqR6gpOJQVKc=;
+	b=h76XgWmUuxD9NXfXtIABjc5MVcushaKkbp0RLa2pms+DJzgvB31t8KJVU0rWB/x5cxLsgL
+	KABCxIEL4knvNdzp/A6HzmKl/D80cWe5XlqlyuoPvf4sWj2K74Yq7M6HSXDdrt7KmS2iCQ
+	StrF15jx+2qnyO91mhz4PR2lY4kvC+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710427272;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wG9JWTLr5OXP9cpOv1POjmlWyamPW2vvqR6gpOJQVKc=;
+	b=VJUlb3WVZyBIo1LiKEClrxGqh+X6nWYh7RohFOX/imEfxp0zFRsZb6b43gJ0aph1QknH/0
+	bSEU6/FVoLybigDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D67551368B;
+	Thu, 14 Mar 2024 14:41:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vqwTLocM82W+GgAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 14 Mar 2024 14:41:11 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: tytso@mit.edu,  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
+  jaegeuk@kernel.org,  chao@kernel.org,
+  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel@collabora.com,
+  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
+ Krisman Bertazi <krisman@collabora.com>
+Subject: Re: [PATCH v13 2/9] f2fs: Simplify the handling of cached
+ insensitive names
+In-Reply-To: <aaa4561e-fd23-4b21-8963-7ba4cc99eed3@collabora.com> (Eugen
+	Hristev's message of "Thu, 14 Mar 2024 10:44:09 +0200")
+Organization: SUSE
+References: <20240305101608.67943-1-eugen.hristev@collabora.com>
+	<20240305101608.67943-3-eugen.hristev@collabora.com>
+	<87edcdk8li.fsf@mailhost.krisman.be>
+	<aaa4561e-fd23-4b21-8963-7ba4cc99eed3@collabora.com>
+Date: Thu, 14 Mar 2024 10:41:10 -0400
+Message-ID: <8734sskha1.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] afs: Revert "afs: Hide silly-rename files from userspace"
-Content-Language: en-US
-To: David Howells <dhowells@redhat.com>
-Cc: Marc Dionne <marc.dionne@auristor.com>,
- Markus Suvanto <markus.suvanto@gmail.com>,
- Jeffrey Altman <jaltman@auristor.com>, Christian Brauner
- <brauner@kernel.org>, linux-afs@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <544d7b9d-ef15-463f-a11c-9a3cca3a49ea@infradead.org>
- <3085695.1710328121@warthog.procyon.org.uk>
- <3341492.1710413737@warthog.procyon.org.uk>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <3341492.1710413737@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=h76XgWmU;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=VJUlb3WV
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.63 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 HAS_ORG_HEADER(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_TWELVE(0.00)[14];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 NEURAL_HAM_SHORT(-0.20)[-0.995];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-1.12)[88.41%]
+X-Spam-Score: -2.63
+X-Rspamd-Queue-Id: 25C1621C9E
+X-Spam-Flag: NO
 
+Eugen Hristev <eugen.hristev@collabora.com> writes:
 
+>> Please, make sure you actually stress test this patchset with fstests
+>> against both f2fs and ext4 before sending each new version.
+>
+> I did run the xfstests, however, maybe I did not run the full suite, or maybe I am
+> running it in a wrong way ?
 
-On 3/14/24 03:55, David Howells wrote:
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->>> Link: https://lists.infradead.org/pipermail/linux-afs/2024-February/008102html
->>
->> Not Found
->>
->> The requested URL was not found on this server.
-> 
-> Erm.  Not sure how you came by that.  You lost a dot somehow.  It's in the
-> original submission:
+No worries.  Did you manage to reproduce it?
 
-Nor am I. Guess I'll blame it on thunderbird.
+> How are you running the kvm-xfstests with qemu ? Can you share your command
+> arguments please ?
 
-> https://lore.kernel.org/linux-fsdevel/3085695.1710328121@warthog.procyon.org.uk/
+I don't use kvm-xfstests.  I run ./check directly:
 
-Yep. Thanks.
+export SCRATCH_DEV=/dev/loop1
+export SCRATCH_MNT=$BASEMNT/scratch
+export TEST_DEV=/dev/loop0
+export TEST_DIR=$BASEMNT/test
+export RESULT_BASE=${BASEMNT}/results
+export REPORT_DIR=${BASEMNT}/report
+export FSTYP=f2fs
+
+mkfs.f2fs -f -C utf8 -O casefold ${TEST_DEV}
+
+./check -g encrypt,quick
 
 -- 
-#Randy
+Gabriel Krisman Bertazi
 
