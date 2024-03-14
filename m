@@ -1,173 +1,252 @@
-Return-Path: <linux-fsdevel+bounces-14402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA5187BF22
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 15:41:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B8487BF46
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 15:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EBE41C223CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 14:41:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F25CF1F2115D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 14:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716D370CB7;
-	Thu, 14 Mar 2024 14:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754EC71723;
+	Thu, 14 Mar 2024 14:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="h76XgWmU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VJUlb3WV";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="h76XgWmU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VJUlb3WV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="taAbA3gy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245E31A38EB;
-	Thu, 14 Mar 2024 14:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D346558104;
+	Thu, 14 Mar 2024 14:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710427275; cv=none; b=MOVW22AlfYWYwiZ8YfeC6PAxnVEfMv9hjNNNZDBOytGklCWamnVYO8D7CG5aPocI8m1v1IiqtYcWWpbjfhDz4ypgePtQ5tW/uswRQZZU45vvWuGT7kRh+WVvLe6soBNIwVKgY2z9KBbCFORjZSc6sKoVZyXxFGgq8K11RG+rJGo=
+	t=1710427676; cv=none; b=tsVFUU/N0bxvWY5menQxf+9elXRPX/9QHa8ZUW29wzw+eIUsIaopZPk/zC2wSqKYjAg9T84UN2mbt5AzNXxoSFPYg1hmfDiFJGFu2M/Vo48V+dLaMdeCEGRbNDgcMjRqg6DmdNtmaJyucMufqBZ03WYVtTyrVsG/8Sg2hZZqpfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710427275; c=relaxed/simple;
-	bh=ELF+f59TJxIixei3mfagGQm1K4qILIyFUQQgSq9dK7c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bM1b7DCmElVWRszV/9xFyZbFHq4xyUrdJmhjmZMmfmzNAPP1GwSbpObji1sY3nUqfLRSyH95Sf5BAjEnV4mKsfmZPpwySCFJveSxZBDcxBmPQ6S8r0fki9RZRCEbo1NCKgJN24qGMpiBqTx4uum2D8tR7JEiaY4Ap0Q8rfYWtsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=h76XgWmU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VJUlb3WV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=h76XgWmU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VJUlb3WV; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 25C1621C9E;
-	Thu, 14 Mar 2024 14:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1710427272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wG9JWTLr5OXP9cpOv1POjmlWyamPW2vvqR6gpOJQVKc=;
-	b=h76XgWmUuxD9NXfXtIABjc5MVcushaKkbp0RLa2pms+DJzgvB31t8KJVU0rWB/x5cxLsgL
-	KABCxIEL4knvNdzp/A6HzmKl/D80cWe5XlqlyuoPvf4sWj2K74Yq7M6HSXDdrt7KmS2iCQ
-	StrF15jx+2qnyO91mhz4PR2lY4kvC+o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1710427272;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wG9JWTLr5OXP9cpOv1POjmlWyamPW2vvqR6gpOJQVKc=;
-	b=VJUlb3WVZyBIo1LiKEClrxGqh+X6nWYh7RohFOX/imEfxp0zFRsZb6b43gJ0aph1QknH/0
-	bSEU6/FVoLybigDA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1710427272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wG9JWTLr5OXP9cpOv1POjmlWyamPW2vvqR6gpOJQVKc=;
-	b=h76XgWmUuxD9NXfXtIABjc5MVcushaKkbp0RLa2pms+DJzgvB31t8KJVU0rWB/x5cxLsgL
-	KABCxIEL4knvNdzp/A6HzmKl/D80cWe5XlqlyuoPvf4sWj2K74Yq7M6HSXDdrt7KmS2iCQ
-	StrF15jx+2qnyO91mhz4PR2lY4kvC+o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1710427272;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wG9JWTLr5OXP9cpOv1POjmlWyamPW2vvqR6gpOJQVKc=;
-	b=VJUlb3WVZyBIo1LiKEClrxGqh+X6nWYh7RohFOX/imEfxp0zFRsZb6b43gJ0aph1QknH/0
-	bSEU6/FVoLybigDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D67551368B;
-	Thu, 14 Mar 2024 14:41:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vqwTLocM82W+GgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Thu, 14 Mar 2024 14:41:11 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: tytso@mit.edu,  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
-  jaegeuk@kernel.org,  chao@kernel.org,
-  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel@collabora.com,
-  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
- Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v13 2/9] f2fs: Simplify the handling of cached
- insensitive names
-In-Reply-To: <aaa4561e-fd23-4b21-8963-7ba4cc99eed3@collabora.com> (Eugen
-	Hristev's message of "Thu, 14 Mar 2024 10:44:09 +0200")
-Organization: SUSE
-References: <20240305101608.67943-1-eugen.hristev@collabora.com>
-	<20240305101608.67943-3-eugen.hristev@collabora.com>
-	<87edcdk8li.fsf@mailhost.krisman.be>
-	<aaa4561e-fd23-4b21-8963-7ba4cc99eed3@collabora.com>
-Date: Thu, 14 Mar 2024 10:41:10 -0400
-Message-ID: <8734sskha1.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1710427676; c=relaxed/simple;
+	bh=d8NWfY0GhHJyd0+xMMvY88LD3k6G8Y5qwteiUz8SGYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8obXgp0WLKquNVBP6Drj1eHMn7dJIALW2xdffmui5F+vFaTzfUhqFYfe/pv2izX1Lv7jLWPrDnllLaK5ehSkzftoOIT6N9fWi/2Rm7wc/ddHl5FjoJnrlLFYKPB0xuFGcKXIzA9/JmXQp+vZVhfl6qrGhFsCAwK+r+gI5mx/cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=taAbA3gy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C266C433F1;
+	Thu, 14 Mar 2024 14:47:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710427676;
+	bh=d8NWfY0GhHJyd0+xMMvY88LD3k6G8Y5qwteiUz8SGYM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=taAbA3gypO+K/rNSO5jHsRe68pQ2T2YfNkw+KH4gw4qYH62mXpFzlo1aFmmISUDYn
+	 ANGWrV8XJnZhLD6R/wvakydrpqt+8DRkmE+F4xjD2WXR4WjReYcIBDL+vlDbqVSY1n
+	 UQ5PqU9BZbxnd210+0UVpzug1HuGkI8sRM/l5goOGf7JlbBTUteaahuxCeI6tWmTCs
+	 BIwowu78VrnCRa4+wriVFa+7rRp7RyEOmJj4ZbK9aIqnmoxzhLxzqwutKxWDuvs/KD
+	 zXuW0y0vGx/9L/11j971XG7F7k0JDShAmIyMFbVRi3OXH1Du4KHynG346f2fm+5ejW
+	 g7zQYBEA6wgDw==
+Date: Thu, 14 Mar 2024 15:47:52 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 01/34] bdev: open block device as files
+Message-ID: <20240314-entbehren-folglich-8c8fef0cd49b@brauner>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-1-adbd023e19cc@kernel.org>
+ <ZfEQQ9jZZVes0WCZ@infradead.org>
+ <20240314-anfassen-teilnahm-20890c4a22c3@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=h76XgWmU;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=VJUlb3WV
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.63 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 HAS_ORG_HEADER(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 NEURAL_HAM_SHORT(-0.20)[-0.995];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-1.12)[88.41%]
-X-Spam-Score: -2.63
-X-Rspamd-Queue-Id: 25C1621C9E
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240314-anfassen-teilnahm-20890c4a22c3@brauner>
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+On Thu, Mar 14, 2024 at 12:10:59PM +0100, Christian Brauner wrote:
+> On Tue, Mar 12, 2024 at 07:32:35PM -0700, Christoph Hellwig wrote:
+> > Now that this is in mainline it seems to cause blktests to crash
+> > nbd/003 with a rather non-obvious oops for me:
+> 
+> Ok, will be looking into that next.
 
->> Please, make sure you actually stress test this patchset with fstests
->> against both f2fs and ext4 before sending each new version.
->
-> I did run the xfstests, however, maybe I did not run the full suite, or maybe I am
-> running it in a wrong way ?
+Ok, I know what's going on. Basically, fput() on the block device runs
+asynchronously which means that bdev->bd_holder can still be set to @sb
+after it has already been freed. Let me illustrate what I mean:
 
-No worries.  Did you manage to reproduce it?
+P1                                                 P2
+mount(sb)                                          fd = open("/dev/nbd", ...)
+-> file = bdev_file_open_by_dev(..., sb, ...)
+   bdev->bd_holder = sb;
 
-> How are you running the kvm-xfstests with qemu ? Can you share your command
-> arguments please ?
+// Later on:
 
-I don't use kvm-xfstests.  I run ./check directly:
+umount(sb)
+->kill_block_super(sb)
+|----> [fput() -> deferred via task work]
+-> put_super(sb) -> frees the sb via rcu
+|
+|                                                 nbd_ioctl(NBD_CLEAR_SOCK)
+|                                                 -> disk_force_media_change()
+|                                                    -> bdev_mark_dead()
+|                                                       -> fs_mark_dead()
+|                                                          // Finds bdev->bd_holder == sb
+|-> file->release::bdev_release()                          // Tries to get reference to it but it's freed; frees it again
+   bdev->bd_holder = NULL;
 
-export SCRATCH_DEV=/dev/loop1
-export SCRATCH_MNT=$BASEMNT/scratch
-export TEST_DEV=/dev/loop0
-export TEST_DIR=$BASEMNT/test
-export RESULT_BASE=${BASEMNT}/results
-export REPORT_DIR=${BASEMNT}/report
-export FSTYP=f2fs
+Two solutions that come to my mind:
 
-mkfs.f2fs -f -C utf8 -O casefold ${TEST_DEV}
+[1] Indicate to fput() that this is an internal block devices open and
+    thus just close it synchronously. This is fine. First, because the block
+    device superblock is never unmounted or anything so there's no risk
+    from hanging there for any reason. Second, bdev_release() also ran
+    synchronously so any issue that we'd see from calling
+    file->f_op->release::bdev_release() we would have seen from
+    bdev_release() itself. See [1.1] for a patch.
 
-./check -g encrypt,quick
+(2) Take a temporary reference to the holder when opening the block
+    device. This is also fine afaict because we differentiate between
+    passive and active references on superblocks and what we already do
+    in fs_bdev_mark_dead() and friends. This mean we don't have to mess
+    around with fput(). See [1.2] for a patch.
 
+(3) Revert and cry. No patch.
+
+Personally, I think (2) is more desirable because we don't lose the
+async property of fput() and we don't need to have a new FMODE_* flag.
+I'd like to do some more testing with this. Thoughts?
+
+[1.1]:
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ block/bdev.c       | 1 +
+ fs/file_table.c    | 5 +++++
+ include/linux/fs.h | 3 +++
+ 3 files changed, 9 insertions(+)
+
+diff --git a/block/bdev.c b/block/bdev.c
+index e7adaaf1c219..d0c208a04b04 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -969,6 +969,7 @@ struct file *bdev_file_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+ 		return bdev_file;
+ 	}
+ 	ihold(bdev->bd_inode);
++	bdev_file->f_mode |= FMODE_BLOCKDEV;
+ 
+ 	ret = bdev_open(bdev, mode, holder, hops, bdev_file);
+ 	if (ret) {
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 4f03beed4737..48d35dd67020 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -473,6 +473,11 @@ void fput(struct file *file)
+ 	if (atomic_long_dec_and_test(&file->f_count)) {
+ 		struct task_struct *task = current;
+ 
++		if (unlikely((file->f_mode & FMODE_BLOCKDEV))) {
++			__fput(file);
++			return;
++		}
++
+ 		if (unlikely(!(file->f_mode & (FMODE_BACKING | FMODE_OPENED)))) {
+ 			file_free(file);
+ 			return;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d5d5a4ee24f0..ceac9c0316a6 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -121,6 +121,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define FMODE_PWRITE		((__force fmode_t)0x10)
+ /* File is opened for execution with sys_execve / sys_uselib */
+ #define FMODE_EXEC		((__force fmode_t)0x20)
++
++/* File is opened as block device. */
++#define FMODE_BLOCKDEV		((__force fmode_t)0x100)
+ /* 32bit hashes as llseek() offset (for directories) */
+ #define FMODE_32BITHASH         ((__force fmode_t)0x200)
+ /* 64bit hashes as llseek() offset (for directories) */
 -- 
-Gabriel Krisman Bertazi
+2.43.0
+
+[1.2]:
+Sketched-by: Christian Brauner <brauner@kernel.org>
+---
+ block/bdev.c           |  4 ++++
+ fs/super.c             | 17 +++++++++++++++++
+ include/linux/blkdev.h |  3 +++
+ 3 files changed, 24 insertions(+)
+
+diff --git a/block/bdev.c b/block/bdev.c
+index e7adaaf1c219..a0d5960dc2b9 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -627,6 +627,8 @@ static void bd_end_claim(struct block_device *bdev, void *holder)
+ 		whole->bd_holder = NULL;
+ 	mutex_unlock(&bdev_lock);
+ 
++	if (bdev->bd_holder_ops && bdev->bd_holder_ops->put_holder)
++		bdev->bd_holder_ops->put_holder(holder);
+ 	/*
+ 	 * If this was the last claim, remove holder link and unblock evpoll if
+ 	 * it was a write holder.
+@@ -902,6 +904,8 @@ int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
+ 		bdev_file->f_mode |= FMODE_NOWAIT;
+ 	bdev_file->f_mapping = bdev->bd_inode->i_mapping;
+ 	bdev_file->f_wb_err = filemap_sample_wb_err(bdev_file->f_mapping);
++	if (hops && hops->get_holder)
++		hops->get_holder(holder);
+ 	bdev_file->private_data = holder;
+ 
+ 	return 0;
+diff --git a/fs/super.c b/fs/super.c
+index ee05ab6b37e7..64dbbdbed93a 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1515,11 +1515,28 @@ static int fs_bdev_thaw(struct block_device *bdev)
+ 	return error;
+ }
+ 
++static void fs_bdev_super_get(void *data)
++{
++	struct super_block *sb = data;
++
++	spin_lock(&sb_lock);
++	sb->s_count++;
++	spin_unlock(&sb_lock);
++}
++
++static void fs_bdev_super_put(void *data)
++{
++	struct super_block *sb = data;
++	put_super(sb);
++}
++
+ const struct blk_holder_ops fs_holder_ops = {
+ 	.mark_dead		= fs_bdev_mark_dead,
+ 	.sync			= fs_bdev_sync,
+ 	.freeze			= fs_bdev_freeze,
+ 	.thaw			= fs_bdev_thaw,
++	.get_holder		= fs_bdev_super_get,
++	.put_holder		= fs_bdev_super_put,
+ };
+ EXPORT_SYMBOL_GPL(fs_holder_ops);
+ 
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index f9b87c39cab0..d919e8bcb2c1 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1505,6 +1505,9 @@ struct blk_holder_ops {
+ 	 * Thaw the file system mounted on the block device.
+ 	 */
+ 	int (*thaw)(struct block_device *bdev);
++
++	void (*get_holder)(void *holder);
++	void (*put_holder)(void *holder);
+ };
+ 
+ /*
+-- 
+2.43.0
+
 
