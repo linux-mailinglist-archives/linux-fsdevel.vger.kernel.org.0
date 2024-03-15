@@ -1,197 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-14519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE0A87D35E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 19:11:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5260087D368
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 19:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5861C2211D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 18:11:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B287DB22FAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 18:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1D450A69;
-	Fri, 15 Mar 2024 18:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4822A50A69;
+	Fri, 15 Mar 2024 18:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Z/ZWKzH7"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="QmqHCebk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3146020310;
-	Fri, 15 Mar 2024 18:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03C94CB3D;
+	Fri, 15 Mar 2024 18:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710526247; cv=none; b=pKzCBjFlL6V/oFYrAsgUqxRvwU8cvHB8Z9juWU9952lBXmcTcsLS1WDPPkJK+ayNDSpiuOKl812WXw58rqEJ7ROZqVafYinwIZy7EG3PneV78QgSh3RdVjXq9wClQNevfFvWll85AEGGn+b+fdcf8tW/QKFtmAx3WlB2r0gFU5I=
+	t=1710526301; cv=none; b=uE2gOPkjxQslqXM+MA+U6XqtkUYnyMZXOAr4JmXgkwj7L+6RT8LZcxGnE53wiyNtgBxzSUrqNmwb/qi+vG/Z8yInjv/ldQvJdng3ZQB/aDoq1wNwRkXpqEETX8dgblg9N0v03RfylezOPr32/Kalkj+baICyeS+NPDXjbVXIH2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710526247; c=relaxed/simple;
-	bh=C25MXQHA40uV4GLLPq6rWFr+sjYebOCkqkMP+9WqSmU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nd+4xcKWg+My0LOEP6FfnyDcTUYMh1eAF+t7nPxQOd+2gS5v3kO5ZPLpWrZfPBs7Nh7KGkdZN6zHg/VdDmV8uPqkGHe3l+NwoaJHoHypRCp/GIDtVxcBPRWB5NvwE7WCq3gLmDcOIbFedvkI2JQqFjZtjTvWjNNVmEO5P0/sbgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Z/ZWKzH7; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3fb8b0b7acso260071866b.2;
-        Fri, 15 Mar 2024 11:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1710526242; x=1711131042; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5vvztQ9R6kS3LLaEzPtb4PkQkdZH06n2URzp7Npwuwk=;
-        b=Z/ZWKzH7cPUad1ak3plQAJQ38lvCNL6ZX2lZy4gbAHMsSLuW48KMxlbV7PLAiY7bT2
-         1JZvrx8iuq6bbBoV9uB34upIHv25k8ehBJfoAWKlGFQjEg6qkqxs6HaO98EuAcGHZjp5
-         1FmzpR8KZe9mfNFMvPuotwtznIjBYWqfqF7LegDzo2pl5+Lc6Pou75LHYVjyKkM4Sv2O
-         0DPjaNkPJ3ufF4Ruye0PPkwMMelhDveLmRBbXNpio3nEsLi9Zac+QP/hjxWqMLOdPf62
-         d+aeVFpOUtZJc+yPdP8/rcqikrOWJsPA46fvtkvpycGAANI+3m5v7gp/dhWGSpITUsGf
-         tWLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710526242; x=1711131042;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5vvztQ9R6kS3LLaEzPtb4PkQkdZH06n2URzp7Npwuwk=;
-        b=ZQRc6XFi3azpBCOnJ5gu3tqGqMZd4vjHXBBB1OvITHg8vvl3AdwMvQ0FoaZo9Vzgo7
-         D6pVFkWjA63u/J6dXzLRhWxTWWBAlxpiZsMFI0M31MlVv3DR2owC3yD0hOVGapOCe0q3
-         teyQ77ODUccqNG+i34mLML9DiaFcPUhEHh8qD6saYeZQtEYruE7/pNV1ZrN0E5TQZxPC
-         UXPJa8d78Es+V3G/CwRf/a3kaA7CFRCckDqE1dU/Zj/bxrQ/IQf0y8hfDmLklFOpb/3e
-         wzu0tYlx/BSlVgNn205Vv6o5FDemp0aRe+1OUr+dG+ZHZ18oPo0eCMSkO5V/e8foeDEv
-         AFOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXm0D9gAiTCPlue9oyPrgGZJQixHIOEClROelifGv+PylfCAu3lLHhCTRqjvr7WBKoOsBP//zHboWBRmOFDmVjj+9clxLJGrDWlFqaGYvo4STAjR4cgjhgfIwaY7buL7V+cEPius4Fps2m+Fw==
-X-Gm-Message-State: AOJu0YzJx6NSkgdYTIhJThpCJFRxdMp6dfxcq41955icLfcjNvi4FLy6
-	Ro3m9XDtF3Pz6q/tZRIOiPshDl81IhJcRZ8y8KYAtNDh60+Or1mMGzn49WZAB6fDzg==
-X-Google-Smtp-Source: AGHT+IGmE1hE7r5LCz1k5oYh5+BcCGT9TTZYLN0ExtvMuVZ15iQOYj4bzU0GgE1LYLz2d9qOed8Jmg==
-X-Received: by 2002:a17:906:7fc8:b0:a46:2760:3c9b with SMTP id r8-20020a1709067fc800b00a4627603c9bmr3360991ejs.34.1710526242402;
-        Fri, 15 Mar 2024 11:10:42 -0700 (PDT)
-Received: from ddev.DebianHome (dynamic-095-119-217-226.95.119.pool.telefonica.de. [95.119.217.226])
-        by smtp.gmail.com with ESMTPSA id jx11-20020a170906ca4b00b00a46937bc44esm510480ejb.135.2024.03.15.11.10.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 11:10:41 -0700 (PDT)
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-To: linux-security-module@vger.kernel.org
-Cc: Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Khadija Kamran <kamrankhadijadj@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Alfred Piccioni <alpic@google.com>,
-	John Johansen <john.johansen@canonical.com>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 1/2] lsm: introduce new hook security_vm_execstack
-Date: Fri, 15 Mar 2024 19:08:48 +0100
-Message-ID: <20240315181032.645161-2-cgzones@googlemail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240315181032.645161-1-cgzones@googlemail.com>
-References: <20240315181032.645161-1-cgzones@googlemail.com>
+	s=arc-20240116; t=1710526301; c=relaxed/simple;
+	bh=yGFDp6e2dOO1N4Y8mr47+8FXmhmHgoG2FhKm/aaPngU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K5t2YwMA2z8HWRCJbEK+Tm8JXRsK+dHz38M49jmQCuaWsnX29t2A5x9pi79ZFYsCsH24QmnAVGA58yUgVQlpfTLflkVs3ymYv4pH8U2Jc31hWjQkzjx+hh/72NI7d+mu8ZO1eBZhHZ2flfHXf2PVLT2KRgJL9fUW5KwsWYAJ0EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=QmqHCebk; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1710526295;
+	bh=yGFDp6e2dOO1N4Y8mr47+8FXmhmHgoG2FhKm/aaPngU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=QmqHCebkcJIp8hFAJ+35uz8sNQ1gebvIM8Ie2T7RirJ3Rmb4g12BL6Jld0dIDAam/
+	 2dgp9O861WULp2YOB69BXiyiYxHUQKAGip0MtmOD9u/y7AhTvDAIanM/9sVSM1IN4/
+	 wVNXw5OO19OGO3MhGy4e//QOyRBGkuFwaCmLYKEU=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v3 0/2] sysctl: treewide: prepare ctl_table_root for
+ ctl_table constification
+Date: Fri, 15 Mar 2024 19:11:29 +0100
+Message-Id: <20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFGP9GUC/4XNQQ6CMBCF4auQrq2hQ6HiynsYF6VMbRNTSAdBQ
+ ri7hcSVMS7/l8w3CyOMHomds4VFHD35LqQoDhkzToc7ct+mZpBDIQAqTjOZ4cFNF2jg3RQwkvM
+ 9t1aVWKlGImqWjvuI1r92+HpL7TwNXZz3P6PY1r/kKLjgrTrZtlVSNlpcJvREZNzTHQMObHNH+
+ FgyByh+WpAsWydE1aXWFr6sdV3fOMp7VQ0BAAA=
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+ Joel Granados <j.granados@samsung.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1710526294; l=2217;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=yGFDp6e2dOO1N4Y8mr47+8FXmhmHgoG2FhKm/aaPngU=;
+ b=DNfzcOV3La0DqS1e9f8mlyjqinvOmso4li0tSKMz6jzrXMrbzpx4XabqpBxzeeWmgOKGWoIxW
+ 0ciuoqIGa4BANa2FPeQeSZtd1DQQ9oNtDxrrm5i8MZO2a4Ep5rsOrek
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Add a new hook guarding instantiations of programs with executable
-stack.  They are being warned about since commit 47a2ebb7f505 ("execve:
-warn if process starts with executable stack").  Lets give LSMs the
-ability to control their presence on a per application basis.
+The two patches were previously submitted on their own.
+In commit f9436a5d0497
+("sysctl: allow to change limits for posix messages queues")
+a code dependency was introduced between the two callbacks.
+This code dependency results in a dependency between the two patches, so
+now they are submitted as a series.
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+The series is meant to be merged via the sysctl tree.
+
+There is an upcoming series that will introduce a new implementation of
+.set_ownership and .permissions which would need to be adapted [0].
+
+These changes ere originally part of the sysctl-const series [1].
+To slim down that series and reduce the message load on other
+maintainers to a minimum, the patches are split out.
+
+[0] https://lore.kernel.org/lkml/20240222160915.315255-1-aleksandr.mikhalitsyn@canonical.com/
+[1] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-2-7a5060b11447@weissschuh.net/
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- fs/exec.c                     |  4 ++++
- include/linux/lsm_hook_defs.h |  1 +
- include/linux/security.h      |  6 ++++++
- security/security.c           | 13 +++++++++++++
- 4 files changed, 24 insertions(+)
+Changes in v3:
+- Drop now spurious argument in fs/proc/proc_sysctl.c
+- Rebase on next-20240315
+- Incorporate permissions patch.
+- Link to v2 (ownership): https://lore.kernel.org/r/20240223-sysctl-const-ownership-v2-1-f9ba1795aaf2@weissschuh.net
+- Link to v1 (permissions): https://lore.kernel.org/r/20231226-sysctl-const-permissions-v1-1-5cd3c91f6299@weissschuh.net
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 8cdd5b2dd09c..e6f9e980c6b1 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -829,6 +829,10 @@ int setup_arg_pages(struct linux_binprm *bprm,
- 	BUG_ON(prev != vma);
- 
- 	if (unlikely(vm_flags & VM_EXEC)) {
-+		ret = security_vm_execstack();
-+		if (ret)
-+			goto out_unlock;
-+
- 		pr_warn_once("process '%pD4' started with executable stack\n",
- 			     bprm->file);
- 	}
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 185924c56378..b31d0744e7e7 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -49,6 +49,7 @@ LSM_HOOK(int, 0, syslog, int type)
- LSM_HOOK(int, 0, settime, const struct timespec64 *ts,
- 	 const struct timezone *tz)
- LSM_HOOK(int, 1, vm_enough_memory, struct mm_struct *mm, long pages)
-+LSM_HOOK(int, 0, vm_execstack, void)
- LSM_HOOK(int, 0, bprm_creds_for_exec, struct linux_binprm *bprm)
- LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct file *file)
- LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index d0eb20f90b26..084b96814970 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -294,6 +294,7 @@ int security_quota_on(struct dentry *dentry);
- int security_syslog(int type);
- int security_settime64(const struct timespec64 *ts, const struct timezone *tz);
- int security_vm_enough_memory_mm(struct mm_struct *mm, long pages);
-+int security_vm_execstack(void);
- int security_bprm_creds_for_exec(struct linux_binprm *bprm);
- int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file);
- int security_bprm_check(struct linux_binprm *bprm);
-@@ -624,6 +625,11 @@ static inline int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- 	return __vm_enough_memory(mm, pages, cap_vm_enough_memory(mm, pages));
- }
- 
-+static inline int security_vm_execstack(void)
-+{
-+	return 0;
-+}
-+
- static inline int security_bprm_creds_for_exec(struct linux_binprm *bprm)
- {
- 	return 0;
-diff --git a/security/security.c b/security/security.c
-index 0144a98d3712..f75240d0d99d 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1125,6 +1125,19 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- 	return __vm_enough_memory(mm, pages, cap_sys_admin);
- }
- 
-+/**
-+ * security_vm_execstack() - Check if starting a program with executable stack
-+ * is allowed
-+ *
-+ * Check whether starting a program with an executable stack is allowed.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
-+int security_vm_execstack(void)
-+{
-+	return call_int_hook(vm_execstack);
-+}
-+
- /**
-  * security_bprm_creds_for_exec() - Prepare the credentials for exec()
-  * @bprm: binary program information
+Changes in v2:
+- Rework commit message
+- Mention potential conflict with upcoming per-namespace kernel.pid_max
+  sysctl
+- Delete unused parameter table
+- Link to v1: https://lore.kernel.org/r/20231226-sysctl-const-ownership-v1-1-d78fdd744ba1@weissschuh.net
+
+---
+Thomas Weißschuh (2):
+      sysctl: treewide: drop unused argument ctl_table_root::set_ownership(table)
+      sysctl: treewide: constify argument ctl_table_root::permissions(table)
+
+ fs/proc/proc_sysctl.c  | 2 +-
+ include/linux/sysctl.h | 3 +--
+ ipc/ipc_sysctl.c       | 5 ++---
+ ipc/mq_sysctl.c        | 5 ++---
+ kernel/ucount.c        | 2 +-
+ net/sysctl_net.c       | 3 +--
+ 6 files changed, 8 insertions(+), 12 deletions(-)
+---
+base-commit: a1e7655b77e3391b58ac28256789ea45b1685abb
+change-id: 20231226-sysctl-const-ownership-ff75e67b4eea
+
+Best regards,
 -- 
-2.43.0
+Thomas Weißschuh <linux@weissschuh.net>
 
 
