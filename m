@@ -1,55 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-14419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB4887C7AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 03:48:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2668A87C7CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 04:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B60962829E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 02:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFA131F22C97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 03:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23DA944F;
-	Fri, 15 Mar 2024 02:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B891D27A;
+	Fri, 15 Mar 2024 03:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClHy/pvM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4m5uex+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA9E6119;
-	Fri, 15 Mar 2024 02:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD54DDA3;
+	Fri, 15 Mar 2024 02:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710470907; cv=none; b=XXOa1HJXREDCX7dhInYc5N1j+6X3NfsDyGrNZetHv0pe6JPtJ4gu+stq/ekkM42ofs+8OA6HuI0eSAFe3RI9QSOxVQkDdlu5Yi0fwCzfAvNYGDTdp4ztiy9Z0zyDyX0MEOSzwRhAimeM4L2hPKMPxoEvz/tt+CvbPPD072czZH0=
+	t=1710471599; cv=none; b=Cm1w+puCx617O3vTQnfpOiwCTSJ9EHLhmEBdjMgRBzwVbCv5VyTEoJ+IAu5X4cbfjcH34sR6LZ+BaiEVwr9NI/by4Cg03vzViP04Aw6aJyxNwGSIGUG0gtPBjSBewgvJedxN+xWgXGbQU93Ag2ccalGPkGo0wWvaFLloKVsJE/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710470907; c=relaxed/simple;
-	bh=vLuEhKukV2AosJU47Ar2L7Vg5bijeRK06wIesJ6eiw0=;
+	s=arc-20240116; t=1710471599; c=relaxed/simple;
+	bh=Ip4m2q25TU6UcwznB7KKcnF1wm/xAIQfgUUxRpAckCc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGtzEXydcccRkNYdty8yDqKvh/m17PqSwDEtbVA+b7E4TKEJ8IJeK6+ccTeT44B7aMnSuCAY+/jL1IikGa2c3pz4APArchmSt7Tnsk5xsjwHHuHGL1VYJ3L96hs8+F+y5aDQMInX/cHLRQFTClib6rRZZDPvUQDaGyw1j4KOzOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClHy/pvM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1287DC433C7;
-	Fri, 15 Mar 2024 02:48:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIbPIFpRxb5LqS3sJwC/EtZuDc0EovHUEIZl49DN1QZ7X43D4cBZy3Zx8Eo4hIFdKE7yXHrXCkFwoo3bPmkSJnQWPN5MPVhmAwhp1qLZVYh2Y+3BtsrCMe1OY1jgUUXzEXfmtuNODYagq31maL3EnDeQzTCXnpfkJxRAAqtDi+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4m5uex+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52DA5C433C7;
+	Fri, 15 Mar 2024 02:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710470907;
-	bh=vLuEhKukV2AosJU47Ar2L7Vg5bijeRK06wIesJ6eiw0=;
+	s=k20201202; t=1710471599;
+	bh=Ip4m2q25TU6UcwznB7KKcnF1wm/xAIQfgUUxRpAckCc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ClHy/pvMYOMBCPGtPbBPhborfE4MX43kvfN7bZhi9dQ//MI2aXwUxPw9FJ+N/1hC+
-	 88eQxFJCZ8dwn8G4fCtdyn31AyI2cPbYDjmjpUwXThZMhKKKZlwCmzqR5Snn4xSLqY
-	 AAMBHjnm7SpgSDvP44N9xDSgsQ9MOzaI+JsEqNef4s+crdoAWBLVXzubBQEd4vUts3
-	 iJXTwb3bBp9myH3mW15EUOPMTyhs3OG5HsOsxrTGqtSBgRS/mrHatH2FrgslesNi7D
-	 H+aIays+2En/AZWPdAYqKEYuDcW+HQvcIFVmdIBxIHhDUjeIULxk2uGWkJsE/Ksyf2
-	 bLuc5we5kLaNA==
-Date: Thu, 14 Mar 2024 19:48:26 -0700
+	b=S4m5uex+3/2PV0S/VEzfFJG3ffbUAsa06ofDg/HgIayzirTpoCM4LIS4RXPE2tR6c
+	 eiU6P1OniQbbdwH8AgpU98/rpIFuAqXd59uhZJChHjgwwlu8R/YtMl4yP3xOsfTe7q
+	 rlTipkbIWBjXa2vecxuOkzHYx8q4u0YPw2Kro3R8D1lsHaBsYdL7utUpBmMmHE0DJp
+	 ewQf7aPfaa442EYZ614bwHZKDbehubZztxyKw89APhk5j+yv6dbtHoSEYQp8/PqS+m
+	 sx2Fi6nPckumcFLhdONTo5RKyidFMGlIH8UecmTvoMFUkYatxERuWBKgep9EGuSxCy
+	 uRpJwgAUyYsAQ==
+Date: Thu, 14 Mar 2024 19:59:58 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: david@fromorbit.com, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, chandan.babu@oracle.com
-Subject: Re: [PATCH v2] xfs: allow cross-linking special files without
- project quota
-Message-ID: <20240315024826.GA1927156@frogsfrogsfrogs>
-References: <20240314170700.352845-3-aalbersh@redhat.com>
+Cc: ebiggers@kernel.org, linux-fsdevel@vger.kernel.org,
+	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 21/29] xfs: add fs-verity support
+Message-ID: <20240315025958.GP6184@frogsfrogsfrogs>
+References: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
+ <171035223693.2613863.3986547716372413007.stgit@frogsfrogsfrogs>
+ <20240314170620.GR1927156@frogsfrogsfrogs>
+ <lveodvnohv4orprbr7xte2c3bbspd3ttmx2e5f5bvtf3353kfa@qsjqrliz4urs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,89 +60,60 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240314170700.352845-3-aalbersh@redhat.com>
+In-Reply-To: <lveodvnohv4orprbr7xte2c3bbspd3ttmx2e5f5bvtf3353kfa@qsjqrliz4urs>
 
-On Thu, Mar 14, 2024 at 06:07:02PM +0100, Andrey Albershteyn wrote:
-> There's an issue that if special files is created before quota
-> project is enabled, then it's not possible to link this file. This
-> works fine for normal files. This happens because xfs_quota skips
-> special files (no ioctls to set necessary flags). The check for
-> having the same project ID for source and destination then fails as
-> source file doesn't have any ID.
+On Thu, Mar 14, 2024 at 06:16:02PM +0100, Andrey Albershteyn wrote:
+> On 2024-03-14 10:06:20, Darrick J. Wong wrote:
+> > On Wed, Mar 13, 2024 at 10:58:03AM -0700, Darrick J. Wong wrote:
+> > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > > 
+> > > Add integration with fs-verity. The XFS store fs-verity metadata in
+> > > the extended file attributes. The metadata consist of verity
+> > > descriptor and Merkle tree blocks.
+> > > 
+> > > The descriptor is stored under "vdesc" extended attribute. The
+> > > Merkle tree blocks are stored under binary indexes which are offsets
+> > > into the Merkle tree.
+> > > 
+> > > When fs-verity is enabled on an inode, the XFS_IVERITY_CONSTRUCTION
+> > > flag is set meaning that the Merkle tree is being build. The
+> > > initialization ends with storing of verity descriptor and setting
+> > > inode on-disk flag (XFS_DIFLAG2_VERITY).
+> > > 
+> > > The verification on read is done in read path of iomap.
+> > > 
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > [djwong: replace caching implementation with an xarray, other cleanups]
+> > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > I started writing more of userspace (xfs_db decoding of verity xattrs,
+> > repair/scrub support) so I think I want to make one more change to this.
 > 
-> mkfs.xfs -f /dev/sda
-> mount -o prjquota /dev/sda /mnt/test
+> Just to note, I have a version of xfs_db with a few modification to
+> make it work with xfstests and make it aware of fs-verity:
 > 
-> mkdir /mnt/test/foo
-> mkfifo /mnt/test/foo/fifo1
-> 
-> xfs_quota -xc "project -sp /mnt/test/foo 9" /mnt/test
-> > Setting up project 9 (path /mnt/test/foo)...
-> > xfs_quota: skipping special file /mnt/test/foo/fifo1
-> > Processed 1 (/etc/projects and cmdline) paths for project 9 with recursion depth infinite (-1).
-> 
-> ln /mnt/test/foo/fifo1 /mnt/test/foo/fifo1_link
-> > ln: failed to create hard link '/mnt/test/testdir/fifo1_link' => '/mnt/test/testdir/fifo1': Invalid cross-device link
+> https://github.com/alberand/xfsprogs/tree/fsverity-v5
 
-Aha.  So hardlinking special files within a directory subtree that all
-have the same nonzero project quota ID fails if that special file
-happened to have been created before the subtree was assigned that pqid.
-And there's nothing we can do about that, because there's no way to call
-XFS_IOC_SETFSXATTR on a special file because opening those gets you a
-different inode from the special block/fifo/chardev filesystem...
+<nod> I implemented online and offline repair today and made a few more
+tweaks; after I let it run through QA overnight I'll send that out to
+the list.
 
-> mkfifo /mnt/test/foo/fifo2
-> ln /mnt/test/foo/fifo2 /mnt/test/foo/fifo2_link
-> 
-> Fix this by allowing linking of special files to the project quota
-> if special files doesn't have any ID set (ID = 0).
+Note that I moved the to_disk/from_disk helpers back to xfs_da_format.h
+and added some more hooks to fsverity so that online fsck can do some
+basic checks for stale merkle tree blocks and the like.
 
-...and that's the workaround for this situation.  The project quota
-accounting here will be weird because there will be (more) files in a
-directory subtree than is reported by xfs_quota, but the subtree was
-already messed up in that manner.
+Also I modified xfs_verity_write_merkle to skip trailing zeroes to save
+space, and changed the hash function to use the merkle tree offset so
+that the merkle blocks get written out in linear(ish) order with fewer
+hash collisions in the xattr index.
 
-Question: Should we have a XFS_IOC_SETFSXATTRAT where we can pass in
-relative directory paths and actually query/update special files?
-
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+That said, I think we're close to finished on this one. :)
 
 --D
 
-> ---
->  fs/xfs/xfs_inode.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index 1fd94958aa97..b7be19be0132 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -1240,8 +1240,19 @@ xfs_link(
->  	 */
->  	if (unlikely((tdp->i_diflags & XFS_DIFLAG_PROJINHERIT) &&
->  		     tdp->i_projid != sip->i_projid)) {
-> -		error = -EXDEV;
-> -		goto error_return;
-> +		/*
-> +		 * Project quota setup skips special files which can
-> +		 * leave inodes in a PROJINHERIT directory without a
-> +		 * project ID set. We need to allow links to be made
-> +		 * to these "project-less" inodes because userspace
-> +		 * expects them to succeed after project ID setup,
-> +		 * but everything else should be rejected.
-> +		 */
-> +		if (!special_file(VFS_I(sip)->i_mode) ||
-> +		    sip->i_projid != 0) {
-> +			error = -EXDEV;
-> +			goto error_return;
-> +		}
->  	}
->  
->  	if (!resblks) {
 > -- 
-> 2.42.0
+> - Andrey
 > 
 > 
 
