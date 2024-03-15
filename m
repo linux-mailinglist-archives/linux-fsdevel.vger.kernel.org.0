@@ -1,68 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-14457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9252C87CE62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:53:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3312787CE65
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:54:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C99283046
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:53:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AD051F21212
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A435336B04;
-	Fri, 15 Mar 2024 13:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F56236AED;
+	Fri, 15 Mar 2024 13:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqzhkH+o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kreJIIP8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0028D1BF28;
-	Fri, 15 Mar 2024 13:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA402E62F;
+	Fri, 15 Mar 2024 13:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710510751; cv=none; b=tyK6kWTR47P7OgCXIoVttOsR01TODiI4PMzcjQEGrtSmNJ2JpA7UnPg6d+RnZ6TMDVVyq26BMWDveuUrc3wd6Y+VmBb9+MycYL3euGtha0eHBCKLDCmHlMGO14B/6rIaXkOIQ0ckZBBvNZN9TjT3xFBNSSlwR6p9NThL7GqJMLo=
+	t=1710510872; cv=none; b=gZURBcACcmcXzxx0Vm3ibSLdXJ5y4+4Om3duo5d11s3U9EOtkxkb9f8GHZaaWE46htZWivSvz2qHUT9FsEbuP1WdqUmptLWZg/e5pxLVcti/5A432xpgNij1K8gZ63FORrDbeTP0/mtqBk3mTUiU1wEaaP4qeOOnvA1j/uppxak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710510751; c=relaxed/simple;
-	bh=AwIVao3rL1Q0k95nqbmA9y6yqrp6LGbk8gB2bmRe7uc=;
+	s=arc-20240116; t=1710510872; c=relaxed/simple;
+	bh=s5tlyQ3TQ92cp3zmv6WhJU0WhcyMs03/Vt56LrZyZP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=taeTNxw00RvkGCdDWgHYwcqBVGsdzARCzw0oCSyNtTH/T0wY42HvbhKhmBE094zugFdz8huq37O8rhfasfNTHFPbUf1P4PpUJWgbZrMvc+J8qK2KED6/hyRw8h5vY14n16ph1MfwcVgr1vOCT5tCxtW2SXifB6SfeCnIl/ttje8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqzhkH+o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B09DAC433F1;
-	Fri, 15 Mar 2024 13:52:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTQQDInt/S2R74fCGjShPmowqrzPopQVwQHhUllJZ8dMKuz6CCBqekVhoQBhENSKcTlqPvx6jkk7K5Qeo9MuSS1aX/XVuozuuUytZdEo3KBPSBjcB++Q03tKERNl4ngezCofZCwFHvOZMmcGJ1WevTzUebBv5e2A6G6P8BC0CXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kreJIIP8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5130C433C7;
+	Fri, 15 Mar 2024 13:54:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710510750;
-	bh=AwIVao3rL1Q0k95nqbmA9y6yqrp6LGbk8gB2bmRe7uc=;
+	s=k20201202; t=1710510872;
+	bh=s5tlyQ3TQ92cp3zmv6WhJU0WhcyMs03/Vt56LrZyZP4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kqzhkH+oA5Y2fdTLJi8P7w3/r/btamKmCo690KIn0ZIru45tU+mFtEtMiGSX5ypl3
-	 eag+OprokOmKCLgl2aoLS2XP8c22mUJCeYuhzqPDQKZKotfiaHFSMbXoHafhzQ0lUF
-	 b0ir/DnTenexQYigIBvpmNaNILaV6Ms5+c50uObeXes8h8ocxmea6QGAv9wWj1fKus
-	 iJ2l+PrwBcmk9hOfcK2YZhzxZsRpnlzO7bVQpYkBGQiqv2S9F6m15Cfcf8rnMFUoOh
-	 1fpt0GgXfkjKW4maiZuN4RnGAx7JVqk09IsKrg3GpmBhIfJ+InRsJWFbse65QceJTs
-	 JaRfYJRY7AatQ==
-Date: Fri, 15 Mar 2024 14:52:24 +0100
+	b=kreJIIP8JrjAHNDdkuowy06oj0Iwlu4NtzzGXp7ds7sLDxdg7VzHgI6Zycgasxnnc
+	 mMbA1s695y3UMU45bEpqxwvcFqyT4NdCFt+oxNt0Jd21duw0H8jIyPuW6O7jMOADZJ
+	 Z46JW1piH1hiNaDqU3n8QMuK1r1QwMQow+M7dZBYFpjKVrnZNAmS4sBi4lGOZZ06F9
+	 kJAHcdIPuzD6ZmSZGJ+V1om6fwCm34RZ16gR7A3QIQNYAAKPL2JKXkw6wAkBd8xFA7
+	 LCiUrYqU/Bcd3LJ3HcDoIN4JRkxCxh9SAy845bUZeXOBRB/rLCzeUu2VLptzAG0To/
+	 edjvfwCE2X/kw==
+Date: Fri, 15 Mar 2024 14:54:27 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Michael Forney <mforney@mforney.org>, Jan Kara <jack@suse.cz>, 
-	Theodore Ts'o <tytso@mit.edu>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>, Dave Kleikamp <shaggy@kernel.org>, 
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	jfs-discussion@lists.sourceforge.net, Yang Xu <xuyang2018.jy@fujitsu.com>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
- support is disabled
-Message-ID: <20240315-hasst-anmachen-4c9e89a56840@brauner>
-References: <CAKPOu+-hLrrpZShHh0o6uc_KMW91suEd0_V_uzp5vMf4NM-8yw@mail.gmail.com>
- <CAKPOu+_0yjg=PrwAR8jKok8WskjdDEJOBtu3uKR_4Qtp8b7H1Q@mail.gmail.com>
- <20231011135922.4bij3ittlg4ujkd7@quack3>
- <20231011-braumeister-anrufen-62127dc64de0@brauner>
- <20231011170042.GA267994@mit.edu>
- <20231011172606.mztqyvclq6hq2qa2@quack3>
- <20231012142918.GB255452@mit.edu>
- <20231012144246.h3mklfe52gwacrr6@quack3>
- <28DSITL9912E1.2LSZUVTGTO52Q@mforney.org>
- <CAKPOu+910gjDp9Lk3sW=CmTM8j_FHEYyfH-kQKz-piRJHkQiDw@mail.gmail.com>
+To: Yu Kuai <yukuai3@huawei.com>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de, 
+	axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [RFC v4 linux-next 00/19] fs & block: remove bdev->bd_inode
+Message-ID: <20240315-assoziieren-hacken-b43f24f78970@brauner>
+References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
+ <1324ffb5-28b6-34fb-014e-3f57df714095@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,45 +59,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+910gjDp9Lk3sW=CmTM8j_FHEYyfH-kQKz-piRJHkQiDw@mail.gmail.com>
+In-Reply-To: <1324ffb5-28b6-34fb-014e-3f57df714095@huawei.com>
 
-On Thu, Mar 14, 2024 at 02:08:04PM +0100, Max Kellermann wrote:
-> On Wed, Mar 13, 2024 at 9:39 PM Michael Forney <mforney@mforney.org> wrote:
-> > Turns out that symlinks are inheriting umask on my system (which
-> > has CONFIG_EXT4_FS_POSIX_ACL=n):
-> >
-> > $ umask 022
-> > $ ln -s target symlink
-> > $ ls -l symlink
-> > lrwxr-xr-x    1 michael  michael           6 Mar 13 13:28 symlink -> target
-> > $
-> >
-> > Looking at the referenced functions, posix_acl_create() returns
-> > early before applying umask for symlinks, but ext4_init_acl() now
-> > applies the umask unconditionally.
+On Fri, Mar 15, 2024 at 08:08:49PM +0800, Yu Kuai wrote:
+> Hi, Christian
+> Hi, Christoph
+> Hi, Jan
 > 
-> Indeed, I forgot to exclude symlinks from this - sorry for the breakage.
-> 
-> > After reverting this commit, it works correctly. I am also unable
-> > to reproduce the mentioned issue with O_TMPFILE after reverting the
-> > commit. It seems that the bug was fixed properly in ac6800e279a2
-> > ('fs: Add missing umask strip in vfs_tmpfile'), and all branches
-> > that have this ext4_init_acl patch already had ac6800e279a2 backported.
-> 
-> I can post a patch that adds the missing check or a revert - what do
-> the FS maintainers prefer?
+> Perhaps now is a good time to send a formal version of this set.
+> However, I'm not sure yet what branch should I rebase and send this set.
+> Should I send to the vfs tree?
 
-If it works correctly with a revert we should remove the code rather
-than adding more code to handle a special case.
-
-> 
-> (There was a bug with O_TMPFILE ignoring umasks years ago - I first
-> posted the patch in 2018 or so - but by the time my patch actually got
-> merged, the bug had already been fixed somewhere else IIRC.)
-
-Yeah, we fixed it a while ago and then I added generic VFS level umask
-handling but POSIX ACL are hurting us because they're a massive layering
-violation on that front.
-
+Nearly all of it is in fs/ so I'd say yes.
 
