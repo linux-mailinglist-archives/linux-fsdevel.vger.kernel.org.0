@@ -1,192 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-14433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA7787CAC9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 10:35:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3D087CBB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 11:59:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C6E1F21A27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 09:35:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444822833F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 10:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F050F17C6C;
-	Fri, 15 Mar 2024 09:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158611AACF;
+	Fri, 15 Mar 2024 10:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VQuit0ju"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kIeV/N+n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N4muqVjs";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kIeV/N+n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N4muqVjs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CFA17C67
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Mar 2024 09:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A04C19474;
+	Fri, 15 Mar 2024 10:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710495340; cv=none; b=LmOjUozHB7I90mlIwewGxrlCDB4MrV/SO7P6FP4fZ8+dIpa4hhIYlCIEkVV6N8lMDPcOzDvbzRH7GL0Y+tUmULOVUPVePqlyhvtZyTXbFTe7cxneRryOgUsTMGB5pgguQoRP5k1IC3SrzvEOfdeJ8iHsNJpejYAj0Zp4+/3M60c=
+	t=1710500337; cv=none; b=ADK6iyvmqlO0bpszkQnFd2HMJTJlOsKUi6jjo678k7pHmCX+Pb1E1DIdWbsZvGPNzyF+6ezOqzREz35fYxoauWHr6dNGiOgOgtP7l7K5wBjmz+NWjAJfbsymffAxbG+9GTxioTGXQWp8MPd7pgDFkMxiPe8fSuLI2uRB9p2dpL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710495340; c=relaxed/simple;
-	bh=2yAE5iV1MSSTh1feLI8XyJKlFo7iOZ+pIPnLE4Jf16M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maxnX9e2xzKScf75G1PiB1SfJxKrV6IvEUlYsmksk3cLlswtwRd77vYZ/EJuwu0aYW0iHeARI8Kqh2iIVRN4ITEiHNBxW4LnLBqSpQytngNah4jcb2vHQ7dDmEWr8g1qXXt3KGNRHjz7vMSF/ZLGF2iIjdALSDxfc/xLSJ5fAE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VQuit0ju; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710495337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1710500337; c=relaxed/simple;
+	bh=bLXi0Kv2aTCp63cNUTwNkTolcU7Fdj7oossLerdiFcs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mokFSlsCyn/pc7u8J/SYlROAZjToEGytjMRd38KQYxDqX97/yYZSzfmCojICe1c0yKIb/+VvpKnW97Ra/y+Uyag66QqYLf7FJ1prXWqC42yUUPqZEU/7+GM+18hdlIv8sQSBxNVoMrHopWh1SKkTZpo0vfABWVoHo98W2hZtBdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kIeV/N+n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N4muqVjs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kIeV/N+n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N4muqVjs; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 50E4E21DD2;
+	Fri, 15 Mar 2024 10:58:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710500333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iA147xZGlBwqF7Q86Jc3Wh+c7m/V0s46+JVOCVxwzLk=;
-	b=VQuit0juDu8NFSQFKWurc5RsyU9ZGvu5oF3SVBML9Y+MsInt76dZamw5IjZA3GSOnsc07K
-	qODT3fWRE/rF/7WdxUy2jX2Zhg+VdpG0Eh3lr6WHi7y6depNcHjKdKWc549uZa+WXx1qGD
-	R3NEz8IJZIquvuLTJ8oJhbNiXFROIsM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-ifVu-lcyP6e4JCuFke454A-1; Fri, 15 Mar 2024 05:35:35 -0400
-X-MC-Unique: ifVu-lcyP6e4JCuFke454A-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-33d51bb9353so832072f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Mar 2024 02:35:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710495334; x=1711100134;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iA147xZGlBwqF7Q86Jc3Wh+c7m/V0s46+JVOCVxwzLk=;
-        b=bQBDnKGFSjmV/VqQRozbr6N/TEA3xNSYmhJTD0+6acqWx2LTb+sBrMw3K99Y6tTiyE
-         kwG79cRt3Gmrgl9ITT+s2tiCNNJQJZhVBHkpEjsvq7q/wQwbfXR12CPcIaNDNYQlbp7P
-         8KW7ASuhJd59uW1iTL7wv7wG5FeUGXpaT5nRMrTd2gEr4LLrCgEBHnuS2EIWNM+G5qVE
-         s93eu4LblcVz9L4MEZXS5TxmL6M1XRh05kTIRdq1wGuDFTW/CFuOdeyPAjr9PP9V+CWR
-         J2ToRBVFntQ+gxf4yuoWoTtL/Hm7X52SsdmXpC+VPaj+wYb1UB8Yih6UBsNI5rRCGpHm
-         M6FA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVY3Lp0eF2NBUyxLe4E6FoEzV5pCS7Sb6+ZujbzRKwic/6+8EKyZAv8A/Z+kLg8ZSaOj0Hnjp604YF8uDtcPvaWNMp2XH+yTO6KyS5DQ==
-X-Gm-Message-State: AOJu0Yxf1zdULSU9PovGxEsRLNvFZfMeZHuaF7j759bOxXJXM7saQjMb
-	i5ADlqmqyqFLn7Qpa+GhpCFOnG7mR/lTX1Hq5Ak0SAO8eGJ1B6vb+4NDar4tLJtDuHpFkxz/Dfw
-	f8aIC1L210uLiwE5ohz6wl2ETljW8QnfbItHYTSRF921UHsKpJBA11rcSSXCvhw==
-X-Received: by 2002:a5d:6692:0:b0:33d:7e99:babc with SMTP id l18-20020a5d6692000000b0033d7e99babcmr1902767wru.50.1710495334325;
-        Fri, 15 Mar 2024 02:35:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH2v6neodCoZA53J2GKmZGMZqBs+vBhsxHf1LBZOrQ08F4prtacHbJQmkKaU7FWwZhauAP9AQ==
-X-Received: by 2002:a5d:6692:0:b0:33d:7e99:babc with SMTP id l18-20020a5d6692000000b0033d7e99babcmr1902741wru.50.1710495333637;
-        Fri, 15 Mar 2024 02:35:33 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id bt17-20020a056000081100b0033ec8c1c233sm2831824wrb.19.2024.03.15.02.35.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 02:35:33 -0700 (PDT)
-Date: Fri, 15 Mar 2024 10:35:32 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: david@fromorbit.com, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, chandan.babu@oracle.com
-Subject: Re: [PATCH v2] xfs: allow cross-linking special files without
- project quota
-Message-ID: <ptvityysbpctponllgsenstpymivqhnrqpudeuzvfohzdcvfp7@c5ruilxfzlzb>
-References: <20240314170700.352845-3-aalbersh@redhat.com>
- <20240315024826.GA1927156@frogsfrogsfrogs>
+	bh=9muM8bo+rTj/3DcyAeA4j1Dljj8nhnMTXgWWpTVnpQM=;
+	b=kIeV/N+n1Qjn4RwdctLpBJA/ti5qrD6sZCC/MPiMggb17MFzRe5HBe0AQTNROQDaKSju7R
+	a0SLFUAt+MJiKmd9tkmDZZP0d8BIvQQaQcoE33BtEHz87wjWhVe0H/xpFhRF3pbknSydFH
+	TYmRZwi/PzREciTT3ulCpGUJ5who+rQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710500333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9muM8bo+rTj/3DcyAeA4j1Dljj8nhnMTXgWWpTVnpQM=;
+	b=N4muqVjs0s0Jytaoa8YUY3ruVKbKV/g3CLqo9GREsnONsvr9go6NQwryE9JTCFZbAjNLnA
+	uwWsA04tQTN0rHCg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710500333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9muM8bo+rTj/3DcyAeA4j1Dljj8nhnMTXgWWpTVnpQM=;
+	b=kIeV/N+n1Qjn4RwdctLpBJA/ti5qrD6sZCC/MPiMggb17MFzRe5HBe0AQTNROQDaKSju7R
+	a0SLFUAt+MJiKmd9tkmDZZP0d8BIvQQaQcoE33BtEHz87wjWhVe0H/xpFhRF3pbknSydFH
+	TYmRZwi/PzREciTT3ulCpGUJ5who+rQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710500333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9muM8bo+rTj/3DcyAeA4j1Dljj8nhnMTXgWWpTVnpQM=;
+	b=N4muqVjs0s0Jytaoa8YUY3ruVKbKV/g3CLqo9GREsnONsvr9go6NQwryE9JTCFZbAjNLnA
+	uwWsA04tQTN0rHCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4DD81368C;
+	Fri, 15 Mar 2024 10:58:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BxitK+wp9GU7dwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 15 Mar 2024 10:58:52 +0000
+Message-ID: <1f51ffe8-e5b9-460f-815e-50e3a81c57bf@suse.cz>
+Date: Fri, 15 Mar 2024 11:58:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240315024826.GA1927156@frogsfrogsfrogs>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 23/37] mm/slab: add allocation accounting into slab
+ allocation and free paths
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, mhocko@suse.com, hannes@cmpxchg.org,
+ roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+ willy@infradead.org, liam.howlett@oracle.com,
+ penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com,
+ peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+ david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+ nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com, tj@kernel.org,
+ muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+ pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com,
+ dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com,
+ keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com,
+ gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+ penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+ glider@google.com, elver@google.com, dvyukov@google.com,
+ shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+ aliceryhl@google.com, rientjes@google.com, minchan@google.com,
+ kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-modules@vger.kernel.org,
+ kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+References: <20240306182440.2003814-1-surenb@google.com>
+ <20240306182440.2003814-24-surenb@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20240306182440.2003814-24-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -3.00
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 XM_UA_NO_VERSION(0.01)[];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_GT_50(0.00)[76];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FREEMAIL_CC(0.00)[linux.dev,suse.com,cmpxchg.org,suse.de,stgolabs.net,infradead.org,oracle.com,i-love.sakura.ne.jp,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,nvidia.com,soleen.com,google.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[];
+	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="kIeV/N+n";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=N4muqVjs
+X-Rspamd-Queue-Id: 50E4E21DD2
 
-On 2024-03-14 19:48:26, Darrick J. Wong wrote:
-> On Thu, Mar 14, 2024 at 06:07:02PM +0100, Andrey Albershteyn wrote:
-> > There's an issue that if special files is created before quota
-> > project is enabled, then it's not possible to link this file. This
-> > works fine for normal files. This happens because xfs_quota skips
-> > special files (no ioctls to set necessary flags). The check for
-> > having the same project ID for source and destination then fails as
-> > source file doesn't have any ID.
-> > 
-> > mkfs.xfs -f /dev/sda
-> > mount -o prjquota /dev/sda /mnt/test
-> > 
-> > mkdir /mnt/test/foo
-> > mkfifo /mnt/test/foo/fifo1
-> > 
-> > xfs_quota -xc "project -sp /mnt/test/foo 9" /mnt/test
-> > > Setting up project 9 (path /mnt/test/foo)...
-> > > xfs_quota: skipping special file /mnt/test/foo/fifo1
-> > > Processed 1 (/etc/projects and cmdline) paths for project 9 with recursion depth infinite (-1).
-> > 
-> > ln /mnt/test/foo/fifo1 /mnt/test/foo/fifo1_link
-> > > ln: failed to create hard link '/mnt/test/testdir/fifo1_link' => '/mnt/test/testdir/fifo1': Invalid cross-device link
+On 3/6/24 19:24, Suren Baghdasaryan wrote:
+> Account slab allocations using codetag reference embedded into slabobj_ext.
 > 
-> Aha.  So hardlinking special files within a directory subtree that all
-> have the same nonzero project quota ID fails if that special file
-> happened to have been created before the subtree was assigned that pqid.
-> And there's nothing we can do about that, because there's no way to call
-> XFS_IOC_SETFSXATTR on a special file because opening those gets you a
-> different inode from the special block/fifo/chardev filesystem...
-> 
-> > mkfifo /mnt/test/foo/fifo2
-> > ln /mnt/test/foo/fifo2 /mnt/test/foo/fifo2_link
-> > 
-> > Fix this by allowing linking of special files to the project quota
-> > if special files doesn't have any ID set (ID = 0).
-> 
-> ...and that's the workaround for this situation.  The project quota
-> accounting here will be weird because there will be (more) files in a
-> directory subtree than is reported by xfs_quota, but the subtree was
-> already messed up in that manner.
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Co-developed-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Yeah, there's already that prj ID = 0 file, so nothing changes
-regarding accounting.
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-> Question: Should we have a XFS_IOC_SETFSXATTRAT where we can pass in
-> relative directory paths and actually query/update special files?
+Nit below:
 
-Added to xfs_quota to not skip them? It would probably solve the
-issue, but for existing filesystems with projects this will require
-to go through all of special files
+> @@ -3833,6 +3913,7 @@ void slab_post_alloc_hook(struct kmem_cache *s,	struct obj_cgroup *objcg,
+>  			  unsigned int orig_size)
+>  {
+>  	unsigned int zero_size = s->object_size;
+> +	struct slabobj_ext *obj_exts;
+>  	bool kasan_init = init;
+>  	size_t i;
+>  	gfp_t init_flags = flags & gfp_allowed_mask;
+> @@ -3875,6 +3956,12 @@ void slab_post_alloc_hook(struct kmem_cache *s,	struct obj_cgroup *objcg,
+>  		kmemleak_alloc_recursive(p[i], s->object_size, 1,
+>  					 s->flags, init_flags);
+>  		kmsan_slab_alloc(s, p[i], init_flags);
+> +		obj_exts = prepare_slab_obj_exts_hook(s, flags, p[i]);
+> +#ifdef CONFIG_MEM_ALLOC_PROFILING
+> +		/* obj_exts can be allocated for other reasons */
+> +		if (likely(obj_exts) && mem_alloc_profiling_enabled())
+> +			alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->size);
+> +#endif
 
-> 
-> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> 
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> 
-> --D
-> 
-> > ---
-> >  fs/xfs/xfs_inode.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > index 1fd94958aa97..b7be19be0132 100644
-> > --- a/fs/xfs/xfs_inode.c
-> > +++ b/fs/xfs/xfs_inode.c
-> > @@ -1240,8 +1240,19 @@ xfs_link(
-> >  	 */
-> >  	if (unlikely((tdp->i_diflags & XFS_DIFLAG_PROJINHERIT) &&
-> >  		     tdp->i_projid != sip->i_projid)) {
-> > -		error = -EXDEV;
-> > -		goto error_return;
-> > +		/*
-> > +		 * Project quota setup skips special files which can
-> > +		 * leave inodes in a PROJINHERIT directory without a
-> > +		 * project ID set. We need to allow links to be made
-> > +		 * to these "project-less" inodes because userspace
-> > +		 * expects them to succeed after project ID setup,
-> > +		 * but everything else should be rejected.
-> > +		 */
-> > +		if (!special_file(VFS_I(sip)->i_mode) ||
-> > +		    sip->i_projid != 0) {
-> > +			error = -EXDEV;
-> > +			goto error_return;
-> > +		}
-> >  	}
-> >  
-> >  	if (!resblks) {
-> > -- 
-> > 2.42.0
-> > 
-> > 
-> 
+I think you could still do this a bit better:
 
--- 
-- Andrey
+Check mem_alloc_profiling_enabled() once before the whole block calling
+prepare_slab_obj_exts_hook() and alloc_tag_add()
+Remove need_slab_obj_ext() check from prepare_slab_obj_exts_hook()
+
+>  	}
+>  
+>  	memcg_slab_post_alloc_hook(s, objcg, flags, size, p);
+> @@ -4353,6 +4440,7 @@ void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
+>  	       unsigned long addr)
+>  {
+>  	memcg_slab_free_hook(s, slab, &object, 1);
+> +	alloc_tagging_slab_free_hook(s, slab, &object, 1);
+>  
+>  	if (likely(slab_free_hook(s, object, slab_want_init_on_free(s))))
+>  		do_slab_free(s, slab, object, object, 1, addr);
+> @@ -4363,6 +4451,7 @@ void slab_free_bulk(struct kmem_cache *s, struct slab *slab, void *head,
+>  		    void *tail, void **p, int cnt, unsigned long addr)
+>  {
+>  	memcg_slab_free_hook(s, slab, p, cnt);
+> +	alloc_tagging_slab_free_hook(s, slab, p, cnt);
+>  	/*
+>  	 * With KASAN enabled slab_free_freelist_hook modifies the freelist
+>  	 * to remove objects, whose reuse must be delayed.
 
 
