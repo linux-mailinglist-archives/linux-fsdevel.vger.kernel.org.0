@@ -1,134 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-14450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54BF87CDCB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:10:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E9287CE06
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D20A1F2134E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54816282396
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEDF2575D;
-	Fri, 15 Mar 2024 13:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DEE28DCF;
+	Fri, 15 Mar 2024 13:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U2712HQN"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="0dRpwze5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F5725543
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Mar 2024 13:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4041B940;
+	Fri, 15 Mar 2024 13:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710508206; cv=none; b=qNCUuqIB+JMCZOKwdyO2E5MWp06kVLobehUqUgwAUYcQAKf1ATOVAGJr9f8P7KllQxAUDiC87H9adzAf1BVtsTh9iabAfbTYYlj47zvh2J9mfY+ZeBNk5e+uSbd2PruwP0VoCLg7lauKwHjN9ch4qctti9Lmi1jVdzP/Co+jEMU=
+	t=1710508879; cv=none; b=iHGXlLyUOhHwjYE/OWT/qlD659vTjQkD/EBhzUc/pvDuoyIHr3+Qy7pDNhbfXk9I4Orjd27W5ZkwqG+/G8Pj3zt7oVQs1BWGxp8e83fRVjH/cUhxvdw7Bf0Vh6bENTpdoLwzRFgiLmf4I2fh+F3pXUxVHvGyo/88vhiEXN0rhF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710508206; c=relaxed/simple;
-	bh=Oa3Umy36YobvTEyJhUdMvkH9ELj1sL6BHsH5KZ4jzW4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cAAjHNaANxOpLWPLZkK2mb2uPQbHpS1BysDs2VzKCnUivt7wVtQccFXTwxTgdf8iEnEqyz/UfUL9I/pUR+obZqkZKPhoBipcEG4AazpQr2OugtkG72v9eduHdNB9NGm2Clc+NaXq6Y5ch5ptjrmdvPwkluCtiJlApH6GEyRVZx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=U2712HQN; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-d9b9adaf291so1816016276.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Mar 2024 06:10:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1710508204; x=1711113004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xMezNXkB9TO/Do+10PK7yOkqjtztuGFODtVVCBpPxvk=;
-        b=U2712HQNOvzirtw8F1U3e3Uf1roP/CNc7arEsbbGZyMUsfV3sY1vaUEnmc5KBthOzF
-         0IrCdMc+XOwpau4lyBcCgct7sHgvhLADqeQ2C72GXMUZfn/vw/kq99+3Z6+wU4NXoqMv
-         Y5AD/WgXWHti0SNysYkOh8BzEyR5IM0XVHMv8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710508204; x=1711113004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xMezNXkB9TO/Do+10PK7yOkqjtztuGFODtVVCBpPxvk=;
-        b=Vy+oHUuvhdBvioDq9wqt6nIyjELp/MP3iGY4wWfT2+bv2/Rphq4KRQLWb8vaR33vk3
-         GWTNxZo5KFojrc7V21Vn9uM+MZwBS92KnzT3MGSsoENPXPPquHHMPmlqTKwqemfQacV9
-         omuFHnPeRk1FxhXtPV1wkXaoHjj92n84lwIPoHtyDtSsUkCLJPcqZE3e615kwF/I92qZ
-         AMX8Swpj3NlNhVN6l/xwmbIT+dCaOdW/sY1ZtCazCd5sagL7Diz2+2Im6dzmjioVW61r
-         HgO94VGbIc4I/+E15z9qwHsWFhT0m1komzVaHSlcuWkFUVATHMXcjxK61VV3iKZCTdo/
-         OzKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkwNx05zvBiN8qEdZwPIjUJI4hX9uVTJFccU/HjKxpuGdGpKgBEW4u6FBP3vvzeg3ku/Oc6U+Fkx8ZazuU29eyNk2pm1K+LLPHNBE8ag==
-X-Gm-Message-State: AOJu0Yzz+tTXi8kHLxQrjgYw56hEROrJG4YClzAQD14fCF6hTF9KhG2I
-	rXT19mwPcRreR+lpkNN+PEDstjJCoH5d7k3JKfknsgXvqC+rAODvpbyE9v05wapZ7plSZWZgSra
-	EN0Xb8ylooYOEwIzllacUN285nETDgAWYUsMh
-X-Google-Smtp-Source: AGHT+IHA0EnM2M9nAzsP1HCtdKzQPO3GMdhS/V1u7qfs5dzMzC1XW1DoI2/JVWjz8Fkwzo2hLLJ5zH3eiul9g8sOb2M=
-X-Received: by 2002:a5b:bce:0:b0:dcc:52dc:deb5 with SMTP id
- c14-20020a5b0bce000000b00dcc52dcdeb5mr4880388ybr.20.1710508204031; Fri, 15
- Mar 2024 06:10:04 -0700 (PDT)
+	s=arc-20240116; t=1710508879; c=relaxed/simple;
+	bh=c6bsZVO4bBgF10Yi8ZqO5zrzwVSEc8zOjEe3crGhLQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lwqw+9UXV7gASA/uKlsod4bjZnuwc9T5HZCBp9lZ4+dlSheTc/Wdd50jcQVNG48acdFykJSiuqVD5FlpLUb6mVAhOpi1DsLjTyYDNjFsnj5NBpNhN7bh6RP3yK+dBPybnvwX+jjcxh92IhW2yimkfDxMi9XybwrNGSWQHG9UNmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=0dRpwze5; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Tx4dG2Hc8z9sX2;
+	Fri, 15 Mar 2024 14:21:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1710508866;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uL8B8rxdNzZ1QT1jmn8Si5bf2Isce5VLmVW1+mlinGY=;
+	b=0dRpwze54JbtFZYv1021iFawCCzzS/F8earDM4Utcgva9wOF+U/UIJ3TePCdr3If0MjxZM
+	zzTbiM3XRek/OATou7PoENHWHTXGR0kSvT+nBLo/W/Da39wxs8z5AlE65Idzx0ZdSTIwPS
+	8cHKj+IytBGODedJIzr+vcZDnSEX+LEmUUwmsiWaq6vFAf4JYVAqol4u2nba7TeTYFvCds
+	197BXrYfukht9gw4Z2umxZ7ahUuTAxrLxOhxIvbObQwhS0yxBK6HIRzdc6WWUCtv6VnN8P
+	JhZjNWtHwp4ftJXBe/9j0WBAz0V+vVQiiTevPLL8hT8X6mhXsPcmrRZthiDVbw==
+Date: Fri, 15 Mar 2024 14:21:02 +0100
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: willy@infradead.org
+Cc: gost.dev@samsung.com, chandan.babu@oracle.com, hare@suse.de, 
+	mcgrof@kernel.org, djwong@kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, david@fromorbit.com, akpm@linux-foundation.org, 
+	Pankaj Raghav <p.raghav@samsung.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 03/11] filemap: allocate mapping_min_order folios in
+ the page cache
+Message-ID: <spgk45dlfiohxug6nokmpaakcevr34ml24loatu3764wgxccc6@iwje3all2lxm>
+References: <20240313170253.2324812-1-kernel@pankajraghav.com>
+ <20240313170253.2324812-4-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231023183035.11035-3-bschubert@ddn.com> <20240314103404.2457718-1-keiichiw@chromium.org>
-In-Reply-To: <20240314103404.2457718-1-keiichiw@chromium.org>
-From: Keiichi Watanabe <keiichiw@chromium.org>
-Date: Fri, 15 Mar 2024 22:09:52 +0900
-Message-ID: <CAD90VcZndHS5f=ZKEkpDMtxQ80J-bAER8FEVHjV+qfUjrLUPbg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Do NULL check instead of IS_ERR in atomic_open
-To: bschubert@ddn.com, linux-fsdevel@vger.kernel.org
-Cc: bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com, 
-	hbirthelmer@ddn.com, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	yuanyaogoog@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240313170253.2324812-4-kernel@pankajraghav.com>
+X-Rspamd-Queue-Id: 4Tx4dG2Hc8z9sX2
 
-I realized this patch was wrong, as I misunderstood the spec of d_splice_al=
-ias.
-d_splice_alias can return NULL in a success case, so the original code
-was totally correct.
-Please ignore this patch. Sorry for the noise!
+Hi willy,
 
-Keiichi
-
-
-On Thu, Mar 14, 2024 at 7:34=E2=80=AFPM Keiichi Watanabe <keiichiw@chromium=
-.org> wrote:
->
-> Since d_splice_alias returns NULL on error, we need to do NUL check
-> instead of IS_ERR.
->
-> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+> filemap_create_folio() and do_read_cache_folio() were always allocating
+> folio of order 0. __filemap_get_folio was trying to allocate higher
+> order folios when fgp_flags had higher order hint set but it will default
+> to order 0 folio if higher order memory allocation fails.
+> 
+> Supporting mapping_min_order implies that we guarantee each folio in the
+> page cache has at least an order of mapping_min_order. When adding new
+> folios to the page cache we must also ensure the index used is aligned to
+> the mapping_min_order as the page cache requires the index to be aligned
+> to the order of the folio.
+> 
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Co-developed-by: Pankaj Raghav <p.raghav@samsung.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 > ---
->  fs/fuse/dir.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 4ae89f428243..4843a749dd91 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -914,7 +914,7 @@ static int _fuse_atomic_open(struct inode *dir, struc=
-t dentry *entry,
->                 alias =3D d_exact_alias(entry, inode);
->                 if (!alias) {
->                         alias =3D d_splice_alias(inode, entry);
-> -                       if (IS_ERR(alias)) {
-> +                       if (!alias) {
->                                 /*
->                                  * Close the file in user space, but do n=
-ot unlink it,
->                                  * if it was created - with network file =
-systems other
-> @@ -928,8 +928,7 @@ static int _fuse_atomic_open(struct inode *dir, struc=
-t dentry *entry,
->                         }
->                 }
->
-> -               if (alias)
-> -                       entry =3D alias;
-> +               entry =3D alias; // alias must not be NULL here.
->         }
->
->         fuse_change_entry_timeout(entry, &outentry);
-> --
-> 2.44.0.291.gc1ea87d7ee-goog
->
+>  mm/filemap.c | 24 +++++++++++++++++-------
+>  1 file changed, 17 insertions(+), 7 deletions(-)
+
+Are the changes more inline with what you had in mind?
+
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index a1cb3ea55fb6..57889f206829 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -849,6 +849,8 @@ noinline int __filemap_add_folio(struct address_space *mapping,
+>  
+>  	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+>  	VM_BUG_ON_FOLIO(folio_test_swapbacked(folio), folio);
+> +	VM_BUG_ON_FOLIO(folio_order(folio) < mapping_min_folio_order(mapping),
+> +			folio);
+>  	mapping_set_update(&xas, mapping);
+>  
+>  	if (!huge) {
+> @@ -1886,8 +1888,10 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  		folio_wait_stable(folio);
+>  no_page:
+>  	if (!folio && (fgp_flags & FGP_CREAT)) {
+> -		unsigned order = FGF_GET_ORDER(fgp_flags);
+> +		unsigned int min_order = mapping_min_folio_order(mapping);
+> +		unsigned int order = max(min_order, FGF_GET_ORDER(fgp_flags));
+>  		int err;
+> +		index = mapping_align_start_index(mapping, index);
+>  
+>  		if ((fgp_flags & FGP_WRITE) && mapping_can_writeback(mapping))
+>  			gfp |= __GFP_WRITE;
+> @@ -1927,7 +1931,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  				break;
+>  			folio_put(folio);
+>  			folio = NULL;
+> -		} while (order-- > 0);
+> +		} while (order-- > min_order);
+>  
+>  		if (err == -EEXIST)
+>  			goto repeat;
+> @@ -2416,13 +2420,16 @@ static int filemap_update_page(struct kiocb *iocb,
+>  }
+>  
+>  static int filemap_create_folio(struct file *file,
+> -		struct address_space *mapping, pgoff_t index,
+> +		struct address_space *mapping, loff_t pos,
+>  		struct folio_batch *fbatch)
+>  {
+>  	struct folio *folio;
+>  	int error;
+> +	unsigned int min_order = mapping_min_folio_order(mapping);
+> +	pgoff_t index;
+>  
+> -	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
+> +	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
+> +				    min_order);
+>  	if (!folio)
+>  		return -ENOMEM;
+>  
+> @@ -2440,6 +2447,8 @@ static int filemap_create_folio(struct file *file,
+>  	 * well to keep locking rules simple.
+>  	 */
+>  	filemap_invalidate_lock_shared(mapping);
+> +	/* index in PAGE units but aligned to min_order number of pages. */
+> +	index = (pos >> (PAGE_SHIFT + min_order)) << min_order;
+>  	error = filemap_add_folio(mapping, folio, index,
+>  			mapping_gfp_constraint(mapping, GFP_KERNEL));
+>  	if (error == -EEXIST)
+> @@ -2500,8 +2509,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+>  	if (!folio_batch_count(fbatch)) {
+>  		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
+>  			return -EAGAIN;
+> -		err = filemap_create_folio(filp, mapping,
+> -				iocb->ki_pos >> PAGE_SHIFT, fbatch);
+> +		err = filemap_create_folio(filp, mapping, iocb->ki_pos, fbatch);
+>  		if (err == AOP_TRUNCATED_PAGE)
+>  			goto retry;
+>  		return err;
+> @@ -3662,9 +3670,11 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
+>  repeat:
+>  	folio = filemap_get_folio(mapping, index);
+>  	if (IS_ERR(folio)) {
+> -		folio = filemap_alloc_folio(gfp, 0);
+> +		folio = filemap_alloc_folio(gfp,
+> +					    mapping_min_folio_order(mapping));
+>  		if (!folio)
+>  			return ERR_PTR(-ENOMEM);
+> +		index = mapping_align_start_index(mapping, index);
+>  		err = filemap_add_folio(mapping, folio, index, gfp);
+>  		if (unlikely(err)) {
+>  			folio_put(folio);
+> -- 
+> 2.43.0
+> 
+
+-- 
+Pankaj Raghav
 
