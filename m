@@ -1,185 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-14417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D1F87C3DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 20:56:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59FE087C797
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 03:36:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC2F1C22550
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Mar 2024 19:56:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B57A1C20AF3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 02:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419C475817;
-	Thu, 14 Mar 2024 19:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB3E8801;
+	Fri, 15 Mar 2024 02:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hhACOGk4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPHRd6hW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061B174BE8;
-	Thu, 14 Mar 2024 19:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420CF6FA9;
+	Fri, 15 Mar 2024 02:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710446165; cv=none; b=pYP8g86iXNUr56UqvfqWu/9RcFvfN1aC/PwQspALIf2bX4saqhXc2O19rKZyCvdTByk6G6J8Co5aQabqIiVtT1HsaECnPfV61t76tGPfnW/CDwP0X2oPoPjRgG8+NBrm0UnfTtZfWZ9cWALRYkpzla11ghDA1QCXWmhxr6JeqgM=
+	t=1710470196; cv=none; b=tCCt6JQrwbioUjcNE1Xc7vln7fgSoG2ROKEfWN8ybRTq+GKyLTwPiTc5SsSYywqgc9nT0IyOVHHlf0lyQNtxdomnww7ifpJatACiv8keT8IbFsBEMnjO0IbIDr76P11hmbacEi2NjBTCMdYSw6xQImR3p4WKg4w24nz6VxLNDew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710446165; c=relaxed/simple;
-	bh=dMtdr+z4geWEk1nGxP9DZ1xFcbrcm4t9EL/q1iF77rM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nDjzAQWVYB9T3ZLkBM+1PEfY7UhKlRgQMCMDGnHrefQCG+7MKsiudEyC7jljDRnAM7b7tdrodOFWaH5GKiKQ/8mWNofRu9JrvJADjPKL3o1jlFDfuQogDB/kp0T+Ma8tsFNLmGDr3y8wawPwfu00i5ooC0RiAv3AYRc6SXvn4lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hhACOGk4; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-513d4559fb4so1032029e87.3;
-        Thu, 14 Mar 2024 12:56:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710446162; x=1711050962; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WmU5kHfUbvawQJQeqNyzZ92DSbRivWiIURaaWWNvTq0=;
-        b=hhACOGk4kNkVMdShtb6IDPmfV5idflHYDAkLrKsbt9G0xWvLfVqr226pUilH6Ig1wW
-         oodm39SfrPNyYHe96Jgsqe85SWj/2jmmC4sa69RR4xUI4YV95+/av/O+4LwLu/6UwpSF
-         6uZ9/IYsZsZQWuqxSuJc3IX0tgbt0Fsp9+m38NZ231EqKoUiRb6+RQY4L+NC8h1iO3+k
-         +hJI1owALr9BpQMY/XwVXIYxVvhzWkej/pXtKneVan2ZRIbM4y0bwfmout4/Lp0ME5wD
-         5IL9pNu+qetg9xMuzHj63VCMNNRp6oGnV/ncXxnUkshrI+C8qaIjTRtwB/PonhlYEQZy
-         2IUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710446162; x=1711050962;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WmU5kHfUbvawQJQeqNyzZ92DSbRivWiIURaaWWNvTq0=;
-        b=aPegjSnqmFX3tzx5e0SRrD7Q7Gwr06AZ+tQc1ETzqpWH483w5MhNrtaqRLpuSq7Rkw
-         qvUEbo90RTzAa53hY68+gwtXExbxnckTbl66KD7PHZNHJIqQtDJFLatPv3XlV9u9o1Vu
-         NNVo/n54f0PQuoivT6DKWtbGPTcXJV1xc0wt17fPSxNaW35X6F0s2Gl6bNwGuEO7O5bC
-         uqYB62d4hqT617EZHP26/qTU19nIecYr5whan0uwn9tw1BccLSu5RGzkk026+qkXROua
-         b30iqA/LRB06gJRes8uuD+CJXQADv41BjTsJ7PGDh7jDT21vjOcpCvnZAoQxQSZ5Xxv6
-         gLtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVw8twsV9P8vUU/YBMAZ50vtH2zuVHtWX4hUw0TgMTstU9EDQNDZJMCMmL1uQwzztGvC0AEG0xX18a+PePzGHe6XrIWRzUaXXlZ/N9RAyAcuw7Z/dFchZ2tCoT4P3nGkJYKewR5NIbaCAk=
-X-Gm-Message-State: AOJu0YyJ2Qs7+N2w5coQuj7Oa8yzIK3AXLPFVgDF095F153fbn+FIik7
-	0CsN09K2rQe2RgmNaNxm6NRoK3/3v3Z7qm198FnwDpVanfbrEbS2NSqmvlz9g5Gna4fSaNDRfVg
-	FlE14UQhdSzgOLtBYKrQfGVLWdQc=
-X-Google-Smtp-Source: AGHT+IHVjuQkZFwa6Zwnan4Px4We41FJXhl7ioG9TTa71PGzxxVT7QOjctjDO9GawpmgI5YMmim5zZ1OQ0sDuixZmk0=
-X-Received: by 2002:a05:6512:469:b0:513:c9de:ee30 with SMTP id
- x9-20020a056512046900b00513c9deee30mr2228965lfd.17.1710446161749; Thu, 14 Mar
- 2024 12:56:01 -0700 (PDT)
+	s=arc-20240116; t=1710470196; c=relaxed/simple;
+	bh=IDHZnC8DRlGzREfmab5dkL11UA+OXeGg6l0o1zRoQ6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKGgA2IOsL/7TBdexV89/Y/kNV29+d56maUGsaIYQWTYbZ7tsrUYAUoZ9J/BZ/BZCcL/ukFKkoLNq80onhtRgcyFPr0m0UI1G07QYDcoS8Ko7zDHJtKLwwY/KzjutjPF41ijedDKrgsdbrIF96ABXooUH+b/FCgjp0w9x6q6DGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPHRd6hW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C71C433F1;
+	Fri, 15 Mar 2024 02:36:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710470195;
+	bh=IDHZnC8DRlGzREfmab5dkL11UA+OXeGg6l0o1zRoQ6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aPHRd6hW4TLqldoASq97l9h+BSFDg8lphaGFOZv1cXzrQ6qEO4BhTIULZ+wg72nlD
+	 Ujb+uQ1cOnnxwGEi3MelUyFCFIsYGOPvKXODfl1XaPJt3KcYByfiSxhn4NTJ7c6uoj
+	 8mdrOyWV1m4MgrhmJYq/v9Eui42RV6+ATITPAAAJuAeH/HmNv4JO2S8MLPbxzerf9s
+	 NWy/Rr4RKMwdZ/P9HJYG/sfWYLwencwz+H0psIl0KOkDcfX4YvFzwXNbitvLhWFUwH
+	 rCQX6w9jKjGv0cVLW266Qv02YwDQ0LKc6QuixByi4MiKEYlmDapPH+jaml2j7DKZcJ
+	 K77qvv/RS0bfg==
+Date: Thu, 14 Mar 2024 19:36:35 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Chandan Babu R <chandanbabu@kernel.org>
+Cc: Dave Chinner <david@fromorbit.com>, akiyks@gmail.com,
+	cmaiolino@redhat.com, corbet@lwn.net, dan.carpenter@linaro.org,
+	dchinner@redhat.com, hch@lst.de, hsiangkao@linux.alibaba.com,
+	hughd@google.com, kch@nvidia.com, kent.overstreet@linux.dev,
+	leo.lilong@huawei.com, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, longman@redhat.com, mchehab@kernel.org,
+	peterz@infradead.org, sfr@canb.auug.org.au, sshegde@linux.ibm.com,
+	willy@infradead.org
+Subject: Re: [ANNOUNCE] xfs-linux: for-next updated to 75bcffbb9e75
+Message-ID: <20240315023635.GZ1927156@frogsfrogsfrogs>
+References: <87r0gmz82t.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <ZepcRgdO39xIrXG2@dread.disaster.area>
+ <87o7bihb66.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240308-vfs-uuid-f917b2acae70@brauner>
-In-Reply-To: <20240308-vfs-uuid-f917b2acae70@brauner>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 14 Mar 2024 14:55:50 -0500
-Message-ID: <CAH2r5mvXYwLJbKJhAVd34zyDcM4YNM5_n4G-aUNjrjG3VT5KQQ@mail.gmail.com>
-Subject: Fwd: [GIT PULL] vfs uuid
-To: Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	Kent Overstreet <kent.overstreet@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o7bihb66.fsf@debian-BULLSEYE-live-builder-AMD64>
 
-Do you have sample programs for these programs (or even better
-mini-xfstest programs) that we can use to make sure this e.g. works
-for cifs.ko (which has similar concept to FS UUID for most remote
-filesystems etc.)?
+On Wed, Mar 13, 2024 at 12:23:17PM +0530, Chandan Babu R wrote:
+> On Fri, Mar 08, 2024 at 11:31:02 AM +1100, Dave Chinner wrote:
+> > On Thu, Mar 07, 2024 at 03:16:56PM +0530, Chandan Babu R wrote:
+> > Hi Chandan,
+> >
+> > I'm finding it difficult to determine what has changed from one
+> > for-next update to the next because there's only a handful of new
+> > commits being added to this list.
+> >
+> > In this case, I think there's only 1 new commit in this update:
+> >
+> >>       [75bcffbb9e75] xfs: shrink failure needs to hold AGI buffer
+> >
+> > And I only found that out when rebasing my local tree and that patch
+> > did not apply.
+> >
+> > When I was doing these for-next tree updates, I tried to only send
+> > out the list of commits that changed since the last for-next tree
+> > update rather than the whole lot since the base kernel it was
+> > started from. That made it easy for everyone to see what I'd just
+> > committed, as opposed to trying to find whether their outstanding
+> > patches were in a big list already committed patches...
+> >
+> > Up to you, but I'm bringing it up because I am finding it difficult
+> > to track when one of my patches has been committed to for-next right
+> > now...
+> >
+> 
+> You are right. I didn't realize this problem. I will limit for-next
+> announcements to include only new patches that were added/removed to/from the
+> existing pile.
 
----------- Forwarded message ---------
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, Mar 8, 2024 at 4:19=E2=80=AFAM
-Subject: [GIT PULL] vfs uuid
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Or tell us what changed since the last push in the first paragraph.
 
+"Hi folks,
 
-Hey Linus,
+"The for-next branch of the xfs-linux repository at:
 
-/* Summary */
-This adds two new ioctl()s for getting the filesystem uuid and
-retrieving the sysfs path based on the path of a mounted filesystem. The
-bcachefs pull request should include a merge of this as well as it
-depends on the two new ioctls. Getting the filesystem uuid has been
-implemented in filesystem specific code for a while it's now lifted as a
-generic ioctl.
+	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-/* Testing */
-clang: Debian clang version 16.0.6 (19)
-gcc: (Debian 13.2.0-7) 13.2.0
+"has just been updated.  New since the last push are some bug fixes to
+insulate us from small mammals infiltrating the inode cache and wreaking
+havoc on Riker's trombone.  I also merged the Y2500 support patchset to
+make Geordi happy."
 
-All patches are based on v6.8-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed.
+--D
 
-/* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with
-current mainline.
-
-The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d=
-:
-
-  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9.uui=
-d
-
-for you to fetch changes up to 01edea1bbd1768be41729fd018a82556fa1810ec:
-
-  Merge series "filesystem visibility ioctls" of
-https://lore.kernel.org/r/20240207025624.1019754-1-kent.overstreet@linux.de=
-v
-(2024-02-12 13:14:21 +0100)
-
-Please consider pulling these changes from the signed vfs-6.9.uuid tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.9.uuid
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      Merge series "filesystem visibility ioctls" of
-https://lore.kernel.org/r/20240207025624.1019754-1-kent.overstreet@linux.de=
-v
-
-Kent Overstreet (6):
-      fs: super_set_uuid()
-      ovl: convert to super_set_uuid()
-      fs: FS_IOC_GETUUID
-      fat: Hook up sb->s_uuid
-      fs: add FS_IOC_GETFSSYSFSPATH
-      xfs: add support for FS_IOC_GETFSSYSFSPATH
-
- Documentation/userspace-api/ioctl/ioctl-number.rst |  3 +-
- fs/ext4/super.c                                    |  2 +-
- fs/f2fs/super.c                                    |  2 +-
- fs/fat/inode.c                                     |  3 ++
- fs/gfs2/ops_fstype.c                               |  2 +-
- fs/ioctl.c                                         | 33 ++++++++++++++
- fs/kernfs/mount.c                                  |  4 +-
- fs/ocfs2/super.c                                   |  4 +-
- fs/overlayfs/util.c                                | 18 +++++---
- fs/ubifs/super.c                                   |  2 +-
- fs/xfs/xfs_mount.c                                 |  4 +-
- include/linux/fs.h                                 | 52 ++++++++++++++++++=
-++++
- include/uapi/linux/fs.h                            | 25 +++++++++++
- mm/shmem.c                                         |  4 +-
- 14 files changed, 141 insertions(+), 17 deletions(-)
-
-
-
---
-Thanks,
-
-Steve
+> -- 
+> Chandan
+> 
 
