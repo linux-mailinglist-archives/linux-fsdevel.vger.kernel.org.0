@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-14440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C83887CD8B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:01:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A57C87CD9D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5D0284625
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B1631C2249A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2013C28E02;
-	Fri, 15 Mar 2024 13:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4333BBD0;
+	Fri, 15 Mar 2024 13:01:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D69624B2B;
-	Fri, 15 Mar 2024 13:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E46924B52;
+	Fri, 15 Mar 2024 13:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710507669; cv=none; b=RHfkARIa39gi3pOwwjgGy3GYW8iZ3aTqdhOGe+2GZxjXntkVic6IGnmxL8ZDjyANe2Im6znY0iqFxD/YExvcna3eiVfJUJHeuRsmn7ItPEbXvj4AnoIPDXrkszv8yI4702hGhr+q9FZRUV2LcXcTIqLmhPr7REwdzfdRzekOzUY=
+	t=1710507671; cv=none; b=Nb21CW/RLA2Uj5mHmFgh5qZ1fi+6jAr3P8ooRdQDetWRW+8d0s2CKxvtimTnB2LO3JEh2h7VUUH5NEHnpyJV95mCvtANciBWYWjS6JVZ2Y/fpjvqRqRE+/vIYe0MHDIC0Irmons4U8PoqsPjzwABPM90wJN6x4tG+U5L3664Tvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710507669; c=relaxed/simple;
-	bh=5KY2Ma2lHy9rGkgAfDoGPA/NG9qONKe8ZaT2COQGmFc=;
+	s=arc-20240116; t=1710507671; c=relaxed/simple;
+	bh=JfovSRICGTZ9ZriaIuolViU7gmL3XgHTj4nvWZySKmk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DJeu4NjfsQUQiPwhtBS4QrLHunOGuGTYdg802kkWrnKb6BlKiTQGdTlVHqsGeYx1zSIOETOfQ+E1wTgXqcMAN6nJC6UlssPtp1kAcSXoLltpnLWqHaBfYWC7n+cwicOOg9itWvQ/RHpXlTb1jewGdRV2RRr8+ePVrV+jCYIl9gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=TTKpQnZBAm0IbXZCTceVKhJWjvaP8bWllg6avMRHCtQaoiF3tx1ENd2cagGwkojE6BPVIxwuQGNpxhp5HNC1n4qe8okQel7q1/HoMebbVbjAcF+zLA+U+fV/qtD4RI7U5bXp8t1x57VEhC5aAJ/wvAUX8QtY2s+jUN8V78swigc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Tx4B2072Zz4f3kFb;
-	Fri, 15 Mar 2024 21:00:58 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Tx4B040XZz4f3m7Y;
+	Fri, 15 Mar 2024 21:00:56 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id C76371A016E;
-	Fri, 15 Mar 2024 21:01:03 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 531751A0172;
+	Fri, 15 Mar 2024 21:01:04 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgCXaBF9RvRldVMfHA--.12032S9;
-	Fri, 15 Mar 2024 21:01:03 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgCXaBF9RvRldVMfHA--.12032S10;
+	Fri, 15 Mar 2024 21:01:04 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: linux-kernel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com
-Subject: [PATCH v2 05/10] xfs: convert delayed extents to unwritten when zeroing post eof blocks
-Date: Fri, 15 Mar 2024 20:53:49 +0800
-Message-Id: <20240315125354.2480344-6-yi.zhang@huaweicloud.com>
+Subject: [PATCH v2 06/10] iomap: drop the write failure handles when unsharing and zeroing
+Date: Fri, 15 Mar 2024 20:53:50 +0800
+Message-Id: <20240315125354.2480344-7-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240315125354.2480344-1-yi.zhang@huaweicloud.com>
 References: <20240315125354.2480344-1-yi.zhang@huaweicloud.com>
@@ -65,10 +65,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCXaBF9RvRldVMfHA--.12032S9
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw4ktry7GF4Utw4UurW8Crg_yoW5AF15pF
-	Z3Kwn8GrsxGw13Zwn3AFn3Kw1F9wn5Cw4UJry3Wwn3Xa4Dtr1Ig34Iy3WYgw18ArZ7A3Wj
-	gF4YgF1I934UuaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgCXaBF9RvRldVMfHA--.12032S10
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr43GryfJw13AF1DKw1DGFg_yoW8Cr45pr
+	98K3ykCFWxJF47uF1kJFyDuFyYyFZ7KrW7CrWUGw43ZF4DAr42gF18KayYvF1kJ3s7ArWS
+	qF4vya4rX3WUAr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -87,82 +87,59 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Current clone operation could be non-atomic if the destination of a file
-is beyond EOF, user could get a file with corrupted (zeroed) data on
-crash.
+Unsharing and zeroing can only happen within EOF, so there is never a
+need to perform posteof pagecache truncation if write begin fails, also
+partial write could never theoretically happened from iomap_write_end(),
+so remove both of them.
 
-The problem is about to pre-alloctions. If you write some data into a
-file [A, B) (the position letters are increased one by one), and xfs
-could pre-allocate some blocks, then we get a delayed extent [A, D).
-Then the writeback path allocate blocks and convert this delayed extent
-[A, C) since lack of enough contiguous physical blocks, so the extent
-[C, D) is still delayed. After that, both the in-memory and the on-disk
-file size are B. If we clone file range into [E, F) from another file,
-xfs_reflink_zero_posteof() would call iomap_zero_range() to zero out the
-range [B, E) beyond EOF and flush range. Since [C, D) is still a delayed
-extent, it will be zeroed and the file's in-memory && on-disk size will
-be updated to D after flushing and before doing the clone operation.
-This is wrong, because user can user can see the size change and read
-zeros in the middle of the clone operation.
-
-We need to keep the in-memory and on-disk size before the clone
-operation starts, so instead of writing zeroes through the page cache
-for delayed ranges beyond EOF, we convert these ranges to unwritten and
-invalidating any cached data over that range beyond EOF.
-
-Suggested-by: Dave Chinner <david@fromorbit.com>
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/xfs/xfs_iomap.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ fs/iomap/buffered-io.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index ccf83e72d8ca..1a6d05830433 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1035,6 +1035,24 @@ xfs_buffered_write_iomap_begin(
- 	}
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 093c4515b22a..7e32a204650b 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -786,7 +786,6 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
  
- 	if (imap.br_startoff <= offset_fsb) {
-+		/*
-+		 * For zeroing out delayed allocation extent, we trim it if
-+		 * it's partial beyonds EOF block, or convert it to unwritten
-+		 * extent if it's all beyonds EOF block.
-+		 */
-+		if ((flags & IOMAP_ZERO) &&
-+		    isnullstartblock(imap.br_startblock)) {
-+			xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-+
-+			if (offset_fsb >= eof_fsb)
-+				goto convert_delay;
-+			if (end_fsb > eof_fsb) {
-+				end_fsb = eof_fsb;
-+				xfs_trim_extent(&imap, offset_fsb,
-+						end_fsb - offset_fsb);
-+			}
+ out_unlock:
+ 	__iomap_put_folio(iter, pos, 0, folio);
+-	iomap_write_failed(iter->inode, pos, len);
+ 
+ 	return status;
+ }
+@@ -863,8 +862,6 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
+ 
+ 	if (old_size < pos)
+ 		pagecache_isize_extended(iter->inode, old_size, pos);
+-	if (ret < len)
+-		iomap_write_failed(iter->inode, pos + ret, len - ret);
+ 	return ret;
+ }
+ 
+@@ -912,8 +909,10 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 		}
+ 
+ 		status = iomap_write_begin(iter, pos, bytes, &folio);
+-		if (unlikely(status))
++		if (unlikely(status)) {
++			iomap_write_failed(iter->inode, pos, bytes);
+ 			break;
 +		}
-+
- 		/*
- 		 * For reflink files we may need a delalloc reservation when
- 		 * overwriting shared extents.   This includes zeroing of
-@@ -1158,6 +1176,17 @@ xfs_buffered_write_iomap_begin(
- 	xfs_iunlock(ip, lockmode);
- 	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0, seq);
+ 		if (iter->iomap.flags & IOMAP_F_STALE)
+ 			break;
  
-+convert_delay:
-+	xfs_iunlock(ip, lockmode);
-+	truncate_pagecache(inode, offset);
-+	error = xfs_bmapi_convert_delalloc(ip, XFS_DATA_FORK, offset,
-+					iomap, NULL);
-+	if (error)
-+		return error;
-+
-+	trace_xfs_iomap_alloc(ip, offset, count, XFS_DATA_FORK, &imap);
-+	return 0;
-+
- found_cow:
- 	seq = xfs_iomap_inode_sequence(ip, 0);
- 	if (imap.br_startoff <= offset_fsb) {
+@@ -927,6 +926,9 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
+ 		status = iomap_write_end(iter, pos, bytes, copied, folio);
+ 
++		if (status < bytes)
++			iomap_write_failed(iter->inode, pos + status,
++					   bytes - status);
+ 		if (unlikely(copied != status))
+ 			iov_iter_revert(i, copied - status);
+ 
 -- 
 2.39.2
 
