@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-14533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8574387D56A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 21:50:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAB587D576
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 21:51:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A722A1C22272
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 20:50:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C63D1F22BBE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 20:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8995A103;
-	Fri, 15 Mar 2024 20:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FFE5B663;
+	Fri, 15 Mar 2024 20:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Sq8LvcBI"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="RuyY3u5r"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9DF1EB48;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E2354912;
 	Fri, 15 Mar 2024 20:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710535710; cv=none; b=Haap+C0hpaRg/BFhIZ25vw8TW+L6IFOAHfvtLXnYn3sE5zKhO7SVanzxS5mstI+9PdqkClVSZAsinq5rvPAWA9B76/QzkF+DWAn1NmhJXAgTgvirkLPgfhhVKijQis6NyMddez0+30mbJqL8+4FBA6fk+ZOpoPrbElL6ycfkc6E=
+	t=1710535710; cv=none; b=bvSPFVsC2zJEi0ldikTuykaHvOXht9IggjB7/IJhZOro1E2LYs5SrOtcB8s4mgNztdUi1ple538ZBF7uAMHDaU93K9q7SCET0IP2EV8k1tpAuVAapV6MMA/K/e68Bxsf0TevquHhyRbFBke3HsUpDgn6buazqwtAxceHlxY8oR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1710535710; c=relaxed/simple;
-	bh=ZA8n2/koLk8T5EEGrZrQe3HTqPjD2IuDJPJOoTgLjZQ=;
+	bh=N3YQ+74nNXsZKp7PEdJnsfg+4VEg1y14khiTCB8rEVY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P29bstIaCi4WdbFLgd/wg5uZsfCS0PPzxJply/TteRzE7nOvG+D7eWNzbkpIRbEuXLFfUnzU1KjziHgUJeEN0JSWAkg0EusZm4CBRnU0KawC8M2JXzjwF+p1JLJeOj56IHTZfEvjil4FeaR/CPd7ioLIqN0Bx6AJ0hsHf1mz4Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Sq8LvcBI; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=ZB5VupDrnSx3rRkc344nftYBoWsd9mpqpBskrYxfvKaUiRbhE1Ik01wXUxoq3kmmyLHFERjgZPA20r0KPgF07vEtxHQ0bWd+zotKd894JbatTaswm+7y5xT8PjjhElCueoMxHtgy5XEPdnhPX94PCr7izRZIWgVP69n/SyVet+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=RuyY3u5r; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1710535697;
-	bh=ZA8n2/koLk8T5EEGrZrQe3HTqPjD2IuDJPJOoTgLjZQ=;
+	bh=N3YQ+74nNXsZKp7PEdJnsfg+4VEg1y14khiTCB8rEVY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Sq8LvcBI7p1gv8YF+Fl6E9SHh6cG4uM9FEK2x/Wqq1z2lsOrhhz5yQNS/tUAIK6jL
-	 zaTESlVFyFVTGgnfO0nn5yRM2Yc0itbSdfIy/O/NbQJVPCSWx7t53jzls8LBlYOeHK
-	 IrYN0Ex/0XRwb/4piozxul/b2C8P/gHg2Vl5ibj4=
+	b=RuyY3u5rYBiguTrn2XInl4Ajsqpr9gged17slcRcyBJUHHxvliEq2D58U55ZU0L/2
+	 tDtmVWfSwncce6QhDGXdWdqZSGwnSc0Kzxfvkvrjor4H49NhkZZxu5MoEIzzUHk82w
+	 zNfqHOTG+OspUx4e92XQR4ruhqFKUsn1UDGgq48w=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Fri, 15 Mar 2024 21:48:01 +0100
-Subject: [PATCH 03/11] hugetlb: constify ctl_table arguments of utility
- functions
+Date: Fri, 15 Mar 2024 21:48:02 +0100
+Subject: [PATCH 04/11] utsname: constify ctl_table arguments of utility
+ function
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240315-sysctl-const-handler-v1-3-1322ac7cb03d@weissschuh.net>
+Message-Id: <20240315-sysctl-const-handler-v1-4-1322ac7cb03d@weissschuh.net>
 References: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
 In-Reply-To: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -140,45 +140,36 @@ Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-security-module@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1710535695; l=1138;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1710535695; l=696;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=ZA8n2/koLk8T5EEGrZrQe3HTqPjD2IuDJPJOoTgLjZQ=;
- b=boZ4t6eOPk3Dljh4IP0PKWoLOxGtOLAXof5Zxa1r9XXXItitoJuOMZutWnuJAn75hjXtWjz0B
- 7PQefNn5iOMATogPVExj5hPohFmPOE42B/+MU7bt9FL5JEbL5sxkIfe
+ bh=N3YQ+74nNXsZKp7PEdJnsfg+4VEg1y14khiTCB8rEVY=;
+ b=xEm0d8CYQV6qN7oZA7EuQpgHjbZrMfPqjThMCUp02NAIP8Ff1lQTYCA5z6GSB4NPcFQzy/2jj
+ Y0NcUklMzOzC1as2M3524rbivhNsj1cwIIJnIozArSnSxvsTxxWEUrP
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
 In a future commit the proc_handlers themselves will change to
 "const struct ctl_table". As a preparation for that adapt the internal
-helpers.
+helper.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- mm/hugetlb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/utsname_sysctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 23ef240ba48a..b0d89ab98eaa 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4929,7 +4929,7 @@ static unsigned int allowed_mems_nr(struct hstate *h)
- }
+diff --git a/kernel/utsname_sysctl.c b/kernel/utsname_sysctl.c
+index 019e3a1566cf..46590d4addc8 100644
+--- a/kernel/utsname_sysctl.c
++++ b/kernel/utsname_sysctl.c
+@@ -15,7 +15,7 @@
  
- #ifdef CONFIG_SYSCTL
--static int proc_hugetlb_doulongvec_minmax(struct ctl_table *table, int write,
-+static int proc_hugetlb_doulongvec_minmax(const struct ctl_table *table, int write,
- 					  void *buffer, size_t *length,
- 					  loff_t *ppos, unsigned long *out)
- {
-@@ -4946,7 +4946,7 @@ static int proc_hugetlb_doulongvec_minmax(struct ctl_table *table, int write,
- }
+ #ifdef CONFIG_PROC_SYSCTL
  
- static int hugetlb_sysctl_handler_common(bool obey_mempolicy,
--			 struct ctl_table *table, int write,
-+			 const struct ctl_table *table, int write,
- 			 void *buffer, size_t *length, loff_t *ppos)
+-static void *get_uts(struct ctl_table *table)
++static void *get_uts(const struct ctl_table *table)
  {
- 	struct hstate *h = &default_hstate;
+ 	char *which = table->data;
+ 	struct uts_namespace *uts_ns;
 
 -- 
 2.44.0
