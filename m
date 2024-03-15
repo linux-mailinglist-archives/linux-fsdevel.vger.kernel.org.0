@@ -1,74 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-14458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3312787CE65
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:54:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5983E87CE7B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 15:05:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AD051F21212
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1691B2820FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F56236AED;
-	Fri, 15 Mar 2024 13:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kreJIIP8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C233F376F9;
+	Fri, 15 Mar 2024 14:05:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from vps.thesusis.net (vps.thesusis.net [34.202.238.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA402E62F;
-	Fri, 15 Mar 2024 13:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F161C376EB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Mar 2024 14:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.238.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710510872; cv=none; b=gZURBcACcmcXzxx0Vm3ibSLdXJ5y4+4Om3duo5d11s3U9EOtkxkb9f8GHZaaWE46htZWivSvz2qHUT9FsEbuP1WdqUmptLWZg/e5pxLVcti/5A432xpgNij1K8gZ63FORrDbeTP0/mtqBk3mTUiU1wEaaP4qeOOnvA1j/uppxak=
+	t=1710511524; cv=none; b=qCL/LKj2aXRfZANE46079cNlTL6iYQ95fOplg3YG1iwWpHSdb2wud2sf6Q2ZRdXYZDXMBLYjIFiSp2WXQWjmLlLn7xepZMVLvqwixgVn3QqM5IWkzsu/0gT5u1uOkoOJwUPZij7C3DrvvmCEie2u+iOe5+L1rB2b4VFlIsoFYOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710510872; c=relaxed/simple;
-	bh=s5tlyQ3TQ92cp3zmv6WhJU0WhcyMs03/Vt56LrZyZP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTQQDInt/S2R74fCGjShPmowqrzPopQVwQHhUllJZ8dMKuz6CCBqekVhoQBhENSKcTlqPvx6jkk7K5Qeo9MuSS1aX/XVuozuuUytZdEo3KBPSBjcB++Q03tKERNl4ngezCofZCwFHvOZMmcGJ1WevTzUebBv5e2A6G6P8BC0CXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kreJIIP8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5130C433C7;
-	Fri, 15 Mar 2024 13:54:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710510872;
-	bh=s5tlyQ3TQ92cp3zmv6WhJU0WhcyMs03/Vt56LrZyZP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kreJIIP8JrjAHNDdkuowy06oj0Iwlu4NtzzGXp7ds7sLDxdg7VzHgI6Zycgasxnnc
-	 mMbA1s695y3UMU45bEpqxwvcFqyT4NdCFt+oxNt0Jd21duw0H8jIyPuW6O7jMOADZJ
-	 Z46JW1piH1hiNaDqU3n8QMuK1r1QwMQow+M7dZBYFpjKVrnZNAmS4sBi4lGOZZ06F9
-	 kJAHcdIPuzD6ZmSZGJ+V1om6fwCm34RZ16gR7A3QIQNYAAKPL2JKXkw6wAkBd8xFA7
-	 LCiUrYqU/Bcd3LJ3HcDoIN4JRkxCxh9SAy845bUZeXOBRB/rLCzeUu2VLptzAG0To/
-	 edjvfwCE2X/kw==
-Date: Fri, 15 Mar 2024 14:54:27 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Yu Kuai <yukuai3@huawei.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de, 
-	axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [RFC v4 linux-next 00/19] fs & block: remove bdev->bd_inode
-Message-ID: <20240315-assoziieren-hacken-b43f24f78970@brauner>
-References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
- <1324ffb5-28b6-34fb-014e-3f57df714095@huawei.com>
+	s=arc-20240116; t=1710511524; c=relaxed/simple;
+	bh=lPGtBFMkTbmo0hjXK/bSvF83XXMOkPdN5B6xeP9jEHU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=d2z/NfFeWelauS37+Fw7gREddWqRkxj8vn94KxEDZSlSx6/IjCY0CYp6H7x76brcHT7hoD4PewdUrTQLG4o5UDIxpZbSeXqsnL2kCRcpv+x5Ut7CnI7L7gU6s1vj6U52nvpzyBzEHJum/zeglq1k5ueEYg9KIWvhlooBbMXY00U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thesusis.net; spf=pass smtp.mailfrom=thesusis.net; arc=none smtp.client-ip=34.202.238.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thesusis.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thesusis.net
+Received: by vps.thesusis.net (Postfix, from userid 1000)
+	id 6F1CA29C26; Fri, 15 Mar 2024 10:05:16 -0400 (EDT)
+From: Phillip Susi <phill@thesusis.net>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+Subject: Re: Uneccesary flushes waking up suspended disks
+In-Reply-To: <Ze5fOTojI+BhgXOW@dread.disaster.area>
+References: <877cieqhaw.fsf@vps.thesusis.net>
+ <Ze5fOTojI+BhgXOW@dread.disaster.area>
+Date: Fri, 15 Mar 2024 10:05:16 -0400
+Message-ID: <87h6h78uar.fsf@vps.thesusis.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1324ffb5-28b6-34fb-014e-3f57df714095@huawei.com>
+Content-Type: text/plain
 
-On Fri, Mar 15, 2024 at 08:08:49PM +0800, Yu Kuai wrote:
-> Hi, Christian
-> Hi, Christoph
-> Hi, Jan
-> 
-> Perhaps now is a good time to send a formal version of this set.
-> However, I'm not sure yet what branch should I rebase and send this set.
-> Should I send to the vfs tree?
+Dave Chinner <david@fromorbit.com> writes:
 
-Nearly all of it is in fs/ so I'd say yes.
+> How do other filesystems behave? Is this a problem just on specific
+> filesystems?
+
+I finally got around to testing other filesystems and surprisingly, it
+seems this is only a problem for ext4.  I tried btrfs, f2fs, jfs, udf,
+and xfs.  xfs even uses the same jbd2 for journaling that ext4 does
+doesn't it?
+
+I just formatted a clean fs, synced, and ran blktrace, then synced
+again, and only ext4 emits a flush on the second sync.
 
