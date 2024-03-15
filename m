@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-14520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5260087D368
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 19:12:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3073587D367
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 19:12:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B287DB22FAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 18:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61F991C20BAC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 18:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4822A50A69;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5958050A7E;
 	Fri, 15 Mar 2024 18:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="QmqHCebk"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="OD3jZxwC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03C94CB3D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07D34D13B;
 	Fri, 15 Mar 2024 18:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710526301; cv=none; b=uE2gOPkjxQslqXM+MA+U6XqtkUYnyMZXOAr4JmXgkwj7L+6RT8LZcxGnE53wiyNtgBxzSUrqNmwb/qi+vG/Z8yInjv/ldQvJdng3ZQB/aDoq1wNwRkXpqEETX8dgblg9N0v03RfylezOPr32/Kalkj+baICyeS+NPDXjbVXIH2k=
+	t=1710526301; cv=none; b=J7MoXq5Ubl566R1KIGIxrrpKTu5meRohbnkG1xg29HaXZPyILIgZQhQuUSpEjJIgOkTMTEURA2QLtHtOIRBFgNkNYedY+qtHp58VQk4Z5+9NWfg9Wf8tzsof1MB4LWgkD4qtCgekSxvYLtRoSKAHNMkeKiGXIjkQJietQf6oaUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1710526301; c=relaxed/simple;
-	bh=yGFDp6e2dOO1N4Y8mr47+8FXmhmHgoG2FhKm/aaPngU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K5t2YwMA2z8HWRCJbEK+Tm8JXRsK+dHz38M49jmQCuaWsnX29t2A5x9pi79ZFYsCsH24QmnAVGA58yUgVQlpfTLflkVs3ymYv4pH8U2Jc31hWjQkzjx+hh/72NI7d+mu8ZO1eBZhHZ2flfHXf2PVLT2KRgJL9fUW5KwsWYAJ0EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=QmqHCebk; arc=none smtp.client-ip=159.69.126.157
+	bh=av+LO3pCFDRpgY7P1nu9SdAbRzagRbYwt2rIz+Cgj/8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nx0LZ3//Qbig3r9g8euji+kivhIgoRC10sbpSwHDdTh5p8NKNtkZXJZn0MSEzSm431UJwXYD3FgZ6Du1YsfkzgWCVA3exG34CA6JtvIqDflL4+tGboX1qG+VxqcJbyubBt0Zv7Jc0020Q8wvMYtkPHi7oD/OZMTEaHSKzj/3Pgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=OD3jZxwC; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1710526295;
-	bh=yGFDp6e2dOO1N4Y8mr47+8FXmhmHgoG2FhKm/aaPngU=;
-	h=From:Subject:Date:To:Cc:From;
-	b=QmqHCebkcJIp8hFAJ+35uz8sNQ1gebvIM8Ie2T7RirJ3Rmb4g12BL6Jld0dIDAam/
-	 2dgp9O861WULp2YOB69BXiyiYxHUQKAGip0MtmOD9u/y7AhTvDAIanM/9sVSM1IN4/
-	 wVNXw5OO19OGO3MhGy4e//QOyRBGkuFwaCmLYKEU=
+	bh=av+LO3pCFDRpgY7P1nu9SdAbRzagRbYwt2rIz+Cgj/8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=OD3jZxwC+FqX8IcDG2x1uL6bhvabCVY1qk3pDF/wV7PcuOjIgawHBeqnUMd5XwNnk
+	 XCoL9XQwy0AYlgMdrgE1fo0HBnu7rzTj+KafnRaxEbKoPWfSC2klW0x+sdfhYkZJNA
+	 J0elsOmulDVo3ZeGRwQ+OVxYkZDbZe2BNQj52oMs=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: [PATCH v3 0/2] sysctl: treewide: prepare ctl_table_root for
- ctl_table constification
-Date: Fri, 15 Mar 2024 19:11:29 +0100
-Message-Id: <20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net>
+Date: Fri, 15 Mar 2024 19:11:30 +0100
+Subject: [PATCH v3 1/2] sysctl: treewide: drop unused argument
+ ctl_table_root::set_ownership(table)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,10 +50,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAFGP9GUC/4XNQQ6CMBCF4auQrq2hQ6HiynsYF6VMbRNTSAdBQ
- ri7hcSVMS7/l8w3CyOMHomds4VFHD35LqQoDhkzToc7ct+mZpBDIQAqTjOZ4cFNF2jg3RQwkvM
- 9t1aVWKlGImqWjvuI1r92+HpL7TwNXZz3P6PY1r/kKLjgrTrZtlVSNlpcJvREZNzTHQMObHNH+
- FgyByh+WpAsWydE1aXWFr6sdV3fOMp7VQ0BAAA=
+Message-Id: <20240315-sysctl-const-ownership-v3-1-b86680eae02e@weissschuh.net>
+References: <20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net>
+In-Reply-To: <20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net>
 To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
  Joel Granados <j.granados@samsung.com>, 
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -62,67 +61,129 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  netdev@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1710526294; l=2217;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1710526294; l=3835;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=yGFDp6e2dOO1N4Y8mr47+8FXmhmHgoG2FhKm/aaPngU=;
- b=DNfzcOV3La0DqS1e9f8mlyjqinvOmso4li0tSKMz6jzrXMrbzpx4XabqpBxzeeWmgOKGWoIxW
- 0ciuoqIGa4BANa2FPeQeSZtd1DQQ9oNtDxrrm5i8MZO2a4Ep5rsOrek
+ bh=av+LO3pCFDRpgY7P1nu9SdAbRzagRbYwt2rIz+Cgj/8=;
+ b=/F06c2EJiWGR1f+P1HpCb7VAwJpzrdnOwXaMr5dC/J/axq7JcENhUxIxB79TjfmogI3LQqTY2
+ e4nU4U6SQfoBdvFWisQ4l4iMp/1tJkIVslkveD0MdFsz9205ZIMY9r2
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The two patches were previously submitted on their own.
-In commit f9436a5d0497
-("sysctl: allow to change limits for posix messages queues")
-a code dependency was introduced between the two callbacks.
-This code dependency results in a dependency between the two patches, so
-now they are submitted as a series.
+The argument is never used and can be removed.
 
-The series is meant to be merged via the sysctl tree.
+In a future commit the sysctl core will only use
+"const struct ctl_table". Removing it here is a preparation for this
+consitifcation.
 
-There is an upcoming series that will introduce a new implementation of
-.set_ownership and .permissions which would need to be adapted [0].
+The patch was created with the following coccinelle script:
 
-These changes ere originally part of the sysctl-const series [1].
-To slim down that series and reduce the message load on other
-maintainers to a minimum, the patches are split out.
+  @@
+  identifier func, head, table, uid, gid;
+  @@
 
-[0] https://lore.kernel.org/lkml/20240222160915.315255-1-aleksandr.mikhalitsyn@canonical.com/
-[1] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-2-7a5060b11447@weissschuh.net/
+  void func(
+    struct ctl_table_header *head,
+  - struct ctl_table *table,
+    kuid_t *uid, kgid_t *gid)
+  { ... }
+
+The single changed location was validate through manual inspection and
+compilation.
+
+In addition, a search for 'set_ownership' was done over the full tree to
+look for places that were missed by coccinelle.
+None were found.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
-Changes in v3:
-- Drop now spurious argument in fs/proc/proc_sysctl.c
-- Rebase on next-20240315
-- Incorporate permissions patch.
-- Link to v2 (ownership): https://lore.kernel.org/r/20240223-sysctl-const-ownership-v2-1-f9ba1795aaf2@weissschuh.net
-- Link to v1 (permissions): https://lore.kernel.org/r/20231226-sysctl-const-permissions-v1-1-5cd3c91f6299@weissschuh.net
-
-Changes in v2:
-- Rework commit message
-- Mention potential conflict with upcoming per-namespace kernel.pid_max
-  sysctl
-- Delete unused parameter table
-- Link to v1: https://lore.kernel.org/r/20231226-sysctl-const-ownership-v1-1-d78fdd744ba1@weissschuh.net
-
----
-Thomas Weißschuh (2):
-      sysctl: treewide: drop unused argument ctl_table_root::set_ownership(table)
-      sysctl: treewide: constify argument ctl_table_root::permissions(table)
-
  fs/proc/proc_sysctl.c  | 2 +-
- include/linux/sysctl.h | 3 +--
- ipc/ipc_sysctl.c       | 5 ++---
- ipc/mq_sysctl.c        | 5 ++---
- kernel/ucount.c        | 2 +-
- net/sysctl_net.c       | 3 +--
- 6 files changed, 8 insertions(+), 12 deletions(-)
----
-base-commit: a1e7655b77e3391b58ac28256789ea45b1685abb
-change-id: 20231226-sysctl-const-ownership-ff75e67b4eea
+ include/linux/sysctl.h | 1 -
+ ipc/ipc_sysctl.c       | 3 +--
+ ipc/mq_sysctl.c        | 3 +--
+ net/sysctl_net.c       | 1 -
+ 5 files changed, 3 insertions(+), 7 deletions(-)
 
-Best regards,
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 37cde0efee57..ed3a41ed9705 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -480,7 +480,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+ 	}
+ 
+ 	if (root->set_ownership)
+-		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
++		root->set_ownership(head, &inode->i_uid, &inode->i_gid);
+ 	else {
+ 		inode->i_uid = GLOBAL_ROOT_UID;
+ 		inode->i_gid = GLOBAL_ROOT_GID;
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index ee7d33b89e9e..60333a6b9370 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -205,7 +205,6 @@ struct ctl_table_root {
+ 	struct ctl_table_set default_set;
+ 	struct ctl_table_set *(*lookup)(struct ctl_table_root *root);
+ 	void (*set_ownership)(struct ctl_table_header *head,
+-			      struct ctl_table *table,
+ 			      kuid_t *uid, kgid_t *gid);
+ 	int (*permissions)(struct ctl_table_header *head, struct ctl_table *table);
+ };
+diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+index 45cb1dabce29..1a5085e5b178 100644
+--- a/ipc/ipc_sysctl.c
++++ b/ipc/ipc_sysctl.c
+@@ -192,7 +192,6 @@ static int set_is_seen(struct ctl_table_set *set)
+ }
+ 
+ static void ipc_set_ownership(struct ctl_table_header *head,
+-			      struct ctl_table *table,
+ 			      kuid_t *uid, kgid_t *gid)
+ {
+ 	struct ipc_namespace *ns =
+@@ -224,7 +223,7 @@ static int ipc_permissions(struct ctl_table_header *head, struct ctl_table *tabl
+ 		kuid_t ns_root_uid;
+ 		kgid_t ns_root_gid;
+ 
+-		ipc_set_ownership(head, table, &ns_root_uid, &ns_root_gid);
++		ipc_set_ownership(head, &ns_root_uid, &ns_root_gid);
+ 
+ 		if (uid_eq(current_euid(), ns_root_uid))
+ 			mode >>= 6;
+diff --git a/ipc/mq_sysctl.c b/ipc/mq_sysctl.c
+index 21fba3a6edaf..6bb1c5397c69 100644
+--- a/ipc/mq_sysctl.c
++++ b/ipc/mq_sysctl.c
+@@ -78,7 +78,6 @@ static int set_is_seen(struct ctl_table_set *set)
+ }
+ 
+ static void mq_set_ownership(struct ctl_table_header *head,
+-			     struct ctl_table *table,
+ 			     kuid_t *uid, kgid_t *gid)
+ {
+ 	struct ipc_namespace *ns =
+@@ -97,7 +96,7 @@ static int mq_permissions(struct ctl_table_header *head, struct ctl_table *table
+ 	kuid_t ns_root_uid;
+ 	kgid_t ns_root_gid;
+ 
+-	mq_set_ownership(head, table, &ns_root_uid, &ns_root_gid);
++	mq_set_ownership(head, &ns_root_uid, &ns_root_gid);
+ 
+ 	if (uid_eq(current_euid(), ns_root_uid))
+ 		mode >>= 6;
+diff --git a/net/sysctl_net.c b/net/sysctl_net.c
+index 051ed5f6fc93..a0a7a79991f9 100644
+--- a/net/sysctl_net.c
++++ b/net/sysctl_net.c
+@@ -54,7 +54,6 @@ static int net_ctl_permissions(struct ctl_table_header *head,
+ }
+ 
+ static void net_ctl_set_ownership(struct ctl_table_header *head,
+-				  struct ctl_table *table,
+ 				  kuid_t *uid, kgid_t *gid)
+ {
+ 	struct net *net = container_of(head->set, struct net, sysctls);
+
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+2.44.0
 
 
