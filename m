@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-14541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1E787D5D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 21:56:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 786AF87D5C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 21:56:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EB72287C11
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 20:56:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71B21F25CFD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 20:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEDE60259;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB575F866;
 	Fri, 15 Mar 2024 20:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="cb3QOEgY"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ZRYoy5xK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC0D17BCA;
-	Fri, 15 Mar 2024 20:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C926355C13;
+	Fri, 15 Mar 2024 20:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710535773; cv=none; b=amUlvm9eDM/aAJkRiwpf1zvY44eeT4MT+w3X0oSpPw6w9E0qam4aGQInc1OJFH2ZeAzzpz2IEBF72kOExIeMCcWTG2pnHWn45Dg0xWI3cEL2+G+bUMFkNd23ollmCjrWCwXLWV3hY6LzPsn4481McKheKQxV1wp+t4bINQNV0/8=
+	t=1710535772; cv=none; b=KWTj+dZcVT6GZwOPouNVK59zv1impsiEZjr1DY0TbPr+3gkAb3KmuDlJfb2qLaSfnY/4Y41Jd/ioNtB0Dn3SQdedgoqq/l4iWWpAISu5x+sbGTaELZJBMNkmKXjinCtEJoUbdOPD4ElIkmXyh5rSjKCKR2d2zNBxdB5Uv1BKzdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710535773; c=relaxed/simple;
-	bh=m+K+pCOcUIKDJXVlXdIjxkNCOOD+02kNnAffkd4pv3g=;
+	s=arc-20240116; t=1710535772; c=relaxed/simple;
+	bh=odMbVtXputh1B0wvO7gtV7cKLTLD5qqVWgyPwr4fby8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i6qC9iD02Z87/2IJJd+czg4MuFHisoiKHrWXb2imjNSW8p4/AsU6sDgVYn1wI6SlJ+aFZFWUixwibTgI/9PqY3sA1Zu9+dWRtmA/82+FJLEU79uScAlzAuXPNVgH73/jL9jrtOV1UbOBDKC4sEk7yPLwrLq0kIbYl0qX5BV35Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=cb3QOEgY; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=oNjECK7F+gHcKzrAXQhVmyUzc9+Si9XjskYNq6nb2uG0DFkwYd7p0/s1vgZoJZJxk10zIytdWqFMOBd1LRykgsqK5Okt3KBJbOjGRd/veJsiZyXNDVGpMVMlf8ShyLEnGnu0WSBvmGCBMSY+Hzj4Ohep/G6Z7BN4BjoIPOdFAgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ZRYoy5xK; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1710535766;
-	bh=m+K+pCOcUIKDJXVlXdIjxkNCOOD+02kNnAffkd4pv3g=;
+	s=mail; t=1710535767;
+	bh=odMbVtXputh1B0wvO7gtV7cKLTLD5qqVWgyPwr4fby8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cb3QOEgYhSOo5dBLnXgkMRMxuVv0okcJpfd5edbt3ifxIzXT2zjoDCiC4tGUNCz+W
-	 ljsJju3dsPM4CKYzcJSWsCzYywoPdqBymXenIAOEg6SNhFXLDJy11LIev3CLU+5SiX
-	 5OtXoaPWfNVzSic8h/bjX3Y17XydBQOq3b1+hCAQ=
+	b=ZRYoy5xKlPbaQJbgxsp1QGsFld7cYmUHymRwffDkifNDwOHyAedHpITyb+WigYxCt
+	 q1gwkFJh6JIVyUe2TB4mwf5as8GGNXoQ1lKGvZwP/yMMpArCzaDsGbQ55vzZG5KmO6
+	 AB8XmeGq62jLL6684ZpFESHQRsP/qQVQN/RRxZNQ=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Fri, 15 Mar 2024 21:48:06 +0100
-Subject: [PATCH 08/11] ipv6/ndisc: constify ctl_table arguments of utility
- function
+Date: Fri, 15 Mar 2024 21:48:07 +0100
+Subject: [PATCH 09/11] ipvs: constify ctl_table arguments of utility
+ functions
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240315-sysctl-const-handler-v1-8-1322ac7cb03d@weissschuh.net>
+Message-Id: <20240315-sysctl-const-handler-v1-9-1322ac7cb03d@weissschuh.net>
 References: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
 In-Reply-To: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -140,36 +140,48 @@ Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-security-module@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1710535695; l=778;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1710535695; l=1292;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=m+K+pCOcUIKDJXVlXdIjxkNCOOD+02kNnAffkd4pv3g=;
- b=d4zm13k2OQna/NlK3uekXkMo7hwOBupIjvbXHKdSXoSk2DsIK+yuhbmEQr0VAeaARyLv14HqX
- 0Z4woBXtUp1D7/pq8L0Ybaa/TZAKfXvfcMgjftD2Zr5aqWsk6Mdkffo
+ bh=odMbVtXputh1B0wvO7gtV7cKLTLD5qqVWgyPwr4fby8=;
+ b=7GpUccAEuc2xBmXqEFNwFbz0XLotyU5tmG9v17gkewwd7Qns7NOwDWHSnZv3ofT48IWObeYTu
+ 7RChjCUP9KPAHqCOBeJFTfx/E5jUeficzF5rmf2RzH6o0IYBCrGbbwP
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
 In a future commit the proc_handlers themselves will change to
 "const struct ctl_table". As a preparation for that adapt the internal
-helper.
+helpers.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- net/ipv6/ndisc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/ipvs/ip_vs_ctl.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
-index ae134634c323..945d5f5ca039 100644
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -1936,7 +1936,7 @@ static struct notifier_block ndisc_netdev_notifier = {
- };
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 143a341bbc0a..689ac521ea2d 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -1924,7 +1924,8 @@ proc_do_sync_ports(struct ctl_table *table, int write,
+ 	return rc;
+ }
  
- #ifdef CONFIG_SYSCTL
--static void ndisc_warn_deprecated_sysctl(struct ctl_table *ctl,
-+static void ndisc_warn_deprecated_sysctl(const struct ctl_table *ctl,
- 					 const char *func, const char *dev_name)
+-static int ipvs_proc_est_cpumask_set(struct ctl_table *table, void *buffer)
++static int ipvs_proc_est_cpumask_set(const struct ctl_table *table,
++				     void *buffer)
  {
- 	static char warncomm[TASK_COMM_LEN];
+ 	struct netns_ipvs *ipvs = table->extra2;
+ 	cpumask_var_t *valp = table->data;
+@@ -1962,8 +1963,8 @@ static int ipvs_proc_est_cpumask_set(struct ctl_table *table, void *buffer)
+ 	return ret;
+ }
+ 
+-static int ipvs_proc_est_cpumask_get(struct ctl_table *table, void *buffer,
+-				     size_t size)
++static int ipvs_proc_est_cpumask_get(const struct ctl_table *table,
++				     void *buffer, size_t size)
+ {
+ 	struct netns_ipvs *ipvs = table->extra2;
+ 	cpumask_var_t *valp = table->data;
 
 -- 
 2.44.0
