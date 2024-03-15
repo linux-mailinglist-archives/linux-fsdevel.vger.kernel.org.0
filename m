@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-14489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F5B87D18F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 17:54:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC4E87D19A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 17:54:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4984F1C21FB2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 16:54:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE361C21D0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 16:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF274DA08;
-	Fri, 15 Mar 2024 16:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91470524B1;
+	Fri, 15 Mar 2024 16:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUDyOe+Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XEY+uGi+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B464CB2E;
-	Fri, 15 Mar 2024 16:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E6050A60;
+	Fri, 15 Mar 2024 16:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710521590; cv=none; b=SnyJj3kgCKVscIuXKMYjLuOQOsqTkLFkr90L3Zex4P4C+HbBoDPpTDBGat6nQWU1OnIIlK5F6lXt7vQn664t4A1PVB2vmbH9O6M5py8jEsY9BN+y/zPOrqrjLtGZPEvEjYslZVepMpWlAVuWx1vjal/0N7aBFx5i9CdTdR/E150=
+	t=1710521594; cv=none; b=WAK0p5056l7mOMei4iJMHxXLikWw1SkPDX3wQdD/OiPbwFWahqsY92FgkD9p1LnODhDwDk6RtXk8fmkVnGRdfMx7IzS8wo0FIHFvgv7W85G95wi6IYL/+279BPktkfYLXb1Sq2ZnbOyndC+4FA/e8cOQDLuY9N2m6mwwMWWT/Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710521590; c=relaxed/simple;
-	bh=8T+6AOlfeQNDoOcwsJEzBNC68QavdbxR38E+z9RzRco=;
+	s=arc-20240116; t=1710521594; c=relaxed/simple;
+	bh=yoiNJ2WMy08Z/jmvwgFEmuwGurlE5zLX34Ydm7pIfCE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=afb3MXSTdZKVZGCaNc1I1G2hFyrLkmvjuGga9YO7hgjM992oSycPUMdjEcjoZkcPlohvqw/d1d3nHGwCtP52vxW/pYvInnJU+kO/fFOV9odNDRvTCvxFDdXYcSYNMcyp5+Y3bCCvHpVbOCxJRxg1ttdqMw5jfeW7F9TvcFjgc44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUDyOe+Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CE9CC43330;
-	Fri, 15 Mar 2024 16:53:07 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=XjA6w0lbfsfCd44dASjqWF6unHW4GneHnPO/5doV+PJapFFZjTQuwOjh1N0+Ni5C5o/Lu3BrfGiJSh8wLzV7cr/Hw5FmyaEvI93O5WB+3EfQg0TofXjkhGE++5jPhrrj+P24cAo9IwZ1R8Mt0uyewGjhOHHPivcMfX4mXG1XhT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XEY+uGi+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A6CC433A6;
+	Fri, 15 Mar 2024 16:53:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710521590;
-	bh=8T+6AOlfeQNDoOcwsJEzBNC68QavdbxR38E+z9RzRco=;
+	s=k20201202; t=1710521593;
+	bh=yoiNJ2WMy08Z/jmvwgFEmuwGurlE5zLX34Ydm7pIfCE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=AUDyOe+Q5lZxtJzsCf7qTK7H4/hxOvfkImC2NcB/evyqNClohpHmxZM/hQPJsf62W
-	 DS2OP7iHyOMqCuLZSAdcO+7bfYHpQsQGMz75vrfBzjd4ZrD8EPsdjA9TtraEMbWkso
-	 pBvJ6alqfXf36Cg0xIL/2JH07c1Rf2G+4+BkQco4koJVWwTdXCtdeSV7KHARTZ0sFu
-	 kcVjcqI2sbJyJR9MH2SG0adqDaYmkiT+9sJLBpCKLr5m4Ch9dkMvAf1J7DlHh55TjN
-	 TwkjEDioYr1cUN6SH3fAMVdXAEP9umrPP+UZfogGhXNBKKReHUEEkIO01aZ1+QeQIK
-	 J02PcEkUH6g+Q==
+	b=XEY+uGi+XMfNO7Nb9q1mLl4Bfrs/QaMERD5P8XHgsE2J6AyHsA6licbS7dt+lLy2t
+	 KM0eaSgrJ59Koop917ozXPgeF6uTMZEP918pHrzQLXSL03vEFVh51sClvgH6k0vOUR
+	 2PeS5U7F2I05DTJA54hYL5sGQzW7yYX2yJ/tSVUNWroH4kRN0WOQqVTnxr9T6awvoe
+	 nFgi9nhNxa+3XTCLMBpVJhoehe1rMjgiebXSozDVnZgwPQY6cCIct+aH7NlPcY6Upl
+	 H7w6YxbygBaPaVf5PIgvj96wnZDBzV0HptW2ZGvonXw+4R4lbEEKC70h33YvkH5tM8
+	 9/Fa/diGIy0lA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 15 Mar 2024 12:52:52 -0400
-Subject: [PATCH RFC 01/24] filelock: push the S_ISREG check down to
- ->setlease handlers
+Date: Fri, 15 Mar 2024 12:52:53 -0400
+Subject: [PATCH RFC 02/24] filelock: add a lm_set_conflict lease_manager
+ callback
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240315-dir-deleg-v1-1-a1d6209a3654@kernel.org>
+Message-Id: <20240315-dir-deleg-v1-2-a1d6209a3654@kernel.org>
 References: <20240315-dir-deleg-v1-0-a1d6209a3654@kernel.org>
 In-Reply-To: <20240315-dir-deleg-v1-0-a1d6209a3654@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -80,85 +80,74 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
  netdev@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2248; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=8T+6AOlfeQNDoOcwsJEzBNC68QavdbxR38E+z9RzRco=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBl9HzsJ1CBEsrq8i5Ktjn9sZVvT1iJpsa6mUcrE
- MFBp+WpUjyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZfR87AAKCRAADmhBGVaC
- FQ69D/9Gv0ui46+5Z7asnVv3ONO1FfD1Q27hfM+zoxC44Kn2IQR1AW8gU2Y8zAvnx+bPM2W6rdZ
- uNMueRm6pIHtjRX3LpIkRbXADPaQBhtMoLBO95opU0PQe3b3Fv04BN+drlyJvG5NsxclTzqAy2R
- swCVQh2cvBjPik90E2d4gGpaddqJgzmThyhFzcvpJEyECheSWljRSj81tlcXZMlOQBvwDaxHnNT
- fHnWxSvqLaIpDh/7XJgnNFp0/auy/nV4mM2KfUv5dm9Oxu3Dnm82zIB0130RZMj6vce9aLWT/+n
- rexsrTOF/SLE+jSDlfaHy9NxF6CPDaj8vSNDWf3fVfuquN+kLhLOgvmO0ug/zNncgBCM0nP5JyC
- P0XUPWUvlXqlL7+liFs5YZ80jR7FJRWmE1bZzSRI8PTmj6YEU3p5mvocnBQLfMJnz4pFr7Dh6xX
- 7ZaGDJNdZXagKsz8fn0abO9543C8hej+RSPpR58Ma9HcYvobnDub4aU0WbQr29FTsrCzGxKERih
- +WjetRDcMl+QrhIU148tacvuu/wT8fZXaAOUjtDkGG7WOC5UG9NnJwL+blCyM/wKNnAerlLitmS
- UBJmG7hTqXYUtBqb/01UE30rbth48Q2cc/4qu8TZqt5hC0C1LpETknJMBmZNaZF9EgdhI10RYw3
- KVk/Jrr27U64+Dw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1797; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=yoiNJ2WMy08Z/jmvwgFEmuwGurlE5zLX34Ydm7pIfCE=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBl9Hzs2+8zYCAzKB5/98GTlmhyG+aP5LQ4QlhAD
+ oFPU5y3oqqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZfR87AAKCRAADmhBGVaC
+ FZYbD/9PgexRfP/oZyLnzXj1LQWbdWuafLMR1PrMfcQdA8nLyj3/XcZVj2tQW5hRtHbc1/GScMU
+ yYZdODfDWam9emdF6YJ/+OhumYMhsUydbjCmkDn8q0AaXNW355kf+uqC5F+k+1fQlSMMykC1K2Z
+ QEQnObzc18vZmuUlY4UeMotErRi+UVV2ZAZT+YAnIoK0o/r7sXEbwUdlzlz0BBV1wxCBEv5wGQX
+ h/aNQk9ECgurxf0qnWemYcGZA4kbJenOXPHG3mpleUBOO/tMcKUyUWKZVfdd8khpEQFd5cdWqDk
+ xX1W5Ez+Hg6MJhufoEvl0ulX62KFJIexDpJIh1ZpqgNe+RzEoXXx1DaZ2dRJ+fD4RFiSw8RDGzh
+ 7P02ZSdU95bgAICsLfo7ojqsfatE2cN40aDVw4/nui8+h+60jsLjYKirmVGJ60gI9WRw/I1VDMs
+ 9Hbv0fCP36t1OpGXXG//745DiBd8rrv0fmBSwFuy4/f1DBDywPZudFYUCaU9rl5FlDw4NFxEM3/
+ 2arcncljpxeoVmWuGp3VUg/B+82OWTDnbaxZfRQH7Sn4f4yzgTwvqIW8bk+lSmYcvdcvbbF9PDa
+ i60bc0vUKjfjiCDeGSP8ou4pL/07m1Dyhlc6e/t4O4Kk/NrnxGN71aEYWCgqeU8EmnCYTCDjmrM
+ XfcREeDkf4rMEBA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-When nfsd starts requesting directory delegations, setlease handlers may
-see requests for leases on directories. Push the !S_ISREG check down
-into the non-trivial setlease handlers, so we can selectively enable
-them where they're supported.
+The NFSv4.1 protocol adds support for directory delegations, but it
+specifies that if you already have a delegation and try to request a new
+one on the same filehandle, the server must reply that the delegation is
+unavailable.
+
+Add a new lease_manager callback to allow the lease manager (nfsd in
+this case) to impose extra checks when performing a setlease.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/locks.c             | 5 +++--
- fs/nfs/nfs4file.c      | 2 ++
- fs/smb/client/cifsfs.c | 3 +++
- 3 files changed, 8 insertions(+), 2 deletions(-)
+ fs/locks.c               |  5 +++++
+ include/linux/filelock.h | 10 ++++++++++
+ 2 files changed, 15 insertions(+)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index 90c8746874de..cb4b35d26162 100644
+index cb4b35d26162..415cca8e9565 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -1925,6 +1925,9 @@ static int generic_delete_lease(struct file *filp, void *owner)
- int generic_setlease(struct file *filp, int arg, struct file_lease **flp,
- 			void **priv)
- {
-+	if (!S_ISREG(file_inode(filp)->i_mode))
-+		return -EINVAL;
+@@ -1822,6 +1822,11 @@ generic_add_lease(struct file *filp, int arg, struct file_lease **flp, void **pr
+ 			continue;
+ 		}
+ 
++		/* Allow the lease manager to veto the setlease */
++		if (lease->fl_lmops->lm_set_conflict &&
++		    lease->fl_lmops->lm_set_conflict(lease, fl))
++			goto out;
 +
- 	switch (arg) {
- 	case F_UNLCK:
- 		return generic_delete_lease(filp, *priv);
-@@ -2014,8 +2017,6 @@ vfs_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
- 
- 	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE))
- 		return -EACCES;
--	if (!S_ISREG(inode->i_mode))
--		return -EINVAL;
- 	error = security_file_lock(filp, arg);
- 	if (error)
- 		return error;
-diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-index 1cd9652f3c28..b7630a437ad2 100644
---- a/fs/nfs/nfs4file.c
-+++ b/fs/nfs/nfs4file.c
-@@ -442,6 +442,8 @@ void nfs42_ssc_unregister_ops(void)
- static int nfs4_setlease(struct file *file, int arg, struct file_lease **lease,
- 			 void **priv)
- {
-+	if (!S_ISREG(file_inode(file)->i_mode))
-+		return -EINVAL;
- 	return nfs4_proc_setlease(file, arg, lease, priv);
- }
- 
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index fb368b191eef..81a96fbfa3ed 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -1094,6 +1094,9 @@ cifs_setlease(struct file *file, int arg, struct file_lease **lease, void **priv
- 	struct inode *inode = file_inode(file);
- 	struct cifsFileInfo *cfile = file->private_data;
- 
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
+ 		/*
+ 		 * No exclusive leases if someone else has a lease on
+ 		 * this file:
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index daee999d05f3..c5fc768087df 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -49,6 +49,16 @@ struct lease_manager_operations {
+ 	int (*lm_change)(struct file_lease *, int, struct list_head *);
+ 	void (*lm_setup)(struct file_lease *, void **);
+ 	bool (*lm_breaker_owns_lease)(struct file_lease *);
 +
- 	/* Check if file is oplocked if this is request for new lease */
- 	if (arg == F_UNLCK ||
- 	    ((arg == F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
++	/**
++	 * lm_set_conflict - extra conditions for setlease
++	 * @new: new file_lease being set
++	 * @old: old (extant) file_lease
++	 *
++	 * This allows the lease manager to add extra conditions when
++	 * setting a lease.
++	 */
++	bool (*lm_set_conflict)(struct file_lease *new, struct file_lease *old);
+ };
+ 
+ struct lock_manager {
 
 -- 
 2.44.0
