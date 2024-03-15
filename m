@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-14505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3348387D20F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 18:02:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E781687D217
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 18:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651ED1C2099B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 17:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A585928150F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 17:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878E45D8EA;
-	Fri, 15 Mar 2024 16:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA365E086;
+	Fri, 15 Mar 2024 16:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bA0JHACJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLPvsPtQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B4346444;
-	Fri, 15 Mar 2024 16:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329D05DF3A;
+	Fri, 15 Mar 2024 16:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710521642; cv=none; b=oq7K+ZeAiJBFoc2G1KaC0/lLkeRU0t3EsAX7IMAZARpOBpS/hOzK1uE9+Gv++U2WkcZkDRf5wIC+FD7+7hp8WDhUQF9Cg8Q7iuEIIZD7qoen9bI/gRY2z9p0Wpi812NTUW7ua8JeYRfZXYrlSci+C3Hkj1QVCO7WulCDjXbhL58=
+	t=1710521645; cv=none; b=VCdWWhsRGdiGlaCE/BgUHejTjULhgHoLUF1cB3se7S3anzKjjeIXO5tQp/Erbg83sSsSfC79xsY4bJ4MyD+CTuKZbXw4pcv96lg5Gystmnf1ZqyYGZJugLrXrsI9e7+L1w6spSqdAmXMTkNfV/LWmQTQ6LKFjVRro5MIQJ97KDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710521642; c=relaxed/simple;
-	bh=P3P+nenUv6VvukNKiPfmxlsB6i7HdvY08p8t+ZTGZvQ=;
+	s=arc-20240116; t=1710521645; c=relaxed/simple;
+	bh=XiLoCX5bhdIOKqVgg6TYQoclvr1Nu5zRdr/p/ktT9jI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jrOqPBHMecBfmxYp/3RHpfZub/Rj96+BWHjHv/0H+XNouftnEWpgkC23GQC9hKIDf4p6YZAe9FqyC5cAqVIpmB8SDqOSscGyud95mAlw8t748isH0b47ub4F2mPMmViZA9NlujsobM54RNjnTt16R5pgSrKkMBGA1c5tTGNylnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bA0JHACJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D4B4C433C7;
-	Fri, 15 Mar 2024 16:53:58 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=qmvvTutwcBUWA0gyJ4705t5+nAgkef/EpR2X61nQgdBd+KwRHC3mJmqGpnmZQfgf4JI8O6264lKhU9c8a0i2GE2RaURmWuicofhxK6dZmB7ZY815EXND8UdZOP0VLtz8OttTEy9wER1IGBaU0LXWbPQ5ODrNnW3hn8Yj2P/CY0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLPvsPtQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE688C43141;
+	Fri, 15 Mar 2024 16:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710521641;
-	bh=P3P+nenUv6VvukNKiPfmxlsB6i7HdvY08p8t+ZTGZvQ=;
+	s=k20201202; t=1710521644;
+	bh=XiLoCX5bhdIOKqVgg6TYQoclvr1Nu5zRdr/p/ktT9jI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=bA0JHACJ4ODIfzBcjkQNec/1i3GwGfPX1XO4vav7s1TnyjdlA3Ai7XJBTetakBPIi
-	 IDeYNJpPufcNi2bhKyQjNL8PnbNlpwqXcIaVejSxLrpp8s+x/ARHSBZ3s05qZKCAC4
-	 BxrxURM+BIWz9InwPb8QNgVIkfmGuDFQ8+dkU0JOpWyNz6bD746s+rXg+ySz3hNwr+
-	 vVS5NMLoD4yBzXbzcK+N+vK8aRz2rv9+9QWdtOlezW9105CArD4duChX13QkCTVqa4
-	 ufi0ideAIXlaDVahH6wsWH5BgbrHskAZu4bRpFhAv5M4FxurCn8+BNzxEEMP2VW0x+
-	 O+apPmFY+MZTg==
+	b=BLPvsPtQdNH5QPkGe5nrzfrhOhLNi2qwiwA2ylgWSBrlb8XTozNQ95eRiDkApXBll
+	 Eq/eMNeqMJxZDFAbeyaPJb8yLCrV1oTKxOV4sRgugj+PnBh8S6DZfOmNr4wSWICVab
+	 I5QqpFrWSpRjYP1+RlK5lZifRgcaXmY54Fm2zkhqTwoveWgpZXmf5R3c7Todz0zo81
+	 pI+rzNF1Jp0ez4zvsj7YUucHPhITnQWcxkyFNmAcDyfNWcSSIMqYF29mAECLJJOmvz
+	 SVdnJUW4+S1K8Mapl2DOyY4KX5QyBbkA/+cgzyLr6AqS/Jpro5R9JA+INPyQubZ3dF
+	 mxOhzh3d1u28g==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 15 Mar 2024 12:53:08 -0400
-Subject: [PATCH RFC 17/24] nfs: add cache_validity to the nfs_inode_event
- tracepoints
+Date: Fri, 15 Mar 2024 12:53:09 -0400
+Subject: [PATCH RFC 18/24] nfs: add a tracepoint to
+ nfs_inode_detach_delegation_locked
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240315-dir-deleg-v1-17-a1d6209a3654@kernel.org>
+Message-Id: <20240315-dir-deleg-v1-18-a1d6209a3654@kernel.org>
 References: <20240315-dir-deleg-v1-0-a1d6209a3654@kernel.org>
 In-Reply-To: <20240315-dir-deleg-v1-0-a1d6209a3654@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -80,64 +80,57 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
  netdev@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1399; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=P3P+nenUv6VvukNKiPfmxlsB6i7HdvY08p8t+ZTGZvQ=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBl9Hzuw88TNqkwCTRIrEoLMgta3Sg0NHy64s1yu
- mjRVl3KkxWJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZfR87gAKCRAADmhBGVaC
- FasaEACuCD1+QHJLojJYk7/ZwEUGejIPwEWap+++JOPIdRPuGRKC8aDvaOaQD2V1gAoWvZ47y8a
- I9XxuUjcpfkniTYoJb1Vvy7rz/6uTRGV/91UFdLPY/N19gjH5ZdvP+ZgKpcxsTpscRCyZNSj4br
- PKYcfDpjLymWsxaQZAvoEq5CGJOJjij+oJwTwXG04n0+hBXAdsDGS0oeUQG3A3FWr5Q2QjsYPfa
- cQ+G1aoNF1dw88GvPPXh3X2N8hGu/gmDyKXXhzD4jCp1spW+3ffSBQ6dhOXhLOQyUmAS0IWeWB3
- nujqVPjSUgjK0yaE/SIII5RNggdSMIZXCgg6XSBGt3rxjvLIpw4XHOfk44ZXnYKzvpwMBfqszdF
- VrGm4HFamuj+O9HHv+VSd4140KbfULTBr3txJviII7n2ri9V3BnbXUCPmiLnMQmjs26Qe91ZRnp
- +ZTOdmV1IM/LR4xnXjCPPAYO2cSU+gZVb7mnDd5i30nCWGZhQDSiW6TnYeHU+w+EU0eXMNvIxcx
- fwEWWo/uy8U0gwJC/N6ZHz4rM2e3KylUA5GQVvUmLzn0l75LRWYvAC3F0LK7lxcxK3P/QawY2Ym
- Ztm7wFSUOQZjAsx2PwIqKSBubWclBpFRn3KXQyMmp7xX/TZ9TB9Z2hxLH7+2hy7DUTFixYnKOY1
- LAsxr375bCYSywg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1244; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=XiLoCX5bhdIOKqVgg6TYQoclvr1Nu5zRdr/p/ktT9jI=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBl9HzuFU9/qcgtCrWHrKJL7PuqWD46v0PKpVFYD
+ d0wkTeXPv2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZfR87gAKCRAADmhBGVaC
+ Ff3SEACwqsjqTGfQkWOWe61DrYWuJK3UYZgCteOaTcV+W2NWpxdnkFRovxC3Se9EQLFO4XYdz9h
+ sn0mFfChkDAvBCMdBVVXnmiUSbyibhezGotYkv/OvUgiXR7EBtFEkB+gHkwRKlMDjJ26di0puOO
+ uSrdJuCp0u73L9RkjUAQldmInEzMQ0/BoGkzflTS6JtvfYM2lWk8Vl3zPA1d+PC4V5GbewJQ+EM
+ V5H4uqj2ZMEpL9R8oGjTpMT7MANepirW1NOyv6fwvSqbNg9q9q8sbCSyDJ3SBvLOeNcvC9ftk2d
+ aTdXJSePeMTuALlxkeoa+KdleIx7qwV5d0pYLnLp5Ln6LfRe0m3pybLzBcLyKgIZ2evFWpbm/KP
+ EROuJMgNarMgNsejXdkODcuHcKrt77wRFe4HC93mAQQSJVCxzF8BexykjGwbkBmEM2Qy3HQy1QS
+ PVEMszQUJhJ7Ljm4y97zwWZftIkSfahruJsqoRXJd16/qLTJHrb5p1dkZFAvGwsmaMozMu6EOaf
+ 3EVaCPZVvYPu+Q5ovAeQuueGEkvAoZcV7dwrvlFmpWuFv4YfE38lxbNby4N+UNXQsL5H1GbLRJf
+ PXVHfP5hiziscco0g7ByP2lUwWP2uvoj/h5wG1zJT9XgMaBX9nQ3pjZNb+f8BYuBV4j+0qxneoO
+ 5NqX/6yGWQJ5Gsw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Managing the cache_validity flags is the deep voodoo of NFS cache
-coherency. Let's have a little extra visibility into that value via the
-nfs_inode_event tracepoints.
+We have a tracepoint for setting a delegation and reclaiming them. Add a
+tracepoint for when the delegation is being detached from the inode.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfs/nfstrace.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/nfs/delegation.c | 2 ++
+ fs/nfs/nfs4trace.h  | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/fs/nfs/nfstrace.h b/fs/nfs/nfstrace.h
-index afedb449b54f..e0cd3601d1f7 100644
---- a/fs/nfs/nfstrace.h
-+++ b/fs/nfs/nfstrace.h
-@@ -56,6 +56,7 @@ DECLARE_EVENT_CLASS(nfs_inode_event,
- 			__field(u32, fhandle)
- 			__field(u64, fileid)
- 			__field(u64, version)
-+			__field(unsigned long, cache_validity)
- 		),
+diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
+index d4a42ce0c7e3..a331a2dbae12 100644
+--- a/fs/nfs/delegation.c
++++ b/fs/nfs/delegation.c
+@@ -342,6 +342,8 @@ nfs_detach_delegation_locked(struct nfs_inode *nfsi,
+ 		rcu_dereference_protected(nfsi->delegation,
+ 				lockdep_is_held(&clp->cl_lock));
  
- 		TP_fast_assign(
-@@ -64,14 +65,17 @@ DECLARE_EVENT_CLASS(nfs_inode_event,
- 			__entry->fileid = nfsi->fileid;
- 			__entry->fhandle = nfs_fhandle_hash(&nfsi->fh);
- 			__entry->version = inode_peek_iversion_raw(inode);
-+			__entry->cache_validity = nfsi->cache_validity;
- 		),
++	trace_nfs4_detach_delegation(&nfsi->vfs_inode, delegation->type);
++
+ 	if (deleg_cur == NULL || delegation != deleg_cur)
+ 		return NULL;
  
- 		TP_printk(
--			"fileid=%02x:%02x:%llu fhandle=0x%08x version=%llu ",
-+			"fileid=%02x:%02x:%llu fhandle=0x%08x version=%llu cache_validity=0x%lx (%s)",
- 			MAJOR(__entry->dev), MINOR(__entry->dev),
- 			(unsigned long long)__entry->fileid,
- 			__entry->fhandle,
--			(unsigned long long)__entry->version
-+			(unsigned long long)__entry->version,
-+			__entry->cache_validity,
-+			nfs_show_cache_validity(__entry->cache_validity)
- 		)
- );
+diff --git a/fs/nfs/nfs4trace.h b/fs/nfs/nfs4trace.h
+index fd7cb15b08b2..b4ebac1961cc 100644
+--- a/fs/nfs/nfs4trace.h
++++ b/fs/nfs/nfs4trace.h
+@@ -926,6 +926,7 @@ DECLARE_EVENT_CLASS(nfs4_set_delegation_event,
+ 			TP_ARGS(inode, fmode))
+ DEFINE_NFS4_SET_DELEGATION_EVENT(nfs4_set_delegation);
+ DEFINE_NFS4_SET_DELEGATION_EVENT(nfs4_reclaim_delegation);
++DEFINE_NFS4_SET_DELEGATION_EVENT(nfs4_detach_delegation);
  
+ TRACE_EVENT(nfs4_delegreturn_exit,
+ 		TP_PROTO(
 
 -- 
 2.44.0
