@@ -1,62 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-14418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FE087C797
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 03:36:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB4887C7AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 03:48:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B57A1C20AF3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 02:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B60962829E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 02:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB3E8801;
-	Fri, 15 Mar 2024 02:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23DA944F;
+	Fri, 15 Mar 2024 02:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPHRd6hW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClHy/pvM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420CF6FA9;
-	Fri, 15 Mar 2024 02:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA9E6119;
+	Fri, 15 Mar 2024 02:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710470196; cv=none; b=tCCt6JQrwbioUjcNE1Xc7vln7fgSoG2ROKEfWN8ybRTq+GKyLTwPiTc5SsSYywqgc9nT0IyOVHHlf0lyQNtxdomnww7ifpJatACiv8keT8IbFsBEMnjO0IbIDr76P11hmbacEi2NjBTCMdYSw6xQImR3p4WKg4w24nz6VxLNDew=
+	t=1710470907; cv=none; b=XXOa1HJXREDCX7dhInYc5N1j+6X3NfsDyGrNZetHv0pe6JPtJ4gu+stq/ekkM42ofs+8OA6HuI0eSAFe3RI9QSOxVQkDdlu5Yi0fwCzfAvNYGDTdp4ztiy9Z0zyDyX0MEOSzwRhAimeM4L2hPKMPxoEvz/tt+CvbPPD072czZH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710470196; c=relaxed/simple;
-	bh=IDHZnC8DRlGzREfmab5dkL11UA+OXeGg6l0o1zRoQ6s=;
+	s=arc-20240116; t=1710470907; c=relaxed/simple;
+	bh=vLuEhKukV2AosJU47Ar2L7Vg5bijeRK06wIesJ6eiw0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OKGgA2IOsL/7TBdexV89/Y/kNV29+d56maUGsaIYQWTYbZ7tsrUYAUoZ9J/BZ/BZCcL/ukFKkoLNq80onhtRgcyFPr0m0UI1G07QYDcoS8Ko7zDHJtKLwwY/KzjutjPF41ijedDKrgsdbrIF96ABXooUH+b/FCgjp0w9x6q6DGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPHRd6hW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C71C433F1;
-	Fri, 15 Mar 2024 02:36:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LGtzEXydcccRkNYdty8yDqKvh/m17PqSwDEtbVA+b7E4TKEJ8IJeK6+ccTeT44B7aMnSuCAY+/jL1IikGa2c3pz4APArchmSt7Tnsk5xsjwHHuHGL1VYJ3L96hs8+F+y5aDQMInX/cHLRQFTClib6rRZZDPvUQDaGyw1j4KOzOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClHy/pvM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1287DC433C7;
+	Fri, 15 Mar 2024 02:48:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710470195;
-	bh=IDHZnC8DRlGzREfmab5dkL11UA+OXeGg6l0o1zRoQ6s=;
+	s=k20201202; t=1710470907;
+	bh=vLuEhKukV2AosJU47Ar2L7Vg5bijeRK06wIesJ6eiw0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aPHRd6hW4TLqldoASq97l9h+BSFDg8lphaGFOZv1cXzrQ6qEO4BhTIULZ+wg72nlD
-	 Ujb+uQ1cOnnxwGEi3MelUyFCFIsYGOPvKXODfl1XaPJt3KcYByfiSxhn4NTJ7c6uoj
-	 8mdrOyWV1m4MgrhmJYq/v9Eui42RV6+ATITPAAAJuAeH/HmNv4JO2S8MLPbxzerf9s
-	 NWy/Rr4RKMwdZ/P9HJYG/sfWYLwencwz+H0psIl0KOkDcfX4YvFzwXNbitvLhWFUwH
-	 rCQX6w9jKjGv0cVLW266Qv02YwDQ0LKc6QuixByi4MiKEYlmDapPH+jaml2j7DKZcJ
-	 K77qvv/RS0bfg==
-Date: Thu, 14 Mar 2024 19:36:35 -0700
+	b=ClHy/pvMYOMBCPGtPbBPhborfE4MX43kvfN7bZhi9dQ//MI2aXwUxPw9FJ+N/1hC+
+	 88eQxFJCZ8dwn8G4fCtdyn31AyI2cPbYDjmjpUwXThZMhKKKZlwCmzqR5Snn4xSLqY
+	 AAMBHjnm7SpgSDvP44N9xDSgsQ9MOzaI+JsEqNef4s+crdoAWBLVXzubBQEd4vUts3
+	 iJXTwb3bBp9myH3mW15EUOPMTyhs3OG5HsOsxrTGqtSBgRS/mrHatH2FrgslesNi7D
+	 H+aIays+2En/AZWPdAYqKEYuDcW+HQvcIFVmdIBxIHhDUjeIULxk2uGWkJsE/Ksyf2
+	 bLuc5we5kLaNA==
+Date: Thu, 14 Mar 2024 19:48:26 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Chandan Babu R <chandanbabu@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>, akiyks@gmail.com,
-	cmaiolino@redhat.com, corbet@lwn.net, dan.carpenter@linaro.org,
-	dchinner@redhat.com, hch@lst.de, hsiangkao@linux.alibaba.com,
-	hughd@google.com, kch@nvidia.com, kent.overstreet@linux.dev,
-	leo.lilong@huawei.com, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, longman@redhat.com, mchehab@kernel.org,
-	peterz@infradead.org, sfr@canb.auug.org.au, sshegde@linux.ibm.com,
-	willy@infradead.org
-Subject: Re: [ANNOUNCE] xfs-linux: for-next updated to 75bcffbb9e75
-Message-ID: <20240315023635.GZ1927156@frogsfrogsfrogs>
-References: <87r0gmz82t.fsf@debian-BULLSEYE-live-builder-AMD64>
- <ZepcRgdO39xIrXG2@dread.disaster.area>
- <87o7bihb66.fsf@debian-BULLSEYE-live-builder-AMD64>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: david@fromorbit.com, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, chandan.babu@oracle.com
+Subject: Re: [PATCH v2] xfs: allow cross-linking special files without
+ project quota
+Message-ID: <20240315024826.GA1927156@frogsfrogsfrogs>
+References: <20240314170700.352845-3-aalbersh@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,56 +58,89 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87o7bihb66.fsf@debian-BULLSEYE-live-builder-AMD64>
+In-Reply-To: <20240314170700.352845-3-aalbersh@redhat.com>
 
-On Wed, Mar 13, 2024 at 12:23:17PM +0530, Chandan Babu R wrote:
-> On Fri, Mar 08, 2024 at 11:31:02 AM +1100, Dave Chinner wrote:
-> > On Thu, Mar 07, 2024 at 03:16:56PM +0530, Chandan Babu R wrote:
-> > Hi Chandan,
-> >
-> > I'm finding it difficult to determine what has changed from one
-> > for-next update to the next because there's only a handful of new
-> > commits being added to this list.
-> >
-> > In this case, I think there's only 1 new commit in this update:
-> >
-> >>       [75bcffbb9e75] xfs: shrink failure needs to hold AGI buffer
-> >
-> > And I only found that out when rebasing my local tree and that patch
-> > did not apply.
-> >
-> > When I was doing these for-next tree updates, I tried to only send
-> > out the list of commits that changed since the last for-next tree
-> > update rather than the whole lot since the base kernel it was
-> > started from. That made it easy for everyone to see what I'd just
-> > committed, as opposed to trying to find whether their outstanding
-> > patches were in a big list already committed patches...
-> >
-> > Up to you, but I'm bringing it up because I am finding it difficult
-> > to track when one of my patches has been committed to for-next right
-> > now...
-> >
+On Thu, Mar 14, 2024 at 06:07:02PM +0100, Andrey Albershteyn wrote:
+> There's an issue that if special files is created before quota
+> project is enabled, then it's not possible to link this file. This
+> works fine for normal files. This happens because xfs_quota skips
+> special files (no ioctls to set necessary flags). The check for
+> having the same project ID for source and destination then fails as
+> source file doesn't have any ID.
 > 
-> You are right. I didn't realize this problem. I will limit for-next
-> announcements to include only new patches that were added/removed to/from the
-> existing pile.
+> mkfs.xfs -f /dev/sda
+> mount -o prjquota /dev/sda /mnt/test
+> 
+> mkdir /mnt/test/foo
+> mkfifo /mnt/test/foo/fifo1
+> 
+> xfs_quota -xc "project -sp /mnt/test/foo 9" /mnt/test
+> > Setting up project 9 (path /mnt/test/foo)...
+> > xfs_quota: skipping special file /mnt/test/foo/fifo1
+> > Processed 1 (/etc/projects and cmdline) paths for project 9 with recursion depth infinite (-1).
+> 
+> ln /mnt/test/foo/fifo1 /mnt/test/foo/fifo1_link
+> > ln: failed to create hard link '/mnt/test/testdir/fifo1_link' => '/mnt/test/testdir/fifo1': Invalid cross-device link
 
-Or tell us what changed since the last push in the first paragraph.
+Aha.  So hardlinking special files within a directory subtree that all
+have the same nonzero project quota ID fails if that special file
+happened to have been created before the subtree was assigned that pqid.
+And there's nothing we can do about that, because there's no way to call
+XFS_IOC_SETFSXATTR on a special file because opening those gets you a
+different inode from the special block/fifo/chardev filesystem...
 
-"Hi folks,
+> mkfifo /mnt/test/foo/fifo2
+> ln /mnt/test/foo/fifo2 /mnt/test/foo/fifo2_link
+> 
+> Fix this by allowing linking of special files to the project quota
+> if special files doesn't have any ID set (ID = 0).
 
-"The for-next branch of the xfs-linux repository at:
+...and that's the workaround for this situation.  The project quota
+accounting here will be weird because there will be (more) files in a
+directory subtree than is reported by xfs_quota, but the subtree was
+already messed up in that manner.
 
-	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+Question: Should we have a XFS_IOC_SETFSXATTRAT where we can pass in
+relative directory paths and actually query/update special files?
 
-"has just been updated.  New since the last push are some bug fixes to
-insulate us from small mammals infiltrating the inode cache and wreaking
-havoc on Riker's trombone.  I also merged the Y2500 support patchset to
-make Geordi happy."
+> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
+> ---
+>  fs/xfs/xfs_inode.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index 1fd94958aa97..b7be19be0132 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -1240,8 +1240,19 @@ xfs_link(
+>  	 */
+>  	if (unlikely((tdp->i_diflags & XFS_DIFLAG_PROJINHERIT) &&
+>  		     tdp->i_projid != sip->i_projid)) {
+> -		error = -EXDEV;
+> -		goto error_return;
+> +		/*
+> +		 * Project quota setup skips special files which can
+> +		 * leave inodes in a PROJINHERIT directory without a
+> +		 * project ID set. We need to allow links to be made
+> +		 * to these "project-less" inodes because userspace
+> +		 * expects them to succeed after project ID setup,
+> +		 * but everything else should be rejected.
+> +		 */
+> +		if (!special_file(VFS_I(sip)->i_mode) ||
+> +		    sip->i_projid != 0) {
+> +			error = -EXDEV;
+> +			goto error_return;
+> +		}
+>  	}
+>  
+>  	if (!resblks) {
 > -- 
-> Chandan
+> 2.42.0
+> 
 > 
 
