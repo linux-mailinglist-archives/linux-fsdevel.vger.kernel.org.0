@@ -1,165 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-14456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E94887CE3B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:47:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9252C87CE62
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:53:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 840E2B21DD1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C99283046
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0154B2CCAD;
-	Fri, 15 Mar 2024 13:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A435336B04;
+	Fri, 15 Mar 2024 13:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3olND42"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqzhkH+o"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609F224A13;
-	Fri, 15 Mar 2024 13:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0028D1BF28;
+	Fri, 15 Mar 2024 13:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710510444; cv=none; b=noTd8Q+djTkbgJyCkCABwz3rwZlqD5WCHMQljftfKM9wFx+E09BcvhYtEFbvU00hU+qNfK96KMa8jhwJWYq8SNSkjYaVc7fRa9oOM4CfkPnOvVFrDL9uLCT0Nhj2sSeDY7jf0z0LmECSI9TTRk/3oUXXlrxvnyZ5vhqQAdUQcPc=
+	t=1710510751; cv=none; b=tyK6kWTR47P7OgCXIoVttOsR01TODiI4PMzcjQEGrtSmNJ2JpA7UnPg6d+RnZ6TMDVVyq26BMWDveuUrc3wd6Y+VmBb9+MycYL3euGtha0eHBCKLDCmHlMGO14B/6rIaXkOIQ0ckZBBvNZN9TjT3xFBNSSlwR6p9NThL7GqJMLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710510444; c=relaxed/simple;
-	bh=WZKSCm4I1cJxUT1dB7anQ5dQ3CQgP62hCCuNX0RFUDs=;
+	s=arc-20240116; t=1710510751; c=relaxed/simple;
+	bh=AwIVao3rL1Q0k95nqbmA9y6yqrp6LGbk8gB2bmRe7uc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YRZsuWWNrkttKQs5Mp7kaZZBzqV4+SMSkFqYfpfei9dSGX/SYHjouH9qpikFmIn3O7ETlsFP5cUcEATnQklzH7Fq9fAnUK1n2M9u0bejCWxpYgWRbog5HB2/aeLWyRbrwkXVIL5r0XPVZDR51hi9R5IfgQlVLHTP/5kYe29MOnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3olND42; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4B3C433F1;
-	Fri, 15 Mar 2024 13:47:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=taeTNxw00RvkGCdDWgHYwcqBVGsdzARCzw0oCSyNtTH/T0wY42HvbhKhmBE094zugFdz8huq37O8rhfasfNTHFPbUf1P4PpUJWgbZrMvc+J8qK2KED6/hyRw8h5vY14n16ph1MfwcVgr1vOCT5tCxtW2SXifB6SfeCnIl/ttje8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqzhkH+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B09DAC433F1;
+	Fri, 15 Mar 2024 13:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710510444;
-	bh=WZKSCm4I1cJxUT1dB7anQ5dQ3CQgP62hCCuNX0RFUDs=;
+	s=k20201202; t=1710510750;
+	bh=AwIVao3rL1Q0k95nqbmA9y6yqrp6LGbk8gB2bmRe7uc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a3olND42NPRr7GHVTiRFmHwiT3COsI3pTwBkQG26HWOMmopGetI5qDXTUL42msVNk
-	 g5Tg0/Tj356EXwKOGuQtJZSvCkBh2OKWQ+G2HSYec2A3tVMPBdNpS4i/1XAXseFmHO
-	 eEWa06NoA4tHWncP2L8AAyN7FPIBwpRpv2hvDyDUY1UqM+cK+dBJj5TZJJuuh3X5xA
-	 8WjROsoT4GewQGAEk57Op1nGRxpXcG0fAidsOTYf3fUSo27gdwP2RmzkTnSOJmiLsL
-	 LC1LSJJiPo2l7k3ai69x40o1Q7F4rv/TCuuHq7qV7d7Xwwk63QA7ExScfvF9+RavK2
-	 SXpFy3iS0OlIA==
-Date: Fri, 15 Mar 2024 14:47:20 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-man@vger.kernel.org,
+	b=kqzhkH+oA5Y2fdTLJi8P7w3/r/btamKmCo690KIn0ZIru45tU+mFtEtMiGSX5ypl3
+	 eag+OprokOmKCLgl2aoLS2XP8c22mUJCeYuhzqPDQKZKotfiaHFSMbXoHafhzQ0lUF
+	 b0ir/DnTenexQYigIBvpmNaNILaV6Ms5+c50uObeXes8h8ocxmea6QGAv9wWj1fKus
+	 iJ2l+PrwBcmk9hOfcK2YZhzxZsRpnlzO7bVQpYkBGQiqv2S9F6m15Cfcf8rnMFUoOh
+	 1fpt0GgXfkjKW4maiZuN4RnGAx7JVqk09IsKrg3GpmBhIfJ+InRsJWFbse65QceJTs
+	 JaRfYJRY7AatQ==
+Date: Fri, 15 Mar 2024 14:52:24 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Michael Forney <mforney@mforney.org>, Jan Kara <jack@suse.cz>, 
+	Theodore Ts'o <tytso@mit.edu>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>, Dave Kleikamp <shaggy@kernel.org>, 
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	jfs-discussion@lists.sourceforge.net, Yang Xu <xuyang2018.jy@fujitsu.com>, 
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] statx.2: Document STATX_SUBVOL
-Message-ID: <ZfRRaGMO2bngdFOs@debian>
-References: <20240311203221.2118219-1-kent.overstreet@linux.dev>
- <20240312021908.GC1182@sol.localdomain>
+Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
+ support is disabled
+Message-ID: <20240315-hasst-anmachen-4c9e89a56840@brauner>
+References: <CAKPOu+-hLrrpZShHh0o6uc_KMW91suEd0_V_uzp5vMf4NM-8yw@mail.gmail.com>
+ <CAKPOu+_0yjg=PrwAR8jKok8WskjdDEJOBtu3uKR_4Qtp8b7H1Q@mail.gmail.com>
+ <20231011135922.4bij3ittlg4ujkd7@quack3>
+ <20231011-braumeister-anrufen-62127dc64de0@brauner>
+ <20231011170042.GA267994@mit.edu>
+ <20231011172606.mztqyvclq6hq2qa2@quack3>
+ <20231012142918.GB255452@mit.edu>
+ <20231012144246.h3mklfe52gwacrr6@quack3>
+ <28DSITL9912E1.2LSZUVTGTO52Q@mforney.org>
+ <CAKPOu+910gjDp9Lk3sW=CmTM8j_FHEYyfH-kQKz-piRJHkQiDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1SBjcjs/NEOtcOiI"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240312021908.GC1182@sol.localdomain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKPOu+910gjDp9Lk3sW=CmTM8j_FHEYyfH-kQKz-piRJHkQiDw@mail.gmail.com>
 
+On Thu, Mar 14, 2024 at 02:08:04PM +0100, Max Kellermann wrote:
+> On Wed, Mar 13, 2024 at 9:39 PM Michael Forney <mforney@mforney.org> wrote:
+> > Turns out that symlinks are inheriting umask on my system (which
+> > has CONFIG_EXT4_FS_POSIX_ACL=n):
+> >
+> > $ umask 022
+> > $ ln -s target symlink
+> > $ ls -l symlink
+> > lrwxr-xr-x    1 michael  michael           6 Mar 13 13:28 symlink -> target
+> > $
+> >
+> > Looking at the referenced functions, posix_acl_create() returns
+> > early before applying umask for symlinks, but ext4_init_acl() now
+> > applies the umask unconditionally.
+> 
+> Indeed, I forgot to exclude symlinks from this - sorry for the breakage.
+> 
+> > After reverting this commit, it works correctly. I am also unable
+> > to reproduce the mentioned issue with O_TMPFILE after reverting the
+> > commit. It seems that the bug was fixed properly in ac6800e279a2
+> > ('fs: Add missing umask strip in vfs_tmpfile'), and all branches
+> > that have this ext4_init_acl patch already had ac6800e279a2 backported.
+> 
+> I can post a patch that adds the missing check or a revert - what do
+> the FS maintainers prefer?
 
---1SBjcjs/NEOtcOiI
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 15 Mar 2024 14:47:20 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-man@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] statx.2: Document STATX_SUBVOL
+If it works correctly with a revert we should remove the code rather
+than adding more code to handle a special case.
 
-Hi!
+> 
+> (There was a bug with O_TMPFILE ignoring umasks years ago - I first
+> posted the patch in 2018 or so - but by the time my patch actually got
+> merged, the bug had already been fixed somewhere else IIRC.)
 
-On Mon, Mar 11, 2024 at 07:19:08PM -0700, Eric Biggers wrote:
-> On Mon, Mar 11, 2024 at 04:31:36PM -0400, Kent Overstreet wrote:
-> > Document the new statxt.stx_subvol field.
-> >=20
-> > This would be clearer if we had a proper API for walking subvolumes that
-> > we could refer to, but that's still coming.
-> >=20
-> > Link: https://lore.kernel.org/linux-fsdevel/20240308022914.196982-1-ken=
-t.overstreet@linux.dev/
-> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: Alejandro Colomar <alx@kernel.org>
-> > Cc: linux-man@vger.kernel.org
-> > Cc: linux-fsdevel@vger.kernel.org
-> > ---
-> >  man2/statx.2 | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >=20
-> > diff --git a/man2/statx.2 b/man2/statx.2
-> > index 0dcf7e20bb1f..480e69b46a89 100644
-> > --- a/man2/statx.2
-> > +++ b/man2/statx.2
-> > @@ -68,6 +68,7 @@ struct statx {
-> >      /* Direct I/O alignment restrictions */
-> >      __u32 stx_dio_mem_align;
-> >      __u32 stx_dio_offset_align;
-> > +    __u64 stx_subvol;      /* Subvolume identifier */
-> >  };
-> >  .EE
-> >  .in
-> > @@ -255,6 +256,8 @@ STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTI=
-ME.
-> >  STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
-> >  STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
-> >  	(since Linux 6.1; support varies by filesystem)
-> > +STATX_SUBVOL	Wants stx_subvol
-> > +	(since Linux 6.9; support varies by filesystem)
->=20
-> The other ones say "Want", not "Wants".
->=20
-> > +.TP
-> > +.I stx_subvolume
->=20
-> It's stx_subvol, not stx_subvolume.
->=20
-> > +Subvolume number of the current file.
-> > +
+Yeah, we fixed it a while ago and then I added generic VFS level umask
+handling but POSIX ACL are hurting us because they're a massive layering
+violation on that front.
 
-Also, don't use blank lines.  We use '.P' for new paragraphs.
-
-> > +Subvolumes are fancy directories, i.e. they form a tree structure that=
- may be walked recursively.
-
-And please use semantic newlines (see man-pages(7)).
-
-Have a lovely day!
-Alex
-
->=20
-> How about documenting which filesystems support it?
->=20
-> - Eric
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---1SBjcjs/NEOtcOiI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmX0UWgACgkQnowa+77/
-2zJzvBAAqD0ofioGqo0fyumCr5QI1S5cvYiS+Mv5DaMiwKBuATfdJRro74XSKs5P
-gGKM9vObAexpA9uuAlRXtrxSMdm1U5c9lnVnRy0iJSN0hMPwK1+A1oaMhxwPwNQD
-DpXl3FvxioeK9gWKUhNzvCAJFBCBrcCec9FQi5OBK5vqKyfLhs/FlGvg8xosKHP4
-vmsLEtnv7tGD4R7+mFPSKm2WnchFf7UsrEkBi2aYbQW6+HpV3n1SMx0SpXswA0v4
-jgIakuH1naEWipkf1MhRnEELkzOPLV/rk4gqBV6mPWdcG/PahpynMuYeqqSUN2GP
-k3YpRcCbDD+6/qr7YcmubBfJAOXvPuGIyvkyL+wnb6/T7f/39p2iglUqlH/khCHa
-TvpuJD71MLoezA2knRgW+f3mKy4iJEjwmSAMCQ9TTDIUADU6LoXe+ZcubqUNbtfx
-MYUFBSu+XRMAEWYjr2NwSk99sjKgW2Rfd6xlphCJpVOHTZTGQsKxWGUvI7vaAelW
-EtpT0fFpepvrJTzfA4WCfY1MbnVv/Mg7hPrfcUNdxiXQj+Tv9xyDfVqsERX5MhQh
-hiVUZjKa8lhavzS6vspKWQNsFvWTnkKkVQe0uO9kyZG7t+EavXrhd5tjwvhw4ujq
-L8gCRygbqR8Pl5zJQ2ocrad77myRmI8+TogU1rZhn4PC40ppf84=
-=CpTm
------END PGP SIGNATURE-----
-
---1SBjcjs/NEOtcOiI--
 
