@@ -1,531 +1,306 @@
-Return-Path: <linux-fsdevel+bounces-14475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F4C87CFAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 16:00:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C0E87CFCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 16:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B56E1C2258F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 15:00:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E85691C222D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 15:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4093C680;
-	Fri, 15 Mar 2024 14:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8EF3CF6B;
+	Fri, 15 Mar 2024 15:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Lyfx3weT"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="imjDoNGq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lOBCWd9B";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MpsCKT4p";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="T6MJmB42"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33A73E498
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Mar 2024 14:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFF43C680;
+	Fri, 15 Mar 2024 15:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710514788; cv=none; b=ogBi67H2jcgS2Llx0LfHE6v9zDLxpY1RJkwjexZu3Rf9IF/escB6pBZMTuY8Yy1ULIeEhxGFXYtvVSbfxv4Q3PdcRxGO+w+Av2LM8fW3z/k1cnM5WflcslvShoXVIY7T0ow4QExKJvuk9YHpqoOIWjg1chrNmB0R6grUN45vChE=
+	t=1710515214; cv=none; b=Fjd7XOTjkAuxoxOUVtf1C0yidjAt4JezSd8vt3e72JiSfY/SqTdJ4PY3bzt2/T1qs/XXjknYUz6mSy0PZZaVaDiDieMBczQTzKiSdq2ng1qdjEIxvwjx9MbK4hyeH/D4Ga/5uxOCmnX+9+ZI+0gJYla/cppAYqZBZF76PB5LJcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710514788; c=relaxed/simple;
-	bh=wo/rwevH6BBPxAwOVWPsa+Y6SrIThf8W4tKxO+X738w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qf7yQanLCG3+MPTehg9+WU97upwtNAnglCkci8DaawNTg1ScZ0QtVqnNYZEjpEKLOy2+9+ByyCmDeIaXwPZWJVYTvV9LYYs9Apm0YFtDafa0oEKzHQRVxFAsU+RCWqB0/8eZR5xhXrxCRpMtIrPnFmFDFkT05aR+Mmv/qmpjEio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Lyfx3weT; arc=none smtp.client-ip=83.166.143.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tx6pr53W6zVyn;
-	Fri, 15 Mar 2024 15:59:32 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tx6pq5t2vzMpnPs;
-	Fri, 15 Mar 2024 15:59:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1710514772;
-	bh=wo/rwevH6BBPxAwOVWPsa+Y6SrIThf8W4tKxO+X738w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Lyfx3weTwSVYSBsYSCVKOZdIsnm/GsUf9IiSMJAWxNdJWw1koe4/C0+1JkKU5HxrZ
-	 7FYN3laSL/4Eokd+jknWDTkA9PlclUo3SqbY1dt3rbggiJ94rwWSoiHqhTLxAMXMpN
-	 C5kHJ21v57VucvhbaWBLqK7FWreH55oi2i+I8UXc=
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@chromium.org>,
-	Allen Webb <allenwebb@google.com>,
-	Dmitry Torokhov <dtor@google.com>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <repnop@google.com>,
-	linux-fsdevel@vger.kernel.org,
-	Dave Chinner <david@fromorbit.com>
-Subject: [RFC PATCH] fs: Add an use vfs_get_ioctl_handler()
-Date: Fri, 15 Mar 2024 15:58:38 +0100
-Message-ID: <20240315145848.1844554-1-mic@digikod.net>
-In-Reply-To: <CAHC9VhRojXNSU9zi2BrP8z6JmOmT3DAqGNtinvvz=tL1XhVdyg@mail.gmail.com>
-References: <CAHC9VhRojXNSU9zi2BrP8z6JmOmT3DAqGNtinvvz=tL1XhVdyg@mail.gmail.com>
+	s=arc-20240116; t=1710515214; c=relaxed/simple;
+	bh=QwSmbaOIgQEs4j0V8Mxa0AtBigBKkk8zNBSossl9e64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9BYlZNBu62L34iKyNaaSs/IukfDSttx0ngXWFEULPF9QXQJbPG18l7xQeVyC+oCBzfyUWmBSinIWTEI/nO37bp9Vi9F6UBf2Su9JCYLEszmhRYn2mWgtlF3yE43IPBaZx9EPP5o7zBOBNFseuf7x2GtCsMqtuUgGSsuOobncBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=imjDoNGq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lOBCWd9B; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MpsCKT4p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=T6MJmB42; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 99A1621DEE;
+	Fri, 15 Mar 2024 15:06:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710515210; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9unvmjq3IBY9p6AeuU6ZA/OY0k6Y9OlDsVFizUQPAeA=;
+	b=imjDoNGqtm902XiAAKz5Yrv0YqlGfxbVPRbyzm4zy6l7GlRSgcshp5iGJTBQQ6YM6W4506
+	U3MPz7mhxQVqirnG7zPUmaRO5Euv6fBQ0M+BRaPhas2sR9oOsA01iTDWsfHYb8md0VbiVy
+	kRonhtpJrNshxcUGzjGpos2e1YHlEoM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710515210;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9unvmjq3IBY9p6AeuU6ZA/OY0k6Y9OlDsVFizUQPAeA=;
+	b=lOBCWd9BpzS/nc6aoq4rUzDlNPpcfgJLydeNXlovFQzjMJJcr4OB8hE/ozTFfsXhwZsIUd
+	axDTYCvF8hTVuPBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710515209; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9unvmjq3IBY9p6AeuU6ZA/OY0k6Y9OlDsVFizUQPAeA=;
+	b=MpsCKT4p99TvRwHOy4gIr+jroldsGDF5tv3q+P5vWLEc/CHObm7FMs3WZ3wOLUvB4YQaG+
+	CFwD118BDzT/0kg68wP05EEB1l3EHvDIsbdZqFbcHMi17EpTwGmSni/bMcii2oORlwq4+b
+	uMjCv84O/jgCyEJs3qFx5lbVPU4b9G0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710515209;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9unvmjq3IBY9p6AeuU6ZA/OY0k6Y9OlDsVFizUQPAeA=;
+	b=T6MJmB42/cA5TRc0dKdzHnegXrAneKMAh+8zAeRRXSv2PT6b5Mhw+Ija9VtUZuOGOdJrkv
+	X39cELtNEq9blBDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BBBF1368C;
+	Fri, 15 Mar 2024 15:06:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cwEVIglk9GU2TAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 15 Mar 2024 15:06:49 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2A87BA07D9; Fri, 15 Mar 2024 16:06:45 +0100 (CET)
+Date: Fri, 15 Mar 2024 16:06:45 +0100
+From: Jan Kara <jack@suse.cz>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, hch@lst.de, brauner@kernel.org, axboe@kernel.dk,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [RFC v4 linux-next 14/19] jbd2: prevent direct access of bd_inode
+Message-ID: <20240315150645.jdegmdoahjdz7uo7@quack3>
+References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
+ <20240222124555.2049140-15-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240222124555.2049140-15-yukuai1@huaweicloud.com>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[10];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Flag: NO
 
-Add a new vfs_get_ioctl_handler() helper to identify if an IOCTL command
-is handled by the first IOCTL layer.  Each IOCTL command is now handled
-by a dedicated function, and all of them use the same signature.
+On Thu 22-02-24 20:45:50, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Now that all filesystems stash the bdev file, it's ok to get mapping
+> from the file.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-Apart from the VFS, this helper is also intended to be used by Landlock
-to cleanly categorize VFS IOCTLs and create appropriate security
-policies.
+Looks good. Feel free to add:
 
-This is an alternative to a first RFC [1] and a proposal for a new LSM
-hook [2].
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-By dereferencing some pointers only when required, this should also
-slightly improve do_vfs_ioctl().
+								Honza
 
-Remove (double) pointer castings on put_user() calls.
-
-Remove potential double vfs_ioctl() call for FIONREAD.
-
-Fix ioctl_file_clone_range() return type from long to int.
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Link: https://lore.kernel.org/r/20240219183539.2926165-1-mic@digikod.net [1]
-Link: https://lore.kernel.org/r/20240309075320.160128-2-gnoack@google.com [2]
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
- fs/ioctl.c         | 213 +++++++++++++++++++++++++++++++--------------
- include/linux/fs.h |   6 ++
- 2 files changed, 155 insertions(+), 64 deletions(-)
-
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 76cf22ac97d7..d2b6691ded16 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -56,8 +56,9 @@ long vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- }
- EXPORT_SYMBOL(vfs_ioctl);
- 
--static int ioctl_fibmap(struct file *filp, int __user *p)
-+static int ioctl_fibmap(struct file *filp, unsigned int fd, unsigned long arg)
- {
-+	int __user *p = (void __user *)arg;
- 	struct inode *inode = file_inode(filp);
- 	struct super_block *sb = inode->i_sb;
- 	int error, ur_block;
-@@ -197,11 +198,12 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
- }
- EXPORT_SYMBOL(fiemap_prep);
- 
--static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
-+static int ioctl_fiemap(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	struct fiemap fiemap;
- 	struct fiemap_extent_info fieinfo = { 0, };
- 	struct inode *inode = file_inode(filp);
-+	struct fiemap __user *ufiemap = (void __user *)arg;
- 	int error;
- 
- 	if (!inode->i_op->fiemap)
-@@ -228,6 +230,18 @@ static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
- 	return error;
- }
- 
-+static int ioctl_figetbsz(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(file);
-+	int __user *argp = (void __user *)arg;
-+
-+	/* anon_bdev filesystems may not have a block size */
-+	if (!inode->i_sb->s_blocksize)
-+		return -EINVAL;
-+
-+	return put_user(inode->i_sb->s_blocksize, argp);
-+}
-+
- static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
- 			     u64 off, u64 olen, u64 destoff)
- {
-@@ -249,9 +263,15 @@ static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
- 	return ret;
- }
- 
--static long ioctl_file_clone_range(struct file *file,
--				   struct file_clone_range __user *argp)
-+static int ioctl_ficlone(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	return ioctl_file_clone(file, arg, 0, 0, 0);
-+}
-+
-+static int ioctl_file_clone_range(struct file *file, unsigned int fd,
-+				  unsigned long arg)
- {
-+	struct file_clone_range __user *argp = (void __user *)arg;
- 	struct file_clone_range args;
- 
- 	if (copy_from_user(&args, argp, sizeof(args)))
-@@ -292,6 +312,27 @@ static int ioctl_preallocate(struct file *filp, int mode, void __user *argp)
- 			sr.l_len);
- }
- 
-+static int ioctl_resvsp(struct file *filp, unsigned int fd, unsigned long arg)
-+{
-+	int __user *p = (void __user *)arg;
-+
-+	return ioctl_preallocate(filp, 0, p);
-+}
-+
-+static int ioctl_unresvsp(struct file *filp, unsigned int fd, unsigned long arg)
-+{
-+	int __user *p = (void __user *)arg;
-+
-+	return ioctl_preallocate(filp, FALLOC_FL_PUNCH_HOLE, p);
-+}
-+
-+static int ioctl_zero_range(struct file *filp, unsigned int fd, unsigned long arg)
-+{
-+	int __user *p = (void __user *)arg;
-+
-+	return ioctl_preallocate(filp, FALLOC_FL_ZERO_RANGE, p);
-+}
-+
- /* on ia32 l_start is on a 32-bit boundary */
- #if defined CONFIG_COMPAT && defined(CONFIG_X86_64)
- /* just account for different alignment */
-@@ -321,28 +362,41 @@ static int compat_ioctl_preallocate(struct file *file, int mode,
- }
- #endif
- 
--static int file_ioctl(struct file *filp, unsigned int cmd, int __user *p)
-+static ioctl_handler_t file_ioctl(unsigned int cmd)
- {
- 	switch (cmd) {
- 	case FIBMAP:
--		return ioctl_fibmap(filp, p);
-+		return ioctl_fibmap;
- 	case FS_IOC_RESVSP:
- 	case FS_IOC_RESVSP64:
--		return ioctl_preallocate(filp, 0, p);
-+		return ioctl_resvsp;
- 	case FS_IOC_UNRESVSP:
- 	case FS_IOC_UNRESVSP64:
--		return ioctl_preallocate(filp, FALLOC_FL_PUNCH_HOLE, p);
-+		return ioctl_unresvsp;
- 	case FS_IOC_ZERO_RANGE:
--		return ioctl_preallocate(filp, FALLOC_FL_ZERO_RANGE, p);
-+		return ioctl_zero_range;
- 	}
- 
--	return -ENOIOCTLCMD;
-+	return NULL;
-+}
-+
-+static int ioctl_fioclex(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	set_close_on_exec(fd, 1);
-+	return 0;
-+}
-+
-+static int ioctl_fionclex(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	set_close_on_exec(fd, 0);
-+	return 0;
- }
- 
--static int ioctl_fionbio(struct file *filp, int __user *argp)
-+static int ioctl_fionbio(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	unsigned int flag;
- 	int on, error;
-+	int __user *argp = (void __user *)arg;
- 
- 	error = get_user(on, argp);
- 	if (error)
-@@ -362,11 +416,11 @@ static int ioctl_fionbio(struct file *filp, int __user *argp)
- 	return error;
- }
- 
--static int ioctl_fioasync(unsigned int fd, struct file *filp,
--			  int __user *argp)
-+static int ioctl_fioasync(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	unsigned int flag;
- 	int on, error;
-+	int __user *argp = (void __user *)arg;
- 
- 	error = get_user(on, argp);
- 	if (error)
-@@ -384,7 +438,22 @@ static int ioctl_fioasync(unsigned int fd, struct file *filp,
- 	return error < 0 ? error : 0;
- }
- 
--static int ioctl_fsfreeze(struct file *filp)
-+static int ioctl_fioqsize(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(file);
-+	void __user *argp = (void __user *)arg;
-+
-+	if (S_ISDIR(inode->i_mode) || S_ISREG(inode->i_mode) ||
-+	    S_ISLNK(inode->i_mode)) {
-+		loff_t res = inode_get_bytes(inode);
-+
-+		return copy_to_user(argp, &res, sizeof(res)) ? -EFAULT : 0;
-+	}
-+
-+	return -ENOTTY;
-+}
-+
-+static int ioctl_fsfreeze(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	struct super_block *sb = file_inode(filp)->i_sb;
- 
-@@ -401,7 +470,7 @@ static int ioctl_fsfreeze(struct file *filp)
- 	return freeze_super(sb, FREEZE_HOLDER_USERSPACE);
- }
- 
--static int ioctl_fsthaw(struct file *filp)
-+static int ioctl_fsthaw(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	struct super_block *sb = file_inode(filp)->i_sb;
- 
-@@ -414,9 +483,9 @@ static int ioctl_fsthaw(struct file *filp)
- 	return thaw_super(sb, FREEZE_HOLDER_USERSPACE);
- }
- 
--static int ioctl_file_dedupe_range(struct file *file,
--				   struct file_dedupe_range __user *argp)
-+static int ioctl_file_dedupe_range(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	struct file_dedupe_range __user *argp = (void __user *)arg;
- 	struct file_dedupe_range *same = NULL;
- 	int ret;
- 	unsigned long size;
-@@ -454,6 +523,14 @@ static int ioctl_file_dedupe_range(struct file *file,
- 	return ret;
- }
- 
-+static int ioctl_fionread(struct file *filp, unsigned int fd, unsigned long arg)
-+{
-+	int __user *argp = (void __user *)arg;
-+	struct inode *inode = file_inode(filp);
-+
-+	return put_user(i_size_read(inode) - filp->f_pos, argp);
-+}
-+
- /**
-  * fileattr_fill_xflags - initialize fileattr with xflags
-  * @fa:		fileattr pointer
-@@ -702,8 +779,9 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
- }
- EXPORT_SYMBOL(vfs_fileattr_set);
- 
--static int ioctl_getflags(struct file *file, unsigned int __user *argp)
-+static int ioctl_getflags(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	unsigned int __user *argp = (void __user *)arg;
- 	struct fileattr fa = { .flags_valid = true }; /* hint only */
- 	int err;
- 
-@@ -713,8 +791,9 @@ static int ioctl_getflags(struct file *file, unsigned int __user *argp)
- 	return err;
- }
- 
--static int ioctl_setflags(struct file *file, unsigned int __user *argp)
-+static int ioctl_setflags(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	unsigned int __user *argp = (void __user *)arg;
- 	struct mnt_idmap *idmap = file_mnt_idmap(file);
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct fileattr fa;
-@@ -733,8 +812,9 @@ static int ioctl_setflags(struct file *file, unsigned int __user *argp)
- 	return err;
- }
- 
--static int ioctl_fsgetxattr(struct file *file, void __user *argp)
-+static int ioctl_fsgetxattr(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	struct fsxattr __user *argp = (void __user *)arg;
- 	struct fileattr fa = { .fsx_valid = true }; /* hint only */
- 	int err;
- 
-@@ -745,8 +825,9 @@ static int ioctl_fsgetxattr(struct file *file, void __user *argp)
- 	return err;
- }
- 
--static int ioctl_fssetxattr(struct file *file, void __user *argp)
-+static int ioctl_fssetxattr(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	struct fsxattr __user *argp = (void __user *)arg;
- 	struct mnt_idmap *idmap = file_mnt_idmap(file);
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct fileattr fa;
-@@ -764,94 +845,98 @@ static int ioctl_fssetxattr(struct file *file, void __user *argp)
- }
- 
- /*
-- * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL()'d.
-- * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
-+ * Return NULL when no handler exists for @cmd, or the appropriate function
-+ * otherwise.  This means that these handlers should never return -ENOIOCTLCMD.
-  *
-  * When you add any new common ioctls to the switches above and below,
-  * please ensure they have compatible arguments in compat mode.
-  */
--static int do_vfs_ioctl(struct file *filp, unsigned int fd,
--			unsigned int cmd, unsigned long arg)
-+ioctl_handler_t vfs_get_ioctl_handler(struct file *filp, unsigned int cmd)
- {
--	void __user *argp = (void __user *)arg;
--	struct inode *inode = file_inode(filp);
--
- 	switch (cmd) {
- 	case FIOCLEX:
--		set_close_on_exec(fd, 1);
--		return 0;
-+		return ioctl_fioclex;
- 
- 	case FIONCLEX:
--		set_close_on_exec(fd, 0);
--		return 0;
-+		return ioctl_fionclex;
- 
- 	case FIONBIO:
--		return ioctl_fionbio(filp, argp);
-+		return ioctl_fionbio;
- 
- 	case FIOASYNC:
--		return ioctl_fioasync(fd, filp, argp);
-+		return ioctl_fioasync;
- 
- 	case FIOQSIZE:
--		if (S_ISDIR(inode->i_mode) || S_ISREG(inode->i_mode) ||
--		    S_ISLNK(inode->i_mode)) {
--			loff_t res = inode_get_bytes(inode);
--			return copy_to_user(argp, &res, sizeof(res)) ?
--					    -EFAULT : 0;
--		}
--
--		return -ENOTTY;
-+		return ioctl_fioqsize;
- 
- 	case FIFREEZE:
--		return ioctl_fsfreeze(filp);
-+		return ioctl_fsfreeze;
- 
- 	case FITHAW:
--		return ioctl_fsthaw(filp);
-+		return ioctl_fsthaw;
- 
- 	case FS_IOC_FIEMAP:
--		return ioctl_fiemap(filp, argp);
-+		return ioctl_fiemap;
- 
- 	case FIGETBSZ:
--		/* anon_bdev filesystems may not have a block size */
--		if (!inode->i_sb->s_blocksize)
--			return -EINVAL;
--
--		return put_user(inode->i_sb->s_blocksize, (int __user *)argp);
-+		return ioctl_figetbsz;
- 
- 	case FICLONE:
--		return ioctl_file_clone(filp, arg, 0, 0, 0);
-+		return ioctl_ficlone;
- 
- 	case FICLONERANGE:
--		return ioctl_file_clone_range(filp, argp);
-+		return ioctl_file_clone_range;
- 
- 	case FIDEDUPERANGE:
--		return ioctl_file_dedupe_range(filp, argp);
-+		return ioctl_file_dedupe_range;
- 
- 	case FIONREAD:
--		if (!S_ISREG(inode->i_mode))
--			return vfs_ioctl(filp, cmd, arg);
-+		if (!S_ISREG(file_inode(filp)->i_mode))
-+			break;
- 
--		return put_user(i_size_read(inode) - filp->f_pos,
--				(int __user *)argp);
-+		return ioctl_fionread;
- 
- 	case FS_IOC_GETFLAGS:
--		return ioctl_getflags(filp, argp);
-+		return ioctl_getflags;
- 
- 	case FS_IOC_SETFLAGS:
--		return ioctl_setflags(filp, argp);
-+		return ioctl_setflags;
- 
- 	case FS_IOC_FSGETXATTR:
--		return ioctl_fsgetxattr(filp, argp);
-+		return ioctl_fsgetxattr;
- 
- 	case FS_IOC_FSSETXATTR:
--		return ioctl_fssetxattr(filp, argp);
-+		return ioctl_fssetxattr;
- 
- 	default:
--		if (S_ISREG(inode->i_mode))
--			return file_ioctl(filp, cmd, argp);
-+		if (S_ISREG(file_inode(filp)->i_mode))
-+			return file_ioctl(cmd);
- 		break;
- 	}
- 
--	return -ENOIOCTLCMD;
-+	/* Forwards call to vfs_ioctl(filp, cmd, arg) */
-+	return NULL;
-+}
-+
-+/*
-+ * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL()'d.
-+ * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
-+ */
-+static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-+			unsigned int cmd, unsigned long arg)
-+{
-+	ioctl_handler_t handler = vfs_get_ioctl_handler(filp, cmd);
-+	int ret;
-+
-+	if (!handler)
-+		return -ENOIOCTLCMD;
-+
-+	ret = (*handler)(filp, fd, arg);
-+	/* Makes sure handle() really handles this command. */
-+	if (WARN_ON_ONCE(ret == -ENOIOCTLCMD))
-+		return -ENOTTY;
-+
-+	return ret;
- }
- 
- SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 1fbc72c5f112..92bf421aae83 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1904,6 +1904,12 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
- #define compat_ptr_ioctl NULL
- #endif
- 
-+typedef int (*ioctl_handler_t)(struct file *file, unsigned int fd,
-+			       unsigned long arg);
-+
-+extern ioctl_handler_t vfs_get_ioctl_handler(struct file *filp,
-+					     unsigned int cmd);
-+
- /*
-  * VFS file helper functions.
-  */
+> ---
+>  fs/ext4/super.c      |  2 +-
+>  fs/jbd2/journal.c    | 26 +++++++++++++++-----------
+>  include/linux/jbd2.h | 18 ++++++++++++++----
+>  3 files changed, 30 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 55b3df71bf5e..4df1a5cfe0a5 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -5918,7 +5918,7 @@ static journal_t *ext4_open_dev_journal(struct super_block *sb,
+>  	if (IS_ERR(bdev_file))
+>  		return ERR_CAST(bdev_file);
+>  
+> -	journal = jbd2_journal_init_dev(file_bdev(bdev_file), sb->s_bdev, j_start,
+> +	journal = jbd2_journal_init_dev(bdev_file, sb->s_bdev_file, j_start,
+>  					j_len, sb->s_blocksize);
+>  	if (IS_ERR(journal)) {
+>  		ext4_msg(sb, KERN_ERR, "failed to create device journal");
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index b6c114c11b97..abd42a6ccd0e 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -1516,11 +1516,12 @@ static int journal_load_superblock(journal_t *journal)
+>   * very few fields yet: that has to wait until we have created the
+>   * journal structures from from scratch, or loaded them from disk. */
+>  
+> -static journal_t *journal_init_common(struct block_device *bdev,
+> -			struct block_device *fs_dev,
+> +static journal_t *journal_init_common(struct file *bdev_file,
+> +			struct file *fs_dev_file,
+>  			unsigned long long start, int len, int blocksize)
+>  {
+>  	static struct lock_class_key jbd2_trans_commit_key;
+> +	struct block_device *bdev = file_bdev(bdev_file);
+>  	journal_t *journal;
+>  	int err;
+>  	int n;
+> @@ -1531,7 +1532,9 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>  
+>  	journal->j_blocksize = blocksize;
+>  	journal->j_dev = bdev;
+> -	journal->j_fs_dev = fs_dev;
+> +	journal->j_dev_file = bdev_file;
+> +	journal->j_fs_dev = file_bdev(fs_dev_file);
+> +	journal->j_fs_dev_file = fs_dev_file;
+>  	journal->j_blk_offset = start;
+>  	journal->j_total_len = len;
+>  	jbd2_init_fs_dev_write_error(journal);
+> @@ -1628,8 +1631,8 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>  
+>  /**
+>   *  journal_t * jbd2_journal_init_dev() - creates and initialises a journal structure
+> - *  @bdev: Block device on which to create the journal
+> - *  @fs_dev: Device which hold journalled filesystem for this journal.
+> + *  @bdev_file: Opened block device on which to create the journal
+> + *  @fs_dev_file: Opened device which hold journalled filesystem for this journal.
+>   *  @start: Block nr Start of journal.
+>   *  @len:  Length of the journal in blocks.
+>   *  @blocksize: blocksize of journalling device
+> @@ -1640,13 +1643,13 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>   *  range of blocks on an arbitrary block device.
+>   *
+>   */
+> -journal_t *jbd2_journal_init_dev(struct block_device *bdev,
+> -			struct block_device *fs_dev,
+> +journal_t *jbd2_journal_init_dev(struct file *bdev_file,
+> +			struct file *fs_dev_file,
+>  			unsigned long long start, int len, int blocksize)
+>  {
+>  	journal_t *journal;
+>  
+> -	journal = journal_init_common(bdev, fs_dev, start, len, blocksize);
+> +	journal = journal_init_common(bdev_file, fs_dev_file, start, len, blocksize);
+>  	if (IS_ERR(journal))
+>  		return ERR_CAST(journal);
+>  
+> @@ -1683,8 +1686,9 @@ journal_t *jbd2_journal_init_inode(struct inode *inode)
+>  		  inode->i_sb->s_id, inode->i_ino, (long long) inode->i_size,
+>  		  inode->i_sb->s_blocksize_bits, inode->i_sb->s_blocksize);
+>  
+> -	journal = journal_init_common(inode->i_sb->s_bdev, inode->i_sb->s_bdev,
+> -			blocknr, inode->i_size >> inode->i_sb->s_blocksize_bits,
+> +	journal = journal_init_common(inode->i_sb->s_bdev_file,
+> +			inode->i_sb->s_bdev_file, blocknr,
+> +			inode->i_size >> inode->i_sb->s_blocksize_bits,
+>  			inode->i_sb->s_blocksize);
+>  	if (IS_ERR(journal))
+>  		return ERR_CAST(journal);
+> @@ -2009,7 +2013,7 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
+>  		byte_count = (block_stop - block_start + 1) *
+>  				journal->j_blocksize;
+>  
+> -		truncate_inode_pages_range(journal->j_dev->bd_inode->i_mapping,
+> +		truncate_inode_pages_range(journal->j_dev_file->f_mapping,
+>  				byte_start, byte_stop);
+>  
+>  		if (flags & JBD2_JOURNAL_FLUSH_DISCARD) {
+> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> index 971f3e826e15..fc26730ae8ef 100644
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -968,6 +968,11 @@ struct journal_s
+>  	 */
+>  	struct block_device	*j_dev;
+>  
+> +	/**
+> +	 * @j_dev_file: Opended device @j_dev.
+> +	 */
+> +	struct file		*j_dev_file;
+> +
+>  	/**
+>  	 * @j_blocksize: Block size for the location where we store the journal.
+>  	 */
+> @@ -993,6 +998,11 @@ struct journal_s
+>  	 */
+>  	struct block_device	*j_fs_dev;
+>  
+> +	/**
+> +	 * @j_fs_dev_file: Opened device @j_fs_dev.
+> +	 */
+> +	struct file		*j_fs_dev_file;
+> +
+>  	/**
+>  	 * @j_fs_dev_wb_err:
+>  	 *
+> @@ -1533,8 +1543,8 @@ extern void	 jbd2_journal_unlock_updates (journal_t *);
+>  
+>  void jbd2_journal_wait_updates(journal_t *);
+>  
+> -extern journal_t * jbd2_journal_init_dev(struct block_device *bdev,
+> -				struct block_device *fs_dev,
+> +extern journal_t *jbd2_journal_init_dev(struct file *bdev_file,
+> +				struct file *fs_dev_file,
+>  				unsigned long long start, int len, int bsize);
+>  extern journal_t * jbd2_journal_init_inode (struct inode *);
+>  extern int	   jbd2_journal_update_format (journal_t *);
+> @@ -1696,7 +1706,7 @@ static inline void jbd2_journal_abort_handle(handle_t *handle)
+>  
+>  static inline void jbd2_init_fs_dev_write_error(journal_t *journal)
+>  {
+> -	struct address_space *mapping = journal->j_fs_dev->bd_inode->i_mapping;
+> +	struct address_space *mapping = journal->j_fs_dev_file->f_mapping;
+>  
+>  	/*
+>  	 * Save the original wb_err value of client fs's bdev mapping which
+> @@ -1707,7 +1717,7 @@ static inline void jbd2_init_fs_dev_write_error(journal_t *journal)
+>  
+>  static inline int jbd2_check_fs_dev_write_error(journal_t *journal)
+>  {
+> -	struct address_space *mapping = journal->j_fs_dev->bd_inode->i_mapping;
+> +	struct address_space *mapping = journal->j_fs_dev_file->f_mapping;
+>  
+>  	return errseq_check(&mapping->wb_err,
+>  			    READ_ONCE(journal->j_fs_dev_wb_err));
+> -- 
+> 2.39.2
+> 
 -- 
-2.44.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
