@@ -1,108 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-14453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B2787CE18
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:29:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B939B87CE1A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4CBC2824BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EACA01C2105B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC92C28E31;
-	Fri, 15 Mar 2024 13:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440D828E02;
+	Fri, 15 Mar 2024 13:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuuIXcWd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WvhlQWHa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB20376E6;
-	Fri, 15 Mar 2024 13:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEBC25760;
+	Fri, 15 Mar 2024 13:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710509365; cv=none; b=HEurv0IAUwKm1NwsoEJGumBghN5LjZws7Wd5j+h2vSqjOi1BJWgXVj8Jme9mfeJrMN9tT9w7pnHghBqy09E/m+yfgsmf0mPhnRnmPG8ZbZESA64wCcf2Uya1jf952OxOUiq1JajQqhbeGUlhdqWP41QpCXlUErIQEJCSxOKRh0s=
+	t=1710509463; cv=none; b=qaj8lRkYrlYW4n0SsssnBx5WZq4kBVRtXdHixE9Ncgt3obVvO0lklnl8qeIC8EqmaUIMY6Un7mPRxnr0BoZnFblzV56PF89rjAqhGtSY8hkw5RD1+G8edpFBFxQqR5T6sY5zvBFhfEC5jklyBfm8NYMutN+NZialAFvFbaO3x/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710509365; c=relaxed/simple;
-	bh=Vb6QoET5XlbVi8dY8PNk86MFBYpawiqOsxptI1/cIE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qb+JFPb+tiKOs5e0KalibMd77zDkzr13FNpFStm/7iX4g9Fa4mwnF7FZYHBBZwHFXeekHPvrBbSjjpSyx4E80U/tmfFwszTx9XTDQLcvCZVb18l3+ZwiScbBUKdyd+3axg/t3HSOFjidFtVKjAbvfudo/nM3UuXSeUWrtjXBTm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AuuIXcWd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6122CC433F1;
-	Fri, 15 Mar 2024 13:29:20 +0000 (UTC)
+	s=arc-20240116; t=1710509463; c=relaxed/simple;
+	bh=TCAvTPDDyMtBOpDF5RzJopMQnVJK92lEuN5mqBZOkvc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mg1JcciekbsLky4Pz+xILvhKNNPmXVM3fm4wpD4r3+TxLDNY4YcSGqMQU7xS2ESDhl/yJrUyUJEWMo5HmfkQ+9dD6tzNbe9cIbm35wyxs3p93mGlxTONHMLoBZYLlj/OAnRRwh2f6undQloWKosd68jX3uXxCu5d4vV5IPfey40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WvhlQWHa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5E0FC433C7;
+	Fri, 15 Mar 2024 13:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710509364;
-	bh=Vb6QoET5XlbVi8dY8PNk86MFBYpawiqOsxptI1/cIE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AuuIXcWdjVgqawPveKoDdoZZQGM7YiX17835SOPCU4pqi2cRrbHDlcQEGm5ZyyE0a
-	 wpy82qGfmG/5dNwQ9PmDOaLTFQ3RvoyCQirpcuRrhMjlg+x6vkdUNiTDLNO6VU52vl
-	 a2hnVKTy1b4VcfPqaCkEUN/aEK1i+0xFXvRXpbEVJeFfGxohMFB8n1F//nHNg0lf3P
-	 PhWvMP0ZeelNw8cVsrpXwEeFzKLlg8KrWODtEGN0haPrSFKRju9lrRelW4X4F14Itq
-	 yFTXodGlXL1IZEYa7A261KVUgLmDWUxN5Qv9z6/hTgumIb9xMCAzM+jZrVysm6hq2o
-	 dKkSL4C1vscUw==
-Date: Fri, 15 Mar 2024 14:29:17 +0100
+	s=k20201202; t=1710509463;
+	bh=TCAvTPDDyMtBOpDF5RzJopMQnVJK92lEuN5mqBZOkvc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WvhlQWHahq84Nj1PeWqopYGv9pkIJUxmw9Pc5mkM2Iobus9QknFWd1vyqdbTMdhsy
+	 3ORzBSfFUKRb++HwJ9TJXsFAyMs3VuG8qkul0URvQn6hxoUhDDaMFy/WcVR5SVMwTZ
+	 ePkoo72H38qgvqCl4VDNMWrgmeD3zgT/UrvpONo5norAB13qfl/606aXUn+kZHupsy
+	 74VCCKuGRNEMBRavv5tzIy7nVaJc5PyY2nzXp3wWxP7CnrdVbRoDVnMxKitjMz+pgd
+	 /RrdfwufNJeOeN1ftj4iOmpF+IJSxnrLWT0mRzPxbc+lXfvHSyVUbNHcmsRMNlHJ9E
+	 ovkcbZDbUkvjw==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Aleksandr Nogikh <nogikh@google.com>, 
-	syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>, axboe@kernel.dk, jmorris@namei.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [syzbot] [hfs] general protection fault in tomoyo_check_acl (3)
-Message-ID: <20240315-zugerechnet-abserviert-36a416bde350@brauner>
-References: <000000000000fcfb4a05ffe48213@google.com>
- <0000000000009e1b00060ea5df51@google.com>
- <20240111092147.ywwuk4vopsml3plk@quack3>
- <bbeeb617-6730-4159-80b1-182841925cce@I-love.SAKURA.ne.jp>
- <20240314155417.aysvaktvvqxc34zb@quack3>
- <CANp29Y6uevNW1SmXi_5muEeruP0TVh9Y9xwhgKO==J3fh8oa=w@mail.gmail.com>
- <20240314172731.vj4tspj6yudztmxu@quack3>
+To: Yang Li <yang.lee@linux.alibaba.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH -next] fs: Add kernel-doc comments to proc_create_net_data_write()
+Date: Fri, 15 Mar 2024 14:30:56 +0100
+Message-ID: <20240315-bitten-feiern-95b68a84b3a9@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240315073805.77463-1-yang.lee@linux.alibaba.com>
+References: <20240315073805.77463-1-yang.lee@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240314172731.vj4tspj6yudztmxu@quack3>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=962; i=brauner@kernel.org; h=from:subject:message-id; bh=TCAvTPDDyMtBOpDF5RzJopMQnVJK92lEuN5mqBZOkvc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR+8Z2wRKjn/zOLXT2iy27Ozmg0tHPnvZK2JPPBh/4fG mcazNfN6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZgImzsjw8bH55+kZRy9u8dg x71bry29GPsPa7tK/V66+fEtF5fFV04x/DPffLJ7bXFQnabeTg3xTt+7Wf+f702aVmVW/iagJOz ecx4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 14, 2024 at 06:27:31PM +0100, Jan Kara wrote:
-> Hi Aleksandr,
+On Fri, 15 Mar 2024 15:38:05 +0800, Yang Li wrote:
+> This commit adds kernel-doc style comments with complete parameter
+> descriptions for the function proc_create_net_data_write.
 > 
-> On Thu 14-03-24 17:21:30, Aleksandr Nogikh wrote:
-> > Yes, the CONFIG_BLK_DEV_WRITE_MOUNTED=n change did indeed break our C
-> > executor code (and therefore our C reproducers). I posted a fix[1]
-> > soon afterwards, but the problem is that syzbot will keep on using old
-> > reproducers for old bugs. Syzkaller descriptions change over time, so
-> > during bisection and patch testing we have to use the exact syzkaller
-> > revision that detected the original bug. All older syzkaller revisions
-> > now neither find nor reproduce fs bugs on newer Linux kernel revisions
-> > with CONFIG_BLK_DEV_WRITE_MOUNTED=n.
 > 
-> I see, thanks for explanation!
-> 
-> > If the stream of such bisection results is already bothering you and
-> > other fs people, a very quick fix could be to ban this commit from the
-> > possible bisection results (it's just a one line change in the syzbot
-> > config). Then such bugs would just get gradually obsoleted by syzbot
-> > without any noise.
-> 
-> It isn't bothering me as such but it results in
-> CONFIG_BLK_DEV_WRITE_MOUNTED=n breaking all fs-related reproducers and thus
-> making it difficult to evaluate whether the reproducer was somehow
-> corrupting the fs image or not. Practically it means closing most
-> fs-related syzbot bugs and (somewhat needlessly) starting over from scratch
-> with search for reproducers. I'm OK with that although it is a bit
-> unfortunate... But I'm pretty sure within a few months syzbot will deliver
-> a healthy portion of new issues :)
 
-Fwiw, my take on this is that if an active subsystem (responsive to
-syzbot bugs and whatnot) is not able to fix a bug within months given a
-reproducer then it's likely that the reproducer is not all that useful.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-So by closing that issue and we're hopefully getting a better
-reproducer.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs: Add kernel-doc comments to proc_create_net_data_write()
+      https://git.kernel.org/vfs/vfs/c/18326d197204
 
