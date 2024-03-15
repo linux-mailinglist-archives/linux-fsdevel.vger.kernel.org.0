@@ -1,128 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-14448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E5987CDA2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:02:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54BF87CDCB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 14:10:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E5641C2241F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:02:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D20A1F2134E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 13:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52263D96E;
-	Fri, 15 Mar 2024 13:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEDF2575D;
+	Fri, 15 Mar 2024 13:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U2712HQN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853BD2E634;
-	Fri, 15 Mar 2024 13:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F5725543
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Mar 2024 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710507672; cv=none; b=FGRr9+w/sx7KqwcNSwISVZVNeZfb093DILk4QSAnYY1Z500Pq6Ch637hhu4+NPb3qEquHUUggmIjQ2UNvLeL/xl0L6+2CFP9fmtPZk0tXYnkLW5XM7IgE/0iU6qinLVWfz+DxsP45JrmXyhtq7WlmlOvf/HIeKSP6cbZy5kvK64=
+	t=1710508206; cv=none; b=qNCUuqIB+JMCZOKwdyO2E5MWp06kVLobehUqUgwAUYcQAKf1ATOVAGJr9f8P7KllQxAUDiC87H9adzAf1BVtsTh9iabAfbTYYlj47zvh2J9mfY+ZeBNk5e+uSbd2PruwP0VoCLg7lauKwHjN9ch4qctti9Lmi1jVdzP/Co+jEMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710507672; c=relaxed/simple;
-	bh=yzLyf4DBqbGBUB3Jr9bqLKZhlCgORpswVgEGEoIqS1w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V3Film1okiBHLFCLCVrZyRr+bYERWE11UmyPA0h2SirNKv8DKBCwTDF8HPrx9AhLnG5Cu1Gi3xG9C1V0n0N73N07FmMfWjm4Ec0jResHdKd/f8swuDjGUWTMH1AZ8BDqGsoe1+gwqamC7iBKSldqvNuO+Cjwd7GqMAxPvSB5ar4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Tx4B64sRRz4f3jqB;
-	Fri, 15 Mar 2024 21:01:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 6AC1B1A017A;
-	Fri, 15 Mar 2024 21:01:06 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgCXaBF9RvRldVMfHA--.12032S14;
-	Fri, 15 Mar 2024 21:01:06 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	tytso@mit.edu,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v2 10/10] iomap: do some small logical cleanup in buffered write
-Date: Fri, 15 Mar 2024 20:53:54 +0800
-Message-Id: <20240315125354.2480344-11-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240315125354.2480344-1-yi.zhang@huaweicloud.com>
-References: <20240315125354.2480344-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1710508206; c=relaxed/simple;
+	bh=Oa3Umy36YobvTEyJhUdMvkH9ELj1sL6BHsH5KZ4jzW4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cAAjHNaANxOpLWPLZkK2mb2uPQbHpS1BysDs2VzKCnUivt7wVtQccFXTwxTgdf8iEnEqyz/UfUL9I/pUR+obZqkZKPhoBipcEG4AazpQr2OugtkG72v9eduHdNB9NGm2Clc+NaXq6Y5ch5ptjrmdvPwkluCtiJlApH6GEyRVZx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=U2712HQN; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-d9b9adaf291so1816016276.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Mar 2024 06:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1710508204; x=1711113004; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xMezNXkB9TO/Do+10PK7yOkqjtztuGFODtVVCBpPxvk=;
+        b=U2712HQNOvzirtw8F1U3e3Uf1roP/CNc7arEsbbGZyMUsfV3sY1vaUEnmc5KBthOzF
+         0IrCdMc+XOwpau4lyBcCgct7sHgvhLADqeQ2C72GXMUZfn/vw/kq99+3Z6+wU4NXoqMv
+         Y5AD/WgXWHti0SNysYkOh8BzEyR5IM0XVHMv8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710508204; x=1711113004;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xMezNXkB9TO/Do+10PK7yOkqjtztuGFODtVVCBpPxvk=;
+        b=Vy+oHUuvhdBvioDq9wqt6nIyjELp/MP3iGY4wWfT2+bv2/Rphq4KRQLWb8vaR33vk3
+         GWTNxZo5KFojrc7V21Vn9uM+MZwBS92KnzT3MGSsoENPXPPquHHMPmlqTKwqemfQacV9
+         omuFHnPeRk1FxhXtPV1wkXaoHjj92n84lwIPoHtyDtSsUkCLJPcqZE3e615kwF/I92qZ
+         AMX8Swpj3NlNhVN6l/xwmbIT+dCaOdW/sY1ZtCazCd5sagL7Diz2+2Im6dzmjioVW61r
+         HgO94VGbIc4I/+E15z9qwHsWFhT0m1komzVaHSlcuWkFUVATHMXcjxK61VV3iKZCTdo/
+         OzKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkwNx05zvBiN8qEdZwPIjUJI4hX9uVTJFccU/HjKxpuGdGpKgBEW4u6FBP3vvzeg3ku/Oc6U+Fkx8ZazuU29eyNk2pm1K+LLPHNBE8ag==
+X-Gm-Message-State: AOJu0Yzz+tTXi8kHLxQrjgYw56hEROrJG4YClzAQD14fCF6hTF9KhG2I
+	rXT19mwPcRreR+lpkNN+PEDstjJCoH5d7k3JKfknsgXvqC+rAODvpbyE9v05wapZ7plSZWZgSra
+	EN0Xb8ylooYOEwIzllacUN285nETDgAWYUsMh
+X-Google-Smtp-Source: AGHT+IHA0EnM2M9nAzsP1HCtdKzQPO3GMdhS/V1u7qfs5dzMzC1XW1DoI2/JVWjz8Fkwzo2hLLJ5zH3eiul9g8sOb2M=
+X-Received: by 2002:a5b:bce:0:b0:dcc:52dc:deb5 with SMTP id
+ c14-20020a5b0bce000000b00dcc52dcdeb5mr4880388ybr.20.1710508204031; Fri, 15
+ Mar 2024 06:10:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCXaBF9RvRldVMfHA--.12032S14
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZrykWry8urWrAr1xCr48Zwb_yoW8JF43pF
-	nxKayvk3y0qwsruF1kAF9ruFyjya93GFy7GrWUGw45Zrs8A3yYgFy09ayYv3W8XFZ3CryS
-	vr4vy348W3W5ArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
-	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
-	SdkUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20231023183035.11035-3-bschubert@ddn.com> <20240314103404.2457718-1-keiichiw@chromium.org>
+In-Reply-To: <20240314103404.2457718-1-keiichiw@chromium.org>
+From: Keiichi Watanabe <keiichiw@chromium.org>
+Date: Fri, 15 Mar 2024 22:09:52 +0900
+Message-ID: <CAD90VcZndHS5f=ZKEkpDMtxQ80J-bAER8FEVHjV+qfUjrLUPbg@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Do NULL check instead of IS_ERR in atomic_open
+To: bschubert@ddn.com, linux-fsdevel@vger.kernel.org
+Cc: bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com, 
+	hbirthelmer@ddn.com, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	yuanyaogoog@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhang Yi <yi.zhang@huawei.com>
+I realized this patch was wrong, as I misunderstood the spec of d_splice_al=
+ias.
+d_splice_alias can return NULL in a success case, so the original code
+was totally correct.
+Please ignore this patch. Sorry for the noise!
 
-Since iomap_write_end() can never return a partial write length, the
-comperation between written, copied and bytes becomes useless, just
-merge them with the unwritten branch.
+Keiichi
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/iomap/buffered-io.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 004673ea8bc1..f2fb89056259 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -937,11 +937,6 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 
- 		if (old_size < pos)
- 			pagecache_isize_extended(iter->inode, old_size, pos);
--		if (written < bytes)
--			iomap_write_failed(iter->inode, pos + written,
--					   bytes - written);
--		if (unlikely(copied != written))
--			iov_iter_revert(i, copied - written);
- 
- 		cond_resched();
- 		if (unlikely(written == 0)) {
-@@ -951,6 +946,9 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 			 * halfway through, might be a race with munmap,
- 			 * might be severe memory pressure.
- 			 */
-+			iomap_write_failed(iter->inode, pos, bytes);
-+			iov_iter_revert(i, copied);
-+
- 			if (chunk > PAGE_SIZE)
- 				chunk /= 2;
- 			if (copied) {
--- 
-2.39.2
-
+On Thu, Mar 14, 2024 at 7:34=E2=80=AFPM Keiichi Watanabe <keiichiw@chromium=
+.org> wrote:
+>
+> Since d_splice_alias returns NULL on error, we need to do NUL check
+> instead of IS_ERR.
+>
+> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+> ---
+>  fs/fuse/dir.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 4ae89f428243..4843a749dd91 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -914,7 +914,7 @@ static int _fuse_atomic_open(struct inode *dir, struc=
+t dentry *entry,
+>                 alias =3D d_exact_alias(entry, inode);
+>                 if (!alias) {
+>                         alias =3D d_splice_alias(inode, entry);
+> -                       if (IS_ERR(alias)) {
+> +                       if (!alias) {
+>                                 /*
+>                                  * Close the file in user space, but do n=
+ot unlink it,
+>                                  * if it was created - with network file =
+systems other
+> @@ -928,8 +928,7 @@ static int _fuse_atomic_open(struct inode *dir, struc=
+t dentry *entry,
+>                         }
+>                 }
+>
+> -               if (alias)
+> -                       entry =3D alias;
+> +               entry =3D alias; // alias must not be NULL here.
+>         }
+>
+>         fuse_change_entry_timeout(entry, &outentry);
+> --
+> 2.44.0.291.gc1ea87d7ee-goog
+>
 
