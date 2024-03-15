@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-14535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0092C87D57B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 21:51:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5290987D58B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 21:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0152842A4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 20:51:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1C9D1F24E3F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 20:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8762A5BAF2;
-	Fri, 15 Mar 2024 20:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855E35CDEC;
+	Fri, 15 Mar 2024 20:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="OzlCngVZ"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="FizCPf3S"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0E855798;
-	Fri, 15 Mar 2024 20:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7E55916A;
+	Fri, 15 Mar 2024 20:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710535710; cv=none; b=VmKMjyFNPYUfY4hbXYziQSdUXYy3oKCzddSVXlY8/HLg8qJyCJ83/zkJ0gtriObsbQp9qTcZIwb9EvkgWT/aMO4FKc2ySCt1VY+SxccJqoWo4s+U1jdqR+pcQUdmMbBo8b6HcRbF+TzfI2/GQgqB8hZKjKvOxyrN5SPIfNzF908=
+	t=1710535714; cv=none; b=sSyG52SSZDw9YWIp4drPoLjyTrRnlMjt5D7GDQB4FhDRh6igY9Mappma97lQdRoCu+OjKVt+u5PFtGQwMM2oD1RR7Epn/ytjp4Te1scd5guzRbLgOPvFFDUUGGefBYRj+b+aAjSbhdZPfrB0aQDtzQS9KKUdGb0QgW/eGC8LyCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710535710; c=relaxed/simple;
-	bh=oevlPOUTno1lzAS8VyWx7MVuhqnxcH7itmP3/5hwz20=;
+	s=arc-20240116; t=1710535714; c=relaxed/simple;
+	bh=yGyEnmkHG4K/QBZUE+wYC6PI0MysqQBf2jxKv03Uqeg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ddhkBpgjGMwe7LiakJ3p3JUpr4fUhXckAdPtszMMv+RGGNmNZ2k1jLWMJcx6VIZNE0SYlf/Or4nggQxBZMBsFLcq4GpHjnKmQCP4ncxpw5hlRjoyu4F9lYwN9K4LV+IpsU564D9L4TYc1UzJeDOYO9zg9m02Je7wNKm86vcr9OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=OzlCngVZ; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=nOlZ2c0tuyntXVpB+Y8NaiGuLhpEouS0R7OLJGmhAhwbS/xl4exbkKRqINaUc1dMYvdXo4U9PTYdgGzNee5XmBZIkyN7Tk19kdh0bPXIrybTm1VXMJ5qf3d1KDMB5/O+fjYczNwNq+ZpmowokOy4xJJVeFlH27a6sefBpeegV1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=FizCPf3S; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1710535698;
-	bh=oevlPOUTno1lzAS8VyWx7MVuhqnxcH7itmP3/5hwz20=;
+	bh=yGyEnmkHG4K/QBZUE+wYC6PI0MysqQBf2jxKv03Uqeg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OzlCngVZzs14BEfB2dc5J4o4ZKkSQQkWcdhqOSjhZhgkw/Ll2JQ6iAP5cU1U+kVsa
-	 SrPCNtTtm8SHoDqPXiHa4YsznSa7vqTifHCUJbDAIQNi550jyZtghvHYAeHSFkf+H5
-	 CmLMXq4gfmBvTUDddBCzzP8cINqR1mq64EVXhq9A=
+	b=FizCPf3SLAP8QJl7MKFLQmc5kz5/Ber5gPk8JnKK898Pgfacl6e7Q9zZ8wapuxDxV
+	 TQWvxZCydhPkPxx+WAYMk6TZp7HXP9SWmdfrZU1oYK6fsVpzjHLFaMHd2iiXqD6aYq
+	 mvnmhabBstRavzIG/FFHz4xiVL036JzBS8Q+3twI=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Fri, 15 Mar 2024 21:48:03 +0100
-Subject: [PATCH 05/11] neighbour: constify ctl_table arguments of utility
- function
+Date: Fri, 15 Mar 2024 21:48:04 +0100
+Subject: [PATCH 06/11] ipv4/sysctl: constify ctl_table arguments of utility
+ functions
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240315-sysctl-const-handler-v1-5-1322ac7cb03d@weissschuh.net>
+Message-Id: <20240315-sysctl-const-handler-v1-6-1322ac7cb03d@weissschuh.net>
 References: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
 In-Reply-To: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -140,36 +140,47 @@ Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-security-module@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1710535695; l=808;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1710535695; l=1269;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=oevlPOUTno1lzAS8VyWx7MVuhqnxcH7itmP3/5hwz20=;
- b=nal6nqzlOqju6KoSlkSXv2irkXSIQB1hPxMMvRw5/3x5Pl0PJC8iZv6mLbrbrwrTwJiwMMOTx
- vrmE29LSkJlAudC9x/ESIVrRSshIpjIXJbLqbScnLDsQB6DzgzZYtRY
+ bh=yGyEnmkHG4K/QBZUE+wYC6PI0MysqQBf2jxKv03Uqeg=;
+ b=WplrulYKd7B5TGswqzcDZbw2m/RyDv+HhOXZKHSfdG38pZxdNlsfrZeeItPHEYHA5eD5Kt+EM
+ V7+s8EbXwZLDElxohBqz8CxV4en1zqMOoIPQsYqfboOMLt8tzBvHJKe
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
 In a future commit the proc_handlers themselves will change to
 "const struct ctl_table". As a preparation for that adapt the internal
-helper.
+helpers.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- net/core/neighbour.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/sysctl_net_ipv4.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-index 552719c3bbc3..1fb71107accf 100644
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -3573,7 +3573,7 @@ static void neigh_copy_dflt_parms(struct net *net, struct neigh_parms *p,
- 	rcu_read_unlock();
+diff --git a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
+index 7e4f16a7dcc1..363dc2a487ac 100644
+--- a/net/ipv4/sysctl_net_ipv4.c
++++ b/net/ipv4/sysctl_net_ipv4.c
+@@ -130,7 +130,8 @@ static int ipv4_privileged_ports(struct ctl_table *table, int write,
+ 	return ret;
  }
  
--static void neigh_proc_update(struct ctl_table *ctl, int write)
-+static void neigh_proc_update(const struct ctl_table *ctl, int write)
+-static void inet_get_ping_group_range_table(struct ctl_table *table, kgid_t *low, kgid_t *high)
++static void inet_get_ping_group_range_table(const struct ctl_table *table,
++					    kgid_t *low, kgid_t *high)
  {
- 	struct net_device *dev = ctl->extra1;
- 	struct neigh_parms *p = ctl->extra2;
+ 	kgid_t *data = table->data;
+ 	struct net *net =
+@@ -145,7 +146,8 @@ static void inet_get_ping_group_range_table(struct ctl_table *table, kgid_t *low
+ }
+ 
+ /* Update system visible IP port range */
+-static void set_ping_group_range(struct ctl_table *table, kgid_t low, kgid_t high)
++static void set_ping_group_range(const struct ctl_table *table,
++				 kgid_t low, kgid_t high)
+ {
+ 	kgid_t *data = table->data;
+ 	struct net *net =
 
 -- 
 2.44.0
