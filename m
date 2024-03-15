@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-14428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C747087C852
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 05:42:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C6487C965
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 08:38:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A8BB283022
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 04:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F17284A53
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 07:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7700C1799D;
-	Fri, 15 Mar 2024 04:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2805C1429B;
+	Fri, 15 Mar 2024 07:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YmBtz8zp"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kU55tM8u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13D217735
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Mar 2024 04:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A257913FE0;
+	Fri, 15 Mar 2024 07:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710477676; cv=none; b=X2xCc2vt+WtZgg8DD8DC7F8psTTgd+3P5QzpvJIPLUE0VdyRPmTAVv3TD+K4IdNoVL+5i54FAEVaxHv3eE4X1ZVOtIFkGXfB29zU2WrYCH9cBFJ8eByy1eZUjUBO9OHSLH4KTO0VGPEhwDAKhy0gSXhN1+dTNnudjBVDo8eujvc=
+	t=1710488293; cv=none; b=NSPS95z+GhB5D/eJ6u4A+IdNc3VV1DKB3z1Wk5GaXNF7OBbBTUj0A/sa2BtbhL90f4XowHsOWlEWWenHm2/J7oXHFXWDqm5H82A3JmlcgS9siken3WWnTf/tva447m9UnjDj86uapgjGe+WZuSA+3yunYcnXTkdhu7r9nSHFfuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710477676; c=relaxed/simple;
-	bh=X556mm4b3NpKRrUCJb6n7/rhicann9OZN87sidxesuU=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fqMi7Pi++8GV3a4gAJwnHEzrxxSjTqSV5irJaSbIEcMyD+3k1YfTiMa5yGgUE1+DEkqQhNRtWWZU5RKr8+EiSAAcEglxF9m6NrBA/jdgRTAhuzd0m+3xrhtXOcIs2HsnnJhvkU+XZSQC6t/8zzk12Mq9F9vWy89e0TtaPK9/rFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YmBtz8zp; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 15 Mar 2024 00:41:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1710477673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=FxktxHvBJyfDKoa1bxvzSlyMzdw19RWnlTREhjaJS9A=;
-	b=YmBtz8zpXZ3X+nN6YK1MiC/nghiJLmLfgbN0gAzP5k7RRB9MCJuXxPZNTGoGZLmRPiIzjy
-	gdrjstZP82IJC6uwwEEHfIP7wcKCLa93wmUwvVxMU3vsknpQBAPsk/qdr1aLM5Oaf6Phwv
-	iP/HDBDBGrpckvVlFY7kwdG3/hBWyNI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: bcachefs: do not run 6.7: upgrade to 6.8 immediately if you have a
- multi device fs
-Message-ID: <muwlfryvafsskt2l2hgv3szwzjfn7cswmmnoka6zlpz2bxj6lh@ugceww4kv3jr>
+	s=arc-20240116; t=1710488293; c=relaxed/simple;
+	bh=XWWRvsgk/0lGAj9U5B09PIVCpqzsHnTUgd04g+wpHSI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Uj5GXswrsTR0aP4p5rkfyfKXoC9c+9z32Pj+41txzvtdKeV7HmSd3sS/2+Vuf/vQMzfVDoeXvwI5EUwALUr0qZqV+umsVkvOopKcsG1WXLzGlRXqAH/PTjp6nPqBfw9MOF4BvF/xqzGJnn5fXuHy14FxyRz9vBzqkJPFssloG3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kU55tM8u; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1710488288; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=5g45Kk7mH0mIdrRQacSl6eYr0tbYPGHsSpK+SWXMIFg=;
+	b=kU55tM8udS+41uU6sB3rvgB4CPMcjO7bhsKYV5FQ6abFq2i92tLoe4bk2lmF3c0l8fF455vpKqzCf5PuZhEG7s1HBoWMAiNn0ZmdIX9QGD3SmFehsxUoX86m9hodAcwUQbIgw1wGInOBUAg1PfQT0dP6CV244f6Gmm4fzqvl/5s=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W2VapzI_1710488287;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0W2VapzI_1710488287)
+          by smtp.aliyun-inc.com;
+          Fri, 15 Mar 2024 15:38:07 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: brauner@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>
+Subject: [PATCH -next] fs: Add kernel-doc comments to proc_create_net_data_write()
+Date: Fri, 15 Mar 2024 15:38:05 +0800
+Message-Id: <20240315073805.77463-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-there's a bug in 6.7 with filesystems that are mid upgrade and then get
-downgraded not getting marked in the superblock as downgraded, and this
-translates to a really horrific bug in splitbrain detection when the old
-version isn't updating member sequence nmubers and you go back to the
-new version - this results in every device being kicked out of the fs.
+This commit adds kernel-doc style comments with complete parameter
+descriptions for the function proc_create_net_data_write.
 
-and our backports are not being picked up by the stable team, so - do
-not run 6.7, switch to 6.8 immediately, running 6.7 with new -tools will
-trigger it.
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ fs/proc/proc_net.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-if you are affected:
+diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+index 2ba31b6d68c0..52f0b75cbce2 100644
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -135,6 +135,7 @@ EXPORT_SYMBOL_GPL(proc_create_net_data);
+  * @parent: The parent directory in which to create.
+  * @ops: The seq_file ops with which to read the file.
+  * @write: The write method with which to 'modify' the file.
++ * @state_size: The size of the per-file private state to allocate.
+  * @data: Data for retrieval by pde_data().
+  *
+  * Create a network namespaced proc file in the @parent directory with the
+-- 
+2.20.1.7.g153144c
 
- - 6.9 (once Linus merges) will have a new no_splitbrain_check option,
-   which runs the splitbrain checks in dry mode and won't kick your
-   devices out
-
- - we have new repair code landing soon that can recover from
-   missing/unreadable btree roots by scanning the entire device(s) for
-   btree nodes (which, fortunately, we have sufficient metadata in btree
-   node headers to do safely; reiserfs famously did not). i've seen some
-   crazy corruption resulting from this, but it might still be
-   recoverable
 
