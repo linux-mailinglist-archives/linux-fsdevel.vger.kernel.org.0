@@ -1,108 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-14546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC0287D667
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 22:53:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555E487D805
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Mar 2024 03:50:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4201F22AAD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Mar 2024 21:53:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6D5FB20A78
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Mar 2024 02:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820A855C19;
-	Fri, 15 Mar 2024 21:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="ejWnM7Jj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DD829A0;
+	Sat, 16 Mar 2024 02:49:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56AD38F91;
-	Fri, 15 Mar 2024 21:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710539614; cv=none; b=fEGVIS8PBI8yvee7EP4mwDtC7RmvjxqZu9vhDRezSoWt5udaaGyHB+mIqjZiNqoyu0kRHjWdeyH8NpIwXncNSgVxf6k2V0hEv7wDvBeiTQlqCXyP3Rx0vrY2VTCIzN1t0Iyq44JnKggtBp9J9EBs0t1KBSML8aqOb1clJZNxVYI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710539614; c=relaxed/simple;
-	bh=jhM7ZU8FyIla2o0H5m42cLWxc85vKv1rzCK2ST8oj+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEnMIUls7Ete+pleowEj5WeYn2G6IlmefS71DwSQ0jKZ9YpyL8335l1xr6NjjX4fTiwJr8WOT3NbD1d8zSrJ6DikefgqSEqFZWHboCn/C95efpnRE5HF96OJVOmMNb/8S7ZlkPsBnz9oBtYpWZxRY8c6d71+XHcW68p/KZgyYVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=ejWnM7Jj; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe0c3c.dip0.t-ipconnect.de [79.254.12.60])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 1C8531E2193;
-	Fri, 15 Mar 2024 22:53:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1710539602;
-	bh=jhM7ZU8FyIla2o0H5m42cLWxc85vKv1rzCK2ST8oj+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ejWnM7JjNgo1Ys7WJ+duORdqNChXIKawPJHEGPvKzhkkfIAJlfXspOCr+eQiMME96
-	 tsTNs3axuK/FqxnqYzLYkhwGHhTDgI6Cdp6ZKqqXu7KW7v9HCNEeuqiwmAad9NsHgd
-	 lq+LllK57GAVJFVoam7Sf8tvQ9nx4V+81+F0a32IC+o8INOLldtxyrDbk2lIuD0/Iq
-	 tbEjEEqioSbWbO88Xjro/jyflz8JvdRxBIwvkrBbje7A/LU8xIgIDkO6vb/wAwlPza
-	 ylpM/bpodX485nATx/iDV9D/v0w1o7eJtSGgjBG0OqY6jWlAfbe2CebOkr+Ex3MpAg
-	 U7tplkqnSgVoQ==
-Date: Fri, 15 Mar 2024 22:53:20 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Andrew Morton <akpm@linux-foundation.org>, alim.akhtar@samsung.com,
-	alyssa@rosenzweig.io, asahi@lists.linux.dev,
-	baolu.lu@linux.intel.com, bhelgaas@google.com,
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com,
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de,
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com,
-	jonathanh@nvidia.com, krzysztof.kozlowski@linaro.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
-	marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com,
-	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com,
-	samuel@sholland.org, suravee.suthikulpanit@amd.com,
-	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org,
-	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org,
-	will@kernel.org, yu-cheng.yu@intel.com, bagasdotme@gmail.com,
-	mkoutny@suse.com
-Subject: Re: [PATCH v5 00/11] IOMMU memory observability
-Message-ID: <ZfTDUGSshZUbs13-@8bytes.org>
-References: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
- <00555af4-8786-b772-7897-aef1e912b368@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF501C36;
+	Sat, 16 Mar 2024 02:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710557388; cv=none; b=MvXniuMxJUY44sFocM9i0GXF1xuoaS71jhYfzJtdZwvLFZkplSzXgJ7t4+kM2/vy8Lj3rAvHVt0uzc0fOor0V0wsARoIQKRBa+tXLIFIScsn5hzaUdVoalEpomqABloF+efrL06BBQR/K+EVj4uqtDSxgZmpa2znxV2WlRiGVpY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710557388; c=relaxed/simple;
+	bh=zd1ZRWGAMcuMlmsNsFTXLgzIr7rlDB7RWUiQwBjAdSI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=c1W2zG+E07taxKOaeUxCYb6nAAX4D/2CVt7c+CPaWYqTNKGDQdzoqPQiPqgUt0++R2faqeFWCOuFn0EnrA3hs82/+JWn4QgidNCoeX+BeY00HpIc0QUKM8CMdoQWWXtZYcZBqNqvv836CvgDysgMXKTN8QTq1MZ3ZtGFJvaNW0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TxQZ14SW3z4f3kFF;
+	Sat, 16 Mar 2024 10:49:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 6F21B1A0B46;
+	Sat, 16 Mar 2024 10:49:35 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgAn+RG9CPVlFadbHA--.20779S3;
+	Sat, 16 Mar 2024 10:49:35 +0800 (CST)
+Subject: Re: [RFC v4 linux-next 00/19] fs & block: remove bdev->bd_inode
+To: Christian Brauner <brauner@kernel.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de,
+ axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
+ <1324ffb5-28b6-34fb-014e-3f57df714095@huawei.com>
+ <20240315-assoziieren-hacken-b43f24f78970@brauner>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <ac0eb132-c604-9761-bce5-69158e73f256@huaweicloud.com>
+Date: Sat, 16 Mar 2024 10:49:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00555af4-8786-b772-7897-aef1e912b368@google.com>
+In-Reply-To: <20240315-assoziieren-hacken-b43f24f78970@brauner>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn+RG9CPVlFadbHA--.20779S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYg7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
+	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi David,
+Hi, Christian
 
-On Fri, Mar 15, 2024 at 02:33:53PM -0700, David Rientjes wrote:
-> Joerg, is this series anticipated to be queued up in the core branch of 
-> git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git so it gets into 
-> linux-next?
+在 2024/03/15 21:54, Christian Brauner 写道:
+> On Fri, Mar 15, 2024 at 08:08:49PM +0800, Yu Kuai wrote:
+>> Hi, Christian
+>> Hi, Christoph
+>> Hi, Jan
+>>
+>> Perhaps now is a good time to send a formal version of this set.
+>> However, I'm not sure yet what branch should I rebase and send this set.
+>> Should I send to the vfs tree?
 > 
-> This observability seems particularly useful so that we can monitor and 
-> alert on any unexpected increases (unbounded memory growth from this 
-> subsystem has in the past caused us issues before the memory is otherwise 
-> not observable by host software).
+> Nearly all of it is in fs/ so I'd say yes.
+> .
+
+I see that you just create a new branch vfs.fixes, perhaps can I rebase
+this set against this branch?
+
+Thanks,
+Kuai
+
 > 
-> Or are we still waiting on code reviews from some folks that we should 
-> ping?
 
-A few more reviews would certainly help, but I will also do a review on
-my own. If things are looking good I can merge it into the iommu tree
-when 6.9-rc3 is released (which is the usual time I start merging new
-stuff).
-
-Regards,
-
-	Joerg
 
