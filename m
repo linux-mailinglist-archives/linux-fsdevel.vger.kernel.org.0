@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-14619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4FA87DEBC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF38C87DEBD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:34:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05DF7280E81
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE2D280946
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388EB63B3;
-	Sun, 17 Mar 2024 16:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F611CAAE;
+	Sun, 17 Mar 2024 16:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5QKlEuU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbIzSL53"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943221B949;
-	Sun, 17 Mar 2024 16:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952E91B949;
+	Sun, 17 Mar 2024 16:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710693261; cv=none; b=ZpXcEd31eiPYPNysxCs31FkdwxErT7t7l3RaqE2EzdxJlRJiyJxhMSfhPjsM2nLuJIncB+Lf+WRh+8U+BkiB4UB9RLdBFVa1pHUpT4wZg+WH8YDjsULFUwQrcglzvxKT/vIb5eQlAKhoj26TTsT/J15pgJ8ZY8Isj9m+xxLMmes=
+	t=1710693277; cv=none; b=PvDitcqTM9oVc2Ce0qtQpRZEhUwjldMcmh2h4/tImDCsbYcRGm9Y2qmwhp5Mh3jQiQfI4AspHtpidokW+I8bW/ckLekQk0LvVyqOgH16RPL968nNFEMRjaTnz/yXJN7AGLg4xhbvEmaZ2snW4FIiITsjjfTBipHVnuflLG9MPRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710693261; c=relaxed/simple;
-	bh=+O804seDjcWiSwjJhai6gBDtUJWVnPn4VUy30SoJQN8=;
+	s=arc-20240116; t=1710693277; c=relaxed/simple;
+	bh=qz+FGJ6RLkUwKwK0DKJWnw4RO5PtzLDwaxpfHG3YJdo=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gExxY8qA4+nnNhAiTwL95uic3E2FjI5wXmTKS/+tVUXvDyJKG9tj2npYCsJe/MjtMTwQAJVSj6v2j58fLCAfZAMFTFLbRdvHMZGKD2nF6vEQuDUC1w9JBsZ2vY9FHkgpa1TK5ptZOqF//U75mvnHlClMheHI0FrEgw2lXSMmSTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5QKlEuU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 687BCC433C7;
-	Sun, 17 Mar 2024 16:34:21 +0000 (UTC)
+	 MIME-Version:Content-Type; b=T8IbALPj5OLIF+nwK00/ykRghkbNwfWuFHGKsd2rNSCBIOgZaw7TmNraQeY79ua3X/idREqpEcWI2a0dp5Z5iQy9+KGZgg8oqU/3EUNiz56uCr/YjEOuFH6gqhoHLm1MBjZOpyx7XxIvb24iKxOcYN3MbEshiE/SuffscvLbsmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbIzSL53; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C26AC433F1;
+	Sun, 17 Mar 2024 16:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710693261;
-	bh=+O804seDjcWiSwjJhai6gBDtUJWVnPn4VUy30SoJQN8=;
+	s=k20201202; t=1710693277;
+	bh=qz+FGJ6RLkUwKwK0DKJWnw4RO5PtzLDwaxpfHG3YJdo=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=d5QKlEuUepG4gBySv2cdGwZg2/HUhW8hkYoTwpYNdajs4cJuyKhDpooM3pm2AJwlN
-	 4vEQh/0UyOskYAsM7ZcnlNH8CTJr002VVFnJfu1/Z7gkoZH9jRyB4/xCa9df4+6C0d
-	 Gi1rq/cJ1ip8TULOCCROdOIE/6u9xM08RGPAwSR90mp6bwWAsZgXtTqwPIqx/nyX9g
-	 zlgNee2Q7WQDkD55ziKSkan9wUWfwfbSlIYBKUD4UJ9qMl3hlGppwXuJWxx+Ap5R9G
-	 NJHijDqlZFLAGCZvLfqDOE5OLKxHyLXjGVoEg4zKgwxH9snXTOmZuseR/tpSSO9xEJ
-	 1ccyqwHEdAWDQ==
-Date: Sun, 17 Mar 2024 09:34:20 -0700
-Subject: [PATCH 02/20] xfsprogs: define parent pointer xattr format
+	b=JbIzSL53zxR2HrcD0zt4oXSZdedBQERHewi+OIq3luKm+/eHo3F36qbLQ6NSAi+Ne
+	 jkDHge8M31PscpVdjyqgNEWFZBiyryjAF4vt59gDiJngOE1kviFALWktixj110oK9+
+	 KnBPR5OG1G06rLuBxqEso7wSipQQTYCoBqVIHf7+g1YLI+GAArHSX6Cd8e7zLqw1wa
+	 zMEriX9MKfbgvsWtrhblGk1kJPiE/d8gJA/m5XcEMqVi54vjGMnypGFjbv043LiRrx
+	 erSqFYLVNgGvqK4iaQ17RjP7BmJcaeas23rMcqjKIL8S8Ksaihm6UuDSNM9+enxjh9
+	 ogJXxpxE1dbrA==
+Date: Sun, 17 Mar 2024 09:34:36 -0700
+Subject: [PATCH 03/20] xfsprogs: Add xfs_verify_pptr
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, djwong@kernel.org, cem@kernel.org,
  ebiggers@kernel.org
-Cc: Dave Chinner <dchinner@redhat.com>,
- Allison Henderson <allison.henderson@oracle.com>, fsverity@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Message-ID: <171069247702.2685643.4144188443131170132.stgit@frogsfrogsfrogs>
+Cc: Allison Henderson <allison.henderson@oracle.com>,
+ fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-xfs@vger.kernel.org
+Message-ID: <171069247716.2685643.14245994906424011556.stgit@frogsfrogsfrogs>
 In-Reply-To: <171069247657.2685643.11583844772215446491.stgit@frogsfrogsfrogs>
 References: <171069247657.2685643.11583844772215446491.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -64,74 +64,170 @@ Content-Transfer-Encoding: 7bit
 
 From: Allison Henderson <allison.henderson@oracle.com>
 
-Source kernel commit: 655e7fb23dc155b37a2eeadf2c854def053980bf
+Source kernel commit: 27e62618672464a8c011ee180878c711a6faed73
 
-We need to define the parent pointer attribute format before we start
-adding support for it into all the code that needs to use it. The EA
-format we will use encodes the following information:
+Attribute names of parent pointers are not strings.  So we need to modify
+attr_namecheck to verify parent pointer records when the XFS_ATTR_PARENT flag is
+set.
 
-name={parent inode #, parent inode generation, dirent offset}
-value={dirent filename}
-
-The inode/gen gives all the information we need to reliably identify the
-parent without requiring child->parent lock ordering, and allows
-userspace to do pathname component level reconstruction without the
-kernel ever needing to verify the parent itself as part of ioctl calls.
-
-By using the dirent offset in the EA name, we have a method of knowing
-the exact parent pointer EA we need to modify/remove in rename/unlink
-without an unbound EA name search.
-
-By keeping the dirent name in the value, we have enough information to
-be able to validate and reconstruct damaged directory trees. While the
-diroffset of a filename alone is not unique enough to identify the
-child, the {diroffset,filename,child_inode} tuple is sufficient. That
-is, if the diroffset gets reused and points to a different filename, we
-can detect that from the contents of EA. If a link of the same name is
-created, then we can check whether it points at the same inode as the
-parent EA we current have.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
 Signed-off-by: Allison Henderson <allison.henderson@oracle.com>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 ---
- libxfs/xfs_da_format.h |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ libxfs/xfs_attr.c      |   47 ++++++++++++++++++++++++++++++++++++++++++++---
+ libxfs/xfs_attr.h      |    3 ++-
+ libxfs/xfs_da_format.h |    8 ++++++++
+ repair/attr_repair.c   |   19 ++++++++++++-------
+ 4 files changed, 66 insertions(+), 11 deletions(-)
 
 
+diff --git a/libxfs/xfs_attr.c b/libxfs/xfs_attr.c
+index 4818eabb..a9241d18 100644
+--- a/libxfs/xfs_attr.c
++++ b/libxfs/xfs_attr.c
+@@ -1510,9 +1510,33 @@ xfs_attr_node_get(
+ 	return error;
+ }
+ 
+-/* Returns true if the attribute entry name is valid. */
+-bool
+-xfs_attr_namecheck(
++/*
++ * Verify parent pointer attribute is valid.
++ * Return true on success or false on failure
++ */
++STATIC bool
++xfs_verify_pptr(
++	struct xfs_mount			*mp,
++	const struct xfs_parent_name_rec	*rec)
++{
++	xfs_ino_t				p_ino;
++	xfs_dir2_dataptr_t			p_diroffset;
++
++	p_ino = be64_to_cpu(rec->p_ino);
++	p_diroffset = be32_to_cpu(rec->p_diroffset);
++
++	if (!xfs_verify_ino(mp, p_ino))
++		return false;
++
++	if (p_diroffset > XFS_DIR2_MAX_DATAPTR)
++		return false;
++
++	return true;
++}
++
++/* Returns true if the string attribute entry name is valid. */
++static bool
++xfs_str_attr_namecheck(
+ 	const void	*name,
+ 	size_t		length)
+ {
+@@ -1527,6 +1551,23 @@ xfs_attr_namecheck(
+ 	return !memchr(name, 0, length);
+ }
+ 
++/* Returns true if the attribute entry name is valid. */
++bool
++xfs_attr_namecheck(
++	struct xfs_mount	*mp,
++	const void		*name,
++	size_t			length,
++	int			flags)
++{
++	if (flags & XFS_ATTR_PARENT) {
++		if (length != sizeof(struct xfs_parent_name_rec))
++			return false;
++		return xfs_verify_pptr(mp, (struct xfs_parent_name_rec *)name);
++	}
++
++	return xfs_str_attr_namecheck(name, length);
++}
++
+ int __init
+ xfs_attr_intent_init_cache(void)
+ {
+diff --git a/libxfs/xfs_attr.h b/libxfs/xfs_attr.h
+index 81be9b3e..af92cc57 100644
+--- a/libxfs/xfs_attr.h
++++ b/libxfs/xfs_attr.h
+@@ -547,7 +547,8 @@ int xfs_attr_get(struct xfs_da_args *args);
+ int xfs_attr_set(struct xfs_da_args *args);
+ int xfs_attr_set_iter(struct xfs_attr_intent *attr);
+ int xfs_attr_remove_iter(struct xfs_attr_intent *attr);
+-bool xfs_attr_namecheck(const void *name, size_t length);
++bool xfs_attr_namecheck(struct xfs_mount *mp, const void *name, size_t length,
++			int flags);
+ int xfs_attr_calc_size(struct xfs_da_args *args, int *local);
+ void xfs_init_attr_trans(struct xfs_da_args *args, struct xfs_trans_res *tres,
+ 			 unsigned int *total);
 diff --git a/libxfs/xfs_da_format.h b/libxfs/xfs_da_format.h
-index 5434d4d5..fa0f46db 100644
+index fa0f46db..e7045b36 100644
 --- a/libxfs/xfs_da_format.h
 +++ b/libxfs/xfs_da_format.h
-@@ -878,4 +878,29 @@ static inline unsigned int xfs_dir2_dirblock_bytes(struct xfs_sb *sbp)
- xfs_failaddr_t xfs_da3_blkinfo_verify(struct xfs_buf *bp,
- 				      struct xfs_da3_blkinfo *hdr3);
+@@ -757,6 +757,14 @@ xfs_attr3_leaf_name(xfs_attr_leafblock_t *leafp, int idx)
+ 	return &((char *)leafp)[be16_to_cpu(entries[idx].nameidx)];
+ }
  
-+/*
-+ * Parent pointer attribute format definition
-+ *
-+ * EA name encodes the parent inode number, generation and the offset of
-+ * the dirent that points to the child inode. The EA value contains the
-+ * same name as the dirent in the parent directory.
-+ */
-+struct xfs_parent_name_rec {
-+	__be64  p_ino;
-+	__be32  p_gen;
-+	__be32  p_diroffset;
-+};
++static inline int
++xfs_attr3_leaf_flags(xfs_attr_leafblock_t *leafp, int idx)
++{
++	struct xfs_attr_leaf_entry *entries = xfs_attr3_leaf_entryp(leafp);
 +
-+/*
-+ * incore version of the above, also contains name pointers so callers
-+ * can pass/obtain all the parent pointer information in a single structure
-+ */
-+struct xfs_parent_name_irec {
-+	xfs_ino_t		p_ino;
-+	uint32_t		p_gen;
-+	xfs_dir2_dataptr_t	p_diroffset;
-+	const char		*p_name;
-+	uint8_t			p_namelen;
-+};
++	return entries[idx].flags;
++}
 +
- #endif /* __XFS_DA_FORMAT_H__ */
+ static inline xfs_attr_leaf_name_remote_t *
+ xfs_attr3_leaf_name_remote(xfs_attr_leafblock_t *leafp, int idx)
+ {
+diff --git a/repair/attr_repair.c b/repair/attr_repair.c
+index f117f9ae..25588b3b 100644
+--- a/repair/attr_repair.c
++++ b/repair/attr_repair.c
+@@ -292,8 +292,9 @@ process_shortform_attr(
+ 		}
+ 
+ 		/* namecheck checks for null chars in attr names. */
+-		if (!libxfs_attr_namecheck(currententry->nameval,
+-					   currententry->namelen)) {
++		if (!libxfs_attr_namecheck(mp, currententry->nameval,
++					   currententry->namelen,
++					   currententry->flags)) {
+ 			do_warn(
+ 	_("entry contains illegal character in shortform attribute name\n"));
+ 			junkit = 1;
+@@ -469,12 +470,14 @@ process_leaf_attr_local(
+ 	xfs_dablk_t		da_bno,
+ 	xfs_ino_t		ino)
+ {
+-	xfs_attr_leaf_name_local_t *local;
++	xfs_attr_leaf_name_local_t	*local;
++	int				flags;
+ 
+ 	local = xfs_attr3_leaf_name_local(leaf, i);
++	flags = xfs_attr3_leaf_flags(leaf, i);
+ 	if (local->namelen == 0 ||
+-	    !libxfs_attr_namecheck(local->nameval,
+-				   local->namelen)) {
++	    !libxfs_attr_namecheck(mp, local->nameval,
++				   local->namelen, flags)) {
+ 		do_warn(
+ 	_("attribute entry %d in attr block %u, inode %" PRIu64 " has bad name (namelen = %d)\n"),
+ 			i, da_bno, ino, local->namelen);
+@@ -525,12 +528,14 @@ process_leaf_attr_remote(
+ {
+ 	xfs_attr_leaf_name_remote_t *remotep;
+ 	char*			value;
++	int			flags;
+ 
+ 	remotep = xfs_attr3_leaf_name_remote(leaf, i);
++	flags = xfs_attr3_leaf_flags(leaf, i);
+ 
+ 	if (remotep->namelen == 0 ||
+-	    !libxfs_attr_namecheck(remotep->name,
+-				   remotep->namelen) ||
++	    !libxfs_attr_namecheck(mp, remotep->name,
++				   remotep->namelen, flags) ||
+ 	    be32_to_cpu(entry->hashval) !=
+ 			libxfs_da_hashname((unsigned char *)&remotep->name[0],
+ 					   remotep->namelen) ||
 
 
