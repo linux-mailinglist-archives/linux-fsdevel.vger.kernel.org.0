@@ -1,55 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-14632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F86A87DEDB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:37:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBAB87DEDD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B17401C21057
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E9A2813CA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4421B949;
-	Sun, 17 Mar 2024 16:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790D61B949;
+	Sun, 17 Mar 2024 16:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtZPEYb0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pL2ghk4c"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382451CD11;
-	Sun, 17 Mar 2024 16:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AE61CD11;
+	Sun, 17 Mar 2024 16:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710693465; cv=none; b=nZlUHN/mWvWbychDL7v04E2IZE/rUHsih+ZGeF4HL7fxBpmA9p3b22uONWdxZeqcRW04zrdZ0YWo1Qj98Mm0c2IWOigYsGdmICkvSMGNjTtbqcPfpc8om5SX4MPJiKr0wwKkBBIUPUz3f2lKWxgE1g+GVtdebXgo4EkbMCw7t+s=
+	t=1710693480; cv=none; b=VdaA+1ch09Kp9LBD+3aQ7G8MJ+aASxA5L3sQiGEYW5mrGX7U7g0QyRL+6x0ICLLqX+6xWInWhBZjPqgGRvLCTnAhgMkbmwceG7Oye5CtaayR9uj4CHUGSI72zTdTUljd55ALZCQ8KD+HOnIWPeLkj9Wgh3kT8M1f4+hXhdZ/taI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710693465; c=relaxed/simple;
-	bh=7KR5QG05a5iw5iF04hooLILvIXBX0ycR2j/5TnBxR/c=;
+	s=arc-20240116; t=1710693480; c=relaxed/simple;
+	bh=5TMuct5iysN+++jCX0ghHaVBGM32xVUZYZTaz/c5VEQ=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sZK9TBadZ44y1TCMn+CTfoV53Q4KZac0fvcuop2Q/CQAzonsOFheb7TAtgNKtyFwoOkCrb8kXAKKuFLnHnXk+LHJX4pXW+Cy68t41+KtbXu3KPgElwyEmEJmrAKIpfe8ktSNSa7/7xZaC/K0nB/W5co/9wVFhSojRhOdIotUCLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtZPEYb0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C119DC433F1;
-	Sun, 17 Mar 2024 16:37:44 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ppOv9fL488tI0DuyFKcZNfFvYfasUntDJQXS5dGQtUDTeUpXBPTmYh4HPx5i/WDHP89d9g/goyhAC98i8oucAmNuQhVrF7rgY5It2Olb1HikFYvLm9ijQhbWhjfsBUc8tVRMlayxcdQzW8I4oLyIUkWFuYsmc/eOuE3JzLnGZks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pL2ghk4c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65680C433C7;
+	Sun, 17 Mar 2024 16:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710693464;
-	bh=7KR5QG05a5iw5iF04hooLILvIXBX0ycR2j/5TnBxR/c=;
+	s=k20201202; t=1710693480;
+	bh=5TMuct5iysN+++jCX0ghHaVBGM32xVUZYZTaz/c5VEQ=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=RtZPEYb08qZZtIFaF0HzvLjtRogDYfXRwj/HjAk22yAZHnk2f10uOh7oYF0Vdpavs
-	 8OHG2YKZCJ/t5W1QVpQJNSpO7EMcxN+srtoGPme1nDlewucitGYn68mxnv9m3O2Nu7
-	 fFHvGD1CPMMfELO5RbjaxDxjD1cE8kINCs2OCHoLb6DPyV9RhdnQ2nTzpS2hnQJ4x+
-	 wmcYuzFTNBhAcdVl7g8Hhi6mZVhKIInDcdiuy+ngIlmaYT3vvF/DtlRsVgV08/EkE6
-	 mMB1S/37kGezvy5m5I2a4dPMA4F1NIVGiUISld/k5obbjHogZKtqmQBsMKdFAuo6VL
-	 FaYauhfT87KLQ==
-Date: Sun, 17 Mar 2024 09:37:44 -0700
-Subject: [PATCH 15/20] xfs_db: make attr_set/remove/modify be able to handle
- fs-verity attrs
+	b=pL2ghk4c1HNbKLsiTvFVDvUt9uFkqMzG2NjGgWGdW8oYc+UksJ0S/0wYsH+sG14M+
+	 NbRpcRMC9SIGAtftEm777rnoISqLFspjlx8GdvOr27ehy4Vu9wa9MhYwOXcymLvEDv
+	 RjV0hwUZMh2UmPfHbdbvf4OUGyDW1Pyzy+JuT6/7vm1jxm9LL6U7pOQxh9k1OsiNpu
+	 JBvxlveYViBShy8qe7g2dNXSurBTvOQOdOLCnwf2Fg7d3TRqlt566S79kWDsIz+7Kl
+	 frLA057xbQeCfgGFy0Z2+rIG2vrFT3HVYE6R1pzwKUxKTGv/gJlkF2mSWetvIKMx/3
+	 OxkPWFxvxu3Qw==
+Date: Sun, 17 Mar 2024 09:37:59 -0700
+Subject: [PATCH 16/20] man: document attr_modify command
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, djwong@kernel.org, cem@kernel.org,
  ebiggers@kernel.org
-Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-xfs@vger.kernel.org
-Message-ID: <171069247882.2685643.11040631435359813980.stgit@frogsfrogsfrogs>
+Cc: "Darrick J. Wong" <djwong@djwong.org>, fsverity@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Message-ID: <171069247896.2685643.7638335950847568851.stgit@frogsfrogsfrogs>
 In-Reply-To: <171069247657.2685643.11583844772215446491.stgit@frogsfrogsfrogs>
 References: <171069247657.2685643.11583844772215446491.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,120 +61,62 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-From: Andrey Albershteyn <aalbersh@redhat.com>
+From: Darrick J. Wong <djwong@djwong.org>
 
-Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+Add some documentation for the new attr_modify command.  I'm not sure
+all what this this supposed to do, but there needs to be /something/ to
+satisfy the documentation tests.
+
+Signed-off-by: Darrick J. Wong <djwong@djwong.org>
 ---
- db/attrset.c             |   28 ++++++++++++++++++++++------
- libxfs/libxfs_api_defs.h |    1 +
- 2 files changed, 23 insertions(+), 6 deletions(-)
+ man/man8/xfs_db.8 |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
 
-diff --git a/db/attrset.c b/db/attrset.c
-index 7249294a..f64f0cd9 100644
---- a/db/attrset.c
-+++ b/db/attrset.c
-@@ -26,15 +26,15 @@ static void		attrset_help(void);
- 
- static const cmdinfo_t	attr_set_cmd =
- 	{ "attr_set", "aset", attr_set_f, 1, -1, 0,
--	  N_("[-r|-s|-u] [-n] [-R|-C] [-v n] name"),
-+	  N_("[-r|-s|-u|-f] [-n] [-R|-C] [-v n] name"),
- 	  N_("set the named attribute on the current inode"), attrset_help };
- static const cmdinfo_t	attr_remove_cmd =
- 	{ "attr_remove", "aremove", attr_remove_f, 1, -1, 0,
--	  N_("[-r|-s|-u] [-n] name"),
-+	  N_("[-r|-s|-u|-f] [-n] name"),
- 	  N_("remove the named attribute from the current inode"), attrset_help };
- static const cmdinfo_t	attr_modify_cmd =
- 	{ "attr_modify", "amodify", attr_modify_f, 1, -1, 0,
--	  N_("[-r|-s|-u] [-o n] [-v n] [-m n] name value"),
-+	  N_("[-r|-s|-u|-f] [-o n] [-v n] [-m n] name value"),
- 	  N_("modify value of the named attribute of the current inode"),
- 		attrset_help };
- 
-@@ -52,6 +52,7 @@ attrset_help(void)
- "  -r -- 'root'\n"
- "  -u -- 'user'		(default)\n"
- "  -s -- 'secure'\n"
-+"  -f -- 'fs-verity'\n"
- "\n"
- " For attr_set, these options further define the type of set operation:\n"
- "  -C -- 'create'    - create attribute, fail if it already exists\n"
-@@ -92,7 +93,7 @@ attr_set_f(
- 		return 0;
- 	}
- 
--	while ((c = getopt(argc, argv, "rusCRnv:")) != EOF) {
-+	while ((c = getopt(argc, argv, "rusfCRnv:")) != EOF) {
- 		switch (c) {
- 		/* namespaces */
- 		case 'r':
-@@ -107,6 +108,11 @@ attr_set_f(
- 			args.attr_filter |= LIBXFS_ATTR_SECURE;
- 			args.attr_filter &= ~LIBXFS_ATTR_ROOT;
- 			break;
-+		case 'f':
-+			args.attr_filter |= LIBXFS_ATTR_VERITY;
-+			args.attr_filter &= ~(LIBXFS_ATTR_ROOT |
-+					      LIBXFS_ATTR_SECURE);
-+			break;
- 
- 		/* modifiers */
- 		case 'C':
-@@ -208,7 +214,7 @@ attr_remove_f(
- 		return 0;
- 	}
- 
--	while ((c = getopt(argc, argv, "rusn")) != EOF) {
-+	while ((c = getopt(argc, argv, "rusfn")) != EOF) {
- 		switch (c) {
- 		/* namespaces */
- 		case 'r':
-@@ -223,6 +229,11 @@ attr_remove_f(
- 			args.attr_filter |= LIBXFS_ATTR_SECURE;
- 			args.attr_filter &= ~LIBXFS_ATTR_ROOT;
- 			break;
-+		case 'f':
-+			args.attr_filter |= LIBXFS_ATTR_VERITY;
-+			args.attr_filter &= ~(LIBXFS_ATTR_ROOT |
-+					      LIBXFS_ATTR_SECURE);
-+			break;
- 
- 		case 'n':
- 			/*
-@@ -301,7 +312,7 @@ attr_modify_f(
- 		return 0;
- 	}
- 
--	while ((c = getopt(argc, argv, "rusnv:o:m:")) != EOF) {
-+	while ((c = getopt(argc, argv, "rusfnv:o:m:")) != EOF) {
- 		switch (c) {
- 		/* namespaces */
- 		case 'r':
-@@ -316,6 +327,11 @@ attr_modify_f(
- 			args.attr_filter |= LIBXFS_ATTR_SECURE;
- 			args.attr_filter &= ~LIBXFS_ATTR_ROOT;
- 			break;
-+		case 'f':
-+			args.attr_filter |= LIBXFS_ATTR_VERITY;
-+			args.attr_filter &= ~(LIBXFS_ATTR_ROOT |
-+					      LIBXFS_ATTR_SECURE);
-+			break;
- 
- 		case 'n':
- 			/*
-diff --git a/libxfs/libxfs_api_defs.h b/libxfs/libxfs_api_defs.h
-index ccc92a83..04a5dad5 100644
---- a/libxfs/libxfs_api_defs.h
-+++ b/libxfs/libxfs_api_defs.h
-@@ -15,6 +15,7 @@
-  */
- #define LIBXFS_ATTR_ROOT		XFS_ATTR_ROOT
- #define LIBXFS_ATTR_SECURE		XFS_ATTR_SECURE
-+#define LIBXFS_ATTR_VERITY		XFS_ATTR_VERITY
- 
- #define xfs_agfl_size			libxfs_agfl_size
- #define xfs_agfl_walk			libxfs_agfl_walk
+diff --git a/man/man8/xfs_db.8 b/man/man8/xfs_db.8
+index a7f6d55e..d4651eb4 100644
+--- a/man/man8/xfs_db.8
++++ b/man/man8/xfs_db.8
+@@ -184,6 +184,40 @@ Displays the length, free block count, per-AG reservation size, and per-AG
+ reservation usage for a given AG.
+ If no argument is given, display information for all AGs.
+ .TP
++.BI "attr_modify [\-r|\-u|\-s|\-f] [\-o n] [\-v n] [\-m n] name value
++Modifies an extended attribute on the current file with the given name.
++
++If the
++.B name
++is a string that can be converted into an integer value, it will be.
++.RS 1.0i
++.TP 0.4i
++.B \-r
++Sets the attribute in the root namespace.
++Only one namespace option can be specified.
++.TP
++.B \-u
++Sets the attribute in the user namespace.
++Only one namespace option can be specified.
++.TP
++.B \-s
++Sets the attribute in the secure namespace.
++Only one namespace option can be specified.
++.TP
++.B \-f
++Sets the attribute in the verity namespace.
++Only one namespace option can be specified.
++.TP
++.B \-m
++Length of the attr name.
++.TP
++.B \-o
++Offset into the attr value to place the new contents.
++.TP
++.B \-v
++Length of the attr value.
++.RE
++.TP
+ .BI "attr_remove [\-r|\-u|\-s] [\-n] " name
+ Remove the specified extended attribute from the current file.
+ .RS 1.0i
 
 
