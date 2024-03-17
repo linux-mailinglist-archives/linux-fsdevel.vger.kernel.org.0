@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-14595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549E187DE89
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:29:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA81787DE8B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:29:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 920CA2810EE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FFA21F21B88
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DBC1DDEB;
-	Sun, 17 Mar 2024 16:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645381EB2A;
+	Sun, 17 Mar 2024 16:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UohMoUpH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="imoxCkaB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DE31D556;
-	Sun, 17 Mar 2024 16:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43DA1E527;
+	Sun, 17 Mar 2024 16:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710692886; cv=none; b=D9CnU+ghqkqeXDa+jI0n9xh1CXpcmxlA77COWAU2dmZXHPVB6WSRoMw/KD+n/Z2qVWgzY7g2Pi9zFoYe63VQ7ARBjag8ReSJiH9dg4SPXd08SIcNckZqGzXyleVZtWk+h+c9orthk/nhTUtp84DIPGQJSs17MmlOIa2h+vkAzO4=
+	t=1710692901; cv=none; b=YGPN4Hj+1wylIY3uFB06TOndxFcgQZAS/4g9vMOFCJuU5+dN13q9v4bvhMcWPjNI9iKV/DjkKnmLCh/bH1dCgVyskZ8fnixGZK7AifV0q+J4yutLHnx08xFqg5pKPuGrpCD+5N1xJ7zkgA3Dqr1DmtqQotXsQn8Zcv5g44U6g/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710692886; c=relaxed/simple;
-	bh=kMdqz7RLV569ab/XXjmmU/XwIDmkNbuvXEq3UWvjaMk=;
+	s=arc-20240116; t=1710692901; c=relaxed/simple;
+	bh=YV2FpcHp1T9nZAjzqj8IXFCQoFgRWZQjMLPyND0pLlc=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pbtQ/YPeBPZBtCirH0sSktAyZDJATA/NFo+EukwbmC9QiguQyLSLF+njNckngqOL9d3fNzAQwRIz2oKTGjFPCkRz4s98Uv1Fv5OWha6HhpUthh5XhaRqvoSzPIMyNsVJ86UYAuap0I0K5REKyU6JLmq1VOXkOGlFIl6gXrBDjag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UohMoUpH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF54C433F1;
-	Sun, 17 Mar 2024 16:28:05 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZLunEslmyFxRamxmDdeFzM8rrTVdCx582JCWUTMbVoGX5isUlmUMjgXczmSMSklFOku7XyBEPYzpmXMgJbIs88Q2Ye85AVsDUmlWvp1KJnCgVOVpxyOcQjpfBWnl8gfkfFvcVT6WdoE+Gai/F/0Xg5KMfRKzyF3x+3aR6sgrHB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=imoxCkaB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DF4CC433C7;
+	Sun, 17 Mar 2024 16:28:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710692885;
-	bh=kMdqz7RLV569ab/XXjmmU/XwIDmkNbuvXEq3UWvjaMk=;
+	s=k20201202; t=1710692901;
+	bh=YV2FpcHp1T9nZAjzqj8IXFCQoFgRWZQjMLPyND0pLlc=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=UohMoUpHCpJyl+F1XaH46qosTb7fM7vyxiVQRRok2WdSZqMWyp4fRxb5lR1KIoDjd
-	 pTBGm4D5NIOV3IhLFPuMfuEhljZuYVQSeH9niln2tKn8K6JO7VH1UxgRrijMTw5ToX
-	 aN0ch3RSSzg/E8vsYinu0JbH1j+0TBE3iBkpoZd+yJtHvgCydwcDZ7p5blRFjHpWUJ
-	 bhyKu4NiI4oQnASTewzrznIuZJfQa93kOgKyI28QQwJZCVxXo/7FqA6yL8ga1IG7R8
-	 P7EPVt8ha7jFyJZFUT0A1fqHd7tDMtBA3K8NJUMnk+6nNx1R/C+p/Ww4Zt0zy9FuHn
-	 iNGge02hC7JFA==
-Date: Sun, 17 Mar 2024 09:28:05 -0700
-Subject: [PATCH 18/40] iomap: integrate fs-verity verification into iomap's
- read path
+	b=imoxCkaB5uzwb3AbG0LnzD/W/7H8rZ0WIp7XDIT3i1CbaYayS9TbN18Kk7XkvV1ZM
+	 u3hjDGvmDZ2XlWzeOV5z+QHj/IX4e0eCuaoHPjL3FOXg60LREtcJygTlVQTA103FU5
+	 Ayy60FEweJElomtrNj9MXFf3DFUDdEbTpyPVp42kzsUgAi1o9cjIlj4tVf3mlWRVV/
+	 P2eIOvvCQ5WbuiL3yEO+r+GaGJogteVAseuhoDOEYdE3nozkOsoUy4/YVCLoi0xFXB
+	 qL8N7uU7tlmAtcrK+QYciOhqr/oCeIZXCP0vaGg6z+GreGNrdLFPtzDp8HJxFHilxk
+	 T1Z60IVj3liug==
+Date: Sun, 17 Mar 2024 09:28:21 -0700
+Subject: [PATCH 19/40] xfs: add attribute type for fs-verity
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, ebiggers@kernel.org, aalbersh@redhat.com
-Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
- fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
-Message-ID: <171069246202.2684506.10370751871434901402.stgit@frogsfrogsfrogs>
+Cc: linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-xfs@vger.kernel.org
+Message-ID: <171069246218.2684506.7049031355830726932.stgit@frogsfrogsfrogs>
 In-Reply-To: <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
 References: <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -63,170 +62,123 @@ Content-Transfer-Encoding: 7bit
 
 From: Andrey Albershteyn <aalbersh@redhat.com>
 
-This patch adds fs-verity verification into iomap's read path. After
-BIO's io operation is complete the data are verified against
-fs-verity's Merkle tree. Verification work is done in a separate
-workqueue.
-
-The read path ioend iomap_read_ioend are stored side by side with
-BIOs if FS_VERITY is enabled.
+The Merkle tree blocks and descriptor are stored in the extended
+attributes of the inode. Add new attribute type for fs-verity
+metadata. Add XFS_ATTR_INTERNAL_MASK to skip parent pointer and
+fs-verity attributes as those are only for internal use. While we're
+at it add a few comments in relevant places that internally visible
+attributes are not suppose to be handled via interface defined in
+xfs_xattr.c.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-[djwong: fix doc warning]
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/iomap/buffered-io.c |   91 +++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 82 insertions(+), 9 deletions(-)
+ fs/xfs/libxfs/xfs_da_format.h  |   10 +++++++++-
+ fs/xfs/libxfs/xfs_log_format.h |    1 +
+ fs/xfs/xfs_ioctl.c             |    5 +++++
+ fs/xfs/xfs_trace.h             |    3 ++-
+ fs/xfs/xfs_xattr.c             |   10 ++++++++++
+ 5 files changed, 27 insertions(+), 2 deletions(-)
 
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 093c4515b22a..c708a93d6a02 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -6,6 +6,7 @@
- #include <linux/module.h>
- #include <linux/compiler.h>
- #include <linux/fs.h>
-+#include <linux/fsverity.h>
- #include <linux/iomap.h>
- #include <linux/pagemap.h>
- #include <linux/uio.h>
-@@ -330,6 +331,56 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
- 		pos >= i_size_read(iter->inode);
- }
+diff --git a/fs/xfs/libxfs/xfs_da_format.h b/fs/xfs/libxfs/xfs_da_format.h
+index 839df0e5401b..28d4ac6fa156 100644
+--- a/fs/xfs/libxfs/xfs_da_format.h
++++ b/fs/xfs/libxfs/xfs_da_format.h
+@@ -715,14 +715,22 @@ struct xfs_attr3_leafblock {
+ #define	XFS_ATTR_ROOT_BIT	1	/* limit access to trusted attrs */
+ #define	XFS_ATTR_SECURE_BIT	2	/* limit access to secure attrs */
+ #define	XFS_ATTR_PARENT_BIT	3	/* parent pointer attrs */
++#define	XFS_ATTR_VERITY_BIT	4	/* verity merkle tree and descriptor */
+ #define	XFS_ATTR_INCOMPLETE_BIT	7	/* attr in middle of create/delete */
+ #define XFS_ATTR_LOCAL		(1u << XFS_ATTR_LOCAL_BIT)
+ #define XFS_ATTR_ROOT		(1u << XFS_ATTR_ROOT_BIT)
+ #define XFS_ATTR_SECURE		(1u << XFS_ATTR_SECURE_BIT)
+ #define XFS_ATTR_PARENT		(1u << XFS_ATTR_PARENT_BIT)
++#define XFS_ATTR_VERITY		(1u << XFS_ATTR_VERITY_BIT)
+ #define XFS_ATTR_INCOMPLETE	(1u << XFS_ATTR_INCOMPLETE_BIT)
+ #define XFS_ATTR_NSP_ONDISK_MASK \
+-			(XFS_ATTR_ROOT | XFS_ATTR_SECURE | XFS_ATTR_PARENT)
++			(XFS_ATTR_ROOT | XFS_ATTR_SECURE | XFS_ATTR_PARENT | \
++			 XFS_ATTR_VERITY)
++
++/*
++ * Internal attributes not exposed to the user
++ */
++#define XFS_ATTR_INTERNAL_MASK (XFS_ATTR_PARENT | XFS_ATTR_VERITY)
  
-+#ifdef CONFIG_FS_VERITY
-+struct iomap_fsverity_bio {
-+	struct work_struct	work;
-+	struct bio		bio;
-+};
-+static struct bio_set iomap_fsverity_bioset;
-+
-+static void
-+iomap_read_fsverify_end_io_work(struct work_struct *work)
-+{
-+	struct iomap_fsverity_bio *fbio =
-+		container_of(work, struct iomap_fsverity_bio, work);
-+
-+	fsverity_verify_bio(&fbio->bio);
-+	iomap_read_end_io(&fbio->bio);
-+}
-+
-+static void
-+iomap_read_fsverity_end_io(struct bio *bio)
-+{
-+	struct iomap_fsverity_bio *fbio =
-+		container_of(bio, struct iomap_fsverity_bio, bio);
-+
-+	INIT_WORK(&fbio->work, iomap_read_fsverify_end_io_work);
-+	queue_work(bio->bi_private, &fbio->work);
-+}
-+#endif /* CONFIG_FS_VERITY */
-+
-+static struct bio *iomap_read_bio_alloc(struct inode *inode,
-+		struct block_device *bdev, int nr_vecs, gfp_t gfp)
-+{
-+	struct bio *bio;
-+
-+#ifdef CONFIG_FS_VERITY
-+	if (fsverity_active(inode)) {
-+		bio = bio_alloc_bioset(bdev, nr_vecs, REQ_OP_READ, gfp,
-+					&iomap_fsverity_bioset);
-+		if (bio) {
-+			bio->bi_private = inode->i_sb->s_read_done_wq;
-+			bio->bi_end_io = iomap_read_fsverity_end_io;
-+		}
-+		return bio;
-+	}
-+#endif
-+	bio = bio_alloc(bdev, nr_vecs, REQ_OP_READ, gfp);
-+	if (bio)
-+		bio->bi_end_io = iomap_read_end_io;
-+	return bio;
-+}
-+
- static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 		struct iomap_readpage_ctx *ctx, loff_t offset)
+ /*
+  * Alignment for namelist and valuelist entries (since they are mixed
+diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
+index 9cbcba4bd363..407fadfb5c06 100644
+--- a/fs/xfs/libxfs/xfs_log_format.h
++++ b/fs/xfs/libxfs/xfs_log_format.h
+@@ -975,6 +975,7 @@ struct xfs_icreate_log {
+ #define XFS_ATTRI_FILTER_MASK		(XFS_ATTR_ROOT | \
+ 					 XFS_ATTR_SECURE | \
+ 					 XFS_ATTR_PARENT | \
++					 XFS_ATTR_VERITY | \
+ 					 XFS_ATTR_INCOMPLETE)
+ 
+ /*
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index d0e2cec6210d..ab61d7d552fb 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -352,6 +352,11 @@ static unsigned int
+ xfs_attr_filter(
+ 	u32			ioc_flags)
  {
-@@ -353,6 +404,12 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
++	/*
++	 * Only externally visible attributes should be specified here.
++	 * Internally used attributes (such as parent pointers or fs-verity)
++	 * should not be exposed to userspace.
++	 */
+ 	if (ioc_flags & XFS_IOC_ATTR_ROOT)
+ 		return XFS_ATTR_ROOT;
+ 	if (ioc_flags & XFS_IOC_ATTR_SECURE)
+diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+index d4f1b2da21e7..9d4ae05abfc8 100644
+--- a/fs/xfs/xfs_trace.h
++++ b/fs/xfs/xfs_trace.h
+@@ -87,7 +87,8 @@ struct xfs_bmap_intent;
+ 	{ XFS_ATTR_ROOT,	"ROOT" }, \
+ 	{ XFS_ATTR_SECURE,	"SECURE" }, \
+ 	{ XFS_ATTR_INCOMPLETE,	"INCOMPLETE" }, \
+-	{ XFS_ATTR_PARENT,	"PARENT" }
++	{ XFS_ATTR_PARENT,	"PARENT" }, \
++	{ XFS_ATTR_VERITY,	"VERITY" }
  
- 	if (iomap_block_needs_zeroing(iter, pos)) {
- 		folio_zero_range(folio, poff, plen);
-+		if (fsverity_active(iter->inode) &&
-+		    !fsverity_verify_blocks(folio, plen, poff)) {
-+			folio_set_error(folio);
-+			goto done;
-+		}
-+
- 		iomap_set_range_uptodate(folio, poff, plen);
- 		goto done;
- 	}
-@@ -370,28 +427,29 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
- 		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
- 		gfp_t orig_gfp = gfp;
--		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
+ DECLARE_EVENT_CLASS(xfs_attr_list_class,
+ 	TP_PROTO(struct xfs_attr_list_context *ctx),
+diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
+index 364104e1b38a..e4c88dde4e44 100644
+--- a/fs/xfs/xfs_xattr.c
++++ b/fs/xfs/xfs_xattr.c
+@@ -20,6 +20,13 @@
  
- 		if (ctx->bio)
- 			submit_bio(ctx->bio);
+ #include <linux/posix_acl_xattr.h>
  
- 		if (ctx->rac) /* same as readahead_gfp_mask */
- 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
--		ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
--				     REQ_OP_READ, gfp);
++/*
++ * This file defines interface to work with externally visible extended
++ * attributes, such as those in user, system or security namespaces. This
++ * interface should not be used for internally used attributes (consider
++ * xfs_attr.c).
++ */
 +
-+		ctx->bio = iomap_read_bio_alloc(iter->inode, iomap->bdev,
-+				bio_max_segs(DIV_ROUND_UP(length, PAGE_SIZE)),
-+				gfp);
-+
- 		/*
- 		 * If the bio_alloc fails, try it again for a single page to
- 		 * avoid having to deal with partial page reads.  This emulates
- 		 * what do_mpage_read_folio does.
- 		 */
- 		if (!ctx->bio) {
--			ctx->bio = bio_alloc(iomap->bdev, 1, REQ_OP_READ,
--					     orig_gfp);
-+			ctx->bio = iomap_read_bio_alloc(iter->inode,
-+					iomap->bdev, 1, orig_gfp);
- 		}
- 		if (ctx->rac)
- 			ctx->bio->bi_opf |= REQ_RAHEAD;
- 		ctx->bio->bi_iter.bi_sector = sector;
--		ctx->bio->bi_end_io = iomap_read_end_io;
- 		bio_add_folio_nofail(ctx->bio, folio, plen, poff);
- 	}
+ /*
+  * Get permission to use log-assisted atomic exchange of file extents.
+  *
+@@ -244,6 +251,9 @@ xfs_xattr_put_listent(
  
-@@ -1996,10 +2054,25 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
- }
- EXPORT_SYMBOL_GPL(iomap_writepages);
+ 	ASSERT(context->count >= 0);
  
-+#define IOMAP_POOL_SIZE		(4 * (PAGE_SIZE / SECTOR_SIZE))
++	if (flags & XFS_ATTR_INTERNAL_MASK)
++		return;
 +
- static int __init iomap_init(void)
- {
--	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
--			   offsetof(struct iomap_ioend, io_inline_bio),
--			   BIOSET_NEED_BVECS);
-+	int error;
-+
-+	error = bioset_init(&iomap_ioend_bioset, IOMAP_POOL_SIZE,
-+			    offsetof(struct iomap_ioend, io_inline_bio),
-+			    BIOSET_NEED_BVECS);
-+#ifdef CONFIG_FS_VERITY
-+	if (error)
-+		return error;
-+
-+	error = bioset_init(&iomap_fsverity_bioset, IOMAP_POOL_SIZE,
-+			    offsetof(struct iomap_fsverity_bio, bio),
-+			    BIOSET_NEED_BVECS);
-+	if (error)
-+		bioset_exit(&iomap_ioend_bioset);
-+#endif
-+	return error;
- }
- fs_initcall(iomap_init);
+ 	if (flags & XFS_ATTR_ROOT) {
+ #ifdef CONFIG_XFS_POSIX_ACL
+ 		if (namelen == SGI_ACL_FILE_SIZE &&
 
 
