@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-14650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B4387DF4A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 19:43:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 778F387DF4B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 19:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0767B281734
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 18:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2358D28172A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 18:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E95021106;
-	Sun, 17 Mar 2024 18:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7727D21373;
+	Sun, 17 Mar 2024 18:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmEFOjAe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNXpuMYh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD30208D7
-	for <linux-fsdevel@vger.kernel.org>; Sun, 17 Mar 2024 18:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4186520DE8
+	for <linux-fsdevel@vger.kernel.org>; Sun, 17 Mar 2024 18:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710700935; cv=none; b=eM7p1pPxUTa0rKbIRpnYBp/tdBuXzbuh7faIkCKNKHFe7Jj3NQNihGKPua799sfS+hH4X2AcZ+kJSt82wnYuIoSeQPysuZ3qGlUhZ+GNiCBDoy2/wypMGwQ76kQZnNZashTVlvQR7Z5YwTPEblQYrfB/Q6u/U+hxtIqIXbnIg0s=
+	t=1710700936; cv=none; b=VOz19UfCV8a3wSXnCfa2GUK5NgacnqI2tbgIIEMymLwmwsW6iTkGxS2p3MxMv106CPZEpoVeRf6y3prPzDigTRyXH/e18AFWfkWVViH78w9/nLRVMT41esg049nCai2l+DDs74JQ3tANkm3nuQYfmGLLseCCiR6LhoaLHG1TWUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710700935; c=relaxed/simple;
-	bh=eLMhAxZ7X9XAP78u8qtA3ZWzkrFjGPMJZl7c5hsJ80o=;
+	s=arc-20240116; t=1710700936; c=relaxed/simple;
+	bh=rX7xmVRStLhkNd5wHaN+v4sb0YCreMdMKYJ+htFqcrg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iXiVt0xqzeTo8AQ+thvKZuKoSs4mnAj5MnRKmWY+DH1nnYi+yfsm3UCJhpY9aNVETIxLJTkakx6jrJxb5fjev+mzvesiXvxAMXqrsmReXdktjXhjEmTwjpsj3pk+CbKefK0bFcvQeQ3w/rMCCd+DGGf6wwwv8ay9LDA1Ji++aKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OmEFOjAe; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version; b=beElSW2ZQhsLNAhB0XHRgW/2/L27cdhWXIkeuQDGkFyglms0mz62AESId0puzvBWaH4OfXyCUhs/3TtpzPMPsQ29iZpYV2g2ulx+61KO1mNcB6m+mkag9844o0O551L5cbUzSELMWWozcfbTK82UQfrFnWsWuwfTlwCSIGImGKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KNXpuMYh; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-341730bfc46so194349f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Mar 2024 11:42:13 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-33e162b1b71so3357904f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Mar 2024 11:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710700932; x=1711305732; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710700933; x=1711305733; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sl5ZPuOEnLGPgFl7XDyh7HPKN//XZ708139+PbsBYio=;
-        b=OmEFOjAefHJpGY5nX/xfKpbivst4VfDvzvx/Pb6qeh4TYp11cbALYhJKmscRNE4Yr6
-         AI9oyFCp+yFIG9xQlUIQUmpm5bxt+ID+ePiKg1LerJ5/zXUuJGQrB/uE5JJ5A3q0MaBE
-         v++7+EsxNYvn5kXmZdpJpunPhUzQxSSMcsuH8d7dN7a4HjCPbQZqAOp0o0oNSQtgpZRR
-         aD60vxrlFsNmMJRrXtxjxbeV1GOIh9fRj8Un143N6fyhrpR7WPrQUpD1m9D84QIzetEP
-         c3U4ikGJKoBhdeL5J7RxzGM0wbMK1xI7RjYe8QOtYezZpoZO3VrYWFsoHxQM8AbgLNj/
-         6KKg==
+        bh=ZT95zX8R7Zwrvlho7vje0jbMWbCpxDzZYy0Zrphqd40=;
+        b=KNXpuMYh1172FhC5XTX5qIQijUw7wqsVZelYi4iwPxzB5NfasJuT40FhLoTBsbVGBS
+         dajaWCPFbvTN36qomjjDxn//jIlPule2AwffaHkzzwp+SNoY+joKdlqP9qH7yxqy9oI1
+         kuakSG5zTid0FB6rx3j/rLtWIMigTqhN0h1JJbsDoRuKNl5rdYMPmH03XLsVGlM1mQrI
+         t7i9kSPbGeAkbq026YGm24GwGPzNbyMKgjX8FOp9fS+lh6WBDs70p8bgm5mNkxYltvRt
+         yhafdRPr6QOOzK71qhYJSonACD2wxILhi0zfh8L1/eZoeRQ17HVzfDTlC29wTKLdfmaI
+         Jb+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710700932; x=1711305732;
+        d=1e100.net; s=20230601; t=1710700933; x=1711305733;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sl5ZPuOEnLGPgFl7XDyh7HPKN//XZ708139+PbsBYio=;
-        b=g7FdbakjLFj069aidxh+DmH1ltXdnUQjiuRVLI7mxsF+FD+9f8vX9+eH1Hn466V5LC
-         0nMIR8eiU6wAzZhICLA8/YJ7/r/UXKnTZ7QqEu4cFICZFhvEOWAcxUIKnK7F3KHG7Ler
-         PbTmJIXmEft3H53YolICr4Ou2HkeNJg4pjCg/Rj58GwkAI9pxFAn7SlUdH59bZvXhMsz
-         Sw0Amgpt7+Itjh6TTBlyW0wSyLbuodxd1hKaWfqk5XwV1CMZdM1EmYUor91EHnyYOQ0O
-         zh0zYDtwp0Q1nLOIkOgEhAPCoLi+6oV2ufM9U340nAqZmf1A0Rz4Jki8bo3HgLFdDe7n
-         CCOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXz9T7ERxeG6aD6GxxN7GEmWMghs7sYALwEfQb3ZnN/FunMYH7YKUfQ0nyR27GobHEU5p8ndzQulATxRVaNI0qK0Oyt9nvexaeLF4Yk2A==
-X-Gm-Message-State: AOJu0YxuCuWL3GAPomSvXn++fQZm3lDuVtL0vhB3BiTvezYgEKL+ZCai
-	x3buT+1RTnv3w++9WvckslWDvzSRLzV2BKNak5GRfkn3g+tqLhAn
-X-Google-Smtp-Source: AGHT+IF99iKKeZmsbIxxNwbwcvyIuEc9tws6T0Tyh6pIhDPHTtokXbXi5780552GL6JqqgDaFx67KQ==
-X-Received: by 2002:a5d:4c51:0:b0:33e:7d03:5fc3 with SMTP id n17-20020a5d4c51000000b0033e7d035fc3mr7082625wrt.13.1710700932242;
-        Sun, 17 Mar 2024 11:42:12 -0700 (PDT)
+        bh=ZT95zX8R7Zwrvlho7vje0jbMWbCpxDzZYy0Zrphqd40=;
+        b=nDSHYQqQcfLtxP98lvScI+qHXh5BFwujVhRyPCFKQNCMJFGcTXadGKtxn75+u5qDZT
+         mWGZXvJyzFOvljikWCco77LgZaRVVJBW40X9lFZJVTq6rG5W04cYz2uyOEgi/YRdjo4a
+         vGaGX0EN6eJazNyFSCrmwUVqtz/DtFMn1cwJ5aBAuSeALuaeyL+gCLLh/RiVi7ZpF0Kw
+         U2rrrzUrQ5S+SslIYqq5v0BzQ06M0XQycdl6b53VlQxyUrE3maWeCY8R7uy8eOZAmo33
+         S6Fo/0M7sK2IskbAA7ZeAXbhK436zNRn+4ZADL/WpH9KbdxrzmsxcA5InnX7mQFAZnG1
+         cdGw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3O5QVVUYMPTwoAOz//INinACIhRztlS0vEBaj9N63v7iFzxE9TNEJb2Fye9fUtDXuUdhaBFIHHVsiiRaZUWE64qbikMO4dDx3viPwMw==
+X-Gm-Message-State: AOJu0Yy1MNMYnrTTIYr1SdgK3UZNo6IcLQ4GEnPKLKoTob0S8LCMO/1L
+	64GGSRKfEoI3srnaXIR6x2wf566995Abc8s2BiplZa2StmgfQBrD
+X-Google-Smtp-Source: AGHT+IHeENFfvE2LJEVwnoqkPgmNWEmm7J+AmSWR/Mv/v5loHcvEKLIcXVuBOyUWhEfJzFxZrjVAFA==
+X-Received: by 2002:a05:6000:246:b0:33e:b1e7:7423 with SMTP id m6-20020a056000024600b0033eb1e77423mr6958281wrz.11.1710700933466;
+        Sun, 17 Mar 2024 11:42:13 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan (85-250-214-4.bb.netvision.net.il. [85.250.214.4])
-        by smtp.gmail.com with ESMTPSA id bk28-20020a0560001d9c00b0033e22a7b3f8sm3070716wrb.75.2024.03.17.11.42.11
+        by smtp.gmail.com with ESMTPSA id bk28-20020a0560001d9c00b0033e22a7b3f8sm3070716wrb.75.2024.03.17.11.42.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Mar 2024 11:42:11 -0700 (PDT)
+        Sun, 17 Mar 2024 11:42:13 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Jan Kara <jack@suse.cz>,
 	Jens Axboe <axboe@kernel.dk>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 08/10] fsnotify: move s_fsnotify_connectors into fsnotify_sb_info
-Date: Sun, 17 Mar 2024 20:41:52 +0200
-Message-Id: <20240317184154.1200192-9-amir73il@gmail.com>
+Subject: [PATCH 09/10] fsnotify: use an enum for group priority constants
+Date: Sun, 17 Mar 2024 20:41:53 +0200
+Message-Id: <20240317184154.1200192-10-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240317184154.1200192-1-amir73il@gmail.com>
 References: <20240317184154.1200192-1-amir73il@gmail.com>
@@ -86,77 +86,88 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move the s_fsnotify_connectors counter into the per-sb fsnotify state.
+And use meaningfull names for the constants.
 
-Suggested-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- include/linux/fs.h               | 6 ------
- include/linux/fsnotify.h         | 8 +++++++-
- include/linux/fsnotify_backend.h | 7 ++++++-
- 3 files changed, 13 insertions(+), 8 deletions(-)
+ fs/notify/fanotify/fanotify_user.c | 11 +++++------
+ include/linux/fsnotify_backend.h   | 20 ++++++++++++--------
+ 2 files changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7f40b592f711..c36c2f8fdbe3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1302,12 +1302,6 @@ struct super_block {
- 	/* Number of inodes with nlink == 0 but still referenced */
- 	atomic_long_t s_remove_count;
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index ee2b5017d247..9ec313e9f6e1 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1516,13 +1516,13 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 	INIT_LIST_HEAD(&group->fanotify_data.access_list);
+ 	switch (class) {
+ 	case FAN_CLASS_NOTIF:
+-		group->priority = FS_PRIO_0;
++		group->priority = FSNOTIFY_PRIO_NORMAL;
+ 		break;
+ 	case FAN_CLASS_CONTENT:
+-		group->priority = FS_PRIO_1;
++		group->priority = FSNOTIFY_PRIO_CONTENT;
+ 		break;
+ 	case FAN_CLASS_PRE_CONTENT:
+-		group->priority = FS_PRIO_2;
++		group->priority = FSNOTIFY_PRIO_PRE_CONTENT;
+ 		break;
+ 	default:
+ 		fd = -EINVAL;
+@@ -1774,12 +1774,11 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 		goto fput_and_out;
  
--	/*
--	 * Number of inode/mount/sb objects that are being watched, note that
--	 * inodes objects are currently double-accounted.
--	 */
--	atomic_long_t s_fsnotify_connectors;
--
- 	/* Read-only state of the superblock is being changed */
- 	int s_readonly_remount;
+ 	/*
+-	 * group->priority == FS_PRIO_0 == FAN_CLASS_NOTIF.  These are not
+-	 * allowed to set permissions events.
++	 * Permission events require minimum priority FAN_CLASS_CONTENT.
+ 	 */
+ 	ret = -EINVAL;
+ 	if (mask & FANOTIFY_PERM_EVENTS &&
+-	    group->priority == FS_PRIO_0)
++	    group->priority < FSNOTIFY_PRIO_CONTENT)
+ 		goto fput_and_out;
  
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index e470bb67c9a3..48dc65702415 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -20,7 +20,13 @@
- /* Are there any inode/mount/sb objects that are being watched at all? */
- static inline bool fsnotify_sb_has_watchers(struct super_block *sb)
- {
--	return atomic_long_read(fsnotify_sb_watched_objects(sb));
-+	struct fsnotify_sb_info *sbinfo = fsnotify_sb_info(sb);
-+
-+	/* Were any marks ever added to any object on this sb? */
-+	if (!sbinfo)
-+		return false;
-+
-+	return atomic_long_read(&sbinfo->watched_objects);
- }
- 
- /*
+ 	if (mask & FAN_FS_ERROR &&
 diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index c9f2b2f6b493..ec592aeadfa3 100644
+index ec592aeadfa3..fc38587d8564 100644
 --- a/include/linux/fsnotify_backend.h
 +++ b/include/linux/fsnotify_backend.h
-@@ -483,6 +483,11 @@ struct fsnotify_mark_connector {
-  */
- struct fsnotify_sb_info {
- 	struct fsnotify_mark_connector __rcu *sb_marks;
-+	/*
-+	 * Number of inode/mount/sb objects that are being watched in this sb.
-+	 * Note that inodes objects are currently double-accounted.
-+	 */
-+	atomic_long_t watched_objects;
+@@ -176,6 +176,17 @@ struct fsnotify_event {
+ 	struct list_head list;
  };
  
- static inline struct fsnotify_sb_info *fsnotify_sb_info(struct super_block *sb)
-@@ -496,7 +501,7 @@ static inline struct fsnotify_sb_info *fsnotify_sb_info(struct super_block *sb)
- 
- static inline atomic_long_t *fsnotify_sb_watched_objects(struct super_block *sb)
- {
--	return &sb->s_fsnotify_connectors;
-+	return &fsnotify_sb_info(sb)->watched_objects;
- }
- 
++/*
++ * fsnotify group priorities.
++ * Events are sent in order from highest priority to lowest priority.
++ */
++enum fsnotify_group_prio {
++	FSNOTIFY_PRIO_NORMAL = 0,	/* normal notifiers, no permissions */
++	FSNOTIFY_PRIO_CONTENT,		/* fanotify permission events */
++	FSNOTIFY_PRIO_PRE_CONTENT,	/* fanotify pre-content events */
++	__FSNOTIFY_PRIO_NUM
++};
++
  /*
+  * A group is a "thing" that wants to receive notification about filesystem
+  * events.  The mask holds the subset of event types this group cares about.
+@@ -201,14 +212,7 @@ struct fsnotify_group {
+ 	wait_queue_head_t notification_waitq;	/* read() on the notification file blocks on this waitq */
+ 	unsigned int q_len;			/* events on the queue */
+ 	unsigned int max_events;		/* maximum events allowed on the list */
+-	/*
+-	 * Valid fsnotify group priorities.  Events are send in order from highest
+-	 * priority to lowest priority.  We default to the lowest priority.
+-	 */
+-	#define FS_PRIO_0	0 /* normal notifiers, no permissions */
+-	#define FS_PRIO_1	1 /* fanotify content based access control */
+-	#define FS_PRIO_2	2 /* fanotify pre-content access */
+-	unsigned int priority;
++	enum fsnotify_group_prio priority;	/* priority for sending events */
+ 	bool shutdown;		/* group is being shut down, don't queue more events */
+ 
+ #define FSNOTIFY_GROUP_USER	0x01 /* user allocated group */
 -- 
 2.34.1
 
