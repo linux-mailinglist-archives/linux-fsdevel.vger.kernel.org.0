@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-14636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05FA87DEE4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:38:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 777D987DEE6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FDFD1F21A39
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:38:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DDF0281461
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239D21CAAE;
-	Sun, 17 Mar 2024 16:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD07D1CA96;
+	Sun, 17 Mar 2024 16:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ny/Swwi0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdAIkMEs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800DF1CA87;
-	Sun, 17 Mar 2024 16:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DC41CA87;
+	Sun, 17 Mar 2024 16:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710693527; cv=none; b=fRFmfpyweCr4blbpHBFJuss2LF9NNMw1iSmVkLSce01NA0BN1nL8jkzLsiIKcPYRHaeXiwKcAA+hDs9p75JoeJuV/ikb3Ebzaz4rcqn5iCrV9XhGG9ti/Z5krSdKwOq1qhtJSqAWuKuQogt55YXtVlrPMaezkrP5ss47Q3Xvi/k=
+	t=1710693543; cv=none; b=IaTa/Ztt29J4ak9E3me+GsTpUU3J+w3cymxR9Wqev/3ZpmDZVrKcVutrXQ9GcgVaLMsYh9j1PHqMoabfE5Hyw1r8CTkrGWYX8ReQloynveTqXiN+zAQkZokfd9iotPhkKf/OcHIfNu4b+yo/lMuMb+pntC/nzHc6fZUUGD7VAVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710693527; c=relaxed/simple;
-	bh=YonbOlo7kZSrSHU+riF5JjnXy5xT6SgrOFqAqO9Lx1A=;
+	s=arc-20240116; t=1710693543; c=relaxed/simple;
+	bh=sQpc0kmxBtO4UBUhStV0HJX0r8qKG+wP7go6XMJGgxw=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H5rrVtGxqjx0OKCm+1O3/r/dX848jd1n2Ypnep3NafoCohCV+hr1X1kCgtPZPLuVc3SNwv0FfbPoOVb30NRDvmPseI5KmnKg6FY3ySsuCKEXraa1jS5VjKVVHVnM08bcz/+p//FOImmcaS/rUAhdKvnTtzD/G4vvjhxqv5Iunuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ny/Swwi0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56A9EC433C7;
-	Sun, 17 Mar 2024 16:38:47 +0000 (UTC)
+	 MIME-Version:Content-Type; b=EpOcWXS0kABxxaxsERglN+w1UPCPiCjHB9+O5LS06uiNOLYvvR9jjiBtV4S26xVqAZ9KhhXoqMgh53zz04FLezZ+6lMz5eVbel1t7nfzqBsh4sou1g8glhm1e088AKxuglXpJEsRqE7MgrbO0MRBmqYgC+HrVZNPWchX1a7Pez8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UdAIkMEs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C68DC433C7;
+	Sun, 17 Mar 2024 16:39:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710693527;
-	bh=YonbOlo7kZSrSHU+riF5JjnXy5xT6SgrOFqAqO9Lx1A=;
+	s=k20201202; t=1710693543;
+	bh=sQpc0kmxBtO4UBUhStV0HJX0r8qKG+wP7go6XMJGgxw=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Ny/Swwi0tvnl6I7rDvXBsh3Rfr7eEL7kxXVBjAg6MZEoK5oKTX0MbDXtY+QV977u/
-	 MC6r2lyUiuHoRdKDliGyzuOfPQwfgM9G99P4v3ih0JEbo+D9RA/xXnrxY4xM1VvPIb
-	 +sYYuXplXZoMqz/fYx+pnaonYaWYHYEtDsxhlhY/vbhENCEWmRz9T3OWyJXt2Ny975
-	 zVJa+Kj1rwbPRr4hB4lSWh6qtczniWk3tC7ZViRH2DdMswfXCccNu51CKGnJl09FhB
-	 0cIJQ/0KxijzR56tjwoWb6iPsISxPO9R/b1gu8ECsAGuEUAiKNxfBpZIuFBRkWpKPC
-	 6LT2dkwb0i8SQ==
-Date: Sun, 17 Mar 2024 09:38:46 -0700
-Subject: [PATCH 19/20] xfs_repair: junk fsverity xattrs when unnecessary
+	b=UdAIkMEskTR/S/WGLI7y4Wqf2AI7XwyB9tFElEO3lsunFWmZxfBeqo24K+Hd9Otex
+	 18pHJ5G6AdLVV5jagjPQ5pdyuOjw0E5GiX4m/aTxg/IdLQCIfNwqBPLKVbnICuuH9E
+	 65bm586XXV5B3Xe0VltS9ynVKFOtGleCcmQMr0pG+Ui4ReFD4CuCyWGE1hNlkERbWj
+	 aA2CjeTBrBB5k2p9pmCiIWuO20WagFAivvuQZ4TJ5gyPhmhocCl6RcFWwuTc12BRG8
+	 Gkcg+X+5ccIBgT5wPeJI4Fz4COieXuRjiuSv9lsWtsf1oUkufLkr10JIDW3NlbUtiL
+	 1UheMcoembTVw==
+Date: Sun, 17 Mar 2024 09:39:02 -0700
+Subject: [PATCH 20/20] mkfs.xfs: add verity parameter
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: aalbersh@redhat.com, djwong@kernel.org, cem@kernel.org,
  ebiggers@kernel.org
 Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
  linux-xfs@vger.kernel.org
-Message-ID: <171069247937.2685643.15009445761715327565.stgit@frogsfrogsfrogs>
+Message-ID: <171069247951.2685643.5838885180227203125.stgit@frogsfrogsfrogs>
 In-Reply-To: <171069247657.2685643.11583844772215446491.stgit@frogsfrogsfrogs>
 References: <171069247657.2685643.11583844772215446491.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -61,65 +61,115 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-From: Darrick J. Wong <djwong@kernel.org>
+From: Andrey Albershteyn <aalbersh@redhat.com>
 
-Remove any fs-verity extended attributes when the filesystem doesn't
-support fs-verity.
+fs-verity brings on-disk changes (inode flag). Add parameter to
+enable (default disabled) fs-verity flag in superblock. This will
+make newly create filesystem read-only for older kernels.
 
+Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+[djwong: make this an -i(node) option, edit manpage]
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- repair/attr_repair.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ man/man8/mkfs.xfs.8.in |    4 ++++
+ mkfs/xfs_mkfs.c        |   19 +++++++++++++++++--
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
 
-diff --git a/repair/attr_repair.c b/repair/attr_repair.c
-index 9c41cb21..5225950c 100644
---- a/repair/attr_repair.c
-+++ b/repair/attr_repair.c
-@@ -313,6 +313,13 @@ process_shortform_attr(
- 					NULL, currententry->namelen,
- 					currententry->valuelen);
+diff --git a/man/man8/mkfs.xfs.8.in b/man/man8/mkfs.xfs.8.in
+index 8060d342..4864b4d4 100644
+--- a/man/man8/mkfs.xfs.8.in
++++ b/man/man8/mkfs.xfs.8.in
+@@ -670,6 +670,10 @@ If the value is omitted, 1 is assumed.
+ This feature will be enabled when possible.
+ This feature is only available for filesystems formatted with -m crc=1.
+ .TP
++.BI verity[= value]
++This flag activates verity support, which enables sealing of regular file data
++with hashes and cryptographic signatures.
++This feature is only available for filesystems formatted with -m crc=1.
+ .RE
+ .PP
+ .PD 0
+diff --git a/mkfs/xfs_mkfs.c b/mkfs/xfs_mkfs.c
+index d6fa48ed..dec5edaf 100644
+--- a/mkfs/xfs_mkfs.c
++++ b/mkfs/xfs_mkfs.c
+@@ -90,6 +90,7 @@ enum {
+ 	I_PROJID32BIT,
+ 	I_SPINODES,
+ 	I_NREXT64,
++	I_VERITY,
+ 	I_MAX_OPTS,
+ };
  
-+		if ((currententry->flags & XFS_ATTR_VERITY) &&
-+		    !xfs_has_verity(mp)) {
-+			do_warn(
-+ _("verity metadata found on filesystem that doesn't support verity\n"));
-+			junkit |= 1;
-+		}
-+
- 		remainingspace = remainingspace -
- 					xfs_attr_sf_entsize(currententry);
+@@ -469,6 +470,7 @@ static struct opt_params iopts = {
+ 		[I_PROJID32BIT] = "projid32bit",
+ 		[I_SPINODES] = "sparse",
+ 		[I_NREXT64] = "nrext64",
++		[I_VERITY] = "verity",
+ 		[I_MAX_OPTS] = NULL,
+ 	},
+ 	.subopt_params = {
+@@ -523,7 +525,13 @@ static struct opt_params iopts = {
+ 		  .minval = 0,
+ 		  .maxval = 1,
+ 		  .defaultval = 1,
+-		}
++		},
++		{ .index = I_VERITY,
++		  .conflicts = { { NULL, LAST_CONFLICT } },
++		  .minval = 0,
++		  .maxval = 1,
++		  .defaultval = 1,
++		},
+ 	},
+ };
  
-@@ -513,6 +520,15 @@ process_leaf_attr_local(
- 			return -1;
- 		}
+@@ -889,6 +897,7 @@ struct sb_feat_args {
+ 	bool	nodalign;
+ 	bool	nortalign;
+ 	bool	nrext64;
++	bool	verity;			/* XFS_SB_FEAT_RO_COMPAT_VERITY */
+ };
+ 
+ struct cli_params {
+@@ -1024,7 +1033,7 @@ usage( void )
+ 			    sectsize=num,concurrency=num]\n\
+ /* force overwrite */	[-f]\n\
+ /* inode size */	[-i perblock=n|size=num,maxpct=n,attr=0|1|2,\n\
+-			    projid32bit=0|1,sparse=0|1,nrext64=0|1]\n\
++			    projid32bit=0|1,sparse=0|1,nrext64=0|1,verity=0|1]\n\
+ /* no discard */	[-K]\n\
+ /* log subvol */	[-l agnum=n,internal,size=num,logdev=xxx,version=n\n\
+ 			    sunit=value|su=num,sectsize=num,lazy-count=0|1,\n\
+@@ -1722,6 +1731,9 @@ inode_opts_parser(
+ 	case I_NREXT64:
+ 		cli->sb_feat.nrext64 = getnum(value, opts, subopt);
+ 		break;
++	case I_VERITY:
++		cli->sb_feat.verity = getnum(value, opts, subopt);
++		break;
+ 	default:
+ 		return -EINVAL;
  	}
-+
-+	if ((entry->flags & XFS_ATTR_VERITY) && !xfs_has_verity(mp)) {
-+		do_warn(
-+ _("verity metadata found in attribute entry %d in attr block %u, inode %"
-+   PRIu64 " on filesystem that doesn't support verity\n"),
-+				i, da_bno, ino);
-+		return -1;
-+	}
-+
- 	return xfs_attr_leaf_entsize_local(local->namelen,
- 						be16_to_cpu(local->valuelen));
- }
-@@ -549,6 +565,14 @@ process_leaf_attr_remote(
- 		return -1;
- 	}
+@@ -3478,6 +3490,8 @@ sb_set_features(
+ 		sbp->sb_features_ro_compat |= XFS_SB_FEAT_RO_COMPAT_REFLINK;
+ 	if (fp->inobtcnt)
+ 		sbp->sb_features_ro_compat |= XFS_SB_FEAT_RO_COMPAT_INOBTCNT;
++	if (fp->verity)
++		sbp->sb_features_ro_compat |= XFS_SB_FEAT_RO_COMPAT_VERITY;
+ 	if (fp->bigtime)
+ 		sbp->sb_features_incompat |= XFS_SB_FEAT_INCOMPAT_BIGTIME;
  
-+	if ((entry->flags & XFS_ATTR_VERITY) && !xfs_has_verity(mp)) {
-+		do_warn(
-+ _("verity metadata found in attribute entry %d in attr block %u, inode %"
-+   PRIu64 " on filesystem that doesn't support verity\n"),
-+				i, da_bno, ino);
-+		return -1;
-+	}
-+
- 	value = malloc(be32_to_cpu(remotep->valuelen));
- 	if (value == NULL) {
- 		do_warn(
+@@ -4339,6 +4353,7 @@ main(
+ 			.nortalign = false,
+ 			.bigtime = true,
+ 			.nrext64 = true,
++			.verity = false,
+ 			/*
+ 			 * When we decide to enable a new feature by default,
+ 			 * please remember to update the mkfs conf files.
 
 
