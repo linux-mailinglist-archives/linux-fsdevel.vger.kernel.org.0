@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-14610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8A1687DEA7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:32:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 476F587DEA9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 17:32:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DAC7B210BA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1531F20621
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 16:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830F94C84;
-	Sun, 17 Mar 2024 16:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9149D5221;
+	Sun, 17 Mar 2024 16:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UW9yt7iK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdoH3j+B"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8A81CD13;
-	Sun, 17 Mar 2024 16:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAF536D;
+	Sun, 17 Mar 2024 16:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710693121; cv=none; b=tk5+gn4ffb5BDgsMMZkVb50SeH044su0Hp/xlrfi9/aPO0S+q7J2UBzY6PNuMtqVRhXVL3xzgBdgOESY4qgwa8sKuQOzDM6DP3ihBdhPZkm1X1ehyYhmsLajfbO7khIGv5iHTsv36vdvdKhLfLd8vH8SYc8SejQaYsx573xs5hY=
+	t=1710693137; cv=none; b=fQPID3lHSyLp3WVyehlhECT9Jt5uxH6Neb06RCzLibMhovA3zBJa/X80NRvsU9c+wC00RSis1+LUScxmMTlN1wpSZUR8AauvK2SzZZk172/jodjZrDCfYbUNqxWCrSiJfXBsR1dX5mv7GB0Nn5gf3/E6n8lWfOEbyfqqhYwcfaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710693121; c=relaxed/simple;
-	bh=hfNdyLjE0iccOAS0uu/YAdIUW0G4z5hO8bo6TEkRMsk=;
+	s=arc-20240116; t=1710693137; c=relaxed/simple;
+	bh=yqHsxghv7Z64lboh1wQLuPmDG/JgBesCNaDkoWMgcDI=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NbOFhVrhRmIyMkGNRabuV5srcF/tr28wTNLtxdElgeBVHrebz4LzX9nGwLgfNxeWlb6QxUuujDgG6e32vfMIsaAeaCpqoL5JBq+W4P7wCluuX+r8Fihc2J2nOHuX8gkoodxfI+p/hpQzJ384ATGW1R0MnqOhqBpVUWbwbqr5yas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UW9yt7iK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE206C433C7;
-	Sun, 17 Mar 2024 16:32:00 +0000 (UTC)
+	 MIME-Version:Content-Type; b=pJz/PDWEFIuoNWYoK6d25ZjrDGQTmxyWCRrsXTOt1G+aA70Bvs7+UuxKcD+2IribrdpjZjwume6QEHHhIqIxeBECXmx3b5iE2d3GvLtqeDhMutEYiClxupVQH3wf7oOLY23G7EpCIXJ3rT+PEafj9NGb8hhkCEpEue5c37ncoJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdoH3j+B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1B0C433F1;
+	Sun, 17 Mar 2024 16:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710693120;
-	bh=hfNdyLjE0iccOAS0uu/YAdIUW0G4z5hO8bo6TEkRMsk=;
+	s=k20201202; t=1710693136;
+	bh=yqHsxghv7Z64lboh1wQLuPmDG/JgBesCNaDkoWMgcDI=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=UW9yt7iKAojHVHTga1fTtUjGhWvHzJ5pX4KJ/wIhHknWAPa7jm8762UIHTIS1iKBL
-	 QkbxqA3/T0/S87HU4t7BUs8LQCh/agTorGx8N+e45TaK2ii2NdGNbX3DMuIbqPWz19
-	 gvQKbm77yX/JShbYbYSwv2rBEdlAN96NDre+WtMJgFpBr67+sFk0wR3Oib6MlrxIQC
-	 XfUMEgQTAyMtAKszvhe9CnEhlPNNCqMEJ8H7tYBeq9akWc9YYfTF17FNX3c+FaYDe2
-	 URsp6meGwPuKA+NVuPRNn9xvv6MqhkPs0Fgnqc+cDizWcCXEs1fiYK93sXBD8ckkfb
-	 8WOdz+YdPIPWQ==
-Date: Sun, 17 Mar 2024 09:32:00 -0700
-Subject: [PATCH 33/40] xfs: add fs-verity ioctls
+	b=fdoH3j+BfNtnJQkvJBYn+e3mwqBH6ioXtFR91qJPFiFI/uKA8P45vaKy9IphMuAvm
+	 BUy0tT7eWTAtajY5myEf4ily+AQAVVYyLrGHNEFvwluw33C5ZaOMdSz6vBDe88jccU
+	 laQTC0vtLN5nikfLfAH1AYoGkrloKQ9h8K1fKOINQCd23EE0QGcecq0HJB5vu1zvuL
+	 WyO4lIv5Qa2nxST6IANIZUjAh+I773C+983mGYAxWxACyiG3Wo1kINXMbzav+akE9k
+	 vrJZsWFwhfcGluG2VETqlmqemOxaLysC6QwtwD2ar9v9age8Y5yyvSJK9QE3n8/F81
+	 VhHpANd3hnC/g==
+Date: Sun, 17 Mar 2024 09:32:15 -0700
+Subject: [PATCH 34/40] xfs: advertise fs-verity being available on filesystem
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, ebiggers@kernel.org, aalbersh@redhat.com
 Cc: linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
  linux-xfs@vger.kernel.org
-Message-ID: <171069246438.2684506.7350688709329720774.stgit@frogsfrogsfrogs>
+Message-ID: <171069246454.2684506.17930149061393435049.stgit@frogsfrogsfrogs>
 In-Reply-To: <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
 References: <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -60,53 +60,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-From: Andrey Albershteyn <aalbersh@redhat.com>
+From: Darrick J. Wong <djwong@kernel.org>
 
-Add fs-verity ioctls to enable, dump metadata (descriptor and Merkle
-tree pages) and obtain file's digest.
+Advertise that this filesystem supports fsverity.
 
-Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-[djwong: remove unnecessary casting]
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/xfs_ioctl.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ fs/xfs/libxfs/xfs_fs.h |    1 +
+ fs/xfs/libxfs/xfs_sb.c |    2 ++
+ 2 files changed, 3 insertions(+)
 
 
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index ab61d7d552fb..4b11898728cc 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -43,6 +43,7 @@
- #include <linux/mount.h>
- #include <linux/namei.h>
- #include <linux/fileattr.h>
-+#include <linux/fsverity.h>
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index ca1b17d01437..2f372088004f 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -239,6 +239,7 @@ typedef struct xfs_fsop_resblks {
+ #define XFS_FSOP_GEOM_FLAGS_BIGTIME	(1 << 21) /* 64-bit nsec timestamps */
+ #define XFS_FSOP_GEOM_FLAGS_INOBTCNT	(1 << 22) /* inobt btree counter */
+ #define XFS_FSOP_GEOM_FLAGS_NREXT64	(1 << 23) /* large extent counters */
++#define XFS_FSOP_GEOM_FLAGS_VERITY	(1 << 24) /* fs-verity */
  
  /*
-  * xfs_find_handle maps from userspace xfs_fsop_handlereq structure to
-@@ -2174,6 +2175,21 @@ xfs_file_ioctl(
- 		return error;
+  * Minimum and maximum sizes need for growth checks.
+diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
+index a845cbe3f539..f5038d0d94fe 100644
+--- a/fs/xfs/libxfs/xfs_sb.c
++++ b/fs/xfs/libxfs/xfs_sb.c
+@@ -1260,6 +1260,8 @@ xfs_fs_geometry(
  	}
+ 	if (xfs_has_large_extent_counts(mp))
+ 		geo->flags |= XFS_FSOP_GEOM_FLAGS_NREXT64;
++	if (xfs_has_verity(mp))
++		geo->flags |= XFS_FSOP_GEOM_FLAGS_VERITY;
+ 	geo->rtsectsize = sbp->sb_blocksize;
+ 	geo->dirblocksize = xfs_dir2_dirblock_bytes(sbp);
  
-+	case FS_IOC_ENABLE_VERITY:
-+		if (!xfs_has_verity(mp))
-+			return -EOPNOTSUPP;
-+		return fsverity_ioctl_enable(filp, arg);
-+
-+	case FS_IOC_MEASURE_VERITY:
-+		if (!xfs_has_verity(mp))
-+			return -EOPNOTSUPP;
-+		return fsverity_ioctl_measure(filp, arg);
-+
-+	case FS_IOC_READ_VERITY_METADATA:
-+		if (!xfs_has_verity(mp))
-+			return -EOPNOTSUPP;
-+		return fsverity_ioctl_read_metadata(filp, arg);
-+
- 	default:
- 		return -ENOTTY;
- 	}
 
 
