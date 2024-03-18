@@ -1,148 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-14779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5EF387F312
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 23:23:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EB787F340
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 23:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C5E1C21519
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 22:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179F41C20FFC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 22:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A815A4C4;
-	Mon, 18 Mar 2024 22:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3586D5B1F1;
+	Mon, 18 Mar 2024 22:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="hhfOO/cn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjYCusVd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57A059B76
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 22:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC605A786;
+	Mon, 18 Mar 2024 22:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710800581; cv=none; b=fTqXhHmt16G4NkzGjlbidYcc8Rz/Ha1K4kOowJ08K3t6g93LKBC/IjKYSzC2wn7DsiaJMQCGe3yvVbMVgMf+qrv+FWu4WcL63A7k8PvHkh94x8yEwfHzyVkhp+Fy5eDSjPS4rntdsjUguJYjiCgvNBnWTWcAfatoSCFlRbLX1J4=
+	t=1710802042; cv=none; b=Xtq1Ej1ueU+2MlhSuFF1WcYIanTdej9/hPM/yDjOSUcSpD/+x+Tuji0bE/8YoybdLN/GgkPahcUwZ3nn9IoIL2frxTi2r3+i6r0v8RenknfOjBSaKQOWA9a0HGI2VtbEd4N4T2zHHXw5kyoNDl0R9/uBxL3GoF7d+IZpVXkO29Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710800581; c=relaxed/simple;
-	bh=NqI0VTZW80xtuCGyeObiIog7FSq9YX7JYVoRKPWyAsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VbQWXiJDfy+YtRI4k3qsQxEHc9fmGDNgSRyH8LgU0+IkY1g2BmoWvAS6wRHWlxXUh1qOc8msIkX2MxpuLSRaRCOnsrfs0zWXC6TMXKuZ1J0qWawnkJuznDNfy2jZHQrWrxAAlaZkgywFdW4zFlMRpkMRLlL9g0zmjpHWf1QsIqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=hhfOO/cn; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5a47abe2ff7so1868214eaf.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 15:22:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710800578; x=1711405378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oCCQCvkYtGuuihvS9ju13jWtjvlJYDKT9jyxnBBJm5s=;
-        b=hhfOO/cnoOU3wnrH1TbsSuGUEZTtNBJPUDUIbIAw5mre3kMg5Q2CKR2Kyj5ZdgPqYj
-         L59Hc5IG1vEkH6kMNEMU+NGk4dmZokTStw+YOyuNaRBD9KaavjAG3GAo+VWrvcIt0ezv
-         J6zCf3W+rPjJKZhIdewcStElPotBuTlh+jd+U0/2gHu52tCxBqzm9o6s7Kr1FX/KMnCh
-         pcTWN+t2vHrFJq0yxrqcgf/6RWQ5L5Y1y54x+MjP24en8VttiVvw1Iy7Ges0vbru+9o9
-         qAZM6/TgKk30AlXLTRsze7+vMESCdieBkoMP5z88IMY3EmGxscSo2HXrqy8HTEfuhyvQ
-         dDbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710800578; x=1711405378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oCCQCvkYtGuuihvS9ju13jWtjvlJYDKT9jyxnBBJm5s=;
-        b=iLBRWu6bqgetSTXhGELmWDKrKq5DMUSSSyTMvzPgjPd17bPEjj8WALX+xX+8wLYWg2
-         3NjyPgb+947e7DD34oc52dsbP+5u88lfnzF/2K90Dy6b0QI1kEEh/+X4PaCv9pM6tQJc
-         jeHDRe/3vey0OBw00ngfafLSrvtEYphiAydn+jYxxDB5kO7ZXC6nXTOtB9p6SsI0MD2f
-         L9jgKz+0B5v4vOztDfSSJeGOEkpT4VKU14N2k4ykw5pxp+hGB6yIbZk/gAjRZtPCgh2Q
-         kqe9nZHCbAWZiqb9cL0s0NMBNhPyxXgc1ufoDDi59l2KCAci8EOtUloHrXlEFxclfzVT
-         GoTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGt6yCpIWL77yLh6KgKXZyM4H0qcc6GTyUJtkjRcy5+3Avrb+tMdpJx0yl7sYXD4ge55Zt4PXED3coBzepZm32uvcd+1n52Uz9vo8FXw==
-X-Gm-Message-State: AOJu0YxEYX2Qa4hDdtoJHLD60L+JSOtL7Tp9fdbFMaQowowuQUBDer3U
-	BnO23n68dJnmuTwYCPkIu0zb2qN6SLJtf8UUhtUhjtST6nKQNCDX+7OZ+PeS++U=
-X-Google-Smtp-Source: AGHT+IHyckCjaxFsQHMtIDAZv7wEdAat6m2tUFjdH9I1ji+XQfTeAoj5hu9HAz770Ekw5+eb0V75BA==
-X-Received: by 2002:a05:6358:3389:b0:17e:8e40:47f5 with SMTP id i9-20020a056358338900b0017e8e4047f5mr8624180rwd.11.1710800578468;
-        Mon, 18 Mar 2024 15:22:58 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-185-123.pa.nsw.optusnet.com.au. [49.180.185.123])
-        by smtp.gmail.com with ESMTPSA id k12-20020aa790cc000000b006e71cd9c02bsm3240212pfk.129.2024.03.18.15.22.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 15:22:57 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rmLNf-003nTk-25;
-	Tue, 19 Mar 2024 09:22:55 +1100
-Date: Tue, 19 Mar 2024 09:22:55 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Kiselev, Oleg" <okiselev@amazon.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Theodore Ts'o <tytso@mit.edu>,
-	"torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
-Subject: Re: [PATCH 3/3] ext4: Add support for FS_IOC_GETFSSYSFSPATH
-Message-ID: <Zfi+v/9vF+mfZ4Bl@dread.disaster.area>
-References: <20240315035308.3563511-1-kent.overstreet@linux.dev>
- <20240315035308.3563511-4-kent.overstreet@linux.dev>
- <20240315164550.GD324770@mit.edu>
- <l3dzlrzaekbxjryazwiqtdtckvl4aundfmwff2w4exuweg4hbc@2zsrlptoeufv>
- <A0A342BA-631D-4D6E-B6D2-692A45509F63@amazon.com>
+	s=arc-20240116; t=1710802042; c=relaxed/simple;
+	bh=+oeCCZuGnI9DcVme6NWVIVJJgNcEbP+7SYrOodPau6A=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=blIOTuT+vWffjlTxBmrx32SlRg1nmYnhfPBLjjuZ2imEf9llX21w6d35mWyPfopXkmlNaZPZqtT1Z2JobHAv43RXb0UWEqV/2IeN1nok0pTu+maf4DN3dHPddgB/7ZMYy/InPBKY5EW6tOYvhGtYn8yrQ/60K0Yi6Glp7TwJowA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjYCusVd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 492C7C433C7;
+	Mon, 18 Mar 2024 22:47:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710802042;
+	bh=+oeCCZuGnI9DcVme6NWVIVJJgNcEbP+7SYrOodPau6A=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=CjYCusVdCPlzf/MFrgzsqGKMRiMHAwB4X177B374Du+vkQDFsA3JlW75xnMQwnhAF
+	 02mp6qVs6nc0Gj5FcfBfUNGcntzXtcIHKomJIGFJjYgFPzdisuKrdHJ2QP59LYVGrW
+	 2ATBuwPWAcUL5giL2zJzFe0l//CltiMNmq21TqsRTFrdFNzE5VKh54mcKUGShS2KMw
+	 U1NPiCHpNfaKRHT7EV251EuxLfH/vD7MjEzWuKf+j7kr1bnNSzBLfYDBdprQGpfL8M
+	 AGh0DhaoLq15JLaZBN9EFJpks0oHbT6IyyvdzXEMgGaqmZpZJ2KzJxIBXJHGuKPgeq
+	 2Oz90rynqtqKw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3CA75D84BB3;
+	Mon, 18 Mar 2024 22:47:22 +0000 (UTC)
+Subject: Re: [GIT PULL] sysctl changes for v6.9-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240318122559.jedemqmrgms2wmgq@joelS2.panther.com>
+References: <CGME20240318122602eucas1p1d7761ac44909f55a8bb369982d2e0adb@eucas1p1.samsung.com> <20240318122559.jedemqmrgms2wmgq@joelS2.panther.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240318122559.jedemqmrgms2wmgq@joelS2.panther.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sysctl-6.9-rc1
+X-PR-Tracked-Commit-Id: 4f1136a55dc8e2c27d51e934d0675e12331c7291
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2cb5c8683981ebd5033e3cc91f7dd75794f16e61
+Message-Id: <171080204223.23091.18349900387276389619.pr-tracker-bot@kernel.org>
+Date: Mon, 18 Mar 2024 22:47:22 +0000
+To: Joel Granados <j.granados@samsung.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, Thomas =?utf-8?B?V2Vp77+9c2NodWg=?= <linux@weissschuh.net>, Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Joel Granados <j.granados@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A0A342BA-631D-4D6E-B6D2-692A45509F63@amazon.com>
 
-On Mon, Mar 18, 2024 at 09:51:04PM +0000, Kiselev, Oleg wrote:
-> On 3/15/24, 09:51, "Kent Overstreet" <kent.overstreet@linux.dev <mailto:kent.overstreet@linux.dev>> wrote:
-> > On Fri, Mar 15, 2024 at 12:45:50PM -0400, Theodore Ts'o wrote:
-> > > On Thu, Mar 14, 2024 at 11:53:02PM -0400, Kent Overstreet wrote:
-> > > > the new sysfs path ioctl lets us get the /sys/fs/ path for a given
-> > > > filesystem in a fs agnostic way, potentially nudging us towards
-> > > > standarizing some of our reporting.
-> > > >
-> > > > --- a/fs/ext4/super.c
-> > > > +++ b/fs/ext4/super.c
-> > > > @@ -5346,6 +5346,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
-> > > > sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP | QTYPE_MASK_PRJ;
-> > > > #endif
-> > > > super_set_uuid(sb, es->s_uuid, sizeof(es->s_uuid));
-> > > > + super_set_sysfs_name_bdev(sb);
-> > >
-> > > Should we perhaps be hoisting this call up to the VFS layer, so that
-> > > all file systems would benefit?
-> >
-> >
-> > I did as much hoisting as I could. For some filesystems (single device
-> > filesystems) the sysfs name is the block device, for the multi device
-> > filesystems I've looked at it's the UUID.
-> 
-> Why not use the fs UUID for all cases, single device and multi device?
+The pull request you sent on Mon, 18 Mar 2024 13:25:59 +0100:
 
-Because the sysfs directory heirachy has already been defined for
-many filesystems, and technically sysfs represents a KABI that we
-can't just break for the hell of it.
+> git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sysctl-6.9-rc1
 
-e.g. changing everything to use uuid will break fstests
-infrastructure because it assumes that it can derive the sysfs dir
-location for the filesystem from the *device name* the filesystem is
-mounted on. btrfs has a special implementation of that derivation
-that runs the btrfs command to retreive the UUID of the filesysem.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2cb5c8683981ebd5033e3cc91f7dd75794f16e61
 
-So, yes, while we could technically change it, we break anything in
-userspace that has introduced a dependency on bdev name as the sysfs
-fs identifier. We're not going to break userspace like this,
-especially as it is trivial to avoid.
+Thank you!
 
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
