@@ -1,75 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-14734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BE187E81B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 12:08:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C95987E87D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 12:22:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 513BCB207DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 11:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288091F23071
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 11:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8434C374EA;
-	Mon, 18 Mar 2024 11:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A5136B1D;
+	Mon, 18 Mar 2024 11:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxdhKG/C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qY4r/LVk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3124364D6;
-	Mon, 18 Mar 2024 11:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ADB2C85D;
+	Mon, 18 Mar 2024 11:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710760033; cv=none; b=n3nx7uzjHZt4FBmXfCh8nLio5XOgPIZmxoTdYryOa5U0qva/3WSCppLXxu4eIGwUPu3JPBRlD9eh7JZnXZG851acfQOFJ7x7+mZh/yPOaoLvIdb8QJWeLZyNgKwZvSmFptlQKw4M7zDABSk8xQmkPh6sXHMrQA7sNWTkCEN1xyc=
+	t=1710760928; cv=none; b=NKeFCVlmm6Z+DwB7k9Q6AfzW9oCxy0XhNw0T7LDqUpuThuMNAjcgtjPpZM5CKwOEN4HpnZTqmy/g9jORofrzbxULU9jleivYiWt7ibBRGxgvsv5oMsBs69JNJkt7W3w3k+IOBa4LUFEZU2V8b0jddV01mOjSDPjptP+JQAT8YJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710760033; c=relaxed/simple;
-	bh=6qPQr5BehNc/ICqIC3PCIAiNdkcFX+UvDJ8LDqMO3BY=;
+	s=arc-20240116; t=1710760928; c=relaxed/simple;
+	bh=0xOr6SIupIgFP91LGldL2VaJn7VG0m94uoYWdc60Zbc=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BK1bLSvCRj0s9q/EQ9GJcLR/R2A/hp30/CmhlL/EAiMoinw/S3vEPaMjwBWL+0zv+iMM9k+T/niSI1HWh0yiC7OWJTrGwrUVbgKzBmloDLLulvvzPHVxgDxSquOGNniFiv12d+mYbnLCrIrh8n7OLTEFqDECNVhszch+N9ZBOjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxdhKG/C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35221C43390;
-	Mon, 18 Mar 2024 11:07:10 +0000 (UTC)
+	 Content-Type:MIME-Version; b=fmhZjeI/6Uqgy+4KIDMvSbtq69qEuosUL5w1HMKsi+auF1MKnc1nqMcmfRjBbmhz2GodRQe1csrqOrhckDtPqSO92xweNO23bRrb8zn843PV+ziGb4HZwh63buii2MZVegw9BNOOdt0bf1fVN8/9GTbNno5K4l3ibPBwfHqGWGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qY4r/LVk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3330CC433C7;
+	Mon, 18 Mar 2024 11:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710760033;
-	bh=6qPQr5BehNc/ICqIC3PCIAiNdkcFX+UvDJ8LDqMO3BY=;
+	s=k20201202; t=1710760928;
+	bh=0xOr6SIupIgFP91LGldL2VaJn7VG0m94uoYWdc60Zbc=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=BxdhKG/C/wXOoASFsJFVF68HuRWx1y6JBbwFqitH4++kowFq9b5ugPI+zE+5lhd+/
-	 6tgcoI/lQQYijdbCumIsVI/OHDeLtpRUOhXOK7GfYj/QlnqXDcrey1EEsxCOt+Wdsl
-	 DU5tt9303GIN1I2cmxFpOAZAYHI7bW7zYrUN+Xjl46xIf8vJ/pm03rzMv8R9GBRSKT
-	 twLMCdYNcfbKGOpKmn5O1wmBONghgnnyDRjyrbjNiB20LxfTy3Tg7Ahg7CSX1a/2iL
-	 zeeD9xK1ThRLdubf2Dt9Ik3EZfqigRmzm6Q2aYUTq7iOSYYStS3NppUB91Tsvvakrw
-	 FWvD9RtCSzi4Q==
-Message-ID: <2a29648675b743befe59fc13c5ed1440d5cbe9ee.camel@kernel.org>
-Subject: Re: [PATCH RFC 02/24] filelock: add a lm_set_conflict lease_manager
- callback
+	b=qY4r/LVkNbaubL7kQdZSigdtImRj8XV7gdVH9zytMDfp1G2AiNEsyPFUbcrIq4QxK
+	 PkLeBI3iCml6AstODLC+MCV4ppult4Tf8PxVedJWNjtFFvfTJgPbUS1Ol7XmDeREEU
+	 LTMCLKiajHPHdCHzfRBIEdDx7hzyQRjUjZ/l9Az2dvvNUuy42pMRfhU1nMLv8gdzPH
+	 BQsHP8HdP2xM4ZhWHX8b2dBg+5xHc681xeQ+/HlOLO2ykFQzwK5bdYbffB78SVP/jf
+	 +N7+IWqeRHl8kRQYEd+7Q0EGZypLNUgEKPdQFajjYDvzFHpSwqCqFrlQXJes6BqaSn
+	 pG0RokFnVGEug==
+Message-ID: <5d6688d419f19512a8170ca915ec5825df8f489a.camel@kernel.org>
+Subject: Re: [PATCH RFC 11/24] nfsd: allow DELEGRETURN on directories
 From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Alexander Aring
- <alex.aring@gmail.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, 
- Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, Paulo
- Alcantara <pc@manguebit.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, David Howells <dhowells@redhat.com>, Tyler Hicks
- <code@tyhicks.com>, Neil Brown <neilb@suse.de>, Olga Kornievskaia
- <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Miklos Szeredi
- <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, Namjae Jeon
- <linkinjeon@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>,  linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-nfs@vger.kernel.org,
- linux-cifs@vger.kernel.org,  samba-technical@lists.samba.org,
- netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
- linux-unionfs@vger.kernel.org, netdev@vger.kernel.org
-Date: Mon, 18 Mar 2024 07:07:08 -0400
-In-Reply-To: <ZfcDHPq68nZBaY5D@manet.1015granger.net>
+To: Trond Myklebust <trondmy@hammerspace.com>, "chuck.lever@oracle.com"
+	 <chuck.lever@oracle.com>
+Cc: "senozhatsky@chromium.org" <senozhatsky@chromium.org>, 
+ "sfrench@samba.org" <sfrench@samba.org>, "ecryptfs@vger.kernel.org"
+ <ecryptfs@vger.kernel.org>,  "linux-unionfs@vger.kernel.org"
+ <linux-unionfs@vger.kernel.org>, "davem@davemloft.net"
+ <davem@davemloft.net>,  "viro@zeniv.linux.org.uk"
+ <viro@zeniv.linux.org.uk>, "anna@kernel.org" <anna@kernel.org>,
+ "jack@suse.cz" <jack@suse.cz>, "tom@talpey.com" <tom@talpey.com>,
+ "pabeni@redhat.com" <pabeni@redhat.com>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>,  "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "ronniesahlberg@gmail.com"
+ <ronniesahlberg@gmail.com>, "samba-technical@lists.samba.org"
+ <samba-technical@lists.samba.org>, "dhowells@redhat.com"
+ <dhowells@redhat.com>,  "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "rafael@kernel.org"
+ <rafael@kernel.org>, "alex.aring@gmail.com" <alex.aring@gmail.com>, 
+ "pc@manguebit.com" <pc@manguebit.com>, "amir73il@gmail.com"
+ <amir73il@gmail.com>,  "kolga@netapp.com" <kolga@netapp.com>,
+ "sprasad@microsoft.com" <sprasad@microsoft.com>,  "code@tyhicks.com"
+ <code@tyhicks.com>, "brauner@kernel.org" <brauner@kernel.org>, 
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "edumazet@google.com" <edumazet@google.com>,  "linux-cifs@vger.kernel.org"
+ <linux-cifs@vger.kernel.org>, "linkinjeon@kernel.org"
+ <linkinjeon@kernel.org>,  "neilb@suse.de" <neilb@suse.de>,
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, 
+ "netfs@lists.linux.dev" <netfs@lists.linux.dev>, "miklos@szeredi.hu"
+ <miklos@szeredi.hu>
+Date: Mon, 18 Mar 2024 07:22:04 -0400
+In-Reply-To: <d3d8483b1248e4bccadb8591019dbe7c4aeb3d1c.camel@hammerspace.com>
 References: <20240315-dir-deleg-v1-0-a1d6209a3654@kernel.org>
-	 <20240315-dir-deleg-v1-2-a1d6209a3654@kernel.org>
-	 <ZfcDHPq68nZBaY5D@manet.1015granger.net>
+	 <20240315-dir-deleg-v1-11-a1d6209a3654@kernel.org>
+	 <ZfcHvSEkwIS8-Ytj@manet.1015granger.net>
+	 <d3d8483b1248e4bccadb8591019dbe7c4aeb3d1c.camel@hammerspace.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/
 	r0kmR/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2BrQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRIONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZWf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQOlDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7RjiR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27XiQQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBMYXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9qLqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoac8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3FLpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx
@@ -89,81 +98,73 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Sun, 2024-03-17 at 10:56 -0400, Chuck Lever wrote:
-> On Fri, Mar 15, 2024 at 12:52:53PM -0400, Jeff Layton wrote:
-> > The NFSv4.1 protocol adds support for directory delegations, but it
-> > specifies that if you already have a delegation and try to request a ne=
-w
-> > one on the same filehandle, the server must reply that the delegation i=
-s
-> > unavailable.
+On Sun, 2024-03-17 at 16:03 +0000, Trond Myklebust wrote:
+> On Sun, 2024-03-17 at 11:09 -0400, Chuck Lever wrote:
+> > On Fri, Mar 15, 2024 at 12:53:02PM -0400, Jeff Layton wrote:
+> > > fh_verify only allows you to filter on a single type of inode, so
+> > > have
+> > > nfsd4_delegreturn not filter by type. Once fh_verify returns, do
+> > > the
+> > > appropriate check of the type and return an error if it's not a
+> > > regular
+> > > file or directory.
+> > >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > > =A0fs/nfsd/nfs4state.c | 14 +++++++++++++-
+> > > =A01 file changed, 13 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> > > index 17d09d72632b..c52e807f9672 100644
+> > > --- a/fs/nfsd/nfs4state.c
+> > > +++ b/fs/nfsd/nfs4state.c
+> > > @@ -7425,12 +7425,24 @@ nfsd4_delegreturn(struct svc_rqst *rqstp,
+> > > struct nfsd4_compound_state *cstate,
+> > > =A0	struct nfs4_delegation *dp;
+> > > =A0	stateid_t *stateid =3D &dr->dr_stateid;
+> > > =A0	struct nfs4_stid *s;
+> > > +	umode_t mode;
+> > > =A0	__be32 status;
+> > > =A0	struct nfsd_net *nn =3D net_generic(SVC_NET(rqstp),
+> > > nfsd_net_id);
+> > > =A0
+> > > -	if ((status =3D fh_verify(rqstp, &cstate->current_fh,
+> > > S_IFREG, 0)))
+> > > +	if ((status =3D fh_verify(rqstp, &cstate->current_fh, 0,
+> > > 0)))
+> > > =A0		return status;
+> > > =A0
+> > > +	mode =3D d_inode(cstate->current_fh.fh_dentry)->i_mode &
+> > > S_IFMT;
+> > > +	switch(mode) {
+> > > +	case S_IFREG:
+> > > +	case S_IFDIR:
+> > > +		break;
+> > > +	case S_IFLNK:
+> > > +		return nfserr_symlink;
+> > > +	default:
+> > > +		return nfserr_inval;
+> > > +	}
+> > > +
 > >=20
-> > Add a new lease_manager callback to allow the lease manager (nfsd in
-> > this case) to impose extra checks when performing a setlease.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/locks.c               |  5 +++++
-> >  include/linux/filelock.h | 10 ++++++++++
-> >  2 files changed, 15 insertions(+)
-> >=20
-> > diff --git a/fs/locks.c b/fs/locks.c
-> > index cb4b35d26162..415cca8e9565 100644
-> > --- a/fs/locks.c
-> > +++ b/fs/locks.c
-> > @@ -1822,6 +1822,11 @@ generic_add_lease(struct file *filp, int arg, st=
-ruct file_lease **flp, void **pr
-> >  			continue;
-> >  		}
-> > =20
-> > +		/* Allow the lease manager to veto the setlease */
-> > +		if (lease->fl_lmops->lm_set_conflict &&
-> > +		    lease->fl_lmops->lm_set_conflict(lease, fl))
-> > +			goto out;
-> > +
-> >  		/*
-> >  		 * No exclusive leases if someone else has a lease on
-> >  		 * this file:
-> > diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-> > index daee999d05f3..c5fc768087df 100644
-> > --- a/include/linux/filelock.h
-> > +++ b/include/linux/filelock.h
-> > @@ -49,6 +49,16 @@ struct lease_manager_operations {
-> >  	int (*lm_change)(struct file_lease *, int, struct list_head *);
-> >  	void (*lm_setup)(struct file_lease *, void **);
-> >  	bool (*lm_breaker_owns_lease)(struct file_lease *);
-> > +
-> > +	/**
-> > +	 * lm_set_conflict - extra conditions for setlease
-> > +	 * @new: new file_lease being set
-> > +	 * @old: old (extant) file_lease
-> > +	 *
-> > +	 * This allows the lease manager to add extra conditions when
-> > +	 * setting a lease.
+> > RFC 8881 Section 15.2 does not list NFS4ERR_SYMLINK among the
+> > valid status codes for the DELEGRETURN operation. Maybe the naked
+> > fh_verify() call has gotten it wrong all these years...?
 >=20
-> To make it clear which return value causes add_lease() to abort, I'd
-> rather see API contract-style descriptions of the meaning of the
-> return values instead of this design note. Something like:
+> The WANT_DELEGATION operation allows the server to hand out delegations
+> for aggressive caching of symlinks. It is not an error to return that
+> delegation using DELEGRETURN.
 >=20
->  * Return values:
->  *   %true: @new and @old conflict
->  *   %false: No conflict detected
->=20
+> Furthermore, provided that the presented stateid is actually valid, it
+> is also sufficient to uniquely identify the file to which it is
+> associated (see RFC8881 Section 8.2.4), so the filehandle should be
+> considered mostly irrelevant for operations like DELEGRETURN.
 >=20
 
-Thanks. I added this to the patch in my tree.
-
-> > +	 */
-> > +	bool (*lm_set_conflict)(struct file_lease *new, struct file_lease *ol=
-d);
-> >  };
-> > =20
-> >  struct lock_manager {
-> >=20
-> > --=20
-> > 2.44.0
-> >=20
->=20
+Ok. I think we can probably just drop the switch altogether. We already
+don't validate that the stateid is associated with current_fh, AFAICT.
+It looks possible to send a valid stateid alongside an FH that refers to
+a completely different file, and we'll just accept it.
 
 --=20
 Jeff Layton <jlayton@kernel.org>
