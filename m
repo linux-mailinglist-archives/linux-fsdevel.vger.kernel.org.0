@@ -1,137 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-14736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6D687E927
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 13:11:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA4C87E938
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 13:20:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15BDE1C22037
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 12:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 465BC282A6A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 12:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7E3381AC;
-	Mon, 18 Mar 2024 12:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7283381C1;
+	Mon, 18 Mar 2024 12:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OGeLIBIr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpK9Smku"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D4837710
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 12:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2347A3771C;
+	Mon, 18 Mar 2024 12:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710763849; cv=none; b=M+ga26B4aaaGS9k0zt/lStqH5wYROJNcnofLNdIRtQqgjPPQKwv6YFTVj1S0foFUJn3V7QVrok+/j6e+4zFnBnhbX9YnlOMB/2RdKLEchgO5NkmoqnpPsbfvI7A+9+wWSqqHwt7+9+If5hCsCn7c0NIernL5BxwFQDbGtVGMnv0=
+	t=1710764411; cv=none; b=JrwopN3YLxxWvHOVNIeXwtX7afEHy95qAQiLsIj1vybuF/4LXowUgeq0yD68y9IFeomfL0pH9Jbu2+BArvB5oSXK0KbHiIPGEiR0uGjxD5b6ZKzBJVKsyaEcQs6bqZikYdEHF78gnnXsXTcZdl0i2dTtE8tAq2kmGra2ftf2ZQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710763849; c=relaxed/simple;
-	bh=7C5gRByOTiBepMYDEh4/2vOam5byMw39eopNXREv3n8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rBBo0+r4sJhXoXk7zTm26hl8L1CKxIVH59TMTXqW+HZAEFoa9cyK0iUz0VGPIs//Q3qRbqExWCLpEsZKujopulGaCECJ8kF7X7gtH9qUDQ7ke/JpzC9GkAJRPyu1wqP0hPlhXHRRku5GiRx7jiNa4KmFolFF/mA3ndSv0oVYzIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OGeLIBIr; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcd9e34430cso4332479276.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 05:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1710763847; x=1711368647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z8XaTQbE1O0a0/DruCXEWFfXkhfUXOtTJuF3lZFPpKI=;
-        b=OGeLIBIrbBl1wS++5IgDfxJUtQhbKyzaUJCruOG93fptOob1QfcsFndguweA41xS4o
-         cz3bAmvrcu2YXeoBZ7HfJRuYmkGVEZhpW9EXGsA6+EYnaGJ2qA5WE8PjKRR6fyNxeVKH
-         n67aJGVdddG+v+xtcbIcjj825N+tlfFZHtYi/RN9kxzDEvYqqJNKvXDjxCAwX7KuExIo
-         ictT+8VdXNXXzucx2sZ+ltwgldkis0kEpg+vU3zB5Afg5lUA3ktbaRSqsLI35bTqlrHx
-         SiI3QzGrc/w7e73VxGSar9mZvXkT/fHxFp6azJcDPrpKfadmgP3YCxDgSpLJ0KPbe9EY
-         P7Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710763847; x=1711368647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z8XaTQbE1O0a0/DruCXEWFfXkhfUXOtTJuF3lZFPpKI=;
-        b=qtyLuvXsJmDChtUr7C6JeeFw260+A9mjneyXUGquB+A9buHiZyLQBAaf1xoWtZygYK
-         Z77UPgyzH0o+Zh+z4uG2V7J8wuyyp7x8J/fYeK7+hHTlflWvDV9U+sZb+0R1A0bHyRLe
-         rCuu0jbq4F330uIDsLlQNTkPaFbgq3RAhVqnBWmwgxFId1qDecvsGRwZY18bR+txz9l4
-         xsY4s6AwZQ0ZASH3g9+JtefOYtGNbV46DfplFMZQG08VxA+3pismNg+j4p9ECxoc72Fx
-         A0t+p5RVP0yeXqn0AmSM8jfsrMSJrR3c/2pq/gzEz7FsbIA7pUU+a8rHSYQ58HQvgxvb
-         AQZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNbhVQxp4UKKdE7jVGuDiYqhkxLSow52cQXNJFy3xwikV6RST+k819lw180gWlaVJHR79EM6O1xPfwgGXBfKBvoZIanrsJqPNpnkv4jQ==
-X-Gm-Message-State: AOJu0Yy9SkZSux1+Nx/EmhGv5DuOX7t+fimhhkPC25s83EmXrcpY4PDO
-	sNc93Ov2SOWhsEiNMILUgB9pxo5rFLGXtW7LD5+gwFq1/086NKEyBNm6RoUDzZpiL7Hz9zA7uT1
-	+qSB5ygRgJ1nk0abszbUfkIBoGeqCHVKzyV4e
-X-Google-Smtp-Source: AGHT+IF0o8YCJwyZootm2txwhqaD34gHDzLw+VYz4p/Uyk4KgCREaF0sTQ1a2ev5uipb6KhEUuWEa8OZkGTEaGcgl94=
-X-Received: by 2002:a25:e0d5:0:b0:dcf:a4a9:98bd with SMTP id
- x204-20020a25e0d5000000b00dcfa4a998bdmr10530889ybg.20.1710763847155; Mon, 18
- Mar 2024 05:10:47 -0700 (PDT)
+	s=arc-20240116; t=1710764411; c=relaxed/simple;
+	bh=B5o2vdQkYKf0gLGLbgOOM3rM1ASv07qeSLQyl+ljBY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HnslGtnS/kNMnaVTCrwqJT2Wg9KoF7JJ7KIqHWS6MaFHGvCScxa1Di7lcA6y8PVpot82WlfFsCrpGhHgLs8DRNZEj+ACepM9jYfBmNK5yuqI4mryMT/1yKOZRRl1PqdlG1qvf9Jkiizdm9md17q2aQneioAMBMQ7W/LP9ZYN/QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpK9Smku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D1DCC433F1;
+	Mon, 18 Mar 2024 12:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710764410;
+	bh=B5o2vdQkYKf0gLGLbgOOM3rM1ASv07qeSLQyl+ljBY4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KpK9SmkuD1eVJP6NUtXLtYZKpHB1QJF+TESlpo/fn7T8KeZKzmH9bG800/QCKkcXW
+	 fQEW/Aq78dySwA4HmZRFqAESyJQYSnALY5axve5g5jYi219pOgBaHuz7hgzAC8i8eQ
+	 XxqYvQVr6WqyMr4Uvk66sCC/A9Fr6CyVCYjflWbfhBdm3SHZwUtHJQHvzfK8AOX/Tn
+	 iu6wbWgnFiunJblwGAdDkpqt87AUV5eeIY4Y0uAfJgORiT9El8MGlD7gHlEGcQfUMM
+	 H7gc5/J7hx2rrOS7Wq334jxkWmT6sIrQpGClZ9hVWKmDjYEBJ0OkKl8/hf2fRyNAz1
+	 XK2cOdLBlyicA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Mon, 18 Mar 2024 13:19:54 +0100
+Message-ID: <20240318-vfs-fixes-e0e7e114b1d1@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240309235927.168915-2-mcanal@igalia.com> <20240309235927.168915-4-mcanal@igalia.com>
-In-Reply-To: <20240309235927.168915-4-mcanal@igalia.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 18 Mar 2024 13:10:35 +0100
-Message-ID: <CAH5fLgi9uaOOT=fHKWmXT7ETv+Nf6_TVttuWoyMtuYNguCGYtw@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] rust: xarray: Add an abstraction for XArray
-To: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
-Cc: Asahi Lina <lina@asahilina.net>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Matthew Wilcox <willy@infradead.org>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2338; i=brauner@kernel.org; h=from:subject:message-id; bh=B5o2vdQkYKf0gLGLbgOOM3rM1ASv07qeSLQyl+ljBY4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT+MCzsj9YMPrl72hP2Vz+3FU5cI9i9fV2blaHHk19Bx 3+p9K1N6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI0ClGhjcLWJKnvp2kdPWH 2MTSh+9vbZ2zym52q9l/ZqdJDJM57tczMtzbbPdSXP5Qq/GpGp6CqBSh6ND9r3/1GhRcCth9+aD PUQ4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 10, 2024 at 1:00=E2=80=AFAM Ma=C3=ADra Canal <mcanal@igalia.com=
-> wrote:
->
-> From: Asahi Lina <lina@asahilina.net>
->
-> The XArray is an abstract data type which behaves like a very large
-> array of pointers. Add a Rust abstraction for this data type.
->
-> The initial implementation uses explicit locking on get operations and
-> returns a guard which blocks mutation, ensuring that the referenced
-> object remains alive. To avoid excessive serialization, users are
-> expected to use an inner type that can be efficiently cloned (such as
-> Arc<T>), and eagerly clone and drop the guard to unblock other users
-> after a lookup.
->
-> Future variants may support using RCU instead to avoid mutex locking.
->
-> This abstraction also introduces a reservation mechanism, which can be
-> used by alloc-capable XArrays to reserve a free slot without immediately
-> filling it, and then do so at a later time. If the reservation is
-> dropped without being filled, the slot is freed again for other users,
-> which eliminates the need for explicit cleanup code.
->
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> Co-developed-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> Reviewed-by: Andreas Hindborg <a.hindborg@samsung.com>
+Hey Linus,
 
-Overall looks good to me.
+/* Summary */
+This contains a few small fixes for this merge window:
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+* Undo the hiding of silly-rename files in afs. If they're hidden they
+  can't be deleted by rm manually anymore causing regressions.
+* Avoid caching the preferred address for an afs server to avoid
+  accidently overriding an explicitly specified preferred server address.
+* Fix bad stat() and rmdir() interaction in afs.
+* Take a passive reference on the superblock when opening a block device
+  so the holder is available to concurrent callers from the block layer.
+* Clear private data pointer in fscache_begin_operation() to avoid it
+  being falsely treated as valid.
 
-> +        if ret < 0 {
-> +            Err(Error::from_errno(ret))
-> +        } else {
-> +            guard.dismiss();
-> +            Ok(id as usize)
-> +        }
+/* Testing */
+clang: Debian clang version 16.0.6 (19)
+gcc: (Debian 13.2.0-7) 13.2.0
 
-You could make this easier to read using to_result.
+All patches are based on mainline and have been sitting in linux-next.
+No build failures or warnings were observed.
 
-to_result(ret)?;
-guard.dismiss();
-Ok(id as usize)
+/* Conflicts */
+No known conflicts.
 
-Alice
+The following changes since commit 480e035fc4c714fb5536e64ab9db04fedc89e910:
+
+  Merge tag 'drm-next-2024-03-13' of https://gitlab.freedesktop.org/drm/kernel (2024-03-13 18:34:05 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9-rc1.fixes
+
+for you to fetch changes up to 449ac5514631dd9b9b66dd708dd5beb1428e2812:
+
+  fscache: Fix error handling in fscache_begin_operation() (2024-03-18 10:33:48 +0100)
+
+Please consider pulling these changes from the signed vfs-6.9-rc1.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.9-rc1.fixes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      fs,block: get holder during claim
+
+David Howells (4):
+      afs: Revert "afs: Hide silly-rename files from userspace"
+      afs: Don't cache preferred address
+      afs: Fix occasional rmdir-then-VNOVNODE with generic/011
+      fscache: Fix error handling in fscache_begin_operation()
+
+ block/bdev.c           |  7 +++++++
+ fs/afs/dir.c           | 10 ----------
+ fs/afs/rotate.c        | 21 ++++-----------------
+ fs/afs/validation.c    | 16 +++++++++-------
+ fs/netfs/fscache_io.c  |  4 +++-
+ fs/super.c             | 18 ++++++++++++++++++
+ include/linux/blkdev.h | 10 ++++++++++
+ 7 files changed, 51 insertions(+), 35 deletions(-)
 
