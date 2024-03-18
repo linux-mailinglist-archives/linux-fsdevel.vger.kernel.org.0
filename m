@@ -1,216 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-14737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4E387E932
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 13:17:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA6D687E927
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 13:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80E40282CE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 12:17:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15BDE1C22037
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 12:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56519381B1;
-	Mon, 18 Mar 2024 12:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7E3381AC;
+	Mon, 18 Mar 2024 12:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OGeLIBIr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D2425740;
-	Mon, 18 Mar 2024 12:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D4837710
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 12:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710764262; cv=none; b=cnQNebfd3wMSTIStJqgh+zIzNOLGn0MAyloVKKaRp17H82C3oTmvE+eDDHzC1vkuDlK1TWMtsEXmo0oX4Peup/ZpGnqwXw8zpIu1Ys4UvQqpIf/Pha9i5ggCVSOqgMciGEIn/W8+R/UGoJ6+nxsbf2XahPTJ574F+FsPk+7J1NA=
+	t=1710763849; cv=none; b=M+ga26B4aaaGS9k0zt/lStqH5wYROJNcnofLNdIRtQqgjPPQKwv6YFTVj1S0foFUJn3V7QVrok+/j6e+4zFnBnhbX9YnlOMB/2RdKLEchgO5NkmoqnpPsbfvI7A+9+wWSqqHwt7+9+If5hCsCn7c0NIernL5BxwFQDbGtVGMnv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710764262; c=relaxed/simple;
-	bh=C9vwxNqqS1MgLoDivRETYtHtVTLZAJOzHIFtIGowLEw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=DSIfTe7Xasz45VNNjzdmJ8BOgag0ssynh9ra++c9xZPxjaXyW1nrjYW1ChCps0c+jdl3vxnIYwVaHzySrYWDBTIWAXiwEpynYFfZFYpnK1CxHittV9f6q2R29kwJXIH9C+qoTYUU1nnq7rUiKiroLqibZbkhl8geENC+6nnsVRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Tytdk6WRgz4f3jMX;
-	Mon, 18 Mar 2024 19:57:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id CBDEE1A0A6E;
-	Mon, 18 Mar 2024 19:57:52 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBE9LPhlRX9THQ--.47650S3;
-	Mon, 18 Mar 2024 19:57:51 +0800 (CST)
-Subject: Re: [RFC v4 linux-next 19/19] fs & block: remove bdev->bd_inode
-To: Christian Brauner <brauner@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Christoph Hellwig <hch@lst.de>, jack@suse.cz, axboe@kernel.dk,
- linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
- <20240222124555.2049140-20-yukuai1@huaweicloud.com>
- <20240317213847.GD10665@lst.de>
- <022204e6-c387-b4b2-5982-970fd1ed5b5b@huaweicloud.com>
- <20240318013208.GA23711@lst.de>
- <5c231b60-a2bf-383e-e641-371e7e57da67@huaweicloud.com>
- <ea4774db-188e-6744-6a5b-0096f6206112@huaweicloud.com>
- <20240318-umwirbt-fotowettbewerb-63176f9d75f3@brauner>
- <20240318-fassen-xylofon-1d50d573a196@brauner>
- <20240318-darauf-lachhaft-b7a510575d87@brauner>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <06c8cc61-0368-eccc-b781-0eda223a9b07@huaweicloud.com>
-Date: Mon, 18 Mar 2024 19:57:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1710763849; c=relaxed/simple;
+	bh=7C5gRByOTiBepMYDEh4/2vOam5byMw39eopNXREv3n8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rBBo0+r4sJhXoXk7zTm26hl8L1CKxIVH59TMTXqW+HZAEFoa9cyK0iUz0VGPIs//Q3qRbqExWCLpEsZKujopulGaCECJ8kF7X7gtH9qUDQ7ke/JpzC9GkAJRPyu1wqP0hPlhXHRRku5GiRx7jiNa4KmFolFF/mA3ndSv0oVYzIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OGeLIBIr; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcd9e34430cso4332479276.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 05:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1710763847; x=1711368647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z8XaTQbE1O0a0/DruCXEWFfXkhfUXOtTJuF3lZFPpKI=;
+        b=OGeLIBIrbBl1wS++5IgDfxJUtQhbKyzaUJCruOG93fptOob1QfcsFndguweA41xS4o
+         cz3bAmvrcu2YXeoBZ7HfJRuYmkGVEZhpW9EXGsA6+EYnaGJ2qA5WE8PjKRR6fyNxeVKH
+         n67aJGVdddG+v+xtcbIcjj825N+tlfFZHtYi/RN9kxzDEvYqqJNKvXDjxCAwX7KuExIo
+         ictT+8VdXNXXzucx2sZ+ltwgldkis0kEpg+vU3zB5Afg5lUA3ktbaRSqsLI35bTqlrHx
+         SiI3QzGrc/w7e73VxGSar9mZvXkT/fHxFp6azJcDPrpKfadmgP3YCxDgSpLJ0KPbe9EY
+         P7Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710763847; x=1711368647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z8XaTQbE1O0a0/DruCXEWFfXkhfUXOtTJuF3lZFPpKI=;
+        b=qtyLuvXsJmDChtUr7C6JeeFw260+A9mjneyXUGquB+A9buHiZyLQBAaf1xoWtZygYK
+         Z77UPgyzH0o+Zh+z4uG2V7J8wuyyp7x8J/fYeK7+hHTlflWvDV9U+sZb+0R1A0bHyRLe
+         rCuu0jbq4F330uIDsLlQNTkPaFbgq3RAhVqnBWmwgxFId1qDecvsGRwZY18bR+txz9l4
+         xsY4s6AwZQ0ZASH3g9+JtefOYtGNbV46DfplFMZQG08VxA+3pismNg+j4p9ECxoc72Fx
+         A0t+p5RVP0yeXqn0AmSM8jfsrMSJrR3c/2pq/gzEz7FsbIA7pUU+a8rHSYQ58HQvgxvb
+         AQZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNbhVQxp4UKKdE7jVGuDiYqhkxLSow52cQXNJFy3xwikV6RST+k819lw180gWlaVJHR79EM6O1xPfwgGXBfKBvoZIanrsJqPNpnkv4jQ==
+X-Gm-Message-State: AOJu0Yy9SkZSux1+Nx/EmhGv5DuOX7t+fimhhkPC25s83EmXrcpY4PDO
+	sNc93Ov2SOWhsEiNMILUgB9pxo5rFLGXtW7LD5+gwFq1/086NKEyBNm6RoUDzZpiL7Hz9zA7uT1
+	+qSB5ygRgJ1nk0abszbUfkIBoGeqCHVKzyV4e
+X-Google-Smtp-Source: AGHT+IF0o8YCJwyZootm2txwhqaD34gHDzLw+VYz4p/Uyk4KgCREaF0sTQ1a2ev5uipb6KhEUuWEa8OZkGTEaGcgl94=
+X-Received: by 2002:a25:e0d5:0:b0:dcf:a4a9:98bd with SMTP id
+ x204-20020a25e0d5000000b00dcfa4a998bdmr10530889ybg.20.1710763847155; Mon, 18
+ Mar 2024 05:10:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240318-darauf-lachhaft-b7a510575d87@brauner>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBE9LPhlRX9THQ--.47650S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Xw1xJFyUuFy5Cw45WFWDtwb_yoW7GrWDpF
-	W5tF4UKr4kGr10g3Z2v3W7Xr4Fyws5JrW5Xr1Yqry5ArWq9rnagFWrKr1YkF1Utr4xAr4j
-	qr4jgry7Xrn8ArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
-	3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20240309235927.168915-2-mcanal@igalia.com> <20240309235927.168915-4-mcanal@igalia.com>
+In-Reply-To: <20240309235927.168915-4-mcanal@igalia.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 18 Mar 2024 13:10:35 +0100
+Message-ID: <CAH5fLgi9uaOOT=fHKWmXT7ETv+Nf6_TVttuWoyMtuYNguCGYtw@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] rust: xarray: Add an abstraction for XArray
+To: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
+Cc: Asahi Lina <lina@asahilina.net>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Matthew Wilcox <willy@infradead.org>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sun, Mar 10, 2024 at 1:00=E2=80=AFAM Ma=C3=ADra Canal <mcanal@igalia.com=
+> wrote:
+>
+> From: Asahi Lina <lina@asahilina.net>
+>
+> The XArray is an abstract data type which behaves like a very large
+> array of pointers. Add a Rust abstraction for this data type.
+>
+> The initial implementation uses explicit locking on get operations and
+> returns a guard which blocks mutation, ensuring that the referenced
+> object remains alive. To avoid excessive serialization, users are
+> expected to use an inner type that can be efficiently cloned (such as
+> Arc<T>), and eagerly clone and drop the guard to unblock other users
+> after a lookup.
+>
+> Future variants may support using RCU instead to avoid mutex locking.
+>
+> This abstraction also introduces a reservation mechanism, which can be
+> used by alloc-capable XArrays to reserve a free slot without immediately
+> filling it, and then do so at a later time. If the reservation is
+> dropped without being filled, the slot is freed again for other users,
+> which eliminates the need for explicit cleanup code.
+>
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> Co-developed-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+> Reviewed-by: Andreas Hindborg <a.hindborg@samsung.com>
 
-在 2024/03/18 18:46, Christian Brauner 写道:
-> On Mon, Mar 18, 2024 at 11:29:22AM +0100, Christian Brauner wrote:
->> On Mon, Mar 18, 2024 at 11:07:49AM +0100, Christian Brauner wrote:
->>> On Mon, Mar 18, 2024 at 03:19:03PM +0800, Yu Kuai wrote:
->>>> Hi, Christoph!
->>>>
->>>> 在 2024/03/18 9:51, Yu Kuai 写道:
->>>>> Hi,
->>>>>
->>>>> 在 2024/03/18 9:32, Christoph Hellwig 写道:
->>>>>> On Mon, Mar 18, 2024 at 09:26:48AM +0800, Yu Kuai wrote:
->>>>>>> Because there is a real filesystem(devtmpfs) used for raw block devcie
->>>>>>> file operations, open syscall to devtmpfs:
->>
->> Don't forget:
->>
->> mknod /my/xfs/file/system b 8 0
->>
->> which means you're not opening it via devtmpfs but via xfs. IOW, the
->> inode for that file is from xfs.
+Overall looks good to me.
 
-I think there is no difference from devtmpfs, no matter what file is
-passed in from blkdev_open(), we'll find the only bd_inode and stash
-new bdev_file here.
->>
->>>>>>>
->>>>>>> blkdev_open
->>>>>>>    bdev = blkdev_get_no_open
->>>>>>>    bdev_open -> pass in file is from devtmpfs
->>>>>>>    -> in this case, file inode is from devtmpfs,
->>>>>>
->>>>>> But file->f_mapping->host should still point to the bdevfs inode,
->>>>>> and file->f_mapping->host is what everything in the I/O path should
->>>>>> be using.
->>>
->>> I mentioned this in
->>> https://lore.kernel.org/r/20240118-gemustert-aalen-ee71d0c69826@brauner
->>>
->>> "[...] if we want to have all code pass a file and we have code in
->>> fs/buffer.c like iomap_to_bh():
->>>
->>> iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
->>>          loff_t offset = block << inode->i_blkbits;
->>>
->>>          bh->b_bdev = iomap->bdev;
->>> +       bh->f_b_bdev = iomap->f_bdev;
->>>
->>> While that works for every single filesystem that uses block devices
->>> because they stash them somewhere (like s_bdev_file) it doesn't work for
->>> the bdev filesystem itself. So if the bdev filesystem calls into helpers
->>> that expect e.g., buffer_head->s_f_bdev to have been initialized from
->>> iomap->f_bdev this wouldn't work.
->>>
->>> So if we want to remove b_bdev from struct buffer_head and fully rely on
->>> f_b_bdev - and similar in iomap - then we need a story for the bdev fs
->>> itself. And I wasn't clear on what that would be."
->>>
->>>>>>
->>>>>>> Then later, in blkdev_iomap_begin(), bd_inode is passed in and there is
->>>>>>> no access to the devtmpfs file, we can't use s_bdev_file() as other
->>>>>>> filesystems here.
->>>>>>
->>>>>> We can just pass the file down in iomap_iter.private
->>>>>
->>>>> I can do this for blkdev_read_folio(), however, for other ops like
->>>>> blkdev_writepages(), I can't find a way to pass the file to
->>>>> iomap_iter.private yet.
->>>>>
->>>>> Any suggestions?
->>>>
->>>> I come up with an ideal:
->>>>
->>>> While opening the block_device the first time, store the generated new
->>>> file in "bd_inode->i_private". And release it after the last opener
->>>> close the block_device.
->>>>
->>>> The advantages are:
->>>>   - multiple openers can share the same bdev_file;
->>>
->>> You mean use the file stashed in bdev_inode->i_private only to retrieve
->>> the inode/mapping in the block layer ops.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-Yes. I mean in the first bdev_open() allocate a bdev_file and stash it,
-and free it in the last bdev_release().
->>>
->>>>   - raw block device ops can use the bdev_file as well, and there is no
->>>> need to distinguish iomap/buffer_head for raw block_device;
->>>>
->>>> Please let me know what do you think?
->>>
->>> It's equally ugly but probably slightly less error prone than the union
->>> approach. But please make that separate patches on top of the series.
-> 
-> The other issue with this on-demand inode->i_private allocation will be
-> lifetime management. If you're doing some sort of writeback initiated
-> from the filesystem then you're guaranteed that the file stashed in
-> sb->bdev_file is aligned with the lifetime of the filesystem. All
-> writeback related stuff that relies on inode's can rely on the
-> superblock being valid while it is doing stuff.
+> +        if ret < 0 {
+> +            Err(Error::from_errno(ret))
+> +        } else {
+> +            guard.dismiss();
+> +            Ok(id as usize)
+> +        }
 
-For raw block device, before bdev_release() is called for the last
-opener(specifically bd_openers decreased to zero),
-blkdev_flush_mapping() is called, hence raw block_device writeback
-should always see valid 'bdev_file' that will be release in the last
-bdev_release().
+You could make this easier to read using to_result.
 
-And 'blockdev_superblock' will always be there and is always valid.>
-> In your approach that guarantee can't be given easily. If someone opens
-> a block device /dev/sda does some buffered writes and then closes it the
-> file might be cleaned up while there's still operations ongoing that
-> rely on the file stashed in inode->i_private to be valid.
-> 
-> If on the other hand you allocate a stub file on-demand during
-> bdev_open() and stash it in inode->i_private you need to make sure to
-> avoid creating reference count cycles that keep the inode alive.
+to_result(ret)?;
+guard.dismiss();
+Ok(id as usize)
 
-I'm thinking about use 'bdev_openers' to gurantee the lifetime. I can't
-think of possible problems for now, however, I cound be wrong.
-
-Thanks,
-Kuai
-
-> .
-> 
-
+Alice
 
