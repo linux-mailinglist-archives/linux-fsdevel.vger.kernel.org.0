@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-14717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3049F87E501
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 09:33:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D52687E52D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 09:48:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91419B215E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 08:33:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D711F21148
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 08:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADBC28DC8;
-	Mon, 18 Mar 2024 08:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A052C19A;
+	Mon, 18 Mar 2024 08:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gB0QabqU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzivUTTJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8D728DA5;
-	Mon, 18 Mar 2024 08:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D1028E26;
+	Mon, 18 Mar 2024 08:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710750821; cv=none; b=QZIRFND+6HV7q4pPCowZ/MDP2Z1yyh1DHgbd380s7nbvKWO0QckDoHlrSHjxj+Hp/dO2cjIoDYc2lYdi6wOzQBW4DmkDFNI4PB4wt5klth9oDY+7GRM/u35N5oVLnnaLbcy10ZJU6vzi1A56Xonog3mCryZ5nWgMWtHeUCVnIWg=
+	t=1710751670; cv=none; b=AQXh0E9T/HGOEVrCOkyi1uf4L/Uyy+Xl6LtmIpKB9O15neHq9Ib9TT5a6jQalMfjGC5S8w3Ip+x6u3dQNbiER4jdaVPlS1bRVzSSLOP8GHIwtdx9KIjEN0fupHwqbe1gv4zM0eGIZTxMQA/ca33r3ON+RMthUBHPtJCBjHqoI1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710750821; c=relaxed/simple;
-	bh=SbMAD9hclS7MZ4xz6LIJyGsFZIeKU1ChXipgW5RrNPg=;
+	s=arc-20240116; t=1710751670; c=relaxed/simple;
+	bh=Ew2uVxn7vsJK/JFcU9zZaMqRiK9DDlzk08Afo0ps6tI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PIsMkf58R3sZwGPb/5wsAU0GzebM7gXvpTXCAT5XKse2HOraKmfi6iCEDJWM93JUjvohTIWfmvi/tvSpqhwA70xz87Xf0q5gJ3epUVctY1bgdKXLMfzP8ALQY/ZyZpVjGLRcXxOlyf1hET04hiFw14EzDVAfi8Z38tkMeVzSnoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gB0QabqU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C233AC433C7;
-	Mon, 18 Mar 2024 08:33:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=p93WRwniWv6hKPAUHh4ZTrZqQy9FBq1d97ZSfsvrUWhTrgJHKcqaicin6t9Sfm7hm+UDoMqMZCMF5Kqpx1xsco0gdnRL1zrTJhHECuFGerwBRD5AQHQBJM+MMeE+e0k/KoFp1nHog4vzrbniVb3TqeN2WIVH4f61sb5af+D/ACs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzivUTTJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C5EFC43390;
+	Mon, 18 Mar 2024 08:47:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710750820;
-	bh=SbMAD9hclS7MZ4xz6LIJyGsFZIeKU1ChXipgW5RrNPg=;
+	s=k20201202; t=1710751670;
+	bh=Ew2uVxn7vsJK/JFcU9zZaMqRiK9DDlzk08Afo0ps6tI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gB0QabqU2SmgnpTReDDuanCy7H+rVHXPDj/tQMNWrBvav9yhNXNHzewu/jxoZ34hL
-	 U3dSNHoTCSBUazjBaT+KTKYFEpgoT3tgk1+P8zNMvgXbsvc2GJbFp/pskitO9Bu007
-	 Uf3bOD6E9WRbiy6Ma/XJ2AmiBsFuUM2iiR2EXCf8QaabWgqHfV1FA8fBKctuzdgRKb
-	 ulhXnl/EUVgoL3uFGkQ3hf1SHk+JEEgyV6mMNm9OgEO8n+NewVHy38E01kYVICRo0r
-	 /tTxdZEuiDZwHWy70oLiSxqcscMEiuXkZchThRMgAapp4pVShlXYpeGDSKOqH4nm8/
-	 ejv41k7sMcO2A==
-Date: Mon, 18 Mar 2024 09:33:35 +0100
+	b=EzivUTTJsOVwzxrrjAi8avkIKYnbjeM4XRGeAWhECQodhvZC8kmFJWqaTzdz0pxWC
+	 P+u23knAXSnKZzwSijQvwcTp1Y6yj9Th6qF11ie0hubBxxB/lbWkBb8wG8INhF5gNt
+	 SD/6DmhfAK68FbBlHwoFcGYdsPbAjZTJXaQyWLRyUrU+DDiNfEIrK2L+dTACporQO1
+	 s0fBVumxqULEsAVUSP5Pg1kqLtxW7KR2VmNF4ZEemUk1fWUFSssa5XNq/GleRsKDdw
+	 aKUJD8WTFNE0x9UTeLrBts8E4bqGm+jegR21ZVPowPivX1mVBWpcVQmkp0orvcL5Oa
+	 eTYI7PqVNFLMw==
+Date: Mon, 18 Mar 2024 09:47:45 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH] fs,block: get holder during claim
-Message-ID: <20240318-begierde-ehedrama-a3b57393e496@brauner>
-References: <20240314165814.tne3leyfmb4sqk2t@quack3>
- <20240315-freibad-annehmbar-ca68c375af91@brauner>
- <ZfdYX3-_53txEYTa@infradead.org>
+To: Cyril Hrubis <chrubis@suse.cz>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, lkp@intel.com, ltp@lists.linux.it, linux-kernel@vger.kernel.org
+Subject: Re: [LTP] [linus:master] [pidfd]  cb12fd8e0d: ltp.readahead01.fail
+Message-ID: <20240318-fegen-bezaubern-57b0a9c6f78b@brauner>
+References: <202403151507.5540b773-oliver.sang@intel.com>
+ <20240315-neufahrzeuge-kennt-317f2a903605@brauner>
+ <ZfRf36u7CH7bIEZ7@yuki>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,26 +59,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZfdYX3-_53txEYTa@infradead.org>
+In-Reply-To: <ZfRf36u7CH7bIEZ7@yuki>
 
-On Sun, Mar 17, 2024 at 01:53:51PM -0700, Christoph Hellwig wrote:
-> On Fri, Mar 15, 2024 at 02:23:07PM +0100, Christian Brauner wrote:
-> > Now that we open block devices as files we need to deal with the
-> > realities that closing is a deferred operation. An operation on the
-> > block device such as e.g., freeze, thaw, or removal that runs
-> > concurrently with umount, tries to acquire a stable reference on the
-> > holder. The holder might already be gone though. Make that reliable by
-> > grabbing a passive reference to the holder during bdev_open() and
-> > releasing it during bdev_release().
+On Fri, Mar 15, 2024 at 03:49:03PM +0100, Cyril Hrubis wrote:
+> Hi!
+> > So I'd just remove that test. It's meaningless for pseudo fses.
 > 
-> Looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> does bcachefs also need a fix for it's holder ops?  Or does it get to
-> keep the pieces as it has it's own NULL holder_ops and obviously doens't
-> care about getting any of this right?
+> Wouldn't it make more sense to actually return EINVAL instead of
+> ignoring the request if readahead() is not implemented?
 
-It has empty holder ops and so is behaving equivalent too having NULL
-holder ops. IOW, the block layer cannot access the holder.
+It would change the return value for a whole bunch of stuff. I'm not
+sure that wouldn't cause regressions but is in any case a question for
+the readahead maintainers. For now I'd just remove that test for pidfds
+imho.
 
