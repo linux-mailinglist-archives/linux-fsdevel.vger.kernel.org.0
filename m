@@ -1,126 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-14675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A1387E0B9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 23:46:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773AA87E179
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 02:11:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01CBF28104B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Mar 2024 22:46:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6DFA1C20CE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 01:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16FC20B28;
-	Sun, 17 Mar 2024 22:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bScBcbnh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF805168B7;
+	Mon, 18 Mar 2024 01:11:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14061E862
-	for <linux-fsdevel@vger.kernel.org>; Sun, 17 Mar 2024 22:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264F71096F;
+	Mon, 18 Mar 2024 01:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710715558; cv=none; b=gYuapungfEXkedPl0LexNyCayoLSj/iIKQ3VGyi1kbJVaMwTBneJki075Hd28Q3GAUmeTqKy2F7SA7l4Zp/zD2Ck78MwmMPcmqoiAbEcznEi3cy6FPtkvslKQLo2RrydJ0Gw/fvBG1T7ggwRRWp7Pj9V6fl+Dv+Z9D66Ln3blso=
+	t=1710724266; cv=none; b=gAw2EVR/2fx5FMX8N6sseostJk+/ihfbTQ9g96Rs6SzZ23zP98SrQOo9k+UmiOB00PjjDq9IEDOAe3WRkeqHpAUYWMMVpkPggj1qCTOR0uhKYI/jqRFlgbrH0Ub7Ms8EuqfVS5Y5Gt8S3mt8H17lHw9aRN9SIPYiVZlCQhcDqBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710715558; c=relaxed/simple;
-	bh=kwyXDiw+YmRDf21OZX7aoqqUKYq2VEvs+TgsZIZ3yUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJkLJMH1EuVP70FEbpn5E7Nyg6yRDPWh3iPdku01E18Rk3PH87t7WQIuK5nokdBwLsiGTEz+5iBA1mxs4x+gl/Qujku/m9I3sE9c8CwnesMtLEJjxnALEGoNc6lD0wXOMBpQHMj/Moo8w1Mr3kApGG5B6M5uBbMDAJGHhJq1xPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bScBcbnh; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-53fa455cd94so2778923a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Mar 2024 15:45:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710715556; x=1711320356; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vvQf0WHXJqA0y2473FjO9YeNzTMgVo6pogsCAEp4oGo=;
-        b=bScBcbnh6irv3s3q7Ayqi75X0wB21FikIiTlgtN2vh8WdbqkuBUiyYgqQp0Hq3Ijxw
-         cTQmHGn0wpH2acabp1MR11Se3XejiSaDPi/x+Vo4elUDoBP1ioGJ4o+DUl1JgGAAzCcw
-         vC5AN/3qHVmpZJ4a+5EhQrgcbMT3/oZOI3AJzaIdD0ZyOh3jHFARbfFAPknV0tjM8Uu7
-         Zur+drzjJMb3wa3nWjPZBtMhxT8oY2zH9rqr+WYMzTUsxjGLJmmIdX+jPZsrGUUbue4A
-         vV3Vcz+i4XHH0vt94e5aoUsidO8haioAi57bgj5FzDtrv36IF0hH9DTzF4qmnp+MQTsQ
-         B65Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710715556; x=1711320356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vvQf0WHXJqA0y2473FjO9YeNzTMgVo6pogsCAEp4oGo=;
-        b=cMcLsZq0zLLULmfSxdrUZ95w8odvkhwM7uluHoZOY/t9GZKp2xEh22APPZdS1bEMDw
-         HaB+CoWY1t9CBLKceHdG87ix6Umpfr3iPEYUJCL8UVJDGiWuTRBVfFtCptC/KJEc1MoJ
-         Y9lmbbPSR3BmwdwuADhfuIyUs+giml0u8zjmKD19KEkF3c6RBv2IM5uM9bsrG2yu4VDy
-         6FItHwyInPXtG5bRZ3/gEWkIUiGGIRQssam1He1ryTRFFoeeXA7r92oKxIb+CeFNPR5c
-         RqAoYgOSz7lhTLzRKIE85mRJpBU6tJ4c/x764kbTkGf2jd602r4l83Q5M043cWv9KW7L
-         QXkw==
-X-Gm-Message-State: AOJu0Yzl+mAVyVZnveo44BzeMBQfb1auYrPINl4c1b81V0rJimGGz8hp
-	lKGKKGckLAMFP/XEnirpnH5Ud7ssX8IEag2zfVEvjmt/1wIXEOmwz0ofWWPONOg=
-X-Google-Smtp-Source: AGHT+IEqllOMfHUGt/yWxvRFt2bEwKKrFY14muZM1xh6ZmR9cX1p1d5hS5RxvyilAaPivCWb6IZ/1Q==
-X-Received: by 2002:a05:6a20:3d12:b0:1a3:64a9:11e5 with SMTP id y18-20020a056a203d1200b001a364a911e5mr1355710pzi.50.1710715555791;
-        Sun, 17 Mar 2024 15:45:55 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-185-123.pa.nsw.optusnet.com.au. [49.180.185.123])
-        by smtp.gmail.com with ESMTPSA id oe14-20020a17090b394e00b0029fb85dca03sm121173pjb.25.2024.03.17.15.45.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Mar 2024 15:45:55 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rlzGK-003Lsm-1G;
-	Mon, 18 Mar 2024 09:45:52 +1100
-Date: Mon, 18 Mar 2024 09:45:52 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Phillip Susi <phill@thesusis.net>
-Cc: linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: Uneccesary flushes waking up suspended disks
-Message-ID: <ZfdyoJ90mxRLzELg@dread.disaster.area>
-References: <877cieqhaw.fsf@vps.thesusis.net>
- <Ze5fOTojI+BhgXOW@dread.disaster.area>
- <87h6h78uar.fsf@vps.thesusis.net>
+	s=arc-20240116; t=1710724266; c=relaxed/simple;
+	bh=I4hBJrS5WvFbsx6QzlYXMpmT+2k43TYUl5LNCWYkrFA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=e9rIA0TVAROHr2LIkb4tXq1DKDXNG1ih7vXv15YXsR1CUTCN/FOeCi+G7HR2/YVkTwU6s2WqvR4xxKYxWX8xRRleU/B6BHerHTiYBM71vOeJTEOruisSmWoVdI/rcxpuV+fgEix8UfRTKzqVubG180NbaCvzbGhzFyDAIE869/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TycHD5rMWz4f3jdB;
+	Mon, 18 Mar 2024 09:10:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id B19891A0568;
+	Mon, 18 Mar 2024 09:10:54 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgDHlxCclPdlm9EkHQ--.6088S3;
+	Mon, 18 Mar 2024 09:10:54 +0800 (CST)
+Subject: Re: [RFC v4 linux-next 14/19] jbd2: prevent direct access of bd_inode
+To: Christoph Hellwig <hch@lst.de>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, brauner@kernel.org, axboe@kernel.dk,
+ linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
+ <20240222124555.2049140-15-yukuai1@huaweicloud.com>
+ <20240317212650.GM8963@lst.de>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <2af147ca-8c9a-0e03-de55-ddb24a4551a3@huaweicloud.com>
+Date: Mon, 18 Mar 2024 09:10:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h6h78uar.fsf@vps.thesusis.net>
+In-Reply-To: <20240317212650.GM8963@lst.de>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDHlxCclPdlm9EkHQ--.6088S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYg7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
+	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, Mar 15, 2024 at 10:05:16AM -0400, Phillip Susi wrote:
-> Dave Chinner <david@fromorbit.com> writes:
+Hi,
+
+ÔÚ 2024/03/18 5:26, Christoph Hellwig Ð´µÀ:
+>> +extern journal_t *jbd2_journal_init_dev(struct file *bdev_file,
+>> +				struct file *fs_dev_file,
 > 
-> > How do other filesystems behave? Is this a problem just on specific
-> > filesystems?
+> Maybe drop the pointless extern while you're at it?
+
+Will do this in the formal version.
+
+Thansk for the review!
+Kuai
 > 
-> I finally got around to testing other filesystems and surprisingly, it
-> seems this is only a problem for ext4.
+> Otherwise looks good:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> .
+> 
 
-That's what I expected - I would have been surprised if you found
-problems across multiple filesystems...
-
-> I tried btrfs, f2fs, jfs, udf,
-> and xfs.  xfs even uses the same jbd2 for journaling that ext4 does
-> doesn't it?
-
-.... because none of them share "journalling" code at all. They all
-have their own independent mechanisms for ensuring data and metadata
-integrity. ext4/jbd2 actually shares little code with other Linux
-filesystems - ocfs2 is the only other linux filesystem that uses
-jbd2.
-
-> I just formatted a clean fs, synced, and ran blktrace, then synced
-> again, and only ext4 emits a flush on the second sync.
-
-So this really sounds like it's just a bug in ext4/jbd2 behaviour
-and so there's no real general filesystem or infrastructure
-problem that needs to be fixed here....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
