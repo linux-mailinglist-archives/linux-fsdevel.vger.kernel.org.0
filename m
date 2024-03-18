@@ -1,98 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-14755-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC8C87EE88
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 18:12:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D71787EF01
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 18:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A3C282BCD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 17:12:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DC471C222FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 17:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A53655C11;
-	Mon, 18 Mar 2024 17:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC835674C;
+	Mon, 18 Mar 2024 17:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XPUpJ9Yv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yso7FAO/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XPUpJ9Yv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yso7FAO/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PfhD0Bv/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C494655C0B;
-	Mon, 18 Mar 2024 17:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6960E57874
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 17:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710781953; cv=none; b=jA+c4pcLynkuY6Y+jKmSN3uNj9iA38+j0+UyjGwWzjxpPd5fMX67NHppztKDNO4ispbcYhj5DS6KG2+tTAKDZgQXYk9y+xmTi1G/blDIud4rIh5JGlumXj/kVu7XFrl6RBlMrriJnKLMr0Ktz6bb9oTs1Trw2lNR9YswOfP3ynA=
+	t=1710783252; cv=none; b=QhKtWBVnKp5BLL7wUMrtu/M0nrp1zlXNmL2wxpGiir18O8UHUcxqvspR2stdEpqXaa/Q/FbVCLyPkW1RxXK1506EpyxIlsp+sviT5r7J3MdI8U6Q/9BZZ00riI6kAzZYhVgwNNxNOMHjs1WO7G4Trbg79U9Pz5DrRBYlFMpj5HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710781953; c=relaxed/simple;
-	bh=KMaihn4MpIRXKl8tkj5Fn5F8oH1HWRx74ohqeZJYX2k=;
+	s=arc-20240116; t=1710783252; c=relaxed/simple;
+	bh=UTbEDQuBPq0vcs45OgpExSveoxGH1wHzjv+GJN8St7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2K9NYOq9fKZKsD/DYsGO2idQXy07gyJC5UUmH28bm9MbEa0Ggw4NNoB1TF3TO1up+tRadfF5Yx9cFzyt4D3ZjvWTtuS4afaMLnAQdQMlqZIzV+vedr83mQGCjGoNhDP5pgYfjyWf2U2gEkjgtomihPmcl5Bhg/RJFwutu5Szm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XPUpJ9Yv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yso7FAO/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XPUpJ9Yv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yso7FAO/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 928CB5C7CC;
-	Mon, 18 Mar 2024 17:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710781949; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MqGvRT0SlnLqAeUg3nPYqH4eRJtYMG3oU/SjFFo9b29ycpac/VfKpnvhr+ZkLv3lFgQCjUXD8XB4jA/ZRhFnIM9+7KsT8LTMuxiDF4HHPvCLOKvLS0LqA5Uvnnli4KXBQcDR/ZanlJY65SPYhWJsYkJEf0wgkw/of6uEZDmPJfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PfhD0Bv/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1710783249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IW6le/Od3RFdjNNBBDjiiTrXvpKiTjXrCzfAN8an4i0=;
-	b=XPUpJ9YvFgaw3NKAv39mjAsdWsL0aIED9lP1SzUquXgFbqLWmUu6IEDXOx0aol0jlBFh4E
-	Lfdfs68Nvn7rolnsdeHGKpLcOqgHkWFuzrA0PMb5BXpPkT09cO7ONp/w7fXOd1d36fgJWG
-	jK8dfAFu5+KEuHKOkTnZ1Le4qcRn7qo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710781949;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IW6le/Od3RFdjNNBBDjiiTrXvpKiTjXrCzfAN8an4i0=;
-	b=yso7FAO/xPIvJD02YRiwJVXl3YahgaS8+Hi+3DdCCNu2ww7vj49QyQcPXRUi+APx5y2b4U
-	szW6uVFLm+nQllCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710781949; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IW6le/Od3RFdjNNBBDjiiTrXvpKiTjXrCzfAN8an4i0=;
-	b=XPUpJ9YvFgaw3NKAv39mjAsdWsL0aIED9lP1SzUquXgFbqLWmUu6IEDXOx0aol0jlBFh4E
-	Lfdfs68Nvn7rolnsdeHGKpLcOqgHkWFuzrA0PMb5BXpPkT09cO7ONp/w7fXOd1d36fgJWG
-	jK8dfAFu5+KEuHKOkTnZ1Le4qcRn7qo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710781949;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IW6le/Od3RFdjNNBBDjiiTrXvpKiTjXrCzfAN8an4i0=;
-	b=yso7FAO/xPIvJD02YRiwJVXl3YahgaS8+Hi+3DdCCNu2ww7vj49QyQcPXRUi+APx5y2b4U
-	szW6uVFLm+nQllCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 86C92136A5;
-	Mon, 18 Mar 2024 17:12:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8wd+IP11+GXKdQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 18 Mar 2024 17:12:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3897BA07D9; Mon, 18 Mar 2024 18:12:29 +0100 (CET)
-Date: Mon, 18 Mar 2024 18:12:29 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz,
-	Kemeng Shi <shikemeng@huaweicloud.com>, tim.c.chen@linux.intel.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Fixes and cleanups to fs-writeback
-Message-ID: <20240318171229.ftdwkh3a45r4y6j7@quack3>
-References: <20240228091958.288260-1-shikemeng@huaweicloud.com>
+	bh=1b336hcpmrVHHwLQeQ8dAMc9BcLym1+XVHhIRwOaNJE=;
+	b=PfhD0Bv/1bKsVZvLJCzGNN4xaw6KZgZpxz99R4EXVMiL7c2CuCp/sfTVmQ7DoA7bcVmHvu
+	OjL8DGLukKPBDvM6u/2osuZ8PoYBOgYvxPhsSLeF6U2JD6d7L07oHa7e9DOxj4cBcNp0mS
+	quKs6gbMmdF0bq4lEnF5x20AIhDKt00=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-578-5fgtIZT3OD-5S639yIXbbg-1; Mon, 18 Mar 2024 13:34:07 -0400
+X-MC-Unique: 5fgtIZT3OD-5S639yIXbbg-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-514b4572d2bso813571e87.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 10:34:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710783246; x=1711388046;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1b336hcpmrVHHwLQeQ8dAMc9BcLym1+XVHhIRwOaNJE=;
+        b=qldT+Bk0lJpLcdSmDG/PwZE5WDXpNhRrD8ICTRU4Cbjgb76F+2CKpLntvJLhsF/O3p
+         /LSoKAA3QU0oamqX95hWEi24zcp/G+yk6AKtoyomx3MDCN5vGqKtDjMusVogDBiXCnL6
+         BoWlhbhYv/A/iuX9Nax5M+rC8a9yB28neZDqRzJgZDFlj6xE3TUD/pELhJWjz8EXt9FS
+         pdoe9sVX49afrav0fDEGPUzT0/yWUDJ/IFjgVZYFlFVhQbmgu8wNKNU/Az8dEqwZrIK+
+         b94HhW6bIDFqqYR47xgGGBQWCzsczvyCM+W/jupLaUnu7RSn4648vWy+GtadQu2YJ77s
+         SHeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWEea+HK3uKIpmUbT9Mg39V2BSBnG7tAECiNYc7wYGtcfF+g4NnVT5oUbHprPmzEYQjWxBLTt0w4ehVlypOhbQNr6B3VRQ8kRtIxgoWA==
+X-Gm-Message-State: AOJu0Yy4//rXxI+SzDVOq+8pBT9P3Ft9ehNEuSNim2aqbf5Yo/auCPXa
+	SZ6QOX49asnqOZLhOkS0jaMm3jOPxBv7BsaJGh2MwiwVboOiZw742qHaiGwsusCbbm1xLmdj4k3
+	NSWqnk/4qcDq9Jd/iEyJMAk577C1ZxRlwpM4SCVr6F+6NoS0S8rA/x+N6vXXL4A==
+X-Received: by 2002:a19:9146:0:b0:513:d3c2:f094 with SMTP id y6-20020a199146000000b00513d3c2f094mr8043634lfj.29.1710783245866;
+        Mon, 18 Mar 2024 10:34:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzpiw4+mEtjtGD7WM2sm40ah3Ge0myoXaoUNKqmzufoploM8oU95BG7gPUFQDrqvtjqK7wRg==
+X-Received: by 2002:a19:9146:0:b0:513:d3c2:f094 with SMTP id y6-20020a199146000000b00513d3c2f094mr8043627lfj.29.1710783245311;
+        Mon, 18 Mar 2024 10:34:05 -0700 (PDT)
+Received: from thinky ([109.183.6.197])
+        by smtp.gmail.com with ESMTPSA id bh25-20020a05600c3d1900b0041461b04cd2sm456682wmb.3.2024.03.18.10.34.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Mar 2024 10:34:05 -0700 (PDT)
+Date: Mon, 18 Mar 2024 18:34:04 +0100
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, 
+	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 35/40] xfs: teach online repair to evaluate fsverity
+ xattrs
+Message-ID: <cukuakjpyim572vkhcl24xxnkrgrmkkalkrnoglte735jmpm7m@epenfnca5a4s>
+References: <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
+ <171069246470.2684506.16777519924436608697.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -101,64 +90,148 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240228091958.288260-1-shikemeng@huaweicloud.com>
-X-Spam-Score: -0.80
-X-Spamd-Result: default: False [-0.80 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Flag: NO
+In-Reply-To: <171069246470.2684506.16777519924436608697.stgit@frogsfrogsfrogs>
 
-On Wed 28-02-24 17:19:52, Kemeng Shi wrote:
-> v1->v2:
-> -Filter non-expired in requeue_inode in patch "fs/writeback: avoid to
-> writeback non-expired inode in kupdate writeback"
-> -Wrap the comment at 80 columns in patch "fs/writeback: only calculate
-> dirtied_before when b_io is empty"
-> -Abandon patch "fs/writeback: remove unneeded check in
-> writeback_single_inode"
-> -Collect RVB from Jan and Tim
+On 2024-03-17 09:32:31, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
+> 
+> Teach online repair to check for unused fsverity metadata and purge it
+> on reconstruction.
+> 
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> ---
+>  fs/xfs/scrub/attr.c   |  102 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/xfs/scrub/attr.h   |    4 ++
+>  fs/xfs/scrub/common.c |   27 +++++++++++++
+>  3 files changed, 133 insertions(+)
+> 
+> 
+> diff --git a/fs/xfs/scrub/attr.c b/fs/xfs/scrub/attr.c
+> index ae4227cb55ec..c69dee281984 100644
+> --- a/fs/xfs/scrub/attr.c
+> +++ b/fs/xfs/scrub/attr.c
+> @@ -21,6 +21,8 @@
+>  #include "scrub/dabtree.h"
+>  #include "scrub/attr.h"
+>  
+> +#include <linux/fsverity.h>
+> +
+>  /* Free the buffers linked from the xattr buffer. */
+>  static void
+>  xchk_xattr_buf_cleanup(
+> @@ -135,6 +137,91 @@ xchk_setup_xattr(
+>  	return xchk_setup_inode_contents(sc, 0);
+>  }
+>  
+> +#ifdef CONFIG_FS_VERITY
+> +/* Extract merkle tree geometry from incore information. */
+> +static int
+> +xchk_xattr_extract_verity(
+> +	struct xfs_scrub		*sc)
+> +{
+> +	struct xchk_xattr_buf		*ab = sc->buf;
+> +
+> +	/* setup should have allocated the buffer */
+> +	if (!ab) {
+> +		ASSERT(0);
+> +		return -EFSCORRUPTED;
+> +	}
+> +
+> +	return fsverity_merkle_tree_geometry(VFS_I(sc->ip),
+> +			&ab->merkle_blocksize, &ab->merkle_tree_size);
+> +}
+> +
+> +/* Check the merkle tree xattrs. */
+> +STATIC void
+> +xchk_xattr_verity(
+> +	struct xfs_scrub		*sc,
+> +	xfs_dablk_t			blkno,
+> +	const unsigned char		*name,
+> +	unsigned int			namelen,
+> +	unsigned int			valuelen)
+> +{
+> +	struct xchk_xattr_buf		*ab = sc->buf;
+> +
+> +	/* Non-verity filesystems should never have verity xattrs. */
+> +	if (!xfs_has_verity(sc->mp)) {
+> +		xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * Any verity metadata on a non-verity file are leftovers from a
+> +	 * previous attempt to enable verity.
+> +	 */
+> +	if (!IS_VERITY(VFS_I(sc->ip))) {
+> +		xchk_ino_set_preen(sc, sc->ip->i_ino);
+> +		return;
+> +	}
+> +
+> +	switch (namelen) {
+> +	case sizeof(struct xfs_verity_merkle_key):
+> +		/* Oversized blocks are not allowed */
+> +		if (valuelen > ab->merkle_blocksize) {
+> +			xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
+> +			return;
+> +		}
+> +		break;
+> +	case XFS_VERITY_DESCRIPTOR_NAME_LEN:
+> +		/* Has to match the descriptor xattr name */
+> +		if (memcmp(name, XFS_VERITY_DESCRIPTOR_NAME, namelen)) {
+> +			xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
+> +		}
+> +		return;
+> +	default:
+> +		xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * Merkle tree blocks beyond the end of the tree are leftovers from
+> +	 * a previous failed attempt to enable verity.
+> +	 */
+> +	if (xfs_verity_merkle_key_from_disk(name) >= ab->merkle_tree_size)
+> +		xchk_ino_set_preen(sc, sc->ip->i_ino);
+> +}
+> +#else
+> +# define xchk_xattr_extract_verity(sc)	(0)
+> +
+> +static void
+> +xchk_xattr_verity(
+> +	struct xfs_scrub	*sc,
+> +	xfs_dablk_t		blkno,
+> +	const unsigned char	*name,
+> +	unsigned int		namelen)
+> +{
+> +	/* Should never see verity xattrs when verity is not enabled. */
+> +	xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
+> +}
+> +#endif /* CONFIG_FS_VERITY */
+> +
+>  /* Extended Attributes */
+>  
+>  struct xchk_xattr {
+> @@ -194,6 +281,15 @@ xchk_xattr_listent(
+>  		goto fail_xref;
+>  	}
+>  
+> +	/* Check verity xattr geometry */
+> +	if (flags & XFS_ATTR_VERITY) {
+> +		xchk_xattr_verity(sx->sc, args.blkno, name, namelen, valuelen);
+> +		if (sx->sc->sm->sm_flags & XFS_SCRUB_OFLAG_CORRUPT) {
+> +			context->seen_enough = 1;
+> +			return;
+> +		}
+> +	}
+> +
+>  	/* Does this name make sense? */
+>  	if (!xfs_attr_namecheck(sx->sc->mp, name, namelen, flags)) {
+>  		xchk_fblock_set_corrupt(sx->sc, XFS_ATTR_FORK, args.blkno);
 
-Christian, the series looks good to me. Please pick it up once your tree
-settles after the merge window. Thanks!
+Would it be better to check verity after xfs_attr_namecheck()?
+Invalid name seems to be a more basic corruption.
 
-								Honza
-
-> 
-> Kemeng Shi (6):
->   fs/writeback: avoid to writeback non-expired inode in kupdate
->     writeback
->   fs/writeback: bail out if there is no more inodes for IO and queued
->     once
->   fs/writeback: remove unused parameter wb of finish_writeback_work
->   fs/writeback: only calculate dirtied_before when b_io is empty
->   fs/writeback: correct comment of __wakeup_flusher_threads_bdi
->   fs/writeback: remove unnecessary return in writeback_inodes_sb
-> 
->  fs/fs-writeback.c | 57 +++++++++++++++++++++++++++--------------------
->  1 file changed, 33 insertions(+), 24 deletions(-)
-> 
-> -- 
-> 2.30.0
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+- Andrey
+
 
