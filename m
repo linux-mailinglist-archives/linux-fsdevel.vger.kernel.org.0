@@ -1,129 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-14716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BED787E4EE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 09:25:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3049F87E501
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 09:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3F401F21D93
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 08:25:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91419B215E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 08:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01DA28DAB;
-	Mon, 18 Mar 2024 08:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADBC28DC8;
+	Mon, 18 Mar 2024 08:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="oBxflvDV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gB0QabqU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29D925760;
-	Mon, 18 Mar 2024 08:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8D728DA5;
+	Mon, 18 Mar 2024 08:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710750344; cv=none; b=pVuEy+nVCHTxV2hqx0cSGWNJw4ZIId4njG97lxi7iuIGmtL8J9RS1Gppsmak/TS9Ge+/SDwf2RV7xd3hJ82LwozPXicwX4ZZq7PlUGoF3yahtP7BewJqEpPVcPq1WEJhZUMdYBHP3L1BDn4jK+Nsr1b4Cae3p8cuo5dU64d3P2s=
+	t=1710750821; cv=none; b=QZIRFND+6HV7q4pPCowZ/MDP2Z1yyh1DHgbd380s7nbvKWO0QckDoHlrSHjxj+Hp/dO2cjIoDYc2lYdi6wOzQBW4DmkDFNI4PB4wt5klth9oDY+7GRM/u35N5oVLnnaLbcy10ZJU6vzi1A56Xonog3mCryZ5nWgMWtHeUCVnIWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710750344; c=relaxed/simple;
-	bh=9Gox6nr4Yw3nX20mUWVTq/8pONnShOOhZz4ItxTrQSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nU2I0CP+Vw6piFu/LKIQ44ucgSkTGAuFqIN7kLnnmvQCWH9ufk23SIxDF5Qn9eKu6znzkb5KDMT1VpBL8jUrHT7dR9ZG6vTwkNA0QvaOVV4Kahw/DQVmTzfmR87Fj3pEF9Ha5tlEzMyK0J47tRARdx4MFV6+cKv4FyYr4J6Zgzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=oBxflvDV; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=5lYBvG/HYr+nZZA7Ycz+u5VrES4YL7MUIS//0G2Ymss=; b=oBxflvDVpm9F7x3AVIgIprIZjM
-	D7jw1p3vzgwchZMSbqw7iBA0n6s8OElUrgZUo4gO6ntkWIBjwIYrPglb5noNTeb6Wsvuqjl0vZjkt
-	sgAAKesQmGWPo8wkagDWUYzif6v+Fd5WQmvqKLiYqrx6lJHaUosRUyTMPqGkHpqmyv/9M73in9eXl
-	5ZJB98fh7FOB83SGxT1f1UL1LeuUDdL1KAzt+tC5BwQhwIw/Kfv2FJiERCmCer4K/tg2qzn2LxuD6
-	FCU3HoaFyb6aBISmUu/LRWDmOZydZ8FfpH276W4qvrsA2jBgvSnu/VT/EzntvUv0wOCLiHwHk+V9Y
-	uDmBmiBiMH84b8hrhizZflbIgoW1BxiVI6HSOZxp+FMi0sQqD+DttRTiN6RMZzkTL7Z9qdCtaFqy6
-	o2SUNzb7Go93OB1GHrEl+TH4kL9pL5EcMT1eWLCFrfODM7EJRORXDGUSvKJgprDBtdpGnTFdBDigA
-	ESG8nh0AYk6H7STsYJQKmXyS;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1rm8JD-001XmP-1R;
-	Mon, 18 Mar 2024 08:25:27 +0000
-Message-ID: <0583f4be-4c34-44de-99f2-891d673b53a9@samba.org>
-Date: Mon, 18 Mar 2024 09:25:25 +0100
+	s=arc-20240116; t=1710750821; c=relaxed/simple;
+	bh=SbMAD9hclS7MZ4xz6LIJyGsFZIeKU1ChXipgW5RrNPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PIsMkf58R3sZwGPb/5wsAU0GzebM7gXvpTXCAT5XKse2HOraKmfi6iCEDJWM93JUjvohTIWfmvi/tvSpqhwA70xz87Xf0q5gJ3epUVctY1bgdKXLMfzP8ALQY/ZyZpVjGLRcXxOlyf1hET04hiFw14EzDVAfi8Z38tkMeVzSnoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gB0QabqU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C233AC433C7;
+	Mon, 18 Mar 2024 08:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710750820;
+	bh=SbMAD9hclS7MZ4xz6LIJyGsFZIeKU1ChXipgW5RrNPg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gB0QabqU2SmgnpTReDDuanCy7H+rVHXPDj/tQMNWrBvav9yhNXNHzewu/jxoZ34hL
+	 U3dSNHoTCSBUazjBaT+KTKYFEpgoT3tgk1+P8zNMvgXbsvc2GJbFp/pskitO9Bu007
+	 Uf3bOD6E9WRbiy6Ma/XJ2AmiBsFuUM2iiR2EXCf8QaabWgqHfV1FA8fBKctuzdgRKb
+	 ulhXnl/EUVgoL3uFGkQ3hf1SHk+JEEgyV6mMNm9OgEO8n+NewVHy38E01kYVICRo0r
+	 /tTxdZEuiDZwHWy70oLiSxqcscMEiuXkZchThRMgAapp4pVShlXYpeGDSKOqH4nm8/
+	 ejv41k7sMcO2A==
+Date: Mon, 18 Mar 2024 09:33:35 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH] fs,block: get holder during claim
+Message-ID: <20240318-begierde-ehedrama-a3b57393e496@brauner>
+References: <20240314165814.tne3leyfmb4sqk2t@quack3>
+ <20240315-freibad-annehmbar-ca68c375af91@brauner>
+ <ZfdYX3-_53txEYTa@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 06/24] vfs: break parent dir delegations in open(...,
- O_CREAT) codepath
-To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,
- Paulo Alcantara <pc@manguebit.com>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, David Howells
- <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>,
- Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
- Dai Ngo <Dai.Ngo@oracle.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, netfs@lists.linux.dev,
- ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20240315-dir-deleg-v1-0-a1d6209a3654@kernel.org>
- <20240315-dir-deleg-v1-6-a1d6209a3654@kernel.org>
-Content-Language: en-US
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <20240315-dir-deleg-v1-6-a1d6209a3654@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZfdYX3-_53txEYTa@infradead.org>
 
-Hi Jeff,
-
-> In order to add directory delegation support, we need to break
-> delegations on the parent whenever there is going to be a change in the
-> directory.
+On Sun, Mar 17, 2024 at 01:53:51PM -0700, Christoph Hellwig wrote:
+> On Fri, Mar 15, 2024 at 02:23:07PM +0100, Christian Brauner wrote:
+> > Now that we open block devices as files we need to deal with the
+> > realities that closing is a deferred operation. An operation on the
+> > block device such as e.g., freeze, thaw, or removal that runs
+> > concurrently with umount, tries to acquire a stable reference on the
+> > holder. The holder might already be gone though. Make that reliable by
+> > grabbing a passive reference to the holder during bdev_open() and
+> > releasing it during bdev_release().
 > 
-> Add a delegated_inode parameter to lookup_open and have it break the
-> delegation. Then, open_last_lookups can wait for the delegation break
-> and retry the call to lookup_open once it's done.
+> Looks good:
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/namei.c | 22 ++++++++++++++++++----
->   1 file changed, 18 insertions(+), 4 deletions(-)
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index f00d8d708001..88598a62ec64 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3404,7 +3404,7 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
->    */
->   static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
->   				  const struct open_flags *op,
-> -				  bool got_write)
-> +				  bool got_write, struct inode **delegated_inode)
+> does bcachefs also need a fix for it's holder ops?  Or does it get to
+> keep the pieces as it has it's own NULL holder_ops and obviously doens't
+> care about getting any of this right?
 
-Does NFS has a concept of lease keys and parent lease keys?
-
-In SMB it's possible that the client passes a lease key (16 client chosen bytes) to a directory open,
-when asking for a directory lease.
-
-Then operations on files within that directory, take that lease key from the directory as
-'parent lease keys' in addition to a unique lease key for the file.
-
-That way a client can avoid breaking its own directory leases when creating/move/delete... files
-in the directory.
-
-metze
+It has empty holder ops and so is behaving equivalent too having NULL
+holder ops. IOW, the block layer cannot access the holder.
 
