@@ -1,96 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-14773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECD487F1B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 22:04:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F47D87F252
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 22:38:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C2A1F224D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 21:04:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78051C211CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 21:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169FC58138;
-	Mon, 18 Mar 2024 21:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AO0xu0R0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9275917C;
+	Mon, 18 Mar 2024 21:38:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7103F59140;
-	Mon, 18 Mar 2024 21:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C465A792
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 21:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710795852; cv=none; b=XiUnNvBeOqan/fyy4bzuppEkXFzlcBEPGrPVLk1mFwQS6t8ut18YK2AXune36z5TIMZ3tF1tmP7+038e2rTLlMFcgdd38GJFBPacN6kwnQuj9OPcM0eee1iWpTyfNMDNSxwrveyPuBQZ9qf65bVqiKzb+7pzonZbMnqVtsBBlBE=
+	t=1710797884; cv=none; b=L+kUvdgojlGVI0eHiPlyFny/Qmn5bsSeD97p7x9gxz1MPNfs/euFAy/DuMxkikLgk4b7v7nTcvdNvIZ9xAu/K6HwdUQDUgLwyojWukUp6wxfD7m3fZu2/gjD8TL0KGSqB50gQcIjCdVte1/OBx7aVK3I9gujhdE7+3IvPYMxgIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710795852; c=relaxed/simple;
-	bh=QT/ehi740JNvXD0Kk69zsxeQiWTWYJhR3CX98vGF494=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dbihepjwxjfa5bqlFELqDQXP5fZqfNKJ+qhFEYjgzMiASfDEU/ogrwzagqcoGpMeZP3JSp1LPJ5XjxI1DEDcg9PzfT4rmz3+0Zm+hkBhrOBUDbrp7eXT3YKkIYGqZjHt09veux1qviSu7PtSZ2l8GIqG/u6nI3zOapgBJDR5Rbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AO0xu0R0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3BCBC433C7;
-	Mon, 18 Mar 2024 21:04:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710795852;
-	bh=QT/ehi740JNvXD0Kk69zsxeQiWTWYJhR3CX98vGF494=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AO0xu0R08RT5Eefaw+orL+W6OP77jJ6FjwjOS8n4pvT5ssPGS7SbepGDzOOiqrNO4
-	 JIUpTiwCIFQ1gPMdvFHHKb3kud5jTH1tlmw446JGf7SFf8glBViU2/PoANjG3atbf5
-	 Gb1Ud+UWrPVoR7DfbcK5/IAXsSiMyDHMw5X+7K6XGSPFUdUmwH/R3XejhWEWc7wUKv
-	 /PkDNvyabWh5VwgDReL+vq/z1zoEszNEVJ98g0OHZqMGUH/2ReDiskTspH1/hQBrMM
-	 ntpP+m9rGpdk9Gd0vzfgQb7MXR6uFmQc9PKLyQ5r7S15TJ3KR2uSGQ9fr4cTHUdKcU
-	 HasQDXpxbOOFg==
-Date: Mon, 18 Mar 2024 14:04:11 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: aalbersh@redhat.com, linux-fsdevel@vger.kernel.org,
-	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 16/40] fsverity: pass the zero-hash value to the
- implementation
-Message-ID: <20240318210411.GE6226@frogsfrogsfrogs>
-References: <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
- <171069246170.2684506.16175333193381403848.stgit@frogsfrogsfrogs>
- <20240318163847.GC1185@sol.localdomain>
+	s=arc-20240116; t=1710797884; c=relaxed/simple;
+	bh=O4umbVjFHYUDfEMizAn5kUkkWDtKLtGnkvI7A/r4rMg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RMBxrN34flvvXrb/iQXz8uO3Y1Fg53YxWdnWQ+xul2T6Z9fnpPAMj90MXrW0+0bEndMxCDbF7tggf5shz+filLWaj2s8QhQzQPlkkRJ6sswYc8ZR7p4GgTX2kriBt2wWRSyH8b8Me0wjtYpP2Ww0hE1lWLWQA1kYKKijGEETlmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7cc0a422d43so248790039f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 14:38:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710797882; x=1711402682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GJmAzOZTchuP4uA1qhK5Bek7hETqC3bRqV9ZUNXqqkg=;
+        b=YlVAiSs2JYRjGBgxXuGlbgEUubodRtYj+iE1OWzjXis1l+/fmB9AJ5UJmEg+QtKvvS
+         oqbe2DAlDfc+0fcOQh2sTvrA23c6IHMeQ5Wz6msTllhCFeseCRNFNOoU0SdrvMn88CPJ
+         TYqWoR7Yhtmp9rl1Ssq3Nnl5xEK1ej38CEwh1Q580gPrTTfsJyb3k71CeKh2tR6RV5QH
+         4o3zA6Pebm0pmm4JWV+Gs/uEh23uQlkoFXUvlZO7MFDecVtozYbhdI5vr8bKnMV5GxUw
+         kTTqH+bKBnoYgG70uz2g8/wVtAhmD5ztGZHwvpR88x2nF75vxKZD967ewsnHMfINjnoX
+         ekUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5UEMmMvm8u4uGi0vN0b7f7lnoGbLFHf9REuXKkfobQqE6fNMWudc2tAZ9Fd36baFWBfA8IxDTY2QIuEvtSZzd4B5QA8gu6twQNZkEYQ==
+X-Gm-Message-State: AOJu0YzhOH5MWhZ5W7IwXliOKRb3DpwT/yJA0YqGXUdUmVS29lNgTXe7
+	DSkUr/d0POl52H75/ZOeRYa6mlXmnSpjBcYU966jpG1f/6L+RSd+m1egJ20uO2nDsWcshZoGiP0
+	aqkoiV46wml//PN7neKHsSGxZFibFHT87Kp7TNGyd9zkAWp9qhHjbvlY=
+X-Google-Smtp-Source: AGHT+IEE0bl1tT2EzGs5vApz2wZu53dx4QAXfi7kjhMEVBTjBAHVikJmo68tYp6WxIDBl91ZI6pdnd0yhhgF/4otTEnc3TJgJEZQ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240318163847.GC1185@sol.localdomain>
+X-Received: by 2002:a05:6602:1656:b0:7cc:76d0:cc1f with SMTP id
+ y22-20020a056602165600b007cc76d0cc1fmr25629iow.4.1710797882097; Mon, 18 Mar
+ 2024 14:38:02 -0700 (PDT)
+Date: Mon, 18 Mar 2024 14:38:02 -0700
+In-Reply-To: <B6E22992-FF45-44E3-8FBE-D157BED7B922@posteo.net>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000b942f0613f62cdf@google.com>
+Subject: Re: [syzbot] [v9fs?] KMSAN: uninit-value in v9fs_evict_inode
+From: syzbot <syzbot+eb83fe1cce5833cd66a0@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, charmitro@posteo.net, ericvh@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 18, 2024 at 09:38:47AM -0700, Eric Biggers wrote:
-> On Sun, Mar 17, 2024 at 09:27:34AM -0700, Darrick J. Wong wrote:
-> > diff --git a/fs/verity/open.c b/fs/verity/open.c
-> > index 7a86407732c4..433a70eeca55 100644
-> > --- a/fs/verity/open.c
-> > +++ b/fs/verity/open.c
-> > @@ -144,6 +144,13 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
-> >  		goto out_err;
-> >  	}
-> >  
-> > +	err = fsverity_hash_buffer(params->hash_alg, page_address(ZERO_PAGE(0)),
-> > +				   i_blocksize(inode), params->zero_digest);
-> > +	if (err) {
-> > +		fsverity_err(inode, "Error %d computing zero digest", err);
-> > +		goto out_err;
-> > +	}
-> 
-> This doesn't take the salt into account.  Also it's using the wrong block size
-> (filesystem block size instead of Merkle tree block size).
-> 
-> How about using fsverity_hash_block()?
+Hello,
 
-/me looks at build_merkle_tree again, realizes that it calls
-hash_one_block on params->block_size bytes of file data.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-IOWs, fsverity_hash_block is indeed the correct function to call here.
-Thanks for the correction!
+failed to apply patch:
+checking file fs/9p/vfs_inode.c
+patch: **** unexpected end of file in patch
 
---D
 
-> - Eric
+
+Tested on:
+
+commit:         bf3a69c6 Merge tag 'for-linus-6.9-ofs1' of git://git.k..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+kernel config:  https://syzkaller.appspot.com/x/.config?x=48bb382b96e7eda7
+dashboard link: https://syzkaller.appspot.com/bug?extid=eb83fe1cce5833cd66a0
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=160cdef1180000
+
 
