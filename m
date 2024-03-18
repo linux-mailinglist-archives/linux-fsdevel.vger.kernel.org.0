@@ -1,86 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-14760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC8187EF3B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 18:53:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BED187EF47
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 18:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C5B4B20D03
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 17:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9FC1C222F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 17:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D5955C2B;
-	Mon, 18 Mar 2024 17:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9280F55C3C;
+	Mon, 18 Mar 2024 17:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gU/ct5mY"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NC26Ldk1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F006855C04
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 17:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4BF55C07
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 17:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710784415; cv=none; b=nTbJ7vRJHGIIbYOPhG30QL7qnBffUduJRuWr+KPF6+9imgLnOagjb28IjPV8VzXc0AW4ZpYJRINQN3cPmexPGl06lZu9Or+uZBusZb2qVZy7aWQQf1ReS7lwvOA1CPhvU0Sz/IOGYPE3jzuMnjfYqSmIB0DRI+0FoUX/OkxVTv0=
+	t=1710784548; cv=none; b=KtlruzoiMPEB7sFo99SB+sfHX2HuUGk1IEbJVWq4FyC80MDOmQatqHPOpdhGeuWue8d725XSCCmaUb5JV2G9wZK9erPYbmIrhJdrDXRXeX+ygJyJctLTEyQDE8N3x21Xy3txOOVDFUpsx6mw43bly0KK5vqrcn/pnlcNRK9nblM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710784415; c=relaxed/simple;
-	bh=nHCCJ8oZPuVSMcOyY978rJsUOKLNziW6XrpyCath8X0=;
+	s=arc-20240116; t=1710784548; c=relaxed/simple;
+	bh=pulUaf4YhSsFFM1biSTcYfSrkKMd+Ti4pDXyJ7rmZls=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3bffnptQKk6AtUqcQCeWaVvyELfrgX17CbSWFXFrcG+qbzm1dGLh0yeWR1PspUq60Tr1JLQfR1UngpXP3UBHDuxc7N8ekNWKfXsg+iG1X/ghzcGvNweS65eZzE8i3KK8nz/zVOCxBQHXWKO4StocUXha7ERDUFENluKbZKHIic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gU/ct5mY; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=XDt+XUZe7pX+wajIsqPk4Ts0qr8SaRPo1XHPgTbjLqIZz9d/DEj313XXA+MJ3p+gIdWoMip9K5BZYE6YVV9J71XgdkNHmElBVxrRxelr73v0CWDU4FR1f3Vrnw7oCZu3uBkRMBkbuOAxfnnlqV6Mz+DWJN6R3FoelxsK4A0I2X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NC26Ldk1; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710784412;
+	s=mimecast20190719; t=1710784545;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hTLQGA3ce6NqmPZ27ixtXcNcDBrXeiwKPfMM8J13wPA=;
-	b=gU/ct5mYuKUKD2sly09tNu0miSFfnMQqof9T9i+3ijygaBAeWn8xAlb7XhoAFX/AvLpjgE
-	hS/Wh2jP73Bui8cP7e9MGnWp2Ayiqtu2jzaSYFvpLsEAw+TqfGdR29gwoTTEZmzi1z+wjr
-	1gAkNVUG+5LFmlMOwVqFOh1aKm8bgz8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=BIeZF3pcV9ybXmMCNiFAFeode04oEpCoNs6YN4HJg24=;
+	b=NC26Ldk1gTG6eqtjzdlj07oxgsx32Csu3ke8ow4N5KDhH4F8TqPMYBLlYg7yMC4JMMCHif
+	7zc7TWK/FQ7LOgE7LUiwKTE9FNEZAbLCaU5v2RojOjyKAMZGc3gNTaW4IegOursHhRX7LD
+	uBLDF1BY/OI/DvKZIY7X6n1OXj+06DA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-r_nB7vjsPIWj44z7HqlVMA-1; Mon, 18 Mar 2024 13:53:29 -0400
-X-MC-Unique: r_nB7vjsPIWj44z7HqlVMA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-33ed234bcb1so1325677f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 10:53:29 -0700 (PDT)
+ us-mta-363-w6bkTwixOS2J48ZSwMLl5w-1; Mon, 18 Mar 2024 13:55:41 -0400
+X-MC-Unique: w6bkTwixOS2J48ZSwMLl5w-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-33ec6c43a9cso3535876f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 10:55:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710784408; x=1711389208;
+        d=1e100.net; s=20230601; t=1710784540; x=1711389340;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hTLQGA3ce6NqmPZ27ixtXcNcDBrXeiwKPfMM8J13wPA=;
-        b=Gl6Hw/gGXMxaVPglcXaPOg9yJCxAVzl2kQcNFJ/9OoXBMEn3pqMpOdBXPM8M6ZowxA
-         KOMjQdwwHFJX/XD4AAwHQ6UxAoUorxMZXfQtgjY3SbvSqIZHBK/5Xyi8olWLiynWG374
-         y+E4qQXs4iOMUZFtwW7FRl0cy6EQAjsp8sI/ohJQHJsZi88c/HoN8W5Shk8TS35W6clE
-         xuU9E9EDQC/2mjcV4gvHSwp1QTS+2XoVTpLsBI9gJS0fW4OSM1MFK8lY9TLNf4z2Hc0L
-         1crT3orB72iMQ0oyGQ1Jpyok31LJpHOQxBTd7IFmVZPkwOGg2aRfTBhrNqPvjEDLFB5n
-         bYEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgK4cj5iDKQPN1g3mNv3hrg9Bh3Hvy7hU0jPiIaq8f6JKdhABFxWhHlFgAeXNLE6zwketI1iE+C551YTLpwY50D7WRz8TEV9hc+fugIA==
-X-Gm-Message-State: AOJu0YyT1XcfRHJFDmaJgjtWxqTEN93jdghKbW2DcbrUyreoHmQm/jlA
-	aCt4lpKONzTQhk/QMXqfyN2fy75Bl3j+dzzc24Oc/Mk08IKV/FQnrvnahm07b9bv5K87MTs3aVh
-	TzFPUFJ/FaTnshcNklzx9y6vr1qLN9NKegqOdxbUeTuDHF+/JAPUPvJjd61rCTg==
-X-Received: by 2002:adf:e0c4:0:b0:33e:aead:af07 with SMTP id m4-20020adfe0c4000000b0033eaeadaf07mr224617wri.27.1710784407975;
-        Mon, 18 Mar 2024 10:53:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6+9xAN+Z54GX2Nx2lx8orsnGgnShZlg5f0CZs3fxj5R/U8eBAYqqMj8u9Hck3IL5mnidI1Q==
-X-Received: by 2002:adf:e0c4:0:b0:33e:aead:af07 with SMTP id m4-20020adfe0c4000000b0033eaeadaf07mr224601wri.27.1710784407406;
-        Mon, 18 Mar 2024 10:53:27 -0700 (PDT)
+        bh=BIeZF3pcV9ybXmMCNiFAFeode04oEpCoNs6YN4HJg24=;
+        b=qc5YZwH9WVyzDvUf53Mfa6PojGGIeLg4kmmW/j2jbaq5yCfvDiU80HoKMMA2+U8Vca
+         74qAG2dPQYac7ts7rX3zEK6t8db5JVngpEMtyvkEcGnvN53wVxXr0ULkcwcOaYQXVKRo
+         EB+pEEj96vt0JQGYUBn4I/3JOyb5JhcU7zHosB880R1cGq8CPybhPMr7S9WpaBODqFVU
+         0RwUuTddoprOQDxeKW2VjtB5XoAj28hdHngnRzaitBcYG6MHIwixQTSXwyUc7/9lWNoC
+         jWbYce2jhenUWwL+4rHN50TysVQcDJn1KuSn9EwXLQpxtBDlueMThoaXBhEpL3ONy+t+
+         gTjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVjiE7jNq4oSL7Ya7JBm33jKcbpE2rKjwiOVma8sINGXKp7UCvp3Zu7USNihostfXpvgolIc3YdJ4sbc0sePDB3qFAHemSkiij6/breQ==
+X-Gm-Message-State: AOJu0YxF2IME2BB2/aLian9JmTywWIgm00R4WpIg0VRIyh22wA29wUBx
+	JwcHHeniI0/6OHbcZ4Eryd4WOF4s0q5HE3SSwgprQxQJ6UqLYXfU5JBzjaeU3JFUBbu5t9YiM+e
+	iHVH8l7qHlbQob//aNSAkFb3CniodXBYFGN0N32aaeriOHqP/NhB8pPn3uMAD5A==
+X-Received: by 2002:a05:6000:912:b0:33e:7564:ceb with SMTP id cw18-20020a056000091200b0033e75640cebmr6538759wrb.52.1710784540472;
+        Mon, 18 Mar 2024 10:55:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIYaglzyvoDgvioWLXHUUli7NeWqj9AChqPSkZfhtsI7iCTP9DwDDB2UpPqVyaLx8GqGL/pQ==
+X-Received: by 2002:a05:6000:912:b0:33e:7564:ceb with SMTP id cw18-20020a056000091200b0033e75640cebmr6538740wrb.52.1710784539982;
+        Mon, 18 Mar 2024 10:55:39 -0700 (PDT)
 Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id n8-20020a5d6608000000b0033e45930f35sm10336986wru.6.2024.03.18.10.53.26
+        by smtp.gmail.com with ESMTPSA id i18-20020adffc12000000b0033e786abf84sm10329696wrr.54.2024.03.18.10.55.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 10:53:27 -0700 (PDT)
-Date: Mon, 18 Mar 2024 18:53:26 +0100
+        Mon, 18 Mar 2024 10:55:39 -0700 (PDT)
+Date: Mon, 18 Mar 2024 18:55:39 +0100
 From: Andrey Albershteyn <aalbersh@redhat.com>
 To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, 
 	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 37/40] xfs: create separate name hash function for xattrs
-Message-ID: <ebpjh7ix3ccqaym4cy5h66xu37777kcccsuqqrtq34efnj3oo3@xnmblpp4dngy>
+Subject: Re: [PATCH 38/40] xfs: use merkle tree offset as attr hash
+Message-ID: <tbqzcbhc267i6be5suodaqdxbdtdettd7jb442dvgiugbeoxsm@rkzvxzj7ca63>
 References: <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
- <171069246501.2684506.2064171073014791566.stgit@frogsfrogsfrogs>
+ <171069246517.2684506.8560170754721057486.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,13 +89,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <171069246501.2684506.2064171073014791566.stgit@frogsfrogsfrogs>
+In-Reply-To: <171069246517.2684506.8560170754721057486.stgit@frogsfrogsfrogs>
 
-On 2024-03-17 09:33:02, Darrick J. Wong wrote:
+On 2024-03-17 09:33:18, Darrick J. Wong wrote:
 > From: Darrick J. Wong <djwong@kernel.org>
 > 
-> Create a new hashing function for extended attribute names.  The next
-> patch needs this so it can modify the hash strategy for verity xattrs.
+> I was exploring the fsverity metadata with xfs_db after creating a 220MB
+> verity file, and I noticed the following in the debugger output:
+> 
+> entries[0-75] = [hashval,nameidx,incomplete,root,secure,local,parent,verity]
+> 0:[0,4076,0,0,0,0,0,1]
+> 1:[0,1472,0,0,0,1,0,1]
+> 2:[0x800,4056,0,0,0,0,0,1]
+> 3:[0x800,4036,0,0,0,0,0,1]
+> ...
+> 72:[0x12000,2716,0,0,0,0,0,1]
+> 73:[0x12000,2696,0,0,0,0,0,1]
+> 74:[0x12800,2676,0,0,0,0,0,1]
+> 75:[0x12800,2656,0,0,0,0,0,1]
+> ...
+> nvlist[0].merkle_off = 0x18000
+> nvlist[1].merkle_off = 0
+> nvlist[2].merkle_off = 0x19000
+> nvlist[3].merkle_off = 0x1000
+> ...
+> nvlist[71].merkle_off = 0x5b000
+> nvlist[72].merkle_off = 0x44000
+> nvlist[73].merkle_off = 0x5c000
+> nvlist[74].merkle_off = 0x45000
+> nvlist[75].merkle_off = 0x5d000
+> 
+> Within just this attr leaf block, there are 76 attr entries, but only 38
+> distinct hash values.  There are 415 merkle tree blocks for this file,
+> but we already have hash collisions.  This isn't good performance from
+> the standard da hash function because we're mostly shifting and rolling
+> zeroes around.
+> 
+> However, we don't even have to do that much work -- the merkle tree
+> block keys are themslves u64 values.  Truncate that value to 32 bits
+> (the size of xfs_dahash_t) and use that for the hash.  We won't have any
+> collisions between merkle tree blocks until that tree grows to 2^32nd
+> blocks.  On a 4k block filesystem, we won't hit that unless the file
+> contains more than 2^49 bytes, assuming sha256.
+> 
+> As a side effect, the keys for merkle tree blocks get written out in
+> roughly sequential order, though I didn't observe any change in
+> performance.
 > 
 > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 
@@ -103,151 +142,40 @@ Looks good to me:
 Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
 
 > ---
->  fs/xfs/libxfs/xfs_attr.c      |   16 ++++++++++++++--
->  fs/xfs/libxfs/xfs_attr.h      |    3 +++
->  fs/xfs/libxfs/xfs_attr_leaf.c |    4 ++--
->  fs/xfs/scrub/attr.c           |    8 +++++---
->  fs/xfs/xfs_attr_item.c        |    3 ++-
->  fs/xfs/xfs_attr_list.c        |    3 ++-
->  6 files changed, 28 insertions(+), 9 deletions(-)
+>  fs/xfs/libxfs/xfs_attr.c      |    7 +++++++
+>  fs/xfs/libxfs/xfs_da_format.h |    2 ++
+>  2 files changed, 9 insertions(+)
 > 
 > 
 > diff --git a/fs/xfs/libxfs/xfs_attr.c b/fs/xfs/libxfs/xfs_attr.c
-> index b7aa1bc12fd1..b1fa45197eac 100644
+> index b1fa45197eac..7c0f006f972a 100644
 > --- a/fs/xfs/libxfs/xfs_attr.c
 > +++ b/fs/xfs/libxfs/xfs_attr.c
-> @@ -238,6 +238,16 @@ xfs_attr_get_ilocked(
->  	return xfs_attr_node_get(args);
+> @@ -245,6 +245,13 @@ xfs_attr_hashname(
+>  	const uint8_t		*name,
+>  	unsigned int		namelen)
+>  {
+> +	if ((attr_flags & XFS_ATTR_VERITY) &&
+> +	    namelen == sizeof(struct xfs_verity_merkle_key)) {
+> +		uint64_t	off = xfs_verity_merkle_key_from_disk(name);
+> +
+> +		return off >> XFS_VERITY_MIN_MERKLE_BLOCKLOG;
+> +	}
+> +
+>  	return xfs_da_hashname(name, namelen);
 >  }
 >  
-> +/* Compute hash for an extended attribute name. */
-> +xfs_dahash_t
-> +xfs_attr_hashname(
-> +	unsigned int		attr_flags,
-> +	const uint8_t		*name,
-> +	unsigned int		namelen)
-> +{
-> +	return xfs_da_hashname(name, namelen);
-> +}
+> diff --git a/fs/xfs/libxfs/xfs_da_format.h b/fs/xfs/libxfs/xfs_da_format.h
+> index e4aa7c9a0ccb..58887a1c65fe 100644
+> --- a/fs/xfs/libxfs/xfs_da_format.h
+> +++ b/fs/xfs/libxfs/xfs_da_format.h
+> @@ -946,4 +946,6 @@ xfs_verity_merkle_key_from_disk(
+>  #define XFS_VERITY_DESCRIPTOR_NAME	"vdesc"
+>  #define XFS_VERITY_DESCRIPTOR_NAME_LEN	(sizeof(XFS_VERITY_DESCRIPTOR_NAME) - 1)
+>  
+> +#define XFS_VERITY_MIN_MERKLE_BLOCKLOG	(10)
 > +
->  /*
->   * Retrieve an extended attribute by name, and its value if requested.
->   *
-> @@ -268,7 +278,8 @@ xfs_attr_get(
->  
->  	args->geo = args->dp->i_mount->m_attr_geo;
->  	args->whichfork = XFS_ATTR_FORK;
-> -	args->hashval = xfs_da_hashname(args->name, args->namelen);
-> +	args->hashval = xfs_attr_hashname(args->attr_filter, args->name,
-> +					  args->namelen);
->  
->  	/* Entirely possible to look up a name which doesn't exist */
->  	args->op_flags = XFS_DA_OP_OKNOENT;
-> @@ -942,7 +953,8 @@ xfs_attr_set(
->  
->  	args->geo = mp->m_attr_geo;
->  	args->whichfork = XFS_ATTR_FORK;
-> -	args->hashval = xfs_da_hashname(args->name, args->namelen);
-> +	args->hashval = xfs_attr_hashname(args->attr_filter, args->name,
-> +					  args->namelen);
->  
->  	/*
->  	 * We have no control over the attribute names that userspace passes us
-> diff --git a/fs/xfs/libxfs/xfs_attr.h b/fs/xfs/libxfs/xfs_attr.h
-> index 92711c8d2a9f..19db6c1cc71f 100644
-> --- a/fs/xfs/libxfs/xfs_attr.h
-> +++ b/fs/xfs/libxfs/xfs_attr.h
-> @@ -619,4 +619,7 @@ extern struct kmem_cache *xfs_attr_intent_cache;
->  int __init xfs_attr_intent_init_cache(void);
->  void xfs_attr_intent_destroy_cache(void);
->  
-> +xfs_dahash_t xfs_attr_hashname(unsigned int attr_flags,
-> +		const uint8_t *name_string, unsigned int name_length);
-> +
->  #endif	/* __XFS_ATTR_H__ */
-> diff --git a/fs/xfs/libxfs/xfs_attr_leaf.c b/fs/xfs/libxfs/xfs_attr_leaf.c
-> index ac904cc1a97b..fcece25fd13e 100644
-> --- a/fs/xfs/libxfs/xfs_attr_leaf.c
-> +++ b/fs/xfs/libxfs/xfs_attr_leaf.c
-> @@ -911,8 +911,8 @@ xfs_attr_shortform_to_leaf(
->  		nargs.namelen = sfe->namelen;
->  		nargs.value = &sfe->nameval[nargs.namelen];
->  		nargs.valuelen = sfe->valuelen;
-> -		nargs.hashval = xfs_da_hashname(sfe->nameval,
-> -						sfe->namelen);
-> +		nargs.hashval = xfs_attr_hashname(sfe->flags, sfe->nameval,
-> +						  sfe->namelen);
->  		nargs.attr_filter = sfe->flags & XFS_ATTR_NSP_ONDISK_MASK;
->  		error = xfs_attr3_leaf_lookup_int(bp, &nargs); /* set a->index */
->  		ASSERT(error == -ENOATTR);
-> diff --git a/fs/xfs/scrub/attr.c b/fs/xfs/scrub/attr.c
-> index c69dee281984..e7d50589f72d 100644
-> --- a/fs/xfs/scrub/attr.c
-> +++ b/fs/xfs/scrub/attr.c
-> @@ -253,7 +253,6 @@ xchk_xattr_listent(
->  		.dp			= context->dp,
->  		.name			= name,
->  		.namelen		= namelen,
-> -		.hashval		= xfs_da_hashname(name, namelen),
->  		.trans			= context->tp,
->  		.valuelen		= valuelen,
->  	};
-> @@ -263,6 +262,7 @@ xchk_xattr_listent(
->  
->  	sx = container_of(context, struct xchk_xattr, context);
->  	ab = sx->sc->buf;
-> +	args.hashval = xfs_attr_hashname(flags, name, namelen);
->  
->  	if (xchk_should_terminate(sx->sc, &error)) {
->  		context->seen_enough = error;
-> @@ -600,7 +600,8 @@ xchk_xattr_rec(
->  			xchk_da_set_corrupt(ds, level);
->  			goto out;
->  		}
-> -		calc_hash = xfs_da_hashname(lentry->nameval, lentry->namelen);
-> +		calc_hash = xfs_attr_hashname(ent->flags, lentry->nameval,
-> +				lentry->namelen);
->  	} else {
->  		rentry = (struct xfs_attr_leaf_name_remote *)
->  				(((char *)bp->b_addr) + nameidx);
-> @@ -608,7 +609,8 @@ xchk_xattr_rec(
->  			xchk_da_set_corrupt(ds, level);
->  			goto out;
->  		}
-> -		calc_hash = xfs_da_hashname(rentry->name, rentry->namelen);
-> +		calc_hash = xfs_attr_hashname(ent->flags, rentry->name,
-> +				rentry->namelen);
->  	}
->  	if (calc_hash != hash)
->  		xchk_da_set_corrupt(ds, level);
-> diff --git a/fs/xfs/xfs_attr_item.c b/fs/xfs/xfs_attr_item.c
-> index 703770cf1482..4d8264f0a537 100644
-> --- a/fs/xfs/xfs_attr_item.c
-> +++ b/fs/xfs/xfs_attr_item.c
-> @@ -536,7 +536,8 @@ xfs_attri_recover_work(
->  	args->whichfork = XFS_ATTR_FORK;
->  	args->name = nv->name.i_addr;
->  	args->namelen = nv->name.i_len;
-> -	args->hashval = xfs_da_hashname(args->name, args->namelen);
-> +	args->hashval = xfs_attr_hashname(attrp->alfi_attr_filter, args->name,
-> +					  args->namelen);
->  	args->attr_filter = attrp->alfi_attr_filter & XFS_ATTRI_FILTER_MASK;
->  	args->op_flags = XFS_DA_OP_RECOVERY | XFS_DA_OP_OKNOENT |
->  			 XFS_DA_OP_LOGGED;
-> diff --git a/fs/xfs/xfs_attr_list.c b/fs/xfs/xfs_attr_list.c
-> index fa74378577c5..96169474d023 100644
-> --- a/fs/xfs/xfs_attr_list.c
-> +++ b/fs/xfs/xfs_attr_list.c
-> @@ -135,7 +135,8 @@ xfs_attr_shortform_list(
->  		}
->  
->  		sbp->entno = i;
-> -		sbp->hash = xfs_da_hashname(sfe->nameval, sfe->namelen);
-> +		sbp->hash = xfs_attr_hashname(sfe->flags, sfe->nameval,
-> +					      sfe->namelen);
->  		sbp->name = sfe->nameval;
->  		sbp->namelen = sfe->namelen;
->  		/* These are bytes, and both on-disk, don't endian-flip */
+>  #endif /* __XFS_DA_FORMAT_H__ */
 > 
 
 -- 
