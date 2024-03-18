@@ -1,79 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-14780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19EB787F340
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 23:47:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EDF87F3F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 00:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179F41C20FFC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 22:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4BB1F22C5C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 23:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3586D5B1F1;
-	Mon, 18 Mar 2024 22:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjYCusVd"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA7F5EE6F;
+	Mon, 18 Mar 2024 23:22:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC605A786;
-	Mon, 18 Mar 2024 22:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C295E095;
+	Mon, 18 Mar 2024 23:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710802042; cv=none; b=Xtq1Ej1ueU+2MlhSuFF1WcYIanTdej9/hPM/yDjOSUcSpD/+x+Tuji0bE/8YoybdLN/GgkPahcUwZ3nn9IoIL2frxTi2r3+i6r0v8RenknfOjBSaKQOWA9a0HGI2VtbEd4N4T2zHHXw5kyoNDl0R9/uBxL3GoF7d+IZpVXkO29Y=
+	t=1710804172; cv=none; b=m11bMA6e+vyJmsurDM3Jcv0rR11tFgPxr3fo9Pxl8QUMCRFj69GwY+2AOFPOs0djNi2LXncMg+f9fhVusEvhIaG8ENUC9augefVcGvPjuYkI7jhzBmwe8u7zCtt8TprbG2fbIyqYPjIcsUidaG7aTeRzydLsOM0QCdD5U5niiRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710802042; c=relaxed/simple;
-	bh=+oeCCZuGnI9DcVme6NWVIVJJgNcEbP+7SYrOodPau6A=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=blIOTuT+vWffjlTxBmrx32SlRg1nmYnhfPBLjjuZ2imEf9llX21w6d35mWyPfopXkmlNaZPZqtT1Z2JobHAv43RXb0UWEqV/2IeN1nok0pTu+maf4DN3dHPddgB/7ZMYy/InPBKY5EW6tOYvhGtYn8yrQ/60K0Yi6Glp7TwJowA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjYCusVd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 492C7C433C7;
-	Mon, 18 Mar 2024 22:47:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710802042;
-	bh=+oeCCZuGnI9DcVme6NWVIVJJgNcEbP+7SYrOodPau6A=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=CjYCusVdCPlzf/MFrgzsqGKMRiMHAwB4X177B374Du+vkQDFsA3JlW75xnMQwnhAF
-	 02mp6qVs6nc0Gj5FcfBfUNGcntzXtcIHKomJIGFJjYgFPzdisuKrdHJ2QP59LYVGrW
-	 2ATBuwPWAcUL5giL2zJzFe0l//CltiMNmq21TqsRTFrdFNzE5VKh54mcKUGShS2KMw
-	 U1NPiCHpNfaKRHT7EV251EuxLfH/vD7MjEzWuKf+j7kr1bnNSzBLfYDBdprQGpfL8M
-	 AGh0DhaoLq15JLaZBN9EFJpks0oHbT6IyyvdzXEMgGaqmZpZJ2KzJxIBXJHGuKPgeq
-	 2Oz90rynqtqKw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3CA75D84BB3;
-	Mon, 18 Mar 2024 22:47:22 +0000 (UTC)
-Subject: Re: [GIT PULL] sysctl changes for v6.9-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240318122559.jedemqmrgms2wmgq@joelS2.panther.com>
-References: <CGME20240318122602eucas1p1d7761ac44909f55a8bb369982d2e0adb@eucas1p1.samsung.com> <20240318122559.jedemqmrgms2wmgq@joelS2.panther.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240318122559.jedemqmrgms2wmgq@joelS2.panther.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sysctl-6.9-rc1
-X-PR-Tracked-Commit-Id: 4f1136a55dc8e2c27d51e934d0675e12331c7291
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2cb5c8683981ebd5033e3cc91f7dd75794f16e61
-Message-Id: <171080204223.23091.18349900387276389619.pr-tracker-bot@kernel.org>
-Date: Mon, 18 Mar 2024 22:47:22 +0000
-To: Joel Granados <j.granados@samsung.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, Thomas =?utf-8?B?V2Vp77+9c2NodWg=?= <linux@weissschuh.net>, Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Joel Granados <j.granados@samsung.com>
+	s=arc-20240116; t=1710804172; c=relaxed/simple;
+	bh=HX7LG/+liOyF9Yphtpxw/AdVLRbvPxASNf7gfobkwRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZKyGQmcSxJEmKBDwcAYNFpUIyM2Kmqqdom/7JTzRnzam9D/wgnnpEx9mAlXmZleRb2charNzkUXRFlmTf3LwTY5SlqlxJ5R2EnZ60U8iChalGmZHXSAUi66Kqngn6nzW/fmgWcV6xKq7BHtPnx8umP6FyYQPpRRYnBgmZr4e0iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 6364068CFE; Tue, 19 Mar 2024 00:22:45 +0100 (CET)
+Date: Tue, 19 Mar 2024 00:22:45 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christoph Hellwig <hch@lst.de>, jack@suse.cz, brauner@kernel.org,
+	axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [RFC v4 linux-next 19/19] fs & block: remove bdev->bd_inode
+Message-ID: <20240318232245.GA17831@lst.de>
+References: <20240222124555.2049140-1-yukuai1@huaweicloud.com> <20240222124555.2049140-20-yukuai1@huaweicloud.com> <20240317213847.GD10665@lst.de> <022204e6-c387-b4b2-5982-970fd1ed5b5b@huaweicloud.com> <20240318013208.GA23711@lst.de> <5c231b60-a2bf-383e-e641-371e7e57da67@huaweicloud.com> <ea4774db-188e-6744-6a5b-0096f6206112@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea4774db-188e-6744-6a5b-0096f6206112@huaweicloud.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-The pull request you sent on Mon, 18 Mar 2024 13:25:59 +0100:
+On Mon, Mar 18, 2024 at 03:19:03PM +0800, Yu Kuai wrote:
+> I come up with an ideal:
+>
+> While opening the block_device the first time, store the generated new
+> file in "bd_inode->i_private". And release it after the last opener
+> close the block_device.
+>
+> The advantages are:
+>  - multiple openers can share the same bdev_file;
+>  - raw block device ops can use the bdev_file as well, and there is no
+> need to distinguish iomap/buffer_head for raw block_device;
+>
+> Please let me know what do you think?
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sysctl-6.9-rc1
+That does sound very reasonable to me.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2cb5c8683981ebd5033e3cc91f7dd75794f16e61
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
