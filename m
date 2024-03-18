@@ -1,217 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-14723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92CE87E59C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 10:22:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99AB987E5D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 10:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FE5CB2128A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 09:22:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38C1E1F2125E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 09:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C8F2C694;
-	Mon, 18 Mar 2024 09:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C52F2C1AD;
+	Mon, 18 Mar 2024 09:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bGzaSV9P";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NrLzzAHs";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w6kVA0iK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NDFBtx52"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8txPrXp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DD62C684;
-	Mon, 18 Mar 2024 09:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785842C1A2;
+	Mon, 18 Mar 2024 09:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710753749; cv=none; b=OykkSEjj+y15DHEQz5c0mcqHUgXQlpPNS19Q3RNxSgg4/7uaBKOWExgCciLACOwtx0U6Np64mUmDas7dIAIFPew0hoitgrnWpK28UG1cfFQoqW9pUgMixw77jhTw6Edc4go3tu3hX706EuC/xzXFZzdcf8Iv80myqNRfY8QpoFg=
+	t=1710754297; cv=none; b=i5vwTdHAi+5AcuMDY2/hzgXNwkEp24AMaIXGSzFBOMeOpFrTiD5hKOgdulcmeEuCzJulu8ZDnMwFlqQamzFMzN3b35zOKX8ifi/GNkxb3LplQ1iWN65GO7wBPLuzMwVUraqnms35M4NgWULwOQbw3Xk4SedNILfF+us1sQ598YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710753749; c=relaxed/simple;
-	bh=YB7Nput7gyoYeZjQKvKFl9SFdfZHqHfrmo3S2a64UtE=;
+	s=arc-20240116; t=1710754297; c=relaxed/simple;
+	bh=Wv5XgnQMknYBIHZPwVPnV1WLFXNTUqJQsLd0N+JSBBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cga34Yz6F9hX1AzXl843HlOpJZ3x44tWGydLZuAP4NEtyS/o7cTnCJ00HULS5GLTGN5LBbzWZ3cYNQ4yBIvRAvx3g4mYhFHdGFnXIMpwNjSwtRFWf1xkBaFA/uxyilVqaVazaw5IjYRrMcFjbuFDfQbc3JhxRWjmj6T+Ui1Sw34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bGzaSV9P; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NrLzzAHs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w6kVA0iK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NDFBtx52; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D5FD45C324;
-	Mon, 18 Mar 2024 09:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710753745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PKXwT21zGp7h0P23JiHp9Uxx7vGKylqN1ycx8ujs+cY=;
-	b=bGzaSV9PmTC17piPa+FfeQLOqeYNWANak3uA2dqes54c71HpczmoCaZvSCznj6PQSjP2Qq
-	yP5BDrKk3oYYDxe1Fv3enNVEWuMdQhphtQ/tYmU931sJUwDjpzyvkRwskYQKDj3/nJeFDp
-	Wn2DJNLa5sSeTN7ck3jaWMsEjKgieNc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710753745;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PKXwT21zGp7h0P23JiHp9Uxx7vGKylqN1ycx8ujs+cY=;
-	b=NrLzzAHsh26EVpRNB1EUEhhKvwWSu4JnpBqjgqzur9DcktMBviEwOilXNbU47ZSx8GSKYh
-	Q6GsuGW7nOhGzuCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710753743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PKXwT21zGp7h0P23JiHp9Uxx7vGKylqN1ycx8ujs+cY=;
-	b=w6kVA0iKB12APM3/l2fIFkJ5m6PIkZbfpV4yQ99tuNUgwoqWmwyz5gDfKaYIDNXxgAPYfI
-	qCQIZyuIXP7bFtwn/FATgpE/jdVnsEjpNWAOWt0Dm7DVaJ8EZXW8lACW35MyQA79naRuve
-	rKn41jrlvXyJFODfgL5qPsXnrrCWYdw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710753743;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PKXwT21zGp7h0P23JiHp9Uxx7vGKylqN1ycx8ujs+cY=;
-	b=NDFBtx52tJ6B7wc0zcEpKZPimbu5oLzGObGTTFqn/3p6e7Y/HRsjX+4onxcEb59glD9rZ1
-	jxc63njrEd+ttlDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CAA391349D;
-	Mon, 18 Mar 2024 09:22:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id o/52Mc8H+GW6SgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 18 Mar 2024 09:22:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8A91AA07D9; Mon, 18 Mar 2024 10:22:19 +0100 (CET)
-Date: Mon, 18 Mar 2024 10:22:19 +0100
-From: Jan Kara <jack@suse.cz>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: jack@suse.cz, hch@lst.de, brauner@kernel.org, axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [RFC v4 linux-next 18/19] scsi: factor out a helper
- bdev_read_folio() from scsi_bios_ptable()
-Message-ID: <20240318092219.t7ausibxzgoawscl@quack3>
-References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
- <20240222124555.2049140-19-yukuai1@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTWj66ETu+llOnZVQ4BUlMSly+bK6VtBMesrOnyHA9jyAz9maF0vCTkCEiQWwXSgLHyz0ms946ZUukrZSzxf/h/Bmn69qCf3IBZD8NV27LXd3n0FfKk5Z7ZmOy6fo3VZ59Ba0TFz5HzqaNfbYNhvJbNNsGeBmsXcraae+IaW/94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8txPrXp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39273C433C7;
+	Mon, 18 Mar 2024 09:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710754297;
+	bh=Wv5XgnQMknYBIHZPwVPnV1WLFXNTUqJQsLd0N+JSBBE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c8txPrXphMTQHclKlbYFFv8yFf5EB9y35fHu3d5Sn2WvglPXY1l+6oqg/KkRNRU1X
+	 y04QxW8rmLClmevLpyQqDbYqmPetZAYskEhOpbNSbuVSKQqjaLLIkVEULULzYTuxl9
+	 KWhIs9xVgbCdby3hyPtjlEJDcMd6cvvuP18QSu1Ms1TlCzXydmRp25alwHPLg+13YJ
+	 xuwqbb1UJrtmVGkDb2GV1NMnymWcptgc8b/i1L7SEyckJoId+z+jHaW/9btMEC0yYi
+	 Th4hf0Xz2oEXaWZA8xqAvgN3OH5b/WR3YE8kVkHbX/KH6ztUBlu395A4wh3phyn5q5
+	 +UVNw3qAJFUxA==
+Date: Mon, 18 Mar 2024 10:31:32 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: cheung wall <zzqq0103.hey@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: VFS: Close: file count is zero (use-after-free)
+Message-ID: <20240318-verjagen-klemmen-b8430586340d@brauner>
+References: <CAKHoSAsAt3hsZeqDBA6T_HkqgPWwrgmeBrZ+g7R5Wtw6auChKA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240222124555.2049140-19-yukuai1@huaweicloud.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-0.999];
-	 RCPT_COUNT_SEVEN(0.00)[10];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Flag: NO
+In-Reply-To: <CAKHoSAsAt3hsZeqDBA6T_HkqgPWwrgmeBrZ+g7R5Wtw6auChKA@mail.gmail.com>
 
-On Thu 22-02-24 20:45:54, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On Sun, Mar 17, 2024 at 07:57:28PM +0800, cheung wall wrote:
+> Hello,
 > 
-> scsi_bios_ptable() is reading without opening disk as file, factor out
-> a helper to read into block device page cache to prevent access bd_inode
-> directly from scsi.
+> when using Healer to fuzz the latest Linux Kernel, the following crash
 > 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-
-Looks good to me. Either before or after split feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  block/bdev.c           | 19 +++++++++++++++++++
->  drivers/scsi/scsicam.c |  3 +--
->  include/linux/blkdev.h |  1 +
->  3 files changed, 21 insertions(+), 2 deletions(-)
+> was triggered on:
 > 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index 60a1479eae83..b7af04d34af2 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -1211,6 +1211,25 @@ unsigned int block_size(struct block_device *bdev)
->  }
->  EXPORT_SYMBOL_GPL(block_size);
->  
-> +/**
-> + * bdev_read_folio - Read into block device page cache.
-> + * @bdev: the block device which holds the cache to read.
-> + * @pos: the offset that allocated folio will contain.
-> + *
-> + * Read one page into the block device page cache. If it succeeds, the folio
-> + * returned will contain @pos;
-> + *
-> + * This is only used for scsi_bios_ptable(), the bdev is not opened as files.
-> + *
-> + * Return: Uptodate folio on success, ERR_PTR() on failure.
-> + */
-> +struct folio *bdev_read_folio(struct block_device *bdev, loff_t pos)
-> +{
-> +	return mapping_read_folio_gfp(bdev_mapping(bdev),
-> +				      pos >> PAGE_SHIFT, GFP_KERNEL);
-> +}
-> +EXPORT_SYMBOL_GPL(bdev_read_folio);
-> +
->  static int __init setup_bdev_allow_write_mounted(char *str)
->  {
->  	if (kstrtobool(str, &bdev_allow_write_mounted))
-> diff --git a/drivers/scsi/scsicam.c b/drivers/scsi/scsicam.c
-> index e2c7d8ef205f..1c99b964a0eb 100644
-> --- a/drivers/scsi/scsicam.c
-> +++ b/drivers/scsi/scsicam.c
-> @@ -32,11 +32,10 @@
->   */
->  unsigned char *scsi_bios_ptable(struct block_device *dev)
->  {
-> -	struct address_space *mapping = bdev_whole(dev)->bd_inode->i_mapping;
->  	unsigned char *res = NULL;
->  	struct folio *folio;
->  
-> -	folio = read_mapping_folio(mapping, 0, NULL);
-> +	folio = bdev_read_folio(bdev_whole(dev), 0);
->  	if (IS_ERR(folio))
->  		return NULL;
->  
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index c510f334c84f..3fb02e3a527a 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -1514,6 +1514,7 @@ struct file *bdev_file_open_by_path(const char *path, blk_mode_t mode,
->  int bd_prepare_to_claim(struct block_device *bdev, void *holder,
->  		const struct blk_holder_ops *hops);
->  void bd_abort_claiming(struct block_device *bdev, void *holder);
-> +struct folio *bdev_read_folio(struct block_device *bdev, loff_t pos);
->  
->  /* just for blk-cgroup, don't use elsewhere */
->  struct block_device *blkdev_get_no_open(dev_t dev);
-> -- 
-> 2.39.2
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> HEAD commit: e8f897f4afef0031fe618a8e94127a0934896aba  (tag: v6.8)
+> 
+> git tree: upstream
+> 
+> console output: https://pastebin.com/raw/nWDbVZij
+
+Generally it's not great to have ever more fuzzer generated reports
+outside of the official syzbot reports.
+
+And fwiw, your link isn't even accessible.
+
+> 
+> kernel config: https://pastebin.com/raw/4m4ax5gq
+> 
+> C reproducer: https://pastebin.com/raw/0ZSaae7K
+
+That program seemingly to the mounted block device and your config has
+CONFIG_BLK_DEV_WRITE_MOUNTED=y causing corruption. So that bug is likely
+caused by that. Set CONFIG_BLK_DEV_WRITE_MOUNTED=n for your testbot.
 
