@@ -1,90 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-14775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0260087F286
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 22:49:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B51187F293
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 22:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE47B21B71
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 21:49:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 872F8B21A72
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 21:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3005359B59;
-	Mon, 18 Mar 2024 21:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D16659B71;
+	Mon, 18 Mar 2024 21:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="A1QODJ+s"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="vMrNwQMP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999B05916F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 21:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E9C59B4C;
+	Mon, 18 Mar 2024 21:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710798556; cv=none; b=pSYvYb7mx6UWTqUvA8ghkTRhR5Ue28W4Goo9GWAAalYexJWhfT/W6txcpUndjpyLo2IKuXtEpTZ8xk7+PaKgef/ZX6HNHnNLnC1v5XjAt7iQUor/ESRfR2hShRNa5xCMBZJjS+AQU42dDD9yFR4nd+kniqEZQ4AlcDSqaHJzJys=
+	t=1710798668; cv=none; b=BooM40GyuSo6Mw8acjrOGXKDfIa2c9sWHCgQaSWACI5Y5L7rp+vHOB5o/+vq19gtGiUUVSh9np/7UJdVMqEleIKFtQv83s9BOEIEZwdEXR6t0DY0Wy5V0gZIXsUQxL14QUU7QBs3B1lPBykXu8/8vDpDzyMiIlT0luisj0d8Y7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710798556; c=relaxed/simple;
-	bh=6P3rFkrW9HnhkfagqhtOgoRhL4elj2LsX7y/ud/bmu0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=hhM4onofJ3YvdrxN3lcR2CdYl/tlfl4LV9lsFwb2AEHf7Bp4i1ySs04mkvw2qduPoXLZ4u78S3Qttprfdsd1a2fn+3SZyQUQk4ZJYEkFGKDJFQcGcAODjisk+fEB8VORVa3ueWc6P458ckMk/bdfVzYYyLMjQQsXa0aja+or0Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=A1QODJ+s; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id E9C6F240104
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 22:49:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1710798546; bh=6P3rFkrW9HnhkfagqhtOgoRhL4elj2LsX7y/ud/bmu0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:Content-Type:
-	 Content-Transfer-Encoding:From;
-	b=A1QODJ+sQD/n147oK1SJ5BVHfmWOXLEoIsQeobr3+VtG3vpib0kanM+ZLG9Pj/Scu
-	 wnR6b/GqpSq1sxwCcuK14I0zAPZjHavXz49fwKOYQORkSI5WF39l9QEVed8lp76a5e
-	 LudiJhxvs3nW2JjlwUG+DLuCRGBQtislQ5zDL8ydvU5Sr7c31NW/PVVjlkBf37e0Zy
-	 H7IxAYCvgs/5zBKik3nCp7rRKqxgcARwgCBCum3iqNMQ6GbncnAHjWcXjM/frTGdAn
-	 H5xpIZx49GJ+HcK03PUOo3I2mHkqQhbAUX+kpmrPuaUFzbgmg5BYKS9dgEgWlWC2CY
-	 2SFs7jyXbjqIw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Tz7ly5gmvz6trs;
-	Mon, 18 Mar 2024 22:49:02 +0100 (CET)
-Message-ID: <ec51cc1d-beaa-4aa1-a54d-e503223dd365@posteo.net>
-Date: Mon, 18 Mar 2024 21:49:00 +0000
+	s=arc-20240116; t=1710798668; c=relaxed/simple;
+	bh=t48BTKEfxRoE6vzKtASN4ZILJHHG5zCzsAm9dMku81M=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=W8uDIfuN0tDFnVVoLRBnby4hiRsCAAkXTqAYsBkg7jWoLF2Jco2fFcSo0qes+e47bvBmBVEc4T7fiq+WnmLQJB5T0dx7w8sWIZRdQC5vGFnEgG0NjO5kXzdwIfBGRZR7/V8laEQ1NfkpJnnVedT1amxXG/osJ9B3QR41EM6baN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=vMrNwQMP; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1710798668; x=1742334668;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=t48BTKEfxRoE6vzKtASN4ZILJHHG5zCzsAm9dMku81M=;
+  b=vMrNwQMPFt3AP+xSanYn4NRyYBARguQREY8s+HoA/BZuuM96di9FBqNg
+   cRfWdtjcw0COmom4KbVcKh470ni1rj0b8k7xgiqkvlCh2skymyQxv16Hb
+   DfLxXpHM+cq1l3fOzpn+WvoJVNyASEp0Tqbo8lwQgtWVhC8Ms/AGBmR+r
+   c=;
+X-IronPort-AV: E=Sophos;i="6.07,135,1708387200"; 
+   d="scan'208";a="711898919"
+Subject: Re: [PATCH 3/3] ext4: Add support for FS_IOC_GETFSSYSFSPATH
+Thread-Topic: [PATCH 3/3] ext4: Add support for FS_IOC_GETFSSYSFSPATH
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2024 21:51:07 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:7322]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.8.10:2525] with esmtp (Farcaster)
+ id ee40fc96-dfbd-4d21-9a62-ccb2dc7432dc; Mon, 18 Mar 2024 21:51:05 +0000 (UTC)
+X-Farcaster-Flow-ID: ee40fc96-dfbd-4d21-9a62-ccb2dc7432dc
+Received: from EX19D023UWA001.ant.amazon.com (10.13.139.15) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Mon, 18 Mar 2024 21:51:04 +0000
+Received: from EX19D023UWA003.ant.amazon.com (10.13.139.33) by
+ EX19D023UWA001.ant.amazon.com (10.13.139.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Mon, 18 Mar 2024 21:51:04 +0000
+Received: from EX19D023UWA003.ant.amazon.com ([fe80::2d45:e73:b7a8:15de]) by
+ EX19D023UWA003.ant.amazon.com ([fe80::2d45:e73:b7a8:15de%6]) with mapi id
+ 15.02.1258.028; Mon, 18 Mar 2024 21:51:04 +0000
+From: "Kiselev, Oleg" <okiselev@amazon.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>, Theodore Ts'o <tytso@mit.edu>
+CC: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Christian
+ Brauner" <brauner@kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+Thread-Index: AQHadoyDsV0USCkQJEC028Q3z6qlgrE5A18AgAABWYCABJWUgA==
+Date: Mon, 18 Mar 2024 21:51:04 +0000
+Message-ID: <A0A342BA-631D-4D6E-B6D2-692A45509F63@amazon.com>
+References: <20240315035308.3563511-1-kent.overstreet@linux.dev>
+ <20240315035308.3563511-4-kent.overstreet@linux.dev>
+ <20240315164550.GD324770@mit.edu>
+ <l3dzlrzaekbxjryazwiqtdtckvl4aundfmwff2w4exuweg4hbc@2zsrlptoeufv>
+In-Reply-To: <l3dzlrzaekbxjryazwiqtdtckvl4aundfmwff2w4exuweg4hbc@2zsrlptoeufv>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <26EE5E8E86AD7645A307DC5C99A094F6@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [syzbot] [v9fs?] KMSAN: uninit-value in v9fs_evict_inode
-To: syzbot <syzbot+eb83fe1cce5833cd66a0@syzkaller.appspotmail.com>
-References: <0000000000002750950613c53e72@google.com>
-Content-Language: en-US
-Cc: asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net,
- syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-In-Reply-To: <0000000000002750950613c53e72@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-please test uv in v9fs_evict_inode
-
-#syz test 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 360a5304ec03..5d046f63e5fa 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -353,7 +353,8 @@ void v9fs_evict_inode(struct inode *inode)
-      filemap_fdatawrite(&inode->i_data);
-
-  #ifdef CONFIG_9P_FSCACHE
--    fscache_relinquish_cookie(v9fs_inode_cookie(v9inode), false);
-+    if (v9fs_inode_cookie(v9inode))
-+        fscache_relinquish_cookie(v9fs_inode_cookie(v9inode), false);
-  #endif
-  }
-
-
+T24gMy8xNS8yNCwgMDk6NTEsICJLZW50IE92ZXJzdHJlZXQiIDxrZW50Lm92ZXJzdHJlZXRAbGlu
+dXguZGV2IDxtYWlsdG86a2VudC5vdmVyc3RyZWV0QGxpbnV4LmRldj4+IHdyb3RlOg0KPiBPbiBG
+cmksIE1hciAxNSwgMjAyNCBhdCAxMjo0NTo1MFBNIC0wNDAwLCBUaGVvZG9yZSBUcydvIHdyb3Rl
+Og0KPiA+IE9uIFRodSwgTWFyIDE0LCAyMDI0IGF0IDExOjUzOjAyUE0gLTA0MDAsIEtlbnQgT3Zl
+cnN0cmVldCB3cm90ZToNCj4gPiA+IHRoZSBuZXcgc3lzZnMgcGF0aCBpb2N0bCBsZXRzIHVzIGdl
+dCB0aGUgL3N5cy9mcy8gcGF0aCBmb3IgYSBnaXZlbg0KPiA+ID4gZmlsZXN5c3RlbSBpbiBhIGZz
+IGFnbm9zdGljIHdheSwgcG90ZW50aWFsbHkgbnVkZ2luZyB1cyB0b3dhcmRzDQo+ID4gPiBzdGFu
+ZGFyaXppbmcgc29tZSBvZiBvdXIgcmVwb3J0aW5nLg0KPiA+ID4NCj4gPiA+IC0tLSBhL2ZzL2V4
+dDQvc3VwZXIuYw0KPiA+ID4gKysrIGIvZnMvZXh0NC9zdXBlci5jDQo+ID4gPiBAQCAtNTM0Niw2
+ICs1MzQ2LDcgQEAgc3RhdGljIGludCBfX2V4dDRfZmlsbF9zdXBlcihzdHJ1Y3QgZnNfY29udGV4
+dCAqZmMsIHN0cnVjdCBzdXBlcl9ibG9jayAqc2IpDQo+ID4gPiBzYi0+c19xdW90YV90eXBlcyA9
+IFFUWVBFX01BU0tfVVNSIHwgUVRZUEVfTUFTS19HUlAgfCBRVFlQRV9NQVNLX1BSSjsNCj4gPiA+
+ICNlbmRpZg0KPiA+ID4gc3VwZXJfc2V0X3V1aWQoc2IsIGVzLT5zX3V1aWQsIHNpemVvZihlcy0+
+c191dWlkKSk7DQo+ID4gPiArIHN1cGVyX3NldF9zeXNmc19uYW1lX2JkZXYoc2IpOw0KPiA+DQo+
+ID4gU2hvdWxkIHdlIHBlcmhhcHMgYmUgaG9pc3RpbmcgdGhpcyBjYWxsIHVwIHRvIHRoZSBWRlMg
+bGF5ZXIsIHNvIHRoYXQNCj4gPiBhbGwgZmlsZSBzeXN0ZW1zIHdvdWxkIGJlbmVmaXQ/DQo+DQo+
+DQo+IEkgZGlkIGFzIG11Y2ggaG9pc3RpbmcgYXMgSSBjb3VsZC4gRm9yIHNvbWUgZmlsZXN5c3Rl
+bXMgKHNpbmdsZSBkZXZpY2UNCj4gZmlsZXN5c3RlbXMpIHRoZSBzeXNmcyBuYW1lIGlzIHRoZSBi
+bG9jayBkZXZpY2UsIGZvciB0aGUgbXVsdGkgZGV2aWNlDQo+IGZpbGVzeXN0ZW1zIEkndmUgbG9v
+a2VkIGF0IGl0J3MgdGhlIFVVSUQuDQoNCldoeSBub3QgdXNlIHRoZSBmcyBVVUlEIGZvciBhbGwg
+Y2FzZXMsIHNpbmdsZSBkZXZpY2UgYW5kIG11bHRpIGRldmljZT8NCi0tIA0KT2xlZyBLaXNlbGV2
+IA0KDQoNCg0KDQo=
 
