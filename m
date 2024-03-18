@@ -1,113 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-14764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CB1287EFED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 19:43:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B77CF87EFF4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 19:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A4F1C21555
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 18:43:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968B21C22074
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 18:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557FA38DD9;
-	Mon, 18 Mar 2024 18:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED1156468;
+	Mon, 18 Mar 2024 18:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="FdjGk33A"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q2FObs2O";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dT6tgLg2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q2FObs2O";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dT6tgLg2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FA92837D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 18:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5B356462
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 18:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710787419; cv=none; b=qSHaSn9e7udIQ1265Xpx9Ik22UqjpFmbYxX329LMtFVJiPeaZk+oLDYgj9VjD4j51pIZtOtxPK8v5EDqXsPM4gveKZrdZ6KDTf/S8ZV5CxycgldPbxddc3c8jqiBa5sNdpV6bQ81Dmlrjvrmk0XV7qjO28WEdoYKJg27kYTTsGI=
+	t=1710787736; cv=none; b=R9XuN4avGdjMKnOd0xMZAePKZFE4nXHZIiDcp+mpcKUWcHEPSZOAPkCDLNCmoZkp93ssyUWqZ3MVr4yFv3slfRFI1//cuW+Lbl+zP6tuC3WTfLCzopDupLvjJPkY8rk+5Pr7dticC84AzfTtVm88wM1+fSYDzqt1XgLWXCB8aiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710787419; c=relaxed/simple;
-	bh=r1LSqF/JinUQWJSsN0OUELOLOFK8eHrasFlFpPDIwEs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Bx+OdtZepf1v25i91m9MfGBBSdUp2afLMZHovJD3tCYsJ0cYPo3/pgZrkd380qaZYMcsvvE8QJFmiFmviRjHIXWjq4URm2Y2TcYDxysJL2F2FOHfldrHknOe43XkEizFCuMyo+rKJfaUkrkPvqBDA74M9Md9ayO5Yj2vw+FRHyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=FdjGk33A; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dcd7c526cc0so4340509276.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 11:43:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1710787417; x=1711392217; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mwfNzMrPyHMimoiUInuyyd0VhXrOiwGqLq6Wr7mPq0c=;
-        b=FdjGk33APToC4oySOc4zwnTLA6dk1c9E/YEwSpcH4vG9tGD/l6B2yup+PiYiG9ezFs
-         QzArTOC4wuy/JhnQNtCMjPNIjCyh51xiSiTBNdI7YWdsRQPb32I8DLCBlundg+1/kRhM
-         nLbOGVUKgb9nhI+K7NpSUhdrLS5Lce+uso/ytaDFiJN2x6JVSUUxoLpr/wZbZBq240Us
-         wGNGrdWkE/MF1UbsHmfUh1x98Ch4vBpJN9JArKKu73/DBkxCbFz1bwIofVd8CHa7VWZU
-         CLrlAYWNd3tVo8FXmPXxVo8hwmMaLIrwXHC17HMiamsf/aoTtCIOTPGw/YCW3ENHbYdv
-         nVCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710787417; x=1711392217;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mwfNzMrPyHMimoiUInuyyd0VhXrOiwGqLq6Wr7mPq0c=;
-        b=PV+8JJs5CwbQGUQ6s5yS2w95EFnQCJYh7qfDHBa+zx38elt4RT1rdkJwgB6jqFAB0O
-         pgyPxSVis2+gJRdxEeKaA61A8gwl4yqSpAxNmQ8dySI7c5/sQ66dG/E0zP3OrFfzm7ww
-         g2thKiyM0m7HxqlJNfswEXh6I1grOb9sF+rt06/DZH2GWQ7Ax9rKWXp9F8i3ae18HzWM
-         JpuJYWb93EhfTZqwBE+o5X12F1Tpo6Yb7TYD3Mk7oLMs52gDnhodoPo82vOcvpuERojr
-         PmLvKrFrw1u/vto9Fpwj0EW9j6nHPwa/AV3hkA+3a7tInFn5Nsw53EiO8W2FDrQBDDgc
-         hL6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWMw6utIjARRFX4mYXH3xHMoNQXKKdaAjO4rc9nrZdCdi8U0J7as+g2KzQ1SmOsSwIIR+lXU266S/Mn5Kp/xGY2XFeQLUMtEI0raxq08g==
-X-Gm-Message-State: AOJu0Yz3f/trN5aN3pbYx6qviZn9TddWP+g6bHQiGO6s5/JBqc6EhsWT
-	sMAmx+Dl9+CAk2AN1leU1y3xqxDhfqpp9x5EtW1OYGJamalzBzdMreMPywa921rKdYwZX1MGtpO
-	dwpvGyQ/+gjTP5sjC5cIhtBEmxQ4dWyroNyGb
-X-Google-Smtp-Source: AGHT+IFPTSoVQeCl4K23xshVdS96dFIPuzVHsWtZw7eVBSoCmRhr1VSbq6A5pcTy4zBjjeNZBFeHgRiOT0pOZqD6nDM=
-X-Received: by 2002:a5b:9cf:0:b0:dc6:f055:c16d with SMTP id
- y15-20020a5b09cf000000b00dc6f055c16dmr9959522ybq.36.1710787416946; Mon, 18
- Mar 2024 11:43:36 -0700 (PDT)
+	s=arc-20240116; t=1710787736; c=relaxed/simple;
+	bh=JmlJFpAM2RoINtTtYZLu5wC7Bt+LRtGXt5zSephhVf0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PIAfeEuFyvhlJ0AX/SPzgF4JwBSu2/ZNyhwpgZniGDqQAGZc8iyFMHkRvW2GlXR5LCWm34HqO+NMP/w/zljy1t79euER5Js/xTU042wA+OkWHWYcxegroCmtAkdVhls8AiQE771ld/B5x7g2CjWe1BnfawyLLCOGH4jU3G6gSZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q2FObs2O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dT6tgLg2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q2FObs2O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dT6tgLg2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 71C4634DDA;
+	Mon, 18 Mar 2024 18:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710787732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayet3oedNBW1SkDoKToreyGDhd5DvaUI0W9XW30cdGs=;
+	b=Q2FObs2OtCGrZBTyhiiqL5AQmem+eZrQehtXtrnuwPVWerUoWXeLB3YSbkk26M9Wz5HOU8
+	cVjavyYJUqNvvbOsXdJms8zmhGggnVK/vkzDGKP6e91dctv1UvJFiTnYwsuZkW0x/HnYuu
+	SN64WV84eKL0T9mzRLIVONgnfABXizU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710787732;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayet3oedNBW1SkDoKToreyGDhd5DvaUI0W9XW30cdGs=;
+	b=dT6tgLg2MxjM5hbTZjLEMToy/GEmI3BCwpi7xXpQMkv30lbyN/1UzMvSDe3SsWwuR5ALQ3
+	ZWjoqcfLIOY7zoBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1710787732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayet3oedNBW1SkDoKToreyGDhd5DvaUI0W9XW30cdGs=;
+	b=Q2FObs2OtCGrZBTyhiiqL5AQmem+eZrQehtXtrnuwPVWerUoWXeLB3YSbkk26M9Wz5HOU8
+	cVjavyYJUqNvvbOsXdJms8zmhGggnVK/vkzDGKP6e91dctv1UvJFiTnYwsuZkW0x/HnYuu
+	SN64WV84eKL0T9mzRLIVONgnfABXizU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1710787732;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayet3oedNBW1SkDoKToreyGDhd5DvaUI0W9XW30cdGs=;
+	b=dT6tgLg2MxjM5hbTZjLEMToy/GEmI3BCwpi7xXpQMkv30lbyN/1UzMvSDe3SsWwuR5ALQ3
+	ZWjoqcfLIOY7zoBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 37A1D136A5;
+	Mon, 18 Mar 2024 18:48:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rglZB5SM+GW+FQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 18 Mar 2024 18:48:52 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Cc: Leah Rumancik <leah.rumancik@gmail.com>,
+  lsf-pc@lists.linux-foundation.org,  linux-fsdevel@vger.kernel.org,
+  Naresh Kamboju <naresh.kamboju@linaro.org>,  Disha Goel
+ <disgoel@linux.ibm.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Filesystem testing
+In-Reply-To: <87h6h4sopf.fsf@doe.com> (Ritesh Harjani's message of "Sun, 17
+	Mar 2024 23:52:36 +0530")
+References: <87h6h4sopf.fsf@doe.com>
+Date: Mon, 18 Mar 2024 14:48:51 -0400
+Message-ID: <87cyrre5po.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Mon, 18 Mar 2024 14:43:26 -0400
-Message-ID: <CAOg9mSSsSvVzxVfkyv2vNoYNE50pLpnm040K1eA+2KV281ugGA@mail.gmail.com>
-Subject: [GIT PULL] orangefs updates for 6.9
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Marshall <hubcapsc@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCPT_COUNT_FIVE(0.00)[6];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[gmail.com,lists.linux-foundation.org,vger.kernel.org,linaro.org,linux.ibm.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Flag: NO
 
-The following changes since commit 841c35169323cd833294798e58b9bf63fa4fa1de:
+Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
 
-  Linux 6.8-rc4 (2024-02-11 12:18:13 -0800)
+> Leah Rumancik <leah.rumancik@gmail.com> writes:
+>
+>> Last year we covered the new process for backporting to XFS. There are
+>> still remaining pain points: establishing a baseline for new branches
+>> is time consuming, testing resources aren't easy to come by for
+>> everyone, and selecting appropriate patches is also time consuming. To
+>> avoid the need to establish a baseline, I'm planning on converting to
+>> a model in which I only run failed tests on the baseline. I test with
+>> gce-xfstests and am hoping to automate a relaunch of failed tests.
+>> Perhaps putting the logic to process the results and form new ./check
+>> commands could live in fstests-dev in case it is useful for other
+>> testing infrastructures.
+>
+> Nice idea. Another painpoint to add - 
+> 4k blocksize gets tested a lot but as soon as we switch to large block
+> size testing, either with LBS, or on a system with larger pagesize...
+> ...we quickly starts seeing problems. Most of them could be testcase
+> failure, so if this could help establish a baseline, that might be helpful.
+>
+>
+> Also if could collborate on exclude/known failures w.r.t different
+> test configs that might come handy for people who are looking to help in
+> this effort. In fact, why not have different filesystems cfg files and their
+> corresponding exclude files as part of fstests repo itself?  
+> I know xfstests-bld maintains it here [1][2][3]. And it is rather
+> very convinient to point this out to anyone who asks me of what test
+> configs to test with or what tests are considered to be testcase
+> failures bugs with a given fs config.
+>
+> So it will very helpful if we could have a mechanism such that all of
+> this fs configs (and it's correspinding excludes) could be maintained in
+> fstests itself, and anyone who is looking to test any fs config should
+> be quickly be able to test it with ./check <fs_cfg_params>. Has this
+> already been discussed before? Does this sound helpful for people who
+> are looking to contribute in this effort of fs testing?
+>
+>
+> [1] [ext4]:
+> https://github.com/tytso/xfstests-bld/tree/master/test-appliance/files/root/fs/ext4/cfg
 
-are available in the Git repository at:
+Looking at the expunge comments, I think many of those entries should
+just be turned into inline checks in the test preamble and skipped with
+_notrun.  The way I see it, expunged tests should be kept to a minimum,
+and the goal should be to eventually remove them from the list, IMO.
+They are tests that are known to be broken or flaky now, and can be safely
+ignored when doing unrelated work, but that will be fixed in the
+future. Tests that will always fail because the feature doesn't exist in
+the filesystem, or because it asks for an impossible situation in a
+specific configuration should be checked inline and skipped, IMO.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
-tags/for-linus-6.9-ofs1
++1 for the idea of having this in fstests.  Even if we
+lack the infrastructure to do anything useful with it in ./check,
+having them in fstests will improve collaboration throughout
+different fstests wrappers (kernelci, xfstests-bld, etc.)
 
-for you to fetch changes up to 9bf93dcfc453fae192fe5d7874b89699e8f800ac:
+> [2] [xfs]: https://github.com/tytso/xfstests-bld/tree/master/test-appliance/files/root/fs/xfs/cfg
+> [3] [fs]: https://github.com/tytso/xfstests-bld/tree/master/test-appliance/files/root/fs/
 
-  Julia Lawall reported this null pointer dereference, this should fix
-it. (2024-02-14 15:57:53 -0500)
 
-----------------------------------------------------------------
-One fix, one cleanup...
 
-Fix:
-Julia Lawall pointed out a null pointer dereference.
+>
+> -ritesh
 
-Cleanup:
-Vlastimil Babka sent me a patch to remove some SLAB related code.
-
-----------------------------------------------------------------
-Mike Marshall (1):
-      Julia Lawall reported this null pointer dereference, this should fix it.
-
-Vlastimil Babka (1):
-      fs/orangefs: remove ORANGEFS_CACHE_CREATE_FLAGS
-
- fs/orangefs/orangefs-cache.c  |  2 +-
- fs/orangefs/orangefs-kernel.h | 10 ----------
- fs/orangefs/super.c           |  4 ++--
- 3 files changed, 3 insertions(+), 13 deletions(-)
+-- 
+Gabriel Krisman Bertazi
 
