@@ -1,87 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-14778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D54087F2EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 23:06:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5EF387F312
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 23:23:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B823DB22706
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 22:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C5E1C21519
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 22:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C2259B74;
-	Mon, 18 Mar 2024 22:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A815A4C4;
+	Mon, 18 Mar 2024 22:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="LiHA1EIG"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="hhfOO/cn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3562E58AAF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 22:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57A059B76
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 22:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710799586; cv=none; b=iy1SWrJ5qP/d6ILOgLb6aKAVOGJKb236gBUFhxOFHUOCT/XE+Pth2lUyHExR9+Ngo7tXdX+ePjH1sxnw/3ojJ+YtaCNUiB6Evq9nuyBrLK6HmkEBYMG3jjhhXzZKFSblevF1x4bqkqV0budezDqYgBF1RSbsKO/qfceZ0KQwmJM=
+	t=1710800581; cv=none; b=fTqXhHmt16G4NkzGjlbidYcc8Rz/Ha1K4kOowJ08K3t6g93LKBC/IjKYSzC2wn7DsiaJMQCGe3yvVbMVgMf+qrv+FWu4WcL63A7k8PvHkh94x8yEwfHzyVkhp+Fy5eDSjPS4rntdsjUguJYjiCgvNBnWTWcAfatoSCFlRbLX1J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710799586; c=relaxed/simple;
-	bh=CvSnN2pJwsOSQXujT8XZ9VJyh8AUAgmfw6DLEt9dVbI=;
+	s=arc-20240116; t=1710800581; c=relaxed/simple;
+	bh=NqI0VTZW80xtuCGyeObiIog7FSq9YX7JYVoRKPWyAsA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g7PRrkN8nTiswBUZ9VplgRtcaj7YG195mHNbn9VTAb6stm+juxb9pVsduPhYeZEufxiPwI5jj72VAePVjQGh7RogqqRxWqoJjqHhhkhdHAKGDUnu0i/F7x2Ic4+lJSAZmHWSZYnN9aVo5LFRVFzZ7pldHqvfTxUQXbwhzg4Fcr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=LiHA1EIG; arc=none smtp.client-ip=209.85.210.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=VbQWXiJDfy+YtRI4k3qsQxEHc9fmGDNgSRyH8LgU0+IkY1g2BmoWvAS6wRHWlxXUh1qOc8msIkX2MxpuLSRaRCOnsrfs0zWXC6TMXKuZ1J0qWawnkJuznDNfy2jZHQrWrxAAlaZkgywFdW4zFlMRpkMRLlL9g0zmjpHWf1QsIqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=hhfOO/cn; arc=none smtp.client-ip=209.85.161.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6e703e0e5deso2035820b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 15:06:23 -0700 (PDT)
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5a47abe2ff7so1868214eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 15:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710799583; x=1711404383; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710800578; x=1711405378; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=llAqtHkUM+V9LtUAaqPShx3V52b3OEOB72SlFUiDPMI=;
-        b=LiHA1EIG65jEZ20eQBAF8QBtmaAx2ASmeM2VbcQiZAaGosVVYVRgqSEPK935xjp4yB
-         puKExNmKQKOTzW119VDtT0jGwNlaWFHJ5hHJjeencS2LLXcde7oJuIOqlVwLlJb6O4W/
-         m4dsp2mmDz/0vEh4bh2Qn++rYyNm+Wv7MPYU60VwOke2jcPtH00f0bEOjdX7ftlAduYz
-         ddjMePXgflm+cahAkWnlvtJvf2iVA/K+93J7MLqLRSH89mVzk4PDL8ED5U49fBDvYb4+
-         Uxm9rxlTW1b5UikhPl7KKLyxtJxLe4hVE6v6pDOb6Ra8EzfVQzgXzIg0wAtP1LoseXuI
-         4qWg==
+        bh=oCCQCvkYtGuuihvS9ju13jWtjvlJYDKT9jyxnBBJm5s=;
+        b=hhfOO/cnoOU3wnrH1TbsSuGUEZTtNBJPUDUIbIAw5mre3kMg5Q2CKR2Kyj5ZdgPqYj
+         L59Hc5IG1vEkH6kMNEMU+NGk4dmZokTStw+YOyuNaRBD9KaavjAG3GAo+VWrvcIt0ezv
+         J6zCf3W+rPjJKZhIdewcStElPotBuTlh+jd+U0/2gHu52tCxBqzm9o6s7Kr1FX/KMnCh
+         pcTWN+t2vHrFJq0yxrqcgf/6RWQ5L5Y1y54x+MjP24en8VttiVvw1Iy7Ges0vbru+9o9
+         qAZM6/TgKk30AlXLTRsze7+vMESCdieBkoMP5z88IMY3EmGxscSo2HXrqy8HTEfuhyvQ
+         dDbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710799583; x=1711404383;
+        d=1e100.net; s=20230601; t=1710800578; x=1711405378;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=llAqtHkUM+V9LtUAaqPShx3V52b3OEOB72SlFUiDPMI=;
-        b=ttoePeCarQBlOE7DrqPBsdqMsAna9XPAnBQe2G8XB8kFQMfdt5D2TQcp53uly9eieY
-         qFWtin4y0mqA9DAgRnTP11t+3IQBZZhwGOYfJg4oTUFAGjbCs9wkYvGHZPksVNL7lpNA
-         6mSq8WItBOIjSljUgYQl8iDa6RL+fLJkaZC5AlsyB+4059euzgVvhoigkCqM5rv+goB2
-         3NyCNkMMWAN1JrQoQV8R1zOdrs88bevNNYrMyvQ5vHQ1o3CaaoHGyDvVe7IxU/1bY+y8
-         iFT9C2tktDeuRCNexXqjk23n7XYHQrrokSgNmodoWx5fPxhlpUKIgxoyEkR4FdAG221l
-         8qzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjkXw15QKnD7XSGyiDfYoimQE/yJoVJenkkPx8ER7ezP4n7BJKw1Ww146gkGvFHzE82RISWxwwY5qAyWI/OC6rhNdJcvmJ8huzQ+VxTA==
-X-Gm-Message-State: AOJu0YwIMFQnCkgrJ8s/I2ZeHOCyi0QE23Bk5zDVxY13JNlpi5ewHKiq
-	0/pLMti8ygmRC7aSvisDJYs9ezR5OIRmFw7J/IotaB4YI3HHUN7XKc19cfmmnm8=
-X-Google-Smtp-Source: AGHT+IEX+h044MfpqNpkLVsLecdp4wnCcyoIYE7wCAC9v+H0v8x4GY/sXmA+5pqrxgSYsgSaIlZMYQ==
-X-Received: by 2002:a05:6a00:a11:b0:6e6:451c:a519 with SMTP id p17-20020a056a000a1100b006e6451ca519mr13751257pfh.5.1710799582154;
-        Mon, 18 Mar 2024 15:06:22 -0700 (PDT)
+        bh=oCCQCvkYtGuuihvS9ju13jWtjvlJYDKT9jyxnBBJm5s=;
+        b=iLBRWu6bqgetSTXhGELmWDKrKq5DMUSSSyTMvzPgjPd17bPEjj8WALX+xX+8wLYWg2
+         3NjyPgb+947e7DD34oc52dsbP+5u88lfnzF/2K90Dy6b0QI1kEEh/+X4PaCv9pM6tQJc
+         jeHDRe/3vey0OBw00ngfafLSrvtEYphiAydn+jYxxDB5kO7ZXC6nXTOtB9p6SsI0MD2f
+         L9jgKz+0B5v4vOztDfSSJeGOEkpT4VKU14N2k4ykw5pxp+hGB6yIbZk/gAjRZtPCgh2Q
+         kqe9nZHCbAWZiqb9cL0s0NMBNhPyxXgc1ufoDDi59l2KCAci8EOtUloHrXlEFxclfzVT
+         GoTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGt6yCpIWL77yLh6KgKXZyM4H0qcc6GTyUJtkjRcy5+3Avrb+tMdpJx0yl7sYXD4ge55Zt4PXED3coBzepZm32uvcd+1n52Uz9vo8FXw==
+X-Gm-Message-State: AOJu0YxEYX2Qa4hDdtoJHLD60L+JSOtL7Tp9fdbFMaQowowuQUBDer3U
+	BnO23n68dJnmuTwYCPkIu0zb2qN6SLJtf8UUhtUhjtST6nKQNCDX+7OZ+PeS++U=
+X-Google-Smtp-Source: AGHT+IHyckCjaxFsQHMtIDAZv7wEdAat6m2tUFjdH9I1ji+XQfTeAoj5hu9HAz770Ekw5+eb0V75BA==
+X-Received: by 2002:a05:6358:3389:b0:17e:8e40:47f5 with SMTP id i9-20020a056358338900b0017e8e4047f5mr8624180rwd.11.1710800578468;
+        Mon, 18 Mar 2024 15:22:58 -0700 (PDT)
 Received: from dread.disaster.area (pa49-180-185-123.pa.nsw.optusnet.com.au. [49.180.185.123])
-        by smtp.gmail.com with ESMTPSA id s26-20020a65691a000000b005e838b99c96sm3923546pgq.80.2024.03.18.15.06.21
+        by smtp.gmail.com with ESMTPSA id k12-20020aa790cc000000b006e71cd9c02bsm3240212pfk.129.2024.03.18.15.22.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 15:06:21 -0700 (PDT)
+        Mon, 18 Mar 2024 15:22:57 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1rmL7a-003nIG-2D;
-	Tue, 19 Mar 2024 09:06:18 +1100
-Date: Tue, 19 Mar 2024 09:06:18 +1100
+	id 1rmLNf-003nTk-25;
+	Tue, 19 Mar 2024 09:22:55 +1100
+Date: Tue, 19 Mar 2024 09:22:55 +1100
 From: Dave Chinner <david@fromorbit.com>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>,
-	Leah Rumancik <leah.rumancik@gmail.com>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Filesystem testing
-Message-ID: <Zfi62v5FWDeajwLq@dread.disaster.area>
-References: <87h6h4sopf.fsf@doe.com>
- <87cyrre5po.fsf@mailhost.krisman.be>
+To: "Kiselev, Oleg" <okiselev@amazon.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Theodore Ts'o <tytso@mit.edu>,
+	"torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ext4: Add support for FS_IOC_GETFSSYSFSPATH
+Message-ID: <Zfi+v/9vF+mfZ4Bl@dread.disaster.area>
+References: <20240315035308.3563511-1-kent.overstreet@linux.dev>
+ <20240315035308.3563511-4-kent.overstreet@linux.dev>
+ <20240315164550.GD324770@mit.edu>
+ <l3dzlrzaekbxjryazwiqtdtckvl4aundfmwff2w4exuweg4hbc@2zsrlptoeufv>
+ <A0A342BA-631D-4D6E-B6D2-692A45509F63@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,156 +96,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87cyrre5po.fsf@mailhost.krisman.be>
+In-Reply-To: <A0A342BA-631D-4D6E-B6D2-692A45509F63@amazon.com>
 
-On Mon, Mar 18, 2024 at 02:48:51PM -0400, Gabriel Krisman Bertazi wrote:
-> Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
+On Mon, Mar 18, 2024 at 09:51:04PM +0000, Kiselev, Oleg wrote:
+> On 3/15/24, 09:51, "Kent Overstreet" <kent.overstreet@linux.dev <mailto:kent.overstreet@linux.dev>> wrote:
+> > On Fri, Mar 15, 2024 at 12:45:50PM -0400, Theodore Ts'o wrote:
+> > > On Thu, Mar 14, 2024 at 11:53:02PM -0400, Kent Overstreet wrote:
+> > > > the new sysfs path ioctl lets us get the /sys/fs/ path for a given
+> > > > filesystem in a fs agnostic way, potentially nudging us towards
+> > > > standarizing some of our reporting.
+> > > >
+> > > > --- a/fs/ext4/super.c
+> > > > +++ b/fs/ext4/super.c
+> > > > @@ -5346,6 +5346,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+> > > > sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP | QTYPE_MASK_PRJ;
+> > > > #endif
+> > > > super_set_uuid(sb, es->s_uuid, sizeof(es->s_uuid));
+> > > > + super_set_sysfs_name_bdev(sb);
+> > >
+> > > Should we perhaps be hoisting this call up to the VFS layer, so that
+> > > all file systems would benefit?
+> >
+> >
+> > I did as much hoisting as I could. For some filesystems (single device
+> > filesystems) the sysfs name is the block device, for the multi device
+> > filesystems I've looked at it's the UUID.
 > 
-> > Leah Rumancik <leah.rumancik@gmail.com> writes:
-> >
-> >> Last year we covered the new process for backporting to XFS. There are
-> >> still remaining pain points: establishing a baseline for new branches
-> >> is time consuming, testing resources aren't easy to come by for
-> >> everyone, and selecting appropriate patches is also time consuming. To
-> >> avoid the need to establish a baseline, I'm planning on converting to
-> >> a model in which I only run failed tests on the baseline. I test with
-> >> gce-xfstests and am hoping to automate a relaunch of failed tests.
-> >> Perhaps putting the logic to process the results and form new ./check
-> >> commands could live in fstests-dev in case it is useful for other
-> >> testing infrastructures.
-> >
-> > Nice idea. Another painpoint to add - 
-> > 4k blocksize gets tested a lot but as soon as we switch to large block
-> > size testing, either with LBS, or on a system with larger pagesize...
-> > ...we quickly starts seeing problems. Most of them could be testcase
-> > failure, so if this could help establish a baseline, that might be helpful.
-> >
-> >
-> > Also if could collborate on exclude/known failures w.r.t different
-> > test configs that might come handy for people who are looking to help in
-> > this effort. In fact, why not have different filesystems cfg files and their
-> > corresponding exclude files as part of fstests repo itself?  
-> > I know xfstests-bld maintains it here [1][2][3]. And it is rather
-> > very convinient to point this out to anyone who asks me of what test
-> > configs to test with or what tests are considered to be testcase
-> > failures bugs with a given fs config.
-> >
-> > So it will very helpful if we could have a mechanism such that all of
-> > this fs configs (and it's correspinding excludes) could be maintained in
-> > fstests itself, and anyone who is looking to test any fs config should
-> > be quickly be able to test it with ./check <fs_cfg_params>. Has this
-> > already been discussed before? Does this sound helpful for people who
-> > are looking to contribute in this effort of fs testing?
+> Why not use the fs UUID for all cases, single device and multi device?
 
-Filesystem configs have already been implemented, yes? i.e. config
-file sections.
+Because the sysfs directory heirachy has already been defined for
+many filesystems, and technically sysfs represents a KABI that we
+can't just break for the hell of it.
 
-We can do delta definitions like this in the config file:
+e.g. changing everything to use uuid will break fstests
+infrastructure because it assumes that it can derive the sysfs dir
+location for the filesystem from the *device name* the filesystem is
+mounted on. btrfs has a special implementation of that derivation
+that runs the btrfs command to retreive the UUID of the filesysem.
 
-RECREATE_TEST_DEV=true
-TEST_MNT=/mnt/test
-TEST_DEV=/dev/vda
-SCRATCH_MNT=/mnt/scratch
-SCRATCH_DEV=/dev/vdb
-MKFS_OPTIONS=
-MOUNT_OPTIONS=
+So, yes, while we could technically change it, we break anything in
+userspace that has introduced a dependency on bdev name as the sysfs
+fs identifier. We're not going to break userspace like this,
+especially as it is trivial to avoid.
 
-[xfs_4k]
-MKFS_OPTIONS="-m rmapbt=1"
+Cheers,
 
-[xfs_4k_quota]
-MKFS_OPTIONS="-m rmapbt=1"
-MOUNT_OPTIONS="-o uquota,gquota,pquota"
-
-[xfs_1k]
-MKFS_OPTIONS="-m rmapbt=1 -b size=1k"
-MOUNT_OPTIONS=
-
-[xfs_n64k]
-MKFS_OPTIONS="-m rmapbt=1 -n size=64k"
-
-....
-
-And then simply run 'check -s xfs_n64k' or "-s xfs_4k_quota" or
-"-s xfs_1k", etc to run the tests against a pre-defined filesystem
-configuration.
-
-The actual per-system customised part of the config file is the
-initial device and mount definitions, all the fs config definitions
-are fixed and never really change. So we could ship a config file
-like the above as a template alongside config/example.config (e.g.
-example.xfs.config) and then the test environment setup can simply
-copy the file and use sed to rewrite the devices/mount points to
-match what it is going to use...
-
-IOWs, I think the fs config thing is already a solved problem, and
-we already have precedent for shipping example config files...
-
-As for excludes - unlike fs configs, these are not static across all
-test environments. They are entirely dependent on what
-kernel/userspace combination is being tested and the constraints the
-test running is executing under (e.g.  runtime constraints). IOWs,
-every external test runner has a different set of tests that it will
-need to expunge...
-
-As it is, it would be trivial to add a config file section variable
-to define an expunge file for a given config section. That way
-the test running could keep it's own expunge files and add them
-to the relevant section when setting up the test VM environment,
-same as it would do for the devices and mounts.
-
-That way the expunge file isn't needed on the CLI, and so the test
-runner could just do 'check -s xfs_4k -s xfs_1k -s xfs_4k_quota" and
-get all those configs tested and have all the local expunges for the
-different configs just work....
-
-> > [1] [ext4]:
-> > https://github.com/tytso/xfstests-bld/tree/master/test-appliance/files/root/fs/ext4/cfg
-> 
-> Looking at the expunge comments, I think many of those entries should
-> just be turned into inline checks in the test preamble and skipped with
-> _notrun.
-
-This is the right thing to do - reduce the reliance on expunge
-files, and hence get rid of the need for them in most cases
-altogether. The best code is -no code-.
-
-> The way I see it, expunged tests should be kept to a minimum,
-> and the goal should be to eventually remove them from the list, IMO.
-> They are tests that are known to be broken or flaky now, and can be safely
-> ignored when doing unrelated work, but that will be fixed in the
-> future. Tests that will always fail because the feature doesn't exist in
-> the filesystem, or because it asks for an impossible situation in a
-> specific configuration should be checked inline and skipped, IMO.
-
-> +1 for the idea of having this in fstests.  Even if we
-> lack the infrastructure to do anything useful with it in ./check,
-> having them in fstests will improve collaboration throughout
-> different fstests wrappers (kernelci, xfstests-bld, etc.)
-
-Except that this places the maintenance burden on fstests, in
-an environment where we can do -nothing- to validate the correctness
-of these lists, nor have any idea of when tests should or
-shouldn't be placed in these lists.
-
-i.e. If your test runner needs to expunge tests for some reason,
-either keep the expunge lists with the test runner, or add detection
-to the test that automatically _notrun()s the test in enviroments
-where it shouldn't be run....
-
-I'd much prefer the improvement of _notrun detection over spreading
-the expunge file mess further into fstests. THis helps remove the
-technical debt (lack of proper checking in the test) rather than
-kicking it down the road for someone else to have to deal with in
-future.
-
-Centralisation of third party expunge file management is not the
-answer.  We should be trying to reduce our reliance on expunges and
-the maintenance overhead they require, not driving that expunge file
-maintaintenance overhead into fstests itself...
-
--Dave.
-
+Dave.
 -- 
 Dave Chinner
 david@fromorbit.com
