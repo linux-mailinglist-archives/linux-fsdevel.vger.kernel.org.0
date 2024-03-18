@@ -1,176 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-14762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5441687EF4A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 18:56:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5E187EFBC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 19:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D51461F23727
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 17:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D741F23CD7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 18:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EAF55E42;
-	Mon, 18 Mar 2024 17:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFAE56441;
+	Mon, 18 Mar 2024 18:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MKKIEBR0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxieFLyG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F127955E65
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 17:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8B855C07;
+	Mon, 18 Mar 2024 18:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710784575; cv=none; b=IoVFkb7Y1lSZ3cpWa+Y5EevKhWuiSQOtijLx3GUkDeJf+NqpxMhVdlkNSs2GLQVHEfFISKpQo6tg0UUD3/Djmp1YkY6k+JqZjoki8Vp0JSMfh3yD9qf3NfkjEJTX5skCqeuoj/GE2cyMmKU+nqHmyzzlo+Vs/Sw+q5a+/aCTuLY=
+	t=1710786553; cv=none; b=HEhc/HPyfDtzMPoKq62otdwBBzg1I2FVXUE/wRGvr/bNd2UbRgiLEhHW6VdmKx/Ac9jT7JXOc+zOJgrK9rPMGds1sWaMfaUwMueLvmeLX+JyObbdxZw4vzGfhFH+azjBOYLUqKpSxxYJX8REFR7PcTvVWeH15lQFh4RjaRw1ZtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710784575; c=relaxed/simple;
-	bh=0FtzGvqVbYFmN7GMdlBX+qWbmEc8QxImSt8+4v3LFEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRJXPpaOS0QqPWGqp8JOQyjWQCc2DquUFwBBhnJ53OSCVL4ZPnHH/BCRSIcOZRo/IxRL+4YHaXinNIlJM+akQaabhRfd/Licez+nF7Q644JXaVo8OE2LUn07BB2tft96qRLvnnNdlzJqRaxVO8b2GgPdUDLzEJrUEGW4PSvkIW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MKKIEBR0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710784573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QrQMbiWszmtJVUZZia3Tysbn/H6xa9ajIREFO0TRHiQ=;
-	b=MKKIEBR0qvNR6qdzO/8waM04Wd2qrHwTLXX0FjDpcrhz5cQ6VVJ1CpQdkSBJvdFyE28s/+
-	w746IXTZ3XmYMK3gZn4bjHYKdLp5c8zaJ4b+tVWdtg3kkDpTBs6OYXl2yeHKUCHWyAuEKl
-	fcCV87/Q2rDg6vTcSlBQi25m2zgTM/M=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-572-lib-aEH_MZeVjg8oID9J_A-1; Mon, 18 Mar 2024 13:56:11 -0400
-X-MC-Unique: lib-aEH_MZeVjg8oID9J_A-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4140a509ee9so9236715e9.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 10:56:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710784570; x=1711389370;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QrQMbiWszmtJVUZZia3Tysbn/H6xa9ajIREFO0TRHiQ=;
-        b=XxABRDhpsyzy4+lKAj7+U9Qezmn/OIXiovzWLWKfIUDYsxF5ZGExK3wJlIopy2Kn7e
-         SytUhHYDS0m5VQDGPoS9fIYREj5TX8U4ldw7w8rwX9jZIWqbC6yCUvLX5ny+hJP1Xx1N
-         /uIM5RgtS4d3+CD7ymqfq8DHdh/pHhh0AJU8v2M8J68WivLgxcOQc0E4gbtj3yEVRZzl
-         cZ8mOwWOlZ3nwbNndsaJ/T3v8hb57GppwRmmOOkf1xl2Oe6yoQzK0UqbvSAstc0YT6Ys
-         RQEbSYZ6f1N0UB2wrtuilG8mIBxxTxDHC24a++qPii3vlBGMyXsOw/N3EhykjF+b4n1T
-         QIiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeTwABRFsOA8hMPWl7YwEmwcw3gBvQhJQvkB+gobOMhLXVrB/BUcfDMh6OgdweqUgz8e3Agi9Dagm6rUbKbZSXOOs2lXnauWGwNKxbWA==
-X-Gm-Message-State: AOJu0YyrBgRzQDWz+j/RoZSSPbB1cT5zDrjUAvuAycCWi+GJOYKy0JbA
-	25kgMWrTK6Px9SBJIIASIoUWCl6Gx+Pcy9FPso2sH/O5iayNCfvNTpVJJJIh7P9e3fJk/VIvApS
-	bShBjt14Er4DZO9S4FCOennbmorbuEuoYogg5JXiXTQYkOFTKV2vXtyI3GtQTgw==
-X-Received: by 2002:a05:600c:190a:b0:413:30dc:698a with SMTP id j10-20020a05600c190a00b0041330dc698amr139903wmq.25.1710784570113;
-        Mon, 18 Mar 2024 10:56:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEDD/I8FOZXWT0V/bqbSkWFY/a9NMAOlO3XQS0wwQPWuzvaXp4QniddUZMMkEaWAXV8P1rExg==
-X-Received: by 2002:a05:600c:190a:b0:413:30dc:698a with SMTP id j10-20020a05600c190a00b0041330dc698amr139879wmq.25.1710784569539;
-        Mon, 18 Mar 2024 10:56:09 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id h15-20020a05600c314f00b0041408e16e6bsm7937522wmo.25.2024.03.18.10.56.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 10:56:09 -0700 (PDT)
-Date: Mon, 18 Mar 2024 18:56:08 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, 
-	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 39/40] xfs: don't bother storing merkle tree blocks for
- zeroed data blocks
-Message-ID: <aql6oqq5tzhemldls4c72i43wsxuwvp2jgfa2szfxkkshynoid@zxblqyeyhopz>
-References: <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
- <171069246533.2684506.10607368938981182877.stgit@frogsfrogsfrogs>
+	s=arc-20240116; t=1710786553; c=relaxed/simple;
+	bh=4BiSnBXF2XntdujNulUT7s4tD/RrjPjxiNCH97QXwF4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rqfPOvb8r4uv5uvzA+VHajZ9W5kmWhq3Uk2PiITfRgu0R1AXk4x+aDKWDybw2HT9GoZ4ggin8YXDHsbr46nLRD75Yu3iC2AvDeJX2r+xDTxgVC392eUpv1rVvjqyxi8u3YGFeMIn3fcvszANWa1JHtgwIhllrfhzSNZITyNDKr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxieFLyG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1689FC433F1;
+	Mon, 18 Mar 2024 18:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710786552;
+	bh=4BiSnBXF2XntdujNulUT7s4tD/RrjPjxiNCH97QXwF4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=rxieFLyGRT76cOB5hREmWHq0exWv5OwSlzGrKK5pMe3PZjAu6CbZjnRHQK20eL3di
+	 1r8T5wJ/UYZ2+fEBtir0gbCgsIs1JlI9mno8d0rpCIDTEv1DUzsEGPQjBLgF+i50ke
+	 witk82ptXef2U4o8mVt+g0MoCnii8ghNuVEea3KacErBxdqoMDD0W1P2szHwTRT1oL
+	 5meV8a1N0/3vO+nsZfkmOVe+nEERtEN1MYu5yOTxdoz94RhsOtiN0n01cbAXdqhd1h
+	 kbVwOKkjYpHCKw+wGLYTAvg5lMovBKBGo/QpPsh/Y9ajmV0R/+oZky0q4ZFaaDExh5
+	 0diPrkn3HtYVw==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Mon, 18 Mar 2024 14:28:50 -0400
+Subject: [PATCH RFC] ntfs3: remove atomic_open
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171069246533.2684506.10607368938981182877.stgit@frogsfrogsfrogs>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240318-ntfs3-atomic-open-v1-1-57afed48fe86@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAOKH+GUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDY0ML3byStGJj3cSS/NzMZN38gtQ8XYPkZEtzyxTzZKASJaC+gqLUtMw
+ KsJnRSkFuzkqxtbUAMe9nWmgAAAA=
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, ntfs3@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3536; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=4BiSnBXF2XntdujNulUT7s4tD/RrjPjxiNCH97QXwF4=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBl+Ify5+ag2l9CjEgDqMW/OZyFDhQDA+SVLVzKv
+ p5Fta4VoIyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZfiH8gAKCRAADmhBGVaC
+ FY7wD/0XW6LwAkm0hdlpMO20mie+EqZnQNvNoXjZWMXJcV+rYPS1oWHc3eRlh3aseEGkXSWBJ3r
+ djujh2o+yWLj2axMk+k9ZEdxRaEMgh0dnsrgdOi0Ot+GqNUZih24E7slSwm+5eE0oz40J3LjNm5
+ Y2uj4pD7FdrrXf0CVLQpV7O02nLIw9/dQLAuSs0vQUZYxx+OaW+r9DeJXblaCDcrKqHsJKF07v5
+ f6Stqsen8Fi6XVGOCdwgF2FyEVBwn+nexirtbYcLlpibP6/WKEqkIn7ZlyPLf0IYz5NXRKua4z5
+ hgJgC0yyi/W0RMoN6/pUDhOocROGouEbSEFulzhp+yP01aQbEfE2Ceh1E/BHyyUrmzp4NcvRvUS
+ tejN9LIXJzCeswyo1Sj/CKhZ0Z2MQPVjEhBVFRm0uZTUSE3WBUM9bLtTSFKmF6fNDeMApGogdmr
+ 5TTQNh8cDhDk0F+XHoGiaiLj6kvWW05XuWzrEsUHi6MIOFriHIh2KkdjXJsmK7VX4vbsSB0IdNg
+ CtrQIqQmdt34q4LvHnCP1WvuFC7WCzLc94j8tNl4X5metw9u8MpcWzDVAi/1ny/8wL7Lp2RLM0q
+ iu/Aff89joy1pkWwcUP7ygjyucknK4AerThCyPAAHc34bFZg0lBebP32+XVidJbikmX6/Pn0kzg
+ p1YxMrzKOZLj92Q==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 2024-03-17 09:33:34, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
-> 
-> Now that fsverity tells our merkle tree io functions about what a hash
-> of a data block full of zeroes looks like, we can use this information
-> to avoid writing out merkle tree blocks for sparse regions of the file.
-> For verified gold master images this can save quite a bit of overhead.
-> 
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+atomic_open is an optional VFS operation, and is primarily for network
+filesystems. NFS (for instance) can just send an open call for the last
+path component rather than doing a lookup and then having to follow that
+up with an open when it doesn't have a dentry in cache.
 
-Looks good to me:
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
+ntfs3 is a local filesystem however, and its atomic_open just does a
+typical lookup + open, but in a convoluted way. atomic_open will also
+make directory leases more difficult to implement on the filesystem.
 
-> ---
->  fs/xfs/xfs_verity.c |   37 ++++++++++++++++++++++++++++++++++---
->  1 file changed, 34 insertions(+), 3 deletions(-)
-> 
-> 
-> diff --git a/fs/xfs/xfs_verity.c b/fs/xfs/xfs_verity.c
-> index abd95bc1ba6e..ba96e7049f61 100644
-> --- a/fs/xfs/xfs_verity.c
-> +++ b/fs/xfs/xfs_verity.c
-> @@ -619,6 +619,20 @@ xfs_verity_read_merkle(
->  	xfs_verity_merkle_key_to_disk(&name, block->offset);
->  
->  	error = xfs_attr_get(&args);
-> +	if (error == -ENOATTR) {
-> +		u8		*p;
-> +		unsigned int	i;
-> +
-> +		/*
-> +		 * No attribute found.  Synthesize a buffer full of the zero
-> +		 * digests on the assumption that we elided them at write time.
-> +		 */
-> +		for (i = 0, p = new_mk->data;
-> +		     i < block->size;
-> +		     i += req->digest_size, p += req->digest_size)
-> +			memcpy(p, req->zero_digest, req->digest_size);
-> +		error = 0;
-> +	}
->  	if (error)
->  		goto out_new_mk;
->  
-> @@ -676,12 +690,29 @@ xfs_verity_write_merkle(
->  		.value			= (void *)buf,
->  		.valuelen		= size,
->  	};
-> -	const char			*p = buf + size - 1;
-> +	const char			*p;
-> +	unsigned int			i;
->  
-> -	/* Don't store trailing zeroes. */
-> +	/*
-> +	 * If this is a block full of hashes of zeroed blocks, don't bother
-> +	 * storing the block.  We can synthesize them later.
-> +	 */
-> +	for (i = 0, p = buf;
-> +	     i < size;
-> +	     i += req->digest_size, p += req->digest_size)
-> +		if (memcmp(p, req->zero_digest, req->digest_size))
-> +			break;
-> +	if (i == size)
-> +		return 0;
-> +
-> +	/*
-> +	 * Don't store trailing zeroes.  Store at least one byte so that the
-> +	 * block cannot be mistaken for an elided one.
-> +	 */
-> +	p = buf + size - 1;
->  	while (p >= (const char *)buf && *p == 0)
->  		p--;
-> -	args.valuelen = p - (const char *)buf + 1;
-> +	args.valuelen = max(1, p - (const char *)buf + 1);
->  
->  	xfs_verity_merkle_key_to_disk(&name, pos);
->  	return xfs_attr_set(&args);
-> 
+Remove ntfs_atomic_open.
 
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Am I missing something about why ntfs3 requires an atomic_open op? In
+any case, this is only lightly tested, but it seems to work.
+---
+ fs/ntfs3/namei.c | 90 --------------------------------------------------------
+ 1 file changed, 90 deletions(-)
+
+diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+index 084d19d78397..edb6a7141246 100644
+--- a/fs/ntfs3/namei.c
++++ b/fs/ntfs3/namei.c
+@@ -358,95 +358,6 @@ static int ntfs_rename(struct mnt_idmap *idmap, struct inode *dir,
+ 	return err;
+ }
+ 
+-/*
+- * ntfs_atomic_open
+- *
+- * inode_operations::atomic_open
+- */
+-static int ntfs_atomic_open(struct inode *dir, struct dentry *dentry,
+-			    struct file *file, u32 flags, umode_t mode)
+-{
+-	int err;
+-	struct inode *inode;
+-	struct ntfs_fnd *fnd = NULL;
+-	struct ntfs_inode *ni = ntfs_i(dir);
+-	struct dentry *d = NULL;
+-	struct cpu_str *uni = __getname();
+-	bool locked = false;
+-
+-	if (!uni)
+-		return -ENOMEM;
+-
+-	err = ntfs_nls_to_utf16(ni->mi.sbi, dentry->d_name.name,
+-				dentry->d_name.len, uni, NTFS_NAME_LEN,
+-				UTF16_HOST_ENDIAN);
+-	if (err < 0)
+-		goto out;
+-
+-#ifdef CONFIG_NTFS3_FS_POSIX_ACL
+-	if (IS_POSIXACL(dir)) {
+-		/*
+-		 * Load in cache current acl to avoid ni_lock(dir):
+-		 * ntfs_create_inode -> ntfs_init_acl -> posix_acl_create ->
+-		 * ntfs_get_acl -> ntfs_get_acl_ex -> ni_lock
+-		 */
+-		struct posix_acl *p = get_inode_acl(dir, ACL_TYPE_DEFAULT);
+-
+-		if (IS_ERR(p)) {
+-			err = PTR_ERR(p);
+-			goto out;
+-		}
+-		posix_acl_release(p);
+-	}
+-#endif
+-
+-	if (d_in_lookup(dentry)) {
+-		ni_lock_dir(ni);
+-		locked = true;
+-		fnd = fnd_get();
+-		if (!fnd) {
+-			err = -ENOMEM;
+-			goto out1;
+-		}
+-
+-		d = d_splice_alias(dir_search_u(dir, uni, fnd), dentry);
+-		if (IS_ERR(d)) {
+-			err = PTR_ERR(d);
+-			d = NULL;
+-			goto out2;
+-		}
+-
+-		if (d)
+-			dentry = d;
+-	}
+-
+-	if (!(flags & O_CREAT) || d_really_is_positive(dentry)) {
+-		err = finish_no_open(file, d);
+-		goto out2;
+-	}
+-
+-	file->f_mode |= FMODE_CREATED;
+-
+-	/*
+-	 * fnd contains tree's path to insert to.
+-	 * If fnd is not NULL then dir is locked.
+-	 */
+-	inode = ntfs_create_inode(file_mnt_idmap(file), dir, dentry, uni,
+-				  mode, 0, NULL, 0, fnd);
+-	err = IS_ERR(inode) ? PTR_ERR(inode) :
+-			      finish_open(file, dentry, ntfs_file_open);
+-	dput(d);
+-
+-out2:
+-	fnd_put(fnd);
+-out1:
+-	if (locked)
+-		ni_unlock(ni);
+-out:
+-	__putname(uni);
+-	return err;
+-}
+-
+ struct dentry *ntfs3_get_parent(struct dentry *child)
+ {
+ 	struct inode *inode = d_inode(child);
+@@ -612,7 +523,6 @@ const struct inode_operations ntfs_dir_inode_operations = {
+ 	.setattr	= ntfs3_setattr,
+ 	.getattr	= ntfs_getattr,
+ 	.listxattr	= ntfs_listxattr,
+-	.atomic_open	= ntfs_atomic_open,
+ 	.fiemap		= ntfs_fiemap,
+ };
+ 
+
+---
+base-commit: 0a7b0acecea273c8816f4f5b0e189989470404cf
+change-id: 20240318-ntfs3-atomic-open-0cc979d7c024
+
+Best regards,
 -- 
-- Andrey
+Jeff Layton <jlayton@kernel.org>
 
 
