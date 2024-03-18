@@ -1,86 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-14750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2725E87EDAF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 17:39:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AFF87EDE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 17:49:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4B79B20FC4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 16:38:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0924B229E8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 16:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38106548F6;
-	Mon, 18 Mar 2024 16:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7916A5578D;
+	Mon, 18 Mar 2024 16:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMX6cmvs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmXzLAgu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D1618029;
-	Mon, 18 Mar 2024 16:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DBC55762;
+	Mon, 18 Mar 2024 16:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710779929; cv=none; b=jZuOUi+22u45X1pKP+lsrvMn3eHBDTUwqhEcjs6x2LCP+HHbqOtqwdh8OyFVT9y4eWvEUytEyLjJ+K0JspDZvn/67K/t1En68WjXwSv13dLZ/PMfhTCvpuYvN1Az/d5/WEmVjvxGHVdGhHylBY+sS0iCDlQcOP+bpMXjEYz8SFk=
+	t=1710780482; cv=none; b=DKFAcOYz25vrjA3eZuXwUdMhWq4gUJsccIBSv6tuVJ1f3tWJooaGw0RjK68eA8l+NMRg/j7tiS+g4AgmNr3+lAb9O0DMdNM2iBag33QHArr/Nc3yoS8+pUCNikD9rVqDr72q2dptxwLOsP70u2bFvjZCSfo0Xtl5xn9ExsxuTtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710779929; c=relaxed/simple;
-	bh=r/w0MpoYhI2VjKsZ/a7mRRzQ3HdE2iGjNIEVyNYpnSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JEzx88gSdTP1+sA4MjajFXsodDi70RiiX9rNBUfkEyup70HQU2q3pGjt+Fq2yhfDXI8Dbw6hRgnT4/+m0Pg0xOJWgSOWF9WlFeSPqo6qiqVsvrBChhUCj9Obu+0A3Xw3r8mFaQxD47tGcBuAYq4W/EG/nmOWpjngpvk9YfEzog0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMX6cmvs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04AD8C433C7;
-	Mon, 18 Mar 2024 16:38:48 +0000 (UTC)
+	s=arc-20240116; t=1710780482; c=relaxed/simple;
+	bh=tuCJC2sQxKIp3jJ5QacXYqe+VxcQS8pGWCBSAYdNC1k=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FWx4UPMNR8/v/86EsuuMWSCjyVBMGXluXGIhSh7ESMbXq9/IzViJx6lHguePoqJ0UV0xNu7aXySQnN007nMR+uZWR/uPRmDYG2PszvJVoTm2A3jWfWZJcgADX1zvGtvtJyQk57hdy8coC/2IfAGklQmexofDLB/y+otdfkL9FVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmXzLAgu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 77635C433F1;
+	Mon, 18 Mar 2024 16:48:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710779929;
-	bh=r/w0MpoYhI2VjKsZ/a7mRRzQ3HdE2iGjNIEVyNYpnSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qMX6cmvsaBaskapC6MxYeGaNtUIK/9qC6GhAtEkvrd8NXm57Y21GQE7XuAgt1FUbr
-	 GjEoao0gZUoOPKBGdiT5HlSlrBagZfvgH94q1s6a49HxxxBM3se4C2C7nq6aLthmth
-	 1xWqkzSBytVjpT0u/JmUhCAJaHcuvlKAdujC7pXfVxuS6XBcOfX2WEQyVYcOBeouPC
-	 kzFhX22DACkMN4RqGkp2n4v6hwk4J0lH+oxjOE3OW+ImC/9TTuKnpO69DvAbzOMqgy
-	 PSrv3/F64nh3n+nSZxMhUB10xfXcRCa0GmENxcTFHot9aTNyAX8FFhbvB+h/Xt7I9X
-	 7WhK0ydxy1UEQ==
-Date: Mon, 18 Mar 2024 09:38:47 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: aalbersh@redhat.com, linux-fsdevel@vger.kernel.org,
-	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 16/40] fsverity: pass the zero-hash value to the
- implementation
-Message-ID: <20240318163847.GC1185@sol.localdomain>
-References: <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
- <171069246170.2684506.16175333193381403848.stgit@frogsfrogsfrogs>
+	s=k20201202; t=1710780482;
+	bh=tuCJC2sQxKIp3jJ5QacXYqe+VxcQS8pGWCBSAYdNC1k=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=fmXzLAgue1wYAIJ6bMAQ6y4qb1r+ArIU4yZM7276RdXoAEc4tzBEKeZjvkn5ogOet
+	 jO23lStXv6/2TEwMJUkHjqMorzM6oy5tdrSyMybm/mVvxM6p3wpLm2mlueiZXpbv7p
+	 Tt0R9VxaAplrc5kG5jEs4Aw1bobPbcfyx3VjYkYUEbWyVJvrO/4Hj2EbZGhmGA3ajq
+	 boW2+drwtuQU8D/8fVNSmKgicJsJrhDyl8gHVGz+mXaNawXRpEtHeYG4xj8K2oIDhW
+	 59Vrl53LRnwvYxQmAyqaeIgc0MCdLFim5fXYoCJxPjXHwxCDQdyn91MxY6A2eT3n6t
+	 8ORYboxD6nELw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5E604D84BA7;
+	Mon, 18 Mar 2024 16:48:02 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240318-vfs-fixes-e0e7e114b1d1@brauner>
+References: <20240318-vfs-fixes-e0e7e114b1d1@brauner>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240318-vfs-fixes-e0e7e114b1d1@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9-rc1.fixes
+X-PR-Tracked-Commit-Id: 449ac5514631dd9b9b66dd708dd5beb1428e2812
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0a7b0acecea273c8816f4f5b0e189989470404cf
+Message-Id: <171078048238.4121.17032827791250760520.pr-tracker-bot@kernel.org>
+Date: Mon, 18 Mar 2024 16:48:02 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171069246170.2684506.16175333193381403848.stgit@frogsfrogsfrogs>
 
-On Sun, Mar 17, 2024 at 09:27:34AM -0700, Darrick J. Wong wrote:
-> diff --git a/fs/verity/open.c b/fs/verity/open.c
-> index 7a86407732c4..433a70eeca55 100644
-> --- a/fs/verity/open.c
-> +++ b/fs/verity/open.c
-> @@ -144,6 +144,13 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
->  		goto out_err;
->  	}
->  
-> +	err = fsverity_hash_buffer(params->hash_alg, page_address(ZERO_PAGE(0)),
-> +				   i_blocksize(inode), params->zero_digest);
-> +	if (err) {
-> +		fsverity_err(inode, "Error %d computing zero digest", err);
-> +		goto out_err;
-> +	}
+The pull request you sent on Mon, 18 Mar 2024 13:19:54 +0100:
 
-This doesn't take the salt into account.  Also it's using the wrong block size
-(filesystem block size instead of Merkle tree block size).
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.9-rc1.fixes
 
-How about using fsverity_hash_block()?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0a7b0acecea273c8816f4f5b0e189989470404cf
 
-- Eric
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
