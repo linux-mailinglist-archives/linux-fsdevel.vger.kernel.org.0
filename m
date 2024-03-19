@@ -1,59 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-14848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EF0880821
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 00:21:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A0E880830
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 00:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA5A283E08
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 23:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A411F2212F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 23:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183DC5FB89;
-	Tue, 19 Mar 2024 23:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983F65FB90;
+	Tue, 19 Mar 2024 23:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MysLTr8G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qTqj8MB3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701CF364D4;
-	Tue, 19 Mar 2024 23:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD1A40BF2;
+	Tue, 19 Mar 2024 23:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710890479; cv=none; b=Fc4J9pVsTaMABbxn0h3s8d+X5ge3VfI67TPexAkKkuiKJFNDzL30JM+8inklQVdoKjHUmrGYEEqD/VcwPou4ZCgOXSNmcHVvOiwcvSVB70rtEXWmVMemzFTEUOEo07KawtPJ5bk+oCAFNdeCnTRouFF3YNMM+p2TqoaxGWVFN6I=
+	t=1710891013; cv=none; b=UdUf9NwQiHMsTh7EjTT9bPECI1I3nk3eXeYtvHWRdC1cffMW26fyuZZVI3ppxAVTbizdNbqiRI5oYt7yPcwTcqrHr2bANpoj17nArhvt520UrrlnW2aAl4OU7Kdp+Sf8cfe6vb9+q3pD9dVV77o/7M78bsEoRMFffkAz9FxdlBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710890479; c=relaxed/simple;
-	bh=v5rIu5BY/J0kwD4bsmH6BK9WegwzoTHxoqdQgT2dv2c=;
+	s=arc-20240116; t=1710891013; c=relaxed/simple;
+	bh=1NkfHaaq/qk9BWoinhAyqxBdU7ECkk6uQ94U6X/8YWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=llNu136HkJYUSlrqeqPhrmk/oM2RwOlDJQvmibJKk+HxWZavHPWiTFCULV+qq5LoWhdSWxpsbFb6IJOWSnZGOoE+l9S3tkZ2JWV7DiistJ788hf1sgsU7B/McUqgFzUIjik2xa18/0eSM5JOlnE2jFDqpH5AIaoaZPOHkJZ60Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MysLTr8G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43A85C43390;
-	Tue, 19 Mar 2024 23:21:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=q09+VJm1hadI+4w4q20pMHKcdU+V1y0J66Nj5K6+JFRgEBbKZ+Bz9LCaGgw02PpEjN1EZzG0zTVIZsc/CXmYZgPx+BneR1a+rI0x3IivxNaHEBx6V5nxl46K4bhcBhQFhAj1vmKjHAPbeihD6ghCupLCmYUqalSQkyQpj4PrsBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qTqj8MB3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B34FC433C7;
+	Tue, 19 Mar 2024 23:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710890479;
-	bh=v5rIu5BY/J0kwD4bsmH6BK9WegwzoTHxoqdQgT2dv2c=;
+	s=k20201202; t=1710891011;
+	bh=1NkfHaaq/qk9BWoinhAyqxBdU7ECkk6uQ94U6X/8YWk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MysLTr8G9icHMzfsPeiP/R+QNe4mYrPb9fdn5fePGvcHRv1hMkBSOp05hv/Mvlkxm
-	 YmB7Ok1jiCiN2fL1TW8ZFzBIH3I3tzxX5AWGcdCk/mhRO7DJj2CbLLfdtOe33XhmwB
-	 KqzHCbLEECri57YHSvRAm1+TNV0u7QErtXFuIHOziAokOrGb2vgAPnDgknKQadIhZ3
-	 TNAfmGTpUM/rn6I0GoJ171xuxN4tOUb6w1XkI2bpuPjc05Ui3b5zyWeRjcR34+fnrr
-	 Ly3387l9SbZ2MQN3bFujCxO0nuTAQxPmQHnEOVvvYaf2XYkVLTKQrBW40ZErJ1ZISO
-	 jraPgfqiqDRCw==
-Date: Tue, 19 Mar 2024 16:21:18 -0700
+	b=qTqj8MB3arjzjTNmEx40506ehQK3+7w3tN0D/N3mk0Y6ApwdHbUSI4qJszojWTakv
+	 b9h92m41o0zV/CmooK/N4b/ALsK+P52UZ7WUlPyCf1JgnGCtCQicHcS6XObZlYVEQj
+	 XHOky+KJzSS7ukFNJZY4Ip/MUNtVM9PYFPFI/meg/+qzHQZao4MTqlKVuz8YHMVWfJ
+	 7CD/znlPW4aEpOPGQxC378K33/370BZdzV7PwhlY5xnCpcEo2C7+FIqY2it9DsIUPQ
+	 76VVpuwIg/X0S8pCa7s78DCl1l0rMTS7/mwEAMFPkUmePQhllc4EjmKFnEElN7YSGG
+	 nq++6PDEHGypg==
+Date: Tue, 19 Mar 2024 16:30:10 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: aalbersh@redhat.com, Eric Biggers <ebiggers@kernel.org>
-Cc: Allison Henderson <allison.henderson@oracle.com>,
-	Christoph Hellwig <hch@lst.de>, Dave Chinner <dchinner@redhat.com>,
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, mark.tinguely@oracle.com
-Subject: Re: [PATCHSET v5.3] fs-verity support for XFS
-Message-ID: <20240319232118.GU1927156@frogsfrogsfrogs>
-References: <20240317161954.GC1927156@frogsfrogsfrogs>
- <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
- <20240318163512.GB1185@sol.localdomain>
- <20240319220743.GF6226@frogsfrogsfrogs>
+To: aalbersh@redhat.com, ebiggers@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 08/29] fsverity: add per-sb workqueue for post read
+ processing
+Message-ID: <20240319233010.GV1927156@frogsfrogsfrogs>
+References: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
+ <171035223488.2613863.7583467519759571221.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,75 +59,119 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240319220743.GF6226@frogsfrogsfrogs>
+In-Reply-To: <171035223488.2613863.7583467519759571221.stgit@frogsfrogsfrogs>
 
-[fix tinguely email addr]
+On Wed, Mar 13, 2024 at 10:54:39AM -0700, Darrick J. Wong wrote:
+> From: Andrey Albershteyn <aalbersh@redhat.com>
+> 
+> For XFS, fsverity's global workqueue is not really suitable due to:
+> 
+> 1. High priority workqueues are used within XFS to ensure that data
+>    IO completion cannot stall processing of journal IO completions.
+>    Hence using a WQ_HIGHPRI workqueue directly in the user data IO
+>    path is a potential filesystem livelock/deadlock vector.
+> 
+> 2. The fsverity workqueue is global - it creates a cross-filesystem
+>    contention point.
+> 
+> This patch adds per-filesystem, per-cpu workqueue for fsverity
+> work. This allows iomap to add verification work in the read path on
+> BIO completion.
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> ---
+>  fs/super.c               |    7 +++++++
+>  include/linux/fs.h       |    2 ++
+>  include/linux/fsverity.h |   22 ++++++++++++++++++++++
+>  3 files changed, 31 insertions(+)
+> 
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index d35e85295489..338d86864200 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -642,6 +642,13 @@ void generic_shutdown_super(struct super_block *sb)
+>  			sb->s_dio_done_wq = NULL;
+>  		}
+>  
+> +#ifdef CONFIG_FS_VERITY
+> +		if (sb->s_read_done_wq) {
+> +			destroy_workqueue(sb->s_read_done_wq);
+> +			sb->s_read_done_wq = NULL;
+> +		}
+> +#endif
+> +
+>  		if (sop->put_super)
+>  			sop->put_super(sb);
+>  
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index ed5966a70495..9db24a825d94 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1221,6 +1221,8 @@ struct super_block {
+>  #endif
+>  #ifdef CONFIG_FS_VERITY
+>  	const struct fsverity_operations *s_vop;
+> +	/* Completion queue for post read verification */
+> +	struct workqueue_struct *s_read_done_wq;
+>  #endif
+>  #if IS_ENABLED(CONFIG_UNICODE)
+>  	struct unicode_map *s_encoding;
+> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+> index 0973b521ac5a..45b7c613148a 100644
+> --- a/include/linux/fsverity.h
+> +++ b/include/linux/fsverity.h
+> @@ -241,6 +241,22 @@ void fsverity_enqueue_verify_work(struct work_struct *work);
+>  void fsverity_invalidate_block(struct inode *inode,
+>  		struct fsverity_blockbuf *block);
+>  
+> +static inline int fsverity_set_ops(struct super_block *sb,
+> +				   const struct fsverity_operations *ops)
+> +{
+> +	sb->s_vop = ops;
+> +
+> +	/* Create per-sb workqueue for post read bio verification */
+> +	struct workqueue_struct *wq = alloc_workqueue(
+> +		"pread/%s", (WQ_FREEZABLE | WQ_MEM_RECLAIM), 0, sb->s_id);
 
-On Tue, Mar 19, 2024 at 03:07:43PM -0700, Darrick J. Wong wrote:
-> On Mon, Mar 18, 2024 at 09:35:12AM -0700, Eric Biggers wrote:
-> > On Sun, Mar 17, 2024 at 09:22:52AM -0700, Darrick J. Wong wrote:
-> > > Hi all,
-> > > 
-> > > From Darrick J. Wong:
-> > > 
-> > > This v5.3 patchset builds upon v5.2 of Andrey's patchset to implement
-> > > fsverity for XFS.
-> > 
-> > Is this ready for me to review, or is my feedback on v5 still being
-> > worked on?
-> 
-> It's still being worked on.  I figured it was time to push my work tree
-> back to Andrey so everyone could see the results of me attempting to
-> understand the fsverity patchset by working around in the codebase.
-> 
-> From your perspective, I suspect the most interesting patches will be 5,
-> 6, 7+10+14, 11-13, and 15-17.  For everyone on the XFS side, patches
-> 27-39 are the most interesting since they change the caching strategy
-> and slim down the ondisk format.
-> 
-> > From a quick glance, not everything from my feedback has been
-> > addressed.
-> 
-> That's correct.  I cleaned up the mechanics of passing merkle trees
-> around, but I didn't address the comments about per-sb workqueues,
-> fsverity tracepoints, or whether or not iomap should allocate biosets.
+Looking at this more closely, why is it that the fsverity_read_queue
+is unbound and tagged WQ_HIGHPRI, whereas this one is instead FREEZEABLE
+and MEM_RECLAIM and bound?
 
-That perhaps wasn't quite clear enough -- I'm curious to see what Andrey
-has to say about that part (patches 8, 9, 18) of the patchset.
+If it's really feasible to use /one/ workqueue for all the read
+post-processing then this ought to be a fs/super.c helper ala
+sb_init_dio_done_wq.  That said, from Eric's comments on the v5 thread
+about fsverity and fscrypt locking horns over workqueue stalls I'm not
+convinced that's true.
 
 --D
 
-> Roughly, here's what I did in the generic code:
+> +	if (!wq)
+> +		return -ENOMEM;
+> +
+> +	sb->s_read_done_wq = wq;
+> +
+> +	return 0;
+> +}
+> +
+>  #else /* !CONFIG_FS_VERITY */
+>  
+>  static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
+> @@ -318,6 +334,12 @@ static inline void fsverity_enqueue_verify_work(struct work_struct *work)
+>  	WARN_ON_ONCE(1);
+>  }
+>  
+> +static inline int fsverity_set_ops(struct super_block *sb,
+> +				   const struct fsverity_operations *ops)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>  #endif	/* !CONFIG_FS_VERITY */
+>  
+>  static inline bool fsverity_verify_folio(struct folio *folio)
 > 
-> I fixed the FS_XFLAG_VERITY handling so that you can't clear it via
-> FS_IOC_FSSETXATTR.
-> 
-> I also rewrote and augmented the "drop dead merkle tree" functions in
-> xfs_verity to clean out incomplete trees when ->end_enable tells us we
-> failed; and to clean out extra blocks in the ->begin_enable just in case
-> the file shrank since a failed attempt to enable fsverity.
-> 
-> As for online repair, the "fsverity: expose merkle tree geometry to
-> callers" enables the kernel to do some basic online checking that there
-> aren't excessive merkle tree blocks and that fsverity can read the
-> descriptor.  In my djwong-wtf tree, xfs_scrub gains the ability to read
-> the entire file into the pagecache (and hence validate the verity info)
-> via MADV_POPULATE READ, and now it has a patch to read the entire merkle
-> tree/descriptor/signature just to make sure those can actually be read.
-> 
-> Most of the things you gave feedback about in "fsverity: support
-> block-based Merkle tree caching" I think I cleaned up in "fsverity: fix
-> "support block-based Merkle tree caching"" and "fsverity: rely on cached
-> block callers to retain verified state".  I kept those separate so that
-> Andrey could see what I did, though they really ought to be merged into
-> the main support patch.
-> 
-> Note that I greatly expanded the usage of struct fsverity_blockbuf and
-> changed the verified flag handling so that the invalidation function was
-> no longer necessary.
-> 
-> --D
-> 
-> > - Eric
 > 
 
