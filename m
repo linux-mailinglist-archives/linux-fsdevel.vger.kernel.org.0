@@ -1,94 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-14798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1316287F544
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 03:13:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDC787F574
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 03:28:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E49282792
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 02:13:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C52A0B21924
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 02:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BB3651AB;
-	Tue, 19 Mar 2024 02:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dclSv7M4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380C2651BE;
+	Tue, 19 Mar 2024 02:27:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359EB6518E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 02:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA2764CF3;
+	Tue, 19 Mar 2024 02:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710814412; cv=none; b=jwoYSWnd+Oa1Yj1A/9m+2DEVXiat+1uuQ+/WPl+LXaOx99ORpGYU/Sr7s71s32gwrWS9mdwEtP0RSMEXPp4Er7R5xcweQ35Qvib+p6bO2FTruUBJFuQAERdEFc5pKWNtIf85PE2gBZNsn/qXmc3d57jVKkPFr340RvPp3Ep87WA=
+	t=1710815268; cv=none; b=FMunqHrHT8/FoamhLBWzV4kmHQebVwpIc6Zat/JOaTBELNFRlmnz/0mlA//No4mgVVP+iPloOyOU99ss78mddU4oDfzqQhaBqH66ZIj+gE7EGjw/mEShtk/HnM3HhEmdTcSSMVUL6phtHWqSGbBZCQ9UpsO/zZveVTs1VFV5v2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710814412; c=relaxed/simple;
-	bh=HgXqsL6bokae77+3qonV1fTiuEm5+WKxKPmzpTF7UQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=poAEXn6XUMNmd0uwH0W3JD6so8a2kKe+WCmTuIBzGbsbd8HaLEScNC+YoFLTn0PP7xk0Bk+Z0+ga58902YRzxSdm4Vcn8DLasHh6UmEAQmYDMFrYrSkdNON7o800+9QEdDXdlqmM84YS1zT3B7Mn0duqSLv/DMc9hsGhGUwuc8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dclSv7M4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710814410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PR2W7QxFvFoQlpFb6TU+oTBxoI64ohRIcsZtQ1vS4u0=;
-	b=dclSv7M4P6H+TjkYIV4eF+zKpeTHDYzCHHOknIKpBoSMQrTtl5uKt2+tZpRXRcxxExmIU8
-	cajmM1k73pBaE5UmRQyE6vnAVerZvXIAGxqhLJ+6SURA6kWZLJvOIJbWo6PmC23z4aYCsF
-	GI7Mzam1SIOpwiBNFzqBQtlzkd9Pimg=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-231-rDHzkUEqO8yz-aAVUD5oXQ-1; Mon, 18 Mar 2024 22:13:25 -0400
-X-MC-Unique: rDHzkUEqO8yz-aAVUD5oXQ-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-78a09c0a053so108232585a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 19:13:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710814405; x=1711419205;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PR2W7QxFvFoQlpFb6TU+oTBxoI64ohRIcsZtQ1vS4u0=;
-        b=wmBM3SL70fgoqzKwJ74MgctMM0e63xKghEmP37Ji7NMKc4AsL5Y5rZxsbK+BzTpiPL
-         nhv2mS+bVRv27WJKBvHDd/9Q9kYyN+qUlEOUwNVUOY+aEUUfWAiKRW+gUDAy42Gq6MdV
-         8D68ixWARh+6Yuvo0yo0TSYzgXIxECCcwJpm17NRyanwATAh1GuAw2xmBIhh+oCykZOM
-         K4482vUEKP4rY4R0Q0oN8aTccwV05794zo9bEDrAHWlnHFK6Aonp8O3pCOArv2TJUPIL
-         m4jZWyMFfT1FY7X4EjHDz0PHh3HbinTCFm04wyfS3vnGETd3DtqAG3l1AGFb3Ir0mHeO
-         XWng==
-X-Forwarded-Encrypted: i=1; AJvYcCW/9n9BUoSwJlAAKcIH1xMqwc6jOZgnqV9xRcLs0b/IXefYOtLB7rAoxts5d8AfwmzCaqfkAUthwp2tYgsFGtsB/jUHB0m9CHo3J+vZuw==
-X-Gm-Message-State: AOJu0YwY0jsJtazTqdgchXsxdm3GeCT5xIG1zijEWX3QjTw/osGfttsy
-	TXP3Rxle9wViLQD63MSaXzmT1H+IovcWPH3zYMDN1Ri41thshJfHAXNRDmT8IV2MsRxJduwcMmK
-	/eSK1HharaPZQVuPfilVxXjzH1m+lVomYELm5QEcpZtg0yVAqoOqj72BL01Flqe4=
-X-Received: by 2002:a05:620a:ec1:b0:788:2b1c:1e57 with SMTP id x1-20020a05620a0ec100b007882b1c1e57mr14376431qkm.55.1710814405020;
-        Mon, 18 Mar 2024 19:13:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6IVS25Egeb7ZU7Mkj2+mrhK7KiNxctSo4ouA/lQ06ajNkcRwpZqlTTzOThSCjm79dmZhgIw==
-X-Received: by 2002:a05:620a:ec1:b0:788:2b1c:1e57 with SMTP id x1-20020a05620a0ec100b007882b1c1e57mr14376420qkm.55.1710814404762;
-        Mon, 18 Mar 2024 19:13:24 -0700 (PDT)
-Received: from [192.168.1.163] ([70.22.187.239])
-        by smtp.gmail.com with ESMTPSA id 20-20020a05620a04d400b007885e3275e9sm5007287qks.132.2024.03.18.19.13.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 19:13:24 -0700 (PDT)
-Message-ID: <0665f6a6-39d9-e730-9403-0348c181dd55@redhat.com>
-Date: Mon, 18 Mar 2024 22:13:23 -0400
-Precedence: bulk
-X-Mailing-List: linux-fsdevel@vger.kernel.org
-List-Id: <linux-fsdevel.vger.kernel.org>
-List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
+	s=arc-20240116; t=1710815268; c=relaxed/simple;
+	bh=KlK6RRY+rznZ+X+XX2ZR9KnlLvHxiYkumw+UmKTdxzM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=i2Obn7Ah07erqBOeRGJjEkY/bePCuBHYJrGJJy9AAtZ3T6x7rml1SdQcG4wSMqKmTWrzTaZZZQ6Nd7x1tGLV70sr4TnQx7uuWcfUyBG7Y4Ts0wTo0M2k/u7fThDwxHINjgKHWGJA9PcF+ygBla70oIbMDeaOr6os3sC8afTw3CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TzFxQ3kYjz4f3jZm;
+	Tue, 19 Mar 2024 10:27:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 5DC121A09D0;
+	Tue, 19 Mar 2024 10:27:42 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgAX6REc+PhlGo6SHQ--.49153S3;
+	Tue, 19 Mar 2024 10:27:42 +0800 (CST)
 Subject: Re: [RFC v4 linux-next 00/19] fs & block: remove bdev->bd_inode
-Content-Language: en-US
-To: Yu Kuai <yukuai1@huaweicloud.com>, Christian Brauner <brauner@kernel.org>
+To: Matthew Sakai <msakai@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ Christian Brauner <brauner@kernel.org>
 Cc: jack@suse.cz, hch@lst.de, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
  linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>, dm-devel@lists.linux.dev
+ dm-devel@lists.linux.dev, "yukuai (C)" <yukuai3@huawei.com>
 References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
  <1324ffb5-28b6-34fb-014e-3f57df714095@huawei.com>
  <20240315-assoziieren-hacken-b43f24f78970@brauner>
@@ -96,55 +51,100 @@ References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
  <20240318-mythisch-pittoresk-1c57af743061@brauner>
  <c9bfba49-9611-c965-713c-1ef0b1e305ce@huaweicloud.com>
  <dd4e443a-696d-b02f-44ff-4649b585ef17@huaweicloud.com>
-From: Matthew Sakai <msakai@redhat.com>
-In-Reply-To: <dd4e443a-696d-b02f-44ff-4649b585ef17@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <0665f6a6-39d9-e730-9403-0348c181dd55@redhat.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <7210daac-4c0b-ce98-fe61-1c5e7c33b289@huaweicloud.com>
+Date: Tue, 19 Mar 2024 10:27:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+Precedence: bulk
+X-Mailing-List: linux-fsdevel@vger.kernel.org
+List-Id: <linux-fsdevel.vger.kernel.org>
+List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <0665f6a6-39d9-e730-9403-0348c181dd55@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAX6REc+PhlGo6SHQ--.49153S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJryUZryfur4xuF43uFW3KFg_yoW8Aw18p3
+	4qyFsxKr4Dtr1DA34Syw18Xw1Fyw45Xr1rXw15Xr12vryktry3tr4xKrn0kryDXrsrZr17
+	uF48t3yfXas5ZrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
+	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
-On 3/18/24 21:43, Yu Kuai wrote:
-> Hi,
+在 2024/03/19 10:13, Matthew Sakai 写道:
 > 
-> 在 2024/03/19 9:18, Yu Kuai 写道:
+> On 3/18/24 21:43, Yu Kuai wrote:
 >> Hi,
 >>
->> 在 2024/03/18 17:39, Christian Brauner 写道:
->>> On Sat, Mar 16, 2024 at 10:49:33AM +0800, Yu Kuai wrote:
->>>> Hi, Christian
->>>>
->>>> 在 2024/03/15 21:54, Christian Brauner 写道:
->>>>> On Fri, Mar 15, 2024 at 08:08:49PM +0800, Yu Kuai wrote:
->>>>>> Hi, Christian
->>>>>> Hi, Christoph
->>>>>> Hi, Jan
->>>>>>
->>>>>> Perhaps now is a good time to send a formal version of this set.
->>>>>> However, I'm not sure yet what branch should I rebase and send 
->>>>>> this set.
->>>>>> Should I send to the vfs tree?
->>>>>
->>>>> Nearly all of it is in fs/ so I'd say yes.
->>>>> .
->>>>
->>>> I see that you just create a new branch vfs.fixes, perhaps can I rebase
->>>> this set against this branch?
+>> 在 2024/03/19 9:18, Yu Kuai 写道:
+>>> Hi,
 >>>
->>> Please base it on vfs.super. I'll rebase it to v6.9-rc1 on Sunday.
+>>> 在 2024/03/18 17:39, Christian Brauner 写道:
+>>>> On Sat, Mar 16, 2024 at 10:49:33AM +0800, Yu Kuai wrote:
+>>>>> Hi, Christian
+>>>>>
+>>>>> 在 2024/03/15 21:54, Christian Brauner 写道:
+>>>>>> On Fri, Mar 15, 2024 at 08:08:49PM +0800, Yu Kuai wrote:
+>>>>>>> Hi, Christian
+>>>>>>> Hi, Christoph
+>>>>>>> Hi, Jan
+>>>>>>>
+>>>>>>> Perhaps now is a good time to send a formal version of this set.
+>>>>>>> However, I'm not sure yet what branch should I rebase and send 
+>>>>>>> this set.
+>>>>>>> Should I send to the vfs tree?
+>>>>>>
+>>>>>> Nearly all of it is in fs/ so I'd say yes.
+>>>>>> .
+>>>>>
+>>>>> I see that you just create a new branch vfs.fixes, perhaps can I 
+>>>>> rebase
+>>>>> this set against this branch?
+>>>>
+>>>> Please base it on vfs.super. I'll rebase it to v6.9-rc1 on Sunday.
+>>>
+>>> Okay, I just see that vfs.super doesn't contain commit
+>>> 1cdeac6da33f("btrfs: pass btrfs_device to btrfs_scratch_superblocks()"),
+>>> and you might need to fix the conflict at some point.
 >>
->> Okay, I just see that vfs.super doesn't contain commit
->> 1cdeac6da33f("btrfs: pass btrfs_device to btrfs_scratch_superblocks()"),
->> and you might need to fix the conflict at some point.
+>> And there is another problem, dm-vdo doesn't exist in vfs.super yet. Do
+>> you still want me to rebase here?
+>>
 > 
-> And there is another problem, dm-vdo doesn't exist in vfs.super yet. Do
-> you still want me to rebase here?
+> The dm-vdo changes don't appear to rely on earlier patches in the 
+> series, so I think dm-vdo could incorporate the dm-vdo patch 
+> independently from the rest of the series, if that would be helpful. (I 
+> don't want to confuse things too much.) In that case it would go through 
+> the dm tree with the rest of dm-vdo.
+
+We want to remove the 'bd_inode' field in this set. And if we want to go
+through dm tree for dm-vdo changes, we must keep the field for now.
+
+I don't have preference, Christian will make the decision. 😉
+
+Thanks,
+Kuai
+
 > 
-
-The dm-vdo changes don't appear to rely on earlier patches in the 
-series, so I think dm-vdo could incorporate the dm-vdo patch 
-independently from the rest of the series, if that would be helpful. (I 
-don't want to confuse things too much.) In that case it would go through 
-the dm tree with the rest of dm-vdo.
-
-Matt
+> Matt
+> 
+> .
+> 
 
 
