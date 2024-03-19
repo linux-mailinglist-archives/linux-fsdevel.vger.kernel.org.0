@@ -1,94 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-14802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A87187F7DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 07:58:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B61387F856
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 08:26:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC4331C21935
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 06:58:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57537282A40
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 07:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7A650A97;
-	Tue, 19 Mar 2024 06:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGQmPCVi"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708F053E28;
+	Tue, 19 Mar 2024 07:26:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C14D4438A;
-	Tue, 19 Mar 2024 06:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DDC5381E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 07:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710831492; cv=none; b=uuJ7g/Nq/wvra0AbeguJQSmDFPuqRtFmIIdhtJlNfT+iR8ZxQZWciJcdT84R1YO0b4WECc92z8GKfleLRQZ8NQ5TUyRuubN082gau/MHVRAWgI89ULBsnNmsmazXHTQzQMFRaJDZJblRPgiD8mBuaHhs9rcvoNsWY+kE8eoPI3M=
+	t=1710833188; cv=none; b=hmeWzZeVkkUe6EVPB3J1auCkjVN6fxDVx3nV/x1aSNGJY4VnYjGHzGjVhBpWQ7mq6MvlZgV1GkLsnzlUzYVb0d7jKX6k+HZ7tN1iiUnC3ECPNKvHFErie828srDK9GlXJEakGCzTYQr9kVCjcyMPISxpuMwN8EF92y058YM6+yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710831492; c=relaxed/simple;
-	bh=hmsk6AHRpVBb2U+cRbYLU+mLvD6WW/eHrcNrsOEF3RQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwZ5zM0d22hWDFJFoRyuwQ0z7NsyIjnMr3cNctBL4FXrR6S3uoptDApuImcM59nxqmClPYZdQIufwikdT7EeXoQb2naWi1E7wXDmtvPSOQyB7esG1cRGi/tQAGvfbyLAL3kSVTYd3SbgQujCOEpLR+/Ua6JhnSxFqgc599VTEFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGQmPCVi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 787DDC433C7;
-	Tue, 19 Mar 2024 06:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710831492;
-	bh=hmsk6AHRpVBb2U+cRbYLU+mLvD6WW/eHrcNrsOEF3RQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CGQmPCVi2Ba2+IfTWlFC9SJV3UDzZREF11kMCEfOVNXjeArN9btlDZ0we1hrnCAXe
-	 WOgHiZ5IdH1RU7oVnom/oxDlTRyKUkyC6AeFHaE8z5dbdWybl0JAcoeBfEj+2vqHYP
-	 icQSdif6TiNcptenGQnMoEK1JTxrQmqI2Se1QlG154OUTCttKlk17DyNNxCIYZKLpG
-	 WGm3HKyNWS9uO2F1dpxNANwwS75QVuIK01Zi+iF2tW0MZdnVKHkX7XrSXQh/ene9bj
-	 ZetbujCiEDRS8fGnpwe85KaVik0VgRKK/XLcf+TeMCr6F9f4qXyRWmwGe4AECwKKy9
-	 lPsZmR9Mbh+mg==
-Date: Tue, 19 Mar 2024 07:58:07 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs fixes
-Message-ID: <20240319-sobald-reagenzglas-d4c5b1c644ad@brauner>
-References: <20240318-vfs-fixes-e0e7e114b1d1@brauner>
- <CAHk-=wj-uKiYKh7g1=R9jkXB=GmwJ79uDdFKBKib2rDq79VDUQ@mail.gmail.com>
- <CAHk-=wjRukhPxmDFAk+aAZEcA_RQvmbOoJGOw6w2RBSDd1Nmwg@mail.gmail.com>
+	s=arc-20240116; t=1710833188; c=relaxed/simple;
+	bh=wI1T0EzdWk+Ahj6218/EOyE9S19iLjzHRDYJ+5toT40=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=C3RfqZ9OgHUYq2ApOvjYhhUc/2+7TGCZj6CHph13ylZCb0w2McGha6qNsJNV5x4ytN1EFcQZN0HWqEYRPENXpxX8p6UiJVwozxG8iimUdm56mkTv9DJtqE/gQCNn/VNVMK6OqfsDxnJZiBjdx5oFWg1gG0Nz3qB/Ae+i+Kf11cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36660582003so74521995ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 00:26:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710833186; x=1711437986;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EWwA4gt2QV2ljMc7dh01T3FMCTXDPFNrXBsk1q+DFxU=;
+        b=qa/qSbUsUHPl8sSI9fP0l6bjr7Wy4FBGlp295ed49cJLKJ9UQwFGcWhPDvdhH+x2C3
+         sMOV4Ou472fjBh31YBBClD/iK4VL7BF9fX34LYsGR16NjBvC9J6A8ccsiLUDbq/ovDCG
+         cU4hPOgmklXvYbYdMht72bNOmUOnaK7cCkr91HZ05MeWvN2jDHVhmWrQf/8NMX3vsjYs
+         Tn8CJEYWRW0EE144QuCIbs0sKSTFyCaYBN6MQk3uH/eJyPqLtI7cX074oVBHbKhzzhu7
+         WAre3VuLvb5K7xHxVwP35oBfwuucqfaSbAA+1juKjyxQfEplR6cCaICMEhEZbWJGu4qp
+         gMNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUepwuqgCWEMojHPiRSqAKhyGbtlIoLMmari2ZHM7ve5Emm0EInnPP+ZIEY8gwkleS6CJ6/eZwwVMXaonaBDJzsF0HOGB6+sb9YETBa8w==
+X-Gm-Message-State: AOJu0YyuGR9gqt+evoUNhW/Mi/ZqGJPNWH76dH9oITlOlsrFS3j6kzmD
+	3JceIGhE0ukOjgNCsC+YlXY0RlRjMRMcv9PIgMPXRtd5EhbvFr7QWoqIQgN265+EtRmrAwCucg0
+	C0NiOZt+1s0z2qrDD8ipUl+wGm4d5PUpvQ/X0SyGjYuBKNC43+zEWWY0=
+X-Google-Smtp-Source: AGHT+IFtYdMhgryWzdomQCSC8tYxXzyfdXIUYNX82HD8z/KnQcHKQ+ghCeUabP4SxoSefeK7v0plabTaWXIqe1UgCvUuMsNeDBno
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjRukhPxmDFAk+aAZEcA_RQvmbOoJGOw6w2RBSDd1Nmwg@mail.gmail.com>
+X-Received: by 2002:a05:6e02:164f:b0:366:b4c8:2150 with SMTP id
+ v15-20020a056e02164f00b00366b4c82150mr59828ilu.6.1710833185908; Tue, 19 Mar
+ 2024 00:26:25 -0700 (PDT)
+Date: Tue, 19 Mar 2024 00:26:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000050fb620613fe6483@google.com>
+Subject: [syzbot] Monthly v9fs report (Mar 2024)
+From: syzbot <syzbot+list27b848ebc739cbe61649@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lucho@ionkov.net, 
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 18, 2024 at 12:41:49PM -0700, Linus Torvalds wrote:
-> On Mon, 18 Mar 2024 at 12:14, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > IOW, isn't the 'get()' always basically paired with the mounting? And
-> > the 'put()' would probably be best done iin kill_block_super()?
-> 
-> .. or alternative handwavy approach:
-> 
->  The fundamental _reason_ for the ->get/put seems to be to make the
-> 'holder' lifetime be at least as long as the 'struct file' it is
-> associated with. No?
-> 
-> So how about we just make the 'holder' always *be* a 'struct file *'? That
-> 
->  (a) gets rid of the typeless 'void *' part
-> 
->  (b) is already what it is for normal cases (ie O_EXCL file opens).
-> 
-> wouldn't it be lovely if we just made the rule be that 'holder' *is*
-> the file pointer, and got rid of a lot of typeless WTF code?
-> 
-> Again, this comment (and the previous email) is more based on "this
-> does not feel right to me" than anything else.
-> 
-> That code just makes my skin itch. I can't say it's _wrong_, but it
-> just FeelsWrongToMe(tm).
+Hello v9fs maintainers/developers,
 
-So, initially I think the holder ops were intended to be generic by
-Christoph but I agree that it's probably not needed. I just didn't
-massage that code yet. Now on my todo for this cycle!
+This is a 31-day syzbot report for the v9fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/v9fs
+
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 7 issues are still open and 26 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 1814    Yes   WARNING in v9fs_fid_get_acl
+                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
+<2> 273     Yes   BUG: corrupted list in p9_fd_cancelled (2)
+                  https://syzkaller.appspot.com/bug?extid=1d26c4ed77bc6c5ed5e6
+<3> 119     Yes   KASAN: slab-use-after-free Read in v9fs_stat2inode_dotl
+                  https://syzkaller.appspot.com/bug?extid=7a3d75905ea1a830dbe5
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
