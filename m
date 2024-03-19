@@ -1,100 +1,322 @@
-Return-Path: <linux-fsdevel+bounces-14803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B61387F856
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 08:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6D587F9B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 09:26:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57537282A40
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 07:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8FC5282FB9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 08:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708F053E28;
-	Tue, 19 Mar 2024 07:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DE0548F6;
+	Tue, 19 Mar 2024 08:26:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DDC5381E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 07:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2420F54645;
+	Tue, 19 Mar 2024 08:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710833188; cv=none; b=hmeWzZeVkkUe6EVPB3J1auCkjVN6fxDVx3nV/x1aSNGJY4VnYjGHzGjVhBpWQ7mq6MvlZgV1GkLsnzlUzYVb0d7jKX6k+HZ7tN1iiUnC3ECPNKvHFErie828srDK9GlXJEakGCzTYQr9kVCjcyMPISxpuMwN8EF92y058YM6+yI=
+	t=1710836787; cv=none; b=JcARWmTka7YCWIwFmTuMQFjiKphUNWR9VTZ9SONRuxsHismdQX0b7oA9Z2IXoJ7p3Icem3nq0uh/PG8v4r5fmU64pLZ7l1aXVUfhJN+HrUIOz9lr0//i5HbVEGDp2iXg0vGdmkCT34AiHkCqV/l63zHyjRkz1gJg3j/deLTn04o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710833188; c=relaxed/simple;
-	bh=wI1T0EzdWk+Ahj6218/EOyE9S19iLjzHRDYJ+5toT40=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=C3RfqZ9OgHUYq2ApOvjYhhUc/2+7TGCZj6CHph13ylZCb0w2McGha6qNsJNV5x4ytN1EFcQZN0HWqEYRPENXpxX8p6UiJVwozxG8iimUdm56mkTv9DJtqE/gQCNn/VNVMK6OqfsDxnJZiBjdx5oFWg1gG0Nz3qB/Ae+i+Kf11cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36660582003so74521995ab.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 00:26:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710833186; x=1711437986;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EWwA4gt2QV2ljMc7dh01T3FMCTXDPFNrXBsk1q+DFxU=;
-        b=qa/qSbUsUHPl8sSI9fP0l6bjr7Wy4FBGlp295ed49cJLKJ9UQwFGcWhPDvdhH+x2C3
-         sMOV4Ou472fjBh31YBBClD/iK4VL7BF9fX34LYsGR16NjBvC9J6A8ccsiLUDbq/ovDCG
-         cU4hPOgmklXvYbYdMht72bNOmUOnaK7cCkr91HZ05MeWvN2jDHVhmWrQf/8NMX3vsjYs
-         Tn8CJEYWRW0EE144QuCIbs0sKSTFyCaYBN6MQk3uH/eJyPqLtI7cX074oVBHbKhzzhu7
-         WAre3VuLvb5K7xHxVwP35oBfwuucqfaSbAA+1juKjyxQfEplR6cCaICMEhEZbWJGu4qp
-         gMNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUepwuqgCWEMojHPiRSqAKhyGbtlIoLMmari2ZHM7ve5Emm0EInnPP+ZIEY8gwkleS6CJ6/eZwwVMXaonaBDJzsF0HOGB6+sb9YETBa8w==
-X-Gm-Message-State: AOJu0YyuGR9gqt+evoUNhW/Mi/ZqGJPNWH76dH9oITlOlsrFS3j6kzmD
-	3JceIGhE0ukOjgNCsC+YlXY0RlRjMRMcv9PIgMPXRtd5EhbvFr7QWoqIQgN265+EtRmrAwCucg0
-	C0NiOZt+1s0z2qrDD8ipUl+wGm4d5PUpvQ/X0SyGjYuBKNC43+zEWWY0=
-X-Google-Smtp-Source: AGHT+IFtYdMhgryWzdomQCSC8tYxXzyfdXIUYNX82HD8z/KnQcHKQ+ghCeUabP4SxoSefeK7v0plabTaWXIqe1UgCvUuMsNeDBno
+	s=arc-20240116; t=1710836787; c=relaxed/simple;
+	bh=73VHrk/0BPskzmZgqkIxNnLhsrJjuXoHiGnhXcDdTFk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=XeAC7pprYQyIQORS/P/VfGFkzz6RxYD5ThXgW5eIVIHbZWiDpmGaS80PVCoIU06u1cvvnBXdl1nrcf8Fm6/7X+zLGavJA9BYSSQCaR9yW/NmyJLk+GW9upNlj1OIL22uAtWllKco2OAQUeZfhmLqANutfiycUQzRi/t3FToE6Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TzPvC4fljz4f3kFW;
+	Tue, 19 Mar 2024 16:26:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 953271A0175;
+	Tue, 19 Mar 2024 16:26:21 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgAn+RErTPllNWKsHQ--.24489S3;
+	Tue, 19 Mar 2024 16:26:21 +0800 (CST)
+Subject: Re: [RFC v4 linux-next 19/19] fs & block: remove bdev->bd_inode
+To: Christoph Hellwig <hch@lst.de>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, brauner@kernel.org, axboe@kernel.dk,
+ linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
+ <20240222124555.2049140-20-yukuai1@huaweicloud.com>
+ <20240317213847.GD10665@lst.de>
+ <022204e6-c387-b4b2-5982-970fd1ed5b5b@huaweicloud.com>
+ <20240318013208.GA23711@lst.de>
+ <5c231b60-a2bf-383e-e641-371e7e57da67@huaweicloud.com>
+ <ea4774db-188e-6744-6a5b-0096f6206112@huaweicloud.com>
+ <20240318232245.GA17831@lst.de>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c62dac0e-666f-9cc9-cffe-f3d985029d6a@huaweicloud.com>
+Date: Tue, 19 Mar 2024 16:26:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164f:b0:366:b4c8:2150 with SMTP id
- v15-20020a056e02164f00b00366b4c82150mr59828ilu.6.1710833185908; Tue, 19 Mar
- 2024 00:26:25 -0700 (PDT)
-Date: Tue, 19 Mar 2024 00:26:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000050fb620613fe6483@google.com>
-Subject: [syzbot] Monthly v9fs report (Mar 2024)
-From: syzbot <syzbot+list27b848ebc739cbe61649@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lucho@ionkov.net, 
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20240318232245.GA17831@lst.de>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn+RErTPllNWKsHQ--.24489S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKr17Cw4DKw4ktr1rCw48Zwb_yoWxZr18pr
+	Z8Ja45trW8G34vgFWIva17Xr1Y9w17try8Za48W34akrZ7tr92kF18CryUuFyrt3ykJw4D
+	XF4jgryUCryfCaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
+	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hello v9fs maintainers/developers,
+Hi,
 
-This is a 31-day syzbot report for the v9fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/v9fs
+ÔÚ 2024/03/19 7:22, Christoph Hellwig Ð´µÀ:
+> On Mon, Mar 18, 2024 at 03:19:03PM +0800, Yu Kuai wrote:
+>> I come up with an ideal:
+>>
+>> While opening the block_device the first time, store the generated new
+>> file in "bd_inode->i_private". And release it after the last opener
+>> close the block_device.
+>>
+>> The advantages are:
+>>   - multiple openers can share the same bdev_file;
+>>   - raw block device ops can use the bdev_file as well, and there is no
+>> need to distinguish iomap/buffer_head for raw block_device;
+>>
+>> Please let me know what do you think?
+> 
+> That does sound very reasonable to me.
+> 
+I just implement the ideal with following patch(not fully tested, just
+boot and some blktests)
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 7 issues are still open and 26 have been fixed so far.
+Please let me know what you think.
+Thanks!
+Kuai
 
-Some of the still happening issues:
+diff --git a/block/bdev.c b/block/bdev.c
+index d42a6bc73474..8bc8962c59a5 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -899,14 +899,6 @@ int bdev_open(struct block_device *bdev, blk_mode_t 
+mode, void *holder,
+         if (unblock_events)
+                 disk_unblock_events(disk);
 
-Ref Crashes Repro Title
-<1> 1814    Yes   WARNING in v9fs_fid_get_acl
-                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
-<2> 273     Yes   BUG: corrupted list in p9_fd_cancelled (2)
-                  https://syzkaller.appspot.com/bug?extid=1d26c4ed77bc6c5ed5e6
-<3> 119     Yes   KASAN: slab-use-after-free Read in v9fs_stat2inode_dotl
-                  https://syzkaller.appspot.com/bug?extid=7a3d75905ea1a830dbe5
+-       bdev_file->f_flags |= O_LARGEFILE;
+-       bdev_file->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT;
+-       if (bdev_nowait(bdev))
+-               bdev_file->f_mode |= FMODE_NOWAIT;
+-       bdev_file->f_mapping = bdev_mapping(bdev);
+-       bdev_file->f_wb_err = filemap_sample_wb_err(bdev_file->f_mapping);
+-       bdev_file->private_data = holder;
+-
+         return 0;
+  put_module:
+         module_put(disk->fops->owner);
+@@ -948,12 +940,66 @@ static unsigned blk_to_file_flags(blk_mode_t mode)
+         return flags;
+  }
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
++struct file *alloc_and_init_bdev_file(struct block_device *bdev,
++                                     blk_mode_t mode, void *holder)
++{
++       struct file *bdev_file = 
+alloc_file_pseudo_noaccount(bdev_inode(bdev),
++                       blockdev_mnt, "", blk_to_file_flags(mode) | 
+O_LARGEFILE,
++                       &def_blk_fops);
++
++       if (IS_ERR(bdev_file))
++               return bdev_file;
++
++       bdev_file->f_flags |= O_LARGEFILE;
++       bdev_file->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT;
++       if (bdev_nowait(bdev))
++               bdev_file->f_mode |= FMODE_NOWAIT;
++       bdev_file->f_mapping = bdev_mapping(bdev);
++       bdev_file->f_wb_err = filemap_sample_wb_err(bdev_file->f_mapping);
++       bdev_file->private_data = holder;
++
++       return bdev_file;
++}
++
++void get_bdev_file(struct block_device *bdev, struct file *bdev_file)
++{
++       struct inode *bd_inode = bdev_inode(bdev);
++       struct file *file;
++
++       mutex_lock(&bdev->bd_disk->open_mutex);
++       file = bd_inode->i_private;
++
++       if (!file) {
++               get_file(bdev_file);
++               bd_inode->i_private = bdev_file;
++       } else {
++               get_file(file);
++       }
++
++       mutex_unlock(&bdev->bd_disk->open_mutex);
++}
++
++void put_bdev_file(struct block_device *bdev)
++{
++       struct file *file = NULL;
++       struct inode *bd_inode = bdev_inode(bdev);
++
++       mutex_lock(&bdev->bd_disk->open_mutex);
++       file = bd_inode->i_private;
++
++       if (!atomic_read(&bdev->bd_openers))
++               bd_inode->i_private = NULL;
++
++       mutex_unlock(&bdev->bd_disk->open_mutex);
++
++       fput(file);
++}
++
+  struct file *bdev_file_open_by_dev(dev_t dev, blk_mode_t mode, void 
+*holder,
+                                    const struct blk_holder_ops *hops)
+  {
+         struct file *bdev_file;
+         struct block_device *bdev;
+-       unsigned int flags;
+         int ret;
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+         ret = bdev_permission(dev, mode, holder);
+@@ -964,20 +1010,20 @@ struct file *bdev_file_open_by_dev(dev_t dev, 
+blk_mode_t mode, void *holder,
+         if (!bdev)
+                 return ERR_PTR(-ENXIO);
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+-       flags = blk_to_file_flags(mode);
+-       bdev_file = alloc_file_pseudo_noaccount(bdev_inode(bdev),
+-                       blockdev_mnt, "", flags | O_LARGEFILE, 
+&def_blk_fops);
++       bdev_file = alloc_and_init_bdev_file(bdev, mode, holder);
+         if (IS_ERR(bdev_file)) {
+                 blkdev_put_no_open(bdev);
+                 return bdev_file;
+         }
+         ihold(bdev_inode(bdev));
++       get_bdev_file(bdev, bdev_file);
 
-You may send multiple commands in a single email message.
+         ret = bdev_open(bdev, mode, holder, hops, bdev_file);
+         if (ret) {
+                 /* We failed to open the block device. Let ->release() 
+know. */
+                 bdev_file->private_data = ERR_PTR(ret);
+                 fput(bdev_file);
++               put_bdev_file(bdev);
+                 return ERR_PTR(ret);
+         }
+         return bdev_file;
+@@ -1049,6 +1095,7 @@ void bdev_release(struct file *bdev_file)
+
+         module_put(disk->fops->owner);
+  put_no_open:
++       put_bdev_file(bdev);
+         blkdev_put_no_open(bdev);
+  }
+
+diff --git a/block/blk.h b/block/blk.h
+index 5ac293179bfb..ebe99dc9cff5 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -518,6 +518,10 @@ static inline int req_ref_read(struct request *req)
+         return atomic_read(&req->ref);
+  }
+
++struct file *alloc_and_init_bdev_file(struct block_device *bdev,
++                                     blk_mode_t mode, void *holder);
++void get_bdev_file(struct block_device *bdev, struct file *bdev_file);
++void put_bdev_file(struct block_device *bdev);
+  void bdev_release(struct file *bdev_file);
+  int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
+               const struct blk_holder_ops *hops, struct file *bdev_file);
+diff --git a/block/fops.c b/block/fops.c
+index 4037ae72a919..059f6c7d3c09 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -382,7 +382,7 @@ static ssize_t blkdev_direct_IO(struct kiocb *iocb, 
+struct iov_iter *iter)
+  static int blkdev_iomap_begin(struct inode *inode, loff_t offset, 
+loff_t length,
+                 unsigned int flags, struct iomap *iomap, struct iomap 
+*srcmap)
+  {
+-       struct block_device *bdev = I_BDEV(inode);
++       struct block_device *bdev = file_bdev(inode->i_private);
+         loff_t isize = i_size_read(inode);
+
+         iomap->bdev = bdev;
+@@ -404,7 +404,7 @@ static const struct iomap_ops blkdev_iomap_ops = {
+  static int blkdev_get_block(struct inode *inode, sector_t iblock,
+                 struct buffer_head *bh, int create)
+  {
+-       bh->b_bdev = I_BDEV(inode);
++       bh->b_bdev = file_bdev(inode->i_private);
+         bh->b_blocknr = iblock;
+         set_buffer_mapped(bh);
+         return 0;
+@@ -598,6 +598,7 @@ blk_mode_t file_to_blk_mode(struct file *file)
+
+  static int blkdev_open(struct inode *inode, struct file *filp)
+  {
++       struct file *bdev_file;
+         struct block_device *bdev;
+         blk_mode_t mode;
+         int ret;
+@@ -614,9 +615,28 @@ static int blkdev_open(struct inode *inode, struct 
+file *filp)
+         if (!bdev)
+                 return -ENXIO;
+
++       bdev_file = alloc_and_init_bdev_file(bdev,
++                       BLK_OPEN_READ | BLK_OPEN_WRITE, NULL);
++       if (IS_ERR(bdev_file)) {
++               blkdev_put_no_open(bdev);
++               return PTR_ERR(bdev_file);
++       }
++
++       bdev_file->private_data = ERR_PTR(-EINVAL);
++       get_bdev_file(bdev, bdev_file);
+         ret = bdev_open(bdev, mode, filp->private_data, NULL, filp);
+-       if (ret)
++       if (ret) {
++               put_bdev_file(bdev);
+                 blkdev_put_no_open(bdev);
++       } else {
++               filp->f_flags |= O_LARGEFILE;
++               filp->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT;
++               if (bdev_nowait(bdev))
++                       filp->f_mode |= FMODE_NOWAIT;
++               filp->f_mapping = bdev_mapping(bdev);
++               filp->f_wb_err = 
+filemap_sample_wb_err(bdev_file->f_mapping);
++       }
++
+         return ret;
+  }
+
+> .
+> 
+
 
