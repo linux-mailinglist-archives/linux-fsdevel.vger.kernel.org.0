@@ -1,67 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-14782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3F087F429
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 00:39:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959B887F4DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 02:18:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F880B22A86
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Mar 2024 23:39:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01548282209
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 01:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F453626D5;
-	Mon, 18 Mar 2024 23:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2975A17F6;
+	Tue, 19 Mar 2024 01:18:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A501A626BC;
-	Mon, 18 Mar 2024 23:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE20620;
+	Tue, 19 Mar 2024 01:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710804924; cv=none; b=QOs86vHu2zNHo0hJPkXUKLT6iCEji9Zt/MI1L3WyOBDf17zcJgOFldf+fVoupI1y12NRiqpvlEzBxoW5bVZrR94RY2LsmrHRtX2DzJqJ8C9iFUZgdJAJ6Ij1S5tKvTEnaXc4Q+VmY75Qi/fuGQQrISoEAdAuXJ3Q4RP6SjM1fHg=
+	t=1710811123; cv=none; b=ghJkDvBf47bigs2q88qUKzlS6bypGsr9r7OtJxvaalCaoxUfeBKuAKrp9d6+qnAJ/5Elas7+iRZhakhjMMvOI+UpvBRiz/FKUCCRSI+3Ue0UaoMoSIfbAmELVWAub+aWqt8PNvXvIYJwS9RHkpvwbLgOMVeiiZ5not3EgjqM70k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710804924; c=relaxed/simple;
-	bh=p7qM0iAaddZW/6udQz75AYjb5Mrw3uNz9HTax7Z+4Xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ccuqSVGKfIXrEkTWAwGYBPBbdHmOi9MFCwj3OFeh4E3jhe34AEGIuxINBoM9RvAzBo2WQPD8UsONzr/gNXJFKJi7o9mnXIBoq2daIdgeJRq0JyQypFcFDO3WTgs5AaFH3bsZKW2fkCnUFeI2jpAeiHRvasDtTc2TJQmX1vykqec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id AF0A168CFE; Tue, 19 Mar 2024 00:35:17 +0100 (CET)
-Date: Tue, 19 Mar 2024 00:35:17 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, Christoph Hellwig <hch@lst.de>,
-	jack@suse.cz, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [RFC v4 linux-next 19/19] fs & block: remove bdev->bd_inode
-Message-ID: <20240318233517.GA17983@lst.de>
-References: <20240222124555.2049140-1-yukuai1@huaweicloud.com> <20240222124555.2049140-20-yukuai1@huaweicloud.com> <20240317213847.GD10665@lst.de> <022204e6-c387-b4b2-5982-970fd1ed5b5b@huaweicloud.com> <20240318013208.GA23711@lst.de> <5c231b60-a2bf-383e-e641-371e7e57da67@huaweicloud.com> <ea4774db-188e-6744-6a5b-0096f6206112@huaweicloud.com> <20240318-umwirbt-fotowettbewerb-63176f9d75f3@brauner> <20240318-fassen-xylofon-1d50d573a196@brauner>
+	s=arc-20240116; t=1710811123; c=relaxed/simple;
+	bh=jdGAolbsdclm0Dm+TBgvDSH6fSo2w9v+pLpchiQ+qYA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UWqjrOvV1jp5RnbmBAdY1Uglh2tdUmE3gU02gna2oa2bBsZVzyxIPCUCsaOQm/AmOMH/x646g5aRpw+ogiSbZq62qwbgzOKPoOauywR/rp8ZodZSOj7ClmkwbFsc/cK7UGCaMM/nV3EXcOF1Q/lws6+aV1O2G025fFKOnA25uKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TzDPZ0ySvz4f3jd2;
+	Tue, 19 Mar 2024 09:18:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 125021A017A;
+	Tue, 19 Mar 2024 09:18:32 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAn9g7O5_hlUIGNHQ--.34497S4;
+	Tue, 19 Mar 2024 09:18:30 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	brauner@kernel.org,
+	david@fromorbit.com,
+	tytso@mit.edu,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v3 0/9] xfs/iomap: fix non-atomic clone operation and don't update size when zeroing range post eof
+Date: Tue, 19 Mar 2024 09:10:53 +0800
+Message-Id: <20240319011102.2929635-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240318-fassen-xylofon-1d50d573a196@brauner>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn9g7O5_hlUIGNHQ--.34497S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr43trykKw4fZryxGF4kZwb_yoW5JFWDpF
+	ZxKw43Kr4vgr1fZrn7AF45Jw1rK3Z7GF4UCr4xJws3Z3y5ZF1xuF4IgF4F9rW7Ar93Wa1j
+	qF4jyFyxG34DAFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+	UdHUDUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Mon, Mar 18, 2024 at 11:29:17AM +0100, Christian Brauner wrote:
-> Don't forget:
-> 
-> mknod /my/xfs/file/system b 8 0
-> 
-> which means you're not opening it via devtmpfs but via xfs. IOW, the
-> inode for that file is from xfs.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Yes.  file_inode() for block devices is always the "upper" fs, which can
-be any file system supporting device nodes.  file->f_mapping->host will
-always be the bdevfs inode, and nothing in the I/O path should ever be
-using file_inode().
+Changes since v2:
+ - Merge the patch for dropping of xfs_convert_blocks() and the patch
+   for modifying xfs_bmapi_convert_delalloc().
+ - Reword the commit message of the second patch.
+
+Changes since v1:
+ - Make xfs_bmapi_convert_delalloc() to allocate the target offset and
+   drop the writeback helper xfs_convert_blocks().
+ - Don't use xfs_iomap_write_direct() to convert delalloc blocks for
+   zeroing posteof case, use xfs_bmapi_convert_delalloc() instead.
+ - Fix two off-by-one issues when converting delalloc blocks.
+ - Add a separate patch to drop the buffered write failure handle in
+   zeroing and unsharing.
+ - Add a comments do emphasize updating i_size should under folio lock.
+ - Make iomap_write_end() to return a boolean, and do some cleanups in
+   buffered write begin path.
+
+This patch series fix a problem of exposing zeroed data on xfs since the
+non-atomic clone operation. This problem was found while I was
+developing ext4 buffered IO iomap conversion (ext4 is relying on this
+fix [1]), the root cause of this problem and the discussion about the
+solution please see [2]. After fix the problem, iomap_zero_range()
+doesn't need to update i_size so that ext4 can use it to zero partial
+block, e.g. truncate eof block [3].
+
+[1] https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
+[2] https://lore.kernel.org/linux-ext4/9b0040ef-3d9d-6246-4bdd-82b9a8f55fa2@huaweicloud.com/
+[3] https://lore.kernel.org/linux-ext4/9c9f1831-a772-299b-072b-1c8116c3fb35@huaweicloud.com/
+
+Thanks,
+Yi.
+
+Zhang Yi (9):
+  xfs: match lock mode in xfs_buffered_write_iomap_begin()
+  xfs: make the seq argument to xfs_bmapi_convert_delalloc() optional
+  xfs: make xfs_bmapi_convert_delalloc() to allocate the target offset
+  xfs: convert delayed extents to unwritten when zeroing post eof blocks
+  iomap: drop the write failure handles when unsharing and zeroing
+  iomap: don't increase i_size if it's not a write operation
+  iomap: use a new variable to handle the written bytes in
+    iomap_write_iter()
+  iomap: make iomap_write_end() return a boolean
+  iomap: do some small logical cleanup in buffered write
+
+ fs/iomap/buffered-io.c   | 101 ++++++++++++++++++++++-----------------
+ fs/xfs/libxfs/xfs_bmap.c |  40 ++++++++++++++--
+ fs/xfs/xfs_aops.c        |  54 ++++++---------------
+ fs/xfs/xfs_iomap.c       |  39 +++++++++++++--
+ 4 files changed, 142 insertions(+), 92 deletions(-)
+
+-- 
+2.39.2
+
 
