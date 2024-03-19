@@ -1,118 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-14789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DD087F505
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 02:36:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2109B87F500
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 02:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CB81C21557
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 01:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F97F1C211BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 01:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A3E657A3;
-	Tue, 19 Mar 2024 01:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB7C64CE9;
+	Tue, 19 Mar 2024 01:35:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4F4626CD;
-	Tue, 19 Mar 2024 01:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1408D612F6;
+	Tue, 19 Mar 2024 01:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710812179; cv=none; b=aUkUDyslrixPSdh1xJusZbjplTG5HNHZWsAcMpAuIl2G/tn9r4yQTq/O5pRQK7MSsmjcdC0J9/+QocFU1XyV8aklnPofx9S9Bnkaj7bWF3XyUE28X+sP1+qYi0j00EoTJtnRWXJj6TIpr/Q1HnH3t2La/UpA2VefIhSfZF29d/U=
+	t=1710812117; cv=none; b=LTyq0hoCXRfMe5LdPPhgm5EgyoAqtGWmuqL3jxTxy/jwdu7qPdVK5+nQPzFT8bidn64oX5dyO9r+hgswsPGs774ErJNoZxDh8aIijXrACoNVrWzYu0wADbbKlOl9Vn3EwPldUvsBVAu2COkxPGkxx37KNF7b+72Lh0/1x7Ivwf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710812179; c=relaxed/simple;
-	bh=GzEBhKZ4LIu43FoyVX7+dAaGHt5sdgp1AOcuREBzOt0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=opGO0HTUWGQ21sSOcPAJlcz2UBuIlGG0u1Ya/sqYuKpKCaBd9oR3XIu3fjyHmH2PBBN87MxNvKDT0BOWsLziXlQtd7uRrhEI0eagSFWK7DIzmQWCoyGwPbp3o7t95+rtQdg8OJVijTeuyuvJCQVvnKxGfca8Km0Q2+Ftz+Eu2Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TzDPc5kTGz4f3kJq;
-	Tue, 19 Mar 2024 09:18:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9BE671A0172;
-	Tue, 19 Mar 2024 09:18:32 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgDHlxDm5_hltIiNHQ--.22830S3;
-	Tue, 19 Mar 2024 09:18:32 +0800 (CST)
-Subject: Re: [RFC v4 linux-next 00/19] fs & block: remove bdev->bd_inode
-To: Christian Brauner <brauner@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: jack@suse.cz, hch@lst.de, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
- linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
- <1324ffb5-28b6-34fb-014e-3f57df714095@huawei.com>
- <20240315-assoziieren-hacken-b43f24f78970@brauner>
- <ac0eb132-c604-9761-bce5-69158e73f256@huaweicloud.com>
- <20240318-mythisch-pittoresk-1c57af743061@brauner>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <c9bfba49-9611-c965-713c-1ef0b1e305ce@huaweicloud.com>
-Date: Tue, 19 Mar 2024 09:18:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1710812117; c=relaxed/simple;
+	bh=Sd8bclQ/7iS9zW3jBrxs2+6SaQEBr8bQ3OMru9SXT94=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Vo5YK+j8bylyvmD/5JOXSPSCpuPRb15gXaMRWpTYGa9haxO6sw0gxpiHpDDmWnaJhI3Qn/F4khlpT2ZV5bPl2g72UYo/BFdXrAGTw+Kt5OnFNm6D4rWhZNy7UQiOO2bUjXTvUabsStK5Db6f8VbobB4NsT0L44FCO4YKSCwtWRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4TzDkC3xRJz1Q9nH;
+	Tue, 19 Mar 2024 09:32:51 +0800 (CST)
+Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
+	by mail.maildlp.com (Postfix) with ESMTPS id C14991400F4;
+	Tue, 19 Mar 2024 09:35:05 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemm600013.china.huawei.com (7.193.23.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 19 Mar 2024 09:35:04 +0800
+Subject: Re: [linux-next:master] BUILD REGRESSION
+ 2e93f143ca010a5013528e1cfdc895f024fe8c21
+To: kernel test robot <lkp@intel.com>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: Linux Memory Management List <linux-mm@kvack.org>,
+	<amd-gfx@lists.freedesktop.org>, <bpf@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<linux-mtd@lists.infradead.org>, <linux-omap@vger.kernel.org>,
+	<netdev@vger.kernel.org>
+References: <202403182219.XrvfZx4s-lkp@intel.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <e7ca3f69-7052-616b-68db-f29a66b42edc@huawei.com>
+Date: Tue, 19 Mar 2024 09:35:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240318-mythisch-pittoresk-1c57af743061@brauner>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <202403182219.XrvfZx4s-lkp@intel.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDHlxDm5_hltIiNHQ--.22830S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Wr47CFW3WF13JFWrWF48Zwb_yoWfCrgEvw
-	4akFykG34DZw1jqanxKrs0yrWDCFy3Jry5JryrJF13XayDXF98GF4kJw1kZwnxGa13KF1f
-	Cr4qqFy5ZrWfGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
-	3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm600013.china.huawei.com (7.193.23.68)
 
-Hi,
-
-åœ¨ 2024/03/18 17:39, Christian Brauner å†™é“:
-> On Sat, Mar 16, 2024 at 10:49:33AM +0800, Yu Kuai wrote:
->> Hi, Christian
->>
->> åœ¨ 2024/03/15 21:54, Christian Brauner å†™é“:
->>> On Fri, Mar 15, 2024 at 08:08:49PM +0800, Yu Kuai wrote:
->>>> Hi, Christian
->>>> Hi, Christoph
->>>> Hi, Jan
->>>>
->>>> Perhaps now is a good time to send a formal version of this set.
->>>> However, I'm not sure yet what branch should I rebase and send this set.
->>>> Should I send to the vfs tree?
->>>
->>> Nearly all of it is in fs/ so I'd say yes.
->>> .
->>
->> I see that you just create a new branch vfs.fixes, perhaps can I rebase
->> this set against this branch?
+ÔÚ 2024/3/18 22:33, kernel test robot Ð´µÀ:
+> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+> branch HEAD: 2e93f143ca010a5013528e1cfdc895f024fe8c21  Add linux-next specific files for 20240318
 > 
-> Please base it on vfs.super. I'll rebase it to v6.9-rc1 on Sunday.
-
-Okay, I just see that vfs.super doesn't contain commit
-1cdeac6da33f("btrfs: pass btrfs_device to btrfs_scratch_superblocks()"),
-and you might need to fix the conflict at some point.
-
-Thanks,
-Kuai
-
-> .
+> Error/Warning ids grouped by kconfigs:
 > 
+> gcc_recent_errors
+> |-- arc-allmodconfig
+> |   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+> |-- arc-allyesconfig
+> |   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+> |-- arm-allmodconfig
+> |   |-- arch-arm-mach-omap2-prm33xx.c:warning:expecting-prototype-for-am33xx_prm_global_warm_sw_reset().-Prototype-was-for-am33xx_prm_global_sw_reset()-instead
+> |   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_vcn.c:warning:.bin-directive-output-may-be-truncated-writing-bytes-into-a-region-of-size-between-and
+> |   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+> |-- arm-allyesconfig
+> |   |-- arch-arm-mach-omap2-prm33xx.c:warning:expecting-prototype-for-am33xx_prm_global_warm_sw_reset().-Prototype-was-for-am33xx_prm_global_sw_reset()-instead
+> |   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_vcn.c:warning:.bin-directive-output-may-be-truncated-writing-bytes-into-a-region-of-size-between-and
+> |   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+> |-- arm64-defconfig
+> |   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+> |-- csky-allmodconfig
+> |   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_vcn.c:warning:.bin-directive-output-may-be-truncated-writing-bytes-into-a-region-of-size-between-and
+> |   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+> |-- csky-allyesconfig
+> |   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_vcn.c:warning:.bin-directive-output-may-be-truncated-writing-bytes-into-a-region-of-size-between-and
+> |   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
 
+Hi, Richard,
+I sent out the warning fix patch in 
+https://patchwork.ozlabs.org/project/linux-mtd/patch/20240227024204.1080739-1-chengzhihao1@huawei.com/
 
