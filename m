@@ -1,102 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-14842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F878806CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 22:33:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7181588071E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 23:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C556A1C22116
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 21:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E63282354
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 22:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8AC4C626;
-	Tue, 19 Mar 2024 21:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129AF4F21D;
+	Tue, 19 Mar 2024 22:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="2d6FvCDm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPlVI8+i"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC95C3BBD5;
-	Tue, 19 Mar 2024 21:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD544F217;
+	Tue, 19 Mar 2024 22:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710884003; cv=none; b=Cas8ZzaznoogGNVHakHAFHoKRFdX5no2FU9YmTmY5F37i2yomQCvFrF8HLtWpQehgJfO065jivGQYZZVeZ9Wmt4VuGLq2CqcIILb+1hnP1g6r1kSku+22quc97hAR0weC46cL6CQYhIdl/4otKEpI4/MqSTmEE6ssYCeU1VAjGY=
+	t=1710886064; cv=none; b=VQhhoeawezFSzfmReoRDVtVVFC6BN4MXlK/lymCGlwsPKP9Uzf1g/Y4+CCtFu9pFJkz7g5UTA4Gehei07ZEeCk80So4MHJt8dAzIYjyl3rgwI25AJHmeE3xUXFmGexq26BZGq8ZwucCwdK5+9+vazuhKz7WdRui8gUXDiHCY9M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710884003; c=relaxed/simple;
-	bh=J5WT7lTwbAC1lXKfreuO+YX+l04IPqUHj6iyt9rvxuk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ktumXU42crwD6JGNvu7mPnHJAf8/MvsYeQuiCLA8W4z222zlIkfXLpKfA1Qe0v+rS1NFhb6fIXzQTAqakcRdVkTIItdmDloQw1fHOnzAi4zZczFmyVkRuy+zOWHhT16KeOXZbasLOqs4O827PeUUlgT1LjBB6SyHygDxA4Me3MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=2d6FvCDm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82463C433C7;
-	Tue, 19 Mar 2024 21:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1710884002;
-	bh=J5WT7lTwbAC1lXKfreuO+YX+l04IPqUHj6iyt9rvxuk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=2d6FvCDmUDzCnQWUs6H1g2ELt5Bif7X71Z0u7gzOPi0w7QcSwE+An+R17OMSTIPx9
-	 iCrN2n/gl/q8nd4aqoJcuV+U1EQOnvyWcioTDrjzxiER2uJb1RnEqHkyaLundadVRQ
-	 uoD5sWxCE/LS3LSNv7W7xNDhZ+rS13k/+syZCdXE=
-Date: Tue, 19 Mar 2024 14:33:20 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Sourav Panda <souravpanda@google.com>
-Cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org,
- mike.kravetz@oracle.com, muchun.song@linux.dev, rppt@kernel.org,
- david@redhat.com, rdunlap@infradead.org, chenlinxuan@uniontech.com,
- yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com, bhelgaas@google.com,
- ivan@cloudflare.com, pasha.tatashin@soleen.com, yosryahmed@google.com,
- hannes@cmpxchg.org, shakeelb@google.com, kirill.shutemov@linux.intel.com,
- wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz,
- Liam.Howlett@Oracle.com, surenb@google.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, weixugc@google.com
-Subject: Re: [PATCH v9 1/1] mm: report per-page metadata information
-Message-Id: <20240319143320.d1b1ef7f6fa77b748579ba59@linux-foundation.org>
-In-Reply-To: <20240220214558.3377482-2-souravpanda@google.com>
-References: <20240220214558.3377482-1-souravpanda@google.com>
-	<20240220214558.3377482-2-souravpanda@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1710886064; c=relaxed/simple;
+	bh=h0l6BvmGc4RnVLcgjaZZBNAvFtveWCLZCTnIqDxlgao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SRuw11ACy0uLmSFyZU7n0AkgDiF1Clkkg4Y+3QW5RxhPDanhi12QTPFGfuG+pwgpBNKQ9Xo3+sDFgQFzuWM11HoBWSttCWOHDNZ92moL0ac6dCOvT0inv3lw8apg0AsQ1j1lYAcl4zssgGeom8obuq5GdmuKzZChGqKLWgkqWjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPlVI8+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF8E3C433C7;
+	Tue, 19 Mar 2024 22:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710886063;
+	bh=h0l6BvmGc4RnVLcgjaZZBNAvFtveWCLZCTnIqDxlgao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TPlVI8+i0+pIn7OhuRUCSBa++0XF33/hHvn9rdg/tykQ9vlRsHV424zMRriWUrqNz
+	 Ht7Tb15MsXwHoEKSv398BaIyygVYi+f8LLf2gkAdqAX8kDPEIpF5AZJJIdp5p9Tyxf
+	 wC1pwwCo1IU3o5PHdkgQzP2hEBcwUlKpx2jQElphs0TtQwW174t/VuVO59vVmN66IC
+	 axceiUyBR7uRmDE1b3FPrC9vCK33mc3ERoHvaRE2UhIBVvZZBikekBAsPgXLV9eFkf
+	 vkMFZAbXSNqxanwGdjPivpMhSe/0sBIb4dPBT/cnEkHAzJQAz9F7y3Ls89x5MlCF5T
+	 6jcwjZmaaMUdQ==
+Date: Tue, 19 Mar 2024 15:07:43 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: aalbersh@redhat.com, Mark Tinguely <tinguely@sgi.com>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	Christoph Hellwig <hch@lst.de>, Dave Chinner <dchinner@redhat.com>,
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCHSET v5.3] fs-verity support for XFS
+Message-ID: <20240319220743.GF6226@frogsfrogsfrogs>
+References: <20240317161954.GC1927156@frogsfrogsfrogs>
+ <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
+ <20240318163512.GB1185@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240318163512.GB1185@sol.localdomain>
 
-On Tue, 20 Feb 2024 13:45:58 -0800 Sourav Panda <souravpanda@google.com> wrote:
+On Mon, Mar 18, 2024 at 09:35:12AM -0700, Eric Biggers wrote:
+> On Sun, Mar 17, 2024 at 09:22:52AM -0700, Darrick J. Wong wrote:
+> > Hi all,
+> > 
+> > From Darrick J. Wong:
+> > 
+> > This v5.3 patchset builds upon v5.2 of Andrey's patchset to implement
+> > fsverity for XFS.
+> 
+> Is this ready for me to review, or is my feedback on v5 still being
+> worked on?
 
-> Adds two new per-node fields, namely nr_memmap and nr_memmap_boot,
-> to /sys/devices/system/node/nodeN/vmstat and a global Memmap field
-> to /proc/meminfo. This information can be used by users to see how
-> much memory is being used by per-page metadata, which can vary
-> depending on build configuration, machine architecture, and system
-> use.
+It's still being worked on.  I figured it was time to push my work tree
+back to Andrey so everyone could see the results of me attempting to
+understand the fsverity patchset by working around in the codebase.
 
-I yield to no man in my admiration of changelogging but boy, that's a
-lot of changelogging.  Would it be possible to consolidate the [0/N]
-coverletter and the [1/N] changelog into a single thing please?
+From your perspective, I suspect the most interesting patches will be 5,
+6, 7+10+14, 11-13, and 15-17.  For everyone on the XFS side, patches
+27-39 are the most interesting since they change the caching strategy
+and slim down the ondisk format.
 
->  Documentation/filesystems/proc.rst |  3 +++
->  fs/proc/meminfo.c                  |  4 ++++
->  include/linux/mmzone.h             |  4 ++++
->  include/linux/vmstat.h             |  4 ++++
->  mm/hugetlb_vmemmap.c               | 17 ++++++++++++----
->  mm/mm_init.c                       |  3 +++
->  mm/page_alloc.c                    |  1 +
->  mm/page_ext.c                      | 32 +++++++++++++++++++++---------
->  mm/sparse-vmemmap.c                |  8 ++++++++
->  mm/sparse.c                        |  7 ++++++-
->  mm/vmstat.c                        | 26 +++++++++++++++++++++++-
->  11 files changed, 94 insertions(+), 15 deletions(-)
+> From a quick glance, not everything from my feedback has been
+> addressed.
 
-And yet we offer the users basically no documentation.  The new sysfs
-file should be documented under Documentation/ABI somewhere and
-perhaps we could prepare some more expansive user-facing documentation
-elsewhere?
+That's correct.  I cleaned up the mechanics of passing merkle trees
+around, but I didn't address the comments about per-sb workqueues,
+fsverity tracepoints, or whether or not iomap should allocate biosets.
+Roughly, here's what I did in the generic code:
 
-I'd like to hear others' views on the overall usefulness/utility of this
-change, please?
+I fixed the FS_XFLAG_VERITY handling so that you can't clear it via
+FS_IOC_FSSETXATTR.
+
+I also rewrote and augmented the "drop dead merkle tree" functions in
+xfs_verity to clean out incomplete trees when ->end_enable tells us we
+failed; and to clean out extra blocks in the ->begin_enable just in case
+the file shrank since a failed attempt to enable fsverity.
+
+As for online repair, the "fsverity: expose merkle tree geometry to
+callers" enables the kernel to do some basic online checking that there
+aren't excessive merkle tree blocks and that fsverity can read the
+descriptor.  In my djwong-wtf tree, xfs_scrub gains the ability to read
+the entire file into the pagecache (and hence validate the verity info)
+via MADV_POPULATE READ, and now it has a patch to read the entire merkle
+tree/descriptor/signature just to make sure those can actually be read.
+
+Most of the things you gave feedback about in "fsverity: support
+block-based Merkle tree caching" I think I cleaned up in "fsverity: fix
+"support block-based Merkle tree caching"" and "fsverity: rely on cached
+block callers to retain verified state".  I kept those separate so that
+Andrey could see what I did, though they really ought to be merged into
+the main support patch.
+
+Note that I greatly expanded the usage of struct fsverity_blockbuf and
+changed the verified flag handling so that the invalidation function was
+no longer necessary.
+
+--D
+
+> - Eric
 
