@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-14819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC788800E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 16:43:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13D68800EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 16:45:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDDC61F218CF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 15:43:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7E69B21D38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 15:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71DB657CC;
-	Tue, 19 Mar 2024 15:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24DC657D2;
+	Tue, 19 Mar 2024 15:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="csn78fzB"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E+ow/cwt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD61081AC2;
-	Tue, 19 Mar 2024 15:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033BC2E400;
+	Tue, 19 Mar 2024 15:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710863007; cv=none; b=JrpyF6gMvIf43fFRdhnUJuMibXS64df21Ws7V5RZb2P0nikV6CNizOAkkjRLq9uBbWc2BC84WZ92whQFs3b/qzYpMWXCS0m+g8xMtsV88i9ojm9iZVajSk1Q7gfSVPTfQiTJargLS3rjkEb/dpkduNmKDJdw2yQ2I/HIcztNqh0=
+	t=1710863092; cv=none; b=lujnrtt5AcHBJfmeAmVAwMNn7AAFZltPwhE2m+OkjECdFgLTXuqL+pNY4CCQD46IT0cEQF26mxc8TGpK8DRES7lqI/eEhD9BnFp8EQ8KcYW+keeafMn8pvaHkFZMCSrT5suoX6z0yah/Jr+tXtYtUrV5n9jBKnFd91PWfUn3V7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710863007; c=relaxed/simple;
-	bh=mKl+KknZfH00zqLtAK5vBmrNkwKBmkUtDal8f4RF87E=;
+	s=arc-20240116; t=1710863092; c=relaxed/simple;
+	bh=1+/B8Un/cn9W3oC1K+Qer3zRsiVXWK25MTlnqh3cJ2Q=;
 	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=mGVYTPv383IHQRju+4FzvrZu8wrCP+vFHf0RIo9MCNALmMEaSlJBC0HiKrmHg6GW6x5SK3xWYeH90zcTXyrSn3VlJNBxuhAZkANEsWHpXl7AO1OCPJiujQgzn7wN2/Pg97w8YkM3bT0FrRYAgv1nN0ebABeg1Mti4NAS+poiObk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=csn78fzB; arc=none smtp.client-ip=210.118.77.11
+	 Content-Disposition:In-Reply-To:References; b=qJD7ODegpwJzlIJlH/ywiQoJEAklmQboxIV2TtNr0Mq8CGBGu+KoASNoMceYfEqMlmMydy3+Qd3w34qXQuTc1qwN6Ci1/jTMpLto3IYhOHu9tGbd0S7sibgtfr3hACZafBgbK9bXWQRbpSwN2AqXotkqv20wqa/OAbfSpYkFTM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=E+ow/cwt; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240319154316euoutp01038718aeea66d1ecbabb2a604adb9afd~_NNS3hRSf1009310093euoutp015;
-	Tue, 19 Mar 2024 15:43:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240319154316euoutp01038718aeea66d1ecbabb2a604adb9afd~_NNS3hRSf1009310093euoutp015
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240319154448euoutp02fc1abb2b1e28a1f2922f59092e0d9a6a~_NOoDgQVl0279302793euoutp02c;
+	Tue, 19 Mar 2024 15:44:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240319154448euoutp02fc1abb2b1e28a1f2922f59092e0d9a6a~_NOoDgQVl0279302793euoutp02c
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1710862996;
-	bh=AS6iYt5Z3OUVSOXuK7Jk0QEzzPsK1Am2oZk5Lkk21io=;
+	s=mail20170921; t=1710863088;
+	bh=QAJxnVSdhCOYOBKuvvvp87CCwedHp7UufWZtCssqJPQ=;
 	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=csn78fzBk6InC2XSHK1DisaRp80+luW2GYs7C3K9UhSIeQH1gKDGTV7Hz8VeI2giv
-	 cy0TZl78mvv6ZgEnd+9pfDO/0EZJgA6ztr8Rkj/R5wE8oCoIOotssXCFj2YuFp5Ghk
-	 98d8jF5bUh6djxphySp9V7Yx2hOot7BpYHujE+MQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	b=E+ow/cwthTCixP+MfH4WTT9TOuyFtJwJRcgFb/aVhAVWULfFn4dzo15yqnpWHrnfr
+	 yhUQtFBchEAojFLWSBbSZG4fxKk097ie0NUNr2w0Bs05QBIgtzg9SR3NRHtV1tdi/6
+	 NKA7cl2C3/pAk0PGu54NcfNaMvSCfBA9y6Nveqxg=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240319154316eucas1p280faeada383fcdd6678ac05a30eef6d0~_NNSrI9gL0631106311eucas1p2B;
-	Tue, 19 Mar 2024 15:43:16 +0000 (GMT)
+	20240319154447eucas1p2cbe94008acb27d760657de7c63b1603f~_NOn4FpcO2761227612eucas1p2X;
+	Tue, 19 Mar 2024 15:44:47 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id C9.0A.09814.492B9F56; Tue, 19
-	Mar 2024 15:43:16 +0000 (GMT)
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id C4.5C.09552.FE2B9F56; Tue, 19
+	Mar 2024 15:44:47 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240319154316eucas1p1e84e6f0657516d620f2b50ff06d1b8c4~_NNSR86HQ1679816798eucas1p1T;
-	Tue, 19 Mar 2024 15:43:16 +0000 (GMT)
+	20240319154447eucas1p196eb8c607f40cb1a12b66a3909202dfe~_NOnYElPL1694716947eucas1p1K;
+	Tue, 19 Mar 2024 15:44:47 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
 	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240319154316eusmtrp247465fb0aa3b2d17317cbdd288b8ed6b~_NNSRXutL1693316933eusmtrp27;
-	Tue, 19 Mar 2024 15:43:16 +0000 (GMT)
-X-AuditID: cbfec7f4-711ff70000002656-1e-65f9b294f2ad
+	20240319154447eusmtrp253e12c255cc7fefa394253448fc4d227~_NOnXgo3t1754317543eusmtrp2N;
+	Tue, 19 Mar 2024 15:44:47 +0000 (GMT)
+X-AuditID: cbfec7f5-853ff70000002550-8f-65f9b2efd3f9
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id DC.1F.10702.392B9F56; Tue, 19
-	Mar 2024 15:43:15 +0000 (GMT)
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id C6.5F.10702.FE2B9F56; Tue, 19
+	Mar 2024 15:44:47 +0000 (GMT)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
 	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240319154315eusmtip1a931f69e6cfa9556f8c8fe870acda115~_NNSHOvM12723827238eusmtip1V;
-	Tue, 19 Mar 2024 15:43:15 +0000 (GMT)
+	20240319154447eusmtip1f0cfe96b51675879190ab08d7374f8e3~_NOnIYle33135931359eusmtip1e;
+	Tue, 19 Mar 2024 15:44:47 +0000 (GMT)
 Received: from localhost (106.210.248.248) by CAMSVWEXC02.scsc.local
 	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 19 Mar 2024 15:43:14 +0000
-Date: Tue, 19 Mar 2024 16:43:12 +0100
+	Tue, 19 Mar 2024 15:44:46 +0000
+Date: Tue, 19 Mar 2024 16:44:44 +0100
 From: Joel Granados <j.granados@samsung.com>
 To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
 CC: "Eric W. Biederman" <ebiederm@xmission.com>, Luis Chamberlain
 	<mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
 	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] sysctl: move sysctl type to ctl_table_header
-Message-ID: <20240319154312.amfmomddvjyqh5yc@joelS2.panther.com>
+Subject: Re: [PATCH 1/4] sysctl: drop sysctl_is_perm_empty_ctl_table
+Message-ID: <20240319154444.gjdg33aa6px7kmkc@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,167 +83,106 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="6v64fw4r57zc557r"
+	protocol="application/pgp-signature"; boundary="rhjcpktngvcxuw73"
 Content-Disposition: inline
-In-Reply-To: <20240222-sysctl-empty-dir-v1-2-45ba9a6352e8@weissschuh.net>
+In-Reply-To: <20240222-sysctl-empty-dir-v1-1-45ba9a6352e8@weissschuh.net>
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
 	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOKsWRmVeSWpSXmKPExsWy7djP87pTNv1MNfj2RMTi/7YWdosz3bkW
-	e/aeZLG4vGsOm8XvH8+YLG5MeMrowOYxu+Eii8emVZ1sHp83yXn0dx9j95hyqJ0lgDWKyyYl
-	NSezLLVI3y6BK6Nl4zLGgoWaFVc+zWJuYHyq2MXIySEhYCKx6eUMti5GLg4hgRWMErc7njGC
-	JIQEvjBKLHkhCpH4zChx9k47K0zH5LvdrBCJ5YwSJx5/ZYarunV/BhOEs5VRomvGLTaQFhYB
-	VYlVzbuYQGw2AR2J82/uMIPYIgI2Eiu/fWYHaWAW2MsoMevFfCCHg0NYwFVi/eJ6kBpeAQeJ
-	q1v+sUPYghInZz5hAbGZBSokjr/bzAxSziwgLbH8HweIySngKdH4hhfiUGWJ6/sWs0HYtRKn
-	ttwCO01CYDKnxJSbW5ggEi4SvbP/MkLYwhKvjm9hh7BlJP7vnA/TwCix/98HdghnNaPEssav
-	UN3WEi1XnkB1OEpc/biJCeQKCQE+iRtvBSHu5JOYtG06M0SYV6KjTQiiWk1i9b03LBMYlWch
-	+WwWks9mIXwGEdaTuDF1ChuGsLbEsoWvmSFsW4l1696zLGBkX8UonlpanJueWmyUl1quV5yY
-	W1yal66XnJ+7iRGYvk7/O/5lB+PyVx/1DjEycTAeYlQBan60YfUFRimWvPy8VCURXnbun6lC
-	vCmJlVWpRfnxRaU5qcWHGKU5WJTEeVVT5FOFBNITS1KzU1MLUotgskwcnFINTKVfgzgEVjH9
-	sErbGznp5IUZ71Y6cT7M3/Zix+bVN14bOOc5f4i1OD8ll+3fVce5XXa87tyvUsT2/Gk4ZLAs
-	JPtUwJrcp/UuRedzryRYL9O7//Wn9sxjKxv1v2j+3dmYp52ziuH68VUbDM5wy90uufhmzxFZ
-	Y47EizFrNQwL9iosmmoRxJrUn3CJi1M2e64cT3pWQAH/3aVBr3dmL7v8bmNgT0N2xfOiKypC
-	vcvl/P8ZrulaJ9TjXeSsGGCUXPt1Imfj9t1qvYfqfS1K/u99x7N08/wHl2rvMMezWF1wnTrz
-	7yb75MmKW5z3qWlNe/0o7Mnm1te35qTPn/M0XqZS/lBckn7Ie47WFdybZf4rcSmxFGckGmox
-	FxUnAgDwI79W2gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xu7qTN/1MNZi9z8ri/7YWdosz3bkW
+X-Brightmail-Tracker: H4sIAAAAAAAAA2WSa0xSYRjH98LhnANFHYnmozYtvHQnnV3Y8tIFi6gPtbV1W8tTnswloCDd
+	3WyZltZySTMps8tKk80pKV0wKNoktallM3Nmd2uaUZEV1SzwaLX17fe8z/N73+e/vSRX5OQF
+	kinqDEarplMluACz1HtaZrrMHiby0+0o2S9LNiG7l6+S1d1swGRtN07jsh/fejiyjoLXaAGu
+	OJV1H1OYKw7jCrc5WHEsv55QGBy52EreekFMEpOasoPRzopLFGwbcJaitHr/XdYXZ7EsVCvO
+	Q3wSqNlgvFqI5yEBKaLKEfzs6eWwxWcEz+vsPLZwI+hxd/FGlO8NBRjbKEOQtf8A8Weq5Nb5
+	4U4tgpayIsKnYFQ42A82Ix/j1AxoedfF9bGYioHLX9xDNpe6icD4tnRIGEfJwdp5FfexkFoA
+	1u6vGMt+0FD8ysukV9gFFtsGFoOgbJD0TfCpZfCy6QiH3TQUHtku4CxnQmNN51A2oAr50Pvw
+	/HBDDp7X9uFo46DXWUOwPAF+XS8dERDYBz8QbGFCcGn/wPAT8yH74SvCtwVQC8F4KpXFMdDR
+	7+eb4HrxuKWIyx4L4VCOiBUjwNT9DitAocZ/ghn/BjP+DWYcukcKHScM+H/H0+HSuT4uy7FQ
+	WenCziKiAvkzep0qmdFFq5mdUh2t0unVydItGpUZef9X06Bz4Boq7/0odSAOiRwozCu/qDK1
+	okBMrVEzErGQGOVhRMIkevceRqvZpNWnMjoHCiIxib8wPCmEEVHJdAaznWHSGO1Il0PyA7M4
+	4vK+VWUBNZnXUrYqhZq8xlu5aWvFT+gYx9Oj3d/z96jT9WsfH5Y8SEhULgncPLW8sn+Doan7
+	dkZkgqF/TMxmmyciY/rCnOb46vix5sh2/YrCp2fsUVNsyhJreljO1OBG4Fcr5yRGzVZKeQGZ
+	kuj+dtg4/vHKOJsoNDfoeDLfVKV1DbQLI1zLnPIwpdUwrVXgV5hYnV40q3Ze7OS70L5lVAjX
+	JL88WmRYU1cckC3szJz0fHWDarE7XNMXCzPe7wvBPG3P9F3xV06uppcGTVxX4djeVkO2PMvf
+	t9djiV+xNLqEXqyMvWjzd557Iv+2qMdSV8WBO5riCtemI28WzV0uwXTb6KhpXK2O/g0AhGt0
+	2gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsVy+t/xu7rvN/1MNZi0WMji/7YWdosz3bkW
 	e/aeZLG4vGsOm8XvH8+YLG5MeMrowOYxu+Eii8emVZ1sHp83yXn0dx9j95hyqJ0lgDVKz6Yo
-	v7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL2P+gyWMBfM1
-	K37MWs/awPhYsYuRk0NCwERi8t1u1i5GLg4hgaWMEqtmvGSESMhIbPxylRXCFpb4c62LDcQW
-	EvjIKHF0VxFEw1ZGiVm/PjOBJFgEVCVWNe8Cs9kEdCTOv7nDDGKLCNhIrPz2mR2kgVlgL1DD
-	i/lADgeHsICrxPrF9SA1vAIOEle3/GOHGHqbUWLdu2YmiISgxMmZT1hAbGaBMontB9cxgfQy
-	C0hLLP/HAWJyCnhKNL7hhbhTWeL6vsVsEHatxOe/zxgnMArPQjJoFpJBsxAGQYR1JHZuvcOG
-	IawtsWzha2YI21Zi3br3LAsY2VcxiqSWFuem5xYb6RUn5haX5qXrJefnbmIExvC2Yz+37GBc
-	+eqj3iFGJg7GQ4wqQJ2PNqy+wCjFkpefl6okwsvO/TNViDclsbIqtSg/vqg0J7X4EKMpMBAn
-	MkuJJucDk0teSbyhmYGpoYmZpYGppZmxkjivZ0FHopBAemJJanZqakFqEUwfEwenVAMT59ec
-	i+4nJ63zCtiUEP1UM+4l45OOndLZyv0b+5gWZOwRuVXXyhHTwCz/T7SvaOe97813kh7Yiy2y
-	tRFS/f+wyDFM39VlUh/L358Ldp2JjPvuJKmudnLndXdN1yKOgkq3+DyOlw/LAxq2c3sK31A/
-	sqFpcsXPdNtLQc8t2+0/zvZ+GWi/+u/tu7NTwwWOJGlmfFj0M/bte4v0Ch7xJ6ls7C/ehhzw
-	l/lqvls6w4Vxhrai5K2U4vjUGQcnKYmemuy3TuflfutrZaXu/rfU9Zd1Z/cVHT6+ZMHHj1lz
-	Hj9yF1XPf/tKYNq3kq0PVsRytaQ35t/5a7T5eMe2zDbxhk9MZUfmFvfv7lEISJAJP6/EUpyR
-	aKjFXFScCABrDvn9dgMAAA==
-X-CMS-MailID: 20240319154316eucas1p1e84e6f0657516d620f2b50ff06d1b8c4
+	v7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL2PH2zPsBUfE
+	K+7v2svewLhZpIuRk0NCwETi18kJLF2MXBxCAksZJdbM/8ICkZCR2PjlKiuELSzx51oXG0TR
+	R0aJm5M3MUI4WxklLraeButgEVCV2N96jhHEZhPQkTj/5g4ziC0iYCOx8ttndpAGZoG9jBKz
+	XsxnB0kIC7hI7L61nQ3E5hVwkNh97zvUHbcZJbZvfgGVEJQ4OfMJ2AZmgTKJG52fgDZwANnS
+	Esv/cYCEOQU8JR6f7mGCOFVZ4vq+xWwQdq3E57/PGCcwCs9CMmkWkkmzECZBhHUkdm69w4Yh
+	rC2xbOFrZgjbVmLduvcsCxjZVzGKpJYW56bnFhvpFSfmFpfmpesl5+duYgRG8rZjP7fsYFz5
+	6qPeIUYmDsZDjCpAnY82rL7AKMWSl5+XqiTCy879M1WINyWxsiq1KD++qDQntfgQoykwGCcy
+	S4km5wNTTF5JvKGZgamhiZmlgamlmbGSOK9nQUeikEB6YklqdmpqQWoRTB8TB6dUA9Payg1r
+	3v9n46rVTp7izVDSxSbKuE33851b+5hZJ2k3q317vsCHOa8orOfowhtTPlRu/2v6yN/H/9C3
+	W4umJMZsjzb6/SBqlckmlSVFGunrFUwv5s/QPs7qtU+Ge55n463E5N29lg7GS/KV9ppOkTzt
+	YdYi5DAzOnnSi/NLOndufMWzf2OqasXsN1ZXTkbMO+o7y1A2lz1uAvfJedKbeI5dEgjIauTe
+	ufWAC0f9eoO/axdIr/OcteDiy4ajZecM5Hn8LnbtfX81PqFA0EGwYsvabdq/C61erpN4svXK
+	8XVzCltipDJufWUreWvjULwkvWjixz2zf1myhS0qsl29zsWqaeLc+TdjH4hEi994td5WiaU4
+	I9FQi7moOBEAJ9TR5XkDAAA=
+X-CMS-MailID: 20240319154447eucas1p196eb8c607f40cb1a12b66a3909202dfe
 X-Msg-Generator: CA
-X-RootMTR: 20240222070824eucas1p1e0a6b38607370cf7b1cca4d07de474f2
+X-RootMTR: 20240222070825eucas1p2dc50c8ef29cae3e43bee012773a19824
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20240222070824eucas1p1e0a6b38607370cf7b1cca4d07de474f2
+X-CMS-RootMailID: 20240222070825eucas1p2dc50c8ef29cae3e43bee012773a19824
 References: <20240222-sysctl-empty-dir-v1-0-45ba9a6352e8@weissschuh.net>
-	<CGME20240222070824eucas1p1e0a6b38607370cf7b1cca4d07de474f2@eucas1p1.samsung.com>
-	<20240222-sysctl-empty-dir-v1-2-45ba9a6352e8@weissschuh.net>
+	<CGME20240222070825eucas1p2dc50c8ef29cae3e43bee012773a19824@eucas1p2.samsung.com>
+	<20240222-sysctl-empty-dir-v1-1-45ba9a6352e8@weissschuh.net>
 
---6v64fw4r57zc557r
+--rhjcpktngvcxuw73
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 22, 2024 at 08:07:37AM +0100, Thomas Wei=DFschuh wrote:
-> As static initialization of the is not possible anymore move it into
-> init_header() where all the other header fields are also initialized.
-Please say what was done. Something like: "Moved the
-SYSCTL_TABLE_TYPE_{DEFAULT,PERMANENTLY_EMPTY} enumerations from
-ctl_table to ctl_table_header."
-
-And the then you can mention the why: "Removing the mutable memeber from
-ctl_table opens the ...."
-
->=20
-> Reduce memory consumption as there are less instances of
-> ctl_table_header than ctl_table.
-This is indeed true, but the main reasoning behind this is
-constification. Right? If you want to leave this comment, I would
-suggest you add something that talks about the amount of bytes saved.
-Something like : "Reduce memory consumption by sizeof(int) for every
-ctl_table entry in ctl_table_header". Or something similar.
-
->=20
-> Removing this mutable member also opens the way to constify static
-> instances of ctl_table.
+On Thu, Feb 22, 2024 at 08:07:36AM +0100, Thomas Wei=DFschuh wrote:
+> It is used only twice and those callers are simpler with
+> sysctl_is_perm_empty_ctl_header().
+> So use this sibling function.
+Can you please add a comment relating this to the constification effort.
 >=20
 > Signed-off-by: Thomas Wei=DFschuh <linux@weissschuh.net>
 > ---
->  fs/proc/proc_sysctl.c  | 10 ++++++----
->  include/linux/sysctl.h | 22 +++++++++++-----------
->  2 files changed, 17 insertions(+), 15 deletions(-)
+>  fs/proc/proc_sysctl.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 >=20
 > diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 2f4d4329d83d..fde7a2f773f0 100644
+> index 37cde0efee57..2f4d4329d83d 100644
 > --- a/fs/proc/proc_sysctl.c
 > +++ b/fs/proc/proc_sysctl.c
-> @@ -31,7 +31,7 @@ static const struct inode_operations proc_sys_dir_opera=
-tions;
-> =20
->  /* Support for permanently empty directories */
->  static struct ctl_table sysctl_mount_point[] =3D {
-> -	{.type =3D SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY }
-> +	{ }
->  };
-> =20
->  /**
-> @@ -49,11 +49,11 @@ struct ctl_table_header *register_sysctl_mount_point(=
-const char *path)
+> @@ -48,10 +48,8 @@ struct ctl_table_header *register_sysctl_mount_point(c=
+onst char *path)
+>  }
 >  EXPORT_SYMBOL(register_sysctl_mount_point);
 > =20
+> -#define sysctl_is_perm_empty_ctl_table(tptr)		\
+> -	(tptr[0].type =3D=3D SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY)
 >  #define sysctl_is_perm_empty_ctl_header(hptr)		\
-> -	(hptr->ctl_table[0].type =3D=3D SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY)
-> +	(hptr->type =3D=3D SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY)
+> -	(sysctl_is_perm_empty_ctl_table(hptr->ctl_table))
+> +	(hptr->ctl_table[0].type =3D=3D SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY)
 >  #define sysctl_set_perm_empty_ctl_header(hptr)		\
-> -	(hptr->ctl_table[0].type =3D SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY)
-> +	(hptr->type =3D SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY)
+>  	(hptr->ctl_table[0].type =3D SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY)
 >  #define sysctl_clear_perm_empty_ctl_header(hptr)	\
-> -	(hptr->ctl_table[0].type =3D SYSCTL_TABLE_TYPE_DEFAULT)
-> +	(hptr->type =3D SYSCTL_TABLE_TYPE_DEFAULT)
+> @@ -233,7 +231,7 @@ static int insert_header(struct ctl_dir *dir, struct =
+ctl_table_header *header)
 > =20
->  void proc_sys_poll_notify(struct ctl_table_poll *poll)
->  {
-> @@ -208,6 +208,8 @@ static void init_header(struct ctl_table_header *head,
->  			node++;
->  		}
->  	}
-> +	if (table =3D=3D sysctl_mount_point)
-> +		sysctl_set_perm_empty_ctl_header(head);
->  }
+>  	/* Am I creating a permanently empty directory? */
+>  	if (header->ctl_table_size > 0 &&
+> -	    sysctl_is_perm_empty_ctl_table(header->ctl_table)) {
+> +	    sysctl_is_perm_empty_ctl_header(header)) {
+>  		if (!RB_EMPTY_ROOT(&dir->root))
+>  			return -EINVAL;
+>  		sysctl_set_perm_empty_ctl_header(dir_h);
+> @@ -1204,7 +1202,7 @@ static bool get_links(struct ctl_dir *dir,
+>  	struct ctl_table *entry, *link;
 > =20
->  static void erase_header(struct ctl_table_header *head)
-> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-> index ee7d33b89e9e..c87f73c06cb9 100644
-> --- a/include/linux/sysctl.h
-> +++ b/include/linux/sysctl.h
-> @@ -137,17 +137,6 @@ struct ctl_table {
->  	void *data;
->  	int maxlen;
->  	umode_t mode;
-> -	/**
-> -	 * enum type - Enumeration to differentiate between ctl target types
-> -	 * @SYSCTL_TABLE_TYPE_DEFAULT: ctl target with no special considerations
-> -	 * @SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY: Used to identify a permanently
-> -	 *                                       empty directory target to serve
-> -	 *                                       as mount point.
-> -	 */
-> -	enum {
-> -		SYSCTL_TABLE_TYPE_DEFAULT,
-> -		SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY
-> -	} type;
->  	proc_handler *proc_handler;	/* Callback for text formatting */
->  	struct ctl_table_poll *poll;
->  	void *extra1;
-> @@ -188,6 +177,17 @@ struct ctl_table_header {
->  	struct ctl_dir *parent;
->  	struct ctl_node *node;
->  	struct hlist_head inodes; /* head for proc_inode->sysctl_inodes */
-> +	/**
-> +	 * enum type - Enumeration to differentiate between ctl target types
-> +	 * @SYSCTL_TABLE_TYPE_DEFAULT: ctl target with no special considerations
-> +	 * @SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY: Used to identify a permanently
-> +	 *                                       empty directory target to serve
-> +	 *                                       as mount point.
-> +	 */
-> +	enum {
-> +		SYSCTL_TABLE_TYPE_DEFAULT,
-> +		SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY,
-> +	} type;
->  };
+>  	if (header->ctl_table_size =3D=3D 0 ||
+> -	    sysctl_is_perm_empty_ctl_table(header->ctl_table))
+> +	    sysctl_is_perm_empty_ctl_header(header))
+>  		return true;
 > =20
->  struct ctl_dir {
+>  	/* Are there links available for every entry in table? */
 >=20
 > --=20
 > 2.43.2
@@ -253,23 +192,23 @@ const char *path)
 
 Joel Granados
 
---6v64fw4r57zc557r
+--rhjcpktngvcxuw73
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmX5so8ACgkQupfNUreW
-QU8aYAv/UprU+nc9BoDYqe8bRl+/aiJFFJI4z9YvG8q+qmQxbxNrAvEq8cn0Qo76
-qpjwbEvuYO+HbisUuzX7F6I/fu6zH3djnbNP6Q+NhZRRVxFWskzfH9IOCoemJfxD
-a47KEf3HbUy5sLVHsNmucJBgXRtH/mIx2Da8UFRn1BhW3TQgoguO0ZzgsyO7JQbL
-8ar2SKzCY8YzS5IgiuEOEBvEDM0bMaFq8R3Af9TizlXh95lOsncgq383khl4dNjg
-9xJUXW0Dv9gxrQVMb+Z2F7qLVSLEJIgVjI/m0dbY0mbWL/U8bY1mlggjrZ2RTja9
-CHTVQsrpuHmie4m3bWKDxs704qJcvKxR84jUE8ZakiwQYOJFjYKd+tyfC09k8ehm
-DJ1NCih93QK/ZWjuAF4l7hAiiUvB7+678F3Eufee3aZeHHHc+kRiiZ5wk4GnlBWY
-oNeYTPMH6LVI0bUJBly5d6l8tZ+SCYyUgwly7ZeGfD8B3Onve2PgcdqkKIHH7Bbk
-giNcBVa9
-=WYc3
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmX5suwACgkQupfNUreW
+QU911Qv/XUtVU47NJ2TAOrmjM/9rBCJk43tJ6uNgBE4JrVTXaXV3hyT/bGtEX99m
+H5hMHgKyJR2CRBqS8gaHKgYT53qEXsr8YBtF3xO3rtX/PtCXd4jwVO93wL6eQb8I
+BKufeqOY69mzB2omwA8JzWeHH8u2dEY/R95ZGSMFPQeG4ennAUWQG2wAaw+BFoph
+A2oJWZ7s6t1ue5/Suf75BeLY/40dOkGTXbvQ+slR41/dQMUvWYEx7Ho/WDcvDM7Y
+HB8UV7izm61UPpzEWUPjvJFAI0LnNB6CLAgCZFMuUJ9LIZdoLbU5zctyXTBthy//
+N5ku13pVSteJtI5clFwmnjALIVQ8zneS6s2BHB2VlYOlECJ9O/PmfBGZszB8AMA1
+zOu4UYzJsIJax7PdAWMG75ZZok+tebPhc+LFSRY/aOtUcAX/bVroZflhhZWApoKH
+zORCcxFq0E78tsw+cTSk4S2oFx3eM7q8L248Du0v8/zmMbTJ3ojL+c5euo++k+jN
+DJiNNVWR
+=70js
 -----END PGP SIGNATURE-----
 
---6v64fw4r57zc557r--
+--rhjcpktngvcxuw73--
 
