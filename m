@@ -1,148 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-14811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB2087FF63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 15:15:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C94D87FF91
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 15:26:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D49431F23935
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 14:15:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7D06B22A26
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 14:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B052881ABD;
-	Tue, 19 Mar 2024 14:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A45781AD9;
+	Tue, 19 Mar 2024 14:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TkfTjeZC"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="ZsdNFS5C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3EF81741
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 14:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC56381AB0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 14:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710857702; cv=none; b=fCebPB+nW9H2KXTLlmcuuKSt+SjAAILJFpOeauWLu5q+hFAtJB/6ygOLgIYEWXQ1FQn3Bs4uGjGc1Y7FACn9MAe5oAMXm13RR9kllgDHV5dwo8Cw5MbvcAW5AWD3zToqPuteHSZ43pe8q/gw8nSc4UxMhvAEAKfJk2Z5JVCa8lo=
+	t=1710858370; cv=none; b=UYQ10Xy36olJYD2Lsy5O7JpbFMPlsfGKlVEsH5jGUeODifhqqrnDGOgnDBnpU2QO84cHBIxuWRTIKtXfK4D1vAfuP9UnqNqEWidzwNCk6YIJeKbKTvWqKaYLDiRlexySZ+8Sp56AyHe3mYpNb6OGM17s2KGNgYlga6LsvBEFP+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710857702; c=relaxed/simple;
-	bh=xkAb1InU9RoZkNjiU+AcuFfqyRq8G3AqX8f6uQ9VC8Q=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=kshqnCtQVpEZuyBNDyNFES3JKux00kD/Ngw6phed8grvvpfk08z5gWgKJyG8QDWgkNEr5STv5JRccjZl6+uqLAhMFWYs9gEFJjj+oeKROGntqPxJnvXnD2Wl0hwdbcejl0qxWGD0wZHO00adoI7P9p+hfZK6c8rrINjUtBgK6ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TkfTjeZC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710857699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tO0V8aj/5qg/fr51DKNlXHyJU/GLErDbNftb0tj9j8Q=;
-	b=TkfTjeZCft50cIYUEhpwQGWSGr2vBI2tAwUd2VexjQuFOMmVwBn3oVuH0mGK7nOckK/0cE
-	HfM3Q+FHzO696SBjfOGKEYUqup4Tr5kZ09+xm+rfYjS7le0Z87VOSikH4j2h29sNAon/T0
-	H8qKZmztx4eg+uEgUCb7P5lOH22V9EY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-368--eOoKW_BP26pSFwrkb5TTQ-1; Tue, 19 Mar 2024 10:14:56 -0400
-X-MC-Unique: -eOoKW_BP26pSFwrkb5TTQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5463C101CF81;
-	Tue, 19 Mar 2024 14:14:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 58E25492BD0;
-	Tue, 19 Mar 2024 14:14:52 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegv8X0PY7PvxEF=zEwRbdZ7yZZcwB80iDO+XLverognx+g@mail.gmail.com>
-References: <CAJfpegv8X0PY7PvxEF=zEwRbdZ7yZZcwB80iDO+XLverognx+g@mail.gmail.com> <1668172.1709764777@warthog.procyon.org.uk> <ZelGX3vVlGfEZm8H@casper.infradead.org> <1831809.1709807788@warthog.procyon.org.uk>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-    Trond Myklebust <trond.myklebust@hammerspace.com>,
-    Christoph Hellwig <hch@lst.de>,
-    Andrew Morton <akpm@linux-foundation.org>,
-    Alexander Viro <viro@zeniv.linux.org.uk>,
-    Christian Brauner <brauner@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>, linux-mm@kvack.org,
-    linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: Replace ->launder_folio() with flush and wait
+	s=arc-20240116; t=1710858370; c=relaxed/simple;
+	bh=/ai7rsRCGQJwbmMN9+0MqsXjffyEnlQWeJfS3vA+etg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ByJRSQ2tnxFHy0vw7rhNLOL304KXnsU20PmL+fFR5Qs1mWZ1pgRMENFdACK6n4h3WuWoNQ/NU8GTZPFMWjJph1iKd5KCSx06E51uXe+5ESleSmYnDgUlM91zXM2To5yA6t9h9+CA8SQpm3zox3MKmsj5S31MdxAHMrzIecktEoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=ZsdNFS5C; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-430c03bfcf4so15050321cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 07:26:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1710858367; x=1711463167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ai7rsRCGQJwbmMN9+0MqsXjffyEnlQWeJfS3vA+etg=;
+        b=ZsdNFS5CLyanYiKD/6naRKyWF4Gbq8HpwvdVEw9eYRwZda4V7tEQGBWn/s/rEhB/D2
+         aEQOUclwi9HR0MWvHnH8A/qVKgak0BidZvvaHTm1tSnBi+6RWQX9HuMZ9pHaVfgNXY29
+         /NKJrUKNWPMdE5ii1+3913bG1SNGZ51Ezo1j0d71fmxhEMLo0YUMn6ogQM7QGe5UAzJy
+         qWrj9V8UapEswmU28CIJNmWdY8eModaKriQIx9MB6EEXgOGpbhp9bgtr77DQWa/xPhmU
+         mwcOYKvdlXZ8eMa0U6nRdvln4jaDxsaVwEyMcuuZk0LlLIkRsvukTMiS/gPrVUO1ewcE
+         Znfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710858367; x=1711463167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/ai7rsRCGQJwbmMN9+0MqsXjffyEnlQWeJfS3vA+etg=;
+        b=RVJvJqIhE9Hlp+Dtt+O0heSVS2eAgQhKOL/tDe6KE3jY6+2O6BicoUMln4O+rRu5Xm
+         D6QNSaSpAcVOBNXUb+wrJ+7xuwTG04TmHd8DBQo+KsDnBL5qK+31k3DZKkYeyWMcNeQ3
+         wblDn1YGF8Q1UfAzAdEyiyudE44vQAXOaVAhavuHB9Rw5yDLl8jtgYPKBbnoIt8I7kEN
+         3ozBB1o9aYKlnkUfRVVYMOaK15n/2/whArzUaZ9OCR9e41JVJX0Zm2YhqLrNYgTcGG9X
+         ZoWiXTXaqzm9E8VH8/BPiXA+ZgqDKUdtA4F21buoHwDmRWP95ulfX1kkc6Tri+RXGNfV
+         ii1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ0i4iMUYgPGgGX3D4fsK+iXHaeNVocY+xV1QRPuEsxfTutLytAkFiCNSjuLwZDqNNKrFymqrNfNkDfGYLBX4CDd8Lghr7rnWuDijT6A==
+X-Gm-Message-State: AOJu0YyzO6Sr4NjOYaZrLL/vRdDQ+OPL5X4KlSSoVt0hyNoLlQ31JHxR
+	xD5E11MomsaHI2LOmtGLF4Yb9JEYi12tBBICEtHei2bS7ylN4alfYeiBxqcirYcB0PaeS1VbV8I
+	rEh0JjdsSr6TNPw/IRN0usvwA6deju4b5+R6Gag==
+X-Google-Smtp-Source: AGHT+IFo9PiCBqdDBB0vvJuRxgnxergt1C9KVhjkk/hjChR3zfOYA2+Oj1/6ln63mQWAtnarjsG0RvDWTC/dvSg3Wa4=
+X-Received: by 2002:a05:622a:1991:b0:430:ef64:8637 with SMTP id
+ u17-20020a05622a199100b00430ef648637mr1164760qtc.15.1710858367665; Tue, 19
+ Mar 2024 07:26:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <651178.1710857687.1@warthog.procyon.org.uk>
-Date: Tue, 19 Mar 2024 14:14:47 +0000
-Message-ID: <651179.1710857687@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+References: <20240220214558.3377482-1-souravpanda@google.com>
+ <20240220214558.3377482-2-souravpanda@google.com> <CA+CK2bAM4Xe7BT3TFZT-+3qQTFGgkYBiYY=oVkdqMN8gyJg_0g@mail.gmail.com>
+In-Reply-To: <CA+CK2bAM4Xe7BT3TFZT-+3qQTFGgkYBiYY=oVkdqMN8gyJg_0g@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 19 Mar 2024 10:25:30 -0400
+Message-ID: <CA+CK2bCwi0yU_jX8qKCBMUnTeqoDYc65z7GKd5uEKcpkPAn4MA@mail.gmail.com>
+Subject: Re: [PATCH v9 1/1] mm: report per-page metadata information
+To: akpm@linux-foundation.org
+Cc: Sourav Panda <souravpanda@google.com>, corbet@lwn.net, gregkh@linuxfoundation.org, 
+	rafael@kernel.org, mike.kravetz@oracle.com, muchun.song@linux.dev, 
+	rppt@kernel.org, david@redhat.com, rdunlap@infradead.org, 
+	chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com, 
+	bhelgaas@google.com, ivan@cloudflare.com, yosryahmed@google.com, 
+	hannes@cmpxchg.org, shakeelb@google.com, kirill.shutemov@linux.intel.com, 
+	wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz, 
+	Liam.Howlett@oracle.com, surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, weixugc@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Wed, Mar 13, 2024 at 6:40=E2=80=AFPM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
+>
+> On Tue, Feb 20, 2024 at 4:46=E2=80=AFPM Sourav Panda <souravpanda@google.=
+com> wrote:
+> >
+> > Adds two new per-node fields, namely nr_memmap and nr_memmap_boot,
+> > to /sys/devices/system/node/nodeN/vmstat and a global Memmap field
+> > to /proc/meminfo. This information can be used by users to see how
+> > much memory is being used by per-page metadata, which can vary
+> > depending on build configuration, machine architecture, and system
+> > use.
+> >
+> > Per-page metadata is the amount of memory that Linux needs in order to
+> > manage memory at the page granularity. The majority of such memory is
+> > used by "struct page" and "page_ext" data structures. In contrast to
+> > most other memory consumption statistics, per-page metadata might not
+> > be included in MemTotal. For example, MemTotal does not include membloc=
+k
+> > allocations but includes buddy allocations. In this patch, exported
+> > field nr_memmap in /sys/devices/system/node/nodeN/vmstat would
+> > exclusively track buddy allocations while nr_memmap_boot would
+> > exclusively track memblock allocations. Furthermore, Memmap in
+> > /proc/meminfo would exclusively track buddy allocations allowing it to
+> > be compared against MemTotal.
+> >
+> > This memory depends on build configurations, machine architectures, and
+> > the way system is used:
+> >
+> > Build configuration may include extra fields into "struct page",
+> > and enable / disable "page_ext"
+> > Machine architecture defines base page sizes. For example 4K x86,
+> > 8K SPARC, 64K ARM64 (optionally), etc. The per-page metadata
+> > overhead is smaller on machines with larger page sizes.
+> > System use can change per-page overhead by using vmemmap
+> > optimizations with hugetlb pages, and emulated pmem devdax pages.
+> > Also, boot parameters can determine whether page_ext is needed
+> > to be allocated. This memory can be part of MemTotal or be outside
+> > MemTotal depending on whether the memory was hot-plugged, booted with,
+> > or hugetlb memory was returned back to the system.
+> >
+> > Utility for userspace:
+> >
+> > Application Optimization: Depending on the kernel version and command
+> > line options, the kernel would relinquish a different number of pages
+> > (that contain struct pages) when a hugetlb page is reserved (e.g., 0, 6
+> > or 7 for a 2MB hugepage). The userspace application would want to know
+> > the exact savings achieved through page metadata deallocation without
+> > dealing with the intricacies of the kernel.
+> >
+> > Observability: Struct page overhead can only be calculated on-paper at
+> > boot time (e.g., 1.5% machine capacity). Beyond boot once hugepages are
+> > reserved or memory is hotplugged, the computation becomes complex.
+> > Per-page metrics will help explain part of the system memory overhead,
+> > which shall help guide memory optimizations and memory cgroup sizing.
+> >
+> > Debugging: Tracking the changes or absolute value in struct pages can
+> > help detect anomalies as they can be correlated with other metrics in
+> > the machine (e.g., memtotal, number of huge pages, etc).
+> >
+> > page_ext overheads: Some kernel features such as page_owner
+> > page_table_check that use page_ext can be optionally enabled via kernel
+> > parameters. Having the total per-page metadata information helps users
+> > precisely measure impact.
 
-> >  (2) invalidate_inode_pages2() is used in some places to effect
-> >      invalidation of the pagecache in the case where the server tells us
-> >      that a third party modified the server copy of a file.  What the
-> >      right behaviour should be here, I'm not sure, but at the moment, any
-> >      dirty data will get laundered back to the server.  Possibly it should
-> >      be simply invalidated locally or the user asked how they want to
-> >      handle the divergence.
-> 
-> Skipping ->launder_page will mean there's a window where the data
-> *will* be lost, AFAICS.
-> 
-> Of course concurrent cached writes on different hosts against the same
-> region (the size of which depends on how the caching is done) will
-> conflict.
+Hi Andrew,
 
-Indeed.  Depending on when you're using invalidate_inode_pages2() and co. and
-what circumstances you're using it for, you *are* going to suffer data loss.
+Can you please give this patch another look, does it require more
+reviews before you can take it in?
 
-For instance, if you have dirty data on the local host and get an invalidation
-notification from the server: if you write just your dirty data back, you may
-corrupt the file on the server, losing the third party changes; if you write
-back your entire copy of the file, you might avoid corrupting the file, but
-completely obliterate the third party changes; if you discard your changes,
-you lose those instead, but save the third party changes.
-
-I'm working towards supporting disconnected operation where I'll need to add
-some sort of user interaction mechanism that will allow the user to say how
-they want to handle this.
-
-> But if concurrent writes are to different regions, then they shouldn't
-> be lost, no?  Without the current ->launder_page thing I don't see how
-> that could be guaranteed.
-
-Define "different regions".  If they're not on the same folios, then why would
-they be lost by simply flushing the data before doing the invalidation?  If
-they are on different parts of the same folio, all the above still apply when
-you flush the whole folio.
-
-Now, you can mitigate the latter case by keeping track of which bytes changed,
-but that still allows you to corrupt the file by writing back just your
-particular changes.
-
-And then there's the joker in the deck: mmap.  The main advantage of
-invalidate_inode_pages2() is that it forcibly unmaps the page before
-laundering it.  However, this doesn't prevent you then corrupting the upstream
-copy by writing the changes back.
-
-What particular usage case of invalidate_inode_pages2() are you thinking of?
-
-DIO read/write can only be best effort: flush, invalidate then do the DIO
-which may bring the buffers back in because they're mmapped.  In which case
-doing a flush and a non-laundering invalidate that leaves dirty pages in place
-ought to be fine.
-
-David
-
+Thank you,
+Pasha
 
