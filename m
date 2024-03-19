@@ -1,96 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-14810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914C987FC80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 12:03:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB2087FF63
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 15:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35211C2145F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 11:03:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D49431F23935
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 14:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7637E572;
-	Tue, 19 Mar 2024 11:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B052881ABD;
+	Tue, 19 Mar 2024 14:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TkfTjeZC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC2A2C857
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 11:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3EF81741
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 14:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710846185; cv=none; b=nJJ2B7IlMsRuK+xN0PO2S5uqj5mjD3QjVHIvdRb4g5CgWqB3ZTq/CcqMWPBaJGv/0DKOHwRStSiCuIzrbAF7Q1aAloRwICpFNplygR0XwtSImmAr0GDF48tJu+m1+mLtYASy8jPV6d03khPbAZEm7zLnXpO3A+AahpltAQ+1Epk=
+	t=1710857702; cv=none; b=fCebPB+nW9H2KXTLlmcuuKSt+SjAAILJFpOeauWLu5q+hFAtJB/6ygOLgIYEWXQ1FQn3Bs4uGjGc1Y7FACn9MAe5oAMXm13RR9kllgDHV5dwo8Cw5MbvcAW5AWD3zToqPuteHSZ43pe8q/gw8nSc4UxMhvAEAKfJk2Z5JVCa8lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710846185; c=relaxed/simple;
-	bh=slKjRaMkRRkHh/39qn7hwcXp2X2erWHCbqhQGdEu/ow=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sKVCXD2PqNeeepZVpO4iN959wVf6acDbkaatbkArvQ7lXSwsHg2emxBalXkyPM6ewC2patfwta+kUQEeB9Y62n1kyfwyurCszZU+gs9CahjG8pLw37lLewqc2eEaJNrZJduUxUsLJTZHGou8iV3O9hl+G3mhUIgsEn1J3q54v14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-366b97b571cso23768785ab.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 04:03:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710846183; x=1711450983;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NS31IZUVISj+9f5GH0XsvKxqqRb+tl8wJ9ZGlJagits=;
-        b=dxIp3sY48VUQp3rYZzfurA9O54M+771rAT3SlhI66HNXbatN5mIXXr+tMh54U86kGT
-         BNNMTrnDvroxGBoz7yz51QUt8QYtqw7Ed+IdFlx7rqgrisUEtPMudcwNFx5DeLZoCGNl
-         UfYZ4W6eesPPTNFCEQZd4jLSFZfxedxDr811sfXYUO0VC+O9jfaVLjMLwm4obeL3Gqx1
-         sU92KF7+b8bWLjIGU7RiQ7y7qXBE+8vV6tDWUCTMcK8uaoFPWZHMaK/4p5e5EviXTp+R
-         kCZ1I6X3K6XqlK6aTCbj0AgdhzgX83/KJpx07pKW8z66J+34msmqLyT6hMoWhvfnfj5m
-         NAhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVG875darUfjUBf0csfWhOI0PrWx/lovW0V4JqLrsO2fkl+RB+uZMaRkJTkxnmSe81M8Wbw1RRwZB1WOI1scpiU/FIJggBa+ovzBs0R5Q==
-X-Gm-Message-State: AOJu0YxISbpOjVHV1Ikz++SSQNlofvBZlQNDZgvy7MlATg5bpcvJ9RY2
-	D/WxOrfHCz6UHAP/EH9G/jpi4gSNuXTKYFmQzfcv7vA0MIL/8nyD0haFNUReNospYtR6CFpv4ze
-	K4fDUcplycIU0aQDhEq28jUYw8Ssh9fPTTDuzgu+WZcDFsoCfMpVtJ9o=
-X-Google-Smtp-Source: AGHT+IFiDK1WT/n8TCOKAH5CGiH/AJ5QTidJfxOX7D2n/lTfWZAch3GSOQ51Bj+zC4HRoLqpgpszLLuCibMY38T8UfSWzD9bvdOO
+	s=arc-20240116; t=1710857702; c=relaxed/simple;
+	bh=xkAb1InU9RoZkNjiU+AcuFfqyRq8G3AqX8f6uQ9VC8Q=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=kshqnCtQVpEZuyBNDyNFES3JKux00kD/Ngw6phed8grvvpfk08z5gWgKJyG8QDWgkNEr5STv5JRccjZl6+uqLAhMFWYs9gEFJjj+oeKROGntqPxJnvXnD2Wl0hwdbcejl0qxWGD0wZHO00adoI7P9p+hfZK6c8rrINjUtBgK6ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TkfTjeZC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1710857699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tO0V8aj/5qg/fr51DKNlXHyJU/GLErDbNftb0tj9j8Q=;
+	b=TkfTjeZCft50cIYUEhpwQGWSGr2vBI2tAwUd2VexjQuFOMmVwBn3oVuH0mGK7nOckK/0cE
+	HfM3Q+FHzO696SBjfOGKEYUqup4Tr5kZ09+xm+rfYjS7le0Z87VOSikH4j2h29sNAon/T0
+	H8qKZmztx4eg+uEgUCb7P5lOH22V9EY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-368--eOoKW_BP26pSFwrkb5TTQ-1; Tue, 19 Mar 2024 10:14:56 -0400
+X-MC-Unique: -eOoKW_BP26pSFwrkb5TTQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5463C101CF81;
+	Tue, 19 Mar 2024 14:14:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 58E25492BD0;
+	Tue, 19 Mar 2024 14:14:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegv8X0PY7PvxEF=zEwRbdZ7yZZcwB80iDO+XLverognx+g@mail.gmail.com>
+References: <CAJfpegv8X0PY7PvxEF=zEwRbdZ7yZZcwB80iDO+XLverognx+g@mail.gmail.com> <1668172.1709764777@warthog.procyon.org.uk> <ZelGX3vVlGfEZm8H@casper.infradead.org> <1831809.1709807788@warthog.procyon.org.uk>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    Christoph Hellwig <hch@lst.de>,
+    Andrew Morton <akpm@linux-foundation.org>,
+    Alexander Viro <viro@zeniv.linux.org.uk>,
+    Christian Brauner <brauner@kernel.org>,
+    Jeff Layton <jlayton@kernel.org>, linux-mm@kvack.org,
+    linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
+    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+    ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: Replace ->launder_folio() with flush and wait
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c02:b0:366:c200:a9fa with SMTP id
- l2-20020a056e021c0200b00366c200a9famr121313ilh.1.1710846183604; Tue, 19 Mar
- 2024 04:03:03 -0700 (PDT)
-Date: Tue, 19 Mar 2024 04:03:03 -0700
-In-Reply-To: <000000000000aefc5005f5df169b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000a1c180614016bc9@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: use-after-free Read in ntfs_attr_find (2)
-From: syzbot <syzbot+ef50f8eb00b54feb7ba2@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
-	brauner@kernel.org, david@fromorbit.com, ghandatmanas@gmail.com, 
-	linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com, 
-	willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <651178.1710857687.1@warthog.procyon.org.uk>
+Date: Tue, 19 Mar 2024 14:14:47 +0000
+Message-ID: <651179.1710857687@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-syzbot suspects this issue was fixed by commit:
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-commit 7ffa8f3d30236e0ab897c30bdb01224ff1fe1c89
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Mon Jan 15 07:20:25 2024 +0000
+> >  (2) invalidate_inode_pages2() is used in some places to effect
+> >      invalidation of the pagecache in the case where the server tells us
+> >      that a third party modified the server copy of a file.  What the
+> >      right behaviour should be here, I'm not sure, but at the moment, any
+> >      dirty data will get laundered back to the server.  Possibly it should
+> >      be simply invalidated locally or the user asked how they want to
+> >      handle the divergence.
+> 
+> Skipping ->launder_page will mean there's a window where the data
+> *will* be lost, AFAICS.
+> 
+> Of course concurrent cached writes on different hosts against the same
+> region (the size of which depends on how the caching is done) will
+> conflict.
 
-    fs: Remove NTFS classic
+Indeed.  Depending on when you're using invalidate_inode_pages2() and co. and
+what circumstances you're using it for, you *are* going to suffer data loss.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11fafac9180000
-start commit:   9d64bf433c53 Merge tag 'perf-tools-for-v6.8-1-2024-01-09' ..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7a6ff9d9d5d2dc4a
-dashboard link: https://syzkaller.appspot.com/bug?extid=ef50f8eb00b54feb7ba2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d79fbde80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14be4a73e80000
+For instance, if you have dirty data on the local host and get an invalidation
+notification from the server: if you write just your dirty data back, you may
+corrupt the file on the server, losing the third party changes; if you write
+back your entire copy of the file, you might avoid corrupting the file, but
+completely obliterate the third party changes; if you discard your changes,
+you lose those instead, but save the third party changes.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+I'm working towards supporting disconnected operation where I'll need to add
+some sort of user interaction mechanism that will allow the user to say how
+they want to handle this.
 
-#syz fix: fs: Remove NTFS classic
+> But if concurrent writes are to different regions, then they shouldn't
+> be lost, no?  Without the current ->launder_page thing I don't see how
+> that could be guaranteed.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Define "different regions".  If they're not on the same folios, then why would
+they be lost by simply flushing the data before doing the invalidation?  If
+they are on different parts of the same folio, all the above still apply when
+you flush the whole folio.
+
+Now, you can mitigate the latter case by keeping track of which bytes changed,
+but that still allows you to corrupt the file by writing back just your
+particular changes.
+
+And then there's the joker in the deck: mmap.  The main advantage of
+invalidate_inode_pages2() is that it forcibly unmaps the page before
+laundering it.  However, this doesn't prevent you then corrupting the upstream
+copy by writing the changes back.
+
+What particular usage case of invalidate_inode_pages2() are you thinking of?
+
+DIO read/write can only be best effort: flush, invalidate then do the DIO
+which may bring the buffers back in because they're mmapped.  In which case
+doing a flush and a non-laundering invalidate that leaves dirty pages in place
+ought to be fine.
+
+David
+
 
