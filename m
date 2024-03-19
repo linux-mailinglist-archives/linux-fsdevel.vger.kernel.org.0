@@ -1,91 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-14801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F28E87F744
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 07:26:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A87187F7DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 07:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAD151F225DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 06:26:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC4331C21935
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 06:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803997C081;
-	Tue, 19 Mar 2024 06:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7A650A97;
+	Tue, 19 Mar 2024 06:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGQmPCVi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AD75B1E3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 06:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C14D4438A;
+	Tue, 19 Mar 2024 06:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710829564; cv=none; b=RR0o/XODNZHy2sVKnvQEu8kkY/JVDvQ8INHYDd4s9e8Mg1S0RJE+rpgwigawd3qCK4SpC8kKBeGZt0ErJ9NwbtJG/2B49SCHj2XRLhUQcPI9iv+kGi4rPhuyCjbuBNf9iMxt5FFozyfnkBBBQQypI9k4CLvGd50i/9hznmzd6MI=
+	t=1710831492; cv=none; b=uuJ7g/Nq/wvra0AbeguJQSmDFPuqRtFmIIdhtJlNfT+iR8ZxQZWciJcdT84R1YO0b4WECc92z8GKfleLRQZ8NQ5TUyRuubN082gau/MHVRAWgI89ULBsnNmsmazXHTQzQMFRaJDZJblRPgiD8mBuaHhs9rcvoNsWY+kE8eoPI3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710829564; c=relaxed/simple;
-	bh=Vdnf5nY/czOnJuaGBtdc0SPAtrzeEIXDsmcxSs4q/hk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qR36gZrHF4Ft4QCNu6pTxhtc0jRDmgU3/M5qMlKyhhRLWUkqBNQ+BkL+8ff0vc/AnQAs0NPiRk3h3FYtjikebDiW+Fs3zqEykDpdIY/fYONzKR7SShveVb2W+K2lpVS6nvK1VtBn71gJ7WulM2AuXn2gQ/+pr2gkNdGdyJjydAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7c874fb29a3so364266639f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 23:26:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710829562; x=1711434362;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SGyIYPow4NlrefKnKPQPE6bAcLRxnsVwIJ5cTlLJan8=;
-        b=vfZLgx6HAX7tGpLh1A1lSPnk7yyafX2Su2l6DgI+WHU0OrsD6fh9U6oG+P7RCVi0Zv
-         teiKnQm17lL/pC6SfLjg5fZm9NRwCUYmcSbMx013i959ylQUXaCPEqRDcWzSDeW7hUrR
-         1iD5CUMfMW9LXR0IGCXA8yUWirv1nb3ygxyo2B2vBwYVr4TN5VAcJaIP/x48LEuMTiw5
-         ZT/TyVMz1lgwrSP16j8aY0s7Ysw0ZKuQzixC8xQgjuU6C0DWC2bpUIsWQKHhWAXN7RKI
-         05quC9ywK189XAx7OaU9jl6JKog093DEo4S5r3KHl1nOJmmQrOdRVG2PU61MwdGrGbij
-         qCYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuJjfVVIytLBOW4fXy7TfD2y+8Ld+fDuFa4qkFJHpdnqhMvCLpQX6yUBIkmiDAPDvQo5LFuNXxLgDyl+Db++60gYubF2dpH1I7hN79gg==
-X-Gm-Message-State: AOJu0YwGJcwh4Bgk17mHZqzc/cnc8PIYrkOUVx35QdSoefNDc7o2xfnM
-	NzmSAtPyrR1A1FsUOqa/esbU+OJ9uEZly/5BY7sK3OZGdi1SVjJb7Py62vF/DW2ROzM964JNFmv
-	Ef85jW7t7Tc/5X5Wj7kxN/6d9nacDgAAmga8koKCJTM98QuYk8KHE6Ng=
-X-Google-Smtp-Source: AGHT+IE2QD0gDlbEx3Hy3y/Bkl9ZHnqqTTwLra5wel1Aa+fBhvD4Qk670jJxAR1r48q58RoFOTHF+8ak7zpqJ97cuZoc/2yby5Dw
+	s=arc-20240116; t=1710831492; c=relaxed/simple;
+	bh=hmsk6AHRpVBb2U+cRbYLU+mLvD6WW/eHrcNrsOEF3RQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bwZ5zM0d22hWDFJFoRyuwQ0z7NsyIjnMr3cNctBL4FXrR6S3uoptDApuImcM59nxqmClPYZdQIufwikdT7EeXoQb2naWi1E7wXDmtvPSOQyB7esG1cRGi/tQAGvfbyLAL3kSVTYd3SbgQujCOEpLR+/Ua6JhnSxFqgc599VTEFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGQmPCVi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 787DDC433C7;
+	Tue, 19 Mar 2024 06:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710831492;
+	bh=hmsk6AHRpVBb2U+cRbYLU+mLvD6WW/eHrcNrsOEF3RQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CGQmPCVi2Ba2+IfTWlFC9SJV3UDzZREF11kMCEfOVNXjeArN9btlDZ0we1hrnCAXe
+	 WOgHiZ5IdH1RU7oVnom/oxDlTRyKUkyC6AeFHaE8z5dbdWybl0JAcoeBfEj+2vqHYP
+	 icQSdif6TiNcptenGQnMoEK1JTxrQmqI2Se1QlG154OUTCttKlk17DyNNxCIYZKLpG
+	 WGm3HKyNWS9uO2F1dpxNANwwS75QVuIK01Zi+iF2tW0MZdnVKHkX7XrSXQh/ene9bj
+	 ZetbujCiEDRS8fGnpwe85KaVik0VgRKK/XLcf+TeMCr6F9f4qXyRWmwGe4AECwKKy9
+	 lPsZmR9Mbh+mg==
+Date: Tue, 19 Mar 2024 07:58:07 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] vfs fixes
+Message-ID: <20240319-sobald-reagenzglas-d4c5b1c644ad@brauner>
+References: <20240318-vfs-fixes-e0e7e114b1d1@brauner>
+ <CAHk-=wj-uKiYKh7g1=R9jkXB=GmwJ79uDdFKBKib2rDq79VDUQ@mail.gmail.com>
+ <CAHk-=wjRukhPxmDFAk+aAZEcA_RQvmbOoJGOw6w2RBSDd1Nmwg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19c7:b0:366:b696:e943 with SMTP id
- r7-20020a056e0219c700b00366b696e943mr559353ill.5.1710829562024; Mon, 18 Mar
- 2024 23:26:02 -0700 (PDT)
-Date: Mon, 18 Mar 2024 23:26:02 -0700
-In-Reply-To: <ec51cc1d-beaa-4aa1-a54d-e503223dd365@posteo.net>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000050e6310613fd8ccd@google.com>
-Subject: Re: [syzbot] [v9fs?] KMSAN: uninit-value in v9fs_evict_inode
-From: syzbot <syzbot+eb83fe1cce5833cd66a0@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, charmitro@posteo.net, ericvh@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjRukhPxmDFAk+aAZEcA_RQvmbOoJGOw6w2RBSDd1Nmwg@mail.gmail.com>
 
-Hello,
+On Mon, Mar 18, 2024 at 12:41:49PM -0700, Linus Torvalds wrote:
+> On Mon, 18 Mar 2024 at 12:14, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > IOW, isn't the 'get()' always basically paired with the mounting? And
+> > the 'put()' would probably be best done iin kill_block_super()?
+> 
+> .. or alternative handwavy approach:
+> 
+>  The fundamental _reason_ for the ->get/put seems to be to make the
+> 'holder' lifetime be at least as long as the 'struct file' it is
+> associated with. No?
+> 
+> So how about we just make the 'holder' always *be* a 'struct file *'? That
+> 
+>  (a) gets rid of the typeless 'void *' part
+> 
+>  (b) is already what it is for normal cases (ie O_EXCL file opens).
+> 
+> wouldn't it be lovely if we just made the rule be that 'holder' *is*
+> the file pointer, and got rid of a lot of typeless WTF code?
+> 
+> Again, this comment (and the previous email) is more based on "this
+> does not feel right to me" than anything else.
+> 
+> That code just makes my skin itch. I can't say it's _wrong_, but it
+> just FeelsWrongToMe(tm).
 
-syzbot tried to test the proposed patch but the build/boot failed:
-
-failed to apply patch:
-checking file fs/9p/vfs_inode.c
-patch: **** unexpected end of file in patch
-
-
-
-Tested on:
-
-commit:         b3603fcb Merge tag 'dlm-6.9' of git://git.kernel.org/p..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48bb382b96e7eda7
-dashboard link: https://syzkaller.appspot.com/bug?extid=eb83fe1cce5833cd66a0
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13a5fe81180000
-
+So, initially I think the holder ops were intended to be generic by
+Christoph but I agree that it's probably not needed. I just didn't
+massage that code yet. Now on my todo for this cycle!
 
