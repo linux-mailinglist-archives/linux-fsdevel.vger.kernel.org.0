@@ -1,129 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-14786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E77F87F4E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 02:19:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7DD087F505
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 02:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70DE1F21ACF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 01:19:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CB81C21557
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 01:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FCE1B7FD;
-	Tue, 19 Mar 2024 01:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A3E657A3;
+	Tue, 19 Mar 2024 01:36:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FC3847C;
-	Tue, 19 Mar 2024 01:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4F4626CD;
+	Tue, 19 Mar 2024 01:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710811127; cv=none; b=BwfDUMle8XgolXM1+WhoJjuMm0CYc7OhPj3qBp+dIjZ4GPzUPaiAb2QUCMZPsCiCLsMGUAfBeOWZduRMI2gDfKHLqCzStX3bybhAbMx5651+hhue99DE1zga5Y7a2SLUyRnT8tpm0DUHdz+ex7nlXRRRqi9hD4SmzBjaPtvrVQ4=
+	t=1710812179; cv=none; b=aUkUDyslrixPSdh1xJusZbjplTG5HNHZWsAcMpAuIl2G/tn9r4yQTq/O5pRQK7MSsmjcdC0J9/+QocFU1XyV8aklnPofx9S9Bnkaj7bWF3XyUE28X+sP1+qYi0j00EoTJtnRWXJj6TIpr/Q1HnH3t2La/UpA2VefIhSfZF29d/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710811127; c=relaxed/simple;
-	bh=MMrbMRAxlRdrfAR82H7F/UOhyfZI3AaGwXVLWaHdmc8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DyTha109+1a2DR+TBoH0adNZYIFhfrczAtlaUNmDmp3SKg0Hj0Z2hsxOed/esWf3K2KwFq4LAQkGEk8HDj1yR+H0t2+BfHqcGl+LYoIA3e51u48Rer+5FV6FsGW9e80TNZhbXkjXdk0sChQTncFVHaYB42G/xvXc30N4PEHhJoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	s=arc-20240116; t=1710812179; c=relaxed/simple;
+	bh=GzEBhKZ4LIu43FoyVX7+dAaGHt5sdgp1AOcuREBzOt0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=opGO0HTUWGQ21sSOcPAJlcz2UBuIlGG0u1Ya/sqYuKpKCaBd9oR3XIu3fjyHmH2PBBN87MxNvKDT0BOWsLziXlQtd7uRrhEI0eagSFWK7DIzmQWCoyGwPbp3o7t95+rtQdg8OJVijTeuyuvJCQVvnKxGfca8Km0Q2+Ftz+Eu2Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TzDPf6qNKz4f3kFp;
-	Tue, 19 Mar 2024 09:18:30 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TzDPc5kTGz4f3kJq;
+	Tue, 19 Mar 2024 09:18:28 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id DC0C91A017A;
-	Tue, 19 Mar 2024 09:18:36 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g7O5_hlUIGNHQ--.34497S13;
-	Tue, 19 Mar 2024 09:18:36 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	tytso@mit.edu,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v3 9/9] iomap: do some small logical cleanup in buffered write
-Date: Tue, 19 Mar 2024 09:11:02 +0800
-Message-Id: <20240319011102.2929635-10-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240319011102.2929635-1-yi.zhang@huaweicloud.com>
-References: <20240319011102.2929635-1-yi.zhang@huaweicloud.com>
+	by mail.maildlp.com (Postfix) with ESMTP id 9BE671A0172;
+	Tue, 19 Mar 2024 09:18:32 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgDHlxDm5_hltIiNHQ--.22830S3;
+	Tue, 19 Mar 2024 09:18:32 +0800 (CST)
+Subject: Re: [RFC v4 linux-next 00/19] fs & block: remove bdev->bd_inode
+To: Christian Brauner <brauner@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, hch@lst.de, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
+ <1324ffb5-28b6-34fb-014e-3f57df714095@huawei.com>
+ <20240315-assoziieren-hacken-b43f24f78970@brauner>
+ <ac0eb132-c604-9761-bce5-69158e73f256@huaweicloud.com>
+ <20240318-mythisch-pittoresk-1c57af743061@brauner>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c9bfba49-9611-c965-713c-1ef0b1e305ce@huaweicloud.com>
+Date: Tue, 19 Mar 2024 09:18:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240318-mythisch-pittoresk-1c57af743061@brauner>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn9g7O5_hlUIGNHQ--.34497S13
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZrykWry8urWrArWUZr4xJFb_yoW8Jw43pr
-	nxKay8CrW0qwsruF1kAF9ruFyjya97Gry7GrWUGw45urs8ArWYgFy0gayjv3W8XrZ3C34S
-	vr4vy348Jw15ArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
-	SdkUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-CM-TRANSID:cCh0CgDHlxDm5_hltIiNHQ--.22830S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Wr47CFW3WF13JFWrWF48Zwb_yoWfCrgEvw
+	4akFykG34DZw1jqanxKrs0yrWDCFy3Jry5JryrJF13XayDXF98GF4kJw1kZwnxGa13KF1f
+	Cr4qqFy5ZrWfGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
+	3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Hi,
 
-Since iomap_write_end() can never return a partial write length, the
-comperation between written, copied and bytes becomes useless, just
-merge them with the unwritten branch.
+在 2024/03/18 17:39, Christian Brauner 写道:
+> On Sat, Mar 16, 2024 at 10:49:33AM +0800, Yu Kuai wrote:
+>> Hi, Christian
+>>
+>> 在 2024/03/15 21:54, Christian Brauner 写道:
+>>> On Fri, Mar 15, 2024 at 08:08:49PM +0800, Yu Kuai wrote:
+>>>> Hi, Christian
+>>>> Hi, Christoph
+>>>> Hi, Jan
+>>>>
+>>>> Perhaps now is a good time to send a formal version of this set.
+>>>> However, I'm not sure yet what branch should I rebase and send this set.
+>>>> Should I send to the vfs tree?
+>>>
+>>> Nearly all of it is in fs/ so I'd say yes.
+>>> .
+>>
+>> I see that you just create a new branch vfs.fixes, perhaps can I rebase
+>> this set against this branch?
+> 
+> Please base it on vfs.super. I'll rebase it to v6.9-rc1 on Sunday.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/buffered-io.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Okay, I just see that vfs.super doesn't contain commit
+1cdeac6da33f("btrfs: pass btrfs_device to btrfs_scratch_superblocks()"),
+and you might need to fix the conflict at some point.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 004673ea8bc1..f2fb89056259 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -937,11 +937,6 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 
- 		if (old_size < pos)
- 			pagecache_isize_extended(iter->inode, old_size, pos);
--		if (written < bytes)
--			iomap_write_failed(iter->inode, pos + written,
--					   bytes - written);
--		if (unlikely(copied != written))
--			iov_iter_revert(i, copied - written);
- 
- 		cond_resched();
- 		if (unlikely(written == 0)) {
-@@ -951,6 +946,9 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 			 * halfway through, might be a race with munmap,
- 			 * might be severe memory pressure.
- 			 */
-+			iomap_write_failed(iter->inode, pos, bytes);
-+			iov_iter_revert(i, copied);
-+
- 			if (chunk > PAGE_SIZE)
- 				chunk /= 2;
- 			if (copied) {
--- 
-2.39.2
+Thanks,
+Kuai
+
+> .
+> 
 
 
