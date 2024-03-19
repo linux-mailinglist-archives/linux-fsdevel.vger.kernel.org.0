@@ -1,150 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-14799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDC787F574
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 03:28:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3C687F60C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 04:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C52A0B21924
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 02:28:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281E01C21B14
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Mar 2024 03:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380C2651BE;
-	Tue, 19 Mar 2024 02:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C8C7BB11;
+	Tue, 19 Mar 2024 03:33:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA2764CF3;
-	Tue, 19 Mar 2024 02:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7108E2F5B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Mar 2024 03:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710815268; cv=none; b=FMunqHrHT8/FoamhLBWzV4kmHQebVwpIc6Zat/JOaTBELNFRlmnz/0mlA//No4mgVVP+iPloOyOU99ss78mddU4oDfzqQhaBqH66ZIj+gE7EGjw/mEShtk/HnM3HhEmdTcSSMVUL6phtHWqSGbBZCQ9UpsO/zZveVTs1VFV5v2o=
+	t=1710819206; cv=none; b=Kd3eUqXVHFEs43I/HdesnSOcwbUwkksEaf4E1pLgRY0/szeXGuJdxRYz7W2aKLkR13UqKDpa68xJUnsS6TaVKowAr211Jym4hxhILhGumLjaWTFVzDYbyOo/myOCMdfnuBgnVm/pO7I+1yBZN65aAs2OEwr4Las/VJxWZhV+/zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710815268; c=relaxed/simple;
-	bh=KlK6RRY+rznZ+X+XX2ZR9KnlLvHxiYkumw+UmKTdxzM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=i2Obn7Ah07erqBOeRGJjEkY/bePCuBHYJrGJJy9AAtZ3T6x7rml1SdQcG4wSMqKmTWrzTaZZZQ6Nd7x1tGLV70sr4TnQx7uuWcfUyBG7Y4Ts0wTo0M2k/u7fThDwxHINjgKHWGJA9PcF+ygBla70oIbMDeaOr6os3sC8afTw3CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TzFxQ3kYjz4f3jZm;
-	Tue, 19 Mar 2024 10:27:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 5DC121A09D0;
-	Tue, 19 Mar 2024 10:27:42 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgAX6REc+PhlGo6SHQ--.49153S3;
-	Tue, 19 Mar 2024 10:27:42 +0800 (CST)
-Subject: Re: [RFC v4 linux-next 00/19] fs & block: remove bdev->bd_inode
-To: Matthew Sakai <msakai@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- Christian Brauner <brauner@kernel.org>
-Cc: jack@suse.cz, hch@lst.de, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
- linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- dm-devel@lists.linux.dev, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
- <1324ffb5-28b6-34fb-014e-3f57df714095@huawei.com>
- <20240315-assoziieren-hacken-b43f24f78970@brauner>
- <ac0eb132-c604-9761-bce5-69158e73f256@huaweicloud.com>
- <20240318-mythisch-pittoresk-1c57af743061@brauner>
- <c9bfba49-9611-c965-713c-1ef0b1e305ce@huaweicloud.com>
- <dd4e443a-696d-b02f-44ff-4649b585ef17@huaweicloud.com>
- <0665f6a6-39d9-e730-9403-0348c181dd55@redhat.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <7210daac-4c0b-ce98-fe61-1c5e7c33b289@huaweicloud.com>
-Date: Tue, 19 Mar 2024 10:27:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1710819206; c=relaxed/simple;
+	bh=foU7Dh8htpgGcaSBFSwvBOAYFXfZVzC57V6NEB1PYeI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fOgApTKxOgbVpERnxdYcid+lNoAbY3FqEtJ6n1sslxyIkh6ZKozobzgDXiw0UHjcrZzalPyyGLc5l/bbMt4WDhwAAw9JD36PL5qzi5jumOIFfc/QML8e6ktSToEujZ5Mv7OV5UpvQKScV2GpfUn4Aje04fMzGN+9Xr+fQKfPpjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36848e95617so4902425ab.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Mar 2024 20:33:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710819203; x=1711424003;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Csjh0lxNo0sPgq8PGq+TzcEtEY7UHn0bf829ioXWN0c=;
+        b=i7gI7/FkJy3mBLnRhmMG0hPBhEEMZxTn0Yojl0HvEH98mwaQFxGrYW1hx1uM4yFcDY
+         5YNbZABN5yf2VxToVGjiLRbDt2+kWTPQ69buNSg1YS9dpuJldsokIIgTpRW2yOH8A74/
+         eNcdzEk3/cL4nnUg0HXNtelWBgrwWV1SegPG05V3gjcZ5rAVSrIX39bcd84ICcG7spYq
+         udIcO7S+6NAyN/KqHryRnGcfPSL85+z5xWKiGX6zK5RJGXoZIGdQjgdLCK3WT/Y30wIx
+         VVMxgs0f4I7pngqnTJFzVMDDGhJyyn9zHnJkkhJtkijeNQM4znAeQ9iR6i0l/VxMmtky
+         KZnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzukvMUsKLU1IA+ajL9m6kyY7TnioyWOQBTxIk3iCUtEhc2M3JLbh6Qx/MS31Mwn5iLIWemVUyAwaIMF3wN6u+UfuvLge1GvgRGpQFgQ==
+X-Gm-Message-State: AOJu0YxZRFSg87wwP1pwUjHPnhSg3/bkT3M16l2yL191f+ZJVJ1W6IdL
+	D4bZtqbztXQvBZWoPtdmiK6SFVVnrF3WolgE7kqGLQX1Kg77LmUVfnlC12y+KwJvW8nfEh8i+La
+	DLvEQ4PM6mKMQUmNDo3wX6YSp6qeLP5ZXzE1krZ1x5+jzJKFjxXJaDe8=
+X-Google-Smtp-Source: AGHT+IHCxtljGz0UAMsiGPWn/AccGbvldt5Q9YBlfC9M01nPa2qg+X1j8BikjRevWbkLwxSWbIWGJA2tNIdFANltpQFhwgUeAouO
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <0665f6a6-39d9-e730-9403-0348c181dd55@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX6REc+PhlGo6SHQ--.49153S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryUZryfur4xuF43uFW3KFg_yoW8Aw18p3
-	4qyFsxKr4Dtr1DA34Syw18Xw1Fyw45Xr1rXw15Xr12vryktry3tr4xKrn0kryDXrsrZr17
-	uF48t3yfXas5ZrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
-	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-Received: by 2002:a05:6e02:1d97:b0:366:97fc:b9cf with SMTP id
+ h23-20020a056e021d9700b0036697fcb9cfmr91886ila.0.1710819203707; Mon, 18 Mar
+ 2024 20:33:23 -0700 (PDT)
+Date: Mon, 18 Mar 2024 20:33:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e981c10613fb227e@google.com>
+Subject: [syzbot] [xfs?] possible deadlock in xfs_qm_dqfree_one
+From: syzbot <syzbot+b44399433a41aaed7a9f@syzkaller.appspotmail.com>
+To: chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-在 2024/03/19 10:13, Matthew Sakai 写道:
-> 
-> On 3/18/24 21:43, Yu Kuai wrote:
->> Hi,
->>
->> 在 2024/03/19 9:18, Yu Kuai 写道:
->>> Hi,
->>>
->>> 在 2024/03/18 17:39, Christian Brauner 写道:
->>>> On Sat, Mar 16, 2024 at 10:49:33AM +0800, Yu Kuai wrote:
->>>>> Hi, Christian
->>>>>
->>>>> 在 2024/03/15 21:54, Christian Brauner 写道:
->>>>>> On Fri, Mar 15, 2024 at 08:08:49PM +0800, Yu Kuai wrote:
->>>>>>> Hi, Christian
->>>>>>> Hi, Christoph
->>>>>>> Hi, Jan
->>>>>>>
->>>>>>> Perhaps now is a good time to send a formal version of this set.
->>>>>>> However, I'm not sure yet what branch should I rebase and send 
->>>>>>> this set.
->>>>>>> Should I send to the vfs tree?
->>>>>>
->>>>>> Nearly all of it is in fs/ so I'd say yes.
->>>>>> .
->>>>>
->>>>> I see that you just create a new branch vfs.fixes, perhaps can I 
->>>>> rebase
->>>>> this set against this branch?
->>>>
->>>> Please base it on vfs.super. I'll rebase it to v6.9-rc1 on Sunday.
->>>
->>> Okay, I just see that vfs.super doesn't contain commit
->>> 1cdeac6da33f("btrfs: pass btrfs_device to btrfs_scratch_superblocks()"),
->>> and you might need to fix the conflict at some point.
->>
->> And there is another problem, dm-vdo doesn't exist in vfs.super yet. Do
->> you still want me to rebase here?
->>
-> 
-> The dm-vdo changes don't appear to rely on earlier patches in the 
-> series, so I think dm-vdo could incorporate the dm-vdo patch 
-> independently from the rest of the series, if that would be helpful. (I 
-> don't want to confuse things too much.) In that case it would go through 
-> the dm tree with the rest of dm-vdo.
+syzbot found the following issue on:
 
-We want to remove the 'bd_inode' field in this set. And if we want to go
-through dm tree for dm-vdo changes, we must keep the field for now.
+HEAD commit:    906a93befec8 Merge tag 'efi-fixes-for-v6.9-1' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d6ea6e180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5206351398500a90
+dashboard link: https://syzkaller.appspot.com/bug?extid=b44399433a41aaed7a9f
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-I don't have preference, Christian will make the decision. 😉
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Thanks,
-Kuai
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-906a93be.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f096ab7eaede/vmlinux-906a93be.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/52e0859d6157/bzImage-906a93be.xz
 
-> 
-> Matt
-> 
-> .
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b44399433a41aaed7a9f@syzkaller.appspotmail.com
 
+======================================================
+WARNING: possible circular locking dependency detected
+6.8.0-syzkaller-11405-g906a93befec8 #0 Not tainted
+------------------------------------------------------
+kswapd0/109 is trying to acquire lock:
+ffff888022fc0958 (&qinf->qi_tree_lock){+.+.}-{3:3}, at: xfs_qm_dqfree_one+0x6f/0x1a0 fs/xfs/xfs_qm.c:1654
+
+but task is already holding lock:
+ffffffff8d930be0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x19a0 mm/vmscan.c:6782
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
+       might_alloc include/linux/sched/mm.h:312 [inline]
+       slab_pre_alloc_hook mm/slub.c:3746 [inline]
+       slab_alloc_node mm/slub.c:3827 [inline]
+       kmem_cache_alloc+0x4f/0x320 mm/slub.c:3852
+       radix_tree_node_alloc.constprop.0+0x7c/0x350 lib/radix-tree.c:276
+       radix_tree_extend+0x1a2/0x4d0 lib/radix-tree.c:425
+       __radix_tree_create lib/radix-tree.c:613 [inline]
+       radix_tree_insert+0x499/0x630 lib/radix-tree.c:712
+       xfs_qm_dqget_cache_insert.constprop.0+0x38/0x2c0 fs/xfs/xfs_dquot.c:826
+       xfs_qm_dqget+0x182/0x4a0 fs/xfs/xfs_dquot.c:901
+       xfs_qm_scall_setqlim+0x172/0x1980 fs/xfs/xfs_qm_syscalls.c:300
+       xfs_fs_set_dqblk+0x166/0x1e0 fs/xfs/xfs_quotaops.c:267
+       quota_setquota+0x4c5/0x5f0 fs/quota/quota.c:310
+       do_quotactl+0xb03/0x13e0 fs/quota/quota.c:802
+       __do_sys_quotactl fs/quota/quota.c:961 [inline]
+       __se_sys_quotactl fs/quota/quota.c:917 [inline]
+       __x64_sys_quotactl+0x1b4/0x440 fs/quota/quota.c:917
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xd2/0x260 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x6d/0x75
+
+-> #0 (&qinf->qi_tree_lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x540 kernel/locking/lockdep.c:5719
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       xfs_qm_dqfree_one+0x6f/0x1a0 fs/xfs/xfs_qm.c:1654
+       xfs_qm_shrink_scan+0x25c/0x3f0 fs/xfs/xfs_qm.c:531
+       do_shrink_slab+0x44f/0x1160 mm/shrinker.c:435
+       shrink_slab+0x18a/0x1310 mm/shrinker.c:662
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+       shrink_many mm/vmscan.c:4835 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4935 [inline]
+       shrink_node+0x231f/0x3a80 mm/vmscan.c:5894
+       kswapd_shrink_node mm/vmscan.c:6704 [inline]
+       balance_pgdat+0x9a0/0x19a0 mm/vmscan.c:6895
+       kswapd+0x5ea/0xb90 mm/vmscan.c:7164
+       kthread+0x2c1/0x3a0 kernel/kthread.c:388
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&qinf->qi_tree_lock);
+                               lock(fs_reclaim);
+  lock(&qinf->qi_tree_lock);
+
+ *** DEADLOCK ***
+
+1 lock held by kswapd0/109:
+ #0: ffffffff8d930be0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x19a0 mm/vmscan.c:6782
+
+stack backtrace:
+CPU: 3 PID: 109 Comm: kswapd0 Not tainted 6.8.0-syzkaller-11405-g906a93befec8 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x540 kernel/locking/lockdep.c:5719
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ xfs_qm_dqfree_one+0x6f/0x1a0 fs/xfs/xfs_qm.c:1654
+ xfs_qm_shrink_scan+0x25c/0x3f0 fs/xfs/xfs_qm.c:531
+ do_shrink_slab+0x44f/0x1160 mm/shrinker.c:435
+ shrink_slab+0x18a/0x1310 mm/shrinker.c:662
+ shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+ shrink_many mm/vmscan.c:4835 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4935 [inline]
+ shrink_node+0x231f/0x3a80 mm/vmscan.c:5894
+ kswapd_shrink_node mm/vmscan.c:6704 [inline]
+ balance_pgdat+0x9a0/0x19a0 mm/vmscan.c:6895
+ kswapd+0x5ea/0xb90 mm/vmscan.c:7164
+ kthread+0x2c1/0x3a0 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
