@@ -1,192 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-14883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C0A88100A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 11:37:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE2588096D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 03:07:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CECC6283D7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 10:37:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88290B238AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 02:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F4838398;
-	Wed, 20 Mar 2024 10:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="irOxKMZv"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD79171A5;
+	Wed, 20 Mar 2024 02:06:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF63383A0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 10:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC5E125B4;
+	Wed, 20 Mar 2024 02:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710931056; cv=none; b=UnYY7t+WZcXYj8pgsP+/B/EQ4IHV2AEHwOQ+14qRzqSdFrasv2t6/SKWsKU6wzSEhTuBvUmQ/pntCp2Awh7l5Ea/XqnGXi2iaQt3vVPoG3fXjstbk500Ae7uXSjEn+tz2a4/msvnwG9ie0ysrYaqyWJ9MgWDfRmIOaLmbPqWh1w=
+	t=1710900371; cv=none; b=pEE5zJIu7VJTjKuJn03zpxyJkAXja1k2gp9X669j6CZEWBsavBsLD1LtZREnkUr7yBTaR9ea0nLdqC096FkCklVYDa93T4vtvl+07jdQwWm5mG5JOLN+M3ezR/hIBq4/qUDNs+mQgx2n8l0sbSy2StEfW2fhiC2U+5Zo5YBn1Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710931056; c=relaxed/simple;
-	bh=9UYs4ZwejA0f5HPmQh6g5I9ponZ+C0/FZF4IS9lsAzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8yqk3zuoy50ryEJAep1sFfZZ0c0FL/LLybYf/ua6/PF4uOFcvdO6C0Y9oBpr0xfHmkkJeLXzVxfAz3njZGg1EQF3Qu65GUy6YxLnrDDGUHqspewBKfbWGId2fKIy2KmVjaGAZSF7FPhqwKvl8GC8ifTPyu9pWeN+qHWjj5bH28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=irOxKMZv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710931053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ADJP39t1GFmXzKGwztEyWbu3Yu1GQbVpqFj8SngTSA0=;
-	b=irOxKMZvknRAEvnJ6eqlPEvWWot60ztPvaVBRFJejWzIczMGPSqvFoo5Vs4RZzMcDYckbN
-	lc2EC15eZf0+4rWwIocp59QB+HsOaIQ/qHvlQREwkl9NUmLZTG4EkSlsA1r0108gA2LniI
-	H1/3Uk54zxIG5FX8mc3CJiVb/FGLHr4=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-h10gS5e1Nu6yX3g4AxepZQ-1; Wed, 20 Mar 2024 06:37:31 -0400
-X-MC-Unique: h10gS5e1Nu6yX3g4AxepZQ-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a46b82df33cso216205566b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 03:37:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710931050; x=1711535850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ADJP39t1GFmXzKGwztEyWbu3Yu1GQbVpqFj8SngTSA0=;
-        b=c/bBXX4Q0FRKb0mzQ96jriyG0kBcQ5yp2irjF4GUZeVW4C7IPE6lLXWIZkFn71sISf
-         o81R/EBhBDe0tqcAFl/uqda0+S63XA+Pv+ycT7k2CWLC2kYREBeYFYHhl9z5yt/48a87
-         u7A/SqLbbeFmRkrACwlDrte5JusL0HE5CPTfUmjO4nxeqxHYY4H6qoWC/nvplKRhLsxJ
-         YH5NoYSbU8xdO9lgQ+Oijha3eAWwADFBepisM61aQyoLVk6EOnwfeHG20bHM1mMOLtp9
-         ViFbyHjj6n9WPzFFPmDPzxhPHueTf9Jhm1X55TQ3ZSalp6mGeqruti77fVhdo5OjiPDH
-         dpwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjXXdIuMySNAt94+ytqrj8KCrqpZsOcopN6PyRO+LniDvddJefYfoXm51FpYsaIZQ2MSU+hU43JnD1nVNvtXwiZZ6egnZ+ZyYH1ZwZ8w==
-X-Gm-Message-State: AOJu0YyUBuQxRlF9yfGsH8ymRGB5lHEWguWDRXshoAK+DL4pRGWscL12
-	W/irqcNzox+feyka7k5Y49Pa1mlWcLTIICkF0GjFMbSO7ZZtCjrIPmAete1Yqj93aSRYLO+yemV
-	SFmYP5mivbrrG2Ep3K6nDYyFMxR8ix59UbzoPBZmbA4z6TUBd8TmzelFjPVvgrw==
-X-Received: by 2002:a17:907:6d0d:b0:a46:a927:115e with SMTP id sa13-20020a1709076d0d00b00a46a927115emr10378527ejc.39.1710931050414;
-        Wed, 20 Mar 2024 03:37:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGIJTAG9ko72Loy57po7F4TUY1dy0JWk8zC92Uf2ucyNg7WDekar5E7XdbMe/WRMTnJxVjXFg==
-X-Received: by 2002:a17:907:6d0d:b0:a46:a927:115e with SMTP id sa13-20020a1709076d0d00b00a46a927115emr10378499ejc.39.1710931049760;
-        Wed, 20 Mar 2024 03:37:29 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id wr6-20020a170907700600b00a4623030893sm7019903ejb.126.2024.03.20.03.37.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Mar 2024 03:37:29 -0700 (PDT)
-Date: Wed, 20 Mar 2024 11:37:28 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, 
-	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 08/29] fsverity: add per-sb workqueue for post read
- processing
-Message-ID: <ktc3ofsctond43xfc3lerr4evy3a3hsclyxm24cmhf7fsxxfsw@gjqnq57cbeoy>
-References: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
- <171035223488.2613863.7583467519759571221.stgit@frogsfrogsfrogs>
- <20240319233010.GV1927156@frogsfrogsfrogs>
+	s=arc-20240116; t=1710900371; c=relaxed/simple;
+	bh=r997A3PAmYHUvUVJriZ8d1Iy+tr1vtY9egOCLSJiTlc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hzZNF5IYkloSrRN4prm3e9pTcIBlRuiC3l3MjDe9bw7bzXokFi4eDF+kv3sJTuX3Ll/NOlxOlbUwSkmU8yl8878XZH77FggQgftPSQ0vUAZElMPE73fNJ6vkJr7TwqqvM5MzkUjqp24k99z32bb73TvSsSE/lEkf1d4ok0ngvhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TzsPw5y6Hz4f3n5k;
+	Wed, 20 Mar 2024 10:05:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id B889C1A016E;
+	Wed, 20 Mar 2024 10:06:04 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.6])
+	by APP3 (Coremail) with SMTP id _Ch0CgAHFZ2KRPplVj2CHQ--.18626S2;
+	Wed, 20 Mar 2024 10:06:04 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	tj@kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: willy@infradead.org,
+	bfoster@redhat.com,
+	jack@suse.cz,
+	dsterba@suse.com,
+	mjguzik@gmail.com,
+	dhowells@redhat.com,
+	peterz@infradead.org
+Subject: [PATCH 0/6] Improve visibility of writeback
+Date: Wed, 20 Mar 2024 19:02:16 +0800
+Message-Id: <20240320110222.6564-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240319233010.GV1927156@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAHFZ2KRPplVj2CHQ--.18626S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw47ZF4DAr4xXw43Kw1UAwb_yoW5Cr43pF
+	Z5Ar15Kr48A3WxCr93Ca42gr13t3y8ta47XrZrZrW2qrn0gr1DtF95Wa4Fyr15Jry3AFy3
+	JFsxZry8Kr4vqF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
+	8lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E
+	3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r
+	xl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv
+	0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z2
+	80aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v
+	6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI
+	8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
+	xVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI
+	8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxUIf-PUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On 2024-03-19 16:30:10, Darrick J. Wong wrote:
-> On Wed, Mar 13, 2024 at 10:54:39AM -0700, Darrick J. Wong wrote:
-> > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > 
-> > For XFS, fsverity's global workqueue is not really suitable due to:
-> > 
-> > 1. High priority workqueues are used within XFS to ensure that data
-> >    IO completion cannot stall processing of journal IO completions.
-> >    Hence using a WQ_HIGHPRI workqueue directly in the user data IO
-> >    path is a potential filesystem livelock/deadlock vector.
-> > 
-> > 2. The fsverity workqueue is global - it creates a cross-filesystem
-> >    contention point.
-> > 
-> > This patch adds per-filesystem, per-cpu workqueue for fsverity
-> > work. This allows iomap to add verification work in the read path on
-> > BIO completion.
-> > 
-> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > ---
-> >  fs/super.c               |    7 +++++++
-> >  include/linux/fs.h       |    2 ++
-> >  include/linux/fsverity.h |   22 ++++++++++++++++++++++
-> >  3 files changed, 31 insertions(+)
-> > 
-> > 
-> > diff --git a/fs/super.c b/fs/super.c
-> > index d35e85295489..338d86864200 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -642,6 +642,13 @@ void generic_shutdown_super(struct super_block *sb)
-> >  			sb->s_dio_done_wq = NULL;
-> >  		}
-> >  
-> > +#ifdef CONFIG_FS_VERITY
-> > +		if (sb->s_read_done_wq) {
-> > +			destroy_workqueue(sb->s_read_done_wq);
-> > +			sb->s_read_done_wq = NULL;
-> > +		}
-> > +#endif
-> > +
-> >  		if (sop->put_super)
-> >  			sop->put_super(sb);
-> >  
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index ed5966a70495..9db24a825d94 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1221,6 +1221,8 @@ struct super_block {
-> >  #endif
-> >  #ifdef CONFIG_FS_VERITY
-> >  	const struct fsverity_operations *s_vop;
-> > +	/* Completion queue for post read verification */
-> > +	struct workqueue_struct *s_read_done_wq;
-> >  #endif
-> >  #if IS_ENABLED(CONFIG_UNICODE)
-> >  	struct unicode_map *s_encoding;
-> > diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> > index 0973b521ac5a..45b7c613148a 100644
-> > --- a/include/linux/fsverity.h
-> > +++ b/include/linux/fsverity.h
-> > @@ -241,6 +241,22 @@ void fsverity_enqueue_verify_work(struct work_struct *work);
-> >  void fsverity_invalidate_block(struct inode *inode,
-> >  		struct fsverity_blockbuf *block);
-> >  
-> > +static inline int fsverity_set_ops(struct super_block *sb,
-> > +				   const struct fsverity_operations *ops)
-> > +{
-> > +	sb->s_vop = ops;
-> > +
-> > +	/* Create per-sb workqueue for post read bio verification */
-> > +	struct workqueue_struct *wq = alloc_workqueue(
-> > +		"pread/%s", (WQ_FREEZABLE | WQ_MEM_RECLAIM), 0, sb->s_id);
-> 
-> Looking at this more closely, why is it that the fsverity_read_queue
-> is unbound and tagged WQ_HIGHPRI, whereas this one is instead FREEZEABLE
-> and MEM_RECLAIM and bound?
-> 
-> If it's really feasible to use /one/ workqueue for all the read
-> post-processing then this ought to be a fs/super.c helper ala
-> sb_init_dio_done_wq.  That said, from Eric's comments on the v5 thread
-> about fsverity and fscrypt locking horns over workqueue stalls I'm not
-> convinced that's true.
+This series tries to improve visilibity of writeback. Patch 1 make
+/sys/kernel/debug/bdi/xxx/stats show writeback info of whole bdi
+instead of only writeback info in root cgroup. Patch 2 add a new
+debug file /sys/kernel/debug/bdi/xxx/wb_stats to show per wb writeback
+info. Patch 4 add wb_monitor.py to monitor basic writeback info
+of running system, more info could be added on demand. Rest patches
+are some random cleanups. More details can be found in respective
+patches. Thanks!
 
-There's good explanation by Dave why WQ_HIGHPRI is not a good fit
-for XFS (potential livelock/deadlock):
+Following domain hierarchy is tested:
+                global domain (320G)
+                /                 \
+        cgroup domain1(10G)     cgroup domain2(10G)
+                |                 |
+bdi            wb1               wb2
 
-https://lore.kernel.org/linux-xfs/20221214054357.GI3600936@dread.disaster.area/
+/* all writeback info of bdi is successfully collected */
+# cat /sys/kernel/debug/bdi/252:16/stats:
+BdiWriteback:              448 kB
+BdiReclaimable:        1303904 kB
+BdiDirtyThresh:      189914124 kB
+DirtyThresh:         195337564 kB
+BackgroundThresh:     32516508 kB
+BdiDirtied:            3591392 kB
+BdiWritten:            2287488 kB
+BdiWriteBandwidth:      322248 kBps
+b_dirty:                     0
+b_io:                        0
+b_more_io:                   2
+b_dirty_time:                0
+bdi_list:                    1
+state:                       1
 
-Based on his feedback I changed it to per-filesystem.
+/* per wb writeback info is collected */
+# cat /sys/kernel/debug/bdi/252:16/wb_stats:
+cat wb_stats
+WbCgIno:                    1
+WbWriteback:                0 kB
+WbReclaimable:              0 kB
+WbDirtyThresh:              0 kB
+WbDirtied:                  0 kB
+WbWritten:                  0 kB
+WbWriteBandwidth:      102400 kBps
+b_dirty:                    0
+b_io:                       0
+b_more_io:                  0
+b_dirty_time:               0
+state:                      1
+WbCgIno:                 4284
+WbWriteback:              448 kB
+WbReclaimable:         818944 kB
+WbDirtyThresh:        3096524 kB
+WbDirtied:            2266880 kB
+WbWritten:            1447936 kB
+WbWriteBandwidth:      214036 kBps
+b_dirty:                    0
+b_io:                       0
+b_more_io:                  1
+b_dirty_time:               0
+state:                      5
+WbCgIno:                 4325
+WbWriteback:              224 kB
+WbReclaimable:         819392 kB
+WbDirtyThresh:        2920088 kB
+WbDirtied:            2551808 kB
+WbWritten:            1732416 kB
+WbWriteBandwidth:      201832 kBps
+b_dirty:                    0
+b_io:                       0
+b_more_io:                  1
+b_dirty_time:               0
+state:                      5
+
+/* monitor writeback info */
+# ./wb_monitor.py 252:16 -c
+                  writeback  reclaimable   dirtied   written    avg_bw
+252:16_1                  0            0         0         0    102400
+252:16_4284             672       820064   9230368   8410304    685612
+252:16_4325             896       819840  10491264   9671648    652348
+252:16                 1568      1639904  19721632  18081952   1440360
+
+
+                  writeback  reclaimable   dirtied   written    avg_bw
+252:16_1                  0            0         0         0    102400
+252:16_4284             672       820064   9230368   8410304    685612
+252:16_4325             896       819840  10491264   9671648    652348
+252:16                 1568      1639904  19721632  18081952   1440360
+...
+
+
+
+Kemeng Shi (6):
+  writeback: collect stats of all wb of bdi in bdi_debug_stats_show
+  writeback: support retrieving per group debug writeback stats of bdi
+  workqueue: remove unnecessary import and function in wq_monitor.py
+  writeback: add wb_monitor.py script to monitor writeback info on bdi
+  writeback: rename nr_reclaimable to nr_dirty in balance_dirty_pages
+  writeback: remove unneeded GDTC_INIT_NO_WB
+
+ include/linux/writeback.h     |   1 +
+ mm/backing-dev.c              | 159 ++++++++++++++++++++++++++-----
+ mm/page-writeback.c           |  32 +++++--
+ tools/workqueue/wq_monitor.py |   9 +-
+ tools/writeback/wb_monitor.py | 172 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 334 insertions(+), 39 deletions(-)
+ create mode 100644 tools/writeback/wb_monitor.py
 
 -- 
-- Andrey
+2.30.0
 
 
