@@ -1,149 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-14881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EC6880F70
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 11:16:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE23880F8C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 11:21:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F943283717
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 10:16:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 071C21C2237F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 10:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFF83C47B;
-	Wed, 20 Mar 2024 10:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14773D986;
+	Wed, 20 Mar 2024 10:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ajzGFEgO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWCD1O6F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B89C3C471
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 10:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C3D3D566;
+	Wed, 20 Mar 2024 10:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710929770; cv=none; b=ogMzAPAY79s/GLdLG0SSKu2jUEspr1qRjIR6ITc9MpRhDqvDlvwqMZAjZrqigEF2LuRKeD+GNqn96o0Ye9yxr2fmElSFtAr5eHCXq2cNkM8PQsSESNWsU2IQXmVHk/NjRepCllXRFM4P2wzzMeDIJxd1tv2eFgNKAyc9J333Ap8=
+	t=1710930065; cv=none; b=pgn4U17NTxhYdiX6LBJpEEGANMoyhFLBCLvaj/OhGVeZabXdWeaDQL3LOcaLw0QJ6f2hse0V0Idnbz/LiJ6d/pIvteYK32m/+lbG+KKCF4ryeoh+mzh1JH68DG09nDzC4N/VaaUawXHR8/cbedKdE4wGC5SQ/4BkzJrZ7E4V7K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710929770; c=relaxed/simple;
-	bh=rPa9t11DkjZ8Ed7kwM28DoTQ4P507YzandJi5vcUYHQ=;
+	s=arc-20240116; t=1710930065; c=relaxed/simple;
+	bh=IipSOTUrpbfVFxPTbW4SJLskOKCRvgsTreIQKJ6a6F8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAyGaQqL2A3ND/BuvBo98KAK4dEeiLIc+M0zGjGbzCRRgK47Bzs2ywXkhWhElhUfxvNnwVmsMWThVXBeNmkY/mviDL0muUu4HzFAzFeVfH/sgIwXPjYmbuEniuaxjkh9++RaFSvWIcsdrdYI+GVhqhqTOzbQK3fk4pV4xCn4cuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ajzGFEgO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710929767;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t44WkNVUoNO+QtPNbszmzeZBcjv/Mxh37EetmY3mq4g=;
-	b=ajzGFEgO+2bG5quG+zn5rkdjD2h0OMwHcizVFdqsRrN8zShppv01wUrdHv29S3B6X6PSXu
-	ZGHiNWqm5imRdNJVLvDDljPoANFju443IRVHZdnPORG3A05bNBFfZE1UgBueua4Ru+h+Pq
-	YY2j+bHqYyAPVYZIMLfRSM6vO/6Gc6E=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-44-QM__AnlYPXOay8K8qTz2Fg-1; Wed, 20 Mar 2024 06:16:05 -0400
-X-MC-Unique: QM__AnlYPXOay8K8qTz2Fg-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-56b829a3b41so1506548a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 03:16:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710929764; x=1711534564;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t44WkNVUoNO+QtPNbszmzeZBcjv/Mxh37EetmY3mq4g=;
-        b=b3jQ4jMsav1VV6IP2Cm5Q8WsEvYSvUukcu9cpCt+kmKoW9wkm+0gtrSucK2wAurIjF
-         IiVPZD3p6/BJ8TXfGomVwsTq3eDgXRfoAcEX+0BWXbI+oT1709rft3L+slRo3l4ttTlb
-         7MdNwuGRYy1AbdXx3SusfEhHZ1v5tIOLQnUZ3IglWZldCIH1Jj4op7CJCcsDPNrHD7Sw
-         /p/T5SkQI4ALIV2+j6oAIH7krb+jYEU6lF6QEb8dmjRh8WIGG3mt7zcFd0vsnmKy7eLK
-         fThBATnsXxza2ws/DlVJD7tX/3MUBiXrYTcL7sRk5Bl+iukSLCF9mqbP9bebBNMYddHh
-         h86w==
-X-Forwarded-Encrypted: i=1; AJvYcCXoqHN93Cs79TTESbo99pekWBdQvZ/gtIVZD3dOityvD+LxtP8q9rBDNMC+e4b75cK9itFCeY/k0GXsVwxf1CJF2TmiPrvWEWrzHOE8Ug==
-X-Gm-Message-State: AOJu0YxW26x9EOAyzWMln5h0k1ZuKmVNQSIKYBh1kmBLjF6ID4tLhE6g
-	fU3E8r3G2qyWiekHYHXOb/z8XDFMCQvLbPB2VEOpxVGgWEWOBO/z/t6RibvUREgXB/cPUHWGTL3
-	ZlG2DqsyzNDS2tQiUBT8lOrw40k5uT+N92rWLXU9ePHLhMef61aoRYXkmIsNpamV+KDGxBg==
-X-Received: by 2002:aa7:c402:0:b0:568:99fa:26c with SMTP id j2-20020aa7c402000000b0056899fa026cmr10205690edq.11.1710929764182;
-        Wed, 20 Mar 2024 03:16:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7TqJtJpn6F0nyXq620kFUM+OS+Yv9phf2USDD8d0KiBXDmdTBFbx3kb2cefQw/Lig8fvKUQ==
-X-Received: by 2002:aa7:c402:0:b0:568:99fa:26c with SMTP id j2-20020aa7c402000000b0056899fa026cmr10205662edq.11.1710929763564;
-        Wed, 20 Mar 2024 03:16:03 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id n13-20020a05640204cd00b00569aed32c32sm3327689edw.75.2024.03.20.03.16.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Mar 2024 03:16:03 -0700 (PDT)
-Date: Wed, 20 Mar 2024 11:16:01 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, 
-	Allison Henderson <allison.henderson@oracle.com>, Christoph Hellwig <hch@lst.de>, 
-	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev, 
-	linux-xfs@vger.kernel.org, mark.tinguely@oracle.com
-Subject: Re: [PATCHSET v5.3] fs-verity support for XFS
-Message-ID: <7ov4snchmjuh6an7cwredibanjjd6zvwcwyic6un6lafjt5e3i@kgt75bq3q56t>
-References: <20240317161954.GC1927156@frogsfrogsfrogs>
- <171069245829.2684506.10682056181611490828.stgit@frogsfrogsfrogs>
- <20240318163512.GB1185@sol.localdomain>
- <20240319220743.GF6226@frogsfrogsfrogs>
- <20240319232118.GU1927156@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UxjwSkAzKxfgbc4ek/Tyt/xtZSfy37BJK4aXsfQMUdQ4PKS5HT5P+J+lCEXwRbDrxHgd0fFAO2kyeiD66aq7+yz82XaKPTiLYiWSFvEUI95D1N5owtjwabVdhIOYtjD1Fhn3Eg09iXrMt7ydOthQb6Rnuth+Q3Wffhk4/fyMohA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWCD1O6F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B450C433C7;
+	Wed, 20 Mar 2024 10:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710930064;
+	bh=IipSOTUrpbfVFxPTbW4SJLskOKCRvgsTreIQKJ6a6F8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XWCD1O6FALeplYBj5OA8LMWPCuojnLZozmfgek5zxP6B9NK8pxucIk416IrkDUrjN
+	 aMVZ+TEY6c8/Jf0FtVEUPgdqYT/ranTLlz5pyh8F1J1hQnOpwy4L6ehhXNv6/lcS5o
+	 46mAtZjAgmEUHiKtxSXShkmkiCv9xlzYaCg0G7RZjyOk5m5sG7GkEcI4yK7AtNFJM0
+	 64lMFt05xRSXcyrf28VEHyiwoW9gEhKQUCiAioGbTUfqi6/8PkFKHixaYh8Y/vrSau
+	 VUUC5cy3TtMX8cAj2WO/MFr0rTB16nATUlMO9jLAj3hrWapXKvR6U/ZsxwQuFSeAJz
+	 p5yWRcYS3CbPA==
+Date: Wed, 20 Mar 2024 11:21:00 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] vfs fixes
+Message-ID: <20240320-ameisen-werktag-86c781724557@brauner>
+References: <20240318-vfs-fixes-e0e7e114b1d1@brauner>
+ <CAHk-=wj-uKiYKh7g1=R9jkXB=GmwJ79uDdFKBKib2rDq79VDUQ@mail.gmail.com>
+ <CAHk-=wjRukhPxmDFAk+aAZEcA_RQvmbOoJGOw6w2RBSDd1Nmwg@mail.gmail.com>
+ <20240319-sobald-reagenzglas-d4c5b1c644ad@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240319232118.GU1927156@frogsfrogsfrogs>
+In-Reply-To: <20240319-sobald-reagenzglas-d4c5b1c644ad@brauner>
 
-On 2024-03-19 16:21:18, Darrick J. Wong wrote:
-> [fix tinguely email addr]
+> > Again, this comment (and the previous email) is more based on "this
+> > does not feel right to me" than anything else.
+> > 
+> > That code just makes my skin itch. I can't say it's _wrong_, but it
+> > just FeelsWrongToMe(tm).
 > 
-> On Tue, Mar 19, 2024 at 03:07:43PM -0700, Darrick J. Wong wrote:
-> > On Mon, Mar 18, 2024 at 09:35:12AM -0700, Eric Biggers wrote:
-> > > On Sun, Mar 17, 2024 at 09:22:52AM -0700, Darrick J. Wong wrote:
-> > > > Hi all,
-> > > > 
-> > > > From Darrick J. Wong:
-> > > > 
-> > > > This v5.3 patchset builds upon v5.2 of Andrey's patchset to implement
-> > > > fsverity for XFS.
-> > > 
-> > > Is this ready for me to review, or is my feedback on v5 still being
-> > > worked on?
-> > 
-> > It's still being worked on.  I figured it was time to push my work tree
-> > back to Andrey so everyone could see the results of me attempting to
-> > understand the fsverity patchset by working around in the codebase.
-> > 
-> > From your perspective, I suspect the most interesting patches will be 5,
-> > 6, 7+10+14, 11-13, and 15-17.  For everyone on the XFS side, patches
-> > 27-39 are the most interesting since they change the caching strategy
-> > and slim down the ondisk format.
-> > 
-> > > From a quick glance, not everything from my feedback has been
-> > > addressed.
-> > 
-> > That's correct.  I cleaned up the mechanics of passing merkle trees
-> > around, but I didn't address the comments about per-sb workqueues,
-> > fsverity tracepoints, or whether or not iomap should allocate biosets.
-> 
-> That perhaps wasn't quite clear enough -- I'm curious to see what Andrey
-> has to say about that part (patches 8, 9, 18) of the patchset.
+> So, initially I think the holder ops were intended to be generic by
+> Christoph but I agree that it's probably not needed. I just didn't
+> massage that code yet. Now on my todo for this cycle!
 
-The per-sb workqueue can be used for other fs, which should be
-doable (also I will rename it, as generic name came from the v2 when
-I thought it would be used for more stuff than just verity)
+So, the block holder ops will gain additional implementers in the block
+layer that will implement their own separate ops. So I trust the block
+layer with this.
 
-For tracepoints, I will add all the changes suggested by Eric, the
-signature tracepoints could be probably dropped.
+The holder is used to determine whether a block device can be reopened.
+So both for internal (mounting, log device initialization) or userspace
+opens we compare the holders of the block device. We do have allowed for
+quite some time to open the same block device exclusively with different
+flags. So there are multiple files open to the same block device and the
+holder is used as proof that it can be reopened. So always using the
+file as the holder would still mean that we have to compare
+file->private_data to determine whether the block device can be
+reopened. So it won't get us as much as we'd want.
 
-For bioset allocation, I will look into this if there's good way to
-allocate only for verity inodes, if it's not complicate things too
-much. Make sense for systems which won't use fsverity but have
-FS_VERITY=y.
+The reason for the holder to remain valid is that the block layer does
+have ioctl operations such as removal of a device in the case of nbd,
+suspend and resume used in stuff like cryptsetup. In all such cases we
+go from arbitrary block device to arbitrary holder and then inform them
+about the operation calling the appropriate callback. So we would still
+have to guarantee the validity of the holder in file->private_data.
 
--- 
-- Andrey
+There are also two internal codepaths where the block device is
+temporarly marked as being in the process of being claimed. This will
+cause actual openers to wait until bd_holder is really set or aborted
+but not fail the actual open. This has traditionally been the case in
+the loop code and during user initiated and internally triggered
+partition scanning. That could be reworked but would be pretty ugly.
 
+We'll continue considering additional cleanups and latest next merge
+window I'll give you a detailed write up what happened.
 
