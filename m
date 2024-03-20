@@ -1,69 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-14894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C308811C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 13:39:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763418811C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 13:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEED6B23088
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 12:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F60A285E22
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 12:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5E33FE20;
-	Wed, 20 Mar 2024 12:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4283FB95;
+	Wed, 20 Mar 2024 12:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qeoINsTh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from vps.thesusis.net (vps.thesusis.net [34.202.238.73])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327F33EA62
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 12:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.238.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575823BBC8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 12:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710938341; cv=none; b=fCJ3B+qi3+xjrNCg/A+Cegb0UB93Ze7wr+H0zb2uXjHFaB0lIJcys46EqLa5bTnuZG9u6r38NTGzYI63O3AAoXmYg0YqQHF98GUOkbLT5VlSP/OzB6pArQOufl4tiRrwjQgz+3o+u3p4OiF12+9DbaEUC4/NbFZZ2HMpm7v+Fg4=
+	t=1710938426; cv=none; b=vGHd4bGnUyjU6TJSDa0SAksSzGTiCPGnyFCuCbA2J1QC1rIV6jt+N87O15mN2CybLLGGQSceAPBC33FFk/i4V2Msj39zcDIiVgd9iAGFa/a+xXWRrM8HS9a69nHprCTDT3RnDqPJykhG6mWVtBNOwTg3p74O54f/wl70960Lsls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710938341; c=relaxed/simple;
-	bh=kxwRjPUqcNG9TAudiswtW/7gS5A/wlXNMa9X3KmVwIc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=m+l6TCD610OHS/WLl47Mozk5bXAa5bzmW56m/oWxL4r7PEVWZ/12yDo4H0xY/SdHIIqCQoSruI7sXvalVYqhHVuBML7GokDj5hwj+UFF9Vuh2FlKBx06/Qn50J2nHe50k7PQmhwMlQsfv7xLoa2ZEmofy/oh/cbymwnNa50eGVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thesusis.net; spf=pass smtp.mailfrom=thesusis.net; arc=none smtp.client-ip=34.202.238.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thesusis.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thesusis.net
-Received: by vps.thesusis.net (Postfix, from userid 1000)
-	id E9CAE2A94E; Wed, 20 Mar 2024 08:38:52 -0400 (EDT)
-From: Phillip Susi <phill@thesusis.net>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: Uneccesary flushes waking up suspended disks
-In-Reply-To: <ZfdyoJ90mxRLzELg@dread.disaster.area>
-References: <877cieqhaw.fsf@vps.thesusis.net>
- <Ze5fOTojI+BhgXOW@dread.disaster.area> <87h6h78uar.fsf@vps.thesusis.net>
- <ZfdyoJ90mxRLzELg@dread.disaster.area>
-Date: Wed, 20 Mar 2024 08:38:52 -0400
-Message-ID: <87r0g5ulgj.fsf@vps.thesusis.net>
+	s=arc-20240116; t=1710938426; c=relaxed/simple;
+	bh=L8vG9X0aLpduj2IMjd1lFAKHMHqMxxJSPbXUMsD9Vz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhV24Xx8nN7qq+ATQ2AK93PaEf8rWiNPKKeMEp3DgTRPed4oadDAeS5xU4F9ddqM/biqxGt55E/I6HtCQAv2KnLPRH4upkuiG1VfSqOVvFeyNvjnfdKBUn8T0JCS25Xf4NSz6IXqPQuIOjFPymhp8jDNyAXQ7cxzUI2xcMZS/Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qeoINsTh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB54AC433F1;
+	Wed, 20 Mar 2024 12:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710938426;
+	bh=L8vG9X0aLpduj2IMjd1lFAKHMHqMxxJSPbXUMsD9Vz0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qeoINsThEOWj9Hc0GsyoJQB+8JGsYzJG3bv+N2UstanrJLF5KoXOMJMLEsh08Ute0
+	 QxeI5GjP4B2v4bDHFUe0moI6QPD8zhTSfodctZgVlCVj6mreRVCuvh+f28ul1bQHmd
+	 oirHvAQTq4Q0SIzmadHqjiKIlhkE0KkyQZajt3aT7G6MOHFS84yG6/UPGcnZVervY4
+	 mKEzDAszC9112Agddbg1U5U5wGqBDYSnKpzS4uiSMBNXFWKKTCiZ53c/sbpm+gojMV
+	 IFaHEPnKBMLa5wd7HviizOA2TlVLvyhQzSIYIZZkV8KfXEujqLrvKZgQ4ukWr9ccrl
+	 fPXb69zXGhARw==
+From: cem@kernel.org
+To: akpm@linux-foundation.org
+Cc: jack@suse.cz,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	hughd@google.com
+Subject: [PATCH RESEND] tmpfs: Fix race on handling dquot rbtree
+Date: Wed, 20 Mar 2024 13:39:59 +0100
+Message-ID: <20240320124011.398847-1-cem@kernel.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Dave Chinner <david@fromorbit.com> writes:
+From: Carlos Maiolino <cem@kernel.org>
 
-> That's what I expected - I would have been surprised if you found
-> problems across multiple filesystems...
+A syzkaller reproducer found a race while attempting to remove dquot information
+from the rb tree.
+Fetching the rb_tree root node must also be protected by the dqopt->dqio_sem,
+otherwise, giving the right timing, shmem_release_dquot() will trigger a warning
+because it couldn't find a node in the tree, when the real reason was the root
+node changing before the search starts:
 
-How do the other filesystems know they don't need to issue a flush?
-While this particular method of reproducing the problem ( sync without
-touching the filesystem ) only shows on ext4, I'm not sure this isn't
-still a broader problem.
+Thread 1				Thread 2
+- shmem_release_dquot()			- shmem_{acquire,release}_dquot()
 
-Say that a program writes some data to a file.  Due to cache pressure,
-the dirty pages get written to the disk.  Some time later, the disk is
-runtime suspended ( which flushes its write cache ).  After that,
-someone does some kind of sync ( whole fs or individual file ).  Doesn't
-the FS *have* to issue a flush at that point?  Even though there is
-nothing in the disk's cache, the FS doesn't know that.
+- fetch ROOT				- Fetch ROOT
+
+					- acquire dqio_sem
+- wait dqio_sem
+
+					- do something, triger a tree rebalance
+					- release dqio_sem
+
+- acquire dqio_sem
+- start searching for the node, but
+  from the wrong location, missing
+  the node, and triggering a warning.
+
+Fixes: eafc474e202978 ("shmem: prepare shmem quota infrastructure")
+Reported-by: Ubisectech Sirius <bugreport@ubisectech.com>
+Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+---
+
+Hi Andrew, the original series has been pushed through your tree, do you think you can pull this
+patch too?
+
+Thanks,
+Carlos
+ 
+ mm/shmem_quota.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/mm/shmem_quota.c b/mm/shmem_quota.c
+index 062d1c1097ae3..ce514e700d2f6 100644
+--- a/mm/shmem_quota.c
++++ b/mm/shmem_quota.c
+@@ -116,7 +116,7 @@ static int shmem_free_file_info(struct super_block *sb, int type)
+ static int shmem_get_next_id(struct super_block *sb, struct kqid *qid)
+ {
+ 	struct mem_dqinfo *info = sb_dqinfo(sb, qid->type);
+-	struct rb_node *node = ((struct rb_root *)info->dqi_priv)->rb_node;
++	struct rb_node *node;
+ 	qid_t id = from_kqid(&init_user_ns, *qid);
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	struct quota_id *entry = NULL;
+@@ -126,6 +126,7 @@ static int shmem_get_next_id(struct super_block *sb, struct kqid *qid)
+ 		return -ESRCH;
+ 
+ 	down_read(&dqopt->dqio_sem);
++	node = ((struct rb_root *)info->dqi_priv)->rb_node;
+ 	while (node) {
+ 		entry = rb_entry(node, struct quota_id, node);
+ 
+@@ -165,7 +166,7 @@ static int shmem_get_next_id(struct super_block *sb, struct kqid *qid)
+ static int shmem_acquire_dquot(struct dquot *dquot)
+ {
+ 	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
+-	struct rb_node **n = &((struct rb_root *)info->dqi_priv)->rb_node;
++	struct rb_node **n;
+ 	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
+ 	struct rb_node *parent = NULL, *new_node = NULL;
+ 	struct quota_id *new_entry, *entry;
+@@ -176,6 +177,8 @@ static int shmem_acquire_dquot(struct dquot *dquot)
+ 	mutex_lock(&dquot->dq_lock);
+ 
+ 	down_write(&dqopt->dqio_sem);
++	n = &((struct rb_root *)info->dqi_priv)->rb_node;
++
+ 	while (*n) {
+ 		parent = *n;
+ 		entry = rb_entry(parent, struct quota_id, node);
+@@ -264,7 +267,7 @@ static bool shmem_is_empty_dquot(struct dquot *dquot)
+ static int shmem_release_dquot(struct dquot *dquot)
+ {
+ 	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
+-	struct rb_node *node = ((struct rb_root *)info->dqi_priv)->rb_node;
++	struct rb_node *node;
+ 	qid_t id = from_kqid(&init_user_ns, dquot->dq_id);
+ 	struct quota_info *dqopt = sb_dqopt(dquot->dq_sb);
+ 	struct quota_id *entry = NULL;
+@@ -275,6 +278,7 @@ static int shmem_release_dquot(struct dquot *dquot)
+ 		goto out_dqlock;
+ 
+ 	down_write(&dqopt->dqio_sem);
++	node = ((struct rb_root *)info->dqi_priv)->rb_node;
+ 	while (node) {
+ 		entry = rb_entry(node, struct quota_id, node);
+ 
+-- 
+2.44.0
 
 
