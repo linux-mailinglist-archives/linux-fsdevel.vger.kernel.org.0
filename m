@@ -1,79 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-14850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B652088088A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 01:32:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85E788093C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 02:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513741F23D25
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 00:32:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 746B4283FD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 01:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABD1187F;
-	Wed, 20 Mar 2024 00:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC19279FE;
+	Wed, 20 Mar 2024 01:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt3TthtJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjbzolXh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28211366;
-	Wed, 20 Mar 2024 00:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDAD7464;
+	Wed, 20 Mar 2024 01:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710894729; cv=none; b=habRAkM2m0myKFcCSXUY+hYtDdLTySVVQ16PEk/Un0vbpIpJ04NgA/V36idvdPCakbVoeYQ5frjptuV86512SPgO5nQhwZV6jqqsTXGeDfj/WQ4v7VZntchFflmJhm7HZru2zUCM1EQUN2xd/ownhvJcbWsD0Qxf8ApdfNCxQ1Q=
+	t=1710899368; cv=none; b=tabaOwZxFrpOQeLfbNPMjzhzYkKZ9/WY7Ny0LmrMDrWyj9Cp7JkHa1vrxhdWXQXAg1NW1n2x3ySdNowclOopetbLnmpdOab8Q5YTCyUJ62mhLNSaMK9rhuznZDzcJojktnf6bVaE66+PhGHSYYNo+7rF1vQPbQGMWv9AMdmPQQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710894729; c=relaxed/simple;
-	bh=OJ+DFUbaDU6D6Jdy3Jzi3cIZ7vDGjVP9P9Zwh0GdCHE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=YV/24RXPs+9LtvsfU3jykasX4w0k+RDU+E2bWAu5HWY/xmAWbmsBoGP/azvlThWq0LHwRCUezp2rYbj6Ah7c+stRTdD3dgjnjNNNIVJ4AjV6WaFJYuaiYzGrAS2hlq1mhRAjrUqUE9ryWUIApCir0PrSfHgm/wM+clJX2aPvseg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bt3TthtJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A4118C433C7;
-	Wed, 20 Mar 2024 00:32:09 +0000 (UTC)
+	s=arc-20240116; t=1710899368; c=relaxed/simple;
+	bh=P+xOin5dGZ4GaniipK30HqG2ktCQwuPC/n57ZbiXppM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zu0ICq6KvoSPuf89XvuCzXharuGIO0cixAUXmzICPomeRK0sneiW+Rzq6Fjx6oaSWFMiTu+KYOMRAqhJLOyJTS4aaTxWMG88LEatvPuShQ16j9jjvpDWUnhO6N4+L+YK3ZTMHGblw/6T8zQ4+EiKvsAzVt/tdHYH1UO+5Wr+zTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjbzolXh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C03C433C7;
+	Wed, 20 Mar 2024 01:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710894729;
-	bh=OJ+DFUbaDU6D6Jdy3Jzi3cIZ7vDGjVP9P9Zwh0GdCHE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=bt3TthtJlY0uGATnr2gJJR9G8MY4DleAZiDIdIRCqqdfGnjLUpCz4X/voEZm26Nwj
-	 LsV3rz4w2LwHfBEeZKqv4t6b3qv1kLYBK8ffefrRrIXF1tJ4HXSKA2/bDUu/DJcLh0
-	 n5V75xemvlD728iFTLhbDyzgAQ1VaZwJzvmZL/TugpYuSajKVHYql66gJ27GerJJdE
-	 xk02PObriLx3sKdCUl/D1Vf06Mhd01TliXOj34GB73vm3na+gItzEr8EAFrfF/3Usz
-	 IB1ht174s3NMVTMQDGQbq9BLku/JHBbz7pG7+MhaiTXMzgdC/jtuMB9tQEPaK/q4fZ
-	 qa5JAoUeTA/rg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9BB69D84BB3;
-	Wed, 20 Mar 2024 00:32:09 +0000 (UTC)
-Subject: Re: [GIT PULL] bachefs fixes for 6.9-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <qhecenhgh5bnkjllimyvmqc6cv5bv4vposvh5hqtjjm7hx3q4u@r4gwjp6wl2k2>
-References: <qhecenhgh5bnkjllimyvmqc6cv5bv4vposvh5hqtjjm7hx3q4u@r4gwjp6wl2k2>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <qhecenhgh5bnkjllimyvmqc6cv5bv4vposvh5hqtjjm7hx3q4u@r4gwjp6wl2k2>
-X-PR-Tracked-Remote: https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-03-19
-X-PR-Tracked-Commit-Id: 2e92d26b25432ec3399cb517beb0a79a745ec60f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a4145ce1e7bc247fd6f2846e8699473448717b37
-Message-Id: <171089472962.650.4843210170856467637.pr-tracker-bot@kernel.org>
-Date: Wed, 20 Mar 2024 00:32:09 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1710899367;
+	bh=P+xOin5dGZ4GaniipK30HqG2ktCQwuPC/n57ZbiXppM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sjbzolXhEiJUY+t3wAhyS0phc5T83NDCfJXFQNahxsWBcGJ3prS+19CHlzsu+ZOPY
+	 dezPg0TVkppu4MdGjZQNtDwu+SMuteP1iSaVOf8JqGEdhEgPLt38RbmUUDLP37H2AD
+	 38XehjBo9s382bQ3bmAwv63dLmhqovQflmnmmSsiR3vE6SwVou1ueeqHyspjzMl7GD
+	 UvPhiLmDSD5IEy4SitSAvdrtN+1C7e2i1kcj/iH54Umzj6tYv9mQkrO2NM54/tYgVY
+	 r+LBl9gr27FdU7ZnNtzk+2+mvzqzW84yJbN7AC6CwV5Vg9I5MiG3jTLKTx9jrKr0Nh
+	 iPi75nzRcUzqQ==
+Date: Tue, 19 Mar 2024 18:49:27 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Kiselev, Oleg" <okiselev@amazon.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Theodore Ts'o <tytso@mit.edu>,
+	"torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ext4: Add support for FS_IOC_GETFSSYSFSPATH
+Message-ID: <20240320014927.GT6184@frogsfrogsfrogs>
+References: <20240315035308.3563511-1-kent.overstreet@linux.dev>
+ <20240315035308.3563511-4-kent.overstreet@linux.dev>
+ <20240315164550.GD324770@mit.edu>
+ <l3dzlrzaekbxjryazwiqtdtckvl4aundfmwff2w4exuweg4hbc@2zsrlptoeufv>
+ <A0A342BA-631D-4D6E-B6D2-692A45509F63@amazon.com>
+ <Zfi+v/9vF+mfZ4Bl@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zfi+v/9vF+mfZ4Bl@dread.disaster.area>
 
-The pull request you sent on Tue, 19 Mar 2024 18:11:15 -0400:
+On Tue, Mar 19, 2024 at 09:22:55AM +1100, Dave Chinner wrote:
+> On Mon, Mar 18, 2024 at 09:51:04PM +0000, Kiselev, Oleg wrote:
+> > On 3/15/24, 09:51, "Kent Overstreet" <kent.overstreet@linux.dev <mailto:kent.overstreet@linux.dev>> wrote:
+> > > On Fri, Mar 15, 2024 at 12:45:50PM -0400, Theodore Ts'o wrote:
+> > > > On Thu, Mar 14, 2024 at 11:53:02PM -0400, Kent Overstreet wrote:
+> > > > > the new sysfs path ioctl lets us get the /sys/fs/ path for a given
+> > > > > filesystem in a fs agnostic way, potentially nudging us towards
+> > > > > standarizing some of our reporting.
+> > > > >
+> > > > > --- a/fs/ext4/super.c
+> > > > > +++ b/fs/ext4/super.c
+> > > > > @@ -5346,6 +5346,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+> > > > > sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP | QTYPE_MASK_PRJ;
+> > > > > #endif
+> > > > > super_set_uuid(sb, es->s_uuid, sizeof(es->s_uuid));
+> > > > > + super_set_sysfs_name_bdev(sb);
+> > > >
+> > > > Should we perhaps be hoisting this call up to the VFS layer, so that
+> > > > all file systems would benefit?
+> > >
+> > >
+> > > I did as much hoisting as I could. For some filesystems (single device
+> > > filesystems) the sysfs name is the block device, for the multi device
+> > > filesystems I've looked at it's the UUID.
+> > 
+> > Why not use the fs UUID for all cases, single device and multi device?
+> 
+> Because the sysfs directory heirachy has already been defined for
+> many filesystems, and technically sysfs represents a KABI that we
+> can't just break for the hell of it.
+> 
+> e.g. changing everything to use uuid will break fstests
+> infrastructure because it assumes that it can derive the sysfs dir
+> location for the filesystem from the *device name* the filesystem is
+> mounted on. btrfs has a special implementation of that derivation
+> that runs the btrfs command to retreive the UUID of the filesysem.
+> 
+> So, yes, while we could technically change it, we break anything in
+> userspace that has introduced a dependency on bdev name as the sysfs
+> fs identifier. We're not going to break userspace like this,
+> especially as it is trivial to avoid.
 
-> https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-03-19
+Wellll... some day in the far kumbaya future, everyone will call
+GETSYSFSPATH and they won't have to know or care what each fs does under
+the covers.  So who cares? 8-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a4145ce1e7bc247fd6f2846e8699473448717b37
+How about using sysfs_create_link for non -o nouuid filesystems so that
+/sys/fs/xfs/$uuid actually goes somewhere?
 
-Thank you!
+<shrug> Don't really care much myself either way.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+--D
+
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
