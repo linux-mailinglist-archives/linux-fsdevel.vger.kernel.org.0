@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-14868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68560880D88
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 09:47:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B27C880D8E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 09:48:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2481C285123
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 08:47:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4A7EB23D10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 08:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C393D3A5;
-	Wed, 20 Mar 2024 08:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDAA3EA64;
+	Wed, 20 Mar 2024 08:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YpZDw3q0"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T6T2i4Y5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1823C478;
-	Wed, 20 Mar 2024 08:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0463D57A;
+	Wed, 20 Mar 2024 08:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710924402; cv=none; b=eI5qeScySf6Y/vveT/YrLNFQPfY47Fuqa76bZ6pWlAJiL0DCHPwGp6vG1h2co3x9p9lbaLprT7M0l1b/B7pwy7QFlMdd6abKdXLRnl+C8V2N//9klPDE7mz08OTlhALbdhL4QBu/2s6JssbqNFZSLLN5BhIdvlKVP1YCbWp9yBc=
+	t=1710924405; cv=none; b=Ssa9d22yEAvzjpCCA5QWXx7yn7xSnDz6JXvjKO6cYhnnMsSzXUfYc8RGQveFTtG0NinowWxwEVdVbjm1KJa+q+yUsGYDjV5sruQECaPLcZWFkeK7RSP3uRK5i1p0a2onUGtvt88THspzQDHBc82vC4mrjJXu8eNU6o2N1VjEKgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710924402; c=relaxed/simple;
-	bh=upTn9VDPH4ATj696dO2v0HAAxcgXeQncdfgIxpTDi8A=;
+	s=arc-20240116; t=1710924405; c=relaxed/simple;
+	bh=swtZ6BKu+FGmiqRjglGL90hSAB3JlB+upSuAXL/TJpA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OIVfclPp0u0pBGWCdBAU+kDIJ1Kbi5N1pB/27dXOikc5O50Fu22X28R52s0lhMmjfmz+xYQB67ksydYP8DpZ3nZy8eO+DMSFfz9TaJcMbBVIEqFjMCUGFBXXN1sdcVLwJDLkXIDdOmFbeFRS2nBVFLXj7RwH0ayvXCicl4AWyAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YpZDw3q0; arc=none smtp.client-ip=46.235.227.194
+	 MIME-Version; b=nCByvms61q3LjcyEqWfWKk2YyBLUy5zUR4y2Yaj2edAxGyE4l32XaMqvD4nQF+F9WBgFzrHrQ/Tk7vtv0J98EflDi/40Z4RT7CEMzHL4LXZaI0VkZ5VoCh/8zKCRas7ffoGMEwlG7d51BUg89KrZ0DM+Od/bHXkS8LaAbAPx850=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T6T2i4Y5; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1710924399;
-	bh=upTn9VDPH4ATj696dO2v0HAAxcgXeQncdfgIxpTDi8A=;
+	s=mail; t=1710924402;
+	bh=swtZ6BKu+FGmiqRjglGL90hSAB3JlB+upSuAXL/TJpA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YpZDw3q0AHiyQxFxxxMOsYIEu8hpNzrcUOaLhtnYdCnBBfYVOvA6OV9ibmNLIVtZu
-	 R4n3tihSPplRzkMbNlfSontLgp4QYbciXCy7VS+q05+/VjX4DeDTzp4nKklAy3TT/g
-	 XfCPn6SAyMlWnNjYf1j2xtlenI4am+/A3YNawid4++6JzTgfe4/8ivQj1wXp5xSN8+
-	 YNahRfjAtYaPUxf24TmD6fOIdDgI+/GbvSAp4d8s5QdvZjwvO4x9JdQkUikjpRWNpA
-	 zKpczlMRu09COAVX/Yp103lnxoLP1cwKH1V7315vsD6g+4uneaUMrw0Hhr/XT3Y2AR
-	 aiOsIoDhlsnMQ==
+	b=T6T2i4Y5qwjtficiWom7ZT8GuQjm3nHTHKUpmxoUhXQaqCY3wbIJD8xdG7J1fK2lX
+	 U9j32SPQ3BSrGjUjLSIyamSYPSzgO7Xgop7D77IpaYak3lK5z5WcuQ6YxuPXe9+luR
+	 qjAOmI6Z6vl74J4/XskhhgIn+Nq5rVJdVRBkquiShpjEapD/8myfNQy8UZGAduI5yl
+	 HGlhcijFdT3S+tkfZmtGrBeKu5Vs40o0fCaB9/5WOCXY7byQpS3f5lIwMC5ZzSAaXr
+	 h3ang+mn1uld1RW/V+5u37V49aA1FyxasYMicZf6H/zBdsAoR0GvWndGGV5mewBM1o
+	 HT+K0PpjxyCPQ==
 Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 925F737820EE;
-	Wed, 20 Mar 2024 08:46:36 +0000 (UTC)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 94FFE3782110;
+	Wed, 20 Mar 2024 08:46:39 +0000 (UTC)
 From: Eugen Hristev <eugen.hristev@collabora.com>
 To: tytso@mit.edu,
 	adilger.kernel@dilger.ca,
@@ -64,9 +64,9 @@ Cc: linux-kernel@vger.kernel.org,
 	jack@suse.cz,
 	krisman@suse.de,
 	Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH v14 3/9] libfs: Introduce case-insensitive string comparison helper
-Date: Wed, 20 Mar 2024 10:46:16 +0200
-Message-Id: <20240320084622.46643-4-eugen.hristev@collabora.com>
+Subject: [PATCH v14 4/9] ext4: Reuse generic_ci_match for ci comparisons
+Date: Wed, 20 Mar 2024 10:46:17 +0200
+Message-Id: <20240320084622.46643-5-eugen.hristev@collabora.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240320084622.46643-1-eugen.hristev@collabora.com>
 References: <20240320084622.46643-1-eugen.hristev@collabora.com>
@@ -80,123 +80,129 @@ Content-Transfer-Encoding: 8bit
 
 From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-generic_ci_match can be used by case-insensitive filesystems to compare
-strings under lookup with dirents in a case-insensitive way.  This
-function is currently reimplemented by each filesystem supporting
-casefolding, so this reduces code duplication in filesystem-specific
-code.
+Instead of reimplementing ext4_match_ci, use the new libfs helper.
+
+It also adds a comment explaining why fname->cf_name.name must be
+checked prior to the encryption hash optimization, because that tripped
+me before.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-[eugen.hristev@collabora.com: rework to first test the exact match]
 Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
 ---
- fs/libfs.c         | 77 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  4 +++
- 2 files changed, 81 insertions(+)
+ fs/ext4/namei.c | 91 +++++++++++++++----------------------------------
+ 1 file changed, 27 insertions(+), 64 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index c297953db948..711eecc125bd 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1776,6 +1776,83 @@ static const struct dentry_operations generic_ci_dentry_ops = {
- 	.d_revalidate = fscrypt_d_revalidate,
- #endif
- };
-+
-+/**
-+ * generic_ci_match() - Match a name (case-insensitively) with a dirent.
-+ * This is a filesystem helper for comparison with directory entries.
-+ * generic_ci_d_compare should be used in VFS' ->d_compare instead.
-+ *
-+ * @parent: Inode of the parent of the dirent under comparison
-+ * @name: name under lookup.
-+ * @folded_name: Optional pre-folded name under lookup
-+ * @de_name: Dirent name.
-+ * @de_name_len: dirent name length.
-+ *
-+ * Test whether a case-insensitive directory entry matches the filename
-+ * being searched.  If @folded_name is provided, it is used instead of
-+ * recalculating the casefold of @name.
-+ *
-+ * Return: > 0 if the directory entry matches, 0 if it doesn't match, or
-+ * < 0 on error.
-+ */
-+int generic_ci_match(const struct inode *parent,
-+		     const struct qstr *name,
-+		     const struct qstr *folded_name,
-+		     const u8 *de_name, u32 de_name_len)
-+{
-+	const struct super_block *sb = parent->i_sb;
-+	const struct unicode_map *um = sb->s_encoding;
-+	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
-+	struct qstr dirent = QSTR_INIT(de_name, de_name_len);
-+	int res = 0, match = 0;
-+
-+	if (IS_ENCRYPTED(parent)) {
-+		const struct fscrypt_str encrypted_name =
-+			FSTR_INIT((u8 *) de_name, de_name_len);
-+
-+		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
-+			return -EINVAL;
-+
-+		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
-+		if (!decrypted_name.name)
-+			return -ENOMEM;
-+		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
-+						&decrypted_name);
-+		if (res < 0)
-+			goto out;
-+		dirent.name = decrypted_name.name;
-+		dirent.len = decrypted_name.len;
-+	}
-+
-+	/*
-+	 * Attempt a case-sensitive match first. It is cheaper and
-+	 * should cover most lookups, including all the sane
-+	 * applications that expect a case-sensitive filesystem.
-+	 */
-+	if (folded_name->name) {
-+		if (dirent.len == folded_name->len &&
-+		    !memcmp(folded_name->name, dirent.name, dirent.len)) {
-+			match = 1;
-+			goto out;
-+		}
-+		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
-+	} else {
-+		if (dirent.len == name->len &&
-+		    !memcmp(name->name, dirent.name, dirent.len) &&
-+		    (!sb_has_strict_encoding(sb) || !utf8_validate(um, name))) {
-+			match = 1;
-+			goto out;
-+		}
-+		res = utf8_strncasecmp(um, name, &dirent);
-+	}
-+
-+out:
-+	kfree(decrypted_name.name);
-+	if (res < 0)
-+		return res;
-+	return (match || !res);
-+}
-+EXPORT_SYMBOL(generic_ci_match);
- #endif
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index b96983a4c185..2d0ee232fbe7 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1390,58 +1390,6 @@ static void dx_insert_block(struct dx_frame *frame, u32 hash, ext4_lblk_t block)
+ }
  
- #ifdef CONFIG_FS_ENCRYPTION
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ff1338109b54..690b37e1db95 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3281,6 +3281,10 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- extern int generic_check_addressable(unsigned, u64);
- 
- extern void generic_set_sb_d_ops(struct super_block *sb);
-+extern int generic_ci_match(const struct inode *parent,
-+			    const struct qstr *name,
-+			    const struct qstr *folded_name,
-+			    const u8 *de_name, u32 de_name_len);
- 
- static inline bool sb_has_encoding(const struct super_block *sb)
+ #if IS_ENABLED(CONFIG_UNICODE)
+-/*
+- * Test whether a case-insensitive directory entry matches the filename
+- * being searched for.  If quick is set, assume the name being looked up
+- * is already in the casefolded form.
+- *
+- * Returns: 0 if the directory entry matches, more than 0 if it
+- * doesn't match or less than zero on error.
+- */
+-static int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
+-			   u8 *de_name, size_t de_name_len, bool quick)
+-{
+-	const struct super_block *sb = parent->i_sb;
+-	const struct unicode_map *um = sb->s_encoding;
+-	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
+-	struct qstr entry = QSTR_INIT(de_name, de_name_len);
+-	int ret;
+-
+-	if (IS_ENCRYPTED(parent)) {
+-		const struct fscrypt_str encrypted_name =
+-				FSTR_INIT(de_name, de_name_len);
+-
+-		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
+-		if (!decrypted_name.name)
+-			return -ENOMEM;
+-		ret = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
+-						&decrypted_name);
+-		if (ret < 0)
+-			goto out;
+-		entry.name = decrypted_name.name;
+-		entry.len = decrypted_name.len;
+-	}
+-
+-	if (quick)
+-		ret = utf8_strncasecmp_folded(um, name, &entry);
+-	else
+-		ret = utf8_strncasecmp(um, name, &entry);
+-	if (ret < 0) {
+-		/* Handle invalid character sequence as either an error
+-		 * or as an opaque byte sequence.
+-		 */
+-		if (sb_has_strict_encoding(sb))
+-			ret = -EINVAL;
+-		else if (name->len != entry.len)
+-			ret = 1;
+-		else
+-			ret = !!memcmp(name->name, entry.name, entry.len);
+-	}
+-out:
+-	kfree(decrypted_name.name);
+-	return ret;
+-}
+-
+ int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+ 				  struct ext4_filename *name)
  {
+@@ -1503,20 +1451,35 @@ static bool ext4_match(struct inode *parent,
+ #if IS_ENABLED(CONFIG_UNICODE)
+ 	if (IS_CASEFOLDED(parent) &&
+ 	    (!IS_ENCRYPTED(parent) || fscrypt_has_encryption_key(parent))) {
+-		if (fname->cf_name.name) {
+-			if (IS_ENCRYPTED(parent)) {
+-				if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
+-					fname->hinfo.minor_hash !=
+-						EXT4_DIRENT_MINOR_HASH(de)) {
++		int ret;
+ 
+-					return false;
+-				}
+-			}
+-			return !ext4_ci_compare(parent, &fname->cf_name,
+-						de->name, de->name_len, true);
++		/*
++		 * Just checking IS_ENCRYPTED(parent) below is not
++		 * sufficient to decide whether one can use the hash for
++		 * skipping the string comparison, because the key might
++		 * have been added right after
++		 * ext4_fname_setup_ci_filename().  In this case, a hash
++		 * mismatch will be a false negative.  Therefore, make
++		 * sure cf_name was properly initialized before
++		 * considering the calculated hash.
++		 */
++		if (IS_ENCRYPTED(parent) && fname->cf_name.name &&
++		    (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
++		     fname->hinfo.minor_hash != EXT4_DIRENT_MINOR_HASH(de)))
++			return false;
++
++		ret = generic_ci_match(parent, fname->usr_fname,
++				       &fname->cf_name, de->name,
++				       de->name_len);
++		if (ret < 0) {
++			/*
++			 * Treat comparison errors as not a match.  The
++			 * only case where it happens is on a disk
++			 * corruption or ENOMEM.
++			 */
++			return false;
+ 		}
+-		return !ext4_ci_compare(parent, fname->usr_fname, de->name,
+-						de->name_len, false);
++		return ret;
+ 	}
+ #endif
+ 
 -- 
 2.34.1
 
