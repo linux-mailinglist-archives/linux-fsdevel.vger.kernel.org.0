@@ -1,62 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-14921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111768817D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 20:29:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF10D8817F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 20:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65281C21E59
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 19:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69E6F285D43
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 19:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC78685642;
-	Wed, 20 Mar 2024 19:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008798564F;
+	Wed, 20 Mar 2024 19:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l6z8UkWz"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g9+3i0OJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72ED6AFAE;
-	Wed, 20 Mar 2024 19:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0645485266
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 19:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710962991; cv=none; b=ska3Q/ZtNdAutaQB/ZMy+fIjXLvAXPTAtQCyHXV2UQUdl3RPZ+CzlZmK3gcrXombhWT/xqjVmkW/Z2DsBlT8Q0ZsJTmbUMI3KMMrUkJP+ZxD12DBtL9jm6PPFw+Kyx7/RRCcqBcBwo9Qns8sCVG9mS6zjXogfOZL00L+MBFiYPQ=
+	t=1710963205; cv=none; b=B/1w1UHWatksiTnvc4CQFLLKSKfBN9QLeV/4h1VuYJyi6KjniRXI50s66BSwe4tr2K6WKXWF3iN6si2Z18SehvJu9CnKf1Eyb3rs+4Sb8WHIhiEta3TLJ8HfHCnJDr3KIVhUXGn0cEh7on8kmaKCLUyylbjBZ9auhk8MPTkE1oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710962991; c=relaxed/simple;
-	bh=zSZ9KkY083/xyX1OWaFfmiEEW4XlP6evc9N/ZITr/Ec=;
+	s=arc-20240116; t=1710963205; c=relaxed/simple;
+	bh=nN5+ywBmRc+r5vpgYmdumpD7NYsf4980nJhhgV58+L0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9R1jNsesPjJ3qh4Ugo0b2wVhjKMAw6gI6UMR5htDIuvzh4FxsFLd0Eu6rA8N1gv+N4BsvnauzhnBOSuFBJf6A14LH2Npjr4WVP88+Or0ovyEjkEchudQAJJfXAuQdn5xst1LmdR38HdDpWEWSH1wRDuK/403AP8wepF23iroao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l6z8UkWz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=yvq+o8b7UjuJnPOttI4lLotYQ0Q3sPL2mIWTZN8jvW0=; b=l6z8UkWzI0ESS7o9ZWcOPP5lby
-	9zxxbsnFzQthW6djG85BtYcfSPsQF2oOY1v/H/GtyB6eLQiOMHEdm8i+3uwmmBtZWaA0zBuhcKzME
-	TDAcb/GEg7WgmDOHWSq5ABZel17C8g7W0aEu4Qkey+7Q68CtMZLmFMmppnaHL8bIk6DoJZzdz+ZU+
-	MApl7pBBBV69Lo1vj1t/67Mjo0OvdOFMw+btrI7qA+gZR5qnZ6OTqhAAB2QIHt4RMHkn7g/jgOLbs
-	Kt7xRzUDH5w+mM8+JH2gex+3Hxce9HYaRLVufdF/50egFUWr2wvNETPIidYey2WCeyeyWKfgury6j
-	h/fwfNVg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rn1dB-00000004xuW-1mOR;
-	Wed, 20 Mar 2024 19:29:45 +0000
-Date: Wed, 20 Mar 2024 19:29:45 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Rich Felker <dalias@libc.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] exec: fix linux_binprm::exec in transfer_args_to_stack()
-Message-ID: <Zfs5KTgGnetmg1we@casper.infradead.org>
-References: <20240320182607.1472887-1-jcmvbkbc@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F8z6so0SJaPBQQT+ad834N9qQX6qYRkJWbYKNWRlNnL1d8uLVsbvAIO5jKTMF/YlQoz+4ddotF16kuUvAWJDuxqDQ8OvAehGPQdBz90Hx+fQGMFP9XBolLxbe7JklA/CvEi1XZ+mf6vFOdiCcdYEaMKBIrKV/WlEKeUHNWjAuVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g9+3i0OJ; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Mar 2024 15:33:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1710963202;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4Z2+kj8E7dAZztXoz7TRBvcmNS+JTIHwOPikowIfTEE=;
+	b=g9+3i0OJJrgmxAhAeq8rmqn2Wwjk6Gay8gBdl83Tki5UyIDBeoY63LmE6oEDamNJS4utNR
+	8RKIqITtxfNuktlWZYFMUtvaag9ofsmId5ryGZvBWkZPw/olhPWo8RP3hwqeTQUEnoyrWI
+	6WtbgoKpWXBEHUbXB7nhvCzco/WRXoQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, NeilBrown <neilb@suse.de>, Dave Chinner <david@fromorbit.com>, 
+	Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org, lsf-pc@lists.linux-foundation.org, 
+	linux-mm@kvack.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Jan Kara <jack@suse.cz>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
+Message-ID: <tbrlw2ypn4sb5dolib4lyilfhintg6nsmxiozdxx7p6trjmybz@oev26466nnhf>
+References: <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>
+ <170933687972.24797.18406852925615624495@noble.neil.brown.name>
+ <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>
+ <170950594802.24797.17587526251920021411@noble.neil.brown.name>
+ <a7862cf1-1ed2-4c2c-8a27-f9d950ff4da5@suse.cz>
+ <aaea1147-f015-423b-8a42-21fc18930c8f@moroto.mountain>
+ <73533d54-2b92-4794-818e-753aaea887f9@suse.cz>
+ <ZfsxKOA5vfa9yo76@casper.infradead.org>
+ <fqaedupymxnx23fo4k34obzahzubbjxgoka7uta2j7zyh2hg63@h2aupn6atmdh>
+ <Zfs1m3VGvGh4OhX_@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,44 +69,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240320182607.1472887-1-jcmvbkbc@gmail.com>
+In-Reply-To: <Zfs1m3VGvGh4OhX_@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Mar 20, 2024 at 11:26:07AM -0700, Max Filippov wrote:
-> In NUMMU kernel the value of linux_binprm::p is the offset inside the
-> temporary program arguments array maintained in separate pages in the
-> linux_binprm::page. linux_binprm::exec being a copy of linux_binprm::p
-> thus must be adjusted when that array is copied to the user stack.
-> Without that adjustment the value passed by the NOMMU kernel to the ELF
-> program in the AT_EXECFN entry of the aux array doesn't make any sense
-> and it may break programs that try to access memory pointed to by that
-> entry.
+On Wed, Mar 20, 2024 at 07:14:35PM +0000, Matthew Wilcox wrote:
+> On Wed, Mar 20, 2024 at 03:07:38PM -0400, Kent Overstreet wrote:
+> > On Wed, Mar 20, 2024 at 06:55:36PM +0000, Matthew Wilcox wrote:
+> > > GFP_NOFAIL should still fail for allocations larger than KMALLOC_MAX_SIZE.
+> > > Or should we interpret that as "die now"?  Or "go into an unkillable
+> > > sleep"?  If the caller really has taken the opportunity to remove their
+> > > error handling path, returning NULL will lead to a crash and a lot of
+> > > beard stroking trying to understand why a GFP_NOFAIL allocation has
+> > > returned NULL.  May as well BUG_ON(size > KMALLOC_MAX_SIZE) and give
+> > > the developer a clear indication of what they did wrong.
+> > 
+> > Why do we even need KMALLOC_MAX_SIZE...?
+> > 
+> > Given that kmalloc internally switches to the page allocator when
+> > needed, I would think that that's something we can do away with.
 > 
-> Adjust linux_binprm::exec before the successful return from the
-> transfer_args_to_stack().
+> ... maybe check what I said before replying?
+> 
+> /*
+>  * SLUB directly allocates requests fitting in to an order-1 page
+>  * (PAGE_SIZE*2).  Larger requests are passed to the page allocator.
+>  */
+> #define KMALLOC_SHIFT_MAX       (MAX_PAGE_ORDER + PAGE_SHIFT)
+> 
+> You caan't allocate larger than that without going to CMA or some other
+> custom allocator.
 
-Do you know which commit broke this, ie how far back should this be
-backported?  Or has it always been broken?
-
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-> ---
->  fs/exec.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index af4fbb61cd53..5ee2545c3e18 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -895,6 +895,7 @@ int transfer_args_to_stack(struct linux_binprm *bprm,
->  			goto out;
->  	}
->  
-> +	bprm->exec += *sp_location - MAX_ARG_PAGES * PAGE_SIZE;
->  	*sp_location = sp;
->  
->  out:
-> -- 
-> 2.39.2
-> 
-> 
+Ahh, my recollection was out of date - I believe that was 128k at one
+time?
 
