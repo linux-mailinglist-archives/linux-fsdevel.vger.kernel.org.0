@@ -1,169 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-14874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90BD880DA3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 09:49:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF1D880DB0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 09:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E9542816D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 08:49:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3901F2403B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 08:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF94244C65;
-	Wed, 20 Mar 2024 08:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44A6481A0;
+	Wed, 20 Mar 2024 08:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Gj91RX1Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l527pITV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34BF38DC0;
-	Wed, 20 Mar 2024 08:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B693481A6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 08:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710924420; cv=none; b=aW94lsrvG9kRnC2Hj4a4f6Pkmcfiz72cHpiqEcvXeNfELUILT17f9GHjEnDOEYrVWybJLQebUX6SJkTQsKz1qah0h6uo3zu3Hz5gPCvzJiPXl6zOO4hA775UVhKd/Ru4vx2CKHjLr8FwZbq1HpJMDZ02MygUroTgdtTRNYxY0S8=
+	t=1710924471; cv=none; b=Dff8AnTEy81++JW52G9B+RHFNzymSHJpyxtZ2yR90UBzxmiJ1Et9ikTMkr9Umy4WXaUHFGrArLqX691cAm7SG4t9m932hMwA4UBVn2BZtP/uWgJuXXK0+B2BZ1aJlXpvj+XwKvjjmy+CBAfGQAw+V/3R4yJyR/1WeSUHEAHOSlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710924420; c=relaxed/simple;
-	bh=NYwDnN28mEZsfcXBv2JU5FVxAioxdPfAjfdUmE66h5Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bsjrTK6cT3NJEEkFNUoo4VUQTgwychE4xBU0g2aTJlpc9xdk678QM8awoQtwPixf8QnMgQX6sM85kkFysHrnqeRW+s6YLLtDqFzkDidKUWjLZ7IMEgk3yEq+Cb95wrtn8zfgDhrwa8OTT3aZFCnkxOnhWwbtSXo5qHmXwa9X/Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Gj91RX1Y; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1710924416;
-	bh=NYwDnN28mEZsfcXBv2JU5FVxAioxdPfAjfdUmE66h5Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Gj91RX1YXpfuOe85NVcgoi8mVW2QlLmxjvjuUWQYDLqKcyTXc4lFfeQ27+f2gRtCY
-	 +u7abuV5kUCMj89swUclHGLOU5b+K7DRzWqZ7oZvO5wwGcN1uE1rCOIb/0w5Nq9oAO
-	 BXjnrO65MWFa9WYsgIhBUG5mau3hwTUeqLRWswr8055usJ7cS1CBYYRC/rM5irYyT6
-	 k6coLntNQhogfFg7MZS2ZeYlZWn1vZBQwF3cyn2rVAz6NUHt7LZ/vfD+mE2wMY183m
-	 jx6iD5KFkfWyCtTVlLDB3REbq4VLyALet0oQOJyrGynI0SSjf336OUZuF7Lc6FOi8e
-	 NV8frGad5YJ8A==
-Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4C9D93782110;
-	Wed, 20 Mar 2024 08:46:54 +0000 (UTC)
-From: Eugen Hristev <eugen.hristev@collabora.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	jaegeuk@kernel.org,
-	chao@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
+	s=arc-20240116; t=1710924471; c=relaxed/simple;
+	bh=ovbE1H/eafUl7JqqeQpmsR87BijtBtXTjBxJwG+RWpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFyGqa2oMGh0mk9+ZM3hVAODqUCJ94ogkFG2sEPCgLhuPbUjOQtRID3x8BK/vUT/6NPfq1w9a6taeiFhq/4LvPkEzvZp1VMJmnOFW6OkVfqF0uWhTi6ScG4vvhTSIZwJSuPUql7UYuMvnoGADbF6abBTPLfmt7o5c/NSnWHPW0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l527pITV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5402FC43390;
+	Wed, 20 Mar 2024 08:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710924470;
+	bh=ovbE1H/eafUl7JqqeQpmsR87BijtBtXTjBxJwG+RWpo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l527pITVHtGBUWBa56xCjY7Y0qwKKmCVKX70VySfNyxt5fDuP4tARJGT5C35CeZl2
+	 oEFQGhKksWF0KkGucA8dlYqN1v3BEOH98cMurIbBkDWLc2MVL/lHS7Lg/kAp6l0LZk
+	 1SyG9PEW/9s1xY/w/mB8Y9THsoMfUxuGgO04+pUqQxGnr6XUYtA/cTXvjrle45NZJP
+	 QogK39wI6MwnIIiClAkeI1MH5NqVYRgz9fP2ZrRq0WbusgMvIzmNKcl3ono7dE5aru
+	 J4M2xhRMQFkaPO/uLe1/LJnVP7rR+FTsn+1JEcaJrJXdjeIVCx+zp0mFNoNAhQwCQb
+	 xdtIW8+7BeKGw==
+Date: Wed, 20 Mar 2024 09:47:46 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
 	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	eugen.hristev@collabora.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	krisman@suse.de,
-	Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH v14 9/9] f2fs: Move CONFIG_UNICODE defguards into the code flow
-Date: Wed, 20 Mar 2024 10:46:22 +0200
-Message-Id: <20240320084622.46643-10-eugen.hristev@collabora.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240320084622.46643-1-eugen.hristev@collabora.com>
-References: <20240320084622.46643-1-eugen.hristev@collabora.com>
+Subject: Re: [PATCH 07/10] fsnotify: lazy attach fsnotify_sb_info state to sb
+Message-ID: <20240320-einblick-wimmeln-8fba6416c874@brauner>
+References: <20240317184154.1200192-1-amir73il@gmail.com>
+ <20240317184154.1200192-8-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240317184154.1200192-8-amir73il@gmail.com>
 
-From: Gabriel Krisman Bertazi <krisman@collabora.com>
+On Sun, Mar 17, 2024 at 08:41:51PM +0200, Amir Goldstein wrote:
+> Define a container struct fsnotify_sb_info to hold per-sb state,
+> including the reference to sb marks connector.
+> 
+> Allocate the fsnotify_sb_info state before attaching connector to any
+> object on the sb and free it only when killing sb.
+> 
+> This state is going to be used for storing per priority watched objects
+> counters.
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/notify/fsnotify.c             | 16 +++++++++++++---
+>  fs/notify/fsnotify.h             |  9 ++++++++-
+>  fs/notify/mark.c                 | 32 +++++++++++++++++++++++++++++++-
+>  include/linux/fs.h               |  8 ++++----
+>  include/linux/fsnotify_backend.h | 17 +++++++++++++++++
+>  5 files changed, 73 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 503e7c75e777..fb3f36bc6ea9 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -89,11 +89,18 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
+>  
+>  void fsnotify_sb_delete(struct super_block *sb)
+>  {
+> +	struct fsnotify_sb_info *sbinfo = fsnotify_sb_info(sb);
+> +
+> +	/* Were any marks ever added to any object on this sb? */
+> +	if (!sbinfo)
+> +		return;
+> +
+>  	fsnotify_unmount_inodes(sb);
+>  	fsnotify_clear_marks_by_sb(sb);
+>  	/* Wait for outstanding object references from connectors */
+>  	wait_var_event(fsnotify_sb_watched_objects(sb),
+>  		       !atomic_long_read(fsnotify_sb_watched_objects(sb)));
+> +	kfree(sbinfo);
+>  }
+>  
+>  /*
+> @@ -489,6 +496,7 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+>  {
+>  	const struct path *path = fsnotify_data_path(data, data_type);
+>  	struct super_block *sb = fsnotify_data_sb(data, data_type);
+> +	struct fsnotify_sb_info *sbinfo = fsnotify_sb_info(sb);
+>  	struct fsnotify_iter_info iter_info = {};
+>  	struct mount *mnt = NULL;
+>  	struct inode *inode2 = NULL;
+> @@ -525,7 +533,7 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+>  	 * SRCU because we have no references to any objects and do not
+>  	 * need SRCU to keep them "alive".
+>  	 */
+> -	if (!sb->s_fsnotify_marks &&
+> +	if ((!sbinfo || !sbinfo->sb_marks) &&
+>  	    (!mnt || !mnt->mnt_fsnotify_marks) &&
+>  	    (!inode || !inode->i_fsnotify_marks) &&
+>  	    (!inode2 || !inode2->i_fsnotify_marks))
+> @@ -552,8 +560,10 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+>  
+>  	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
+>  
+> -	iter_info.marks[FSNOTIFY_ITER_TYPE_SB] =
+> -		fsnotify_first_mark(&sb->s_fsnotify_marks);
+> +	if (sbinfo) {
+> +		iter_info.marks[FSNOTIFY_ITER_TYPE_SB] =
+> +			fsnotify_first_mark(&sbinfo->sb_marks);
+> +	}
+>  	if (mnt) {
+>  		iter_info.marks[FSNOTIFY_ITER_TYPE_VFSMOUNT] =
+>  			fsnotify_first_mark(&mnt->mnt_fsnotify_marks);
+> diff --git a/fs/notify/fsnotify.h b/fs/notify/fsnotify.h
+> index 8b73ad45cc71..378f9ec6d64b 100644
+> --- a/fs/notify/fsnotify.h
+> +++ b/fs/notify/fsnotify.h
+> @@ -53,6 +53,13 @@ static inline struct super_block *fsnotify_connector_sb(
+>  	return fsnotify_object_sb(conn->obj, conn->type);
+>  }
+>  
+> +static inline fsnotify_connp_t *fsnotify_sb_marks(struct super_block *sb)
+> +{
+> +	struct fsnotify_sb_info *sbinfo = fsnotify_sb_info(sb);
+> +
+> +	return sbinfo ? &sbinfo->sb_marks : NULL;
+> +}
+> +
+>  /* destroy all events sitting in this groups notification queue */
+>  extern void fsnotify_flush_notify(struct fsnotify_group *group);
+>  
+> @@ -78,7 +85,7 @@ static inline void fsnotify_clear_marks_by_mount(struct vfsmount *mnt)
+>  /* run the list of all marks associated with sb and destroy them */
+>  static inline void fsnotify_clear_marks_by_sb(struct super_block *sb)
+>  {
+> -	fsnotify_destroy_marks(&sb->s_fsnotify_marks);
+> +	fsnotify_destroy_marks(fsnotify_sb_marks(sb));
+>  }
+>  
+>  /*
+> diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+> index 0b703f9e6344..db053e0e218d 100644
+> --- a/fs/notify/mark.c
+> +++ b/fs/notify/mark.c
+> @@ -105,7 +105,7 @@ static fsnotify_connp_t *fsnotify_object_connp(void *obj, int obj_type)
+>  	case FSNOTIFY_OBJ_TYPE_VFSMOUNT:
+>  		return &real_mount(obj)->mnt_fsnotify_marks;
+>  	case FSNOTIFY_OBJ_TYPE_SB:
+> -		return &((struct super_block *)obj)->s_fsnotify_marks;
+> +		return fsnotify_sb_marks(obj);
+>  	default:
+>  		return NULL;
+>  	}
+> @@ -568,6 +568,26 @@ int fsnotify_compare_groups(struct fsnotify_group *a, struct fsnotify_group *b)
+>  	return -1;
+>  }
+>  
+> +static int fsnotify_attach_info_to_sb(struct super_block *sb)
+> +{
+> +	struct fsnotify_sb_info *sbinfo;
+> +
+> +	/* sb info is freed on fsnotify_sb_delete() */
+> +	sbinfo = kzalloc(sizeof(*sbinfo), GFP_KERNEL);
+> +	if (!sbinfo)
+> +		return -ENOMEM;
+> +
+> +	/*
+> +	 * cmpxchg() provides the barrier so that callers of fsnotify_sb_info()
+> +	 * will observe an initialized structure
+> +	 */
+> +	if (cmpxchg(&sb->s_fsnotify_info, NULL, sbinfo)) {
+> +		/* Someone else created sbinfo for us */
+> +		kfree(sbinfo);
+> +	}
 
-Instead of a bunch of ifdefs, make the unicode built checks part of the
-code flow where possible, as requested by Torvalds.
-
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-[eugen.hristev@collabora.com: port to 6.8-rc3]
-Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
----
- fs/f2fs/namei.c | 10 ++++------
- fs/f2fs/super.c |  8 ++++----
- 2 files changed, 8 insertions(+), 10 deletions(-)
-
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index f7f63a567d86..5da1aae7d23a 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -576,8 +576,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		goto out_iput;
- 	}
- out_splice:
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (!inode && IS_CASEFOLDED(dir)) {
-+	if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
- 		/* Eventually we want to call d_add_ci(dentry, NULL)
- 		 * for negative dentries in the encoding case as
- 		 * well.  For now, prevent the negative dentry
-@@ -586,7 +585,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		trace_f2fs_lookup_end(dir, dentry, ino, err);
- 		return NULL;
- 	}
--#endif
-+
- 	new = d_splice_alias(inode, dentry);
- 	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
- 				ino, IS_ERR(new) ? PTR_ERR(new) : err);
-@@ -639,16 +638,15 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 	f2fs_delete_entry(de, page, dir, inode);
- 	f2fs_unlock_op(sbi);
- 
--#if IS_ENABLED(CONFIG_UNICODE)
- 	/* VFS negative dentries are incompatible with Encoding and
- 	 * Case-insensitiveness. Eventually we'll want avoid
- 	 * invalidating the dentries here, alongside with returning the
- 	 * negative dentries at f2fs_lookup(), when it is better
- 	 * supported by the VFS for the CI case.
- 	 */
--	if (IS_CASEFOLDED(dir))
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
- 		d_invalidate(dentry);
--#endif
-+
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
- fail:
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 313024f5c90c..c4325cc066c6 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -306,7 +306,7 @@ struct kmem_cache *f2fs_cf_name_slab;
- static int __init f2fs_create_casefold_cache(void)
- {
- 	f2fs_cf_name_slab = f2fs_kmem_cache_create("f2fs_casefolded_name",
--							F2FS_NAME_LEN);
-+						   F2FS_NAME_LEN);
- 	return f2fs_cf_name_slab ? 0 : -ENOMEM;
- }
- 
-@@ -1354,13 +1354,13 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		return -EINVAL;
- 	}
- #endif
--#if !IS_ENABLED(CONFIG_UNICODE)
--	if (f2fs_sb_has_casefold(sbi)) {
-+
-+	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
- 		f2fs_err(sbi,
- 			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
- 		return -EINVAL;
- 	}
--#endif
-+
- 	/*
- 	 * The BLKZONED feature indicates that the drive was formatted with
- 	 * zone alignment optimization. This is optional for host-aware
--- 
-2.34.1
-
+Alternatively, you could consider using wait_var_event() to let
+concurrent attachers wait for s_fsnotify_info to be initialized using a
+sentinel value to indicate that the caller should wait. But not sure if
+it's worth it.
 
