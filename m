@@ -1,111 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-14916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28F488177E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 19:49:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C030881793
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 19:55:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 147DDB23453
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 18:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F005D1F22A40
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 18:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6C185633;
-	Wed, 20 Mar 2024 18:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F73C8529B;
+	Wed, 20 Mar 2024 18:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xT6kbLQs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eoey5pTD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xT6kbLQs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eoey5pTD"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PDnCBuEZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C6685282
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 18:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9DC6AFAE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 18:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710960485; cv=none; b=quApC1lfL25+MsGet2hParaL1Z96wdMUKdwCP8E7slqznL2ROtBa2mxNwIoVYADksYd0fRMiqLLMkD7SU7+gbg1Bgjw5xn9Hdf8P+l56SmqeIVb2YfZFJX3SgCFNp39LzP8Sfma726yA2Xb6rG2XUpvetDmDDRvSKYDd792NTOM=
+	t=1710960948; cv=none; b=GF8Ee4HTJh+vu5JKhi48hf6ISEnjIC3BPhmwoIBHRhjm/1fPbGkcV4tksrb1Yx/0hgwLXulY+TJlxcNDJEBMamBmk1GXyMQr708RhYqPiz6HDzTd32tlB4kXmp708wlYLF/dFCbJYzDbllNfShecgtdSzcawQtCwwl8COYE2Vbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710960485; c=relaxed/simple;
-	bh=kT+d2DscrUyLwuK+uYu8yV4ngnv9KT85I+YhxL6h54s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rPl0qCOOM9Atgbba329L49tpxd1NMiNCr+fAMag5jIdj2GQhBq7fVBqI44wAokHTrz/RqI742QSPboxoUQig7ZAtNFRgn8Imp3vJ1W2WNXHiC5tiWg6MPu+IVs6BuBEk9931c9WylAaW/M1jvOjDxWwm9tIWnJ2pkeYLCtuboy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xT6kbLQs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eoey5pTD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xT6kbLQs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eoey5pTD; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2C2FC5C17D;
-	Wed, 20 Mar 2024 18:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710960482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FAfb8JiCgjwf7Wx15wKutMK9k8c4fMfmPM4F7ML4T6k=;
-	b=xT6kbLQsb/oUUyyFlW+JXkY3YY3CEIBRZmwvAId0fkmV8qd98tzYwwlftd2dWW/r/eVImQ
-	um6NyMQTGBegvuaNlyFlr8Vp3+GLeXXoUteglGIC7cGupMZ+LefDLGhhPxGpZ49qoA/1Mx
-	B1aJOySPuEox+TeEX2A2uVmP2guxle0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710960482;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FAfb8JiCgjwf7Wx15wKutMK9k8c4fMfmPM4F7ML4T6k=;
-	b=eoey5pTDs0JRsVpGTzPwSnQcIgCJ6MM6URqNjHBxtw6Q7fSwIif3IOIjRuVt3+NZeoWrWY
-	SdDkI6rca45U9UDQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1710960482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FAfb8JiCgjwf7Wx15wKutMK9k8c4fMfmPM4F7ML4T6k=;
-	b=xT6kbLQsb/oUUyyFlW+JXkY3YY3CEIBRZmwvAId0fkmV8qd98tzYwwlftd2dWW/r/eVImQ
-	um6NyMQTGBegvuaNlyFlr8Vp3+GLeXXoUteglGIC7cGupMZ+LefDLGhhPxGpZ49qoA/1Mx
-	B1aJOySPuEox+TeEX2A2uVmP2guxle0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1710960482;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FAfb8JiCgjwf7Wx15wKutMK9k8c4fMfmPM4F7ML4T6k=;
-	b=eoey5pTDs0JRsVpGTzPwSnQcIgCJ6MM6URqNjHBxtw6Q7fSwIif3IOIjRuVt3+NZeoWrWY
-	SdDkI6rca45U9UDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 01B55136D6;
-	Wed, 20 Mar 2024 18:48:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PYVgO2Ev+2WMFgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 20 Mar 2024 18:48:01 +0000
-Message-ID: <73533d54-2b92-4794-818e-753aaea887f9@suse.cz>
-Date: Wed, 20 Mar 2024 19:48:01 +0100
-Precedence: bulk
-X-Mailing-List: linux-fsdevel@vger.kernel.org
-List-Id: <linux-fsdevel.vger.kernel.org>
-List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+	s=arc-20240116; t=1710960948; c=relaxed/simple;
+	bh=jX6auQ2yeXm6JfhERoc4doEO9Iuu8u+75FYD8DsxT4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ibWqrVfLBOsz61qffcO+j1zUdSpr7cLEcNhSILFLjN6m1s0FcN56atBr4VvWTYAWs53xAcyYSJfG4rebuDmhymYOg+eIOmacUtnPwajhMx1gB9ac4UvOhR4v93r6uP8hO7uTbknPW8I2lZfuvFPd6Vgj+D7Q0eRrSmPUm/gM4H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PDnCBuEZ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3PmEI0D9WC6qbWjMQFdByNKzMVLkjA1cfp8fJnMIdSU=; b=PDnCBuEZfLfrEv+/kKxhyViKtW
+	QaQIvr77L/TQkHjj68hUuIPYk0KmOm4JlZ+WLF+zyuEpW7HmzAKjQGqQUPcNqv0D+YzLQOQV4VASO
+	pzDogHHxWuLmgcZPuO/9OxabRb1ADXQpIeh16wAmcCeZ3G1ZRjsw94u3ZRT4YZPq1z1DfHXeWFDp8
+	TUCSXpUJ/rroG/xU3vYX9jNSV/2rqfNGZjYE6EZyaw5L2Xvm0hhhMKsYZA5BiO+KF6FrNEe2glgp/
+	6JSoZLmdnHAPvmFKMoB7g9sbz1TTfZBpUt85TCoNHs1IKnXlDLYz4q58g+S44SnhtmbWWYNlyNQAN
+	Rr21zTBw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rn168-00000004uuD-1AMI;
+	Wed, 20 Mar 2024 18:55:36 +0000
+Date: Wed, 20 Mar 2024 18:55:36 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, NeilBrown <neilb@suse.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Dave Chinner <david@fromorbit.com>,
+	Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org,
+	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Jan Kara <jack@suse.cz>
 Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: NeilBrown <neilb@suse.de>, Kent Overstreet <kent.overstreet@linux.dev>,
- Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
- Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org,
- lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>
-References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>
- <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>
- <Zd-LljY351NCrrCP@casper.infradead.org>
+Message-ID: <ZfsxKOA5vfa9yo76@casper.infradead.org>
+References: <Zd-LljY351NCrrCP@casper.infradead.org>
  <170925937840.24797.2167230750547152404@noble.neil.brown.name>
  <ZeFtrzN34cLhjjHK@dread.disaster.area>
  <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>
@@ -114,76 +65,37 @@ References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>
  <170950594802.24797.17587526251920021411@noble.neil.brown.name>
  <a7862cf1-1ed2-4c2c-8a27-f9d950ff4da5@suse.cz>
  <aaea1147-f015-423b-8a42-21fc18930c8f@moroto.mountain>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <aaea1147-f015-423b-8a42-21fc18930c8f@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -1.42
-X-Spamd-Result: default: False [-1.42 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 XM_UA_NO_VERSION(0.01)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 BAYES_HAM(-0.13)[67.77%];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 FREEMAIL_CC(0.00)[suse.de,linux.dev,fromorbit.com,infradead.org,gmail.com,kernel.org,lists.linux-foundation.org,kvack.org,vger.kernel.org,suse.cz];
-	 RCVD_TLS_ALL(0.00)[];
-	 MID_RHS_MATCH_FROM(0.00)[]
-X-Spam-Flag: NO
+ <73533d54-2b92-4794-818e-753aaea887f9@suse.cz>
+Precedence: bulk
+X-Mailing-List: linux-fsdevel@vger.kernel.org
+List-Id: <linux-fsdevel.vger.kernel.org>
+List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73533d54-2b92-4794-818e-753aaea887f9@suse.cz>
 
-On 3/20/24 19:32, Dan Carpenter wrote:
-> On Tue, Mar 12, 2024 at 03:46:32PM +0100, Vlastimil Babka wrote:
->> But if we change it to effectively mean GFP_NOFAIL (for non-costly
->> allocations), there should be a manageable number of places to change to a
->> variant that allows failure.
+On Wed, Mar 20, 2024 at 07:48:01PM +0100, Vlastimil Babka wrote:
+> On 3/20/24 19:32, Dan Carpenter wrote:
+> > On Tue, Mar 12, 2024 at 03:46:32PM +0100, Vlastimil Babka wrote:
+> >> But if we change it to effectively mean GFP_NOFAIL (for non-costly
+> >> allocations), there should be a manageable number of places to change to a
+> >> variant that allows failure.
+> > 
+> > What does that even mean if GFP_NOFAIL can fail for "costly" allocations?
+> > I thought GFP_NOFAIL couldn't fail at all...
 > 
-> What does that even mean if GFP_NOFAIL can fail for "costly" allocations?
-> I thought GFP_NOFAIL couldn't fail at all...
+> Yeah, the suggestion was that GFP_KERNEL would act as GFP_NOFAIL but only
+> for non-costly allocations. Anything marked GFP_NOFAIL would still be fully
+> nofail.
 
-Yeah, the suggestion was that GFP_KERNEL would act as GFP_NOFAIL but only
-for non-costly allocations. Anything marked GFP_NOFAIL would still be fully
-nofail.
-
-> Unfortunately, it's common that when we can't decide on a sane limit for
-> something people just say "let the user decide based on how much memory
-> they have".  I have added some integer overflow checks which allow the
-> user to allocate up to UINT_MAX bytes so I know this code is out
-> there.  We can't just s/GFP_KERNEL/GFP_NOFAIL/.
-
-Maybe we could start producing warnings for costly GFP_KERNEL allocations to
-get them converted away faster. Anything that's user-controlled most likely
-shouldn't be GFP_KERNEL.
-
-> From a static analysis perspective it would be nice if the callers
-> explicitly marked which allocations can fail and which can't.
-
-As I suggested, it would be nice not to wait until everything is explicitly
-marked one way or another. I get the comparison with BKL, but also the
-kernel got much larger since the BKL times?
-
-Good point that it's not ideal if the size is unknown. Maybe the tools could
-be used to point out places where the size cannot be determined, so those
-should be converted first?
-
-Also tools cound warn about attempts to handle failure to point out places
-where it should be removed?
-
-> regards,
-> dan carpenter
-> 
+GFP_NOFAIL should still fail for allocations larger than KMALLOC_MAX_SIZE.
+Or should we interpret that as "die now"?  Or "go into an unkillable
+sleep"?  If the caller really has taken the opportunity to remove their
+error handling path, returning NULL will lead to a crash and a lot of
+beard stroking trying to understand why a GFP_NOFAIL allocation has
+returned NULL.  May as well BUG_ON(size > KMALLOC_MAX_SIZE) and give
+the developer a clear indication of what they did wrong.
 
 
