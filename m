@@ -1,90 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-14911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F960881588
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 17:22:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F15881685
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 18:23:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A33011C20BC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 16:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE0E91F2660A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 17:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D64254FB7;
-	Wed, 20 Mar 2024 16:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E1E6BB27;
+	Wed, 20 Mar 2024 17:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UURchn5Z"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="puN0of6f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RtK5pfCB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="puN0of6f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RtK5pfCB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D275466C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 16:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4651E6A8C0;
+	Wed, 20 Mar 2024 17:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710951751; cv=none; b=pL8g0ei/lJc5KXxdnn/WWwZcXGoT5YKTx7qexr1vWIVsAEkxVtqwYD7v633vmmuuU5OEg1Bq2tT4kLJMdMYTz3mAhjqXeRUg+X1K5yMky6FnyuQtH0CYzem7uW9Mdh/MQXurOkU3mSciomIei7f+yj+atvzWcbL/1JQw5uIzBv4=
+	t=1710955365; cv=none; b=gALy2rZeD2FtKPela7FsnkxUMzypS1VSibV3psmm2KsnSGHF2JUZVS8glbxCz7ceUBAOnWs+NtCDkFGnMjzY68kRB3wQbRryyAIsPlXBwx7xK0qe9kXWgwRDyelHbAGN8IzxvqsNKwMnnTT5e9stcOxycb7xrfoByHyAtHeVFoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710951751; c=relaxed/simple;
-	bh=41tjM+J6WGDCzpOXj69URQ1sTfiQe8Lh93Zr3nJSrwc=;
+	s=arc-20240116; t=1710955365; c=relaxed/simple;
+	bh=DxJg+RgyKlnBqSxnRERu5DEqGICa3qsb7JyTUi2s88o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uGnv0XvpeV5ieF+j93Woq22nPdaeUv4TOR9n6JKnh89SYs/k3RaBgCW+T1GqNa1HBHaRNL2x81CDL08bJhFguL47NhCOM/yBfREExnf3LS1KbfKaNi4XV0SzOUSbiuZ+DtyL4gFzWvMJ1QCV87gbgkdXIcC8gurLCo2WopC7yIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UURchn5Z; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710951748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FRz10ZNI0SZyXKoZrRnGEbVzm8OFyjhuLjguQrAWRVFqEHQqXrNDAvOV2s0kESUhFSBBcD6oTiSt64qZErKAidRR/hTDFepckppjXWXup3iSAuiHnT49v5i9uR8Cm/cbLKv3mn7fauEKMrCf3JaeN6nfsdfgOaA2qUBm7b++PNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=puN0of6f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RtK5pfCB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=puN0of6f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RtK5pfCB; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3BCCB34875;
+	Wed, 20 Mar 2024 17:22:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710955361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1PNmHTETrb06QIsSR2/EHe/MAGIbj5F6opVNo6zaJeM=;
-	b=UURchn5ZUee2MTogNcXP9ef2nifL+EGgIR20mm/FsE19XJCQpSORkHMgz22jIo27UkVYqb
-	JTKop0YXHKDjIC9DdfAsfKE+ZfIYYrmPWVCuVMJpla5ZrKm7XedivJ5h+NBueSheZXsibP
-	WppMSfUoOfWsZBIiiU0buGpuoPh1+o4=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-193-sL8Sf4yBO4aDe5JN7eDRkA-1; Wed, 20 Mar 2024 12:22:27 -0400
-X-MC-Unique: sL8Sf4yBO4aDe5JN7eDRkA-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a4675f4361dso724766b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 09:22:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710951745; x=1711556545;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1PNmHTETrb06QIsSR2/EHe/MAGIbj5F6opVNo6zaJeM=;
-        b=dr1lkgSvFi4Vpy60XnreiJPSU4dHp+eSu/DEK1Tq4wRyjWoBb6dcHJgZXYL7ywTlwW
-         LkWlNb7N4q9zG5Opmpt/T8Lc9XNxLFsZf9SBWWZ1ifgbgYIrCrQ7q0DRSzyKtVtfo8pX
-         xNF4sdoUwyQjfXzcs9gWIVyynoMc1akpjs00tgQy6kBIL2oK3gowvkl9KXNX9dGJvIYW
-         W2lgM4F1gwZqxezUCUwB4gwu8MeviV6z1H07jMazpLhxjlQuXNotQLoOgYbDP82tvwz4
-         yvzyOPYt3L8AaprczTFVBDL/6F1VpozdIvND2pUmXqnqBSMIDoj5irkVkrBckF64dsxa
-         wpVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbepQHsJPq0hLAv81V4Tj1QmGeSjz2Jkn5jNRDRY6g6j8hbkpNtUZqgt5z6iyeJaduuou8DGF2krBOMNjzDSm5xBKyGppKA23j7RdPSA==
-X-Gm-Message-State: AOJu0Yz134vekhnK2nJ5hQJKviAY+MPY3SMfKxpBZYkSmgyV1YTNbQjK
-	lR6jYPDeCzqDk201BxcBpysCrrKkSU3k5PBeg6aDSmId2LrlGNgki9drjEilvRblyQVeFzAdGi+
-	pJ0nzVImy+yIntNIRoX4envsDutvNj1BqhyZEDyJNr6vF3IadW9/9tGKgCPvWlXNbRfhbiQ==
-X-Received: by 2002:a17:906:6009:b0:a44:b9e0:8592 with SMTP id o9-20020a170906600900b00a44b9e08592mr1687366ejj.8.1710951745314;
-        Wed, 20 Mar 2024 09:22:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFG7Udrm6I52hNnwHrU2ypGXiKfrtE7hJ7eDswBpRY1MNY22ZWL6AD5QA9JT8JzOvVqArGrUA==
-X-Received: by 2002:a17:906:6009:b0:a44:b9e0:8592 with SMTP id o9-20020a170906600900b00a44b9e08592mr1687352ejj.8.1710951744752;
-        Wed, 20 Mar 2024 09:22:24 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id wg8-20020a17090705c800b00a46cc48ab13sm3161782ejb.62.2024.03.20.09.22.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Mar 2024 09:22:24 -0700 (PDT)
-Date: Wed, 20 Mar 2024 17:22:23 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, 
-	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 08/29] fsverity: add per-sb workqueue for post read
- processing
-Message-ID: <tuidl6b6miayxekeqfpdgegvxyisqjryf5zvgnz5dfbqab5def@cnks2upytvto>
-References: <171035223299.2613863.12196197862413309469.stgit@frogsfrogsfrogs>
- <171035223488.2613863.7583467519759571221.stgit@frogsfrogsfrogs>
- <20240319233010.GV1927156@frogsfrogsfrogs>
- <ktc3ofsctond43xfc3lerr4evy3a3hsclyxm24cmhf7fsxxfsw@gjqnq57cbeoy>
- <20240320145504.GY1927156@frogsfrogsfrogs>
+	bh=nuvmLSJGfAFUcRzkMmUxW9qRIUCVm3vOjIWb2YFRR4Y=;
+	b=puN0of6fZNsYdGdaQb+O2UNBhGxZGe41YGTYx6LNl9cTaOkEUZyQhYQq5K0UoLbemQ9B8J
+	XTrMub46H8kdFIFLs31iK/FEbDsIIVcSsnLDxG5TyGVUy85k/H4Y+5gn+hSrWTv4mBHkVR
+	v/uURHYPn9NJmGfCvSAcfKTcMGnFtOg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710955361;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nuvmLSJGfAFUcRzkMmUxW9qRIUCVm3vOjIWb2YFRR4Y=;
+	b=RtK5pfCBrNdbWQdznWPb0bH3fXRJV1S0BeSoIuMbnSmvcZsHD356E9XKAnLW/tdw5sQVe3
+	WLqhuiWwzyR1K8DA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710955361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nuvmLSJGfAFUcRzkMmUxW9qRIUCVm3vOjIWb2YFRR4Y=;
+	b=puN0of6fZNsYdGdaQb+O2UNBhGxZGe41YGTYx6LNl9cTaOkEUZyQhYQq5K0UoLbemQ9B8J
+	XTrMub46H8kdFIFLs31iK/FEbDsIIVcSsnLDxG5TyGVUy85k/H4Y+5gn+hSrWTv4mBHkVR
+	v/uURHYPn9NJmGfCvSAcfKTcMGnFtOg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710955361;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nuvmLSJGfAFUcRzkMmUxW9qRIUCVm3vOjIWb2YFRR4Y=;
+	b=RtK5pfCBrNdbWQdznWPb0bH3fXRJV1S0BeSoIuMbnSmvcZsHD356E9XKAnLW/tdw5sQVe3
+	WLqhuiWwzyR1K8DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 314E2136CD;
+	Wed, 20 Mar 2024 17:22:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ay0JDGEb+2VhegAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 20 Mar 2024 17:22:41 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D0E85A080F; Wed, 20 Mar 2024 18:22:40 +0100 (CET)
+Date: Wed, 20 Mar 2024 18:22:40 +0100
+From: Jan Kara <jack@suse.cz>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: akpm@linux-foundation.org, tj@kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	willy@infradead.org, bfoster@redhat.com, jack@suse.cz,
+	dsterba@suse.com, mjguzik@gmail.com, dhowells@redhat.com,
+	peterz@infradead.org
+Subject: Re: [PATCH 0/6] Improve visibility of writeback
+Message-ID: <20240320172240.7buswiv7zj2m5odg@quack3>
+References: <20240320110222.6564-1-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,114 +103,128 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240320145504.GY1927156@frogsfrogsfrogs>
+In-Reply-To: <20240320110222.6564-1-shikemeng@huaweicloud.com>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: ****
+X-Spam-Score: 4.30
+X-Spamd-Result: default: False [4.30 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_SPAM(5.10)[100.00%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_TWELVE(0.00)[13];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 FREEMAIL_CC(0.00)[linux-foundation.org,kernel.org,kvack.org,vger.kernel.org,infradead.org,redhat.com,suse.cz,suse.com,gmail.com];
+	 RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
 
-On 2024-03-20 07:55:04, Darrick J. Wong wrote:
-> On Wed, Mar 20, 2024 at 11:37:28AM +0100, Andrey Albershteyn wrote:
-> > On 2024-03-19 16:30:10, Darrick J. Wong wrote:
-> > > On Wed, Mar 13, 2024 at 10:54:39AM -0700, Darrick J. Wong wrote:
-> > > > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > 
-> > > > For XFS, fsverity's global workqueue is not really suitable due to:
-> > > > 
-> > > > 1. High priority workqueues are used within XFS to ensure that data
-> > > >    IO completion cannot stall processing of journal IO completions.
-> > > >    Hence using a WQ_HIGHPRI workqueue directly in the user data IO
-> > > >    path is a potential filesystem livelock/deadlock vector.
-> > > > 
-> > > > 2. The fsverity workqueue is global - it creates a cross-filesystem
-> > > >    contention point.
-> > > > 
-> > > > This patch adds per-filesystem, per-cpu workqueue for fsverity
-> > > > work. This allows iomap to add verification work in the read path on
-> > > > BIO completion.
-> > > > 
-> > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > > > ---
-> > > >  fs/super.c               |    7 +++++++
-> > > >  include/linux/fs.h       |    2 ++
-> > > >  include/linux/fsverity.h |   22 ++++++++++++++++++++++
-> > > >  3 files changed, 31 insertions(+)
-> > > > 
-> > > > 
-> > > > diff --git a/fs/super.c b/fs/super.c
-> > > > index d35e85295489..338d86864200 100644
-> > > > --- a/fs/super.c
-> > > > +++ b/fs/super.c
-> > > > @@ -642,6 +642,13 @@ void generic_shutdown_super(struct super_block *sb)
-> > > >  			sb->s_dio_done_wq = NULL;
-> > > >  		}
-> > > >  
-> > > > +#ifdef CONFIG_FS_VERITY
-> > > > +		if (sb->s_read_done_wq) {
-> > > > +			destroy_workqueue(sb->s_read_done_wq);
-> > > > +			sb->s_read_done_wq = NULL;
-> > > > +		}
-> > > > +#endif
-> > > > +
-> > > >  		if (sop->put_super)
-> > > >  			sop->put_super(sb);
-> > > >  
-> > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > > index ed5966a70495..9db24a825d94 100644
-> > > > --- a/include/linux/fs.h
-> > > > +++ b/include/linux/fs.h
-> > > > @@ -1221,6 +1221,8 @@ struct super_block {
-> > > >  #endif
-> > > >  #ifdef CONFIG_FS_VERITY
-> > > >  	const struct fsverity_operations *s_vop;
-> > > > +	/* Completion queue for post read verification */
-> > > > +	struct workqueue_struct *s_read_done_wq;
-> > > >  #endif
-> > > >  #if IS_ENABLED(CONFIG_UNICODE)
-> > > >  	struct unicode_map *s_encoding;
-> > > > diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> > > > index 0973b521ac5a..45b7c613148a 100644
-> > > > --- a/include/linux/fsverity.h
-> > > > +++ b/include/linux/fsverity.h
-> > > > @@ -241,6 +241,22 @@ void fsverity_enqueue_verify_work(struct work_struct *work);
-> > > >  void fsverity_invalidate_block(struct inode *inode,
-> > > >  		struct fsverity_blockbuf *block);
-> > > >  
-> > > > +static inline int fsverity_set_ops(struct super_block *sb,
-> > > > +				   const struct fsverity_operations *ops)
-> > > > +{
-> > > > +	sb->s_vop = ops;
-> > > > +
-> > > > +	/* Create per-sb workqueue for post read bio verification */
-> > > > +	struct workqueue_struct *wq = alloc_workqueue(
-> > > > +		"pread/%s", (WQ_FREEZABLE | WQ_MEM_RECLAIM), 0, sb->s_id);
-> > > 
-> > > Looking at this more closely, why is it that the fsverity_read_queue
-> > > is unbound and tagged WQ_HIGHPRI, whereas this one is instead FREEZEABLE
-> > > and MEM_RECLAIM and bound?
-> > > 
-> > > If it's really feasible to use /one/ workqueue for all the read
-> > > post-processing then this ought to be a fs/super.c helper ala
-> > > sb_init_dio_done_wq.  That said, from Eric's comments on the v5 thread
-> > > about fsverity and fscrypt locking horns over workqueue stalls I'm not
-> > > convinced that's true.
-> > 
-> > There's good explanation by Dave why WQ_HIGHPRI is not a good fit
-> > for XFS (potential livelock/deadlock):
-> > 
-> > https://lore.kernel.org/linux-xfs/20221214054357.GI3600936@dread.disaster.area/
-> > 
-> > Based on his feedback I changed it to per-filesystem.
+On Wed 20-03-24 19:02:16, Kemeng Shi wrote:
+> This series tries to improve visilibity of writeback. Patch 1 make
+> /sys/kernel/debug/bdi/xxx/stats show writeback info of whole bdi
+> instead of only writeback info in root cgroup. Patch 2 add a new
+> debug file /sys/kernel/debug/bdi/xxx/wb_stats to show per wb writeback
+> info. Patch 4 add wb_monitor.py to monitor basic writeback info
+> of running system, more info could be added on demand. Rest patches
+> are some random cleanups. More details can be found in respective
+> patches. Thanks!
 > 
-> Ah, ok.  Why is the workqueue tagged with MEM_RECLAIM though?  Does
-> letting it run actually help out with reclaim?  I guess it does by
-> allowing pages involved in readahead to get to unlocked state where they
-> can be ripped out. :)
+> Following domain hierarchy is tested:
+>                 global domain (320G)
+>                 /                 \
+>         cgroup domain1(10G)     cgroup domain2(10G)
+>                 |                 |
+> bdi            wb1               wb2
+> 
+> /* all writeback info of bdi is successfully collected */
+> # cat /sys/kernel/debug/bdi/252:16/stats:
+> BdiWriteback:              448 kB
+> BdiReclaimable:        1303904 kB
+> BdiDirtyThresh:      189914124 kB
+> DirtyThresh:         195337564 kB
+> BackgroundThresh:     32516508 kB
+> BdiDirtied:            3591392 kB
+> BdiWritten:            2287488 kB
+> BdiWriteBandwidth:      322248 kBps
+> b_dirty:                     0
+> b_io:                        0
+> b_more_io:                   2
+> b_dirty_time:                0
+> bdi_list:                    1
+> state:                       1
+> 
+> /* per wb writeback info is collected */
+> # cat /sys/kernel/debug/bdi/252:16/wb_stats:
+> cat wb_stats
+> WbCgIno:                    1
+> WbWriteback:                0 kB
+> WbReclaimable:              0 kB
+> WbDirtyThresh:              0 kB
+> WbDirtied:                  0 kB
+> WbWritten:                  0 kB
+> WbWriteBandwidth:      102400 kBps
+> b_dirty:                    0
+> b_io:                       0
+> b_more_io:                  0
+> b_dirty_time:               0
+> state:                      1
+> WbCgIno:                 4284
+> WbWriteback:              448 kB
+> WbReclaimable:         818944 kB
+> WbDirtyThresh:        3096524 kB
+> WbDirtied:            2266880 kB
+> WbWritten:            1447936 kB
+> WbWriteBandwidth:      214036 kBps
+> b_dirty:                    0
+> b_io:                       0
+> b_more_io:                  1
+> b_dirty_time:               0
+> state:                      5
+> WbCgIno:                 4325
+> WbWriteback:              224 kB
+> WbReclaimable:         819392 kB
+> WbDirtyThresh:        2920088 kB
+> WbDirtied:            2551808 kB
+> WbWritten:            1732416 kB
+> WbWriteBandwidth:      201832 kBps
+> b_dirty:                    0
+> b_io:                       0
+> b_more_io:                  1
+> b_dirty_time:               0
+> state:                      5
+> 
+> /* monitor writeback info */
+> # ./wb_monitor.py 252:16 -c
+>                   writeback  reclaimable   dirtied   written    avg_bw
+> 252:16_1                  0            0         0         0    102400
+> 252:16_4284             672       820064   9230368   8410304    685612
+> 252:16_4325             896       819840  10491264   9671648    652348
+> 252:16                 1568      1639904  19721632  18081952   1440360
+> 
+> 
+>                   writeback  reclaimable   dirtied   written    avg_bw
+> 252:16_1                  0            0         0         0    102400
+> 252:16_4284             672       820064   9230368   8410304    685612
+> 252:16_4325             896       819840  10491264   9671648    652348
+> 252:16                 1568      1639904  19721632  18081952   1440360
+> ...
 
-Not sure how much it actually helps with reclaims, leaving it out
-would probably have the same effect in most cases. But I suppose at
-least one reserved execution context is good thing to not block BIO
-finalization.
+So I'm wondering: Are you implementing this just because this looks
+interesting or do you have a real need for the functionality? Why?
 
+								Honza
 -- 
-- Andrey
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
