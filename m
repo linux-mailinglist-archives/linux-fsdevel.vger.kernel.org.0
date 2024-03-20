@@ -1,66 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-14919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01FB28817A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 20:09:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1034A8817BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 20:14:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B3C1C2135E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 19:09:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FA11B22627
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Mar 2024 19:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4D48562D;
-	Wed, 20 Mar 2024 19:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F5785631;
+	Wed, 20 Mar 2024 19:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NEFybc15"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PlTQoTIG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B5484A43
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 19:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484E78527E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 19:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710961764; cv=none; b=Rf84JloWf6+4iXGcVG8mjHJEHZtjhqRI6iVWshsmo8sllb4qtOGB1hmQazYY6bcMmswiuz4CDl+pmK794x+bxTmV7qUNQLP/2pqBI4x97iAC3FGmI+pZR2bopxDtAtO9uS7sIlqkhLgPbIE1hbPu0yVcgBjVwM0s6/8L9apQQOQ=
+	t=1710962083; cv=none; b=iP6WqKjnCBqTDPtLq3Bkn/xI32Xb71Htz4O5u+KERUG1EY+IlHI34rObDROnvTd9SWgiqoQs8isVlpbjdBk1iQnv+pchJuphNbttliy5yBCRoPJ0xHAK3XeyU++aC2khBATZqiApg2Ti1FdWDQe6f+bMxxpBGCuC7AbdMwaFRVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710961764; c=relaxed/simple;
-	bh=Pd+MNEr8JOAN89f7XbQ1aj7LFt1Td2jcy+MF4mO6Di4=;
+	s=arc-20240116; t=1710962083; c=relaxed/simple;
+	bh=QgUId3BnyBUUtUmW79Yu0Sps7oOPxY+/OKtSS/9tiic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlWl6NKCLxOff55bVdTQV5dvxmw/tb6Cl2I6Bb0/W90/t2/OnArfKRHdBMXDZU8SR55LQvRo6kkGvqVmNGn0GONa1pA8OpU54NIF1ux1wejfDAtqklo/naslvwuxA5IJ+U1B5GriCau1rAaeTomt6UiBrybIrlix5TDZ3AJEVY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NEFybc15; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Mar 2024 15:09:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1710961757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wTEWayW9aPquw6DO2+U/3LY8xFsyNhj8KMMbEd/vHoc=;
-	b=NEFybc15veLUTIsek+CPE/P7R4LQEyH+LrbWjxgvsu6lW5JWOhQWycf+EHjXWp9FBavdpp
-	ZNA8CEVi500eKdikuW1Ws3wpr93/AxDgkEHKQPazsDnQPZYsEkru4BT3RHw+0ECyUayjF6
-	bPJafHLW5RvsjqulZy3Ep9aHkPqJUC8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, NeilBrown <neilb@suse.de>, 
-	Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>, 
-	Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org, lsf-pc@lists.linux-foundation.org, 
-	linux-mm@kvack.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ckb02xrB8g7HvgCr0ZPDgaMyev0y3y3/xg37jzbOIKpP7RSXnxDy22wCzaADfbwpwnwCXm9euXHpBmUU3117QAO/eY2QJCxi3mIXqx7N2w3sDpKY7bw+ff+41SSWqFmiYJP+9+Ndhy0zHJWhh6zPOFE5YXweDUsCy9mjNPGur04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PlTQoTIG; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pgJOHL6eKLRoRRqaIiPicRmx3T3NmG07fCD4Avz/des=; b=PlTQoTIGrWd6EWOWpdwcOYiEgB
+	VGV2aoDF0qGjUja+owJJnEVjwBuQRrcYOfa6Rcb07U6ZDhAj64hK5y2oMvQQsHEhothBL11YF+UFX
+	O+s0LX/dZhGWs1lr48W6ZAdqkTYVcwz5YNqC+jxK8fffkD/3RQqNrBChbWZIQDfY5frf+isSCQCZQ
+	rTPdkUjpM48pnL85Ge8h/3b4GLDoPHRUABR3R4IJcdh+U7xpaBjA8paFf++PqGxFeJmxFjXni1edN
+	pYKm5nsVKZ405d1AEw0Nq6lQKgMkDJqYN0OTyq9URZqciOOPTXIeRlNHm1xQ3DRyVN1OfeMo9r32S
+	Zd7kgPGg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rn1OV-00000004wlD-3e8J;
+	Wed, 20 Mar 2024 19:14:36 +0000
+Date: Wed, 20 Mar 2024 19:14:35 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Dan Carpenter <dan.carpenter@linaro.org>, NeilBrown <neilb@suse.de>,
+	Dave Chinner <david@fromorbit.com>,
+	Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org,
+	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
 	Jan Kara <jack@suse.cz>
 Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
-Message-ID: <5vwztnuwnu4tdcopfxgdqiv2qkgdsvdskvrs6sdpadj4fcgti7@v4otdcsc6uxr>
-References: <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>
- <Zd-LljY351NCrrCP@casper.infradead.org>
- <170925937840.24797.2167230750547152404@noble.neil.brown.name>
- <ZeFtrzN34cLhjjHK@dread.disaster.area>
+Message-ID: <Zfs1m3VGvGh4OhX_@casper.infradead.org>
+References: <ZeFtrzN34cLhjjHK@dread.disaster.area>
  <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>
  <170933687972.24797.18406852925615624495@noble.neil.brown.name>
  <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>
  <170950594802.24797.17587526251920021411@noble.neil.brown.name>
  <a7862cf1-1ed2-4c2c-8a27-f9d950ff4da5@suse.cz>
  <aaea1147-f015-423b-8a42-21fc18930c8f@moroto.mountain>
+ <73533d54-2b92-4794-818e-753aaea887f9@suse.cz>
+ <ZfsxKOA5vfa9yo76@casper.infradead.org>
+ <fqaedupymxnx23fo4k34obzahzubbjxgoka7uta2j7zyh2hg63@h2aupn6atmdh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,31 +74,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aaea1147-f015-423b-8a42-21fc18930c8f@moroto.mountain>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <fqaedupymxnx23fo4k34obzahzubbjxgoka7uta2j7zyh2hg63@h2aupn6atmdh>
 
-On Wed, Mar 20, 2024 at 09:32:52PM +0300, Dan Carpenter wrote:
-> On Tue, Mar 12, 2024 at 03:46:32PM +0100, Vlastimil Babka wrote:
-> > But if we change it to effectively mean GFP_NOFAIL (for non-costly
-> > allocations), there should be a manageable number of places to change to a
-> > variant that allows failure.
+On Wed, Mar 20, 2024 at 03:07:38PM -0400, Kent Overstreet wrote:
+> On Wed, Mar 20, 2024 at 06:55:36PM +0000, Matthew Wilcox wrote:
+> > GFP_NOFAIL should still fail for allocations larger than KMALLOC_MAX_SIZE.
+> > Or should we interpret that as "die now"?  Or "go into an unkillable
+> > sleep"?  If the caller really has taken the opportunity to remove their
+> > error handling path, returning NULL will lead to a crash and a lot of
+> > beard stroking trying to understand why a GFP_NOFAIL allocation has
+> > returned NULL.  May as well BUG_ON(size > KMALLOC_MAX_SIZE) and give
+> > the developer a clear indication of what they did wrong.
 > 
-> What does that even mean if GFP_NOFAIL can fail for "costly" allocations?
-> I thought GFP_NOFAIL couldn't fail at all...
+> Why do we even need KMALLOC_MAX_SIZE...?
 > 
-> Unfortunately, it's common that when we can't decide on a sane limit for
-> something people just say "let the user decide based on how much memory
-> they have".  I have added some integer overflow checks which allow the
-> user to allocate up to UINT_MAX bytes so I know this code is out
-> there.  We can't just s/GFP_KERNEL/GFP_NOFAIL/.
-> 
-> From a static analysis perspective it would be nice if the callers
-> explicitly marked which allocations can fail and which can't.
+> Given that kmalloc internally switches to the page allocator when
+> needed, I would think that that's something we can do away with.
 
-GFP_NOFAIL throws a warning if the allocation size is > 2 pages, which
-is a separate issue from whether the allocation becomes fallible -
-someone would have to - oh, I don't know, read the code to answer that
-question.
+... maybe check what I said before replying?
 
-I think we can ditch the 2 page limit on GFP_NOFAIL, though.
+/*
+ * SLUB directly allocates requests fitting in to an order-1 page
+ * (PAGE_SIZE*2).  Larger requests are passed to the page allocator.
+ */
+#define KMALLOC_SHIFT_MAX       (MAX_PAGE_ORDER + PAGE_SHIFT)
+
+You caan't allocate larger than that without going to CMA or some other
+custom allocator.
+
+So.  The caller has requested NOFAIL, and requested a size larger than
+we can allocate.  Do we panic, go into an uninterruptible sleep, or
+return NULL?
 
