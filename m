@@ -1,171 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-15024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FCD8860DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 20:05:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EECC886149
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 20:52:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B791C21F9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 19:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A401F21F9F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 19:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABA6134404;
-	Thu, 21 Mar 2024 19:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B5C13443F;
+	Thu, 21 Mar 2024 19:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p9nSo6+x";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HaNgX+nD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R99i+GAf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nP/x2L21"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8sRqRSw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13855CB5;
-	Thu, 21 Mar 2024 19:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DAF133997;
+	Thu, 21 Mar 2024 19:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711047930; cv=none; b=ZjhhNvLJ8gPzqENhGXy5unOqBnJSDIGw6MdLHX2oMEBM6th/j9Vp96IpUg9BOF4zGjpxokuI68Wp9S2yf1B5Y8PnTSo6NKmzO3Sybc2cQcfz0Uze0V5RfaB+Of33a5sDH/aRawGTZ0QUGyWgffH4xymqSj2EsHvLKSerpdWft68=
+	t=1711050750; cv=none; b=jRglM07eaZg3X+ZaMhKDQJ2nqePQg25WXGLqLk73wu4W5sNJd8r0T7aY3hEyIOcDveMRWtX2DMtXyYO6p3T+OQ3ICqj+G3xwPMLT4Y5C9IZFpHmSxeZs+ckMKYpD+J+q7Ry945fd039dpLyq5UFNhLceVMLyN6HpnB1FpryMC6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711047930; c=relaxed/simple;
-	bh=iYSjuUOJa8DuLLmQDiLEHkhY5sqpF85A5G6lrPzxVIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mlVDVlV7SxDoaidBCVkH7r1Y4JrA/pIJdxRnjyjT4kcE6LT8XtueQfE/kzlWXbIy3w6sWSiWz2aeQf0MxTHxJ8VjDbAoNtJQs2OQw9b8xvvQZG7r0RxQY0vZkCqobweSwGMONJRwYDBvjOPC21z5CsfTbGZo9uwm0uN3QT/gAQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p9nSo6+x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HaNgX+nD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R99i+GAf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nP/x2L21; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C07711FE5E;
-	Thu, 21 Mar 2024 19:05:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711047923;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQ5nPVWJ8277+FaZetcWdUm2C7FpD6mS7J+tmecF20w=;
-	b=p9nSo6+xKc7PB0tWfcTs9Cu59gcpu1hSj3JdKfJnP87c9axKoY0sNq/ShBDH3l+jYRVIR8
-	3OIaVqY8/Rk8Sxo0ET2F71jEEOw5aRKF+SHrede3m9733eWiYV5m/j/ASWTHP+/PnnJkMT
-	hXlcnNXmJRU7/syMePra6kgHa0P/Y4Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711047923;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQ5nPVWJ8277+FaZetcWdUm2C7FpD6mS7J+tmecF20w=;
-	b=HaNgX+nD7nLjaAknAWqKzKa03R/U+5vamob+SpX5eSl2hXbk/Nq7APQ78OMzxjZorEbb6U
-	R+2PcyOQCmGWxnDA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711047922;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQ5nPVWJ8277+FaZetcWdUm2C7FpD6mS7J+tmecF20w=;
-	b=R99i+GAfUcCxUU20+/j6JSVw2BavIydp1z0FgrXb6wLj6TmgBHxgTmgtRAAPiGTbeGi7E/
-	ztO/fN7hYDTWf/4GWW5d8dijoF58yn2w7tdJisLaBEX/gOJ8t2nBSMWWV6GzCo4vyIpcMA
-	3NdxHK/+3EKccMwtvmOeccY+tIblNHk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711047922;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQ5nPVWJ8277+FaZetcWdUm2C7FpD6mS7J+tmecF20w=;
-	b=nP/x2L21n2C7JW+Oql9EWah1M4WRSJksb1TeUEtZS5ggHZuX1RrUar08atWoFbyYGdkJMM
-	+8PjzzHpA9cfTNAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9E88F136AD;
-	Thu, 21 Mar 2024 19:05:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id T9GEJvKE/GXHSwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 21 Mar 2024 19:05:22 +0000
-Date: Thu, 21 Mar 2024 19:58:03 +0100
-From: David Sterba <dsterba@suse.cz>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>, corbet@lwn.net,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, clm@meta.com, dsterba@suse.com,
-	josef@toxicpanda.com, jbacik@toxicpanda.com, kernel-team@meta.com
-Subject: Re: [PATCH 0/3] fiemap extension to add physical extent length
-Message-ID: <20240321185803.GH14596@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <cover.1709918025.git.sweettea-kernel@dorminy.me>
- <20240315030334.GQ6184@frogsfrogsfrogs>
+	s=arc-20240116; t=1711050750; c=relaxed/simple;
+	bh=zHyKqEmeTxvw8dg11FT8bhX85OPIH4GvobQHVZQABxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GAsXOCLCtTUT3I4dG++MNjgoVxU8P+EXaGnR3OVsS/N6gEIhuHl0Hdni9RsyAK+/X+gD3lqAnmNk3qSazMI4CJUDXv3mGZfRgqwiKdrOPEPDY+qyVkFTaaGLln3xMEsU0X2I5f0Gh5XlboDURYriBYQ9TiWQDNwUEjdf4TXJwKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8sRqRSw; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1dde26f7e1dso10188705ad.1;
+        Thu, 21 Mar 2024 12:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711050748; x=1711655548; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7g9NCGY01ymluNhJoggsG8hQO99YWuEg4encn9wbinI=;
+        b=U8sRqRSwiCW9ESh0lgqQLbdwL+S4b4uOtERLJ+6rRt8mkp/r7Y0SEAveS1QSTs7FBN
+         iWpYF18JM2I0WZjKzaBBACVt5yJw5OWNgNxe75NTcS2DR7WgvgpCPfvZaMsdySijf1Cx
+         gp/bZGesZedbiW3j3fdXpADPh3ca23m+C+11WZfc/LWtlcPC0vRTACyEpSs5bEEr/rJm
+         lA3YHZluXjArBL+IOAM5LeLjBPqh5mF4cEds3kFg5MuaAn16yz0ugWx/DACfgEm0owE0
+         qn/dY8sq0CFhDq5oV5dcu6mXzxeMdLF7ZGVu4nJu8evChy7jfsQaDwp5BEj1o5zlskwW
+         EncA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711050748; x=1711655548;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7g9NCGY01ymluNhJoggsG8hQO99YWuEg4encn9wbinI=;
+        b=Xi5k7GsZqee7T7UX9+lCcUbAxuuK5RkIl8BkLV+aNjiz4bgt5WX/BCZOHhi/jUNudN
+         os6bo/zQFzrGiNHlcwqfNu9VHHiEAyXZXdlbpnnVA2UFoQi9GCQPmbyWRi5vMef7uzcI
+         LM7GT52GXn41narLqiQSq1ndR1Z3prKb9A6j0AupwFKRX0sNRbSJJtPcT2uaJzKucRmd
+         i9z/KVnJc9nb9n/feZGISRHD8P5QUMxKFukxws/MrVd5b0GrD/u0vUWIaeS8+0db63Ll
+         Xr2z4Lnpa3u/jvOtDBT2IHzWmOggdWoQRGay8jSqCazFS2xdTRxNwpQZWzPWwo7uoP8A
+         PXbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEXNyC3YZ0dCHaYacMEGL2zdE4jtjjuKfNzexe268PouRj+L0TdswztoQryW36o2Sn9R/+vaNcxo4bCdgEJLgkXpmqFt1HP02XUIxKwskrgdSYnFHmg5IapITPt7a6POaxPmdzVA==
+X-Gm-Message-State: AOJu0YwHCjWDQHVtl5Gi/EQi5FBRx2XcT9hLExr93YJzwo0mNx6R0t7C
+	U8w8WJccBNTCNarFU6gIfX42ZvwhgHowR7cx8hH0SQZdSbxhoxArZSUGzQJSFwH4Gp4n0r5ZgyV
+	WJjxANH2Ua2O72ugvpBv5R9z1a98=
+X-Google-Smtp-Source: AGHT+IHeRGYnu8OY3eiPPYKq0YGvx2izwmmbVrGCsmBFaLYt0yE8OEZ9pzFlZGLmywWhWPikpexuKk1/hqI8uulgA4o=
+X-Received: by 2002:a17:903:230f:b0:1dc:51ac:88f5 with SMTP id
+ d15-20020a170903230f00b001dc51ac88f5mr434224plh.65.1711050747888; Thu, 21 Mar
+ 2024 12:52:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240315030334.GQ6184@frogsfrogsfrogs>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=R99i+GAf;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="nP/x2L21"
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.21 / 50.00];
-	 ARC_NA(0.00)[];
-	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 BAYES_HAM(-0.00)[30.49%];
-	 MIME_GOOD(-0.10)[text/plain];
-	 REPLYTO_ADDR_EQ_FROM(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 MID_RHS_MATCH_FROM(0.00)[]
-X-Spam-Score: -1.21
-X-Rspamd-Queue-Id: C07711FE5E
-X-Spam-Flag: NO
+References: <20240320182607.1472887-1-jcmvbkbc@gmail.com> <202403211004.19F5EE27F@keescook>
+In-Reply-To: <202403211004.19F5EE27F@keescook>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Thu, 21 Mar 2024 12:52:16 -0700
+Message-ID: <CAMo8Bf+jbsnok=zy3gT2Z-F8=LCMVVFhAoiJ8sjwaEBSbbJXzw@mail.gmail.com>
+Subject: Re: [PATCH] exec: fix linux_binprm::exec in transfer_args_to_stack()
+To: Kees Cook <keescook@chromium.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Rich Felker <dalias@libc.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 14, 2024 at 08:03:34PM -0700, Darrick J. Wong wrote:
-> On Fri, Mar 08, 2024 at 01:03:17PM -0500, Sweet Tea Dorminy wrote:
-> > For many years, various btrfs users have written programs to discover
-> > the actual disk space used by files, using root-only interfaces.
-> > However, this information is a great fit for fiemap: it is inherently
-> > tied to extent information, all filesystems can use it, and the
-> > capabilities required for FIEMAP make sense for this additional
-> > information also.
-> > 
-> > Hence, this patchset adds physical extent length information to fiemap,
-> > and extends btrfs to return it.  This uses some of the reserved padding
-> > in the fiemap extent structure, so programs unaware of the new field
-> > will be unaffected by its presence.
-> > 
-> > This is based on next-20240307. I've tested the btrfs part of this with
-> > the standard btrfs testing matrix locally, and verified that the physical extent
-> > information returned there is correct, but I'm still waiting on more
-> > tests. Please let me know what you think of the general idea!
-> 
-> Seems useful!  Any chance you'd be willing to pick up this old proposal
-> to report the dev_t through iomap?  iirc the iomap wrappers for fiemap
-> can export that pretty easily.
-> 
-> https://lore.kernel.org/linux-fsdevel/20190211094306.fjr6gfehcstm7eqq@hades.usersys.redhat.com/
+On Thu, Mar 21, 2024 at 10:05=E2=80=AFAM Kees Cook <keescook@chromium.org> =
+wrote:
+>
+> On Wed, Mar 20, 2024 at 11:26:07AM -0700, Max Filippov wrote:
+> > In NUMMU kernel the value of linux_binprm::p is the offset inside the
+> > temporary program arguments array maintained in separate pages in the
+> > linux_binprm::page. linux_binprm::exec being a copy of linux_binprm::p
+> > thus must be adjusted when that array is copied to the user stack.
+> > Without that adjustment the value passed by the NOMMU kernel to the ELF
+> > program in the AT_EXECFN entry of the aux array doesn't make any sense
+> > and it may break programs that try to access memory pointed to by that
+> > entry.
+> >
+> > Adjust linux_binprm::exec before the successful return from the
+> > transfer_args_to_stack().
+>
+> What's the best way to test this? (Is there a qemu setup I can use to
+> see the before/after of AT_EXECFN?)
 
-I think this is not too useful for btrfs (in general) due to the block
-group profiles that store copies on multiple devices, we'd need more
-than one device identifier per extent.
+I put a readme with the steps to build such system here:
+  http://jcmvbkbc.org/~dumb/tmp/202403211236/README
+it uses a prebuilt rootfs image and a 6.8 kernel branch with two
+patches on top of it: one adds a dts and a defconfig and the other
+is this fix. The rootfs boots successfully with this fix, but panics
+if this fix is removed.
+The easiest way to actually see the AT_EXECFN is, I guess, to
+do something like that:
+---8<---
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index fefc642541cb..22d34272a570 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -659,6 +659,7 @@ static int create_elf_fdpic_tables(struct
+linux_binprm *bprm,
+       NEW_AUX_ENT(AT_EGID,    (elf_addr_t)
+from_kgid_munged(cred->user_ns, cred->egid));
+       NEW_AUX_ENT(AT_SECURE,  bprm->secureexec);
+       NEW_AUX_ENT(AT_EXECFN,  bprm->exec);
++       pr_info("%s: AT_EXECFN =3D %#lx\n", __func__, bprm->exec);
+
+#ifdef ARCH_DLINFO
+       nr =3D 0;
+---8<---
+
+> How did you encounter the problem?
+
+I'm doing xtensa FDPIC port of musl libc and this issue popped up when
+I began testing it on qemu-system-xtensa with the real linux kernel.
+Related post to the musl ML:
+  https://www.openwall.com/lists/musl/2024/03/20/2
+
+--
+Thanks.
+-- Max
 
