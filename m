@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-15028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8948861BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 21:32:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E57DC8861CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 21:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5C728873A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 20:32:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 862471F22D1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 20:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6AC1353E2;
-	Thu, 21 Mar 2024 20:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F25135A5C;
+	Thu, 21 Mar 2024 20:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="myqqqaYb"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="sk1DY3Jk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A00E5680;
-	Thu, 21 Mar 2024 20:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2F513540C;
+	Thu, 21 Mar 2024 20:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711053111; cv=none; b=U8f0onOFfhAERUKKryZoe7bfx9AAEsYqbeRp9UhkdEtPE5JYse6Ee8sn15F08GlQ1ZnnZ/iFDFY9McLbcQa91UpvvSRdHNrSB2WNDU6SFFXjGge6x3Y2yzY5o/DQs/nly50FYYYwqzw4oHHx0cdEf6fZJe+7PXWLERSOu/uzdPY=
+	t=1711053721; cv=none; b=BQj80c/5cj6cHZJgWLlTSlBscgNTBM9mBl6Q41jUunh3RqvZ3yKiN5OOrDX7jR8MIsDctAzQmsEPuXBhfXUAhlAbbrVzBj0G9bPrVtZWqHiQRFt4LEvUdCags5cmJazBhtEO6r0OYpHQVERZ4Lm1kdXcOGLdzxAlh17DMOYUnF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711053111; c=relaxed/simple;
-	bh=baRa6A2qOinOd5YVAtWej5lfyO2Yw47YmlHbzlE1Jvg=;
+	s=arc-20240116; t=1711053721; c=relaxed/simple;
+	bh=bsLnMq6f9MuSXEybZlFqoUeze7bLA8PKxbpvqrgPFq0=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OE+semlzvoEKhY1+ZzXqxt61kWAta5CLgzXWUp+ilDqSxYI7VV0Ph2ix9CoWZfcqW2kCbGRn7dS9UOtC3oi5eUO1q5uskRm4BbLtWW+Tj97ajKqTsszNZDCtkpG0pNDWJtf7DX8Z/WrShhh+73u78YkN0+T2fHOxMItE6xc0lZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=myqqqaYb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C826DC433C7;
-	Thu, 21 Mar 2024 20:31:47 +0000 (UTC)
+	 Mime-Version:Content-Type; b=pB3VB3z1YCcuIA1tOCtM1XwQ+udvkGE78M+1ikN2PkF2eObQiyaoFTAkSsYL6w7gjOtlWW4g5K2yKYJHKx33fA21QfJnyxY9mSS4zw8JEvIUrswHG30P5qEFnXiUSbyyjvFDGd2kVIiz0uBNehjlpZVHwL3xqYySy2wBelZFUH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=sk1DY3Jk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D384C433C7;
+	Thu, 21 Mar 2024 20:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1711053110;
-	bh=baRa6A2qOinOd5YVAtWej5lfyO2Yw47YmlHbzlE1Jvg=;
+	s=korg; t=1711053720;
+	bh=bsLnMq6f9MuSXEybZlFqoUeze7bLA8PKxbpvqrgPFq0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=myqqqaYbliRJE7PVgZhrPNW4VsZSILLB+0SlZqyShzqltI9nE6pTdWnygoFZn4dbb
-	 cd7SNGeTgLc7GfmU2xwl33gTqeb9pkt91tBji4fk8llEMAbUkAQtFXJU5/LCiWBvgC
-	 EtAkHaVZ9tqLwxhvUHQb1iYeHrpwdBWq8Zx/XJf4=
-Date: Thu, 21 Mar 2024 13:31:47 -0700
+	b=sk1DY3JksFP68PjXEwOnUAq1Vd5lNUolSDYThGrqzyyqLQr4fombyuh40LdrgfYbW
+	 Ac/65wSglYIyyBBtUS08I78shDAf7A7GSt+MOEK7LRTFv12fDEKGSsGGb3if8rK0ti
+	 YWcirP5763C8DrAMcFLznADKk78RtFDyLeMAKgoA=
+Date: Thu, 21 Mar 2024 13:41:57 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
 To: Suren Baghdasaryan <surenb@google.com>
 Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
@@ -65,13 +65,11 @@ Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
  linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
  linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-mm@kvack.org, linux-modules@vger.kernel.org,
- kasan-dev@googlegroups.com, cgroups@vger.kernel.org, Alexander Viro
- <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v6 05/37] fs: Convert alloc_inode_sb() to a macro
-Message-Id: <20240321133147.6d05af5744f9d4da88234fb4@linux-foundation.org>
-In-Reply-To: <20240321163705.3067592-6-surenb@google.com>
+ kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v6 00/37] Memory allocation profiling
+Message-Id: <20240321134157.212f0fbe1c03479c01e8a69e@linux-foundation.org>
+In-Reply-To: <20240321163705.3067592-1-surenb@google.com>
 References: <20240321163705.3067592-1-surenb@google.com>
-	<20240321163705.3067592-6-surenb@google.com>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -82,32 +80,29 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 21 Mar 2024 09:36:27 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+On Thu, 21 Mar 2024 09:36:22 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
 
-> From: Kent Overstreet <kent.overstreet@linux.dev>
+> Low overhead [1] per-callsite memory allocation profiling. Not just for
+> debug kernels, overhead low enough to be deployed in production.
 > 
-> We're introducing alloc tagging, which tracks memory allocations by
-> callsite. Converting alloc_inode_sb() to a macro means allocations will
-> be tracked by its caller, which is a bit more useful.
+> Example output:
+>   root@moria-kvm:~# sort -rn /proc/allocinfo
+>    127664128    31168 mm/page_ext.c:270 func:alloc_page_ext
+>     56373248     4737 mm/slub.c:2259 func:alloc_slab_page
+>     14880768     3633 mm/readahead.c:247 func:page_cache_ra_unbounded
+>     14417920     3520 mm/mm_init.c:2530 func:alloc_large_system_hash
+>     13377536      234 block/blk-mq.c:3421 func:blk_mq_alloc_rqs
+>     11718656     2861 mm/filemap.c:1919 func:__filemap_get_folio
+>      9192960     2800 kernel/fork.c:307 func:alloc_thread_stack_node
+>      4206592        4 net/netfilter/nf_conntrack_core.c:2567 func:nf_ct_alloc_hashtable
+>      4136960     1010 drivers/staging/ctagmod/ctagmod.c:20 [ctagmod] func:ctagmod_start
+>      3940352      962 mm/memory.c:4214 func:alloc_anon_folio
+>      2894464    22613 fs/kernfs/dir.c:615 func:__kernfs_new_node
 
-I'd have thought that there would be many similar
-inlines-which-allocate-memory.  Such as, I dunno, jbd2_alloc_inode(). 
-Do we have to go converting things to macros as people report
-misleading or less useful results, or is there some more general
-solution to this?
+Did you consider adding a knob to permit all the data to be wiped out? 
+So people can zap everything, run the chosen workload then go see what
+happened?
 
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3083,11 +3083,7 @@ int setattr_should_drop_sgid(struct mnt_idmap *idmap,
->   * This must be used for allocating filesystems specific inodes to set
->   * up the inode reclaim context correctly.
->   */
-> -static inline void *
-> -alloc_inode_sb(struct super_block *sb, struct kmem_cache *cache, gfp_t gfp)
-> -{
-> -	return kmem_cache_alloc_lru(cache, &sb->s_inode_lru, gfp);
-> -}
-> +#define alloc_inode_sb(_sb, _cache, _gfp) kmem_cache_alloc_lru(_cache, &_sb->s_inode_lru, _gfp)
-
-Parenthesizing __sb seems sensible here?  
+Of course, this can be done in userspace by taking a snapshot before
+and after, then crunching on the two....
 
