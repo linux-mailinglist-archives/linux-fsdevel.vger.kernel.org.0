@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-15004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8807F885E70
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 17:48:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB0F885E77
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 17:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157871F2200D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 16:48:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A9181C22B7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 16:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4019D140399;
-	Thu, 21 Mar 2024 16:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB88013AA23;
+	Thu, 21 Mar 2024 16:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hvfDI9IK"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ez30l1h8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7E313EFE3
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 16:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D479D13F42F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 16:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711039091; cv=none; b=jTEEx7P27rjo1yJJGULlOTD+SY+3uWODQMpieLblRU3liyKMTnLCWJDXWqFln91tVBBnduZ7TWASwI6zKs0wOXl0fcRbl8FqCR57V6dGhRllWoatPYnvT3H9E82tGDP7MTZQ1NX+sf16nzfxHbvK8DCieTqFOV5q/gO/7EpM+AU=
+	t=1711039092; cv=none; b=TY47OW/Zp8TzSp9EvKxSEZIA33Lv4J04piabzxHGiZg5War+hZlVI9EYbunUQQE8YgtDMydOuK/WXl5CaOqbSfX/lAJqPOhdL6xSZ/zEBJ9PK/KLLHLyDvcgDBjqY/JZyjUcnhUpN7J4jjeapTpPG3ii+trkNBz+5uAdEm08sY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711039091; c=relaxed/simple;
-	bh=ND4weKb2Cmy5ZvffNAUyVtQSvrQwxNVPHe7dGS4BU5U=;
+	s=arc-20240116; t=1711039092; c=relaxed/simple;
+	bh=+ModUrXGUZjC5AAS6wB/LjX+0Qg1HpdT5TONNQSJr2U=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=E8rglu2broMLieKDfJ9WQXXyn4orK3/5zY5CiZkM/QKhKxtU+ttmlSuvgyDCm5660eTbi4P1RxS8DhIz/1SQejOP83ZPsdsTP+Sy1IVny0S8oYLHr9oECXzcBOXeWeU+nPICZ3xZhTw7D0w00NlH8ZH6nTBysY05G8Axq8P8P1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hvfDI9IK; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=apLVIJxUd3hQZXqGDHHFnOlcl8fpcJgH7anfDwveGnqJmicX5P+fhjSWfbbRruoFtoLhiwIycox6TMaIwLTSHMLEUB+mxMDeTBt4/5nzj/wdQL4XB0k/7cvO8+gaqKBaXWzP4Nvjz3ugV+x+dqJ2nyU0VRGHLCQDDjhtYs81z/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ez30l1h8; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-60a0b18e52dso14811717b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 09:38:07 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-60a0a5bf550so21850487b3.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 09:38:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711039087; x=1711643887; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1711039089; x=1711643889; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kbJXFr2w8KI4PQ3iTaDylf6laxNigfzl4BgVu2a2cxc=;
-        b=hvfDI9IK6CvB2tjcbMA1lEWqT/gkGMCTiCQ4cBhobR+2RSgzfSOqSpTT1YavGTN23y
-         /+a2OdcXGCm23P1eMk46Cn3xcrR9ZJ5xOYVWIV1HzmoL5J4Eu+vK1it/lk+RYiHzH/ZA
-         Uivcrcq4gz07FRVi9frmAG1Zl9JaWnpXP4gniI0zPrAZGTi1KxVRNnY5lhLueR14Vt56
-         chNKezSm3xyFAHuykn2MZctnu4gmUKB+KjMxw45aqkPlsIw8sCH5aqjM5szNA+aV8yQb
-         McmlKvKCOU++nH5gRdZzpY1N24fVwmhz7yXNO7nmUB4UfXVa1cpf3J5ce+g3o8hM/J3C
-         bWwA==
+        bh=DhlVYTL0Ii8S3ZK2BTRjXFWA8z6FsoYkfvkLJwCmND0=;
+        b=Ez30l1h8przBKYrt5dGb/AX8FwNQJnoWNwwWxZW+jCu76mbKPC4pvwYzooouwpwdKs
+         Oy1THsmJ0s/7iB5fffcW+RSS6id0agxNqNxkDHUe1kLZCrGs5gRMvWTsdQCq6O/arPLh
+         Sv9rc1W+Uc6DJwbB3al0pjm5mWjuEVJ1QPq31kPgpsqSRE2v6GVmj2fFQja2iUGcUvkX
+         iVxUG/16MtbuTGnFhb4C1oeGu/RMPqRK1qyFP+5tPd8ZawctyjK7NaAfz45MxFdM5Qk9
+         q0w1+FV1r/WsUrPfcFW+5aM4Y3VgRu709HKN9bcKy8tnqKq6gFMjwu1Tpj+cIDis4HH6
+         RnfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711039087; x=1711643887;
+        d=1e100.net; s=20230601; t=1711039089; x=1711643889;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kbJXFr2w8KI4PQ3iTaDylf6laxNigfzl4BgVu2a2cxc=;
-        b=GsJxuOkoWe6uJb/qeNfvaAsfZD5rnUgA/tPK4JrDbA7ibvBwAL2VQpT66m+OrHaRjO
-         0tij4wSY/OhNd+h3hEPe3ZeLMr6pmtdG93l/ONwnenlex7GKdg0Q3rHZ/w6wkwJUx2JF
-         I7hH18fNrxtQ2w03eLkd+Vhv4zOG7RWcWc0hizYbbiv0Cf+Tst7TIfLj8KhOkbEXvTPN
-         hkuzocasc5HccHd83aLyWKhjyY8GKaTAgmSVfFU0p0lXX2pZuSdygeA4SqxZ2StXye8D
-         5OpoFW2eABLSYleu5xjNAf8JdxwLiXnKo0M1OKJCgQla9l+NsJvdI0cAGQLl9xp9Gghu
-         oVrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpkyHrY4jFy7oppgaDFRQApC43gj85JqDsSIdbsnIXFVmT5JURVzvnj6ldpe79bIlGjpTu6OBjPfi1bHQntjWxOW8u7+LTYpzKAtTwKg==
-X-Gm-Message-State: AOJu0Yz00uehQy9lEwgBRhIc8DZ9rlGiFu7uLYb7yPWM/Rc6vznkTUG0
-	5Blyl32t4AbIm5Wa40abkB52RcVwJWvmbEQ2bi3lyNGgiBFJ8mSNk7x8pXA8koDtCFl09UVfBps
-	nUQ==
-X-Google-Smtp-Source: AGHT+IGAFq37Jmasj0HYRGF5DFuiG3xE73e4VFfbf3VLLmYen1YphSWB2duspGO/poHTwQ+f8dcPx9x7Bl8=
+        bh=DhlVYTL0Ii8S3ZK2BTRjXFWA8z6FsoYkfvkLJwCmND0=;
+        b=GmgH+inTn/5S+kO/726vpt2bl4Z0S7knAXHzeh/ynJyaF7HdgXVMYy8L5zt3dQF+ba
+         I6ekBm1M2y7cqMGyQLjqzAtj1Hy2UkB616VMYMTLUXZ1GRc7tcCl3skCD1iOyT+OGPzf
+         UgDnOR4A9S42+mdVkb1ktFPfLsryNonIB6c64na3PLSUVayBOkB9gQ9LEyEwTHL2Jdhm
+         rvlN40rGMEhRXP+wCGqwX9LqqcbkB+OVWYyNQ8Bb2FF8wt9jWt9WriFIU/AesmlNG9az
+         eGJRBI3UZ7lrflhYE2iDpKE7MoGKmWwQgm58Y8jONGTZ5W99yXj0xi/kkKZm6mPCyYwV
+         C/BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9sgBu80J2ob3wpTjMqXurJeWhwugi/uKYq0X4aQcVDVKcC7X/5/wMursbTosy+0yY1t2yDdR3muDP7MdYfh65cknzEHtd7ZE6/HENAw==
+X-Gm-Message-State: AOJu0YzxNqDfBhSxAhUHOtjsE0iTtdZI0hIHZEugTiIrEF6x8BYaodeW
+	1c5Mu4yE571/OYCzO40ojIuqn+kyVHC46HuzkFED7FpwdHPbxLgfycI77gU15tA4XEkMjV30vw0
+	vFg==
+X-Google-Smtp-Source: AGHT+IFC+oFCb8HvR8Vt3k92TqGML+O+aM2nK5Ub8xVAQ3egP3eKpX1Sre3j/wPk5Gz2RQOGjx8MvWsloBo=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:a489:6433:be5d:e639])
- (user=surenb job=sendgmr) by 2002:a81:a1d2:0:b0:610:e44b:acc3 with SMTP id
- y201-20020a81a1d2000000b00610e44bacc3mr857961ywg.4.1711039086504; Thu, 21 Mar
- 2024 09:38:06 -0700 (PDT)
-Date: Thu, 21 Mar 2024 09:36:48 -0700
+ (user=surenb job=sendgmr) by 2002:a05:6902:2689:b0:dcb:e4a2:1ab1 with SMTP id
+ dx9-20020a056902268900b00dcbe4a21ab1mr2382761ybb.11.1711039088572; Thu, 21
+ Mar 2024 09:38:08 -0700 (PDT)
+Date: Thu, 21 Mar 2024 09:36:49 -0700
 In-Reply-To: <20240321163705.3067592-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240321163705.3067592-1-surenb@google.com>
 X-Mailer: git-send-email 2.44.0.291.gc1ea87d7ee-goog
-Message-ID: <20240321163705.3067592-27-surenb@google.com>
-Subject: [PATCH v6 26/37] mempool: Hook up to memory allocation profiling
+Message-ID: <20240321163705.3067592-28-surenb@google.com>
+Subject: [PATCH v6 27/37] mm: percpu: Introduce pcpuobj_ext
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz, 
@@ -107,249 +107,152 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Kent Overstreet <kent.overstreet@linux.dev>
 
-This adds hooks to mempools for correctly annotating mempool-backed
-allocations at the correct source line, so they show up correctly in
-/sys/kernel/debug/allocations.
+Upcoming alloc tagging patches require a place to stash per-allocation
+metadata.
 
-Various inline functions are converted to wrappers so that we can invoke
-alloc_hooks() in fewer places.
+We already do this when memcg is enabled, so this patch generalizes the
+obj_cgroup * vector in struct pcpu_chunk by creating a pcpu_obj_ext
+type, which we will be adding to in an upcoming patch - similarly to the
+previous slabobj_ext patch.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: linux-mm@kvack.org
 ---
- include/linux/mempool.h | 73 ++++++++++++++++++++---------------------
- mm/mempool.c            | 36 ++++++++------------
- 2 files changed, 49 insertions(+), 60 deletions(-)
+ mm/percpu-internal.h | 19 +++++++++++++++++--
+ mm/percpu.c          | 30 +++++++++++++++---------------
+ 2 files changed, 32 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/mempool.h b/include/linux/mempool.h
-index 16c5cc807ff6..7b151441341b 100644
---- a/include/linux/mempool.h
-+++ b/include/linux/mempool.h
-@@ -5,6 +5,8 @@
- #ifndef _LINUX_MEMPOOL_H
- #define _LINUX_MEMPOOL_H
+diff --git a/mm/percpu-internal.h b/mm/percpu-internal.h
+index cdd0aa597a81..e62d582f4bf3 100644
+--- a/mm/percpu-internal.h
++++ b/mm/percpu-internal.h
+@@ -32,6 +32,16 @@ struct pcpu_block_md {
+ 	int			nr_bits;	/* total bits responsible for */
+ };
  
-+#include <linux/sched.h>
-+#include <linux/alloc_tag.h>
- #include <linux/wait.h>
- #include <linux/compiler.h>
- 
-@@ -39,18 +41,32 @@ void mempool_exit(mempool_t *pool);
- int mempool_init_node(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
- 		      mempool_free_t *free_fn, void *pool_data,
- 		      gfp_t gfp_mask, int node_id);
--int mempool_init(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
++struct pcpuobj_ext {
++#ifdef CONFIG_MEMCG_KMEM
++	struct obj_cgroup	*cgroup;
++#endif
++};
 +
-+int mempool_init_noprof(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
- 		 mempool_free_t *free_fn, void *pool_data);
-+#define mempool_init(...)						\
-+	alloc_hooks(mempool_init_noprof(__VA_ARGS__))
- 
- extern mempool_t *mempool_create(int min_nr, mempool_alloc_t *alloc_fn,
- 			mempool_free_t *free_fn, void *pool_data);
--extern mempool_t *mempool_create_node(int min_nr, mempool_alloc_t *alloc_fn,
++#ifdef CONFIG_MEMCG_KMEM
++#define NEED_PCPUOBJ_EXT
++#endif
 +
-+extern mempool_t *mempool_create_node_noprof(int min_nr, mempool_alloc_t *alloc_fn,
- 			mempool_free_t *free_fn, void *pool_data,
- 			gfp_t gfp_mask, int nid);
-+#define mempool_create_node(...)					\
-+	alloc_hooks(mempool_create_node_noprof(__VA_ARGS__))
+ struct pcpu_chunk {
+ #ifdef CONFIG_PERCPU_STATS
+ 	int			nr_alloc;	/* # of allocations */
+@@ -64,8 +74,8 @@ struct pcpu_chunk {
+ 	int			end_offset;	/* additional area required to
+ 						   have the region end page
+ 						   aligned */
+-#ifdef CONFIG_MEMCG_KMEM
+-	struct obj_cgroup	**obj_cgroups;	/* vector of object cgroups */
++#ifdef NEED_PCPUOBJ_EXT
++	struct pcpuobj_ext	*obj_exts;	/* vector of object cgroups */
+ #endif
+ 
+ 	int			nr_pages;	/* # of pages served by this chunk */
+@@ -74,6 +84,11 @@ struct pcpu_chunk {
+ 	unsigned long		populated[];	/* populated bitmap */
+ };
+ 
++static inline bool need_pcpuobj_ext(void)
++{
++	return !mem_cgroup_kmem_disabled();
++}
 +
-+#define mempool_create(_min_nr, _alloc_fn, _free_fn, _pool_data)	\
-+	mempool_create_node(_min_nr, _alloc_fn, _free_fn, _pool_data,	\
-+			    GFP_KERNEL, NUMA_NO_NODE)
+ extern spinlock_t pcpu_lock;
  
- extern int mempool_resize(mempool_t *pool, int new_min_nr);
- extern void mempool_destroy(mempool_t *pool);
--extern void *mempool_alloc(mempool_t *pool, gfp_t gfp_mask) __malloc;
-+
-+extern void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask) __malloc;
-+#define mempool_alloc(...)						\
-+	alloc_hooks(mempool_alloc_noprof(__VA_ARGS__))
-+
- extern void *mempool_alloc_preallocated(mempool_t *pool) __malloc;
- extern void mempool_free(void *element, mempool_t *pool);
+ extern struct list_head *pcpu_chunk_lists;
+diff --git a/mm/percpu.c b/mm/percpu.c
+index 4e11fc1e6def..2e5edaad9cc3 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -1392,9 +1392,9 @@ static struct pcpu_chunk * __init pcpu_alloc_first_chunk(unsigned long tmp_addr,
+ 		panic("%s: Failed to allocate %zu bytes\n", __func__,
+ 		      alloc_size);
  
-@@ -62,19 +78,10 @@ extern void mempool_free(void *element, mempool_t *pool);
- void *mempool_alloc_slab(gfp_t gfp_mask, void *pool_data);
- void mempool_free_slab(void *element, void *pool_data);
+-#ifdef CONFIG_MEMCG_KMEM
++#ifdef NEED_PCPUOBJ_EXT
+ 	/* first chunk is free to use */
+-	chunk->obj_cgroups = NULL;
++	chunk->obj_exts = NULL;
+ #endif
+ 	pcpu_init_md_blocks(chunk);
  
--static inline int
--mempool_init_slab_pool(mempool_t *pool, int min_nr, struct kmem_cache *kc)
--{
--	return mempool_init(pool, min_nr, mempool_alloc_slab,
--			    mempool_free_slab, (void *) kc);
--}
--
--static inline mempool_t *
--mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
--{
--	return mempool_create(min_nr, mempool_alloc_slab, mempool_free_slab,
--			      (void *) kc);
--}
-+#define mempool_init_slab_pool(_pool, _min_nr, _kc)			\
-+	mempool_init(_pool, (_min_nr), mempool_alloc_slab, mempool_free_slab, (void *)(_kc))
-+#define mempool_create_slab_pool(_min_nr, _kc)			\
-+	mempool_create((_min_nr), mempool_alloc_slab, mempool_free_slab, (void *)(_kc))
+@@ -1463,12 +1463,12 @@ static struct pcpu_chunk *pcpu_alloc_chunk(gfp_t gfp)
+ 	if (!chunk->md_blocks)
+ 		goto md_blocks_fail;
  
- /*
-  * a mempool_alloc_t and a mempool_free_t to kmalloc and kfree the
-@@ -83,17 +90,12 @@ mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
- void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data);
- void mempool_kfree(void *element, void *pool_data);
+-#ifdef CONFIG_MEMCG_KMEM
+-	if (!mem_cgroup_kmem_disabled()) {
+-		chunk->obj_cgroups =
++#ifdef NEED_PCPUOBJ_EXT
++	if (need_pcpuobj_ext()) {
++		chunk->obj_exts =
+ 			pcpu_mem_zalloc(pcpu_chunk_map_bits(chunk) *
+-					sizeof(struct obj_cgroup *), gfp);
+-		if (!chunk->obj_cgroups)
++					sizeof(struct pcpuobj_ext), gfp);
++		if (!chunk->obj_exts)
+ 			goto objcg_fail;
+ 	}
+ #endif
+@@ -1480,7 +1480,7 @@ static struct pcpu_chunk *pcpu_alloc_chunk(gfp_t gfp)
  
--static inline int mempool_init_kmalloc_pool(mempool_t *pool, int min_nr, size_t size)
--{
--	return mempool_init(pool, min_nr, mempool_kmalloc,
--			    mempool_kfree, (void *) size);
--}
--
--static inline mempool_t *mempool_create_kmalloc_pool(int min_nr, size_t size)
--{
--	return mempool_create(min_nr, mempool_kmalloc, mempool_kfree,
--			      (void *) size);
--}
-+#define mempool_init_kmalloc_pool(_pool, _min_nr, _size)		\
-+	mempool_init(_pool, (_min_nr), mempool_kmalloc, mempool_kfree,	\
-+		     (void *)(unsigned long)(_size))
-+#define mempool_create_kmalloc_pool(_min_nr, _size)			\
-+	mempool_create((_min_nr), mempool_kmalloc, mempool_kfree,	\
-+		       (void *)(unsigned long)(_size))
+ 	return chunk;
  
- void *mempool_kvmalloc(gfp_t gfp_mask, void *pool_data);
- void mempool_kvfree(void *element, void *pool_data);
-@@ -115,16 +117,11 @@ static inline mempool_t *mempool_create_kvmalloc_pool(int min_nr, size_t size)
- void *mempool_alloc_pages(gfp_t gfp_mask, void *pool_data);
- void mempool_free_pages(void *element, void *pool_data);
- 
--static inline int mempool_init_page_pool(mempool_t *pool, int min_nr, int order)
--{
--	return mempool_init(pool, min_nr, mempool_alloc_pages,
--			    mempool_free_pages, (void *)(long)order);
--}
--
--static inline mempool_t *mempool_create_page_pool(int min_nr, int order)
--{
--	return mempool_create(min_nr, mempool_alloc_pages, mempool_free_pages,
--			      (void *)(long)order);
--}
-+#define mempool_init_page_pool(_pool, _min_nr, _order)			\
-+	mempool_init(_pool, (_min_nr), mempool_alloc_pages,		\
-+		     mempool_free_pages, (void *)(long)(_order))
-+#define mempool_create_page_pool(_min_nr, _order)			\
-+	mempool_create((_min_nr), mempool_alloc_pages,			\
-+		       mempool_free_pages, (void *)(long)(_order))
- 
- #endif /* _LINUX_MEMPOOL_H */
-diff --git a/mm/mempool.c b/mm/mempool.c
-index 076c736f5f1f..602e6eba68d3 100644
---- a/mm/mempool.c
-+++ b/mm/mempool.c
-@@ -240,17 +240,17 @@ EXPORT_SYMBOL(mempool_init_node);
-  *
-  * Return: %0 on success, negative error code otherwise.
-  */
--int mempool_init(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
--		 mempool_free_t *free_fn, void *pool_data)
-+int mempool_init_noprof(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
-+			mempool_free_t *free_fn, void *pool_data)
+-#ifdef CONFIG_MEMCG_KMEM
++#ifdef NEED_PCPUOBJ_EXT
+ objcg_fail:
+ 	pcpu_mem_free(chunk->md_blocks);
+ #endif
+@@ -1498,8 +1498,8 @@ static void pcpu_free_chunk(struct pcpu_chunk *chunk)
  {
- 	return mempool_init_node(pool, min_nr, alloc_fn, free_fn,
- 				 pool_data, GFP_KERNEL, NUMA_NO_NODE);
+ 	if (!chunk)
+ 		return;
+-#ifdef CONFIG_MEMCG_KMEM
+-	pcpu_mem_free(chunk->obj_cgroups);
++#ifdef NEED_PCPUOBJ_EXT
++	pcpu_mem_free(chunk->obj_exts);
+ #endif
+ 	pcpu_mem_free(chunk->md_blocks);
+ 	pcpu_mem_free(chunk->bound_map);
+@@ -1646,9 +1646,9 @@ static void pcpu_memcg_post_alloc_hook(struct obj_cgroup *objcg,
+ 	if (!objcg)
+ 		return;
  
- }
--EXPORT_SYMBOL(mempool_init);
-+EXPORT_SYMBOL(mempool_init_noprof);
+-	if (likely(chunk && chunk->obj_cgroups)) {
++	if (likely(chunk && chunk->obj_exts)) {
+ 		obj_cgroup_get(objcg);
+-		chunk->obj_cgroups[off >> PCPU_MIN_ALLOC_SHIFT] = objcg;
++		chunk->obj_exts[off >> PCPU_MIN_ALLOC_SHIFT].cgroup = objcg;
  
- /**
-- * mempool_create - create a memory pool
-+ * mempool_create_node - create a memory pool
-  * @min_nr:    the minimum number of elements guaranteed to be
-  *             allocated for this pool.
-  * @alloc_fn:  user-defined element-allocation function.
-@@ -265,17 +265,9 @@ EXPORT_SYMBOL(mempool_init);
-  *
-  * Return: pointer to the created memory pool object or %NULL on error.
-  */
--mempool_t *mempool_create(int min_nr, mempool_alloc_t *alloc_fn,
--				mempool_free_t *free_fn, void *pool_data)
--{
--	return mempool_create_node(min_nr, alloc_fn, free_fn, pool_data,
--				   GFP_KERNEL, NUMA_NO_NODE);
--}
--EXPORT_SYMBOL(mempool_create);
--
--mempool_t *mempool_create_node(int min_nr, mempool_alloc_t *alloc_fn,
--			       mempool_free_t *free_fn, void *pool_data,
--			       gfp_t gfp_mask, int node_id)
-+mempool_t *mempool_create_node_noprof(int min_nr, mempool_alloc_t *alloc_fn,
-+				      mempool_free_t *free_fn, void *pool_data,
-+				      gfp_t gfp_mask, int node_id)
+ 		rcu_read_lock();
+ 		mod_memcg_state(obj_cgroup_memcg(objcg), MEMCG_PERCPU_B,
+@@ -1663,13 +1663,13 @@ static void pcpu_memcg_free_hook(struct pcpu_chunk *chunk, int off, size_t size)
  {
- 	mempool_t *pool;
+ 	struct obj_cgroup *objcg;
  
-@@ -291,7 +283,7 @@ mempool_t *mempool_create_node(int min_nr, mempool_alloc_t *alloc_fn,
+-	if (unlikely(!chunk->obj_cgroups))
++	if (unlikely(!chunk->obj_exts))
+ 		return;
  
- 	return pool;
- }
--EXPORT_SYMBOL(mempool_create_node);
-+EXPORT_SYMBOL(mempool_create_node_noprof);
+-	objcg = chunk->obj_cgroups[off >> PCPU_MIN_ALLOC_SHIFT];
++	objcg = chunk->obj_exts[off >> PCPU_MIN_ALLOC_SHIFT].cgroup;
+ 	if (!objcg)
+ 		return;
+-	chunk->obj_cgroups[off >> PCPU_MIN_ALLOC_SHIFT] = NULL;
++	chunk->obj_exts[off >> PCPU_MIN_ALLOC_SHIFT].cgroup = NULL;
  
- /**
-  * mempool_resize - resize an existing memory pool
-@@ -374,7 +366,7 @@ int mempool_resize(mempool_t *pool, int new_min_nr)
- EXPORT_SYMBOL(mempool_resize);
- 
- /**
-- * mempool_alloc - allocate an element from a specific memory pool
-+ * mempool_alloc_noprof - allocate an element from a specific memory pool
-  * @pool:      pointer to the memory pool which was allocated via
-  *             mempool_create().
-  * @gfp_mask:  the usual allocation bitmask.
-@@ -387,7 +379,7 @@ EXPORT_SYMBOL(mempool_resize);
-  *
-  * Return: pointer to the allocated element or %NULL on error.
-  */
--void *mempool_alloc(mempool_t *pool, gfp_t gfp_mask)
-+void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
- {
- 	void *element;
- 	unsigned long flags;
-@@ -454,7 +446,7 @@ void *mempool_alloc(mempool_t *pool, gfp_t gfp_mask)
- 	finish_wait(&pool->wait, &wait);
- 	goto repeat_alloc;
- }
--EXPORT_SYMBOL(mempool_alloc);
-+EXPORT_SYMBOL(mempool_alloc_noprof);
- 
- /**
-  * mempool_alloc_preallocated - allocate an element from preallocated elements
-@@ -562,7 +554,7 @@ void *mempool_alloc_slab(gfp_t gfp_mask, void *pool_data)
- {
- 	struct kmem_cache *mem = pool_data;
- 	VM_BUG_ON(mem->ctor);
--	return kmem_cache_alloc(mem, gfp_mask);
-+	return kmem_cache_alloc_noprof(mem, gfp_mask);
- }
- EXPORT_SYMBOL(mempool_alloc_slab);
- 
-@@ -580,7 +572,7 @@ EXPORT_SYMBOL(mempool_free_slab);
- void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data)
- {
- 	size_t size = (size_t)pool_data;
--	return kmalloc(size, gfp_mask);
-+	return kmalloc_noprof(size, gfp_mask);
- }
- EXPORT_SYMBOL(mempool_kmalloc);
- 
-@@ -610,7 +602,7 @@ EXPORT_SYMBOL(mempool_kvfree);
- void *mempool_alloc_pages(gfp_t gfp_mask, void *pool_data)
- {
- 	int order = (int)(long)pool_data;
--	return alloc_pages(gfp_mask, order);
-+	return alloc_pages_noprof(gfp_mask, order);
- }
- EXPORT_SYMBOL(mempool_alloc_pages);
+ 	obj_cgroup_uncharge(objcg, pcpu_obj_full_size(size));
  
 -- 
 2.44.0.291.gc1ea87d7ee-goog
