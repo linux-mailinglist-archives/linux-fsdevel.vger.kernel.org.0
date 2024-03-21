@@ -1,113 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-14959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BF3885633
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 10:08:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEEF885638
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 10:11:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3227E282943
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 09:08:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14B11F22055
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 09:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26D43B2A8;
-	Thu, 21 Mar 2024 09:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583313EA8C;
+	Thu, 21 Mar 2024 09:11:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83669BE47;
-	Thu, 21 Mar 2024 09:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C844208C8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 09:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711012090; cv=none; b=ikEezFnWezKUyGK722y7GdEVmbacNftzutGDl9a+lmuyXhdpAMX92PyPEifMWTCFmUN0+NKtVjROaW9d7A9ovDIx6BxRiUE++0zO1mC3oVKJaMOO93lq6U75pXwMVOzT3q1dwwKLfug2eFb6HLrbOmv7mU5ahItI41oXfcJoLfo=
+	t=1711012289; cv=none; b=YVU45hkwrZvEvOoTd9mB8RzvhDm4kyy6sny2vWex9dHlCosKi7NmVf4lYmXwjMzqj6Y3KvnOJL+4j3/CDFWNWmkV7OJbIUoqpH6q6FwichcZXTrgJUsFCqT4F69TX5CS12SsvTUKDeES04EiphWAFSODG0W2FzUMGIDMCD+VCH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711012090; c=relaxed/simple;
-	bh=Qpcx0mFyj0lNkiDCl/naVg0tO54qntAJp1uhqBMPplg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bhrANU3MMLoOHas+yD0RjmvbFNComuyO2Zuoaw8fkwPr2iqBfDfdJ3/UefH5jvCtDuVqNozOXZIW90VIbkhU3J6OJk1Jm27QqJZHLL8cnTetiScUAfDBvrwbjM6pn8Wwxw+xH74wqGssuthdCSz87yO+Zh2Paz1vmBFbHH1CZ3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4V0fgV0SgqzwPtl;
-	Thu, 21 Mar 2024 17:05:26 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id BC47E140114;
-	Thu, 21 Mar 2024 17:07:59 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 21 Mar 2024 17:07:59 +0800
-Message-ID: <45a2ab40-bc03-417e-9b9a-bb140e5f3444@huawei.com>
-Date: Thu, 21 Mar 2024 17:07:58 +0800
+	s=arc-20240116; t=1711012289; c=relaxed/simple;
+	bh=4p2q6rst3MSLkj/marzYZrBJYnvNL2MkgRCx9XGEW1M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WLp+MRJkBdG1iyEZpqq6BHFJx3EUDK+Vt98yH1mG3usTpvo/uzloZDv7fy8zy3APStRGLw/t6xdanooeT7hdZS6X+Hfuq0sCTzblMyIDUbGNDNwmjdumED6ZlUNv6BwIXf94HflguDPfzt//rnCIEx6YAH+dE/mED/A+Zt3xCSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7cc7a6a04d9so89353439f.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 02:11:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711012287; x=1711617087;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p2nxkyW3QnJtQkkJ/xHRsWAFnQAiQ6b/LmgvW4wXuTI=;
+        b=ozF6i47RaBR3ttHFQLH9qPpgliJr+H7MdGoTuY0YS2VN55hpgbFptFTpY1qZkAYjGk
+         XDOAsmHGkRpNIP9/orG4LgOPWVDovM9J1I8cqOF/HUG8ESvCGYsb/NN4jMWFnscWgwWr
+         KeH7h5VSjCCqtx1ycZW45doiM/4rER/kv3MZRx1j2Iyk4NZT4VV9HFv0hHxXyXR3DrGi
+         RyO0xL5jWXn1DStv1nx2GLyhonj/0L4Ho7fXWtzOxAXC9vVjG0pCf2Izr7F+v96bpFn+
+         Z5VW0urVWvH3LyeBsp3Kge+CL20pcuAljFiCye8NKiB81DG6IQosXowIhdeaKpIvuxyH
+         CYnw==
+X-Gm-Message-State: AOJu0Yxm4vAoRFuxmCAGGbIRO3kYeSiJV6cIhJeQC9RKCDT4Th7FSnhN
+	/Ov6WxaQZG61e/wdi9xUbZLR0PdVCWNhcdpxhnrFMosEBupA6loM0O00u6/40EHEyXuUhGwQWlm
+	Fe3zvIM8EUPfMxOnwLhl1WHPApmqgqtUvSnkp1z9RelUKsj1BQ1WNeK3CxA==
+X-Google-Smtp-Source: AGHT+IGiLoeeCHi6SR3q+Mh4SfPW4HcQeJ2EaF9K7KbAUHSePrFH5jmv1YDzZZEhYE1HOwDvz/2s+y9ErXgGqVmDF6qm8C2yujdd
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] fs: aio: use a folio in aio_setup_ring()
-Content-Language: en-US
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Benjamin LaHaise
-	<bcrl@kvack.org>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, Matthew Wilcox
-	<willy@infradead.org>
-CC: <linux-aio@kvack.org>, <linux-fsdevel@vger.kernel.org>
-References: <20240321082733.614329-1-wangkefeng.wang@huawei.com>
- <20240321082733.614329-2-wangkefeng.wang@huawei.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20240321082733.614329-2-wangkefeng.wang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+X-Received: by 2002:a05:6638:210d:b0:476:f2bd:d636 with SMTP id
+ n13-20020a056638210d00b00476f2bdd636mr842624jaj.2.1711012286809; Thu, 21 Mar
+ 2024 02:11:26 -0700 (PDT)
+Date: Thu, 21 Mar 2024 02:11:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008fd9bc061428179e@google.com>
+Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfs_find_1st_rec_by_cnid
+From: syzbot <syzbot+65f53dd6a0f7ad64c0cb@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    a4145ce1e7bc Merge tag 'bcachefs-2024-03-19' of https://ev..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1312764e180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5c1d7ee7e74661a8
+dashboard link: https://syzkaller.appspot.com/bug?extid=65f53dd6a0f7ad64c0cb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1737d879180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15f5c2a5180000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ce90c7e9c4b9/disk-a4145ce1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fc2e82754c55/vmlinux-a4145ce1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dfc8b656ea07/bzImage-a4145ce1.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/acef21cf3ab0/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+65f53dd6a0f7ad64c0cb@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 1024
+=====================================================
+BUG: KMSAN: uninit-value in hfs_find_1st_rec_by_cnid+0x27a/0x3f0 fs/hfsplus/bfind.c:78
+ hfs_find_1st_rec_by_cnid+0x27a/0x3f0 fs/hfsplus/bfind.c:78
+ __hfsplus_brec_find+0x26f/0x7b0 fs/hfsplus/bfind.c:135
+ hfsplus_brec_find+0x445/0x970 fs/hfsplus/bfind.c:195
+ hfsplus_find_attr+0x30c/0x390
+ hfsplus_listxattr+0x586/0x1a60 fs/hfsplus/xattr.c:708
+ vfs_listxattr fs/xattr.c:493 [inline]
+ listxattr+0x1f3/0x6b0 fs/xattr.c:840
+ path_listxattr fs/xattr.c:864 [inline]
+ __do_sys_listxattr fs/xattr.c:876 [inline]
+ __se_sys_listxattr fs/xattr.c:873 [inline]
+ __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
+ do_syscall_64+0xd5/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3804 [inline]
+ slab_alloc_node mm/slub.c:3845 [inline]
+ __do_kmalloc_node mm/slub.c:3965 [inline]
+ __kmalloc+0x6e4/0x1000 mm/slub.c:3979
+ kmalloc include/linux/slab.h:632 [inline]
+ hfsplus_find_init+0x91/0x250 fs/hfsplus/bfind.c:21
+ hfsplus_listxattr+0x44a/0x1a60 fs/hfsplus/xattr.c:695
+ vfs_listxattr fs/xattr.c:493 [inline]
+ listxattr+0x1f3/0x6b0 fs/xattr.c:840
+ path_listxattr fs/xattr.c:864 [inline]
+ __do_sys_listxattr fs/xattr.c:876 [inline]
+ __se_sys_listxattr fs/xattr.c:873 [inline]
+ __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
+ do_syscall_64+0xd5/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+
+CPU: 0 PID: 5013 Comm: syz-executor378 Not tainted 6.8.0-syzkaller-11743-ga4145ce1e7bc #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
+=====================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 2024/3/21 16:27, Kefeng Wang wrote:
-> Use a folio throughout aio_setup_ring() to remove calls to compound_head().
-> 
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> ---
->   fs/aio.c | 21 ++++++++++++---------
->   1 file changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 9cdaa2faa536..d7f6c8705016 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -527,17 +527,20 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
->   	}
->   
->   	for (i = 0; i < nr_pages; i++) {
-> -		struct page *page;
-> -		page = find_or_create_page(file->f_mapping,
-> -					   i, GFP_USER | __GFP_ZERO);
-> -		if (!page)
-> +		struct folio *folio;
-> +
-> +		folio = __filemap_get_folio(file->f_mapping, i,
-> +					    FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-> +					    GFP_USER | __GFP_ZERO);
-> +		if (!folio)
-Oh, this should be  if (IS_ERR(folio)), will update.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
->   			break;
-> -		pr_debug("pid(%d) page[%d]->count=%d\n",
-> -			 current->pid, i, page_count(page));
-> -		SetPageUptodate(page);
-> -		unlock_page(page);
->   
-> -		ctx->ring_pages[i] = page;
-> +		pr_debug("pid(%d) [%d] folio->count=%d\n", current->pid, i,
-> +			 folio_ref_count(folio));
-> +		folio_mark_uptodate(folio);
-> +		folio_unlock(folio);
-> +
-> +		ctx->ring_pages[i] = &folio->page;
->   	}
->   	ctx->nr_pages = i;
->   
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
