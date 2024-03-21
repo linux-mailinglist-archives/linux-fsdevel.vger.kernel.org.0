@@ -1,113 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-15026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2DAB88615B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 20:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F9D88616C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 21:04:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F344280102
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 19:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4E9286B93
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 20:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B397134434;
-	Thu, 21 Mar 2024 19:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD2E13443F;
+	Thu, 21 Mar 2024 20:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EUKc5GZ0"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t9UBmgHd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0548C79F0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 19:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4486313442C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 20:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711051057; cv=none; b=iUg4uB0PotbkTNFCGXDAx2iDJaR1+qS2VT8tMSwOeSmbuwMrTUQ6yJyYKrb11VypNwS/3HjZUqdspWcVU9jx1xnmOVuXANJU3ZDRZp3IEKinS8gUv7gGOaSG2S9iG93Ai9pi16ZurBm6f9kKqh6boGNQb9i4+9mS6eTfthl9NfA=
+	t=1711051451; cv=none; b=JAm5OhloIPEbaXxxP1bf2wBUg0coIYKAENWxx3CRE6scYB+7lslRfZLcRpZrMpikgOuNOAa2HlvIAL6v7T+3TekrzCRsOMswXGyXtNmMVQrBoMkFMb5nXqM/Wy22tpQzdW4/kA9vL9YunfqZWU7Oq3irP+LJQle6yJ1r3unkPKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711051057; c=relaxed/simple;
-	bh=ACQEgjHXrHrKmVUN1e84w9K08GUoD7rvTF7AzK/2oLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cMeHaGdMZ074F1jUJYTPwGabvTNAi+mno/+CPknJQE1MZmGQp2yk6LHKluH+fi7EPBK1niTNqw57A8T+eqS0nz73c814xEiOxXsO16mhE3kyUT+fhFT6mqFXOWb6oW0IO63MiS7OssFujlGbSyPdImJIRmrMsWr8JruWT5rAurw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EUKc5GZ0; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1711051451; c=relaxed/simple;
+	bh=S6RP6uWmLdlEXkKQny/wqkGVsqJcl1gAUGPqZ6bCYiM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jmkkvguXBnLdWKydN3+/6VkVbUsNZpTWtnxilrV2FVFmNZmj59ILyvXzdcK2AkMTGVRCoV62OYVJmxVqRlcO04elr4o8MKh8G192wjYTubbnBmXSO+ebo0E4R09BdeSsPv6Z/HEr4fCOHnXTcUWxdR8Jve8UxNfpx20Z9pQSZao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t9UBmgHd; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-512e39226efso1166399e87.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 12:57:35 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dcbfe1a42a4so2575663276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 13:04:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711051054; x=1711655854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ck9XtKTBgRiwFDSQngG8cInr2uoxIAAWioBX8TmAnyo=;
-        b=EUKc5GZ0tCVMydYn4Zjgc59pIQW6FtI3oUrKP4tTiXmoc4Wf7NYzII4ZrHP4zdeKJP
-         4ztu6DX4lhWEeF9WTMioGrhUhtLIhYI/UZNeSY4V1BsqVecn881JdG71Cw1ORYnXx7Fw
-         oozS2IzoiNesxe8stXlvIE93EKHi8/yS//19piK1S62M5nZQzuU3dBLCTxQSDez193lH
-         zvsmtvlnqsMAjDRwaLkV/PKjSmPuGJgvGip9fV1lw+tkxMPjyqJuhViNWrureVqF/B1p
-         BuGryC1FS8bW+O2zzKxHesVlgNNFZFKur3Z/HSI8JAPbbVxYnSeEPQnkMabrmvCrn+aN
-         txOQ==
+        d=google.com; s=20230601; t=1711051449; x=1711656249; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TCBKqThFKtYqhjiY4RMqU+IuZ1w6cv8EE0k+cJlDNnk=;
+        b=t9UBmgHd/q5utv6qWZdP7eKjHmnVZeNPsHJMDwPYc4VzSykPCFSN7CTgGuWTVhHh+a
+         aKYy3oo4FCmLVj+XEkYF67gVoWr+EGVpoDy9KDhU+KV1z8h0vybFigUzJVjuqcBcQVDi
+         9UmqlsMy2iJRkUHNR8I9EdPTQxdvTqqtsFqsliQ7cuFrF7hYiNguxgHqbnR4oDDOHWj+
+         FPJxBjH6zXp5rlwhy0fpxHw6jCbrbESsqvo5Ky7MZSvoDJz7FjZyvxMnyPP53mO65s3h
+         AWBYcWP74+R9YGP7LJSclVyEpCt5zYHP+H8lumtOK1/34k4CFGACNJ5Ja89dzoaPxFV4
+         U8lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711051054; x=1711655854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ck9XtKTBgRiwFDSQngG8cInr2uoxIAAWioBX8TmAnyo=;
-        b=vUmGRrDl9ASgxf5HWvJ17gxpcM9Enn8JMh7VtE3rBRsXvZxWSTD9Rzd507+NmVGqOp
-         zH59RpC2lycuk9WBG8Zt1ysXlJ5ecwS2PIe5a2hfK5XWy9JGTSa2CokMWWQB/b5lmIau
-         xjcwWYkrXotxZb/X5hqMwFaHBTk7/wNuOytmRyxolsEmXxdRELpXupoH2LWBQPlSKjNk
-         TEGzWGjTe1Nfdsbv1dzd5T1ZwurV3vSs58EXNaEJGYzT7wKrZzUSizDeOY/FVjXknj1f
-         ypMW8M+o+6rSHMR0I/9tm4+n5fUxkenwAcFp0Kn0gsllf8BoH8NxR8LAszLhs210purG
-         4w+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXinqdIvrwu5L6FekxPxeCVPH1o08Sdyn7BstebWPQAl4ImynSE9VucjskguCTNY/AQDfwgEKOc9WfuFcJve6lZ8iDF059QTQU+qElULA==
-X-Gm-Message-State: AOJu0YyV/JH1kmKY4xJGp0zU3fXJeuoQb+o93OyR6RS5HydlU5KXHYzG
-	/f/LarD5wzIU/BYnaT8pbn9V7BhMDxIqP15ej99aLPrCMaSB0xOgCgMsCQeeTMbYIPvaNT0+6lJ
-	6vDzCSYy11JPWaPM1fJ+gXMAwDnUBC132Y9c5
-X-Google-Smtp-Source: AGHT+IEm3LB16hV2ttktwzI7uFI9wHrobF/GyRBvFlFKy38e078SgRE+nrCXL99kg0aKWSlsYgwHdwgeQSI3HPnhMyQ=
-X-Received: by 2002:a19:ca13:0:b0:513:da24:fc0b with SMTP id
- a19-20020a19ca13000000b00513da24fc0bmr247849lfg.33.1711051053968; Thu, 21 Mar
- 2024 12:57:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711051449; x=1711656249;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TCBKqThFKtYqhjiY4RMqU+IuZ1w6cv8EE0k+cJlDNnk=;
+        b=rK9y7JU+jSC3J6eA2KuGleBeMqaBUHf5mWw85fCtocygDnWWaiCpDTAJM+U4pBcjmI
+         sRfEdMCxOExmxySq46h0aXTp24AN1sOaBK6qqN+ZyPh0Yuhd1CNLjcol6qYUcIQkY+kk
+         MdHgU5WEIf/giDILV29OgX9TshO31jyH7AabmaQ01KiIbr84N4UBqzIxXetOwbzMS31z
+         x3iSo2+JMhlgie5L6RX08tD18IAvx8IZJrrrMKXcYJEkH0IoW2XPEDCBJXed7cKfdZhi
+         JVw5wPBU5rVP+9X8LNE/ogJmQ1WiizACiG0uY28Mg8f6wJWHmZyGlqNdvB5SX7BJWCwA
+         +lwQ==
+X-Gm-Message-State: AOJu0YzfnR5MqDjeABV14lmuGrYlhR/j3hBx1VYiCmRGBm2XstMTzbuI
+	gPuRkJYNl1nK5OtTfQRLmWPtOWSHKjDtQQ4MgghiqsTRGiM8H3x3yMovdwUNn+uY2vIeVTQ/NsB
+	diL71Xl8KauRXUc7OO5MKtA==
+X-Google-Smtp-Source: AGHT+IE5VBN/+0LV/WPi06J13PSBodS0OdOu9MsbtLw0uhdLxrW4h4oP0M2VfdY/eM1a/8qsQNDCacEmRg4kGkc2ng==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6902:2484:b0:dbd:b165:441 with
+ SMTP id ds4-20020a056902248400b00dbdb1650441mr74857ybb.0.1711051449209; Thu,
+ 21 Mar 2024 13:04:09 -0700 (PDT)
+Date: Thu, 21 Mar 2024 20:04:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240321-strncpy-fs-binfmt_elf_fdpic-c-v1-1-fdde26c8989e@google.com>
- <871q83eepl.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <871q83eepl.fsf@email.froward.int.ebiederm.org>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIALeS/GUC/4XNQQqDMBCF4avIrDslicVqV71HEWmTiQ5oEhKRi
+ nj3pkLXZVb/LL63QaLIlOBWbBBp4cTe5VCnAvTwdD0hm9yghLqIUglMc3Q6rGgTvtjZae5otJ0
+ 1gTVqrFW+ylyrUgrIRohk+X34jzb3wGn2cT3mFvn9/mT5R14kSrTGkKp03dQN3Xvv+5HO2k/Q7 vv+AbD0yg3LAAAA
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1711051448; l=1634;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=S6RP6uWmLdlEXkKQny/wqkGVsqJcl1gAUGPqZ6bCYiM=; b=ltUxZ2cpj94pnvyIBEzmfBEHQXiRRLeDTlLyWbffUabFpLWPDEAtsiKsRij39k9phe/VyFBxJ
+ 50r/4jHF4KlATUMzXLzQG9U+LPWH6633/Y5LV4uwnne1EeG7KX+npD1
+X-Mailer: b4 0.12.3
+Message-ID: <20240321-strncpy-fs-binfmt_elf_fdpic-c-v2-1-0b6daec6cc56@google.com>
+Subject: [PATCH v2] binfmt: replace deprecated strncpy
 From: Justin Stitt <justinstitt@google.com>
-Date: Thu, 21 Mar 2024 12:57:21 -0700
-Message-ID: <CAFhGd8r_Z2m4akKTBvxy7s8Nwc1HLUE+uKu31mAya5QQyhBhig@mail.gmail.com>
-Subject: Re: [PATCH] binfmt: replace deprecated strncpy with strscpy_pad
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hi,
+strncpy() is deprecated for use on NUL-terminated destination strings
+[1] and as such we should prefer more robust and less ambiguous string
+interfaces.
 
-On Thu, Mar 21, 2024 at 9:23=E2=80=AFAM Eric W. Biederman <ebiederm@xmissio=
-n.com> wrote:
->
-> I am perplexed.  Why not use get_task_comm fill_psinfo like binfmt_elf
-> does?
->
-> It seems very silly to copy half the function without locking and then
-> not copy it's locking as well.
->
-> Given that the more highly tested binfmt_elf uses get_task_comm I can't
-> imagine a reason why binfmt_elf_fdpic can't use it as well.
+There is a _nearly_ identical implementation of fill_psinfo present in
+binfmt_elf.c -- except that one uses get_task_comm over strncpy(). Let's
+mirror that in binfmt_elf_fdpic.c
 
-I am not sure why the original opted for strncpy over get_task_comm
-but I made the replacement without being aware of the literally
-identical code present in binfmt_elf.c
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+Changes in v2:
+- use get_task_comm (thanks Eric)
+- Link to v1: https://lore.kernel.org/r/20240321-strncpy-fs-binfmt_elf_fdpic-c-v1-1-fdde26c8989e@google.com
+---
+Note: build-tested only.
 
-I'll send a v2.
+Found with: $ rg "strncpy\("
+---
+ fs/binfmt_elf_fdpic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Eric
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index 1920ed69279b..3314249e8674 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -1359,7 +1359,7 @@ static int fill_psinfo(struct elf_prpsinfo *psinfo, struct task_struct *p,
+ 	SET_UID(psinfo->pr_uid, from_kuid_munged(cred->user_ns, cred->uid));
+ 	SET_GID(psinfo->pr_gid, from_kgid_munged(cred->user_ns, cred->gid));
+ 	rcu_read_unlock();
+-	strncpy(psinfo->pr_fname, p->comm, sizeof(psinfo->pr_fname));
++	get_task_comm(psinfo->pr_fname, p);
+ 
+ 	return 0;
+ }
 
-Thanks
-Justin
+---
+base-commit: a4145ce1e7bc247fd6f2846e8699473448717b37
+change-id: 20240320-strncpy-fs-binfmt_elf_fdpic-c-828286d76310
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
 
