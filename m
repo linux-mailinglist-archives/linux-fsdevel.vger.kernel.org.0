@@ -1,152 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-14960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEEF885638
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 10:11:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A66E885645
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 10:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14B11F22055
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 09:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21BBD1C21198
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 09:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583313EA8C;
-	Thu, 21 Mar 2024 09:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD143D0C6;
+	Thu, 21 Mar 2024 09:15:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C844208C8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 09:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F756883C;
+	Thu, 21 Mar 2024 09:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711012289; cv=none; b=YVU45hkwrZvEvOoTd9mB8RzvhDm4kyy6sny2vWex9dHlCosKi7NmVf4lYmXwjMzqj6Y3KvnOJL+4j3/CDFWNWmkV7OJbIUoqpH6q6FwichcZXTrgJUsFCqT4F69TX5CS12SsvTUKDeES04EiphWAFSODG0W2FzUMGIDMCD+VCH0=
+	t=1711012532; cv=none; b=asKNnE2SuoxLd8RmREd4luL3KqUjputuAz7YjKrfR01m+SgS5tqOVcm9N4Ia91TmzqD7Ss08xtTdlXAWOcMQxGspI4KMcszVsaJVISiyfxpZ2p6SAlmkp6h2m9LvTsxzwgSWOSnYbP0qiKLQ/2qCoTd5GLu0IBWlHrUasCUOYfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711012289; c=relaxed/simple;
-	bh=4p2q6rst3MSLkj/marzYZrBJYnvNL2MkgRCx9XGEW1M=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WLp+MRJkBdG1iyEZpqq6BHFJx3EUDK+Vt98yH1mG3usTpvo/uzloZDv7fy8zy3APStRGLw/t6xdanooeT7hdZS6X+Hfuq0sCTzblMyIDUbGNDNwmjdumED6ZlUNv6BwIXf94HflguDPfzt//rnCIEx6YAH+dE/mED/A+Zt3xCSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7cc7a6a04d9so89353439f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 02:11:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711012287; x=1711617087;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p2nxkyW3QnJtQkkJ/xHRsWAFnQAiQ6b/LmgvW4wXuTI=;
-        b=ozF6i47RaBR3ttHFQLH9qPpgliJr+H7MdGoTuY0YS2VN55hpgbFptFTpY1qZkAYjGk
-         XDOAsmHGkRpNIP9/orG4LgOPWVDovM9J1I8cqOF/HUG8ESvCGYsb/NN4jMWFnscWgwWr
-         KeH7h5VSjCCqtx1ycZW45doiM/4rER/kv3MZRx1j2Iyk4NZT4VV9HFv0hHxXyXR3DrGi
-         RyO0xL5jWXn1DStv1nx2GLyhonj/0L4Ho7fXWtzOxAXC9vVjG0pCf2Izr7F+v96bpFn+
-         Z5VW0urVWvH3LyeBsp3Kge+CL20pcuAljFiCye8NKiB81DG6IQosXowIhdeaKpIvuxyH
-         CYnw==
-X-Gm-Message-State: AOJu0Yxm4vAoRFuxmCAGGbIRO3kYeSiJV6cIhJeQC9RKCDT4Th7FSnhN
-	/Ov6WxaQZG61e/wdi9xUbZLR0PdVCWNhcdpxhnrFMosEBupA6loM0O00u6/40EHEyXuUhGwQWlm
-	Fe3zvIM8EUPfMxOnwLhl1WHPApmqgqtUvSnkp1z9RelUKsj1BQ1WNeK3CxA==
-X-Google-Smtp-Source: AGHT+IGiLoeeCHi6SR3q+Mh4SfPW4HcQeJ2EaF9K7KbAUHSePrFH5jmv1YDzZZEhYE1HOwDvz/2s+y9ErXgGqVmDF6qm8C2yujdd
+	s=arc-20240116; t=1711012532; c=relaxed/simple;
+	bh=7mZ+Ap7YfWnxtKv8WqQRdUUF6tDAryF5ikk9T8xbk1E=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=n/A+F1PirkPd1+Mq1A5hFTJgd1Wd1rv8aqA+73776Yju7pTa8bPvCiuQBH4q8CWx0GbGQqeyUXhnLYQ5NBxShl4yBm6tdwFJ9CB1vbhLeB0/Nuo5Zmm0XsrsK5gI0qmzEF0sFsHT+AWXuLjuiU+A+kutRjslR24FwzdyFBgDafk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.31.7] (theinternet.molgen.mpg.de [141.14.31.7])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: buczek)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 7E94061E5FE0A;
+	Thu, 21 Mar 2024 10:15:05 +0100 (CET)
+Message-ID: <6e010dbb-f125-4f44-9b1a-9e6ac9bb66ff@molgen.mpg.de>
+Date: Thu, 21 Mar 2024 10:15:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:210d:b0:476:f2bd:d636 with SMTP id
- n13-20020a056638210d00b00476f2bdd636mr842624jaj.2.1711012286809; Thu, 21 Mar
- 2024 02:11:26 -0700 (PDT)
-Date: Thu, 21 Mar 2024 02:11:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008fd9bc061428179e@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfs_find_1st_rec_by_cnid
-From: syzbot <syzbot+65f53dd6a0f7ad64c0cb@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, it+linux@molgen.mpg.de
+From: Donald Buczek <buczek@molgen.mpg.de>
+Subject: possible 6.6 regression: Deadlock involving super_lock()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+we have a set of 6 systems with similar usage patterns which ran on 5.15 kernels for over a year.  Only two weeks after we've switched one of the systems from a 5.15 kernel to a 6.6 kernel, it went into a deadlock. I'm aware that I don't have enough information that this could be analyzed, but I though I drop it here anyway, because the deadlock seems to involve the locking of a superblock and I've seen that some changes in that area went into 6.6. Maybe someone has an idea or suggestions for further inspection if this happens the next time.
 
-HEAD commit:    a4145ce1e7bc Merge tag 'bcachefs-2024-03-19' of https://ev..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1312764e180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5c1d7ee7e74661a8
-dashboard link: https://syzkaller.appspot.com/bug?extid=65f53dd6a0f7ad64c0cb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1737d879180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15f5c2a5180000
+These systems
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ce90c7e9c4b9/disk-a4145ce1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fc2e82754c55/vmlinux-a4145ce1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dfc8b656ea07/bzImage-a4145ce1.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/acef21cf3ab0/mount_0.gz
+- use automounter a lot (many mount/umount events)
+- use nfs a lot (most data is on remote filesystems over nfs)
+- are used interactively (users occasionally overload any resource like memory, cores or network)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+65f53dd6a0f7ad64c0cb@syzkaller.appspotmail.com
+When we've noticed the problem, several processes were blocked, including the automounter which waited for a mount that didn't complete:
 
-loop0: detected capacity change from 0 to 1024
-=====================================================
-BUG: KMSAN: uninit-value in hfs_find_1st_rec_by_cnid+0x27a/0x3f0 fs/hfsplus/bfind.c:78
- hfs_find_1st_rec_by_cnid+0x27a/0x3f0 fs/hfsplus/bfind.c:78
- __hfsplus_brec_find+0x26f/0x7b0 fs/hfsplus/bfind.c:135
- hfsplus_brec_find+0x445/0x970 fs/hfsplus/bfind.c:195
- hfsplus_find_attr+0x30c/0x390
- hfsplus_listxattr+0x586/0x1a60 fs/hfsplus/xattr.c:708
- vfs_listxattr fs/xattr.c:493 [inline]
- listxattr+0x1f3/0x6b0 fs/xattr.c:840
- path_listxattr fs/xattr.c:864 [inline]
- __do_sys_listxattr fs/xattr.c:876 [inline]
- __se_sys_listxattr fs/xattr.c:873 [inline]
- __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
- do_syscall_64+0xd5/0x1f0
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
+# # /proc/73777/task/73777: mount.nfs : /sbin/mount.nfs rabies:/amd/rabies/M/MG009/project/avitidata /project/avitidata -s -o rw,nosuid,sec=mariux
+# cat /proc/73777/task/73777/stack
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3804 [inline]
- slab_alloc_node mm/slub.c:3845 [inline]
- __do_kmalloc_node mm/slub.c:3965 [inline]
- __kmalloc+0x6e4/0x1000 mm/slub.c:3979
- kmalloc include/linux/slab.h:632 [inline]
- hfsplus_find_init+0x91/0x250 fs/hfsplus/bfind.c:21
- hfsplus_listxattr+0x44a/0x1a60 fs/hfsplus/xattr.c:695
- vfs_listxattr fs/xattr.c:493 [inline]
- listxattr+0x1f3/0x6b0 fs/xattr.c:840
- path_listxattr fs/xattr.c:864 [inline]
- __do_sys_listxattr fs/xattr.c:876 [inline]
- __se_sys_listxattr fs/xattr.c:873 [inline]
- __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
- do_syscall_64+0xd5/0x1f0
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-
-CPU: 0 PID: 5013 Comm: syz-executor378 Not tainted 6.8.0-syzkaller-11743-ga4145ce1e7bc #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-=====================================================
+[<0>] super_lock+0x40/0x140
+[<0>] grab_super+0x29/0xc0
+[<0>] grab_super_dead+0x2e/0x140
+[<0>] sget_fc+0x1e1/0x2d0
+[<0>] nfs_get_tree_common+0x86/0x520 [nfs]
+[<0>] vfs_get_tree+0x21/0xb0
+[<0>] nfs_do_submount+0x128/0x180 [nfs]
+[<0>] nfs4_submount+0x566/0x6d0 [nfsv4]
+[<0>] nfs_d_automount+0x16b/0x230 [nfs]
+[<0>] __traverse_mounts+0x8f/0x210
+[<0>] step_into+0x32a/0x740
+[<0>] link_path_walk.part.0.constprop.0+0x246/0x380
+[<0>] path_lookupat+0x3e/0x190
+[<0>] filename_lookup+0xe8/0x1f0
+[<0>] vfs_path_lookup+0x52/0x80
+[<0>] mount_subtree+0xa0/0x150
+[<0>] do_nfs4_mount+0x269/0x360 [nfsv4]
+[<0>] nfs4_try_get_tree+0x48/0xd0 [nfsv4]
+[<0>] vfs_get_tree+0x21/0xb0
+[<0>] path_mount+0x79e/0xa50
+[<0>] __x64_sys_mount+0x11a/0x150
+[<0>] do_syscall_64+0x46/0x90
+[<0>] entry_SYSCALL_64_after_hwframe+0x6e/0xd8
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Also, one writeback thread was blocked. I mention that, because I don't get how these these two threads could depend on each other:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+# # /proc/39359/task/39359: kworker/u268:5+flush-0:58 : 
+# cat /proc/39359/task/39359/stack
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+[<0>] folio_wait_bit_common+0x135/0x350
+[<0>] write_cache_pages+0x1a0/0x3a0
+[<0>] nfs_writepages+0x12a/0x1e0 [nfs]
+[<0>] do_writepages+0xcf/0x1e0
+[<0>] __writeback_single_inode+0x46/0x3a0
+[<0>] writeback_sb_inodes+0x1f5/0x4d0
+[<0>] __writeback_inodes_wb+0x4c/0xf0
+[<0>] wb_writeback+0x1f5/0x320
+[<0>] wb_workfn+0x350/0x4f0
+[<0>] process_one_work+0x142/0x300
+[<0>] worker_thread+0x2f5/0x410
+[<0>] kthread+0xe8/0x120
+[<0>] ret_from_fork+0x34/0x50
+[<0>] ret_from_fork_asm+0x1b/0x30
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+As a result, of course, more and more processes were blocked. A full list of all stack traces and some more info from the system in the blocked state is at https://owww.molgen.mpg.de/~buczek/2024-03-18_mount/info.log
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+dmesg not included in that file, but I've reviewed it and there was nothing unusual in it.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks
+
+  Donald
+
+-- 
+Donald Buczek
+buczek@molgen.mpg.de
+Tel: +49 30 8413 14  
 
