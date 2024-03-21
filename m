@@ -1,102 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-15022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B0B886048
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 19:06:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7C788604C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 19:07:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BC7FB20E87
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 18:06:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5124A286E2A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 18:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBABA1332B7;
-	Thu, 21 Mar 2024 18:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E502F224D7;
+	Thu, 21 Mar 2024 18:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w7lT68Oz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MYtuAGMa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w7lT68Oz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MYtuAGMa"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qSTXFzpH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jyrZiQTK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qSTXFzpH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jyrZiQTK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2763485938;
-	Thu, 21 Mar 2024 18:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833311332AD;
+	Thu, 21 Mar 2024 18:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711044392; cv=none; b=N2YA6iLanCiKco8XQPbT3E8IB30aGeCWUppjWhwzUWu/zQ/LcIP/Yv+l+1A4SBRPublPuotPBMFDaaZp10YGrz0vPUuZfaP3r8YzJ033tlAM9XokvZGygPV2uNdWBnoPAlQ7qMH+ctMgpIRBaO+oYou4KZZrmek2/cJeMYARpds=
+	t=1711044428; cv=none; b=VXuR9U4HVodBJEenByiiYAmq6UT+vwYpkWm+Mc1oeFYJBYwZ70N8K9qAMKeFBw19akDpsOwEGAPUrfrTteV9l4odp4vK0fdIlmqeKjZOLnflpDHYyjM7KveM00/ICddpO1IYGGt7mjVXGZQDnIly6bu4B/a6nha9/Fp57LZEDfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711044392; c=relaxed/simple;
-	bh=kJrZ3FrkwvsIEAdYklwK2BTz9nTXtGc86+l16KyBOEs=;
+	s=arc-20240116; t=1711044428; c=relaxed/simple;
+	bh=FwyV5G5T8xNWHin0iIxpU0FjYvWou7GfBsp3wgr/t4c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yim4OGkhf1pLAW9LHVdSQYCsqm1CE6O9SMgwgHiliX0NXUAYMdMaXzxbYPAn4DwSIKUivyWRhprVvilnbqmVE+3q786eUo71GUob5TDFgigNp2PFCt81J0RftaN6JkMOyYhai8ReNMMd8dNQ3g/330IXYCdIHtDooD+fhaLcSew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w7lT68Oz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MYtuAGMa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w7lT68Oz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MYtuAGMa; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=rmim6XYy+fyUDDINfrTCjq2yPLHWkJ7Gy+YEt83sjLBZvDn1OewMgCj51vOVXZmcBoTc+tL+etVHEuljBEypdsTAtKIlfEV0yWnZuS8luR+k98D7+A5jg+fyIcnLLtpouJsdC4QZeItq108LanRTGEKtoY6+y+Anxp84KtHS0Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qSTXFzpH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jyrZiQTK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qSTXFzpH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jyrZiQTK; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9059421E83;
-	Thu, 21 Mar 2024 18:06:25 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A5EA35D2A6;
+	Thu, 21 Mar 2024 18:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711044385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1711044424; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CGVHmTaTp8V9BZmoFhStOl7fyzif6q6m2j5KQberDvI=;
-	b=w7lT68OzRPoxfG/hfxpofqN8QxlCEI72WnQVD/otuPit/xsQS3kknF0DZcO31LBzqy4B5l
-	ZKCw+9zyq50FVn2Y9QxS2C0mBmUNUyz1TJF1aFzethOvkk9y7tmxVS4Tju4Qtdb3SGUiga
-	9U31koKDRrrb07uPZW4g5wnW4MpM62Q=
+	bh=Er0BQY9yyhShKISjQxXgJJ4fPACRuENnuK7t6pwKzT4=;
+	b=qSTXFzpHwuoVCvOZ3GNS+UgUHoMukzlTJ1tfGZc9Jr7tJURCmH13hi3dn0E7x5zdcIphWo
+	qE0h5rGLe4h4RhuHex8TtU2gAEUO3Wa444zNqNphBj4BbfFOpbQYGSna8jPdk4+pzaKzR7
+	O0Bny7FMVslcvK0cQBh18/xXp7z+ffU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711044385;
+	s=susede2_ed25519; t=1711044424;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CGVHmTaTp8V9BZmoFhStOl7fyzif6q6m2j5KQberDvI=;
-	b=MYtuAGMaNl8DwPSPn6WffLO7cvdpC1k+t9LxlY0JUkXnuc53PR8ZW9ZbehMg9bgaQigS2y
-	ZuRsp7pPd7CwpDDw==
+	bh=Er0BQY9yyhShKISjQxXgJJ4fPACRuENnuK7t6pwKzT4=;
+	b=jyrZiQTKOf1qUFHF6itTgEhgh9ek+6yvFInS0FE2apXbvmFgIRXstV9T5cToIhWeLvF5YV
+	m7lzsrlNrV0o78AA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711044385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1711044424; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CGVHmTaTp8V9BZmoFhStOl7fyzif6q6m2j5KQberDvI=;
-	b=w7lT68OzRPoxfG/hfxpofqN8QxlCEI72WnQVD/otuPit/xsQS3kknF0DZcO31LBzqy4B5l
-	ZKCw+9zyq50FVn2Y9QxS2C0mBmUNUyz1TJF1aFzethOvkk9y7tmxVS4Tju4Qtdb3SGUiga
-	9U31koKDRrrb07uPZW4g5wnW4MpM62Q=
+	bh=Er0BQY9yyhShKISjQxXgJJ4fPACRuENnuK7t6pwKzT4=;
+	b=qSTXFzpHwuoVCvOZ3GNS+UgUHoMukzlTJ1tfGZc9Jr7tJURCmH13hi3dn0E7x5zdcIphWo
+	qE0h5rGLe4h4RhuHex8TtU2gAEUO3Wa444zNqNphBj4BbfFOpbQYGSna8jPdk4+pzaKzR7
+	O0Bny7FMVslcvK0cQBh18/xXp7z+ffU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711044385;
+	s=susede2_ed25519; t=1711044424;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CGVHmTaTp8V9BZmoFhStOl7fyzif6q6m2j5KQberDvI=;
-	b=MYtuAGMaNl8DwPSPn6WffLO7cvdpC1k+t9LxlY0JUkXnuc53PR8ZW9ZbehMg9bgaQigS2y
-	ZuRsp7pPd7CwpDDw==
+	bh=Er0BQY9yyhShKISjQxXgJJ4fPACRuENnuK7t6pwKzT4=;
+	b=jyrZiQTKOf1qUFHF6itTgEhgh9ek+6yvFInS0FE2apXbvmFgIRXstV9T5cToIhWeLvF5YV
+	m7lzsrlNrV0o78AA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B675138A1;
-	Thu, 21 Mar 2024 18:06:25 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9B7D5138A1;
+	Thu, 21 Mar 2024 18:07:04 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eV3cHSF3/GWVOQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 21 Mar 2024 18:06:25 +0000
+	id rgb8JUh3/GXaOQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 21 Mar 2024 18:07:04 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id DA2D0A0806; Thu, 21 Mar 2024 19:06:20 +0100 (CET)
-Date: Thu, 21 Mar 2024 19:06:20 +0100
+	id 422C6A0806; Thu, 21 Mar 2024 19:07:04 +0100 (CET)
+Date: Thu, 21 Mar 2024 19:07:04 +0100
 From: Jan Kara <jack@suse.cz>
 To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: akpm@linux-foundation.org, tj@kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	willy@infradead.org, bfoster@redhat.com, jack@suse.cz,
-	dsterba@suse.com, mjguzik@gmail.com, dhowells@redhat.com,
-	peterz@infradead.org
-Subject: Re: [PATCH 1/6] writeback: collect stats of all wb of bdi in
- bdi_debug_stats_show
-Message-ID: <20240321180620.mbint45pbyc74vpg@quack3>
+Cc: Jan Kara <jack@suse.cz>, akpm@linux-foundation.org, tj@kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, willy@infradead.org,
+	bfoster@redhat.com, dsterba@suse.com, mjguzik@gmail.com,
+	dhowells@redhat.com, peterz@infradead.org
+Subject: Re: [PATCH 0/6] Improve visibility of writeback
+Message-ID: <20240321180704.lqmtdmd5tzsbuyyu@quack3>
 References: <20240320110222.6564-1-shikemeng@huaweicloud.com>
- <20240320110222.6564-2-shikemeng@huaweicloud.com>
+ <20240320172240.7buswiv7zj2m5odg@quack3>
+ <44e3b910-8b52-5583-f8a9-37105bf5e5b6@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,14 +105,12 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240320110222.6564-2-shikemeng@huaweicloud.com>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
+In-Reply-To: <44e3b910-8b52-5583-f8a9-37105bf5e5b6@huaweicloud.com>
+X-Spam-Score: 4.30
+X-Spamd-Result: default: False [4.30 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_SPAM(5.10)[100.00%];
 	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
 	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
@@ -128,125 +126,119 @@ X-Spamd-Result: default: False [-3.80 / 50.00];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
 	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[linux-foundation.org,kernel.org,kvack.org,vger.kernel.org,infradead.org,redhat.com,suse.cz,suse.com,gmail.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
+	 FREEMAIL_CC(0.00)[suse.cz,linux-foundation.org,kernel.org,kvack.org,vger.kernel.org,infradead.org,redhat.com,suse.com,gmail.com];
+	 RCVD_TLS_ALL(0.00)[]
+X-Spam-Level: ****
+Authentication-Results: smtp-out2.suse.de;
+	none
 X-Spam-Flag: NO
 
-On Wed 20-03-24 19:02:17, Kemeng Shi wrote:
-> /sys/kernel/debug/bdi/xxx/stats is supposed to show writeback information
-> of whole bdi, but only writeback information of bdi in root cgroup is
-> collected. So writeback information in non-root cgroup are missing now.
-> To be more specific, considering following case:
-> 
-> /* create writeback cgroup */
-> cd /sys/fs/cgroup
-> echo "+memory +io" > cgroup.subtree_control
-> mkdir group1
-> cd group1
-> echo $$ > cgroup.procs
-> /* do writeback in cgroup */
-> fio -name test -filename=/dev/vdb ...
-> /* get writeback info of bdi */
-> cat /sys/kernel/debug/bdi/xxx/stats
-> The cat result unexpectedly implies that there is no writeback on target
-> bdi.
-> 
-> Fix this by collecting stats of all wb in bdi instead of only wb in
-> root cgroup.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+On Thu 21-03-24 16:12:52, Kemeng Shi wrote:
+> on 3/21/2024 1:22 AM, Jan Kara wrote:
+> > On Wed 20-03-24 19:02:16, Kemeng Shi wrote:
+> >> This series tries to improve visilibity of writeback. Patch 1 make
+> >> /sys/kernel/debug/bdi/xxx/stats show writeback info of whole bdi
+> >> instead of only writeback info in root cgroup. Patch 2 add a new
+> >> debug file /sys/kernel/debug/bdi/xxx/wb_stats to show per wb writeback
+> >> info. Patch 4 add wb_monitor.py to monitor basic writeback info
+> >> of running system, more info could be added on demand. Rest patches
+> >> are some random cleanups. More details can be found in respective
+> >> patches. Thanks!
+> >>
+> >> Following domain hierarchy is tested:
+> >>                 global domain (320G)
+> >>                 /                 \
+> >>         cgroup domain1(10G)     cgroup domain2(10G)
+> >>                 |                 |
+> >> bdi            wb1               wb2
+> >>
+> >> /* all writeback info of bdi is successfully collected */
+> >> # cat /sys/kernel/debug/bdi/252:16/stats:
+> >> BdiWriteback:              448 kB
+> >> BdiReclaimable:        1303904 kB
+> >> BdiDirtyThresh:      189914124 kB
+> >> DirtyThresh:         195337564 kB
+> >> BackgroundThresh:     32516508 kB
+> >> BdiDirtied:            3591392 kB
+> >> BdiWritten:            2287488 kB
+> >> BdiWriteBandwidth:      322248 kBps
+> >> b_dirty:                     0
+> >> b_io:                        0
+> >> b_more_io:                   2
+> >> b_dirty_time:                0
+> >> bdi_list:                    1
+> >> state:                       1
+> >>
+> >> /* per wb writeback info is collected */
+> >> # cat /sys/kernel/debug/bdi/252:16/wb_stats:
+> >> cat wb_stats
+> >> WbCgIno:                    1
+> >> WbWriteback:                0 kB
+> >> WbReclaimable:              0 kB
+> >> WbDirtyThresh:              0 kB
+> >> WbDirtied:                  0 kB
+> >> WbWritten:                  0 kB
+> >> WbWriteBandwidth:      102400 kBps
+> >> b_dirty:                    0
+> >> b_io:                       0
+> >> b_more_io:                  0
+> >> b_dirty_time:               0
+> >> state:                      1
+> >> WbCgIno:                 4284
+> >> WbWriteback:              448 kB
+> >> WbReclaimable:         818944 kB
+> >> WbDirtyThresh:        3096524 kB
+> >> WbDirtied:            2266880 kB
+> >> WbWritten:            1447936 kB
+> >> WbWriteBandwidth:      214036 kBps
+> >> b_dirty:                    0
+> >> b_io:                       0
+> >> b_more_io:                  1
+> >> b_dirty_time:               0
+> >> state:                      5
+> >> WbCgIno:                 4325
+> >> WbWriteback:              224 kB
+> >> WbReclaimable:         819392 kB
+> >> WbDirtyThresh:        2920088 kB
+> >> WbDirtied:            2551808 kB
+> >> WbWritten:            1732416 kB
+> >> WbWriteBandwidth:      201832 kBps
+> >> b_dirty:                    0
+> >> b_io:                       0
+> >> b_more_io:                  1
+> >> b_dirty_time:               0
+> >> state:                      5
+> >>
+> >> /* monitor writeback info */
+> >> # ./wb_monitor.py 252:16 -c
+> >>                   writeback  reclaimable   dirtied   written    avg_bw
+> >> 252:16_1                  0            0         0         0    102400
+> >> 252:16_4284             672       820064   9230368   8410304    685612
+> >> 252:16_4325             896       819840  10491264   9671648    652348
+> >> 252:16                 1568      1639904  19721632  18081952   1440360
+> >>
+> >>
+> >>                   writeback  reclaimable   dirtied   written    avg_bw
+> >> 252:16_1                  0            0         0         0    102400
+> >> 252:16_4284             672       820064   9230368   8410304    685612
+> >> 252:16_4325             896       819840  10491264   9671648    652348
+> >> 252:16                 1568      1639904  19721632  18081952   1440360
+> >> ...
+> > 
+> > So I'm wondering: Are you implementing this just because this looks
+> > interesting or do you have a real need for the functionality? Why?
+> Hi Jan, I added debug files to test change in [1] which changes the way how
+> dirty background threshold of wb is calculated. Without debug files, we could
+> only monitor writeback to imply that threshold is corrected.
+> In current patchset, debug info has not included dirty background threshold yet,
+> I will add it when discution of calculation of dirty background threshold in [1]
+> is done.
+> The wb_monitor.py is suggested by Tejun in [2] to improve visibility of writeback.
+> The script is more convenient than trace to monitor writeback behavior of the running
+> system.
 
-Looks mostly good, one comment below:
-
-> ---
->  mm/backing-dev.c | 93 ++++++++++++++++++++++++++++++++++++------------
->  1 file changed, 70 insertions(+), 23 deletions(-)
-> 
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 5f2be8c8df11..788702b6c5dd 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -39,6 +39,19 @@ struct workqueue_struct *bdi_wq;
->  #include <linux/debugfs.h>
->  #include <linux/seq_file.h>
->  
-> +struct wb_stats {
-> +	unsigned long nr_dirty;
-> +	unsigned long nr_io;
-> +	unsigned long nr_more_io;
-> +	unsigned long nr_dirty_time;
-> +	unsigned long nr_writeback;
-> +	unsigned long nr_reclaimable;
-> +	unsigned long nr_dirtied;
-> +	unsigned long nr_written;
-> +	unsigned long dirty_thresh;
-> +	unsigned long wb_thresh;
-> +};
-> +
->  static struct dentry *bdi_debug_root;
->  
->  static void bdi_debug_init(void)
-> @@ -46,31 +59,65 @@ static void bdi_debug_init(void)
->  	bdi_debug_root = debugfs_create_dir("bdi", NULL);
->  }
->  
-> -static int bdi_debug_stats_show(struct seq_file *m, void *v)
-> +static void collect_wb_stats(struct wb_stats *stats,
-> +			     struct bdi_writeback *wb)
->  {
-> -	struct backing_dev_info *bdi = m->private;
-> -	struct bdi_writeback *wb = &bdi->wb;
-> -	unsigned long background_thresh;
-> -	unsigned long dirty_thresh;
-> -	unsigned long wb_thresh;
-> -	unsigned long nr_dirty, nr_io, nr_more_io, nr_dirty_time;
->  	struct inode *inode;
->  
-> -	nr_dirty = nr_io = nr_more_io = nr_dirty_time = 0;
->  	spin_lock(&wb->list_lock);
->  	list_for_each_entry(inode, &wb->b_dirty, i_io_list)
-> -		nr_dirty++;
-> +		stats->nr_dirty++;
->  	list_for_each_entry(inode, &wb->b_io, i_io_list)
-> -		nr_io++;
-> +		stats->nr_io++;
->  	list_for_each_entry(inode, &wb->b_more_io, i_io_list)
-> -		nr_more_io++;
-> +		stats->nr_more_io++;
->  	list_for_each_entry(inode, &wb->b_dirty_time, i_io_list)
->  		if (inode->i_state & I_DIRTY_TIME)
-> -			nr_dirty_time++;
-> +			stats->nr_dirty_time++;
->  	spin_unlock(&wb->list_lock);
->  
-> +	stats->nr_writeback += wb_stat(wb, WB_WRITEBACK);
-> +	stats->nr_reclaimable += wb_stat(wb, WB_RECLAIMABLE);
-> +	stats->nr_dirtied += wb_stat(wb, WB_DIRTIED);
-> +	stats->nr_written += wb_stat(wb, WB_WRITTEN);
-> +	stats->wb_thresh += wb_calc_thresh(wb, stats->dirty_thresh);
-> +}
-> +
-> +#ifdef CONFIG_CGROUP_WRITEBACK
-> +static void bdi_collect_stats(struct backing_dev_info *bdi,
-> +			      struct wb_stats *stats)
-> +{
-> +	struct bdi_writeback *wb;
-> +
-> +	/* protect wb from release */
-> +	mutex_lock(&bdi->cgwb_release_mutex);
-> +	list_for_each_entry(wb, &bdi->wb_list, bdi_node)
-> +		collect_wb_stats(stats, wb);
-> +	mutex_unlock(&bdi->cgwb_release_mutex);
-> +}
-
-So AFAICT this function can race against
-  bdi_unregister() -> wb_shutdown(&bdi->wb)
-
-because that doesn't take the cgwb_release_mutex. So we either need the RCU
-protection as Brian suggested or cgwb_lock or something. But given
-collect_wb_stats() can take a significant amount of time (traversing all
-the lists etc.) I think we'll need something more clever.
+Thanks for the pointer. OK, I agree this is useful so let's have a look
+into the code :)
 
 								Honza
 -- 
