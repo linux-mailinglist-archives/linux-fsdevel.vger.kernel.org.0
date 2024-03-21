@@ -1,123 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-14951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72A1881C80
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 07:32:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E27881CC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 08:12:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88CA328394B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 06:32:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 142511C20D08
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 07:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADEC3C484;
-	Thu, 21 Mar 2024 06:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2ianOgs"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9442F4F8BC;
+	Thu, 21 Mar 2024 07:12:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51B73BB29
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 06:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6E7381AA;
+	Thu, 21 Mar 2024 07:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711002733; cv=none; b=fwtEsvFZl0ggoJZTeAL3fkjmEsEXEzGc0a5h+Ri4a76lkpkeqz3APhgrlVo5vpie02kAYMhvgLVfqdTutut2KsChZlMHqpyrugqLspGC4McIW9DTfgfKd/XdBi16Y0npUqlq8u8srR6P7K85euXhNAw9SQ5efpF7MQC1zTV4Rcc=
+	t=1711005150; cv=none; b=Rbqt2myq3igPvjiKmEM6PK3qETEyYJXWl7FZfn2bM1oB8Po1/bwDbLJOpz05IIVrCumxCfMx3Rdv1SScewH1NLcKb2J1UOZWpoo9Rn/SRvl2U6xaCRBYVrBZv8RrLytIoD6EYzoK7w8Llf11VTAKzpui0QoL8vkp5rPvsrni660=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711002733; c=relaxed/simple;
-	bh=IWzoRyiIq34RmhOn0iDV7qym3hPufd8Mn7S0DjBmBYA=;
-	h=From:To:Subject:Message-ID:Date:MIME-Version:Content-Type; b=AWt8BmYIiNEA4XULYDtyWIYhR85CdnbK6LOS/E2Mj2U7ds4leqFLrJn7bMmtjr+pTk0mUl2FC9ZQZmlNW/pumfKNih4sSFs3G0ibID2mY11swxcuzwi7dlt13xS65aRlmvJxkscxJb+wdT8ZCNIg0/VrN3oyNCe3OpAdnlHwX1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2ianOgs; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1e0189323b4so4125715ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 23:32:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711002730; x=1711607530; darn=vger.kernel.org;
-        h=content-language:content-transfer-encoding:mime-version:user-agent
-         :date:message-id:subject:to:from:reply-to:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pUEt2Z97b8lEWwJktqHAAwXS3vj2uI9IohvvSbiYwx0=;
-        b=k2ianOgs6XfahY7djovsmCc2HRcRAvOPaJwjG31wpDL5zRkEVzUeUe/8EELufGVrqX
-         9XvMSOGFiBwiV7S525r0SditCfH4kNx9Sa8EzKrQFtmPNBvAmzKzECAESyXw7esa5V69
-         4f8T1oQWEoY3Fl98u+1qEicop+FESUqLIDUnM1ad6hoR5xBo/kaEhq4k8X8Nm7+c0jjo
-         TbjlmzaqwFw3X6asXhefQcCOErMB6Z9sHm7sFKRgF4oUUPz58lCbHXAilwAvs+hqrQ0K
-         0PSUi2DoUQDnJgglXz+tidtEgDQ0cg8cu2E+XE3J/wZJkvWMz3t9GzZY2/XRLLzx9zmE
-         HZAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711002730; x=1711607530;
-        h=content-language:content-transfer-encoding:mime-version:user-agent
-         :date:message-id:subject:to:from:reply-to:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pUEt2Z97b8lEWwJktqHAAwXS3vj2uI9IohvvSbiYwx0=;
-        b=DFsxuqlyCMT0YyUFRoBHwm7aqP0ExubUvMHOm5jc11zM/QTNrJDso+ezX0/JQ+cFNG
-         UgHfK/Uq/AJ6cVohbkDisR4IgnXnXcXf96KFXMnQFVp1x6I7y8VC4Fjs6XyQ+/BOBOYT
-         vAyDV+Pw8QsOlzGMc1zEF9Ki6U+EKRa0gZ0Cs5GAtcwYcAfDlLcij2E1OCSQ81oce9jh
-         OLN4MCExU7rd+cPtj5JgV99u8cGSS4z67ru0EHGfQoKgp2H1mYn0OGY759uOZq3GBoM+
-         1zd2ZDuhAVFDakaAyH6R2IZXZfSB27LrnszLfY8xemaLKMSUIXNdP06n5o8BufXhZHCz
-         /5wg==
-X-Gm-Message-State: AOJu0YzUpvWGkq02kWkF09R8GEo1QXiuf2efXoPe/PlXV/+tuOLe0Bn+
-	QokftmHygiXnyFNXTyczS4Xb7WIweTcMeqrdeGWOiTPbQ217qF5JaoitMKTz
-X-Google-Smtp-Source: AGHT+IGUtJRNLNOl2DMk5FallQXu86jmnIbAbbBmCeEkhh+a/L48PJFWk2XVRdMBYS10t/Zm29L4iQ==
-X-Received: by 2002:a17:902:eb45:b0:1dd:96ca:e1ae with SMTP id i5-20020a170902eb4500b001dd96cae1aemr4132733pli.69.1711002730593;
-        Wed, 20 Mar 2024 23:32:10 -0700 (PDT)
-Received: from ?IPv6:2409:4063:6c85:f395:d58f:6b15:5165:7028? ([2409:4063:6c85:f395:d58f:6b15:5165:7028])
-        by smtp.gmail.com with ESMTPSA id jx18-20020a170903139200b001dcc2847655sm14865305plb.176.2024.03.20.23.32.09
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Mar 2024 23:32:10 -0700 (PDT)
-Reply-To: businesssolutionsrocks23@gmail.com
-From: Raju Kumar <rajukumarkorav@gmail.com>
-To: linux-fsdevel@vger.kernel.org
-Subject: RE:Mobile App Development || Web App Development
-Message-ID: <e2578063-3dd4-d349-308e-8d84e936b10d@gmail.com>
-Date: Thu, 21 Mar 2024 12:02:05 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1711005150; c=relaxed/simple;
+	bh=mzMLKiw5MQzxQS21Hp1Kb386ukYGSQSd0ad2KKmfIrg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=s5YXMa/P86qS9VFEY/u2tzasOABQDL1Jnd6uJeCBAFl02sbyJfaNpsJQQafKYNNIyProZGJXNQte1r8xN4MT0Ht0XaJmofaWNlezEE9xHdBpkT0QqIfazzcGeSY8VoXEi2UtLJHJW8WKc8ArmwXYX4vW/MmvHZzQXEqDx0YyQhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4V0c8x3B9rz4f3jsn;
+	Thu, 21 Mar 2024 15:12:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 756BB1A016E;
+	Thu, 21 Mar 2024 15:12:23 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP1 (Coremail) with SMTP id cCh0CgAnRQ7V3ftldCd1Hg--.33160S2;
+	Thu, 21 Mar 2024 15:12:23 +0800 (CST)
+Subject: Re: [PATCH 6/6] writeback: remove unneeded GDTC_INIT_NO_WB
+To: Tejun Heo <tj@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ willy@infradead.org, bfoster@redhat.com, jack@suse.cz, dsterba@suse.com,
+ mjguzik@gmail.com, dhowells@redhat.com, peterz@infradead.org
+References: <20240320110222.6564-1-shikemeng@huaweicloud.com>
+ <20240320110222.6564-7-shikemeng@huaweicloud.com>
+ <Zfr9my_tfxO-N6HS@mtj.duckdns.org>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <becdb16b-a318-ec05-61d2-d190541ae997@huaweicloud.com>
+Date: Thu, 21 Mar 2024 15:12:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+In-Reply-To: <Zfr9my_tfxO-N6HS@mtj.duckdns.org>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgAnRQ7V3ftldCd1Hg--.33160S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrZr4rtw1fWrW3Zw1UZF1UJrb_yoW8JF1rpF
+	4fWa1UKFW5Ja9a9rnrCw4xXr90grZ7Ka9xJ3s8CwsxZa1fG3Z3Gr1qq3yFqF47Ar1fGr9x
+	Z3yIq3Z7AFWUCFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUrR6zUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Hi,
-
-Just checking with you if you got a chance to see my previous email.
-
-Please let us know if you have MOBILE APP or WEB APP DEVELOPMENT 
-requirements; we can schedule a quick call to discuss further in detail.
-
-Kindly suggest a good time to connect also best number to reach you.
-
-Thank you
-Raju Kumar
-
-  On Tuesday 28 November 2023 5:43 PM, Raju Kumar wrote:
 
 
-Hi,
+on 3/20/2024 11:15 PM, Tejun Heo wrote:
+> Hello,
+> 
+> On Wed, Mar 20, 2024 at 07:02:22PM +0800, Kemeng Shi wrote:
+>> We never use gdtc->dom set with GDTC_INIT_NO_WB, just remove unneeded
+>> GDTC_INIT_NO_WB
+>>
+>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> ...
+>>  void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty)
+>>  {
+>> -	struct dirty_throttle_control gdtc = { GDTC_INIT_NO_WB };
+>> +	struct dirty_throttle_control gdtc = { };
+> 
+> Even if it's currently not referenced, wouldn't it still be better to always
+> guarantee that a dtc's dom is always initialized? I'm not sure what we get
+> by removing this.
+As we explicitly use GDTC_INIT_NO_WB to set global_wb_domain before
+calculating dirty limit with domain_dirty_limits, I intuitively think the dirty
+limit calculation in domain_dirty_limits is related to global_wb_domain when
+CONFIG_WRITEBACK_CGROUP is enabled while the truth is not. So this is a little
+confusing to me.
+Would it be acceptable to you that we keep useing GDTC_INIT_NO_WB but
+define GDTC_INIT_NO_WB to null fow now and redefine GDTC_INIT_NO_WB when some
+member of gdtc is really needed.
+Of couse I'm not insistent on this. Would like to hear you suggestion. Thanks!
 
-We are a leading IT & Non-IT Staffing services company.
-We design and develop web and mobile applications for our clients 
-worldwide, focusing on outstanding user experience.
+> 
+> Thanks.
+> 
 
-We help companies leverage technological capabilities by developing 
-cutting-edge mobile applications with excellent UX (User Experience) 
-across multiple platforms.
-
-iOS App Development
-Android App Development
-Cross-platform App Development
-Web App Development
-
-Can we schedule a quick call with one of senior consultants so we can 
-discuss this further in detail?
-Please suggest a day and time and also share the best number to reach you.
-
-Thank you
-Raju Kumar
 
