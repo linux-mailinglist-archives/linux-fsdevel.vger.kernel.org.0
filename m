@@ -1,123 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-14950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC69A881C77
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 07:27:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C72A1881C80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 07:32:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39BFD2836B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 06:27:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88CA328394B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 06:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F623A8CB;
-	Thu, 21 Mar 2024 06:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADEC3C484;
+	Thu, 21 Mar 2024 06:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D0fNtcS+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2ianOgs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15115AD48
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 06:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51B73BB29
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 06:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711002446; cv=none; b=QrhJOjcH3EWlldwJqWbveJqDQp0ThWAPLwCxl+GmcDM0tL/MVuBDysKSf/zPGVqOkZtCt7uWPBbcOyJqHdFkedXlIDfg3vvn/1zeQDR6IZx01bf4ghlAT7ub6sdpm0FeYHcEQkwyZRT2TQMb/cmSBcCH7JOcUufVPF4hGA7a13Y=
+	t=1711002733; cv=none; b=fwtEsvFZl0ggoJZTeAL3fkjmEsEXEzGc0a5h+Ri4a76lkpkeqz3APhgrlVo5vpie02kAYMhvgLVfqdTutut2KsChZlMHqpyrugqLspGC4McIW9DTfgfKd/XdBi16Y0npUqlq8u8srR6P7K85euXhNAw9SQ5efpF7MQC1zTV4Rcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711002446; c=relaxed/simple;
-	bh=wWeZ5wKnmyqfo6klLo7hs0oKotIAM52wU8x+gYne8Kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKXmAhhld5O/Qe2s6disxUuDWesLV4W4rV/P8cv9/wlDBcL4BFgQ9rR1doAx6GzD5EB7DMPC6ZxwgsNSb7dJDjfJU8zutpjL729rHLC0NRJqr0C/+wc0VfBSFrvZcgrAoGtK64xDBlrGHglJt6n2TmaI6fwfolDGsxwD3zoBsCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D0fNtcS+; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-341950a6c9aso381039f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 23:27:24 -0700 (PDT)
+	s=arc-20240116; t=1711002733; c=relaxed/simple;
+	bh=IWzoRyiIq34RmhOn0iDV7qym3hPufd8Mn7S0DjBmBYA=;
+	h=From:To:Subject:Message-ID:Date:MIME-Version:Content-Type; b=AWt8BmYIiNEA4XULYDtyWIYhR85CdnbK6LOS/E2Mj2U7ds4leqFLrJn7bMmtjr+pTk0mUl2FC9ZQZmlNW/pumfKNih4sSFs3G0ibID2mY11swxcuzwi7dlt13xS65aRlmvJxkscxJb+wdT8ZCNIg0/VrN3oyNCe3OpAdnlHwX1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2ianOgs; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1e0189323b4so4125715ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Mar 2024 23:32:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711002443; x=1711607243; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSQhQiUH2jjd3Q+kMevndwXSXFnGsWPcdl8QHcS1iag=;
-        b=D0fNtcS+FE/DteAxmgmrAEXr+yaJLvsXSwDif3OVqKJ5gnjz3SLDWIt1tgP64lh0y6
-         sEGO0S9A9pair3rfQEZFcf2VF79SD/u9+rf6M2i/xSp0g4S8+r6NUAa8VGczrvBtY3LU
-         MOaK2PZdvPKIdvyV4UXkGhLHk6x1uddv59j4eDCA3Kz61BKavKFyO3RbmharqkQeA/TV
-         9QD2x2gk/Cn3O3IGeGYDnGsWLbzXJpMC6SSIopdZB09MoZBGWCvd8q8b3F3TV45CIL/q
-         PhPtD3GdToW1diWqbTKBNrOf05b9Rsk5G4rEHdW8wd2rPYA8xhxoVra9Pcps8rhRzrJL
-         3L/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711002443; x=1711607243;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1711002730; x=1711607530; darn=vger.kernel.org;
+        h=content-language:content-transfer-encoding:mime-version:user-agent
+         :date:message-id:subject:to:from:reply-to:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tSQhQiUH2jjd3Q+kMevndwXSXFnGsWPcdl8QHcS1iag=;
-        b=rT2uwjxAv0TsJ9v3hhOMzGFi9kzz0cdraB5jrCTfYcJ/CTcs9kX8Yw+FT0xHxw2WRN
-         bqZJ/t04J70/s+L0SlLXy5EDW55eroI+l6R8XMhHQIap+tUyw1TLO8sk/guB9XuR/wnJ
-         186oMT4KL+Evm1kfy24qPBukGxslbRCsk1IMZw9KILnvrc5TuWWMNl8hg7xc4z0mHvZT
-         Zsa/7vpz4KWO2eu9HbaUqJGrP8cl2hnFmyvGm13LEXvxKdwLZXTCp6eyia1IGE5Jwul7
-         gOO31Nl8wy/BhGlRa6uujBYDk6uUu+d91XEkOLpefdPXIWzxWocMewKjdJ0cDyPWUCy6
-         oydQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlmu8ZM6zX1EO06A8itDGjd+P3b+nzgX8zUO1VahpUWHuF7MxIG1v0HGV4XSK5SmYBiUlYAoMV7w0Ho//5C00bdeHhY6bQL8t0Ffcm2A==
-X-Gm-Message-State: AOJu0Ywyg3Wd3hwr+bT9gmcazXBinlQdIvS1unfAjU7/rtPE5PJynhbg
-	FnoDA9+npcA45mw1aenh5oM+CtjayoqYWcA0Wt4VenPYlHku5GmH+0D1sV+TmgI=
-X-Google-Smtp-Source: AGHT+IGcFZM7skFlJ6C6gRjFbmw45WroL80/uGSIzGK+mD9Pf2Ww1sESE8kIm89OItZQCbsTSFMtAQ==
-X-Received: by 2002:a5d:62c1:0:b0:33e:c56f:b5e7 with SMTP id o1-20020a5d62c1000000b0033ec56fb5e7mr867149wrv.31.1711002443326;
-        Wed, 20 Mar 2024 23:27:23 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id dd15-20020a0560001e8f00b0033ce727e728sm16332994wrb.94.2024.03.20.23.27.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Mar 2024 23:27:23 -0700 (PDT)
-Date: Thu, 21 Mar 2024 09:27:18 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org,
-	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
-Message-ID: <22363d0a-71db-4ba7-b5e1-8bb515811d1c@moroto.mountain>
-References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>
- <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>
- <Zd-LljY351NCrrCP@casper.infradead.org>
- <170925937840.24797.2167230750547152404@noble.neil.brown.name>
- <ZeFtrzN34cLhjjHK@dread.disaster.area>
- <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>
- <170933687972.24797.18406852925615624495@noble.neil.brown.name>
- <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>
- <170950594802.24797.17587526251920021411@noble.neil.brown.name>
+        bh=pUEt2Z97b8lEWwJktqHAAwXS3vj2uI9IohvvSbiYwx0=;
+        b=k2ianOgs6XfahY7djovsmCc2HRcRAvOPaJwjG31wpDL5zRkEVzUeUe/8EELufGVrqX
+         9XvMSOGFiBwiV7S525r0SditCfH4kNx9Sa8EzKrQFtmPNBvAmzKzECAESyXw7esa5V69
+         4f8T1oQWEoY3Fl98u+1qEicop+FESUqLIDUnM1ad6hoR5xBo/kaEhq4k8X8Nm7+c0jjo
+         TbjlmzaqwFw3X6asXhefQcCOErMB6Z9sHm7sFKRgF4oUUPz58lCbHXAilwAvs+hqrQ0K
+         0PSUi2DoUQDnJgglXz+tidtEgDQ0cg8cu2E+XE3J/wZJkvWMz3t9GzZY2/XRLLzx9zmE
+         HZAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711002730; x=1711607530;
+        h=content-language:content-transfer-encoding:mime-version:user-agent
+         :date:message-id:subject:to:from:reply-to:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pUEt2Z97b8lEWwJktqHAAwXS3vj2uI9IohvvSbiYwx0=;
+        b=DFsxuqlyCMT0YyUFRoBHwm7aqP0ExubUvMHOm5jc11zM/QTNrJDso+ezX0/JQ+cFNG
+         UgHfK/Uq/AJ6cVohbkDisR4IgnXnXcXf96KFXMnQFVp1x6I7y8VC4Fjs6XyQ+/BOBOYT
+         vAyDV+Pw8QsOlzGMc1zEF9Ki6U+EKRa0gZ0Cs5GAtcwYcAfDlLcij2E1OCSQ81oce9jh
+         OLN4MCExU7rd+cPtj5JgV99u8cGSS4z67ru0EHGfQoKgp2H1mYn0OGY759uOZq3GBoM+
+         1zd2ZDuhAVFDakaAyH6R2IZXZfSB27LrnszLfY8xemaLKMSUIXNdP06n5o8BufXhZHCz
+         /5wg==
+X-Gm-Message-State: AOJu0YzUpvWGkq02kWkF09R8GEo1QXiuf2efXoPe/PlXV/+tuOLe0Bn+
+	QokftmHygiXnyFNXTyczS4Xb7WIweTcMeqrdeGWOiTPbQ217qF5JaoitMKTz
+X-Google-Smtp-Source: AGHT+IGUtJRNLNOl2DMk5FallQXu86jmnIbAbbBmCeEkhh+a/L48PJFWk2XVRdMBYS10t/Zm29L4iQ==
+X-Received: by 2002:a17:902:eb45:b0:1dd:96ca:e1ae with SMTP id i5-20020a170902eb4500b001dd96cae1aemr4132733pli.69.1711002730593;
+        Wed, 20 Mar 2024 23:32:10 -0700 (PDT)
+Received: from ?IPv6:2409:4063:6c85:f395:d58f:6b15:5165:7028? ([2409:4063:6c85:f395:d58f:6b15:5165:7028])
+        by smtp.gmail.com with ESMTPSA id jx18-20020a170903139200b001dcc2847655sm14865305plb.176.2024.03.20.23.32.09
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Mar 2024 23:32:10 -0700 (PDT)
+Reply-To: businesssolutionsrocks23@gmail.com
+From: Raju Kumar <rajukumarkorav@gmail.com>
+To: linux-fsdevel@vger.kernel.org
+Subject: RE:Mobile App Development || Web App Development
+Message-ID: <e2578063-3dd4-d349-308e-8d84e936b10d@gmail.com>
+Date: Thu, 21 Mar 2024 12:02:05 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <170950594802.24797.17587526251920021411@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 
-On Mon, Mar 04, 2024 at 09:45:48AM +1100, NeilBrown wrote:
-> I have in mind a more explicit statement of how much waiting is
-> acceptable.
-> 
-> GFP_NOFAIL - wait indefinitely
+Hi,
 
-Why not call it GFP_SMALL?  It wouldn't fail.  The size would have to be
-less than some limit.  If the size was too large, that would trigger a
-WARN_ON_ONCE().
+Just checking with you if you got a chance to see my previous email.
 
-I obviously understand that this duplicates the information in the size
-parameter but the point is that GFP_SMALL allocations have been
-reviewed, updated, and don't have error handling code.
+Please let us know if you have MOBILE APP or WEB APP DEVELOPMENT 
+requirements; we can schedule a quick call to discuss further in detail.
 
-We'd keep GFP_KERNEL which would keep the existing behavior.  (Which is
-that it can sleep and it can fail).  I think that maps to GFP_RETRY but
-GFP_RETRY is an uglier name.
+Kindly suggest a good time to connect also best number to reach you.
 
-People could still use __GFP_NOFAIL for larger allocations.
+Thank you
+Raju Kumar
 
-regards,
-dan carpenter
+  On Tuesday 28 November 2023 5:43 PM, Raju Kumar wrote:
 
+
+Hi,
+
+We are a leading IT & Non-IT Staffing services company.
+We design and develop web and mobile applications for our clients 
+worldwide, focusing on outstanding user experience.
+
+We help companies leverage technological capabilities by developing 
+cutting-edge mobile applications with excellent UX (User Experience) 
+across multiple platforms.
+
+iOS App Development
+Android App Development
+Cross-platform App Development
+Web App Development
+
+Can we schedule a quick call with one of senior consultants so we can 
+discuss this further in detail?
+Please suggest a day and time and also share the best number to reach you.
+
+Thank you
+Raju Kumar
 
