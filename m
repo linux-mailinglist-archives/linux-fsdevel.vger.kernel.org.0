@@ -1,77 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-14973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-14974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDF18859F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 14:31:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE26885A03
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 14:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A51AB2187A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 13:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF0F1C2177F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 13:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182F284A50;
-	Thu, 21 Mar 2024 13:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C2384A51;
+	Thu, 21 Mar 2024 13:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVgs5M3U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359A784038;
-	Thu, 21 Mar 2024 13:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D885810B;
+	Thu, 21 Mar 2024 13:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711027877; cv=none; b=mua96ZOJL4temxJrRCQt0fHdzlJe/KmoPGCJYqsg4wKaaQXCS03lvHqedq4RN+XHD+MyXUAivJqE0e4EBKbndQ4pWVytdKmu6pZzEvQJhPkSRGQl84ZeFmELgg67bysbfwa5L4MNw+WpiEsO2VlQsGAY58OAOJsj3l5XR3TzOiA=
+	t=1711028120; cv=none; b=Uyd+ViSpA0pGy3RYw0QXRNlOdPK2KZ76xNdtrFq3vzg4SBxWyUbFRYRqy40Bdo+KXETdbO/gaZjBIq3hZNiJZZsu9xoMwiaBFpDr3FwgFfRTkb6SOLXgwzVJcheqwmA6TS3Zy1MLa1/6cXfH4/oUhuxP19HzuuINdjfDtobzuuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711027877; c=relaxed/simple;
-	bh=OhCMX+u/w5DafdAqpyRLtzB5VUIURs138ZjC93mxC5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RszH4FSc0nlzc+485TpjKUQkwEIm6KpUfvVNNuZvnlbBJrhRjGQY7zaxLH3pSeq07tOCkx0X1QqDWLfp4JZe0lW4uk14uGAmyViw/7aF/sU5wq/FJ2mROb8R463S6jwV+vsK6w2crsIcFlsxOEK/6PXmRBmqiZDunnY6xYI0NiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4V0mY50FP4zbdSr;
-	Thu, 21 Mar 2024 21:30:17 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3C73D140FEA;
-	Thu, 21 Mar 2024 21:31:06 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 21 Mar 2024 21:31:05 +0800
-Message-ID: <c798ca36-397d-4406-900b-a2b02c0462b1@huawei.com>
-Date: Thu, 21 Mar 2024 21:31:05 +0800
+	s=arc-20240116; t=1711028120; c=relaxed/simple;
+	bh=JpD2OHISkkjxiWqxZe4gvt3KE6laF2S8GHpaK5KN600=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXakTzL+FSVS6XWbULatdsdp/gyXf4CwgGRmcsiNlXmBzygFFX242d6bKZfVR4pvmYawY280udxfZIcNCgCkgRxh4aRjimE3v6u7Nny2s2cc/fYIDcITfobTkuZl4sPP6gdkQi0i61B2ewuyx+E0X2V0OLtjdkSB5Bkr2R6JPTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVgs5M3U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77EEEC433C7;
+	Thu, 21 Mar 2024 13:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711028120;
+	bh=JpD2OHISkkjxiWqxZe4gvt3KE6laF2S8GHpaK5KN600=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IVgs5M3U2fy7JgNBFDaw7i3SKbHIZjBHPK/mGVImZXYCb8UOcWIUGSzO5kc/EcFSG
+	 sJU0W4H2QJVryB9kOxIZnXBzYFnvhe9wZkibLS0hw3/rlqjjLujFe39mcOdz/JKSKl
+	 f1ii5dk+WTSs1i0vtseKFGoKEE1IAB3/+F/cGM8BY9//sxQ8R9I2PmTo1+6/hJSNtC
+	 DDdNIJzwBVfTZgIS06Jv+nY0Ut8aO7ueCAxbBCj/0XR8MEKimKVJCaqRqmv1MBhHMA
+	 wzJM8Bu+Q7iRh/5ox2JXBThuOPbqYFWlObC6QOZ030lgBTxtpuY8cFn7Y0jymZmbZv
+	 cIyFGQef6vU1w==
+Date: Thu, 21 Mar 2024 14:35:15 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Donald Buczek <buczek@molgen.mpg.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, it+linux@molgen.mpg.de
+Subject: Re: possible 6.6 regression: Deadlock involving super_lock()
+Message-ID: <20240321-brecheisen-lasst-7ac15aff03b1@brauner>
+References: <6e010dbb-f125-4f44-9b1a-9e6ac9bb66ff@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] fs: aio: more folio conversion
-Content-Language: en-US
-To: Matthew Wilcox <willy@infradead.org>
-CC: Alexander Viro <viro@zeniv.linux.org.uk>, Benjamin LaHaise
-	<bcrl@kvack.org>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, <linux-aio@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>
-References: <20240321082733.614329-1-wangkefeng.wang@huawei.com>
- <Zfwncw6NrQc6K6ki@casper.infradead.org>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <Zfwncw6NrQc6K6ki@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6e010dbb-f125-4f44-9b1a-9e6ac9bb66ff@molgen.mpg.de>
 
+> Also, one writeback thread was blocked. I mention that, because I
+> don't get how these these two threads could depend on each other:
 
+Writeback holds s_umount. So writeback seems to not make progress and
+blocks the mount. So right now it seems unlikely that this is related.
+Any chance you can try and reproduce this with v6.7 and newer?
 
-On 2024/3/21 20:26, Matthew Wilcox wrote:
-> On Thu, Mar 21, 2024 at 04:27:30PM +0800, Kefeng Wang wrote:
->> Convert to use folio throughout aio.
+> # # /proc/39359/task/39359: kworker/u268:5+flush-0:58 : 
+> # cat /proc/39359/task/39359/stack
 > 
-> I see no problems here other than the one you mentioned and the minor
-> optimisation I pointed out.  Thanks.
-
-I send v2 to fix the folio check and use the helper, thanks for you review.
+> [<0>] folio_wait_bit_common+0x135/0x350
+> [<0>] write_cache_pages+0x1a0/0x3a0
+> [<0>] nfs_writepages+0x12a/0x1e0 [nfs]
+> [<0>] do_writepages+0xcf/0x1e0
+> [<0>] __writeback_single_inode+0x46/0x3a0
+> [<0>] writeback_sb_inodes+0x1f5/0x4d0
+> [<0>] __writeback_inodes_wb+0x4c/0xf0
+> [<0>] wb_writeback+0x1f5/0x320
+> [<0>] wb_workfn+0x350/0x4f0
+> [<0>] process_one_work+0x142/0x300
+> [<0>] worker_thread+0x2f5/0x410
+> [<0>] kthread+0xe8/0x120
+> [<0>] ret_from_fork+0x34/0x50
+> [<0>] ret_from_fork_asm+0x1b/0x30
 
