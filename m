@@ -1,78 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-15083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF76886DEB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 14:57:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFBB886E37
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 15:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AF661F213FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 13:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C2671F23378
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 14:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350144643A;
-	Fri, 22 Mar 2024 13:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE2C47A6C;
+	Fri, 22 Mar 2024 14:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4akKLQc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I71/PQGv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932AE3F8F7;
-	Fri, 22 Mar 2024 13:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5605C47A55;
+	Fri, 22 Mar 2024 14:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711115867; cv=none; b=KRuu3hCD4px6lLz8xjkhxMj7rQM8AijcqM03wRTpbTRWbC8kPzPvoH4F9xrcxp87lkGBlMYLvV0rUwrMvicHlEbf4Gkrczb2rDanKrtbcbE3vJqB5L7pKfTjUCyfNGABogYxti+Qk213gwQL9bNO6x8CfLeabyVn/htlEKmBJ98=
+	t=1711116772; cv=none; b=lMtjhDdc1WJwx0LVVtoNluJnLtkT+lGPlt1nwRZdOqc8VC9gr7nSBEdD0PZMoIDngvHC2K/Ig4CXGL8JTveV+oVlwmdkSvgg4WSs43MoSI0SHgbb9NYwgROHaAV3L7DUNrKRc9kvQEdAPoSRdYAtHX82lVsO2/WT46+cyTUKCFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711115867; c=relaxed/simple;
-	bh=Js9co96eGqEjZBrOp/79tcRIasSwidzlgGY09Q9Tvsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R70wkRgoX9lemvNVlID/jXOGuyxBaZf3lFPzm+yZXGAGH9hop7vZYe8LfWgcNeKj7vEGSiXKdjBGVY+o72a5Pick3GDQ1cOt7GFE/mvK+jkzwYeI31hfiS8nq583aLvhC+4mAon9MLx9BLP8ibQ7Kl1nDMSm8Cs/TffMnxV2Jcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4akKLQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A22E4C433C7;
-	Fri, 22 Mar 2024 13:57:44 +0000 (UTC)
+	s=arc-20240116; t=1711116772; c=relaxed/simple;
+	bh=WeXXfmSf1eObBCCvc/WGUG0pS+xp6MKLs+xYQPCR818=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PtgPYMsYtuThDSMOEWdHBxlpKbUsMK54t9FzYkbr9jy1SDcasyVpZMpVVwYeAmL+MioMsxAEGeuiu+tct0jZojqZcRAKITM1uOKS9k7SWqYm7GjnuJeLz+kg4AeUu4ECF6YZRnNOVqbBHTHo39Z/ZdRY1skmi6pxUaPpOjiOexY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I71/PQGv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80508C433C7;
+	Fri, 22 Mar 2024 14:12:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711115867;
-	bh=Js9co96eGqEjZBrOp/79tcRIasSwidzlgGY09Q9Tvsk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L4akKLQcATzeOK7VwTduDoLlDz05vnQojHzdXe4skXSmeNqay+OjIuOVnU8zq8OEq
-	 GLt1dy+P4FSPlSg9paqzSZy+WWfaF2nlk7dZ51hhvci4yOfgUqcdwhXrk6sdHqYXOL
-	 aG0bK/xqxOY2RWfUBr5h7lFVNoqjLRBWyMDZFBUFmEsSiWtYEUsKveciT6cFO7Esot
-	 paR7fGq80GcEIoUcA64/QpWXw7uKCHDnOkkdXcX0dbGvLHR2Q6khhfi1s1iogK4srD
-	 dcuMOE32KbIZRzI8uUv7FLNL5yD+D5JZ5CeH17p+TDlGHjKijDsP+/3qw9LUQXBH7H
-	 Emt7GgxljVe9Q==
-Date: Fri, 22 Mar 2024 14:57:42 +0100
+	s=k20201202; t=1711116771;
+	bh=WeXXfmSf1eObBCCvc/WGUG0pS+xp6MKLs+xYQPCR818=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=I71/PQGvypwsjVwIh4xbPDHqZRSd2o6chxAIWsRRJ7//xVX38evD+hPm25eSnPwn6
+	 BL8zXs2/zcfMC/DYOaqpy1pBAPDW8LPZQEVinYXrt7E4dEZexOnHIb05KRTLf4F+ZK
+	 3HdkQnHp9rmSAROmGphuhZMELX763PFPaU62ps1mZ4DIG/F6sP3c2C7eB8rDr8a5BZ
+	 O3Cc5u3iXlxXZSnyWW/aaI3khBHOnLrciqT5GTzVHqgPRktKeSxxqlUz07ZnZ4kml+
+	 2Mih1AJjoZDwHp8yngRHF0sckcsmE0mSGU97h2eIniIL1+ccuZFec5NDpInz4pGG/E
+	 MwlknjmX2LIrg==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [RFC v4 linux-next 19/19] fs & block: remove bdev->bd_inode
-Message-ID: <20240322-zerfiel-dolch-0faceaf399d2@brauner>
-References: <5c231b60-a2bf-383e-e641-371e7e57da67@huaweicloud.com>
- <ea4774db-188e-6744-6a5b-0096f6206112@huaweicloud.com>
- <20240318232245.GA17831@lst.de>
- <c62dac0e-666f-9cc9-cffe-f3d985029d6a@huaweicloud.com>
- <20240321112737.33xuxfttrahtvbej@quack3>
- <240b78df-257e-a97c-31ff-a8b1b1882e80@huaweicloud.com>
- <20240322063718.GC3404528@ZenIV>
- <20240322063955.GM538574@ZenIV>
- <170c544c-164e-368c-474a-74ae4055d55f@huaweicloud.com>
- <20240322125750.jov4f3alsrkmqnq7@quack3>
+To: Matthew Wilcox <willy@infradead.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] fs: aio: more folio conversion
+Date: Fri, 22 Mar 2024 15:12:42 +0100
+Message-ID: <20240322-rangfolge-teilnahm-9815a419610d@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240321131640.948634-1-wangkefeng.wang@huawei.com>
+References: <20240321131640.948634-1-wangkefeng.wang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240322125750.jov4f3alsrkmqnq7@quack3>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1406; i=brauner@kernel.org; h=from:subject:message-id; bh=WeXXfmSf1eObBCCvc/WGUG0pS+xp6MKLs+xYQPCR818=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT+nXj7xNJjH3tFeGaG9yu8dJmzglVBPbXASWL1Asm8+ 82Pb+Zt6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI3HVGhtOF60w+LDh2OFmC /9+it4u4ODJK5ENub1+f0vvou8OBq06MDKv335vG1n6nwuKRQyizjcqfuOgPzK3rFHRC3n95Ui2 ZxgwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-> Do you mean for operations like bread(), getblk(), or similar, don't you?
-> Frankly I don't find a huge value in this and seeing how clumsy it is
-> getting I'm not convinced it is worth it at this point.
+On Thu, 21 Mar 2024 21:16:37 +0800, Kefeng Wang wrote:
+> Convert to use folio throughout aio.
+> 
+> v2:
+> - fix folio check returned from __filemap_get_folio()
+> - use folio_end_read() suggested by Matthew
+> 
+> Kefeng Wang (3):
+>   fs: aio: use a folio in aio_setup_ring()
+>   fs: aio: use a folio in aio_free_ring()
+>   fs: aio: convert to ring_folios and internal_folios
+> 
+> [...]
 
-Yes, I agree.
+@Willy, can I get your RVB, please?
+
+---
+
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/3] fs: aio: use a folio in aio_setup_ring()
+      https://git.kernel.org/vfs/vfs/c/39dad2b19085
+[2/3] fs: aio: use a folio in aio_free_ring()
+      https://git.kernel.org/vfs/vfs/c/be0d43ccd350
+[3/3] fs: aio: convert to ring_folios and internal_folios
+      https://git.kernel.org/vfs/vfs/c/6a5599ce3338
 
