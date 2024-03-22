@@ -1,105 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-15050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E2688657A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 04:38:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3EA88659B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 04:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0B611F2301A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 03:38:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1825F1C21CCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 03:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10B263D5;
-	Fri, 22 Mar 2024 03:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="izV6NGCH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262566FD5;
+	Fri, 22 Mar 2024 03:43:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5024436
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 03:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470DC4688
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 03:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711078694; cv=none; b=TOesaA9QaB1N7LXqwY4HgVxF6NUnaO4yodU9OxHGa+ATW1oXfN5skU9RUloB+4RmgdaC0Dn9uLI+nYxdNYKvBIKYJaLPl5Duq3xSXos6Fbqp8H6Y8DuRhmpfO6KjE8BSzugpJcGHG9S9AlEOuawIjztNj8GJAT04ZMp8sHww6cU=
+	t=1711078992; cv=none; b=rNwbO4pQkXwtOE+aEFBrR6uot7SyMnsr6SG0rs9yyPxDqZBdiB1n2hJLvuJNKHe9KVpzwtGmXwVI5JWxapq84gaND3D90SOIWRqt0u9x+2w/U2K1+cJ6Ofz5CyHVVbIP4m33grQlVy5Rqj3XwnA6yuJZUlT1X9parW3Ggdyv3bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711078694; c=relaxed/simple;
-	bh=aXzEcMgK03ktUtjli7dv3iU6kR7ZuJbzmnLZD27piCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZOxiwvyFUvWi4FuUkNQdDUfA5kugdMpmlRL3BpVSZSU2xlDYvKYCKCglO0w9Xn+kvkgDPK6ledFNl5109SnjTm7jNrBvBGEIid0M4+/KOaS/HMZ1g3+zKG3dTzP6Gv8PEejy/yllYfgY4Ies0NTQfvuiF7H+lsShqO2NlW1kGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=izV6NGCH; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 21 Mar 2024 23:38:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1711078690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O+cKT4Y2w8MQNTOtlTHhMaKct7Pv7j1Qvo20xK7Y1P0=;
-	b=izV6NGCHxuCG5cHJrBUMwHn0SJg+5jShzUomDyWp2ugpd3dAZfVZ84mFrnG+XQ0AgN++HQ
-	vuempKm6FxDhknslJ1Hq7QS/eZqrnJEbfmGV5qGHCTTrw/5Iy8Os0BS+QcNPdpRjxHqMSX
-	6jctNsSPDjZzVwyPfR88MRpV6UHwb7o=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 00/34] Open block devices as files
-Message-ID: <62e6oefgpa5gj4xipmu6jjohkyl3bqcufcvfa2vn3tnyfwpmi2@oh6c2svzixxl>
-References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
- <ZfyyEwu9Uq5Pgb94@casper.infradead.org>
+	s=arc-20240116; t=1711078992; c=relaxed/simple;
+	bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Liyjp2DMgSWMELwchD2YyN3jyX3SPnvzMmgTG9AJ826dTuDxFIbak8TCqBLKHMo/umsLOp/VFSpxqLEp3/XU1YICDHCiKaXPuxyb5eIjKRFJeLuFlPfbzKr0RXq4ysOvD/9hy8zdDcY+Kx5rk30ZXMD2it1C39Sfmv4gpVH6W4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7cf179c3da4so177326639f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 20:43:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711078990; x=1711683790;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+        b=V8Yt1hwRFREiHwRCP53draJElX/u77YqtXrrN/00OYo19vcfBkPvxDK5XZ5pT7dCpF
+         T0a0pOrEYSNV+cIa2zh9ZnTre0VI7W1TcelR+yjpSK9t6+O4mhCcra07ofZlJ/9PXWIu
+         nwQXmVsZSFLgrvZLZlrW/dDsnwaDW91gqFCojmQw2bG0GUz/Ob+9kBlx+7U1AJ+R4Mnd
+         TmQRaICmqF0YMZOriyR1Bb1I+b7xxX4+XpUGRYM45pyZB+6JPe0MjNd5ONkYqYM4p7Eo
+         Nv7odLXnRwWwp0afA3t3d3bkOMbpBg1+kO4ldPehn5zzsDanRJt0hJZ6XBffa47ogSJM
+         4Rqg==
+X-Forwarded-Encrypted: i=1; AJvYcCV80cZbjIFFt1m4HfL6JEVSCP3D8BV9Mv2bEq3ml1jgx4jV/n2eF/b+nJZO7zUUwq9pMW+imC9c9ESyEkyubycAuG0ICbpZrxZQABJ3fA==
+X-Gm-Message-State: AOJu0YwWFTOPNOXrlSwOuKFAVnXzeX71TFyHzq/YN+Sc8MviyUDM/dTS
+	gBPGUvkNTfe8lk4Rue24wa0ESXzkl6JDCDHhmheaIZxC/xbeuNxr44c7GvkBEIBBn2WDlv2JJUj
+	unp2LvV3N3BBiEf5fzJ6ikJWQeUY4WQ470e+7B6MAMA3C21aZTb7Qngs=
+X-Google-Smtp-Source: AGHT+IEHxk8xSCWHhcDoCB7Keif1EAn8Bc3Wm7anJiX6s4lQ7mGl+EfpLANtSBAw8oWfeCh6UDat/0XrKUqX/usRC3mv5voXUGuX
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZfyyEwu9Uq5Pgb94@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6638:270b:b0:474:c3b5:a8b7 with SMTP id
+ m11-20020a056638270b00b00474c3b5a8b7mr68265jav.6.1711078990482; Thu, 21 Mar
+ 2024 20:43:10 -0700 (PDT)
+Date: Thu, 21 Mar 2024 20:43:10 -0700
+In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000069222e0614379f1f@google.com>
+Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
+From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 21, 2024 at 10:17:55PM +0000, Matthew Wilcox wrote:
-> On Tue, Jan 23, 2024 at 02:26:17PM +0100, Christian Brauner wrote:
-> > This opens block devices as files. Instead of introducing a separate
-> > indirection into bdev_open_by_*() vis struct bdev_handle we can just
-> > make bdev_file_open_by_*() return a struct file. Opening and closing a
-> > block device from setup_bdev_super() and in all other places just
-> > becomes equivalent to opening and closing a file.
-> > 
-> > This has held up in xfstests and in blktests so far and it seems stable
-> > and clean. The equivalence of opening and closing block devices to
-> > regular files is a win in and of itself imho. Added to that is the
-> > ability to do away with struct bdev_handle completely and make various
-> > low-level helpers private to the block layer.
-> 
-> It fails to hold up in xfstests for me.
-> 
-> git bisect leads to:
-> 
-> commit 321de651fa565dcf76c017b257bdf15ec7fff45d
-> Author: Christian Brauner <brauner@kernel.org>
-> Date:   Tue Jan 23 14:26:48 2024 +0100
-> 
->     block: don't rely on BLK_OPEN_RESTRICT_WRITES when yielding write access
-> 
-> QA output created by 015
-> mkfs failed
-> (see /ktest-out/xfstests/generic/015.full for details)
-> umount: /dev/vdc: not mounted.
-> 
-> ** mkfs failed with extra mkfs options added to "-m reflink=1,rmapbt=1 -i sparse=1,nrext64=1" by test 015 **
-> ** attempting to mkfs using only test 015 options: -d size=268435456 -b size=4096 **
-> mkfs.xfs: cannot open /dev/vdc: Device or resource busy
-> mkfs failed
-> 
-> About half the xfstests fail this way (722 of 1387 tests)
+This bug is marked as fixed by commit:
+ext4: fix race condition between buffer write and page_mkwrite
 
-Christain, let's chat about testing at LSF - I was looking at this too
-because we thought it was a ktest update that broke at first, but if we
-can get you using the automated test infrastructure I built this could
-get caught before hitting -next
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
+
+#syz fix: exact-commit-title
+
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
+
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
+
+---
+[1] I expect the commit to be present in:
+
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 9 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
