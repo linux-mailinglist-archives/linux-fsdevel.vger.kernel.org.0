@@ -1,129 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-15103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF600886FB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 16:17:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F763886FCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 16:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98CA8284D39
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 15:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C983E1F22B87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 15:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE75A51C4A;
-	Fri, 22 Mar 2024 15:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504FD56751;
+	Fri, 22 Mar 2024 15:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jXFYqGMe"
+	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="kldN/Bo0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YdxfEgCQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF6647A58
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 15:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF7F54BD3;
+	Fri, 22 Mar 2024 15:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711120637; cv=none; b=SV7P/ZHVxaB2aYPE0TnytsNInaNlGIAZnP29ESUasiOvSXz61UFjdH5gvZCy9Mg3617zABpxyoiDj/oQPzI8cSLlq6ArSceRiSW7BL6JaeQQeXiW7xhMQoqRvzACnAkkufQf6TU2vHfxYesElh4kKk6O1Ybf7xtytsWD6yXWMoM=
+	t=1711121123; cv=none; b=JyXPpUPp8nBo5PAJv0zX6NBdYzSZ7SQdPK1forlv2geRHdEir/k8WoW+UxjiUpQqAkDYCVnz3gQ1NYFUEbK4fGNUn2lfBmj9N36jtLclzB5WzdTolmEWfypjqTDBq21T2Enq1vee1JVWITILXj4m7FER6I8IVO1OF0OeFoW9H/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711120637; c=relaxed/simple;
-	bh=eiVxLfEbT2fV2MypbifS2SQXxSiacXNMhFESsejWf7s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=vEdASJFlTdddmqjIn3i15tXsatcQfscysxmVaTTvwWPSYKU/jGM0q4i2OHPldfnj8797fx31aXecOtOhF+UUSj9osG4P/XQNOKOkbWg3Tb2Et3eS4cfVOOJ8nACfIDoDXbG0aDc/TZp8KeeRYgpOf6lkrzrP6IyAofE4WkflRgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jXFYqGMe; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1711120632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=frMCKDXPG6C6yySkxGYI1EQakMDsEGGuUgb/MT4GE4g=;
-	b=jXFYqGMeJw+ipXCAEa15FYcqmaV0hwDuo0hCYglk2DX8jpk7tdLkYxPjFxCRBhyJpMjMUD
-	ppxh/NHvM+jpSQ5BmLyRsvTtJf+tQNMfO++VK/RTcEWb61QetAFewltPYwQmK8xb2bVwy8
-	QCaWJRP2I/jzW7FOWhFTC7AgQbzCSqs=
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Jan Kara <jack@suse.cz>,  Theodore
- Ts'o <tytso@mit.edu>,  Andreas Dilger <adilger.kernel@dilger.ca>,
-  Alexander Viro <viro@zeniv.linux.org.uk>,  Amir Goldstein
- <amir73il@gmail.com>,  linux-ext4@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  linux-unionfs@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] ovl: fix the parsing of empty string mount
- parameters
-In-Reply-To: <20240322-ortseinfahrt-gespeichert-9fc21a98aa39@brauner>
-	(Christian Brauner's message of "Fri, 22 Mar 2024 15:22:41 +0100")
-References: <20240307160225.23841-1-lhenriques@suse.de>
-	<20240307160225.23841-4-lhenriques@suse.de>
-	<CAJfpegtQSi0GFzUEDqdeOAq7BN2KvDV8i3oBFvPOCKfJJOBd2g@mail.gmail.com>
-	<87le6p6oqe.fsf@suse.de>
-	<CAJfpeguN9nMJGJzx8sgwP=P9rJFVkYF5rVZOi_wNu7mj_jfBsA@mail.gmail.com>
-	<20240311-weltmeere-gesiegt-798c4201c3f8@brauner>
-	<CAJfpegsn-jMY2J8Wd2Q9qmZFqxR6fAwZ4auoK+-uyxaK+F-0rw@mail.gmail.com>
-	<20240312-orten-erbsen-2105c134762e@brauner>
-	<87h6hbhhcj.fsf@brahms.olymp>
-	<20240322-ortseinfahrt-gespeichert-9fc21a98aa39@brauner>
-Date: Fri, 22 Mar 2024 15:17:09 +0000
-Message-ID: <875xxe2t56.fsf@brahms.olymp>
+	s=arc-20240116; t=1711121123; c=relaxed/simple;
+	bh=1X+jnJGNJJlRwE895VkKaLxZq0x6oHeflOxLmP1lLnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UJlweqCAnVwThRpjfgyLCke+pHl8CMV2VYMSmbY/Y3rlnexmbtbCDJl4Ew8FZmYyPVMlbNVjwdRhcyeIA7FHnqTf0UKmDXGZHHLq7nQn5doy0l3Jdce1Mm1cVKXTqY/bF5P1xJm4Ef47ukokVa/BlqD2M6IsR/xnV6uERXcLuho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=kldN/Bo0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YdxfEgCQ; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id B778B1140172;
+	Fri, 22 Mar 2024 11:25:19 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Fri, 22 Mar 2024 11:25:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	joshtriplett.org; h=cc:cc:content-type:content-type:date:date
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1711121119; x=1711207519; bh=1X+jnJGNJJ
+	lRwE895VkKaLxZq0x6oHeflOxLmP1lLnA=; b=kldN/Bo0gwIEsV42OSQSXvu1xe
+	x72fbZBsbbdjf/1NuiLKCftcKwXsGva5LvBC58ppp1KR7lX57+1H5ufBk1TAN95t
+	GJZBrJd+OQvrzGS7SDVTjtI5g4loD10b/mvxEGbWFMYzVtqXcOh7GIu45k0Sj0gz
+	XhxVk1oqro+SZ9r+asbbHB0q+9lCyXRzQMsy1sSIsVsGdt2JMv7KwfZ8G8fNUEHi
+	RHohUsRQrqDyDGn4n91wimbdTkNjDhJdKnWZfUOdgVFGjyQpxnZ/9hRTqeFdv3Xw
+	PS4UQWR7sTVapYvF/j+1+TjWRVrIRvDnJ5u6cqPnVWM/3SllODb/bdy96Sdw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1711121119; x=1711207519; bh=1X+jnJGNJJlRwE895VkKaLxZq0x6oHeflOx
+	LmP1lLnA=; b=YdxfEgCQfuw1X8/VkWKrNCCyBd3OGuNKnTPxNEf7/2HOPYxF7Dh
+	WdeCOPaNnYbNVQP9tW1iV3ssPnzi2KybLo6FtHZlKAllTs0e+AncNG/17dN4WIZv
+	CDOt0e51sCEAjxUOnyF2iQ97mn+IcUYeMsLWdifcbTmuqUc/9GU274pWuc++GtQj
+	SrQZdjRTGUsMJ6A45zOR6LlfZ2Je+OmSZVUwckSLx0zLDARjKSj8BqMahuv4gCkv
+	CQI+2r5RCCn88ESze37jHtDfgJHHtVctkUJ3NhH+9Sjs7RxKPg6recrYO0XQ0+pJ
+	PygSfJbpF8pI13Ww7CvNuTFB2Pp/u1AVPnQ==
+X-ME-Sender: <xms:36L9ZZL9h4L6b59P10r0_3mIhssHBZYwQKOLCYXuXTAGItNk0k-yLQ>
+    <xme:36L9ZVI_Rmj-9r62D3UWK_hXEEw2Zb3mMStQAiT5wUIkjjakfHDtsqMoxwUInv6A1
+    8SK0YB3z5wiPL-t0ls>
+X-ME-Received: <xmr:36L9ZRv6xPVCpNUvtGlfPe_oH3ivnKTmgGh43cBuJTkHZTWjRidP0JsPtlk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddtvddguddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkgggtugesthdtredttddtvdenucfhrhhomheplfhoshhhucfv
+    rhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhgqeenucggtf
+    frrghtthgvrhhnpeduvdelheettdfgvddvleegueefudegudevffekjeegffefvdeikeeh
+    vdehleekhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
+X-ME-Proxy: <xmx:36L9ZaYrWt38yFhqwPsEwDSsf7D4ZN3haXL65N2oZFieVBXnH1UMLw>
+    <xmx:36L9ZQZ-568P2erZS1h-l9N3far0j6FeOIEjMhSO0Nwi-HBI4dw1jA>
+    <xmx:36L9ZeCoOMPsMqxXagfiDaqpmYZ3I7IishD3mDyrWImodhRIaYUeFg>
+    <xmx:36L9Zea49mdEK08n1ybdbd5JQD10nXNu4nZXSFXxyrZdj3w4d4ZAyw>
+    <xmx:36L9ZXU-1IvgsJgRht9YeutHVXLJq-KBaFSYu31YOBRzvTMEqQIxLA>
+Feedback-ID: i83e94755:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 22 Mar 2024 11:25:18 -0400 (EDT)
+Date: Fri, 22 Mar 2024 15:25:16 +0000
+From: Josh Triplett <josh@joshtriplett.org>
+To: Alessio Balsini <balsini@android.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: FUSE passthrough after opening?
+Message-ID: <Zf2i3MJrKRsp-fkZ@localhost>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Christian Brauner <brauner@kernel.org> writes:
+I'm really happy to see the FUSE passthrough support merged!
 
-> On Tue, Mar 12, 2024 at 10:31:08AM +0000, Luis Henriques wrote:
->> Christian Brauner <brauner@kernel.org> writes:
->> 
->> > On Mon, Mar 11, 2024 at 03:39:39PM +0100, Miklos Szeredi wrote:
->> >> On Mon, 11 Mar 2024 at 14:25, Christian Brauner <brauner@kernel.org> wrote:
->> >> 
->> >> > Yeah, so with that I do agree. But have you read my reply to the other
->> >> > thread? I'd like to hear your thoughs on that. The problem is that
->> >> > mount(8) currently does:
->> >> >
->> >> > fsconfig(3, FSCONFIG_SET_FLAG, "usrjquota", NULL, 0) = -1 EINVAL (Invalid argument)
->> >> >
->> >> > for both -o usrjquota and -o usrjquota=
->> >> 
->> >> For "-o usrjquota" this seems right.
->> >> 
->> >> For "-o usrjquota=" it doesn't.  Flags should never have that "=", so
->> >> this seems buggy in more than one ways.
->> >> 
->> >> > So we need a clear contract with userspace or the in-kernel solution
->> >> > proposed here. I see the following options:
->> >> >
->> >> > (1) Userspace must know that mount options such as "usrjquota" that can
->> >> >     have no value must be specified as "usrjquota=" when passed to
->> >> >     mount(8). This in turn means we need to tell Karel to update
->> >> >     mount(8) to recognize this and infer from "usrjquota=" that it must
->> >> >     be passed as FSCONFIG_SET_STRING.
->> >> 
->> >> Yes, this is what I'm thinking.  Of course this only works if there
->> >> are no backward compatibility issues, if "-o usrjquota" worked in the
->> >> past and some systems out there relied on this, then this is not
->> >> sufficient.
->> >
->> > Ok, I spoke to Karel and filed:
->> >
->> > https://github.com/util-linux/util-linux/issues/2837
->
-> This is now merged as of today and backported to at least util-linux
-> 2.40 which is the current release.
-> https://github.com/util-linux/util-linux/pull/2849
->
-> If your distros ship 2.39 and won't upgrade to 2.40 for a while it might
-> be worth cherry-picking that fix.
+I have a use case for which it'd be nice to start FUSE passthrough
+some time after the initial open: I have a network-backed filesystem,
+and in some cases I'd like to serve an initial request before retrieving
+the full file. For instance, for a library .so file, I'd love to service
+the initial 832-byte read while still downloading the full file.
 
-That's awesome, thanks a lot for pushing this.  I just gave it a try and
-it looks good -- ext4/053 isn't failing any more with the next version.
+Would it be possible to add support for transitioning an open FUSE file
+to being backed by passthrough *after* the initial open? Could that work
+with the current passthrough architecture? (I realize that this might be
+more complex, as the initial open is a good time to directly substitute
+a file from the underlying filesystem.)
 
-Cheers,
--- 
-Luis
+Thanks,
+Josh Triplett
 
