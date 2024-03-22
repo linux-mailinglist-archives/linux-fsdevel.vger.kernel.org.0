@@ -1,107 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-15112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A791A8870F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 17:35:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E03D8887103
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 17:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66B21C2237F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 16:35:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC611C21CCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 16:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191225C90A;
-	Fri, 22 Mar 2024 16:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745845D47A;
+	Fri, 22 Mar 2024 16:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oilfk1zh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXoFqmac"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720CC59163;
-	Fri, 22 Mar 2024 16:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BFB59163;
+	Fri, 22 Mar 2024 16:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711125300; cv=none; b=ohzfMF2ObaL3FD4imUyeBSU6LLoAWDXo7sJgpcHWxGtvAreshxntFpqV6NPM+dIrRFUvzPyJO+dAr/qK+8P+BE4XZBNQylLbWw/RW6EuNl8XNW022dlXVHEra1SvIpiDl75TnjSTSnygihZ9JuAUB0fLOxZoTyY2aqLCa5lonLE=
+	t=1711125597; cv=none; b=jsd5DTfJdutP+0aXWmF8LzSWE096CjpxRLUEzhNRdNLeBEfm34AmRgGjiWPlRxCfpIhoFnzZPhVX58I+MtURsU5uDJM14J4RhaRnvcdw6A67bV+c/7JXcxlR3/8eyAiR8wj0asp6snIFJAzpf8av2qdvwD/cPCS5JGkB6FHj3nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711125300; c=relaxed/simple;
-	bh=Cm01Q1014eD7bi3Ghg+OrTnDa1xuGXQVz909MO6xnV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MjLsqidYFkPyaGAAWe/9MmIU6DJetDSjAItPwfHTh+LOPq1OvCHPQ8/5D9uUwQEw/dQKd+w6yJaXgBNSjoZtzMTeyL5dAXvdhZGWvmXVPFJIj4I1yava1dCXXrjKRh9/YtSNWCclJfgesqzf+gY3tr8H8Zc+S4sbwsSQSjJeMLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oilfk1zh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E76F9C433C7;
-	Fri, 22 Mar 2024 16:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711125299;
-	bh=Cm01Q1014eD7bi3Ghg+OrTnDa1xuGXQVz909MO6xnV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oilfk1zhhkn6/QOWDSz8/xIOh7J5NgEpjruYLPRoOiQu7qb+7CCiRMJ6HGhhZ3G37
-	 22WO4Fni5z3Nn7DxP/5MjqDRY7el+s5C9bv1JZLU3yPq9l2G/H2M5wDVc+w63r7+qr
-	 gRkiw253U2LkRccgdcHyUFCWWFGf7Aj3XuXLGbxiLUJ4iJjg8uEi6i5CfxoXwxh4G/
-	 o8LVa3+Z9Eu1eszg90WUqbizm0iKL+6ux4d7yM2nI8UlJC3wYW+t6pHNq52RMjk9qD
-	 YY2utGSjPSnX9dN/R6u1dKE9EPLmLyWFf3JI9xM26pzu+T+qh+sMa8wrSsM7V8LRf+
-	 KI6AYxOrY3dTQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1rnhrJ-000000002rv-2vlb;
-	Fri, 22 Mar 2024 17:35:09 +0100
-Date: Fri, 22 Mar 2024 17:35:09 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Christian Brauner <brauner@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-	ntfs3@lists.linux.dev, Anton Altaparmakov <anton@tuxera.com>,
-	Namjae Jeon <linkinjeon@kernel.org>, regressions@lists.linux.dev
-Subject: Re: [PATCH] fs: Remove NTFS classic
-Message-ID: <Zf2zPf5TO5oYt3I3@hovoldconsulting.com>
-References: <20240115072025.2071931-1-willy@infradead.org>
- <20240116-fernbedienung-vorwort-a21384fd7962@brauner>
+	s=arc-20240116; t=1711125597; c=relaxed/simple;
+	bh=7v+ihhXci5sqhX8V+jNruf1JVBOlr5+Ra+WTdULUBEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OVjKzvZ+IhWhLZrqH7g3Nlfcsto6t8O4PCzHTX5t90d0QpPn/HAzb69gl98ihFxDuy3H3k3ErtgPkwiPWIXnD3PtYHwXrPZexXOd8DgiIn2C8giRiSiehRwdpAPgbEgSdJ5vG8vr/YlAm1tpnL63zZ0qnxa5D8IWHIcoCkCtHDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iXoFqmac; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-29fbe140c24so1628199a91.0;
+        Fri, 22 Mar 2024 09:39:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711125596; x=1711730396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZidRDuY5Aevf95sEzZzzxNl7J8LcO4JJpSyMrNFhevQ=;
+        b=iXoFqmac3oBxDQr5Tf4CjkA+6IE3q4pjzalPFe0CJaY+HeoZLRscawiu71n3UJpP4T
+         roRp4rTq4AYoeDDmoepV+TYWsjHeHrnMiyEMyR5mP0M9iBRcOExR2z8rQpV3aR8oc8Ai
+         Xj+ouEQiIeQ+HD/3wIeFXoqjk8fbxOcT2EDxg7m5rIhAP7bZtH7rwNADgDtnpmOWFxP6
+         v1Tu5c9sf1Nza1sxSxkVuJV1xBYEF31aHGPsgGL+72QPRAjcOI7ALj3vZ3nnbje5hAYk
+         f1sfSvimNo8yy8uRUrn8bRU4tWonyawkVRwMOas3hmc2f2MT2Rv6rYVDb5AGXpsWsN+k
+         ASSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711125596; x=1711730396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZidRDuY5Aevf95sEzZzzxNl7J8LcO4JJpSyMrNFhevQ=;
+        b=gzwbfh++ULSwjHU2+oZ8MdCy6cfh7c0rc8iJVdSDFQIZNK5FnXHwtHTUcDRjJ8SAYg
+         9x2ALh56GweJbJyTmIVjTkJAXoA/Ox3aKfa/3eogt/U4YaXg4ntUW/ZshXa2KCcllCG+
+         owq9yx52P+AGw7byP8M+vQiBu6KKtACc049jX86APWydYzZ3nENxK+RzHzW3AYoJfZfP
+         7rYfiT5SVLzHC5yB5DDdnFm5VEk/B88FLd1c12v8O2wnlllBomHa8zTfw3FA74s/Qw2K
+         umX5LAprhnynbPg6Ni/EEn2ih+UeleTWPCJHmPJmqDD4lajdG6bI5JrZLN/i2uMcHZTy
+         KAWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPdWAkYjFJkdRlFVILD2PaqBxwkvNYYEBFLdgMsuKezHgXX0izOPSLK8MyMVyZSND4YaZrJj9unf6LkNft5P9LzpLWV5j9QGAnL5yDIBw8VvlohfE26qz1MJ05RJRmJIp90hH1hw==
+X-Gm-Message-State: AOJu0YxkEqR7zlYt0n0Mi356aI3Vp6ADyyQuFyxAcbul+nPN/GIm4wo5
+	3undBmEURkbGQlA8awFvEGE3w9d6eYGSdhDp/PtoTkK7ONkl/I6jnqrQ3MQclu7v/0bQSRDSJot
+	nPRb40i1HhjmdJKpONUrrYwvIPO4=
+X-Google-Smtp-Source: AGHT+IFFDT4lxr5rv/sSdVPMZV2VS9eEMJx70sZTwM8qOxvzpf7GeHb5N66oQ8piCdfm1OVUveKq3wOuVHYS3S5Oii8=
+X-Received: by 2002:a17:90a:c503:b0:29f:aee7:f41b with SMTP id
+ k3-20020a17090ac50300b0029faee7f41bmr154889pjt.42.1711125595924; Fri, 22 Mar
+ 2024 09:39:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240116-fernbedienung-vorwort-a21384fd7962@brauner>
+References: <20240320182607.1472887-1-jcmvbkbc@gmail.com> <202403211004.19F5EE27F@keescook>
+ <CAMo8Bf+jbsnok=zy3gT2Z-F8=LCMVVFhAoiJ8sjwaEBSbbJXzw@mail.gmail.com> <202403212041.AEB471AC@keescook>
+In-Reply-To: <202403212041.AEB471AC@keescook>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Fri, 22 Mar 2024 09:39:43 -0700
+Message-ID: <CAMo8BfKhk8dk3-n7gx3edZKSZUhCa+GJf4XwFvXr6bYzcwsb-A@mail.gmail.com>
+Subject: Re: [PATCH] exec: fix linux_binprm::exec in transfer_args_to_stack()
+To: Kees Cook <keescook@chromium.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Rich Felker <dalias@libc.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 16, 2024 at 10:33:49AM +0100, Christian Brauner wrote:
-> On Mon, 15 Jan 2024 07:20:25 +0000, Matthew Wilcox (Oracle) wrote:
-> > The replacement, NTFS3, was merged over two years ago.  It is now time to
-> > remove the original from the tree as it is the last user of several APIs,
-> > and it is not worth changing.
+On Thu, Mar 21, 2024 at 8:48=E2=80=AFPM Kees Cook <keescook@chromium.org> w=
+rote:
+> On Thu, Mar 21, 2024 at 12:52:16PM -0700, Max Filippov wrote:
+> > On Thu, Mar 21, 2024 at 10:05=E2=80=AFAM Kees Cook <keescook@chromium.o=
+rg> wrote:
+> > > What's the best way to test this? (Is there a qemu setup I can use to
+> > > see the before/after of AT_EXECFN?)
+> >
+> > I put a readme with the steps to build such system here:
+> >   http://jcmvbkbc.org/~dumb/tmp/202403211236/README
+> > it uses a prebuilt rootfs image and a 6.8 kernel branch with two
+> > patches on top of it: one adds a dts and a defconfig and the other
+> > is this fix. The rootfs boots successfully with this fix, but panics
+> > if this fix is removed.
+>
+> Does musl have something like the LD_SHOW_AUXV env variable. With glibc,
+> I usually explore auxv like so:
+>
+> $ LD_SHOW_AUXV=3D1 uname -a | grep EXECFN
+> AT_EXECFN:            /usr/bin/uname
 
-> I see no reason to not at least try and remove it given that we have
-> ntfs3 as a replacement. Worst case is we have to put it back in. Let's
-> try it.
+I couldn't find anything like that in either musl or uClibc-ng.
+So I updated the above rootfs and put the following program
+into it as /bin/test-auxv:
 
-This patch breaks boot of my Lenovo ThinkPad X13s where I have an fstab
-entry to access firmware from the original Windows partition; ended up
-in some kind of systemd emergency mode.
+#include <stdio.h>
+#include <sys/auxv.h>
 
-Fix is easy enough once I figured out what broke, but requires changing
-the fs type from 'ntfs' to 'ntfs3' in the fstab (after enabling NTFS3 in
-the kernel config).
+int main()
+{
+       unsigned long p =3D getauxval(AT_EXECFN);
+       fprintf(stderr, "AT_EXECFN: 0x%lx\n", p);
+       if (p)
+               fprintf(stderr, "%s\n", (const char *)p);
+       return 0;
+}
 
-Is it possible to provide an alias or something to avoid breaking
-people's machines like this? Perhaps something is needed for the Kconfig
-too.
+While looking at it I also noticed that /proc/<pid>/auxv is empty
+on NOMMU, looks like there will be yet another fix for that.
 
-I also now get a bunch of warning when listing the root directory:
-
-[   68.967970] ntfs3: nvme0n1p3: ino=130d6, Correct links count -> 1.
-[   68.969137] ntfs3: nvme0n1p3: ino=13a, Correct links count -> 1.
-[   68.969798] ntfs3: nvme0n1p3: ino=3ad, Correct links count -> 1.
-[   68.970431] ntfs3: nvme0n1p3: ino=3d9, Correct links count -> 1.
-[   68.971150] ntfs3: nvme0n1p3: ino=26, Correct links count -> 1.
-[   68.971780] ntfs3: nvme0n1p3: ino=eb, Correct links count -> 1.
-[   68.972263] ntfs3: nvme0n1p3: ino=1ce, Correct links count -> 1.
-[   68.973062] ntfs3: nvme0n1p3: ino=a608, Correct links count -> 1.
-
-Flagging this as a regression so that Thorsten is aware of it:
-
-#regzbot introduced: 7ffa8f3d3023
-
-Johan
+--=20
+Thanks.
+-- Max
 
