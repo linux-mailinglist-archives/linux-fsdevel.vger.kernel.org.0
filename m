@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-15137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7118875D3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Mar 2024 00:40:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D1E8875D6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Mar 2024 00:40:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B068B214D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 23:40:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 203C61C22EF8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 23:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB06D83CA3;
-	Fri, 22 Mar 2024 23:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D6584FD7;
+	Fri, 22 Mar 2024 23:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CfeeYC1l"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDMwLfMX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7621082D87;
-	Fri, 22 Mar 2024 23:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA396839FE;
+	Fri, 22 Mar 2024 23:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711150754; cv=none; b=utdqi50FSCY7+zWwLQjpshNnJQgnS/t8DqYz0zSuAHP+Lrd8QYbEG4QElSMtWIa58/go6IqOVD08nrrRS9+oDn2W66y38IBkFmFlYs8Ef7GMkAbIAtCtrXKZOapePeNR8jg1zTHacSEw4V6IUdQGJVpLuNSz0MjMHZ7S38jML6A=
+	t=1711150755; cv=none; b=kf4p56SC2vDfAXSMZtTj7YDWxpRp8sLiUyUjz16kVNinKWsqJ6gDsAoiU2HGH/xfF5aD7dbQR3SDY1h62YEockHseXRaXBSa2qN70w57M3PCWow+2WFwenbjjq3mHGY9BY/qs3LP7PMnAD/vgYSV2ELxuqC2j8oQp67ohSnYrUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711150754; c=relaxed/simple;
-	bh=/NBZoIhK1CtetohxAcHUpmJsAGut/+ZBo1KxCgXiFn0=;
+	s=arc-20240116; t=1711150755; c=relaxed/simple;
+	bh=qQ5oagRUQmpb8GABKAqxfq/Tg/yBhJf6ca7+7tUxq/A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aRH2mBmkL/SD6/q9w4zT4zTatNm7gc8SVrxuWv2k9uCGBo45QgZVtG4w8cBTyNXjuYLjlQbM2Az+uUd40tYMu1hXJOSFMpwNtxiAD8thoioJBN/4NwB+Kw1q1vPBTBzvve3xRogUEZquF5rj4VJKChpdLHST2C3WfaFZZMxDSxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CfeeYC1l; arc=none smtp.client-ip=209.85.222.179
+	 MIME-Version; b=CQhKln5RHcYqZp/e9XQbLsUEwsF/wB7islcXZmlVYgDWejEf8yWR8tt47p2jD01umcUUBwZxf5tR0Ky5myC4Wp3k7RnY4rwElOaolcSrNOLznjN2H1d/+Bv49LGIUV6qIU6Pq7eu5fZm3nsJYwM2/f/k8lO/6cCrWn6UkEAwV9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDMwLfMX; arc=none smtp.client-ip=209.85.221.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-789e2bf854dso165694885a.3;
-        Fri, 22 Mar 2024 16:39:12 -0700 (PDT)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4d453ae6af5so1246455e0c.2;
+        Fri, 22 Mar 2024 16:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711150751; x=1711755551; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1711150753; x=1711755553; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=/F96a8YELf+Ur72xFbmW7ZJSVd3YYBPROndGsfciYiA=;
-        b=CfeeYC1ldfisFBhiiBFKBGYcJQ0/SaYb52QkB5VrW3FFBNoe5ZQKWpb+cgVuN9SMpq
-         cbqBCAjNBoI3FwtE6l6YPqS5kn8J8ZoZvIFw5/GyH9Y1H11FmYRrFn1+6buzBOk4/pQO
-         Cn87gJU4kQo3hszZ50B7kkZLp808EJNTXXCCzSbc28WAW7Oz+vq6YodsbAHOifrKftR/
-         7OteAVDnIvwrK2iQqflVbZD8y91HU07d0zXX6VkEgTQ9lOl3KVJ87bCt7+kqkIRpu7zg
-         +3bkdFf2ioFf05ycKsn18QLeV4FJJxVEsm/gSFa3JTKeHZxSMcqH+pAVb9kEd7468y/K
-         M41Q==
+        bh=QZ2rrwnnSPuoyWFM6/wbqSx+XEHGNK8//eAAMbn2SLU=;
+        b=dDMwLfMXrAIntfyxsD7U/i+CyLeVvop5HCkJUXDxZ3E5Ox4MA2QEwrfgbc3hOnaRQ0
+         8P0NDpDw3HNqDhsCLGLqoemApY2JZ5SkKujRkkNtQYGdbXi2EDoqpz8XqH6vu66H3VXq
+         S/AN1WUsXKkmeupMb34U2zafIg0KFtox6/XDck1h7smrwW8m6hty48gwJJb0Jli9PeB7
+         cXhIfkeGM6wh1CCk8VfMQcJ991+RSPDSDGvAYHg6FMhfnacQ/5Ni4QLBoeb24gTEp5wt
+         +8nKdEBtEQEQTQ3OUNiN+gv5GEzML0GDpaOH6wpJ9OMLtKugkQOkixyT8xxpS7S6w27u
+         Okqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711150751; x=1711755551;
+        d=1e100.net; s=20230601; t=1711150753; x=1711755553;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/F96a8YELf+Ur72xFbmW7ZJSVd3YYBPROndGsfciYiA=;
-        b=xQIXwRH73q9uOKtNjh5MU5TzOwaqQiMmeez4E81KeQoVger+sZqxPhiv0ONKC5IiIV
-         wEPzntEalC0Q5vcs6+v5UgUVKPZgEt667h1Kvo8XO2aJRCQMtdSK1eF1WC233GGVOVCI
-         XSHVHA6w1RCVsXE7sfmPX+UvzMf2sccP10aCOs58jxuZBcE0wUiYnRikRsDfV1fGx1nq
-         wf0m4lGXCbI9MQ/sMgDtAMpYZFoiUo0ZsPBEyby+A90j9ox5ZR3eLeZvJgL5LMo2XO2M
-         Bijcbm2a01rcErPgRVPjSwDzd/0DEOOZLLF+lW+GJHn/mdlN/e321nqZfFzavSrFEbCy
-         vs/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUXnS+JIkTfNrC1askxqs+HFDSs2CKGjQlwhIH51ZGce+/H2syh248ZQFb/MAX+ZSfqnT92RrV955bMuREgIeEVOtDIcHUnOZOPszezCDeYozYYzTZ/23UZEVU+BB48AqaexZzLweJZLKpLFbTQjKKLmDC8KOwbDEOKlpSnVqN5tB9xvF1vvIE=
-X-Gm-Message-State: AOJu0YwIKj9aRGPO0bHrUjb3dU2TlOcLNYDSOCoxL4VL59knndzBqO5k
-	2eOPyPucOUx3FadPEHKlJwYY0c9jl1OaIn9BtZpwJWAABNw4UwHl
-X-Google-Smtp-Source: AGHT+IFnhi7P+k/MkZCWrllad1of00qh69/aWCRn2Ch4hXaX74mXDXtJDyquVhXLLDKOeEFx3KqBoA==
-X-Received: by 2002:a05:620a:40d3:b0:78a:3fb1:bade with SMTP id g19-20020a05620a40d300b0078a3fb1bademr1295433qko.1.1711150751298;
-        Fri, 22 Mar 2024 16:39:11 -0700 (PDT)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id cz52-20020a05620a36f400b0078a43996ab7sm267608qkb.1.2024.03.22.16.39.10
+        bh=QZ2rrwnnSPuoyWFM6/wbqSx+XEHGNK8//eAAMbn2SLU=;
+        b=JNSsPCtmJHpsVFsB4T2qqgIICax3EvoqFll/5Pa8jGhDc3z4tVuItZKm+VS4R81gqd
+         zY86LvZiimkjsouOCALItWaqGwVwodSY2x6+43vqPFoNjKntjPVuOyG0omCnbIMhU8cW
+         wdXZfQo9dB1HNZHzogZv3fzaBlgtSQXz7D3J4n3Be79EtE/M0DI7c7xPu4Jy722RWxVW
+         lpO8oaiVvpv8emYQ/fEGmbqcDCertCU00gPKiO0lE50Z90azATaO3kNH6f4pI6U+8eLH
+         l4JiwlLBKE0UjeikgQKy7AVN7GJ2uSzIUMp3PE2FvJ6I2pIqyV4Rfx5Jafy7mePJ6oCz
+         j1EA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0jY7H+lU535PTaP5PORM00USAbDk30DNgMhZ+ij6UMdRglItTr2FZHqt68qWe+541Lw5aj5c7zZKu7DJdU1jA/R+vOA5gkhwpdcJpYsYtORDuHCkmunC+ecJ1kHu23BQhvMqZ5dp0CdkbSJMtcDEobp8Vk/4qSX9Jx0IO9nBtT0Lj++3606A=
+X-Gm-Message-State: AOJu0Yz6CI/ekBopSa/bV0wb4BjPaHfITxfZ8mfcSxTOfjTU1CatVxQS
+	bevk+peHQuMKN4q4AAc/6PAMBBCdMdptjyPZ+4i+K2qb9Ba4HX8S
+X-Google-Smtp-Source: AGHT+IEaYQaJaeCZmztaSPVyvy8V/Vxeh4oBqEj4kwmvUweyQop95DXCqfqCPm+ZQJ2lS/7MtVUgAg==
+X-Received: by 2002:a05:6122:c9f:b0:4cb:fc25:7caa with SMTP id ba31-20020a0561220c9f00b004cbfc257caamr1351039vkb.14.1711150752858;
+        Fri, 22 Mar 2024 16:39:12 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id dd7-20020ad45807000000b0069675909982sm456994qvb.70.2024.03.22.16.39.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Mar 2024 16:39:10 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailauth.nyi.internal (Postfix) with ESMTP id E694E27C005B;
-	Fri, 22 Mar 2024 19:39:09 -0400 (EDT)
+        Fri, 22 Mar 2024 16:39:12 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 98CB91200032;
+	Fri, 22 Mar 2024 19:39:11 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 22 Mar 2024 19:39:09 -0400
-X-ME-Sender: <xms:nRb-ZYRx2_-58_-z6-x6S4sKXkjHp-GCdlJ3teS6u0_eGxEhEFihvA>
-    <xme:nRb-ZVwJEn5X_3CSF2VBVtDTWyJWMQOj41t5nU4Y3tVws8i5M3p0M0znwaIFaCWeJ
-    RuL49VwOqImuy1r3Q>
-X-ME-Received: <xmr:nRb-ZV38RkJQ6TRlO3PiWGx7flW84bXCLPP2yLPAhZeGxyNf_GQM_kKb9P0jLw>
+  by compute4.internal (MEProxy); Fri, 22 Mar 2024 19:39:11 -0400
+X-ME-Sender: <xms:nxb-ZXIx1aaow52e_WoDZFqnahY1bIzzv5Wxu7y5Bx3FCqaoacZKaw>
+    <xme:nxb-ZbKVQEyiu5t7Xp4_oUUScOcKEYzNSWnVzrOr-P_XBPKxvfNR9gvy-y3qaTfgd
+    B88TMJzA-sHCJuMcg>
+X-ME-Received: <xmr:nxb-ZfsAdtEQ6wxjKWrjG-mmoZH0kN4C1sOqF3vapgci3LBivqDLSJscBpEfvw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddtfedgudegucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -86,14 +86,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddtfedgudegucetufdoteggod
     gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
     gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
     igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:nRb-ZcBtlI8Nx1uTVZ20QbfmnwHmh_PUZHvw3mBA8IwuxKJSFpfnIQ>
-    <xmx:nRb-ZRj_EGYVPZNkd1RT736QMkUg-qVTRaNTocfxpK8xNaNZvrYkVg>
-    <xmx:nRb-ZYrJcjVRZwzY0KBDqLp6P-pKhcf5ywqbm4nI0O16gmgmwapI6Q>
-    <xmx:nRb-ZUhdx8xp4T0whLRk9kcTd4nFRTE3UQe3vJyjzA_kfVUbwdWnRA>
-    <xmx:nRb-ZSBpBm8jvDtFtL4qCfbPT8guZsv0eGkZwMfREFkeARBMIPrlq2SrgRg>
+X-ME-Proxy: <xmx:nxb-ZQZZZwqym68B78NpzEjDSIBXxqsT776nMUbyvIA4DeAUsNkvmA>
+    <xmx:nxb-ZeYPyMmA5Ie9kuz4ke_eNCTGF5Hy17FOBYmquZHMlJ3KUlIaVw>
+    <xmx:nxb-ZUAFZkXd54Zn9rr1tBaLwxLqHc0ZCPVMAyTQnanW_yNTyHsHwQ>
+    <xmx:nxb-ZcZNxf4TI3OmNTLXqYypNReK-w3xMoiOqTqRfhqRIPvgjUNKZA>
+    <xmx:nxb-ZeaMRH_yJkm0MFOiCC5_cBsqDl8eAbpKk1x-uyep6Kc4A-NFFUh1PGAvdpkV>
 Feedback-ID: iad51458e:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 22 Mar 2024 19:39:08 -0400 (EDT)
+ 22 Mar 2024 19:39:10 -0400 (EDT)
 From: Boqun Feng <boqun.feng@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -124,9 +124,9 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
 	"H. Peter Anvin" <hpa@zytor.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
 	linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org
-Subject: [WIP 2/3] rust: atomic: Add ARM64 fetch_add_relaxed()
-Date: Fri, 22 Mar 2024 16:38:37 -0700
-Message-ID: <20240322233838.868874-3-boqun.feng@gmail.com>
+Subject: [WIP 3/3] rust: atomic: Add fetch_sub_release()
+Date: Fri, 22 Mar 2024 16:38:38 -0700
+Message-ID: <20240322233838.868874-4-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240322233838.868874-1-boqun.feng@gmail.com>
 References: <20240322233838.868874-1-boqun.feng@gmail.com>
@@ -140,48 +140,60 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- rust/kernel/sync/atomic/arch.rs       |  6 ++++++
- rust/kernel/sync/atomic/arch/arm64.rs | 26 ++++++++++++++++++++++++++
- 2 files changed, 32 insertions(+)
- create mode 100644 rust/kernel/sync/atomic/arch/arm64.rs
+ rust/kernel/sync/atomic.rs            | 23 +++++++++++++++++++++++
+ rust/kernel/sync/atomic/arch/arm64.rs | 20 ++++++++++++++++++++
+ rust/kernel/sync/atomic/arch/x86.rs   |  5 +++++
+ 3 files changed, 48 insertions(+)
 
-diff --git a/rust/kernel/sync/atomic/arch.rs b/rust/kernel/sync/atomic/arch.rs
-index 3eb5a103a69a..fc280f229237 100644
---- a/rust/kernel/sync/atomic/arch.rs
-+++ b/rust/kernel/sync/atomic/arch.rs
-@@ -5,5 +5,11 @@
- #[cfg(CONFIG_X86)]
- pub(crate) use x86::*;
- 
-+#[cfg(CONFIG_ARM64)]
-+pub(crate) use arm64::*;
+diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
+index 280040705fb0..c3cae0d25e88 100644
+--- a/rust/kernel/sync/atomic.rs
++++ b/rust/kernel/sync/atomic.rs
+@@ -39,4 +39,27 @@ pub fn new(v: i32) -> Self {
+     pub fn fetch_add_relaxed(&self, i: i32) -> i32 {
+         arch::i32_fetch_add_relaxed(&self.0, i)
+     }
 +
- #[cfg(CONFIG_X86)]
- pub(crate) mod x86;
-+
-+#[cfg(CONFIG_ARM64)]
-+pub(crate) mod arm64;
++    /// Subs `i` to the atomic variable with RELEASE ordering.
++    ///
++    /// Returns the old value before the sub.
++    ///
++    /// # Example
++    ///
++    /// ```rust
++    /// use kernel::sync::atomic::AtomicI32;
++    ///
++    /// let a = AtomicI32::new(1);
++    /// let b = a.fetch_sub_release(1);
++    /// let c = a.fetch_sub_release(2);
++    /// let d = a.fetch_sub_release(3);
++    /// let e = a.fetch_sub_release(core::i32::MIN);
++    ///
++    /// assert_eq!(b, 1);
++    /// assert_eq!(c, 0);
++    /// assert_eq!(d, -2);
++    /// ```
++    pub fn fetch_sub_release(&self, i: i32) -> i32 {
++        arch::i32_fetch_sub_release(&self.0, i)
++    }
+ }
 diff --git a/rust/kernel/sync/atomic/arch/arm64.rs b/rust/kernel/sync/atomic/arch/arm64.rs
-new file mode 100644
-index 000000000000..438f37cf7df6
---- /dev/null
+index 438f37cf7df6..beea77ecdb20 100644
+--- a/rust/kernel/sync/atomic/arch/arm64.rs
 +++ b/rust/kernel/sync/atomic/arch/arm64.rs
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -24,3 +24,23 @@ pub(crate) fn i32_fetch_add_relaxed(v: &UnsafeCell<i32>, i: i32) -> i32 {
+ 
+     result
+ }
 +
-+//! ARM64 implementation for atomic and barrier primitives.
-+
-+use core::arch::asm;
-+use core::cell::UnsafeCell;
-+
-+pub(crate) fn i32_fetch_add_relaxed(v: &UnsafeCell<i32>, i: i32) -> i32 {
++pub(crate) fn i32_fetch_sub_release(v: &UnsafeCell<i32>, i: i32) -> i32 {
 +    let mut result;
 +    unsafe {
 +        asm!(
 +            "prfm    pstl1strm, [{v}]",
 +            "1: ldxr {result:w}, [{v}]",
-+            "add {val:w}, {result:w}, {i:w}",
-+            "stxr {tmp:w}, {val:w}, [{v}]",
++            "sub {val:w}, {result:w}, {i:w}",
++            "stlxr {tmp:w}, {val:w}, [{v}]",
 +            "cbnz {tmp:w}, 1b",
 +            result = out(reg) result,
 +            tmp = out(reg) _,
@@ -192,6 +204,19 @@ index 000000000000..438f37cf7df6
 +    }
 +
 +    result
++}
+diff --git a/rust/kernel/sync/atomic/arch/x86.rs b/rust/kernel/sync/atomic/arch/x86.rs
+index 2d715f740b22..7f764cde4576 100644
+--- a/rust/kernel/sync/atomic/arch/x86.rs
++++ b/rust/kernel/sync/atomic/arch/x86.rs
+@@ -41,3 +41,8 @@ pub(crate) fn i32_fetch_add_relaxed(v: &UnsafeCell<i32>, i: i32) -> i32 {
+     // SAFETY: `v.get()` points to a valid `i32`.
+     unsafe { i32_xadd(v.get(), i) }
+ }
++
++pub(crate) fn i32_fetch_sub_release(v: &UnsafeCell<i32>, i: i32) -> i32 {
++    // SAFETY: `v.get()` points to a valid `i32`.
++    unsafe { i32_xadd(v.get(), i.wrapping_neg()) }
 +}
 -- 
 2.44.0
