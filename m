@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-15130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A7388747C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 22:38:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19B48874A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 22:56:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11BA28365F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 21:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 257EB280F6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 21:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE2A7FBC6;
-	Fri, 22 Mar 2024 21:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A559E80C0C;
+	Fri, 22 Mar 2024 21:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aqN3BIfb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GqXTrMwM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC3A5820D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 21:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D7D7F7FA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 21:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711143474; cv=none; b=S+dphcQnQ03VvFPcEwhBUVZyH2rZ4SeZ6Ef3SsbajIUiQGlyZxcQt+Nbk0PQQPdD/3cY4YRdOe8GyfBa51gRdLQJxxEoaMN+P3XfjFpQj2XlMpPO+39u1lAPubiK6vxbVl0XdTLoZ/VopJ11zlSRF3hQE8rvjgpUWESwwWkBTsA=
+	t=1711144577; cv=none; b=uwgVI126Rz5TycTMVYMxBxDM7WMK+bVHM7x6XIbaFnquGPam3ysxAWbUYwyqXQSClrgyGRtm0UiHwMwxClrwCNVsX/3xrIckKbgElMQKi166OyldBz5B2hzPi1l5Kj3riAIkfvBwJzluXASjSu8X1h/Owy6u2+04QAJ8fSZFVDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711143474; c=relaxed/simple;
-	bh=4o29E18DvArCwwrf1uIOP968MrTh8gpzjXevBxF0sJ8=;
+	s=arc-20240116; t=1711144577; c=relaxed/simple;
+	bh=mqI5C2sstfl9phrjs83gokfY9/p+7iYAYoYf3S8etno=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ielc6REAsT+iBK/WkIMmOlLRlPXDRcZPkMSG0lqjKULg3HUKMPqe8DYVlPVAWQ6b8yJPKa+rBBgJOrghM6znr1X6LNkaAYovxxg/5f/h7gUQH8JwDlba5rihl3XDH4vLbREj40OuIB5soNKItx9sMjvhiOp3hhdw1PxR0NyRs8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aqN3BIfb; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=pnZSTAxiH+TPNyk5BORRZPz09IcYL8V3MIylREZ2jaHjpIfv2ZrALE4QeYxVuWolhdruOu+opMjvHIuq/ZdTQuALa2GA6dm6sTMN0n8CcH/BSS1o6bzIVd+q152aTuHwKyHICpxcMCm6vtGSO4gPPdec00DIjsv0w2M9m5KVp6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GqXTrMwM; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1711143471;
+	s=mimecast20190719; t=1711144574;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dJLlKtTO62WD62r/VeuZe7I8eIHgd9fp/eop39lk08g=;
-	b=aqN3BIfbxjoZ3pAjaaUieS3jktwrcgBJI7n9tzw/c3rGv7d0C4J69CtYANYlYTl9hv9UGV
-	h5HtPfqPDUB4XPyTfo4yFUqxRxCcUXffHTFCvsVWQigZRGxU62UJ/sAYgMtZQJ0iiOBC/6
-	v2Mcwpp6zBBHXXotjWXybAwmIdYefyQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ilDRSs0Ait/XlZwDgiIlSIqrzhhZAq2BofMKP07LLMA=;
+	b=GqXTrMwMhif35sGRcQMpGk11xZmCMrSTIz9HLMZ3Eor3k+imtsdgP1Oe7ZVWxb3LxMs7uo
+	QQBsy/0IRKEshSXVKraiV6oKlmgjRE2c5MT3Sd7fPkfNnsjRfFoYskCMkzj9QfS+dH9Sfo
+	HGbCVPfl+v0cL2d6g6Iu7GzYD4uF1U0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-91-fovZXkxuPKGnd12zK57hHQ-1; Fri, 22 Mar 2024 17:37:50 -0400
-X-MC-Unique: fovZXkxuPKGnd12zK57hHQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-33ed22facfeso1130668f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 14:37:50 -0700 (PDT)
+ us-mta-45-sVOkumHZPqG33JlqCKbbLg-1; Fri, 22 Mar 2024 17:56:11 -0400
+X-MC-Unique: sVOkumHZPqG33JlqCKbbLg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4147f17da12so2007355e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 14:56:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711143469; x=1711748269;
+        d=1e100.net; s=20230601; t=1711144570; x=1711749370;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :references:cc:to:from:content-language:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=dJLlKtTO62WD62r/VeuZe7I8eIHgd9fp/eop39lk08g=;
-        b=JXCm6IJWnGQkl+ZM1L6u/NokwzJ5jP+3Nx5rKTFtqskXBILwHfetEk/5YT7MIf3d8B
-         0PWdQbIbmjt5UDON5NS0xysPrZ9/JwUBo9kZNY3smoMVA6QFvKM1MUQb54ApSrFVW4V3
-         tj5+m+9gTHVU4m3oneQXryUNK7/OcQDECS8IANJUa4CgGssPzWlz/Rp/zt9SqyvDWe7A
-         9AFzEB4var8HlJ4Ni9brchlU25zhluAeXZBVoa1Wn+yh7TiTT2ei6A9Ml2H9zl2lHeuD
-         PVMMISepmUPJP5cIo+5KjhZJSUbPoe8zKg1MqQ9QSYAjCRK6nhiwfw9/mzLsYunqJ7/2
-         PAUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTaVdIrphCxbZojPxy7ldAhyutYcTrc0PkHN4adf5cpRea8J/K10HzNmQ4g7+Y9ye3v9LTO+zysHVkz9jIGLKABG9sqT/+0q/X0OTWhQ==
-X-Gm-Message-State: AOJu0YwQgh2a3TWDRrG0QVjJHfwiGS7Fly9TBmbOfYuMAkbpcdVxXKMc
-	hsBM/PypsIs5Fls8zUHNiKtTXCfaUwqnTR8a/03gm3WHrQMRh3Zzc00l1IMWMCkK92/S3EiV5jq
-	GTq+W9L0bXYicLaEAn8ghDgDG1HLd6Aiyerc1vMdUXfuJPudItCbmY6vcqdtVdOc=
-X-Received: by 2002:adf:ea0a:0:b0:33d:c217:e8a4 with SMTP id q10-20020adfea0a000000b0033dc217e8a4mr356448wrm.14.1711143468987;
-        Fri, 22 Mar 2024 14:37:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH5apehEMN7dJN5VDNeS7m0+2uq/zBxksh09hGs4GpIijR0sdSVzM6MYbYDeI4LGD2ytEjLtA==
-X-Received: by 2002:adf:ea0a:0:b0:33d:c217:e8a4 with SMTP id q10-20020adfea0a000000b0033dc217e8a4mr356436wrm.14.1711143468561;
-        Fri, 22 Mar 2024 14:37:48 -0700 (PDT)
+        bh=ilDRSs0Ait/XlZwDgiIlSIqrzhhZAq2BofMKP07LLMA=;
+        b=v7LzBHWT8RqNzK5kaa8aL+Ol+4acex9koHf5yXUxq5yZmW56o0w9BpJUqxhAp1BV9H
+         8UBcMCVUVEd034vCjKUo/xp+gf6BcMYrvPIR5YzelcFWawDaEoavWC6BD7xEBHo+eEGZ
+         wJYDSUjqIsfb7ObVW+lBpY6YR8UDLaS5tQ+55MurodcTdtYE+94c3m58myJkmLvY/1s9
+         qNaoL1fClbr+ptG1mQtfZ0mb2b9oPsrVk9Gnml1DDeIqjJ3QqC+TUDNxPEvL0tMLSUfV
+         mOghN0HRclSrUEWk9Fo0L3kfFhzjoe/Ouq1TLA4UIbmcsKL8F8xPWRX+ZbI0qKdEo5Hf
+         J1+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXm1A+GRl0XYJLvq7IP+pZLW4in0+ZhJNRBGdvICH29MAdfVXQMZ2r8M6kUvU+EMx6gCctuqHDw63f9f/CKDJXKU9KMpPPEhYMki5ZYDw==
+X-Gm-Message-State: AOJu0YxASaZVWf/4A+YJF5Hbf5V/GSolak+aaLwPhlHmGdvKKK7UQzYG
+	zuAoBJ5vkKYiO7H0kHwusugI27Tj7U/Cxjgbc0Hm4Nkwex/JtBTcex9K1AkPGOwv0bzPxvcHBSE
+	7Nw1yXr9Mj8UJiqAyzToYzCes7AVMRvaN6AWeX5kM0iOOno2GAbQlCk6qxQCu/Sc=
+X-Received: by 2002:a5d:6a44:0:b0:341:b9d2:82e7 with SMTP id t4-20020a5d6a44000000b00341b9d282e7mr426762wrw.13.1711144569921;
+        Fri, 22 Mar 2024 14:56:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgLLEm/IdbO6RfLia7LH2DHDQxsP79ZB+YJJPkRpwqbWTlGm6fv6vpR0pcdvs7yiVfvJc/eg==
+X-Received: by 2002:a5d:6a44:0:b0:341:b9d2:82e7 with SMTP id t4-20020a5d6a44000000b00341b9d282e7mr426747wrw.13.1711144569511;
+        Fri, 22 Mar 2024 14:56:09 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c71b:7e00:9339:4017:7111:82d0? (p200300cbc71b7e0093394017711182d0.dip0.t-ipconnect.de. [2003:cb:c71b:7e00:9339:4017:7111:82d0])
-        by smtp.gmail.com with ESMTPSA id w13-20020a05600c474d00b00414108a1c55sm621811wmo.16.2024.03.22.14.37.47
+        by smtp.gmail.com with ESMTPSA id r17-20020a05600c459100b00413f25d9104sm652216wmo.40.2024.03.22.14.56.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Mar 2024 14:37:48 -0700 (PDT)
-Message-ID: <dd3e28b3-647c-4657-9c3f-9778bb046799@redhat.com>
-Date: Fri, 22 Mar 2024 22:37:47 +0100
+        Fri, 22 Mar 2024 14:56:09 -0700 (PDT)
+Message-ID: <b40eb0b7-7362-4d19-95b3-e06435e6e09c@redhat.com>
+Date: Fri, 22 Mar 2024 22:56:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,6 +99,7 @@ References: <CABOYnLyevJeravW=QrH0JUPYEcDN160aZFb7kwndm-J2rmz0HQ@mail.gmail.com>
  <CAJfpegub5Ny9kyX+dDbRwx7kd6ZdxtOeQ9RTK8n=LGGSzA9iOQ@mail.gmail.com>
  <463612f2-5590-4fb3-8273-0d64c3fd3684@redhat.com>
  <a6632384-c186-4640-8b48-f40d6c4f7d1d@redhat.com>
+ <dd3e28b3-647c-4657-9c3f-9778bb046799@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
  dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
@@ -144,107 +145,156 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <a6632384-c186-4640-8b48-f40d6c4f7d1d@redhat.com>
+In-Reply-To: <dd3e28b3-647c-4657-9c3f-9778bb046799@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 22.03.24 22:33, David Hildenbrand wrote:
-> On 22.03.24 22:18, David Hildenbrand wrote:
->> On 22.03.24 22:13, Miklos Szeredi wrote:
->>> On Fri, 22 Mar 2024 at 22:08, David Hildenbrand <david@redhat.com> wrote:
->>>>
->>>> On 22.03.24 20:46, Miklos Szeredi wrote:
->>>>> On Fri, 22 Mar 2024 at 16:41, David Hildenbrand <david@redhat.com> wrote:
+On 22.03.24 22:37, David Hildenbrand wrote:
+> On 22.03.24 22:33, David Hildenbrand wrote:
+>> On 22.03.24 22:18, David Hildenbrand wrote:
+>>> On 22.03.24 22:13, Miklos Szeredi wrote:
+>>>> On Fri, 22 Mar 2024 at 22:08, David Hildenbrand <david@redhat.com> wrote:
 >>>>>
->>>>>> But at least the vmsplice() just seems to work. Which is weird, because
->>>>>> GUP-fast should not apply (page not faulted in?)
+>>>>> On 22.03.24 20:46, Miklos Szeredi wrote:
+>>>>>> On Fri, 22 Mar 2024 at 16:41, David Hildenbrand <david@redhat.com> wrote:
+>>>>>>
+>>>>>>> But at least the vmsplice() just seems to work. Which is weird, because
+>>>>>>> GUP-fast should not apply (page not faulted in?)
+>>>>>>
+>>>>>> But it is faulted in, and that indeed seems to be the root cause.
 >>>>>
->>>>> But it is faulted in, and that indeed seems to be the root cause.
->>>>
->>>> secretmem mmap() won't populate the page tables. So it's not faulted in yet.
->>>>
->>>> When we GUP via vmsplice, GUP-fast should not find it in the page tables
->>>> and fallback to slow GUP.
->>>>
->>>> There, we seem to pass check_vma_flags(), trigger faultin_page() to
->>>> fault it in, and then find it via follow_page_mask().
->>>>
->>>> ... and I wonder how we manage to skip check_vma_flags(), or otherwise
->>>> managed to GUP it.
->>>>
->>>> vmsplice() should, in theory, never succeed here.
->>>>
->>>> Weird :/
->>>>
->>>>> Improved repro:
+>>>>> secretmem mmap() won't populate the page tables. So it's not faulted in yet.
 >>>>>
->>>>> #define _GNU_SOURCE
+>>>>> When we GUP via vmsplice, GUP-fast should not find it in the page tables
+>>>>> and fallback to slow GUP.
 >>>>>
->>>>> #include <fcntl.h>
->>>>> #include <unistd.h>
->>>>> #include <stdio.h>
->>>>> #include <errno.h>
->>>>> #include <sys/mman.h>
->>>>> #include <sys/syscall.h>
+>>>>> There, we seem to pass check_vma_flags(), trigger faultin_page() to
+>>>>> fault it in, and then find it via follow_page_mask().
 >>>>>
->>>>> int main(void)
->>>>> {
->>>>>             int fd1, fd2;
->>>>>             int pip[2];
->>>>>             struct iovec iov;
->>>>>             char *addr;
->>>>>             int ret;
+>>>>> ... and I wonder how we manage to skip check_vma_flags(), or otherwise
+>>>>> managed to GUP it.
 >>>>>
->>>>>             fd1 = syscall(__NR_memfd_secret, 0);
->>>>>             addr = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd1, 0);
->>>>>             ftruncate(fd1, 7);
->>>>>             addr[0] = 1; /* fault in page */
+>>>>> vmsplice() should, in theory, never succeed here.
+>>>>>
+>>>>> Weird :/
+>>>>>
+>>>>>> Improved repro:
+>>>>>>
+>>>>>> #define _GNU_SOURCE
+>>>>>>
+>>>>>> #include <fcntl.h>
+>>>>>> #include <unistd.h>
+>>>>>> #include <stdio.h>
+>>>>>> #include <errno.h>
+>>>>>> #include <sys/mman.h>
+>>>>>> #include <sys/syscall.h>
+>>>>>>
+>>>>>> int main(void)
+>>>>>> {
+>>>>>>              int fd1, fd2;
+>>>>>>              int pip[2];
+>>>>>>              struct iovec iov;
+>>>>>>              char *addr;
+>>>>>>              int ret;
+>>>>>>
+>>>>>>              fd1 = syscall(__NR_memfd_secret, 0);
+>>>>>>              addr = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd1, 0);
+>>>>>>              ftruncate(fd1, 7);
+>>>>>>              addr[0] = 1; /* fault in page */
+>>>>
+>>>> Here the page is faulted in and GUP-fast will find it.  It's not in
+>>>> the kernel page table, but it is in the user page table, which is what
+>>>> matter for GUP.
 >>>
->>> Here the page is faulted in and GUP-fast will find it.  It's not in
->>> the kernel page table, but it is in the user page table, which is what
->>> matter for GUP.
+>>> Trust me, I know the GUP code very well :P
+>>>
+>>> gup_pte_range -- GUP fast -- contains:
+>>>
+>>> if (unlikely(folio_is_secretmem(folio))) {
+>>> 	gup_put_folio(folio, 1, flags);
+>>> 	goto pte_unmap;
+>>> }
+>>>
+>>> So we "should" be rejecting any secretmem folios and fallback to GUP slow.
+>>>
+>>>
+>>> ... we don't check the same in gup_huge_pmd(), but we shouldn't ever see
+>>> THP in secretmem code.
+>>>
 >>
->> Trust me, I know the GUP code very well :P
+>> Ehm:
 >>
->> gup_pte_range -- GUP fast -- contains:
->>
->> if (unlikely(folio_is_secretmem(folio))) {
->> 	gup_put_folio(folio, 1, flags);
->> 	goto pte_unmap;
->> }
->>
->> So we "should" be rejecting any secretmem folios and fallback to GUP slow.
+>> [   29.441405] Secretmem fault: PFN: 1096177
+>> [   29.442092] GUP-fast: PFN: 1096177
 >>
 >>
->> ... we don't check the same in gup_huge_pmd(), but we shouldn't ever see
->> THP in secretmem code.
+>> ... is folio_is_secretmem() broken?
 >>
+>> ... is it something "obvious" like:
+>>
+>> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
+>> index 35f3a4a8ceb1e..6996f1f53f147 100644
+>> --- a/include/linux/secretmem.h
+>> +++ b/include/linux/secretmem.h
+>> @@ -16,7 +16,7 @@ static inline bool folio_is_secretmem(struct folio *folio)
+>>             * We know that secretmem pages are not compound and LRU so we can
+>>             * save a couple of cycles here.
+>>             */
+>> -       if (folio_test_large(folio) || !folio_test_lru(folio))
+>> +       if (folio_test_large(folio) || folio_test_lru(folio))
+>>                    return false;
+>>     
+>>            mapping = (struct address_space *)
 > 
-> Ehm:
+> ... yes, that does the trick!
 > 
-> [   29.441405] Secretmem fault: PFN: 1096177
-> [   29.442092] GUP-fast: PFN: 1096177
-> 
-> 
-> ... is folio_is_secretmem() broken?
-> 
-> ... is it something "obvious" like:
-> 
-> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
-> index 35f3a4a8ceb1e..6996f1f53f147 100644
-> --- a/include/linux/secretmem.h
-> +++ b/include/linux/secretmem.h
-> @@ -16,7 +16,7 @@ static inline bool folio_is_secretmem(struct folio *folio)
->            * We know that secretmem pages are not compound and LRU so we can
->            * save a couple of cycles here.
->            */
-> -       if (folio_test_large(folio) || !folio_test_lru(folio))
-> +       if (folio_test_large(folio) || folio_test_lru(folio))
->                   return false;
->    
->           mapping = (struct address_space *)
 
-... yes, that does the trick!
+Proper patch (I might send out again on Monday "officially"). There are
+other improvements we want to do to folio_is_secretmem() in the light of
+folio_fast_pin_allowed(), that I wanted to do a while ago. I might send
+a patch for that as well now that I'm at it.
+
+
+ From 85558a46d9f249f26bd77dd3b18d14f248464845 Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Fri, 22 Mar 2024 22:45:36 +0100
+Subject: [PATCH] mm/secretmem: fix GUP-fast succeeding on secretmem folios
+
+folio_is_secretmem() states that secretmem folios cannot be LRU folios:
+so we may only exit early if we find an LRU folio. Yet, we exit early if
+we find a folio that is not a secretmem folio.
+
+Consequently, folio_is_secretmem() fails to detect secretmem folios and,
+therefore, we can succeed in grabbing a secretmem folio during GUP-fast,
+crashing the kernel when we later try reading/writing to the folio, because
+the folio has been unmapped from the directmap.
+
+Reported-by: xingwei lee <xrivendell7@gmail.com>
+Reported-by: yue sun <samsun1006219@gmail.com>
+Debugged-by: Miklos Szeredi <miklos@szeredi.hu>
+Fixes: 1507f51255c9 ("mm: introduce memfd_secret system call to create "secret" memory areas")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  include/linux/secretmem.h | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
+index 35f3a4a8ceb1..6996f1f53f14 100644
+--- a/include/linux/secretmem.h
++++ b/include/linux/secretmem.h
+@@ -16,7 +16,7 @@ static inline bool folio_is_secretmem(struct folio *folio)
+  	 * We know that secretmem pages are not compound and LRU so we can
+  	 * save a couple of cycles here.
+  	 */
+-	if (folio_test_large(folio) || !folio_test_lru(folio))
++	if (folio_test_large(folio) || folio_test_lru(folio))
+  		return false;
+  
+  	mapping = (struct address_space *)
+-- 
+2.43.2
+
 
 -- 
 Cheers,
