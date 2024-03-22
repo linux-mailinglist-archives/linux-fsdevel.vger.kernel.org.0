@@ -1,180 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-15037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9E988640F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 00:46:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311B688644A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 01:17:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB191F228D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Mar 2024 23:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2AF82826C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 00:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9EE31A8F;
-	Thu, 21 Mar 2024 23:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98575A48;
+	Fri, 22 Mar 2024 00:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VsCJse60"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YlL0RuO8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2063.outbound.protection.outlook.com [40.107.223.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3EE1B592
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 23:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711064794; cv=none; b=W6bnKdUdVKu5G3VHX658/araEkTECLbymRk8NEqM2OaqXBCgYaxCdJ2aPni4T7WCxFCntSCzIg9EjEHL3SlUUcQOVma394G4CX2xNJiTR+wum2X8jNgH+XkBBNFCuQbKLtsCY7yCWeG5pE1wILGV2txRsPIP1yQ2etVxZlqq0K4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711064794; c=relaxed/simple;
-	bh=GBp117Rw9ou09bC9vlczg3WmwjqjNQ4BV42hmHgOAGM=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Eud1qnJRLCPs4pUJvtotLk1FjWQBLe0coattIhbf9nYbHnXddd3bqOpTA7TLo1hJ/fdKYQRv6PpOaALmk3ZR1YUT84d1bg0x3orZUS9kkRbbHKw6Pi9B1YmeGe4NuHHOnudBM6o/P630FnWV6eIY6AVeNmJuBetsE7qKiVgqap4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VsCJse60; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc3645a6790so2508205276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 16:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711064791; x=1711669591; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TKcHHCSWCqgul2AOMbuKphpbCV9drtQafSH0+0DTZms=;
-        b=VsCJse60j86WLf2PNMFujVaQX/q9AyhsHXmv/C09+wPlP+I0eZpkWyVD2nuHIr3e2w
-         NsGGQJV5cM/vpLFlHwltfelhumVPrZR13P5ANwKcFg82SeZY9ULvH/FytwRXQTwCrYOI
-         q8sitGGwDRXrgrziLBI6tJGwsJe3E13S4xFCW1BPRfOrawWEkh95DkZ1fmFUelM0zJj9
-         g9fjDuAjILXtG7hGSbDt0wodKzHspkM/8kb3Ic/wV0fvs4U5UozufWb/ndF9eyK0GbY8
-         gckRVGUM09dqaPOSPeL9t1MJZ+Nu093QYtukD/aDnHaX+VfZjnKRwbzFKF3n5ZHfoj7d
-         CxNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711064791; x=1711669591;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TKcHHCSWCqgul2AOMbuKphpbCV9drtQafSH0+0DTZms=;
-        b=Cq8sT+3ypzR5vVsbmchx8B00UdiIgksjdTn+/XDAnoe2XCrVvRLtTwt3bFLXFsx5gL
-         K8p2inkyAVgmCm7JEPhEwakMjhxp7R2kIamdlUph9WonZQVPT8XLU0juOZaEXE/0qNo3
-         fAqQqJS7nlaAiLc8O1vFB7mNka60w0CjUq0z9UjjixK6dSZXkzvMA1XbJ9IXLY96zVPM
-         SRrfTBr86sb3jD8002BqwHMbL+CbBEwjAbUKW6kf9XTtKziaQfBw8ODd4iLtXdvrc6mF
-         Kp7dzLhvQ5rxjYkcJ07ZUc0PeSTsS5MCX6ORgfe5iTzlRVWOGM09PEtuaB9hKz2DCsUM
-         DTbg==
-X-Gm-Message-State: AOJu0YwkYIW4+JmtziPKJWep+bnejR8vlFxCI3C4cGcyvVF7xzHYsAXO
-	9aEzNgr2LksbRpc9RXG3mvocOJpC6reVzGppHB1+MCXzeKVXRIyGeE2vxRrldoHOVpj+wlnsuRF
-	A/I1JV2NqGwZr4+DkQFgnqw==
-X-Google-Smtp-Source: AGHT+IGslFJ7I58NprLlYtxvFu8RungPyoqKiB8iuMyQ7S0Xf45CcMjYFnGLqEJkvq/9SAAdc0Ta5veeJ5B3mcEUmw==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a05:6902:100a:b0:dc6:ff2b:7e1b with
- SMTP id w10-20020a056902100a00b00dc6ff2b7e1bmr196400ybt.4.1711064791522; Thu,
- 21 Mar 2024 16:46:31 -0700 (PDT)
-Date: Thu, 21 Mar 2024 23:46:27 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450F2637
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 00:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711066613; cv=fail; b=MWoupbcCHwxvdDsbkef1e2pI8A4gOJqtrZL5ZM93oRn+BoVzsBUmyweRnx5gAYj3a7uM2MnrzuHf5gCuacAO2aFdNmeAOqO9fFD47JZvve5WRkmqd2v4mYwrAdpGfoDMxcDrwJNPygDR3ZD/l8NZwjHVdNY3sn5Pb/NaJM0KZRQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711066613; c=relaxed/simple;
+	bh=s0fTYAUDj/35DDZOayIB5Y3o8+uYXIHgCJ4fQA9magg=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=Udw7pFYjr0+zcBq+KTyETGyTliFDpoPIrQ5aD66CCNx2ljcj9erqiKw4puXuJXBwjvHRLJhT5KSUdaKQM2DK5w41xoJCYWDLNa8uyvpLGq3uBhc4mvZR3ynJ5i4UQufkj1lbgyLX6fPcFYoLQUPezU1X9DXg7wtEgfOe+F/fNWY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YlL0RuO8; arc=fail smtp.client-ip=40.107.223.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Sy0hoW8jW8Hew4KC+XpwsBswIFP5kNB9kPuI0OVK6eqZ1XsMwLsIz989fwOz57WiW+pYB37cZ8/CbgTIudkn1iaeJnM/Qpd1xX/Ocv5Jm79zHDMbtgLkHC3sAa8tqgqwdxmMvFYOeyq0nD4fclHIL45Hrmh7k04+O0gP1EVRh9VRwVWntc2NlMPnnrGpPiAO17AKlGBxLN/ynXq4/XX/WJdLe8lsLMrnrmaoyvVjyVaCrMeBFjm/baIG3asmJLlp/8ZoIqUDZp3r30XqL2dVtu1VJsWJUpkVRFXVQuK7L1x0ME6xKVtKvi8MoVPNsgHEGUWx4YmFaMgGm4V8in6Ahw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=peSGCTNN4d0KB/c9m5SUtHQjzyZArizj4p6xYWRHa0Q=;
+ b=LJ7cwYB/aMFdB1Rf7Pq2MesP81+bxXR3WRbslmR7acwYiNI+POXh7stLNgLckbaCSyYsE0wJ9rGkzcCGWxNuLl2AySdcQo2/ySC7Yj0vryn+Edv6R6cB9+Vw0BlcN/jlZXnUJBqVdPmLsTxv8l17Hv3H6bnaS6SEZ/xh5ZxEzlF5G1F80SvdHOPE2Ilqe5ys7QFi5SV6/m4t94Mu70qOES0rw7LvqTyzpvrOV+gIgJYc9A/YuySC74TZzWcfZV7Dca212mCznvSK6mKEaxMtUfSnktQ7gAJMB+mpPoSpFeU834sEpeGowPFgix+KxCXjShRmQaZ6UbP5KANIE47EtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=peSGCTNN4d0KB/c9m5SUtHQjzyZArizj4p6xYWRHa0Q=;
+ b=YlL0RuO88VRiCDxGc5gMjZ1r09Lus1kgj9AI/WPVq6aK0aiidJ1vHJ0oYSNTHqPDPU/z7QijdM+1eKPWLii8drQPKz8x7zkKEsHqtzAnYqBlwaHUslkZUy83pVCBAyCRsdA7zEgRnYzanr/JfgJjP3rrA8PRE2X6dgz7wSugNwlu3XqRwAB6NUfNsTF3JNZG22VyVxvHyQA449yQijeZIuDyyti81hdoXhBNeYYT/hTiEb/SXsWkPiPkmTZvhi1qTCzWVYoE4d0LU0XC6cpx/BfuRcOjFGzjr3tdYPQnGuJxFK2hY3Szjyp3VUqt1xyqGZMC67sHv/tEhJiogu7oCQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ SJ0PR12MB6709.namprd12.prod.outlook.com (2603:10b6:a03:44a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.28; Fri, 22 Mar
+ 2024 00:16:47 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::c5de:1187:4532:de80]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::c5de:1187:4532:de80%7]) with mapi id 15.20.7386.025; Fri, 22 Mar 2024
+ 00:16:46 +0000
+References: <87ttlhmj9p.fsf@nvdebian.thelocal>
+ <65f148866bc56_a9b42947@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <87y1ad776c.fsf@nvdebian.thelocal> <878r2c6t99.fsf@nvdebian.thelocal>
+ <65fbcdaf2042f_aa222948c@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-mm@kvack.org, jhubbard@nvidia.com, rcampbell@nvidia.com,
+ willy@infradead.org, jgg@nvidia.com, david@fromorbit.com,
+ linux-fsdevel@vger.kernel.org, jack@suse.cz, djwong@kernel.org,
+ hch@lst.de, david@redhat.com, ruansy.fnst@fujitsu.com
+Subject: Re: ZONE_DEVICE refcounting
+Date: Fri, 22 Mar 2024 11:01:25 +1100
+In-reply-to: <65fbcdaf2042f_aa222948c@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Message-ID: <874jcz6ryu.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SYYP282CA0004.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:b4::14) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIANLG/GUC/x3MwQqDMAwA0F+RnA1oLQr+ytjB1WQGpJakikP8d
- 8uO7/IuMFIhg7G6QOkQky0WtHUFYZnil1DmYnCN803nWrSsMaQfsuHCltbd8JxyVgzo6cPUD+x DP0MJkhLL+c9f7/t+AA3Ex21sAAAA
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1711064790; l=3560;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=GBp117Rw9ou09bC9vlczg3WmwjqjNQ4BV42hmHgOAGM=; b=7eliCTZlOhrbirCoWB7C+nw7yQJFi+JZPUgfpGG0LQzr9Zvxig7qUqczMOmzK471p6Oo4nxWE
- EZp5nx2evR3AhFnqMtbF8E/P5IbKnWIgUu8C3qx4/qaT1i9Z166dvrZ
-X-Mailer: b4 0.12.3
-Message-ID: <20240321-strncpy-fs-hfsplus-xattr-c-v1-1-0c6385a10251@google.com>
-Subject: [PATCH] hfsplus: refactor copy_name to not use strncpy
-From: Justin Stitt <justinstitt@google.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SJ0PR12MB6709:EE_
+X-MS-Office365-Filtering-Correlation-Id: d8604ae2-d875-4444-4791-08dc4a055c38
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	UkSXcPV4Fne6yRtIao7SKjaoKMtFsl+/TDZB708bcZdLMosLno1lGzb/4R4LVEIAqw6gOluYPbhOuR3YVfcyH8q2DWlhFb5fho5mgg+CgZn1zz/J3NpvdpQ4OZXwb/ZZbEBImXXCIIUl/dEN4Boo9onrXrVuey7Z7ehN3FNf/QE+QIPEA2r4Ah5yIGqHYnNI6gLAXT8gNtj1KGRcoR7OWK86lr05SP13tXKimyVgrTE8RpOmVKf35q2ckA1UpFWHjis5rfufv8qRJl874VEzO32XH0XWiWcZ9ZG7U1S0Mm/5uksDPXJMIq4oXG9LKA2Yj0OFTnQGT/Wv3v1hQnor8AhR/zdq7Fn3GEmiBky4AmwioIpyMvTah+DjIX8H6IHOhvvkAUcJUaTYrb4IX7HVuPFeMi9l2wfbXBbAHMaAmNzxB0hdyycnyZY9ITWMPrVOx3QYIBOB9I8oq48GOVS5+xmFj2jXQYCzujF3GPv+41X13EHENiQUR8aLH5bQh3H1oKDL2NvWgAO3/Foymhde6+qhfwlWXsnOTq9MPtkeRi1R4xkSmU8KIkJR7ylb6eC5aVrniIk06ovvPKRuedNemIxAcijybeVi22wOxPlGHyJ4ocau5pk5ft5EnLwFh3md/e1kFRjf2Iw0crYzGgojaXtVi/5SfcUuMGwu0m5rJ58=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(7416005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2u79CtH6XNZ3ZRsKbjX/ct8UgofZ1U/RI+CVfLB/XvtKtuq1P88dNbCHxuei?=
+ =?us-ascii?Q?Z8ADyAioqBf5Nz7k74fxeKqv74ceWM2JzAfaVyuxSHXI7y8HkmP/8j1gMOUY?=
+ =?us-ascii?Q?isJ6JJckoFY/37gUCbIUGs+cHThUF2KzGztCQ51mHcf2/CJ7dSUbRWpEPkLs?=
+ =?us-ascii?Q?NKGmtb85hJZU84GGykLCR5cOT4mdHdLoihseWb5ExeX8B3AyU074qDa9Bu5h?=
+ =?us-ascii?Q?t111VGjJlw9xSm1nbQsL+mKTG7n6xlh4H8h7gdKiI1imyFm1K4OLu6bWOKvC?=
+ =?us-ascii?Q?YY3FG3pMtysZ2X6wfFaPS8BPScXsqjJgtCNXCld/z+WzWvdaBv6IKXSq17MM?=
+ =?us-ascii?Q?LWW9msQ14TevXbs06nE/SEl7fIq+mjFfOK1VwcIBjc6bTMpTxqGkbVtPq560?=
+ =?us-ascii?Q?a3y0UrqZBhyn/krnewuDa1ABWLUF8Xl7K57fk0r3wR2UTP6XpSipWZkNCBDN?=
+ =?us-ascii?Q?llUzAw18gFOyVgL0xP5qWiGHPEEwzlP1PgQX8O/wzfTsVrRwh0Opvp8D5JkL?=
+ =?us-ascii?Q?8fuwIUSLxdpLJKkTflmgEnhiu38RWgOFXdr7VneVgPtyBBfrp9ruXkxP7CVF?=
+ =?us-ascii?Q?QjGj3NsVDORTJWs7+LrZIUZHTRIXtXPDMNea1Zn0hk3mM2a+/XSlDWTztlaW?=
+ =?us-ascii?Q?ROC1NIKX23M8i8NENqiFnfrcOxs0cnM6j83Q8WXNwte6WX3ogw1h26z09t8K?=
+ =?us-ascii?Q?EyI4jnEZ9MniBn67LhCb+W9yLPSYazdOtURh4yXPD0r5BOHF+BsxANI7dPpo?=
+ =?us-ascii?Q?L2oEWub3MfbKs112dlXHUwvDtX+qbD5KInRcqarTsQyQMEeq6PQRj5YAAdrq?=
+ =?us-ascii?Q?DK8L6Lm4WnyZfNa6oyzw/nN6rnSy/RMThLRpfJ0AplEjqnNCilplxzolwuF7?=
+ =?us-ascii?Q?mngVdRquiXiniz9sME5zRY4MVvT8F8zrR/AZHMi0mJxRuy8e8NehOascg+jF?=
+ =?us-ascii?Q?4J8QmXDFfrXE7dGXWm6ow1CWFHLH4KxqZZMi9MN95tTmgMaozkuBK+ay2Mwb?=
+ =?us-ascii?Q?A+8GQD3Gq6y398i30u+dcNZSqMSYeZciabhsJ7csh301wnnGie1ho1Ill6id?=
+ =?us-ascii?Q?jxV+KtUq45wTKJK+fMwz+6ZWmX1/Eif5yGmDIxJXzibRmAHlU56+960k9UID?=
+ =?us-ascii?Q?JpKK4WLwU/qMXeAy6uvyz6oqHVyAeHOxOWtNDuF6ztzyuMvr98LyXcU4Cdmn?=
+ =?us-ascii?Q?rIufVlNe3jy98LpnG+U7coPHUTQY/R6w1b3flqGFDHJPMKO7mhnYmMR4+3L9?=
+ =?us-ascii?Q?kg89LpR4FQgPlGqoZ+SEUlN68XpsqKWAAlcAvQpjYqGHONEU3LbA5J64qU4Y?=
+ =?us-ascii?Q?luLlSqSuvZKLEQGyRIFNZvmrDtGzJ/ZtjFbTPVpq4k0jg4B7o0xycmMItDRV?=
+ =?us-ascii?Q?ezfAWjSoWA+Myzt0Ridfk7nvbAmaG2y9L6ojwjal0dyCACLdR439t9WUr5B1?=
+ =?us-ascii?Q?NYtJ1vORlkmj89Y65F5DyneK///RaX75AbXbKTS4SiDbstPTP+Lw40S22TCs?=
+ =?us-ascii?Q?Vc204uLcNw5xPexDRBmbWB27yLu7/g4OjwqCbumA2UUEJ9IR96XdpS0gvYeL?=
+ =?us-ascii?Q?pbQuEQhptdROxygXwUGfW6F3YIfNRLgF7lORrPAc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8604ae2-d875-4444-4791-08dc4a055c38
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2024 00:16:46.4078
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8Nu0Q4o9sNDXPEgnLlfg0zlQURgBxEVs8ahkCjKJSfefjCvEzLkrXxuApowgMyxfhL+9jtnf5YQ9UqqxTo0f0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6709
 
-strncpy() is deprecated with NUL-terminated destination strings [1].
 
-The copy_name() method does a lot of manual buffer manipulation to
-eventually arrive with its desired string. If we don't know the
-namespace this attr has or belongs to we want to prepend "osx." to our
-final string. Following this, we're copying xattr_name and doing a
-bizarre manual NUL-byte assignment with a memset where n=1.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-Really, we can use some more obvious string APIs to acomplish this,
-improving readability and security. Following the same control flow as
-before: if we don't know the namespace let's use scnprintf() to form our
-prefix + xattr_name pairing (while NUL-terminating too!). Otherwise, use
-strscpy() to return the number of bytes copied into our buffer.
+> Alistair Popple wrote:
+>> 
+>> Alistair Popple <apopple@nvidia.com> writes:
+>> 
+>> > Dan Williams <dan.j.williams@intel.com> writes:
+>> >
+>> >> Alistair Popple wrote:
+>> >
+>> > I also noticed folio_anon() is not safe to call on a FS DAX page due to
+>> > sharing PAGE_MAPPING_DAX_SHARED.
+>> 
+>> Also it feels like I could be missing something here. AFAICT the
+>> page->mapping and page->index fields can't actually be used outside of
+>> fs/dax because they are overloaded for the shared case. Therefore
+>> setting/clearing them could be skipped and the only reason for doing so
+>> is so dax_associate_entry()/dax_disassociate_entry() can generate
+>> warnings which should never occur anyway. So all that code is
+>> functionally unnecessary.
+>
+> What do you mean outside of fs/dax, do you literally mean outside of
+> fs/dax.c, or the devdax case (i.e. dax without fs-entanglements)?
 
-Note that strscpy() _can_ return -E2BIG but this is already handled by
-all callsites:
+Only the cases fs dax pages might need it. ie. Not devdax which I
+haven't looked at closely yet.
 
-In both hfsplus_listxattr_finder_info() and hfsplus_listxattr(), ret is
-already type ssize_t so we can change the return type of copy_name() to
-match (understanding that scnprintf()'s return type is different yet
-fully representable by ssize_t). Furthermore, listxattr() in fs/xattr.c
-is well-equipped to handle a potential -E2BIG return result from
-vfs_listxattr():
-|	ssize_t error;
-...
-|	error = vfs_listxattr(d, klist, size);
-|	if (error > 0) {
-|		if (size && copy_to_user(list, klist, error))
-|			error = -EFAULT;
-|	} else if (error == -ERANGE && size >= XATTR_LIST_MAX) {
-|		/* The file system tried to returned a list bigger
-|			than XATTR_LIST_MAX bytes. Not possible. */
-|		error = -E2BIG;
-|	}
-... our error can potentially already be -E2BIG, skipping this else-if
-and ending up at the same state as other errors.
+> Memory
+> failure needs ->mapping and ->index to rmap dax pages. See
+> mm/memory-failure.c::__add_to_kill() and
+> mm/memory-failure.c::__add_to_kill_fsdax() where that latter one is for
+> cases where the fs needs has signed up to react to dax page failure.
 
-This whole copy_name() function could really be a one-line with some
-ternary statements embedded into a scnprintf() arg-list but I've opted
-to maintain some semblance of readability.
+How does that work for reflink/shared pages which overwrite
+page->mapping and page->index? Eg. in __add_to_kill() if *p is a shared fs
+dax page then p->mapping == PAGE_MAPPING_DAX_SHARED and
+page_address_in_vma(vma, p) will probably crash.
 
-Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
-Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
-Link: https://github.com/KSPP/linux/issues/90
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Justin Stitt <justinstitt@google.com>
----
----
- fs/hfsplus/xattr.c | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
-
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 9c9ff6b8c6f7..00351f566e9f 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -400,22 +400,13 @@ static int name_len(const char *xattr_name, int xattr_name_len)
- 	return len;
- }
- 
--static int copy_name(char *buffer, const char *xattr_name, int name_len)
-+static ssize_t copy_name(char *buffer, const char *xattr_name, int name_len)
- {
--	int len = name_len;
--	int offset = 0;
--
--	if (!is_known_namespace(xattr_name)) {
--		memcpy(buffer, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN);
--		offset += XATTR_MAC_OSX_PREFIX_LEN;
--		len += XATTR_MAC_OSX_PREFIX_LEN;
--	}
--
--	strncpy(buffer + offset, xattr_name, name_len);
--	memset(buffer + offset + name_len, 0, 1);
--	len += 1;
-+	if (!is_known_namespace(xattr_name))
-+		return scnprintf(buffer, name_len + XATTR_MAC_OSX_PREFIX_LEN,
-+				 "%s%s", XATTR_MAC_OSX_PREFIX, xattr_name);
- 
--	return len;
-+	return strscpy(buffer, xattr_name, name_len + 1);
- }
- 
- int hfsplus_setxattr(struct inode *inode, const char *name,
-
----
-base-commit: 241590e5a1d1b6219c8d3045c167f2fbcc076cbb
-change-id: 20240321-strncpy-fs-hfsplus-xattr-c-4ebfe67f4c6d
-
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
-
+Thanks.
 
