@@ -1,135 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-15110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69E18870D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 17:28:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA78F8870EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 17:31:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 901352868E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 16:28:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132561C2365A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 16:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F8C59147;
-	Fri, 22 Mar 2024 16:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C25F5CDF2;
+	Fri, 22 Mar 2024 16:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="in9L/Owx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB6C5674E;
-	Fri, 22 Mar 2024 16:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26065D468;
+	Fri, 22 Mar 2024 16:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711124905; cv=none; b=L+h1BtTih1G3mWydMe0dtg0HFDuRiDTpZPEbyIftFGRf+btUWNqYam4hfDQhKrkhBH6wU26nQKQh5Yzn5DjtrnnNUhJZrDIBIPnfoCRldbHQXiHNSYC4pZA3sKTskEYZTJHJSCFk8CZ8gtRQ+/EWXHQF4/tv6Nf9ZDg27hDghQo=
+	t=1711125105; cv=none; b=JYHU+JSjugnr/rD8Lt6Ud6SvZQIEpQUC7LEs2aT+i05MAWo7efl0O4sHCr7ppjIdL5hJs0sW6e2s4oCuZE21W7Mac+sBoKDpHcWR3SGKj6xtcEFzwXqt4xvOnuxq1IZbT8Sx/MHfT7In6JnNQ9/TNKVDdtV5wv3Kl2mfV7ZPY74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711124905; c=relaxed/simple;
-	bh=lRVx4ECF5hJdd5NdS5SDeG9HLw77wx4Jl92htBH1/iY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rn7WxdXTvYhM9a3Yai+9cSfKKYRrPxt0BKWxraInIPsIPEARhxVHA4N5SHHEJmz1a0EAe+Yu9j3Lv2SrZvKve1jlE7+3KDASSkky65YuufqeAt7brAM2ub24qwS2vkMsq94XljrT83IBIf6wJc/lGNf5xvbzNO7xtvJstBaSnhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DC7EFEC;
-	Fri, 22 Mar 2024 09:28:56 -0700 (PDT)
-Received: from PF4Q20KV.arm.com (PF4Q20KV.arm.com [10.1.26.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A2D2B3F762;
-	Fri, 22 Mar 2024 09:28:19 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>
-Cc: Leo Yan <leo.yan@arm.com>,
-	Al Grant <al.grant@arm.com>,
-	James Clark <james.clark@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] exec: Don't disable perf events for setuid root executables
-Date: Fri, 22 Mar 2024 16:27:59 +0000
-Message-Id: <20240322162759.714141-1-leo.yan@arm.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1711125105; c=relaxed/simple;
+	bh=8LJhxXCQD+wqtKoDkgpPXOqd45cr4Vf2KPCBquLBOjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m51hG468eSifZ5qKyD2lPxylsd+GR+8qimLKm8+6C/D/e+BH2tg0nImlGNv1KsMFwC/FOaedeEt44J/o8R1iqMjyqSEtQFmtP6G9ANqr16Kg4uLXO2JptZ+OmXAoZssawByqqtfcR6VJ7+tYTtPXa6uJkcgLo40SmVfM9lUM7nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=in9L/Owx; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1711125098;
+	bh=8LJhxXCQD+wqtKoDkgpPXOqd45cr4Vf2KPCBquLBOjo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=in9L/OwxVLBeWYnkf8nGXvSJmViCoHW5+lzOtfOpf/PwuJqIUlGjqh1QGOQeYRzEf
+	 e8RtkjcnB5s8/M5RNO5OAeJkcLiraaToEUIwlJ4kmYdrDaY1e8GY40M3AOHAU9Um4K
+	 JbzvoN3HXduDPwuqh3jAVV7/k/IC3UeVMiRF4TQA=
+Date: Fri, 22 Mar 2024 17:31:37 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] sysctl: treewide: prepare ctl_table_root for
+ ctl_table constification
+Message-ID: <e4de72dc-8dad-4c57-85b3-174272bd1530@t-8ch.de>
+References: <CGME20240315181141eucas1p267385cd08f77d720e58b038be06d292e@eucas1p2.samsung.com>
+ <20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net>
+ <20240322124709.w5ntjwb5tbumltoy@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240322124709.w5ntjwb5tbumltoy@joelS2.panther.com>
 
-Al Grant reported that the 'perf record' command terminates abnormally
-after setting the setuid bit for the executable. To reproduce this
-issue, an additional condition is the binary file is owned by the root
-user but is running under a non-privileged user. The logs below provide
-details:
+On 2024-03-22 13:47:09+0100, Joel Granados wrote:
+> On Fri, Mar 15, 2024 at 07:11:29PM +0100, Thomas Weißschuh wrote:
+> > The two patches were previously submitted on their own.
+> > In commit f9436a5d0497
+> > ("sysctl: allow to change limits for posix messages queues")
+> > a code dependency was introduced between the two callbacks.
+> > This code dependency results in a dependency between the two patches, so
+> > now they are submitted as a series.
+> > 
+> > The series is meant to be merged via the sysctl tree.
+> > 
+> > There is an upcoming series that will introduce a new implementation of
+> > .set_ownership and .permissions which would need to be adapted [0].
+> > 
+> > These changes ere originally part of the sysctl-const series [1].
+> > To slim down that series and reduce the message load on other
+> > maintainers to a minimum, the patches are split out.
+> > 
+> > [0] https://lore.kernel.org/lkml/20240222160915.315255-1-aleksandr.mikhalitsyn@canonical.com/
+> > [1] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-2-7a5060b11447@weissschuh.net/
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> > Changes in v3:
+> > - Drop now spurious argument in fs/proc/proc_sysctl.c
+> > - Rebase on next-20240315
+> > - Incorporate permissions patch.
+> > - Link to v2 (ownership): https://lore.kernel.org/r/20240223-sysctl-const-ownership-v2-1-f9ba1795aaf2@weissschuh.net
+> > - Link to v1 (permissions): https://lore.kernel.org/r/20231226-sysctl-const-permissions-v1-1-5cd3c91f6299@weissschuh.net
+> > 
+> > Changes in v2:
+> > - Rework commit message
+> > - Mention potential conflict with upcoming per-namespace kernel.pid_max
+> >   sysctl
+> > - Delete unused parameter table
+> > - Link to v1: https://lore.kernel.org/r/20231226-sysctl-const-ownership-v1-1-d78fdd744ba1@weissschuh.net
+> > 
+> > ---
+> > Thomas Weißschuh (2):
+> >       sysctl: treewide: drop unused argument ctl_table_root::set_ownership(table)
+> >       sysctl: treewide: constify argument ctl_table_root::permissions(table)
+> > 
+> >  fs/proc/proc_sysctl.c  | 2 +-
+> >  include/linux/sysctl.h | 3 +--
+> >  ipc/ipc_sysctl.c       | 5 ++---
+> >  ipc/mq_sysctl.c        | 5 ++---
+> >  kernel/ucount.c        | 2 +-
+> >  net/sysctl_net.c       | 3 +--
+> >  6 files changed, 8 insertions(+), 12 deletions(-)
+> > ---
+> > base-commit: a1e7655b77e3391b58ac28256789ea45b1685abb
+> > change-id: 20231226-sysctl-const-ownership-ff75e67b4eea
+> > 
+> > Best regards,
+> > -- 
+> > Thomas Weißschuh <linux@weissschuh.net>
+> > 
+> 
+> Will put this to test and then try to rebase it to 6.9-rc1 once it comes
+> out.
 
-    $ sudo chmod u+s perf
-    $ ls -l perf
-    -rwsr-xr-x 1 root root 13147600 Mar 17 14:56 perf
-    $ ./perf record -e cycles -- uname
-    [ perf record: Woken up 1 times to write data ]
-    [ perf record: Captured and wrote 0.003 MB perf.data (7 samples) ]
-    Terminated
+Thanks!
+Your changes to the commit messages look good.
 
-Comparatively, the same command can succeed if the setuid bit is cleared
-for the perf executable:
+For my other changes I'm planning to resubmit all of them during the
+weekend or next week.
 
-    $ sudo chmod u-s perf
-    $ ls -l perf
-    -rwxr-xr-x 1 root root 13147600 Mar 17 14:56 perf
-    $ ./perf record -e cycles -- uname
-    Linux
-    [ perf record: Woken up 1 times to write data ]
-    [ perf record: Captured and wrote 0.003 MB perf.data (13 samples) ]
 
-After setting the setuid bit, the problem arises when begin_new_exec()
-disables the perf events upon detecting that a regular user is executing
-a setuid binary, which notifies the perf process. Consequently, the perf
-tool in user space exits from polling and sends a SIGTERM signal to kill
-child processes and itself. This explains why we observe the tool being
-'Terminated'.
-
-With the setuid bit a non-privileged user can obtain the same
-permissions as the executable's owner. If the owner has the privileged
-permission for accessing perf events, the kernel should keep enabling
-perf events. For this reason, this patch adds a condition checking for
-perfmon_capable() to not disabling perf events when the user has
-privileged permission yet.
-
-Note the begin_new_exec() function only checks permission for the
-per-thread mode in a perf session. This is why we don't need to add any
-extra checking for the global knob 'perf_event_paranoid', as it always
-grants permission for per-thread performance monitoring for unprivileged
-users (see Documentation/admin-guide/perf-security.rst).
-
-Signed-off-by: Leo Yan <leo.yan@arm.com>
-Cc: Al Grant <al.grant@arm.com>
-Cc: James Clark <james.clark@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
----
- fs/exec.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index ff6f26671cfc..5ded01190278 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1401,7 +1401,8 @@ int begin_new_exec(struct linux_binprm * bprm)
- 	 * wait until new credentials are committed
- 	 * by commit_creds() above
- 	 */
--	if (get_dumpable(me->mm) != SUID_DUMP_USER)
-+	if ((get_dumpable(me->mm) != SUID_DUMP_USER) &&
-+	    !perfmon_capable())
- 		perf_event_exit_task(me);
- 	/*
- 	 * cred_guard_mutex must be held at least to this point to prevent
--- 
-2.39.2
-
+Thomas
 
