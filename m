@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-15136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DC48875D0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Mar 2024 00:39:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7118875D3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Mar 2024 00:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6047B2237F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 23:39:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B068B214D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 23:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143A6839E6;
-	Fri, 22 Mar 2024 23:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB06D83CA3;
+	Fri, 22 Mar 2024 23:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AdlOkbtS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CfeeYC1l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC80382C67;
-	Fri, 22 Mar 2024 23:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7621082D87;
+	Fri, 22 Mar 2024 23:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711150752; cv=none; b=kqQZsrwkT4PELYPf0GbbHNcu9lvd7OaHAlTXUjOk2Aw7HUGyrAJM5eV1iaF5Lw7LW9CgLdmTmeDrzAKWkXLQEumKP6xQthJV28M50cKh8JTAho031ABSd9rwS9pOMyYdvkP0tzXQbmLSarMesiYvHOUkhAPJbwjhA5jiGP+X3oo=
+	t=1711150754; cv=none; b=utdqi50FSCY7+zWwLQjpshNnJQgnS/t8DqYz0zSuAHP+Lrd8QYbEG4QElSMtWIa58/go6IqOVD08nrrRS9+oDn2W66y38IBkFmFlYs8Ef7GMkAbIAtCtrXKZOapePeNR8jg1zTHacSEw4V6IUdQGJVpLuNSz0MjMHZ7S38jML6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711150752; c=relaxed/simple;
-	bh=e6OXAQgc0jxh60UP+AT0xAtl7n5YPlqj9xRF3ydf1Vc=;
+	s=arc-20240116; t=1711150754; c=relaxed/simple;
+	bh=/NBZoIhK1CtetohxAcHUpmJsAGut/+ZBo1KxCgXiFn0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tI9z1mp27vYc9MDfTrjEBkbXCor2ks/jeqDIlpiLVMeD7175F1xNocTBM0f964hXVZ3nhHUqeXcnhvrPMaSJI1xVGmxuBozdlOlN07c+4ht0FI6D4UVgJ/hC4qsk3FhWnJ7QrqeFpuZhB+eVpRNR4U5xdgiQEb7OuWebn9VciQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AdlOkbtS; arc=none smtp.client-ip=209.85.219.44
+	 MIME-Version; b=aRH2mBmkL/SD6/q9w4zT4zTatNm7gc8SVrxuWv2k9uCGBo45QgZVtG4w8cBTyNXjuYLjlQbM2Az+uUd40tYMu1hXJOSFMpwNtxiAD8thoioJBN/4NwB+Kw1q1vPBTBzvve3xRogUEZquF5rj4VJKChpdLHST2C3WfaFZZMxDSxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CfeeYC1l; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6928a5e2479so17058406d6.0;
-        Fri, 22 Mar 2024 16:39:10 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-789e2bf854dso165694885a.3;
+        Fri, 22 Mar 2024 16:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711150749; x=1711755549; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1711150751; x=1711755551; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=CMsNwHviwi/fcgZpZ6hEf/r33sW+GCsEsvaN1TfyKyc=;
-        b=AdlOkbtS9FlzFTs+QhsReJzLVn4+/Vb1xWKnOmnQkzYQjKUlggmFFfXzjD8SCSaPSp
-         sF7wGOFtwrirgftUWJguIj+y4szt5Qgp5IGGZIGkG8RokGxGVn8mOvez7Ae9zsd9u8tJ
-         14LIGDiH7JVpMrnge/4wPmTyKwefn50tuTlWeS94GYokENJwrkXda6CPLAG5vSo6HQ4q
-         oIxmuE4UWln7ij9ZeVTZNPyLoAkmln2ywqQMsVCvE4dRM3nUQot8KrGZIOd8pbHsx31k
-         tqpjzyWMiC1aAVvbj5+DZN1IIUt5I7iHxNr93A5asY/0aIEsZivx4zewi8xhaUlgyTU5
-         KdEA==
+        bh=/F96a8YELf+Ur72xFbmW7ZJSVd3YYBPROndGsfciYiA=;
+        b=CfeeYC1ldfisFBhiiBFKBGYcJQ0/SaYb52QkB5VrW3FFBNoe5ZQKWpb+cgVuN9SMpq
+         cbqBCAjNBoI3FwtE6l6YPqS5kn8J8ZoZvIFw5/GyH9Y1H11FmYRrFn1+6buzBOk4/pQO
+         Cn87gJU4kQo3hszZ50B7kkZLp808EJNTXXCCzSbc28WAW7Oz+vq6YodsbAHOifrKftR/
+         7OteAVDnIvwrK2iQqflVbZD8y91HU07d0zXX6VkEgTQ9lOl3KVJ87bCt7+kqkIRpu7zg
+         +3bkdFf2ioFf05ycKsn18QLeV4FJJxVEsm/gSFa3JTKeHZxSMcqH+pAVb9kEd7468y/K
+         M41Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711150749; x=1711755549;
+        d=1e100.net; s=20230601; t=1711150751; x=1711755551;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CMsNwHviwi/fcgZpZ6hEf/r33sW+GCsEsvaN1TfyKyc=;
-        b=ENtbfylMSZBVSbpdM841TmvmwGjiWjQ4SuQOf87TY2Pk8VmiHVg1XL6XPU7TZLOXqU
-         luoHJGOV+RlXKd9fZCaLhCets7J9G0OwlU1Qxbmqo3dJtejO/Zb520DFB2DGQmGE9RHR
-         OjAe2CLtfLRsFa/3qxi6wTyHnAx8QYl/V2Gs0A9Buapo3KT9/Yl6PkW/szrdmOV1kkBa
-         QydxcS/+088avNoDTUdgVPZtcfRa/kSo18xves0ggqoSb23+PZLU5To8RZ1aC0eTz8BF
-         RF5EhqPKl0sO2sBuVpDab8Rbkjl0own729SYAEqhk/R4J3RRvNBoflnvHUwVR7+SR3vk
-         /mPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWf65NoB0W3pF+jfMXDT3EtNlWXukYixo6BNOwKVZp2Msj09T4x12HX8gxV2ojqdbl9YgG7Zlrzikj7MVjqaPCG8pNST93irDGsIl6aAmcV19SaROBnlxC/09sv8biVPRWbTohBizECi5yH7YIlE9PCLopHUxSy7bGMxmIvrBkz2dbDNLtTHSc=
-X-Gm-Message-State: AOJu0Yzi6vQwbXwsxfR45YqrVa+b9NCXe2LxsMb6FXOh4KoBVCx4BFRJ
-	hKLwKR2sk01u738orOWG1oI44eVWavZZuPdEx+CwGslhrykuXhAg
-X-Google-Smtp-Source: AGHT+IHZ+NuIYKcs3sHrLWDGnicqM7RhyyK/vWc/KL6bEIvyatErGn/eE74OoTUwRrPjNflkhje49A==
-X-Received: by 2002:ad4:5ba9:0:b0:696:1ffd:a32c with SMTP id 9-20020ad45ba9000000b006961ffda32cmr714687qvq.31.1711150749485;
-        Fri, 22 Mar 2024 16:39:09 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id mx17-20020a0562142e1100b0069679a663e6sm105329qvb.21.2024.03.22.16.39.08
+        bh=/F96a8YELf+Ur72xFbmW7ZJSVd3YYBPROndGsfciYiA=;
+        b=xQIXwRH73q9uOKtNjh5MU5TzOwaqQiMmeez4E81KeQoVger+sZqxPhiv0ONKC5IiIV
+         wEPzntEalC0Q5vcs6+v5UgUVKPZgEt667h1Kvo8XO2aJRCQMtdSK1eF1WC233GGVOVCI
+         XSHVHA6w1RCVsXE7sfmPX+UvzMf2sccP10aCOs58jxuZBcE0wUiYnRikRsDfV1fGx1nq
+         wf0m4lGXCbI9MQ/sMgDtAMpYZFoiUo0ZsPBEyby+A90j9ox5ZR3eLeZvJgL5LMo2XO2M
+         Bijcbm2a01rcErPgRVPjSwDzd/0DEOOZLLF+lW+GJHn/mdlN/e321nqZfFzavSrFEbCy
+         vs/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXnS+JIkTfNrC1askxqs+HFDSs2CKGjQlwhIH51ZGce+/H2syh248ZQFb/MAX+ZSfqnT92RrV955bMuREgIeEVOtDIcHUnOZOPszezCDeYozYYzTZ/23UZEVU+BB48AqaexZzLweJZLKpLFbTQjKKLmDC8KOwbDEOKlpSnVqN5tB9xvF1vvIE=
+X-Gm-Message-State: AOJu0YwIKj9aRGPO0bHrUjb3dU2TlOcLNYDSOCoxL4VL59knndzBqO5k
+	2eOPyPucOUx3FadPEHKlJwYY0c9jl1OaIn9BtZpwJWAABNw4UwHl
+X-Google-Smtp-Source: AGHT+IFnhi7P+k/MkZCWrllad1of00qh69/aWCRn2Ch4hXaX74mXDXtJDyquVhXLLDKOeEFx3KqBoA==
+X-Received: by 2002:a05:620a:40d3:b0:78a:3fb1:bade with SMTP id g19-20020a05620a40d300b0078a3fb1bademr1295433qko.1.1711150751298;
+        Fri, 22 Mar 2024 16:39:11 -0700 (PDT)
+Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
+        by smtp.gmail.com with ESMTPSA id cz52-20020a05620a36f400b0078a43996ab7sm267608qkb.1.2024.03.22.16.39.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Mar 2024 16:39:09 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 2EC3C1200032;
-	Fri, 22 Mar 2024 19:39:08 -0400 (EDT)
+        Fri, 22 Mar 2024 16:39:10 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailauth.nyi.internal (Postfix) with ESMTP id E694E27C005B;
+	Fri, 22 Mar 2024 19:39:09 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Fri, 22 Mar 2024 19:39:08 -0400
-X-ME-Sender: <xms:mxb-ZXTbYVqlom28rQt9TnMLbujWEI8AGMPI5M2G22WRIJ5GDiGN3w>
-    <xme:mxb-ZYzEupW_TSonIS8-cka8D4hKKfqIchGklOxjHyBQKab_c3uSpvvwCVKOIYB-o
-    0rEF9RKlVrFEdFW3Q>
-X-ME-Received: <xmr:mxb-Zc3Pix3SYs8RDObCLVOZlFqBSe5IvT0aypgBpFNIzOwbOWqnfFT1tgH9Xw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddtfedgudefucetufdoteggodetrfdotf
+  by compute5.internal (MEProxy); Fri, 22 Mar 2024 19:39:09 -0400
+X-ME-Sender: <xms:nRb-ZYRx2_-58_-z6-x6S4sKXkjHp-GCdlJ3teS6u0_eGxEhEFihvA>
+    <xme:nRb-ZVwJEn5X_3CSF2VBVtDTWyJWMQOj41t5nU4Y3tVws8i5M3p0M0znwaIFaCWeJ
+    RuL49VwOqImuy1r3Q>
+X-ME-Received: <xmr:nRb-ZV38RkJQ6TRlO3PiWGx7flW84bXCLPP2yLPAhZeGxyNf_GQM_kKb9P0jLw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddtfedgudegucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepuehoqhhu
@@ -86,14 +86,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddtfedgudefucetufdoteggod
     gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
     gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
     igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:mxb-ZXAUGc00uvVSj6JP0u6CxcdlKt75QhCkZVZ26jmeWQ9mz1tuyQ>
-    <xmx:mxb-ZQgYjg8xkF4RHCcfqgDedHzoHJo2KpTqJsUK3J0FTSlP52-Evw>
-    <xmx:mxb-ZboHXuECLo9v63UMdwqhJcBb_sy4xm-LJZ1wI1CvwxZQ7BumKw>
-    <xmx:mxb-Zbj3D06k_UrcI3Y5poH5iaZbMQwdIEpWqXHaPX3B5VwLSHFhWA>
-    <xmx:nBb-ZdAzgXOgVGyLecu6swYaPqY3_ELlnR8gNtETKrEgam36BUKbCZIaA-GS-jFH>
+X-ME-Proxy: <xmx:nRb-ZcBtlI8Nx1uTVZ20QbfmnwHmh_PUZHvw3mBA8IwuxKJSFpfnIQ>
+    <xmx:nRb-ZRj_EGYVPZNkd1RT736QMkUg-qVTRaNTocfxpK8xNaNZvrYkVg>
+    <xmx:nRb-ZYrJcjVRZwzY0KBDqLp6P-pKhcf5ywqbm4nI0O16gmgmwapI6Q>
+    <xmx:nRb-ZUhdx8xp4T0whLRk9kcTd4nFRTE3UQe3vJyjzA_kfVUbwdWnRA>
+    <xmx:nRb-ZSBpBm8jvDtFtL4qCfbPT8guZsv0eGkZwMfREFkeARBMIPrlq2SrgRg>
 Feedback-ID: iad51458e:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 22 Mar 2024 19:39:06 -0400 (EDT)
+ 22 Mar 2024 19:39:08 -0400 (EDT)
 From: Boqun Feng <boqun.feng@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -124,9 +124,9 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
 	"H. Peter Anvin" <hpa@zytor.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
 	linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org
-Subject: [WIP 1/3] rust: Introduce atomic module
-Date: Fri, 22 Mar 2024 16:38:36 -0700
-Message-ID: <20240322233838.868874-2-boqun.feng@gmail.com>
+Subject: [WIP 2/3] rust: atomic: Add ARM64 fetch_add_relaxed()
+Date: Fri, 22 Mar 2024 16:38:37 -0700
+Message-ID: <20240322233838.868874-3-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240322233838.868874-1-boqun.feng@gmail.com>
 References: <20240322233838.868874-1-boqun.feng@gmail.com>
@@ -138,147 +138,60 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Although Rust has its own memory ordering model (in the standard C++
-memory model), having two models is not wise to start with: it increases
-the difficulty for correctness reasoning. Since we use Linux Kernel
-Memory Model for C code in kernel, it makes sense that Rust code also
-uses LKMM, therefore introduce a module to provide LKMM atomic
-primitives.
-
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- rust/kernel/sync.rs                 |  1 +
- rust/kernel/sync/atomic.rs          | 42 ++++++++++++++++++++++++++++
- rust/kernel/sync/atomic/arch.rs     |  9 ++++++
- rust/kernel/sync/atomic/arch/x86.rs | 43 +++++++++++++++++++++++++++++
- 4 files changed, 95 insertions(+)
- create mode 100644 rust/kernel/sync/atomic.rs
- create mode 100644 rust/kernel/sync/atomic/arch.rs
- create mode 100644 rust/kernel/sync/atomic/arch/x86.rs
+ rust/kernel/sync/atomic/arch.rs       |  6 ++++++
+ rust/kernel/sync/atomic/arch/arm64.rs | 26 ++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 rust/kernel/sync/atomic/arch/arm64.rs
 
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index c983f63fd56e..dc2d26712f26 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -8,6 +8,7 @@
- use crate::types::Opaque;
- 
- mod arc;
-+pub mod atomic;
- mod condvar;
- pub mod lock;
- mod locked_by;
-diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
-new file mode 100644
-index 000000000000..280040705fb0
---- /dev/null
-+++ b/rust/kernel/sync/atomic.rs
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Atomic and barrier primitives.
-+//!
-+//! These primitives should have the same semantics as their C counterparts, for precise definitions
-+//! of the semantics, please refer to tools/memory-model. Note that Linux Kernel Memory
-+//! (Consistency) Model is the only model for Rust development in kernel right now, please avoid to
-+//! use Rust's own atomics.
-+
-+use core::cell::UnsafeCell;
-+
-+mod arch;
-+
-+/// An atomic `i32`.
-+pub struct AtomicI32(pub(crate) UnsafeCell<i32>);
-+
-+impl AtomicI32 {
-+    /// Creates a new atomic value.
-+    pub fn new(v: i32) -> Self {
-+        Self(UnsafeCell::new(v))
-+    }
-+
-+    /// Adds `i` to the atomic variable with RELAXED ordering.
-+    ///
-+    /// Returns the old value before the add.
-+    ///
-+    /// # Example
-+    ///
-+    /// ```rust
-+    /// use kernel::sync::atomic::AtomicI32;
-+    ///
-+    /// let a = AtomicI32::new(0);
-+    /// let b = a.fetch_add_relaxed(1);
-+    /// let c = a.fetch_add_relaxed(2);
-+    ///
-+    /// assert_eq!(b, 0);
-+    /// assert_eq!(c, 1);
-+    /// ```
-+    pub fn fetch_add_relaxed(&self, i: i32) -> i32 {
-+        arch::i32_fetch_add_relaxed(&self.0, i)
-+    }
-+}
 diff --git a/rust/kernel/sync/atomic/arch.rs b/rust/kernel/sync/atomic/arch.rs
-new file mode 100644
-index 000000000000..3eb5a103a69a
---- /dev/null
+index 3eb5a103a69a..fc280f229237 100644
+--- a/rust/kernel/sync/atomic/arch.rs
 +++ b/rust/kernel/sync/atomic/arch.rs
-@@ -0,0 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -5,5 +5,11 @@
+ #[cfg(CONFIG_X86)]
+ pub(crate) use x86::*;
+ 
++#[cfg(CONFIG_ARM64)]
++pub(crate) use arm64::*;
 +
-+//! Architectural atomic and barrier primitives.
+ #[cfg(CONFIG_X86)]
+ pub(crate) mod x86;
 +
-+#[cfg(CONFIG_X86)]
-+pub(crate) use x86::*;
-+
-+#[cfg(CONFIG_X86)]
-+pub(crate) mod x86;
-diff --git a/rust/kernel/sync/atomic/arch/x86.rs b/rust/kernel/sync/atomic/arch/x86.rs
++#[cfg(CONFIG_ARM64)]
++pub(crate) mod arm64;
+diff --git a/rust/kernel/sync/atomic/arch/arm64.rs b/rust/kernel/sync/atomic/arch/arm64.rs
 new file mode 100644
-index 000000000000..2d715f740b22
+index 000000000000..438f37cf7df6
 --- /dev/null
-+++ b/rust/kernel/sync/atomic/arch/x86.rs
-@@ -0,0 +1,43 @@
++++ b/rust/kernel/sync/atomic/arch/arm64.rs
+@@ -0,0 +1,26 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+//! x86 implementation for atomic and barrier primitives.
++//! ARM64 implementation for atomic and barrier primitives.
 +
 +use core::arch::asm;
 +use core::cell::UnsafeCell;
 +
-+/// Generates an instruction with "lock" prefix.
-+#[cfg(CONFIG_SMP)]
-+macro_rules! lock_instr {
-+    ($i:literal) => { concat!("lock; ", $i) }
-+}
-+
-+#[cfg(not(CONFIG_SMP))]
-+macro_rules! lock_instr {
-+    ($i:literal) => { $i }
-+}
-+
-+/// Atomically exchanges and adds `i` to `*v` in a wrapping way.
-+///
-+/// Return the old value before the addition.
-+///
-+/// # Safety
-+///
-+/// The caller need to make sure `v` points to a valid `i32`.
-+unsafe fn i32_xadd(v: *mut i32, mut i: i32) -> i32 {
-+    // SAFETY: Per function safety requirement, the address of `v` is valid for "xadd".
++pub(crate) fn i32_fetch_add_relaxed(v: &UnsafeCell<i32>, i: i32) -> i32 {
++    let mut result;
 +    unsafe {
 +        asm!(
-+            lock_instr!("xaddl {i:e}, ({v})"),
-+            i = inout(reg) i,
-+            v = in(reg) v,
-+            options(att_syntax, preserves_flags),
-+        );
++            "prfm    pstl1strm, [{v}]",
++            "1: ldxr {result:w}, [{v}]",
++            "add {val:w}, {result:w}, {i:w}",
++            "stxr {tmp:w}, {val:w}, [{v}]",
++            "cbnz {tmp:w}, 1b",
++            result = out(reg) result,
++            tmp = out(reg) _,
++            val = out(reg) _,
++            v = in(reg) v.get(),
++            i = in(reg) i,
++        )
 +    }
 +
-+    i
-+}
-+
-+pub(crate) fn i32_fetch_add_relaxed(v: &UnsafeCell<i32>, i: i32) -> i32 {
-+    // SAFETY: `v.get()` points to a valid `i32`.
-+    unsafe { i32_xadd(v.get(), i) }
++    result
 +}
 -- 
 2.44.0
