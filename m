@@ -1,208 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-15045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB078864E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 02:48:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA30886532
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 03:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F66128396D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 01:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C621F245C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 02:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B0D138E;
-	Fri, 22 Mar 2024 01:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463B06138;
+	Fri, 22 Mar 2024 02:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Df6szJWA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0DKNwIPQ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Df6szJWA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0DKNwIPQ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OjhrExiM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A7D10E3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 01:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC81138C;
+	Fri, 22 Mar 2024 02:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711072074; cv=none; b=V1hxLVoOiToMcYkn7SPG0+mHFhg6GNtnRDJzWKwoUQvpnoRrgFPExIYE6xTSKCrm1ypRSM3mby6NfVh5f7F95XtvIwJCtf66aNuw5hLD78/GcYlp2F9tLZ4Mla6ukj29DL3D3FC/NBkAgLTOldMJ6Ot5yYcSE2A6kAwHf6B6RLE=
+	t=1711074923; cv=none; b=pM8cpO2WBon2l42DLQL3XyA+Pa88fRs6QKY/ZDej9dh+oItjkJDXToF6bx/IQStl5lw6a3Bu0XvJzqX91VU6oMy8lPJMwsiUvXBtOyvyEdZFLK84HkEyJwMsvhQEQfTV3xoR1tbcxHoqhOpKZ/1GfolFPAi80yH521wI3ssJ/eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711072074; c=relaxed/simple;
-	bh=RSytXHPUrUpVCXUexDd+NhSJrC25Y2MvJilI1pY4/6s=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=qvBHsHMldDT5LhZdCeEvFDWIYqXIGlC5h77So5GV+kIjSclTh2oGVyjOC9b3aTIjNWxSpstAb2dXrTvGyObpS+j3kfcsDz6xE1fsKnCbg9R+52a0kKvkZmlP2mNuAUN2B1HXSPNRtiRFAozo59jvcyS/whmiVjqRwWyGrnBIsrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Df6szJWA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0DKNwIPQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Df6szJWA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0DKNwIPQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C39D37DFF;
-	Fri, 22 Mar 2024 01:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1711072070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qB5h1cXTtBf6CkxlPpVgndnqzX6pa6NxOnKxnnwpgIQ=;
-	b=Df6szJWA4yMVMZXXaZKpkO+RDk4HiHOW6p6036TJcmuxfZxc+4N3HO605+iDXusIA0JeAq
-	FajK1eVzkk0k68ZmQyM75+qUNegxJWX9n6LDaUuuNZ4jLgDx4NM9mtOAJyKXFkgXyTIsFZ
-	HTi2uVe6yJIcTMUAVOkWFgCtrXWqCAM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1711072070;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qB5h1cXTtBf6CkxlPpVgndnqzX6pa6NxOnKxnnwpgIQ=;
-	b=0DKNwIPQWBjFSjGgBFfQDYwn+HRVOUocDDR2vfX34H/fqKBbCivDSBb9P5K6CH3kYgrPBA
-	4Pqr/djfAixVdKBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1711072070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qB5h1cXTtBf6CkxlPpVgndnqzX6pa6NxOnKxnnwpgIQ=;
-	b=Df6szJWA4yMVMZXXaZKpkO+RDk4HiHOW6p6036TJcmuxfZxc+4N3HO605+iDXusIA0JeAq
-	FajK1eVzkk0k68ZmQyM75+qUNegxJWX9n6LDaUuuNZ4jLgDx4NM9mtOAJyKXFkgXyTIsFZ
-	HTi2uVe6yJIcTMUAVOkWFgCtrXWqCAM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1711072070;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qB5h1cXTtBf6CkxlPpVgndnqzX6pa6NxOnKxnnwpgIQ=;
-	b=0DKNwIPQWBjFSjGgBFfQDYwn+HRVOUocDDR2vfX34H/fqKBbCivDSBb9P5K6CH3kYgrPBA
-	4Pqr/djfAixVdKBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 15349137D4;
-	Fri, 22 Mar 2024 01:47:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /D6+KkHj/GUHPQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Fri, 22 Mar 2024 01:47:45 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1711074923; c=relaxed/simple;
+	bh=nB0QDypS2n9Nsn2FH/sqpS/3Wr6EHtgvGrCrJlul2Ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VOh1zCicwjSGxw2Ukhqa2J1nmhRxVxiAYvY9XsK8Gfy+PGPeVEdJCr42VJAt6C5G4FkAOx5wZPyK/fPe/WlYIDzE2GHWoOPcloSVDt+JVMDYzrnvEMJrn8CFeeUduPSsV1zsD4qwYKAJW6TZJo9RSTQkffQusRLwZToirdRJOUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OjhrExiM; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vjik512rUaEVFltmTlo5uRjlbgnvPI+ZtoSp05483d0=; b=OjhrExiMqssHwc8+LlNq3DD18s
+	mTVDyk0TCBA6cxhek+tL+ArRd4M/9JX7+lNeAdOnVTIKfHJ3o3YLKoe/6LvV7vrLkcVq9vWEtx73p
+	jfttgTZH45cPRqm6VL6fbLyQX7+/YkbFdTTULoXkgNYq2EWTlvgSfhHNagQsW8/qKS3zgsFDO6pWQ
+	Vzdt0DYPMXRNG1ClUBrSVfiAUhq6r33cO+ef/5tZI//FUw0q01fuD+yTExOd3TxW1P7nuMjNl4kV2
+	xZ15KlvHwgyF817PurOyZNLc5O8Jm/1LFy7PqEYKgl27Tto+Pf9hxI3kBwwze4+2cyvbfn8gfD5Pb
+	7X+ege8w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rnUkV-00EDhl-1k;
+	Fri, 22 Mar 2024 02:35:15 +0000
+Date: Fri, 22 Mar 2024 02:35:15 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Christian Brauner <brauner@kernel.org>, ntfs3@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC] ntfs3: remove atomic_open
+Message-ID: <20240322023515.GK538574@ZenIV>
+References: <20240318-ntfs3-atomic-open-v1-1-57afed48fe86@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Dan Carpenter" <dan.carpenter@linaro.org>
-Cc: "Kent Overstreet" <kent.overstreet@linux.dev>,
- "Dave Chinner" <david@fromorbit.com>, "Matthew Wilcox" <willy@infradead.org>,
- "Amir Goldstein" <amir73il@gmail.com>, paulmck@kernel.org,
- lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
- "linux-fsdevel" <linux-fsdevel@vger.kernel.org>, "Jan Kara" <jack@suse.cz>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
-In-reply-to: <22363d0a-71db-4ba7-b5e1-8bb515811d1c@moroto.mountain>
-References: <c6321dd1-ec0e-4fed-87cc-50d297d2be30@paulmck-laptop>,
- <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>,
- <Zd-LljY351NCrrCP@casper.infradead.org>,
- <170925937840.24797.2167230750547152404@noble.neil.brown.name>,
- <ZeFtrzN34cLhjjHK@dread.disaster.area>,
- <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>,
- <170933687972.24797.18406852925615624495@noble.neil.brown.name>,
- <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>,
- <170950594802.24797.17587526251920021411@noble.neil.brown.name>,
- <22363d0a-71db-4ba7-b5e1-8bb515811d1c@moroto.mountain>
-Date: Fri, 22 Mar 2024 12:47:42 +1100
-Message-id: <171107206231.13576.16550758513765438714@noble.neil.brown.name>
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Df6szJWA;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0DKNwIPQ
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[10];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FREEMAIL_CC(0.00)[linux.dev,fromorbit.com,infradead.org,gmail.com,kernel.org,lists.linux-foundation.org,kvack.org,vger.kernel.org,suse.cz];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Score: -4.51
-X-Rspamd-Queue-Id: 2C39D37DFF
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240318-ntfs3-atomic-open-v1-1-57afed48fe86@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, 21 Mar 2024, Dan Carpenter wrote:
-> On Mon, Mar 04, 2024 at 09:45:48AM +1100, NeilBrown wrote:
-> > I have in mind a more explicit statement of how much waiting is
-> > acceptable.
-> > 
-> > GFP_NOFAIL - wait indefinitely
+On Mon, Mar 18, 2024 at 02:28:50PM -0400, Jeff Layton wrote:
+> atomic_open is an optional VFS operation, and is primarily for network
+> filesystems. NFS (for instance) can just send an open call for the last
+> path component rather than doing a lookup and then having to follow that
+> up with an open when it doesn't have a dentry in cache.
 > 
-> Why not call it GFP_SMALL?  It wouldn't fail.  The size would have to be
-> less than some limit.  If the size was too large, that would trigger a
-> WARN_ON_ONCE().
+> ntfs3 is a local filesystem however, and its atomic_open just does a
+> typical lookup + open, but in a convoluted way. atomic_open will also
+> make directory leases more difficult to implement on the filesystem.
 
-I would be happy with GFP_SMALL.  It would never return NULL but might
-block indefinitely.  It would (as you say) WARN (maybe ONCE) if the size
-was considered "COSTLY" and would possibly BUG if the size exceeded
-KMALLOC_MAX_SIZE. 
+FWIW, I'm not sure they are actually doing it correctly, but in any
+case - there's no reason whatsoever for implementing that sucker on
+a local filesystem.  Kill it.
 
-> 
-> I obviously understand that this duplicates the information in the size
-> parameter but the point is that GFP_SMALL allocations have been
-> reviewed, updated, and don't have error handling code.
+> -	inode = ntfs_create_inode(file_mnt_idmap(file), dir, dentry, uni,
+> -				  mode, 0, NULL, 0, fnd);
+> -	err = IS_ERR(inode) ? PTR_ERR(inode) :
+> -			      finish_open(file, dentry, ntfs_file_open);
 
-We are on the same page here.
+... incidentally, this ntfs_create_inode() thing should not have the
+calling conventions it has.
 
-> 
-> We'd keep GFP_KERNEL which would keep the existing behavior.  (Which is
-> that it can sleep and it can fail).  I think that maps to GFP_RETRY but
-> GFP_RETRY is an uglier name.
+It does create inode, all right - and attaches it to dentry.  Then it
+proceeds to return the pointer to that new inode, with dentry->d_inode
+being the only thing that keeps it alive.  That would be defendable
+(we are holding a reference to dentry and nobody else could turn
+it negative under us), but... look at the callers.
 
-Can it fail though?  I know it is allowed to, but does it happen?
+4 out of 5 are of the same form:
+	inode = ntfs_create_inode(....);
+	return IS_ERR(inode) ? PTR_ERR(inode) : 0;
 
-I think I would prefer the normal approach for allocations that are (or
-might be) too large for GFP_SMALL was to *not* risk triggering oom.
-So I'd rather we didn't have GFP_KERNEL (which I think does have that
-risk) and instead (maybe) GFP_LARGE which sleeps but will return NULL
-when an OOM condition is looming.
+The fifth one is the crap above and there we *also* never look at the
+return value downstream of that IS_ERR(inode) ? PTR_ERR(inode) : ...;
 
-So we only get OOM for GFP_SMALL allocations (because not failing
-simplifies the code), and where it is explicitly requested - like for
-user-space allocations and probably for file cache allocations.
+Which is to say, all callers of that thing don't give a damn about
+the pointer per se - they only want to know if it's ERR_PTR(-E...)
+or not and if it is, what error had been wrapped into that ERR_PTR().
 
-But I think that keeping it simple and only adding GFP_SMALL as we have
-discussed would be a big step in the right direction and we don't need
-to complicate it with other ideas.
+Simply make it return 0 or -E... - if some future caller really
+wants a reference to struct inode that had been created, they can
+bloody well pick it from dentry->d_inode.
 
-Thanks,
-NeilBrown
+In any case, this caller should simply die - ->atomic_open() instance
+does not buy *anything* here.
 
-
-> 
-> People could still use __GFP_NOFAIL for larger allocations.
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> 
-
+Acked-by: Al Viro <viro@zeniv.linux.org.uk>
 
