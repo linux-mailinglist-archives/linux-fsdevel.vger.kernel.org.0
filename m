@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-15096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9A7886F7F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 16:10:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9FC886F82
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 16:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BCF288EC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 15:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25A81C2237F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 15:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331DF481B3;
-	Fri, 22 Mar 2024 15:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56B651C23;
+	Fri, 22 Mar 2024 15:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XUp8BC3H"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QBIX9Kdh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F4950249
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 15:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCB14F897
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 15:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711120233; cv=none; b=VkWPpPd3f5kEU9W8z+1VeRXsWh2qWfkfaiKi4AFgYvlBVJpf7xd2z+Pyv7Y5gfL+SOwqgcNngchvXlN9KxJ4ILmg8uHikdz0pJUAGJXm7CORGw6HRIfRtCU9l+5xVt/IkDXv2Y4RMsKKcC9231QthQWiYHWkr9bX1I6RBfzPSpk=
+	t=1711120235; cv=none; b=GuSL5ylKelK655g430ni1hm6mTYLdZZNSQk1QjV+CcD93M7gXuFOq0oG/yFZjAacPXts1Yz6G9RC+zU3EhWiNeHwaaL6SbDFpqWC2sy6I1fHN72jVBJTSOaUi3K6tI/5cIK6KCSZF2DmWub8KqI75XXxm2o6RKqM16S95ehucAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711120233; c=relaxed/simple;
-	bh=Jdal8IKILETTWsojG5pDXheVDyQeR66rUe3RKtiUO/I=;
+	s=arc-20240116; t=1711120235; c=relaxed/simple;
+	bh=HzbXoAKj1O2Axw/b80Ha7oRq747pOMPBeo9PHNh77I4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gJBZxIA76A2KSaARLTUmSZk/jmPO0de5Eyrk/JToOoR9OCyrppM3mPvC9IG1xC6uz5k+EL1fTQ6zw84TmXint70RlO9kJoV9zbagtYjLNueGAPd6i5lXDF+JRoi9Nf8miI2dDM2t7FIH4jEqLd8kcG/ogilslEK8mEnHKO9qqlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XUp8BC3H; arc=none smtp.client-ip=209.85.218.74
+	 To:Cc:Content-Type; b=AH+ijm6L5nQiqMoWjrPUpBLuYfIm/eOBiESgN4YSj1XC4Rn1a8F71Yx/W4itEElB3dHYXHoVd8ay2DWpuYIYqssyDVpWorQ8jdhrmX3ez+zzxG51hPoLXIC0tN/2L6/oL3/OUG/X8As9VuFD4SgoyhMdHJ84eDBCUxrf92wTSMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QBIX9Kdh; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a473555ec33so15899966b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 08:10:31 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61100c749afso40104367b3.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 08:10:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711120230; x=1711725030; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1711120232; x=1711725032; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qobHCRmb6cXg9TV4MF/PMa0SUI8jbJIaeOrvT83hbEo=;
-        b=XUp8BC3HyI+X9G3Y6wmrELtKlRUSyz08pivvHaDOfGD2C/flbs4owpPajkuuLQpRHV
-         i85XE1H7y4OuJ2i87dlIvULW5Vt5l0XNrQgHK39l9tIwAijzrxUQ680wDevN7GHamMEh
-         6yhDl2ec7BRv2n/Y9KMCiFtmrqWCn35Kn9LvKxsVrLwxZAsbVr6CiZAOch2mSHV9svn5
-         5Z54Fi3VXIFoSwyHEsV0pd/lbKAbGp21gwgWjVumFg5o2C5sgyr0Cz2UEs99Bw3m7cBR
-         Zlcn0EydxpmeIfeChIiEtdUEBmZwbhByV8W+bwbOKnVUiKOWRHY+Z6yXeUDf9n6oGExo
-         DvOw==
+        bh=WK2iXIrfoq6Fz3IO0C5eVV32OG2FmcAULBO6/ELXu64=;
+        b=QBIX9KdhgFRcPZhX55SAdjX0AX0CPPlQvQVqd6h1lrE4b3MQl9FAF9nZQL/GR/UOhQ
+         xLQd6NwBxLrx4fFtNz9ww6JBKlphMFJFVR2rIYc6DVWsxW+DMpCQeAclB3BwRiEVJrZz
+         8wCzefRfhIuxgUT6jdimzude9g567dfxoXjJy7zvq0f7N+R0/NGMGWakZiWlO6yNM/oI
+         jYLh59rAQwMKc9vvaDu83ZFnnnf3CCIF+fy9nSZQKNpbM4+EQMBtemJLouapwcKJfkg6
+         eLr1p6+HwBAtu+B12ZHjmKfJ0TthxdmgaWjuVmk8YZc5mNo0uPtkvjUDCKPtnBA8XCei
+         3GHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711120230; x=1711725030;
+        d=1e100.net; s=20230601; t=1711120232; x=1711725032;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=qobHCRmb6cXg9TV4MF/PMa0SUI8jbJIaeOrvT83hbEo=;
-        b=fn8yPWAsfX1NonjaMbwYY1k5KgUFVqDzI6QAtAsIRfHM7J+yPtu4m+PP/YFx3eMEN9
-         iWT9R5LCOzd+b30hN83v8zf4raAGHry20Kupd3zN2o40kx/Xpa1nTEheKzLV8lpB6Cin
-         R9rOLcRmSy28ZUlxsgUnUSBQMM0gaMYW+tvSNT268C5nS5FvpUonTsexuh6m2B1zVZq7
-         5zvDVU5pWJI0Uh5ScABp07FNI2E2cPPDvuNkvqoo13qPIJjM0NQoWtZwD2rEGOPen+Oi
-         TqJM0AsEj2qM2Zbp+LpuBu8lCvh4kKEvnmbK8vnsX0mIGcCBbv+6wB+kjmShGvYjDcCO
-         HLgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWonZtpWonLpY1dlBaSBut7jPJh2wTxvLELlP+Fz7+dsilSYwVto0plDzXnVt2GfeTZjilIMtLpTIbSdQnJndwgtR3A03qZWVUPcVTx0w==
-X-Gm-Message-State: AOJu0YyF68qILdGFbNn7X94hfe8n5oNNgkUzBY6sQcyPHU53L0FliFKF
-	KIlwpItB6cZfxo3sIQPkhWv2yd1mAV0XOmKWmsP0aeszs0lHQm5VIfmORGXcgPNw1nc7brvVg3p
-	uZw==
-X-Google-Smtp-Source: AGHT+IGKONiWvctPFgaXTgXqq9xxHFVwjT49Su0OSiBo8MX70YapJ4UVh8nInJsSxxBNK14VBxvLp0hWONE=
+        bh=WK2iXIrfoq6Fz3IO0C5eVV32OG2FmcAULBO6/ELXu64=;
+        b=Y145LUPSwq4gsYliHbbZGXoIKw/za6+vA+KxNUbBiANB+Mt6vVdmua26u7FRICsTbF
+         gVFeJxMn/RL5qEURzv4EkocwAjnZog4AV6ZLpsIWbbxNPn1FTvJBK38REHBqJdIW2MDR
+         s44rcmBbUV5PgP8FkRlngWsV5GoyfGC4sMN7E93bO3BiZJoTVlo2Y1eK6VIMjA2B3Pt7
+         Mh2VpmH2pfGxccPnK57zPMABkaiUMc1phukPrQ4gT/j3xbOQT6RC52ylx0MA+JroVnk0
+         oF7UNwA4K5pGrfRb4WDPv6ISxec1zouEFyobuW/p/2khF9evKrbnCjPANSSt9dLhhHkG
+         gLKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmf6DHLC4xe79xDGOnM1MElodXb9l726NTFwZrI2UA0QXrSG/BxA0WGwnkZkMfm9fpm0ZscNdC8P/tsX7jBSQ5Xn7HdjICH3O9HohWVw==
+X-Gm-Message-State: AOJu0YxSvyoYiJnJRLTDYafkWgiIilDQQrJrZ7DOY+ptbDxwLCfhyyu7
+	nsp/7Qz+BKKzvKyulc4Da88fH7xEXU9Zb/Y4njuyfE+ykOVejWQLytZWAUwsEh10DWtdhGm9q44
+	ltA==
+X-Google-Smtp-Source: AGHT+IE/skOcqhwr+ZTj08fMTLjErgP9sxDZA9kKjc1KHwbR43EKvperDiZY9OJDs96Y5WSECFwxnpc28bg=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a17:906:a1d0:b0:a47:1499:6de0 with SMTP id
- bx16-20020a170906a1d000b00a4714996de0mr0ejb.7.1711120230227; Fri, 22 Mar 2024
- 08:10:30 -0700 (PDT)
-Date: Fri, 22 Mar 2024 15:09:57 +0000
+ (user=gnoack job=sendgmr) by 2002:a81:9c0d:0:b0:611:2ae5:2ea7 with SMTP id
+ m13-20020a819c0d000000b006112ae52ea7mr151930ywa.6.1711120232760; Fri, 22 Mar
+ 2024 08:10:32 -0700 (PDT)
+Date: Fri, 22 Mar 2024 15:09:58 +0000
 In-Reply-To: <20240322151002.3653639-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,8 +76,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240322151002.3653639-1-gnoack@google.com>
 X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
-Message-ID: <20240322151002.3653639-5-gnoack@google.com>
-Subject: [PATCH v11 4/9] selftests/landlock: Test IOCTL with memfds
+Message-ID: <20240322151002.3653639-6-gnoack@google.com>
+Subject: [PATCH v11 5/9] selftests/landlock: Test ioctl(2) and ftruncate(2)
+ with open(O_PATH)
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -89,68 +90,69 @@ Cc: Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Because the LANDLOCK_ACCESS_FS_IOCTL_DEV right is associated with the
-opened file during open(2), IOCTLs are supposed to work with files
-which are opened by means other than open(2).
+ioctl(2) and ftruncate(2) operations on files opened with O_PATH
+should always return EBADF, independent of the
+LANDLOCK_ACCESS_FS_TRUNCATE and LANDLOCK_ACCESS_FS_IOCTL_DEV access
+rights in that file hierarchy.
 
+Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 36 ++++++++++++++++------
- 1 file changed, 27 insertions(+), 9 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
 ftests/landlock/fs_test.c
-index 22229fe3e403..32a77757462b 100644
+index 32a77757462b..dde4673e2df4 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -3850,20 +3850,38 @@ static int test_fs_ioc_getflags_ioctl(int fd)
+@@ -3893,6 +3893,46 @@ static int test_fionread_ioctl(int fd)
  	return 0;
  }
 =20
--TEST(memfd_ftruncate)
-+TEST(memfd_ftruncate_and_ioctl)
- {
--	int fd;
--
--	fd =3D memfd_create("name", MFD_CLOEXEC);
--	ASSERT_LE(0, fd);
++TEST_F_FORK(layout1, o_path_ftruncate_and_ioctl)
++{
 +	const struct landlock_ruleset_attr attr =3D {
 +		.handled_access_fs =3D ACCESS_ALL,
 +	};
-+	int ruleset_fd, fd, i;
-=20
- 	/*
--	 * Checks that ftruncate is permitted on file descriptors that are
--	 * created in ways other than open(2).
-+	 * We exercise the same test both with and without Landlock enabled, to
-+	 * ensure that it behaves the same in both cases.
- 	 */
--	EXPECT_EQ(0, test_ftruncate(fd));
-+	for (i =3D 0; i < 2; i++) {
-+		/* Creates a new memfd. */
-+		fd =3D memfd_create("name", MFD_CLOEXEC);
-+		ASSERT_LE(0, fd);
-=20
--	ASSERT_EQ(0, close(fd));
-+		/*
-+		 * Checks that operations associated with the opened file
-+		 * (ftruncate, ioctl) are permitted on file descriptors that are
-+		 * created in ways other than open(2).
-+		 */
-+		EXPECT_EQ(0, test_ftruncate(fd));
-+		EXPECT_EQ(0, test_fs_ioc_getflags_ioctl(fd));
++	int ruleset_fd, fd;
 +
-+		ASSERT_EQ(0, close(fd));
++	/*
++	 * Checks that for files opened with O_PATH, both ioctl(2) and
++	 * ftruncate(2) yield EBADF, as it is documented in open(2) for the
++	 * O_PATH flag.
++	 */
++	fd =3D open(dir_s1d1, O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, fd);
 +
-+		/* Enables Landlock. */
-+		ruleset_fd =3D landlock_create_ruleset(&attr, sizeof(attr), 0);
-+		ASSERT_LE(0, ruleset_fd);
-+		enforce_ruleset(_metadata, ruleset_fd);
-+		ASSERT_EQ(0, close(ruleset_fd));
-+	}
- }
++	EXPECT_EQ(EBADF, test_ftruncate(fd));
++	EXPECT_EQ(EBADF, test_fs_ioc_getflags_ioctl(fd));
++
++	ASSERT_EQ(0, close(fd));
++
++	/* Enables Landlock. */
++	ruleset_fd =3D landlock_create_ruleset(&attr, sizeof(attr), 0);
++	ASSERT_LE(0, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd);
++	ASSERT_EQ(0, close(ruleset_fd));
++
++	/*
++	 * Checks that after enabling Landlock,
++	 * - the file can still be opened with O_PATH
++	 * - both ioctl and truncate still yield EBADF (not EACCES).
++	 */
++	fd =3D open(dir_s1d1, O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++
++	EXPECT_EQ(EBADF, test_ftruncate(fd));
++	EXPECT_EQ(EBADF, test_fs_ioc_getflags_ioctl(fd));
++
++	ASSERT_EQ(0, close(fd));
++}
++
+ /* clang-format off */
+ FIXTURE(ioctl) {};
 =20
- static int test_fionread_ioctl(int fd)
 --=20
 2.44.0.396.g6e790dbe36-goog
 
