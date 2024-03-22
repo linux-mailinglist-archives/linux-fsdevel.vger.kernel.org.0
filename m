@@ -1,135 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-15041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27F9886467
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 01:37:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8AE88649A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 02:20:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E901C21FED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 00:37:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82406B21C87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 01:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA1910E3;
-	Fri, 22 Mar 2024 00:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF771392;
+	Fri, 22 Mar 2024 01:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KGNqJUXn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2FGRtdY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345C8376;
-	Fri, 22 Mar 2024 00:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E27165C;
+	Fri, 22 Mar 2024 01:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711067846; cv=none; b=UQpNZ0WwBwtslOS3taS/wZi7gqC5KHQLnlfOvipmm3vVq9ZLUAiKNSULzwc7InlZekET2mjoXMzMKfauvFZ/bjnRqzlaHqEWEXg9+GX88nbtKDOHtKiFYMczKyyPEH3/4lSMjtYHk35fVGWpSvLNB8S/DK9iZWli2ZejfVychzc=
+	t=1711070444; cv=none; b=R8Treyr+DQwRKVGZFvYiIeiocr0b4nEFb4jJygfEPCEaHx3GhEjzahQ0i8I8s/TpvgK+RDA5SfP1fcOU/RFnxQlSb+y1SzznHbqGjfQbBQFdqpIxd2QppJi+gW1fCezhvp22Spf1vCezEyg38rBhJHHDtqxNaOFjgVzlqMked/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711067846; c=relaxed/simple;
-	bh=lM2DDRDjWwjPRlQ67f2eeArWymy0wFusj65S5rDPcz4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=nGBxUi/RSXy+nbiGDbPbIts/P1VTg6C644FHuR4+pQuv1bnC1sasIWqYX5W632BKEebH0v1pEuqXuA88MYCsmE4B68t2mbMCcMiwY84ug63HJZvspQw49gMnXEMVPbShnbgO38PDy6ck2tYUHBtqRogc+zI1HJb/a+PQ4RYBNGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KGNqJUXn; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1711067838; bh=r4IFZTlDc4FNVIlNbrQKRPaN2yiQZzGfTw9TeJnxUWw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=KGNqJUXn8airvafwLPfVSg0b+B1dTwq1TNNJ0TGjEcnbXV13Ua1iMmV9ioOUZRT3e
-	 FUzxMX3+T+bXIfX4eUGgwOwpPOR6Gv2qsEq2nnsCx64fpqGsUHZsOI9P59OYaUZe6U
-	 rdfu63E2qY+Xrc2Uk68ciBHZO1rm4tawtYguLHtI=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrszc5-1.qq.com (NewEsmtp) with SMTP
-	id 7C7A2048; Fri, 22 Mar 2024 08:31:07 +0800
-X-QQ-mid: xmsmtpt1711067467tnw9eno2d
-Message-ID: <tencent_C54679498DEEC46ED40C8BA7F386D352D606@qq.com>
-X-QQ-XMAILINFO: Ncpnai4dwVTHorlzyzhU77ytbUvOBdgC2WZW0ZSVeR1eDCJaBUV5De7sHzroXJ
-	 NCPMnm1AImZ2qDwB048DoGdiKZWDPG7UwJNMeJTRqBiFFe9+mT/FkbgPGffkFy5g6d2L8ejVJY7s
-	 sJOdcjJgnJEst4eVPRO3C6oiMhSRck2qfpnQtomsvRBa6kQpftLQLT9lRVL83jqVHiBCEEU4QKSD
-	 7cewjJ5aJZZOrU/46m35tW55De4/L1MKcxc4qNHZfabPNUC/jwRX5ZK2EGYm5zS/Bnj0kUpVY72X
-	 DjvcUqv068/keICLAuGFpcbqrpnbEKiKHt8nAbdo9YKPPqG4zEBOJGssqd/8NjnRALQugVVdSuuy
-	 uI1JGCqgGYJCKAc9UR4TkAuNzmHJDKggo/EH8AvOQWcBc/JPK7qpjg5W061GSyAtWJnjNu79j2Xg
-	 s30ghUxM9qJ9Z8qh4vV97A0GbIneN2rsau22iVu5jmVU7p3YaRDH2dEHdjjLTNMh4Mu6+LKQaHPk
-	 WNmCsY5sEVwmuchDhGbdy4VD/jl6DhK5YHXoIrwztmVCadbPgUc2Oe/jJWYWHHsTrs3DR5pHKL5x
-	 0lDtvTVc2ZIY0+v5TUymVCHYSxtj5z0yKejIcgcN1zp7yTgks6SZfjNGMSyrBlNAAiz/sDP4oszF
-	 mXr+/hLa6VQUvwC4XJFvGn+GE97UV39j/IrY5Wou1VHCipab1JWwhtHrPLJe6dMMiWH1H008j7rv
-	 5kh8cGys0k7oWeHqT5fznYJ+MHCxo4b6DrCvaRuWKxfTZW617oG/ln36jHim2ZhQHSNTKsidSmFh
-	 pPVEE9pa/inLDfxGyfzycVlLnNtce/tl4VR3Rssgd5gR8aKfyztSUV1AxV1Mm5SXsspGNWO5L29C
-	 eI+cF7dP7DfSiLKYQuOPFG9+MxqH8MUZnW7H2qrJSkrTJBsrcCcQuzMKZ6owYVo8K+/N/pfLXL
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+65f53dd6a0f7ad64c0cb@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] fs/hfsplus: fix uninit-value in hfs_find_1st_rec_by_cnid
-Date: Fri, 22 Mar 2024 08:31:08 +0800
-X-OQ-MSGID: <20240322003107.2672796-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000008fd9bc061428179e@google.com>
-References: <0000000000008fd9bc061428179e@google.com>
+	s=arc-20240116; t=1711070444; c=relaxed/simple;
+	bh=UezMJ6BGmvAPNOKpgIMHTqQ5+LXCECHMe/jAQaIzMD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uj6yIPhnzdXAgLObS535FetYsxtRf3gINwuMz2JmDAvSnjzHJCBv3W74Kk7qeV/l2rhXBbfodwg0HdOVQClU8dOSA2F2xggFMh4Txls8EsPdfKZ7GszxKZwgbv202sbrYY82gpMKtlZvwWGepDNqY3dng6/puRyJZMMQaXdmiOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N2FGRtdY; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-78822e21a9dso89395885a.2;
+        Thu, 21 Mar 2024 18:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711070442; x=1711675242; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AEhwZNosta1NIlXJ9RmSmF3Nm4p1XcIBc8mpun1aEN4=;
+        b=N2FGRtdYrmrZfyOTiOlspA3GyMW3aNrHAtRIRHrluFpFOOCagL5GxKfp5rIx2rWHKE
+         pkegLdkM3hsD32i+eAWlogXonNOAJA/jb3zMoZfY5R7ZSTWQE/zJhW7BH9PCwWtOMrUO
+         +RPC8ozGhRb6mkaeTQ91FHYMKGJzrLfm6Q2T6zP0xOIJnXAP0N8mthC69dMSgl6DFKOS
+         YXYbfcs200w9KAKnadugLn/zVeDRYLXgQJgAknOtEC1aRCc7Lb8CxFzffGAe3xusikEs
+         mceXkAnBkZ5MUHlg0ReXrjJ0Xs0y+ZUNlg0MdEb2A0lry6bwW+Eu0FA8A7qDxTkDDhPt
+         NgAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711070442; x=1711675242;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AEhwZNosta1NIlXJ9RmSmF3Nm4p1XcIBc8mpun1aEN4=;
+        b=F2XsyQlaibBfMUHg9FWqIwvVbSXoygv5Eq4FJmoQtJh2S7+QFi/LNYmrZ/0VK87I8M
+         d8df5K8ZWLJUsUX4t9/9g6FBwKrhwB4wBA37ZjHKr+qgCNwPsW4teanYdALuK8swONin
+         BWkY802G0WXM3uBQIkAxpqtQSBaHwTTfKshpBgxzDCqwDoFdVRKz7vjBFDlF+oLrLGYQ
+         ea6BMfzSVNnqq1n+syV+NIwKniNedXvujFlqBB0+wwb4Vf3pZYGyKIWaORhzfJ9VU/SW
+         Mm75YmD3G1h65nvBabACdaCaWy6jEpbT1YfRUXqRVHg5XayW63BUmfkoYSL39DZK9veo
+         s6/w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/P/0d/AtGtNaTxmwTIJIwiV3w/+bakZk9eMSbXLO62JxUOpPepLkDfXSb2Irn+DmRS8dkMpf7PS7BattS6PtbIZ9sTcMIxLbDO9nZhNhsPJkfy2q08/oB4WbKLYnvA9N87Cr5XcT+6GAVCRFU
+X-Gm-Message-State: AOJu0Yw95OsXRBMuMcOXTYfdT6UmxBNaYNXNuzPZcegCcpeM9SEoLtiM
+	VzRus7DEioRenZVMm0lDQsvEJ4YsmqfI2KKDfhR0NMMHDG8vybmP
+X-Google-Smtp-Source: AGHT+IEWSZCVoJVhIdVcPVe3W35iSPVUa6L0bXnFX58YCRM7aHptQvoeiNQUxAV9KzBwEaUjygdswA==
+X-Received: by 2002:a05:6214:250f:b0:691:3549:340a with SMTP id gf15-20020a056214250f00b006913549340amr852080qvb.42.1711070442054;
+        Thu, 21 Mar 2024 18:20:42 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6-20020a0562140d4600b0068f75622543sm539138qvr.1.2024.03.21.18.20.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Mar 2024 18:20:22 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 329D41200043;
+	Thu, 21 Mar 2024 21:20:22 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Thu, 21 Mar 2024 21:20:22 -0400
+X-ME-Sender: <xms:1dz8ZU2gZM_-IyRDNQn_7CUS9NLIGkbijFnDGAY1KHEzVcgf12me7Q>
+    <xme:1dz8ZfGKz4ob86Uy6xPsWLG2j4R5tZRsq3lOUXKwh07k3nHb-hO0F0Je26eOigBtJ
+    JEpxTO1_fbA9XV86A>
+X-ME-Received: <xmr:1dz8Zc4Gv5yVnBO2oTPI0NP0I9iswSWi8zIpiQChUkKuviBpv7okrT7duw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrleelgddtvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtudenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpedtgeehleevffdujeffgedvlefghffhleekieeifeegveetjedvgeevueff
+    ieehhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
+    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:1dz8Zd1lPoz8_Pp0-zmrt8CFTCq6VTHW1mtrURi0A5g4ud28L9PDrQ>
+    <xmx:1dz8ZXGxFZAlvpdOZS_InlbiDOA7wghDY-JfjPjZfWrOWu9602LG9Q>
+    <xmx:1dz8ZW-vuuk3y_KfVzcrQ2S07KNuou9n9mSxT7PugiTugwoXH7unXQ>
+    <xmx:1dz8Zcn9C63mB7_QHvia4MoAb38X_nhUkLaJ3ot2ellw0e9db5Lf7A>
+    <xmx:1tz8ZYIvGt_gRsFbwrFT7ed2MX7vo4W9n49Mx9-h_3v0vlQvoWJhEfMNTAw>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Mar 2024 21:20:20 -0400 (EDT)
+Date: Thu, 21 Mar 2024 18:20:19 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Philipp Stanner <pstanner@redhat.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Asahi Lina <lina@asahilina.net>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH v8 2/2] rust: xarray: Add an abstraction for XArray
+Message-ID: <Zfzc09QY5IWKeeUB@Boquns-Mac-mini.home>
+References: <20240309235927.168915-2-mcanal@igalia.com>
+ <20240309235927.168915-4-mcanal@igalia.com>
+ <CAH5fLgi9uaOOT=fHKWmXT7ETv+Nf6_TVttuWoyMtuYNguCGYtw@mail.gmail.com>
+ <c8279ceb44cf430e039a66d67ac2aa1d75e7e285.camel@redhat.com>
+ <f0b1ca50-dd0c-447e-bf21-6e6cac2d3afb@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f0b1ca50-dd0c-447e-bf21-6e6cac2d3afb@nvidia.com>
 
-[syzbot reported]
-BUG: KMSAN: uninit-value in hfs_find_1st_rec_by_cnid+0x27a/0x3f0 fs/hfsplus/bfind.c:78
- hfs_find_1st_rec_by_cnid+0x27a/0x3f0 fs/hfsplus/bfind.c:78
- __hfsplus_brec_find+0x26f/0x7b0 fs/hfsplus/bfind.c:135
- hfsplus_brec_find+0x445/0x970 fs/hfsplus/bfind.c:195
- hfsplus_find_attr+0x30c/0x390
- hfsplus_listxattr+0x586/0x1a60 fs/hfsplus/xattr.c:708
- vfs_listxattr fs/xattr.c:493 [inline]
- listxattr+0x1f3/0x6b0 fs/xattr.c:840
- path_listxattr fs/xattr.c:864 [inline]
- __do_sys_listxattr fs/xattr.c:876 [inline]
- __se_sys_listxattr fs/xattr.c:873 [inline]
- __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
- do_syscall_64+0xd5/0x1f0
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
+On Thu, Mar 21, 2024 at 05:22:11PM -0700, John Hubbard wrote:
+> On 3/19/24 2:32 AM, Philipp Stanner wrote:
+> ...
+> > > 
+> > > > +        if ret < 0 {
+> > > > +            Err(Error::from_errno(ret))
+> > > > +        } else {
+> > > > +            guard.dismiss();
+> > > > +            Ok(id as usize)
+> > > > +        }
+> > > 
+> > > You could make this easier to read using to_result.
+> > > 
+> > > to_result(ret)?;
+> > > guard.dismiss();
+> > > Ok(id as usize)
+> > 
+> > My 2 cents, I'd go for classic kernel style:
+> > 
+> > 
+> > if ret < 0 {
+> >      return Err(...);
+> > }
+> > 
+> > guard.dismiss();
+> > Ok(id as usize)
+> > 
+> 
+> Yes.
+> 
+> As a "standard" C-based kernel person who is trying to move into Rust
+> for Linux, I hereby invoke my Rust-newbie powers to confirm that the
+> "clasic kernel style" above goes into my head much faster and easier,
+> yes. :)
+> 
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3804 [inline]
- slab_alloc_node mm/slub.c:3845 [inline]
- __do_kmalloc_node mm/slub.c:3965 [inline]
- __kmalloc+0x6e4/0x1000 mm/slub.c:3979
- kmalloc include/linux/slab.h:632 [inline]
- hfsplus_find_init+0x91/0x250 fs/hfsplus/bfind.c:21
- hfsplus_listxattr+0x44a/0x1a60 fs/hfsplus/xattr.c:695
- vfs_listxattr fs/xattr.c:493 [inline]
- listxattr+0x1f3/0x6b0 fs/xattr.c:840
- path_listxattr fs/xattr.c:864 [inline]
- __do_sys_listxattr fs/xattr.c:876 [inline]
- __se_sys_listxattr fs/xattr.c:873 [inline]
- __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
- do_syscall_64+0xd5/0x1f0
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-[Fix]
-Let's clear all search_key fields at alloc time.
+Hope I'm still belong to a "standard C-based kernel person" ;-) My
+problem on "if ret < 0 { ... }" is: what's the type of "ret", and is it
+"negative means failure" or "non-zero means failure"? Now for this
+particular code, the assignment of "ret" and the use of "ret" is pretty
+close, so it doesn't matter. But in the code where "ret" is used for
+multiple function calls and there is code in-between, then I'd prefer we
+use `to_result` (i.e. `Result` type and question mark operator).
 
-Reported-and-tested-by: syzbot+65f53dd6a0f7ad64c0cb@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/hfsplus/bfind.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> I hope I'm not violating any "this is how Rust idioms must be"
+> conventions. But if not, then all other things being equal, it is of
+> course a nice touch to make the code more readable to the rest of the
+> kernel folks.
+> 
 
-diff --git a/fs/hfsplus/bfind.c b/fs/hfsplus/bfind.c
-index ca2ba8c9f82e..b939dc879dac 100644
---- a/fs/hfsplus/bfind.c
-+++ b/fs/hfsplus/bfind.c
-@@ -18,7 +18,7 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
- 
- 	fd->tree = tree;
- 	fd->bnode = NULL;
--	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
-+	ptr = kzalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
- 	if (!ptr)
- 		return -ENOMEM;
- 	fd->search_key = ptr;
--- 
-2.43.0
+One more extra point from myself only: if one is using Rust for drivers
+or subsystem they are going to take care of it in the future, it's
+totally fine for them to pick coding styles that they feel comfortable,
+I don't want to make people who do the real work feel frustrated because
+"this is how Rust idioms must be", also I don't believe tools should
+restrict people. But in the "kernel" crate (i.e. for core kernel part),
+I want to make it "Rusty" since it's the point of the experiement ("you
+asked for it ;-)).
 
+Hope we can find a balanced point when we learn more and more ;-)
+
+Regards,
+Boqun
+
+> 
+> thanks,
+> -- 
+> John Hubbard
+> NVIDIA
+> 
 
