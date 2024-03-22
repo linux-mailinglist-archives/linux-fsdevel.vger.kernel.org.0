@@ -1,93 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-15055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD3B88669F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 07:13:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 826518866C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 07:34:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82F671F23241
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 06:13:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B437F1C2346B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 06:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FA9C133;
-	Fri, 22 Mar 2024 06:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112B6107B6;
+	Fri, 22 Mar 2024 06:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yH34rL1H"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="tQvTg7IO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697C08F6F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 06:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61282FBE4;
+	Fri, 22 Mar 2024 06:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711088018; cv=none; b=RBzhmS2MSgfE7Wjc2RVpWrnP9Aj70H82a5kMKe/rd/z2dj9WXmzqLJ9JS7gulDJHf1JkuNqQqX5oVZNnAFpllVt/ripfTNuJcl/w/bZf5Tlctg/Yrs8lDRVOa14qZhPku519mJ60U9exwbkLLXV6u/BdQja5QY9u6UA2tXNN/bI=
+	t=1711089240; cv=none; b=mpQsZ4k+jHYWT1/ZCmH3j7v90WShYkmapDI8pBZFp79mN5WFZANutyceBB1ApiH//PMduJT89Fe0Vp2EE21YtiJMSyHinZhJBLittqBC14VjF/W0o9wyNROB5qPMiIm51OTsLk8KPBCVxLVjUA2q9o6oL3T5v5nT5WUdco+qQlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711088018; c=relaxed/simple;
-	bh=13n6vEx0RKsPduTpGL8LKKNQYLIk+cUJACRS11LHd5k=;
+	s=arc-20240116; t=1711089240; c=relaxed/simple;
+	bh=EOZvWjDugJcFimCP04bdjbd5AdrBHZSGq1PB1mX3YvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=coZsc272pxY1bhSGev7WZEY1HY9W6x3H96UJNoVe0eYmcR8A50YIh8I89vFv4lvxKCJsENh2rRxvjZzA57ufrJhU3GQzeB+FRasJm6HmTEc6phTBpKeg3tjGqtU23ugHtuy5zTfpuO0SBEtkcjDY2+0IKKgaQR6rd6VirOoYaFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yH34rL1H; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-33ff53528ceso1027366f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Mar 2024 23:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711088015; x=1711692815; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjqo6wElKZtgGNj6GGnnTBQeXO+eE9diL9uYn1NC34Q=;
-        b=yH34rL1HQkn+GtaR/e1SwxD3zU4FLBOokBopUvKX/JyacdjiGSibmtVaxoOaGmGk2x
-         4yJxCIFJzBNjnLYeiIoxbEg9dPUP+Xx+aysbURa5jn802e63pxqaR3P2D0qHrdkVYGc9
-         s7VLxVPv0PM7LBB/2e0xWC5aEjrbrVhkNy7dmGPnE4dtq4vBxh74Zse7iccg/zhN7vOg
-         iDW8x6vlfaHKsCefVfgg8qM3C/A+AG+g2RpOerJdj8jAdHBsbotrA7+Uc+FF6onuMS9T
-         PdKKqIY7a/hkrVAfvXGjSEuaIfqroSEmBZ9iwiHJfy+vHuJdByjjkPisIolq7q3sYE92
-         7RPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711088015; x=1711692815;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vjqo6wElKZtgGNj6GGnnTBQeXO+eE9diL9uYn1NC34Q=;
-        b=a2xMApNcduNqN+gFkhu63wwmFNcY6TJRL0xsHZ/i7SMGjLYkKndb5HoRcWh76/lrR3
-         poK5z3kv7tEZAarj7Hf7FUljHAS96oazXz8vVCMOqR8hE69meozrxWXweLuiHAhA4xUW
-         R2WGJ8GUvC2VC6HzwJfcrArKGRjnY3Evf4ZNJ1D5uWCMu6G5QNoT/36VYgmpatq7qZcM
-         gKZlK7g5+h7qGB4L8F58gaLUcBha+UJ/6DS7KyEbyBD2ux/rBVljeaapw/BszfgE1Gp0
-         HvCMuBoiwqU38Oxh+bSYGnq/Vz1EgRRuCAZ0moC33SMFtx3iC0pV34/1JQ51D0NsSrvl
-         kcyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaY+91cfjAXkaWEKqmvfdS0puI67eNBNAW6JP2dtqDJnUvAeuOaMjhN76LWvFjcg/zJzqBM54KWNWDcRYUjqmld0oeGAYNWd/zPgDeyg==
-X-Gm-Message-State: AOJu0YxFGulgjva6yixTo9LTPE4LaUdHpoQ20xzLBvfGhLmetELOOiGU
-	KIub2Lr89hyGynf258H2MsS6WTPJkN8hGywEotcMOMEcwGJcYwnNM7zi3zzu8VM=
-X-Google-Smtp-Source: AGHT+IHm8OsbpGQ2JHUp5hBd388gtEhT3nrU3IpFVsVcGMJeNceWFfJltzX1vVpM68rf361cJgKaKQ==
-X-Received: by 2002:a5d:6dc1:0:b0:33c:e396:b035 with SMTP id d1-20020a5d6dc1000000b0033ce396b035mr733113wrz.69.1711088014591;
-        Thu, 21 Mar 2024 23:13:34 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id e9-20020adffc49000000b0033e192a5852sm1263895wrs.30.2024.03.21.23.13.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Mar 2024 23:13:34 -0700 (PDT)
-Date: Fri, 22 Mar 2024 09:13:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Amir Goldstein <amir73il@gmail.com>, paulmck@kernel.org,
-	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	Jan Kara <jack@suse.cz>, Jiri Pirko <jiri@resnulli.us>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Reclamation interactions with RCU
-Message-ID: <fa490acb-2df6-435d-a68f-8db814db4685@moroto.mountain>
-References: <CAOQ4uxhiOizDDDJZ+hth4KDvUAYSyM6FRr_uqErAvzQ-=2VydQ@mail.gmail.com>
- <Zd-LljY351NCrrCP@casper.infradead.org>
- <170925937840.24797.2167230750547152404@noble.neil.brown.name>
- <ZeFtrzN34cLhjjHK@dread.disaster.area>
- <pv2chxwnrufut6wecm47q2z7222tzdl3gi6s5wgvmk3b2gq3n5@d23qr5odwyxl>
- <170933687972.24797.18406852925615624495@noble.neil.brown.name>
- <xbjw7mn57qik3ica2k6o7ykt7twryod6rt3uvu73w6xahrrrql@iaplvz7t5tgv>
- <170950594802.24797.17587526251920021411@noble.neil.brown.name>
- <22363d0a-71db-4ba7-b5e1-8bb515811d1c@moroto.mountain>
- <171107206231.13576.16550758513765438714@noble.neil.brown.name>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WXWjS5VIb9q1rEcUKHCkzatuJjouGjsYD/uaDdcWBN52hq0DYMaeecaKACVsIs+5iFNuMnYc3+j/zUHRQUOrJmRT1IJVp4+6XrBIrfA0daUvYt4x3GRsAzTR6K5RtMUXBmUzvC2cc/Zbk9tnJdMuLo2cBof/vJ/3JevSiZ2pR5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=tQvTg7IO; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=glri/vKotUbrSJNqM39pLtYkb0KC3SQXl8u3YXFujwc=; b=tQvTg7IOdij7qdx5bCpTRs/k6X
+	xGcH1sMbYuwVOG3jYHUYkubA9AirkkwNnuTS2qVMobPmdRjM2E8/e8jisefcml11WmB9ZH/JuIbLl
+	JT8Y7HoXemOh50+NCN3mQNoAqZkTl+XmQ8JF3BxkkeDi0SJB/T1sn7Teezy9q1A7z5fxldjidMhv5
+	UxhmLBKePRP6VBlhJLzH7Sq8EqOETHR4ZaRrKKUkCxeDWJ0FOqGquw+E2SWnZ5k/uf8LpKRX2KQdV
+	BR9cKKIUkiJBQto/2bANgTO/n5ofN+sqQBM+pJyofEMTJeLJTbZjMGcCZZLV8HjJdvRFmFiJVVfcq
+	9SDDl6ew==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rnYTK-00EKUC-3A;
+	Fri, 22 Mar 2024 06:33:47 +0000
+Date: Fri, 22 Mar 2024 06:33:46 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christoph Hellwig <hch@lst.de>, jack@suse.cz, brauner@kernel.org,
+	axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [RFC v4 linux-next 19/19] fs & block: remove bdev->bd_inode
+Message-ID: <20240322063346.GB3404528@ZenIV>
+References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
+ <20240222124555.2049140-20-yukuai1@huaweicloud.com>
+ <20240317213847.GD10665@lst.de>
+ <022204e6-c387-b4b2-5982-970fd1ed5b5b@huaweicloud.com>
+ <20240318013208.GA23711@lst.de>
+ <5c231b60-a2bf-383e-e641-371e7e57da67@huaweicloud.com>
+ <ea4774db-188e-6744-6a5b-0096f6206112@huaweicloud.com>
+ <20240318232245.GA17831@lst.de>
+ <c62dac0e-666f-9cc9-cffe-f3d985029d6a@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -96,72 +70,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <171107206231.13576.16550758513765438714@noble.neil.brown.name>
+In-Reply-To: <c62dac0e-666f-9cc9-cffe-f3d985029d6a@huaweicloud.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Mar 22, 2024 at 12:47:42PM +1100, NeilBrown wrote:
-> On Thu, 21 Mar 2024, Dan Carpenter wrote:
-> > On Mon, Mar 04, 2024 at 09:45:48AM +1100, NeilBrown wrote:
-> > > I have in mind a more explicit statement of how much waiting is
-> > > acceptable.
-> > > 
-> > > GFP_NOFAIL - wait indefinitely
-> > 
-> > Why not call it GFP_SMALL?  It wouldn't fail.  The size would have to be
-> > less than some limit.  If the size was too large, that would trigger a
-> > WARN_ON_ONCE().
-> 
-> I would be happy with GFP_SMALL.  It would never return NULL but might
-> block indefinitely.  It would (as you say) WARN (maybe ONCE) if the size
-> was considered "COSTLY" and would possibly BUG if the size exceeded
-> KMALLOC_MAX_SIZE. 
+On Tue, Mar 19, 2024 at 04:26:19PM +0800, Yu Kuai wrote:
 
-I'd like to keep GFP_SMALL much smaller than KMALLOC_MAX_SIZE.  IIf
-you're allocating larger than that, you'd still be able to GFP_NOFAIL.
-I looked quickly an I think over 60% of allocations are just sizeof(*p)
-and probably 90% are under 4k.
+> +void put_bdev_file(struct block_device *bdev)
+> +{
+> +       struct file *file = NULL;
+> +       struct inode *bd_inode = bdev_inode(bdev);
+> +
+> +       mutex_lock(&bdev->bd_disk->open_mutex);
+> +       file = bd_inode->i_private;
+> +
+> +       if (!atomic_read(&bdev->bd_openers))
+> +               bd_inode->i_private = NULL;
+> +
+> +       mutex_unlock(&bdev->bd_disk->open_mutex);
+> +
+> +       fput(file);
+> +}
 
-> 
-> > 
-> > I obviously understand that this duplicates the information in the size
-> > parameter but the point is that GFP_SMALL allocations have been
-> > reviewed, updated, and don't have error handling code.
-> 
-> We are on the same page here.
-> 
-> > 
-> > We'd keep GFP_KERNEL which would keep the existing behavior.  (Which is
-> > that it can sleep and it can fail).  I think that maps to GFP_RETRY but
-> > GFP_RETRY is an uglier name.
-> 
-> Can it fail though?  I know it is allowed to, but does it happen?
-> 
+Locking is completely wrong here.  The only thing that protects
+->bd_openers is ->open_mutex.  atomic_read() is obviously a red
+herring.
 
-In some sense, I don't really care about this, I just want the rules
-clear from a static analysis perspective.  Btw, you're discussing making
-the too small to fail rule official but other times we have discussed
-getting rid of it all together.  So I think maybe it's better to keep
-the rules strict but allow the actual implentation to change later.
+Suppose another thread has already opened the same sucker
+with bdev_file_open_by_dev().
 
-The GFP_SMALL stuff is nice for static analysis because it would warn
-about anything larger than whatever the small limit is.  So that means I
-have fewer allocations to review for integer overflow bugs.
+Now you are doing the same thing, just as the other guy is
+getting to bdev_release() call.
 
-Btw, Jiri Pirko, was proposing a macro which would automatically
-allocate the 60+% of allocations which are sizeof(*p).
-https://lore.kernel.org/all/20240315132249.2515468-1-jiri@resnulli.us/
-I had offered an alternative macro but the idea is the same:
+The thing is, between your get_bdev_file() and increment of ->bd_openers
+(in bdev_open()) there's a window when bdev_release() of the old file
+could've gotten all the way through the decrement of ->bd_openers
+(to 0, since our increment has not happened yet) and through the
+call of put_bdev_file(), which ends up clearing ->i_private.
 
-#define __ALLOC(p) p __free(kfree) = kzalloc(sizeof(*p), GFP_KERNEL)
-        struct ice_aqc_get_phy_caps_data *__ALLOC(pcaps);
+End result:
 
-Combining no fail allocations with automatic cleanup changes the way you
-write code.
+* old ->i_private leaked (already grabbed by your get_bdev_file())
+* ->bd_openers at 1 (after your bdev_open() gets through)
+* ->i_private left NULL.
 
-And then on the success patch you have the no_free_ptr() which I haven't
-used but I think will be so useful for static analysis.  I'm so excited
-about this.
-
-regards,
-dan carpenter
-
+Christoph, could we please get rid of that atomic_t nonsense?
+It only confuses people into brainos like that.  It really
+needs ->open_mutex for any kind of atomicity.
 
