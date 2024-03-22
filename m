@@ -1,380 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-15087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D82886E79
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 15:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47570886ECC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 15:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 699AD281E13
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 14:26:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EECB7286253
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Mar 2024 14:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFBA481B7;
-	Fri, 22 Mar 2024 14:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1989047F6F;
+	Fri, 22 Mar 2024 14:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bLcBL/ob"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z54Ah0dj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7AC47A6F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 14:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B545447F5D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 14:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711117576; cv=none; b=WbZ3QCihcZKD8LGS9eUhVSTKzfI8xFMs7K37eesTmWZiFlHixWNdRmgB2qWEQ88/TFMPzJ6yqerOYuJ0IhQIe+hpXOVtQ15VyLHk0OsUJ8lhmskvqx6Gip7wZ/mrAvKO83a2sK5+n7K7hx8HzSZBOoF1GfQlKAlvq/eqmdWzNPQ=
+	t=1711118401; cv=none; b=j7QV3JAdEdwaswI28qOs9Q6NAQQp77GskHCtB+sJmUmzBLmWtEkrB3ItgOO7WY3yo7XuS8u8Xrz9Co3QsXeJO5w63qU/nYiPNGBm0zoAJSUMx2rt9pjk0q4vm/z0WZFHm3ZU2iOMYx0JriuuEDp7bwHkZwuHC8Ny9k7eMii/kg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711117576; c=relaxed/simple;
-	bh=nSU7Us69HjcGfMbnFoTnP50Z6345s8XT/n87H31Yw/4=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=Pj2DrdMRMM6y+SpEhg2VFmnYPneJsh4tC1BS0OChvTbKU3CLjEF9J1odj5o+AJXf6rAGC5YOa/RwS7iozpSeo8eC4foDV2mirAqG76CQBlWnvMIfdI4Ucwr4aYWzVQs/rzd6Nohb/erwrs1ked41SH50WKZigofyBBGt3DdcmpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bLcBL/ob; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1711118401; c=relaxed/simple;
+	bh=M7m9yV9q8q1viUtrYDpgP7bD9ijmQCcD6ZY4tFU6kqs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ni6ht8mVc+OQMVQqs0pBnppKzPBeBRtpwmHIGBY1ki79cWritiOup/q2xomdZS+LTxyMgVZNQzjLU8M1CMjwWrKSKpLuneEKfBc64hlZsVZKPa65OGtSnKEB4U9uDbsvJCJXDOiYhKuP8KdDu2H6HtEnWvcCIzCAehUTVphDqk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z54Ah0dj; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a4455ae71fcso107870766b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Mar 2024 07:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1711118398; x=1711723198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r/VtsW+/qJuiMTAVZL+Cnz9ytEzKEgAcOHZ3oa+QL2U=;
+        b=z54Ah0dj4cu0+PcuKgUInytYtmwSvQRQ4F8ibGoF3t93BqjAv4RAxV11SYGkxRg1cd
+         +/U2mVqv1sYk2whiZM7KVxTl8ccJkaACmam4AqTnGIrsPeM5XO/pS1h9Uq8jXdORJMfL
+         obGTc5KvjQzOYauIbz81nfYngnzqK45hMoTs4WAKb1VnD7fYtehIyrSSV2/X/V3lOCZ+
+         tfKsXUubXyjYvbsAtU21TyLRLYGs5tqZLGopUUGOP9XEd/GtVbwrhzrUqtlcadNPETLB
+         u0y+O8J0+VvyQDep7EwMcR2vQ/xlIkd363m4S+sPbrHgnCy0WLcH8byVnNBb4qNxllwy
+         3pSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711118398; x=1711723198;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=r/VtsW+/qJuiMTAVZL+Cnz9ytEzKEgAcOHZ3oa+QL2U=;
+        b=eFpCE3RMsKnvrzcYkGjRYBkCvzbeLb1soOzc5erHJ0g0FSMDmR1tiHKk7vFfY0552c
+         a5l817gofeGutCyNzYmrbOQjHi1prBhgjBNGL/YUJvRehzNRBhhlojuYykRjxqFft2ol
+         Bz7XIGYulsLusPQQVf0kA2Q9Zriwi6LBdDA11BJsBHIBUWHBYdOaZL9Swwo6thT1yXzD
+         JycgjcfDdoigQ+YazWEu54ZCw3sSiIAmw82zfhhj7V4TuzjWf9z0RKMK907sEYArtHXW
+         eD72C+19xWFE5SAsAZnNhs5SyT8S6ET8gWOH5WQs4L1OLwmBX4iXXkqF4b/m/gnHPrcV
+         9Cdw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/VT9xJvenmWBnI8mKxNPjgTZ70LFNadDAPmzQafTwBefOsl2FexU7AUY8knHfo9ktSo+8hoVMAAAd2EYkrzNRx4zLxxz4Ecii8LGL1w==
+X-Gm-Message-State: AOJu0YzrWHZGfCPM86lMjd3Y7suQWRLHdI8uBrgJEc6of1hHqcs8j5QS
+	KwKl5untPTddcpBH7vkoKywzB8RgkQWqoKLr5nVTI0Su3BqLL1XYrMxZOuuDwWS+3Z9f5tYSSdH
+	O8A==
+X-Google-Smtp-Source: AGHT+IFeINQB2Sle2Lc5d7rpFvqJ16OAKnqUTHVNUPaYB9k0cSsB18JUjEFjHs1bMxWTLSjcIFGX8Cbe+TA=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a17:906:f191:b0:a45:2ebe:2636 with SMTP id
+ gs17-20020a170906f19100b00a452ebe2636mr9264ejb.9.1711118397698; Fri, 22 Mar
+ 2024 07:39:57 -0700 (PDT)
+Date: Fri, 22 Mar 2024 15:39:55 +0100
+In-Reply-To: <20240322.axashie2ooJ1@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1711117571;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rNKWKSvBYXyFmKH07lb65pWFdnTMZ8/LLL+0AQv8eO4=;
-	b=bLcBL/obbWtDCzqCO3PPbrtR4uBJqRvJ9isSCYkkQzvmeOpM7HYPwrHRtlBpachPQ0RyLd
-	pVYF0eKPaX4UzpEj/vz0wtlb+5aYl5mwwgiLSbYoyuQpfLYlg0MBgn/rt5CuMO05gsmDGy
-	M30mRDjb5vDuINRUcVBYiQM1w5UjR5I=
-Date: Fri, 22 Mar 2024 14:26:07 +0000
+Mime-Version: 1.0
+References: <20240309075320.160128-1-gnoack@google.com> <20240309075320.160128-7-gnoack@google.com>
+ <20240322.axashie2ooJ1@digikod.net>
+Message-ID: <Zf2YO8LHm3Wi4aNu@google.com>
+Subject: Re: [PATCH v10 6/9] selftests/landlock: Test IOCTLs on named pipes
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Eric Van Hensbergen" <eric.vanhensbergen@linux.dev>
-Message-ID: <ada13e85bf2ceed91052fa20adb02c4815953e26@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH next] fs/9p: fix uaf in in v9fs_stat2inode_dotl
-To: "Jakub Kicinski" <kuba@kernel.org>, asmadeus@codewreck.org
-Cc: "Lizhi Xu" <lizhi.xu@windriver.com>,
- syzbot+7a3d75905ea1a830dbe5@syzkaller.appspotmail.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux_oss@crudebyte.com, lucho@ionkov.net,
- syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
- regressions@lists.linux.dev, netdev@vger.kernel.org
-In-Reply-To: <20240321182824.6f303e38@kernel.org>
-References: <00000000000055ecb906105ed669@google.com>
- <20240202121531.2550018-1-lizhi.xu@windriver.com>
- <ZeXGZS1-X8_CYCUz@codewreck.org>
- <20240321182824.6f303e38@kernel.org>
-X-Migadu-Flow: FLOW_OUT
 
-Patch is in the unapplied portion of my for-next tree along with another =
-one.  I was hoping to hear some feedback on the other one before i did a =
-pull request and was torn on whether or not I wait on -rc1 to send since =
-we are so close.
+On Fri, Mar 22, 2024 at 08:48:29AM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> It might be interesting to create a layout with one file of each type
+> and use that for the IOCTL tests.
 
-       -eric
+We have already written these tests and we can keep them, but I think that =
+we
+only gain little additional confidence from testing non-device files.  The
+implementation is saying pretty directly that IOCTLs are permitted if the f=
+ile
+is not a character or block device, at the top of the file_ioctl hook.  I d=
+on't
+see much value in testing this even more exhaustively and would like to kee=
+p it
+as it is for now.
 
 
-March 21, 2024 at 8:28 PM, "Jakub Kicinski" <kuba@kernel.org> wrote:
->=20
->=20On Mon, 4 Mar 2024 22:02:29 +0900 asmadeus@codewreck.org wrote:
->=20
->=20>=20
->=20> Lizhi Xu wrote on Fri, Feb 02, 2024 at 08:15:31PM +0800:
+> On Sat, Mar 09, 2024 at 07:53:17AM +0000, G=C3=BCnther Noack wrote:
+> > Named pipes should behave like pipes created with pipe(2),
+> > so we don't want to restrict IOCTLs on them.
 > >=20
->=20>  The incorrect logical order of accessing the st object code in v9f=
-s_fid_iget_dotl
+> > Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+> > ---
+> >  tools/testing/selftests/landlock/fs_test.c | 61 ++++++++++++++++++----
+> >  1 file changed, 52 insertions(+), 9 deletions(-)
 > >=20
->=20>  is causing this uaf.=20
->=20>=20
->=20>=20=20
->=20>=20
->=20>  Thanks for the fix!
+> > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing=
+/selftests/landlock/fs_test.c
+> > index 5c47231a722e..d991f44875bc 100644
+> > --- a/tools/testing/selftests/landlock/fs_test.c
+> > +++ b/tools/testing/selftests/landlock/fs_test.c
+> > @@ -3924,6 +3924,58 @@ TEST_F_FORK(layout1, o_path_ftruncate_and_ioctl)
+> >  	ASSERT_EQ(0, close(fd));
+> >  }
+> > =20
+> > +static int test_fionread_ioctl(int fd)
+> > +{
+> > +	size_t sz =3D 0;
+> > +
+> > +	if (ioctl(fd, FIONREAD, &sz) < 0 && errno =3D=3D EACCES)
+> > +		return errno;
+> > +	return 0;
+> > +}
+> > +
+> > +/*
+> > + * Named pipes are not governed by the LANDLOCK_ACCESS_FS_IOCTL_DEV ri=
+ght,
+> > + * because they are not character or block devices.
+> > + */
+> > +TEST_F_FORK(layout1, named_pipe_ioctl)
+> > +{
+> > +	pid_t child_pid;
+> > +	int fd, ruleset_fd;
+> > +	const char *const path =3D file1_s1d1;
+> > +	const struct landlock_ruleset_attr attr =3D {
+> > +		.handled_access_fs =3D LANDLOCK_ACCESS_FS_IOCTL_DEV,
+> > +	};
+> > +
+> > +	ASSERT_EQ(0, unlink(path));
+> > +	ASSERT_EQ(0, mkfifo(path, 0600));
+> > +
+> > +	/* Enables Landlock. */
+> > +	ruleset_fd =3D landlock_create_ruleset(&attr, sizeof(attr), 0);
+> > +	ASSERT_LE(0, ruleset_fd);
+> > +	enforce_ruleset(_metadata, ruleset_fd);
+> > +	ASSERT_EQ(0, close(ruleset_fd));
+> > +
+> > +	/* The child process opens the pipe for writing. */
+> > +	child_pid =3D fork();
+> > +	ASSERT_NE(-1, child_pid);
+> > +	if (child_pid =3D=3D 0) {
+>=20
+> What is the purpose of this child's code?
+
+From fifo(7):
+
+  Opening the FIFO blocks until the other end is opened also.
+
+So the child and parent process both wait for the other open to happen.
+
+I suspect I could technically also use O_RDWR here, but that is undefined
+behaviour in POSIX and less conventional code.  (This is described further =
+down,
+also in fifo(7).)
+
+>=20
+> > +		fd =3D open(path, O_WRONLY);
+> > +		close(fd);
+> > +		exit(0);
+> > +	}
+> > +
+> > +	fd =3D open(path, O_RDONLY);
+> > +	ASSERT_LE(0, fd);
+> > +
+> > +	/* FIONREAD is implemented by pipefifo_fops. */
+> > +	EXPECT_EQ(0, test_fionread_ioctl(fd));
+> > +
+> > +	ASSERT_EQ(0, close(fd));
+> > +	ASSERT_EQ(0, unlink(path));
+> > +
+> > +	ASSERT_EQ(child_pid, waitpid(child_pid, NULL, 0));
+> > +}
+> > +
+> >  /* clang-format off */
+> >  FIXTURE(ioctl) {};
+> > =20
+> > @@ -3997,15 +4049,6 @@ static int test_tcgets_ioctl(int fd)
+> >  	return 0;
+> >  }
+> > =20
+> > -static int test_fionread_ioctl(int fd)
+> > -{
+> > -	size_t sz =3D 0;
+> > -
+> > -	if (ioctl(fd, FIONREAD, &sz) < 0 && errno =3D=3D EACCES)
+> > -		return errno;
+> > -	return 0;
+> > -}
+> > -
+>=20
+> You should add test_fionread_ioctl() at the right place from the start.
+
+Fair enough, done.
+
+> >  TEST_F_FORK(ioctl, handle_dir_access_file)
+> >  {
+> >  	const int flag =3D 0;
+> > --=20
+> > 2.44.0.278.ge034bb2e1d-goog
 > >=20
->=20>=20=20
->=20>=20
->=20>  Eric, this is also for your tree.
 > >=20
->=20>=20=20
->=20>=20
->=20>  Fixes: 724a08450f74 ("fs/9p: simplify iget to remove unnecessary p=
-aths")=20
->=20>=20
->=20>=20=20
->=20>=20
->=20>  (careful if you rebase your tree as this commit isn't merged yet)
-> >=20
->=20>=20=20
->=20>=20
->=20>  Reported-and-tested-by: syzbot+7a3d75905ea1a830dbe5@syzkaller.apps=
-potmail.com
-> >=20
->=20>  Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>=20
->=20>=20
->=20>=20=20
->=20>=20
->=20>  Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
-> >=20
->=20
-> Looks like this UAF is in Linus's tree now, and possibly getting hit
->=20
->=20by anyone using virtme to test the kernel? I can't vouch for the
->=20
->=20correctness of the fix but it does make the KASAN splat go away for m=
-e.
->=20
->=20[ 12.474676][ T1] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
->=20
->=20[ 12.474870][ T1] BUG: KASAN: slab-use-after-free in v9fs_stat2inode_=
-dotl+0x9d6/0xb80
->=20
->=20[ 12.475060][ T1] Read of size 8 at addr ffff888002bdbad8 by task swa=
-pper/0/1
->=20
->=20[ 12.475248][ T1]=20
->=20
-> [ 12.475314][ T1] CPU: 3 PID: 1 Comm: swapper/0 Not tainted 6.8.0-virtm=
-e #1
->=20
->=20[ 12.475503][ T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 199=
-6), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
->=20
->=20[ 12.475811][ T1] Call Trace:
->=20
->=20[ 12.475908][ T1] <TASK>
->=20
->=20[ 12.475976][ T1] dump_stack_lvl+0x82/0xd0
->=20
->=20[ 12.476133][ T1] print_address_description.constprop.0+0x2c/0x3b0
->=20
->=20[ 12.476295][ T1] ? v9fs_stat2inode_dotl+0x9d6/0xb80
->=20
->=20[ 12.476425][ T1] print_report+0xb4/0x270
->=20
->=20[ 12.476552][ T1] ? kasan_addr_to_slab+0x4e/0x90
->=20
->=20[ 12.476679][ T1] kasan_report+0xbd/0xf0
->=20
->=20[ 12.476775][ T1] ? v9fs_stat2inode_dotl+0x9d6/0xb80
->=20
->=20[ 12.476903][ T1] v9fs_stat2inode_dotl+0x9d6/0xb80
->=20
->=20[ 12.477053][ T1] v9fs_fid_iget_dotl+0x18c/0x210
->=20
->=20[ 12.477180][ T1] v9fs_mount+0x3fe/0x7d0
->=20
->=20[ 12.477281][ T1] ? __pfx_v9fs_mount+0x10/0x10
->=20
->=20[ 12.477406][ T1] ? vfs_parse_fs_string+0xdb/0x130
->=20
->=20[ 12.477533][ T1] ? __pfx_vfs_parse_fs_string+0x10/0x10
->=20
->=20[ 12.477660][ T1] ? __pfx_v9fs_mount+0x10/0x10
->=20
->=20[ 12.477786][ T1] legacy_get_tree+0x107/0x200
->=20
->=20[ 12.477912][ T1] vfs_get_tree+0x8a/0x2e0
->=20
->=20[ 12.478042][ T1] do_new_mount+0x27d/0x5e0
->=20
->=20[ 12.478170][ T1] ? __pfx_do_new_mount+0x10/0x10
->=20
->=20[ 12.478294][ T1] ? __pfx___debug_check_no_obj_freed+0x10/0x10
->=20
->=20[ 12.478453][ T1] ? __virt_addr_valid+0x227/0x420
->=20
->=20[ 12.478583][ T1] path_mount+0x271/0x14f0
->=20
->=20[ 12.478713][ T1] ? __pfx_path_mount+0x10/0x10
->=20
->=20[ 12.478840][ T1] ? kmem_cache_free+0xd7/0x220
->=20
->=20[ 12.478970][ T1] ? kern_path+0x3d/0x50
->=20
->=20[ 12.479068][ T1] init_mount+0x9d/0xf0
->=20
->=20[ 12.479164][ T1] ? __pfx_init_mount+0x10/0x10
->=20
->=20[ 12.479292][ T1] do_mount_root+0xbc/0x330
->=20
->=20[ 12.479419][ T1] mount_root_generic+0x22c/0x470
->=20
->=20[ 12.479550][ T1] ? __pfx_mount_root_generic+0x10/0x10
->=20
->=20[ 12.479680][ T1] ? mount_root+0x25b/0x2f0
->=20
->=20[ 12.479807][ T1] prepare_namespace+0xa5/0x2d0
->=20
->=20[ 12.479933][ T1] ? __pfx_prepare_namespace+0x10/0x10
->=20
->=20[ 12.480061][ T1] ? __pfx_kernel_init+0x10/0x10
->=20
->=20[ 12.480188][ T1] kernel_init+0x20/0x200
->=20
->=20[ 12.480285][ T1] ? __pfx_kernel_init+0x10/0x10
->=20
->=20[ 12.480410][ T1] ret_from_fork+0x31/0x70
->=20
->=20[ 12.480543][ T1] ? __pfx_kernel_init+0x10/0x10
->=20
->=20[ 12.480670][ T1] ret_from_fork_asm+0x1a/0x30
->=20
->=20[ 12.480807][ T1] </TASK>
->=20
->=20[ 12.480904][ T1]=20
->=20
-> [ 12.480969][ T1] Allocated by task 1:
->=20
->=20[ 12.481063][ T1] kasan_save_stack+0x24/0x50
->=20
->=20[ 12.481191][ T1] kasan_save_track+0x14/0x30
->=20
->=20[ 12.481323][ T1] __kasan_kmalloc+0x7f/0x90
->=20
->=20[ 12.481449][ T1] p9_client_getattr_dotl+0x4c/0x1a0
->=20
->=20[ 12.481576][ T1] v9fs_fid_iget_dotl+0xca/0x210
->=20
->=20[ 12.481706][ T1] v9fs_mount+0x3fe/0x7d0
->=20
->=20[ 12.481801][ T1] legacy_get_tree+0x107/0x200
->=20
->=20[ 12.481927][ T1] vfs_get_tree+0x8a/0x2e0
->=20
->=20[ 12.482053][ T1] do_new_mount+0x27d/0x5e0
->=20
->=20[ 12.482178][ T1] path_mount+0x271/0x14f0
->=20
->=20[ 12.482303][ T1] init_mount+0x9d/0xf0
->=20
->=20[ 12.482397][ T1] do_mount_root+0xbc/0x330
->=20
->=20[ 12.482523][ T1] mount_root_generic+0x22c/0x470
->=20
->=20[ 12.482649][ T1] prepare_namespace+0xa5/0x2d0
->=20
->=20[ 12.482779][ T1] kernel_init+0x20/0x200
->=20
->=20[ 12.482876][ T1] ret_from_fork+0x31/0x70
->=20
->=20[ 12.483002][ T1] ret_from_fork_asm+0x1a/0x30
->=20
->=20[ 12.483128][ T1]=20
->=20
-> [ 12.483191][ T1] Freed by task 1:
->=20
->=20[ 12.483283][ T1] kasan_save_stack+0x24/0x50
->=20
->=20[ 12.483409][ T1] kasan_save_track+0x14/0x30
->=20
->=20[ 12.483535][ T1] kasan_save_free_info+0x3b/0x60
->=20
->=20[ 12.483662][ T1] __kasan_slab_free+0xf4/0x180
->=20
->=20[ 12.483788][ T1] kfree+0xd3/0x230
->=20
->=20[ 12.483886][ T1] v9fs_fid_iget_dotl+0x15e/0x210
->=20
->=20[ 12.484017][ T1] v9fs_mount+0x3fe/0x7d0
->=20
->=20[ 12.484112][ T1] legacy_get_tree+0x107/0x200
->=20
->=20[ 12.484238][ T1] vfs_get_tree+0x8a/0x2e0
->=20
->=20[ 12.484365][ T1] do_new_mount+0x27d/0x5e0
->=20
->=20[ 12.484492][ T1] path_mount+0x271/0x14f0
->=20
->=20[ 12.484619][ T1] init_mount+0x9d/0xf0
->=20
->=20[ 12.484713][ T1] do_mount_root+0xbc/0x330
->=20
->=20[ 12.484846][ T1] mount_root_generic+0x22c/0x470
->=20
->=20[ 12.484974][ T1] prepare_namespace+0xa5/0x2d0
->=20
->=20[ 12.485100][ T1] kernel_init+0x20/0x200
->=20
->=20[ 12.485196][ T1] ret_from_fork+0x31/0x70
->=20
->=20[ 12.485324][ T1] ret_from_fork_asm+0x1a/0x30
->=20
->=20[ 12.485449][ T1]=20
->=20
-> [ 12.485512][ T1] The buggy address belongs to the object at ffff888002=
-bdbad8
->=20
->=20[ 12.485512][ T1] which belongs to the cache kmalloc-192 of size 192
->=20
->=20[ 12.485825][ T1] The buggy address is located 0 bytes inside of
->=20
->=20[ 12.485825][ T1] freed 192-byte region [ffff888002bdbad8, ffff888002=
-bdbb98)
->=20
->=20[ 12.486131][ T1]=20
->=20
-> [ 12.486194][ T1] The buggy address belongs to the physical page:
->=20
->=20[ 12.486347][ T1] page: refcount:1 mapcount:0 mapping:000000000000000=
-0 index:0xffff888002bdbc10 pfn:0x2bda
->=20
->=20[ 12.486600][ T1] head: order:1 entire_mapcount:0 nr_pages_mapped:0 p=
-incount:0
->=20
->=20[ 12.486795][ T1] flags: 0x80000000000a40(workingset|slab|head|node=
-=3D0|zone=3D1)
->=20
->=20[ 12.486989][ T1] page_type: 0xffffffff()
->=20
->=20[ 12.487088][ T1] raw: 0080000000000a40 ffff888001042c40 ffff88800104=
-0a88 ffff888001040a88
->=20
->=20[ 12.487315][ T1] raw: ffff888002bdbc10 00000000001a0017 00000001ffff=
-ffff 0000000000000000
->=20
->=20[ 12.487538][ T1] head: 0080000000000a40 ffff888001042c40 ffff8880010=
-40a88 ffff888001040a88
->=20
->=20[ 12.487765][ T1] head: ffff888002bdbc10 00000000001a0017 00000001fff=
-fffff 0000000000000000
->=20
->=20[ 12.487992][ T1] head: 0080000000000001 ffffea00000af681 dead0000000=
-00122 00000000ffffffff
->=20
->=20[ 12.488213][ T1] head: 0000000200000000 0000000000000000 00000000fff=
-fffff 0000000000000000
->=20
->=20[ 12.488436][ T1] page dumped because: kasan: bad access detected
->=20
->=20[ 12.488590][ T1]=20
->=20
-> [ 12.488653][ T1] Memory state around the buggy address:
->=20
->=20[ 12.488797][ T1] ffff888002bdb980: fc fc fc fc 00 00 00 00 00 00 00 =
-00 00 00 00 00
->=20
->=20[ 12.488986][ T1] ffff888002bdba00: 00 00 00 00 00 00 00 00 00 00 fc =
-fc fc fc fc fc
->=20
->=20[ 12.489168][ T1] >ffff888002bdba80: fc fc fc fc fc fc fc fc fc fc fc=
- fa fb fb fb fb
->=20
->=20[ 12.489353][ T1] ^
->=20
->=20[ 12.489506][ T1] ffff888002bdbb00: fb fb fb fb fb fb fb fb fb fb fb =
-fb fb fb fb fb
->=20
->=20[ 12.489688][ T1] ffff888002bdbb80: fb fb fb fc fc fc fc fc fc fc fc =
-fc fc fc fc fc
->=20
->=20[ 12.489873][ T1] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
->
+
+=E2=80=94G=C3=BCnther
 
