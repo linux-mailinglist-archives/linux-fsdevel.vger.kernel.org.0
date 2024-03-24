@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-15176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C963887DBA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 18:07:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 080E8887DD2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 18:10:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5248F1F2114D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 17:07:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1EC92816BD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 17:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6227D28E0D;
-	Sun, 24 Mar 2024 17:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D2141232;
+	Sun, 24 Mar 2024 17:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gz0G5DDC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aca0wll7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA9E25623;
-	Sun, 24 Mar 2024 17:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3706A3FB1D;
+	Sun, 24 Mar 2024 17:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711299971; cv=none; b=J21nyxIfUJv9gKwAUhMZPYS05T8XFjnewscNKrZnTIvmRB4KUkN9e/N3RkqmiAnyg9r47lRkFLjdjgzQUqHqFmilTOdk8rcfpxbdLZzarXEvz/AhEncHgSPbvPHPGO6w9DtLCrsWtBfAwOjptAYqeUgVrwsGOTZarLTGCEESCqE=
+	t=1711299997; cv=none; b=Nj55HtGWkGkEGAlltn/2cswkkNqrm+SATd+U5ifHB6WRWXsJcA5/8tRtyd8DvsChnxxf0FBDG0uldgwoVbmabW4XLoI2UQqt7EiC2zNolQnGcoF14UMczOgOooyNvDMA32cAqCvQCsKY9onL4rytEFfSn8dQovs+MeandysP844=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711299971; c=relaxed/simple;
-	bh=7GtXCPqmqjHiSEPOGh8S8ON88h/4OxU4q8QzWboLN8Y=;
+	s=arc-20240116; t=1711299997; c=relaxed/simple;
+	bh=qbSukr1xjfbCNHH5Hna8EvkRe9LoXvD/qru4UF7SU6o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JW3yoahazxfWNFLfAUIijMIsHYn4d5MXmp9JRSGBv8941tvDYEbWwV1W2Yn7VPwc8/c/cRKQGWnESfjaU5cKs733woTzKbDncr4zJ72cEq6kyGNBR1hzChngSh6mXnl/ROestrrh+sRTjGM3qnImpnlkgXBZMYAEVRrJLE51b34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gz0G5DDC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07A3C43399;
-	Sun, 24 Mar 2024 17:06:09 +0000 (UTC)
+	 MIME-Version; b=udIwKTux2v+PmlEMF+tSpZqIzfj0b6mb3nqjYckqHRCXEJ6Bwb6IRkkbOj1FhCooUJKednXHPO9P3nvf7EQ1wKDhrTMJrErvfozgB8CtZ11UkyVXzi8ZPJ9bCuKPl1Al6R9IweFEwiBhAeWL6xRi+HtpO4sToLufEvysO760nF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aca0wll7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C9EC43394;
+	Sun, 24 Mar 2024 17:06:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711299970;
-	bh=7GtXCPqmqjHiSEPOGh8S8ON88h/4OxU4q8QzWboLN8Y=;
+	s=k20201202; t=1711299997;
+	bh=qbSukr1xjfbCNHH5Hna8EvkRe9LoXvD/qru4UF7SU6o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Gz0G5DDC6ZpGzEb3AuZy3kQFN1XOlAnttAbYYMGUZLfdII1Hldb3tYszjD6U6dKm9
-	 11ujBPSMBs2q/9t6tqfUaUsIGd/S+qRNWxCYCN7ilVIKKNqIEYzdtk/0dzMg4K9WWH
-	 TyfSFKtUagZ4+S44eDWlM3Ssq30Gv3F/edPhjZXH16gxxlQMvSp8W3lx6GPkrSFdFs
-	 NMlX2ATQRj52SesCvX1raZybDHHXOl0/z+lddylHmqRHvA6z6y6S6BgJeR/TzDwZ8j
-	 +kNq3u/vsGh5rBKSb9mGilopsGrfJ11iO6EBYfOb6G6xFitcXqRrUNqavZh2FkYtaC
-	 4F+0/NkMFyFkg==
+	b=Aca0wll7y7chuo72LEwigEfLz1T4ClmYdeXRQs9GBWWeyYgStSS6d0wPE2dqYAjif
+	 HDKY9sgyeOgV8oex01pIFR3oon456C1YwJdbtaWVQayMw7LYthaj6eti2PojRdHYYY
+	 j4KiJhEsIRW+WeLhn60nDcc7enzwlcOua5D+wyXJB2mH7AEcFZqUJ1CqNrwis6CHWe
+	 maeW7ToRBli5vvhdESwBHyXoxl7wekvMHd90XcmGgyiXYjc8INJn4AIud1LL/8OGOM
+	 WAI2MZiMM/XPf3/WY/pWdr0ZHjwsZVto8AVQErWVmL7pQxkT5P/VqVTnyhoVnRrfU2
+	 KSJ1V+uKQZlSQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -50,12 +50,12 @@ Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
 	Sasha Levin <sashal@kernel.org>,
 	viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.8 09/11] fs: improve dump_mapping() robustness
-Date: Sun, 24 Mar 2024 13:05:44 -0400
-Message-ID: <20240324170552.545730-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.7 09/11] fs: improve dump_mapping() robustness
+Date: Sun, 24 Mar 2024 13:06:12 -0400
+Message-ID: <20240324170619.545975-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240324170552.545730-1-sashal@kernel.org>
-References: <20240324170552.545730-1-sashal@kernel.org>
+In-Reply-To: <20240324170619.545975-1-sashal@kernel.org>
+References: <20240324170619.545975-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.8.1
+X-stable-base: Linux 6.7.10
 Content-Transfer-Encoding: 8bit
 
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
@@ -141,10 +141,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/inode.c b/fs/inode.c
-index 91048c4c9c9e7..6d0d542303638 100644
+index f238d987dec90..fd50a85f2c730 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -588,7 +588,8 @@ void dump_mapping(const struct address_space *mapping)
+@@ -589,7 +589,8 @@ void dump_mapping(const struct address_space *mapping)
  	}
  
  	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
