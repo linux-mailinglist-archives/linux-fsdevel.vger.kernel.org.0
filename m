@@ -1,138 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-15174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8574887D73
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 16:23:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E995887D9E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 17:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF701F213C2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 15:23:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029A81F212E9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 16:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D071AAB9;
-	Sun, 24 Mar 2024 15:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1431219474;
+	Sun, 24 Mar 2024 16:50:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id B0A3C1946B
-	for <linux-fsdevel@vger.kernel.org>; Sun, 24 Mar 2024 15:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03756171D1;
+	Sun, 24 Mar 2024 16:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711293767; cv=none; b=WlHhvjSPJ3asre62ZVLU+KGSx5Dj9zxCsB1Jw/LmvdgQ8wNXpHKQp6IaM2xcsNUQFKl8m3ocpv/XL7Mt/sRekE6M35P8C3z4WqDAtp9JV/lesC2uaU29Vvnn9ujiPB2mlNUIGOjoqxeC0+quwyYsa/DakhNvGvdARn+rMww7ee0=
+	t=1711299037; cv=none; b=s3ATE9PF+1J875MCaAxsL/K4heWSn06ZYsztn3M+ouSnA7JYZKLFXbaKbEgY9zTH9qts4dzTZJVv1ASeLQLjbkXJ8Jx6bT/q0Nr+CmPCQDrrorMwfwcIVHa555x55GsHz6Y85rfE457MkALwno3BcMlMWct1mf3c8ocHYvC2Yro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711293767; c=relaxed/simple;
-	bh=SuH1hMVA2o74FCs6AvGI7dXDMoRLsBXOu5zkwoZfD8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Me75KdzED4UoEAeVG48Ff1ovf/fAnA51a7ynnxcV8p/780sUzjMDETAOMxABcDtV1gV9mwj/rU3hvW/AVQxhtn3/Gh/CI6iTV/re/nY87BJXlb1eQP/UH8/5vW4/7DkDCqsb2DmRwRWapfNaIg1k93O3ffegCsYdldbtwgK591g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 820911 invoked by uid 1000); 24 Mar 2024 11:22:41 -0400
-Date: Sun, 24 Mar 2024 11:22:41 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: comex <comexk@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-  Kent Overstreet <kent.overstreet@linux.dev>,
-  Boqun Feng <boqun.feng@gmail.com>,
-  rust-for-linux <rust-for-linux@vger.kernel.org>,
-  linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-  llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
-  Alex Gaynor <alex.gaynor@gmail.com>,
-  Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
-  =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-  Benno Lossin <benno.lossin@proton.me>,
-  Andreas Hindborg <a.hindborg@samsung.com>,
-  Alice Ryhl <aliceryhl@google.com>, Andrea Parri <parri.andrea@gmail.com>,
-  Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-  Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>,
-  Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>,
-  "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>,
-  Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>,
-  Nathan Chancellor <nathan@kernel.org>,
-  Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com,
-  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-  Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
-  Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-  Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-  "H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>,
-  linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <174272a1-e21f-4d85-94ab-f0457bd1c93b@rowland.harvard.edu>
-References: <20240322233838.868874-1-boqun.feng@gmail.com>
- <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
- <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
- <C85BE4F4-5847-45B4-A973-76B184B35EDE@gmail.com>
+	s=arc-20240116; t=1711299037; c=relaxed/simple;
+	bh=XTqqWBJYofix9/upqo66g0+ko3ZgqhuOv6+PQmT0aqg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RXwBpy6A2kStUAxAEXCUpGiakRjrMWzWoB/2rh3S0e39NEfuRNwLhM+tYz73qZR1FNLId5LPVTP2N5mdpoWwcvRoXeaqdi2Q19ZDO9Teu4z5BF0MiCHO6bEszltnfb3cwd0VjaGsGwpc0M7bbIqPEwKijgMf+lXRYER8dkfuy4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4V2hlZ1fj7z6K7JS;
+	Mon, 25 Mar 2024 00:46:02 +0800 (CST)
+Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id 401151400DB;
+	Mon, 25 Mar 2024 00:50:25 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (7.182.85.13) by
+ frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Sun, 24 Mar 2024 17:50:24 +0100
+Received: from frapeml500005.china.huawei.com ([7.182.85.13]) by
+ frapeml500005.china.huawei.com ([7.182.85.13]) with mapi id 15.01.2507.035;
+ Sun, 24 Mar 2024 17:50:24 +0100
+From: Roberto Sassu <roberto.sassu@huawei.com>
+To: Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>
+CC: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel
+	<linux-fsdevel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, "Paulo
+ Alcantara" <pc@manguebit.com>, Christian Brauner <christian@brauner.io>,
+	"Mimi Zohar" <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>
+Subject: RE: kernel crash in mknod
+Thread-Topic: kernel crash in mknod
+Thread-Index: AQHafag2XY/u/k17xEe65QyoT7TnEbFGUTAAgADHHcA=
+Date: Sun, 24 Mar 2024 16:50:24 +0000
+Message-ID: <3441a4a1140944f5b418b70f557bca72@huawei.com>
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV>
+In-Reply-To: <20240324054636.GT538574@ZenIV>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <C85BE4F4-5847-45B4-A973-76B184B35EDE@gmail.com>
 
-On Sat, Mar 23, 2024 at 05:40:23PM -0400, comex wrote:
-> That may be true, but the LLVM issue you cited isn’t a good example.  
-> In that issue, the function being miscompiled doesn’t actually use any 
-> barriers or atomics itself; only the scaffolding around it does.  The 
-> same issue would happen even if the scaffolding used LKMM atomics.
-> 
-> For anyone curious: The problematic optimization involves an 
-> allocation (‘p’) that is initially private to the function, but is 
-> returned at the end of the function.  LLVM moves a non-atomic store to 
-> that allocation across an external function call (to ‘foo’).  This 
-> reordering would be blatantly invalid if any other code could observe 
-> the contents of the allocation, but is valid if the allocation is 
-> private to the function.  LLVM assumes the latter: after all, the 
-> pointer to it hasn’t escaped.  Yet.  Except that in a weak memory 
-> model, the escape can ‘time travel’...
+> From: Al Viro [mailto:viro@ftp.linux.org.uk] On Behalf Of Al Viro
+> Sent: Sunday, March 24, 2024 6:47 AM
+> On Sun, Mar 24, 2024 at 12:00:15AM -0500, Steve French wrote:
+> > Anyone else seeing this kernel crash in do_mknodat (I see it with a
+> > simple "mkfifo" on smb3 mount).  I started seeing this in 6.9-rc (did
+> > not see it in 6.8).   I did not see it with the 3/12/23 mainline
+> > (early in the 6.9-rc merge Window) but I do see it in the 3/22 build
+> > so it looks like the regression was introduced by:
+>=20
+> 	FWIW, successful ->mknod() is allowed to return 0 and unhash
+> dentry, rather than bothering with lookups.  So commit in question
+> is bogus - lack of error does *NOT* mean that you have struct inode
+> existing, let alone attached to dentry.  That kind of behaviour
+> used to be common for network filesystems more than just for ->mknod(),
+> the theory being "if somebody wants to look at it, they can bloody
+> well pay the cost of lookup after dcache miss".
+>=20
+> Said that, the language in D/f/vfs.rst is vague as hell and is very easy
+> to misread in direction of "you must instantiate".
+>=20
+> Thankfully, there's no counterpart with mkdir - *there* it's not just
+> possible, it's inevitable in some cases for e.g. nfs.
+>=20
+> What the hell is that hook doing in non-S_IFREG cases, anyway?  Move it
+> up and be done with it...
 
-It's hard to understand exactly what you mean, but consider the 
-following example:
+Hi Al
 
-int *globalptr;
-int x;
+thanks for the patch. Indeed, it was like that before, when instead of
+an LSM hook there was an IMA call.
 
-int *f() {
-	int *p = kzalloc(sizeof(int));
+However, I thought, since we were promoting it as an LSM hook,
+we should be as generic possible, and support more usages than
+what was needed for IMA.
 
-	L1: *p = 1;
-	L2: foo();
-	return p;
-}
+> diff --git a/fs/namei.c b/fs/namei.c
+> index ceb9ddf8dfdd..821fe0e3f171 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -4050,6 +4050,8 @@ static int do_mknodat(int dfd, struct filename *nam=
+e, umode_t mode,
+>  		case 0: case S_IFREG:
+>  			error =3D vfs_create(idmap, path.dentry->d_inode,
+>  					   dentry, mode, true);
+> +			if (!error)
+> +				error =3D security_path_post_mknod(idmap, dentry);
 
-void foo() {
-	smp_store_release(&x, 2);
-}
+Minor issue, security_path_post_mknod() does not return an error.
 
-void thread0() {
-	WRITE_ONCE(globalptr, f());
-}
+Also, please update the description of security_path_post_mknod() to say
+that it is not going to be called for non-regular files.
 
-void thread1() {
-	int m, n;
-	int *q;
+Hopefully, Paul also agrees with this change.
 
-	m = smp_load_acquire(&x);
-	q = READ_ONCE(globalptr);
-	if (m && q)
-		n = *q;
-}
+Other than that, please add my:
 
-(If you like, pretend each of these function definitions lives in a 
-different source file -- it doesn't matter.)
+Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-With no optimization, whenever thread1() reads *q it will always obtain 
-1, thanks to the store-release in foo() and the load-acquire() in 
-thread1().  But if the compiler swaps L1 and L2 in f() then this is not 
-guaranteed.  On a weakly ordered architecture, thread1() could then get 
-0 from *q.
+Thanks
 
-I don't know if this is what you meant by "in a weak memory model, the 
-escape can ‘time travel'".  Regardless, it seems very clear that any 
-compiler which swaps L1 and L2 in f() has a genuine bug.
+Roberto
 
-Alan Stern
+>  			break;
+>  		case S_IFCHR: case S_IFBLK:
+>  			error =3D vfs_mknod(idmap, path.dentry->d_inode,
+> @@ -4061,10 +4063,6 @@ static int do_mknodat(int dfd, struct filename *na=
+me, umode_t mode,
+>  			break;
+>  	}
+>=20
+> -	if (error)
+> -		goto out2;
+> -
+> -	security_path_post_mknod(idmap, dentry);
+>  out2:
+>  	done_path_create(&path, dentry);
+>  	if (retry_estale(error, lookup_flags)) {
 
