@@ -1,152 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-15175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E995887D9E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 17:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C963887DBA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 18:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029A81F212E9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 16:50:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5248F1F2114D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 17:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1431219474;
-	Sun, 24 Mar 2024 16:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6227D28E0D;
+	Sun, 24 Mar 2024 17:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gz0G5DDC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03756171D1;
-	Sun, 24 Mar 2024 16:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA9E25623;
+	Sun, 24 Mar 2024 17:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711299037; cv=none; b=s3ATE9PF+1J875MCaAxsL/K4heWSn06ZYsztn3M+ouSnA7JYZKLFXbaKbEgY9zTH9qts4dzTZJVv1ASeLQLjbkXJ8Jx6bT/q0Nr+CmPCQDrrorMwfwcIVHa555x55GsHz6Y85rfE457MkALwno3BcMlMWct1mf3c8ocHYvC2Yro=
+	t=1711299971; cv=none; b=J21nyxIfUJv9gKwAUhMZPYS05T8XFjnewscNKrZnTIvmRB4KUkN9e/N3RkqmiAnyg9r47lRkFLjdjgzQUqHqFmilTOdk8rcfpxbdLZzarXEvz/AhEncHgSPbvPHPGO6w9DtLCrsWtBfAwOjptAYqeUgVrwsGOTZarLTGCEESCqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711299037; c=relaxed/simple;
-	bh=XTqqWBJYofix9/upqo66g0+ko3ZgqhuOv6+PQmT0aqg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RXwBpy6A2kStUAxAEXCUpGiakRjrMWzWoB/2rh3S0e39NEfuRNwLhM+tYz73qZR1FNLId5LPVTP2N5mdpoWwcvRoXeaqdi2Q19ZDO9Teu4z5BF0MiCHO6bEszltnfb3cwd0VjaGsGwpc0M7bbIqPEwKijgMf+lXRYER8dkfuy4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4V2hlZ1fj7z6K7JS;
-	Mon, 25 Mar 2024 00:46:02 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 401151400DB;
-	Mon, 25 Mar 2024 00:50:25 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (7.182.85.13) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Sun, 24 Mar 2024 17:50:24 +0100
-Received: from frapeml500005.china.huawei.com ([7.182.85.13]) by
- frapeml500005.china.huawei.com ([7.182.85.13]) with mapi id 15.01.2507.035;
- Sun, 24 Mar 2024 17:50:24 +0100
-From: Roberto Sassu <roberto.sassu@huawei.com>
-To: Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>
-CC: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel
-	<linux-fsdevel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, "Paulo
- Alcantara" <pc@manguebit.com>, Christian Brauner <christian@brauner.io>,
-	"Mimi Zohar" <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>
-Subject: RE: kernel crash in mknod
-Thread-Topic: kernel crash in mknod
-Thread-Index: AQHafag2XY/u/k17xEe65QyoT7TnEbFGUTAAgADHHcA=
-Date: Sun, 24 Mar 2024 16:50:24 +0000
-Message-ID: <3441a4a1140944f5b418b70f557bca72@huawei.com>
-References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
- <20240324054636.GT538574@ZenIV>
-In-Reply-To: <20240324054636.GT538574@ZenIV>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1711299971; c=relaxed/simple;
+	bh=7GtXCPqmqjHiSEPOGh8S8ON88h/4OxU4q8QzWboLN8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JW3yoahazxfWNFLfAUIijMIsHYn4d5MXmp9JRSGBv8941tvDYEbWwV1W2Yn7VPwc8/c/cRKQGWnESfjaU5cKs733woTzKbDncr4zJ72cEq6kyGNBR1hzChngSh6mXnl/ROestrrh+sRTjGM3qnImpnlkgXBZMYAEVRrJLE51b34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gz0G5DDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07A3C43399;
+	Sun, 24 Mar 2024 17:06:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711299970;
+	bh=7GtXCPqmqjHiSEPOGh8S8ON88h/4OxU4q8QzWboLN8Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Gz0G5DDC6ZpGzEb3AuZy3kQFN1XOlAnttAbYYMGUZLfdII1Hldb3tYszjD6U6dKm9
+	 11ujBPSMBs2q/9t6tqfUaUsIGd/S+qRNWxCYCN7ilVIKKNqIEYzdtk/0dzMg4K9WWH
+	 TyfSFKtUagZ4+S44eDWlM3Ssq30Gv3F/edPhjZXH16gxxlQMvSp8W3lx6GPkrSFdFs
+	 NMlX2ATQRj52SesCvX1raZybDHHXOl0/z+lddylHmqRHvA6z6y6S6BgJeR/TzDwZ8j
+	 +kNq3u/vsGh5rBKSb9mGilopsGrfJ11iO6EBYfOb6G6xFitcXqRrUNqavZh2FkYtaC
+	 4F+0/NkMFyFkg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.8 09/11] fs: improve dump_mapping() robustness
+Date: Sun, 24 Mar 2024 13:05:44 -0400
+Message-ID: <20240324170552.545730-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240324170552.545730-1-sashal@kernel.org>
+References: <20240324170552.545730-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.8.1
+Content-Transfer-Encoding: 8bit
 
-> From: Al Viro [mailto:viro@ftp.linux.org.uk] On Behalf Of Al Viro
-> Sent: Sunday, March 24, 2024 6:47 AM
-> On Sun, Mar 24, 2024 at 12:00:15AM -0500, Steve French wrote:
-> > Anyone else seeing this kernel crash in do_mknodat (I see it with a
-> > simple "mkfifo" on smb3 mount).  I started seeing this in 6.9-rc (did
-> > not see it in 6.8).   I did not see it with the 3/12/23 mainline
-> > (early in the 6.9-rc merge Window) but I do see it in the 3/22 build
-> > so it looks like the regression was introduced by:
->=20
-> 	FWIW, successful ->mknod() is allowed to return 0 and unhash
-> dentry, rather than bothering with lookups.  So commit in question
-> is bogus - lack of error does *NOT* mean that you have struct inode
-> existing, let alone attached to dentry.  That kind of behaviour
-> used to be common for network filesystems more than just for ->mknod(),
-> the theory being "if somebody wants to look at it, they can bloody
-> well pay the cost of lookup after dcache miss".
->=20
-> Said that, the language in D/f/vfs.rst is vague as hell and is very easy
-> to misread in direction of "you must instantiate".
->=20
-> Thankfully, there's no counterpart with mkdir - *there* it's not just
-> possible, it's inevitable in some cases for e.g. nfs.
->=20
-> What the hell is that hook doing in non-S_IFREG cases, anyway?  Move it
-> up and be done with it...
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-Hi Al
+[ Upstream commit 8b3d838139bcd1e552f1899191f734264ce2a1a5 ]
 
-thanks for the patch. Indeed, it was like that before, when instead of
-an LSM hook there was an IMA call.
+We met a kernel crash issue when running stress-ng testing, and the
+system crashes when printing the dentry name in dump_mapping().
 
-However, I thought, since we were promoting it as an LSM hook,
-we should be as generic possible, and support more usages than
-what was needed for IMA.
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+pc : dentry_name+0xd8/0x224
+lr : pointer+0x22c/0x370
+sp : ffff800025f134c0
+......
+Call trace:
+  dentry_name+0xd8/0x224
+  pointer+0x22c/0x370
+  vsnprintf+0x1ec/0x730
+  vscnprintf+0x2c/0x60
+  vprintk_store+0x70/0x234
+  vprintk_emit+0xe0/0x24c
+  vprintk_default+0x3c/0x44
+  vprintk_func+0x84/0x2d0
+  printk+0x64/0x88
+  __dump_page+0x52c/0x530
+  dump_page+0x14/0x20
+  set_migratetype_isolate+0x110/0x224
+  start_isolate_page_range+0xc4/0x20c
+  offline_pages+0x124/0x474
+  memory_block_offline+0x44/0xf4
+  memory_subsys_offline+0x3c/0x70
+  device_offline+0xf0/0x120
+  ......
 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index ceb9ddf8dfdd..821fe0e3f171 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -4050,6 +4050,8 @@ static int do_mknodat(int dfd, struct filename *nam=
-e, umode_t mode,
->  		case 0: case S_IFREG:
->  			error =3D vfs_create(idmap, path.dentry->d_inode,
->  					   dentry, mode, true);
-> +			if (!error)
-> +				error =3D security_path_post_mknod(idmap, dentry);
+The root cause is that, one thread is doing page migration, and we will
+use the target page's ->mapping field to save 'anon_vma' pointer between
+page unmap and page move, and now the target page is locked and refcount
+is 1.
 
-Minor issue, security_path_post_mknod() does not return an error.
+Currently, there is another stress-ng thread performing memory hotplug,
+attempting to offline the target page that is being migrated. It discovers
+that the refcount of this target page is 1, preventing the offline operation,
+thus proceeding to dump the page. However, page_mapping() of the target
+page may return an incorrect file mapping to crash the system in dump_mapping(),
+since the target page->mapping only saves 'anon_vma' pointer without setting
+PAGE_MAPPING_ANON flag.
 
-Also, please update the description of security_path_post_mknod() to say
-that it is not going to be called for non-regular files.
+The page migration issue has been fixed by commit d1adb25df711 ("mm: migrate:
+fix getting incorrect page mapping during page migration"). In addition,
+Matthew suggested we should also improve dump_mapping()'s robustness to
+resilient against the kernel crash [1].
 
-Hopefully, Paul also agrees with this change.
+With checking the 'dentry.parent' and 'dentry.d_name.name' used by
+dentry_name(), I can see dump_mapping() will output the invalid dentry
+instead of crashing the system when this issue is reproduced again.
 
-Other than that, please add my:
+[12211.189128] page:fffff7de047741c0 refcount:1 mapcount:0 mapping:ffff989117f55ea0 index:0x1 pfn:0x211dd07
+[12211.189144] aops:0x0 ino:1 invalid dentry:74786574206e6870
+[12211.189148] flags: 0x57ffffc0000001(locked|node=1|zone=2|lastcpupid=0x1fffff)
+[12211.189150] page_type: 0xffffffff()
+[12211.189153] raw: 0057ffffc0000001 0000000000000000 dead000000000122 ffff989117f55ea0
+[12211.189154] raw: 0000000000000001 0000000000000001 00000001ffffffff 0000000000000000
+[12211.189155] page dumped because: unmovable page
 
-Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+[1] https://lore.kernel.org/all/ZXxn%2F0oixJxxAnpF@casper.infradead.org/
 
-Thanks
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Link: https://lore.kernel.org/r/937ab1f87328516821d39be672b6bc18861d9d3e.1705391420.git.baolin.wang@linux.alibaba.com
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Roberto
+diff --git a/fs/inode.c b/fs/inode.c
+index 91048c4c9c9e7..6d0d542303638 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -588,7 +588,8 @@ void dump_mapping(const struct address_space *mapping)
+ 	}
+ 
+ 	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
+-	if (get_kernel_nofault(dentry, dentry_ptr)) {
++	if (get_kernel_nofault(dentry, dentry_ptr) ||
++	    !dentry.d_parent || !dentry.d_name.name) {
+ 		pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
+ 				a_ops, ino, dentry_ptr);
+ 		return;
+-- 
+2.43.0
 
->  			break;
->  		case S_IFCHR: case S_IFBLK:
->  			error =3D vfs_mknod(idmap, path.dentry->d_inode,
-> @@ -4061,10 +4063,6 @@ static int do_mknodat(int dfd, struct filename *na=
-me, umode_t mode,
->  			break;
->  	}
->=20
-> -	if (error)
-> -		goto out2;
-> -
-> -	security_path_post_mknod(idmap, dentry);
->  out2:
->  	done_path_create(&path, dentry);
->  	if (retry_estale(error, lookup_flags)) {
 
