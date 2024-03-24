@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-15178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A483A887DEB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 18:13:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB8C887DFF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 18:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4F01F2134B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 17:13:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B204DB2150E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Mar 2024 17:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2ECA1E4B7;
-	Sun, 24 Mar 2024 17:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A705A7B9;
+	Sun, 24 Mar 2024 17:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbQT+m+i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WylR+HgC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5505952F9A;
-	Sun, 24 Mar 2024 17:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157FD5A0FC;
+	Sun, 24 Mar 2024 17:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711300023; cv=none; b=SmrfarggBNOoVdn+RKMfr8/pUjsCGnMZH2wDkhuSvpSV1j/pOF21+X1mJ5VPnjcBI3GocpYiidMI+a61/VTmnbrnRuPjGFv2hZ0WcNXQK/fkLugrRHoGqeVHFHgdfvuQHW+IfeYmLu69SD/N583Hjlc0EwnPXw5iW47rXXftvHM=
+	t=1711300040; cv=none; b=VMJoRIq5YJXnWTXrZg/Gp4h0BeWYneEe3/M6fOGtQjS9m0ogj/zRQ6JxVFru2diIA81EPf0qnCx21ZvQ+yxuUhlqgyZDZNmGITdpq/ej+lh+/ckuKBAgUyB59r5YfbcHUxqhvxoUcw+j6h+EJl9YdSHr1FYFr0Jk8RzH4B3iCz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711300023; c=relaxed/simple;
-	bh=FJV7v8TU4Y/QRbVH+NipQairAmupPu/3JD0xriGs1VU=;
+	s=arc-20240116; t=1711300040; c=relaxed/simple;
+	bh=aySIcr4UqZJMOTSbmO06wvPBSpJQfBmCrnR+w0/YUuY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qfUaLYffT1+dpXgLBjxcmRuykMtAyCiSr/7O4qmzNmN0TkDK5onGAtzYaaGkGtRsbWInhw9Rg21IL5XxVm8eNdx7blFHRlMqQkkQKpXju6WhXeESMmvTTHHLqjSLwyp2xP+RH2JWQ04juIblxJh319SODbqbWjAfMQugySkBZcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbQT+m+i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 557F5C433B1;
-	Sun, 24 Mar 2024 17:07:02 +0000 (UTC)
+	 MIME-Version; b=euHNjlzLZuNZlB+QEQGn1p1e3oQjgIRhaxZr4gSXqX4CqGN2Rkq3O9d4e4kbHjiHCxEiF9numybTe18wCTAI5xJmsos9klMHvVTc7zeHokiz77yFNN4VdQolhVwp+qbim+92i73RYNfm3JOxsb3xg42bXoFlCB2ZzRPykTv2sH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WylR+HgC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBB72C43390;
+	Sun, 24 Mar 2024 17:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711300023;
-	bh=FJV7v8TU4Y/QRbVH+NipQairAmupPu/3JD0xriGs1VU=;
+	s=k20201202; t=1711300039;
+	bh=aySIcr4UqZJMOTSbmO06wvPBSpJQfBmCrnR+w0/YUuY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KbQT+m+iX7r8+Lw3nPwJYpXgqJP9vP3XnbctFbaYDcMP/jOGGHI58ULx6YFvVscfJ
-	 GrZjwNsLK4JD59axk38OTFNp7ndKsau3xOyOvaINZ442DbrKDRRIGypsejMZXBfEkb
-	 Wlyx0T32W217ThFxWmIHHsBcxtH/E8FF5lhBRQfR+i5ZGzqqAvU8QVz0Sh3/IJqkOt
-	 jOfYqVZIfBG/UKLEA5+0cOZRfBbOS94K9ryiQOqhqWHSAvmqsONqANogNNqBWoi8yc
-	 WVJnbwLbl+KHGWDawM7AW16BJJWRzaUvtvldI+KMiH0C82/+EDLTLpDnpoGt0HLHhZ
-	 0XooOvNHZeMAQ==
+	b=WylR+HgCcbt9hWyvH83ybZbySPLb0haqzfSW0MPaQ8HBLzIY3FbtLZEk18M5oV+CE
+	 OyXHQXXekab9z8VIrO7lz1GpBr5eGYdT6SWxWa56KIHX7WorwvQ8gNh2Dsi1zmzwD9
+	 XDpB89GtYCwn1g3p/ZTJ6XycWrnkn17IUUMZIGUKbLIXZt9vGW5xTebH94qkvMr9RW
+	 aEoGVyxzP4Av9JHwzGn6rkhso81RX4lTanQt2saDdGwAjZSbRJWv8e9pKMN2Q6/Tvo
+	 85jPPJJcXhMyB5dV5/us9QFPE6+Pg6RjwcEu5qJurSxFCYfryxyV46NrCBxPWouSo3
+	 Y/kzqyiuLhpdQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -50,12 +50,12 @@ Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
 	Sasha Levin <sashal@kernel.org>,
 	viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 09/11] fs: improve dump_mapping() robustness
-Date: Sun, 24 Mar 2024 13:06:39 -0400
-Message-ID: <20240324170645.546220-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 6/7] fs: improve dump_mapping() robustness
+Date: Sun, 24 Mar 2024 13:07:06 -0400
+Message-ID: <20240324170709.546465-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240324170645.546220-1-sashal@kernel.org>
-References: <20240324170645.546220-1-sashal@kernel.org>
+In-Reply-To: <20240324170709.546465-1-sashal@kernel.org>
+References: <20240324170709.546465-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.22
+X-stable-base: Linux 6.1.82
 Content-Transfer-Encoding: 8bit
 
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
@@ -141,7 +141,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/inode.c b/fs/inode.c
-index ae1a6410b53d7..2d8b8d353750b 100644
+index 8cfda7a6d5900..5ad22efb5def4 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
 @@ -589,7 +589,8 @@ void dump_mapping(const struct address_space *mapping)
