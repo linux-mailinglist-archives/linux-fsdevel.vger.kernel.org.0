@@ -1,148 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-15203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EA488AB4E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 18:19:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 565EF88B309
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 22:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9048DC049D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 14:38:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F20AB2D4DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 14:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD9B1C2337;
-	Mon, 25 Mar 2024 11:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0F615B12E;
+	Mon, 25 Mar 2024 11:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="a32WMOuD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC0017D23D;
-	Mon, 25 Mar 2024 10:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4CF15B554
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 11:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711363501; cv=none; b=lol9DxDbvPP9K2/71SQ/SYgMCxeAmgN6lujHBpZzzpSdwiXXwNxPREV6yNZqaXLWpaxWjrWy34ee5cJ8cxaqzoSffbrjP873+ruU/OyhBpfYGE01q0NWlP/dC7lq/sy6r5k+41zMhQL+tepVhUwDHztnWOakWV1cA08FQXDPFds=
+	t=1711365680; cv=none; b=PLhe3KIkIJOIbhE+dR2Yrr/41V3Pcdh0oKP+09+UMd0PRX57waLlrc0VRPZGbCztt/tMAACM6l9VwsxY4IwzdzwEmQsS4Cl5TncayoxHmuc1DST4TutpBrWf8O1efyWDcH4ZGHhma46rJzZJrhWKu87qRZO2eRa3urohgdfyYzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711363501; c=relaxed/simple;
-	bh=HVlViT7fg37ArzDR5okosyV0TQroP4C7gOqT9V4q2f0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJVgG1cja4QnpRC+43Tf3ug6jce0R7PXmitvWr8upEsksCGCbGoAMRLoH4HTE92+Ct0wLJ40FoMz4Nn6rTOG0AHm5FTsg9jCaOyLcPuG67SI9sr7DBzuMXUxYcgh6a3O4OmtYpjBOAGYPMXy19Z8pUNo6PYKz6RzrBhlyeJpqKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C15E01FB;
-	Mon, 25 Mar 2024 03:45:31 -0700 (PDT)
-Received: from FVFF77S0Q05N (unknown [10.57.16.150])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AFF8B3F67D;
-	Mon, 25 Mar 2024 03:44:51 -0700 (PDT)
-Date: Mon, 25 Mar 2024 10:44:45 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?us-ascii?Q?Bj=22orn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <ZgFVnar3nS4F8eIX@FVFF77S0Q05N>
-References: <20240322233838.868874-1-boqun.feng@gmail.com>
+	s=arc-20240116; t=1711365680; c=relaxed/simple;
+	bh=xudEe2YJTvWsBm8CpDg5lmI/tLcexD8Blm3Xdr2w+mc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B0WaxQItRMWYGTJ6PShkOjBR7d+BIdbsY4Cng463cc5fsCEE4wUnIknI1xRNVxaEriFfVMtKSighFzKnXoCOLZYrxNXTbggbvVwJiJE8KCcrkt+huDBI81vTBaasHRPd44L48fWzh5thEgnAw4KX9hw7Cs+D2guypy+OQ6Izfr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=a32WMOuD; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a472f8c6a55so340419766b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 04:21:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1711365676; x=1711970476; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0c+XedPdeNuNXfU5mtLEzBWBIzV1dWjxq7xb3M/FhvM=;
+        b=a32WMOuDNG1J+K0+ytDniSg1jyeS8/N31C2c3T3jacOJYKcl3nZGpfPZgVB0ooFZxQ
+         ZKUtEDAIv8oJ0BQ9tx7Z3Dsb0IPFGBcSwPBpk0W7tTQrfrFYOgmRueY6wMlRYk1f77B5
+         L1LEQwta/ITK7LqJpJ+0nwzRFOff6DGga+z1I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711365676; x=1711970476;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0c+XedPdeNuNXfU5mtLEzBWBIzV1dWjxq7xb3M/FhvM=;
+        b=aZG9wzI3l9If+PJkmCJjxIJ8G6GcPs8cTWifaYC0mvtmAyX1Jvp7wgrcI2E2obzb4S
+         f+QGw36dIcUDja4d9Dnlzd36eR8wFs4JzyEPrkZIpqYxc00nc/DFSWbdz0a96ANtYHQA
+         TbL56jpuDqbhnRvAq9BeBkGqUU1qIqhLdYGBUiBLuC3PlSgv1Axx1rA3h+3Qrqmecwrm
+         xh5Zsd5CiDEQ1Hlr7P3FxheofGuslMc+1lQrLrmrqsfjigLYAXqedb0bxgCawi9N7lar
+         RrsgfbOKsJPWl3Ay2TimGXdRI6jpw21mYXPzwEx+0WRkGCXBqlAzcHgyRvAfNU2mji0E
+         t3bA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxmLqMXG9tRaI3a7WV26MUUT4vOBbvZXjchAAxGNPy5ZUUP6/WVSZCNWA5K7SCQZIvD4KV6ag3xLdm6j/k+ymxGXlMFZ3SYrNCskyfdQ==
+X-Gm-Message-State: AOJu0YxZwWZIZWnmfIxRiyEfkEQ6V/PrpI53gerIraVjRAxG+ywPqV6B
+	2Kjqe6aYuYQgTlcc1533K5A7XMhC80neTSTRE0FABjOBaDrvweB3vgbSnJWJ0cPpHhFMCkLjh+a
+	zznFmYPjNWLUk7Xc+8ScKZaMFLcgzzsPFNisimA==
+X-Google-Smtp-Source: AGHT+IEHgtn80L49Skt3CEF+hTXCA3FdVG+hC9lS8i92+yyLZZ9XMCkOBIMmlhGWRtndIytDvEiwFaWaIbgkiRj6zl8=
+X-Received: by 2002:a17:906:b109:b0:a46:d978:bf02 with SMTP id
+ u9-20020a170906b10900b00a46d978bf02mr3970124ejy.34.1711365675733; Mon, 25 Mar
+ 2024 04:21:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240322233838.868874-1-boqun.feng@gmail.com>
+References: <CABOYnLyevJeravW=QrH0JUPYEcDN160aZFb7kwndm-J2rmz0HQ@mail.gmail.com>
+ <CAJfpegu8qTARQBftZSaiif0E6dbRcbBvZvW7dQf8sf_ymoogCA@mail.gmail.com>
+ <c58a8dc8-5346-4247-9a0a-8b1be286e779@redhat.com> <CAJfpegt3UCsMmxd0taOY11Uaw5U=eS1fE5dn0wZX3HF0oy8-oQ@mail.gmail.com>
+ <620f68b0-4fe0-4e3e-856a-dedb4bcdf3a7@redhat.com> <CAJfpegub5Ny9kyX+dDbRwx7kd6ZdxtOeQ9RTK8n=LGGSzA9iOQ@mail.gmail.com>
+ <463612f2-5590-4fb3-8273-0d64c3fd3684@redhat.com> <a6632384-c186-4640-8b48-f40d6c4f7d1d@redhat.com>
+ <dd3e28b3-647c-4657-9c3f-9778bb046799@redhat.com> <b40eb0b7-7362-4d19-95b3-e06435e6e09c@redhat.com>
+In-Reply-To: <b40eb0b7-7362-4d19-95b3-e06435e6e09c@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 25 Mar 2024 12:21:04 +0100
+Message-ID: <CAJfpegtssacBQuV0J2cEFYOJQvg-p10thsMEq2W87SEonqLnkg@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel paging request in fuse_copy_do
+To: David Hildenbrand <david@redhat.com>
+Cc: xingwei lee <xrivendell7@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, samsun1006219@gmail.com, 
+	syzkaller-bugs@googlegroups.com, linux-mm <linux-mm@kvack.org>, 
+	Mike Rapoport <rppt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Mar 22, 2024 at 04:38:35PM -0700, Boqun Feng wrote:
-> Hi,
-> 
-> Since I see more and more Rust code is comming in, I feel like this
-> should be sent sooner rather than later, so here is a WIP to open the
-> discussion and get feedback.
-> 
-> One of the most important questions we need to answer is: which
-> memory (ordering) model we should use when developing Rust in Linux
-> kernel, given Rust has its own memory ordering model[1]. I had some
-> discussion with Rust language community to understand their position
-> on this:
-> 
-> 	https://github.com/rust-lang/unsafe-code-guidelines/issues/348#issuecomment-1218407557
-> 	https://github.com/rust-lang/unsafe-code-guidelines/issues/476#issue-2001382992
-> 
-> My takeaway from these discussions, along with other offline discussion
-> is that supporting two memory models is challenging for both correctness
-> reasoning (some one needs to provide a model) and implementation (one
-> model needs to be aware of the other model). So that's not wise to do
-> (at least at the beginning). So the most reasonable option to me is:
-> 
-> 	we only use LKMM for Rust code in kernel (i.e. avoid using
-> 	Rust's own atomic).
-> 
-> Because kernel developers are more familiar with LKMM and when Rust code
-> interacts with C code, it has to use the model that C code uses.
+On Fri, 22 Mar 2024 at 22:56, David Hildenbrand <david@redhat.com> wrote:
 
-I think that makes sense; if nothing else it's consistent with how we handle
-the C atomics today.
+>  From 85558a46d9f249f26bd77dd3b18d14f248464845 Mon Sep 17 00:00:00 2001
+> From: David Hildenbrand <david@redhat.com>
+> Date: Fri, 22 Mar 2024 22:45:36 +0100
+> Subject: [PATCH] mm/secretmem: fix GUP-fast succeeding on secretmem folios
+>
+> folio_is_secretmem() states that secretmem folios cannot be LRU folios:
+> so we may only exit early if we find an LRU folio. Yet, we exit early if
+> we find a folio that is not a secretmem folio.
+>
+> Consequently, folio_is_secretmem() fails to detect secretmem folios and,
+> therefore, we can succeed in grabbing a secretmem folio during GUP-fast,
+> crashing the kernel when we later try reading/writing to the folio, because
+> the folio has been unmapped from the directmap.
+>
+> Reported-by: xingwei lee <xrivendell7@gmail.com>
+> Reported-by: yue sun <samsun1006219@gmail.com>
+> Debugged-by: Miklos Szeredi <miklos@szeredi.hu>
+> Fixes: 1507f51255c9 ("mm: introduce memfd_secret system call to create "secret" memory areas")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-> And this patchset is the result of that option. I introduced an atomic
-> library to wrap and implement LKMM atomics (of course, given it's a WIP,
-> so it's unfinished). Things to notice:
-> 
-> * I know I could use Rust macro to generate the whole set of atomics,
->   but I choose not to in the beginning, as I want to make it easier to
->   review.
-> 
-> * Very likely, we will only have AtomicI32, AtomicI64 and AtomicUsize
->   (i.e no atomic for bool, u8, u16, etc), with limited support for
->   atomic load and store on 8/16 bits.
-> 
-> * I choose to re-implement atomics in Rust `asm` because we are still
->   figuring out how we can make it easy and maintainable for Rust to call
->   a C function _inlinely_ (Gary makes some progress [2]). Otherwise,
->   atomic primitives would be function calls, and that can be performance
->   bottleneck in a few cases.
+Verified that it's no longer crashing with the reproducers.
 
-I don't think we want to maintain two copies of each architecture's atomics.
-This gets painful very quickly (e.g. as arm64's atomics get patched between
-LL/SC and LSE forms).
-
-Can we start off with out-of-line atomics, and see where the bottlenecks are?
-
-It's relatively easy to do that today, at least for the atomic*_*() APIs:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?h=atomics/outlined&id=e0a77bfa63e7416d610769aa4ab62bc06993ce56
-
-... which IIUC covers the "AtomicI32, AtomicI64 and AtomicUsize" cases you
-mention above.
-
-Mark.
+Tested-by: Miklos Szeredi <mszeredi@redhat.com>
 
