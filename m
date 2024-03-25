@@ -1,69 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-15252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2EC88B092
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 20:55:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF3B88B14D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 21:26:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B2AE2E1B94
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 19:55:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46CC21F66A34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 20:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829BD4501F;
-	Mon, 25 Mar 2024 19:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC294AECB;
+	Mon, 25 Mar 2024 20:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jGiLYVk0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niXDmykL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B226C224DB;
-	Mon, 25 Mar 2024 19:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FDE433CA;
+	Mon, 25 Mar 2024 20:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711396466; cv=none; b=IGk6lOxxqdOEmQ2770ShU/Ncbd4Msd8VrLXoztLNswHlw8G8O/1GZ8itGsVhy3RZLZ9MuIqVbFnxXXVDJvKyFZIHVEhMZv2INJc3Z5vyYvZ471zmtdQFIGQgDrCoZoQoHDQ8wsGw5Yo9w//5fRjHFjtdJNNdBpjGM+HUpIRtb2w=
+	t=1711398384; cv=none; b=dGisJD8panRHS3ot5ZUitGoKkTnXhQdBokhbJu1r9TwvclY4/zmh9S7ccNIROjDq7R8xQBqVOfWvgdJ1MovBX8kXZCaFOZ/u34o75qD0weB1wWyXv6MNwvHE+dtCyC1VSgAAt4R71z3T3WzFwjx7bj4i86ycx0VgS+6qjohbWX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711396466; c=relaxed/simple;
-	bh=Hy2D4JJqgBzY08cEDq6AeRjSKFZX+A9Y1A28xMMdobI=;
+	s=arc-20240116; t=1711398384; c=relaxed/simple;
+	bh=jmKUHFci2vuF+OaEjW1pVKxjDkIWXtyKZpuW9N4y/Js=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T0KMKLpyYA9iN6zduEoj9+eSx1QCfjbm1uVPSaAvO8MnwdBvLyZ7CQ+dhzzQNi3cOT6nRXeC7n/1gqOHX/1kPDRMtN590PoahF7/eo4hd1KOH7JRGA+oZtjuPbFCvBr6v7DMexvK7gCWbileVobyVKaP8L/LHP0nFGwLoXpSzmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jGiLYVk0; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=btW7kQnjDmUmvNE23NH4vh6GdFNyilpMQ7GM8BLzUxo=; b=jGiLYVk075whzTFEz9PjZ7Cig8
-	Dvb2S2yw90zt5tTY3q69uUjfk13fVEeAeZy1pXgZMT6w+Q5JMTI1zPmBfjTg/XaofApLcyBbQWSA8
-	BVET1D7c4X+8z5pg3MGJFvycQpgEsTHkjWmAxVURxIEiLuE61OO/mGHw5mB83tIXQq6zVNLxQzY6O
-	108aP6tkrjQnM3o9HBiEWi/+76kphM7w1dxx2b2m/lyNq2iOY5/+tcIoZ4A7OORJ4iNEQVsGWuQgh
-	XmlRUNi1ntn7Rp02pLQ7n1w0SR257tR1VSpJeo9oZQwwutFSlXs7ZEetTdicVH7o0BYiSTmq15WmM
-	fdUEKH7g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1roqOb-00GXMi-0K;
-	Mon, 25 Mar 2024 19:54:13 +0000
-Date: Mon, 25 Mar 2024 19:54:13 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Steve French <smfrench@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	CIFS <linux-cifs@vger.kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Christian Brauner <christian@brauner.io>,
-	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
-Subject: Re: kernel crash in mknod
-Message-ID: <20240325195413.GW538574@ZenIV>
-References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
- <20240324054636.GT538574@ZenIV>
- <3441a4a1140944f5b418b70f557bca72@huawei.com>
- <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
- <CAH2r5muL4NEwLxq_qnPOCTHunLB_vmDA-1jJ152POwBv+aTcXg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YcIe0G3mBJkOwk5UaFgSzuwVnIlkGvziJXtjGJTKwAUXrt8qROVSvvwY7hQZ56tpKVy/4DMBDf94GOQ53mc3XOpAy6ds3AK5Hlg+bA5Uz0Y3KaRoyqST8dVwlf04HUOG7ROMfR+8BraHi5unBT/lf/YAxSVyZyBguNZmY3ndjUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niXDmykL; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5e4613f2b56so3112873a12.1;
+        Mon, 25 Mar 2024 13:26:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711398382; x=1712003182; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zM//w0ZQA39ATnyT3zYBHv3F+CzIiqRVQ67zJHzHQSE=;
+        b=niXDmykLrkOSN6dR4oKX4A7k175YIUV33NwdBbfuYyprhy8E5lujRFsbXPOQ5zvQ59
+         ca7zeVw05x9cNNIwPh2iBMCUPbpPW4ru9UNIVUqtciuJbRUyjj/F58/Xn8HXFFnvggDp
+         MG2kgOm0EJkne3/a5lnOU18gmtwPeWP2XmJiMwoH6UA5meyqN0Ne7aCqe3tfR7GnSvm6
+         GrLfi1ZhzG3guELIvA9EGxo7schQj32/nW1E8MHbiGbFjpcbM5mo33cHtLif5Hv06Efn
+         ge283dHccC0iCUKE8+GI3oR7utO/FXxpHyVKAeNSWppZNUJE/H8EqoAjYU2MH50YZwS/
+         QOTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711398382; x=1712003182;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zM//w0ZQA39ATnyT3zYBHv3F+CzIiqRVQ67zJHzHQSE=;
+        b=LC7McZdFbzAOF5/t5nERNLNDEEOVWLt7CeeMtPeLBFSi+ledxgH9+78F3hbJtxzcoe
+         /Zs1L8O/Xr9AjNkQHYxSb6a7pPD16EK5VP4ipHtQlJF3VCqt/pm4u4hphuWDvEs1jERq
+         ZfPAJXyJ39kiUfs1mT9AqgGqEFfhznQp2HSovGkXrsShZIhq+W8GqS8N1Wh1ct6w/HtT
+         DoGBPkhHWXYvaafPCK2CKBuxPOssdiI+ZaKaWZkHheqvZtWsYd6KIuxjM0z4m9Hmu3Rm
+         oxzweFIO/nwsKjQ5LxLdyZJQrvsAB/8ykSKsdQIrcIjV0mZZZ/+AcaPQC8EQlqu1VVxM
+         7D1g==
+X-Forwarded-Encrypted: i=1; AJvYcCW5IEHYj9q+4/ynquSLVEL7MhlqbKNCW4dq9rDGobBM1XCd2qpmvPgldi8lK6NZ02nas6/uNJ0qV6IgJjxKveBpYtr/9tjxoX4i7eApGzVNT7DO9rF8RITMGlNAOQ4Ktmx7KUbOqgQWWVJBpA==
+X-Gm-Message-State: AOJu0Yy0fAFxkgttClcC3et8JPqjuoQ0mXDbbJHFWVhTgqqzBSmsijNJ
+	mWJ3oLQ8a4/Zk5Dt2zWlFpzHfc1jAtDy09+TObYriwJPj4T+l3F3
+X-Google-Smtp-Source: AGHT+IHqnA5sag8cpZvLjrUVzMX6qB8fx+bXfLavgzLRsx+qy3P2PK8yQ/Q7PtCapn370eT44Sj9PQ==
+X-Received: by 2002:a17:90a:e392:b0:29d:fe34:fa16 with SMTP id b18-20020a17090ae39200b0029dfe34fa16mr6081228pjz.21.1711398381870;
+        Mon, 25 Mar 2024 13:26:21 -0700 (PDT)
+Received: from localhost (dhcp-141-239-158-86.hawaiiantel.net. [141.239.158.86])
+        by smtp.gmail.com with ESMTPSA id ns21-20020a17090b251500b002a068485de6sm2704002pjb.3.2024.03.25.13.26.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Mar 2024 13:26:21 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 25 Mar 2024 10:26:20 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	willy@infradead.org, bfoster@redhat.com, jack@suse.cz,
+	dsterba@suse.com, mjguzik@gmail.com, dhowells@redhat.com,
+	peterz@infradead.org
+Subject: Re: [PATCH 6/6] writeback: remove unneeded GDTC_INIT_NO_WB
+Message-ID: <ZgHd7GcUslrBEeoi@slm.duckdns.org>
+References: <20240320110222.6564-1-shikemeng@huaweicloud.com>
+ <20240320110222.6564-7-shikemeng@huaweicloud.com>
+ <Zfr9my_tfxO-N6HS@mtj.duckdns.org>
+ <becdb16b-a318-ec05-61d2-d190541ae997@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,52 +90,43 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAH2r5muL4NEwLxq_qnPOCTHunLB_vmDA-1jJ152POwBv+aTcXg@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <becdb16b-a318-ec05-61d2-d190541ae997@huaweicloud.com>
 
-On Mon, Mar 25, 2024 at 11:26:59AM -0500, Steve French wrote:
+On Thu, Mar 21, 2024 at 03:12:21PM +0800, Kemeng Shi wrote:
+> 
+> 
+> on 3/20/2024 11:15 PM, Tejun Heo wrote:
+> > Hello,
+> > 
+> > On Wed, Mar 20, 2024 at 07:02:22PM +0800, Kemeng Shi wrote:
+> >> We never use gdtc->dom set with GDTC_INIT_NO_WB, just remove unneeded
+> >> GDTC_INIT_NO_WB
+> >>
+> >> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> > ...
+> >>  void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty)
+> >>  {
+> >> -	struct dirty_throttle_control gdtc = { GDTC_INIT_NO_WB };
+> >> +	struct dirty_throttle_control gdtc = { };
+> > 
+> > Even if it's currently not referenced, wouldn't it still be better to always
+> > guarantee that a dtc's dom is always initialized? I'm not sure what we get
+> > by removing this.
+> As we explicitly use GDTC_INIT_NO_WB to set global_wb_domain before
+> calculating dirty limit with domain_dirty_limits, I intuitively think the dirty
+> limit calculation in domain_dirty_limits is related to global_wb_domain when
+> CONFIG_WRITEBACK_CGROUP is enabled while the truth is not. So this is a little
+> confusing to me.
+> Would it be acceptable to you that we keep useing GDTC_INIT_NO_WB but
+> define GDTC_INIT_NO_WB to null fow now and redefine GDTC_INIT_NO_WB when some
+> member of gdtc is really needed.
+> Of couse I'm not insistent on this. Would like to hear you suggestion. Thanks!
 
-> A loosely related question.  Do I need to change cifs.ko to return the
-> pointer to inode on mknod now?  dentry->inode is NULL in the case of mknod
-> from cifs.ko (and presumably some other fs as Al noted), unlike mkdir and
-> create where it is filled in.   Is there a perf advantage in filling in the
-> dentry->inode in the mknod path in the fs or better to leave it as is?  Is
-> there a good example to borrow from on this?
+Ah, I see. In that case, the proposed change of removing GDTC_INIT_NO_WB
+looks good to me.
 
-AFAICS, that case in in CIFS is the only instance of ->mknod() that does this
-"skip lookups, just unhash and return 0" at the moment.
+Thanks.
 
-What's more, it really had been broken all along for one important case -
-AF_UNIX bind(2) with address (== socket pathname) being on the filesystem
-in question.
-
-Options:
-	1) make vfs_mknod() callers aware of the possibility, have the ones
-that care do lookup in case when return value is 0 and dentry is unhashed.
-That's similar to what we do for vfs_mkdir().  No changes needed for CIFS
-or fs/namei.c (i.e. do_mknodat()), unix_bind() definitely needs a change,
-ecryptfs can stay as-is, overlayfs just needs to stop complaining when it sees
-that situation, nfsd might or might not need a change - hadn't checked yet.
-In that case we document ->mknod() as "may unhash and return 0 if it wants
-to save a lookup".
-	2) make vfs_mknod() check for that case and have it call ->lookup()
-if it sees that.  I don't see any benefits to that, TBH - no performance
-benefits anywhere and no real simplification for ->mknod() instances.  It
-does avoid the need to change anything in CIFS, though.
-	3) require ->mknod() instances to make dentry positive on success.
-CIFS needs a fix, documentation gets updated to explicitly require that.
-AFAICS, nothing else would need to be touched, except possibly adding
-a warning in vfs_mknod() to catch violation of that rule.
-
-Note that cifs_sfu_make_node() is the only case in CIFS where that happens -
-other codepaths (both in cifs_make_node() and in smb2_make_node()) will
-instantiate.  How painful would it be for cifs_sfu_make_node()?
-AFAICS, you do open/sync_write/close there; would it be hard to do
-an eqiuvalent of fstat and set the inode up?  No need to reread the
-file contents (as cifs_sfu_type() does), and you do have full path
-anyway, so it's less work than for full ->lookup() even if you need
-a path-based protocol operations...
-
-Does that thing have an equivalent of fstat() that would return the
-metadata of opened file?
+-- 
+tejun
 
