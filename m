@@ -1,282 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-15218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00DC288A80B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 17:01:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED7E88A880
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 17:11:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23A3E1C620EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 16:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E103632252B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 16:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACBC12CD83;
-	Mon, 25 Mar 2024 13:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3540813C8FC;
+	Mon, 25 Mar 2024 13:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sTPmmRv8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HsM78UR9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E583357330
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 13:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055E113C81F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 13:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711374032; cv=none; b=OD99PSmZlV85XHl8Xd/fgcNcuH/VJ0aO8EvfKW+0u6rqII3bsD7h4xCcysCEu0eKFK9xFyNycTEnfivYUDbj5m26DsUHzcGr8J8C0g8fZYwSAcJzJzyQrsxMW0zm06dzd4lA7suqU7w35EWa3GyYNxThwx1QzR985Q95vIZKabY=
+	t=1711375028; cv=none; b=ugMYzNv5NdQTAMqDSR5tnFNjqFslwv/3bFobQLKFmP2pI/2k2oO/XfSVqZpMyJoBLW6uxAGz7QQGZlutz5v+74YDASB8bKreUBl2ZjnnvLPiqZGaOH4YYUKNs90gYZtwCYpo5HxjNApMtcVxCvD4U28+r9YosKIDX9f5AQ74LkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711374032; c=relaxed/simple;
-	bh=4g64X2z2I9w1oZROI2GSCgDSQPRm3AXX/Vq984hPUy8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YLAtPYWOe0bPE+QJ59c/97OQeIN2aK8WH2mS/7sgRCHTKVwzqBlZ1ozB0Yi907mUW+eEWycHVIxRYyX71O0DVWpskTFoCL0OUaroGby9gs9rlbOQQYq3zfWgl1JbjCGJBxs7uR2cdpQ8q0Dmt14kUH954HWIjfk6UE9tYuxxX04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sTPmmRv8; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dcc0bcf9256so5392479276.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 06:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711374030; x=1711978830; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AL+pLtjmOCqOyTizrp229Q3mbwzX+z6isjzKlV0osFY=;
-        b=sTPmmRv8KyNA4AHgkC1SESumfHOGNVMLdeeJXtJToVGayvPcwY9zI2h2oqm/y138jH
-         nUsDkK3lNwCbUjZmSVckmbY9v0MzNOecSLqt4G1skckV06ypppCqv0icFAj5hPtADkY1
-         CcxFsDs8PB5FcB2xZBhAkqLJZ8hSvVw9RtiFSUkHr2jW6Xq0HFdikST0/twp1hBPy3cs
-         mlKezzmJWqj8O/fgdkHQ0vXf7c+FltPXNVWWCdDvvJDiNFbcMO+w/IkErwG5kiJqOkh8
-         Re1WrHmj6hnNOPYm5AaVaapMH3R+Xf9bqnrbw/CD02TWbv+hl0n1ocaAnpzcD/hZ48q/
-         8W1Q==
+	s=arc-20240116; t=1711375028; c=relaxed/simple;
+	bh=Su0oRSDMDN6WKCvVoRZlpj1EX7RmBmcvnQ0SRJYHWr0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pDUT9aGUxtHZwrAqlBA9+crKOh5U2HjmS0aTkdtfITGhZ3bDsqaEPrJS14PomzMxeIFtjKh+Wn7Ya9b4k2qlI98sjlHJNop1nzN+/Axi2zJatfrpWxjPhj+FjFCzzTgmGkTgp8zqyL2nhOqkeHUlCYdAgLijaF04LNpZFoI2UFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HsM78UR9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711375026;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Su0oRSDMDN6WKCvVoRZlpj1EX7RmBmcvnQ0SRJYHWr0=;
+	b=HsM78UR91mLa8AECwfCNWCfO4zMqdhsWtsRbEXSbJUZTb/6w12OGUPYvpe3VnozEc/yUEK
+	ADTNc4l0jfBSBts5yTHKYf4KKnO6uGrUFDyVNmMnZHpm0+o8mLpk2NqCRI2P7NyHgPeUme
+	IOWJvOb0ESa4vAsZor9B1xNQoSeKP+E=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-614-U811VP5rOVqln7fobXFurw-1; Mon, 25 Mar 2024 09:57:04 -0400
+X-MC-Unique: U811VP5rOVqln7fobXFurw-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2d68c14a56cso13632861fa.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 06:57:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711374030; x=1711978830;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AL+pLtjmOCqOyTizrp229Q3mbwzX+z6isjzKlV0osFY=;
-        b=TY2wxaDw2YKigcItPRU69tXuK6Ch4g9O1oUVxjvyfIhkIGzhWfZi2tnOI088dEmxIU
-         eXXOVFCb0LwrRcYNm7ReIkOzb2ghQf3LBuVrD/d27lnFB0/viLQ27/uT0gnjoYD7pUvs
-         z/KG1w395AXpnSeTUIf/L19R4KU/tAgdHIpD22Yn/qyIGZGgBSi5BTOa4uIRCIbBuPSV
-         dy7drNotf6UxZRs3QvQvGXXWcE20H0uCNtgfF2A4xZclejF+xI8vidFhVvYnW4VnNddh
-         ZbaptJH1UQvPrWRIOjWrSgLJDzTCHTv26+jc9KwihTaRwzZmNm1JNl4AHAwVhM1EDqS4
-         58DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBJ00ftYcRRFVwunwj0xmLU2kjY6z0fRWCj0zE9jv5lW9G4lfAHBcVGxKsJUj7+05kP4+2aJYSpJInwXWMGk8ntJnEZhV44VpVunRcnw==
-X-Gm-Message-State: AOJu0YzqMw3//E8uogoFgLjx3n234Nojo9kYjGoc1IMr/wB1dN5EF0pH
-	7jM8oGbxyH62DfA3AUvYsT90xSraA7Zdp9w8nX0+/CfxLTPEu9dlSl3UFGwPS3xcT12SnWwk3d3
-	BWA==
-X-Google-Smtp-Source: AGHT+IEmLONyvtYGybUOCEnnXeQyyFFbJ0hIAh4jktgritw14JAHy3RCayEtj6Qf3eX1vANUcfWRhzrGbXQ=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6902:124a:b0:dcc:6bf0:2eb6 with SMTP id
- t10-20020a056902124a00b00dcc6bf02eb6mr317474ybu.6.1711374029954; Mon, 25 Mar
- 2024 06:40:29 -0700 (PDT)
-Date: Mon, 25 Mar 2024 13:40:04 +0000
-In-Reply-To: <20240325134004.4074874-1-gnoack@google.com>
+        d=1e100.net; s=20230601; t=1711375021; x=1711979821;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Su0oRSDMDN6WKCvVoRZlpj1EX7RmBmcvnQ0SRJYHWr0=;
+        b=k/gmmBOcivmP7vK7Q0JSWQJQi1R3PubXpmZ2FmL2IS6QKc97EcS5YphgxC9xfqg5VO
+         Ipr0ljx4K3tm/7uxVJ109XDXpCuYKlBEzMFulG+kZ8GPePbGdUfst07QVtEo+vogng/Y
+         BrEg4RLFQFIomAk4kOOw8aLwYY7ATPGttJu4XTwvCw6p4d+d9NzEiTR+R0oQMdr0A14K
+         kKnWPwsb+Y+dFH/I8PkmSxXq7hyp5KyxpUfR0tN/KDRO/wUBQOEYHlOtc4OVHQ1SLXIE
+         kGQsif38UCpldWXU9Ghn4qiSqhbMoO4KDz7xtr2NGmTFEwhXNy1keuEpt05V37MPKGwG
+         dfpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXpXSJwFnnBIXp4IzYIpauWrUUuH8WKkSt2HoA6xrlp3sgTOPiGu0CdmmCFOx1mWb94m3tcLudBzc2ZT/qBfbzt7oazsTMEIaG3ckDlA==
+X-Gm-Message-State: AOJu0YyeUZM8CJRPOhY/OSOVHrFBuEmL6bb2Q3NS2yoshiMkFpm/YS1v
+	KORqldtcV+KN7RSlcqF5C+HYU91tNS1GD/xUimfGwasJbd2+FWdDNZ65/0/bnKYk0pQkPx8rbHd
+	p8mlG6IJc4hgiaQ71QXWJfcmLzChZJswlSt9+M3iCQVRFif0qqF53r4hBFOIdgZQ=
+X-Received: by 2002:a2e:88d0:0:b0:2d4:78b4:e568 with SMTP id a16-20020a2e88d0000000b002d478b4e568mr4342005ljk.1.1711375021350;
+        Mon, 25 Mar 2024 06:57:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEsEsxChr4oIHfPIiuFPvTM+72aemZNo0G3gI+fLGhTYtrb+QS9VpjMdi/YbUXjC7EP1XZSIg==
+X-Received: by 2002:a2e:88d0:0:b0:2d4:78b4:e568 with SMTP id a16-20020a2e88d0000000b002d478b4e568mr4341961ljk.1.1711375020848;
+        Mon, 25 Mar 2024 06:57:00 -0700 (PDT)
+Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id n3-20020a05600c4f8300b00414887d9329sm4600055wmq.46.2024.03.25.06.56.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Mar 2024 06:57:00 -0700 (PDT)
+Message-ID: <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
+Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
+From: Philipp Stanner <pstanner@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Kent Overstreet
+	 <kent.overstreet@linux.dev>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ llvm@lists.linux.dev,  Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary
+ Guo <gary@garyguo.net>, =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan
+ Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>,
+ Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>,
+ Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>,
+ Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes
+ <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com,  Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland
+ <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Date: Mon, 25 Mar 2024 14:56:58 +0100
+In-Reply-To: <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
+References: <20240322233838.868874-1-boqun.feng@gmail.com>
+	 <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
+	 <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
+	 <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
+	 <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240325134004.4074874-1-gnoack@google.com>
-X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
-Message-ID: <20240325134004.4074874-10-gnoack@google.com>
-Subject: [PATCH v12 9/9] landlock: Document IOCTL support
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: linux-security-module@vger.kernel.org, 
-	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 
-In the paragraph above the fallback logic, use the shorter phrasing
-from the landlock(7) man page.
+On Fri, 2024-03-22 at 17:36 -0700, Linus Torvalds wrote:
+> On Fri, 22 Mar 2024 at 17:21, Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >=20
+> > Besides that there's cross arch support to think about - it's hard
+> > to
+> > imagine us ever ditching our own atomics.
+>=20
+> > [... SNIP ...]
+> >=20
+> > I was thinking about something more incremental - just an optional
+> > mode
+> > where our atomics were C atomics underneath. It'd probably give the
+> > compiler people a much more effective way to test their stuff than
+> > anything they have now.
+>=20
+> I suspect it might be painful, and some compiler people would throw
+> their hands up in horror, because the C++ atomics model is based
+> fairly solidly on atomic types, and the kernel memory model is much
+> more fluid.
+>=20
+> Boqun already mentioned the "mixing access sizes", which is actually
+> quite fundamental in the kernel, where we play lots of games with
+> that
+> (typically around locking, where you find patterns line unlock
+> writing
+> a zero to a single byte, even though the whole lock data structure is
+> a word). And sometimes the access size games are very explicit (eg
+> lib/lockref.c).
+>=20
+> But it actually goes deeper than that. While we do have "atomic_t"
+> etc
+> for arithmetic atomics, and that probably would map fairly well to
+> C++
+> atomics, in other cases we simply base our atomics not on _types_,
+> but
+> on code.
+>=20
+> IOW, we do things like "cmpxchg()", and the target of that atomic
+> access is just a regular data structure field.
+>=20
+> It's kind of like our "volatile" usage. If you read the C (and C++)
+> standards, you'll find that you should use "volatile" on data types.
+> That's almost *never* what the kernel does. The kernel uses
+> "volatile"
+> in _code_ (ie READ_ONCE() etc), and uses it by casting etc.
+>=20
+> Compiler people don't tend to really like those kinds of things.
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- Documentation/userspace-api/landlock.rst | 76 +++++++++++++++++++-----
- 1 file changed, 61 insertions(+), 15 deletions(-)
+Just for my understanding: Why don't they like it?
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index 9dd636aaa829..145bd869c684 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -76,7 +76,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
--            LANDLOCK_ACCESS_FS_TRUNCATE,
-+            LANDLOCK_ACCESS_FS_TRUNCATE |
-+            LANDLOCK_ACCESS_FS_IOCTL_DEV,
-         .handled_access_net =3D
-             LANDLOCK_ACCESS_NET_BIND_TCP |
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-@@ -85,10 +86,10 @@ to be explicit about the denied-by-default access right=
-s.
- Because we may not know on which kernel version an application will be
- executed, it is safer to follow a best-effort security approach.  Indeed, =
-we
- should try to protect users as much as possible whatever the kernel they a=
-re
--using.  To avoid binary enforcement (i.e. either all security features or
--none), we can leverage a dedicated Landlock command to get the current ver=
-sion
--of the Landlock ABI and adapt the handled accesses.  Let's check if we sho=
-uld
--remove access rights which are only supported in higher versions of the AB=
-I.
-+using.
-+
-+To be compatible with older Linux versions, we detect the available Landlo=
-ck ABI
-+version, and only use the available subset of access rights:
-=20
- .. code-block:: c
-=20
-@@ -114,6 +115,10 @@ remove access rights which are only supported in highe=
-r versions of the ABI.
-         ruleset_attr.handled_access_net &=3D
-             ~(LANDLOCK_ACCESS_NET_BIND_TCP |
-               LANDLOCK_ACCESS_NET_CONNECT_TCP);
-+        __attribute__((fallthrough));
-+    case 4:
-+        /* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
-+        ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
-     }
-=20
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -225,6 +230,7 @@ access rights per directory enables to change the locat=
-ion of such directory
- without relying on the destination directory access rights (except those t=
-hat
- are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
- documentation).
-+
- Having self-sufficient hierarchies also helps to tighten the required acce=
-ss
- rights to the minimal set of data.  This also helps avoid sinkhole directo=
-ries,
- i.e.  directories where data can be linked to but not linked from.  Howeve=
-r,
-@@ -318,18 +324,26 @@ It should also be noted that truncating files does no=
-t require the
- system call, this can also be done through :manpage:`open(2)` with the fla=
-gs
- ``O_RDONLY | O_TRUNC``.
-=20
--When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-``
--right is associated with the newly created file descriptor and will be use=
-d for
--subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavio=
-r is
--similar to opening a file for reading or writing, where permissions are ch=
-ecked
--during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)=
-` and
-+The truncate right is associated with the opened file (see below).
-+
-+Rights associated with file descriptors
-+---------------------------------------
-+
-+When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-`` and
-+``LANDLOCK_ACCESS_FS_IOCTL_DEV`` rights is associated with the newly creat=
-ed
-+file descriptor and will be used for subsequent truncation and ioctl attem=
-pts
-+using :manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is si=
-milar
-+to opening a file for reading or writing, where permissions are checked du=
-ring
-+:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
- :manpage:`write(2)` calls.
-=20
--As a consequence, it is possible to have multiple open file descriptors fo=
-r the
--same file, where one grants the right to truncate the file and the other d=
-oes
--not.  It is also possible to pass such file descriptors between processes,
--keeping their Landlock properties, even when these processes do not have a=
-n
--enforced Landlock ruleset.
-+As a consequence, it is possible that a process has multiple open file
-+descriptors referring to the same file, but Landlock enforces different th=
-ings
-+when operating with these file descriptors.  This can happen when a Landlo=
-ck
-+ruleset gets enforced and the process keeps file descriptors which were op=
-ened
-+both before and after the enforcement.  It is also possible to pass such f=
-ile
-+descriptors between processes, keeping their Landlock properties, even whe=
-n some
-+of the involved processes do not have an enforced Landlock ruleset.
-=20
- Compatibility
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-@@ -458,6 +472,28 @@ Memory usage
- Kernel memory allocated to create rulesets is accounted and can be restric=
-ted
- by the Documentation/admin-guide/cgroup-v1/memory.rst.
-=20
-+IOCTL support
-+-------------
-+
-+The ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right restricts the use of
-+:manpage:`ioctl(2)`, but it only applies to *newly opened* device files.  =
-This
-+means specifically that pre-existing file descriptors like stdin, stdout a=
-nd
-+stderr are unaffected.
-+
-+Users should be aware that TTY devices have traditionally permitted to con=
-trol
-+other processes on the same TTY through the ``TIOCSTI`` and ``TIOCLINUX`` =
-IOCTL
-+commands.  Both of these require ``CAP_SYS_ADMIN`` on modern Linux systems=
-, but
-+the behavior is configurable for ``TIOCSTI``.
-+
-+On older systems, it is therefore recommended to close inherited TTY file
-+descriptors, or to reopen them from ``/proc/self/fd/*`` without the
-+``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right, if possible.
-+
-+Landlock's IOCTL support is coarse-grained at the moment, but may become m=
-ore
-+fine-grained in the future.  Until then, users are advised to establish th=
-e
-+guarantees that they need through the file hierarchy, by only allowing the
-+``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right on files where it is really require=
-d.
-+
- Previous limitations
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -495,6 +531,16 @@ bind and connect actions to only a set of allowed port=
-s thanks to the new
- ``LANDLOCK_ACCESS_NET_BIND_TCP`` and ``LANDLOCK_ACCESS_NET_CONNECT_TCP``
- access rights.
-=20
-+IOCTL (ABI < 5)
-+---------------
-+
-+IOCTL operations could not be denied before the fifth Landlock ABI, so
-+:manpage:`ioctl(2)` is always allowed when using a kernel that only suppor=
-ts an
-+earlier ABI.
-+
-+Starting with the Landlock ABI version 5, it is possible to restrict the u=
-se of
-+:manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` access =
-right.
-+
- .. _kernel_support:
-=20
- Kernel support
---=20
-2.44.0.396.g6e790dbe36-goog
+I guess since compiler people have to support volatile pointers
+anyways, temporarily casting something to such a volatile pointer
+shouldn't be a problem either =E2=80=93 so they don't dislike it because it=
+'s
+more difficult to implement, but because it's more difficult to verify
+for correctness?
+
+
+P.
+
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Linus
+>=20
 
 
