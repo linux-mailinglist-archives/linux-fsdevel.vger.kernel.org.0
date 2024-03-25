@@ -1,77 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-15243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A0088AF22
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 19:59:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CAE88AF26
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 20:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E22361C3F98B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 18:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3181F63363
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 19:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FDE610D;
-	Mon, 25 Mar 2024 18:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5E45C96;
+	Mon, 25 Mar 2024 19:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dq7T0k6+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wo9sobzT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BAE4A28
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 18:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2E54A21;
+	Mon, 25 Mar 2024 19:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711393185; cv=none; b=E7M2Y7RPjjmwxZMNow4ztzw6BXMxH6whsj3RLXKE1Z2dM2/yFO+RfuCmXAym+DtAJ/AeNesJj9uWLfe+htRu398x+OS87sdZUlU7doU5hqc77t3YMeo9NFNnjJ7044ZjO9c5gOtJaUpnukCp5x+073OLSE20HlDXWKhAnyTUoz8=
+	t=1711393231; cv=none; b=CO8IlveLXxVbU0MOpIthA2IS8/u/M+WOyeUN9nsgl1kr9PPx2Kmt7V8xvxvUOsp59OzQTBjFc/drNW2NvPEZxC/flY7xdqj7slu/VH0pitCEODEEb7voBYxGVCBQGE/8nWNGbfDvYpoD7XdKZwY8zGE6FJ8bf8IU/EjA/Yn4Jq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711393185; c=relaxed/simple;
-	bh=5gZosMRdgXPNa3JQMcKlsbHmM1gyLPrPMFgAM70+YQw=;
+	s=arc-20240116; t=1711393231; c=relaxed/simple;
+	bh=f6KVRMBffRNR3GxpvS3ie2AoEl9D+n2F+AduBnRxZNY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2mCpyj9btd32YHNiwpnvOwBQwIjh/+4JqUkRe5YMD+5058GfTKERcGFOqua7U6+3J/nKs/Qt4z9CBhRGr2dXeOEuyu910MmvWa/jYX8fRwjObBHx4MSfy0T/dQYkESVWH+JfEbY69ycn6ilABSrOJENWNW34O5CdSYB8zsItxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dq7T0k6+; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 25 Mar 2024 14:59:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1711393181;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VkxyhaTa5U3F8wqjsa7LRBFbMSJiyk7bCAom1K7zW40=;
-	b=Dq7T0k6+H7nOTJbABp2Z2wN8NULCHNW0C7jHxsGk8umchshL+Bt0+paSu3yXZ0U/Y4O7Qw
-	2Wpvlj/e3fmhSm/vChaqixf/iHXD+YHD9CLhy0X4PoAiONraZ+KcYsPwPUDyOPWoE0DhGp
-	ati/oPgLBYa7j6sRtKFgS2L5MNPZSGU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Philipp Stanner <pstanner@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
-	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
-	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <bu3seu56hfozsvgpdqjarbdkqo3lsjfc4lhluk5oj456xmrjc7@lfbbjxuf4rpv>
-References: <20240322233838.868874-1-boqun.feng@gmail.com>
- <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
- <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
- <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
- <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
- <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
- <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h8U38QI8NrgYBZLBiKxLucZoE7jHgkT7nhd5uwX75PTiQd6i0+NWLUsQgIy24OgOjsgSbiF6BjRy/lYTF1ZHCEgZSDvSkgVwkqez6xC6JoCMQsxQjZjdswlZc4a6KeSHwvdKmQ6ADhppbZSUY+6jaXmPegasZFvwqx2sI59L36Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Wo9sobzT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vJKeYjHEVe0gfRNnzKMs8M7l+ce1BSEpQNULOYVmG6E=; b=Wo9sobzTx9yoIPBHdce3Jf8Q4w
+	2ruJ5KSp24f10buTZ2gTyna4Qps8r45y3SNriLQkPwN/xC8aKCzf0J0DHzH8RXz4lTQBVbt2/NjK/
+	7F78mDZYmv1HUsOZrSSu+JaifG7wBI7oEJ+xz/lUhbaQEPLemWnRxUyYoUS5gAxGCdjUv9cMGKltV
+	juuvNVMbM982bct7QUPIAw6nUDogsAidz2B57REtlrMzJXKTgUzbYR2sbS1YB723Yp6UCmUZYFDFu
+	VEtPaNYIkPLvvdkfciegfBcdmumUffVExTTu8xT8XV284FkDg/e5NLKj5wfl4lOIueBUmwq+mLEXy
+	48nf7hlA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ropYU-0000000H7OE-3KgK;
+	Mon, 25 Mar 2024 19:00:22 +0000
+Date: Mon, 25 Mar 2024 19:00:22 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	gost.dev@samsung.com, chandan.babu@oracle.com, hare@suse.de,
+	mcgrof@kernel.org, djwong@kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, david@fromorbit.com,
+	akpm@linux-foundation.org, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3 05/11] readahead: allocate folios with
+ mapping_min_order in readahead
+Message-ID: <ZgHJxiYHvN9DfD15@casper.infradead.org>
+References: <20240313170253.2324812-1-kernel@pankajraghav.com>
+ <20240313170253.2324812-6-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,68 +65,121 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240313170253.2324812-6-kernel@pankajraghav.com>
 
-On Mon, Mar 25, 2024 at 10:44:43AM -0700, Linus Torvalds wrote:
-> On Mon, 25 Mar 2024 at 06:57, Philipp Stanner <pstanner@redhat.com> wrote:
-> >
-> > On Fri, 2024-03-22 at 17:36 -0700, Linus Torvalds wrote:
-> > >
-> > > It's kind of like our "volatile" usage. If you read the C (and C++)
-> > > standards, you'll find that you should use "volatile" on data types.
-> > > That's almost *never* what the kernel does. The kernel uses
-> > > "volatile"
-> > > in _code_ (ie READ_ONCE() etc), and uses it by casting etc.
-> > >
-> > > Compiler people don't tend to really like those kinds of things.
-> >
-> > Just for my understanding: Why don't they like it?
+On Wed, Mar 13, 2024 at 06:02:47PM +0100, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> So I actually think most compiler people are perfectly fine with the
-> kernel model of mostly doing 'volatile' not on the data structures
-> themselves, but as accesses through casts.
+> page_cache_ra_unbounded() was allocating single pages (0 order folios)
+> if there was no folio found in an index. Allocate mapping_min_order folios
+> as we need to guarantee the minimum order if it is set.
+> When read_pages() is triggered and if a page is already present, check
+> for truncation and move the ractl->_index by mapping_min_nrpages if that
+> folio was truncated. This is done to ensure we keep the alignment
+> requirement while adding a folio to the page cache.
 > 
-> It's very traditional C, and there's actually nothing particularly odd
-> about it. Not even from a compiler standpoint.
-> 
-> In fact, I personally will argue that it is fundamentally wrong to
-> think that the underlying data has to be volatile. A variable may be
-> entirely stable in some cases (ie locks held), but not in others.
-> 
-> So it's not the *variable* (aka "object") that is 'volatile', it's the
-> *context* that makes a particular access volatile.
-> 
-> That explains why the kernel has basically zero actual volatile
-> objects, and 99% of all volatile accesses are done through accessor
-> functions that use a cast to mark a particular access volatile.
-> 
-> But I've had negative comments from compiler people who read the
-> standards as language lawyers (which honestly, I despise - it's always
-> possible to try to argue what the meaning of some wording is), and
-> particularly C++ people used to be very very antsy about "volatile".
-> 
-> They had some truly _serious_ problems with volatile.
-> 
-> The C++ people spent absolutely insane amounts of time arguing about
-> "volatile objects" vs "accesses", and how an access through a cast
-> didn't make the underlying object volatile etc.
+> page_cache_ra_order() tries to allocate folio to the page cache with a
+> higher order if the index aligns with that order. Modify it so that the
+> order does not go below the min_order requirement of the page cache.
 
-To be fair, "volatile" dates from an era when we didn't have the haziest
-understanding of what a working memory model for C would look like or
-why we'd even want one.
+This paragraph doesn't make sense.  We have an assertion that there's no
+folio in the page cache with a lower order than the minimum, so this
+seems to be describing a situation that can't happen.  Does it need to
+be rephrased (because you're actually describing something else) or is
+it just stale?
 
-(Someone might want to think about depracating volatile on objects and
-adding compiler flag to disable it; I suspect it'd be a useful cleanup
-for the compiler guys if they could get rid of it.)
+> @@ -239,23 +258,35 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+>  			 * not worth getting one just for that.
+>  			 */
+>  			read_pages(ractl);
+> -			ractl->_index += folio_nr_pages(folio);
+> +
+> +			/*
+> +			 * Move the ractl->_index by at least min_pages
+> +			 * if the folio got truncated to respect the
+> +			 * alignment constraint in the page cache.
+> +			 *
+> +			 */
+> +			if (mapping != folio->mapping)
+> +				nr_pages = min_nrpages;
+> +
+> +			VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
+> +			ractl->_index += nr_pages;
+>  			i = ractl->_index + ractl->_nr_pages - index;
+>  			continue;
+>  		}
+>  
+> -		folio = filemap_alloc_folio(gfp_mask, 0);
+> +		folio = filemap_alloc_folio(gfp_mask,
+> +					    mapping_min_folio_order(mapping));
+>  		if (!folio)
+>  			break;
+>  		if (filemap_add_folio(mapping, folio, index + i,
+>  					gfp_mask) < 0) {
+>  			folio_put(folio);
+>  			read_pages(ractl);
+> -			ractl->_index++;
+> +			ractl->_index += min_nrpages;
 
-The way the kernel uses volatile in e.g. READ_ONCE() is fully in line
-with modern thinking, just done with the tools available at the time. A
-more modern version would be just
+Hah, you changed this here.  Please move into previous patch.
 
-__atomic_load_n(ptr, __ATOMIC_RELAXED)
+>  			i = ractl->_index + ractl->_nr_pages - index;
+>  			continue;
+>  		}
+> -		if (i == nr_to_read - lookahead_size)
+> +		if (i == mark)
+>  			folio_set_readahead(folio);
+>  		ractl->_workingset |= folio_test_workingset(folio);
+>  		ractl->_nr_pages += folio_nr_pages(folio);
+> @@ -489,12 +520,18 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>  {
+>  	struct address_space *mapping = ractl->mapping;
+>  	pgoff_t index = readahead_index(ractl);
+> +	unsigned int min_order = mapping_min_folio_order(mapping);
+>  	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
+>  	pgoff_t mark = index + ra->size - ra->async_size;
+>  	int err = 0;
+>  	gfp_t gfp = readahead_gfp_mask(mapping);
+> +	unsigned int min_ra_size = max(4, mapping_min_folio_nrpages(mapping));
+>  
+> -	if (!mapping_large_folio_support(mapping) || ra->size < 4)
+> +	/*
+> +	 * Fallback when size < min_nrpages as each folio should be
+> +	 * at least min_nrpages anyway.
+> +	 */
+> +	if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size)
+>  		goto fallback;
+>  
+>  	limit = min(limit, index + ra->size - 1);
+> @@ -505,9 +542,19 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>  			new_order = MAX_PAGECACHE_ORDER;
+>  		while ((1 << new_order) > ra->size)
+>  			new_order--;
+> +		if (new_order < min_order)
+> +			new_order = min_order;
 
-Except C atomics only support pointer and integer types, READ_ONCE()
-supports anything up to machine word size - that's something the C
-people need to fix.
+I think these are the two lines you're describing in the paragraph that
+doesn't make sense to me?  And if so, I think they're useless?
+
+> @@ -515,7 +562,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>  		if (index & ((1UL << order) - 1))
+>  			order = __ffs(index);
+>  		/* Don't allocate pages past EOF */
+> -		while (index + (1UL << order) - 1 > limit)
+> +		while (order > min_order && index + (1UL << order) - 1 > limit)
+>  			order--;
+
+This raises an interesting question that I don't know if we have a test
+for.  POSIX says that if we mmap, let's say, the first 16kB of a 10kB
+file, then we can store into offset 0-12287, but stores to offsets
+12288-16383 get a signal (I forget if it's SEGV or BUS).  Thus far,
+we've declined to even create folios in the page cache that would let us
+create PTEs for offset 12288-16383, so I haven't paid too much attention
+to this.  Now we're going to have folios that extend into that range, so
+we need to be sure that when we mmap(), we only create PTEs that go as
+far as 12287.
+
+Can you check that we have such an fstest, and that we still pass it
+with your patches applied and a suitably large block size?
+
 
