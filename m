@@ -1,62 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-15242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B91088AEDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 19:49:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A0088AF22
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 19:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BDC31FA61AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 18:49:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E22361C3F98B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 18:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C0B5DF0E;
-	Mon, 25 Mar 2024 18:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FDE610D;
+	Mon, 25 Mar 2024 18:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fshS5v6/"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dq7T0k6+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBC155798;
-	Mon, 25 Mar 2024 18:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BAE4A28
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 18:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711392067; cv=none; b=surr+CYfFPviQSpp0xEHJE2/HtTnmsq7K9mAeJNOTCbtHiLN4BI7b/Yw1OAm9dtIOr1vsbUPGnHiWImWD2kALw2zHqP1jWqR0qQlK99l1z1YJZlD/6g//LAraLRQcfUkL1pF9ppKO2RYM4D6OerW4LQwi3ZtJJ+v4fqThkKd0Gg=
+	t=1711393185; cv=none; b=E7M2Y7RPjjmwxZMNow4ztzw6BXMxH6whsj3RLXKE1Z2dM2/yFO+RfuCmXAym+DtAJ/AeNesJj9uWLfe+htRu398x+OS87sdZUlU7doU5hqc77t3YMeo9NFNnjJ7044ZjO9c5gOtJaUpnukCp5x+073OLSE20HlDXWKhAnyTUoz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711392067; c=relaxed/simple;
-	bh=hl9tDRwDQKsW9LtTGgLdCiTOPJLvskJO2eBDzKut1dA=;
+	s=arc-20240116; t=1711393185; c=relaxed/simple;
+	bh=5gZosMRdgXPNa3JQMcKlsbHmM1gyLPrPMFgAM70+YQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OT2Jemx0WXZ669UuQFBs7rZrl88SdAo9s4ZHDll2kPl6Pi4xGqYmKqMvWZYkagc8T6bOXQmvZWyR5qBeONnY1fvg1kpu1nKecS/WtCeexLDgsKopjZRIZ+34yGC/r1oIkvzwNaAfJNbiHVI2vTyJ6qqCOSuyaNyN06euAuBtzdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fshS5v6/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GyHaUurcX/968cY6G8Evo8k5/1kOtA+IGwx5RE4txdg=; b=fshS5v6/H1+vcNiHKHJ4eI3/k2
-	kRvn30zyth5jPfJWNf3A0fuUTOL6O9yB+oN/BSWsTWYY9LsGxkLySli6I2ropzZIqMTYf2iCnuqKc
-	dMdm+4udG8q2NprRt2PxtwLhazt36yuGLydUWwisVi4vgSPrrUqfKy4xX103qcloQM3WVComDJzKQ
-	GDq2NpkPTTw3NCK3cucNAgOfLzznMYfkd25JOReAC/ZgiJnP3DFMak8UB00PbBsOGyDArFLHlwjH1
-	UVphT3YhFbiXUOv+CPCOs72Im93u2tyDhs+ryi1OxrYHc4TeCneP7KkMRtSjbYSshmbsXvjyTZaoT
-	wi8fwebg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ropFl-0000000H5As-3Ade;
-	Mon, 25 Mar 2024 18:41:01 +0000
-Date: Mon, 25 Mar 2024 18:41:01 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	gost.dev@samsung.com, chandan.babu@oracle.com, hare@suse.de,
-	mcgrof@kernel.org, djwong@kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, david@fromorbit.com,
-	akpm@linux-foundation.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v3 04/11] readahead: rework loop in
- page_cache_ra_unbounded()
-Message-ID: <ZgHFPZ9tNLLjKZpz@casper.infradead.org>
-References: <20240313170253.2324812-1-kernel@pankajraghav.com>
- <20240313170253.2324812-5-kernel@pankajraghav.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k2mCpyj9btd32YHNiwpnvOwBQwIjh/+4JqUkRe5YMD+5058GfTKERcGFOqua7U6+3J/nKs/Qt4z9CBhRGr2dXeOEuyu910MmvWa/jYX8fRwjObBHx4MSfy0T/dQYkESVWH+JfEbY69ycn6ilABSrOJENWNW34O5CdSYB8zsItxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dq7T0k6+; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 25 Mar 2024 14:59:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1711393181;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VkxyhaTa5U3F8wqjsa7LRBFbMSJiyk7bCAom1K7zW40=;
+	b=Dq7T0k6+H7nOTJbABp2Z2wN8NULCHNW0C7jHxsGk8umchshL+Bt0+paSu3yXZ0U/Y4O7Qw
+	2Wpvlj/e3fmhSm/vChaqixf/iHXD+YHD9CLhy0X4PoAiONraZ+KcYsPwPUDyOPWoE0DhGp
+	ati/oPgLBYa7j6sRtKFgS2L5MNPZSGU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Philipp Stanner <pstanner@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
+	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
+	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
+Message-ID: <bu3seu56hfozsvgpdqjarbdkqo3lsjfc4lhluk5oj456xmrjc7@lfbbjxuf4rpv>
+References: <20240322233838.868874-1-boqun.feng@gmail.com>
+ <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
+ <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
+ <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
+ <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
+ <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
+ <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,29 +80,68 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240313170253.2324812-5-kernel@pankajraghav.com>
+In-Reply-To: <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Mar 13, 2024 at 06:02:46PM +0100, Pankaj Raghav (Samsung) wrote:
-> @@ -239,8 +239,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			 * not worth getting one just for that.
->  			 */
->  			read_pages(ractl);
-> -			ractl->_index++;
-> -			i = ractl->_index + ractl->_nr_pages - index - 1;
-> +			ractl->_index += folio_nr_pages(folio);
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
->  
-> @@ -252,13 +252,14 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			folio_put(folio);
->  			read_pages(ractl);
->  			ractl->_index++;
-> -			i = ractl->_index + ractl->_nr_pages - index - 1;
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
+On Mon, Mar 25, 2024 at 10:44:43AM -0700, Linus Torvalds wrote:
+> On Mon, 25 Mar 2024 at 06:57, Philipp Stanner <pstanner@redhat.com> wrote:
+> >
+> > On Fri, 2024-03-22 at 17:36 -0700, Linus Torvalds wrote:
+> > >
+> > > It's kind of like our "volatile" usage. If you read the C (and C++)
+> > > standards, you'll find that you should use "volatile" on data types.
+> > > That's almost *never* what the kernel does. The kernel uses
+> > > "volatile"
+> > > in _code_ (ie READ_ONCE() etc), and uses it by casting etc.
+> > >
+> > > Compiler people don't tend to really like those kinds of things.
+> >
+> > Just for my understanding: Why don't they like it?
+> 
+> So I actually think most compiler people are perfectly fine with the
+> kernel model of mostly doing 'volatile' not on the data structures
+> themselves, but as accesses through casts.
+> 
+> It's very traditional C, and there's actually nothing particularly odd
+> about it. Not even from a compiler standpoint.
+> 
+> In fact, I personally will argue that it is fundamentally wrong to
+> think that the underlying data has to be volatile. A variable may be
+> entirely stable in some cases (ie locks held), but not in others.
+> 
+> So it's not the *variable* (aka "object") that is 'volatile', it's the
+> *context* that makes a particular access volatile.
+> 
+> That explains why the kernel has basically zero actual volatile
+> objects, and 99% of all volatile accesses are done through accessor
+> functions that use a cast to mark a particular access volatile.
+> 
+> But I've had negative comments from compiler people who read the
+> standards as language lawyers (which honestly, I despise - it's always
+> possible to try to argue what the meaning of some wording is), and
+> particularly C++ people used to be very very antsy about "volatile".
+> 
+> They had some truly _serious_ problems with volatile.
+> 
+> The C++ people spent absolutely insane amounts of time arguing about
+> "volatile objects" vs "accesses", and how an access through a cast
+> didn't make the underlying object volatile etc.
 
-You changed index++ in the first hunk, but not the second hunk.  Is that
-intentional?
+To be fair, "volatile" dates from an era when we didn't have the haziest
+understanding of what a working memory model for C would look like or
+why we'd even want one.
+
+(Someone might want to think about depracating volatile on objects and
+adding compiler flag to disable it; I suspect it'd be a useful cleanup
+for the compiler guys if they could get rid of it.)
+
+The way the kernel uses volatile in e.g. READ_ONCE() is fully in line
+with modern thinking, just done with the tools available at the time. A
+more modern version would be just
+
+__atomic_load_n(ptr, __ATOMIC_RELAXED)
+
+Except C atomics only support pointer and integer types, READ_ONCE()
+supports anything up to machine word size - that's something the C
+people need to fix.
 
