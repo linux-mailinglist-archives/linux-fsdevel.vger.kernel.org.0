@@ -1,125 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-15256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35E788B222
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 21:58:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A269988B228
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 22:00:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCFF2E17CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 20:58:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57BAC2A3842
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 21:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E354F5D724;
-	Mon, 25 Mar 2024 20:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83B15D73B;
+	Mon, 25 Mar 2024 21:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="RgjwET4G"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGzjJ8NC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1550359B70;
-	Mon, 25 Mar 2024 20:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=167.235.159.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711400293; cv=pass; b=oeboe9FxNM+iH4szWegnoHe7W+zE+jywIzQwHRTG+1GldeDEKbjN83Tv5q3Q9zeMVXWXXTuVZXOQv7RZUtGyqOkeJZDhDvNka2TgZg7YW8q4YvVlP+cH+AunVGfGqm8cpj8jwVki+S2m8McTcJmYD3lR5XdLB83HEO+3ErjBgCk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711400293; c=relaxed/simple;
-	bh=76tSERWslhopEOc4u8fRhhRiUnP40jVe+hwo51dCKeo=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=q0Xz3o5rUKCGcPyZ1su+qZwz3F0j+FGB52VWhxHr1dRpzno8cMWnXtDL+ZljWgC9CLqut2XzCJE+hSCWFHs4c3XVqBF9CwXTmYxpBYnBIscnBBTKpqrLGhx4Q9Ft/dA/ZQY3/zsoWjO5nKVFh7zDtLn8QJqzDC48sBBusyRMUWE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=RgjwET4G; arc=pass smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
-Message-ID: <a5d0ee8c54ec2f80cb71cd72e3b4aec3@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1711399640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/MvYkEvJaEDaTgzwXlfM3JjLexNKp+ZD+YKnxgQvNvo=;
-	b=RgjwET4GT2LPkB3kXDJcBckngZwYEgONKnEF6H/uBX2L/FYUh2ER2kLLnvfXCAgcWZWkWP
-	QLKd4xRY+JWMn3+u88vfL1PXEyTZMcal9eMFiqDCjo7VOvxo/AXclOOZQwpK+9HlN36QE1
-	9eF2q5+5y9v+g2nOuWpfdKo8ndO0+DVtvFVV8P08QS1v0CHvDriLaIVowB1wJSn+tCJZmz
-	DF+b/2h+y+9PXA0SaRj3DJpCKPjp3jEHm6QjdaBfBxEnGyVlX5h/S0Mnef8xi09aoheARe
-	bAQf9wm14PDUCkUO7OudaG9uQ71lLlRIORyCeMe7RNI+f+jtzRkOYKi2r4DfTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1711399640; h=from:from:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/MvYkEvJaEDaTgzwXlfM3JjLexNKp+ZD+YKnxgQvNvo=;
-	b=WS1iOrWs1eb+MxY1dQd/82e124OrdEijARV75JqHo+hWaA2Ne7Sz9YEm3Knw9ow3zkLbUJ
-	+mDGgam3XUX/bJFFhj6yXX02oCoM35iOGavtxAXZbOkCFxvzWZRiQ+h45TqW2qV1IzCGbQ
-	WOpMphq+e9AN40niw2tH6hCv43SEgxQT9VwV7u2QGBBhKGpgUxBP6LwqZAmif9u9ZldhmE
-	pu4iAR2dwpd2+5ZrLdlbaMFE2dobmkYjNVLx2DGn6liXRkpmADw2RNaOlc9eD2QHP4Dq9H
-	a7jHf0WrfeVTJDm2kroWoyTiKtbgUe+89gy5pz7DRG57j2ahl0Exn7ucxpyH8A==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.mailfrom=pc@manguebit.com
-ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1711399640; a=rsa-sha256;
-	cv=none;
-	b=cpJ7+g7T28hOqVFhxBw2OZo5TAOgf0/kRogSfzCHCssax9p7NKZa4nuHQZhSxRrHxdE3qh
-	NYg7lWIz58OMdVyPZVA0SpVC/bmyPyVV5icox1wUgiqz8+8+BZR8tSCE5BZVdQT9qnlp1Q
-	6KNy3SbHkElj9HGWipQf67e4qpyLlbmlaWI/7HPrG5fGiVPUmmoxR80sCoZVF8WULK7i7B
-	kj+YowgVal9BZvbLR6jqDTDTBymhtK1HV7UivfIPPU1+yblEoV/2UOOjCRkQ9QQr9Jgqc1
-	OBxXKOC6B7uKL39obFYICrKij5TvV85ZI67FMv8JUJ+ISxcEthWAdzUQq8IB/g==
-From: Paulo Alcantara <pc@manguebit.com>
-To: Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Roberto Sassu
- <roberto.sassu@huawei.com>, LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>, CIFS
- <linux-cifs@vger.kernel.org>, Christian Brauner <christian@brauner.io>,
- Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>
-Subject: Re: kernel crash in mknod
-In-Reply-To: <20240325195413.GW538574@ZenIV>
-References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
- <20240324054636.GT538574@ZenIV>
- <3441a4a1140944f5b418b70f557bca72@huawei.com>
- <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
- <CAH2r5muL4NEwLxq_qnPOCTHunLB_vmDA-1jJ152POwBv+aTcXg@mail.gmail.com>
- <20240325195413.GW538574@ZenIV>
-Date: Mon, 25 Mar 2024 17:47:16 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE11D5BAFA;
+	Mon, 25 Mar 2024 21:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711400435; cv=none; b=gY+9J64wP3Av0s/RifNHikfB+IJpBA3SOsXH2iJAYf7BowOouPyYQNf6xNRxTFq2gFQdfhtzkVzxcGBjXyV9YNrnBRglTmqzJOA4EvrKNwiLzSRtmTmbzMyq53ke/XBDWpanxHRJWqhdKLsCzPtk77skVPmW+B8qIi5WkEanveA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711400435; c=relaxed/simple;
+	bh=4/DCfORHZvvO5HUER8a/EYr7x51a5ySHQFviZ6wk7tU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LFD8bqJeoWDYZAQsX9eTZr6lY9yNzalylIKBwdC94QamIILfO5ytrd8CTp9M2ST5sS+ZeqOSKB0jvwdT4ddfQLVLRbU7HgxWdNxgjhF+4evOgbw0i3iIpa5dU0nauCi77dBkL8094zh3twR646oVbd5QwsKNPdsGQqye5iAlcA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGzjJ8NC; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-78a01a3012aso339323285a.2;
+        Mon, 25 Mar 2024 14:00:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711400432; x=1712005232; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0aIiJsbK/FOYiRULxUQpBOQ0+fV2pbpaO5YH9xL5kFE=;
+        b=nGzjJ8NCiv1FyRq5tzrvDyMvLDsN8QDz3EwXuqD+36BHZAizW4rtV9N+Fagx4kk+GF
+         rUK+Y50Bu1PLFTLzHvyTZWrcrhsF8Y+mRXuUEC3qRalgUwxnWrHpbwV7kGL5/3eH3FKO
+         KWIxdxkP7clhSH2FDHGiG9mdETSPdlYMQplxltjjApgtJC5OXtoWEeCM9F60pZ2cVBWs
+         dQUAIwQ80uDdKypN7dyJMolhgul2348YZpyK8my3PX3OfYHCFCTa1dOcqrQ7+N/Bw2S9
+         1a32TRNTiJNXd44cWjR19cF7ukLM1YKqS2dgY8M+gNZSSO41VJ5VNYs5oMu4+eqcxx4N
+         /Mdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711400432; x=1712005232;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0aIiJsbK/FOYiRULxUQpBOQ0+fV2pbpaO5YH9xL5kFE=;
+        b=mlSaU2jdAMtvll4tO9TWn3HevnPmo5lAyMRYiFZFnsGuDX1hlRExyFJ7BttNQqaG6V
+         tB78yfXGR7ato/QUG/wwYSmLhHBtrgXqURu0OVVyjU7TunIcsZnDnF0+HhN9W7s2NGLI
+         qxyC4mcQ0aMywT2RLXo5vMAcyCuryjw9oly1KFwV8WwsfxAVb8MHIwDxK8AsznWddfAk
+         oEqlyNY41hCFFObFJINgzEJKGXrHI6q1SWvj+vM+gVTiMyofMshyWuVM4f/K1sAsi58y
+         eBZWWjIONVzF87kJwCFt+giXOVLgY3rGiU6V1esB54Z01xDg6HFCBRtZ+uas8Eqd661E
+         t9uw==
+X-Forwarded-Encrypted: i=1; AJvYcCVj0lb1JefuJC4I/U4Twty9rtdzWfcmeKLaxef3rkmG95zuwi0aLhw31W/uyyRKh0G3N+Zuwz3B0vtyrINu02CzaRxSc5KYyWqBw+J+lKxow2bbUef2qB27iD7RTMe5XW5mT0y1tNVUbyufHNax8elJuh+Sni31JRNaMsSxLmSCSANOo4jiHzw=
+X-Gm-Message-State: AOJu0YzUBYyTUmGqPRvINHst9N0D5vzU+zIhIVZ+J02/7Ic0wSvjg0Ic
+	+b/HSFmWWHHWxdezUvzcOHhEjTle0p3OE+fxUIgiTiMpcnpCcV6B
+X-Google-Smtp-Source: AGHT+IEmrJY2YuqwFggGagE/+e8uVbOWYgKk3UIvG8boqku1ije64OUVXZ9orjGM9gQQ0wlamMqAZQ==
+X-Received: by 2002:ae9:ee13:0:b0:78a:5ed7:be26 with SMTP id i19-20020ae9ee13000000b0078a5ed7be26mr974913qkg.65.1711400431680;
+        Mon, 25 Mar 2024 14:00:31 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id k1-20020a05620a0b8100b0078a4fe9bf69sm1715548qkh.57.2024.03.25.14.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Mar 2024 14:00:31 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 1821F1200043;
+	Mon, 25 Mar 2024 17:00:30 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 25 Mar 2024 17:00:30 -0400
+X-ME-Sender: <xms:6-UBZpM5Tshc-CtjpTkTKmhsk51vaHkOzddxRXkfq_dO9MF5hdrnzg>
+    <xme:6-UBZr-xgmbJWemwti49N0igXBZWLCoJ9fpADD9F86xX6x6K1xiOyYH_gs-b4g58c
+    4zVedC4v1KP5dX9bA>
+X-ME-Received: <xmr:6-UBZoSgy4aSWX_9lia6EwdlN0ENgdev2pW8onGnMsooPvP7p1nb0OxUlfwIeQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudduuddgkeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeffleejleehveelteeltedugffhhedvkefgvdehfeeiffeihfeigfdvtdeu
+    hfdtteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvg
+X-ME-Proxy: <xmx:6-UBZltcfQ0QB0cAeGdnsDsuL7jndG7Ucoe-gE-opPwfdGN7ntgmpQ>
+    <xmx:6-UBZhfZgamJm562i4cZaL6MromTCguYiehjc-XJwwQuvuTANbmrxQ>
+    <xmx:6-UBZh21bmniCmLuxrubcoY_-5tFBxlCX2DaU_fPcF4P8r0JY9k3pA>
+    <xmx:6-UBZt-8NOr3p4SFiX8GqA0t7n1p4qdkiQSMwTFBQhIX_pm-Y-eu9A>
+    <xmx:7uUBZvv9S3sdCDei9n1d78JQM-fTSpBTEoSwu9vmACzzWsAxJcpzGsfOEmAkrhi4>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 25 Mar 2024 17:00:26 -0400 (EDT)
+Date: Mon, 25 Mar 2024 13:59:55 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	"Bj\"orn Roy Baron" <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org
+Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
+Message-ID: <ZgHly_fioG7X4wGE@boqun-archlinux>
+References: <20240322233838.868874-1-boqun.feng@gmail.com>
+ <ZgFVnar3nS4F8eIX@FVFF77S0Q05N>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZgFVnar3nS4F8eIX@FVFF77S0Q05N>
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+On Mon, Mar 25, 2024 at 10:44:45AM +0000, Mark Rutland wrote:
+[...]
+> > 
+> > * I choose to re-implement atomics in Rust `asm` because we are still
+> >   figuring out how we can make it easy and maintainable for Rust to call
+> >   a C function _inlinely_ (Gary makes some progress [2]). Otherwise,
+> >   atomic primitives would be function calls, and that can be performance
+> >   bottleneck in a few cases.
+> 
+> I don't think we want to maintain two copies of each architecture's atomics.
+> This gets painful very quickly (e.g. as arm64's atomics get patched between
+> LL/SC and LSE forms).
+> 
 
-> On Mon, Mar 25, 2024 at 11:26:59AM -0500, Steve French wrote:
->
->> A loosely related question.  Do I need to change cifs.ko to return the
->> pointer to inode on mknod now?  dentry->inode is NULL in the case of mknod
->> from cifs.ko (and presumably some other fs as Al noted), unlike mkdir and
->> create where it is filled in.   Is there a perf advantage in filling in the
->> dentry->inode in the mknod path in the fs or better to leave it as is?  Is
->> there a good example to borrow from on this?
->
-> AFAICS, that case in in CIFS is the only instance of ->mknod() that does this
-> "skip lookups, just unhash and return 0" at the moment.
->
-> What's more, it really had been broken all along for one important case -
-> AF_UNIX bind(2) with address (== socket pathname) being on the filesystem
-> in question.
+No argument here ;-)
 
-Yes, except that we currently return -EPERM for such cases.  I don't
-even know if this SFU thing supports sockets.
+> Can we start off with out-of-line atomics, and see where the bottlenecks are?
+> 
+> It's relatively easy to do that today, at least for the atomic*_*() APIs:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?h=atomics/outlined&id=e0a77bfa63e7416d610769aa4ab62bc06993ce56
+> 
+> ... which IIUC covers the "AtomicI32, AtomicI64 and AtomicUsize" cases you
+> mention above.
+> 
 
-> Note that cifs_sfu_make_node() is the only case in CIFS where that happens -
-> other codepaths (both in cifs_make_node() and in smb2_make_node()) will
-> instantiate.  How painful would it be for cifs_sfu_make_node()?
-> AFAICS, you do open/sync_write/close there; would it be hard to do
-> an eqiuvalent of fstat and set the inode up?
+Thanks! Yes, I know I should check with you before I finalize the
+implementation ;-) I will try to integrate that but things to notice:
 
-This should be pretty straightforward as it would only require an extra
-query info call and then {smb311_posix,cifs}_get_inode_info() ->
-d_instantiate().  We could even make it a single compound request of
-open/write/getinfo/close for SMB2+ case.
+* For module usage, we need to EXPORT_SYMBOL_GPL() all the atomics, I'm
+  OK with that, but I don't know how others feel about it.
+
+* Alice reported performance gap between inline and out-of-line refcount
+  operations in Rust binder driver:
+
+	https://github.com/Darksonn/linux/commit/b4be1bd6c44225bf7276a4666fd30b8da9cba517	
+
+  I don't know how much worse since I don't have the data, but that's
+  one of the reasons I started with inline asm.
+
+That being said, I totally agree that we could start with out-of-line
+atomics, and maybe provide inline version for performance critical
+paths. Hoping is we can figure out how Rust could inline a C function
+eventually.
+
+Regards,
+Boqun
+
+> Mark.
 
