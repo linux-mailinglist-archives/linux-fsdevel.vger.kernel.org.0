@@ -1,349 +1,250 @@
-Return-Path: <linux-fsdevel+bounces-15226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D2488ABB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 18:31:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2DF088AD3B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 19:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97BD01F6212F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 17:31:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50453C63D23
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 17:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5551C131737;
-	Mon, 25 Mar 2024 16:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEBD548E2;
+	Mon, 25 Mar 2024 16:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mrFZOgOi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4/Yvcn8T";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BWf6VYBA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xCG5b50G"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZD3p4j91"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EB150248;
-	Mon, 25 Mar 2024 16:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0384584FC9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 16:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711384004; cv=none; b=fAbMRFZgFlRDQ2YjHTcxLvlWjKEDpKOtimuoaae6iGYeozFz9YsbldzltK8YGTgQgEBGHp+GvhR4Fg2/O4g8HzVBLR/bAHbxvMU+5NXk86nfWaLRVqbKX+iLvLu+9AIorQskeRl9eJ0JP4Yli1W/Xw8lS3cbrcHv96BWqBELLlI=
+	t=1711385010; cv=none; b=CbrNUylPc0e+v0/TJj9dyUCx/CPV2fIPPT96RzahpkGaJ+ZyDQ2YuhByLya9s5MC17W4nIuP79c+H3lFTcvE3nUHbzmi9jtFyMgItFxuuBrV4bfBqmUnzTbo9KaPOcPc+FOiVfD/7aAZ75DgNWAszLs+nAtmjtv3Aer/O+fgwA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711384004; c=relaxed/simple;
-	bh=V6sqoAqJ7i7dh2ESkwK1PkgUFkhkxCtWlGMo+TiLqjs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ctwXfwhyIAUebLfo5tXBrsQvM08/MkN01zTfgPGtb5ZB2Yukxn0fpsstpcGglidkZSbFn1K3w3uL9bL+fn2Pd8qWQKIr5MYOozdSi4tNRMUD8hXcYgmI16TKO7K26o3WA479fDIfsiEe9IB/sx47g5WY4RQLjQTree/QfmVluaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mrFZOgOi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4/Yvcn8T; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BWf6VYBA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xCG5b50G; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C6EAC5C90A;
-	Mon, 25 Mar 2024 16:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1711384000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WThhszHeU//Rn2fJzvzyuvkfkPtE9gPEySysSjnivks=;
-	b=mrFZOgOi12pLbOQ7oT+rnFcub4rPm5E4q3euVX0uV9bVmaxKCBrpH+cuI7LW2ePTT+y0Pn
-	47A4RAjy6JfQP1785AKY9hgvthTUj0JJSjLnpRytu0/zl90tK6VQK8lkhvklvEGQMrwIuo
-	DuVw0XoyZm9e3z6xu0bWexaG+pSYtIg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1711384000;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WThhszHeU//Rn2fJzvzyuvkfkPtE9gPEySysSjnivks=;
-	b=4/Yvcn8TXQcPf0e7bI1evj/lQ1gd5qTsHIdEsmEoHKb1RD+PH/igWmNL7PXvGE0ozNAoLg
-	a8e+fxnRq3534MDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1711383998; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WThhszHeU//Rn2fJzvzyuvkfkPtE9gPEySysSjnivks=;
-	b=BWf6VYBAVqOASPU5DE5X9OS5DTw31U7zWNlXe2sk9i54kNcyf1Vlg8ljhDSimFLfmHxlE7
-	GyFOev61YoGQrPaBKEDd/1uck5Pf33OVIo2HJYZ8ZlJNfxYzC67qwGYobTfQs40LMMEIRB
-	ESClhQqgeX2uxL3Q96lgSdETTC98R6I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1711383998;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WThhszHeU//Rn2fJzvzyuvkfkPtE9gPEySysSjnivks=;
-	b=xCG5b50G7PvmnwFPyZTszr5GBE229eX2pzuy/JVPVUQT3YjHh//PS5TiP9+312Xm2nAIUs
-	AImV+/iM4oNd6zAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8496213503;
-	Mon, 25 Mar 2024 16:26:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 00xLGr6lAWaZFwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 25 Mar 2024 16:26:38 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: tytso@mit.edu,  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
-  jaegeuk@kernel.org,  chao@kernel.org,
-  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel@collabora.com,
-  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
- Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v14 8/9] ext4: Move CONFIG_UNICODE defguards into the
- code flow
-In-Reply-To: <20240320084622.46643-9-eugen.hristev@collabora.com> (Eugen
-	Hristev's message of "Wed, 20 Mar 2024 10:46:21 +0200")
-References: <20240320084622.46643-1-eugen.hristev@collabora.com>
-	<20240320084622.46643-9-eugen.hristev@collabora.com>
-Date: Mon, 25 Mar 2024 12:26:37 -0400
-Message-ID: <87edbynupu.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1711385010; c=relaxed/simple;
+	bh=CIEeNqc1cwLb3jW6LUEsuWoRzNKO5RMg20d3I9LYa4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CgucE28DWgxSXjaM3msgxC4pSHb8rl+UNOqHzqp1R58wVtcqoAR71faw6hPLb1jMvr8hY+w1HDWh5HP5HJ4MvmiAVBm0Va2oiWL291aQoBxAgxlsbF8OmwaljkbOLyoXRGfjDE/pDZvHGwnzIV1wKxvvr2DTrOnYYKPK74v+/dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZD3p4j91; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711385008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dKggcYKrKbSOf59PMz2SlOiibK9P2zLY4M6JQ3qRj44=;
+	b=ZD3p4j91TnConOAndVYf5lcEhO90EhK9OB2wkbRtSf2fB2zszHtE//dz7MRzInMi9HOAXe
+	31Uy063iK1Nymx9okD6nYFbXaySDDR6T8Dm6m5HqwMwBlx7eiOYzikmqOBZk8Ygcqf/5RP
+	bI3vyBhewb2JZDDlDhFGwk9+d468+l4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-28-KT7ycquVP6270SMEK7NWDA-1; Mon, 25 Mar 2024 12:43:26 -0400
+X-MC-Unique: KT7ycquVP6270SMEK7NWDA-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-33ed26afd99so2497856f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 09:43:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711385005; x=1711989805;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dKggcYKrKbSOf59PMz2SlOiibK9P2zLY4M6JQ3qRj44=;
+        b=K4SARNoVBaJ9OTH9ZVzubh90QJDdJ4Iob9/G2c/VLb7yiyVtajvz/nCpZ0i/S4VExF
+         VAB5yB4YUeexsK153Vb76OZ6HZ9MjeJAQFFokpzSVW4uq0THBApt1SybUo8C9nXLtFc9
+         zxFOUbNtTvSSzCXTo5E+SCxapAgV4RNgRtysSKsS3LcxTYNWYlYP2j+M1KaXg6jb0E5X
+         wrtvD+r9LesB+UrKHtf74EN6vZyJCUFXy2RSZl4yevlfv8Jq6rN5119A6BltWBHeVpFW
+         uJ03+1iL7Wo3NB1XBELbqJGGV+xj680zcdk1OZ1xNHxVlbgBuIK+p5dHQgxB/Hoowi5f
+         Hq2w==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Z873y2qW5QlZnynXIgP8+Uj8rWxqnuKd2KPJI7FT1fRTMiszgPj/q43b1tFuaPLHCwnybw7SoBMsN+ZIncvKnVKptEQ04JHOuBmM8g==
+X-Gm-Message-State: AOJu0YwGPp0bYbZQDmrWd/SUcMqS/s52z6uEwC0uYmVeUeEOcDZRQ9qB
+	+XI0YRyeJ0yyKFtwyn1dMmp8WY0vFxM21oqIgnG9ZHFCon2k1uynC+mgpQqMQMzjcOMTQeizqDK
+	kS8y/34/e3E19eX0e5uIknO17Pau7r9CXx42RmfT5uDAXt7/klYjvK549mXeZdrU=
+X-Received: by 2002:adf:f544:0:b0:341:a813:2679 with SMTP id j4-20020adff544000000b00341a8132679mr4626473wrp.29.1711385005049;
+        Mon, 25 Mar 2024 09:43:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE19BMNdXGGF1XYo7pZ1qfO8psm15Eug70i/RhGNoNWHzlY72pI7JA4rA2tQtv59a0goajrQA==
+X-Received: by 2002:adf:f544:0:b0:341:a813:2679 with SMTP id j4-20020adff544000000b00341a8132679mr4626455wrp.29.1711385004614;
+        Mon, 25 Mar 2024 09:43:24 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c738:b400:6a82:1eac:2b5:8fca? (p200300cbc738b4006a821eac02b58fca.dip0.t-ipconnect.de. [2003:cb:c738:b400:6a82:1eac:2b5:8fca])
+        by smtp.gmail.com with ESMTPSA id x16-20020a5d6b50000000b0033e93e00f68sm9960271wrw.61.2024.03.25.09.43.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Mar 2024 09:43:24 -0700 (PDT)
+Message-ID: <6f5b9d18-2d04-495c-970c-eb5eada5f676@redhat.com>
+Date: Mon, 25 Mar 2024 17:43:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 NEURAL_HAM_SHORT(-0.20)[-0.999];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-3.00)[100.00%];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[collabora.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: kernel BUG at mm/usercopy.c:102 -- pc : usercopy_abort
+Content-Language: en-US
+To: Xiubo Li <xiubli@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+ Ceph Development <ceph-devel@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
+References: <e119b3e2-09a0-47a7-945c-98a1f03633ef@redhat.com>
+ <f453061e-6e01-4ad7-8fc6-a39108beacfc@redhat.com>
+ <d689e8bf-6628-499e-8a11-c74ce1b1fd8b@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <d689e8bf-6628-499e-8a11-c74ce1b1fd8b@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+On 25.03.24 13:06, Xiubo Li wrote:
+> 
+> On 3/25/24 18:14, David Hildenbrand wrote:
+>> On 25.03.24 08:45, Xiubo Li wrote:
+>>> Hi guys,
+>>>
+>>> We are hitting the same crash frequently recently with the latest kernel
+>>> when testing kceph, and the call trace will be something likes:
+>>>
+>>> [ 1580.034891] usercopy: Kernel memory exposure attempt detected from
+>>> SLUB object 'kmalloc-192' (offset 82, size 499712)!^M
+>>> [ 1580.045866] ------------[ cut here ]------------^M
+>>> [ 1580.050551] kernel BUG at mm/usercopy.c:102!^M
+>>> ^M
+>>> Entering kdb (current=0xffff8881211f5500, pid 172901) on processor 4
+>>> Oops: (null)^M
+>>> due to oops @ 0xffffffff8138cabd^M
+>>> CPU: 4 PID: 172901 Comm: fsstress Tainted: G S 6.6.0-g623393c9d50c #1^M
+>>> Hardware name: Supermicro SYS-5018R-WR/X10SRW-F, BIOS 1.0c 09/07/2015^M
+>>> RIP: 0010:usercopy_abort+0x6d/0x80^M
+>>> Code: 4c 0f 44 d0 41 53 48 c7 c0 1c e9 13 82 48 c7 c6 71 62 13 82 48 0f
+>>> 45 f0 48 89 f9 48 c7 c7 f0 6b 1b 82 4c 89 d2 e8 63 2b df ff <0f> 0b 49
+>>> c7 c1 44 c8 14 82 4d 89 cb 4d 89 c8 eb a5 66 90 f3 0f 1e^M
+>>> RSP: 0018:ffffc90006dfba88 EFLAGS: 00010246^M
+>>> RAX: 000000000000006a RBX: 000000000007a000 RCX: 0000000000000000^M
+>>> RDX: 0000000000000000 RSI: ffff88885fd1d880 RDI: ffff88885fd1d880^M
+>>> RBP: 000000000007a000 R08: 0000000000000000 R09: c0000000ffffdfff^M
+>>> R10: 0000000000000001 R11: ffffc90006dfb930 R12: 0000000000000001^M
+>>> R13: ffff8882b7bbed12 R14: ffff88827a375830 R15: ffff8882b7b44d12^M
+>>> FS:  00007fb24c859500(0000) GS:ffff88885fd00000(0000)
+>>> knlGS:0000000000000000^M
+>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033^M
+>>> CR2: 000055c2bcf9eb00 CR3: 000000028956c005 CR4: 00000000001706e0^M
+>>> Call Trace:^M
+>>>     <TASK>^M
+>>>     ? kdb_main_loop+0x32c/0xa10^M
+>>>     ? kdb_stub+0x216/0x420^M
+>>> more>
+>>>
+>>> You can see more detail in ceph tracker
+>>> https://tracker.ceph.com/issues/64471.
+>>
+>> Where is the full backtrace? Above contains only the backtrace of kdb.
+>>
+> Hi David,
+> 
+> The bad news is that there is no more backtrace. All the failures we hit
+> are similar with the following logs:
+> 
 
-> From: Gabriel Krisman Bertazi <krisman@collabora.com>
->
-> Instead of a bunch of ifdefs, make the unicode built checks part of the
-> code flow where possible, as requested by Torvalds.
->
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> [eugen.hristev@collabora.com: port to 6.8-rc3]
-> Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
-> ---
->  fs/ext4/crypto.c | 19 +++----------------
->  fs/ext4/ext4.h   | 33 +++++++++++++++++++++------------
->  fs/ext4/namei.c  | 14 +++++---------
->  fs/ext4/super.c  |  4 +---
->  4 files changed, 30 insertions(+), 40 deletions(-)
->
-> diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
-> index 7ae0b61258a7..1d2f8b79529c 100644
-> --- a/fs/ext4/crypto.c
-> +++ b/fs/ext4/crypto.c
-> @@ -31,12 +31,7 @@ int ext4_fname_setup_filename(struct inode *dir, const struct qstr *iname,
->  
->  	ext4_fname_from_fscrypt_name(fname, &name);
->  
-> -#if IS_ENABLED(CONFIG_UNICODE)
-> -	err = ext4_fname_setup_ci_filename(dir, iname, fname);
-> -	if (err)
-> -		ext4_fname_free_filename(fname);
-> -#endif
-> -	return err;
-> +	return ext4_fname_setup_ci_filename(dir, iname, fname);
->  }
+That's unfortunate :/
 
-Oops. I ended up replying to v10 but it still applies in the latest
-version. copying it here for reference:
+"exposure" in the message means we are in copy_to_user().
 
-  This shouldn't remove the error path.  It effectively reintroduces the
-  memory leak fixed by commit 7ca4b085f430 ("ext4: fix memory leaks in
-  ext4_fname_{setup_filename,prepare_lookup}").
+SLUB object 'kmalloc-192' means that we come from __check_heap_object() 
+... we have 192 bytes, but the length we want to access is 499712 ... 
+488 KiB.
 
-  This patch was only about inlining the codeguards, so it shouldn't be
-  changing the logic.
+So we ended  up somehow in
 
->  int ext4_fname_prepare_lookup(struct inode *dir, struct dentry *dentry,
-> @@ -51,12 +46,7 @@ int ext4_fname_prepare_lookup(struct inode *dir, struct dentry *dentry,
->  
->  	ext4_fname_from_fscrypt_name(fname, &name);
->  
-> -#if IS_ENABLED(CONFIG_UNICODE)
-> -	err = ext4_fname_setup_ci_filename(dir, &dentry->d_name, fname);
-> -	if (err)
-> -		ext4_fname_free_filename(fname);
-> -#endif
-> -	return err;
-> +	return ext4_fname_setup_ci_filename(dir, &dentry->d_name, fname);
->  }
->  
->  void ext4_fname_free_filename(struct ext4_filename *fname)
-> @@ -70,10 +60,7 @@ void ext4_fname_free_filename(struct ext4_filename *fname)
->  	fname->usr_fname = NULL;
->  	fname->disk_name.name = NULL;
->  
-> -#if IS_ENABLED(CONFIG_UNICODE)
-> -	kfree(fname->cf_name.name);
-> -	fname->cf_name.name = NULL;
-> -#endif
-> +	ext4_fname_free_ci_filename(fname);
->  }
->  
->  static bool uuid_is_zero(__u8 u[16])
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 4061d11b9763..c68f48f706cd 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -2740,8 +2740,25 @@ ext4_fsblk_t ext4_inode_to_goal_block(struct inode *);
->  
->  #if IS_ENABLED(CONFIG_UNICODE)
->  extern int ext4_fname_setup_ci_filename(struct inode *dir,
-> -					 const struct qstr *iname,
-> -					 struct ext4_filename *fname);
-> +					const struct qstr *iname,
-> +					struct ext4_filename *fname);
-> +
-> +static inline void ext4_fname_free_ci_filename(struct ext4_filename *fname)
-> +{
-> +	kfree(fname->cf_name.name);
-> +	fname->cf_name.name = NULL;
-> +}
-> +#else
-> +static inline int ext4_fname_setup_ci_filename(struct inode *dir,
-> +					       const struct qstr *iname,
-> +					       struct ext4_filename *fname)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline void ext4_fname_free_ci_filename(struct ext4_filename *fname)
-> +{
-> +}
->  #endif
->  
->  /* ext4 encryption related stuff goes here crypto.c */
-> @@ -2764,16 +2781,11 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
->  					    int lookup,
->  					    struct ext4_filename *fname)
->  {
-> -	int err = 0;
->  	fname->usr_fname = iname;
->  	fname->disk_name.name = (unsigned char *) iname->name;
->  	fname->disk_name.len = iname->len;
->  
-> -#if IS_ENABLED(CONFIG_UNICODE)
-> -	err = ext4_fname_setup_ci_filename(dir, iname, fname);
-> -#endif
-> -
-> -	return err;
-> +	return ext4_fname_setup_ci_filename(dir, iname, fname);
->  }
->  
->  static inline int ext4_fname_prepare_lookup(struct inode *dir,
-> @@ -2785,10 +2797,7 @@ static inline int ext4_fname_prepare_lookup(struct inode *dir,
->  
->  static inline void ext4_fname_free_filename(struct ext4_filename *fname)
->  {
-> -#if IS_ENABLED(CONFIG_UNICODE)
-> -	kfree(fname->cf_name.name);
-> -	fname->cf_name.name = NULL;
-> -#endif
-> +	ext4_fname_free_ci_filename(fname);
->  }
->  
->  static inline int ext4_ioctl_get_encryption_pwsalt(struct file *filp,
-> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-> index 3268cf45d9db..a5d9e5b01015 100644
-> --- a/fs/ext4/namei.c
-> +++ b/fs/ext4/namei.c
-> @@ -1834,8 +1834,7 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
->  		}
->  	}
->  
-> -#if IS_ENABLED(CONFIG_UNICODE)
-> -	if (!inode && IS_CASEFOLDED(dir)) {
-> +	if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
->  		/* Eventually we want to call d_add_ci(dentry, NULL)
->  		 * for negative dentries in the encoding case as
->  		 * well.  For now, prevent the negative dentry
-> @@ -1843,7 +1842,7 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
->  		 */
->  		return NULL;
->  	}
-> -#endif
-> +
->  	return d_splice_alias(inode, dentry);
->  }
->  
-> @@ -3173,16 +3172,14 @@ static int ext4_rmdir(struct inode *dir, struct dentry *dentry)
->  	ext4_fc_track_unlink(handle, dentry);
->  	retval = ext4_mark_inode_dirty(handle, dir);
->  
-> -#if IS_ENABLED(CONFIG_UNICODE)
->  	/* VFS negative dentries are incompatible with Encoding and
->  	 * Case-insensitiveness. Eventually we'll want avoid
->  	 * invalidating the dentries here, alongside with returning the
->  	 * negative dentries at ext4_lookup(), when it is better
->  	 * supported by the VFS for the CI case.
->  	 */
-> -	if (IS_CASEFOLDED(dir))
-> +	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
->  		d_invalidate(dentry);
-> -#endif
->  
->  end_rmdir:
->  	brelse(bh);
-> @@ -3284,16 +3281,15 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
->  		goto out_trace;
->  
->  	retval = __ext4_unlink(dir, &dentry->d_name, d_inode(dentry), dentry);
-> -#if IS_ENABLED(CONFIG_UNICODE)
-> +
->  	/* VFS negative dentries are incompatible with Encoding and
->  	 * Case-insensitiveness. Eventually we'll want avoid
->  	 * invalidating the dentries here, alongside with returning the
->  	 * negative dentries at ext4_lookup(), when it is  better
->  	 * supported by the VFS for the CI case.
->  	 */
-> -	if (IS_CASEFOLDED(dir))
-> +	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
->  		d_invalidate(dentry);
-> -#endif
->  
->  out_trace:
->  	trace_ext4_unlink_exit(dentry, retval);
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 215b4614eb15..179083728b4b 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -3609,14 +3609,12 @@ int ext4_feature_set_ok(struct super_block *sb, int readonly)
->  		return 0;
->  	}
->  
-> -#if !IS_ENABLED(CONFIG_UNICODE)
-> -	if (ext4_has_feature_casefold(sb)) {
-> +	if (!IS_ENABLED(CONFIG_UNICODE) && ext4_has_feature_casefold(sb)) {
->  		ext4_msg(sb, KERN_ERR,
->  			 "Filesystem with casefold feature cannot be "
->  			 "mounted without CONFIG_UNICODE");
->  		return 0;
->  	}
-> -#endif
->  
->  	if (readonly)
->  		return 1;
+__copy_to_user()->check_object_size()->__check_object_size()->
+check_heap_object()->__check_heap_object()->usercopy_abort()
+
+
+... but the big question is which code tried to copy way too much memory 
+out of a slab folio to user space.
+
+> 
+>> That link also contains:
+>>
+>> Entering kdb (current=0xffff9115d14fb980, pid 61925) on processor 5
+>> Oops: (null)^M
+>> due to oops @ 0xfffffffface3a1d2^M
+>> CPU: 5 PID: 61925 Comm: ld Kdump: loaded Not tainted
+>> 5.14.0-421.el9.x86_64 #1^M
+>> Hardware name: Supermicro SYS-5018R-WR/X10SRW-F, BIOS 2.0 12/17/2015^M
+>> RIP: 0010:usercopy_abort+0x74/0x76^M
+>> Code: 14 74 ad 51 48 0f 44 d6 49 c7 c3 cb 9f 73 ad 4c 89 d1 57 48 c7
+>> c6 60 83 75 ad 48 c7 c7 00 83 75 ad 49 0f 44 f3 e8 1b 3b ff ff <0f> 0b
+>> 0f b6 d3 4d 89 e0 48 89 e9 31 f6 48 c7 c7 7f 83 75 ad e8 73^M
+>> RSP: 0018:ffffbb97c16af8d0 EFLAGS: 00010246^M
+>> RAX: 0000000000000072 RBX: 0000000000000112 RCX: 0000000000000000^M
+>> RDX: 0000000000000000 RSI: ffff911d1fd60840 RDI: ffff911d1fd60840^M
+>> RBP: 0000000000004000 R08: 80000000ffff84b4 R09: 0000000000ffff0a^M
+>> R10: 0000000000000004 R11: 0000000000000076 R12: ffff9115c0be8b00^M
+>> R13: 0000000000000001 R14: ffff911665df9f68 R15: ffff9115d16be112^M
+>> FS:  00007ff20442eb80(0000) GS:ffff911d1fd40000(0000)
+>> knlGS:0000000000000000^M
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033^M
+>> CR2: 00007ff20446142d CR3: 00000001215ec003 CR4: 00000000003706e0^M
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000^M
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400^M
+>> Call Trace:^M
+>>   <TASK>^M
+>>   ? show_trace_log_lvl+0x1c4/0x2df^M
+
+
+... are we stuck in show_trace_log_lvl(), probably deadlocked not being 
+able to print the actuall callstack? If so, that's nasty.
 
 -- 
-Gabriel Krisman Bertazi
+Cheers,
+
+David / dhildenb
+
 
