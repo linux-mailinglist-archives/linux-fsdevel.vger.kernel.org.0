@@ -1,132 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-15257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A269988B228
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 22:00:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 561A688B63C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 01:40:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57BAC2A3842
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 21:00:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57916B2DBE7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 21:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83B15D73B;
-	Mon, 25 Mar 2024 21:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05DB6CDD8;
+	Mon, 25 Mar 2024 21:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGzjJ8NC"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fTGbqxsR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE11D5BAFA;
-	Mon, 25 Mar 2024 21:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C040754902;
+	Mon, 25 Mar 2024 21:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711400435; cv=none; b=gY+9J64wP3Av0s/RifNHikfB+IJpBA3SOsXH2iJAYf7BowOouPyYQNf6xNRxTFq2gFQdfhtzkVzxcGBjXyV9YNrnBRglTmqzJOA4EvrKNwiLzSRtmTmbzMyq53ke/XBDWpanxHRJWqhdKLsCzPtk77skVPmW+B8qIi5WkEanveA=
+	t=1711401198; cv=none; b=JQNaNXJuPcDL6dixpKMUTLoSuDhF2gKizTsHruxY8jP82fRzm8bTix56DjH95MovGDePxxdGa+oK0VNrit0/HFl8QTzPvoWC+jXOAH6I+YxAhIYqQqJz5d89DU+o4DyrFP1qKUmyhvGeTsw4s8Xu0ijMeqOrY07C/Fhu1/7eCyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711400435; c=relaxed/simple;
-	bh=4/DCfORHZvvO5HUER8a/EYr7x51a5ySHQFviZ6wk7tU=;
+	s=arc-20240116; t=1711401198; c=relaxed/simple;
+	bh=6OPKxj3PY7601FbVQRX2xZAyo/li/QEIqiZMW8rxpJk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFD8bqJeoWDYZAQsX9eTZr6lY9yNzalylIKBwdC94QamIILfO5ytrd8CTp9M2ST5sS+ZeqOSKB0jvwdT4ddfQLVLRbU7HgxWdNxgjhF+4evOgbw0i3iIpa5dU0nauCi77dBkL8094zh3twR646oVbd5QwsKNPdsGQqye5iAlcA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGzjJ8NC; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-78a01a3012aso339323285a.2;
-        Mon, 25 Mar 2024 14:00:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711400432; x=1712005232; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0aIiJsbK/FOYiRULxUQpBOQ0+fV2pbpaO5YH9xL5kFE=;
-        b=nGzjJ8NCiv1FyRq5tzrvDyMvLDsN8QDz3EwXuqD+36BHZAizW4rtV9N+Fagx4kk+GF
-         rUK+Y50Bu1PLFTLzHvyTZWrcrhsF8Y+mRXuUEC3qRalgUwxnWrHpbwV7kGL5/3eH3FKO
-         KWIxdxkP7clhSH2FDHGiG9mdETSPdlYMQplxltjjApgtJC5OXtoWEeCM9F60pZ2cVBWs
-         dQUAIwQ80uDdKypN7dyJMolhgul2348YZpyK8my3PX3OfYHCFCTa1dOcqrQ7+N/Bw2S9
-         1a32TRNTiJNXd44cWjR19cF7ukLM1YKqS2dgY8M+gNZSSO41VJ5VNYs5oMu4+eqcxx4N
-         /Mdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711400432; x=1712005232;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0aIiJsbK/FOYiRULxUQpBOQ0+fV2pbpaO5YH9xL5kFE=;
-        b=mlSaU2jdAMtvll4tO9TWn3HevnPmo5lAyMRYiFZFnsGuDX1hlRExyFJ7BttNQqaG6V
-         tB78yfXGR7ato/QUG/wwYSmLhHBtrgXqURu0OVVyjU7TunIcsZnDnF0+HhN9W7s2NGLI
-         qxyC4mcQ0aMywT2RLXo5vMAcyCuryjw9oly1KFwV8WwsfxAVb8MHIwDxK8AsznWddfAk
-         oEqlyNY41hCFFObFJINgzEJKGXrHI6q1SWvj+vM+gVTiMyofMshyWuVM4f/K1sAsi58y
-         eBZWWjIONVzF87kJwCFt+giXOVLgY3rGiU6V1esB54Z01xDg6HFCBRtZ+uas8Eqd661E
-         t9uw==
-X-Forwarded-Encrypted: i=1; AJvYcCVj0lb1JefuJC4I/U4Twty9rtdzWfcmeKLaxef3rkmG95zuwi0aLhw31W/uyyRKh0G3N+Zuwz3B0vtyrINu02CzaRxSc5KYyWqBw+J+lKxow2bbUef2qB27iD7RTMe5XW5mT0y1tNVUbyufHNax8elJuh+Sni31JRNaMsSxLmSCSANOo4jiHzw=
-X-Gm-Message-State: AOJu0YzUBYyTUmGqPRvINHst9N0D5vzU+zIhIVZ+J02/7Ic0wSvjg0Ic
-	+b/HSFmWWHHWxdezUvzcOHhEjTle0p3OE+fxUIgiTiMpcnpCcV6B
-X-Google-Smtp-Source: AGHT+IEmrJY2YuqwFggGagE/+e8uVbOWYgKk3UIvG8boqku1ije64OUVXZ9orjGM9gQQ0wlamMqAZQ==
-X-Received: by 2002:ae9:ee13:0:b0:78a:5ed7:be26 with SMTP id i19-20020ae9ee13000000b0078a5ed7be26mr974913qkg.65.1711400431680;
-        Mon, 25 Mar 2024 14:00:31 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id k1-20020a05620a0b8100b0078a4fe9bf69sm1715548qkh.57.2024.03.25.14.00.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Mar 2024 14:00:31 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 1821F1200043;
-	Mon, 25 Mar 2024 17:00:30 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 25 Mar 2024 17:00:30 -0400
-X-ME-Sender: <xms:6-UBZpM5Tshc-CtjpTkTKmhsk51vaHkOzddxRXkfq_dO9MF5hdrnzg>
-    <xme:6-UBZr-xgmbJWemwti49N0igXBZWLCoJ9fpADD9F86xX6x6K1xiOyYH_gs-b4g58c
-    4zVedC4v1KP5dX9bA>
-X-ME-Received: <xmr:6-UBZoSgy4aSWX_9lia6EwdlN0ENgdev2pW8onGnMsooPvP7p1nb0OxUlfwIeQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudduuddgkeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeffleejleehveelteeltedugffhhedvkefgvdehfeeiffeihfeigfdvtdeu
-    hfdtteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
-    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
-    rghmvg
-X-ME-Proxy: <xmx:6-UBZltcfQ0QB0cAeGdnsDsuL7jndG7Ucoe-gE-opPwfdGN7ntgmpQ>
-    <xmx:6-UBZhfZgamJm562i4cZaL6MromTCguYiehjc-XJwwQuvuTANbmrxQ>
-    <xmx:6-UBZh21bmniCmLuxrubcoY_-5tFBxlCX2DaU_fPcF4P8r0JY9k3pA>
-    <xmx:6-UBZt-8NOr3p4SFiX8GqA0t7n1p4qdkiQSMwTFBQhIX_pm-Y-eu9A>
-    <xmx:7uUBZvv9S3sdCDei9n1d78JQM-fTSpBTEoSwu9vmACzzWsAxJcpzGsfOEmAkrhi4>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 25 Mar 2024 17:00:26 -0400 (EDT)
-Date: Mon, 25 Mar 2024 13:59:55 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
-	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	"Bj\"orn Roy Baron" <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
- linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <ZgHly_fioG7X4wGE@boqun-archlinux>
-References: <20240322233838.868874-1-boqun.feng@gmail.com>
- <ZgFVnar3nS4F8eIX@FVFF77S0Q05N>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fvd66WpgZVxZkVjqbJ24OXEfRjiXuXs/5C1UAaweYP3ujbToOKpJGV7noSIp1WGdK7TwLyBYkseRTT8rjc0G5jAySQ9upR6OZDWlBDhZ3/KkYpIrXCi6OxgfP0rz9V4buc7LUMqj99X7I3Azb3LM3RL7Ox+SUgQmJHvcPOtok5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fTGbqxsR; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=g3Espu9XK22gwjeY8tde1FrtIb6+Pk135nxK84EbhVQ=; b=fTGbqxsRayMH8KFCjNl/wwpDfb
+	9eca37NSbpiMm+/bhx7oopOa6crxJFVkxigNfSx3dXcazK2YtFgN2oFrubYhj9KMcLVxQRa+yqdm/
+	pTyycmwT9haWcP+EulVR2er2L6zc3AelTM9y8MFQHpY8DMv+0oc2SvqfW2uJAT41KKZ291uFztaVW
+	tv7y45Sbsd5qgrIEIx+vcQC5/MDA9anrIAvBY8te0qGMA+Xu/SYMNNSBL++TarHMhgM+59psvml9A
+	NoY3Z29UyppcZYuXRGQH8kE18++Bx66WWsdFCyC8H7dRaGJX+SCe7H3g2tUvMUrlXCM77B6IRyMFB
+	1tq/eBrg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rorcv-00GbYB-2E;
+	Mon, 25 Mar 2024 21:13:05 +0000
+Date: Mon, 25 Mar 2024 21:13:05 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: Steve French <smfrench@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	CIFS <linux-cifs@vger.kernel.org>,
+	Christian Brauner <christian@brauner.io>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Subject: Re: kernel crash in mknod
+Message-ID: <20240325211305.GY538574@ZenIV>
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV>
+ <3441a4a1140944f5b418b70f557bca72@huawei.com>
+ <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
+ <CAH2r5muL4NEwLxq_qnPOCTHunLB_vmDA-1jJ152POwBv+aTcXg@mail.gmail.com>
+ <20240325195413.GW538574@ZenIV>
+ <a5d0ee8c54ec2f80cb71cd72e3b4aec3@manguebit.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -135,55 +74,74 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZgFVnar3nS4F8eIX@FVFF77S0Q05N>
+In-Reply-To: <a5d0ee8c54ec2f80cb71cd72e3b4aec3@manguebit.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Mar 25, 2024 at 10:44:45AM +0000, Mark Rutland wrote:
-[...]
-> > 
-> > * I choose to re-implement atomics in Rust `asm` because we are still
-> >   figuring out how we can make it easy and maintainable for Rust to call
-> >   a C function _inlinely_ (Gary makes some progress [2]). Otherwise,
-> >   atomic primitives would be function calls, and that can be performance
-> >   bottleneck in a few cases.
+On Mon, Mar 25, 2024 at 05:47:16PM -0300, Paulo Alcantara wrote:
+> Al Viro <viro@zeniv.linux.org.uk> writes:
 > 
-> I don't think we want to maintain two copies of each architecture's atomics.
-> This gets painful very quickly (e.g. as arm64's atomics get patched between
-> LL/SC and LSE forms).
+> > On Mon, Mar 25, 2024 at 11:26:59AM -0500, Steve French wrote:
+> >
+> >> A loosely related question.  Do I need to change cifs.ko to return the
+> >> pointer to inode on mknod now?  dentry->inode is NULL in the case of mknod
+> >> from cifs.ko (and presumably some other fs as Al noted), unlike mkdir and
+> >> create where it is filled in.   Is there a perf advantage in filling in the
+> >> dentry->inode in the mknod path in the fs or better to leave it as is?  Is
+> >> there a good example to borrow from on this?
+> >
+> > AFAICS, that case in in CIFS is the only instance of ->mknod() that does this
+> > "skip lookups, just unhash and return 0" at the moment.
+> >
+> > What's more, it really had been broken all along for one important case -
+> > AF_UNIX bind(2) with address (== socket pathname) being on the filesystem
+> > in question.
 > 
+> Yes, except that we currently return -EPERM for such cases.  I don't
+> even know if this SFU thing supports sockets.
 
-No argument here ;-)
+	Sure, but we really want the rules to be reasonably simple and
+"you may leave dentry unhashed negative and return 0, provided that you
+hadn't been asked to create a socket" is anything but ;-)
 
-> Can we start off with out-of-line atomics, and see where the bottlenecks are?
+> > Note that cifs_sfu_make_node() is the only case in CIFS where that happens -
+> > other codepaths (both in cifs_make_node() and in smb2_make_node()) will
+> > instantiate.  How painful would it be for cifs_sfu_make_node()?
+> > AFAICS, you do open/sync_write/close there; would it be hard to do
+> > an eqiuvalent of fstat and set the inode up?
 > 
-> It's relatively easy to do that today, at least for the atomic*_*() APIs:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?h=atomics/outlined&id=e0a77bfa63e7416d610769aa4ab62bc06993ce56
-> 
-> ... which IIUC covers the "AtomicI32, AtomicI64 and AtomicUsize" cases you
-> mention above.
-> 
+> This should be pretty straightforward as it would only require an extra
+> query info call and then {smb311_posix,cifs}_get_inode_info() ->
+> d_instantiate().  We could even make it a single compound request of
+> open/write/getinfo/close for SMB2+ case.
 
-Thanks! Yes, I know I should check with you before I finalize the
-implementation ;-) I will try to integrate that but things to notice:
+	If that's the case, I believe that we should simply declare that
+->mknod() must instantiate on success and have vfs_mknod() check and
+warn if it hadn't.
 
-* For module usage, we need to EXPORT_SYMBOL_GPL() all the atomics, I'm
-  OK with that, but I don't know how others feel about it.
+	Rationale:
 
-* Alice reported performance gap between inline and out-of-line refcount
-  operations in Rust binder driver:
+1) mknod(2) is usually followed by at least some access to created object.
+Not setting the inode up won't save much anyway.
+2) if some instance of ->mknod() skips setting the inode on success (i.e.
+unhashes the still-negative dentry and returns 0), it can easily be
+converted.  The minimal conversion would be along the lines of turning
+	d_drop(dentry);
+	return 0;
+into
+	d_drop(dentry);
+	d = foofs_lookup(dir, dentry, 0);
+	if (unlikely(d)) {
+		if (!IS_ERR(d)) {
+			dput(d);
+			return -EINVAL;	// weird shit - directory got created somehow
+		}
+		return PTR_ERR(d);
+	}
+	return 0;
+but there almost certainly are cheaper ways to get the inode metadata,
+set the inode up and instantiate the dentry.
+3) currently only on in-kernel instance is that way.
+4) it makes life simpler for the users of vfs_mknod().
 
-	https://github.com/Darksonn/linux/commit/b4be1bd6c44225bf7276a4666fd30b8da9cba517	
-
-  I don't know how much worse since I don't have the data, but that's
-  one of the reasons I started with inline asm.
-
-That being said, I totally agree that we could start with out-of-line
-atomics, and maybe provide inline version for performance critical
-paths. Hoping is we can figure out how Rust could inline a C function
-eventually.
-
-Regards,
-Boqun
-
-> Mark.
+	Objections, anyone?
 
