@@ -1,79 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-15259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B46288B272
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 22:15:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A6B88B27D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 22:16:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1CB31C63658
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 21:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 412F22E8414
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Mar 2024 21:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F5A6D1AE;
-	Mon, 25 Mar 2024 21:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812AC6D1B3;
+	Mon, 25 Mar 2024 21:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uiEgXaX1"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="x2FyTEI2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0925B669
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 21:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CF76BFCC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 21:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711401292; cv=none; b=W0eVMqdIv0SgebgRIuWZB+D10Zv6kCTKMHeNEUHhr63YSYH7AgvZhL4ASi3r6ThR5VW338Hr6WMH8+P1GbNLoMTDswZbY2zY/0PMlEeGh9RodVL4CM+FH4BTJ2ItmepiamDOvzix/8KFCe9bsd9TpXvd3+pOHKy4dPrUcRRi82M=
+	t=1711401404; cv=none; b=PZ+aQfOcaehD7BnI5unqSrUvX8jsuaumGVNB6GfHcM4KUSIik4MkZbFGZVaGF0vJMDyDcAFtN/akYlJPycO3/9Lgtc/yf37mhjfLoreHjPy2jUkqXiczGWPsJRbABHCFaXuueIYFn3kI3XR8A8leCR0h0ek/V3zWIYf5orZEs4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711401292; c=relaxed/simple;
-	bh=W1hWRjm3jNJ351RXmnzHe0zzrwx7OW190ghWMHNY1Mw=;
+	s=arc-20240116; t=1711401404; c=relaxed/simple;
+	bh=8Nahw41+JrrFLaowDhNTSh/QV4VstGtS4camkBglTlQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UYJL6Hca8a7AG5fntF7lKP47EwF7DrvnXIKjgJaroX3VenabH0hw8uivnD4PuKoPkZZIOXkoqQrovRW/nHzIzwYdTQk4t9Wfkfj9JnKyB/PTJGjHgj4J3UbDwFWah5CVrROUMBAriZMeTjkVYqyVrbO+NfdqYO59a4s/FFuGvDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uiEgXaX1; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 25 Mar 2024 17:14:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1711401287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=llHHasdPTnE564yAWRIEDlb7QeNB14A4Flfy8lgEg5U=;
-	b=uiEgXaX1EP5tHiPl9/JxgOTwnEkgEqLTkBqdn1FGdGdStYBsEYrfnHyG72l2Ygm0omugkq
-	hspjjqtAH5hNoEQrqWg0Akg1oKhMqTHMnJCEQrJ5aIv4gYjmjaqTT2aN19dl9XREDZdahI
-	RBHeMDIwoVU+fqu2uBvmz9Gzn2npmts=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Philipp Stanner <pstanner@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
-	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
-	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <gewmacbbjxwsn4h54w2jfvbiq5iwr2zdm56pc3pv3rctxyd4lt@sqqa544ezmez>
-References: <20240322233838.868874-1-boqun.feng@gmail.com>
- <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
- <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
- <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
- <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
- <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
- <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
- <bu3seu56hfozsvgpdqjarbdkqo3lsjfc4lhluk5oj456xmrjc7@lfbbjxuf4rpv>
- <CAHk-=wgLGWBXvNODAkzkVHEj7zrrnTq_hzMft62nKNkaL89ZGQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhIVEhsf2Hm0u6CsQCw54XsLweT2LDTSSZ01kaQ6Ad2Ws+fq2vgR6QNc2LmMpscThfb8o+4a5UZVJf5etMELGogZxpsBgYPsruGlneomEEatsU8K43Mdlmqno1Bn8SJG0AVGYVRsDVO7BivIEohCRuK9xcGw2OazbGvxTo3V4sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=x2FyTEI2; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6e6f4ad4c57so3623494b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Mar 2024 14:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1711401403; x=1712006203; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BJrOzTRRAIet2df0BwTVFrV7spSvPuh97bPmsvwqkus=;
+        b=x2FyTEI2tToUByfFt7qKLvwH6awcBpMAiCyErhR1qqeN1b8LBOgLdBjEF4jUree7ye
+         MRWJ/2fiSemc9wHcehmo4dnnqaGcBvVvxxm92+vXymegzRA8vhX82RR1+3X0W/JoZOpH
+         MlmfVEgXG0qUXeMhZvBdlgEMBblIIDhQc2dEbH1BSwjeewOs0lxZfqN3WtZoaSOxVnWf
+         4/uqoZIcvl5zSxRriMsYwQCxoGRC7M2aS8KlDjs5HcCojImKFSJsojZv4Arnr+bx1Z+D
+         5KYWvST4qbQHhMt1M6ocNfQs+ptr1h9wRFecMoLOfEKpNUqT889iAJixpq5/Ah+SyMvv
+         hLUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711401403; x=1712006203;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BJrOzTRRAIet2df0BwTVFrV7spSvPuh97bPmsvwqkus=;
+        b=GHZOte2c8P39pvSimasOUZKfW2i4TWFLLO79RJcGtW5j6qLgswu9BWIDXvI0OY751k
+         RMu9WPoIKwVvu+B4RfAiE4Gngv4OvJIBQJCH5cBY61qvEJWksGXfADdDWHJIQ5o8mBSI
+         xodPe+q2dJXub+DXi3Mwec6AI5bMgitgRH+X7jd2GXGsgnMfpOfNc76xcKytz/QKiBiy
+         USdbnG8rZviueTlUqfPfB425bcwpfIW1avBtwRrQrmAuVqhT62XEzafcFCjwj6hwLnhv
+         p9/Fj6+/Z0XALOz9D7Q0zNAEQL2GLnpdRJNqrkNJn7JuGYGqVuEYOD7I2aGZW9Xxsfcc
+         ScOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8iyeILoPDu2bPUpDGs9xVPl00bouj+roX+rQ801ZXNOLBf5HNn1YXPfppQr/VeW/HT5ycXTRNPHRRLqMzy524aICju1DUayPujxVziA==
+X-Gm-Message-State: AOJu0YznhbTlsgIJfn5ruw0+egScmMiSDQyqiugSWJfbd6TWbONt3lEj
+	ldsEGarItyiwVd8Fk+dEycoEJbZaFhRz8Ol7GIfpd8cJbXm/bO0+tbOqYf0RVy4=
+X-Google-Smtp-Source: AGHT+IE1T64RzY6SQAo/CoKesHPLNU5CSm34ZOwtFdyydPV2JaPr1t8PQjxBRzakKMKeng0mK2DfzQ==
+X-Received: by 2002:a17:903:186:b0:1dd:7df8:9ed7 with SMTP id z6-20020a170903018600b001dd7df89ed7mr11960029plg.15.1711401402537;
+        Mon, 25 Mar 2024 14:16:42 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-56-237.pa.nsw.optusnet.com.au. [49.181.56.237])
+        by smtp.gmail.com with ESMTPSA id z10-20020a170902708a00b001e0d9daa927sm759086plk.49.2024.03.25.14.16.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Mar 2024 14:16:41 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rorgN-009yrN-0Y;
+	Tue, 26 Mar 2024 08:16:39 +1100
+Date: Tue, 26 Mar 2024 08:16:39 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: syzbot <syzbot+fa52b47267f5cac8c654@syzkaller.appspotmail.com>
+Cc: chandan.babu@oracle.com, djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] possible deadlock in xfs_qm_dqget
+Message-ID: <ZgHptxp5Bc4tf3Wc@dread.disaster.area>
+References: <0000000000007b5ec50614821d6f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,58 +87,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgLGWBXvNODAkzkVHEj7zrrnTq_hzMft62nKNkaL89ZGQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <0000000000007b5ec50614821d6f@google.com>
 
-On Mon, Mar 25, 2024 at 12:44:34PM -0700, Linus Torvalds wrote:
-> On Mon, 25 Mar 2024 at 11:59, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> >
-> > To be fair, "volatile" dates from an era when we didn't have the haziest
-> > understanding of what a working memory model for C would look like or
-> > why we'd even want one.
+On Mon, Mar 25, 2024 at 01:35:33PM -0700, syzbot wrote:
+> Hello,
 > 
-> I don't disagree, but I find it very depressing that now that we *do*
-> know about memory models etc, the C++ memory model basically doubled
-> down on the same "object" model.
+> syzbot found the following issue on:
 > 
-> > The way the kernel uses volatile in e.g. READ_ONCE() is fully in line
-> > with modern thinking, just done with the tools available at the time. A
-> > more modern version would be just
-> >
-> > __atomic_load_n(ptr, __ATOMIC_RELAXED)
+> HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=102618b1180000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fe78468a74fdc3b7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=fa52b47267f5cac8c654
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > 
-> Yes. Again, that's the *right* model in many ways, where you mark the
-> *access*, not the variable. You make it completely and utterly clear
-> that this is a very explicit access to memory.
+> Unfortunately, I don't have any reproducer for this issue yet.
 > 
-> But that's not what C++ actually did. They went down the same old
-> "volatile object" road, and instead of marking the access, they mark
-> the object, and the way you do the above is
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/0f7abe4afac7/disk-fe46a7dd.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/82598d09246c/vmlinux-fe46a7dd.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/efa23788c875/bzImage-fe46a7dd.xz
 > 
->     std::atomic_int value;
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+fa52b47267f5cac8c654@syzkaller.appspotmail.com
 > 
-> and then you just access 'value' and magic happens.
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.8.0-syzkaller-08951-gfe46a7dd189e #0 Not tainted
+> ------------------------------------------------------
+> syz-executor.5/6047 is trying to acquire lock:
+> ffffffff8e21f720 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:303 [inline]
+> ffffffff8e21f720 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:3746 [inline]
+> ffffffff8e21f720 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:3827 [inline]
+> ffffffff8e21f720 (fs_reclaim){+.+.}-{0:0}, at: kmem_cache_alloc+0x48/0x340 mm/slub.c:3852
 > 
-> EXACTLY the same way that
+> but task is already holding lock:
+> ffff88801f58d958 (&qinf->qi_tree_lock){+.+.}-{3:3}, at: xfs_qm_dqget_cache_insert fs/xfs/xfs_dquot.c:825 [inline]
+> ffff88801f58d958 (&qinf->qi_tree_lock){+.+.}-{3:3}, at: xfs_qm_dqget+0x2c4/0x640 fs/xfs/xfs_dquot.c:901
 > 
->    volatile int value;
-> 
-> works, in other words. With exactly the same downsides.
+> which lock already depends on the new lock.
 
-Yeah that's crap. Unfortunate too, because this does need to be a type
-system thing and we have all the tools to do it correctly now.
-
-What we need is for loads and stores to be explict, and that absolutely
-can and should be a type system thing.
-
-In Rust terminology, what we want is
-
-  Volatile<T>
-
-where T is any type that fits in a machine word, and the only operations
-it supports are get(), set(), xchg() and cmpxchG().
-
-You DO NOT want it to be possible to transparantly use Volatile<T> in
-place of a regular T - in exactly the same way as an atomic_t can't be
-used in place of a regular integer.
+#syz dup: possible deadlock in xfs_qm_dqget_cache_insert
+-- 
+Dave Chinner
+david@fromorbit.com
 
