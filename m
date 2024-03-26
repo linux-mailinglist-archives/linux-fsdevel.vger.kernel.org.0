@@ -1,139 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-15311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101C388C057
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 12:14:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9831688C0F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 12:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1941F3B42F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 11:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54B102C3825
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 11:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8004AED0;
-	Tue, 26 Mar 2024 11:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86115A0F6;
+	Tue, 26 Mar 2024 11:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SsdJQtuc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMRE/iI4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C7A5647E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 11:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A215475D;
+	Tue, 26 Mar 2024 11:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711451654; cv=none; b=iZYWnJ0B3iBx577kKI3s2kZqC9nc2M9njPFUmLekhWe2BjU4n1dhSC1zPILnbF5vTRLJ+AyHUZ/To2RLxEKf87QfhRp0tppAJ3zEUkdQtI0txOr25HIh7V42pZiC8PKDgfxmSFUPQrRenTzuI8LwG6+AfCO0RTlEM9amMkeNEH4=
+	t=1711453227; cv=none; b=jCaQvjVx3Drdo88I/UTrvHaSCV3WwMsMTJXnutikBm4Gi+noH5fgV0tW03T5q7ZTKLW3+hiZ/YaSfkM0jWwwvGrddEBrR/14Iawp4MIb0hDGrW1D8MeR50boi63daiARFQkdeTKRq4Yk7i/S2xI/F227Uc3ggIchKfLJnHn8FcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711451654; c=relaxed/simple;
-	bh=TYMtfvN2vUnRHd6EWkh9ZqTFU7JiBbIR99/HAjSX77k=;
+	s=arc-20240116; t=1711453227; c=relaxed/simple;
+	bh=LamHup0dGZLclxF5hDMENi9cqj4fae/k4ItBnLEbvXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ag5PdntCx+D/92gUZ1t3rmucq8B/05AeV3yrGrtwOMW7TWRjzjpJFPzL4u9O+jySIEWSzvJG6rZ/NM4Q90MfmYn+P9mz33Z3ZxjywMXKqWU17MNRHCiNT9fpuxYPwqODuCMVrvfOdvb07/fVPqATTghi6oTPRXlu4vXRu+QigEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SsdJQtuc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1711451651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4gvtX7ytW1UnmTr6oylQHGYU56ln9d+44kJej9o2BNg=;
-	b=SsdJQtucOpgUEm0CweKofRUUBKUm9CQrFfudyrtsr0JyccqBDbx+SaHjBBKfJrfZQQIPg1
-	X/pf9q3yP8do+k21OG+IbeJLkjlI1kMrKCCUIVnrLBHOVT3R7ik+wkFp+uwayOjocfHxBb
-	OZWBjwdN6iAry/ekXvYh8FqOx/6LbxY=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-652-0RyZuHOgM52IcNKVq14wnw-1; Tue, 26 Mar 2024 07:14:10 -0400
-X-MC-Unique: 0RyZuHOgM52IcNKVq14wnw-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-56c079c74d1so952349a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 04:14:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711451649; x=1712056449;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4gvtX7ytW1UnmTr6oylQHGYU56ln9d+44kJej9o2BNg=;
-        b=KTDfif2WP5nwpqYAw7TyM48RcdE1bh51CCtZrI9eX3k9iPV598Fh70GIhyE4nZfEG6
-         P6DCv4PN5kTZrusbm2UFw/6ROkpRW0RWUf61JDKYorGi6IhiGQPYu9LWfZahy6fn2IiX
-         YgrgciNlwAHk7s1WAKSM4XKTSeD+2Mi4HPzq5qr0bmmqr3L6Vg3s6ilFqKUfkBnx9wl/
-         SC2YEHgi/WqwEHzg2PMJBGGUBP8cQzjjuHGOWUGjiEwc+4tdFFlgdreKmAkIWEeUtjrr
-         1ARM5HFAEK2twmkTLTenTWNAno9QgQLsxhNPNq2LvITWokfS61S61SlVPKcHFmPYayOJ
-         PmxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXY/R2SWg+c9o3IsEQv8aMm3MDkO3lCG2cFfe3rv56oL7hh5cOZwEKSlytG+qrvb0rqOuXpNvMaDLVF3fQnK2WSvODgTwTbU/O/4Q/WIg==
-X-Gm-Message-State: AOJu0Yz+mTTc9iKojSvVYTbAodKVaLtM3UOWOg+rrCicnJL1gktz7uik
-	0oLN8XhhQcS5ELP8Nj+cWLvFsb52yCudJbhod/h/QWCTNAfSK8GoTEtCiWAOi/xAUAs8ysrpFQL
-	x6MM5CUxDswGA41CDzzJfMm5p8ZIyAp0tit56sQKjYKrfyjs1wKgo0yNhM554NA==
-X-Received: by 2002:a50:d5cb:0:b0:56b:cbb6:f12b with SMTP id g11-20020a50d5cb000000b0056bcbb6f12bmr6394795edj.41.1711451649261;
-        Tue, 26 Mar 2024 04:14:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH9G+oAGBajKHJGKZJ1BqUzj64gXzHas8/hLl8OK59dXzf5a7WIti2wmaIWM9kOtnJxdLgd7A==
-X-Received: by 2002:a50:d5cb:0:b0:56b:cbb6:f12b with SMTP id g11-20020a50d5cb000000b0056bcbb6f12bmr6394764edj.41.1711451648622;
-        Tue, 26 Mar 2024 04:14:08 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id n1-20020aa7c781000000b0056bb65f4a1esm4015250eds.94.2024.03.26.04.14.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Mar 2024 04:14:08 -0700 (PDT)
-Date: Tue, 26 Mar 2024 12:14:07 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Chandan Babu R <chandanbabu@kernel.org>
-Cc: dchinner@redhat.com, djwong@kernel.org, hch@lst.de, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, mark.tinguely@oracle.com
-Subject: Re: [ANNOUNCE] xfs-linux: for-next updated to f2e812c1522d
-Message-ID: <s2kxdz3ztpuptn3o2znqpsbskra5yqxqnjhisfjxyc3cqw33ct@k6bvhr2il2sn>
-References: <874jcte2jm.fsf@debian-BULLSEYE-live-builder-AMD64>
- <wdc2qsq3pzo6pxsvjptbmfre7firhgomac7lxu72qe6ard54ax@fmg5qinif62f>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SvaCcxB+eDowncwy7b+2Bo8t4pXlD4Wuo0cPzxSCvPESE8iDd8wPWjugrs3hNwZFaHXZUK3ZReAoA8JqR1g2e5VMFyjXzgdOdfLebW8NCgpVszgOlSqOXXoZwQNu60G3u1bf/UhyybZU1e2apSri8l6wWCnvvtUUxaqq/s9r3kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMRE/iI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D913C433C7;
+	Tue, 26 Mar 2024 11:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711453226;
+	bh=LamHup0dGZLclxF5hDMENi9cqj4fae/k4ItBnLEbvXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AMRE/iI4RJ6vd0APpjPRk1YQHf4J9dTuv4WrqGL8+E1hr7+otCP/sB5gPa7Rf2wgb
+	 IiPE38SuABXhybKzI5dQ/4abJDjcdtLMFsAW68JM0PSqEWKRuomzcmmWP0/lGUolbm
+	 rArt7kRg23507Zdd3jlu/crFMF3b5yXeuWkyQvYQiQNIUWoDz6ERDiNJqumC0KnAgY
+	 X8pOF+Uqvu+K8HbbMcaKcvHgjpoznL00qAuP4DGdCfgsa98ihYMr7lSYXEeaFsaPXu
+	 i0FW42e42lLutB+Qb3CqlrbfFBUjaqAdZS/nSNx+Em/M+fuwezqwvOuUM+8ViviusI
+	 1GMEGdZV2mTHw==
+Date: Tue, 26 Mar 2024 12:40:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	CIFS <linux-cifs@vger.kernel.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Christian Brauner <christian@brauner.io>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Paul Moore <paul@paul-moore.com>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Subject: Re: kernel crash in mknod
+Message-ID: <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV>
+ <3441a4a1140944f5b418b70f557bca72@huawei.com>
+ <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
+ <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <wdc2qsq3pzo6pxsvjptbmfre7firhgomac7lxu72qe6ard54ax@fmg5qinif62f>
+In-Reply-To: <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
 
-On 2024-03-26 12:10:53, Andrey Albershteyn wrote:
-> On 2024-03-26 15:28:01, Chandan Babu R wrote:
-> > Hi folks,
-> > 
-> > The for-next branch of the xfs-linux repository at:
-> > 
-> > 	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
-> > 
-> > has just been updated.
-> > 
-> > Patches often get missed, so please check if your outstanding patches
-> > were in this update. If they have not been in this update, please
-> > resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-> > the next update.
-> > 
-> > The new head of the for-next branch is commit:
-> > 
-> > f2e812c1522d xfs: don't use current->journal_info
-> > 
-> > 2 new commits:
-> > 
-> > Dave Chinner (2):
-> >       [15922f5dbf51] xfs: allow sunit mount option to repair bad primary sb stripe values
-> >       [f2e812c1522d] xfs: don't use current->journal_info
-> > 
-> > Code Diffstat:
-> > 
-> >  fs/xfs/libxfs/xfs_sb.c | 40 +++++++++++++++++++++++++++--------
-> >  fs/xfs/libxfs/xfs_sb.h |  5 +++--
-> >  fs/xfs/scrub/common.c  |  4 +---
-> >  fs/xfs/xfs_aops.c      |  7 ------
-> >  fs/xfs/xfs_icache.c    |  8 ++++---
-> >  fs/xfs/xfs_trans.h     |  9 +-------
-> >  6 files changed, 41 insertions(+), 32 deletions(-)
-> > 
-> 
-> I think [1] is missing
-> 
-> [1]: https://lore.kernel.org/linux-xfs/20240314170700.352845-3-aalbersh@redhat.com/
+> we can change the parameter of security_path_post_mknod() from
+> dentry to inode?
 
-Should I resend it?
+If all current callers only operate on the inode then it seems the best
+to only pass the inode. If there's some reason someone later needs a
+dentry the hook can always be changed.
 
--- 
-- Andrey
-
+For bigger changes it's also worthwhile if the object that's passed down
+into the hook-based LSM layer is as specific as possible. If someone
+does a change that affects lifetime rules of mounts then any hook that
+takes a struct path argument that's unused means going through each LSM
+that implements the hook only to find out it's not actually used.
+Similar for dentry vs inode imho.
 
