@@ -1,122 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-15293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9BB88BE3E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 10:48:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8C288BE4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 10:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 078262E289A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 09:48:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3891B26F2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 09:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B7D11CBA;
-	Tue, 26 Mar 2024 09:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DD1535CF;
+	Tue, 26 Mar 2024 09:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="WpQ+Ny/V"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HA8Prd32"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE6E10A19;
-	Tue, 26 Mar 2024 09:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277874C60B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 09:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711446254; cv=none; b=iIE7tyvIb1bKRWbip27c28qWlen3sizUj6nhvTQAe8huDa+3LdZPvjIgHl1784gGoTAMwNY81SF/YBugj+3/STmXgkt5mfwa/nAeRxWQzkjIenR6FflcVTqFMPAdldRsVxZy54jn11ENamldOKZxvQWpSOU1icX6MGqNoBLV2Xo=
+	t=1711446479; cv=none; b=A9kLVbcJiPJlLSiPof87LEilTjPBLodq4awyAT8hWZ8op4ZoZqFLcEkdJm9AaKB/ZIPM7BZ8+By/XPdFKK4fvwO/v2cHU4aqJTWzAu4vHm8XVMfLWuvYSRLe1m+xEEtKJAa0O/SLnefCVffhXpub50BdMxN6tLAQiPd96cmqzzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711446254; c=relaxed/simple;
-	bh=otwNxssUTqC8hixZ724zKmTu0LPn+6xgWSR2/3zJtqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g2SXGePh2lb5xF+JVO3/eRFuloLkeAbTyPe1x5DlBNTj+nhQinA/L5iXXZaHmT0mvcQLlO5MMKm8CFqiRWVJdBvV0K5bCN+7jIPmsNyUsiPrnRVzlo3Sewt8MdtxWdIZbu94M0ZmsmquQIV+DkwiVvp6S/un6SQJdlNt/J6iHGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=WpQ+Ny/V; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4V3lHr6bWfz9scb;
-	Tue, 26 Mar 2024 10:44:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1711446248;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YrxaH5mDWbAQSraF+LJ/aFHOMZvEWk75cjO9z38h3ds=;
-	b=WpQ+Ny/VkIGZVysTH9mt6ac6RJIyCQebBhbHlxffuvruRXKXPbTkzElPZGzrve3xAMydqz
-	FzwRyBnZHBfacuxH6PnJB8Bf2FbqGz9YWC2THPAs9/Rq5Cnrv2Y3pfWlbhZhv5RO3FrVMF
-	N7rBO3rjyZhniq35YhDDYlFMWpAgwkeMPjPc98/zmWCggjAIJlL/B3sPeJ93UWO8swi9bP
-	VNEOiZ2fS2J3aSpm+Bs1m5GwKCu7yXFOjkPmpp48UafhHQM3lKS85eHfvVH+pGt3rzgs5S
-	vg8Z5qaYNPqqQ6dPRygBDajkpk2y3m9pi0ejAzbH6PPK7VaVGZKbr2T9ZcMIxQ==
-Message-ID: <5e5523b1-0766-43b2-abb1-f18ea63906d6@pankajraghav.com>
-Date: Tue, 26 Mar 2024 10:44:02 +0100
+	s=arc-20240116; t=1711446479; c=relaxed/simple;
+	bh=CpC0tItTXxJwFXoirWnjMrNhkYYoWKrypxWqWWoGUzk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BNpIJb6Wb/viU70HbIqs574eTL3gth1y6GiyS+zla/4bDKo8fGtMFd2k9sWAKf5OD5KZCRBEHM6VGVyGcOtTng3Pq4pKYC6IL5Jn4QHy/D2pFW1GtAAhPVv10gURyvRsKaX+HndaIUXhrsrSY6HZCK2da2B3hb+2N0CIeLZIiS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=HA8Prd32; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a4702457ccbso678843266b.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 02:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1711446474; x=1712051274; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qsAi2IPIigNJfNFp22vRBFL+67+CvcQhP68RPXSEF6k=;
+        b=HA8Prd32dhdLYTuOT1c0EntHfVIoETJmS1KqHt/ohdWfP0G/iFvM6eFoLgXWbkb9v+
+         3p8NiheLiHbtk65a8H+9aRtqsvZRFRRnViVhfAnSVahk8Dmf366T+bYXe7hoLkWjxxtA
+         /u9SN+BewV/FqTfnmhL8WpJLt2xNdihc6pHVs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711446474; x=1712051274;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qsAi2IPIigNJfNFp22vRBFL+67+CvcQhP68RPXSEF6k=;
+        b=ve9750daDVD1LbtRCiyw6LA48DRFtl4nLXiMcCpsuYhgDhvNLKTtyiuS5GJhO46g9j
+         ID5CC9ouiIn3QX8Z1l8WrwU9mkj1SSIxQfq6ZxCz9mzaRW1kxt7HL55bVIQy1HFj8JxY
+         uIsvAx1lR9cuoZzqnk3PhCZ+7EY3Qkd99yJV87qHR6mVJE8dNDIJ+lxo82gWE1Emp6AJ
+         NP0y2a7W49W3ErKyR4FueMmaISaikCUQdA4k5+1Hv4UmdE0hFoZdAVebEmEajsdkJ5rK
+         7065yqcaysWmJ0+DJZpQs9ovMcuAa6DQuhT/8WKRD1dvRcgl+tRpjyOp5hEZCA8BUiZp
+         1TzQ==
+X-Gm-Message-State: AOJu0Yy+JDTvw2KmBG7hXxQ/3bzPR2OnJA0Px/r8lu0DWEW7p3lQWAow
+	uDo4xs6Pns0DWX68aIYXj+PNFTONPwJnmKjM3WICLQRTpwEFJ64n14gM1D+vHvCYUYdA1zF3CWs
+	BDwBQfdSO+m3o45gVXbrxGkAy4SzrtLdLccfPYA==
+X-Google-Smtp-Source: AGHT+IHL0vByAzM5atnsKLsfU2ike8PqAdV9qKL9COk20raKjo3Jm3y/E9lmm0qvAOOpsYZGr83LkH0s6YFNOxgHUcg=
+X-Received: by 2002:a17:906:114b:b0:a46:7c9c:10d0 with SMTP id
+ i11-20020a170906114b00b00a467c9c10d0mr5800526eja.23.1711446474292; Tue, 26
+ Mar 2024 02:47:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 04/11] readahead: rework loop in
- page_cache_ra_unbounded()
-Content-Language: en-US
-To: Hannes Reinecke <hare@suse.de>, Matthew Wilcox <willy@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- gost.dev@samsung.com, chandan.babu@oracle.com, mcgrof@kernel.org,
- djwong@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- david@fromorbit.com, akpm@linux-foundation.org,
- Pankaj Raghav <p.raghav@samsung.com>
-References: <20240313170253.2324812-1-kernel@pankajraghav.com>
- <20240313170253.2324812-5-kernel@pankajraghav.com>
- <ZgHFPZ9tNLLjKZpz@casper.infradead.org>
- <7217df4e-470b-46ab-a4fc-1d4681256885@suse.de>
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <7217df4e-470b-46ab-a4fc-1d4681256885@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240319-setlease-v1-1-4ce5a220e85d@kernel.org>
+In-Reply-To: <20240319-setlease-v1-1-4ce5a220e85d@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 26 Mar 2024 10:47:42 +0100
+Message-ID: <CAJfpegvTOe8GpsdRUcvi6Ctb7SnBQHrbfP9Kr3Xc4PU5ac0jCw@mail.gmail.com>
+Subject: Re: [PATCH RFC] fuse: require FUSE drivers to opt-in for local file leases
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Hannes,
+On Tue, 19 Mar 2024 at 17:54, Jeff Layton <jlayton@kernel.org> wrote:
+>
+> Traditionally, we've allowed people to set leases on FUSE inodes.  Some
+> FUSE drivers are effectively local filesystems and should be fine with
+> kernel-internal lease support. But others are backed by a network server
+> that may have multiple clients, or may be backed by something non-file
+> like entirely.
+>
+> Have the filesytem driver to set a fuse_conn flag to indicate whether it
+> wants support for local, in-kernel leases. If the flag is unset (the
+> default), then setlease attempts will fail with -EINVAL, indicating that
+> leases aren't supported on that inode.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> This is only tested for compilation, but it's fairly straightforward.
+> Having the FUSE drivers opt-out of this support might be more
+> backward-compatible, but that is a bit more dangerous. I'd rather driver
+> maintainer consciously opt-in.
 
-On 26/03/2024 10:39, Hannes Reinecke wrote:
-> On 3/25/24 19:41, Matthew Wilcox wrote:
->> On Wed, Mar 13, 2024 at 06:02:46PM +0100, Pankaj Raghav (Samsung) wrote:
->>> @@ -239,8 +239,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->>>                * not worth getting one just for that.
->>>                */
->>>               read_pages(ractl);
->>> -            ractl->_index++;
->>> -            i = ractl->_index + ractl->_nr_pages - index - 1;
->>> +            ractl->_index += folio_nr_pages(folio);
->>> +            i = ractl->_index + ractl->_nr_pages - index;
->>>               continue;
->>>           }
->>>   @@ -252,13 +252,14 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->>>               folio_put(folio);
->>>               read_pages(ractl);
->>>               ractl->_index++;
->>> -            i = ractl->_index + ractl->_nr_pages - index - 1;
->>> +            i = ractl->_index + ractl->_nr_pages - index;
->>>               continue;
->>>           }
->>
->> You changed index++ in the first hunk, but not the second hunk.  Is that
->> intentional?
-> 
-> Hmm. Looks you are right; it should be modified, too.
-> Will be fixing it up.
-> 
-You initially had also in the second hunk:
-ractl->index += folio_nr_pages(folio);
+In the end the lease behavior will need to be reverted if there are
+regressions.  I really don't know which is worse, the risk of
+regressions or the of risk data corruption...
 
-and I changed it to what it is now.
+Also I'd prefer a more general flag indicating that the the kernel
+driver can assume no external changes to the filesystem.  E.g.
+FUSE_NO_OUTSIDE_CHANGE.
 
-The reason is in my reply to willy:
-https://lore.kernel.org/linux-xfs/s4jn4t4betknd3y4ltfccqxyfktzdljiz7klgbqsrccmv3rwrd@orlwjz77oyxo/
+Does this make sense?  Can you imagine a case where FUSE_LOCAL_LEASES
+would be set, but caching policy would not assume no external changes?
 
-Let me know if you agree with it.
-
-> Cheers,
-> 
-> Hannes
-> 
+Thanks,
+Miklos
 
