@@ -1,138 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-15300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627D288BEC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 11:07:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D58488BEF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 11:10:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B0B1C3CB69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 10:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCE38301A2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 10:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0A567750;
-	Tue, 26 Mar 2024 10:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6ED6CDB6;
+	Tue, 26 Mar 2024 10:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="SKyZ+6qj"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="scgFueta"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2A55A0E1;
-	Tue, 26 Mar 2024 10:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DB76E616
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 10:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711447610; cv=none; b=K/fWo3KwY1L47dyXZ5V5ONtTUF7fxsA4wRKEWoZIQaOnGHvfgKrkFUqOSj/RQGUJFFz5vE3E73VvUSMrjbBmpPK+TK33wuVt3pwpumC7KMdqGs1HzDnn6fn9e0/adExLthKnwdnY5c/UPMF403FJ9LcDRxlF52kXtNw/A18SGHA=
+	t=1711447815; cv=none; b=ZYJgVCHjofipXDdz4S3w67vV34xvyuKfsIgTk3KkFsxZF2nLRe+7C1CGntgRaLyRdK+js+uuANt3AJEQhYDpyBUAEO/lGygIOYz6Shns3fPCj0kgX4jtLfA14cBBeJcF6sgH+VKHqbmLKCyGWJHCrvrSGlemA7sJenZNIbWB79Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711447610; c=relaxed/simple;
-	bh=zDrEdt71S1V5WCgqhPBVSngeotjSuDZavyd+Y5LUUjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NDhewmR/ioofhX50xWIFp0TIYqzsJDC6BgL+MS97cL0ijLt2rUWbz/+vMcWBGVC8yq8FMvc3d/JMPJDpLxHo/Xhny3syZI0Xvq2BkM3o8O39QUbQhXG1NYMGwx+RsuE4NqD1JihR4mjg/hKdsHAsl6cAqJhhqK1L/+XufZ6jsxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=SKyZ+6qj; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4V3lnt0K4fz9sSF;
-	Tue, 26 Mar 2024 11:06:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1711447602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/l44hIRVvOPEpGQpeViqZ0xwsEycYNDv++J/k+vdgEc=;
-	b=SKyZ+6qjmQ6o2EGEB3YUZN55bm155l+3rRdII0vYo0M/FQm42gD9m1nLnv5eZDYcM8sb1n
-	MpMHvjjhdoS2f1QiJOdcwAmc1lDnHiRuc95L3qeYW/siY2sKBVZtMrtCD7OJrIlSeGxTQV
-	Qp0TF6xN5V99E/bFaEng6gD2MEL98WeCv0fWmkjGHBjaMJIk31bzxIueBpp3gbllnSDZWQ
-	uKZ9fKizPoJdLS/5/xpGCIKvtmKKZ+B/KmSOq/7H6uAKkyCieAZ7TZjDgE/mzmZ1V2zI5k
-	5Q7ehK9AJ1+3cS5w9yoD5/49gaGu3IZb/tFlPs0TZgMWsD/h3/mxtoUrPswqOA==
-Message-ID: <1a4a6ad3-6b88-47ea-a6c4-144a1485f614@pankajraghav.com>
-Date: Tue, 26 Mar 2024 11:06:36 +0100
+	s=arc-20240116; t=1711447815; c=relaxed/simple;
+	bh=fTGzewKK6NNxAEDkXrp9efAnHeqrie/o7hrsmeeKsqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pzp89ZVFDBVOL1rx0RkLmpZ6GgGlQxfVLlE5snEaY1bftHgAJxWnh/Wh1P69h1ol2+5A6PUCuEr9HHp43LMdHFZRTBs3FQwtl5l9G76Ney2YX62/M1IZeXmDL5MOfPWO9dfK6DEmKYcJdEMKZXRGfy3zgoW7raytUnXfaWyYJ84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=scgFueta; arc=none smtp.client-ip=45.157.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3lst40vqz3ym;
+	Tue, 26 Mar 2024 11:10:10 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3lss3Z0CzMppHg;
+	Tue, 26 Mar 2024 11:10:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1711447810;
+	bh=fTGzewKK6NNxAEDkXrp9efAnHeqrie/o7hrsmeeKsqg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=scgFuetaKopx7yXZ8ckjYGk5v82vMMMv0wfnwqTBC1/J2yuLvzcfRDRy6pWsLk6UF
+	 d6CjHexRSYb+gdsjexbDrOPZYnUr2kVq0BHBe8VvDowZsoY2cgipboVYrp+PIWUIEV
+	 g4mzlJUNYgE13NHSuv8BQciPPppBL5iLuR0bsmSs=
+Date: Tue, 26 Mar 2024 11:10:08 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for
+ IOCTL hooks
+Message-ID: <20240326.ahyaaPa0ohs6@digikod.net>
+References: <20240325134004.4074874-1-gnoack@google.com>
+ <20240325134004.4074874-2-gnoack@google.com>
+ <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
+ <20240326.pie9eiF2Weis@digikod.net>
+ <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 04/11] readahead: rework loop in
- page_cache_ra_unbounded()
-Content-Language: en-US
-To: Hannes Reinecke <hare@suse.de>, Matthew Wilcox <willy@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- gost.dev@samsung.com, chandan.babu@oracle.com, mcgrof@kernel.org,
- djwong@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- david@fromorbit.com, akpm@linux-foundation.org,
- Pankaj Raghav <p.raghav@samsung.com>
-References: <20240313170253.2324812-1-kernel@pankajraghav.com>
- <20240313170253.2324812-5-kernel@pankajraghav.com>
- <ZgHFPZ9tNLLjKZpz@casper.infradead.org>
- <7217df4e-470b-46ab-a4fc-1d4681256885@suse.de>
- <5e5523b1-0766-43b2-abb1-f18ea63906d6@pankajraghav.com>
- <3aa8bdf1-24f6-4e1f-a5c4-8dc2d11ca292@suse.de>
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <3aa8bdf1-24f6-4e1f-a5c4-8dc2d11ca292@suse.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
+X-Infomaniak-Routing: alpha
 
-On 26/03/2024 11:00, Hannes Reinecke wrote:
-> On 3/26/24 10:44, Pankaj Raghav wrote:
->> Hi Hannes,
->>
->> On 26/03/2024 10:39, Hannes Reinecke wrote:
->>> On 3/25/24 19:41, Matthew Wilcox wrote:
->>>> On Wed, Mar 13, 2024 at 06:02:46PM +0100, Pankaj Raghav (Samsung) wrote:
->>>>> @@ -239,8 +239,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->>>>>                 * not worth getting one just for that.
->>>>>                 */
->>>>>                read_pages(ractl);
->>>>> -            ractl->_index++;
->>>>> -            i = ractl->_index + ractl->_nr_pages - index - 1;
->>>>> +            ractl->_index += folio_nr_pages(folio);
->>>>> +            i = ractl->_index + ractl->_nr_pages - index;
->>>>>                continue;
->>>>>            }
->>>>>    @@ -252,13 +252,14 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->>>>>                folio_put(folio);
->>>>>                read_pages(ractl);
->>>>>                ractl->_index++;
->>>>> -            i = ractl->_index + ractl->_nr_pages - index - 1;
->>>>> +            i = ractl->_index + ractl->_nr_pages - index;
->>>>>                continue;
->>>>>            }
->>>>
->>>> You changed index++ in the first hunk, but not the second hunk.  Is that
->>>> intentional?
->>>
->>> Hmm. Looks you are right; it should be modified, too.
->>> Will be fixing it up.
->>>
->> You initially had also in the second hunk:
->> ractl->index += folio_nr_pages(folio);
->>
->> and I changed it to what it is now.
->>
->> The reason is in my reply to willy:
->> https://lore.kernel.org/linux-xfs/s4jn4t4betknd3y4ltfccqxyfktzdljiz7klgbqsrccmv3rwrd@orlwjz77oyxo/
->>
->> Let me know if you agree with it.
->>
-> Bah. That really is overly complicated. When we attempt a conversion that conversion should be
-> stand-alone, not rely on some other patch modifications later on.
-> We definitely need to work on that to make it easier to review, even
-> without having to read the mail thread.
+On Tue, Mar 26, 2024 at 10:33:23AM +0100, Arnd Bergmann wrote:
+> On Tue, Mar 26, 2024, at 09:32, Mickaël Salaün wrote:
+> > On Mon, Mar 25, 2024 at 04:19:25PM +0100, Arnd Bergmann wrote:
+> >> On Mon, Mar 25, 2024, at 14:39, Günther Noack wrote:
+> >> > If security_file_ioctl or security_file_ioctl_compat return
+> >> > ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOCTL
+> >> > command, but only as long as the IOCTL command is implemented directly
+> >> > in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
+> >> > f_ops->compat_ioctl operations, which are defined by the given file.
+> >> >
+> >> > The possible return values for security_file_ioctl and
+> >> > security_file_ioctl_compat are now:
+> >> >
+> >> >  * 0 - to permit the IOCTL
+> >> >  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to fall
+> >> >    back to the file implementation.
+> >> >  * any other error - to forbid the IOCTL and return that error
+> >> >
+> >> > This is an alternative to the previously discussed approaches [1] and [2],
+> >> > and implements the proposal from [3].
+> >> 
+> >> Thanks for trying it out, I think this is a good solution
+> >> and I like how the code turned out.
+> >
+> > This is indeed a simpler solution but unfortunately this doesn't fit
+> > well with the requirements for an access control, especially when we
+> > need to log denied accesses.  Indeed, with this approach, the LSM (or
+> > any other security mechanism) that returns ENOFILEOPS cannot know for
+> > sure if the related request will allowed or not, and then it cannot
+> > create reliable logs (unlike with EACCES or EPERM).
 > 
+> Where does the requirement come from specifically, i.e.
+> who is the consumer of that log?
 
-I don't know understand what you mean by overly complicated. This conversion is standalone and it is
-wrong to use folio_nr_pages after we `put` the folio. This patch just reworks the loop and in the
-next patch I add min order support to readahead.
+The audit framework may be used by LSMs to log denials.
 
-This patch doesn't depend on the next patch.
-
-> Cheers,
 > 
-> Hannes
-> 
+> Even if the log doesn't tell you directly whether the ioctl
+> was ultimately denied, I would think logging the ENOFILEOPS
+> along with the command number is enough to reconstruct what
+> actually happened from reading the log later.
+
+We could indeed log ENOFILEOPS but that could include a lot of allowed
+requests and we usually only want unlegitimate access requests to be
+logged.  Recording all ENOFILEOPS would mean 1/ that logs would be
+flooded by legitimate requests and 2/ that user space log parsers would
+need to deduce if a request was allowed or not, which require to know
+the list of IOCTL commands implemented by fs/ioctl.c, which would defeat
+the goal of this specific patch.
 
