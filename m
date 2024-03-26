@@ -1,125 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-15328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0705688C333
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 14:17:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3330E88C341
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 14:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C222C82F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 13:17:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97C3BB25D83
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 13:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B73374402;
-	Tue, 26 Mar 2024 13:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95A77440B;
+	Tue, 26 Mar 2024 13:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkE8O2FF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1342267A00;
-	Tue, 26 Mar 2024 13:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EAD5C61F;
+	Tue, 26 Mar 2024 13:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711459065; cv=none; b=oDKxboh+HoZjz7Qbgh5ARR5YzcAo1BDhZhZcbhXVKhCnOby8uYouk8LoHJ/7B4sx6j2mYScU/mCe/bmyxQloRoXckgM4K94mF1X9qshcpqAAnWe3cC3+Sipz3kIz6JzgM6hnXhKos4NVSOMRSeH3x6KhiUwWknyKOgFpU2Ubcl8=
+	t=1711459187; cv=none; b=T/flWRMsEIpPlfhKurcdcFQXXwZSGWGPwvcgE2V76p17W3yBHrDMnJZNnCBmFk/2m3AirbVF0GpBE1pw9+CwE2+b1VpHLxsRzke2qwEzLa6te+mJUVWtezvll5HSJjgSL7mdcVhwyo6lGNWdjGMQJEx3rrwMebRImCpNXUSo3DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711459065; c=relaxed/simple;
-	bh=ndHjaV/rVUIwd/4CjCvA+hMzKMiCuqACQXGueoTMwNA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=MOVC0TviOiDtp1uh/IrxxWD+d1GxvdX0sOs4v4gvGH8P6S93s4atgKHKAZ91HEs8jCse64J+YVuGSVPbZcxXjuKrVkjajjkwHWwQ8CIsSIQJSC6j08ZUcTBhDcjtEx4oKLODHt0cZF4t+CF0VuR7OWtnbpHnXjWDxeTInE2q6ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4V3r224nH7z4f3jLm;
-	Tue, 26 Mar 2024 21:17:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id C2C201A0199;
-	Tue, 26 Mar 2024 21:17:38 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP2 (Coremail) with SMTP id Syh0CgBHtwrxygJmG1g9IQ--.29068S2;
-	Tue, 26 Mar 2024 21:17:38 +0800 (CST)
-Subject: Re: [PATCH 6/6] writeback: remove unneeded GDTC_INIT_NO_WB
-To: Tejun Heo <tj@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- willy@infradead.org, bfoster@redhat.com, jack@suse.cz, dsterba@suse.com,
- mjguzik@gmail.com, dhowells@redhat.com, peterz@infradead.org
-References: <20240320110222.6564-1-shikemeng@huaweicloud.com>
- <20240320110222.6564-7-shikemeng@huaweicloud.com>
- <Zfr9my_tfxO-N6HS@mtj.duckdns.org>
- <becdb16b-a318-ec05-61d2-d190541ae997@huaweicloud.com>
- <ZgHd7GcUslrBEeoi@slm.duckdns.org>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <82ade435-3ad8-7628-4c1d-09399ebdec49@huaweicloud.com>
-Date: Tue, 26 Mar 2024 21:17:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1711459187; c=relaxed/simple;
+	bh=DzWrRgZIzXMpvefy2yfoXUd4dNEUUHTlgM0Wd9O7BaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mHE1K5mF6rRaSzNk51ZIKeuJ31JEt/qjyBP4q/fZFul3BAG6uQ8N/Q5t7+qkvhdH2l61xYw4sQ1dcqnxhQyLbj+d9yjpS/2xlKN8kIFNYiKPpJXC1hL9k601xz+WDvu3I8OIMBKHRd39xbepiyqOI6UCdxaZqNeM6w1cG8hcdz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkE8O2FF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44435C433F1;
+	Tue, 26 Mar 2024 13:19:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711459186;
+	bh=DzWrRgZIzXMpvefy2yfoXUd4dNEUUHTlgM0Wd9O7BaQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rkE8O2FFLvywoU3r7MQ2SVci8ViMRh//2dtlYaPJgs19ohBoyqxBrIs2/TV15xbIt
+	 c57Yv20emZrtcHPEE+3keIpqfCxCalpxmJJi0jezj6D9+EmtGsCwUyxC+Tq7rR/B5O
+	 +WPiYJTbZkjVnsUIbwPfVTP1udMsi0sWvd9WnOHfoAqdztFbrWr+b8MYIeMJdmk2f0
+	 ZmnckBhs1fqOifhxZKNZc+pzTOxBTwBBMHikrT3ZkDgzI6r9IjhcaLq5kkLT2ohPmY
+	 9GWyurle11jVl6bpvfF6EB4xHAjdIsRh9eAuGRbAvEghoR8yy9NqMUK2BVKyuZyYdp
+	 oK5Bx9VU1ukoA==
+Date: Tue, 26 Mar 2024 14:19:41 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: amir73il@gmail.com, hu1.chen@intel.com, miklos@szeredi.hu, 
+	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
+	lizhen.you@intel.com, linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC v3 1/5] cleanup: Fix discarded const warning when defining
+ lock guard
+Message-ID: <20240326-daheim-aluminium-810603172600@brauner>
+References: <20240216051640.197378-1-vinicius.gomes@intel.com>
+ <20240216051640.197378-2-vinicius.gomes@intel.com>
+ <20240318-flocken-nagetiere-1e027955d06e@brauner>
+ <20240318-dehnen-entdecken-dd436f42f91a@brauner>
+ <87msqlq0i8.fsf@intel.com>
+ <20240326-steil-sachpreis-cec621ae5c59@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZgHd7GcUslrBEeoi@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBHtwrxygJmG1g9IQ--.29068S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr4kCw4fGFWxGw4rGr43GFg_yoW8Xw4rpF
-	4fJ3WUKay5Xa9a9rnFkw4xXr98KrWxK3y3X3s0kw45CFs7G3WfGr1jq3yFgF17Ar1fJrn8
-	ZrWxtas3Xa1UA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU189N3UUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240326-steil-sachpreis-cec621ae5c59@brauner>
 
-
-
-on 3/26/2024 4:26 AM, Tejun Heo wrote:
-> On Thu, Mar 21, 2024 at 03:12:21PM +0800, Kemeng Shi wrote:
->>
->>
->> on 3/20/2024 11:15 PM, Tejun Heo wrote:
->>> Hello,
->>>
->>> On Wed, Mar 20, 2024 at 07:02:22PM +0800, Kemeng Shi wrote:
->>>> We never use gdtc->dom set with GDTC_INIT_NO_WB, just remove unneeded
->>>> GDTC_INIT_NO_WB
->>>>
->>>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
->>> ...
->>>>  void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty)
->>>>  {
->>>> -	struct dirty_throttle_control gdtc = { GDTC_INIT_NO_WB };
->>>> +	struct dirty_throttle_control gdtc = { };
->>>
->>> Even if it's currently not referenced, wouldn't it still be better to always
->>> guarantee that a dtc's dom is always initialized? I'm not sure what we get
->>> by removing this.
->> As we explicitly use GDTC_INIT_NO_WB to set global_wb_domain before
->> calculating dirty limit with domain_dirty_limits, I intuitively think the dirty
->> limit calculation in domain_dirty_limits is related to global_wb_domain when
->> CONFIG_WRITEBACK_CGROUP is enabled while the truth is not. So this is a little
->> confusing to me.
->> Would it be acceptable to you that we keep useing GDTC_INIT_NO_WB but
->> define GDTC_INIT_NO_WB to null fow now and redefine GDTC_INIT_NO_WB when some
->> member of gdtc is really needed.
->> Of couse I'm not insistent on this. Would like to hear you suggestion. Thanks!
+On Tue, Mar 26, 2024 at 11:53:12AM +0100, Christian Brauner wrote:
+> On Mon, Mar 25, 2024 at 05:50:55PM -0700, Vinicius Costa Gomes wrote:
+> > Christian Brauner <brauner@kernel.org> writes:
+> > 
+> > >
+> > > So something like this? (Amir?)
+> > >
+> > >  
+> > > -DEFINE_LOCK_GUARD_1(cred, const struct cred, _T->lock = override_creds_light(_T->lock),
+> > > -	     revert_creds_light(_T->lock));
+> > > +DEFINE_LOCK_GUARD_1(cred, struct cred,
+> > > +		    _T->lock = (struct cred *)override_creds_light(_T->lock),
+> > > +		    revert_creds_light(_T->lock));
+> > > +
+> > > +#define cred_guard(_cred) guard(cred)(((struct cred *)_cred))
+> > > +#define cred_scoped_guard(_cred) scoped_guard(cred, ((struct cred *)_cred))
+> > >  
+> > >  /**
+> > >   * get_new_cred_many - Get references on a new set of credentials
+> > 
+> > Thinking about proposing a PATCH version (with these suggestions applied), Amir
+> > has suggested in the past that I should propose two separate series:
+> >  (1) introducing the guard helpers + backing file changes;
+> >  (2) overlayfs changes;
+> > 
+> > Any new ideas about this? Or should I go with this plan?
 > 
-> Ah, I see. In that case, the proposed change of removing GDTC_INIT_NO_WB
-> looks good to me.
-Sure, will do it in next version. Thanks!
-> 
-> Thanks.
-> 
+> I mean make it two separate patches and I can provide Amir with a stable
+> branch for the cleanup guards. I think that's what he wanted.
 
+But send them out in one series ofc. Amir and I can sort this if needed.
 
