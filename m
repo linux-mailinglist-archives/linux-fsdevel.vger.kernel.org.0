@@ -1,244 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-15284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF6688BB83
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 08:41:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB6F88BBB6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 08:51:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 405A1B21FFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 07:41:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE1701C257AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 07:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3664130A48;
-	Tue, 26 Mar 2024 07:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922E613440D;
+	Tue, 26 Mar 2024 07:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S2uZVvUL"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AoR/K3A9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5DC1804F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 07:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13991132C09
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 07:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711438882; cv=none; b=IRZ8MzVzOcCkmbS4i7DiwOLM8Z9x9vl3CpzOC11v5gjW5EwVQR0YoZeEWIyx0LObL+YXnSBQqwmI6M1seghBWdMsQlyqG4W33aLbnn73ZNiJcZEhc9G74J5MA5VYVq3doOThacvoztLO3haLanueJt2vsZppAIuRMOqXD81ccRU=
+	t=1711439499; cv=none; b=FGSdqJM60D+ynp2cNvRwYHCiABfcyMD2xuKMCctoWLcPPSDhGP/l85c/4HGjabfLRA4yka3Nu+6Mnq/Q6KQ/mC4kOE1kYkUIzwVSDU/7t2NCK2WE0AJV2HVTjJTT8ADkC8MugbVj3Ar/snAXhOE11FtKnJdRO4i6Sa48c94jt4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711438882; c=relaxed/simple;
-	bh=u3PS2SF6PeFEJTqOpWkhsZSn92/PKgMdF3MiFBG5OQw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UDZgB1XcoA2WGQ++L+SF2NAFYYMChdRRmtGZCX5h2iPsBwek8aupWk/b363ZW2WkAUWLznOcdH24OMJBiVICpsr7PkBhdvpfPArcXj+xY594lJuXy8NG0st1Zt5COr9QfWPXabaRJ/UQvBa2ru3bLtjLsCckuw3GZIueO7QfRpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S2uZVvUL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1711438879;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d3ZavT0wcpNZAquKgtlLZ3VH8vB1+EoTz/yO0QPyy7Y=;
-	b=S2uZVvULT7p8FzlrEAfTsznsadXcKOYGwe+lUbWw/kjB9NrumjFqChgz1SmJJztuzTy+0z
-	13C/n2GfmAdM1j9ebqwaNtoecAKBiME5LxBFKnFimpauUatnlQ83leqZJIi88T60SEUWj5
-	dxoyqwiPxFBULLpTQSCji8Q2VeTyo7U=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-135-edicsJF1NNuvnCKLvExS9Q-1; Tue, 26 Mar 2024 03:41:17 -0400
-X-MC-Unique: edicsJF1NNuvnCKLvExS9Q-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-341c449d7beso445507f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 00:41:17 -0700 (PDT)
+	s=arc-20240116; t=1711439499; c=relaxed/simple;
+	bh=qQOLO5yzYREaf6V5UZ46t3ExCwuenEVvpk1QDbdYz28=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rJ2gR4Sjws94MZweiTSbZ4OM+SIraWk8aIQZ9f6gWOkmmuT08RQE67Zk/k5wdA/zpStRCcI2bXypqLevlkX3L1JegDZ6WMGXrewXc1RI4u4rFXZTMSpnbpIbgMBjAFzNV1FEQBW1MIn80zIVjCR6uikhlnYYZ4yUCgkTmAcw3Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AoR/K3A9; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dcc80d6004bso5109638276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 00:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1711439495; x=1712044295; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=shklYWkLA2oyBqnlJsmv6lUxL/P85ZOYE2ckd/gba5w=;
+        b=AoR/K3A9wZgTr/H35zji2Ryw+JLZD17t8Szk3uZ0qBgeAWIMB4NN/BJPJl3JEUN120
+         JR/dFikYMYTHog58UqZeWY3abyXSZUyAQhcJeeiKJpnr/q3iy4u2x+ZiWRmiFXTuY4d0
+         +wc6Q4UTQkI1gwn3NZpEbigkgcPaUHuCPwDkFXgLpseEsrvifg9T5Hl2k2OELRZjb6IO
+         7HhpJaXTkfsKZer7xANqdvBDRaIHRAYTWZTqNzDY69XWEL0E6/FXTCmnffr7tHBlV5uz
+         EdplvUVUqmH07En2kwV6V3HDpPDo4hp6r0Czwxmv6qUgkvmaDs7Irw3eU/uoAoJFXx2u
+         w+jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711438876; x=1712043676;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d3ZavT0wcpNZAquKgtlLZ3VH8vB1+EoTz/yO0QPyy7Y=;
-        b=OCx6Ngd8ZZzzJR1p1pGBHmVnSspnxeRbGTL0rbRECm7kffjiu8i4P4U1zQeB/5RdAO
-         2IWXLwBgzcxwghewJVKK47XrprZVdcQErbADhPsBSfgne40pm6ANWwDqJPv/lILqdrWf
-         wIVgrrJ2SjJ/iZNv4ULakJUxjIM6d7TVrqYeXpyb5HEEaUQQ4FdHbbCF9LQF7GUhLPYa
-         DdjTULGfpAbjD9CrJ24QYF9tJJjUiLFWUPMxwWIFQujPE84NqtXuPC/PKO4pTmPlS4Nk
-         K1thPcIf4ipAojPsTPf+kyP3mZk1qkKLKZvhy9Aj9/G6sOFAsg3kzFH4Q3JQbQG74fE8
-         jdhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWV1+I3GjlejWxHR6pOZDSs6N+rvV+xehq3B6lcBIhDi265NCknB2tZrIrTUd7xxIl68z5TwnK1sddxDtK8gGKk497Ui8dIl8XyVFQgxg==
-X-Gm-Message-State: AOJu0Yz8KHpH1C0QOtl8uzAdL53YMNdBWi613B4dAkZ7CM5/Id4NwJ5A
-	EodU8zvTC5KW4kl9XUtGyEbluW5QKprJ7tasXJEa6FEzdJhIjCfqKLFMYsDWlrFzlfjxpvMt+wV
-	yh3wPRfSPCUy6LoTbIgGEYRh2Zs0/4r0yx0xTP72U4CB8w/aRMShSuqQ6ESN+1Wc=
-X-Received: by 2002:adf:ea0a:0:b0:341:8f18:db39 with SMTP id q10-20020adfea0a000000b003418f18db39mr5994497wrm.1.1711438876483;
-        Tue, 26 Mar 2024 00:41:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUGdSh2ZVWekmrdhYDBf7bJH0jWd1ndgMMu58/HE6/SRNci0b5Purlw6O/kIThYSzJEfbHSQ==
-X-Received: by 2002:adf:ea0a:0:b0:341:8f18:db39 with SMTP id q10-20020adfea0a000000b003418f18db39mr5994489wrm.1.1711438876083;
-        Tue, 26 Mar 2024 00:41:16 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ay9-20020a5d6f09000000b0033b87c2725csm11618924wrb.104.2024.03.26.00.41.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Mar 2024 00:41:15 -0700 (PDT)
-Message-ID: <31263f2235b7f399b2cc350b7ccb283a84534a4b.camel@redhat.com>
-Subject: Re: [PATCH v8 2/2] rust: xarray: Add an abstraction for XArray
-From: Philipp Stanner <pstanner@redhat.com>
-To: Boqun Feng <boqun.feng@gmail.com>, John Hubbard <jhubbard@nvidia.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, =?ISO-8859-1?Q?Ma=EDra?= Canal
- <mcanal@igalia.com>, Asahi Lina <lina@asahilina.net>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida
- Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>,
- Matthew Wilcox <willy@infradead.org>,  rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com
-Date: Tue, 26 Mar 2024 08:41:14 +0100
-In-Reply-To: <Zfzc09QY5IWKeeUB@Boquns-Mac-mini.home>
-References: <20240309235927.168915-2-mcanal@igalia.com>
-	 <20240309235927.168915-4-mcanal@igalia.com>
-	 <CAH5fLgi9uaOOT=fHKWmXT7ETv+Nf6_TVttuWoyMtuYNguCGYtw@mail.gmail.com>
-	 <c8279ceb44cf430e039a66d67ac2aa1d75e7e285.camel@redhat.com>
-	 <f0b1ca50-dd0c-447e-bf21-6e6cac2d3afb@nvidia.com>
-	 <Zfzc09QY5IWKeeUB@Boquns-Mac-mini.home>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        d=1e100.net; s=20230601; t=1711439495; x=1712044295;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=shklYWkLA2oyBqnlJsmv6lUxL/P85ZOYE2ckd/gba5w=;
+        b=a0NRjS5sOlpe47h823WvzWfIjiGX7YHb970aqoj6dk8fuzZVBa5potRt+x67Nxlev3
+         YlIhWCr+H2b55rKy+8kegsADviYAiqnyhql6BqXs4QMQynSAiIgmrRnT+FihxVhQCBtt
+         TTDR2HV3BOKJVGDV/S+wkdB2ZJWtbPvuR9JXDeG19CLPA6/oWDHculuvnY3UD6PsOSxu
+         hK0ZEw02RrsPSm5tubBTzFesFgeicTbHLftXDljoiyw67AeX5I31yPHM48ClxtBT8LtF
+         wu3zBElutW0Z5OhMC+86ci0epzaQoLupb9e58FMc4cXQlLOA+6IxbJNtoVFuAyJ+x2Wg
+         KCyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuHfKiohHJ7eO/gmBcYqkYjzOkhlT6q0i93C9d8SCR19DXtcE1V6oEhr+zTQHl1yMl3u7GLBPp1Xuobp7F6gXKSp64i8tnm1QVJKQP/w==
+X-Gm-Message-State: AOJu0Ywz+/ZsODG7zE/lZIPWUIYSsku0QISvw2ZvZhgFS+p+VWE0J/QN
+	tADWGz7808tKiV5Mkdx5bdj2WlDEyRAxcDWl1KP+XSgWjdZWl4bfcoPgi8QoCItec132nP0BdPJ
+	rUqZ9K9NkFYvaen12zWtjqMT42R6RcY918Qkq
+X-Google-Smtp-Source: AGHT+IEnVh4+gbIjqfTqnNSb1ESniynB5/g+eF5Tlrl382kaRHENtFyyuE83hIP6W791lwHTf2P908O7iGBHbxnvUiU=
+X-Received: by 2002:a5b:181:0:b0:dce:2e9:a637 with SMTP id r1-20020a5b0181000000b00dce02e9a637mr7603025ybl.20.1711439494844;
+ Tue, 26 Mar 2024 00:51:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CAJuCfpGiuCnMFtViD0xsoaLVO_gJddBQ1NpL6TpnsfN8z5P6fA@mail.gmail.com>
+ <20240325182007.233780-1-sj@kernel.org>
+In-Reply-To: <20240325182007.233780-1-sj@kernel.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 26 Mar 2024 00:51:21 -0700
+Message-ID: <CAJuCfpGwLRBWKegYq5XY++fCPWO4mpzrhifw9QGvzJ5Uf9S4jw@mail.gmail.com>
+Subject: Re: [PATCH v6 30/37] mm: vmalloc: Enable memory allocation profiling
+To: SeongJae Park <sj@kernel.org>
+Cc: vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
+	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, 
+	liam.howlett@oracle.com, penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, 
+	void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, 
+	peterx@redhat.com, david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, 
+	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org, 
+	paulmck@kernel.org, pasha.tatashin@soleen.com, yosryahmed@google.com, 
+	yuzhao@google.com, dhowells@redhat.com, hughd@google.com, 
+	andreyknvl@gmail.com, keescook@chromium.org, ndesaulniers@google.com, 
+	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com, 
+	ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, 
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 
+	42.hyeyoo@gmail.com, glider@google.com, elver@google.com, dvyukov@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com, 
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-03-21 at 18:20 -0700, Boqun Feng wrote:
-> On Thu, Mar 21, 2024 at 05:22:11PM -0700, John Hubbard wrote:
-> > On 3/19/24 2:32 AM, Philipp Stanner wrote:
-> > ...
-> > > >=20
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if ret < 0 {
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 Err(Error::from_errno(ret))
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else {
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 guard.dismiss();
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 Ok(id as usize)
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > >=20
-> > > > You could make this easier to read using to_result.
-> > > >=20
-> > > > to_result(ret)?;
-> > > > guard.dismiss();
-> > > > Ok(id as usize)
-> > >=20
-> > > My 2 cents, I'd go for classic kernel style:
-> > >=20
-> > >=20
-> > > if ret < 0 {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 return Err(...);
-> > > }
-> > >=20
-> > > guard.dismiss();
-> > > Ok(id as usize)
-> > >=20
-> >=20
-> > Yes.
-> >=20
-> > As a "standard" C-based kernel person who is trying to move into
-> > Rust
-> > for Linux, I hereby invoke my Rust-newbie powers to confirm that
-> > the
-> > "clasic kernel style" above goes into my head much faster and
-> > easier,
-> > yes. :)
-> >=20
->=20
-> Hope I'm still belong to a "standard C-based kernel person" ;-) My
-> problem on "if ret < 0 { ... }" is: what's the type of "ret", and is
-> it
-> "negative means failure" or "non-zero means failure"? Now for this
-> particular code, the assignment of "ret" and the use of "ret" is
-> pretty
-> close, so it doesn't matter. But in the code where "ret" is used for
-> multiple function calls and there is code in-between, then I'd prefer
-> we
-> use `to_result` (i.e. `Result` type and question mark operator).
+On Mon, Mar 25, 2024 at 11:20=E2=80=AFAM SeongJae Park <sj@kernel.org> wrot=
+e:
+>
+> On Mon, 25 Mar 2024 10:59:01 -0700 Suren Baghdasaryan <surenb@google.com>=
+ wrote:
+>
+> > On Mon, Mar 25, 2024 at 10:49=E2=80=AFAM SeongJae Park <sj@kernel.org> =
+wrote:
+> > >
+> > > On Mon, 25 Mar 2024 14:56:01 +0000 Suren Baghdasaryan <surenb@google.=
+com> wrote:
+> > >
+> > > > On Sat, Mar 23, 2024 at 6:05=E2=80=AFPM SeongJae Park <sj@kernel.or=
+g> wrote:
+> > > > >
+> > > > > Hi Suren and Kent,
+> > > > >
+> > > > > On Thu, 21 Mar 2024 09:36:52 -0700 Suren Baghdasaryan <surenb@goo=
+gle.com> wrote:
+> > > > >
+> > > > > > From: Kent Overstreet <kent.overstreet@linux.dev>
+> > > > > >
+> > > > > > This wrapps all external vmalloc allocation functions with the
+> > > > > > alloc_hooks() wrapper, and switches internal allocations to _no=
+prof
+> > > > > > variants where appropriate, for the new memory allocation profi=
+ling
+> > > > > > feature.
+> > > > >
+> > > > > I just noticed latest mm-unstable fails running kunit on my machi=
+ne as below.
+> > > > > 'git-bisect' says this is the first commit of the failure.
+> > > > >
+> > > > >     $ ./tools/testing/kunit/kunit.py run --build_dir ../kunit.out=
+/
+> > > > >     [10:59:53] Configuring KUnit Kernel ...
+> > > > >     [10:59:53] Building KUnit Kernel ...
+> > > > >     Populating config with:
+> > > > >     $ make ARCH=3Dum O=3D../kunit.out/ olddefconfig
+> > > > >     Building with:
+> > > > >     $ make ARCH=3Dum O=3D../kunit.out/ --jobs=3D36
+> > > > >     ERROR:root:/usr/bin/ld: arch/um/os-Linux/main.o: in function =
+`__wrap_malloc':
+> > > > >     main.c:(.text+0x10b): undefined reference to `vmalloc'
+> > > > >     collect2: error: ld returned 1 exit status
+> > > > >
+> > > > > Haven't looked into the code yet, but reporting first.  May I ask=
+ your idea?
+> > > >
+> > > > Hi SeongJae,
+> > > > Looks like we missed adding "#include <linux/vmalloc.h>" inside
+> > > > arch/um/os-Linux/main.c in this patch:
+> > > > https://lore.kernel.org/all/20240321163705.3067592-2-surenb@google.=
+com/.
+> > > > I'll be posing fixes for all 0-day issues found over the weekend an=
+d
+> > > > will include a fix for this. In the meantime, to work around it you
+> > > > can add that include yourself. Please let me know if the issue stil=
+l
+> > > > persists after doing that.
+> > >
+> > > Thank you, Suren.  The change made the error message disappears.  How=
+ever, it
+> > > introduced another one.
+> >
+> > Ok, let me investigate and I'll try to get a fix for it today evening.
+>
+> Thank you for this kind reply.  Nonetheless, this is not blocking some re=
+al
+> thing from me.  So, no rush.  Plese take your time :)
 
-Yeah, the issue we're running into here is that it's a quite different
-way of programming since you create bindings on the fly with `let`.
+I posted a fix here:
+https://lore.kernel.org/all/20240326073750.726636-1-surenb@google.com/
+Please let me know if this resolves the issue.
+Thanks,
+Suren.
 
-I actually think it would be nice to have variable declarations at the
-top of the functions, but that would obviously very frequently collide
-with Rust's concept of data being immutable by default.
-
-Regarding our example, my hope would be that `if ret < 0 ` should
-always be fine, because, what else could it be? A float?
-And such patterns should only appear where you interact with C, since
-pure Rust should definitely always have all result status packed in
-Result or Option.
-
->=20
-> > I hope I'm not violating any "this is how Rust idioms must be"
-> > conventions. But if not, then all other things being equal, it is
-> > of
-> > course a nice touch to make the code more readable to the rest of
-> > the
-> > kernel folks.
-> >=20
->=20
-> One more extra point from myself only: if one is using Rust for
-> drivers
-> or subsystem they are going to take care of it in the future, it's
-> totally fine for them to pick coding styles that they feel
-> comfortable,
-> I don't want to make people who do the real work feel frustrated
-> because
-> "this is how Rust idioms must be", also I don't believe tools should
-> restrict people.
-
-I'm very happy to hear that we're on sync here :)
-
-Though there will be a lot to be discussed and done. As I see it, so
-far the clippy rules for example are global, aren't they?
-
-In any case I don't even think they shouldn't be global, but that they
-should behave more like checkpatch.
-
-I think the ideal end result would be one where we have rules and
-enforcement similar to how it's done in C:
-C has checkpatch, which fires errors for some things, and warnings for
-others. And, if it makes sense, you or the maintainer can ignore the
-warning.
-
-When the build chain checks global rules we can't really ignore any
-rule without some kind of annotation in the code, because otherwise
-we'd permanently spam the build log
-
-
->  But in the "kernel" crate (i.e. for core kernel part),
-> I want to make it "Rusty" since it's the point of the experiement
-> ("you
-> asked for it ;-)).
->=20
-> Hope we can find a balanced point when we learn more and more ;-)
-
-Yeah, I get where that comes from. Many new languages attempt to end
-endless style discussions etc. by axiomatically defining a canonical
-style.
-
-But we're living in this special world called kernel with its own laws
-of physics so to speak. To some degree we already have to use a
-"dialect / flavor" of Rust (CStr, try_push()?)
-Will be interesting to see how it all plays out for us once the users
-and use cases increase in number more and more
-
-
-Many greetings,
-P.
-
->=20
-> Regards,
-> Boqun
->=20
-> >=20
-> > thanks,
-> > --=20
-> > John Hubbard
-> > NVIDIA
-> >=20
->=20
-
+>
+>
+> Thanks,
+> SJ
+>
+> > Thanks,
+> > Suren.
+> >
+> > >
+> > >     $ git diff
+> > >     diff --git a/arch/um/os-Linux/main.c b/arch/um/os-Linux/main.c
+> > >     index c8a42ecbd7a2..8fe274e9f3a4 100644
+> > >     --- a/arch/um/os-Linux/main.c
+> > >     +++ b/arch/um/os-Linux/main.c
+> > >     @@ -16,6 +16,7 @@
+> > >      #include <kern_util.h>
+> > >      #include <os.h>
+> > >      #include <um_malloc.h>
+> > >     +#include <linux/vmalloc.h>
+> > >
+> > >      #define PGD_BOUND (4 * 1024 * 1024)
+> > >      #define STACKSIZE (8 * 1024 * 1024)
+> > >     $
+> > >     $ ./tools/testing/kunit/kunit.py run --build_dir ../kunit.out/
+> > >     [10:43:13] Configuring KUnit Kernel ...
+> > >     [10:43:13] Building KUnit Kernel ...
+> > >     Populating config with:
+> > >     $ make ARCH=3Dum O=3D../kunit.out/ olddefconfig
+> > >     Building with:
+> > >     $ make ARCH=3Dum O=3D../kunit.out/ --jobs=3D36
+> > >     ERROR:root:In file included from .../arch/um/kernel/asm-offsets.c=
+:1:
+> > >     .../arch/x86/um/shared/sysdep/kernel-offsets.h:9:6: warning: no p=
+revious prototype for =E2=80=98foo=E2=80=99 [-Wmissing-prototypes]
+> > >         9 | void foo(void)
+> > >           |      ^~~
+> > >     In file included from .../include/linux/alloc_tag.h:8,
+> > >                      from .../include/linux/vmalloc.h:5,
+> > >                      from .../arch/um/os-Linux/main.c:19:
+> > >     .../include/linux/bug.h:5:10: fatal error: asm/bug.h: No such fil=
+e or directory
+> > >         5 | #include <asm/bug.h>
+> > >           |          ^~~~~~~~~~~
+> > >     compilation terminated.
+> > >
+> > >
+> > > Thanks,
+> > > SJ
+> > >
+> > > [...]
+> >
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kernel-team+unsubscribe@android.com.
+>
 
