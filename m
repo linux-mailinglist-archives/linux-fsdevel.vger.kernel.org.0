@@ -1,187 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-15324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F3288C2FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 14:08:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 938A888C30A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 14:10:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62F202E5230
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 13:08:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF278B25DB9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 13:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2132773177;
-	Tue, 26 Mar 2024 13:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC0874BE8;
+	Tue, 26 Mar 2024 13:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ZpPpldsn"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hG+b/dpj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B006EEEA9;
-	Tue, 26 Mar 2024 13:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB78745E2
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 13:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711458517; cv=none; b=lRcSQaSSA9rkRKhT1v8wjd9AGaeGt5TcVKuAkM00foaSQrgSmOLqBuB0mLvrr1J6BBApLCNtjjiXujvtnOjRiBZRU74QcM38RIicG7QyaDr7Fyg8KOHvLDz9x5gcypUxv6TwMFIS3SBs6440RSJLJMsOPfZih1ffwYdMzuCKwE0=
+	t=1711458592; cv=none; b=UiTynikZy3Dq3k9HECe0Wd0+TzCTkv/JfDcMfxyQo796sgijkAcFESF5f4RLyWA0ANoaIAlWLUiRKzLiKOugFx1NukkUfPxdFOOlL0zHkUgg0wc+q6CPfaz/F7bILgnLQDEoQaNtQ+dkvQdRtOBab2Wc2y/UXFSXamdTks9Is1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711458517; c=relaxed/simple;
-	bh=zb+c1eJhGpVi8lvJndVvpd3BeurHRjqMmwzo2z5blnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kbAoHWKBjQ/O+/eHxROAqIkKxEM8uGifdEioqpSrZXeNKsP6j4UPsu27iJrdW0Zee9i4c0dtg5WHj3UtyO0I1kNBl1as7ylF1UjVbCNeX+cyTV2rHQdexhTLWnb82VhZ3HgfOPUYIohZ67y7+JT8ifWaA89hBrcd2a2QvV9eopM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ZpPpldsn; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4V3qqZ1vgkz9sZw;
-	Tue, 26 Mar 2024 14:08:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1711458506;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8d3EYhEfZQrAxbjR62dfoi3Du1p/pSGgH8hAUpFy1wc=;
-	b=ZpPpldsnkTVp8fEwuvWULTRBSOBTvIVSqq5FwEnlkX6aBXsg6IxKtbiT4cC9fpCeuZP4Pa
-	0QDhOQMjnvd8vrpFFschiKqbVfCx4ldj9We/LGbWrFUZ+Ir2mBlbhAggwldAbACN/BCVYX
-	pp8dnbZbIw0pkRhn4wzqUCoFNjvAoBeaJegHoJN/JgNyIkQ1lYl19MUTvT02Ecz9UDlG4l
-	MlqfrzPw8n9PoU3e9C9Yjny1M5NoEnesiFxLQUaKqiSQVA8oy2WD4Bai2b6KrJxD16ufLW
-	dQb4pWjeeNcY58dCxJOwf/ETisiFLVe3vBEXbnzUXiLoQhRkRNLem3tqSScy7Q==
-Date: Tue, 26 Mar 2024 14:08:22 +0100
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	gost.dev@samsung.com, chandan.babu@oracle.com, hare@suse.de, mcgrof@kernel.org, 
-	djwong@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	david@fromorbit.com, akpm@linux-foundation.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v3 05/11] readahead: allocate folios with
- mapping_min_order in readahead
-Message-ID: <ftoxbmcyyvrfo5qx6dj2kmifoky36ij3c3wx7h5wl4cg4ml5gw@yi7lxegriowg>
-References: <20240313170253.2324812-1-kernel@pankajraghav.com>
- <20240313170253.2324812-6-kernel@pankajraghav.com>
- <ZgHJxiYHvN9DfD15@casper.infradead.org>
+	s=arc-20240116; t=1711458592; c=relaxed/simple;
+	bh=ebTObtm0sD8Cer1bCQSS15gzK3xT8Q/69O7Kqc6cJYo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LukfGKaCXn0DAM/UlFqVlKd6eNPVI3zfOh4Xoa0p7CcUaOAioAO5gdoocUfCuI4cYeglDMVezJ6xmdnu9gownu77aJ0dZ2P0XucbI4YMpkYXXklMn999n7+EHG6uIComXk/gGqI7HrMnSXFBrYTvtGSV9fgYMwymxaykesnm1GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hG+b/dpj; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-60a0815e3f9so83149407b3.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 06:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1711458589; x=1712063389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NzP2CCUVdCYdG6Z2oZuafIfjQL3zpbJlRZ1Y/vZXh6A=;
+        b=hG+b/dpjD4UcBnZR1VnyJBeoIN9kcn4+XU8WSur2F2eA4maVh4mtB5nkF/6VJF5zgz
+         Ax0m0RHsU4mBBezl4GaZruuKFQUdQI2GhggaUkZXI9HQ62cBWc+AVL4fzScQhHIpthBN
+         tjXrrn9f8QTqjQkSAwtjQ/N1Pw5E3TRKLqkMirjG85hacRsSf+HqKO6z4udnVs7soavG
+         3cYr0ABcJGxCHP28UcJwHJ0Z2A/7JtcsZkXrE6L+XVMuDArUbTKQqkmX2JLmSzz78NxO
+         SC0s1kap4t6FYsSSydtddnOTdaQZRmxdk+KI9/nbxcpezdo4pPlQ7MNJ7uqXAE7ld2W+
+         m2TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711458589; x=1712063389;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NzP2CCUVdCYdG6Z2oZuafIfjQL3zpbJlRZ1Y/vZXh6A=;
+        b=RtDrkpLJVPS8jKn20p3k0mVgLcF4dXtySBL6Vvd3X7za+J0002io3y6VoVJICUeyZY
+         zuADFvAXHW+vQ9lD5ojEVLpKwqHil1x2oojgXSqFb84k08VVIy6nnTFFlhPgZgSVSyv7
+         OtH7Gyp5YUAVVF9ul5UB/ZUSu3I8F0zLn3MvOqZTpqc0kPTdIysoWsbXYK/Tv5kZatFx
+         UG0u1jSk/x6wyEIbBSCNLTtWymn+gOYgvn7pVorE/7dmtM9Fu5yoO0/7110EH76Mz5Hh
+         IqUERDuQDCOvLk7nY2kLkLelYAcXvE3CIW/ZdfM+GcEcSFVUu6CepRktqThz9U9ukp54
+         7Ssw==
+X-Forwarded-Encrypted: i=1; AJvYcCVS6ARbWuoptsu6Q9/trnbWshBie0tzFLgI9pqz6Y29b7FyR0JKitvq4q/JUnHnFaOv1xaScSwr8S1VH3WxBkImrW8UWibqItFZgpBk6w==
+X-Gm-Message-State: AOJu0YxOOTXLgOspybCkza8wLaI0Wp+JDHKDp7Rjz0D4QvBK7XY/EmzS
+	a1h5/JRI1a/aWTNlmZUXbFzu3/T6oyQtA9EaPCw/Cp5bUELQb4h9WMPl3ov4Nuj3O80dG1RvncT
+	Mdw==
+X-Google-Smtp-Source: AGHT+IEUwLWU4LZfecEsq4dTBQYeNqu7eWfbD0LdWXMXrH5wFJBdab+iFQZnjEs0NErmOBTQ4tDm00NQItY=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a81:9a0b:0:b0:611:a424:3c66 with SMTP id
+ r11-20020a819a0b000000b00611a4243c66mr468282ywg.5.1711458589679; Tue, 26 Mar
+ 2024 06:09:49 -0700 (PDT)
+Date: Tue, 26 Mar 2024 14:09:47 +0100
+In-Reply-To: <b6a2a782-894a-461c-8fc1-9a3669545633@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZgHJxiYHvN9DfD15@casper.infradead.org>
+Mime-Version: 1.0
+References: <20240325134004.4074874-1-gnoack@google.com> <20240325134004.4074874-2-gnoack@google.com>
+ <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com> <20240326.pie9eiF2Weis@digikod.net>
+ <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com> <20240326.ahyaaPa0ohs6@digikod.net>
+ <b6a2a782-894a-461c-8fc1-9a3669545633@app.fastmail.com>
+Message-ID: <ZgLJG0aN0psur5Z7@google.com>
+Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for
+ IOCTL hooks
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, linux-security-module@vger.kernel.org, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > page_cache_ra_unbounded() was allocating single pages (0 order folios)
-> > if there was no folio found in an index. Allocate mapping_min_order folios
-> > as we need to guarantee the minimum order if it is set.
-> > When read_pages() is triggered and if a page is already present, check
-> > for truncation and move the ractl->_index by mapping_min_nrpages if that
-> > folio was truncated. This is done to ensure we keep the alignment
-> > requirement while adding a folio to the page cache.
-> > 
-> > page_cache_ra_order() tries to allocate folio to the page cache with a
-> > higher order if the index aligns with that order. Modify it so that the
-> > order does not go below the min_order requirement of the page cache.
-> 
-> This paragraph doesn't make sense.  We have an assertion that there's no
-> folio in the page cache with a lower order than the minimum, so this
-> seems to be describing a situation that can't happen.  Does it need to
-> be rephrased (because you're actually describing something else) or is
-> it just stale?
-> 
-Hmm, maybe I need to explain better here.
+On Tue, Mar 26, 2024 at 12:58:42PM +0100, Arnd Bergmann wrote:
+> On Tue, Mar 26, 2024, at 11:10, Micka=C3=ABl Sala=C3=BCn wrote:
+> > On Tue, Mar 26, 2024 at 10:33:23AM +0100, Arnd Bergmann wrote:
+> >> On Tue, Mar 26, 2024, at 09:32, Micka=C3=ABl Sala=C3=BCn wrote:
+> >> >
+> >> > This is indeed a simpler solution but unfortunately this doesn't fit
+> >> > well with the requirements for an access control, especially when we
+> >> > need to log denied accesses.  Indeed, with this approach, the LSM (o=
+r
+> >> > any other security mechanism) that returns ENOFILEOPS cannot know fo=
+r
+> >> > sure if the related request will allowed or not, and then it cannot
+> >> > create reliable logs (unlike with EACCES or EPERM).
+> >>=20
+> >> Where does the requirement come from specifically, i.e.
+> >> who is the consumer of that log?
+> >
+> > The audit framework may be used by LSMs to log denials.
+> >
+> >>=20
+> >> Even if the log doesn't tell you directly whether the ioctl
+> >> was ultimately denied, I would think logging the ENOFILEOPS
+> >> along with the command number is enough to reconstruct what
+> >> actually happened from reading the log later.
+> >
+> > We could indeed log ENOFILEOPS but that could include a lot of allowed
+> > requests and we usually only want unlegitimate access requests to be
+> > logged.  Recording all ENOFILEOPS would mean 1/ that logs would be
+> > flooded by legitimate requests and 2/ that user space log parsers would
+> > need to deduce if a request was allowed or not, which require to know
+> > the list of IOCTL commands implemented by fs/ioctl.c, which would defea=
+t
+> > the goal of this specific patch.
+>=20
+> Right, makes sense. Unfortunately that means I don't see any
+> option that I think is actually better than what we have today,
+> but that forces the use of a custom whitelist or extra logic in
+> landlock.
+>=20
+> I didn't really mind having an extra hook for the callbacks
+> in addition to the top-level one, but that was already nacked.
 
-> > @@ -489,12 +520,18 @@ void page_cache_ra_order(struct readahead_control *ractl,
-> >  {
-> >  	struct address_space *mapping = ractl->mapping;
-> >  	pgoff_t index = readahead_index(ractl);
-> > +	unsigned int min_order = mapping_min_folio_order(mapping);
-> >  	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
-> >  	pgoff_t mark = index + ra->size - ra->async_size;
-> >  	int err = 0;
-> >  	gfp_t gfp = readahead_gfp_mask(mapping);
-> > +	unsigned int min_ra_size = max(4, mapping_min_folio_nrpages(mapping));
-> >  
-> > -	if (!mapping_large_folio_support(mapping) || ra->size < 4)
+Thank you both for the review!
 
-I had one question: `4` was used here because we could not support order
-1 folios I assume? As we now support order-1 folios, can this fallback
-if ra->size < min_nrpages?
+I agree, this approach would break logging.
 
-> > +	/*
-> > +	 * Fallback when size < min_nrpages as each folio should be
-> > +	 * at least min_nrpages anyway.
-> > +	 */
-> > +	if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size)
-> >  		goto fallback;
-> >  
-> >  	limit = min(limit, index + ra->size - 1);
-> > @@ -505,9 +542,19 @@ void page_cache_ra_order(struct readahead_control *ractl,
-> >  			new_order = MAX_PAGECACHE_ORDER;
-> >  		while ((1 << new_order) > ra->size)
-> >  			new_order--;
-> > +		if (new_order < min_order)
-> > +			new_order = min_order;
-> 
-> I think these are the two lines you're describing in the paragraph that
-Yes. At least I tried to ;)
+As you both also said, I also think this leads us back to the approach
+where we hardcode the allow-list of permitted IOCTL commands in the
+file_ioctl hook.
 
-> doesn't make sense to me?  And if so, I think they're useless?
+I think this approach has the following upsides:
 
-We need this because:
-The caller might pass new_order = 0 (such as when we start mmap around)
-but ra_order will do the "right" thing by taking care of the page cache
-alignment requirements. The previous revision did this other way around
-and it felt a bit all over the place.
+  1. Landlock's (future) audit logging will be able to log exactly
+     which IOCTL commands were denied.
+  2. The allow-list of permitted IOCTL commands can be reasoned about
+     locally and does not accidentally change as a side-effect of a
+     change to the implementation of fs/ioctl.c.
 
-One of the main changes I did for this revision is to adapt the
-functions that alloc and add a folio to respect the min order alignment,
-and not on the caller side.
+A risk that we have is:
 
-The rationale I went for this is three fold: 
-- the callers of page_cache_ra_order() and page_cache_ra_unbounded() 
-  requests a range for which we need to do add a folio and read it. They
-  don't care about the folios size and alignment.
+  3. We might miss changes to fs/ioctl.c which we might want to
+     reflect in Landlock.
 
-- file_ra_state also does not need any poking around because we will
-  make sure to cover from [ra->start, ra->size] and update ra->size if
-  we spilled over due to the min_order requirement(like it was done before).
 
-- And this is also consistent with what we do in filemap where we adjust
-  the index before adding the folio to the page cache.
+To think about 2 and 3 in more concrete terms, I categorized the
+scenarios in which IOCTL cmd implementations can get added to or
+removed from the do_vfs_ioctl() layer:
 
-Let me know if this approach makes sense.
-> 
-> > @@ -515,7 +562,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
-> >  		if (index & ((1UL << order) - 1))
-> >  			order = __ffs(index);
-> >  		/* Don't allocate pages past EOF */
-> > -		while (index + (1UL << order) - 1 > limit)
-> > +		while (order > min_order && index + (1UL << order) - 1 > limit)
-> >  			order--;
-> 
-> This raises an interesting question that I don't know if we have a test
-> for.  POSIX says that if we mmap, let's say, the first 16kB of a 10kB
-> file, then we can store into offset 0-12287, but stores to offsets
-> 12288-16383 get a signal (I forget if it's SEGV or BUS).  Thus far,
-> we've declined to even create folios in the page cache that would let us
-> create PTEs for offset 12288-16383, so I haven't paid too much attention
-> to this.  Now we're going to have folios that extend into that range, so
-> we need to be sure that when we mmap(), we only create PTEs that go as
-> far as 12287.
-> 
-> Can you check that we have such an fstest, and that we still pass it
-> with your patches applied and a suitably large block size?
+  Case A: New cmd added to do_vfs_ioctl layer
 
-Hmmm, good point.
-I think you mean this from the man page:
+    We want to double check whether this cmd should be included in
+    Landlock's allow list.  (Because the command is new, there are no
+    existing users of the IOCTL command, so we can't break anyone and
+    we it probably does not require to be made explicit in Landlock's
+    ABI versioning scheme.)
 
-SIGBUS Attempted access to a page of the buffer that lies beyond the end
-of the mapped file.  For an explanation of the treatment of the bytes in
-the page that corresponds to the end of a mapped file that is not a 
-multiple of the page size, see NOTES.
+    =3D=3D> We need to catch these changes early,
+        and should do Landlock-side changes in sync.
 
-I will add a test case for this and see what happens. I am not sure if I
-need to make some changes or the current implementation should hold.
+  Case B: Existing cmd removed from do_vfs_ioctl layer
+
+    (This case is unlikely, as it would be a backwards-incompatible
+    change in the ioctl interface.)
+
+  Case C: Existing cmd is moved from f_ops->..._ioctl() to do_vfs_ioctl()
+
+    (For regular files, I think this has happened for the XFS
+    "reflink" ioctls before, which became features in other COW file
+    systems as well.)
+
+    If such a change happens for device files (which are in scope for
+    Landlock's IOCTL feature), we should catch these changes.  We
+    should consider whether the affected IOCTL command should be
+    allow-listed.  Strictly speaking, if we allow-list the cmd, which
+    was previously not allow-listed, this would mean that Landlock's
+    DEV_IOCTL feature would have different semantics than before
+    (permitting an additional cmd), and it would potentially be a
+    backwards-incompatible change that need to be made explicit in
+    Landlock's ABI versioning.
+
+  Case D: Existing cmd is moved from do_vfs_ioctl() to f_ops->..._ioctl()
+
+    (This case seems also very unlikely to me because it decentralizes
+    the reasoning about these IOCTL APIs which are currently centrally
+    controlled and must stay backwards compatible.)
+
+
+
+So -- a proposal:
+
+* Keep the original implementation of fs/ioctl.c
+* Implement Landlock's file_ioctl hook with a switch(cmd) where we list
+  the permitted IOCTL commands from do_vfs_ioctl.
+* Make sure Landlock maintainers learn about changes to do_vfs_ioctl():
+  * Put a warning on top of do_vfs_ioctl() to loop in Landlock
+    maintainers
+  * Set up automation to catch such changes?
+
+
+Open questions are:
+
+* Micka=C3=ABl, do you think we should use a more device-file-specific
+  subset of IOCTL commands again, or would you prefer to stick to the
+  full list of all IOCTL commands implemented in do_vfs_ioctl()?
+
+* Regarding automation:
+
+  We could additionally set up some automation to watch changes to
+  do_vfs_ioctl().  Given the low rate of change in that corner, we
+  might get away with extracting the relevant portion of the C file
+  (awk '/^static int do_vfs_ioctl/, /^\}/' fs/ioctl.c) and watching
+  for any changes.  It is brittle, but the rate of changes is low, and
+  reasoning about source code is difficult and error prone as well.
+
+  In an ideal world this could maybe be part of the kernel test
+  suites, but I still have not found the right place where this could
+  be hooked in.  Do you have any thoughts on this?
+
+Thanks,
+=E2=80=94G=C3=BCnther
 
