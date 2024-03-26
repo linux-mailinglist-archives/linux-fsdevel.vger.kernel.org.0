@@ -1,156 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-15322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AE688C298
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 13:51:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E2688C2A7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 13:53:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5072A5A6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 12:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA131F64002
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 12:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0B874420;
-	Tue, 26 Mar 2024 12:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1912F74420;
+	Tue, 26 Mar 2024 12:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="axUcjzD2"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TrSNZXgn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914507441C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 12:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F2373177
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 12:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711457493; cv=none; b=oKKcri8UxOevTD8tpflq/A6/ekORl8YVwDjD+2LA8a4TPYNABaBWMq5zz1WYXhmKr0MpItGPXeK1hYaZi38NHgILYjD6De1+xC5Zeh7YNz+srIpIuuzonZl2egRc2ZfIbwTB0JkECBRo/URX+zc1UVKWCKcYLa+sNROpIeSznr0=
+	t=1711457601; cv=none; b=mRjeBcx9tuLg5j/8+ESek93LZEg/SOejnZX3OGnzYtxtnPOLXDKVBRH1QWXyevwEPCUXrVMkG3pJXUYofZZuS9+P4wsvitPh0bDYnl9cQiD63vdB0yBCTGqd0epJ3yTUiXQ4HxNj7255LpKR2uY3wKM/tnQaOwjWI2wj/DdBkcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711457493; c=relaxed/simple;
-	bh=so6dL+P6dq5Y7OYvRjeRvhwpLxycYRKRO39veYEMi0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JlIjov3Vdqib+N0bE8i0mOL4ordueesTlzCnqEvgLPDAhPD/m/FviwW4pBijvW3oj0/dG61N1BG5G3NRBTgb51M7k03DpXoucM9a9aglnHNOz9msKLqNbzJOW6arzK3nA57Z0sFCKU5aNVbRdRHGBOAcr8T085FLohNwbSxAsKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=axUcjzD2; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3c3b256ab5eso2832201b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 05:51:31 -0700 (PDT)
+	s=arc-20240116; t=1711457601; c=relaxed/simple;
+	bh=5XbquQmJKaNfWBjyEtOOSnqsLcETpU6DZOyNLjemzmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z5SRK+SFZ2XEabgIy4+4VjIjTGKXEQ5GGLyXJegcnj+6wikHD047Z3L+zFFIVAQQL5Ww0THQVdLB6v8UP1st7t4fJo5UvDXxXm3UL3xmI/wROub5dcj1K1eaaIcUTJQvasWyHasb+F5AL+z6HMohe9We7fM/1UL28TYhvzIactw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TrSNZXgn; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-60a0a54869bso44175737b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 05:53:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1711457490; x=1712062290; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EfoOYG5EQf0UkvMjeqz6CEWwC7DheKH6EhJnW18OMBU=;
-        b=axUcjzD2KlaZ1NbWUheLDo0DPud0t5JygAbGoPREqYXRpxJZKn+ohmOMV0uMbXXwrO
-         0+8CE7sCpoQvs9rVNDpqTkVqYkRdU7lP7ZQyT9Usv2cAM7etuxnkKq/YSbRuV0gM6pYJ
-         236/Lof95B9+TUKdOqScNgBrUGsDuacFF2aocCZ318mNZlfOH4gC5khXIADkSbuTiT/I
-         4aWgRuyHGen6oVRBQ8kSxlLdF3ik5juqJNMdK6Uk682GfVAn+kGTYAaXj4yl/ITdGuVK
-         r6EqQAHY5mi1uKysVfd9ypbR13ijietcA2D+hRh6Ff2FcaIEAi5dVnnQ0r0M8wZFGxNZ
-         28Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711457490; x=1712062290;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1711457599; x=1712062399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EfoOYG5EQf0UkvMjeqz6CEWwC7DheKH6EhJnW18OMBU=;
-        b=Nr611ODrBguQ7HfloD3syTo84B49/pRf7YmAZ9NYtNG6gyyEYct1UbTM5K0M5/OmMs
-         8A1Boa5hZ4cgHpmGPoYlgkOxncL9jyuUhWqEV2jDyJyRl4cBSA4aDNSrfoklvkSBPQPJ
-         lVarIz76kISmt221NU584wK6jrOtnXaUF6MCsKqFXT/dGQ5yZqcqSmFJeRPKUkHwTn47
-         OZBmTZLyLkY5b6pQM1jI8yV+ivr0A54BUMAPAi22pADfYcdjpvo1R0Ue9MLIDFigRDQT
-         4m2QFAJ56MBqt9Q/RNlvQagES5RFLslbM+eaZr5cMib5RkFZnKaofaEW8QmN4lIFNJ7x
-         fmaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWifHKEy762SmRXx2gDxIKggdEMIQBYPFEvPQ2gjYaGZOON/bSg5HjR9GkxQwlHhvm5h5OOxvs+VGlsatYPYN4Ha4nA1+8Ewx0xD8Cvow==
-X-Gm-Message-State: AOJu0Yz2aXToEer7VZpEgIsxS3TeiuhnCYoB5Mw/AHKbNVsKtSorB2bs
-	7GnZHiw1QgXlDKGSVvViu7COlu40LSSChUR371e6iE2SvZ/xBGajLBW6mCGE1GU=
-X-Google-Smtp-Source: AGHT+IE8wqWbE8dlvgzHGjmsmYkeWHkJ5uMP6CAmnUcUKq0xZRk3/UFNAOnBZTpR00X275iSg87Usw==
-X-Received: by 2002:a05:6808:1209:b0:3c3:82a1:e6e with SMTP id a9-20020a056808120900b003c382a10e6emr11024343oil.53.1711457490602;
-        Tue, 26 Mar 2024 05:51:30 -0700 (PDT)
-Received: from localhost (2603-7000-0c01-2716-da5e-d3ff-fee7-26e7.res6.spectrum.com. [2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id bz23-20020a05622a1e9700b004313bda0329sm3654928qtb.96.2024.03.26.05.51.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Mar 2024 05:51:30 -0700 (PDT)
-Date: Tue, 26 Mar 2024 08:51:20 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-mm@kvack.org, david@redhat.com, hughd@google.com, osandov@fb.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: swapfile: fix SSD detection with swapfile on
- btrfs
-Message-ID: <20240326125120.GB229434@cmpxchg.org>
-References: <20240322164956.422815-1-hannes@cmpxchg.org>
- <87plvho872.fsf@yhuang6-desk2.ccr.corp.intel.com>
+        bh=Z0BhUuq6w2jcMHo0vnHZWTdWQ7YEJBXZjKotn4i2wHk=;
+        b=TrSNZXgnFF7GvLHr6M+Rgew7GU+Wc6sqwMeSm/E9VbSWkoZE9GMg+Wl71y2gSnuWJI
+         3NFtVETJjLs4IyW9BQR77EzSomQBRFS2IFOkfTYKRG0jNgDUhWWnV30AqBJCNeVmESEq
+         czISs7cXGwoum4ATewhUj9UuAIU1vG32bY7qF+Ww7LB1txAIgVURulRKip8MlfZX0TBj
+         rr7gdsJJ8M/ykHGK+KI164xZ8h3pgemvlntiQy05Zde07NWI178pm1wh5Gu8/PBx/WDq
+         jLvMnhZBmsbSbgOLZpAx3CKkrMaCSZQhW413hzmV/TUd5/ssdMA6/tbShzvdszPIiykJ
+         K0iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711457599; x=1712062399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z0BhUuq6w2jcMHo0vnHZWTdWQ7YEJBXZjKotn4i2wHk=;
+        b=uP0LtQ2w0cR1chQrCapCOukPgap6WcRf6KfkqdmZ7iBmHw97SP8A/Gj6w+clBOUPfe
+         v2txF42HagaqzY3XFdIJt0uqZtnnontj6Ys3wBU8gC/nCdxnOlFkqqtUZI9VFNr0kTTG
+         DFabWzNg8i6CAO6bgO76dlWulcUBOCw1wsnmRfX+ZuHTgf4dMx8TyOw+654FYfA6CoPX
+         1QrtI1lP5eGGyuM1roX8uyCn9NQUtFa2DhVMBBa+9XsOQL3VYYagr5i6sq8XhWrNlKkL
+         mZnDN8AmWooKJZSjYunhwstdFdQQ3D97qT6FChG85TFhOu0cAZ1lECicaX4QI24MTmfP
+         5rxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWh1YMOrYChYgNKCme5MlHXckNR1eZiN8xrV8I5kmckVutuVqrKtDMwKN9G/R1jUchlQpcpdybKiK6jA9zv9mUrCLcrQy3Q1KGLmJOCKA==
+X-Gm-Message-State: AOJu0Yy0UeKDWo4kfHXTlWshvEHfRFK8m1KfJKbI/mgut47eDo7/S6wy
+	sxqc2cGyRaJSC5cM1sBoY8XxA2/nlz9AhGZgHfHjJcD/+fwnLaqSMPXvfSvwwYii8mbs/2D4sLp
+	ob9jEYz9pCZpHSkBBuv6Z6wYP7LcqmfMA+2Ag
+X-Google-Smtp-Source: AGHT+IH2Oz9Ij0xMEiUnRD6ybquNqgql6Kb2ocAG6nS4ykuQkyqgIotaRGNW/ASQAvSIwgHE/TxrVUinkjCFUqhPnQ8=
+X-Received: by 2002:a05:690c:700f:b0:611:336d:c8f3 with SMTP id
+ jf15-20020a05690c700f00b00611336dc8f3mr801016ywb.24.1711457598719; Tue, 26
+ Mar 2024 05:53:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87plvho872.fsf@yhuang6-desk2.ccr.corp.intel.com>
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV> <3441a4a1140944f5b418b70f557bca72@huawei.com>
+ <20240325-beugen-kraftvoll-1390fd52d59c@brauner> <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
+ <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
+In-Reply-To: <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 26 Mar 2024 08:53:07 -0400
+Message-ID: <CAHC9VhQg6Qhqjs7J+X6wZa+dP4cujcWPJMZONB0SB9aaaGvFDg@mail.gmail.com>
+Subject: Re: kernel crash in mknod
+To: Christian Brauner <brauner@kernel.org>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Steve French <smfrench@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	Paulo Alcantara <pc@manguebit.com>, Christian Brauner <christian@brauner.io>, 
+	Mimi Zohar <zohar@linux.ibm.com>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ying,
+On Tue, Mar 26, 2024 at 7:40=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> For bigger changes it's also worthwhile if the object that's passed down
+> into the hook-based LSM layer is as specific as possible. If someone
+> does a change that affects lifetime rules of mounts then any hook that
+> takes a struct path argument that's unused means going through each LSM
+> that implements the hook only to find out it's not actually used.
+> Similar for dentry vs inode imho.
 
-Thanks for taking a look!
+For bigger changes please always ensure that the LSM list, and any
+related LSM implementation lists, are on the To/CC line.  While we
+appreciate Christian's input (and Al's, and all the other VFS devs) on
+VFS matters, there are often other considerations that need to be
+taken into account when discussing LSM related issues.  Generally,
+"specific as possible" is good input, but it isn't the only thing we
+need to worry about, and sometimes other requirements mean that it
+isn't the best choice.  Just as we want the VFS devs involved in
+discussions about VFS related LSM hooks (these new IMA/EVM-related LSM
+hooks were sent to, and reviewed by the VFS folks), I would hope the
+VFS devs would want to include the LSM devs on any LSM related issues
+and would try to avoid speaking on behalf of the LSM devs and
+maintainers.
 
-On Tue, Mar 26, 2024 at 01:47:45PM +0800, Huang, Ying wrote:
-> Johannes Weiner <hannes@cmpxchg.org> writes:
-> > +static struct swap_cluster_info *setup_clusters(struct swap_info_struct *p,
-> > +						unsigned char *swap_map)
-> > +{
-> > +	unsigned long nr_clusters = DIV_ROUND_UP(p->max, SWAPFILE_CLUSTER);
-> > +	unsigned long col = p->cluster_next / SWAPFILE_CLUSTER % SWAP_CLUSTER_COLS;
-> > +	struct swap_cluster_info *cluster_info;
-> > +	unsigned long i, j, k, idx;
-> > +	int cpu, err = -ENOMEM;
-> > +
-> > +	cluster_info = kvcalloc(nr_clusters, sizeof(*cluster_info), GFP_KERNEL);
-> >  	if (!cluster_info)
-> > -		return nr_extents;
-> > +		goto err;
-> > +
-> > +	for (i = 0; i < nr_clusters; i++)
-> > +		spin_lock_init(&cluster_info[i].lock);
-> >  
-> > +	p->cluster_next_cpu = alloc_percpu(unsigned int);
-> > +	if (!p->cluster_next_cpu)
-> > +		goto err_free;
-> > +
-> > +	/* Random start position to help with wear leveling */
-> > +	for_each_possible_cpu(cpu)
-> > +		per_cpu(*p->cluster_next_cpu, cpu) =
-> > +			get_random_u32_inclusive(1, p->highest_bit);
-> > +
-> > +	p->percpu_cluster = alloc_percpu(struct percpu_cluster);
-> > +	if (!p->percpu_cluster)
-> > +		goto err_free;
-> > +
-> > +	for_each_possible_cpu(cpu) {
-> > +		struct percpu_cluster *cluster;
-> > +
-> > +		cluster = per_cpu_ptr(p->percpu_cluster, cpu);
-> > +		cluster_set_null(&cluster->index);
-> > +	}
-> > +
-> > +	/*
-> > +	 * Mark unusable pages as unavailable. The clusters aren't
-> > +	 * marked free yet, so no list operations are involved yet.
-> > +	 */
-> > +	for (i = 0; i < round_up(p->max, SWAPFILE_CLUSTER); i++)
-> > +		if (i >= p->max || swap_map[i] == SWAP_MAP_BAD)
-> > +			inc_cluster_info_page(p, cluster_info, i);
-> 
-> If p->max is large, it seems better to use an loop like below?
-> 
->  	for (i = 0; i < swap_header->info.nr_badpages; i++) {
->                 /* check i and inc_cluster_info_page() */
->         }
-> 
-> in most cases, swap_header->info.nr_badpages should be much smaller than
-> p->max.
-
-Yes, it's a little crappy. I've tried to not duplicate the smarts from
-setup_swap_map_and_extents() to avoid bugs if they go out of
-sync. Consulting the map directly is a bit more robust. Right now it's
-the badpages, but also the header at map[0], that needs to be marked.
-
-But you're right this could be slow with big files. I can send an
-update and add a comment to keep the functions in sync.
+--=20
+paul-moore.com
 
