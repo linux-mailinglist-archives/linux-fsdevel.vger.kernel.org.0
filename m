@@ -1,101 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-15286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D1288BC81
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 09:33:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF5688BCB0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 09:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 381D3B22116
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 08:33:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A640EB228D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 08:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA6DC2E9;
-	Tue, 26 Mar 2024 08:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C6114A8B;
+	Tue, 26 Mar 2024 08:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UlvZSkZz"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="hrJ58fz4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895E81C286
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Mar 2024 08:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1479AFBFC;
+	Tue, 26 Mar 2024 08:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711441968; cv=none; b=J2dtiZvnzTuFYadLy98zAFeq0WCGQZN39lOCmIHemlTHWiHGzxmupPUvr3pSgz4QcJUC8Znotz/LCpE98IX2R82zwdZvU1Sv4nVTEcl1gN7u347o12JhisiyYPC64G40NVV/qxkgkEv/C9k0ROo8VfmO68ZqZzM3mJ5FEnmqDj0=
+	t=1711442658; cv=none; b=BEihGjvEynqNGrnX/hmOz70YaWFfmaI+AYbXKAmxQce5cg0pnkkNN0YgwRyAwKtfsyfSqbhVL7aaKijrw+By3ila5Xythnfs/MsQ3l7V/G169WssEKpwg20ici52QTqAuzSmUa87pAyWxQJrvAZdD0CllF+Zt7Nxa3/6MQqCNWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711441968; c=relaxed/simple;
-	bh=lOmMwKNNzagft7kUe3depGA5Xz8mH58kecSmOwBREFs=;
+	s=arc-20240116; t=1711442658; c=relaxed/simple;
+	bh=tm+NbvYrGarFYSyqK/ixN59aSdmFMLA9v1r7zEm/Uvg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BPTE/m5aEQd9qwAwKt8Pi9rgSWsD/Xvw7USR3N63dzyvnAj/qG7blNG5vSm5T9IIPotTHAaB9jCQUen5GiicHJQ0dPaNxsOO9vA+Tw2jtF0A2yDbzQzpWGTqQEwNNF8iiKwIHpNF4JsQQydDy1BQ7I6EfIy2ULME5zoBEUlCpBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UlvZSkZz; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3jjG3fK7zxrD;
-	Tue, 26 Mar 2024 09:32:34 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3jjF4wJmzMppKw;
-	Tue, 26 Mar 2024 09:32:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711441954;
-	bh=lOmMwKNNzagft7kUe3depGA5Xz8mH58kecSmOwBREFs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UlvZSkZzU4PljVYaMzwHMADOpFQx+TKUD5kwJhtnyC0ec+Q6/TBbRDrV/MULWFwEI
-	 zRLk4WrOva7zZA7k1xhJlyi3OTP0T7OBp9F8pURLYxN4aPLDPI/beRpKs8e6h3PnTR
-	 0ydVsEaGbCtweuVrIDaWOfBXk3tA+YgxB5Oa6QEg=
-Date: Tue, 26 Mar 2024 09:32:33 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for
- IOCTL hooks
-Message-ID: <20240326.pie9eiF2Weis@digikod.net>
-References: <20240325134004.4074874-1-gnoack@google.com>
- <20240325134004.4074874-2-gnoack@google.com>
- <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BB1wvc33Q3JBECBfJpBdPJ1xuzOJBgLxHq5GRgoR3Wb3H/2EveYxJJ/D5Ocler9EXJpZ8SjHFRHpG+uVSG+lhpQo6wtVGcfujUF/AggrxKnQAtpStHoDQEYvM6RRQ1tZtuzx5BbkFRl3RmW3O3caGvinGcf5J5NY8pTdCYt/hZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=hrJ58fz4; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4V3jyb1kR6z9skM;
+	Tue, 26 Mar 2024 09:44:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1711442647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kgtpYMDWWZCofmZ+Xr/eXLBedWKAyq/G32SmuICtiAA=;
+	b=hrJ58fz4Ue65jycC7i4YDw02447kT3KvXWoC6FTQuBcFb+4nZ6Mm0+ODTk4YLfH5jWs/NA
+	ovH5FV/oJAysdNyFyv2ujSm0zy2JqICHjuhl1KzCik5tTzDQHX4lS+Rvyj7HlPOTuDTu2W
+	zWwJgEl3gOBCx6IbQLhfktko0CKJYqIRrpxJoDw7/8jH21wUNMIyhPCaZaw27WKNzQreeb
+	W+vufsc7/cPKw/CCfyZT/+V1vgZr1g8MAVUJL2nB/yBwQSe1bpYs+hW8zyWB0F/eGZM7Tk
+	pnbl2TSyqI7tSWiGf4ODrH+OpLKpZFtnYEJRgBiNxL5MLsByk8JwxRAblu+6ng==
+Date: Tue, 26 Mar 2024 09:44:02 +0100
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	gost.dev@samsung.com, chandan.babu@oracle.com, hare@suse.de, mcgrof@kernel.org, 
+	djwong@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	david@fromorbit.com, akpm@linux-foundation.org, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3 02/11] fs: Allow fine-grained control of folio sizes
+Message-ID: <hjkct6wz4amxzhr4ndrw7srnjepcr3kmd34kixynznhivxv5og@r7hdu4mqt3j3>
+References: <20240313170253.2324812-1-kernel@pankajraghav.com>
+ <20240313170253.2324812-3-kernel@pankajraghav.com>
+ <ZgHCir0cpYZ4vOa0@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <ZgHCir0cpYZ4vOa0@casper.infradead.org>
+X-Rspamd-Queue-Id: 4V3jyb1kR6z9skM
 
-On Mon, Mar 25, 2024 at 04:19:25PM +0100, Arnd Bergmann wrote:
-> On Mon, Mar 25, 2024, at 14:39, Günther Noack wrote:
-> > If security_file_ioctl or security_file_ioctl_compat return
-> > ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOCTL
-> > command, but only as long as the IOCTL command is implemented directly
-> > in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
-> > f_ops->compat_ioctl operations, which are defined by the given file.
-> >
-> > The possible return values for security_file_ioctl and
-> > security_file_ioctl_compat are now:
-> >
-> >  * 0 - to permit the IOCTL
-> >  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to fall
-> >    back to the file implementation.
-> >  * any other error - to forbid the IOCTL and return that error
-> >
-> > This is an alternative to the previously discussed approaches [1] and [2],
-> > and implements the proposal from [3].
+On Mon, Mar 25, 2024 at 06:29:30PM +0000, Matthew Wilcox wrote:
+> On Wed, Mar 13, 2024 at 06:02:44PM +0100, Pankaj Raghav (Samsung) wrote:
+> > +/*
+> > + * mapping_set_folio_min_order() - Set the minimum folio order
+> > + * @mapping: The address_space.
+> > + * @min: Minimum folio order (between 0-MAX_PAGECACHE_ORDER inclusive).
+> > + *
+> > + * The filesystem should call this function in its inode constructor to
+> > + * indicate which base size of folio the VFS can use to cache the contents
+> > + * of the file.  This should only be used if the filesystem needs special
+> > + * handling of folio sizes (ie there is something the core cannot know).
+> > + * Do not tune it based on, eg, i_size.
+> > + *
+> > + * Context: This should not be called while the inode is active as it
+> > + * is non-atomic.
+> > + */
+> > +static inline void mapping_set_folio_min_order(struct address_space *mapping,
+> > +					       unsigned int min)
+> > +{
+> > +	if (min > MAX_PAGECACHE_ORDER)
+> > +		min = MAX_PAGECACHE_ORDER;
+> > +
+> > +	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
+> > +			 (min << AS_FOLIO_ORDER_MIN) |
+> > +			 (MAX_PAGECACHE_ORDER << AS_FOLIO_ORDER_MAX);
+> > +}
 > 
-> Thanks for trying it out, I think this is a good solution
-> and I like how the code turned out.
+> I was surprised when I read this, which indicates it might be surprising
+> for others too.  I think it at least needs a comment to say that the
+> maximum will be set to the MAX_PAGECACHE_ORDER, because I was expecting
+> it to set max == min.  I guess that isn't what XFS wants, but someone
+> doing this to, eg, ext4 is going to have an unpleasant surprise when
+> they call into block_read_full_folio() and overrun 'arr'.
+> 
+> I'm still not entirely convinced this wouldn't be better to do as
+> mapping_set_folio_order_range() and have
+> 
+> static inline void mapping_set_folio_min_order(struct address_space *mapping,
+> 		unsigned int min)
+> {
+> 	mapping_set_folio_range(mapping, min, MAX_PAGECACHE_ORDER);
+> }
 
-This is indeed a simpler solution but unfortunately this doesn't fit
-well with the requirements for an access control, especially when we
-need to log denied accesses.  Indeed, with this approach, the LSM (or
-any other security mechanism) that returns ENOFILEOPS cannot know for
-sure if the related request will allowed or not, and then it cannot
-create reliable logs (unlike with EACCES or EPERM).
+I agree. Having a helper like this will make it more explicit. The
+limits checking can also be done in this helper itself.
+
+Also it makes mapping_set_large_folio() more clear:
+
+static inline void mapping_set_large_folios(struct address_space *mapping)
+{
+      mapping_set_folio_range(mapping, 0, MAX_PAGECACHE_ORDER);
+}
+
+instead of just calling mapping_set_folio_min_order(). Thanks.
 
