@@ -1,155 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-15355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9811688C812
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 16:53:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EDC288C8A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 17:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C99DE1C2E17A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 15:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C9B1F81746
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 16:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E235713C908;
-	Tue, 26 Mar 2024 15:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE1313C9DE;
+	Tue, 26 Mar 2024 16:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nr3YSTrf"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="yHdjTcr3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E2AFC0E;
-	Tue, 26 Mar 2024 15:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A1913C9DA;
+	Tue, 26 Mar 2024 16:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711467995; cv=none; b=N/FuM6vt/zsXXFFSWS1vAUIwMToVS+wth2DTelLNSeLEbwyxSQfzBV8jij6I+hkU0ZvB4zn7F4KfiuUe4tq4zURHMXQjTp76ZI/piy4DdKvzNSOJD7KyIeqauzRTYsyrWBVX7h0saJlA9o26T5XPuxwHgyxGjO0go+9Db1+0daw=
+	t=1711469431; cv=none; b=OFONFl82acBT0QBHlUECca3HO/emSxaapkzVk2DR2SQ6TJ2NrBJO6byzLOXQt4lesZx6Y4n0Y41WoCkXV/tITh92pl+zfySa0zqWldQxhrvodKjFQCddlbJxPoI0eeoJQo38vfu+vrklnNLXcek1z1jpQIMaOnOhSAbsDGJxTUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711467995; c=relaxed/simple;
-	bh=GNKUnehNUWWq14j2h7gVQLCTnR8U3oHCcrr43xdM+qw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XEOnhPubYIusPy9asaWY6cN/Gbm6uaZOcefA/OagfOY7f6HAdJUX6FAiT1UpiD7RT8FOYzwrN2BYpPhub+3jeKTuuVVxSirFlMYBi1j2ZR3z3aYT9ZWsg5GkJcXpwpJgHOvWtAYyRUrWBGmJMXDJ/GemHWBCOkgrw0LnZwtLXW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nr3YSTrf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39534C433A6;
-	Tue, 26 Mar 2024 15:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711467994;
-	bh=GNKUnehNUWWq14j2h7gVQLCTnR8U3oHCcrr43xdM+qw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Nr3YSTrfH5duhoQKB+iYXcVk2dXD9crtjbBjthK2U/f3FNA3Mjyf35AXnoUemV7j8
-	 zKq/NTTOQI5kE23FU+wH8SUYOCVOFqf7Wgyc6gErzGzKd46DBeKZUqWiJ03ryiOsbc
-	 OUnjG/Zsq7LRkC3xxGEHGySJfqWNuQKYOm48Njs+QMj6MBGgdfQI9TSm7Tpv/F4/US
-	 iixX2aAiTg0QVNOqCz0ZFIfZoJgpLd2zq/aXe10DDRunZKrzcSMsXUKTUlmwBKaHT5
-	 E9BRx4Et0Gr2HmXm5KLOucCGgWhcByOcYhuzG4QK5P/ZUaR76LKoNJNqkcaL5ZzJ4B
-	 R2zAjvudRJQNQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] block: handle BLK_OPEN_RESTRICT_WRITES correctly
-Date: Tue, 26 Mar 2024 16:46:19 +0100
-Message-ID: <20240326-lehrkraft-messwerte-e3895039e63b@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240326133107.bnjx2rjf5l6yijgz@quack3>
-References: <20240326133107.bnjx2rjf5l6yijgz@quack3>
+	s=arc-20240116; t=1711469431; c=relaxed/simple;
+	bh=/SwuSRn116nG3Z+Fz1PchQ+dbuLiQb7TRnc9ZAa32x0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aAoC0pJCFaa3udlmhmdi395Xm1BCCd8bLuPk5L2xCfIdzoQaoyyVnAkfKAna07wWMlwa2mJxpAGwli7X5btyzk+5VoqjLoU+gSWnbUL4WKTwHUb8oB+tTT8czJtFmdEH/y9FvrpNV9I6tT3GY89mk/lrXeEIk3qSf+/PN3AYY00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=yHdjTcr3; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4V3vsV0n1cz9scM;
+	Tue, 26 Mar 2024 17:10:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1711469422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3WN8iTw5DCvKXICzDy7GvWDFRE7iUHmu0GOhWN9n+ms=;
+	b=yHdjTcr384i1cvB7hFZT30C9uBwMD8Us2p3BaRxE0yzhUO6JeAPk0zbE/aLeBCdkTVl7D5
+	9z4OZ76A4edSg78yhI+sI+LkX0vMgIvnkZ87Umo2iejOCXrLpLweRxhAkG/pX+b5lhwt+1
+	CZf+iNlgRGCVeHaRVugTq+BcwLBVgJS+TnAibuVTetwJsAYtyvFH7+VzgyA0d/xTMPMysY
+	ljgBOdTodJUMIj6yb/ml9uROxuNUdW954fQNFWTMA4SPwNQHnqbUJ/qyPpwP/d4QAelyv9
+	btnQQq2OrXVss98yKjHHtksrbitZ6nra40b6cZZDvZVZdPf3F6Zj5BvBkKPtSA==
+Date: Tue, 26 Mar 2024 17:10:18 +0100
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>, ziy@nvidia.com
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	gost.dev@samsung.com, chandan.babu@oracle.com, hare@suse.de, mcgrof@kernel.org, 
+	djwong@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	david@fromorbit.com, akpm@linux-foundation.org, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3 07/11] mm: do not split a folio if it has minimum
+ folio order requirement
+Message-ID: <muprk3zff7dsn3futp3by3t6bxuy5m62rpylmrp77ss3kay24k@wx4fn7uw7y6r>
+References: <20240313170253.2324812-1-kernel@pankajraghav.com>
+ <20240313170253.2324812-8-kernel@pankajraghav.com>
+ <ZgHLHNYdK-kU3UAi@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3888; i=brauner@kernel.org; h=from:subject:message-id; bh=GNKUnehNUWWq14j2h7gVQLCTnR8U3oHCcrr43xdM+qw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQxvT2fGMYok8m4XsUyrNGyq1NAWl/yq375EsvO7ndHf QoyP/p0lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATGSOMMN/F7v4DFfZms5r/daZ z3qcjgqU3Qx/IrNu1qot8fe5J8toMvwPzH92Loj16qOovCNyau2iS6Zlnffie/PmtblV2nXVrCk MAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZgHLHNYdK-kU3UAi@casper.infradead.org>
+X-Rspamd-Queue-Id: 4V3vsV0n1cz9scM
 
-Last kernel release we introduce CONFIG_BLK_DEV_WRITE_MOUNTED. By
-default this option is set. When it is set the long-standing behavior
-of being able to write to mounted block devices is enabled.
+On Mon, Mar 25, 2024 at 07:06:04PM +0000, Matthew Wilcox wrote:
+> On Wed, Mar 13, 2024 at 06:02:49PM +0100, Pankaj Raghav (Samsung) wrote:
+> > From: Pankaj Raghav <p.raghav@samsung.com>
+> > 
+> > As we don't have a way to split a folio to a any given lower folio
+> > order yet, avoid splitting the folio in split_huge_page_to_list() if it
+> > has a minimum folio order requirement.
+> 
+> FYI, Zi Yan's patch to do that is now in Andrew's tree.
+> c010d47f107f609b9f4d6a103b6dfc53889049e9 in current linux-next (dated
+> Feb 26)
 
-But in order to guard against unintended corruption by writing to the
-block device buffer cache CONFIG_BLK_DEV_WRITE_MOUNTED can be turned
-off. In that case it isn't possible to write to mounted block devices
-anymore.
+Yes, I started playing with the patches but I am getting a race condition
+resulting in a null-ptr-deref for which I don't have a good answer for
+yet.
 
-A filesystem may open its block devices with BLK_OPEN_RESTRICT_WRITES
-which disallows concurrent BLK_OPEN_WRITE access. When we still had the
-bdev handle around we could recognize BLK_OPEN_RESTRICT_WRITES because
-the mode was passed around. Since we managed to get rid of the bdev
-handle we changed that logic to recognize BLK_OPEN_RESTRICT_WRITES based
-on whether the file was opened writable and writes to that block device
-are blocked. That logic doesn't work because we do allow
-BLK_OPEN_RESTRICT_WRITES to be specified without BLK_OPEN_WRITE.
+@zi yan Did you encounter any issue like this when you were testing?
 
-Fix the detection logic and use one of the FMODE_* bits we freed up a
-while ago. We could've also abused O_EXCL as an indicator that
-BLK_OPEN_RESTRICT_WRITES has been requested. For userspace open paths
-O_EXCL will never be retained but for internal opens where we open files
-that are never installed into a file descriptor table this is fine. But
-it would be a gamble that this doesn't cause bugs. Note that
-BLK_OPEN_RESTRICT_WRITES is an internal only flag that cannot directly
-be raised by userspace. It is implicitly raised during mounting.
+I did the following change (just a prototype) instead of this patch:
 
-Passes xftests and blktests with CONFIG_BLK_DEV_WRITE_MOUNTED set and
-unset.
-
-Link: https://lore.kernel.org/r/ZfyyEwu9Uq5Pgb94@casper.infradead.org
-Link: https://lore.kernel.org/r/20240323-zielbereich-mittragen-6fdf14876c3e@brauner
-Fixes: 321de651fa56 ("block: don't rely on BLK_OPEN_RESTRICT_WRITES when yielding write access")
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- block/bdev.c       | 14 +++++++-------
- include/linux/fs.h |  2 ++
- 2 files changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/block/bdev.c b/block/bdev.c
-index 070890667563..6955693e4bcd 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -814,13 +814,11 @@ static void bdev_yield_write_access(struct file *bdev_file)
- 		return;
- 
- 	bdev = file_bdev(bdev_file);
--	/* Yield exclusive or shared write access. */
--	if (bdev_file->f_mode & FMODE_WRITE) {
--		if (bdev_writes_blocked(bdev))
--			bdev_unblock_writes(bdev);
--		else
--			bdev->bd_writers--;
--	}
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 9859aa4f7553..63ee7b6ed03d 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3041,6 +3041,10 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ {
+        struct folio *folio = page_folio(page);
+        struct deferred_split *ds_queue = get_deferred_split_queue(folio);
++       unsigned int mapping_min_order = mapping_min_folio_order(folio->mapping);
 +
-+	if (bdev_file->f_mode & FMODE_WRITE_RESTRICTED)
-+		bdev_unblock_writes(bdev);
-+	else if (bdev_file->f_mode & FMODE_WRITE)
-+		bdev->bd_writers--;
- }
++       if (!folio_test_anon(folio))
++               new_order = max_t(unsigned int, mapping_min_order, new_order);
+        /* reset xarray order to new order after split */
+        XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_order);
+        struct anon_vma *anon_vma = NULL;
+@@ -3117,6 +3121,8 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+                        goto out;
+                }
  
- /**
-@@ -900,6 +898,8 @@ int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
- 	bdev_file->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT;
- 	if (bdev_nowait(bdev))
- 		bdev_file->f_mode |= FMODE_NOWAIT;
-+	if (mode & BLK_OPEN_RESTRICT_WRITES)
-+		bdev_file->f_mode |= FMODE_WRITE_RESTRICTED;
- 	bdev_file->f_mapping = bdev->bd_inode->i_mapping;
- 	bdev_file->f_wb_err = filemap_sample_wb_err(bdev_file->f_mapping);
- 	bdev_file->private_data = holder;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 00fc429b0af0..8dfd53b52744 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -121,6 +121,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- #define FMODE_PWRITE		((__force fmode_t)0x10)
- /* File is opened for execution with sys_execve / sys_uselib */
- #define FMODE_EXEC		((__force fmode_t)0x20)
-+/* File writes are restricted (block device specific) */
-+#define FMODE_WRITE_RESTRICTED  ((__force fmode_t)0x40)
- /* 32bit hashes as llseek() offset (for directories) */
- #define FMODE_32BITHASH         ((__force fmode_t)0x200)
- /* 64bit hashes as llseek() offset (for directories) */
--- 
-2.43.0
++               // XXX: Remove it later
++               VM_WARN_ON_FOLIO((new_order < mapping_min_order), folio);
+                gfp = current_gfp_context(mapping_gfp_mask(mapping) &
+                                                        GFP_RECLAIM_MASK);
 
+I am getting a random null-ptr deref when I run generic/176 multiple
+times with different blksizes. I still don't have a minimal reproducer 
+for this issue. Race condition during writeback:
+
+filemap_get_folios_tag+0x171/0x5c0:
+arch_atomic_read at arch/x86/include/asm/atomic.h:23
+(inlined by) raw_atomic_read at include/linux/atomic/atomic-arch-fallback.h:457
+(inlined by) raw_atomic_fetch_add_unless at include/linux/atomic/atomic-arch-fallback.h:2426
+(inlined by) raw_atomic_add_unless at include/linux/atomic/atomic-arch-fallback.h:2456
+(inlined by) atomic_add_unless at include/linux/atomic/atomic-instrumented.h:1518
+(inlined by) page_ref_add_unless at include/linux/page_ref.h:238
+(inlined by) folio_ref_add_unless at include/linux/page_ref.h:247
+(inlined by) folio_ref_try_add_rcu at include/linux/page_ref.h:280
+(inlined by) folio_try_get_rcu at include/linux/page_ref.h:313
+(inlined by) find_get_entry at mm/filemap.c:1984
+(inlined by) filemap_get_folios_tag at mm/filemap.c:2222
+
+
+
+[  537.863105] ==================================================================                                                                                                                                                                                                                                             
+[  537.863968] BUG: KASAN: null-ptr-deref in filemap_get_folios_tag+0x171/0x5c0                                                                                                                                                                                                                                               
+[  537.864581] Write of size 4 at addr 0000000000000036 by task kworker/u32:5/366                                                                                                                                                                                                                                             
+[  537.865123]                                                                                                                                                       
+[  537.865293] CPU: 6 PID: 366 Comm: kworker/u32:5 Not tainted 6.8.0-11739-g7d0c6e7b5a7d-dirty #795                                                                                                                                                                                                                           
+[  537.867201] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014                                                                                                                                                                                               
+[  537.868444] Workqueue: writeback wb_workfn (flush-254:32)                                                                                                   
+[  537.869055] Call Trace:                                                                                                                                     
+[  537.869341]  <TASK>                                                                                                                                         
+[  537.869569]  dump_stack_lvl+0x4f/0x70                                                                                                                       
+[  537.869938]  kasan_report+0xbd/0xf0                                                                                                                         
+[  537.870293]  ? filemap_get_folios_tag+0x171/0x5c0                                                                                                           
+[  537.870767]  ? filemap_get_folios_tag+0x171/0x5c0                                                                                                           
+[  537.871578]  kasan_check_range+0x101/0x1b0                                                                                                                  
+[  537.871893]  filemap_get_folios_tag+0x171/0x5c0                                                                                                                                                                                                                                                                            
+[  537.872269]  ? __pfx_filemap_get_folios_tag+0x10/0x10                                                                                                       
+[  537.872857]  ? __pfx___submit_bio+0x10/0x10                                                                                                                 
+[  537.873326]  ? mlock_drain_local+0x234/0x3f0                                                                                                                
+[  537.873938]  writeback_iter+0x59a/0xe00                                                                                                                     
+[  537.874477]  ? __pfx_iomap_do_writepage+0x10/0x10                                                                                                           
+[  537.874969]  write_cache_pages+0x7f/0x100                                                                                                                   
+[  537.875396]  ? __pfx_write_cache_pages+0x10/0x10                                                                                                            
+[  537.875892]  ? do_raw_spin_lock+0x12d/0x270                                                                                                                 
+[  537.876345]  ? __pfx_do_raw_spin_lock+0x10/0x10                                                                                                                                                                                                                                                                            
+[  537.876804]  iomap_writepages+0x88/0xf0                                                                                                                     
+[  537.877186]  xfs_vm_writepages+0x120/0x190                                                                                                                  
+[  537.877705]  ? __pfx_xfs_vm_writepages+0x10/0x10                                                                                                            
+[  537.878161]  ? lock_release+0x36f/0x670                                                                                                                                                                                                                                                                                    
+[  537.878521]  ? __wb_calc_thresh+0xe5/0x3b0                                                                                                                                                                                                                                                                                 
+[  537.878892]  ? __pfx_lock_release+0x10/0x10                                                                                                                 
+[  537.879308]  do_writepages+0x170/0x7a0                                                                                                                                                                                                                                                                                     
+[  537.879676]  ? __pfx_do_writepages+0x10/0x10                                                                                                                                                                                                                                                                               
+[  537.880182]  ? writeback_sb_inodes+0x312/0xe40                                                                                                                                                                                                                                                                             
+[  537.880689]  ? reacquire_held_locks+0x1f1/0x4a0                                                                                                                                                                                                                                                                            
+[  537.881193]  ? writeback_sb_inodes+0x312/0xe40                                                                                                                                                                                                                                                                             
+[  537.881665]  ? find_held_lock+0x2d/0x110                                                                                                                                                                                                                                                                                   
+[  537.882104]  ? lock_release+0x36f/0x670                                                                                                                                                                                                                                                                                    
+[  537.883344]  ? wbc_attach_and_unlock_inode+0x3b8/0x710                                                                                                                                                                                                                                                                     
+[  537.883853]  ? __pfx_lock_release+0x10/0x10                                                                                                                                                                                                                                                                                
+[  537.884229]  ? __pfx_lock_release+0x10/0x10                                                                                                                                                                                                                                                                                
+[  537.884604]  ? lock_acquire+0x138/0x2f0                                                                                                                                                                                                                                                                                    
+[  537.884952]  __writeback_single_inode+0xd4/0xa60                                                                                                            
+[  537.885369]  writeback_sb_inodes+0x4cf/0xe40                                                                                                                
+[  537.885760]  ? __pfx_writeback_sb_inodes+0x10/0x10                                                                                                                                                                                                                                                                         
+[  537.886208]  ? __pfx_move_expired_inodes+0x10/0x10                                                                                                          
+[  537.886640]  __writeback_inodes_wb+0xb4/0x200                                                                                                               
+[  537.887037]  wb_writeback+0x55b/0x7c0                                                                                                                       
+[  537.887372]  ? __pfx_wb_writeback+0x10/0x10                                                                                                                                                                                                                                                                                
+[  537.887750]  ? lock_acquire+0x138/0x2f0                                                                                                                     
+[  537.888094]  ? __pfx_register_lock_class+0x10/0x10                                                                                                          
+[  537.888521]  wb_workfn+0x648/0xbb0                                                                                                                          
+[  537.888835]  ? __pfx_wb_workfn+0x10/0x10                                                                                                                                                                                                                                                                                   
+[  537.889192]  ? lock_acquire+0x128/0x2f0                                                                                                                     
+[  537.889539]  ? lock_acquire+0x138/0x2f0                                                                                                                     
+[  537.889890]  process_one_work+0x7ff/0x1710                                                                                                                                                                                                                                                                                 
+[  537.890272]  ? __pfx_process_one_work+0x10/0x10                                                                                                             
+[  537.890685]  ? assign_work+0x16c/0x240                                                                                                                                                                                                                                                                                     
+[  537.891026]  worker_thread+0x6e8/0x12b0                                                                                                                     
+[  537.891381]  ? __pfx_worker_thread+0x10/0x10                                                                                                                
+[  537.891768]  kthread+0x2ad/0x380                                                                                                                                                                                                                                                                                           
+[  537.892064]  ? __pfx_kthread+0x10/0x10                                                                                                                                                                                                                                                                                     
+[  537.892403]  ret_from_fork+0x2d/0x70                                                                                                                                                                                                                                                                                       
+[  537.892728]  ? __pfx_kthread+0x10/0x10                                                                                                                                                                                                                                                                                     
+[  537.893068]  ret_from_fork_asm+0x1a/0x30                                                                                                                                                                                                                                                                                   
+[  537.893434]  </TASK>
 
