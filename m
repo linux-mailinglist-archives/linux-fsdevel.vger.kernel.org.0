@@ -1,201 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-15354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A0D88C7A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 16:43:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9811688C812
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 16:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F58B26803
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 15:43:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C99DE1C2E17A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 15:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0D313D535;
-	Tue, 26 Mar 2024 15:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E235713C908;
+	Tue, 26 Mar 2024 15:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyKA41Y/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nr3YSTrf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CE613CA98;
-	Tue, 26 Mar 2024 15:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E2AFC0E;
+	Tue, 26 Mar 2024 15:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711467600; cv=none; b=LHyID/sSExbpmKVrXMMbveQoakX4DGhoV61/d8o/Uz2DSbdjtJvCEaPfgsZHTOeRBFujZqHmM7jBkt4Zc5j9qsll120Fa1dWLvMA+iryg8r+lya7H4rsEfz7XQqx4iMOjLiVOyk4wHEHB2Zwy5YnhZylfkL80qfX4RFq6FGB5n0=
+	t=1711467995; cv=none; b=N/FuM6vt/zsXXFFSWS1vAUIwMToVS+wth2DTelLNSeLEbwyxSQfzBV8jij6I+hkU0ZvB4zn7F4KfiuUe4tq4zURHMXQjTp76ZI/piy4DdKvzNSOJD7KyIeqauzRTYsyrWBVX7h0saJlA9o26T5XPuxwHgyxGjO0go+9Db1+0daw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711467600; c=relaxed/simple;
-	bh=ztmkPAB0U1ULXqxkAJmpV7w+Ysid9k8KKpLkRxinnKg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k4SjJzMzURlofj6p5aT3RHyl2YauItKHy+EjvHDPz2o+ula0vZo0ejVqcN4iU9TagpIPZXOENPWITnjI3op2/Z5gh7HmjV9OxbFvDWAWG+xLQAWZ/7wuCn4UdmUOLGgHfbUuilOpCJQEvDfZ+bPxbO0DuY8xMy8KQTNI32bxXZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyKA41Y/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9697C433F1;
-	Tue, 26 Mar 2024 15:39:55 +0000 (UTC)
+	s=arc-20240116; t=1711467995; c=relaxed/simple;
+	bh=GNKUnehNUWWq14j2h7gVQLCTnR8U3oHCcrr43xdM+qw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XEOnhPubYIusPy9asaWY6cN/Gbm6uaZOcefA/OagfOY7f6HAdJUX6FAiT1UpiD7RT8FOYzwrN2BYpPhub+3jeKTuuVVxSirFlMYBi1j2ZR3z3aYT9ZWsg5GkJcXpwpJgHOvWtAYyRUrWBGmJMXDJ/GemHWBCOkgrw0LnZwtLXW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nr3YSTrf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39534C433A6;
+	Tue, 26 Mar 2024 15:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711467600;
-	bh=ztmkPAB0U1ULXqxkAJmpV7w+Ysid9k8KKpLkRxinnKg=;
+	s=k20201202; t=1711467994;
+	bh=GNKUnehNUWWq14j2h7gVQLCTnR8U3oHCcrr43xdM+qw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qyKA41Y/u8Cszywiz7OK3FbbmiKGQ9C4dXlmSowzO0eODtV3XQMYhndL6LqSSCExc
-	 gSr5KriK7AK/eduOXCzUuM9/M/JTph42YYV7yXqy/Ep5e4C8RdOMDwEY3NB+TWhosG
-	 ynhFk3x5fLusreKA62Lb5K8LI+Hrn02SMQKKQERtg/F9T4BStRFCcanXEuZXn7koxg
-	 lsnbct8Q5TAF/wUov8x/pcO/9j1j/+eoZC8z34hhlBPd/+k36MCtc3hIUbdc3qsQoD
-	 O7ZTB0GZ/L4AyBehCj5ri1j5aP5jWLIf/OTq2a320InuObeAqCv/u7gXamunek3p0/
-	 fkdWsgil6eNBQ==
-From: SeongJae Park <sj@kernel.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	hannes@cmpxchg.org,
-	roman.gushchin@linux.dev,
-	mgorman@suse.de,
-	dave@stgolabs.net,
-	willy@infradead.org,
-	liam.howlett@oracle.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	corbet@lwn.net,
-	void@manifault.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	peterx@redhat.com,
-	david@redhat.com,
-	axboe@kernel.dk,
-	mcgrof@kernel.org,
-	masahiroy@kernel.org,
-	nathan@kernel.org,
-	dennis@kernel.org,
-	jhubbard@nvidia.com,
-	tj@kernel.org,
-	muchun.song@linux.dev,
-	rppt@kernel.org,
-	paulmck@kernel.org,
-	pasha.tatashin@soleen.com,
-	yosryahmed@google.com,
-	yuzhao@google.com,
-	dhowells@redhat.com,
-	hughd@google.com,
-	andreyknvl@gmail.com,
-	keescook@chromium.org,
-	ndesaulniers@google.com,
-	vvvvvv@google.com,
-	gregkh@linuxfoundation.org,
-	ebiggers@google.com,
-	ytcoode@gmail.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	bristot@redhat.com,
-	vschneid@redhat.com,
-	cl@linux.com,
-	penberg@kernel.org,
-	iamjoonsoo.kim@lge.com,
-	42.hyeyoo@gmail.com,
-	glider@google.com,
-	elver@google.com,
-	dvyukov@google.com,
-	songmuchun@bytedance.com,
-	jbaron@akamai.com,
-	aliceryhl@google.com,
-	rientjes@google.com,
-	minchan@google.com,
-	kaleshsingh@google.com,
-	kernel-team@android.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-arch@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-modules@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH v6 30/37] mm: vmalloc: Enable memory allocation profiling
-Date: Tue, 26 Mar 2024 08:39:54 -0700
-Message-Id: <20240326153954.89199-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <CAJuCfpGwLRBWKegYq5XY++fCPWO4mpzrhifw9QGvzJ5Uf9S4jw@mail.gmail.com>
-References: 
+	b=Nr3YSTrfH5duhoQKB+iYXcVk2dXD9crtjbBjthK2U/f3FNA3Mjyf35AXnoUemV7j8
+	 zKq/NTTOQI5kE23FU+wH8SUYOCVOFqf7Wgyc6gErzGzKd46DBeKZUqWiJ03ryiOsbc
+	 OUnjG/Zsq7LRkC3xxGEHGySJfqWNuQKYOm48Njs+QMj6MBGgdfQI9TSm7Tpv/F4/US
+	 iixX2aAiTg0QVNOqCz0ZFIfZoJgpLd2zq/aXe10DDRunZKrzcSMsXUKTUlmwBKaHT5
+	 E9BRx4Et0Gr2HmXm5KLOucCGgWhcByOcYhuzG4QK5P/ZUaR76LKoNJNqkcaL5ZzJ4B
+	 R2zAjvudRJQNQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] block: handle BLK_OPEN_RESTRICT_WRITES correctly
+Date: Tue, 26 Mar 2024 16:46:19 +0100
+Message-ID: <20240326-lehrkraft-messwerte-e3895039e63b@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240326133107.bnjx2rjf5l6yijgz@quack3>
+References: <20240326133107.bnjx2rjf5l6yijgz@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3888; i=brauner@kernel.org; h=from:subject:message-id; bh=GNKUnehNUWWq14j2h7gVQLCTnR8U3oHCcrr43xdM+qw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQxvT2fGMYok8m4XsUyrNGyq1NAWl/yq375EsvO7ndHf QoyP/p0lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATGSOMMN/F7v4DFfZms5r/daZ z3qcjgqU3Qx/IrNu1qot8fe5J8toMvwPzH92Loj16qOovCNyau2iS6Zlnffie/PmtblV2nXVrCk MAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 26 Mar 2024 00:51:21 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+Last kernel release we introduce CONFIG_BLK_DEV_WRITE_MOUNTED. By
+default this option is set. When it is set the long-standing behavior
+of being able to write to mounted block devices is enabled.
 
-> On Mon, Mar 25, 2024 at 11:20 AM SeongJae Park <sj@kernel.org> wrote:
-> >
-> > On Mon, 25 Mar 2024 10:59:01 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
-> >
-> > > On Mon, Mar 25, 2024 at 10:49 AM SeongJae Park <sj@kernel.org> wrote:
-> > > >
-> > > > On Mon, 25 Mar 2024 14:56:01 +0000 Suren Baghdasaryan <surenb@google.com> wrote:
-> > > >
-> > > > > On Sat, Mar 23, 2024 at 6:05 PM SeongJae Park <sj@kernel.org> wrote:
-> > > > > >
-> > > > > > Hi Suren and Kent,
-> > > > > >
-> > > > > > On Thu, 21 Mar 2024 09:36:52 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
-> > > > > >
-> > > > > > > From: Kent Overstreet <kent.overstreet@linux.dev>
-> > > > > > >
-> > > > > > > This wrapps all external vmalloc allocation functions with the
-> > > > > > > alloc_hooks() wrapper, and switches internal allocations to _noprof
-> > > > > > > variants where appropriate, for the new memory allocation profiling
-> > > > > > > feature.
-> > > > > >
-> > > > > > I just noticed latest mm-unstable fails running kunit on my machine as below.
-> > > > > > 'git-bisect' says this is the first commit of the failure.
-> > > > > >
-> > > > > >     $ ./tools/testing/kunit/kunit.py run --build_dir ../kunit.out/
-> > > > > >     [10:59:53] Configuring KUnit Kernel ...
-> > > > > >     [10:59:53] Building KUnit Kernel ...
-> > > > > >     Populating config with:
-> > > > > >     $ make ARCH=um O=../kunit.out/ olddefconfig
-> > > > > >     Building with:
-> > > > > >     $ make ARCH=um O=../kunit.out/ --jobs=36
-> > > > > >     ERROR:root:/usr/bin/ld: arch/um/os-Linux/main.o: in function `__wrap_malloc':
-> > > > > >     main.c:(.text+0x10b): undefined reference to `vmalloc'
-> > > > > >     collect2: error: ld returned 1 exit status
-> > > > > >
-> > > > > > Haven't looked into the code yet, but reporting first.  May I ask your idea?
-> > > > >
-> > > > > Hi SeongJae,
-> > > > > Looks like we missed adding "#include <linux/vmalloc.h>" inside
-> > > > > arch/um/os-Linux/main.c in this patch:
-> > > > > https://lore.kernel.org/all/20240321163705.3067592-2-surenb@google.com/.
-> > > > > I'll be posing fixes for all 0-day issues found over the weekend and
-> > > > > will include a fix for this. In the meantime, to work around it you
-> > > > > can add that include yourself. Please let me know if the issue still
-> > > > > persists after doing that.
-> > > >
-> > > > Thank you, Suren.  The change made the error message disappears.  However, it
-> > > > introduced another one.
-> > >
-> > > Ok, let me investigate and I'll try to get a fix for it today evening.
-> >
-> > Thank you for this kind reply.  Nonetheless, this is not blocking some real
-> > thing from me.  So, no rush.  Plese take your time :)
-> 
-> I posted a fix here:
-> https://lore.kernel.org/all/20240326073750.726636-1-surenb@google.com/
-> Please let me know if this resolves the issue.
+But in order to guard against unintended corruption by writing to the
+block device buffer cache CONFIG_BLK_DEV_WRITE_MOUNTED can be turned
+off. In that case it isn't possible to write to mounted block devices
+anymore.
 
-I confirmed it is fixing the issue, and replied to the patch with my Tested-by:
-tag.  Thank you for this kind fix, Suren.
+A filesystem may open its block devices with BLK_OPEN_RESTRICT_WRITES
+which disallows concurrent BLK_OPEN_WRITE access. When we still had the
+bdev handle around we could recognize BLK_OPEN_RESTRICT_WRITES because
+the mode was passed around. Since we managed to get rid of the bdev
+handle we changed that logic to recognize BLK_OPEN_RESTRICT_WRITES based
+on whether the file was opened writable and writes to that block device
+are blocked. That logic doesn't work because we do allow
+BLK_OPEN_RESTRICT_WRITES to be specified without BLK_OPEN_WRITE.
 
+Fix the detection logic and use one of the FMODE_* bits we freed up a
+while ago. We could've also abused O_EXCL as an indicator that
+BLK_OPEN_RESTRICT_WRITES has been requested. For userspace open paths
+O_EXCL will never be retained but for internal opens where we open files
+that are never installed into a file descriptor table this is fine. But
+it would be a gamble that this doesn't cause bugs. Note that
+BLK_OPEN_RESTRICT_WRITES is an internal only flag that cannot directly
+be raised by userspace. It is implicitly raised during mounting.
 
-Thanks,
-SJ
+Passes xftests and blktests with CONFIG_BLK_DEV_WRITE_MOUNTED set and
+unset.
 
-[...]
+Link: https://lore.kernel.org/r/ZfyyEwu9Uq5Pgb94@casper.infradead.org
+Link: https://lore.kernel.org/r/20240323-zielbereich-mittragen-6fdf14876c3e@brauner
+Fixes: 321de651fa56 ("block: don't rely on BLK_OPEN_RESTRICT_WRITES when yielding write access")
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ block/bdev.c       | 14 +++++++-------
+ include/linux/fs.h |  2 ++
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/block/bdev.c b/block/bdev.c
+index 070890667563..6955693e4bcd 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -814,13 +814,11 @@ static void bdev_yield_write_access(struct file *bdev_file)
+ 		return;
+ 
+ 	bdev = file_bdev(bdev_file);
+-	/* Yield exclusive or shared write access. */
+-	if (bdev_file->f_mode & FMODE_WRITE) {
+-		if (bdev_writes_blocked(bdev))
+-			bdev_unblock_writes(bdev);
+-		else
+-			bdev->bd_writers--;
+-	}
++
++	if (bdev_file->f_mode & FMODE_WRITE_RESTRICTED)
++		bdev_unblock_writes(bdev);
++	else if (bdev_file->f_mode & FMODE_WRITE)
++		bdev->bd_writers--;
+ }
+ 
+ /**
+@@ -900,6 +898,8 @@ int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
+ 	bdev_file->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT;
+ 	if (bdev_nowait(bdev))
+ 		bdev_file->f_mode |= FMODE_NOWAIT;
++	if (mode & BLK_OPEN_RESTRICT_WRITES)
++		bdev_file->f_mode |= FMODE_WRITE_RESTRICTED;
+ 	bdev_file->f_mapping = bdev->bd_inode->i_mapping;
+ 	bdev_file->f_wb_err = filemap_sample_wb_err(bdev_file->f_mapping);
+ 	bdev_file->private_data = holder;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 00fc429b0af0..8dfd53b52744 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -121,6 +121,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define FMODE_PWRITE		((__force fmode_t)0x10)
+ /* File is opened for execution with sys_execve / sys_uselib */
+ #define FMODE_EXEC		((__force fmode_t)0x20)
++/* File writes are restricted (block device specific) */
++#define FMODE_WRITE_RESTRICTED  ((__force fmode_t)0x40)
+ /* 32bit hashes as llseek() offset (for directories) */
+ #define FMODE_32BITHASH         ((__force fmode_t)0x200)
+ /* 64bit hashes as llseek() offset (for directories) */
+-- 
+2.43.0
+
 
