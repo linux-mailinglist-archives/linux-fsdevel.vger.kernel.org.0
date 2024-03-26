@@ -1,219 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-15290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D0888BCF1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 09:58:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A441B88BE14
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 10:41:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBD35B21A5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 08:58:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7871B22D45
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 09:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBED61B962;
-	Tue, 26 Mar 2024 08:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9674A6BFDE;
+	Tue, 26 Mar 2024 09:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MGNb0moR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jg9rN1Go";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DxHO4eZX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="j1QiegTh"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="f9jagnBp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qyckHF23"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558C418B04;
-	Tue, 26 Mar 2024 08:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51C04CB3D;
+	Tue, 26 Mar 2024 09:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711443483; cv=none; b=bFo5bMHs4zQ3NzZo2lVcgHkEwdiDuBizbtwIUW0XdMKWlnnq/Uc80GLz2YGWu0XFuJiWT3izlb7/kki0lNiwc34h4ZuwmLHzduWPEZAUVwbv27cIZNm9q2ixBw9fkPRX/QYLBECtkgGva/lQzNeRzZ1rQUOb+ZXIWhW8E4sI+LE=
+	t=1711445626; cv=none; b=qxfN+tmtDTLFBVVlrdkHZfN9ZnBbs56AcwfDbO/QxIvSxJb0Hpnwnztr0elialwF1ThpYX8DIJYfEtk/XzrabOV1XS0ituVHtTHeeTPXtCp5BjlPabgxG9a6oaws0RGc02CkZkfztWnvJtJCHyjd4rlXJLe1l4gYv6G8RDnZH2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711443483; c=relaxed/simple;
-	bh=XFozoUL6QcyIGXvMLCIL84POaBLp8oklHsXjyBmeZK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bxL/vtJw0s4ePWUzJb2cQ1HoTEeJje65p1imx4/xojo/Gjyn6WluZ/Mbi1HQg23yND2i+E7ScKZ9w4zkFwxioMK3DdN9+DnIi39DqQe+2kGN2vwrn3qALSEBNr44uh8LAklZ1ITAjzp5WAmZJaz6qjviq7VzVOtwYICgrqNkc3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MGNb0moR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jg9rN1Go; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DxHO4eZX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=j1QiegTh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 00A565D373;
-	Tue, 26 Mar 2024 08:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711443479; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HJ4vh1O7+H5UDwAkTuEQsybcFx3tg2uZhEm9JonLz3Y=;
-	b=MGNb0moRA53dW6wUQ2O20+FMhlKGOX7mELBApC3UVSwNaErXcil5mNl/xl32/tj+CaRGpc
-	Xvfer1Kn5C5CXVdM+Fattj5d2hDohzEeav/NyK3NbNd18z2cCMYCh7Ff805uHKj6pXJVhf
-	zfilAsLDhY0t73mc6xERs+7CGCJ1hGA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711443479;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HJ4vh1O7+H5UDwAkTuEQsybcFx3tg2uZhEm9JonLz3Y=;
-	b=Jg9rN1GovWLt8oQk0a6YrNgWJUPm+WBZTHAayYnosZ+EtU8vMJa6kiVtbNPXyXkPU+gzju
-	AaqJ0p3nY4AwQNCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711443478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HJ4vh1O7+H5UDwAkTuEQsybcFx3tg2uZhEm9JonLz3Y=;
-	b=DxHO4eZXm8E/qPp37cl0l0IzKSgS7IeKCI105UsLFseKxOF/b80Vs7eDMaZfvEXN6FLRC2
-	0QZJsEsYCJILQi2FZC7J1ILXeWNYyenmyG12+J7MbbuYt6JPgJOAbBdU2GfDl3IILO5LG3
-	xdkaXXTyujLwVkAIDH2u+Q6ABSa+xrE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711443478;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HJ4vh1O7+H5UDwAkTuEQsybcFx3tg2uZhEm9JonLz3Y=;
-	b=j1QiegTh9G0rmPZx3qgi/w9TVuCocHvuAmMl99dKQnhVrzwQAPHTdqhdi3x8JDecAChNq8
-	RYy2S4d0oBwJ/qBw==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id EA83613215;
-	Tue, 26 Mar 2024 08:57:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id SxQ5ORWOAmZCfQAAn2gu4w
-	(envelope-from <jack@suse.cz>); Tue, 26 Mar 2024 08:57:57 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 94944A0812; Tue, 26 Mar 2024 09:57:53 +0100 (CET)
-Date: Tue, 26 Mar 2024 09:57:53 +0100
-From: Jan Kara <jack@suse.cz>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] fs: Annotate struct file_handle with
- __counted_by() and use struct_size()
-Message-ID: <20240326085753.dh6fj7skdzddkdva@quack3>
-References: <ZgImCXTdGDTeBvSS@neat>
+	s=arc-20240116; t=1711445626; c=relaxed/simple;
+	bh=PwcZCILE8KnaKmeT4xNMUoMd6pvbcIPPx+HA7NUhan8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=e674N0Kp6ippoohKk4MA9C6HD9L+EF7pz84+QSk9HFmlc+Sd2ILOr3OLWie9xLciWgapsmjfBK1Yn3OcTIvKQEnf4trBRvp1+FRS8E/A05IHTA1mLHQHWrw5PXplOhCZKu6LfJswejW5LQTR9i3AN2cQRWk6yssXUEemKWoLYiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=f9jagnBp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qyckHF23; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id B7A8013800DF;
+	Tue, 26 Mar 2024 05:33:43 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 26 Mar 2024 05:33:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1711445623;
+	 x=1711532023; bh=0Vu+lialpR+cOIZiodseyUQOl33fRqWzJfGVw61czq4=; b=
+	f9jagnBpYWdPM8wbST8rhgSOKJc0fstUoLu6JeV7dNfGt6jt51GeeAc9h0xPVqzb
+	+Coqe8nxrTb6EWu+InDELoodMCUVJZV/Jw8abIpefgVVlph7kkHAfpGG2n4DmJeI
+	hz4dfMyRsyC/EbYSb1Nmjy6ZBNFcXEqb20o4RPRoKFMGN17gOEsb/2gIWwPh3LKa
+	FHoFAn7ls4FhMT1GXG/nnWCEB4mbNMZn+CHIeRyHfF1lV3JTqkNff7O1sgIt7Pvg
+	s314AgYjpRjbkOG2hkhSNZ6sowq3o8LdYr6g7747m9ovQ3BDVnH1rFFAkM/wkqpI
+	e/GE5fYSsNmVb0KWRau7Rg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1711445623; x=
+	1711532023; bh=0Vu+lialpR+cOIZiodseyUQOl33fRqWzJfGVw61czq4=; b=q
+	yckHF23mIufA4GFuYwTN1tSja2Y23YPwHzxwVGBuzA9XxqCOmsS+tSJY7dUTHGm4
+	IRtocxs/4DTxERgxHkjVSr8EOdO5nUSAUudfVGMAT0YvmOFzCH1u4UMxvMDmxc7K
+	h0MOV4DSmL9JR/lNMkXlbK6dyJx6DE1+EA194wMHFdUTS9GZCzgg7UVe3AT4Bomo
+	4Wk3YCYTPTKo8WuV2qoWMSE5BcxheqxCjDoNILhvf6wEpNncun76D6hdMbwT+eAY
+	QVJww+e2/S2UfHnND8W4+1ONfnAN/tdraz6HN6pgLHJTtfLE1bZc26+QPGb9Qoma
+	ZWoK8l5rGKi7a4iuVCtOg==
+X-ME-Sender: <xms:d5YCZnQfdJfXEGZfV4n9zzDGl7kHHN_Uln45qh_yIFYkPPHeV5vFAg>
+    <xme:d5YCZoy4ma9yZTKH9qYjH9TvwE1r3O4faM6Ds-_r5c4HlEp19q8mXvtc7bb4Qy2jT
+    7z-hnoK-pTp0uxUiCU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddufedgtdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:d5YCZs2zsWBm6fS7anQWTyZk09rcdLHgINuFvAGFQUd9wWe_z2NyBA>
+    <xmx:d5YCZnAoE5-fArk4DTWLhzicioQPbyWaiES-V3gwh5eElPCKPlQE_Q>
+    <xmx:d5YCZgicAJXr2mOB3lY6de6B5JrzvKIcnJ20Af4eDaUNwdPn0GwExQ>
+    <xmx:d5YCZro7uEWVX8RGali4yKg_uA9f1HkkKyR51uGsPLfWj8xGvc9ZvA>
+    <xmx:d5YCZhZ6emVrmu1cFXc8UgqxX7JjgASKH-8ga9BOk_wvPFmV_Oh98A>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7B217B6008D; Tue, 26 Mar 2024 05:33:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-328-gc998c829b7-fm-20240325.002-gc998c829
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZgImCXTdGDTeBvSS@neat>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,vger.kernel.org];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Flag: NO
+Message-Id: <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
+In-Reply-To: <20240326.pie9eiF2Weis@digikod.net>
+References: <20240325134004.4074874-1-gnoack@google.com>
+ <20240325134004.4074874-2-gnoack@google.com>
+ <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
+ <20240326.pie9eiF2Weis@digikod.net>
+Date: Tue, 26 Mar 2024 10:33:23 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, "Jeff Xu" <jeffxu@google.com>,
+ "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
+ "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
+ "Paul Moore" <paul@paul-moore.com>,
+ "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
+ "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+ "Christian Brauner" <brauner@kernel.org>
+Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for IOCTL
+ hooks
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 25-03-24 19:34:01, Gustavo A. R. Silva wrote:
-> Prepare for the coming implementation by GCC and Clang of the __counted_by
-> attribute. Flexible array members annotated with __counted_by can have
-> their accesses bounds-checked at run-time via CONFIG_UBSAN_BOUNDS (for
-> array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-> functions).
-> 
-> While there, use struct_size() helper, instead of the open-coded
-> version.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+On Tue, Mar 26, 2024, at 09:32, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Mon, Mar 25, 2024 at 04:19:25PM +0100, Arnd Bergmann wrote:
+>> On Mon, Mar 25, 2024, at 14:39, G=C3=BCnther Noack wrote:
+>> > If security_file_ioctl or security_file_ioctl_compat return
+>> > ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOC=
+TL
+>> > command, but only as long as the IOCTL command is implemented direc=
+tly
+>> > in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
+>> > f_ops->compat_ioctl operations, which are defined by the given file.
+>> >
+>> > The possible return values for security_file_ioctl and
+>> > security_file_ioctl_compat are now:
+>> >
+>> >  * 0 - to permit the IOCTL
+>> >  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to f=
+all
+>> >    back to the file implementation.
+>> >  * any other error - to forbid the IOCTL and return that error
+>> >
+>> > This is an alternative to the previously discussed approaches [1] a=
+nd [2],
+>> > and implements the proposal from [3].
+>>=20
+>> Thanks for trying it out, I think this is a good solution
+>> and I like how the code turned out.
+>
+> This is indeed a simpler solution but unfortunately this doesn't fit
+> well with the requirements for an access control, especially when we
+> need to log denied accesses.  Indeed, with this approach, the LSM (or
+> any other security mechanism) that returns ENOFILEOPS cannot know for
+> sure if the related request will allowed or not, and then it cannot
+> create reliable logs (unlike with EACCES or EPERM).
 
-Looks good. Feel free to add:
+Where does the requirement come from specifically, i.e.
+who is the consumer of that log?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Even if the log doesn't tell you directly whether the ioctl
+was ultimately denied, I would think logging the ENOFILEOPS
+along with the command number is enough to reconstruct what
+actually happened from reading the log later.
 
-								Honza
-
-> ---
->  fs/fhandle.c       | 8 ++++----
->  include/linux/fs.h | 2 +-
->  2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index 57a12614addf..53ed54711cd2 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -36,7 +36,7 @@ static long do_sys_name_to_handle(const struct path *path,
->  	if (f_handle.handle_bytes > MAX_HANDLE_SZ)
->  		return -EINVAL;
->  
-> -	handle = kzalloc(sizeof(struct file_handle) + f_handle.handle_bytes,
-> +	handle = kzalloc(struct_size(handle, f_handle, f_handle.handle_bytes),
->  			 GFP_KERNEL);
->  	if (!handle)
->  		return -ENOMEM;
-> @@ -71,7 +71,7 @@ static long do_sys_name_to_handle(const struct path *path,
->  	/* copy the mount id */
->  	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
->  	    copy_to_user(ufh, handle,
-> -			 sizeof(struct file_handle) + handle_bytes))
-> +			 struct_size(handle, f_handle, handle_bytes)))
->  		retval = -EFAULT;
->  	kfree(handle);
->  	return retval;
-> @@ -192,7 +192,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
->  		retval = -EINVAL;
->  		goto out_err;
->  	}
-> -	handle = kmalloc(sizeof(struct file_handle) + f_handle.handle_bytes,
-> +	handle = kmalloc(struct_size(handle, f_handle, f_handle.handle_bytes),
->  			 GFP_KERNEL);
->  	if (!handle) {
->  		retval = -ENOMEM;
-> @@ -202,7 +202,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
->  	*handle = f_handle;
->  	if (copy_from_user(&handle->f_handle,
->  			   &ufh->f_handle,
-> -			   f_handle.handle_bytes)) {
-> +			   struct_size(ufh, f_handle, f_handle.handle_bytes))) {
->  		retval = -EFAULT;
->  		goto out_handle;
->  	}
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 034f0c918eea..1540e28d10d7 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1033,7 +1033,7 @@ struct file_handle {
->  	__u32 handle_bytes;
->  	int handle_type;
->  	/* file identifier */
-> -	unsigned char f_handle[];
-> +	unsigned char f_handle[] __counted_by(handle_bytes);
->  };
->  
->  static inline struct file *get_file(struct file *f)
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+     Arnd
 
