@@ -1,224 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-15359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A051488C96D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 17:33:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F49488C985
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 17:39:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BCE2E33E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 16:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0C701C62BE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Mar 2024 16:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5311CD2E;
-	Tue, 26 Mar 2024 16:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA131798A;
+	Tue, 26 Mar 2024 16:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="YG/rrmZS"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="maODXszE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2098.outbound.protection.outlook.com [40.107.243.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E0D1C6B0;
-	Tue, 26 Mar 2024 16:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711470794; cv=none; b=n7j9EOtiEvtgN3EDVHV0hlg5M2f6F0YifWtGiirosQ3qPBTvFyqABDFnF5q5bCDN2VRJuUTCDO9Wg5We/dz+p5lVG0ZPLsmPxXkB0IptrKC7Q4xaGu944GcyCb2ZjTkhIO1wmBfm3V057nH+eMBBgIrCyMqRKmPCXwmS3QjW48g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711470794; c=relaxed/simple;
-	bh=b6+z+ErMJZ6d/LvPwD2TtjcfY1+d2dVNtImvoKvEkcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F/4IshTBmX6t2A6G6zifpov4OQAMSL73UxjeW0Yz6gXG+lH+50c2oe+QQiWBem35J2KXHLsGgt4z2E2Z9oEIX1br5f7anJa8fyuR5Twj6eWfFLL8oehA5hRv/xEznWua6v8TmpCqFthyvkdiYMD1n4IRg4ykXLHraeFCzEjDmKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=YG/rrmZS; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4V3wMk65pcz9sS4;
-	Tue, 26 Mar 2024 17:33:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1711470786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3moU2wlvHsr8+p9ny8JT8xaCQs7lbw0goaeSoNHDbDc=;
-	b=YG/rrmZS5RDXubydtX68X+RaWK/eokcLFx8xmRnde3361DFaGekau5YHR1Fi0jFuv1TU2K
-	IxNElpVIEPCddV8SOUtdRHe8uazMsQLkiP3vP5EVBSOw4CH8hCGTaYOEuYe47ZBo67zIGC
-	uId8BkyuZYZ79+v4C5NL2iViEaj9u7n2kzI+zDXf+jfPharGpymhh6LSXkI2DNYjKAwC70
-	0nzI2WZBoAFFNl+1A2WDU3Zx/59oXxsndeEV0UVfbTIhHkDhw/vGXfu+fCp9oGrIg//oDO
-	R7v6sZcSaWxX+Q9Bc/h7jbAIfM85ToFgR8x+30XVQiDhJPSgBehcvkYfhcR2Pg==
-Message-ID: <c0c777d9-8393-47f0-b5c3-1617c3a7b3ba@pankajraghav.com>
-Date: Tue, 26 Mar 2024 17:33:00 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4256F4C65;
+	Tue, 26 Mar 2024 16:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711471133; cv=fail; b=BHB3sxFlN9BBcxKLvGGjeLwWpl3jRr6NFtGhdSMJ4bbAYLGs+ay1f5QoW0w6RwR7DzxNOf0uhnOLzJYRePlK783bP7pydjXGzQUd0cCpMY09bBa5E+1hlApgsWar3Ow2GG/gGIqpoQUePDzrG8bq6wgQ2AuA837loDK8Atg0H2Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711471133; c=relaxed/simple;
+	bh=9GI/2QwL1QF4BlMAInPTCBmRPTzr0T+4LFR1VP9RPGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ds5Y6/GIHX/wsNfHNrvMCQxq/NxxEYhKQBgUo6JZ20KIOhFfZB1l84vqm7kVMapD+zlzS4HSmeCLlt6BHJ0TDrNPZCOorc1KBfn2eTfZUQR5oMo+BiVh2X9OGLQS2frf0GupNymiOicNhQKf+3SQarFtKt3WmyHzgIvOBEAelUM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=maODXszE; arc=fail smtp.client-ip=40.107.243.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=e6cRr45iDAUc4ZWA8BW/T/LWPW/5l0TirpLxyPXRj5gGgo8Pc+5T8D8GreEO4QeJF476g12hO7unYWdSBByZWd3fieU+EUe6oDcuomS0JHo1RIzsg16FS3BFen4Fb+cObo1bqnZt2kkUQwxkS0JSohmzYpvthlgI+4kJ9FmGdl+fEiyQqQaKknXv76LCLjYvrk4QqNEtIie6pG8qFgPghIZPzJmFVPsuJTVYWVWl/GNlR9q364Ly148for4/b/J/Sh0LeMDvz3fzWK8Ed64kwwEaYIOl4zwyD5Wxz0iRihcs3txVrW1xm2H2zIuA9TuGrfyyo4cD3ifQHvMgz+BNzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ArU877++NHriwCkgospQwj7hObMjfQ/GxS0q0Cwr25Y=;
+ b=h7QHiBRT0I6EUurzhmc/5X+ehG9nl21ub8aUoOutY+Xx8b4gBMTWpdyltrLYkAYstSqUivXEGeK1drWFaQYmyurZHEkqlG1P9JOle7Z7gD5flhkV5Sc1MDSzHArdWs3hFdrBPM1w+cx7O/vA9SnIqmHTwnncclHfVvNb5KJox7Fl3PAv1qmunkqyzHW/+GIF8urh9MJjisrNq8r+WvrGFvTKa8CPp96DoEQjKD1q7QTSAsMe90Chl2+4pYc70QSVw6yKRPaItOX9tISsR3k2LIo+1PeL1nllVB5EnYV3LB0Eqg2eUQUKWE8r+5ysmxYu35KTgRy39NAW6BBlgvLxsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ArU877++NHriwCkgospQwj7hObMjfQ/GxS0q0Cwr25Y=;
+ b=maODXszEtoPRk8SsiorA77nyEEbUVUocBhDfRQE/OBqI6My3lMJPgDxE8Z/Cg1JymJYLvUMwYCXfAJZHGoAEysrybR/aSmZTwqSqBj8d3eUzMrvhEs3WwiioP9G6t880w0dTiDJvIH3P++G3buy8bNXlm4bjG/nO92nZTGS8oSjbNawS9nsu60zD+fPl3vC6epJVQoi9BjG4Hp8wfF0Yw9Ju3mDS5AvoBX3tzTlofzuXs2YqZIrHTIyYe+VK1CNceo+bhHyK/J0YsBLl6yYbnW2PHP/RpPArMaV9s0Js3nmZQ+o6D/qXMOOnsUAY7zhb5q1cEyv5Ky2zVOtVDyt2rQ==
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
+ MW4PR12MB5667.namprd12.prod.outlook.com (2603:10b6:303:18a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.31; Tue, 26 Mar
+ 2024 16:38:41 +0000
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::dc5c:2cf1:d5f5:9753]) by DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::dc5c:2cf1:d5f5:9753%6]) with mapi id 15.20.7409.031; Tue, 26 Mar 2024
+ 16:38:41 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Pankaj Raghav <kernel@pankajraghav.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, gost.dev@samsung.com, chandan.babu@oracle.com,
+ hare@suse.de, mcgrof@kernel.org, djwong@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, david@fromorbit.com, akpm@linux-foundation.org,
+ Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3 07/11] mm: do not split a folio if it has minimum folio
+ order requirement
+Date: Tue, 26 Mar 2024 12:38:38 -0400
+X-Mailer: MailMate (1.14r6028)
+Message-ID: <35B8EDE2-60FB-4376-98BC-DF79C43F1B68@nvidia.com>
+In-Reply-To: <c0c777d9-8393-47f0-b5c3-1617c3a7b3ba@pankajraghav.com>
+References: <20240313170253.2324812-1-kernel@pankajraghav.com>
+ <20240313170253.2324812-8-kernel@pankajraghav.com>
+ <ZgHLHNYdK-kU3UAi@casper.infradead.org>
+ <muprk3zff7dsn3futp3by3t6bxuy5m62rpylmrp77ss3kay24k@wx4fn7uw7y6r>
+ <EE249FE8-2FE9-4BB0-B27A-6202F93B6C12@nvidia.com>
+ <c0c777d9-8393-47f0-b5c3-1617c3a7b3ba@pankajraghav.com>
+Content-Type: multipart/signed;
+ boundary="=_MailMate_F26EA42E-76E9-4ABA-944B-D33F85A7FB4C_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+X-ClientProxiedBy: MN2PR07CA0011.namprd07.prod.outlook.com
+ (2603:10b6:208:1a0::21) To DS7PR12MB5744.namprd12.prod.outlook.com
+ (2603:10b6:8:73::18)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 07/11] mm: do not split a folio if it has minimum folio
- order requirement
-Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, gost.dev@samsung.com,
- chandan.babu@oracle.com, hare@suse.de, mcgrof@kernel.org, djwong@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, david@fromorbit.com,
- akpm@linux-foundation.org, Pankaj Raghav <p.raghav@samsung.com>
-References: <20240313170253.2324812-1-kernel@pankajraghav.com>
- <20240313170253.2324812-8-kernel@pankajraghav.com>
- <ZgHLHNYdK-kU3UAi@casper.infradead.org>
- <muprk3zff7dsn3futp3by3t6bxuy5m62rpylmrp77ss3kay24k@wx4fn7uw7y6r>
- <EE249FE8-2FE9-4BB0-B27A-6202F93B6C12@nvidia.com>
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <EE249FE8-2FE9-4BB0-B27A-6202F93B6C12@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4V3wMk65pcz9sS4
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|MW4PR12MB5667:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	7EqKgd9/g4B30MW1i7cYnA7LdPxhVzq0EFu6oCG9ih34hOjAfLOx1UsMR8I4IQRjsTQG2fz9PHVASK3lCAXh1V4a/XvA7lMh6mmeCkDIa5KVJVoR+Lrrt86kATxL0wy7Jb6P+LtnLBOwmwxDy5Jd2x9TfYwpnMawMBVd318czr1Aw28Hac7/fCbLX8SqPGmWuxEG8qi+ol6FY43t3qg3dzobYJG7Z1b96fbAUUumG7ZChdHe11ZEtg2mI033rOXBVuYzdaPmF9/96WuRzAhy0qdLlq0ym680CgoI4FOQSUBbeJxmLV0gA+GM3O/73Pl8/LVRZY7uaqof0/yI6miattFBPIyO1WkZsOo1TOuAuOIuxGtixNfSAZWUiBAkEefuqtup4193OrZhHOAzhmGLw5taVRzsRWsoBtQJYwDRo+gPn8hiVXzmmIqJdDAJ/NlLgmxibLtwbImQBKK8QCyJG761eFC6t3op3VMvNmo+M0sA/KiNtym5/Fz7U0aqZMhCC50XbvyQcnJEN/3rx0j3p3FiHrIb0TXLWknS7B3FgL9Chb0iB6L+xfV0sQxX9fQ/nppwvJSHgO23I5S1g8Vsecofxw+TY5/4BHksNwEtvBq7EhIB3PBEEnAJUMRMu6bZn37hKG8GXwEHqSZGFRc6vTQ7p3Bltx/cXWPCOgPU5+g=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fybVH8zCGeiIJPCBszMSDpdYDSBZqOALkww+hp/AdMsRriVnMaF254btSYaZ?=
+ =?us-ascii?Q?2t5Ykcq+h1M2kytIBKzIaX3GM6ovd2G6jkuYeITiU10f0GvJOn0DxTgxtqgv?=
+ =?us-ascii?Q?BQOxtdhBZW3S4DA7ZiBJCppaWQTQHjQ8OYWEBxhM2qR4/Sob8I9s5WvEB+up?=
+ =?us-ascii?Q?X3RDFBuEdIQ3Ve3St/VGWmzJ27ERhCJ8eQyJrPGsH96GXwOReZNQleIbScVv?=
+ =?us-ascii?Q?6+psmGlqd6+bzTH7ykHkViOazDXLUL5+dRcReAvsuLkJvu4fLnNk1Y31I1n7?=
+ =?us-ascii?Q?ryXssqQnlkBOllM116qgToTI7PSO/T/YF5r2mG6M5CnqZWZEIys5cYt9Zqbq?=
+ =?us-ascii?Q?/IGim8tzZlYATyIn5IXGqmKxopq6gYkOjmF1rJjTedCyCgFH3lrjVeMqNNly?=
+ =?us-ascii?Q?g45UTS59JnC6GtspYI0B2Kn+2OtMOOOuFKEU6hSs3/HN3kqeCLYDUW5bNya9?=
+ =?us-ascii?Q?oTzeR1a8qBG2I7sw/XO7i7FhY/72mPmqj3/FK7UKZHfZukcQXo9jgIt4aC/p?=
+ =?us-ascii?Q?UJ3amNpzA9rEpQdzRldXNbf5n77y66Tk8R4DlZwls6N53yqtmJUsqhH5MOdd?=
+ =?us-ascii?Q?lueuLJ8+QyGNqA9cYCX4MmMhAc+h0zHIMveRXRi4wnjjX7PHeYhqK050NILg?=
+ =?us-ascii?Q?V74O5SIlBo0UF309RbDxKRpttOrLjeJJ8A6L6+Z0lpvx//QXg1KZG0CNWcec?=
+ =?us-ascii?Q?NJX1h4IPQwAQp+fMjBRlEAgMsBKSH9Q2pXltyJ1Os+yd1Z7tDLNaTsswmFa9?=
+ =?us-ascii?Q?gO3vGhmBLYwzJ4exz56EE4M3taGEodqdXpDRKwWerVjPsJxofKjsy5NuryIp?=
+ =?us-ascii?Q?g9cc1R7eH4AvFzqEeGfJkrJcDkUHrnNDa2qL2Z+5d6htWpkJUwqwkg21KuCE?=
+ =?us-ascii?Q?7pHxvNObhjGg0AP0ZZJGNlBzqu6hRt/S5hEXwTvlwKLyPM5G11u/grE4yEcD?=
+ =?us-ascii?Q?V+O5enoe0hPGhjNKREnc3LAt7QcY1XX/dKvSZWFx2ohPh97tfAcQzHtBNnKu?=
+ =?us-ascii?Q?6KRNgKaRaBtLzfChQmN9y3vW5c+zfuy++S25EsdpeqPyMHO2s6qpx0WP55pD?=
+ =?us-ascii?Q?ivzL/JJ+WUesD8MtoUjF1tcfui1NolpbaldsH5z7UqaG097A1boe4ja9/LgM?=
+ =?us-ascii?Q?my8+gfzbi+Bj/Fzu3k/WAALymbZb2GGRDMPsQhRmywhF3Z2CailiQr2aFNdU?=
+ =?us-ascii?Q?eOIOHdwMafz/nd21arjw3SMtDYEKCvFgvi1IoVWujEYN9z94Y5m+ltfaAt0A?=
+ =?us-ascii?Q?k/yt1OKTN59uvBek0X6Q8GB3+VSQ2CUAtPZX6nLBHWLcpUamv7VszmX6Fe+C?=
+ =?us-ascii?Q?04WjtWn8fKL9vC3/6+Im5W/2+0oy1DT6mvtzEN2i+yuEIvRzObZW2aNCsYkF?=
+ =?us-ascii?Q?Q5vH3KpSs1GIObLlFt18rNcQcfcJiJxf+N9s7MKFa0XcoBNLcAgnhftbTbnx?=
+ =?us-ascii?Q?JqMtNBDnxn+1KfdqO8cOtJgsDDd3kD0BO7J7I5OlCaMIlWW1BlHmLgRxVORZ?=
+ =?us-ascii?Q?eBeC1OPUjDHMfvYnCg67wo0RLC/JkfiWdsqRsHkU3P2wA2eSNgGKbDwIC3Us?=
+ =?us-ascii?Q?gvjA48Hjl0VT2baBgAWBONMvTXBoSsM+p2oyxgc/?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2c590e2-d619-43f5-3894-08dc4db331ca
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2024 16:38:41.0850
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1SaUYopmsu4PaK7A2CjKi9iE7adrCxnOBW5QLTttcnsaHh2bzLS45cSpHL812Mt/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5667
 
-On 26/03/2024 17:23, Zi Yan wrote:
-> On 26 Mar 2024, at 12:10, Pankaj Raghav (Samsung) wrote:
-> 
->> On Mon, Mar 25, 2024 at 07:06:04PM +0000, Matthew Wilcox wrote:
->>> On Wed, Mar 13, 2024 at 06:02:49PM +0100, Pankaj Raghav (Samsung) wrote:
->>>> From: Pankaj Raghav <p.raghav@samsung.com>
+--=_MailMate_F26EA42E-76E9-4ABA-944B-D33F85A7FB4C_=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+On 26 Mar 2024, at 12:33, Pankaj Raghav wrote:
+
+> On 26/03/2024 17:23, Zi Yan wrote:
+>> On 26 Mar 2024, at 12:10, Pankaj Raghav (Samsung) wrote:
+>>
+>>> On Mon, Mar 25, 2024 at 07:06:04PM +0000, Matthew Wilcox wrote:
+>>>> On Wed, Mar 13, 2024 at 06:02:49PM +0100, Pankaj Raghav (Samsung) wr=
+ote:
+>>>>> From: Pankaj Raghav <p.raghav@samsung.com>
+>>>>>
+>>>>> As we don't have a way to split a folio to a any given lower folio
+>>>>> order yet, avoid splitting the folio in split_huge_page_to_list() i=
+f it
+>>>>> has a minimum folio order requirement.
 >>>>
->>>> As we don't have a way to split a folio to a any given lower folio
->>>> order yet, avoid splitting the folio in split_huge_page_to_list() if it
->>>> has a minimum folio order requirement.
+>>>> FYI, Zi Yan's patch to do that is now in Andrew's tree.
+>>>> c010d47f107f609b9f4d6a103b6dfc53889049e9 in current linux-next (date=
+d
+>>>> Feb 26)
 >>>
->>> FYI, Zi Yan's patch to do that is now in Andrew's tree.
->>> c010d47f107f609b9f4d6a103b6dfc53889049e9 in current linux-next (dated
->>> Feb 26)
+>>> Yes, I started playing with the patches but I am getting a race condi=
+tion
+>>> resulting in a null-ptr-deref for which I don't have a good answer fo=
+r
+>>> yet.
+>>>
+>>> @zi yan Did you encounter any issue like this when you were testing?
+>>>
+>>> I did the following change (just a prototype) instead of this patch:
+>>>
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index 9859aa4f7553..63ee7b6ed03d 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -3041,6 +3041,10 @@ int split_huge_page_to_list_to_order(struct pa=
+ge *page, struct list_head *list,
+>>>  {
+>>>         struct folio *folio =3D page_folio(page);
+>>>         struct deferred_split *ds_queue =3D get_deferred_split_queue(=
+folio);
+>>> +       unsigned int mapping_min_order =3D mapping_min_folio_order(fo=
+lio->mapping);
 >>
->> Yes, I started playing with the patches but I am getting a race condition
->> resulting in a null-ptr-deref for which I don't have a good answer for
->> yet.
+>> I am not sure if this is right. Since folio can be anonymous and folio=
+->mapping
+>> does not point to struct address_space.
 >>
->> @zi yan Did you encounter any issue like this when you were testing?
->>
->> I did the following change (just a prototype) instead of this patch:
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 9859aa4f7553..63ee7b6ed03d 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -3041,6 +3041,10 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>  {
->>         struct folio *folio = page_folio(page);
->>         struct deferred_split *ds_queue = get_deferred_split_queue(folio);
->> +       unsigned int mapping_min_order = mapping_min_folio_order(folio->mapping);
-> 
-> I am not sure if this is right. Since folio can be anonymous and folio->mapping
-> does not point to struct address_space.
-> 
->> +
->> +       if (!folio_test_anon(folio))
+>>> +
+>>> +       if (!folio_test_anon(folio))
+>
+> Hmm, but I update the new_order only if it is not anonymous. Do you thi=
+nk it is still
+> wrong?
 
-Hmm, but I update the new_order only if it is not anonymous. Do you think it is still
-wrong?
+For anonymous folio, folio->mapping has last bit set and point to a possi=
+ble struct anon_vma. I do not know what ->flag will be or if it is access=
+ible in that case.
+See: https://elixir.bootlin.com/linux/latest/source/include/linux/page-fl=
+ags.h#L608
 
->> +               new_order = max_t(unsigned int, mapping_min_order, new_order);
->>         /* reset xarray order to new order after split */
->>         XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_order);
->>         struct anon_vma *anon_vma = NULL;
->> @@ -3117,6 +3121,8 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>                         goto out;
->>                 }
->>
->> +               // XXX: Remove it later
->> +               VM_WARN_ON_FOLIO((new_order < mapping_min_order), folio);
->>                 gfp = current_gfp_context(mapping_gfp_mask(mapping) &
->>                                                         GFP_RECLAIM_MASK);
->>
->> I am getting a random null-ptr deref when I run generic/176 multiple
->> times with different blksizes. I still don't have a minimal reproducer
->> for this issue. Race condition during writeback:
->>
->> filemap_get_folios_tag+0x171/0x5c0:
->> arch_atomic_read at arch/x86/include/asm/atomic.h:23
->> (inlined by) raw_atomic_read at include/linux/atomic/atomic-arch-fallback.h:457
->> (inlined by) raw_atomic_fetch_add_unless at include/linux/atomic/atomic-arch-fallback.h:2426
->> (inlined by) raw_atomic_add_unless at include/linux/atomic/atomic-arch-fallback.h:2456
->> (inlined by) atomic_add_unless at include/linux/atomic/atomic-instrumented.h:1518
->> (inlined by) page_ref_add_unless at include/linux/page_ref.h:238
->> (inlined by) folio_ref_add_unless at include/linux/page_ref.h:247
->> (inlined by) folio_ref_try_add_rcu at include/linux/page_ref.h:280
->> (inlined by) folio_try_get_rcu at include/linux/page_ref.h:313
->> (inlined by) find_get_entry at mm/filemap.c:1984
->> (inlined by) filemap_get_folios_tag at mm/filemap.c:2222
->>
->>
->>
->> [  537.863105] ==================================================================
->> [  537.863968] BUG: KASAN: null-ptr-deref in filemap_get_folios_tag+0x171/0x5c0
->> [  537.864581] Write of size 4 at addr 0000000000000036 by task kworker/u32:5/366
->> [  537.865123]
->> [  537.865293] CPU: 6 PID: 366 Comm: kworker/u32:5 Not tainted 6.8.0-11739-g7d0c6e7b5a7d-dirty #795
->> [  537.867201] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
->> [  537.868444] Workqueue: writeback wb_workfn (flush-254:32)
->> [  537.869055] Call Trace:
->> [  537.869341]  <TASK>
->> [  537.869569]  dump_stack_lvl+0x4f/0x70
->> [  537.869938]  kasan_report+0xbd/0xf0
->> [  537.870293]  ? filemap_get_folios_tag+0x171/0x5c0
->> [  537.870767]  ? filemap_get_folios_tag+0x171/0x5c0
->> [  537.871578]  kasan_check_range+0x101/0x1b0
->> [  537.871893]  filemap_get_folios_tag+0x171/0x5c0
->> [  537.872269]  ? __pfx_filemap_get_folios_tag+0x10/0x10
->> [  537.872857]  ? __pfx___submit_bio+0x10/0x10
->> [  537.873326]  ? mlock_drain_local+0x234/0x3f0
->> [  537.873938]  writeback_iter+0x59a/0xe00
->> [  537.874477]  ? __pfx_iomap_do_writepage+0x10/0x10
->> [  537.874969]  write_cache_pages+0x7f/0x100
->> [  537.875396]  ? __pfx_write_cache_pages+0x10/0x10
->> [  537.875892]  ? do_raw_spin_lock+0x12d/0x270
->> [  537.876345]  ? __pfx_do_raw_spin_lock+0x10/0x10
->> [  537.876804]  iomap_writepages+0x88/0xf0
->> [  537.877186]  xfs_vm_writepages+0x120/0x190
->> [  537.877705]  ? __pfx_xfs_vm_writepages+0x10/0x10
->> [  537.878161]  ? lock_release+0x36f/0x670
->> [  537.878521]  ? __wb_calc_thresh+0xe5/0x3b0
->> [  537.878892]  ? __pfx_lock_release+0x10/0x10
->> [  537.879308]  do_writepages+0x170/0x7a0
->> [  537.879676]  ? __pfx_do_writepages+0x10/0x10
->> [  537.880182]  ? writeback_sb_inodes+0x312/0xe40
->> [  537.880689]  ? reacquire_held_locks+0x1f1/0x4a0
->> [  537.881193]  ? writeback_sb_inodes+0x312/0xe40
->> [  537.881665]  ? find_held_lock+0x2d/0x110
->> [  537.882104]  ? lock_release+0x36f/0x670
->> [  537.883344]  ? wbc_attach_and_unlock_inode+0x3b8/0x710
->> [  537.883853]  ? __pfx_lock_release+0x10/0x10
->> [  537.884229]  ? __pfx_lock_release+0x10/0x10
->> [  537.884604]  ? lock_acquire+0x138/0x2f0
->> [  537.884952]  __writeback_single_inode+0xd4/0xa60
->> [  537.885369]  writeback_sb_inodes+0x4cf/0xe40
->> [  537.885760]  ? __pfx_writeback_sb_inodes+0x10/0x10
->> [  537.886208]  ? __pfx_move_expired_inodes+0x10/0x10
->> [  537.886640]  __writeback_inodes_wb+0xb4/0x200
->> [  537.887037]  wb_writeback+0x55b/0x7c0
->> [  537.887372]  ? __pfx_wb_writeback+0x10/0x10
->> [  537.887750]  ? lock_acquire+0x138/0x2f0
->> [  537.888094]  ? __pfx_register_lock_class+0x10/0x10
->> [  537.888521]  wb_workfn+0x648/0xbb0
->> [  537.888835]  ? __pfx_wb_workfn+0x10/0x10
->> [  537.889192]  ? lock_acquire+0x128/0x2f0
->> [  537.889539]  ? lock_acquire+0x138/0x2f0
->> [  537.889890]  process_one_work+0x7ff/0x1710
->> [  537.890272]  ? __pfx_process_one_work+0x10/0x10
->> [  537.890685]  ? assign_work+0x16c/0x240
->> [  537.891026]  worker_thread+0x6e8/0x12b0
->> [  537.891381]  ? __pfx_worker_thread+0x10/0x10
->> [  537.891768]  kthread+0x2ad/0x380
->> [  537.892064]  ? __pfx_kthread+0x10/0x10
->> [  537.892403]  ret_from_fork+0x2d/0x70
->> [  537.892728]  ? __pfx_kthread+0x10/0x10
->> [  537.893068]  ret_from_fork_asm+0x1a/0x30
->> [  537.893434]  </TASK>
-> 
-> 
-> --
-> Best Regards,
-> Yan, Zi
+--
+Best Regards,
+Yan, Zi
+
+--=_MailMate_F26EA42E-76E9-4ABA-944B-D33F85A7FB4C_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmYC+g4PHHppeUBudmlk
+aWEuY29tAAoJEOJ/noEUByhUjW4P/1bIufbo8IwzNsp+7LAjRPiog7nMvmIjLT0G
+VFsf9ZwhL1Jh/exR3duGwsTb3W4mJiuiIkC+GlZB1Vx9bzW9IPBb+jpEFk/VBm5w
+0hTAC8/8fcnXgQSRbJwb7wOEZP84on2dQFudh9b/wIJAFboXc8Y6X0Atr9crFbWp
+ZeRHrt+jXhkmZkdzIBwIFg2YA1j1kY+MsmlAFY+N8C6Svs1rNkCcx7UlZAjM8sMA
+TcUDR2v9D9f3ozeWx/uiaQd7oek+i29WqypCCIWGYB8TvnpKxixGbgarU0aa/8sn
+/VKIfydyWkwM1f6z05FqvvwlQsg1iVTXVbcGOBbtfl1OhFnXQQ+coJaSKPjwdQWI
+9N4QTmwPd163MOingNG2C7yXI30NRGhM/UW/ABRUjZayjcezqzixr4KJbLAn/xVD
+BYp5T4YtZUoNlUkX7kXADIq0/YJ+DhGaW2O0tutjWdRGQ22jGYjpATdBQUqfST0J
+/gAL5uAusx9znytbAErLDxzHAlTbuXJs4X46SxhB50J98vG9MIc+SsR3IQhbzsJl
+QbdBlyZQy6URae/kePbTn4zuX4YykPvM+l9pfBIMNPmDrJZGR+oOMHQVRIqtJsy8
+AQAQ8keL0dlzDBd9Oz6ystSA2EzT3pHBg38GhXwwsm5aL+S0lD8TPlooBVkHuSma
+z+XOW/lW
+=CSUv
+-----END PGP SIGNATURE-----
+
+--=_MailMate_F26EA42E-76E9-4ABA-944B-D33F85A7FB4C_=--
 
