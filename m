@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-15432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F53288E690
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 15:39:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F93988E691
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 15:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 912D81C2DF8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 14:39:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90C9F1C2DFB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 14:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DF715746E;
-	Wed, 27 Mar 2024 13:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65ED15746A;
+	Wed, 27 Mar 2024 13:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zAGVyGo1"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lnTBa5uq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D582157463
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 13:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E0A156F52
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 13:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711545068; cv=none; b=bxZUcdkW4Rrx2gtJgORA6qe9ysVHeFIoIdeCnEBVLVNy+PQ5LmPYOFkf9ChRs2WtGfA5ciLFnjiUyCjXzRfIHtRUZBZJBRJXAtQuuzbdMIZlhIV9Umhw6gWm+RxnwNFgW2SLMoVkq8jpg92Xis0j9BT81vKH2bSOjgR7I/iivs8=
+	t=1711545072; cv=none; b=RYYrDrql/BWdCZmh+AdyyFJoVf6Tfd7TELw80Z0Cx8eO1H5GuAfpE6iwmRO5/Pi7wNODzmToLZS+6YAOn40d5HGfgw+6hOOJzymMw2H5hF/kyvk5qugwXJGb4mpYXoA2hkp5sIkBwk/cCu0nhkLCywDchsY7N78h693263CvVRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711545068; c=relaxed/simple;
-	bh=y+r+QiYljJ8LyQPSz6ila4q3cE0VvWJjqVMPhAkSt5o=;
+	s=arc-20240116; t=1711545072; c=relaxed/simple;
+	bh=DaxfOx5juRgkGT1onoeBml+KzX99DS3H5Kfd98iKnRA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cuNmWejNQNdnfBe7EQMCpnz7kPOefpASWnYbH2+RXz6wWOFtwkZ/bV2JJbI9uFOBvhlk182eNMj2cy1Il0884ouJ423bQAUEfrUNoa3Q5A79gEpj3hsVZMlekGMyVfiBLDYeUC42vcFGz8SH262puvj/XMwtExwE2uDZjWi7yKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zAGVyGo1; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=NYQGyqqgfY3W+R0Z5Dvwr4ToA0pB64zdEnDWVfoMyEvK8rX42QDKp4+SnhjIomiYNbKWWgEoic3kBjh6zPTj4reLDj3q3klxsDFyZuMSW18m9v5sh0wHzg6Kb2rywv1qczclgO5mwcugGKKZSqnzRxIKUVgJVhQ9JY6Pdq+91FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lnTBa5uq; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-60cbba6f571so121456357b3.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 06:11:07 -0700 (PDT)
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a46bc50c895so177694766b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 06:11:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711545066; x=1712149866; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1711545069; x=1712149869; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OgH+A9pGo8bgeAYR/oROdEMFeGk4hRe3NHSXR6u/PQc=;
-        b=zAGVyGo13mPvorWxeq/7hQXRjIB2xwIC0DsLN+8paYKG27bpNg7mJT6TiuNDGADvk8
-         Vf93SKdC+uz4qGJojqYMHReo8FLpC1cipZEIM7Ll4UNLBPVymz/oYU4W2G1qzN9xwwLm
-         +fHGKF75eTGqhSEA7QrBNWFOI69yjKPP/dXrQJHLUStDN1EgAhjZN+9haT32YrZw5kiJ
-         cLPOsdpU7Sd1TXVQ8kfwwdK1jLqcSq3h5DBkty+YF57WaCA9I2H1JFVV/2WAkIBevtCT
-         ZMwY020Yg6pvQ+OuFZL2yvhQj+DjNX0yh0b4MQf2AZtXeUR1Wu1aS2pxiQ31lyRStsi4
-         WClw==
+        bh=JyYxrfp8pIz08BwXl1sIdsAZMNI11A0A6tQ7MGaWE3A=;
+        b=lnTBa5uqfVtfS29tUfP5h5yCrCyZWNqmNSPAdyChw/rok2c8rtAMBOK2Cn4IPjEeQp
+         oMha+GFLF/sJG6ZFG3zUtJeQWtDJ1/RJ1i7H2pqt098wVkHvTpn0/xKmLssZzyhpegVX
+         NShBh+V2YwQ36iTIWcjjJGZyqD/9p2VTYQkxQ6dhhi2UZlNR1o3pecJdGjol2dDAxd+X
+         gIRy/vC1JTB/ZSKJPVkaNd/uI6xowdznOhNEYBjgUha4cCmhF00+qoin47v3fRjCfKFv
+         XjkYXT7uE2+QlHL4FZANl2wiW6Zgm4E58tWR9z/UbyeXvi+MNt2Z/rd1J57C40Vkjax7
+         FbEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711545066; x=1712149866;
+        d=1e100.net; s=20230601; t=1711545069; x=1712149869;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=OgH+A9pGo8bgeAYR/oROdEMFeGk4hRe3NHSXR6u/PQc=;
-        b=Qw1nK+7XiKJjIzqO+HOthG1sM5Pjedw8LTonPu0ZS6cni7RxlQLa5hexULXUg5Wcai
-         uc4DV7zVn2OMNdIlHWSuPwdWjSqpWxdgsRlIn1lEBUQjfg1MeqxIQZGpUN4fswC1Cj9r
-         fsVE2hidHJeAwBF5N9qSvhh45+ST1koKYnDULepRZRDbht9RyBQMa445QTtqSn0afSbV
-         hG54KmbCbh5g7tj1pP3RLhvv9gA5FCjEWaAFb3HO0KY9HDNICi8BV0vfSHozWom+ECuf
-         NALXl7fth7HqE9ari9N8lE+z89u8SWbYVZ4DA6sTIbCB62hJ+vr34j+7fTHNKlaPYtEE
-         AcYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPyABKCgbqLkW52yTc4UzgQ3R8JkAB/0UehkAD1q0D6dGp0bqAtJtc7pD3jvP+TkEKO03qERruI1euKHVKwHp5rSFIkVWnXLn6xDUS9g==
-X-Gm-Message-State: AOJu0YyqXDdCVG6vBWsNitd59BsVv8Flrq6Hf2uqXN1GOcSpDBzi0r5Y
-	gJ33esQ6MfebgkFiOX+oNUMjHQrOsQFqv4jrAu0q7oVy7wtKPXoI34p1DJ8SeOAJJ66on89DeHb
-	p9w==
-X-Google-Smtp-Source: AGHT+IEGx+pRisBXIjqRw7WTmfJs7jTAXuVLd8tF0S97jUlViAzTO05AtGfmYNmzpOBX3iVy3fk2d4rEJuc=
+        bh=JyYxrfp8pIz08BwXl1sIdsAZMNI11A0A6tQ7MGaWE3A=;
+        b=KQeZSmxhfAzBY15onm0nfF9SvujL2fDlLA+vx1eM9H5v0l6UaJitIMA4lixEIbxk7h
+         4yO4D+pqUJEzTWFNR6Ac5hBDd9aSHAEhNBIi2iS80lslSxUMxQMicl0LPCcUM+6SKoH3
+         XfPlwH7r15tfdDRR2WhQ4JWfrkdMLNBg08xhcWipoJhMvGtgRBh6tueWgEzSVJpHrogw
+         A+hIaz6FHTonUo1W+UahAncVRqDR3Oc45uI4wkRu3CR8MOhGaAjQZupj+nyXe3SM4sTn
+         EVdZB4ejQj1ZZzL0YqoXCR9e6NjpQX1s4HdiTpUgLRl4kEA+epvQJgJ+MkyBu6ic3Kfb
+         4uZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVv7T2dleMCexciazkFcBmDn7NY2ePHtpk51d7pYa6gLgpCrTOtfKQgAmgV9eOWfHvVOQV1ggVl4vEiQ3FT368Xa28wMZ8dSUOPZRheLQ==
+X-Gm-Message-State: AOJu0Yw0vAPVJV3eURGQv3/oiLCqww7MvgPiZGWqpksxIHPv5p/rAIHj
+	9MRODlg/vKEJaWtnA8oAqgsTDpyYdKRmq6FnOAQn11AZLC1PwhkIHobu3jwhJcu1r/gVkZWrc2x
+	GkA==
+X-Google-Smtp-Source: AGHT+IE0fDcnEvDqGJg1fVMOQ6R5gkGljbJZHgo/+asP4z0tgVwIay2ta6riix8G+ncHSOmPx2WqFOJsbtU=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6902:220a:b0:dcc:f01f:65e1 with SMTP id
- dm10-20020a056902220a00b00dccf01f65e1mr4043330ybb.8.1711545066672; Wed, 27
- Mar 2024 06:11:06 -0700 (PDT)
-Date: Wed, 27 Mar 2024 13:10:39 +0000
+ (user=gnoack job=sendgmr) by 2002:a17:906:a1d0:b0:a47:1499:6de0 with SMTP id
+ bx16-20020a170906a1d000b00a4714996de0mr61846ejb.7.1711545068926; Wed, 27 Mar
+ 2024 06:11:08 -0700 (PDT)
+Date: Wed, 27 Mar 2024 13:10:40 +0000
 In-Reply-To: <20240327131040.158777-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,9 +76,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240327131040.158777-1-gnoack@google.com>
 X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
-Message-ID: <20240327131040.158777-10-gnoack@google.com>
-Subject: [PATCH v13 09/10] MAINTAINERS: Notify Landlock maintainers about
- changes to fs/ioctl.c
+Message-ID: <20240327131040.158777-11-gnoack@google.com>
+Subject: [PATCH v13 10/10] fs/ioctl: Add a comment to keep the logic in sync
+ with the Landlock LSM
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -91,27 +91,31 @@ Cc: Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Landlock needs to track changes to do_vfs_ioctl() when new IOCTL
-implementations are added to it.
+Landlock's IOCTL support needs to partially replicate the list of
+IOCTLs from do_vfs_ioctl().  The list of commands implemented in
+do_vfs_ioctl() should be kept in sync with Landlock's IOCTL policies.
 
-Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ioctl.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aa3b947fb080..c95dabf4ecc9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12222,6 +12222,7 @@ W:	https://landlock.io
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
- F:	Documentation/security/landlock.rst
- F:	Documentation/userspace-api/landlock.rst
-+F:	fs/ioctl.c
- F:	include/uapi/linux/landlock.h
- F:	samples/landlock/
- F:	security/landlock/
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 1d5abfdf0f22..661b46125669 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -796,6 +796,9 @@ static int ioctl_get_fs_sysfs_path(struct file *file, v=
+oid __user *argp)
+  *
+  * When you add any new common ioctls to the switches above and below,
+  * please ensure they have compatible arguments in compat mode.
++ *
++ * The commands which are implemented here should be kept in sync with the=
+ IOCTL
++ * security policies in the Landlock LSM.
+  */
+ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
+ 			unsigned int cmd, unsigned long arg)
 --=20
 2.44.0.396.g6e790dbe36-goog
 
