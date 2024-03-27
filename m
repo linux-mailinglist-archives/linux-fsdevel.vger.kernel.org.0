@@ -1,210 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-15478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4150E88F0CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 22:21:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6828388F119
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 22:42:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6410F1C2E45B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 21:21:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BA521C29DAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 21:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DE015357E;
-	Wed, 27 Mar 2024 21:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C7F153591;
+	Wed, 27 Mar 2024 21:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAuybtnm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXmyyNGr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA761534E0;
-	Wed, 27 Mar 2024 21:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9271C1514FD;
+	Wed, 27 Mar 2024 21:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711574506; cv=none; b=ECOl8d5Up0xyN4EPcnSy3uv5QUvO/DI7iQfMzqyLnng+1SU3spJ6FpGNGiwm2Z+Dk4jyoY0XGN3yuTxPlVocLrA/aFlOqTdqFdnQvZGFTXzodLSufjDBZR8JoIxMPCaVIXIptgCk+4uypmO8vGYw106dfodtMy8HAhmG4FsVkB0=
+	t=1711575712; cv=none; b=SyGF6PEmAHbTBTqHyZfkYMCVNwNXaPD0mbG/Vio9ZGcZuGAKlbPodyzjTt8Y6fvBwCgNyZoyJwqU3+H9CE8HAnab6s9d/b8BjIFoH+WjY3qz6Gd3D24KD7+2C3NoU+NA0xwPpQAjTAbOQsGCgoBL7/v9GV1yGrai1fZIMPTnpV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711574506; c=relaxed/simple;
-	bh=92sHhCo4mE16EEY2gWj9OXJXpJBX3IDmAVU4FCwQsfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=enf2BtTeNWHVYN6fgVbZmhU1VzGBdmWjSLTzyOzMIRP+gcKHU7Jo7u5Wu9IVMJx/dLtFYqws+fKfsaJf8rwuO1SeHXF34QswXzoUt/G3Og2iwwyNy13nvGFjEqyazmAXI1XkzcW0H1qAuG9acEyS5Td3U8L7mXcxjATB3OCKJ68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAuybtnm; arc=none smtp.client-ip=209.85.210.48
+	s=arc-20240116; t=1711575712; c=relaxed/simple;
+	bh=jmyWyMGFwOtdmdQNcIkC5X3aKzO5r8vG4Waa5MjtpDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZLXQrTDv4Y/QwkQs9SgAiQJTGDPG/kWhzQFH8ugj+hrcGYQVZ6ZzEx2oi/EGM+UjNEfnop+CTPCzghAPFlqC0z/LUc+qWLG6zypJJAUOb3ZjP8WLIRFqIZOR92o+u9Uwf+W2v5+T/x937GbecOfVWmkcZrifI+ga/NfC1rAsB3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXmyyNGr; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6e673ffbd79so162109a34.2;
-        Wed, 27 Mar 2024 14:21:44 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-34005b5927eso141100f8f.1;
+        Wed, 27 Mar 2024 14:41:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711574503; x=1712179303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1711575709; x=1712180509; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gPexr1qL1sWHkOO5VvKGmiwPJykaCN4OnZNa3Q9bZFY=;
-        b=AAuybtnmRN498tp+DG9D25lRfb8dfbJA1RaX9SXwxXq79peONVzFNLjY8hzym820Xb
-         x/t/gRGphvzVQlGhxj76k3Khl0lJwt2bUEm6JZiCgPHq3ExSFERP/V08vGyBVHBxfMA7
-         fpDrwaqFhnmczCI5/t5bl6A2N+vwOSNZZB5hhtTcSSO8kVjWg7LT+Tx3xeKANnMAnrUH
-         m2+HVSTditl6wBdx3sqvU4wyAB9B15J4876rRv2BUW3YHeh0Vk1XZo/5yZtgnl5jtz3c
-         vs+cNB/HW8VK5w9h07IOPPfp3wrR36UTEAxCFPfokidORWEzCemo4Brt7FknBGaDqZQC
-         hLGw==
+        bh=QzkPeJjBZryBqMmL4486tp2idMhhYHpknALnqkob6rs=;
+        b=YXmyyNGrE372EMwKscYn+ImMASKT030Pb23kcQqRdrH/X/L1S3Q7OWZa728MhckVKO
+         8D1Jxdmu08QowZ7zuiFs+F9JYPS/lgs0or6iSAib55NkzqrbDsTCeRlBVgiDkv714JaN
+         /ddOHxVD6O+1ESAXC+y9nsCZ9ovxGU1FKgl3SNK/3NTn0DD6/iveHxYiFkUj+3e6cD1U
+         S8SjvqT29XSE4bsVJqhn8u5Mx3JB/mp1fgmjhZ5Hejc6XfkqIFVzZ6aAfXakf8QAbmMP
+         CA0SZEMY4mx+BcIK+rpKMA9f6WqJu8dHofsf+R8XP7UTKclK2GhgTlFYiu9INHfMbZF2
+         Aaag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711574503; x=1712179303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1711575709; x=1712180509;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gPexr1qL1sWHkOO5VvKGmiwPJykaCN4OnZNa3Q9bZFY=;
-        b=eX9PpuRquYNSVAIquA4+udcb35SnCLq/viMl9Ow9xPynJGSeKB40k8NU3nmuR1dCMr
-         LHVNMAEeNv+3g28TImsAEBcvCkVSczfNwaPXv6yBtOQfbIXsy9HjgFi64u0BqzjTk+ri
-         b8BbCMf6f65VDj1hqSyhGvYo5iowzmMKt1gR1JoFlDcM++7EwRnve/qrB0ijhnTCHqKm
-         uQ2SkiYHyLJNS7eSxhywt6EPCgIyLpsA6d4FWg51GE2hTjMGEnOtnSjmeLEWahLgMscm
-         GzMq+PPwBozHefDeVBr8xmAKksvctP7qT6bBmuVCs+2ZLPgfzX56mOoZU2ow6ljNc1Iz
-         4M3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWRUvHkxw/LwKC84XA0xix35jh+chj7EpMYBaK1b2nIDxVvz30PCbQq9WiAehpEReAxUP1dQeIW0NxE4i5hWKulPTLhdFJMgULqh496GiEj2mdqAw4Mzd4UbQFb80hG/9yKZg6KUGyicOwZBREuuKXJKVAMk0ynVL26urpMgacxJNhdHuYsgUx/YFdhi1hM7/opknL9lN9CLpxy4yD0jlc4isBHBt2KQg==
-X-Gm-Message-State: AOJu0YxnskFWparslt6BHVF8YUxy1iDNgS+tNzM3Q6d+mGWiH9utSbQL
-	ij8ptAOLDXICsyG5k4w7r2afR9vZsBBkPGCV/1+S4rL9k3kl2nXy
-X-Google-Smtp-Source: AGHT+IFwWxghWoZ03Kxvmq00ZJlmOcZRRjCIxBBmZTyM+9J4sTcFCpjAUAyRfv+g/a+r1EiNjL0Udw==
-X-Received: by 2002:a05:6830:11c6:b0:6e6:a6fb:7a11 with SMTP id v6-20020a05683011c600b006e6a6fb7a11mr1161746otq.6.1711574503519;
-        Wed, 27 Mar 2024 14:21:43 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id b23-20020a05620a119700b0078a4590c62esm16536qkk.87.2024.03.27.14.21.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 14:21:43 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id AE07E120006E;
-	Wed, 27 Mar 2024 17:21:41 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Wed, 27 Mar 2024 17:21:41 -0400
-X-ME-Sender: <xms:5I0EZmbZ27cWDN4rQSFDPD1mGD6J3gqPft95zmx1NK2_xZDwSctJQw>
-    <xme:5I0EZpZQ6_OjJ4OxvaOAM9cbcgHQYN-sa1Vg36pOmk5WuxGGnxIwp5wZepZad9RGI
-    IYMvvAo4wC3huvp4A>
-X-ME-Received: <xmr:5I0EZg9sQJuKoJIbDUUTmu5CdPGalgp7jZROwpQq7h1O-iLEi9ncRTxMTws>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudduiedguddvfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
-    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
-    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
-    higihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:5I0EZoroOuCjY_LShRVntoYM4wBUgSW3y-Onjc31X25vu4l66PRUPA>
-    <xmx:5I0EZhrDfK09Wfn5luLpWfnAQAXMzB9Uq5Ed0yTLBa7g1yum1g2u9A>
-    <xmx:5I0EZmQKR94LcuhQkl-PDs_FjWU9DhiTb5rGtKjJy6FbvOqcsjCPFA>
-    <xmx:5I0EZhrWYjaeSHmP1Tey_GBMyjcLKy9yKka_xoeMHz-c__VfBmPMrg>
-    <xmx:5Y0EZkGtaDc1thMvTzTc1feW91AvSQk7aNfAr8PRT7LYvigqA7DzUcqTii7S3a-J>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Mar 2024 17:21:40 -0400 (EDT)
-Date: Wed, 27 Mar 2024 14:21:03 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,	comex <comexk@gmail.com>,
-	"Dr. David Alan Gilbert" <dave@treblig.org>,
-	Philipp Stanner <pstanner@redhat.com>,
-	rust-for-linux <rust-for-linux@vger.kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <ZgSNvzTkR4CY7kQC@boqun-archlinux>
-References: <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
- <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
- <bu3seu56hfozsvgpdqjarbdkqo3lsjfc4lhluk5oj456xmrjc7@lfbbjxuf4rpv>
- <CAHk-=wgLGWBXvNODAkzkVHEj7zrrnTq_hzMft62nKNkaL89ZGQ@mail.gmail.com>
- <ZgIRXL5YM2AwBD0Y@gallifrey>
- <CAHk-=wjwxKD9CxYsf5x+K5fJbJa_JYZh1eKB4PT5cZJq1+foGw@mail.gmail.com>
- <160DB953-1588-418E-A490-381009CD8DE0@gmail.com>
- <qyjrex54hbhvhw4gmn7b6l2hr45o56bwt6fazfalykwcp5zzkx@vwt7k3d6kdwt>
- <CAHk-=wgQy+FRKjO_BvZgZN56w6-+jDO8p-Mt=X=zM70CG=CVBQ@mail.gmail.com>
- <bjorlxatlpzjlh6dfulham3u4mqsfqt7ir5wtayacaoefr2r7x@lmfcqzcobl3f>
+        bh=QzkPeJjBZryBqMmL4486tp2idMhhYHpknALnqkob6rs=;
+        b=Nw0RyJZqljoG4FrX5AmQjLZgbVwQAS0CLqu+gkjy9g853nUDIq3TawIVguSpGbrk1/
+         FHvqRFDX9frDKe+kF53qfQ6UkB6BZeOC566Ww4qmf2Fw2AvZ3HAqN2RPqUUKSZ/zibrl
+         tXUSCT21aqPLskvQdPDX1TY5z1Hxm5k31aDwPIueRKETXqWXA+RfVpADHtOkKH+8gYG7
+         asvvw8VA7weOgJhN+8b0fL5Q+nHwXiF0MfUFG+liIZxbUtD9ctoXBsPXinhqnTCLJQr7
+         fhn/U2l1lUOIW8XFOJbVr1yi+R8aQeEyqkFYlMJn81eCkMGHeo2Oo8W7XC/yKoOf06rb
+         jm0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXZKwePwrd2xTq7TdYFy+auUn+Un6zkCw9lDwn4QJtnvfN6LEuYt9JzynvMVheAKbIzTmyJjVTB6JBSBy+XQG3yHX47ZAuNDIeywHMRDJd4cgXCEo++ImRssOnwkL9w6XDQLm9XauRSv75bopEYd3MHMqRbqbg/4xkH4/w1MBPBF1WKmekYEklALA==
+X-Gm-Message-State: AOJu0Yyi6peQyrL3C+dY/XH5NDlUprAi18Da64j1rVHoTlGxMCggYfRl
+	VWTQJeFL9cnO4FRMlt4Sq6aF5bVbTIiI3JRZAefXIL6Fzi9iKzZfWSQ1PjEwLyESasmoG9QjlxP
+	K13MuJB+dgsGNXjBT72DBXEKKrFY=
+X-Google-Smtp-Source: AGHT+IH8bsjkbEPq5nFZa25RNEBMUp4NHKWgJkZvhsLEiO/AS+v/zIitCzEw8DN2gbwGn9LjyHANzGigswDNTFCf8qM=
+X-Received: by 2002:a05:6000:b04:b0:33e:40a3:22c8 with SMTP id
+ dj4-20020a0560000b0400b0033e40a322c8mr425338wrb.33.1711575708527; Wed, 27 Mar
+ 2024 14:41:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bjorlxatlpzjlh6dfulham3u4mqsfqt7ir5wtayacaoefr2r7x@lmfcqzcobl3f>
+References: <cover.1709675979.git.mattbobrowski@google.com>
+ <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
+ <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
+ <20240307-phosphor-entnahmen-8ef28b782abf@brauner> <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
+ <20240308-kleben-eindecken-73c993fb3ebd@brauner> <CAADnVQJVNntnH=DLHwUioe9mEw0FzzdUvmtj3yx8SjL38daeXQ@mail.gmail.com>
+ <20240311-geglaubt-kursverfall-500a27578cca@brauner> <CAADnVQLnzrxyUM-EiorEP_qvfmdiSK5Kj1WtGjFoAogygHSvmA@mail.gmail.com>
+ <20240318-individual-gekennzeichnet-1658fcb8bf27@brauner>
+In-Reply-To: <20240318-individual-gekennzeichnet-1658fcb8bf27@brauner>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 27 Mar 2024 14:41:36 -0700
+Message-ID: <CAADnVQ+noVorD70rmtESE3MkDHnkQgraNNBCadJ=0x6-nBwhvA@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
+To: Christian Brauner <brauner@kernel.org>
+Cc: Matt Bobrowski <mattbobrowski@google.com>, bpf <bpf@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, 
+	Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 27, 2024 at 03:41:16PM -0400, Kent Overstreet wrote:
-> On Wed, Mar 27, 2024 at 12:07:26PM -0700, Linus Torvalds wrote:
-> > On Wed, 27 Mar 2024 at 11:51, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > >
-> > > On Wed, Mar 27, 2024 at 09:16:09AM -0700, comex wrote:
-> > > > Meanwhile, Rust intentionally lacks strict aliasing.
-> > >
-> > > I wasn't aware of this. Given that unrestricted pointers are a real
-> > > impediment to compiler optimization, I thought that with Rust we were
-> > > finally starting to nail down a concrete enough memory model to tackle
-> > > this safely. But I guess not?
-> > 
-> > Strict aliasing is a *horrible* mistake.
-> > 
-> > It's not even *remotely* "tackle this safely". It's the exact
-> > opposite. It's completely broken.
-> > 
-> > Anybody who thinks strict aliasing is a good idea either
-> > 
-> >  (a) doesn't understand what it means
-> > 
-> >  (b) has been brainwashed by incompetent compiler people.
-> > 
-> > it's a horrendous crock that was introduced by people who thought it
-> > was too complicated to write out "restrict" keywords, and that thought
-> > that "let's break old working programs and make it harder to write new
-> > programs" was a good idea.
-> 
-> Strict aliasing is crap in C and C++ because we started out with
-> unrestricetd pointers, and it just doesn't work in C and C++ with the
-> realities of the kind of code we have to write, and we never got any
-> kind of a model that would have made it workable. Never mind trying to
-> graft that onto existing codebases...
-> 
-> (Restrict was crap too... no scoping, nothing but a single f*cking
-> keyword? Who ever thought _that_ was going to work?)
-> 
-> _But_: the lack of any aliasing guarantees means that writing through
-> any pointer can invalidate practically anything, and this is a real
+On Mon, Mar 18, 2024 at 6:14=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Wed, Mar 13, 2024 at 02:05:13PM -0700, Alexei Starovoitov wrote:
+>
+> But this whole polemic just illustrates that you simply didn't bother to
+> understand how the code works. The way you talk about UAF together with
+> SLAB_TYPESAFE_BY_RCU is telling. Please read the code instead of
+> guessing.
 
-I don't know whether I'm 100% correct on this, but Rust has references,
-so things like "you have a unique reference to a part of memory, no one
-would touch it in the meanwhile" are represented by `&mut`, to get a
-`&mut` from a raw pointer, you need unsafe, where programmers can
-provide the reasoning of the safety of the accesses. More like "pointers
-can alias anyone but references cannot" to me.
+Ok. Fair enough. I've read the code and old threads from Sep-Nov.
+I think the concerns about typesafe_by_rcu made folks believe in
+races that don't exist.
 
-Regards,
-Boqun
 
-> problem. A lot of C programmers have stockholm syndrome when it comes to
-> this, we end up writing a lot of code in weirdly baroque and artificial
-> styles to partially work around this when we care about performance -
-> saving things into locals because at least the _stack_ generally can't
-> alias to avoid forced reloads, or passing and returning things by
-> reference instead of by value when that's _not the semantics we want_
-> because otherwise the compiler is going to do an unnecessary copy -
-> again, that's fundamentally because of aliasing.
+           if (unlikely(!atomic_long_inc_not_zero(&file->f_count)))
+..
+            *  (a) the file ref already went down to zero and the
+            *      file hasn't been reused yet or the file count
+            *      isn't zero but the file has already been reused.
+
+..
+            if (unlikely(file !=3D rcu_dereference_raw(*fdentry)) ||
+
+The first part of the comment is partially incorrect.
+(it's in the wrong place).
+
+The file ref could have been down to zero and not reused yet,
+but it's before atomic_long_inc_not_zero.
+Once the code reaches 2nd check the file guaranteed to be reused
+and it went through init_file(), because that's the only code
+that brings it back from zero.
+This race is ok:
+
+cpu0                                    cpu1
+file =3D rcu_dereference_raw(*fdentry);
+// file->f_count =3D=3D 1
+                                        rcu_assign_pointer(fdt->fd[fd], NUL=
+L);
+                                        fput() // reaches zero
+
+atomic_long_inc_not_zero()
+// will not succeed.
+
+This race is ok too:
+cpu0                                    cpu1
+file =3D rcu_dereference_raw(*fdentry);
+// file->f_count =3D=3D 1
+                                        rcu_assign_pointer(fdt->fd[fd], NUL=
+L);
+
+atomic_long_inc_not_zero()
+// succeeds. f_count =3D=3D 2
+                                        fput() // f_count =3D=3D 1
+
+file !=3D rcu_dereference_raw(*fdentry)
+// will fail
+but it doesn't have to.
+This is a safe race.
+It's no different if cpu0 went through
+these steps including successful last check
+                                        and then cpu1 did close(fd)
+
+The file held by cpu0 is not on the
+path to zero.
+
+Similarly, back then, there was a concern about two parallel __fget_files_r=
+cu()
+where one cpu incremented refcnt, failed some check and didn't do fput yet.
+In this case the file is not on the path to zero either.
+Both cpu-s saw non-zero f_count when they went through atomic_long_inc_not_=
+zero.
+The file is not on the path to be reused.
+
+Now the second part of the comment
+"the file count isn't zero but the file has already been reused"
+is misleading.
+
+The (file !=3D rcu_dereference_raw(*fdentry)) check is racy.
+Another cpu could have replaced that slot right after that check.
+Example:
+cpu0 doing lockless __fget_files_rcu() while cpu1 doing sys_close.
+__fget_files_rcu() will be returning a file that doesn't exist in fdt.
+And it's safe.
+
+This race is possible:
+cpu0                                    cpu1
+file =3D rcu_dereference_raw(*fdentry);
+                                        fput() reaches zero
+                                        file_free
+                                        alloc_empty_file // got same file
+                                        init_file // f_count =3D 1
+atomic_long_inc_not_zero()
+// succeeds. f_count =3D=3D 2
+file !=3D rcu_dereference_raw(*fdentry))
+// preventing a reuse of a file that
+was never in this fdt.
+
+The only value of this check is to make sure that this file
+either _is_ or _was_ at some point in this fdt.
+It's not preventing reuse per-se.
+
+This race is possible:
+cpu0                                    cpu1
+file =3D rcu_dereference_raw(*fdentry);
+                                        fput() reaches zero
+                                        file_free
+                                        alloc_empty_file // got same file
+                                        init_file // f_count =3D 1
+                                        fd_install
+atomic_long_inc_not_zero()
+// succeeds. f_count =3D=3D 2
+file =3D=3D rcu_dereference_raw(*fdentry))
+// success, though the file _was reused_.
+
+I suggest to revise the comment.
+
+>
+> You've been provided:
+>
+> a) good reasons why the patchset in it's current form isn't acceptable
+>    repeated multiple times
+
+We will improve commit logs in the next revision.
+
+> b) support for exporting a variant of bpf_d_path() that is safe to use
+
+good, but bpf_d_path kfunc alone is not useful.
+As Jann noted back in September:
+https://lore.kernel.org/all/CAG48ez2d5CW=3DCDi+fBOU1YqtwHfubN3q6w=3D1LfD+ss=
++Q1PWHgQ@mail.gmail.com/
+
+The conversion of files to typesafe_by_rcu broke that verifier
+assumption about mm->exe_file and we need kfuncs to safely
+acquire/release file reference to fix that breakage.
+
+> c) a request that all kfunc exports for the vfs will have to be located
+>    under fs/, not in kernel/bpf/
+
+we've added kfuncs to
+net/netfilter/, net/xfrm/, net/ipv4/, kernel/cgroup/, drivers/hid/
+because maintainers of those subsystems demonstrated understanding
+of what bpf is doing and what these kfuncs are for.
+
+We can put them in fs/, but you need to demonstrate willingness to
+understand the problem we're solving instead of arguing
+about how hard file typesafe_by_rcu is to understand.
+
+> d) a path on how to move forward with additional kfunc requests:
+>    Clear and documented rules when it's ok for someone to come along and
+>    request access to bpf kfuncs when it's to be rejected and when it's
+>    ok to be supported.
+
+There are ~36500 EXPORT_SYMBOL in the kernel.
+Are there "clear documented rules when it's ok for someone to"
+add or remove them?
+There is a gentleman's agreement that maintainers of subsystems need to
+be cc-ed when new EXPORT_SYMBOL-s are added.
+In this case no new EXPORT_SYMBOLs are requested.
+
+Compare that to 221 bpf helpers (which are uapi, and for the last
+2 years we didn't add a single one) and 151 bpf kfuncs which are
+not uapi as clearly documented in Documentation/bpf/kfuncs.rst
+When developers want to add them they cc bpf@vger and relevant
+subsystems just like we did with netfilter, xfrm, cgroup, hid.
+kfunc deprecation rules are also documented in kfunc.rst
+
+> You repeatedly threatening to go over the heads of people will not make
+> them more amenable to happily integrate with your subsystem.
+
+This is not it. We made our own mistakes with bpf_d_path safety, and now
+file typesafe_by_rcu broke bpf safety assumptions.
+We have to fix it one way or the other.
+It's bpf that got affected by your changes.
+But we don't demand that you fix bpf bits. We're fixing them.
+But you have to provide technical reasons why file acquire/release
+kfuncs are not suitable.
+"Only 3 people understand typesafe_by_rcu" is not it.
 
