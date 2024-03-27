@@ -1,163 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-15388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276F888DAE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 11:01:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146ED88DAF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 11:05:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB7E1F2A8AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 10:01:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4538B1C25952
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 10:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956FD39840;
-	Wed, 27 Mar 2024 10:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10F347A7D;
+	Wed, 27 Mar 2024 10:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wtQJpxmz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="57VDItSE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="i4JUTXki";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vnl9J7E7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYt2jmWd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6504E45975
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 10:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8E928DC8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 10:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711533687; cv=none; b=UkjjeioRY//yFzgT7WNijqER6qgG8l6V/N0JPnGA1nS7NdI7YVHn75H+i0/k4t/a3OuhUca9V4l/2xVXP48OE594Hk++hlw4QC5N5bpd7vQM7v+g5fBERK8oq+JMUq3cDwJBBNAcwJWQn6jeme9+8CfUySGwSmaV4IWsrF2Lby4=
+	t=1711533920; cv=none; b=Cq46j3lpHcLp4GjuxMGakTyPNHh1e4NmW74+gn+wCAiC++KKpvwlHCFIJnfaiYG9ztu9OYZ4LUaBJySIgzzkrQKDp40bdkVCWSeqLvd7B1ytxGmQAyqpYlxgKeiz9fwMn2Ie9RisDF7ZNrjoFMEEWZFTyai+G62AMkUVx6zzM8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711533687; c=relaxed/simple;
-	bh=G9CdM9cUOGIt27SesyAYEfbHuhBhS22GFmqE0yXFXiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lhBeXtcxrA8cbDunwq90Fml67bUy0hgSYNqKgejQhzF520a65JPWMcod6MZBdxP6CCVhFblKAEMdciUFSdWRwvvRSD83527VxfdBV7htFcHx3ElTFQHd5uNPnO6J89/oHKTGodMT0m56gL2ndOBQKofySNyvUsPSrjOl1JE4Dd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wtQJpxmz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=57VDItSE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=i4JUTXki; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vnl9J7E7; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AF61E601F9;
-	Wed, 27 Mar 2024 10:01:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711533683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nsPSx7lxtpbSBFMZOzQ9J1UWr3fqA595PyZT9Vy+e6Q=;
-	b=wtQJpxmzlwPQokYQCIbxD0dr840RdVBNIAqwMwzwfUMhaRY7GoeDhGjPDtTQTDZMMO8EpU
-	jo2F7sIbcTjoZCctlHJWgpK3YI24qH2M8APdOmtBc83lNplu+46U7zpyxccFyZfH/dE+sf
-	955gfrow03hX4g3nWMj/FB0hz4xeEI8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711533683;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nsPSx7lxtpbSBFMZOzQ9J1UWr3fqA595PyZT9Vy+e6Q=;
-	b=57VDItSEKEl8PEYDSUIdFfPdATxV6tm5vX7pteI7/KgYdgeU6tAa4m7NetwlVZHbuVlc5B
-	Avg3quv/Q2Y2OWAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711533682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nsPSx7lxtpbSBFMZOzQ9J1UWr3fqA595PyZT9Vy+e6Q=;
-	b=i4JUTXkipDkICKhFCpQt/zU8in5z7i5ub/o+CVxiqDYT6TpsWulT7cQsXO/oYNMA7YB2n2
-	JFEFck6k+laG2EA4Iam4u4MGRz1Dt7zfJCeElnEUhP4Qvo7VoXlJ6IFeTJsaxIK0aYr9ga
-	oLO1XAhykg7axs9PAjBIRqOZlJvRRAc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711533682;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nsPSx7lxtpbSBFMZOzQ9J1UWr3fqA595PyZT9Vy+e6Q=;
-	b=Vnl9J7E7RvwtC4A5GT6FWcglseVRTZj1ubqQHe9YTqC3yvEUxHk1FON4bo2CXrAHunwmmu
-	Zp9bQnf3PBoNiYDA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 9BDDE13AC5;
-	Wed, 27 Mar 2024 10:01:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id B6ALJnLuA2b7EAAAn2gu4w
-	(envelope-from <jack@suse.cz>); Wed, 27 Mar 2024 10:01:22 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 49C2DA0812; Wed, 27 Mar 2024 11:01:22 +0100 (CET)
-Date: Wed, 27 Mar 2024 11:01:22 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/10] fsnotify: rename fsnotify_{get,put}_sb_connectors()
-Message-ID: <20240327100122.odg6bc4lgsrryt6w@quack3>
-References: <20240317184154.1200192-1-amir73il@gmail.com>
- <20240317184154.1200192-2-amir73il@gmail.com>
+	s=arc-20240116; t=1711533920; c=relaxed/simple;
+	bh=7FfoVz4TyEGCuUBk5GbVWpV4zA0V5bwDX+w/IATyuhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g3rUCHxG3E0YzJiLjWFNCw6FQdfuYrXSugddIYK3fdTW/7EY9uFuaJMYXVszWBP3AmPdj9naxahD2UJ5rBi/wwY5+Iztk/NTJdV2+5epZcdzTcyCCZVBCW26aosY1F0pctdkiWVKD/z+SaBITtcF4JfD/4yZKjyDJaOqGc9v148=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYt2jmWd; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-696719f8dfcso29752416d6.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 03:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711533918; x=1712138718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sU1fgsC+f92ydKdPUBgVrgtIzgqRYlgOSF8lmCAR6dw=;
+        b=QYt2jmWduMhEsVu7kUXPWIUtAUnMj6sndBtLTblMORcTVcHhSOSfWtdHb2n1WVmNKx
+         Tlz2Tdj8KZaiupxiM3PDTgT8lE+S5dPG1+GnH1CT6yHmY0zNpkQhnCokYpL6URg2t4I4
+         w8Y1uTOPuqdh3hgfPqwOwKFFcDi/Urqo9hun1hdPBTgJIhZisdf5bmZZnuPy6QXf77HI
+         /sZykECk6iYRzuSCN8aEHpH6OXlL7vEWo6fR7q0IxkpVNGHkthagEKY6vbEpNUa03kuy
+         EW30lvtkeBmUjyTe0bb7bbBhziaIHJufqV01WSmEckQUiAvZvBV1RIwB3k4q/tswdg3m
+         Eayg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711533918; x=1712138718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sU1fgsC+f92ydKdPUBgVrgtIzgqRYlgOSF8lmCAR6dw=;
+        b=qfQ60grzm1NlM6uJsz1C5tFkIegxZyHHP+Wq8IN1f7ESbNxZTn8VCcpdX7sKZKr1Qq
+         Ul+tzxMzfN72WMT/gaquOOzpLOs4AzMHTisJ62pjgMkUlt722V5q8Xp1OcH9rMwO4oUT
+         c+J8sBlmPxNo+OKnDIBiZ1Ansdp7ClFt7TLi3XyeGPefAehO9bhoLAVsK2Ca+qUTWC3R
+         kgOnUr1c6zolny6cfeYX9gy1nkhYCvvTQfy81k4tZD487XanR5T+cCRBpucNwjfWIX8K
+         CuocPNSA82Utl+svSohFfxpsB1RgfKOAVV9yCGK9Gifq7bToJOTlVTNF3HNyRv2VGJpt
+         Vr6A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0d/W4z/mHs3pKuK52NLMeMm/s5KrkAxs3ZXJ3eAqkOHd9acxHtkluVIe5F7CnymUysFD9lIO/tFv2LF8lHOYR7B1IBxF6mg8/DKH6Cg==
+X-Gm-Message-State: AOJu0YxFXCThnt/jURQnOYVLbqlp7CzGuJe12sBExtaJRDnERZtf9pFc
+	/SkNPsd7wGjWNPbm4BnpsnWmnGql0Jqr1r4QNPwfFzQMuDluYBQSaCCbw0vgdTasf3ytp2xjZH6
+	igpF8nb28KsikzhXumvw+4h831cHsRN4X
+X-Google-Smtp-Source: AGHT+IEEIN21ktOs0x0+fH1aMSO6FoqEu/BRMGtZ6rjX3h9fi5zhHHX/s3cj2Z5gv3WwGDIsdgReUAIKfqcYg06QP8Y=
+X-Received: by 2002:ad4:5966:0:b0:696:20c3:35bd with SMTP id
+ eq6-20020ad45966000000b0069620c335bdmr813921qvb.47.1711533918010; Wed, 27 Mar
+ 2024 03:05:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240317184154.1200192-2-amir73il@gmail.com>
-X-Spam-Score: -0.80
-X-Spamd-Result: default: False [-0.80 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 NEURAL_HAM_SHORT(-0.20)[-0.997];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.00)[44.72%];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Flag: NO
+References: <20240317184154.1200192-1-amir73il@gmail.com> <20240317184154.1200192-2-amir73il@gmail.com>
+ <20240327100122.odg6bc4lgsrryt6w@quack3>
+In-Reply-To: <20240327100122.odg6bc4lgsrryt6w@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 27 Mar 2024 12:05:06 +0200
+Message-ID: <CAOQ4uxie5D8hLX=wPSv7rwsk8nShA5i8AJmBvztQGBDvaiiO6w@mail.gmail.com>
+Subject: Re: [PATCH 01/10] fsnotify: rename fsnotify_{get,put}_sb_connectors()
+To: Jan Kara <jack@suse.cz>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun 17-03-24 20:41:45, Amir Goldstein wrote:
-> Instead of counting the number of connectors in an sb, we would like
-> to count the number of watched objects per priority group.
-> 
-> As a start, create an accessor fsnotify_sb_watched_objects() to
-> s_fsnotify_connectors and rename the fsnotify_{get,put}_sb_connectors()
-> helpers to fsnotify_{get,put}_sb_watchers() to better describes the
-> counter.
-> 
-> Increment the counter at the end of fsnotify_attach_connector_to_object()
-> if connector was attached instead of decrementing it on race to connect.
-> 
-> This is fine, because fsnotify_delete_sb() cannot be running in parallel
-> to fsnotify_attach_connector_to_object() which requires a reference to
-> a filesystem object.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-...
-> +static void fsnotify_put_inode_ref(struct inode *inode)
-> +{
-> +	iput(inode);
-> +	fsnotify_put_sb_watched_objects(inode->i_sb);
-> +}
+On Wed, Mar 27, 2024 at 12:01=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Sun 17-03-24 20:41:45, Amir Goldstein wrote:
+> > Instead of counting the number of connectors in an sb, we would like
+> > to count the number of watched objects per priority group.
+> >
+> > As a start, create an accessor fsnotify_sb_watched_objects() to
+> > s_fsnotify_connectors and rename the fsnotify_{get,put}_sb_connectors()
+> > helpers to fsnotify_{get,put}_sb_watchers() to better describes the
+> > counter.
+> >
+> > Increment the counter at the end of fsnotify_attach_connector_to_object=
+()
+> > if connector was attached instead of decrementing it on race to connect=
+.
+> >
+> > This is fine, because fsnotify_delete_sb() cannot be running in paralle=
+l
+> > to fsnotify_attach_connector_to_object() which requires a reference to
+> > a filesystem object.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ...
+> > +static void fsnotify_put_inode_ref(struct inode *inode)
+> > +{
+> > +     iput(inode);
+> > +     fsnotify_put_sb_watched_objects(inode->i_sb);
+> > +}
+>
+> This is a UAF issue. Will fix on commit. Otherwise the patch looks good.
 
-This is a UAF issue. Will fix on commit. Otherwise the patch looks good.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+oops. Good catch!
+Thanks,
+Amir.
 
