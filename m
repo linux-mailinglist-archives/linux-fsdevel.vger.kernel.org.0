@@ -1,709 +1,530 @@
-Return-Path: <linux-fsdevel+bounces-15377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8078988D6AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 07:40:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670BE88D9AF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 09:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A432C1C2564E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 06:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AB201C23FD5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 08:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE37C36AF6;
-	Wed, 27 Mar 2024 06:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139F43418B;
+	Wed, 27 Mar 2024 08:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JXqRYqft"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rN3+gpdK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE5E2561F;
-	Wed, 27 Mar 2024 06:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711521505; cv=fail; b=tlfeeOYrP86CyWUFApmCOuZ2mqUhwoOzMFodHdK2jsglLl7JuY9iXsO/2HvvyeF/VO99iIXHa51EbTzMDyuoaGLHjiILOr7kFf7aVGTD2MAv7I5rDJzvhdg4HqkxKDO3/fnf5bB3ahRgojbrk/rznbkwlVclODhqTJ1JaMl2FGg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711521505; c=relaxed/simple;
-	bh=/5xw+Dy0oVIy1bJioq//2dUneDfAvBuIbYb0otD3hnk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DC0QQRSmzxWkcFWkoYWk5qXGm/XugUIQmQSMtdY5fNZiwBzbHkaDgbGQ+SYdySsEvaeMBZPTTR0AbMQzUN9y3K6CaIWYc86oskHm7SHhmnmQN/FKAifG8iabHjBAFcW/ACZOT9NvNb7D/EbIbibHIZVeWt2A6glGw/Gu5wd9RsY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JXqRYqft; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1711521503; x=1743057503;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=/5xw+Dy0oVIy1bJioq//2dUneDfAvBuIbYb0otD3hnk=;
-  b=JXqRYqftoNz2QJYREuGfboXdNfxEcIDhoZOXhvyM4F/gEbl3f+u9pBqy
-   agfp8vuC+lB7hq4QiYIWvBw6/wmtvJJ0BoCKdpAqb/QpRaxAyjc5Ep+qm
-   sQYH/Hk84yk4dgtmAI5cCWzZlypH9FjfUoSCOK4t238401BoFJtpJebq7
-   U+TvWZZX+KrjszFZCqQUaFDuFSCFVN75n7sSFzYFEZtAN0D+KtfA2BuBq
-   cLiV8nMYSl96P93IR+Atzte8XePfyqOcSq16zLxXvK/hHleyc0j5D+5aq
-   mVLHjlN4JpqdsW/tywjYWuexuPvcWnmVVW/lHdeNCgA+kXHE/NAte6+Qi
-   A==;
-X-CSE-ConnectionGUID: rqHm7VoaS4WAU7m5ObMtLw==
-X-CSE-MsgGUID: hByopJG9TeWyjdiA/zWFZw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11025"; a="10381890"
-X-IronPort-AV: E=Sophos;i="6.07,158,1708416000"; 
-   d="scan'208";a="10381890"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2024 23:38:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,158,1708416000"; 
-   d="scan'208";a="16576825"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Mar 2024 23:38:21 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 26 Mar 2024 23:38:20 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 26 Mar 2024 23:38:20 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 26 Mar 2024 23:38:20 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 26 Mar 2024 23:38:20 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V9cv7sKMwMLdM2qKQC5E+kjsiTsuJxhyq0GidBqbF6hYczYjLDYk4OGdvinnE8KxN+dnMRFNKpFHyuh7g6AeFWNslqRvHSAodYyL1ox+p+YGHFdVBRBOR31h4MZoEVQIcCCNB91GoORlx7UCBzborKZ1dEnXqB54mMy4ywv6GazuLvhpjyHy7Pu5IzfSbLZrSlQDY0wW2NfHlvfUnNNJ9TAQlTEhkyG/5Yw0hzHy5ijr9BUnNyeyeU5lrP32/j4PwlLr9c2oPLK0kLPs2vZPMLX01mFP3j1n3Um4Y1tMWpwqMXotwoACOd2vT0JwOtlVWWmWtRjpucEL6ZhzTz4BzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wrO6jn1wynSMt6AgsWVUCz2JKBRBcaQO+0mOhYOf9+4=;
- b=PpgqY6NqsCEZJQ11IPYeGmRPXKR+BRXZmiUvu9DJzv/DUIYGAZv4LF2iDXjT46GGgdNO+Bb7kMIzwTgCLNzJC/EtdAjF1HfJyMxlGZ0vu1M0Cw/I53KyQ6dqulW01t17ZC4KDH3ZlcDfjuyYC0Nv0nHA0+YjMe70TMnnZG04WYnx5n5LhduPv7IjL5n2VLEhBb6SJ4ylZNvE/+EEGb0Doe79d0K6HNuNXoJVB/fqByT0PL35vE9mZKnbeaoWkb4jpRmyZ3hSdhYC3KfzPZyLqkgHs6tHPS1rB2NadeV2+34K+KakXl/Vv77l+v0Pu9cvJbIoIP9pL5dSu3e+ORD0IQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by CY5PR11MB6163.namprd11.prod.outlook.com (2603:10b6:930:28::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.32; Wed, 27 Mar
- 2024 06:38:18 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::82fd:75df:40d7:ed71]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::82fd:75df:40d7:ed71%4]) with mapi id 15.20.7409.031; Wed, 27 Mar 2024
- 06:38:17 +0000
-Date: Tue, 26 Mar 2024 23:38:14 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, <Liam.Howlett@oracle.com>,
-	<akpm@linux-foundation.org>, <bp@alien8.de>, <broonie@kernel.org>,
-	<christophe.leroy@csgroup.eu>, <dave.hansen@linux.intel.com>,
-	<debug@rivosinc.com>, <hpa@zytor.com>, <keescook@chromium.org>,
-	<kirill.shutemov@linux.intel.com>, <luto@kernel.org>, <mingo@redhat.com>,
-	<peterz@infradead.org>, <tglx@linutronix.de>, <x86@kernel.org>
-CC: <rick.p.edgecombe@intel.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-s390@vger.kernel.org>,
-	<sparclinux@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <io-uring@vger.kernel.org>,
-	<bpf@vger.kernel.org>
-Subject: Re: [PATCH v4 02/14] mm: Switch mm->get_unmapped_area() to a flag
-Message-ID: <6603bed6662a_4a98a2949e@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-References: <20240326021656.202649-1-rick.p.edgecombe@intel.com>
- <20240326021656.202649-3-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240326021656.202649-3-rick.p.edgecombe@intel.com>
-X-ClientProxiedBy: MW4PR04CA0179.namprd04.prod.outlook.com
- (2603:10b6:303:85::34) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CEB24205;
+	Wed, 27 Mar 2024 08:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711529824; cv=none; b=WB8CpRRZ5Kbqs0sj70Xhv3ljThFJ0CO5XeMt3KZ7bSGTWFfd03TDrdXe66QoR8e3+z6m4+Cl1NnLFjAcddiIr4P8A2k6fY4clz1FTmBnmkaeCmXEGzrWD13ahKaFSFyTQxXSFaA5ZF6wgJMmdYRj4boJCvnj1WzdStx2E2SDtAs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711529824; c=relaxed/simple;
+	bh=CPyt8dOdJgPOfXoxtqI4K1qh0sy7SN32hWmqkLuhppo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hk111ryq3zHSzVlk8tBVUrO5lwDhK7M3kiypIPkjEYbW/RsGYeyTR3ufN1GwJrPyhpPYR657xiQwwthN4Qe1cJ5HokZ0LIvSygkUmmGeJNNCbNQQ9a83SOSwmSCfM3pbU2AGGiNqXTfbZxMfDaFDETDnSNMzX1OPcFaHw5M8/yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rN3+gpdK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68624C433C7;
+	Wed, 27 Mar 2024 08:57:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711529824;
+	bh=CPyt8dOdJgPOfXoxtqI4K1qh0sy7SN32hWmqkLuhppo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rN3+gpdKsuQyrfEKh2lnr9CBilSBTnzNu4+Q/RFGDBZzWUu6gdMo7XAZg1kU0xq/+
+	 FQHc/CQ9N3GaOgl4fELb2/woyzLBFnf1O4KCQG+Jv7IcVAK6pS3LHl3EG3O49k1s9B
+	 7W/NLaDfg4+1zPds50ZE6Nx1R8DsoHFQxD68l0HbtSPb1SZRyowmDlQ5Em+NuEZ6kk
+	 TVoTD3Gw4p5RdH9O+HW1U0NnM1ENf+oAw4/9OshF2z7sxx4drf8lz2hv8qwlFLBxJx
+	 EjBuxTz6OT9W70TP0CKAIfNu05c0/m9g0vxxf76W1e9uCjJjr2kSyTKCE3hGuEG0Sy
+	 5ObkMzZsDlliQ==
+Date: Wed, 27 Mar 2024 09:56:59 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] fs,block: yield devices early
+Message-ID: <20240327-befanden-morsen-9f691f5624f9@brauner>
+References: <20240326-vfs-bdev-end_holder-v1-1-20af85202918@kernel.org>
+ <20240326223213.ytrsxxjsq3twfsxy@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CY5PR11MB6163:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3cc1b1f-ca32-4a0b-2158-08dc4e287c60
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ozCfjyHymPggSh1CtGWAg9622xJ5Tg7vZom6JFpwaI2xZhxIMOIVUbZ3NsyCrKpmQg1JAgLbwg61MkdnRDKsSvU5PJiv1KV5petf6VjnY4U+Bpzq3QcB/wiVEceWCMxD6eVLzOrMlK4eGT0KfvAbdueMcyk/yhKwaYDq0PkQN1zcrliL0EDxES8rl89hfg/w3MiG5KgKC8ezpiwIGuotS3EB+ycGnjUcN/+pcLOjoVFuUCOsezud4fnB/6nArktNIbSAF2scMMcDjt8Bt5p6URrL0sg5CdKdcTw3trgRjyShwoK87xUS/yp71lEujhBZ1CNhLo0Yo2pQVCmKAgtnNWLpcAJf1khLv2k4e+HbQOm2tpDOT5FOTiPTdjLLh57ctnr2JSCP4J6ursmt4xNY962xi8XQL5BfdB2iS3uB87mdjrJWjoCKoo+If+4cWOcmUpIj8rpyY+xlqZwn+f53gRUwEh4E6ATFUDvet3NpqK5Ju3JZW3srnhR8dKM8ArTBGkS0w22CK/9KzkgAPkxV4GSKOBronIw2oiBrDmFTOWJpZwVOntP/Twlif4KTLEihtSppMszmK2eXUa9GQXFi35INfQHBxvQhqThGtnBqw9OA14AHqK2zIjQvzfaa/GyIjbl8BxA3O7WnYMC+fpIYfm/KNeFKLEj8G9kYyVvHB/RYON/IT3/q0Kh4lYN6jcwRem1712H7lvLvSnFLHIDkcg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(7416005)(921011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SoEDMht+EriNEHn7r1aXyKAoHvNXFfkSPvpM8yCM+u0U3Yc8n7tg96LdeSAu?=
- =?us-ascii?Q?2d/DzcPOb7R3RSwtyMGFfTlJNeX0/PJZQoBzgmCJHELTcSk0hIkRqDkthkNO?=
- =?us-ascii?Q?/lBIOKZlii+vZnc9hlIHfEz+IDQxllnPYwAgUHQgQAJlJYY9NdotpaA85UKV?=
- =?us-ascii?Q?MwL3cgeVIC17H1W0FxFmgufdA9Pwx1Jh3E4AU27s2IRlYR0k9ITZmr+I7QwK?=
- =?us-ascii?Q?SXY/WigNsQ5XUQIhAghB+u8RWDmmcvijnBWoRv1LRnpXKOBeBjMSv6IV0IEe?=
- =?us-ascii?Q?0MsgIxU9kfAz1mKtodjHDl3qJ7rGuSQWfwCIxdoWod50PKNPDuP/oNwlZ76i?=
- =?us-ascii?Q?fsu2oLkqnet42nQ0AbDfq0aXSz9shqZSlpQogbhQMgRzbOx/z0sWrJJ2t8SF?=
- =?us-ascii?Q?CLiCvIUCkzR0vh+CAg7UHZCLGhZpV59LQi+tLE6NHcvD+2BE9Jczd78H6GkX?=
- =?us-ascii?Q?+76XBh9gWcb6JUOXLpTdqIktfA5JA6MWPxPuXGlufu2+4UrRsHWsnetiYzNw?=
- =?us-ascii?Q?iUk0FOI6Qsu576N2ZVylbQjE5oU2oDgm5rxpnL1eRrGqMzuiC0wYViTx7K/C?=
- =?us-ascii?Q?Ve+r0Z+7yGOGxDLwX3FdjADsb6NjlmJlfwHSBRAfyI1WhIL66+V4TZduUFJO?=
- =?us-ascii?Q?aiouTsL2vhw24/r/0BmNGCRgXVcdjB0LtUojOjz/neH5GzT1vqZeauKPV/Qb?=
- =?us-ascii?Q?wmTYsau1yF3qvlC75yKV/i0afuwEbCiHfvrWt/kEJqAfYdgOe/h/7rKAMgzy?=
- =?us-ascii?Q?HGMZyLLKYvDH5BZzf6DS9eQ8j0yORyW61Ygl/z7esgXZ87RMTSuaY5+9ZIOL?=
- =?us-ascii?Q?sFT7htzx1XYjnzo+1CnhQEM+MHY1VdEyG1M32QPFfZFymQjwhjyB04eh+3t7?=
- =?us-ascii?Q?if0d3qurFjhljB9MLuBnmvS3DpKb2O9pwmgHNvfi4XVaS1IU/Zex800mnvlA?=
- =?us-ascii?Q?UQ6iw6I3g2d8WxjZEdbQ8AWGO0Hw6fIMWFZ3MOLtLqmdHjGHKawyOBVRVkma?=
- =?us-ascii?Q?PJqcGGhwWojPvO+SCgjSq/d+kjzl9p67rN+9PEZkImUOUgVbzgC2GpdxD1C/?=
- =?us-ascii?Q?cLYEX+vJUgEhc+DNOF7+ufF27QlNGLcxKFg/lT/HVPomfxhZLHEePsxSnf+d?=
- =?us-ascii?Q?FL9fGzMSvBLDbMETFI/Wei+JCvsHTPvnVHF4+LJlbKDNWVYcOC4NzjIWCwww?=
- =?us-ascii?Q?OX2yRlkcsrcTl/uVDqMsSbaGjGepaz8nUYulVLK33TqNiy7UAZr3aV7RcYqN?=
- =?us-ascii?Q?3AibBrjnVCiM4yv7Zju9SXy2U+39/TrHXlCj/CuZ0/7RPoLLYAGR5ZtG+GQf?=
- =?us-ascii?Q?rzWn1JzF43TVefFULH/j83P1BMNvqaBW3FLHx6zMTV+WnS7lHZ8OyM+JXeX7?=
- =?us-ascii?Q?4SvxEarKmZeE0n0dGAWmol4Dh/9ewrawdtXd3x7SZ6M8sU0+oP+RIQUjW/Ny?=
- =?us-ascii?Q?K/DTx13Zwrzq2sBgRzsk1gaT+IzssgT/QEPXwvZ9UOEOBvhGINGo0TH5F4zI?=
- =?us-ascii?Q?OOqFAOYlViVr6XFaHIkvgfeZbenLW+OzBy1LD4UMHxWmm43OJsyW8/WwPUlC?=
- =?us-ascii?Q?BiVSyVZs+GVIvjX/OpnTZR66xzeZGHqspPCKVL9sJW9zstk84dKj6qDod4Er?=
- =?us-ascii?Q?BA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3cc1b1f-ca32-4a0b-2158-08dc4e287c60
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2024 06:38:17.4698
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d/YAWqmzFrdZtb8ARtqlqqeEXQzOaXwoANWRhRUJSBkXwII7DUJ73k1W3kzU7T8lXxAYo4rpzC58encnFNF8wK4qWxqbGVDf7YJt4qJeq2w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6163
-X-OriginatorOrg: intel.com
+Content-Type: multipart/mixed; boundary="gzws4rsal6aab534"
+Content-Disposition: inline
+In-Reply-To: <20240326223213.ytrsxxjsq3twfsxy@quack3>
 
-Rick Edgecombe wrote:
-> The mm_struct contains a function pointer *get_unmapped_area(), which
-> is set to either arch_get_unmapped_area() or
-> arch_get_unmapped_area_topdown() during the initialization of the mm.
-> 
-> Since the function pointer only ever points to two functions that are named
-> the same across all arch's, a function pointer is not really required. In
-> addition future changes will want to add versions of the functions that
-> take additional arguments. So to save a pointers worth of bytes in
-> mm_struct, and prevent adding additional function pointers to mm_struct in
-> future changes, remove it and keep the information about which
-> get_unmapped_area() to use in a flag.
-> 
-> Add the new flag to MMF_INIT_MASK so it doesn't get clobbered on fork by
-> mmf_init_flags(). Most MM flags get clobbered on fork. In the pre-existing
-> behavior mm->get_unmapped_area() would get copied to the new mm in
-> dup_mm(), so not clobbering the flag preserves the existing behavior
-> around inheriting the topdown-ness.
-> 
-> Introduce a helper, mm_get_unmapped_area(), to easily convert code that
-> refers to the old function pointer to instead select and call either
-> arch_get_unmapped_area() or arch_get_unmapped_area_topdown() based on the
-> flag. Then drop the mm->get_unmapped_area() function pointer. Leave the
-> get_unmapped_area() pointer in struct file_operations alone. The main
-> purpose of this change is to reorganize in preparation for future changes,
-> but it also converts the calls of mm->get_unmapped_area() from indirect
-> branches into a direct ones.
-> 
-> The stress-ng bigheap benchmark calls realloc a lot, which calls through
-> get_unmapped_area() in the kernel. On x86, the change yielded a ~1%
-> improvement there on a retpoline config.
-> 
-> In testing a few x86 configs, removing the pointer unfortunately didn't
-> result in any actual size reductions in the compiled layout of mm_struct.
-> But depending on compiler or arch alignment requirements, the change could
-> shrink the size of mm_struct.
-> 
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Acked-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: linux-s390@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: sparclinux@vger.kernel.org
-> Cc: linux-sgx@vger.kernel.org
-> Cc: nvdimm@lists.linux.dev
-> Cc: linux-cxl@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: io-uring@vger.kernel.org
-> Cc: bpf@vger.kernel.org
-> ---
-> v4:
->  - Split out pde_get_unmapped_area() refactor into separate patch
->    (Christophe Leroy)
-> 
-> v3:
->  - Fix comment that still referred to mm->get_unmapped_area()
->  - Resolve trivial rebase conflicts with "mm: thp_get_unmapped_area must
->    honour topdown preference"
->  - Spelling fix in log
-> 
-> v2:
->  - Fix comment on MMF_TOPDOWN (Kirill, rppt)
->  - Move MMF_TOPDOWN to actually unused bit
->  - Add MMF_TOPDOWN to MMF_INIT_MASK so it doesn't get clobbered on fork,
->    and result in the children using the search up path.
->  - New lower performance results after above bug fix
->  - Add Reviews and Acks
-> ---
->  arch/s390/mm/hugetlbpage.c       |  2 +-
->  arch/s390/mm/mmap.c              |  4 ++--
->  arch/sparc/kernel/sys_sparc_64.c | 15 ++++++---------
->  arch/sparc/mm/hugetlbpage.c      |  2 +-
->  arch/x86/kernel/cpu/sgx/driver.c |  2 +-
->  arch/x86/mm/hugetlbpage.c        |  2 +-
->  arch/x86/mm/mmap.c               |  4 ++--
->  drivers/char/mem.c               |  2 +-
->  drivers/dax/device.c             |  6 +++---
->  fs/hugetlbfs/inode.c             |  4 ++--
->  fs/proc/inode.c                  |  3 ++-
->  fs/ramfs/file-mmu.c              |  2 +-
->  include/linux/mm_types.h         |  6 +-----
->  include/linux/sched/coredump.h   |  5 ++++-
->  include/linux/sched/mm.h         |  5 +++++
->  io_uring/io_uring.c              |  2 +-
->  kernel/bpf/arena.c               |  2 +-
->  kernel/bpf/syscall.c             |  2 +-
->  mm/debug.c                       |  6 ------
->  mm/huge_memory.c                 |  9 ++++-----
->  mm/mmap.c                        | 21 ++++++++++++++++++---
->  mm/shmem.c                       | 11 +++++------
->  mm/util.c                        |  6 +++---
->  23 files changed, 66 insertions(+), 57 deletions(-)
-> 
-> diff --git a/arch/s390/mm/hugetlbpage.c b/arch/s390/mm/hugetlbpage.c
-> index c2e8242bd15d..219d906fe830 100644
-> --- a/arch/s390/mm/hugetlbpage.c
-> +++ b/arch/s390/mm/hugetlbpage.c
-> @@ -328,7 +328,7 @@ unsigned long hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
->  			goto check_asce_limit;
->  	}
->  
-> -	if (mm->get_unmapped_area == arch_get_unmapped_area)
-> +	if (!test_bit(MMF_TOPDOWN, &mm->flags))
->  		addr = hugetlb_get_unmapped_area_bottomup(file, addr, len,
->  				pgoff, flags);
->  	else
-> diff --git a/arch/s390/mm/mmap.c b/arch/s390/mm/mmap.c
-> index b14fc0887654..6b2e4436ad4a 100644
-> --- a/arch/s390/mm/mmap.c
-> +++ b/arch/s390/mm/mmap.c
-> @@ -185,10 +185,10 @@ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
->  	 */
->  	if (mmap_is_legacy(rlim_stack)) {
->  		mm->mmap_base = mmap_base_legacy(random_factor);
-> -		mm->get_unmapped_area = arch_get_unmapped_area;
-> +		clear_bit(MMF_TOPDOWN, &mm->flags);
->  	} else {
->  		mm->mmap_base = mmap_base(random_factor, rlim_stack);
-> -		mm->get_unmapped_area = arch_get_unmapped_area_topdown;
-> +		set_bit(MMF_TOPDOWN, &mm->flags);
->  	}
->  }
->  
-> diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_sparc_64.c
-> index 1e9a9e016237..1dbf7211666e 100644
-> --- a/arch/sparc/kernel/sys_sparc_64.c
-> +++ b/arch/sparc/kernel/sys_sparc_64.c
-> @@ -218,14 +218,10 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
->  unsigned long get_fb_unmapped_area(struct file *filp, unsigned long orig_addr, unsigned long len, unsigned long pgoff, unsigned long flags)
->  {
->  	unsigned long align_goal, addr = -ENOMEM;
-> -	unsigned long (*get_area)(struct file *, unsigned long,
-> -				  unsigned long, unsigned long, unsigned long);
-> -
-> -	get_area = current->mm->get_unmapped_area;
->  
->  	if (flags & MAP_FIXED) {
->  		/* Ok, don't mess with it. */
-> -		return get_area(NULL, orig_addr, len, pgoff, flags);
-> +		return mm_get_unmapped_area(current->mm, NULL, orig_addr, len, pgoff, flags);
->  	}
->  	flags &= ~MAP_SHARED;
->  
-> @@ -238,7 +234,8 @@ unsigned long get_fb_unmapped_area(struct file *filp, unsigned long orig_addr, u
->  		align_goal = (64UL * 1024);
->  
->  	do {
-> -		addr = get_area(NULL, orig_addr, len + (align_goal - PAGE_SIZE), pgoff, flags);
-> +		addr = mm_get_unmapped_area(current->mm, NULL, orig_addr,
-> +					    len + (align_goal - PAGE_SIZE), pgoff, flags);
->  		if (!(addr & ~PAGE_MASK)) {
->  			addr = (addr + (align_goal - 1UL)) & ~(align_goal - 1UL);
->  			break;
-> @@ -256,7 +253,7 @@ unsigned long get_fb_unmapped_area(struct file *filp, unsigned long orig_addr, u
->  	 * be obtained.
->  	 */
->  	if (addr & ~PAGE_MASK)
-> -		addr = get_area(NULL, orig_addr, len, pgoff, flags);
-> +		addr = mm_get_unmapped_area(current->mm, NULL, orig_addr, len, pgoff, flags);
->  
->  	return addr;
->  }
-> @@ -292,7 +289,7 @@ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
->  	    gap == RLIM_INFINITY ||
->  	    sysctl_legacy_va_layout) {
->  		mm->mmap_base = TASK_UNMAPPED_BASE + random_factor;
-> -		mm->get_unmapped_area = arch_get_unmapped_area;
-> +		clear_bit(MMF_TOPDOWN, &mm->flags);
->  	} else {
->  		/* We know it's 32-bit */
->  		unsigned long task_size = STACK_TOP32;
-> @@ -303,7 +300,7 @@ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
->  			gap = (task_size / 6 * 5);
->  
->  		mm->mmap_base = PAGE_ALIGN(task_size - gap - random_factor);
-> -		mm->get_unmapped_area = arch_get_unmapped_area_topdown;
-> +		set_bit(MMF_TOPDOWN, &mm->flags);
->  	}
->  }
->  
-> diff --git a/arch/sparc/mm/hugetlbpage.c b/arch/sparc/mm/hugetlbpage.c
-> index b432500c13a5..38a1bef47efb 100644
-> --- a/arch/sparc/mm/hugetlbpage.c
-> +++ b/arch/sparc/mm/hugetlbpage.c
-> @@ -123,7 +123,7 @@ hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
->  		    (!vma || addr + len <= vm_start_gap(vma)))
->  			return addr;
->  	}
-> -	if (mm->get_unmapped_area == arch_get_unmapped_area)
-> +	if (!test_bit(MMF_TOPDOWN, &mm->flags))
->  		return hugetlb_get_unmapped_area_bottomup(file, addr, len,
->  				pgoff, flags);
->  	else
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-> index 262f5fb18d74..22b65a5f5ec6 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver.c
-> @@ -113,7 +113,7 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
->  	if (flags & MAP_FIXED)
->  		return addr;
->  
-> -	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
-> +	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags);
->  }
->  
->  #ifdef CONFIG_COMPAT
-> diff --git a/arch/x86/mm/hugetlbpage.c b/arch/x86/mm/hugetlbpage.c
-> index 5804bbae4f01..6d77c0039617 100644
-> --- a/arch/x86/mm/hugetlbpage.c
-> +++ b/arch/x86/mm/hugetlbpage.c
-> @@ -141,7 +141,7 @@ hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
->  	}
->  
->  get_unmapped_area:
-> -	if (mm->get_unmapped_area == arch_get_unmapped_area)
-> +	if (!test_bit(MMF_TOPDOWN, &mm->flags))
->  		return hugetlb_get_unmapped_area_bottomup(file, addr, len,
->  				pgoff, flags);
->  	else
-> diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
-> index c90c20904a60..a2cabb1c81e1 100644
-> --- a/arch/x86/mm/mmap.c
-> +++ b/arch/x86/mm/mmap.c
-> @@ -129,9 +129,9 @@ static void arch_pick_mmap_base(unsigned long *base, unsigned long *legacy_base,
->  void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
->  {
->  	if (mmap_is_legacy())
-> -		mm->get_unmapped_area = arch_get_unmapped_area;
-> +		clear_bit(MMF_TOPDOWN, &mm->flags);
->  	else
-> -		mm->get_unmapped_area = arch_get_unmapped_area_topdown;
-> +		set_bit(MMF_TOPDOWN, &mm->flags);
->  
->  	arch_pick_mmap_base(&mm->mmap_base, &mm->mmap_legacy_base,
->  			arch_rnd(mmap64_rnd_bits), task_size_64bit(0),
-> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> index 3c6670cf905f..9b80e622ae80 100644
-> --- a/drivers/char/mem.c
-> +++ b/drivers/char/mem.c
-> @@ -544,7 +544,7 @@ static unsigned long get_unmapped_area_zero(struct file *file,
->  	}
->  
->  	/* Otherwise flags & MAP_PRIVATE: with no shmem object beneath it */
-> -	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
-> +	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags);
->  #else
->  	return -ENOSYS;
->  #endif
-> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-> index 93ebedc5ec8c..47c126d37b59 100644
-> --- a/drivers/dax/device.c
-> +++ b/drivers/dax/device.c
-> @@ -329,14 +329,14 @@ static unsigned long dax_get_unmapped_area(struct file *filp,
->  	if ((off + len_align) < off)
->  		goto out;
->  
-> -	addr_align = current->mm->get_unmapped_area(filp, addr, len_align,
-> -			pgoff, flags);
-> +	addr_align = mm_get_unmapped_area(current->mm, filp, addr, len_align,
-> +					  pgoff, flags);
->  	if (!IS_ERR_VALUE(addr_align)) {
->  		addr_align += (off - addr_align) & (align - 1);
->  		return addr_align;
->  	}
->   out:
-> -	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
-> +	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags);
->  }
->  
->  static const struct address_space_operations dev_dax_aops = {
-> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-> index 6502c7e776d1..3dee18bf47ed 100644
-> --- a/fs/hugetlbfs/inode.c
-> +++ b/fs/hugetlbfs/inode.c
-> @@ -249,11 +249,11 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
->  	}
->  
->  	/*
-> -	 * Use mm->get_unmapped_area value as a hint to use topdown routine.
-> +	 * Use MMF_TOPDOWN flag as a hint to use topdown routine.
->  	 * If architectures have special needs, they should define their own
->  	 * version of hugetlb_get_unmapped_area.
->  	 */
-> -	if (mm->get_unmapped_area == arch_get_unmapped_area_topdown)
-> +	if (test_bit(MMF_TOPDOWN, &mm->flags))
->  		return hugetlb_get_unmapped_area_topdown(file, addr, len,
->  				pgoff, flags);
->  	return hugetlb_get_unmapped_area_bottomup(file, addr, len,
-> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-> index 75396a24fd8c..d19434e2a58e 100644
-> --- a/fs/proc/inode.c
-> +++ b/fs/proc/inode.c
-> @@ -455,8 +455,9 @@ pde_get_unmapped_area(struct proc_dir_entry *pde, struct file *file, unsigned lo
->  		return pde->proc_ops->proc_get_unmapped_area(file, orig_addr, len, pgoff, flags);
->  
->  #ifdef CONFIG_MMU
-> -	return current->mm->get_unmapped_area(file, orig_addr, len, pgoff, flags);
-> +	return mm_get_unmapped_area(current->mm, file, orig_addr, len, pgoff, flags);
->  #endif
-> +
->  	return orig_addr;
->  }
->  
-> diff --git a/fs/ramfs/file-mmu.c b/fs/ramfs/file-mmu.c
-> index c7a1aa3c882b..b45c7edc3225 100644
-> --- a/fs/ramfs/file-mmu.c
-> +++ b/fs/ramfs/file-mmu.c
-> @@ -35,7 +35,7 @@ static unsigned long ramfs_mmu_get_unmapped_area(struct file *file,
->  		unsigned long addr, unsigned long len, unsigned long pgoff,
->  		unsigned long flags)
->  {
-> -	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
-> +	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags);
->  }
->  
->  const struct file_operations ramfs_file_operations = {
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 5240bd7bca33..9313e43123d4 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -777,11 +777,7 @@ struct mm_struct {
->  		} ____cacheline_aligned_in_smp;
->  
->  		struct maple_tree mm_mt;
-> -#ifdef CONFIG_MMU
-> -		unsigned long (*get_unmapped_area) (struct file *filp,
-> -				unsigned long addr, unsigned long len,
-> -				unsigned long pgoff, unsigned long flags);
-> -#endif
-> +
->  		unsigned long mmap_base;	/* base of mmap area */
->  		unsigned long mmap_legacy_base;	/* base of mmap area in bottom-up allocations */
->  #ifdef CONFIG_HAVE_ARCH_COMPAT_MMAP_BASES
-> diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
-> index 02f5090ffea2..e62ff805cfc9 100644
-> --- a/include/linux/sched/coredump.h
-> +++ b/include/linux/sched/coredump.h
-> @@ -92,9 +92,12 @@ static inline int get_dumpable(struct mm_struct *mm)
->  #define MMF_VM_MERGE_ANY	30
->  #define MMF_VM_MERGE_ANY_MASK	(1 << MMF_VM_MERGE_ANY)
->  
-> +#define MMF_TOPDOWN		31	/* mm searches top down by default */
-> +#define MMF_TOPDOWN_MASK	(1 << MMF_TOPDOWN)
-> +
->  #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
->  				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
-> -				 MMF_VM_MERGE_ANY_MASK)
-> +				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
->  
->  static inline unsigned long mmf_init_flags(unsigned long flags)
->  {
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index b6543f9d78d6..ed1caa26c8be 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -8,6 +8,7 @@
->  #include <linux/mm_types.h>
->  #include <linux/gfp.h>
->  #include <linux/sync_core.h>
-> +#include <linux/sched/coredump.h>
->  
->  /*
->   * Routines for handling mm_structs
-> @@ -186,6 +187,10 @@ arch_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
->  			  unsigned long len, unsigned long pgoff,
->  			  unsigned long flags);
->  
-> +unsigned long mm_get_unmapped_area(struct mm_struct *mm, struct file *filp,
-> +				   unsigned long addr, unsigned long len,
-> +				   unsigned long pgoff, unsigned long flags);
-> +
->  unsigned long
->  generic_get_unmapped_area(struct file *filp, unsigned long addr,
->  			  unsigned long len, unsigned long pgoff,
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 5d4b448fdc50..405bab0a560c 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -3520,7 +3520,7 @@ static unsigned long io_uring_mmu_get_unmapped_area(struct file *filp,
->  #else
->  	addr = 0UL;
->  #endif
-> -	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
-> +	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags);
->  }
->  
->  #else /* !CONFIG_MMU */
-> diff --git a/kernel/bpf/arena.c b/kernel/bpf/arena.c
-> index 86571e760dd6..74d566dcd2cb 100644
-> --- a/kernel/bpf/arena.c
-> +++ b/kernel/bpf/arena.c
-> @@ -314,7 +314,7 @@ static unsigned long arena_get_unmapped_area(struct file *filp, unsigned long ad
->  			return -EINVAL;
->  	}
->  
-> -	ret = current->mm->get_unmapped_area(filp, addr, len * 2, 0, flags);
-> +	ret = mm_get_unmapped_area(current->mm, filp, addr, len * 2, 0, flags);
->  	if (IS_ERR_VALUE(ret))
->  		return ret;
->  	if ((ret >> 32) == ((ret + len - 1) >> 32))
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index ae2ff73bde7e..dead5e1977d8 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -980,7 +980,7 @@ static unsigned long bpf_get_unmapped_area(struct file *filp, unsigned long addr
->  	if (map->ops->map_get_unmapped_area)
->  		return map->ops->map_get_unmapped_area(filp, addr, len, pgoff, flags);
->  #ifdef CONFIG_MMU
-> -	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
-> +	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags);
->  #else
->  	return addr;
->  #endif
-> diff --git a/mm/debug.c b/mm/debug.c
-> index c1c1a6a484e4..37a17f77df9f 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -180,9 +180,6 @@ EXPORT_SYMBOL(dump_vma);
->  void dump_mm(const struct mm_struct *mm)
->  {
->  	pr_emerg("mm %px task_size %lu\n"
-> -#ifdef CONFIG_MMU
-> -		"get_unmapped_area %px\n"
-> -#endif
->  		"mmap_base %lu mmap_legacy_base %lu\n"
->  		"pgd %px mm_users %d mm_count %d pgtables_bytes %lu map_count %d\n"
->  		"hiwater_rss %lx hiwater_vm %lx total_vm %lx locked_vm %lx\n"
-> @@ -208,9 +205,6 @@ void dump_mm(const struct mm_struct *mm)
->  		"def_flags: %#lx(%pGv)\n",
->  
->  		mm, mm->task_size,
-> -#ifdef CONFIG_MMU
-> -		mm->get_unmapped_area,
-> -#endif
->  		mm->mmap_base, mm->mmap_legacy_base,
->  		mm->pgd, atomic_read(&mm->mm_users),
->  		atomic_read(&mm->mm_count),
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 9859aa4f7553..cede9ccb84dc 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -824,8 +824,8 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
->  	if (len_pad < len || (off + len_pad) < off)
->  		return 0;
->  
-> -	ret = current->mm->get_unmapped_area(filp, addr, len_pad,
-> -					      off >> PAGE_SHIFT, flags);
-> +	ret = mm_get_unmapped_area(current->mm, filp, addr, len_pad,
-> +				   off >> PAGE_SHIFT, flags);
->  
->  	/*
->  	 * The failure might be due to length padding. The caller will retry
-> @@ -843,8 +843,7 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
->  
->  	off_sub = (off - ret) & (size - 1);
->  
-> -	if (current->mm->get_unmapped_area == arch_get_unmapped_area_topdown &&
-> -	    !off_sub)
-> +	if (test_bit(MMF_TOPDOWN, &current->mm->flags) && !off_sub)
->  		return ret + size;
->  
->  	ret += off_sub;
-> @@ -861,7 +860,7 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
->  	if (ret)
->  		return ret;
->  
-> -	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
-> +	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags);
->  }
->  EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
->  
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 6dbda99a47da..224e9ce1e2fd 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1813,7 +1813,8 @@ get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
->  		unsigned long pgoff, unsigned long flags)
->  {
->  	unsigned long (*get_area)(struct file *, unsigned long,
-> -				  unsigned long, unsigned long, unsigned long);
-> +				  unsigned long, unsigned long, unsigned long)
-> +				  = NULL;
->  
->  	unsigned long error = arch_mmap_check(addr, len, flags);
->  	if (error)
-> @@ -1823,7 +1824,6 @@ get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
->  	if (len > TASK_SIZE)
->  		return -ENOMEM;
->  
-> -	get_area = current->mm->get_unmapped_area;
->  	if (file) {
->  		if (file->f_op->get_unmapped_area)
->  			get_area = file->f_op->get_unmapped_area;
-> @@ -1842,7 +1842,11 @@ get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
->  	if (!file)
->  		pgoff = 0;
->  
-> -	addr = get_area(file, addr, len, pgoff, flags);
-> +	if (get_area)
-> +		addr = get_area(file, addr, len, pgoff, flags);
-> +	else
-> +		addr = mm_get_unmapped_area(current->mm, file, addr, len,
-> +					    pgoff, flags);
->  	if (IS_ERR_VALUE(addr))
->  		return addr;
->  
-> @@ -1857,6 +1861,17 @@ get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
->  
->  EXPORT_SYMBOL(get_unmapped_area);
->  
-> +unsigned long
-> +mm_get_unmapped_area(struct mm_struct *mm, struct file *file,
-> +		     unsigned long addr, unsigned long len,
-> +		     unsigned long pgoff, unsigned long flags)
-> +{
 
-Seems like a small waste to have all call sites now need to push an
-additional @mm argument onto the stack just to figure out what function
-to call.
+--gzws4rsal6aab534
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> +	if (test_bit(MMF_TOPDOWN, &mm->flags))
-> +		return arch_get_unmapped_area_topdown(file, addr, len, pgoff, flags);
-> +	return arch_get_unmapped_area(file, addr, len, pgoff, flags);
+On Tue, Mar 26, 2024 at 11:32:13PM +0100, Jan Kara wrote:
+> On Tue 26-03-24 13:47:22, Christian Brauner wrote:
+> > Currently a device is only really released once the umount returns to
+> > userspace due to how file closing works. That ultimately could cause
+> > an old umount assumption to be violated that concurrent umount and mount
+> > don't fail. So an exclusively held device with a temporary holder should
+> > be yielded before the filesystem is gone. Add a helper that allows
+> > callers to do that. This also allows us to remove the two holder ops
+> > that Linus wasn't excited about.
+> > 
+> > Fixes: f3a608827d1f ("bdev: open block device as files") # mainline only
+> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ...
+> > @@ -1012,6 +1005,29 @@ struct file *bdev_file_open_by_path(const char *path, blk_mode_t mode,
+> >  }
+> >  EXPORT_SYMBOL(bdev_file_open_by_path);
+> >  
+> > +static inline void bd_yield_claim(struct file *bdev_file)
+> > +{
+> > +	struct block_device *bdev = file_bdev(bdev_file);
+> > +	struct bdev_inode *bd_inode = BDEV_I(bdev_file->f_mapping->host);
+> > +	void *holder = bdev_file->private_data;
+> > +
+> > +	lockdep_assert_held(&bdev->bd_disk->open_mutex);
+> > +
+> > +	if (WARN_ON_ONCE(IS_ERR_OR_NULL(holder)))
+> > +		return;
+> > +
+> > +	if (holder != bd_inode) {
+> > +		bdev_yield_write_access(bdev_file);
+> 
+> Hum, what if we teached bdev_yield_write_access() about special bd_inode
+> holder and kept bdev_yield_write_access() and bd_yield_claim() separate as
+> they were before this patch? IMHO it would make code a bit more
+> understandable. Otherwise the patch looks good.
 
-This seems small enough to be amenable to a static inline, but that
-would require exporting the arch calls which might be painful.
+Ok, see appended patch where I folded in your suggestion.
 
-Would it not be possible to drop the @mm argument and just reference
-current->mm internal to this function? Just call this funcion
-current_get_unmapped_area()?
+--gzws4rsal6aab534
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-fs-block-yield-devices-early.patch"
 
-Otherwise looks like a useful change to me.
+From 817d36e90a009dc63e28f9b3440b9c9f6a97fe6f Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 26 Mar 2024 13:47:22 +0100
+Subject: [PATCH] fs,block: yield devices early
+
+Currently a device is only really released once the umount returns to
+userspace due to how file closing works. That ultimately could cause
+an old umount assumption to be violated that concurrent umount and mount
+don't fail. So an exclusively held device with a temporary holder should
+be yielded before the filesystem is gone. Add a helper that allows
+callers to do that. This also allows us to remove the two holder ops
+that Linus wasn't excited about.
+
+Link: https://lore.kernel.org/r/20240326-vfs-bdev-end_holder-v1-1-20af85202918@kernel.org
+Fixes: f3a608827d1f ("bdev: open block device as files") # mainline only
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ block/bdev.c           | 64 ++++++++++++++++++++++++++++++++++++------
+ fs/bcachefs/super-io.c |  2 +-
+ fs/cramfs/inode.c      |  2 +-
+ fs/ext4/super.c        |  8 +++---
+ fs/f2fs/super.c        |  2 +-
+ fs/jfs/jfs_logmgr.c    |  4 +--
+ fs/reiserfs/journal.c  |  2 +-
+ fs/romfs/super.c       |  2 +-
+ fs/super.c             | 24 ++--------------
+ fs/xfs/xfs_buf.c       |  2 +-
+ fs/xfs/xfs_super.c     |  6 ++--
+ include/linux/blkdev.h | 11 +-------
+ 12 files changed, 75 insertions(+), 54 deletions(-)
+
+diff --git a/block/bdev.c b/block/bdev.c
+index a1946a902df3..b8e32d933a63 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -583,9 +583,6 @@ static void bd_finish_claiming(struct block_device *bdev, void *holder,
+ 	mutex_unlock(&bdev->bd_holder_lock);
+ 	bd_clear_claiming(whole, holder);
+ 	mutex_unlock(&bdev_lock);
+-
+-	if (hops && hops->get_holder)
+-		hops->get_holder(holder);
+ }
+ 
+ /**
+@@ -608,7 +605,6 @@ EXPORT_SYMBOL(bd_abort_claiming);
+ static void bd_end_claim(struct block_device *bdev, void *holder)
+ {
+ 	struct block_device *whole = bdev_whole(bdev);
+-	const struct blk_holder_ops *hops = bdev->bd_holder_ops;
+ 	bool unblock = false;
+ 
+ 	/*
+@@ -631,9 +627,6 @@ static void bd_end_claim(struct block_device *bdev, void *holder)
+ 		whole->bd_holder = NULL;
+ 	mutex_unlock(&bdev_lock);
+ 
+-	if (hops && hops->put_holder)
+-		hops->put_holder(holder);
+-
+ 	/*
+ 	 * If this was the last claim, remove holder link and unblock evpoll if
+ 	 * it was a write holder.
+@@ -813,6 +806,11 @@ static void bdev_claim_write_access(struct block_device *bdev, blk_mode_t mode)
+ 		bdev->bd_writers++;
+ }
+ 
++static inline bool bdev_unclaimed(const struct file *bdev_file)
++{
++	return bdev_file->private_data == BDEV_I(bdev_file->f_mapping->host);
++}
++
+ static void bdev_yield_write_access(struct file *bdev_file)
+ {
+ 	struct block_device *bdev;
+@@ -820,6 +818,9 @@ static void bdev_yield_write_access(struct file *bdev_file)
+ 	if (bdev_allow_write_mounted)
+ 		return;
+ 
++	if (bdev_unclaimed(bdev_file))
++		return;
++
+ 	bdev = file_bdev(bdev_file);
+ 
+ 	if (bdev_file->f_mode & FMODE_WRITE_RESTRICTED)
+@@ -1012,6 +1013,20 @@ struct file *bdev_file_open_by_path(const char *path, blk_mode_t mode,
+ }
+ EXPORT_SYMBOL(bdev_file_open_by_path);
+ 
++static inline void bd_yield_claim(struct file *bdev_file)
++{
++	struct block_device *bdev = file_bdev(bdev_file);
++	void *holder = bdev_file->private_data;
++
++	lockdep_assert_held(&bdev->bd_disk->open_mutex);
++
++	if (WARN_ON_ONCE(IS_ERR_OR_NULL(holder)))
++		return;
++
++	if (!bdev_unclaimed(bdev_file))
++		bd_end_claim(bdev, holder);
++}
++
+ void bdev_release(struct file *bdev_file)
+ {
+ 	struct block_device *bdev = file_bdev(bdev_file);
+@@ -1036,7 +1051,7 @@ void bdev_release(struct file *bdev_file)
+ 	bdev_yield_write_access(bdev_file);
+ 
+ 	if (holder)
+-		bd_end_claim(bdev, holder);
++		bd_yield_claim(bdev_file);
+ 
+ 	/*
+ 	 * Trigger event checking and tell drivers to flush MEDIA_CHANGE
+@@ -1056,6 +1071,39 @@ void bdev_release(struct file *bdev_file)
+ 	blkdev_put_no_open(bdev);
+ }
+ 
++/**
++ * bdev_fput - yield claim to the block device and put the file
++ * @bdev_file: open block device
++ *
++ * Yield claim on the block device and put the file. Ensure that the
++ * block device can be reclaimed before the file is closed which is a
++ * deferred operation.
++ */
++void bdev_fput(struct file *bdev_file)
++{
++	if (WARN_ON_ONCE(bdev_file->f_op != &def_blk_fops))
++		return;
++
++	if (bdev_file->private_data) {
++		struct block_device *bdev = file_bdev(bdev_file);
++		struct gendisk *disk = bdev->bd_disk;
++
++		mutex_lock(&disk->open_mutex);
++		bdev_yield_write_access(bdev_file);
++		bd_yield_claim(bdev_file);
++		/*
++		 * Tell release we already gave up our hold on the
++		 * device and if write restrictions are available that
++		 * we already gave up write access to the device.
++		 */
++		bdev_file->private_data = BDEV_I(bdev_file->f_mapping->host);
++		mutex_unlock(&disk->open_mutex);
++	}
++
++	fput(bdev_file);
++}
++EXPORT_SYMBOL(bdev_fput);
++
+ /**
+  * lookup_bdev() - Look up a struct block_device by name.
+  * @pathname: Name of the block device in the filesystem.
+diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
+index ad28e370b640..cb7b4de11a49 100644
+--- a/fs/bcachefs/super-io.c
++++ b/fs/bcachefs/super-io.c
+@@ -143,7 +143,7 @@ void bch2_free_super(struct bch_sb_handle *sb)
+ {
+ 	kfree(sb->bio);
+ 	if (!IS_ERR_OR_NULL(sb->s_bdev_file))
+-		fput(sb->s_bdev_file);
++		bdev_fput(sb->s_bdev_file);
+ 	kfree(sb->holder);
+ 	kfree(sb->sb_name);
+ 
+diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+index 39e75131fd5a..9901057a15ba 100644
+--- a/fs/cramfs/inode.c
++++ b/fs/cramfs/inode.c
+@@ -495,7 +495,7 @@ static void cramfs_kill_sb(struct super_block *sb)
+ 		sb->s_mtd = NULL;
+ 	} else if (IS_ENABLED(CONFIG_CRAMFS_BLOCKDEV) && sb->s_bdev) {
+ 		sync_blockdev(sb->s_bdev);
+-		fput(sb->s_bdev_file);
++		bdev_fput(sb->s_bdev_file);
+ 	}
+ 	kfree(sbi);
+ }
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index cfb8449c731f..044135796f2b 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5668,7 +5668,7 @@ failed_mount9: __maybe_unused
+ 	brelse(sbi->s_sbh);
+ 	if (sbi->s_journal_bdev_file) {
+ 		invalidate_bdev(file_bdev(sbi->s_journal_bdev_file));
+-		fput(sbi->s_journal_bdev_file);
++		bdev_fput(sbi->s_journal_bdev_file);
+ 	}
+ out_fail:
+ 	invalidate_bdev(sb->s_bdev);
+@@ -5913,7 +5913,7 @@ static struct file *ext4_get_journal_blkdev(struct super_block *sb,
+ out_bh:
+ 	brelse(bh);
+ out_bdev:
+-	fput(bdev_file);
++	bdev_fput(bdev_file);
+ 	return ERR_PTR(errno);
+ }
+ 
+@@ -5952,7 +5952,7 @@ static journal_t *ext4_open_dev_journal(struct super_block *sb,
+ out_journal:
+ 	jbd2_journal_destroy(journal);
+ out_bdev:
+-	fput(bdev_file);
++	bdev_fput(bdev_file);
+ 	return ERR_PTR(errno);
+ }
+ 
+@@ -7327,7 +7327,7 @@ static void ext4_kill_sb(struct super_block *sb)
+ 	kill_block_super(sb);
+ 
+ 	if (bdev_file)
+-		fput(bdev_file);
++		bdev_fput(bdev_file);
+ }
+ 
+ static struct file_system_type ext4_fs_type = {
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index a6867f26f141..a4bc26dfdb1a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1558,7 +1558,7 @@ static void destroy_device_list(struct f2fs_sb_info *sbi)
+ 
+ 	for (i = 0; i < sbi->s_ndevs; i++) {
+ 		if (i > 0)
+-			fput(FDEV(i).bdev_file);
++			bdev_fput(FDEV(i).bdev_file);
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 		kvfree(FDEV(i).blkz_seq);
+ #endif
+diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+index 73389c68e251..9609349e92e5 100644
+--- a/fs/jfs/jfs_logmgr.c
++++ b/fs/jfs/jfs_logmgr.c
+@@ -1141,7 +1141,7 @@ int lmLogOpen(struct super_block *sb)
+ 	lbmLogShutdown(log);
+ 
+       close:		/* close external log device */
+-	fput(bdev_file);
++	bdev_fput(bdev_file);
+ 
+       free:		/* free log descriptor */
+ 	mutex_unlock(&jfs_log_mutex);
+@@ -1485,7 +1485,7 @@ int lmLogClose(struct super_block *sb)
+ 	bdev_file = log->bdev_file;
+ 	rc = lmLogShutdown(log);
+ 
+-	fput(bdev_file);
++	bdev_fput(bdev_file);
+ 
+ 	kfree(log);
+ 
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 6474529c4253..e539ccd39e1e 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2589,7 +2589,7 @@ static void journal_list_init(struct super_block *sb)
+ static void release_journal_dev(struct reiserfs_journal *journal)
+ {
+ 	if (journal->j_bdev_file) {
+-		fput(journal->j_bdev_file);
++		bdev_fput(journal->j_bdev_file);
+ 		journal->j_bdev_file = NULL;
+ 	}
+ }
+diff --git a/fs/romfs/super.c b/fs/romfs/super.c
+index 2be227532f39..2cbb92462074 100644
+--- a/fs/romfs/super.c
++++ b/fs/romfs/super.c
+@@ -594,7 +594,7 @@ static void romfs_kill_sb(struct super_block *sb)
+ #ifdef CONFIG_ROMFS_ON_BLOCK
+ 	if (sb->s_bdev) {
+ 		sync_blockdev(sb->s_bdev);
+-		fput(sb->s_bdev_file);
++		bdev_fput(sb->s_bdev_file);
+ 	}
+ #endif
+ }
+diff --git a/fs/super.c b/fs/super.c
+index 71d9779c42b1..69ce6c600968 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1515,29 +1515,11 @@ static int fs_bdev_thaw(struct block_device *bdev)
+ 	return error;
+ }
+ 
+-static void fs_bdev_super_get(void *data)
+-{
+-	struct super_block *sb = data;
+-
+-	spin_lock(&sb_lock);
+-	sb->s_count++;
+-	spin_unlock(&sb_lock);
+-}
+-
+-static void fs_bdev_super_put(void *data)
+-{
+-	struct super_block *sb = data;
+-
+-	put_super(sb);
+-}
+-
+ const struct blk_holder_ops fs_holder_ops = {
+ 	.mark_dead		= fs_bdev_mark_dead,
+ 	.sync			= fs_bdev_sync,
+ 	.freeze			= fs_bdev_freeze,
+ 	.thaw			= fs_bdev_thaw,
+-	.get_holder		= fs_bdev_super_get,
+-	.put_holder		= fs_bdev_super_put,
+ };
+ EXPORT_SYMBOL_GPL(fs_holder_ops);
+ 
+@@ -1562,7 +1544,7 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
+ 	 * writable from userspace even for a read-only block device.
+ 	 */
+ 	if ((mode & BLK_OPEN_WRITE) && bdev_read_only(bdev)) {
+-		fput(bdev_file);
++		bdev_fput(bdev_file);
+ 		return -EACCES;
+ 	}
+ 
+@@ -1573,7 +1555,7 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
+ 	if (atomic_read(&bdev->bd_fsfreeze_count) > 0) {
+ 		if (fc)
+ 			warnf(fc, "%pg: Can't mount, blockdev is frozen", bdev);
+-		fput(bdev_file);
++		bdev_fput(bdev_file);
+ 		return -EBUSY;
+ 	}
+ 	spin_lock(&sb_lock);
+@@ -1693,7 +1675,7 @@ void kill_block_super(struct super_block *sb)
+ 	generic_shutdown_super(sb);
+ 	if (bdev) {
+ 		sync_blockdev(bdev);
+-		fput(sb->s_bdev_file);
++		bdev_fput(sb->s_bdev_file);
+ 	}
+ }
+ 
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index 1a18c381127e..f0fa02264eda 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -2030,7 +2030,7 @@ xfs_free_buftarg(
+ 	fs_put_dax(btp->bt_daxdev, btp->bt_mount);
+ 	/* the main block device is closed by kill_block_super */
+ 	if (btp->bt_bdev != btp->bt_mount->m_super->s_bdev)
+-		fput(btp->bt_bdev_file);
++		bdev_fput(btp->bt_bdev_file);
+ 	kfree(btp);
+ }
+ 
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index c21f10ab0f5d..bce020374c5e 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -485,7 +485,7 @@ xfs_open_devices(
+ 		mp->m_logdev_targp = mp->m_ddev_targp;
+ 		/* Handle won't be used, drop it */
+ 		if (logdev_file)
+-			fput(logdev_file);
++			bdev_fput(logdev_file);
+ 	}
+ 
+ 	return 0;
+@@ -497,10 +497,10 @@ xfs_open_devices(
+ 	xfs_free_buftarg(mp->m_ddev_targp);
+  out_close_rtdev:
+ 	 if (rtdev_file)
+-		fput(rtdev_file);
++		bdev_fput(rtdev_file);
+  out_close_logdev:
+ 	if (logdev_file)
+-		fput(logdev_file);
++		bdev_fput(logdev_file);
+ 	return error;
+ }
+ 
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index c3e8f7cf96be..172c91879999 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1505,16 +1505,6 @@ struct blk_holder_ops {
+ 	 * Thaw the file system mounted on the block device.
+ 	 */
+ 	int (*thaw)(struct block_device *bdev);
+-
+-	/*
+-	 * If needed, get a reference to the holder.
+-	 */
+-	void (*get_holder)(void *holder);
+-
+-	/*
+-	 * Release the holder.
+-	 */
+-	void (*put_holder)(void *holder);
+ };
+ 
+ /*
+@@ -1585,6 +1575,7 @@ static inline int early_lookup_bdev(const char *pathname, dev_t *dev)
+ 
+ int bdev_freeze(struct block_device *bdev);
+ int bdev_thaw(struct block_device *bdev);
++void bdev_fput(struct file *bdev_file);
+ 
+ struct io_comp_batch {
+ 	struct request *req_list;
+-- 
+2.43.0
+
+
+--gzws4rsal6aab534--
 
