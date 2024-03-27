@@ -1,173 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-15437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC36188E729
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 15:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B430588E747
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 15:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F24F1F234FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 14:49:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 429E91F311F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 14:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D1015AAD0;
-	Wed, 27 Mar 2024 13:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF4313E8BB;
+	Wed, 27 Mar 2024 13:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPiIZP5u"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JQ6PNnJx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09C913E3E8;
-	Wed, 27 Mar 2024 13:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C3A1304BD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 13:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711546858; cv=none; b=VAt1LxQ/FNkDKls+8aSxBQMO+NRYZ7ZT9y+O8XmpBKzdyES49hNRSGYhVsGArR/SDxw3BUCblMRp3m3gEdl9DiBTKSGV0QnJmg4kM5INIZwiAyVWd47K23OVSlrT7qDsIFpSKWRPm1pJuQ3TyjYo9pM0XDqWDJIaxNtGj5dz5Es=
+	t=1711547172; cv=none; b=Gg4j9/aP952mv2xCWbTiv16wBLmn9wypmb8uiyMToQzQ8AlUzj4BMrns8b7328WAF+OZ2oYNN75bOcr4G/yrswI5lDOkgpr5qwCRpVsjAgg2ML4qp/NHVKx6t8weKWKUTnKucrc6IzMxss6V+h0b4ZJcxnFA1QI+OYf3+ESH4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711546858; c=relaxed/simple;
-	bh=C2xZuYuE0bMiGZGvxAUBs6jO3wA1ouACC5SZ95LnNFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H2rrBb1C5d9l0npNiT4AJ/7e1mlhdm7eGFQVfaRiAxc3xftIBKSEuEmS7auvPstY5+v6kR464R+ur6BapcFzqbt2Ue4+1qC6SkKspBXsQn+LHpLFOT5mlg+JX/cc/GNWQPwGGaQOgNuOUkGt1TTQDBci8sWYE2aiT5dmf+HleBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPiIZP5u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75359C433F1;
-	Wed, 27 Mar 2024 13:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711546858;
-	bh=C2xZuYuE0bMiGZGvxAUBs6jO3wA1ouACC5SZ95LnNFI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oPiIZP5uFcf+EPPe0Khf+td7enUVTphKFH5O8Sjh5QbDTvvzxp4AusoSouDyd+Qty
-	 uNykdMuMQa/3MK9HnwK2YnaNpcAkwziUq3reFV1RYyomG0PJxIZXbdnBqsRsQE9wiW
-	 wLj47B9Lgf9HG3GyHbTyRd/K5ZRm0z/GNEI3Qdrq6LztHDzJTooMaR+NhVqj52gD0M
-	 xPi7oVVfb+oKYpuBiBykgSVcS4Id3gpKilRn/2SvMis2yzYd4XdG+svbKALT31FoRB
-	 xxZViWevf40SnxPCloRb8CPdyibhYtQ48bc87rBCAC3LEnn5pSTNManFgzx2MRjCoV
-	 EzPw7kha0wNtQ==
-Message-ID: <94590f14-f17f-4d07-a2d7-6dfc5f1e171e@kernel.org>
-Date: Wed, 27 Mar 2024 14:40:33 +0100
+	s=arc-20240116; t=1711547172; c=relaxed/simple;
+	bh=sypCJoqUYn7GXSfs9tmtF8gKPG3t3Z9F7og3wGibhQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=bYD+IMZSV3UlJwfwAdk4+qOGX3XmoG+ZwlB4cyEAJyprLurSdFSct60os+8Whn2EH8LSLFsVyyv5/7ajN6s6fqlelc6Lb0LtdtKilN0iOq3auC9VMTBWW7Mm+hP3jar09FOWA5ssBII63kXIDLKo8IfPbFc2pdSIpBtmswtR7L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JQ6PNnJx; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240327134602epoutp03366480714c00602b3a4ba5cf7b74f398~AoxNwbbS40767907679epoutp03E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 13:46:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240327134602epoutp03366480714c00602b3a4ba5cf7b74f398~AoxNwbbS40767907679epoutp03E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1711547162;
+	bh=una1HYSdVM6tYkjzKdUNl/O2Y+ZZNq/Yux8uDVcibfo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=JQ6PNnJx7AdmlnZrxKWjUWJJTO1+yuTcGEU6B4/hLNuLqtwzgLUjGq4U0xDKsFNLQ
+	 D5V4nmndGWAhXcP9qqsGSIxRqQAF3tkocpo7vK2So4yPA2mXYuVMAqAp4VZONxQBs2
+	 99O8QXBV+bmptZlOB1W0TxcJkJ0JakGGvGgIUvN8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240327134601epcas5p2e16fd35ed10455651e4054dba73900ed~AoxNF6BBB0638906389epcas5p2u;
+	Wed, 27 Mar 2024 13:46:01 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4V4ScR66Xnz4x9Pp; Wed, 27 Mar
+	2024 13:45:59 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F0.6F.08600.71324066; Wed, 27 Mar 2024 22:45:59 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240327134559epcas5p1dd8a667cc1b0262d2ee458c559e2046f~AoxLHW1JC0214702147epcas5p12;
+	Wed, 27 Mar 2024 13:45:59 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240327134559epsmtrp1f0f35df3559df0ed54fd8aaf04d0104b~AoxLGmVI91932719327epsmtrp1n;
+	Wed, 27 Mar 2024 13:45:59 +0000 (GMT)
+X-AuditID: b6c32a44-6c3ff70000002198-3e-660423172074
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E9.EF.08924.71324066; Wed, 27 Mar 2024 22:45:59 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240327134557epsmtip168d28035b07ca17472e5e72c49393c09~AoxJtpiy-0831008310epsmtip1F;
+	Wed, 27 Mar 2024 13:45:57 +0000 (GMT)
+Message-ID: <c196e634-7081-9d90-620c-002d3ff15dfc@samsung.com>
+Date: Wed, 27 Mar 2024 19:15:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/22] um: virt-pci: drop owner assignment
-To: Johannes Berg <johannes@sipsolutions.net>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- Jens Axboe <axboe@kernel.dk>, Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Amit Shah <amit@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Gonglei <arei.gonglei@huawei.com>, "David S. Miller" <davem@davemloft.net>,
- Viresh Kumar <vireshk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, David Airlie <airlied@redhat.com>,
- Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Joerg Roedel <joro@8bytes.org>, Alexander Graf <graf@amazon.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- Stefano Garzarella <sgarzare@redhat.com>, Kalle Valo <kvalo@kernel.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Pankaj Gupta
- <pankaj.gupta.linux@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Anton Yakovlev <anton.yakovlev@opensynergy.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
- iommu@lists.linux.dev, netdev@vger.kernel.org, v9fs@lists.linux.dev,
- kvm@vger.kernel.org, linux-wireless@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org
-References: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
- <20240327-module-owner-virtio-v1-2-0feffab77d99@linaro.org>
- <46e9539f59c82762e3468a9519fa4123566910d5.camel@sipsolutions.net>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+	Gecko/20100101 Thunderbird/91.13.1
+Subject: Re: [Lsf-pc] [LSF/MM/BPF ATTEND][LSF/MM/BPF TOPIC]
+ Meta/Integrity/PI improvements
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <46e9539f59c82762e3468a9519fa4123566910d5.camel@sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: lsf-pc@lists.linux-foundation.org, "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>, Linux FS Devel
+	<linux-fsdevel@vger.kernel.org>, "linux-nvme@lists.infradead.org"
+	<linux-nvme@lists.infradead.org>, "kbusch@kernel.org" <kbusch@kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>, josef@toxicpanda.com, Christoph Hellwig
+	<hch@lst.de>
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <yq14jdu7t2u.fsf@ca-mkp.ca.oracle.com>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDJsWRmVeSWpSXmKPExsWy7bCmpq64Mkuawc/Nuhar7/azWaxcfZTJ
+	4s9DQ4tJh64xWuy9pW2xZ+9JFov5y56yW+x7vZfZYvnxf0wOnB6Xz5Z6bFrVyeaxeUm9x+Qb
+	yxk9dt9sYPP4+PQWi8eEzRtZPT5vkgvgiMq2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDU
+	NbS0MFdSyEvMTbVVcvEJ0HXLzAG6TUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJT
+	YFKgV5yYW1yal66Xl1piZWhgYGQKVJiQnbHrG2/BAfGKx/9esDQwtgl3MXJySAiYSLTMv8Lc
+	xcjFISSwm1Fi7o2T7BDOJ0aJrqNnGCGcb4wS//9NBCrjAGs5eCECIr6XUWLmlKdQ7W8ZJdYu
+	fcwEMpdXwE6iZeleMJtFQFXi6IqjbBBxQYmTM5+wgNiiAskSP7sOsIEMFRaIkXi2zxUkzCwg
+	LnHryXywVhEBU4nJn7aygcxnFnjMJDH9eD9YPZuApsSFyaUgJqeAscTmGXEQrfIS29/OATtH
+	QmAph8SxF9cZIW52kbi1TxDiY2GJV8e3sEPYUhIv+9ug7GSJSzPPMUHYJRKP9xyEsu0lWk/1
+	g73ODLR1/S59iFV8Er2/nzBBTOeV6GgTgqhWlLg36SkrhC0u8XDGEijbQ+LH5RNs8HBet2kF
+	ywRGhVlIYTILyfOzkHwzC2HzAkaWVYySqQXFuempyaYFhnmp5fDITs7P3cQITrZaLjsYb8z/
+	p3eIkYmD8RCjBAezkghvyxeGNCHelMTKqtSi/Pii0pzU4kOMpsDImcgsJZqcD0z3eSXxhiaW
+	BiZmZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFxcEo1MMX8+a0SHTm9S1V+mndJ84fJ
+	HXsvvXu686JyAeem3PfeyoeLbnydlLB4OWdUcF90aqzsnUvTLvzWYlo2MdzsDoNqrbro/Qu7
+	xDZueC3T22zsf0zx/Ne/Vx7Xr/g/ZadJ//vzTr+nXNauOjDveOOvJe4pc5aWxb18smjX996p
+	XOmpCappiYf0sk7rqpr2vz3SLDlfMebBrvo1VTyHp+ife/clgpFnm0e65HIxj+asOr+8a8fO
+	61XcY1j+w+bbFYUJU6/1ML//s3LizLNaKc+Xb9z4yOLMSveaOVeXcEyW28OvUt1wPvaaJJPb
+	4e8Lmc7JXkiyCXdQWHmVtfvI///nfmgWnP0/yZYlZkce1xMLT+EXSizFGYmGWsxFxYkAONRg
+	JD8EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42LZdlhJTldcmSXN4NlaIYvVd/vZLFauPspk
+	8eehocWkQ9cYLfbe0rbYs/cki8X8ZU/ZLfa93stssfz4PyYHTo/LZ0s9Nq3qZPPYvKTeY/KN
+	5Yweu282sHl8fHqLxWPC5o2sHp83yQVwRHHZpKTmZJalFunbJXBl7PrGW3BAvOLxvxcsDYxt
+	wl2MHBwSAiYSBy9EdDFycQgJ7GaU2Ns/l7WLkRMoLi7RfO0HO4QtLLHy33N2iKLXjBKHN99n
+	AUnwCthJtCzdywRiswioShxdcZQNIi4ocXLmE7AaUYFkiZd/JoINEhaIkdi7bT1YnBlowa0n
+	88F6RQRMJSZ/2soGsoBZ4DGTxJev29jhTpq7YjsbyKlsApoSFyaXgpicAsYSm2fEQcwxk+ja
+	2sUIYctLbH87h3kCo9AsJGfMQrJuFpKWWUhaFjCyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L
+	10vOz93ECI4uLc0djNtXfdA7xMjEwXiIUYKDWUmEt+ULQ5oQb0piZVVqUX58UWlOavEhRmkO
+	FiVxXvEXvSlCAumJJanZqakFqUUwWSYOTqkGJsbS9at/Jmb3VLdumsUkvlu934519/E7c49+
+	7H01R9pW9PXfP6Hxqb8uRadvlDbpa738k/nytpLrO+daWF2zMzsT3/mhKyBI4Ar3WuUn5hYf
+	3/rcbL/kkpVybb3tnFyZV3zJYVe+LU9VaZVT+9tVcmOv33fP8gqr92c/Bvx1nrXsMmfdnZy+
+	I5y7PN6sMxAKszrw7rmuxLQaxot+c30FfM5tNbNfyxIlLBq8y01Q487lkAkSOzRaQjatDSo8
+	vVuGz2mnAIOL1rt0n/X/VYMNQmLtcpmWbshY3vSY//QCmQslf9u3fNms9DXoh4bK4Uq3xfwr
+	jk039by2tfAnw2LXGyyWt1IPzXw/s6sz7dWuTiWW4oxEQy3mouJEAA52GWkdAwAA
+X-CMS-MailID: 20240327134559epcas5p1dd8a667cc1b0262d2ee458c559e2046f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240222193304epcas5p318426c5267ee520e6b5710164c533b7d
+References: <CGME20240222193304epcas5p318426c5267ee520e6b5710164c533b7d@epcas5p3.samsung.com>
+	<aca1e970-9785-5ff4-807b-9f892af71741@samsung.com>
+	<yq14jdu7t2u.fsf@ca-mkp.ca.oracle.com>
 
-On 27/03/2024 14:34, Johannes Berg wrote:
-> On Wed, 2024-03-27 at 13:40 +0100, Krzysztof Kozlowski wrote:
->> virtio core already sets the .owner, so driver does not need to.
+On 2/27/2024 4:45 AM, Martin K. Petersen wrote:
 > 
->> All further patches depend on the first virtio patch, therefore please ack
->> and this should go via one tree: virtio?
+> Kanchan,
 > 
-> Sure. Though it's not really actually necessary, you can set it in the
-> core and merge the other patches in the next cycle; those drivers that
-> _have_ an .owner aren't broken after all.
+>> - Generic user interface that user-space can use to exchange meta. A
+>> new io_uring opcode IORING_OP_READ/WRITE_META - seems feasible for
+>> direct IO.
 > 
-> Acked-by: Johannes Berg <johannes@sipsolutions.net>
+> Yep. I'm interested in this too. Reviving this effort is near the top of
+> my todo list so I'm happy to collaborate.
 
-True, this can be spread over two cycles. What I wanted to express, is
-that maintainers should not pick individual patches.
+The first cut is here:
+https://lore.kernel.org/linux-block/20240322185023.131697-1-joshi.k@samsung.com/
 
-Thanks for the Ack and apologies for a bit too big CC-list. I need to
-learn how to ask b4 to make Cc-per-patch for such case.
+Not sure how far it is from the requirements you may have. Feedback will 
+help.
+Perhaps the interface needs the ability to tell what kind of checks 
+(guard, apptag, reftag) are desired.
+Doable, but that will require the introduction of three new RWF_* flags.
+
+>> NVMe SSD can do the offload when the host sends the PRACT bit. But in
+>> the driver, this is tied to global integrity disablement using
+>> CONFIG_BLK_DEV_INTEGRITY.
+> 
+>> So, the idea is to introduce a bio flag REQ_INTEGRITY_OFFLOAD
+>> that the filesystem can send. The block-integrity and NVMe driver do
+>> the rest to make the offload work.
+> 
+> Whether to have a block device do this is currently controlled by the
+> /sys/block/foo/integrity/{read_verify,write_generate} knobs.
+
+Right. This can work for the case when host does not need to pass the 
+buffer (meta-size is equal to pi-size).
+But when meta-size is greater than pi-size, the meta-buffer needs to be 
+allocated. Some changes are required so that Block-integrity does that 
+allocation, without having to do read_verify/write_generate.
+
+> At least
+> for SCSI, protected transfers are always enabled between HBA and target
+> if both support it. If no integrity has been attached to an I/O by the
+> application/filesystem, the block layer will do so controlled by the
+> sysfs knobs above. IOW, if the hardware is capable, protected transfers
+> should always be enabled, at least from the block layer down.
+> It's possible that things don't work quite that way with NVMe since, at
+> least for PCIe, the drive is both initiator and target. And NVMe also
+> missed quite a few DIX details in its PI implementation. It's been a
+> while since I messed with PI on NVMe, I'll have a look.
+
+PRACT=1 case, figure 9 and Section 5.2.2, in the spec: 
+https://nvmexpress.org/wp-content/uploads/NVM-Express-NVM-Command-Set-Specification-1.0d-2023.12.28-Ratified.pdf
+
+I am not sure whether SCSI also has the equivalent of this bit.
 
 
+> But in any case the intent for the Linux code was for protected
+> transfers to be enabled automatically when possible. If the block layer
+> protection is explicitly disabled, a filesystem can still trigger
+> protected transfers via the bip flags. So that capability should
+> definitely be exposed via io_uring.
+> 
+>> "Work is in progress to implement support for the data integrity
+>> extensions in btrfs, enabling the filesystem to use the application
+>> tag."
+> 
+> This didn't go anywhere for a couple of reasons:
 
-Best regards,
-Krzysztof
-
+Thanks, this was very helpful!
 
