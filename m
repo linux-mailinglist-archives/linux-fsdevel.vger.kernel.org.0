@@ -1,217 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-15454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5C588EAE9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 17:16:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2ABC88EB82
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 17:43:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40DA41F2376A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 16:16:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F35FAB24EE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 16:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD96130E35;
-	Wed, 27 Mar 2024 16:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E61D130E3C;
+	Wed, 27 Mar 2024 16:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IO2SVDZj"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="P+vdkTPh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qzE8tHKH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F030E42A91;
-	Wed, 27 Mar 2024 16:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E99112F397;
+	Wed, 27 Mar 2024 16:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711556189; cv=none; b=Enf+hE9SyppGxdoU5Sn7sgcIPyDrBnDoiEE4dO4RUVrVw5ZTLybAtVQDmOhW3mVwBa1hj6rZfwzcw87RzoQgeklrmTurnStQSJ242PYPcxsahz21ma23vbtKWjC1VzdRbbXgQurbQGt1NuPN4S94K9n72oK0Eq2GCPjHFVKULCE=
+	t=1711556581; cv=none; b=HDAwSuZh4yVVoUbMIIQhJwEyWkHnSrigtU/nu0C/aUxhtdFYnTSoeaJZ9ijA1lPYuGBzsn8UkqtAHiXR017QeFDWXNskdu5Y7JelcrsvEfQI7Y6GFArD8AClYq3MgC6f22BIAMzqlTSsn9AhGSrDr+PodvwO8yq7maZfISyx374=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711556189; c=relaxed/simple;
-	bh=kfVdwdCf7B9X7O5+oO8Vigvx4JOZ1iSnjiYAU8Orp7A=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=pwqYQHSTqQ6DO2bcHJWmOJqr5jJ9+wNTAqAs5pdIO6ubGs/23T2pbtY2laZzbs9ML5YOvxjgtSoGDwgebgZRBWKjuLQbAssAaUzqMGY6k8n17wc9ND9Tso9HOJmA5tm1tHdCL1R+vqUMo9TjagU9NFEzybgKLJy5pbzY6g39+yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IO2SVDZj; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-29e0229d6b5so21801a91.3;
-        Wed, 27 Mar 2024 09:16:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711556186; x=1712160986; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OSCcPL9ReYBC3ieN7sRSJkCjHUDGGaoDNVjenjFddiw=;
-        b=IO2SVDZjHjZPW2836N0zwP40dW7kQoErJc3ls12qCB3GBLL/+cruxnGBWIqWI55W+/
-         rTAeZE/xIG/NdLRCfK923/dVb4ywqgrX36Nf41UNDY4mYqaWpJXe9kQkbcOGN2XMYmqo
-         33n80Vko3quEny4XazHjxUtQwDeFUJI9S3MyQNR1EAB28D/cFgAW9MeqU8kXxKHa5uYF
-         vefr5H27YGxpRGTYk4Ps13181tXpfpahUTy7rnWVlwqZqcgw7U9nEm2BYllgo3SIvzN0
-         gBg3/Z8Ux/0GYKeEaX/9v9nBs0+OIqbt6JPoOyTJUXlXMBkouO7sSnpj6QAS4J2PiquO
-         Xi6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711556186; x=1712160986;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OSCcPL9ReYBC3ieN7sRSJkCjHUDGGaoDNVjenjFddiw=;
-        b=t6TWzwP3nMhkl9lWbplncD69DNy6Z9TIfmtUWuM/Knj0TsaXMYJeu37kXUc5UAZZD+
-         Q0CfvL9ASMuVsg5yxkCJeXEbBYEBAesjQHvVWV1XMpBtrljOX4pnHo1lrhUKhOCwOrI4
-         F+ZP6PS3ZVlRE3bGHEAzsrOn8+jh8t7yogmNyTZluE/SGE+uvbhLek8CDG+Guikrf7yn
-         /YGkLCrtfEela3Qw9u8wcDaQ2pGmX2VXLgv9eXpMxBOSk9fbhewKPmAf0blVbWQYh+nJ
-         HeYzW6PJEDEs/xg7nXICdfa82I4+mT/KzNAfn0R+8TWQ4yVIUR7ZAo8QAjUXHLn2lpVS
-         YMRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtrL4rJRo2yOOVLMBANZSBx+7aw8MQceJGU4uUHHGlaogTXXasEn9nQNEjgrQ1aXH8T4t9a99X/yad+USad44ml+2LTMnphYL/8SaRdY+/MyXhA+ie1xmPBHros/x3YdUR0DebC+OpNYuHpUn0m9gkdMDNMYNg8zFbi5GZ4SpvBkVWNCPRuTqr1sOcmUZmmLsXPkhNxQlln0XDJyww7762UuWyVFIZSA==
-X-Gm-Message-State: AOJu0YyifwLiRD4W03sQ3W17YXXXjUlkxxDQQpGK6mC+TMFLvYOKOVqp
-	1UuHQER9BFEkBZ7HK22Q9ZJ/D5K4w9hsBLOt0//dv74xniapJuHV
-X-Google-Smtp-Source: AGHT+IFb5IqfgxBvySBVcYNKgghJ48Dnwn4nEVJk9rDb4Sdzmwo0ZtCk8BBaNaurYYvMG+RdbrIyPw==
-X-Received: by 2002:a17:90b:4a44:b0:29c:7845:cba with SMTP id lb4-20020a17090b4a4400b0029c78450cbamr100758pjb.36.1711556186202;
-        Wed, 27 Mar 2024 09:16:26 -0700 (PDT)
-Received: from smtpclient.apple ([2601:647:4d7e:dba0:5840:a196:2bf3:3600])
-        by smtp.gmail.com with ESMTPSA id sl13-20020a17090b2e0d00b0029951d04dc4sm1903536pjb.54.2024.03.27.09.16.21
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Mar 2024 09:16:25 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1711556581; c=relaxed/simple;
+	bh=LBDjeQVI8o7x+twcrGb8CfkBSgOrsaUvNZbDSAekMLM=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=btl0u+fK3nAYR+FW13D6PJpOKvOJ+fwUSauZwljdIbXk2sN+xAsszNzScjBqUROL3bkOo+18uHuOtbp99kNlOPuhZ/euca2NoyMxsqemiQy89D/p9he0I9eq0BLgu5x2XSbFpPMtuTr5p5PnP9R631wBFHuOan8uJzScb1gl6f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=P+vdkTPh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qzE8tHKH; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id A1ACF1380097;
+	Wed, 27 Mar 2024 12:22:58 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 27 Mar 2024 12:22:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1711556578; x=1711642978; bh=04/bv9qv/f
+	J7b6lD5xQpNrs8Wx7z7kkFDtCrZ28H1cg=; b=P+vdkTPhYaNxsDmytF+YVstKTK
+	Pti/rLi9wS8kERhdO3lnq7EGjv2SkvPIoxmsWJMJhLHwEXuzxfpkEd0zo9zuCXe9
+	U+wEG++UW/9ffuDwZQeKjwN2Pdnj3K1fq/uIr+zRKUmmGX2VZikefQZiAdW9+LI+
+	tFc1D5WNqUSuF5nsWnIjQhgKI7iSeKP4j2I+zuHk7DUhCDXwgbx+WVXCooU21c1p
+	i4qEUnq3VWG4y1tvWsJeR3Te+90gCWzNDjx4gK7NRhFzTjJSEaYw6+mIFtvhGc6J
+	uTb8spKcVwxI8gDizZzGDrJfP2J9keJmj5W0iRW5udWe55/wCuskxMEvsLQA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1711556578; x=1711642978; bh=04/bv9qv/fJ7b6lD5xQpNrs8Wx7z
+	7kkFDtCrZ28H1cg=; b=qzE8tHKHnXdh4+H3pRQ/ZQ7HlCMNYT5iwoUelyrNrOO8
+	rHZzjLjTcU1e8WjZdJgpfc5jLq/fS7QujczfIn/RZo9w2sHMwghfmx0B/Pt6ciyY
+	mZLXkBewR4JEfqGSBYoEcrLAYEywprCzg8zl4EfCw/eu0cB+xjol8cRcx4RY2S6G
+	yqYw6EB6oSHbw1fde2y2fpaO35fwy1+1v0G+H5DJwtNWdudg4JulUGwKOMqWw9Fz
+	Sc8MgrZE9ndJY9TQXAX4zlMqZDxTH7TDiDq8JGVK2pWe/jyKZ0+UU4SnTFh/QrUy
+	6QbhllOJ146SyrMw77vTVADthM+W645OaIDvsQniTA==
+X-ME-Sender: <xms:4kcEZiU97SGN7Z_w79poK1nb4N_1GpgTvPhi0lpBpmvTGvWyR8sg2w>
+    <xme:4kcEZuliBFO5zPrdua67vIRl9xLyspg4F5Bc-HYsOxZ4V_RjSuVPQ5Fes-xLTZdBt
+    JRp7P5hoNKuZuOrkdM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudduiedgieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepvefhffeltdegheeffffhtdegvdehjedtgfekueevgfduffettedtkeekueef
+    hedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:4kcEZmbL533qBSNpSxrdX4q5ILP7r7kzKKmlSnDstDRjLbf5N8vcEQ>
+    <xmx:4kcEZpWqWhcavi76Zt4HKiuB6gYaszYGDCTgfWOAAr_Q77vH-hFE1g>
+    <xmx:4kcEZslDfBqUDssPqA0QxV_r5lXOighpBxK0ZhIx_za5D5YM44lNmA>
+    <xmx:4kcEZucOAjhkok5D1ywWCVr9FlOuqT3l6-wCX7uvVOa5-_-KGobtlw>
+    <xmx:4kcEZisfEnJnEcHuvnu41r2ISp1fJRG4dePekVw2WfvYtWEHKQhabQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id EE9E9B60092; Wed, 27 Mar 2024 12:22:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-328-gc998c829b7-fm-20240325.002-gc998c829
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-From: comex <comexk@gmail.com>
-In-Reply-To: <CAHk-=wjwxKD9CxYsf5x+K5fJbJa_JYZh1eKB4PT5cZJq1+foGw@mail.gmail.com>
-Date: Wed, 27 Mar 2024 09:16:09 -0700
-Cc: "Dr. David Alan Gilbert" <dave@treblig.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Philipp Stanner <pstanner@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- rust-for-linux <rust-for-linux@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org,
- llvm@lists.linux.dev,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Alan Stern <stern@rowland.harvard.edu>,
- Andrea Parri <parri.andrea@gmail.com>,
- Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Nicholas Piggin <npiggin@gmail.com>,
- David Howells <dhowells@redhat.com>,
- Jade Alglave <j.alglave@ucl.ac.uk>,
- Luc Maranget <luc.maranget@inria.fr>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Akira Yokosawa <akiyks@gmail.com>,
- Daniel Lustig <dlustig@nvidia.com>,
- Joel Fernandes <joel@joelfernandes.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- kent.overstreet@gmail.com,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Marco Elver <elver@google.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- linux-arm-kernel@lists.infradead.org,
- linux-fsdevel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <160DB953-1588-418E-A490-381009CD8DE0@gmail.com>
-References: <20240322233838.868874-1-boqun.feng@gmail.com>
- <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
- <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
- <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
- <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
- <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
- <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
- <bu3seu56hfozsvgpdqjarbdkqo3lsjfc4lhluk5oj456xmrjc7@lfbbjxuf4rpv>
- <CAHk-=wgLGWBXvNODAkzkVHEj7zrrnTq_hzMft62nKNkaL89ZGQ@mail.gmail.com>
- <ZgIRXL5YM2AwBD0Y@gallifrey>
- <CAHk-=wjwxKD9CxYsf5x+K5fJbJa_JYZh1eKB4PT5cZJq1+foGw@mail.gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Message-Id: <dc1433ea-4e59-4ab7-83fb-23b393020980@app.fastmail.com>
+In-Reply-To: <3922460a-4d01-4ecb-b8c5-7c57fd46f3fd@redhat.com>
+References: <20240327130538.680256-1-david@redhat.com> <ZgQ5hNltQ2DHQXps@x1n>
+ <3922460a-4d01-4ecb-b8c5-7c57fd46f3fd@redhat.com>
+Date: Wed, 27 Mar 2024 17:22:37 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "David Hildenbrand" <david@redhat.com>, peterx <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, "Andrew Morton" <akpm@linux-foundation.org>,
+ "Mike Rapoport" <rppt@kernel.org>, "Jason Gunthorpe" <jgg@nvidia.com>,
+ "John Hubbard" <jhubbard@nvidia.com>, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, linux-mm@kvack.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ x86@kernel.org, "Ryan Roberts" <ryan.roberts@arm.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Matt Turner" <mattst88@gmail.com>, "Vineet Gupta" <vgupta@kernel.org>
+Subject: Re: [PATCH RFC 0/3] mm/gup: consistently call it GUP-fast
+Content-Type: text/plain
 
-On Mar 25, 2024, at 8:49=E2=80=AFPM, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
+On Wed, Mar 27, 2024, at 16:39, David Hildenbrand wrote:
+> On 27.03.24 16:21, Peter Xu wrote:
+>> On Wed, Mar 27, 2024 at 02:05:35PM +0100, David Hildenbrand wrote:
+>> 
+>> I'm not sure what config you tried there; as I am doing some build tests
+>> recently, I found turning off CONFIG_SAMPLES + CONFIG_GCC_PLUGINS could
+>> avoid a lot of issues, I think it's due to libc missing.  But maybe not the
+>> case there.
+>
+> CCin Arnd; I use some of his compiler chains, others from Fedora directly. For
+> example for alpha and arc, the Fedora gcc is "13.2.1".
 
-> But you should _start_ the design of your language memory model around
-> the unsafe "raw atomic access operations" model.
->=20
-> Then you can use those strictly more powerful operations, and you
-> create an object model *around* it.
+>
+> But there is other stuff like (arc):
+>
+> ./arch/arc/include/asm/mmu-arcv2.h: In function 'mmu_setup_asid':
+> ./arch/arc/include/asm/mmu-arcv2.h:82:9: error: implicit declaration of 
+> function 'write_aux_reg' [-Werro
+> r=implicit-function-declaration]
+>     82 |         write_aux_reg(ARC_REG_PID, asid | MMU_ENABLE);
+>        |         ^~~~~~~~~~~~~
 
-To some extent Rust does this already, unlike C++.
+Seems to be missing an #include of soc/arc/aux.h, but I can't
+tell when this first broke without bisecting.
 
-C++ allows atomics to be implemented using locks.  Partly for this =
-reason,
-`std::atomic<T>` is documented as not necessarily having the same
-representation as `T` [1].  C++ also has strict aliasing, so even if =
-those types
-do have the same representation, you still can't cast `T *` to
-`std::atomic<T> *`.
+> or (alpha)
+>
+> WARNING: modpost: "saved_config" [vmlinux] is COMMON symbol
+> ERROR: modpost: "memcpy" [fs/reiserfs/reiserfs.ko] undefined!
+> ERROR: modpost: "memcpy" [fs/nfs/nfs.ko] undefined!
+> ERROR: modpost: "memcpy" [fs/nfs/nfsv3.ko] undefined!
+> ERROR: modpost: "memcpy" [fs/nfsd/nfsd.ko] undefined!
+> ERROR: modpost: "memcpy" [fs/lockd/lockd.ko] undefined!
+> ERROR: modpost: "memcpy" [crypto/crypto.ko] undefined!
+> ERROR: modpost: "memcpy" [crypto/crypto_algapi.ko] undefined!
+> ERROR: modpost: "memcpy" [crypto/aead.ko] undefined!
+> ERROR: modpost: "memcpy" [crypto/crypto_skcipher.ko] undefined!
+> ERROR: modpost: "memcpy" [crypto/seqiv.ko] undefined!
 
-But Rust atomics are lower-level.  First, they are guaranteed lock-free =
-[2].
-Second, they are documented as having "the same in-memory representation =
-as the
-underlying" type [3].  (They also usually have the same alignment, =
-except on
-x86 where u64 is only 4-byte aligned but AtomicU64 of course needs to be =
-8-byte
-aligned.)  Meanwhile, Rust intentionally lacks strict aliasing.
+Al did a series to fix various build problems on alpha, see
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/log/?h=work.alpha
+Not sure if he still has to send them to Matt, or if Matt
+just needs to apply them.
 
-Combined, this means it's perfectly legal in Rust to cast e.g. `&mut =
-u32` to
-`&AtomicU32` and perform atomic accesses on it.  Or the same with =
-u64/AtomicU64
-if you know the pointer is validly aligned.  This is by design; the =
-Atomic
-types' methods are considered the official way to perform atomic =
-operations on
-arbitrary memory, making it unnecessary to also stabilize 'lower-level'
-intrinsics.
+I also have some alpha patches that I should send upstream.
 
-That said, there *are* currently some holes in Rust's atomics model, =
-based on
-the fact that it's mostly inherited from C++.  =46rom the documentation:
-
-> Since C++ does not support mixing atomic and non-atomic accesses, or
-> non-synchronized different-sized accesses to the same data, Rust does =
-not
-> support those operations either. Note that both of those restrictions =
-only
-> apply if the accesses are non-synchronized.
-https://doc.rust-lang.org/std/sync/atomic/index.html
-
-There are some open issues around this:
-
-- "How can we allow read-read races between atomic and non-atomic =
-accesses?"
-  https://github.com/rust-lang/unsafe-code-guidelines/issues/483
-
-  > [..] I do think we should allow such code. However, then we have to =
-change
-  > the way we document our atomics [..]
-
-- "What about: mixed-size atomic accesses"
-  https://github.com/rust-lang/unsafe-code-guidelines/issues/345"
-
-  > Apparently the x86 manual says you "should" not do this [..] It is =
-unclear
-  > what "should" means (or what anything else here really means, =
-operationally
-  > speaking...)
-
-[1] https://eel.is/c++draft/atomics#types.generic.general-3
-[2] https://doc.rust-lang.org/std/sync/atomic/index.html#portability
-[3] =
-https://doc.rust-lang.org/nightly/std/sync/atomic/struct.AtomicU64.html
-
+     Arnd
 
