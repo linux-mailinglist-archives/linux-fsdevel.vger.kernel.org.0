@@ -1,137 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-15472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B5088EF6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 20:41:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D051688F008
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 21:25:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 934AD29F451
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 19:41:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37AFDB228FE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 20:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B7D152508;
-	Wed, 27 Mar 2024 19:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B8D152E0D;
+	Wed, 27 Mar 2024 20:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xGJUKen3"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HtOjh7MY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD8541760
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 19:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0877614EC44
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 20:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711568488; cv=none; b=KBnV6gfV5lqo25RiD3//GvrYW/BoDYxlbUKobTOD71avs+g3a3Qm3SMitNtqDex4ftPO240YsCyeqPWRbbzb2dfLDUF5Whh+vPecJMY3FF5dMnhqNASn9B9XxG5xcHqq3ZdYihl7KEXEwnFH44VSA5NPNrXV7na5skcBPQgNXAE=
+	t=1711571092; cv=none; b=QZUGrXSpeSBsEetgP/l9V1+Yotn3PhAPuYRcFJFp0z5SuBf0nJAAlfue0bt+ZlJURJ++CwU2NHvqVvVQcUSV3YtmoVV9D38eUzxUe3NULOZhQXs5/1NPNLYZZAiwJFek8hlvYNO5hY8Cab5YKWqbekTEBWIXiD/ulozBTACNvTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711568488; c=relaxed/simple;
-	bh=DbVcT/GqVrdr44Z2rkufZ1Y6/S3nUoKZvEfChOqWVTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3zeDGBvM/4ZgNJajbklymfu4WftxWv4hWiSl7CWSdj9cpwtuMKPVXNcmY/OhBJ7pBzG61LSFlVRA9wRSekeVBW+HDMoonXM1rm9NC1uKzupveUyYrR3xSLIHnoXUT8YHgOLbMJh7Vi1LxNs159eiJbooN6GxrZ6XShl/WSohF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xGJUKen3; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 27 Mar 2024 15:41:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1711568485;
+	s=arc-20240116; t=1711571092; c=relaxed/simple;
+	bh=2wt5pcKGxNbpvWCg8ZTbrpXO3NVBOSuebT4+RRom7BE=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=G+y4DE0t6MZ2T2f99kdTzC9Rss1Q4Ad/jou7TJPCO+gWRUdS/ptHVW0qxrdIPqlpEBrlDEB9giAkOpqTJ05e6eXqKbw6+BfniljG6mGHEb8xmqMwuanz6K2Ud3vRr8ohlL3zIhHH/ulfXnjpXfAgXz152IhMvbeLY7XJvKWkt2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HtOjh7MY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711571090;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zm/x/ZeAIuXqSrAULm8c6bXhsoD6FLOm8Awi8FqLz6Y=;
-	b=xGJUKen3fF2NY5gK5gpmGfgRcLbRzTst3KLdtG0DG3xf2Zy93WUNxRSNINO5KHYTBg7ECe
-	g2kaRTQd4bv4SvMaERqJlXyz6eXnbNKoRvXc8XITJEWQSA5ijJkdax3Z89kkvyEghf0E8T
-	JAp3GAHAsmWigw+JmlVQE1cCYwIy05A=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: comex <comexk@gmail.com>, "Dr. David Alan Gilbert" <dave@treblig.org>, 
-	Philipp Stanner <pstanner@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
-	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
-	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marco Elver <elver@google.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <bjorlxatlpzjlh6dfulham3u4mqsfqt7ir5wtayacaoefr2r7x@lmfcqzcobl3f>
-References: <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
- <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
- <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
- <bu3seu56hfozsvgpdqjarbdkqo3lsjfc4lhluk5oj456xmrjc7@lfbbjxuf4rpv>
- <CAHk-=wgLGWBXvNODAkzkVHEj7zrrnTq_hzMft62nKNkaL89ZGQ@mail.gmail.com>
- <ZgIRXL5YM2AwBD0Y@gallifrey>
- <CAHk-=wjwxKD9CxYsf5x+K5fJbJa_JYZh1eKB4PT5cZJq1+foGw@mail.gmail.com>
- <160DB953-1588-418E-A490-381009CD8DE0@gmail.com>
- <qyjrex54hbhvhw4gmn7b6l2hr45o56bwt6fazfalykwcp5zzkx@vwt7k3d6kdwt>
- <CAHk-=wgQy+FRKjO_BvZgZN56w6-+jDO8p-Mt=X=zM70CG=CVBQ@mail.gmail.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5OpSCK5ZWGlU+xhOZk/X4d6um5rclbXdax5bm29ta4o=;
+	b=HtOjh7MY9z804G2k5hOfzk6Qz23vsaOYysXocIOTb+hsx+1DVXbGpav04e8HYpRJj8FB+w
+	bRhrkLNJKUWjEJQqLYJTD6xSgeAil0m0d5kzFGvYdmrjQh2C4Jp+IjDdaO9BPyUSH41MfM
+	JVevQJ5K4q66Dx6wXtNB4RRikxJUUA0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-2F0moKomNwurP2UcBacpSA-1; Wed, 27 Mar 2024 16:24:44 -0400
+X-MC-Unique: 2F0moKomNwurP2UcBacpSA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 713F585A58C;
+	Wed, 27 Mar 2024 20:24:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 04FB840C6CB1;
+	Wed, 27 Mar 2024 20:24:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Eric Van Hensbergen <ericvh@kernel.org>,
+    Latchesar Ionkov <lucho@ionkov.net>,
+    Dominique Martinet <asmadeus@codewreck.org>
+cc: dhowells@redhat.com, Christian Schoenebeck <linux_oss@crudebyte.com>,
+    Christian Brauner <brauner@kernel.org>, v9fs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] 9p: Clean up some kdoc and unused var warnings.
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgQy+FRKjO_BvZgZN56w6-+jDO8p-Mt=X=zM70CG=CVBQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2540926.1711571061.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 27 Mar 2024 20:24:21 +0000
+Message-ID: <2540927.1711571061@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-On Wed, Mar 27, 2024 at 12:07:26PM -0700, Linus Torvalds wrote:
-> On Wed, 27 Mar 2024 at 11:51, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> >
-> > On Wed, Mar 27, 2024 at 09:16:09AM -0700, comex wrote:
-> > > Meanwhile, Rust intentionally lacks strict aliasing.
-> >
-> > I wasn't aware of this. Given that unrestricted pointers are a real
-> > impediment to compiler optimization, I thought that with Rust we were
-> > finally starting to nail down a concrete enough memory model to tackle
-> > this safely. But I guess not?
-> 
-> Strict aliasing is a *horrible* mistake.
-> 
-> It's not even *remotely* "tackle this safely". It's the exact
-> opposite. It's completely broken.
-> 
-> Anybody who thinks strict aliasing is a good idea either
-> 
->  (a) doesn't understand what it means
-> 
->  (b) has been brainwashed by incompetent compiler people.
-> 
-> it's a horrendous crock that was introduced by people who thought it
-> was too complicated to write out "restrict" keywords, and that thought
-> that "let's break old working programs and make it harder to write new
-> programs" was a good idea.
+    =
 
-Strict aliasing is crap in C and C++ because we started out with
-unrestricetd pointers, and it just doesn't work in C and C++ with the
-realities of the kind of code we have to write, and we never got any
-kind of a model that would have made it workable. Never mind trying to
-graft that onto existing codebases...
+Remove the kdoc for the removed 'req' member of the 9p_conn struct.
 
-(Restrict was crap too... no scoping, nothing but a single f*cking
-keyword? Who ever thought _that_ was going to work?)
+Remove a pair of set-but-not-used v9ses variables.
 
-_But_: the lack of any aliasing guarantees means that writing through
-any pointer can invalidate practically anything, and this is a real
-problem. A lot of C programmers have stockholm syndrome when it comes to
-this, we end up writing a lot of code in weirdly baroque and artificial
-styles to partially work around this when we care about performance -
-saving things into locals because at least the _stack_ generally can't
-alias to avoid forced reloads, or passing and returning things by
-reference instead of by value when that's _not the semantics we want_
-because otherwise the compiler is going to do an unnecessary copy -
-again, that's fundamentally because of aliasing.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Eric Van Hensbergen <ericvh@kernel.org>
+cc: Latchesar Ionkov <lucho@ionkov.net>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+cc: v9fs@lists.linux.dev
+---
+ fs/9p/vfs_inode_dotl.c |    4 ----
+ net/9p/trans_fd.c      |    1 -
+ 2 files changed, 5 deletions(-)
+
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index ef9db3e03506..7af27ba1c25d 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -297,7 +297,6 @@ static int v9fs_vfs_mkdir_dotl(struct mnt_idmap *idmap=
+,
+ 			       umode_t omode)
+ {
+ 	int err;
+-	struct v9fs_session_info *v9ses;
+ 	struct p9_fid *fid =3D NULL, *dfid =3D NULL;
+ 	kgid_t gid;
+ 	const unsigned char *name;
+@@ -307,7 +306,6 @@ static int v9fs_vfs_mkdir_dotl(struct mnt_idmap *idmap=
+,
+ 	struct posix_acl *dacl =3D NULL, *pacl =3D NULL;
+ =
+
+ 	p9_debug(P9_DEBUG_VFS, "name %pd\n", dentry);
+-	v9ses =3D v9fs_inode2v9ses(dir);
+ =
+
+ 	omode |=3D S_IFDIR;
+ 	if (dir->i_mode & S_ISGID)
+@@ -739,7 +737,6 @@ v9fs_vfs_mknod_dotl(struct mnt_idmap *idmap, struct in=
+ode *dir,
+ 	kgid_t gid;
+ 	const unsigned char *name;
+ 	umode_t mode;
+-	struct v9fs_session_info *v9ses;
+ 	struct p9_fid *fid =3D NULL, *dfid =3D NULL;
+ 	struct inode *inode;
+ 	struct p9_qid qid;
+@@ -749,7 +746,6 @@ v9fs_vfs_mknod_dotl(struct mnt_idmap *idmap, struct in=
+ode *dir,
+ 		 dir->i_ino, dentry, omode,
+ 		 MAJOR(rdev), MINOR(rdev));
+ =
+
+-	v9ses =3D v9fs_inode2v9ses(dir);
+ 	dfid =3D v9fs_parent_fid(dentry);
+ 	if (IS_ERR(dfid)) {
+ 		err =3D PTR_ERR(dfid);
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 1a3948b8c493..196060dc6138 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -95,7 +95,6 @@ struct p9_poll_wait {
+  * @unsent_req_list: accounting for requests that haven't been sent
+  * @rreq: read request
+  * @wreq: write request
+- * @req: current request being processed (if any)
+  * @tmp_buf: temporary buffer to read in header
+  * @rc: temporary fcall for reading current frame
+  * @wpos: write position for current frame
+
 
