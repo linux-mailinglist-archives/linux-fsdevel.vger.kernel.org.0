@@ -1,126 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-15382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660B088D6EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 08:02:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5C588EAE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 17:16:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 984C41C251D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 07:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40DA41F2376A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 16:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834A32C848;
-	Wed, 27 Mar 2024 07:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD96130E35;
+	Wed, 27 Mar 2024 16:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IO2SVDZj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A3C249ED;
-	Wed, 27 Mar 2024 07:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F030E42A91;
+	Wed, 27 Mar 2024 16:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711522915; cv=none; b=YzPteBlPo2bgamLWo0Rzlv/jw0z6jtNyNOzZgMe7uQQEMraWxHSGZ13mIIaPi7o6GijYD8cCjod1UF8jwjMpEhFEffvjX5UxqXskK6+UCWN3+S88PmQY3Oo1cWfJ1Uu2rnDMFQW/9841hV3gcKAua2kErPn8lSXNYVxDpNwYBwk=
+	t=1711556189; cv=none; b=Enf+hE9SyppGxdoU5Sn7sgcIPyDrBnDoiEE4dO4RUVrVw5ZTLybAtVQDmOhW3mVwBa1hj6rZfwzcw87RzoQgeklrmTurnStQSJ242PYPcxsahz21ma23vbtKWjC1VzdRbbXgQurbQGt1NuPN4S94K9n72oK0Eq2GCPjHFVKULCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711522915; c=relaxed/simple;
-	bh=z3hpLvAqICheWGdppVRowRrjiiDy/NCGgfRnnGCDboA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mEC6Uz4gfOmHGwg8nXcqb2BIpEFJpwkkYlfHvNio3AWdySAch4/tCILIqkdZB1ce4P4xW9opaTIncEgggw8lmH9pcR2tbxCQragqasWvVD0Y30OwV+bT0CL5TLHs2fv6JqsJYOUmiVG3THP6/cI2ETqCQy3jd/2eMEsbE51i678=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4V4Hf16CNQz4f3kpG;
-	Wed, 27 Mar 2024 15:01:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id E27FB1A016E;
-	Wed, 27 Mar 2024 15:01:49 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP2 (Coremail) with SMTP id Syh0CgAnSQxYxANmi6+LIQ--.50310S8;
-	Wed, 27 Mar 2024 15:01:49 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	willy@infradead.org,
-	jack@suse.cz,
-	bfoster@redhat.com,
-	tj@kernel.org
-Cc: dsterba@suse.com,
-	mjguzik@gmail.com,
-	dhowells@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 6/6] writeback: define GDTC_INIT_NO_WB to null
-Date: Wed, 27 Mar 2024 23:57:51 +0800
-Message-Id: <20240327155751.3536-7-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240327155751.3536-1-shikemeng@huaweicloud.com>
-References: <20240327155751.3536-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1711556189; c=relaxed/simple;
+	bh=kfVdwdCf7B9X7O5+oO8Vigvx4JOZ1iSnjiYAU8Orp7A=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pwqYQHSTqQ6DO2bcHJWmOJqr5jJ9+wNTAqAs5pdIO6ubGs/23T2pbtY2laZzbs9ML5YOvxjgtSoGDwgebgZRBWKjuLQbAssAaUzqMGY6k8n17wc9ND9Tso9HOJmA5tm1tHdCL1R+vqUMo9TjagU9NFEzybgKLJy5pbzY6g39+yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IO2SVDZj; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-29e0229d6b5so21801a91.3;
+        Wed, 27 Mar 2024 09:16:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711556186; x=1712160986; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OSCcPL9ReYBC3ieN7sRSJkCjHUDGGaoDNVjenjFddiw=;
+        b=IO2SVDZjHjZPW2836N0zwP40dW7kQoErJc3ls12qCB3GBLL/+cruxnGBWIqWI55W+/
+         rTAeZE/xIG/NdLRCfK923/dVb4ywqgrX36Nf41UNDY4mYqaWpJXe9kQkbcOGN2XMYmqo
+         33n80Vko3quEny4XazHjxUtQwDeFUJI9S3MyQNR1EAB28D/cFgAW9MeqU8kXxKHa5uYF
+         vefr5H27YGxpRGTYk4Ps13181tXpfpahUTy7rnWVlwqZqcgw7U9nEm2BYllgo3SIvzN0
+         gBg3/Z8Ux/0GYKeEaX/9v9nBs0+OIqbt6JPoOyTJUXlXMBkouO7sSnpj6QAS4J2PiquO
+         Xi6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711556186; x=1712160986;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OSCcPL9ReYBC3ieN7sRSJkCjHUDGGaoDNVjenjFddiw=;
+        b=t6TWzwP3nMhkl9lWbplncD69DNy6Z9TIfmtUWuM/Knj0TsaXMYJeu37kXUc5UAZZD+
+         Q0CfvL9ASMuVsg5yxkCJeXEbBYEBAesjQHvVWV1XMpBtrljOX4pnHo1lrhUKhOCwOrI4
+         F+ZP6PS3ZVlRE3bGHEAzsrOn8+jh8t7yogmNyTZluE/SGE+uvbhLek8CDG+Guikrf7yn
+         /YGkLCrtfEela3Qw9u8wcDaQ2pGmX2VXLgv9eXpMxBOSk9fbhewKPmAf0blVbWQYh+nJ
+         HeYzW6PJEDEs/xg7nXICdfa82I4+mT/KzNAfn0R+8TWQ4yVIUR7ZAo8QAjUXHLn2lpVS
+         YMRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtrL4rJRo2yOOVLMBANZSBx+7aw8MQceJGU4uUHHGlaogTXXasEn9nQNEjgrQ1aXH8T4t9a99X/yad+USad44ml+2LTMnphYL/8SaRdY+/MyXhA+ie1xmPBHros/x3YdUR0DebC+OpNYuHpUn0m9gkdMDNMYNg8zFbi5GZ4SpvBkVWNCPRuTqr1sOcmUZmmLsXPkhNxQlln0XDJyww7762UuWyVFIZSA==
+X-Gm-Message-State: AOJu0YyifwLiRD4W03sQ3W17YXXXjUlkxxDQQpGK6mC+TMFLvYOKOVqp
+	1UuHQER9BFEkBZ7HK22Q9ZJ/D5K4w9hsBLOt0//dv74xniapJuHV
+X-Google-Smtp-Source: AGHT+IFb5IqfgxBvySBVcYNKgghJ48Dnwn4nEVJk9rDb4Sdzmwo0ZtCk8BBaNaurYYvMG+RdbrIyPw==
+X-Received: by 2002:a17:90b:4a44:b0:29c:7845:cba with SMTP id lb4-20020a17090b4a4400b0029c78450cbamr100758pjb.36.1711556186202;
+        Wed, 27 Mar 2024 09:16:26 -0700 (PDT)
+Received: from smtpclient.apple ([2601:647:4d7e:dba0:5840:a196:2bf3:3600])
+        by smtp.gmail.com with ESMTPSA id sl13-20020a17090b2e0d00b0029951d04dc4sm1903536pjb.54.2024.03.27.09.16.21
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Mar 2024 09:16:25 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAnSQxYxANmi6+LIQ--.50310S8
-X-Coremail-Antispam: 1UD129KBjvJXoWrur1rurW3Ww45Cw4xXF1rCrg_yoW8JrWkpr
-	ZxC3y5KF1UAFs293Z3Can2gwnrXa97tFW7G3s0gwsIyF4xJ3W8GFyjgw18tr4jvr93tryx
-	ArZ7tFyxXa40y3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPmb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAv
-	FVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJw
-	A2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr2
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7
-	CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2Iq
-	xVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r
-	1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY
-	6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZE
-	Xa7IU0TqcUUUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
+From: comex <comexk@gmail.com>
+In-Reply-To: <CAHk-=wjwxKD9CxYsf5x+K5fJbJa_JYZh1eKB4PT5cZJq1+foGw@mail.gmail.com>
+Date: Wed, 27 Mar 2024 09:16:09 -0700
+Cc: "Dr. David Alan Gilbert" <dave@treblig.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Philipp Stanner <pstanner@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ rust-for-linux <rust-for-linux@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org,
+ llvm@lists.linux.dev,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Alan Stern <stern@rowland.harvard.edu>,
+ Andrea Parri <parri.andrea@gmail.com>,
+ Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ David Howells <dhowells@redhat.com>,
+ Jade Alglave <j.alglave@ucl.ac.uk>,
+ Luc Maranget <luc.maranget@inria.fr>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Akira Yokosawa <akiyks@gmail.com>,
+ Daniel Lustig <dlustig@nvidia.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ kent.overstreet@gmail.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Marco Elver <elver@google.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ linux-arm-kernel@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <160DB953-1588-418E-A490-381009CD8DE0@gmail.com>
+References: <20240322233838.868874-1-boqun.feng@gmail.com>
+ <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
+ <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
+ <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
+ <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
+ <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
+ <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
+ <bu3seu56hfozsvgpdqjarbdkqo3lsjfc4lhluk5oj456xmrjc7@lfbbjxuf4rpv>
+ <CAHk-=wgLGWBXvNODAkzkVHEj7zrrnTq_hzMft62nKNkaL89ZGQ@mail.gmail.com>
+ <ZgIRXL5YM2AwBD0Y@gallifrey>
+ <CAHk-=wjwxKD9CxYsf5x+K5fJbJa_JYZh1eKB4PT5cZJq1+foGw@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-We never use gdtc->dom set with GDTC_INIT_NO_WB, just remove unneeded
-initialization of gdtc->dom for now.
+On Mar 25, 2024, at 8:49=E2=80=AFPM, Linus Torvalds =
+<torvalds@linux-foundation.org> wrote:
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- mm/page-writeback.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> But you should _start_ the design of your language memory model around
+> the unsafe "raw atomic access operations" model.
+>=20
+> Then you can use those strictly more powerful operations, and you
+> create an object model *around* it.
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 211565d01600..2fd2fd2e1932 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -147,6 +147,7 @@ struct dirty_throttle_control {
-  * reflect changes in current writeout rate.
-  */
- #define VM_COMPLETIONS_PERIOD_LEN (3*HZ)
-+#define GDTC_INIT_NO_WB
- 
- #ifdef CONFIG_CGROUP_WRITEBACK
- 
-@@ -154,8 +155,6 @@ struct dirty_throttle_control {
- 				.dom = &global_wb_domain,		\
- 				.wb_completions = &(__wb)->completions
- 
--#define GDTC_INIT_NO_WB		.dom = &global_wb_domain
--
- #define MDTC_INIT(__wb, __gdtc)	.wb = (__wb),				\
- 				.dom = mem_cgroup_wb_domain(__wb),	\
- 				.wb_completions = &(__wb)->memcg_completions, \
-@@ -210,7 +209,6 @@ static void wb_min_max_ratio(struct bdi_writeback *wb,
- 
- #define GDTC_INIT(__wb)		.wb = (__wb),                           \
- 				.wb_completions = &(__wb)->completions
--#define GDTC_INIT_NO_WB
- #define MDTC_INIT(__wb, __gdtc)
- 
- static bool mdtc_valid(struct dirty_throttle_control *dtc)
--- 
-2.30.0
+To some extent Rust does this already, unlike C++.
+
+C++ allows atomics to be implemented using locks.  Partly for this =
+reason,
+`std::atomic<T>` is documented as not necessarily having the same
+representation as `T` [1].  C++ also has strict aliasing, so even if =
+those types
+do have the same representation, you still can't cast `T *` to
+`std::atomic<T> *`.
+
+But Rust atomics are lower-level.  First, they are guaranteed lock-free =
+[2].
+Second, they are documented as having "the same in-memory representation =
+as the
+underlying" type [3].  (They also usually have the same alignment, =
+except on
+x86 where u64 is only 4-byte aligned but AtomicU64 of course needs to be =
+8-byte
+aligned.)  Meanwhile, Rust intentionally lacks strict aliasing.
+
+Combined, this means it's perfectly legal in Rust to cast e.g. `&mut =
+u32` to
+`&AtomicU32` and perform atomic accesses on it.  Or the same with =
+u64/AtomicU64
+if you know the pointer is validly aligned.  This is by design; the =
+Atomic
+types' methods are considered the official way to perform atomic =
+operations on
+arbitrary memory, making it unnecessary to also stabilize 'lower-level'
+intrinsics.
+
+That said, there *are* currently some holes in Rust's atomics model, =
+based on
+the fact that it's mostly inherited from C++.  =46rom the documentation:
+
+> Since C++ does not support mixing atomic and non-atomic accesses, or
+> non-synchronized different-sized accesses to the same data, Rust does =
+not
+> support those operations either. Note that both of those restrictions =
+only
+> apply if the accesses are non-synchronized.
+https://doc.rust-lang.org/std/sync/atomic/index.html
+
+There are some open issues around this:
+
+- "How can we allow read-read races between atomic and non-atomic =
+accesses?"
+  https://github.com/rust-lang/unsafe-code-guidelines/issues/483
+
+  > [..] I do think we should allow such code. However, then we have to =
+change
+  > the way we document our atomics [..]
+
+- "What about: mixed-size atomic accesses"
+  https://github.com/rust-lang/unsafe-code-guidelines/issues/345"
+
+  > Apparently the x86 manual says you "should" not do this [..] It is =
+unclear
+  > what "should" means (or what anything else here really means, =
+operationally
+  > speaking...)
+
+[1] https://eel.is/c++draft/atomics#types.generic.general-3
+[2] https://doc.rust-lang.org/std/sync/atomic/index.html#portability
+[3] =
+https://doc.rust-lang.org/nightly/std/sync/atomic/struct.AtomicU64.html
 
 
