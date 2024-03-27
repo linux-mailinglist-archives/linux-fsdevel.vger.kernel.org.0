@@ -1,185 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-15459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CE288EC1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 18:07:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6342588EC67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 18:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B7E12A6068
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 17:07:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94AA81C2F003
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 17:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF2C14D70A;
-	Wed, 27 Mar 2024 17:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC6514D451;
+	Wed, 27 Mar 2024 17:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PzMpBdPr"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="U5wUCTha"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948FF14D42C;
-	Wed, 27 Mar 2024 17:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C78614D6EC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 17:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711559269; cv=none; b=qffmgCqN3SwUwOGZ2RiHdX/9/VazpiCewBF8NfkKD7Z5MCg+kv4flKGN0o0cuPw596qV3XPg/jtUjLt68TgInr/NCYZDhSt6Wpc8hXcmZc5gtOOVibG5TK6f2eA1frchkB7sggK0cYqNDLN2dV0hGbpwDeWh89guF62pkm7PTb0=
+	t=1711559951; cv=none; b=L3f+0i+qL4iZGJfvgjvkyFlc+kB2FCc0IGJRaqP54hYTS/a1zOVqPOelIIC90Y4T5cvg2/QYzT//REiGFpTTxrSOLyi20tI03QgYLtvMoRcftkbRcQ2D+najm888sXryJ2FHyH8TIU90w7jDEZgrX7aK61zbH6xr4HUPS5ZBIoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711559269; c=relaxed/simple;
-	bh=U3RtwDtYT0yTxSKO6jZYN50WHbzBfyI8DDoY9EMQLEU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zf8nDA1RRLueQ0AqKIAEzJ4wwfC7Gf++T/QvBS4jftj47b8HKDUwWIpRbdm4P3Bnuf/UM5fVppfIED2sSruXLSApeVubCVfInBuo09Tql8zAMK0hK3Vc8nhVGTDg1v7l5RONEJSqYtYW6O1n967LYsB/t/gEz11oC6vh0lfXOFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PzMpBdPr; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2d29aad15a5so87518701fa.3;
-        Wed, 27 Mar 2024 10:07:47 -0700 (PDT)
+	s=arc-20240116; t=1711559951; c=relaxed/simple;
+	bh=29h2AUzAAJnDFXLXJwmwzPe73vea4EZeTwwo589Dbk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZNkQMWt/dYdI10PP4hMJSyV25O9Dt5e2Z4u1jbdhAt8124qQQzs1IAicVgId1Tix+P6Ea0Hl4ji9BXJ1OHDPdXU4jICOp6KiWxMLJwOS5CklZX7S1d4iWzuMG400tNOUPd0yCTOTqXfYSAWLAkUxl2IYotWTt/aN0ozXusMigoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=U5wUCTha; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1e09a7735ecso70135ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 10:19:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711559266; x=1712164066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r3W9HxlOS8+3sB9E9Q/EKAZYL+1+tFa3XLjifQ5VaP8=;
-        b=PzMpBdPrOUprubMwE82WHWnN/hDbi+TYkZE8f2W2ULHCvzjfkcq0hbJY6w1yHy/k7v
-         p1/A5W9I+50AmxOPkclIZ5F4WM1aPp09RUiL3ACvuaSNMnVIyZrOU502Duh1jAPW1p6/
-         KJqMIOEtOgBauJnaw55HKjbr2oh89FfFzNOWBpL5vjaBfccBRmlaqb7LpwluCtO/LzqW
-         zW4ZV1OCJOIOLRR3P//cTkNS4djkfKQkYr7LPkYTAlf7qvsFirTuaQTJFhpYDZBbPnlh
-         HN/GAwZ2Y8YaO2jYeWV+lb7WA6WkJAUn2Y+ja6gcR6YhiCw7ehaOxVUvMFEJhAcTrK/I
-         dEeA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711559949; x=1712164749; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6XH30giHm4xuVAjFduERXiIJfhN32OXXVD0HlYbYbu4=;
+        b=U5wUCThapf685eE9N+MygSUVV3fxDGpFK1Llr9kTGaZ1yt4KZ+CGeO4GlshLjU/+iZ
+         VSbnYcPvKBLuKt2Yx64cmWiID/IxeDCWNQcI3pFtnMJ+RCnfgkh2Q72e86+eCHqT0Ygj
+         28eg6KS6SOzMyZ6ebh3b44qDaQFRrjWCNg4nzwOgiU0X60AxJEn8FMDLsdcZQKdPrrUS
+         PlWSJEYNMGzs3V7cpGV+GRpuRic5kD1Dm7NP6wdCUs9vP+PV1zUKiAvKFNzc5QrPtITr
+         9oxQ2Jh6FJLNoljLQTarcFHb/NmDKdtY6pd6EOvVYI2zNA9EE4OaQ6rOc60RgolnBDnA
+         mHDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711559266; x=1712164066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r3W9HxlOS8+3sB9E9Q/EKAZYL+1+tFa3XLjifQ5VaP8=;
-        b=mAoUqcWLAK39/Ha08NxQLHwH9hfIS44U9u/sXbDVYUiCEqZRc0hec7q0A8rA41+5a4
-         mMUrg2nl7HqZxAkePfVBAgY1cViFdpK05HetEraR68jjfGPhcTKzV06/VxJqIJ6jinp9
-         4ev/eYd9o8UATO7CnHasHgpo2GBb+IpEZDrA6cjo7/op4qQ8ENyfe38xW6MNAMEyEAWV
-         N5uT1OSjH9A56hM96sHhVKLU3WE4uDc3wCgRdOUz7IOw+fPRKMTglV/3iTx72MaPobEX
-         dWwbWkQkR/ndu9KuvjufI0lqKzNwrJ/pCCDCRjuPAGaiGtOLgSXGlTBFgex7DNNXkshg
-         jNlw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7wAFM9S3RIcTXD4dqkPIV4qlINbyRuJo22e2d3uPrxUdQABBbg2RT2EIrnK4AAuDqbFrHkm3ij0eSMmhIF71JzsmsETgF8Zj4/YwyQ5HIaxM26MJlNcXcWSK5oOx/s1QBY0/mZyDN1ANoCi4SGd0zPMakeYD/8ZnavP/ya3+kAwDpZPi5v/w=
-X-Gm-Message-State: AOJu0YxVHBqWbMy6Pe9ntRzjCUWnwCcRS3BC5O9BFpCsLpczhzeCQcxY
-	IP9SIvsdWEWyd0yOk+Lfy4JRWs099INczukeJxkyJeNWs9d/pMefJrjgG1S2hw9Rr0RGUgRUu2w
-	H1n+a3wvRLSsIZ+ey9/jFukZApmRmm3/v
-X-Google-Smtp-Source: AGHT+IGTg5b59WH8c8XtI5m2cG3wee2fpMVNEMOz66Fi2woYZqA5DNodHPMRUJZFSv5qC/pxlAFtlSdBLcT69HeFDbE=
-X-Received: by 2002:a2e:a721:0:b0:2d6:e7b6:f5da with SMTP id
- s33-20020a2ea721000000b002d6e7b6f5damr428989lje.29.1711559265398; Wed, 27 Mar
- 2024 10:07:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711559949; x=1712164749;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6XH30giHm4xuVAjFduERXiIJfhN32OXXVD0HlYbYbu4=;
+        b=EJymirTqDBe0rSs0+cHL4my8jCJlLxJ6DoN+K3CiICm3g2TR2tfRr+tTPu49SUkpIE
+         6TfUPz1Xhbb2+2NZbI2JMDm0w0zwiWB/oz/s5GCeZSqBFA/MYCxnY1fkAEaGJ5jjA7qa
+         2jx5xUs/GrsTpz5p2JRu11shXjSjrdXvd6n5zFjPMsRdyib86k0xgiypU84S4SZ4RrLk
+         pb7Mc3+/AqjR/PbA1WYCOvei6xvQRlhCHnb9ZtNWClUij/XAQVbYpWSGZsJSPWv8Bp8A
+         OSEPykpVxYR1PdX6d6GJStzQM1UdahG0niUuwJ2GwWSm0lAAMySqfUx2XbbkD6xonjMt
+         DYfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhKQE6e279jtYEb367ItfNRwQRqixWRVbjXi26h8aTGg6rbA1VEXpkiY2FSy3OVJSrsqE4w2hTdk5LFdV38r5filh+a1zs/vmuBFf3hw==
+X-Gm-Message-State: AOJu0Ywt6+u7TPNIiqiX8gqw36qvz5VKEU9YUO8gKOSoGgBqT9+AO8Zn
+	Kp14xb6suDVRORWFoJVTywGplQIQUdF1V+f6ivXuKh0Uv3Ar4Dd+QpWD+iAMiJw=
+X-Google-Smtp-Source: AGHT+IHQbekEyHpay7l7rXYFodfJX33zwaI5uIhjFxi+PNIQFoF5Tr15zzymhsRzZ1YV5p6JX0QuZw==
+X-Received: by 2002:a17:902:ab96:b0:1dd:de68:46cf with SMTP id f22-20020a170902ab9600b001ddde6846cfmr286761plr.6.1711559948631;
+        Wed, 27 Mar 2024 10:19:08 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:122::1:2343? ([2620:10d:c090:600::1:bb1e])
+        by smtp.gmail.com with ESMTPSA id f1-20020a170902ce8100b001dd6ebd88b0sm9290497plg.198.2024.03.27.10.19.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Mar 2024 10:19:07 -0700 (PDT)
+Message-ID: <e6a61c54-6b8d-45e0-add3-3bb645466cbf@kernel.dk>
+Date: Wed, 27 Mar 2024 11:19:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2305515.1711548804@warthog.procyon.org.uk>
-In-Reply-To: <2305515.1711548804@warthog.procyon.org.uk>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 27 Mar 2024 12:07:34 -0500
-Message-ID: <CAH2r5mujc2dPCTN15DqoDJXkg8wOUaZbpDZ562CHsStZmuAOUQ@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix duplicate fscache cookie warnings
-To: David Howells <dhowells@redhat.com>
-Cc: Steve French <sfrench@samba.org>, Shyam Prasad N <nspmangalore@gmail.com>, 
-	Rohith Surabattula <rohiths.msft@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [RFC]: fs: claw back a few FMODE_* bits
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org
+References: <20240327-begibt-wacht-b9b9f4d1145a@brauner>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240327-begibt-wacht-b9b9f4d1145a@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-added to cifs-2.6.git (also added Fixes tag) pending testing
+On 3/27/24 10:45 AM, Christian Brauner wrote:
+> There's a bunch of flags that are purely based on what the file
+> operations support while also never being conditionally set or unset.
+> IOW, they're not subject to change for individual file opens. Imho, such
+> flags don't need to live in f_mode they might as well live in the fops
+> structs itself. And the fops struct already has that lonely
+> mmap_supported_flags member. We might as well turn that into a generic
+> fops_flags member and move a few flags from FMODE_* space into FOP_*
+> space. That gets us four FMODE_* bits back and the ability for new
+> static flags that are about file ops to not have to live in FMODE_*
+> space but in their own FOP_* space. It's not the most beautiful thing
+> ever but it gets the job done. Yes, there'll be an additional pointer
+> chase but hopefully that won't matter for these flags.
 
-On Wed, Mar 27, 2024 at 10:00=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
->
-> fscache emits a lot of duplicate cookie warnings with cifs because the
-> index key for the fscache cookies does not include everything that the
-> cifs_find_inode() function does.  The latter is used with iget5_locked() =
-to
-> distinguish between inodes in the local inode cache.
->
-> Fix this by adding the creation time and file type to the fscache cookie
-> key.
->
-> Additionally, add a couple of comments to note that if one is changed the
-> other must be also.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Shyam Prasad N <nspmangalore@gmail.com>
-> cc: Rohith Surabattula <rohiths.msft@gmail.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/smb/client/fscache.c |   16 +++++++++++++++-
->  fs/smb/client/inode.c   |    2 ++
->  2 files changed, 17 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/smb/client/fscache.c b/fs/smb/client/fscache.c
-> index c4a3cb736881..340efce8f052 100644
-> --- a/fs/smb/client/fscache.c
-> +++ b/fs/smb/client/fscache.c
-> @@ -12,6 +12,16 @@
->  #include "cifs_fs_sb.h"
->  #include "cifsproto.h"
->
-> +/*
-> + * Key for fscache inode.  [!] Contents must match comparisons in cifs_f=
-ind_inode().
-> + */
-> +struct cifs_fscache_inode_key {
-> +
-> +       __le64  uniqueid;       /* server inode number */
-> +       __le64  createtime;     /* creation time on server */
-> +       u8      type;           /* S_IFMT file type */
-> +} __packed;
-> +
->  static void cifs_fscache_fill_volume_coherency(
->         struct cifs_tcon *tcon,
->         struct cifs_fscache_volume_coherency_data *cd)
-> @@ -97,15 +107,19 @@ void cifs_fscache_release_super_cookie(struct cifs_t=
-con *tcon)
->  void cifs_fscache_get_inode_cookie(struct inode *inode)
->  {
->         struct cifs_fscache_inode_coherency_data cd;
-> +       struct cifs_fscache_inode_key key;
->         struct cifsInodeInfo *cifsi =3D CIFS_I(inode);
->         struct cifs_sb_info *cifs_sb =3D CIFS_SB(inode->i_sb);
->         struct cifs_tcon *tcon =3D cifs_sb_master_tcon(cifs_sb);
->
-> +       key.uniqueid    =3D cpu_to_le64(cifsi->uniqueid);
-> +       key.createtime  =3D cpu_to_le64(cifsi->createtime);
-> +       key.type        =3D (inode->i_mode & S_IFMT) >> 12;
->         cifs_fscache_fill_coherency(&cifsi->netfs.inode, &cd);
->
->         cifsi->netfs.cache =3D
->                 fscache_acquire_cookie(tcon->fscache, 0,
-> -                                      &cifsi->uniqueid, sizeof(cifsi->un=
-iqueid),
-> +                                      &key, sizeof(key),
->                                        &cd, sizeof(cd),
->                                        i_size_read(&cifsi->netfs.inode));
->         if (cifsi->netfs.cache)
-> diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-> index d28ab0af6049..91b07ef9e25c 100644
-> --- a/fs/smb/client/inode.c
-> +++ b/fs/smb/client/inode.c
-> @@ -1351,6 +1351,8 @@ cifs_find_inode(struct inode *inode, void *opaque)
->  {
->         struct cifs_fattr *fattr =3D opaque;
->
-> +       /* [!] The compared values must be the same in struct cifs_fscach=
-e_inode_key. */
-> +
->         /* don't match inode with different uniqueid */
->         if (CIFS_I(inode)->uniqueid !=3D fattr->cf_uniqueid)
->                 return 0;
->
->
+Not doing that extra dereference is kind of the point of the FMODE_*
+flags, at least the ones that I care about. Probably not a huge deal for
+these cases though, as we're generally going to call one of the f_op
+handlers shortly anyway. The cases where we don't, at least for
+io_uring, we already cache the state separately.
 
+Hence more of a general observation than an objection to the patch. I do
+like freeing up FMODE space, as it's (pretty) full.
 
---=20
-Thanks,
+-- 
+Jens Axboe
 
-Steve
 
