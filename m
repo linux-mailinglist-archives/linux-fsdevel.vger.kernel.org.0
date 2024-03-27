@@ -1,120 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-15389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146ED88DAF1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 11:05:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B05088DB49
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 11:33:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4538B1C25952
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 10:05:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D789929ACBB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 10:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10F347A7D;
-	Wed, 27 Mar 2024 10:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F8E2AD2C;
+	Wed, 27 Mar 2024 10:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYt2jmWd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXm571xa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8E928DC8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 10:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BCE125DB;
+	Wed, 27 Mar 2024 10:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711533920; cv=none; b=Cq46j3lpHcLp4GjuxMGakTyPNHh1e4NmW74+gn+wCAiC++KKpvwlHCFIJnfaiYG9ztu9OYZ4LUaBJySIgzzkrQKDp40bdkVCWSeqLvd7B1ytxGmQAyqpYlxgKeiz9fwMn2Ie9RisDF7ZNrjoFMEEWZFTyai+G62AMkUVx6zzM8A=
+	t=1711535627; cv=none; b=SSJC6UHsNU05nTcYWbeg4MsoNOVsFgIge9IBjIZrKWP4JnIjiwoTET1Czfw1FRvIaxEeNMqa4bTXZYl1Rhh8wipn59fIhXJVoCVcTWVphRd4gcSpkVr9cVsQKp4mffcSGoJ80pG461yOgW87x5sACYmUw5VDOFD7jxKfyTBjI6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711533920; c=relaxed/simple;
-	bh=7FfoVz4TyEGCuUBk5GbVWpV4zA0V5bwDX+w/IATyuhg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g3rUCHxG3E0YzJiLjWFNCw6FQdfuYrXSugddIYK3fdTW/7EY9uFuaJMYXVszWBP3AmPdj9naxahD2UJ5rBi/wwY5+Iztk/NTJdV2+5epZcdzTcyCCZVBCW26aosY1F0pctdkiWVKD/z+SaBITtcF4JfD/4yZKjyDJaOqGc9v148=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYt2jmWd; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-696719f8dfcso29752416d6.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 03:05:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711533918; x=1712138718; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sU1fgsC+f92ydKdPUBgVrgtIzgqRYlgOSF8lmCAR6dw=;
-        b=QYt2jmWduMhEsVu7kUXPWIUtAUnMj6sndBtLTblMORcTVcHhSOSfWtdHb2n1WVmNKx
-         Tlz2Tdj8KZaiupxiM3PDTgT8lE+S5dPG1+GnH1CT6yHmY0zNpkQhnCokYpL6URg2t4I4
-         w8Y1uTOPuqdh3hgfPqwOwKFFcDi/Urqo9hun1hdPBTgJIhZisdf5bmZZnuPy6QXf77HI
-         /sZykECk6iYRzuSCN8aEHpH6OXlL7vEWo6fR7q0IxkpVNGHkthagEKY6vbEpNUa03kuy
-         EW30lvtkeBmUjyTe0bb7bbBhziaIHJufqV01WSmEckQUiAvZvBV1RIwB3k4q/tswdg3m
-         Eayg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711533918; x=1712138718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sU1fgsC+f92ydKdPUBgVrgtIzgqRYlgOSF8lmCAR6dw=;
-        b=qfQ60grzm1NlM6uJsz1C5tFkIegxZyHHP+Wq8IN1f7ESbNxZTn8VCcpdX7sKZKr1Qq
-         Ul+tzxMzfN72WMT/gaquOOzpLOs4AzMHTisJ62pjgMkUlt722V5q8Xp1OcH9rMwO4oUT
-         c+J8sBlmPxNo+OKnDIBiZ1Ansdp7ClFt7TLi3XyeGPefAehO9bhoLAVsK2Ca+qUTWC3R
-         kgOnUr1c6zolny6cfeYX9gy1nkhYCvvTQfy81k4tZD487XanR5T+cCRBpucNwjfWIX8K
-         CuocPNSA82Utl+svSohFfxpsB1RgfKOAVV9yCGK9Gifq7bToJOTlVTNF3HNyRv2VGJpt
-         Vr6A==
-X-Forwarded-Encrypted: i=1; AJvYcCW0d/W4z/mHs3pKuK52NLMeMm/s5KrkAxs3ZXJ3eAqkOHd9acxHtkluVIe5F7CnymUysFD9lIO/tFv2LF8lHOYR7B1IBxF6mg8/DKH6Cg==
-X-Gm-Message-State: AOJu0YxFXCThnt/jURQnOYVLbqlp7CzGuJe12sBExtaJRDnERZtf9pFc
-	/SkNPsd7wGjWNPbm4BnpsnWmnGql0Jqr1r4QNPwfFzQMuDluYBQSaCCbw0vgdTasf3ytp2xjZH6
-	igpF8nb28KsikzhXumvw+4h831cHsRN4X
-X-Google-Smtp-Source: AGHT+IEEIN21ktOs0x0+fH1aMSO6FoqEu/BRMGtZ6rjX3h9fi5zhHHX/s3cj2Z5gv3WwGDIsdgReUAIKfqcYg06QP8Y=
-X-Received: by 2002:ad4:5966:0:b0:696:20c3:35bd with SMTP id
- eq6-20020ad45966000000b0069620c335bdmr813921qvb.47.1711533918010; Wed, 27 Mar
- 2024 03:05:18 -0700 (PDT)
+	s=arc-20240116; t=1711535627; c=relaxed/simple;
+	bh=X4s13pQiIMlSxWNycUMvGwb++iXPjn4geNOGBsGcK/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=c/I0Gqv5G85CKDbnImi5mzJ41ecalm1cDvOiklA5hjD3C6NQUnJInR5w5WzadtaH6ACC5IEQovCgmRd6AbdvWwiWQ98wp7wWtTIuUXnl14+PqQ8wHS73a/T3ScoxHrxZmyBCnHLc3cLhaj5Ud90eolEz9WCvg5jFdVfF+enPH0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXm571xa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16A00C433F1;
+	Wed, 27 Mar 2024 10:33:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711535627;
+	bh=X4s13pQiIMlSxWNycUMvGwb++iXPjn4geNOGBsGcK/Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=RXm571xaFkDpoQNyMD2OrM6Ff4PbI5oyxwIrSn6rh6oTAuAVcMCggPEuRb2mgCuIv
+	 bhNqVRdfaSUyuJvby8XWBnNTa24NpwoV4BQ7Kl1htTkkG04CA5T6Sh48JonEsQiZAV
+	 RigkbGK1bm1IIn1DB6W7IR7SQvCU7ZAPGxvk6/snkBoZpw7bDCYNWSftJOtqL4kvAO
+	 uY5qQehIIb8W9lLjLISE6w78aPCS+aa71c3stOnGl5bPsAnhmCgdSQXaUB9gTy4Aht
+	 jUbAIeeoLZE88ztSmt7l2W/jANxPOnvJ/HtGEEMcM4bJV5bO7930qOpcKvwrFsfqsU
+	 DOfbLOTRqk+Ow==
+Date: Wed, 27 Mar 2024 11:33:41 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: tjackson9431@gmail.com, "Darrick J. Wong" <djwong@kernel.org>
+Cc: fstests@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	kernel test robot <oliver.sang@intel.com>, Dave Chinner <david@fromorbit.com>, 
+	Taylor Jackson <taylor.a.jackson@me.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Linux Memory Management List <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH 2/2] vfs/idmapped_mounts.c: Change mount_setattr expected
+ output
+Message-ID: <20240327-baubeginn-wahljahr-f4ee7484ec48@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240317184154.1200192-1-amir73il@gmail.com> <20240317184154.1200192-2-amir73il@gmail.com>
- <20240327100122.odg6bc4lgsrryt6w@quack3>
-In-Reply-To: <20240327100122.odg6bc4lgsrryt6w@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 27 Mar 2024 12:05:06 +0200
-Message-ID: <CAOQ4uxie5D8hLX=wPSv7rwsk8nShA5i8AJmBvztQGBDvaiiO6w@mail.gmail.com>
-Subject: Re: [PATCH 01/10] fsnotify: rename fsnotify_{get,put}_sb_connectors()
-To: Jan Kara <jack@suse.cz>
-Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240326-mount-setattr-test-v1-2-c061b040d0f7@gmail.com>
+ <20240326152228.GC6379@frogsfrogsfrogs>
 
-On Wed, Mar 27, 2024 at 12:01=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Sun 17-03-24 20:41:45, Amir Goldstein wrote:
-> > Instead of counting the number of connectors in an sb, we would like
-> > to count the number of watched objects per priority group.
-> >
-> > As a start, create an accessor fsnotify_sb_watched_objects() to
-> > s_fsnotify_connectors and rename the fsnotify_{get,put}_sb_connectors()
-> > helpers to fsnotify_{get,put}_sb_watchers() to better describes the
-> > counter.
-> >
-> > Increment the counter at the end of fsnotify_attach_connector_to_object=
-()
-> > if connector was attached instead of decrementing it on race to connect=
-.
-> >
-> > This is fine, because fsnotify_delete_sb() cannot be running in paralle=
-l
-> > to fsnotify_attach_connector_to_object() which requires a reference to
-> > a filesystem object.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ...
-> > +static void fsnotify_put_inode_ref(struct inode *inode)
-> > +{
-> > +     iput(inode);
-> > +     fsnotify_put_sb_watched_objects(inode->i_sb);
-> > +}
->
-> This is a UAF issue. Will fix on commit. Otherwise the patch looks good.
+On Tue, Mar 26, 2024 at 08:33:52PM +0000, Taylor Jackson via B4 Relay wrote:
+> From: Taylor Jackson <tjackson9431@gmail.com>
+> 
+> In kernel commit dacfd001eaf2 (“fs/mnt_idmapping.c: Return -EINVAL
+> when no map is written”), the behavior of mount_setattr changed to
+> return EINVAL when attempting to create an idmapped mount when using
+> a user namespace with no mappings. The following commit updates the test
+> to expect no mount to be created in that case. And since no mount is created,
+> this commit also removes the check for overflow IDs because it does not make
+> sense to check for overflow IDs for a mount that was not created.
+> 
+> Signed-off-by: Taylor Jackson <tjackson9431@gmail.com>
+> ---
 
-oops. Good catch!
-Thanks,
-Amir.
+Thanks for fixing this!
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+
+>  src/vfs/idmapped-mounts.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/src/vfs/idmapped-mounts.c b/src/vfs/idmapped-mounts.c
+> index 34052ca3..f4dfc3f3 100644
+> --- a/src/vfs/idmapped-mounts.c
+> +++ b/src/vfs/idmapped-mounts.c
+> @@ -6667,7 +6667,7 @@ static int nested_userns(const struct vfstest_info *info)
+>  	}
+>  
+>  	if (sys_mount_setattr(fd_open_tree_level4, "", AT_EMPTY_PATH,
+> -			      &attr_level4, sizeof(attr_level4))) {
+> +			      &attr_level4, sizeof(attr_level4)) != -1 || errno != EINVAL) {
+>  		log_stderr("failure: sys_mount_setattr");
+>  		goto out;
+>  	}
+> @@ -6706,11 +6706,6 @@ static int nested_userns(const struct vfstest_info *info)
+>  			log_stderr("failure: check ownership %s", file);
+>  			goto out;
+>  		}
+> -
+> -		if (!expected_uid_gid(fd_open_tree_level4, file, 0, info->t_overflowuid, info->t_overflowgid)) {
+> -			log_stderr("failure: check ownership %s", file);
+> -			goto out;
+> -		}
+>  	}
+>  
+>  	/* Verify that ownership looks correct for callers in the first userns. */
+> 
+> -- 
+> 2.34.1
+> 
+> 
+
+On Tue, Mar 26, 2024 at 08:22:28AM -0700, Darrick J. Wong wrote:
+> On Tue, Mar 26, 2024 at 12:43:27PM +0100, Christian Brauner wrote:
+> > On Mon, Mar 25, 2024 at 09:58:09AM -0700, Darrick J. Wong wrote:
+> > > On Tue, Feb 20, 2024 at 09:57:30AM +0100, Christian Brauner wrote:
+> > > > On Mon, Feb 19, 2024 at 02:55:42PM +0800, kernel test robot wrote:
+> > > > > 
+> > > > > 
+> > > > > Hello,
+> > > > > 
+> > > > > kernel test robot noticed "xfstests.generic.645.fail" on:
+> > > > > 
+> > > > > commit: b4291c7fd9e550b91b10c3d7787b9bf5be38de67 ("fs/mnt_idmapping.c: Return -EINVAL when no map is written")
+> > > > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> > > > 
+> > > > The test needs to be updated. We now explicitly fail when no map is
+> > > > written.
+> > > 
+> > > Has there been any progress on updating generic/645?  6.9-rc1 is out,
+> > > and Dave and I have both noticed this regressing.
+> > 
+> > Iirc, Taylor wanted to fix this but it seems that hasn't happened yet.
+> > I'll ping again and if nothing's happened until tomorrow I'll send a
+> > patch.
+> 
+> Ok, glad to hear that this is still on your radar.  Thank you for
+> following up!
+
+@Darrick, Taylor sent fixes for this now (I've took the liberty to
+respond to both mails combined.).
 
