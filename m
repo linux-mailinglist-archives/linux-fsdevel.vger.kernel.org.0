@@ -1,136 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-15469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2AE888EECE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 20:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E64B888EED6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 20:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C328B1C3422D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 19:02:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23A4A1C2D487
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 19:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EC61514E8;
-	Wed, 27 Mar 2024 19:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A3614A631;
+	Wed, 27 Mar 2024 19:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYHPGXJ3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DmkKlSVv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D9812EBC4;
-	Wed, 27 Mar 2024 19:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B611879
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 19:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711566142; cv=none; b=TJC2zj12O4ThTg00v4SI9PNDiWiO+qUeHB0Fi9rGhskmx0aWBk78FKV8mORJuBjurXx+Baq7fOFiimy/iXtuWESlSPTDTpuqoqXxWIpHfPD3bEL6H7lWA5rwVg3igWAhEXATxou16X5q353Z8cjGbc9idzmEgSGVeLmw6f1/WTo=
+	t=1711566255; cv=none; b=gOXyhBIOfdNudacWrISBncMdRmH8DbVrMWl5NrpPQ8rABdzAwB+QIB2uPvLuuqnKuJuTMPBtaf3Kx2J/oTDboIo8jDZ0/kD986mx4Xv9i9/9RhJR9QQiIlYUqm7AbGO/xbIHR0CyYFerUIx8I9SclyNCcCTGNb8M7+Yidi6XEzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711566142; c=relaxed/simple;
-	bh=Mkjkay7Z0Vj+E8vwdVGwj0OsZgK9nBJ7enE6cPyGExw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mdewmW++iMtfjVPAyJYu/P0E+ZyUHOwIf+D7U4gBM+AbbJd6jxiSocCsWHWMXTTSYos0vUHxLPvg9/OPnG/MjJc+pXUZi72uzzxj7pSieGxI7C7ZoVW8/koYrFEB+k+2WACaXYXq0cqyxyE9OUwDfGGXiPc/KPmHz74tAOX56wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYHPGXJ3; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1711566255; c=relaxed/simple;
+	bh=ecVxOKAQOolSrbOrr/s3HhJgo6bANxQyJkuBA47+08o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pvZ9IgCAduuRWhWz7TM7hGHHuzAfHDbLGZEZyfm6k3k/2T0qe7aPeLIeVKjxbRe5D/qp6ElA7xP2CNSKo9mHVsUBSSyySBvn+2GyO1BayR9MnlvmV01vHFduA/EtDpoteW1g5EqccuenqeE0PK6B1+UkYk6gujYunkSDNQqNo4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DmkKlSVv; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-33fd8a2a407so61157f8f.2;
-        Wed, 27 Mar 2024 12:02:20 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1e0d82c529fso1686225ad.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 12:04:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711566139; x=1712170939; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G43Y9I+3uus2Fv/YCLNGCC6IN7NsddtveLn+lJcwAXE=;
-        b=UYHPGXJ3PPkqIeKVia220JRIT2Mq5ZI9ahYFTwPWE6QsdixEs6MV0i/+rtxhe9prLh
-         /JWeed8ZDDmU5px4kx1jf6pgqxGa3/vwdSlxmIODqjTwIdl91IIo5WfLcR66eQxGYfOM
-         5VcdRh1jqGyDEAST+7nqacKRrcZyiP80qvPVDSYZql6ZZyFhhSsPMISHXOVxMe37t0q5
-         73nJwoX6McszcNwbP1CUXXrZRzh3qai8Hc11f7hkprwLNXbzU+D2mNLJmvIO1nQjlkRo
-         lBTH/hIh7JKon2iPflrEZw8k1N5ctVl8Ar/RS+37D3iDi7J1WEqZ25nfnYlDc/W6SKMJ
-         Y7SA==
+        d=gmail.com; s=20230601; t=1711566253; x=1712171053; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NuQdidlNYSnPluD7foxKQgUqq+Vutn8Nd5TL7swXZ0M=;
+        b=DmkKlSVvyp7Wfzu2ARuCKydKbGRjW0QKW/F48s8jhj36kMtJsEmOi9t5Z/YgVLvYwT
+         8VRTAaXkqBByiAsNnII+sqH3N+RdM+VtTmajq97H/B2U6A3hFXNLcUByETL0u5f7EydL
+         6hJYrrLt3Hxci6y6soyuwCdRggEdcS/EhkekB7ijvn47hpZo7zGTCfKvba0qgkFIYZJW
+         7+qm8zJipcwgffAycnR7yJIKUUZaDuG98b0Io9IftvjMC7iXOwCM+LL7q5bcbP1lEqlD
+         f0XdN+2AVE3IHmALAXpG8lW1CpFOvmIo1bmw7G6dYuG/5ACK+8HkfTq18GMWBy53ANyJ
+         H/9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711566139; x=1712170939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G43Y9I+3uus2Fv/YCLNGCC6IN7NsddtveLn+lJcwAXE=;
-        b=Dv9p5/FMr/rgf67WB86azqkrrmZDfAlqHe8BbmUUfA2UKVuAXV4mFR2hxx+H/cd7K7
-         hIxEZFmQa4x5xKT+fEp4fH7NRrZ8jkf8wwVlDvWeGCbYZZr3XMhsHMpBNpSt5cytA+Vj
-         ksKCb4xpt6iaWWEQqwI/+JFmKfH/+I3/Ne6pgIjcMUJ67PW0TvC2gw7YgXYMmRGnWZP4
-         2LnBnjJgk3qT11Nq6Q5OP8nhEbxUYX6WVBcBUTEFmoPDBDwyA81Wp5ETFOHVtIzHxmMP
-         zTHv3DjGp/O28Q4qI7iOiVlpTnJl9GwNJyROCI4zxpvoZdKM9Is/oCAliGBxbtk1JaOR
-         /PFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhIDoa0MX9FFtcR9MV8S2zWQzPfW+MChouNEH9perUpWZ0RVL2FIuUzYXPuVYnSRLcU5K0VMwgnaNZdsIKQmaQiyaX0EgdoN+nEXAIRmZZUeTu/TDYh9TjjtB6EYCV4m9DhlG5s98/136mnpygcEHEhSE/sTLVJa+bQ+jkWeNfVTkVVjmwEqiD5aNXlhKnZLYSvTrza3KMpg==
-X-Gm-Message-State: AOJu0YzmXagCvwkmEN3FLd9NZeTBX1nr7oS9XZH3+yx2qiPgaHSZSsjN
-	U0WrMdDofkCmDmwP2lyoU3FGireASSr7PfK26s5Y4Ojuei/TpcB8RMxrDUYkkVb5/WSDIu1n8oc
-	NIVN6AalzvB3c6VztWOinUz7AVrI=
-X-Google-Smtp-Source: AGHT+IF3uK8BNj55j5GBkzVOsoRtME4sRuRyuXZ1Yo73eCITL53hu+yrnhHrXwg4fZIQHBJexfPsMc5dhyeUKDaRz0g=
-X-Received: by 2002:a5d:6e0d:0:b0:33e:7896:a9d7 with SMTP id
- h13-20020a5d6e0d000000b0033e7896a9d7mr601323wrz.67.1711566139396; Wed, 27 Mar
- 2024 12:02:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711566253; x=1712171053;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NuQdidlNYSnPluD7foxKQgUqq+Vutn8Nd5TL7swXZ0M=;
+        b=Er6YVn2Y/o4D8NAHLVW49+s79QnFZT76OgD1jUt7F9WxnGc+gJbca2hpPXDLlfl7Gs
+         omivVP+S7qIIck+E+7HYip4jVs9yEPoHFpXVMzdTd+TTT6f7Y6HRs9P91nno0vOVx8Qz
+         KfebpPizBYUYt4qwjqyf33koX+lQPBmFX5IPX9nzgmKy2Yi278ZzL+onu7CPuPbSJVl7
+         ltd3kjAWhS3THSd1fQ9KVauxXi2VXpJGtD4qO9oDjnYyd1PeTyUWGgpWDAFZaBKTFONZ
+         KbjVktorQOePjXRC9gt0IP/IHBe4oRTlTUt/1IS7c0iW0/W2L60vHg4S0x8T3K/0k1k0
+         dXBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXBdwEw1elpOpWtkO4RcLxfZYW+7mdaEbT3fgQZMX/cTI8psJvPRRJ+vM7QUNaNpILztt3mvcCGBIUjPZyCecyy6cLpcSFXkJinSPceg==
+X-Gm-Message-State: AOJu0Ywht2Vr4z7uhGFNwwAJ4QAVlBtA1PDtlI3RVbr2aBVNB7pk/WDc
+	CG1TeqsQCRIukLBWUQuaaBihOQZ/33uoVuiQEQ7dOLA+e1dTAVIm
+X-Google-Smtp-Source: AGHT+IFMYMr6/H4uN6oN+xUQGeMwBBAOp4bBsYUx7MOIV4K7OFKu+mQq3/kZ383xbmvkmXgEfZ8l7g==
+X-Received: by 2002:a17:902:b08d:b0:1e2:578:2c15 with SMTP id p13-20020a170902b08d00b001e205782c15mr496975plr.52.1711566253265;
+        Wed, 27 Mar 2024 12:04:13 -0700 (PDT)
+Received: from fedora (c-73-170-51-167.hsd1.ca.comcast.net. [73.170.51.167])
+        by smtp.gmail.com with ESMTPSA id p16-20020a1709027ed000b001e0b60dfe1bsm7467880plb.197.2024.03.27.12.04.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Mar 2024 12:04:12 -0700 (PDT)
+Date: Wed, 27 Mar 2024 12:04:10 -0700
+From: Vishal Moola <vishal.moola@gmail.com>
+To: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: willy@infradead.org, Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: remove __set_page_dirty_nobuffers()
+Message-ID: <ZgRtqn8la-1wRgQp@fedora>
+References: <20240327143008.3739435-1-wangkefeng.wang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000055ecb906105ed669@google.com> <20240202121531.2550018-1-lizhi.xu@windriver.com>
- <ZeXGZS1-X8_CYCUz@codewreck.org> <20240321182824.6f303e38@kernel.org>
- <ada13e85bf2ceed91052fa20adb02c4815953e26@linux.dev> <20240322081312.2a8a4908@kernel.org>
- <20240327115328.22c5b5a3@kernel.org>
-In-Reply-To: <20240327115328.22c5b5a3@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 27 Mar 2024 12:02:08 -0700
-Message-ID: <CAADnVQJ2SyJq25wvV2kf8Mepic_rYyGNYh7KpdGerFi6a-jQJw@mail.gmail.com>
-Subject: Re: [PATCH next] fs/9p: fix uaf in in v9fs_stat2inode_dotl
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Eric Van Hensbergen <eric.vanhensbergen@linux.dev>, asmadeus@codewreck.org, 
-	Lizhi Xu <lizhi.xu@windriver.com>, 
-	syzbot+7a3d75905ea1a830dbe5@syzkaller.appspotmail.com, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux_oss@crudebyte.com, lucho@ionkov.net, 
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, v9fs@lists.linux.dev, 
-	Linux Regressions <regressions@lists.linux.dev>, Network Development <netdev@vger.kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240327143008.3739435-1-wangkefeng.wang@huawei.com>
 
-On Wed, Mar 27, 2024 at 11:53=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> w=
-rote:
->
-> On Fri, 22 Mar 2024 08:13:12 -0700 Jakub Kicinski wrote:
-> > On Fri, 22 Mar 2024 14:26:07 +0000 Eric Van Hensbergen wrote:
-> > > Patch is in the unapplied portion of my for-next tree along with
-> > > another one.  I was hoping to hear some feedback on the other one
-> > > before i did a pull request and was torn on whether or not I wait on
-> > > -rc1 to send since we are so close.
-> >
-> > My guess would be that quite a few folks use 9p for in-VM kernel
-> > testing. Real question is how many actually update their work tree
-> > before -rc1 or even -rc2, given the anticipated merge window code
-> > instability.. so maybe there's no extreme urgency?
-> >
-> > From netdev's perspective, FWIW, it'd be great if the fix reached
-> > Linux before Thursday, which is when we will forward our tree again.
->
-> Any progress on getting the fix to Linus? I didn't spot it getting
-> merged.
->
-> I'm a bit surprised there aren't more people complaining TBH
-> I'd have thought any CI setup with KASAN enabled has a good
-> chance of hitting this..
+On Wed, Mar 27, 2024 at 10:30:08PM +0800, Kefeng Wang wrote:
+> There are no more callers of __set_page_dirty_nobuffers(), remove it.
+> 
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-The proposed fix is no brainer:
-https://lore.kernel.org/all/20240202121531.2550018-1-lizhi.xu@windriver.com=
-/
-
-+ v9fs_stat2inode_dotl(st, inode, 0);
-  kfree(st);
-  if (retval)
-    goto error;
-
-- v9fs_stat2inode_dotl(st, inode, 0);
-
-Please ship it to Linus asap.
-I'm surprised this bug slipped through.
-
-It does affect bpf developers and our CI, since we run with KASAN and use 9=
-P.
+Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
