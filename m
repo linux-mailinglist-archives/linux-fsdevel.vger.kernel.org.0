@@ -1,76 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-15467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4775F88EE99
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 19:53:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00C688EE9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 19:54:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBEDFB2224A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 18:53:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE5F1F36AF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 18:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BFE14F9E5;
-	Wed, 27 Mar 2024 18:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAB41514C5;
+	Wed, 27 Mar 2024 18:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NrGU0z+z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hspFMTyK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE5A1514FF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 18:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2105C1DDC5;
+	Wed, 27 Mar 2024 18:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711565599; cv=none; b=XOazBjNE0vYQR7bGFUFumAaUuwLdB12IkgG33TM7ofKACSAf7tjWVmvtwr3GJlqG4eOZlsD8oA0gkyMYFVslGBYn49BFVPlglxKDUeY3vRhMKAIQSMMUlrv3n6Ea2QPYxpN7mom09ja1NRATYwPhGQ5/KHdyekd2YDAnZVJ+1q4=
+	t=1711565610; cv=none; b=NAONeEpZIBgh6V2UK+HdHrUrHCB6JIlKT2BHAst09GiU7MEwhMavo4Lr6ljiec8mnMQI8E/3Muar5Iwd+9q3RhmmQxh/R5w3m/nZjy/b7DNILmIVdzvLG8dKwbuPDxnHUpaP5OyNUpcDbOMbQ76zG7JWkX7NEbk9st4HonUOrDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711565599; c=relaxed/simple;
-	bh=Jtccu7UzJToa9o4RH7l5v8KO+oSXLf0FlMxRK9HtvuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TafEWpKlryw+vxtdpmegqMR6kGQiFazz85FgaSmktaM8eQ6qtRZBctudeoPgCWY5HcT4kqg4h7eUi6X2j38muqqtx77p4QcsZCTnxUJ1P7rLL8no6Q8S1L/hvjMNP/0Hxvjm5IXhpx2jhoaPvljBpkUr3zbeaistDaA0aKWeKFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NrGU0z+z; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2gpiYoX81ux2JVxazaRUF8idqOkP7INSc0VwgF0Pp9A=; b=NrGU0z+zggHEwTsmZsGhiWa47b
-	7so4aCaCXIFeMT2DTE2XfggxBfUlvUKikTVq4DZ0jzQHfPaMy40CeYOilK9+mlCXgBnUy2UGGZ1Hp
-	tfYVgxGAuuKz0JsDeCcZwSPQfhy7g4fW6rIOPSPIlpdVGl7HMx+t3GIo0Nj1W0vqLBO6FL4SEnzkr
-	j20vjJDcKQL+peLroPK2pFf6cm3zjAGUx1dPJTObqMUJA/EaBVjQ23+wiVVIhWyTZaYMZvpPlJR5j
-	ZXPJA73xOlKbTa78VOOn64AgXUDF4yVCdl5YDWzq8GrXOd2bdVu8tkPoNMWvBDiYv2XwJNCPrz+A3
-	U5ZL4ETQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rpYOf-00000004W0G-1diN;
-	Wed, 27 Mar 2024 18:53:13 +0000
-Date: Wed, 27 Mar 2024 18:53:13 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: remove __set_page_dirty_nobuffers()
-Message-ID: <ZgRrGdsmlf2pRvVd@casper.infradead.org>
-References: <20240327143008.3739435-1-wangkefeng.wang@huawei.com>
+	s=arc-20240116; t=1711565610; c=relaxed/simple;
+	bh=+O32pSKiKxZOrZ1z6j0vD3Kyh3AW1ZjH2V9CfSPZsUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mn296hZUAJeMEJozO9p3I4FRhB9KDG+hQ0BKCo/UKTfUs8KmgnlHFVvHFX9vTK+luBKE8/8PbWIcJ4NhTZ61guVV7zRAk//mkXg4J4mN7xrI3PyzSX/0L2gb9JE20IURKzJsgt/VpNiv4XdiHEorj/oMZAlJAUkz7v2PcjefQfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hspFMTyK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3484CC433F1;
+	Wed, 27 Mar 2024 18:53:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711565609;
+	bh=+O32pSKiKxZOrZ1z6j0vD3Kyh3AW1ZjH2V9CfSPZsUo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hspFMTyK2qH06drosYNkCR8bPwEwK6OeRHek3DQFlGPDm+QyFobZ0Gxn0kJX7KKBw
+	 4K7bFQUrvTH4tV4hPok/fHV9LbLkiEWJbdBRb1oXpMNwLSZpOPuoZtLsHbYPslgrUq
+	 kcEdkzMvpvOD3MXgKCX1mAw9JXfSzDc95kiFv9WkEuk8Sl5Hi1Ow+UBqcCuURDOehE
+	 3gi6iBdGjBpUQl47w+A78Ec3YgmJKW709PqFvTO8wx8Dgf9wYurl2hVW0GWSDS6jxi
+	 w5IBH+uRMqIUn5YhRocoddfTsbs5eIDFHPm4D7VNouXCgCy7hcaTw9J9qa6JibSsX8
+	 YDERBj6zgvjhg==
+Date: Wed, 27 Mar 2024 11:53:28 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Eric Van Hensbergen" <eric.vanhensbergen@linux.dev>
+Cc: asmadeus@codewreck.org, "Lizhi Xu" <lizhi.xu@windriver.com>,
+ syzbot+7a3d75905ea1a830dbe5@syzkaller.appspotmail.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com,
+ v9fs@lists.linux.dev, regressions@lists.linux.dev, netdev@vger.kernel.org,
+ Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org
+Subject: Re: [PATCH next] fs/9p: fix uaf in in v9fs_stat2inode_dotl
+Message-ID: <20240327115328.22c5b5a3@kernel.org>
+In-Reply-To: <20240322081312.2a8a4908@kernel.org>
+References: <00000000000055ecb906105ed669@google.com>
+	<20240202121531.2550018-1-lizhi.xu@windriver.com>
+	<ZeXGZS1-X8_CYCUz@codewreck.org>
+	<20240321182824.6f303e38@kernel.org>
+	<ada13e85bf2ceed91052fa20adb02c4815953e26@linux.dev>
+	<20240322081312.2a8a4908@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240327143008.3739435-1-wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 27, 2024 at 10:30:08PM +0800, Kefeng Wang wrote:
-> There are no more callers of __set_page_dirty_nobuffers(), remove it.
+On Fri, 22 Mar 2024 08:13:12 -0700 Jakub Kicinski wrote:
+> On Fri, 22 Mar 2024 14:26:07 +0000 Eric Van Hensbergen wrote:
+> > Patch is in the unapplied portion of my for-next tree along with
+> > another one.  I was hoping to hear some feedback on the other one
+> > before i did a pull request and was torn on whether or not I wait on
+> > -rc1 to send since we are so close.  
 > 
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> My guess would be that quite a few folks use 9p for in-VM kernel
+> testing. Real question is how many actually update their work tree
+> before -rc1 or even -rc2, given the anticipated merge window code
+> instability.. so maybe there's no extreme urgency?
+> 
+> From netdev's perspective, FWIW, it'd be great if the fix reached
+> Linux before Thursday, which is when we will forward our tree again.
 
-Yes, I have this exact patch in my tree, stuck behind a mess of other
-patches for the last two months.  It had to wait until the ubifs patches
-landed (which removed the last user), and as you can see I've been busy
-submitting other patches first.
+Any progress on getting the fix to Linus? I didn't spot it getting
+merged.
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+I'm a bit surprised there aren't more people complaining TBH
+I'd have thought any CI setup with KASAN enabled has a good 
+chance of hitting this..
 
