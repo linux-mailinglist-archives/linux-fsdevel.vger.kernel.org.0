@@ -1,75 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-15462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5348488ECCC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 18:40:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9406D88ED2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 18:52:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAAF42990F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 17:40:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433441F32191
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 17:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D55314D2B4;
-	Wed, 27 Mar 2024 17:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DF8153BDE;
+	Wed, 27 Mar 2024 17:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Lyan0XKk"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HDfwRf3f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E53412E1F0;
-	Wed, 27 Mar 2024 17:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6CC153835;
+	Wed, 27 Mar 2024 17:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711561211; cv=none; b=DefaHdq3BTh2bEImWUWaJED67SbWbohjzGec8h67/qS9AgfuTWog7PgGgL+rxp1tgcdiVLxR9Ky1yCRAN9dGwvhc/CN9H5BVokA5T3J7lbXZLd6DcbrptNdVbPMN7NheTiomTs4KesUnt2ymAgIfqqOaqfSHIcbReqvm1I6CSgo=
+	t=1711561619; cv=none; b=fcIVv9som0VasUTHzjYoHyABLWKqOlbDQ5/mGu5EuHXdTWXOE9gsj2mKlMgISy4FFfam60mP5Qt/l1CXT82D/rCs6P0Nh6qZPny8ngr/o+9QH72c/He4aqxV2fNKGHIntmXy49lYGRLsjMTbnBMOys4uTwi9p13JsTFrXDMSvgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711561211; c=relaxed/simple;
-	bh=I6x60ia+rggB1OgVHo+pcCe2/5EmZUntXUlWS6xFGsQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=m5cb3blqgbItv5QQMCzeIEwIVmCJU+Tz05RpnNoFAL43GT0X8ezwQ01gbqDs3jtWLcEuU3glxZiCZFgenKfLMqUaobQuW7WwjBxGdHcJPbPjaQUGv5yZZy+xSCsTBxJD/6u60iGPs4rD46r1Z2QSsjRxGZFeTuBzubk3W5mNkCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Lyan0XKk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB2EFC433C7;
-	Wed, 27 Mar 2024 17:40:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1711561211;
-	bh=I6x60ia+rggB1OgVHo+pcCe2/5EmZUntXUlWS6xFGsQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Lyan0XKkyPAmuDpmWQRdO4kPwUWsHKKFPRzR+jFMTZhBNdgDY1mzOh8Zvhp4h94Hf
-	 VQ0ynNWRsVmi8yXVhWA+xbqA28k23Dd1JQMjKNX4Jw0ahspmVHeKybdifIdb4XAofD
-	 UjdseAN13zD79wSDoh/4LweFnooobhxtunWjgEkM=
-Date: Wed, 27 Mar 2024 10:40:10 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: willy@infradead.org, jack@suse.cz, bfoster@redhat.com, tj@kernel.org,
- dsterba@suse.com, mjguzik@gmail.com, dhowells@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Improve visibility of writeback
-Message-Id: <20240327104010.73d1180fbabe586f9e3f7bd2@linux-foundation.org>
-In-Reply-To: <20240327155751.3536-1-shikemeng@huaweicloud.com>
-References: <20240327155751.3536-1-shikemeng@huaweicloud.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1711561619; c=relaxed/simple;
+	bh=uB7kpus4vivNVZYNNT9/+H7DMP6DSIa06ehGi6L+8KQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXyzba1tB1xYP1jQDtHkqi3qAIDYzLwFYQdxW2jAOG4yWIDu7xyMLXVzaFLnxwRFCJreBBQvuCGLk9Lex37VJ8mJ/aCg6Mz3tkjNqaznlr+uboEfHZTcNSIEDpOknXp7QbQYVD7ehg4qRIK9FYA+ztfslFt0X9Ww06VpKluiIY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HDfwRf3f; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=7rtlcMvAOZqMG91SbLLXeao498bSKZqxUrAUPkW+pUQ=; b=HDfwRf3f9ZX9fBrm5LQIxQEnEx
+	zRji8K6f9jOwKJMzW0ps8UWVTIQ+DpE6EenLKh7kpWOjyp1cwkxzOxyFit8ikVRetjY0m6pdQbBmo
+	cgRxegFCABQRAW0DoxZGjzAkXHWyQ8Qmyj6CVD1YFeBKrD5iLZk6kTMWAayIaAP9Lzo6/VDogbCIw
+	I4hGSVwSGmsWotZ1Zr4n+AFwFE4oQRDQGICi9aX+P7JaGn85ZYew742acjLnQAuTdTVaOz8/p8DI2
+	T+g+iD9V0hpVxiLJQNRFLTuRuHOzcCeZdKqbtUWm1QZEg6DXI3wqVnfZvFZ0K8MIQUyAAVjHTnfgm
+	veRKIGKQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rpXMS-00000004NZT-3R3f;
+	Wed, 27 Mar 2024 17:46:52 +0000
+Date: Wed, 27 Mar 2024 17:46:52 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Trond Myklebust <trondmy@hammerspace.com>
+Cc: "hch@lst.de" <hch@lst.de>, "miklos@szeredi.hu" <miklos@szeredi.hu>,
+	"dhowells@redhat.com" <dhowells@redhat.com>,
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+	"linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"v9fs@lists.linux.dev" <v9fs@lists.linux.dev>,
+	"netfs@lists.linux.dev" <netfs@lists.linux.dev>,
+	"jlayton@kernel.org" <jlayton@kernel.org>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devel@lists.orangefs.org" <devel@lists.orangefs.org>,
+	"linux-afs@lists.infradead.org" <linux-afs@lists.infradead.org>
+Subject: Re: [RFC PATCH] mm, netfs: Provide a means of invalidation without
+ using launder_folio
+Message-ID: <ZgRbjAn-d3_SAaQJ@casper.infradead.org>
+References: <2318298.1711551844@warthog.procyon.org.uk>
+ <37514eae34c02cefb11fc4c6d3f4ae2296fb6ab5.camel@hammerspace.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <37514eae34c02cefb11fc4c6d3f4ae2296fb6ab5.camel@hammerspace.com>
 
-On Wed, 27 Mar 2024 23:57:45 +0800 Kemeng Shi <shikemeng@huaweicloud.com> wrote:
+On Wed, Mar 27, 2024 at 03:56:50PM +0000, Trond Myklebust wrote:
+> On Wed, 2024-03-27 at 15:04 +0000, David Howells wrote:
+> > Implement a replacement for launder_folio[1].  The key feature of
+> > invalidate_inode_pages2() is that it locks each folio individually,
+> > unmaps
+> > it to prevent mmap'd accesses interfering and calls the -
+> > >launder_folio()
+> > address_space op to flush it.  This has problems: firstly, each folio
+> > is
+> > written individually as one or more small writes; secondly, adjacent
+> > folios
+> > cannot be added so easily into the laundry; thirdly, it's yet another
+> > op to
+> > implement.
+> 
+> This is hardly a drop-in replacement for launder_page. The whole point
+> of using invalidate_inode_pages2() was that it only requires taking the
+> page locks, allowing us to use it in contexts such as
+> nfs_release_file().
+> 
+> The above use of truncate_inode_pages_range() will require any caller
+> to grab several locks in order to prevent data loss through races with
+> write system calls.
 
-> This series tries to improve visilibity of writeback.
-
-Well...  why?  Is anyone usefully using the existing instrumentation? 
-What is to be gained by expanding it further?  What is the case for
-adding this code?
-
-I don't recall hearing of anyone using the existing debug
-instrumentation so perhaps we should remove it!
-
-Also, I hit a build error and a pile of warnings with an arm
-allnoconfig build.
+I don't understand why you need launder_folio now
+that you have a page_mkwrite implementation (your commit
+e3db7691e9f3dff3289f64e3d98583e28afe03db used this as justification).
+Other filesystems (except the network filesystems that copied the NFS
+implementation) don't implement launder_folio.
 
