@@ -1,87 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-15374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09C0C88D505
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 04:25:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB1C88D532
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 04:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA0C72C515E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 03:25:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF891C24F5F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 03:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC9E22F08;
-	Wed, 27 Mar 2024 03:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBD323775;
+	Wed, 27 Mar 2024 03:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CvKbObme"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k6AI2bfn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830BC17545;
-	Wed, 27 Mar 2024 03:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2171BF31;
+	Wed, 27 Mar 2024 03:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711509916; cv=none; b=HUF+kZWIQU1g4E5gOrPu0ixxQt3ugiYCG8boS+DpG2H7VqRHN5S82FClvZef3QQgkDul7fRxWGtGfWWz+t3p/4ghVUNhRqr+5pLewDgV7kGUQpnb6Rymulv3ysLQNk34fYm0x7/baT+FXX7DeRJAn5kcYm+1t4f7T4CUvMvuFlc=
+	t=1711511419; cv=none; b=NKLWOwmyqvHnMNUZcv2SKNcQe0Ti8ZG6xSHa35iIVq3cN6GcKLziCuaKleL3v6cdtT7EXQZmaxwztSl09y563ZWz8Y30EVXMeR2my0FJ/jK9K0lWiBnaSz1km9H6UpwaIj1NUY0XstT8WJ++JoozxjbU0XOGLypaDmTRQ0LXJyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711509916; c=relaxed/simple;
-	bh=Ajy7EClEZNT2l5jOz2HI8KHPxT0cshu9vXiK2kZRlto=;
+	s=arc-20240116; t=1711511419; c=relaxed/simple;
+	bh=yxDuwLY/j7X4qrwh8xDbw8rteroxa22o47tiK/LWHgM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ReRtvfXj3NavgzydWCWY9EQm3+1BbJM7IeHD+3lUltRhxsgoK6lLJCqyalPq8uSc5A+A+hwgbgbkDuXI/CsovsDzYs3+jpI4ZIqTDnXYT1hZDkpss0r96Uzx2l2y6x6R1xVlClUM+GyAMq1iuoyFiWJECAGqRSZxJt45b4I2CA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CvKbObme; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=rGUWnWSEzO7Db++j1e814O0vouSLqYWj8wLrkftf8KZj7b7KWokiZvb4jMsxjYDO7XLRhqmDQLLw943v8IDSJDFHvIx70d00npWjPXc3uq0mmTnyI/k6HMjAcKaigU9mdwMkQFlldF+AaZl92ymM4Ggk/afAd/BLYOGsZgI4ZtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k6AI2bfn; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RlEUjYz6ln8uzzOTkIlgn9vdiC3nQ/IHmLuBP8wka2o=; b=CvKbObmeyBqqOPthjS/+uTpYG7
-	eoUDBQh9S0XUeVkTmqvfA2KU9S2jl1TZ0d/qfo5XKxsxRNNeBlTMQ9ds6skxSEv80Xd12pe1JfdEb
-	wBCa1azgkkM7zTLqgfjH1rCC5601LmPSODTJbeICFjKQWfDpMNA114PK6p2Yu5WOCMl603JqhWXFP
-	GAqIFx5AGDyS+2+gnJcmPNdFornkVnc81GPJerRi2bQih5+8inhCt2YgTrhOsNBiT38nwzY62TPlz
-	+Ui6qV0zTYT8lAxb8f7sCnUN35mUg/q0e5NBUGjmRCTIeFKN0D3jcStJA97Y0rx4kDHTcdjGvCFZw
-	x40o0e+w==;
+	bh=rk1STaKASJZMOQESaE4YdsbKcHTwjlEtdkr30vV9pdg=; b=k6AI2bfnRnr2I3SiqEJhR0ATer
+	L/tOjZtLNhHZu7N988MPkHPWZJoBDo+zKoYivmHKkU31eNPCva+VjDW+1R4Gm2R9QCg9X4JWeyq/e
+	dI4XLAOq1DzhKn4YwIj+lcTmhL1RkuTgK/i1pDSmi9D6Lm5kMFE+Q+1wlg5UMNTm5hOwkCAqbRAJj
+	IEUAQSGMrFpTRQY4p8k8ZrEEaxVf4ciY1E1jJcKZIkIQFhgMyGawFsbfpoeYbqpLUo4LPaD/rKBC3
+	+6OIEw+02Zj2ueHh3TKcU/mDZsebPI/D73/FkvUZGJNikrmvbubgTIxVumhEwo5Ifk7nNsozpsf7o
+	FJjRTWDA==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rpJtt-00000002v5K-0VmM;
-	Wed, 27 Mar 2024 03:24:29 +0000
-Date: Wed, 27 Mar 2024 03:24:28 +0000
+	id 1rpKIh-00000002xYu-3gF1;
+	Wed, 27 Mar 2024 03:50:07 +0000
+Date: Wed, 27 Mar 2024 03:50:07 +0000
 From: Matthew Wilcox <willy@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
-	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-	mgorman@suse.de, dave@stgolabs.net, liam.howlett@oracle.com,
-	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net,
-	void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, peterx@redhat.com, david@redhat.com,
-	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-	nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com,
-	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-	paulmck@kernel.org, pasha.tatashin@soleen.com,
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-	ndesaulniers@google.com, vvvvvv@google.com,
-	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
-	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
-	elver@google.com, dvyukov@google.com, songmuchun@bytedance.com,
-	jbaron@akamai.com, aliceryhl@google.com, rientjes@google.com,
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH v6 14/37] lib: introduce support for page allocation
- tagging
-Message-ID: <ZgORbAY5F0MWgX5K@casper.infradead.org>
-References: <20240321163705.3067592-1-surenb@google.com>
- <20240321163705.3067592-15-surenb@google.com>
- <ZgI9Iejn6DanJZ-9@casper.infradead.org>
- <CAJuCfpGvviA5H1Em=ymd8Yqz_UoBVGFOst_wbaA6AwGkvffPHg@mail.gmail.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, nilay@linux.ibm.com,
+	ritesh.list@gmail.com
+Subject: Re: [PATCH v6 00/10] block atomic writes
+Message-ID: <ZgOXb_oZjsUU12YL@casper.infradead.org>
+References: <20240326133813.3224593-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,14 +68,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJuCfpGvviA5H1Em=ymd8Yqz_UoBVGFOst_wbaA6AwGkvffPHg@mail.gmail.com>
+In-Reply-To: <20240326133813.3224593-1-john.g.garry@oracle.com>
 
-On Mon, Mar 25, 2024 at 11:23:25PM -0700, Suren Baghdasaryan wrote:
-> Ah, good eye! We probably didn't include page_ext.h before and then
-> when we did I missed removing these declarations. I'll post a fixup.
-> Thanks!
+On Tue, Mar 26, 2024 at 01:38:03PM +0000, John Garry wrote:
+> The goal here is to provide an interface that allows applications use
+> application-specific block sizes larger than logical block size
+> reported by the storage device or larger than filesystem block size as
+> reported by stat().
+> 
+> With this new interface, application blocks will never be torn or
+> fractured when written. For a power fail, for each individual application
+> block, all or none of the data to be written. A racing atomic write and
+> read will mean that the read sees all the old data or all the new data,
+> but never a mix of old and new.
+> 
+> Three new fields are added to struct statx - atomic_write_unit_min,
+> atomic_write_unit_max, and atomic_write_segments_max. For each atomic
+> individual write, the total length of a write must be a between
+> atomic_write_unit_min and atomic_write_unit_max, inclusive, and a
+> power-of-2. The write must also be at a natural offset in the file
+> wrt the write length. For pwritev2, iovcnt is limited by
+> atomic_write_segments_max.
+> 
+> There has been some discussion on supporting buffered IO and whether the
+> API is suitable, like:
+> https://lore.kernel.org/linux-nvme/ZeembVG-ygFal6Eb@casper.infradead.org/
+> 
+> Specifically the concern is that supporting a range of sizes of atomic IO
+> in the pagecache is complex to support. For this, my idea is that FSes can
+> fix atomic_write_unit_min and atomic_write_unit_max at the same size, the
+> extent alignment size, which should be easier to support. We may need to
+> implement O_ATOMIC to avoid mixing atomic and non-atomic IOs for this. I
+> have no proposed solution for atomic write buffered IO for bdev file
+> operations, but I know of no requirement for this.
 
-Andrew's taken a patch from me to remove these two declarations as
-part of marking them const.  No patch needed from you, just needed to
-check there was no reason to have them.
+The thing is that there's no requirement for an interface as complex as
+the one you're proposing here.  I've talked to a few database people
+and all they want is to increase the untorn write boundary from "one
+disc block" to one database block, typically 8kB or 16kB.
+
+So they would be quite happy with a much simpler interface where they
+set the inode block size at inode creation time, and then all writes to
+that inode were guaranteed to be untorn.  This would also be simpler to
+implement for buffered writes.
+
+Who's asking for this more complex interface?
 
