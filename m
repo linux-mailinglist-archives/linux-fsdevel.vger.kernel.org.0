@@ -1,380 +1,494 @@
-Return-Path: <linux-fsdevel+bounces-15456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745F688EB91
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 17:46:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890C388EBCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 17:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE8AF1F27190
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 16:46:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F3AE29B321
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 16:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF8B14D430;
-	Wed, 27 Mar 2024 16:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E117D149C57;
+	Wed, 27 Mar 2024 16:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYMjCzr7"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ANej7864"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1AA14D420;
-	Wed, 27 Mar 2024 16:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE701130E2C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 16:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711557962; cv=none; b=LX4B/QIYjC2nK8LlFyrtMl9wtFTwmU5Amjqi7RwFKpxuE3skkXK7xDBudV6x7ryZYngfDRYdxnSMpQB1zelMEehnwu9bYANTeRT7cpzGzJD2xBlcjafm7BVJZJ1TIkOPvb+yJZQuT2AGLTdy0H8tSkXdvLNyk/UryCN2YQchmLA=
+	t=1711558670; cv=none; b=qncSkRAZYPkhHL0wQeXGxfsKWiGTYcVXVYCzYJLFEnhcQo+6HFV1JwoP+HyBIZzGcwlcjBQIEoqLeTN4HdsGNskH2QCWFy7g7+6o2J1uNOjwcXso6OcXuxifLf3LQ+CIXy8/y9M3hPCwbjVXY9WkVUCX7JyXg+t7iiE80kL1dnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711557962; c=relaxed/simple;
-	bh=5bra0aGVJyAlPp86GdSCApT1pD4XtUTbN9yyw6gpOnQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e5qCR82ZzQ7tF1sn16HomFKWkku4l0MEYKYT6s1e0HWubAFVcq6TFING15dDcUSlAKp3J8MBdZwgPCqR+OuvqsOe49xDxBCnqbocxjYjsE81RJHjUMEkCL0C480Y76we0DIZnAxdUdAcBhDvTw9DoUH8YpZOOr/ta3KhW89Bzek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYMjCzr7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69755C433F1;
-	Wed, 27 Mar 2024 16:46:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711557962;
-	bh=5bra0aGVJyAlPp86GdSCApT1pD4XtUTbN9yyw6gpOnQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DYMjCzr7gfyfCRHBTXdn8CPXuDaXTNNiWD9JlkJ57LVjQmFqjsiKUQxbiKbXXsJrl
-	 b712uFFlovVjhhrPt9jy/VwNEhzYKUh2r9l1l88zPAjrkiUN5uJvS8gt/T01BKynzC
-	 rEwP14FNkVeg7WRYjVpgC7WozUXTj1aSCjBYj5iXUbEQekoKu9H+x9Pz34ntSAyj6n
-	 hq7QLnI/DuepTbrGqeCTdqB7ePLGfIDHlRMSrJwrAghm1cr1fI4H9/8Gu5bP24HQMm
-	 DZEgsGZ/iLhfHwR1aCzHznoAlyhMQ35Jikvc/ERLYBYPaPhcHe+TjzwBH0C+mwtpMG
-	 jG47A4toH6Jbg==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	io-uring@vger.kernel.org
-Subject: [PATCH] [RFC]: fs: claw back a few FMODE_* bits
-Date: Wed, 27 Mar 2024 17:45:09 +0100
-Message-ID: <20240327-begibt-wacht-b9b9f4d1145a@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1711558670; c=relaxed/simple;
+	bh=sLXjF2mvEUHTc3SFQuhjAA+H9nXhJB6pxzxKhEF6ZCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mHuHOE6kN1E7uw+f1QjDjmxubynk/fXDsMosIfud9vt/TXXo0dokAOgk1ijw0JgZIzucHoN0WpyuEDqiOoXPBksMTRGv5vAg1sgtZTlbZthXHHSowpDXdBuuiwNhzm8kg00+vTrszxh3cqQPBDw9CqmT1VFhkjrWzK9YGc02+28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ANej7864; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V4XsW2gC2zPXN;
+	Wed, 27 Mar 2024 17:57:35 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V4XsV3yLQzMppDX;
+	Wed, 27 Mar 2024 17:57:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1711558655;
+	bh=sLXjF2mvEUHTc3SFQuhjAA+H9nXhJB6pxzxKhEF6ZCs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ANej7864fLKXBEAc83t+T7XK9Eo6wqWbmqt2rEiZEtrQizZrX1on/kPkKXWsn92FB
+	 UX9geiUYm1l6dD+aFsgxrrRJA6nIi6NbUf0wdavtVcahDS+4ZNV7c/pzWndfAayFYg
+	 itFOgUKCZIkM2S5n243EfwYU43srwWmtsoS1NNys=
+Date: Wed, 27 Mar 2024 17:57:31 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
+	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v13 01/10] landlock: Add IOCTL access right for character
+ and block devices
+Message-ID: <20240327.eibaiNgu6lou@digikod.net>
+References: <20240327131040.158777-1-gnoack@google.com>
+ <20240327131040.158777-2-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12207; i=brauner@kernel.org; h=from:subject:message-id; bh=5bra0aGVJyAlPp86GdSCApT1pD4XtUTbN9yyw6gpOnQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSx+Ipu3HGi0nTrlUTbApZTzJPuObya6bzq2aVViobzp 5nceije11HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARoTxGhufC4tpHjCtW/Sst VnVslnBUWLHgbHBWbsbEOyck2B26jjEyfDh4c1L7Swf3/arWjgwrTQ7NeXx/3W3r6EMNuTtnPGm bywEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240327131040.158777-2-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-There's a bunch of flags that are purely based on what the file
-operations support while also never being conditionally set or unset.
-IOW, they're not subject to change for individual file opens. Imho, such
-flags don't need to live in f_mode they might as well live in the fops
-structs itself. And the fops struct already has that lonely
-mmap_supported_flags member. We might as well turn that into a generic
-fops_flags member and move a few flags from FMODE_* space into FOP_*
-space. That gets us four FMODE_* bits back and the ability for new
-static flags that are about file ops to not have to live in FMODE_*
-space but in their own FOP_* space. It's not the most beautiful thing
-ever but it gets the job done. Yes, there'll be an additional pointer
-chase but hopefully that won't matter for these flags.
+On Wed, Mar 27, 2024 at 01:10:31PM +0000, Günther Noack wrote:
+> Introduces the LANDLOCK_ACCESS_FS_IOCTL_DEV right
+> and increments the Landlock ABI version to 5.
+> 
+> This access right applies to device-custom IOCTL commands
+> when they are invoked on block or character device files.
+> 
+> Like the truncate right, this right is associated with a file
+> descriptor at the time of open(2), and gets respected even when the
+> file descriptor is used outside of the thread which it was originally
+> opened in.
+> 
+> Therefore, a newly enabled Landlock policy does not apply to file
+> descriptors which are already open.
+> 
+> If the LANDLOCK_ACCESS_FS_IOCTL_DEV right is handled, only a small
+> number of safe IOCTL commands will be permitted on newly opened device
+> files.  These include FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC, as well
+> as other IOCTL commands for regular files which are implemented in
+> fs/ioctl.c.
+> 
+> Noteworthy scenarios which require special attention:
+> 
+> TTY devices are often passed into a process from the parent process,
+> and so a newly enabled Landlock policy does not retroactively apply to
+> them automatically.  In the past, TTY devices have often supported
+> IOCTL commands like TIOCSTI and some TIOCLINUX subcommands, which were
+> letting callers control the TTY input buffer (and simulate
+> keypresses).  This should be restricted to CAP_SYS_ADMIN programs on
+> modern kernels though.
+> 
+> Known limitations:
+> 
+> The LANDLOCK_ACCESS_FS_IOCTL_DEV access right is a coarse-grained
+> control over IOCTL commands.
+> 
+> Landlock users may use path-based restrictions in combination with
+> their knowledge about the file system layout to control what IOCTLs
+> can be done.
+> 
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>  include/uapi/linux/landlock.h                |  33 +++-
+>  security/landlock/fs.c                       | 183 ++++++++++++++++++-
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/syscalls.c                 |   8 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+>  6 files changed, 216 insertions(+), 17 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 25c8d7677539..5d90e9799eb5 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -128,7 +128,7 @@ struct landlock_net_port_attr {
+>   * files and directories.  Files or directories opened before the sandboxing
+>   * are not subject to these restrictions.
+>   *
+> - * A file can only receive these access rights:
+> + * The following access rights apply only to files:
+>   *
+>   * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
+>   * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note that
+> @@ -138,12 +138,13 @@ struct landlock_net_port_attr {
+>   * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
+>   * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`truncate(2)`,
+>   *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
+> - *   ``O_TRUNC``. Whether an opened file can be truncated with
+> - *   :manpage:`ftruncate(2)` is determined during :manpage:`open(2)`, in the
+> - *   same way as read and write permissions are checked during
+> - *   :manpage:`open(2)` using %LANDLOCK_ACCESS_FS_READ_FILE and
+> - *   %LANDLOCK_ACCESS_FS_WRITE_FILE. This access right is available since the
+> - *   third version of the Landlock ABI.
+> + *   ``O_TRUNC``.  This access right is available since the third version of the
+> + *   Landlock ABI.
+> + *
+> + * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or used
+> + * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same way as
+> + * read and write permissions are checked during :manpage:`open(2)` using
+> + * %LANDLOCK_ACCESS_FS_READ_FILE and %LANDLOCK_ACCESS_FS_WRITE_FILE.
+>   *
+>   * A directory can receive access rights related to files or directories.  The
+>   * following access right is applied to the directory itself, and the
+> @@ -198,13 +199,28 @@ struct landlock_net_port_attr {
+>   *   If multiple requirements are not met, the ``EACCES`` error code takes
+>   *   precedence over ``EXDEV``.
+>   *
+> + * The following access right applies both to files and directories:
+> + *
+> + * - %LANDLOCK_ACCESS_FS_IOCTL_DEV: Invoke :manpage:`ioctl(2)` commands on an opened
+> + *   character or block device.
+> + *
+> + *   This access right applies to all `ioctl(2)` commands implemented by device
 
-If this is palatable I suspect there's a few more we can move into there
-and that we can also redirect new flag suggestions that follow this
-pattern into the fops_flags field instead of f_mode. As of yet untested.
+:manpage:`ioctl(2)`
 
-(Fwiw, FMODE_NOACCOUNT and FMODE_BACKING could live in fops_flags as
- well because they're also completely static but they aren't really
- about file operations so they're better suited for FMODE_* imho.)
+> + *   drivers.  However, the following common IOCTL commands continue to be
+> + *   invokable independent of the %LANDLOCK_ACCESS_FS_IOCTL_DEV right:
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- block/bdev.c         |  2 +-
- block/fops.c         |  1 +
- drivers/dax/device.c |  2 +-
- fs/btrfs/file.c      |  4 ++--
- fs/ext4/file.c       |  6 +++---
- fs/f2fs/file.c       |  3 ++-
- fs/read_write.c      |  3 +--
- fs/xfs/xfs_file.c    |  8 +++++---
- include/linux/fs.h   | 25 +++++++++++++++----------
- io_uring/io_uring.c  |  2 +-
- io_uring/rw.c        |  4 ++--
- mm/mmap.c            |  3 ++-
- 12 files changed, 36 insertions(+), 27 deletions(-)
+This is good but explaining the rationale could help, something like
+this (taking care of not packing lines listing commands to ease review
+when a new command will be added):
 
-diff --git a/block/bdev.c b/block/bdev.c
-index b8e32d933a63..dd26d37356aa 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -903,7 +903,7 @@ int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
- 		disk_unblock_events(disk);
- 
- 	bdev_file->f_flags |= O_LARGEFILE;
--	bdev_file->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT;
-+	bdev_file->f_mode |= FMODE_CAN_ODIRECT;
- 	if (bdev_nowait(bdev))
- 		bdev_file->f_mode |= FMODE_NOWAIT;
- 	if (mode & BLK_OPEN_RESTRICT_WRITES)
-diff --git a/block/fops.c b/block/fops.c
-index 679d9b752fe8..a4c61cf55994 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -863,6 +863,7 @@ const struct file_operations def_blk_fops = {
- 	.splice_read	= filemap_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.fallocate	= blkdev_fallocate,
-+	.fops_flags	= FOP_BUF_RASYNC,
- };
- 
- static __init int blkdev_init(void)
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 93ebedc5ec8c..9ffc63e21af2 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -377,7 +377,7 @@ static const struct file_operations dax_fops = {
- 	.release = dax_release,
- 	.get_unmapped_area = dax_get_unmapped_area,
- 	.mmap = dax_mmap,
--	.mmap_supported_flags = MAP_SYNC,
-+	.fops_flags = FOP_MMAP_SYNC,
- };
- 
- static void dev_dax_cdev_del(void *cdev)
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index f9d76072398d..704eae616281 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -3719,8 +3719,7 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
- {
- 	int ret;
- 
--	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC |
--		        FMODE_CAN_ODIRECT;
-+	filp->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
- 
- 	ret = fsverity_file_open(inode, filp);
- 	if (ret)
-@@ -3850,6 +3849,7 @@ const struct file_operations btrfs_file_operations = {
- 	.compat_ioctl	= btrfs_compat_ioctl,
- #endif
- 	.remap_file_range = btrfs_remap_file_range,
-+	.fops_flags	= FOP_BUF_RASYNC | FOP_BUF_WASYNC,
- };
- 
- int btrfs_fdatawrite_range(struct inode *inode, loff_t start, loff_t end)
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 54d6ff22585c..7deaad4a1178 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -885,8 +885,7 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
- 			return ret;
- 	}
- 
--	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC |
--			FMODE_DIO_PARALLEL_WRITE;
-+	filp->f_mode |= FMODE_NOWAIT;
- 	return dquot_file_open(inode, filp);
- }
- 
-@@ -938,7 +937,6 @@ const struct file_operations ext4_file_operations = {
- 	.compat_ioctl	= ext4_compat_ioctl,
- #endif
- 	.mmap		= ext4_file_mmap,
--	.mmap_supported_flags = MAP_SYNC,
- 	.open		= ext4_file_open,
- 	.release	= ext4_release_file,
- 	.fsync		= ext4_sync_file,
-@@ -946,6 +944,8 @@ const struct file_operations ext4_file_operations = {
- 	.splice_read	= ext4_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.fallocate	= ext4_fallocate,
-+	.fops_flags	= FOP_MMAP_SYNC | FOP_BUF_RASYNC |
-+			  FOP_DIO_PARALLEL_WRITE,
- };
- 
- const struct inode_operations ext4_file_inode_operations = {
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 1761ad125f97..fea5ef1a36e8 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -569,7 +569,7 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
- 	if (err)
- 		return err;
- 
--	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
-+	filp->f_mode |= FMODE_NOWAIT;
- 	filp->f_mode |= FMODE_CAN_ODIRECT;
- 
- 	return dquot_file_open(inode, filp);
-@@ -5045,4 +5045,5 @@ const struct file_operations f2fs_file_operations = {
- 	.splice_read	= f2fs_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.fadvise	= f2fs_file_fadvise,
-+	.fops_flags	= FOP_BUF_RASYNC,
- };
-diff --git a/fs/read_write.c b/fs/read_write.c
-index d4c036e82b6c..1b9f6ce1aec9 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1684,8 +1684,7 @@ int generic_write_checks_count(struct kiocb *iocb, loff_t *count)
- 		iocb->ki_pos = i_size_read(inode);
- 
- 	if ((iocb->ki_flags & IOCB_NOWAIT) &&
--	    !((iocb->ki_flags & IOCB_DIRECT) ||
--	      (file->f_mode & FMODE_BUF_WASYNC)))
-+	    !((iocb->ki_flags & IOCB_DIRECT) || fops_buf_wasync(file)))
- 		return -EINVAL;
- 
- 	return generic_write_check_limits(iocb->ki_filp, iocb->ki_pos, count);
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 632653e00906..d13e21eb9a3c 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1230,8 +1230,7 @@ xfs_file_open(
- {
- 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
- 		return -EIO;
--	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC |
--			FMODE_DIO_PARALLEL_WRITE | FMODE_CAN_ODIRECT;
-+	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
- 	return generic_file_open(inode, file);
- }
- 
-@@ -1490,7 +1489,6 @@ const struct file_operations xfs_file_operations = {
- 	.compat_ioctl	= xfs_file_compat_ioctl,
- #endif
- 	.mmap		= xfs_file_mmap,
--	.mmap_supported_flags = MAP_SYNC,
- 	.open		= xfs_file_open,
- 	.release	= xfs_file_release,
- 	.fsync		= xfs_file_fsync,
-@@ -1498,6 +1496,8 @@ const struct file_operations xfs_file_operations = {
- 	.fallocate	= xfs_file_fallocate,
- 	.fadvise	= xfs_file_fadvise,
- 	.remap_file_range = xfs_file_remap_range,
-+	.fops_flags	= FOP_MMAP_SYNC | FOP_BUF_RASYNC | FOP_BUF_WASYNC |
-+			  FOP_DIO_PARALLEL_WRITE,
- };
- 
- const struct file_operations xfs_dir_file_operations = {
-@@ -1510,4 +1510,6 @@ const struct file_operations xfs_dir_file_operations = {
- 	.compat_ioctl	= xfs_file_compat_ioctl,
- #endif
- 	.fsync		= xfs_dir_fsync,
-+	.fops_flags	= FOP_MMAP_SYNC | FOP_BUF_RASYNC | FOP_BUF_WASYNC |
-+			  FOP_DIO_PARALLEL_WRITE,
- };
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 8dfd53b52744..1e2c843c7b8c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -165,9 +165,6 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- 
- #define	FMODE_NOREUSE		((__force fmode_t)0x800000)
- 
--/* File supports non-exclusive O_DIRECT writes from multiple threads */
--#define FMODE_DIO_PARALLEL_WRITE	((__force fmode_t)0x1000000)
--
- /* File is embedded in backing_file object */
- #define FMODE_BACKING		((__force fmode_t)0x2000000)
- 
-@@ -183,12 +180,6 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- /* File does not contribute to nr_files count */
- #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
- 
--/* File supports async buffered reads */
--#define FMODE_BUF_RASYNC	((__force fmode_t)0x40000000)
--
--/* File supports async nowait buffered writes */
--#define FMODE_BUF_WASYNC	((__force fmode_t)0x80000000)
--
- /*
-  * Attribute flags.  These should be or-ed together to figure out what
-  * has been changed!
-@@ -2005,6 +1996,7 @@ struct offset_ctx;
- 
- struct file_operations {
- 	struct module *owner;
-+	unsigned int fops_flags;
- 	loff_t (*llseek) (struct file *, loff_t, int);
- 	ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
- 	ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
-@@ -2017,7 +2009,6 @@ struct file_operations {
- 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
- 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
- 	int (*mmap) (struct file *, struct vm_area_struct *);
--	unsigned long mmap_supported_flags;
- 	int (*open) (struct inode *, struct file *);
- 	int (*flush) (struct file *, fl_owner_t id);
- 	int (*release) (struct inode *, struct file *);
-@@ -2048,6 +2039,20 @@ struct file_operations {
- 				unsigned int poll_flags);
- } __randomize_layout;
- 
-+/* File ops support async buffered reads */
-+#define FOP_BUF_RASYNC		BIT(0)
-+/* File ops support async nowait buffered writes */
-+#define FOP_BUF_WASYNC		BIT(1)
-+#define FOP_MMAP_SYNC		BIT(2)
-+/* File ops support non-exclusive O_DIRECT writes from multiple threads */
-+#define FOP_DIO_PARALLEL_WRITE	BIT(3)
-+
-+#define __fops_supported(f_op, flag) ((f_op)->fops_flags & (flag))
-+#define fops_buf_rasync(file) __fops_supported((file)->f_op, FOP_BUF_RASYNC)
-+#define fops_buf_wasync(file) __fops_supported((file)->f_op, FOP_BUF_WASYNC)
-+#define fops_mmap_sync(file) __fops_supported((file)->f_op, FOP_MMAP_SYNC)
-+#define fops_dio_parallel_write(file) __fops_supported((file)->f_op, FOP_DIO_PARALLEL_WRITE)
-+
- /* Wrap a directory iterator that needs exclusive inode access */
- int wrap_directory_iterator(struct file *, struct dir_context *,
- 			    int (*) (struct file *, struct dir_context *));
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 5d4b448fdc50..dbf879fc128a 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -471,7 +471,7 @@ static void io_prep_async_work(struct io_kiocb *req)
- 
- 		/* don't serialize this request if the fs doesn't need it */
- 		if (should_hash && (req->file->f_flags & O_DIRECT) &&
--		    (req->file->f_mode & FMODE_DIO_PARALLEL_WRITE))
-+		    fops_dio_parallel_write(req->file))
- 			should_hash = false;
- 		if (should_hash || (ctx->flags & IORING_SETUP_IOPOLL))
- 			io_wq_hash_work(&req->work, file_inode(req->file));
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 0585ebcc9773..dd3e802bd4bf 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -683,7 +683,7 @@ static bool io_rw_should_retry(struct io_kiocb *req)
- 	 * just use poll if we can, and don't attempt if the fs doesn't
- 	 * support callback based unlocks
- 	 */
--	if (io_file_can_poll(req) || !(req->file->f_mode & FMODE_BUF_RASYNC))
-+	if (io_file_can_poll(req) || !fops_buf_rasync(req->file))
- 		return false;
- 
- 	wait->wait.func = io_async_buf_func;
-@@ -1024,7 +1024,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
- 
- 		/* File path supports NOWAIT for non-direct_IO only for block devices. */
- 		if (!(kiocb->ki_flags & IOCB_DIRECT) &&
--			!(kiocb->ki_filp->f_mode & FMODE_BUF_WASYNC) &&
-+			!fops_buf_wasync(kiocb->ki_filp) &&
- 			(req->flags & REQ_F_ISREG))
- 			goto copy_iov;
- 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 6dbda99a47da..0115fc376428 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1294,7 +1294,8 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 		if (!file_mmap_ok(file, inode, pgoff, len))
- 			return -EOVERFLOW;
- 
--		flags_mask = LEGACY_MAP_MASK | file->f_op->mmap_supported_flags;
-+		if (fops_mmap_sync(file))
-+			flags_mask |= MAP_SYNC;
- 
- 		switch (flags & MAP_TYPE) {
- 		case MAP_SHARED:
--- 
-2.43.0
+IOCTL commands targetting file descriptors (``FIOCLEX``, ``FIONCLEX``),
+file descriptions (``FIONBIO``, ``FIOASYNC``),
+file systems (``FIOQSIZE``, ``FS_IOC_FIEMAP``, ``FICLONE``,
+``FICLONERAN``, ``FIDEDUPERANGE``, ``FS_IOC_GETFLAGS``,
+``FS_IOC_SETFLAGS``, ``FS_IOC_FSGETXATTR``, ``FS_IOC_FSSETXATTR``),
+or superblocks (``FIFREEZE``, ``FITHAW``, ``FIGETBSZ``,
+``FS_IOC_GETFSUUID``, ``FS_IOC_GETFSSYSFSPATH``)
+are never denied.  However, such IOCTL commands still require an opened
+file and may not be available on any file type.  Read or write
+permission may be checked by the underlying implementation, as well as
+capabilities.
 
+> + *
+> + *   ``FIOCLEX``, ``FIONCLEX``, ``FIONBIO``, ``FIOASYNC``, ``FIFREEZE``,
+> + *   ``FITHAW``, ``FIGETBSZ``, ``FS_IOC_GETFSUUID``, ``FS_IOC_GETFSSYSFSPATH``
+> + *
+> + *   This access right is available since the fifth version of the Landlock
+> + *   ABI.
+> + *
+>   * .. warning::
+>   *
+>   *   It is currently not possible to restrict some file-related actions
+>   *   accessible through these syscall families: :manpage:`chdir(2)`,
+>   *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+>   *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+> - *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
+> + *   :manpage:`fcntl(2)`, :manpage:`access(2)`.
+>   *   Future Landlock evolutions will enable to restrict them.
+>   */
+>  /* clang-format off */
+> @@ -223,6 +239,7 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
+>  #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+>  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+>  /* clang-format on */
+>  
+>  /**
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index c15559432d3d..2ef6c57fa20b 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -7,6 +7,7 @@
+>   * Copyright © 2021-2022 Microsoft Corporation
+>   */
+>  
+> +#include <asm/ioctls.h>
+>  #include <kunit/test.h>
+>  #include <linux/atomic.h>
+>  #include <linux/bitops.h>
+> @@ -14,6 +15,7 @@
+>  #include <linux/compiler_types.h>
+>  #include <linux/dcache.h>
+>  #include <linux/err.h>
+> +#include <linux/falloc.h>
+>  #include <linux/fs.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> @@ -29,6 +31,7 @@
+>  #include <linux/types.h>
+>  #include <linux/wait_bit.h>
+>  #include <linux/workqueue.h>
+> +#include <uapi/linux/fiemap.h>
+>  #include <uapi/linux/landlock.h>
+>  
+>  #include "common.h"
+> @@ -84,6 +87,141 @@ static const struct landlock_object_underops landlock_fs_underops = {
+>  	.release = release_inode
+>  };
+>  
+> +/* IOCTL helpers */
+> +
+> +/**
+> + * get_required_ioctl_dev_access(): Determine required access rights for IOCTLs
+> + * on device files.
+> + *
+> + * @cmd: The IOCTL command that is supposed to be run.
+> + *
+> + * By default, any IOCTL on a device file requires the
+> + * LANDLOCK_ACCESS_FS_IOCTL_DEV right.  We make exceptions for commands, if:
+> + *
+> + * 1. The command is implemented in fs/ioctl.c's do_vfs_ioctl(),
+> + *    not in f_ops->unlocked_ioctl() or f_ops->compat_ioctl().
+> + *
+> + * 2. The command can be reasonably used on a device file at all.
+> + *
+> + * Any new IOCTL commands that are implemented in fs/ioctl.c's do_vfs_ioctl()
+> + * should be considered for inclusion here.
+> + *
+> + * Returns: The access rights that must be granted on an opened file in order to
+> + * use the given @cmd.
+> + */
+> +static __attribute_const__ access_mask_t
+> +get_required_ioctl_dev_access(const unsigned int cmd)
+> +{
+> +	switch (cmd) {
+> +	case FIOCLEX:
+> +	case FIONCLEX:
+> +	case FIONBIO:
+> +	case FIOASYNC:
+> +		/*
+> +		 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
+> +		 * close-on-exec and the file's buffered-IO and async flags.
+> +		 * These operations are also available through fcntl(2), and are
+> +		 * unconditionally permitted in Landlock.
+> +		 */
+> +		return 0;
+> +	case FIOQSIZE:
+> +		/*
+> +		 * FIOQSIZE queries the size of a regular file or directory.
+> +		 *
+> +		 * This IOCTL command only applies to regular files and
+> +		 * directories.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+
+This should always be allowed because do_vfs_ioctl() never returns
+-ENOIOCTLCMD for this command.  That's why I wrote
+vfs_masked_device_ioctl() this way [1].  I think it would be easier to
+read and maintain this code with a is_masked_device_ioctl() logic.  Listing
+commands that are not masked makes it difficult to review because
+allowed and denied return codes are interleaved.
+
+[1] https://lore.kernel.org/r/20240219183539.2926165-1-mic@digikod.net
+
+Your IOCTL command explanation comments are nice and they should be kept
+in is_masked_device_ioctl() (if they mask device IOCTL commands).
+
+> +	case FIFREEZE:
+> +	case FITHAW:
+> +		/*
+> +		 * FIFREEZE and FITHAW freeze and thaw the file system which the
+> +		 * given file belongs to.  Requires CAP_SYS_ADMIN.
+> +		 *
+> +		 * These commands operate on the file system's superblock rather
+> +		 * than on the file itself.  The same operations can also be
+> +		 * done through any other file or directory on the same file
+> +		 * system, so it is safe to permit these.
+> +		 */
+> +		return 0;
+> +	case FS_IOC_FIEMAP:
+> +		/*
+> +		 * FS_IOC_FIEMAP queries information about the allocation of
+> +		 * blocks within a file.
+> +		 *
+> +		 * This IOCTL command only applies to regular files.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+
+Same here.
+
+> +	case FIGETBSZ:
+> +		/*
+> +		 * FIGETBSZ queries the file system's block size for a file or
+> +		 * directory.
+> +		 *
+> +		 * This command operates on the file system's superblock rather
+> +		 * than on the file itself.  The same operation can also be done
+> +		 * through any other file or directory on the same file system,
+> +		 * so it is safe to permit it.
+> +		 */
+> +		return 0;
+> +	case FICLONE:
+> +	case FICLONERANGE:
+> +	case FIDEDUPERANGE:
+> +		/*
+> +		 * FICLONE, FICLONERANGE and FIDEDUPERANGE make files share
+> +		 * their underlying storage ("reflink") between source and
+> +		 * destination FDs, on file systems which support that.
+> +		 *
+> +		 * These IOCTL commands only apply to regular files.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+
+ditto
+
+> +	case FIONREAD:
+> +		/*
+> +		 * FIONREAD returns the number of bytes available for reading.
+> +		 *
+> +		 * We require LANDLOCK_ACCESS_FS_IOCTL_DEV for FIONREAD, because
+> +		 * devices implement it in f_ops->unlocked_ioctl().  The
+> +		 * implementations of this operation have varying quality and
+> +		 * complexity, so it is hard to reason about what they do.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +	case FS_IOC_GETFLAGS:
+> +	case FS_IOC_SETFLAGS:
+> +	case FS_IOC_FSGETXATTR:
+> +	case FS_IOC_FSSETXATTR:
+> +		/*
+> +		 * FS_IOC_GETFLAGS, FS_IOC_SETFLAGS, FS_IOC_FSGETXATTR and
+> +		 * FS_IOC_FSSETXATTR do not apply for devices.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +	case FS_IOC_GETFSUUID:
+> +	case FS_IOC_GETFSSYSFSPATH:
+> +		/*
+> +		 * FS_IOC_GETFSUUID and FS_IOC_GETFSSYSFSPATH both operate on
+> +		 * the file system superblock, not on the specific file, so
+> +		 * these operations are available through any other file on the
+> +		 * same file system as well.
+> +		 */
+> +		return 0;
+> +	case FIBMAP:
+> +	case FS_IOC_RESVSP:
+> +	case FS_IOC_RESVSP64:
+> +	case FS_IOC_UNRESVSP:
+> +	case FS_IOC_UNRESVSP64:
+> +	case FS_IOC_ZERO_RANGE:
+> +		/*
+> +		 * FIBMAP, FS_IOC_RESVSP, FS_IOC_RESVSP64, FS_IOC_UNRESVSP,
+> +		 * FS_IOC_UNRESVSP64 and FS_IOC_ZERO_RANGE only apply to regular
+> +		 * files (as implemented in file_ioctl()).
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +	default:
+> +		/*
+> +		 * Other commands are guarded by the catch-all access right.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +	}
+> +}
+> +
+>  /* Ruleset management */
+>  
+>  static struct landlock_object *get_inode_object(struct inode *const inode)
+> @@ -148,7 +286,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+>  	LANDLOCK_ACCESS_FS_EXECUTE | \
+>  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> -	LANDLOCK_ACCESS_FS_TRUNCATE)
+> +	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> +	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+>  /* clang-format on */
+>  
+>  /*
+> @@ -1335,8 +1474,10 @@ static int hook_file_alloc_security(struct file *const file)
+>  static int hook_file_open(struct file *const file)
+>  {
+>  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+> -	access_mask_t open_access_request, full_access_request, allowed_access;
+> -	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
+> +	access_mask_t open_access_request, full_access_request, allowed_access,
+> +		optional_access;
+> +	const struct inode *inode = file_inode(file);
+> +	const bool is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
+>  	const struct landlock_ruleset *const dom =
+>  		get_fs_domain(landlock_cred(file->f_cred)->domain);
+>  
+> @@ -1354,6 +1495,10 @@ static int hook_file_open(struct file *const file)
+>  	 * We look up more access than what we immediately need for open(), so
+>  	 * that we can later authorize operations on opened files.
+>  	 */
+> +	optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
+> +	if (is_device)
+> +		optional_access |= LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +
+>  	full_access_request = open_access_request | optional_access;
+>  
+>  	if (is_access_to_paths_allowed(
+> @@ -1410,6 +1555,36 @@ static int hook_file_truncate(struct file *const file)
+>  	return -EACCES;
+>  }
+>  
+> +static int hook_file_ioctl(struct file *file, unsigned int cmd,
+> +			   unsigned long arg)
+> +{
+> +	const struct inode *inode = file_inode(file);
+> +	const bool is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
+> +	access_mask_t required_access, allowed_access;
+
+As explained in [2], I'd like not-sandboxed tasks to not have visible
+performance impact because of Landlock:
+
+  We should first check landlock_file(file)->allowed_access as in
+  hook_file_truncate() to return as soon as possible for non-sandboxed
+  tasks.  Any other computation should be done after that (e.g. with an
+  is_device() helper).
+
+[2] https://lore.kernel.org/r/20240311.If7ieshaegu2@digikod.net
+
+This is_device(file) helper should also replace other is_device variables.
+
+
+> +
+> +	if (!is_device)
+> +		return 0;
+> +
+> +	/*
+> +	 * It is the access rights at the time of opening the file which
+> +	 * determine whether IOCTL can be used on the opened file later.
+> +	 *
+> +	 * The access right is attached to the opened file in hook_file_open().
+> +	 */
+> +	required_access = get_required_ioctl_dev_access(cmd);
+> +	allowed_access = landlock_file(file)->allowed_access;
+> +	if ((allowed_access & required_access) == required_access)
+> +		return 0;
+> +
+> +	return -EACCES;
+> +}
+> +
+> +static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
+> +				  unsigned long arg)
+> +{
+> +	return hook_file_ioctl(file, cmd, arg);
+
+The compat-specific IOCTL commands are missing (e.g. FS_IOC_RESVSP_32).
+Relying on is_masked_device_ioctl() should make this call OK though.
+
+> +}
+> +
+>  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
+>  
 
