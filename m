@@ -1,113 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-15415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE4888E623
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 15:33:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BFD88E630
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 15:34:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C80A281F5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 14:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96BE1C2D5DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 14:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79616153570;
-	Wed, 27 Mar 2024 13:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C617153BFB;
+	Wed, 27 Mar 2024 13:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NmFH0Y2d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8584839EB;
-	Wed, 27 Mar 2024 13:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBC7139D17
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 13:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711544702; cv=none; b=XAgjyZ5dCmZzJo3FnJvSlxJypaTDBqofS7kvdiRlLD7arFVJYTDmSYhc0lQIO/G0b6ihZhsONVSDHXrkwvfQaIncIOgDK3/gF3ENvHW9jLEj41Z3lVm7tO/GalWstmpOciG9wRZs49HYnBGXHk4kptDEtb57Gv3wDCNMMtYnoBI=
+	t=1711544756; cv=none; b=Mra4L6RjFl9Is7nxc02GLnvrf/tnDkCQbtecDl18CGRMSBRofvClP1JngswLFllkjblr2jyuMqM62LaR6DXGOUBVqxF8LmrBOptijav0uxQuoe15NURrFwRsteBKzJ0Xgem+One4VFYzgDp4aOERAARiD7FxGcjDcJFF1ZlPB2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711544702; c=relaxed/simple;
-	bh=HvEgy7qNCDppHe4Qb2WEDENM68hO529w4hNreWKXNUk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Fyn8qpx9B4iiJ2+lbPWczrq4vU1PPyvbFUcyWgeKmrWnNfkXqslLwDWitQPovyeRZ4BQlM9vvG8bmPjTmAzewMBMhtEge2d76y0VtqapoCwT2UA9CrkZxMc/G+j9u59K81A3Z5ZP4rYdgo52YyMge7xrJtwCG4rJG6UZ6C2XtWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA955C433F1;
-	Wed, 27 Mar 2024 13:04:22 +0000 (UTC)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Amit Shah <amit@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Gonglei <arei.gonglei@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	David Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Alexander Graf <graf@amazon.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	virtualization@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linux-block@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
+	s=arc-20240116; t=1711544756; c=relaxed/simple;
+	bh=T7TNvmCf/1yeTIag2IxePhj+p5To/2TxutzNxnT6nU8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rotxZq872INtM1NWxagqIqHR4ZuvbvgV7G1gRAsP9f52mQpeoXL4Q3n9gs+il4lsBQb8qU1t7heHAOJBnRua+NIaNEog4uo+3AdB7hqEHRnaL+wH36uGM+VVu6UTswb5T87ISpBjSzvOX60iimkZ5y1uXS/YPgCbekXZJq8s1oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NmFH0Y2d; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711544752;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rNcKksIhCQ6uwQhIYkqsC9yoUW4iGyOTSKFTVMknF84=;
+	b=NmFH0Y2dBGMlH2kMD7TAonT/i51W70HXIQk9oyQ6FXjPyY+a9k7ok0CrWL2E1QHKrGRT9N
+	I/F28CBmn43TUT0H6LpecL1i4d4N+qx83mMIFN5KX/LiNuqqjZjvj1ncC2++3dvXVzbv+F
+	rFA00F0MYaW609wQ4U17WvaUfe2nHzA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-407-hmCVBBIZOmqVEcZ9AutL7A-1; Wed, 27 Mar 2024 09:05:47 -0400
+X-MC-Unique: hmCVBBIZOmqVEcZ9AutL7A-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B304D85530E;
+	Wed, 27 Mar 2024 13:05:46 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.39.193.208])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id E78F81C05E1C;
+	Wed, 27 Mar 2024 13:05:42 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Peter Xu <peterx@redhat.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	iommu@lists.linux.dev,
-	netdev@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-perf-users@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH 20/22] scsi: virtio: drop owner assignment
-Date: Wed, 27 Mar 2024 14:04:15 +0100
-Message-Id: <20240327130415.378738-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
-References: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
+	x86@kernel.org
+Subject: [PATCH RFC 0/3] mm/gup: consistently call it GUP-fast
+Date: Wed, 27 Mar 2024 14:05:35 +0100
+Message-ID: <20240327130538.680256-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -115,31 +81,68 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-virtio core already sets the .owner, so driver does not need to.
+Some cleanups around function names, comments and the config option of
+"GUP-fast" -- GUP without "lock" safety belts on.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+With this cleanup it's easy to judge which functions are GUP-fast specific.
+We now consistently call it "GUP-fast", avoiding mixing it with "fast GUP",
+"lockless", or simply "gup" (which I always considered confusing in the
+ode).
 
----
+So the magic now happens in functions that contain "gup_fast", whereby
+gup_fast() is the entry point into that magic. Comments consistently
+reference either "GUP-fast" or "gup_fast()".
 
-Depends on the first patch.
----
- drivers/scsi/virtio_scsi.c | 1 -
- 1 file changed, 1 deletion(-)
+Based on mm-unstable from today. I won't CC arch maintainers, but only
+arch mailing lists, to reduce noise.
 
-diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
-index 617eb892f4ad..89ca26945721 100644
---- a/drivers/scsi/virtio_scsi.c
-+++ b/drivers/scsi/virtio_scsi.c
-@@ -1052,7 +1052,6 @@ static struct virtio_driver virtio_scsi_driver = {
- 	.feature_table = features,
- 	.feature_table_size = ARRAY_SIZE(features),
- 	.driver.name = KBUILD_MODNAME,
--	.driver.owner = THIS_MODULE,
- 	.id_table = id_table,
- 	.probe = virtscsi_probe,
- #ifdef CONFIG_PM_SLEEP
+Tested on x86_64, cross compiled on a bunch of archs, whereby some of them
+don't properly even compile on mm-unstable anymore in my usual setup
+(alpha, arc, parisc64, sh) ... maybe the cross compilers are outdated,
+but there are no new ones around. Hm.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport (IBM) <rppt@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: loongarch@lists.linux.dev
+Cc: linux-mips@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-sh@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-perf-users@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: x86@kernel.org
+
+David Hildenbrand (3):
+  mm/gup: consistently name GUP-fast functions
+  mm/treewide: rename CONFIG_HAVE_FAST_GUP to CONFIG_HAVE_GUP_FAST
+  mm: use "GUP-fast" instead "fast GUP" in remaining comments
+
+ arch/arm/Kconfig       |   2 +-
+ arch/arm64/Kconfig     |   2 +-
+ arch/loongarch/Kconfig |   2 +-
+ arch/mips/Kconfig      |   2 +-
+ arch/powerpc/Kconfig   |   2 +-
+ arch/s390/Kconfig      |   2 +-
+ arch/sh/Kconfig        |   2 +-
+ arch/x86/Kconfig       |   2 +-
+ include/linux/rmap.h   |   8 +-
+ kernel/events/core.c   |   4 +-
+ mm/Kconfig             |   2 +-
+ mm/filemap.c           |   2 +-
+ mm/gup.c               | 170 +++++++++++++++++++++--------------------
+ mm/internal.h          |   2 +-
+ mm/khugepaged.c        |   2 +-
+ 15 files changed, 105 insertions(+), 101 deletions(-)
+
 -- 
-2.34.1
+2.43.2
 
 
