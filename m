@@ -1,203 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-15439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABCB688E75D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 15:55:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2052488E769
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 15:56:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386741F318E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 14:55:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CDBB1F31A3D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 14:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5829215D5DA;
-	Wed, 27 Mar 2024 13:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B8B1419BA;
+	Wed, 27 Mar 2024 13:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZL3uFO7S"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UYeqIgCT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2056.outbound.protection.outlook.com [40.107.223.56])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1463130A41;
-	Wed, 27 Mar 2024 13:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711547583; cv=fail; b=rz1C2rfTD+XaDiX98OWrxay9Uz8tVOAfkYUSRxHgbjYui6ZwPiMeVGuhk8tJ0FqQ36pYtyKHLTkplRlOrydvzV0ZyqO2eHoBl4oaUDxvIO9OZNDGfadhWXi0Q0a/6Wh05eKpu1NH8a4cvvViVcjfSxdWxENGrKmXhAdLqZJs+5E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711547583; c=relaxed/simple;
-	bh=yDHhkJIQEiq4h4tGsi/nrNbOjWgdr5PxYFwX0asJwrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WB1cJCQsUVPM+aHQtDBsbccrPLaQloZ/xE4VbSxPFu3ZFw1MYgbmkkG5qThqg+IJDGqJLcsB7+BorNR+m5VTnOIi99MQNaur/Epj9j8NwOearGOKbeqsW+e1p6VclIu28HrGv/xgHJ6qBJu7+e3Nl8lIESfZW1EKtnocD0xLY60=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZL3uFO7S; arc=fail smtp.client-ip=40.107.223.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FAks4C1dXGUKoJHl69RY0z/V++IfV4Md1FPdybrOt6N5XVCjbUcxc25r+2sGBYR0Q8fdyV3+NzY0FyEVGP6UDulDXk6P+PnbZn8YKNFF9ZY9ppWI9IjesWGAh5JWQ/L/x3WupT0iNI6EMpT+7L6kHW3N0IUeHBWmP7owDMZ0BgR+l4NQ9tpSrmpVlf92Bs7pEBoCWlb25iZcarNhZ7x3SDvK7obm/WOiMwdJGZSW9s8ZW504O29VwjWRomUonxjzOUFz4nXQDyxYU9287B6ISNcxBaOvsPHP4FvldrNJ/266lIMwXxnZlpCD85GZNcWF6BwQhMtAkiMlmxlcUHy02A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cZ2rQuHOc7DiX3XJ8A5mf+IVhyyY13SQcZzCvdnBfWg=;
- b=BvpeGxyBa0SVnzmF/nT/q1kfTTjh4pj/jj4vaKuR3eFMyZy2F7k23dM/Bq+ofQuMH30PCGUWV9isVRR07buoK4td78pYb7ib1Y8dyi58HYllCvG0Vk+TZm3+3NKQnXikE9fp3J9SUSS7L3/fNti+eKdhQpQ1snkTel5bf6GbGytxPF64vseDuSSA0VOeqQXS6qKotOe86L1vzugHXdBsJzlGZhuWGS6T9tel0fHCNRBhSSePvzbguIBXAZGjnSmY1QIaX3aVwjz4GxsFYXuvD4uoS4IVCOBLVMcxew0N7u/KrETRsHaOd33JuWkllAk6D6C/jiwIB4AMYxJODepttQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cZ2rQuHOc7DiX3XJ8A5mf+IVhyyY13SQcZzCvdnBfWg=;
- b=ZL3uFO7SDcYM/3uVKaBB8k+zC1edhFnqGZhKNnzrUDUMwDeafJBv3/89h2imC4jc6EO4XNL7YYjLD/RBvKYL8zO83nzVAozYUp1jobQfkT01sRdTAjblXv8CaFA/du4gZDA0TtoRgZsr4wD+kZg5IXh6V+2/T3h7gi1QjFvKWfVyIRWGd0O66b2uioYOnb6doBF5QEwBs93f5gjl/CjBgKeziq3bgVIqfyF6HklyIBULzlpwIvfJZhWYVhWdp7jxt6b9MFelnN3hOEnbG/gZ3S0P692nYDuB1VwM37+iWNTR+yXZqUGXH4nRqOCp5r5OZ1nV9293VYGOLoVyo1dSVg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by PH0PR12MB5608.namprd12.prod.outlook.com (2603:10b6:510:143::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.33; Wed, 27 Mar
- 2024 13:52:58 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::6aec:dbca:a593:a222]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::6aec:dbca:a593:a222%5]) with mapi id 15.20.7409.031; Wed, 27 Mar 2024
- 13:52:58 +0000
-Date: Wed, 27 Mar 2024 10:52:56 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>, John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>, linux-arm-kernel@lists.infradead.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-mm@kvack.org,
-	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [PATCH RFC 1/3] mm/gup: consistently name GUP-fast functions
-Message-ID: <20240327135256.GG946323@nvidia.com>
-References: <20240327130538.680256-1-david@redhat.com>
- <20240327130538.680256-2-david@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240327130538.680256-2-david@redhat.com>
-X-ClientProxiedBy: MN2PR16CA0043.namprd16.prod.outlook.com
- (2603:10b6:208:234::12) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F12129E86
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 13:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711547798; cv=none; b=U7QhehKPxzm3E699HHQncPh1YLNucEz4jHh89X9PuQ48JmQAnTggeSxfgPJhsPPuYcdVMwWpqzhuqvNv3SkyiYmvf4P7MvNJqio2WXcFSnqnwXQCtkFDCsh8GymghbzEySpLIj11LUEz/3aZ0kbGsEk4Z+sRk/xU70dlvk+1LDc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711547798; c=relaxed/simple;
+	bh=q1Sl6onKIcjh+IyaRcKCsDzaQX9LhL1hX70A2AlEmms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j4/1a4nHraB9XqAIBRJmEpVsVfCjmh2A7SBibQZj59/5yM4AjwTkkLBQQvNp9z4VVTfMfG00UpVUnEmWqCO+uza102gpfiPoVsOy90df7A/rKelqLDk68c5jspqxWDtRhULFPmFQ0lZY+B31NwIlyUNpCc0kgNFJM2MQXUInm9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UYeqIgCT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711547795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wwFOu67rAm/jgeVVs/VXwT1nwHyOmGUKbXFLwpopGYg=;
+	b=UYeqIgCTfF2dn3Xo6lcDAyozg7uAooAOtyl+sxJn22W8kXrRe6ma0O8PQ5BBvbVFYtqtE+
+	GlKUIAlAKWrb8p1mIfhKzNZBeIlrndSczMWMinvAG+RPkQ+u0BTyIYMEmZ9s7lgnreeDl4
+	cc6M0xPOSbE5AIetalIxfIRF/4VEOro=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-bVLDYESVMZ68i20HAWIXrA-1; Wed, 27 Mar 2024 09:56:34 -0400
+X-MC-Unique: bVLDYESVMZ68i20HAWIXrA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4140bf38378so48353245e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 06:56:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711547793; x=1712152593;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wwFOu67rAm/jgeVVs/VXwT1nwHyOmGUKbXFLwpopGYg=;
+        b=w08XJ8XP6UWf1KxW0gsD39cHpH8SnWcD43CKBk280/1NIkbpVIyhdIjswnUc864pXA
+         qkG9lrOc+5oV4gtwzNCPw0f3gMNLlVMLcyXBE+jiyY+Engi05aNJd/0ZuxVMygtgGy9T
+         /pX8MBLcoydnUMBmJKgGT0KxjrCR2eJdG/Ym/RZgkS4l5177PHjUMGpMwqc0iGaTrqBj
+         NFMufTNuBTvScus15Vlj8C8AOAqH2kfMHFqb1XBsGY1c7eHAevDI8WtQj3LFH55Snx5m
+         UTVIID5Pky3QdJRE41LIeaAfnsi5jRDkR4yHnGXLB/GHdAIOrqFQX4odvmFc70pE1J7u
+         siVA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1G+xksR4btZBYyFZ7nK2Ds0UddrNeISpBplrmhcTBzsW5UFtq1j7b/kVnBG2zX0ExR9RZflaRKHgrKBe4NEJlPsEFyn234wOvZ4itjQ==
+X-Gm-Message-State: AOJu0YwKnoL5Fq1gI03TOLzUL9L+CCggPQtKBPg2+HPghThwHuW0azBL
+	O4tw/KamA95PK2QlMjtmyLoxlImZbsLjS3/eaKPD8IF4dw8PzD3QigiK1wBn1Uu8BITyU4CSRPK
+	z056KgwcFA1DnH4Ka0qeoB48CVsCeC2jl21kn9wATKVeslTYXSeKO4TOdGffAG7I=
+X-Received: by 2002:a05:600c:a08:b0:414:392:38d2 with SMTP id z8-20020a05600c0a0800b00414039238d2mr74553wmp.24.1711547793054;
+        Wed, 27 Mar 2024 06:56:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExpTOhHThCpVA+4b+ZiNKOUdia4Bzq6YqF2zp26xsxLD8eZI4hj+mGwvlthboaboFnQKnRxA==
+X-Received: by 2002:a05:600c:a08:b0:414:392:38d2 with SMTP id z8-20020a05600c0a0800b00414039238d2mr74531wmp.24.1711547792613;
+        Wed, 27 Mar 2024 06:56:32 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c708:8a00:362b:7e34:a3bc:9ddf? (p200300cbc7088a00362b7e34a3bc9ddf.dip0.t-ipconnect.de. [2003:cb:c708:8a00:362b:7e34:a3bc:9ddf])
+        by smtp.gmail.com with ESMTPSA id k33-20020a05600c1ca100b0041409cabb39sm2218013wms.18.2024.03.27.06.56.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Mar 2024 06:56:32 -0700 (PDT)
+Message-ID: <7631ff56-fa16-4b2b-87b2-1e93691bd110@redhat.com>
+Date: Wed, 27 Mar 2024 14:56:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|PH0PR12MB5608:EE_
-X-MS-Office365-Filtering-Correlation-Id: ddf8446e-4483-4aef-ad6a-08dc4e6535e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	tbA0esurhiO+3PfEmHRopmGYoyz1MPbRyEW8gqqTfsxXRUJRehYJbhrw2sNEfeyKKpTPD47cioHUnrbXLtvH3VkuhvIj7mWqSLVm+txE79TYMkTjWuwLu2g7safC9B/2lu/9IOfefrHjGb2akXW/2vODzDEvh/fPZMF2r2w/n7RUAqm63+nBpQSYBB6foVKDQhl2bIuNH0UmiAXLWGmJSaa7UPkcfxw/VRvQ37t8RtkWONR1S+KGl8PKW0Z7zNFJCLMP5BKdFBuacepmI+IoPCzdw5CDjyXv/OtJMolUbrqXA+feeyDYNXVSlbA/fRmbzjSkJJTU3eAqbREZPUkSm6J/7KESiJUrbJmLVESP46aRZYByA72dBapzynt5loi2Qi0ITMjP0Y2UsXlnQyDVjCzP1HFVPN+x3k9rBKO4v289fVyzH2VtAXtARVWw1w9gKji31tTkrlX28hSIjr6N+iu9Fau7UF0JaDMN2VtY1FkYN6OIndB5BSpdcXVx1lV6zlJvU7w95Y1146akF3Ekf/FHMHqkwnfjPfQtraajQPAybSa0HVCKn6aKqyH7PfoaZkUPjtrUqOvZ4IRcDwuPTit1kMb5Tdt/NWIi3st9th6V9MjnS2lkclu9s3fUYSpNCYErmd2CsWaeX3tYJDAw9+/ibu38MuNb9PxC5CQLV54=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?itf+dpo3GTzSl55VfIjsjt1srx8KuTR6OxZ5DSzQgq9f9ayJLsqD8iU9cW31?=
- =?us-ascii?Q?Up1J9bTXRk/h6ziQRjfAvIpV3qo66CdbEQOXk4t7UKlL+7x5Ibq6YSL4Qzpv?=
- =?us-ascii?Q?cBnFNhRzX8JeSLZpVrSEtq/N7w5MZt8QVSfe4A2MCla4c1q95rt9faidTBOj?=
- =?us-ascii?Q?IWHvzaLwipQyipk2CavvWwXkO+PDFEobgpJKfaEVZmdzxg098OahjxB1aVov?=
- =?us-ascii?Q?GbO7QzUO38km8ZzcmA7tOXODtmZVA5j2NNfXH6pyFZwLnJ8oWuU5GIUqLPNp?=
- =?us-ascii?Q?DTU1SZUbLqXMl8Ca4sTCZprooweLoZnlC//ITsuCA99gu4EyO8HUIddDOen0?=
- =?us-ascii?Q?p8P/9CrycaEDcXEM/7JIPY3FgZ4xD2iZJSJGAjuI5H0B+9Nhymok48Exw9NW?=
- =?us-ascii?Q?rM5nc/uaMzV2F7BBinFBg/JGxqnD3JZleei65YN+LI5McCQw9V2qw9Eqhp3o?=
- =?us-ascii?Q?HQ1LnfYjQFVuEzKms5OW5cUU3wOtmojS3tVZTKEiDc7bvrd7ISpGZbR2wphs?=
- =?us-ascii?Q?qyEurTFInOUItLQDYsnY5AT5Aph8fqvlz572gFFBX1ugC+y8UGspWLlFKeOm?=
- =?us-ascii?Q?MJkHVMJPWWFuDkvzPfBiSIQNibZbz06OQVu5kt1rWSmrYLZ+UzozrhtOedBF?=
- =?us-ascii?Q?Xz0rlA34CTE4fkRoGjcr3rMMPxIZsY8zMSB80eenkmQlxFvbxuaOASfG483l?=
- =?us-ascii?Q?Xa3TSb4yzpVGKJN71bxDB2X4STn952BmjctA0KldZJ+zyIR+QPt3WzpyUpQE?=
- =?us-ascii?Q?ISRktj15OTt2Um/OIVW4n78gcTYQg0iG0QLXWoB8hVy4Dxsnnj0KovnbsVww?=
- =?us-ascii?Q?d5Qelk+r6ZYgD55CCeBrzi8HwvBSF7gc4Thk3dtzv9EpKld6rMUQ1b9ImuK8?=
- =?us-ascii?Q?RDRxp9kxKQCaw2hsM6XBeKRz5JVT6pgDEEjQoWZmZSdoP1ISd+eKqgn1+hy1?=
- =?us-ascii?Q?XoZjijCW469TvVXED2ZzbAj8/HJwEr3ZiqsnHCI1RYpTVnjH+Lc1BmGzBkE1?=
- =?us-ascii?Q?F2IiMaaCoqOn+zmlujey8DlmDqw/2WqETVi7w38sxlhFP0q5g7dRAVe+ZWPy?=
- =?us-ascii?Q?Nef9UGfXVgybBey3EgQiNJCeLKdly7VR18n+6kz1OCx/vOKbRuvh++0P5Ln5?=
- =?us-ascii?Q?T7ioUSaUGExfesZfA2MbFMMBlyaJbhwsfb+2jTT/3x8Hgpan8AiQT1R0h/PK?=
- =?us-ascii?Q?5TbtlURy8DDRHyRgXDKgfdP9iReHMVf2TYVUPd/wlgKz1DhLDH/T+toNbmxz?=
- =?us-ascii?Q?JJ9hW0iFpI/lvCEh+90Ot7eqovCnKPCmSJNQrsDydp+PM0QGXSImsVrBmQB+?=
- =?us-ascii?Q?AzUh1iuMGsp+IIkkbCCcHRY+WMvEU1wMXU+0p/uwrtRD7R/bBSmV6TrBh8rH?=
- =?us-ascii?Q?VhQ9yio6XH/wmPWYJkWeGSUBO1FeF1umPFxW/g111H4CojOglwD1Dn71nv4i?=
- =?us-ascii?Q?6x2geb2AdNcdyKosPr4UNq4wHorGbbXf+lP2MHosWacPSZalRF4tymuw/6nb?=
- =?us-ascii?Q?sNoV/Pw+ztzyS5ytbj03i26FzJkBDXcL+GIbacNBfcmJG2qu1R+yL/h3dCET?=
- =?us-ascii?Q?LDfL9PZHkgamvOhsDiRvnERKfSOgx3Z0elCh3RRm?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ddf8446e-4483-4aef-ad6a-08dc4e6535e5
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2024 13:52:58.3889
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m9NbpnUV2D+qEEPq7X0g7K4FHmO8DKt1OZluear73anXy7NNypFF6Z0Kf3f1qPwt
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5608
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] mm/gup: consistently name GUP-fast functions
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Mike Rapoport <rppt@kernel.org>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, linux-mm@kvack.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ x86@kernel.org
+References: <20240327130538.680256-1-david@redhat.com>
+ <20240327130538.680256-2-david@redhat.com>
+ <20240327135256.GG946323@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240327135256.GG946323@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 27, 2024 at 02:05:36PM +0100, David Hildenbrand wrote:
-> Let's consistently call the "fast-only" part of GUP "GUP-fast" and rename
-> all relevant internal functions to start with "gup_fast", to make it
-> clearer that this is not ordinary GUP. The current mixture of
-> "lockless", "gup" and "gup_fast" is confusing.
+On 27.03.24 14:52, Jason Gunthorpe wrote:
+> On Wed, Mar 27, 2024 at 02:05:36PM +0100, David Hildenbrand wrote:
+>> Let's consistently call the "fast-only" part of GUP "GUP-fast" and rename
+>> all relevant internal functions to start with "gup_fast", to make it
+>> clearer that this is not ordinary GUP. The current mixture of
+>> "lockless", "gup" and "gup_fast" is confusing.
+>>
+>> Further, avoid the term "huge" when talking about a "leaf" -- for
+>> example, we nowadays check pmd_leaf() because pmd_huge() is gone. For the
+>> "hugepd"/"hugepte" stuff, it's part of the name ("is_hugepd"), so that
+>> says.
+>>
+>> What remains is the "external" interface:
+>> * get_user_pages_fast_only()
+>> * get_user_pages_fast()
+>> * pin_user_pages_fast()
+>>
+>> And the "internal" interface that handles GUP-fast + fallback:
+>> * internal_get_user_pages_fast()
 > 
-> Further, avoid the term "huge" when talking about a "leaf" -- for
-> example, we nowadays check pmd_leaf() because pmd_huge() is gone. For the
-> "hugepd"/"hugepte" stuff, it's part of the name ("is_hugepd"), so that
-> says.
-> 
-> What remains is the "external" interface:
-> * get_user_pages_fast_only()
-> * get_user_pages_fast()
-> * pin_user_pages_fast()
-> 
-> And the "internal" interface that handles GUP-fast + fallback:
-> * internal_get_user_pages_fast()
+> This would like a better name too. How about gup_fast_fallback() ?
 
-This would like a better name too. How about gup_fast_fallback() ?
+Yes, I was not able to come up with something I liked. But I do like
+your proposal, so I'll do that!
 
-> The high-level internal function for GUP-fast is now:
-> * gup_fast()
-> 
-> The basic GUP-fast walker functions:
-> * gup_pgd_range() -> gup_fast_pgd_range()
-> * gup_p4d_range() -> gup_fast_p4d_range()
-> * gup_pud_range() -> gup_fast_pud_range()
-> * gup_pmd_range() -> gup_fast_pmd_range()
-> * gup_pte_range() -> gup_fast_pte_range()
-> * gup_huge_pgd()  -> gup_fast_pgd_leaf()
-> * gup_huge_pud()  -> gup_fast_pud_leaf()
-> * gup_huge_pmd()  -> gup_fast_pmd_leaf()
-> 
-> The weird hugepd stuff:
-> * gup_huge_pd() -> gup_fast_hugepd()
-> * gup_hugepte() -> gup_fast_hugepte()
-> 
-> The weird devmap stuff:
-> * __gup_device_huge_pud() -> gup_fast_devmap_pud_leaf()
-> * __gup_device_huge_pmd   -> gup_fast_devmap_pmd_leaf()
-> * __gup_device_huge()     -> gup_fast_devmap_leaf()
->
-> Helper functions:
-> * unpin_user_pages_lockless() -> gup_fast_unpin_user_pages()
-> * gup_fast_folio_allowed() is already properly named
-> * gup_fast_permitted() is already properly named
-> 
-> With "gup_fast()", we now even have a function that is referred to in
-> comment in mm/mmu_gather.c.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  mm/gup.c | 164 ++++++++++++++++++++++++++++---------------------------
->  1 file changed, 84 insertions(+), 80 deletions(-)
+[...]
 
-I think it is a great idea, it always takes a moment to figure out if
-a function is part of the fast callchain or not..
+> 
+> I think it is a great idea, it always takes a moment to figure out if
+> a function is part of the fast callchain or not..
+> 
+> (even better would be to shift the fast stuff into its own file, but I
+> expect that is too much)
 
-(even better would be to shift the fast stuff into its own file, but I
-expect that is too much)
+Yes, one step at a time :)
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Jason
+Thanks Jason!
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
