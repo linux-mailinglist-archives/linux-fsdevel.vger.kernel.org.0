@@ -1,82 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-15466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FF288EE8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 19:51:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4775F88EE99
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 19:53:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C88D1B21DD8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 18:51:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBEDFB2224A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 18:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4C1152160;
-	Wed, 27 Mar 2024 18:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BFE14F9E5;
+	Wed, 27 Mar 2024 18:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J+QxylvG"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NrGU0z+z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65E81514E4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 18:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE5A1514FF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 18:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711565461; cv=none; b=gAVpH6DmqZeFykFDBYM6iY+vQnpGMbAnUUXQ7hfoHVD5ZuT4+mf6XEaZiLzQfnDmLcriqK8jW4g0omVfk0m6eLze38cr4r/DkHHHc8lX6paGsl/z98YZQKVaSoWBnLIlkuuST3pbiB2k5tQG70lDwMLr2KPyfv0ru1KnbTcgc78=
+	t=1711565599; cv=none; b=XOazBjNE0vYQR7bGFUFumAaUuwLdB12IkgG33TM7ofKACSAf7tjWVmvtwr3GJlqG4eOZlsD8oA0gkyMYFVslGBYn49BFVPlglxKDUeY3vRhMKAIQSMMUlrv3n6Ea2QPYxpN7mom09ja1NRATYwPhGQ5/KHdyekd2YDAnZVJ+1q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711565461; c=relaxed/simple;
-	bh=y09bZO3s4B3d+j/TM9H4q7XelPEtm2A9MOJKZskWiUA=;
+	s=arc-20240116; t=1711565599; c=relaxed/simple;
+	bh=Jtccu7UzJToa9o4RH7l5v8KO+oSXLf0FlMxRK9HtvuM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z6FoLJcFRH3YmWa2NjEBxDwGY+cYSfbrpqjA7CiboWoX5nr0XTu2vRUVPton+2wMmPJzDkGo4cIx/BekA1HCZYf3tWNOwkvoN1/77DsbunDlZ91Ch9qCzJ0wJeMkbbwu3EPIimTDShCaT8RCZ9mhOM1M/tiCa7ISFpRPZ24ejOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J+QxylvG; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 27 Mar 2024 14:50:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1711565457;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y09bZO3s4B3d+j/TM9H4q7XelPEtm2A9MOJKZskWiUA=;
-	b=J+QxylvGe+QUAC4rKslSPaaxSYEQP3cf7gNLve1SEYbPfgmA7CwRURnaHGjh5p5JfcK31p
-	1vK9oRQxya417owqBEe+YnvUkm5JhxHTKK4jogYGU2YzTpjIXacfdr0pOFPKHUuXran9tX
-	iSGtM4qV++0E5TJXAzvqfoG+yBb5TyU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: comex <comexk@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	"Dr. David Alan Gilbert" <dave@treblig.org>, Philipp Stanner <pstanner@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, 
-	Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, 
-	Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, 
-	Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <qyjrex54hbhvhw4gmn7b6l2hr45o56bwt6fazfalykwcp5zzkx@vwt7k3d6kdwt>
-References: <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
- <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
- <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
- <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
- <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
- <bu3seu56hfozsvgpdqjarbdkqo3lsjfc4lhluk5oj456xmrjc7@lfbbjxuf4rpv>
- <CAHk-=wgLGWBXvNODAkzkVHEj7zrrnTq_hzMft62nKNkaL89ZGQ@mail.gmail.com>
- <ZgIRXL5YM2AwBD0Y@gallifrey>
- <CAHk-=wjwxKD9CxYsf5x+K5fJbJa_JYZh1eKB4PT5cZJq1+foGw@mail.gmail.com>
- <160DB953-1588-418E-A490-381009CD8DE0@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TafEWpKlryw+vxtdpmegqMR6kGQiFazz85FgaSmktaM8eQ6qtRZBctudeoPgCWY5HcT4kqg4h7eUi6X2j38muqqtx77p4QcsZCTnxUJ1P7rLL8no6Q8S1L/hvjMNP/0Hxvjm5IXhpx2jhoaPvljBpkUr3zbeaistDaA0aKWeKFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NrGU0z+z; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2gpiYoX81ux2JVxazaRUF8idqOkP7INSc0VwgF0Pp9A=; b=NrGU0z+zggHEwTsmZsGhiWa47b
+	7so4aCaCXIFeMT2DTE2XfggxBfUlvUKikTVq4DZ0jzQHfPaMy40CeYOilK9+mlCXgBnUy2UGGZ1Hp
+	tfYVgxGAuuKz0JsDeCcZwSPQfhy7g4fW6rIOPSPIlpdVGl7HMx+t3GIo0Nj1W0vqLBO6FL4SEnzkr
+	j20vjJDcKQL+peLroPK2pFf6cm3zjAGUx1dPJTObqMUJA/EaBVjQ23+wiVVIhWyTZaYMZvpPlJR5j
+	ZXPJA73xOlKbTa78VOOn64AgXUDF4yVCdl5YDWzq8GrXOd2bdVu8tkPoNMWvBDiYv2XwJNCPrz+A3
+	U5ZL4ETQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rpYOf-00000004W0G-1diN;
+	Wed, 27 Mar 2024 18:53:13 +0000
+Date: Wed, 27 Mar 2024 18:53:13 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: remove __set_page_dirty_nobuffers()
+Message-ID: <ZgRrGdsmlf2pRvVd@casper.infradead.org>
+References: <20240327143008.3739435-1-wangkefeng.wang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,14 +60,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <160DB953-1588-418E-A490-381009CD8DE0@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240327143008.3739435-1-wangkefeng.wang@huawei.com>
 
-On Wed, Mar 27, 2024 at 09:16:09AM -0700, comex wrote:
-> Meanwhile, Rust intentionally lacks strict aliasing.
+On Wed, Mar 27, 2024 at 10:30:08PM +0800, Kefeng Wang wrote:
+> There are no more callers of __set_page_dirty_nobuffers(), remove it.
+> 
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-I wasn't aware of this. Given that unrestricted pointers are a real
-impediment to compiler optimization, I thought that with Rust we were
-finally starting to nail down a concrete enough memory model to tackle
-this safely. But I guess not?
+Yes, I have this exact patch in my tree, stuck behind a mess of other
+patches for the last two months.  It had to wait until the ubifs patches
+landed (which removed the last user), and as you can see I've been busy
+submitting other patches first.
+
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
