@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-15380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7B188D6EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 08:02:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660B088D6EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 08:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD58729BBF9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 07:02:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 984C41C251D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Mar 2024 07:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A483828DBF;
-	Wed, 27 Mar 2024 07:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834A32C848;
+	Wed, 27 Mar 2024 07:01:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508EC249EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A3C249ED;
 	Wed, 27 Mar 2024 07:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711522914; cv=none; b=cYjCIfIanfJltT26lpyFKY4ZigOFffzXhS4KcuIyimkOk8SkIPV1PIqNaZvpbHYpTbb5SBASQ/EwogkkrSp+atfdTFOEVFxjC1WDmTppRs+UU8Uhtc7dfox4nYrzUPkY1CF0LFRONZGDGvbyADv7XDfJI6QkUs2LBUe9gXA9ItA=
+	t=1711522915; cv=none; b=YzPteBlPo2bgamLWo0Rzlv/jw0z6jtNyNOzZgMe7uQQEMraWxHSGZ13mIIaPi7o6GijYD8cCjod1UF8jwjMpEhFEffvjX5UxqXskK6+UCWN3+S88PmQY3Oo1cWfJ1Uu2rnDMFQW/9841hV3gcKAua2kErPn8lSXNYVxDpNwYBwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711522914; c=relaxed/simple;
-	bh=1ecx+XQVfyyPzIXpdb429bFh7YKF1knpFij3v+q409Q=;
+	s=arc-20240116; t=1711522915; c=relaxed/simple;
+	bh=z3hpLvAqICheWGdppVRowRrjiiDy/NCGgfRnnGCDboA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lZpE9DneAY+ZhNIh0UbqqNfIPWL3fma0fG/AHyLHZBx85pthPbZr1Ye1GqSVYUkV3qHm4nOscCyu9wVlQHpI1UL7h3Pw3W8iJO3i2V3Fz2N9LbV0faAl4+yOACa65HNE8WBpNBMDsJdmcih4hJzG/y46vMhD6W8STiZ9iSPGt+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=mEC6Uz4gfOmHGwg8nXcqb2BIpEFJpwkkYlfHvNio3AWdySAch4/tCILIqkdZB1ce4P4xW9opaTIncEgggw8lmH9pcR2tbxCQragqasWvVD0Y30OwV+bT0CL5TLHs2fv6JqsJYOUmiVG3THP6/cI2ETqCQy3jd/2eMEsbE51i678=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4V4Hdz1VtTz4f3knj;
-	Wed, 27 Mar 2024 15:01:43 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4V4Hf16CNQz4f3kpG;
+	Wed, 27 Mar 2024 15:01:45 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 6BF091A016E;
+	by mail.maildlp.com (Postfix) with ESMTP id E27FB1A016E;
 	Wed, 27 Mar 2024 15:01:49 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP2 (Coremail) with SMTP id Syh0CgAnSQxYxANmi6+LIQ--.50310S7;
+	by APP2 (Coremail) with SMTP id Syh0CgAnSQxYxANmi6+LIQ--.50310S8;
 	Wed, 27 Mar 2024 15:01:49 +0800 (CST)
 From: Kemeng Shi <shikemeng@huaweicloud.com>
 To: akpm@linux-foundation.org,
@@ -50,9 +50,9 @@ Cc: dsterba@suse.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 5/6] writeback: rename nr_reclaimable to nr_dirty in balance_dirty_pages
-Date: Wed, 27 Mar 2024 23:57:50 +0800
-Message-Id: <20240327155751.3536-6-shikemeng@huaweicloud.com>
+Subject: [PATCH v2 6/6] writeback: define GDTC_INIT_NO_WB to null
+Date: Wed, 27 Mar 2024 23:57:51 +0800
+Message-Id: <20240327155751.3536-7-shikemeng@huaweicloud.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20240327155751.3536-1-shikemeng@huaweicloud.com>
 References: <20240327155751.3536-1-shikemeng@huaweicloud.com>
@@ -63,10 +63,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAnSQxYxANmi6+LIQ--.50310S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFyxZr1fGF17CrW8WFWkXrb_yoW8Cr15pF
-	ZrKw4jkr4xta4avrn3CFWq9rZxtws7tF43JryUCw4avFsrWF1UKFyI9ry0vF1xAayxJrWa
-	qws8trykJw4vkrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:Syh0CgAnSQxYxANmi6+LIQ--.50310S8
+X-Coremail-Antispam: 1UD129KBjvJXoWrur1rurW3Ww45Cw4xXF1rCrg_yoW8JrWkpr
+	ZxC3y5KF1UAFs293Z3Can2gwnrXa97tFW7G3s0gwsIyF4xJ3W8GFyjgw18tr4jvr93tryx
+	ArZ7tFyxXa40y3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPmb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
 	8IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAv
@@ -83,51 +83,43 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7WFyxZr1fGF17CrW8WFWkXrb_yoW8Cr15pF
 	Xa7IU0TqcUUUUUU==
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Commit 8d92890bd6b85 ("mm/writeback: discard NR_UNSTABLE_NFS, use
-NR_WRITEBACK instead") removed NR_UNSTABLE_NFS and nr_reclaimable
-only contains dirty page now.
-Rename nr_reclaimable to nr_dirty properly.
+We never use gdtc->dom set with GDTC_INIT_NO_WB, just remove unneeded
+initialization of gdtc->dom for now.
 
 Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- mm/page-writeback.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ mm/page-writeback.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 3724c7525316..211565d01600 100644
+index 211565d01600..2fd2fd2e1932 100644
 --- a/mm/page-writeback.c
 +++ b/mm/page-writeback.c
-@@ -1695,7 +1695,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
- 	struct dirty_throttle_control * const mdtc = mdtc_valid(&mdtc_stor) ?
- 						     &mdtc_stor : NULL;
- 	struct dirty_throttle_control *sdtc;
--	unsigned long nr_reclaimable;	/* = file_dirty */
-+	unsigned long nr_dirty;
- 	long period;
- 	long pause;
- 	long max_pause;
-@@ -1716,9 +1716,9 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
- 		unsigned long m_thresh = 0;
- 		unsigned long m_bg_thresh = 0;
+@@ -147,6 +147,7 @@ struct dirty_throttle_control {
+  * reflect changes in current writeout rate.
+  */
+ #define VM_COMPLETIONS_PERIOD_LEN (3*HZ)
++#define GDTC_INIT_NO_WB
  
--		nr_reclaimable = global_node_page_state(NR_FILE_DIRTY);
-+		nr_dirty = global_node_page_state(NR_FILE_DIRTY);
- 		gdtc->avail = global_dirtyable_memory();
--		gdtc->dirty = nr_reclaimable + global_node_page_state(NR_WRITEBACK);
-+		gdtc->dirty = nr_dirty + global_node_page_state(NR_WRITEBACK);
+ #ifdef CONFIG_CGROUP_WRITEBACK
  
- 		domain_dirty_limits(gdtc);
+@@ -154,8 +155,6 @@ struct dirty_throttle_control {
+ 				.dom = &global_wb_domain,		\
+ 				.wb_completions = &(__wb)->completions
  
-@@ -1769,7 +1769,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
- 		 * In normal mode, we start background writeout at the lower
- 		 * background_thresh, to keep the amount of dirty memory low.
- 		 */
--		if (!laptop_mode && nr_reclaimable > gdtc->bg_thresh &&
-+		if (!laptop_mode && nr_dirty > gdtc->bg_thresh &&
- 		    !writeback_in_progress(wb))
- 			wb_start_background_writeback(wb);
+-#define GDTC_INIT_NO_WB		.dom = &global_wb_domain
+-
+ #define MDTC_INIT(__wb, __gdtc)	.wb = (__wb),				\
+ 				.dom = mem_cgroup_wb_domain(__wb),	\
+ 				.wb_completions = &(__wb)->memcg_completions, \
+@@ -210,7 +209,6 @@ static void wb_min_max_ratio(struct bdi_writeback *wb,
  
+ #define GDTC_INIT(__wb)		.wb = (__wb),                           \
+ 				.wb_completions = &(__wb)->completions
+-#define GDTC_INIT_NO_WB
+ #define MDTC_INIT(__wb, __gdtc)
+ 
+ static bool mdtc_valid(struct dirty_throttle_control *dtc)
 -- 
 2.30.0
 
