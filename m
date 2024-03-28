@@ -1,130 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-15501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE2C88F715
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 06:17:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF8C88F750
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 06:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E68B1F263C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 05:17:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5DD298129
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 05:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF7D4C618;
-	Thu, 28 Mar 2024 05:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gXPbjKTb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C087B45961;
+	Thu, 28 Mar 2024 05:35:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872BC31A81
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 05:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A558485;
+	Thu, 28 Mar 2024 05:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711602998; cv=none; b=Lyxf0Z6AiQeCEwtcJfleQMr2Uj3O4fnRgFPaj7z2WPhELtQpnC3xkqsmSsMQlLtQxYNzFpqffYoEA18Re8N9OWvtCqbGt70HrJtlr1s7wHmUHDRQRIa5CMZUmgSRvPnGNSIZto7ADLa2uVONdW4o2QUxDIIGIwajKiqhLbg5jNQ=
+	t=1711604143; cv=none; b=vGXJuvsKnbvNwr07J8XK02VObc2KTa8CNk+boM+hC3nZUPIJbVKTxcmFUiA6HoDtwP0yjyGxDvKyC/W5E+EAYXfakiC+prC98FcGGKE2K2KproNBplSCjKF9p1ebUpy8ImkrLnl3seujZFbVwrUsJvaRzFAZMrTXJXkBixwMZBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711602998; c=relaxed/simple;
-	bh=sBPTJcGEYTbv3hcgUwqNauzYtskOKb+GWpnb7br0MOg=;
+	s=arc-20240116; t=1711604143; c=relaxed/simple;
+	bh=moB5DrOjmWx3r17RcxCTM9zF1NX/XnFiRO8wLD+oZMk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lbSKhW5A/+hpvvIL1eV++hH/cbKIwU4PeM849tC0zZfq6YP6K2P0umvdJ7Y8mrcxfFNssLMcygGXHWjHYuVrC6tUtTEIVrSbv/eBR3RPtl2deNwZ8Th02pL7PhmFmOL4qpj7QckhwOeRaEZzH+4cQF9NhwwWtfLZ8LB6IaIUFd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gXPbjKTb; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5a529a1f69aso281356eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Mar 2024 22:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711602994; x=1712207794; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NCBBqATkrmhAqNvcc7V5yUc6Bj0MDD2J9Hd2vuTQUac=;
-        b=gXPbjKTbrvtfpT6/qEmVUxns+A30LH6QOiAjT4F0xLZUPzUZg0ordNOvATabg2F/Wl
-         kPv7rlwtWOxfgPm2w1j9yiVchrEqiifXfpuqKbM3c55rO+d/cQmcOVsJtdO/BdsefRN9
-         RxOKLZQ8lQKHo0Up3S4+54dabwBIgvbFJlg0eTR2NGULCedimJYCVi8NEO/uINa2jv1N
-         m9SrGDUqniaEzEwLDKjTqPO6IIW3ujVusL7p6WPrXVYciMFtPwv7L9mAU+/qpWitn5fr
-         hH1CJycNEicAhv28MTJZUrDtXoqvUlSPCv54sDagwBcdt6nzOokgIGUCvI13cWlf71La
-         jDOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711602994; x=1712207794;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NCBBqATkrmhAqNvcc7V5yUc6Bj0MDD2J9Hd2vuTQUac=;
-        b=lBzzb4U5poj0kF0JFQxzLpq36hAeYvn4u72VilNnxrdj4PzRUDUyX+TUUG99bUUCkM
-         w03EXtoZm/rrnHJfFI1AvJLQItTVMvxdeNwaA14ZnLxLGc0YL5dqUOpruZtsHlorJAdL
-         GvD2c9VnFZj6mCBsBK9EUmR9IGAse/LtzO2HFxyUG6okIIcLp4+aDZs86dW8fs94g1Uz
-         +qQaXdrdbsgOurmcBWwxHf248pjP6XVZYO3rdowhuMUiyTbbR9Dbp2cQbsZkybBg2Cdv
-         ZJmpoDwFKGV2Rb/BD8SjlfebuJO/kngVwVCuuUQwulO8kXnwjP6D8Qp6l5svfo2v2HAP
-         rbNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdnc0R4va61ZGukgk5IRnjCneEKYx0iZZvL3ikyc0tEZwvvd28tSQdcRRLZCSJ30ANBE4hASw0bkcUAS0aVBoK0oib/IZl7Zk5QQ0jgA==
-X-Gm-Message-State: AOJu0YxkKG9pm2RTQ7A7z1Ro+Godv6+7U/rg1GDVFIzE5eelee7jy1vm
-	aUX/dTEqy7WV8MVwezvRD+Ns1pG7f53VDCFfKKRMO858iElSDRsaaaCHHwdSgQY=
-X-Google-Smtp-Source: AGHT+IENjWm30W77Sho1F7STKjVDKRSghd/5qoLRwkalJNx2D7PN+W1+MnXgZZvq+TiwN/1tI/fojA==
-X-Received: by 2002:a05:6358:5307:b0:17e:8f90:dd31 with SMTP id n7-20020a056358530700b0017e8f90dd31mr1555244rwf.32.1711602994298;
-        Wed, 27 Mar 2024 22:16:34 -0700 (PDT)
-Received: from localhost ([122.172.85.206])
-        by smtp.gmail.com with ESMTPSA id u23-20020a63df17000000b005e857bba96csm433309pgg.10.2024.03.27.22.16.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 22:16:33 -0700 (PDT)
-Date: Thu, 28 Mar 2024 10:46:31 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Gonglei <arei.gonglei@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	David Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Joerg Roedel <joro@8bytes.org>, Alexander Graf <graf@amazon.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	iommu@lists.linux.dev, netdev@vger.kernel.org, v9fs@lists.linux.dev,
-	kvm@vger.kernel.org, linux-wireless@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 09/22] gpio: virtio: drop owner assignment
-Message-ID: <20240328051631.c5eitp4mzaj4bh6i@vireshk-i7>
-References: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
- <20240327-module-owner-virtio-v1-9-0feffab77d99@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XCU2yIq2G5Y0MUezNVpwlTn9+5fp3Tw35ulXlidth5TskUv6lJ/fdxsTRx/WLuU2tcqp3OWjKRLezmUWLnPL12svw1wogw2Xn1a9/Y2Nu5reAZl3LXVgUOMcVbMhX0IN4WBa+rpUW7OtQw21x6dLNvvX2g8V9sqiBczLg+HQyf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 665A168D17; Thu, 28 Mar 2024 06:35:35 +0100 (CET)
+Date: Thu, 28 Mar 2024 06:35:33 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org
+Subject: Re: [PATCH] [RFC]: fs: claw back a few FMODE_* bits
+Message-ID: <20240328053533.GA15831@lst.de>
+References: <20240327-begibt-wacht-b9b9f4d1145a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -133,35 +48,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240327-module-owner-virtio-v1-9-0feffab77d99@linaro.org>
+In-Reply-To: <20240327-begibt-wacht-b9b9f4d1145a@brauner>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 27-03-24, 13:41, Krzysztof Kozlowski wrote:
-> virtio core already sets the .owner, so driver does not need to.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Depends on the first patch.
-> ---
->  drivers/gpio/gpio-virtio.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-virtio.c b/drivers/gpio/gpio-virtio.c
-> index fcc5e8c08973..9fae8e396c58 100644
-> --- a/drivers/gpio/gpio-virtio.c
-> +++ b/drivers/gpio/gpio-virtio.c
-> @@ -653,7 +653,6 @@ static struct virtio_driver virtio_gpio_driver = {
->  	.remove			= virtio_gpio_remove,
->  	.driver			= {
->  		.name		= KBUILD_MODNAME,
-> -		.owner		= THIS_MODULE,
->  	},
->  };
->  module_virtio_driver(virtio_gpio_driver);
+On Wed, Mar 27, 2024 at 05:45:09PM +0100, Christian Brauner wrote:
+> There's a bunch of flags that are purely based on what the file
+> operations support while also never being conditionally set or unset.
+> IOW, they're not subject to change for individual file opens. Imho, such
+> flags don't need to live in f_mode they might as well live in the fops
+> structs itself.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Yes.  I actually have a half-finished patch doing the same lying around,
+which I've not found time to rabse.
 
--- 
-viresh
+> (Fwiw, FMODE_NOACCOUNT and FMODE_BACKING could live in fops_flags as
+>  well because they're also completely static but they aren't really
+>  about file operations so they're better suited for FMODE_* imho.)
+
+I'd still move them there.  I've also simply called fops_flags flags
+so maybe it didn't bother me too much :)
+
+> +/* File ops support async buffered reads */
+> +#define FOP_BUF_RASYNC		BIT(0)
+> +/* File ops support async nowait buffered writes */
+> +#define FOP_BUF_WASYNC		BIT(1)
+
+Can we spell out BUFFERED here when changing things?  BUF always confuses
+me as it let's me thing of the buffer cache.
+
+And can be please avoid this silly BIT() junk?  1u << N is shorter
+and a lot more obvious than this random macro.
+
+> +#define FOP_MMAP_SYNC		BIT(2)
+
+Please throw in a comment for this one while you're at it.
+
+> +/* File ops support non-exclusive O_DIRECT writes from multiple threads */
+> +#define FOP_DIO_PARALLEL_WRITE	BIT(3)
+> +
+> +#define __fops_supported(f_op, flag) ((f_op)->fops_flags & (flag))
+> +#define fops_buf_rasync(file) __fops_supported((file)->f_op, FOP_BUF_RASYNC)
+> +#define fops_buf_wasync(file) __fops_supported((file)->f_op, FOP_BUF_WASYNC)
+> +#define fops_mmap_sync(file) __fops_supported((file)->f_op, FOP_MMAP_SYNC)
+> +#define fops_dio_parallel_write(file) __fops_supported((file)->f_op, FOP_DIO_PARALLEL_WRITE)
+
+And please drop these helpers.  They just make grepping for the flags
+a complete pain.
+
 
