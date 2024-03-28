@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-15565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FF78905C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 17:41:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B1B8905CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 17:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAD031F26B8B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:41:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F2F29A3AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6576F139CE5;
-	Thu, 28 Mar 2024 16:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CDC13A258;
+	Thu, 28 Mar 2024 16:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dQG+east"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dFZZdw6t"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8AC1386D8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 16:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D4A12FB2D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 16:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711643834; cv=none; b=s6vo3K8huQH5gSL3ydblu0CbmnnLCJ9HBYL8TVgB9ljTQ5tdWu9zMzalEB5ud8l1Rf8PDKKTsxt3MykoqHyB/fLPNjzlBbrzafqMqVE+3bG3wPsipwVEx2lD9Tt185YbmR/nHAMZieQej2/skXdl+uG1N2QjNA8rlMCbdIsZbi0=
+	t=1711643844; cv=none; b=hLFgZDIX9zLz3gsxwMtZCkfN3IAyrpHJB/jYu8spy/awd1P7nBKCDkVScObRvDwbKQAbbKddkci+krVqIEnTSNTIkEHq3EF6G4Mt1LQDSZ/oqJZOGOC1N6IoEu/BerN5Rt3u75dtyfSU2IvkB/BY8Ma2S+uTw6uC78pEdIqz8Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711643834; c=relaxed/simple;
-	bh=sdVM49R5pf4iYw6+e32PlvypUiyNCnM8S4phChaUfIA=;
+	s=arc-20240116; t=1711643844; c=relaxed/simple;
+	bh=ac+GfpTCxYNZC3SQIAsHI4Ej2LDwFDWNL7Cm4QVLZ8U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fingAohRHNUJAF0ON4kbk4DtA44vzqsEpiIORbqAlUAt2qW5FeV85m/35q9+sz8IdMreUKsGJOyJtPcEG0MMt61w0MxjsRAKREl4chRdEkNAG4025fBrWlfNyIOZGfMettJUciRM8pOfcczb2xSzzDUNTsk9mxHcDlJqZWNjM3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dQG+east; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=NZ01T4Pd0vDwJUTp6fDTy3pP9YdxyoBs24Nd5grlW59kCfWqiEo3+VEpnUlpn5BJXFx82obkeZxT04JYsuhOZ20PHKo1JRr9xSSujNmvsBVf00XQUAbnvYQA0PxzQrwFC7WGvpTAGyigEK6FRj0nTTzbXVs9wNSJhOnC262T6/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dFZZdw6t; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1711643832;
+	s=mimecast20190719; t=1711643841;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ynxqw2O6Fn8BCqwyUG55TcbJftNzL16LOIMZCwa+6jc=;
-	b=dQG+eastKuClaRc0GTmVAx4gxvjFYxhaySz+imRVtVoGmgIsvEdveYoF3fde/6w2W5oypE
-	ZGC6NsU5MUSYIS/sjQ2XDtpn04yqocvUg6k1ZkaGyz45uWeL75vdUXdwxJwvLt9oAIMqNb
-	iyyEbeDfvJAjYuldDU59fGMcDzo0cdc=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-502-Suy6mr8HNd28fD3IYgT4vw-1; Thu,
- 28 Mar 2024 12:37:07 -0400
-X-MC-Unique: Suy6mr8HNd28fD3IYgT4vw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	bh=Mem7lNP+7V6c2t0lUM5oHWZtR8iLqSZVCInVABGeIfQ=;
+	b=dFZZdw6tRJV0P9FXsJLp450efajeYq0vnlAIpOJ6ElpK2i4t4BsTjIdJMR9a8730OKNF6R
+	buVPKvTh4t3jxHjiU6mljm6YtN+PLMmas2lkWSI/gYN1f8RR4xyi8HWqM6pDvR2RpKnMf7
+	lgG/IExchbAV6Bfo7oCV41v/ST0K1Do=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-350-kZUy3AvkNlqShTvnlBvVOQ-1; Thu, 28 Mar 2024 12:37:15 -0400
+X-MC-Unique: kZUy3AvkNlqShTvnlBvVOQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AA02B383CD7A;
-	Thu, 28 Mar 2024 16:37:06 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 97891185A78E;
+	Thu, 28 Mar 2024 16:37:14 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id BB8F0492BD0;
-	Thu, 28 Mar 2024 16:37:03 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 3F62F200AFFC;
+	Thu, 28 Mar 2024 16:37:11 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Christian Brauner <christian@brauner.io>,
 	Jeff Layton <jlayton@kernel.org>,
@@ -80,10 +80,14 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
 	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 12/26] afs: Use alternative invalidation to using launder_folio
-Date: Thu, 28 Mar 2024 16:34:04 +0000
-Message-ID: <20240328163424.2781320-13-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Steve French <sfrench@samba.org>,
+	devel@lists.orangefs.org
+Subject: [PATCH 13/26] netfs: Remove ->launder_folio() support
+Date: Thu, 28 Mar 2024 16:34:05 +0000
+Message-ID: <20240328163424.2781320-14-dhowells@redhat.com>
 In-Reply-To: <20240328163424.2781320-1-dhowells@redhat.com>
 References: <20240328163424.2781320-1-dhowells@redhat.com>
 Precedence: bulk
@@ -93,106 +97,178 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-Use writepages-based flushing invalidation instead of
-invalidate_inode_pages2() and ->launder_folio().  This will allow
-->launder_folio() to be removed eventually.
+Remove support for ->launder_folio() from netfslib and expect filesystems
+to use filemap_invalidate_inode() instead.  netfs_launder_folio() can then
+be got rid of.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
 cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netfs@lists.linux.dev
+cc: Eric Van Hensbergen <ericvh@kernel.org>
+cc: Latchesar Ionkov <lucho@ionkov.net>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+cc: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Steve French <sfrench@samba.org>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: linux-mm@kvack.org
 cc: linux-fsdevel@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: v9fs@lists.linux.dev
+cc: linux-afs@lists.infradead.org
+cc: ceph-devel@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: devel@lists.orangefs.org
 ---
- fs/afs/file.c       |  1 -
- fs/afs/internal.h   |  1 -
- fs/afs/validation.c |  4 ++--
- fs/afs/write.c      | 10 +++-------
- 4 files changed, 5 insertions(+), 11 deletions(-)
+ fs/netfs/buffered_write.c    | 74 ------------------------------------
+ fs/netfs/main.c              |  1 -
+ include/linux/netfs.h        |  2 -
+ include/trace/events/netfs.h |  3 --
+ 4 files changed, 80 deletions(-)
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index ef2cc8f565d2..dfd8f60f5e1f 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -54,7 +54,6 @@ const struct address_space_operations afs_file_aops = {
- 	.read_folio	= netfs_read_folio,
- 	.readahead	= netfs_readahead,
- 	.dirty_folio	= netfs_dirty_folio,
--	.launder_folio	= netfs_launder_folio,
- 	.release_folio	= netfs_release_folio,
- 	.invalidate_folio = netfs_invalidate_folio,
- 	.migrate_folio	= filemap_migrate_folio,
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 6ce5a612937c..b93aa026daa4 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -916,7 +916,6 @@ struct afs_operation {
- 			loff_t	pos;
- 			loff_t	size;
- 			loff_t	i_size;
--			bool	laundering;	/* Laundering page, PG_writeback not set */
- 		} store;
- 		struct {
- 			struct iattr	*attr;
-diff --git a/fs/afs/validation.c b/fs/afs/validation.c
-index 32a53fc8dfb2..1d8bbc46f734 100644
---- a/fs/afs/validation.c
-+++ b/fs/afs/validation.c
-@@ -365,9 +365,9 @@ static void afs_zap_data(struct afs_vnode *vnode)
- 	 * written back in a regular file and completely discard the pages in a
- 	 * directory or symlink */
- 	if (S_ISREG(vnode->netfs.inode.i_mode))
--		invalidate_remote_inode(&vnode->netfs.inode);
-+		filemap_invalidate_inode(&vnode->netfs.inode, true);
- 	else
--		invalidate_inode_pages2(vnode->netfs.inode.i_mapping);
-+		filemap_invalidate_inode(&vnode->netfs.inode, false);
+diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+index 576a68b7887e..624d8859c2fa 100644
+--- a/fs/netfs/buffered_write.c
++++ b/fs/netfs/buffered_write.c
+@@ -1199,77 +1199,3 @@ int netfs_writepages(struct address_space *mapping,
+ 	return ret;
  }
+ EXPORT_SYMBOL(netfs_writepages);
+-
+-/*
+- * Deal with the disposition of a laundered folio.
+- */
+-static void netfs_cleanup_launder_folio(struct netfs_io_request *wreq)
+-{
+-	if (wreq->error) {
+-		pr_notice("R=%08x Laundering error %d\n", wreq->debug_id, wreq->error);
+-		mapping_set_error(wreq->mapping, wreq->error);
+-	}
+-}
+-
+-/**
+- * netfs_launder_folio - Clean up a dirty folio that's being invalidated
+- * @folio: The folio to clean
+- *
+- * This is called to write back a folio that's being invalidated when an inode
+- * is getting torn down.  Ideally, writepages would be used instead.
+- */
+-int netfs_launder_folio(struct folio *folio)
+-{
+-	struct netfs_io_request *wreq;
+-	struct address_space *mapping = folio->mapping;
+-	struct netfs_folio *finfo = netfs_folio_info(folio);
+-	struct netfs_group *group = netfs_folio_group(folio);
+-	struct bio_vec bvec;
+-	unsigned long long i_size = i_size_read(mapping->host);
+-	unsigned long long start = folio_pos(folio);
+-	size_t offset = 0, len;
+-	int ret = 0;
+-
+-	if (finfo) {
+-		offset = finfo->dirty_offset;
+-		start += offset;
+-		len = finfo->dirty_len;
+-	} else {
+-		len = folio_size(folio);
+-	}
+-	len = min_t(unsigned long long, len, i_size - start);
+-
+-	wreq = netfs_alloc_request(mapping, NULL, start, len, NETFS_LAUNDER_WRITE);
+-	if (IS_ERR(wreq)) {
+-		ret = PTR_ERR(wreq);
+-		goto out;
+-	}
+-
+-	if (!folio_clear_dirty_for_io(folio))
+-		goto out_put;
+-
+-	trace_netfs_folio(folio, netfs_folio_trace_launder);
+-
+-	_debug("launder %llx-%llx", start, start + len - 1);
+-
+-	/* Speculatively write to the cache.  We have to fix this up later if
+-	 * the store fails.
+-	 */
+-	wreq->cleanup = netfs_cleanup_launder_folio;
+-
+-	bvec_set_folio(&bvec, folio, len, offset);
+-	iov_iter_bvec(&wreq->iter, ITER_SOURCE, &bvec, 1, len);
+-	if (group != NETFS_FOLIO_COPY_TO_CACHE)
+-		__set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
+-	ret = netfs_begin_write(wreq, true, netfs_write_trace_launder);
+-
+-out_put:
+-	folio_detach_private(folio);
+-	netfs_put_group(group);
+-	kfree(finfo);
+-	netfs_put_request(wreq, false, netfs_rreq_trace_put_return);
+-out:
+-	_leave(" = %d", ret);
+-	return ret;
+-}
+-EXPORT_SYMBOL(netfs_launder_folio);
+diff --git a/fs/netfs/main.c b/fs/netfs/main.c
+index c5a73c9ed126..844efbb2e7a2 100644
+--- a/fs/netfs/main.c
++++ b/fs/netfs/main.c
+@@ -34,7 +34,6 @@ static const char *netfs_origins[nr__netfs_io_origin] = {
+ 	[NETFS_COPY_TO_CACHE]		= "CC",
+ 	[NETFS_WRITEBACK]		= "WB",
+ 	[NETFS_WRITETHROUGH]		= "WT",
+-	[NETFS_LAUNDER_WRITE]		= "LW",
+ 	[NETFS_UNBUFFERED_WRITE]	= "UW",
+ 	[NETFS_DIO_READ]		= "DR",
+ 	[NETFS_DIO_WRITE]		= "DW",
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index ddafc6ebff42..3af589dabd7f 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -172,7 +172,6 @@ enum netfs_io_origin {
+ 	NETFS_COPY_TO_CACHE,		/* This write is to copy a read to the cache */
+ 	NETFS_WRITEBACK,		/* This write was triggered by writepages */
+ 	NETFS_WRITETHROUGH,		/* This write was made by netfs_perform_write() */
+-	NETFS_LAUNDER_WRITE,		/* This is triggered by ->launder_folio() */
+ 	NETFS_UNBUFFERED_WRITE,		/* This is an unbuffered write */
+ 	NETFS_DIO_READ,			/* This is a direct I/O read */
+ 	NETFS_DIO_WRITE,		/* This is a direct I/O write */
+@@ -352,7 +351,6 @@ int netfs_unpin_writeback(struct inode *inode, struct writeback_control *wbc);
+ void netfs_clear_inode_writeback(struct inode *inode, const void *aux);
+ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length);
+ bool netfs_release_folio(struct folio *folio, gfp_t gfp);
+-int netfs_launder_folio(struct folio *folio);
  
- /*
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 74402d95a884..1bc26466eb72 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -75,8 +75,7 @@ static void afs_store_data_success(struct afs_operation *op)
- 	op->ctime = op->file[0].scb.status.mtime_client;
- 	afs_vnode_commit_status(op, &op->file[0]);
- 	if (!afs_op_error(op)) {
--		if (!op->store.laundering)
--			afs_pages_written_back(vnode, op->store.pos, op->store.size);
-+		afs_pages_written_back(vnode, op->store.pos, op->store.size);
- 		afs_stat_v(vnode, n_stores);
- 		atomic_long_add(op->store.size, &afs_v2net(vnode)->n_store_bytes);
- 	}
-@@ -91,8 +90,7 @@ static const struct afs_operation_ops afs_store_data_operation = {
- /*
-  * write to a file
-  */
--static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t pos,
--			  bool laundering)
-+static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t pos)
- {
- 	struct afs_operation *op;
- 	struct afs_wb_key *wbk = NULL;
-@@ -123,7 +121,6 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t
- 	op->file[0].modification = true;
- 	op->store.pos = pos;
- 	op->store.size = size;
--	op->store.laundering = laundering;
- 	op->flags |= AFS_OPERATION_UNINTR;
- 	op->ops = &afs_store_data_operation;
- 
-@@ -168,8 +165,7 @@ static void afs_upload_to_server(struct netfs_io_subrequest *subreq)
- 	       subreq->rreq->debug_id, subreq->debug_index, subreq->io_iter.count);
- 
- 	trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
--	ret = afs_store_data(vnode, &subreq->io_iter, subreq->start,
--			     subreq->rreq->origin == NETFS_LAUNDER_WRITE);
-+	ret = afs_store_data(vnode, &subreq->io_iter, subreq->start);
- 	netfs_write_subrequest_terminated(subreq, ret < 0 ? ret : subreq->len,
- 					  false);
- }
+ /* VMA operations API. */
+ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_group);
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index e03fafb0c1e3..30769103638f 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -26,7 +26,6 @@
+ #define netfs_write_traces					\
+ 	EM(netfs_write_trace_copy_to_cache,	"COPY2CACH")	\
+ 	EM(netfs_write_trace_dio_write,		"DIO-WRITE")	\
+-	EM(netfs_write_trace_launder,		"LAUNDER  ")	\
+ 	EM(netfs_write_trace_unbuffered_write,	"UNB-WRITE")	\
+ 	EM(netfs_write_trace_writeback,		"WRITEBACK")	\
+ 	E_(netfs_write_trace_writethrough,	"WRITETHRU")
+@@ -38,7 +37,6 @@
+ 	EM(NETFS_COPY_TO_CACHE,			"CC")		\
+ 	EM(NETFS_WRITEBACK,			"WB")		\
+ 	EM(NETFS_WRITETHROUGH,			"WT")		\
+-	EM(NETFS_LAUNDER_WRITE,			"LW")		\
+ 	EM(NETFS_UNBUFFERED_WRITE,		"UW")		\
+ 	EM(NETFS_DIO_READ,			"DR")		\
+ 	E_(NETFS_DIO_WRITE,			"DW")
+@@ -135,7 +133,6 @@
+ 	EM(netfs_folio_trace_end_copy,		"end-copy")	\
+ 	EM(netfs_folio_trace_filled_gaps,	"filled-gaps")	\
+ 	EM(netfs_folio_trace_kill,		"kill")		\
+-	EM(netfs_folio_trace_launder,		"launder")	\
+ 	EM(netfs_folio_trace_mkwrite,		"mkwrite")	\
+ 	EM(netfs_folio_trace_mkwrite_plus,	"mkwrite+")	\
+ 	EM(netfs_folio_trace_read_gaps,		"read-gaps")	\
 
 
