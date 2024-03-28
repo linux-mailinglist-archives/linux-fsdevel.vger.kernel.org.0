@@ -1,122 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-15516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F5E788FD79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 11:54:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76C288FDC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 12:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DF84B21C6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 10:54:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 545AB1F27635
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 11:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208927D412;
-	Thu, 28 Mar 2024 10:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDAD7E0F3;
+	Thu, 28 Mar 2024 11:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kwBZUIWX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973054C62E;
-	Thu, 28 Mar 2024 10:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B189651A1;
+	Thu, 28 Mar 2024 11:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711623246; cv=none; b=PmSF7i1Zmrzfir/+WP6YWFx91Y7GCdbpsZ4TxEpR1ZpAmBLfdR3o8uZ+rYg/7m92hrCAgSegyvIIppel/52n17T7PE5y0KBS2cSlo1G7kzUkA9WHLTj0CxmePn8Ch24PJCZcSBxNKrdrHNTg4/zAs9lDpZeVGOy2oOnLk9kl7cc=
+	t=1711624117; cv=none; b=mZq5nQqSd5emAFkG8nI7mDOc2yao8/2zOYE9r5iFTCfhgmCz+83cFDCwvbeXpbwPo+XU9oaDvDTFTeVc5YPZmHifTK3HT+gBxlaEcOtxb3LJgjYvgApzHIYP0oTkj7+PB33I4GHR8XpAS9+Dt6ebD6GNCTkG+DTs2YOYdDH0KKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711623246; c=relaxed/simple;
-	bh=YQRBwIKyXMFpVXmOargCtb2gMHL7sG7XI5XG2RQxFsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I1xsb2B5fuvSVeM/WLEdVV0vu79eygLpMRqdLHfc4EVmZ5IatG8aEboWshAfC5rzhka+tu5FoJbtQpi6lMMOeYGrISVCx1ppW2dxH8zAmHCWRChOeI/3BLLVu2GGji/fPdpMGGTHOtPv6Vtq1YYPZPIW1HRqqvxra2ZNkLbuW7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4V50Nw6SYJz9xqx4;
-	Thu, 28 Mar 2024 18:37:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 3F8F2140417;
-	Thu, 28 Mar 2024 18:53:55 +0800 (CST)
-Received: from [10.81.200.225] (unknown [10.81.200.225])
-	by APP2 (Coremail) with SMTP id GxC2BwAnEyc4TAVmFhodBQ--.8703S2;
-	Thu, 28 Mar 2024 11:53:54 +0100 (CET)
-Message-ID: <4a0b28ba-be57-4443-b91e-1a744a0feabf@huaweicloud.com>
-Date: Thu, 28 Mar 2024 12:53:40 +0200
+	s=arc-20240116; t=1711624117; c=relaxed/simple;
+	bh=W8rjrD7Btmne8moGwzQxQpMrc2o8aOPxid/YQsai9Ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7bL+7gWuATmVTwZnNJNpdIpxwrreBVeBnRf4mvA/EyZ01Kvtpw4qcWqHvInpH0YdyFystWLXeVRw/5MpSTNd0nEDRti+ei98a9UjYNPOyi2XoR0zcNYFCjATYZhDTNCaOqQ7vj2s8WtblQPEpSEwVKuEgPjRQF32As2p/S5s/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kwBZUIWX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8AC4C433F1;
+	Thu, 28 Mar 2024 11:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711624117;
+	bh=W8rjrD7Btmne8moGwzQxQpMrc2o8aOPxid/YQsai9Ms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kwBZUIWX0HFIq68joUOA1btWoHTQ9PVTNAMoUQO+CZq9WHL6JbHI7eKQwZ7a0YzR4
+	 60t/NUND1FP7zoM+hemJKci5oeDkFEPxT5ujao9xd23jOS2PhPiE/F6LpyyJlQ0a6p
+	 axkHPPARRXmpx72Xsv19zoMocjI1uTeuOnPEbNeslwn6Die9j0UHgOjWKARNTTy3oF
+	 yio/m4dCV1FtJ88kfBIHk2YLh7urVeWUAjQBIF7AkRhVa/1mk30dWaAvgnD0TkR7QW
+	 JoCP9bXPpIvzUoQRYWLV53azoXTacPYkCzMUgflIVGA74SVeWSUWmEfazF2Vwa6j56
+	 QowjaYb5MbPgQ==
+Date: Thu, 28 Mar 2024 12:08:31 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	CIFS <linux-cifs@vger.kernel.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Christian Brauner <christian@brauner.io>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Paul Moore <paul@paul-moore.com>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Subject: Re: kernel crash in mknod
+Message-ID: <20240328-raushalten-krass-cb040068bde9@brauner>
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV>
+ <3441a4a1140944f5b418b70f557bca72@huawei.com>
+ <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
+ <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
+ <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
+ <4a0b28ba-be57-4443-b91e-1a744a0feabf@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: kernel crash in mknod
-To: Christian Brauner <brauner@kernel.org>,
- Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>,
- LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- CIFS <linux-cifs@vger.kernel.org>, Paulo Alcantara <pc@manguebit.com>,
- Christian Brauner <christian@brauner.io>, Mimi Zohar <zohar@linux.ibm.com>,
- Paul Moore <paul@paul-moore.com>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>
-References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
- <20240324054636.GT538574@ZenIV> <3441a4a1140944f5b418b70f557bca72@huawei.com>
- <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
- <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
- <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwAnEyc4TAVmFhodBQ--.8703S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF1rZw48CryDurW8GFy8Zrb_yoWkArc_Cr
-	s0ya4UG3y7ur93AF47WF1SgrZxAFWagry7CrWkKFy7t34DJrs8JFZ0vr93Wr1UWFWfGFnI
-	kryDAa40kry2vjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04
-	k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBF1jj5vkfAAAsn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4a0b28ba-be57-4443-b91e-1a744a0feabf@huaweicloud.com>
 
-On 3/26/2024 12:40 PM, Christian Brauner wrote:
->> we can change the parameter of security_path_post_mknod() from
->> dentry to inode?
+On Thu, Mar 28, 2024 at 12:53:40PM +0200, Roberto Sassu wrote:
+> On 3/26/2024 12:40 PM, Christian Brauner wrote:
+> > > we can change the parameter of security_path_post_mknod() from
+> > > dentry to inode?
+> > 
+> > If all current callers only operate on the inode then it seems the best
+> > to only pass the inode. If there's some reason someone later needs a
+> > dentry the hook can always be changed.
 > 
-> If all current callers only operate on the inode then it seems the best
-> to only pass the inode. If there's some reason someone later needs a
-> dentry the hook can always be changed.
+> Ok, so the crash is likely caused by:
+> 
+> void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry
+> *dentry)
+> {
+>         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> 
+> I guess we can also simply check if there is an inode attached to the
+> dentry, to minimize the changes. I can do both.
+> 
+> More technical question, do I need to do extra checks on the dentry before
+> calling security_path_post_mknod()?
 
-Ok, so the crash is likely caused by:
+Why do you need the dentry? The two users I see are ima in [1] and evm in [2].
+Both of them don't care about the dentry. They only care about the
+inode. So why is that hook not just:
 
-void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry 
-*dentry)
+diff --git a/security/security.c b/security/security.c
+index 7e118858b545..025689a7e912 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1799,11 +1799,11 @@ EXPORT_SYMBOL(security_path_mknod);
+  *
+  * Update inode security field after a file has been created.
+  */
+-void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
++void security_inode_post_mknod(struct mnt_idmap *idmap, struct inode *inode)
+ {
+-       if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
++       if (unlikely(IS_PRIVATE(inode)))
+                return;
+-       call_void_hook(path_post_mknod, idmap, dentry);
++       call_void_hook(path_post_mknod, idmap, inode);
+ }
+
+ /**
+
+And one another thing I'd like to point out is that the security hook is
+called "security_path_post_mknod()" while the evm and ima hooks are
+called evm_post_path_mknod() and ima_post_path_mknod() respectively. In
+other words:
+
+git grep _path_post_mknod() doesn't show the implementers of that hook
+which is rather unfortunate. It would be better if the pattern were:
+
+<specific LSM>_$some_$ordered_$words()
+
+[1]:
+static void evm_post_path_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
 {
-         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+        struct inode *inode = d_backing_inode(dentry);
+        struct evm_iint_cache *iint = evm_iint_inode(inode);
 
-I guess we can also simply check if there is an inode attached to the 
-dentry, to minimize the changes. I can do both.
+        if (!S_ISREG(inode->i_mode))
+                return;
 
-More technical question, do I need to do extra checks on the dentry 
-before calling security_path_post_mknod()?
+        if (iint)
+                iint->flags |= EVM_NEW_FILE;
+}
 
-Thanks
+[2]:
+static void ima_post_path_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
+{
+        struct ima_iint_cache *iint;
+        struct inode *inode = dentry->d_inode;
+        int must_appraise;
 
-Roberto
+        if (!ima_policy_flag || !S_ISREG(inode->i_mode))
+                return;
 
-> For bigger changes it's also worthwhile if the object that's passed down
-> into the hook-based LSM layer is as specific as possible. If someone
-> does a change that affects lifetime rules of mounts then any hook that
-> takes a struct path argument that's unused means going through each LSM
-> that implements the hook only to find out it's not actually used.
-> Similar for dentry vs inode imho.
+        must_appraise = ima_must_appraise(idmap, inode, MAY_ACCESS,
+                                          FILE_CHECK);
+        if (!must_appraise)
+                return;
 
+        /* Nothing to do if we can't allocate memory */
+        iint = ima_inode_get(inode);
+        if (!iint)
+                return;
+
+        /* needed for re-opening empty files */
+        iint->flags |= IMA_NEW_FILE;
+}
+
+
+
+> 
+> Thanks
+> 
+> Roberto
+> 
+> > For bigger changes it's also worthwhile if the object that's passed down
+> > into the hook-based LSM layer is as specific as possible. If someone
+> > does a change that affects lifetime rules of mounts then any hook that
+> > takes a struct path argument that's unused means going through each LSM
+> > that implements the hook only to find out it's not actually used.
+> > Similar for dentry vs inode imho.
+> 
 
