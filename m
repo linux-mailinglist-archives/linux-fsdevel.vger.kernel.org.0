@@ -1,168 +1,342 @@
-Return-Path: <linux-fsdevel+bounces-15533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846C489033F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:39:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3DC8903B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:44:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D28BFB229C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 15:39:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5282B23E51
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 15:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8109612FF99;
-	Thu, 28 Mar 2024 15:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5439D131BA7;
+	Thu, 28 Mar 2024 15:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yiXFFCxU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOKf7imY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2D912F5BE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 15:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F79612A14A;
+	Thu, 28 Mar 2024 15:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711640360; cv=none; b=H1lQ0sWttsxQuEQPW2UI+6r47xj6FTfqctt+vQmadFofln4BFZBczqjVJAfw+RSyccOjPtqLi7diA/rZlfjd60NVjIcO1vddjC5jpf/N+dpKJrxw30TbBHlB5c5X4ldpnDjEY4VB0nGA0IZdR1eu2mMn6XEtbqluTd8LcMQ+fbI=
+	t=1711640657; cv=none; b=FeAuaxAUjw80qxwflx4UnCXzwi7rW+1z/LT7QXO3tKX9P6Juqgix2VjJAgMBYyvxwbLofPjcTPK+NkmvqpBxCnGwcJ2OuSfbmK1EIRycKrjcZJbWl53yDRmhoY+aYtVzUGvHT86oSUB2kDjzLQSY9nzXhEDN75KXQvjL6YAJgR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711640360; c=relaxed/simple;
-	bh=G1iRW2zHIY2/EiULrJ1nqfVUKDfTimjQj7b8q3dHoFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ehUdm2EVAy8pf3AnZH4ojXsm7ZujF8jxu07RIjtX9fmLUfHegAy4pf9dAW/bLldCEac80p5LYxSF2PpaIE7oWyYM6FQHXcWdbuIyzTrlbiKY7AfrULT7VlfKNipdLTRHqLQ2GWtsKYj8cShN7phaKiwYIiz+ESlh3H4x5+ZOHBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yiXFFCxU; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6e6b6f86975so760526b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 08:39:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711640358; x=1712245158; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mPjQD/vT8EW8FIsS5EhEUvjw7Yq2DPw74odbleQjQC0=;
-        b=yiXFFCxUidOur1Yje4vLUgh6HPAPLTa0A8Jr+L02ErZCnLUGyA5cbWRfLbW2anYSXf
-         OBw4ySIQT0uhUbGcSG01jSnXmA99UGDz+ieVFtksloTDysGebITCGl5U79aib5tRot4U
-         R4S1ExbeBqVsmWInB4bb8zRKX9QyP7Ax6Eh5Ma6rjz8KpZ8v4vKS3+LuOQnifxodUaJY
-         zzOk4VHwBPO7tnFwFYmLG1MzB7aHaa3xKXAwElEJjPQS4p0yDYFN/Ey+1PpWehd8HZdj
-         vYgMf7EihG/MeLThCAKSbALwA7sdiXDqthcdvgmkCW/VSJ7MQdHCJb7IT9nDNTdo6+e8
-         nNWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711640358; x=1712245158;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mPjQD/vT8EW8FIsS5EhEUvjw7Yq2DPw74odbleQjQC0=;
-        b=YC90l70Btfpi8/jNi0FvqhM7Ok12KMWm+QK1nTLVfPaythn6RMcFPQrupFJV91vJne
-         I6vgw3dlxefGfX2Kiay7mDAGjMbTHGJCSusLXfI9WL5pwuwKu21d6bCs181+1khZnz5L
-         S79AvS0xpCzdTcSKvdgERX69Z4RGZBfLSOrL9NGSRqWker9sFxSdSaCSlslHwTasAAaN
-         Ve+8CbHIOIKAFoCw3RKyiUuYHyNnWJGEjwImf5yUsoO6z3Dc22kzwJSNvBiTd2TJunmb
-         mPsLWVHBGJGfky4P35e0VKFWqMXtVN3SXhiCgScr2CGXhTuFs2qbrM9/Us8gX95Qoo0/
-         yMBA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8O6PDdRH7tyz4pfI/onGdtN8oiT8pllSHtwnk22P/j62CpGxMcvBK24ceQCxwzgsf7r4W5v4y5wFzfIwayNdKRiLTaM8YAX0wqWZ7vA==
-X-Gm-Message-State: AOJu0YyVVXr7NZjL8lQHiVY7YFEQtoDtrwyqbVO4pOEqRe6ZjHKli4Hu
-	XwLvAgELacKmyGwVBXtlIcG8CDcjeozOcSJi87T/uyCqHPZlWFXshyKK+h040cs=
-X-Google-Smtp-Source: AGHT+IGhUQYINGDQ7hWfiGCoXweY10vLCz/e/x+HjJ8dVvYs43ivIcKXZCgoqnZGIv+19J3DIwIpug==
-X-Received: by 2002:a05:6a00:a12:b0:6ea:92a7:fb82 with SMTP id p18-20020a056a000a1200b006ea92a7fb82mr3800870pfh.27.1711640357806;
-        Thu, 28 Mar 2024 08:39:17 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:ff63:c57b:4625:b68c])
-        by smtp.gmail.com with ESMTPSA id e2-20020aa798c2000000b006ea923678a6sm1505830pfm.137.2024.03.28.08.39.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Mar 2024 08:39:17 -0700 (PDT)
-Date: Thu, 28 Mar 2024 09:39:10 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Gonglei <arei.gonglei@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	David Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Joerg Roedel <joro@8bytes.org>, Alexander Graf <graf@amazon.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	iommu@lists.linux.dev, netdev@vger.kernel.org, v9fs@lists.linux.dev,
-	kvm@vger.kernel.org, linux-wireless@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 19/22] rpmsg: virtio: drop owner assignment
-Message-ID: <ZgWPHntosUk+5qac@p14s>
-References: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
- <20240327-module-owner-virtio-v1-19-0feffab77d99@linaro.org>
+	s=arc-20240116; t=1711640657; c=relaxed/simple;
+	bh=qYG1LxutZbe5G+N9vijukhEiMclWEcESiwYYQHumlOs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=thftdyJn1iPFQy6Pn/3EU5qxE/eLBAAG+Imd6urpDfMClrH5i9bAZXGkqBavWHr+BO2ZTwcD7NPteCBpBdIaJQum8s/Q9hc7/h/Rd6/LArDQbmKoXZzVImYZbY3uNBKzlTrYyYoxe5tiLRjBja63uumSezO5CymJxwhn2DBmLbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOKf7imY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 047D3C433F1;
+	Thu, 28 Mar 2024 15:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711640657;
+	bh=qYG1LxutZbe5G+N9vijukhEiMclWEcESiwYYQHumlOs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=oOKf7imYuDujEq+879+zr/VvxaJ/Ijxr538NSpXlq5SsREFnnUiv4vRFrrHLiASw2
+	 usBDXqc5ay5VUzS+O2eVhJYAuCS7uhHNLjRraHdCQWqv4siI0F6+01L/AskBeAKHWy
+	 i+AfyO7ubBsBPtlfZvpz4sKIMWPepKSLtzGsAmDjIz7DGfJ4E7Gj1nnlIPN0HzvaiT
+	 DRT+WkN6qdvGKZ+1i3LJUwkOo1QeoNFfn5SiZdw4QjZf5B4h1+I3K+lsYhgw0iuYIg
+	 AP8giprQf5mU4AnROcxmfCzeflWRW9KFLPhZGJQHYo+unNbUpIrI/U0i904xmQGBhF
+	 3FxvVtYPTUPxw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB314CD1283;
+	Thu, 28 Mar 2024 15:44:16 +0000 (UTC)
+From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
+Subject: [PATCH v3 00/10] sysctl: Remove sentinel elements from kernel dir
+Date: Thu, 28 Mar 2024 16:44:01 +0100
+Message-Id: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-0-285d273912fe@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240327-module-owner-virtio-v1-19-0feffab77d99@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEGQBWYC/5XNQQ6CMBSE4auYrq15BaLoynsYQ5rHgFVKSYuNh
+ HB3q4kLd7r8Z/HNLAK8QRCH1Sw8ognG9Sny9UrwRfctpKlTi4yyXCnayatuZZgCj13lYV1EBTu
+ MU4UOtrrB9+jkrsaeuKmJSYskDR6NebxfTufUFxNG56f3aVSv9T8/KkkSBUPlZVk3mo5B23Dv2
+ w07K14PMfuoBSkqflOzpJb5lpkKEIG/1WVZnsuAdrIuAQAA
+To: Luis Chamberlain <mcgrof@kernel.org>, josh@joshtriplett.org, 
+ Kees Cook <keescook@chromium.org>, Eric Biederman <ebiederm@xmission.com>, 
+ Iurii Zaikin <yzaikin@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
+ Will Drewry <wad@chromium.org>, Ingo Molnar <mingo@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+ Daniel Bristot de Oliveira <bristot@redhat.com>, 
+ Valentin Schneider <vschneid@redhat.com>, Petr Mladek <pmladek@suse.com>, 
+ John Ogness <john.ogness@linutronix.de>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+ Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Balbir Singh <bsingharora@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org, 
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, Joel Granados <j.granados@samsung.com>
+X-Mailer: b4 0.13-dev-2d940
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10789;
+ i=j.granados@samsung.com; h=from:subject:message-id;
+ bh=WUTQDpfZgZClvygT4HGPLJcUbPNO7wR07Jx0+KFw53U=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGYFkEnQF6PJsgI7eC1YBuxJbg5WY4lcHUDna
+ UUkMAaquYCjeokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmBZBJAAoJELqXzVK3
+ lkFPp/QL+gLcDkTlgpnG3tU6FQCIyBxVmVf7smmcFn+p+oiVPHzfavDSm0fReAcsvVNaRSPZVHz
+ SHga0gGAqDAyPkKcigAHHeGwKdIDOBmeKKjqiopEV4TKhCXmJQJXONiXaJFGZpnM+ddn2E3xgA2
+ /Ou9/B4pUvGR1EKZF/L9YtPa+HmrG0SgNCM5kxW3+gWsqgKlJwdn7e+SpCeuQZAhHseoGgCrWsT
+ +ulHQBI6SZbnu3EcYxakfyTqnasMvGyJ9lXMUinfh7fY0U5NmQxRY5WDoiA+yx5PrPuMdW1E/wQ
+ uZe+JmQK9Lv98WV44XpCHCjl3MJDQl98PHhxtcfCT2NTLhf4i78S9+iIXxlhL+Ho0vLoS6IMF60
+ BhfNo2e/Ud1evvW+21VYAFFLDBbTxc+7hdXBc2V0G5sgpU4f39lfsEUxepCV4CHRTNBHjcyDAhe
+ 5j1O8DfGyzmQNnTeXnJCjEEnnUW1SkVcsZCu5wEtZ6NRa+LPmKXL/9qX/z3WUL3Z8WJo5TSm5H4
+ PA=
+X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
+ auth_id=70
+X-Original-From: Joel Granados <j.granados@samsung.com>
+Reply-To: j.granados@samsung.com
 
-On Wed, Mar 27, 2024 at 01:41:12PM +0100, Krzysztof Kozlowski wrote:
-> virtio core already sets the .owner, so driver does not need to.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Depends on the first patch.
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 1062939c3264..e9e8c1f7829f 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -1053,7 +1053,6 @@ static struct virtio_driver virtio_ipc_driver = {
->  	.feature_table	= features,
->  	.feature_table_size = ARRAY_SIZE(features),
->  	.driver.name	= KBUILD_MODNAME,
-> -	.driver.owner	= THIS_MODULE,
->  	.id_table	= id_table,
->  	.probe		= rpmsg_probe,
->  	.remove		= rpmsg_remove,
+From: Joel Granados <j.granados@samsung.com>
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+What?
+These commits remove the sentinel element (last empty element) from the
+sysctl arrays of all the files under the "kernel/" directory that use a
+sysctl array for registration. The merging of the preparation patches
+[1] to mainline allows us to remove sentinel elements without changing
+behavior. This is safe because the sysctl registration code
+(register_sysctl() and friends) use the array size in addition to
+checking for a sentinel [2].
 
-> 
-> -- 
-> 2.34.1
-> 
+Why?
+By removing the sysctl sentinel elements we avoid kernel bloat as
+ctl_table arrays get moved out of kernel/sysctl.c into their own
+respective subsystems. This move was started long ago to avoid merge
+conflicts; the sentinel removal bit came after Mathew Wilcox suggested
+it to avoid bloating the kernel by one element as arrays moved out. This
+patchset will reduce the overall build time size of the kernel and run
+time memory bloat by about ~64 bytes per declared ctl_table array (more
+info here [5]).
+
+When are we done?
+There are 4 patchests (25 commits [3]) that are still outstanding to
+completely remove the sentinels: files under "net/", files under
+"kernel/" (this patchset) dir, misc dirs (files under mm/ security/ and
+others) and the final set that removes the unneeded check for ->procname
+== NULL.
+
+Testing:
+* Ran sysctl selftests (./tools/testing/selftests/sysctl/sysctl.sh)
+* Ran this through 0-day with no errors or warnings
+
+Savings in vmlinux:
+  A total of 64 bytes per sentinel is saved after removal; I measured in
+  x86_64 to give an idea of the aggregated savings. The actual savings
+  will depend on individual kernel configuration.
+    * bloat-o-meter
+        - The "yesall" config saves 1984 bytes [6]
+        - A reduced config [4] saves 1027 bytes [7]
+
+Savings in allocated memory:
+  None in this set but will occur when the superfluous allocations are
+  removed from proc_sysctl.c. I include it here for context. The
+  estimated savings during boot for config [3] are 6272 bytes. See [8]
+  for how to measure it.
+
+Comments/feedback greatly appreciated
+
+Changes in v3:
+- Rebased to v6.9-rc1
+- wrote a shorter cover letter
+- Removed willy@infradead.org from cc
+- Link to v2: https://lore.kernel.org/r/20240104-jag-sysctl_remove_empty_elem_kernel-v2-0-836cc04e00ec@samsung.com
+
+Changes in v2:
+- No functional changes; I resent it as I did not see it in the latest
+  sysctl-next. It might be a bit too late to include it in 6.7 version,
+  but this v2 can be used for 6.8 when it comes out.
+- Rebased on top of v6.7-rc6
+- Added trailers to the relevant commits.
+- Link to v1: https://lore.kernel.org/r/20231107-jag-sysctl_remove_empty_elem_kernel-v1-0-e4ce1388dfa0@samsung.com
+Best
+
+Joel
+
+[1] https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
+[2] https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/tag/?h=sysctl_remove_empty_elem_v5
+[4] https://gist.github.com/Joelgranados/feaca7af5537156ca9b73aeaec093171
+
+[5]
+Links Related to the ctl_table sentinel removal:
+* Good summaries from Luis:
+  https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
+  https://lore.kernel.org/all/ZMFizKFkVxUFtSqa@bombadil.infradead.org/
+* Patches adjusting sysctl register calls:
+  https://lore.kernel.org/all/20230302204612.782387-1-mcgrof@kernel.org/
+  https://lore.kernel.org/all/20230302202826.776286-1-mcgrof@kernel.org/
+* Discussions about expectations and approach
+  https://lore.kernel.org/all/20230321130908.6972-1-frank.li@vivo.com
+  https://lore.kernel.org/all/20220220060626.15885-1-tangmeng@uniontech.com
+
+[6]
+add/remove: 0/0 grow/shrink: 0/31 up/down: 0/-1984 (-1984)
+Function                                     old     new   delta
+watchdog_sysctls                             576     512     -64
+watchdog_hardlockup_sysctl                   128      64     -64
+vm_table                                    1344    1280     -64
+uts_kern_table                               448     384     -64
+usermodehelper_table                         192     128     -64
+user_table                                   832     768     -64
+user_event_sysctls                           128      64     -64
+timer_sysctl                                 128      64     -64
+signal_debug_table                           128      64     -64
+seccomp_sysctl_table                         192     128     -64
+sched_rt_sysctls                             256     192     -64
+sched_fair_sysctls                           256     192     -64
+sched_energy_aware_sysctls                   128      64     -64
+sched_dl_sysctls                             192     128     -64
+sched_core_sysctls                           384     320     -64
+sched_autogroup_sysctls                      128      64     -64
+printk_sysctls                               512     448     -64
+pid_ns_ctl_table_vm                          128      64     -64
+pid_ns_ctl_table                             128      64     -64
+latencytop_sysctl                            128      64     -64
+kprobe_sysctls                               128      64     -64
+kexec_core_sysctls                           256     192     -64
+kern_table                                  2560    2496     -64
+kern_reboot_table                            192     128     -64
+kern_panic_table                             192     128     -64
+kern_exit_table                              128      64     -64
+kern_delayacct_table                         128      64     -64
+kern_acct_table                              128      64     -64
+hung_task_sysctls                            448     384     -64
+ftrace_sysctls                               128      64     -64
+bpf_syscall_table                            192     128     -64
+Total: Before=429912331, After=429910347, chg -0.00%
+
+[7]
+add/remove: 0/1 grow/shrink: 0/16 up/down: 0/-1027 (-1027)
+Function                                     old     new   delta
+sched_core_sysctl_init                        39      36      -3
+vm_table                                    1024     960     -64
+uts_kern_table                               448     384     -64
+usermodehelper_table                         192     128     -64
+user_table                                   704     640     -64
+signal_debug_table                           128      64     -64
+seccomp_sysctl_table                         192     128     -64
+sched_rt_sysctls                             256     192     -64
+sched_fair_sysctls                           128      64     -64
+sched_dl_sysctls                             192     128     -64
+sched_core_sysctls                            64       -     -64
+printk_sysctls                               512     448     -64
+pid_ns_ctl_table_vm                          128      64     -64
+kern_table                                  1920    1856     -64
+kern_reboot_table                            192     128     -64
+kern_panic_table                             128      64     -64
+kern_exit_table                              128      64     -64
+Total: Before=8522228, After=8521201, chg -0.01%
+
+[8]
+To measure the in memory savings apply this on top of this patchset.
+
+"
+"
+diff --git i/fs/proc/proc_sysctl.c w/fs/proc/proc_sysctl.c
+index 37cde0efee57..896c498600e8 100644
+--- i/fs/proc/proc_sysctl.c
++++ w/fs/proc/proc_sysctl.c
+@@ -966,6 +966,7 @@ static struct ctl_dir *new_dir(struct ctl_table_set *set,
+        table[0].procname = new_name;
+        table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
+        init_header(&new->header, set->dir.header.root, set, node, table, 1);
++       printk("%ld sysctl saved mem kzalloc\n", sizeof(struct ctl_table));
+
+        return new;
+ }
+@@ -1189,6 +1190,7 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, s>
+                link_name += len;
+                link++;
+        }
++       printk("%ld sysctl saved mem kzalloc\n", sizeof(struct ctl_table));
+        init_header(links, dir->header.root, dir->header.set, node, link_table,
+                    head->ctl_table_size);
+        links->nreg = nr_entries;
+"
+and then run the following bash script in the kernel:
+
+accum=0
+for n in $(dmesg | grep kzalloc | awk '{print $3}') ; do
+    accum=$(calc "$accum + $n")
+done
+echo $accum
+
+---
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+
+---
+Joel Granados (10):
+      kernel misc:  Remove the now superfluous sentinel elements from ctl_table array
+      umh:  Remove the now superfluous sentinel elements from ctl_table array
+      ftrace: Remove the now superfluous sentinel elements from ctl_table array
+      timekeeping:  Remove the now superfluous sentinel elements from ctl_table array
+      seccomp: Remove the now superfluous sentinel elements from ctl_table array
+      scheduler: Remove the now superfluous sentinel elements from ctl_table array
+      printk: Remove the now superfluous sentinel elements from ctl_table array
+      kprobes: Remove the now superfluous sentinel elements from ctl_table array
+      delayacct:  Remove the now superfluous sentinel elements from ctl_table array
+      bpf: Remove the now superfluous sentinel elements from ctl_table array
+
+ kernel/acct.c                    | 1 -
+ kernel/bpf/syscall.c             | 1 -
+ kernel/delayacct.c               | 1 -
+ kernel/exit.c                    | 1 -
+ kernel/hung_task.c               | 1 -
+ kernel/kexec_core.c              | 1 -
+ kernel/kprobes.c                 | 1 -
+ kernel/latencytop.c              | 1 -
+ kernel/panic.c                   | 1 -
+ kernel/pid_namespace.c           | 1 -
+ kernel/pid_sysctl.h              | 1 -
+ kernel/printk/sysctl.c           | 1 -
+ kernel/reboot.c                  | 1 -
+ kernel/sched/autogroup.c         | 1 -
+ kernel/sched/core.c              | 1 -
+ kernel/sched/deadline.c          | 1 -
+ kernel/sched/fair.c              | 1 -
+ kernel/sched/rt.c                | 1 -
+ kernel/sched/topology.c          | 1 -
+ kernel/seccomp.c                 | 1 -
+ kernel/signal.c                  | 1 -
+ kernel/stackleak.c               | 1 -
+ kernel/sysctl.c                  | 2 --
+ kernel/time/timer.c              | 1 -
+ kernel/trace/ftrace.c            | 1 -
+ kernel/trace/trace_events_user.c | 1 -
+ kernel/ucount.c                  | 3 +--
+ kernel/umh.c                     | 1 -
+ kernel/utsname_sysctl.c          | 1 -
+ kernel/watchdog.c                | 2 --
+ 30 files changed, 1 insertion(+), 33 deletions(-)
+---
+base-commit: 4cece764965020c22cff7665b18a012006359095
+change-id: 20231107-jag-sysctl_remove_empty_elem_kernel-7de90cfd0c0a
+
+Best regards,
+-- 
+Joel Granados <j.granados@samsung.com>
+
+
 
