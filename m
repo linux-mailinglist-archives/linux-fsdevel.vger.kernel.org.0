@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-15535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576DB8903AF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:44:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64598903B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DDEE1F25433
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 15:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4727C1F25419
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 15:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBED13173E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C613131BD3;
 	Thu, 28 Mar 2024 15:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Th2X6ibv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blI9ymBL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835B712AAD3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B449012FF88;
 	Thu, 28 Mar 2024 15:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711640657; cv=none; b=qUKV+gdXzS7HH2pePYDFBhx5xskps/wd5fe1dtin65q3ZA6DcxZe1wFBJz6itFA7rXAIB6r9jbVSkepH+zGUWzEmGjTwgBSeIiSzh3OdgQjJIu9dXPVy0nP0skJoB6ELvYu5EqIuN6zv/SVvQ4Hrl/T5zIGOUXR/SDvGHFJX8MU=
+	t=1711640657; cv=none; b=iuaYlaTkKXIgm9KxbwoDjTdxXS9krzTpTi0alnhRET9r8EO2BE30ASoToeA17oieCoOeOo57YRSWX8J7Xx7ls0NzI/xG1rk797iBMUH6TbuW8FYAE6Pj17iX0oR7jH/glP2bj0GYcypWCyfrodOVzqT63PwDeRvCa1Kk/qy5FT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1711640657; c=relaxed/simple;
-	bh=V9eApfrx/luUPTr0ui9HIhkRp0aZQ7q1nffr8rRLCu8=;
+	bh=m54DIObMwh/oz5+MbWMsGWkY8mPKrW5ppEQGy+WuUHE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y4hHOU3QGmL3ev0PxQ/w/ZItVei9zeM4LKp2c4tMBndCLQXhx2HtqNim/hCq4nyPiwJrXa6lLLZSE6sIbX/Q1AGg6CiAPtXVPHhMDanrmWyPQlNVPAXbP06yKeRvqy8fYIS+sdEuI9jf1o0vZ+Bpa1Gwo4pSJCB9UB01xbLiWSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Th2X6ibv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4E039C43330;
+	 In-Reply-To:To:Cc; b=MuXRyhtecUSoPckY/CWN3oZew14d9WgwGSwZu8gRO1mWaA7r9rRbqtZFIDZqdTwGLwUjxsUZ33SW3DGFQCUdo5mSovuSDxETGSlqnkqntmtbRIkv5vlQ0ZC3tVD5YdZYrF7PC+YW+DVwqvpBfrA6JVts28DV5p/QB7cLWc1iTdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blI9ymBL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 570A2C4167E;
 	Thu, 28 Mar 2024 15:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1711640657;
-	bh=V9eApfrx/luUPTr0ui9HIhkRp0aZQ7q1nffr8rRLCu8=;
+	bh=m54DIObMwh/oz5+MbWMsGWkY8mPKrW5ppEQGy+WuUHE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Th2X6ibvVdQ+kgNVc65KbGnF7WOCx3uMpiu8utEkAUXEGRRyiJ3LbFumLPaz3pwRm
-	 hcw4QdtEZZuBdny5UnP4IaNjE7dVBkQCCEdiObTSlwHmPC7kom1wsZymTk2r/jHMak
-	 dncXWL3zaqzj7Qbr7PHgWpgppPhXFHvwYxZi1ZDQcjru8Hu65ql3UUvqT77YNsHI/e
-	 Iw8CpuIG4z8NiKPFFQ5Bjt7RoAXs54ourHz77o36j2YkJUX5lMkxEX7NfG9IDOkTxm
-	 CKkvDgPkYHnfHpKMepZQh9d5AmD8z4/9xbnYX+CBXGKyqJQMfByDIF2BwOcJV20P/+
-	 35HeG/vANiIlA==
+	b=blI9ymBLAdeCz65Zk6FER0mdzRf4BJX5XXCfQm+xq0oDX0Kles1Tm7BO2x0eLXc6E
+	 z4WuXotOFLuPpzxm/EuKtkcq1sf4l66nOd86iQ1qLEwLo52/Hc3WHIvF9tXtiRuyp7
+	 G4i19vbIOJQ+jyVwJlKqc/RO1Md83z0HjDJ7tUl9pr/pBTVMAE4TgEEjzimybB19N4
+	 gHypPOB5fkcKfdZszZIBjD3OBf2+ALf0ZP/cZRQ8EbcIFG+7LxDp7N/+sJoR5MK7+O
+	 e58AioddtRH0bcp6vOJ6wnT7zKVAmmb5R3vnMFMaWVsmDIRLI31K6qRhzBHNZg4+tL
+	 nAVEZkfaeHUsA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34012C54E64;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45913CD1288;
 	Thu, 28 Mar 2024 15:44:17 +0000 (UTC)
 From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
-Date: Thu, 28 Mar 2024 16:44:04 +0100
-Subject: [PATCH v3 03/10] ftrace: Remove the now superfluous sentinel
+Date: Thu, 28 Mar 2024 16:44:05 +0100
+Subject: [PATCH v3 04/10] timekeeping: Remove the now superfluous sentinel
  elements from ctl_table array
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-3-285d273912fe@samsung.com>
+Message-Id: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-4-285d273912fe@samsung.com>
 References: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-0-285d273912fe@samsung.com>
 In-Reply-To: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-0-285d273912fe@samsung.com>
 To: Luis Chamberlain <mcgrof@kernel.org>, josh@joshtriplett.org, 
@@ -89,19 +89,19 @@ Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
  linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  bpf@vger.kernel.org, Joel Granados <j.granados@samsung.com>
 X-Mailer: b4 0.13-dev-2d940
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1508;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=864;
  i=j.granados@samsung.com; h=from:subject:message-id;
- bh=1araE0kn/61sWG3kWH8OhE3BK5Hy2HOuryBQQ689H28=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGYFkEpW98gjG1D2aFsgWF2O5xiJynGheSz82
- sXxRtohHqsNOIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmBZBKAAoJELqXzVK3
- lkFPCzUL/0SG+3ODZAcC8VOhC+0GoOi4kE7faOWvyEi+zuJjGTMcwSwNf4IntNxUSlKxLruqmu/
- sXS4rISd6LajFHPlALx1lSwYZelfgle5kubkTKxbxuV4A4EpjxsYLKDFRoFS9tmt60X7MzNuPrv
- 2ARWH2eTismjVuHNYgaovyHiC3/nZ7Eq0vltmN6f9/mtI49KNhKAy6wgXicwxtfN5J5aRPKDmKF
- +Crd6eRk4VyjwwB2aR2w++kmDsP6Cjnha4ho87e4AWqV/7W9HLnSNaPkAilDaK+ZwdYvCX/6rhb
- nSA1+bIMwy8cuyKK461nhWqG3gxm1jyfzvwyM3bhD6Z4yl22JmRQg2TxIPM6rEulBpeOGoNfhm8
- 60+H0uxestVapnhLqg3gSUklk+b5Qv4YsJ9XowjlmPrCMKeLBtb6t8Wxpm+72Jba9Nba9Gyx7wB
- 6nHOXmVGMy7L5w1LCv/2Im1SpQ9JngLB+Gni4XCGVVQhaq/cxpd2dV7EQKFfhCDOo17ZGL+oWK6
- +0=
+ bh=lyDve8Ip2KotGee+CC44snEs+zn3osht1uA6DiUuFwM=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGYFkEvKQgW+speYF787yYEHJDVSSH0tynerp
+ 0z73pdqmzw2W4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmBZBLAAoJELqXzVK3
+ lkFPUf0L/2YxDsRniEfrTN5jngDVulSOxiSB4qlNJo3EzgiFbMwGXq7qj0iTqrS6bzM/zQHQelM
+ z6gGiMM/+yQqVBtt6i2wdHtGwRnjt/nOKL92syZf1XmUfb+DsmS3DsDC7HkhkySpWOEQLXPlh/Y
+ vUKou/EVCej3uXWn3Sl9vZCixhu8HctQUpDljEkp3s/xydB+H6sl4c2TLRxDTAPYYbNP9MxMRxK
+ LkPyLkmy7JCPkBw7vwDDId4ex2xU1aj5niZoIT3wH1FjULTg62tRugiLtaGtuoiqklfXBw7gc7q
+ 53t3OF7HpFn26CSo5aJ3mgJZ97lfhYYtS2ji1qpRV9QdPw8k1cgbwYjnMeZvLRecFt7EabhMVOg
+ +mi6NtJgoTt0zZjsuM8IeSGvTk96fszBpJuSQMJeUv+k0PnWx3KTP0gZl6nQNSt0eTxRFAYy67P
+ 5Ugy64D77ah5RGxSUFzdEH9ayB60lVGT8bjRQn/Ix3kzI07osOgMD3M7f6SBTzAbLj7ghOBbLo6
+ Ww=
 X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
@@ -117,40 +117,25 @@ will reduce the overall build time size of the kernel and run time
 memory bloat by ~64 bytes per sentinel (further information Link :
 https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
 
-Remove sentinel elements from ftrace_sysctls and user_event_sysctls
+Remove sentinel element from time_sysctl
 
-Acked-by: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Acked-by: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 Signed-off-by: Joel Granados <j.granados@samsung.com>
 ---
- kernel/trace/ftrace.c            | 1 -
- kernel/trace/trace_events_user.c | 1 -
- 2 files changed, 2 deletions(-)
+ kernel/time/timer.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index da1710499698..6cec53aa45a6 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -8270,7 +8270,6 @@ static struct ctl_table ftrace_sysctls[] = {
- 		.mode           = 0644,
- 		.proc_handler   = ftrace_enable_sysctl,
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index dee29f1f5b75..9d107f4b506c 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -312,7 +312,6 @@ static struct ctl_table timer_sysctl[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
  	},
 -	{}
  };
  
- static int __init ftrace_sysctl_init(void)
-diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
-index 70d428c394b6..304ceed9fd7d 100644
---- a/kernel/trace/trace_events_user.c
-+++ b/kernel/trace/trace_events_user.c
-@@ -2833,7 +2833,6 @@ static struct ctl_table user_event_sysctls[] = {
- 		.mode		= 0644,
- 		.proc_handler	= set_max_user_events_sysctl,
- 	},
--	{}
- };
- 
- static int __init trace_events_user_init(void)
+ static int __init timer_sysctl_init(void)
 
 -- 
 2.43.0
