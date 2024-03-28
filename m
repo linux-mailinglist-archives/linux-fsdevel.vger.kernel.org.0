@@ -1,68 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-15520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB4E88FEB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 13:08:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0516688FECF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 13:18:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 978F4294FDA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 12:08:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80BAE28B890
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 12:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429547F7CC;
-	Thu, 28 Mar 2024 12:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7BC7E772;
+	Thu, 28 Mar 2024 12:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lm1wJG5R"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="LJzPCpjn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928337F492;
-	Thu, 28 Mar 2024 12:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439DA57887
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 12:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711627659; cv=none; b=BxCYxrmFoHq+3+y4WO0Y9zXON0Wzo1G+ZZevfUqj4DX8zZ1fmEk8rBwHC+m7jBNA0ildXHrJgx8DMDYGoCtSHZA+kZElcujvB+YBC9wpk84zBEKiSJw8zvWCEDmy6iCv128HgBVNxBJ2uBlF/8tnW8Y8kQUk8W8IkTVVDzpBYeg=
+	t=1711628299; cv=none; b=O/9tUoSctzRkJS8LrQKZ8rEy/opaEhRiIIkdQCmjy+iaKuE0WQ9zk5YwOf73cNshl/UcKxYWnSb3pkTxpsYyMGY+ihhw0BElIxFcDa+4YIprACRfCtyzebvFE4J+rX9AQWO7wbtnJ/C/jdoecEL1d9wm2dBWO8TcHAlsn1gwll0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711627659; c=relaxed/simple;
-	bh=6Sprpbd1J4ixBjfWxq7eYXtgePBQTW5+LF9lJpAp48E=;
+	s=arc-20240116; t=1711628299; c=relaxed/simple;
+	bh=Lwg1fmCknR8Ry1SW3M22oRRlcnp37S8ciED/40rgmkc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lasc004UHxELin2Jct3OfRSjZWtR1+nLI5XmtX0fi92GOsw0DgXttP0DkGKDD0P4po542Tkx4TRNTeibcpUzxvOlp072SKTqM3q1sJTThCM5nQKGLrb9zwMi4mb3bfqFoaI35ZRiYLTOc/OTUqHqUbGW+hXRgs4+g04gBVOjaeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lm1wJG5R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE126C433C7;
-	Thu, 28 Mar 2024 12:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711627659;
-	bh=6Sprpbd1J4ixBjfWxq7eYXtgePBQTW5+LF9lJpAp48E=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqnU6Apy8IJwLBJJbaOe73nm0EgGSch2oUxmBWRS3cmmAAiDeSrPTkxlHTFSlqMLRC+8VEp4dIyEbyvDM391UfJT/xfZbny2Z1ZCep3sGsxKicajlPbunKAohxZON8brETXmvpDcA7tJAirjiXr2/Z3oDQhrKp5Tl4WekzdZmcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=LJzPCpjn; arc=none smtp.client-ip=83.166.143.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V52Sb0bMRzTcl;
+	Thu, 28 Mar 2024 13:11:11 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V52SZ09ymzMpnPg;
+	Thu, 28 Mar 2024 13:11:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1711627870;
+	bh=Lwg1fmCknR8Ry1SW3M22oRRlcnp37S8ciED/40rgmkc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lm1wJG5RHh/ru2UpvbHkaB1xswp+qwVU3wTbvWy6Z3t5A9nlCMuFSp7Hip030F5a2
-	 6JnptxFB4BXinTXlXdlaMI0YhfQHJavaKWLU5z6FU1INfQTKlA8noN7i/ll9lwFnlQ
-	 J7Ebh/0Eo0tPsO0KXmd75Od/Jyk0cSzq1tJpUKGfT8Fgf3W7i5tvoKuRk6X6OhJTe1
-	 h21T2LcOZn750o4siUsC7Nkfr/pvLevDB1QFn/7U01hn+aHm10RdSiiPMLDjgsRj1a
-	 f2fG40utRPLFee3aPTmGxz1qb+JXN3SYbEbDAGiTIXVXpWEhw96hGEuCvMBDfixf5j
-	 BzUdQ2vL1x0UA==
-Date: Thu, 28 Mar 2024 13:07:33 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	CIFS <linux-cifs@vger.kernel.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Christian Brauner <christian@brauner.io>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Paul Moore <paul@paul-moore.com>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
-Subject: Re: kernel crash in mknod
-Message-ID: <20240328-verfrachten-geebnet-19181fb9ad65@brauner>
-References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
- <20240324054636.GT538574@ZenIV>
- <3441a4a1140944f5b418b70f557bca72@huawei.com>
- <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
- <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
- <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
- <4a0b28ba-be57-4443-b91e-1a744a0feabf@huaweicloud.com>
- <20240328-raushalten-krass-cb040068bde9@brauner>
- <4ad908dc-ddc5-492e-8ed4-d304156b5810@huaweicloud.com>
+	b=LJzPCpjnVdtNhC6IGj0hF26ckJqDOwQ78sc27EX27XxPQfii8VKyDbHy7Jj+dWy9+
+	 dOl1TJyUXHgDbYb/vQehEMpoyYVHGQ3BPtzWIXG3Lb2rq1luUnHAvdVw7nXDa+LW/0
+	 8fdHMmMIxnPEoFSq3CjIAMuZ6Xxe0xGzPSDS9RIE=
+Date: Thu, 28 Mar 2024 13:11:09 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
+	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v13 10/10] fs/ioctl: Add a comment to keep the logic in
+ sync with the Landlock LSM
+Message-ID: <20240328.ahgh8EiLahpa@digikod.net>
+References: <20240327131040.158777-1-gnoack@google.com>
+ <20240327131040.158777-11-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,52 +64,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4ad908dc-ddc5-492e-8ed4-d304156b5810@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240327131040.158777-11-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Mar 28, 2024 at 01:24:25PM +0200, Roberto Sassu wrote:
-> On 3/28/2024 12:08 PM, Christian Brauner wrote:
-> > On Thu, Mar 28, 2024 at 12:53:40PM +0200, Roberto Sassu wrote:
-> > > On 3/26/2024 12:40 PM, Christian Brauner wrote:
-> > > > > we can change the parameter of security_path_post_mknod() from
-> > > > > dentry to inode?
-> > > > 
-> > > > If all current callers only operate on the inode then it seems the best
-> > > > to only pass the inode. If there's some reason someone later needs a
-> > > > dentry the hook can always be changed.
-> > > 
-> > > Ok, so the crash is likely caused by:
-> > > 
-> > > void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry
-> > > *dentry)
-> > > {
-> > >          if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > > 
-> > > I guess we can also simply check if there is an inode attached to the
-> > > dentry, to minimize the changes. I can do both.
-> > > 
-> > > More technical question, do I need to do extra checks on the dentry before
-> > > calling security_path_post_mknod()?
-> > 
-> > Why do you need the dentry? The two users I see are ima in [1] and evm in [2].
-> > Both of them don't care about the dentry. They only care about the
-> > inode. So why is that hook not just:
+On Wed, Mar 27, 2024 at 01:10:40PM +0000, Günther Noack wrote:
+> Landlock's IOCTL support needs to partially replicate the list of
+> IOCTLs from do_vfs_ioctl().  The list of commands implemented in
+> do_vfs_ioctl() should be kept in sync with Landlock's IOCTL policies.
 > 
-> Sure, I can definitely do that. Seems an easier fix to do an extra check in
-> security_path_post_mknod(), rather than changing the parameter everywhere.
-
-You only have two callers and the generic implementation.
-
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>  fs/ioctl.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Next time, when we introduce new LSM hooks we can try to introduce more
-> specific parameters.
-> 
-> Also, consider that the pre hook security_path_mknod() has the dentry as
-> parameter. For symmetry, we could keep it in the post hook.
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 1d5abfdf0f22..661b46125669 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -796,6 +796,9 @@ static int ioctl_get_fs_sysfs_path(struct file *file, void __user *argp)
+>   *
+>   * When you add any new common ioctls to the switches above and below,
+>   * please ensure they have compatible arguments in compat mode.
+> + *
+> + * The commands which are implemented here should be kept in sync with the IOCTL
+> + * security policies in the Landlock LSM.
 
-I think that's not that important.
+Suggestion:
+"with the Landlock IOCTL security policy defined in security/landlock/fs.c"
 
+>   */
+>  static int do_vfs_ioctl(struct file *filp, unsigned int fd,
+>  			unsigned int cmd, unsigned long arg)
+> -- 
+> 2.44.0.396.g6e790dbe36-goog
 > 
-> What I was also asking is if I can still call d_backing_inode() on the
-> dentry without extra checks, and avoiding the IS_PRIVATE() check if the
-> former returns NULL.
+> 
 
