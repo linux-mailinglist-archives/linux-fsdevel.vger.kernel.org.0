@@ -1,151 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-15510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE3B88F9F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 09:24:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A32C088F9FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 09:26:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431BF2934BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 08:24:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05B14B22764
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 08:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AAC5491D;
-	Thu, 28 Mar 2024 08:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6BF54BDA;
+	Thu, 28 Mar 2024 08:26:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680B5224D0;
-	Thu, 28 Mar 2024 08:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25CB1C288
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 08:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711614246; cv=none; b=nVOAfxDyCYc9MsCU0VRk+3U/mGOHwVIdD2po60rYCjhZV+/YgCBrylJL5iMFLLzt7dskXbhhTk6QVOeuFtJHRlA7R9zNlxlgCQ/+I+xIAD0SagP3X7G3CPkmDWM9GCjMuWbDFO3TuaPgE+1kqKFIWmiua+zOHX1wCV2lWYBMT5Q=
+	t=1711614383; cv=none; b=F/tqBInp3GUOoFTGjlnN5WrH5cETKS71jZwUIXPaXLChahISQ6mi5tHHywA5W3XbbJovwWQwqycUYWSSAPg96yCiRy9HAjrtEOyyeqq4dFSo7wXEJuL6OpmQZ36aTVzAgX9ZbsKhvTeTMlhi8mxKzKOjK4F+U1pQByHBIVJRL7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711614246; c=relaxed/simple;
-	bh=3wXLtibn6+YJL74upJjhVxc8aFa7QOdx6HvjY210UyA=;
-	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CB/YPJJiFR1ycJ/UOevRyP/fHNFSCm1oDKTh95d4WNT6VRKVObtkD7aKMinthURqNlUX7uhiSjhTfVHjlmpb8LNGf9DBFpkxOY0+pque23MAgTAR98A+eKG/dEbr6g0+HKJb+qJf3oarnWqtqlL1r078i1F0gFSskPCmrvvp/bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4V4xQH2QN1z4f3nbv;
-	Thu, 28 Mar 2024 16:23:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7D0161A0572;
-	Thu, 28 Mar 2024 16:23:59 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP4 (Coremail) with SMTP id gCh0CgCn+mwcKQVm6yfcIQ--.6069S2;
-	Thu, 28 Mar 2024 16:23:58 +0800 (CST)
-Subject: Re: [PATCH v2 0/6] Improve visibility of writeback
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: willy@infradead.org, jack@suse.cz, bfoster@redhat.com, tj@kernel.org,
- dsterba@suse.com, mjguzik@gmail.com, dhowells@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-References: <20240327155751.3536-1-shikemeng@huaweicloud.com>
- <20240327104010.73d1180fbabe586f9e3f7bd2@linux-foundation.org>
- <05bae65c-99fa-34f2-43e6-9a16f7d1ddc7@huaweicloud.com>
-Message-ID: <2695c070-6490-172a-e735-521f6412aa74@huaweicloud.com>
-Date: Thu, 28 Mar 2024 16:23:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1711614383; c=relaxed/simple;
+	bh=MFs4na4sL+FUvZ0Dm7UY4YPmYNJejcDkKRGL8VyoNns=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SzjxoVICbrKKnG15BXYai5AWge7gOX2pfBsOFk0kaisH+AT4hpEG8oNxqxAf2Mv/ZjoIdn/petK5yYSIEAGIQUl4XdcEjbp4CzcvBjWMTXHPBieozyhT2WfHRd2rEZGpaYyfKlYiN5UbytXbBUhROamdjI3jJsRmQ3RMn9JIEGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-368a72042b9so14043305ab.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 01:26:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711614381; x=1712219181;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bAoSgmgvBXbxtYx8pCIlrNKsK43NOKCP92pCO6ltbP4=;
+        b=llBhrbLD/4dYUSl9vXBiRMnKEE7tK/zFuHufsUGCSrGbZGf3sqrorhoUmZK6RMN7p7
+         BG35B1FNeBwflpVD6dYPPLt31ON7oCguUSskhbYr9V4pZ29SB0MZDpykjFxAapQYSZ8Z
+         fbSC8TCKSDGB/AE66Ej8JBFB9KBIryDJzeMXPje3mfipq0G8tAOQlP0EA5RbnKgB/Asx
+         l2E2NXK8KF8xUfiQszMLiWk7u18SEnzZXJbLq4FwGOeXeATMOqY20tbTcKSCzdGr05Ga
+         OR8kvJa2hXUtBdEkQYrM3IpuAZ1tVjA4lfpinPNAcVP6cj58Xht63LBrTm86NokYnTQk
+         yTYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFfiXnn6bRpFU4DDdWORa4k4ErMYlf9ps8a50CdbvOW10UFMlnBEInEX6TZm4BSubI074P9dF5kEhq8XKYmtVw8rzs3it/WtOYpZk51g==
+X-Gm-Message-State: AOJu0YxXrQ9w61FMsFt6n4xnIPFAZaMTCs/tF0q7jTJOop7Dc7/qbagX
+	QCdcoFCi3wx23uBDo7YoR1NZL66CKTSyhmzWhkABGqleSmFqqFzMgPzJ4FymQ5p14WaasgKeH0I
+	yPDe+I1EWCf5+2A/XDW5DOn3SYIUkbfyVE+RkoaaxcYsnWoHcARlEO+o=
+X-Google-Smtp-Source: AGHT+IHgK5viOd0F+bDHqRYdcaYQ6s8+oCcIoWMtxdMcRU+n/HwfVQ5of75lvk5RAQ44Nz4GNM99q0PodqUqNOfhVuEhp/lNFdgN
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <05bae65c-99fa-34f2-43e6-9a16f7d1ddc7@huaweicloud.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn+mwcKQVm6yfcIQ--.6069S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrykZrW3WF4rJw45Wr1DAwb_yoW5AFyUpa
-	95Can8Kry7CF1xJwnakan2yw12qws8ta17G3sxXr1fAFW29FyvvrZ29rWY9F1UAwsFkFy2
-	qFsrWFyvvw1qy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU1zuWJUUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+X-Received: by 2002:a92:d744:0:b0:368:72f7:a102 with SMTP id
+ e4-20020a92d744000000b0036872f7a102mr39355ilq.0.1711614381036; Thu, 28 Mar
+ 2024 01:26:21 -0700 (PDT)
+Date: Thu, 28 Mar 2024 01:26:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002cabeb0614b447e9@google.com>
+Subject: [syzbot] [jfs?] kernel BUG in txLock (2)
+From: syzbot <syzbot+a843f6ae2130a987d63b@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=130728b5180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
+dashboard link: https://syzkaller.appspot.com/bug?extid=a843f6ae2130a987d63b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1068ec51180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c6f0ce180000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f6c04726a2ae/disk-fe46a7dd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/09c26ce901ea/vmlinux-fe46a7dd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/134acf7f5322/bzImage-fe46a7dd.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/60c8566d11a7/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a843f6ae2130a987d63b@syzkaller.appspotmail.com
+
+Locker's tblock: ffffc90002631850: 8be235c0 ffffffff 00000200 00000000
+Locker's tblock: ffffc90002631860: 02631860 ffffc900 02631860 ffffc900
+Locker's tblock: ffffc90002631870: 00000004 0000001c 00000008 00000000
+Tlock: ffffc900028522d0: 0003000e 20208040 229bc9b0 ffff8880
+Tlock: ffffc900028522e0: 775896b0 ffff8880 03140000 05002000
+Tlock: ffffc900028522f0: 06030a00 0000020d 00000000 00000000
+Tlock: ffffc90002852300: 00000000 00000000 00000000 00000000
+Tlock: ffffc90002852310: 00000000 00000000
+------------[ cut here ]------------
+kernel BUG at fs/jfs/jfs_txnmgr.c:834!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 PID: 5076 Comm: syz-executor283 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
+RIP: 0010:txLock+0x1ed3/0x21a0 fs/jfs/jfs_txnmgr.c:834
+Code: 48 c7 c6 00 3c e2 8b ba 01 00 00 00 b9 10 00 00 00 41 b8 04 00 00 00 4c 8b 4c 24 20 6a 00 6a 48 e8 52 e6 7a 01 48 83 c4 10 90 <0f> 0b e8 56 4e 72 fe 4c 89 f7 48 c7 c6 00 44 e2 8b e8 67 33 b8 fe
+RSP: 0018:ffffc900045070c0 EFLAGS: 00010286
+RAX: 30bbfa8826d96700 RBX: 0000000000000010 RCX: ffff888028011e00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90004507210 R08: ffffffff8175c06c R09: fffffbfff1bf9650
+R10: dffffc0000000000 R11: fffffbfff1bf9650 R12: 1ffff9200050a45a
+R13: ffff888077586f00 R14: 000000000000005a R15: ffffc900028522d2
+FS:  00007f6aa27586c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6aa2758d58 CR3: 000000007b84e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ dtInsert+0xb0a/0x6b00 fs/jfs/jfs_dtree.c:881
+ jfs_create+0x7ba/0xb90 fs/jfs/namei.c:137
+ lookup_open fs/namei.c:3497 [inline]
+ open_last_lookups fs/namei.c:3566 [inline]
+ path_openat+0x1425/0x3240 fs/namei.c:3796
+ do_filp_open+0x235/0x490 fs/namei.c:3826
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+ do_sys_open fs/open.c:1421 [inline]
+ __do_sys_openat fs/open.c:1437 [inline]
+ __se_sys_openat fs/open.c:1432 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
+ do_syscall_64+0xfb/0x240
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+RIP: 0033:0x7f6aa27c2879
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6aa2758218 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f6aa284f6d8 RCX: 00007f6aa27c2879
+RDX: 000000000000275a RSI: 00000000200010c0 RDI: 00000000ffffff9c
+RBP: 00007f6aa284f6d0 R08: 00007fff5a3c9dc7 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6aa281c190
+R13: 0030656c69662f2e R14: 00007f6aa281607e R15: 3d6469672c647261
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:txLock+0x1ed3/0x21a0 fs/jfs/jfs_txnmgr.c:834
+Code: 48 c7 c6 00 3c e2 8b ba 01 00 00 00 b9 10 00 00 00 41 b8 04 00 00 00 4c 8b 4c 24 20 6a 00 6a 48 e8 52 e6 7a 01 48 83 c4 10 90 <0f> 0b e8 56 4e 72 fe 4c 89 f7 48 c7 c6 00 44 e2 8b e8 67 33 b8 fe
+RSP: 0018:ffffc900045070c0 EFLAGS: 00010286
+RAX: 30bbfa8826d96700 RBX: 0000000000000010 RCX: ffff888028011e00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90004507210 R08: ffffffff8175c06c R09: fffffbfff1bf9650
+R10: dffffc0000000000 R11: fffffbfff1bf9650 R12: 1ffff9200050a45a
+R13: ffff888077586f00 R14: 000000000000005a R15: ffffc900028522d2
+FS:  00007f6aa27586c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6aa2758d58 CR3: 000000007b84e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-on 3/28/2024 9:59 AM, Kemeng Shi wrote:
-> 
-> on 3/28/2024 1:40 AM, Andrew Morton wrote:
->> On Wed, 27 Mar 2024 23:57:45 +0800 Kemeng Shi <shikemeng@huaweicloud.com> wrote:
->>
->>> This series tries to improve visilibity of writeback.
->>
->> Well...  why?  Is anyone usefully using the existing instrumentation? 
->> What is to be gained by expanding it further?  What is the case for
->> adding this code?
->>
->> I don't recall hearing of anyone using the existing debug
->> instrumentation so perhaps we should remove it!
-> Hi Andrew, this was discussed in [1]. In short, I use the
-> debug files to test change in submit patchset [1]. The
-> wb_monitor.py is suggested by Tejun in [2] to improve
-> visibility of writeback.
-> I use the debug files to test change in [1]. The wb_monitor.py is suggested by Tejun
-> in [2] to improve visibility of writeback.
->>
->> Also, I hit a build error and a pile of warnings with an arm
->> allnoconfig build.
-With arm allnoconfig build on uptodated mm-unstable branch, I don't
-hit any build error but only some warnings as following:
-...
-mm/page-writeback.c: In function ¡®cgwb_calc_thresh¡¯:
-mm/page-writeback.c:906:13: warning: ¡®writeback¡¯ is used uninitialized in this function [-Wuninitialized]
-  906 |  mdtc.dirty += writeback;
-      |  ~~~~~~~~~~~^~~~~~~~~~~~
-In file included from ./include/linux/kernel.h:28,
-                 from mm/page-writeback.c:15:
-./include/linux/minmax.h:46:54: warning: ¡®filepages¡¯ is used uninitialized in this function [-Wuninitialized]
-   46 | #define __cmp(op, x, y) ((x) __cmp_op_##op (y) ? (x) : (y))
-      |                                                      ^
-mm/page-writeback.c:898:16: note: ¡®filepages¡¯ was declared here
-  898 |  unsigned long filepages, headroom, writeback;
-      |                ^~~~~~~~~
-In file included from ./include/linux/kernel.h:28,
-                 from mm/page-writeback.c:15:
-./include/linux/minmax.h:46:54: warning: ¡®headroom¡¯ is used uninitialized in this function [-Wuninitialized]
-   46 | #define __cmp(op, x, y) ((x) __cmp_op_##op (y) ? (x) : (y))
-      |                                                      ^
-mm/page-writeback.c:898:27: note: ¡®headroom¡¯ was declared here
-  898 |  unsigned long filepages, headroom, writeback;
-      |                           ^~~~~~~~
-...
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-The only reason I can think of is that I also apply patchset [1]
-for build. I mentioned patchset [1] in cover letter but I forgot
-to notify the dependency to the patchset.
-If this is the reason to blame for buidl error, I will send a new
-set based on mm-unstable in next version.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Thanks,
-Kemeng
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-[1] https://lore.kernel.org/lkml/20240123183332.876854-1-shikemeng@huaweicloud.com/T/#mc6455784a63d0f8aa1a2f5aff325abcdf9336b76
->>
-> Sorry for this, I only tested on x86. I will look into this and
-> fix the build problem in next version.
-> 
-> [1] https://lore.kernel.org/lkml/44e3b910-8b52-5583-f8a9-37105bf5e5b6@huaweicloud.com/
-> [2] https://lore.kernel.org/lkml/a747dc7d-f24a-08bd-d969-d3fb35e151b7@huaweicloud.com/
-> [3] https://lore.kernel.org/lkml/ZcUsOb_fyvYr-zZ-@slm.duckdns.org/
-> 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
