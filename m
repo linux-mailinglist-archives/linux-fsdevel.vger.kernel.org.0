@@ -1,120 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-15580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4319890634
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 17:49:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF70189063C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 17:49:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ECD829EBB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4161F27F13
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EA812D76F;
-	Thu, 28 Mar 2024 16:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F277D5A782;
+	Thu, 28 Mar 2024 16:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DXOp6IKO"
+	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="Npio282/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from box.fidei.email (box.fidei.email [71.19.144.250])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048053BBC7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 16:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89B93BBCB;
+	Thu, 28 Mar 2024 16:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711644238; cv=none; b=CG1MP72w8BL88JfAUROdfcv9OtzI+7e9dkD5KiXAVIzJ5nB1oK2E7hT4wGuJ55/JtP4DE8PkxigZk4xfCJmeG7ZfbE4e4zUsnGluJmesbzdkJaTiuacmSEPM4JtgOhgc4a8vi4CnNY7/19tOYb+4BYLAHMlj3pmRrWeksjIXB7g=
+	t=1711644371; cv=none; b=pMNY5ky93s5USSQdOLdA21E44Xf68gEaJEpbJhaSrO7t2EAhyLrzPxxrwDv/J+69c6oNEhBO7AWLQ4RV6oMYKl5544uBnShXdgyU4BtCANO8G23RBAdt3Bc0PVlt1Nh4i+a26T3xLFbYwXFhttppPPFNCovAlOXqCDSMaG4Ouc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711644238; c=relaxed/simple;
-	bh=+bSrKAtDF5uJe/MOUQh6w++8XZ49Zs92jJVUIiROUZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acAvIOgHHKl5kqEaop1ol2RcWHqG4/bQDq3GxUX+w/npFOvsTla9Z7UbBbtURjh0fE/yFlqv04PB2xR+PSByYCom2kgYQY+KstWCz9TVrKtgyvTB2YVd21MpakAKJaC3p695GSuURHon7TEy9+oKx8hTTrF+SxPRx9HxpwrFqNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DXOp6IKO; arc=none smtp.client-ip=83.166.143.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V58WB1Cs4zY8m;
-	Thu, 28 Mar 2024 17:43:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711644230;
-	bh=+bSrKAtDF5uJe/MOUQh6w++8XZ49Zs92jJVUIiROUZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DXOp6IKO55i6BlFAuMxhPG/l0JvRNaGEgg0nV1UX+hFYw+Xy3yL58Pps5MyuS9PRf
-	 9YqFZhuu9iIisMmS2TGxsOZOkcu8z1JihsOCZBH9Pe9DEkLg6iGTTCcLOx1UA8fisE
-	 iDxv2hytl/l2wyx2AufkXulw49xs5We8HMNXp/RU=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V58W9410hzsB;
-	Thu, 28 Mar 2024 17:43:49 +0100 (CET)
-Date: Thu, 28 Mar 2024 17:43:49 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v13 10/10] fs/ioctl: Add a comment to keep the logic in
- sync with the Landlock LSM
-Message-ID: <20240328.mahn4seChaej@digikod.net>
-References: <20240327131040.158777-1-gnoack@google.com>
- <20240327131040.158777-11-gnoack@google.com>
- <20240328.ahgh8EiLahpa@digikod.net>
- <CAHC9VhT0SjH19ToK7=5d5hdkP-ChTpEEaeHbM0=K8ni_ECGQcw@mail.gmail.com>
+	s=arc-20240116; t=1711644371; c=relaxed/simple;
+	bh=VD/BQzvJP3HAh30UmIKf457hjqfLzZGWvqtxZ5kvzv0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I4yuL1Tv4wPKHY6FAebxZ0bWCgNkotvRDAL+hZq0wncbxxyPLZd23tmgTwJU19V9osLr22hPoTxmRXjDzgZ0eXZUAjffM8VXW30Y2IsdkeE/iXa6elYGdVmrLM/QINJ7DTXV1TRxVG/TFx6pzri5PWIBNw9LHdg8EXbBw36KIN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=Npio282/; arc=none smtp.client-ip=71.19.144.250
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
+Received: from authenticated-user (box.fidei.email [71.19.144.250])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	by box.fidei.email (Postfix) with ESMTPSA id DC90782891;
+	Thu, 28 Mar 2024 12:46:06 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
+	t=1711644368; bh=VD/BQzvJP3HAh30UmIKf457hjqfLzZGWvqtxZ5kvzv0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Npio282/c20sA9WVJ7zJi/Sdc3g2iBWg+7m9VWKJ9mvdUR+43+EqYY1rn/97mvd7p
+	 GpnjwrIvXG8wwCnnD4Vn/GDtokiIDmnL6yEjQt8Q7eMghmuWGFD/9gqAqR8lWYZix8
+	 c2l6d/hlZJ0+/7jBEWeLGCZmGfFOQPIwE6B5gf8xJ00N0xQJXButzJRez1tvWd7DW5
+	 YRT1jVWHqfoOh7keHgj9LDCLWvB4m9Zh1gheqHXsrRpXGlpvMEJ7p/YzbaYlQRwCKx
+	 t1bMLIvv5pG3OcCTPWwoKDHTqt1p3H6tUOhviDZp22sy+pvwyoSxd2l+p/KEEW+sUI
+	 CEwvuS6m4LJjA==
+Message-ID: <a58ad76f-780e-42de-86b3-44e24164d945@dorminy.me>
+Date: Thu, 28 Mar 2024 12:46:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhT0SjH19ToK7=5d5hdkP-ChTpEEaeHbM0=K8ni_ECGQcw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Subject: Re: [PATCH] fuse: increase FUSE_MAX_MAX_PAGES limit
+To: Bernd Schubert <bernd.schubert@fastmail.fm>,
+ Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhangjiachen.jaycee@bytedance.com
+References: <20240124070512.52207-1-jefflexu@linux.alibaba.com>
+ <CAJfpegs10SdtzNXJfj3=vxoAZMhksT5A1u5W5L6nKL-P2UOuLQ@mail.gmail.com>
+ <6e6bef3d-dd26-45ce-bc4a-c04a960dfb9c@linux.alibaba.com>
+ <b4e6b930-ed06-4e0d-b17d-61d05381ac92@linux.alibaba.com>
+ <27b34186-bc7c-4f3c-8818-ee73eb3f82ba@linux.alibaba.com>
+ <CAJfpegvLUrqkCkVc=yTXcjZyNNQEG4Z4c6TONEZHGGmjiQ5X2g@mail.gmail.com>
+ <7e79a9fa-99a0-47e5-bc39-107f89852d8d@linux.alibaba.com>
+ <5343dc29-83cb-49b4-91ff-57bbd0eaa1df@fastmail.fm>
+ <cb39ba49-eada-44b4-97fd-ea27ac8ba1f4@linux.alibaba.com>
+ <b24ed720-5490-46e7-8f64-0410d6ea23b5@fastmail.fm>
+Content-Language: en-US
+From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+In-Reply-To: <b24ed720-5490-46e7-8f64-0410d6ea23b5@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 28, 2024 at 09:08:13AM -0400, Paul Moore wrote:
-> On Thu, Mar 28, 2024 at 8:11 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Wed, Mar 27, 2024 at 01:10:40PM +0000, Günther Noack wrote:
-> > > Landlock's IOCTL support needs to partially replicate the list of
-> > > IOCTLs from do_vfs_ioctl().  The list of commands implemented in
-> > > do_vfs_ioctl() should be kept in sync with Landlock's IOCTL policies.
-> > >
-> > > Signed-off-by: Günther Noack <gnoack@google.com>
-> > > ---
-> > >  fs/ioctl.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > > index 1d5abfdf0f22..661b46125669 100644
-> > > --- a/fs/ioctl.c
-> > > +++ b/fs/ioctl.c
-> > > @@ -796,6 +796,9 @@ static int ioctl_get_fs_sysfs_path(struct file *file, void __user *argp)
-> > >   *
-> > >   * When you add any new common ioctls to the switches above and below,
-> > >   * please ensure they have compatible arguments in compat mode.
-> > > + *
-> > > + * The commands which are implemented here should be kept in sync with the IOCTL
-> > > + * security policies in the Landlock LSM.
-> >
-> > Suggestion:
-> > "with the Landlock IOCTL security policy defined in security/landlock/fs.c"
-> 
-> We really shouldn't have any comments or code outside of the security/
-> directory that reference a specific LSM implementation.  I'm sure
-> there are probably a few old comments referring to SELinux, but those
-> are bugs as far as I'm concerned (if anyone spots one, please let me
-> know or send me a patch!).
-> 
-> How about the following?
-> 
-> "The LSM list should also be notified of any command additions or
 
-"The LSM mailing list..."
 
-> changes as specific LSMs may be affected."
-
-Looks good.
-
+On 3/7/24 17:06, Bernd Schubert wrote:
+> Hi Jingbo,
 > 
-> -- 
-> paul-moore.com
+> On 3/7/24 03:16, Jingbo Xu wrote:
+>> Hi Bernd,
+>>
+>> On 3/6/24 11:45 PM, Bernd Schubert wrote:
+>>>
+>>>
+>>> On 3/6/24 14:32, Jingbo Xu wrote:
+>>>>
+>>>>
+>>>> On 3/5/24 10:26 PM, Miklos Szeredi wrote:
+>>>>> On Mon, 26 Feb 2024 at 05:00, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>>>>>
+>>>>>> Hi Miklos,
+>>>>>>
+>>>>>> On 1/26/24 2:29 PM, Jingbo Xu wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 1/24/24 8:47 PM, Jingbo Xu wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 1/24/24 8:23 PM, Miklos Szeredi wrote:
+>>>>>>>>> On Wed, 24 Jan 2024 at 08:05, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>>>>>>>>>
+>>>>>>>>>> From: Xu Ji <laoji.jx@alibaba-inc.com>
+>>>>>>>>>>
+>>>>>>>>>> Increase FUSE_MAX_MAX_PAGES limit, so that the maximum data size of a
+>>>>>>>>>> single request is increased.
+>>>>>>>>>
+>>>>>>>>> The only worry is about where this memory is getting accounted to.
+>>>>>>>>> This needs to be thought through, since the we are increasing the
+>>>>>>>>> possible memory that an unprivileged user is allowed to pin.
+>>>>>>>
+>>>>>>> Apart from the request size, the maximum number of background requests,
+>>>>>>> i.e. max_background (12 by default, and configurable by the fuse
+>>>>>>> daemon), also limits the size of the memory that an unprivileged user
+>>>>>>> can pin.  But yes, it indeed increases the number proportionally by
+>>>>>>> increasing the maximum request size.
+>>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> This optimizes the write performance especially when the optimal IO size
+>>>>>>>>>> of the backend store at the fuse daemon side is greater than the original
+>>>>>>>>>> maximum request size (i.e. 1MB with 256 FUSE_MAX_MAX_PAGES and
+>>>>>>>>>> 4096 PAGE_SIZE).
+>>>>>>>>>>
+>>>>>>>>>> Be noted that this only increases the upper limit of the maximum request
+>>>>>>>>>> size, while the real maximum request size relies on the FUSE_INIT
+>>>>>>>>>> negotiation with the fuse daemon.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Xu Ji <laoji.jx@alibaba-inc.com>
+>>>>>>>>>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+>>>>>>>>>> ---
+>>>>>>>>>> I'm not sure if 1024 is adequate for FUSE_MAX_MAX_PAGES, as the
+>>>>>>>>>> Bytedance floks seems to had increased the maximum request size to 8M
+>>>>>>>>>> and saw a ~20% performance boost.
+>>>>>>>>>
+>>>>>>>>> The 20% is against the 256 pages, I guess.
+>>>>>>>>
+>>>>>>>> Yeah I guess so.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> It would be interesting to
+>>>>>>>>> see the how the number of pages per request affects performance and
+>>>>>>>>> why.
+>>>>>>>>
+>>>>>>>> To be honest, I'm not sure the root cause of the performance boost in
+>>>>>>>> bytedance's case.
+>>>>>>>>
+>>>>>>>> While in our internal use scenario, the optimal IO size of the backend
+>>>>>>>> store at the fuse server side is, e.g. 4MB, and thus if the maximum
+>>>>>>>> throughput can not be achieved with current 256 pages per request. IOW
+>>>>>>>> the backend store, e.g. a distributed parallel filesystem, get optimal
+>>>>>>>> performance when the data is aligned at 4MB boundary.  I can ask my folk
+>>>>>>>> who implements the fuse server to give more background info and the
+>>>>>>>> exact performance statistics.
+>>>>>>>
+>>>>>>> Here are more details about our internal use case:
+>>>>>>>
+>>>>>>> We have a fuse server used in our internal cloud scenarios, while the
+>>>>>>> backend store is actually a distributed filesystem.  That is, the fuse
+>>>>>>> server actually plays as the client of the remote distributed
+>>>>>>> filesystem.  The fuse server forwards the fuse requests to the remote
+>>>>>>> backing store through network, while the remote distributed filesystem
+>>>>>>> handles the IO requests, e.g. process the data from/to the persistent store.
+>>>>>>>
+>>>>>>> Then it comes the details of the remote distributed filesystem when it
+>>>>>>> process the requested data with the persistent store.
+>>>>>>>
+>>>>>>> [1] The remote distributed filesystem uses, e.g. a 8+3 mode, EC
+>>>>>>> (ErasureCode), where each fixed sized user data is split and stored as 8
+>>>>>>> data blocks plus 3 extra parity blocks. For example, with 512 bytes
+>>>>>>> block size, for each 4MB user data, it's split and stored as 8 (512
+>>>>>>> bytes) data blocks with 3 (512 bytes) parity blocks.
+>>>>>>>
+>>>>>>> It also utilize the stripe technology to boost the performance, for
+>>>>>>> example, there are 8 data disks and 3 parity disks in the above 8+3 mode
+>>>>>>> example, in which each stripe consists of 8 data blocks and 3 parity
+>>>>>>> blocks.
+>>>>>>>
+>>>>>>> [2] To avoid data corruption on power off, the remote distributed
+>>>>>>> filesystem commit a O_SYNC write right away once a write (fuse) request
+>>>>>>> received.  Since the EC described above, when the write fuse request is
+>>>>>>> not aligned on 4MB (the stripe size) boundary, say it's 1MB in size, the
+>>>>>>> other 3MB is read from the persistent store first, then compute the
+>>>>>>> extra 3 parity blocks with the complete 4MB stripe, and finally write
+>>>>>>> the 8 data blocks and 3 parity blocks down.
+>>>>>>>
+>>>>>>>
+>>>>>>> Thus the write amplification is un-neglectable and is the performance
+>>>>>>> bottleneck when the fuse request size is less than the stripe size.
+>>>>>>>
+>>>>>>> Here are some simple performance statistics with varying request size.
+>>>>>>> With 4MB stripe size, there's ~3x bandwidth improvement when the maximum
+>>>>>>> request size is increased from 256KB to 3.9MB, and another ~20%
+>>>>>>> improvement when the request size is increased to 4MB from 3.9MB.
+>>>>>
+>>>>> I sort of understand the issue, although my guess is that this could
+>>>>> be worked around in the client by coalescing writes.  This could be
+>>>>> done by adding a small delay before sending a write request off to the
+>>>>> network.
+>>>>>
+>>>>> Would that work in your case?
+>>>>
+>>>> It's possible but I'm not sure. I've asked my colleagues who working on
+>>>> the fuse server and the backend store, though have not been replied yet.
+>>>>   But I guess it's not as simple as increasing the maximum FUSE request
+>>>> size directly and thus more complexity gets involved.
+>>>>
+>>>> I can also understand the concern that this may increase the risk of
+>>>> pinning more memory footprint, and a more generic using scenario needs
+>>>> to be considered.  I can make it a private patch for our internal product.
+>>>>
+>>>> Thanks for the suggestions and discussion.
+>>>
+>>> It also gets kind of solved in my fuse-over-io-uring branch - as long as
+>>> there are enough free ring entries. I'm going to add in a flag there
+>>> that other CQEs might be follow up requests. Really time to post a new
+>>> version.
+>>
+>> Thanks for the information.  I've not read the fuse-over-io-uring branch
+>> yet, but sounds like it would be much helpful .  Would there be a flag
+>> in the FUSE request indicating it's one of the linked FUSE requests?  Is
+>> this feature, say linked FUSE requests, enabled only when io-uring is
+>> upon FUSE?
 > 
+> 
+> Current development branch is this
+> https://github.com/bsbernd/linux/tree/fuse-uring-for-6.8
+> (It sometimes gets rebase/force pushes and incompatible changes - the
+> corresponding libfuse branch is also persistently updated).
+> 
+> Patches need clean up before I can send the next RFC version. And I
+> first want to change fixed single request size (not so nice to use 1MB
+> requests when 4K would be sufficient, for things like metadata and small
+> IO).
+> 
+
+Let me know if there's something you'd like collaboration on -- 
+fuse_iouring sounds very exciting and I'd love to help out any way that 
+would be useful.
+
+For our internal usecase at Meta, the relevant backend store operates on 
+8M chunks, so I'm also very interested in the simplicity of just opting 
+in to receiving 8M IOs from the kernel instead of needing to buffer our 
+own 8MB IOs. But io_uring does seem like a plausible general-purpose 
+improvement too, so either or both of these paths is interesting and I'm 
+working on gathering performance numbers on the relative merits.
+
+Thanks!
+
+Sweet Tea
 
