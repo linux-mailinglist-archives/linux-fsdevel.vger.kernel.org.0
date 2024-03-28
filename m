@@ -1,257 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-15581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF70189063C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 17:49:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE57F890674
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 17:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4161F27F13
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:49:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3FD6B24A50
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F277D5A782;
-	Thu, 28 Mar 2024 16:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D957C3CF4F;
+	Thu, 28 Mar 2024 16:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="Npio282/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ngl3Mzip"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from box.fidei.email (box.fidei.email [71.19.144.250])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89B93BBCB;
-	Thu, 28 Mar 2024 16:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CA83C08E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 16:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711644371; cv=none; b=pMNY5ky93s5USSQdOLdA21E44Xf68gEaJEpbJhaSrO7t2EAhyLrzPxxrwDv/J+69c6oNEhBO7AWLQ4RV6oMYKl5544uBnShXdgyU4BtCANO8G23RBAdt3Bc0PVlt1Nh4i+a26T3xLFbYwXFhttppPPFNCovAlOXqCDSMaG4Ouc8=
+	t=1711645142; cv=none; b=jcGhnNAw2wwFLase5jbwweUT2s9MB2djrCFu3za30+gC38+C+6dF3xR9dKBvBkzyAAPZHnD/yeQQB8Hnyc05EeTvneUpPkaZvoMNOkGiP14FjkdLktcnpV71TEqTswk16ZEKk1kRtoOR4m1MBCCx1eEhp/z4vchkGhqPQ0Lax1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711644371; c=relaxed/simple;
-	bh=VD/BQzvJP3HAh30UmIKf457hjqfLzZGWvqtxZ5kvzv0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I4yuL1Tv4wPKHY6FAebxZ0bWCgNkotvRDAL+hZq0wncbxxyPLZd23tmgTwJU19V9osLr22hPoTxmRXjDzgZ0eXZUAjffM8VXW30Y2IsdkeE/iXa6elYGdVmrLM/QINJ7DTXV1TRxVG/TFx6pzri5PWIBNw9LHdg8EXbBw36KIN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=Npio282/; arc=none smtp.client-ip=71.19.144.250
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
-Received: from authenticated-user (box.fidei.email [71.19.144.250])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	s=arc-20240116; t=1711645142; c=relaxed/simple;
+	bh=apCXXFZ6j3TcjCJV2Cam6vpg1nsRKdd8BKx/sY8Vqwc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pGUfsMcSE7LXoXaswNhU5ft9ndgx0d7MmAu/d9aP5DuL0FPjMyvgEu183WKikmpazJcWP/PJUdqILG6pXJ/5N4hkToolKY5G3bsmONJOJoEEedSzj3jZLs2+BdjYDT07vX/FTz8OPT8Z3HvDtUQ3SPO/sh/Rh8p78fsCXsQpBQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ngl3Mzip; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711645139;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jiVas1tSBjQdCIB/ofa+v43rtug1Sw6ETjtuvBUyvtU=;
+	b=Ngl3Mzipy6aoliCq44CyfJBn1iEbVCDpQIR3zaAXVW6PsTzXV20r/HHCJiXlyhdHEFmI6w
+	Ngqyx2cFCqIC23vz0gZCeHT37lcRJbJKVObLmCbL7ONjzxm4duybQ6zvJ2zjhOwyWOkb5v
+	6CWwtCsi90REeSbz+URpv8GkZBzdmcw=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-544-_lsKnMXBNLeQiQjtN82f-g-1; Thu,
+ 28 Mar 2024 12:58:54 -0400
+X-MC-Unique: _lsKnMXBNLeQiQjtN82f-g-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by box.fidei.email (Postfix) with ESMTPSA id DC90782891;
-	Thu, 28 Mar 2024 12:46:06 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
-	t=1711644368; bh=VD/BQzvJP3HAh30UmIKf457hjqfLzZGWvqtxZ5kvzv0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Npio282/c20sA9WVJ7zJi/Sdc3g2iBWg+7m9VWKJ9mvdUR+43+EqYY1rn/97mvd7p
-	 GpnjwrIvXG8wwCnnD4Vn/GDtokiIDmnL6yEjQt8Q7eMghmuWGFD/9gqAqR8lWYZix8
-	 c2l6d/hlZJ0+/7jBEWeLGCZmGfFOQPIwE6B5gf8xJ00N0xQJXButzJRez1tvWd7DW5
-	 YRT1jVWHqfoOh7keHgj9LDCLWvB4m9Zh1gheqHXsrRpXGlpvMEJ7p/YzbaYlQRwCKx
-	 t1bMLIvv5pG3OcCTPWwoKDHTqt1p3H6tUOhviDZp22sy+pvwyoSxd2l+p/KEEW+sUI
-	 CEwvuS6m4LJjA==
-Message-ID: <a58ad76f-780e-42de-86b3-44e24164d945@dorminy.me>
-Date: Thu, 28 Mar 2024 12:46:06 -0400
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 051F63C01C19;
+	Thu, 28 Mar 2024 16:58:54 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 622EDC4C7A1;
+	Thu, 28 Mar 2024 16:58:52 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Steve French <smfrench@gmail.com>
+Cc: David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Christian Brauner <christian@brauner.io>,
+	netfs@lists.linux.dev,
+	linux-cifs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 00/15] netfs, cifs: Delegate high-level I/O to netfslib
+Date: Thu, 28 Mar 2024 16:57:51 +0000
+Message-ID: <20240328165845.2782259-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] fuse: increase FUSE_MAX_MAX_PAGES limit
-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
- Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhangjiachen.jaycee@bytedance.com
-References: <20240124070512.52207-1-jefflexu@linux.alibaba.com>
- <CAJfpegs10SdtzNXJfj3=vxoAZMhksT5A1u5W5L6nKL-P2UOuLQ@mail.gmail.com>
- <6e6bef3d-dd26-45ce-bc4a-c04a960dfb9c@linux.alibaba.com>
- <b4e6b930-ed06-4e0d-b17d-61d05381ac92@linux.alibaba.com>
- <27b34186-bc7c-4f3c-8818-ee73eb3f82ba@linux.alibaba.com>
- <CAJfpegvLUrqkCkVc=yTXcjZyNNQEG4Z4c6TONEZHGGmjiQ5X2g@mail.gmail.com>
- <7e79a9fa-99a0-47e5-bc39-107f89852d8d@linux.alibaba.com>
- <5343dc29-83cb-49b4-91ff-57bbd0eaa1df@fastmail.fm>
- <cb39ba49-eada-44b4-97fd-ea27ac8ba1f4@linux.alibaba.com>
- <b24ed720-5490-46e7-8f64-0410d6ea23b5@fastmail.fm>
-Content-Language: en-US
-From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-In-Reply-To: <b24ed720-5490-46e7-8f64-0410d6ea23b5@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
+Hi Steve,
 
+Here are patches to convert cifs to use the netfslib library.  I've tested
+them with and without a cache.  Unfortunately, if "-o fsc" is specified a leak
+of a tcon object shows up, particularly with the generic/013 xfstest that
+prevents further testing.  I've investigated this and found that the tcon leak
+is actually present upstream, but just goes unnoticed unless it also pins an
+fscache volume cookie.
 
-On 3/7/24 17:06, Bernd Schubert wrote:
-> Hi Jingbo,
-> 
-> On 3/7/24 03:16, Jingbo Xu wrote:
->> Hi Bernd,
->>
->> On 3/6/24 11:45 PM, Bernd Schubert wrote:
->>>
->>>
->>> On 3/6/24 14:32, Jingbo Xu wrote:
->>>>
->>>>
->>>> On 3/5/24 10:26 PM, Miklos Szeredi wrote:
->>>>> On Mon, 26 Feb 2024 at 05:00, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>>>>>
->>>>>> Hi Miklos,
->>>>>>
->>>>>> On 1/26/24 2:29 PM, Jingbo Xu wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 1/24/24 8:47 PM, Jingbo Xu wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 1/24/24 8:23 PM, Miklos Szeredi wrote:
->>>>>>>>> On Wed, 24 Jan 2024 at 08:05, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>>>>>>>>>
->>>>>>>>>> From: Xu Ji <laoji.jx@alibaba-inc.com>
->>>>>>>>>>
->>>>>>>>>> Increase FUSE_MAX_MAX_PAGES limit, so that the maximum data size of a
->>>>>>>>>> single request is increased.
->>>>>>>>>
->>>>>>>>> The only worry is about where this memory is getting accounted to.
->>>>>>>>> This needs to be thought through, since the we are increasing the
->>>>>>>>> possible memory that an unprivileged user is allowed to pin.
->>>>>>>
->>>>>>> Apart from the request size, the maximum number of background requests,
->>>>>>> i.e. max_background (12 by default, and configurable by the fuse
->>>>>>> daemon), also limits the size of the memory that an unprivileged user
->>>>>>> can pin.  But yes, it indeed increases the number proportionally by
->>>>>>> increasing the maximum request size.
->>>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> This optimizes the write performance especially when the optimal IO size
->>>>>>>>>> of the backend store at the fuse daemon side is greater than the original
->>>>>>>>>> maximum request size (i.e. 1MB with 256 FUSE_MAX_MAX_PAGES and
->>>>>>>>>> 4096 PAGE_SIZE).
->>>>>>>>>>
->>>>>>>>>> Be noted that this only increases the upper limit of the maximum request
->>>>>>>>>> size, while the real maximum request size relies on the FUSE_INIT
->>>>>>>>>> negotiation with the fuse daemon.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Xu Ji <laoji.jx@alibaba-inc.com>
->>>>>>>>>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
->>>>>>>>>> ---
->>>>>>>>>> I'm not sure if 1024 is adequate for FUSE_MAX_MAX_PAGES, as the
->>>>>>>>>> Bytedance floks seems to had increased the maximum request size to 8M
->>>>>>>>>> and saw a ~20% performance boost.
->>>>>>>>>
->>>>>>>>> The 20% is against the 256 pages, I guess.
->>>>>>>>
->>>>>>>> Yeah I guess so.
->>>>>>>>
->>>>>>>>
->>>>>>>>> It would be interesting to
->>>>>>>>> see the how the number of pages per request affects performance and
->>>>>>>>> why.
->>>>>>>>
->>>>>>>> To be honest, I'm not sure the root cause of the performance boost in
->>>>>>>> bytedance's case.
->>>>>>>>
->>>>>>>> While in our internal use scenario, the optimal IO size of the backend
->>>>>>>> store at the fuse server side is, e.g. 4MB, and thus if the maximum
->>>>>>>> throughput can not be achieved with current 256 pages per request. IOW
->>>>>>>> the backend store, e.g. a distributed parallel filesystem, get optimal
->>>>>>>> performance when the data is aligned at 4MB boundary.  I can ask my folk
->>>>>>>> who implements the fuse server to give more background info and the
->>>>>>>> exact performance statistics.
->>>>>>>
->>>>>>> Here are more details about our internal use case:
->>>>>>>
->>>>>>> We have a fuse server used in our internal cloud scenarios, while the
->>>>>>> backend store is actually a distributed filesystem.  That is, the fuse
->>>>>>> server actually plays as the client of the remote distributed
->>>>>>> filesystem.  The fuse server forwards the fuse requests to the remote
->>>>>>> backing store through network, while the remote distributed filesystem
->>>>>>> handles the IO requests, e.g. process the data from/to the persistent store.
->>>>>>>
->>>>>>> Then it comes the details of the remote distributed filesystem when it
->>>>>>> process the requested data with the persistent store.
->>>>>>>
->>>>>>> [1] The remote distributed filesystem uses, e.g. a 8+3 mode, EC
->>>>>>> (ErasureCode), where each fixed sized user data is split and stored as 8
->>>>>>> data blocks plus 3 extra parity blocks. For example, with 512 bytes
->>>>>>> block size, for each 4MB user data, it's split and stored as 8 (512
->>>>>>> bytes) data blocks with 3 (512 bytes) parity blocks.
->>>>>>>
->>>>>>> It also utilize the stripe technology to boost the performance, for
->>>>>>> example, there are 8 data disks and 3 parity disks in the above 8+3 mode
->>>>>>> example, in which each stripe consists of 8 data blocks and 3 parity
->>>>>>> blocks.
->>>>>>>
->>>>>>> [2] To avoid data corruption on power off, the remote distributed
->>>>>>> filesystem commit a O_SYNC write right away once a write (fuse) request
->>>>>>> received.  Since the EC described above, when the write fuse request is
->>>>>>> not aligned on 4MB (the stripe size) boundary, say it's 1MB in size, the
->>>>>>> other 3MB is read from the persistent store first, then compute the
->>>>>>> extra 3 parity blocks with the complete 4MB stripe, and finally write
->>>>>>> the 8 data blocks and 3 parity blocks down.
->>>>>>>
->>>>>>>
->>>>>>> Thus the write amplification is un-neglectable and is the performance
->>>>>>> bottleneck when the fuse request size is less than the stripe size.
->>>>>>>
->>>>>>> Here are some simple performance statistics with varying request size.
->>>>>>> With 4MB stripe size, there's ~3x bandwidth improvement when the maximum
->>>>>>> request size is increased from 256KB to 3.9MB, and another ~20%
->>>>>>> improvement when the request size is increased to 4MB from 3.9MB.
->>>>>
->>>>> I sort of understand the issue, although my guess is that this could
->>>>> be worked around in the client by coalescing writes.  This could be
->>>>> done by adding a small delay before sending a write request off to the
->>>>> network.
->>>>>
->>>>> Would that work in your case?
->>>>
->>>> It's possible but I'm not sure. I've asked my colleagues who working on
->>>> the fuse server and the backend store, though have not been replied yet.
->>>>   But I guess it's not as simple as increasing the maximum FUSE request
->>>> size directly and thus more complexity gets involved.
->>>>
->>>> I can also understand the concern that this may increase the risk of
->>>> pinning more memory footprint, and a more generic using scenario needs
->>>> to be considered.  I can make it a private patch for our internal product.
->>>>
->>>> Thanks for the suggestions and discussion.
->>>
->>> It also gets kind of solved in my fuse-over-io-uring branch - as long as
->>> there are enough free ring entries. I'm going to add in a flag there
->>> that other CQEs might be follow up requests. Really time to post a new
->>> version.
->>
->> Thanks for the information.  I've not read the fuse-over-io-uring branch
->> yet, but sounds like it would be much helpful .  Would there be a flag
->> in the FUSE request indicating it's one of the linked FUSE requests?  Is
->> this feature, say linked FUSE requests, enabled only when io-uring is
->> upon FUSE?
-> 
-> 
-> Current development branch is this
-> https://github.com/bsbernd/linux/tree/fuse-uring-for-6.8
-> (It sometimes gets rebase/force pushes and incompatible changes - the
-> corresponding libfuse branch is also persistently updated).
-> 
-> Patches need clean up before I can send the next RFC version. And I
-> first want to change fixed single request size (not so nice to use 1MB
-> requests when 4K would be sufficient, for things like metadata and small
-> IO).
-> 
+The patches remove around 2000 lines from CIFS.
 
-Let me know if there's something you'd like collaboration on -- 
-fuse_iouring sounds very exciting and I'd love to help out any way that 
-would be useful.
+Notes:
 
-For our internal usecase at Meta, the relevant backend store operates on 
-8M chunks, so I'm also very interested in the simplicity of just opting 
-in to receiving 8M IOs from the kernel instead of needing to buffer our 
-own 8MB IOs. But io_uring does seem like a plausible general-purpose 
-improvement too, so either or both of these paths is interesting and I'm 
-working on gathering performance numbers on the relative merits.
+ (1) CIFS is made to use unbuffered I/O for unbuffered caching modes and
+     write-through caching for cache=strict.
 
-Thanks!
+ (2) Various cifs fallocate() function implementations have issues that
+     aren't easily fixed without enhanced protocol support.
 
-Sweet Tea
+ (3) It should be possible to turn on multipage folio support in CIFS now.
+
+ (4) The then-unused CIFS code is removed in three patches, not one, to
+     avoid the git patch generator from producing confusing patches in
+     which it thinks code is being moved around rather than just being
+     removed.
+
+The patches can be found here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-netfs
+
+Changes
+=======
+ver #6)
+ - The netfslib write helpers got rewritten and, consequently, some changes
+   were made here.
+ - Rearranged the patch order a little to put the smaller changes first.
+ - Use a different way to invalidate that doesn't use ->launder_folio().
+ - Attempt to open the handle on the server READ+WRITE, even if the user
+   asks for O_WRONLY, if the mount was with "-o fsc" so that we can fill in
+   the gaps in partial folio writes; if we can't fall back to WRITE-only
+   and disable caching.
+ - Fixed the cookie key to match the key used by iget5_locked() to avoid
+   "Duplicate cookie" errors.
+ - Made add_credits_and_wake_if() clear the number of returned credits,
+   allowing it to be called multiple times in cleanup/error handling.
+ - Made ->async_writev() not return an error directly, but always set it on
+   the subreq.
+ - Fixed error handling from writethrough writing.
+
+ver #5)
+ - Rebased to -rc3 plus SteveF's for-next branch as netfslib is now
+   upstream, as are a couple of patches from this series.
+ - Replace the ->replay bool Shyam added with a flag on the netfs
+   subrequest.  This is tested by the code, but not currently set (see
+   above).
+
+ver #4)
+ - Slimmed down the branch:
+   - Split the cifs-related patches off to a separate branch (cifs-netfs)
+   - Deferred the content-encryption to the in-progress ceph changes.
+   - Deferred the use-PG_writeback rather than PG_fscache patch
+ - Rebased on a later linux-next with afs-rotation patches.
+
+ver #3)
+ - Moved the fscache module into netfslib to avoid export cycles.
+ - Fixed a bunch of bugs.
+ - Got CIFS to pass as much of xfstests as possible.
+ - Added a patch to make 9P use all the helpers.
+ - Added a patch to stop using PG_fscache, but rather dirty pages on
+   reading and have writepages write to the cache.
+
+ver #2)
+ - Folded the addition of NETFS_RREQ_NONBLOCK/BLOCKED into first patch that
+   uses them.
+ - Folded addition of rsize member into first user.
+ - Don't set rsize in ceph (yet) and set it in kafs to 256KiB.  cifs sets
+   it dynamically.
+ - Moved direct_bv next to direct_bv_count in struct netfs_io_request and
+   labelled it with a __counted_by().
+ - Passed flags into netfs_xa_store_and_mark() rather than two bools.
+ - Removed netfs_set_up_buffer() as it wasn't used.
+
+David
+
+Link: https://lore.kernel.org/r/20231213152350.431591-1-dhowells@redhat.com/ [1]
+Link: https://lore.kernel.org/r/20231013160423.2218093-1-dhowells@redhat.com/ # v1
+Link: https://lore.kernel.org/r/20231117211544.1740466-1-dhowells@redhat.com/ # v2
+Link: https://lore.kernel.org/r/20231207212206.1379128-1-dhowells@redhat.com/ # v3
+Link: https://lore.kernel.org/r/20231213154139.432922-1-dhowells@redhat.com/ # v4
+Link: https://lore.kernel.org/r/20240205225726.3104808-1-dhowells@redhat.com/ # v5
+
+David Howells (15):
+  cifs: Replace cifs_readdata with a wrapper around netfs_io_subrequest
+  cifs: Replace cifs_writedata with a wrapper around netfs_io_subrequest
+  cifs: Use more fields from netfs_io_subrequest
+  cifs: Make wait_mtu_credits take size_t args
+  cifs: Replace the writedata replay bool with a netfs sreq flag
+  cifs: Move cifs_loose_read_iter() and cifs_file_write_iter() to file.c
+  cifs: Set zero_point in the copy_file_range() and remap_file_range()
+  cifs: Add mempools for cifs_io_request and cifs_io_subrequest structs
+  cifs: Make add_credits_and_wake_if() clear deducted credits
+  cifs: Implement netfslib hooks
+  cifs: When caching, try to open O_WRONLY file rdwr on server
+  cifs: Cut over to using netfslib
+  cifs: Remove some code that's no longer used, part 1
+  cifs: Remove some code that's no longer used, part 2
+  cifs: Remove some code that's no longer used, part 3
+
+ fs/netfs/buffered_write.c    |    6 +
+ fs/netfs/io.c                |    7 +-
+ fs/smb/client/Kconfig        |    1 +
+ fs/smb/client/cifsfs.c       |  124 +-
+ fs/smb/client/cifsfs.h       |   10 +-
+ fs/smb/client/cifsglob.h     |   65 +-
+ fs/smb/client/cifsproto.h    |   12 +-
+ fs/smb/client/cifssmb.c      |  120 +-
+ fs/smb/client/dir.c          |   15 +
+ fs/smb/client/file.c         | 2841 ++++++----------------------------
+ fs/smb/client/fscache.c      |  109 --
+ fs/smb/client/fscache.h      |   54 +-
+ fs/smb/client/inode.c        |   19 +-
+ fs/smb/client/smb2ops.c      |   10 +-
+ fs/smb/client/smb2pdu.c      |  186 ++-
+ fs/smb/client/smb2proto.h    |    5 +-
+ fs/smb/client/trace.h        |  144 +-
+ fs/smb/client/transport.c    |   17 +-
+ include/linux/netfs.h        |    1 +
+ include/trace/events/netfs.h |    1 +
+ 20 files changed, 946 insertions(+), 2801 deletions(-)
+
 
