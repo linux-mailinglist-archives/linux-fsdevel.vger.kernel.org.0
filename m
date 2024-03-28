@@ -1,182 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-15511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32C088F9FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 09:26:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E073888FB76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 10:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05B14B22764
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 08:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D5671C217AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 09:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6BF54BDA;
-	Thu, 28 Mar 2024 08:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEC854777;
+	Thu, 28 Mar 2024 09:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQdAe7/9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25CB1C288
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 08:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2859134CB;
+	Thu, 28 Mar 2024 09:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711614383; cv=none; b=F/tqBInp3GUOoFTGjlnN5WrH5cETKS71jZwUIXPaXLChahISQ6mi5tHHywA5W3XbbJovwWQwqycUYWSSAPg96yCiRy9HAjrtEOyyeqq4dFSo7wXEJuL6OpmQZ36aTVzAgX9ZbsKhvTeTMlhi8mxKzKOjK4F+U1pQByHBIVJRL7I=
+	t=1711618151; cv=none; b=FhqZM3cKijceTTQcC1Gl6k1MlUUwfTNKjLeEwnCRGH1PMBd68d3A3zXFuXc/IUFE1+AoPWvaNVKjI/njiutapQgx0S7z0N5j1rjalAGklYAnmGUbLAJ5gkX6PbhX/UE6WEeU/acFfzuBIAXqR5hlN2Xamz0y5Fi/eJIcE//IPuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711614383; c=relaxed/simple;
-	bh=MFs4na4sL+FUvZ0Dm7UY4YPmYNJejcDkKRGL8VyoNns=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SzjxoVICbrKKnG15BXYai5AWge7gOX2pfBsOFk0kaisH+AT4hpEG8oNxqxAf2Mv/ZjoIdn/petK5yYSIEAGIQUl4XdcEjbp4CzcvBjWMTXHPBieozyhT2WfHRd2rEZGpaYyfKlYiN5UbytXbBUhROamdjI3jJsRmQ3RMn9JIEGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-368a72042b9so14043305ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 01:26:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711614381; x=1712219181;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bAoSgmgvBXbxtYx8pCIlrNKsK43NOKCP92pCO6ltbP4=;
-        b=llBhrbLD/4dYUSl9vXBiRMnKEE7tK/zFuHufsUGCSrGbZGf3sqrorhoUmZK6RMN7p7
-         BG35B1FNeBwflpVD6dYPPLt31ON7oCguUSskhbYr9V4pZ29SB0MZDpykjFxAapQYSZ8Z
-         fbSC8TCKSDGB/AE66Ej8JBFB9KBIryDJzeMXPje3mfipq0G8tAOQlP0EA5RbnKgB/Asx
-         l2E2NXK8KF8xUfiQszMLiWk7u18SEnzZXJbLq4FwGOeXeATMOqY20tbTcKSCzdGr05Ga
-         OR8kvJa2hXUtBdEkQYrM3IpuAZ1tVjA4lfpinPNAcVP6cj58Xht63LBrTm86NokYnTQk
-         yTYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFfiXnn6bRpFU4DDdWORa4k4ErMYlf9ps8a50CdbvOW10UFMlnBEInEX6TZm4BSubI074P9dF5kEhq8XKYmtVw8rzs3it/WtOYpZk51g==
-X-Gm-Message-State: AOJu0YxXrQ9w61FMsFt6n4xnIPFAZaMTCs/tF0q7jTJOop7Dc7/qbagX
-	QCdcoFCi3wx23uBDo7YoR1NZL66CKTSyhmzWhkABGqleSmFqqFzMgPzJ4FymQ5p14WaasgKeH0I
-	yPDe+I1EWCf5+2A/XDW5DOn3SYIUkbfyVE+RkoaaxcYsnWoHcARlEO+o=
-X-Google-Smtp-Source: AGHT+IHgK5viOd0F+bDHqRYdcaYQ6s8+oCcIoWMtxdMcRU+n/HwfVQ5of75lvk5RAQ44Nz4GNM99q0PodqUqNOfhVuEhp/lNFdgN
+	s=arc-20240116; t=1711618151; c=relaxed/simple;
+	bh=tstE2NqDI/Vxx8vKqwGujaCnsTcUFYCwuYFiwCeEh80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZHZoYFd2nNFXhCK8ORMcfMpGzr8AUIb8tEXS2jtepRxPkSmPduhA3N5hgspqp0Z9i1o0HBWZoIx5/tH3EgnBFQuCR272ntQ7tWPYmkLHhVpQS12JcMtSEAltuomwUBo8kLH9jXo1iNEby2WWZYNICMTfvqIb+pY5oOUycmPZaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQdAe7/9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F299C433C7;
+	Thu, 28 Mar 2024 09:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711618150;
+	bh=tstE2NqDI/Vxx8vKqwGujaCnsTcUFYCwuYFiwCeEh80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lQdAe7/9OTPRUEXx9tJyaK3wl7bOG731jfQ8dFD2himK+zeu0+b3pm/8cXccy105v
+	 NcdFWciUVF4To/OiARHyaZzUy9Lb1vyprymg/PqTVgSMXJ8Z/l3RGlHFERBf/Ir2AC
+	 NYpctZtHA4sRzYyiOEbZgjC0lxfqnzzINW0Y+eWKYdy/w2VbP6uriMDcx4SpTpkYtA
+	 DCB4UOOrAIjGow0W0/FUl2SJ4UfFNOTs8HpiiOtI///CBL2YcZS/P2jE+OMAFG4M0x
+	 KBrtKM7O+af/Xm5S/Dd1RUc3TB7hpiPL8LMS6dXijEwwneS7h27PXOXf3DJwc3R5jv
+	 ebuZoTNVEEHvw==
+Date: Thu, 28 Mar 2024 10:29:06 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH] [RFC]: fs: claw back a few FMODE_* bits
+Message-ID: <20240328-begriffen-entgleisen-2e89b8d52667@brauner>
+References: <20240327-begibt-wacht-b9b9f4d1145a@brauner>
+ <20240328053533.GA15831@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d744:0:b0:368:72f7:a102 with SMTP id
- e4-20020a92d744000000b0036872f7a102mr39355ilq.0.1711614381036; Thu, 28 Mar
- 2024 01:26:21 -0700 (PDT)
-Date: Thu, 28 Mar 2024 01:26:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002cabeb0614b447e9@google.com>
-Subject: [syzbot] [jfs?] kernel BUG in txLock (2)
-From: syzbot <syzbot+a843f6ae2130a987d63b@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240328053533.GA15831@lst.de>
 
-Hello,
+On Thu, Mar 28, 2024 at 06:35:33AM +0100, Christoph Hellwig wrote:
+> On Wed, Mar 27, 2024 at 05:45:09PM +0100, Christian Brauner wrote:
+> > There's a bunch of flags that are purely based on what the file
+> > operations support while also never being conditionally set or unset.
+> > IOW, they're not subject to change for individual file opens. Imho, such
+> > flags don't need to live in f_mode they might as well live in the fops
+> > structs itself.
+> 
+> Yes.  I actually have a half-finished patch doing the same lying around,
+> which I've not found time to rabse.
+> 
+> > (Fwiw, FMODE_NOACCOUNT and FMODE_BACKING could live in fops_flags as
+> >  well because they're also completely static but they aren't really
+> >  about file operations so they're better suited for FMODE_* imho.)
+> 
+> I'd still move them there.  I've also simply called fops_flags flags
+> so maybe it didn't bother me too much :)
 
-syzbot found the following issue on:
+Possible that we can do that as well but I'd keep calling it fop_flags
+for the sake of grepping. If you git grep \\.fop_flags you get a nice
+unique match and you get an overview who uses what. I'm not married to
+this but I'll keep it for now.
 
-HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=130728b5180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
-dashboard link: https://syzkaller.appspot.com/bug?extid=a843f6ae2130a987d63b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1068ec51180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c6f0ce180000
+> 
+> > +/* File ops support async buffered reads */
+> > +#define FOP_BUF_RASYNC		BIT(0)
+> > +/* File ops support async nowait buffered writes */
+> > +#define FOP_BUF_WASYNC		BIT(1)
+> 
+> Can we spell out BUFFERED here when changing things?  BUF always confuses
+> me as it let's me thing of the buffer cache.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f6c04726a2ae/disk-fe46a7dd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/09c26ce901ea/vmlinux-fe46a7dd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/134acf7f5322/bzImage-fe46a7dd.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/60c8566d11a7/mount_0.gz
+Ok.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a843f6ae2130a987d63b@syzkaller.appspotmail.com
+> 
+> And can be please avoid this silly BIT() junk?  1u << N is shorter
+> and a lot more obvious than this random macro.
 
-Locker's tblock: ffffc90002631850: 8be235c0 ffffffff 00000200 00000000
-Locker's tblock: ffffc90002631860: 02631860 ffffc900 02631860 ffffc900
-Locker's tblock: ffffc90002631870: 00000004 0000001c 00000008 00000000
-Tlock: ffffc900028522d0: 0003000e 20208040 229bc9b0 ffff8880
-Tlock: ffffc900028522e0: 775896b0 ffff8880 03140000 05002000
-Tlock: ffffc900028522f0: 06030a00 0000020d 00000000 00000000
-Tlock: ffffc90002852300: 00000000 00000000 00000000 00000000
-Tlock: ffffc90002852310: 00000000 00000000
-------------[ cut here ]------------
-kernel BUG at fs/jfs/jfs_txnmgr.c:834!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 5076 Comm: syz-executor283 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-RIP: 0010:txLock+0x1ed3/0x21a0 fs/jfs/jfs_txnmgr.c:834
-Code: 48 c7 c6 00 3c e2 8b ba 01 00 00 00 b9 10 00 00 00 41 b8 04 00 00 00 4c 8b 4c 24 20 6a 00 6a 48 e8 52 e6 7a 01 48 83 c4 10 90 <0f> 0b e8 56 4e 72 fe 4c 89 f7 48 c7 c6 00 44 e2 8b e8 67 33 b8 fe
-RSP: 0018:ffffc900045070c0 EFLAGS: 00010286
-RAX: 30bbfa8826d96700 RBX: 0000000000000010 RCX: ffff888028011e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc90004507210 R08: ffffffff8175c06c R09: fffffbfff1bf9650
-R10: dffffc0000000000 R11: fffffbfff1bf9650 R12: 1ffff9200050a45a
-R13: ffff888077586f00 R14: 000000000000005a R15: ffffc900028522d2
-FS:  00007f6aa27586c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6aa2758d58 CR3: 000000007b84e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- dtInsert+0xb0a/0x6b00 fs/jfs/jfs_dtree.c:881
- jfs_create+0x7ba/0xb90 fs/jfs/namei.c:137
- lookup_open fs/namei.c:3497 [inline]
- open_last_lookups fs/namei.c:3566 [inline]
- path_openat+0x1425/0x3240 fs/namei.c:3796
- do_filp_open+0x235/0x490 fs/namei.c:3826
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
- do_sys_open fs/open.c:1421 [inline]
- __do_sys_openat fs/open.c:1437 [inline]
- __se_sys_openat fs/open.c:1432 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
- do_syscall_64+0xfb/0x240
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-RIP: 0033:0x7f6aa27c2879
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6aa2758218 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f6aa284f6d8 RCX: 00007f6aa27c2879
-RDX: 000000000000275a RSI: 00000000200010c0 RDI: 00000000ffffff9c
-RBP: 00007f6aa284f6d0 R08: 00007fff5a3c9dc7 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6aa281c190
-R13: 0030656c69662f2e R14: 00007f6aa281607e R15: 3d6469672c647261
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:txLock+0x1ed3/0x21a0 fs/jfs/jfs_txnmgr.c:834
-Code: 48 c7 c6 00 3c e2 8b ba 01 00 00 00 b9 10 00 00 00 41 b8 04 00 00 00 4c 8b 4c 24 20 6a 00 6a 48 e8 52 e6 7a 01 48 83 c4 10 90 <0f> 0b e8 56 4e 72 fe 4c 89 f7 48 c7 c6 00 44 e2 8b e8 67 33 b8 fe
-RSP: 0018:ffffc900045070c0 EFLAGS: 00010286
-RAX: 30bbfa8826d96700 RBX: 0000000000000010 RCX: ffff888028011e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc90004507210 R08: ffffffff8175c06c R09: fffffbfff1bf9650
-R10: dffffc0000000000 R11: fffffbfff1bf9650 R12: 1ffff9200050a45a
-R13: ffff888077586f00 R14: 000000000000005a R15: ffffc900028522d2
-FS:  00007f6aa27586c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6aa2758d58 CR3: 000000007b84e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Everyone and their grandmother has an opinion on this hex, <<, BIT(). :)
+Fine, I don't care enough and my grandmothers aren't around anymore.
 
+> 
+> > +#define FOP_MMAP_SYNC		BIT(2)
+> 
+> Please throw in a comment for this one while you're at it.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Ok.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> > +/* File ops support non-exclusive O_DIRECT writes from multiple threads */
+> > +#define FOP_DIO_PARALLEL_WRITE	BIT(3)
+> > +
+> > +#define __fops_supported(f_op, flag) ((f_op)->fops_flags & (flag))
+> > +#define fops_buf_rasync(file) __fops_supported((file)->f_op, FOP_BUF_RASYNC)
+> > +#define fops_buf_wasync(file) __fops_supported((file)->f_op, FOP_BUF_WASYNC)
+> > +#define fops_mmap_sync(file) __fops_supported((file)->f_op, FOP_MMAP_SYNC)
+> > +#define fops_dio_parallel_write(file) __fops_supported((file)->f_op, FOP_DIO_PARALLEL_WRITE)
+> 
+> And please drop these helpers.  They just make grepping for the flags
+> a complete pain.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Ok.
 
