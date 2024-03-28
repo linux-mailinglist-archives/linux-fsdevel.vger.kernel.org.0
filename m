@@ -1,157 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-15530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC2189018F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 15:20:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85ED689031C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 16:33:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E37A1C2C038
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 14:20:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2495C1F21309
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Mar 2024 15:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D70F85930;
-	Thu, 28 Mar 2024 14:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608D012F599;
+	Thu, 28 Mar 2024 15:33:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E4B81AB1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 14:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0855AFC11;
+	Thu, 28 Mar 2024 15:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711635633; cv=none; b=M1EpV9UkvEfxeQRB/sTxcZ0Jz5l309gDhNNe2bvWFshBrAhTj3umSMok98dl76u39OfGx6vyW9VUXeENNdGZmGC21xpqz/31Ao4oHbFu1JoK4obg5pfnXiVrFxSaZCyQkSPSFINpB3k4wBrWvNAOK3LGBiYTcM+pv0EiqIDdPN4=
+	t=1711639996; cv=none; b=VxWTV1TgIaHx9xyv/u8+xnusr9PaXibMBRK+c4C//g7NAp1sDv4u2VBXEWh7FyuJ+M5QlS4YfqSVUam48FelnKWdEgPWhTNjNbFiTz/2QIM0eIxMCVXRCWu+P22QDf4uBXDp+H0yftgOJdiclXWV/W+FWR/xJyD4BfcFXzTI4Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711635633; c=relaxed/simple;
-	bh=T8DLcIMd2SwGMGXpo5o6c1OWUqQbagaVQM/hTLTTZaM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ea7q8K2qhqZeeSEffie/rl1qOQnEuZW/RQSM8G2IA5xVwowTNLQIw6Bcgv2x11kS/8fgMiAy26S23nzcY6uft+Qdek2h081Krs8EAEfHFQfRd61q7sGkgWKPhEJNFp3zu+Eyrt+lIVM1yfkeOgAi6DE/RnKaT2Ox6pxVs/e++2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7cc0370e9b0so100599039f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 07:20:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711635630; x=1712240430;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kehk7qvxJZP+l6TvYnKQNOGXzfsQSvUSobZ1QiEcyr4=;
-        b=DUUH+UyamSlYDc3ENfIREVuuIhHLsyPAJFTs3lIztsHx0tPq36iou+4kQH4azuND1p
-         K1t0+/kZ/OqA2ul6Xdfd102VVE4EBPo1XLeZBLfCxvcdxzthan9FY77zSUautNhSw5Kq
-         mSIyN69dxPgqLzbV9TftunXg5PjZnM/3EC9i1m2rKOKNcD0YFt66IbAjytGSMK7Cz4DE
-         s2++BJDlwpT/dfUbsJJQjPdXRi/PRgUfUN6TGWDQZJxwdidWp35Ff6135s4bTHYuD8zb
-         gHbCuaSj4VdjV31LqHkgvyROB1Es5Ep4srr2uLZMIAutPMtL1AV92CkLnkTmeGtxm4A6
-         LdjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEGqbVoT8Q8xZoMsLPSe/uc+Kg8BgRWjbQFkTiR5Eyhr3B80miVAg/BCW33IutP2PZXL9433zRWVFXJDHTPmMeroquANcz3KGeaCfiHA==
-X-Gm-Message-State: AOJu0YzD7RpQMvor12sgw+M24B+MayiW7/oXscPRS8qv9UlvaLzHlNzT
-	XqagzQv6eySiZ7Vh11BvUYJDfycKJpuNdhlXAgI1ZKSVsnMpAJ7WWpEa9iFVrS7LyIyX2QXcR24
-	aSRFRjCZ+2DDSA00SIj2B4SeKYRwDrMzTnpBJFU0F0N95IfpZ28GTUDg=
-X-Google-Smtp-Source: AGHT+IHOQEDKEzHMPEyNia95LF4eqnhBYXOxv4nISoba8zmXfetT82PhsR/uf4+tnT3yCeFM1un4zFCaMoHGDCSRlqr6DT6N/wv0
+	s=arc-20240116; t=1711639996; c=relaxed/simple;
+	bh=fAKnJ+l/CeeAUwTfc1KZGm5gtMUfkHA9P1HwOy5rWGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rKEnPGFwqM5jwNyO+kwJBuLXwW/4qiO48mLHFtV7QhocZ2jgb76eAyCTHtevl4TL/EBKSrAvuWbcga/sjNBPYeSGWITctFR0kofBZcxeN9gcblV44HenecthKmBz1pZufx+LIjP7UrFbSOn95BFNHRkD80/17qAnfCSjym4reU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C99C433F1;
+	Thu, 28 Mar 2024 15:33:12 +0000 (UTC)
+Date: Thu, 28 Mar 2024 15:33:10 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mark Brown <broonie@kernel.org>, Will Deacon <will@kernel.org>,
+	Dave Martin <Dave.Martin@arm.com>, Oleg Nesterov <oleg@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Matthew Wilcox <willy@infradead.org>,
+	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>,
+	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2] regset: use kvzalloc() for regset_get_alloc()
+Message-ID: <ZgWNtmcyZOMZR1Fi@arm.com>
+References: <20240205092626.v2.1.Id9ad163b60d21c9e56c2d686b0cc9083a8ba7924@changeid>
+ <CAD=FV=WgGuJLBWmXBOU5oHMvWP2M1cSMS201K8HpyXSYiBPJXQ@mail.gmail.com>
+ <CAD=FV=U82H41q3sKxZK_i1ffaQuqwFo98MLiPhSo=mY8SWLJcA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:506:b0:366:a77e:62dc with SMTP id
- d6-20020a056e02050600b00366a77e62dcmr53014ils.2.1711635629257; Thu, 28 Mar
- 2024 07:20:29 -0700 (PDT)
-Date: Thu, 28 Mar 2024 07:20:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000aacdcb0614b939ad@google.com>
-Subject: [syzbot] [fs?] WARNING: ODEBUG bug in bdev_super_lock
-From: syzbot <syzbot+9c0a93c676799fdf466c@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=U82H41q3sKxZK_i1ffaQuqwFo98MLiPhSo=mY8SWLJcA@mail.gmail.com>
 
-Hello,
+On Thu, Mar 28, 2024 at 07:16:37AM -0700, Doug Anderson wrote:
+> On Mon, Feb 26, 2024 at 3:55 PM Doug Anderson <dianders@chromium.org> wrote:
+> > On Mon, Feb 5, 2024 at 9:27 AM Douglas Anderson <dianders@chromium.org> wrote:
+> > > While browsing through ChromeOS crash reports, I found one with an
+> > > allocation failure that looked like this:
+> > >
+> > >   chrome: page allocation failure: order:7,
+> > >           mode:0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO),
+> > >           nodemask=(null),cpuset=urgent,mems_allowed=0
+> > >   CPU: 7 PID: 3295 Comm: chrome Not tainted
+> > >           5.15.133-20574-g8044615ac35c #1 (HASH:1162 1)
+> > >   Hardware name: Google Lazor (rev3 - 8) with KB Backlight (DT)
+> > >   Call trace:
+> > >   ...
+> > >   warn_alloc+0x104/0x174
+> > >   __alloc_pages+0x5f0/0x6e4
+> > >   kmalloc_order+0x44/0x98
+> > >   kmalloc_order_trace+0x34/0x124
+> > >   __kmalloc+0x228/0x36c
+> > >   __regset_get+0x68/0xcc
+> > >   regset_get_alloc+0x1c/0x28
+> > >   elf_core_dump+0x3d8/0xd8c
+> > >   do_coredump+0xeb8/0x1378
+> > >   get_signal+0x14c/0x804
+> > >   ...
+> > >
+> > > An order 7 allocation is (1 << 7) contiguous pages, or 512K. It's not
+> > > a surprise that this allocation failed on a system that's been running
+> > > for a while.
+> > >
+> > > More digging showed that it was fairly easy to see the order 7
+> > > allocation by just sending a SIGQUIT to chrome (or other processes) to
+> > > generate a core dump. The actual amount being allocated was 279,584
+> > > bytes and it was for "core_note_type" NT_ARM_SVE.
+> > >
+> > > There was quite a bit of discussion [1] on the mailing lists in
+> > > response to my v1 patch attempting to switch to vmalloc. The overall
+> > > conclusion was that we could likely reduce the 279,584 byte allocation
+> > > by quite a bit and Mark Brown has sent a patch to that effect [2].
+> > > However even with the 279,584 byte allocation gone there are still
+> > > 65,552 byte allocations. These are just barely more than the 65,536
+> > > bytes and thus would require an order 5 allocation.
+> > >
+> > > An order 5 allocation is still something to avoid unless necessary and
+> > > nothing needs the memory here to be contiguous. Change the allocation
+> > > to kvzalloc() which should still be efficient for small allocations
+> > > but doesn't force the memory subsystem to work hard (and maybe fail)
+> > > at getting a large contiguous chunk.
+> > >
+> > > [1] https://lore.kernel.org/r/20240201171159.1.Id9ad163b60d21c9e56c2d686b0cc9083a8ba7924@changeid
+> > > [2] https://lore.kernel.org/r/20240203-arm64-sve-ptrace-regset-size-v1-1-2c3ba1386b9e@kernel.org
+> > >
+> > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > > ---
+> > >
+> > > Changes in v2:
+> > > - Use kvzalloc() instead of vmalloc().
+> > > - Update description based on v1 discussion.
+> > >
+> > >  fs/binfmt_elf.c | 2 +-
+> > >  kernel/regset.c | 6 +++---
+> > >  2 files changed, 4 insertions(+), 4 deletions(-)
+> >
+> > Just wanted to check in to see if there's anything else that I need to
+> > do here. Mark's patch to avoid the order 7 allocations [1] has landed,
+> > but we still want this kvzalloc() because the order 5 allocations
+> > can't really be avoided. I'm happy to sit tight for longer but just
+> > wanted to make sure it was clear that we still want my patch _in
+> > addition_ to Mark's patch and to see if there was anything else you
+> > needed me to do.
+> >
+> > Thanks!
+> >
+> > [1] https://lore.kernel.org/r/20240213-arm64-sve-ptrace-regset-size-v2-1-c7600ca74b9b@kernel.org
+> 
+> I'm not trying to be a pest here, so if this is on someone's todo list
+> and they'll get to it eventually then feel free to tell me to go away
+> and I'll snooze this for another few months. I just want to make sure
+> it's not forgotten.
+> 
+> I've been assuming that someone like Al Viro or Christian Brauner
+> would land this patch eventually and I know Al responded rather
+> quickly to my v1 [2]. I think all of Al's issues were resolved by Mark
+> Brown's patch [1] (which has landed in the arm64 tree) and my updating
+> of the patch description in v2. I see that Al and Christian are
+> flagged as maintainers of "fs/binfmt_elf.c" which is one of the two
+> files I'm touching, so that's mostly why I was assuming they would
+> land it.
+> 
+> ...but I realize that perhaps my assumptions are wrong and this needs
+> to go through a different maintainer. In this case (if I'm reading it
+> correctly) Al and Christian are listed because the file is under "fs"
+> even though this isn't _really_ much of a filesystem-related patch.
+> Perhaps this needs to go through something like Andrew Morton's tree
+> since he often picks up patches that have nowhere else to land? If
+> someone else has suggestions, I'm all ears. I'm also happy to repost
+> this patch in case it helps with a maintainer applying it.
 
-syzbot found the following issue on:
+FWIW, for this patch:
 
-HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17d1c4f9180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fe78468a74fdc3b7
-dashboard link: https://syzkaller.appspot.com/bug?extid=9c0a93c676799fdf466c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16577eb1180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=106fa941180000
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0f7abe4afac7/disk-fe46a7dd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/82598d09246c/vmlinux-fe46a7dd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/efa23788c875/bzImage-fe46a7dd.xz
+Yeah, normally Al or Christian would take it but with their ack we can
+also take it through the arm64 tree (or Andrew can pick it up through
+the mm tree).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9c0a93c676799fdf466c@syzkaller.appspotmail.com
+With Mark's fix, I assume this is no longer urgent, cc stable material,
+but rather something nice in the future to reduce the risk of allocation
+failure on this path.
 
-WARNING: CPU: 1 PID: 5462 at lib/debugobjects.c:517 debug_print_object+0x17a/0x1f0 lib/debugobjects.c:514
-Modules linked in:
-CPU: 1 PID: 5462 Comm: syz-executor454 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-RIP: 0010:debug_print_object+0x17a/0x1f0 lib/debugobjects.c:514
-Code: e8 0b ce 4a fd 4c 8b 0b 48 c7 c7 c0 dc fe 8b 48 8b 74 24 08 48 89 ea 44 89 e1 4d 89 f8 ff 34 24 e8 fb 52 aa fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 1c f7 d9 0a 48 83 c4 10 5b 41 5c 41 5d 41 5e 41
-RSP: 0018:ffffc9000909f918 EFLAGS: 00010286
-RAX: a857c73db866d400 RBX: ffffffff8babd760 RCX: ffff888026321e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff8bfede40 R08: ffffffff8157cc12 R09: 1ffff92001213ec0
-R10: dffffc0000000000 R11: fffff52001213ec1 R12: 0000000000000001
-R13: ffffffff8bfedd58 R14: dffffc0000000000 R15: ffff8880267c6880
-FS:  000055555d3d6380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2334c3f130 CR3: 000000002c7fe000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- debug_object_activate+0x357/0x510 lib/debugobjects.c:732
- debug_rcu_head_queue kernel/rcu/rcu.h:227 [inline]
- __call_rcu_common kernel/rcu/tree.c:2719 [inline]
- call_rcu+0x97/0xa70 kernel/rcu/tree.c:2838
- put_super fs/super.c:424 [inline]
- bdev_super_lock+0x1ea/0x360 fs/super.c:1384
- fs_bdev_sync+0x17/0x50 fs/super.c:1419
- blkdev_flushbuf block/ioctl.c:380 [inline]
- blkdev_common_ioctl+0x88e/0x2880 block/ioctl.c:512
- blkdev_ioctl+0x532/0x740 block/ioctl.c:634
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:904 [inline]
- __se_sys_ioctl+0xfe/0x170 fs/ioctl.c:890
- do_syscall_64+0xfd/0x240
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-RIP: 0033:0x7f2334bc5b69
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe40c66978 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2334bc5b69
-RDX: 0000000000000000 RSI: 0000000000001261 RDI: 0000000000000003
-RBP: 00000000000f4240 R08: 00000000000000a0 R09: 00000000000000a0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000014ed2
-R13: 00007ffe40c6698c R14: 00007ffe40c669a0 R15: 00007ffe40c66990
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Catalin
 
