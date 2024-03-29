@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-15683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C975C891E17
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Mar 2024 15:33:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9A6891EBC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Mar 2024 15:50:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842A4286DCE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Mar 2024 14:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C0E61F27C7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Mar 2024 14:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907851A7714;
-	Fri, 29 Mar 2024 12:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B561B6266;
+	Fri, 29 Mar 2024 12:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkflOth0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMPMTzS9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA691A7702;
-	Fri, 29 Mar 2024 12:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A3713A3F4;
+	Fri, 29 Mar 2024 12:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711716483; cv=none; b=M4IswQGXdi7oHcSPlllJ7Z/IyhwpmewRwno/UrqxcKFYlk6OyWOqwIw9qVctPuubJ/d8FoZ1CphP7LFFo7hJmALWEBc6+s7HjP8HtAD5JTrTVoYSgk++2CNtT3HLRbu6uQSW1imwQdpmEBMSRi6NY7aEt8LtXXsBVP+cmHC/Tlw=
+	t=1711716621; cv=none; b=THenFaAZXTePn75Hv0SCrZzy2fp4SV224Pm3raWfvXo4Zwst+66Ao7C+wF1ZAEp2609uMa4uLKAEFrPmpCKHqONNpPSdplUS//2hPCh7RLuRskPiAJ99inDjGmHWpWT/Z0M8zXTA7wcdkUecUhaXv7ZkSP3SlwQzzRdmxW0ltMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711716483; c=relaxed/simple;
-	bh=h/r/xAuLF3DKhe4P3WHvc7dcZDo8RWm6hNQX3r2L9go=;
+	s=arc-20240116; t=1711716621; c=relaxed/simple;
+	bh=D+ZXDrFMuuWbejT/nbfJPc0TsJqe2vEksn/ftcPCOEM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yq1Yv/vtmPM07dO3PRfOenCnnp9vRjZAh0iZNvK+Mw4Ybmn6yv8GEVDvyI6b9IcTZk2LZ0ZWFR4PKYOaGBxSR8dfsE92zPnygKRZ7S9avOTyStE9E5OzYSgo2rHyLtj/LrlvRe7NSAl+hwPRrcwCEih1TGqDNZaHRP5KAF/4rdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkflOth0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17DE2C433F1;
-	Fri, 29 Mar 2024 12:48:02 +0000 (UTC)
+	 MIME-Version; b=ebNM+326J/ouAOqbJ8oYq/sMKLwjf/4tnSz9TvsOUQrpZphnj68qg4zQKJREWxTxxusj38K4//EjD+RrbtGrxc0fgjbRhBeHy9gJKazEBxJXfSD3497pCJQeb7Cy17ocixjk4Lfw/3VK4PYGluC1BjkrzQlmJD8zrmDjJe8gZLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMPMTzS9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38259C43390;
+	Fri, 29 Mar 2024 12:50:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711716482;
-	bh=h/r/xAuLF3DKhe4P3WHvc7dcZDo8RWm6hNQX3r2L9go=;
+	s=k20201202; t=1711716620;
+	bh=D+ZXDrFMuuWbejT/nbfJPc0TsJqe2vEksn/ftcPCOEM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HkflOth0ncaMqYIZoxl66pdEJhtehpLCN672h6Q7CI8U7RECJMyUtyS9NQR8+EEo6
-	 z8avDAdeWZAM/KBYeMx6eggAqgwn2Pt6sTnRCWyD06y+Vgr22Ko7cgEeuGJV8ep1Bf
-	 D+voGCEoyjul32WYouYJ+P80Hua3Tg3xwZfSBfubTgzC60v1RmT0pOJtoxl+QiIDR7
-	 baHeTrFI1G8AXn/AbJ3iVMSrrRg6h4bAx+SxiBcEA90/66jVx8qsPge2aIKz+hoilm
-	 y6jvE86lhQtTDvbZQ9VJgyHGfdngnAVzu/wti3WnK4XM5bM+Zir02h0cjIUQ8Z+6OV
-	 IDQBgl5S0R5dw==
+	b=LMPMTzS9r9xJmMVQ++Y7p+etuiwNRX5gi/jjTrXFY3FLPU6+uOYyQOqk4y8IfMeGK
+	 Py7Y2JuT+sxkhO5JIlpUMT0uzNaOxOat0jfXG9YihiXCJBXUmSeCFPrN8+n2+sR1yp
+	 ktCf2FjWkZeQ6YxJduZskH/UPe9Nrj/VzIYeSJ9B8zn+oYdwWTAxIncPzSiLNBBUk3
+	 eqWq5/85Zcc1lma7glXQugCQE/RVc5xYoB3y4zPF6mwMI2G5dS++QHjUn4HtBe/+yi
+	 mNyIv5/x+RW34A6K3R2vQRVI3VgcIH8MsTY8zVbexfiMQr+wtdjiB2dGHzmr0p5qx4
+	 13wiA0DHtmQ1A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -48,12 +48,12 @@ Cc: Alex Henrie <alexhenrie24@gmail.com>,
 	Jan Kara <jack@suse.cz>,
 	Sasha Levin <sashal@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 08/34] isofs: handle CDs with bad root inode but good Joliet root directory
-Date: Fri, 29 Mar 2024 08:47:09 -0400
-Message-ID: <20240329124750.3092394-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 07/23] isofs: handle CDs with bad root inode but good Joliet root directory
+Date: Fri, 29 Mar 2024 08:49:40 -0400
+Message-ID: <20240329125009.3093845-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240329124750.3092394-1-sashal@kernel.org>
-References: <20240329124750.3092394-1-sashal@kernel.org>
+In-Reply-To: <20240329125009.3093845-1-sashal@kernel.org>
+References: <20240329125009.3093845-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.153
+X-stable-base: Linux 5.4.273
 Content-Transfer-Encoding: 8bit
 
 From: Alex Henrie <alexhenrie24@gmail.com>
@@ -89,10 +89,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index 0c6eacfcbeef1..07252d2a7f5f2 100644
+index 74e487d63c62c..95c08f3c4b35e 100644
 --- a/fs/isofs/inode.c
 +++ b/fs/isofs/inode.c
-@@ -908,8 +908,22 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
+@@ -912,8 +912,22 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
  	 * we then decide whether to use the Joliet descriptor.
  	 */
  	inode = isofs_iget(s, sbi->s_firstdatazone, 0);
