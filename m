@@ -1,567 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-15621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764DB89107A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Mar 2024 02:40:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48EC189109A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Mar 2024 02:54:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3175B22F1A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Mar 2024 01:40:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BD791C25981
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Mar 2024 01:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5B5179B7;
-	Fri, 29 Mar 2024 01:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC9A1D699;
+	Fri, 29 Mar 2024 01:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="LNjl4GxN"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aB/f3A+0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA4B14A8F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Mar 2024 01:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C5F171D8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Mar 2024 01:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711676442; cv=none; b=HOMUEZd+kHfVGLRydwCmW/0InYw7H3jv0ZCTl3gcQP7FQ9oEYVPRsQikh6tp3c0XE2QFW3IN7K1WfmOPVLJ0lCveBXNWHP/Sbj2FDrhU6w8RMfAQSKKFlJcdmsR2+LnEO1IJW6JhGKZ6fuJo3aifDoHefs/dOVAKhp1BVfp+Ap0=
+	t=1711677242; cv=none; b=mn4v5zT0c4g/hehaWDhEb0UUTv1lFUrbgnBdKKhE1Eh1t2CYx2d12F0OW3Xs3jgk858v/5F/SDUZGv4Mmnk+fPKbGrwHfLcBooUF0LcFcyvudcWN1dICWkDi4+eB8GIAJZFHFFp0p8mxfHLop8HslJ+Et0OImRVaIAtGoPAVvac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711676442; c=relaxed/simple;
-	bh=Sv/KzQSZiIdu4jwzeAdN7g8uBYzeKd/z+enccjF1W6c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HLSqOIsICtIVzkD5GD3L/mKkKR7ZyrHkotZ9WPAmAKgJjm0vtXIUF4mpn9qSCpgal7XEZJQX3AVFgNylOj83F0HnuIxnAsCVf7Dxtbu6e+hPJzth0bYavMFwBYy75nXi3iEMQWb5VSnKpt267mSRjbZBCnwsL3jvjMbddNO6//g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=LNjl4GxN; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 264873FBD3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Mar 2024 01:40:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1711676437;
-	bh=k7YUzhJDeO5ZCJjxa2pLoVgtYPAqmTWH2V4ovZbzNJc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=LNjl4GxN0o1Y+nUL+KH0l0QJrPfBwNM/zQqqSXQovKcOOajx7xSs7oufLgrBjcWIP
-	 xoQj2QfDHSxaMZ4cSKUqNQhppOsKU8PsQTm75ZqvXyCRg3pT+BgVbxOg+rl4UMOG82
-	 SZ/ybZYQi+hgw7IgXm8/KmEoYBYV/rbuRSKs8X379KC2//BSr2R72493t1/xVMjBZL
-	 iKVy42NERqsczGTqpHlEgMjdbukT8ecJpmx+cKrklHXirwmJH3KxhrkhKHobIdUVqo
-	 J4EYMTe3aQRkNGj/q4mIZ6BQ21fJhAqU8Icu8pUv+N9QtCMqQnDWrkgN/QfozIIA2V
-	 vcyouzrfQrfNQ==
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3418f237c0bso850859f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 18:40:37 -0700 (PDT)
+	s=arc-20240116; t=1711677242; c=relaxed/simple;
+	bh=lZQQuABwJOZmsUVIT61uWFDnm9sPaB2yuqUrKtsNR+Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=r4rHDxZnv7+smD2ygC7xYljNctSFBHnMf0BWhLVcXpPX1WjA8XI3QJymmy1kQsfOKnxyOrTK5semmYIdlMkYHhH5iGLQ+/ihPunxuNJfCl5xZWWg5WXK43E9zg5l1f6fhVZraCLeNW8e4ipaO1C+WqUoq87dhx4PmXU0sPa+NkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--drosen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aB/f3A+0; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--drosen.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-60ab69a9e6fso32646767b3.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Mar 2024 18:54:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1711677240; x=1712282040; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=z0NIzBAv+SjWsssKXwGXD1rG7WqoBIi+ZSW1OwLkK/0=;
+        b=aB/f3A+0y2zE3//JflrfPOK/EMqYs4pKgx5lsOtZOxmrr4t9pxHB/UVniPQL776sOh
+         HoNA8wORbOBoSfSG6QBQhyXndgV/Z7FxKPsEW/CL8vdpEFDLmS3Mvki8FxMEZzzOLtMn
+         niv8in4Et03d21JGWbsJFrymPXOAO7AblFKOnoFTyut96PLXHRUHKvrQQ4nKJPmsy0Ne
+         4yRLNtNVayYO7HYP3H1LIk1CQ7J9XtAIT+d5txKgNfRglCk7ObzRPlBsK2T1NEHzPuRJ
+         no/YqmVe4gYDEraWAVjCjit3EQ/OsHhZEVw0bLXYAvbtX7Uosvz29P6oykAT//vCwmwc
+         KeAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711676437; x=1712281237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k7YUzhJDeO5ZCJjxa2pLoVgtYPAqmTWH2V4ovZbzNJc=;
-        b=R7T8ji1KsA6JjLZBUemykIzbqDL4lQZv/LeDG9IRVjj8p4j9A5cITJ5kvrkpJkJ/f8
-         OsKtMBm0mRfF75UWmEF/IL0EEJfhn2Ty9yLYUxuVNBsaqsIuI00Go67T/9FltUVWwZef
-         XfD7Atw8m2f83+qvVyW2MvokQ/osvbzxY6G6en6C1wfhOREidRz4f6ROeVZ2XzCfk7JZ
-         HDnojEE0LG/EHcoN5tSFJTwVqUTPhZcWK8X33xDP6Kl3cg7Y03AbWLSon1a5ZeLU9/+T
-         BYEwpRls9KI3IBCegR/tZneBFsmIiI4ab+w4E7OE4xz2FYCXDX+C0c1wuWl9hwItInAZ
-         L3sw==
-X-Forwarded-Encrypted: i=1; AJvYcCU252YCrbgCzGTPbQrLFuR0x19J8C/+pMHsOK7irYEv7C23Sph9OOp38l0DGo1eBZLkaqKFH4dQ+hSQRcRYkj2ysGBdKCdP2ZdneU1zZg==
-X-Gm-Message-State: AOJu0YwAFARceOImZ4B9D9LrKUI4xxDZqA01q9YtFJ6YpXVFyPqbena1
-	ox9Ev3w59yk6jdJ3CKxAisuRkcZrMypBeEJUmyBQuyciMB1VDKcUNh5Cjz8CYzBPvxSTh6+pFRS
-	W3y5XII1npXx9FaRWs6WViXbK+ueTny5Wj8qy7I5VR6XXNC7tWLKAMP272Zi9YjAwhguF1R0bP4
-	rkLaNQpW9AsD/xIGKcfx44tEJipsJrBwj3XPMdL7KJivxPNtz59bSqrA==
-X-Received: by 2002:adf:eed2:0:b0:33e:be35:d449 with SMTP id a18-20020adfeed2000000b0033ebe35d449mr451127wrp.44.1711676436605;
-        Thu, 28 Mar 2024 18:40:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBoivmSNMrevHO+wGm+fOd5NERBxPHGIGPlB4wFeNrwEO78Zx1X7AYGJmQZBuXwAho3v7XNOp6vuGZX5qwZVE=
-X-Received: by 2002:adf:eed2:0:b0:33e:be35:d449 with SMTP id
- a18-20020adfeed2000000b0033ebe35d449mr451116wrp.44.1711676436148; Thu, 28 Mar
- 2024 18:40:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711677240; x=1712282040;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z0NIzBAv+SjWsssKXwGXD1rG7WqoBIi+ZSW1OwLkK/0=;
+        b=YSccLQF/3Nu+jU5tbkKRQ1waFntIzgXnR/EUGIWTAuYXqTvKljKlRmRH3zbyoLfr1E
+         qUIx28vv39buZXdjVEKhItTsj0E9pGM5eDzUawOBJbXD+F0WzcyFZj8t6nl1JIL/HJkL
+         2/5Bujdl0q4fJA3AG6U2CPiNwVu2fCziUurVlu/1bnR8h8lpYBpK4YnOKM3Uc9hijEP6
+         zR6tGQ/yaUTg0qFkiqsfLSK6EFBahZj+WpDN5SThEVSy5pF+RAqMzhETVRBCcPn2Aayv
+         fd6hENOnROyvgcVqJqlByow5NIFCUfQfa1d0YDj5nRFRLvw9SnR8weeU/rbQS7/9rhsD
+         u3Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtYNJEYAUGx+oqP70lw3PJUxdUEPNh4xSx7/tNEPVcU28ULH7eXSXx/4qIOeSjBhp6sb+zUs1TfPG8vv30fKGVjqhRR0WKwDOAjKzxbQ==
+X-Gm-Message-State: AOJu0Yy1YET+jiSkH8GjMEcwFpWZoLh+P44nKZfg+NRKOyOiLPMoEB0+
+	S3yVjtDOtIoZdXkZmH9yqRuQ2gw1oKtJ4xFBCOzuWN5LLqw45FUE5gIaKqlOhzTXdx54tme+RwU
+	mhQ==
+X-Google-Smtp-Source: AGHT+IHyDXdhzOnaRkdixUL2++rweJn9lx+Erbim0MGnWcbc9hWfYz0a9yunyZZkRCL+mZoYrYs+P/ft4MQ=
+X-Received: from drosen.mtv.corp.google.com ([2620:15c:211:201:fcce:d6ab:804c:b94b])
+ (user=drosen job=sendgmr) by 2002:a25:c753:0:b0:dd3:f55f:ff02 with SMTP id
+ w80-20020a25c753000000b00dd3f55fff02mr840384ybe.1.1711677239983; Thu, 28 Mar
+ 2024 18:53:59 -0700 (PDT)
+Date: Thu, 28 Mar 2024 18:53:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <b8e4d93c-f2f2-4a0e-a47f-15a740434356@mitchellaugustin.com>
- <CAHTA-ubfwwB51A5Wg5M6H_rPEQK9pNf8FkAGH=vr=FEkyRrtqw@mail.gmail.com> <u7o6c74dsi3fxewhguinoy77dxgscsnmix5zzqqm2ckdcdiv2j@2g5zuy5vsudc>
-In-Reply-To: <u7o6c74dsi3fxewhguinoy77dxgscsnmix5zzqqm2ckdcdiv2j@2g5zuy5vsudc>
-From: Mitchell Augustin <mitchell.augustin@canonical.com>
-Date: Thu, 28 Mar 2024 20:40:25 -0500
-Message-ID: <CAHTA-uaQRS4E=hPsqf0V01x3ycd9LyCP5-Auqs1cP77bUpAEmg@mail.gmail.com>
-Subject: Re: [PATCH] fs/aio: obey min_nr when doing wakeups
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-aio@kvack.org, brauner@kernel.org, bcrl@kvack.org, 
-	linux-fsdevel@vger.kernel.org, colin.i.king@gmail.com, 
-	dann frazier <dann.frazier@canonical.com>, Ian May <ian.may@canonical.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.44.0.478.gd926399ef9-goog
+Message-ID: <20240329015351.624249-1-drosen@google.com>
+Subject: [RFC PATCH v4 00/36] Fuse-BPF and plans on merging with Fuse Passthrough
+From: Daniel Rosenberg <drosen@google.com>
+To: Miklos Szeredi <miklos@szeredi.hu>, bpf@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Joanne Koong <joannelkoong@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
+	Christian Brauner <brauner@kernel.org>, kernel-team@android.com, 
+	Daniel Rosenberg <drosen@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-@Ian May from our kernel team also mentioned early on that he thought
-this might be due to a race condition. I've added him to this thread
-in case he has any additional thoughts on that.
+I've recently gotten some time to re-focus on fuse-bpf efforts, and
+had some questions on how to best integrate with recent changes that
+have landed in the last year. I've included a rebased version (ontop
+of bpf-next e63985ecd226 ("bpf, riscv64/cfi: Support kCFI + BPF on
+riscv64") of the old patchset for reference here.
 
-I'll look into setting up a ktest environment to help reproduce this.
-In the meantime, here is the exact process I used that exposes the
-issue on Noble daily arm64+largemem
-(https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/noble-live-ser=
-ver-arm64+largemem.iso)
-on our Grace machine:
+On the bpf end, I'm struggling a little bit with the interface for
+selecting programs. I'd like to be able to pass the map id to fuse,
+since that's a value userspace already knows the program by. Would it
+be reasonable to either pass that ID down to the registration
+function, or otherwise provide a path for a separate module to
+translate from a map id to a struct_op program?
 
-I'm not sure what differences there may be between different versions
-of stress-ng, but the version I am running is the one that comes with
-the following version of canonical-certification-server:
-canonical-certification-server/noble,now 3.3.0~dev19~ubuntu24.04.1 all
+On the fuse end, I'm wondering how the interface will extend to
+directories. At LSFMMBPF last year, some people brought up concerns
+with the interface we had, specifically that it required opens to get
+fds, which we'd then use to respond to lookup requests, adding a lot
+of extra overhead. I had been planning to switch to a path that the
+response would supply instead, likely limited by RESOLVE_BENEATH. That
+seems pretty different from Fuse Passthrough's approach. Are there any
+current plans on how that interface will extend for a directory
+passthrough?
 
-which can be installed by running the following commands:
+Could someone clarify why passthrough has an extra layer to register
+for use as a backing file? Does the ioctl provide some additional
+tracking purpose? I recall there being some security issue around
+directly responding with the fd. In fuse-bpf, we were handling this by
+responding to the fuse request via an ioctl in those cases.
 
-add-apt-repository -y ppa:checkbox-dev/stable
-apt-add-repository -y ppa:firmware-testing-team/ppa-fwts-stable
-apt update
-apt install -y canonical-certification-server
+Passthrough also maintains a separate cred instance for each backing
+file. I had been planning to have a single one for the userspace
+daemon, likely grabbed during the init response. I'm unsure how the
+current Passthrough method there should scale to directories.
 
-Inside the stress_disk() function of
-/usr/lib/checkbox-provider-base/bin/stress_ng_test.py, I have
-redefined disk_stressors =3D ['aiol'] so that only the aiol test runs.
-Each aiol test takes about 5 minutes when run alone, and the panic
-will usually happen in under 10 runs.
+Now on to my plans. Struct ops programs have more dynamic support now
+[1]. I'm hoping to be able to move most of the Fuse BPF related code
+to live closer to Fuse, and to have it more neatly encapsulated when
+building as a module. I'm not sure if everything that's needed for
+that exists, but I need to play with it a bit more to understand what
+I'm missing. I'll probably show up at bpf office hours at some point.
 
-Once the above is complete, I run the following script, which runs
-only the affected test $count times:
+Struct ops have proper multi page support now [2], which removes
+another patch. I'm still slightly over the struct ops limit, but that
+may change with other changes I'm considering.
 
-count=3D15
-for i in $(seq $count); do
-    echo "Starting Stress #${i}/${count} for $(uname -r)"
-    /usr/lib/checkbox-provider-base/bin/stress_ng_test.py disk
---device dm-0 --base-time 240
-    echo "Completed Stress #${i}/${count} for $(uname -r)"
-done
+I'm very excited to see the new generic stacking filesystem support
+with backing-file [3]. I imagine in time we'll extend that to have a
+backing-inode as well, for the various inode_operations. That will
+definitely involve a lot of refactoring of the way fuse-bpf is
+currently structured, but it's clearly the right way forward.
 
-Aside from the above steps and the fact that I was stressing the
-device-mapper device dm-0, I don't think there were any special
-configuration options in use.
+I'm glad to see fuse passthrough, which provides a subset of the
+fuse-bpf functionality, has landed[4]. I'm planning to rework the
+patch set to integrate better with that. First off, I've been
+considering splitting up the bpf progam into a dentry, inode, and file
+set. That has the added bonus of pushing us back down below the
+current struct_op function list limits. I would want to establish some
+linkage between the sets, so that you could still just set the bpf
+program at a folder level, and have all objects underneath inherit the
+correct program. That's not an issue for a version with just file
+support, but I'll want to ensure the interface extends naturally. With
+the increased module support, I plan to redo all of the bpf program
+linking anyways. The existing code was a temporary placeholder while
+the method of registering struct ops programs was still in flux.
 
--Mitchell Augustin
+My plan for the next patch set is to prune down to just the file
+operations. That removes a lot of the tricky questions for the moment,
+and should shrink down the patch set massively. Along with that, I'll
+clean up the struct_op implementation to take more advantage of the
+recent bpf additions.
+
+[1] https://lore.kernel.org/r/20240119225005.668602-12-thinker.li@gmail.com
+[2] https://lore.kernel.org/all/20240224223418.526631-3-thinker.li@gmail.com/
+[3] https://lore.kernel.org/all/20240105-vfs-rw-9b5809292b57@brauner/
+[4] https://lore.kernel.org/all/CAJfpegsZoLMfcpBXBPr7wdAnuXfAYUZYyinru3jrOWWEz7DJPQ@mail.gmail.com/
 
 
-On Thu, Mar 28, 2024 at 7:18=E2=80=AFPM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Thu, Mar 28, 2024 at 05:29:30PM -0500, Mitchell Augustin wrote:
-> > Hello!
-> >
-> > While running the stress-ng disk test suite as part of our
-> > certification process for Noble on Nvidia Grace machines, I observed a
-> > kernel panic during the aiol test. This issue initially presented
-> > itself on the Ubuntu 6.8.0-11-generic kernel, but I have verified that
-> > it is also present in the latest mainline 6.8 kernel as well as the
-> > master branch of the Linus tree (at least as late as
-> > 8d025e2092e29bfd13e56c78e22af25fac83c8ec). The panic does not occur
-> > during every run of the aiol test on affected kernels, but it does
-> > appear at least 25% of the time based on my tests. I'm also not
-> > entirely sure if this is related, but I have only personally observed
-> > this issue on Grace when disks were set up with LVM enabled during the
-> > Ubuntu installation phase (and thus, stress-ng was stressing /dev/dm-0
-> > rather than /dev/nvme*). (See this Ubuntu BugLink for more details on
-> > reproducing this:
-> > https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2058557).
-> >
-> > I have determined that this commit
-> > (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/com=
-mit/fs/aio.c?id=3D71eb6b6b0ba93b1467bccff57b5de746b09113d2)
-> > introduced this regression. On this commit's parent (and all other
-> > ancestors I tested during the bisect), I was able to run the aiol test
-> > 15 times in a row without any panics, but on this commit (and all
-> > descendants I tested, including the latest version of the Linus tree),
-> > there would typically be a kernel panic within the first 5 executions
-> > of the aiol test. The trace also supports this, as it shows the crash
-> > occurring during the wake_up_process() call inside aio_complete(),
-> > which is introduced in this commit. To further verify this, I also
-> > reverted this patch on the latest Ubuntu kernel, and that version of
-> > the kernel did not panic after 15 aiol test runs.
-> >
-> > I've CC'd Colin King here since stress-ng helped us find this bug.
-> > Thanks, Colin!
-> >
-> > Let me know if you need any more information from me that would be
-> > useful in fixing this regression.
-> >
-> > Thanks,
-> >
-> > Mitchell Augustin
->
-> Yeah, this is a funny one, w.w.private (task_struct) appears to have
-> been set to NULL, but I see nothing in that codepath that would do that.
->
-> But hrtimer_sleeper also has a pointer back to current and that does get
-> nulled when the timeout expires; device-mapper affecting how often the
-> bug pops does point to a race, i.e. likely hrtimer involvement.
->
-> If you could get me a testcase that I could run in ktest, or more
-> details on how to repro - that would let me get kgdb attached and check
-> exactly what's going on with both the aio_waiter and the
-> hrtimer_sleeper. I run stress-ng in my automated testing and haven't
-> seen this there, but only with the default options, so maybe your
-> harness is giving it non defaults?
->
-> https://evilpiepirate.org/git/ktest.git/
->
->
-> >
-> > Kernel panic trace:
-> >
-> > 28 Mar 21:28: Running stress-ng aiol stressor for 240 seconds...
-> > [  453.969106] Unable to handle kernel NULL pointer dereference at virt=
-ual add
-> > ress 00000000000008f5
-> > [  453.978106] Mem abort info:
-> > [  453.980957]   ESR =3D 0x0000000096000005
-> > [  453.984786]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> > [  453.990215]   SET =3D 0, FnV =3D 0
-> > [  453.993331]   EA =3D 0, S1PTW =3D 0
-> > [  453.996537]   FSC =3D 0x05: level 1 translation fault
-> > [  454.001521] Data abort info:
-> > [  454.004459]   ISV =3D 0, ISS =3D 0x00000005, ISS2 =3D 0x00000000
-> > [  454.010065]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> > [  454.015225]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> > [  454.020653] user pgtable: 64k pages, 48-bit VAs, pgdp=3D00001000d9a7=
-0a00
-> > [  454.027328] [00000000000008f5] pgd=3D0000000000000000, p4d=3D0000000=
-000000000,
-> > pud=3D0000000000000000
-> > [  454.036229] Internal error: Oops: 0000000096000005 [#1] SMP
-> > [  454.041928] Modules linked in: qrtr cfg80211 binfmt_misc nls_iso8859=
-_1 dax_
-> > hmem cxl_acpi acpi_ipmi cxl_core onboard_usb_hub ipmi_ssif input_leds e=
-inj uio
-> > _pdrv_genirq ipmi_devintf arm_smmuv3_pmu arm_cspmu_module uio ipmi_msgh=
-andler
-> > joydev spi_nor mtd cppc_cpufreq acpi_power_meter dm_multipath nvme_fabr=
-ics efi
-> > _pstore nfnetlink dmi_sysfs ip_tables x_tables autofs4 btrfs blake2b_ge=
-neric r
-> > aid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_t=
-x xor x
-> > or_neon raid6_pq libcrc32c raid1 raid0 hid_generic rndis_host usbhid cd=
-c_ether
-> >  hid usbnet uas usb_storage crct10dif_ce polyval_ce polyval_generic gha=
-sh_ce s
-> > m4_ce_gcm sm4_ce_ccm sm4_ce sm4_ce_cipher sm4 ast sm3_ce sm3 drm_shmem_=
-helper
-> > i2c_algo_bit i2c_smbus sha3_ce drm_kms_helper nvme sha2_ce ixgbe xhci_p=
-ci sha2
-> > 56_arm64 sha1_ce drm xfrm_algo nvme_core xhci_pci_renesas mdio spi_tegr=
-a210_qu
-> > ad i2c_tegra aes_neon_bs aes_neon_blk aes_ce_blk aes_ce_cipher
-> > [  454.123972] CPU: 63 PID: 3571 Comm: kworker/63:6 Not tainted 6.9.0-r=
-c1+ #2
-> > [  454.131003] Hardware name: Supermicro MBD-G1SMH/G1SMH, BIOS 1.0c 12/=
-28/2023
-> > [  454.138121] Workqueue: dio/dm-0 iomap_dio_complete_work
-> > [  454.143475] pstate: 034000c9 (nzcv daIF +PAN -UAO +TCO +DIT -SSBS BT=
-YPE=3D--)
-> > [  454.150594] pc : _raw_spin_lock_irqsave+0x44/0x100
-> > [  454.155503] lr : try_to_wake_up+0x68/0x758
-> > [  454.159692] sp : ffff8000faa4fc50
-> > [  454.163075] x29: ffff8000faa4fc50 x28: 0000000000000000 x27: 0000000=
-0000000
-> > 00
-> > [  454.170371] x26: ffff003bdc6ff328 x25: 0000000000000000 x24: 0000000=
-0000000
-> > 12
-> > [  454.177666] x23: ffff0000e11f5640 x22: 00000000000008f5 x21: 0000000=
-0000000
-> > 00
-> > [  454.184963] x20: 0000000000000003 x19: 00000000000000c0 x18: ffff800=
-0faa600
-> > 48
-> > [  454.192258] x17: 0000000000000000 x16: 0000000000000000 x15: 0000ba4=
-bb2d887
-> > f0
-> > [  454.199554] x14: 0000000000000000 x13: 0000000000000000 x12: 0101010=
-1010101
-> > 01
-> > [  454.206850] x11: 7f7f7f7f7f7f7f7f x10: fefefefefefefeff x9 : ffffc81=
-e3f8edb
-> > 60
-> > [  454.214145] x8 : 8080808080808080 x7 : 0000002040000000 x6 : 0000000=
-00000b2
-> > 40
-> > [  454.221442] x5 : 0000ba4bb2d883b0 x4 : 0000000000000000 x3 : ffff000=
-0ec4400
-> > 00
-> > [  454.228738] x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000=
-0000008
-> > f5
-> > [  454.236034] Call trace:
-> > [  454.238529]  _raw_spin_lock_irqsave+0x44/0x100
-> > [  454.243069]  try_to_wake_up+0x68/0x758
-> > [  454.246897]  wake_up_process+0x24/0x50
-> > [  454.250725]  aio_complete+0x1cc/0x2c0
-> > [  454.254472]  aio_complete_rw+0x11c/0x2c8
-> > [  454.258480]  iomap_dio_complete_work+0x3c/0x68
-> > [  454.263018]  process_one_work+0x18c/0x478
-> > [  454.267118]  worker_thread+0x338/0x450
-> > [  454.270947]  kthread+0x11c/0x128
-> > [  454.274244]  ret_from_fork+0x10/0x20
-> > [  454.277901] Code: b9001041 d503201f 52800001 52800022 (88e17c02)
-> > [  454.284134] ---[ end trace 0000000000000000 ]---
-> > [  454.316501] note: kworker/63:6[3571] exited with irqs disabled
-> > [  454.322522] note: kworker/63:6[3571] exited with preempt_count 3
-> > [  454.325180] kauditd_printk_skb: 81 callbacks suppressed
-> > [  454.325247] audit: type=3D1400 audit(1711661498.816:93): apparmor=3D=
-"DENIED" op
-> > eration=3D"open" class=3D"file" profile=3D"rsyslogd" name=3D"/run/syste=
-md/sessions/" p
-> > id=3D2692 comm=3D72733A6D61696E20513A526567 requested_mask=3D"r" denied=
-_mask=3D"r" fsu
-> > id=3D103 ouid=3D0
-> > [  514.192212] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> > [  514.198495] rcu: 120-...0: (27 ticks this GP) idle=3D7504/1/0x400000=
-00000
-> > 00000 softirq=3D9023/9025 fqs=3D6895
-> > [  514.208233] rcu:         hardirqs   softirqs   csw/system
-> > [  514.213941] rcu: number:        0          0            0
-> > [  514.219653] rcu: cputime:        0          0            0   =3D=3D>=
- 30028(
-> > ms)
-> > [  514.226801] rcu: (detected by 18, t=3D15010 jiffies, g=3D19925, q=3D=
-444 ncpus
-> > =3D144)
-> > [  514.234133] Sending NMI from CPU 18 to CPUs 120:
-> > [  524.245328] rcu: rcu_preempt kthread timer wakeup didn't happen for =
-2513 ji
-> > ffies! g19925 f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x402
-> > [  524.257006] rcu: Possible timer handling issue on cpu=3D18 timer-sof=
-tirq=3D
-> > 2890
-> > [  524.264227] rcu: rcu_preempt kthread starved for 2518 jiffies! g1992=
-5 f0x0
-> > RCU_GP_WAIT_FQS(5) ->state=3D0x402 ->cpu=3D18
-> > [  524.275009] rcu: Unless rcu_preempt kthread gets sufficient CPU time=
-, O
-> > OM is now expected behavior.
-> > [  524.284361] rcu: RCU grace-period kthread stack dump:
-> > [  524.289532] task:rcu_preempt     state:I stack:0     pid:16    tgid:=
-16    p
-> > pid:2      flags:0x00000008
-> > [  524.299085] Call trace:
-> > [  524.301593]  __switch_to+0xdc/0x138
-> > [  524.305196]  __schedule+0x3f0/0x18a0
-> > [  524.308870]  schedule+0x40/0x1b8
-> > [  524.312184]  schedule_timeout+0xac/0x1e0
-> > [  524.316222]  rcu_gp_fqs_loop+0x120/0x508
-> > [  524.320273]  rcu_gp_kthread+0x148/0x178
-> > [  524.324222]  kthread+0x11c/0x128
-> > [  524.327551]  ret_from_fork+0x10/0x20
-> > [  524.331235] rcu: Stack dump where RCU GP kthread last ran:
-> > [  524.336859] CPU: 18 PID: 0 Comm: swapper/18 Tainted: G      D       =
-     6.
-> > 9.0-rc1+ #2
-> > [  524.344976] Hardware name: Supermicro MBD-G1SMH/G1SMH, BIOS 1.0c 12/=
-28/2023
-> > [  524.352104] pstate: 63400009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BT=
-YPE=3D--)
-> > [  524.359243] pc : cpuidle_enter_state+0xd8/0x790
-> > [  524.363906] lr : cpuidle_enter_state+0xcc/0x790
-> > [  524.368563] sp : ffff80008324fd80
-> > [  524.371957] x29: ffff80008324fd80 x28: 0000000000000000 x27: 0000000=
-0000000
-> > 00
-> > [  524.379287] x26: 0000000000000000 x25: 00000077b804c1a0 x24: 0000000=
-0000000
-> > 00
-> > [  524.386611] x23: ffffc81e42d8bd68 x22: 0000000000000000 x21: 0000007=
-7b83e5c
-> > e0
-> > [  524.393935] x20: ffffc81e42d8bd80 x19: ffff000098ef0000 x18: ffff800=
-0832600
-> > 28
-> > [  524.401258] x17: 0000000000000000 x16: 0000000000000000 x15: 0000ba4=
-bb2d87f
-> > b0
-> > [  524.408583] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000=
-0000000
-> > 00
-> > [  524.415907] x11: 0000000000000000 x10: 0000000000000000 x9 : ffffc81=
-e40d035
-> > 64
-> > [  524.423231] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000=
-0000000
-> > 00
-> > [  524.430553] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000=
-0000000
-> > 00
-> > [  524.437876] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000=
-0000000
-> > 00
-> > [  524.445198] Call trace:
-> > [  524.447705]  cpuidle_enter_state+0xd8/0x790
-> > [  524.452008]  cpuidle_enter+0x44/0x78
-> > [  524.455683]  do_idle+0x264/0x2f8
-> > [  524.458995]  cpu_startup_entry+0x44/0x50
-> > [  524.463016]  secondary_start_kernel+0x13c/0x180
-> > [  524.467679]  __secondary_switched+0xc0/0xc8
-> > [  615.621045] ------------[ cut here ]------------
-> > [  615.625852] hwirq =3D 71
-> > [  615.625996] WARNING: CPU: 0 PID: 0 at drivers/gpio/gpio-tegra186.c:6=
-55 tegr
-> > a186_gpio_irq+0x258/0x2e0
-> > [  615.637932] Modules linked in: qrtr cfg80211 binfmt_misc nls_iso8859=
-_1 dax_
-> > hmem cxl_acpi acpi_ipmi cxl_core onboard_usb_hub ipmi_ssif input_leds e=
-inj uio
-> > _pdrv_genirq ipmi_devintf arm_smmuv3_pmu arm_cspmu_module uio ipmi_msgh=
-andler
-> > joydev spi_nor mt[0001.089] W> RATCHET: MB1 binary ratchet value 1 is l=
-arger t
-> > han ratchet level 0 from HW fuses.
-> >
-> >
-> > On Wed, 22 Nov 2023 18:42:53 -0500 Kent Overstreet
-> > <kent.overstreet@linux.dev> wrote:
-> > >
-> > > Unclear who's maintaining fs/aio.c these days - who wants to take thi=
-s?
-> > > -- >8 --
-> > >
-> > > I've been observing workloads where IPIs due to wakeups in
-> > > aio_complete() are ~15% of total CPU time in the profile. Most of tho=
-se
-> > > wakeups are unnecessary when completion batching is in use in
-> > > io_getevents().
-> > >
-> > > This plumbs min_nr through via the wait eventry, so that aio_complete=
-()
-> > > can avoid doing unnecessary wakeups.
-> > >
-> > > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > > Cc: Benjamin LaHaise <bcrl@kvack.org
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: linux-aio@kvack.org
-> > > Cc: linux-fsdevel@vger.kernel.org
-> > > ---
-> > > fs/aio.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++--------=
--
-> > > 1 file changed, 56 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/fs/aio.c b/fs/aio.c
-> > > index f8589caef9c1..c69e7caacd1b 100644
-> > > --- a/fs/aio.c
-> > > +++ b/fs/aio.c
-> > > @@ -1106,6 +1106,11 @@ static inline void iocb_destroy(struct aio_kio=
-cb
-> > > *iocb)
-> > > kmem_cache_free(kiocb_cachep, iocb);
-> > > }
-> > > +struct aio_waiter {
-> > > + struct wait_queue_entry w;
-> > > + size_t min_nr;
-> > > +};
-> > > +
-> > > /* aio_complete
-> > > * Called when the io request on the given iocb is complete.
-> > > */
-> > > @@ -1114,7 +1119,7 @@ static void aio_complete(struct aio_kiocb *iocb=
-)
-> > > struct kioctx *ctx =3D iocb->ki_ctx;
-> > > struct aio_ring *ring;
-> > > struct io_event *ev_page, *event;
-> > > - unsigned tail, pos, head;
-> > > + unsigned tail, pos, head, avail;
-> > > unsigned long flags;
-> > > /*
-> > > @@ -1156,6 +1161,10 @@ static void aio_complete(struct aio_kiocb *ioc=
-b)
-> > > ctx->completed_events++;
-> > > if (ctx->completed_events > 1)
-> > > refill_reqs_available(ctx, head, tail);
-> > > +
-> > > + avail =3D tail > head
-> > > + ? tail - head
-> > > + : tail + ctx->nr_events - head;
-> > > spin_unlock_irqrestore(&ctx->completion_lock, flags);
-> > > pr_debug("added to ring %p at [%u]\n", iocb, tail);
-> > > @@ -1176,8 +1185,18 @@ static void aio_complete(struct aio_kiocb *ioc=
-b)
-> > > */
-> > > smp_mb();
-> > > - if (waitqueue_active(&ctx->wait))
-> > > - wake_up(&ctx->wait);
-> > > + if (waitqueue_active(&ctx->wait)) {
-> > > + struct aio_waiter *curr, *next;
-> > > + unsigned long flags;
-> > > +
-> > > + spin_lock_irqsave(&ctx->wait.lock, flags);
-> > > + list_for_each_entry_safe(curr, next, &ctx->wait.head, w.entry)
-> > > + if (avail >=3D curr->min_nr) {
-> > > + list_del_init_careful(&curr->w.entry);
-> > > + wake_up_process(curr->w.private);
-> > > + }
-> > > + spin_unlock_irqrestore(&ctx->wait.lock, flags);
-> > > + }
-> > > }
-> > > static inline void iocb_put(struct aio_kiocb *iocb)
-> > > @@ -1290,7 +1309,9 @@ static long read_events(struct kioctx *ctx, lon=
-g
-> > > min_nr, long nr,
-> > > struct io_event __user *event,
-> > > ktime_t until)
-> > > {
-> > > - long ret =3D 0;
-> > > + struct hrtimer_sleeper t;
-> > > + struct aio_waiter w;
-> > > + long ret =3D 0, ret2 =3D 0;
-> > > /*
-> > > * Note that aio_read_events() is being called as the conditional - i.=
-e.
-> > > @@ -1306,12 +1327,37 @@ static long read_events(struct kioctx *ctx, l=
-ong
-> > > min_nr, long nr,
-> > > * the ringbuffer empty. So in practice we should be ok, but it's
-> > > * something to be aware of when touching this code.
-> > > */
-> > > - if (until =3D=3D 0)
-> > > - aio_read_events(ctx, min_nr, nr, event, &ret);
-> > > - else
-> > > - wait_event_interruptible_hrtimeout(ctx->wait,
-> > > - aio_read_events(ctx, min_nr, nr, event, &ret),
-> > > - until);
-> > > + aio_read_events(ctx, min_nr, nr, event, &ret);
-> > > + if (until =3D=3D 0 || ret < 0 || ret >=3D min_nr)
-> > > + return ret;
-> > > +
-> > > + hrtimer_init_sleeper_on_stack(&t, CLOCK_MONOTONIC, HRTIMER_MODE_REL=
-);
-> > > + if (until !=3D KTIME_MAX) {
-> > > + hrtimer_set_expires_range_ns(&t.timer, until, current->timer_slack_=
-ns);
-> > > + hrtimer_sleeper_start_expires(&t, HRTIMER_MODE_REL);
-> > > + }
-> > > +
-> > > + init_wait(&w.w);
-> > > +
-> > > + while (1) {
-> > > + unsigned long nr_got =3D ret;
-> > > +
-> > > + w.min_nr =3D min_nr - ret;
-> > > +
-> > > + ret2 =3D prepare_to_wait_event(&ctx->wait, &w.w, TASK_INTERRUPTIBLE=
-) ?:
-> > > + !t.task ? -ETIME : 0;
-> > > +
-> > > + if (aio_read_events(ctx, min_nr, nr, event, &ret) || ret2)
-> > > + break;
-> > > +
-> > > + if (nr_got =3D=3D ret)
-> > > + schedule();
-> > > + }
-> > > +
-> > > + finish_wait(&ctx->wait, &w.w);
-> > > + hrtimer_cancel(&t.timer);
-> > > + destroy_hrtimer_on_stack(&t.timer);
-> > > +
-> > > return ret;
-> > > }
-> > >
-> > > --
-> > > 2.42.0
-> > >
-> > >
+Daniel Rosenberg (36):
+  fuse-bpf: Update fuse side uapi
+  fuse-bpf: Add data structures for fuse-bpf
+  fuse-bpf: Prepare for fuse-bpf patch
+  fuse: Add fuse-bpf, a stacked fs extension for FUSE
+  fuse-bpf: Add ioctl interface for /dev/fuse
+  fuse-bpf: Don't support export_operations
+  fuse-bpf: Add support for access
+  fuse-bpf: Partially add mapping support
+  fuse-bpf: Add lseek support
+  fuse-bpf: Add support for fallocate
+  fuse-bpf: Support file/dir open/close
+  fuse-bpf: Support mknod/unlink/mkdir/rmdir
+  fuse-bpf: Add support for read/write iter
+  fuse-bpf: support readdir
+  fuse-bpf: Add support for sync operations
+  fuse-bpf: Add Rename support
+  fuse-bpf: Add attr support
+  fuse-bpf: Add support for FUSE_COPY_FILE_RANGE
+  fuse-bpf: Add xattr support
+  fuse-bpf: Add symlink/link support
+  fuse-bpf: Add partial flock support
+  fuse-bpf: Add partial ioctl support
+  fuse-bpf: allow mounting with no userspace daemon
+  fuse-bpf: Add fuse-bpf constants
+  bpf: Increase struct_op max members
+  WIP: bpf: Add fuse_ops struct_op programs
+  fuse-bpf: Export Functions
+  fuse: Provide registration functions for fuse-bpf
+  fuse-bpf: Set fuse_ops at mount or lookup time
+  fuse-bpf: Call bpf for pre/post filters
+  fuse-bpf: Add userspace pre/post filters
+  WIP: fuse-bpf: add error_out
+  fuse-bpf: Add default filter op
+  tools: Add FUSE, update bpf includes
+  fuse-bpf: Add selftests
+  fuse: Provide easy way to test fuse struct_op call
+
+ fs/fuse/Kconfig                               |    8 +
+ fs/fuse/Makefile                              |    1 +
+ fs/fuse/backing.c                             | 4287 +++++++++++++++++
+ fs/fuse/bpf_register.c                        |  207 +
+ fs/fuse/control.c                             |    2 +-
+ fs/fuse/dev.c                                 |   85 +-
+ fs/fuse/dir.c                                 |  318 +-
+ fs/fuse/file.c                                |  126 +-
+ fs/fuse/fuse_i.h                              |  472 +-
+ fs/fuse/inode.c                               |  377 +-
+ fs/fuse/ioctl.c                               |   11 +-
+ fs/fuse/readdir.c                             |    5 +
+ fs/fuse/xattr.c                               |   18 +
+ include/linux/bpf.h                           |    2 +-
+ include/linux/bpf_fuse.h                      |  285 ++
+ include/uapi/linux/bpf.h                      |   13 +
+ include/uapi/linux/fuse.h                     |   41 +
+ kernel/bpf/Makefile                           |    4 +
+ kernel/bpf/bpf_fuse.c                         |  716 +++
+ kernel/bpf/bpf_struct_ops.c                   |    2 +
+ kernel/bpf/btf.c                              |    1 +
+ kernel/bpf/verifier.c                         |   10 +-
+ tools/include/uapi/linux/bpf.h                |   13 +
+ tools/include/uapi/linux/fuse.h               | 1197 +++++
+ .../selftests/filesystems/fuse/.gitignore     |    2 +
+ .../selftests/filesystems/fuse/Makefile       |  189 +
+ .../testing/selftests/filesystems/fuse/OWNERS |    2 +
+ .../selftests/filesystems/fuse/bpf_common.h   |   51 +
+ .../selftests/filesystems/fuse/bpf_loader.c   |  597 +++
+ .../testing/selftests/filesystems/fuse/fd.txt |   21 +
+ .../selftests/filesystems/fuse/fd_bpf.bpf.c   |  397 ++
+ .../selftests/filesystems/fuse/fuse_daemon.c  |  300 ++
+ .../selftests/filesystems/fuse/fuse_test.c    | 2476 ++++++++++
+ .../filesystems/fuse/struct_op_test.bpf.c     |  642 +++
+ .../selftests/filesystems/fuse/test.bpf.c     | 1045 ++++
+ .../filesystems/fuse/test_framework.h         |  172 +
+ .../selftests/filesystems/fuse/test_fuse.h    |  494 ++
+ 37 files changed, 14385 insertions(+), 204 deletions(-)
+ create mode 100644 fs/fuse/backing.c
+ create mode 100644 fs/fuse/bpf_register.c
+ create mode 100644 include/linux/bpf_fuse.h
+ create mode 100644 kernel/bpf/bpf_fuse.c
+ create mode 100644 tools/include/uapi/linux/fuse.h
+ create mode 100644 tools/testing/selftests/filesystems/fuse/.gitignore
+ create mode 100644 tools/testing/selftests/filesystems/fuse/Makefile
+ create mode 100644 tools/testing/selftests/filesystems/fuse/OWNERS
+ create mode 100644 tools/testing/selftests/filesystems/fuse/bpf_common.h
+ create mode 100644 tools/testing/selftests/filesystems/fuse/bpf_loader.c
+ create mode 100644 tools/testing/selftests/filesystems/fuse/fd.txt
+ create mode 100644 tools/testing/selftests/filesystems/fuse/fd_bpf.bpf.c
+ create mode 100644 tools/testing/selftests/filesystems/fuse/fuse_daemon.c
+ create mode 100644 tools/testing/selftests/filesystems/fuse/fuse_test.c
+ create mode 100644 tools/testing/selftests/filesystems/fuse/struct_op_test.bpf.c
+ create mode 100644 tools/testing/selftests/filesystems/fuse/test.bpf.c
+ create mode 100644 tools/testing/selftests/filesystems/fuse/test_framework.h
+ create mode 100644 tools/testing/selftests/filesystems/fuse/test_fuse.h
+
+
+base-commit: e63985ecd22681c7f5975f2e8637187a326b6791
+-- 
+2.44.0.478.gd926399ef9-goog
+
 
