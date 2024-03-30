@@ -1,210 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-15769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6609C892B1B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 13:11:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6B7892B7B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 14:54:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6FD51F230E1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 12:11:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B0F1C20FF6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 13:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B35E374D9;
-	Sat, 30 Mar 2024 12:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838F92D03B;
+	Sat, 30 Mar 2024 13:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PubxICAP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81042D057;
-	Sat, 30 Mar 2024 12:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE61C8BFC;
+	Sat, 30 Mar 2024 13:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711800641; cv=none; b=qA2AUCXuNIeaFf0E9TFCdTFuTjPdLdVhU4N1IEMSBsVbCSD1pxaim8h7SUqzledb21KOCKmRRUNmvM4AViGyxWYEyWMNI60+N+i0OjDfA2yOUIijglp87K840UrTLCmmvT4R4mCWwotEK66lYeI1V+tqk74e2O4lHQ1uO2jqUCA=
+	t=1711806860; cv=none; b=FmCupPtpBb+5PcHQKWuVl5+KqOF6v0RVbvOseDqCaJbhvBwDI22iSL1HsiyYpk/nSQA2JrsaoRnDSGAAARm4smYU6bzTJyotGtdjFxErrLGFRdXRv0XyUz6sHW/2ZmRa27Nghsaow+tUVuS54Y6epS9+cW2CSSG1r+CEt5OLNHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711800641; c=relaxed/simple;
-	bh=+ixc1uNvIKaGevL37bDckvnrFxYiL2IIzR2flXamFVc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dD2e2fOxlNkoWqKtK8exd72J2nlWOsQXouRPO3B/hqbQKg/jyypnj4XEI8KOHJX5nAdbR/RxIDNYl8e32pW5sj16FjUWnROv3NSsJSVlQ8OJJiLL7gE8aQUoQgexDP1dcDMMpUNIOGWFWnde8g1FFq2EvjHUrJvWCu0ZAx9n2GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4V6GLq72lHz4f3kG5;
-	Sat, 30 Mar 2024 20:10:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 55DA91A016E;
-	Sat, 30 Mar 2024 20:10:34 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+REsAQhmkPEjIg--.10652S11;
-	Sat, 30 Mar 2024 20:10:34 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH 7/7] ext4: make ext4_da_map_blocks() buffer_head unaware
-Date: Sat, 30 Mar 2024 20:02:36 +0800
-Message-Id: <20240330120236.3789589-8-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240330120236.3789589-1-yi.zhang@huaweicloud.com>
-References: <20240330120236.3789589-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1711806860; c=relaxed/simple;
+	bh=gdiN5QceMOmYJR6aANoPIK9P+VOtXiE5jti77EzMyng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dvhMJNQZGA+tr+mScsz8Pc/JSpPP+X4an1/fNaBxlTWlb2hg5g9oDsmgM2PjTxR+HodT2LN4b7CPwVHYwKWkgUnSbo8/EbqlvC6wc5iRtnzOi0O5O94JECYj3XLfsBCTPaG9q1biqr6IuaXy9xzXE20nMJJI9XyUEcMt7dBk79M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PubxICAP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E9AC433C7;
+	Sat, 30 Mar 2024 13:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711806860;
+	bh=gdiN5QceMOmYJR6aANoPIK9P+VOtXiE5jti77EzMyng=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PubxICAPFkULCDHrQInMKvt2ftqscwq70N6vX9ZqASVjAp8t5oYpBlGWrvCgHY3YD
+	 NXba2llksm6YUEoKNje3YwcMqeRjNADEpMRCSnrwXZyLTk5EwXIpH6JfrxKQi9nI1O
+	 aF7Hnukoid+Aijov1T7qenSgIIwM5zXFaWR0Z4ljkBXp/K0feDbGPczApsDlOqGsTr
+	 SW0Kn17L7J90R8xPzZJ1taWFr8PMHR43CHp/tXGIt1+DBJ8LHeWB49uqSvY/8pl7TU
+	 yEAdc5l+bDPMOJ/SnlpAkwlywDep7TUDRQUd+pOudcaOgsOTLvGyuFQFraNz4R/PC5
+	 54p6P9XmvlV+A==
+User-agent: mu4e 1.10.8; emacs 27.1
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: chandanbabu@kernel.org, dchinner@redhat.com, djwong@kernel.org,
+ hch@lst.de, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ mark.tinguely@oracle.com
+Subject: [GIT PULL] xfs: Bug fixes for 6.9
+Date: Sat, 30 Mar 2024 19:19:34 +0530
+Message-ID: <875xx3lta0.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+REsAQhmkPEjIg--.10652S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr4rGw4UCF43Gw4DJFy5Jwb_yoWrWFWUpr
-	ZxAF1rGr17WF1xua1ftw1UXF1fK3WjyFWUKr93GryrAryDArn2qF1UJFyava98trZ3WFn5
-	XF45Kry8uF48C37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOBTYUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Hi Linus,
 
-After calling ext4_da_map_blocks(), a delalloc extent state could be
-distinguished through EXT4_MAP_DELAYED flag in map. So factor out
-buffer_head related handles in ext4_da_map_blocks(), make it
-buffer_head unaware, make it become a common helper, it could be used
-for iomap in the future.
+Please pull this branch which contains two XFS bug fixes for 6.9-rc2. A brief
+summary of the bug fixes is provided below.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/inode.c | 40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+I did a test-merge with the main upstream branch as of a few minutes ago and
+didn't see any conflicts.  Please let me know if you encounter any problems.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 6983ced32dce..8f026d8c27db 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1720,23 +1720,18 @@ static int ext4_insert_delayed_blocks(struct inode *inode, ext4_lblk_t lblk,
-  * This function is grabs code from the very beginning of
-  * ext4_map_blocks, but assumes that the caller is from delayed write
-  * time. This function looks up the requested blocks and sets the
-- * buffer delay bit under the protection of i_data_sem.
-+ * delalloc extent map under the protection of i_data_sem.
-  */
--static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
--			      struct buffer_head *bh)
-+static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
- {
- 	struct extent_status es;
- 	int retval;
--	sector_t invalid_block = ~((sector_t) 0xffff);
- #ifdef ES_AGGRESSIVE_TEST
- 	struct ext4_map_blocks orig_map;
- 
- 	memcpy(&orig_map, map, sizeof(*map));
- #endif
- 
--	if (invalid_block < ext4_blocks_count(EXT4_SB(inode->i_sb)->s_es))
--		invalid_block = ~0;
--
- 	map->m_flags = 0;
- 	ext_debug(inode, "max_blocks %u, logical block %lu\n", map->m_len,
- 		  (unsigned long) map->m_lblk);
-@@ -1755,10 +1750,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		 * Delayed extent could be allocated by fallocate.
- 		 * So we need to check it.
- 		 */
--		if (ext4_es_is_delayed(&es) && !ext4_es_is_unwritten(&es)) {
--			map_bh(bh, inode->i_sb, invalid_block);
--			set_buffer_new(bh);
--			set_buffer_delay(bh);
-+		if (ext4_es_is_delonly(&es)) {
-+			map->m_flags |= EXT4_MAP_DELAYED;
- 			return 0;
- 		}
- 
-@@ -1773,7 +1766,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- #ifdef ES_AGGRESSIVE_TEST
- 		ext4_map_blocks_es_recheck(NULL, inode, map, &orig_map, 0);
- #endif
--		return retval;
-+		return 0;
- 	}
- 
- 	/*
-@@ -1807,20 +1800,16 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
- 				      map->m_pblk, status);
- 		up_read(&EXT4_I(inode)->i_data_sem);
--		return retval;
-+		return 0;
- 	}
- 	up_read(&EXT4_I(inode)->i_data_sem);
- 
- add_delayed:
- 	down_write(&EXT4_I(inode)->i_data_sem);
-+	map->m_flags |= EXT4_MAP_DELAYED;
- 	retval = ext4_insert_delayed_blocks(inode, map->m_lblk, map->m_len);
- 	up_write(&EXT4_I(inode)->i_data_sem);
--	if (retval)
--		return retval;
- 
--	map_bh(bh, inode->i_sb, invalid_block);
--	set_buffer_new(bh);
--	set_buffer_delay(bh);
- 	return retval;
- }
- 
-@@ -1840,11 +1829,15 @@ int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
- 			   struct buffer_head *bh, int create)
- {
- 	struct ext4_map_blocks map;
-+	sector_t invalid_block = ~((sector_t) 0xffff);
- 	int ret = 0;
- 
- 	BUG_ON(create == 0);
- 	BUG_ON(bh->b_size != inode->i_sb->s_blocksize);
- 
-+	if (invalid_block < ext4_blocks_count(EXT4_SB(inode->i_sb)->s_es))
-+		invalid_block = ~0;
-+
- 	map.m_lblk = iblock;
- 	map.m_len = 1;
- 
-@@ -1853,10 +1846,17 @@ int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
- 	 * preallocated blocks are unmapped but should treated
- 	 * the same as allocated blocks.
- 	 */
--	ret = ext4_da_map_blocks(inode, &map, bh);
--	if (ret <= 0)
-+	ret = ext4_da_map_blocks(inode, &map);
-+	if (ret < 0)
- 		return ret;
- 
-+	if (map.m_flags & EXT4_MAP_DELAYED) {
-+		map_bh(bh, inode->i_sb, invalid_block);
-+		set_buffer_new(bh);
-+		set_buffer_delay(bh);
-+		return 0;
-+	}
-+
- 	map_bh(bh, inode->i_sb, map.m_pblk);
- 	ext4_update_bh_state(bh, map.m_flags);
- 
--- 
-2.39.2
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.9-fixes-1
+
+for you to fetch changes up to f2e812c1522dab847912309b00abcc762dd696da:
+
+  xfs: don't use current->journal_info (2024-03-25 10:21:01 +0530)
+
+----------------------------------------------------------------
+Bug fixes for 6.9-rc2:
+
+ * Allow stripe unit/width value passed via mount option to be written over
+   existing values in the super block.
+ * Do not set current->journal_info to avoid its value from being miused by
+   another filesystem context.
+
+Signed-off-by: Chandan Babu R <chandanbabu@kernel.org>
+
+----------------------------------------------------------------
+Dave Chinner (2):
+      xfs: allow sunit mount option to repair bad primary sb stripe values
+      xfs: don't use current->journal_info
+
+ fs/xfs/libxfs/xfs_sb.c | 40 +++++++++++++++++++++++++++++++---------
+ fs/xfs/libxfs/xfs_sb.h |  5 +++--
+ fs/xfs/scrub/common.c  |  4 +---
+ fs/xfs/xfs_aops.c      |  7 -------
+ fs/xfs/xfs_icache.c    |  8 +++++---
+ fs/xfs/xfs_trans.h     |  9 +--------
+ 6 files changed, 41 insertions(+), 32 deletions(-)
 
