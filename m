@@ -1,167 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-15763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CE7892AAE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 12:13:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CFB892B14
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 13:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992862827F5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 11:13:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256B51C210C1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 12:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250D4374C3;
-	Sat, 30 Mar 2024 11:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C2939FC1;
+	Sat, 30 Mar 2024 12:10:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6552C6B2
-	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Mar 2024 11:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D219B3308A;
+	Sat, 30 Mar 2024 12:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711797213; cv=none; b=Ny05a6cAp1JyJ1wDTzx4Yn8qO5CDbE73oUFQIaTce1/0ZBUjTbUZaj2jh0sGIcokHsuvkNRhMm0SFBcLL1MQ4QsEhVk64xNZKlQh53jKLdoHs7pqHRGagV9oSio6rvChT4n1KYFF1/IeWOEC4l3dhIdZBTSHY2vHv/lAH7eU08I=
+	t=1711800640; cv=none; b=pNuhuwHPJKg59ewr0SsrEsIAQQPIS9uSYVvMU/N2+62RA0Qe4zYSzwWuvgf8+9ft4gnH28ka01dm53ByfDXqf66ND/wlFc1SrOUMAHMacrF9mv1o2/po3kumIiG/YET20G9He7cNEnwr8en9Z+kVwh6Al3GaM1TwnzNQhPR7bVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711797213; c=relaxed/simple;
-	bh=esAXML7DHdxiwyFJ3iRZS4Izea43hxblUD9ErMVwPiI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RfjzeOxVJrkA+xMBu6DyZ5xB7qZaNX/CDb9gWK15171t5Yau+3q1V+Svi/bs+X+JTuglYXnJPB9Su/UdvoNNkIuz0N+tziTgLvrg6vIL1JuPWh7fP02L0oUlx2EvijL2YHc4llCHeBWiyima1jDGE8nq+q0gJe9b+jpI0sdyTlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7cbfd9f04e3so201848939f.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 30 Mar 2024 04:13:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711797210; x=1712402010;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Th/ktqkvCCzUDJYZJAFFpoB/hGLm/LGgGFQxtdAl6RU=;
-        b=BOrtTxCiCKnH7Pm1st+cR5Kq/8QaSJJ9AT8gQSZcmtHOp1pYBVdykJ9X+IbfRmRiaE
-         PhBfS3G12IaK/O5hE4ld1vfe55YNCeUaMuMpC1Ses6/TuZGtZzlp8bNs5PoJ18LQD2Ai
-         J1QD2Q//SIDUYNb+VGOHJ6YkVwHW6JXWBx4kBe//hixKaceQCM5itZrgF/fTMeRbB/c/
-         B5XDyRAJywtYloTFvbDYDndZj9TuXt87AJRytD+skz5yLzULorW6HPe4VlOKWRCXAGSz
-         q6qfb+tuidzGoo2LxVcAdqhSINLbiE6U97p2ReRcudGyKdCwRW9wlXT8j03CHkPqGwcz
-         5YKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWl3VsO3XvomhbfwP1gAaPnNO7ixB4OQtpARRUlZJ1sX2/9oyUAlPs9ZsHMlwGT1EpWSKcYZKYWYbiYhkPspkpK4pgDenQHGIMRo1Y0xQ==
-X-Gm-Message-State: AOJu0YwA5ZFQLVyStyP1pBhsbyv8gfhMXsdJtkGmvAuQ09FC4sBdZtx2
-	E3YM9RNm+xBd0rXisOD6xEs87kKEMEP/DT7xxOF9OwWIPIzufahLApFjg9R++eMqKDZOtmCq5EX
-	uEaZwVlwAbt6Rzvr226jZfHabY8nztgf0r5Yojy8c3WEq59H+KHReBj8=
-X-Google-Smtp-Source: AGHT+IGxal1IK5WXsozmNjYHSWk6UQm4arNSNM0+XE34coPxtoa/VQPoyRHCC6IT846ZPApk7qV62yTI6SCgeH/pNAly4hRnVze8
+	s=arc-20240116; t=1711800640; c=relaxed/simple;
+	bh=a+LNOdkQlYnSt/8ppmspGPD5Pv/kj3Xgnu7c4yJ9ic8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ljSoKX0x7m3xK44r3m2lL0ucS8IExoXrI8S65Z5cZZ91+N9rT7BJ7/PYdj6RcoglMcTTs67EC94R3jvJ6cjQeTL9JT49dZ2ZoK+unmvOZ4looRdFc5gLwhw6Oj/EIUTVVxmvCX/rJ3KS8eVTO7vwFjujzGW3uH+vfvUrZC1+O48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4V6GLq3Mpxz4f3jQY;
+	Sat, 30 Mar 2024 20:10:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 93F8E1A0232;
+	Sat, 30 Mar 2024 20:10:31 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAn+REsAQhmkPEjIg--.10652S4;
+	Sat, 30 Mar 2024 20:10:27 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH 0/7] ext4: support adding multi-delalloc blocks
+Date: Sat, 30 Mar 2024 20:02:29 +0800
+Message-Id: <20240330120236.3789589-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:858f:b0:475:2758:9f20 with SMTP id
- it15-20020a056638858f00b0047527589f20mr184172jab.1.1711797210408; Sat, 30 Mar
- 2024 04:13:30 -0700 (PDT)
-Date: Sat, 30 Mar 2024 04:13:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a77e580614ded85a@google.com>
-Subject: [syzbot] [v9fs?] KMSAN: uninit-value in p9_client_rpc (2)
-From: syzbot <syzbot+ff14db38f56329ef68df@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn+REsAQhmkPEjIg--.10652S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Wry3JrWkZw1ftw13GF1kGrg_yoW8JFWfpF
+	WS9a4Sgr48Ww1aga1fAa1UJF45Xw4fCr4UG343tw18ZrWDZFyfXFsrKF1F9ayrJrZ3ZFn0
+	qF1a9ry8u3Wjk37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hello,
+From: Zhang Yi <yi.zhang@huawei.com>
 
-syzbot found the following issue on:
+Hello!
 
-HEAD commit:    928a87efa423 Merge tag 'gfs2-v6.8-fix' of git://git.kernel..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=106cc57e180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e2599baf258ef795
-dashboard link: https://syzkaller.appspot.com/bug?extid=ff14db38f56329ef68df
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13a39546180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b4aa7e180000
+This patch series is the part 2 prepartory changes of the buffered IO
+iomap conversion, I picked them out from my buffered IO iomap conversion
+RFC series v3[1], and add bigalloc feature support.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7d66fa7ed5c7/disk-928a87ef.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8b511d64cde0/vmlinux-928a87ef.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8810588440a2/bzImage-928a87ef.xz
+The first 6 patches make ext4_insert_delayed_block() call path support
+inserting multi-delalloc blocks once a time, and the last patch makes
+ext4_da_map_blocks() buffer_head unaware.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ff14db38f56329ef68df@syzkaller.appspotmail.com
+This patch set has been passed 'kvm-xfstests -g auto' tests, I hope it
+could be reviewed and merged first.
 
-=====================================================
-BUG: KMSAN: uninit-value in trace_9p_client_res include/trace/events/9p.h:146 [inline]
-BUG: KMSAN: uninit-value in p9_client_rpc+0x1314/0x1340 net/9p/client.c:754
- trace_9p_client_res include/trace/events/9p.h:146 [inline]
- p9_client_rpc+0x1314/0x1340 net/9p/client.c:754
- p9_client_create+0x1551/0x1ff0 net/9p/client.c:1031
- v9fs_session_init+0x1b9/0x28e0 fs/9p/v9fs.c:410
- v9fs_mount+0xe2/0x12b0 fs/9p/vfs_super.c:122
- legacy_get_tree+0x114/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa7/0x570 fs/super.c:1797
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
- path_mount+0x742/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3875
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
- do_syscall_64+0xd5/0x1f0
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[1] https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
 
-Uninit was created at:
- __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
- __alloc_pages_node include/linux/gfp.h:238 [inline]
- alloc_pages_node include/linux/gfp.h:261 [inline]
- alloc_slab_page mm/slub.c:2175 [inline]
- allocate_slab mm/slub.c:2338 [inline]
- new_slab+0x2de/0x1400 mm/slub.c:2391
- ___slab_alloc+0x1184/0x33d0 mm/slub.c:3525
- __slab_alloc mm/slub.c:3610 [inline]
- __slab_alloc_node mm/slub.c:3663 [inline]
- slab_alloc_node mm/slub.c:3835 [inline]
- kmem_cache_alloc+0x6d3/0xbe0 mm/slub.c:3852
- p9_tag_alloc net/9p/client.c:278 [inline]
- p9_client_prepare_req+0x20a/0x1770 net/9p/client.c:641
- p9_client_rpc+0x27e/0x1340 net/9p/client.c:688
- p9_client_create+0x1551/0x1ff0 net/9p/client.c:1031
- v9fs_session_init+0x1b9/0x28e0 fs/9p/v9fs.c:410
- v9fs_mount+0xe2/0x12b0 fs/9p/vfs_super.c:122
- legacy_get_tree+0x114/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa7/0x570 fs/super.c:1797
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
- path_mount+0x742/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3875
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
- do_syscall_64+0xd5/0x1f0
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
+Thanks,
+Yi.
 
-CPU: 1 PID: 5017 Comm: syz-executor353 Not tainted 6.9.0-rc1-syzkaller-00005-g928a87efa423 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-=====================================================
+Zhang Yi (7):
+  ext4: trim delalloc extent
+  ext4: drop iblock parameter
+  ext4: make ext4_es_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_reserve_space() reserve multi-clusters
+  ext4: factor out check for whether a cluster is allocated
+  ext4: make ext4_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_map_blocks() buffer_head unaware
 
+ fs/ext4/extents_status.c    |  63 +++++++++-----
+ fs/ext4/extents_status.h    |   5 +-
+ fs/ext4/inode.c             | 165 ++++++++++++++++++++++--------------
+ include/trace/events/ext4.h |  26 +++---
+ 4 files changed, 162 insertions(+), 97 deletions(-)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-- 
+2.39.2
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
