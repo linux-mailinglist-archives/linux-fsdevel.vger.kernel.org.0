@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-15715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A429E892839
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:36:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B816C89283B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175141F222E7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 00:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A529282641
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 00:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DB01C3D;
-	Sat, 30 Mar 2024 00:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3F21C0DE3;
+	Sat, 30 Mar 2024 00:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRq/waav"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Msdre7BP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0981851;
-	Sat, 30 Mar 2024 00:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BB01FA2;
+	Sat, 30 Mar 2024 00:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711758965; cv=none; b=lt8cfPCXJogpqZbGhLkvyhReoAackgbOFy+/51H3azhiEO50cXjuTNZkzayVMHykBHHdrjQpj0cS3UAMNwS670Tfi6vhYsYl1LvISHwK+69Fm6IQ0QoK0IuH41CNdJxj0ZpZJUfQDGmwNVXbLi6cQjAbgPEE5KacK0D3uYPXw74=
+	t=1711758980; cv=none; b=YXSmgBUfgh7iOYEssmLdczwych/9fUcla2HuSw+BLzAnDJkdY/F/b6xCVLpKZGJLa9d0i+gid3HKqZvLW4vkQ0Vre/RBtjuwwCG9uOR3vFeLKcG7oFMu1jm8XEFt0Xgl4S4Kyz3mC+vd8zfTU31cXKRYmS+m6DVmN5WO4GwXYnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711758965; c=relaxed/simple;
-	bh=oQH8xAJ/JADHGK4A2NMf6GJLSuDZm9k61AYIFHuvRNE=;
+	s=arc-20240116; t=1711758980; c=relaxed/simple;
+	bh=f3ftG9DDkN4s7AMRC5wPnIpscCrbQlSD/O4eOjMD1vE=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tvqkARIryF4a0QcZEaU/amQ8S/4lwz3IQgggJe/s3bI9C+w3ijwXG/mo2Y3XFpq2oAf33RVYHpI4PaTQS50/PrpJR9A79S8NZDSpnmGMDWSZ2uzN8sHdtbgi3r/dI/kjVyUbD6HDILdjB9/fUq76m3mK/vCq4Afu59CWfspzC5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRq/waav; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A56BC433F1;
-	Sat, 30 Mar 2024 00:36:04 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CitEOsWYvA3xfCtpCbcwt0zmqVX1tE4hp6HnuzZy9iPIvGVmrPEI9F4hte2tX86VWnRkZWNaejPK2i34ww7WQMnK8hsT5yZ13s86ZvNXcamKCPmBT9MNhkxjYC0wgPwHJrzfo8iYc1QUm9SMtlqplsvojPOQIE7KmRX5RGOYCik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Msdre7BP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20BF6C433C7;
+	Sat, 30 Mar 2024 00:36:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711758964;
-	bh=oQH8xAJ/JADHGK4A2NMf6GJLSuDZm9k61AYIFHuvRNE=;
+	s=k20201202; t=1711758980;
+	bh=f3ftG9DDkN4s7AMRC5wPnIpscCrbQlSD/O4eOjMD1vE=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=DRq/waavT46kt61YHN4RTa82J62A681ipWATWf5jD0n1okurI1QC35zRplgbC9x3Y
-	 XxunxRXIpAwiOcJoxVd8Z+uc8cwXVW3hHTkRb8lLMZ6eUnqxDw21tPdDzGQXkfDnXn
-	 1U0iwa6XHvsXgvkXTnqBVq+aPskRLEw+2o0pPufU4HL6qsuj+qa6CUrjoPFlxJcxrd
-	 e9p0Hk1S838plvkTCImMR930WB1hNqjF7gf1CtBvqimMci/PFLh3s9A2gjSS2I52ky
-	 Nbb9fuJXMNBUBPCUiF3wpPxeucGLU7sqrQEXz3xTJFI+DO1aIxK9E/JZXPYCf+4V3M
-	 WAc7Wktk/oRuw==
-Date: Fri, 29 Mar 2024 17:36:04 -0700
-Subject: [PATCH 13/13] iomap: integrate fs-verity verification into iomap's
- read path
+	b=Msdre7BPP/l7lDZLw0k/vn7OV3z59VPiW2qbsyMxWZHc+TNlHAzT+RlF53GHwRNYG
+	 d+ZV6kwCBT6pmIWE/Fd/BudeI1mWKaGahM+/vhKbYqLInVb/llrktD2DhdQInZIqEt
+	 pBwmj7CE/r3oJGMHdhGrF+QBIH0hB4WQ+YXI7+W0ExVP2iEvUJROZPyba0/JK+s7M4
+	 /mauM2yhBlegswehIy67ZFB7Fd5EHPm5Nl9PQM1mKgNtayS35VWrT8kjkYoKVPSfy8
+	 vWkN7GYN/dW3VCLuQRZ1GC7ntZWksMA1rNx4hg7kpehcwV47S3+tI4WH5LvdlQd+Qe
+	 6J6BfI9IG73Bg==
+Date: Fri, 29 Mar 2024 17:36:19 -0700
+Subject: [PATCH 01/29] xfs: use unsigned ints for non-negative quantities in
+ xfs_attr_remote.c
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, ebiggers@kernel.org, aalbersh@redhat.com
-Cc: Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
-Message-ID: <171175868082.1987804.4008377696050953236.stgit@frogsfrogsfrogs>
-In-Reply-To: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
-References: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ fsverity@lists.linux.dev
+Message-ID: <171175868577.1988170.1326765772903298581.stgit@frogsfrogsfrogs>
+In-Reply-To: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
+References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -61,231 +61,178 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-From: Andrey Albershteyn <aalbersh@redhat.com>
+From: Darrick J. Wong <djwong@kernel.org>
 
-This patch adds fs-verity verification into iomap's read path. After
-BIO's io operation is complete the data are verified against
-fs-verity's Merkle tree. Verification work is done in a separate
-workqueue.
+In the next few patches we're going to refactor the attr remote code so
+that we can support headerless remote xattr values for storing merkle
+tree blocks.  For now, let's change the code to use unsigned int to
+describe quantities of bytes and blocks that cannot be negative.
 
-The read path ioend iomap_read_ioend are stored side by side with
-BIOs if FS_VERITY is enabled.
-
-Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-[djwong: fix doc warning]
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/iomap/buffered-io.c |  128 +++++++++++++++++++++++++++++++++++++++++++++---
- include/linux/iomap.h  |    4 ++
- 2 files changed, 125 insertions(+), 7 deletions(-)
+ fs/xfs/libxfs/xfs_attr_remote.c |   54 ++++++++++++++++++++-------------------
+ fs/xfs/libxfs/xfs_attr_remote.h |    2 +
+ 2 files changed, 28 insertions(+), 28 deletions(-)
 
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4e8e41c8b3c0e..9f9d929dfeebc 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -6,6 +6,7 @@
- #include <linux/module.h>
- #include <linux/compiler.h>
- #include <linux/fs.h>
-+#include <linux/fsverity.h>
- #include <linux/iomap.h>
- #include <linux/pagemap.h>
- #include <linux/uio.h>
-@@ -23,6 +24,8 @@
- 
- #define IOEND_BATCH_SIZE	4096
- 
-+#define IOMAP_POOL_SIZE		(4 * (PAGE_SIZE / SECTOR_SIZE))
-+
- typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
- /*
-  * Structure allocated for each folio to track per-block uptodate, dirty state
-@@ -368,6 +371,110 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
- 		pos >= i_size_read(iter->inode);
- }
- 
-+#ifdef CONFIG_FS_VERITY
-+struct iomap_fsverity_bio {
-+	struct work_struct	work;
-+	struct bio		bio;
-+};
-+static struct bio_set *iomap_fsverity_bioset;
-+
-+static int iomap_fsverity_init_bioset(void)
-+{
-+	struct bio_set *bs, *old;
-+	int error;
-+
-+	bs = kzalloc(sizeof(*bs), GFP_KERNEL);
-+	if (!bs)
-+		return -ENOMEM;
-+
-+	error = bioset_init(bs, IOMAP_POOL_SIZE,
-+			    offsetof(struct iomap_fsverity_bio, bio),
-+			    BIOSET_NEED_BVECS);
-+	if (error) {
-+		kfree(bs);
-+		return error;
-+	}
-+
-+	/*
-+	 * This has to be atomic as readaheads can race to create the
-+	 * bioset.  If someone set the pointer before us, we drop ours.
-+	 */
-+	old = cmpxchg(&iomap_fsverity_bioset, NULL, bs);
-+	if (old) {
-+		bioset_exit(bs);
-+		kfree(bs);
-+	}
-+
-+	return 0;
-+}
-+
-+int iomap_init_fsverity(struct super_block *sb)
-+{
-+	int ret;
-+
-+	if (!iomap_fsverity_bioset) {
-+		ret = iomap_fsverity_init_bioset();
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return fsverity_init_verify_wq(sb);
-+}
-+EXPORT_SYMBOL_GPL(iomap_init_fsverity);
-+
-+static void
-+iomap_read_fsverify_end_io_work(struct work_struct *work)
-+{
-+	struct iomap_fsverity_bio *fbio =
-+		container_of(work, struct iomap_fsverity_bio, work);
-+
-+	fsverity_verify_bio(&fbio->bio);
-+	iomap_read_end_io(&fbio->bio);
-+}
-+
-+static void
-+iomap_read_fsverity_end_io(struct bio *bio)
-+{
-+	struct iomap_fsverity_bio *fbio =
-+		container_of(bio, struct iomap_fsverity_bio, bio);
-+
-+	INIT_WORK(&fbio->work, iomap_read_fsverify_end_io_work);
-+	queue_work(bio->bi_private, &fbio->work);
-+}
-+
-+static struct bio *
-+iomap_fsverity_read_bio_alloc(struct inode *inode, struct block_device *bdev,
-+			    int nr_vecs, gfp_t gfp)
-+{
-+	struct bio *bio;
-+
-+	bio = bio_alloc_bioset(bdev, nr_vecs, REQ_OP_READ, gfp,
-+			iomap_fsverity_bioset);
-+	if (bio) {
-+		bio->bi_private = inode->i_sb->s_verify_wq;
-+		bio->bi_end_io = iomap_read_fsverity_end_io;
-+	}
-+	return bio;
-+}
-+#else
-+# define iomap_fsverity_read_bio_alloc(...)	(NULL)
-+# define iomap_fsverity_init_bioset(...)	(-EOPNOTSUPP)
-+#endif /* CONFIG_FS_VERITY */
-+
-+static struct bio *iomap_read_bio_alloc(struct inode *inode,
-+		struct block_device *bdev, int nr_vecs, gfp_t gfp)
-+{
-+	struct bio *bio;
-+
-+	if (fsverity_active(inode))
-+		return iomap_fsverity_read_bio_alloc(inode, bdev, nr_vecs, gfp);
-+
-+	bio = bio_alloc(bdev, nr_vecs, REQ_OP_READ, gfp);
-+	if (bio)
-+		bio->bi_end_io = iomap_read_end_io;
-+	return bio;
-+}
-+
- static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 		struct iomap_readpage_ctx *ctx, loff_t offset)
+diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
+index a8de9dc1e998a..c778a3a51792e 100644
+--- a/fs/xfs/libxfs/xfs_attr_remote.c
++++ b/fs/xfs/libxfs/xfs_attr_remote.c
+@@ -47,13 +47,13 @@
+  * Each contiguous block has a header, so it is not just a simple attribute
+  * length to FSB conversion.
+  */
+-int
++unsigned int
+ xfs_attr3_rmt_blocks(
+-	struct xfs_mount *mp,
+-	int		attrlen)
++	struct xfs_mount	*mp,
++	unsigned int		attrlen)
  {
-@@ -391,6 +498,12 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 
- 	if (iomap_block_needs_zeroing(iter, pos)) {
- 		folio_zero_range(folio, poff, plen);
-+		if (fsverity_active(iter->inode) &&
-+		    !fsverity_verify_blocks(folio, plen, poff)) {
-+			folio_set_error(folio);
-+			goto done;
-+		}
-+
- 		iomap_set_range_uptodate(folio, poff, plen);
- 		goto done;
+ 	if (xfs_has_crc(mp)) {
+-		int buflen = XFS_ATTR3_RMT_BUF_SPACE(mp, mp->m_sb.sb_blocksize);
++		unsigned int buflen = XFS_ATTR3_RMT_BUF_SPACE(mp, mp->m_sb.sb_blocksize);
+ 		return (attrlen + buflen - 1) / buflen;
  	}
-@@ -408,28 +521,29 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
- 		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
- 		gfp_t orig_gfp = gfp;
--		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
- 
- 		if (ctx->bio)
- 			submit_bio(ctx->bio);
- 
- 		if (ctx->rac) /* same as readahead_gfp_mask */
- 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
--		ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
--				     REQ_OP_READ, gfp);
-+
-+		ctx->bio = iomap_read_bio_alloc(iter->inode, iomap->bdev,
-+				bio_max_segs(DIV_ROUND_UP(length, PAGE_SIZE)),
-+				gfp);
-+
- 		/*
- 		 * If the bio_alloc fails, try it again for a single page to
- 		 * avoid having to deal with partial page reads.  This emulates
- 		 * what do_mpage_read_folio does.
- 		 */
- 		if (!ctx->bio) {
--			ctx->bio = bio_alloc(iomap->bdev, 1, REQ_OP_READ,
--					     orig_gfp);
-+			ctx->bio = iomap_read_bio_alloc(iter->inode,
-+					iomap->bdev, 1, orig_gfp);
- 		}
- 		if (ctx->rac)
- 			ctx->bio->bi_opf |= REQ_RAHEAD;
- 		ctx->bio->bi_iter.bi_sector = sector;
--		ctx->bio->bi_end_io = iomap_read_end_io;
- 		bio_add_folio_nofail(ctx->bio, folio, plen, poff);
- 	}
- 
-@@ -1987,7 +2101,7 @@ EXPORT_SYMBOL_GPL(iomap_writepages);
- 
- static int __init iomap_init(void)
+ 	return XFS_B_TO_FSB(mp, attrlen);
+@@ -122,9 +122,9 @@ __xfs_attr3_rmt_read_verify(
  {
--	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
-+	return bioset_init(&iomap_ioend_bioset, IOMAP_POOL_SIZE,
- 			   offsetof(struct iomap_ioend, io_bio),
- 			   BIOSET_NEED_BVECS);
- }
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 6fc1c858013d1..d486ec62d4082 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -256,6 +256,10 @@ static inline const struct iomap *iomap_iter_srcmap(const struct iomap_iter *i)
- 	return &i->iomap;
- }
+ 	struct xfs_mount *mp = bp->b_mount;
+ 	char		*ptr;
+-	int		len;
++	unsigned int	len;
+ 	xfs_daddr_t	bno;
+-	int		blksize = mp->m_attr_geo->blksize;
++	unsigned int	blksize = mp->m_attr_geo->blksize;
  
-+#ifdef CONFIG_FS_VERITY
-+int iomap_init_fsverity(struct super_block *sb);
-+#endif
-+
- ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
- 		const struct iomap_ops *ops);
- int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+ 	/* no verification of non-crc buffers */
+ 	if (!xfs_has_crc(mp))
+@@ -186,7 +186,7 @@ xfs_attr3_rmt_write_verify(
+ {
+ 	struct xfs_mount *mp = bp->b_mount;
+ 	xfs_failaddr_t	fa;
+-	int		blksize = mp->m_attr_geo->blksize;
++	unsigned int	blksize = mp->m_attr_geo->blksize;
+ 	char		*ptr;
+ 	int		len;
+ 	xfs_daddr_t	bno;
+@@ -281,20 +281,20 @@ xfs_attr_rmtval_copyout(
+ 	struct xfs_buf		*bp,
+ 	struct xfs_inode	*dp,
+ 	xfs_ino_t		owner,
+-	int			*offset,
+-	int			*valuelen,
++	unsigned int		*offset,
++	unsigned int		*valuelen,
+ 	uint8_t			**dst)
+ {
+ 	char			*src = bp->b_addr;
+ 	xfs_daddr_t		bno = xfs_buf_daddr(bp);
+-	int			len = BBTOB(bp->b_length);
+-	int			blksize = mp->m_attr_geo->blksize;
++	unsigned int		len = BBTOB(bp->b_length);
++	unsigned int		blksize = mp->m_attr_geo->blksize;
+ 
+ 	ASSERT(len >= blksize);
+ 
+ 	while (len > 0 && *valuelen > 0) {
+-		int hdr_size = 0;
+-		int byte_cnt = XFS_ATTR3_RMT_BUF_SPACE(mp, blksize);
++		unsigned int hdr_size = 0;
++		unsigned int byte_cnt = XFS_ATTR3_RMT_BUF_SPACE(mp, blksize);
+ 
+ 		byte_cnt = min(*valuelen, byte_cnt);
+ 
+@@ -330,20 +330,20 @@ xfs_attr_rmtval_copyin(
+ 	struct xfs_mount *mp,
+ 	struct xfs_buf	*bp,
+ 	xfs_ino_t	ino,
+-	int		*offset,
+-	int		*valuelen,
++	unsigned int	*offset,
++	unsigned int	*valuelen,
+ 	uint8_t		**src)
+ {
+ 	char		*dst = bp->b_addr;
+ 	xfs_daddr_t	bno = xfs_buf_daddr(bp);
+-	int		len = BBTOB(bp->b_length);
+-	int		blksize = mp->m_attr_geo->blksize;
++	unsigned int	len = BBTOB(bp->b_length);
++	unsigned int	blksize = mp->m_attr_geo->blksize;
+ 
+ 	ASSERT(len >= blksize);
+ 
+ 	while (len > 0 && *valuelen > 0) {
+-		int hdr_size;
+-		int byte_cnt = XFS_ATTR3_RMT_BUF_SPACE(mp, blksize);
++		unsigned int hdr_size;
++		unsigned int byte_cnt = XFS_ATTR3_RMT_BUF_SPACE(mp, blksize);
+ 
+ 		byte_cnt = min(*valuelen, byte_cnt);
+ 		hdr_size = xfs_attr3_rmt_hdr_set(mp, dst, ino, *offset,
+@@ -389,12 +389,12 @@ xfs_attr_rmtval_get(
+ 	struct xfs_buf		*bp;
+ 	xfs_dablk_t		lblkno = args->rmtblkno;
+ 	uint8_t			*dst = args->value;
+-	int			valuelen;
++	unsigned int		valuelen;
+ 	int			nmap;
+ 	int			error;
+-	int			blkcnt = args->rmtblkcnt;
++	unsigned int		blkcnt = args->rmtblkcnt;
+ 	int			i;
+-	int			offset = 0;
++	unsigned int		offset = 0;
+ 
+ 	trace_xfs_attr_rmtval_get(args);
+ 
+@@ -452,7 +452,7 @@ xfs_attr_rmt_find_hole(
+ 	struct xfs_inode	*dp = args->dp;
+ 	struct xfs_mount	*mp = dp->i_mount;
+ 	int			error;
+-	int			blkcnt;
++	unsigned int		blkcnt;
+ 	xfs_fileoff_t		lfileoff = 0;
+ 
+ 	/*
+@@ -481,11 +481,11 @@ xfs_attr_rmtval_set_value(
+ 	struct xfs_bmbt_irec	map;
+ 	xfs_dablk_t		lblkno;
+ 	uint8_t			*src = args->value;
+-	int			blkcnt;
+-	int			valuelen;
++	unsigned int		blkcnt;
++	unsigned int		valuelen;
+ 	int			nmap;
+ 	int			error;
+-	int			offset = 0;
++	unsigned int		offset = 0;
+ 
+ 	/*
+ 	 * Roll through the "value", copying the attribute value to the
+@@ -645,7 +645,7 @@ xfs_attr_rmtval_invalidate(
+ 	struct xfs_da_args	*args)
+ {
+ 	xfs_dablk_t		lblkno;
+-	int			blkcnt;
++	unsigned int		blkcnt;
+ 	int			error;
+ 
+ 	/*
+diff --git a/fs/xfs/libxfs/xfs_attr_remote.h b/fs/xfs/libxfs/xfs_attr_remote.h
+index d097ec6c4dc35..c64b04f91cafd 100644
+--- a/fs/xfs/libxfs/xfs_attr_remote.h
++++ b/fs/xfs/libxfs/xfs_attr_remote.h
+@@ -6,7 +6,7 @@
+ #ifndef __XFS_ATTR_REMOTE_H__
+ #define	__XFS_ATTR_REMOTE_H__
+ 
+-int xfs_attr3_rmt_blocks(struct xfs_mount *mp, int attrlen);
++unsigned int xfs_attr3_rmt_blocks(struct xfs_mount *mp, unsigned int attrlen);
+ 
+ int xfs_attr_rmtval_get(struct xfs_da_args *args);
+ int xfs_attr_rmtval_stale(struct xfs_inode *ip, struct xfs_bmbt_irec *map,
 
 
