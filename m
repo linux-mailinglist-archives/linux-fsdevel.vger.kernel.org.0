@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-15742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41EE892873
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:43:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC88892876
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:43:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0620B1C20EFE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 00:43:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 342EFB22C29
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 00:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF12C15C9;
-	Sat, 30 Mar 2024 00:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F3B15A5;
+	Sat, 30 Mar 2024 00:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QojW9igw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sahgHTqj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B84801;
-	Sat, 30 Mar 2024 00:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F7A7F8;
+	Sat, 30 Mar 2024 00:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711759387; cv=none; b=hTp/4dw2KRvbjZBZfSeyWPPP2IodC30LWqf4NJHF+y/S057AM93lLMX7LaM8wbw0zb9OQz8xS0EZ9dEEV076Vgrp7k9dpzLjAWHuDxnc1rFVSiltQzIRR+UBS4p6/wtsLELyGAfCKygm+6dpyGN06BOW3Z1+LR0TfFVxScXoW6Y=
+	t=1711759403; cv=none; b=Fu0AyKoHSsAB708qm9Xj4H7Q7uOCffItZy90vIWI+Jp2WB/AvwMiCwc74Gd7KZMs7jsM7uLwH6NV/JSSU36BGIS/RP+WndhQKgxw9KEjKf+SGzXbP7z7Ztq/HiT3bp5u1rMbvCZOo1QjfNXWIDaLJlTucemak/TG3pRWpD8H+I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711759387; c=relaxed/simple;
-	bh=UnzsECvFAnQT6bMmRAHHSYPz9zT1trrX/GCXdbKeheA=;
+	s=arc-20240116; t=1711759403; c=relaxed/simple;
+	bh=IeNrlhcNkOwaqIOtr82LPcKDi10R7TrEkQRywtS6IZ8=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OY8W2HCxD3sk2216id2kxHiwRF93pashmOkobdQgiGkmzJV9jg0MJXxHltoKUrHhJVzkk41mlXficMrxGjE3618+VIaIFnzM8k6RyKSOTipLDmDgJYbj692M+LesW+/F/Y2EAGLnBiPQZt5GHmbwlMSx2m5QPlt6WCmZt8UyTOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QojW9igw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A341C433C7;
-	Sat, 30 Mar 2024 00:43:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=TN1xSdkt9JzV4MiHRI4NA8PUPf+G6h3033YsHg0JBr1h/oDcD0bk1H99XhyfZg9tYO84X8a8FbWN+c6HTHqBXUHEKq4hk+FXWxU3/lZwtswICCUs8Y+ep9uRMHoNB5RAiyEj+dulgmKKfz5QsUoKH50JSWHKPIFDVxH0zProZZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sahgHTqj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD51EC43390;
+	Sat, 30 Mar 2024 00:43:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711759387;
-	bh=UnzsECvFAnQT6bMmRAHHSYPz9zT1trrX/GCXdbKeheA=;
+	s=k20201202; t=1711759402;
+	bh=IeNrlhcNkOwaqIOtr82LPcKDi10R7TrEkQRywtS6IZ8=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=QojW9igwTjWLwzjaeoVbxxI1izEjCECCUYTLj1NPFq+YQ7WfgdIN3Dwhr8TrIDXHk
-	 yZNMmOHOINbgwJKYEtZzxTk8udAKF9blRMe+78lCnBxhjkhFbwOoayRwmgVZlLsW2F
-	 pewO1fthfwrG7v0dLB9oRiouKHmEs3PPgnpFCGWs/l9CnW40RNf+IRrNkfnWpVRrmK
-	 P3RZYXw/DkE6RJVALymRXk4ZRUHOjmTeoLRC/GuoOzZpdcnVXnQdTThOecPSXD1iEW
-	 +s2ZAAMFydeJZ2RpO6W9dDbl8ndHS4HFnIt4Hz0+qXqAo54Z69PU+oPLlpxhibfZ5w
-	 n9lNSzM8oR/gA==
-Date: Fri, 29 Mar 2024 17:43:06 -0700
-Subject: [PATCH 27/29] xfs: make it possible to disable fsverity
+	b=sahgHTqje9Bao5C9XBxkwRuKtkHvkPIAsmq6kADgSgDtTVINDdOkKTjAyQfpWc6a7
+	 xZgqvaajWFN5VxD8ttTvKvFtu/8n7WkJ0wPmJFg0AYXo4X/Y8mOv9acgr53OyWxp2q
+	 62fSuRXFK4nT2rKqNjT/+vfTlcX4odnLGXnqLum1+oA60ddv5heVr/+q5JJMQVBl/y
+	 UKSaGgTp7z7eSAVPOb6O1f4yNiuNP/l3zoib9uUKnOVrqyn2tUal9SnAQmCmMaaWZB
+	 PXhY0Ikpjrx4LNuuScM/ksMcphTfx3rufxBzHmvx63O/fsu4kBVCJfsV24YIqsNYol
+	 uW4KUp2FlxbWQ==
+Date: Fri, 29 Mar 2024 17:43:22 -0700
+Subject: [PATCH 28/29] xfs: allow verity files to be opened even if the
+ fsverity metadata is damaged
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, ebiggers@kernel.org, aalbersh@redhat.com
 Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  fsverity@lists.linux.dev
-Message-ID: <171175869006.1988170.17755870506078239341.stgit@frogsfrogsfrogs>
+Message-ID: <171175869022.1988170.16501260874882118498.stgit@frogsfrogsfrogs>
 In-Reply-To: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
 References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,154 +63,70 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Create an experimental ioctl so that we can turn off fsverity.
+There are more things that one can do with an open file descriptor on
+XFS -- query extended attributes, scan for metadata damage, repair
+metadata, etc.  None of this is possible if the fsverity metadata are
+damaged, because that prevents the file from being opened.
+
+Ignore a selective set of error codes that we know fsverity_file_open to
+return if the verity descriptor is nonsense.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/libxfs/xfs_fs_staging.h |    3 ++
- fs/xfs/xfs_fsverity.c          |   73 ++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_fsverity.h          |    3 ++
- fs/xfs/xfs_ioctl.c             |    6 +++
- 4 files changed, 85 insertions(+)
+ fs/iomap/buffered-io.c |    8 ++++++++
+ fs/xfs/xfs_file.c      |   19 ++++++++++++++++++-
+ 2 files changed, 26 insertions(+), 1 deletion(-)
 
 
-diff --git a/fs/xfs/libxfs/xfs_fs_staging.h b/fs/xfs/libxfs/xfs_fs_staging.h
-index 899a56a569d50..4c29167a2b190 100644
---- a/fs/xfs/libxfs/xfs_fs_staging.h
-+++ b/fs/xfs/libxfs/xfs_fs_staging.h
-@@ -229,4 +229,7 @@ struct xfs_map_freesp {
-  */
- #define XFS_IOC_MAP_FREESP	_IOWR('X', 64, struct xfs_map_freesp)
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 9f9d929dfeebc..e68a15b72dbdd 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -487,6 +487,14 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 	size_t poff, plen;
+ 	sector_t sector;
  
-+/* Turn off fs-verity */
-+#define FS_IOC_DISABLE_VERITY	_IO('f', 133)
++	/*
++	 * If this verity file hasn't been activated, fail read attempts.  This
++	 * can happen if the calling filesystem allows files to be opened even
++	 * with damaged verity metadata.
++	 */
++	if (IS_VERITY(iter->inode) && !fsverity_active(iter->inode))
++		return -EIO;
 +
- #endif /* __XFS_FS_STAGING_H__ */
-diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
-index bfa5c70beec24..f57d8acbd858a 100644
---- a/fs/xfs/xfs_fsverity.c
-+++ b/fs/xfs/xfs_fsverity.c
-@@ -792,3 +792,76 @@ const struct fsverity_operations xfs_fsverity_ops = {
- 	.drop_merkle_tree_block		= xfs_fsverity_drop_merkle,
- 	.fail_validation		= xfs_fsverity_fail_validation,
- };
-+
-+/* Turn off fs-verity. */
-+int
-+xfs_fsverity_disable(
-+	struct file		*file)
-+{
-+	struct inode		*inode = file_inode(file);
-+	struct xfs_inode	*ip = XFS_I(inode);
-+	struct xfs_mount	*mp = ip->i_mount;
-+	struct xfs_trans	*tp;
-+	u64			merkle_tree_size;
-+	unsigned int		merkle_blocksize;
-+	int			error;
-+
-+	BUILD_BUG_ON(FS_IOC_DISABLE_VERITY == FS_IOC_ENABLE_VERITY);
-+
-+	if (!xfs_has_verity(mp))
-+		return -EOPNOTSUPP;
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	xfs_ilock(ip, XFS_IOLOCK_EXCL);
-+
-+	if (!IS_VERITY(inode)) {
-+		error = 0;
-+		goto out_iolock;
+ 	if (iomap->type == IOMAP_INLINE)
+ 		return iomap_read_inline_data(iter, folio);
+ 
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index c0b3e8146b753..36034eaefbf55 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -1431,8 +1431,25 @@ xfs_file_open(
+ 			FMODE_DIO_PARALLEL_WRITE | FMODE_CAN_ODIRECT;
+ 
+ 	error = fsverity_file_open(inode, file);
+-	if (error)
++	switch (error) {
++	case -EFBIG:
++	case -EINVAL:
++	case -EMSGSIZE:
++	case -EFSCORRUPTED:
++		/*
++		 * Be selective about which fsverity errors we propagate to
++		 * userspace; we still want to be able to open this file even
++		 * if reads don't work.  Someone might want to perform an
++		 * online repair.
++		 */
++		if (has_capability_noaudit(current, CAP_SYS_ADMIN))
++			break;
+ 		return error;
++	case 0:
++		break;
++	default:
++		return error;
 +	}
-+
-+	if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION)) {
-+		error = -EBUSY;
-+		goto out_iolock;
-+	}
-+
-+	error = xfs_qm_dqattach(ip);
-+	if (error)
-+		goto out_iolock;
-+
-+	error = fsverity_merkle_tree_geometry(inode, &merkle_blocksize,
-+			&merkle_tree_size);
-+	if (error)
-+		goto out_iolock;
-+
-+	xfs_fsverity_cache_drop(ip);
-+
-+	/* Clear fsverity inode flag */
-+	error = xfs_trans_alloc_inode(ip, &M_RES(mp)->tr_ichange, 0, 0, false,
-+			&tp);
-+	if (error)
-+		goto out_iolock;
-+
-+	ip->i_diflags2 &= ~XFS_DIFLAG2_VERITY;
-+
-+	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
-+	xfs_trans_set_sync(tp);
-+
-+	error = xfs_trans_commit(tp);
-+	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-+	if (error)
-+		goto out_iolock;
-+
-+	inode->i_flags &= ~S_VERITY;
-+	fsverity_cleanup_inode(inode);
-+
-+	/* Remove the fsverity xattrs. */
-+	error = xfs_fsverity_delete_metadata(ip, merkle_tree_size,
-+			merkle_blocksize);
-+	if (error)
-+		goto out_iolock;
-+
-+out_iolock:
-+	xfs_iunlock(ip, XFS_IOLOCK_EXCL);
-+	return error;
-+}
-diff --git a/fs/xfs/xfs_fsverity.h b/fs/xfs/xfs_fsverity.h
-index 21ba0d82f26d8..4b9fff6b0d2c4 100644
---- a/fs/xfs/xfs_fsverity.h
-+++ b/fs/xfs/xfs_fsverity.h
-@@ -17,6 +17,8 @@ struct xfs_icwalk;
- int xfs_fsverity_scan_inode(struct xfs_inode *ip, struct xfs_icwalk *icw);
  
- extern const struct fsverity_operations xfs_fsverity_ops;
-+
-+int xfs_fsverity_disable(struct file *file);
- #else
- # define xfs_fsverity_cache_init(ip)		((void)0)
- # define xfs_fsverity_cache_drop(ip)		((void)0)
-@@ -24,6 +26,7 @@ extern const struct fsverity_operations xfs_fsverity_ops;
- # define xfs_fsverity_register_shrinker(mp)	(0)
- # define xfs_fsverity_unregister_shrinker(mp)	((void)0)
- # define xfs_fsverity_scan_inode(ip, icw)	(0)
-+# define xfs_fsverity_disable(ip)			(-EOPNOTSUPP)
- #endif	/* CONFIG_FS_VERITY */
- 
- #endif	/* __XFS_FSVERITY_H__ */
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 0aa0ceb9ec153..24deaaf5eb0f5 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -44,6 +44,7 @@
- #include "xfs_file.h"
- #include "xfs_exchrange.h"
- #include "xfs_rtgroup.h"
-+#include "xfs_fsverity.h"
- 
- #include <linux/mount.h>
- #include <linux/namei.h>
-@@ -2712,6 +2713,11 @@ xfs_file_ioctl(
- 	case XFS_IOC_MAP_FREESP:
- 		return xfs_ioc_map_freesp(filp, arg);
- 
-+#ifdef CONFIG_XFS_EXPERIMENTAL_IOCTLS
-+	case FS_IOC_DISABLE_VERITY:
-+		return xfs_fsverity_disable(filp);
-+#endif
-+
- 	case FS_IOC_ENABLE_VERITY:
- 		if (!xfs_has_verity(mp))
- 			return -EOPNOTSUPP;
+ 	return generic_file_open(inode, file);
+ }
 
 
