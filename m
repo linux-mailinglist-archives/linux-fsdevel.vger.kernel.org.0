@@ -1,102 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-15772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6B7892B7B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 14:54:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA43892CFC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 21:29:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B0F1C20FF6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 13:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D1F1C21561
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 20:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838F92D03B;
-	Sat, 30 Mar 2024 13:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFBD2C6B2;
+	Sat, 30 Mar 2024 20:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PubxICAP"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uA+km6Tl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE61C8BFC;
-	Sat, 30 Mar 2024 13:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0D01E885
+	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Mar 2024 20:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711806860; cv=none; b=FmCupPtpBb+5PcHQKWuVl5+KqOF6v0RVbvOseDqCaJbhvBwDI22iSL1HsiyYpk/nSQA2JrsaoRnDSGAAARm4smYU6bzTJyotGtdjFxErrLGFRdXRv0XyUz6sHW/2ZmRa27Nghsaow+tUVuS54Y6epS9+cW2CSSG1r+CEt5OLNHA=
+	t=1711830581; cv=none; b=BcJQ0kB01Wnn+EtL0Q1YR8zbhqROIjBZ5bGGe3EaXBlMbQ36E501yEgJxp4woq7BrGpOVOlJftSh2/GMF3jl1QGXkYwa7fny/vRIq87S969jb66ge8GOztEhf3t51kjh3JAxsRnjyefByJk34aUdC64ZwK78TLLkW/azY3I4j/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711806860; c=relaxed/simple;
-	bh=gdiN5QceMOmYJR6aANoPIK9P+VOtXiE5jti77EzMyng=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dvhMJNQZGA+tr+mScsz8Pc/JSpPP+X4an1/fNaBxlTWlb2hg5g9oDsmgM2PjTxR+HodT2LN4b7CPwVHYwKWkgUnSbo8/EbqlvC6wc5iRtnzOi0O5O94JECYj3XLfsBCTPaG9q1biqr6IuaXy9xzXE20nMJJI9XyUEcMt7dBk79M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PubxICAP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E9AC433C7;
-	Sat, 30 Mar 2024 13:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711806860;
-	bh=gdiN5QceMOmYJR6aANoPIK9P+VOtXiE5jti77EzMyng=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PubxICAPFkULCDHrQInMKvt2ftqscwq70N6vX9ZqASVjAp8t5oYpBlGWrvCgHY3YD
-	 NXba2llksm6YUEoKNje3YwcMqeRjNADEpMRCSnrwXZyLTk5EwXIpH6JfrxKQi9nI1O
-	 aF7Hnukoid+Aijov1T7qenSgIIwM5zXFaWR0Z4ljkBXp/K0feDbGPczApsDlOqGsTr
-	 SW0Kn17L7J90R8xPzZJ1taWFr8PMHR43CHp/tXGIt1+DBJ8LHeWB49uqSvY/8pl7TU
-	 yEAdc5l+bDPMOJ/SnlpAkwlywDep7TUDRQUd+pOudcaOgsOTLvGyuFQFraNz4R/PC5
-	 54p6P9XmvlV+A==
-User-agent: mu4e 1.10.8; emacs 27.1
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: chandanbabu@kernel.org, dchinner@redhat.com, djwong@kernel.org,
- hch@lst.de, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
- mark.tinguely@oracle.com
-Subject: [GIT PULL] xfs: Bug fixes for 6.9
-Date: Sat, 30 Mar 2024 19:19:34 +0530
-Message-ID: <875xx3lta0.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=arc-20240116; t=1711830581; c=relaxed/simple;
+	bh=4agRjPMzG1/XtmQuWYKpTl8EdRGg6eblVES2ZO+0SlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYrhZy/tuAe8IdRD62UusEVk13FUHrNvZm3Qh7yZ+LvN/F8A+oc9lON0taacS9rCUdR3mzp4Ko4hUsKLsB6x4ljDBNq5vLTwGDiYTqfmxOR1QNOSngjtjvvhbMn1cGmyNoxGEk1+msjUs8CHLL+bYjVdJln8kajoy16ZQ1tA1+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uA+km6Tl; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 30 Mar 2024 16:29:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1711830576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kyuuX/CAzaYww5VoFTY8UcWmpR1otbpj2QC6MHiOP6Y=;
+	b=uA+km6TlvUg6jRtUMOEQuGan9xTSoi3SOnOH3q82vcwT/289LwZIYTRTxXA4xhtkFmvseo
+	Zl3beFxh4b1qDY8quO5wtU3v0xwmCpR0XwYHRTlvkAN/5rulDDsg3Y/nhl4RrlhZOlYTbB
+	uIiPGG/tnr8VzI7qMkC6rQ/XyQDDUTc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Mitchell Augustin <mitchell.augustin@canonical.com>
+Cc: linux-aio@kvack.org, brauner@kernel.org, bcrl@kvack.org, 
+	linux-fsdevel@vger.kernel.org, colin.i.king@gmail.com, 
+	dann frazier <dann.frazier@canonical.com>, Ian May <ian.may@canonical.com>
+Subject: Re: [PATCH] fs/aio: obey min_nr when doing wakeups
+Message-ID: <kgkn6pklnafahldqznbf3zgqch3dyoxgsvmse4xfcz5rdgilxf@veery7hzv3zf>
+References: <b8e4d93c-f2f2-4a0e-a47f-15a740434356@mitchellaugustin.com>
+ <CAHTA-ubfwwB51A5Wg5M6H_rPEQK9pNf8FkAGH=vr=FEkyRrtqw@mail.gmail.com>
+ <u7o6c74dsi3fxewhguinoy77dxgscsnmix5zzqqm2ckdcdiv2j@2g5zuy5vsudc>
+ <CAHTA-uaQRS4E=hPsqf0V01x3ycd9LyCP5-Auqs1cP77bUpAEmg@mail.gmail.com>
+ <CAHTA-uZo15smL6f=S7kMcJiGMNjUQ7fZMj7-5e6is=2HUeYr-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHTA-uZo15smL6f=S7kMcJiGMNjUQ7fZMj7-5e6is=2HUeYr-Q@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Linus,
+On Fri, Mar 29, 2024 at 12:09:10PM -0500, Mitchell Augustin wrote:
+> I was able to reproduce this panic with the following ktest:
+> 
+> ~/ktest/tests/stress_ng.ktest:
+> 
+> #!/usr/bin/env bash
+> 
+> . $(dirname $(readlink -e "${BASH_SOURCE[0]}"))/test-libs.sh
+> 
+> test_stressng()
+> {
+>     apt install stress-ng
+>     count=15
+>     for i in $(seq $count); do
+>         echo "Starting Stress #${i}/${count} for $(uname -r)"
+>         mkdir /tmp/kerneltest
+>         stress-ng --aggressive --verify --timeout 240 --temp-path
+> //tmp/kerneltest --hdd-opts dsync --readahead-bytes 16M -k --aiol 0
+>         rm -rf /tmp/kerneltest
+>         echo "Completed Stress #${i}/${count} for $(uname -r)"
+>     done
+> }
+> 
+> main "$@"
+> 
+> by running ~/ktest/build-test-kernel run -I ~/ktest/tests/stress_ng.ktest
+> 
+> Note that the panic may not necessarily happen on the first run of
+> that stress-ng command, so you might have to wait several iterations.
+> 
+> Panic:
+> Running test stress_ng.ktest on gunyolk at /home/ubuntu/upstream/linux
+> building kernel... done
+> Kernel version: 6.9.0-rc1-ktest-00061-g8d025e2092e2
 
-Please pull this branch which contains two XFS bug fixes for 6.9-rc2. A brief
-summary of the bug fixes is provided below.
+Thanks for the quick reproducer.
 
-I did a test-merge with the main upstream branch as of a few minutes ago and
-didn't see any conflicts.  Please let me know if you encounter any problems.
+I got it to pop - a few times, actually - but now that I've added debug
+code (cookie values to check for some sort of a stray write), it's now
+decided not to pop anymore, after 24 hours of testing, with and without
+my debug changes.
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+Hmm.
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.9-fixes-1
-
-for you to fetch changes up to f2e812c1522dab847912309b00abcc762dd696da:
-
-  xfs: don't use current->journal_info (2024-03-25 10:21:01 +0530)
-
-----------------------------------------------------------------
-Bug fixes for 6.9-rc2:
-
- * Allow stripe unit/width value passed via mount option to be written over
-   existing values in the super block.
- * Do not set current->journal_info to avoid its value from being miused by
-   another filesystem context.
-
-Signed-off-by: Chandan Babu R <chandanbabu@kernel.org>
-
-----------------------------------------------------------------
-Dave Chinner (2):
-      xfs: allow sunit mount option to repair bad primary sb stripe values
-      xfs: don't use current->journal_info
-
- fs/xfs/libxfs/xfs_sb.c | 40 +++++++++++++++++++++++++++++++---------
- fs/xfs/libxfs/xfs_sb.h |  5 +++--
- fs/xfs/scrub/common.c  |  4 +---
- fs/xfs/xfs_aops.c      |  7 -------
- fs/xfs/xfs_icache.c    |  8 +++++---
- fs/xfs/xfs_trans.h     |  9 +--------
- 6 files changed, 41 insertions(+), 32 deletions(-)
+We may just have to revert this for now, unless anyone else has any
+bright ideas.
 
