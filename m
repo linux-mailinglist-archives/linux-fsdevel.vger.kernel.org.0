@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-15717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7088089283D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:36:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF651892841
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01743B2286D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 00:36:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74A59B219B7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 00:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8494A3F;
-	Sat, 30 Mar 2024 00:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406924C8A;
+	Sat, 30 Mar 2024 00:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0sThPzo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kB46jTGd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96AA4685;
-	Sat, 30 Mar 2024 00:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3D04685;
+	Sat, 30 Mar 2024 00:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711758996; cv=none; b=hE5syoRQi3Kvz57BZryA7qkvNCV1IfS3z3Z8kpCXPZ37RlByFkDy7KwgLPVLuRzjlKcmuGIt/Aox9ZdHafDZ32cu40yeREfe3mdc/Q30G+lxqbq8U05zfGM/+BjlASii4iUExjU03UOd2wNddvXpxP7rwiEilbR7vkn6uDrqpiY=
+	t=1711759011; cv=none; b=marMW7vqyx2AIzKoiMQU8I6uwwHBJpYG+NWCTzlE1IMJ7ruggfYNRYMzo5nTKxGDgmqDlYVvLtqbXMdqw4zOJpu5CyC/LhtcY2QASypjgmXYOKTCvXNOJha2kpGoYWQqbs1ADvDFHQDNuLqjp04vfzFJZARA9Exr9PgiVEY0y/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711758996; c=relaxed/simple;
-	bh=nX9fmfpUpo6IYdkZSI6bCLEb+syc4sYBvMlI72ttkw4=;
+	s=arc-20240116; t=1711759011; c=relaxed/simple;
+	bh=hvYTprEUADnxGd3t/GzxmtItDq5eIs0D2/gCmlmHBpY=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JoS1pzqyOOaZ+sat2Nw+X6L4yy0Gf4Gi9IGTdW2tKRLoKm7MHs0eLT96wyC4nS5Jnm6uaMulp6yHQbW9kHkRG5tEAYNtcUr+Hg5F1m//Sx+44IPmhmonmqqWGLD8a2U9uYYewLzlb3zNrS9VN6BlW6yYXpwSQY2spIKlADJUubo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0sThPzo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCD97C43394;
-	Sat, 30 Mar 2024 00:36:35 +0000 (UTC)
+	 MIME-Version:Content-Type; b=R7AYChFOIBHdor6P+40h6Q1j5nGTrFUFLNiRCnsynZ8/pBrqu5gYIhyy+SwcQh3V5Z5y4ClvB9pIT1qZ0JAwtR+DGgjAwa/8UNPQia1gtlLoK+sZ7JwC3NJrK18fCcUw1DOw5gs5cfNJk727aJoFiRHuYCVSrSHrmFvXKG8YUrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kB46jTGd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70BC1C433F1;
+	Sat, 30 Mar 2024 00:36:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711758995;
-	bh=nX9fmfpUpo6IYdkZSI6bCLEb+syc4sYBvMlI72ttkw4=;
+	s=k20201202; t=1711759011;
+	bh=hvYTprEUADnxGd3t/GzxmtItDq5eIs0D2/gCmlmHBpY=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=o0sThPzoleN3hv1uRRRqPdltGRVEwBWAt35ir6fuMCBCmY1C/0GrjA3qpWQAPF1DN
-	 0wHY68FAG9OoDbFKLHjq98LEM++5YojcIOBDIT62kuhqRhiTl8nGc2VSCN+yviyJF2
-	 R0SqFar8sFIOr8wgDvVOXYaKSnCGniRPQ68PHDKriBYYcXQSYAyfCsya2kDsmVgIeK
-	 UxBQ05x+83V7rGvhhH4hhI+nkVELNAEGKZIkz6f7WLyWKBP5U/Pp+n7JHymI9Yhd6w
-	 JhA4Xq4Vk+xpxCl3tL47PDXAWvg8oTGwEp/jKBndvHD/bF1Hb0fNtHTOXFMJ/U8AuU
-	 lXAS/D6mzPgPQ==
-Date: Fri, 29 Mar 2024 17:36:35 -0700
-Subject: [PATCH 02/29] xfs: turn XFS_ATTR3_RMT_BUF_SPACE into a function
+	b=kB46jTGdZUU+VrlmVvcnSNhI1OQJZMyJAOn5T8irRy2xPLP9/UfdGgoVHG7CluqFw
+	 BmvSpN0q35ybuSHTL9RG/+QN7R5xEDBEn7gToMub+1xg8+grc9Jl7mt9gNzfIFNZdA
+	 IuxJ+A1Gy2qitPA5yNnK4W1DzaA1J7VKbrvwBTcZ3o2XzMqpLUFy7uiU6yL0T+6PaK
+	 RdQIWrNnTlObdr8nAvK2aGl2wthpBO88S8xAkmQoMAXcLh4xfaCoKdTk27xx0IzPyV
+	 4A25aiv00FGGsNHCFxybhWOWhiPm5AHFY+UOMWrqruv3zuL5bAeYmoV4zG3BN0mXsN
+	 ituk2pp5sKQlQ==
+Date: Fri, 29 Mar 2024 17:36:50 -0700
+Subject: [PATCH 03/29] xfs: create a helper to compute the blockcount of a max
+ sized remote value
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, ebiggers@kernel.org, aalbersh@redhat.com
 Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  fsverity@lists.linux.dev
-Message-ID: <171175868593.1988170.18437361749358268580.stgit@frogsfrogsfrogs>
+Message-ID: <171175868610.1988170.11402681235329108487.stgit@frogsfrogsfrogs>
 In-Reply-To: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
 References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,82 +63,77 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Turn this into a properly typechecked function, and actually use the
-correct blocksize for extended attributes.  The function cannot be
-static inline because xfsprogs userspace uses it.
+Create a helper function to compute the number of fsblocks needed to
+store a maximally-sized extended attribute value.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/libxfs/xfs_attr_remote.c |   19 ++++++++++++++++---
- fs/xfs/libxfs/xfs_da_format.h   |    4 +---
- 2 files changed, 17 insertions(+), 6 deletions(-)
+ fs/xfs/libxfs/xfs_attr.c        |    4 ++--
+ fs/xfs/libxfs/xfs_attr_remote.h |    6 ++++++
+ fs/xfs/scrub/reap.c             |    4 ++--
+ 3 files changed, 10 insertions(+), 4 deletions(-)
 
 
-diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
-index c778a3a51792e..efecebc20ec46 100644
---- a/fs/xfs/libxfs/xfs_attr_remote.c
-+++ b/fs/xfs/libxfs/xfs_attr_remote.c
-@@ -43,6 +43,19 @@
-  * the logging system and therefore never have a log item.
-  */
+diff --git a/fs/xfs/libxfs/xfs_attr.c b/fs/xfs/libxfs/xfs_attr.c
+index 45dd3e57615e7..c21def69cf636 100644
+--- a/fs/xfs/libxfs/xfs_attr.c
++++ b/fs/xfs/libxfs/xfs_attr.c
+@@ -1063,7 +1063,7 @@ xfs_attr_set(
+ 			rmt_blks = xfs_attr3_rmt_blocks(mp, args->valuelen);
+ 	} else {
+ 		XFS_STATS_INC(mp, xs_attr_remove);
+-		rmt_blks = xfs_attr3_rmt_blocks(mp, XFS_XATTR_SIZE_MAX);
++		rmt_blks = xfs_attr3_max_rmt_blocks(mp);
+ 	}
  
-+/* How many bytes can be stored in a remote value buffer? */
-+inline unsigned int
-+xfs_attr3_rmt_buf_space(
-+	struct xfs_mount	*mp)
+ 	/*
+@@ -1228,7 +1228,7 @@ xfs_attr_removename(
+ 	ASSERT(!args->trans);
+ 
+ 	rmt_extents = XFS_IEXT_ATTR_MANIP_CNT(
+-				xfs_attr3_rmt_blocks(mp, XFS_XATTR_SIZE_MAX));
++				xfs_attr3_max_rmt_blocks(mp));
+ 
+ 	xfs_init_attr_trans(args, &tres, &total);
+ 	error = xfs_trans_alloc_inode(dp, &tres, total, 0, rsvd, &args->trans);
+diff --git a/fs/xfs/libxfs/xfs_attr_remote.h b/fs/xfs/libxfs/xfs_attr_remote.h
+index c64b04f91cafd..e3c6c7d774bf9 100644
+--- a/fs/xfs/libxfs/xfs_attr_remote.h
++++ b/fs/xfs/libxfs/xfs_attr_remote.h
+@@ -8,6 +8,12 @@
+ 
+ unsigned int xfs_attr3_rmt_blocks(struct xfs_mount *mp, unsigned int attrlen);
+ 
++/* Number of rmt blocks needed to store the maximally sized attr value */
++static inline unsigned int xfs_attr3_max_rmt_blocks(struct xfs_mount *mp)
 +{
-+	unsigned int		blocksize = mp->m_attr_geo->blksize;
-+
-+	if (xfs_has_crc(mp))
-+		return blocksize - sizeof(struct xfs_attr3_rmt_hdr);
-+
-+	return blocksize;
++	return xfs_attr3_rmt_blocks(mp, XFS_XATTR_SIZE_MAX);
 +}
 +
- /*
-  * Each contiguous block has a header, so it is not just a simple attribute
-  * length to FSB conversion.
-@@ -53,7 +66,7 @@ xfs_attr3_rmt_blocks(
- 	unsigned int		attrlen)
- {
- 	if (xfs_has_crc(mp)) {
--		unsigned int buflen = XFS_ATTR3_RMT_BUF_SPACE(mp, mp->m_sb.sb_blocksize);
-+		unsigned int buflen = xfs_attr3_rmt_buf_space(mp);
- 		return (attrlen + buflen - 1) / buflen;
- 	}
- 	return XFS_B_TO_FSB(mp, attrlen);
-@@ -294,7 +307,7 @@ xfs_attr_rmtval_copyout(
+ int xfs_attr_rmtval_get(struct xfs_da_args *args);
+ int xfs_attr_rmtval_stale(struct xfs_inode *ip, struct xfs_bmbt_irec *map,
+ 		xfs_buf_flags_t incore_flags);
+diff --git a/fs/xfs/scrub/reap.c b/fs/xfs/scrub/reap.c
+index b8166e19726a4..fbf4d248f0060 100644
+--- a/fs/xfs/scrub/reap.c
++++ b/fs/xfs/scrub/reap.c
+@@ -227,7 +227,7 @@ xrep_bufscan_max_sectors(
+ 	int			max_fsbs;
  
- 	while (len > 0 && *valuelen > 0) {
- 		unsigned int hdr_size = 0;
--		unsigned int byte_cnt = XFS_ATTR3_RMT_BUF_SPACE(mp, blksize);
-+		unsigned int byte_cnt = xfs_attr3_rmt_buf_space(mp);
+ 	/* Remote xattr values are the largest buffers that we support. */
+-	max_fsbs = xfs_attr3_rmt_blocks(mp, XFS_XATTR_SIZE_MAX);
++	max_fsbs = xfs_attr3_max_rmt_blocks(mp);
  
- 		byte_cnt = min(*valuelen, byte_cnt);
- 
-@@ -343,7 +356,7 @@ xfs_attr_rmtval_copyin(
- 
- 	while (len > 0 && *valuelen > 0) {
- 		unsigned int hdr_size;
--		unsigned int byte_cnt = XFS_ATTR3_RMT_BUF_SPACE(mp, blksize);
-+		unsigned int byte_cnt = xfs_attr3_rmt_buf_space(mp);
- 
- 		byte_cnt = min(*valuelen, byte_cnt);
- 		hdr_size = xfs_attr3_rmt_hdr_set(mp, dst, ino, *offset,
-diff --git a/fs/xfs/libxfs/xfs_da_format.h b/fs/xfs/libxfs/xfs_da_format.h
-index e67045a66ef8f..30c97aecd8115 100644
---- a/fs/xfs/libxfs/xfs_da_format.h
-+++ b/fs/xfs/libxfs/xfs_da_format.h
-@@ -870,9 +870,7 @@ struct xfs_attr3_rmt_hdr {
- 
- #define XFS_ATTR3_RMT_CRC_OFF	offsetof(struct xfs_attr3_rmt_hdr, rm_crc)
- 
--#define XFS_ATTR3_RMT_BUF_SPACE(mp, bufsize)	\
--	((bufsize) - (xfs_has_crc((mp)) ? \
--			sizeof(struct xfs_attr3_rmt_hdr) : 0))
-+unsigned int xfs_attr3_rmt_buf_space(struct xfs_mount *mp);
- 
- /* Number of bytes in a directory block. */
- static inline unsigned int xfs_dir2_dirblock_bytes(struct xfs_sb *sbp)
+ 	return XFS_FSB_TO_BB(mp, min_t(xfs_extlen_t, fsblocks, max_fsbs));
+ }
+@@ -1070,7 +1070,7 @@ xreap_bmapi_binval(
+ 	 * of the next hole.
+ 	 */
+ 	off = imap->br_startoff + imap->br_blockcount;
+-	max_off = off + xfs_attr3_rmt_blocks(mp, XFS_XATTR_SIZE_MAX);
++	max_off = off + xfs_attr3_max_rmt_blocks(mp);
+ 	while (off < max_off) {
+ 		struct xfs_bmbt_irec	hmap;
+ 		int			nhmaps = 1;
 
 
