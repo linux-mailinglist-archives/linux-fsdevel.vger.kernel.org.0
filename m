@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-15723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1201A89284C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:38:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632EE89284E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72D79B220F6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 00:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE5F2827FF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 00:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA26ECC;
-	Sat, 30 Mar 2024 00:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CA01366;
+	Sat, 30 Mar 2024 00:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DreHyU+d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SexWY1ED"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20D4197;
-	Sat, 30 Mar 2024 00:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A377E8;
+	Sat, 30 Mar 2024 00:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711759090; cv=none; b=VppKiX4qtOdePeataOAbRrxPjeXyEtOvUjDPFazOHcbF7WvMvpXLyUFjJIiToApiNfZPUk7ELk62WtNpjeK4jBM28P9Zz+kwzm9f4QAdMeIKUxObMJo7m8bmypnsRUQNiqTmZ4wbZo2hh2OZmOtZoiCIGhp2ld2gpWyY6JLnGfY=
+	t=1711759105; cv=none; b=f484w4+jw+wa/dCZhwx+D8xonb8p74A7xn/K4VchaZ6k0MWSNWiJr4FgVeKo4ZAoIO4GbQOg0+LQBXnWcJaHyBS4I8vFJeRoR0RGE3O70wpXdP3LB1OPr1lOIL+oQoiw5h8RKtGbw3dDpIc243ZZA4qgjc8gFKEaKPmQVpa/1XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711759090; c=relaxed/simple;
-	bh=kelOQlvwOy6It/u8qRUqG79iQJlCeZ73U0XhGC61cjg=;
+	s=arc-20240116; t=1711759105; c=relaxed/simple;
+	bh=eiWHecNvYqhB+6cSUmRbC7ZUB5W/5z51JKcGRv96OrI=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oM53SABHKAq/kQYN8t1/aTAkQMYwJVxBo+6tESNAL+sUSeaZxeRHpIRwtmuH5g2dA+5aytVTWxIdtSJh5MfhSe09noW3JnmsJdaHpOx7laAefW6H3TUquvQn3pPK5+rjM/AegphmV08GT6VIgc0uwTGBI4keskgl/Yt6qVULG1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DreHyU+d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C314C433C7;
-	Sat, 30 Mar 2024 00:38:09 +0000 (UTC)
+	 MIME-Version:Content-Type; b=DMytp4nZInT8wBVpgoZ/18zQ3RW4LoHQ9Lhz8TPp48rBs1UbHgwAY1fTwC19YMWoWWdjuRVOg0IJ0qJyipdqf00ezYRikqGzl5sZ3yVE4TA8sVXmLWbQKAmHawVeDUNWqy+D4ihg7NN/R4fyxkLDyx1HvXGSoJkyMcAHtI0KxaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SexWY1ED; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 365B2C433F1;
+	Sat, 30 Mar 2024 00:38:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711759089;
-	bh=kelOQlvwOy6It/u8qRUqG79iQJlCeZ73U0XhGC61cjg=;
+	s=k20201202; t=1711759105;
+	bh=eiWHecNvYqhB+6cSUmRbC7ZUB5W/5z51JKcGRv96OrI=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=DreHyU+dZ1SklJpmJE/IX83clUvk0Omc3PvB40enr+SBm8eiJY4QJPRQjKa/frrO8
-	 K3MTdbK4HKgqkF+fnA36CG4j38o/vM6zZns5ESYyOes8E0GEU6cBi0dhfSnYmeq1NO
-	 Z0IM30MneHtEJL9tSRevMjbB5gDeTbaETVx6GqK9rtl8qdqrj8EPUbJqs4nI2KG6WU
-	 wiFPsCft5ktvaDjEyVK+eYkLGGZRHnPvxaxpnBKkZWQ4cPmGVOqg03hhpVlZteXH58
-	 f+F06EstZcfCmyT1UStO7Yr53mZgk/EpHexqhU49Sn02eDZYkjpykp2IIDz8Mctrpw
-	 KmeGPXBBgD6qw==
-Date: Fri, 29 Mar 2024 17:38:09 -0700
-Subject: [PATCH 08/29] xfs: add inode on-disk VERITY flag
+	b=SexWY1EDz+P7YBiwf+QEHGeEodbIPW22oz4qsye4+MT3KMUvk8p77p4zTxgwgFckr
+	 jMlXlDCQsL7ov1dykqBybosLt8shciGLLa65zXJBplGNNHJzbDJGqcO5umiThwDeg9
+	 dWg8B2sjQd1/bfDiFclhOdsVhHnJniMvKPbVtrahmWkoVekDcT429+sS47k8ZJ4ECk
+	 qQFKqxoLI2qu80KfMNwLNzyrmK6qLMS/J3SylOwkMitUif7/dQBLxZW6jchopZggM/
+	 pPxfbV+ctuNKPUvuHQ83mlIysPWdgiIfc+CbHT3PCo6cCHQEi1J3eN5imo+dxg/xIv
+	 PL1ROTV0Fdn4Q==
+Date: Fri, 29 Mar 2024 17:38:24 -0700
+Subject: [PATCH 09/29] xfs: initialize fs-verity on file open and cleanup on
+ inode destruction
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, ebiggers@kernel.org, aalbersh@redhat.com
 Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  fsverity@lists.linux.dev
-Message-ID: <171175868693.1988170.8596275385018721223.stgit@frogsfrogsfrogs>
+Message-ID: <171175868710.1988170.10919521002440903345.stgit@frogsfrogsfrogs>
 In-Reply-To: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
 References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,74 +63,67 @@ Content-Transfer-Encoding: 7bit
 
 From: Andrey Albershteyn <aalbersh@redhat.com>
 
-Add flag to mark inodes which have fs-verity enabled on them (i.e.
-descriptor exist and tree is built).
+fs-verity will read and attach metadata (not the tree itself) from
+a disk for those inodes which already have fs-verity enabled.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/libxfs/xfs_format.h     |    5 ++++-
- fs/xfs/libxfs/xfs_inode_util.c |    2 ++
- fs/xfs/xfs_iops.c              |    2 ++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_file.c  |    8 ++++++++
+ fs/xfs/xfs_super.c |    2 ++
+ 2 files changed, 10 insertions(+)
 
 
-diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-index 1532d37fd1029..e7ed55f747d01 100644
---- a/fs/xfs/libxfs/xfs_format.h
-+++ b/fs/xfs/libxfs/xfs_format.h
-@@ -1207,6 +1207,7 @@ static inline void xfs_dinode_put_rdev(struct xfs_dinode *dip, xfs_dev_t rdev)
- #define XFS_DIFLAG2_COWEXTSIZE_BIT   2  /* copy on write extent size hint */
- #define XFS_DIFLAG2_BIGTIME_BIT	3	/* big timestamps */
- #define XFS_DIFLAG2_NREXT64_BIT	4	/* large extent counters */
-+#define XFS_DIFLAG2_VERITY_BIT	5	/* inode sealed by fsverity */
- #define XFS_DIFLAG2_METADIR_BIT	63	/* filesystem metadata */
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 6162d6c12b76d..ce57f5007308a 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -32,6 +32,7 @@
+ #include <linux/mman.h>
+ #include <linux/fadvise.h>
+ #include <linux/mount.h>
++#include <linux/fsverity.h>
  
- #define XFS_DIFLAG2_DAX		(1ULL << XFS_DIFLAG2_DAX_BIT)
-@@ -1214,6 +1215,7 @@ static inline void xfs_dinode_put_rdev(struct xfs_dinode *dip, xfs_dev_t rdev)
- #define XFS_DIFLAG2_COWEXTSIZE	(1ULL << XFS_DIFLAG2_COWEXTSIZE_BIT)
- #define XFS_DIFLAG2_BIGTIME	(1ULL << XFS_DIFLAG2_BIGTIME_BIT)
- #define XFS_DIFLAG2_NREXT64	(1ULL << XFS_DIFLAG2_NREXT64_BIT)
-+#define XFS_DIFLAG2_VERITY	(1ULL << XFS_DIFLAG2_VERITY_BIT)
+ static const struct vm_operations_struct xfs_file_vm_ops;
  
- /*
-  * The inode contains filesystem metadata and can be found through the metadata
-@@ -1242,7 +1244,8 @@ static inline void xfs_dinode_put_rdev(struct xfs_dinode *dip, xfs_dev_t rdev)
- 
- #define XFS_DIFLAG2_ANY \
- 	(XFS_DIFLAG2_DAX | XFS_DIFLAG2_REFLINK | XFS_DIFLAG2_COWEXTSIZE | \
--	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64 | XFS_DIFLAG2_METADIR)
-+	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64 | XFS_DIFLAG2_METADIR | \
-+	 XFS_DIFLAG2_VERITY)
- 
- static inline bool xfs_dinode_has_bigtime(const struct xfs_dinode *dip)
+@@ -1413,10 +1414,17 @@ xfs_file_open(
+ 	struct inode	*inode,
+ 	struct file	*file)
  {
-diff --git a/fs/xfs/libxfs/xfs_inode_util.c b/fs/xfs/libxfs/xfs_inode_util.c
-index a448e4a2a3e59..fcea20ad675e8 100644
---- a/fs/xfs/libxfs/xfs_inode_util.c
-+++ b/fs/xfs/libxfs/xfs_inode_util.c
-@@ -127,6 +127,8 @@ xfs_ip2xflags(
- 			flags |= FS_XFLAG_DAX;
- 		if (ip->i_diflags2 & XFS_DIFLAG2_COWEXTSIZE)
- 			flags |= FS_XFLAG_COWEXTSIZE;
-+		if (ip->i_diflags2 & XFS_DIFLAG2_VERITY)
-+			flags |= FS_XFLAG_VERITY;
- 	}
++	int		error;
++
+ 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
+ 		return -EIO;
+ 	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC |
+ 			FMODE_DIO_PARALLEL_WRITE | FMODE_CAN_ODIRECT;
++
++	error = fsverity_file_open(inode, file);
++	if (error)
++		return error;
++
+ 	return generic_file_open(inode, file);
+ }
  
- 	if (xfs_inode_has_attr_fork(ip))
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index b453d5966bfc7..b0672af049043 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1291,6 +1291,8 @@ xfs_diflags_to_iflags(
- 		flags |= S_NOATIME;
- 	if (init && xfs_inode_should_enable_dax(ip))
- 		flags |= S_DAX;
-+	if (xflags & FS_XFLAG_VERITY)
-+		flags |= S_VERITY;
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 5304004646b40..42a1e1f23d3b3 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -52,6 +52,7 @@
+ #include <linux/magic.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
++#include <linux/fsverity.h>
  
- 	/*
- 	 * S_DAX can only be set during inode initialization and is never set by
+ static const struct super_operations xfs_super_operations;
+ 
+@@ -671,6 +672,7 @@ xfs_fs_destroy_inode(
+ 	ASSERT(!rwsem_is_locked(&inode->i_rwsem));
+ 	XFS_STATS_INC(ip->i_mount, vn_rele);
+ 	XFS_STATS_INC(ip->i_mount, vn_remove);
++	fsverity_cleanup_inode(inode);
+ 	xfs_inode_mark_reclaimable(ip);
+ }
+ 
 
 
