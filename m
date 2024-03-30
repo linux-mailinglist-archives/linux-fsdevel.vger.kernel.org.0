@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-15757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FEE89289C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 02:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B6189289E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 02:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B931C20B44
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F941C20BBC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Mar 2024 01:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7820B5CAC;
-	Sat, 30 Mar 2024 00:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55078467;
+	Sat, 30 Mar 2024 01:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inQwtO3s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOHMy+Jq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4314C99;
-	Sat, 30 Mar 2024 00:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2BB79D8;
+	Sat, 30 Mar 2024 01:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711760388; cv=none; b=Tl+YfvQXJ0Iw3XFMBnRM3ei9uJbPhyDG1RwazsYpB8vmyyN+QujuZ9lZO7mNQCJVDADew/aOYR5n6E44wADX9zuvLsyYPkzFpLloczTC4aUL0dzD1NpQNSVavzVXv/Kwl9SRU+91SfNWmk+pr4pVh2RYeH0dmtJ2CetHQ9P7zSI=
+	t=1711760404; cv=none; b=DTFJ9PPzZnReSDrIjBdF/fqjfxfhi1TdrKh7lrtiwj9faWkZXG40N04XNA10Igpb7ndXbNZiSuIjix0D4A+F5pFoy3lJS+S1X/sNOITzBnDkBZ0rkkuTz6RSkwawflP6aEg2f42T8TK0q8YXk6RNFvxJ+Q3atkNuZ+RQTqwm5Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711760388; c=relaxed/simple;
-	bh=o9iIaWSYhQ3MC2Zqg/VKe33lM2bmHrfsINac+R7dP+4=;
+	s=arc-20240116; t=1711760404; c=relaxed/simple;
+	bh=2ah3qhjIaiFztUm/NWJ+1imWmWuxFYh5tm2QDgJlzf0=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dy43rhtjr3Ex3gZU9vDoapSEHoPvSNJqTGvLex3s2zOiZtBkOVHQDngNSSFutE9HwE2WcgffE8pKCkAhdVFgkflN9lR7J68282+JTZcpaHkZKUQOKpdHLzqlJj7Q/lhWKQCsnk0JCGnl5MCFCkk9jH9+ff1+NgjQA2rFnZDCOKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inQwtO3s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A884C4166A;
-	Sat, 30 Mar 2024 00:59:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=kUqa+PLAqxon83J/pdIyQwCUouJAekCuNh0RgflLEM68T6NWAp/jKe2YHZC3UfyGmxoOpWbIp4Gwm9NEwdT8udtjx8Szi7kmu/87qUsN4wLN8iMUisAbg/TUyIsBrrh1tEoNypYjHv5jJUtO781tjwUCQ/h5jtRI6hTvm37XnqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOHMy+Jq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 235F6C433F1;
+	Sat, 30 Mar 2024 01:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711760388;
-	bh=o9iIaWSYhQ3MC2Zqg/VKe33lM2bmHrfsINac+R7dP+4=;
+	s=k20201202; t=1711760404;
+	bh=2ah3qhjIaiFztUm/NWJ+1imWmWuxFYh5tm2QDgJlzf0=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=inQwtO3sST/AGB1oalP0po3VotWaQxCEYmMMeQTC8wmUZM2R12iur8FXjPPTNcN6o
-	 VauYM92tNqXpYMBUDC9V2rnoh3WRcf6yJ0iIXYZxWas/WvUEN0fgz7y3akp282fOv6
-	 UDE8+8UBh/0VOZVv7cLggSEkDMOh+QBD3ccjpp8okXOyC2OtGxs95s7ToKs4PtHNLr
-	 pwIgb/fDyxh41GkKJKphwXv7yeDF6Kgg2+GDryRa/oEZrsB5b7Az5VfKT18k0Ygdaa
-	 UYK8pF6zqrqas98/5Q/7hb5a/3twjnISPUyS6FEIewQ4LDhH9qtekn5o8lvT1yAupU
-	 ZhEZ0RLQm73SA==
-Date: Fri, 29 Mar 2024 17:59:47 -0700
-Subject: [PATCH 11/14] xfs: make file range exchange support realtime files
+	b=cOHMy+Jq4gYyjsclZacUnv6647hmo8+fcKQsz60yHp1/CVMC/WLoJV50ZMUx4IhXY
+	 4jvWn2mLYjRgZHQZZSV80E/SADj6jfrNfrrZ3V1Y3qKQB+nVDOzkhTlFGgnUqjlgRf
+	 Db+99yxfccK6t5IFvcjWfaKLhaTYpIBGsZQCxKMJqJWkw5wRCVgief7uCSVepj1p8C
+	 fS81g7hgMWj3vZtDVEEv+yCB216awFqClXl6Hofx4czWj8WhN4p8pdP+5NdNH/IXX1
+	 XhJEk1oXKhm1uIZkVUQlLNVvl3KPc9nCaUIXLUc3otkLxfKbyIbfNyAwc+SOyi1uve
+	 yrkmeXzlE6/mA==
+Date: Fri, 29 Mar 2024 18:00:03 -0700
+Subject: [PATCH 12/14] xfs: support non-power-of-two rtextsize with
+ exchange-range
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org
 Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, hch@lst.de,
  linux-xfs@vger.kernel.org
-Message-ID: <171176018859.2014991.5490004087203613834.stgit@frogsfrogsfrogs>
+Message-ID: <171176018875.2014991.5435978759086688250.stgit@frogsfrogsfrogs>
 In-Reply-To: <171176018639.2014991.12163554496963657299.stgit@frogsfrogsfrogs>
 References: <171176018639.2014991.12163554496963657299.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,141 +63,133 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Now that bmap items support the realtime device, we can add the
-necessary pieces to the file range exchange code to support exchanging
-mappings.  All we really need to do here is adjust the blockcount
-upwards to the end of the rt extent and remove the inode checks.
+The generic exchange-range alignment checks use (fast) bitmasking
+operations to perform block alignment checks on the exchange parameters.
+Unfortunately, bitmasks require that the alignment size be a power of
+two.  This isn't true for realtime devices with a non-power-of-two
+extent size, so we have to copy-pasta the generic checks using long
+division for this to work properly.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/xfs/libxfs/xfs_exchmaps.c |   70 ++++++++++++++++++++++++++++++++++++------
- fs/xfs/xfs_exchrange.c       |    9 +++++
- 2 files changed, 69 insertions(+), 10 deletions(-)
+ fs/xfs/xfs_exchrange.c |   89 ++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 82 insertions(+), 7 deletions(-)
 
 
-diff --git a/fs/xfs/libxfs/xfs_exchmaps.c b/fs/xfs/libxfs/xfs_exchmaps.c
-index 7b7b8b1d8a2b5..0ac52a73152f2 100644
---- a/fs/xfs/libxfs/xfs_exchmaps.c
-+++ b/fs/xfs/libxfs/xfs_exchmaps.c
-@@ -152,12 +152,7 @@ xfs_exchmaps_check_forks(
- 	    ifp2->if_format == XFS_DINODE_FMT_LOCAL)
- 		return -EINVAL;
- 
--	/* We don't support realtime data forks yet. */
--	if (!XFS_IS_REALTIME_INODE(req->ip1))
--		return 0;
--	if (whichfork == XFS_ATTR_FORK)
--		return 0;
--	return -EINVAL;
-+	return 0;
- }
- 
- #ifdef CONFIG_XFS_QUOTA
-@@ -198,6 +193,8 @@ xfs_exchmaps_can_skip_mapping(
- 	struct xfs_exchmaps_intent	*xmi,
- 	struct xfs_bmbt_irec		*irec)
- {
-+	struct xfs_mount		*mp = xmi->xmi_ip1->i_mount;
-+
- 	/* Do not skip this mapping if the caller did not tell us to. */
- 	if (!(xmi->xmi_flags & XFS_EXCHMAPS_INO1_WRITTEN))
- 		return false;
-@@ -209,11 +206,64 @@ xfs_exchmaps_can_skip_mapping(
- 	/*
- 	 * The mapping is unwritten or a hole.  It cannot be a delalloc
- 	 * reservation because we already excluded those.  It cannot be an
--	 * unwritten mapping with dirty page cache because we flushed the page
--	 * cache.  We don't support realtime files yet, so we needn't (yet)
--	 * deal with them.
-+	 * unwritten extent with dirty page cache because we flushed the page
-+	 * cache.  For files where the allocation unit is 1FSB (files on the
-+	 * data dev, rt files if the extent size is 1FSB), we can safely
-+	 * skip this mapping.
- 	 */
--	return true;
-+	if (!xfs_inode_has_bigallocunit(xmi->xmi_ip1))
-+		return true;
-+
-+	/*
-+	 * For a realtime file with a multi-fsb allocation unit, the decision
-+	 * is trickier because we can only swap full allocation units.
-+	 * Unwritten mappings can appear in the middle of an rtx if the rtx is
-+	 * partially written, but they can also appear for preallocations.
-+	 *
-+	 * If the mapping is a hole, skip it entirely.  Holes should align with
-+	 * rtx boundaries.
-+	 */
-+	if (!xfs_bmap_is_real_extent(irec))
-+		return true;
-+
-+	/*
-+	 * All mappings below this point are unwritten.
-+	 *
-+	 * - If the beginning is not aligned to an rtx, trim the end of the
-+	 *   mapping so that it does not cross an rtx boundary, and swap it.
-+	 *
-+	 * - If both ends are aligned to an rtx, skip the entire mapping.
-+	 */
-+	if (!isaligned_64(irec->br_startoff, mp->m_sb.sb_rextsize)) {
-+		xfs_fileoff_t	new_end;
-+
-+		new_end = roundup_64(irec->br_startoff, mp->m_sb.sb_rextsize);
-+		irec->br_blockcount = min(irec->br_blockcount,
-+					  new_end - irec->br_startoff);
-+		return false;
-+	}
-+	if (isaligned_64(irec->br_blockcount, mp->m_sb.sb_rextsize))
-+		return true;
-+
-+	/*
-+	 * All mappings below this point are unwritten, start on an rtx
-+	 * boundary, and do not end on an rtx boundary.
-+	 *
-+	 * - If the mapping is longer than one rtx, trim the end of the mapping
-+	 *   down to an rtx boundary and skip it.
-+	 *
-+	 * - The mapping is shorter than one rtx.  Swap it.
-+	 */
-+	if (irec->br_blockcount > mp->m_sb.sb_rextsize) {
-+		xfs_fileoff_t	new_end;
-+
-+		new_end = rounddown_64(irec->br_startoff + irec->br_blockcount,
-+				mp->m_sb.sb_rextsize);
-+		irec->br_blockcount = new_end - irec->br_startoff;
-+		return true;
-+	}
-+
-+	return false;
- }
- 
- /*
 diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
-index 1642ea1bd7b30..23e668a192e0d 100644
+index 23e668a192e0d..2d33c7de04f4c 100644
 --- a/fs/xfs/xfs_exchrange.c
 +++ b/fs/xfs/xfs_exchrange.c
-@@ -21,6 +21,7 @@
- #include "xfs_sb.h"
- #include "xfs_icache.h"
- #include "xfs_log.h"
-+#include "xfs_rtbitmap.h"
- #include <linux/fsnotify.h>
+@@ -563,6 +563,75 @@ xfs_exchange_range_finish(
+ 	return file_remove_privs(fxr->file2);
+ }
  
- /*
-@@ -241,6 +242,14 @@ xfs_exchrange_mappings(
- 	if (fxr->flags & XFS_EXCHANGE_RANGE_FILE1_WRITTEN)
- 		req.flags |= XFS_EXCHMAPS_INO1_WRITTEN;
- 
-+	/*
-+	 * Round the request length up to the nearest file allocation unit.
-+	 * The prep function already checked that the request offsets and
-+	 * length in @fxr are safe to round up.
-+	 */
-+	if (xfs_inode_has_bigallocunit(ip2))
-+		req.blockcount = xfs_rtb_roundup_rtx(mp, req.blockcount);
++/*
++ * Check the alignment of an exchange request when the allocation unit size
++ * isn't a power of two.  The generic file-level helpers use (fast)
++ * bitmask-based alignment checks, but here we have to use slow long division.
++ */
++static int
++xfs_exchrange_check_rtalign(
++	const struct xfs_exchrange	*fxr,
++	struct xfs_inode		*ip1,
++	struct xfs_inode		*ip2,
++	unsigned int			alloc_unit)
++{
++	uint64_t			length = fxr->length;
++	uint64_t			blen;
++	loff_t				size1, size2;
 +
- 	error = xfs_exchrange_estimate(&req);
- 	if (error)
- 		return error;
++	size1 = i_size_read(VFS_I(ip1));
++	size2 = i_size_read(VFS_I(ip2));
++
++	/* The start of both ranges must be aligned to a rt extent. */
++	if (!isaligned_64(fxr->file1_offset, alloc_unit) ||
++	    !isaligned_64(fxr->file2_offset, alloc_unit))
++		return -EINVAL;
++
++	if (fxr->flags & XFS_EXCHANGE_RANGE_TO_EOF)
++		length = max_t(int64_t, size1 - fxr->file1_offset,
++					size2 - fxr->file2_offset);
++
++	/*
++	 * If the user wanted us to exchange up to the infile's EOF, round up
++	 * to the next rt extent boundary for this check.  Do the same for the
++	 * outfile.
++	 *
++	 * Otherwise, reject the range length if it's not rt extent aligned.
++	 * We already confirmed the starting offsets' rt extent block
++	 * alignment.
++	 */
++	if (fxr->file1_offset + length == size1)
++		blen = roundup_64(size1, alloc_unit) - fxr->file1_offset;
++	else if (fxr->file2_offset + length == size2)
++		blen = roundup_64(size2, alloc_unit) - fxr->file2_offset;
++	else if (!isaligned_64(length, alloc_unit))
++		return -EINVAL;
++	else
++		blen = length;
++
++	/* Don't allow overlapped exchanges within the same file. */
++	if (ip1 == ip2 &&
++	    fxr->file2_offset + blen > fxr->file1_offset &&
++	    fxr->file1_offset + blen > fxr->file2_offset)
++		return -EINVAL;
++
++	/*
++	 * Ensure that we don't exchange a partial EOF rt extent into the
++	 * middle of another file.
++	 */
++	if (isaligned_64(length, alloc_unit))
++		return 0;
++
++	blen = length;
++	if (fxr->file2_offset + length < size2)
++		blen = rounddown_64(blen, alloc_unit);
++
++	if (fxr->file1_offset + blen < size1)
++		blen = rounddown_64(blen, alloc_unit);
++
++	return blen == length ? 0 : -EINVAL;
++}
++
+ /* Prepare two files to have their data exchanged. */
+ STATIC int
+ xfs_exchrange_prep(
+@@ -570,6 +639,7 @@ xfs_exchrange_prep(
+ 	struct xfs_inode	*ip1,
+ 	struct xfs_inode	*ip2)
+ {
++	struct xfs_mount	*mp = ip2->i_mount;
+ 	unsigned int		alloc_unit = xfs_inode_alloc_unitsize(ip2);
+ 	int			error;
+ 
+@@ -579,13 +649,18 @@ xfs_exchrange_prep(
+ 	if (XFS_IS_REALTIME_INODE(ip1) != XFS_IS_REALTIME_INODE(ip2))
+ 		return -EINVAL;
+ 
+-	/*
+-	 * The alignment checks in the generic helpers cannot deal with
+-	 * allocation units that are not powers of 2.  This can happen with the
+-	 * realtime volume if the extent size is set.
+-	 */
+-	if (!is_power_of_2(alloc_unit))
+-		return -EOPNOTSUPP;
++	/* Check non-power of two alignment issues, if necessary. */
++	if (!is_power_of_2(alloc_unit)) {
++		error = xfs_exchrange_check_rtalign(fxr, ip1, ip2, alloc_unit);
++		if (error)
++			return error;
++
++		/*
++		 * Do the generic file-level checks with the regular block
++		 * alignment.
++		 */
++		alloc_unit = mp->m_sb.sb_blocksize;
++	}
+ 
+ 	error = xfs_exchange_range_prep(fxr, alloc_unit);
+ 	if (error || fxr->length == 0)
 
 
