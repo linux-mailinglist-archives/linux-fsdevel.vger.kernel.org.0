@@ -1,265 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-15783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96314893000
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Mar 2024 10:50:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1870893103
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Mar 2024 11:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC0E2825CB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Mar 2024 08:50:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98B002824E7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Mar 2024 09:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D329134402;
-	Sun, 31 Mar 2024 08:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C25757F2;
+	Sun, 31 Mar 2024 09:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="E1af0MIc"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UT4ERiH6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B20131746;
-	Sun, 31 Mar 2024 08:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D904C6E5EC
+	for <linux-fsdevel@vger.kernel.org>; Sun, 31 Mar 2024 09:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711874707; cv=none; b=ASjZhm4etoroySNZM7SHPypUllGWchz7JTA0L9hJQ1lBfEDoFwSBJD/6kAL0RflI5zSLfAZ/MkUNLsAAIBmQnAO8CtBHPFeYe37YDR6GMznoRpXjHAH4SpJ1symJl1qCEmjALonN5QDOCCdH3QGxM5kWF4p1hRK8WB1H51ALt1I=
+	t=1711875825; cv=none; b=nE9wXatyrHbzuJGngrdTSsD2LIRmUH+b6bLBpjIYxv85MQkyLCwCeOrvS4dJugn5IpFcEPZict8qe7almPCOhij0C5bT2HXy06RL5wsBYwsZxLMp9H2IkZPrZ4weQBsrWEE5EVU1O92K59AxLoxxc/ruosOHBAHSaE/U6Hmos2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711874707; c=relaxed/simple;
-	bh=CNf8m/nWef9wkixInR6E4NOpXx000CTYoiqaE6ARRBM=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=YOho9o/tqDgno3dKSYsO97RmZwiqBoe2ZMvFABUtl+RpS+nrT20p8EPgivMRnI466WV22nvtRywPYJw/jV8rzZg/My27zL/15Bywi3pCnOafdfEQo6tVSLzyM8mcJagKI8nXKIAqHmqfSW/HndFs1Mp7TGVRVFJ5OSfIH5e1pUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=E1af0MIc; arc=none smtp.client-ip=203.205.221.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1711874698; bh=tBu+Ad0GvUc8I+j976xrx6ZCEBZjX5o7ydCYejD59JE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=E1af0MIcwwgHHanggZE7u1ZgOGH/OUXEy/YKxQRtoMkA/EnpA1cuUmIR2iVFc7LFh
-	 T1U+/m1cmjrlXTGch9yz2WSW7iwv0TYbIz6USo5DTXe2vZ/g3KQFuVEhzZ4i2+ZN10
-	 3kvdAS++WEe1Ba2CtpaOThEtyvIAGovjTnGK8HiQ=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrsza1-0.qq.com (NewEsmtp) with SMTP
-	id B38BB8CD; Sun, 31 Mar 2024 16:44:56 +0800
-X-QQ-mid: xmsmtpt1711874696tshyse111
-Message-ID: <tencent_6CF766EA3CD936E4960C377C4A0C74377609@qq.com>
-X-QQ-XMAILINFO: Mdc3TkmnJyI/uQ6d1i0rpitS/WHY3aEsTp4RGE2Rw/OuqxCrWz4BOPf2zajzUA
-	 OVQnNkUIZgAGyBK+zkbxNXxuyjMfpzjcaCysDFz6P+IaJsUBjG7ybGHRrhT/wysmMVBj0I1opnWW
-	 nXWAXIrhGG4g+lnTwEtj2+wlcEwFXQ1sLVcIzNSY2rrD/D35zMTSPQjOKIwZOh+NHCOsYT93XzG4
-	 G4gtVFVHO1D63kETEWyMXWWup6PuCZhNrQkvz9MS4cdsdA9nQsIBn+ALUA0gniPXS8Q2jjburTTp
-	 UtqH7tlI0tKUwwd5oeV8qdFfeiu8QYv2qt5PaJiJzArTEhIt92zlW//3ZV0K+8RgI0nlU6ljDWCa
-	 Zl05gZSxGzb0Nrejcie3UgMcPXZCtxxX1gqmKYjCgiJlkEJ+ppITyssSRec3tY4W4SLNkMgQt+aD
-	 vF2C3bhV/rpyv0cXJKCvyQtNQ2zffU4qo4LzjgKWDWuqvM+Gra40aCHR4uxJPy9HMbGlE0GrOasr
-	 5QmNDM1xSCcIWGv+y7sWk9khpy7syy3/ahflyLYGg1BSOvffGr2hzBM5huI3ucmHssx8QnkwQ4Xh
-	 K3nhBEDr2ANCrovAhX0eT65U9zTvYSgHeswbps8NzTY6WTwV8bV8gt82jYYd1eH3KRsQlDe+dwWV
-	 OGLYkQRSiMd6zxtnD7fcSiPt3P+npQq1t4q9KBDPCyxGhXWh0nKEKNOVyyf+JNXBv+1T02AKmRpm
-	 8CNToJYt5/Y7UDfGu9wpg1WGxZmRdOuIq4rRbFdWE4kt12BL7F4mS6L68C/3lEiqCaRhZhcfF6YW
-	 xO1UGhpse9wGZWLw5NUf2uDVpxtl9l1YaJfC/ZSUV6/7FHeioyRpACSuX4VzAi6ID0MTtlUFdOIJ
-	 4Md8/+BPyBfqiOAxBiKQ+ptf0qmxXLETNUlmwgHGpqFrN+AZtAmDOyTXbHuvXtfzl9iiyctBR4
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c824290332add8067111@syzkaller.appspotmail.com
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shaggy@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] jfs: fix task hung in lmLogClose
-Date: Sun, 31 Mar 2024 16:44:57 +0800
-X-OQ-MSGID: <20240331084456.1126705-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <00000000000041ac86061400b95d@google.com>
-References: <00000000000041ac86061400b95d@google.com>
+	s=arc-20240116; t=1711875825; c=relaxed/simple;
+	bh=+GUX9N7KTWqDazQlkr4dOjvGUXRVNVbAjc11ZWEUXfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=j8fNQ7f+9lMEYwQCxTQHrtFbyn7ZGXTQNtKi9O0oXgEp8yZPvJ0jWfNttcnrFl8mmPFceeiYc+ocSvFFRiowEVguLRwTv2o1fD+FCMR+I0mIRcW3R0bGH/pGgmo08Cs+eeOWVrogRl/qjLpOdxK7mIgtv6d8QtjB0vflBBaCD3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UT4ERiH6; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-515a86daf09so3964724e87.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Mar 2024 02:03:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1711875821; x=1712480621; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=enqKlhrqJxOY+Eg7jfBUlxt+b2cgWgCVyMnuUniyPjo=;
+        b=UT4ERiH6Acl0kCe3NDuaNz4AOWi5uiNlFubfWdqc0qZ9GCrlER04mO4bgwdeoOt+4B
+         CLCgJXhBSjTp5BhSbDMW95V6f1aC4OanknHTkuaG2YDy7APn2DshXJSh7LxfgZZxt/dG
+         28FyOMFQw46OxtYUcGoXKLtcodK/8oSrU6yjKdIIs1MHYKvtrF89vZ3neK/dhMdK/pA6
+         fdz0uN1WOAV6m1NjuLvPw3OLaPQHPbxnxvBdeGkIe6RIbiSnDGe+L6DfA0bR6JLHMe5o
+         xE7YSJX+ix5hy5AUo+6zsVcoR22BagvDIrSm1jX2bit+AR8mURBzpG8qwrSTxAs5mE3M
+         qj+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711875821; x=1712480621;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=enqKlhrqJxOY+Eg7jfBUlxt+b2cgWgCVyMnuUniyPjo=;
+        b=f0uQ0gXn+WlxlS772Pc6XCuGbFOZyOBjC7PVa+cULQNfGTu7WbSlunJM8yXffW9bmR
+         BDKGBw37YDKUaz2kjAeCKyRjOLE3921AU/j7i2MB/SFNQJix8Rm9KIHRC9YUwFGczC/H
+         HErdNkE5EuwW/2CcJROVx+eBNaiYrvBzaofpsTIxoUeoHHO/oY5cLLfNTgeC4TTd6284
+         mZNFCfhaQthbIP3BXMa8Fy/779xkMG+WBBgrFK5GjUrv0+jyPHGioCM9Jsm1YrAAuM9N
+         +0fAkcBx2w/XCk4O0T8S8rb10wuu0kKHGzpiUwT+b8rty1KtFOs75uGQcy3LvY+nE55y
+         lWEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtETAgcch/T+6FPHMX0TZp85NbwXIfFcawvfw5h50bVcBi04iI6Ip7w6XPf9s5FykYpJRK5o4K17OU3DD7bID3szE46k7HsJNYAtFfIQ==
+X-Gm-Message-State: AOJu0Yw6HE/7VBO7bKwRhi5xcIHfXo7A8+fdsjvueewv+VoO5V74G+Bt
+	3IPyiV6ZTnrA1qirLLITqKxd5kR6UPlOd+nlSh89wCwvy7Jugt8KJOOJoIK3kt8=
+X-Google-Smtp-Source: AGHT+IEFl+fHjFxKCqXr1wfcw/tZ0o11CMu7VI22034XxsfuzUlS3bN1GEeMhfM4+5PMbXFTPtYY+Q==
+X-Received: by 2002:a19:ac03:0:b0:516:a213:46d2 with SMTP id g3-20020a19ac03000000b00516a21346d2mr1775370lfc.69.1711875820967;
+        Sun, 31 Mar 2024 02:03:40 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id cp12-20020a170902e78c00b001e245c5afbfsm92671plb.155.2024.03.31.02.03.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Mar 2024 02:03:40 -0700 (PDT)
+Message-ID: <a2d3cdef-ed4e-41f0-b0d9-801c781f9512@suse.com>
+Date: Sun, 31 Mar 2024 19:33:32 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] btrfs: fiemap: return extent physical size
+To: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
+ Jonathan Corbet <corbet@lwn.net>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-doc@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+References: <cover.1711588701.git.sweettea-kernel@dorminy.me>
+ <93686d5c4467befe12f76e4921bfc20a13a74e2d.1711588701.git.sweettea-kernel@dorminy.me>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
+ Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
+ p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
+ ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
+ dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
+ RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
+ rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
+ 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
+ bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
+ AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
+ ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
+In-Reply-To: <93686d5c4467befe12f76e4921bfc20a13a74e2d.1711588701.git.sweettea-kernel@dorminy.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-[Syzbot reported]
-INFO: task syz-executor394:6204 blocked for more than 143 seconds.
-      Not tainted 6.8.0-rc7-syzkaller-g707081b61156 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor394 state:D stack:0     pid:6204  tgid:6204  ppid:6201   flags:0x0000000c
-Call trace:
- __switch_to+0x314/0x560 arch/arm64/kernel/process.c:553
- context_switch kernel/sched/core.c:5400 [inline]
- __schedule+0x1498/0x24b4 kernel/sched/core.c:6727
- __schedule_loop kernel/sched/core.c:6802 [inline]
- schedule+0xb8/0x19c kernel/sched/core.c:6817
- schedule_preempt_disabled+0x18/0x2c kernel/sched/core.c:6874
- __mutex_lock_common+0xbd8/0x21a0 kernel/locking/mutex.c:684
- __mutex_lock kernel/locking/mutex.c:752 [inline]
- mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
- lmLogClose+0xc8/0x4d4 fs/jfs/jfs_logmgr.c:1444
- jfs_umount+0x274/0x360 fs/jfs/jfs_umount.c:114
- jfs_put_super+0x90/0x188 fs/jfs/super.c:194
- generic_shutdown_super+0x128/0x2b8 fs/super.c:641
- kill_block_super+0x44/0x90 fs/super.c:1675
- deactivate_locked_super+0xc4/0x12c fs/super.c:472
- deactivate_super+0xe0/0x100 fs/super.c:505
- cleanup_mnt+0x34c/0x3dc fs/namespace.c:1267
- __cleanup_mnt+0x20/0x30 fs/namespace.c:1274
- task_work_run+0x230/0x2e0 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
- exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
- el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:713
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-[Fix]
-The jfs_log_mutex cannot distinguish different superblocks, resulting in multiple
-different superblocks competing for jfs_log_mutex.
 
-Reported-and-tested-by: syzbot+c824290332add8067111@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/jfs/jfs_incore.h |  1 +
- fs/jfs/jfs_logmgr.c | 26 +++++++++++++-------------
- fs/jfs/super.c      |  1 +
- 3 files changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/fs/jfs/jfs_incore.h b/fs/jfs/jfs_incore.h
-index 10934f9a11be..56d336a49985 100644
---- a/fs/jfs/jfs_incore.h
-+++ b/fs/jfs/jfs_incore.h
-@@ -197,6 +197,7 @@ struct jfs_sb_info {
- 	kgid_t		gid;		/* gid to override on-disk gid */
- 	uint		umask;		/* umask to override on-disk umask */
- 	uint		minblks_trim;	/* minimum blocks, for online trim */
-+	struct mutex    simutex;
- };
- 
- /* jfs_sb_info commit_state */
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index 73389c68e251..b5609a7618e5 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -155,7 +155,6 @@ do {						\
-  */
- static LIST_HEAD(jfs_external_logs);
- static struct jfs_log *dummy_log;
--static DEFINE_MUTEX(jfs_log_mutex);
- 
- /*
-  * forward references
-@@ -1068,19 +1067,19 @@ int lmLogOpen(struct super_block *sb)
- 	if (sbi->mntflag & JFS_INLINELOG)
- 		return open_inline_log(sb);
- 
--	mutex_lock(&jfs_log_mutex);
-+	mutex_lock(&sbi->simutex);
- 	list_for_each_entry(log, &jfs_external_logs, journal_list) {
- 		if (file_bdev(log->bdev_file)->bd_dev == sbi->logdev) {
- 			if (!uuid_equal(&log->uuid, &sbi->loguuid)) {
- 				jfs_warn("wrong uuid on JFS journal");
--				mutex_unlock(&jfs_log_mutex);
-+				mutex_unlock(&sbi->simutex);
- 				return -EINVAL;
- 			}
- 			/*
- 			 * add file system to log active file system list
- 			 */
- 			if ((rc = lmLogFileSystem(log, sbi, 1))) {
--				mutex_unlock(&jfs_log_mutex);
-+				mutex_unlock(&sbi->simutex);
- 				return rc;
- 			}
- 			goto journal_found;
-@@ -1088,7 +1087,7 @@ int lmLogOpen(struct super_block *sb)
- 	}
- 
- 	if (!(log = kzalloc(sizeof(struct jfs_log), GFP_KERNEL))) {
--		mutex_unlock(&jfs_log_mutex);
-+		mutex_unlock(&sbi->simutex);
- 		return -ENOMEM;
- 	}
- 	INIT_LIST_HEAD(&log->sb_list);
-@@ -1130,7 +1129,7 @@ int lmLogOpen(struct super_block *sb)
- 	sbi->log = log;
- 	LOG_UNLOCK(log);
- 
--	mutex_unlock(&jfs_log_mutex);
-+	mutex_unlock(&sbi->simutex);
- 	return 0;
- 
- 	/*
-@@ -1144,7 +1143,7 @@ int lmLogOpen(struct super_block *sb)
- 	fput(bdev_file);
- 
-       free:		/* free log descriptor */
--	mutex_unlock(&jfs_log_mutex);
-+	mutex_unlock(&sbi->simutex);
- 	kfree(log);
- 
- 	jfs_warn("lmLogOpen: exit(%d)", rc);
-@@ -1187,12 +1186,13 @@ static int open_inline_log(struct super_block *sb)
- static int open_dummy_log(struct super_block *sb)
- {
- 	int rc;
-+	struct jfs_sb_info *sbi = JFS_SBI(sb);
- 
--	mutex_lock(&jfs_log_mutex);
-+	mutex_lock(&sbi->simutex);
- 	if (!dummy_log) {
- 		dummy_log = kzalloc(sizeof(struct jfs_log), GFP_KERNEL);
- 		if (!dummy_log) {
--			mutex_unlock(&jfs_log_mutex);
-+			mutex_unlock(&sbi->simutex);
- 			return -ENOMEM;
- 		}
- 		INIT_LIST_HEAD(&dummy_log->sb_list);
-@@ -1205,7 +1205,7 @@ static int open_dummy_log(struct super_block *sb)
- 		if (rc) {
- 			kfree(dummy_log);
- 			dummy_log = NULL;
--			mutex_unlock(&jfs_log_mutex);
-+			mutex_unlock(&sbi->simutex);
- 			return rc;
- 		}
- 	}
-@@ -1214,7 +1214,7 @@ static int open_dummy_log(struct super_block *sb)
- 	list_add(&JFS_SBI(sb)->log_list, &dummy_log->sb_list);
- 	JFS_SBI(sb)->log = dummy_log;
- 	LOG_UNLOCK(dummy_log);
--	mutex_unlock(&jfs_log_mutex);
-+	mutex_unlock(&sbi->simutex);
- 
- 	return 0;
- }
-@@ -1441,7 +1441,7 @@ int lmLogClose(struct super_block *sb)
- 
- 	jfs_info("lmLogClose: log:0x%p", log);
- 
--	mutex_lock(&jfs_log_mutex);
-+	mutex_lock(&sbi->simutex);
- 	LOG_LOCK(log);
- 	list_del(&sbi->log_list);
- 	LOG_UNLOCK(log);
-@@ -1490,7 +1490,7 @@ int lmLogClose(struct super_block *sb)
- 	kfree(log);
- 
-       out:
--	mutex_unlock(&jfs_log_mutex);
-+	mutex_unlock(&sbi->simutex);
- 	jfs_info("lmLogClose: exit(%d)", rc);
- 	return rc;
- }
-diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-index e1be21ca5d6e..23628ca3990c 100644
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -504,6 +504,7 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
- 	sbi->uid = INVALID_UID;
- 	sbi->gid = INVALID_GID;
- 	sbi->umask = -1;
-+	mutex_init(&sbi->simutex);
- 
- 	/* initialize the mount flag and determine the default error handler */
- 	flag = JFS_ERR_REMOUNT_RO;
--- 
-2.43.0
+在 2024/3/28 11:52, Sweet Tea Dorminy 写道:
+> Now that fiemap allows returning extent physical size, make btrfs return
+> the appropriate extent's actual disk size.
+> 
+> Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+[...]
+> @@ -3221,7 +3239,9 @@ int extent_fiemap(struct btrfs_inode *inode, struct fiemap_extent_info *fieinfo,
+>   
+>   			ret = emit_fiemap_extent(fieinfo, &cache, key.offset,
+>   						 disk_bytenr + extent_offset,
+> -						 extent_len, flags);
+> +						 extent_len,
+> +						 disk_size - extent_offset,
 
+This means, we will emit a entry that uses the end to the physical 
+extent end.
+
+Considering a file layout like this:
+
+	item 6 key (257 EXTENT_DATA 0) itemoff 15816 itemsize 53
+		generation 7 type 1 (regular)
+		extent data disk byte 13631488 nr 65536
+		extent data offset 0 nr 4096 ram 65536
+		extent compression 0 (none)
+	item 7 key (257 EXTENT_DATA 4096) itemoff 15763 itemsize 53
+		generation 8 type 1 (regular)
+		extent data disk byte 13697024 nr 4096
+		extent data offset 0 nr 4096 ram 4096
+		extent compression 0 (none)
+	item 8 key (257 EXTENT_DATA 8192) itemoff 15710 itemsize 53
+		generation 7 type 1 (regular)
+		extent data disk byte 13631488 nr 65536
+		extent data offset 8192 nr 57344 ram 65536
+		extent compression 0 (none)
+
+For fiemap, we would got something like this:
+
+fileoff 0, logical len 4k, phy 13631488, phy len 64K
+fileoff 4k, logical len 4k, phy 13697024, phy len 4k
+fileoff 8k, logical len 56k, phy 13631488 + 8k, phylen 56k
+
+[HOW TO CALCULATE WASTED SPACE IN USER SPACE]
+My concern is on the first entry. It indicates that we have wasted 60K 
+(phy len is 64K, while logical len is only 4K)
+
+But that information is not correct, as in reality we only wasted 4K, 
+the remaining 56K is still referred by file range [8K, 64K).
+
+Do you mean that user space program should maintain a mapping of each 
+utilized physical range, and when handling the reported file range [8K, 
+64K), the user space program should find that the physical range covers 
+with one existing extent, and do calculation correctly?
+
+[COMPRESSION REPRESENTATION]
+The biggest problem other than the complexity in user space is the 
+handling of compressed extents.
+
+Should we return the physical bytenr (disk_bytenr of file extent item) 
+directly or with the extent offset added?
+Either way it doesn't look consistent to me, compared to non-compressed 
+extents.
+
+[ALTERNATIVE FORMAT]
+The other alternative would be following the btrfs ondisk format, 
+providing a unique physical bytenr for any file extent, then the 
+offset/referred length inside the uncompressed extent.
+
+That would handle compressed and regular extents more consistent, and a 
+little easier for user space tool to handle (really just a tiny bit 
+easier, no range overlap check needed), but more complex to represent, 
+and I'm not sure if any other filesystem would be happy to accept the 
+extra members they don't care.
+
+Thanks,
+Qu
+
+> +						 flags);
+>   		}
+>   
+>   		if (ret < 0) {
+> @@ -3259,7 +3279,7 @@ int extent_fiemap(struct btrfs_inode *inode, struct fiemap_extent_info *fieinfo,
+>   		prev_extent_end = range_end;
+>   	}
+>   
+> -	if (cache.cached && cache.offset + cache.len >= last_extent_end) {
+> +	if (cache.cached && cache.offset + cache.log_len >= last_extent_end) {
+>   		const u64 i_size = i_size_read(&inode->vfs_inode);
+>   
+>   		if (prev_extent_end < i_size) {
 
