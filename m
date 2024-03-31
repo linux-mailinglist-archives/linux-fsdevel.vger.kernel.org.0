@@ -1,151 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-15803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054D6893136
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Mar 2024 12:27:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68993893173
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Mar 2024 13:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7391F21057
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Mar 2024 10:27:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8213DB216A3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Mar 2024 11:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E35177F1B;
-	Sun, 31 Mar 2024 10:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DF11448DF;
+	Sun, 31 Mar 2024 11:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWgBL+qV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c7i9IAHs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A3777620;
-	Sun, 31 Mar 2024 10:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A323C143C75
+	for <linux-fsdevel@vger.kernel.org>; Sun, 31 Mar 2024 11:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711880838; cv=none; b=N5Z1ojrJ+gJwyhtuVo4RN++hBunKXxFl7NkHOX4UoAPx5Mr3CTSj8r2oF0a+a/1CPJ45S4hDJDYBL8kPkLPSIka4BwnCMQzq9upfqmbd2RPR7Th9DLW+bfAtzrhII9WES6tzGwlvfE5kIo4AJufoe9nbYZ7rP7yyIVWc9YzMmus=
+	t=1711884041; cv=none; b=F0E5owfASl/kZxeE8nwwr2mznD4ifmjDa8bNd0qW26GG3HjpBoPtyWXPUQ6zlcUPMmjjvQqhdMcpeiqzGClFtQtPMdS5e1hKZhYjERi8pXzDjn8LEg/3qCjn22lxYLFpfnU8IArQT0alUcEbBHrxkPpaQBnpflwSZAcuALppvaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711880838; c=relaxed/simple;
-	bh=lOXebHqDjv7+CsO26vpn2Z87+IhF/5Rp8Ms/Vf7+noY=;
+	s=arc-20240116; t=1711884041; c=relaxed/simple;
+	bh=HA92dRzVt3vZdgr5pQJY02em2UTWtsR+GLFyMiGbHw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sPf5/ZbTMf4pi6RtvKWIMpP5NUktd9VkZ91XHZ7QfoiYjMYnFKlAuvhyWwTMx9wGQybr9eKyp36h5NfF2afu/RF0ajgWgI1lY+PN8Uq//KC3KByKwwEekiDqxw6BXprHlyVK7d8njUdNslMv0+XcVQlIiFUkKQYseQjL3FdkTzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWgBL+qV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4850C433F1;
-	Sun, 31 Mar 2024 10:26:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711880838;
-	bh=lOXebHqDjv7+CsO26vpn2Z87+IhF/5Rp8Ms/Vf7+noY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cWgBL+qVQcrZeY6hz1o+C2TbEb+6Hg0Z73F8wCc1FVQbReyqTrOn52MBHUiJ+YGW8
-	 fiHAKoBr9bMy6TP8GsJHgEu16UrRg4nN3KSL9d7i7OIA5rmKGyBMh5Fk7eS8wYpQdH
-	 wldMkmULHBt82g5hAtstNxJ4kD2B4lLq/z4h1fIYZVZPBQ2N0rJlJ//TdyXxW+TYNg
-	 aoQwbozm9kqGr55IcKOQjsA9RGvzaZNF0I366fmhV5fiv+yKHv/q+toxmuDCIlrgJV
-	 4ZVEwHpwcWI2MsUqRTxV8WA/xn05bgdOyKNZ6h5XMCJwdRKU7DLqGGa7MsQKGbxWYN
-	 kQT7G+HhW4bFA==
-Date: Sun, 31 Mar 2024 12:26:44 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-Subject: Re: [PATCH v5 8/9] rust: file: add `DeferredFdCloser`
-Message-ID: <20240331-waran-geldregen-aa3d299c6680@brauner>
-References: <20240209-alice-file-v5-0-a37886783025@google.com>
- <20240209-alice-file-v5-8-a37886783025@google.com>
- <20240320-massieren-lackschaden-9b30825babec@brauner>
- <CAH5fLgjeet1nhycCqdaKE9CSY02XW85jn302zNEjJNQaJ1czGQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z+bIvAM7zEp10fEy9KXQ02RUwUGMZEf6Q5L5WAtVANwx+XG39iT3ghfrgfKSE6u4o4y8YEH2qj5R7oIurAcI/aGiU4AI8M+wPe17hbJqrvysif5qeYJQ1U8eOpgc/vBAcSsFV5lH0AUEf11J5FnDNfRYb3wj3U4WHToQBarrs0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c7i9IAHs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711884038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZAFJ+0SeTqdsqNS6GC0N4AccV7yeFgGXHpRB2cwbNo4=;
+	b=c7i9IAHsKuupMX+QQPKbD7KgxC0UmvECMDPWeIvRD1pNKLUFH4axWG4pdtxcuX1LmGnPO3
+	gM2r3MOoObjgNNk0gWim29dzL+FITCqjEbrZuABlRIdOhAzG92Y5aSzV59s9BLlwdbVclF
+	t6IoszosnTZQ9ptY4RWIPTQb15+RIGE=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-255-j5mZdXVSPvqopILjKUm_nw-1; Sun, 31 Mar 2024 07:20:35 -0400
+X-MC-Unique: j5mZdXVSPvqopILjKUm_nw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-414ae9b8c04so21085335e9.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Mar 2024 04:20:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711884035; x=1712488835;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZAFJ+0SeTqdsqNS6GC0N4AccV7yeFgGXHpRB2cwbNo4=;
+        b=JmPWr8G186Ci05VMtdr2gGazww8IRSGNvktDJRGfRJ3chK2L0pjV1odNsp4dTA67gM
+         fk8WE41K/94S9ZLVzizB5DaWJpSGA0XIPHraXifnVAJH4zr+rLK/HUcQQAY54IzVHiPm
+         DcftBZhAC7+ueSz4m9h+JlIrzn0evPl6Iq1/6IX4j63apub7dXQ0YqAI3ilw8/Crz4oT
+         Xc7AMBM/85yTWQ8yDJP6kA3dbUhCSEL6To6tttfFaxOXfhXkX2K8UJwmxlo8sv/ikzVn
+         uRf5+mVHomF5fz70UcMyL4bxQCbpLb0Xih7gCQqG9d0+FYQUYm5FASGG/R9juO2YHrWj
+         HQXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDp8t4ru4YIqkPoB+kB6pvOy5+Fme4jN1gMOz2zqvEMNbfDxBX4B7rWr4/46V44lJP9p/CwdRSvaiaGq6FkMqmvUjk4aIbBdPYBXK93A==
+X-Gm-Message-State: AOJu0YynfW1o104SO4LeaKZFiJY79oSmBp3v9E81ptJ6oRUQWpdLnhiQ
+	hoFbTK4jWJu3Tsrh3UuyeFM8PYsT8sBSxPmYpWZ9sZP9kVdJwKSy2XkD3tSDSx7AyAo9ka6IzgW
+	yGpF4B19Yge3qHpU47yQM8IKeLb2s2vrpHEYt7kk5W9SmJwLDxpVmm0gyI8/eaP0=
+X-Received: by 2002:a05:600c:220f:b0:413:e19:337f with SMTP id z15-20020a05600c220f00b004130e19337fmr6115875wml.22.1711884034574;
+        Sun, 31 Mar 2024 04:20:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhoN6xvj4jps7JZJhPCGbovoaf04BQIV4BBUP7925nSfWx1HPIV5PQzN7Ku2MIo02ql2sOQw==
+X-Received: by 2002:a05:600c:220f:b0:413:e19:337f with SMTP id z15-20020a05600c220f00b004130e19337fmr6115845wml.22.1711884033951;
+        Sun, 31 Mar 2024 04:20:33 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:173:c52c:ce6f:ec9c:ca7c:7200])
+        by smtp.gmail.com with ESMTPSA id u22-20020a05600c139600b004148d7b889asm14465567wmf.8.2024.03.31.04.20.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Mar 2024 04:20:33 -0700 (PDT)
+Date: Sun, 31 Mar 2024 07:20:24 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	iommu@lists.linux.dev, netdev@vger.kernel.org, v9fs@lists.linux.dev,
+	kvm@vger.kernel.org, linux-wireless@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 01/22] virtio: store owner from modules with
+ register_virtio_driver()
+Message-ID: <20240331071546-mutt-send-email-mst@kernel.org>
+References: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
+ <20240327-module-owner-virtio-v1-1-0feffab77d99@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgjeet1nhycCqdaKE9CSY02XW85jn302zNEjJNQaJ1czGQ@mail.gmail.com>
+In-Reply-To: <20240327-module-owner-virtio-v1-1-0feffab77d99@linaro.org>
 
-On Thu, Mar 21, 2024 at 02:28:15PM +0100, Alice Ryhl wrote:
-> On Wed, Mar 20, 2024 at 3:22 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Fri, Feb 09, 2024 at 11:18:21AM +0000, Alice Ryhl wrote:
-> > >
-> > > +/// Helper used for closing file descriptors in a way that is safe even if the file is currently
-> > > +/// held using `fdget`.
-> > > +///
-> > > +/// Additional motivation can be found in commit 80cd795630d6 ("binder: fix use-after-free due to
-> > > +/// ksys_close() during fdget()") and in the comments on `binder_do_fd_close`.
-> > > +pub struct DeferredFdCloser {
-> > > +    inner: Box<DeferredFdCloserInner>,
-> > > +}
-> > > +
-> > > +/// SAFETY: This just holds an allocation with no real content, so there's no safety issue with
-> > > +/// moving it across threads.
-> > > +unsafe impl Send for DeferredFdCloser {}
-> > > +unsafe impl Sync for DeferredFdCloser {}
-> > > +
-> > > +/// # Invariants
-> > > +///
-> > > +/// If the `file` pointer is non-null, then it points at a `struct file` and owns a refcount to
-> > > +/// that file.
-> > > +#[repr(C)]
-> > > +struct DeferredFdCloserInner {
-> > > +    twork: mem::MaybeUninit<bindings::callback_head>,
-> > > +    file: *mut bindings::file,
-> > > +}
-> > > +
-> > > +impl DeferredFdCloser {
-> >
-> > So the explicitly deferred close is due to how binder works so it's not
-> > much of a general purpose interface as I don't recall having other
-> > codepaths with similar problems. So this should live in the binder
-> > specific rust code imo.
+On Wed, Mar 27, 2024 at 01:40:54PM +0100, Krzysztof Kozlowski wrote:
+> Modules registering driver with register_virtio_driver() might forget to
+> set .owner field.  i2c-virtio.c for example has it missing.  The field
+> is used by some of other kernel parts for reference counting
+> (try_module_get()), so it is expected that drivers will set it.
 > 
-> Hmm. Are there really no other ioctls that call ksys_close on a
-> user-provided fd?
-
-No, I don't think there are otherwise they would have the same bug that
-binder had. io_uring comes closest but they have their own task work
-and deferred close implementation.
-
+> Solve the problem by moving this task away from the drivers to the core
+> amba bus code, just like we did for platform_driver in
+> commit 9447057eaff8 ("platform_device: use a macro instead of
+> platform_driver_register").
 > 
-> As far as I can tell, this kind of deferred API is the only way for us
-> to provide a fully safe Rust api for closing an fd. Directly calling
-> ksys_close must unsafely assert that the fd does not have an active
-> fdget call. So it makes sense to me as an API that others might want
-> to use.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I'm sorry, I don't quite understand you here.
 
-What binder is doing iirc is that it's performing an ioctl() using a fd
-to /dev/binderfs/$device-node or similar. The fatal flaw is that binder
-now allows that fd to be closed during that ioctl - and by accident at
-that. It's effectively closing a file it's relying on to not go away.
-That's the original nonsense/creativity that necessitates this whole
-manual task work shenanigans binder is doing. Unless I misremember.
 
-But that's really frowned upon generally and absolutely not encouraged
-by providing a generic interface for this stuff.
+This makes sense. So this will be:
 
-Sure, we have some users in the kernel that do stuff like call
-close_fd() on a file descriptor they just installed into their file
-descriptor table. That's usually bad design with maybe a few valid
-exceptions. One example where that's still done and should be fixed is
-e.g., cachefiles in fs/cachefiles/ondemand.c. The point is that they at
-least close a file descriptor that they just installed and that they
-don't rely on being valid.
+Fixes: 3cfc88380413 ("i2c: virtio: add a virtio i2c frontend driver")
+Cc: "Jie Deng" <jie.deng@intel.com>
 
-So really, I need more details why without this interface it would
-prevent Rust from implementing safe file descriptor closing because
-right now all I see is a design flaw in binder being promoted to a
-generic interface. And unless there's detailed reasons for it's
-existence we're not going to do it.
+and I think I will pick this patch for this cycle to fix
+the bug. The cleanups can go in the next cycle.
+
+
+> ---
+>  Documentation/driver-api/virtio/writing_virtio_drivers.rst | 1 -
+>  drivers/virtio/virtio.c                                    | 6 ++++--
+>  include/linux/virtio.h                                     | 7 +++++--
+>  3 files changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/virtio/writing_virtio_drivers.rst b/Documentation/driver-api/virtio/writing_virtio_drivers.rst
+> index e14c58796d25..e5de6f5d061a 100644
+> --- a/Documentation/driver-api/virtio/writing_virtio_drivers.rst
+> +++ b/Documentation/driver-api/virtio/writing_virtio_drivers.rst
+> @@ -97,7 +97,6 @@ like this::
+>  
+>  	static struct virtio_driver virtio_dummy_driver = {
+>  		.driver.name =  KBUILD_MODNAME,
+> -		.driver.owner = THIS_MODULE,
+>  		.id_table =     id_table,
+>  		.probe =        virtio_dummy_probe,
+>  		.remove =       virtio_dummy_remove,
+> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+> index f173587893cb..9510c551dce8 100644
+> --- a/drivers/virtio/virtio.c
+> +++ b/drivers/virtio/virtio.c
+> @@ -362,14 +362,16 @@ static const struct bus_type virtio_bus = {
+>  	.remove = virtio_dev_remove,
+>  };
+>  
+> -int register_virtio_driver(struct virtio_driver *driver)
+> +int __register_virtio_driver(struct virtio_driver *driver, struct module *owner)
+>  {
+>  	/* Catch this early. */
+>  	BUG_ON(driver->feature_table_size && !driver->feature_table);
+>  	driver->driver.bus = &virtio_bus;
+> +	driver->driver.owner = owner;
+> +
+>  	return driver_register(&driver->driver);
+>  }
+> -EXPORT_SYMBOL_GPL(register_virtio_driver);
+> +EXPORT_SYMBOL_GPL(__register_virtio_driver);
+>  
+>  void unregister_virtio_driver(struct virtio_driver *driver)
+>  {
+> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> index b0201747a263..26c4325aa373 100644
+> --- a/include/linux/virtio.h
+> +++ b/include/linux/virtio.h
+> @@ -170,7 +170,7 @@ size_t virtio_max_dma_size(const struct virtio_device *vdev);
+>  
+>  /**
+>   * struct virtio_driver - operations for a virtio I/O driver
+> - * @driver: underlying device driver (populate name and owner).
+> + * @driver: underlying device driver (populate name).
+>   * @id_table: the ids serviced by this driver.
+>   * @feature_table: an array of feature numbers supported by this driver.
+>   * @feature_table_size: number of entries in the feature table array.
+> @@ -208,7 +208,10 @@ static inline struct virtio_driver *drv_to_virtio(struct device_driver *drv)
+>  	return container_of(drv, struct virtio_driver, driver);
+>  }
+>  
+> -int register_virtio_driver(struct virtio_driver *drv);
+> +/* use a macro to avoid include chaining to get THIS_MODULE */
+> +#define register_virtio_driver(drv) \
+> +	__register_virtio_driver(drv, THIS_MODULE)
+> +int __register_virtio_driver(struct virtio_driver *drv, struct module *owner);
+>  void unregister_virtio_driver(struct virtio_driver *drv);
+>  
+>  /* module_virtio_driver() - Helper macro for drivers that don't do
+> 
+> -- 
+> 2.34.1
+
 
