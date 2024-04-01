@@ -1,189 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-15825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA4B893BA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 15:54:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994E8893BBE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 16:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CD4C1C21439
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 13:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C78F1C20AE8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 14:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932B740860;
-	Mon,  1 Apr 2024 13:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c29yWJov"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FAF40BFD;
+	Mon,  1 Apr 2024 14:07:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5AC3F8F1;
-	Mon,  1 Apr 2024 13:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6725D17580
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 14:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711979639; cv=none; b=tQWzCsmlMbfa4nu4nMmBeNLBSw/Wa18pE4srCoW/WALjyTW3Xk/AcipeATv+JqWKfAbNJw9lYl7wvp/GNd4e3YGHmtto4f0VbP4C/WIlCB84O2qSiN/RlrL2PO2gQjA3Adxh30lRR96/7qnIp0TceatzAxC3urqzGxj7im+MjUo=
+	t=1711980448; cv=none; b=orvG/zMNgzSEWHquIIVGgQg+OSF/dZ98D9pA75L2oXC0NApxJ9vew/ZYaAxFeofqpt0ozVkeZcztPSeb6Mm2kQXoQrPXerprvzTp1bBsvZKRSg6S3E8uyCBjApxohfPWP9Bp74ZXHAdcjnukkrrS6cw3HMStJiO9OPaZbJa6pDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711979639; c=relaxed/simple;
-	bh=dmYCendNfZLK2ZYRN4P3XHXSgHmLS9K4qfGr3Ifd3v0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6zYjs94S03IZeCtmtIlyX/0RK17WPiPjQkkDmYDdljlVx5Ikj7KZ0xlYzZkJBOfdBVG1MpITp77wpluPmQpDILA0kJhTsyLJuHYzRXhvMhIcA7cyKxg5+Zg8gi+oK1VsYYFRNPRyFN8P2/SZACqIjf4YrJy966YDreftmU1DIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c29yWJov; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA0CC433C7;
-	Mon,  1 Apr 2024 13:53:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711979638;
-	bh=dmYCendNfZLK2ZYRN4P3XHXSgHmLS9K4qfGr3Ifd3v0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c29yWJov1MPD3KNJnAc3J10X31RIJx5rJ8pZ9aMASTtRIDHTlXt3YBkMhR/2MmTeW
-	 zKg7sKvzusvvzXvEpqIv8nO9JilxGOlGDD9rpErvCQJiT/+cOIdnykZR54Pb5hp73A
-	 n3db2XvRlrrFuw27hXNlQVFklZF/bwBt1Tvksi8eyn/LaeBo2QoMfURHysv0Ra+tcm
-	 5GNCZFCSDd/aMOWF7fV3ver/b2jE5QU8+WhPmhCzIjV1dmrOHawVXzxIdY9jTI6kkp
-	 3RzhX7bCaKGHmMTJC3G9ZTma+EDhOVW6r/AdWBj3gvJJLSd3U3a0S7GGRMCCfrXnpN
-	 BcEw/0JlvpOew==
-Date: Mon, 1 Apr 2024 14:53:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steve French <smfrench@gmail.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-	linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 26/26] netfs, afs: Use writeback retry to deal with
- alternate keys
-Message-ID: <20240401135351.GD26556@kernel.org>
-References: <20240328163424.2781320-1-dhowells@redhat.com>
- <20240328163424.2781320-27-dhowells@redhat.com>
+	s=arc-20240116; t=1711980448; c=relaxed/simple;
+	bh=SPtxXi5PvRjsqoDPT9n1bJFZlmK8nVXtA21jNRCVXyw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=h7Ew+yvwGbkqc70mKdmEbVRCAq9z0+QDQR4knQ2+1ypclDPBl+Yu+iUZLFN0XBtfWzixuoEshZM4QGwTf4TQmMWdg5UMdcIjOqS3+9hPYxAbqcq4irJD2cOBBTvBX+LXGavsBtv9OjFfpWK9vZDEt9jpfzrHJVnkBmLAETFuXFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7cbf092a502so430664439f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Apr 2024 07:07:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711980445; x=1712585245;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YpErK9qu/PGde2topRn8Sa+4f9zoUj4OqVEyctoEVTw=;
+        b=CqA4FDklFNxsJUqRG6w4csukSdxKe/6rXaqFzqQn80OtPi7YIrnlG7zYL+nR1oTTqR
+         AyvNsCNt8yCyZXHLTtbCbO6wCnzv3THq6AMqgjmJUdKeSl/bE6a7i1XqMn8/9sQxEFyk
+         EeoXn2+xKVVci1dRE5n67IqzjHiUnvwXefFF8B+87+jRcoqBq6Q9OL4PdZHypsZaQ7TB
+         sWJwBH/Gmzcc/yQAs72vOe8MEiZWTxElEntWJtNMaabmqSi9GhkEZ1AzJSk++5MV4dKg
+         OMvKo3H4rBOSbzT4tqmG+JEiPSs2qNODy3OcykSsYJWehCePz8VXqAEee3mnJW8uVgrT
+         jCfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVku/zWXFzMeDsy1oXZOqEW/7enFocH0lHwi3zTIGLuIooPwd7aDayV13b3VjudKhGOYy9imEBT8tHZg/JvCeXw07qtPMlH3G3rqtSWCA==
+X-Gm-Message-State: AOJu0Yzbsyod+WEpwgJPg1TV2jLy3dlzgpQ8pGoUhY8dKIHJ4/TPZYKq
+	er68+FFrcHbSz27WSH582o7B+O5nDS72gbJ9VW2rFD4YoLaYeVkhLGfRswfeX+6mBHBqdDiPg7b
+	PNQvoqgZNcjIWfn0s3/AOKfORBSLjnJC4aJ/X4XMAn94ZmwCkLL0W3WY=
+X-Google-Smtp-Source: AGHT+IF3/sFIb0CAoEg9PV13WObAPYgrnxhGisLBb2Iw7Ia2ohijMls29S/WYYpz18hhx+m+vvgnktUoDi10I4OnzaGoOq07x6+i
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240328163424.2781320-27-dhowells@redhat.com>
+X-Received: by 2002:a05:6e02:1a4b:b0:369:98a3:6f7b with SMTP id
+ u11-20020a056e021a4b00b0036998a36f7bmr437628ilv.4.1711980445526; Mon, 01 Apr
+ 2024 07:07:25 -0700 (PDT)
+Date: Mon, 01 Apr 2024 07:07:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000518bc10615098296@google.com>
+Subject: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in jfs_readdir
+From: syzbot <syzbot+0315f8fe99120601ba88@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 28, 2024 at 04:34:18PM +0000, David Howells wrote:
+Hello,
 
-...
+syzbot found the following issue on:
 
-> +void afs_issue_write(struct netfs_io_subrequest *subreq)
->  {
-> +	struct netfs_io_request *wreq = subreq->rreq;
->  	struct afs_operation *op;
-> -	struct afs_wb_key *wbk = NULL;
-> -	loff_t size = iov_iter_count(iter);
-> +	struct afs_vnode *vnode = AFS_FS_I(wreq->inode);
-> +	unsigned long long pos = subreq->start + subreq->transferred;
-> +	size_t len = subreq->len - subreq->transferred;
->  	int ret = -ENOKEY;
->  
-> -	_enter("%s{%llx:%llu.%u},%llx,%llx",
-> +	_enter("R=%x[%x],%s{%llx:%llu.%u},%llx,%zx",
-> +	       wreq->debug_id, subreq->debug_index,
->  	       vnode->volume->name,
->  	       vnode->fid.vid,
->  	       vnode->fid.vnode,
->  	       vnode->fid.unique,
-> -	       size, pos);
-> +	       pos, len);
->  
-> -	ret = afs_get_writeback_key(vnode, &wbk);
-> -	if (ret) {
-> -		_leave(" = %d [no keys]", ret);
-> -		return ret;
-> -	}
-> +#if 0 // Error injection
-> +	if (subreq->debug_index == 3)
-> +		return netfs_write_subrequest_terminated(subreq, -ENOANO, false);
->  
-> -	op = afs_alloc_operation(wbk->key, vnode->volume);
-> -	if (IS_ERR(op)) {
-> -		afs_put_wb_key(wbk);
-> -		return -ENOMEM;
-> +	if (!test_bit(NETFS_SREQ_RETRYING, &subreq->flags)) {
-> +		set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
-> +		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
->  	}
-> +#endif
-> +
-> +	op = afs_alloc_operation(wreq->netfs_priv, vnode->volume);
-> +	if (IS_ERR(op))
-> +		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
->  
->  	afs_op_set_vnode(op, 0, vnode);
-> -	op->file[0].dv_delta = 1;
-> +	op->file[0].dv_delta	= 1;
->  	op->file[0].modification = true;
-> -	op->store.pos = pos;
-> -	op->store.size = size;
-> -	op->flags |= AFS_OPERATION_UNINTR;
-> -	op->ops = &afs_store_data_operation;
-> +	op->store.pos		= pos;
-> +	op->store.size		= len,
+HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1723f529180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
+dashboard link: https://syzkaller.appspot.com/bug?extid=0315f8fe99120601ba88
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1574d855180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d95219180000
 
-nit: this is probably more intuitively written using len;
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/72ab73815344/disk-fe46a7dd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2d6d6b0d7071/vmlinux-fe46a7dd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/48e275e5478b/bzImage-fe46a7dd.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/fe45a050e301/mount_0.gz
 
-> +	op->flags		|= AFS_OPERATION_UNINTR;
-> +	op->ops			= &afs_store_data_operation;
->  
-> -try_next_key:
->  	afs_begin_vnode_operation(op);
->  
-> -	op->store.write_iter = iter;
-> -	op->store.i_size = max(pos + size, vnode->netfs.remote_i_size);
-> -	op->mtime = inode_get_mtime(&vnode->netfs.inode);
-> +	op->store.write_iter	= &subreq->io_iter;
-> +	op->store.i_size	= umax(pos + len, vnode->netfs.remote_i_size);
-> +	op->mtime		= inode_get_mtime(&vnode->netfs.inode);
->  
->  	afs_wait_for_operation(op);
-> -
-> -	switch (afs_op_error(op)) {
-> +	ret = afs_put_operation(op);
-> +	switch (ret) {
->  	case -EACCES:
->  	case -EPERM:
->  	case -ENOKEY:
->  	case -EKEYEXPIRED:
->  	case -EKEYREJECTED:
->  	case -EKEYREVOKED:
-> -		_debug("next");
-> -
-> -		ret = afs_get_writeback_key(vnode, &wbk);
-> -		if (ret == 0) {
-> -			key_put(op->key);
-> -			op->key = key_get(wbk->key);
-> -			goto try_next_key;
-> -		}
-> +		/* If there are more keys we can try, use the retry algorithm
-> +		 * to rotate the keys.
-> +		 */
-> +		if (wreq->netfs_priv2)
-> +			set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
->  		break;
->  	}
->  
-> -	afs_put_wb_key(wbk);
-> -	_leave(" = %d", afs_op_error(op));
-> -	return afs_put_operation(op);
-> +	netfs_write_subrequest_terminated(subreq, ret < 0 ? ret : subreq->len, false);
->  }
->  
->  /*
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-...
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12f6203d180000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11f6203d180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16f6203d180000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0315f8fe99120601ba88@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:2892:30
+index -1 is out of range for type 'struct dtslot[128]'
+CPU: 0 PID: 5057 Comm: syz-executor163 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:217 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:415
+ jfs_readdir+0x1cb4/0x4660 fs/jfs/jfs_dtree.c:2892
+ wrap_directory_iterator+0x94/0xe0 fs/readdir.c:67
+ iterate_dir+0x539/0x6f0 fs/readdir.c:110
+ __do_sys_getdents64 fs/readdir.c:409 [inline]
+ __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:394
+ do_syscall_64+0xfb/0x240
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+RIP: 0033:0x7f00e0f665f9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffdc32b878 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00007fffdc32ba48 RCX: 00007f00e0f665f9
+RDX: 000000000000102a RSI: 0000000020002280 RDI: 0000000000000004
+RBP: 00007f00e0fdf610 R08: 0000000000000000 R09: 00007fffdc32ba48
+R10: 00000000000060cc R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fffdc32ba38 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+---[ end trace ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
