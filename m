@@ -1,195 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-15816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD7D8937D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 05:41:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7D1893849
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 08:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EC32B20FD2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 03:41:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6244281969
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 06:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7EA8828;
-	Mon,  1 Apr 2024 03:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62DE8F7A;
+	Mon,  1 Apr 2024 06:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="FHoaR+dr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985351362;
-	Mon,  1 Apr 2024 03:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71782595;
+	Mon,  1 Apr 2024 06:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711942883; cv=none; b=cBdL2RuEzA/koJRdUPuV6T2xqU70H2ACc/v2somBMvRqirbeRVbyER34qTexEsgTcT5fgO1Whr177Sm7mJ5gsUcKRb7jbnMOauzNAlFqDioSlqAlnkiTcYS2Pko5LNE+SsD46o3rcQmYD5RrI5M1pVE8O9jYiNhiuMvdDLxtUac=
+	t=1711952198; cv=none; b=J1tuXCYZupSM3VdR7MiFNpLS3PaWSRUGRM/6OMdVqt9aWu1TP4sNEzhlmS1ePn+vnguJgViQtlBFKjpSfdu3UrpUpvyliIckzfnz8IPNtBgnpF1c5hbpi00+U5akWqy3DI6ISgeqe69fVfJVdK5oadlqF7/WSJBOqDR0S0tu35s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711942883; c=relaxed/simple;
-	bh=Y+C6YOutpzawaB9+UJw3qAWVjD/gimExt0e/uFbsI/M=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=mY7Zk+TlqPu+lrZp7JFB4o4xRLuTe0T0l5lwKEyf/RlZzxfTwzOgGUlk8z4t+NoeFia2/2U+Fo20XeD6iK7KPJdITlUistow2/yNUhTmp+S6Q2SNpTnNIHVbMnJEUrRSLoNWXULJForu/DemB62v3kznoGkHCly12w2wz5N6ENM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4V7Gvt1Wpsz1xtQy;
-	Mon,  1 Apr 2024 11:39:06 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id C7BCE1A016F;
-	Mon,  1 Apr 2024 11:41:11 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 1 Apr 2024 11:41:10 +0800
-Subject: Re: [PATCH 1/7] memory: Remove the now superfluous sentinel element
- from ctl_table array
-To: <j.granados@samsung.com>
-CC: Luis Chamberlain <mcgrof@kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-	<keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<io-uring@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, Naoya
- Horiguchi <naoya.horiguchi@nec.com>, John Johansen
-	<john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, James Morris
-	<jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, David Howells
-	<dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook
-	<keescook@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S.
- Miller" <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>, Pavel Begunkov
-	<asml.silence@gmail.com>, Atish Patra <atishp@atishpatra.org>, Anup Patel
-	<anup@brainfault.org>, Will Deacon <will@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
- <20240328-jag-sysctl_remset_misc-v1-1-47c1463b3af2@samsung.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <0e35e88d-3ea1-4f62-77e4-eb12e9f51583@huawei.com>
-Date: Mon, 1 Apr 2024 11:41:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1711952198; c=relaxed/simple;
+	bh=Gf16/3ATwW5ymrwfxNotUxyAiehv1Nj7wPTQDzI+o1E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G6NNIoQdHL5kDf4rYEbprYhZOZroZ6gf1mvRW70m5HIhWvmGShgDU49XDPpUDxCNrCJfDiwFLbi+4qW8Aid9Qu7ZX4gp4eAM6dl6gWH1BbCG+EVVwbENCCBoWsdGkxqdFcRaaMOTRRWX2B9FYCH12jEIxcGk4+Xb0CKvYWyPYmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=FHoaR+dr; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4314icou027716;
+	Sun, 31 Mar 2024 23:16:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding:content-type; s=
+	PPS06212021; bh=b94hqPNHzJ06xjr7BdMuOoe9TJRdHoixRFvvRcdazSY=; b=
+	FHoaR+drR9DxOd9KlI3Fm61PX0vt2htMGp3sC33+cd3bOC2vkt4V/z9Se3c3ljqx
+	Zf5sMa216+TUFCcKDm4KUiwU8KgLOg8ZFj55lxbRZOJDz2sAbwfVgUTFPFW22zNf
+	kcrkTfwoLUTo9FUkCme8gUqokOktRj4KGl2vMaMbnUCY4YMKct71jXfHXwePtP0z
+	wZzwgSa3S7qQ9zVNuO7HKDLA1YjLLcB27gO4k3a+BQEiDNbKXxBPf0WvH9W86rrL
+	YRu1k9Cb+RtivWJEN6VLkjAFdEgBLtpIgaeBjkpMxQoUZCyDfwDM25kY7yclw2jL
+	Vbu1j2WVrkVb0ZKKsTxYOQ==
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3x6e10heu2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sun, 31 Mar 2024 23:16:26 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.37; Sun, 31 Mar 2024 23:16:26 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.37 via Frontend Transport; Sun, 31 Mar 2024 23:16:24 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+fa7b3ab32bcb56c10961@syzkaller.appspotmail.com>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] fs/hfsplus: fix in hfsplus_read_wrapper
+Date: Mon, 1 Apr 2024 14:16:19 +0800
+Message-ID: <20240401061619.2995409-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000001126200614f5c9c4@google.com>
+References: <0000000000001126200614f5c9c4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-1-47c1463b3af2@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- canpemm500002.china.huawei.com (7.192.104.244)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: SltEFJFXiS2Dxwb9z7AU2VZ-n3NLmiIA
+X-Proofpoint-GUID: SltEFJFXiS2Dxwb9z7AU2VZ-n3NLmiIA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-01_03,2024-03-28_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 adultscore=0 clxscore=1011 phishscore=0 priorityscore=1501
+ suspectscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403210001 definitions=main-2404010044
 
-On 2024/3/28 23:57, Joel Granados via B4 Relay wrote:
-> From: Joel Granados <j.granados@samsung.com>
-> 
-> This commit comes at the tail end of a greater effort to remove the
-> empty elements at the end of the ctl_table arrays (sentinels) which will
-> reduce the overall build time size of the kernel and run time memory
-> bloat by ~64 bytes per sentinel (further information Link :
-> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
-> 
-> Remove sentinel from all files under mm/ that register a sysctl table.
-> 
-> Signed-off-by: Joel Granados <j.granados@samsung.com>
+[Syzbot reported]
+BUG: KASAN: slab-use-after-free in hfsplus_read_wrapper+0xf86/0x1070 fs/hfsplus/wrapper.c:226
+Read of size 2 at addr ffff888024fba400 by task syz-executor204/5218
 
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+CPU: 1 PID: 5218 Comm: syz-executor204 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ hfsplus_read_wrapper+0xf86/0x1070 fs/hfsplus/wrapper.c:226
+ hfsplus_fill_super+0x352/0x1bc0 fs/hfsplus/super.c:419
+ mount_bdev+0x1e6/0x2d0 fs/super.c:1658
+ legacy_get_tree+0x10c/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x92/0x380 fs/super.c:1779
+ do_new_mount fs/namespace.c:3352 [inline]
+ path_mount+0x14e6/0x1f20 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xd5/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+RIP: 0033:0x7f706ca0c69a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcd3a1c1c8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f706ca0c69a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffcd3a1c210
+RBP: 0000000000000004 R08: 00007ffcd3a1c250 R09: 0000000000000632
+R10: 0000000000000050 R11: 0000000000000286 R12: 00007ffcd3a1c210
+R13: 00007ffcd3a1c250 R14: 0000000000080000 R15: 0000000000000003
+ </TASK>
+[Fix] 
+When the logical_block_size was changed from 512 to 2048, it resulted in 
+insufficient space pre allocated to s_backup_vhdr_buf. To solve this problem, 
+move the memory allocation of s_backup_vhdr_buf to after the logical_block_size
+has been changed.
 
-Thanks.
+Reported-and-tested-by: syzbot+fa7b3ab32bcb56c10961@syzkaller.appspotmail.com
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ fs/hfsplus/wrapper.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> ---
->  mm/compaction.c      | 1 -
->  mm/hugetlb.c         | 1 -
->  mm/hugetlb_vmemmap.c | 1 -
->  mm/memory-failure.c  | 1 -
->  mm/oom_kill.c        | 1 -
->  mm/page-writeback.c  | 1 -
->  mm/page_alloc.c      | 1 -
->  7 files changed, 7 deletions(-)
-> 
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index 807b58e6eb68..e8a047afca22 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -3345,7 +3345,6 @@ static struct ctl_table vm_compaction[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_ONE,
->  	},
-> -	{ }
->  };
->  
->  static int __init kcompactd_init(void)
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 23ef240ba48a..7ac5240a197d 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -5045,7 +5045,6 @@ static struct ctl_table hugetlb_table[] = {
->  		.mode		= 0644,
->  		.proc_handler	= hugetlb_overcommit_handler,
->  	},
-> -	{ }
->  };
->  
->  static void hugetlb_sysctl_init(void)
-> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> index da177e49d956..b9a55322e52c 100644
-> --- a/mm/hugetlb_vmemmap.c
-> +++ b/mm/hugetlb_vmemmap.c
-> @@ -679,7 +679,6 @@ static struct ctl_table hugetlb_vmemmap_sysctls[] = {
->  		.mode		= 0644,
->  		.proc_handler	= proc_dobool,
->  	},
-> -	{ }
->  };
->  
->  static int __init hugetlb_vmemmap_init(void)
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 9349948f1abf..6a112f9ecf91 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -141,7 +141,6 @@ static struct ctl_table memory_failure_table[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_ONE,
->  	},
-> -	{ }
->  };
->  
->  /*
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 8d6a207c3c59..4d7a0004df2c 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -724,7 +724,6 @@ static struct ctl_table vm_oom_kill_table[] = {
->  		.mode		= 0644,
->  		.proc_handler	= proc_dointvec,
->  	},
-> -	{}
->  };
->  #endif
->  
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 3e19b87049db..fba324e1a010 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2291,7 +2291,6 @@ static struct ctl_table vm_page_writeback_sysctls[] = {
->  		.mode		= 0644,
->  		.proc_handler	= proc_dointvec_jiffies,
->  	},
-> -	{}
->  };
->  #endif
->  
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 14d39f34d336..8b9820620fe3 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -6211,7 +6211,6 @@ static struct ctl_table page_alloc_sysctl_table[] = {
->  		.extra2		= SYSCTL_ONE_HUNDRED,
->  	},
->  #endif
-> -	{}
->  };
->  
->  void __init page_alloc_sysctl_init(void)
-> 
+diff --git a/fs/hfsplus/wrapper.c b/fs/hfsplus/wrapper.c
+index ce9346099c72..974786e30259 100644
+--- a/fs/hfsplus/wrapper.c
++++ b/fs/hfsplus/wrapper.c
+@@ -179,16 +179,13 @@ int hfsplus_read_wrapper(struct super_block *sb)
+ 	sbi->s_vhdr_buf = kmalloc(hfsplus_min_io_size(sb), GFP_KERNEL);
+ 	if (!sbi->s_vhdr_buf)
+ 		goto out;
+-	sbi->s_backup_vhdr_buf = kmalloc(hfsplus_min_io_size(sb), GFP_KERNEL);
+-	if (!sbi->s_backup_vhdr_buf)
+-		goto out_free_vhdr;
+ 
+ reread:
+ 	error = hfsplus_submit_bio(sb, part_start + HFSPLUS_VOLHEAD_SECTOR,
+ 				   sbi->s_vhdr_buf, (void **)&sbi->s_vhdr,
+ 				   REQ_OP_READ);
+ 	if (error)
+-		goto out_free_backup_vhdr;
++		goto out_free_vhdr;
+ 
+ 	error = -EINVAL;
+ 	switch (sbi->s_vhdr->signature) {
+@@ -199,7 +196,7 @@ int hfsplus_read_wrapper(struct super_block *sb)
+ 		break;
+ 	case cpu_to_be16(HFSP_WRAP_MAGIC):
+ 		if (!hfsplus_read_mdb(sbi->s_vhdr, &wd))
+-			goto out_free_backup_vhdr;
++			goto out_free_vhdr;
+ 		wd.ablk_size >>= HFSPLUS_SECTOR_SHIFT;
+ 		part_start += (sector_t)wd.ablk_start +
+ 			       (sector_t)wd.embed_start * wd.ablk_size;
+@@ -212,10 +209,13 @@ int hfsplus_read_wrapper(struct super_block *sb)
+ 		 * (should do this only for cdrom/loop though)
+ 		 */
+ 		if (hfs_part_find(sb, &part_start, &part_size))
+-			goto out_free_backup_vhdr;
++			goto out_free_vhdr;
+ 		goto reread;
+ 	}
+ 
++	sbi->s_backup_vhdr_buf = kmalloc(hfsplus_min_io_size(sb), GFP_KERNEL);
++	if (!sbi->s_backup_vhdr_buf)
++		goto out_free_vhdr;
+ 	error = hfsplus_submit_bio(sb, part_start + part_size - 2,
+ 				   sbi->s_backup_vhdr_buf,
+ 				   (void **)&sbi->s_backup_vhdr, REQ_OP_READ);
+-- 
+2.43.0
 
 
