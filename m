@@ -1,198 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-15820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FB6893902
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 10:27:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD21C89391D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 10:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B281F214AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 08:27:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68931281C2F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 08:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D026DDA2;
-	Mon,  1 Apr 2024 08:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA59DDDD5;
+	Mon,  1 Apr 2024 08:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="jx7XbCKi";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="Y6QW+iGJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdbTPgmN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta-04.yadro.com (mta-04.yadro.com [89.207.88.248])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C190FBF7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 08:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56086DDB7
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 08:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711960040; cv=none; b=mLjK6jo1iR0FRne8Y9oqUtU1d9KR4oCT2PM/DmMV9LfvYAKVbS6HCKtqoItb+j+VPM1bMPGE4qe86UWHk4NF8uIBEmhx+Qb1xn2ka1bv/2XOXR/BoAnjrkc6n83soHzeA7j/1qdGlqcP54Rvmht3XwuuJyreVZGmBK23eFgVZzA=
+	t=1711960800; cv=none; b=QF+t5y+RhhY+bA0pF1ZtTMpjjb9JOPgRCABFX/sMjTyS9A0S1xYeS28Z/8RbcSyzD/NZ06xMsJpOv4AfRzMOsWtr4jtZunXzJjctJfF2E+Nxc1vJXemtpwsTkc55jyeFVjK4BMuYVsdP1dVKCuLaatIfCinCZl/rU0/5fIQWVGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711960040; c=relaxed/simple;
-	bh=xGCz31NA1YJdiHL3WUeB1Ku7bq5CIg7cM44njKCPpKA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IoA50ZMJkMIhF2EioucGSbFivPtzQQgjGr2Or7V+Qll4kTwA7eBUDWZsgk2mofZoXzJEQSOYMA1IzDvba9A5ZE/aTPoCqon+c25sF0PoVXsTr+dUAn4ihdPHgbmFWzTQBhZcn8a9rP81O4WoA1Ff03T4mbLmDS/FKaXJOsDKKCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=jx7XbCKi; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=Y6QW+iGJ; arc=none smtp.client-ip=89.207.88.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-04.yadro.com BE6A0C0002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1711960028; bh=G67xYXybf4S1qrW02ulM0Iakj7j+SLvnUUYylGZVLyM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=jx7XbCKikc+noqkYhGZT29lpdN5J5Cuy2tJGuVQsLOf716bszuOzM3IDTE4m6gQax
-	 bX/jrxlKDJ9s9OY2DjvgFL2qz1x0+m0t226CjBwgGEXnJq5C+IQqDG8wABzoQ3lwHV
-	 DsFSwl2LJJZgW6X7AFPJc8N3Gvk5PlSoXAbVGyZvqhyhBE5b++U3X/mO81PqcRzep7
-	 jPIJdcJRroNScYp7rGvReT6j2EivJfDj6tmI+VEcm+r7w/ABMmvU7oWN4s+KInkY3z
-	 Z40wFK1VPQANC0Iy6hM7/ncM4We0k4GXO76xl8fOJHd+WgjJamrIjBoNnAq716R6yt
-	 e9qrW74arLMWw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1711960028; bh=G67xYXybf4S1qrW02ulM0Iakj7j+SLvnUUYylGZVLyM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=Y6QW+iGJBP9Sz9SUvZFvF1QKvm/iKhuOIzWyK6bKQrPtv32DiD6D3rxrQJlbVtUC/
-	 2eNSB52RWcveUn06gIiyZNN/m5golKKszflA9/SxbfftqHjdph9DQwOhdP4sLCt7GQ
-	 cahTkl23Q/HKUeOlAFYDuNBMFZuFgL1TQPZSsd4vEa0I5feaAZMTot0FO3xalGLh11
-	 4dckg+fhkELiuwwhoqfuvBjDzarAzIPox4upM6tScsCfgAqQAN8vx3rrOhQ+803LW2
-	 7cdANLb+5dkp301TPOeg1N87cXjuJrYFfFmmpY5yhgC4I3Fd48XvMFMZFjkJwWSyWt
-	 AebgXv+JCWwaw==
-From: Dmitry Bogdanov <d.bogdanov@yadro.com>
-To: Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>
-CC: <linux-fsdevel@vger.kernel.org>, <linux@yadro.com>, Dmitry Bogdanov
-	<d.bogdanov@yadro.com>
-Subject: [PATCH 2/2] configfs: make a minimal path of symlink
-Date: Mon, 1 Apr 2024 11:26:55 +0300
-Message-ID: <20240401082655.31613-3-d.bogdanov@yadro.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240401082655.31613-1-d.bogdanov@yadro.com>
-References: <20240401082655.31613-1-d.bogdanov@yadro.com>
+	s=arc-20240116; t=1711960800; c=relaxed/simple;
+	bh=vgdeUVyXhHA3q4zDa3spGSLQ2M7q2vkACMSbnQIBDI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t6L3mkkWQX3E1Q71k8zA/v23UDJM+CZQsIOtlPZtkiUuzEPaAdeH5JQ8v6lA8tZqbHhCGFlwwOc3aPkV5UnrKt859g56tDZEmLhIpwzracBgnznf6m2QcvPkZDOuxP4HEj5RevNOLui0CVslg06fCgJ2ZaNBNwvvxmlGgd81Vx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QdbTPgmN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70064C433C7;
+	Mon,  1 Apr 2024 08:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711960800;
+	bh=vgdeUVyXhHA3q4zDa3spGSLQ2M7q2vkACMSbnQIBDI0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QdbTPgmNawOeGzV7HcHpH64p+WS7rT9z/gaWbc0mbLrByOv+UlqfHRXRk8c17G0o/
+	 oKdEAQyMjVBvZN7XLNXHng+MQYxQE62zUlB0BtiPL1Ej/D3Ggg314A1hJQtSVaBe5N
+	 OtLLHpjWD/S08FxC9ycgk0ccS8bmaZrUXuuwuGypxmOqxyiEJDO7kLha/M2MuDPrxz
+	 Uo41NmtSu/q+cLdo4hg/h0f42M3J6zZbZqfxTSjwXLtijzUmLegy5gH+ziJefnt+2X
+	 OSMmFwKPflqcpynFZu3al21C9Ff6YjABucVWH5KlwyteID5jLNaCPy48sw7ma68IQE
+	 o1qVuHX04/P5Q==
+From: Christian Brauner <brauner@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Mitchell Augustin <mitchell.augustin@canonical.com>,
+	linux-stable@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] aio: Fix null ptr deref in aio_complete() wakeup
+Date: Mon,  1 Apr 2024 10:39:37 +0200
+Message-ID: <20240401-hoffen-fachbegriff-ecf9760b765a@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240331215212.522544-1-kent.overstreet@linux.dev>
+References: <20240331215212.522544-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1185; i=brauner@kernel.org; h=from:subject:message-id; bh=vgdeUVyXhHA3q4zDa3spGSLQ2M7q2vkACMSbnQIBDI0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRxFV1PubzeKc1ipYRFS8XRXb1G10R3Z/Vue+9lPfG6x nHWHqnJHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP5+5SRYf/sQoYldXsCbW8G xXDsNzgYMkM9dlYxSx//5oPHAs8ULWVk2JstOvXLlCtvM09ZH5c1Odzy/wl35w/Xk5ULRQsX1hm I8gMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: T-EXCH-07.corp.yadro.com (172.17.11.57) To
- T-EXCH-09.corp.yadro.com (172.17.11.59)
 
-Symlinks in configfs are used to be created from near places. Currently the
-path is artificially inflated by multiple ../ to the configfs root an then
-a full path of the target.
+On Sun, 31 Mar 2024 17:52:12 -0400, Kent Overstreet wrote:
+> list_del_init_careful() needs to be the last access to the wait queue
+> entry - it effectively unlocks access.
+> 
+> Previously, finish_wait() would see the empty list head and skip taking
+> the lock, and then we'd return - but the completion path would still
+> attempt to do the wakeup after the task_struct pointer had been
+> overwritten.
+> 
+> [...]
 
-For scsi target subsystem the difference between such a path and a minimal
-possible path is ~100 characters.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-This patch makes a minimal relative path of symlink - from the closest
-common parent.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
----
- fs/configfs/symlink.c | 59 ++++++++++++++++++++++++++++---------------
- 1 file changed, 38 insertions(+), 21 deletions(-)
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-diff --git a/fs/configfs/symlink.c b/fs/configfs/symlink.c
-index 224c9e4899d4..a61f5a4763e1 100644
---- a/fs/configfs/symlink.c
-+++ b/fs/configfs/symlink.c
-@@ -19,62 +19,79 @@
- /* Protects attachments of new symlinks */
- DEFINE_MUTEX(configfs_symlink_mutex);
- 
--static int item_depth(struct config_item * item)
--{
--	struct config_item * p = item;
--	int depth = 0;
--	do { depth++; } while ((p = p->ci_parent) && !configfs_is_root(p));
--	return depth;
--}
--
--static int item_path_length(struct config_item * item)
-+static int item_path_length(struct config_item *item, int depth)
- {
- 	struct config_item * p = item;
- 	int length = 1;
-+
-+	if (!depth)
-+		return length;
-+
- 	do {
- 		length += strlen(config_item_name(p)) + 1;
- 		p = p->ci_parent;
--	} while (p && !configfs_is_root(p));
-+		depth--;
-+	} while (depth && p && !configfs_is_root(p));
- 	return length;
- }
- 
--static void fill_item_path(struct config_item * item, char * buffer, int length)
-+
-+static void fill_item_path(struct config_item *item, int depth, char *buffer, int length)
- {
- 	struct config_item * p;
- 
- 	--length;
--	for (p = item; p && !configfs_is_root(p); p = p->ci_parent) {
-+	for (p = item; depth && p && !configfs_is_root(p); p = p->ci_parent, depth--) {
- 		int cur = strlen(config_item_name(p));
- 
- 		/* back up enough to print this bus id with '/' */
- 		length -= cur;
- 		memcpy(buffer + length, config_item_name(p), cur);
--		*(buffer + --length) = '/';
-+		if (depth > 1)
-+			*(buffer + --length) = '/';
- 	}
- }
- 
- static int configfs_get_target_path(struct config_item *item,
- 		struct config_item *target, char **path)
- {
--	int depth, size;
-+	struct config_item *pdest, *ptarget;
-+	int target_depth = 0, item_depth = 0;
-+	int size;
- 	char *s;
- 
--	depth = item_depth(item);
--	size = item_path_length(target) + depth * 3 - 1;
-+	/* find closest common parent to make a minimal path */
-+	for (ptarget = target;
-+	     ptarget && !configfs_is_root(ptarget);
-+	     ptarget = ptarget->ci_parent) {
-+		item_depth = 0;
-+		for (pdest = item;
-+		     pdest && !configfs_is_root(pdest);
-+		     pdest = pdest->ci_parent) {
-+			if (pdest == ptarget)
-+				goto out;
-+
-+			item_depth++;
-+		}
-+
-+		target_depth++;
-+	}
-+out:
-+	size = 3 * item_depth + item_path_length(target, target_depth) - 1;
- 	if (size > PATH_MAX)
- 		return -ENAMETOOLONG;
- 
--	pr_debug("%s: depth = %d, size = %d\n", __func__, depth, size);
-+	pr_debug("%s: item_depth = %d, target_depth = %d, size = %d\n",
-+		 __func__, item_depth, target_depth, size);
- 
- 	*path = kzalloc(size, GFP_KERNEL);
- 	if (!*path)
- 		return -ENOMEM;
- 
-+	for (s = *path; item_depth--; s += 3)
-+		strcpy(s, "../");
- 
--	for (s = *path; depth--; s += 3)
--		strcpy(s,"../");
--
--	fill_item_path(target, *path, size);
-+	fill_item_path(target, target_depth, *path, size);
- 	pr_debug("%s: path = '%s'\n", __func__, *path);
- 	return 0;
- }
--- 
-2.25.1
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] aio: Fix null ptr deref in aio_complete() wakeup
+      https://git.kernel.org/vfs/vfs/c/4d455e51278f
 
