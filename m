@@ -1,153 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-15831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FA6893EE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 18:09:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9B989414B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 18:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92ED81F20C17
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 16:09:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E00A1C20FC7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 16:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAACA4776F;
-	Mon,  1 Apr 2024 16:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D8B4596E;
+	Mon,  1 Apr 2024 16:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ETXFhuXF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51924778E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 16:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A941E86C
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 16:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711987770; cv=none; b=izMF/Xa2HVBCH555CA9eK0dtx45kntk/SKx04nEO7HW4uuZnO0bETYuXd6M0CoOAgkq81sb2gEJ6IVFaeJQ3+1fnQvLL8TiU/xj5FDIvjsYGaaFZJThFLvOxZj21+qpIFq01NmXGF/rRuU9WAeiuaIoC/l32nCgmSUgTR4WyrTE=
+	t=1711989619; cv=none; b=ZAxbrKKLroPRk4FQPz+miv8BOAO8qOrynJ5fEVlZGQEVlDFPkFKs4tSHX4CeA43cYCgRO1jpdP8GtqWMgA8n9RtRp+d6pH1KKXMgXkk5QwtGS3FN/m6l6ZhB554qhTsMeL0mJGW5glCYL2cpVbBYP0fy8ODQaJxzh4UQA+BkwZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711987770; c=relaxed/simple;
-	bh=9MJQaaNhjZxg8cTjUe//Brvwr9I7kgQyflReATtuETk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RKnNZRAqCkid2duWY3au6NU8i2d2HLeipN2fjMY8gvZHRTJa/6xrkKRfFQlqSBYwF9aHLTHBgM8wGbKn16Qq2AZwJzZn7b7rpNCAigIJNcTxkPXJoE4dd7eXP2S1R06LwXiCWT+MCpt9xfKi2JtOtzh2mmIEo3rdF83BN0Y04b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36848678a9fso42845785ab.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Apr 2024 09:09:28 -0700 (PDT)
+	s=arc-20240116; t=1711989619; c=relaxed/simple;
+	bh=mOJrEurQ2Cag7MoBJFEH3T/XZh3COptZr3FEmCGbPLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gcraoAYkkIroveIlohUWjKbuBF3txJz7iaLb0fz0a037FsSdpb82jjfmoGQgBho7/hjU0rexbOKOAHc6Y3oIjbbFDdVUgG296gKEn/tgybqGq2upyAlc0+dOBcl+98eMPgKMfkVBI57fSQJ9TnGGL2U7hlHpqx2v36Yq1evbbxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ETXFhuXF; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 51A6C3F285
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 16:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1711989615;
+	bh=kyw1q0UdGddbIeiCqeCW+8pgC3ifkxrhttUo3nZlsFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=ETXFhuXFBf3r2Bx69+s1Xse6pGp5O0SrBfIg29uKYOmm9xEFH0LMqBosP7nVhBO6l
+	 TXAoZ7lxUycn/iAtPcvIOHZqe9aykh7327rluR2xbbPmG3AwuGn0LkmXjzjK8jv1pS
+	 S2Sx3/Xz/Gn/syHM/HXW8jeVlTPQvZpOMUSLQcfKpbi8C6HzVaxFv8Im6uR7VwGYjh
+	 XwGTcZ3rShQdPgm0+UwteX2IZYE/xBtpzPtBv+Gll3eCA1liNihPXmQmhe6RG/xbBG
+	 Nd7RSuNOgNndDBDP9vfhssDe6M5Rq7HMzB+NDNyzh1NGc6068x7bFnxACgHNoHUBSo
+	 /nl5pFIx7u2fw==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a4455ae71fcso260640766b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Apr 2024 09:40:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711987768; x=1712592568;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v8ltHQaZ4qCuEtVlYYBAXZvP0KfucEV94mRShkDJKW8=;
-        b=ahIWi2E1MKYAxf2KtnWVyLHKM7dWY/EohRvAVq9cc7LjdjXe4fjMDHcFWS6WRQGddv
-         uxKnwu/sFRHP0OZ+tuO6GSz1B2yzZ8TT75EiSdG/26on+n8xyxiEXp2+MRaRmE2dUAht
-         oh+jsCEue413OAuppmz/vkDCf3vk2/BJ/Tl2Ch3iN/za98DXtl8gniHJktf36A0NhtM1
-         Lt3rxF0Ewy7wkPW5QmK9IAgR+oxbX2sBgZzF6e3vdMlXAaM9oQcMmz1g1ZE7jK4jffOZ
-         z3pQW7lUQ9yFCgh11z9KgJvL28Enu6JkD+c2u2HPc/I7epO5V8SIInspA4vRQ/zkVxTE
-         rVsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7aKIHe2QI08Rm1eSjBPN3PR7WcZItPLSoY8jDXJFovd1YAc3ZkEDDbPhTBn1QhVxw9W16fkJDUgFNC1hPvQn1J7cA6DZnku+3ja+1Jw==
-X-Gm-Message-State: AOJu0Yx+34k2yKhQewmlia09NbwR4H3AIaHREt60iftr0ZJJa4IvmKie
-	6BIhQx5Y4H7/wzkKGy2pKrSevb+DkIO2MlGiKhShdFJOOmWJJsWRKQbtl58/jDHd0H5821maP9U
-	GtpIFSpmU1SAKEUCWbPyP/Jo9ySEmX9kuz8J7yri3Qy7Spmvrn3W1Ajs=
-X-Google-Smtp-Source: AGHT+IG5j4u78ZNjb/Jw67+iM4et54jH7d48y5fTefaiTFr2aCnztjUBHPyzxghJLrWbFnQq+DceoHsnDB5Fr3f+SkbuiyO/zPa6
+        d=1e100.net; s=20230601; t=1711989614; x=1712594414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kyw1q0UdGddbIeiCqeCW+8pgC3ifkxrhttUo3nZlsFg=;
+        b=DghPvwJf7UiURhs27+GD0l66zYM5vt7uKMBfsSFiR2v6Vv85Wbm7iouYMfiJ2O3lhH
+         q8QpB8OM2ykCLIE8aH3ymTX9eZ6A+UdVMoXeeL3sA6DW+yCN3ApXIcR6vD3N9BWavRlI
+         +PNeuVag9Cw/b024qTEj+8glLHbtdLNEBqTeZVGsYeAYHm9gJ4jy0ElA2D83dtKUqHu5
+         xcJDI/Nd7hzkZZR67cWCn9iyJf0uTTMd1ib7sRo8zYiU0SBeB6oyzWXRISsDRO1LOr0d
+         B35UJUKutTxxpUIkkDsCw1vPL9XfMfBsO9mZN8f81Bb1pTfvFOl4XZ/dUmDgmrBk+dXP
+         ZHGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXhTQGgatogNRKUIs98suuLcdv4UaUv5W0vMfgkigajG1VgiT4rOA31Z5FqROOAI/Udai6tJPT71roewGWOrs6y7kkps8bBktiIaJCwA==
+X-Gm-Message-State: AOJu0YyBWcGfJOMiAR0jtEcLZo0zQwFhP2vLlGRLa9sEdNxZRF60rL1f
+	R2KSkJe1MtQG1T9OvBzdA4H4BNpLM8vdwVzZI3ojFIMX76+hXY3N39llNmjxjqwC3u0whu5tOfn
+	ZecH8CrUxxPvDjIdN5OW6Sklu9MkU+ctrENSHtJzstlgpNiOf3w3SVn5qygwyGmRXCpqVtjxu8A
+	pNJder8Dv7Y/NSelNXg5Zn0OArrxyHyjOqGYFGa+pET5Mu9owfokbezJh1zJZOLA==
+X-Received: by 2002:a05:6402:40c2:b0:56b:ff72:e6bb with SMTP id z2-20020a05640240c200b0056bff72e6bbmr6674388edb.40.1711989614775;
+        Mon, 01 Apr 2024 09:40:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHQZMMgAC2q+xzfVYatcAeJXEQLbSa+Mn87FXyIp1gsrEXa2l5dwlJxB4sf4HiCQ8uLwUu2v1TJ86fJdiabH1w=
+X-Received: by 2002:a05:6402:40c2:b0:56b:ff72:e6bb with SMTP id
+ z2-20020a05640240c200b0056bff72e6bbmr6674373edb.40.1711989614398; Mon, 01 Apr
+ 2024 09:40:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a69:b0:369:8ea5:f650 with SMTP id
- w9-20020a056e021a6900b003698ea5f650mr408782ilv.3.1711987768088; Mon, 01 Apr
- 2024 09:09:28 -0700 (PDT)
-Date: Mon, 01 Apr 2024 09:09:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c6ea9b06150b361c@google.com>
-Subject: [syzbot] [v9fs?] WARNING in v9fs_init_request
-From: syzbot <syzbot+0354394655e838206fba@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+References: <20240331215212.522544-1-kent.overstreet@linux.dev>
+In-Reply-To: <20240331215212.522544-1-kent.overstreet@linux.dev>
+From: Mitchell Augustin <mitchell.augustin@canonical.com>
+Date: Mon, 1 Apr 2024 11:40:03 -0500
+Message-ID: <CAHTA-ubqxnx2FES6tMfuC25VAc_CJ_MZg8YjCU_c6bdF1=N12A@mail.gmail.com>
+Subject: Re: [PATCH] aio: Fix null ptr deref in aio_complete() wakeup
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-fsdevel@vger.kernel.org, linux-stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Thanks for the quick patch!
 
-syzbot found the following issue on:
+I just ran my reproducer 50x and did not observe any kernel panics
+(either in the ktest environment or on bare metal), so it does seem
+that resolves the issue on our end.
 
-HEAD commit:    8d025e2092e2 Merge tag 'erofs-for-6.9-rc2-fixes' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17cb6d7e180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a2fbd4c518bbb6b3
-dashboard link: https://syzkaller.appspot.com/bug?extid=0354394655e838206fba
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+-Mitchell Augustin
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-8d025e20.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8028eb34add3/vmlinux-8d025e20.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1edea22db964/bzImage-8d025e20.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0354394655e838206fba@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-folio expected an open fid inode->i_ino=2
-WARNING: CPU: 2 PID: 1121 at fs/9p/vfs_addr.c:115 v9fs_init_request+0x346/0x380 fs/9p/vfs_addr.c:115
-Modules linked in:
-CPU: 2 PID: 1121 Comm: kworker/u32:9 Not tainted 6.9.0-rc1-syzkaller-00061-g8d025e2092e2 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Workqueue: writeback wb_workfn (flush-9p-36)
-RIP: 0010:v9fs_init_request+0x346/0x380 fs/9p/vfs_addr.c:115
-Code: ff ff 37 00 48 c1 e0 2a 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 35 48 8b 73 40 48 c7 c7 60 03 4e 8b e8 cb 20 12 fe 90 <0f> 0b 90 90 eb 9a e8 1f d0 ab fe e9 51 fe ff ff e8 25 cf ab fe e9
-RSP: 0018:ffffc90006ebf2e8 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff888029e72920 RCX: ffffffff8150eb39
-RDX: ffff888018f42440 RSI: ffffffff8150eb46 RDI: 0000000000000001
-RBP: ffff88805d9bfc00 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
-R13: ffff88805d9bfd42 R14: 0000000000000001 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88802c400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000058389000 CR3: 0000000043388000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netfs_alloc_request+0x54c/0x9a0 fs/netfs/objects.c:53
- netfs_write_back_from_locked_folio fs/netfs/buffered_write.c:910 [inline]
- netfs_writepages_begin fs/netfs/buffered_write.c:1100 [inline]
- netfs_writepages_region.constprop.0+0xffe/0x1bc0 fs/netfs/buffered_write.c:1123
- netfs_writepages+0x2fa/0x420 fs/netfs/buffered_write.c:1169
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2612
- __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1650
- writeback_sb_inodes+0x5a6/0x10d0 fs/fs-writeback.c:1941
- wb_writeback+0x28a/0xb30 fs/fs-writeback.c:2117
- wb_do_writeback fs/fs-writeback.c:2264 [inline]
- wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2304
- process_one_work+0x902/0x1a30 kernel/workqueue.c:3254
- process_scheduled_works kernel/workqueue.c:3335 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3416
- kthread+0x2c1/0x3a0 kernel/kthread.c:388
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+On Sun, Mar 31, 2024 at 4:52=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> list_del_init_careful() needs to be the last access to the wait queue
+> entry - it effectively unlocks access.
+>
+> Previously, finish_wait() would see the empty list head and skip taking
+> the lock, and then we'd return - but the completion path would still
+> attempt to do the wakeup after the task_struct pointer had been
+> overwritten.
+>
+> Fixes: 71eb6b6b0ba9 fs/aio: obey min_nr when doing wakeups
+> Cc: linux-stable@vger.kernel.org
+> Link: https://lore.kernel.org/linux-fsdevel/CAHTA-ubfwwB51A5Wg5M6H_rPEQK9=
+pNf8FkAGH=3Dvr=3DFEkyRrtqw@mail.gmail.com/
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> ---
+>  fs/aio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 9cdaa2faa536..0f4f531c9780 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -1202,8 +1202,8 @@ static void aio_complete(struct aio_kiocb *iocb)
+>                 spin_lock_irqsave(&ctx->wait.lock, flags);
+>                 list_for_each_entry_safe(curr, next, &ctx->wait.head, w.e=
+ntry)
+>                         if (avail >=3D curr->min_nr) {
+> -                               list_del_init_careful(&curr->w.entry);
+>                                 wake_up_process(curr->w.private);
+> +                               list_del_init_careful(&curr->w.entry);
+>                         }
+>                 spin_unlock_irqrestore(&ctx->wait.lock, flags);
+>         }
+> --
+> 2.43.0
+>
 
