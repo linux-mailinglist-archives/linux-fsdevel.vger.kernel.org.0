@@ -1,370 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-15824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E45893AC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 14:09:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA4B893BA3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 15:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D7B21F21F6B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 12:09:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CD4C1C21439
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 13:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6879224C6;
-	Mon,  1 Apr 2024 12:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932B740860;
+	Mon,  1 Apr 2024 13:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wdH0HlRj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c29yWJov"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f74.google.com (mail-lf1-f74.google.com [209.85.167.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82A8171C1
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 12:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5AC3F8F1;
+	Mon,  1 Apr 2024 13:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711973356; cv=none; b=hJ6svpAOGF7aLJTcg4Ozj6okrRxSmKzR08GyE15LFEgKS+Hnz1U3GRum0j+mANyMwNk/wUe3CQvUhOhCap1yL+KlZ1cFCRnqJma5qIeXXp+tH35F7e4JKd3dAJgdExri2LCoh44VwQPfO87f/7LG5z7VIV8nIvNmbJCxjD102/c=
+	t=1711979639; cv=none; b=tQWzCsmlMbfa4nu4nMmBeNLBSw/Wa18pE4srCoW/WALjyTW3Xk/AcipeATv+JqWKfAbNJw9lYl7wvp/GNd4e3YGHmtto4f0VbP4C/WIlCB84O2qSiN/RlrL2PO2gQjA3Adxh30lRR96/7qnIp0TceatzAxC3urqzGxj7im+MjUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711973356; c=relaxed/simple;
-	bh=fpC8jMr4ERIIG7n0IC8absC0LBQoNkUPiyo97un4Hms=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FqKPrAC5HbTks3p5Uv2gdAZl9XlutAZbvrtd6YQXnSqWxSa+7/HdKIK+JcNBpHGEIG8SVZ7gDRDlN9SFHCFrkuUZks0zMsIjn2wzmwXMzWHWk4YXpJA+5ftsY8Twz/L/5g+MSUp72CDB/ViFur2CL5UIanflmibY8WQ5vxTW/U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wdH0HlRj; arc=none smtp.client-ip=209.85.167.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-lf1-f74.google.com with SMTP id 2adb3069b0e04-513d1759b50so3415527e87.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Apr 2024 05:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711973352; x=1712578152; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GNIWHPFWrR28Vxkgpa/Zbi8QQ03EfQ/KbKBZRUe3Jn0=;
-        b=wdH0HlRjrlEcLsdi750qJhdz754CpDzgw8otW84eVKXu9oU8k8t8U2l/pyqOUjpejY
-         C7agDCD5sHBpVGH4Ih04H7nttvhvvKGzhu+lydMT8g7e/ppN73jrNizWm+VY1b9OLB5H
-         WY3Oy9jpr3plraPNWSf6uyCWIkgsGEp5nI8dkOLoSv++Cr2fEYuiQLV6GHA9Qq6b/p2u
-         3QgsnUjt3XoFUVQFU4phNSptG6x/rgIc+dX5GEKRUsSXUbpvOyWTZ9+cWFEdwXHE4QXM
-         5QNF0lqtpQsYo0aa4gGxSkgkpWG1XBXHQk9axGbCdWSVYmgMdenRySMWOBNDDEM821Qb
-         3OKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711973352; x=1712578152;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GNIWHPFWrR28Vxkgpa/Zbi8QQ03EfQ/KbKBZRUe3Jn0=;
-        b=lmkSN2IQuS/mlOQMemRL+FF4V8TWF6R7BxqLI/MhVHj1SWcbtKsN9UCuw5KxtBB3VX
-         OvIIKgzIHeK7/oWHB2XC79ZewUuI+dAIW3Y8/zOAikD3jU21AHk61oYTdYWsP7WJzZ4V
-         1/QgVkGprllvq+lA2XPSciDhN1nYjoLMpCfFiRzb+ouV9/PO9CO+iHcB7u2wHm6lV0b8
-         L6fvEnBd6dXB2JGXnd6M0lMvlRyJTASEuQz1lwV5t/tWDcoNtOfFWuQIt2X1Q903Zjk5
-         yz20o4i32XRiY1twe/aEnuah9g0ty7lHOBNCpc3Qz9pSnE6k2Sz1LG316/eRb3xZ9qgO
-         v1QA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfbc02x184yO1s4T97iF4i8aWmdCMnVdpjhWJjduIwEJbRDR5KysrrIk/ukm/+cDKxLezirgNTeZy+ZN8OqRDag/VQ+sRSP+qYnpx4Ig==
-X-Gm-Message-State: AOJu0YyYhWDCpUPgTrbD5QxnCDkOV6CWB06SxwPkgHRBp6hfvABGToit
-	7L/zWr+0ZDMxbOehl+fMsghSS6Z7sBXOQ2HO4bN5xqlrfyc0o1PIzATts8m4Nrangsj+zqRH6T1
-	9+Gt4KISBg6v/sg==
-X-Google-Smtp-Source: AGHT+IFf2prF7+QM5Z1+J/2lAZeDezFNT/C/b1YS+D309ZkfMJvvir9PADXc+d708yuXon3dhfdq69A2mjWk7oY=
-X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:ac2:599a:0:b0:515:c509:dbb5 with SMTP id
- w26-20020ac2599a000000b00515c509dbb5mr9136lfn.13.1711973351744; Mon, 01 Apr
- 2024 05:09:11 -0700 (PDT)
-Date: Mon,  1 Apr 2024 12:09:08 +0000
-In-Reply-To: <20240331-kellner-ausrufen-5b6c191fba35@brauner>
+	s=arc-20240116; t=1711979639; c=relaxed/simple;
+	bh=dmYCendNfZLK2ZYRN4P3XHXSgHmLS9K4qfGr3Ifd3v0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u6zYjs94S03IZeCtmtIlyX/0RK17WPiPjQkkDmYDdljlVx5Ikj7KZ0xlYzZkJBOfdBVG1MpITp77wpluPmQpDILA0kJhTsyLJuHYzRXhvMhIcA7cyKxg5+Zg8gi+oK1VsYYFRNPRyFN8P2/SZACqIjf4YrJy966YDreftmU1DIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c29yWJov; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA0CC433C7;
+	Mon,  1 Apr 2024 13:53:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711979638;
+	bh=dmYCendNfZLK2ZYRN4P3XHXSgHmLS9K4qfGr3Ifd3v0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c29yWJov1MPD3KNJnAc3J10X31RIJx5rJ8pZ9aMASTtRIDHTlXt3YBkMhR/2MmTeW
+	 zKg7sKvzusvvzXvEpqIv8nO9JilxGOlGDD9rpErvCQJiT/+cOIdnykZR54Pb5hp73A
+	 n3db2XvRlrrFuw27hXNlQVFklZF/bwBt1Tvksi8eyn/LaeBo2QoMfURHysv0Ra+tcm
+	 5GNCZFCSDd/aMOWF7fV3ver/b2jE5QU8+WhPmhCzIjV1dmrOHawVXzxIdY9jTI6kkp
+	 3RzhX7bCaKGHmMTJC3G9ZTma+EDhOVW6r/AdWBj3gvJJLSd3U3a0S7GGRMCCfrXnpN
+	 BcEw/0JlvpOew==
+Date: Mon, 1 Apr 2024 14:53:51 +0100
+From: Simon Horman <horms@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Steve French <smfrench@gmail.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+	linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 26/26] netfs, afs: Use writeback retry to deal with
+ alternate keys
+Message-ID: <20240401135351.GD26556@kernel.org>
+References: <20240328163424.2781320-1-dhowells@redhat.com>
+ <20240328163424.2781320-27-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240331-kellner-ausrufen-5b6c191fba35@brauner>
-X-Mailer: git-send-email 2.44.0.478.gd926399ef9-goog
-Message-ID: <20240401120908.3298077-1-aliceryhl@google.com>
-Subject: Re: [PATCH v5 3/9] rust: file: add Rust abstraction for `struct file`
-From: Alice Ryhl <aliceryhl@google.com>
-To: brauner@kernel.org
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
-	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com, 
-	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, 
-	joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
-	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
-	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, 
-	viro@zeniv.linux.org.uk, wedsonaf@gmail.com, willy@infradead.org, 
-	yakoyoku@gmail.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328163424.2781320-27-dhowells@redhat.com>
 
-Christian Brauner <brauner@kernel.org> wrote:
-> On Wed, Mar 20, 2024 at 06:09:05PM +0000, Alice Ryhl wrote:
->> Christian Brauner <brauner@kernel.org> wrote:
->>> On Fri, Feb 09, 2024 at 11:18:16AM +0000, Alice Ryhl wrote:
->>>> +/// Wraps the kernel's `struct file`.
->>>> +///
->>>> +/// This represents an open file rather than a file on a filesystem. Processes generally reference
->>>> +/// open files using file descriptors. However, file descriptors are not the same as files. A file
->>>> +/// descriptor is just an integer that corresponds to a file, and a single file may be referenced
->>>> +/// by multiple file descriptors.
->>>> +///
->>>> +/// # Refcounting
->>>> +///
->>>> +/// Instances of this type are reference-counted. The reference count is incremented by the
->>>> +/// `fget`/`get_file` functions and decremented by `fput`. The Rust type `ARef<File>` represents a
->>>> +/// pointer that owns a reference count on the file.
->>>> +///
->>>> +/// Whenever a process opens a file descriptor (fd), it stores a pointer to the file in its `struct
->>>> +/// files_struct`. This pointer owns a reference count to the file, ensuring the file isn't
->>>> +/// prematurely deleted while the file descriptor is open. In Rust terminology, the pointers in
->>>> +/// `struct files_struct` are `ARef<File>` pointers.
->>>> +///
->>>> +/// ## Light refcounts
->>>> +///
->>>> +/// Whenever a process has an fd to a file, it may use something called a "light refcount" as a
->>>> +/// performance optimization. Light refcounts are acquired by calling `fdget` and released with
->>>> +/// `fdput`. The idea behind light refcounts is that if the fd is not closed between the calls to
->>>> +/// `fdget` and `fdput`, then the refcount cannot hit zero during that time, as the `struct
->>>> +/// files_struct` holds a reference until the fd is closed. This means that it's safe to access the
->>>> +/// file even if `fdget` does not increment the refcount.
->>>> +///
->>>> +/// The requirement that the fd is not closed during a light refcount applies globally across all
->>>> +/// threads - not just on the thread using the light refcount. For this reason, light refcounts are
->>>> +/// only used when the `struct files_struct` is not shared with other threads, since this ensures
->>>> +/// that other unrelated threads cannot suddenly start using the fd and close it. Therefore,
->>>> +/// calling `fdget` on a shared `struct files_struct` creates a normal refcount instead of a light
->>>> +/// refcount.
->>> 
->>> When the fdget() calling task doesn't have a shared file descriptor
->>> table fdget() will not increment the reference count, yes. This
->>> also implies that you cannot have task A use fdget() and then pass
->>> f.file to task B that holds on to it while A returns to userspace. It's
->>> irrelevant that task A won't drop the reference count or that task B
->>> won't drop the reference count. Because task A could return back to
->>> userspace and immediately close the fd via a regular close() system call
->>> at which point task B has a UAF. In other words a file that has been
->>> gotten via fdget() can't be Send to another task without the Send
->>> implying taking a reference to it.
->> 
->> That matches my understanding.
->> 
->> I suppose that technically you can still send it to another thread *if* you
->> ensure that the current thread waits until that other thread stops using the
->> file before returning to userspace.
-> 
-> _Technically_ yes, but it would be brittle as hell. The problem is that
-> fdget() _relies_ on being single-threaded for the time that fd is used
-> until fdput(). There's locking assumptions that build on that e.g., for
-> concurrent read/write. So no, that shouldn't be allowed.
-> 
-> Look at how this broke our back when we introduced pidfd_getfd() where
-> we steal an fd from another task. I have a lengthy explanation how that
-> can be used to violate our elided-locking which is based on assuming
-> that we're always single-threaded and the file can't be suddenly shared
-> with another task. So maybe doable but it would make the semantics even
-> more intricate.
+On Thu, Mar 28, 2024 at 04:34:18PM +0000, David Howells wrote:
 
-Hmm, the part about elided locking is surprising to me, and may be an
-issue. Can you give more details on that?  Because the current
-abstractions here *do* actually allow what I described, since we
-implement Sync for File.
+...
 
-I'm not familiar with the pidfd_getfd discussion you are referring to.
-Do you have a link?
+> +void afs_issue_write(struct netfs_io_subrequest *subreq)
+>  {
+> +	struct netfs_io_request *wreq = subreq->rreq;
+>  	struct afs_operation *op;
+> -	struct afs_wb_key *wbk = NULL;
+> -	loff_t size = iov_iter_count(iter);
+> +	struct afs_vnode *vnode = AFS_FS_I(wreq->inode);
+> +	unsigned long long pos = subreq->start + subreq->transferred;
+> +	size_t len = subreq->len - subreq->transferred;
+>  	int ret = -ENOKEY;
+>  
+> -	_enter("%s{%llx:%llu.%u},%llx,%llx",
+> +	_enter("R=%x[%x],%s{%llx:%llu.%u},%llx,%zx",
+> +	       wreq->debug_id, subreq->debug_index,
+>  	       vnode->volume->name,
+>  	       vnode->fid.vid,
+>  	       vnode->fid.vnode,
+>  	       vnode->fid.unique,
+> -	       size, pos);
+> +	       pos, len);
+>  
+> -	ret = afs_get_writeback_key(vnode, &wbk);
+> -	if (ret) {
+> -		_leave(" = %d [no keys]", ret);
+> -		return ret;
+> -	}
+> +#if 0 // Error injection
+> +	if (subreq->debug_index == 3)
+> +		return netfs_write_subrequest_terminated(subreq, -ENOANO, false);
+>  
+> -	op = afs_alloc_operation(wbk->key, vnode->volume);
+> -	if (IS_ERR(op)) {
+> -		afs_put_wb_key(wbk);
+> -		return -ENOMEM;
+> +	if (!test_bit(NETFS_SREQ_RETRYING, &subreq->flags)) {
+> +		set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
+> +		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
+>  	}
+> +#endif
+> +
+> +	op = afs_alloc_operation(wreq->netfs_priv, vnode->volume);
+> +	if (IS_ERR(op))
+> +		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
+>  
+>  	afs_op_set_vnode(op, 0, vnode);
+> -	op->file[0].dv_delta = 1;
+> +	op->file[0].dv_delta	= 1;
+>  	op->file[0].modification = true;
+> -	op->store.pos = pos;
+> -	op->store.size = size;
+> -	op->flags |= AFS_OPERATION_UNINTR;
+> -	op->ops = &afs_store_data_operation;
+> +	op->store.pos		= pos;
+> +	op->store.size		= len,
 
-I'm thinking that we may have to provide two different `struct file`
-wrappers to accurately model this API in Rust. Perhaps they could be
-called File and LocalFile, where one is marked as thread safe and the
-other isn't. I can make all LocalFile methods available on File to avoid
-having to duplicate methods that are available on both.
+nit: this is probably more intuitively written using len;
 
-But it's not clear to me that this is even enough. Even if we give you a
-&LocalFile to prevent you from moving it across threads, you can just
-call File::fget to get an ARef<File> to the same file and then move
-*that* across threads.
+> +	op->flags		|= AFS_OPERATION_UNINTR;
+> +	op->ops			= &afs_store_data_operation;
+>  
+> -try_next_key:
+>  	afs_begin_vnode_operation(op);
+>  
+> -	op->store.write_iter = iter;
+> -	op->store.i_size = max(pos + size, vnode->netfs.remote_i_size);
+> -	op->mtime = inode_get_mtime(&vnode->netfs.inode);
+> +	op->store.write_iter	= &subreq->io_iter;
+> +	op->store.i_size	= umax(pos + len, vnode->netfs.remote_i_size);
+> +	op->mtime		= inode_get_mtime(&vnode->netfs.inode);
+>  
+>  	afs_wait_for_operation(op);
+> -
+> -	switch (afs_op_error(op)) {
+> +	ret = afs_put_operation(op);
+> +	switch (ret) {
+>  	case -EACCES:
+>  	case -EPERM:
+>  	case -ENOKEY:
+>  	case -EKEYEXPIRED:
+>  	case -EKEYREJECTED:
+>  	case -EKEYREVOKED:
+> -		_debug("next");
+> -
+> -		ret = afs_get_writeback_key(vnode, &wbk);
+> -		if (ret == 0) {
+> -			key_put(op->key);
+> -			op->key = key_get(wbk->key);
+> -			goto try_next_key;
+> -		}
+> +		/* If there are more keys we can try, use the retry algorithm
+> +		 * to rotate the keys.
+> +		 */
+> +		if (wreq->netfs_priv2)
+> +			set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
+>  		break;
+>  	}
+>  
+> -	afs_put_wb_key(wbk);
+> -	_leave(" = %d", afs_op_error(op));
+> -	return afs_put_operation(op);
+> +	netfs_write_subrequest_terminated(subreq, ret < 0 ? ret : subreq->len, false);
+>  }
+>  
+>  /*
 
-This kind of global requirement is not so easy to model. Maybe klint [1]
-could do it ... atomic context violations are a similar kind of global
-check. But having klint do it would be far out.
-
-Or maybe File::fget should also return a LocalFile?
-
-But this raises a different question to me. Let's say process A uses
-Binder to send its own fd to process B, and the following things happen:
-
-1. Process A enters the ioctl and takes fdget on the fd.
-2. Process A calls fget on the same fd to send it to another process.
-3. Process A goes to sleep, waiting for process B to respond.
-4. Process B receives the message, installs the fd, and returns to userspace.
-5. Process B responds to the transaction, but does not close the fd.
-6a. Process A finishes sleeping, and returns to userspace from the ioctl.
-6b. Process B tries to do an operation (e.g. read) on the fd.
-
-Let's say that 6a and 6b run in parallel.
-
-Could this potentially result in a data race between step 6a and 6b? I'm
-guessing that step 6a probably doesn't touch any of the code that has
-elided locking assumptions, so in practice I guess there's not a problem
-... but if you make any sort of elided locking assumption as you exit
-from the ioctl (before reaching the fdput), then it seems to me that you
-have a problem.
-
->>>> +///
->>>> +/// Light reference counts must be released with `fdput` before the system call returns to
->>>> +/// userspace. This means that if you wait until the current system call returns to userspace, then
->>>> +/// all light refcounts that existed at the time have gone away.
->>>> +///
->>>> +/// ## Rust references
->>>> +///
->>>> +/// The reference type `&File` is similar to light refcounts:
->>>> +///
->>>> +/// * `&File` references don't own a reference count. They can only exist as long as the reference
->>>> +///   count stays positive, and can only be created when there is some mechanism in place to ensure
->>>> +///   this.
->>>> +///
->>>> +/// * The Rust borrow-checker normally ensures this by enforcing that the `ARef<File>` from which
->>>> +///   a `&File` is created outlives the `&File`.
->>> 
->>> The section confuses me a little: Does the borrow-checker always ensure
->>> that a &File stays valid or are there circumstances where it doesn't or
->>> are you saying it doesn't enforce it?
->> 
->> The borrow-checker always ensures it.
-> 
-> Ok, thanks.
-> 
->> 
->> A &File is actually short-hand for &'a File, where 'a is some
->> unspecified lifetime. We say that &'a File is annotated with 'a. The
->> borrow-checker rejects any code that tries to use a reference after the
->> end of the lifetime annotated on it.
-> 
-> Thanks for the explanation.
-> 
->> 
->> So as long as you annotate the reference with a sufficiently short
->> lifetime, the borrow checker will prevent UAF. And outside of cases like
-> 
-> Sorry, but can you explain "sufficiently short lifetime"?
-
-By "sufficiently short lifetime" I mean "lifetime that ends before the
-object is destroyed".
-
-Idea being that if the lifetime ends before the object is freed, and the
-borrow-checker rejects attempts to use it after the lifetime ends, then
-it follows that the borrow-checker prevents use-after-frees.
-
->> from_ptr, the borrow-checker also takes care of ensuring that the
->> lifetimes are sufficiently short.
->> 
->> (Technically &'a File and &'b File are two completely different types,
->> so &File is technically a class of types and not a single type. Rust
->> will automatically convert &'long File to &'short File.)
->> 
->>>> +///
->>>> +/// * Using the unsafe [`File::from_ptr`] means that it is up to the caller to ensure that the
->>>> +///   `&File` only exists while the reference count is positive.
->>> 
->>> What is this used for in binder? If it's not used don't add it.
->> 
->> This is used on the boundary between the Rust part of Binder and the
->> binderfs component that is implemented in C. For example:
-> 
-> I see, I'm being foiled by my own code...
-> 
->> 
->> 	unsafe extern "C" fn rust_binder_open(
->> 	    inode: *mut bindings::inode,
->> 	    file_ptr: *mut bindings::file,
->> 	) -> core::ffi::c_int {
->> 	    // SAFETY: The `rust_binderfs.c` file ensures that `i_private` is set to the return value of a
->> 	    // successful call to `rust_binder_new_device`.
->> 	    let ctx = unsafe { Arc::<Context>::borrow((*inode).i_private) };
->> 	
->> 	    // SAFETY: The caller provides a valid file pointer to a new `struct file`.
->> 	    let file = unsafe { File::from_ptr(file_ptr) };
-> 
-> We need a better name for this helper than from_ptr() imho. I think
-> from_ptr() and as_ptr() is odd for C. How weird would it be to call
-> that from_raw_file() and as_raw_file()?
- 
-That's a reasonable name. I would be happy to rename to that, and I
-don't think it is unidiomatic.
-
-> But bigger picture I somewhat struggle with the semantics of this
-> because this is not an interface that we have in C and this is really
-> about a low-level contract between C and Rust. Specifically this states
-> that this pointer is _somehow_ guaranteed valid. And really, this seems
-> a bit of a hack.
-
-Indeed ... but I think it's a quite common hack. After all, any time you
-dereference a raw pointer in Rust, you are making the same assumption.
-
-> Naively, I think this should probably not be necessary if
-> file_operations are properly wrapped. Or it should at least be demotable
-> to a purely internal method that can't be called directly or something.
-
-Yes, the usage here of File::from_ptr could probably be hidden inside a
-suitably designed file_operations wrapper. The thing is, Rust Binder
-doesn't currently use such a wrapper at all. It just exports a global of
-type file_operations and the C code in binderfs then references that
-global.
-
-Rust Binder used to use such an abstraction, but I ripped it out before
-sending the Rust Binder RFC because it didn't actually help. It was
-designed for cases where the file system is also implemented in Rust, so
-to get it to expose a file_operations global to the C code in binderfs,
-I had to reach inside its internal implementation. It did not save me
-from doing stuff such as using File::from_ptr from Binder.
-
-Now, you could most likely modify those file_operations abstractions to
-support my use-case better. But calling into C is already unsafe, so
-unless we get multiple drivers that have a similar C/Rust split, it's
-not clear that it's useful to extract the logic from Binder. I would
-prefer to wait for the file_operations abstraction to get upstreamed by
-the people working on VFS bindings, and then we can decide whether we
-should rewrite binderfs into Rust and get rid of the logic, or whether
-it's worth to expand the file_operations abstraction to support split
-C/Rust drivers like the current binderfs.
-
-> So what I mean is. fdget() may or may not take a reference. The C
-> interface internally knows whether a reference is owned or not by
-> abusing the lower two bits in a pointer to keep track of that. Naively,
-> I would expect the same information to be available to rust so that it's
-> clear to Rust wheter it's dealing with an explicitly referenced file or
-> an elided-reference file. Maybe that's not possible and I'm not
-> well-versed enough to see that yet.
-
-I'm sure Rust can access the same information, but I don't think I'm
-currently doing anything that cares about the distinction?
-
->> 	    let process = match Process::open(ctx, file) {
->> 	        Ok(process) => process,
->> 	        Err(err) => return err.to_errno(),
->> 	    };
->> 	    // SAFETY: This file is associated with Rust binder, so we own the `private_data` field.
->> 	    unsafe {
->> 	        (*file_ptr).private_data = process.into_foreign().cast_mut();
->> 	    }
->> 	    0
->> 	}
->> 
->> Here, rust_binder_open is the open function in a struct file_operations
->> vtable. In this case, file_ptr is guaranteed by the caller to be valid
-> 
-> Where's the code that wraps struct file_operations?
-
-Please see drivers/android/rust_binder.rs in the binderfs patch [2] in
-the Rust Binder RFC.
-
->> for the duration of the call to rust_binder_open. Binder uses from_ptr
->> to get a &File from the raw pointer.
->> 
->> As far as I understand, the caller of rust_binder_open uses fdget to
->> ensure that file_ptr is valid for the duration of the call, but the Rust
->> code doesn't assume that it does this with fdget. As long as file_ptr is
->> valid for the duration of the rust_binder_open call, this use of
->> from_ptr is okay. It will continue to work even if the caller is changed
->> to use fget.
-> 
-> Ok.
-> 
-
-[1]: https://rust-for-linux.com/klint
-[2]: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-2-08ba9197f637@google.com/
-
-Alice
+...
 
