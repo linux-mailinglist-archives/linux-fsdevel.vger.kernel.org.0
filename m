@@ -1,198 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-15827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FFF893C3F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 16:36:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3747E893C4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 16:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ADB8B21D36
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 14:36:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F29281806
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 14:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13CE43AC8;
-	Mon,  1 Apr 2024 14:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CB644375;
+	Mon,  1 Apr 2024 14:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vbRzFtYr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpaIjc+Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4C21FB4
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 14:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9499F41A8F;
+	Mon,  1 Apr 2024 14:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711982187; cv=none; b=AY+5Brph9wv/gYFJL9H3IoRc5CwMQkuU0qlpIbGxiIXJhTbwFFli9RTRqdNy9YdXos8nDiiBRQLy+Hm6xP5Cfvi3hu5nuduuMeoKeGWpbMFWBTdKfENMrM+43iD4vX/QZTIXcPy4sQQVtJqCHg8ZUpYPEYZqC3CWozk2SIyPiAg=
+	t=1711982622; cv=none; b=KSIMDVIqaxLm+qgWZvK853Gzs37sggZG6AiMqIWem8c5mn+pbzQNlQZmSuS5KFah+WmTvGGW9w7OMBAJow3v46WHLEo/igzGlqKeFIN+9qlf/SsOr9gJVGZT68Owka+Kym5QfaKPFBY9PMRNQri9fd0KQbJ6qyUnJHdExUUg2sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711982187; c=relaxed/simple;
-	bh=tttedzRvaJG3KbiI7Ru6YeDlFsxwkRdr5+bdoF4FuSk=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=CDZaAesZl9fZs3/gzhqSdrNbblmeX2ozg8LTMLqBin6zPFwr42JhHtgEhxvdh/t9T2EpWUGo2L3wSGNuj+rT55kEktZimJNrRhJqDMEPv2C3+bPreSLyLinWCxDaK0QJ86Xso5Av2GZisGF0d7Z/elDkQs8un0MbDRfv5ar4UsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vbRzFtYr; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7d0ab7842b4so26120639f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Apr 2024 07:36:24 -0700 (PDT)
+	s=arc-20240116; t=1711982622; c=relaxed/simple;
+	bh=Vc6NiOHxNPUEbcLUyvebLrZcsJJh6LzjpaD86Ih2b+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=erLoN07zyinpokQpXOjVZDjaTzNZtbQvpQPEZGgB3LnYbuBHl9HEMHMb36AzvC8gAdpUo++YdJzkZwULTWNq7qY0pKzBEqv2qnztly/BsBiRHfFTXlRZ1aK052HqLIeLYYJd/vhLs6kB88r8W9sWeo61CIyQ2C0fCmTAUJqUiwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JpaIjc+Z; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6963c0c507eso39223016d6.1;
+        Mon, 01 Apr 2024 07:43:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711982183; x=1712586983; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ltg0u0ghJ7IRb8fWgHA/21TzuOfUg/SV+vjrDaGMyTw=;
-        b=vbRzFtYrerBb3j/GJ2M1vdMcTqz+vNODDItpXimXeZXeAqt6eYxx+gp0CIq+y2pNeV
-         PZtMYydFZiai9f5vZIMo0dyNs54hGNQEqMYEQpEz6kQU6K4b/xcIeWi5jfPYmt/WcIVU
-         VtZVf5G0Tr6q+t3A3Qd1RRikbpVyazlIHPc/nUJXSN0Rwa6aj17hM9vRulr83h0lS16D
-         CB2WoBVneffmHezRu4s1LoGShNfqQmauk4cEey3ESHIuXTDJPAqJQah3sbwsdqKu6Ftg
-         QQzxZasjWwgCLp1zZgWgQ2V8GMbXbTGVHht+yF2htli+3y5BlrygINAgXAnFDum4VI71
-         SLhA==
+        d=gmail.com; s=20230601; t=1711982619; x=1712587419; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vc6NiOHxNPUEbcLUyvebLrZcsJJh6LzjpaD86Ih2b+0=;
+        b=JpaIjc+ZNAJq+2U378+Imfr6AB3TZlLUwO4Y+JjMleDx1x9B/4xFw9j1KUM6yyxGs/
+         Nv05YL0IczDoPQJRM15M5zf+HIGo4jYJJ4yB7d1oD9i0DbAl0JYwOVQ9ZwpRrET5rJPn
+         xWf1c+guSw97t6XzJHbexL0g7Zzau1K4BnsLZ6DUYbUHgP2K384lGeYta6Z5m3DV/S5Z
+         tNRar3/yoYg/jP0Co7EPswJmsJiumlqiBVGUAdEAdrm3/ymFynL0BA8LNiY0gbGXuTZu
+         Sg2ELVUz6QSssc7l1iYkYHL62h1fAjR7N44ALK1yNeK4lwfYPTjjrZ+P54aChaeYWPdd
+         Q7KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711982183; x=1712586983;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ltg0u0ghJ7IRb8fWgHA/21TzuOfUg/SV+vjrDaGMyTw=;
-        b=xD4qN/oKfwob4rNY2RrJWY9UfP7P+YwFf7Da6diFcLPTClVPcbd3/wvMLAf94Pn/Uc
-         SgBTGTHRqdnaOO79jRcs1Gwcvqh07atHjg0yLF/Nla6akLxdfP/tbD1+Z4zEcc/loe2I
-         fr8EkH4dGX/L2rQl1fjRTRPKIHCKPEnH2mBhVqbxsvkUqjmjuw3lnhYjkEARk7GHSAdz
-         GhE1OKfmPHdYm1a4aM5vuLujBUyZli2FcYH4iT2xuD0VIv+dwqVWVf3GWS8di2SO28X5
-         gpCEEHqGvNUQbgWtFxHJYyj/kUuezZiYsJCnCxLnxLrM1AyWJAHpZZZfnujfZxWEDGfe
-         L7og==
-X-Forwarded-Encrypted: i=1; AJvYcCUkiWOPxxJf4++oPVqbqPRtgmSAa/GxsQV5bbiyX8PVJDz6IJ7EZYH03S/zCOgr0ltB91TxK+H50EibpfAj5TecaOm7tTn3pcbgmB4vfA==
-X-Gm-Message-State: AOJu0YytBbANGuZRdKg90gk9iw0xqZc4OHyUxKyDExA9c2C0RIYfLrXU
-	ps932ecfNWU6F/70u85bVEZdbsTmTF8jvY+nF04UMnKLRWNapyNV9y0y29mGPMAN1/66HVqUdEJ
-	e
-X-Google-Smtp-Source: AGHT+IF07Btw8NGrlUXgq8Iu5rp/C2QJmRs7UVCLEGq0Z18YVznZ0regsIiorY3/kD2WgZyQYfmHtA==
-X-Received: by 2002:a05:6602:2b09:b0:7d0:a4d8:f285 with SMTP id p9-20020a0566022b0900b007d0a4d8f285mr9401099iov.0.1711982183263;
-        Mon, 01 Apr 2024 07:36:23 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id f66-20020a0284c8000000b0047be39e85adsm2646920jai.83.2024.04.01.07.36.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Apr 2024 07:36:22 -0700 (PDT)
-Message-ID: <b4059ed0-5567-44e7-95f7-f7e4b227501c@kernel.dk>
-Date: Mon, 1 Apr 2024 08:36:21 -0600
+        d=1e100.net; s=20230601; t=1711982619; x=1712587419;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vc6NiOHxNPUEbcLUyvebLrZcsJJh6LzjpaD86Ih2b+0=;
+        b=ln/wQFKNpcbk31vPpEZyQEQi5x7srAfeRLePHLMu4X+qUsg0qUO5HAhAsuDjqDAlT0
+         2lkuGYgIPnsZYVRE3EFBti9xbrWdmOx9uGFgU018c8pE8gONoHMC7fBIT7P0nTLIuVfS
+         sk7HjqGsmcGUlBXm7PDTA2oEico83dVXrSu1Dx9t0BtQwKw74IlXoF6SBNEbzfVSte00
+         AmAKv2MFEasBuWXGmef6arW60Wv0SlCzmPsvhrZArqt/SllM+wNlM2Yrqxa+MesAcjrZ
+         iWIu4sJe31Bu33lZ5C7vjarY2mG4vcvCrUkouXzc2h+CZPb5pZ9yQsqfcDtut8GaiSZz
+         5Xew==
+X-Forwarded-Encrypted: i=1; AJvYcCWnbq1N45PacJQG+inGFKEGz4w+yat08sblq6TDjd2Fl6HjIf3LRVk8qMrh5tIMj5VvCVoR+3c5MpIJZcKQI1NhyiqZG886uy+6xErhN4ME1P+dAOEGJYZ/ltB/n9Qq11mrVo+99pxi5H/XiF+G0XhBMd+9+e8HAsrZamsFUPnxW+cEo82B2PXg2YXhNk72nWCof9MAkibMF5xOBxt/iL4=
+X-Gm-Message-State: AOJu0Yzewk4O7pshwlZ1rMqUDZBCPMzbWyQ/z6SkHPFism/eIkAedcSb
+	742e8ml8rIwBBFu1zLcVXA3hK52mFyYVDQP+aAOPdtNTAI71uwAjDwGSX1PXaRvJPl5X/b8oPcU
+	Le/Xui76WTYdy1jBew7MRbmfx8PY=
+X-Google-Smtp-Source: AGHT+IEj5PHp+PAahd9ICs2conJFjhP/2w0ENPJPsqRrd5GeyeyrfMR8kAs+QQf9J4427JbhyeAo9E72xbgAa7y1jjI=
+X-Received: by 2002:a05:6214:84c:b0:696:739c:7296 with SMTP id
+ dg12-20020a056214084c00b00696739c7296mr19388342qvb.21.1711982619467; Mon, 01
+ Apr 2024 07:43:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] timerfd: fix nonblocking reads
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240329015351.624249-1-drosen@google.com> <CAOQ4uxhLPw9AKBWmUcom3RUrsov0q39tiNhh2Mw7qJbwKr1yRQ@mail.gmail.com>
+ <CA+PiJmQR17nwkHaZXUhw=YRM06TfF14bhozc=nM9cw51aiiB6g@mail.gmail.com>
+In-Reply-To: <CA+PiJmQR17nwkHaZXUhw=YRM06TfF14bhozc=nM9cw51aiiB6g@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 1 Apr 2024 17:43:28 +0300
+Message-ID: <CAOQ4uxiyS9viEpOwT8f2Np=wuMdWwUqqyHFRrBX9+Acy_i3OHw@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 00/36] Fuse-BPF and plans on merging with Fuse Passthrough
+To: Daniel Rosenberg <drosen@google.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, bpf@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Joanne Koong <joannelkoong@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
+	Christian Brauner <brauner@kernel.org>, kernel-team@android.com, 
+	Bernd Schubert <bschubert@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
 
-timerfd is utterly buggy wrt nonblocking reads - regardless of whether
-or not there's data available, it returns -EAGAIN. This is incompatible
-with how nonblocking reads should work. If there's data available, it
-should be returned.
+> >
+> > That sounds like a good plan, but also, please remember Miklos' request -
+> > please split the patch sets for review to:
+> > 1. FUSE-passthrough-all-mode
+> > 2. Attach BPF program
+> >
+> > We FUSE developers must be able to review the FUSE/passthough changes
+> > without any BPF code at all (which we have little understanding thereof)
+> >
+> > As a merge strategy, I think we need to aim for merging all the FUSE
+> > passthrough infrastructure needed for passthrough of inode operations
+> > strictly before merging any FUSE-BPF specific code.
+> >
+> > In parallel you may get BPF infrastructure merged, but integrating FUSE+BPF,
+> > should be done only after all infrastructure is already merged IMO.
+> >
+>
+> Ok. I'll probably mess around with the module stuff at least, in order
+> to work out if everything I need is present on the bpf side. Do you
+> know if anyone is actively working on extending the file-backing work
+> to something like inode-backing? I don't want to duplicate work there,
 
-Convert it to use fops->read_iter() so it can handle both nonblocking
-fds and IOCB_NOWAIT, mark it as FMODE_NOWAIT to signify that it's
-compatible with nonblocking reads, and finally have timerfd_read_iter()
-properly check for data availability in nonblocking mode.
+I am actively *thinking* about working on passthrough for getattr/getxattr.
+As soon as I come up with something concrete I will let you know.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> but I'd be happy to start looking at it. Otherwise I'd focus on the
+> bpf end for now. I expect we'll want to be able to optionally set the
+> bpf program at the same place where we set the backing file/inode.
+> Hence the spit into a file and inode program set. I'm still thinking
+> over what the best way to address the programs is...
+>
 
----
+My thoughts were doing something similar to FOPEN_PASSTHROUGH
+but in response to LOOKUP request and in that case the fuse inode
+will enter passthrough mode early and will not leave passthrough mode
+until inode is evicted.
 
-Can't believe it's this broken... Patch has been tested with a test case
-that was reported via io_uring, and I also ran the ltp timerfd test
-cases and it passes all of those too.
+> > Please explain what you mean by that.
+> > How are fuse-bpf file operations expected to be used and specifically,
+> > How are they expected to extend the current FUSE passthrough functionality?
+> >
+> > Do you mean that an passthrough setup will include a reference to a bpf
+> > program that will be used to decide per read/write/splice operation
+> > whether it should be passed through to backing file or sent to server
+> > direct_io style?
+> >
+>
+> So in the current fuse-bpf setup, the bpf program does two things. It
+> can edit certain parameters, and it can indicate what the next action
+> should be. That action could be queuing up the post filter after the
+> backing operation, deferring to a userspace pre/post filter, or going
+> back to normal fuse operations.
+> The latter one isn't currently very well fleshed out. Unless you do
+> some specific tracking, under existing fuse-bpf you'd have a node id
+> of 0, and userspace can't make much out of that. With that aside,
 
-diff --git a/fs/timerfd.c b/fs/timerfd.c
-index e9c96a0c79f1..9297b82af13d 100644
---- a/fs/timerfd.c
-+++ b/fs/timerfd.c
-@@ -262,20 +262,24 @@ static __poll_t timerfd_poll(struct file *file, poll_table *wait)
- 	return events;
- }
- 
--static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
--			    loff_t *ppos)
-+static ssize_t timerfd_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
-+	struct file *file = iocb->ki_filp;
- 	struct timerfd_ctx *ctx = file->private_data;
- 	ssize_t res;
- 	u64 ticks = 0;
- 
--	if (count < sizeof(ticks))
-+	if (iov_iter_count(to) < sizeof(ticks))
- 		return -EINVAL;
-+
- 	spin_lock_irq(&ctx->wqh.lock);
--	if (file->f_flags & O_NONBLOCK)
--		res = -EAGAIN;
--	else
--		res = wait_event_interruptible_locked_irq(ctx->wqh, ctx->ticks);
-+	if (!ctx->ticks) {
-+		if (file->f_flags & O_NONBLOCK || iocb->ki_flags & IOCB_NOWAIT)
-+			res = -EAGAIN;
-+		else
-+			res = wait_event_interruptible_locked_irq(ctx->wqh,
-+								  ctx->ticks);
-+	}
- 
- 	/*
- 	 * If clock has changed, we do not care about the
-@@ -313,7 +317,7 @@ static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
- 	}
- 	spin_unlock_irq(&ctx->wqh.lock);
- 	if (ticks)
--		res = put_user(ticks, (u64 __user *) buf) ? -EFAULT: sizeof(ticks);
-+		res = copy_to_iter(&ticks, sizeof(ticks), to);
- 	return res;
- }
- 
-@@ -384,7 +388,7 @@ static long timerfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg
- static const struct file_operations timerfd_fops = {
- 	.release	= timerfd_release,
- 	.poll		= timerfd_poll,
--	.read		= timerfd_read,
-+	.read_iter	= timerfd_read_iter,
- 	.llseek		= noop_llseek,
- 	.show_fdinfo	= timerfd_show,
- 	.unlocked_ioctl	= timerfd_ioctl,
-@@ -407,6 +411,7 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
- {
- 	int ufd;
- 	struct timerfd_ctx *ctx;
-+	struct file *file;
- 
- 	/* Check the TFD_* constants for consistency.  */
- 	BUILD_BUG_ON(TFD_CLOEXEC != O_CLOEXEC);
-@@ -443,11 +448,22 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
- 
- 	ctx->moffs = ktime_mono_to_real(0);
- 
--	ufd = anon_inode_getfd("[timerfd]", &timerfd_fops, ctx,
--			       O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
--	if (ufd < 0)
-+	ufd = get_unused_fd_flags(O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
-+	if (ufd < 0) {
- 		kfree(ctx);
-+		return ufd;
-+	}
-+
-+	file = anon_inode_getfile("[timerfd]", &timerfd_fops, ctx,
-+				    O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
-+	if (IS_ERR(file)) {
-+		put_unused_fd(ufd);
-+		kfree(ctx);
-+		return PTR_ERR(file);
-+	}
- 
-+	file->f_mode |= FMODE_NOWAIT;
-+	fd_install(ufd, file);
- 	return ufd;
- }
- 
--- 
-Jens Axboe
+node id 0 sounds weird.
+I was wondering if and how a passthrough lookup operation would work.
+The only thing I can think of is that in this setup, fuse must use the backing
+file st_ino as the fuse node id, so that the kernel can instantiate a fuse inode
+before the server knows about it.
 
+> there's all sorts of caching nightmares to deal with there.
+>
+
+Yeh...
+
+> We're only using the parameter changing currently in our use cases. I
+> wouldn't be opposed to leaving the falling back to fuse for specific
+> operations out of v1 of the bpf enhancements, especially if we have
+> the userspace pre/post filters available.
+> So you'd optionally specify a bpf program to use with the backing
+> file. That would allow you to manipulate some data in the files like
+> you might in Fuse itself. For instance, data redaction. You could null
+> out location metadata in images, provided a map or something with the
+> offsets that should be nulled. You could also prepend some data at the
+> beginning of a file by adjusting offsets and attrs and whatnot. I
+> could imagine having multiple backing files, and the bpf program
+> splitting a read into multiple parts to handle parts of it using
+> different backing files, although that's not in the current design.
+>
+
+Lots of plans ;)
+
+>
+> Can you not read/write without interacting with the server? Or do you
+> mean FOPEN_DIRECT_IO sends some file ops to the server even in
+> passthrough mode?
+
+FOPEN_DIRECT_IO sends write() and read() to the server even in
+passthrough mode.
+
+> At the moment I'm tempted to follow the same
+> mechanics passthrough is using. The only exception would be possibly
+> tossing back to the server, which I mentioned above. That'd only
+> happen for, say, read, if we're not under FOPEN_DIRECT_IO. I've not
+> looked too closely at FOPEN_DIRECT_IO. In Fuse bpf we currently have
+> bpf mode taking priority. Are there any email threads I should look at
+> for more background there?
+
+Maybe this patch set:
+https://lore.kernel.org/linux-fsdevel/20240208170603.2078871-1-amir73il@gmail.com/
+
+Bernd and I worked on it together as a prerequisite to fuse passthrough.
+Benrd has some followup direct_io re-factoring patches.
+
+Thanks,
+Amir.
 
