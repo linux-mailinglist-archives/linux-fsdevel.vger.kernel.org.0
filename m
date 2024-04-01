@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-15821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F0D893903
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 10:27:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FB6893902
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 10:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0606B20F4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 08:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B281F214AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 08:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC83DDCD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D026DDA2;
 	Mon,  1 Apr 2024 08:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="AcruFtp/";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="rGlX5rZL"
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="jx7XbCKi";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="Y6QW+iGJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mta-04.yadro.com (mta-04.yadro.com [89.207.88.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7808FBED
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C190FBF7
 	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 08:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711960041; cv=none; b=tafv8pRAeT7xtvqpOXRM6Lb0SMJC17TPnyGFlQ47pAcnvuSN1eHAQq+n1ZQviE36wnoX/aSTnxIn4wUnEdvZRRP7A5jP+73JagixsKzCh6BMzgy+1AI4YgzsmNVE3dI5KBsKopjGNIEpGmfVitugLSIx9RDFgpXraMv295Q55Ws=
+	t=1711960040; cv=none; b=mLjK6jo1iR0FRne8Y9oqUtU1d9KR4oCT2PM/DmMV9LfvYAKVbS6HCKtqoItb+j+VPM1bMPGE4qe86UWHk4NF8uIBEmhx+Qb1xn2ka1bv/2XOXR/BoAnjrkc6n83soHzeA7j/1qdGlqcP54Rvmht3XwuuJyreVZGmBK23eFgVZzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711960041; c=relaxed/simple;
-	bh=hZlm0zkFCGTOIDnEXMQmJyM/E8WzgMvLYScHTLu2mus=;
+	s=arc-20240116; t=1711960040; c=relaxed/simple;
+	bh=xGCz31NA1YJdiHL3WUeB1Ku7bq5CIg7cM44njKCPpKA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dstmloA5qLox7hmWbXoZyYa2nTDQ+torudT1PFaoG4MEH5nPJmsAl2C7tg2e/+nTqg4GHU0+XMmI1vPbv9JAzqwxmffUpBUBWoQsNAZg3lYl9r62BSWYdN5bLXVWP8sIPN4+CuvukREdF+maWfe36/uvam1esShUg1A0goQ3jIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=AcruFtp/; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=rGlX5rZL; arc=none smtp.client-ip=89.207.88.248
+	 MIME-Version:Content-Type; b=IoA50ZMJkMIhF2EioucGSbFivPtzQQgjGr2Or7V+Qll4kTwA7eBUDWZsgk2mofZoXzJEQSOYMA1IzDvba9A5ZE/aTPoCqon+c25sF0PoVXsTr+dUAn4ihdPHgbmFWzTQBhZcn8a9rP81O4WoA1Ff03T4mbLmDS/FKaXJOsDKKCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=jx7XbCKi; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=Y6QW+iGJ; arc=none smtp.client-ip=89.207.88.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-04.yadro.com 540B8C0002
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-04.yadro.com BE6A0C0002
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1711960028; bh=FwL4XEYpWWhPGybJNUUC1YdjhmrAss3icF+IWEyyy18=;
+	t=1711960028; bh=G67xYXybf4S1qrW02ulM0Iakj7j+SLvnUUYylGZVLyM=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=AcruFtp/RvLYnXBBEIp8ynn4mXRFhO4MpUIUHMJrUtT5b+/3qVzQ+1ykUEt8PUG8t
-	 MnteY9+WgfLrXVEJLdvmTZXoVBkEIVgrHG4Vr/ot/DNvGWebO9cuiAASi6/2iGfR5N
-	 lfeoatikR1DrcqrcOdm7TwvVrLJnvX51cfHeftTQSsqdi0wGMsppnvHJg51atCdrn+
-	 mKYCm8NhcQ2MWp+gttbLIdGkYsyuABl/jyIWmboyTdYvoxqSSNzohOlEh7qvNjBH8k
-	 LbSI2jxbzLdQk1ZwKPA2rmqlN0hhthtOfT+ybJH4TXO6yZgbEEQxj1dXEkdRrknq90
-	 SNhswraLhfJbQ==
+	b=jx7XbCKikc+noqkYhGZT29lpdN5J5Cuy2tJGuVQsLOf716bszuOzM3IDTE4m6gQax
+	 bX/jrxlKDJ9s9OY2DjvgFL2qz1x0+m0t226CjBwgGEXnJq5C+IQqDG8wABzoQ3lwHV
+	 DsFSwl2LJJZgW6X7AFPJc8N3Gvk5PlSoXAbVGyZvqhyhBE5b++U3X/mO81PqcRzep7
+	 jPIJdcJRroNScYp7rGvReT6j2EivJfDj6tmI+VEcm+r7w/ABMmvU7oWN4s+KInkY3z
+	 Z40wFK1VPQANC0Iy6hM7/ncM4We0k4GXO76xl8fOJHd+WgjJamrIjBoNnAq716R6yt
+	 e9qrW74arLMWw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1711960028; bh=FwL4XEYpWWhPGybJNUUC1YdjhmrAss3icF+IWEyyy18=;
+	t=1711960028; bh=G67xYXybf4S1qrW02ulM0Iakj7j+SLvnUUYylGZVLyM=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=rGlX5rZLYZTd2zyLCBEwnAdYDUNuMsTvQvNXswmywTPK38O2OvDj+lhWr/6zhhIe4
-	 P9aFcSUP+F7Rdan14hpZqiIgHtBDYXtL9nKLPMkYyms4H/ocPDbWhwcHXqptbuDi8v
-	 2v/RksgDRQsD6ffPuB1J/QyAVjArrLhWk1Y9Fm/oE9rEIrCDSXHoJcxjZ5iXNlyYMK
-	 m5Y0+gLlFBngvpISgXRJH9G6qjuVnAdenxQDJMviD4ZDHPyJdGKmd5jPEFjQIV8y2s
-	 Jt94bVBRTFwW5RnYii6HPngILgt7bL10eNZvdzVWSJeDsVb5xEhW0BG5F2RE9j4Xg3
-	 URyP/+S6YlKPA==
+	b=Y6QW+iGJBP9Sz9SUvZFvF1QKvm/iKhuOIzWyK6bKQrPtv32DiD6D3rxrQJlbVtUC/
+	 2eNSB52RWcveUn06gIiyZNN/m5golKKszflA9/SxbfftqHjdph9DQwOhdP4sLCt7GQ
+	 cahTkl23Q/HKUeOlAFYDuNBMFZuFgL1TQPZSsd4vEa0I5feaAZMTot0FO3xalGLh11
+	 4dckg+fhkELiuwwhoqfuvBjDzarAzIPox4upM6tScsCfgAqQAN8vx3rrOhQ+803LW2
+	 7cdANLb+5dkp301TPOeg1N87cXjuJrYFfFmmpY5yhgC4I3Fd48XvMFMZFjkJwWSyWt
+	 AebgXv+JCWwaw==
 From: Dmitry Bogdanov <d.bogdanov@yadro.com>
 To: Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>
 CC: <linux-fsdevel@vger.kernel.org>, <linux@yadro.com>, Dmitry Bogdanov
 	<d.bogdanov@yadro.com>
-Subject: [PATCH 1/2] configfs: reduce memory consumption by symlinks
-Date: Mon, 1 Apr 2024 11:26:54 +0300
-Message-ID: <20240401082655.31613-2-d.bogdanov@yadro.com>
+Subject: [PATCH 2/2] configfs: make a minimal path of symlink
+Date: Mon, 1 Apr 2024 11:26:55 +0300
+Message-ID: <20240401082655.31613-3-d.bogdanov@yadro.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240401082655.31613-1-d.bogdanov@yadro.com>
 References: <20240401082655.31613-1-d.bogdanov@yadro.com>
@@ -72,81 +72,126 @@ Content-Type: text/plain
 X-ClientProxiedBy: T-EXCH-07.corp.yadro.com (172.17.11.57) To
  T-EXCH-09.corp.yadro.com (172.17.11.59)
 
-Instead of preallocating PAGE_SIZE for a symlink path, allocate the exact
-size of that path.
+Symlinks in configfs are used to be created from near places. Currently the
+path is artificially inflated by multiple ../ to the configfs root an then
+a full path of the target.
 
-Fixes: e9c03af21cc7 (configfs: calculate the symlink target only once)
+For scsi target subsystem the difference between such a path and a minimal
+possible path is ~100 characters.
+
+This patch makes a minimal relative path of symlink - from the closest
+common parent.
+
 Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
-
 ---
-I treat this as bugfux due to reducing of enourmous memory consumption.
----
- fs/configfs/symlink.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ fs/configfs/symlink.c | 59 ++++++++++++++++++++++++++++---------------
+ 1 file changed, 38 insertions(+), 21 deletions(-)
 
 diff --git a/fs/configfs/symlink.c b/fs/configfs/symlink.c
-index 0623c3edcfb9..224c9e4899d4 100644
+index 224c9e4899d4..a61f5a4763e1 100644
 --- a/fs/configfs/symlink.c
 +++ b/fs/configfs/symlink.c
-@@ -54,7 +54,7 @@ static void fill_item_path(struct config_item * item, char * buffer, int length)
+@@ -19,62 +19,79 @@
+ /* Protects attachments of new symlinks */
+ DEFINE_MUTEX(configfs_symlink_mutex);
+ 
+-static int item_depth(struct config_item * item)
+-{
+-	struct config_item * p = item;
+-	int depth = 0;
+-	do { depth++; } while ((p = p->ci_parent) && !configfs_is_root(p));
+-	return depth;
+-}
+-
+-static int item_path_length(struct config_item * item)
++static int item_path_length(struct config_item *item, int depth)
+ {
+ 	struct config_item * p = item;
+ 	int length = 1;
++
++	if (!depth)
++		return length;
++
+ 	do {
+ 		length += strlen(config_item_name(p)) + 1;
+ 		p = p->ci_parent;
+-	} while (p && !configfs_is_root(p));
++		depth--;
++	} while (depth && p && !configfs_is_root(p));
+ 	return length;
+ }
+ 
+-static void fill_item_path(struct config_item * item, char * buffer, int length)
++
++static void fill_item_path(struct config_item *item, int depth, char *buffer, int length)
+ {
+ 	struct config_item * p;
+ 
+ 	--length;
+-	for (p = item; p && !configfs_is_root(p); p = p->ci_parent) {
++	for (p = item; depth && p && !configfs_is_root(p); p = p->ci_parent, depth--) {
+ 		int cur = strlen(config_item_name(p));
+ 
+ 		/* back up enough to print this bus id with '/' */
+ 		length -= cur;
+ 		memcpy(buffer + length, config_item_name(p), cur);
+-		*(buffer + --length) = '/';
++		if (depth > 1)
++			*(buffer + --length) = '/';
+ 	}
  }
  
  static int configfs_get_target_path(struct config_item *item,
--		struct config_item *target, char *path)
-+		struct config_item *target, char **path)
+ 		struct config_item *target, char **path)
  {
- 	int depth, size;
+-	int depth, size;
++	struct config_item *pdest, *ptarget;
++	int target_depth = 0, item_depth = 0;
++	int size;
  	char *s;
-@@ -66,11 +66,16 @@ static int configfs_get_target_path(struct config_item *item,
  
- 	pr_debug("%s: depth = %d, size = %d\n", __func__, depth, size);
- 
--	for (s = path; depth--; s += 3)
-+	*path = kzalloc(size, GFP_KERNEL);
-+	if (!*path)
-+		return -ENOMEM;
+-	depth = item_depth(item);
+-	size = item_path_length(target) + depth * 3 - 1;
++	/* find closest common parent to make a minimal path */
++	for (ptarget = target;
++	     ptarget && !configfs_is_root(ptarget);
++	     ptarget = ptarget->ci_parent) {
++		item_depth = 0;
++		for (pdest = item;
++		     pdest && !configfs_is_root(pdest);
++		     pdest = pdest->ci_parent) {
++			if (pdest == ptarget)
++				goto out;
 +
++			item_depth++;
++		}
 +
-+	for (s = *path; depth--; s += 3)
- 		strcpy(s,"../");
++		target_depth++;
++	}
++out:
++	size = 3 * item_depth + item_path_length(target, target_depth) - 1;
+ 	if (size > PATH_MAX)
+ 		return -ENAMETOOLONG;
  
--	fill_item_path(target, path, size);
--	pr_debug("%s: path = '%s'\n", __func__, path);
-+	fill_item_path(target, *path, size);
-+	pr_debug("%s: path = '%s'\n", __func__, *path);
+-	pr_debug("%s: depth = %d, size = %d\n", __func__, depth, size);
++	pr_debug("%s: item_depth = %d, target_depth = %d, size = %d\n",
++		 __func__, item_depth, target_depth, size);
+ 
+ 	*path = kzalloc(size, GFP_KERNEL);
+ 	if (!*path)
+ 		return -ENOMEM;
+ 
++	for (s = *path; item_depth--; s += 3)
++		strcpy(s, "../");
+ 
+-	for (s = *path; depth--; s += 3)
+-		strcpy(s,"../");
+-
+-	fill_item_path(target, *path, size);
++	fill_item_path(target, target_depth, *path, size);
+ 	pr_debug("%s: path = '%s'\n", __func__, *path);
  	return 0;
  }
- 
-@@ -79,27 +84,22 @@ static int create_link(struct config_item *parent_item,
- 		       struct dentry *dentry)
- {
- 	struct configfs_dirent *target_sd = item->ci_dentry->d_fsdata;
--	char *body;
-+	char *body = NULL;
- 	int ret;
- 
- 	if (!configfs_dirent_is_ready(target_sd))
- 		return -ENOENT;
- 
--	body = kzalloc(PAGE_SIZE, GFP_KERNEL);
--	if (!body)
--		return -ENOMEM;
--
- 	configfs_get(target_sd);
- 	spin_lock(&configfs_dirent_lock);
- 	if (target_sd->s_type & CONFIGFS_USET_DROPPING) {
- 		spin_unlock(&configfs_dirent_lock);
- 		configfs_put(target_sd);
--		kfree(body);
- 		return -ENOENT;
- 	}
- 	target_sd->s_links++;
- 	spin_unlock(&configfs_dirent_lock);
--	ret = configfs_get_target_path(parent_item, item, body);
-+	ret = configfs_get_target_path(parent_item, item, &body);
- 	if (!ret)
- 		ret = configfs_create_link(target_sd, parent_item->ci_dentry,
- 					   dentry, body);
 -- 
 2.25.1
 
