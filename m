@@ -1,104 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-15835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E11E894486
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 19:54:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8695C8944A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 20:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452391F21C1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 17:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916611C21722
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 18:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E715A4D5B0;
-	Mon,  1 Apr 2024 17:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687334F217;
+	Mon,  1 Apr 2024 18:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAZKaGtU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rHMkJeSL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5551DFE3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 17:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F544E1CE
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Apr 2024 18:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711994089; cv=none; b=t2cO883Q8PofaaKHoeC2MEoQiGK0p0Op6ZWUtqRVdvYQvmQPoCK25m12JWa1cOzqjwyCO4L+Jgowzh2W9/SUC5AEl9xekWfp1CoinpE9LZFudfxx9tLAYf/Ac5p7SRHhAgNNRL11hMk74cu8RzX7++2vE1rgsJZL0ZpB2vzWwcg=
+	t=1711995051; cv=none; b=HVTpQl9MPi0XHE2t9huYWKpufka1MeetOms/vKNUxGynpXyIPlI01DRMu9YvIZFW1xGffK0czKpcggO2spwj2yIr7ORyMJVTmXuP2M5CwcCLYEoeQVdS78oyfFt0JzB3KwqPyIzNc/cNbEq6g29fwBdpV55CrmPCFUT78a8jXr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711994089; c=relaxed/simple;
-	bh=o6pBrkFgBa36aOQgvs2uRQ9sx/GPxetp6qRvYA96clg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1PrF5ALa4gOxxULUeIzAJFXriGYW80dn9pRzHL5DBlBKh/0XOcGcuo4iNXKA5rx9MiwKlzg4VtQZNJrybkv+YZMSBka2gTSEFGAbILIgtcp1/vLPxFo+Qb2lGDq5Q4mGgtaSrzs3QcJfP3nkCX7GiDiIFKl5ZhJAbhRFNAm2AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAZKaGtU; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-614cd12d84dso7445437b3.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Apr 2024 10:54:47 -0700 (PDT)
+	s=arc-20240116; t=1711995051; c=relaxed/simple;
+	bh=z2HNaLW7w9QpZHWGF0jaA9MyMN6bCQ1kVStq5aF7W4M=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=X4mskrPHb5tMm5B2MbtsYXKT61gO68dzSipxY/4YMJZVwDLrgk937YnWRP/Az5U690TYt//PS1MmHEKo0kSd9gUulG6KyZobNuUvdMCwfBtqmTQ+cPe0IXT+3rfPkImSHhuSqyzgXp0NZ3mhkI2H00/OBlXbL08NGXVx76SFfe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rHMkJeSL; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dcc4563611cso6673051276.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Apr 2024 11:10:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711994087; x=1712598887; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SR1ugTn4UR80SSjFNO0YwFJM6k3RR0xXzQKQgGj97bw=;
-        b=nAZKaGtUuwGxNgajWRDgEoLpO3vF3xD70bpD4stMVxPKGmyebr9Nn3lfv3AALroJNm
-         kXiByOQjpx5tMlxGvJ5cKmikJN2ya5sjn41UIDzO9cYe2o6csgnVPBLu7A98O/VxoZ7Z
-         H9Wt3EmUSqFcPUuBffMuG+E3v0N3rXNJrk+TDCDEwpEzEsGszh/rqvj6OyrApsscvOSF
-         ePOuoeD+EBSTAw4e4Bb1YxL7p5waQ/OZlK6jBQZDNyNymHy/wMsMhmuYe4JOaNeQduNp
-         oqCgxXl4EPpSH9aybHMdhU7wxvYeMv96/5BVk0SO3ubstpxQYaBpaPVb95vY6Y6DsWQC
-         2LqQ==
+        d=google.com; s=20230601; t=1711995049; x=1712599849; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sw2vY2M4CeKEyqj973cP6PJDE6m3drwFn3wvpEExDXs=;
+        b=rHMkJeSLIwbDSDjhAaUaHbGeo9ua3hm9of4MyQaLy0zZMvNGtvYEnEdula2es1QbPW
+         pY4QSMRWt+1t/WE9SNVbgzlEVlFj8GGjMIaO0tar77U8CEsd/4yT+PIfWJYbsXsvAvbV
+         uCCvztO/lH1qProrX3SxFuT+O/4ldTN1OWLZdVfhqgcxMvNAnVBKnxhFPFv6H2jgvOJ0
+         8FJLuRFXQwdPA7pnbfjNsj+s//nuXBraiIeZpaypwBXn5cbliWpVG+myT90fLVRhK9Ag
+         SMgGj7StrbdgJVpr6fkS2+lUtNxDv0JNJq5Qmi0r1Mjk/99ISZ+LSOWL44a+iDi/OlYR
+         6Kzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711994087; x=1712598887;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SR1ugTn4UR80SSjFNO0YwFJM6k3RR0xXzQKQgGj97bw=;
-        b=FTtz6NIEdEknCPL+Iwc6QJrh6ivHHpC/WDAOfEbiSLdopxEPLbkpzV2Wgu541gz+oD
-         V9SRY88zN0GF3fua3cpsAyMdUSzu9uWJ6jz6JXi6WYAcgB2QtlpamwTZu+1aTIUzg2sa
-         jJOk7F4rw68vrds0BIYdHlOIObMF6FZaN+F8YnP+vQ7+RwLHUmkWvUK1nfep7P629sJw
-         Wq/cvA3ycf2E4rvOfqrjOgL7IOYX+9YGRBhxdBX8G72BRk7PXvsTPkkFMCsVLXZjIhaM
-         Fnu625KT89maoOSqEmx9UeZ6knSulCS0kvASNm1f1XeoaWrdWk4fgdxCeVDw8XbvVRta
-         Iz8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVVsN/576uKeNgUxFlwAAMsI3f0mWZLfJ5nhTPuCbrRT+R15CLvBl4+Q8xLlyQ7LpyDkmZN3/tOzXUunUo8mJ7QH7mXMCUMcwNueGTtJQ==
-X-Gm-Message-State: AOJu0Yz7QGUgPOrujQgB5tZ2jll+FHfM/prGYN4K93ftHVaxc4BB9O6x
-	uGc9xU/cf0rXT3EQUK0wTekA7e/Qfcefop8yTO+DS3LWMzzSP/eR
-X-Google-Smtp-Source: AGHT+IEDB08AxTFRV08zVyBCfomFaj84XYRClmjXcKo3TBjz4gBR5/luGcJFoJqaI5T9/AJHRjvzWQ==
-X-Received: by 2002:a81:528a:0:b0:615:b94:1c7c with SMTP id g132-20020a81528a000000b006150b941c7cmr1027560ywb.18.1711994086784;
-        Mon, 01 Apr 2024 10:54:46 -0700 (PDT)
-Received: from fedora ([2600:1700:2f7d:1800::23])
-        by smtp.gmail.com with ESMTPSA id gt8-20020a05690c450800b00611a4cd615asm2329599ywb.88.2024.04.01.10.54.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Apr 2024 10:54:46 -0700 (PDT)
-Date: Mon, 1 Apr 2024 10:54:42 -0700
-From: Vishal Moola <vishal.moola@gmail.com>
-To: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	Tony Luck <tony.luck@intel.com>,
-	Naoya Horiguchi <naoya.horiguchi@nec.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Benjamin LaHaise <bcrl@kvack.org>, jglisse@redhat.com,
-	linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-	Zi Yan <ziy@nvidia.com>, Jiaqi Yan <jiaqiyan@google.com>,
-	Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH v1 01/11] mm: migrate: simplify __buffer_migrate_folio()
-Message-ID: <Zgr04p7jIer7hlfS@fedora>
-References: <20240321032747.87694-1-wangkefeng.wang@huawei.com>
- <20240321032747.87694-2-wangkefeng.wang@huawei.com>
+        d=1e100.net; s=20230601; t=1711995049; x=1712599849;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sw2vY2M4CeKEyqj973cP6PJDE6m3drwFn3wvpEExDXs=;
+        b=XqdvZ+pLkO8sQrxKazcHiccwPEjtEBFugLZ1jFy+bs6/XdBUgTN+fyJ+k8DCluYxkT
+         Xt3jfgEwIIIpQKcguuV1C6FAP3vlQnMAr+gaG4jS58ji6Q+nWwF3d+BVm6dbqZ61peJV
+         4BTvvgxMLGCeEb+8PtiBYlUsjRjWZSna16NdRg2ZEhQJlYBYt/GVYV62Bdf4M1zGkV0k
+         ttvfYAHjQ/o0acv7GPTSHS7wB9DBTHKSwYzM+eTyV1MJn9zdRtvB0G7wjQ34Jc+GVqZL
+         u+Uhdy5Z6VnrwNG5si+ACNmPAUk6HKj7XVH+0NRNI0FtszJPg3J7xHcmcIiIL9IX7PcI
+         mSfQ==
+X-Gm-Message-State: AOJu0YwRajlDEK3JC9Uhijr4X1s8rtiCxhanUch1/eqxEyvTXH6ru5su
+	d9ARCN2kskr3QPW0/qq0ZL4R/GKQFKVieTcGIKAt+Occ8fePSY3O7L804vbj/5qvD3GeMN0FjNI
+	UN3Cm8AdELpHF0BHx+G38PQ==
+X-Google-Smtp-Source: AGHT+IFAZ8Se8nHA0Of3hEysmza4VRg6qbci7e1TG3olLS+L6R1D++n7SLB99RNTps6QkAlE7iFc8jPZQ89cC3NRtQ==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6902:2313:b0:ddd:7581:1237 with
+ SMTP id do19-20020a056902231300b00ddd75811237mr3279498ybb.3.1711995049368;
+ Mon, 01 Apr 2024 11:10:49 -0700 (PDT)
+Date: Mon, 01 Apr 2024 18:10:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240321032747.87694-2-wangkefeng.wang@huawei.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAKf4CmYC/43NQQ6CMBCF4auQWTumLQWNK+5hWGCZQhOkpFMJh
+ PTuVk7g8nuL/x3AFBwxPIoDAq2OnZ8z1KUAM3bzQOj6bFBCaVEqiRzDbJYdLeNoeZk+jFsXY0C
+ Dml6W6pvVpu4hB5ZA1m1n/Nlmj46jD/v5tcrf+ld2lShRmLq8V50UqpLN4P0w0dX4N7QppS9rB YvIxQAAAA==
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1711995048; l=3756;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=z2HNaLW7w9QpZHWGF0jaA9MyMN6bCQ1kVStq5aF7W4M=; b=kU6IxVx3/F03byPgQEL8DLNLMSnWNCYWY3e9y+7keVoKq+5hvMV5hXsypcquKgXyj0ecnWlJ8
+ lvja9jJqSVCAxSvYraO/3hVEpDYa2ynuZ0XmjXrTG7v0QdUj3JsrDWG
+X-Mailer: b4 0.12.3
+Message-ID: <20240401-strncpy-fs-hfsplus-xattr-c-v2-1-6e089999355e@google.com>
+Subject: [PATCH v2] hfsplus: refactor copy_name to not use strncpy
+From: Justin Stitt <justinstitt@google.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Mar 21, 2024 at 11:27:37AM +0800, Kefeng Wang wrote:
-> Use filemap_migrate_folio() helper to simplify __buffer_migrate_folio().
-> 
-> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+strncpy() is deprecated with NUL-terminated destination strings [1].
 
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+The copy_name() method does a lot of manual buffer manipulation to
+eventually arrive with its desired string. If we don't know the
+namespace this attr has or belongs to we want to prepend "osx." to our
+final string. Following this, we're copying xattr_name and doing a
+bizarre manual NUL-byte assignment with a memset where n=1.
+
+Really, we can use some more obvious string APIs to acomplish this,
+improving readability and security. Following the same control flow as
+before: if we don't know the namespace let's use scnprintf() to form our
+prefix + xattr_name pairing (while NUL-terminating too!). Otherwise, use
+strscpy() to return the number of bytes copied into our buffer.
+Additionally, for non-empty strings, include the NUL-byte in the length
+-- matching the behavior of the previous implementation.
+
+Note that strscpy() _can_ return -E2BIG but this is already handled by
+all callsites:
+
+In both hfsplus_listxattr_finder_info() and hfsplus_listxattr(), ret is
+already type ssize_t so we can change the return type of copy_name() to
+match (understanding that scnprintf()'s return type is different yet
+fully representable by ssize_t). Furthermore, listxattr() in fs/xattr.c
+is well-equipped to handle a potential -E2BIG return result from
+vfs_listxattr():
+|	ssize_t error;
+...
+|	error = vfs_listxattr(d, klist, size);
+|	if (error > 0) {
+|		if (size && copy_to_user(list, klist, error))
+|			error = -EFAULT;
+|	} else if (error == -ERANGE && size >= XATTR_LIST_MAX) {
+|		/* The file system tried to returned a list bigger
+|			than XATTR_LIST_MAX bytes. Not possible. */
+|		error = -E2BIG;
+|	}
+... the error can potentially already be -E2BIG, skipping this else-if
+and ending up at the same state as other errors.
+
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+Changes in v2:
+- include NUL-byte in length (thanks Kees)
+- reword commit message slightly
+- Link to v1: https://lore.kernel.org/r/20240321-strncpy-fs-hfsplus-xattr-c-v1-1-0c6385a10251@google.com
+---
+---
+ fs/hfsplus/xattr.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index 9c9ff6b8c6f7..5a400259ae74 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -400,21 +400,19 @@ static int name_len(const char *xattr_name, int xattr_name_len)
+ 	return len;
+ }
+ 
+-static int copy_name(char *buffer, const char *xattr_name, int name_len)
++static ssize_t copy_name(char *buffer, const char *xattr_name, int name_len)
+ {
+-	int len = name_len;
+-	int offset = 0;
++	ssize_t len;
+ 
+-	if (!is_known_namespace(xattr_name)) {
+-		memcpy(buffer, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN);
+-		offset += XATTR_MAC_OSX_PREFIX_LEN;
+-		len += XATTR_MAC_OSX_PREFIX_LEN;
+-	}
+-
+-	strncpy(buffer + offset, xattr_name, name_len);
+-	memset(buffer + offset + name_len, 0, 1);
+-	len += 1;
++	if (!is_known_namespace(xattr_name))
++		len = scnprintf(buffer, name_len + XATTR_MAC_OSX_PREFIX_LEN,
++				 "%s%s", XATTR_MAC_OSX_PREFIX, xattr_name);
++	else
++		len = strscpy(buffer, xattr_name, name_len + 1);
+ 
++	/* include NUL-byte in length for non-empty name */
++	if (len >= 0)
++		len++;
+ 	return len;
+ }
+ 
+
+---
+base-commit: 241590e5a1d1b6219c8d3045c167f2fbcc076cbb
+change-id: 20240321-strncpy-fs-hfsplus-xattr-c-4ebfe67f4c6d
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
 
