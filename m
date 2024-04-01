@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-15817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7D1893849
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 08:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A984893873
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 08:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6244281969
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 06:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8E5280E50
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Apr 2024 06:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62DE8F7A;
-	Mon,  1 Apr 2024 06:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B1E8C09;
+	Mon,  1 Apr 2024 06:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="FHoaR+dr"
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="ZjIaJDO/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71782595;
-	Mon,  1 Apr 2024 06:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880EA10F1;
+	Mon,  1 Apr 2024 06:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711952198; cv=none; b=J1tuXCYZupSM3VdR7MiFNpLS3PaWSRUGRM/6OMdVqt9aWu1TP4sNEzhlmS1ePn+vnguJgViQtlBFKjpSfdu3UrpUpvyliIckzfnz8IPNtBgnpF1c5hbpi00+U5akWqy3DI6ISgeqe69fVfJVdK5oadlqF7/WSJBOqDR0S0tu35s=
+	t=1711953483; cv=none; b=qvOJjGyXn6xGziqiMadXM6qhW/5ldC7LtjMizTWEgbmtOU4ex+Pe1mzO0qaY24/6QCEOjQZwdAfXOWWmQ7Jwe8l5AUcEu4s0MhPUwkHm4XBE3qXutGVgME+FZWhHooYju3aCMOXKndPtoLm7EiniG8/Ra0qQWynjOGYlY8rhjGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711952198; c=relaxed/simple;
+	s=arc-20240116; t=1711953483; c=relaxed/simple;
 	bh=Gf16/3ATwW5ymrwfxNotUxyAiehv1Nj7wPTQDzI+o1E=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G6NNIoQdHL5kDf4rYEbprYhZOZroZ6gf1mvRW70m5HIhWvmGShgDU49XDPpUDxCNrCJfDiwFLbi+4qW8Aid9Qu7ZX4gp4eAM6dl6gWH1BbCG+EVVwbENCCBoWsdGkxqdFcRaaMOTRRWX2B9FYCH12jEIxcGk4+Xb0CKvYWyPYmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=FHoaR+dr; arc=none smtp.client-ip=205.220.166.238
+	 MIME-Version:Content-Type; b=rvkquytU3QV75lH8Xb+Zo3AInnzHMVtTNr+o6Gfwfusu+YLn/Hsw/oTs83HmQAf7HP1/yKHSUpasMmV4jwQsz/BjgDjJcx6rNK33pYYkD20alNxdVGbs3Oa7lLJWkQpyF64yl83hJeaywoGmwQpQLW88iJEW1EzFSi64q37o/Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=ZjIaJDO/; arc=none smtp.client-ip=205.220.166.238
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
 Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4314icou027716;
-	Sun, 31 Mar 2024 23:16:27 -0700
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4315weTk028185;
+	Sun, 31 Mar 2024 23:37:57 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
 	 h=from:to:cc:subject:date:message-id:in-reply-to:references
 	:mime-version:content-transfer-encoding:content-type; s=
 	PPS06212021; bh=b94hqPNHzJ06xjr7BdMuOoe9TJRdHoixRFvvRcdazSY=; b=
-	FHoaR+drR9DxOd9KlI3Fm61PX0vt2htMGp3sC33+cd3bOC2vkt4V/z9Se3c3ljqx
-	Zf5sMa216+TUFCcKDm4KUiwU8KgLOg8ZFj55lxbRZOJDz2sAbwfVgUTFPFW22zNf
-	kcrkTfwoLUTo9FUkCme8gUqokOktRj4KGl2vMaMbnUCY4YMKct71jXfHXwePtP0z
-	wZzwgSa3S7qQ9zVNuO7HKDLA1YjLLcB27gO4k3a+BQEiDNbKXxBPf0WvH9W86rrL
-	YRu1k9Cb+RtivWJEN6VLkjAFdEgBLtpIgaeBjkpMxQoUZCyDfwDM25kY7yclw2jL
-	Vbu1j2WVrkVb0ZKKsTxYOQ==
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3x6e10heu2-1
+	ZjIaJDO/2tGLkjqpHCZzJqmEdjIOxJp0QxmlH8BqDGxC+w+U8xPxyEjHRWO7Uyqq
+	tEPR10/+DAQe9oIe6lXagFTl1PC9NtD+jBXrGFd5tpzM0MZ/GoREATaR4sA5TDLA
+	pPoCsSCqSgO9uM+edlPR5euQ2VFa2Xd3XaGFJixpedKfBxkGcUow48+yOZg4LvuR
+	rLaSzVOfDwlQ96xfSYXyZJoqPbfMTsbUBORYzYgNeHrPE4ehA7EHwUoaQNQUhqGI
+	NsPFCksgJqPmyOAkKUDlD6APeT/zbsa/Ht/iUv1G18jJVzeNlQmwPq3+W+8XzrwE
+	aRIzukbIiuZwGDlr2v2GrQ==
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3x6e10hf5w-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sun, 31 Mar 2024 23:16:26 -0700 (PDT)
+	Sun, 31 Mar 2024 23:37:57 -0700 (PDT)
 Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.37; Sun, 31 Mar 2024 23:16:26 -0700
+ 15.1.2507.37; Sun, 31 Mar 2024 23:37:57 -0700
 Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
  ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.37 via Frontend Transport; Sun, 31 Mar 2024 23:16:24 -0700
+ 15.1.2507.37 via Frontend Transport; Sun, 31 Mar 2024 23:37:55 -0700
 From: Lizhi Xu <lizhi.xu@windriver.com>
 To: <syzbot+fa7b3ab32bcb56c10961@syzkaller.appspotmail.com>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] fs/hfsplus: fix in hfsplus_read_wrapper
-Date: Mon, 1 Apr 2024 14:16:19 +0800
-Message-ID: <20240401061619.2995409-1-lizhi.xu@windriver.com>
+Subject: [PATCH V2] fs/hfsplus: fix uaf in hfsplus_read_wrapper
+Date: Mon, 1 Apr 2024 14:37:54 +0800
+Message-ID: <20240401063754.3161903-1-lizhi.xu@windriver.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <0000000000001126200614f5c9c4@google.com>
 References: <0000000000001126200614f5c9c4@google.com>
@@ -73,16 +73,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: SltEFJFXiS2Dxwb9z7AU2VZ-n3NLmiIA
-X-Proofpoint-GUID: SltEFJFXiS2Dxwb9z7AU2VZ-n3NLmiIA
+X-Proofpoint-ORIG-GUID: JhSL1fz0Dg4eMw7JJsDoOgv5NCypEZJ9
+X-Proofpoint-GUID: JhSL1fz0Dg4eMw7JJsDoOgv5NCypEZJ9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-01_03,2024-03-28_01,2023-05-22_02
+ definitions=2024-04-01_04,2024-03-28_01,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 adultscore=0 clxscore=1011 phishscore=0 priorityscore=1501
+ spamscore=0 adultscore=0 clxscore=1015 phishscore=0 priorityscore=1501
  suspectscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
  impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2403210001 definitions=main-2404010044
+ engine=8.19.0-2403210001 definitions=main-2404010046
 
 [Syzbot reported]
 BUG: KASAN: slab-use-after-free in hfsplus_read_wrapper+0xf86/0x1070 fs/hfsplus/wrapper.c:226
