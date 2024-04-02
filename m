@@ -1,146 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-15916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA29E895D33
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 21:58:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99301895D37
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13FE0B25954
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 19:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5115028AEC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 20:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A429A15CD7A;
-	Tue,  2 Apr 2024 19:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7E715B0E8;
+	Tue,  2 Apr 2024 20:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LNtqNNSK"
+	dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b="dHrd5vKK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YJlQJ0A9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wfhigh7-smtp.messagingengine.com (wfhigh7-smtp.messagingengine.com [64.147.123.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3638B15CD52
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 19:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A8315AAA1;
+	Tue,  2 Apr 2024 20:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712087870; cv=none; b=l9Fh1tEsgnS3DP9/J8IxOXFFz2/rAP8k7YKggVbEsth4zBo5Ya476zLTbtz2vJUxeMWMBHzod42AG2eTSGBAYMkbwgQXuNYDMI8LzOwtqXp1eWUDxG/hIuUt8q2xRgzcg6Z7m+2ll/yGvtTMTj8qfPe6/Tfy5aKa9dnCot1S8f8=
+	t=1712088048; cv=none; b=Ez4gxm3MN4Sx+9+v6XDEQsxgZWVuZ69nAb540xLV7912iOsH4M/tiFfnilnTwYcbsdYThgbVye5r4n6vhzcvySJpp9b+qtMlLOuoFKEUVijwAUHHBre1FniHGlhpc9gH0tyfIieH5zklzGv63fYa1yo9Dcr65TRh2WYZjgFaWzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712087870; c=relaxed/simple;
-	bh=dktNbJSE4AMUUSXBqDMDbOSzD2AIdHi/2em6bOnXPak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sLV/IfllqhI59XOI03WIRTqk6zmH6Y7+OG7ijEGJR3XJC1c2FljtiTf5xZwcOt3fXD1lSI/vOBTr//UHG32zo7czk1eAI0HPGL9r7iP9fpUHoz3TJ1VcWOmedphCZHTgqAAv/7jAhDB6j7yxKOaNClkXS27qWGMG75RTx0V7QNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LNtqNNSK; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a4a3a5e47baso660225166b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 12:57:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1712087866; x=1712692666; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xZSMPyJcLDwQQyPD929o3b508jAKY9ueBln0f3F7O4Q=;
-        b=LNtqNNSK2bxx5ZBmRwBbbisytbYWfxwNUm4pCONxSDiyQA4x40LNM9pwUOlV9l6SBd
-         dq3annfM35j9CkSniihaifFKA/I9XrLJv1LyYi9GqAKPmLaNy4iSI/Xcr8gfRZo5AXsE
-         30yfgTyqewyZ1yQ9OivJubpMkTgvXkjWl0ff8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712087866; x=1712692666;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xZSMPyJcLDwQQyPD929o3b508jAKY9ueBln0f3F7O4Q=;
-        b=ltgC70zi1IrJaEUt424YS+GflIGosEyJzIpTj8xxwV10Kfv1Rt08beyrr6FZglu9tq
-         qPu6trikK+OngpfU+A8X5mPKKKRnVfaDnpwDAVWPXuQjVA3dl3ZT4gmlaPinlGgl61rf
-         dRCEGuYxpqbxnQrkGrZVjr57TSmi8JmcpIjNmqqGl+f2rtXr4kHaW/rfOBC2KkE2brVO
-         06VXvO6x2PxHuYvSj1ZBnsUooriqgKi+on+bPE3wWIzoar2u+epb8ZBRg4gKli+mhueR
-         saoRGUD6UevcyxQXIz/d0OGHu+hjAMWmCvZLT5REPvB9FKf6zU9mFHXZfF3URCMFce1x
-         bXDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmLYT6RUnQim7KTnZEojNv0Z7kAhMi/epHooIZvHzyQpXj419GdO+jjHu6jtkY7RqH3lMJXtd3SdayzDsPkGbz3SnQVGklLBFDTGWDVw==
-X-Gm-Message-State: AOJu0Yz7l/pE4owZtMMUbMpxl5OB1rTa63f4H3hZK2otKDEzL9PvW+ox
-	pSXl5r+KjYoOw95d3sOvY3O66Cp/FoS1rLTGVqAZfym83LMQkIr6uCJ9BfCdJ5WIQAsG/JpHpo2
-	88pk=
-X-Google-Smtp-Source: AGHT+IGzbYGpzmshIafj42Ek1klIVBdCVrBfCbqREBI4Gaw4ZvG91cJFkhsWIqVC3ZGEeTxAKhA8GA==
-X-Received: by 2002:a17:907:a46:b0:a4e:38c3:e06b with SMTP id be6-20020a1709070a4600b00a4e38c3e06bmr12174188ejc.73.1712087866275;
-        Tue, 02 Apr 2024 12:57:46 -0700 (PDT)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id u7-20020a17090626c700b00a4735e440e1sm6945999ejc.97.2024.04.02.12.57.45
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Apr 2024 12:57:45 -0700 (PDT)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a4a3a5e47baso660221766b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 12:57:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWx/kNYV4vkQLkNmZ9YwUFT6tPQae1qwjkq3aFi23a+eZ0tH2uuC0mlDK5dRgj0fHgN+cPIyyFzkCGNcLh+vhPem8SI2KXuRouyCUcpew==
-X-Received: by 2002:a17:906:5794:b0:a4e:7b8e:35ae with SMTP id
- k20-20020a170906579400b00a4e7b8e35aemr3749307ejq.38.1712087865212; Tue, 02
- Apr 2024 12:57:45 -0700 (PDT)
+	s=arc-20240116; t=1712088048; c=relaxed/simple;
+	bh=oQG74lIw7JzbfZaqhhdIPaSHwhkDfjMfH91CA0M6Fz0=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=u8hqNO0QHkYRlgmH/Jt5d2hCkP5r1LmjrBuv9cclpff55QbDYzgmlLV/uo0iNEzbxBSI/teCUKGGM7fQSbrf9VAKSFHRELZDbN3KjC95BKvtLV3r7FySW4Ly8B/EYLpRGT3923DSRdaeIwD9fRTJESh/imw3ff1LiHYm8gqnDVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org; spf=pass smtp.mailfrom=verbum.org; dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b=dHrd5vKK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YJlQJ0A9; arc=none smtp.client-ip=64.147.123.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verbum.org
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 4692718000AA;
+	Tue,  2 Apr 2024 16:00:45 -0400 (EDT)
+Received: from imap46 ([10.202.2.96])
+  by compute2.internal (MEProxy); Tue, 02 Apr 2024 16:00:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verbum.org; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1712088044; x=1712174444; bh=OW/hxEQUut
+	Xp7x5hTZ4AAb/775nuMaqmDiM9VHgDKFk=; b=dHrd5vKKARetFhs2l68SvwcprX
+	ioKAlXeUlwsOvxxA49OKRLCqfLNDPRuDOKnyuvHTk/CF+CbTOPEdyBVyLe0ScA4j
+	HHA0ApLbcW7hAhUSnxQN/EV267GxUdDsY8nJnfaXok433e4Bh5AVEVXWR5Y38prp
+	zb8eU7arUZrvYkWFoM6++GAPGHX6aZdyvBMOYiL3+9dEWfGgVgmLRhE0X8KOSj0L
+	r3AcIK1EtEhSyEAL1vUr00x7IPAQZOsjcn7JbzlYN3fQC5kfxfx2IS0ymaUvZ/xq
+	8Wm6XATlbpfYEQJOuJRRokD9FAMss5qW9hplrTw+H0jZI7VEMpMY3/f9Gcbg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1712088044; x=1712174444; bh=OW/hxEQUutXp7x5hTZ4AAb/775nu
+	MaqmDiM9VHgDKFk=; b=YJlQJ0A9QysXP6BIBmidXnVuYD9xE2CsFFvTBnnjW7pY
+	vfnCNn0HX7WCd99iElTcukxGjzjUxcE9b0t1cS+MCuXmd1sCaJA8YFiIyFl/R3Sb
+	m9jwEQ7EX2KPmQDbYesggRHMHXx1FasbAyyUMtoVIRZ56Hqgp2mg8/Zxxor+blko
+	z8p6eHfuyPNAfeKe9FAxslk3IGWidL0gFf89i8WmNJG7ZH0ZlJeIMJmAFbXNSfMV
+	/IArAaNLJDiBqprZ+M2NbxiN1c3+PQl4sMnxIPyjSRerHJBLk1wZkNa1/6QgC1D/
+	GH+aLzYoKHI12dYlwXp9kp9BmEdGgdpJ0xCqpbO8mg==
+X-ME-Sender: <xms:7GMMZrGaDHYL0raARx7IDtuM-qMNLWS-tmdjtwzlFrrqu_2cL5dUiQ>
+    <xme:7GMMZoX_evcaB7kzFKIJ2l49ZS2u2iASUEg6KGEvWgwfbPYSPHiEhRmMP85UzzjMf
+    8LCxgQN77uFrSyv>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudefvddgudeggecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdev
+    ohhlihhnucghrghlthgvrhhsfdcuoeifrghlthgvrhhssehvvghrsghumhdrohhrgheqne
+    cuggftrfgrthhtvghrnhephfejuddthedtgfeuueeltdekfeekvdfgveeifeduteekheff
+    jefgieehheekgeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepfigrlhhtvghrshesvhgvrhgsuhhmrdhorhhg
+X-ME-Proxy: <xmx:7GMMZtKh7LwQTiHt5G9YL6mgxpAKysOKoIUcM9mut0RgOCP1XseZ7Q>
+    <xmx:7GMMZpH-nphrXeADRlUrz0lXIn1EE93x68S4waR4LDl8lmhxd3Ybww>
+    <xmx:7GMMZhVuWHzjk-ytc1LdCstihbgJFtvkBhb4e_6n1Uw4fPlMLKUL4A>
+    <xmx:7GMMZkNZ0JZqZZuq_bE2CHOmQXhNgm18nJxS75fhMYSMmbr0P4CWLw>
+    <xmx:7GMMZjIOCjYXlxRv_bVWTm7MbGiOLxaU0fUm5gaOBoActf47nGBSX2Ui>
+Feedback-ID: ibe7c40e9:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 22EDD2A2008B; Tue,  2 Apr 2024 16:00:44 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-333-gbfea15422e-fm-20240327.001-gbfea1542
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240402141145.2685631-1-roberto.sassu@huaweicloud.com> <CAHk-=wgepVMJCYj9s7J50_Tpb5BWq9buBoF0J5HAa1xjet6B8A@mail.gmail.com>
-In-Reply-To: <CAHk-=wgepVMJCYj9s7J50_Tpb5BWq9buBoF0J5HAa1xjet6B8A@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 2 Apr 2024 12:57:28 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjjx3oZ55Uyaw9N_kboHdiScLkXAu05CmPF_p_UhQ-tbw@mail.gmail.com>
-Message-ID: <CAHk-=wjjx3oZ55Uyaw9N_kboHdiScLkXAu05CmPF_p_UhQ-tbw@mail.gmail.com>
-Subject: Re: [GIT PULL] security changes for v6.9-rc3
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <2afcf2b2-992d-4678-bf68-d70dce0a2289@app.fastmail.com>
+In-Reply-To: 
+ <171175869022.1988170.16501260874882118498.stgit@frogsfrogsfrogs>
+References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
+ <171175869022.1988170.16501260874882118498.stgit@frogsfrogsfrogs>
+Date: Tue, 02 Apr 2024 16:00:06 -0400
+From: "Colin Walters" <walters@verbum.org>
+To: "Darrick J. Wong" <djwong@kernel.org>,
+ "Eric Biggers" <ebiggers@kernel.org>, aalbersh@redhat.com
+Cc: xfs <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+ fsverity@lists.linux.dev
+Subject: Re: [PATCH 28/29] xfs: allow verity files to be opened even if the fsverity
+ metadata is damaged
+Content-Type: text/plain
 
-On Tue, 2 Apr 2024 at 12:39, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+
+
+On Fri, Mar 29, 2024, at 8:43 PM, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 >
+> There are more things that one can do with an open file descriptor on
+> XFS -- query extended attributes, scan for metadata damage, repair
+> metadata, etc.  None of this is possible if the fsverity metadata are
+> damaged, because that prevents the file from being opened.
+>
+> Ignore a selective set of error codes that we know fsverity_file_open to
+> return if the verity descriptor is nonsense.
+>
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> ---
+>  fs/iomap/buffered-io.c |    8 ++++++++
+>  fs/xfs/xfs_file.c      |   19 ++++++++++++++++++-
+>  2 files changed, 26 insertions(+), 1 deletion(-)
+>
+>
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 9f9d929dfeebc..e68a15b72dbdd 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -487,6 +487,14 @@ static loff_t iomap_readpage_iter(const struct 
+> iomap_iter *iter,
+>  	size_t poff, plen;
+>  	sector_t sector;
+> 
+> +	/*
+> +	 * If this verity file hasn't been activated, fail read attempts.  This
+> +	 * can happen if the calling filesystem allows files to be opened even
+> +	 * with damaged verity metadata.
+> +	 */
+> +	if (IS_VERITY(iter->inode) && !fsverity_active(iter->inode))
+> +		return -EIO;
+> +
+>  	if (iomap->type == IOMAP_INLINE)
+>  		return iomap_read_inline_data(iter, folio);
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index c0b3e8146b753..36034eaefbf55 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -1431,8 +1431,25 @@ xfs_file_open(
+>  			FMODE_DIO_PARALLEL_WRITE | FMODE_CAN_ODIRECT;
+> 
+>  	error = fsverity_file_open(inode, file);
+> -	if (error)
+> +	switch (error) {
+> +	case -EFBIG:
+> +	case -EINVAL:
+> +	case -EMSGSIZE:
+> +	case -EFSCORRUPTED:
+> +		/*
+> +		 * Be selective about which fsverity errors we propagate to
+> +		 * userspace; we still want to be able to open this file even
+> +		 * if reads don't work.  Someone might want to perform an
+> +		 * online repair.
+> +		 */
+> +		if (has_capability_noaudit(current, CAP_SYS_ADMIN))
+> +			break;
 
->    void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
->    {
->   -     if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->   +     struct inode *inode = d_backing_inode(dentry);
->   +     if (unlikely(!inode || IS_PRIVATE(inode)))
->                 return;
->         call_void_hook(path_post_mknod, idmap, dentry);
+As I understand it, fsverity (and dm-verity) are desirable in high-safety and integrity requirement cases where the goal is for the system to "fail closed" if errors in general are detected; anything that would have the system be in an ill-defined state.
 
-Hmm. We do have other hooks that get called for this case.
+A lot of ambient processes are going to have CAP_SYS_ADMIN and this will just swallow these errors for those (will things the EFSCORRUPTED path at least have been logged by a lower level function?)...whereas this is only needed just for a very few tools.
 
-For fsnotify_create() we actually have a comment about this:
+At least for composefs the quoted cases of "query extended attributes, scan for metadata damage, repair metadata" are all things that canonically live in the composefs metadata (EROFS) blob, so in theory there's a lot less of a need to query/inspect it for those use cases.  (Maybe for composefs we should force canonicalize all the underlying files to have mode 0400 and no xattrs or something and add that to its repair).
 
- * fsnotify_create - 'name' was linked in
- *
- * Caller must make sure that dentry->d_name is stable.
- * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
- * ->d_inode later
+I hesitate to say it but maybe there should be some ioctl for online repair use cases only, or perhaps a new O_NOVERITY special flag to openat2()?
 
-and audit_inode_child() ends up having a
 
-        if (inode)
-                handle_one(inode);
 
-in it.
-
-So in other cases we do handle the NULL, but it does seem like the
-other cases actually do validaly want to deal with this (ie the
-fsnotify case will say "the directory that mknod was done in was
-changed" even if it doesn't know what the change is.
-
-But for the security case, it really doesn't seem to make much sense
-to check a mknod() that you don't know the result of.
-
-I do wonder if that "!inode" test might also be more specific with
-"d_unhashed(dentry)". But that would only make sense if we moved this
-test from security_path_post_mknod() into the caller itself, ie we
-could possibly do something like this instead (or in addition to):
-
-  -     if (error)
-  -             goto out2;
-  -     security_path_post_mknod(idmap, dentry);
-  +     if (!error && !d_unhashed(dentry))
-  +             security_path_post_mknod(idmap, dentry);
-
-which might also be sensible.
-
-Al? Anybody?
-
-                Linus
 
