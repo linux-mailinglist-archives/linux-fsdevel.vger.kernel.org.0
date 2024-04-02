@@ -1,184 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-15866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2E78951FE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 13:37:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1628952AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 14:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96CF01F22B29
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 11:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC1CB2850A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 12:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5C767C46;
-	Tue,  2 Apr 2024 11:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OGjH+Mkt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Y5JmAN8i"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4C177F15;
+	Tue,  2 Apr 2024 12:15:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93DA1F619;
-	Tue,  2 Apr 2024 11:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52C06CDB3;
+	Tue,  2 Apr 2024 12:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712057843; cv=none; b=PLjre1ffg1rHCJAG3u4OZE3Mvi3p9+2jLJanfY25Ivch54zWIytT6thg1rOe1mopqkSW6F9pMgkEItdtxQ3xsJIH10+3g+SEYXKpg+WfSO3oXkpDb9Vek3d1VawIXcWJDHc3SV4Nha+PMXYQLh/ukMNGly8drKynDtQT6WopFLE=
+	t=1712060153; cv=none; b=oi7kSWF7zwXXo8gtwwxEDsVD+d7GWiHmqswvrD2lsnlWdHo3Gwbd6/25hVSim4rG0J8TBGqZnhgrjKpe+P+utMV1Y6gUGqwLzJIiXdWpqYitBAlFt+Qd7Z2vuA63IEyAcisbrCo+WIniy+lUiYZV1uZBxQZOd7rqoF9Kstbb/yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712057843; c=relaxed/simple;
-	bh=QHARwJ1KIzwTbtjx/NTMLbBPMx6OM8GPMOChTbRB+Zs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=frd/freEOUv0bppShFf3S9mX8heZCuEuF02eRmrmR9ix0JvV4y1pJslmgelmtCdHRwrOJwdsW2UG0WrlbzkJfE7SrZX0Foj6FmjVS7Ny5eWb8P78Q7wkhkrw00/E4C4zxYvEIDzgkim2A6qDFx5ihOZ+NMX5TllrnB4JDmJWymM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OGjH+Mkt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Y5JmAN8i; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E35C834628;
-	Tue,  2 Apr 2024 11:37:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1712057839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SJ3ZFU1RiRJTIMmOESh+Awufpt2n1eMVYEYTzVGB6g4=;
-	b=OGjH+MktKXWEul8I1KyU8ep16udkrlXbCthAaMI2G5VUaCK6l5MkeFdjRNZq0UZS9PE3BK
-	8Wsuud2vX32NcAxswYe6bKlIQE0PAKK91ubkMCaw+QxIhErO6wWoRO+ir6YL4r1wfeIg+n
-	itaVcfIdUxYbskAmkVvwP0J4W/S7zQo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1712057839;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SJ3ZFU1RiRJTIMmOESh+Awufpt2n1eMVYEYTzVGB6g4=;
-	b=Y5JmAN8i5adaqxqs7GO3BpwghDSBKVAm7H4N01pAJARZBIBXq6v5r0gGLusmJMVl8bkkc/
-	8Jx64dPs7Qd9+0Cg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=none
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id BFE9213A90;
-	Tue,  2 Apr 2024 11:37:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id 8whwLu/tC2btLQAAn2gu4w
-	(envelope-from <hare@suse.de>); Tue, 02 Apr 2024 11:37:19 +0000
-Message-ID: <7fbfdcf6-22ee-48f4-be80-92b465067216@suse.de>
-Date: Tue, 2 Apr 2024 13:37:19 +0200
+	s=arc-20240116; t=1712060153; c=relaxed/simple;
+	bh=aK3b3jUw7a1hW0R0pLU6JDxDOnmP/FeDrYujna8rGOI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Y7YTrTV4ueqnrlZ2IRzLE3dcjObDpZgGBTYhHjRZXzGRCqOteytFI3Kcj+XYP+1Gu7RyCt77QMMu/GhkvxvUQVCgg/gQNJFfeSFlmMwcCA4VMlXA0KFpyl8uzhF3dfKjIvXxNqjIa6C5/vPOJqd6FDjybRBnMhXbu3N27eqo3WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4V85sq0CyKz9v7cS;
+	Tue,  2 Apr 2024 19:55:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 56197140413;
+	Tue,  2 Apr 2024 20:15:41 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwAH_BTl9gtmt4V1BQ--.26589S2;
+	Tue, 02 Apr 2024 13:15:40 +0100 (CET)
+Message-ID: <24c1af6912b53e4da086cff7999be85d35a9ba40.camel@huaweicloud.com>
+Subject: Re: [GIT PULL] security changes for v6.9-rc3
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: torvalds@linux-foundation.org
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Tue, 02 Apr 2024 14:15:29 +0200
+In-Reply-To: <20240402092108.2520373-1-roberto.sassu@huaweicloud.com>
+References: <20240402092108.2520373-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Lsf-pc] [LSF/MM/BPF ATTEND][LSF/MM/BPF TOPIC] Meta/Integrity/PI
- improvements
-Content-Language: en-US
-To: Dongyang Li <dongyangli@ddn.com>,
- "joshi.k@samsung.com" <joshi.k@samsung.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "hch@lst.de" <hch@lst.de>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "axboe@kernel.dk" <axboe@kernel.dk>,
- "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
- "josef@toxicpanda.com" <josef@toxicpanda.com>,
- "kbusch@kernel.org" <kbusch@kernel.org>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-References: <CGME20240222193304epcas5p318426c5267ee520e6b5710164c533b7d@epcas5p3.samsung.com>
- <aca1e970-9785-5ff4-807b-9f892af71741@samsung.com>
- <yq14jdu7t2u.fsf@ca-mkp.ca.oracle.com>
- <ab32d8be16bf9fd5862e50b9a01018aa634c946a.camel@ddn.com>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <ab32d8be16bf9fd5862e50b9a01018aa634c946a.camel@ddn.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: E35C834628
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	R_DKIM_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap2.dmz-prg2.suse.org:rdns,imap2.dmz-prg2.suse.org:helo]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spam-Flag: NO
+X-CM-TRANSID:LxC2BwAH_BTl9gtmt4V1BQ--.26589S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CrW5Cry8JFyxJr47uFyrCrg_yoW8ZF4fpF
+	43KF47Crn5XFyxGF4kXF1UuFW8J3yrGr15J3Z5Jw1kZFy5CF15GF1vvr1SgryDGry7Kw1x
+	tw1jyFn8Gw1DAFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r126r1DMIIYY7kG6xAYrwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
+	6r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj4
+	0_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j
+	6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUgCztUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBF1jj5gDxAABso
 
-On 4/2/24 12:45, Dongyang Li wrote:
-> Martin, Kanchan,
->>
->> Kanchan,
->>
->>> - Generic user interface that user-space can use to exchange meta.
->>> A new io_uring opcode IORING_OP_READ/WRITE_META - seems feasible
->>> for direct IO.
->>
->> Yep. I'm interested in this too. Reviving this effort is near the top
->> of my todo list so I'm happy to collaborate.
-> If we are going to have a interface to exchange meta/integrity to user-
-> space, we could also have a interface in kernel to do the same?
-> 
-> It would be useful for some network filesystem/block device drivers
-> like nbd/drbd/NVMe-oF to use blk-integrity as network checksum, and the
-> same checksum covers the I/O on the server as well.
-> 
-> The integrity can be generated on the client and send over network,
-> on server blk-integrity can just offload to storage.
-> Verify follows the same principle: on server blk-integrity gets
-> the PI from storage using the interface, and send over network,
-> on client we can do the usual verify.
-> 
-> In the past we tried to achieve this, there's patch to add optional
-> generate/verify functions and they take priority over the ones from the
-> integrity profile, and the optional generate/verify functions does the
-> meta/PI exchange, but that didn't get traction. It would be much better
-> if we can have an bio interface for this.
-> 
-Not sure if I understand.
-Key point of PI is that there _is_ hardware interaction on the disk 
-side, and that you can store/offload PI to the hardware.
-That PI data can be transferred via the transport up to the application,
-and the application can validate it.
-I do see the case for nbd (in the sense that nbd should be enabled to 
-hand down PI information if it receives them). NVMe-oF is trying to use
-PI (which is what this topic is about).
-But drbd?
-What do you want to achieve? Sure drbd should be PI enabled, but I can't 
-really see how it would forward PI information; essentially drbd is a
-network-based RAID1, so what should happen with the PI information?
-Should drbd try to combine PI information from both legs?
-Is the PI information from both legs required to be the same?
-Incidentally, the same question would apply to 'normal' RAID1.
-In the end, I'm tempted to declare PI to be terminated at that
-level to treat everything the same.
-But I'd be open to discussion here.
+On Tue, 2024-04-02 at 11:21 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Hi Linus
+>=20
+> I have a small bug fix for this kernel version. Please pull.
 
-Cheers,
+Ops, there is a spurious 'i' in the referenced commit ID, in the commit
+message. Please discard, will send a new pull request shortly.
 
-Hannes
+Roberto
+
+> PS: sorry for the email mismatch, @huawei.com emails resent from the
+>     mailing list are classified by Gmail as spam, we are working on
+>     fixing it.
+>=20
+> Thanks
+>=20
+> Roberto
+>=20
+>=20
+> The following changes since commit 026e680b0a08a62b1d948e5a8ca78700bfac0e=
+6e:
+>=20
+>   Merge tag 'pwm/for-6.9-rc3-fixes' of git://git.kernel.org/pub/scm/linux=
+/kernel/git/ukleinek/linux (2024-04-01 14:38:55 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://github.com/linux-integrity/linux.git tags/security-mknod-6.9-rc=
+3
+>=20
+> for you to fetch changes up to 12d665b7d3fa743ec58160ceda8421d64b63f272:
+>=20
+>   security: Handle dentries without inode in security_path_post_mknod() (=
+2024-04-02 10:01:19 +0200)
+>=20
+> ----------------------------------------------------------------
+> Here is a simple follow-up patch for the patch set to move IMA and EVM to
+> the LSM infrastructure.
+>=20
+> It fixes a kernel panic in the newly introduced function
+> security_path_post_mknod(), when trying to check if an inode is private.
+> The panic occurs because not all dentries have an inode attached to them.
+>=20
+> I'm sending this PR as IMA/EVM co-maintainer, even if the patch also
+> touches the LSM infrastructure itself (it is acked by Paul).
+>=20
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> ----------------------------------------------------------------
+> Roberto Sassu (1):
+>       security: Handle dentries without inode in security_path_post_mknod=
+()
+>=20
+>  security/integrity/evm/evm_main.c | 6 ++++--
+>  security/integrity/ima/ima_main.c | 5 +++--
+>  security/security.c               | 5 ++++-
+>  3 files changed, 11 insertions(+), 5 deletions(-)
+>=20
 
 
