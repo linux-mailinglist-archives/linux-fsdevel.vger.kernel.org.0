@@ -1,87 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-15902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A27895975
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 18:16:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A888959B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 18:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62D1A1F23F9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 16:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61E171C21533
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 16:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB66414B065;
-	Tue,  2 Apr 2024 16:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB0314B072;
+	Tue,  2 Apr 2024 16:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dGAA4XJy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DbeoKSgR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2D97A724
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 16:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67394132C38;
+	Tue,  2 Apr 2024 16:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712074595; cv=none; b=EOZFcXQ9X7TwzkKtBacjL+1bEZJEqAQVX4NCAkRlB00pMTjk1PcSiPPx9NrEXZ0eKbo6ndonysDehhuHjSYeTi7oNAZhIK4dsN4h7shEcZQHIxtBRzul5apDPmMAlO2qJAjBgIPUBYRHSr8hLB1VQ02SncuJXCFAMnRPvONRhNs=
+	t=1712075132; cv=none; b=VZbJGOUEcPRIjeQOgcRPVJN8Vtx6EkdfnSMAH57P/U2oFqA9osfg4AitIoc3XLf9ITlGJtXuUKLa2wx9+XBE0GOyxBu0jNcx9EdRS1HGd1my4EiY0MGgGID7u9BD9FrU77CkjeMMyLygev/xHExc5S/nAzFHq2Yn+Qy66OoNbmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712074595; c=relaxed/simple;
-	bh=OxlWVdxTEdD893sBNtktZlp9W+CSobIQEK3xYRBJ0BU=;
+	s=arc-20240116; t=1712075132; c=relaxed/simple;
+	bh=CpXBpfFI2tLnM2I0IN8ckZC2Oo+13p2Q4UbLIpch8mU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GBJ5MTLwiNrV3R/J0YIbLwM4cMI/68wr9tW9CtNVWzz67FDPDuRAfJGd2n2S992+yqpvqB20naoermWlshbEi6Hs78KxHodf8yHKVrf1lKfohplzitW5pha6pcm8d1sKtJJwiS8h2Jlni3kuKRVLq2xHvaqCY8gl4WUskfUw3cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dGAA4XJy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712074593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=poSTIC0rG2YkQpDe1N+vUApeRhMh2mNxpVONRYNd57c=;
-	b=dGAA4XJy57mmpWU8/mDkaIMTWws9Szb2loSrnB1f/CounrxWCJyxqldUsAYrNkidvn/Hzj
-	TGvM0dZlh5gm7vPEOV8OHSHiBD/cJbJxF6mZFUxRwio2oKC0++3W+Duyfib7cR4PbcvTXZ
-	fEPwJDJHRaCHxt7dpM1hxubu8gMTGuQ=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-370-9vfH-5RGM9SDtQl8t6VuIA-1; Tue, 02 Apr 2024 12:16:30 -0400
-X-MC-Unique: 9vfH-5RGM9SDtQl8t6VuIA-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a466c7b0587so374545566b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 09:16:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712074589; x=1712679389;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=poSTIC0rG2YkQpDe1N+vUApeRhMh2mNxpVONRYNd57c=;
-        b=vYqiq6mGq0SjHmELjNhqUX/ivwzqAi1I1Lt5qbIGH/FQasK8QGWYWVN/9iezVt2BmB
-         cTjKPYkD0dINdeMwPT8+pIrppOFlOyTnUCx4JHvCXXWeFmGkK+FWf5mZwnVJkqs4Z5ah
-         5WNvOvERENWjBe6d/ALzm1xp9qINQ96DcDuTbFUX3kVTZ9v9GOYeJ+JwG2ySxv5H3L2v
-         eSSMVZOpa3XNV8eCm5SVE4LBS6CKyWPEQPnHg1CyZyKzPIeQs6LhNWy5xzJvjuKW1tCh
-         QKWp9vfHEqhIcdpjVpkvBIDdLJAuFFcI+A64Cw70iTAYUObx4g+rHz8pSiGBPBdXUQV4
-         0lZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9xUSQJn0bzZ4Zhux6w9DfLWRItmFEfD1MyE/wSVamx8c841RFhWlXYh6405ypWDfZSDobp5Il+WYBWuJ0Mev3HgSbITYxBRmI9OutYA==
-X-Gm-Message-State: AOJu0YyT6rYGjtKLBtJ7LvR215JX8qXGx/t7Gd2/4mWjUjIKNs/JC9Z8
-	YQzEy6/4tRgzUYxj+b0i5CT+HoKkIDGPkv5k7Rj/w7shu8cQBEELEbDwboBnufK45FR/hOHOUAc
-	/PkPxPS5Fjk6hgckjKHBOBnZo8+68c94Q3pZzI0Z6iSs0KPoOAxdOHiqO2yUHnA==
-X-Received: by 2002:a17:906:2b5b:b0:a4e:60c0:6a98 with SMTP id b27-20020a1709062b5b00b00a4e60c06a98mr156980ejg.55.1712074589256;
-        Tue, 02 Apr 2024 09:16:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF05AJXgDG172NMmyUH7ahWdx/rKSi/SG4rJfk01sHORjq/CrxsWQtDEe/ffiuLuuhSZJWGTw==
-X-Received: by 2002:a17:906:2b5b:b0:a4e:60c0:6a98 with SMTP id b27-20020a1709062b5b00b00a4e60c06a98mr156961ejg.55.1712074588781;
-        Tue, 02 Apr 2024 09:16:28 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id la1-20020a170907780100b00a4e8e080869sm774247ejc.176.2024.04.02.09.16.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Apr 2024 09:16:28 -0700 (PDT)
-Date: Tue, 2 Apr 2024 18:16:27 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: ebiggers@kernel.org, linux-xfs@vger.kernel.org, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=hoMY+eRJuGbsd3wZpzDkzT/n+ohpBMK+pBg10mooPuUzvqbwwCoP+2UIU8z0Muq3dOa4bphyMklkRLf+0LN6Mia3iEqWUZ+9N1d3wyZ4dZd2qRopV5BDPYNL/eJ4t9Ufp16RO4xlDH9rZQ3uTrAmynDNTKf31bXq3UxfY3GKTbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DbeoKSgR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5B43C433C7;
+	Tue,  2 Apr 2024 16:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712075130;
+	bh=CpXBpfFI2tLnM2I0IN8ckZC2Oo+13p2Q4UbLIpch8mU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DbeoKSgR018ET+3izr9ejq3qRxnlX0IqKyZVvVe8Hths/vhvuE5aWjyiBuzcyO7H+
+	 tS5l8p9nPD8NmLvg6zjVLXCT/qrzVArucAu5k359v+7WbpYHoLH8lJx1NEXZcTz6OT
+	 sGJirbn5ypdXo7N9dIuIWNJIPcOZYG4CM/GWyD0E1nhpiwHVvSTZXAk8iPkegbDRDk
+	 JNA2Wv8ScjU0ZOqkpodJj9stgNrhig6OTOy9IMYFIiVYfQkx+k1TSuJH8fppvKwI/A
+	 ZjHdYS35O8QRs5IA98R/Omy8XZRJ5yjKsMh89hX3u1kMachUcaU1ix0KAzTkdiD2Jj
+	 7GHb3pPtVCHyw==
+Date: Tue, 2 Apr 2024 09:25:30 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: ebiggers@kernel.org, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
-Subject: Re: [PATCH 25/29] xfs: report verity failures through the health
- system
-Message-ID: <ruqr5tdxmmnwdb2kd6t4jsxzdtrurwiyovoguv4nf5suxfpx5s@ypic544cgqt7>
+Subject: Re: [PATCH 01/29] xfs: use unsigned ints for non-negative quantities
+ in xfs_attr_remote.c
+Message-ID: <20240402162530.GZ6390@frogsfrogsfrogs>
 References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
- <171175868973.1988170.8154641065699724886.stgit@frogsfrogsfrogs>
+ <171175868577.1988170.1326765772903298581.stgit@frogsfrogsfrogs>
+ <nx4hkurupibsk7fgxeh3qhdpeheyewazgay3whw5r55immgbia@6s253r4inkxn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,27 +60,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <171175868973.1988170.8154641065699724886.stgit@frogsfrogsfrogs>
+In-Reply-To: <nx4hkurupibsk7fgxeh3qhdpeheyewazgay3whw5r55immgbia@6s253r4inkxn>
 
-On 2024-03-29 17:42:35, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
+On Tue, Apr 02, 2024 at 11:51:55AM +0200, Andrey Albershteyn wrote:
+> On 2024-03-29 17:36:19, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > In the next few patches we're going to refactor the attr remote code so
+> > that we can support headerless remote xattr values for storing merkle
+> > tree blocks.  For now, let's change the code to use unsigned int to
+> > describe quantities of bytes and blocks that cannot be negative.
+> > 
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > ---
+> >  fs/xfs/libxfs/xfs_attr_remote.c |   54 ++++++++++++++++++++-------------------
+> >  fs/xfs/libxfs/xfs_attr_remote.h |    2 +
+> >  2 files changed, 28 insertions(+), 28 deletions(-)
+> > 
+> > 
+> > diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
+> > index a8de9dc1e998a..c778a3a51792e 100644
+> > --- a/fs/xfs/libxfs/xfs_attr_remote.c
+> > +++ b/fs/xfs/libxfs/xfs_attr_remote.c
+> > @@ -47,13 +47,13 @@
+> >   * Each contiguous block has a header, so it is not just a simple attribute
+> >   * length to FSB conversion.
+> >   */
+> > -int
+> > +unsigned int
+> >  xfs_attr3_rmt_blocks(
+> > -	struct xfs_mount *mp,
+> > -	int		attrlen)
+> > +	struct xfs_mount	*mp,
+> > +	unsigned int		attrlen)
+> >  {
+> >  	if (xfs_has_crc(mp)) {
+> > -		int buflen = XFS_ATTR3_RMT_BUF_SPACE(mp, mp->m_sb.sb_blocksize);
+> > +		unsigned int buflen = XFS_ATTR3_RMT_BUF_SPACE(mp, mp->m_sb.sb_blocksize);
+> >  		return (attrlen + buflen - 1) / buflen;
+> >  	}
+> >  	return XFS_B_TO_FSB(mp, attrlen);
+> > @@ -122,9 +122,9 @@ __xfs_attr3_rmt_read_verify(
 > 
-> Record verity failures and report them through the health system.
-> 
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> ---
->  fs/xfs/libxfs/xfs_fs.h     |    1 +
->  fs/xfs/libxfs/xfs_health.h |    4 +++-
->  fs/xfs/xfs_fsverity.c      |   11 +++++++++++
->  fs/xfs/xfs_health.c        |    1 +
->  4 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> 
+> fsbsize in xfs_attr3_rmt_verify()?
 
-Looks good to me:
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
+Ah, yes, good catch.  Fixed.
 
--- 
-- Andrey
+> Otherwise, looks good to me:
+> Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
 
+Thanks!
+
+--D
+
+> -- 
+> - Andrey
+> 
+> 
 
