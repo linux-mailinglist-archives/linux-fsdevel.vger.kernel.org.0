@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-15896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FB58958BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 17:50:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E033A8958C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 17:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB811F22961
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 15:50:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D75F1C20E4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 15:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76294136673;
-	Tue,  2 Apr 2024 15:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB13B137762;
+	Tue,  2 Apr 2024 15:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0HtEHEh2"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SgZfM4j8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8071350DA;
-	Tue,  2 Apr 2024 15:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CF2134738;
+	Tue,  2 Apr 2024 15:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712072937; cv=none; b=ClW3BRGteC9DPEG6G5KLuAOuJkb2v0gE781IrWwpzMxIwLmcCQVQ0Ufw5wBxIxFUEfn13UYIcpIzkXVYnmnyQO8lkVO+iYa7Vjcf13qEaBxlAAWm/tDFlom8l3zW+mQQd2aZEdsfzJ14v/inIIzvHDloxa6cvjD5KpKh43MMXkk=
+	t=1712072939; cv=none; b=lJi2ZDmq/pRqxG2c9BuA/f6/LqCbORLBrFlMwlbo+FqN48aPGvuJBhYyDnbwaUD6ZUOXZOwHAAsGvbksgfCWMMKPxWoWY9UvsgoaBwrdFyv1kVNWsYiUascJy7STyqye/N/b4pwdfFbcNsMCftFVDIckUegorhEnY//T9uQQSYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712072937; c=relaxed/simple;
-	bh=aRA2g6rcldGcm0eggJ+qgCaUO+InE396o0stDobGMYQ=;
+	s=arc-20240116; t=1712072939; c=relaxed/simple;
+	bh=3qqbmy6OIcOoO07cO28FmCqjE206p+74Pkl9CCe0L8Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V+VZdqDvCrM22eIQcOvEfOzGDNMykTVx4BDxfkXqfXoLS34/9mTnIFfNf7cOHVN/7z29q3y4A1aMP+csaPQHrEgt3fsLT7qz00vbcikRYQMPZJsK3+qi+i0J3KIAkCVJR2jW5471YN7TFEMe6tgZYCJsyYxm6Cy+I20avYWQ+3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0HtEHEh2; arc=none smtp.client-ip=46.235.227.194
+	 MIME-Version; b=oV4IU3JuFep57iarqKkG/0LMVg5Z4NHwg0aAgAPQjNNCFy155TUp/qXCf9tJyRCuhrVLZmtxBGaqxgRPmF5a3FqxH7CItwvBVkJdBHYRLAGksm19mopxTr1ofbLgsCkv/5OJF4FTAOeTdKaO0SUnDDcPcTgR8zXk3qWBsbLPhjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SgZfM4j8; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1712072934;
-	bh=aRA2g6rcldGcm0eggJ+qgCaUO+InE396o0stDobGMYQ=;
+	s=mail; t=1712072935;
+	bh=3qqbmy6OIcOoO07cO28FmCqjE206p+74Pkl9CCe0L8Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=0HtEHEh2LR1L9DM73x3tqIb7Au5sPOcfokP5b64dXKxo5yl8RrHVlc6u5I4lW7Hjb
-	 9EL1C5E5ehXcKa81hZl4JYADNGrmAwS7m/z+Xtkf0x/u6ig8fzKhjwzuKOmrf86/UM
-	 zygR/A/XXsOsOkkrJHR+cxTm9Ne9XL6W6feL9MkK2tlTzqH51j55tTmMaoxYzBWMNx
-	 /i1gLsJr4ZAgbwxf4m2yDHYcINZNMcH+dCJbHV5fcDXD40MMA8mpqU9QOILo6BNfZk
-	 9yzjP5vjtSOIT7MA3lfhwtmLk6XDUyGqQURzOCfQOlLBA1c9oUBk1FSVCBWkSp8RdJ
-	 7zC9Ogq+QvkbQ==
+	b=SgZfM4j8m0wWn0DNkDq46LDfpOBCGT3bILSbqHsGSkUxpPo4b81IwwPrajdoCRvtX
+	 I9p71M+M9+37cLUTdwD9efeNnm8NGbKKT5AELMTUDi+9Js+xv+kx/NzGqOxwd7Ary/
+	 zG2nBh7kWJFz5w1UaHVgfrRvJ1LcMygbfanLp168vvYaX6KcLSAjeM9+xOXkdp3+KC
+	 Mh0eMbgI92pS+V8giRfPK3NFpk2zOtnmQHmurb5O5fIFnUeX59s+UaTUpOtsnLHDU5
+	 gDahwNPmpCA0ASioL89EdUSTwGD5AVZwXkuaE/YTKkvWtgBr24Jjk1Gjp0soSK0qtV
+	 LFrDgky450Pxw==
 Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 86AF837820F8;
-	Tue,  2 Apr 2024 15:48:53 +0000 (UTC)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BA3A037820F5;
+	Tue,  2 Apr 2024 15:48:54 +0000 (UTC)
 From: Eugen Hristev <eugen.hristev@collabora.com>
 To: tytso@mit.edu,
 	adilger.kernel@dilger.ca,
@@ -64,9 +64,9 @@ Cc: linux-kernel@vger.kernel.org,
 	jack@suse.cz,
 	krisman@suse.de,
 	Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH v15 5/9] f2fs: Reuse generic_ci_match for ci comparisons
-Date: Tue,  2 Apr 2024 18:48:38 +0300
-Message-Id: <20240402154842.508032-6-eugen.hristev@collabora.com>
+Subject: [PATCH v15 6/9] ext4: Log error when lookup of encoded dentry fails
+Date: Tue,  2 Apr 2024 18:48:39 +0300
+Message-Id: <20240402154842.508032-7-eugen.hristev@collabora.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240402154842.508032-1-eugen.hristev@collabora.com>
 References: <20240402154842.508032-1-eugen.hristev@collabora.com>
@@ -80,91 +80,30 @@ Content-Transfer-Encoding: 8bit
 
 From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Now that ci_match is part of libfs, make f2fs reuse it instead of having
-a different implementation.
+If the volume is in strict mode, ext4_ci_compare can report a broken
+encoding name.  This will not trigger on a bad lookup, which is caught
+earlier, only if the actual disk name is bad.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
 ---
- fs/f2fs/dir.c | 58 ++++-----------------------------------------------
- 1 file changed, 4 insertions(+), 54 deletions(-)
+ fs/ext4/namei.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 3b454f355f15..88b0045d0c4f 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -185,58 +185,6 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
- 	return f2fs_find_target_dentry(&d, fname, max_slots);
- }
- 
--#if IS_ENABLED(CONFIG_UNICODE)
--/*
-- * Test whether a case-insensitive directory entry matches the filename
-- * being searched for.
-- *
-- * Returns 1 for a match, 0 for no match, and -errno on an error.
-- */
--static int f2fs_match_ci_name(const struct inode *dir, const struct qstr *name,
--			       const u8 *de_name, u32 de_name_len)
--{
--	const struct super_block *sb = dir->i_sb;
--	const struct unicode_map *um = sb->s_encoding;
--	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
--	struct qstr entry = QSTR_INIT(de_name, de_name_len);
--	int res;
--
--	if (IS_ENCRYPTED(dir)) {
--		const struct fscrypt_str encrypted_name =
--			FSTR_INIT((u8 *)de_name, de_name_len);
--
--		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(dir)))
--			return -EINVAL;
--
--		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
--		if (!decrypted_name.name)
--			return -ENOMEM;
--		res = fscrypt_fname_disk_to_usr(dir, 0, 0, &encrypted_name,
--						&decrypted_name);
--		if (res < 0)
--			goto out;
--		entry.name = decrypted_name.name;
--		entry.len = decrypted_name.len;
--	}
--
--	res = utf8_strncasecmp_folded(um, name, &entry);
--	/*
--	 * In strict mode, ignore invalid names.  In non-strict mode,
--	 * fall back to treating them as opaque byte sequences.
--	 */
--	if (res < 0 && !sb_has_strict_encoding(sb)) {
--		res = name->len == entry.len &&
--				memcmp(name->name, entry.name, name->len) == 0;
--	} else {
--		/* utf8_strncasecmp_folded returns 0 on match */
--		res = (res == 0);
--	}
--out:
--	kfree(decrypted_name.name);
--	return res;
--}
--#endif /* CONFIG_UNICODE */
--
- static inline int f2fs_match_name(const struct inode *dir,
- 				   const struct f2fs_filename *fname,
- 				   const u8 *de_name, u32 de_name_len)
-@@ -245,8 +193,10 @@ static inline int f2fs_match_name(const struct inode *dir,
- 
- #if IS_ENABLED(CONFIG_UNICODE)
- 	if (fname->cf_name.name)
--		return f2fs_match_ci_name(dir, &fname->cf_name,
--					  de_name, de_name_len);
-+		return generic_ci_match(dir, fname->usr_fname,
-+					&fname->cf_name,
-+					de_name, de_name_len);
-+
- #endif
- 	f.usr_fname = fname->usr_fname;
- 	f.disk_name = fname->disk_name;
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 2d0ee232fbe7..3268cf45d9db 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1477,6 +1477,9 @@ static bool ext4_match(struct inode *parent,
+ 			 * only case where it happens is on a disk
+ 			 * corruption or ENOMEM.
+ 			 */
++			if (ret == -EINVAL)
++				EXT4_ERROR_INODE(parent,
++					"Directory contains filename that is invalid UTF-8");
+ 			return false;
+ 		}
+ 		return ret;
 -- 
 2.34.1
 
