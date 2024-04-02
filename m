@@ -1,142 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-15939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55911895ED1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 23:36:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF1D895F97
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 00:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863E21C24395
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 21:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D76E1F234D0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB7A15E5C0;
-	Tue,  2 Apr 2024 21:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD66224FD;
+	Tue,  2 Apr 2024 22:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VFs56/kY"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Co1h3BR1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2139.outbound.protection.outlook.com [40.107.243.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E65015E5D3
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 21:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712093803; cv=none; b=ZXeDwCYdkafI2hx0RfQNeHLNrW3CtVNu7eImYCQBGCdjXyoFGCoONmZrke7Po3YxHj7FqMRA+cOPfqOI1LrPWXrPgE8oaLxKU8+xQlSz9XTd3Edhtg6WXvqAvRkRWLP1SFfFc9ypQ/Xa+T9mAOyynRmrDo/i2kdwdGjrBIdRn6A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712093803; c=relaxed/simple;
-	bh=zRrJ7KggAH7cTt1Vhmiuiy2Df28+5h6/wPPYTkWVw04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BFBwuOC9a2dudHH3aSmXq7asFy7ivyBh9IUJM1DSLvEBUiRy2ROSzyZs23pxmzSokjS+C9r4pnX3+tFjCXqQnCHUJn9W9xTvegmccABjNjq5sDg/rzG708ZIOYaRDkK8l0zshVK/dzElm1jEeS3ueWZg0cMzLgCsQfG95fFExRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VFs56/kY; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6153d343a4eso9147407b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 14:36:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1712093801; x=1712698601; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=timWU9GFd6HZQcBIpJ1fDsofXUJOEA2GJUMxdnQeWyI=;
-        b=VFs56/kYlEJ/L6SfqNtsq2LSS+FXJEtIlml70yJZrVYGXT5pKgv9O1EfqVnfef2DHC
-         effgJPyzTa7fxIfft8tofMWxtRk6jmHDTs/yrjT89LI5jITiHeDxBltTiHMGm1NgfK0c
-         C/IyN5f7hATZMFKF4tDkZVaKw40iTbRHuRL92vkwITMIrS8aH/VZ2+qDNVtlfDd2CWfD
-         4JwBLd0t6R2N76LWeJCWujE/6aOaergy+OuNTXokJ3qZixcUjT3l+gdhN9qrThw4qDzV
-         aHjcDYvhpXIKiv7j7zkVSqOt6JiBpGFYEfXPT1uYaYV2WBffe/MmP7+wNEp2PnfMMkS0
-         L4Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712093801; x=1712698601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=timWU9GFd6HZQcBIpJ1fDsofXUJOEA2GJUMxdnQeWyI=;
-        b=m9CfrkHJ9+PVEKhumtfzzwOb+GKi8jVS8rsSddrEMkw7J5JvHAK51FSBSQYPF+tX/0
-         KM3c5CSmjStyrzOcyGBfihEJBq6uenD+2LeltqXhSY1XwJSbjI9llNyzgHImuhfkzKbD
-         0w1oRCzVZwP51XDnKXIbBuVfi2M0g9Vf2lsyP4IRqz9qIba9kAiwtAStxjIueD8RHXMn
-         LM1U1XMnNd66c1DYlyeX675anlAjsJ5QPKJG3HSdlFBnP/yrRGWQ809VnF+2ps0s2wqi
-         W8HegwYMOUj6lMdyeEYAOpI9fbAOzm9tn85f1BN81HJiJiCu4Wz9Eh/LLTij6lhaThv2
-         GG8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUkEHbv85zr6Jvq/AZNii1+kEeQEgUcQg/8UAG5y+ZdSsB6YBLIJX24hnhiAI4+lgI3W0YrPtmvE9U8vJ2nICZV3QEp7Ph/pr/zgplV0g==
-X-Gm-Message-State: AOJu0Yw/Zx7uDEhfL0T1Zspkn/9LZTLXE7r67a0phwV15c2SC5IqfF6D
-	SLpkzLmB5QhNFqSx7U94nJzmiaDvwlBf3qsRsQgM98hk0L+QOjEE8cx1BjvUP+tfPy46FFrQmx6
-	oVo0yT/maEV8UqIdLnqOIfTSN3fZdGuTQn/LJpD6XNOMj0os=
-X-Google-Smtp-Source: AGHT+IFJTwImClpiwZnwMaF5ABMRExNpfaFRHdgXao7m2+19hKn+RgyYiVPx95ZPN4eHvFaQwRNeE+0VXYBbG7NAbBQ=
-X-Received: by 2002:a81:8544:0:b0:610:e9b2:f84a with SMTP id
- v65-20020a818544000000b00610e9b2f84amr12120598ywf.26.1712093801155; Tue, 02
- Apr 2024 14:36:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992784C6E;
+	Tue,  2 Apr 2024 22:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.139
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712097185; cv=fail; b=ktb26kXsRcFBcNorzwZpme3IOCvKSQYOEN0cMYHWo1cMRgDdAxjleZiSRnzOYGMsMWJSvNU3Gdw2TxnsMA66o3RIcKjjysbnqswLb7dHyN/YPOxaeZr42lxPLUiN+HmNenS+pmVLa83qj+LVFB72HY36T6XyZrHsrIJei+AjZ4s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712097185; c=relaxed/simple;
+	bh=4B6BEAIrwMPGKCgv+mWDJbzFdF2KMhXP9zFwYfOCcvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fK/A5uj9pP+qgKHF0E6kCUVFPTvdnyiIIn6gvYQjqzI8ZyOpRpnY66en7uHFIsBfegq4JjedNmCzDlYo3wvcEP7Igez7ogrQ76bWvH1btjBJAVggx/RFyodjojV55m4uwpUarbZgxF5tETNmZNjdD3zIDq86c5xjzfWjeW0KmKg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Co1h3BR1; arc=fail smtp.client-ip=40.107.243.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=h5ierhoCNz/qyOq5xDGuhZ6yPOjr3c6waFIYghQ2gqjRrdye4ZPsEt/tE9PpWP5QEm51Wc+Xtb6zM6P/akXWIOXtPFpm5bpxCGJpd0+B9BUUde46HGRcM8ZOXVuqUAw+67npIB4BEiAOij4VxvwI3v2ByRbJHmxRgHV3gexZfkgkCA9WWpMsbwe0gy5E9Az5grHlMGv1uq9UigzQFtwpJwaAuQclMngg0wB1hwjfaOEYQq5KixTztSdWKOuGeX67hEN0Ybs9PEG9v/qspNvZXbLQYgyIxoV6jlVUkTK2ip+eNRj5RSwRpWdtrmnhWYhptEiFQ0FHISnGvyvQvFI0NQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tB0wld9CioLPvgqwUdTTK5WxiWvsshqYgT+yDfVJlH8=;
+ b=cvVrSTJd5e6Ow9wPCHKMNo17nrK04zqqUpnh9M38V1M1Rdd3jWt+GfKcBUkFBa6S4uqMMNHBrPzXt0zMfdq2YbbwuqAS/UFdmivGTjBwoYVj/elzKJ7x/qrDmh+mD0laKXxGN3duG5Z+a5/2iAZkLqr5Brm8rggXkprlPEAX9Nj2rf5aQZxya+yPbRcIvVkzN3sOnTZFNmyr8pTNlJv3gnD9HUBNi6jmtxMiK7Nia7xumhL1M5Ne6VTg7I/vTtXKsqxtcS6982tUEwBakENlnKt3yGf5CdCY3H9II6OZgi3SIRNzKOQC1bcOpihdsnF6nnPXWs2sbzZDTp3wUA99Fg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tB0wld9CioLPvgqwUdTTK5WxiWvsshqYgT+yDfVJlH8=;
+ b=Co1h3BR11gXZuJOliOgfWeSbhiUvo8stZw37AmpemjU2oS+FfSPH8/DFs/0YTAqYLQIxFXmjx37mKmvN1c/l7v7YD7cVcP1yeiOK3sjEh15PQ75PTYLPx5s+YY8dgk76SoMVWbb4lGUsXjiSww/AZ8MiAHj2gjhRf+UE6cb0wh8sSjv4hPjXUjTBeCTkZ6RTMUsRW0V7M8JHl8Wg22HWulAWmj5yOy1NsYRVtP2M8ruUgnAlRuSJ8ol23B5lsmJ+ysvndWQ1swtTHeAz9p86OWdbSh6FDlJvPjqItl0U+dLZpobZybTP8znVrrey21BaXC5xIgeEUZoVEPwfMqUzbg==
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by DM4PR12MB5793.namprd12.prod.outlook.com (2603:10b6:8:60::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Tue, 2 Apr
+ 2024 22:32:58 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::6aec:dbca:a593:a222]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::6aec:dbca:a593:a222%5]) with mapi id 15.20.7409.042; Tue, 2 Apr 2024
+ 22:32:58 +0000
+Date: Tue, 2 Apr 2024 19:32:56 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>, John Hubbard <jhubbard@nvidia.com>,
+	Peter Xu <peterx@redhat.com>, linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	x86@kernel.org
+Subject: Re: [PATCH v1 2/3] mm/treewide: rename CONFIG_HAVE_FAST_GUP to
+ CONFIG_HAVE_GUP_FAST
+Message-ID: <20240402223256.GR946323@nvidia.com>
+References: <20240402125516.223131-1-david@redhat.com>
+ <20240402125516.223131-3-david@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240402125516.223131-3-david@redhat.com>
+X-ClientProxiedBy: SA1P222CA0044.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:2d0::9) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240402141145.2685631-1-roberto.sassu@huaweicloud.com>
- <CAHk-=wgepVMJCYj9s7J50_Tpb5BWq9buBoF0J5HAa1xjet6B8A@mail.gmail.com>
- <CAHk-=wjjx3oZ55Uyaw9N_kboHdiScLkXAu05CmPF_p_UhQ-tbw@mail.gmail.com> <20240402210035.GI538574@ZenIV>
-In-Reply-To: <20240402210035.GI538574@ZenIV>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 2 Apr 2024 17:36:30 -0400
-Message-ID: <CAHC9VhSWiQQ3shgczkNr+xYX6G5PX+LgeP3bsMepnM_cp4Gd4g@mail.gmail.com>
-Subject: Re: [GIT PULL] security changes for v6.9-rc3
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|DM4PR12MB5793:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	5JB6BilPex/iw8fpF25dq3VpvhrukRTjVfLurXbkj0tJQLCjcBFLMAwhURfvyYn88Utq0P0/Y8LnQxXwzhAKBmlOYFjz2fgNQbPF2Zuqj8L/lxE7XjUr0ZaSIN9oU+yoeT9dwZNTLweIq/GSNd3PHaSqnuBv3WagaVJzQ9tiZwJwjdEAIbg5Ox47pEoi+brsiuyICNgEVqgjdJzGUwi7RWbBr1Jibdi188M28zsKSartIy6AGQBFe/hNc2M7lAg9ABKwgNpIdBSqihcYKoNJpSDeZjwqMmD5rH8dSZ422xCE4sSL5BMmiMvnFXB1Rm+i2foEeUmDI0zZz8I9l0brSifTbnlDLm3ZkQt1r0KuuSgwQm5MiCAndmg7B4Hb6EyDASlXoddpfCxXygy+J8jS1hzDWxVmA5CSiidIVjI6zcQstvI2h+t6liapqcTnSMh5L98nE1XPNq3j4MO3yBvqhL2wL5NdMINmi6OQoe5g9ldu+4CDqjRW+NqbuURZjxmonzN7CScM5DCQB8xOuUwHvXcktG7tWD93OVN9RZBEqS/eHHHavLSmmktl7NyenaCE9LUmlAhDCsL7Oeex5RHhX5UJycprbUEEJILsTO8w1fv+aP0jXqC9qmHnBDn6G8Mgwwc0cj5Y8Yg9ppmcUFFIsuSIDwKiof1Z1Rc1R2hBWNo=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(7416005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YIHVYcmfjfhuGhVvO9beY3696SSbYLBXCstNYAJnOmGpVx548BoVdyxzkL9Z?=
+ =?us-ascii?Q?GIB2jRnfaIHcFBFSyslNaMXAChVVeZklhjcV8mPExutYhfmO9Y4DfmUjpm7j?=
+ =?us-ascii?Q?O6J0dDYtr0ZPJAgFO8kgrNWJMBH8LxZMqNdVlBzh9UunChGcQeDgwkCJ3Nbn?=
+ =?us-ascii?Q?Ttj7PB+cq9go68qRbWcIXL+Om3IwMV3n7OUxuRhUCPD+NC6gDQ3ZfCoQSYqi?=
+ =?us-ascii?Q?+YT/tusLgryM92iZJIs2mNcX7TIPK/XmnEm3M1E0IcYrCoI401zpjN75T9Zx?=
+ =?us-ascii?Q?d0Upg2uzUi8EdZS17S/tU/lo2wtZliNOCf/ztxi23/LAsLr4R8L4zkw+ZJva?=
+ =?us-ascii?Q?u/ZdgPzWTLS2th28UNKE/6RmlsrdCyl2Sf7ufAGxvu8YOfJzJF9GDLFQ9pHI?=
+ =?us-ascii?Q?vMaYAoySZqjCSmdr52/fXp6zapqIYI4gc4ZI/q6Y5Vz571yJf7b5ZE6tVBG9?=
+ =?us-ascii?Q?nARRVtwSarHrZTC9bXicbePKphuc+n/T8MTOGxjkfLialci9ab9iwQm8GBOd?=
+ =?us-ascii?Q?8zFvsWo15Rl3A0Ed5sWi20f+0qHwt7qW/806+grXC0+CzZWiVtMNYsN/eKja?=
+ =?us-ascii?Q?DcfzeUF985OzqKlNjNhDx2Zlx/81dJTBzyn+6SKqkUrxGKa2GGbddFtc+Qqm?=
+ =?us-ascii?Q?NDkARs48gMG+rvftEB12mRYuljl1Yh79iURU50KEHjSc5J95dw3DA2US/yhA?=
+ =?us-ascii?Q?W8/r6IeDjx/gTdjlxFr012y9ejIkh3pBIN/xmW/4pJOkD31Dz4bdsPx8Kgnv?=
+ =?us-ascii?Q?GUAzJkHHcyqaQuWAFY6KydB2AXSMbCRKOZCV07oFAcgMUumaZAs+CNGQ9+Km?=
+ =?us-ascii?Q?Hojxt9y/g9B5C2NjXqAaYLKqhu2cQvMAMtj7DF0lgHjUlJ4aIhxyaR6U5SfL?=
+ =?us-ascii?Q?vX8kww3lLqz7yVg40o/U+6az+yviFFIvSnnz6x7B5FU/eXDDl35NlV5/riXN?=
+ =?us-ascii?Q?ngBW/uuNYHH8mAQeGDFOTcyxlUxZ76q662t4DaqwXX0EKE5k4vq6DhdR4WUF?=
+ =?us-ascii?Q?NlyQYjfstLK9LnckCL/va6GuWsYWBH6XChHGFeHzixvpRu2TldGn8UNn9Vry?=
+ =?us-ascii?Q?bdAo9adU3CwkWzIMBfMXlldlpvNbfq2fxzoL+xfp+CZFQIIO7GFtN7rf/c7c?=
+ =?us-ascii?Q?NQki/Eog3U7jG/X0b2/aCBP+5n8KhpCVewJng3pv3XL7hnt7St1kwAKISh9r?=
+ =?us-ascii?Q?VyuKNtJKW77USokJtCzqj3Rbs2HG5B+9qZYVKa5S2rxU3m3qzlojskiSF4mB?=
+ =?us-ascii?Q?hk6LHp7gfdfGpi4MSQQ2reB16YLXLq0S4uOsm/QpLW3JJL9bB7pkI0alH6aL?=
+ =?us-ascii?Q?UzDuog4tnuDhNe1JtfcLIuiLvvk2FJ+cIWt4VQuKysx4YmMEGseaoTatrGQV?=
+ =?us-ascii?Q?ecJVZm2sVBmK7XGbYFCOTfasFW2aafrySEEKwUKH1oYs+HWs+PnBf3xmdYKv?=
+ =?us-ascii?Q?j1WaAPb0PrATlMCzCKbSs1nDnJ8bo2zcYihPC7KAtqNk+iTQhUjPkv5vkwYq?=
+ =?us-ascii?Q?pHLverouVx4bMCo8xIFLov4q5A8jotmZ9rC+sr4jtfxcrzDgoG7MCeYZNDeH?=
+ =?us-ascii?Q?DqtLNRTQsdySV80kfT7DqGtOogTmFNDQVIkgsvY/?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 227402b1-27a9-43c2-b148-08dc5364d8ec
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2024 22:32:58.2460
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8MPIwg9UToD/4t9j93r/ZEdRhKmo51nZ9NLMy+VDPn+jgiEPi8hdKyWVcs8WSiH1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5793
 
-On Tue, Apr 2, 2024 at 5:00=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
-> On Tue, Apr 02, 2024 at 12:57:28PM -0700, Linus Torvalds wrote:
->
-> > So in other cases we do handle the NULL, but it does seem like the
-> > other cases actually do validaly want to deal with this (ie the
-> > fsnotify case will say "the directory that mknod was done in was
-> > changed" even if it doesn't know what the change is.
-> >
-> > But for the security case, it really doesn't seem to make much sense
-> > to check a mknod() that you don't know the result of.
-> >
-> > I do wonder if that "!inode" test might also be more specific with
-> > "d_unhashed(dentry)". But that would only make sense if we moved this
-> > test from security_path_post_mknod() into the caller itself, ie we
-> > could possibly do something like this instead (or in addition to):
-> >
-> >   -     if (error)
-> >   -             goto out2;
-> >   -     security_path_post_mknod(idmap, dentry);
-> >   +     if (!error && !d_unhashed(dentry))
-> >   +             security_path_post_mknod(idmap, dentry);
-> >
-> > which might also be sensible.
-> >
-> > Al? Anybody?
->
-> Several things here:
->
->         1) location of that hook is wrong.  It's really "how do we catch
-> file creation that does not come through open() - yes, you can use
-> mknod(2) for that".  It should've been after the call of vfs_create(),
-> not the entire switch.  LSM folks have a disturbing fondness of inserting
-> hooks in various places, but IMO this one has no business being where
-> they'd placed it.
+On Tue, Apr 02, 2024 at 02:55:15PM +0200, David Hildenbrand wrote:
+> Nowadays, we call it "GUP-fast", the external interface includes
+> functions like "get_user_pages_fast()", and we renamed all internal
+> functions to reflect that as well.
+> 
+> Let's make the config option reflect that.
+> 
+> Reviewed-by: Mike Rapoport (IBM) <rppt@kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  arch/arm/Kconfig       |  2 +-
+>  arch/arm64/Kconfig     |  2 +-
+>  arch/loongarch/Kconfig |  2 +-
+>  arch/mips/Kconfig      |  2 +-
+>  arch/powerpc/Kconfig   |  2 +-
+>  arch/riscv/Kconfig     |  2 +-
+>  arch/s390/Kconfig      |  2 +-
+>  arch/sh/Kconfig        |  2 +-
+>  arch/x86/Kconfig       |  2 +-
+>  include/linux/rmap.h   |  8 ++++----
+>  kernel/events/core.c   |  4 ++--
+>  mm/Kconfig             |  2 +-
+>  mm/gup.c               | 10 +++++-----
+>  mm/internal.h          |  2 +-
+>  14 files changed, 22 insertions(+), 22 deletions(-)
 
-I know it's everyone's favorite hobby to bash the LSM and LSM devs,
-but it's important to note that we don't add hooks without working
-with the associated subsystem devs to get approval.  In the cases
-where we don't get an explicit ACK, there is an on-list approval, or
-several ignored on-list attempts over weeks/months/years.  We want to
-be good neighbors.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Roberto's original patch which converted from the IMA/EVM hook to the
-LSM hook was ACK'd by the VFS folks.
-
-Regardless, Roberto if it isn't obvious by now, just move the hook
-back to where it was prior to v6.9-rc1.
-
---=20
-paul-moore.com
+Jason
 
