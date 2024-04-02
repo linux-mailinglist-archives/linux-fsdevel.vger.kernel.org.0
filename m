@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-15922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB23895D66
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:13:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A27895D67
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D02E1C22E04
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 20:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294A21F22DCB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 20:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4383E15D5D1;
-	Tue,  2 Apr 2024 20:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345B915DBA2;
+	Tue,  2 Apr 2024 20:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KFSBRA+D"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ql+wRWJ1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473EC12BF20
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 20:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2975615D5D9
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 20:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712088781; cv=none; b=hGOq9i6reQsZZFKLX73KO0rVtVDOv5P2LUUE5/AycLARTF5c5RKpProZMiZFIZVrWZLhnhdsbmkpKA/rtQPY6mNo3BluvFPcDa8NXUJIPx21okBgydmoa9L+7IvyKplk6iYW/2PRdQreyPEm5Sn61MfhFQT0iMhu2T8sYdBcYMM=
+	t=1712088784; cv=none; b=hJbZreCJpNraoM1CDUTlLcrsSSFDvxSA/G0RGY+7loFAumDoKq02hK1RToL4leh4eYuKJPQa7GGohYMfMBkEEEtyCn0eeul8dDBeuvKQZicQfUj4bQijrP+zgbxXVZnPJU/p7zNyLuLe0jf0fvAS8Ca2O0s0fd4KIwawQNhNnZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712088781; c=relaxed/simple;
-	bh=AKKQUQVL9PPEY9ddlf6WvJr0f0geZN4h9eAfU+3sDFs=;
+	s=arc-20240116; t=1712088784; c=relaxed/simple;
+	bh=bhjVpGWpPoEuqQw0l1Jh+K3sMgTRSeIw5JSxJn6jLEs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xka9zGIsZwrZz6oYjYvzZiAeXuEr9BablzGOqPZYwpao8HFpR/PsuS4w6IEQxk4e3N8+/QMz0ojOD1csnGovHK3YLjwjqqTafcyptNsw8wjDQ1O2t/H44eWToQfPpLbaHYwTbBkrNyC6S3T+eIZN4sZacfKpRZLb3Ep6vsIh8u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KFSBRA+D; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=BjhVNU71q7XBTDjNIFfAQAJ8ja5Y7JdaxX1a/AZwXcEOs93UQvhAg6Hcb8SZoLMlnJC4C1UYwTy+ETLoyw0SnVM5KOKYsk4eMW1rHgUYp35UWEMj88pdmY8iOeLk7EzDcxD0ghfMPV5ifLExc+StjSTT9cKCyTO97PNZ2Q2W6kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ql+wRWJ1; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=aGWyUYT48YDE0Cw8D9rqi8Yjlewy6qzvPlzZEpe8jC4=; b=KFSBRA+DOIo/e3gn0cB/MqI584
-	BZhGwMIi1Fbj5QSAzWFE/2KsMjLQ5og1aJBVTsZ+exboTHaAo6wcL9Ruh6gEK5K31iCrFiTLMX9Er
-	uhLmtz2Ihs1MDcf1Gf+XiYBcmfWPGIHf1novrK+wJEI6fOyoE/9PDGH+uiXvulPrlwoM3wUcJdZie
-	MHRZRvVjJmvrwLgGWA+OPJR+SHQE0buExlLRQKzpkxi4Sav2x/cm+qXKq6uCmCpwl+qe9SwzAFILY
-	pX3qXCuCLd+voMTc/1bzLJKKMXdTgSgr6TCQ2ML0yyO9/IhgZc8R6FS0MYqhmSDPog9g0Vc93pH0b
-	CQ4YJoEQ==;
+	bh=e1hlJ7o2gk3mHAyuSZ6004f3QEoMdjwYdrk3GsoxpIc=; b=Ql+wRWJ1lLCueTZ/gqy0LLsh9P
+	VENcmG/hSpXabmYcNpyTYxFrLaTiSTgK7jzG2aaK0SXqBDcOwVfWmvsmVQYNTEogzCsrVYK8XfCCa
+	UVSkzLLTLL8NkPVR90FEyD4ADHSQgEmKwizHj0/T/OoyUUzjarKpAmXfPdgPhoHWSAtpURlqUUJbq
+	WmhiKSLWQ1PhmyF9jM18aRlV3dwxm+Pq/C7YN5PGt1L4ZbC8KToC/ScCjyQmiIYOmLFy01ky+iDNw
+	XNiwVg4udRFGvoUEhbSXbR7Sg8CMHJ8jF4Qh6vV4COchA3r7v2B0lexLgx3/wZOspm1BugZoTMYt6
+	PtCRHUHQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rrkV5-00000003qe8-2Ulc;
+	id 1rrkV5-00000003qeB-2mET;
 	Tue, 02 Apr 2024 20:12:55 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/4] proc: Convert clear_refs_pte_range to use a folio
-Date: Tue,  2 Apr 2024 21:12:48 +0100
-Message-ID: <20240402201252.917342-2-willy@infradead.org>
+Subject: [PATCH 2/4] proc: Convert smaps_account() to use a folio
+Date: Tue,  2 Apr 2024 21:12:49 +0100
+Message-ID: <20240402201252.917342-3-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240402201252.917342-1-willy@infradead.org>
 References: <20240402201252.917342-1-willy@infradead.org>
@@ -63,61 +63,69 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replaces four calls to compound_head() with two.
+Replace seven calls to compound_head() with one.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/proc/task_mmu.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/proc/task_mmu.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 23fbab954c20..b94101cd2706 100644
+index b94101cd2706..e8d1008a838d 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -1161,7 +1161,7 @@ static int clear_refs_pte_range(pmd_t *pmd, unsigned long addr,
- 	struct vm_area_struct *vma = walk->vma;
- 	pte_t *pte, ptent;
- 	spinlock_t *ptl;
--	struct page *page;
-+	struct folio *folio;
+@@ -444,6 +444,7 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+ 		bool compound, bool young, bool dirty, bool locked,
+ 		bool migration)
+ {
++	struct folio *folio = page_folio(page);
+ 	int i, nr = compound ? compound_nr(page) : 1;
+ 	unsigned long size = nr * PAGE_SIZE;
  
- 	ptl = pmd_trans_huge_lock(pmd, vma);
- 	if (ptl) {
-@@ -1173,12 +1173,12 @@ static int clear_refs_pte_range(pmd_t *pmd, unsigned long addr,
- 		if (!pmd_present(*pmd))
- 			goto out;
- 
--		page = pmd_page(*pmd);
-+		folio = pmd_folio(*pmd);
- 
- 		/* Clear accessed and referenced bits. */
- 		pmdp_test_and_clear_young(vma, addr, pmd);
--		test_and_clear_page_young(page);
--		ClearPageReferenced(page);
-+		folio_test_clear_young(folio);
-+		folio_clear_referenced(folio);
- out:
- 		spin_unlock(ptl);
- 		return 0;
-@@ -1200,14 +1200,14 @@ static int clear_refs_pte_range(pmd_t *pmd, unsigned long addr,
- 		if (!pte_present(ptent))
- 			continue;
- 
--		page = vm_normal_page(vma, addr, ptent);
--		if (!page)
-+		folio = vm_normal_folio(vma, addr, ptent);
-+		if (!folio)
- 			continue;
- 
- 		/* Clear accessed and referenced bits. */
- 		ptep_test_and_clear_young(vma, addr, pte);
--		test_and_clear_page_young(page);
--		ClearPageReferenced(page);
-+		folio_test_clear_young(folio);
-+		folio_clear_referenced(folio);
+@@ -451,27 +452,28 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+ 	 * First accumulate quantities that depend only on |size| and the type
+ 	 * of the compound page.
+ 	 */
+-	if (PageAnon(page)) {
++	if (folio_test_anon(folio)) {
+ 		mss->anonymous += size;
+-		if (!PageSwapBacked(page) && !dirty && !PageDirty(page))
++		if (!folio_test_swapbacked(folio) && !dirty &&
++		    !folio_test_dirty(folio))
+ 			mss->lazyfree += size;
  	}
- 	pte_unmap_unlock(pte - 1, ptl);
- 	cond_resched();
+ 
+-	if (PageKsm(page))
++	if (folio_test_ksm(folio))
+ 		mss->ksm += size;
+ 
+ 	mss->resident += size;
+ 	/* Accumulate the size in pages that have been accessed. */
+-	if (young || page_is_young(page) || PageReferenced(page))
++	if (young || folio_test_young(folio) || folio_test_referenced(folio))
+ 		mss->referenced += size;
+ 
+ 	/*
+ 	 * Then accumulate quantities that may depend on sharing, or that may
+ 	 * differ page-by-page.
+ 	 *
+-	 * page_count(page) == 1 guarantees the page is mapped exactly once.
++	 * refcount == 1 guarantees the page is mapped exactly once.
+ 	 * If any subpage of the compound page mapped with PTE it would elevate
+-	 * page_count().
++	 * the refcount.
+ 	 *
+ 	 * The page_mapcount() is called to get a snapshot of the mapcount.
+ 	 * Without holding the page lock this snapshot can be slightly wrong as
+@@ -480,7 +482,7 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+ 	 * especially for migration entries.  Treat regular migration entries
+ 	 * as mapcount == 1.
+ 	 */
+-	if ((page_count(page) == 1) || migration) {
++	if ((folio_ref_count(folio) == 1) || migration) {
+ 		smaps_page_accumulate(mss, page, size, size << PSS_SHIFT, dirty,
+ 			locked, true);
+ 		return;
 -- 
 2.43.0
 
