@@ -1,130 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-15874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDC8895411
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 14:57:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F5B895423
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 14:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247541F25118
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 12:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E051F22A6F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 12:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C79185261;
-	Tue,  2 Apr 2024 12:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D117FBA2;
+	Tue,  2 Apr 2024 12:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fj0kHomC"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="O+kh+0Xh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F407EF10
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 12:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331FE7EF10
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 12:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712062563; cv=none; b=mKbTB2XMxH47qGmRK3k/8jI0Zd+GT7roPd7wTX/bN6e2Ur8TP20Eo8q2yjiHTpDpaL7oHxdG/kwpwxzZo7xtjeYsWZe9kfvzrQb0juQ2JapU+6dGILc5HJ8BGbAfVaMNRkZ9Ix7m4dVpRKscfvKFgZ+B7I1toV03NoGebr7akgA=
+	t=1712062764; cv=none; b=B1EwMmwHZPj/moio0xOX3Pc8Ey5aHzxlb2W9igexbRAejBx/Nf2cqrlyJ/bSylNZ479A7hgD8kE/6D3SDH38MxXL9S+GLCduWd2LgNzlpm+mmCaXTvJwnwY/rNRBwh6CAbrwdNv4qWZXbDrTs4WxevXqx2qTs6eYbZbMOxJmFdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712062563; c=relaxed/simple;
-	bh=zN8QbrS4azbPCsghFpZd2U9tA5iFf1lkMG/47l0YA4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PoAt/Ryx59ucbofcplfGt+Qh097NY6o2vv3V5MCX8GHW45JONQ2TW7XIToYeQdOoWAdfrHjT0Oi39x7RONz81zcKKA1Wx3CifW2r/pAb6BMLi+2EUgsSLqOGWy/YN9na+GgrYA5oSagBAEKRVIXkBeJwiGEvwJZ5yagvWCs984U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fj0kHomC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712062560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z7LWvvJr0ZLeVlbglQU3vOlFLqLTXjJjluvDd3mIpGc=;
-	b=fj0kHomCx+QBfVD12G/6ClWpGqWAlqODDDI775NUdm0sWGuf2Qfz69bqU/X36fWnHzWyCD
-	zKS8BZp9FztncWR6srfIteOZTGJxivcANcX9pSYTsO7tL0XMFbxSbZcaev4H3uVBGLvDFS
-	x7y/aV3282qDG2ZhKF4Nu+2lKMLMuvw=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-410-rp9IQ797NSqx0sgO2R02KQ-1; Tue,
- 02 Apr 2024 08:55:55 -0400
-X-MC-Unique: rp9IQ797NSqx0sgO2R02KQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3FBAA2823F33;
-	Tue,  2 Apr 2024 12:55:54 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.39.194.247])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 02C913C22;
-	Tue,  2 Apr 2024 12:55:50 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	x86@kernel.org
-Subject: [PATCH v1 3/3] mm: use "GUP-fast" instead "fast GUP" in remaining comments
-Date: Tue,  2 Apr 2024 14:55:16 +0200
-Message-ID: <20240402125516.223131-4-david@redhat.com>
-In-Reply-To: <20240402125516.223131-1-david@redhat.com>
-References: <20240402125516.223131-1-david@redhat.com>
+	s=arc-20240116; t=1712062764; c=relaxed/simple;
+	bh=tiK9jKJ2+xXuH8WXQGbb0XpXEfM+vM67ITuCAXHE0dU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=adSQV5cDDafCn05ZFTpqNbU35UkeTeQFRYkJDnHa/tyca3SLwekjlOi45+WfDGxNL/R3ROL7WNs/pjyKcW2dlhdGyI3MnPF2yR2VRiLRokrOUjhGqmCluLLahf5Cx52uPpDScAezGGLuckccEd91N9nOmt1q2My96NGdg/G2dhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=O+kh+0Xh; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6e696233f44so576227b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 05:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712062760; x=1712667560; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WFjYmEuWTIY3JaRPL6EesdmjDFY5OtvnQu536kNTjd4=;
+        b=O+kh+0XhqBpGCeoXVeckb1hbaHVwLb4M9W+YqjkdbUmlRgO9m4ZV34KC7CRHVC7Ol9
+         Ewv/KWd5HHm5sMl9X3hlXA01e0GxswykkoydUYb/pOO1wcLO69meyZF7r+CYoMJBcKLJ
+         jzx8iO0e9wJq9I09xl95slJzz+9vPZiNI1CEcCSsLGePCTek1A+e2sx306lUFfUS0XIL
+         ixNwuwRZSo7y61mnnWwySyMM3y/XvqFfrlZY1vA9/ju9v1p+xHDfF9Xx1JAWny4F68XP
+         TOzOPUKf0WeEenBNcJuDpSWCRluMnbUGja2P45KPV1/hjNbxczQwJ8Wjb16h/+9lak/l
+         Oq/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712062760; x=1712667560;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WFjYmEuWTIY3JaRPL6EesdmjDFY5OtvnQu536kNTjd4=;
+        b=Pjr6/1efPRu3n1C/2Gxd5UrOhPBxfrE4GiC21UR4l4H+BjpYuvNCWxmScX4PMLOB2I
+         B5tUWegmlzFUXGmT79CAofthHx0+F9xEii+PkmwjxxsFvXQ6xngRe9chy6+GpZG1MP/9
+         jR7HnfYmsvHTtipZwrAFdjfsrtZ5320YYOCbX8rULv0ldmQZ1d6GXe63s+PYDp5Mm9Rt
+         z2unEKXDPDDPRPQdfJayCb331gKz+L7iGlmV2zyQrGm3gdqlO1898Hp2MApfZKSR9rU8
+         192YpWVQstEnANXO0w7Z7cFMWa/PWTtmQPPvDXV6oY25JOAtDUL3K7+JDZgFAUgUDrbh
+         rClg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoZDzUgkOgvlR3BUCtv8er7mwKPvFZvU9DwFcMd0hbFoiijRbKVzo42AJJq/+4hSSuJJff7HO4HYworJTv26xE40daR13jCt7CYrZ2Vw==
+X-Gm-Message-State: AOJu0YxAD2MV24ySxjjMEvE4369MpOAG0tUCs3neQmfTcmISsZ59Jh4/
+	z+dsEumR/RzR0F/xRD/bPwM3nAA/9UxnPRmtNuEAJDZWmxJ7GRGvyqhTbyTjzGc=
+X-Google-Smtp-Source: AGHT+IH0ArF1jhsbGRi1BzERtUavmZVX4yVdDKAX/YHZKuB0EYztAUiFcsrm/vEfhvOSnaPo5K25Xg==
+X-Received: by 2002:a05:6a21:a5a3:b0:1a3:b0a8:fbe9 with SMTP id gd35-20020a056a21a5a300b001a3b0a8fbe9mr16248531pzc.1.1712062760425;
+        Tue, 02 Apr 2024 05:59:20 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id bw28-20020a056a02049c00b005dcaa45d87esm8474183pgb.42.2024.04.02.05.59.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Apr 2024 05:59:19 -0700 (PDT)
+Message-ID: <65e9d205-5ba7-4cfe-ac28-bb0494cc61b9@kernel.dk>
+Date: Tue, 2 Apr 2024 06:59:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs: claw back a few FMODE_* bits
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Dave Chinner
+ <david@fromorbit.com>, io-uring@vger.kernel.org
+References: <20240328-gewendet-spargel-aa60a030ef74@brauner>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240328-gewendet-spargel-aa60a030ef74@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Let's fixup the remaining comments to consistently call that thing
-"GUP-fast". With this change, we consistently call it "GUP-fast".
+On 3/28/24 6:27 AM, Christian Brauner wrote:
+> There's a bunch of flags that are purely based on what the file
+> operations support while also never being conditionally set or unset.
+> IOW, they're not subject to change for individual files. Imho, such
+> flags don't need to live in f_mode they might as well live in the fops
+> structs itself. And the fops struct already has that lonely
+> mmap_supported_flags member. We might as well turn that into a generic
+> fop_flags member and move a few flags from FMODE_* space into FOP_*
+> space. That gets us four FMODE_* bits back and the ability for new
+> static flags that are about file ops to not have to live in FMODE_*
+> space but in their own FOP_* space. It's not the most beautiful thing
+> ever but it gets the job done. Yes, there'll be an additional pointer
+> chase but hopefully that won't matter for these flags.
+> 
+> I suspect there's a few more we can move into there and that we can also
+> redirect a bunch of new flag suggestions that follow this pattern into
+> the fop_flags field instead of f_mode.
+> 
+> (Fwiw, FMODE_NOACCOUNT and FMODE_BACKING could live in fop_flags as
+>  well because they're also completely static but they aren't really
+>  about file operations so they're better suited for FMODE_* imho.)
 
-Reviewed-by: Mike Rapoport (IBM) <rppt@kernel.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/filemap.c    | 2 +-
- mm/khugepaged.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 387b394754fa..c668e11cd6ef 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1810,7 +1810,7 @@ EXPORT_SYMBOL(page_cache_prev_miss);
-  * C. Return the page to the page allocator
-  *
-  * This means that any page may have its reference count temporarily
-- * increased by a speculative page cache (or fast GUP) lookup as it can
-+ * increased by a speculative page cache (or GUP-fast) lookup as it can
-  * be allocated by another user before the RCU grace period expires.
-  * Because the refcount temporarily acquired here may end up being the
-  * last refcount on the page, any page allocation must be freeable by
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 38830174608f..6972fa05132e 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1169,7 +1169,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
- 	 * huge and small TLB entries for the same virtual address to
- 	 * avoid the risk of CPU bugs in that area.
- 	 *
--	 * Parallel fast GUP is fine since fast GUP will back off when
-+	 * Parallel GUP-fast is fine since GUP-fast will back off when
- 	 * it detects PMD is changed.
- 	 */
- 	_pmd = pmdp_collapse_flush(vma, address, pmd);
+As you know, this is going to cause conflicts. Wondering if it's worth
+doing anything about that...
+
 -- 
-2.44.0
+Jens Axboe
 
 
