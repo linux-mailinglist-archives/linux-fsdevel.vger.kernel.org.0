@@ -1,66 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-15942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CCD895FAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 00:42:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B98895FD5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 00:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17561F24722
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:42:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6A4328728C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80BF26AD3;
-	Tue,  2 Apr 2024 22:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C68035F18;
+	Tue,  2 Apr 2024 22:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="E84EBHY9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+Rb195/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EB71E531;
-	Tue,  2 Apr 2024 22:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF511D6AE;
+	Tue,  2 Apr 2024 22:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712097759; cv=none; b=eDqTikItMHGt80/6D5ftrymZ9iAK2cVokzdsUvFpbGC4fRaMgqsqeROzcgJs9JBulJbgqH8/R3Zo/ZWRgteN75Zt9uQPjV/KpaziYy7vbU/fwYX6Op8x/lA40bvhs2OZOXNY23YcdoaMoGEGTULrOYFNs1lnAVcV6CzAjQ8KRk0=
+	t=1712098337; cv=none; b=lizRcw9jixiutD6WqsDlzH4uPLvsmqKHa8FIeP+GZZu7Z6BpEp18aTtwXvl5LHkEX1uxragaQTZfpLWrrGd26nO6dbek5pTyraGYlzAXnTNMwedj8vu+jIcrvigwDGvicTgOE0r1RAZ+TXzK7NSJsmAtCG45OjX+n2/AUrNjNOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712097759; c=relaxed/simple;
-	bh=76n/dtlrdS4V3B69xGR2/C2+sMIqOX5IJ8MMCJoFQsE=;
+	s=arc-20240116; t=1712098337; c=relaxed/simple;
+	bh=JCUX01z4imv3ohaGJcNNxza8lnFq8bCI2iYQo+Q8KyM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jy+lajzzJGXcHY6Ge3NLY4adydlY+1wGWG5AZzs0yOKzlSY42fP/2X+7q6g4IUY6WLUInPPuY1WqleRiju2JcS+YW52wj5E853AI1KoG2qQpWHLKiukIStvsvOfmbBw3x4WzlrVzEAm1iUJjW4tdnw2a4C/MrO1SCqtgI7p5Yos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=E84EBHY9; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9vuFRydjFmA3iR+UUnQHu939ajflmP5RxYpQ3S/7QEQ=; b=E84EBHY99VSck8VRb3I+xR7fQ3
-	MOhva1SFDx4LcquqPIXb78cVrAuiJ/XZr+ypDL49prxUF9jv5V7KRYCJkx54WLbnYkrLnJDHRF5YU
-	voQJIsae1qL9QyTm/6BE0udqedcbzXUyMZw7p4PsoxekPQgDlxlZ9VwZmDAOapcuSjP778b1WnVeE
-	DvjhZUou0IYs9ZRuwXrEbW7JYnPGnlAA4pT+bVbjyaqvq5/ao6K97lRwm7bQokmatWc+o7fegbN9a
-	hpC/U4c9t0XInAkGopJOxDFZfdLu5KxE3g7QsadDkZXiKyIMcK0WTEImfFaNPexLoYg3aB1n+zzsJ
-	1e/Nt3EQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rrmpq-004St9-2e;
-	Tue, 02 Apr 2024 22:42:30 +0000
-Date: Tue, 2 Apr 2024 23:42:30 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [GIT PULL] security changes for v6.9-rc3
-Message-ID: <20240402224230.GJ538574@ZenIV>
-References: <20240402141145.2685631-1-roberto.sassu@huaweicloud.com>
- <CAHk-=wgepVMJCYj9s7J50_Tpb5BWq9buBoF0J5HAa1xjet6B8A@mail.gmail.com>
- <CAHk-=wjjx3oZ55Uyaw9N_kboHdiScLkXAu05CmPF_p_UhQ-tbw@mail.gmail.com>
- <20240402210035.GI538574@ZenIV>
- <CAHC9VhSWiQQ3shgczkNr+xYX6G5PX+LgeP3bsMepnM_cp4Gd4g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHOKGAkmZOI7edPVD0mdXbmjyysnf6dkwVRkSZcqgAwZ+QJakRUr9yE9DPQjjUqQQkawcAaWap4laV4mH2MJGhGKRmSWepmNkLUR3E3bOWaxvmXDf+j9uDmOs0GY4TY6Tp7wkcP5/49at3sL4Wyk+Ii28aa2eKZa7kRMnWKlSrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+Rb195/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3858C433C7;
+	Tue,  2 Apr 2024 22:52:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712098336;
+	bh=JCUX01z4imv3ohaGJcNNxza8lnFq8bCI2iYQo+Q8KyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d+Rb195/3tMPL+2xn3xsfYWgYwB5vpbIMaaBppUtggwt8lZH3uhcy3a/vOr59P1tI
+	 pc4lnQtV/7JLof4BOrv0XyWtdVYZL15oVG6eyn6mGWOSlTBMa11UCTgoaRM2BxSFK1
+	 egKEZSNleAdO3YoTqXaVZ8QC1risSSqzrDXgvG+PZ27MK5zMBz6Ia1+oP8cR5V1tJO
+	 thqPtu2HQzPDXbTpx7FOXxUoOjgxFEx55OuMvI4VbzmTWqRMTkhLOkVvFNKQk7wz7r
+	 jMnjF9gUMmAA1aSlV49Szfr7GDDvzefjuGNM4g/AbP7T1ChNJqoqmOVG3uGkrbKFgU
+	 TDShKNv8sqAaw==
+Date: Tue, 2 Apr 2024 15:52:16 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Colin Walters <walters@verbum.org>
+Cc: Eric Biggers <ebiggers@kernel.org>, aalbersh@redhat.com,
+	xfs <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	fsverity@lists.linux.dev
+Subject: Re: [PATCH 28/29] xfs: allow verity files to be opened even if the
+ fsverity metadata is damaged
+Message-ID: <20240402225216.GW6414@frogsfrogsfrogs>
+References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
+ <171175869022.1988170.16501260874882118498.stgit@frogsfrogsfrogs>
+ <2afcf2b2-992d-4678-bf68-d70dce0a2289@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,49 +61,106 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhSWiQQ3shgczkNr+xYX6G5PX+LgeP3bsMepnM_cp4Gd4g@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <2afcf2b2-992d-4678-bf68-d70dce0a2289@app.fastmail.com>
 
-On Tue, Apr 02, 2024 at 05:36:30PM -0400, Paul Moore wrote:
-
-> >         1) location of that hook is wrong.  It's really "how do we catch
-> > file creation that does not come through open() - yes, you can use
-> > mknod(2) for that".  It should've been after the call of vfs_create(),
-> > not the entire switch.  LSM folks have a disturbing fondness of inserting
-> > hooks in various places, but IMO this one has no business being where
-> > they'd placed it.
+On Tue, Apr 02, 2024 at 04:00:06PM -0400, Colin Walters wrote:
 > 
-> I know it's everyone's favorite hobby to bash the LSM and LSM devs,
-> but it's important to note that we don't add hooks without working
-> with the associated subsystem devs to get approval.  In the cases
-> where we don't get an explicit ACK, there is an on-list approval, or
-> several ignored on-list attempts over weeks/months/years.  We want to
-> be good neighbors.
 > 
-> Roberto's original patch which converted from the IMA/EVM hook to the
-> LSM hook was ACK'd by the VFS folks.
+> On Fri, Mar 29, 2024, at 8:43 PM, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> >
+> > There are more things that one can do with an open file descriptor on
+> > XFS -- query extended attributes, scan for metadata damage, repair
+> > metadata, etc.  None of this is possible if the fsverity metadata are
+> > damaged, because that prevents the file from being opened.
+> >
+> > Ignore a selective set of error codes that we know fsverity_file_open to
+> > return if the verity descriptor is nonsense.
+> >
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > ---
+> >  fs/iomap/buffered-io.c |    8 ++++++++
+> >  fs/xfs/xfs_file.c      |   19 ++++++++++++++++++-
+> >  2 files changed, 26 insertions(+), 1 deletion(-)
+> >
+> >
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 9f9d929dfeebc..e68a15b72dbdd 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -487,6 +487,14 @@ static loff_t iomap_readpage_iter(const struct 
+> > iomap_iter *iter,
+> >  	size_t poff, plen;
+> >  	sector_t sector;
+> > 
+> > +	/*
+> > +	 * If this verity file hasn't been activated, fail read attempts.  This
+> > +	 * can happen if the calling filesystem allows files to be opened even
+> > +	 * with damaged verity metadata.
+> > +	 */
+> > +	if (IS_VERITY(iter->inode) && !fsverity_active(iter->inode))
+> > +		return -EIO;
+> > +
+> >  	if (iomap->type == IOMAP_INLINE)
+> >  		return iomap_read_inline_data(iter, folio);
+> > 
+> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > index c0b3e8146b753..36034eaefbf55 100644
+> > --- a/fs/xfs/xfs_file.c
+> > +++ b/fs/xfs/xfs_file.c
+> > @@ -1431,8 +1431,25 @@ xfs_file_open(
+> >  			FMODE_DIO_PARALLEL_WRITE | FMODE_CAN_ODIRECT;
+> > 
+> >  	error = fsverity_file_open(inode, file);
+> > -	if (error)
+> > +	switch (error) {
+> > +	case -EFBIG:
+> > +	case -EINVAL:
+> > +	case -EMSGSIZE:
+> > +	case -EFSCORRUPTED:
+> > +		/*
+> > +		 * Be selective about which fsverity errors we propagate to
+> > +		 * userspace; we still want to be able to open this file even
+> > +		 * if reads don't work.  Someone might want to perform an
+> > +		 * online repair.
+> > +		 */
+> > +		if (has_capability_noaudit(current, CAP_SYS_ADMIN))
+> > +			break;
 > 
-> Regardless, Roberto if it isn't obvious by now, just move the hook
-> back to where it was prior to v6.9-rc1.
+> As I understand it, fsverity (and dm-verity) are desirable in
+> high-safety and integrity requirement cases where the goal is for the
+> system to "fail closed" if errors in general are detected; anything
+> that would have the system be in an ill-defined state.
 
-The root cause is in the too vague documentation - it's very easy to
-misread as "->mknod() must call d_instantiate()", so the authors of
-that patchset and reviewers of the same had missed the subtlety
-involved.  No arguments about that.
+Is "open() fails if verity metadata are trashed" a hard requirement?
 
-Unkind comments about the LSM folks' tendency to shove hooks in
-places where they make no sense had been brought by many things,
-the most recent instance being this:
-	However, I thought, since we were promoting it as an LSM hook,
-	we should be as generic possible, and support more usages than
-	what was needed for IMA.
-(https://lore.kernel.org/all/3441a4a1140944f5b418b70f557bca72@huawei.com/)
+Reads will still fail due to (iomap) readahead returning EIO for a file
+that is IS_VERITY() && !fsverity_active().  This is (afaict) the state
+you end up with when the fsverity open fails.  ext4/f2fs don't do that,
+but they also don't have online fsck so once a file's dead it's dead.
 
-I'm not blaming Roberto - that really seems to be the general attitude
-around LSM;  I've seen a _lot_ of "it doesn't matter if it makes any sense,
-somebody might figure out some use for the data we have at that point in
-control flow, eventually if not now" kind of responses over the years.
-IME asking what this or that hook is for and what it expects from the objects
-passed to it gets treated as invalid question.  Which invites treating
-hooks as black boxes...
+> A lot of ambient processes are going to have CAP_SYS_ADMIN and this
+> will just swallow these errors for those (will things the EFSCORRUPTED
+> path at least have been logged by a lower level function?)...whereas
+> this is only needed just for a very few tools.
+> 
+> At least for composefs the quoted cases of "query extended attributes,
+> scan for metadata damage, repair metadata" are all things that
+> canonically live in the composefs metadata (EROFS) blob, so in theory
+> there's a lot less of a need to query/inspect it for those use cases.
+> (Maybe for composefs we should force canonicalize all the underlying
+> files to have mode 0400 and no xattrs or something and add that to its
+> repair).
+
+<shrug> I don't know if regular (i.e. non-verity) xattrs are one of the
+things that get frozen by verity?  Storing fsverity metadata in private
+namespace xattrs is unique to xfs.
+
+> I hesitate to say it but maybe there should be some ioctl for online
+> repair use cases only, or perhaps a new O_NOVERITY special flag to
+> openat2()?
+
+"openat2 but without meddling from the VFS"?  Tempting... ;)
+
+--D
 
