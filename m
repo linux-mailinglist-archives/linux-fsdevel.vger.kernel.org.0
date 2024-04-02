@@ -1,182 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-15880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322C48955D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 15:53:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F1889560A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 16:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0FA1F23469
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 13:53:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39F0284279
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 14:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403F484FA9;
-	Tue,  2 Apr 2024 13:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D2D85925;
+	Tue,  2 Apr 2024 14:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GYOArCvz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oVQiqqsS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW0iibiz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F588405D;
-	Tue,  2 Apr 2024 13:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC81184A22;
+	Tue,  2 Apr 2024 14:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712065998; cv=none; b=nRnvRjkavISD8jnurV7kRZUQ2x7RR1kSioSSrq4JJ7J3gw/yeOWH5Pm4aSrPv47q0Y9fnHgeNm+F8BaXcb2OTkMGFdv3gq+8Y6BWt86XBauuFtwn2ID7LNu3UCjSsg6iyUwb5l9zwFRVkr6eNTPTmQJaDdzHO9+4vHUuViTpV5U=
+	t=1712066546; cv=none; b=hNciZRhUasbHm1/jo8OBQgfJoZv80dhGR9iV0Iewz+vK1jw7ov5voQ1c8z3zABQzX9sKrzbaXT02ecPcN4ubkjFQ2raLw0dkxS5f6waja+uN+oqBsxWh3oscApFocf2/eLwGxwxFHmMFcxOJRh0XfMfa2v/4605DFGEH5lGuyCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712065998; c=relaxed/simple;
-	bh=LyoTfqRjN9j3MoNuZhUjYR5rfEWeY5pb4kTEkVb3zX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IM3iK0DbJqcAQP7o9sy4BlqSPWLerVGeOR9wyi99wo7ATT74o7K7Mer3H1K6OzsXNmJIPrUdT1LBy4I5ulihc5UPA4KuFzGv1S0iwSqTlBRWH0crfSg8nH6KuI/Hzm6+k49AEQiNuEIXfmWiiw88t/Ynvc1Ddbbim4TsRSUFn0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GYOArCvz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oVQiqqsS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0E8905BDF2;
-	Tue,  2 Apr 2024 13:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1712065995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FGcfQklvUedGwDv0N6DFd1u+IVz+5qx/4hMKzVEGwI8=;
-	b=GYOArCvzuT6FP3IcfS3UQE4mfVipbv0+wGzv1Ht12S5KDzRcG57i9bzNKECetfosW/EZDK
-	FRdJRkOOFBB6VFLVFHPeAmoIGmsgiAIgaPsCi6V5QKWP4TNnUjjPWb3YXBWnSwqC/9dxvV
-	hDYNPljnvTDAxZHNHxUmWJ69XJi7Hkk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1712065995;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FGcfQklvUedGwDv0N6DFd1u+IVz+5qx/4hMKzVEGwI8=;
-	b=oVQiqqsSkWTMu+wnMPetAL7KPG+bdsPQACuZiBPlnhEX6ceCgZlAPkxLH3PTMYeoCTe+EP
-	ymdF70jwspkycOCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id F0AD913A90;
-	Tue,  2 Apr 2024 13:53:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id mM66OsoNDGYaXQAAn2gu4w
-	(envelope-from <jack@suse.cz>); Tue, 02 Apr 2024 13:53:14 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 92DB2A0813; Tue,  2 Apr 2024 15:53:06 +0200 (CEST)
-Date: Tue, 2 Apr 2024 15:53:06 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
-	akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	willy@infradead.org, bfoster@redhat.com, dsterba@suse.com,
-	mjguzik@gmail.com, dhowells@redhat.com, peterz@infradead.org
-Subject: Re: [PATCH 6/6] writeback: remove unneeded GDTC_INIT_NO_WB
-Message-ID: <20240402135306.kluke2jjcmh5f4ei@quack3>
-References: <20240320110222.6564-1-shikemeng@huaweicloud.com>
- <20240320110222.6564-7-shikemeng@huaweicloud.com>
- <Zfr9my_tfxO-N6HS@mtj.duckdns.org>
- <becdb16b-a318-ec05-61d2-d190541ae997@huaweicloud.com>
- <20240327093309.ejuzjus2zcixb4qt@quack3>
- <c2fc01e2-f15a-d331-6c4f-64319f3adc8a@huaweicloud.com>
+	s=arc-20240116; t=1712066546; c=relaxed/simple;
+	bh=UO9L6r+vy9lR2lIAPzgynVMMD8ptxjYlJtiwB4qr5Rg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=itTeIOmd5I2+SDvAA9GR2/UPgIYikoBUtMtCLdF4Gk9/6TBnIIBEYNdBCTIrmkBuK2Sw+iQy5Nhxao5ChmHhHhqGgno1739I4E3kyO1XNHr68g8HZjeiogpn0oQ55GZxea800IxezPs+Om7/cdgpTyWRezdBWuUhh7AdfLRB/RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GW0iibiz; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-78a746759b4so379296785a.2;
+        Tue, 02 Apr 2024 07:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712066543; x=1712671343; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QHSoMgHSVCnzk9XY/4SW/zti9qPkDr59hKAE7jpY8Tg=;
+        b=GW0iibizMDfs4tL2jAt3gwJn9oRMyIWxqcPsdSw9pp6Ik6E1wDXST7YfyN8GXu95sU
+         7cRy0aIaSNM1UIbzfc936BAF4mcKnYCbZKAysnKKYOf5jEhX6qVnXI4bJAAhUiG0iOly
+         t8rw2BbrcZqIlJT6ekbQEgh2XhsJ3Dl1z4oedHOkxYWXIisEEWRURsjC+jNl2ftQLxkt
+         z7FpyLdkt/vSqOsEkXgNKRW/erZWgYhD04An+QzgSneBEX4GUAgkwC1aR8UsNkKc68MS
+         aC/9a7ED0F1tjfVOKTJNy1OxeydtqVCY/RN9DORTHr6lMr/iIdCx7yqghTRNcvSbisqW
+         gMng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712066543; x=1712671343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QHSoMgHSVCnzk9XY/4SW/zti9qPkDr59hKAE7jpY8Tg=;
+        b=inZr0bB92Ya1gIjv8BEZ3IULhoqEiYGIb7DkqXPQ6a7AcwUdYruKnRmEfl3ahySCE+
+         ik0vs5cM7A5cJ/q1sKZyY+2uKP9fZMhe5GZaONUgtvmp057d67A6swHJuJLauI2ZlAVB
+         C9BdFpDfLQgR9alanTPNsS2h9hrOAEpGOO0C6x0W/PPhD57S3r+1ceNQt8g3M+r5OiJh
+         5rzStoicNz9ywsgqLNeXlz366YWyrCJ/94iRGRmXYk4Inxjyf5QmZk6vKNohJD5Brwzc
+         6L2oUBaN/wBpfN7jDrUjCAQQJ1ANVBa5p7owgTEJW4GuWq7IHfgZ+Pnf1PFxNUGUhMhO
+         ouBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsv2T08F2L/H8fmPfOFCDCfFG99h+lrRjQiROdsVRW2h962uJvEya9m0sORJnB7MuZWvnDpfncaUJzEpUjvkVvoDSJFBXntNlBuQxCBUEMS0P8B38fLg+DmuhIEqYUgR2FTiFRjmAVDTqAGA==
+X-Gm-Message-State: AOJu0YwprDNxwUD+SNtkuSqG25xZuAQ3y4Q+Xg/5zwoO+oeTSTqzLa0o
+	f4XLWBylOhyVB6W7KFSY8hLCsCrS5jTVJ1Nbs9ZCeDvOnFrfoF7q3LA4M/sBwAAWrDSm7DqkLAm
+	P2FMuIRSyhX1Eh7zAhCoPGVoQAAA=
+X-Google-Smtp-Source: AGHT+IE3Ie6UqpwR2ahcExp5xoKdrL6D3srT7/FC+clGzi0IT7DyqDbvdiFN6ftWm9TmZrO0LeCLO9dpE3KzPEnQxIA=
+X-Received: by 2002:ad4:4e62:0:b0:699:514:3031 with SMTP id
+ ec2-20020ad44e62000000b0069905143031mr5645451qvb.20.1712066543293; Tue, 02
+ Apr 2024 07:02:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2fc01e2-f15a-d331-6c4f-64319f3adc8a@huaweicloud.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-0.997];
-	 RCPT_COUNT_TWELVE(0.00)[13];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[suse.cz,kernel.org,linux-foundation.org,kvack.org,vger.kernel.org,infradead.org,redhat.com,suse.com,gmail.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Level: 
-X-Spam-Flag: NO
+References: <20240402-setlease-v2-1-b098a5f9295d@kernel.org>
+ <8a8e8c0d-7878-4289-b490-cb9bf17e56b9@fastmail.fm> <f6bbdf158f0ca7a12de9b9f980d4d7fa31399ed9.camel@kernel.org>
+In-Reply-To: <f6bbdf158f0ca7a12de9b9f980d4d7fa31399ed9.camel@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 2 Apr 2024 17:02:12 +0300
+Message-ID: <CAOQ4uxiv7xSUS7RDK3esa1Crp8reYXewxkr5fFbhG623P20PwA@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: allow FUSE drivers to declare themselves free
+ from outside changes
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Miklos Szeredi <miklos@szeredi.hu>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 28-03-24 09:49:59, Kemeng Shi wrote:
-> on 3/27/2024 5:33 PM, Jan Kara wrote:
-> > On Thu 21-03-24 15:12:21, Kemeng Shi wrote:
-> >>
-> >>
-> >> on 3/20/2024 11:15 PM, Tejun Heo wrote:
-> >>> Hello,
-> >>>
-> >>> On Wed, Mar 20, 2024 at 07:02:22PM +0800, Kemeng Shi wrote:
-> >>>> We never use gdtc->dom set with GDTC_INIT_NO_WB, just remove unneeded
-> >>>> GDTC_INIT_NO_WB
-> >>>>
-> >>>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> >>> ...
-> >>>>  void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty)
-> >>>>  {
-> >>>> -	struct dirty_throttle_control gdtc = { GDTC_INIT_NO_WB };
-> >>>> +	struct dirty_throttle_control gdtc = { };
-> >>>
-> >>> Even if it's currently not referenced, wouldn't it still be better to always
-> >>> guarantee that a dtc's dom is always initialized? I'm not sure what we get
-> >>> by removing this.
-> >> As we explicitly use GDTC_INIT_NO_WB to set global_wb_domain before
-> >> calculating dirty limit with domain_dirty_limits, I intuitively think the
-> >> dirty limit calculation in domain_dirty_limits is related to
-> >> global_wb_domain when CONFIG_WRITEBACK_CGROUP is enabled while the truth
-> >> is not. So this is a little confusing to me.
-> > 
-> Hi Jan,
-> > I'm not sure I understand your confusion. domain_dirty_limits() calculates
-> > the dirty limit (and background dirty limit) for the dirty_throttle_control
-> > passed in. If you pass dtc initialized with GDTC_INIT[_NO_WB], it will
-> > compute global dirty limits. If the dtc passed in is initialized with
-> > MDTC_INIT() it will compute cgroup specific dirty limits.
-> No doubt about this.
-> > 
-> > Now because domain_dirty_limits() does not scale the limits based on each
-> > device throughput - that is done only later in __wb_calc_thresh() to avoid> relatively expensive computations when we don't need them - and also
-> > because the effective dirty limit (dtc->dom->dirty_limit) is not updated by
-> > domain_dirty_limits(), domain_dirty_limits() does not need dtc->dom at all.
-> Acutally, here is the thing confusing me. For wb_calc_thresh, we always pass
-> dtc initialized with a wb (GDTC_INIT(wb) or MDTC_INIT(wb,..). The dtc
-> initialized with _NO_WB is only passed to domain_dirty_limits. However, The
-> dom initialized by _NO_WB for domain_dirty_limits is not needed at all.
-> > But that is a technical detail of implementation and I don't want this
-> > technical detail to be relied on by even more code.
-> Yes, I agree with this. So I wonder if it's acceptable to simply define
-> GDTC_INIT_NO_WB to empty for now instead of remove defination of
-> GDTC_INIT_NO_WB. When implementation of domain_dirty_limits() or any
-> other low level function in future using GDTC_INIT(_NO_WB) changes to
-> need dtc->domain, we re-define GDTC_INIT_NO_WB to proper value.
-> As this only looks confusing to me. I will drop this one in next version
-> if you still prefer to keep definatino of GDTC_INIT_NO_WB in the old way.
+On Tue, Apr 2, 2024 at 4:29=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
+te:
+>
+> On Tue, 2024-04-02 at 15:23 +0200, Bernd Schubert wrote:
+> >
+> > On 4/2/24 15:10, Jeff Layton wrote:
+> > > Traditionally, we've allowed people to set leases on FUSE inodes.  So=
+me
+> > > FUSE drivers are effectively local filesystems and should be fine wit=
+h
+> > > kernel-internal lease support. Others are backed by a network server
+> > > that may have multiple clients, or may be backed by something non-fil=
+e
+> > > like entirely. On those, we don't want to allow leases.
+> > >
+> > > Have the filesytem driver to set a fuse_conn flag to indicate whether
+> > > the inodes are subject to outside changes, not done via kernel APIs. =
+ If
+> > > the flag is unset (the default), then setlease attempts will fail wit=
+h
+> > > -EINVAL, indicating that leases aren't supported on that inode.
+> > >
+> > > Local-ish filesystems may want to start setting this value to true to
+> > > preserve the ability to set leases.
+> > >
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > > This is only tested for compilation, but it's fairly straightforward.
+> > >
+> > > I've left the default the "safe" value of false, so that we assume th=
+at
+> > > outside changes are possible unless told otherwise.
+> > > ---
+> > > Changes in v2:
+> > > - renamed flag to FUSE_NO_OUTSIDE_CHANGES
+> > > - flesh out comment describing the new flag
+> > > ---
+> > >  fs/fuse/file.c            | 11 +++++++++++
+> > >  fs/fuse/fuse_i.h          |  5 +++++
+> > >  fs/fuse/inode.c           |  4 +++-
+> > >  include/uapi/linux/fuse.h |  1 +
+> > >  4 files changed, 20 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > > index a56e7bffd000..79c7152c0d12 100644
+> > > --- a/fs/fuse/file.c
+> > > +++ b/fs/fuse/file.c
+> > > @@ -3298,6 +3298,16 @@ static ssize_t fuse_copy_file_range(struct fil=
+e *src_file, loff_t src_off,
+> > >     return ret;
+> > >  }
+> > >
+> > > +static int fuse_setlease(struct file *file, int arg,
+> > > +                    struct file_lease **flp, void **priv)
+> > > +{
+> > > +   struct fuse_conn *fc =3D get_fuse_conn(file_inode(file));
+> > > +
+> > > +   if (fc->no_outside_changes)
+> > > +           return generic_setlease(file, arg, flp, priv);
+> > > +   return -EINVAL;
+> > > +}
+> > > +
+> > >  static const struct file_operations fuse_file_operations =3D {
+> > >     .llseek         =3D fuse_file_llseek,
+> > >     .read_iter      =3D fuse_file_read_iter,
+> > > @@ -3317,6 +3327,7 @@ static const struct file_operations fuse_file_o=
+perations =3D {
+> > >     .poll           =3D fuse_file_poll,
+> > >     .fallocate      =3D fuse_file_fallocate,
+> > >     .copy_file_range =3D fuse_copy_file_range,
+> > > +   .setlease       =3D fuse_setlease,
+> > >  };
+> > >
+> > >  static const struct address_space_operations fuse_file_aops  =3D {
+> > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > index b24084b60864..49d44a07b0db 100644
+> > > --- a/fs/fuse/fuse_i.h
+> > > +++ b/fs/fuse/fuse_i.h
+> > > @@ -860,6 +860,11 @@ struct fuse_conn {
+> > >     /** Passthrough support for read/write IO */
+> > >     unsigned int passthrough:1;
+> > >
+> > > +   /** Can we assume that the only changes will be done via the loca=
+l
+> > > +    *  kernel? If the driver represents a network filesystem or is a=
+ front
+> > > +    *  for data that can change on its own, set this to false. */
+> > > +   unsigned int no_outside_changes:1;
+> > > +
+> > >     /** Maximum stack depth for passthrough backing files */
+> > >     int max_stack_depth;
+> > >
+> > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > index 3a5d88878335..f33aedccdb26 100644
+> > > --- a/fs/fuse/inode.c
+> > > +++ b/fs/fuse/inode.c
+> > > @@ -1330,6 +1330,8 @@ static void process_init_reply(struct fuse_moun=
+t *fm, struct fuse_args *args,
+> > >                     }
+> > >                     if (flags & FUSE_NO_EXPORT_SUPPORT)
+> > >                             fm->sb->s_export_op =3D &fuse_export_fid_=
+operations;
+> > > +                   if (flags & FUSE_NO_OUTSIDE_CHANGES)
+> > > +                           fc->no_outside_changes =3D 1;
+> > >             } else {
+> > >                     ra_pages =3D fc->max_read / PAGE_SIZE;
+> > >                     fc->no_lock =3D 1;
+> > > @@ -1377,7 +1379,7 @@ void fuse_send_init(struct fuse_mount *fm)
+> > >             FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_E=
+XT |
+> > >             FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
+> > >             FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
+> > > -           FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND;
+> > > +           FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_NO_OUTSID=
+E_CHANGES;
+> > >  #ifdef CONFIG_FUSE_DAX
+> > >     if (fm->fc->dax)
+> > >             flags |=3D FUSE_MAP_ALIGNMENT;
+> > > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > > index d08b99d60f6f..703d149d45ff 100644
+> > > --- a/include/uapi/linux/fuse.h
+> > > +++ b/include/uapi/linux/fuse.h
+> > > @@ -463,6 +463,7 @@ struct fuse_file_lock {
+> > >  #define FUSE_PASSTHROUGH   (1ULL << 37)
+> > >  #define FUSE_NO_EXPORT_SUPPORT     (1ULL << 38)
+> > >  #define FUSE_HAS_RESEND            (1ULL << 39)
+> > > +#define FUSE_NO_OUTSIDE_CHANGES    (1ULL << 40)
+> >
+> > Above all of these flags are comments explaining the flags, so that one
+> > doesn't need to look up in kernel sources what the exact meaning is.
+> >
+> > Could you please add something like below?
+> >
+> > FUSE_NO_OUTSIDE_CHANGES: No file changes through other mounts / clients
+> >
+>
+> Definitely. I've added that in my local branch. I can either resend
+> later, or maybe Miklos can just add that if he's otherwise OK with this
+> patch.
 
-Yeah, please keep the code as is for now. I agree this needs some cleanups
-but what you suggest is IMHO not an improvement.
+Don't love the name but don't have any suggestions either.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I am wondering out loud, if we have such a mode for the fs,
+if and how should it affect caching configuration?
+
+Thanks,
+Amir.
 
