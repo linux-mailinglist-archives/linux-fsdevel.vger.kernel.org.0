@@ -1,275 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-15890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5B689585A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 17:42:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA59D89589C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 17:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B10C283A55
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 15:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD4B1F22606
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 15:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E99584FCD;
-	Tue,  2 Apr 2024 15:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A96A1332A9;
+	Tue,  2 Apr 2024 15:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDVDF/jA"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PI5xi3Zy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB5A13174F
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 15:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8340C131751;
+	Tue,  2 Apr 2024 15:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712072532; cv=none; b=RQroTq+GNMetVzBr284EQqCSsMD/Y5UybM17+UXju7XQDaJLoBOVMkZvSiO7mEkDceF+dTLA6WDFqQc9+0K2s5VQX5VU21AxsyokhJA8chsfldakyTY3M2tfWTpbyV+q0VJ0gjGBys+DVa9teJyqQBmb2YX8ik+PRNKu6Owb71o=
+	t=1712072932; cv=none; b=ak8xXkgXcZ/FTMVu1OXoCc9x1oRXLO2oA6utX9s4XlL0Awwy0f+iJaeraVH+4u+dMt7QHOxvFc630OVMfA/O4Vqv6oGLNYKH4Yv2LeR68xMaAy+UYwq1k5TZO14QBYAkGFAkvYR2MnrI6DDR9gpgMpKnzg86EmG/H2z5CWJoVzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712072532; c=relaxed/simple;
-	bh=IOMwyl/RlCQmuZPdZbebox/pMJPz1qwO9Fe/PD0INNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uzt0cY4wj6oLvbAtRX97Z+FiODUJd+a/DhXrjhd7Q2rqFansdsY5/WOakL2lRmLRgZAOw2ltyiU4p9gK+C2YK/50PwClkdr85nnoJz+XgoETmVdcLw1c49FNwNYAyQaRJIP31PK5zmIM0TNK5U6VC/kVfw5FFf/tElNDxTGqoeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDVDF/jA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712072529;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vo4KXHnHT1kRb4VWXMSvY0WyUHSYdFU/l/w7yaKXDrE=;
-	b=VDVDF/jAeya7UNE5nedS09mrRKQnTQJtwWoEIS8iY0bgqD1NIELBHV0JKCkytwf9fplfkb
-	+Lri6SBTsTv7SECduQLU/FKtWChNmcLXd+mPeStTZBvoiwzwlgRWN4w//a1Njv3p93Ghyv
-	BmPEQ0oK6m2CRCfnQSHWs9ZQb4VCZNI=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-393-ZufTvKPVM7-NaoaJZGZsTw-1; Tue, 02 Apr 2024 11:42:08 -0400
-X-MC-Unique: ZufTvKPVM7-NaoaJZGZsTw-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-56dc267c77dso1745637a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 08:42:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712072526; x=1712677326;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vo4KXHnHT1kRb4VWXMSvY0WyUHSYdFU/l/w7yaKXDrE=;
-        b=FQSAvzvsbuUzUpNMKtIFPqQFK9AZ86ZeD3iA/pG9Q39LDNV8ecdQB1VU3ED+upZn7D
-         hsWbElRqRIw6rQdfjLv+vKc6BVHQLJHwwiQ5RQVTB1MiCtwvmv96YXIbuEfs7+dwmAMm
-         okpWTPc2FtpQdpHTlvjZP+LrQRZncVkXtG/gvKpBPC1LAM7boy4VXGrEDrup3zEsRO3C
-         y019+Zwioyho6Tpjht40dcTZxFdenqngtVT3ACfvcFWdx0MW1KTS5IodKpKbbeUjNc4J
-         PCmEkFLlCX7DMfF3MHuMha77kGd/iR7VPuWPaTCGtb8XYTrKXiSadTCt9rj707LTbmdG
-         TBDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFJthO7FESXOXuZESXHtQfUHoQVvEuzhHJ6t6jH6TBl9m2EEjy1m345wsFgnzLQK3qOj/40AeyRsQEyTVQ3dlcUgdhA/z+wgz7xRRFbg==
-X-Gm-Message-State: AOJu0Yzyek5ve0wiQpUGPgOYwOu6VH2wGzdn9KKJhfDWC1fyFi/kpdzj
-	/ct9MHult9Asucyk9d2ECrzFNqRD2MpJduR83Bm4APwgGtOiqFydAxb014uXnb0rbcnf3+h8QkA
-	+HVLr4PCVGFeaC/6ZB6O3mdvNhZLa1o67nku2YsqiOSTZWhtP8v4/h0zC0bFGdhMMtWimGg==
-X-Received: by 2002:a05:6402:4406:b0:56d:f7ce:e879 with SMTP id y6-20020a056402440600b0056df7cee879mr938360eda.37.1712072526382;
-        Tue, 02 Apr 2024 08:42:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7aAEJW4XWvHbT55Usj/Gd7Y4zWuDJoOPWluU6ci0bU43MAk3Fvh9dqfeJxqYZcKsMvZRGzA==
-X-Received: by 2002:a05:6402:4406:b0:56d:f7ce:e879 with SMTP id y6-20020a056402440600b0056df7cee879mr938329eda.37.1712072525629;
-        Tue, 02 Apr 2024 08:42:05 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id x7-20020aa7cd87000000b0056dd19e3296sm2900699edv.30.2024.04.02.08.42.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Apr 2024 08:42:05 -0700 (PDT)
-Date: Tue, 2 Apr 2024 17:42:04 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: ebiggers@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
-Subject: Re: [PATCH 24/29] xfs: teach online repair to evaluate fsverity
- xattrs
-Message-ID: <6fd77dqwbfmbaqwqori6jffpg2czfe23qmqrvzducti33a4vvi@7lut4a6qhsmt>
-References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
- <171175868956.1988170.10162640337320302727.stgit@frogsfrogsfrogs>
+	s=arc-20240116; t=1712072932; c=relaxed/simple;
+	bh=3Q4sw2WXlvOL56uRd8hcDkbPNnR7p5wFvWwXppPSe2U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b+Kc+m5Awuz4DZD5oX/vW9MOTHcGbDc4LDtRXzcI2AE1SyIrYHqp2ZW5umNe9Ps0U2l9c8MZsC8DEdNKH3Bu2xiv6N6J3PaufLYvFIiqqrUQET2gYygHQJJ7fnWSVBXHVQkPGrXrBvrMfLVoozCXOnazxpZrAWBAQVQGWYnEBvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PI5xi3Zy; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1712072928;
+	bh=3Q4sw2WXlvOL56uRd8hcDkbPNnR7p5wFvWwXppPSe2U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PI5xi3ZycfvN4c9ep2fl6zXkWItHP4JowiwSlBcekvXuv+387JU5aaViZoOZiQxcY
+	 KXPq0fzMtqwFNcYQdmx41zEs70JREAPN9TUs3o5ozIszcmS6Bptwi9z1Lu3ATVk4B6
+	 MgqN8T5PoAbXhyNwEEjSucXtOtesYNy4HFvq25d1k33pXfm+4xTfeGVjIjdIDj/FHL
+	 jFq1RxQ8Ai4ME2kV0BdRjMYOj+NTmtDibf+zOL6QI0UMXJKGa4ZvIrlqZbMOdTWulW
+	 D3vawV71c3/oRq6OGFlpOr5rS9fuXPBvGiXFyWz/8IMW6jovaYklSo9TN83IgZW1hR
+	 8ukjO3YmuytlQ==
+Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ehristev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8ACDD3780C39;
+	Tue,  2 Apr 2024 15:48:47 +0000 (UTC)
+From: Eugen Hristev <eugen.hristev@collabora.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel@collabora.com,
+	eugen.hristev@collabora.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	krisman@suse.de
+Subject: [PATCH v15 0/9] Cache insensitive cleanup for ext4/f2fs
+Date: Tue,  2 Apr 2024 18:48:33 +0300
+Message-Id: <20240402154842.508032-1-eugen.hristev@collabora.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171175868956.1988170.10162640337320302727.stgit@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
 
-On 2024-03-29 17:42:19, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
-> 
-> Teach online repair to check for unused fsverity metadata and purge it
-> on reconstruction.
-> 
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> ---
->  fs/xfs/scrub/attr.c        |  139 ++++++++++++++++++++++++++++++++++++++++++++
->  fs/xfs/scrub/attr.h        |    6 ++
->  fs/xfs/scrub/attr_repair.c |   50 ++++++++++++++++
->  fs/xfs/scrub/trace.c       |    1 
->  fs/xfs/scrub/trace.h       |   31 ++++++++++
->  5 files changed, 226 insertions(+), 1 deletion(-)
-> 
-> 
-> diff --git a/fs/xfs/scrub/attr.c b/fs/xfs/scrub/attr.c
-> index 2e8a2b2e82fbd..be121625c14f0 100644
-> --- a/fs/xfs/scrub/attr.c
-> +++ b/fs/xfs/scrub/attr.c
-> @@ -18,6 +18,7 @@
->  #include "xfs_attr_leaf.h"
->  #include "xfs_attr_sf.h"
->  #include "xfs_parent.h"
-> +#include "xfs_verity.h"
->  #include "scrub/scrub.h"
->  #include "scrub/common.h"
->  #include "scrub/dabtree.h"
-> @@ -25,6 +26,8 @@
->  #include "scrub/listxattr.h"
->  #include "scrub/repair.h"
->  
-> +#include <linux/fsverity.h>
-> +
->  /* Free the buffers linked from the xattr buffer. */
->  static void
->  xchk_xattr_buf_cleanup(
-> @@ -126,6 +129,53 @@ xchk_setup_xattr_buf(
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_FS_VERITY
-> +/*
-> + * Obtain merkle tree geometry information for a verity file so that we can
-> + * perform sanity checks of the fsverity xattrs.
-> + */
-> +STATIC int
-> +xchk_xattr_setup_verity(
-> +	struct xfs_scrub	*sc)
-> +{
-> +	struct xchk_xattr_buf	*ab;
-> +	int			error;
-> +
-> +	/*
-> +	 * Drop the ILOCK and the transaction because loading the fsverity
-> +	 * metadata will call into the xattr code.  S_VERITY is enabled with
-> +	 * IOLOCK_EXCL held, so it should not change here.
-> +	 */
-> +	xchk_iunlock(sc, XFS_ILOCK_EXCL);
-> +	xchk_trans_cancel(sc);
-> +
-> +	error = xchk_setup_xattr_buf(sc, 0);
-> +	if (error)
-> +		return error;
-> +
-> +	ab = sc->buf;
-> +	error = fsverity_merkle_tree_geometry(VFS_I(sc->ip),
-> +			&ab->merkle_blocksize, &ab->merkle_tree_size);
-> +	if (error == -ENODATA || error == -EFSCORRUPTED) {
-> +		/* fsverity metadata corrupt, cannot complete checks */
-> +		xchk_set_incomplete(sc);
-> +		ab->merkle_blocksize = 0;
-> +		error = 0;
-> +	}
-> +	if (error)
-> +		return error;
-> +
-> +	error = xchk_trans_alloc(sc, 0);
-> +	if (error)
-> +		return error;
-> +
-> +	xchk_ilock(sc, XFS_ILOCK_EXCL);
-> +	return 0;
-> +}
-> +#else
-> +# define xchk_xattr_setup_verity(...)	(0)
-> +#endif /* CONFIG_FS_VERITY */
-> +
->  /* Set us up to scrub an inode's extended attributes. */
->  int
->  xchk_setup_xattr(
-> @@ -150,9 +200,89 @@ xchk_setup_xattr(
->  			return error;
->  	}
->  
-> -	return xchk_setup_inode_contents(sc, 0);
-> +	error = xchk_setup_inode_contents(sc, 0);
-> +	if (error)
-> +		return error;
-> +
-> +	if (IS_VERITY(VFS_I(sc->ip))) {
-> +		error = xchk_xattr_setup_verity(sc);
-> +		if (error)
-> +			return error;
-> +	}
-> +
-> +	return error;
->  }
->  
-> +#ifdef CONFIG_FS_VERITY
-> +/* Check the merkle tree xattrs. */
-> +STATIC void
-> +xchk_xattr_verity(
-> +	struct xfs_scrub		*sc,
-> +	xfs_dablk_t			blkno,
-> +	const unsigned char		*name,
-> +	unsigned int			namelen,
-> +	unsigned int			valuelen)
-> +{
-> +	struct xchk_xattr_buf		*ab = sc->buf;
-> +
-> +	/* Non-verity filesystems should never have verity xattrs. */
-> +	if (!xfs_has_verity(sc->mp)) {
-> +		xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * Any verity metadata on a non-verity file are leftovers from a
-> +	 * previous attempt to enable verity.
-> +	 */
-> +	if (!IS_VERITY(VFS_I(sc->ip))) {
-> +		xchk_ino_set_preen(sc, sc->ip->i_ino);
-> +		return;
-> +	}
-> +
-> +	/* Zero blocksize occurs if we couldn't load the merkle tree data. */
-> +	if (ab->merkle_blocksize == 0)
-> +		return;
-> +
-> +	switch (namelen) {
-> +	case sizeof(struct xfs_merkle_key):
-> +		/* Oversized blocks are not allowed */
-> +		if (valuelen > ab->merkle_blocksize) {
-> +			xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
-> +			return;
-> +		}
-> +		break;
-> +	case XFS_VERITY_DESCRIPTOR_NAME_LEN:
-> +		/* Has to match the descriptor xattr name */
-> +		if (memcmp(name, XFS_VERITY_DESCRIPTOR_NAME, namelen))
-> +			xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
-> +		return;
-> +	default:
-> +		xchk_fblock_set_corrupt(sc, XFS_ATTR_FORK, blkno);
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * Merkle tree blocks beyond the end of the tree are leftovers from
-> +	 * a previous failed attempt to enable verity.
-> +	 */
-> +	if (xfs_merkle_key_from_disk(name, namelen) >= ab->merkle_tree_size)
-> +		xchk_ino_set_preen(sc, sc->ip->i_ino);
+Hello,
 
-The other case which probably can be detected is if we start
-removing the tree and it gets interrupted (starting blocks missing).
-This can be checked by iterating over the xattrs names up to
-->merkle_tree_size. But I'm not sure if online repair can store
-state over xattrs validation.
+I am trying to respin the series here :
+https://www.spinics.net/lists/linux-ext4/msg85081.html
 
-Also, only pair of valid descriptor and valid tree is something of
-use, but I'm not sure if all of this is in scope of online repair.
+I resent some of the v9 patches and got some reviews from Gabriel,
+I did changes as requested and here is v15.
 
-Otherwise, looks good to me:
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
+Changes in v15:
+- fix wrong check `ret<0` in 7/9
+- fix memleak reintroduced in 8/9
+
+Changes in v14:
+- fix wrong kfree unchecked call
+- changed the return code in 3/8
+
+Changes in v13:
+- removed stray wrong line in 2/8
+- removed old R-b as it's too long since they were given
+- removed check for null buff in 2/8
+- added new patch `f2fs: Log error when lookup of encoded dentry fails` as suggested
+- rebased on unicode.git for-next branch
+
+Changes in v12:
+- revert to v10 comparison with propagating the error code from utf comparison
+
+Changes in v11:
+- revert to the original v9 implementation for the comparison helper.
+
+Changes in v10:
+- reworked a bit the comparison helper to improve performance by
+first performing the exact lookup.
+
+
+* Original commit letter
+
+The case-insensitive implementations in f2fs and ext4 have quite a bit
+of duplicated code.  This series simplifies the ext4 version, with the
+goal of extracting ext4_ci_compare into a helper library that can be
+used by both filesystems.  It also reduces the clutter from many
+codeguards for CONFIG_UNICODE; as requested by Linus, they are part of
+the codeflow now.
+
+While there, I noticed we can leverage the utf8 functions to detect
+encoded names that are corrupted in the filesystem. Therefore, it also
+adds an ext4 error on that scenario, to mark the filesystem as
+corrupted.
+
+This series survived passes of xfstests -g quick.
+
+Eugen Hristev (1):
+  f2fs: Log error when lookup of encoded dentry fails
+
+Gabriel Krisman Bertazi (8):
+  ext4: Simplify the handling of cached insensitive names
+  f2fs: Simplify the handling of cached insensitive names
+  libfs: Introduce case-insensitive string comparison helper
+  ext4: Reuse generic_ci_match for ci comparisons
+  f2fs: Reuse generic_ci_match for ci comparisons
+  ext4: Log error when lookup of encoded dentry fails
+  ext4: Move CONFIG_UNICODE defguards into the code flow
+  f2fs: Move CONFIG_UNICODE defguards into the code flow
+
+ fs/ext4/crypto.c   |  10 +---
+ fs/ext4/ext4.h     |  35 +++++++-----
+ fs/ext4/namei.c    | 129 ++++++++++++++++-----------------------------
+ fs/ext4/super.c    |   4 +-
+ fs/f2fs/dir.c      | 108 ++++++++++++-------------------------
+ fs/f2fs/f2fs.h     |  16 +++++-
+ fs/f2fs/namei.c    |  10 ++--
+ fs/f2fs/recovery.c |   5 +-
+ fs/f2fs/super.c    |   8 +--
+ fs/libfs.c         |  77 +++++++++++++++++++++++++++
+ include/linux/fs.h |   4 ++
+ 11 files changed, 210 insertions(+), 196 deletions(-)
 
 -- 
-- Andrey
+2.34.1
 
 
