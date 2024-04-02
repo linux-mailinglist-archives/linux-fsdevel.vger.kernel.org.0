@@ -1,121 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-15875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F5B895423
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 14:59:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDE08954DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 15:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E051F22A6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 12:59:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11CD1B2461F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 13:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D117FBA2;
-	Tue,  2 Apr 2024 12:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873BF84FB8;
+	Tue,  2 Apr 2024 13:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="O+kh+0Xh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ra5rTJra"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331FE7EF10
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 12:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF03E84FA0;
+	Tue,  2 Apr 2024 13:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712062764; cv=none; b=B1EwMmwHZPj/moio0xOX3Pc8Ey5aHzxlb2W9igexbRAejBx/Nf2cqrlyJ/bSylNZ479A7hgD8kE/6D3SDH38MxXL9S+GLCduWd2LgNzlpm+mmCaXTvJwnwY/rNRBwh6CAbrwdNv4qWZXbDrTs4WxevXqx2qTs6eYbZbMOxJmFdU=
+	t=1712063464; cv=none; b=X84UypSy5Rf8PdNtsHs3pXY3OvPUC08Up3tljtGgUXxHAgLf2zJCmLaGCl8K014DOupLnq/YqsGe25fxQ8kW4HsPvcYuUjAoeyOoiTkGcrUpCvEaNRsj/rWOo7QOab1ndWVjfhBJwkXzS8s9g2WCXbkZNVPM3tqJkAnjfteaIak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712062764; c=relaxed/simple;
-	bh=tiK9jKJ2+xXuH8WXQGbb0XpXEfM+vM67ITuCAXHE0dU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=adSQV5cDDafCn05ZFTpqNbU35UkeTeQFRYkJDnHa/tyca3SLwekjlOi45+WfDGxNL/R3ROL7WNs/pjyKcW2dlhdGyI3MnPF2yR2VRiLRokrOUjhGqmCluLLahf5Cx52uPpDScAezGGLuckccEd91N9nOmt1q2My96NGdg/G2dhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=O+kh+0Xh; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6e696233f44so576227b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 05:59:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712062760; x=1712667560; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WFjYmEuWTIY3JaRPL6EesdmjDFY5OtvnQu536kNTjd4=;
-        b=O+kh+0XhqBpGCeoXVeckb1hbaHVwLb4M9W+YqjkdbUmlRgO9m4ZV34KC7CRHVC7Ol9
-         Ewv/KWd5HHm5sMl9X3hlXA01e0GxswykkoydUYb/pOO1wcLO69meyZF7r+CYoMJBcKLJ
-         jzx8iO0e9wJq9I09xl95slJzz+9vPZiNI1CEcCSsLGePCTek1A+e2sx306lUFfUS0XIL
-         ixNwuwRZSo7y61mnnWwySyMM3y/XvqFfrlZY1vA9/ju9v1p+xHDfF9Xx1JAWny4F68XP
-         TOzOPUKf0WeEenBNcJuDpSWCRluMnbUGja2P45KPV1/hjNbxczQwJ8Wjb16h/+9lak/l
-         Oq/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712062760; x=1712667560;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WFjYmEuWTIY3JaRPL6EesdmjDFY5OtvnQu536kNTjd4=;
-        b=Pjr6/1efPRu3n1C/2Gxd5UrOhPBxfrE4GiC21UR4l4H+BjpYuvNCWxmScX4PMLOB2I
-         B5tUWegmlzFUXGmT79CAofthHx0+F9xEii+PkmwjxxsFvXQ6xngRe9chy6+GpZG1MP/9
-         jR7HnfYmsvHTtipZwrAFdjfsrtZ5320YYOCbX8rULv0ldmQZ1d6GXe63s+PYDp5Mm9Rt
-         z2unEKXDPDDPRPQdfJayCb331gKz+L7iGlmV2zyQrGm3gdqlO1898Hp2MApfZKSR9rU8
-         192YpWVQstEnANXO0w7Z7cFMWa/PWTtmQPPvDXV6oY25JOAtDUL3K7+JDZgFAUgUDrbh
-         rClg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoZDzUgkOgvlR3BUCtv8er7mwKPvFZvU9DwFcMd0hbFoiijRbKVzo42AJJq/+4hSSuJJff7HO4HYworJTv26xE40daR13jCt7CYrZ2Vw==
-X-Gm-Message-State: AOJu0YxAD2MV24ySxjjMEvE4369MpOAG0tUCs3neQmfTcmISsZ59Jh4/
-	z+dsEumR/RzR0F/xRD/bPwM3nAA/9UxnPRmtNuEAJDZWmxJ7GRGvyqhTbyTjzGc=
-X-Google-Smtp-Source: AGHT+IH0ArF1jhsbGRi1BzERtUavmZVX4yVdDKAX/YHZKuB0EYztAUiFcsrm/vEfhvOSnaPo5K25Xg==
-X-Received: by 2002:a05:6a21:a5a3:b0:1a3:b0a8:fbe9 with SMTP id gd35-20020a056a21a5a300b001a3b0a8fbe9mr16248531pzc.1.1712062760425;
-        Tue, 02 Apr 2024 05:59:20 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id bw28-20020a056a02049c00b005dcaa45d87esm8474183pgb.42.2024.04.02.05.59.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Apr 2024 05:59:19 -0700 (PDT)
-Message-ID: <65e9d205-5ba7-4cfe-ac28-bb0494cc61b9@kernel.dk>
-Date: Tue, 2 Apr 2024 06:59:18 -0600
+	s=arc-20240116; t=1712063464; c=relaxed/simple;
+	bh=z5ftgWu8Ra0zpOJ1b9c3WKlj8qgG1oMSVZZQwaE7zsU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rkE2Tm7fTTalJBGasUU9B/AVVDVXBT7dMIp1gnAAjYLR2gT6T1E88DvpB+nEhiPiRWIYqZPdArG9SoIG2GdINMaW/VNwpGKLPgb6CLDM6XqiqyFKGKSn8nHoRgoNDaF5mf+S0fsEuHpMc6src1hFusX+/kjjqmJlVSY22i2XCCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ra5rTJra; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4DBAC433C7;
+	Tue,  2 Apr 2024 13:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712063464;
+	bh=z5ftgWu8Ra0zpOJ1b9c3WKlj8qgG1oMSVZZQwaE7zsU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ra5rTJraG+89L9ZWvJvdB3sz4/wSDPqC2yO9IyYSCCLiVVqrLyZ7bztknKfHGM4wB
+	 Pihv6dT2oXClDocCbTNwkUWw/pgKH1Pjc/BUe8YICVBboQEiEYIoD20chIMvRNFyL5
+	 n63+A3hvrxI2GTTHzjlsSGKiDRKbGTK95ERrccH4oeRWfYd+LYQOTCOR+HD8e54ihI
+	 baUKCwAfjIxbdd2FuI/Ue9VGyWgk8kSJTZPoSscz1gFXUQqtDat9Sfvup1Ymug3OBO
+	 TuIOM8ioidwlanbp7eQl+KWQU7eIiDAfn/FheZmRixfZxW971raFR+bNrral/q3SGt
+	 L8buvO5K02nvw==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Tue, 02 Apr 2024 09:10:59 -0400
+Subject: [PATCH v2] fuse: allow FUSE drivers to declare themselves free
+ from outside changes
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs: claw back a few FMODE_* bits
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Dave Chinner
- <david@fromorbit.com>, io-uring@vger.kernel.org
-References: <20240328-gewendet-spargel-aa60a030ef74@brauner>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240328-gewendet-spargel-aa60a030ef74@brauner>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240402-setlease-v2-1-b098a5f9295d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAOIDDGYC/23MQQ6DIBSE4auYty4NoAbbVe/RuEAcldSAAUPaG
+ O5e6rrLfzL5DooIFpHu1UEByUbrXQl5qcgs2s1gdixNksuG1+LGIvYVOoIZ1GIaOqXUwKnct4D
+ Jvk/q2ZdebNx9+JxyEr/1D5IEE6wxaLWUHF07Pl4IDuvVh5n6nPMXJU0/BaEAAAA=
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4466; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=z5ftgWu8Ra0zpOJ1b9c3WKlj8qgG1oMSVZZQwaE7zsU=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmDAPnXJvae21imEUXw9IWkX/IlcYgW2n9bbmh8
+ oVoswE2n62JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZgwD5wAKCRAADmhBGVaC
+ FQUEEACgR+cPI6gQDVV2g2uLq3sQMUiJZ9WN1lXUi71fPAfcYQuVNdzX2DzvA9QimmAMhD7TL3n
+ oEM9oXNh6DerUHXiXjVAHswIs8nOAMb52t4mBglzBmKaGnxGkiBx0DPJg9GIFNWWdCIkYWQzQ1a
+ RG0MVGo0tKCybBe6VR0f6JycPBC4Cd2vyiRvWISICWVyBiDYwvh3rnViyvb2n4cCufejLMyvdl0
+ azVzW3PUWKrYra9oITvj8WYvVos73tOqpInUcn6ukPLeGb82/cyikKGP8lxEG4PoO72jtV0HWK+
+ 3eB3C96vudLDKnSV9MoOorhYxGdOlVm9DtLPTNae/BpeV9SCsB39dtXGg4+ns02s1SPNOQV3Fi0
+ 7O0RYoAvI9BrhFvszwyo3rQGNWKqjB0LDfbKD/DXFk4k6ppp+n0Lr8EebZyNyYNnAYuy35SDC9c
+ C66I/JbMrQoFwZRJ6/xBiXGARtW6Nc5FudpdJZdYRwMOO+8877VH+pwEDjKDt1v3BtoDR8atyTE
+ lsgV75VsaY/mALD2mdvM7QedCXtHs9xNb9PltM4ZHnd8RILcXpC08H3HfIQZU4yojJgnz/N2Znx
+ 9eGt6iWoMv28ghNhwKx6NV6dG8LWdj4rNVmjGJvbQrYvzBEW2vaW/NtmBl47MpqJRpQLyPjb4qc
+ qihsHoB6aXduPUw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 3/28/24 6:27 AM, Christian Brauner wrote:
-> There's a bunch of flags that are purely based on what the file
-> operations support while also never being conditionally set or unset.
-> IOW, they're not subject to change for individual files. Imho, such
-> flags don't need to live in f_mode they might as well live in the fops
-> structs itself. And the fops struct already has that lonely
-> mmap_supported_flags member. We might as well turn that into a generic
-> fop_flags member and move a few flags from FMODE_* space into FOP_*
-> space. That gets us four FMODE_* bits back and the ability for new
-> static flags that are about file ops to not have to live in FMODE_*
-> space but in their own FOP_* space. It's not the most beautiful thing
-> ever but it gets the job done. Yes, there'll be an additional pointer
-> chase but hopefully that won't matter for these flags.
-> 
-> I suspect there's a few more we can move into there and that we can also
-> redirect a bunch of new flag suggestions that follow this pattern into
-> the fop_flags field instead of f_mode.
-> 
-> (Fwiw, FMODE_NOACCOUNT and FMODE_BACKING could live in fop_flags as
->  well because they're also completely static but they aren't really
->  about file operations so they're better suited for FMODE_* imho.)
+Traditionally, we've allowed people to set leases on FUSE inodes.  Some
+FUSE drivers are effectively local filesystems and should be fine with
+kernel-internal lease support. Others are backed by a network server
+that may have multiple clients, or may be backed by something non-file
+like entirely. On those, we don't want to allow leases.
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Have the filesytem driver to set a fuse_conn flag to indicate whether
+the inodes are subject to outside changes, not done via kernel APIs.  If
+the flag is unset (the default), then setlease attempts will fail with
+-EINVAL, indicating that leases aren't supported on that inode.
 
-As you know, this is going to cause conflicts. Wondering if it's worth
-doing anything about that...
+Local-ish filesystems may want to start setting this value to true to
+preserve the ability to set leases.
 
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+This is only tested for compilation, but it's fairly straightforward.
+
+I've left the default the "safe" value of false, so that we assume that
+outside changes are possible unless told otherwise.
+---
+Changes in v2:
+- renamed flag to FUSE_NO_OUTSIDE_CHANGES
+- flesh out comment describing the new flag
+---
+ fs/fuse/file.c            | 11 +++++++++++
+ fs/fuse/fuse_i.h          |  5 +++++
+ fs/fuse/inode.c           |  4 +++-
+ include/uapi/linux/fuse.h |  1 +
+ 4 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index a56e7bffd000..79c7152c0d12 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -3298,6 +3298,16 @@ static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
+ 	return ret;
+ }
+ 
++static int fuse_setlease(struct file *file, int arg,
++			 struct file_lease **flp, void **priv)
++{
++	struct fuse_conn *fc = get_fuse_conn(file_inode(file));
++
++	if (fc->no_outside_changes)
++		return generic_setlease(file, arg, flp, priv);
++	return -EINVAL;
++}
++
+ static const struct file_operations fuse_file_operations = {
+ 	.llseek		= fuse_file_llseek,
+ 	.read_iter	= fuse_file_read_iter,
+@@ -3317,6 +3327,7 @@ static const struct file_operations fuse_file_operations = {
+ 	.poll		= fuse_file_poll,
+ 	.fallocate	= fuse_file_fallocate,
+ 	.copy_file_range = fuse_copy_file_range,
++	.setlease	= fuse_setlease,
+ };
+ 
+ static const struct address_space_operations fuse_file_aops  = {
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index b24084b60864..49d44a07b0db 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -860,6 +860,11 @@ struct fuse_conn {
+ 	/** Passthrough support for read/write IO */
+ 	unsigned int passthrough:1;
+ 
++	/** Can we assume that the only changes will be done via the local
++	 *  kernel? If the driver represents a network filesystem or is a front
++	 *  for data that can change on its own, set this to false. */
++	unsigned int no_outside_changes:1;
++
+ 	/** Maximum stack depth for passthrough backing files */
+ 	int max_stack_depth;
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 3a5d88878335..f33aedccdb26 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1330,6 +1330,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 			}
+ 			if (flags & FUSE_NO_EXPORT_SUPPORT)
+ 				fm->sb->s_export_op = &fuse_export_fid_operations;
++			if (flags & FUSE_NO_OUTSIDE_CHANGES)
++				fc->no_outside_changes = 1;
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1377,7 +1379,7 @@ void fuse_send_init(struct fuse_mount *fm)
+ 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
+ 		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
+ 		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
+-		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND;
++		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_NO_OUTSIDE_CHANGES;
+ #ifdef CONFIG_FUSE_DAX
+ 	if (fm->fc->dax)
+ 		flags |= FUSE_MAP_ALIGNMENT;
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index d08b99d60f6f..703d149d45ff 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -463,6 +463,7 @@ struct fuse_file_lock {
+ #define FUSE_PASSTHROUGH	(1ULL << 37)
+ #define FUSE_NO_EXPORT_SUPPORT	(1ULL << 38)
+ #define FUSE_HAS_RESEND		(1ULL << 39)
++#define FUSE_NO_OUTSIDE_CHANGES	(1ULL << 40)
+ 
+ /* Obsolete alias for FUSE_DIRECT_IO_ALLOW_MMAP */
+ #define FUSE_DIRECT_IO_RELAX	FUSE_DIRECT_IO_ALLOW_MMAP
+
+---
+base-commit: 026e680b0a08a62b1d948e5a8ca78700bfac0e6e
+change-id: 20240319-setlease-ce31fb8777b0
+
+Best regards,
 -- 
-Jens Axboe
+Jeff Layton <jlayton@kernel.org>
 
 
