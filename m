@@ -1,79 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-15918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C7C895D40
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:06:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BDC895D65
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D4328B020
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 20:06:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 478A2B290EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 20:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9550615CD53;
-	Tue,  2 Apr 2024 20:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5219815D5C0;
+	Tue,  2 Apr 2024 20:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D24TCWwZ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="taugIkjc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA53915CD4D;
-	Tue,  2 Apr 2024 20:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FA75C8E6
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 20:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712088373; cv=none; b=sC0K/+SGUAr23wUOc5C91edlaaeIymTAdrtwzcckKBYcZVUGePqf1Es8CbiyNbAUefU8HT5PjHEf5yzvoGmJJrVI+cK4DLIVdJasWEwKuBR2Lw9Ce7SfoEPJI5lrcilDEWWW3GyF7Uc+3yg+Veet5ZRrPCHIjNE2FfZVg5jycIU=
+	t=1712088778; cv=none; b=YbUWmf1KItb3MifUSZ0Jh0Tg7C8Sxe2Ulx3u2IAv1UcFF4hr4JGPYEUlk5E+T0rtZkEpsAO97Y64WwM9g+eBPZ5/YyMaGIQF8zi8ha0wiXB9gCJK+Uet5kWKvArsXqj5BKtXTOdBGDlECJo/3PyQnNQnz5LZsnV/spbW7Kwvj0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712088373; c=relaxed/simple;
-	bh=AH+u9yD1jlJSCwTFHBY22iNrtcc4kJBqM95CmEZNxsY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ZArPl5d6uc1hoEiF1pU5Ifb/mAQayjcjaw8homZpgXIZw6phLtS33pbCN5ZQ3BxvSEWHv+WiuqRGVIWsyTmLkFBf8ncMcuzJNh7mc9iip7viYyEByz0hKjF70+uC2d8v9KnsPaJ91SNuclhqsy7+K4bT93EoGvxpINp8p2vVdcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D24TCWwZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7039DC433F1;
-	Tue,  2 Apr 2024 20:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712088373;
-	bh=AH+u9yD1jlJSCwTFHBY22iNrtcc4kJBqM95CmEZNxsY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=D24TCWwZ/VlQFqz/RYnybaursMP7ag22EyiqOi86ORsMsFef9dky7Q88YULfXo1nV
-	 TksziVXp2dSh2cCJ6cuGDdLBPPLFVDUArwbaAEUXDCiJNTaVQTb7EkLEZwrsJDMWxY
-	 ADOJ6kH0QG8imlKt1fetCm+6EafCB5AnrRpmZRL+QH8/6uVE0dkloe2Rpruor+rFSK
-	 eAH/XSq5BO/KooRUahuU5fv20PSqaQ3uJHpShSaOe6SOnlwqzlZ1sljcr0o8ojOYTx
-	 2tkAEe12ikZY5o8qJGntrmIkiTQof15Rs5ozyLntFH1SsXkM12GZFJpPb9CvgOxfi/
-	 QBLIajJNnIZ3A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 66653D9A155;
-	Tue,  2 Apr 2024 20:06:13 +0000 (UTC)
-Subject: Re: [GIT PULL] bcachefs fixes for 6.9-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <wwkqc7ugdewzde6gdej5bi6kb3bsvoqzqkexxejcl64d5r3pow@46qmmqq5wx4y>
-References: <wwkqc7ugdewzde6gdej5bi6kb3bsvoqzqkexxejcl64d5r3pow@46qmmqq5wx4y>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <wwkqc7ugdewzde6gdej5bi6kb3bsvoqzqkexxejcl64d5r3pow@46qmmqq5wx4y>
-X-PR-Tracked-Remote: https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-04-01
-X-PR-Tracked-Commit-Id: b3c7fd35c03c17a950737fb56a06b730a7962d28
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 67199a47ddb9e265d1a83bb23bb06c752ffa1f4b
-Message-Id: <171208837341.25987.15931523598662864079.pr-tracker-bot@kernel.org>
-Date: Tue, 02 Apr 2024 20:06:13 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1712088778; c=relaxed/simple;
+	bh=B5VNmsDifySZAuHrpGWSzGdFc0wvmC2oSNPrPlwh79c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ftfa4izGZgXB2raaGFfe9HRMGzLHDKfMY+3d62TtPFqhJnyNtW25PexpPrGXewBcfBUL1lz1fYPsEyFAHK3o9v/haDHfYCJX9pb1mUql7FRUABR9/60MiKm0yTkINoJN8lnojfoZD9td5KrVAN4ERWR9l4AT2nP8nKkXKdzfKvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=taugIkjc; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=joUr8j94Nl3F8GfeLZkX0bpznKDL0IJXDpaW9Sh6Jk8=; b=taugIkjcHTH/CrDE2DvOwonKkY
+	lz1EqnGQ1DArXcQjYx/pC4ZxYm4L8W/RBgWju9Lh0gLbFYevQcp+FA96vlIJmp/zkQDlj0H6lBhR1
+	IDhPN2m7sTRUvEwuF9ztIXY+8RyykR+OavNVKvq3SzRgwC/C8O/WyGyw+iVQEBsa2ecSNP6M637JI
+	j4oagHCtzMV7KjTG1CRtJlwrINnyXOyxCf9rZ2A37Z4t7aco4ME2ouV8imTG/Fq7XiPgqfbqHG6Iu
+	Z2LgOHFeGAhxpuwgrdgELdJ9wfaQRm9C3k5j558MH1DqOTFNpWkgbbXjgM90xAaXwGkeJzVhM9aAB
+	PijOOIKw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rrkV5-00000003qe5-27eG;
+	Tue, 02 Apr 2024 20:12:55 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/4] Remove page_idle and page_young wrappers
+Date: Tue,  2 Apr 2024 21:12:47 +0100
+Message-ID: <20240402201252.917342-1-willy@infradead.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Mon, 1 Apr 2024 18:14:33 -0400:
+There are only a couple of places left using the page wrappers for
+idle & young tracking.  Convert the two users in proc and then we can
+remove the wrappers.  That enables the further simplification of
+autogenerating the definitions when CONFIG_PAGE_IDLE_FLAG is disabled.
 
-> https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-04-01
+Matthew Wilcox (Oracle) (4):
+  proc: Convert clear_refs_pte_range to use a folio
+  proc: Convert smaps_account() to use a folio
+  mm: Remove page_idle and page_young wrappers
+  mm: Generate PAGE_IDLE_FLAG definitions
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/67199a47ddb9e265d1a83bb23bb06c752ffa1f4b
-
-Thank you!
+ fs/proc/task_mmu.c         | 32 +++++++++++---------
+ include/linux/page-flags.h |  9 +++++-
+ include/linux/page_idle.h  | 62 ++------------------------------------
+ 3 files changed, 27 insertions(+), 76 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0
+
 
