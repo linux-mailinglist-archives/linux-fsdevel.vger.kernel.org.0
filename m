@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-15927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE19D895D87
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:26:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D9C895D89
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 22:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214791F22ACB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 20:26:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C0328A93F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Apr 2024 20:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EB615E1E6;
-	Tue,  2 Apr 2024 20:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF3F15E209;
+	Tue,  2 Apr 2024 20:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2gtWnPGf"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="d4IitUln"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B5C15D5C1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 20:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2A215DBC4
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Apr 2024 20:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712089534; cv=none; b=tuzsbT6IaPGxrXGXb/FL1B0qpNXPPbRT7XVEcCWhkxol/xvmn61W9BCp91YqyE/FZ86nlguHPc45+w8bQiyf9zz/r3xNqBfikgYddezxHp3ElawPtvR2talZXUiUmYitWeqx0u6GWlCXgMZyIVHmK+oITh2pEJKt4beu7HAYEKE=
+	t=1712089535; cv=none; b=aV9k5R2x8MXr1WoBKzgtPO/Bfva2whxTXDIo/aIetEJOsLZnFYwLFBmeehdCwsI1Q+wHjH8uXqUGVD9Y20zBGVhPy1ICCrnn2FYH1YSE2k9MEPQbSqfhRRIVJATpdHZ+Ui5cgOG18EnYx2Tn5CThti0u3K4U/VbUovKLp4ThH8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712089534; c=relaxed/simple;
-	bh=nKnUH95th5iYE+E4iFcTgJ/16TGJIT26Qlwp258+K5s=;
+	s=arc-20240116; t=1712089535; c=relaxed/simple;
+	bh=OIR2Y5io1QhHTLei1BSk8STk0MqP9Cy7Pory5o7tlKI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ns+BfVPgPVA3vcFL2BAkn4At6j/+c7zkNd+CXfpzmiXGfTleORa/IY4bYYzkz7g2b/HFkLTu/Pxb5PIEBMCeXqqT+PItB/XhBcnTTYvPv+t9LN3bu6fzcuJD2GX8xdakrSO4VzbJ/++eNnuT0Ugz5AhdiBV176ehXDjH6H1jlN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2gtWnPGf; arc=none smtp.client-ip=209.85.166.52
+	 MIME-Version; b=BwSXOEfWem8olfk5ij5KH8d5V9QQSAdb7Cy9K62cBlropxwAnKTU4VnTeFgVe45cmee9b8ZHVr7ErjP+Bz+2QCxkF15odw6RrFl6gTXoxyzWvADZufotYL42MsFxQL9YQrv5HtalP3+/RCSsDNgLDJNA2PBlHck34zcsE6SPlDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=d4IitUln; arc=none smtp.client-ip=209.85.166.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7cc0e831e11so42168239f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 13:25:31 -0700 (PDT)
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7cc0e831e11so42169039f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 13:25:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712089531; x=1712694331; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712089532; x=1712694332; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0FZepTNIuSDeEcz8U+UNewgZo+OZhoLKPwuweNfu0j4=;
-        b=2gtWnPGf5fqzADevdBAFp2Ldv/vvHexZ0YgDDDUHikM1VtL+bIGWOifz9I3kY52S/W
-         cuL2TdVyELFAxPXlCTP1VG20bRS5eEj3uj/SuDZoF8ssZ9iwVkmTJxwYN8kYL1OJWkik
-         GxHH9A2qx7g5XojFDK9wv+3jpbjV5puKvrtJCnMKcmFNdNdJ3JV7iFvr6igvpftZAmKb
-         5rfU0rRzAgHKtWRm4jBUVKFobvtPeoufGeGtTBvDRBmMWKVgvQ9eS9+tCYJtpGTYxPcQ
-         4JrCnsNWUh/Yfg04LBUunmXJUtmhfwaan9vLICa3AVX96mTuWxNZWrYf0iiyBHj469WS
-         G5tQ==
+        bh=xLz/H2XFRBrWVV5Gb4xnS/5GtE0qd548o457X3QGvso=;
+        b=d4IitUlno+PuogJ8NCl7dVSEOq176jVoZrWzBNZXyTbn/swjwxqIvBtrZOi891h0pY
+         lIKtL79G7INaAgvEVMCcIKvG9BwpqaytpNNXz5WPdGVwTQY+17iJJmG1zqeh97XImOO/
+         Bd/m92nwuMJ3fGAhDT+vKpMQGwpjGki1ZCafFw+dFzU+ul7h/BrGHC6GfCI7Ec+rL+Wg
+         P6UGtibQAdiIyIqQWaUxRONMT8Do8YVJBoSqfgLpSf9jqRe2dkT2SFAHe1hG42kvfIMN
+         4fPy7eDnm/OsHSi6v2IAnF/IzMqGRuhJPvugqktAiXVm3tP87YKBMjuI6j4sgpxU0yfD
+         gT4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712089531; x=1712694331;
+        d=1e100.net; s=20230601; t=1712089532; x=1712694332;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0FZepTNIuSDeEcz8U+UNewgZo+OZhoLKPwuweNfu0j4=;
-        b=Gxx8tWCx8hAbdNQW8JCfHAA7x8D9XrA9WdIVdwXUG3UgG5E/vHqy4HsDteFG3cpQLP
-         H092zy07sRxYnUViAfSPRkmMjvRgc4SQDjDb/jkpokMg9PPXS9DjU55VsvOwGZmiB63A
-         CoxayzQcr17GInro91mTgfUU0bHlDu/OWYZ/WiBYa1XAX8emmHxavdt+a4U+H9FBBUNE
-         MSMmOqFODo/kIGklmy5GwQuLwhpZDd9EeAhc7o/lbg0r26mNyDBeewHFnqi3DCS4iDhm
-         /HnD3fJxiVJQjnpiZsohF0FFaOUnL82wHxy75rvlbRax/T48VejCRmIJvOxOpm2orEp7
-         ROHQ==
-X-Gm-Message-State: AOJu0YzlIdu66d4XuD3zIdtL3KaDuZhEqkA6OvH0z2SKJOY5xv4jfK6M
-	eVjGjdp1qjJtCafnDuB/VH3LBM0KTXhvv2S3abMAYKjRK+B5GzM6jqPye9Idn5YtkTf9kv+wICg
-	6
-X-Google-Smtp-Source: AGHT+IFF7DMoRqbCY2mzvlWMvINoCoSms6BJpXeiJeD49z0rUXhgZSmI6hVa5k8tSH1ih5v7pQIr3Q==
-X-Received: by 2002:a6b:6d16:0:b0:7d0:c0e7:b577 with SMTP id a22-20020a6b6d16000000b007d0c0e7b577mr7956399iod.2.1712089530753;
-        Tue, 02 Apr 2024 13:25:30 -0700 (PDT)
+        bh=xLz/H2XFRBrWVV5Gb4xnS/5GtE0qd548o457X3QGvso=;
+        b=AVpXdo0qepnGMv9pQkdHX8bnBkQGcvDPahgt5nq1e6ZNzBbNKUi5NQk+tvj4cLgGMp
+         ztDsw+uie0ZjfSafaTwFYjC7+6o31sTGC8c7HdsI9RTGeDY/vFu/6AafdRLDWF6t6Hv1
+         px11mqO2/4z3cC1hq4BatOoOLjSWTmzi6OMHJf40iG6vDcj6SyAxuRnlNisgiSW9Qx5x
+         jlca5sJjye32nb9DKQ0S2uxF+q1r0P/XZjpI/PcY9BIPoMcXgD6o3xaY8+u/h0zynnst
+         S/nMhGfSF8i60DoEQ4+pZmjl8T9xgzvbxB40sIQhCZJyBLcSYRFS2Fm+n7BECrr6tCv+
+         0npw==
+X-Gm-Message-State: AOJu0YykPINsEcuSpPoSPLtNPs9/iknZb12LMqkPO0TNl2vCYi45K+Sp
+	bKYI+ZlUImEcF55tuBqaYdbloGnqwTFXHB5oXO/f9AYxCAcw5FwrlJO1ilzvllOCJEE6y35gPwO
+	d
+X-Google-Smtp-Source: AGHT+IHYbMpQf4s8TRlHSc+tS+jQrOmVzcT6LSF5ihsLdx9ND8J3x+gOfbJS39lohHw+Z7Bh3px49w==
+X-Received: by 2002:a6b:c949:0:b0:7d0:bd2b:43ba with SMTP id z70-20020a6bc949000000b007d0bd2b43bamr9340547iof.0.1712089532551;
+        Tue, 02 Apr 2024 13:25:32 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id u9-20020a02cbc9000000b0047ec029412fsm3445956jaq.12.2024.04.02.13.25.28
+        by smtp.gmail.com with ESMTPSA id u9-20020a02cbc9000000b0047ec029412fsm3445956jaq.12.2024.04.02.13.25.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Apr 2024 13:25:29 -0700 (PDT)
+        Tue, 02 Apr 2024 13:25:31 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	linux-kernel@vger.kernel.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/3] timerfd: convert to ->read_iter()
-Date: Tue,  2 Apr 2024 14:18:21 -0600
-Message-ID: <20240402202524.1514963-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] userfaultfd: convert to ->read_iter()
+Date: Tue,  2 Apr 2024 14:18:22 -0600
+Message-ID: <20240402202524.1514963-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240402202524.1514963-1-axboe@kernel.dk>
 References: <20240402202524.1514963-1-axboe@kernel.dk>
@@ -86,99 +86,123 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Switch timerfd to using fops->read_iter(), so it can support not just
-O_NONBLOCK but IOCB_NOWAIT as well. With the latter, users like io_uring
-interact with timerfds a lot better, as they can be driven purely
-by the poll trigger.
+Rather than use the older style ->read() hook, use ->read_iter() so that
+userfaultfd can support both O_NONBLOCK and IOCB_NOWAIT for non-blocking
+read attempts.
 
-Manually get and install the required fd, so that FMODE_NOWAIT can be
-set before the file is installed into the file table.
-
-No functional changes intended in this patch, it's purely a straight
-conversion to using the read iterator method.
+Split the fd setup into two parts, so that userfaultfd can mark the file
+mode with FMODE_NOWAIT before installing it into the process table. With
+that, we can also defer grabbing the mm until we know the rest will
+succeed, as the fd isn't visible before then.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/timerfd.c | 31 ++++++++++++++++++++++---------
- 1 file changed, 22 insertions(+), 9 deletions(-)
+ fs/userfaultfd.c | 42 ++++++++++++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 16 deletions(-)
 
-diff --git a/fs/timerfd.c b/fs/timerfd.c
-index e9c96a0c79f1..b96690b46c1f 100644
---- a/fs/timerfd.c
-+++ b/fs/timerfd.c
-@@ -262,17 +262,18 @@ static __poll_t timerfd_poll(struct file *file, poll_table *wait)
- 	return events;
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 60dcfafdc11a..7864c2dba858 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -282,7 +282,7 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+ /*
+  * Verify the pagetables are still not ok after having reigstered into
+  * the fault_pending_wqh to avoid userland having to UFFDIO_WAKE any
+- * userfault that has already been resolved, if userfaultfd_read and
++ * userfault that has already been resolved, if userfaultfd_read_iter and
+  * UFFDIO_COPY|ZEROPAGE are being run simultaneously on two different
+  * threads.
+  */
+@@ -1177,34 +1177,34 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+ 	return ret;
  }
  
--static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
--			    loff_t *ppos)
-+static ssize_t timerfd_read_iter(struct kiocb *iocb, struct iov_iter *to)
+-static ssize_t userfaultfd_read(struct file *file, char __user *buf,
+-				size_t count, loff_t *ppos)
++static ssize_t userfaultfd_read_iter(struct kiocb *iocb, struct iov_iter *to)
  {
 +	struct file *file = iocb->ki_filp;
- 	struct timerfd_ctx *ctx = file->private_data;
- 	ssize_t res;
- 	u64 ticks = 0;
+ 	struct userfaultfd_ctx *ctx = file->private_data;
+ 	ssize_t _ret, ret = 0;
+ 	struct uffd_msg msg;
+-	int no_wait = file->f_flags & O_NONBLOCK;
+ 	struct inode *inode = file_inode(file);
++	bool no_wait;
  
--	if (count < sizeof(ticks))
-+	if (iov_iter_count(to) < sizeof(ticks))
+ 	if (!userfaultfd_is_initialized(ctx))
  		return -EINVAL;
-+
- 	spin_lock_irq(&ctx->wqh.lock);
--	if (file->f_flags & O_NONBLOCK)
-+	if (file->f_flags & O_NONBLOCK || iocb->ki_flags & IOCB_NOWAIT)
- 		res = -EAGAIN;
- 	else
- 		res = wait_event_interruptible_locked_irq(ctx->wqh, ctx->ticks);
-@@ -313,7 +314,7 @@ static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
+ 
++	no_wait = file->f_flags & O_NONBLOCK || iocb->ki_flags & IOCB_NOWAIT;
+ 	for (;;) {
+-		if (count < sizeof(msg))
++		if (iov_iter_count(to) < sizeof(msg))
+ 			return ret ? ret : -EINVAL;
+ 		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg, inode);
+ 		if (_ret < 0)
+ 			return ret ? ret : _ret;
+-		if (copy_to_user((__u64 __user *) buf, &msg, sizeof(msg)))
++		_ret = copy_to_iter(&msg, sizeof(msg), to);
++		if (_ret < 0)
+ 			return ret ? ret : -EFAULT;
+ 		ret += sizeof(msg);
+-		buf += sizeof(msg);
+-		count -= sizeof(msg);
+ 		/*
+ 		 * Allow to read more than one fault at time but only
+ 		 * block if waiting for the very first one.
+ 		 */
+-		no_wait = O_NONBLOCK;
++		no_wait = true;
  	}
- 	spin_unlock_irq(&ctx->wqh.lock);
- 	if (ticks)
--		res = put_user(ticks, (u64 __user *) buf) ? -EFAULT: sizeof(ticks);
-+		res = copy_to_iter(&ticks, sizeof(ticks), to);
- 	return res;
  }
  
-@@ -384,7 +385,7 @@ static long timerfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg
- static const struct file_operations timerfd_fops = {
- 	.release	= timerfd_release,
- 	.poll		= timerfd_poll,
--	.read		= timerfd_read,
-+	.read_iter	= timerfd_read_iter,
+@@ -2172,7 +2172,7 @@ static const struct file_operations userfaultfd_fops = {
+ #endif
+ 	.release	= userfaultfd_release,
+ 	.poll		= userfaultfd_poll,
+-	.read		= userfaultfd_read,
++	.read_iter	= userfaultfd_read_iter,
+ 	.unlocked_ioctl = userfaultfd_ioctl,
+ 	.compat_ioctl	= compat_ptr_ioctl,
  	.llseek		= noop_llseek,
- 	.show_fdinfo	= timerfd_show,
- 	.unlocked_ioctl	= timerfd_ioctl,
-@@ -407,6 +408,7 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
+@@ -2192,6 +2192,7 @@ static void init_once_userfaultfd_ctx(void *mem)
+ static int new_userfaultfd(int flags)
  {
- 	int ufd;
- 	struct timerfd_ctx *ctx;
+ 	struct userfaultfd_ctx *ctx;
 +	struct file *file;
+ 	int fd;
  
- 	/* Check the TFD_* constants for consistency.  */
- 	BUILD_BUG_ON(TFD_CLOEXEC != O_CLOEXEC);
-@@ -443,11 +445,22 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
- 
- 	ctx->moffs = ktime_mono_to_real(0);
- 
--	ufd = anon_inode_getfd("[timerfd]", &timerfd_fops, ctx,
--			       O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
--	if (ufd < 0)
-+	ufd = get_unused_fd_flags(O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
-+	if (ufd < 0) {
- 		kfree(ctx);
-+		return ufd;
-+	}
+ 	BUG_ON(!current->mm);
+@@ -2215,16 +2216,25 @@ static int new_userfaultfd(int flags)
+ 	init_rwsem(&ctx->map_changing_lock);
+ 	atomic_set(&ctx->mmap_changing, 0);
+ 	ctx->mm = current->mm;
+-	/* prevent the mm struct to be freed */
+-	mmgrab(ctx->mm);
 +
-+	file = anon_inode_getfile("[timerfd]", &timerfd_fops, ctx,
-+				    O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
-+	if (IS_ERR(file)) {
-+		put_unused_fd(ufd);
-+		kfree(ctx);
-+		return PTR_ERR(file);
-+	}
++	fd = get_unused_fd_flags(O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS));
++	if (fd < 0)
++		goto err_out;
  
+ 	/* Create a new inode so that the LSM can block the creation.  */
+-	fd = anon_inode_create_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
++	file = anon_inode_create_getfile("[userfaultfd]", &userfaultfd_fops, ctx,
+ 			O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+-	if (fd < 0) {
+-		mmdrop(ctx->mm);
+-		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
++	if (IS_ERR(file)) {
++		fd = PTR_ERR(file);
++		goto err_out;
+ 	}
++	/* prevent the mm struct to be freed */
++	mmgrab(ctx->mm);
 +	file->f_mode |= FMODE_NOWAIT;
-+	fd_install(ufd, file);
- 	return ufd;
++	fd_install(fd, file);
++	return fd;
++err_out:
++	kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+ 	return fd;
  }
  
 -- 
