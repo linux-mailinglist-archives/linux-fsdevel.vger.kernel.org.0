@@ -1,144 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-16060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C01897814
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 20:22:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25AB8977EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 20:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE471B2A47A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 17:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF451F215FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 18:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F848156870;
-	Wed,  3 Apr 2024 17:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F40B153585;
+	Wed,  3 Apr 2024 18:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="trJzTW73"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O+mF5tSo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEE8152175;
-	Wed,  3 Apr 2024 17:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA681534EB
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 18:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712165057; cv=none; b=Ihj9RuGkFZhyqmYuyaGEej8eYHtesyOuXb7PBhjFkYqfW4egj1TKE4mw9EJEV7cGouy3vIZMDDlsbOgnSGz4zvDDsYCulpEjOuDLfXYpT3z/VYj6SKdF6RCAMlsPMOph3m5MCdAGuE/LBcTYLm8EzCDMx60LXELzebplzBvYO80=
+	t=1712168130; cv=none; b=QHUnHIsh0vYmNpfZ12z+QAGz2Jb5P8BFMV5MGgL/r1a47C7fJVcfwnCeQ/MmMFv5ITScSvneAyt0cEO0opRpu2bHdSpkJHrH198POWhRM6N0+FG5L/P1fKwzHsYwBKLxSXWF0RnbSq9C56F8RP+NBZQ3kgvvwRW6s6ZX2AT2+sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712165057; c=relaxed/simple;
-	bh=zSO/odJdFXXneJrbo8fSVlxTxnqWFL7oMb2O1sfY2Xc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LtpxgaP6esPhs4m+odvo5QuF09l+bEI7j1h4vA62ya03ALH3iv3vtgl39CW7F8fWiAZNi8d8X927VgElH7ffstxgFnLU+HzmuXkd3lysKcBvt0YvHEtYOsglpGI7y7H2J47j2SIJ037IdQY354+n8oTnIKLyB+LittzqQnCd8sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=trJzTW73; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=FaXgaXmPWGmVs0XtUcYWboJGgaLa4yLdJXSlNBFL4J4=; b=trJzTW73Phj4Jpy/0FaC2mAuFp
-	4jmsPWb1fxghkOvsYtT9dUrQ0jkGry6AK4cW09kbj+YjxFqMXwYwq4lyn/404XB0CgjgcdjzBgMt0
-	V+zFm1FyNHabodkzkNs+ETApejQqhs/n9xv5Z0AAdkkah8ZWLGnynBdo9AGeNQb37nJbXiK/gdlIB
-	VsHS/73rjhZPqmHyJwccuxDVag2jApsvpd0O5lXNNAeVNwLT4K0cmSTuRzHTNi2Y0bZBkGFm2i/Lf
-	at0MYJMVYaHpD25WG2qLaSxN2SX2lu5w9DKrfLLF3hvetU1SeXARb3TowUTIqCgU99WV5lu+4MfVr
-	Bblz2lPA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rs4LE-0000000651f-2901;
-	Wed, 03 Apr 2024 17:24:04 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org,
-	Andreas Gruenbacher <agruenba@redhat.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	gfs2@lists.linux.dev
-Subject: [PATCH 2/4] gfs2: Add a migrate_folio operation for journalled files
-Date: Wed,  3 Apr 2024 18:23:49 +0100
-Message-ID: <20240403172400.1449213-3-willy@infradead.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240403172400.1449213-1-willy@infradead.org>
-References: <20240403172400.1449213-1-willy@infradead.org>
+	s=arc-20240116; t=1712168130; c=relaxed/simple;
+	bh=1oV7F1jBmYRZsA6svOOmuWXQI3vYZavB0QFuGC36KRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhRD1TAjOG1U9rzvAca1q9Z/kEEdEowZF0+ME8ZUjCZ4pmsrtHEl49Lwey0duZKWIF0NaWd8+EmMyCST2vQsyJ7FRA476/Ofx4TOfURUaSOJy46sx79ggJOMUqgXgv7StQf52mcFWnztD2bwIn+CNKqxNhHHH2NaTABwEHj/hRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O+mF5tSo; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 3 Apr 2024 14:15:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1712168126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KugM06W/s0lb++bW7levKHgpFLyEAtmCAECxADz00LA=;
+	b=O+mF5tSo+kQ3evl6evxwBacTiXzfRDinz7tasCBoCXvkVzg71Eg2Tj11aOOQOvAn2VtbKa
+	4xDUzXt3vcUN1q4BynOenQTSxBZUR+PUrwJNN863OgeLxrPH8kAqph+irAR/22JqAk8WiC
+	UUHnl3AUbkMRomaUH0xPDBYfDm7mIPM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Brian Foster <bfoster@redhat.com>
+Cc: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>, 
+	Jonathan Corbet <corbet@lwn.net>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 11/13] bcachefs: fiemap: return correct extent
+ physical length
+Message-ID: <qf3rldn7sha5nbwz7iidkzb6secoyebwldgq56tfx4sunmthxo@qdap46g7lfsc>
+References: <cover.1712126039.git.sweettea-kernel@dorminy.me>
+ <b9b795987a485afa0fdb8f0decc09405691d9320.1712126039.git.sweettea-kernel@dorminy.me>
+ <Zg2LG1_2-ac1GlsG@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zg2LG1_2-ac1GlsG@bfoster>
+X-Migadu-Flow: FLOW_OUT
 
-For journalled data, folio migration currently works by writing the folio
-back, freeing the folio and faulting the new folio back in.  We can
-bypass that by telling the migration code to migrate the buffer_heads
-attached to our folios.  That lets us delete gfs2_jdata_writepage()
-as it has no more callers.
+On Wed, Apr 03, 2024 at 01:00:11PM -0400, Brian Foster wrote:
+> On Wed, Apr 03, 2024 at 03:22:52AM -0400, Sweet Tea Dorminy wrote:
+> > Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+> > ---
+> >  fs/bcachefs/fs.c | 18 ++++++++++++------
+> >  1 file changed, 12 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+> > index f830578a9cd1..d2793bae842d 100644
+> > --- a/fs/bcachefs/fs.c
+> > +++ b/fs/bcachefs/fs.c
+> > @@ -913,15 +913,17 @@ static int bch2_fill_extent(struct bch_fs *c,
+> >  			flags |= FIEMAP_EXTENT_SHARED;
+> >  
+> >  		bkey_for_each_ptr_decode(k.k, ptrs, p, entry) {
+> > -			int flags2 = 0;
+> > +			int flags2 = FIEMAP_EXTENT_HAS_PHYS_LEN;
+> > +			u64 phys_len = k.k->size << 9;
+> >  			u64 offset = p.ptr.offset;
+> >  
+> >  			if (p.ptr.unwritten)
+> >  				flags2 |= FIEMAP_EXTENT_UNWRITTEN;
+> >  
+> > -			if (p.crc.compression_type)
+> > +			if (p.crc.compression_type) {
+> >  				flags2 |= FIEMAP_EXTENT_ENCODED;
+> > -			else
+> > +				phys_len = p.crc.compressed_size << 9;
+> > +			} else
+> >  				offset += p.crc.offset;
+> >  
+> >  			if ((offset & (block_sectors(c) - 1)) ||
+> > @@ -931,7 +933,7 @@ static int bch2_fill_extent(struct bch_fs *c,
+> >  			ret = fiemap_fill_next_extent(info,
+> >  						bkey_start_offset(k.k) << 9,
+> >  						offset << 9,
+> > -						k.k->size << 9, 0,
+> > +						k.k->size << 9, phys_len,
+> >  						flags|flags2);
+> >  			if (ret)
+> >  				return ret;
+> > @@ -941,14 +943,18 @@ static int bch2_fill_extent(struct bch_fs *c,
+> >  	} else if (bkey_extent_is_inline_data(k.k)) {
+> >  		return fiemap_fill_next_extent(info,
+> >  					       bkey_start_offset(k.k) << 9,
+> > -					       0, k.k->size << 9, 0,
+> > +					       0, k.k->size << 9,
+> > +					       bkey_inline_data_bytes(k.k),
+> 
+> Question for Kent perhaps, but what's the functional difference between
+> bkey_inline_data_bytes() and k->size in this particular case?
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/gfs2/aops.c | 34 ++--------------------------------
- 1 file changed, 2 insertions(+), 32 deletions(-)
+Not much - k->size will correspond to the size of the original write -
+that is, the writeback write from the pagecache. inline_data_bytes is
+the amount of data that wasn't zeroes.
 
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index 974aca9c8ea8..68fc8af14700 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -116,8 +116,7 @@ static int gfs2_write_jdata_folio(struct folio *folio,
-  * @folio: The folio to write
-  * @wbc: The writeback control
-  *
-- * This is shared between writepage and writepages and implements the
-- * core of the writepage operation. If a transaction is required then
-+ * Implements the core of write back. If a transaction is required then
-  * the checked flag will have been set and the transaction will have
-  * already been started before this is called.
-  */
-@@ -139,35 +138,6 @@ static int __gfs2_jdata_write_folio(struct folio *folio,
- 	return gfs2_write_jdata_folio(folio, wbc);
- }
- 
--/**
-- * gfs2_jdata_writepage - Write complete page
-- * @page: Page to write
-- * @wbc: The writeback control
-- *
-- * Returns: errno
-- *
-- */
--
--static int gfs2_jdata_writepage(struct page *page, struct writeback_control *wbc)
--{
--	struct folio *folio = page_folio(page);
--	struct inode *inode = page->mapping->host;
--	struct gfs2_inode *ip = GFS2_I(inode);
--	struct gfs2_sbd *sdp = GFS2_SB(inode);
--
--	if (gfs2_assert_withdraw(sdp, ip->i_gl->gl_state == LM_ST_EXCLUSIVE))
--		goto out;
--	if (folio_test_checked(folio) || current->journal_info)
--		goto out_ignore;
--	return __gfs2_jdata_write_folio(folio, wbc);
--
--out_ignore:
--	folio_redirty_for_writepage(wbc, folio);
--out:
--	folio_unlock(folio);
--	return 0;
--}
--
- /**
-  * gfs2_writepages - Write a bunch of dirty pages back to disk
-  * @mapping: The mapping to write
-@@ -749,12 +719,12 @@ static const struct address_space_operations gfs2_aops = {
- };
- 
- static const struct address_space_operations gfs2_jdata_aops = {
--	.writepage = gfs2_jdata_writepage,
- 	.writepages = gfs2_jdata_writepages,
- 	.read_folio = gfs2_read_folio,
- 	.readahead = gfs2_readahead,
- 	.dirty_folio = jdata_dirty_folio,
- 	.bmap = gfs2_bmap,
-+	.migrate_folio = buffer_migrate_folio,
- 	.invalidate_folio = gfs2_invalidate_folio,
- 	.release_folio = gfs2_release_folio,
- 	.is_partially_uptodate = block_is_partially_uptodate,
--- 
-2.43.0
-
+So inline_data_bytes is probably the right thing to use here.
 
