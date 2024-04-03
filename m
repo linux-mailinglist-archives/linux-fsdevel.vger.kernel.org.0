@@ -1,227 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-15975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1470B896521
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 08:58:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3705D8965FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 09:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35F1B1C21C58
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 06:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16B61F27466
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 07:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49935490C;
-	Wed,  3 Apr 2024 06:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C15A5813E;
+	Wed,  3 Apr 2024 07:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="T1gRHCQ3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from box.fidei.email (box.fidei.email [71.19.144.250])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9C46F067;
-	Wed,  3 Apr 2024 06:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E125F45BE1;
+	Wed,  3 Apr 2024 07:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712127394; cv=none; b=SY/SbSRxFExtiVdGv/62eUKO6cWQkjWaFjOBiGMKy1+zxSHx37oPNYCtPSuA2OYgeQ8F7+Gx/hSHzykPGSxJjpsNTxkjWuVrIaN2gD9QKtGd8zH4TiTyHXUzlBcNK9W8wsvqBHrjwlQaXgcfhTV833TyTuMQT+yWZoEHLnwtbb8=
+	t=1712128703; cv=none; b=sUxqJy3CNkLK0aPNwFTo+EL4Wwb40NYuJgObdbzPPLPBGrMMZoKrsdpElM4skMiHoa2SR89zUUVeUYfPirIH5ko+TRxfNMFer2IwchtpnA0+ApSl8xq5P7/RZe48uDakuCReb0rACrqxsJknH29jhPBoTZVSbg2CzwodkqIYrsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712127394; c=relaxed/simple;
-	bh=M2/HbdCSYKxjX0JQZfhKLCikOiHHQZAP56IhdnhJVfs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JvaeKiISFWB6bmfkA0RUn5ZYADmcC+B7ZqWHqeJAMCZO9J1jmKvQiwBZshqDGG+SlPriW+XAVpy8ouSGLOG2PkdKRWftzr2ZcIINuky+/5BgkudXUTZ0fM7C559MFnUtAe8lHvsTTTv8AcniShug2Sgqu9+SM2CTPrdW0adEaC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4V8bBP0z0bz4f3jLY;
-	Wed,  3 Apr 2024 14:56:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 821371A0176;
-	Wed,  3 Apr 2024 14:56:21 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP3 (Coremail) with SMTP id _Ch0CgA39p2S_QxmsaQcIw--.36319S2;
-	Wed, 03 Apr 2024 14:56:20 +0800 (CST)
-Subject: Re: [PATCH v2 0/6] Improve visibility of writeback
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: akpm@linux-foundation.org, willy@infradead.org, jack@suse.cz,
- bfoster@redhat.com, tj@kernel.org, dsterba@suse.com, mjguzik@gmail.com,
- dhowells@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-References: <20240327155751.3536-1-shikemeng@huaweicloud.com>
- <qyzaompqkxwdquqtofmqghvpi4m3twkrawn26rxs56aw4n2j3o@kt32f47dkjtu>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <6d83cf77-a0eb-3ee7-78f2-dae45562a6aa@huaweicloud.com>
-Date: Wed, 3 Apr 2024 14:56:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1712128703; c=relaxed/simple;
+	bh=Bk9js/MfI08l6jPdLqN/viHKCIfVYvOaZJKwM1hfuAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nmxq4aeQXi1MrrrfM8nfEQwAaeh2/P4cri8FxvBJqOZBMwboWjs69i382ApxO/bMYWkXvClry0um8sd8qD0D5dK/X1xkwwKivMeeHSywEPVNh4KZ8ytLYs+U2iWMQg0H/VkVspDY/HQjmKNuW1At75VUGQ8SvWJDP0FTFiHhOfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=T1gRHCQ3; arc=none smtp.client-ip=71.19.144.250
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
+Received: from authenticated-user (box.fidei.email [71.19.144.250])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	by box.fidei.email (Postfix) with ESMTPSA id 11456805C3;
+	Wed,  3 Apr 2024 03:18:19 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
+	t=1712128701; bh=Bk9js/MfI08l6jPdLqN/viHKCIfVYvOaZJKwM1hfuAs=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=T1gRHCQ3MCrsp7BfMW6trWrX3CG07X4l5PnpymJl0JYbPMVFO0jgcIAC9IlijYO98
+	 OU54i3ohXtaZ9LWvI/hCX0o+C36Oyd7ghpaMFtwzgYM5RV1rkGnVG4KesUtwq8KN46
+	 yx4PsB/fBGle4DGL+BMGxzH3mCPqyCIEJaqLgoLXOSYUII/txYsAaeRlYHDV9ybUK5
+	 zbBDbv5xHI52C7ku00thZvfu4ujOW5TOYwNSgO5zheTpJXVCdZ2qnND22nRldTSLdI
+	 U25dEAUVnRsEqgxow2Z3D7dgPQrRNuJBQsdAuXgijblEaLo9XayjheYeg4zOOV9TuH
+	 B/2tfRedW2Tmw==
+Message-ID: <851fd25e-78fd-4d6d-9572-f074a85bb30e@dorminy.me>
+Date: Wed, 3 Apr 2024 03:18:19 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <qyzaompqkxwdquqtofmqghvpi4m3twkrawn26rxs56aw4n2j3o@kt32f47dkjtu>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgA39p2S_QxmsaQcIw--.36319S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCFW8uryfZr15Kr4kKryrXrb_yoWrtw4kpF
-	Z5A3W5tr48Zr1xArnaka4aqryYy3y0qFy3Xr97ZFWIyrn0gF15tFykW3yFyF15Zr9xAry3
-	ZrsxZrykKr1vvaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Subject: Re: [PATCH v2 5/5] btrfs: fiemap: return extent physical size
+Content-Language: en-US
+To: Qu Wenruo <wqu@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-doc@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+References: <cover.1711588701.git.sweettea-kernel@dorminy.me>
+ <93686d5c4467befe12f76e4921bfc20a13a74e2d.1711588701.git.sweettea-kernel@dorminy.me>
+ <a2d3cdef-ed4e-41f0-b0d9-801c781f9512@suse.com>
+ <ff320741-0516-410f-9aba-fc2d9d7a6b01@dorminy.me>
+ <821adc74-1c35-4003-aa31-a2562791dde8@suse.com>
+From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+In-Reply-To: <821adc74-1c35-4003-aa31-a2562791dde8@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-on 3/29/2024 3:24 AM, Kent Overstreet wrote:
-> On Wed, Mar 27, 2024 at 11:57:45PM +0800, Kemeng Shi wrote:
->> v1->v2:
->> -Send cleanup to wq_monitor.py separately.
->> -Add patch to avoid use after free of bdi.
->> -Rename wb_calc_cg_thresh to cgwb_calc_thresh as Tejun suggested.
->> -Use rcu walk to avoid use after free.
->> -Add debug output to each related patches.
+On 4/3/24 01:52, Qu Wenruo wrote:
+> 
+> 
+> 在 2024/4/3 16:02, Sweet Tea Dorminy 写道:
+> [...]
+>>>
+>>> fileoff 0, logical len 4k, phy 13631488, phy len 64K
+>>> fileoff 4k, logical len 4k, phy 13697024, phy len 4k
+>>> fileoff 8k, logical len 56k, phy 13631488 + 8k, phylen 56k
+>>>
+>>> [HOW TO CALCULATE WASTED SPACE IN USER SPACE]
+>>> My concern is on the first entry. It indicates that we have wasted 
+>>> 60K (phy len is 64K, while logical len is only 4K)
+>>>
+>>> But that information is not correct, as in reality we only wasted 4K, 
+>>> the remaining 56K is still referred by file range [8K, 64K).
+>>>
+>>> Do you mean that user space program should maintain a mapping of each 
+>>> utilized physical range, and when handling the reported file range 
+>>> [8K, 64K), the user space program should find that the physical range 
+>>> covers with one existing extent, and do calculation correctly?
 >>
->> This series tries to improve visilibity of writeback. Patch 1 make
->> /sys/kernel/debug/bdi/xxx/stats show writeback info of whole bdi
->> instead of only writeback info in root cgroup. Patch 2 add a new
->> debug file /sys/kernel/debug/bdi/xxx/wb_stats to show per wb writeback
->> info. Patch 4 add wb_monitor.py to monitor basic writeback info
->> of running system, more info could be added on demand. Rest patches
->> are some random cleanups. More details can be found in respective
->> patches. Thanks!
->> This series is on top of patchset [1].
+>> My goal is to give an unprivileged interface for tools like compsize 
+>> to figure out how much space is used by a particular set of files. 
+>> They report the total disk space referenced by the provided list of 
+>> files, currently by doing a tree search (CAP_SYS_ADMIN) for all the 
+>> extents pertaining to the requested files and deduplicating extents 
+>> based on disk_bytenr.
 >>
->> [1] https://lore.kernel.org/lkml/20240123183332.876854-1-shikemeng@huaweicloud.com/T/#mc6455784a63d0f8aa1a2f5aff325abcdf9336b76
+>> It seems simplest to me for userspace for the kernel to emit the 
+>> entire extent for each part of it referenced in a file, and let 
+>> userspace deal with deduplicating extents. This is also most similar 
+>> to the existing tree-search based interface. Reporting whole extents 
+>> gives more flexibility for userspace to figure out how to report 
+>> bookend extents, or shared extents, or ...
 > 
-> Not bad
+> That's totally fine, no matter what solution you go, (reporting exactly 
+> as the on-disk file extent, or with offset into consideration), user 
+> space always need to maintain some type of mapping to calculate the 
+> wasted space by bookend extents.
 > 
-Hi Kent,
-> I've been trying to improve our ability to debug latency issues - stalls
-> of all sorts. While you're looking at all this code, do you think you
-> could find some places to collect useful latency numbers?
-I would like to do it to collect more useful info for writeback.
+>>
+>> It does seem a little weird where if you request with fiemap only e.g. 
+>> 4k-16k range in that example file you'll get reported all 68k 
+>> involved, but I can't figure out a way to fix that without having the 
+>> kernel keep track of used parts of the extents as part of reporting, 
+>> which sounds expensive.
 > 
-> fs/bcachefs/time_stats.c has some code that's going to be moving out to
-> lib/ at some point, after I switch it to MAD; if you could hook that up
-> as well to a few points we could see at a glance if there are stalls
-> happening in the writeback path.
-I see that Tejun recommend to use bpf. I don't know much about bpf and
-new approach in time_stats.c. For me personly, I think that it's better
-to use the new approach after the work of moving code to lib/ is merged.
-Then I would like to submit a patchset to discuss of using it in writeback.
-Would this make sense to you. Look forward to your reply!
+> I do not think mapping 4k-16K is a common scenario either, but since you 
+> mentioned, at least we need a consistent way to emit a filemap entry.
+> 
+> The tracking part can be done in the user space.
+> 
+>>
+>> You're right that I'm being inconsistent, taking off extent_offset 
+>> from the reported disk size when that isn't what I should be doing, so 
+>> I fixed that in v3.
+>>
+>>>
+>>> [COMPRESSION REPRESENTATION]
+>>> The biggest problem other than the complexity in user space is the 
+>>> handling of compressed extents.
+>>>
+>>> Should we return the physical bytenr (disk_bytenr of file extent 
+>>> item) directly or with the extent offset added?
+>>> Either way it doesn't look consistent to me, compared to 
+>>> non-compressed extents.
+>>>
+>>
+>> As I understand it, the goal of reporting physical bytenr is to 
+>> provide a number which we could theoretically then resolve into a disk 
+>> location or few if we cared, but which doesn't necessarily have any 
+>> physical meaning. To quote the fiemap documentation page: "It is 
+>> always undefined to try to update the data in-place by writing to the 
+>> indicated location without the assistance of the filesystem". So I 
+>> think I'd prefer to always report the entire size of the entire extent 
+>> being referenced.
+> 
+> The concern is, if we have a compressed file extent, reflinked to 
+> different part of the file.
+> 
+> Then the fiemap returns all different physical bytenr (since offset is 
+> added), user space tool have no idea they are the same extent on-disk.
+> Furthermore, if we emit the physical + offset directly to user space 
+> (which can be beyond the compressed extent), then we also have another 
+> uncompressed extent at previous physical + offset.
+> 
+> Would that lead to bad calculation in user space to determine how many 
+> bytes are really used?
+> 
+>>
+>>> [ALTERNATIVE FORMAT]
+>>> The other alternative would be following the btrfs ondisk format, 
+>>> providing a unique physical bytenr for any file extent, then the 
+>>> offset/referred length inside the uncompressed extent.
+>>>
+>>> That would handle compressed and regular extents more consistent, and 
+>>> a little easier for user space tool to handle (really just a tiny bit 
+>>> easier, no range overlap check needed), but more complex to 
+>>> represent, and I'm not sure if any other filesystem would be happy to 
+>>> accept the extra members they don't care.
+>>
+>> I really want to make sure that this interface reports the unused 
+>> space in e.g bookend extents well -- compsize has been an important 
+>> tool for me in this respect, e.g. a time when a 10g file was taking up 
+>> 110g of actual disk space. If we report the entire length of the 
+>> entire extent, then when used on whole files one can establish the 
+>> space referenced by that file but not used; similarly on multiple 
+>> files. So while I like the simplicity of just reporting the used 
+>> length, I don't think there's a way to make compsize unprivileged with 
+>> that approach.
+> 
+> Why not? In user space we just need to maintain a mapping of each 
+> referred range.
+> 
+> Then we get the real actual disk space, meanwhile the fiemap report is 
+> no different than "btrfs ins dump-tree" for file extents (we have all 
+> the things we need, filepos, length (num_bytes), disk_bytenr, 
+> disk_num_bytes, offset, and ram_bytes
 
-Thanks,
-Kemeng
-> 
->>
->> Following domain hierarchy is tested:
->>                 global domain (320G)
->>                 /                 \
->>         cgroup domain1(10G)     cgroup domain2(10G)
->>                 |                 |
->> bdi            wb1               wb2
->>
->> /* all writeback info of bdi is successfully collected */
->> # cat /sys/kernel/debug/bdi/252:16/stats:
->> BdiWriteback:              448 kB
->> BdiReclaimable:        1303904 kB
->> BdiDirtyThresh:      189914124 kB
->> DirtyThresh:         195337564 kB
->> BackgroundThresh:     32516508 kB
->> BdiDirtied:            3591392 kB
->> BdiWritten:            2287488 kB
->> BdiWriteBandwidth:      322248 kBps
->> b_dirty:                     0
->> b_io:                        0
->> b_more_io:                   2
->> b_dirty_time:                0
->> bdi_list:                    1
->> state:                       1
->>
->> /* per wb writeback info is collected */
->> # cat /sys/kernel/debug/bdi/252:16/wb_stats:
->> cat wb_stats
->> WbCgIno:                    1
->> WbWriteback:                0 kB
->> WbReclaimable:              0 kB
->> WbDirtyThresh:              0 kB
->> WbDirtied:                  0 kB
->> WbWritten:                  0 kB
->> WbWriteBandwidth:      102400 kBps
->> b_dirty:                    0
->> b_io:                       0
->> b_more_io:                  0
->> b_dirty_time:               0
->> state:                      1
->> WbCgIno:                 4284
->> WbWriteback:              448 kB
->> WbReclaimable:         818944 kB
->> WbDirtyThresh:        3096524 kB
->> WbDirtied:            2266880 kB
->> WbWritten:            1447936 kB
->> WbWriteBandwidth:      214036 kBps
->> b_dirty:                    0
->> b_io:                       0
->> b_more_io:                  1
->> b_dirty_time:               0
->> state:                      5
->> WbCgIno:                 4325
->> WbWriteback:              224 kB
->> WbReclaimable:         819392 kB
->> WbDirtyThresh:        2920088 kB
->> WbDirtied:            2551808 kB
->> WbWritten:            1732416 kB
->> WbWriteBandwidth:      201832 kBps
->> b_dirty:                    0
->> b_io:                       0
->> b_more_io:                  1
->> b_dirty_time:               0
->> state:                      5
->>
->> /* monitor writeback info */
->> # ./wb_monitor.py 252:16 -c
->>                   writeback  reclaimable   dirtied   written    avg_bw
->> 252:16_1                  0            0         0         0    102400
->> 252:16_4284             672       820064   9230368   8410304    685612
->> 252:16_4325             896       819840  10491264   9671648    652348
->> 252:16                 1568      1639904  19721632  18081952   1440360
->>
->>
->>                   writeback  reclaimable   dirtied   written    avg_bw
->> 252:16_1                  0            0         0         0    102400
->> 252:16_4284             672       820064   9230368   8410304    685612
->> 252:16_4325             896       819840  10491264   9671648    652348
->> 252:16                 1568      1639904  19721632  18081952   1440360
->> ...
->>
->> Kemeng Shi (6):
->>   writeback: protect race between bdi release and bdi_debug_stats_show
->>   writeback: collect stats of all wb of bdi in bdi_debug_stats_show
->>   writeback: support retrieving per group debug writeback stats of bdi
->>   writeback: add wb_monitor.py script to monitor writeback info on bdi
->>   writeback: rename nr_reclaimable to nr_dirty in balance_dirty_pages
->>   writeback: define GDTC_INIT_NO_WB to null
->>
->>  include/linux/writeback.h     |   1 +
->>  mm/backing-dev.c              | 203 ++++++++++++++++++++++++++++++----
->>  mm/page-writeback.c           |  31 ++++--
->>  tools/writeback/wb_monitor.py | 172 ++++++++++++++++++++++++++++
->>  4 files changed, 378 insertions(+), 29 deletions(-)
->>  create mode 100644 tools/writeback/wb_monitor.py
->>
->> -- 
->> 2.30.0
->>
-> 
-
+The fiemap output (in this changeset) has equivalents of filepos, 
+length; disk_bytenr + offset, disk_num_bytes - offset -- we don't get 
+ram_bytes and we get two computed values from the three dump-tree outputs.
+If it were reporting whole extents, it'd be disk_bytenr, disk_num_bytes, 
+and we'd be missing offset.
+I think we'd need a third piece of information about physical space in 
+order to convey all three equivalents of disk_bytenr, disk_num_bytes, 
+offset. And without that third piece of information, we can't both match 
+up disk extents and also know exactly what disk bytenr data is stored 
+at, I think? But maybe you're proposing exactly that, having a third number?
 
