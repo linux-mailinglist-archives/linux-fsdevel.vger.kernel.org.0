@@ -1,97 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-16086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36286897BD5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 00:58:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0299897CBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 01:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF9911F28C3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 22:58:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91123B296C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 23:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000D3156C61;
-	Wed,  3 Apr 2024 22:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="o2SyvooU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E8515531D;
+	Wed,  3 Apr 2024 23:51:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A28156871;
-	Wed,  3 Apr 2024 22:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3F1156871
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 23:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712185071; cv=none; b=D1oZ5F7EBsmV92BZd0BhnyjTByv9vybYysQLyWjZnbaodKoDuvieeWCptqFHYxCdlno7jBPaoMJhEbeCTQ6LwDFhorU51QQ/U/ROffdq/XRFrSryhser5NpojtDXeLNMKqhctWvnSQq4vK8FeATSqtxEnKtcSrjZLDhEuXPPmbM=
+	t=1712188264; cv=none; b=dLcdwQhj5pW4eor/oQIqLWe/dsd2F85gjHgrfPr6C/pV/pJECHwe+rAmXcbKWKuJm1owab+2NFF9ER6i3YTi7aoB0rqbhRKOFQLvFM8NeiiieyCGWEL2zNSSqGe9zDgJvwKnVFVG0FHcEfxKfM+jjCeeSD+3lzuTVA8TmciXJOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712185071; c=relaxed/simple;
-	bh=GdJ01PLvlUXO2n1nMDCRGXdWiRPjGHJisvsRdsLX798=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ulcx3BhCfKhNOf5yieYQ8sek/DToN2X7tCZVNd1NxGYuAv4TCFmnxUN1bAvAeR7IRvQhceH1SyOv0NxUm6kIB026IavRdu4WfaDOi2Vj7CkFLAxKXGxwQWpYVCVsdjD+bykl1c1QMFd6YiVFA8Xps7bm9/Xmcj+acsWkxiA82w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=o2SyvooU; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CbWk5huEObmhcA5g7RS6q+JrWme5Jfa+v58vnxeLScA=; b=o2SyvooUZ3RyKcf/A0OloFojZu
-	jTEW+zYs/9y+bXLfkWyE0ezuyrexew06OqIWb0wvmInMbTEsN84Lu8Gk6hQzJ95XaCcOgoJVvhEUX
-	wluc/kCDcy8r6RRX3iKsi+1EfyvOi6VikZZlkfrgOu9Uky+bAZ8TjVB8cLWpmbp2D3OPMaxhesglM
-	jxVSkV/9m1GR/D6UZJmp2CbdirwKrPdg16n2SyzmGlchvsilJ6ZYBeyeN4HaUuUIIcgUitqsl5y0r
-	NHbv2dWHdv+o5IvdxGYay9wPBcIyeqt/7jSbdXKuIPWTgXxYNyRcMi8rN74+Oey+8fs9cFU/gPg/U
-	mi79J3XQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rs9YB-005ByQ-0W;
-	Wed, 03 Apr 2024 22:57:47 +0000
-Date: Wed, 3 Apr 2024 23:57:47 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] signalfd: convert to ->read_iter()
-Message-ID: <20240403225747.GO538574@ZenIV>
-References: <20240403140446.1623931-1-axboe@kernel.dk>
- <20240403140446.1623931-4-axboe@kernel.dk>
+	s=arc-20240116; t=1712188264; c=relaxed/simple;
+	bh=7ip0uxWOp6WecD8HYk9xKfo5g7Q5QDWOV6mON1A9o6Q=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IuDVSZRhTldtJHfA6j/TaejmLTDTQXqghT9fJUrfrf0mLba8fUNpZMXAbLFgrYBHyz8NOLRlMRBNrc+mvjAOz946O0xBCT4wpLK9iQz/SfJaTxnMm8vq2cc7HGXvcDqPLEIHy6OPstCe3SG2Al0x3bNvCk3XSo0avRMcGnvFyWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36660582091so3927335ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Apr 2024 16:51:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712188262; x=1712793062;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/jC4YnFvifP/yHXxrC7XuUJyFpMsXOBNgCQBG5wdRFQ=;
+        b=LUhqG5T1kVHCDrkA8jx2NKUcCsUPhDGTRZczSFa7B1098o+ftKL68GDgMErJaeWSu4
+         ofe08ssjfpdPyA3DAWk1lInJ7PbN/A1949LAAT4Kkniut7bis6cGW4AXK6wwyqJ1xeum
+         1CzjbQHM1Rv9IVzHKbDIaQZQXmsa8672IWqC5X/uFdJEonBgzdMZTBE/WkQ1hcoHYNBp
+         epome8SnodDmPoLwjCceg0zOQvOxypUqQVffXwa1v8zrujuixHtI+Wh61FMLotf2hsiF
+         SZ0xA6vXoaEf8GjDovbO/DkWXpovl/nttQoT2YKkZA3kv5bY6PXIxz+eqhhZ8Yq8p1av
+         Jmtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGu5ZXKjhN+Lqt81oRp0K48C4v7HGho9NRU7WJUGQLtSLRN6vLkzerTLKhMEOdbMvQP4JySawig+2HAPkJ6cNk/iog7Od/MHPLNDft1Q==
+X-Gm-Message-State: AOJu0YyaidtOqKYdG0uzYsxGRQeOtCS8nDaqUh2J82ad/cosXSD1tqwP
+	CD6qOQjFUzcU6qGBv0lJsBSptVL7PWHYasz6GdgRsC9OCwefRubih63z9bg21uQs0xt6DFvHY9x
+	HYP7ZLdsVLR8nNTZlch6SFc5ykUyCtcuwd1NAZOrDk+K05bQZTeCv6pc=
+X-Google-Smtp-Source: AGHT+IEPilzz/Msv9bs1Mliga9g/dWfYMw9Di7/yPVPKV6N4GrfprHzjRBALpFuinDYc9680MMfz8pX7uCCb8L6K+oyeroVyXbJJ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240403140446.1623931-4-axboe@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6e02:178c:b0:369:f9c6:359d with SMTP id
+ y12-20020a056e02178c00b00369f9c6359dmr83958ilu.2.1712188262648; Wed, 03 Apr
+ 2024 16:51:02 -0700 (PDT)
+Date: Wed, 03 Apr 2024 16:51:02 -0700
+In-Reply-To: <00000000000098f75506153551a1@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002f2066061539e54b@google.com>
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_fop_llseek
+From: syzbot <syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
+	valesini@yandex-team.ru
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Apr 03, 2024 at 08:02:54AM -0600, Jens Axboe wrote:
-> Rather than use the older style ->read() hook, use ->read_iter() so that
-> signalfd can support both O_NONBLOCK and IOCB_NOWAIT for non-blocking
-> read attempts.
-> 
-> Split the fd setup into two parts, so that signalfd can mark the file
-> mode with FMODE_NOWAIT before installing it into the process table.
+syzbot has bisected this issue to:
 
-Same issue with copy_to_iter() calling conventions; what's more, userland
-really does not expect partial copies here, so it might be worth adding
+commit 0fedefd4c4e33dd24f726b13b5d7c143e2b483be
+Author: Valentine Sinitsyn <valesini@yandex-team.ru>
+Date:   Mon Sep 25 08:40:12 2023 +0000
 
-static inline
-bool copy_to_iter_full(void *addr, size_t bytes, struct iov_iter *i)
-{
-        size_t copied = copy_to_iter(addr, bytes, i);
-	if (likely(copied == bytes))
-		return true;
-	iov_iter_revert(i, copied);
-	return false;
-}
+    kernfs: sysfs: support custom llseek method for sysfs entries
 
-to include/linux/uio.h for the sake of those suckers.  Then
-they could go for
-        return copy_to_iter_full(&new, sizeof(new), to) ? sizeof(new) : -EFAULT;
-and similar in other two.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17cb5e03180000
+start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=142b5e03180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=102b5e03180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
+dashboard link: https://syzkaller.appspot.com/bug?extid=9a5b0ced8b1bfb238b56
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f1d93d180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c38139180000
 
-NOTE: the userland ABI is somewhat sucky here - if the buffer goes
-unmapped (or r/o) at the offset that is *not* a multiple of
-sizeof(struct signalfd_siginfo), you get an event quietly lost.
-Not sure what can be done with that - it is a user-visible ABI.
+Reported-by: syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com
+Fixes: 0fedefd4c4e3 ("kernfs: sysfs: support custom llseek method for sysfs entries")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
