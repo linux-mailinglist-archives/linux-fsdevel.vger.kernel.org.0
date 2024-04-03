@@ -1,80 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-16035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097B7897201
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 16:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC95D897202
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 16:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3882E1C26249
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 14:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18DFA1C26143
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 14:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5A0149003;
-	Wed,  3 Apr 2024 14:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858B3148FE5;
+	Wed,  3 Apr 2024 14:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GQ9txCv/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KuXGQlbe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD32148FF6
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 14:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D748147C61
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 14:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712153433; cv=none; b=EHi1xkvOf5tM+PapC4u1jgyTda7Hb4G12du1buUdIfH6KvKXQ7evQEz7eO83h1M25S6Ydtjx7FtMVlEpoiSggzJgDiooRqvQ/bjRURL6ZM1NqUgzkSSYfWwVIBMXiMtwrgEBMblx3+RJFWRvXrk/NdoZFg58LpiRfHKxmvrnMFk=
+	t=1712153439; cv=none; b=uAvN8UMdc/yfwjxOiy8nyu2tIFEFRHbeAG9anJ8okfs0xCttLvLb8i690l7JK30RJJGK+C4BKsNqG2pQvzilAmwwfTiby7dKQ8v7Fv5+atcKD1Z9W1w8PyCuj39rE64/u7bUoksbZhOicL/zJpO5M23nhNvomYDvVn3dEDzzTJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712153433; c=relaxed/simple;
-	bh=PoednBtoE1tvUhRclYnddbxZ7od4p002R25b+VPNj7I=;
+	s=arc-20240116; t=1712153439; c=relaxed/simple;
+	bh=gnQFujUVd4le7PN2eYoz/fObbbbcl8DGK6hCKJ6Zjnw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KbRNqVxpRjOlxquveXdQHbtET2TfY8E9RYSq3qSNrNRZlPXsS0R6qMeA5Ix6TLG0hiq9xCQSdV3XTezEb8wS7w9X2ZIY4+7aOLlU7/gUaG9vV6Z6cOVPAnKdngq5kgzCopfXqs/8xBJYBe/mI5O1X8hcWkNm6cfuOzKdd9TYCB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GQ9txCv/; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=q/fRG61lTvPf/sKYf1P+1Q5AO6yOpV04Z2JNnoqYD3UJiK5bVlDP+8wvz0w+9Pz/Qoi3WQfsWbz3o3cSAhsfrYm77EppUdWvXPIpGzQKDYugvz5Ls/xdSipCvFDOYnObiuHiEhG11MOYGrZOzcYRqonmp4S4dM9eCyEk/WvNvHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KuXGQlbe; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712153430;
+	s=mimecast20190719; t=1712153437;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=y0+cDn0/ggKHKobWqWXUXd6pCIGaHqIXCgKr68nR+EE=;
-	b=GQ9txCv/duMuPUR8zDbP0UOtScfOyDp9ihcWvKqpYJedcbExGqiJT270cq9RGKwlI/vitT
-	p6R3DgwKY8pEl72z8iNXXkyvTcwaat5E2ZnhDTLTPl4vslo2PuHxPjS+h3Ns5SGYEKnQCQ
-	obKgpkvLkofiLKmFycJMgFd8/SiVMT0=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=K2aBTyYb+Nt/ptLDXgMV8oWUST4z7rOytIWtEbvnm/I=;
+	b=KuXGQlbeSVapxqTFQFAdsWWIaj0XDHNAiD/3OPOPJN/Y1TnJC7yKiI5UhQlY1YsrvYYK/8
+	SpJrXk/28lwvGk1/wkE5kw896SfU6hT7MpKLOholLpN4LckomqFS79E/RnPLdFCrGD6pVm
+	Y3CZ7zI6rg78g0VWzFosZeBiCWV6wv8=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-MuREwq22PxCaC-Df5P2GFg-1; Wed, 03 Apr 2024 10:10:21 -0400
-X-MC-Unique: MuREwq22PxCaC-Df5P2GFg-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a474ac232e9so310089266b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Apr 2024 07:10:21 -0700 (PDT)
+ us-mta-691-eW8n61ReNeuGqyLOdL1GKg-1; Wed, 03 Apr 2024 10:10:35 -0400
+X-MC-Unique: eW8n61ReNeuGqyLOdL1GKg-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-56e0ce8d705so245408a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Apr 2024 07:10:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712153420; x=1712758220;
+        d=1e100.net; s=20230601; t=1712153434; x=1712758234;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y0+cDn0/ggKHKobWqWXUXd6pCIGaHqIXCgKr68nR+EE=;
-        b=SwmZd2udkPNDWvls9hJnBYMn+hOLV/22QCl5wgcCV+K3vlt0dEnWPANjyE534QRllL
-         3HEt4Q7AZuYRTJXPjLcIvvsEBRcbwOkOK2b54CdK2boHyvAtf/dpbCG08sl1ffrj1bw2
-         gNWZfh9aLP8Vr2d6sNr6HoBHmcnL8418biBkJxXD3wh2D3/vW3mS3vH22giW6hZO65xJ
-         n3vj1aHJfxc/cY3GaoQJLFqJdvSs8pu9HzWwWyhY7BEsQe+CYOD2JXsjOtZ5PIWxmMZ1
-         Ato2fuXXTGonYDjfIcjKYIf/K3Be6Ul1CVdX52p85sYN+KG6gSGW0qicdVBCNc/UkeoS
-         jtDg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4hFLY9EqBMZ6BHGZr+oT1C/ewSBsBANXyJLzwnpBgiQBdz5Fp13Nub6tFSQnvn7qIgGwAthHm423yB+4NTbV3Rxqq/VrosYZZRkuHeg==
-X-Gm-Message-State: AOJu0YyY0NFVabTnbe6X35/XrthRNkQ11+ttyDu76IpExMgl0tFo220e
-	RLa4GzALY7ZJBFYRgU0TTWVcbTplo0ZJDigC+nsaYzJKHA/K8kfZi3p1JArMOEcP7dsaJBEYcOq
-	pL3t8sGdYK4ufph12mdoxMQvlvGPLaR0hsiOTUkqNGkSPdTPs4YeqgBEhJ3kdvuA=
-X-Received: by 2002:a50:a446:0:b0:568:d55c:1bb3 with SMTP id v6-20020a50a446000000b00568d55c1bb3mr11923377edb.31.1712153420161;
-        Wed, 03 Apr 2024 07:10:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhi00Gg7n9Ts7IAvb+tYatzzV6iMMMdxXDIzLOIHLjOh3ba8rP3luYiF+Q/5TjPb4RqxFo8w==
-X-Received: by 2002:a50:a446:0:b0:568:d55c:1bb3 with SMTP id v6-20020a50a446000000b00568d55c1bb3mr11923354edb.31.1712153419787;
-        Wed, 03 Apr 2024 07:10:19 -0700 (PDT)
+        bh=K2aBTyYb+Nt/ptLDXgMV8oWUST4z7rOytIWtEbvnm/I=;
+        b=o9wJECAL6KjCpqjZNOxMzcpwY+IHV1hq+QYOv+jVf96/R62mRPvUO6T8hxPlGwVzsa
+         WRfpw8T+T/TUp/OqfJHTfVqSU+TOZ+LFvV8E7M9mINLE/BNzFFf9OWZG60FHYs1H41Go
+         E7CYnTKeaJz4qn8kQQ60YySyN6/ilSr5xUllj3GjEOVFDWu6NO9jRJ6aMvwCvb7rsJ5W
+         9n33EKiDlvOw1EPAAxSPLru14fCE0Z3lZkHxtnLLNXZdvBvrRPxckTGCjwS3srp4+oH1
+         5gkBIH9IwqCpi3QEXmRwxiCG8zncWB20bBndbOL1RS0dOuKZ8d0AdBinhTUHpZ8iCwne
+         UDkw==
+X-Gm-Message-State: AOJu0YzIFK1P4y3wi3xmGf/EHMGziTXD6GqD/NPb3ynbbTR0VrJa2O6g
+	fhwD29ib0B1BXECC0GQbgU5JNORncakxuFKHA5ziwT3HG9PnxDIAaWJzH2m3hCuqrNh+U6Q1/8Y
+	I/S7Yhmrdjw8bT/ZlZpb/JjInVA1Ukhe7+uk/gBtjbpjExEWgTHjokKUXKni/GTk=
+X-Received: by 2002:a05:6402:27d3:b0:568:d315:b85e with SMTP id c19-20020a05640227d300b00568d315b85emr2403728ede.36.1712153434327;
+        Wed, 03 Apr 2024 07:10:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGTz1BJSzH4XsYtIvDxE2Ibd4gH2Fl0QoKJfEwumIBmM+YFFAAfM84ZxOKH6aulkAAP1jXrg==
+X-Received: by 2002:a05:6402:27d3:b0:568:d315:b85e with SMTP id c19-20020a05640227d300b00568d315b85emr2403684ede.36.1712153433621;
+        Wed, 03 Apr 2024 07:10:33 -0700 (PDT)
 Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id ig10-20020a056402458a00b0056c0a668316sm948334edb.3.2024.04.03.07.10.19
+        by smtp.gmail.com with ESMTPSA id f4-20020a056402194400b0056c4cdc987esm8055405edz.8.2024.04.03.07.10.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Apr 2024 07:10:19 -0700 (PDT)
-Message-ID: <95be6ebf-9f45-404c-a643-89dd6ee4efdf@redhat.com>
-Date: Wed, 3 Apr 2024 16:10:18 +0200
+        Wed, 03 Apr 2024 07:10:33 -0700 (PDT)
+Message-ID: <6898c729-cc96-4611-9a5a-8e3558e1b69c@redhat.com>
+Date: Wed, 3 Apr 2024 16:10:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,38 +81,30 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] vboxsf: Avoid an spurious warning if load_nls_xxx()
- fails
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Christoph Hellwig <hch@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] vboxsf: explicitly deny setlease attempts
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240319-setlease-v1-1-5997d67e04b3@kernel.org>
 Content-Language: en-US, nl
 From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240319-setlease-v1-1-5997d67e04b3@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi,
 
-On 11/1/23 11:49 AM, Christophe JAILLET wrote:
-> If an load_nls_xxx() function fails a few lines above, the 'sbi->bdi_id' is
-> still 0.
-> So, in the error handling path, we will call ida_simple_remove(..., 0)
-> which is not allocated yet.
+On 3/19/24 5:32 PM, Jeff Layton wrote:
+> vboxsf does not break leases on its own, so it can't properly handle the
+> case where the hypervisor changes the data. Don't allow file leases on
+> vboxsf.
 > 
-> In order to prevent a spurious "ida_free called for id=0 which is not
-> allocated." message, tweak the error handling path and add a new label.
-> 
-> Fixes: 0fd169576648 ("fs: Add VirtualBox guest shared folder (vboxsf) support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Thanks, both patches in this series look good to me:
+Thanks, patch looks good to me:
 
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-I have added both patches to my local vboxsf branch now and I'll send
+I have added this to my local vboxsf branch now and I'll send
 out a pull-request with this and a couple of other vboxsf fixes
 soon.
 
@@ -124,31 +115,31 @@ Hans
 
 
 
-
 > ---
->  fs/vboxsf/super.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Looking over the comments in the code around cache coherency, it seems
+> like it ought to deny file locks as well? We could add a stub ->lock
+> routine that just returns -ENOLCK or something.
+> ---
+>  fs/vboxsf/file.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index 1fb8f4df60cb..9848af78215b 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -151,7 +151,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		if (!sbi->nls) {
->  			vbg_err("vboxsf: Count not load '%s' nls\n", nls_name);
->  			err = -EINVAL;
-> -			goto fail_free;
-> +			goto fail_destroy_idr;
->  		}
->  	}
+> diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
+> index 2307f8037efc..118dedef8ebe 100644
+> --- a/fs/vboxsf/file.c
+> +++ b/fs/vboxsf/file.c
+> @@ -218,6 +218,7 @@ const struct file_operations vboxsf_reg_fops = {
+>  	.release = vboxsf_file_release,
+>  	.fsync = noop_fsync,
+>  	.splice_read = filemap_splice_read,
+> +	.setlease = simple_nosetlease,
+>  };
 >  
-> @@ -224,6 +224,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
->  	if (sbi->nls)
->  		unload_nls(sbi->nls);
-> +fail_destroy_idr:
->  	idr_destroy(&sbi->ino_idr);
->  	kfree(sbi);
->  	return err;
+>  const struct inode_operations vboxsf_reg_iops = {
+> 
+> ---
+> base-commit: 0a7b0acecea273c8816f4f5b0e189989470404cf
+> change-id: 20240319-setlease-ce31fb8777b0
+> 
+> Best regards,
 
 
