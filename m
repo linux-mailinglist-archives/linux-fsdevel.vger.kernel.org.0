@@ -1,128 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-15953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B87896243
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 03:59:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD23689625B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 04:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9997AB2476A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 01:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87B9D1F25A4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 02:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E895A168DA;
-	Wed,  3 Apr 2024 01:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FBE17BCE;
+	Wed,  3 Apr 2024 02:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="rpjs7nyy"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="aAaHfe5b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035881B950
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 01:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FB914F70;
+	Wed,  3 Apr 2024 02:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712109567; cv=none; b=uQ+jYg8MyC0f3/IIjt3Wwl8MSd9wTMmPU/9rKbCe2Kwc+mGOSnNSo9HMeAVsiY8V+W6zZCBvxEwIpwZZgMIqwA8cIArlc7YBMIc0yOmR0YLifAF6UPBU1bZEZCXKHTJeUmhtVILOzv4128r9vib3NxIb5+nXhVkRyGdQsrmUbnc=
+	t=1712110590; cv=none; b=a91UvHuOO3SdHyS1WhohOJR36j90D9CHk9hw/eLcBTpevmA4OLG7MlUQJVEZZGAeSn87vE7grNLWBHHYkUfft4UzoEHfke1Q1T4TwP+hgSSmk2FpYaG3XLbBHc8ux1gP87jvAEBFDAEzgSZDveLKUgcckeIT+8dm+Yke4GIdPLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712109567; c=relaxed/simple;
-	bh=QIwoSNVbGhF4tVY6dhV0Hdf7RkIWChRHPzMOnXsGvyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nBKmZUSu0SpHwhDrhB4ukdnjnQgWsjNfQALaTFJb6/NvJL/q7eKywhqQzxi7EgbDvEM4H0hjLtwrWfGyN3vFMH14NLDYFrW9N/65185Bg1qU53U3t1mGfk5792kM0H8VFRySWoI2jfJnLWaQnGu+4S3Bov/bYdXmbbbZ6dB8udY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=rpjs7nyy; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6e6fb9a494aso4804967b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 18:59:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1712109565; x=1712714365; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NYvnBCprFZzYoPCfFCY9FHGMDGDnnbenpZrTFCrtHqg=;
-        b=rpjs7nyyzAAMQeWPg+BIk9yk5PJuPWeYYoY1Uos8w6nfhEGE90DxqhXsnYPcYqQLAV
-         gdQCZEqdmgwAbNyXNuxgdGHH2a4dbaecGQ4U/7NvzWBYZ2c2WWDy898PvSMbtGRyJSPd
-         Hq9OJFC7q/D3Awx4AMUmOOliQhqfJoIJpe0+MsLSinlM4amxTcqFoEU69Zu3osUCeEnl
-         jkgyOcQza2pOuweaWEG9Cog2XBsoZXAKonzdHZklaIIWJaeTI+IqBhI0xX2r1cxe/w4w
-         sFJiIgmf4rRMGxGtKVikl1VCAQJl/lQZPo6++42llug2bvHBDX50r4OnkqGNyNtmQtFo
-         rzEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712109565; x=1712714365;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NYvnBCprFZzYoPCfFCY9FHGMDGDnnbenpZrTFCrtHqg=;
-        b=pINtSxQ8rg87bG3w3ySdaHHtuA/HNImIlj1+kWJUq4iEGYhHUydtF7MSXHJKn3xDIR
-         TENwUA8dFciZOJMqvaMy6qJQXljwcnvsJGC/wQWZbgvUuJNjqDgoRo1V0rM1KN570JDx
-         GkOk266zLi4T9ToSffCqrAqnhi0Mlph3Z2dditDp6E1vUt8zHJSTb2z5XTFIAaVduYVm
-         JRN4H0Kax+F6LwbKUqZLKueNI7zZ5TBuZwomIO1Z+woy96vwwfKeuzp2RZIQWy2NbPyp
-         9vfxOqu0L3cYr0e7dloHng5CT+2fVfC+kKfxjtvogQQMUFvev/BPqFh1MC70qoQeTMEC
-         4FCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIV9vwOoqN/HiRxippWWZeyMTByyNUiOZXflINKmy0yE4KgGq5vjZHKZmVyLOWbpu48uUgnZe9Dyd0hYvKY1UzKg455Rp8Yu4mZklB8w==
-X-Gm-Message-State: AOJu0YxOhJu7qGj6yAYdVlK8wy2zqBqJeCG18V5Ucuq3Axjv/dA70cuz
-	3lgPPQhYgJ2ZxZWDdWOKRw0O69tDhUfMRnyljikJjwoxo4WjSHQ9DX2TFQLoTyk=
-X-Google-Smtp-Source: AGHT+IH7IcdRuRfN1eedYkwr5P3Wm/AdI3Un/KrVubjcpsHE0mA4uhQCOt/SLnjlUQhlQrSkkwksHg==
-X-Received: by 2002:a05:6a20:8f27:b0:1a3:30a8:2ad6 with SMTP id b39-20020a056a208f2700b001a330a82ad6mr12794751pzk.10.1712109565140;
-        Tue, 02 Apr 2024 18:59:25 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-56-237.pa.nsw.optusnet.com.au. [49.181.56.237])
-        by smtp.gmail.com with ESMTPSA id n14-20020a170902d2ce00b001e0942da6c7sm11830061plc.284.2024.04.02.18.59.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Apr 2024 18:59:24 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rrpuM-0020Ui-0p;
-	Wed, 03 Apr 2024 12:59:22 +1100
-Date: Wed, 3 Apr 2024 12:59:22 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Colin Walters <walters@verbum.org>, Eric Biggers <ebiggers@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	xfs <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-	fsverity@lists.linux.dev, Alexander Larsson <alexl@redhat.com>
-Subject: Re: [PATCH 28/29] xfs: allow verity files to be opened even if the
- fsverity metadata is damaged
-Message-ID: <Zgy3+ljJME0pky3d@dread.disaster.area>
-References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
- <171175869022.1988170.16501260874882118498.stgit@frogsfrogsfrogs>
- <2afcf2b2-992d-4678-bf68-d70dce0a2289@app.fastmail.com>
- <20240402225216.GW6414@frogsfrogsfrogs>
- <992e84c7-66f5-42d2-a042-9a850891b705@app.fastmail.com>
- <20240403013903.GG6390@frogsfrogsfrogs>
+	s=arc-20240116; t=1712110590; c=relaxed/simple;
+	bh=/mxN8H4HfV7JABW4Te432WPH6daYeWBceHea3twjMLM=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=omoiahcPBevfnmSlFDAgaegJ3zJ936fM76pvBxZdehlLClzor26zotvfAr7uUa4pGEJwnGSm/L5aBQH+SmeW0877qC54plABbQkCuXU5Zp943d7NYPvGN+k59Fq/e43ASvjn0+UynrgN7EpJZPagHp7nk5fkRky0DwLbhq/sF9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=aAaHfe5b; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1712110580; bh=ayMG5kPQyrq+8jbtAodeuRBjRi8R0ZuYWiPfYDs0A34=;
+	h=From:To:Cc:Subject:Date;
+	b=aAaHfe5b5gUJG5SLXJdPdLM5+JJSV6qDXhowhdgzoqg5YOksjxp74ppb74tTYNTGH
+	 6afNCoeyui6dRjew6BkBHgcUA70gIx7NcN2otvjv5WbP06nkCixxLOFCSYrjGpva+1
+	 goJCLpAahBUmI0it/yB+VLY5HLVFtI3tSdAXsn6g=
+Received: from localhost.localdomain ([153.3.164.50])
+	by newxmesmtplogicsvrsza1-0.qq.com (NewEsmtp) with SMTP
+	id 28B83A6E; Wed, 03 Apr 2024 10:10:11 +0800
+X-QQ-mid: xmsmtpt1712110211t0yxkh2ev
+Message-ID: <tencent_5E187BD0A61BA28605E85405F15228254D0A@qq.com>
+X-QQ-XMAILINFO: OZsapEVPoiO6vlv/ICY8TgGx/eAkz6B+6WYW0Fyip6dA9nbTAMktxVIHkJVNf7
+	 /qgVBr13Tr0pnzOGDRUO+imITOgybbwGqCPCWx1l5sNIMBN030FXqhXIcuyCPy+U2wWLCA6Y//a1
+	 X+pPp2bwvopAsl7+YcseK/bZ8YIL1a9WRUYfgUlFXDRjVvPnsCoRyXsywRCSygAeuh+rheiBjr8n
+	 e3GNL44yiWYtMSA/z0QlB4oDUN3CZdZvxgQ8KwQ7DJ3lvcd5VWZOOGTJqtbLX2w5pvvRBdQz3/cF
+	 6JfhQpgnlDxadKmaCtgFC0akIXzmR6cXopvN8zU/VhziGWk2GtFim2Rfz0OrXWaPeaxUvU0c0D5E
+	 hTGv3imEXzbGBmgcQje1xS360PoFRhRCjMpPxpOHizK55Od5SaWMPWUJIQJIFJI6H+Daq7foK0k/
+	 aOO84kOtSJySjk/AMDu5bMFlr8v+l3YnHf+HxMA80amXsbupS1R7Hi+eyUvv3XZX/5bcHzBGRII5
+	 pPb92Nz+Brv/wOg4GIuwCiGh8DCi0sJQyJ17ruHxc3I5JhPGr+TDe157nPTfZfYT36z+JyG4GoOX
+	 Tz7ctL6pYeksRLp6lNheZlbmMlt0ZtlkAFQpDy9Sfvt4Rr6G8fQUnZQ1G9AS2P+OtNGBswgWxNux
+	 5JdGzlXVwbXJIiUKUrTmZgVob5nb7Luy2lelKBCuSrWqfoORJu0yBNWkzCu6smrYp3LhUD8KYVtc
+	 cXTv/k/aReGTc2OuX9bRWa3kjQxhbxivFC3FUQTwBb+tbWZYPBBzK4XPMGRbfYZwEl4UyMZRTzjK
+	 UoYWmeHxaeSrGvzXtYr7yoAEbMFTeoX74HQsXXcq0JwjDECWB7o5j0jyWGa6j9xs/LYnmLZdEWky
+	 r45NTgljWNl6RmL1a7752NElIFnswoFi3tdvSXa5sN4YUa991fPARneISEx96bW/xisMfbH79Tml
+	 b0hARrFd7tzRZfnYj6XdZt+gnkcJcGNlvWpYTG5Yq+w3qJcijaYl42u5My6mCsIhaor54BL9M=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: linke li <lilinke99@qq.com>
+To: 
+Cc: xujianhao01@gmail.com,
+	linke li <lilinke99@qq.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/dcache: Re-use value stored to dentry->d_flags instead of re-reading
+Date: Wed,  3 Apr 2024 10:10:08 +0800
+X-OQ-MSGID: <20240403021008.47028-1-lilinke99@qq.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240403013903.GG6390@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 02, 2024 at 06:39:03PM -0700, Darrick J. Wong wrote:
-> On Tue, Apr 02, 2024 at 08:10:15PM -0400, Colin Walters wrote:
-> > >> I hesitate to say it but maybe there should be some ioctl for online
-> > >> repair use cases only, or perhaps a new O_NOVERITY special flag to
-> > >> openat2()?
-> > >
-> > > "openat2 but without meddling from the VFS"?  Tempting... ;)
-> > 
-> > Or really any lower level even filesystem-specific API for the online
-> > fsck case.  Adding a blanket new special case for all CAP_SYS_ADMIN
-> > processes covers a lot of things that don't need that.
-> 
-> I suppose there could be an O_NOVALIDATION to turn off data checksum
-> validation on btrfs/bcachefs too.  But then you'd want to careful
-> controls on who gets to use it.  Maybe not liblzma_la-crc64-fast.o.
+Currently, the __d_clear_type_and_inode() writes the value flags to
+dentry->d_flags, then immediately re-reads it in order to use it in a if
+statement. This re-read is useless because no other update to 
+dentry->d_flags can occur at this point.
 
-Just use XFS_IOC_OPEN_BY_HANDLE same as xfs_fsr and xfsdump do. The
-handle can be build in userspace from the inode bulkstat
-information, and for typical inode contents verification purposes we
-don't actually need path-based open access to the inodes. That would
-then mean we can simple add our own open flag to return a fd that
-can do data operations that short-circuit verification...
+This commit therefore re-use flags in the if statement instead of
+re-reading dentry->d_flags.
 
-Cheers,
 
-Dave.
+Signed-off-by: linke li <lilinke99@qq.com>
+---
+ fs/dcache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index b813528fb147..79da415d7995 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -355,7 +355,7 @@ static inline void __d_clear_type_and_inode(struct dentry *dentry)
+ 	flags &= ~DCACHE_ENTRY_TYPE;
+ 	WRITE_ONCE(dentry->d_flags, flags);
+ 	dentry->d_inode = NULL;
+-	if (dentry->d_flags & DCACHE_LRU_LIST)
++	if (flags & DCACHE_LRU_LIST)
+ 		this_cpu_inc(nr_dentry_negative);
+ }
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.39.3 (Apple Git-146)
+
 
