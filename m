@@ -1,144 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-16074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E41897A71
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 23:12:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C619897A74
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 23:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FD35282837
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 21:12:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D1A1F23F91
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 21:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42976156670;
-	Wed,  3 Apr 2024 21:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E6915664A;
+	Wed,  3 Apr 2024 21:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvVi8LMC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKx6/qod"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAE75DF0E;
-	Wed,  3 Apr 2024 21:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60C85DF0E;
+	Wed,  3 Apr 2024 21:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712178766; cv=none; b=Bny2k+UmT8PAEEW3PyRu7QIALA53HYWPTT7j8COy5WUvgI51/IxlVdKvguft1cb/fmbGk+3lg/1c2/GNpD+Ygz0gRvoZq8Rwv1UkvLtWYOeQ5slrAwHs34hoKKfI7fqbBX4p9V/AktHwWNUczrTw2cA3ALR26ZaUEYgH940l3qc=
+	t=1712178770; cv=none; b=PYikDNlEqSqSMHoxY5MU4aGL1JzLu8PpUdl8rWZxl96euJ5KlwAWev57PNcqGDoDG0yguYxkvUHQe7dzLy42Np0hxYFM1eG/MlLbt29GpywX16NsYgqzig20AM6TY4RLUzabN5nA1oXL7rkJjaoIJkddszwqdIcrV48aDxvFZdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712178766; c=relaxed/simple;
-	bh=eAxmNahq0qz4MjguPAZcqC0KPuy9iIiFN/TD17zLp6k=;
+	s=arc-20240116; t=1712178770; c=relaxed/simple;
+	bh=MhBeFVX+yqfsszn7feIWeCwLrrnL1A5qyItez7QnJ1E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqmLIkAWp+8WuvT6Y1hZED1BHuinEdoe52jifK7r/QahXOpucjCH4WE4ISReD5Ja2gu5TJZC8qM2xatfYZU8D6S8cE1fPKRghRpxpZePciFRyQWHSW4pc/HwPjVoPv6u3u1REOsv5KQvKJ1zgU0XEju4uZtU2k33ZtCHkvs9DL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AvVi8LMC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E15A6C433C7;
-	Wed,  3 Apr 2024 21:12:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnjxQNgqYScy6AmQffRly/sng+J2AtmJdOm1NnVcyk0NdRDm7vuVesiTycu/J83Czgs/eys9Oa264h/WeMvf8zzzoJ0n4YoTdXehoQLUxm00spZGMzKYsKwkmUl/aSwohKCMdCHIvdHTsJRhBguDxnlwPPN1p4hipONO7E9RxF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKx6/qod; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F6ADC433C7;
+	Wed,  3 Apr 2024 21:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712178766;
-	bh=eAxmNahq0qz4MjguPAZcqC0KPuy9iIiFN/TD17zLp6k=;
+	s=k20201202; t=1712178770;
+	bh=MhBeFVX+yqfsszn7feIWeCwLrrnL1A5qyItez7QnJ1E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AvVi8LMCPmD4vtizYlqbbrKdv6QHneAbgdsDhvVCwOCKlEjxORkOrxxsJaVKKe7ib
-	 YfLM/rXrgmOgLEfBvFZMk7h4uuO1i9LQJ8M/6UOuM3j1UhfgLRc8vtGUdYkyvOB7qF
-	 FK0zIrKPLUKf2X5PFEHqblNLkN3++ZGBDxB0Ckhu7GEuMY1ENqC6PtyP4PptCVwaCA
-	 a2tbItT4M2CDmlu7PtN/anCWs0FKgXZEkpfh6sPHkTM077WDUkJUHG5B3YhvYpuPju
-	 xPxmHBxAuN4+ZSpTgL2wp6f5XhRGsP7bV4GU68Ip1Yj2vPHXgYGKnLcD5SyRvdfCp0
-	 PZSDJCo+DH2qQ==
-Date: Wed, 3 Apr 2024 14:12:40 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
-	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net,
-	void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, peterx@redhat.com, david@redhat.com,
-	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-	dennis@kernel.org, jhubbard@nvidia.com, tj@kernel.org,
-	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com,
-	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com,
-	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com,
-	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
-	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
-	elver@google.com, dvyukov@google.com, songmuchun@bytedance.com,
-	jbaron@akamai.com, aliceryhl@google.com, rientjes@google.com,
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH v6 01/37] fix missing vmalloc.h includes
-Message-ID: <20240403211240.GA307137@dev-arch.thelio-3990X>
-References: <20240321163705.3067592-1-surenb@google.com>
- <20240321163705.3067592-2-surenb@google.com>
+	b=FKx6/qodk41xQfO+hzX4a16PJ+jm4Mxfrqh1k0qZaD8FxruP1dcomzmymE9I1Ieba
+	 Gto5eTQNY41wGS/ofcYE63P+Da4Vy3cnQ8WFZdPLSfely5MrcOCLqErQOEvAa15woY
+	 CZlIIQ8dMrcwPc13JX6uARH298S0mvBy8WFoNO6xtdPPjG4cqVT4FAlBnyB/6HgvML
+	 3BCOQ97u5iUyXA8f0E6zfN1jiw7wfsSxbMeHzu/SH2xHAmGqI1vQcVxYnzUzavCvt7
+	 +nzWQw31j3W4gdW7hbbwqeV2vaeY14Q9PhoYyHavmYeK8UGyDpce/Pw+NA9tPn9bjw
+	 hVIot6CnIbpoQ==
+Date: Wed, 3 Apr 2024 22:12:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
+Subject: Re: [PATCH v2] fs: claw back a few FMODE_* bits
+Message-ID: <9bb5e9ad-d788-441e-96f3-489a031bb387@sirena.org.uk>
+References: <20240328-gewendet-spargel-aa60a030ef74@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="K+f1fOeCclksxSlf"
+Content-Disposition: inline
+In-Reply-To: <20240328-gewendet-spargel-aa60a030ef74@brauner>
+X-Cookie: Idleness is the holiday of fools.
+
+
+--K+f1fOeCclksxSlf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240321163705.3067592-2-surenb@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 21, 2024 at 09:36:23AM -0700, Suren Baghdasaryan wrote:
-> From: Kent Overstreet <kent.overstreet@linux.dev>
-> 
-> The next patch drops vmalloc.h from a system header in order to fix
-> a circular dependency; this adds it to all the files that were pulling
-> it in implicitly.
-> 
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+On Thu, Mar 28, 2024 at 01:27:24PM +0100, Christian Brauner wrote:
+> There's a bunch of flags that are purely based on what the file
+> operations support while also never being conditionally set or unset.
+> IOW, they're not subject to change for individual files. Imho, such
+> flags don't need to live in f_mode they might as well live in the fops
+> structs itself. And the fops struct already has that lonely
+> mmap_supported_flags member. We might as well turn that into a generic
+> fop_flags member and move a few flags from FMODE_* space into FOP_*
+> space. That gets us four FMODE_* bits back and the ability for new
+> static flags that are about file ops to not have to live in FMODE_*
+> space but in their own FOP_* space. It's not the most beautiful thing
+> ever but it gets the job done. Yes, there'll be an additional pointer
+> chase but hopefully that won't matter for these flags.
 
-I bisected an error that I see when building ARCH=loongarch allmodconfig
-to commit 302519d9e80a ("asm-generic/io.h: kill vmalloc.h dependency")
-in -next, which tells me that this patch likely needs to contain
-something along the following lines, as LoongArch was getting
-include/linux/sizes.h transitively through the vmalloc.h include in
-include/asm-generic/io.h.
+For the past couple of days several LTP tests (open_by_handle_at0[12]
+and name_to_handle_at01) have been failing on all the arm64 platforms
+we're running these tests on.  I ran a bisect which came back to this
+commit which is in -next as 80a07849c0b8d8a2e839c8.  I didn't verify a
+revert against -next due to conflicts and it being pretty late but I'm a
+little suspicous this report is misdrected, the commit doesn't look
+obviously relevant but equally I'm totally unfamiliar with this bit of
+the code. =20
 
-Cheers,
-Nathan
+We use a NFS root for our testing.  The last pass was next-20240328 and
+while the bisect was run on yesterday's -next things still look bad
+today.
 
-  In file included from arch/loongarch/include/asm/io.h:11,
-                   from include/linux/io.h:13,
-                   from arch/loongarch/mm/mmap.c:6:
-  include/asm-generic/io.h: In function 'ioport_map':
-  arch/loongarch/include/asm/addrspace.h:124:25: error: 'SZ_32M' undeclared (first use in this function); did you mean 'PS_32M'?
-    124 | #define PCI_IOSIZE      SZ_32M
-        |                         ^~~~~~
-  arch/loongarch/include/asm/addrspace.h:126:26: note: in expansion of macro 'PCI_IOSIZE'
-    126 | #define IO_SPACE_LIMIT  (PCI_IOSIZE - 1)
-        |                          ^~~~~~~~~~
-  include/asm-generic/io.h:1113:17: note: in expansion of macro 'IO_SPACE_LIMIT'
-   1113 |         port &= IO_SPACE_LIMIT;
-        |                 ^~~~~~~~~~~~~~
-  arch/loongarch/include/asm/addrspace.h:124:25: note: each undeclared identifier is reported only once for each function it appears in
-    124 | #define PCI_IOSIZE      SZ_32M
-        |                         ^~~~~~
-  arch/loongarch/include/asm/addrspace.h:126:26: note: in expansion of macro 'PCI_IOSIZE'
-    126 | #define IO_SPACE_LIMIT  (PCI_IOSIZE - 1)
-        |                          ^~~~~~~~~~
-  include/asm-generic/io.h:1113:17: note: in expansion of macro 'IO_SPACE_LIMIT'
-   1113 |         port &= IO_SPACE_LIMIT;
-        |                 ^~~~~~~~~~~~~~
+Bisect log:
 
-diff --git a/arch/loongarch/include/asm/addrspace.h b/arch/loongarch/include/asm/addrspace.h
-index b24437e28c6e..7bd47d65bf7a 100644
---- a/arch/loongarch/include/asm/addrspace.h
-+++ b/arch/loongarch/include/asm/addrspace.h
-@@ -11,6 +11,7 @@
- #define _ASM_ADDRSPACE_H
- 
- #include <linux/const.h>
-+#include <linux/sizes.h>
- 
- #include <asm/loongarch.h>
- 
+git bisect start
+# bad: [c0b832517f627ead3388c6f0c74e8ac10ad5774b] Add linux-next specific f=
+iles for 20240402
+git bisect bad c0b832517f627ead3388c6f0c74e8ac10ad5774b
+# good: [0fc83069bcaee78f60b8511d9453a9441963a072] Merge branch 'for-linux-=
+next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
+git bisect good 0fc83069bcaee78f60b8511d9453a9441963a072
+# bad: [784b758e641c4b36be7ef8ab585bea834099b030] Merge branch 'for-linux-n=
+ext' of https://gitlab.freedesktop.org/drm/misc/kernel.git
+git bisect bad 784b758e641c4b36be7ef8ab585bea834099b030
+# good: [8b8b4dca2ddd82d3ae7e2a6a2fc7d49e511ceae7] Merge branch 'dev' of gi=
+t://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git
+git bisect good 8b8b4dca2ddd82d3ae7e2a6a2fc7d49e511ceae7
+# bad: [2c20b30ed316f5cb8773e5f99c02cd997f2374b7] Merge branch 'main' of gi=
+t://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect bad 2c20b30ed316f5cb8773e5f99c02cd997f2374b7
+# bad: [bbe99111e156e6838845511debc03f4ef5041f1a] Merge branch 'linux-next'=
+ of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+git bisect bad bbe99111e156e6838845511debc03f4ef5041f1a
+# bad: [7e4f9465775837c3af79501698b0bb5ce28ffb11] Merge branch 'for-next' o=
+f git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git
+git bisect bad 7e4f9465775837c3af79501698b0bb5ce28ffb11
+# good: [a2b4cab9da7746c42f87c13721d305baf0085a20] Merge branch 'for-6.10' =
+into for-next
+git bisect good a2b4cab9da7746c42f87c13721d305baf0085a20
+# bad: [35c44ac8370af87614db9d0727da06a07d5436a2] Merge branch 'vfs.mount.a=
+pi' into vfs.all
+git bisect bad 35c44ac8370af87614db9d0727da06a07d5436a2
+# good: [16634c0975ba6569991274e7a4ccbb15766e31d3] Merge patch series 'fs: =
+aio: more folio conversion' of https://lore.kernel.org/r/20240321131640.948=
+634-1-wangkefeng.wang@huawei.com
+git bisect good 16634c0975ba6569991274e7a4ccbb15766e31d3
+# bad: [276832a7ef840783bf867abe680db0eb6b3d4655] Merge branch 'vfs.misc' i=
+nto vfs.all
+git bisect bad 276832a7ef840783bf867abe680db0eb6b3d4655
+# good: [1b43c4629756a2c4bbbe4170eea1cc869fd8cb91] fs: Annotate struct file=
+_handle with __counted_by() and use struct_size()
+git bisect good 1b43c4629756a2c4bbbe4170eea1cc869fd8cb91
+# good: [22650a99821dda3d05f1c334ea90330b4982de56] fs,block: yield devices =
+early
+git bisect good 22650a99821dda3d05f1c334ea90330b4982de56
+# bad: [80a07849c0b8d8a2e839c83cea939c2e1cd7800b] fs: claw back a few FMODE=
+_* bits
+git bisect bad 80a07849c0b8d8a2e839c83cea939c2e1cd7800b
+# first bad commit: [80a07849c0b8d8a2e839c83cea939c2e1cd7800b] fs: claw bac=
+k a few FMODE_* bits
+
+--K+f1fOeCclksxSlf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmYNxkwACgkQJNaLcl1U
+h9Ditwf+ONflswHRYnr7p2R5aO2ZQsIYjhKd4BoBPFb3Q6ukC3feFlN7DEQCTQ3k
+/CSMkjuCGGQzRKV+PD9+kzH192FbQD2ZkfIcc3LdDJnjX9M8NRCfQx0iJtB1sHAk
+Pni7/cmrLk7wnuUN1rLMWE1B5kZ8miLJpMyrnr04xlp3Bvm5K8GEPTdkX2JkxXAX
+Wmpxk+uEpmMJ8D2GndUXka4CWRbvLAxhXdfOba4WyR6/r86S1BjrmN9W3yHp46A6
+c7CM1Mx+xMCRIX7XqDHi6f9srZ43pV6ZTD727nxhI4g/cBvs+ou1GlxCyCW7qZBf
+UGXQiw6cdUFDPr46vnYJSZPSA6uWFQ==
+=0ldx
+-----END PGP SIGNATURE-----
+
+--K+f1fOeCclksxSlf--
 
