@@ -1,55 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-16002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8D789697F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 10:49:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3AEE8969AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 10:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80D928A75E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 08:49:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11C77B2944B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 08:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3E16E2A3;
-	Wed,  3 Apr 2024 08:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B8F6EB53;
+	Wed,  3 Apr 2024 08:50:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9822026286;
-	Wed,  3 Apr 2024 08:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875ED70CA6;
+	Wed,  3 Apr 2024 08:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712134191; cv=none; b=g5spoTXRbrEAIy8ZQOs+p60ja4WyAQG56zMlY6MbrSAGDaPGQ+WpK4F2s4VUBqcc60PYlI9Z0AuNX/PQ/1pP1MzuHD5Uba6kCm6AiTT2xC8voXYzjf281RGwv2kMSxOY7RU/t8B4enKPiO38cgJ7a40rNUiO2SSN5KuLOQS8ZtI=
+	t=1712134223; cv=none; b=EZ06PO96aGnHXvo2qMhoDfXe+4H2FohlQMTUaFSPHTc3tRsN/X3gEfA0kTGqGfFMZXSKEU2T4Uf42/NiIhB5Bw9ks1eQnJR1T+hVSp1T2lYnlsXQMJxUVi/lImTCT8wFM3ElbRzG3GjxmOP8GfuC/Haqkb9d96LedwumjzH65xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712134191; c=relaxed/simple;
-	bh=fn7DVLGKWosvunx9fjOF1fFwjTXPBL4g1aWLefcdTbQ=;
+	s=arc-20240116; t=1712134223; c=relaxed/simple;
+	bh=j6PVjnhEwFnTM08n6aItl3eHzcT4fMKyQysaXwS7MUI=;
 	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hQZe24pz7dDtCRhiBzwCHBGhjlvt/AKeYkzVYeqTt3VGuNDA9eLXqRgGDJToth2XxurlahzjZmxIJYl1Jw/owY6jrXR2OsFSsgFDPkMCHziiWlApuVaQSU0mJxP/gZ6NR97VV/7g47+jRv8+h3w7ldjq+ykRqZHCNQUASuxXKmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 In-Reply-To:Content-Type; b=EfnsrhFeVLr2ou5PRHIPD2TDrgOzt4+30LJDk3PPqaYDQLFrKS5VnYiL0uSGhZub/AW1P8+NPJKhZ/7OJMmZIwXotUIfFlxnGKLLzJ+bGLZWP9H2jP7vBLA8c/fy549/RvoTp5SvuGzV6hIWg4eWVBQpPkhxTJMcTqM47knuYFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4V8djD2KFTz4f3p1K;
-	Wed,  3 Apr 2024 16:49:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id AFC401A0572;
-	Wed,  3 Apr 2024 16:49:44 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4V8djt1bSHz4f3kny;
+	Wed,  3 Apr 2024 16:50:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id B82B31A0568;
+	Wed,  3 Apr 2024 16:50:16 +0800 (CST)
 Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP2 (Coremail) with SMTP id Syh0CgCHrA8mGA1mM_hsJA--.51200S2;
-	Wed, 03 Apr 2024 16:49:44 +0800 (CST)
-Subject: Re: [PATCH v2 3/6] writeback: support retrieving per group debug
- writeback stats of bdi
-To: Brian Foster <bfoster@redhat.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, jack@suse.cz,
- tj@kernel.org, dsterba@suse.com, mjguzik@gmail.com, dhowells@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-References: <20240327155751.3536-1-shikemeng@huaweicloud.com>
- <20240327155751.3536-4-shikemeng@huaweicloud.com> <Zga937dR5UgtSVaz@bfoster>
+	by APP1 (Coremail) with SMTP id cCh0CgD3Ew1HGA1mt0KtIw--.56654S2;
+	Wed, 03 Apr 2024 16:50:16 +0800 (CST)
+Subject: Re: [PATCH 6/6] writeback: remove unneeded GDTC_INIT_NO_WB
+To: Jan Kara <jack@suse.cz>
+Cc: Tejun Heo <tj@kernel.org>, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ willy@infradead.org, bfoster@redhat.com, dsterba@suse.com,
+ mjguzik@gmail.com, dhowells@redhat.com, peterz@infradead.org
+References: <20240320110222.6564-1-shikemeng@huaweicloud.com>
+ <20240320110222.6564-7-shikemeng@huaweicloud.com>
+ <Zfr9my_tfxO-N6HS@mtj.duckdns.org>
+ <becdb16b-a318-ec05-61d2-d190541ae997@huaweicloud.com>
+ <20240327093309.ejuzjus2zcixb4qt@quack3>
+ <c2fc01e2-f15a-d331-6c4f-64319f3adc8a@huaweicloud.com>
+ <20240402135306.kluke2jjcmh5f4ei@quack3>
 From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <e3816f9c-0f29-a0e4-8ad8-a6acf82a06ad@huaweicloud.com>
-Date: Wed, 3 Apr 2024 16:49:42 +0800
+Message-ID: <50663bca-3851-42bb-ef1d-5fee8fc7b9b6@huaweicloud.com>
+Date: Wed, 3 Apr 2024 16:50:15 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.0
 Precedence: bulk
@@ -58,291 +62,93 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zga937dR5UgtSVaz@bfoster>
+In-Reply-To: <20240402135306.kluke2jjcmh5f4ei@quack3>
 Content-Type: text/plain; charset=gbk
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgCHrA8mGA1mM_hsJA--.51200S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3JF4DKF1fAr4xZry7AFW3GFg_yoW3AFW8pa
-	13J3W5KF4UXryI9rnxZFWUXryrt395trW7XF97Za4rCFyq9r1FkFyfGrWakFy5Ar93AFy3
-	Za1Yvryku3yktrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+X-CM-TRANSID:cCh0CgD3Ew1HGA1mt0KtIw--.56654S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw47Zw13Cw4fAw18Cr45KFg_yoW5ZFWfpF
+	W3Xa1DKay5Ja4SqrnIgwn7Xa1rKrZ7t347X3s0kw4UArs5Krn7Krnrta1rCF17Ar1xXw1j
+	vFW3tas7Za1UCFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
 	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
 	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
 	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
 	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
 	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
 	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
 	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUOyCJDUUUU
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
 
 
-on 3/29/2024 9:10 PM, Brian Foster wrote:
-> On Wed, Mar 27, 2024 at 11:57:48PM +0800, Kemeng Shi wrote:
->> Add /sys/kernel/debug/bdi/xxx/wb_stats to show per group writeback stats
->> of bdi.
->>
+on 4/2/2024 9:53 PM, Jan Kara wrote:
+> On Thu 28-03-24 09:49:59, Kemeng Shi wrote:
+>> on 3/27/2024 5:33 PM, Jan Kara wrote:
+>>> On Thu 21-03-24 15:12:21, Kemeng Shi wrote:
+>>>>
+>>>>
+>>>> on 3/20/2024 11:15 PM, Tejun Heo wrote:
+>>>>> Hello,
+>>>>>
+>>>>> On Wed, Mar 20, 2024 at 07:02:22PM +0800, Kemeng Shi wrote:
+>>>>>> We never use gdtc->dom set with GDTC_INIT_NO_WB, just remove unneeded
+>>>>>> GDTC_INIT_NO_WB
+>>>>>>
+>>>>>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+>>>>> ...
+>>>>>>  void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty)
+>>>>>>  {
+>>>>>> -	struct dirty_throttle_control gdtc = { GDTC_INIT_NO_WB };
+>>>>>> +	struct dirty_throttle_control gdtc = { };
+>>>>>
+>>>>> Even if it's currently not referenced, wouldn't it still be better to always
+>>>>> guarantee that a dtc's dom is always initialized? I'm not sure what we get
+>>>>> by removing this.
+>>>> As we explicitly use GDTC_INIT_NO_WB to set global_wb_domain before
+>>>> calculating dirty limit with domain_dirty_limits, I intuitively think the
+>>>> dirty limit calculation in domain_dirty_limits is related to
+>>>> global_wb_domain when CONFIG_WRITEBACK_CGROUP is enabled while the truth
+>>>> is not. So this is a little confusing to me.
+>>>
+>> Hi Jan,
+>>> I'm not sure I understand your confusion. domain_dirty_limits() calculates
+>>> the dirty limit (and background dirty limit) for the dirty_throttle_control
+>>> passed in. If you pass dtc initialized with GDTC_INIT[_NO_WB], it will
+>>> compute global dirty limits. If the dtc passed in is initialized with
+>>> MDTC_INIT() it will compute cgroup specific dirty limits.
+>> No doubt about this.
+>>>
+>>> Now because domain_dirty_limits() does not scale the limits based on each
+>>> device throughput - that is done only later in __wb_calc_thresh() to avoid> relatively expensive computations when we don't need them - and also
+>>> because the effective dirty limit (dtc->dom->dirty_limit) is not updated by
+>>> domain_dirty_limits(), domain_dirty_limits() does not need dtc->dom at all.
+>> Acutally, here is the thing confusing me. For wb_calc_thresh, we always pass
+>> dtc initialized with a wb (GDTC_INIT(wb) or MDTC_INIT(wb,..). The dtc
+>> initialized with _NO_WB is only passed to domain_dirty_limits. However, The
+>> dom initialized by _NO_WB for domain_dirty_limits is not needed at all.
+>>> But that is a technical detail of implementation and I don't want this
+>>> technical detail to be relied on by even more code.
+>> Yes, I agree with this. So I wonder if it's acceptable to simply define
+>> GDTC_INIT_NO_WB to empty for now instead of remove defination of
+>> GDTC_INIT_NO_WB. When implementation of domain_dirty_limits() or any
+>> other low level function in future using GDTC_INIT(_NO_WB) changes to
+>> need dtc->domain, we re-define GDTC_INIT_NO_WB to proper value.
+>> As this only looks confusing to me. I will drop this one in next version
+>> if you still prefer to keep definatino of GDTC_INIT_NO_WB in the old way.
 > 
-> Hi Kemeng,
-Hello Brian,
-> 
-> Just a few random thoughts/comments..
-> 
->> Following domain hierarchy is tested:
->>                 global domain (320G)
->>                 /                 \
->>         cgroup domain1(10G)     cgroup domain2(10G)
->>                 |                 |
->> bdi            wb1               wb2
->>
->> /* per wb writeback info of bdi is collected */
->> cat /sys/kernel/debug/bdi/252:16/wb_stats
->> WbCgIno:                    1
->> WbWriteback:                0 kB
->> WbReclaimable:              0 kB
->> WbDirtyThresh:              0 kB
->> WbDirtied:                  0 kB
->> WbWritten:                  0 kB
->> WbWriteBandwidth:      102400 kBps
->> b_dirty:                    0
->> b_io:                       0
->> b_more_io:                  0
->> b_dirty_time:               0
->> state:                      1
-> 
-> Maybe some whitespace or something between entries would improve
-> readability?
-Sure, I will add a whitespace in next version.
-> 
->> WbCgIno:                 4094
->> WbWriteback:            54432 kB
->> WbReclaimable:         766080 kB
->> WbDirtyThresh:        3094760 kB
->> WbDirtied:            1656480 kB
->> WbWritten:             837088 kB
->> WbWriteBandwidth:      132772 kBps
->> b_dirty:                    1
->> b_io:                       1
->> b_more_io:                  0
->> b_dirty_time:               0
->> state:                      7
->> WbCgIno:                 4135
->> WbWriteback:            15232 kB
->> WbReclaimable:         786688 kB
->> WbDirtyThresh:        2909984 kB
->> WbDirtied:            1482656 kB
->> WbWritten:             681408 kB
->> WbWriteBandwidth:      124848 kBps
->> b_dirty:                    0
->> b_io:                       1
->> b_more_io:                  0
->> b_dirty_time:               0
->> state:                      7
->>
->> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
->> ---
->>  include/linux/writeback.h |  1 +
->>  mm/backing-dev.c          | 88 +++++++++++++++++++++++++++++++++++++++
->>  mm/page-writeback.c       | 19 +++++++++
->>  3 files changed, 108 insertions(+)
->>
-> ...
->> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
->> index 8daf950e6855..e3953db7d88d 100644
->> --- a/mm/backing-dev.c
->> +++ b/mm/backing-dev.c
->> @@ -103,6 +103,91 @@ static void collect_wb_stats(struct wb_stats *stats,
->>  }
->>  
->>  #ifdef CONFIG_CGROUP_WRITEBACK
-> ...
->> +static int cgwb_debug_stats_show(struct seq_file *m, void *v)
->> +{
->> +	struct backing_dev_info *bdi;
->> +	unsigned long background_thresh;
->> +	unsigned long dirty_thresh;
->> +	struct bdi_writeback *wb;
->> +	struct wb_stats stats;
->> +
->> +	rcu_read_lock();
->> +	bdi = lookup_bdi(m);
->> +	if (!bdi) {
->> +		rcu_read_unlock();
->> +		return -EEXIST;
->> +	}
->> +
->> +	global_dirty_limits(&background_thresh, &dirty_thresh);
->> +
->> +	list_for_each_entry_rcu(wb, &bdi->wb_list, bdi_node) {
->> +		memset(&stats, 0, sizeof(stats));
->> +		stats.dirty_thresh = dirty_thresh;
-> 
-> If you did something like the following here, wouldn't that also zero
-> the rest of the structure?
-> 
-> 		struct wb_stats stats = { .dirty_thresh = dirty_thresh };
-> 
-Suer, will do it in next version.
->> +		collect_wb_stats(&stats, wb);
->> +
-> 
-> Also, similar question as before on whether you'd want to check
-> WB_registered or something here..
-Still prefer to keep full debug info and user could filter out on
-demand.
-> 
->> +		if (mem_cgroup_wb_domain(wb) == NULL) {
->> +			wb_stats_show(m, wb, &stats);
->> +			continue;
->> +		}
-> 
-> Can you explain what this logic is about? Is the cgwb_calc_thresh()
-> thing not needed in this case? A comment might help for those less
-> familiar with the implementation details.
-If mem_cgroup_wb_domain(wb) is NULL, then it's bdi->wb, otherwise,
-it's wb in cgroup. For bdi->wb, there is no need to do wb_tryget
-and cgwb_calc_thresh. Will add some comment in next version.
-> 
-> BTW, I'm also wondering if something like the following is correct
-> and/or roughly equivalent:
-> 	
-> 	list_for_each_*(wb, ...) {
-> 		struct wb_stats stats = ...;
-> 
-> 		if (!wb_tryget(wb))
-> 			continue;
-> 
-> 		collect_wb_stats(&stats, wb);
-> 
-> 		/*
-> 		 * Extra wb_thresh magic. Drop rcu lock because ... . We
-> 		 * can do so here because we have a ref.
-> 		 */
-> 		if (mem_cgroup_wb_domain(wb)) {
-> 			rcu_read_unlock();
-> 			stats.wb_thresh = min(stats.wb_thresh, cgwb_calc_thresh(wb));
-> 			rcu_read_lock();
-> 		}
-> 
-> 		wb_stats_show(m, wb, &stats)
-> 		wb_put(wb);
-> 	}
-It's correct as wb_tryget to bdi->wb has no harm. I have considered
-to do it in this way, I change my mind to do it in new way for
-two reason:
-1. Put code handling wb in cgroup more tight which could be easier
-to maintain.
-2. Rmove extra wb_tryget/wb_put for wb in bdi.
-Would this make sense to you?
-> 
->> +
->> +		/*
->> +		 * cgwb_release will destroy wb->memcg_completions which
->> +		 * will be ued in cgwb_calc_thresh. Use wb_tryget to prevent
->> +		 * memcg_completions destruction from cgwb_release.
->> +		 */
->> +		if (!wb_tryget(wb))
->> +			continue;
->> +
->> +		rcu_read_unlock();
->> +		/* cgwb_calc_thresh may sleep in cgroup_rstat_flush */
->> +		stats.wb_thresh = min(stats.wb_thresh, cgwb_calc_thresh(wb));
->> +		wb_stats_show(m, wb, &stats);
->> +		rcu_read_lock();
->> +		wb_put(wb);
->> +	}
->> +	rcu_read_unlock();
->> +
->> +	return 0;
->> +}
->> +DEFINE_SHOW_ATTRIBUTE(cgwb_debug_stats);
->> +
->> +static void cgwb_debug_register(struct backing_dev_info *bdi)
->> +{
->> +	debugfs_create_file("wb_stats", 0444, bdi->debug_dir, bdi,
->> +			    &cgwb_debug_stats_fops);
->> +}
->> +
->>  static void bdi_collect_stats(struct backing_dev_info *bdi,
->>  			      struct wb_stats *stats)
->>  {
->> @@ -117,6 +202,8 @@ static void bdi_collect_stats(struct backing_dev_info *bdi,
->>  {
->>  	collect_wb_stats(stats, &bdi->wb);
->>  }
->> +
->> +static inline void cgwb_debug_register(struct backing_dev_info *bdi) { }
-> 
-> Could we just create the wb_stats file regardless of whether cgwb is
-> enabled? Obviously theres only one wb in the !CGWB case and it's
-> somewhat duplicative with the bdi stats file, but that seems harmless if
-> the same code can be reused..? Maybe there's also a small argument for
-> dropping the state info from the bdi stats file and moving it to
-> wb_stats.In backing-dev.c, there are a lot "#ifdef CGWB .. #else .. #endif" to
-avoid unneed extra cost when CGWB is not enabled.
-I think it's better to avoid extra cost from wb_stats when CGWB is not
-enabled. For now, we only save cpu cost to create and destroy wb_stats
-and save memory cost to record debugfs file, we could save more in
-future when wb_stats records more debug info.
-Move state info from bdi stats to wb_stats make senses to me. The only
-concern would be compatibility problem. I will add a new patch to this
-to make this more noticeable and easier to revert.
-Thanks a lot for review!
+> Yeah, please keep the code as is for now. I agree this needs some cleanups
+> but what you suggest is IMHO not an improvement.
+Sure, will drop this in next version.
 
+Thanks,
 Kemeng
 > 
-> Brian
-> 
->>  #endif
->>  
->>  static int bdi_debug_stats_show(struct seq_file *m, void *v)
->> @@ -182,6 +269,7 @@ static void bdi_debug_register(struct backing_dev_info *bdi, const char *name)
->>  
->>  	debugfs_create_file("stats", 0444, bdi->debug_dir, bdi,
->>  			    &bdi_debug_stats_fops);
->> +	cgwb_debug_register(bdi);
->>  }
->>  
->>  static void bdi_debug_unregister(struct backing_dev_info *bdi)
->> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
->> index 0e20467367fe..3724c7525316 100644
->> --- a/mm/page-writeback.c
->> +++ b/mm/page-writeback.c
->> @@ -893,6 +893,25 @@ unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh)
->>  	return __wb_calc_thresh(&gdtc, thresh);
->>  }
->>  
->> +unsigned long cgwb_calc_thresh(struct bdi_writeback *wb)
->> +{
->> +	struct dirty_throttle_control gdtc = { GDTC_INIT_NO_WB };
->> +	struct dirty_throttle_control mdtc = { MDTC_INIT(wb, &gdtc) };
->> +	unsigned long filepages, headroom, writeback;
->> +
->> +	gdtc.avail = global_dirtyable_memory();
->> +	gdtc.dirty = global_node_page_state(NR_FILE_DIRTY) +
->> +		     global_node_page_state(NR_WRITEBACK);
->> +
->> +	mem_cgroup_wb_stats(wb, &filepages, &headroom,
->> +			    &mdtc.dirty, &writeback);
->> +	mdtc.dirty += writeback;
->> +	mdtc_calc_avail(&mdtc, filepages, headroom);
->> +	domain_dirty_limits(&mdtc);
->> +
->> +	return __wb_calc_thresh(&mdtc, mdtc.thresh);
->> +}
->> +
->>  /*
->>   *                           setpoint - dirty 3
->>   *        f(dirty) := 1.0 + (----------------)
->> -- 
->> 2.30.0
->>
-> 
+> 								Honza
 > 
 
 
