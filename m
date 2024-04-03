@@ -1,157 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-15973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF4F896454
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 08:02:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA35C8964FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 08:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EB83B23C05
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 06:02:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A316B21243
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 06:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1C04EB5F;
-	Wed,  3 Apr 2024 06:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12CC5339E;
+	Wed,  3 Apr 2024 06:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="OQr4Z5gg"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ww5v858u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from box.fidei.email (box.fidei.email [71.19.144.250])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out203-205-251-59.mail.qq.com (out203-205-251-59.mail.qq.com [203.205.251.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E834D117;
-	Wed,  3 Apr 2024 06:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071EF1757A;
+	Wed,  3 Apr 2024 06:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712124153; cv=none; b=KHPv2VHGRTk/4YXTT+x17ZbKgBdGEPHDkCrEMNScD2dW9OeeC/alS+Exm2uU1bON9NoKoaLVEZEW3PmLh9epJEUn+h/Gu1PkAP5+ShH7v9GfsP6n8myVgn8K+luFLPatwIEMaa7xLavEDWjXtc0HjNYbeAFb1i7YueEuf5fAjTk=
+	t=1712127264; cv=none; b=olv1vYwV9HItiIAN2bQcgghp3nNfHTs5GtvDOlqX/QN2VveNwCJOXFNR1bDedJUx6VPXvF42WG2cBFKNQ7YIrugpKYWcoPYc2DB4Ry9xu9zKAKvF4y20iwa5ok7zTxtoXgN5hv69wen8RTfzEPNo3fTk/J/aja+/Fy99JHpJxyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712124153; c=relaxed/simple;
-	bh=rzXbHeyJ/9o+6UEDEOJYVqyrbxJV+Tcf6YMwKwFBkBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=h8+hSB+QBrUeZlngcATZf52Q7Q4yHCa+c5IftGDW2embJjAhUSPyxiMOBBg7NSTRoDAacmWU2TCGZy98h6IWziQPv3jFfWQJuYeEuvnXPlwMk2Eyvq2YBH2YSEOjkZizfKh/5/tmpbqmB0sR7jOkCUa0TQBfd5Hfp/uIti+l1xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=OQr4Z5gg; arc=none smtp.client-ip=71.19.144.250
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
-Received: from authenticated-user (box.fidei.email [71.19.144.250])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	by box.fidei.email (Postfix) with ESMTPSA id C0E7080818;
-	Wed,  3 Apr 2024 02:02:28 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
-	t=1712124150; bh=rzXbHeyJ/9o+6UEDEOJYVqyrbxJV+Tcf6YMwKwFBkBQ=;
-	h=Date:Subject:From:To:References:In-Reply-To:From;
-	b=OQr4Z5ggeR/gh79M0z9MJwXoIMiY8Lp+Z3jHON0B+EeHFQ5QQbSdyIdz3fhhhe+OC
-	 kK56COJmGDpWFvgXgLDK7UgQndSNp447NDlTbQcUdAR9OSefTCogo18TQNunYaZ63c
-	 vOYaK4V6jX4Ll8fR4pQ0hcf1qycRqoM/RfIn+TSUOkQqsYuVmrvmcPt1ZolGdbc5TQ
-	 05RQfBA+pMswHMlPPHWY65Y0r1Gkq1YKtqmlTvRPcrNsUMu0OeHALLAO7QsXrWdJLi
-	 wGe7zfn9Hc8Zr6bZQibHfFmQ6lKxi/CbrcpvqKYKweEF/SaRcoMGEy+Ce9jPkdBTBD
-	 rBX8pR+K8Kmiw==
-Message-ID: <d01b4606-38fa-4f27-8fbd-31de505ba3a3@dorminy.me>
-Date: Wed, 3 Apr 2024 02:02:27 -0400
+	s=arc-20240116; t=1712127264; c=relaxed/simple;
+	bh=QbYk7mkbWCkqiAPyu00RQYNoFA+Z6ycbz2v55PnVMiI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=BN0AlH8o/oMPehz4hlJaQsd5QdbzxJbTwMfX29qVwCgwE8lP31yjYoSZnse5TrDWGy0x641C3JdYzF+MKSMpZxJr7WyarkWU9TLuKmewbaWJwioAlCzNU6BywyI6bJCKk26KxyyguiQgsCJJy6Awowc+vVgZBMuAymkqyQTAtck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ww5v858u; arc=none smtp.client-ip=203.205.251.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1712127257; bh=wO+LSoJgGLH+WEilHLpBJL664dA/mQelv4HBiD7UnlQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ww5v858uCwq1w5zdK55rhVxHczIbATC9FsYF/tgwRNlrL3vbDkusJHkunKqZUsCbS
+	 Ita/esfj8fQoZTLxVcvIXblHaQsSnZ0F0w+ZDnpVs0FQ4B2wXlipMICPvsXCpGGIRZ
+	 NLM5XmX4n1f5T2e+2FasGXZXHQ/hL+N/aFONa9qY=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrsza7-0.qq.com (NewEsmtp) with SMTP
+	id D8D0E6B2; Wed, 03 Apr 2024 14:54:13 +0800
+X-QQ-mid: xmsmtpt1712127253txeonps73
+Message-ID: <tencent_A7845DD769577306D813742365E976E3A205@qq.com>
+X-QQ-XMAILINFO: M0PjjqbLT90w12+nNA4lBxOmIdpSsE/HWlu6fSC76OnRo3mC7x1xVBJ6vgHm5t
+	 LXX3DGeGvGv4D2FwSa6lO3Gpi8YBxx0Lrh0g5rbFivooSczFJHG50VzdqyFq0ibqKaWaa3M2Z0nL
+	 hd21UYuZYqyQ9jxc4I1VVHuj1nM5Y5Ad+whhHfjaLDpUdYwqT9Km2SR5GAdWvF/rgP4YcmtOitjt
+	 5J0DsVi8M/as00lbqj9w+x74Uzk/MwNJEBIpmfmexx10OiI8rQAWRamiJZf1RIeubMtWj2ZiOhn+
+	 bpPF0Qt9UQf2h3C28M34880QFbNR7SbhJIDjUH/TYP5STa6CAo3GNYpMGL08zXI58jwLHVUj7EyM
+	 rua8AsKW05KnEr6b2l6foUGH6KXjN/kjyOZM8jX2SwDAAfR799LZ0r+ONyWTrWICmXECwVgSBMng
+	 gMJWA8fWsMM4cEDm/ClA/8Xl+UszHmF+E3Gr4hIiVCsS6YE309SYmDFPH8V+2fkbaYsQwgVri4ra
+	 Obd1tQotfYLIoCMD/1KFveY2xClwhxi0xyTUmDbucEjx91cgX9WSt+/6qPtUXVBWDLeW0u0fwFiU
+	 EdM6vTPY0HAadz+L9i8cQaAhKcJ0zRx7iayDzVNfbDAEaHJXwZdySPFJnI+fv2fiKqrgE3YBh+xC
+	 ZD8I7lcShnGfhhAj6gGHXGz+GkBn0ywRhO5rdXpxaQ79A++l0Q7O8gODLb/tuwHinZH97x4gZnI1
+	 c4eNL5tPFxSh1uc2to+mEJzqTQxBal2mcktEtyY3kmV9gUtfYyb+TrYfWgxCp0FPZxW7WNHk5eMo
+	 eb3KJJjSpvqjgWkeRxsN3iG7zaC6zkAj09Jtuueje04/9mD/+PhMPUUaM9iNGKe+WHgNJDhuf8mV
+	 n1Cw4oIXcGOSK0ByezdHjlrJlv4ry/5OPMyXXUIzuPWfm3xzDWJw9MhzPVfme9TkB6CPAVdx1v5O
+	 siopw6vqQ=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4139435cb1b34cf759c2@syzkaller.appspotmail.com
+Cc: amir73il@gmail.com,
+	brauner@kernel.org,
+	chuck.lever@oracle.com,
+	jack@suse.cz,
+	jlayton@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH next] fs: fix oob in do_handle_open
+Date: Wed,  3 Apr 2024 14:54:14 +0800
+X-OQ-MSGID: <20240403065413.3307887-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000f075b9061520cbbe@google.com>
+References: <000000000000f075b9061520cbbe@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 5/5] btrfs: fiemap: return extent physical size
-Content-Language: en-US
-From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-To: Qu Wenruo <wqu@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-doc@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-References: <cover.1711588701.git.sweettea-kernel@dorminy.me>
- <93686d5c4467befe12f76e4921bfc20a13a74e2d.1711588701.git.sweettea-kernel@dorminy.me>
- <a2d3cdef-ed4e-41f0-b0d9-801c781f9512@suse.com>
- <ff320741-0516-410f-9aba-fc2d9d7a6b01@dorminy.me>
-In-Reply-To: <ff320741-0516-410f-9aba-fc2d9d7a6b01@dorminy.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
->> This means, we will emit a entry that uses the end to the physical 
->> extent end.
->>
->> Considering a file layout like this:
->>
->>      item 6 key (257 EXTENT_DATA 0) itemoff 15816 itemsize 53
->>          generation 7 type 1 (regular)
->>          extent data disk byte 13631488 nr 65536
->>          extent data offset 0 nr 4096 ram 65536
->>          extent compression 0 (none)
->>      item 7 key (257 EXTENT_DATA 4096) itemoff 15763 itemsize 53
->>          generation 8 type 1 (regular)
->>          extent data disk byte 13697024 nr 4096
->>          extent data offset 0 nr 4096 ram 4096
->>          extent compression 0 (none)
->>      item 8 key (257 EXTENT_DATA 8192) itemoff 15710 itemsize 53
->>          generation 7 type 1 (regular)
->>          extent data disk byte 13631488 nr 65536
->>          extent data offset 8192 nr 57344 ram 65536
->>          extent compression 0 (none)
->>
->> For fiemap, we would got something like this:
->>
->> fileoff 0, logical len 4k, phy 13631488, phy len 64K
->> fileoff 4k, logical len 4k, phy 13697024, phy len 4k
->> fileoff 8k, logical len 56k, phy 13631488 + 8k, phylen 56k
->>
->> [HOW TO CALCULATE WASTED SPACE IN USER SPACE]
->> My concern is on the first entry. It indicates that we have wasted 60K 
->> (phy len is 64K, while logical len is only 4K)
->>
->> But that information is not correct, as in reality we only wasted 4K, 
->> the remaining 56K is still referred by file range [8K, 64K).
->>
->> Do you mean that user space program should maintain a mapping of each 
->> utilized physical range, and when handling the reported file range 
->> [8K, 64K), the user space program should find that the physical range 
->> covers with one existing extent, and do calculation correctly?
-> 
-> My goal is to give an unprivileged interface for tools like compsize to 
-> figure out how much space is used by a particular set of files. They 
-> report the total disk space referenced by the provided list of files, 
-> currently by doing a tree search (CAP_SYS_ADMIN) for all the extents 
-> pertaining to the requested files and deduplicating extents based on 
-> disk_bytenr.
-> 
-> It seems simplest to me for userspace for the kernel to emit the entire 
-> extent for each part of it referenced in a file, and let userspace deal 
-> with deduplicating extents. This is also most similar to the existing 
-> tree-search based interface. Reporting whole extents gives more 
-> flexibility for userspace to figure out how to report bookend extents, 
-> or shared extents, or ...
-> 
-> It does seem a little weird where if you request with fiemap only e.g. 
-> 4k-16k range in that example file you'll get reported all 68k involved, 
-> but I can't figure out a way to fix that without having the kernel keep 
-> track of used parts of the extents as part of reporting, which sounds 
-> expensive.
-> 
-> You're right that I'm being inconsistent, taking off extent_offset from 
-> the reported disk size when that isn't what I should be doing, so I 
-> fixed that in v3.
+[Syzbot reported]
+BUG: KASAN: slab-out-of-bounds in instrument_copy_from_user_before include/linux/instrumented.h:129 [inline]
+BUG: KASAN: slab-out-of-bounds in _copy_from_user+0x7b/0xe0 lib/usercopy.c:22
+Write of size 48 at addr ffff88802b8cbc88 by task syz-executor333/5090
 
-Ah, I think I grasp a point I'd missed before.
-- Without setting disk_bytenr to the actual start of the data on disk, 
-there's no way to find the location of the actual data on disk within 
-the extent from fiemap alone
-- But reporting disk_bytenr + offset, to get actual start of data on 
-disk, means we need to report a physical size to figure out the end of 
-the extent and we can't know the beginning.
+CPU: 0 PID: 5090 Comm: syz-executor333 Not tainted 6.9.0-rc2-next-20240402-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_copy_from_user_before include/linux/instrumented.h:129 [inline]
+ _copy_from_user+0x7b/0xe0 lib/usercopy.c:22
+ copy_from_user include/linux/uaccess.h:183 [inline]
+ handle_to_path fs/fhandle.c:203 [inline]
+ do_handle_open+0x204/0x660 fs/fhandle.c:226
+ do_syscall_64+0xfb/0x240
+ entry_SYSCALL_64_after_hwframe+0x72/0x7a
+[Fix] 
+When copying data to f_handle, the length of the copied data should not include
+the length of "struct file_handle".
 
-We can't convey both actual location, start, and end of the extent in 
-just two pieces of information.
+Reported-by: syzbot+4139435cb1b34cf759c2@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/fhandle.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On the other hand, if someone really needs to know the actual location 
-on disk of their data, they could use the tree_search ioctl as root to 
-do so?
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 53ed54711cd2..8a7f86c2139a 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -202,7 +202,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
+ 	*handle = f_handle;
+ 	if (copy_from_user(&handle->f_handle,
+ 			   &ufh->f_handle,
+-			   struct_size(ufh, f_handle, f_handle.handle_bytes))) {
++			   f_handle.handle_bytes)) {
+ 		retval = -EFAULT;
+ 		goto out_handle;
+ 	}
+-- 
+2.43.0
 
-So I still think we should be reporting entire extents but am less 
-confident that it doesn't break existing users. I am not sure how common 
-it is to take fiemap output on btrfs and use it to try to get to 
-physical data on disk - do you know of a tool that does so?
-
-Thank you!
 
