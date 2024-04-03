@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-16034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D3D8971FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 16:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 097B7897201
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 16:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73B2E1C25F70
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 14:10:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3882E1C26249
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 14:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603BB1494AD;
-	Wed,  3 Apr 2024 14:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5A0149003;
+	Wed,  3 Apr 2024 14:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IyJL8Y5f"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GQ9txCv/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5149F1494A4
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 14:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD32148FF6
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 14:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712153389; cv=none; b=MgzOjrqzhDif2+xVrqyulHLeMzcLB1bERy7GAOvEvvgKVwasml+72Oz8zQ+t4qA/svuq5e3xLc6iMb3hZqkMAYvWMo9n9yW60wkxfNEe+6Ny+CIOgSvV1yHaTL69QjR4qguyEHgwom3BrgImdwI6L6refgXVTMGSNanhx7qnYEI=
+	t=1712153433; cv=none; b=EHi1xkvOf5tM+PapC4u1jgyTda7Hb4G12du1buUdIfH6KvKXQ7evQEz7eO83h1M25S6Ydtjx7FtMVlEpoiSggzJgDiooRqvQ/bjRURL6ZM1NqUgzkSSYfWwVIBMXiMtwrgEBMblx3+RJFWRvXrk/NdoZFg58LpiRfHKxmvrnMFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712153389; c=relaxed/simple;
-	bh=uaBB+wQsNV6UWh9EWCIicCJ/cZxkRwz+9E3hPzTRRxE=;
+	s=arc-20240116; t=1712153433; c=relaxed/simple;
+	bh=PoednBtoE1tvUhRclYnddbxZ7od4p002R25b+VPNj7I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XOXIbV3njhIScxF7w75sL7CJvheDiNmR23saPbyvSNy7VcFn8CNWM01Ak0kpyLXprXYqg7NMy1/44syz5N5LWXfEIDxbfw0tIjEny+7Im0lGdPAQFZCE7V/sgVMOznq4D7vaMs7skfZ2gOw2jvGYphn6QjM/DzEG2xIBpdJ3aOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IyJL8Y5f; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=KbRNqVxpRjOlxquveXdQHbtET2TfY8E9RYSq3qSNrNRZlPXsS0R6qMeA5Ix6TLG0hiq9xCQSdV3XTezEb8wS7w9X2ZIY4+7aOLlU7/gUaG9vV6Z6cOVPAnKdngq5kgzCopfXqs/8xBJYBe/mI5O1X8hcWkNm6cfuOzKdd9TYCB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GQ9txCv/; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712153387;
+	s=mimecast20190719; t=1712153430;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2dbCAJSaH9jFId+0gZzIqDck5z9baO02AHMcYssDIEM=;
-	b=IyJL8Y5fm1JzQ0EnLxXFdeJEsUWJ/7M7gcCuJW9WGNcap55omrMLIsNOOyxaj5uB8nKZxd
-	YfXCMMlpXAcQjLU/yK61bqIPYA5WUEBGcgZURxfksrMjdEGG/4OfJFCtLgBz6N5dWIR24a
-	+20zVrsL+TcIx4dkZu0sA4iD3dMIVi8=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=y0+cDn0/ggKHKobWqWXUXd6pCIGaHqIXCgKr68nR+EE=;
+	b=GQ9txCv/duMuPUR8zDbP0UOtScfOyDp9ihcWvKqpYJedcbExGqiJT270cq9RGKwlI/vitT
+	p6R3DgwKY8pEl72z8iNXXkyvTcwaat5E2ZnhDTLTPl4vslo2PuHxPjS+h3Ns5SGYEKnQCQ
+	obKgpkvLkofiLKmFycJMgFd8/SiVMT0=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-77-nE09X9HcM3GIj8L_1a8yZA-1; Wed, 03 Apr 2024 10:09:42 -0400
-X-MC-Unique: nE09X9HcM3GIj8L_1a8yZA-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-56c25ebc347so2278116a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Apr 2024 07:09:42 -0700 (PDT)
+ us-mta-630-MuREwq22PxCaC-Df5P2GFg-1; Wed, 03 Apr 2024 10:10:21 -0400
+X-MC-Unique: MuREwq22PxCaC-Df5P2GFg-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a474ac232e9so310089266b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Apr 2024 07:10:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712153381; x=1712758181;
+        d=1e100.net; s=20230601; t=1712153420; x=1712758220;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2dbCAJSaH9jFId+0gZzIqDck5z9baO02AHMcYssDIEM=;
-        b=VEMp3ksUWg1VT8T3xLUbYoE+z/n6HsnEveB8Vt9ZEuDSGNZYiQXelFzCXP1PpLIJeo
-         WQk05KAuSM1miCBaG6N7V9IiHIB2CAxqvUO3X/pCZzbfH9y+/x7qOKM1/XQXkwznAcjq
-         xcMAH5NwD/YS4ClzT7x9Mh9sQF3DVrJd+GD+PSqvN2/fB03HnUAQeFarBspa2wSq5I/j
-         7D+rCY8M9MvF028+QBf/aGSgrPmXzapJy+9uaorQjlLjbItQTN80OiSSLoo5WecmTzUa
-         iQaD++475ycbekou6KCWL7reRPwQeGfVIiwxndftdI/wi74JAf7UJ+CGEbGpqsz7WbbK
-         5heg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNtr6bVpZinpPxvun4o6oAEPXEcovpvFhY/xsy4zl8nEEoZ5GwpYFd6nGj9Y0KcRQ8OyyMXZuEqD7V31LTe9Kut89lY5CPB4t9mDA1oQ==
-X-Gm-Message-State: AOJu0YzeSaqW4V/UK1/4pdA1RumUdNxtSpj7r9CBBxjRQghVyWpRgizR
-	sEsFnnyb/+fnu5QLQw95L+6VdCo+euf+8pTic5JYjC3yAMWpPMhYFvW6qJrbrLjKq+LuYcTz0gV
-	kpSxm5+YSr1CQzNXthp2sAu5owYaTXUWvN/Gs6LRv2RxvOQtW9fjcK+uC7CifUJ0=
-X-Received: by 2002:a05:6402:518f:b0:566:ca0:4a91 with SMTP id q15-20020a056402518f00b005660ca04a91mr12828055edd.2.1712153381707;
-        Wed, 03 Apr 2024 07:09:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG5knLeof+HgcpRtumWCQlmMftyzct6dVwSxv5H+k5eapOlsocG/j7R3Dvj1z53sLwMEafApw==
-X-Received: by 2002:a05:6402:518f:b0:566:ca0:4a91 with SMTP id q15-20020a056402518f00b005660ca04a91mr12828043edd.2.1712153381364;
-        Wed, 03 Apr 2024 07:09:41 -0700 (PDT)
+        bh=y0+cDn0/ggKHKobWqWXUXd6pCIGaHqIXCgKr68nR+EE=;
+        b=SwmZd2udkPNDWvls9hJnBYMn+hOLV/22QCl5wgcCV+K3vlt0dEnWPANjyE534QRllL
+         3HEt4Q7AZuYRTJXPjLcIvvsEBRcbwOkOK2b54CdK2boHyvAtf/dpbCG08sl1ffrj1bw2
+         gNWZfh9aLP8Vr2d6sNr6HoBHmcnL8418biBkJxXD3wh2D3/vW3mS3vH22giW6hZO65xJ
+         n3vj1aHJfxc/cY3GaoQJLFqJdvSs8pu9HzWwWyhY7BEsQe+CYOD2JXsjOtZ5PIWxmMZ1
+         Ato2fuXXTGonYDjfIcjKYIf/K3Be6Ul1CVdX52p85sYN+KG6gSGW0qicdVBCNc/UkeoS
+         jtDg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4hFLY9EqBMZ6BHGZr+oT1C/ewSBsBANXyJLzwnpBgiQBdz5Fp13Nub6tFSQnvn7qIgGwAthHm423yB+4NTbV3Rxqq/VrosYZZRkuHeg==
+X-Gm-Message-State: AOJu0YyY0NFVabTnbe6X35/XrthRNkQ11+ttyDu76IpExMgl0tFo220e
+	RLa4GzALY7ZJBFYRgU0TTWVcbTplo0ZJDigC+nsaYzJKHA/K8kfZi3p1JArMOEcP7dsaJBEYcOq
+	pL3t8sGdYK4ufph12mdoxMQvlvGPLaR0hsiOTUkqNGkSPdTPs4YeqgBEhJ3kdvuA=
+X-Received: by 2002:a50:a446:0:b0:568:d55c:1bb3 with SMTP id v6-20020a50a446000000b00568d55c1bb3mr11923377edb.31.1712153420161;
+        Wed, 03 Apr 2024 07:10:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhi00Gg7n9Ts7IAvb+tYatzzV6iMMMdxXDIzLOIHLjOh3ba8rP3luYiF+Q/5TjPb4RqxFo8w==
+X-Received: by 2002:a50:a446:0:b0:568:d55c:1bb3 with SMTP id v6-20020a50a446000000b00568d55c1bb3mr11923354edb.31.1712153419787;
+        Wed, 03 Apr 2024 07:10:19 -0700 (PDT)
 Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id r17-20020a056402019100b0056c4a0ccaacsm8024402edv.83.2024.04.03.07.09.40
+        by smtp.gmail.com with ESMTPSA id ig10-20020a056402458a00b0056c0a668316sm948334edb.3.2024.04.03.07.10.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Apr 2024 07:09:40 -0700 (PDT)
-Message-ID: <7591adba-0603-4843-b228-a0bf20fd116f@redhat.com>
-Date: Wed, 3 Apr 2024 16:09:40 +0200
+        Wed, 03 Apr 2024 07:10:19 -0700 (PDT)
+Message-ID: <95be6ebf-9f45-404c-a643-89dd6ee4efdf@redhat.com>
+Date: Wed, 3 Apr 2024 16:10:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,34 +82,38 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] vboxsf: remove redundant variable out_len
-To: Colin Ian King <colin.i.king@gmail.com>, linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240229225138.351909-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH 1/2] vboxsf: Avoid an spurious warning if load_nls_xxx()
+ fails
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Christoph Hellwig <hch@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US, nl
 From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240229225138.351909-1-colin.i.king@gmail.com>
+In-Reply-To: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi,
 
-On 2/29/24 11:51 PM, Colin Ian King wrote:
-> The variable out_len is being used to accumulate the number of
-> bytes but it is not being used for any other purpose. The variable
-> is redundant and can be removed.
+On 11/1/23 11:49 AM, Christophe JAILLET wrote:
+> If an load_nls_xxx() function fails a few lines above, the 'sbi->bdi_id' is
+> still 0.
+> So, in the error handling path, we will call ida_simple_remove(..., 0)
+> which is not allocated yet.
 > 
-> Cleans up clang scan build warning:
-> fs/vboxsf/utils.c:443:9: warning: variable 'out_len' set but not
-> used [-Wunused-but-set-variable]
+> In order to prevent a spurious "ida_free called for id=0 which is not
+> allocated." message, tweak the error handling path and add a new label.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fixes: 0fd169576648 ("fs: Add VirtualBox guest shared folder (vboxsf) support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Thanks, patch looks good to me:
+Thanks, both patches in this series look good to me:
 
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-I have added this to my local vboxsf branch now and I'll send
+I have added both patches to my local vboxsf branch now and I'll send
 out a pull-request with this and a couple of other vboxsf fixes
 soon.
 
@@ -119,37 +123,32 @@ Hans
 
 
 
+
+
 > ---
->  fs/vboxsf/utils.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  fs/vboxsf/super.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/vboxsf/utils.c b/fs/vboxsf/utils.c
-> index 72ac9320e6a3..9515bbf0b54c 100644
-> --- a/fs/vboxsf/utils.c
-> +++ b/fs/vboxsf/utils.c
-> @@ -440,7 +440,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
->  {
->  	const char *in;
->  	char *out;
-> -	size_t out_len;
->  	size_t out_bound_len;
->  	size_t in_bound_len;
->  
-> @@ -448,7 +447,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
->  	in_bound_len = utf8_len;
->  
->  	out = name;
-> -	out_len = 0;
->  	/* Reserve space for terminating 0 */
->  	out_bound_len = name_bound_len - 1;
->  
-> @@ -469,7 +467,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
->  
->  		out += nb;
->  		out_bound_len -= nb;
-> -		out_len += nb;
+> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
+> index 1fb8f4df60cb..9848af78215b 100644
+> --- a/fs/vboxsf/super.c
+> +++ b/fs/vboxsf/super.c
+> @@ -151,7 +151,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
+>  		if (!sbi->nls) {
+>  			vbg_err("vboxsf: Count not load '%s' nls\n", nls_name);
+>  			err = -EINVAL;
+> -			goto fail_free;
+> +			goto fail_destroy_idr;
+>  		}
 >  	}
 >  
->  	*out = 0;
+> @@ -224,6 +224,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
+>  		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
+>  	if (sbi->nls)
+>  		unload_nls(sbi->nls);
+> +fail_destroy_idr:
+>  	idr_destroy(&sbi->ino_idr);
+>  	kfree(sbi);
+>  	return err;
 
 
