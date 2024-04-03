@@ -1,113 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-16024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6092896FA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 14:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD6C896FAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 14:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45391B256AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 12:58:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5F47B25EB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 12:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BEB147C90;
-	Wed,  3 Apr 2024 12:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63E2146A8E;
+	Wed,  3 Apr 2024 12:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eLOuqIBk"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="V05JxkJq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7594F613
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 12:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498E8146A75
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 12:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712149109; cv=none; b=D2nR7V051wse0PZEOpqHKAaGiarB2HhfresI043rPNFIiefj2qf053Y54Q9UkqIEWCX4Aj30hq6Yd+W/mGbdqO57fwVDBVFv2w56cPmrlzn8vlJyJB8wpx/uvIspS9Yvs8C6oiUygcFPvsueODc0otQ7LxrGIoyGxJIKzmZDKzY=
+	t=1712149181; cv=none; b=lRVhZIh8YarFFPFUwJi4dJ8kOLHc9zMxca+buF3JHu8wXQAI+5BotNMvv6t/myyP+mmXKa6WI2Ea/J+LFOHzfw6Cbjd6Ud2Y9St3JPeqE4e+tKw6ymkYfscjNAhGu97d1Ub9SFkIfWHYJPTz6cGSKjGJKBnvadcBOs2MOpcGhW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712149109; c=relaxed/simple;
-	bh=DAkeTo88/Q8SBcOAB+webgQsBX2i+Ci1XmPfSwoxQ0Q=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=eCrmS+WYIS7YGelIkry33EJyp0vdq7MlWhOAQBClf9UIC0no+n7gUSpIIX9x9RM99GMYixrmnceI6FaRdyzm+Ilt4CXTFMwoe3yODLpdKRYB5N3H96kFRG+c7L41aAeMpmgQJsx9fycJh2bKqf3onOxOWr16y8e22J6JTUtqViU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eLOuqIBk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712149107;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5DGnORPv79MmjGVc5naevaHP+scfzBDnCLP3n2Z3Y4Q=;
-	b=eLOuqIBkzgg08Ss24ikz2T0ftxc9pO9Ihm+V1lFUSLfwiF+xwUn93GwkiCj9X+dgHhNotq
-	/+XpHO4HNpP4zGLZQGIa8NytakpI3PbYpMqz3t3wUtDlO5p1v2lSEtcPa4aZx6yeedu/vA
-	CN8IGDbZ9uqC0wyS7JlMFsxf4h+wt8w=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-522-dz7FoxU5NrCenslQwwmFtQ-1; Wed, 03 Apr 2024 08:58:24 -0400
-X-MC-Unique: dz7FoxU5NrCenslQwwmFtQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E932785A588;
-	Wed,  3 Apr 2024 12:58:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id E17DAC04122;
-	Wed,  3 Apr 2024 12:58:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240403124124.GA19085@lst.de>
-References: <20240403124124.GA19085@lst.de> <20240403101422.GA7285@lst.de> <20240403085918.GA1178@lst.de> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-16-dhowells@redhat.com> <3235934.1712139047@warthog.procyon.org.uk> <3300438.1712141700@warthog.procyon.org.uk>
-To: Christoph Hellwig <hch@lst.de>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Jeff Layton <jlayton@kernel.org>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Matthew Wilcox <willy@infradead.org>,
-    Steve French <smfrench@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 15/26] mm: Export writeback_iter()
+	s=arc-20240116; t=1712149181; c=relaxed/simple;
+	bh=HUm4rX7f5vx16jEu8Sf5T2cz4l5Z+ApVMO6v3mlJDPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uo/cLHFkLEzLp4ZTpKweI0twTvwjIIb/Ex1/AYyfXcW+AyA7AFWLCr2ELHvQTRkjiE0GeFrTWqfhi3BYO7Tsex7H9LcKYIvRnMyG0eB2D3EbznXJIkkk1C+hhzjqfrRCMfuu3mwHMiyMVmBtnOLnAO8wSU2v/0pGq6GIMrAAN+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=V05JxkJq; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
+	by cmsmtp with ESMTPS
+	id rsdHrxQU3l9dRs0DEroRaG; Wed, 03 Apr 2024 12:59:32 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id s0DDrJkJBuv6Xs0DDrmsCi; Wed, 03 Apr 2024 12:59:31 +0000
+X-Authority-Analysis: v=2.4 cv=YbZ25BRf c=1 sm=1 tr=0 ts=660d52b3
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4VnFru8p6tJF5H7f7NqpSA==:17
+ a=IkcTkHD0fZMA:10 a=raytVjVEu-sA:10 a=wYkD_t78qR0A:10 a=hSkVLCK3AAAA:8
+ a=dZbOZ2KzAAAA:8 a=NCOkLyd_rlf-iUkjTgcA:9 a=QEXdDO2ut3YA:10
+ a=cQPPKAXgyycSBL8etih5:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fviJob8AHM37gPjhK3h7HrJK72m/4Gn7wrbDrlUSskE=; b=V05JxkJqP76wdpE6Bj5q0AVFtl
+	8zYkkK7JocWgI6tZffH/UbcDyOgwgoxTV4GAuzD7Ur49Xvwe71SdnCdyPvNlh42vgUCiWiKQdkjlo
+	n5FjQuWcxkDwDk0vHjpjKjvIHhxgojXOwmHkGvsIEH5BnaYeN2syAz5/GAkfj0p5MKfcekEegWG4X
+	AmnjvtjLAlaAvrqWfx7FSbEkN6gkXKpQt/C9mZf7OP9dRtCsDnfs8zapScgg357O11jMrfgfIyGFk
+	l0CUrGd6dWbdbcMTR4V0zB50erBv73/SbuoNbRK84XhCtIS5u8x/pUqHiUbuWYcVHewnC8jSHhCL7
+	mRkevEyw==;
+Received: from [187.184.159.122] (port=11187 helo=[192.168.0.27])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1rs0DC-002qxv-17;
+	Wed, 03 Apr 2024 07:59:30 -0500
+Message-ID: <88f4493a-2787-4c25-bd0a-80731a603faa@embeddedor.com>
+Date: Wed, 3 Apr 2024 06:59:24 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3326106.1712149095.1@warthog.procyon.org.uk>
-Date: Wed, 03 Apr 2024 13:58:15 +0100
-Message-ID: <3326107.1712149095@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] fs: fix oob in do_handle_open
+To: Jeff Layton <jlayton@kernel.org>, Edward Adam Davis <eadavis@qq.com>,
+ syzbot+4139435cb1b34cf759c2@syzkaller.appspotmail.com
+Cc: amir73il@gmail.com, brauner@kernel.org, chuck.lever@oracle.com,
+ jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ viro@zeniv.linux.org.uk, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+References: <000000000000f075b9061520cbbe@google.com>
+ <tencent_A7845DD769577306D813742365E976E3A205@qq.com>
+ <72d7604e38ee9a37bcb33a6a537758e4412488ee.camel@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <72d7604e38ee9a37bcb33a6a537758e4412488ee.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.184.159.122
+X-Source-L: No
+X-Exim-ID: 1rs0DC-002qxv-17
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.27]) [187.184.159.122]:11187
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFldZXxxeQrS/skokxirUGMi0T5D+g5QdlmBnA54ZnfI5cMjx1BIj6rl5+JvUjCX9TzRvJFxB3KjhHA3PSv+6WOfLdakXH6HG54pF6x9GdMK4JU1mK5I
+ vD4AwRUPSSJq14nrc4JQrd9CKaI8ffSRYHZhbWobnO7rYuyDwsxa6wfVD1sgw+EdQ4zJ7w5GARqRIxBTYvMwN+5cAvO75ilWWbzW5KoIkYxn4gL9QWXy2RvX
 
-Christoph Hellwig <hch@lst.de> wrote:
 
-> > So why are we bothering with EXPORT_SYMBOL at all?  Why don't you just
-> > send a patch replace all of them with EXPORT_SYMBOL_GPL()?
+
+On 03/04/24 02:48, Jeff Layton wrote:
+> On Wed, 2024-04-03 at 14:54 +0800, Edward Adam Davis wrote:
+>> [Syzbot reported]
+>> BUG: KASAN: slab-out-of-bounds in instrument_copy_from_user_before include/linux/instrumented.h:129 [inline]
+>> BUG: KASAN: slab-out-of-bounds in _copy_from_user+0x7b/0xe0 lib/usercopy.c:22
+>> Write of size 48 at addr ffff88802b8cbc88 by task syz-executor333/5090
+>>
+>> CPU: 0 PID: 5090 Comm: syz-executor333 Not tainted 6.9.0-rc2-next-20240402-syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+>> Call Trace:
+>>   <TASK>
+>>   __dump_stack lib/dump_stack.c:88 [inline]
+>>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>>   print_address_description mm/kasan/report.c:377 [inline]
+>>   print_report+0x169/0x550 mm/kasan/report.c:488
+>>   kasan_report+0x143/0x180 mm/kasan/report.c:601
+>>   kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+>>   instrument_copy_from_user_before include/linux/instrumented.h:129 [inline]
+>>   _copy_from_user+0x7b/0xe0 lib/usercopy.c:22
+>>   copy_from_user include/linux/uaccess.h:183 [inline]
+>>   handle_to_path fs/fhandle.c:203 [inline]
+>>   do_handle_open+0x204/0x660 fs/fhandle.c:226
+>>   do_syscall_64+0xfb/0x240
+>>   entry_SYSCALL_64_after_hwframe+0x72/0x7a
+>> [Fix]
+>> When copying data to f_handle, the length of the copied data should not include
+>> the length of "struct file_handle".
+>>
+>> Reported-by: syzbot+4139435cb1b34cf759c2@syzkaller.appspotmail.com
+>> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+>> ---
+>>   fs/fhandle.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/fhandle.c b/fs/fhandle.c
+>> index 53ed54711cd2..8a7f86c2139a 100644
+>> --- a/fs/fhandle.c
+>> +++ b/fs/fhandle.c
+>> @@ -202,7 +202,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
+>>   	*handle = f_handle;
+>>   	if (copy_from_user(&handle->f_handle,
+>>   			   &ufh->f_handle,
+>> -			   struct_size(ufh, f_handle, f_handle.handle_bytes))) {
+>> +			   f_handle.handle_bytes)) {
+>>   		retval = -EFAULT;
+>>   		goto out_handle;
+>>   	}
 > 
-> No my business.
-
-Clearly it is as you're gradually replacing APIs with stuff that is GPL'd.
-
-> But if you want to side track this let me just put this in here:
+> cc'ing Gustavo, since it looks like his patch in -next is what broke
+> this.
 > 
-> NAK to the non-GPL EXPORT of writeback_iter().
 
-Very well, I'll switch that export to GPL.  Christian, if you can amend that
-patch in your tree?
+Oh, sorry about that folks. That looks pretty much like a copy/paste error.
 
-David
+The fix is correct.
+
+Thanks, Edward!
+--
+Gustavo
 
 
