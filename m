@@ -1,65 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-16069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30ABB8978CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 21:07:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590CD8978E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 21:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81DD2877DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 19:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14CE7288005
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 19:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9573F154458;
-	Wed,  3 Apr 2024 19:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA49A1552FF;
+	Wed,  3 Apr 2024 19:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ab29Awgi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+BsV4B+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493E3146D62
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 19:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5C0154C09;
+	Wed,  3 Apr 2024 19:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712171224; cv=none; b=D1G1Zcs2GUJ1GUDnHfbre58cbyeTkxr0yRL54wuWjXrfMCOY1dCyX5gpOJ5pz4GUkHbHODjnuDFd0saQu6khFYJk23UHi4YmFhFYRjjzwlbPMI2YfUDBuH/zYbrTZumzIjrm9Lq4hjqlXgayYO8L7XzxFRKsOBwNrj5OMkMHP2o=
+	t=1712171789; cv=none; b=Uh1GlpWpO5KlPqUxobabDkOwLDdYyOkpiuubmFTxIf5J1WzVYXvKyUQFMwoR6Y8JO/XEM4fi1eJl3TEMrdmrVYXHakB8nRHJGHcQogCMIuuXS/oVjkzcf7UrjtJ0GPY5zSX5hufySaysmxlQ0bywNdqlC/8stZ0BtJacw/O8bCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712171224; c=relaxed/simple;
-	bh=DmbUJaU7fvPvxuhQjMUT+PZdyRm/OezzMypWogtG338=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gYkteRyr46cEM9P3Cf5/fyWWzfxI35Hk5NwL5iEiA9dhzGyja8U5Dcjdg619AQ2MUFttFXGmscDGJVQFiOnl/AJpncTNyLNcpI3lPyeNwpcYOakxsXZGP5P2VqtM8LSaw4SWmHYDG9FqBuBhlxtCgeF1hpSve5V1P/NtNtmX2rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ab29Awgi; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 3 Apr 2024 15:06:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1712171220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MPufZuIJuTLIDu10Urps9fsUQXIz9rznyNkrrZnyWEM=;
-	b=ab29AwgidGYXl/9pYqDFJfdDItXW7t4LUhM3Qj9YVwhcTDaF8J7UEropu/nN8V+SnlrPp/
-	+SrSQ2f18s9M0jQ8SgPaaB8J5ogz82i+9eN08TaGx4gkgjN0F4Euhr/MbcHZN6rMiDbbtt
-	T9FLbyOJvoCIqIyAx5v/kURkMzbxliU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Tejun Heo <tj@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	akpm@linux-foundation.org, willy@infradead.org, bfoster@redhat.com, dsterba@suse.com, 
-	mjguzik@gmail.com, dhowells@redhat.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Improve visibility of writeback
-Message-ID: <qemects2mglzjdig7y5uufhoqdhoccwlrwrtfhe4jy6gbadj6n@dnnbzymtxpyj>
-References: <qyzaompqkxwdquqtofmqghvpi4m3twkrawn26rxs56aw4n2j3o@kt32f47dkjtu>
- <ZgXFrabAqunDctVp@slm.duckdns.org>
- <n2znv2ioy62rrrzz4nl2x7x5uighuxf2fgozhpfdkj6ialdiqe@a3mnfez7mitl>
- <ZgXJH9XQNqda7fpz@slm.duckdns.org>
- <wgec7wbhdn7ilvwddcalkbgxzjutp6h7dgfrijzffb64pwpksz@e6tqcybzfu2f>
- <ZgXPZ1uJSUCF79Ef@slm.duckdns.org>
- <qv3vv6355aw5fkzw5yvuwlnyceypcsfl5kkcrvlipxwfl3nuyg@7cqwaqpxn64t>
- <ZgXXKaZlmOWC-3mn@slm.duckdns.org>
- <20240403162716.icjbicvtbleiymjy@quack3>
- <Zg2jdcochRXNdDZX@slm.duckdns.org>
+	s=arc-20240116; t=1712171789; c=relaxed/simple;
+	bh=JsM5mkCH6HCrr21KWiyEBg8/v2IEioU5Aq4XlPGc5zg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fVYYnOEFM7M52JADt10xUZxk2l9mcqM06DxO/X0BLhfM8qG+EG8ruKYBEmAjRFXXdYMf1UkjT19o/DBbtsrXaGLJQiBKVUv16XAxhB4lMYq40vYAp8loIi+DVmGkkWtt83Gy7hR/o2QTU9zDPX+3patPt0iZICpcHyGISGE8OMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+BsV4B+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD4F3C433C7;
+	Wed,  3 Apr 2024 19:16:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712171788;
+	bh=JsM5mkCH6HCrr21KWiyEBg8/v2IEioU5Aq4XlPGc5zg=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=a+BsV4B+kCslv/iESfG8GcvrWbGidFMrLxDUlHgpi7cN+bOtujc899mQ9EknVYJZp
+	 7AbLj6FjjzVkDc7JTOOXNUzvXMXUPX1bTJDp0/b63ReuTo9ZnNtKHNbYoIm63z6F+L
+	 rp00xhD8pTmEXYWSh/ELe9SvFIi0McXYSvE0rI7+WPutxmb+auHLP4Yd4+4k4rWRHq
+	 GGnyB+gcvBMVSZglMjmfdpaSAKKtMJyYiAZbICojAUjtu9V36mbN/2xM8/fpDPNNRH
+	 6kL4EuN7NWVBK/JCDJoR+sPeCxKncqyNtO8o5JLS51vziWb2+FCu1K0Acx9bJM4f1M
+	 +tHsu2qF2EnOA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 41937CE0D85; Wed,  3 Apr 2024 12:16:28 -0700 (PDT)
+Date: Wed, 3 Apr 2024 12:16:28 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH fs/proc/bootconfig] remove redundant comments from
+ /proc/bootconfig
+Message-ID: <f036c5b0-20cc-40c1-85f9-69fa9edd0c95@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,64 +61,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zg2jdcochRXNdDZX@slm.duckdns.org>
-X-Migadu-Flow: FLOW_OUT
 
-On Wed, Apr 03, 2024 at 08:44:05AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Wed, Apr 03, 2024 at 06:27:16PM +0200, Jan Kara wrote:
-> > Yeah, BPF is great and I use it but to fill in some cases from practice,
-> > there are sysadmins refusing to install bcc or run your BPF scripts on
-> > their systems due to company regulations, their personal fear, or whatever.
-> > So debugging with what you can achieve from a shell is still the thing
-> > quite often.
-> 
-> Yeah, I mean, this happens with anything new. Tracing itself took quite a
-> while to be adopted widely. BPF, bcc, bpftrace are all still pretty new and
-> it's likely that the adoption line will keep shifting for quite a while.
-> Besides, even with all the new gizmos there definitely are cases where good
-> ol' cat interface makes sense.
-> 
-> So, if the static interface makes sense, we add it but we should keep in
-> mind that the trade-offs for adding such static infrastructure, especially
-> for the ones which aren't *widely* useful, are rather quickly shfiting in
-> the less favorable direction.
+commit 717c7c894d4b ("fs/proc: Add boot loader arguments as comment to
+/proc/bootconfig") adds bootloader argument comments into /proc/bootconfig.
 
-A lot of our static debug infrastructure isn't that useful because it
-just sucks.
+/proc/bootconfig shows boot_command_line[] multiple times following
+every xbc key value pair, that's duplicated and not necessary.
+Remove redundant ones.
 
-Every time I hit a sysfs or procfs file that's just a single integer,
-and nothing else, when clearly there's internal structure and
-description that needs to be there I die a little inside. It's lazy and
-amateurish.
+Output before and after the fix is like:
+key1 = value1
+*bootloader argument comments*
+key2 = value2
+*bootloader argument comments*
+key3 = value3
+*bootloader argument comments*
+...
 
-I regularly debug things in bcachefs over IRC in about 5-10 minutes of
-asking to check various files and pastebin them - this is my normal
-process, I pretty much never have to ssh and touch the actual machines.
+key1 = value1
+key2 = value2
+key3 = value3
+*bootloader argument comments*
+...
 
-That's how it should be if you just make a point of making your internal
-state easy to view and introspect, but when I'm debugging issues that
-run into the wider block layer, or memory reclaim, we often hit a wall.
+Fixes: 717c7c894d4b ("fs/proc: Add boot loader arguments as comment to /proc/bootconfig")
+Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: <linux-trace-kernel@vger.kernel.org>
+Cc: <linux-fsdevel@vger.kernel.org>
 
-Writeback throttling was buggy for _months_, no visibility or
-introspection or concerns for debugging, and that's a small chunk of
-code. io_uring - had to disable it. I _still_ have people bringing
-issues to me that are clearly memory reclaim related but I don't have
-the tools.
-
-It's not like any of this code exports much in the way of useful
-tracepoints either, but tracepoints often just aren't what you want;
-what you want just to be able to see internal state (_without_ having to
-use a debugger, because that's completely impractical outside highly
-controlled environments) - and tracing is also never the first thing you
-want to reach for when you have a user asking you "hey, this thing went
-wonky, what's it doing?" - tracing automatically turns it into a multi
-step process of decide what you want to look at, run the workload more
-to collect data, iterate.
-
-Think more about "what would make code easier to debug" and less about
-"how do I shove this round peg through the square tracing/BPF slot".
-There's _way_ more we could be doing that would just make our lives
-easier.
+diff --git a/fs/proc/bootconfig.c b/fs/proc/bootconfig.c
+index 902b326e1e560..e5635a6b127b0 100644
+--- a/fs/proc/bootconfig.c
++++ b/fs/proc/bootconfig.c
+@@ -62,12 +62,12 @@ static int __init copy_xbc_key_value_list(char *dst, size_t size)
+ 				break;
+ 			dst += ret;
+ 		}
+-		if (ret >= 0 && boot_command_line[0]) {
+-			ret = snprintf(dst, rest(dst, end), "# Parameters from bootloader:\n# %s\n",
+-				       boot_command_line);
+-			if (ret > 0)
+-				dst += ret;
+-		}
++	}
++	if (ret >= 0 && boot_command_line[0]) {
++		ret = snprintf(dst, rest(dst, end), "# Parameters from bootloader:\n# %s\n",
++			       boot_command_line);
++		if (ret > 0)
++			dst += ret;
+ 	}
+ out:
+ 	kfree(key);
 
