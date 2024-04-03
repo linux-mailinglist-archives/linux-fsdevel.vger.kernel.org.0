@@ -1,170 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-16025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD6C896FAE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 14:59:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E1D896FED
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 15:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5F47B25EB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 12:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF6E28C226
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 13:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63E2146A8E;
-	Wed,  3 Apr 2024 12:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9661482E2;
+	Wed,  3 Apr 2024 13:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="V05JxkJq"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Upl7xRlv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498E8146A75
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 12:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAD6200D4;
+	Wed,  3 Apr 2024 13:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712149181; cv=none; b=lRVhZIh8YarFFPFUwJi4dJ8kOLHc9zMxca+buF3JHu8wXQAI+5BotNMvv6t/myyP+mmXKa6WI2Ea/J+LFOHzfw6Cbjd6Ud2Y9St3JPeqE4e+tKw6ymkYfscjNAhGu97d1Ub9SFkIfWHYJPTz6cGSKjGJKBnvadcBOs2MOpcGhW8=
+	t=1712149916; cv=none; b=beMQbl1PE/prIpYLya6B7k1r09SbGf5BRXRrN373xXl4sBHeMSHFsNIxAunx0GTu5DZQaAuZ50P8IgKxVVBZyYg/3BWviY1CzCu1QJpp6I614SzEHqjcT+1+pczGd16bsbSssckTqLcjxJqW2pBgcs5Jdg93932KHQcIKIXp9LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712149181; c=relaxed/simple;
-	bh=HUm4rX7f5vx16jEu8Sf5T2cz4l5Z+ApVMO6v3mlJDPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uo/cLHFkLEzLp4ZTpKweI0twTvwjIIb/Ex1/AYyfXcW+AyA7AFWLCr2ELHvQTRkjiE0GeFrTWqfhi3BYO7Tsex7H9LcKYIvRnMyG0eB2D3EbznXJIkkk1C+hhzjqfrRCMfuu3mwHMiyMVmBtnOLnAO8wSU2v/0pGq6GIMrAAN+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=V05JxkJq; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id rsdHrxQU3l9dRs0DEroRaG; Wed, 03 Apr 2024 12:59:32 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id s0DDrJkJBuv6Xs0DDrmsCi; Wed, 03 Apr 2024 12:59:31 +0000
-X-Authority-Analysis: v=2.4 cv=YbZ25BRf c=1 sm=1 tr=0 ts=660d52b3
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4VnFru8p6tJF5H7f7NqpSA==:17
- a=IkcTkHD0fZMA:10 a=raytVjVEu-sA:10 a=wYkD_t78qR0A:10 a=hSkVLCK3AAAA:8
- a=dZbOZ2KzAAAA:8 a=NCOkLyd_rlf-iUkjTgcA:9 a=QEXdDO2ut3YA:10
- a=cQPPKAXgyycSBL8etih5:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=fviJob8AHM37gPjhK3h7HrJK72m/4Gn7wrbDrlUSskE=; b=V05JxkJqP76wdpE6Bj5q0AVFtl
-	8zYkkK7JocWgI6tZffH/UbcDyOgwgoxTV4GAuzD7Ur49Xvwe71SdnCdyPvNlh42vgUCiWiKQdkjlo
-	n5FjQuWcxkDwDk0vHjpjKjvIHhxgojXOwmHkGvsIEH5BnaYeN2syAz5/GAkfj0p5MKfcekEegWG4X
-	AmnjvtjLAlaAvrqWfx7FSbEkN6gkXKpQt/C9mZf7OP9dRtCsDnfs8zapScgg357O11jMrfgfIyGFk
-	l0CUrGd6dWbdbcMTR4V0zB50erBv73/SbuoNbRK84XhCtIS5u8x/pUqHiUbuWYcVHewnC8jSHhCL7
-	mRkevEyw==;
-Received: from [187.184.159.122] (port=11187 helo=[192.168.0.27])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1rs0DC-002qxv-17;
-	Wed, 03 Apr 2024 07:59:30 -0500
-Message-ID: <88f4493a-2787-4c25-bd0a-80731a603faa@embeddedor.com>
-Date: Wed, 3 Apr 2024 06:59:24 -0600
+	s=arc-20240116; t=1712149916; c=relaxed/simple;
+	bh=988I3Q8yT1g6WpTi1Ga40N32urlSH2QimLrM2LzfSQs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ht/SOUW5vc9UYTape6IUgbjMMoPbW35ftH9heAPrL+EGJxhx+CzmFyRZQXGe2zEq1wYhaTX0mOPOD06f8q1v1QtUeLRKOJVY2YoHabJryRkhRsMoBu2JD1izGzNxgIaqRu2Pvjw2tyOTUiyyGJr3umGgJRkc2TuDipJ844SCSXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Upl7xRlv; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 433CqamI013959;
+	Wed, 3 Apr 2024 13:11:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=cX9BfS1KFfnbnppbxJxElitNCKueMFxijxJrZ6z2zUY=;
+ b=Upl7xRlvRndQgXEOukfJD8YvwK8uodvSpontiwuTshTMpllHoYVQIpRAgIV2cHEpF8eL
+ wMeO+3N4zGuRYam8thFiH4TYke6zB4CmxU6wxHfdBRUQz+J1b28xIOOtFdtpjLG3aRe2
+ hiX1h1hLm4RGqCmnj1jxX8pAFyeVKHllAg5U7iFSCUXkPSB8qULByym6B5I1QICnI3xd
+ V3ITFR5yCjMpVUdV77VktwzlX+e2IWuS6MlxIqMhH5rHWe3b/uc8XDCY4ox3D1RNH2qB
+ vL/okmm37QDg67D8QXV82a1SyLLbT9qDpuTf0m+xhusxeAujZWsEpgg3++dTsaWWIu4P nw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x97gd01fg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Apr 2024 13:11:18 +0000
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 433DBH13013325;
+	Wed, 3 Apr 2024 13:11:17 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x97gd01f5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Apr 2024 13:11:17 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4339sdpA015214;
+	Wed, 3 Apr 2024 13:11:10 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3x6y9m5299-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Apr 2024 13:11:10 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 433DB7Sd393788
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 3 Apr 2024 13:11:09 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5C3EA5805B;
+	Wed,  3 Apr 2024 13:11:07 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0A23D58067;
+	Wed,  3 Apr 2024 13:11:06 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.65.3])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  3 Apr 2024 13:11:05 +0000 (GMT)
+Message-ID: <6d3b9d8a5f5a2ca010a5a701d7826e47912fec89.camel@linux.ibm.com>
+Subject: Re: [RESEND][PATCH v3] security: Place security_path_post_mknod()
+ where the original IMA call was
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, jack@suse.cz, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, pc@manguebit.com,
+        torvalds@linux-foundation.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Steve French <smfrench@gmail.com>
+Date: Wed, 03 Apr 2024 09:11:05 -0400
+In-Reply-To: <20240403090749.2929667-1-roberto.sassu@huaweicloud.com>
+References: <20240403090749.2929667-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: WKsOfMXpW4Ur0rTPFXN01RjMFZxDEYOv
+X-Proofpoint-GUID: grSbjh9SmaV9twxkgVclig21urG8CFOV
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] fs: fix oob in do_handle_open
-To: Jeff Layton <jlayton@kernel.org>, Edward Adam Davis <eadavis@qq.com>,
- syzbot+4139435cb1b34cf759c2@syzkaller.appspotmail.com
-Cc: amir73il@gmail.com, brauner@kernel.org, chuck.lever@oracle.com,
- jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- viro@zeniv.linux.org.uk, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-References: <000000000000f075b9061520cbbe@google.com>
- <tencent_A7845DD769577306D813742365E976E3A205@qq.com>
- <72d7604e38ee9a37bcb33a6a537758e4412488ee.camel@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <72d7604e38ee9a37bcb33a6a537758e4412488ee.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.184.159.122
-X-Source-L: No
-X-Exim-ID: 1rs0DC-002qxv-17
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.27]) [187.184.159.122]:11187
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFldZXxxeQrS/skokxirUGMi0T5D+g5QdlmBnA54ZnfI5cMjx1BIj6rl5+JvUjCX9TzRvJFxB3KjhHA3PSv+6WOfLdakXH6HG54pF6x9GdMK4JU1mK5I
- vD4AwRUPSSJq14nrc4JQrd9CKaI8ffSRYHZhbWobnO7rYuyDwsxa6wfVD1sgw+EdQ4zJ7w5GARqRIxBTYvMwN+5cAvO75ilWWbzW5KoIkYxn4gL9QWXy2RvX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-03_12,2024-04-03_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ phishscore=0 mlxscore=0 adultscore=0 suspectscore=0 clxscore=1011
+ mlxlogscore=999 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2403210000 definitions=main-2404030091
 
+Hi Roberto,
 
+Subject: -> security: Limit security_path_post_mknod() to regular files
 
-On 03/04/24 02:48, Jeff Layton wrote:
-> On Wed, 2024-04-03 at 14:54 +0800, Edward Adam Davis wrote:
->> [Syzbot reported]
->> BUG: KASAN: slab-out-of-bounds in instrument_copy_from_user_before include/linux/instrumented.h:129 [inline]
->> BUG: KASAN: slab-out-of-bounds in _copy_from_user+0x7b/0xe0 lib/usercopy.c:22
->> Write of size 48 at addr ffff88802b8cbc88 by task syz-executor333/5090
->>
->> CPU: 0 PID: 5090 Comm: syz-executor333 Not tainted 6.9.0-rc2-next-20240402-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
->> Call Trace:
->>   <TASK>
->>   __dump_stack lib/dump_stack.c:88 [inline]
->>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->>   print_address_description mm/kasan/report.c:377 [inline]
->>   print_report+0x169/0x550 mm/kasan/report.c:488
->>   kasan_report+0x143/0x180 mm/kasan/report.c:601
->>   kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
->>   instrument_copy_from_user_before include/linux/instrumented.h:129 [inline]
->>   _copy_from_user+0x7b/0xe0 lib/usercopy.c:22
->>   copy_from_user include/linux/uaccess.h:183 [inline]
->>   handle_to_path fs/fhandle.c:203 [inline]
->>   do_handle_open+0x204/0x660 fs/fhandle.c:226
->>   do_syscall_64+0xfb/0x240
->>   entry_SYSCALL_64_after_hwframe+0x72/0x7a
->> [Fix]
->> When copying data to f_handle, the length of the copied data should not include
->> the length of "struct file_handle".
->>
->> Reported-by: syzbot+4139435cb1b34cf759c2@syzkaller.appspotmail.com
->> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
->> ---
->>   fs/fhandle.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/fhandle.c b/fs/fhandle.c
->> index 53ed54711cd2..8a7f86c2139a 100644
->> --- a/fs/fhandle.c
->> +++ b/fs/fhandle.c
->> @@ -202,7 +202,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
->>   	*handle = f_handle;
->>   	if (copy_from_user(&handle->f_handle,
->>   			   &ufh->f_handle,
->> -			   struct_size(ufh, f_handle, f_handle.handle_bytes))) {
->> +			   f_handle.handle_bytes)) {
->>   		retval = -EFAULT;
->>   		goto out_handle;
->>   	}
+This patch description was written for the previous patch version with minor
+changes.  The discussion was more about making LSM hooks more generic than
+currently needed.  The patch description should somehow reflect that discussion.
+
+On Wed, 2024-04-03 at 11:07 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> cc'ing Gustavo, since it looks like his patch in -next is what broke
-> this.
+> Commit 08abce60d63f ("security: Introduce path_post_mknod hook")
+> introduced security_path_post_mknod(), to replace the IMA-specific call to
+> ima_post_path_mknod().
 > 
+> For symmetry with security_path_mknod(), security_path_post_mknod() was
+> called after a successful mknod operation, for any file type, rather than
+> only for regular files at the time there was the IMA call.
 
-Oh, sorry about that folks. That looks pretty much like a copy/paste error.
+-> rather than only for regular files.
+> 
+> However, as reported by VFS maintainers, successful mknod operation does
+> not mean that the dentry always has an inode attached to it (for example,
+> not for FIFOs on a SAMBA mount).
+> 
+> If that condition happens, the kernel crashes when
+> security_path_post_mknod() attempts to verify if the inode associated to
+> the dentry is private.
 
-The fix is correct.
+This is an example of why making the LSM hook more generic than needed didn't
+work.  Based on the discussion there is no valid reason for making the hook more
+generic.
 
-Thanks, Edward!
---
-Gustavo
+> 
+> Move security_path_post_mknod() where the ima_post_path_mknod() call was,
+> which is obviously correct from IMA/EVM perspective. IMA/EVM are the only
+> in-kernel users, and only need to inspect regular files.
+
+-> Move the security_path_post_mknod() back to the original placement of the
+ima_post_path_mknod(), so that it is only called for regular files.
+
+> 
+> Reported-by: Steve French <smfrench@gmail.com>
+> Closes: 
+> https://lore.kernel.org/linux-kernel/CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com/
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> Fixes: 08abce60d63f ("security: Introduce path_post_mknod hook")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
 
