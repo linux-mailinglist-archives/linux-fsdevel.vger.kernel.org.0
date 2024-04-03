@@ -1,58 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-16084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A62897BC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 00:46:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40215897BD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 00:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F15941C23EAE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 22:46:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 722D51C21701
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 22:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AE015623A;
-	Wed,  3 Apr 2024 22:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C907D156253;
+	Wed,  3 Apr 2024 22:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="t2ncr//f"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="altBgIa+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2C01757A;
-	Wed,  3 Apr 2024 22:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C30156890
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 22:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712184355; cv=none; b=XV0ZlqXRhdSpHd2bUCoC3QzVordKlsrMX68mi6jVa5hqmYJv81sb7VuTMHMomPcCrR/bxWis5DQ5kEqmfZl9aCuGw8UYaMzHS0R5Wu7KqpfmbtPSOy+UkTMK1CuLyHYmqwhjX1kvwA4hAV2N6A37m5KGQ/GO428FbKA5m8LSDQE=
+	t=1712185064; cv=none; b=X3FweT4T+p5Btc3AWkBs335l/Q/w9Xu+a4DoL8wYcQtIHkM0Ow/7gyOBSYIWkkaHi47CYX6asHdtJE8CSTM51aAjIKn2eSCzUCw0Gzb2d9OfLiGoacwQ1gcVe7CMcR3HU7vaLVYTqCqOxy2R0SwXLy2RdmxbbL8Xz2Wkpj84Ogo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712184355; c=relaxed/simple;
-	bh=Wl13HCQUnod0lTUKQ6DNuqqLHcv1UPBQ6Mocvat/Q3E=;
+	s=arc-20240116; t=1712185064; c=relaxed/simple;
+	bh=rSC5AEVZmjhxZcqf+HrPUcVtv4hsU7DupAfE4SmRWDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OrH3uBCPSMVU0Ltm9TKU9jkyIxQHhV4Y0cuZrRrQqRkg3S5vpgWyzsR8A3gE8Em9iaZIZ+kfpGfcGkEQEJHAbkQKiVJz911ZjXkUSLlUWP8xlWS/L4ZnoWdWMP9+RnRuWGBFx4LyxOEYDa2MlNOJ3XWc+Wz4mdvX6JwPMDpwkqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=t2ncr//f; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zlKZnL7sDm8BDCMejJeZM50ZtuMxH0tQsMbjPb3yHD8=; b=t2ncr//fpGvPtpESJNxRb6/ovo
-	c8kDk5LFRDFeqtIIPAWZbXg37VJMBMuLM/WrbBwybND37YVoNxDknuqeN4Xzx4n0yyAeyzIpXpD8n
-	aRVrbdxNoGlYBges4TbCTHcW+TYHr5QBZYfmd/uYwq6HaTcmvZlvePB78sLuJFjRgp6/6R0bxL2nF
-	QFdzEU0ksQQEYlIl4+vky3ogrI2/xGnyFkZMmoVNm7SiLB5q72L5gfUKSC/wxWD8fSciZFOQJtuYD
-	Vzc2GB6F6rX/U93Bbdlsfwg1coD6Hc0w4G9ooDWlpfQe/RkjSnuy3VTFTdUqRruF87O2IGYqfJLC7
-	4hfCSTGQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rs9Md-005Bdo-27;
-	Wed, 03 Apr 2024 22:45:51 +0000
-Date: Wed, 3 Apr 2024 23:45:51 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] userfaultfd: convert to ->read_iter()
-Message-ID: <20240403224551.GN538574@ZenIV>
-References: <20240403140446.1623931-1-axboe@kernel.dk>
- <20240403140446.1623931-3-axboe@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VbYuBILgXEA6oBy5yE7MiYTnoXHWt53ygcdXdSTcwaziLPAe+NjZuQ4XU6gQJkWoRId/hCMRNkzMHjeH1Xln9zmIU1q01jPdTaTZJ7IRYjhIwJk77Agq/6O7h6Npeo9BFA6sv3DPmh4aYnzt93UXTlj1fx2Za5Us3RvObPVD9ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=altBgIa+; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 3 Apr 2024 18:57:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1712185059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AWtiyFTqYKwdJDHyaCD82L5617uAdz2F4Sz0PAghbhE=;
+	b=altBgIa+MeRE72rlksdac4u+jogeiW19C04WbQpYqlQTv7yFrJi+DeOIswL1ev0MHQMoJz
+	3P/blHm1a9ObCUExPNH7tB1oeAvKxRHvqrARJ69T91VOSSObtkLUGmQ7Nd8eHpwXRM9vPE
+	nRIje5E5zoSDcqJDGAKpSrukrB99Ej0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: David Hildenbrand <david@redhat.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, penguin-kernel@i-love.sakura.ne.jp, 
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org, 
+	paulmck@kernel.org, pasha.tatashin@soleen.com, yosryahmed@google.com, 
+	yuzhao@google.com, dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
+	elver@google.com, dvyukov@google.com, songmuchun@bytedance.com, jbaron@akamai.com, 
+	aliceryhl@google.com, rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	kernel-team@android.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
+Subject: Re: [PATCH v6 01/37] fix missing vmalloc.h includes
+Message-ID: <qyyo6mjctqm734utdjen4ozhoo3t4ikswzjfjnemp7olwdgyt4@qifwishdzul4>
+References: <20240321163705.3067592-1-surenb@google.com>
+ <20240321163705.3067592-2-surenb@google.com>
+ <20240403211240.GA307137@dev-arch.thelio-3990X>
+ <4qk7f3ra5lrqhtvmipmacgzo5qwnugrfxn5dd3j4wubzwqvmv4@vzdhpalbmob3>
+ <9e2d09f8-2234-42f3-8481-87bbd9ad4def@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,30 +81,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240403140446.1623931-3-axboe@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <9e2d09f8-2234-42f3-8481-87bbd9ad4def@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Apr 03, 2024 at 08:02:53AM -0600, Jens Axboe wrote:
-> -		if (count < sizeof(msg))
-> +		if (iov_iter_count(to) < sizeof(msg))
->  			return ret ? ret : -EINVAL;
->  		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg, inode);
->  		if (_ret < 0)
->  			return ret ? ret : _ret;
-> -		if (copy_to_user((__u64 __user *) buf, &msg, sizeof(msg)))
-> +		_ret = copy_to_iter(&msg, sizeof(msg), to);
-> +		if (_ret < 0)
->  			return ret ? ret : -EFAULT;
+On Wed, Apr 03, 2024 at 11:48:12PM +0200, David Hildenbrand wrote:
+> On 03.04.24 23:41, Kent Overstreet wrote:
+> > On Wed, Apr 03, 2024 at 02:12:40PM -0700, Nathan Chancellor wrote:
+> > > On Thu, Mar 21, 2024 at 09:36:23AM -0700, Suren Baghdasaryan wrote:
+> > > > From: Kent Overstreet <kent.overstreet@linux.dev>
+> > > > 
+> > > > The next patch drops vmalloc.h from a system header in order to fix
+> > > > a circular dependency; this adds it to all the files that were pulling
+> > > > it in implicitly.
+> > > > 
+> > > > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > > Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > > 
+> > > I bisected an error that I see when building ARCH=loongarch allmodconfig
+> > > to commit 302519d9e80a ("asm-generic/io.h: kill vmalloc.h dependency")
+> > > in -next, which tells me that this patch likely needs to contain
+> > > something along the following lines, as LoongArch was getting
+> > > include/linux/sizes.h transitively through the vmalloc.h include in
+> > > include/asm-generic/io.h.
+> > 
+> > gcc doesn't appear to be packaged for loongarch for debian (most other
+> > cross compilers are), so that's going to make it hard for me to test
+> > anything...
+> 
+> The latest cross-compilers from Arnd [1] include a 13.2.0 one for
+> loongarch64 that works for me. Just in case you haven't heard of Arnds work
+> before and want to give it a shot.
+> 
+> [1] https://mirrors.edge.kernel.org/pub/tools/crosstool/
 
-Take a look in uio.h - you'll see
-
-size_t copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
-
-in there.  See the problem?
-
-> +	fd = get_unused_fd_flags(O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS));
-> +	if (fd < 0)
-> +		goto err_out;
-
-Same comment as for the previous patch.
+Thanks for the pointer - but something seems to be busted with the
+loongarch build, if I'm not mistaken; one of the included headers
+references loongarch-def.h, but that's not included.
 
