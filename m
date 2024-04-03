@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-15981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D76889667B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 09:34:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0290389667F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 09:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADF06285C45
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 07:34:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340F01C23FC3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 07:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F1F6CDBE;
-	Wed,  3 Apr 2024 07:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF516F534;
+	Wed,  3 Apr 2024 07:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="I+GHyyn2"
+	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="QEytHR5M"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from box.fidei.email (box.fidei.email [71.19.144.250])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06E46CDB4;
-	Wed,  3 Apr 2024 07:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336F96EB41;
+	Wed,  3 Apr 2024 07:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712129592; cv=none; b=H5oSFhah6DgCHLlAypDGky7mbpAEQi2ydgmyW8mNgMtmXqy9+x8ch4csN4UhCSY8NgXeU7WzK4hjAfX9ndlJHyR7WkmHh95nxBvruPFeNNaZxw6Hv9CL8qHxUe7VC83l+Ox2ozYVsRcPY5vDWzeliGDzWa2fxAEa2k4sDx8L3gs=
+	t=1712129594; cv=none; b=BIQLx6Hs5tINHjcRs2yxSkx8mguJ2mC9Zo4pL3rGfGjBjej6WMhxlnBOQqOkrdSvXFiDOBGgPZWnAP+FFOMDcQXQMhXqFir5VmpXGRwN9IE+cmnhCfCV1z5mZCLOiuFCtbGIcm3u4uRaUOhRdxpulGJZhxkXQt/tvt/99uVdSpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712129592; c=relaxed/simple;
-	bh=5jSs8nU917GCzbrVP0KXLbUutJOMwr3M87eATF8xiYE=;
+	s=arc-20240116; t=1712129594; c=relaxed/simple;
+	bh=GM61hCA7kvAHqNWRBNMS7+3u4Ivx/tDJO9J885fhLWo=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LP4KM6czLJQlTLY9G1ufy+ezGD4RwsvAWv8VpiLzUzEDHa9LBAvl1tFapDbedqmpYBTZMpJEVYWIQWtlZ0AFpo4JbvUorH4NK2cCW+NWb+IaLexoSaTlowTFe9nXUnUpCIbbTsNRwqSTZiCrr5IzTBwk7FSd/xpOY+HXaa051Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=I+GHyyn2; arc=none smtp.client-ip=71.19.144.250
+	 MIME-Version; b=NolqJK+z/6n00HXR0U+NTI7sRJFxgjR0EZ4OSbPmC0Cvf2i/daxwG/LG0UZ535W1tEQE0X34+2G33p5GxyuDEQSk8AC5htRi5K2zkOAwj+mKkvkt43HRlsuRhIt1ppgf+4P3T67O6YlmsRk6tKB9VDLZYdmABsj5PBTh1M3YjT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=QEytHR5M; arc=none smtp.client-ip=71.19.144.250
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
 Received: from authenticated-user (box.fidei.email [71.19.144.250])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
 	(No client certificate requested)
-	by box.fidei.email (Postfix) with ESMTPSA id 41FCF807B2;
-	Wed,  3 Apr 2024 03:33:10 -0400 (EDT)
+	by box.fidei.email (Postfix) with ESMTPSA id EFBB2807E8;
+	Wed,  3 Apr 2024 03:33:11 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
-	t=1712129590; bh=5jSs8nU917GCzbrVP0KXLbUutJOMwr3M87eATF8xiYE=;
+	t=1712129592; bh=GM61hCA7kvAHqNWRBNMS7+3u4Ivx/tDJO9J885fhLWo=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=I+GHyyn2AqhIMgJR35EkQswgG3miJcGyEJxwzXEC6xVoLDp2OlwyCosaNuuCkBCB9
-	 e3mF+1V+JntbUuBhT+zndD8j1+FQqYM+m18PAE0UkxIGavLc/UHnvJgLZlPhY3HvRU
-	 dAB1kd2oBY1IVAYOFyco0jcQzCh32wCqvmI1yUvKFEjAsgvRdtJEggWdai9Jldcnqz
-	 ZrXXRiSB4ad5DztioJsAP3FkLablHBamn3DBFU9p+4wWhQQJptJQTzZ4KPwbj+Bogf
-	 R+1oWcA8RUDRvVc2MjugMnBE1zMK/gXCQTxbPRZqZkrJjkesi+ktRnElXyFYmnL7+R
-	 VHl1Slf2emloA==
+	b=QEytHR5MrDl3eno9gSXLyQB780SiYAwX/SZdkiJabaBXvfAUR2a/I55tLnkfL+CpI
+	 LnJTjdaz247j/qKvYwDUu7CxYvVbE8cVGMf0WclMBiAvAT10XgKz3HSg1Ml/SaYXQa
+	 rg2PstwGLpZAeUn5EpHRZFRcrevxmhyfmtSUhkJtQUFuxI0LSJpShGx9d+xVczDG3M
+	 x8y3lzEBsciaVn1VquDjmkqOHeXLmOzuRycxl5c2xZombu1LEM3DPEHr6zhFU2SLrO
+	 ClzRjg6qvWGUqMZ4Ods46LlfFVGV113DU5DLef8bULDeQuG84gvVvSjV6FppbEL/WO
+	 qyopps01ElZSg==
 From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Kent Overstreet <kent.overstreet@linux.dev>,
@@ -66,9 +66,9 @@ To: Jonathan Corbet <corbet@lwn.net>,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org,
 	kernel-team@meta.com
-Subject: [PATCH v3 03/13] fs: fiemap: add new COMPRESSED extent state
-Date: Wed,  3 Apr 2024 03:22:44 -0400
-Message-ID: <2befe2c13065bdf3ca74cb8b701727940310fd2a.1712126039.git.sweettea-kernel@dorminy.me>
+Subject: [PATCH v3 04/13] btrfs: fiemap: emit new COMPRESSED state.
+Date: Wed,  3 Apr 2024 03:22:45 -0400
+Message-ID: <ed3a3c3edbf01b728c20c0718d227ebb79611f47.1712126039.git.sweettea-kernel@dorminy.me>
 In-Reply-To: <cover.1712126039.git.sweettea-kernel@dorminy.me>
 References: <cover.1712126039.git.sweettea-kernel@dorminy.me>
 Precedence: bulk
@@ -79,59 +79,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This goes closely with the new physical length field in struct
-fiemap_extent, as when physical length is not equal to logical length
-the reason is frequently compression.
-
 Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
 ---
- Documentation/filesystems/fiemap.rst | 4 ++++
- fs/ioctl.c                           | 3 ++-
- include/uapi/linux/fiemap.h          | 2 ++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ fs/btrfs/extent_io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/filesystems/fiemap.rst b/Documentation/filesystems/fiemap.rst
-index c060bb83f5d8..16bd7faba5e0 100644
---- a/Documentation/filesystems/fiemap.rst
-+++ b/Documentation/filesystems/fiemap.rst
-@@ -162,6 +162,10 @@ FIEMAP_EXTENT_DATA_ENCRYPTED
-   This will also set FIEMAP_EXTENT_ENCODED
-   The data in this extent has been encrypted by the file system.
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 9e421d99fd5c..e9df670ef7d2 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2706,7 +2706,7 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
+ 			if (range_end <= cache_end)
+ 				return 0;
  
-+FIEMAP_EXTENT_DATA_COMPRESSED
-+  This will also set FIEMAP_EXTENT_ENCODED
-+  The data in this extent is compressed by the file system.
-+
- FIEMAP_EXTENT_NOT_ALIGNED
-   Extent offsets and length are not guaranteed to be block aligned.
+-			if (!(flags & (FIEMAP_EXTENT_ENCODED | FIEMAP_EXTENT_DELALLOC)))
++			if (!(flags & (FIEMAP_EXTENT_DATA_COMPRESSED | FIEMAP_EXTENT_DELALLOC)))
+ 				phys += cache_end - offset;
  
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 1830baca532b..b47e2da7ec17 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -126,7 +126,8 @@ int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
- 		return 1;
+ 			offset = cache_end;
+@@ -3236,7 +3236,7 @@ int extent_fiemap(struct btrfs_inode *inode, struct fiemap_extent_info *fieinfo,
+ 		}
  
- #define SET_UNKNOWN_FLAGS	(FIEMAP_EXTENT_DELALLOC)
--#define SET_NO_UNMOUNTED_IO_FLAGS	(FIEMAP_EXTENT_DATA_ENCRYPTED)
-+#define SET_NO_UNMOUNTED_IO_FLAGS	(FIEMAP_EXTENT_DATA_ENCRYPTED|\
-+					 FIEMAP_EXTENT_DATA_COMPRESSED)
- #define SET_NOT_ALIGNED_FLAGS	(FIEMAP_EXTENT_DATA_TAIL|FIEMAP_EXTENT_DATA_INLINE)
+ 		if (compression != BTRFS_COMPRESS_NONE)
+-			flags |= FIEMAP_EXTENT_ENCODED;
++			flags |= FIEMAP_EXTENT_DATA_COMPRESSED;
  
- 	if (flags & SET_UNKNOWN_FLAGS)
-diff --git a/include/uapi/linux/fiemap.h b/include/uapi/linux/fiemap.h
-index 3079159b8e94..ea97e33ddbb3 100644
---- a/include/uapi/linux/fiemap.h
-+++ b/include/uapi/linux/fiemap.h
-@@ -67,6 +67,8 @@ struct fiemap {
- 						    * Sets EXTENT_UNKNOWN. */
- #define FIEMAP_EXTENT_ENCODED		0x00000008 /* Data can not be read
- 						    * while fs is unmounted */
-+#define FIEMAP_EXTENT_DATA_COMPRESSED	0x00000040 /* Data is compressed by fs.
-+						    * Sets EXTENT_ENCODED. */
- #define FIEMAP_EXTENT_DATA_ENCRYPTED	0x00000080 /* Data is encrypted by fs.
- 						    * Sets EXTENT_NO_BYPASS. */
- #define FIEMAP_EXTENT_NOT_ALIGNED	0x00000100 /* Extent offsets may not be
+ 		if (extent_type == BTRFS_FILE_EXTENT_INLINE) {
+ 			flags |= FIEMAP_EXTENT_DATA_INLINE;
 -- 
 2.43.0
 
