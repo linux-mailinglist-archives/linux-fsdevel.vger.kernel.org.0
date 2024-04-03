@@ -1,84 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-16029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16030-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D2EC897192
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 15:50:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F1B8971EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 16:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7BE92821AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 13:50:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0397E1F28FE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 14:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57112148FEB;
-	Wed,  3 Apr 2024 13:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230C714900C;
+	Wed,  3 Apr 2024 14:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="chCBJ5cg"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="B6KC+At7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC7F148FE1
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 13:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F25F14882F
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 14:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712152229; cv=none; b=fFTLXrpLN7CNeU0nmO7UYKdxylBAYhJczzPkJbsF44JwUR32DOISanQZreBHu0guxG6aYHWBst0XAhVYG9PsHjfLCxSOEtT7NzHBJDVZnA4KS52mXLdWBN/CLObR/ZnZp4wio3K3BI/2iU/ECduoLMQNXt90OaLCzw5iOjIwhiE=
+	t=1712153093; cv=none; b=Svp6BUhjLAd0BomRusjg4qpvcFG4xaevL9cNoS15kMTatjysSIKDGLfBeB2+9Jq1HCVJjrGU6W/Ek9AJhU44TGoQGsm2Wiczbayff0ZGNv7Wu2+P3EPU1pdNVGe2HersqBW87VsTvIWkZJx9fl55iV6vwluNO70MQmFBTz90LsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712152229; c=relaxed/simple;
-	bh=SNs5mn9q2CYcjUZ4AvUrXAt5dsOuFa1tNz0XiT4priE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gg2tGj+w/T98LOBxZ9OU4kRqtnMuPOcpuDjIGqzTsUh/JJ4IISKN7/sIUuf+iKuL+1RynCVbKqbK4yVdL4maYknQTL39a4kjdJsWifj8eHx9w182Xf5z2Tx/qVO3MHJo95vVfgvHlnIPiGEACoEr2WEbK1s32r/GJSfCXhzZlsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=chCBJ5cg; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=j7/etqMGMPSyH+wRa4krhFIvV76igxRl28+rNLU7x/M=; b=chCBJ5cgiUK22CWM6VUCUezLPy
-	8Ci+of9g8uj1J+mSwIY4pYgP7AM0ORMKqbETNBX8NijAjRIAhFaa4YWXCcYUXK93c/qeHGx5374Qj
-	EyLJO8xyVA7T1IZWqTM2cbDUoRJVOwctCYQ/RO23NGyYYw8eTQsWoQje8PDnZlSoA8lC7u4jxKm/k
-	FW25cMvxCYFdGsgTSMZBQmReGQJpikEOaGp7+wNvQ1s5TFKu8hw7b2FQYsVsGcDwQU7mZs+t6MwL1
-	aZKpoi7HElHE9mk7UYpoNTg9CsHsZIaLrs2EjJvOftuFeU+j0vCdzvidEQDnKB7g7tRm3BZ5zw74E
-	CUHWGU3Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rs10S-00000005hxO-4A5W;
-	Wed, 03 Apr 2024 13:50:25 +0000
-Date: Wed, 3 Apr 2024 14:50:24 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc: "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-	"sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-	"Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>,
-	"dchinner@redhat.com" <dchinner@redhat.com>
-Subject: Re: [PATCH v1] exfat: move extend valid_size into ->page_mkwrite()
-Message-ID: <Zg1eoJToXZYEHqg4@casper.infradead.org>
-References: <PUZPR04MB6316A7351B69621BA899844F813D2@PUZPR04MB6316.apcprd04.prod.outlook.com>
+	s=arc-20240116; t=1712153093; c=relaxed/simple;
+	bh=9bR9uidFJljssUBEjRj7U4HEyVV6DCBDCUm4+7Tk/SA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ViGotHOcZJ9FW7JDDh91jthFD7THUjlepRlGRdZ1E7sypztgt1zqd2LpqPcHmtLom9SkGwUUPZmSMVkMpJPde/zA0raVv+DjRXYy9U/EDkViglx0m0Z3a5EjmveLVOFfL/m3BdgL/I3v/J0pHLlvGeXUU14CXKbMlJx1y23BdnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=B6KC+At7; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-7d341631262so21023439f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Apr 2024 07:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712153090; x=1712757890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=60D2dsRaBW+2mEAkcXZIgJC7Rr7l0v2bYCjZOQO3Yxc=;
+        b=B6KC+At7WF3OJYZKD5L4LqM9GCBQCJAZ7c9gcn0fHiffiJw2S0oT0xgIXd24gnpFyK
+         +MaxDfKGYLviqGtoQGd/BOU2pMuh/hvjVEoyqHrBXxmFZ9dGU7tAq3fgC0xwzdagws5+
+         D00u1Elv3rOgZOisvudoVllEt8i6/FHTEflvZL8nDTyl6xifRY50WO4i2y3dciusNi2i
+         6i7lVocnnwmGwczdCDWg83kBS2MuQ6TFeho0m5uFsTQOKL+ka1kWgo5wRFyghHvIO2mX
+         onr1ta5QBPni7FvP9soqjTG0isJTzb1IGVV+eeyGwax1x8SL9ltpvQjXxpI9sarkcQqQ
+         ysOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712153090; x=1712757890;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=60D2dsRaBW+2mEAkcXZIgJC7Rr7l0v2bYCjZOQO3Yxc=;
+        b=jkfMirOCsxBbqyP/BUX2qCq3HJgu2tQwCbU/l42Wh+gA/83S+Tiz5++45jj4xNNkz2
+         iLVmgWiP7xk09KTbJmKdILzinZuOAahL7NoztZImg9/9zEQYTmV2SBK6k3qTutMW22Jp
+         7pB+YaWAhXTLhu81kq2kuKepSQT8RbRUPUG2ggJFVArIvzu/Z6nwC29Z0VbnDlvlidyp
+         KAjCw+dqeK+lZ0DxU95EUUrbO3fxMs/9AD58whOmk5q53rsvQcCrbQBE0H4JMujJEN9h
+         UGNixuZ/JIpFGhoYvHiU3z+4qk2vzBtVAQjnS0fc68lpWxPC516nZMsYYzyKFXBruKD+
+         v8wA==
+X-Gm-Message-State: AOJu0YxbsPK1RYXrc46EHzaVhkjjXLDsX7ojal1p4tcgOxY8I/5UAtDC
+	HRIYTV4nPXHOreCOIfOwB/cE6X/JxTEt84Dr0b+pcWr9E/YpaUye0LOwk8rDb08Uzg+1peU+1Zg
+	u
+X-Google-Smtp-Source: AGHT+IFgJ/+EiGZcRaKBxWwIWI7fnIcJtk2PXn3ayYcARmzBtHy0Hs+SNVDALrGNmm4YHf2VTf3zxg==
+X-Received: by 2002:a92:6503:0:b0:368:8d92:3262 with SMTP id z3-20020a926503000000b003688d923262mr14486682ilb.2.1712153089710;
+        Wed, 03 Apr 2024 07:04:49 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id a3-20020a056638164300b0047ef3ea2bdfsm2027098jat.78.2024.04.03.07.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Apr 2024 07:04:49 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-fsdevel@vger.kernel.org
+Cc: brauner@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHSET v2 0/3] Convert fs drivers to ->read_iter()
+Date: Wed,  3 Apr 2024 08:02:51 -0600
+Message-ID: <20240403140446.1623931-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PUZPR04MB6316A7351B69621BA899844F813D2@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 03, 2024 at 07:34:08AM +0000, Yuezhang.Mo@sony.com wrote:
-> +static int exfat_file_mmap(struct file *file, struct vm_area_struct *vma)
-> +{
-> +	struct address_space *mapping = file->f_mapping;
-> +
-> +	if (!mapping->a_ops->read_folio)
-> +		return -ENOEXEC;
+Hi,
 
-Why do you need this check?
+There are still a few users of fops->read() in the core parts of the
+fs stack. Which is a shame, since it'd be nice to get rid of the
+non-iterator parts of down the line, and reclaim that part of the
+file_operations struct.
 
-> +	file_accessed(file);
-> +	vma->vm_ops = &exfat_file_vm_ops;
-> +	return 0;
->  }
+Outside of moving in that direction as a cleanup, using ->read_iter()
+enables us to mark them with FMODE_NOWAIT. This is important for users
+like io_uring, where per-IO nonblocking hints make a difference in how
+efficiently IO can be done.
+
+Those two things are my main motivation for starting this work, with
+hopefully more to come down the line.
+
+All patches have been booted and tested, and the corresponding test
+cases been run. The timerfd one was sent separately previously, figured
+I'd do a few more and make a smaller series out of it.
+
+Since v1:
+- Include uio.h in userfaultfd, or it fails to see iov_iter_count()
+  on some configs
+- Drop (now) unused siginfo pointer in signalfd and the incrementing of
+  it, we don't use it anymore
+- Add missing put_unused_fd() for userfaultfd error path
+
+ fs/signalfd.c    | 46 ++++++++++++++++++++++++++++------------------
+ fs/timerfd.c     | 31 ++++++++++++++++++++++---------
+ fs/userfaultfd.c | 44 ++++++++++++++++++++++++++++----------------
+ 3 files changed, 78 insertions(+), 43 deletions(-)
+
+-- 
+Jens Axboe
 
 
