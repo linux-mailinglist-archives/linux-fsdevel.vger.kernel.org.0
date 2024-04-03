@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-15978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942B889666F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 09:33:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9455896673
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 09:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C667B1C22AE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 07:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCEFB1C23036
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 07:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA195C901;
-	Wed,  3 Apr 2024 07:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466775EE80;
+	Wed,  3 Apr 2024 07:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="RMMhudxb"
+	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="duAbvHkd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from box.fidei.email (box.fidei.email [71.19.144.250])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843EB55C29;
-	Wed,  3 Apr 2024 07:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304405B68F;
+	Wed,  3 Apr 2024 07:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712129586; cv=none; b=ohEPCj9LHhuDanS9G+EhOjYcVnwreUL+v539Zz+BtPonw04QhjpQi2Uq3C9UqwEvrksEga6I7MjcpVKeK7b1NhwBry8DWcB+gysTd9Mk/DoO51hAUtvrpx5EdExpO9K9ItAltAWhcQzTKsC127hC6GBaMXijqiMKiHY3wVEWWZA=
+	t=1712129587; cv=none; b=BnMd9NpwMx4sJWpOw5C9UHodNEKFKX3SK7cwmim+E8hcVYRlBv/IS9ItN33oDgfbGvuLKk79az1O3Gw+hQj7VXnOJIcRclfx3TREaAB4WoxMcjO0deoXYiDa/jz+ZL7Ls9TiN723SeuMcWwrvPp1D+Lzc+9b8Wmj+KUdCgaWRwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712129586; c=relaxed/simple;
-	bh=B8T21JVbOLWLZIWqX9Kk4W8YEBxzK1vo2nUprAs1Et0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=YnT6QxSRgbiqiRKQfkis86dC+IJOzeXrihvd/oiWkyF3ZBofhW2c6FuKVERmSR98exLdXRZ8ELgB1LrNI+2mnqE2mSU5DHaHu+ilHsoKkI1xzqaHhTZuaMkOuCKhinM+ROfh9rbxe/j4zWegmqYhaKw+DrjvptYWUk3bzKccXRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=RMMhudxb; arc=none smtp.client-ip=71.19.144.250
+	s=arc-20240116; t=1712129587; c=relaxed/simple;
+	bh=8hdRucriYr7TDeIc1Z7lCtD9oMQ64x6lsX9+VmwRajs=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hu4amzfH5J4b6+u0f00WKMpQlapFy+DDAvg4mCqnEdIahv3gxb3P83wZV8+XLFHVXgnupNulMynR2MTNKiVAITjz6X0AmgkB57TCf4hIOmXy3UARmhdZV2OWqRNiU7X0sL5Oz5hc80csBdAIsBpAS+2l4Hta4gLrdB5Iobpydb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=duAbvHkd; arc=none smtp.client-ip=71.19.144.250
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
 Received: from authenticated-user (box.fidei.email [71.19.144.250])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
 	(No client certificate requested)
-	by box.fidei.email (Postfix) with ESMTPSA id 83D2B807A2;
-	Wed,  3 Apr 2024 03:33:03 -0400 (EDT)
+	by box.fidei.email (Postfix) with ESMTPSA id 47146807A5;
+	Wed,  3 Apr 2024 03:33:05 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
-	t=1712129583; bh=B8T21JVbOLWLZIWqX9Kk4W8YEBxzK1vo2nUprAs1Et0=;
-	h=From:To:Subject:Date:From;
-	b=RMMhudxb7EIzCkqtHOmFwCDPbzgbWgn5vp8COLdnfwf+qsRdUrHavuwlRc5bMVEiY
-	 kgw67uVuJhjs63x2OaL8IC0tPgouh2AcqwdGCEWhTb0V7eUhPxFrhru47kQh7HeJWE
-	 t2+MhGmN22+WGDmkykhpSjR9PhQJTk/Ep//iqUjzwTzOsSU6sq4vsvZfyhow8doZ7o
-	 YhR7ehQgYH/ByQMLhSyFGRFnpzJKYoUFAaoDiZASvkHxaV54iofPU6PSNKQFMJWjB0
-	 8EOfG2D66AkPESDO8GJmrHFQfKL9137B2ksLw3d3FgnT9Fd+KFJNw/QioT2Nr/hMha
-	 orctZOIBXFCvQ==
+	t=1712129585; bh=8hdRucriYr7TDeIc1Z7lCtD9oMQ64x6lsX9+VmwRajs=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=duAbvHkdgGafhhkA8hd0r625830aALZZQ8oxeANR/Kl8V2xZug5kmcP4vI1YapxFN
+	 A9LIDRTvjeSQOhcIpRDoLRTbG3NMyvM/72K1ifkS/Z9WVfqJVjWSBQ7y9OWOKItEFi
+	 P+IExaIGlJDtZ5Rx/+twB5qnULd5b1xw9JJmHoTUZK1CNmor9ry/3WJ5MlliuOXzge
+	 eoaW6DepcInBi/zwZ/15PRH144T5KOWel/2PH8M2LXhMM/YZG6q5hG/wxWX1eFQHXr
+	 y0rEkGXPrjhNC8NJHfsw4ypdhHDVDROcDUUlNXmuBJ6WY9PkwLnPjt68hBA1lQ7Eyb
+	 PKcWh0anOhPtA==
 From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Kent Overstreet <kent.overstreet@linux.dev>,
@@ -65,9 +66,11 @@ To: Jonathan Corbet <corbet@lwn.net>,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org,
 	kernel-team@meta.com
-Subject: [PATCH v3 00/13] fiemap extension for more physical information
-Date: Wed,  3 Apr 2024 03:22:41 -0400
-Message-ID: <cover.1712126039.git.sweettea-kernel@dorminy.me>
+Subject: [PATCH v3 01/13] fs: fiemap: add physical_length field to extents
+Date: Wed,  3 Apr 2024 03:22:42 -0400
+Message-ID: <1ba5bfccccbf4ff792f178268badde056797d0c4.1712126039.git.sweettea-kernel@dorminy.me>
+In-Reply-To: <cover.1712126039.git.sweettea-kernel@dorminy.me>
+References: <cover.1712126039.git.sweettea-kernel@dorminy.me>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,76 +79,136 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For many years, various btrfs users have written programs to discover
-the actual disk space used by files, using root-only interfaces.
-However, this information is a great fit for fiemap: it is inherently
-tied to extent information, all filesystems can use it, and the
-capabilities required for FIEMAP make sense for this additional
-information also.
+Some filesystems support compressed extents which have a larger logical
+size than physical, and for those filesystems, it can be useful for
+userspace to know how much space those extents actually use. For
+instance, the compsize [1] tool for btrfs currently uses btrfs-internal,
+root-only ioctl to find the actual disk space used by a file; it would
+be better and more useful for this information to require fewer
+privileges and to be usable on more filesystems. Therefore, use one of
+the padding u64s in the fiemap extent structure to return the actual
+physical length; and, for now, return this as equal to the logical
+length.
 
-Hence, this patchset adds various additional information to fiemap,
-and extends filesystems (but not iomap) to return it.  This uses some of
-the reserved padding in the fiemap extent structure, so programs unaware
-of the changes will be unaffected.
+[1] https://github.com/kilobyte/compsize
 
-This is based on next-20240403. I've tested the btrfs part of this with
-the standard btrfs testing matrix locally and manually, and done minimal
-testing of the non-btrfs parts.
+Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+---
+ Documentation/filesystems/fiemap.rst | 28 +++++++++++++++++-------
+ fs/ioctl.c                           |  3 ++-
+ include/uapi/linux/fiemap.h          | 32 ++++++++++++++++++++++------
+ 3 files changed, 47 insertions(+), 16 deletions(-)
 
-I'm unsure whether btrfs should be returning the entire physical extent
-referenced by a particular logical range, or just the part of the
-physical extent referenced by that range. The v2 thread has a discussion
-of this.
-
-Changelog:
-
-v3: 
- - Adapted all the direct users of fiemap, except iomap, to emit
-   the new fiemap information, as far as I understand the other
-   filesystems.
-
-v2:
- - Adopted PHYS_LEN flag and COMPRESSED flag from the previous version,
-   as per Andreas Dilger' comment.
-   https://patchwork.ozlabs.org/project/linux-ext4/patch/4f8d5dc5b51a43efaf16c39398c23a6276e40a30.1386778303.git.dsterba@suse.cz/
- - https://lore.kernel.org/linux-fsdevel/cover.1711588701.git.sweettea-kernel@dorminy.me/T/#t
-
-v1: https://lore.kernel.org/linux-fsdevel/20240315030334.GQ6184@frogsfrogsfrogs/T/#t
-
-Sweet Tea Dorminy (13):
-  fs: fiemap: add physical_length field to extents
-  fs: fiemap: update fiemap_fill_next_extent() signature
-  fs: fiemap: add new COMPRESSED extent state
-  btrfs: fiemap: emit new COMPRESSED state.
-  btrfs: fiemap: return extent physical size
-  nilfs2: fiemap: return correct extent physical length
-  ext4: fiemap: return correct extent physical length
-  f2fs: fiemap: add physical length to trace_f2fs_fiemap
-  f2fs: fiemap: return correct extent physical length
-  ocfs2: fiemap: return correct extent physical length
-  bcachefs: fiemap: return correct extent physical length
-  f2fs: fiemap: emit new COMPRESSED state
-  bcachefs: fiemap: emit new COMPRESSED state
-
- Documentation/filesystems/fiemap.rst | 35 ++++++++++----
- fs/bcachefs/fs.c                     | 17 +++++--
- fs/btrfs/extent_io.c                 | 72 ++++++++++++++++++----------
- fs/ext4/extents.c                    |  3 +-
- fs/f2fs/data.c                       | 36 +++++++++-----
- fs/f2fs/inline.c                     |  7 +--
- fs/ioctl.c                           | 11 +++--
- fs/iomap/fiemap.c                    |  2 +-
- fs/nilfs2/inode.c                    | 18 ++++---
- fs/ntfs3/frecord.c                   |  7 +--
- fs/ocfs2/extent_map.c                | 10 ++--
- fs/smb/client/smb2ops.c              |  1 +
- include/linux/fiemap.h               |  2 +-
- include/trace/events/f2fs.h          | 10 ++--
- include/uapi/linux/fiemap.h          | 34 ++++++++++---
- 15 files changed, 178 insertions(+), 87 deletions(-)
-
-
-base-commit: 75e31f66adc4c8d049e8aac1f079c1639294cd65
+diff --git a/Documentation/filesystems/fiemap.rst b/Documentation/filesystems/fiemap.rst
+index 93fc96f760aa..c2bfa107c8d7 100644
+--- a/Documentation/filesystems/fiemap.rst
++++ b/Documentation/filesystems/fiemap.rst
+@@ -80,14 +80,24 @@ Each extent is described by a single fiemap_extent structure as
+ returned in fm_extents::
+ 
+     struct fiemap_extent {
+-	    __u64	fe_logical;  /* logical offset in bytes for the start of
+-				* the extent */
+-	    __u64	fe_physical; /* physical offset in bytes for the start
+-				* of the extent */
+-	    __u64	fe_length;   /* length in bytes for the extent */
+-	    __u64	fe_reserved64[2];
+-	    __u32	fe_flags;    /* FIEMAP_EXTENT_* flags for this extent */
+-	    __u32	fe_reserved[3];
++            /*
++             * logical offset in bytes for the start of
++             * the extent from the beginning of the file
++             */
++            __u64 fe_logical;
++            /*
++             * physical offset in bytes for the start
++             * of the extent from the beginning of the disk
++             */
++            __u64 fe_physical;
++            /* logical length in bytes for this extent */
++            __u64 fe_logical_length;
++            /* physical length in bytes for this extent */
++            __u64 fe_physical_length;
++            __u64 fe_reserved64[1];
++            /* FIEMAP_EXTENT_* flags for this extent */
++            __u32 fe_flags;
++            __u32 fe_reserved[3];
+     };
+ 
+ All offsets and lengths are in bytes and mirror those on disk.  It is valid
+@@ -175,6 +185,8 @@ FIEMAP_EXTENT_MERGED
+   userspace would be highly inefficient, the kernel will try to merge most
+   adjacent blocks into 'extents'.
+ 
++FIEMAP_EXTENT_HAS_PHYS_LEN
++  This will be set if the file system populated the physical length field.
+ 
+ VFS -> File System Implementation
+ ---------------------------------
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 661b46125669..8afd32e1a27a 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -138,7 +138,8 @@ int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+ 	memset(&extent, 0, sizeof(extent));
+ 	extent.fe_logical = logical;
+ 	extent.fe_physical = phys;
+-	extent.fe_length = len;
++	extent.fe_logical_length = len;
++	extent.fe_physical_length = len;
+ 	extent.fe_flags = flags;
+ 
+ 	dest += fieinfo->fi_extents_mapped;
+diff --git a/include/uapi/linux/fiemap.h b/include/uapi/linux/fiemap.h
+index 24ca0c00cae3..3079159b8e94 100644
+--- a/include/uapi/linux/fiemap.h
++++ b/include/uapi/linux/fiemap.h
+@@ -14,14 +14,30 @@
+ 
+ #include <linux/types.h>
+ 
++/*
++ * For backward compatibility, where the member of the struct was called
++ * fe_length instead of fe_logical_length.
++ */
++#define fe_length fe_logical_length
++
+ struct fiemap_extent {
+-	__u64 fe_logical;  /* logical offset in bytes for the start of
+-			    * the extent from the beginning of the file */
+-	__u64 fe_physical; /* physical offset in bytes for the start
+-			    * of the extent from the beginning of the disk */
+-	__u64 fe_length;   /* length in bytes for this extent */
+-	__u64 fe_reserved64[2];
+-	__u32 fe_flags;    /* FIEMAP_EXTENT_* flags for this extent */
++	/*
++	 * logical offset in bytes for the start of
++	 * the extent from the beginning of the file
++	 */
++	__u64 fe_logical;
++	/*
++	 * physical offset in bytes for the start
++	 * of the extent from the beginning of the disk
++	 */
++	__u64 fe_physical;
++	/* logical length in bytes for this extent */
++	__u64 fe_logical_length;
++	/* physical length in bytes for this extent */
++	__u64 fe_physical_length;
++	__u64 fe_reserved64[1];
++	/* FIEMAP_EXTENT_* flags for this extent */
++	__u32 fe_flags;
+ 	__u32 fe_reserved[3];
+ };
+ 
+@@ -66,5 +82,7 @@ struct fiemap {
+ 						    * merged for efficiency. */
+ #define FIEMAP_EXTENT_SHARED		0x00002000 /* Space shared with other
+ 						    * files. */
++#define FIEMAP_EXTENT_HAS_PHYS_LEN	0x00004000 /* Physical length is valid
++						    * and set by FS. */
+ 
+ #endif /* _UAPI_LINUX_FIEMAP_H */
 -- 
 2.43.0
 
