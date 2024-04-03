@@ -1,114 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-15948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-15949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EEEC89615D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 02:29:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD418961EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 03:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0C22885D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 00:29:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E69BFB26BC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 01:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EB3DDC9;
-	Wed,  3 Apr 2024 00:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9GxVKw0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6489712B77;
+	Wed,  3 Apr 2024 01:23:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83071870
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 00:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E666E56E
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 01:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712104058; cv=none; b=oFAdUM+Y8nmpYfUuZlTDGqDBuMHU7KRe2+iKew1lQIfC5h+Ri6AifJXAHaJiCjd78d4BLR78DpeZjg5ufsjsvV/1tf7hTLsJMOBWtA4XThlo7F8o1PBYdeGCgM4LxeYLWeGQStfqXY8pQC0pPQDYM3WuANsMmWLvGCfbPRzr4PA=
+	t=1712107409; cv=none; b=Zb5t+KMX/STk6JThlVezWe7wMBGXnHwftrVlNdYxCW+C/mcyC29LGBWGaJEi+XgFWjS6RQivdPaokO5rj7XmV7rGH3JkauY8EswsKrurkhghv362y74UiOs2yvmIxb/pCp3vFziojOnupV3DEnaBRH3jyzp2L9RmuyVLSEPsHkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712104058; c=relaxed/simple;
-	bh=6bx6dvjCDy7W2XrYx7Yjz9n7aSEbbJChVDFrOXZevqA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=aGHXqX3EvtnVCqzVN5u4DmrwE0SpDsYBmg3whkmDRZVqyzEeas6t4AAap6mEzRBtMZ5rSW2GXMG0a39gDsbQioixYo8t7MeQpdhcVDkqiyAO0PikpRdAH0kPusafzqsSJen26dQIkPZl+ZCGZFzkKYiYbs18FFUuYNVQ+oVisYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R9GxVKw0; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-56c197d042fso6851197a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Apr 2024 17:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712104055; x=1712708855; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=z54Vq/DYl09yFH5y/5HKdIW9f1qPSd6mTVIl2My/z5Y=;
-        b=R9GxVKw0N8/e6oe+6SBFGJ91QDoNl6BRCRPYLyUWZmLbw4mmhvOpjByBXHXqdY+6US
-         ttwEjNDuMNsspYQPIou3P8r9Jo7f5Q4B4d7eBJ45gsCHoqPn3174yJTcACzl6kedXx22
-         4oqS9072iBsHF6pV5GotGC/XmPyP3iGlY8LEGjx8Hk3D7myzUCGpvsI12dXnpdCcrggK
-         JHkII+emaGWEX2w6iNElHUUUp6MvHmWmZVAMTl6K4k8dd2FCJtUeuBdWy6W4m4DtSqLw
-         v6EIx8YrG5YmFKQpZ8MiPz2nnE8AMRHGTgFR9RJdsgqbpwn67FPZKTzlQLb17PbdIvEK
-         14eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712104055; x=1712708855;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z54Vq/DYl09yFH5y/5HKdIW9f1qPSd6mTVIl2My/z5Y=;
-        b=RU0l/xM/BeCePunClPHjcq5JjRXGviqN+kpjQb8p8ExP9aOkN+CD0ZjHphvVccdHem
-         PIXZ3N6XOYIj03mphH5rC0cZEV3aeYA8iUqFXDtQGXbYtO5bEplITG/DPP7BoKtbw6uC
-         MM46tJJUzAy8bhirNl+o8gbsklFdkqgLngK9Q8yyxXCLtrkz5B+Uoh3q6ni/vJ3A+KPJ
-         7MLXc3TIxOLkIiDEd3+9eP4LANiuFsvoLztSZVX/q1I+LZATcdDg6BvKFHyYOkv+Q46F
-         3mqMTqI7dyePSkFvK+W50mtF5lf9xdU/rULtfKRsjRggxWy54O7KD0/zuDIAvl6Y/Dqf
-         2npg==
-X-Gm-Message-State: AOJu0YxIuCVqQmDtO7GEujv+IJensQ6J0If7R+/yPtlo4z9IJQSeZ+GA
-	1WGtlYx1Fe23WDh85t4hWJdPna29Xv4SqNumYXwHR4gl/wa6CNm51jx3G+2sDbbgKqqyIbO95Cw
-	DTOfHV/HDOZDfwi0g4vgIlV7aExDL9fJYJTw=
-X-Google-Smtp-Source: AGHT+IEGCwBxb9UDZl+HWzKsJSngYAy65nsEX0LUaluQVsC2SerF2MDDNlIfulT4OgzlV+EKcBr+14cqEPg/8bx/aLk=
-X-Received: by 2002:a5d:648b:0:b0:343:53ca:cee1 with SMTP id
- o11-20020a5d648b000000b0034353cacee1mr5517311wri.13.1712104034255; Tue, 02
- Apr 2024 17:27:14 -0700 (PDT)
+	s=arc-20240116; t=1712107409; c=relaxed/simple;
+	bh=DXwQ8NSyoaNWBWymhROwa3+nTCXOrEXDfvqXy8+Bv7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PQBr1/NyqQbgSNTUzfqi2plpMxsgDoQHodLvnqdi92FO4jV/eKr+ZEOm95BBgyTRtYHV5XE8Gb8stOaDE+C2jYcAV8zNK7G/lwepzW0h0Yf6ljE9PZq3fKJbbPoXvv/OVWk+0ZcgF4xPAUrK4866dDVlFZW98ulnAJyDhLUdgfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4V8Rl94hWcz1R9x5;
+	Wed,  3 Apr 2024 09:20:37 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5FFAE140257;
+	Wed,  3 Apr 2024 09:23:23 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 3 Apr 2024 09:23:22 +0800
+Message-ID: <3e17cb03-eb23-4e13-876a-53a62b6c59bb@huawei.com>
+Date: Wed, 3 Apr 2024 09:23:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Josh Marshall <joshua.r.marshall.1991@gmail.com>
-Date: Tue, 2 Apr 2024 20:27:03 -0400
-Message-ID: <CAFkJGRdhJrhb3-k28oX3WkqqDCTw7egQCJhX42-XXxGXbnnc0w@mail.gmail.com>
-Subject: Is this a fanotify_init() bug manifesting in fanotify_mark()?
-To: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 02/11] mm: migrate_device: use more folio in
+ __migrate_device_pages()
+Content-Language: en-US
+To: Vishal Moola <vishal.moola@gmail.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>, Tony Luck
+	<tony.luck@intel.com>, Naoya Horiguchi <naoya.horiguchi@nec.com>, Miaohe Lin
+	<linmiaohe@huawei.com>, Matthew Wilcox <willy@infradead.org>, David
+ Hildenbrand <david@redhat.com>, Muchun Song <muchun.song@linux.dev>, Benjamin
+ LaHaise <bcrl@kvack.org>, <jglisse@redhat.com>, <linux-aio@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>, Zi Yan <ziy@nvidia.com>, Jiaqi Yan
+	<jiaqiyan@google.com>, Hugh Dickins <hughd@google.com>
+References: <20240321032747.87694-1-wangkefeng.wang@huawei.com>
+ <20240321032747.87694-3-wangkefeng.wang@huawei.com> <Zgr7fYRd1M6gnEBi@fedora>
+ <9200de40-aee5-4aee-9b78-4b93e3442d5f@huawei.com>
+ <CAOzc2pwXs1Vomy=yuQ0=mDF=oPfJVe720vPKfYP3Er7YhYtWww@mail.gmail.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <CAOzc2pwXs1Vomy=yuQ0=mDF=oPfJVe720vPKfYP3Er7YhYtWww@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-Hello all, I rarely post.  Please be gentle.
 
-I am making an event driven free space monitoring utility.  The core
-idea of the design is to use fanotify to listen for the existence of
-events which can increase space consumption, and when this happens
-check the remaining free space.  Extra functionality to make this not
-face meltingly stupid are planned before I suggest anyone use it,
-don't worry.
 
-I am using the documentation here:
-https://man7.org/linux/man-pages/man7/fanotify.7.html
-https://man7.org/linux/man-pages/man2/fanotify_init.2.html
-https://man7.org/linux/man-pages/man2/fanotify_mark.2.html
+On 2024/4/2 23:54, Vishal Moola wrote:
+> On Mon, Apr 1, 2024 at 11:21 PM Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
+>>
+>>
+>>
+>> On 2024/4/2 2:22, Vishal Moola wrote:
+>>> On Thu, Mar 21, 2024 at 11:27:38AM +0800, Kefeng Wang wrote:
+>>>>
+>>>>               if (!newpage) {
+>>>> @@ -728,14 +729,13 @@ static void __migrate_device_pages(unsigned long *src_pfns,
+>>>>                       continue;
+>>>>               }
+>>>>
+>>>> -            mapping = page_mapping(page);
+>>>> +            newfolio = page_folio(newpage);
+>>>
+>>> You could save another compound_head() call by passing the folio through
+>>> to migrate_vma_insert_page() and make it migrate_vma_insert_folio(),
+>>> since its already converted to use folios.
+>>
+>> Sure, but let's do it later, we could convert more functions in
+>> migrate_device.c to use folios, thanks for your review, do you
+> 
+> Makes sense to me. This patch looks fine to me:
+> Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> 
 
-```Causes problem
-  int f_notify = fanotify_init(FAN_CLASS_NOTIF, 0);
-```
-```No problem
-  int f_notify = fanotify_init(FAN_CLASS_NOTIF | FAN_REPORT_DFID_NAME, 0);
-```
-```Where it manifests
-  if( fanotify_mark(f_notify, FAN_MARK_ADD | FAN_MARK_ONLYDIR,
-FAN_CREATE , AT_FDCWD, mnt) == -1 ){...}
-```
+Thanks,
 
-The documentation for fanotify_init() states that no flags are
-required in the first argument.  However, doing so using the code
-example in the first link to documentation results in an error, with
-errno being set to EINVAL.  However, when an additional flag gets
-added to fanotify_init() outside the top three flags for control,
-there is no error.
+>> mind to help to review other patches, hope that the poison recover
+>> from migrate folio was merged firstly.
+> 
+> I'll take a look at it, I'm not too familiar with how that code works just
+> yet.
 
-For my use case, it seems unnecessary to add additional flags and have
-additional work done that I'll never use but that leads me to believe
-that this is a kernel bug and I'm not prepared to delve into that
-without someone else checking that this is an actual bug and what I
-should do to fix it.
+That's great.
+
+> 
+>>>
+>>>> +            folio = page_folio(page);
+>>>> +            mapping = folio_mapping(folio);
+>>>>
+>>>
 
