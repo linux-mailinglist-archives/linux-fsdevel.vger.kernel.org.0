@@ -1,116 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-16013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAA3896D59
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 12:55:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FEB896D8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 13:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2F421F28AB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 10:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D299293321
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 11:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501CC1420A3;
-	Wed,  3 Apr 2024 10:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EE013AA35;
+	Wed,  3 Apr 2024 11:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PP++8r8Z"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J4Z6frUR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kz/GSfhV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38644141987
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 10:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8C4136E3E;
+	Wed,  3 Apr 2024 11:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712141715; cv=none; b=adAF2TIA4rsOcBcJHoGU9f+zUSqccZemcqFstwVmpOgVoqk8NXB+41mZtyVxmaz4ZA4HRlqJ7QRV05NvKc0TKcNP3MZnUNenlUjpQtbhj/TDQqayFBhy9Qvlauy1BYTCHpSNW6+Vi3Znjg9Zz4cR9VggnCruoLxtms8/gsK8GmU=
+	t=1712142110; cv=none; b=F3Gc7xi7w3xv5lsopgQvEpGgb5sn53IbgdI48cSSzK+2Y8iS05Y3y5M81j66GQyRpU1XwjzFRvzrA8G/A7aJvqU+lv0aDIfq9Brrexa3X2mR9/cHr7BaCZ+owFEuESQUQIJPm0OwUgqRb255WSyb8vjKrejzzzPyC7WgzXZwvQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712141715; c=relaxed/simple;
-	bh=ACQpn9vs7GeKGUhlQvB3CXp7C7P0aciqvgBCFb4+LHI=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=NYlCMD60sKHAWp1Hk4FuNAyUJMaPNNn4MsYusUc+D4QYBBFi7g7za0bvMLb7qQbT9TQWeFmyHuYfK5D0Sc+5OmlxnaKMe1TXtspsPIVMmEvbwKCPzff5y93xCDKql/ZRsCYt1xaxVB1EgyQtZsv6K1hob4pfhFumnjT7VhDnug4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PP++8r8Z; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712141713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JOHdI5+Rm0qGsBNAwcaXDe1QoVGd2FuT8Hymhfhq4nw=;
-	b=PP++8r8ZmpRyUlrcj2v3Wy11ek17NGtA+K5ivLqU+r7mCAyiGGdL9ovrhnzUGnsOgpN/by
-	tGxQf+ed0Eakzgrh/H+ELH5TXS2meOZ3DwyB/a6U/Ksu22jy5QXkU6TyPEVxmupwCPG+FZ
-	d7NK68gXhDAH8q+E7KPj4qOlSrJfh7s=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-XFTgKXIOOraQHI6hCfH_XA-1; Wed, 03 Apr 2024 06:55:10 -0400
-X-MC-Unique: XFTgKXIOOraQHI6hCfH_XA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	s=arc-20240116; t=1712142110; c=relaxed/simple;
+	bh=9GEI1T/BIb0u7Ba49sNT+VonlJl0tLoBbS/sysht5MM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cY/zN0mIYOLVa5OqfhI4LyzcwuZAE8ucfMDnV5qbn7T0N0dgwfVy2k02M4qQBlcJ+frnFLQkEfrO3d/qmXIODncHKy0guKJbfPrrUgo9fuCxB+wNiF2//dsRp7Mh8kh+5eG2J/4XCnW23l8GKDNVJ4QDBmhIFbg/TT7gzSA5rrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J4Z6frUR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kz/GSfhV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D0A868007BB;
-	Wed,  3 Apr 2024 10:55:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 97C6CC1576F;
-	Wed,  3 Apr 2024 10:55:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240403101422.GA7285@lst.de>
-References: <20240403101422.GA7285@lst.de> <20240403085918.GA1178@lst.de> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-16-dhowells@redhat.com> <3235934.1712139047@warthog.procyon.org.uk>
-To: Christoph Hellwig <hch@lst.de>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Jeff Layton <jlayton@kernel.org>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Matthew Wilcox <willy@infradead.org>,
-    Steve French <smfrench@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 15/26] mm: Export writeback_iter()
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 048235C3F0;
+	Wed,  3 Apr 2024 11:01:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1712142107; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FgZn5hYEs65OLn3ywWKO1gDe5MG1D6Nrstl+kPl9Poc=;
+	b=J4Z6frUR/8obCyGpnSxbAb9nCV2IS78j/k203bzTcYKhseC2bgc3LfKSg/auF1VGESCERG
+	Ue2SrDUnH6pB1baXHB4G/BTot8qs0+CiAsBQ2Z0mkcpT51C8zBU12RjDSdeDXDJc6AG7LE
+	sWXDPwxbiDKbYGrx2ja1HkWhufrD5AA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1712142107;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FgZn5hYEs65OLn3ywWKO1gDe5MG1D6Nrstl+kPl9Poc=;
+	b=kz/GSfhV2006TD+nW8pIrHnl05uFCu4rjoPjns2Orc6r43p7jOGz/vysjbNLq079iGKWDX
+	Rylnc/LteJgdnBDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=none
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id EDCF213357;
+	Wed,  3 Apr 2024 11:01:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id JiMMOho3DWYHGgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Wed, 03 Apr 2024 11:01:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8C8FDA0814; Wed,  3 Apr 2024 13:01:46 +0200 (CEST)
+Date: Wed, 3 Apr 2024 13:01:46 +0200
+From: Jan Kara <jack@suse.cz>
+To: linke li <lilinke99@qq.com>
+Cc: xujianhao01@gmail.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/dcache: Re-use value stored to dentry->d_flags
+ instead of re-reading
+Message-ID: <20240403110146.axoxzqr4zwoeyyas@quack3>
+References: <tencent_5E187BD0A61BA28605E85405F15228254D0A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3300437.1712141700.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 03 Apr 2024 11:55:00 +0100
-Message-ID: <3300438.1712141700@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_5E187BD0A61BA28605E85405F15228254D0A@qq.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-0.45 / 50.00];
+	BAYES_HAM(-0.66)[82.76%];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.18)[-0.916];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,qq.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[qq.com];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org];
+	R_DKIM_NA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap2.dmz-prg2.suse.org:rdns,imap2.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Level: 
+X-Spam-Score: -0.45
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 048235C3F0
 
-Christoph Hellwig <hch@lst.de> wrote:
+On Wed 03-04-24 10:10:08, linke li wrote:
+> Currently, the __d_clear_type_and_inode() writes the value flags to
+> dentry->d_flags, then immediately re-reads it in order to use it in a if
+> statement. This re-read is useless because no other update to 
+> dentry->d_flags can occur at this point.
+> 
+> This commit therefore re-use flags in the if statement instead of
+> re-reading dentry->d_flags.
+> 
+> Signed-off-by: linke li <lilinke99@qq.com>
 
-> On Wed, Apr 03, 2024 at 11:10:47AM +0100, David Howells wrote:
-> > That depends.  You put a comment on write_cache_pages() saying that pe=
-ople
-> > should use writeback_iter() instead.  w_c_p() is not marked GPL.  Is i=
-t your
-> > intention to get rid of it?
-> =
+Indeed, this seems pointless and actually a bit confusing. Feel free to
+add:
 
-> Yes.  If you think you're not a derivate work of Linux you have no
-> business using either one.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-So why are we bothering with EXPORT_SYMBOL at all?  Why don't you just sen=
-d a
-patch replace all of them with EXPORT_SYMBOL_GPL()?
+								Honza
 
-David
-
+> ---
+>  fs/dcache.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index b813528fb147..79da415d7995 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -355,7 +355,7 @@ static inline void __d_clear_type_and_inode(struct dentry *dentry)
+>  	flags &= ~DCACHE_ENTRY_TYPE;
+>  	WRITE_ONCE(dentry->d_flags, flags);
+>  	dentry->d_inode = NULL;
+> -	if (dentry->d_flags & DCACHE_LRU_LIST)
+> +	if (flags & DCACHE_LRU_LIST)
+>  		this_cpu_inc(nr_dentry_negative);
+>  }
+>  
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
