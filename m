@@ -1,188 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-16010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D87C3896BB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 12:09:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3872F896BD0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 12:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1544F1C20400
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 10:09:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5568B2E8AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 10:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40691136989;
-	Wed,  3 Apr 2024 10:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACC6138494;
+	Wed,  3 Apr 2024 10:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJ2spcBg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PRoW4T+b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2B7135405;
-	Wed,  3 Apr 2024 10:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF26136676
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 10:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712138957; cv=none; b=XGI1ZuG+WQr8UaUHfTbf61fHtXluiAsa5szGG+Wt9IqA5dsvG3AUP7O18MWfjJ+wgIxcYjX7PxzIRyoJkiWYQ9HCrpGfuRJhKU5dGV9eUNwIsA1MGFurOTMvYNtXHghYtfNotYpDhggh7fUznjnzoQpWdG8pV1ArsAAWXHgTCjs=
+	t=1712139081; cv=none; b=o2Utohie5jLSLYzSeEvG85n4Gt5DdyuOO7gN71GmxaAnvBnuX+I/OHjEj20/UZ7/9Oi4yaz7HIo2AkAtMzMZEIFpe5aS6bxaJqNSd/9bYmcMJAqC4RnCD4MJGC6BBmzu8JyK120yeEUSUdNfGoK4C4kT/7Y5eYevhOW4kyiPrq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712138957; c=relaxed/simple;
-	bh=D7YcKRAyLmgecFCMGfV+qUbrqgrhgsh6evzf5fyLOEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VmOSBIbdawDw11B5CEv2pcR0aqk3iGgIigwL+t/KT9mjFfSn7WslBw7JWeAB6Azc3XZbH8+d0WuUCk6lyiHN1+m+P9IRAlEMucPs3G0IrwPN/BAFEPMY9uVCTwAyTybxdaPzZcUe4VxZhrGxMa8HatdvRL2d3THr3rNkRddRiYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJ2spcBg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C95FAC433F1;
-	Wed,  3 Apr 2024 10:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712138957;
-	bh=D7YcKRAyLmgecFCMGfV+qUbrqgrhgsh6evzf5fyLOEQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PJ2spcBgRJ9cCviFtJP0QmImAnbdS+JnAtL4wfOC6ghXiZ4WZFw/PeivBhM4eAS6G
-	 8Lht3xZ2oilNdCX84B0ShCgy26TM3ns1j0THOK1pyJ2hL/DIozrsHZS+P+AHkVEIv9
-	 uIlqx47gRDkH7vwGkLTRoKGRXOyuWs+kfjAfdaJDDb+aDcoyjK+pJgjO3TlQ+7BKUK
-	 6te/s/ciNPdF+y+YP+6Wjub5xoGtVzCUcYQkVbNCMKlkzTg7ikQm7lgVpgRMDxmGLR
-	 bCVrv/QgXiD7I7vt51Df4d0g1Yd32hlVsTKUFTCBAwP0sddUTXnDh584gKrbjbdkw7
-	 XidMBxWftvX5g==
-Date: Wed, 3 Apr 2024 12:09:12 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] userfaultfd: convert to ->read_iter()
-Message-ID: <20240403-plant-narren-2bbfb61f19f0@brauner>
-References: <20240402202524.1514963-1-axboe@kernel.dk>
- <20240402202524.1514963-3-axboe@kernel.dk>
+	s=arc-20240116; t=1712139081; c=relaxed/simple;
+	bh=q5PvWHwoWD/1a3RxU9EydL5cEmke/jqCAXYn/kIe5KA=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Ukf3N5R3iFpc7zKFkYdYWG006JP23Ma3PcLm5lg+fs3U+CQDjrcomB81RsSUnFn56+RhtYmJ/mGvch2ibkY+57GjnOdSUgxrc9qVTTVT9YySnjIU9mVlg4E8ZOhZh7gN6QYc7xZYKedL3SEV3gnFrElcoLzoGOtSFiPUEdRMu1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PRoW4T+b; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1712139078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q10XbPWbwPAYz3tVe+780L2sWGchjiaH8ntssWQEh20=;
+	b=PRoW4T+bI+hd+yrOvE8dyb6/BQQ/G7YKn6yHhb0YT0RWe43XKbH4c0yhCHVYruAhC+isES
+	B2A1wQlmkFumaYX2WWzJ3BTHYrZ9qfI1f9gHzryST+uR8O2p77D/WQ875T/3ka26nGcqHM
+	uFDHPnWBiT5p/twJVdTAjRm9bfI5MlQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-377-n6tZ6td_NZGxPdmOiGxErA-1; Wed, 03 Apr 2024 06:11:13 -0400
+X-MC-Unique: n6tZ6td_NZGxPdmOiGxErA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AD06C185A784;
+	Wed,  3 Apr 2024 10:11:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 51AC140C6CB3;
+	Wed,  3 Apr 2024 10:11:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240403085918.GA1178@lst.de>
+References: <20240403085918.GA1178@lst.de> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-16-dhowells@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Jeff Layton <jlayton@kernel.org>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Matthew Wilcox <willy@infradead.org>,
+    Steve French <smfrench@gmail.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/26] mm: Export writeback_iter()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240402202524.1514963-3-axboe@kernel.dk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3235933.1712139047.1@warthog.procyon.org.uk>
+Date: Wed, 03 Apr 2024 11:10:47 +0100
+Message-ID: <3235934.1712139047@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-On Tue, Apr 02, 2024 at 02:18:22PM -0600, Jens Axboe wrote:
-> Rather than use the older style ->read() hook, use ->read_iter() so that
-> userfaultfd can support both O_NONBLOCK and IOCB_NOWAIT for non-blocking
-> read attempts.
-> 
-> Split the fd setup into two parts, so that userfaultfd can mark the file
-> mode with FMODE_NOWAIT before installing it into the process table. With
-> that, we can also defer grabbing the mm until we know the rest will
-> succeed, as the fd isn't visible before then.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/userfaultfd.c | 42 ++++++++++++++++++++++++++----------------
->  1 file changed, 26 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 60dcfafdc11a..7864c2dba858 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -282,7 +282,7 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
->  /*
->   * Verify the pagetables are still not ok after having reigstered into
->   * the fault_pending_wqh to avoid userland having to UFFDIO_WAKE any
-> - * userfault that has already been resolved, if userfaultfd_read and
-> + * userfault that has already been resolved, if userfaultfd_read_iter and
->   * UFFDIO_COPY|ZEROPAGE are being run simultaneously on two different
->   * threads.
->   */
-> @@ -1177,34 +1177,34 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
->  	return ret;
->  }
->  
-> -static ssize_t userfaultfd_read(struct file *file, char __user *buf,
-> -				size_t count, loff_t *ppos)
-> +static ssize_t userfaultfd_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  {
-> +	struct file *file = iocb->ki_filp;
->  	struct userfaultfd_ctx *ctx = file->private_data;
->  	ssize_t _ret, ret = 0;
->  	struct uffd_msg msg;
-> -	int no_wait = file->f_flags & O_NONBLOCK;
->  	struct inode *inode = file_inode(file);
-> +	bool no_wait;
->  
->  	if (!userfaultfd_is_initialized(ctx))
->  		return -EINVAL;
->  
-> +	no_wait = file->f_flags & O_NONBLOCK || iocb->ki_flags & IOCB_NOWAIT;
->  	for (;;) {
-> -		if (count < sizeof(msg))
-> +		if (iov_iter_count(to) < sizeof(msg))
->  			return ret ? ret : -EINVAL;
->  		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg, inode);
->  		if (_ret < 0)
->  			return ret ? ret : _ret;
-> -		if (copy_to_user((__u64 __user *) buf, &msg, sizeof(msg)))
-> +		_ret = copy_to_iter(&msg, sizeof(msg), to);
-> +		if (_ret < 0)
->  			return ret ? ret : -EFAULT;
->  		ret += sizeof(msg);
-> -		buf += sizeof(msg);
-> -		count -= sizeof(msg);
->  		/*
->  		 * Allow to read more than one fault at time but only
->  		 * block if waiting for the very first one.
->  		 */
-> -		no_wait = O_NONBLOCK;
-> +		no_wait = true;
->  	}
->  }
->  
-> @@ -2172,7 +2172,7 @@ static const struct file_operations userfaultfd_fops = {
->  #endif
->  	.release	= userfaultfd_release,
->  	.poll		= userfaultfd_poll,
-> -	.read		= userfaultfd_read,
-> +	.read_iter	= userfaultfd_read_iter,
->  	.unlocked_ioctl = userfaultfd_ioctl,
->  	.compat_ioctl	= compat_ptr_ioctl,
->  	.llseek		= noop_llseek,
-> @@ -2192,6 +2192,7 @@ static void init_once_userfaultfd_ctx(void *mem)
->  static int new_userfaultfd(int flags)
->  {
->  	struct userfaultfd_ctx *ctx;
-> +	struct file *file;
->  	int fd;
->  
->  	BUG_ON(!current->mm);
-> @@ -2215,16 +2216,25 @@ static int new_userfaultfd(int flags)
->  	init_rwsem(&ctx->map_changing_lock);
->  	atomic_set(&ctx->mmap_changing, 0);
->  	ctx->mm = current->mm;
-> -	/* prevent the mm struct to be freed */
-> -	mmgrab(ctx->mm);
-> +
-> +	fd = get_unused_fd_flags(O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS));
-> +	if (fd < 0)
-> +		goto err_out;
->  
->  	/* Create a new inode so that the LSM can block the creation.  */
-> -	fd = anon_inode_create_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
-> +	file = anon_inode_create_getfile("[userfaultfd]", &userfaultfd_fops, ctx,
->  			O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
-> -	if (fd < 0) {
-> -		mmdrop(ctx->mm);
-> -		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
-> +	if (IS_ERR(file)) {
-> +		fd = PTR_ERR(file);
-> +		goto err_out;
+Christoph Hellwig <hch@lst.de> wrote:
 
-You're leaking the fd you allocated above.
-
->  	}
-> +	/* prevent the mm struct to be freed */
-> +	mmgrab(ctx->mm);
-> +	file->f_mode |= FMODE_NOWAIT;
-> +	fd_install(fd, file);
-> +	return fd;
-> +err_out:
-> +	kmem_cache_free(userfaultfd_ctx_cachep, ctx);
->  	return fd;
->  }
->  
-> -- 
-> 2.43.0
+> On Thu, Mar 28, 2024 at 04:34:07PM +0000, David Howells wrote:
+> > Export writeback_iter() so that it can be used by netfslib as a module.
 > 
+> EXPORT_SYMBOL_GPL, please.
+
+That depends.  You put a comment on write_cache_pages() saying that people
+should use writeback_iter() instead.  w_c_p() is not marked GPL.  Is it your
+intention to get rid of it?
+
+David
+
 
