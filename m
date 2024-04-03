@@ -1,150 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-16043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F67E897455
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 17:48:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB5F897466
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 17:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2C028135E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 15:48:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C19EB2B024
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 15:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260DF14A4E9;
-	Wed,  3 Apr 2024 15:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239D814A602;
+	Wed,  3 Apr 2024 15:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lSQvN18p"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B9LTX7Lv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XpD4vI0O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2123143869;
-	Wed,  3 Apr 2024 15:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A906D14A0A2;
+	Wed,  3 Apr 2024 15:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712159279; cv=none; b=WysVQ44QwEJc9J4QjbI4/PORqp6Zz7kEJTcnGdmew41NM8ZR2WS5j+tHtzJz2aSdLIbQAFrW8WlxYF/a4iyCqFDN3M3Dbmg9p4wh25ECUSVIdFh84Nf0zV7TojfioywbzSJYSRt9faNCi4F29lqdayyv8H7Wv86PpuBBA0/L030=
+	t=1712159308; cv=none; b=iy7qw1iKIxy64EcgaKMbkyqmB7lYE5umvexLfrOyNB6OHE5kx2jcRtP7mijilovNhzb2aIOQRo1ZMSzvsBGkQFl44dtISMQa2DKqJtG0GU5LOMqogM5OrWAp13ODQ7BmsqXmddp36rxOjCxjf6/oIMmOuf1lOAjiMUZ9fxnFlxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712159279; c=relaxed/simple;
-	bh=wzzfIE273kK/KSd802a4HQaAZTBLYE4XpaXSQtu0YcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BOomeMP0keHlgo1rG9LCnF1zGva4jCylnAByYW4Cdi7/Yu/bfJ1uRWdFGY8p5D8BGvFK0q1y9Z4cqM9++QfiJXMT0hrR8RWNTBfHCUTMSYP8V3Wjde96zU+szcdeQjyNrI9HoCh98VYyeOGVcwcIYfk0B+CdS5TTBbeazfImsc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lSQvN18p; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712159279; x=1743695279;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wzzfIE273kK/KSd802a4HQaAZTBLYE4XpaXSQtu0YcQ=;
-  b=lSQvN18pfmZNZ3cQe6C7SnKzJuLykRjKjBO4ByNAXzelSvsj+wKuVU/V
-   Dedv5/DtBF9R5hBkPIi3UaEbFa4oXMnd040+OeurcTsgfKV2s0xUI08yq
-   L89vhS/2c9Pu39W5wyD3aKWaGi+6/O/JvjXi9RAIQkQsgtUSKT9+NbztM
-   r559e2WZKNqEACYe2NUP7hnIY87G1bees6y87uOzY3Crgn6nOZ+Cu/d8F
-   J+K3IS1SmPHMyI/GEzeUqiKEN2p1JMmAE+kbPP9kieJax1o4bcn4ULO9W
-   BgRYlHjsn3ZOj0zp4NN3Q63Sh3j5GQy/3gbh1WFpWwnonp1KBgQK/uXvf
-   w==;
-X-CSE-ConnectionGUID: UGoyrI8bQwGV7sTXj+muHg==
-X-CSE-MsgGUID: I6q8bCmeTzykcBlCN96BsA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11033"; a="18558390"
-X-IronPort-AV: E=Sophos;i="6.07,177,1708416000"; 
-   d="scan'208";a="18558390"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2024 08:47:58 -0700
-X-CSE-ConnectionGUID: xFH3pTNqRYKDyd2CjLd83Q==
-X-CSE-MsgGUID: fkgl5cVSTnqwRuFhVMznNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,177,1708416000"; 
-   d="scan'208";a="18397626"
-Received: from lkp-server02.sh.intel.com (HELO 90ee3aa53dbd) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 03 Apr 2024 08:47:54 -0700
-Received: from kbuild by 90ee3aa53dbd with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rs2q7-0002Mc-2t;
-	Wed, 03 Apr 2024 15:47:51 +0000
-Date: Wed, 3 Apr 2024 23:40:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, brauner@kernel.org,
-	amir73il@gmail.com, hu1.chen@intel.com
-Cc: oe-kbuild-all@lists.linux.dev, miklos@szeredi.hu,
-	malini.bhandaru@intel.com, tim.c.chen@intel.com,
-	mikko.ylinen@intel.com, lizhen.you@intel.com,
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: Re: [PATCH v1 2/3] fs: Optimize credentials reference count for
- backing file ops
-Message-ID: <202404032344.SKdrnkhI-lkp@intel.com>
-References: <20240403021808.309900-3-vinicius.gomes@intel.com>
+	s=arc-20240116; t=1712159308; c=relaxed/simple;
+	bh=xeOUKhPq3Fj2QGoZD8eBqnVOFFJiuO02MjXvbR7cwtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qnuSjXpHdqZpeXT9hsK0nCa5kXRw1+6/+dwTzg0EagFIeGgYunuYNDomUxU3TN2RgFfQ/nhkGGWMh0200vYtbZOb1HKU5n5T+nU08AFAkPAnt8P7PDSqJkteu7zpVe3eGV4DOGHxVd5V73IEZ9AI8DlZvlmsWLT+bdmN7RU7duU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=B9LTX7Lv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XpD4vI0O; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DE05234F5A;
+	Wed,  3 Apr 2024 15:48:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1712159304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7oNoIY5ww0gv3VU/TWODJLW0stHUYUIo7HrJ52y0BwM=;
+	b=B9LTX7LvmmsyVU4sIRQovKvU02mdKjzNeFejSfw+KnhrXcUtGr/V1WGmTUvAgVVvwQKd3j
+	+FV20M4Sv/CqK1RW2oe/0geQaAuA+pnzADleF4Hj3FTvlPB8ELNOiSLe8+PaWQwzUe+DBO
+	MDzXUtk0PNOMmo1l1/IvzsLO1NG1bxY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1712159304;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7oNoIY5ww0gv3VU/TWODJLW0stHUYUIo7HrJ52y0BwM=;
+	b=XpD4vI0OejctTDeIixHkLVdljXWdVHrKM7K1YjIYArDfpRXhwYY+7nUrsk3Om4eQ2vMdLU
+	kTaPgCYV1K7kSbBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id AA70F1331E;
+	Wed,  3 Apr 2024 15:48:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id aLZCKUh6DWbpegAAn2gu4w
+	(envelope-from <vbabka@suse.cz>); Wed, 03 Apr 2024 15:48:24 +0000
+Message-ID: <4af50be2-4109-45e5-8a36-2136252a635e@suse.cz>
+Date: Wed, 3 Apr 2024 17:48:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240403021808.309900-3-vinicius.gomes@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mm, slab: move memcg charging to post-alloc hook
+Content-Language: en-US
+To: Aishwarya TCV <aishwarya.tcv@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>, Kees Cook <kees@kernel.org>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Hocko <mhocko@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Mark Brown <broonie@kernel.org>
+References: <20240325-slab-memcg-v2-0-900a458233a6@suse.cz>
+ <20240325-slab-memcg-v2-1-900a458233a6@suse.cz>
+ <30df7730-1b37-420d-b661-e5316679246f@arm.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <30df7730-1b37-420d-b661-e5316679246f@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.79
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 XM_UA_NO_VERSION(0.01)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-0.998];
+	 BAYES_HAM(-3.00)[100.00%];
+	 RCPT_COUNT_TWELVE(0.00)[26];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[kvack.org,vger.kernel.org,linux.dev,linux-foundation.org,kernel.org,oracle.com,linux.com,google.com,lge.com,gmail.com,cmpxchg.org,zeniv.linux.org.uk,suse.cz];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-Hi Vinicius,
+On 4/3/24 1:39 PM, Aishwarya TCV wrote:
+> 
+> 
+> On 25/03/2024 08:20, Vlastimil Babka wrote:
+>> The MEMCG_KMEM integration with slab currently relies on two hooks
+>> during allocation. memcg_slab_pre_alloc_hook() determines the objcg and
+>> charges it, and memcg_slab_post_alloc_hook() assigns the objcg pointer
+>> to the allocated object(s).
+>> 
+>> As Linus pointed out, this is unnecessarily complex. Failing to charge
+>> due to memcg limits should be rare, so we can optimistically allocate
+>> the object(s) and do the charging together with assigning the objcg
+>> pointer in a single post_alloc hook. In the rare case the charging
+>> fails, we can free the object(s) back.
+>> 
+>> This simplifies the code (no need to pass around the objcg pointer) and
+>> potentially allows to separate charging from allocation in cases where
+>> it's common that the allocation would be immediately freed, and the
+>> memcg handling overhead could be saved.
+>> 
+>> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+>> Link: https://lore.kernel.org/all/CAHk-=whYOOdM7jWy5jdrAm8LxcgCMFyk2bt8fYYvZzM4U-zAQA@mail.gmail.com/
+>> Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+>> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>>  mm/slub.c | 180 +++++++++++++++++++++++++++-----------------------------------
+>>  1 file changed, 77 insertions(+), 103 deletions(-)
+> 
+> Hi Vlastimil,
+> 
+> When running the LTP test "memcg_limit_in_bytes" against next-master
+> (next-20240402) kernel with Arm64 on JUNO, oops is observed in our CI. I
+> can send the full logs if required. It is observed to work fine on
+> softiron-overdrive-3000.
+> 
+> A bisect identified 11bb2d9d91627935c63ea3e6a031fd238c846e1 as the first
+> bad commit. Bisected it on the tag "next-20240402" at repo
+> "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git".
+> 
+> This works fine on  Linux version v6.9-rc2
 
-kernel test robot noticed the following build warnings:
+Oops, sorry, can you verify that this fixes it?
+Thanks.
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on linus/master v6.9-rc2 next-20240403]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+----8<----
+From b0597c220624fef4f10e26079a3ff1c86f02a12b Mon Sep 17 00:00:00 2001
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Wed, 3 Apr 2024 17:45:15 +0200
+Subject: [PATCH] fixup! mm, slab: move memcg charging to post-alloc hook
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vinicius-Costa-Gomes/cred-Add-a-light-version-of-override-revert_creds/20240403-101954
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240403021808.309900-3-vinicius.gomes%40intel.com
-patch subject: [PATCH v1 2/3] fs: Optimize credentials reference count for backing file ops
-config: i386-randconfig-061-20240403 (https://download.01.org/0day-ci/archive/20240403/202404032344.SKdrnkhI-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240403/202404032344.SKdrnkhI-lkp@intel.com/reproduce)
+The call to memcg_alloc_abort_single() is wrong, it expects a pointer to
+single object, not an array.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202404032344.SKdrnkhI-lkp@intel.com/
+Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ mm/slub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-sparse warnings: (new ones prefixed by >>)
-   fs/backing-file.c: note: in included file (through include/linux/sched/signal.h, include/linux/rcuwait.h, include/linux/percpu-rwsem.h, ...):
->> include/linux/cred.h:182:41: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *cred @@
-   include/linux/cred.h:182:41: sparse:     expected struct cred const *old
-   include/linux/cred.h:182:41: sparse:     got struct cred const [noderef] __rcu *cred
->> include/linux/cred.h:182:41: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *cred @@
-   include/linux/cred.h:182:41: sparse:     expected struct cred const *old
-   include/linux/cred.h:182:41: sparse:     got struct cred const [noderef] __rcu *cred
->> include/linux/cred.h:182:41: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *cred @@
-   include/linux/cred.h:182:41: sparse:     expected struct cred const *old
-   include/linux/cred.h:182:41: sparse:     got struct cred const [noderef] __rcu *cred
->> include/linux/cred.h:182:41: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *cred @@
-   include/linux/cred.h:182:41: sparse:     expected struct cred const *old
-   include/linux/cred.h:182:41: sparse:     got struct cred const [noderef] __rcu *cred
->> include/linux/cred.h:182:41: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *cred @@
-   include/linux/cred.h:182:41: sparse:     expected struct cred const *old
-   include/linux/cred.h:182:41: sparse:     got struct cred const [noderef] __rcu *cred
-
-vim +182 include/linux/cred.h
-
-58319057b78476 Andy Lutomirski      2015-09-04  174  
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  175  /*
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  176   * Override creds without bumping reference count. Caller must ensure
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  177   * reference remains valid or has taken reference. Almost always not the
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  178   * interface you want. Use override_creds()/revert_creds() instead.
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  179   */
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  180  static inline const struct cred *override_creds_light(const struct cred *override_cred)
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  181  {
-dd60a254548056 Vinicius Costa Gomes 2024-04-02 @182  	const struct cred *old = current->cred;
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  183  
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  184  	rcu_assign_pointer(current->cred, override_cred);
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  185  	return old;
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  186  }
-dd60a254548056 Vinicius Costa Gomes 2024-04-02  187  
-
+diff --git a/mm/slub.c b/mm/slub.c
+index f5b151a58b7d..b32e79629ae7 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2100,7 +2100,7 @@ bool memcg_slab_post_alloc_hook(struct kmem_cache *s, struct list_lru *lru,
+ 		return true;
+ 
+ 	if (likely(size == 1)) {
+-		memcg_alloc_abort_single(s, p);
++		memcg_alloc_abort_single(s, *p);
+ 		*p = NULL;
+ 	} else {
+ 		kmem_cache_free_bulk(s, size, p);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.44.0
+
+
 
