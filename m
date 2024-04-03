@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-16059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE62D89777B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 19:56:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C5A89773D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 19:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BB5FB2FAD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 17:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C55A28E937
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 17:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C831C156877;
-	Wed,  3 Apr 2024 17:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7332315688D;
+	Wed,  3 Apr 2024 17:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FD3R+jeC"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lnRKjm1r"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB95152175;
-	Wed,  3 Apr 2024 17:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB99152175;
+	Wed,  3 Apr 2024 17:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712165054; cv=none; b=b1oeVlJBr9M+sX9hK9m1OaoSwsZxHKBapayDBKu/91EmzVxZrTSxhnWHC3a4umaHPrh9Yi5dtxaxYnFQt9A3T2dWXUEcJt3GnU2mlKCvgniwCmxb+SdrCiWbkFoj4d38fam3qV/yJccbsarY1sFgwILGLEBBOyKH4I6xkqUAce4=
+	t=1712165059; cv=none; b=flpH2jzR0oic9Ki8XW3PQR/Uzukc63MF4vjJlu+lF/LnAdcmzoQaqrfy7Iuyzw61tzBjzIOozoKHQyB+acT2Wdx86BqiIgxDeeLteE+3lj/73HI1DhMpt3uEJMGY9906l8Q4nj8NL8+2kP+Xan+TZcDlc4lRSlrDjNthnwXrUg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712165054; c=relaxed/simple;
-	bh=TDaCpini53Mr8yK0eITvdAcgX3FCd3UJWdi7Bjl0CGA=;
+	s=arc-20240116; t=1712165059; c=relaxed/simple;
+	bh=2orlmU3+ddfZAx8MxU/h/dDPtWin+PllLR1kRvdFdF4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZWi06EruYpWlrluiy9Zrw92uAa/NVJXEJd627ZyGWBhmgCmb6lX7kQDW8UcvwroefvWB3IMUQGK1KkpHAbdWh7BeTNjFYD7wbUIBkYDj1mq0dzUCxy4BYE1mmAcBd1yNomYqFf4P3KDW2lKPMsJ7A7MI5Gcstt0yolI2cFjjfb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FD3R+jeC; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=Vn0+CjYdyGe35UqsVbNUUsiubFeKVTrppFptcZ9VTNyd0VlFhiLB43kkJKh6tX0H3Atcn0IoR2aXDJwvPOjt7IA32vV4TiGEiG+xKb8Cbn1M2mVffISgDNISyf5Xvu1utBrD5EvOns20gqkeyxcPu0q5JBQnLOpcdkFUBIrzUw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lnRKjm1r; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=7yNU0GNknH4C2nBYMfys3Y9RA2bakiNSz7XulvKIjAs=; b=FD3R+jeCs3z7BLjA73aVZ26ajR
-	8ov5O9FcSU4uSDTN43f17vMomrFsmrC1kT2v3/kcTHJXyXhTnF09/0q6r9gPdlLj/6OzxiH7oQ9Nl
-	wrYXKUnpomjxPCuthHthTX+Sx3qFWUzZX9MhjexyiRNftneMgZDgw/pnguMpoTHUFQhu5wzwr8iPx
-	0t6NIPNFqWuuIOlaE/dafaCa8QQDiVeiX1Sc6+s0xl8eDUx6CNUY25uxSPA6wzZIQ6Zy8E5vaE2wU
-	EuTnQScTinOf96a9Msz3UEtGDVd8qYPbuS6ZUWHy3ly/X9sk9jn6D7UWXjxhVFp/QjTxYftqv0hBX
-	aDHJwpqQ==;
+	bh=8F4T2283ehKXbosjyapVzSIDjXmVUuBE7uMEC2QD6mI=; b=lnRKjm1rnYPHl+KuzlczISLgLf
+	ufclFtmCJA3gjmQ7BPMedt+YHuEA7irzgpl1Vdo/zDma73UTcidoQ5sP8dn4zXm1u9o8TRgaU498k
+	EJPjFog0fTFY4DGMJXcNXRuGVDusQcV4m5kmbzE8GRhWnhxmzS8F150oAl6Y/7Jhi9f3c7fgmQDFg
+	PuM0+0DiK64LI9HRXNtfGRWGsm1lqiZjWARpJmvp/Hy5PJiQ8QOvnqJd18TjsCTQ0FX4rEvdPc6Dk
+	lBZ9cJRfngGwE6U6S0bt6e1NEmT0eX9kKkMTzIdW7e6wCLVYWL+ltoEesIGJoDd/u+WWJ2nEjAdcI
+	xBiMBu3g==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rs4LE-0000000651d-1r3G;
+	id 1rs4LE-0000000651h-2Ud3;
 	Wed, 03 Apr 2024 17:24:04 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org,
 	Andreas Gruenbacher <agruenba@redhat.com>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	gfs2@lists.linux.dev
-Subject: [PATCH 1/4] gfs2: Convert gfs2_page_mkwrite() to use a folio
-Date: Wed,  3 Apr 2024 18:23:48 +0100
-Message-ID: <20240403172400.1449213-2-willy@infradead.org>
+Subject: [PATCH 3/4] gfs2: Simplify gfs2_read_super
+Date: Wed,  3 Apr 2024 18:23:50 +0100
+Message-ID: <20240403172400.1449213-4-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240403172400.1449213-1-willy@infradead.org>
 References: <20240403172400.1449213-1-willy@infradead.org>
@@ -63,168 +63,95 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the incoming page to a folio and use it throughout saving several
-calls to compound_head().  Also use 'pos' for file position rather than
-the ambiguou 'offset' and increase 'length' to size_t in cae we get some
-truly ridiculous sized folios in future.  This function should now be
-large-folio safe, but I may have missed something.
+Use submit_bio_wait() instead of hand-rolling our own synchronous
+wait.  Also allocate the BIO on the stack since we're not deep in
+the call stack at this point.
+
+There's no need to kmap the page, since it isn't allocated from HIGHMEM.
+Turn the GFP_NOFS allocation into GFP_KERNEL; if the page allocator
+enters reclaim, we cannot be called as the filesystem has not yet been
+initialised and so has no pages to reclaim.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/gfs2/file.c | 59 +++++++++++++++++++++++++-------------------------
- 1 file changed, 30 insertions(+), 29 deletions(-)
+ fs/gfs2/ops_fstype.c | 46 +++++++++++++-------------------------------
+ 1 file changed, 13 insertions(+), 33 deletions(-)
 
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index 4c42ada60ae7..08982937b5df 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -376,23 +376,23 @@ static void gfs2_size_hint(struct file *filep, loff_t offset, size_t size)
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index 572d58e86296..f98651229c8f 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -184,22 +184,10 @@ static int gfs2_check_sb(struct gfs2_sbd *sdp, int silent)
+ 	return 0;
  }
  
- /**
-- * gfs2_allocate_page_backing - Allocate blocks for a write fault
-- * @page: The (locked) page to allocate backing for
-+ * gfs2_allocate_folio_backing - Allocate blocks for a write fault
-+ * @folio: The (locked) folio to allocate backing for
-  * @length: Size of the allocation
-  *
-- * We try to allocate all the blocks required for the page in one go.  This
-+ * We try to allocate all the blocks required for the folio in one go.  This
-  * might fail for various reasons, so we keep trying until all the blocks to
-- * back this page are allocated.  If some of the blocks are already allocated,
-+ * back this folio are allocated.  If some of the blocks are already allocated,
-  * that is ok too.
-  */
--static int gfs2_allocate_page_backing(struct page *page, unsigned int length)
-+static int gfs2_allocate_folio_backing(struct folio *folio, size_t length)
+-static void end_bio_io_page(struct bio *bio)
+-{
+-	struct page *page = bio->bi_private;
+-
+-	if (!bio->bi_status)
+-		SetPageUptodate(page);
+-	else
+-		pr_warn("error %d reading superblock\n", bio->bi_status);
+-	unlock_page(page);
+-}
+-
+-static void gfs2_sb_in(struct gfs2_sbd *sdp, const void *buf)
++static void gfs2_sb_in(struct gfs2_sbd *sdp, const struct gfs2_sb *str)
  {
--	u64 pos = page_offset(page);
-+	u64 pos = folio_pos(folio);
+ 	struct gfs2_sb_host *sb = &sdp->sd_sb;
+ 	struct super_block *s = sdp->sd_vfs;
+-	const struct gfs2_sb *str = buf;
  
- 	do {
- 		struct iomap iomap = { };
- 
--		if (gfs2_iomap_alloc(page->mapping->host, pos, length, &iomap))
-+		if (gfs2_iomap_alloc(folio->mapping->host, pos, length, &iomap))
- 			return -EIO;
- 
- 		if (length < iomap.length)
-@@ -414,16 +414,16 @@ static int gfs2_allocate_page_backing(struct page *page, unsigned int length)
- 
- static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
+ 	sb->sb_magic = be32_to_cpu(str->sb_header.mh_magic);
+ 	sb->sb_type = be32_to_cpu(str->sb_header.mh_type);
+@@ -239,34 +227,26 @@ static void gfs2_sb_in(struct gfs2_sbd *sdp, const void *buf)
+ static int gfs2_read_super(struct gfs2_sbd *sdp, sector_t sector, int silent)
  {
--	struct page *page = vmf->page;
-+	struct folio *folio = page_folio(vmf->page);
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
- 	struct gfs2_alloc_parms ap = {};
--	u64 offset = page_offset(page);
-+	u64 pos = folio_pos(folio);
- 	unsigned int data_blocks, ind_blocks, rblocks;
- 	vm_fault_t ret = VM_FAULT_LOCKED;
- 	struct gfs2_holder gh;
--	unsigned int length;
-+	size_t length;
- 	loff_t size;
- 	int err;
+ 	struct super_block *sb = sdp->sd_vfs;
+-	struct gfs2_sb *p;
+ 	struct page *page;
+-	struct bio *bio;
++	struct bio_vec bvec;
++	struct bio bio;
++	int err;
  
-@@ -436,23 +436,23 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 		goto out_uninit;
- 	}
+-	page = alloc_page(GFP_NOFS);
++	page = alloc_page(GFP_KERNEL);
+ 	if (unlikely(!page))
+ 		return -ENOMEM;
  
--	/* Check page index against inode size */
-+	/* Check folio index against inode size */
- 	size = i_size_read(inode);
--	if (offset >= size) {
-+	if (pos >= size) {
- 		ret = VM_FAULT_SIGBUS;
- 		goto out_unlock;
- 	}
- 
--	/* Update file times before taking page lock */
-+	/* Update file times before taking folio lock */
- 	file_update_time(vmf->vma->vm_file);
- 
--	/* page is wholly or partially inside EOF */
--	if (size - offset < PAGE_SIZE)
--		length = size - offset;
-+	/* folio is wholly or partially inside EOF */
-+	if (size - pos < folio_size(folio))
-+		length = size - pos;
- 	else
--		length = PAGE_SIZE;
-+		length = folio_size(folio);
- 
--	gfs2_size_hint(vmf->vma->vm_file, offset, length);
-+	gfs2_size_hint(vmf->vma->vm_file, pos, length);
- 
- 	set_bit(GLF_DIRTY, &ip->i_gl->gl_flags);
- 	set_bit(GIF_SW_PAGED, &ip->i_flags);
-@@ -463,11 +463,12 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 	 */
- 
- 	if (!gfs2_is_stuffed(ip) &&
--	    !gfs2_write_alloc_required(ip, offset, length)) {
--		lock_page(page);
--		if (!PageUptodate(page) || page->mapping != inode->i_mapping) {
-+	    !gfs2_write_alloc_required(ip, pos, length)) {
-+		folio_lock(folio);
-+		if (!folio_test_uptodate(folio) ||
-+		    folio->mapping != inode->i_mapping) {
- 			ret = VM_FAULT_NOPAGE;
--			unlock_page(page);
-+			folio_unlock(folio);
- 		}
- 		goto out_unlock;
- 	}
-@@ -504,7 +505,7 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 		goto out_trans_fail;
- 	}
- 
--	/* Unstuff, if required, and allocate backing blocks for page */
-+	/* Unstuff, if required, and allocate backing blocks for folio */
- 	if (gfs2_is_stuffed(ip)) {
- 		err = gfs2_unstuff_dinode(ip);
- 		if (err) {
-@@ -513,22 +514,22 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 		}
- 	}
- 
+-	ClearPageUptodate(page);
+-	ClearPageDirty(page);
 -	lock_page(page);
-+	folio_lock(folio);
- 	/* If truncated, we must retry the operation, we may have raced
- 	 * with the glock demotion code.
- 	 */
--	if (!PageUptodate(page) || page->mapping != inode->i_mapping) {
-+	if (!folio_test_uptodate(folio) || folio->mapping != inode->i_mapping) {
- 		ret = VM_FAULT_NOPAGE;
- 		goto out_page_locked;
- 	}
+-
+-	bio = bio_alloc(sb->s_bdev, 1, REQ_OP_READ | REQ_META, GFP_NOFS);
+-	bio->bi_iter.bi_sector = sector * (sb->s_blocksize >> 9);
+-	__bio_add_page(bio, page, PAGE_SIZE, 0);
++	bio_init(&bio, sb->s_bdev, &bvec, 1, REQ_OP_READ | REQ_META);
++	bio.bi_iter.bi_sector = sector * (sb->s_blocksize >> 9);
++	__bio_add_page(&bio, page, PAGE_SIZE, 0);
  
--	err = gfs2_allocate_page_backing(page, length);
-+	err = gfs2_allocate_folio_backing(folio, length);
- 	if (err)
- 		ret = vmf_fs_error(err);
- 
- out_page_locked:
- 	if (ret != VM_FAULT_LOCKED)
--		unlock_page(page);
-+		folio_unlock(folio);
- out_trans_end:
- 	gfs2_trans_end(sdp);
- out_trans_fail:
-@@ -540,8 +541,8 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- out_uninit:
- 	gfs2_holder_uninit(&gh);
- 	if (ret == VM_FAULT_LOCKED) {
--		set_page_dirty(page);
--		wait_for_stable_page(page);
-+		folio_mark_dirty(folio);
-+		folio_wait_stable(folio);
+-	bio->bi_end_io = end_bio_io_page;
+-	bio->bi_private = page;
+-	submit_bio(bio);
+-	wait_on_page_locked(page);
+-	bio_put(bio);
+-	if (!PageUptodate(page)) {
++	err = submit_bio_wait(&bio);
++	if (err) {
++		pr_warn("error %d reading superblock\n", err);
+ 		__free_page(page);
+-		return -EIO;
++		return err;
  	}
- 	sb_end_pagefault(inode->i_sb);
- 	return ret;
+-	p = kmap(page);
+-	gfs2_sb_in(sdp, p);
+-	kunmap(page);
++	gfs2_sb_in(sdp, page_address(page));
+ 	__free_page(page);
+ 	return gfs2_check_sb(sdp, silent);
+ }
 -- 
 2.43.0
 
