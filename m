@@ -1,141 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-16078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E02897B12
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 23:54:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD29897B74
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 00:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA893B2875E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 21:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC1D28B322
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 22:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEBC15689B;
-	Wed,  3 Apr 2024 21:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C563156984;
+	Wed,  3 Apr 2024 22:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PQW+IFZ0"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="d2Imvi/b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182EA15623F
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 21:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDC9156988
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Apr 2024 22:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712181247; cv=none; b=XsGz0gmt3LlIAP33Il0XBXYw9w1CguiNb74FiqOYJSq37qrD4dXhFVQE/XLjw/XRuOOuo1dGBUbuD9fr/iW0WYdeoxSRDIHyHA2zDpL8AtBSgFhKjXagoOhcKyqAmWd99wc/QSscNodFLz/k2XIvptv2/+Vb9+dNTeR9CESKinY=
+	t=1712182301; cv=none; b=saMbN7oapL4i9au0N/FziF0hGkLxM56dTmUheZ99SAWJyN7lZmA2VRK7CrqGXuJzcqm5FL+aRSp241BAqUmVxWusWN1t03xDrKSpRGo5KTCNVHmqScGXfVxf/LbnMd8myVM0aiIoPMihgwA5yCQ3sURJyF0hEiVm1QEo8GFtd1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712181247; c=relaxed/simple;
-	bh=iQVFWLJ69AonJ7RrN7NlN9bDUbprCHUU+71zAbs8w88=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=URWZKsqz1uyPdRiZciX5pYHigjIoLWCSNcY8H+lviRHKNQliObdSQ3FCXNBtrzOZvznlQ9WHlodr57A1W0XetH5u8Z2rgH4ho9yR6IGO4XzPKk5hTckBBc0bTfOgZCMSFeMQm4FxYUVZqwhddw//1ThU6QGkONbHUZcUTlXXKq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PQW+IFZ0; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6e6bee809b8so271912b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Apr 2024 14:54:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1712181245; x=1712786045; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wyoDF56le3EvhIDIgPf2lEDUDtLNrgDGJWIz/J9qO5g=;
-        b=PQW+IFZ09fblZdzdxMXsNTwJ1d9sQKB6IQY0K7DEgdcgNwcnESw/cZeSPp9urjz/3L
-         hT6dN1tQJ580PILYblLxRS19UGTTev0J2IAIWqYECfq6zSskempfBRBVTKnDZmRj+SMz
-         ZwZPywybjChY9kdPpqJktYVgEApilSG2cq6wg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712181245; x=1712786045;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wyoDF56le3EvhIDIgPf2lEDUDtLNrgDGJWIz/J9qO5g=;
-        b=cv6v2YmSUw0cNeEU+SFR22cbdfyge0vPholM3Hc/Y0XPMXwXZRZ87x/HY3BX5bTV9S
-         unUXh4JWNFYLENBn24WYPe8OOfz6wjMTnXvDhCucBzY/3Ik2yKijiVTywbv2ecTzaFJO
-         sKZAsgUxWQLzL85qcDHHi2r0zgJxn3LLYPKiDwNBHCJV2aJHCbemdEF71qupfp7h/Bb8
-         WukUGC4R/W7p8x3ls6jzpcPdtbN8RXCtmFJ+41KBPQ1T68ZrHC9cGDBIZPqd3xekz7Sx
-         /ZMw6bOJscsu7wyEQdEzbuUG8Oj1k5wDyjvEmali0275rd3RgmNkbo4aMvWERsXivY3b
-         UzOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzZJBssTTUoMok+VzQDhXZrcH3kDRhLJU63lDhKpF5/dCOK6SDa0guaSXzbBCaJjm2aQqjpw0MqFSBcqoaQI9crrv1NJfzgHIyTmNbbw==
-X-Gm-Message-State: AOJu0Yzw12Mwhv0XZ8abZp8uM1vklkDLeaF8byROFLbOtzOphT3/d59d
-	opEVnu5l1rdUSakjjbfHl+LybuDnUMS89y53SGViSSU+lqnpM46Wj/cnx+r0uA==
-X-Google-Smtp-Source: AGHT+IEiUV78v4OyDNYTQJ/rL2/MwBFA9iNAMaCfTqIv6x+qoAInhK8ZaE73eDO/HyzNjqQHoqDN3g==
-X-Received: by 2002:a05:6a00:13a3:b0:6ea:b69a:7c70 with SMTP id t35-20020a056a0013a300b006eab69a7c70mr825437pfg.34.1712181245390;
-        Wed, 03 Apr 2024 14:54:05 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id kt1-20020a056a004ba100b006eae6c8d2c3sm10516881pfb.106.2024.04.03.14.54.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Apr 2024 14:54:04 -0700 (PDT)
-From: Kees Cook <keescook@chromium.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: Set file_handle::handle_bytes before referencing file_handle::f_handle
-Date: Wed,  3 Apr 2024 14:54:03 -0700
-Message-Id: <20240403215358.work.365-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1712182301; c=relaxed/simple;
+	bh=WIB6N0+ro9wwJRgZrFb3cmseapPM8ZIsPFiWTTuerxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YTPy4L66NhRkxk/cvHCFBYnNJIL+1GFJwKYMMnTg9TtIX+RCtIJxJxteJEMRFzCr3VAUdssa7PKvVSpyWrtJqG4u3vlcy77sg3lfeuSbhan2+mtQ25HS0y5I01uKcGMkqCC4a3RzMMWUT1+ALQkazk3OYCZKxIRpOIK0NNC3k5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=d2Imvi/b; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id rsYer9OJ9s4yTs8pRrNKrF; Wed, 03 Apr 2024 22:11:33 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id s8pQr9weLnNCOs8pQrEX7p; Wed, 03 Apr 2024 22:11:33 +0000
+X-Authority-Analysis: v=2.4 cv=DKCJ4TNb c=1 sm=1 tr=0 ts=660dd415
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4VnFru8p6tJF5H7f7NqpSA==:17
+ a=IkcTkHD0fZMA:10 a=raytVjVEu-sA:10 a=wYkD_t78qR0A:10 a=cm27Pg_UAAAA:8
+ a=VwQbUJbxAAAA:8 a=drOt6m5kAAAA:8 a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8
+ a=jdHS4qDDNQt1OS4QkXsA:9 a=QEXdDO2ut3YA:10 a=xmb-EsYY8bH0VWELuYED:22
+ a=AjGcO6oz07-iQ99wixmX:22 a=RMMjzBEyIzXRtoq5n5K6:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WWVro7cWydSO/uOEVxaGOi3jrLoa0beeMTA3tm6Z6pg=; b=d2Imvi/bmi7TayGjpxTc9DFtEN
+	EafRKSpi8ipQCngDq1nOFjts1a3KKiKH1BAwLu9Hdb7Xlq3u4BEM3qdlOnljHFhWwU1p/VhHsGg87
+	K4hOpZ3FIfZTzWVdD9L8L0NAbTgQwhXVXvmM1hurvUXClBUXWgO76YcM5v+tGooBKgIg1UE+l8Ykr
+	10bO0N/eYyvjAfhJqxM+XBuoUsFTvEB5j030dv35MkP7oS5Hm8F50DiuDhQd3uD6giaHCMtehHCN7
+	BIs+qFl5Yx9HJbr29WpIdlE1e7NWmFrtcQ5b3A3QGg+pyf9vxlEV+pKBLqJm9lmrTE8tziaYnhg6A
+	JFvYB/FA==;
+Received: from [187.184.159.122] (port=22874 helo=[192.168.0.27])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1rs8pP-002b0h-2c;
+	Wed, 03 Apr 2024 17:11:31 -0500
+Message-ID: <01167882-2e6c-4504-8c9e-825ecd268411@embeddedor.com>
+Date: Wed, 3 Apr 2024 16:11:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1216; i=keescook@chromium.org;
- h=from:subject:message-id; bh=iQVFWLJ69AonJ7RrN7NlN9bDUbprCHUU+71zAbs8w88=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmDc/6H7alh0B6TVjRvaoj9tj+S8i/H4cugB5L5
- Chzk/m/q0CJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZg3P+gAKCRCJcvTf3G3A
- Jiz9D/9xoda+JjArsGSrjkvnflCSblOHq+w37ybPQ/5cInqaZEYDwUkQEXMMi4PNHKSj2oYglPF
- Cu07odSugJ1sk46ckYSrF9iNGhnJzTjacivFOPR7SfqJYNZDJ2Urc946DjHpIZ0OH5D7m8Ca+Zi
- QOJG2QMHSN+orW1DScb2PFXS8PAUH1yp5mMZ9etVJrrKUYbhxtrCXKMoeiduk6fhriSLRjDX3f4
- 1lrIGKTwC53kOmmPN49YJ7EEqjkLn0wbLGBPOQkuPa5i0ycRw4KNgOB+1nINEedae5XBplhdiuX
- V+eyC8i4bIGp2sEDcEzLe/MtNG2eMhk+lODN4PGJu1wCTNi1cOS9yKeBJHqwZcOko8QSkzWqhO0
- 6QmyD4gIf+xoRU37EOCnE9m57v3z2IdCmv3L5bLEpfYB+XdO3SIX+1PKCSGjVMFpIC1GlvV3ZU6
- eR3/HyWGGiFw2GaHHkPaXdn67lDDxGi+HX45xwMoeM92qwxcSb/hw5OKKrSU0qn5Ti++4NV5wCv
- laXgURTzxSlCnwVp/HipmrGwRM944KL9voOfvsnl7Yv2cfYHoyWT3cZW9XG08AtyLca1pEGP6K3
- dFMBPcJ3UtGKk+uhI4+1im/J+9p+7p36QoEHM7tJmNnaXo+ZktH1heNAkvjTyGhrVBmsBRizzse
- vETTyAt bh3OZAlg==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Set file_handle::handle_bytes before referencing
+ file_handle::f_handle
+To: Kees Cook <keescook@chromium.org>, Christian Brauner <brauner@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+ Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240403215358.work.365-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240403215358.work.365-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.184.159.122
+X-Source-L: No
+X-Exim-ID: 1rs8pP-002b0h-2c
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.27]) [187.184.159.122]:22874
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGxDQwav9SlE5FcLu42FkI0lJYEDgTJ0hhtzJXnr04ceJf6Bd5wevn9e5QlVdSPJjJ0I57ZCJwO4wkv/YlQen0m/qL0urXw5r0M8/6KgYMJ2x03ZgHxd
+ IXX6pibob7dYSBIxEq9qk9a1+Dgwo9h08nCtMmsWPSz5e5ROr2+TV5i+2KSeIThFDwfbLsSKZ7CoEVMm8d0mP0MFaBuUK8S41+Qd+o7c8BdadpZSAvtBjn4I
 
-With adding __counted_by(handle_bytes) to struct file_handle, we need
-to explicitly set it in the one place it wasn't yet happening prior to
-accessing the flex array "f_handle".
 
-Fixes: 1b43c4629756 ("fs: Annotate struct file_handle with __counted_by() and use struct_size()")
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-nfs@vger.kernel.org
-Cc: linux-hardening@vger.kernel.org
----
- fs/fhandle.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 53ed54711cd2..08ec2340dd22 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -40,6 +40,7 @@ static long do_sys_name_to_handle(const struct path *path,
- 			 GFP_KERNEL);
- 	if (!handle)
- 		return -ENOMEM;
-+	handle->handle_bytes = f_handle.handle_bytes;
- 
- 	/* convert handle size to multiple of sizeof(u32) */
- 	handle_dwords = f_handle.handle_bytes >> 2;
--- 
-2.34.1
+On 03/04/24 15:54, Kees Cook wrote:
+> With adding __counted_by(handle_bytes) to struct file_handle, we need
+> to explicitly set it in the one place it wasn't yet happening prior to
+> accessing the flex array "f_handle".
 
+Yes, which (access to `f_handle`) happens here:
+
+  48         retval = exportfs_encode_fh(path->dentry,
+  49                                     (struct fid *)handle->f_handle,
+  50                                     &handle_dwords, fh_flags);
+
+> 
+> Fixes: 1b43c4629756 ("fs: Annotate struct file_handle with __counted_by() and use struct_size()")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+
+Thanks for catching this!
+--
+Gustavo
+
+> ---
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Chuck Lever <chuck.lever@oracle.com>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-nfs@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+> ---
+>   fs/fhandle.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 53ed54711cd2..08ec2340dd22 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -40,6 +40,7 @@ static long do_sys_name_to_handle(const struct path *path,
+>   			 GFP_KERNEL);
+>   	if (!handle)
+>   		return -ENOMEM;
+> +	handle->handle_bytes = f_handle.handle_bytes;
+>   
+>   	/* convert handle size to multiple of sizeof(u32) */
+>   	handle_dwords = f_handle.handle_bytes >> 2;
 
