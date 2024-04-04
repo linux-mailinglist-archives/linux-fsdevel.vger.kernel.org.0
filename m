@@ -1,125 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-16137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6C78990ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 00:01:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75DDD8991AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 00:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9860A289072
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 22:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157061F22A68
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 22:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E5913C3D9;
-	Thu,  4 Apr 2024 22:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B58138499;
+	Thu,  4 Apr 2024 22:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SvSU3HHb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axGga/hV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B92413BAEB;
-	Thu,  4 Apr 2024 22:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7A271723;
+	Thu,  4 Apr 2024 22:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712268078; cv=none; b=pCbvaxAy7z5T5Yz+b7LLe1eoyLYEz5M6TU+pDI7zvoXkcq8H86qAm4j0OAEz8bbrgrHnl1w1fqFSatUNS2rypS0UY3aMB1BjUfIf4FuqFEBKV1p5mORanwCHH8V/qdSxAL+ZMvgGK84DX+Zn7LwmL1M1JuBtzr8JZsH5lWch+AA=
+	t=1712271485; cv=none; b=PLKo1Y+3JKaPyJeXxdFTaSTayzrLuM3SpGcWUhfvwKSRegt8qFeMhuoSLz80/ze9IE2fF/3y1wDP6fjn32Yp4j5Cvy/EuvLJl6IOzqiqKCpOiFg4mTHpuX5GSNqKPF76OWT7NZbHbpQ/hHmr3uKuRNjYjvbKAjDPWZHesFq0x3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712268078; c=relaxed/simple;
-	bh=6QN77bM5eaKWq592iQn7Zfbv1Ht+etn+Tqg/2FEHFoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpTc228pxFFCiIr7Zys0N8ScGrI0TtsYGrxt/LcK6daidyHr0CPwcPpXF8IYPttVb1KCsOOfgXEVvU3tsPHhl+Pq2DCf030wuMGhJdNXPWQHjv4Uv6qJun0G83rmkGY53ki2kOohyy8YF1uAmFM0o9gLuFnprUKH2bnhOB4hWqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SvSU3HHb; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5GxWmiEW8cxRUvYpr6QE/44g8xV+AEZ5YGPD0FX451A=; b=SvSU3HHbitU7Sm0vaC2Gbie+g1
-	sAgr23TjHvoIlqpobR5T5/90hjdhQ6shFrov4ee1f8i/p1nLbpsYwS1EsWogUTPh0L5+9qzFB1GTg
-	YIo4tCKvESp+K51GQGcsB+SQPfNvu4idwZI5ZyBfbsSN78JY+0yXAaZIJsfvDtpc/oIqzaliUoFHI
-	HV3RA0+32e0/GD3rXLtQG0dLJH4mYTJVeIvPjrbGKiWZYmhorc1slpRwojKS0QCl8Iv34Yc1w4CEW
-	f8eanWfn9yxsqm+V9p0sNqYSeqzpKtRNIsFvd+XlWZTq3SLxE8GVdtOsl4BO10l6ZgpAI3rlaj7y9
-	kgH5WAnA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rsV8u-005rD2-2G;
-	Thu, 04 Apr 2024 22:01:08 +0000
-Date: Thu, 4 Apr 2024 23:01:08 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: syzbot <syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	tj@kernel.org, valesini@yandex-team.ru,
-	Christoph Hellwig <hch@lst.de>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_fop_llseek
-Message-ID: <20240404220108.GT538574@ZenIV>
-References: <00000000000098f75506153551a1@google.com>
- <0000000000002f2066061539e54b@google.com>
- <CAOQ4uxiS5X19OT2MTo_LnLAx2VL9oA1zBSpbuiWMNy_AyGLDrg@mail.gmail.com>
- <20240404081122.GQ538574@ZenIV>
- <20240404082110.GR538574@ZenIV>
- <CAOQ4uximHfK78KFabJA3Hf4R0En6-GfJ3eF96Lzmc94PGuGayA@mail.gmail.com>
+	s=arc-20240116; t=1712271485; c=relaxed/simple;
+	bh=9P1rM+pEx/DoNg6daSbtI6YIkycpWCZDfGcCVbalA44=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bRpA75k3Np+ak4b59pwrYCcNlFOGUmxJaJQ4lKsK1PhFjvlaEY9KmmtEFc8BDcXBFfXx0j7gj7YSWFydvlMv+jfaxxg33kn19xkHvVwsdmh8p9AQ8J9lqHqM5KJ5C+CMBlIqc9APjTi4GI6EbLPRnpGzcdSEE65bMfD/S5T5vLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axGga/hV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EE4D5C433F1;
+	Thu,  4 Apr 2024 22:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712271485;
+	bh=9P1rM+pEx/DoNg6daSbtI6YIkycpWCZDfGcCVbalA44=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=axGga/hVj5muwdTZS/Jq+hFhfhQAJ6ZA147M21jPfkLr9QBru7bZQjLV1NWBUd5eq
+	 QeCbnvJqjMUwDq/cqadYEy0c0L3IER2h6bd33tHw2XN/QpbJFZSTqt4ElF49FULO7/
+	 tdo5uUMdKHXDX690/qz7g4T67vFRrnTPr4VwKZKsqtuvxlFkBLaXIq4bOj7ypX4lNr
+	 ORRSZm9KVGx3PbjtQXADEj/SEs+QyVity0YJg5LVWEvvOas9g0Mb9e484kwL4US5H3
+	 /qbNq2MyzGOKaWSbdkoufdPVSoOd6KBGPQdnHoYJFhg0zJuo16LLZkpJjSzuKQ51sJ
+	 r6any5+3o9mkA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DE209D9A150;
+	Thu,  4 Apr 2024 22:58:04 +0000 (UTC)
+Subject: Re: [GIT PULL] bcachefs repair code for rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <nqkz5ed4k5vhhnmr5m32jydfgnon3hv7rj2vl6jywz6h44cjqp@olraxajp3avu>
+References: <nqkz5ed4k5vhhnmr5m32jydfgnon3hv7rj2vl6jywz6h44cjqp@olraxajp3avu>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <nqkz5ed4k5vhhnmr5m32jydfgnon3hv7rj2vl6jywz6h44cjqp@olraxajp3avu>
+X-PR-Tracked-Remote: https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-04-03
+X-PR-Tracked-Commit-Id: 09d4c2acbf4c864fef0f520bbcba256c9a19102e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ec25bd8d981d910cdcc84914bf57e2cff9e7d63b
+Message-Id: <171227148488.29192.10440081755784547472.pr-tracker-bot@kernel.org>
+Date: Thu, 04 Apr 2024 22:58:04 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uximHfK78KFabJA3Hf4R0En6-GfJ3eF96Lzmc94PGuGayA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Apr 04, 2024 at 12:33:40PM +0300, Amir Goldstein wrote:
+The pull request you sent on Wed, 3 Apr 2024 15:22:53 -0400:
 
-> This specifically cannot happen because sysfs is not allowed as an
-> upper layer only as a lower layer, so overlayfs itself will not be writing to
-> /sys/power/resume.
+> https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-04-03
 
-Then how could you possibly get a deadlock there?  What would your minimal
-deadlocked set look like?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ec25bd8d981d910cdcc84914bf57e2cff9e7d63b
 
-1.  Something is blocked in lookup_bdev() called from resume_store(), called
-from sysfs_kf_write(), called from kernfs_write_iter(), which has acquired
-->mutex of struct kernfs_open_file that had been allocated by
-kernfs_fop_open() back when the file had been opened.  Note that each
-struct file instance gets a separate struct kernfs_open_file.  Since we are
-calling ->write_iter(), the file *MUST* have been opened for write.
+Thank you!
 
-2.  Something is blocked in kernfs_fop_llseek() on the same of->mutex,
-i.e. using the same struct file as (1).  That something is holding an
-overlayfs inode lock, which is what the next thread is blocked on.
-
-+ at least one more thread, to complete the cycle.
-
-Right?  How could that possibly happen without overlayfs opening /sys/power/resume
-for write?  Again, each struct file instance gets a separate of->mutex;
-for a deadlock you need a cycle of threads and a cycle of locks, such
-that each thread is holding the corresponding lock and is blocked on
-attempt to get the lock that comes next in the cyclic order.
-
-If overlayfs never writes to that sucker, it can't participate in that
-cycle.  Sure, you can get overlayfs llseek grabbing of->mutex of *ANOTHER*
-struct file opened for the same sysfs file.  Since it's not the same
-struct file and since each struct file there gets a separate kernfs_open_file
-instance, the mutex won't be the same.
-
-Unless I'm missing something else, that can't deadlock.  For a quick and
-dirty experiment, try to give of->mutex on r/o opens a class separate from
-that on r/w and w/o opens (mutex_init() in kernfs_fop_open()) and see
-if lockdep warnings persist.
-
-Something like
-
-        if (has_mmap)
-                mutex_init(&of->mutex);
-        else if (file->f_mode & FMODE_WRITE)
-                mutex_init(&of->mutex);
-	else
-                mutex_init(&of->mutex);
-
-circa fs/kernfs/file.c:642.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
