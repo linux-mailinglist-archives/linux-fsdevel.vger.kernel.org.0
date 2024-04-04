@@ -1,202 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-16106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F2389843F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 11:36:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7E1898459
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 11:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4F81F29C7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 09:36:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8590728A4DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 09:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1671084D35;
-	Thu,  4 Apr 2024 09:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26B9757EB;
+	Thu,  4 Apr 2024 09:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7VOYkxw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jKlac1jf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7F073186;
-	Thu,  4 Apr 2024 09:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B68F59B7F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Apr 2024 09:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712223234; cv=none; b=lg0rDaDXcPGhYjfMgOx4Oic/wEofldqPuNAM3QV45+9rky+Fn0gaEhDkM4X+4ZqL9+/8xsdb+9duHuclGhWdjUz/BfzpcvtKd6mK0sNu6hjRMLbQd9k7MkrWCLQkstz/3VyX7BCq/XXOq1OCAmh3ZYQ2QtJ9V+PEPd3ggMn5RbQ=
+	t=1712223596; cv=none; b=Bl/2gm3+cciH+DIVBS/lBHdphtWOnYuVX5uczerznbqGXnLwuxgsHe88PKuItw5gWcC+Ua3ksmHp0Dgy6jifltEelx+YInlxyDMRlQVrOIjH6NIVEeNOSeRFtMibBWA/FunV5qIqP4xp+OYMq8FY+J3BHHp9s5K9BY05qb1dyh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712223234; c=relaxed/simple;
-	bh=lJfZD0YPE4bSLnA47vSCMjB6M2AgR7foMEa5v1Pe2RU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aWEkgSAHjPIWL3FvWBKtx9QBLFXOQi8U9DdCaavNodF+DinImFuS7B8LOxecOh8H0BmUYMQl5o1d/3hYrSdPsxmmtVDjWNJk18U1mVlH4MWhan2xAYypAJr9FqzE3qyJduY3kSg5sg+9qmETDXgpnXGQxrlZxcrQjpZJv8z0MPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7VOYkxw; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6992c0f6da3so3431646d6.1;
-        Thu, 04 Apr 2024 02:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712223232; x=1712828032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FWAqHn8+xECL5oeLDf6K7tfC2/a+9qCTtqqBfEwyf6o=;
-        b=m7VOYkxwwBxjUxxcQ6fLpU9GxHr40i6tQxNCNexBDO5At9vrQ5xrz1px/hQG+2GIm5
-         m75GBJiZtW4wL0+ZMeHN6+JHglfdezCats0tNfIbRjuWLyBdUS17UC0UJ6VcMeA9xL8j
-         bNeSusabLV6LoprsUP9mO9Q3Q6Btj2Hk11Kg7oAu7qcqL2JXy5fksI7LfDH37RRL1MqU
-         JQ7sIzoCglYNclPmG3roRYhFk8QdXRz0fi0GRZ7Gwlpd9Z3SOE9tVyeGh/g4C1bkLtib
-         YbIDvvlmnxPbLCYb0BWhtga868wWjjEWI+LnXfD+v+WaEorbx5D4fKuvgth2IlAEvMbj
-         Anyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712223232; x=1712828032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FWAqHn8+xECL5oeLDf6K7tfC2/a+9qCTtqqBfEwyf6o=;
-        b=cQ69E9H61ypDE72xDtSvXfQT7VbWEi4NGjmiKcOuv7X4TGWhYjTKva0m8+tZVd/y4U
-         Fa/W6lqcYIVAoNpQlMEoCxqw4htagXVTHI9Z2rc9G+lZhcNnpRKMFPB4FKDMa0MpH2Vm
-         /T4LFBt/o1BV8X2HR38Kf7poyFgA35ScNro3Je5vMY9t7edeuj+wbzcq7df/GGqztSIv
-         56nqcY8U3wr68RwqpHpNPp2QOb4wvWLC46rx3B6rlUfkB5wAunWk51lk115MJ+9UKIaV
-         RU5Te7FfyqFZ/QhSnCP8ym1eN/51yi8Ko8+v8RCjT6tP6u5i3/z5CMTXOuhPxK5Rtcgb
-         aUVw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1PnVayE2YKfieIgQ4uZk1I3LQ1W7Ng9yfqv4Maoz4iJ1GHaEu4Y9Y8uuW8qUllrZWlTKMJSLs0mKw3vmLH9O1uVdfDDmawHrBzp/yUStXQMpWbkz+nnpXQwdbLQ9ndmA1vedDpNx5DfJFlQ==
-X-Gm-Message-State: AOJu0YwF94TmcN4YGjOyLoIukokVvrq/AJ5c9jJenv/aRi/kvRtHzak3
-	hMelFtZomxGYvM59FEk7yZiWpHqCCNebUoM87DU57rs1Oj8LzMBHlrybghTnWExPuJDYBziJ870
-	8BN312/mL6YkXnFOcEYfdhmseHeE=
-X-Google-Smtp-Source: AGHT+IGbbirhCWaHqNC+X46roF64fcTSKbRAVv7l0jg/9DDTm3zUzZN4eZR1RMq9j3HT3R///aBUWTiDFXkiTZfRLew=
-X-Received: by 2002:a05:6214:411c:b0:699:1f86:e968 with SMTP id
- kc28-20020a056214411c00b006991f86e968mr1752988qvb.41.1712223231813; Thu, 04
- Apr 2024 02:33:51 -0700 (PDT)
+	s=arc-20240116; t=1712223596; c=relaxed/simple;
+	bh=Q2J0SHdbDDTKk3cBCCZk1JWW4uClXx9Nvjj8wbCUCz8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CwzJkaaijzZ/o7nmers3IUo+X7JHSeLloN7EhArcode4pQf0A1KrFiTOxtVtOhVgjGUrGHNLOlRRCGfV+awsh5JDlncr9tvayi6nJnNoqOegJtOZ7dQXe4sihr8uC0D4+wLzNO6+kFlGwAgkf5H58lO9tpr4XNNdfd6KSOD4k7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jKlac1jf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1712223593;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9Q0Gv0d6rBwe65qsruTCiuIlit9fW3dRsJmEeNPjWAs=;
+	b=jKlac1jfNQdvA+3JTwA/VMFUXl03yhZk5IZcGp/I0lFxwqFWFurYaggW4AvhZwK+Xr4eCs
+	9ZzOsBVzHsNHt/du7UW/bqLEa6WAbaIigDIHZ3XmQ7SJtyViPL6TrdDoc6q7ngMNlOkbSB
+	H05i7SHVVXUNdfW9S9NTJd8Umv1hA/I=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-3KsI3PBNM1-8XJ9da5_nog-1; Thu, 04 Apr 2024 05:39:50 -0400
+X-MC-Unique: 3KsI3PBNM1-8XJ9da5_nog-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C004485A5BA;
+	Thu,  4 Apr 2024 09:39:49 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.226.93])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 337BE1C060A4;
+	Thu,  4 Apr 2024 09:39:49 +0000 (UTC)
+Date: Thu, 4 Apr 2024 11:39:43 +0200
+From: Karel Zak <kzak@redhat.com>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux maintenance release v2.39.4
+Message-ID: <20240404093943.jkyn4eimk3humbw2@ws.net.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000098f75506153551a1@google.com> <0000000000002f2066061539e54b@google.com>
- <CAOQ4uxiS5X19OT2MTo_LnLAx2VL9oA1zBSpbuiWMNy_AyGLDrg@mail.gmail.com>
- <20240404081122.GQ538574@ZenIV> <20240404082110.GR538574@ZenIV>
-In-Reply-To: <20240404082110.GR538574@ZenIV>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 4 Apr 2024 12:33:40 +0300
-Message-ID: <CAOQ4uximHfK78KFabJA3Hf4R0En6-GfJ3eF96Lzmc94PGuGayA@mail.gmail.com>
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_fop_llseek
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: syzbot <syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com>, 
-	gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
-	valesini@yandex-team.ru, Christoph Hellwig <hch@lst.de>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On Thu, Apr 4, 2024 at 11:21=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Thu, Apr 04, 2024 at 09:11:22AM +0100, Al Viro wrote:
-> > On Thu, Apr 04, 2024 at 09:54:35AM +0300, Amir Goldstein wrote:
-> > >
-> > > In the lockdep dependency chain, overlayfs inode lock is taken
-> > > before kernfs internal of->mutex, where kernfs (sysfs) is the lower
-> > > layer of overlayfs, which is sane.
-> > >
-> > > With /sys/power/resume (and probably other files), sysfs also
-> > > behaves as a stacking filesystem, calling vfs helpers, such as
-> > > lookup_bdev() -> kern_path(), which is a behavior of a stacked
-> > > filesystem, without all the precautions that comes with behaving
-> > > as a stacked filesystem.
-> >
-> > No.  This is far worse than anything stacked filesystems do - it's
-> > an arbitrary pathname resolution while holding a lock.
-> > It's not local.  Just about anything (including automounts, etc.)
-> > can be happening there and it pushes the lock in question outside
-> > of *ALL* pathwalk-related locks.  Pathname doesn't have to
-> > resolve to anything on overlayfs - it can just go through
-> > a symlink on it, or walk into it and traverse a bunch of ..
-> > afterwards, etc.
-> >
-> > Don't confuse that with stacking - it's not even close.
-> > You can't use that anywhere near overlayfs layers.
-> >
-> > Maybe isolate it into a separate filesystem, to be automounted
-> > on /sys/power.  And make anyone playing with overlayfs with
-> > sysfs as a layer mount the damn thing on top of power/ in your
-> > overlayfs.  But using that thing as a part of layer is
-> > a non-starter.
 
-I don't follow what you are saying.
-Which code is in non-starter violation?
-kernfs for calling lookup_bdev() with internal of->mutex held?
-Overlayfs for allowing sysfs as a lower layer and calling
-vfs_llseek(lower_sysfs_file,...) during copy up while ovl inode is held
-for legit reasons (e.g. from ovl_rename())?
+The util-linux stable maintenance release v2.39.4 is available at
 
->
-> Incidentally, why do you need to lock overlayfs inode to call
-> vfs_llseek() on the underlying file?  It might (or might not)
-> need to lock the underlying file (for things like ->i_size,
-> etc.), but that will be done by ->llseek() instance and it
-> would deal with the inode in the layer, not overlayfs one.
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.39/
 
-We do not (anymore) lock ovl inode in ovl_llseek(), see:
-b1f9d3858f72 ovl: use ovl_inode_lock in ovl_llseek()
-but ovl inode is held in operations (e.g. ovl_rename)
-which trigger copy up and call vfs_llseek() on the lower file.
+Feedback and bug reports, as always, are welcomed.
 
->
-> Similar question applies to ovl_write_iter() - why do you
-> need to hold the overlayfs inode locked during the call of
-> backing_file_write_iter()?
->
+(Please note that the current stable release is v2.40.)
 
-Not sure. This question I need to defer to Miklos.
-I see in several places the pattern:
-        inode_lock(inode);
-        /* Update mode */
-        ovl_copyattr(inode);
-        ret =3D file_remove_privs(file);
-...
-        /* Update size */
-        ovl_file_modified(file);
-...
-        inode_unlock(inode);
+  Karel
 
-so it could be related to atomic remove privs and update mtime,
-but possibly we could convert all of those inode_lock() to
-ovl_inode_lock() (i.e. internal lock below vfs inode lock).
 
-[...]
-> Consider the scenario when unlink() is called on that sucker
-> during the write() that triggers that pathwalk.  We have
->
-> unlink: blocked on overlayfs inode of file, while holding the parent dire=
-ctory.
-> write: holding the overlayfs inode of file and trying to resolve a pathna=
-me
-> that contains .../power/suspend_stats/../../...; blocked on attempt to lo=
-ck
-> parent so we could do a lookup in it.
+util-linux v2.39.4 Release Notes
+================================
+ 
+Security issues
+---------------
 
-This specifically cannot happen because sysfs is not allowed as an
-upper layer only as a lower layer, so overlayfs itself will not be writing =
-to
-/sys/power/resume.
+This release fixes CVE-2024-28085. The wall command does not filter escape
+sequences from command line arguments. The vulnerable code was introduced in
+commit cdd3cc7fa4 (2013). Every version since has been vulnerable.
 
->
-> No llseek involved anywhere, kernfs of->mutex held, but not contended,
-> deadlock purely on ->i_rwsem of overlayfs inodes.
->
-> Holding overlayfs inode locked during the call of lookup_bdev() is really
-> no-go.
+This allows unprivileged users to put arbitrary text on other users terminals,
+if mesg is set to y and *wall is setgid*. Not all distros are affected (e.g.
+CentOS, RHEL, Fedora are not; Ubuntu and Debian wall is both setgid and mesg is
+set to y by default).
 
-Yes. I see that, but how can this be resolved?
 
-If the specific file /sys/power/resume will not have FMODE_LSEEK,
-then ovl_copy_up_file() will not try to skip_hole on it at all and the
-llseek lock dependency will be averted.
+Changes between v2.39.3 and v2.39.4
+-----------------------------------
 
-The question is whether opt-out of FMODE_LSEEK for /sys/power/resume
-will break anything or if we should mark seq files in another way so that
-overlayfs would not try to seek_hole on any of them categorically.
+build:
+   - only build test_enosys if an audit arch exists  [Thomas Weiﬂschuh]
+dmesg:
+   - (tests) validate json output  [Thomas Weiﬂschuh]
+   - -r LOG_MAKEPRI needs fac << 3  [Edward Chron]
+   - correctly print all supported facility names  [Thomas Weiﬂschuh]
+   - only write one message to json  [Thomas Weiﬂschuh]
+   - open-code LOG_MAKEPRI  [Thomas Weiﬂschuh]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fadvise:
+   - (test) don't compare fincore page counts  [Thomas Weiﬂschuh]
+   - (test) dynamically calculate expected test values  [Thomas Weiﬂschuh]
+   - (test) test with 64k blocks  [Thomas Weiﬂschuh]
+   - (tests) factor out calls to "fincore"  [Thomas Weiﬂschuh]
+github:
+   - add labeler  [Karel Zak]
+jsonwrt:
+   - add ul_jsonwrt_value_s_sized  [Thomas Weiﬂschuh]
+libblkid:
+   - Check offset in LUKS2 header  [Milan Broz]
+   - topology/ioctl  correctly handle kernel types  [Thomas Weiﬂschuh]
+libmount:
+   - don't initialize variable twice (#2714)  [Thorsten Kukuk]
+   - make sure "option=" is used as string  [Karel Zak]
+libsmartcols:
+   - (tests) add test for continuous json output  [Thomas Weiﬂschuh]
+   - drop spourious newline in between streamed JSON objects  [Thomas Weiﬂschuh]
+   - flush correct stream  [Thomas Weiﬂschuh]
+   - only recognize closed object as final element  [Thomas Weiﬂschuh]
+po:
+   - merge changes  [Karel Zak]
+po-man:
+   - merge changes  [Karel Zak]
+wall:
+   - fix calloc cal [-Werror=calloc-transposed-args]  [Karel Zak]
+   - fix escape sequence Injection [CVE-2024-28085]  [Karel Zak]
 
-Thanks,
-Amir.
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
 
