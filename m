@@ -1,216 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-16095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0158898161
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 08:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D514B8981AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 08:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F1E287892
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 06:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD081F2771B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 06:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BE254915;
-	Thu,  4 Apr 2024 06:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48655789F;
+	Thu,  4 Apr 2024 06:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ti4QNbMG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hq9a3GkC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2090.outbound.protection.outlook.com [40.107.96.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532AB4E1C1;
-	Thu,  4 Apr 2024 06:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712211526; cv=fail; b=RUIMoM8LQS1OvChcv9ACRTqUwIHxN9QGIKiSDUgzp460N+bVWatZnxbx5O4nz1W0NzsJ0uOt0LGrq8HrTouQ88eUuu37/Pqrfo/65ANpQm4vjpnK6nTsh6BwqU8dw2Iy9pjK6nQozQjO5TU2lMs+YQqtGhL0YerIPXiHeFLj67A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712211526; c=relaxed/simple;
-	bh=5iTFWYeYYgk3kmHc88d3wERfQdd7HrN64KnxhFxbULs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rNLe8A7gxEBw8awvHcs9QveqweNVFnmyq0EBUgDR5sRG+cerjx5Ez3iU+2jpYDoO1DgWUtYVWiYxl5Xn1PMqguiRQBBsADQ2lGo0uD4uzjL6j9VvEjGfS/9CBVfaUO85hINqZUG7rh8uylIuYZh2MooGCpwpbrMKxfrZLbqT9Z4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ti4QNbMG; arc=fail smtp.client-ip=40.107.96.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RtjhKVM57qU5y5mv21WhFCs5hmRlaWNCq448k1bPzi2WieaYQjYn1woTffeSgIKpkiDamD0jmhHDh0as/gRP28zjdAqdqq24V6kBdBZDQz72sU8LZMbItfS/0uJiZSJAG2n3KNiOl7zIOegIrfTlwwNmYHCtyhl0VLPX6ce9surd4HyHY+G8Tgz4hvV6KjfBsgP3qIRRhKzUj98RvcZFsq+12j6iktqgyxbCJ8WNwTX3hc/uGwAoaWzvi5fng3eckMR/WR687u/62af4VdtGNl4M9o7g44HlVdOFfUHaezvAkoDBCkRzhK3/V/d5esxm9udd9QxI9loChKJaGgPNoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sGUygyizDVzBGCSeklfWFqq/09oRo1P3p2+NVZdNwPw=;
- b=C839bf3+/3gt/v0gNUXxnJ+SAWf/4Q5FmBDU830qwOvuSZhImOxKK6oGv3z2Bnlglcla1b3ep4zxoLnlDtb2G1CZmAmz0mc7zipgXVxQD2Fo5gxnuMEwN7R1hndGLzfq8blvBSK+/hax1WAhUmvyJiefJz7RX7su5k+xX0SG2Msulwcxp41GzkTJahYTA7cqIAFdwNz6qLGoruLZIbyPtBsKFLoqWn3YvdNJmUDIOqMmQy7CZp2ls/6gjiSGIDigEpzrs625RG/RJTWd3g7e9r3YwAfepq3pgB5lFppjZ0dbk6pHJcAsN0NbotriUsW2GGWdYsa7TtvwniRW6Yv58A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sGUygyizDVzBGCSeklfWFqq/09oRo1P3p2+NVZdNwPw=;
- b=ti4QNbMGBNM11dvPdJwSfVherCTjHD0M9T0gh6aiVYmr24jCJLM2CmPr83JHE6sLvLd1PaOFrEeWjo2lbC5T/D+tRUL2YVGt42dDvRqMQH7RP/VzI1G3q0giXgFk/KH9oEjlZ20JyP4BIaqx+MWELaJUbl6Q14dS9WSfz6zS3Pg=
-Received: from DM6PR12MB2810.namprd12.prod.outlook.com (2603:10b6:5:41::21) by
- CY8PR12MB8216.namprd12.prod.outlook.com (2603:10b6:930:78::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7409.46; Thu, 4 Apr 2024 06:18:39 +0000
-Received: from DM6PR12MB2810.namprd12.prod.outlook.com
- ([fe80::2385:dab8:fddf:bcba]) by DM6PR12MB2810.namprd12.prod.outlook.com
- ([fe80::2385:dab8:fddf:bcba%6]) with mapi id 15.20.7409.042; Thu, 4 Apr 2024
- 06:18:39 +0000
-Message-ID: <a30d9ff5-638b-9d81-2c4e-8afd585d437c@amd.com>
-Date: Thu, 4 Apr 2024 08:17:48 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 21/25] nvdimm: virtio_pmem: drop owner assignment
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Jonathan Corbet <corbet@lwn.net>,
- David Hildenbrand <david@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Paolo Bonzini <pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- Jens Axboe <axboe@kernel.dk>, Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Amit Shah <amit@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Gonglei <arei.gonglei@huawei.com>, "David S. Miller" <davem@davemloft.net>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Cristian Marussi <cristian.marussi@arm.com>,
- Viresh Kumar <vireshk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, David Airlie <airlied@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Daniel Vetter <daniel@ffwll.ch>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Alexander Graf <graf@amazon.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- Stefano Garzarella <sgarzare@redhat.com>, Kalle Valo <kvalo@kernel.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Pankaj Gupta
- <pankaj.gupta.linux@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Anton Yakovlev <anton.yakovlev@opensynergy.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
- iommu@lists.linux.dev, netdev@vger.kernel.org, v9fs@lists.linux.dev,
- kvm@vger.kernel.org, linux-wireless@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org
-References: <20240331-module-owner-virtio-v2-0-98f04bfaf46a@linaro.org>
- <20240331-module-owner-virtio-v2-21-98f04bfaf46a@linaro.org>
-From: "Gupta, Pankaj" <pankaj.gupta@amd.com>
-In-Reply-To: <20240331-module-owner-virtio-v2-21-98f04bfaf46a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR09CA0091.eurprd09.prod.outlook.com
- (2603:10a6:803:78::14) To DM6PR12MB2810.namprd12.prod.outlook.com
- (2603:10b6:5:41::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EC656740;
+	Thu,  4 Apr 2024 06:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712213689; cv=none; b=NpTZhEzyOCTceyysJnBlhgsaarzzE2kbaQgXDNSmDvhuStjalNoB/haF5bAvgIbmM+QKhFSPNfiDASTaVc2bXYZu72SgLmbHWibc8XcBGArEZJQghXK/vHMe+WJRpMLbtWAJuoZXpyo5jP0Q2jjMcPmsV/TkepeCgu487ZZUNKc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712213689; c=relaxed/simple;
+	bh=P4HRQlK3gIOZhynu3iitqpwrtMPK33V9qTle66OO+mQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GgV2q2e58UAslJ8AmyhkKbzsBDSQbSRgxZakYIRss4UYlx17KcUQ0u8XdLYYms4Z6SiYQ93Y2WKTuYuNeaQe0np23vD/mIxpiMkPkXaSKaOqrEFlHk5Kp9M8uTUGlCjqcNJzNCKJl8q0R840Bn3rTtbugwbp5YBN9jmRjPwQbfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hq9a3GkC; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6992f97ec8eso3709366d6.3;
+        Wed, 03 Apr 2024 23:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712213686; x=1712818486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lw65dET69SWIl1E/XYAbpA7W4BYrqXaCQ0IUnLjWA9A=;
+        b=Hq9a3GkCAhGD4Y+Y9Xdamz1qsCdP6VQFiMhsH2VsXzbP5AuUuAoGSQh0HVTNBse8k5
+         YZ2BI7xUcc98xhhMt0riIGK7E5+NHQF73FyipwTeZrU6aBcq5jp52JCprjXVnsGauIgk
+         GP+Wkd+6Sea+Y0DJ9kq8LNJztfu+9dWO61eZ+To4mM+mNMs4ZshDFiQKyHLYUQKoiJw5
+         M7zbotJGSf/rZqG/7UT6ZSFdka27eTVwWxfM0DfBP6opYqOFwCo+UkirDGQB9ALX3h/l
+         te/aZRWnOY0lJJLnap6L+V8nAXhwPLJdRlEAX642NHxp2CFV9vM97c4b9VScM4cSRqNA
+         yobA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712213686; x=1712818486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lw65dET69SWIl1E/XYAbpA7W4BYrqXaCQ0IUnLjWA9A=;
+        b=HfdLag7n7HNADxhCJ486YllJx98gzWzCn2+Bo8NXd/2Qc6YdlijczWQbDZF6k+AXZw
+         jceTMTNd2mjn/P5JuSZXVtTMvFWKYX7FMRyw1k5ceirRGNwtjAw5KGq6htvkQQvieCQ/
+         pGjcynSLtpNIO+9hjCUiAW4HW6Z7PhTn3slyWLiMlSigqe+S6EKkQQ57/KJeG2hm7zYV
+         +VKQONA3vNKXsGdmov3nezPjmG5cxRrnkQ6QkFZb03v7uhcif8Z+W5gQR3Vw3eRgJEyH
+         pnl3tsl9ZkYkuAEkKCpSHkzJM4MHDk/8MxwOU7iHlQWrlOKJ5zQ2v76wYvjltzDM4j4b
+         PoUw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5gKYJkiQ5PFPd25TAotd6kPCleSpMqY4TxHCYOPuDGA3oxp7h3EFN45HEJbdGiLOau0h1trE/dzgpH6bCUoD0KiG88czSIuNchF4j8mUCHDo7XXw/A6u6Wd/+8FmHnbTykIY8CvWsetT48g==
+X-Gm-Message-State: AOJu0YxORKVDSQdz651WMgE0OAbO6Awlp+ezLYHZx3vacC/1N5Z0uAtF
+	WDBH3P+AXc6LNd2XSy7re7l3Sg6ii0dI7803IOrQIcDpQnmJ+mYnNRHBcKcQGp0PYy/YDbJIVwe
+	R8dcHIoPT1bE4kNBPqwCH9zSA4Zo=
+X-Google-Smtp-Source: AGHT+IGC2+AfF1pywBGs2k+kBcpPpK4UcRei87wZYI1X7piC3TmIlAxmVD6isSsFawmYGgoVAIr5ySEJgzrtr/c57Co=
+X-Received: by 2002:ad4:5ecc:0:b0:699:197e:f689 with SMTP id
+ jm12-20020ad45ecc000000b00699197ef689mr1552673qvb.35.1712213686467; Wed, 03
+ Apr 2024 23:54:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2810:EE_|CY8PR12MB8216:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	3FffiHvmVY5igagMS6HFuehymN9LrxeNdbbBXpvUSfgEfgdxTVr0Vaf8j89Wo8MTcHWDcxWZuXHqaQWzC1xGreHIwkQlKqYXP9K7Jf7Wof4aSKqaqFpgwFQ9pQFNmtJgSNcCi1l/QrZu/BXkxbkpkcXTZVQKZzZlJ75zkWDe0uKewVkzQF73JuHopJGJ/oG/PGDIKlFOVfi+jY2fd95vjvx3qRqLKO7nvsq9tGlZPBZU44UyYxtaRAmrND6VASBbbEoCSgjURHO3hOPqVBOk45UDBVERXWbgA9/TzPvbujnAbXaLrPKMcZDlkgJpuBl99f7JLPU3TT2tJgZTIhzMLAEw9RCd40ZkAw8Arls5SKlJJ0HDaxPia21Hpca5K3yAOdPSTkqewkBt/ZmPBdAdXfP2N4HAWcTdfHVfeOZFOz3iJHYOUFV/+qaxiYXtZVQtj7HcfBKhMc8z9oofKCUT+Dj4N4Wo0WXh/Z+GqdXb8GIWmjQc1ZIS2cT9OdMzqyDqY0yLuI484nGakhcP/Xxxj9ufPCoTzeBwrqQDhQEeP30d1ju7hOSFKoMMthe43blFzVzkVvVoeFXV+tq4uY882/gIhOInvww+65Md4boluQociatlug6mB0lKm+osdQJp/aVYOSkrbIGG4z+Pq1AqaYF5jLjOXprj4ECvWOZAMer2ZmrxLsYz7Y/k50YLQlPmvbCl1RnyW9hLOwJuRdw8Mg==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2810.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(7416005)(921011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NldqM0VrbkFNditIdUI3c2JSakkrOEJHbnczZUpuTzFvVWxZaTdsUTlvejZ6?=
- =?utf-8?B?c0VKVjE1eUo5VWkycTRoOWVlc3ZQMjFkMHZrREJMSFEzNWhJa0E5bkh5bFpt?=
- =?utf-8?B?TDdISlpPcXBvRTYwQ3RZLzRiK1hUcmZBcUNFai9ka0dGUWtvbHNJdWcySEw0?=
- =?utf-8?B?M1RKU2YwdFVnZE41M3pxanYxSmZwdXZ4dHRSQlRCc3V6dTllY3FIeUdpTjUz?=
- =?utf-8?B?aWU2eVltcU9uWnV5YlRPdDdOZTRlNkRIQU4xV3daTjRDWVIrenBFWHg3SEVK?=
- =?utf-8?B?OE5ERmx1ZHNwSUZGWTFSMG5TQnJ1eTcyZGx2UXhWTTJtNDIrTHpmeW50eExm?=
- =?utf-8?B?blhZMjNlZFU5NEpYdEVrc3Z2WlgxOU8xTHlwTHVwa2RLTnFuOVhiQUNnREtj?=
- =?utf-8?B?Rm9VUW5vcnZ6R1ZJU1FNeE9hRXJzQnhDQ205dUw3RFVsck5KNjV4enVXY2J4?=
- =?utf-8?B?cGhxZ3QvWHJkbHM4Ry9iTDBxWFBVNG9kZmhHbVhWZlNDdFlCQ0xmNGRYSmN1?=
- =?utf-8?B?WHJ4Ullidm9QWTFZdmQvNkVrRCt5cVAwcGJDNC85NTE4UHQ2LzNVOGNPYk1T?=
- =?utf-8?B?ZmhsWlcvQ21yb21YREhSOGlCSDVTajZXV3cxOUlpTGxlQTQvT21WeHM0REFU?=
- =?utf-8?B?Q0ZlV2I0UGJUZ3hVbU8wVTcrd0pBejhtNzlobVp4emJFN1RvVU94REYxRWxP?=
- =?utf-8?B?a0VTbnBYZzh5NUxwTnNMamxnSjUvdkNXUHpyRC9Nenl1SGVpNkQzeGEvZGtY?=
- =?utf-8?B?cWptOVQ3dXVENXNiY3FNK3d4TWFqSFpGTkFiQmFHNHB3bHlBeGpQaUovMEoy?=
- =?utf-8?B?Z2h3d3NzN1JMNkRaSDB4WHIrMTA5b3dSbGdhSHh0bWZKVjRrakMxM3FlNmF6?=
- =?utf-8?B?Y01rYzZJUWMxRysxTkwzTmRjYjB3SitiMXhySHdYdVRYN3BvMWJmZkJQNmsz?=
- =?utf-8?B?RkdTeGg1eUg4Q1R6Y1BUdFlOclBvRXdVdGRPRDh0TUphSXYwdnRSc1J0bDI3?=
- =?utf-8?B?dldxWlNLTy9ld2tUSFB0QlE5MTEzN3QyL1B3NHQ3c095MEtQNjNkMmdxcGVS?=
- =?utf-8?B?MDhqSGwwakNLaHQwbWQ5NzRHR2FHR290azFDaWUwVHpsSm5qdWpnelMwNzc0?=
- =?utf-8?B?RHV0SUVoWEtRK1E0S1AwaENQVWxqOG94eCtrejI0aEpReFlNRENaRUlxN0NS?=
- =?utf-8?B?dk5zK3Fua1NPZlFTNjUyRlhtVjVPcG85dHVnVDV2Q29NK0lVRWMxeS9GMk9D?=
- =?utf-8?B?QXQ3b29wUjZaWUpnYlNMS1VRdERibzB4MHoyamVNV3dEbWlZQlNIYzBpemlE?=
- =?utf-8?B?TG9yZTVZaW0wY2RPQXovVDdhMkpZNUVhcVVCYm0vaDNYNExjdms0MUtWL2tq?=
- =?utf-8?B?cm5vY3REcFJ6T1F4S0swb0wrVHhPVG5Xc0pPa1dnNHBNbmljZjdBa0g1SkNv?=
- =?utf-8?B?dmFwL29VTU5FRnVXNFJ2dDdXYUpOa0JLTVh4Tk9WUWo1d0pnRUJzejhRQ3o5?=
- =?utf-8?B?anJKTkpIV3FvNG9pWEtEaUhHNGl4bm5WL0U5VTMxQnJkb2xuZTBxOUsvTzly?=
- =?utf-8?B?a3dlRlU1WTVnWWpPV21SK0xpZEpnZEZpeDIwaTk4MFk5MjdSVFJGckF1QXln?=
- =?utf-8?B?QWNJZk42OFloK3crUUtxZndXbDVOWUZMUm4zRlBFM0ZIbmF2SzhpU250TlpP?=
- =?utf-8?B?c0ZJK1JhUWFQVDdsUnZBSE9YcGt5N3lCVGNLUGYzVTlVNnF5aHlnbm5sQVNJ?=
- =?utf-8?B?czRtNlI2UGxUbzdkSFN3NUZKSkNmTEJxL3ljakRLYjJ0dElxQzlwR2hjL1p1?=
- =?utf-8?B?MnNacDJuTE1CRWg4QUMvY2hZb0RkbFluclR2QVo1ektwTUNwK2g3eDdVM0t4?=
- =?utf-8?B?K0Z4cDlYaFpqZmtBNXl3NkdLMmNRQTNYeVNFcEhpV0Y0ZjBmRVZwSDN5dzFZ?=
- =?utf-8?B?Y09RcXZodG5iZkg2bFpCcVlHRUp2UmhNWVRFSU9uM0YyaWQ0a1c3VFZ3eGt1?=
- =?utf-8?B?dGpMa3JqTG1XSEc2NjBlLy96SVRkL2pEOUlpOWViTWZLVjNOZDUyMXY1cGpZ?=
- =?utf-8?B?RGREaWpOcUxFbkVBMXZHaVVZNlpmbDlJRkllOUIwbTV1MENhR1AzdTBpem1s?=
- =?utf-8?Q?qw2qYdOwELcIKPD9IK3bVT7xj?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0fc5c03-d3f1-407b-10f4-08dc546f0ca4
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2810.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Apr 2024 06:18:31.3112
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tdOgk2JHQ+D4pOlbMfhFDQrfxUTlXRzHE0L+I38/h/takAwhkipgrCqw8gQk6S20PrFBvpBv4UbElXDU4YfCTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8216
+References: <00000000000098f75506153551a1@google.com> <0000000000002f2066061539e54b@google.com>
+In-Reply-To: <0000000000002f2066061539e54b@google.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 4 Apr 2024 09:54:35 +0300
+Message-ID: <CAOQ4uxiS5X19OT2MTo_LnLAx2VL9oA1zBSpbuiWMNy_AyGLDrg@mail.gmail.com>
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_fop_llseek
+To: syzbot <syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
+	valesini@yandex-team.ru, Christoph Hellwig <hch@lst.de>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/31/2024 10:44 AM, Krzysztof Kozlowski wrote:
-> virtio core already sets the .owner, so driver does not need to.
-> 
-> Acked-by: Dave Jiang <dave.jiang@intel.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-> 
-> Depends on the first patch.
-> ---
->   drivers/nvdimm/virtio_pmem.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/nvdimm/virtio_pmem.c b/drivers/nvdimm/virtio_pmem.c
-> index 4ceced5cefcf..c9b97aeabf85 100644
-> --- a/drivers/nvdimm/virtio_pmem.c
-> +++ b/drivers/nvdimm/virtio_pmem.c
-> @@ -151,7 +151,6 @@ static struct virtio_driver virtio_pmem_driver = {
->   	.feature_table		= features,
->   	.feature_table_size	= ARRAY_SIZE(features),
->   	.driver.name		= KBUILD_MODNAME,
-> -	.driver.owner		= THIS_MODULE,
->   	.id_table		= id_table,
->   	.validate		= virtio_pmem_validate,
->   	.probe			= virtio_pmem_probe,
-> 
+On Thu, Apr 4, 2024 at 2:51=E2=80=AFAM syzbot
+<syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this issue to:
+>
+> commit 0fedefd4c4e33dd24f726b13b5d7c143e2b483be
+> Author: Valentine Sinitsyn <valesini@yandex-team.ru>
+> Date:   Mon Sep 25 08:40:12 2023 +0000
+>
+>     kernfs: sysfs: support custom llseek method for sysfs entries
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D17cb5e0318=
+0000
+> start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kerne=
+l..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D142b5e0318=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D102b5e0318000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4d90a36f0cab4=
+95a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D9a5b0ced8b1bfb2=
+38b56
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17f1d93d180=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D15c3813918000=
+0
+>
+> Reported-by: syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com
+> Fixes: 0fedefd4c4e3 ("kernfs: sysfs: support custom llseek method for sys=
+fs entries")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>
 
-Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
+I think this commit is only the trigger for lockdep warning in this
+specific scenario, but the conceptual issue existed before that
+for example, with read from sysfs, which also can take of->mutex.
 
+I think (not sure) that the potential deadlock is real, not a false
+positive. OTOH, hibernation code may be crawling with potential
+and more likely deadlocks...
+
+The conceptual issue (I think) is this:
+
+Overlayfs is a stacked filesystem which regularly calls vfs helpers
+such as path lookup on other filesystems.
+This specialized behavior is accompanied with a declaration of
+s_stack_depth > 0, annotating ovl inode locks per stack depth
+(ovl_lockdep_annotate_inode_mutex_key) and restricting the
+types of filesystems that are allowed for writable upper layer.
+
+In the lockdep dependency chain, overlayfs inode lock is taken
+before kernfs internal of->mutex, where kernfs (sysfs) is the lower
+layer of overlayfs, which is sane.
+
+With /sys/power/resume (and probably other files), sysfs also
+behaves as a stacking filesystem, calling vfs helpers, such as
+lookup_bdev() -> kern_path(), which is a behavior of a stacked
+filesystem, without all the precautions that comes with behaving
+as a stacked filesystem.
+
+If an overlayfs path is written into /sys/power/resume and that
+overlayfs has sysfs as its lower layer, then there may be a small
+chance of hitting the ABBA deadlock, but there could very well
+be some conditions that prevent it.
+
+It's a shame that converting blockdev path to major:minor is
+not always done as a separate step by usersapce, but not much
+to do about it now...
+
+I don't think that Christoph's refactoring to blockdev interfaces
+have changed anything in this regard, but I wasn't sure so CCed
+the developers involved.
+
+A relatively easy way to avert this use case is to define a lookup
+flag LOOKUP_NO_STACKED, which does not traverse into any
+stacked fs (s_stack_depth > 0) and use this flag for looking up
+the hibernation blockdev.
+
+I suppose writing the hibernation blockdev from inside containers
+is not a common thing to do, so this mitigation could be good enough.
+
+Thoughts?
+Amir.
 
