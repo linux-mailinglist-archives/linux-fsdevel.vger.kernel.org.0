@@ -1,75 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-16135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9FC899057
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 23:29:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1566899063
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 23:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B5281C21B61
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 21:29:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F977B26BA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 21:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AA813C3C4;
-	Thu,  4 Apr 2024 21:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D851313BC3B;
+	Thu,  4 Apr 2024 21:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YVZ9jJv4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d1g8oWeT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359BD1384AE
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Apr 2024 21:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EC813BACF;
+	Thu,  4 Apr 2024 21:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712265929; cv=none; b=G2mkc8f5cO+0NAulBsRFMUm2MyypWmaqpizpKSfUunKzGADc1c43k7zePbxgr5LiEn/bUURgAUh+/5z0MdXdJDSv7AiubBww15BBpVgapKWUW5yaoUciOu7oaUR2RwFlIw5gnAOAQtN+4B60CB/9b9o7xDftjm5tNWle36+ckZs=
+	t=1712266165; cv=none; b=B9uwEs7oU4nGLGx+6/JrdS/s+og0nPtC15ZFquFGz7/SIZiv3QB74TXFdguVsz67pCg36SKXzX21EKPHqEEmFJPigp/np0wqxO6om0D5+FfSkqF95w0CvVJkvsXvbPvhNyUB0UXqnWdiP1PmQtt9Ko9JU3Ox1WCqqG8uIt9dQK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712265929; c=relaxed/simple;
-	bh=3NKUzTGkIDEpQ5wUoVyjTBqpGFGUoC7t9j9PGK1BOcQ=;
+	s=arc-20240116; t=1712266165; c=relaxed/simple;
+	bh=Utj8g5kSIY2oZzcEMi6QXW1D/5gc1CLBmlqTBBy6/AM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ViiqDQZmZYZHI3UYTjA8J8P7LYOjb9N9aAaMoAg4aMZp9rOwv+2tMm6O/EAM1DRU1cto20CUYxfKfkjA/fLZbo7K7YayTkmCNTsqA3QfUwtBPlBo+bzsBQYLEcMzstfzOjBZddQHyrLoefzfdWmkd9v8QTvp7lIsyHaN5346Ug0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YVZ9jJv4; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1e0bec01232so12984265ad.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Apr 2024 14:25:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1712265926; x=1712870726; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EpiEkHKVQpziLc/Q1KdhUKlYdlAbkM0446cfuS4Rfmw=;
-        b=YVZ9jJv493y9smv/0jF5HIShwzyvA4qSjrnq97hYJ3HAYCz9eWw+iJehW9rnNcNqo2
-         pfXJN8dbgnfQRVqee1wCqoIPuxN2XINa4wpzazZuVmgxyCUnd52m7oQCdwPrGwaJXncE
-         ALaMg6WJ5nv1dhrjenPwviG7GoqJwbjfIc30Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712265926; x=1712870726;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EpiEkHKVQpziLc/Q1KdhUKlYdlAbkM0446cfuS4Rfmw=;
-        b=wtdQaVQMb5/5kF4smap+FIu1Pl94GxvftlTWYG2LBqTPz5hG5YS6jL4BgBtEYJqBY0
-         u9XQfLFEVLxd9wi/eHFmYhQEVVfI8OauYXrQ5QaTS+MpJqNM8qnZL8et8ZFPfTQ4r0xs
-         XlUi5HzSyLCVEaYXftTIz7pYT5IS0psoAUrATxkz51W0GjWBl0/Hd5n9SjD8UXUpYavm
-         P+37tmRRm9XCgh3+Hzma1hTdxm5t8x8kqQnELxE5Diicn0WMtvXWhjwlhNFPZaFRZGEL
-         ybvCq+JkNA37FpXm6HspWlT/qCZ6Ml16H393jWBuR2WpMbBlTMtaPfyNBtGthwaA14og
-         1Xgg==
-X-Gm-Message-State: AOJu0YzHCFwzN/CDWnTSs6cI77epqtfB3wRyNrkUvUy8s0RyIoJ9MwCk
-	xb58+SM4zK6odktmse+lt0JLnHBUZ91hK6m7WISL20YF3K90XLhsHw9YWJGIrg==
-X-Google-Smtp-Source: AGHT+IE94WGQc2eT/aw5lISX7Th0dXyOdwG6Wu0UODl3BM+QKoXt+9KC7Bf3vkB0vJ7kUinlMgttZA==
-X-Received: by 2002:a17:902:9698:b0:1e2:a2ca:6366 with SMTP id n24-20020a170902969800b001e2a2ca6366mr3033583plp.21.1712265926601;
-        Thu, 04 Apr 2024 14:25:26 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id l15-20020a170902f68f00b001e20be11688sm73790plg.229.2024.04.04.14.25.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 14:25:26 -0700 (PDT)
-Date: Thu, 4 Apr 2024 14:25:25 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Justin Stitt <justinstitt@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] hfsplus: refactor copy_name to not use strncpy
-Message-ID: <202404041425.53F8283@keescook>
-References: <20240401-strncpy-fs-hfsplus-xattr-c-v2-1-6e089999355e@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUlgkdjk/HlF00OSdbkpWs3XMJxNbiAFUWUv2D8E+Q6zKljZNBcRpaXfv9UXckj2USTSNtmNeA0BMnDivzGXhypZUXFhf2rcxJGcjozU8wv0kAJ6vkEIP5txtc1s2JT67+upBK/d4l2SHUJ45BVacJVuIlNxV/UE3C4PLxXKy6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d1g8oWeT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Zyi7AEcYnfqB6wuIN5C5labJ5TkiPsioxAOKz/6Fbqs=; b=d1g8oWeT9rYHBlZuF9xsTFDFHG
+	4lSJo/KGw64j3qekI4UzOPIXJ1k3xqp49kuQDsjI3KWu1PeNyrvAx32gduojBtJnubIYbpR8ATH9/
+	iHi0XgwD4MRWgBREvdk6kwWIJMIJufuG2rvsYSbhZahYCtFlqfUHZoB/9OG3i+HKLm5pf24AQ/JN2
+	9SFsSEsuALRsGWBL8WIAgLr6AWItvY3OcojGDkbhHZsDqZ1XuYyScYDs1+aUQs9aWl8qV9+jLJ+tV
+	tJCk+/43dla/bl5lv45MJp+W8A/geOJcFQ8gjN3XZ0JwVqHcOjoTgz3o0Y9HJuAjDwX2Jd5ldJTru
+	2h94r9pw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rsUe5-00000008veN-2BP2;
+	Thu, 04 Apr 2024 21:29:17 +0000
+Date: Thu, 4 Apr 2024 22:29:17 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: Set file_handle::handle_bytes before referencing
+ file_handle::f_handle
+Message-ID: <Zg8brYRFHlS1qaJC@casper.infradead.org>
+References: <20240404211212.it.297-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,58 +67,80 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240401-strncpy-fs-hfsplus-xattr-c-v2-1-6e089999355e@google.com>
+In-Reply-To: <20240404211212.it.297-kees@kernel.org>
 
-On Mon, Apr 01, 2024 at 06:10:48PM +0000, Justin Stitt wrote:
-> strncpy() is deprecated with NUL-terminated destination strings [1].
-> 
-> The copy_name() method does a lot of manual buffer manipulation to
-> eventually arrive with its desired string. If we don't know the
-> namespace this attr has or belongs to we want to prepend "osx." to our
-> final string. Following this, we're copying xattr_name and doing a
-> bizarre manual NUL-byte assignment with a memset where n=1.
-> 
-> Really, we can use some more obvious string APIs to acomplish this,
-> improving readability and security. Following the same control flow as
-> before: if we don't know the namespace let's use scnprintf() to form our
-> prefix + xattr_name pairing (while NUL-terminating too!). Otherwise, use
-> strscpy() to return the number of bytes copied into our buffer.
-> Additionally, for non-empty strings, include the NUL-byte in the length
-> -- matching the behavior of the previous implementation.
-> 
-> Note that strscpy() _can_ return -E2BIG but this is already handled by
-> all callsites:
-> 
-> In both hfsplus_listxattr_finder_info() and hfsplus_listxattr(), ret is
-> already type ssize_t so we can change the return type of copy_name() to
-> match (understanding that scnprintf()'s return type is different yet
-> fully representable by ssize_t). Furthermore, listxattr() in fs/xattr.c
-> is well-equipped to handle a potential -E2BIG return result from
-> vfs_listxattr():
-> |	ssize_t error;
-> ...
-> |	error = vfs_listxattr(d, klist, size);
-> |	if (error > 0) {
-> |		if (size && copy_to_user(list, klist, error))
-> |			error = -EFAULT;
-> |	} else if (error == -ERANGE && size >= XATTR_LIST_MAX) {
-> |		/* The file system tried to returned a list bigger
-> |			than XATTR_LIST_MAX bytes. Not possible. */
-> |		error = -E2BIG;
-> |	}
-> ... the error can potentially already be -E2BIG, skipping this else-if
-> and ending up at the same state as other errors.
-> 
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
-> Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
-> Link: https://github.com/KSPP/linux/issues/90
+On Thu, Apr 04, 2024 at 02:12:15PM -0700, Kees Cook wrote:
+> Since __counted_by(handle_bytes) was added to struct file_handle, we need
+> to explicitly set it in the one place it wasn't yet happening prior to
+> accessing the flex array "f_handle". For robustness also check for a
+> negative value for handle_bytes, which is possible for an "int", but
+> nothing appears to set.
+
+Why not change handle_bytes from an int to a u32?
+
+Also, what a grotty function.
+
+        handle_dwords = f_handle.handle_bytes >> 2;
+...
+        handle_bytes = handle_dwords * sizeof(u32);
+
+> Fixes: 1b43c4629756 ("fs: Annotate struct file_handle with __counted_by() and use struct_size()")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Chuck Lever <chuck.lever@oracle.com>
+> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-nfs@vger.kernel.org
 > Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
-
-Thanks, this looks right to me now!
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--- 
-Kees Cook
+>  v2: more bounds checking, add comments, dropped reviews since logic changed
+>  v1: https://lore.kernel.org/all/20240403215358.work.365-kees@kernel.org/
+> ---
+>  fs/fhandle.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 8a7f86c2139a..854f866eaad2 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -40,6 +40,11 @@ static long do_sys_name_to_handle(const struct path *path,
+>  			 GFP_KERNEL);
+>  	if (!handle)
+>  		return -ENOMEM;
+> +	/*
+> +	 * Since handle->f_handle is about to be written, make sure the
+> +	 * associated __counted_by(handle_bytes) variable is correct.
+> +	 */
+> +	handle->handle_bytes = f_handle.handle_bytes;
+>  
+>  	/* convert handle size to multiple of sizeof(u32) */
+>  	handle_dwords = f_handle.handle_bytes >> 2;
+> @@ -51,8 +56,8 @@ static long do_sys_name_to_handle(const struct path *path,
+>  	handle->handle_type = retval;
+>  	/* convert handle size to bytes */
+>  	handle_bytes = handle_dwords * sizeof(u32);
+> -	handle->handle_bytes = handle_bytes;
+> -	if ((handle->handle_bytes > f_handle.handle_bytes) ||
+> +	/* check if handle_bytes would have exceeded the allocation */
+> +	if ((handle_bytes < 0) || (handle_bytes > f_handle.handle_bytes) ||
+>  	    (retval == FILEID_INVALID) || (retval < 0)) {
+>  		/* As per old exportfs_encode_fh documentation
+>  		 * we could return ENOSPC to indicate overflow
+> @@ -68,6 +73,8 @@ static long do_sys_name_to_handle(const struct path *path,
+>  		handle_bytes = 0;
+>  	} else
+>  		retval = 0;
+> +	/* the "valid" number of bytes may fewer than originally allocated */
+> +	handle->handle_bytes = handle_bytes;
+>  	/* copy the mount id */
+>  	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
+>  	    copy_to_user(ufh, handle,
+> -- 
+> 2.34.1
+> 
+> 
 
