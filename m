@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-16130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F55C898E1E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 20:42:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BCA898E24
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 20:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC30928AA3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 18:42:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2871DB25816
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 18:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F4B13249E;
-	Thu,  4 Apr 2024 18:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17A01339B1;
+	Thu,  4 Apr 2024 18:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VKCpiVdp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a/Av4pcm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37241131E25
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Apr 2024 18:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E35133998
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Apr 2024 18:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712256133; cv=none; b=NX4zYhkdDPar23A58K6vawXciwS5oHsAqRrehHHu6nug4VrQ2YXpDZS+xg5HHkKQZ52+EN2FLkUiQkkmAtrWg7kWtlvPq5F5Vtr+lyoHtyHhmDjSylHibZ7zyERODnKUKVG+u+2S6U1iIaVbzoIIDYQxuwueaGdvdb2X6LL3MTo=
+	t=1712256146; cv=none; b=b+CYoi3/FVTbVLzJZyGyEIq4nqae/Hgm4DrdO7lHyMU4Un0GUf7VMBnBUg9wfOwjfJlGH5yNYgk47o7Zwpai2mWWXMAIbv+PWVWf5Ulg13yvESe8lXr2Fkkd3xgRHXu0hvXWXQfscR/UxeaKUPbzhdYM/1z9fL02b+yiTPck7co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712256133; c=relaxed/simple;
-	bh=mxtQGu0VbikEl6edah1T6fmv0PPTmUEkqHJQ0AQh2eo=;
+	s=arc-20240116; t=1712256146; c=relaxed/simple;
+	bh=Z83ja+l0VTRUrB5Qq4P4rMl9hozC74q/e2MCCZIoYCg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LVJ1M6uu7PrXx7jL25+wfxe1hopsgjypEkvJU8rSKu11ek72pTxTUOB5RjyWEQqwsH9hF+kQV3LkMQ9kjvydnLceSd9vcrg8NHGEE/npBbKndX1kGfnX9J4++/UJ/ouxYwNnReoWfvNQN94U0nLd6wqsmsz1ZuOkUcrWpCtsiQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VKCpiVdp; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=e5yGsSaSEusQD01AY6udGFIdQ548EiKvRQ11j9kvPM+4eU3+2tWG0t5uWxw9X6VhfBj0fTiviaHozbAS0Z0RtlZ3+ItlJxi1b2CghAjZXqEN25OxHao8jHRtcKSfUsyHg33oj/8fDpdjE8c63id+YDkYUCUPXfl4IoWfGzwpPck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a/Av4pcm; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712256131;
+	s=mimecast20190719; t=1712256143;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VXVUwGYTU0aDJqcnnXTAYUUhn2eC/lSy0nJKGgogFh4=;
-	b=VKCpiVdpfydUGsgp5L38jVW+qMOQkaJrHVKiEr8xmEZHWKhRa+RFXCvPS0NjtidHHnLlTA
-	X0QCVxZgXcJfQjY6mMj3Bump7QFSbuOOX+3AXdPNe7K72JdWY3bKBVj0CPlN3hRvU1PLCV
-	CmoQlfNe3A8sP4csxgjA0r1KAv7SuDE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=KPkoIEd0Yplqf5rZjUYHBbb+iWAlDOmARVQjBnVydxI=;
+	b=a/Av4pcmu8G7MHBn1/Lslfa3YVumcZTefOgONUpcteOGnI1QS5Cv58/Ge24gc7RFnN2WB/
+	CUIgLcddwSjmvKjrypebx99mdqFBpwI0uU/p9gi/TA0pjRUAaj0pOqCI42485oxnhwBB1c
+	iL03JAa4duZQ/6t4ydj1O28lQ6FZfy0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-280-WSmJl-tyMS2FPKxSyokZ9w-1; Thu, 04 Apr 2024 14:42:08 -0400
-X-MC-Unique: WSmJl-tyMS2FPKxSyokZ9w-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-34386849dbcso764026f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Apr 2024 11:42:08 -0700 (PDT)
+ us-mta-443-mbnxDxd2NOmsSXXTKkyNkQ-1; Thu, 04 Apr 2024 14:42:22 -0400
+X-MC-Unique: mbnxDxd2NOmsSXXTKkyNkQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4155db7b58cso6483775e9.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Apr 2024 11:42:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712256127; x=1712860927;
+        d=1e100.net; s=20230601; t=1712256141; x=1712860941;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VXVUwGYTU0aDJqcnnXTAYUUhn2eC/lSy0nJKGgogFh4=;
-        b=hWWnBUe3BrYL4G70jwxu3CnSwqBRpEtEfj44SqufQYjES3PAhhVnSpdJmC58KHI8uM
-         LiBT6wUe741Qe32OdGb7uNsXzC2jZib+5vBU8W3Q29JjrFPOqbQxOZAa+dx4/F7FJLBQ
-         d6p2AE5BsWP2rsDJ+xNYGc0IyFVhW81/Oahi8b3x843W9/FN7o/fADkQVKiQjVLUNSE5
-         PrJa1wPDcNtAOONryl5akJB+pAKPmJQ7L0079DbVSxXm32CsgdGfEnpia7VoqwXRqX2X
-         rQd2txei2cO1XN8PidqjK3zBWvsw9SDW1hpQwTBFxsXVIvQUBlN/pRMwboHgwEvcrq7M
-         SqUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtjMA0kS/tQeH6N+3wZUm4EG3LWmePdY3upnNoKjAWYiL0l4DFZ3bn2AT2TBn9VQq9AXQZH+oJo2Ty4Ujtc7l15PNLnkbR/24TU7CwOQ==
-X-Gm-Message-State: AOJu0Yxrt+mAgc7cWoOj8GSTQ9esZeKhnZvDD17nZFaxZoaPLYQ189or
-	M+8GSqrc3RYdgCwOfgsrzvW5t+Z9mvhbtM5mlgskbObd2qKHIg+liHfFoBeyjKWrRuGR5GSfknA
-	pZoVGu8PjtBcGATkM8J6dosm2OfDzHuJmBx4S2wOJ7VwKBvxc1aKbKsdcjORCLH8=
-X-Received: by 2002:a05:6000:10ce:b0:343:bb25:73d9 with SMTP id b14-20020a05600010ce00b00343bb2573d9mr1850713wrx.22.1712256127670;
-        Thu, 04 Apr 2024 11:42:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2HHFzRhzrRdESIVf8/2Mx2b70/YDKA5fSlJbHgiZiR+greKXVxjMfZKl+GSkXsL5nirBGeg==
-X-Received: by 2002:a05:6000:10ce:b0:343:bb25:73d9 with SMTP id b14-20020a05600010ce00b00343bb2573d9mr1850702wrx.22.1712256127245;
-        Thu, 04 Apr 2024 11:42:07 -0700 (PDT)
+        bh=KPkoIEd0Yplqf5rZjUYHBbb+iWAlDOmARVQjBnVydxI=;
+        b=aaJBjgZ1HQITODZKj8JQWzP/J4RvSmXWdQfvJO0TByxTLsZvljIIPSeYVzuqapqX4W
+         f9E3P1ZBYYZUro2RpvGl0hLS4kLmpT6ThcNFg1zSoL1WyUUfVVmcwcBN+MILQHBHUkeb
+         F3ah0tDin74GorVImpd9zJR2sPBTzleeCt9liBeJo0T5HHBdFAegojcJJRdxttrTd/zZ
+         NC30vij9Di8NlgZqWBKziWgCi6bLP03/9R7MIJn5+7hrhkAh2WApzOqetxcM1XAxpgnR
+         0WcIR/tRHtuGD2JN3Ud8foilp9P+1UlEK6prEOHdbbWnaGFri0Mlafut+uJUn5mIpsdD
+         ZycQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPL1+KIponnth94y4I/PwlUdxZU9NBPgbLoIEJc8oEFMvLuNkJmpzU/UZd079wRd08mM5JH/xEx0TFV/CP2Z31CBFDcfHxFCgINGkWWg==
+X-Gm-Message-State: AOJu0YzgLsXAQ2p+qkvsQxptAq+KHzsMSdP+DLvzlLdzglP1SWtLbfXU
+	AQ85kGn06L9xMuw6J2kB5wzzw+uJkpqwII7vNobVhTng0kLsHYpx86LLGOD61in0Od7ajGmxkPb
+	YYGRWYA9SxuvT7kLrcviHYG+3GSdKwz7TPGcmTXQ5Ve2sexuRRiXtiTYzZ15uaQKjWBwY714=
+X-Received: by 2002:a05:600c:63c8:b0:415:6ad6:cc27 with SMTP id dx8-20020a05600c63c800b004156ad6cc27mr445666wmb.24.1712256141186;
+        Thu, 04 Apr 2024 11:42:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEU24YjPAP9C4DylSiEsof/KT8uoS11i4c/uG8ULhF5tETjoxmnQOU/nJALx5N/lBRNUjMWaw==
+X-Received: by 2002:a05:600c:63c8:b0:415:6ad6:cc27 with SMTP id dx8-20020a05600c63c800b004156ad6cc27mr445659wmb.24.1712256140787;
+        Thu, 04 Apr 2024 11:42:20 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c743:de00:7030:120f:d1c9:4c3c? (p200300cbc743de007030120fd1c94c3c.dip0.t-ipconnect.de. [2003:cb:c743:de00:7030:120f:d1c9:4c3c])
-        by smtp.gmail.com with ESMTPSA id o27-20020adfa11b000000b00341cc9c1871sm77479wro.0.2024.04.04.11.42.06
+        by smtp.gmail.com with ESMTPSA id c2-20020a05600c0a4200b004162bac1393sm66380wmq.43.2024.04.04.11.42.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Apr 2024 11:42:06 -0700 (PDT)
-Message-ID: <8b78e61f-5620-46ec-a391-983a7d88768d@redhat.com>
-Date: Thu, 4 Apr 2024 20:42:06 +0200
+        Thu, 04 Apr 2024 11:42:20 -0700 (PDT)
+Message-ID: <9eef3aa9-9a1e-49c5-90a8-090c2a200f2b@redhat.com>
+Date: Thu, 4 Apr 2024 20:42:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,12 +83,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] proc: Convert smaps_account() to use a folio
+Subject: Re: [PATCH 3/4] mm: Remove page_idle and page_young wrappers
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 References: <20240402201252.917342-1-willy@infradead.org>
- <20240402201252.917342-3-willy@infradead.org>
+ <20240402201252.917342-4-willy@infradead.org>
 Content-Language: en-US
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
@@ -136,12 +136,13 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240402201252.917342-3-willy@infradead.org>
+In-Reply-To: <20240402201252.917342-4-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 02.04.24 22:12, Matthew Wilcox (Oracle) wrote:
-> Replace seven calls to compound_head() with one.
+> All users have now been converted to the folio equivalents, so
+> remove the page wrappers.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
