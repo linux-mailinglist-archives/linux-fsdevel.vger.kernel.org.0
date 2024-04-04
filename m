@@ -1,117 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-16117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3D4898987
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 16:07:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF828898A3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 16:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9061F28322
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 14:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4571E1F2D48E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 14:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A0D128833;
-	Thu,  4 Apr 2024 14:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933B91C698;
+	Thu,  4 Apr 2024 14:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="fG5DuGnx"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HxUUJ+JF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iJPPRKV/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HxUUJ+JF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iJPPRKV/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from box.fidei.email (box.fidei.email [71.19.144.250])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB677129E88
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Apr 2024 14:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C73715EA6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Apr 2024 14:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712239635; cv=none; b=hEyK2lcaLLDi7R6O+c9qRp7GaWm4iENpEnu8dTRdGO6xrP7E8ngYqCfQDTIg3TzaIMDOIBhCkSAvILmlXGfHVLBseytesffdxWG317A3HnGx5Y1qZTYqD4O/h1t4b2YzA2KgseJDLGPqlZA0Tr/LKIvz2rBGuyg+kactkp49n2k=
+	t=1712241289; cv=none; b=jYH0wiZXUpeoLFZKkn0eAIIXqk10XKRFh4GE4+KEsqSF9TXKSxsDIFWttbzZiMtMyOd+F1UNCIbxj2i2XBCWCe04bva4yFH1Md6/xK+AWaZclhuIegzMSeFNjHRnFh+SpI1r67dE3CNbxC8E8lNlO7VI3breQx/27CgtTUd1rLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712239635; c=relaxed/simple;
-	bh=E+j9cz4kxBl1NQUZzQyZHjbBiKZgtg0pRVyiZQ0eJZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gWqJXh5JTll4ia6v0YC2168KKj8a9OireJ3gODViaE/jJEA+4xuhtgIGG31DKnDKGxIBlWAsCKFMUEHxOyUZjNlQEx+4xc8kMpJzPs++weood6d4L+zET3Ya333cmvT9gHAfXU+/QrxrrLX7FMyJFShZHK2EeN1QZhPaAsoQuUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=fG5DuGnx; arc=none smtp.client-ip=71.19.144.250
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
-Received: from authenticated-user (box.fidei.email [71.19.144.250])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	s=arc-20240116; t=1712241289; c=relaxed/simple;
+	bh=yqRIZt9uiklxMvZCl6WqnC3Fb66BWd6I0hAiX1PluJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFjg+0mhH3Q+9jFtXDLu5xLTHESRI+Jz3QAqbcv4afIsaAC2o4XgzyNeC7dFbhxduAUMlMpQo3yVY7WRPoAvmOc6+W+eT6l4QNMps312FBL5rmIK3U6UX7yX5hu+AKV2eUr+OQbrSyWBAbbTPGAMK5ecqRU7d9bnm3zjo/OPy6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HxUUJ+JF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iJPPRKV/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HxUUJ+JF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iJPPRKV/; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by box.fidei.email (Postfix) with ESMTPSA id 669BB82A0E;
-	Thu,  4 Apr 2024 10:07:06 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
-	t=1712239627; bh=E+j9cz4kxBl1NQUZzQyZHjbBiKZgtg0pRVyiZQ0eJZg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fG5DuGnxr+zxlJSErXfcbJKh2MCqvy9o/QGFKS+VMkX/FxhnfjIw3d6ibbMNv5dzx
-	 uf12s/92do9DhzoLCMPIho0aNSTTWYobCUpWQn3Pj+nNALdr3QG6xtcVRYTDavKKea
-	 A4q/oqBtDhWSsC3zW29qGmdiemy1yH04mYoqktsDa+Trir8x8U03a+AOOkEU2i6FsQ
-	 7PaNyIpEq9taovfxMmJ7QAlaSI0106t5lKR3wBRhDSKQB6Qw3RyAuQeXzK5J8JuUf+
-	 YW4UbFezh2wDNFnDtMxplUcz2HPn0kPCTYEMCBcPwhW3kQ4YzblO728eE2VFW9f3do
-	 vtHKxeKebZVeg==
-Message-ID: <e9aac186-7935-485e-b067-e80ff19743dc@dorminy.me>
-Date: Thu, 4 Apr 2024 10:07:05 -0400
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6C0C037C7F;
+	Thu,  4 Apr 2024 14:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1712241284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l5qwxwlOlToBrIXRxAVRhFJY83jpHsG7WQFBwQ4SOFg=;
+	b=HxUUJ+JFiEZcGFJs7urJ281UsQ7B0AO1EsP2X7GTl9yipr194O7rtliDKPMjoJeFfxFGDh
+	+q774nXbZshNM+Qs35ECQ01lpGhGxoLaRrpZ0VV9kU6NsikiwuqatTlf5cCCkVaAWVdE5S
+	pcxBq/KkEdYgRKPGCeeOEEOrnj5Fa5U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1712241284;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l5qwxwlOlToBrIXRxAVRhFJY83jpHsG7WQFBwQ4SOFg=;
+	b=iJPPRKV/9cijPd0iY7J86VTe9A0IPETq/VvrchFqNyI9beI0Zn4b627wgvu3TyhJbWJEoh
+	4p7HwIVecpFPAsBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1712241284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l5qwxwlOlToBrIXRxAVRhFJY83jpHsG7WQFBwQ4SOFg=;
+	b=HxUUJ+JFiEZcGFJs7urJ281UsQ7B0AO1EsP2X7GTl9yipr194O7rtliDKPMjoJeFfxFGDh
+	+q774nXbZshNM+Qs35ECQ01lpGhGxoLaRrpZ0VV9kU6NsikiwuqatTlf5cCCkVaAWVdE5S
+	pcxBq/KkEdYgRKPGCeeOEEOrnj5Fa5U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1712241284;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l5qwxwlOlToBrIXRxAVRhFJY83jpHsG7WQFBwQ4SOFg=;
+	b=iJPPRKV/9cijPd0iY7J86VTe9A0IPETq/VvrchFqNyI9beI0Zn4b627wgvu3TyhJbWJEoh
+	4p7HwIVecpFPAsBw==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 5E5BE13298;
+	Thu,  4 Apr 2024 14:34:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id Is8EF4S6DmZPCwAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 04 Apr 2024 14:34:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 06677A0816; Thu,  4 Apr 2024 16:34:43 +0200 (CEST)
+Date: Thu, 4 Apr 2024 16:34:43 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH 00/10] Further reduce overhead of fsnotify permission
+ hooks
+Message-ID: <20240404143443.zfurlpe27m4mysrs@quack3>
+References: <20240317184154.1200192-1-amir73il@gmail.com>
+ <CAOQ4uxgssYK=vL3=0af6gh+AgSPx__UR2cU6gAu_1a3nVdYKLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v15 9/9] fuse: auto-invalidate inode attributes in
- passthrough mode
-Content-Language: en-US
-To: Amir Goldstein <amir73il@gmail.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-References: <20240206142453.1906268-1-amir73il@gmail.com>
- <20240206142453.1906268-10-amir73il@gmail.com>
- <c52a81b4-2e88-4a89-b2e5-fecbb3e3d03e@dorminy.me>
- <a939b9b5-fb66-42ea-9855-6c7275f17452@fastmail.fm>
- <CAOQ4uxgVmG6QGVHEO1u-F3XC_1_sCkP=ekfEZtgeSpsrTkX21w@mail.gmail.com>
-From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-In-Reply-To: <CAOQ4uxgVmG6QGVHEO1u-F3XC_1_sCkP=ekfEZtgeSpsrTkX21w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgssYK=vL3=0af6gh+AgSPx__UR2cU6gAu_1a3nVdYKLA@mail.gmail.com>
+X-Spam-Flag: NO
+X-Spam-Score: -1.98
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.98 / 50.00];
+	BAYES_HAM(-1.18)[88.95%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap2.dmz-prg2.suse.org:helo,imap2.dmz-prg2.suse.org:rdns,suse.com:email]
 
-
-> Sweet Tea,
+On Tue 19-03-24 11:59:11, Amir Goldstein wrote:
+> On Sun, Mar 17, 2024 at 8:42 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > Jan,
+> >
+> > Commit 082fd1ea1f98 ("fsnotify: optimize the case of no parent watcher")
+> > has reduced the CPU overhead of fsnotify hooks, but we can further
+> > reduce the overhead of permission event hooks, by avoiding the call to
+> > fsnotify() and fsnotify_parent() altogether when there are no permission
+> > event watchers on the sb.
+> >
+> > The main motivation for this work was to avoid the overhead that was
+> > reported by kernel test robot on the patch that adds the upcoming
+> > per-content event hooks (i.e. FS_PRE_ACCESS/FS_PRE_MODIFY).
+> >
+> > Kernel test robot has confirmed that with this series, the addition of
+> > pre-conent fsnotify hooks does not result in any regression [1].
+> > Kernet test robot has also reported performance improvements in some
+> > workloads compared to upstream on an earlier version of this series, but
+> > still waiting for the final results.
 > 
-> Can you please explain the workload where you find that this patch is needed?
+> FYI, the results are back [1] and they show clear improvement in two
+> workloads by this patch set as expected when the permission hooks
+> are practically being disabled:
 
-I was researching before sending out my own version of attr passthrough 
-- it seemed like a step in the direction, but then the code in-tree 
-wasn't the same.
+Patches are now merged into my tree.
 
-> Is your workload using mmap writes? requires a long attribute cache timeout?
-> Does your workload involve mixing passthrough IO and direct/cached IO
-> on the same inode at different times or by different open fd's?
-> 
-> I would like to know, so I can tell you if getattr() passthrough design is
-> going to help your use case.
-> 
-> For example, my current getattr() passthrough design (in my head)
-> will not allow opening the inode in cached IO mode from lookup time
-> until evict/forget, unlike the current read/write passthrough, which is
-> from first open to last close.
-
-I think the things I'd been working on is very similar.
-
-Two possible HSM variants, both focused on doing passthrough IO with 
-minimal involvement from the fuse server in at least some cases.
-
-One would be using passthrough for temporary ingestion of some memory 
-state for a workload, user writes files and the FUSE server can choose 
-to passthrough them to local storage temporarily or to send them to 
-remote storage -- as ingestion requires pausing the workload and is 
-therefore very expensive, I'd like to pass through attr updates to the 
-backing file so that there are minimal roundtrips to the fuse server 
-during write. Later the HSM would move the files to remote storage, or 
-delete them.
-
-One would be using passthrough for binaries -- providing specific sets 
-of mostly binaries with some tracking on open/close, so the HSM can 
-delete unused sets. Again the goal is to avoid metadata query roundtrips 
-to userspace for speed; we don't expect a file open in passthrough mode 
-to be opened again for FUSE-server-mediated IO until the passthrough 
-version is closed.
-
-Thanks!
-
-Sweet Tea
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
