@@ -1,170 +1,363 @@
-Return-Path: <linux-fsdevel+bounces-16126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5774F898C91
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 18:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CAF3898CCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 18:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16F7B2243F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 16:49:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B789B272B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 16:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF7E12CD9C;
-	Thu,  4 Apr 2024 16:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE9312BF22;
+	Thu,  4 Apr 2024 16:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mZVvZ5Qt"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VE+TMXT1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CFE1C6A5;
-	Thu,  4 Apr 2024 16:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2474129E8A
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Apr 2024 16:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712249327; cv=none; b=fTfPXjgtTs8ZqZFLuF/qb61Dnf3nGehB6sFWZa0CtK9znNpO3TPOYCgaATl0e/A6yhL8UDfD7xJ5emXynPnEQlc/6av1x5my8qB4p2G23HsZ5ancVftxTgUkXht+xO781iIGagv25BoagP77uAykj5OyyoJIL3Zi8o/FYOFgYwQ=
+	t=1712249892; cv=none; b=IolHL/Hku+Lv+tuwnEXM3eV1sb9LzpW6acLpNdL4xHtq9tHuPJDCaC//TBogOpdXRtxpyGPCnuZMyUFl3WU2G/bRn/Pl5RKMUzrNEs7Ng+QDaSj2Lx80U0A54Q4q+pxf2HwabSqck7JpMSmGAoOrq/rlToUbcwHbWvd8nG0eFG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712249327; c=relaxed/simple;
-	bh=FItxQKIKnB6xDpTy4OuJ7+aJw2KPqlzMNdwMCbAlF6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pfb4GXbGLAP+qyUJNa2wieeOPLptd8Z4YYw3zuZgD7n29dHChK1SW3jjPGbo8yGq6W/aJKHm0EITRFQIPE9UmmeYGU8JZZxmFdVCFdlkviCaQ7cNpkxNcLVmO0af8wPyYfCtwQYBtbvQEu7sNwsYXWa8PyhH86W1wRxM4iu+zCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mZVvZ5Qt; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IAcMzbwzMSdGjUZJwsigBkmbiIdxzP3w50+Ad4sa5UQ=; b=mZVvZ5QtSrlprrhnUVhWEWIU7E
-	sphdhQo7g/IJfa+/FvwlZsRFYmJ5wkNkd4AWif4Utjy+vMZEnwOad5hHf+SRbN7FGKw+i0FGqJBM4
-	yF2PaxBkNGMpqYBfoujAS+qFScyAlz3vNlovdCRtdSYfHINucazB4MwtfIsMPo5qEa0NQKwlFZIUA
-	VfRN+/hUWdkFBdAGtszp5axo9ZNsq2cyjqNAFaNh3mFRGcmLETrtGXGf3qXwEZGqMoZx63OmbHyON
-	JugVn8XGevOpUa3bOez65lUMoibZGmnJJ93pBOBTs99hw8DRim6xKVB8Vqfk/oU+BU912iDFwt/nX
-	hMyfZDfA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rsQGP-00000008SrU-2u2m;
-	Thu, 04 Apr 2024 16:48:33 +0000
-Date: Thu, 4 Apr 2024 17:48:33 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v6 00/10] block atomic writes
-Message-ID: <Zg7Z4aJtn3SxY5w1@casper.infradead.org>
-References: <20240326133813.3224593-1-john.g.garry@oracle.com>
- <ZgOXb_oZjsUU12YL@casper.infradead.org>
- <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
+	s=arc-20240116; t=1712249892; c=relaxed/simple;
+	bh=Ug3wNn9rUYSiApUWsdmJAfxaH7gkdUjC0d0zsQR/y4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SDNxJe0pvwkjfIUAMgWWkhwlMCAPxGFiReggudSdf1sfN/F50atTXj/HV/D7eB2+nVbFbuPgWKlmMlOuUhNMS8OLVavoemiWXXCssguC7h1rwPe9A62fleIDdNosZW0Q7zQT6cJP+59tZQPi+5Xat0LmugoNAxRNp6Yw9vhzeJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VE+TMXT1; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-ddaad2aeab1so1227882276.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Apr 2024 09:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1712249890; x=1712854690; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SnNkrv9amLNSOChMZU1xiNRngWLHsWRGHJdyDWSVIjQ=;
+        b=VE+TMXT19IlGsNP/1GZ4QkeACDqlNHhbUWPxK9JAFxupGgfIy3o9CUYHwC3zIILeE/
+         dw0le8WSHyjn/yq30nG7WGIBs+X6a9VPfx1czXi3gORFjnFlex63/z9NmeK+P7uf4FiD
+         RHJKVnZ48GhO6Q4rq8jgk0qaybB9hdHz4S+E0g6+tSZchhycJvFOpbl7D2UtYx1SXGvj
+         gepwgqcJ7Jg/qqAYl7LvxwqsD5gHQVzcaToe3QQoSJR+sUbcEAX8lpWLwVUPvWrUQ6mm
+         MWXNXICHXg6DmfFEa3hCb/McRPKDAOzCAeHvys1ChiPt0IZ9j9LrXVHefmOmwHrmBH7X
+         jS3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712249890; x=1712854690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SnNkrv9amLNSOChMZU1xiNRngWLHsWRGHJdyDWSVIjQ=;
+        b=TMpS/QwQIhMA2ZmK/5woI6jvC+QQ0dJZPdZz4VCHMP+siQgNJJppewX/BdzMTu9JVe
+         ZveQX1J3GwMc9mas3FR+U4NxDKYvtoaE+w/7hL6bh+AM2X8JiZrpiVZMVPimCvKUiief
+         /iNhZEgsr2TprBtp7gexE9YeuXzJ+HxF/sgqldKNZqj3pDE3t4UtYx1ewZEbS6GgmPUJ
+         x//fUMy/Jd6/icbfykQxqJnRyt/lPrMj4BU75mBVUB3+2+vfDPYaGNg2v5gabZJxGnf0
+         QdY6SNOETmqvmp6YLWQhJNRrd7Lfy8hjDIONDYxutPS5nQ3fv1lpYc3fhRIqAARph0Ql
+         9+kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSa5HjMgYtY9w0iUWD5A2sArF1h7g9XGuoECih45zpKWVG2F5czkA8jeyXZwYisTBUtTdAo7ri7pwi9UbigVSl0gfVJc2lI/jZG8opIw==
+X-Gm-Message-State: AOJu0YzpIU3uiid1ownv8Q+0PvWgtnBSxDutTuCqmfuDtJmq+KYufAaO
+	yTeZ293DPMrc5fNoyHvz4CEPkrhasUG/EmIwCOmSMLx/d9E81rb1++sHEUxVEhIjmC3YIN9pLxS
+	3+gC91zfV2Vds5Ss/u9JNRdREFHXOQGfDrfMe
+X-Google-Smtp-Source: AGHT+IF7B3akhgfxRrnqjce/FXowsw1E3eakccZbE6M28J8HXpTOkV5OPQcXw5mCpvOPKhYETIzOkOwrlUerT+o2JDc=
+X-Received: by 2002:a5b:481:0:b0:dcc:9d30:58a0 with SMTP id
+ n1-20020a5b0481000000b00dcc9d3058a0mr2683124ybp.64.1712249889460; Thu, 04 Apr
+ 2024 09:58:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
+References: <20240321163705.3067592-1-surenb@google.com> <20240321163705.3067592-6-surenb@google.com>
+ <20240321133147.6d05af5744f9d4da88234fb4@linux-foundation.org>
+ <gnqztvimdnvz2hcepdh3o3dpg4cmvlkug4sl7ns5vd4lm7hmao@dpstjnacdubq>
+ <20240321150908.48283ba55a6c786dee273ec3@linux-foundation.org>
+ <bliyhrwtskv5xhg3rxxszouxntrhnm3nxhcmrmdwwk4iyx5wdo@vodd22dbtn75> <CAJuCfpEO4NjYysJ7X8ME_GjHc41u-_dK4AhrhmaSMh_9mxaHSA@mail.gmail.com>
+In-Reply-To: <CAJuCfpEO4NjYysJ7X8ME_GjHc41u-_dK4AhrhmaSMh_9mxaHSA@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 4 Apr 2024 09:57:55 -0700
+Message-ID: <CAJuCfpEGJHs=ygb2_PNcqEy__dvhby5N7dvwnno=3pDEvE1+2g@mail.gmail.com>
+Subject: Re: [PATCH v6 05/37] fs: Convert alloc_inode_sb() to a macro
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com, tj@kernel.org, 
+	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, 
+	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com, 
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 27, 2024 at 01:37:41PM +0000, John Garry wrote:
-> On 27/03/2024 03:50, Matthew Wilcox wrote:
-> > On Tue, Mar 26, 2024 at 01:38:03PM +0000, John Garry wrote:
-> > > The goal here is to provide an interface that allows applications use
-> > > application-specific block sizes larger than logical block size
-> > > reported by the storage device or larger than filesystem block size as
-> > > reported by stat().
-> > > 
-> > > With this new interface, application blocks will never be torn or
-> > > fractured when written. For a power fail, for each individual application
-> > > block, all or none of the data to be written. A racing atomic write and
-> > > read will mean that the read sees all the old data or all the new data,
-> > > but never a mix of old and new.
-> > > 
-> > > Three new fields are added to struct statx - atomic_write_unit_min,
-> > > atomic_write_unit_max, and atomic_write_segments_max. For each atomic
-> > > individual write, the total length of a write must be a between
-> > > atomic_write_unit_min and atomic_write_unit_max, inclusive, and a
-> > > power-of-2. The write must also be at a natural offset in the file
-> > > wrt the write length. For pwritev2, iovcnt is limited by
-> > > atomic_write_segments_max.
-> > > 
-> > > There has been some discussion on supporting buffered IO and whether the
-> > > API is suitable, like:
-> > > https://lore.kernel.org/linux-nvme/ZeembVG-ygFal6Eb@casper.infradead.org/
-> > > 
-> > > Specifically the concern is that supporting a range of sizes of atomic IO
-> > > in the pagecache is complex to support. For this, my idea is that FSes can
-> > > fix atomic_write_unit_min and atomic_write_unit_max at the same size, the
-> > > extent alignment size, which should be easier to support. We may need to
-> > > implement O_ATOMIC to avoid mixing atomic and non-atomic IOs for this. I
-> > > have no proposed solution for atomic write buffered IO for bdev file
-> > > operations, but I know of no requirement for this.
-> > 
-> > The thing is that there's no requirement for an interface as complex as
-> > the one you're proposing here.  I've talked to a few database people
-> > and all they want is to increase the untorn write boundary from "one
-> > disc block" to one database block, typically 8kB or 16kB.
-> > 
-> > So they would be quite happy with a much simpler interface where they
-> > set the inode block size at inode creation time,
-> 
-> We want to support untorn writes for bdev file operations - how can we set
-> the inode block size there? Currently it is based on logical block size.
+On Thu, Mar 21, 2024 at 3:47=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Thu, Mar 21, 2024 at 3:17=E2=80=AFPM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >
+> > On Thu, Mar 21, 2024 at 03:09:08PM -0700, Andrew Morton wrote:
+> > > On Thu, 21 Mar 2024 17:15:39 -0400 Kent Overstreet <kent.overstreet@l=
+inux.dev> wrote:
+> > >
+> > > > On Thu, Mar 21, 2024 at 01:31:47PM -0700, Andrew Morton wrote:
+> > > > > On Thu, 21 Mar 2024 09:36:27 -0700 Suren Baghdasaryan <surenb@goo=
+gle.com> wrote:
+> > > > >
+> > > > > > From: Kent Overstreet <kent.overstreet@linux.dev>
+> > > > > >
+> > > > > > We're introducing alloc tagging, which tracks memory allocation=
+s by
+> > > > > > callsite. Converting alloc_inode_sb() to a macro means allocati=
+ons will
+> > > > > > be tracked by its caller, which is a bit more useful.
+> > > > >
+> > > > > I'd have thought that there would be many similar
+> > > > > inlines-which-allocate-memory.  Such as, I dunno, jbd2_alloc_inod=
+e().
+> > > > > Do we have to go converting things to macros as people report
+> > > > > misleading or less useful results, or is there some more general
+> > > > > solution to this?
+> > > >
+> > > > No, this is just what we have to do.
+> > >
+> > > Well, this is something we strike in other contexts - kallsyms gives =
+us
+> > > an inlined function and it's rarely what we wanted.
+> > >
+> > > I think kallsyms has all the data which is needed to fix this - how
+> > > hard can it be to figure out that a particular function address lies
+> > > within an outer function?  I haven't looked...
+> >
+> > This is different, though - even if a function is inlined in multiple
+> > places there's only going to be one instance of a static var defined
+> > within that function.
+>
+> I guess one simple way to detect the majority of these helpers would
+> be to filter all entries from /proc/allocinfo which originate from
+> header files.
+>
+> ~# grep ".*\.h:." /proc/allocinfo
+>       933888      228 include/linux/mm.h:2863 func:pagetable_alloc
+>          848       53 include/linux/mm_types.h:1175 func:mm_alloc_cid
+>            0        0 include/linux/bpfptr.h:70 func:kvmemdup_bpfptr
+>            0        0 include/linux/bpf.h:2237 func:bpf_map_kmalloc_node
+>            0        0 include/linux/bpf.h:2256 func:bpf_map_alloc_percpu
+>            0        0 include/linux/bpf.h:2256 func:bpf_map_alloc_percpu
+>            0        0 include/linux/bpf.h:2237 func:bpf_map_kmalloc_node
+>            0        0 include/linux/bpf.h:2249 func:bpf_map_kvcalloc
+>            0        0 include/linux/bpf.h:2243 func:bpf_map_kzalloc
+>            0        0 include/linux/bpf.h:2237 func:bpf_map_kmalloc_node
+>            0        0 include/linux/ptr_ring.h:471
+> func:__ptr_ring_init_queue_alloc
+>            0        0 include/linux/bpf.h:2256 func:bpf_map_alloc_percpu
+>            0        0 include/linux/bpf.h:2237 func:bpf_map_kmalloc_node
+>            0        0 include/net/tcx.h:80 func:tcx_entry_create
+>            0        0 arch/x86/include/asm/pgalloc.h:156 func:p4d_alloc_o=
+ne
+>       487424      119 include/linux/mm.h:2863 func:pagetable_alloc
+>            0        0 include/linux/mm.h:2863 func:pagetable_alloc
+>          832       13 include/linux/jbd2.h:1607 func:jbd2_alloc_inode
+>            0        0 include/linux/jbd2.h:1591 func:jbd2_alloc_handle
+>            0        0 fs/nfs/iostat.h:51 func:nfs_alloc_iostats
+>            0        0 include/net/netlabel.h:281 func:netlbl_secattr_cach=
+e_alloc
+>            0        0 include/net/netlabel.h:381 func:netlbl_secattr_allo=
+c
+>            0        0 include/crypto/internal/acompress.h:76
+> func:__acomp_request_alloc
+>         8064       84 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>         1016       74 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>          384        4 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>          704        3 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>           32        1 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>           64        1 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>           40        2 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>           32        1 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>        30000      625 include/acpi/platform/aclinuxex.h:67
+> func:acpi_os_acquire_object
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>            0        0 include/acpi/platform/aclinuxex.h:67
+> func:acpi_os_acquire_object
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>          512        1 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>          192        6 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>          192        3 include/acpi/platform/aclinuxex.h:52 func:acpi_os_a=
+llocate
+>        61992      861 include/acpi/platform/aclinuxex.h:67
+> func:acpi_os_acquire_object
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 include/acpi/platform/aclinuxex.h:67
+> func:acpi_os_acquire_object
+>            0        0 include/acpi/platform/aclinuxex.h:57
+> func:acpi_os_allocate_zeroed
+>            0        0 drivers/iommu/amd/amd_iommu.h:141 func:alloc_pgtabl=
+e_page
+>            0        0 drivers/iommu/amd/amd_iommu.h:141 func:alloc_pgtabl=
+e_page
+>            0        0 drivers/iommu/amd/amd_iommu.h:141 func:alloc_pgtabl=
+e_page
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>            0        0 include/linux/hid_bpf.h:154 func:call_hid_bpf_rdesc=
+_fixup
+>            0        0 include/linux/skbuff.h:3392 func:__dev_alloc_pages
+>       114688       56 include/linux/ptr_ring.h:471
+> func:__ptr_ring_init_queue_alloc
+>            0        0 include/linux/skmsg.h:415 func:sk_psock_init_link
+>            0        0 include/linux/bpf.h:2237 func:bpf_map_kmalloc_node
+>            0        0 include/linux/ptr_ring.h:628 func:ptr_ring_resize_m=
+ultiple
+>        24576        3 include/linux/ptr_ring.h:471
+> func:__ptr_ring_init_queue_alloc
+>            0        0 include/net/netlink.h:1896 func:nla_memdup
+>            0        0 include/linux/sockptr.h:97 func:memdup_sockptr
+>            0        0 include/net/request_sock.h:131 func:reqsk_alloc
+>            0        0 include/net/tcp.h:2456 func:tcp_v4_save_options
+>            0        0 include/net/tcp.h:2456 func:tcp_v4_save_options
+>            0        0 include/crypto/hash.h:586 func:ahash_request_alloc
+>            0        0 include/linux/sockptr.h:97 func:memdup_sockptr
+>            0        0 include/linux/sockptr.h:97 func:memdup_sockptr
+>            0        0 net/sunrpc/auth_gss/auth_gss_internal.h:38
+> func:simple_get_netobj
+>            0        0 include/crypto/hash.h:586 func:ahash_request_alloc
+>            0        0 include/net/netlink.h:1896 func:nla_memdup
+>            0        0 include/crypto/skcipher.h:869 func:skcipher_request=
+_alloc
+>            0        0 include/net/fq_impl.h:361 func:fq_init
+>            0        0 include/net/netlabel.h:316 func:netlbl_catmap_alloc
+>
+> and it finds our example:
+>
+>          832       13 include/linux/jbd2.h:1607 func:jbd2_alloc_inode
+>
+> Interestingly the inlined functions which are called from multiple
+> places will have multiple entries with the same file+line:
+>
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>            0        0 include/linux/dma-fence-chain.h:91
+> func:dma_fence_chain_alloc
+>
+> So, duplicate entries can be also used as an indication of an inlined all=
+ocator.
+> I'll go chase these down and will post a separate patch converting them.
 
-ioctl(BLKBSZSET), I guess?  That currently limits to PAGE_SIZE, but I
-think we can remove that limitation with the bs>PS patches.
-
-> > and then all writes to
-> > that inode were guaranteed to be untorn.  This would also be simpler to
-> > implement for buffered writes.
-> 
-> We did consider that. Won't that lead to the possibility of breaking
-> existing applications which want to do regular unaligned writes to these
-> files? We do know that mysql/innodb does have some "compressed" mode of
-> operation, which involves regular writes to the same file which wants untorn
-> writes.
-
-If you're talking about "regular unaligned buffered writes", then that
-won't break.  If you cross a folio boundary, the result may be torn,
-but if you're crossing a block boundary you expect that.
-
-> Furthermore, untorn writes in HW are expensive - for SCSI anyway. Do we
-> always want these for such a file?
-
-Do untorn writes actually exist in SCSI?  I was under the impression
-nobody had actually implemented them in SCSI hardware.
-
-> We saw untorn writes as not being a property of the file or even the inode
-> itself, but rather an attribute of the specific IO being issued from the
-> userspace application.
-
-The problem is that keeping track of that is expensive for buffered
-writes.  It's a model that only works for direct IO.  Arguably we
-could make it work for O_SYNC buffered IO, but that'll require some
-surgery.
-
-> > Who's asking for this more complex interface?
-> 
-> It's not a case of someone specifically asking for this interface. This is
-> just a proposal to satisfy userspace requirement to do untorn writes in a
-> generic way.
-> 
-> From a user point-of-view, untorn writes for a regular file can be enabled
-> for up to a specific size* with FS_IOC_SETFLAGS API. Then they need to
-> follow alignment and size rules for issuing untorn writes, but they would
-> always need to do this. In addition, the user may still issue regular
-> (tearable) writes to the file.
-> 
-> * I think that we could change this to only allow writes for that specific
-> size, which was my proposal for buffered IO.
-> 
-> Thanks,
-> John
-> 
+I just posted https://lore.kernel.org/all/20240404165404.3805498-1-surenb@g=
+oogle.com/
+to report allocations done from the inlined functions in the headers
+to their callers.
 
