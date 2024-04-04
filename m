@@ -1,131 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-16088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFCDF897CBC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 01:55:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9973F897CF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 02:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71D2928A1A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Apr 2024 23:55:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A63FB2978E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 00:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2708F156C50;
-	Wed,  3 Apr 2024 23:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EBF3C30;
+	Thu,  4 Apr 2024 00:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSX60lOJ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nBfpn3r5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CE5139D;
-	Wed,  3 Apr 2024 23:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7316E23CE;
+	Thu,  4 Apr 2024 00:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712188527; cv=none; b=Pjep+Y285hmdQrpRGvzNbVIlX4UP7FyUuPNIL+tVpnNEux1rQ3p/9xDOIdFhQjouieI651+CDmackOAaIqEJ6KMvnw/+YLopiL0wc2tVAjWiFXHOnJrxsItC7fBHzwahqVE8eldmsFZ66dgeR06Eu9LxzwBOS/VA1DRK/v5EeX4=
+	t=1712189909; cv=none; b=l/UfcuKcKo0Oo7S44meJsEdrQDOGjXTX9EPNCRtqalZXvbq2L5sh7Thy6tXniUHRj1/Zz02m6yI6qb8pOAqCa1xGqSy5vttBjUOg/HUM3ZIRtrjRmeCJmlgyvogMiHTuQ0VbOZ80pGdQX5mgeYcinRYxMr5nu9GEyoBia3q0xNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712188527; c=relaxed/simple;
-	bh=HWHBdM5a47wfjfWmcaNM3oH6e3DQ6PEyk5hcv30TTn4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Z3yjUGBxLT+6xIM3Pad87pn8Gkkm3z13t+ogbdasqtHK3oxFvfcPObUQbmT+CtNidQfDRLOWXbfADgXG9Dg/uaOW/fGDT4DCU73eYKx+zKR4gZ1YsQxyONRe6D3pOyiv8OoS/SjhX2W7WQx6H0JqSXA1zmdc7ADMGZab3HJu/7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CSX60lOJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AA36C433F1;
-	Wed,  3 Apr 2024 23:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712188527;
-	bh=HWHBdM5a47wfjfWmcaNM3oH6e3DQ6PEyk5hcv30TTn4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CSX60lOJpUVt/g+VfUjC5n6QM20vfeqZCF2mvJKXLloZhBG936KkYNAcXK+zfkdAv
-	 PaRjfysfe4887jJeoKZEMTi98/a4k+GGVYzo8mK9/HfgLq61PQAqL9ZAdjHAlE/y49
-	 yMlb4uhUFsgTjDtx4zVhaBmDLUYDBHAOnPp26e9zA4aNGBwUsp/sTV1I/3/UpKY1T7
-	 ep3zamJcF8CQb87lD/8pnVVBw3zQWM96tQpf5YV6uTbPSrzTvJcwM7sr9g13PJa4KH
-	 N2PPaaJy9liGDBBq2eB7ptHxYHi58CgxGo0m5r606yKUkq19M8P3LhmSqCvDaNU9K9
-	 8AT4CSreSSMGg==
-Date: Thu, 4 Apr 2024 08:55:22 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: paulmck@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Zhenhua Huang <quic_zhenhuah@quicinc.com>,
- Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH fs/proc/bootconfig] remove redundant comments from
- /proc/bootconfig
-Message-Id: <20240404085522.63bf8cce6f961c07c8ce3f17@kernel.org>
-In-Reply-To: <f036c5b0-20cc-40c1-85f9-69fa9edd0c95@paulmck-laptop>
-References: <f036c5b0-20cc-40c1-85f9-69fa9edd0c95@paulmck-laptop>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1712189909; c=relaxed/simple;
+	bh=j8Vd4HpiPBroNvmjK9rwTnZO4v1iynoIydnJokVfVTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJx1LD/Ve9BJ76DXlcp7aIGoIhhsfanPebuPwXTd2EMirTroI+vAEkrwgATBOPHuihm4OUU7PPDBzMb2Sbht85dEuv2kpQfF+boq5bIphZBCDr8VSad3DVVx6QpCVkIEWkmCGuXUM1Xg7fyhAdaj0sb9xCyx9Bverk+k+JyGkWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nBfpn3r5; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=D1Qy3uDlb5XwBny7lH9hFBYMOl++jZ3p8eUgQAsnp68=; b=nBfpn3r5exKRz9e1SCCNaOmI6m
+	x04cK1HdGeI/TSsa3zBHQygME5IjAzxKGZ9l69wGhyNrttA4EfBDl4908YBTF0WqDdTgO/2siYCng
+	NhhtjpAsl3kEE6m+eJiwo0pfwrjMm3RD34JOaa2eTCKSu5IkOOPKN6jsjDswk7Kvbeimtjdy0c1F6
+	kMkJRxxRKwoc0vScJmsh0hkH7/985L8CbQNTkupIDMj1yd97g1OV0KYgFFe7awqQjcGYVqfNwi1H7
+	+o5AM6RLdSKMYMOiuVRisyyStJD3S+82r2Qpnplsm/GJEllLHvDCHPQUrXjlfjryun49YG2LYbD6U
+	MZpunzqg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rsAoB-005EUU-2X;
+	Thu, 04 Apr 2024 00:18:23 +0000
+Date: Thu, 4 Apr 2024 01:18:23 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2] fs: claw back a few FMODE_* bits
+Message-ID: <20240404001823.GP538574@ZenIV>
+References: <20240328-gewendet-spargel-aa60a030ef74@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328-gewendet-spargel-aa60a030ef74@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, 3 Apr 2024 12:16:28 -0700
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
+On Thu, Mar 28, 2024 at 01:27:24PM +0100, Christian Brauner wrote:
 
-> commit 717c7c894d4b ("fs/proc: Add boot loader arguments as comment to
-> /proc/bootconfig") adds bootloader argument comments into /proc/bootconfig.
-> 
-> /proc/bootconfig shows boot_command_line[] multiple times following
-> every xbc key value pair, that's duplicated and not necessary.
-> Remove redundant ones.
-> 
-> Output before and after the fix is like:
-> key1 = value1
-> *bootloader argument comments*
-> key2 = value2
-> *bootloader argument comments*
-> key3 = value3
-> *bootloader argument comments*
-> ...
-> 
-> key1 = value1
-> key2 = value2
-> key3 = value3
-> *bootloader argument comments*
-> ...
-> 
-> Fixes: 717c7c894d4b ("fs/proc: Add boot loader arguments as comment to /proc/bootconfig")
-> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: <linux-trace-kernel@vger.kernel.org>
-> Cc: <linux-fsdevel@vger.kernel.org>
+> (Fwiw, FMODE_NOACCOUNT and FMODE_BACKING could live in fop_flags as
+>  well because they're also completely static but they aren't really
+>  about file operations so they're better suited for FMODE_* imho.)
 
-OOps, good catch! Let me pick it.
+????
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+FMODE_BACKING is set for files opened by e.g. overlayfs in the underlying
+layers.  They bloody well can share file_operations with the files opened
+in the same underlying filesystem the usual way - you wouldn't be able
+to store that in file_operations, simply because the instances with
+identical ->f_op might differ in that flag.
 
-Thank you!
-
-> 
-> diff --git a/fs/proc/bootconfig.c b/fs/proc/bootconfig.c
-> index 902b326e1e560..e5635a6b127b0 100644
-> --- a/fs/proc/bootconfig.c
-> +++ b/fs/proc/bootconfig.c
-> @@ -62,12 +62,12 @@ static int __init copy_xbc_key_value_list(char *dst, size_t size)
->  				break;
->  			dst += ret;
->  		}
-> -		if (ret >= 0 && boot_command_line[0]) {
-> -			ret = snprintf(dst, rest(dst, end), "# Parameters from bootloader:\n# %s\n",
-> -				       boot_command_line);
-> -			if (ret > 0)
-> -				dst += ret;
-> -		}
-> +	}
-> +	if (ret >= 0 && boot_command_line[0]) {
-> +		ret = snprintf(dst, rest(dst, end), "# Parameters from bootloader:\n# %s\n",
-> +			       boot_command_line);
-> +		if (ret > 0)
-> +			dst += ret;
->  	}
->  out:
->  	kfree(key);
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+The same goes for FMODE_NOACCOUNT - kernel_file_open() vs. open(2)
+can easily yield struct file instances that differ in that flag, but
+have the same ->f_op.
 
