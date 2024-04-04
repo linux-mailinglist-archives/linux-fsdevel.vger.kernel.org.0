@@ -1,145 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-16093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88465897DED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 04:56:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9B2897E26
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 06:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 181471F283E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 02:56:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D721228AF69
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Apr 2024 04:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BE52032B;
-	Thu,  4 Apr 2024 02:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA342F37;
+	Thu,  4 Apr 2024 04:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DOYOq1kt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B0dVQptS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F74EEEB2;
-	Thu,  4 Apr 2024 02:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D3820B20
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Apr 2024 04:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712199359; cv=none; b=mSiz+APlstW1ljXZskE8dV+mg/iOxpb6u7p1+aCINou+Wy/MMTqUKqo0Z73Dp+3HUt1ZYevStMNpWVylHKEFhIjXVyJiiXAz6V9wDZVxDFEWd+cFL8kJL/R1V03jjnJ3TNGfCNxhV6AizvhvQUbDqn4FhHNFlbBkF5GuVJcSENc=
+	t=1712203683; cv=none; b=Eb6F/UdRFICo9wHB4CpfxMWe1jJ5Z/ZMBOy2kuFKln+fjoYVl/pegxj/owpWupDqVS8VPVcg1CzkGMVdSO6rjAaewqNCNJz15tIV4a9rLFZBuQkB4FdiLzcmOsFhczFLLokDcfdCC1urP0JM/d2Nkl2ujjmSsl3YCNIBgtLXZlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712199359; c=relaxed/simple;
-	bh=woQPwN94SfTkVo2nkrzwmeNCeR1tcNFP0GrDX8U1n6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oOO6hyjDrgYEyeqM6WiNg0nyVqPu4f/vz4XKFWPHMz52UQcdoxzDazSOxB3oMqBMcUMfT9xHtWHAHrFelZi4N6L4fTB5JuVDDJyWtG6G12VxXrEr2PKDTX5Gcy88ddmGjA+XXOnAq17cq/5d5nbGonlnwxcRHSIDi4brBAW34r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DOYOq1kt; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=b2H16tqCkJ6i90mQLPDpV1ZsYZDW4KEWWz9R9e+0Oig=; b=DOYOq1ktip9OrPqyMbwDoNqDtq
-	VB6HauYA/GGMAstDHOFp3X/FsrrMKv6YfXGD+QUD67yFNWCAcxzrPxwIanfV6S3L97X/TEZcue6x1
-	DEi6bN9guWRaHhck/D7JnDVcfH/ggNwDsVGjKVdBzXBBK0zM3jPjOcv259vAlag3vudS0kmURSzoM
-	aJYzWCso5E+7of2Er2nfWcoIvHsHbXLcHILwObAIYPaSB1QJuojxjuRFiDBF8ddzqHDVt2GWbVL/+
-	xR+0t7YyOlbaQgK6MbdXjKGC7weqzQ++wCpmLrtM1OisyiYiLNHGQ3qfa4nDy1kb8yHh9fC1vn6Yz
-	GUTgK+bw==;
-Received: from [50.53.2.121] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rsDGA-000000012Up-3OOS;
-	Thu, 04 Apr 2024 02:55:27 +0000
-Message-ID: <5a349108-afd9-4290-acb6-8ec176a80a84@infradead.org>
-Date: Wed, 3 Apr 2024 19:55:22 -0700
+	s=arc-20240116; t=1712203683; c=relaxed/simple;
+	bh=cG0Z/Q8Vd/6CIRdn/7mt96uH+81CK7mUItk43ieg5Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PrZYe6I2u7jNKi6jlAgLgNh661REEddv6oXeFkbv5eiPcjWvS2CubYwajz1EyADyzfCmMnwT944oEHDSrlJ2lJhK0jo8dSs0d/XMirw92VaqODaBTCUShu1JN+gN155V24+fI4GBrC0kt79xcdosP+R1FJqX8cw2lECmPi16uxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B0dVQptS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1712203679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Tnf/JqmvOIZtBLVJwY7VQErV1KE6NDkwVDWid6kh50=;
+	b=B0dVQptSTzzVXOVtfIvYrZTOmM6Hfoqaj8V3yMAwqIzqEWYeUo5u0fGHtPzKfywpd9bTYw
+	uNz2tMlBT4g4EDV1y6/pcPtd7xDEFwnDzxi21rPbd0+N4toESGlQeTSfJ1e3h7cpWtUx5P
+	sJVStcgsq/hC19o0WCsOIs6A3/QY2TQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-604-6qohKH8hNYix2r2mMKHUzQ-1; Thu, 04 Apr 2024 00:07:55 -0400
+X-MC-Unique: 6qohKH8hNYix2r2mMKHUzQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D9445185A782;
+	Thu,  4 Apr 2024 04:07:54 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.50])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id F31448173;
+	Thu,  4 Apr 2024 04:07:53 +0000 (UTC)
+Date: Thu, 4 Apr 2024 12:07:46 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Justin Stitt <justinstitt@google.com>
+Cc: akpm@linux-foundation.org, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] vmcore: replace strncpy with strscpy_pad
+Message-ID: <Zg4nkkXYySZT6ZdE@MiWiFi-R3L-srv>
+References: <20240401-strncpy-fs-proc-vmcore-c-v2-1-dd0a73f42635@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/37] fix missing vmalloc.h includes
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- David Hildenbrand <david@redhat.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
- mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
- roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
- willy@infradead.org, liam.howlett@oracle.com,
- penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com,
- peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
- axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, dennis@kernel.org,
- jhubbard@nvidia.com, tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
- paulmck@kernel.org, pasha.tatashin@soleen.com, yosryahmed@google.com,
- yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
- andreyknvl@gmail.com, keescook@chromium.org, ndesaulniers@google.com,
- vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com,
- ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
- vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
- elver@google.com, dvyukov@google.com, songmuchun@bytedance.com,
- jbaron@akamai.com, aliceryhl@google.com, rientjes@google.com,
- minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arch@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
- cgroups@vger.kernel.org
-References: <20240321163705.3067592-1-surenb@google.com>
- <20240321163705.3067592-2-surenb@google.com>
- <20240403211240.GA307137@dev-arch.thelio-3990X>
- <4qk7f3ra5lrqhtvmipmacgzo5qwnugrfxn5dd3j4wubzwqvmv4@vzdhpalbmob3>
- <9e2d09f8-2234-42f3-8481-87bbd9ad4def@redhat.com>
- <qyyo6mjctqm734utdjen4ozhoo3t4ikswzjfjnemp7olwdgyt4@qifwishdzul4>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <qyyo6mjctqm734utdjen4ozhoo3t4ikswzjfjnemp7olwdgyt4@qifwishdzul4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240401-strncpy-fs-proc-vmcore-c-v2-1-dd0a73f42635@google.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-
-
-On 4/3/24 3:57 PM, Kent Overstreet wrote:
-> On Wed, Apr 03, 2024 at 11:48:12PM +0200, David Hildenbrand wrote:
->> On 03.04.24 23:41, Kent Overstreet wrote:
->>> On Wed, Apr 03, 2024 at 02:12:40PM -0700, Nathan Chancellor wrote:
->>>> On Thu, Mar 21, 2024 at 09:36:23AM -0700, Suren Baghdasaryan wrote:
->>>>> From: Kent Overstreet <kent.overstreet@linux.dev>
->>>>>
->>>>> The next patch drops vmalloc.h from a system header in order to fix
->>>>> a circular dependency; this adds it to all the files that were pulling
->>>>> it in implicitly.
->>>>>
->>>>> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
->>>>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->>>>> Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->>>>
->>>> I bisected an error that I see when building ARCH=loongarch allmodconfig
->>>> to commit 302519d9e80a ("asm-generic/io.h: kill vmalloc.h dependency")
->>>> in -next, which tells me that this patch likely needs to contain
->>>> something along the following lines, as LoongArch was getting
->>>> include/linux/sizes.h transitively through the vmalloc.h include in
->>>> include/asm-generic/io.h.
->>>
->>> gcc doesn't appear to be packaged for loongarch for debian (most other
->>> cross compilers are), so that's going to make it hard for me to test
->>> anything...
->>
->> The latest cross-compilers from Arnd [1] include a 13.2.0 one for
->> loongarch64 that works for me. Just in case you haven't heard of Arnds work
->> before and want to give it a shot.
->>
->> [1] https://mirrors.edge.kernel.org/pub/tools/crosstool/
+On 04/01/24 at 06:39pm, Justin Stitt wrote:
+> strncpy() is in the process of being replaced as it is deprecated [1].
+> We should move towards safer and less ambiguous string interfaces.
 > 
-> Thanks for the pointer - but something seems to be busted with the
-> loongarch build, if I'm not mistaken; one of the included headers
-> references loongarch-def.h, but that's not included.
+> Looking at vmcoredd_header's definition:
+> |	struct vmcoredd_header {
+> |		__u32 n_namesz; /* Name size */
+> |		__u32 n_descsz; /* Content size */
+> |		__u32 n_type;   /* NT_VMCOREDD */
+> |		__u8 name[8];   /* LINUX\0\0\0 */
+> |		__u8 dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Device dump's name */
+> |	};
+> ... we see that @name wants to be NUL-padded.
 > 
+> We're copying data->dump_name which is defined as:
+> |	char dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Unique name of the dump */
+> ... which shares the same size as vdd_hdr->dump_name. Let's make sure we
+> NUL-pad this as well.
+> 
+> Use strscpy_pad() which NUL-terminates and NUL-pads its destination
+> buffers. Specifically, use the new 2-argument version of strscpy_pad
+> introduced in Commit e6584c3964f2f ("string: Allow 2-argument
+> strscpy()").
+> 
+> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+> Link: https://github.com/KSPP/linux/issues/90
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Justin Stitt <justinstitt@google.com>
+> ---
+> Changes in v2:
+> - don't mark buffers as __nonstring, instead use a string API (thanks Kees)
+> - Link to v1: https://lore.kernel.org/r/20240327-strncpy-fs-proc-vmcore-c-v1-1-e025ed08b1b0@google.com
+> ---
+> Note: build-tested only.
+> 
+> Found with: $ rg "strncpy\("
+> ---
+>  fs/proc/vmcore.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index 1fb213f379a5..5d08d4d159d3 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -1370,9 +1370,8 @@ static void vmcoredd_write_header(void *buf, struct vmcoredd_data *data,
+>  	vdd_hdr->n_descsz = size + sizeof(vdd_hdr->dump_name);
+>  	vdd_hdr->n_type = NT_VMCOREDD;
+>  
+> -	strncpy((char *)vdd_hdr->name, VMCOREDD_NOTE_NAME,
+> -		sizeof(vdd_hdr->name));
+> -	memcpy(vdd_hdr->dump_name, data->dump_name, sizeof(vdd_hdr->dump_name));
+> +	strscpy_pad(vdd_hdr->name, VMCOREDD_NOTE_NAME);
+> +	strscpy_pad(vdd_hdr->dump_name, data->dump_name);
 
-That file is part of gcc plugins. If you disable CONFIG_GCC_PLUGINS,
-it should build without having that issue. Of course, there may be other
-unrelated issues....
+LGTM, thx
 
+Acked-by: Baoquan He <bhe@redhat.com>
 
--- 
-#Randy
 
