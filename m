@@ -1,179 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-16224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29B889A4BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 21:15:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8218F89A4D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 21:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6AF81C216AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 19:15:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17647281636
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 19:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EC1172BD0;
-	Fri,  5 Apr 2024 19:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF51E172BC9;
+	Fri,  5 Apr 2024 19:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="dckJbH8t"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y89oozBU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDA5172BAE
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Apr 2024 19:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18345172BBC
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Apr 2024 19:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712344541; cv=none; b=em+cCMENXcpZ89HWvY4Juox4DyGMb6FtXZSDD/ip7tIXRWuN8v9WUNPM0GCo+Xv3n7LX1KyihX+kR1nLIQjCQToRQkIWDzBZLWefFKY8JaTZzMdtaFdBVM1P9tI7HrnUzwA1/EiKGe2NahWjRiGlRhsxCXHbs9xuBVzvUkUSOgk=
+	t=1712345018; cv=none; b=j943iirCqpsDsw1cG0zfAkwQIF4SRib55ssftDrCgxsY+A+Ug7aqLT14HGBMg5upoWzxLg657J6/vEklA8VD1J9e7oEzrX769yq50dAf7jXQn4Kd0PSx9+zfMEVHqoQwBnx2CW9E+JIE+jy+rV1q0YNWW5K1G3pCc9qokLsKqvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712344541; c=relaxed/simple;
-	bh=zXljUdGcTtBGipmnNDprBpcZkCkrHGztkJZeni3/5cA=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=JIxAROxyQq1qJAHRA1R37JRY6cB1K2Z9Lq0TJr+CPTR/ZRw+RvKkTo9tsUbWJqhPcCKzpqvw5vcQb/VZSNNQ2uwWby+sGf1h+jjezBdb0htwlhNecXy992PiriiJQAi0Dp/zRTMwqIErF81w2Edo109uSXe/a/INxhPsWGbZdPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=dckJbH8t; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5e42b4bbfa4so1742049a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Apr 2024 12:15:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1712344538; x=1712949338; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWmfDDERJb42IjzSqTDZHJTCfY0P4Md9v2hGsxPXotE=;
-        b=dckJbH8tqvhfIZg4vPllAk2/mB3njC7QURDRbLQER2R6RSPuZAogmdKPtofQEx7o5a
-         wxmg3HPwxbGxYxgRUlpglq0j/lHMfWofkAObH5vnV2sV46r/zBD68qkJKW5BbL9p6haI
-         6m1IYRK5whyxn84xP32ylcdC0ew4neH7Ky31k/3slaktV8xJstsG7ooEkQfNkgt2iRAP
-         VhWaYppUhga3OzKvAqHneJluIeAAhLNIxZUEroae82POI3wa9rT7MyLAmQz4iBDh7bV/
-         yli66L7hBIyNMOAveBns5sfHXoIsD+zhjNCwEzpu1RBr6Oo8dsbBsoUqH4Aez/g6+HWT
-         LnzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712344538; x=1712949338;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWmfDDERJb42IjzSqTDZHJTCfY0P4Md9v2hGsxPXotE=;
-        b=mX+VP0pWX/gPOe7QVDS0qyTz/L3Kw8bDqQQq9uetYwZ1dFs9Rh8QBztelNfEBucB45
-         +5IFZBO6ME3AkK3xrEZb4pJDYQfbOkMN4H/53NTwAsdsblvy1pJmxYAGznX41xFB4wPm
-         JNJnaSMu0eZldwbwu2L8obgqb5/yajHlp1TRMuuleeuUZv8S2Y8QXaHA/abFvyWujc60
-         72TWcogoYffi0rbxZYCUM4fKtvFfbyPmLTR7bJiW+BGiS9Q5S7slsEcosbbex91JRx1+
-         I79j0U3qB+KpeXY479avzWNSyO5cUEca1iA32Gd3a6q1KA5f9vHKQXpJ5scanxrF2kZz
-         RD5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVPuHguVtJnlV/7Z9wpCOsWDMQwei4qGDWgFT3iii264gcGAzVZMBRs6p7DrL1AynVZk6j542rwDn+FDCkT3NXNRmErYtfHQDaYudoIgw==
-X-Gm-Message-State: AOJu0YzAPGBpiHxytZEKAuxQdEpiRClgw3p04LyUvYmtQGW7tgpxzA2U
-	PP7MYwePpO4yAySdYsuRXXUaNE6MFSZmoWKhQeiC6ApK8OpoBZ9zvr0PhJKJ904=
-X-Google-Smtp-Source: AGHT+IHlz7CYySz4NrOEi/P6qH0+BaOoz73hQtya4g8iBNYvzcjlBcDm5rsBAIWsDBMSIH8uUJ5Ubg==
-X-Received: by 2002:a17:90a:d086:b0:2a0:38f0:dc4b with SMTP id k6-20020a17090ad08600b002a038f0dc4bmr2044465pju.7.1712344537643;
-        Fri, 05 Apr 2024 12:15:37 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id l13-20020a17090aec0d00b0029c7963a33fsm3715620pjy.10.2024.04.05.12.15.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Apr 2024 12:15:37 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <7CF0A3D0-50E7-448F-A992-90B9168D557F@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_580FDCAB-FBEF-42A4-B8AF-A599EDFED403";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+	s=arc-20240116; t=1712345018; c=relaxed/simple;
+	bh=nkqHwe55YJ9zTx4pJGKNQXEgxCDOoQOns9N0daTk1J4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pv4yjE1TPTv9GGWIYi3vnJCGzLxVUgpz2/qR5N/h127Ow2IrsHaAFomsr+COAa0GCI88pnvvzrv7T7+fNs8Nqj7YG9MQ86+O4/nazN3Vd10SazRDStv91eMsxuCUL0kIxYU8u7ozNT90dGxGwG0m8mKzRrdhgCDKvHKIN8wTRuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y89oozBU; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O035s/ElEy1jmyHtvDTa4n9h4zo4uhAS6t7qctQ3LN4=; b=Y89oozBUAFlVaUbPlFxR+YbiIF
+	/QsP4lJDJBplRp4KCjrr9paGPpSobgMKEQG8cBs5KVt9HwLJRdQS1DOsDjcGSjZd+1Px9hZMN9eBw
+	zLoDsSbUr+WRvyBwt8HAbDZQOfIQq3ddqO7XLXFJtkjV7Df0+LW5sgbaGqv9K5VjCUXA/47ksoW/s
+	GIb9aovGCwog9KFjZ2Q5pm6mVYq9pvsAsRzoM4dStUMSwVLUTJu6pi8OG64d8IW0jy1riam8oLyU1
+	A2VOhXEjAZz8kyv2zVw2kGKODJc4LLxAf2lC4TFI7wt2hevCd3JDx0jddoEwtpba9Y0kC7WkIoRJ8
+	K4Jpduxw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rsp9w-0000000B7qg-1i0v;
+	Fri, 05 Apr 2024 19:23:32 +0000
+Date: Fri, 5 Apr 2024 20:23:32 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [FIX] proc: rewrite stable_page_flags()
+Message-ID: <ZhBPtCYfSuFuUMEz@casper.infradead.org>
+References: <1a6dc6a5-b5b6-494c-b94b-f6655da51bb9@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v3 13/13] bcachefs: fiemap: emit new COMPRESSED state
-Date: Fri, 5 Apr 2024 13:17:45 -0600
-In-Reply-To: <943938ff75580b210eebf6c885659dd95f029486.1712126039.git.sweettea-kernel@dorminy.me>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Brian Foster <bfoster@redhat.com>,
- Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <chao@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>,
- =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- linux-doc@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-bcachefs@vger.kernel.org,
- linux-btrfs <linux-btrfs@vger.kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- kernel-team@meta.com
-To: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
- Kent Overstreet <kent.overstreet@linux.dev>
-References: <cover.1712126039.git.sweettea-kernel@dorminy.me>
- <943938ff75580b210eebf6c885659dd95f029486.1712126039.git.sweettea-kernel@dorminy.me>
-X-Mailer: Apple Mail (2.3273)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a6dc6a5-b5b6-494c-b94b-f6655da51bb9@moroto.mountain>
 
+On Wed, Apr 03, 2024 at 12:01:35PM +0300, Dan Carpenter wrote:
+> Hello Matthew Wilcox (Oracle),
+> 
+> Commit ea1be2228bb6 ("proc: rewrite stable_page_flags()") from Mar
+> 26, 2024 (linux-next), leads to the following Smatch static checker
+> warning:
+> 
+> fs/proc/page.c:156 stable_page_flags() warn: bit shifter 'PG_lru' used for logical '&'
+> fs/proc/page.c:207 stable_page_flags() warn: bit shifter 'KPF_HUGE' used for logical '&'
 
---Apple-Mail=_580FDCAB-FBEF-42A4-B8AF-A599EDFED403
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+Thanks.  I thought I sent this out on Tuesday, but it doesn't seem to
+have left my machine.  Andrew, can you add this -fix patch?
 
-On Apr 3, 2024, at 1:22 AM, Sweet Tea Dorminy =
-<sweettea-kernel@dorminy.me> wrote:
->=20
-> Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-> ---
-> fs/bcachefs/fs.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-> index d2793bae842d..54f613f977b4 100644
-> --- a/fs/bcachefs/fs.c
-> +++ b/fs/bcachefs/fs.c
-> @@ -921,7 +921,7 @@ static int bch2_fill_extent(struct bch_fs *c,
-> 				flags2 |=3D FIEMAP_EXTENT_UNWRITTEN;
->=20
-> 			if (p.crc.compression_type) {
-> -				flags2 |=3D FIEMAP_EXTENT_ENCODED;
-> +				flags2 |=3D =
-FIEMAP_EXTENT_DATA_COMPRESSED;
-
-(defect) This should *also* set FIEMAP_EXTENT_ENCODED in this case,
-along with FIEMAP_EXTENT_DATA_COMPRESSED.  Both for compatibility with
-older code that doesn't understand FIEMAP_EXTENT_DATA_COMPRESSED, and
-because the data still cannot be read directly from the volume when it
-is not mounted.
-
-Probably Kent should chime in here with what needs to be done to set
-the phys_len properly for bcachefs, or leave this patch out of your
-series and let him submit it directly.  With proposed wrapper in the
-first patch of the series there isn't a hard requirement to change
-all of the filesystems in one shot.
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_580FDCAB-FBEF-42A4-B8AF-A599EDFED403
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmYQTlkACgkQcqXauRfM
-H+Da1w/+KwGpB/pDp08sIkXnagyqUWMdqtRK9hS/4cehNOAAdPTlbycb3PfNiTxy
-m2DZwrCbnPe4P1WB1nFy5DNsprtdOTGEbOiuOXKS3hkgnf9qY2lrFoC4inAMpNZi
-W+p1IXURkUadjDgKS5Ijwyl0HpDheQcN/AVdLKUR9vKebxRsIBlJ2qlekVVOakYS
-Y5wM2U8Ct3eaU6MAW3Mr0KMZKQPj5Ez5cVNZHm0046DtRmV/LI9/5RAKJUheesok
-eF88SBmXg4t5KUsCLRIqi8wUHnrdfWEVrc83RK3l8LYAVpw/SdP+5TSYwontrBU5
-KoUUEkwdKv6p5yvzGKkdh0iR00oEQHtUvYJR1es9oCl0er6eeqOAryoNTtK7BpBG
-XbmY3rFRTCAgOp1gElHCIddnAIs2G5hDSo4jAqU/RzMkadFfS3YPuYL95BWAALlY
-bfmmXpRyeD4z9wzBQz5HRu+rhKThHdvKyOL5GkaYcYNEmFWQq64+bDTtb5aKm1DD
-FtfSEbx89tF6RyoafS3H6ESbhH4hmyYTWVmx9wpXtzLrGd8HWnRGsuQzFLx/uRWN
-tRMosixMwAJsO3rzvuAXyZKcDqsAHyzF9hHwogaZn0SmpyGwFPZc5/iIr8tBZS+U
-OWrKlNAy6Q0U91xdZPx3ZWpwSC3zh5BtCehRD0b8YX+G7DVSeFk=
-=8Pjr
------END PGP SIGNATURE-----
-
---Apple-Mail=_580FDCAB-FBEF-42A4-B8AF-A599EDFED403--
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index 5bc82828c6aa..55b01535eb22 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -175,6 +175,8 @@ u64 stable_page_flags(const struct page *page)
+ 		u |= 1 << KPF_OFFLINE;
+ 	if (PageTable(page))
+ 		u |= 1 << KPF_PGTABLE;
++	if (folio_test_slab(folio))
++		u |= 1 << KPF_SLAB;
+ 
+ #if defined(CONFIG_PAGE_IDLE_FLAG) && defined(CONFIG_64BIT)
+ 	u |= kpf_copy_bit(k, KPF_IDLE,          PG_idle);
+@@ -184,7 +186,6 @@ u64 stable_page_flags(const struct page *page)
+ #endif
+ 
+ 	u |= kpf_copy_bit(k, KPF_LOCKED,	PG_locked);
+-	u |= kpf_copy_bit(k, KPF_SLAB,		PG_slab);
+ 	u |= kpf_copy_bit(k, KPF_ERROR,		PG_error);
+ 	u |= kpf_copy_bit(k, KPF_DIRTY,		PG_dirty);
+ 	u |= kpf_copy_bit(k, KPF_UPTODATE,	PG_uptodate);
+diff --git a/tools/cgroup/memcg_slabinfo.py b/tools/cgroup/memcg_slabinfo.py
+index 1d3a90d93fe2..270c28a0d098 100644
+--- a/tools/cgroup/memcg_slabinfo.py
++++ b/tools/cgroup/memcg_slabinfo.py
+@@ -146,12 +146,11 @@ def detect_kernel_config():
+ 
+ 
+ def for_each_slab(prog):
+-    PGSlab = 1 << prog.constant('PG_slab')
+-    PGHead = 1 << prog.constant('PG_head')
++    PGSlab = ~prog.constant('PG_slab')
+ 
+     for page in for_each_page(prog):
+         try:
+-            if page.flags.value_() & PGSlab:
++            if page.page_type.value_() == PGSlab:
+                 yield cast('struct slab *', page)
+         except FaultError:
+             pass
 
