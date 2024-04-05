@@ -1,61 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-16216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1522389A3D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 20:05:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A1B089A3FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 20:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467D91C21D84
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 18:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09BA41F22E3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 18:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9BA171E64;
-	Fri,  5 Apr 2024 18:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC69B171E71;
+	Fri,  5 Apr 2024 18:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="hnwiHyfM"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ATQej8jQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAF616C690
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Apr 2024 18:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED94517167C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Apr 2024 18:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712340290; cv=none; b=jsqeXrI2AJcRj1gAuZG95sNMEHpNADWt7Gv35UqFvjTiyaG1IpLr3I1TpCSQOv1vUx6X1Vel4QlucqQhWrMRVzaLRE2Ppi57dwEjsXWwcH5NfVbfEOptDCZSodIXqtlXR0JcYXoJTxBpOqD3ubI65EBfwpvwoE78hjmwdttfh8g=
+	t=1712341061; cv=none; b=PQsL7HFKoXMEURogeI2tC05sqm8nAnEQKlBAZqZ968/YVtH0sW2wZ8Hb+DgAEcWPx7PYkr4ZVAXlRpoZGi6e6mWvKZsqBaXh9DN2wfxdT3BV/5/bG3ZFjQB3YnId/FyxLGUoMpL4Wt97CKQXGNhgASV+6ICAKi5EkjP+scOZEgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712340290; c=relaxed/simple;
-	bh=Z/gYh40YSgwB2BZnBaFHPThTxllMSe3ftcvL4OlrbvI=;
+	s=arc-20240116; t=1712341061; c=relaxed/simple;
+	bh=9AkpJlrF5odbZV84lVLCxgA8MjnO8gRUI0F9+okt4N8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n/Ru0U+JMWrHlLv1LPRGuPGZ56h9d4NFirojeubtmmq9whpwrfzMbr6hvh0vprsOOnApvo6pycheB1Mw2IUNUCHxRHWnfYGjBLA9G4nRhAJEtGilL4F+CWQINSPNM74/KoG1xi6OEa42reW2XJdk7AZwv+v3GrqXW/gXOTUbO8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=hnwiHyfM; arc=none smtp.client-ip=45.157.188.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VB5wj1nt8z21p;
-	Fri,  5 Apr 2024 20:04:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1712340277;
-	bh=Z/gYh40YSgwB2BZnBaFHPThTxllMSe3ftcvL4OlrbvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hnwiHyfMe2qRGtR744cczcj2mgeS9ScuX1Jho6NI/WW/Hck8zxLz4e5HZkFrtQHeM
-	 ivqPfzHI+EO5q8whpB1H+uQTDwvnhRq6W4l8J01r/YGwqwch4dEOHcE2H49JAL3L27
-	 L3CUhXBm9uRNZqX5fy50+FnGaqU3boEEra8yety4=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VB5wh3yKlzmBB;
-	Fri,  5 Apr 2024 20:04:36 +0200 (CEST)
-Date: Fri, 5 Apr 2024 20:04:36 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dpo9SubQyzpkBbt9PpZmN6xhf4xvV6lnXm9UmNpbEpHmfzXkT1Y0GrpJ2IcGhoemkrwnocpTsvnyl4EBeUyW/Q1u4ZiwKT9sRno0tAXVFUdYxb/w17bvTtzHZjL6Lzuc5HIoVsK9Q8cgl37+8rB8lXUdCtV3lgOTMNwEDdMKDIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ATQej8jQ; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 5 Apr 2024 14:17:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1712341056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DRUSRTybuNRB3AfwvsaVKFQldXbDzh1KNiUNcGYtJqc=;
+	b=ATQej8jQu8tuNtAXedkf+i8FuCyCe76gbQonboyja2qc3hoxthjvbOAdkDPsoB4/CJW/yN
+	PWkMVvivlV8A3A2ZPuEhxBRWzcAlXsqDx2voFXfgnCRuRp1Y6gqZtB5FB/xD1pe57cVpGx
+	7OuOUU/cl0625FvM2Iyp+b+MRlbYNV8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
 To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-	Amir Goldstein <amir73il@gmail.com>, linux-security-module@vger.kernel.org, 
-	Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+Cc: Amir Goldstein <amir73il@gmail.com>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
 	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
 	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
 	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 Subject: Re: [PATCH v13 01/10] landlock: Add IOCTL access right for character
  and block devices
-Message-ID: <20240405.ahtaVee6ahc0@digikod.net>
+Message-ID: <cnwpkeovzbumhprco7q2c2y6zxzmxfpwpwe3tyy6c3gg2szgqd@vfzjaw5v5imr>
 References: <20240327131040.158777-1-gnoack@google.com>
  <20240327131040.158777-2-gnoack@google.com>
  <20240327.eibaiNgu6lou@digikod.net>
@@ -73,7 +72,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <ZhAlXB3PWC4yyU8F@google.com>
-X-Infomaniak-Routing: alpha
+X-Migadu-Flow: FLOW_OUT
 
 On Fri, Apr 05, 2024 at 06:22:52PM +0200, Günther Noack wrote:
 > On Fri, Apr 05, 2024 at 06:17:17PM +0200, Günther Noack wrote:
@@ -108,10 +107,6 @@ On Fri, Apr 05, 2024 at 06:22:52PM +0200, Günther Noack wrote:
 > can fall back to a IOCTL implementation in struct file_operations?  I found this
 > remark by Amir which sounded vaguely like it might have been on purpose?  Did I
 > understand that correctly?
-
-I think the rationale is that all new VFS IOCTLs should have this fall
-back because device drivers might already implement them.
-
 > 
 > https://lore.kernel.org/lkml/CAOQ4uxjvEL4P4vV5SKpHVS5DtOwKpxAn4n4+Kfqawcu+H-MC5g@mail.gmail.com/
 > 
@@ -120,8 +115,7 @@ back because device drivers might already implement them.
 > the safety of these IOCTLs for IOCTL security policies enforced by the Landlock
 > LSM. (Some of these file_operations IOCTL implementations do stuff before
 > looking at the cmd number.)
-> 
-> Thanks,
-> —Günther
-> 
+
+They're not supposed to be extensible - the generic implementations are
+all we need.
 
