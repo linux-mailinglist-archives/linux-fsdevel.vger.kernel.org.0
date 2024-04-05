@@ -1,151 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-16209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB22089A266
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 18:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101A489A26B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 18:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49A10B21BFD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 16:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 419B51C21B5C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 16:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF86171092;
-	Fri,  5 Apr 2024 16:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622A1171656;
+	Fri,  5 Apr 2024 16:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vJjXdnjY"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="arE4UiGD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3984D16F917
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Apr 2024 16:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A5717164E;
+	Fri,  5 Apr 2024 16:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712334176; cv=none; b=L1tm/4jPC9neNCe7dSHLm7Zgr04/tR1P+qTMe349BdpJgMFUW07FGPXGMZg81AlC5Iajl/rbcgNX75nrp3gcB6Zjv4F+q072NGXRoi3st5qLo0LFOBmhzLGUpUiICGX6uesDe19sDXijNMC8+SMPIxpGM7A4ooKDZ5Jimacs0Tk=
+	t=1712334226; cv=none; b=T1YlEj7b0DtsDWLDq/1QSGArdO3Nx+Ym/RwPt7RESauZAeShm66CdZmDmfZ4mnbVL7Vjiy9VoWEHf2ZjzT1a5Nifw+QJbwzD/ilwIpV32mdJtfn3gxXMo0oB+X8dAdOCC3RsMJqv/OyYJNe3rA6hwM9iGopCurjvHsadK4Ja4OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712334176; c=relaxed/simple;
-	bh=CkzMuNkj3cN8dIvITeM7UFTZGwxWNHl9NlYw4/h6L8I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FwQe8PwDK2u7VlfaXmxCecXdq2Gql5cnCLzVqheyi11dFmycrD4Iw823eyRkzX8HIlre1w2NsZn8ZangiFjQJiHOZpJNMjAC7hGWsaGhuSDHUoE9RYXYyOEBg5Xh39MoTWlLhgpY9I/d6jAe7mY8q2n1F0zg51ARAnlyVDNHX+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vJjXdnjY; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6144244c60cso35059357b3.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Apr 2024 09:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1712334174; x=1712938974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xwUrlMvM+rXEVIqWbsl+r+Hr3twGjCCQJKVxaKiZeNY=;
-        b=vJjXdnjYWh26PYgS5D2QFdJlLeq3g2D/U7LzrK9NA5IVvImQTNuSKTKALSerVj1Y+v
-         FCAQ+R+NjH0ygHEj0HLolllP8Fic3OKSMfWrXIsSQMam+f/D2q3yNuMRbIAM/fPz1us2
-         sG24mlyhDlU0rQz0uAZ6aYOevHLTceuRtxDz4z6TqmJfEuXm3+ygiRb5fe/ds7DYvwA8
-         LN9uO4PDl2aRHNo4v9EmQOP9PhUpZOBlDrKWADTibY/W0/SDYGXEM+yS01p87ZfO+4tl
-         MaEFwRrH/agSQxFvZQvdZCQRB/8//flXJleXAL9dqJUDUyS/jQJuWswZ5fLZ07yFKh73
-         pn+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712334174; x=1712938974;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xwUrlMvM+rXEVIqWbsl+r+Hr3twGjCCQJKVxaKiZeNY=;
-        b=Vsz2AzthHuuRABa3+rDnOgvZxYdpU2/KFeO+IT0x5OtubeL2AhPAjLTO/A9Hj2rYpG
-         /jVeN9/KkYNhRa6gxm0AsPqT6z7OUeLfi2PVGdsrVxu0c+t9Qxkc+XiqnWV5c3EM4afB
-         JsQJH52l+BmCLq/PUbThvoq07KUY9kwDe8GvD7mtrbr1iPbde0bJqDyxcxSCnVxN8ZUj
-         lYmtnmeoEjxL7cgCqzIK+Y4UMFmHlbqinMfuYpHuMEkZYapNU7M5Cm0LdtcLUZl8TU/7
-         D6qYgGDgxprCdp0mOJXCQOqnp6KAqoGJnyQVCxJz9NgXkT01kUh+dcB76OohXcSKL9gX
-         bPNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwNJeSxYRgyjeYt/dCo4/rH/W7ZFzLRtykIaul/BiX3Ps/4l8nXZGKsgESfgjEl8ZM0NIhuTkuKI+7GYQYIneF3o+izDkwuZ5eXOjErA==
-X-Gm-Message-State: AOJu0YyGba+yGixTp9yq9GWQtPTPJYYr7W2/Mn2KwehEoKxoYrOFYejw
-	NI42z+00/QQ2oyGNyT2ZwDdNNVzlfkyxs60UCSa3dj7Ay+V8Z6Rn8NqPWry3cKYUu8qU2PK15VT
-	wJA==
-X-Google-Smtp-Source: AGHT+IFfkEHDkX6cNGYdslsDw+WZb0VcpM/Aaw+gxFd6VQjv9bI2I2bG+UOudCm0AIdGM7zAUTf1V2A/KwM=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:690c:6510:b0:615:fd8:d65f with SMTP id
- hw16-20020a05690c651000b006150fd8d65fmr412530ywb.4.1712334174325; Fri, 05 Apr
- 2024 09:22:54 -0700 (PDT)
-Date: Fri, 5 Apr 2024 18:22:52 +0200
-In-Reply-To: <ZhAkDW2u3GItsody@google.com>
+	s=arc-20240116; t=1712334226; c=relaxed/simple;
+	bh=yQwnPJwEQYu9fX0Y+AyQBdUHzuvzjDribddGeoztlJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5mmJn+8JEE8epqXwsRofGdFhvAmkJsQGqiZ8LQeGyTpoR7BUHMNeh+wEd0xbWnxFdSDa2qMMLwA07I2ocEp0oSL5b2SGS4Yq8kvJV1GW9mwCxusFMuwEJPprQVPr0FEUlQL2n62wFPp4NZjc5WVUsscwCajnq6i0yA6ST40pw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=arE4UiGD; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=arvQmQUbCzmXxGsLUTemBamkFbcSe28YZx+4in1OsC4=; b=arE4UiGDJMHJCOuYz0k/QMkQpd
+	v5AAkhjF4BWEFyeh6KI3mtA8rKUqooynRdqNRaLPKKWDlvmhrR0165RWL32l0xtyi/aAG4Q8xPn1E
+	KRfhmzT3rLn6Ski9UFu5pGAydobawe96V9+Rnp157aFiD5XAkPckSbrV7+zJfZObVH+RZ8GrVjs1m
+	cXh+ToZ2kDa5iKHhYJUXwlAvz1MFFMIbhxHG714ZGoBfw5tUMtHpv1McTIjqJazr7y2x5qiA/H/JN
+	nazBYFKbT5AYqPCznOXEE9Ye8wUDJLIzvs8Y4xq3J8vQ5Vvt9Hq0TJVqbgyLasKpsaHDn3chfyI8K
+	TiYzPNvw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rsmLl-006V3K-2H;
+	Fri, 05 Apr 2024 16:23:33 +0000
+Date: Fri, 5 Apr 2024 17:23:33 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: syzbot <syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com>
+Cc: amir73il@gmail.com, brauner@kernel.org, gregkh@linuxfoundation.org,
+	hch@lst.de, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, miklos@szeredi.hu,
+	syzkaller-bugs@googlegroups.com, tj@kernel.org,
+	valesini@yandex-team.ru
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_fop_llseek
+Message-ID: <20240405162333.GU538574@ZenIV>
+References: <CAOQ4uxhm5m9CvX0y2RcJGuP=vryZLp9M+tS6vH1o_9BGUqxrvg@mail.gmail.com>
+ <00000000000039026a06155b3a12@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240327131040.158777-1-gnoack@google.com> <20240327131040.158777-2-gnoack@google.com>
- <20240327.eibaiNgu6lou@digikod.net> <ZgxOYauBXowTIgx-@google.com>
- <20240403.In2aiweBeir2@digikod.net> <ZhAkDW2u3GItsody@google.com>
-Message-ID: <ZhAlXB3PWC4yyU8F@google.com>
-Subject: Re: [PATCH v13 01/10] landlock: Add IOCTL access right for character
- and block devices
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-security-module@vger.kernel.org, 
-	Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000039026a06155b3a12@google.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Apr 05, 2024 at 06:17:17PM +0200, G=C3=BCnther Noack wrote:
-> On Wed, Apr 03, 2024 at 01:15:45PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> > On Tue, Apr 02, 2024 at 08:28:49PM +0200, G=C3=BCnther Noack wrote:
-> > > Can you please clarify how you make up your mind about what should be=
- permitted
-> > > and what should not?  I have trouble understanding the rationale for =
-the changes
-> > > that you asked for below, apart from the points that they are harmles=
-s and that
-> > > the return codes should be consistent.
-> >=20
-> > The rationale is the same: all IOCTL commands that are not
-> > passed/specific to character or block devices (i.e. IOCTLs defined in
-> > fs/ioctl.c) are allowed.  vfs_masked_device_ioctl() returns true if the
-> > IOCTL command is not passed to the related device driver but handled by
-> > fs/ioctl.c instead (i.e. handled by the VFS layer).
->=20
-> Thanks for clarifying -- this makes more sense now.  I traced the cases w=
-ith
-> -ENOIOCTLCMD through the code more thoroughly and it is more aligned now =
-with
-> what you implemented before.  The places where I ended up implementing it
-> differently to your vfs_masked_device_ioctl() patch are:
->=20
->  * Do not blanket-permit FS_IOC_{GET,SET}{FLAGS,XATTR}.
->    They fall back to the device implementation.
->=20
->  * FS_IOC_GETUUID and FS_IOC_GETFSSYSFSPATH are now handled.
->    These return -ENOIOCTLCMD from do_vfs_ioctl(), so they do fall back to=
- the
->    handlers in struct file_operations, so we can not permit these either.
+On Fri, Apr 05, 2024 at 08:37:03AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot tried to test the proposed patch but the build/boot failed:
 
-Kent, Amir:
+WTF?  The patch is
 
-Is it intentional that the new FS_IOC_GETUUID and FS_IOC_GETFSSYSFSPATH IOC=
-TLs
-can fall back to a IOCTL implementation in struct file_operations?  I found=
- this
-remark by Amir which sounded vaguely like it might have been on purpose?  D=
-id I
-understand that correctly?
-
-https://lore.kernel.org/lkml/CAOQ4uxjvEL4P4vV5SKpHVS5DtOwKpxAn4n4+Kfqawcu+H=
--MC5g@mail.gmail.com/
-
-Otherwise, I am happy to send a patch to make it non-extensible (the impls =
-in
-fs/ioctl.c would need to return -ENOTTY).  This would let us reason better =
-about
-the safety of these IOCTLs for IOCTL security policies enforced by the Land=
-lock
-LSM. (Some of these file_operations IOCTL implementations do stuff before
-looking at the cmd number.)
-
-Thanks,
-=E2=80=94G=C3=BCnther
+diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+index e9df2f87072c6..8502ef68459b9 100644
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -636,11 +636,18 @@ static int kernfs_fop_open(struct inode *inode, struct file *file)
+ 	 * each file a separate locking class.  Let's differentiate on
+ 	 * whether the file has mmap or not for now.
+ 	 *
+-	 * Both paths of the branch look the same.  They're supposed to
++	 * For similar reasons, writable and readonly files are given different
++	 * lockdep key, because the writable file /sys/power/resume may call vfs
++	 * lookup helpers for arbitrary paths and readonly files can be read by
++	 * overlayfs from vfs helpers when sysfs is a lower layer of overalyfs.
++	 *
++	 * All three cases look the same.  They're supposed to
+ 	 * look that way and give @of->mutex different static lockdep keys.
+ 	 */
+ 	if (has_mmap)
+ 		mutex_init(&of->mutex);
++	else if (file->f_mode & FMODE_WRITE)
++		mutex_init(&of->mutex);
+ 	else
+ 		mutex_init(&of->mutex);
+ 
+How could it possibly trigger boot failure?  Test the parent, perhaps?
 
