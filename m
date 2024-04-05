@@ -1,236 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-16167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D77899AA2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 12:22:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A2F899AB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 12:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9444E1C21501
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 10:22:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28F4B1F2223F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 10:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5D31649D3;
-	Fri,  5 Apr 2024 10:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256D216ABFB;
+	Fri,  5 Apr 2024 10:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zj/bIVK3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9vMrf8BW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zj/bIVK3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9vMrf8BW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bINCfElL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F376161B4E;
-	Fri,  5 Apr 2024 10:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F86142E73;
+	Fri,  5 Apr 2024 10:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712312523; cv=none; b=l98J+La8jFt8oOZf0VaEe95z/YPXa79CdKvA1Gix27nYw1Zn+DKTzsBacmq1XRmm4LPM4al0h8P8vIxkwWKxQtR3Iw3yrj3NvFgQf3oftHm77yPgyoyHo0Su4pOyKqx/MfmULGrEAQ3i1JS/OJ5+9Ult/4F8R9kmk00sCsxHftU=
+	t=1712312778; cv=none; b=cKNtQ2gu4jcA/mHhae21izyoC2Aw5ET3vR0eW8Ff6uoTDywHd3bf8ln3GyJ9h4JNYLLDqyo+yS3BeY/cCX5/f8KFRRcqTiz9/NGeb3KS48XwOJiWbkIbTX+4CcYC65FfwjusWcRxNaDAhEwOzf1o1UJpudw99z7vlhupB5LkVds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712312523; c=relaxed/simple;
-	bh=gp6lawSvavTZZXlwdEk/RyHYzVANfbImjOT2PQBI3RY=;
+	s=arc-20240116; t=1712312778; c=relaxed/simple;
+	bh=qxvSkouKOtVZUfYflXrpgvGiCmviOJRnuWLFOMraY9Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAN1KGR0nvpaPiR+kOtjYqiWwqfd+eR7ZeZZAdf1nYbqCQxTzWkzjpytPS0cS/iRodAr+WeEtPnF+2AXYUJ0E6wtrNqh0Hg2+7i/zXQXItJY6vcE0ofAvtfeIrg45zIfVhGwvSfxXqn+E0ne57jePQeKluKSxUOfTVIvK42ffvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zj/bIVK3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9vMrf8BW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zj/bIVK3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9vMrf8BW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6F1EE1F789;
-	Fri,  5 Apr 2024 10:21:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1712312518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EETuShd9DBL++bLZx8natSBLuwv4gMpMvywzc3iX/as=;
-	b=Zj/bIVK3Zh1WAmVOuH1ssEJ/nItehEBIX5D+ccWFcY6+LeKxkj+Jwir6LeR4v0sp/4CyJa
-	ZUYLetkdfULNWVWIw4hafZyn3lBpl2xQ8WmK5a/9gBXXrC3RCFon0DUPGivB408fyPBeZF
-	XB9oydAhYFBNSmIsaCVGohIHGgO9iwg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1712312518;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EETuShd9DBL++bLZx8natSBLuwv4gMpMvywzc3iX/as=;
-	b=9vMrf8BWkGyJ9WLohMxzWX3nwphZVKY2Mkq1/XSKrN343PenqXuxrcri3GeyPjGvxrJCQ7
-	JYAMy4DQxVvzR3Bg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1712312518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EETuShd9DBL++bLZx8natSBLuwv4gMpMvywzc3iX/as=;
-	b=Zj/bIVK3Zh1WAmVOuH1ssEJ/nItehEBIX5D+ccWFcY6+LeKxkj+Jwir6LeR4v0sp/4CyJa
-	ZUYLetkdfULNWVWIw4hafZyn3lBpl2xQ8WmK5a/9gBXXrC3RCFon0DUPGivB408fyPBeZF
-	XB9oydAhYFBNSmIsaCVGohIHGgO9iwg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1712312518;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EETuShd9DBL++bLZx8natSBLuwv4gMpMvywzc3iX/as=;
-	b=9vMrf8BWkGyJ9WLohMxzWX3nwphZVKY2Mkq1/XSKrN343PenqXuxrcri3GeyPjGvxrJCQ7
-	JYAMy4DQxVvzR3Bg==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 5F5F6139E8;
-	Fri,  5 Apr 2024 10:21:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id 381DF8bQD2aTawAAn2gu4w
-	(envelope-from <jack@suse.cz>); Fri, 05 Apr 2024 10:21:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 055F5A0814; Fri,  5 Apr 2024 12:21:57 +0200 (CEST)
-Date: Fri, 5 Apr 2024 12:21:57 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kees Cook <keescook@chromium.org>
-Cc: Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: Set file_handle::handle_bytes before referencing
- file_handle::f_handle
-Message-ID: <20240405102157.mmrralt5iohc2pz6@quack3>
-References: <20240404211212.it.297-kees@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rF8b4CQyg/L+GnNXfJuyc5/WftlZiVkWIdxoqGaL/8hyUDRi7kxdxgaXYsQ4caHQG5UnlPoWktDm+FXflum3b4FFN4HB0yov+UVRjiewJ7CKyYPplnWa86LZywgGgrYjeWX4dJ7UtPQVd5p1eLFWTQn7QRtxyPtlk5AT4SAuVUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bINCfElL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1883C433C7;
+	Fri,  5 Apr 2024 10:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712312778;
+	bh=qxvSkouKOtVZUfYflXrpgvGiCmviOJRnuWLFOMraY9Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bINCfElL0YOkSGUGgBWQU1PYTboFoNjPpGUmdkBGEcNqNV3v3DE8rR8UUBoVjXUKZ
+	 SF3gqSACH3hIVgkBpt7V3YnZNoH5beyWwUNr8Nq5rkP6D9jVf7JyAXA06DbOKRiFaP
+	 U7gqB7jS2VVMEbxMNgQUy66/yy6C+qwiHnB+GvSbRkRIQJhQdtWwzmtHEThe3JaVM2
+	 EG6ZC1RLGavidNg6oLm80JqkS+AwnsNa4KT1En63HEr/HvHvWj+wWEiPysX4pQaFVc
+	 rG0fQXqGdn/eUccA8z41XKZgsx8EWC5GxnIb3Tcp/UWA0H6whhyugJB3UprYeVElyk
+	 dZMOI3E9EM+0w==
+Date: Fri, 5 Apr 2024 12:26:10 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: kernel test robot <oliver.sang@intel.com>, 
+	syzbot <syzbot+4139435cb1b34cf759c2@syzkaller.appspotmail.com>, Edward Adam Davis <eadavis@qq.com>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Linux Memory Management List <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	amir73il@gmail.com, chuck.lever@oracle.com, jlayton@kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [linux-next:master] [fs]  1b43c46297: kernel_BUG_at_mm/usercopy.c
+Message-ID: <20240405-basisarbeit-kohlenkeller-676735d80a89@brauner>
+References: <202404031550.f3de0571-lkp@intel.com>
+ <000000000000f075b9061520cbbe@google.com>
+ <tencent_A7845DD769577306D813742365E976E3A205@qq.com>
+ <20240403-mundgerecht-klopapier-e921ceb787ca@brauner>
+ <20240403110316.qtmypq2rtpueloga@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240404211212.it.297-kees@kernel.org>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,oracle.com,kernel.org,zeniv.linux.org.uk,gmail.com,vger.kernel.org];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.com:email,imap2.dmz-prg2.suse.org:helo,imap2.dmz-prg2.suse.org:rdns,suse.cz:email]
+In-Reply-To: <20240403110316.qtmypq2rtpueloga@quack3>
 
-On Thu 04-04-24 14:12:15, Kees Cook wrote:
-> Since __counted_by(handle_bytes) was added to struct file_handle, we need
-> to explicitly set it in the one place it wasn't yet happening prior to
-> accessing the flex array "f_handle". For robustness also check for a
-> negative value for handle_bytes, which is possible for an "int", but
-> nothing appears to set.
+On Wed, Apr 03, 2024 at 01:03:16PM +0200, Jan Kara wrote:
+> On Wed 03-04-24 10:46:19, Christian Brauner wrote:
+> > On Wed, Apr 03, 2024 at 02:54:14PM +0800, Edward Adam Davis wrote:
+> > > [Syzbot reported]
+> > > BUG: KASAN: slab-out-of-bounds in instrument_copy_from_user_before include/linux/instrumented.h:129 [inline]
+> > > BUG: KASAN: slab-out-of-bounds in _copy_from_user+0x7b/0xe0 lib/usercopy.c:22
+> > > Write of size 48 at addr ffff88802b8cbc88 by task syz-executor333/5090
+> > > 
+> > > CPU: 0 PID: 5090 Comm: syz-executor333 Not tainted 6.9.0-rc2-next-20240402-syzkaller #0
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+> > > Call Trace:
+> > >  <TASK>
+> > >  __dump_stack lib/dump_stack.c:88 [inline]
+> > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+> > >  print_address_description mm/kasan/report.c:377 [inline]
+> > >  print_report+0x169/0x550 mm/kasan/report.c:488
+> > >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> > >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+> > >  instrument_copy_from_user_before include/linux/instrumented.h:129 [inline]
+> > >  _copy_from_user+0x7b/0xe0 lib/usercopy.c:22
+> > >  copy_from_user include/linux/uaccess.h:183 [inline]
+> > >  handle_to_path fs/fhandle.c:203 [inline]
+> > >  do_handle_open+0x204/0x660 fs/fhandle.c:226
+> > >  do_syscall_64+0xfb/0x240
+> > >  entry_SYSCALL_64_after_hwframe+0x72/0x7a
+> > > [Fix] 
+> > > When copying data to f_handle, the length of the copied data should not include
+> > > the length of "struct file_handle".
+> > > 
+> > > Reported-by: syzbot+4139435cb1b34cf759c2@syzkaller.appspotmail.com
+> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > > ---
+> > >  fs/fhandle.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/fhandle.c b/fs/fhandle.c
+> > > index 53ed54711cd2..8a7f86c2139a 100644
+> > > --- a/fs/fhandle.c
+> > > +++ b/fs/fhandle.c
+> > > @@ -202,7 +202,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
+> > >  	*handle = f_handle;
+> > >  	if (copy_from_user(&handle->f_handle,
+> > >  			   &ufh->f_handle,
+> > > -			   struct_size(ufh, f_handle, f_handle.handle_bytes))) {
+> > > +			   f_handle.handle_bytes)) {
+> > 
+> > Groan, of course. What a silly mistake. Thanks for the fix.
+> > I'll fold this into:
+> > Fixes: 1b43c4629756 ("fs: Annotate struct file_handle with __counted_by() and use struct_size()")
+> > because this hasn't hit mainline yet and it doesn't make sense to keep
+> > that bug around.
+> > 
+> > Sorry, that'll mean we drop your patch but I'll give you credit in the
+> > commit log of the original patch.
 > 
-> Fixes: 1b43c4629756 ("fs: Annotate struct file_handle with __counted_by() and use struct_size()")
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Chuck Lever <chuck.lever@oracle.com>
-> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-nfs@vger.kernel.org
-> Cc: linux-hardening@vger.kernel.org
->  v2: more bounds checking, add comments, dropped reviews since logic changed
->  v1: https://lore.kernel.org/all/20240403215358.work.365-kees@kernel.org/
-> ---
->  fs/fhandle.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index 8a7f86c2139a..854f866eaad2 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -40,6 +40,11 @@ static long do_sys_name_to_handle(const struct path *path,
->  			 GFP_KERNEL);
->  	if (!handle)
->  		return -ENOMEM;
-> +	/*
-> +	 * Since handle->f_handle is about to be written, make sure the
-> +	 * associated __counted_by(handle_bytes) variable is correct.
-> +	 */
-> +	handle->handle_bytes = f_handle.handle_bytes;
->  
->  	/* convert handle size to multiple of sizeof(u32) */
->  	handle_dwords = f_handle.handle_bytes >> 2;
-> @@ -51,8 +56,8 @@ static long do_sys_name_to_handle(const struct path *path,
->  	handle->handle_type = retval;
->  	/* convert handle size to bytes */
->  	handle_bytes = handle_dwords * sizeof(u32);
-> -	handle->handle_bytes = handle_bytes;
-> -	if ((handle->handle_bytes > f_handle.handle_bytes) ||
-> +	/* check if handle_bytes would have exceeded the allocation */
-> +	if ((handle_bytes < 0) || (handle_bytes > f_handle.handle_bytes) ||
+> Indeed, I should have caught this during review. Sorry for that and thanks
+> for fixing this up quickly.
 
-This is broken. Let me explain: Userspace passes in struct file_handle
-(ufh) and says how many bytes it has reserved for the variable length
-contents in ufh->handle_bytes. We call exportfs_encode_fh() to create
-the file handle. If it fits into the provided space, the function returns
-in handle_dwords how many uints it has actually stored. If the handle
-didn't fit, handle_dword contains number of uints we'd need in the variable
-length part to be able to fit the handle in.
-
-Now your patch destroys this behavior by storing 0 to handle_bytes in case
-the handle didn't fit *before* the returned value is actually stored to a
-struct copied to userspace.
-
-Also the handle_bytes < 0 check is IMHO pointless and confusing. If some
-filesystem is returning bogus size of the file handle, we have a big
-problem anyway so I don't think checking like this brings much. If you want
-to add some paranoia what would make some sense is: Make handle_bytes uint
-and do:
-
-	if (WARN_ON_ONCE(handle_bytes > MAX_HANDLE_SZ)) {
-		handle_bytes = 0;
-		retval = -EINVAL;
-	}
-
-But as a separate patch please, because it is unrelated to this __counted_by
-fixup.
-
-								Honza
-
->  	    (retval == FILEID_INVALID) || (retval < 0)) {
->  		/* As per old exportfs_encode_fh documentation
->  		 * we could return ENOSPC to indicate overflow
-> @@ -68,6 +73,8 @@ static long do_sys_name_to_handle(const struct path *path,
->  		handle_bytes = 0;
->  	} else
->  		retval = 0;
-> +	/* the "valid" number of bytes may fewer than originally allocated */
-> +	handle->handle_bytes = handle_bytes;
->  	/* copy the mount id */
->  	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
->  	    copy_to_user(ufh, handle,
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Fwiw, it wasn't meant that way. I meant it's a silly mistake in the
+sense that it is so easy to miss because the patch looks so benign. The
+fact is that we will have to live with missing things like this once in
+a while and that is why we have testing bots as well. :)
 
