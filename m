@@ -1,96 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-16165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE4D899A7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 12:16:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C853C899A9B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 12:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 744D0281B7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 10:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512B21F25225
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 10:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E091649A8;
-	Fri,  5 Apr 2024 10:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21EE16ABD4;
+	Fri,  5 Apr 2024 10:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="caMJ71mm"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t3AqxFMd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF48F27447;
-	Fri,  5 Apr 2024 10:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E94161B73
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Apr 2024 10:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712312145; cv=none; b=FRf/9LI8EZtwQDI3NFDfVmKkFyomRACUHaHFr7JwEbEVbAcgfjekdqoKBd5qxyhfZ+yWy8Vge/CEdv/gvbvFdkqzdL05Ynol/1XBQ2ZZyYmbWgtBCIO7eVKfBDSh25Avi5Q94PP9Nqzhr/900qd7VeqthUDPeqYql1t1KqjqxEc=
+	t=1712312442; cv=none; b=PfeS/z9indCyV7AJVIF0+jNklfdzlG5JTS5aBetE8TwV2U3hl2oRLdVNRz4tGuTerx6xOHyd/TLwf8/TtiU+RBJ9EOJs2lVUCMEjeYwcBtopJCIbDwvGyw+ndafaBqcdrUDpUqXG5g7F+FZPf23S9ptEFq7vvgDOoYluR425Q6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712312145; c=relaxed/simple;
-	bh=yIHeOwT1Z+4CwFKwe4RcKGCjnk0s2xBp+R1BOpUfFsg=;
+	s=arc-20240116; t=1712312442; c=relaxed/simple;
+	bh=x9FEW35UHYYiTgw3MPS855vU699G37yrjB8/DVBrIOE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TOoOkt2YAldLu2yTTJ5AyWwxcI4eJ851JbGwibmJNmAN9EJcvcEeRJainUrKwDhOvcF3MnozlI1MnfoRqOlrDGMiOdlriWn3WQJATMdaHEnCRIrl7NCcDNR2TjCMvn4bgtfRRTN1yyMs5gj2FOuySaLLthK7e/PgfIFjMvIquL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=caMJ71mm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F21BC433F1;
-	Fri,  5 Apr 2024 10:15:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712312144;
-	bh=yIHeOwT1Z+4CwFKwe4RcKGCjnk0s2xBp+R1BOpUfFsg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=caMJ71mmy73c69ZyZyNX4wS/2d8Gtly6EtzykUIE0yXHbrAMwv7eMWt2apQEno6io
-	 8Ny3HtFvTnC9Gaz97HDodO14jUPgFC3leggZFXx05N0QdQvMLPMYwokSZFQfHYbZxp
-	 O/nEAmSn8QWyea3nkipZVjXjYGJ9KgFkOeQnWOkMeRzcnwCDzqKGT2YLEgcy1zW6DW
-	 epW118aIRpl+hKttSW1y64jhg1CcH5IhVBH6IsGyDznq/8k7bxLKOAjx7fl1UZW+BT
-	 erfELlSyjrxr9gChb3R7X47yIZZ6/lr6monLIC+TD0k2YntQu2xsEIQ2MH1kiRPpGw
-	 NigJI7ozoCNng==
-Date: Fri, 5 Apr 2024 12:15:34 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, 
-	Christian Brauner <christian@brauner.io>, Jeff Layton <jlayton@kernel.org>, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Matthew Wilcox <willy@infradead.org>, Steve French <smfrench@gmail.com>, 
-	Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev, 
-	linux-cachefs@redhat.com, linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 15/26] mm: Export writeback_iter()
-Message-ID: <20240405-kanarienvogel-besuchen-63c433180767@brauner>
-References: <20240403124124.GA19085@lst.de>
- <20240403101422.GA7285@lst.de>
- <20240403085918.GA1178@lst.de>
- <20240328163424.2781320-1-dhowells@redhat.com>
- <20240328163424.2781320-16-dhowells@redhat.com>
- <3235934.1712139047@warthog.procyon.org.uk>
- <3300438.1712141700@warthog.procyon.org.uk>
- <3326107.1712149095@warthog.procyon.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PK2z2f2NEU1m8R13s6n8j1tMDfxlQ/S9LaTUPFcdGcynN8tzdqYtgQ+UtRK9RPskEu7c6OXu0fpgaalCSaUBP52BQXTi9Zf8263LmMPr98rOU7sjndftPOvXZ4SwurvM+WQXvqbXcUSMgH++rZIP/jGVJnZL+f4DNAfiZ+Mnzb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t3AqxFMd; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 5 Apr 2024 06:20:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1712312437;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JKB/XK2+ZspoYCWJ5e9uu85ZD/ohSEghijO4GmecwRI=;
+	b=t3AqxFMdmrGtYQ9G8J216FgOVp7DHoc0Xl3/V6haSjRofA+J7YhhVeOOItBQf08WAumVMo
+	nQF8ZnKnTLhSXGMG2LvUUMcNlI5s/Bj6jZIzc20XpDdSIHP81L8M5hslsOIXVeIolsY/ev
+	xjIhfxlnC1KvRHF0mVQhDM3doE0Si7o=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, 
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, jack@suse.cz, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org, 
+	ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org, 
+	io-uring@vger.kernel.org, nilay@linux.ibm.com, ritesh.list@gmail.com
+Subject: Re: [PATCH v6 00/10] block atomic writes
+Message-ID: <62uvkga54im76lnz47nc2znoeayidp2tcwpffseqtl42xdwxlc@hep6ckbgpwqz>
+References: <20240326133813.3224593-1-john.g.garry@oracle.com>
+ <ZgOXb_oZjsUU12YL@casper.infradead.org>
+ <ZgSCMXKtcYWhxR7e@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3326107.1712149095@warthog.procyon.org.uk>
+In-Reply-To: <ZgSCMXKtcYWhxR7e@dread.disaster.area>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Apr 03, 2024 at 01:58:15PM +0100, David Howells wrote:
-> Christoph Hellwig <hch@lst.de> wrote:
-> 
-> > > So why are we bothering with EXPORT_SYMBOL at all?  Why don't you just
-> > > send a patch replace all of them with EXPORT_SYMBOL_GPL()?
+On Thu, Mar 28, 2024 at 07:31:45AM +1100, Dave Chinner wrote:
+> On Wed, Mar 27, 2024 at 03:50:07AM +0000, Matthew Wilcox wrote:
+> > On Tue, Mar 26, 2024 at 01:38:03PM +0000, John Garry wrote:
+> > > The goal here is to provide an interface that allows applications use
+> > > application-specific block sizes larger than logical block size
+> > > reported by the storage device or larger than filesystem block size as
+> > > reported by stat().
+> > > 
+> > > With this new interface, application blocks will never be torn or
+> > > fractured when written. For a power fail, for each individual application
+> > > block, all or none of the data to be written. A racing atomic write and
+> > > read will mean that the read sees all the old data or all the new data,
+> > > but never a mix of old and new.
+> > > 
+> > > Three new fields are added to struct statx - atomic_write_unit_min,
+> > > atomic_write_unit_max, and atomic_write_segments_max. For each atomic
+> > > individual write, the total length of a write must be a between
+> > > atomic_write_unit_min and atomic_write_unit_max, inclusive, and a
+> > > power-of-2. The write must also be at a natural offset in the file
+> > > wrt the write length. For pwritev2, iovcnt is limited by
+> > > atomic_write_segments_max.
+> > > 
+> > > There has been some discussion on supporting buffered IO and whether the
+> > > API is suitable, like:
+> > > https://lore.kernel.org/linux-nvme/ZeembVG-ygFal6Eb@casper.infradead.org/
+> > > 
+> > > Specifically the concern is that supporting a range of sizes of atomic IO
+> > > in the pagecache is complex to support. For this, my idea is that FSes can
+> > > fix atomic_write_unit_min and atomic_write_unit_max at the same size, the
+> > > extent alignment size, which should be easier to support. We may need to
+> > > implement O_ATOMIC to avoid mixing atomic and non-atomic IOs for this. I
+> > > have no proposed solution for atomic write buffered IO for bdev file
+> > > operations, but I know of no requirement for this.
 > > 
-> > No my business.
-> 
-> Clearly it is as you're gradually replacing APIs with stuff that is GPL'd.
-> 
-> > But if you want to side track this let me just put this in here:
+> > The thing is that there's no requirement for an interface as complex as
+> > the one you're proposing here.  I've talked to a few database people
+> > and all they want is to increase the untorn write boundary from "one
+> > disc block" to one database block, typically 8kB or 16kB.
 > > 
-> > NAK to the non-GPL EXPORT of writeback_iter().
+> > So they would be quite happy with a much simpler interface where they
+> > set the inode block size at inode creation time, and then all writes to
+> > that inode were guaranteed to be untorn.  This would also be simpler to
+> > implement for buffered writes.
 > 
-> Very well, I'll switch that export to GPL.  Christian, if you can amend that
-> patch in your tree?
+> You're conflating filesystem functionality that applications will use
+> with hardware and block-layer enablement that filesystems and
+> filesystem utilities need to configure the filesystem in ways that
+> allow users to make use of atomic write capability of the hardware.
+> 
+> The block layer functionality needs to export everything that the
+> hardware can do and filesystems will make use of. The actual
+> application usage and setup of atomic writes at the filesystem/page
+> cache layer is a separate problem.  i.e. The block layer interfaces
+> need only support direct IO and expose limits for issuing atomic
+> direct IO, and nothing more. All the more complex stuff to make it
+> "easy to use" is filesystem level functionality and completely
+> outside the scope of this patchset....
 
-Sorted yesterday night!
+A CoW filesystem can implement atomic writes without any block device
+support. It seems to me that might have been the easier place to start -
+start by getting the APIs right, then do all the plumbing for efficient
+untorn writes on non CoW filesystems...
 
