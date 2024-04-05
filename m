@@ -1,137 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-16202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE05C89A0AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 17:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5363389A0EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 17:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76B251F22F7B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 15:08:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE8871F248B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Apr 2024 15:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E9116F84B;
-	Fri,  5 Apr 2024 15:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEC216F8F7;
+	Fri,  5 Apr 2024 15:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFFmoZoa"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SXKGA+GZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1015316EBF3;
-	Fri,  5 Apr 2024 15:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEB516F8EE
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Apr 2024 15:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712329707; cv=none; b=RcxNkvjD2bX6U9mqRAiZg8TqpTRL9khWPga6Ip7KcibX97bGEUfenYKGZe21Bl0BccEjEwIb+OIrb6GS8gXxOSR5rnW0zIdaG45ETwNUsh7iCETzmilWZ8kbHSMRNxwRQBrTbFK6GUnoZ/c/Ga69jQHtWKG89uKTo6t42PgS32c=
+	t=1712330461; cv=none; b=WF4Csjlx/XuuyRKJ6J3SMm+uiq5wuKHwTuLUutK2B9Y0E5rjVi7G0NEkoLjXD7TYzxBkC0wDj4go1O9c481uaKJit6uSorWrdd7Fp5TAnN3fLG+1Y8XFaTmtZpmiED57qr0rPFZlB/EnJ9LRUmV7rkIQYW1/AeWWiFOB8+kbfD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712329707; c=relaxed/simple;
-	bh=8OTJYRkxJEPH+ieN+Wz+w9QPRHjkaVsc32knKowB3cU=;
+	s=arc-20240116; t=1712330461; c=relaxed/simple;
+	bh=v2LZLmJjwZiX/Av/VtBl/rfMd2QhhbkrVc7py92eGo0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MOkJ10xsY8bTODKtsWcZbH1mZhfVUXeDB7hS2N7BJjs3Yd/gJfXIZE7vWiftB9sTAXdUGBTUJQaTnLqMe1f0DqKOFbDs014N0va/OTVEiCp4Ft5StuLkRtdZKyd/5ZN2+BOZ9NvnCHg2gjs+p60gPAUeZbZuzsWVoIvQIDWzclo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JFFmoZoa; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6993f39ac53so3839516d6.1;
-        Fri, 05 Apr 2024 08:08:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=P+acssIfWj59t0IIUwuyegRfIMFqY/LUqe3FI5zerogOv9cE/9/7nuqX4DbiyVJenQVP5GS7e+EEcDuiVT9k2kPuGVIynpAYAdQgAT6QOJ+GPXHx7z7Pk4kna5/oXu4pVAZzRmMWSGcB/lhQZdWxKrktB/iqSZPivO8AaJxZDqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SXKGA+GZ; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dcc6fc978ddso1923839276.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Apr 2024 08:20:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712329705; x=1712934505; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1712330459; x=1712935259; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d56tBBvKhdU/LZ/YsQQXpTmVNEsS5p7VvT7fAO/irxw=;
-        b=JFFmoZoa/Rptz37vqJ3VSqJU5RmAWxOJzIwnwNsGNLesESCpoucwCDPqHryReQklgf
-         1cRZdoiBjv/ZkbR3lg/dUuBK1Qhm3RsfatEwYHyc+aX9LFZW7gqlJcNto5zk1Kfzxvo8
-         uLQeMfe+Sgq+U4TCCglYRNQpx3Oti2/XoCMA2fmupPrQvAeGa5ezMcka1qqfY0dIo5fw
-         7YM0dbQKGm6dx4Wx2UDlTiTxUDZEgaLbMLLOnU3+c7AMMCXXGPaIpGg+Pja/Umv7NmJe
-         jP+uQDAzN0Of6ATgcOuI+vLRgMa5v2uxANdxvAA35Z7HXDQgFQqZJ1Y1NfkLhKxAZ5fK
-         e/4A==
+        bh=xfDVWiPNFB4hCGgsx7SCawcdvp63A70UKMWvRcHoJQg=;
+        b=SXKGA+GZwNrphgd7e0RtYhr+EJx5qRVK0fYdxJEvQtDKQopI6RDlP1YVIhzVUu+GBS
+         IsCDFx8FDHWZDrt1aHQvEQ8wnH/bM3Kui+J4iWRxtf3l9hYXObTwy64YrCFA2ws+UQ2D
+         eG5mM4zY15xcHfGLZeWK1AC67+h2Jx/4hu7RqE+ekwbzEauID+yn7tsqpp0ztuKG158z
+         o6Byo/b0FVHbTYOHB+c9wm65ICoJOsA4HgAMD92+TkT76K26mzttEVneGjZtpLcZrmmR
+         zLbw4NQZlbbp6CvbeMtdecci1kQ8YWGO9KAmhdLp3hxEL+Z/ejB9GQMvrLzgxGBpv59w
+         uTPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712329705; x=1712934505;
+        d=1e100.net; s=20230601; t=1712330459; x=1712935259;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d56tBBvKhdU/LZ/YsQQXpTmVNEsS5p7VvT7fAO/irxw=;
-        b=h3u+z8Zq2gQa58dJ0GVHu82wiFdwzeeh6ICDJdNYKiuVKZZwgiqXcxshd/5wUa2pEH
-         x/GljFnlfkoCBg3v/VDWGL3QDk12ESEYwsu0t6PaMX1BGJz+Bn7GoR2yf2qsZdBsYEbG
-         qts6UQbeilCTJE3+qq0Di1s4l+3crYWEHHOKVoHk23JagR38ekTgjF1KPQwd/TGHUK5b
-         TYo6vD0bIgiH/vC8j+Udw7yNv31pwVhQl//XRaqicuDLdZLNr23Im6JMK68+HZDFykkY
-         hc9/or64LHVJRW1wFEOIWtvUbx8ErUxKzxjv488PWcxKLEO5mM2ahtw36hM1SiJPNWwY
-         SC5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXMmgpIqQ8IapK2xm9RpPH36YqWQOZkjW4GYg+huQt7WIxv/x3KP9PGbYKJdqTMaZ4y6uPRBDAtVn4GLqEtAPqHvZIBGkWdncoJCHpGKa0HTLo6GRw/CySvnYi1k1MSQ14lVDj2Bq50FU8Gkw==
-X-Gm-Message-State: AOJu0YwCNbk57M+JLBbgB4R2r/NJOwMLsJ2u9ngndMzPSv1ojR0/g77N
-	+zqQE20kZ6C+pGmnbezzXP4GAmMIHN/Q418NZ9Cfp7f5abE6Ol46K0YglyFo5e9/K+5JQ0fClKD
-	C5MkS0znO8gwKXZx3j7lMybdKy0U=
-X-Google-Smtp-Source: AGHT+IHsrzycOXlQkse5JPUfdRu4z8p9YwMV+DwDSeufk6DF3ue8UQQXBW6CwnVEK5l1XwTuje/F5xYnB/KwXUA3A5Y=
-X-Received: by 2002:a05:6214:20aa:b0:696:4256:9fa6 with SMTP id
- 10-20020a05621420aa00b0069642569fa6mr1916749qvd.26.1712329704925; Fri, 05 Apr
- 2024 08:08:24 -0700 (PDT)
+        bh=xfDVWiPNFB4hCGgsx7SCawcdvp63A70UKMWvRcHoJQg=;
+        b=stmVuQEqD3+KLxwS9Ka7AmkWG6EnyazbALeHdOXkExP2xewoWbwF/ZpVEUS3D9sJIl
+         Xo0Nkj/+YS01hR840m4l4P6OhezzdO0zFcQotOVQ4IqE2bIOGc/wEPG0t+OWS9EYllKb
+         We65lkWtrI7R4aXnsGYM2bd6+lzG4fphSj2GMzx6UaYr8FZ/YA6Iki/LT8dyxJKbz3Fi
+         KTS9rw947c4E9DADiVWYPtrGbGcCasYrjuT2MU0raENMpBNuyVkgaTPgH2Q8pX1x7OO6
+         /BnIIModjff4bEqXHrbwl/gi1pQOObNLlvlKS4wqzcUI9fiV4HPnw3nK6VjHm4T3eDAi
+         YDUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3qoUqr+nyl1qKDu9L+9cujkzAifay2OdTX/y2NESTm1PwI81WmYyBuq9Z2l7hGVGMuE1Z/MDWfvlCsZGhNxRVwmqMU8TAj1w4B2BeuA==
+X-Gm-Message-State: AOJu0YwdH+jA2EpN3r5uhzUhQBzDK9B7txCu8iQ66AAoAp1iwg5EbRKs
+	pUuqyGWJwAKZ1tym1mGXTbELlj+aMlAgKnE740mMeMr1oFdz00DUpYZKp58Tx/or4QmXkuFcsM6
+	+9Xr0qcKpY8/bUxldgPJAQSYQXtCmwIG3nfUP
+X-Google-Smtp-Source: AGHT+IFEI5zu5AiOteuhDQ2sEIS5wB7/bvXsQ5XrghDRi0ac0xrycb3LZS7XKg1pBjRTjmrFbQ1PTicmGSgIyMm6syU=
+X-Received: by 2002:a25:6ec3:0:b0:dc6:d258:c694 with SMTP id
+ j186-20020a256ec3000000b00dc6d258c694mr2014282ybc.19.1712330458412; Fri, 05
+ Apr 2024 08:20:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000098f75506153551a1@google.com> <0000000000002f2066061539e54b@google.com>
- <CAOQ4uxiS5X19OT2MTo_LnLAx2VL9oA1zBSpbuiWMNy_AyGLDrg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiS5X19OT2MTo_LnLAx2VL9oA1zBSpbuiWMNy_AyGLDrg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 5 Apr 2024 18:08:13 +0300
-Message-ID: <CAOQ4uxhm5m9CvX0y2RcJGuP=vryZLp9M+tS6vH1o_9BGUqxrvg@mail.gmail.com>
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_fop_llseek
-To: syzbot <syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com>
-Cc: gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
-	valesini@yandex-team.ru, Christoph Hellwig <hch@lst.de>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Al Viro <viro@zeniv.linux.org.uk>
+References: <20240321163705.3067592-1-surenb@google.com> <c14cd89b-c879-4474-a800-d60fc29c1820@gmail.com>
+ <CAJuCfpHEt2n6sA7m5zvc-F+z=3-twVEKfVGCa0+y62bT10b0Bw@mail.gmail.com> <41328d5a-3e41-4936-bcb7-c0a85e6ce332@gmail.com>
+In-Reply-To: <41328d5a-3e41-4936-bcb7-c0a85e6ce332@gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 5 Apr 2024 08:20:44 -0700
+Message-ID: <CAJuCfpERj52X8DB64b=6+9WLcnuEBkpjnfgYBgvPs0Rq7kxOkw@mail.gmail.com>
+Subject: Re: [PATCH v6 00/37] Memory allocation profiling
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com, tj@kernel.org, 
+	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, 
+	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com, 
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 4, 2024 at 9:54=E2=80=AFAM Amir Goldstein <amir73il@gmail.com> =
+On Fri, Apr 5, 2024 at 7:30=E2=80=AFAM Klara Modin <klarasmodin@gmail.com> =
 wrote:
 >
-> On Thu, Apr 4, 2024 at 2:51=E2=80=AFAM syzbot
-> <syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com> wrote:
+> On 2024-04-05 16:14, Suren Baghdasaryan wrote:
+> > On Fri, Apr 5, 2024 at 6:37=E2=80=AFAM Klara Modin <klarasmodin@gmail.c=
+om> wrote:
+> >> If I enable this, I consistently get percpu allocation failures. I can
+> >> occasionally reproduce it in qemu. I've attached the logs and my confi=
+g,
+> >> please let me know if there's anything else that could be relevant.
 > >
-> > syzbot has bisected this issue to:
+> > Thanks for the report!
+> > In debug_alloc_profiling.log I see:
 > >
-> > commit 0fedefd4c4e33dd24f726b13b5d7c143e2b483be
-> > Author: Valentine Sinitsyn <valesini@yandex-team.ru>
-> > Date:   Mon Sep 25 08:40:12 2023 +0000
+> > [    7.445127] percpu: limit reached, disable warning
 > >
-> >     kernfs: sysfs: support custom llseek method for sysfs entries
-> >
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D17cb5e03=
-180000
-> > start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.ker=
-nel..
-> > git tree:       upstream
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D142b5e03=
-180000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D102b5e03180=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4d90a36f0ca=
-b495a
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D9a5b0ced8b1bf=
-b238b56
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17f1d93d1=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D15c38139180=
-000
-> >
-> > Reported-by: syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com
-> > Fixes: 0fedefd4c4e3 ("kernfs: sysfs: support custom llseek method for s=
-ysfs entries")
-> >
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bise=
-ction
-> >
+> > That's probably the reason. I'll take a closer look at the cause of
+> > that and how we can fix it.
 >
+> Thanks!
 
-Let's test Al's solution.
+In the build that produced debug_alloc_profiling.log I think we are
+consuming all the per-cpu memory reserved for the modules. Could you
+please try this change and see if that fixes the issue:
 
-#syz test: https://github.com/amir73il/linux/ vfs-fixes
+ include/linux/percpu.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Amir.
+diff --git a/include/linux/percpu.h b/include/linux/percpu.h
+index a790afba9386..03053de557cf 100644
+--- a/include/linux/percpu.h
++++ b/include/linux/percpu.h
+@@ -17,7 +17,7 @@
+ /* enough to cover all DEFINE_PER_CPUs in modules */
+ #ifdef CONFIG_MODULES
+ #ifdef CONFIG_MEM_ALLOC_PROFILING
+-#define PERCPU_MODULE_RESERVE (8 << 12)
++#define PERCPU_MODULE_RESERVE (8 << 13)
+ #else
+ #define PERCPU_MODULE_RESERVE (8 << 10)
+ #endif
+
+>
+> >
+> >   In qemu-alloc3.log I see couple of warnings:
+> >
+> > [    1.111620] alloc_tag was not set
+> > [    1.111880] WARNING: CPU: 0 PID: 164 at
+> > include/linux/alloc_tag.h:118 kfree (./include/linux/alloc_tag.h:118
+> > (discriminator 1) ./include/linux/alloc_tag.h:161 (discriminator 1)
+> > mm/slub.c:2043 ...
+> >
+> > [    1.161710] alloc_tag was not cleared (got tag for fs/squashfs/cache=
+.c:413)
+> > [    1.162289] WARNING: CPU: 0 PID: 195 at
+> > include/linux/alloc_tag.h:109 kmalloc_trace_noprof
+> > (./include/linux/alloc_tag.h:109 (discriminator 1)
+> > ./include/linux/alloc_tag.h:149 (discriminator 1) ...
+> >
+> > Which means we missed to instrument some allocation. Can you please
+> > check if disabling CONFIG_MEM_ALLOC_PROFILING_DEBUG fixes QEMU case?
+> > In the meantime I'll try to reproduce and fix this.
+> > Thanks,
+> > Suren.
+>
+> That does seem to be the case from what I can tell. I didn't get the
+> warning in qemu consistently, but it hasn't reappeared for a number of
+> times at least with the debugging option off.
+>
+> Regards,
+> Klara Modin
 
