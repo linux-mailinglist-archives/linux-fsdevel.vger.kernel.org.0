@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-16276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6938989A9F1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 11:19:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CFD89A9F5
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 11:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8838B222FC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 09:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 688EE1C21084
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 09:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21B1376E0;
-	Sat,  6 Apr 2024 09:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A33381C6;
+	Sat,  6 Apr 2024 09:17:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB962E652;
-	Sat,  6 Apr 2024 09:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A33A36AF6;
+	Sat,  6 Apr 2024 09:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712395072; cv=none; b=k7cpQ7W5gKQYQ5zows6F8YozHqr/Hs3BrecZy4Hgtz96QOa8W+KN47m9zHWyBJ2KJfbetscEPyqNeZ8DmNEQMhOf4v6GLx0bLHTtyhxw64JocD0yaWn/mlQPkgTPoutCT32yOnfBydA5t7rrCF9Lew1U0ZT0dU8a7Td0wnjLtuk=
+	t=1712395072; cv=none; b=btklzGXmtLdi38KpIJRpVAkt6IEWcncxUP9lwyC7gVU+OItXBH4OeTDa1irmrgCiYK5FjaH3zFV2M3xTsqs+k6SWYxz44FID8yl2lvRtWHL5t65kxUJFGIbYtjREfLHmxZInuBsg/46PFz/+KfR6n1pRMwKhaUhfHx4rslsG3yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1712395072; c=relaxed/simple;
-	bh=g8gx/vP7JXR9bQcNllNLkqVOlxmyZfK7k0VNv7WlN94=;
+	bh=8vZlYcXDwbM//A79Dk/T06AReJmn5bA6v/csx8/5VJw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LC+X4X4DTaOBBpcD/oxDs+HObX1D5zLz7eolbqJMI7FcjfcXa/AIQmqBHeHi2iGcMHkdJTUddWZsFSeGlM+OcaRZgxRjEdO9GP88oHSYrvBjR/ClL/c5Y5qBG795LP+3e2DOEc5yR9JtXG1LjUycfvGMJcGk47UpgxjC2S7SVfA=
+	 MIME-Version; b=D2gGd1/3U/KveRy2jWDv+dBnQjwkjCovAocJL42rifCCvrU4LUYBb+Rn6y+ZVAQWMgTVGzkvrzKw8nEfLKBTHzgVPY1rENmj96+8OP94m6AqAMccrhtA398Kqj5Bsc8rz/2jq5VHrOZ0dnZ5d7c/VLI6Vm+MotJVW4coWmvXQog=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VBVBH1vVBz4f3kJv;
-	Sat,  6 Apr 2024 17:17:43 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VBVBC3bPbz4f3lg9;
+	Sat,  6 Apr 2024 17:17:39 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9017B1A0175;
-	Sat,  6 Apr 2024 17:17:47 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 013F91A0175;
+	Sat,  6 Apr 2024 17:17:48 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+REyExFm0JDpJA--.50223S17;
+	by APP1 (Coremail) with SMTP id cCh0CgAn+REyExFm0JDpJA--.50223S18;
 	Sat, 06 Apr 2024 17:17:47 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: jack@suse.cz,
@@ -49,9 +49,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com,
 	yukuai3@huawei.com
-Subject: [PATCH vfs.all 13/26] ext4: prevent direct access of bd_inode
-Date: Sat,  6 Apr 2024 17:09:17 +0800
-Message-Id: <20240406090930.2252838-14-yukuai1@huaweicloud.com>
+Subject: [PATCH vfs.all 14/26] jbd2: prevent direct access of bd_inode
+Date: Sat,  6 Apr 2024 17:09:18 +0800
+Message-Id: <20240406090930.2252838-15-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
 References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
@@ -62,10 +62,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+REyExFm0JDpJA--.50223S17
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFW7WrW8ZF4DWFyDAF1DJrb_yoW5Ww48pa
-	s8AF15Cr4UZFyj9a9xGFZrta47uw18Kayxuryxu34a9rZIqrySvFy8KF1jvFWjqrW8Zr97
-	XF1jkryrCr1FkrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgAn+REyExFm0JDpJA--.50223S18
+X-Coremail-Antispam: 1UD129KBjvJXoW3GF1rJw4fAF1fJw1rKF4fuFg_yoWxXFW3pF
+	98Ga45ZrWUZryjgrWxXrWUJrWYqa40ka4UWr9ru3sYy3yqyr97KF1kKr1UJFWUtFWrGan5
+	XF1DC3y7Gw1UK3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -90,68 +90,160 @@ Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/ext4/dir.c       | 2 +-
- fs/ext4/ext4_jbd2.c | 2 +-
- fs/ext4/super.c     | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ fs/ext4/super.c      |  2 +-
+ fs/jbd2/journal.c    | 26 +++++++++++++++-----------
+ include/linux/jbd2.h | 18 ++++++++++++++----
+ 3 files changed, 30 insertions(+), 16 deletions(-)
 
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index 3985f8c33f95..0733bc1eec7a 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -192,7 +192,7 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
- 					(PAGE_SHIFT - inode->i_blkbits);
- 			if (!ra_has_index(&file->f_ra, index))
- 				page_cache_sync_readahead(
--					sb->s_bdev->bd_inode->i_mapping,
-+					sb->s_bdev_file->f_mapping,
- 					&file->f_ra, file,
- 					index, 1);
- 			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
-diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
-index 5d8055161acd..dbb9aff07ac1 100644
---- a/fs/ext4/ext4_jbd2.c
-+++ b/fs/ext4/ext4_jbd2.c
-@@ -206,7 +206,7 @@ static void ext4_journal_abort_handle(const char *caller, unsigned int line,
- 
- static void ext4_check_bdev_write_error(struct super_block *sb)
- {
--	struct address_space *mapping = sb->s_bdev->bd_inode->i_mapping;
-+	struct address_space *mapping = sb->s_bdev_file->f_mapping;
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	int err;
- 
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index cf4666b04d2e..2a1afe6c77f2 100644
+index 2a1afe6c77f2..d47c1e7e8798 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -244,7 +244,7 @@ static struct buffer_head *__ext4_sb_bread_gfp(struct super_block *sb,
- struct buffer_head *ext4_sb_bread(struct super_block *sb, sector_t block,
- 				   blk_opf_t op_flags)
- {
--	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev->bd_inode->i_mapping,
-+	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev_file->f_mapping,
- 			~__GFP_FS) | __GFP_MOVABLE;
+@@ -5910,7 +5910,7 @@ static journal_t *ext4_open_dev_journal(struct super_block *sb,
+ 	if (IS_ERR(bdev_file))
+ 		return ERR_CAST(bdev_file);
  
- 	return __ext4_sb_bread_gfp(sb, block, op_flags, gfp);
-@@ -253,7 +253,7 @@ struct buffer_head *ext4_sb_bread(struct super_block *sb, sector_t block,
- struct buffer_head *ext4_sb_bread_unmovable(struct super_block *sb,
- 					    sector_t block)
- {
--	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev->bd_inode->i_mapping,
-+	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev_file->f_mapping,
- 			~__GFP_FS);
+-	journal = jbd2_journal_init_dev(file_bdev(bdev_file), sb->s_bdev, j_start,
++	journal = jbd2_journal_init_dev(bdev_file, sb->s_bdev_file, j_start,
+ 					j_len, sb->s_blocksize);
+ 	if (IS_ERR(journal)) {
+ 		ext4_msg(sb, KERN_ERR, "failed to create device journal");
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index b6c114c11b97..abd42a6ccd0e 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -1516,11 +1516,12 @@ static int journal_load_superblock(journal_t *journal)
+  * very few fields yet: that has to wait until we have created the
+  * journal structures from from scratch, or loaded them from disk. */
  
- 	return __ext4_sb_bread_gfp(sb, block, 0, gfp);
-@@ -5552,7 +5552,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	 * used to detect the metadata async write error.
+-static journal_t *journal_init_common(struct block_device *bdev,
+-			struct block_device *fs_dev,
++static journal_t *journal_init_common(struct file *bdev_file,
++			struct file *fs_dev_file,
+ 			unsigned long long start, int len, int blocksize)
+ {
+ 	static struct lock_class_key jbd2_trans_commit_key;
++	struct block_device *bdev = file_bdev(bdev_file);
+ 	journal_t *journal;
+ 	int err;
+ 	int n;
+@@ -1531,7 +1532,9 @@ static journal_t *journal_init_common(struct block_device *bdev,
+ 
+ 	journal->j_blocksize = blocksize;
+ 	journal->j_dev = bdev;
+-	journal->j_fs_dev = fs_dev;
++	journal->j_dev_file = bdev_file;
++	journal->j_fs_dev = file_bdev(fs_dev_file);
++	journal->j_fs_dev_file = fs_dev_file;
+ 	journal->j_blk_offset = start;
+ 	journal->j_total_len = len;
+ 	jbd2_init_fs_dev_write_error(journal);
+@@ -1628,8 +1631,8 @@ static journal_t *journal_init_common(struct block_device *bdev,
+ 
+ /**
+  *  journal_t * jbd2_journal_init_dev() - creates and initialises a journal structure
+- *  @bdev: Block device on which to create the journal
+- *  @fs_dev: Device which hold journalled filesystem for this journal.
++ *  @bdev_file: Opened block device on which to create the journal
++ *  @fs_dev_file: Opened device which hold journalled filesystem for this journal.
+  *  @start: Block nr Start of journal.
+  *  @len:  Length of the journal in blocks.
+  *  @blocksize: blocksize of journalling device
+@@ -1640,13 +1643,13 @@ static journal_t *journal_init_common(struct block_device *bdev,
+  *  range of blocks on an arbitrary block device.
+  *
+  */
+-journal_t *jbd2_journal_init_dev(struct block_device *bdev,
+-			struct block_device *fs_dev,
++journal_t *jbd2_journal_init_dev(struct file *bdev_file,
++			struct file *fs_dev_file,
+ 			unsigned long long start, int len, int blocksize)
+ {
+ 	journal_t *journal;
+ 
+-	journal = journal_init_common(bdev, fs_dev, start, len, blocksize);
++	journal = journal_init_common(bdev_file, fs_dev_file, start, len, blocksize);
+ 	if (IS_ERR(journal))
+ 		return ERR_CAST(journal);
+ 
+@@ -1683,8 +1686,9 @@ journal_t *jbd2_journal_init_inode(struct inode *inode)
+ 		  inode->i_sb->s_id, inode->i_ino, (long long) inode->i_size,
+ 		  inode->i_sb->s_blocksize_bits, inode->i_sb->s_blocksize);
+ 
+-	journal = journal_init_common(inode->i_sb->s_bdev, inode->i_sb->s_bdev,
+-			blocknr, inode->i_size >> inode->i_sb->s_blocksize_bits,
++	journal = journal_init_common(inode->i_sb->s_bdev_file,
++			inode->i_sb->s_bdev_file, blocknr,
++			inode->i_size >> inode->i_sb->s_blocksize_bits,
+ 			inode->i_sb->s_blocksize);
+ 	if (IS_ERR(journal))
+ 		return ERR_CAST(journal);
+@@ -2009,7 +2013,7 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
+ 		byte_count = (block_stop - block_start + 1) *
+ 				journal->j_blocksize;
+ 
+-		truncate_inode_pages_range(journal->j_dev->bd_inode->i_mapping,
++		truncate_inode_pages_range(journal->j_dev_file->f_mapping,
+ 				byte_start, byte_stop);
+ 
+ 		if (flags & JBD2_JOURNAL_FLUSH_DISCARD) {
+diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+index 971f3e826e15..fc26730ae8ef 100644
+--- a/include/linux/jbd2.h
++++ b/include/linux/jbd2.h
+@@ -968,6 +968,11 @@ struct journal_s
  	 */
- 	spin_lock_init(&sbi->s_bdev_wb_lock);
--	errseq_check_and_advance(&sb->s_bdev->bd_inode->i_mapping->wb_err,
-+	errseq_check_and_advance(&sb->s_bdev_file->f_mapping->wb_err,
- 				 &sbi->s_bdev_wb_err);
- 	EXT4_SB(sb)->s_mount_state |= EXT4_ORPHAN_FS;
- 	ext4_orphan_cleanup(sb, es);
+ 	struct block_device	*j_dev;
+ 
++	/**
++	 * @j_dev_file: Opended device @j_dev.
++	 */
++	struct file		*j_dev_file;
++
+ 	/**
+ 	 * @j_blocksize: Block size for the location where we store the journal.
+ 	 */
+@@ -993,6 +998,11 @@ struct journal_s
+ 	 */
+ 	struct block_device	*j_fs_dev;
+ 
++	/**
++	 * @j_fs_dev_file: Opened device @j_fs_dev.
++	 */
++	struct file		*j_fs_dev_file;
++
+ 	/**
+ 	 * @j_fs_dev_wb_err:
+ 	 *
+@@ -1533,8 +1543,8 @@ extern void	 jbd2_journal_unlock_updates (journal_t *);
+ 
+ void jbd2_journal_wait_updates(journal_t *);
+ 
+-extern journal_t * jbd2_journal_init_dev(struct block_device *bdev,
+-				struct block_device *fs_dev,
++extern journal_t *jbd2_journal_init_dev(struct file *bdev_file,
++				struct file *fs_dev_file,
+ 				unsigned long long start, int len, int bsize);
+ extern journal_t * jbd2_journal_init_inode (struct inode *);
+ extern int	   jbd2_journal_update_format (journal_t *);
+@@ -1696,7 +1706,7 @@ static inline void jbd2_journal_abort_handle(handle_t *handle)
+ 
+ static inline void jbd2_init_fs_dev_write_error(journal_t *journal)
+ {
+-	struct address_space *mapping = journal->j_fs_dev->bd_inode->i_mapping;
++	struct address_space *mapping = journal->j_fs_dev_file->f_mapping;
+ 
+ 	/*
+ 	 * Save the original wb_err value of client fs's bdev mapping which
+@@ -1707,7 +1717,7 @@ static inline void jbd2_init_fs_dev_write_error(journal_t *journal)
+ 
+ static inline int jbd2_check_fs_dev_write_error(journal_t *journal)
+ {
+-	struct address_space *mapping = journal->j_fs_dev->bd_inode->i_mapping;
++	struct address_space *mapping = journal->j_fs_dev_file->f_mapping;
+ 
+ 	return errseq_check(&mapping->wb_err,
+ 			    READ_ONCE(journal->j_fs_dev_wb_err));
 -- 
 2.39.2
 
