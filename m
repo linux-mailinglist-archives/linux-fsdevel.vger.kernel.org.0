@@ -1,79 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-16297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AFD89ABFE
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 18:19:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D1589ACC5
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 21:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4AC2B211FB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 16:19:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98CAA28205A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 19:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290543FB91;
-	Sat,  6 Apr 2024 16:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3C44CE17;
+	Sat,  6 Apr 2024 19:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4wpZX/N"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ETQbf6Np"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886013F9D4;
-	Sat,  6 Apr 2024 16:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084AF2E419;
+	Sat,  6 Apr 2024 19:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712420345; cv=none; b=K7fFGznYDcv65Bz9xngUop8JK3BvPnBNDdjMvMV8KvYVehy8G+EIougsJIGzWBFlcviIqbOvmEMkGtsM3CJh2Us0Zfn5ptodhxEuKVVBWYWZUtYTRIgMIKzXs6tsONchUBd+Tkl4WAcWg1oi+uN7fGYqDMJs6uqkt0f9W8RBPnw=
+	t=1712432545; cv=none; b=q9KWAM9m8X3kkADkQ973a4EpvNm/d39ideu9Jheog2XA+NbZN/ktlXriBkcaWgGSmI4dxSRsWacN6bpSh7o5q7Y/Lwq5QYn45b4svASvLu5wGKd9UEgJbVjcAi6CC1rJiWcEBIfkajO23jdwsmHHF+XUJc0QTWvbbrvforiO0H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712420345; c=relaxed/simple;
-	bh=H/6btIUI69l3hqvbJuOXI9gKB0Wbv0bWGrQw5jtsO5Y=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=c3di55jXBeHmssdlHglGlbZzEECFxDc3L213bAkQbJYGTMefH2S5a1ekptj5STwKQ1Vp0XJ+N+6RwOZqymC7oWxRRZAMa+2h+RcuBkcOQSYCQ9dM6x98o2w7mwVQCDuuQs12UJR2kF+8Q/KIuO/QlvZfhF331ERvCFm+QLLuKRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4wpZX/N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 18114C43394;
-	Sat,  6 Apr 2024 16:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712420345;
-	bh=H/6btIUI69l3hqvbJuOXI9gKB0Wbv0bWGrQw5jtsO5Y=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=p4wpZX/NOE0Th4WqHf42mdKbFtDoRIkXLG4cX2K6ThjJsLTDS3fvpf/YY0tAueQzG
-	 woAl/kseUD5hBZVTd7KjdPNn600/d+dLbXwOloZmV5vB/ZVF3BFyPSj/+vS/XpEB2X
-	 DSyQ0gLPc8IYGXqhD60Q0ySoLG79QNKBOB3yYaaFdLMFpi87WFgWkAtuyKNt/lRDJm
-	 +p1BzDS6f3IrZ3sUCRhY0Zwnald3jqe/8YIE1cH68nJiEXHY6mvtzwTvRG0IdL585J
-	 8kBfnLmWdc4QBTIyRFItfJ9ssimGgPKCbWnf5Q8145/mU8N5ZlaQ77YKNOO7JE8SOo
-	 iQRoilzJKEMKg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0A55CD8A103;
-	Sat,  6 Apr 2024 16:19:05 +0000 (UTC)
-Subject: Re: [GIT PULL] xfs: bug fixes for 6.9
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <878r1q3byi.fsf@debian-BULLSEYE-live-builder-AMD64>
-References: <878r1q3byi.fsf@debian-BULLSEYE-live-builder-AMD64>
-X-PR-Tracked-List-Id: <linux-xfs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <878r1q3byi.fsf@debian-BULLSEYE-live-builder-AMD64>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.9-fixes-2
-X-PR-Tracked-Commit-Id: e23d7e82b707d1d0a627e334fb46370e4f772c11
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9520c192e853bad2a0029f5ce00fa7774408efad
-Message-Id: <171242034503.494.6533765764306092670.pr-tracker-bot@kernel.org>
-Date: Sat, 06 Apr 2024 16:19:05 +0000
-To: Chandan Babu R <chandanbabu@kernel.org>
-Cc: torvalds@linux-foundation.org, chandanbabu@kernel.org, aalbersh@redhat.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+	s=arc-20240116; t=1712432545; c=relaxed/simple;
+	bh=FQOx6neNfjf28as4+qdgLiKcxs8a3QWN1kgr8cW+bt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OzDhwsiAHZHecYxIg0A4h0bfrrN4/zoA/+IEuBdCCBkQmaYJBm3YKrjkMET33g5EJYZw5EJ98HatL6VctTKrt06XOALiwqAPmllU67q4ioMLrMbx2l4LXeLcSC/PXuMsOLP29phHqN5K8/KchNtHCzm443Hly0g0kjt6U5JdFOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ETQbf6Np; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=12s9IqCzKg6mDwJlnb73Nn/9S6R6dU8UO0E4IWBh+L0=; b=ETQbf6NpzsfS+4sfGBNEXD88O6
+	K7R0EVgl/2uQdUQpxH5phxJkEcCWpb2cU4rTZ87ttLSlaBTCB7krUuXnoQ2+uFtR26JxsSl9frFww
+	ViimFAF5598Unu5bSYuouJkMOYX+MLkLZtZ0J0GI/OM0GzvjT8tXTqPOANL+HSunZSMWTHvNivJuy
+	r6MEA4kf42rbT+K1XSl8XhOmkFedwg3zXT0styV/qtzoR/vm+iu2Z9WY5JTtnQjnaY/An7etszz3K
+	83BvP7YVoHbH/WKlPlBYfWjzJNlFZLAi4bUAsuNqO8Ekf4MUHak8jZOHKKrtXWB4svpUoYHJ7A0za
+	+l3ZQgwQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rtBvS-007MrB-1m;
+	Sat, 06 Apr 2024 19:42:06 +0000
+Date: Sat, 6 Apr 2024 20:42:06 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, hch@lst.de, brauner@kernel.org, axboe@kernel.dk,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+Message-ID: <20240406194206.GC538574@ZenIV>
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <20240406090930.2252838-23-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240406090930.2252838-23-yukuai1@huaweicloud.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The pull request you sent on Sat, 06 Apr 2024 18:02:40 +0530:
+On Sat, Apr 06, 2024 at 05:09:26PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> So that iomap and bffer_head can convert to use bdev_file in following
+> patches.
 
-> https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.9-fixes-2
+Let me see if I got it straight.  You introduce dummy struct file instances
+(no methods, nothing).  The *ONLY* purpose they serve is to correspond to
+opened instances of struct bdev.  No other use is possible.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9520c192e853bad2a0029f5ce00fa7774408efad
+You shove them into ->i_private of bdevfs inodes.  Lifetime rules are...
+odd.
 
-Thank you!
+In bdev_open() you arrange for such beast to be present.  You never
+return it anywhere, they only get accessed via ->i_private, exposing
+it at least to fs/buffer.c.  Reference to those suckers get stored
+(without grabbing refcount) into buffer_head instances.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+And all of that is for... what, exactly?
 
