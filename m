@@ -1,81 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-16263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCDB289A97B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 09:11:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2834F89A9CB
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 10:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41B3EB21A5A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 07:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52EE1F219F0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Apr 2024 08:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7078522616;
-	Sat,  6 Apr 2024 07:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F2822618;
+	Sat,  6 Apr 2024 08:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Shi0azks"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQU7mZdQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0E91EEFC;
-	Sat,  6 Apr 2024 07:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA35F8BF8;
+	Sat,  6 Apr 2024 08:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712387501; cv=none; b=Loea8vgMEme55srCWRp1AA+ozghxs1Y9qn8tzOm8gZpspeXuFpKVUBPNeyPEv5NtSpNL26CmEEFQA18EwUrBD9AkP4WuY6qK27IZEnHbRJIBFdejRS8c22TQQ1hiOz1Z5AVDreCV56pn0JI0rumM9OcdgtdQIQUhsLzRmHW2QGQ=
+	t=1712393845; cv=none; b=sacsCtMlb4K3rVgZ3LSdfmqt7kh/5on7m9W72+Nr0/uoGVFSNmdjUdiK83/13mMfPRVLq4xpiCVvY382pyEdDX7hbiEHpNObqR+A8U5Z4TQV/8D5JhoYMjXUsNu9phlFkpASqn5KtUf89e1LE3Qxng913jTI2H5qPVOEovuspqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712387501; c=relaxed/simple;
-	bh=va5+nVrH2sTYitIpPwPYUS69H/ywqZioHyWNF/sVd3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pNTm3NI/RNv8DgEr60UTcZDPwvnSR5mMnGJ/2fTQuarf1llf+/1TS1NjGsHzUF1R+XbI/fdMwTRoT48PJGsavobaeMK0RGa5EHqdDmHwy0yO7XSFc4dvkTs57a43kI92cVI1zmhvTLe/U157Du6Rk/O+OviCP9ySMQ1GxwiUeMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Shi0azks; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GNfNtOBQ9mUCSvC61XgRvWAWZ3dPPmGPMc1/GfjrGTo=; b=Shi0azks95Y038eI3QTH1bmTWb
-	wfIcFskYYx/8HAj5FzEqjL2Jys5VQE4o2zM0NYYgm1aiSFbIlEVmE8e2IviqJvYGy3H5J0MPEAkD7
-	CC1lF8eIfwScfjmAfv7BNoBTwXUfXXQMSYBiwwfvo1l67C1TbkfDzwfA1Phxr9WnrMypN9aYZ5+g1
-	haTiSo3BYfaDAZOCnUBj2mrKIDLW173EnzhLBVvMZ0+Uns7uUFrC8M0Ges/7b5QWCSNaeQBL1lcxo
-	+OG9Qx5PQ/RMaWOq3cR7CjtLg6wHH/TtLsVtSn9MU5vKW8los4Dau+/YHwbzhZFFnpkC6uDnfkol8
-	fkJgdJwA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rt0D4-0070iB-3B;
-	Sat, 06 Apr 2024 07:11:31 +0000
-Date: Sat, 6 Apr 2024 08:11:30 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: syzbot <syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com>
-Cc: amir73il@gmail.com, brauner@kernel.org, gregkh@linuxfoundation.org,
-	hch@lst.de, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, miklos@szeredi.hu,
-	syzkaller-bugs@googlegroups.com, tj@kernel.org,
-	valesini@yandex-team.ru
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_fop_llseek
-Message-ID: <20240406071130.GB538574@ZenIV>
-References: <CAOQ4uxgJ5URyDG26Ny5Cmg7DceOeG-exNt9N346pq9U0TmcYtg@mail.gmail.com>
- <000000000000107743061568319c@google.com>
+	s=arc-20240116; t=1712393845; c=relaxed/simple;
+	bh=StBXlES+se0UmIkWKsWzRN0DgoDY/J/oleJZeUAhnIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cLT9mpR5POnUBz4qrdE8W0kYkH4T4phXR8YZsFQSQYy2hltD57yTdWaCbYnM/gkeUYgvVL9Bw6v12ejrRbZs7gp/IkLrsHLGCX4M8ZMck0yxccce5mQLaHkNyg4h4dI4gCfgZ72Pir/R2w2CChMbdsY1IRe6T72WFrVn+brLJIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQU7mZdQ; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-69625f89aa2so21186186d6.3;
+        Sat, 06 Apr 2024 01:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712393843; x=1712998643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i/MwuJlZNqicRfHzJT4JMkKGmDiUN9LbPXKSHMIDrnY=;
+        b=XQU7mZdQrlXuV/B5Yog4GPNUrvFOjUx1J512VPrxlvTxdYoVBtGlCDOj9mtXoAzr5G
+         Ak0FNlyjjeby/rPw9Z2dNHVGKhjXAwtdLgitJecbxXqzvYSPFL81CS/AEj7C8v7MXYLR
+         yPjCheUo5aIyR+ffiT02KmYXjUFgtoKBcI8MUJV+XFr2kLiphMLEsBo7RpVt1SOIWpUU
+         +bKABk2TLGnBrFxfjByuWgCI+UVlLk+MTR1W20IW/Wea+OFyLYgocgWv+9uRhqKXj9o9
+         F9C4V2r6jf5XUr/HlcXdMwyPQFpkEdw1VBo/VQQHS51FRZ+rnNu5NWmlDoTdYndrBm8n
+         AUIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712393843; x=1712998643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i/MwuJlZNqicRfHzJT4JMkKGmDiUN9LbPXKSHMIDrnY=;
+        b=CPWkd4clgqF0OMOLXaa3VGqQoRA8ppg2rU7p9qARUTclziA3uZY+nlYQFCywlilYNE
+         9g+IOW+RovTOah8b7kCQ4COsODHK8rQJ0lLkd/Q6aCyrJtFbLtS3UMTmQyWWNsPN900R
+         7gAvKpIDpujXZpWIP8lkjE19ads2oIYImNG2gm2XXT7T/pe2z3ch0c/1xdosys8MnDUL
+         yIgAvxFn9bPNepbv0CGVKYB2P7jYDdw7PqZs8fqDbwH8rZVKid0FibkGUYactnfV+Mir
+         JmxlFFGpylICvP9D0C2aSd8CnvvltzP9wemmbMrVAJ5Dtez2W3WcRd7EQTNOU0LZcwIU
+         odgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcY5hUyu4a3B5qOt1yvQ5haAUvQw889UlP/nN6vLGAtL+a7u322AiUk6q4n/8OT0SiWzDTy3iKrowTJiLIL+cvIDZ6e1eTRH5yJlO73RWmjkZQ0K0ezYVAfgdgcC2Wzfy6MQiDYCDdcoeO5Q==
+X-Gm-Message-State: AOJu0YzyPSfuP5DiyTf7M1HmAgOdmUic17pAybKibJEFtbAA1a9tSCy/
+	yPnZXEMpGpE1R+dvNTb3JvwE9TbTaqqG7mVp+3s04sfpuKC4yoA/32FtDDrqJEiOOT6lW3lbeeo
+	X/Xv7sxUUAVC1JeZs9RndhIXgM/4=
+X-Google-Smtp-Source: AGHT+IHcXmyv9Qp7IoTlp34aR5y8QmAQRz8JhAAy0mu9y0+b442lmwRmmluSsSSe1RYSPh39naRayCCmXFGgqzwxJ9s=
+X-Received: by 2002:ad4:4ead:0:b0:696:93f3:7c9b with SMTP id
+ ed13-20020ad44ead000000b0069693f37c9bmr4214263qvb.40.1712393842843; Sat, 06
+ Apr 2024 01:57:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000107743061568319c@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <CAOQ4uxgJ5URyDG26Ny5Cmg7DceOeG-exNt9N346pq9U0TmcYtg@mail.gmail.com>
+ <000000000000107743061568319c@google.com> <20240406071130.GB538574@ZenIV>
+In-Reply-To: <20240406071130.GB538574@ZenIV>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 6 Apr 2024 11:57:11 +0300
+Message-ID: <CAOQ4uxhpXGuDy4VRE4Xj9iJpR0MUh9tKYF3TegT8NQJwanHQ8g@mail.gmail.com>
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_fop_llseek
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: syzbot <syzbot+9a5b0ced8b1bfb238b56@syzkaller.appspotmail.com>, 
+	brauner@kernel.org, gregkh@linuxfoundation.org, hch@lst.de, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
+	valesini@yandex-team.ru, Hillf Danton <hdanton@sina.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 06, 2024 at 12:05:04AM -0700, syzbot wrote:
+On Sat, Apr 6, 2024 at 10:11=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Sat, Apr 06, 2024 at 12:05:04AM -0700, syzbot wrote:
+>
+> > commit:         3398bf34 kernfs: annotate different lockdep class for .=
+.
+> > git tree:       https://github.com/amir73il/linux/ vfs-fixes
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc5cda112a84=
+38056
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D9a5b0ced8b1bf=
+b238b56
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> >
+> > Note: no patches were applied.
+>
 
-> commit:         3398bf34 kernfs: annotate different lockdep class for ..
-> git tree:       https://github.com/amir73il/linux/ vfs-fixes
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c5cda112a8438056
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9a5b0ced8b1bfb238b56
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Note: no patches were applied.
+Looks like it fixes the problem:
+https://lore.kernel.org/lkml/000000000000a386f2061562ba6a@google.com/
 
-How about the same test on 6c6e47d69d821047097909288b6d7f1aafb3b9b1?
+Al,
+
+Are you ok with going with your solution?
+Do you want to pick it up through your tree?
+Or shall I post it and ask Christian or Greg to pick it up?
+
+Thanks,
+Amir.
 
