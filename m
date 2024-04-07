@@ -1,245 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-16331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF33889B38B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 20:37:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468BC89B3F3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 22:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F954B225A3
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 18:37:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749B32815AD
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 20:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD163C48E;
-	Sun,  7 Apr 2024 18:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A893D993;
+	Sun,  7 Apr 2024 20:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oxqtcBUh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C0B3BB48
-	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Apr 2024 18:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BE13D569
+	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Apr 2024 20:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712515049; cv=none; b=DNZup/GltBJFT/jSrYv8HggrGbKqyjNGthR7OTF3yeQyNL4rJqA4h+a5UFpSFjVZbxESNDAbjg/8aJcauLNZe9hVBHUDJI1frOR7iqATekb7AlbZRkg1dppOxM/jYCKVUdOcjmdARrr9hxd0n7nrTGx9fy+eJQIfZL8A6kknfg8=
+	t=1712520692; cv=none; b=LR8hkqi0wWY42HutcMKajWrL4Re+A8onCLJH+rsXeIQTWowYHJ89zEa0DTD26n8fOp1b5yowEn+XllSIRul1h9nDIqkckoiC9WYkIRSwsA4o8+/t0roOC2RslrYk+Ryh6ED01mxfJfBxMOnISHpxyeJBLapv/cxWnMRduI6DIEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712515049; c=relaxed/simple;
-	bh=z9dVydCGQccil9iduLyVYmGvHO0quDz92LltjxcSIP4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DcRUKCTShjSl9PbVYVLPYPKmPUtROWJkieeGCq5+N2X1ZUpjIsbSWlNXUZhtNVgm9Nq3Vlwv19P6xFKV06p2xNtamexMlE54yckQ/+UoHpd5QLDLlT6t4hEVowM1eg71pORX8k+7jHysdqOSuEeHgJARGUhPUfsM+rLk54C9JqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c7e21711d0so298996539f.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Apr 2024 11:37:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712515046; x=1713119846;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZtGQvEQZ/fTBpSrM4TpNjFmoANPjSiQ4qjQ7HxVZ0EI=;
-        b=uWniTBVPbPGC6Rgv763EX+OYikK9uLsxwuOcxjKXAa7K0SZBD2psQhExCjVAz2lZX0
-         g/zgjvrWFQ6fqlwRexEU3FDtSbtZnqJIm4wKqs8rir3H5Bc2jusr1+Ciq3PTl7sUEFsr
-         TytlRqcOV9ev5HnA381AfF6shV4sSkav2SS0sHMEzDUOIxS4zNKrbJpJ5VwTuKrQ2m61
-         x6GT1UBz49lf6TIFFnrim/i45yt4MCgr6XGOgLT7auf5U6B0FCCddt1oJXOFkQ7K/N5m
-         lo8PVozGXw9z8TXnwFq/YAFA9gDTzKuo0n6ejFaPlBccW51JI3Q43iTqyK64PBFjDLSE
-         O7xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlI3cv7ggEw8CqBUXTuVG4wsIm5oK9fJanFyugdpC3IbIW+xErTZa5Ig9fRtPZIbBnKLWxfAPkCmQfXaauzVaazY8qoID+6Hn146R7bA==
-X-Gm-Message-State: AOJu0YyHhEdbuHQAbFjV3+xJedtnFZ7u80e5d4gM3oVKX6D6W3z/1hgC
-	1Q1Wig+w25hN8sRkewlCG6rQLdf8YgK+U4tTdGvyuUBrV1zW9pQuVy8mZrbqMXwOVAEb8JYBj1x
-	OZlPnlx+E6BxNmoL2Y6awZNhoUphsQOH0Xu6PYvLRFQXweu2f5WwBnC8=
-X-Google-Smtp-Source: AGHT+IEMMfEJ1vPqqmcV5Eghlm9vTYfBeLb9v464xCZ7Hc2GJXk5IJwp5pQGcGOig7pbJfZ7LmAgK0ceaM4TJZTnjGXTHRAZAmdK
+	s=arc-20240116; t=1712520692; c=relaxed/simple;
+	bh=HumBzKPe+RYytsEYhacEELPkiNv+7DTXfXQUcLE1Qv8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t+9+95UuNrkxtRhbcWigWdq6dyfxUUC/Cs1JwsURIhTLtXZyh0cdNQJSKbi2CTMW4QH+96TjhJLXhavjMwm3PjK5AXeg1HSE4MSPHyyF+b+lMEcLcrsVaxZYv78e/JnmBZEG54r9fTw6B/jfRiEwAPh/D4c13seUaSiaCxpkmBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oxqtcBUh; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=UQsOFvL5oFgV4srGasbjfHyPJshGZk1x51pSsspYdxY=; b=oxqtcBUhDSBPZDEBGm2OpZsLq0
+	FFqjpc+7u5M9XrJ0e7rzqd42GGHmfsjUdd2hF4tyuBYFiYwTjhiTQwA/LzOWpmvcbFdVOtnGI7YNC
+	vQe+Loe0axTb6dncgKtJaLNlKte20i/q7BLokpxYAXpiCyB3BYPQzEkDl+BOsa4nVFQzkez7hSSiV
+	EKGDWP8VxUjRvSD4yK0iipZ5K8pRelU3G7FG4FatU3ad9PMrVwynBOOprCNEEYb1SnMmQxPh78xou
+	iw5kvciKg4qSUwbplo6ximwob/2Gsw8T6lv05RlbXz1FkCPvyNpoff6P9hs10JtEIvenk6PK9SXLZ
+	drTfDktw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rtYrP-0000000FsMo-0Ae2;
+	Sun, 07 Apr 2024 20:11:27 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: Add FOP_HUGE_PAGES
+Date: Sun,  7 Apr 2024 21:11:20 +0100
+Message-ID: <20240407201122.3783877-1-willy@infradead.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:22d0:b0:47c:195d:16f6 with SMTP id
- j16-20020a05663822d000b0047c195d16f6mr235298jat.6.1712515046692; Sun, 07 Apr
- 2024 11:37:26 -0700 (PDT)
-Date: Sun, 07 Apr 2024 11:37:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000007ebc6061585fb7f@google.com>
-Subject: [syzbot] [overlayfs?] possible deadlock in ovl_copy_up_start (3)
-From: syzbot <syzbot+5e130dffef394d3f11a6@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Instead of checking for specific file_operations, add a bit to
+file_operations which denotes a file that only contain hugetlb pages.
+This lets us make hugetlbfs_file_operations static, and removes
+is_file_shm_hugepages() completely.
 
-syzbot found the following issue on:
-
-HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15f706ad180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
-dashboard link: https://syzkaller.appspot.com/bug?extid=5e130dffef394d3f11a6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/72ab73815344/disk-fe46a7dd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2d6d6b0d7071/vmlinux-fe46a7dd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/48e275e5478b/bzImage-fe46a7dd.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5e130dffef394d3f11a6@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.8.0-syzkaller-08951-gfe46a7dd189e #0 Not tainted
-------------------------------------------------------
-syz-executor.4/8594 is trying to acquire lock:
-ffff88805d9aff38 (&ovl_i_lock_key[depth]){+.+.}-{3:3}, at: ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:654 [inline]
-ffff88805d9aff38 (&ovl_i_lock_key[depth]){+.+.}-{3:3}, at: ovl_copy_up_start+0x53/0x310 fs/overlayfs/util.c:719
-
-but task is already holding lock:
-ffff88805d9afb80 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}, at: inode_lock include/linux/fs.h:793 [inline]
-ffff88805d9afb80 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}, at: vfs_rmdir+0x101/0x4c0 fs/namei.c:4198
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}:
-       lock_acquire+0x1e4/0x530 kernel/locking/lockdep.c:5754
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
-       inode_lock_shared include/linux/fs.h:803 [inline]
-       lookup_slow+0x45/0x70 fs/namei.c:1708
-       walk_component+0x2e1/0x410 fs/namei.c:2004
-       lookup_last fs/namei.c:2461 [inline]
-       path_lookupat+0x16f/0x450 fs/namei.c:2485
-       filename_lookup+0x256/0x610 fs/namei.c:2514
-       kern_path+0x35/0x50 fs/namei.c:2622
-       lookup_bdev+0xc5/0x290 block/bdev.c:1072
-       resume_store+0x1a0/0x710 kernel/power/hibernate.c:1235
-       kernfs_fop_write_iter+0x3a4/0x500 fs/kernfs/file.c:334
-       call_write_iter include/linux/fs.h:2108 [inline]
-       new_sync_write fs/read_write.c:497 [inline]
-       vfs_write+0xa84/0xcb0 fs/read_write.c:590
-       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
-       do_syscall_64+0xfb/0x240
-       entry_SYSCALL_64_after_hwframe+0x6d/0x75
-
--> #1 (&of->mutex){+.+.}-{3:3}:
-       lock_acquire+0x1e4/0x530 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       kernfs_fop_llseek+0x7e/0x2a0 fs/kernfs/file.c:867
-       ovl_llseek+0x314/0x470 fs/overlayfs/file.c:218
-       vfs_llseek fs/read_write.c:289 [inline]
-       ksys_lseek fs/read_write.c:302 [inline]
-       __do_sys_lseek fs/read_write.c:313 [inline]
-       __se_sys_lseek fs/read_write.c:311 [inline]
-       __x64_sys_lseek+0x153/0x1e0 fs/read_write.c:311
-       do_syscall_64+0xfb/0x240
-       entry_SYSCALL_64_after_hwframe+0x6d/0x75
-
--> #0 (&ovl_i_lock_key[depth]){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1e4/0x530 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:654 [inline]
-       ovl_copy_up_start+0x53/0x310 fs/overlayfs/util.c:719
-       ovl_copy_up_one fs/overlayfs/copy_up.c:1161 [inline]
-       ovl_copy_up_flags+0xbb6/0x4450 fs/overlayfs/copy_up.c:1223
-       ovl_nlink_start+0x9f/0x390 fs/overlayfs/util.c:1157
-       ovl_do_remove+0x1fa/0xd90 fs/overlayfs/dir.c:893
-       vfs_rmdir+0x367/0x4c0 fs/namei.c:4209
-       do_rmdir+0x3b5/0x580 fs/namei.c:4268
-       __do_sys_rmdir fs/namei.c:4287 [inline]
-       __se_sys_rmdir fs/namei.c:4285 [inline]
-       __x64_sys_rmdir+0x49/0x60 fs/namei.c:4285
-       do_syscall_64+0xfb/0x240
-       entry_SYSCALL_64_after_hwframe+0x6d/0x75
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ovl_i_lock_key[depth] --> &of->mutex --> &ovl_i_mutex_dir_key[depth]
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ovl_i_mutex_dir_key[depth]);
-                               lock(&of->mutex);
-                               lock(&ovl_i_mutex_dir_key[depth]);
-  lock(&ovl_i_lock_key[depth]);
-
- *** DEADLOCK ***
-
-3 locks held by syz-executor.4/8594:
- #0: ffff88802c9d8420 (sb_writers#23){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
- #1: ffff88805d9aa450 (&ovl_i_mutex_dir_key[depth]/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:828 [inline]
- #1: ffff88805d9aa450 (&ovl_i_mutex_dir_key[depth]/1){+.+.}-{3:3}, at: do_rmdir+0x263/0x580 fs/namei.c:4256
- #2: ffff88805d9afb80 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}, at: inode_lock include/linux/fs.h:793 [inline]
- #2: ffff88805d9afb80 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}, at: vfs_rmdir+0x101/0x4c0 fs/namei.c:4198
-
-stack backtrace:
-CPU: 0 PID: 8594 Comm: syz-executor.4 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1e4/0x530 kernel/locking/lockdep.c:5754
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:654 [inline]
- ovl_copy_up_start+0x53/0x310 fs/overlayfs/util.c:719
- ovl_copy_up_one fs/overlayfs/copy_up.c:1161 [inline]
- ovl_copy_up_flags+0xbb6/0x4450 fs/overlayfs/copy_up.c:1223
- ovl_nlink_start+0x9f/0x390 fs/overlayfs/util.c:1157
- ovl_do_remove+0x1fa/0xd90 fs/overlayfs/dir.c:893
- vfs_rmdir+0x367/0x4c0 fs/namei.c:4209
- do_rmdir+0x3b5/0x580 fs/namei.c:4268
- __do_sys_rmdir fs/namei.c:4287 [inline]
- __se_sys_rmdir fs/namei.c:4285 [inline]
- __x64_sys_rmdir+0x49/0x60 fs/namei.c:4285
- do_syscall_64+0xfb/0x240
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-RIP: 0033:0x7f3be947dde9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f3bea1720c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000054
-RAX: ffffffffffffffda RBX: 00007f3be95abf80 RCX: 00007f3be947dde9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000200002c0
-RBP: 00007f3be94ca47a R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f3be95abf80 R15: 00007ffd9e6203e8
- </TASK>
-
-
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/hugetlbfs/inode.c    |  5 +++--
+ include/linux/fs.h      |  2 ++
+ include/linux/hugetlb.h |  8 ++------
+ include/linux/shm.h     |  5 -----
+ ipc/shm.c               | 10 +++-------
+ 5 files changed, 10 insertions(+), 20 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 2f4e88552d3f..412f295acebe 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -40,7 +40,7 @@
+ #include <linux/sched/mm.h>
+ 
+ static const struct address_space_operations hugetlbfs_aops;
+-const struct file_operations hugetlbfs_file_operations;
++static const struct file_operations hugetlbfs_file_operations;
+ static const struct inode_operations hugetlbfs_dir_inode_operations;
+ static const struct inode_operations hugetlbfs_inode_operations;
+ 
+@@ -1298,13 +1298,14 @@ static void init_once(void *foo)
+ 	inode_init_once(&ei->vfs_inode);
+ }
+ 
+-const struct file_operations hugetlbfs_file_operations = {
++static const struct file_operations hugetlbfs_file_operations = {
+ 	.read_iter		= hugetlbfs_read_iter,
+ 	.mmap			= hugetlbfs_file_mmap,
+ 	.fsync			= noop_fsync,
+ 	.get_unmapped_area	= hugetlb_get_unmapped_area,
+ 	.llseek			= default_llseek,
+ 	.fallocate		= hugetlbfs_fallocate,
++	.fop_flags		= FOP_HUGE_PAGES,
+ };
+ 
+ static const struct inode_operations hugetlbfs_dir_inode_operations = {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 883b72478f61..736ffe2c6863 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2043,6 +2043,8 @@ struct file_operations {
+ #define FOP_MMAP_SYNC		((__force fop_flags_t)(1 << 2))
+ /* Supports non-exclusive O_DIRECT writes from multiple threads */
+ #define FOP_DIO_PARALLEL_WRITE	((__force fop_flags_t)(1 << 3))
++/* Contains huge pages */
++#define FOP_HUGE_PAGES		((__force fop_flags_t)(1 << 4))
+ 
+ /* Wrap a directory iterator that needs exclusive inode access */
+ int wrap_directory_iterator(struct file *, struct dir_context *,
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index bebf4c3a53ef..aaa11eeb939d 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -526,17 +526,13 @@ static inline struct hugetlbfs_inode_info *HUGETLBFS_I(struct inode *inode)
+ 	return container_of(inode, struct hugetlbfs_inode_info, vfs_inode);
+ }
+ 
+-extern const struct file_operations hugetlbfs_file_operations;
+ extern const struct vm_operations_struct hugetlb_vm_ops;
+ struct file *hugetlb_file_setup(const char *name, size_t size, vm_flags_t acct,
+ 				int creat_flags, int page_size_log);
+ 
+-static inline bool is_file_hugepages(struct file *file)
++static inline bool is_file_hugepages(const struct file *file)
+ {
+-	if (file->f_op == &hugetlbfs_file_operations)
+-		return true;
+-
+-	return is_file_shm_hugepages(file);
++	return file->f_op->fop_flags & FOP_HUGE_PAGES;
+ }
+ 
+ static inline struct hstate *hstate_inode(struct inode *i)
+diff --git a/include/linux/shm.h b/include/linux/shm.h
+index c55bef0538e5..1d3d3ae958fb 100644
+--- a/include/linux/shm.h
++++ b/include/linux/shm.h
+@@ -16,7 +16,6 @@ struct sysv_shm {
+ 
+ long do_shmat(int shmid, char __user *shmaddr, int shmflg, unsigned long *addr,
+ 	      unsigned long shmlba);
+-bool is_file_shm_hugepages(struct file *file);
+ void exit_shm(struct task_struct *task);
+ #define shm_init_task(task) INIT_LIST_HEAD(&(task)->sysvshm.shm_clist)
+ #else
+@@ -30,10 +29,6 @@ static inline long do_shmat(int shmid, char __user *shmaddr,
+ {
+ 	return -ENOSYS;
+ }
+-static inline bool is_file_shm_hugepages(struct file *file)
+-{
+-	return false;
+-}
+ static inline void exit_shm(struct task_struct *task)
+ {
+ }
+diff --git a/ipc/shm.c b/ipc/shm.c
+index a89f001a8bf0..3e3071252dac 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -662,8 +662,8 @@ static const struct file_operations shm_file_operations = {
+ };
+ 
+ /*
+- * shm_file_operations_huge is now identical to shm_file_operations,
+- * but we keep it distinct for the sake of is_file_shm_hugepages().
++ * shm_file_operations_huge is now identical to shm_file_operations
++ * except for fop_flags
+  */
+ static const struct file_operations shm_file_operations_huge = {
+ 	.mmap		= shm_mmap,
+@@ -672,13 +672,9 @@ static const struct file_operations shm_file_operations_huge = {
+ 	.get_unmapped_area	= shm_get_unmapped_area,
+ 	.llseek		= noop_llseek,
+ 	.fallocate	= shm_fallocate,
++	.fop_flags	= FOP_HUGE_PAGES,
+ };
+ 
+-bool is_file_shm_hugepages(struct file *file)
+-{
+-	return file->f_op == &shm_file_operations_huge;
+-}
+-
+ static const struct vm_operations_struct shm_vm_ops = {
+ 	.open	= shm_open,	/* callback for a new vm-area open */
+ 	.close	= shm_close,	/* callback for when the vm-area is released */
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
