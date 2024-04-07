@@ -1,110 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-16320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EEAF89AEAA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 07:21:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0B889AF3B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 09:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 065ABB219ED
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 05:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29C41F23DDC
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 07:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9436AB9;
-	Sun,  7 Apr 2024 05:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FF3101F7;
+	Sun,  7 Apr 2024 07:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mqutEJmN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6+sgDLC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B921876;
-	Sun,  7 Apr 2024 05:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3DECA7A;
+	Sun,  7 Apr 2024 07:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712467303; cv=none; b=jdKBzPH0V3aOw2nfRJRdAldImXn48ZGp0i0Nf2jJ998umPCAmx4BseUMM7xR9SGhR+TxcVqYqQubtNbddgra13nXxbBKj7PEX6/UdBP6smSpadmvE4QzWQEKDSSqsL6ZLfKKiO+WP4BGfKgF7NPguq5jBDaYsq79YHOOGIMVJz8=
+	t=1712475099; cv=none; b=jDvrwSz1EtGGvjwCTMEA4b9IJdsKg64JiVPorbnV6FvZGOw4NZPruFIWn9EzILXtc0+e65OppNgQnK3s1ilKuG9SjFZmqW2Ujm+xDrB/y7dDRrzmBZ604r4ic2WnnM6mLx08wNgoREuEETHv3QCUfQtjdkqXrzNm4Au8Oep/fTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712467303; c=relaxed/simple;
-	bh=ujk7DSuKVcPRG2wlyqBMd8YB/i8MCyZkjnXuAJsWi4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OszcucS6MBb2Ks8DP21jtVLdy5j73Gh7zxsux+//QkygRv/PdLTEu3/ydrpJqSGYrE84IRFtnEBiDWKVGUe7q9sO2Sw0uK308oeZx4+RDM5JP8GJjvy+DNj0oYBVfXbNqDr2zIrP4WBOZzgVuGtlsfsrtzg/lP3iPp4vAHVuQLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mqutEJmN; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=huWoGSBEymltKqBrtCrxk2uX4uO2jpl6CW0VFMMyyOc=; b=mqutEJmNFIr2v7gBSjVCMUqcDV
-	xsPe04ijls8Ap0J5IcmyYdK8EZ1tvK2jR/PYBcoBlBgnexAtUkoUTi0T8xZim0fu+LOWPFnV88A+Z
-	CBPgjtnddrY5sTXr7PpFNwL8j7TbJcCt9JvYbCIejzL9+ymRxyYjDywSxZlhbzFtPwuWjVRRn1WAs
-	UVH854MWKDSgR0F+E0hc6+qw4TxQ5Y716cCBeG9M1uQlzNAmK3g3ZZDycn7mIyfBaNy1xOLVb3OIH
-	w8pvQDEs1HG28rdIW6WT8JuhxAktTe/Afy9MaYI3ZRcR882rRrP/Ooq1zVUaHYBmikI9HTxKEVv4O
-	UAoqcHEA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rtKyC-007cdB-33;
-	Sun, 07 Apr 2024 05:21:33 +0000
-Date: Sun, 7 Apr 2024 06:21:32 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: jack@suse.cz, hch@lst.de, brauner@kernel.org, axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
- blcok_device
-Message-ID: <20240407052132.GM538574@ZenIV>
-References: <20240406090930.2252838-23-yukuai1@huaweicloud.com>
- <20240406194206.GC538574@ZenIV>
- <20240406202947.GD538574@ZenIV>
- <3567de30-a7ce-b639-fa1f-805a8e043e18@huaweicloud.com>
- <20240407015149.GG538574@ZenIV>
- <21d1bfd6-76f7-7ffb-34a4-2a85644674fe@huaweicloud.com>
- <20240407030610.GI538574@ZenIV>
- <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
- <20240407045758.GK538574@ZenIV>
- <20240407051119.GL538574@ZenIV>
+	s=arc-20240116; t=1712475099; c=relaxed/simple;
+	bh=2/0x+pGO2mDSJuLq4AV+U67ydy3QJW8qPn5DR/tXu7M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MAcYQ2a9wKKYabHV4j6L4WV/85X8PNDF63D0lJAmysxX0ZLCjj5IL+QpS4V0J9X4Z+3FwxN2axzucL6O/j7m4tgZURig0dZ+eW99wGGc0ClZFZiOQlCZR+Awjr/jDRM4hapg7eZF5hzMME0Jb/FMuSIiYKxW8o3tbbD8QLmDKLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6+sgDLC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F0A1C433F1;
+	Sun,  7 Apr 2024 07:31:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712475098;
+	bh=2/0x+pGO2mDSJuLq4AV+U67ydy3QJW8qPn5DR/tXu7M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=S6+sgDLCxBKN2cW/PAEpm26hBflmn3XI7Qb1NH7Rhtu25Ci/Rv894J2SwVy2Q2Pc8
+	 f2099vC2pcgsDAawlDh/xlnbFRJqXn6VE+wZ0emqYgPYZuWkjBaGEIwRL1OlS6tgXR
+	 c7H1OD5Vk4mm3siSlysuA9QJeM5n3qwl789MtZXKKPRX6nzePmSSvN0vHpoOLiUSWB
+	 eJ932kj2wH1j/nuWR+/LC5P5ThMuW+Fs/i4jFLp2YrJ3r9cRVWTLXUO/NVlnU95oNV
+	 cYmNVqARd8aZHjSh1JF/SsXasKoETWWYEvHti/4XumVLeEVuU8zwisEOSrWlACKaJw
+	 zkDNu0Iizfc3w==
+From: Chao Yu <chao@kernel.org>
+To: jack@suse.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] quota: don't let mark_dquot_dirty() fail silently
+Date: Sun,  7 Apr 2024 15:31:28 +0800
+Message-Id: <20240407073128.3489785-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240407051119.GL538574@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 07, 2024 at 06:11:19AM +0100, Al Viro wrote:
-> On Sun, Apr 07, 2024 at 05:57:58AM +0100, Al Viro wrote:
-> 
-> > PS: in grow_dev_folio() we probably want
-> > 	struct address_space *mapping = bdev->bd_inode->i_mapping;
-> > instead of
-> > 	struct inode *inode = bdev->bd_inode;
-> > as one of the preliminary chunks.
-> > FWIW, it really looks like address_space (== page cache of block device,
-> > not an unreasonably candidate for primitive) and block size (well,
-> > logarithm thereof) cover the majority of what remains, with device
-> > size possibly being (remote) third...
-> 
-> Incidentally, how painful would it be to switch __bread_gfp() and __bread()
-> to passing *logarithm* of block size instead of block size?  And possibly
-> supply the same to clean_bdev_aliases()...
-> 
-> That would reduce fs/buffer.c uses to just "give me the address_space of
-> that block device"...
+mark_dquot_dirty() will callback to specified filesystem function,
+it may fail due to any reasons, however, no caller will check return
+value of mark_dquot_dirty(), so, it may fail silently, let's print
+one line message for such case.
 
-... and from what I've seen in your series, it very much looks like after
-that we could replace ->bd_inode with ->bd_mapping, turning your bdev_mapping()
-into an inline and (hopefully) leaving the few remaining uses of bdev_inode()
-outside of block/bdev.c _not_ on hot paths.  If nothing else, it would
-make it much easier to grep for remaining odd stuff.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/quota/dquot.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-Might trim the btrfs parts of the series, at that - a lot of that seems to
-be "how do we propagate opened file instead of just bdev, so that we could
-get to its ->f_mapping deep in call chain"...
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index dacbee455c03..c5df7863942a 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -399,21 +399,20 @@ int dquot_mark_dquot_dirty(struct dquot *dquot)
+ EXPORT_SYMBOL(dquot_mark_dquot_dirty);
+ 
+ /* Dirtify all the dquots - this can block when journalling */
+-static inline int mark_all_dquot_dirty(struct dquot __rcu * const *dquots)
++static inline void mark_all_dquot_dirty(struct dquot __rcu * const *dquots)
+ {
+-	int ret, err, cnt;
++	int ret, cnt;
+ 	struct dquot *dquot;
+ 
+-	ret = err = 0;
+ 	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
+ 		dquot = srcu_dereference(dquots[cnt], &dquot_srcu);
+-		if (dquot)
+-			/* Even in case of error we have to continue */
+-			ret = mark_dquot_dirty(dquot);
+-		if (!err)
+-			err = ret;
++		if (!dquot)
++			continue;
++		ret = mark_dquot_dirty(dquot);
++		if (ret < 0)
++			quota_error(dquot->dq_sb,
++				"mark_all_dquot_dirty fails, ret: %d", ret);
+ 	}
+-	return err;
+ }
+ 
+ static inline void dqput_all(struct dquot **dquot)
+@@ -2725,6 +2724,7 @@ static int do_set_dqblk(struct dquot *dquot, struct qc_dqblk *di)
+ {
+ 	struct mem_dqblk *dm = &dquot->dq_dqb;
+ 	int check_blim = 0, check_ilim = 0;
++	int ret;
+ 	struct mem_dqinfo *dqi = &sb_dqopt(dquot->dq_sb)->info[dquot->dq_id.type];
+ 
+ 	if (di->d_fieldmask & ~VFS_QC_MASK)
+@@ -2807,7 +2807,10 @@ static int do_set_dqblk(struct dquot *dquot, struct qc_dqblk *di)
+ 	else
+ 		set_bit(DQ_FAKE_B, &dquot->dq_flags);
+ 	spin_unlock(&dquot->dq_dqb_lock);
+-	mark_dquot_dirty(dquot);
++	ret = mark_dquot_dirty(dquot);
++	if (ret < 0)
++		quota_error(dquot->dq_sb,
++			"mark_dquot_dirty fails, ret: %d", ret);
+ 
+ 	return 0;
+ }
+-- 
+2.40.1
 
-Again, all of that is only if __bread...() conversion to log(size) is feasible
-without a massive PITA - there might be dragons...
 
