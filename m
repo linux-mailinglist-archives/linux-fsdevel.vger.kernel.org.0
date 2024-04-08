@@ -1,93 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-16366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7AD689C6A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 16:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C10FC89C708
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 16:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA83D1C21C1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 14:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0ACC1C2178A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 14:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5491185939;
-	Mon,  8 Apr 2024 14:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365AF127B5A;
+	Mon,  8 Apr 2024 14:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="HONY+oDM"
+	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="FjTcWAKj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26CC8592A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Apr 2024 14:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D291CD21;
+	Mon,  8 Apr 2024 14:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712585732; cv=none; b=WA9Lqk74enA32v+z3V1M85KkI/01KZ8JVf1Cy9AbS55X/mKZCjKQUlraA93NVPi/jHd+pvRkNpszY4c0AQzDB5dQZ5gdT1TnhkC6FRsN2lKgayzsC74ZpEXbCz4J26ldCGDcv7YArGlGoLMwUi2ZRu4k7DTOGYr/B9Bui4mgFUs=
+	t=1712586422; cv=none; b=MABXY2vxbFxhmSc3nscxleVG3FonH3OJ4kch1fbzUGnRk3j5ExrDkrelzq3hXhzvhH0hth5eHVObNfDOivJW47AsYA3/zyIU/O7z0p9Wv48aBg7o8vyvPQt9bBitW86U83VEapvI60QqKQiBPUJYSLuk5FZveK/aYA7kmdHZxWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712585732; c=relaxed/simple;
-	bh=ADXGdxvg0oF2vsB4ZJmUWTJLOw3fUL4w2dLJjuMosuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAmIuxrqH1V6bigR0Xv4NAr8TA9y0DBm3EDz4TJ9S1adf7FK6ku/no+gEjTEk9eeSMJRyRjKPA3n3OazIAITlLL4iaPKA3ZNgzqxNBh3iGCsMFfc5BhComiUTwSYwdqayHh5GiFnQVROaJD6Y83MpyMpT38B3EYv7dMi2B7NWak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=HONY+oDM; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-60.bstnma.fios.verizon.net [173.48.113.60])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 438EF4R2003092
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 8 Apr 2024 10:15:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1712585708; bh=n0L8jGEaqMSQqP+8wLzWG2tUuPOgaNvlPqaKBr3gcaw=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=HONY+oDMme0xbipSpJQ9y6Zcs+cGoT2efYjF5GSz+f9r9zonEBR/TXBB33Oc28N7D
-	 46zViJ67l/Tat+YWjPGGFGlrfI/qs17C27WZwqNgV0+nkXV6Qad/dO/Pdm4hioqgRa
-	 TAQSuduWKkfqr0kuKvNx3e//KwD+MaaAX6eafLSJNDxgWJ7nFNNXNn/emjlyy15dV/
-	 1JeipL9SB9JyMaTdL0dtvL20Jt94cT6jHcvlnh3szeeE7oUVSB5ZtU8JFgpdDPXM0S
-	 47xa2lCmCltO/sIBUEEDtBmxvAQd+43Q4DI7dc81LvP+AUsGAG4/nzqJf5BILnevAY
-	 BhUEZu3oqGAjA==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 127E715C00DE; Mon,  8 Apr 2024 10:15:04 -0400 (EDT)
-Date: Mon, 8 Apr 2024 10:15:04 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: HAN Yuwei <hrx@bupt.moe>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: Questions about Unicode Normalization Form
-Message-ID: <20240408141504.GA122316@mit.edu>
-References: <AD5CD726D505B53F+46f1c811-ae13-4811-8b56-62d88dd1674a@bupt.moe>
- <ccfe804c63cbc975b567aa79fb37002d50196215.camel@HansenPartnership.com>
- <D445FB6AD28AA2B6+fe6a70b0-56bf-4283-ab4d-8c12fb5d377f@bupt.moe>
- <20240408013928.GG13376@mit.edu>
- <ZhNk78RE2Bocs9ap@casper.infradead.org>
+	s=arc-20240116; t=1712586422; c=relaxed/simple;
+	bh=rxVFR+tl2mqy5C+KQx6ENcTMnb0CNT7kB2Tov4/MpRo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tRBVwLGFrx8dq3tLTl7M0A7byT+sjved1TLVyNDBBtQOclW36JxM0gfmcVcBJyBo0YyEpYpydhF0GBWbAG1I2jhkSROUiJU+BtYz1ZcBtx/Hd1ceEjsqyORULc/5xMtALRP9GihZqVGNEFJeyRLsHF/JtVan0Bd9E9yRTbJJ/Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=FjTcWAKj; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
+	s=protonmail; t=1712586416; x=1712845616;
+	bh=+5Fh0WwUiPmwp1z2/Cl7upCopJ5n83pXevljT6PBbkc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=FjTcWAKjU2UpdyqQGatEblHduf+EVHQOCjF/vjxIU3vcIMouKpOLFkPqSLzzN1qXc
+	 jJSwPsk6ac9jMtiVAI/NS0MKv9M8N5vuEsCfF7sQcE8SLIi+A2RtcGKH00RAFJEOux
+	 Iuv8ay/Dn4Et0DStZjb/Z/rk1CP0gZPEsRiTVgJWqMOepInOZzwg4fHnkr5yzLWDF9
+	 DeTLOUZqI4HBMz9dzElk828BpyRaQB73TjjS+0XAj1IeCqPLzE1e7l/uIm15NQG88n
+	 p3w8C9HKt8YM8Y5oj29BwmnUUu5+OaBH3ed+GM580jK8dt0wYRdfp4SWsAbULviYPR
+	 yoe7NWEDFNhZw==
+Date: Mon, 08 Apr 2024 14:26:53 +0000
+To: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>, Jingbo Xu <jefflexu@linux.alibaba.com>
+From: Antonio SJ Musumeci <trapexit@spawn.link>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, zhangjiachen.jaycee@bytedance.com
+Subject: Re: [PATCH] fuse: increase FUSE_MAX_MAX_PAGES limit
+Message-ID: <af555e3c-cd00-4bf4-b774-8099517bf559@spawn.link>
+In-Reply-To: <b4d801a442c71d064a6b2212d8d6f661@dorminy.me>
+References: <b4d801a442c71d064a6b2212d8d6f661@dorminy.me>
+Feedback-ID: 55718373:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZhNk78RE2Bocs9ap@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 08, 2024 at 04:30:55AM +0100, Matthew Wilcox wrote:
-> As I understand it, an important usecase for the casefold feature is
-> running Windows games under WINE.  I don't do this myself (sgt-puzzles
-> is more my speed), but there's a pretty important market for this.
-> Wasn't this why Gabriel was funded to work on it (eg commit b886ee3e778e)?
-> Or was that the Android usecase?
+On 4/8/24 01:32, Sweet Tea Dorminy wrote:
+>=20
+> On 2024-01-26 01:29, Jingbo Xu wrote:
+>> On 1/24/24 8:47 PM, Jingbo Xu wrote:
+>>>
+>>>
+>>> On 1/24/24 8:23 PM, Miklos Szeredi wrote:
+>>>> On Wed, 24 Jan 2024 at 08:05, Jingbo Xu <jefflexu@linux.alibaba.com>
+>>>> wrote:
+>>>>>
+>>>>> From: Xu Ji <laoji.jx@alibaba-inc.com>
+>>>>>
+>>>>> Increase FUSE_MAX_MAX_PAGES limit, so that the maximum data size of
+>>>>> a
+>>>>> single request is increased.
+>>>>
+>>>> The only worry is about where this memory is getting accounted to.
+>>>> This needs to be thought through, since the we are increasing the
+>>>> possible memory that an unprivileged user is allowed to pin.
+>>
+>> Apart from the request size, the maximum number of background requests,
+>> i.e. max_background (12 by default, and configurable by the fuse
+>> daemon), also limits the size of the memory that an unprivileged user
+>> can pin.  But yes, it indeed increases the number proportionally by
+>> increasing the maximum request size.
+>>
+>>
+>>>
+>>>> It would be interesting to
+>>>> see the how the number of pages per request affects performance and
+>>>> why.
+>>>
+>>> To be honest, I'm not sure the root cause of the performance boost in
+>>> bytedance's case.
+>>>
+>>> While in our internal use scenario, the optimal IO size of the backend
+>>> store at the fuse server side is, e.g. 4MB, and thus if the maximum
+>>> throughput can not be achieved with current 256 pages per request. IOW
+>>> the backend store, e.g. a distributed parallel filesystem, get optimal
+>>> performance when the data is aligned at 4MB boundary.  I can ask my
+>>> folk
+>>> who implements the fuse server to give more background info and the
+>>> exact performance statistics.
+>>
+>> Here are more details about our internal use case:
+>>
+>> We have a fuse server used in our internal cloud scenarios, while the
+>> backend store is actually a distributed filesystem.  That is, the fuse
+>> server actually plays as the client of the remote distributed
+>> filesystem.  The fuse server forwards the fuse requests to the remote
+>> backing store through network, while the remote distributed filesystem
+>> handles the IO requests, e.g. process the data from/to the persistent
+>> store.
+>>
+>> Then it comes the details of the remote distributed filesystem when it
+>> process the requested data with the persistent store.
+>>
+>> [1] The remote distributed filesystem uses, e.g. a 8+3 mode, EC
+>> (ErasureCode), where each fixed sized user data is split and stored as
+>> 8
+>> data blocks plus 3 extra parity blocks. For example, with 512 bytes
+>> block size, for each 4MB user data, it's split and stored as 8 (512
+>> bytes) data blocks with 3 (512 bytes) parity blocks.
+>>
+>> It also utilize the stripe technology to boost the performance, for
+>> example, there are 8 data disks and 3 parity disks in the above 8+3
+>> mode
+>> example, in which each stripe consists of 8 data blocks and 3 parity
+>> blocks.
+>>
+>> [2] To avoid data corruption on power off, the remote distributed
+>> filesystem commit a O_SYNC write right away once a write (fuse) request
+>> received.  Since the EC described above, when the write fuse request is
+>> not aligned on 4MB (the stripe size) boundary, say it's 1MB in size,
+>> the
+>> other 3MB is read from the persistent store first, then compute the
+>> extra 3 parity blocks with the complete 4MB stripe, and finally write
+>> the 8 data blocks and 3 parity blocks down.
+>>
+>>
+>> Thus the write amplification is un-neglectable and is the performance
+>> bottleneck when the fuse request size is less than the stripe size.
+>>
+>> Here are some simple performance statistics with varying request size.
+>> With 4MB stripe size, there's ~3x bandwidth improvement when the
+>> maximum
+>> request size is increased from 256KB to 3.9MB, and another ~20%
+>> improvement when the request size is increased to 4MB from 3.9MB.
+>=20
+> To add my own performance statistics in a microbenchmark:
+>=20
+> Tested on both small VM and large hardware, with suitably large
+> FUSE_MAX_MAX_PAGES, using a simple fuse filesystem whose write handlers
+> did basically nothing but read the data buffers (memcmp() each 8 bytes
+> of data provided against a variable), I ran fio with 128M blocksize,
+> end_fsync=3D1, psync IO engine, times each of 4 parallel jobs. Throughput
+> was as follows over variable write_size in MB/s.
+>=20
+> write_size  machine1 machine2
+> 32M=091071=096425
+> 16M=091002=096445
+> 8M=09890=096443
+> 4M=09713=096342
+> 2M=09557=096290
+> 1M=09404=096201
+> 512K=09268=096041
+> 256K=09156=095782
+>=20
+> Even on the fast machine, increasing the buffer size to 8M is worth 3.9%
+> over keeping it at 1M, and is worth over 2x on the small VM. We are
+> striving to reduce the ingestion speed in particular as we have seen
+> that as a limiting factor on some machines, and there's a clear plateau
+> reached around 8M. While most fuse servers would likely not benefit from
+> this, and others would benefit from fuse passthrough instead, it does
+> seem like a performance win.
+>=20
+> Perhaps, in analogy to soft and hard limits on pipe size,
+> FUSE_MAX_MAX_PAGES could be increased and treated as the maximum
+> possible hard limit for max_write; and the default hard limit could stay
+> at 1M, thereby allowing folks to opt into the new behavior if they care
+> about the performance more than the memory?
+>=20
+> Sweet Tea
 
-Good point.  Your history is correct; the other use case, which Gabriel
-was funded to do the work for, was for Steam for Linux, which uses a
-fork of Wine called Stream Play.
+As I recall the concern about increased message sizes is that it gives a=20
+process the ability to allocate non-insignificant amounts of kernel=20
+memory. Perhaps the limits could be expanded only if the server has=20
+SYS_ADMIN cap.
 
-The other potential use case for casefold is that it would accelarate
-Samba servers, which will first try to do a lookup on the filename but
-if it gets ENOENT, has to do an O(1) readdir search to see if there is
-a case insensitive match to the given lookup.  I haven't heard of
-anyone who has actually configured their CIFS server to do this, but
-it should work.
-
-						- Ted
 
