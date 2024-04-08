@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-16363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6BA89C399
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 15:42:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C8A89C3DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 15:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8474283CDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 13:42:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86459282AE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 13:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771D212AAED;
-	Mon,  8 Apr 2024 13:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC1013A25E;
+	Mon,  8 Apr 2024 13:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MU4xNdzI"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TNk0Zb2v"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD587F7DB;
-	Mon,  8 Apr 2024 13:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B1A13957F;
+	Mon,  8 Apr 2024 13:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712583439; cv=none; b=JAc0xYy2yfUz5EGeZ8HT4OcJKNKj+he4JDstwbMjh013UCAycS0D6/qzlWEorctgGtsjEnfTF+JvZ+pYm+doogYPagv/9JlpIEdqUs0rezneE4j8THs49qckACDPAq+aMACgr7b2/kg2KEC1t1nPc1CiymdCYR8oKWh97HiS6eM=
+	t=1712583567; cv=none; b=Hw2EezqTsPEL1RqdzJ7DcLC2OGxMGfzLjvLXTChxJThU/pUSf1jqdbiHPP18kg0nqXe5OWMwx3pNLoSdR6sIpX4uycFrW0BZE3XEgexFv7PQZOGcxgTaubtgPN8Z9ALniBlyQ/bbMrEDAqgnemLFvnJDkhQ/Hm/K7Am64reBiw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712583439; c=relaxed/simple;
-	bh=aUpnEhLZkHEK7BjO2NlX1kxJnUSh9ZWUKOZfSqk9s+U=;
+	s=arc-20240116; t=1712583567; c=relaxed/simple;
+	bh=EEmbfV3uQpwgGCJO7dnHWa+5UKtHYq3/CeiV/4Cwsf4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VSzTrHKG/zRpS1mDkXJ2VFriFdwp68TGISl4ue5gDVTKdvT01+cWGFJ7RR8S0QeYac5MOWNhAsegsiS7EBbLBE6hijot/+yz+3blsu4N/tPxVjMFuCZ2WsPYLHhgTeQ4kHlrwKOeYce3pQIRbLpc2+xFO6w19JhJhYuoxlNrJKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MU4xNdzI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E708C433C7;
-	Mon,  8 Apr 2024 13:37:19 +0000 (UTC)
+	 MIME-Version; b=ayrolShWi21zcYLIEaxElFxxV8JeJCLAyrXD8674KQj5BnWZUP0BZiVeV6+j28h9MhVW6tDAHZ3v1W7uJBW8g/EZvhmFK3JZ7EES15HH49hGwMhiFpL2u/5oTHOhUu+Bdc3NW3qxORr+wc+HW9u3chc87HpeOvmIUlrbhtf/xpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TNk0Zb2v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E08DDC433C7;
+	Mon,  8 Apr 2024 13:39:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1712583439;
-	bh=aUpnEhLZkHEK7BjO2NlX1kxJnUSh9ZWUKOZfSqk9s+U=;
+	s=korg; t=1712583567;
+	bh=EEmbfV3uQpwgGCJO7dnHWa+5UKtHYq3/CeiV/4Cwsf4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MU4xNdzIoABKZOqc/HII/r7gWKST3sdZ2nRAPkX/V1a1wFNn/ieMRZZiMpcU39yHR
-	 xguGwS+Yt8iEu3aVzN1GOfX+slNDkQ0MykWe//MSkPC8T9zzUBO02rg3Dm9AZapLA5
-	 utBUkWfKK2h+MpGWxSsLtOBwfo7tH8cmkG6ZT3fA=
+	b=TNk0Zb2vg7ccGdLUZGfPmfQRGdLnguA7yDONhYnk69uDKf8G/2VMPL5cb/oX6MeGp
+	 jdkzoasVVCc5ui1f8ADwhHm6sU3nAYaMwXWrsIZ7dDMSk3ndHJseoFxj8bo6kXLzna
+	 hUzQdVVsqpFXaYU9QUxrSk/IoGDVHWI9aLi9oHF8=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -52,12 +52,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-fsdevel@vger.kernel.org,
 	Steve French <stfrench@microsoft.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.8 179/273] cifs: Fix caching to try to do open O_WRONLY as rdwr on server
-Date: Mon,  8 Apr 2024 14:57:34 +0200
-Message-ID: <20240408125314.831583040@linuxfoundation.org>
+Subject: [PATCH 6.6 188/252] cifs: Fix caching to try to do open O_WRONLY as rdwr on server
+Date: Mon,  8 Apr 2024 14:58:07 +0200
+Message-ID: <20240408125312.497212281@linuxfoundation.org>
 X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240408125309.280181634@linuxfoundation.org>
-References: <20240408125309.280181634@linuxfoundation.org>
+In-Reply-To: <20240408125306.643546457@linuxfoundation.org>
+References: <20240408125306.643546457@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.8-stable review patch.  If anyone has any objections, please let me know.
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -106,7 +106,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  3 files changed, 59 insertions(+), 10 deletions(-)
 
 diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
-index 89333d9bce36e..37897b919dd5a 100644
+index 580a27a3a7e62..855468a32904e 100644
 --- a/fs/smb/client/dir.c
 +++ b/fs/smb/client/dir.c
 @@ -189,6 +189,7 @@ static int cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned
@@ -162,7 +162,7 @@ index 89333d9bce36e..37897b919dd5a 100644
  #ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
  	/*
 diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 9d42a39009076..9ec835320f8a7 100644
+index c711d5eb2987e..606972a95465b 100644
 --- a/fs/smb/client/file.c
 +++ b/fs/smb/client/file.c
 @@ -206,12 +206,12 @@ cifs_mark_open_files_invalid(struct cifs_tcon *tcon)
