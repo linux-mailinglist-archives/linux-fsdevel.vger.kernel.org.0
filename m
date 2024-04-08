@@ -1,183 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-16340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC2D89B735
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 07:37:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDA389B7A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 08:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CBA9B21B98
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 05:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1EC51C21578
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 06:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E95410942;
-	Mon,  8 Apr 2024 05:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C0A1B94D;
+	Mon,  8 Apr 2024 06:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b="EMK1a7eN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from box.fidei.email (box.fidei.email [71.19.144.250])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D18EBE6F
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Apr 2024 05:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B5D182C5;
+	Mon,  8 Apr 2024 06:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.144.250
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712554655; cv=none; b=PLqD0g67BGtfknaNhajR3AKzOFTxULeUihfhh4rGVcVuoiS3aVX5Y4sVoLDu1E4Ba+tW9j6bG2Ubu069asYWFkOlhyK4mDZ6L9LkuVZELUQ/SetNJgbsxCvL1H7EzeVz5+sVR9Qfm0EwRsP6ln93FM+3l0rw4Qc888sCAkZllnE=
+	t=1712557930; cv=none; b=kyzqqHrvFsUeBZhD4FpekhebRqzuG+DDCN834F7yLlPHYSeYbmj2Qs47gU6XrIliD7rZsbCrr3COCrBd66ha80Ug/V8UDAqXO56MrCyLHM2Op1mMJRCy82f0Ez3S48Pjyj7P/dY8RIMdOn4RXDhISva57mNxlJREyg6LcG33Jxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712554655; c=relaxed/simple;
-	bh=PlaoKMkkbwRopVHxjZ81zgR+BSt6yBxSGyH82WAI16g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rwE46daMTTqVJaEK0D47ien4eJdglGvh2h4jE2Q9xbKtPtrnqsOiS0q42t0bMX8yl3bmPjNNWg34QQUHcmQTip5qU6hxMJ21lwQVMBmseiMdl5x79TQNua4Uryz4iDzZ+Ol0HzamCPdsjbOgglTLxL5nUSYv/K6KOcHJRnyNOWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7d5d7d6b971so139635239f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Apr 2024 22:37:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712554653; x=1713159453;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vKi95jyAR9UGqqxHndWlLAjt2KjqNn8010J0mQ3K9UQ=;
-        b=vQMomN0HKK8iTPkzXXp7wf2pa/LP82e4JBgSTxNzjNUH9QTyDTzRLMF2vubKeUDIKK
-         xt5llIzmQWT/6ND8oN4Gnn66iSIJ6Z2nybTuzk0LAz41QCdv4WKSPcPK9idw5LM7qLEY
-         I2eAHjI8JIzxbMQM9vcEibcx0wcddJr3oaR4aAwifV7qBPk6BVSk5sq4g1d1N7n0cbya
-         To3hqVlQ+yrokjERL7BbUeBYs5llat+/y2X16u8eUitrvzOuSTMeKnUTzPmRybw6WlWb
-         ZZd/GbdsDMXNoBxYhrM2TSBM15mwm4G26YGQp5Zult3ZCJNYLrvsJf1CeBu03RfwRQSY
-         05tg==
-X-Forwarded-Encrypted: i=1; AJvYcCXG0PM8fgMLEdueHymYsfKbEOQnJgPwn4hK3QAvX0EnYzta92M+aaWRo9x2eZHvMpjrfM/qxJnIbSafoq9WgoA0wrYO3Gj5scf/dCgXwA==
-X-Gm-Message-State: AOJu0YwDvckcfO+gR+rl2lsjljNS7WRwGPBCBHpT4usEmKoDMB/uWwJV
-	oeCVfbXitWAalWMim3dRYGL6cQEL84anOyX9qV/+spFy0rfe00/n32DWGurFTPgilRuUUfTQIeo
-	pRpkKnFBSwaW3FymudxILBHvlGQ64tKEtMGZDTGlo7VqIs9yWE+vzVPU=
-X-Google-Smtp-Source: AGHT+IEHd5mSDwz8qlWZV7v1SpzIfoRT4uHkR2ekY/3S1NCd5xVfIvM29yPrBsNjRfpiszYDQhSnee5q4PhDNc+eJUGeN6trcYFE
+	s=arc-20240116; t=1712557930; c=relaxed/simple;
+	bh=XwwgQRyoQELf3dRyU9eU2MR58r2rYRarWDZETjS7DEM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:Message-ID:Content-Type; b=Qe8ecqMZwRGnSrAgylzkMT8PMDfD2zdffevK4EBV4KZ/hyCIyTwl9K/twsy+s3eQ/HI0n8Yn7VgZ2mxVN0nu5PKNLVZYr5Qv8vA1EK3p5Q6AUAgVsK8BzDmwRUYe7NPiqVerNOdKfOowozfT+HqVMGGRoLBkHfOXh7Wo8mlJRvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me; spf=pass smtp.mailfrom=dorminy.me; dkim=pass (2048-bit key) header.d=dorminy.me header.i=@dorminy.me header.b=EMK1a7eN; arc=none smtp.client-ip=71.19.144.250
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dorminy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dorminy.me
+Received: from authenticated-user (box.fidei.email [71.19.144.250])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by box.fidei.email (Postfix) with ESMTPSA id B640382891;
+	Mon,  8 Apr 2024 02:32:02 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
+	t=1712557922; bh=XwwgQRyoQELf3dRyU9eU2MR58r2rYRarWDZETjS7DEM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EMK1a7eNjICT7tH9Glwsje0GM4Pu38lDpYoFwVNR104pzhtJLlpTjmD4iSVqbPVLW
+	 kLbY+IdGBrSSfvBJlmo+8PmM5OOINM3krlzgykHiZxQCpsp2BUyDYvZCyEl2acutUc
+	 cJu67FA9lJwduBWfXVjqJplGt6jhQvJBpgJsw8MVvqOQ1OjQv8N5I19O6tBhQBn9PG
+	 FFHK9Q0wmSuqYZBHg/fGDNLewmHDTalfnhY/tc5qwHio8KIpwqN/VYzD0qkp5zxv5j
+	 c9pTxxEwp1669OZJ/RNxP9jf5HADgM36U+w0AuW1GzopoiWWgByf93c49qWp/U6sif
+	 YlEOXhCypQX2g==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:378d:b0:481:2592:4f5a with SMTP id
- w13-20020a056638378d00b0048125924f5amr401258jal.1.1712554653459; Sun, 07 Apr
- 2024 22:37:33 -0700 (PDT)
-Date: Sun, 07 Apr 2024 22:37:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c7345f06158f331a@google.com>
-Subject: [syzbot] [jffs2?] kernel BUG in jffs2_start_garbage_collect_thread
-From: syzbot <syzbot+61a9d95630970eece39d@syzkaller.appspotmail.com>
-To: arnd@arndb.de, dhowells@redhat.com, dwmw2@infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, richard@nod.at, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16f4efc5180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
-dashboard link: https://syzkaller.appspot.com/bug?extid=61a9d95630970eece39d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15ea8f4b180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1754c105180000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/72ab73815344/disk-fe46a7dd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2d6d6b0d7071/vmlinux-fe46a7dd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/48e275e5478b/bzImage-fe46a7dd.xz
-
-The issue was bisected to:
-
-commit 9c8ad7a2ff0bfe58f019ec0abc1fb965114dde7d
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu May 16 11:52:27 2019 +0000
-
-    uapi, x86: Fix the syscall numbering of the mount API syscalls [ver #2]
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=168fca9d180000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=158fca9d180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=118fca9d180000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+61a9d95630970eece39d@syzkaller.appspotmail.com
-Fixes: 9c8ad7a2ff0b ("uapi, x86: Fix the syscall numbering of the mount API syscalls [ver #2]")
-
-------------[ cut here ]------------
-kernel BUG at fs/jffs2/background.c:40!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 5060 Comm: syz-executor108 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:jffs2_start_garbage_collect_thread+0x1f5/0x200 fs/jffs2/background.c:40
-Code: 03 ff e9 1b ff ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 64 ff ff ff 48 89 df e8 76 78 03 ff e9 57 ff ff ff e8 9c 77 a3 fe 90 <0f> 0b 66 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000422fd00 EFLAGS: 00010293
-RAX: ffffffff82f17cb4 RBX: ffff8880240a6018 RCX: ffff8880242b5a00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880240a6000
-RBP: 0000000000000000 R08: ffffffff82f1c1c9 R09: 1ffff92000845f94
-R10: dffffc0000000000 R11: fffff52000845f95 R12: ffff8880240a6000
-R13: dffffc0000000000 R14: ffff8880240a6000 R15: ffff88802e7774f8
-FS:  000055559415a380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f54dacad0d0 CR3: 000000007aeec000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- jffs2_do_remount_fs+0x15b/0x1d0 fs/jffs2/fs.c:415
- reconfigure_super+0x445/0x880 fs/super.c:1071
- vfs_cmd_reconfigure fs/fsopen.c:267 [inline]
- vfs_fsconfig_locked fs/fsopen.c:296 [inline]
- __do_sys_fsconfig fs/fsopen.c:476 [inline]
- __se_sys_fsconfig+0xab5/0xec0 fs/fsopen.c:349
- do_syscall_64+0xfb/0x240
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-RIP: 0033:0x7f54dac35cf9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc9713c8d8 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f54dac35cf9
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000003
-RBP: 0000000000010305 R08: 0000000000000000 R09: 0000000000000006
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc9713c8ec
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:jffs2_start_garbage_collect_thread+0x1f5/0x200 fs/jffs2/background.c:40
-Code: 03 ff e9 1b ff ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 64 ff ff ff 48 89 df e8 76 78 03 ff e9 57 ff ff ff e8 9c 77 a3 fe 90 <0f> 0b 66 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000422fd00 EFLAGS: 00010293
-RAX: ffffffff82f17cb4 RBX: ffff8880240a6018 RCX: ffff8880242b5a00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880240a6000
-RBP: 0000000000000000 R08: ffffffff82f1c1c9 R09: 1ffff92000845f94
-R10: dffffc0000000000 R11: fffff52000845f95 R12: ffff8880240a6000
-R13: dffffc0000000000 R14: ffff8880240a6000 R15: ffff88802e7774f8
-FS:  000055559415a380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc9713c7d8 CR3: 000000007aeec000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Date: Mon, 08 Apr 2024 02:32:02 -0400
+From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, zhangjiachen.jaycee@bytedance.com
+Subject: Re: [PATCH] fuse: increase FUSE_MAX_MAX_PAGES limit
+Message-ID: <b4d801a442c71d064a6b2212d8d6f661@dorminy.me>
+X-Sender: sweettea-kernel@dorminy.me
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 2024-01-26 01:29, Jingbo Xu wrote:
+> On 1/24/24 8:47 PM, Jingbo Xu wrote:
+>> 
+>> 
+>> On 1/24/24 8:23 PM, Miklos Szeredi wrote:
+>>> On Wed, 24 Jan 2024 at 08:05, Jingbo Xu <jefflexu@linux.alibaba.com> 
+>>> wrote:
+>>>> 
+>>>> From: Xu Ji <laoji.jx@alibaba-inc.com>
+>>>> 
+>>>> Increase FUSE_MAX_MAX_PAGES limit, so that the maximum data size of 
+>>>> a
+>>>> single request is increased.
+>>> 
+>>> The only worry is about where this memory is getting accounted to.
+>>> This needs to be thought through, since the we are increasing the
+>>> possible memory that an unprivileged user is allowed to pin.
+> 
+> Apart from the request size, the maximum number of background requests,
+> i.e. max_background (12 by default, and configurable by the fuse
+> daemon), also limits the size of the memory that an unprivileged user
+> can pin.  But yes, it indeed increases the number proportionally by
+> increasing the maximum request size.
+> 
+> 
+>> 
+>>> 
+>>> 
+>>> 
+>>>> 
+>>>> This optimizes the write performance especially when the optimal IO 
+>>>> size
+>>>> of the backend store at the fuse daemon side is greater than the 
+>>>> original
+>>>> maximum request size (i.e. 1MB with 256 FUSE_MAX_MAX_PAGES and
+>>>> 4096 PAGE_SIZE).
+>>>> 
+>>>> Be noted that this only increases the upper limit of the maximum 
+>>>> request
+>>>> size, while the real maximum request size relies on the FUSE_INIT
+>>>> negotiation with the fuse daemon.
+>>>> 
+>>>> Signed-off-by: Xu Ji <laoji.jx@alibaba-inc.com>
+>>>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+>>>> ---
+>>>> I'm not sure if 1024 is adequate for FUSE_MAX_MAX_PAGES, as the
+>>>> Bytedance floks seems to had increased the maximum request size to 
+>>>> 8M
+>>>> and saw a ~20% performance boost.
+>>> 
+>>> The 20% is against the 256 pages, I guess.
+>> 
+>> Yeah I guess so.
+>> 
+>> 
+>>> It would be interesting to
+>>> see the how the number of pages per request affects performance and
+>>> why.
+>> 
+>> To be honest, I'm not sure the root cause of the performance boost in
+>> bytedance's case.
+>> 
+>> While in our internal use scenario, the optimal IO size of the backend
+>> store at the fuse server side is, e.g. 4MB, and thus if the maximum
+>> throughput can not be achieved with current 256 pages per request. IOW
+>> the backend store, e.g. a distributed parallel filesystem, get optimal
+>> performance when the data is aligned at 4MB boundary.  I can ask my 
+>> folk
+>> who implements the fuse server to give more background info and the
+>> exact performance statistics.
+> 
+> Here are more details about our internal use case:
+> 
+> We have a fuse server used in our internal cloud scenarios, while the
+> backend store is actually a distributed filesystem.  That is, the fuse
+> server actually plays as the client of the remote distributed
+> filesystem.  The fuse server forwards the fuse requests to the remote
+> backing store through network, while the remote distributed filesystem
+> handles the IO requests, e.g. process the data from/to the persistent 
+> store.
+> 
+> Then it comes the details of the remote distributed filesystem when it
+> process the requested data with the persistent store.
+> 
+> [1] The remote distributed filesystem uses, e.g. a 8+3 mode, EC
+> (ErasureCode), where each fixed sized user data is split and stored as 
+> 8
+> data blocks plus 3 extra parity blocks. For example, with 512 bytes
+> block size, for each 4MB user data, it's split and stored as 8 (512
+> bytes) data blocks with 3 (512 bytes) parity blocks.
+> 
+> It also utilize the stripe technology to boost the performance, for
+> example, there are 8 data disks and 3 parity disks in the above 8+3 
+> mode
+> example, in which each stripe consists of 8 data blocks and 3 parity
+> blocks.
+> 
+> [2] To avoid data corruption on power off, the remote distributed
+> filesystem commit a O_SYNC write right away once a write (fuse) request
+> received.  Since the EC described above, when the write fuse request is
+> not aligned on 4MB (the stripe size) boundary, say it's 1MB in size, 
+> the
+> other 3MB is read from the persistent store first, then compute the
+> extra 3 parity blocks with the complete 4MB stripe, and finally write
+> the 8 data blocks and 3 parity blocks down.
+> 
+> 
+> Thus the write amplification is un-neglectable and is the performance
+> bottleneck when the fuse request size is less than the stripe size.
+> 
+> Here are some simple performance statistics with varying request size.
+> With 4MB stripe size, there's ~3x bandwidth improvement when the 
+> maximum
+> request size is increased from 256KB to 3.9MB, and another ~20%
+> improvement when the request size is increased to 4MB from 3.9MB.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+To add my own performance statistics in a microbenchmark:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Tested on both small VM and large hardware, with suitably large 
+FUSE_MAX_MAX_PAGES, using a simple fuse filesystem whose write handlers 
+did basically nothing but read the data buffers (memcmp() each 8 bytes 
+of data provided against a variable), I ran fio with 128M blocksize, 
+end_fsync=1, psync IO engine, times each of 4 parallel jobs. Throughput 
+was as follows over variable write_size in MB/s.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+write_size  machine1 machine2
+32M	1071	6425
+16M	1002	6445
+8M	890	6443
+4M	713	6342
+2M	557	6290
+1M	404	6201
+512K	268	6041
+256K	156	5782
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Even on the fast machine, increasing the buffer size to 8M is worth 3.9% 
+over keeping it at 1M, and is worth over 2x on the small VM. We are 
+striving to reduce the ingestion speed in particular as we have seen 
+that as a limiting factor on some machines, and there's a clear plateau 
+reached around 8M. While most fuse servers would likely not benefit from 
+this, and others would benefit from fuse passthrough instead, it does 
+seem like a performance win.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Perhaps, in analogy to soft and hard limits on pipe size, 
+FUSE_MAX_MAX_PAGES could be increased and treated as the maximum 
+possible hard limit for max_write; and the default hard limit could stay 
+at 1M, thereby allowing folks to opt into the new behavior if they care 
+about the performance more than the memory?
 
-If you want to undo deduplication, reply with:
-#syz undup
+Sweet Tea
 
