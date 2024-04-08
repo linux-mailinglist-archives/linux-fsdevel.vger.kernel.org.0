@@ -1,156 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-16372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91ED89C8FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 17:55:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 624F789C948
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 18:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0DD2879FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 15:55:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9E6B2556D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 16:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7888E1422A6;
-	Mon,  8 Apr 2024 15:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019001422D9;
+	Mon,  8 Apr 2024 16:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M3pQiY5l"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iBigXMxg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7807A1422A8
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Apr 2024 15:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFF41420D5;
+	Mon,  8 Apr 2024 16:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712591613; cv=none; b=VWlA6m8BlT8dziLbj49RieVSrBS6w4jGe8XUEPTIbu1xWEj9UpQXxDun4OuvxG+V88UChgirpLcUwkfnfAzpN5K/67dcWyiiiB+VPLY7ZetMPG5g3hX6e3NMQJxKWrqRRqbuTgGWlrmG84Z+tVZQ9cPrrZAMjEczvtYXP16HQfQ=
+	t=1712592168; cv=none; b=Oie8SiX3o90Z/DH+06Xm0fUokeaI3BQZngI8GndNvBB52g9erZy7I6bzMZ6jcLl/57JwPXhLJfwPF10vrzrSIuulIcQJJ5U+5oevdi3JdggVp82SiaMFDPXqUmQyDQf2/1RufDmzJRGrC1RGaHZkZb2xH2WYuykNiqFH6Bql1B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712591613; c=relaxed/simple;
-	bh=c7hBMA4mXgWP8KpfW/frrWt9OAipSAHQsJKBjgulmnE=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=Cdl9lmOVeP2vM6melZz8DMCVZMsKKvwoITz8/9ZA9UP/EJzC7w+3Ivo2aTl5oyp5gIa7yn094rWsQ2f727xY3/KGZyHMyggryQnlxaLjP2sCRDfVwup/b6EkgeFImMgzM9KiHhGhGOrELt1Z64H3SaD5PfZm53QYNJ8hugeDxB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M3pQiY5l; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712591610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CFuGX1yyoTN69ecCATsVj4UhORzkDiRUWoktVVAJ3+Q=;
-	b=M3pQiY5lqBUvg/LGShdu13XW38l8ONsKhdxdh35Uw1RJ4HmupW3rKYJQQQtzHVfogfJsZg
-	jN1+dVINASTXemnr+GMMM0vgjrM/Cm1i39jGpulL+JwbQVIyNQ30SYwdjwsR8465a/7k1L
-	yNNvp6exSFMjDPkt8+eZF6zmaIORk88=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-137-HJAhESVFMaKi_61YaghcgA-1; Mon, 08 Apr 2024 11:53:27 -0400
-X-MC-Unique: HJAhESVFMaKi_61YaghcgA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EEA2C90ACC7;
-	Mon,  8 Apr 2024 15:53:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 084C62033AC1;
-	Mon,  8 Apr 2024 15:53:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240328163424.2781320-24-dhowells@redhat.com>
-References: <20240328163424.2781320-24-dhowells@redhat.com> <20240328163424.2781320-1-dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-    Matthew Wilcox <willy@infradead.org>
-Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Steve French <smfrench@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
-    Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH 23/26] netfs: Cut over to using new writeback code
+	s=arc-20240116; t=1712592168; c=relaxed/simple;
+	bh=Y30PmaNhnezUuMlBCV6pB7+TsKy2Xq+rK8IH/JfTHog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0MGV4YI7tsSvB/Ap2QCkEZGnQIOQ4TuQJmJRyEegQPmD+1cDaYEiFXpxrMWzXbKmxO1dmCExYnQNIgyMi5rL9e+z7vANgt2JGwe1TSLWxB1fICxstVjWZ2Td2rre+wb88LnfeTp/d+Z0CWngYBFGVNhWc2FaIYKpo2D4cSIZ5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iBigXMxg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=izUM//YtAco+VvWir8uJwOQef2J3aIrjmbstnFNAkDI=; b=iBigXMxgZi2deI/ZFxgrEINoG9
+	ynsx+q7hfmtWcVmHw0IWtJMqsPdA9jDQbFF8f1uvh+/Kee0EfWOzl7xMVtCZhzF8TQWvru7Zcin4M
+	OzwZ002fnCE6hxU5qx5ssj62e5dsuNMzauIyLwg5+q/6YeFmfVBQKqsGbo9TGdSr9qBr2MqdFmVuW
+	iFw0QPZR6RKbpTRKzGHN6XuxlgGcYz4T7bKnfvCEWmPIRjmBq/zSkf9/B43LCOtdXtmDZx926JW9S
+	TZNQSKznDjkDVm1i5h/AcUiheZt1qx1v8cYU0PN7RPGq5MySGKDLaqm+U86RIdVuGRZuglLRmVIDF
+	OXJt75vQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rtrS9-000000009mo-2kya;
+	Mon, 08 Apr 2024 16:02:37 +0000
+Date: Mon, 8 Apr 2024 17:02:37 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Philipp Stanner <pstanner@redhat.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
+Message-ID: <ZhQVHZnU3beOhEGU@casper.infradead.org>
+References: <20240322233838.868874-1-boqun.feng@gmail.com>
+ <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
+ <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
+ <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
+ <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
+ <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
+ <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <877901.1712591597.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 08 Apr 2024 16:53:17 +0100
-Message-ID: <877902.1712591597@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
 
-David Howells <dhowells@redhat.com> wrote:
+On Mon, Mar 25, 2024 at 10:44:43AM -0700, Linus Torvalds wrote:
+> So I actually think most compiler people are perfectly fine with the
+> kernel model of mostly doing 'volatile' not on the data structures
+> themselves, but as accesses through casts.
+> 
+> It's very traditional C, and there's actually nothing particularly odd
+> about it. Not even from a compiler standpoint.
+> 
+> In fact, I personally will argue that it is fundamentally wrong to
+> think that the underlying data has to be volatile. A variable may be
+> entirely stable in some cases (ie locks held), but not in others.
+> 
+> So it's not the *variable* (aka "object") that is 'volatile', it's the
+> *context* that makes a particular access volatile.
+> 
+> That explains why the kernel has basically zero actual volatile
+> objects, and 99% of all volatile accesses are done through accessor
+> functions that use a cast to mark a particular access volatile.
 
-> +		/* Wait for writeback to complete.  The writeback engine owns
-> +		 * the info in folio->private and may change it until it
-> +		 * removes the WB mark.
-> +		 */
-> +		if (folio_wait_writeback_killable(folio)) {
-> +			ret =3D written ? -EINTR : -ERESTARTSYS;
-> +			goto error_folio_unlock;
-> +		}
-> +
+What annoys me is that 'volatile' accesses have (at least) two distinct
+meanings:
+ - Make this access untorn
+ - Prevent various optimisations (code motion,
+   common-subexpression-elimination, ...)
 
-It turns out that this really kills performance with fio with as many jobs=
- as
-cpus.  It's taking up to around 8x longer to complete a pwrite() on averag=
-e
-and perf shows a 30% of the CPU cycles are being spent in contention on th=
-e
-i_rwsem.
+As an example, folio_migrate_flags() (in mm/migrate.c):
 
-The reason this was added here is that writeback cannot take the folio loc=
-k in
-order to clean up folio->private without risking deadlock vs the truncatio=
-n
-routines (IIRC).
+        if (folio_test_error(folio))
+                folio_set_error(newfolio);
+        if (folio_test_referenced(folio))
+                folio_set_referenced(newfolio);
+        if (folio_test_uptodate(folio))
+                folio_mark_uptodate(newfolio);
 
-I can mitigate this by skipping the wait if folio->private is not set and =
-if
-we're not going to attach anything there (see attached).  Note that if
-writeout is ongoing and there is nothing attached to ->private, then we sh=
-ould
-not be engaging write-streaming mode and attaching a new netfs_folio (and =
-if
-we did, we'd flush the page and wait for it anyway).
+... which becomes...
 
-The other possibility is if we have a writeback group to set.  This only
-applies to ceph for the moment and is something that will need dealing wit=
-h
-if/when ceph is made to use this code.
+      1f:       f6 c4 04                test   $0x4,%ah
+      22:       74 05                   je     29 <folio_migrate_flags+0x19>
+      24:       f0 80 4f 01 04          lock orb $0x4,0x1(%rdi)
+      29:       48 8b 03                mov    (%rbx),%rax
+      2c:       a8 04                   test   $0x4,%al
+      2e:       74 05                   je     35 <folio_migrate_flags+0x25>
+      30:       f0 80 4d 00 04          lock orb $0x4,0x0(%rbp)
+      35:       48 8b 03                mov    (%rbx),%rax
+      38:       a8 08                   test   $0x8,%al
+      3a:       74 05                   je     41 <folio_migrate_flags+0x31>
+      3c:       f0 80 4d 00 08          lock orb $0x8,0x0(%rbp)
 
-David
----
+In my ideal world, the compiler would turn this into:
 
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index 1eff9413eb1b..279b296f8014 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -255,7 +255,8 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct=
- iov_iter *iter,
- 		 * the info in folio->private and may change it until it
- 		 * removes the WB mark.
- 		 */
--		if (folio_wait_writeback_killable(folio)) {
-+		if (folio_get_private(folio) &&
-+		    folio_wait_writeback_killable(folio)) {
- 			ret =3D written ? -EINTR : -ERESTARTSYS;
- 			goto error_folio_unlock;
- 		}
+	newfolio->flags |= folio->flags & MIGRATE_MASK;
 
+but because folio_test_foo() and folio_set_foo() contain all manner of
+volatile casts, the compiler is forced to do individual tests and sets.
+
+Part of that is us being dumb; folio_set_foo() should be __folio_set_foo()
+because this folio is newly allocated and nobody else can be messing
+with its flags word yet.  I failed to spot that at the time I was doing
+the conversion from SetPageFoo to folio_set_foo.
+
+But if the compiler people could give us something a little more
+granular than "scary volatile access disable everything", that would
+be nice.  Also hard, because now you have to figure out what this new
+thing interacts with and when is it safe to do what.
 
