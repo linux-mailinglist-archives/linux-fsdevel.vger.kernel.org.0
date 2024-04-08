@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-16360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9884D89C071
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 15:08:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4787A89C001
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 15:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFB21F211F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 13:08:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC7F11F24A45
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 13:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241A771727;
-	Mon,  8 Apr 2024 13:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36527C086;
+	Mon,  8 Apr 2024 13:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UH8FCNQk"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="T+KT8TTL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746D32DF73;
-	Mon,  8 Apr 2024 13:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A5564CF2;
+	Mon,  8 Apr 2024 13:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712581715; cv=none; b=Ea28KHfUh92MS4cWb7nUGwuBikQg352erffXvd+QmYoJKtpz/sjpe9Fk1U0A7lu1aEZk3Yiq9QtUXbenBzkplIA6zuXiuQ4N+fHHpjRuj3fKv40++oqE/cfIu1oc0QhOUBqLeTGsSw60aOpFT4dSV91HN8rWu8RC4WzmZTgTefM=
+	t=1712581437; cv=none; b=FJU1eIUF9183cmgDNKPVNWIlJGT3+Zwd9b4v+z6G/REXl3cT0zLopkzOzH/y2ubCOmIEQPO9cEbsKbJxOfx3NAMWJM/s7akSePdfy++DUVa4mm+26F2aDuRrBm+ZkVQeP0o2W6IOvXJfhKTtMy/dkaykHL0slAfVWpiw3YQbIrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712581715; c=relaxed/simple;
-	bh=V+SQFQ3cbRnsftBKVQRqsHHmc9X4VscONc83K7lIx2Q=;
+	s=arc-20240116; t=1712581437; c=relaxed/simple;
+	bh=Nx84nNful3EhSCX9GDP3HZbAXgF2FzEiBKfHlDAeiw4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s+KKyELbM9PooDNB1E8+OJ31tErXoWB+gUXWqVlV5hXxNhafhO0akIZq6AI2F/nOcgMymkQs/VBo3L0vl6WL/E2NBilaunR2dDwixvezGSRMT9FQwdvflIscoVKL1lkUVmbPsIpbAJ1gAeoVgzavCoU92OneRE6tLYyGNw1NrUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UH8FCNQk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2CF9C43390;
-	Mon,  8 Apr 2024 13:08:34 +0000 (UTC)
+	 MIME-Version; b=J+kwZYvBA0e/WeiPWdrCtqiIdsXl5lW3NXwwJZNw35pY3kmiNxwu2zxRHPJVPQLgjWMM9IyiabmCd7rbo1UBV73hlk7zFkInw2E8xUVWnAkpjY9ohy1TlGC3Tprv4e1SNjOBGbNPvD2d6r8iTJBuo/hCKSww0lH8yvYLokWQ1kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=T+KT8TTL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A10DFC433C7;
+	Mon,  8 Apr 2024 13:03:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1712581715;
-	bh=V+SQFQ3cbRnsftBKVQRqsHHmc9X4VscONc83K7lIx2Q=;
+	s=korg; t=1712581437;
+	bh=Nx84nNful3EhSCX9GDP3HZbAXgF2FzEiBKfHlDAeiw4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UH8FCNQkgt2Ik6pBrqkxYg8rN5bf4eEKSKJFI31ZSahnkWR/eqaUT6F0e2i33ATq6
-	 8wFeXsUCo5OHpYW+R1sR0stYURGEIKqNnVRVsxolIQ7yclmxVIDQwa8gg5Eun/QNGU
-	 tDEVrgbjbEtGYClXj6Xg8MbwHKZxq7WHvgWw/i5w=
+	b=T+KT8TTLx84PkHk8YMW5QmyJFiQm6emyaGbV+Pl+nyLjK9pDCjkp2KsFng2UdHs3x
+	 uD9TznLOaPcjzgwD0fNO7Y624EIzCwiZDCUVMv4Q6J+sAxMxp9ZQUnVdAu/C375Ybb
+	 DXcAqzE0hrQzsWAwdYir8EznKR5K7IoOEBC9IJEA=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -51,12 +51,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-fsdevel@vger.kernel.org,
 	Steve French <stfrench@microsoft.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.6 034/252] cifs: Fix duplicate fscache cookie warnings
-Date: Mon,  8 Apr 2024 14:55:33 +0200
-Message-ID: <20240408125307.702823323@linuxfoundation.org>
+Subject: [PATCH 6.1 019/138] cifs: Fix duplicate fscache cookie warnings
+Date: Mon,  8 Apr 2024 14:57:13 +0200
+Message-ID: <20240408125256.827989943@linuxfoundation.org>
 X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240408125306.643546457@linuxfoundation.org>
-References: <20240408125306.643546457@linuxfoundation.org>
+In-Reply-To: <20240408125256.218368873@linuxfoundation.org>
+References: <20240408125256.218368873@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.6-stable review patch.  If anyone has any objections, please let me know.
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -103,7 +103,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 17 insertions(+), 1 deletion(-)
 
 diff --git a/fs/smb/client/fscache.c b/fs/smb/client/fscache.c
-index e5cad149f5a2d..a4ee801b29394 100644
+index f64bad513ba6d..6df4ab2a6e5dc 100644
 --- a/fs/smb/client/fscache.c
 +++ b/fs/smb/client/fscache.c
 @@ -12,6 +12,16 @@
@@ -145,10 +145,10 @@ index e5cad149f5a2d..a4ee801b29394 100644
  				       i_size_read(&cifsi->netfs.inode));
  	if (cifsi->netfs.cache)
 diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-index cb9e719e67ae2..fa6330d586e89 100644
+index 5343898bac8a6..634f28f0d331e 100644
 --- a/fs/smb/client/inode.c
 +++ b/fs/smb/client/inode.c
-@@ -1390,6 +1390,8 @@ cifs_find_inode(struct inode *inode, void *opaque)
+@@ -1274,6 +1274,8 @@ cifs_find_inode(struct inode *inode, void *opaque)
  {
  	struct cifs_fattr *fattr = opaque;
  
