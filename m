@@ -1,255 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-16375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6087989CA34
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 19:02:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8180089CA3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 19:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9081F27202
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 17:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3F1288166
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 17:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7567142E7F;
-	Mon,  8 Apr 2024 17:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53989142E9C;
+	Mon,  8 Apr 2024 17:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Xy9PJNWZ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aiNc++Ts"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA9C142E7D
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Apr 2024 17:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242B76E60E;
+	Mon,  8 Apr 2024 17:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712595735; cv=none; b=T5crVI+LkXOf52fjznRoCZV5wuH/VSHfqxDli57sXfTU/y/BDsV2SPnLEM1xyKCWXZvkR9EDLaGjK3doU0hbB22ll9867Kv/4yfRUmxCza9ZeEMG0ZqlffPJceg3f/1EdZLEr3OAUpY0TWqSz0UA8KZFn3CEHkhLwhGqzf5tjU4=
+	t=1712595803; cv=none; b=N8j2jfrMH+MXK+SNc7xO3VyLq+XD4ysLe9vu3MYvNkTGnAyFQhe5bK6EShCtaOpy8yQiC5PwI/1May8wQrTz2po4qPg5RcFHMw6of4oDhHWgwuY0BHPb3NZWkIgcLgZ433+1yBmvqkqOapHSt130KhmTNyz1gEliBZn7rY5q0EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712595735; c=relaxed/simple;
-	bh=R1X/55Ass4+5QaXX6Nqf8js8X6058F+DL+6kNlzxcrA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1ubctX/SaPhpw/vW3u9Ga080MctJZVZsCYgld2BVxg8dqj6G4S1JaPGB/KtxSXDwpFAupS8H/jWfr4rHbzThCYo0wHyTNUD+p7fyU//HHo1DbzrA0D3tl0qvTjhu6r6cvGFM4Q8PBTf3FHZV/x1Q7sOCsl5qbKyMHVdpPD787w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Xy9PJNWZ; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-516d6898bebso3338920e87.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Apr 2024 10:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1712595731; x=1713200531; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DwMXPeVIx6bxobFvIepci0DieuFBhkBMzMB9NgGCo/g=;
-        b=Xy9PJNWZ1wX+APjG82Bc3YUodJzeih9BLijjQyKB0UfdLaZwotMSrWoKMt/0JLHYdi
-         09+CX8YrODIivoCgxc62Hxlig5kzjeCe1S7v0H6Pekh5arDHb52fAxFtZaT+Ds0OU2XT
-         5wZbF9H4nF5jT55PtqXdTDN/aRS5th801DBgQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712595731; x=1713200531;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DwMXPeVIx6bxobFvIepci0DieuFBhkBMzMB9NgGCo/g=;
-        b=Zhgm0Q2KAEANOZX/cPLdPMaBO/ViGYZOBLFHvCNzrhS3sDRLxUTtefd3nmJ22QLaQd
-         L28qdZ5wBfMwRrqW/2yO8/ULu5hdbDoFukUJbIyMrqGkVnObfGqvL8k/2Yg9ZfdMTpCz
-         N3dZI4mAW1cLTHb35NLXM+hnNCu3QVwL0GPTJ8hRO27lHIthcXriUjpfgSRgIuhnTqiS
-         /T6uyNTcIEZjuVGfB0+mkq5AcbTUkNkikAM9bu33j9lCFOA+A4xHOWTac3nSIPNtrGW0
-         cGxZpumN7A6yk1V6+ypaSzFWwA38vpa62ox8tahY/wwlSTwKDTwIMOTGL4kh5aVBXhDo
-         v28w==
-X-Forwarded-Encrypted: i=1; AJvYcCWw7yJpsliYzXyCh/hYaMkrD4z/JOPPZKQZ2XnkX9c5uNBTFQMQNeeGZ3JGYNvXJAWc0qKME58V8SWgsa8JpXImVAke4zMqrobVrlowrw==
-X-Gm-Message-State: AOJu0YySzFswYEZULblCBTy7RzZQqeNUZIOBJeFeGubOL27dBZSqZIuW
-	qasGuIA2uWutc733v4U2D6x/3bJ5/6Zvj/oCCMTVuCh4rfCq9ZpbdiyDwFYl2PvT+v2EMgiZO8C
-	4fhA=
-X-Google-Smtp-Source: AGHT+IFVUsUUUpkFN2fK+++0CY4Oz/CUtsi1ctnP0e8+fBGt/vCQoM0hv4lXqgTz39ElDoiOrsPVSw==
-X-Received: by 2002:ac2:5964:0:b0:515:d10b:522a with SMTP id h4-20020ac25964000000b00515d10b522amr6204785lfp.30.1712595731193;
-        Mon, 08 Apr 2024 10:02:11 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id y11-20020ac255ab000000b00516d2c05b3dsm1232283lfg.299.2024.04.08.10.02.10
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Apr 2024 10:02:10 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-516d6898bebso3338881e87.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Apr 2024 10:02:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXgZ0k8eXbE9WJXwQCwTJZphi7hgMfeR+ncPn9IfuytjCRHiPriv8/qcYGNXm4pXOewIC6UUgLCY/XB4eAO2EBFehurXjhkTphnsradpA==
-X-Received: by 2002:a17:906:1d05:b0:a51:913c:1c83 with SMTP id
- n5-20020a1709061d0500b00a51913c1c83mr6230911ejh.58.1712595709884; Mon, 08 Apr
- 2024 10:01:49 -0700 (PDT)
+	s=arc-20240116; t=1712595803; c=relaxed/simple;
+	bh=gN//XILcBlT0DJQEOTanYjKqrO+N1Qj9zEhssZWgESs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S9GN/SZX4xgj3LOy33wBl9t/NauJV7i8gJRXhp4j8SkMhkuPf5Aw19PcVzsX4ZT70HNvGYx5c4f+Dl1tO80iKLFjiPQCLqCw89Y4Cn+hgLrBuOaRMSfozvRCHZgKjaFVEWoJIfqTSH0blpGR+ykc9CK79ndSLjSyQB/dJCPQ4TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aiNc++Ts; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EC+c0K53M4cQQaYWWH6ov1Mzjcw38TyRZLp9ANkJLfo=; b=aiNc++TsrqGY3idP8BZBqBlc23
+	oDcNXXEP/RYnFgfQlOPLjGuK9TyM29iXrAGUee+aG7r2LzkLZm3oki+4c3erRNHbk6dMGfEFjMs4I
+	FTKkciLzcgIwLKHkl1eY78PCHKwjaPO86ZVwYHCxX4QdmJB67yprKZRnjijIXIvZTfkqMKvacRcxu
+	nH1VzsXeLWU7yECxgsj+2YHhAwMGTKhhyxnqIzXdjbb9vdOSvLe67vpVrSG0J9QzB4BhBNxuMhk1t
+	TCl1NW+7G3YF8eev+borvQZqjaJVd7MnzNDG5NUNdpmA1v/ZJnCJV0VHqR9LXo4wwNtZpFziOEsBJ
+	ZSxQj4EQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rtsOl-00000000Fng-1Lf1;
+	Mon, 08 Apr 2024 17:03:11 +0000
+Date: Mon, 8 Apr 2024 18:03:11 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
+Message-ID: <ZhQjT4xdS3h-GbtC@casper.infradead.org>
+References: <20240322233838.868874-1-boqun.feng@gmail.com>
+ <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
+ <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
+ <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
+ <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
+ <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
+ <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
+ <ZhQVHZnU3beOhEGU@casper.infradead.org>
+ <fec60bba-e414-43d1-bc3e-870f5ffe4626@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240322233838.868874-1-boqun.feng@gmail.com> <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
- <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
- <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
- <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
- <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
- <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com> <ZhQVHZnU3beOhEGU@casper.infradead.org>
-In-Reply-To: <ZhQVHZnU3beOhEGU@casper.infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 8 Apr 2024 10:01:32 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whmmeU_r_o+sPMcr7tPr-EU+HLnmL+GaWUkMUW0kDzDxw@mail.gmail.com>
-Message-ID: <CAHk-=whmmeU_r_o+sPMcr7tPr-EU+HLnmL+GaWUkMUW0kDzDxw@mail.gmail.com>
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Philipp Stanner <pstanner@redhat.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
-	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
-	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, 
-	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fec60bba-e414-43d1-bc3e-870f5ffe4626@paulmck-laptop>
 
-On Mon, 8 Apr 2024 at 09:02, Matthew Wilcox <willy@infradead.org> wrote:
->
-> What annoys me is that 'volatile' accesses have (at least) two distinct
-> meanings:
->  - Make this access untorn
->  - Prevent various optimisations (code motion,
->    common-subexpression-elimination, ...)
+On Mon, Apr 08, 2024 at 09:55:23AM -0700, Paul E. McKenney wrote:
+> On Mon, Apr 08, 2024 at 05:02:37PM +0100, Matthew Wilcox wrote:
+> > In my ideal world, the compiler would turn this into:
+> > 
+> > 	newfolio->flags |= folio->flags & MIGRATE_MASK;
+> 
+> Why not accumulate the changes in a mask, and then apply the mask the
+> one time?  (In situations where __folio_set_foo() need not apply.)
 
-Oh, I'm not at all trying to say that "volatile" is great.
+Yes, absolutely, we can, should and probably eventually will do this
+when it gets to the top of somebody's todo list.  But it irks me that
+we can't tell the compiler this is a safe transformation for it to make.
+There are a number of places where similar things happen.
 
-My argument was that the C (and C++, and Rust) model of attaching
-memory ordering to objects is actively bad. and limiting.
+$ git grep folio_test.*folio_test
 
-Because the whole "the access rules are context-dependent" is really
-fundamental. Anybody who designs an atomic model around the object is
-simply not doing it right.
+will find you 82 of them (where they happen to be on the same line)
 
-Now, the "volatile" rules actually make sense in a historical
-"hardware access" context. So I do not think "volatile" is great, but
-I also don't think K&R were incompetent. "volatile" makes perfect
-sense in the historical setting of "direct hardware access".
+                if (folio_test_dirty(folio) || folio_test_locked(folio) ||
+                                folio_test_writeback(folio))
+                        break;
 
-It just so happens that there weren't other tools, so then you end up
-using "volatile" for cached memory too when you want to get "access
-once" semantics, and then it isn't great.
+turns into:
 
-And then you have *too* many tools on the standards bodies, and they
-don't understand atomics, and don't understand volatile, and they have
-been told that "volatile" isn't great for atomics because it doesn't
-have memory ordering semantics, but do not understand the actual
-problem space.
+    1f41:       48 8b 29                mov    (%rcx),%rbp
+    1f44:       48 c1 ed 04             shr    $0x4,%rbp
+    1f48:       83 e5 01                and    $0x1,%ebp
+    1f4b:       0f 85 d5 00 00 00       jne    2026 <filemap_range_has_writeback+0x1a6>
+    1f51:       48 8b 29                mov    (%rcx),%rbp
+    1f54:       83 e5 01                and    $0x1,%ebp
+    1f57:       0f 85 c9 00 00 00       jne    2026 <filemap_range_has_writeback+0x1a6>
+    1f5d:       48 8b 29                mov    (%rcx),%rbp
+    1f60:       48 d1 ed                shr    $1,%rbp
+    1f63:       83 e5 01                and    $0x1,%ebp
+    1f66:       0f 85 ba 00 00 00       jne    2026 <filemap_range_has_writeback+0x1a6>
 
-So those people - who in some cases spent decades arguing about (and
-sometimes against) "volatile" think that despite all the problems, the
-solution for atomics is to make the *same* mistake, and tie it to the
-data and the type system, not the action.
+rather than _one_ load from rcx and a test against a mask.
 
-Which is honestly just plain *stupid*. What made sense for 'volatile'
-in a historical setting, absolutely does not make sense for atomics.
+> If it turns out that we really do need a not-quite-volatile, what exactly
+> does it do?  You clearly want it to be able to be optimized so as to merge
+> similar accesses.  Is there a limit to the number of accesses that can
+> be merged or to the region of code over which such merging is permitted?
+> Either way, how is the compiler informed of these limits?
 
-> As an example, folio_migrate_flags() (in mm/migrate.c):
->
->         if (folio_test_error(folio))
->                 folio_set_error(newfolio);
->         if (folio_test_referenced(folio))
->                 folio_set_referenced(newfolio);
->         if (folio_test_uptodate(folio))
->                 folio_mark_uptodate(newfolio);
->
-> ... which becomes...
-
-[ individual load and store code generation removed ]
-
-> In my ideal world, the compiler would turn this into:
->
->         newfolio->flags |= folio->flags & MIGRATE_MASK;
-
-Well, honestly, we should just write the code that way, and not expect
-too much of the compiler.
-
-We don't currently have a "generic atomic or" operation, but we
-probably should have one.
-
-For our own historical reasons, while we have a few generic atomic
-operations: bit operations, cmpxchg, etc, most of our arithmetic and
-logical ops all rely on a special "atomic_t" type (later extended with
-"atomic_long_t").
-
-The reason? The garbage that is legacy Sparc atomics.
-
-Sparc historically basically didn't have any atomics outside of the
-'test and set byte' one, so if you wanted an atomic counter thing, and
-you cared about sparc, you had to play games with "some bits of the
-counter are the atomic byte lock".
-
-And we do not care about that Sparc horror any *more*, but we used to.
-
-End result: instead of having "do atomic ops on a normal type" - which
-would be a lot more powerful - we have this model of "do atomic ops on
-atomic_t".
-
-We could fix that now. Instead of having architectures define
-
-   arch_atomic_or(int i, atomic_t *v)
-
-operations, we could - and should - make the 'arch' atomics be
-
-   arch_atomic_or(int i, unsigned int *v)
-
-and then we'd still keep the "atomic_t" around for type safety
-reasons, but code that just wants to act on an "int" (or a "long")
-atomically could just do so.
-
-But in your case, I don't think you actually need it:
-
-> Part of that is us being dumb; folio_set_foo() should be __folio_set_foo()
-> because this folio is newly allocated and nobody else can be messing
-> with its flags word yet.  I failed to spot that at the time I was doing
-> the conversion from SetPageFoo to folio_set_foo.
-
-This is part of my "context matters" rant and why I do *not* think
-atomics should be tied to the object, but to the operation.
-
-The compiler generally doesn't know the context rules (insert "some
-languages do know in some cases" here), which is why we as programmers
-should just use different operations when we do.
-
-In this case, since it's a new folio that hasn't been exposed to
-anybody, you should just have done exactly that kind of
-
-    newfolio->flags |= folio->flags & MIGRATE_MASK;
-
-which we already do in the page initialization code when we know we
-own the flags (set_page_zone, set_page_zone, set_page_section).
-
-We've generally avoided doing this in general, though - even the buddy
-allocator seldom does it. The only case of manual "I know I own the
-flags" I know if (apart from the initialization itself) is
-
-        ->flags &= ~PAGE_FLAGS_CHECK_AT_FREE;
-     ...
-        ->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
-
-kinds of things at free/alloc time.
-
-> But if the compiler people could give us something a little more
-> granular than "scary volatile access disable everything", that would
-> be nice.  Also hard, because now you have to figure out what this new
-> thing interacts with and when is it safe to do what.
-
-I think it would be lovely to have some kind of "atomic access"
-operations that the compiler could still combine when it can see that
-"this is invisible at a cache access level".
-
-But as things are now, we do have most of those in the kernel, and
-what you ask for can either be done today, or could be done (like that
-"arch_atomic_or()") with a bit of re-org.
-
-                       Linus
+Right, like I said, it's not going to be easy to define exactly what we
+want.
 
