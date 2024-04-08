@@ -1,324 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-16362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334E289C1B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 15:23:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B12F89C63C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 16:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 584BB1C21439
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 13:23:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4311C21A38
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 14:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267EE8060C;
-	Mon,  8 Apr 2024 13:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AF880BF8;
+	Mon,  8 Apr 2024 14:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nPpSVLEP"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MofoLoFN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wp7MzA1f";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MofoLoFN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wp7MzA1f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0A670CCB;
-	Mon,  8 Apr 2024 13:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CBD80624;
+	Mon,  8 Apr 2024 14:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712582375; cv=none; b=LrCskWMf3VIfi4dOM+eM2wOIvvcDxz7BQZKvaS1oulCCcHZKnhKLDjSuugPyGt7mvYc/HC7ohfiJrdOZ6ksUrpDDajprCpi78mdENH71FoIb4G4nlmSDq773yTd5Hl5v2UQe6A3bfADkPuEd3A7usQdsDKibOBoowm9lZs5uq/w=
+	t=1712585150; cv=none; b=cCpaFYVXg7C8qrOz1o91IN8KhiZFL3ELqYsFCW9284PLI2dC1FdT4UFg2kVJG/sJj9ptLNyxdw6JbHbrYX3BvHDvL+/QqZB0+g/WagkvnEozMgqil5sSE2ih1ck8pCjYTWj67Bh/3JYdtXI7zyN/fJLyTTyzLVicWS6YZa4vBN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712582375; c=relaxed/simple;
-	bh=NhvtdevDHN9Wq8sUJv73XolrMHEq35fQ58EhfySQfIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jZEgtd0K7FDvhnqoKRYo+7T/8fVSmTqn7je9ZmZfMFcbVw686l5v+90vKkjUDY3Dley4c62UzS4sZM5yxebfP7O8xk1vcGUzy3crCKJ3rZuCrTzC+Zgj0PWQGpgtsLGyFU06JltnbZRvRPyDGKJgJx4RdhU13vjYsoU0ZzDGF4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nPpSVLEP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEDBEC433F1;
-	Mon,  8 Apr 2024 13:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1712582375;
-	bh=NhvtdevDHN9Wq8sUJv73XolrMHEq35fQ58EhfySQfIA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nPpSVLEPuDw2wkkHy76jPryzOg/pfd+pRfNNZO2363jLEG+SqB15qlIHCW52Lv2g5
-	 jchiAtEAcxGA0ToPrVDAZWEj5s5lz7ppfCuOV+XdjWj3gOL3/ijgeSH8Htz/VAb5LU
-	 VNn5akQ7ZRHXGGaLQYS0lRLqRCOnz3pVIoyC2C44=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	David Howells <dhowells@redhat.com>,
-	Steve French <sfrench@samba.org>,
-	Shyam Prasad N <nspmangalore@gmail.com>,
-	Rohith Surabattula <rohiths.msft@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	linux-cifs@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	Steve French <stfrench@microsoft.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 100/138] cifs: Fix caching to try to do open O_WRONLY as rdwr on server
-Date: Mon,  8 Apr 2024 14:58:34 +0200
-Message-ID: <20240408125259.342475642@linuxfoundation.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240408125256.218368873@linuxfoundation.org>
-References: <20240408125256.218368873@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1712585150; c=relaxed/simple;
+	bh=s8bdLcGMbFj1E3CCUGSRfPeiS+tNSHD+/NTrJNSxZuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2p0tSSyzlZeTlZA905Jj0W1w9YJlgWl8lYgGg6arkwpYL5WB9qMndCPc3mbVocqosGpn5XfaYD8sct1zD1J9RQcI2kwokg5eyED0J47NUfYQnKduSGMlzlxCGHqAsC+qF6oOACoEyU7iOlPjdF38huV9ZHt8oM/q3zhMRCGH8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MofoLoFN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wp7MzA1f; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MofoLoFN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wp7MzA1f; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3226822981;
+	Mon,  8 Apr 2024 14:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1712585144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7CFyho3n5Kge6NnS/vjp6526Vx90yRChUiIgeH6TJ3Y=;
+	b=MofoLoFNaYPJvKE7Eo9vI5nwMS5shYrpA/T++PEKIH3KSKdlm0VeGnxGPjd0Fh6IcrwR79
+	5IE4vvs+vDto2ccNIDYdMJ62wsnuHoK1ANPoLO8DKZ3OOKKJj96B6EFxR3MWsK4w/Zf/YY
+	eJ/s0ZCg6pAchiUIVR1jlIpl5BC+jRk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1712585144;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7CFyho3n5Kge6NnS/vjp6526Vx90yRChUiIgeH6TJ3Y=;
+	b=wp7MzA1fG9cc4YhoIObUi0ULJ5FYVCMro5U5XhsByywCu6EqDwI4rME/O3jcYSl8kYdmGB
+	O1E8LR9XvDewMrAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MofoLoFN;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=wp7MzA1f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1712585144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7CFyho3n5Kge6NnS/vjp6526Vx90yRChUiIgeH6TJ3Y=;
+	b=MofoLoFNaYPJvKE7Eo9vI5nwMS5shYrpA/T++PEKIH3KSKdlm0VeGnxGPjd0Fh6IcrwR79
+	5IE4vvs+vDto2ccNIDYdMJ62wsnuHoK1ANPoLO8DKZ3OOKKJj96B6EFxR3MWsK4w/Zf/YY
+	eJ/s0ZCg6pAchiUIVR1jlIpl5BC+jRk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1712585144;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7CFyho3n5Kge6NnS/vjp6526Vx90yRChUiIgeH6TJ3Y=;
+	b=wp7MzA1fG9cc4YhoIObUi0ULJ5FYVCMro5U5XhsByywCu6EqDwI4rME/O3jcYSl8kYdmGB
+	O1E8LR9XvDewMrAA==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 2641313A92;
+	Mon,  8 Apr 2024 14:05:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id uApOCbj5E2aoagAAn2gu4w
+	(envelope-from <jack@suse.cz>); Mon, 08 Apr 2024 14:05:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id AEA5EA0814; Mon,  8 Apr 2024 16:05:43 +0200 (CEST)
+Date: Mon, 8 Apr 2024 16:05:43 +0200
+From: Jan Kara <jack@suse.cz>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, hch@lst.de, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	axboe@kernel.dk, gustavoars@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH vfs.all 00/26] fs & block: remove bdev->bd_inode
+Message-ID: <20240408140543.lslhx5epe6hnns6h@quack3>
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <227a872d-51e9-babc-0489-7fcc7112c0e6@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <227a872d-51e9-babc-0489-7fcc7112c0e6@huaweicloud.com>
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 3226822981
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-2.99)[99.95%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap2.dmz-prg2.suse.org:helo,imap2.dmz-prg2.suse.org:rdns];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+On Sun 07-04-24 10:20:39, Yu Kuai wrote:
+> Hi, Christian!
+> Hi, Jan!
+> +CC Gustavo
+> 
+> While testing this set, I found that the branch vfs.all seems broken,
+> xfstests report success while lots of BUG is reported in dmesg:
+> 
+> [22709.079704] =============================================================================^M
+> [22709.082404] BUG kmalloc-16 (Not tainted): Right Redzone overwritten^M
+> [22709.084148] -----------------------------------------------------------------------------^M
+> [22709.084148] ^M
+> [22709.086784] 0xffff88817d52e7a0-0xffff88817d52e7a7 @offset=1952. First
+> byte 0x0 instead of 0xcc^M
+> [22709.089169] Allocated in do_handle_open+0x97/0x440 age=10 cpu=13
+> pid=814795^M
+> [22709.091158]  __kmalloc+0x41d/0x5e0^M
+> [22709.092153]  do_handle_open+0x97/0x440^M
+> [22709.093240]  __x64_sys_open_by_handle_at+0x23/0x30^M
+> [22709.094482]  do_syscall_64+0xb1/0x210^M
+> [22709.095316]  entry_SYSCALL_64_after_hwframe+0x6c/0x74^M
+> [22709.096414] Freed in kvfree+0x4c/0x60 age=43560 cpu=15 pid=813506^M
+> [22709.097719]  kfree+0x31c/0x530^M
+> [22709.098396]  kvfree+0x4c/0x60^M
+> [22709.099048]  ext4_mb_release+0x29c/0x570^M
+> [22709.099901]  ext4_put_super+0x17f/0x590^M
+> [22709.100735]  generic_shutdown_super+0xba/0x240^M
+> [22709.101698]  kill_block_super+0x22/0x70^M
+> [22709.102525]  ext4_kill_sb+0x2a/0x70^M
+> [22709.103297]  deactivate_locked_super+0x4f/0xe0^M
+> [22709.104261]  deactivate_super+0x81/0x90^M
+> [22709.104876]  cleanup_mnt+0xe0/0x1b0^M
+> [22709.105419]  __cleanup_mnt+0x1a/0x30^M
+> [22709.105964]  task_work_run+0x88/0x100^M
+> [22709.106531]  syscall_exit_to_user_mode+0x3cc/0x3e0^M
+> [22709.107263]  do_syscall_64+0xc5/0x210^M
+> [22709.107820]  entry_SYSCALL_64_after_hwframe+0x6c/0x74^M
+> 
+> While digging this problem, I found that commit 1b43c4629756 ("fs:
+> Annotate struct file_handle with __counted_by() and use struct_size()")
+> might made a mistake, and I verified following patch can fix the
+> problem.
 
-------------------
+Yep, this should have been fixed recently in VFS tree as well.
 
-From: David Howells <dhowells@redhat.com>
-
-[ Upstream commit e9e62243a3e2322cf639f653a0b0a88a76446ce7 ]
-
-When we're engaged in local caching of a cifs filesystem, we cannot perform
-caching of a partially written cache granule unless we can read the rest of
-the granule.  This can result in unexpected access errors being reported to
-the user.
-
-Fix this by the following: if a file is opened O_WRONLY locally, but the
-mount was given the "-o fsc" flag, try first opening the remote file with
-GENERIC_READ|GENERIC_WRITE and if that returns -EACCES, try dropping the
-GENERIC_READ and doing the open again.  If that last succeeds, invalidate
-the cache for that file as for O_DIRECT.
-
-Fixes: 70431bfd825d ("cifs: Support fscache indexing rewrite")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/smb/client/dir.c     | 15 +++++++++++++
- fs/smb/client/file.c    | 48 ++++++++++++++++++++++++++++++++---------
- fs/smb/client/fscache.h |  6 ++++++
- 3 files changed, 59 insertions(+), 10 deletions(-)
-
-diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
-index e382b794acbed..863c7bc3db86f 100644
---- a/fs/smb/client/dir.c
-+++ b/fs/smb/client/dir.c
-@@ -180,6 +180,7 @@ static int cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned
- 	int disposition;
- 	struct TCP_Server_Info *server = tcon->ses->server;
- 	struct cifs_open_parms oparms;
-+	int rdwr_for_fscache = 0;
- 
- 	*oplock = 0;
- 	if (tcon->ses->server->oplocks)
-@@ -191,6 +192,10 @@ static int cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned
- 		return PTR_ERR(full_path);
- 	}
- 
-+	/* If we're caching, we need to be able to fill in around partial writes. */
-+	if (cifs_fscache_enabled(inode) && (oflags & O_ACCMODE) == O_WRONLY)
-+		rdwr_for_fscache = 1;
-+
- #ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
- 	if (tcon->unix_ext && cap_unix(tcon->ses) && !tcon->broken_posix_open &&
- 	    (CIFS_UNIX_POSIX_PATH_OPS_CAP &
-@@ -267,6 +272,8 @@ static int cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned
- 		desired_access |= GENERIC_READ; /* is this too little? */
- 	if (OPEN_FMODE(oflags) & FMODE_WRITE)
- 		desired_access |= GENERIC_WRITE;
-+	if (rdwr_for_fscache == 1)
-+		desired_access |= GENERIC_READ;
- 
- 	disposition = FILE_OVERWRITE_IF;
- 	if ((oflags & (O_CREAT | O_EXCL)) == (O_CREAT | O_EXCL))
-@@ -295,6 +302,7 @@ static int cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned
- 	if (!tcon->unix_ext && (mode & S_IWUGO) == 0)
- 		create_options |= CREATE_OPTION_READONLY;
- 
-+retry_open:
- 	oparms = (struct cifs_open_parms) {
- 		.tcon = tcon,
- 		.cifs_sb = cifs_sb,
-@@ -308,8 +316,15 @@ static int cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned
- 	rc = server->ops->open(xid, &oparms, oplock, buf);
- 	if (rc) {
- 		cifs_dbg(FYI, "cifs_create returned 0x%x\n", rc);
-+		if (rc == -EACCES && rdwr_for_fscache == 1) {
-+			desired_access &= ~GENERIC_READ;
-+			rdwr_for_fscache = 2;
-+			goto retry_open;
-+		}
- 		goto out;
- 	}
-+	if (rdwr_for_fscache == 2)
-+		cifs_invalidate_cache(inode, FSCACHE_INVAL_DIO_WRITE);
- 
- #ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
- 	/*
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 0f3405e0f2e48..c240cea7ca349 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -77,12 +77,12 @@ cifs_mark_open_files_invalid(struct cifs_tcon *tcon)
- 	 */
- }
- 
--static inline int cifs_convert_flags(unsigned int flags)
-+static inline int cifs_convert_flags(unsigned int flags, int rdwr_for_fscache)
- {
- 	if ((flags & O_ACCMODE) == O_RDONLY)
- 		return GENERIC_READ;
- 	else if ((flags & O_ACCMODE) == O_WRONLY)
--		return GENERIC_WRITE;
-+		return rdwr_for_fscache == 1 ? (GENERIC_READ | GENERIC_WRITE) : GENERIC_WRITE;
- 	else if ((flags & O_ACCMODE) == O_RDWR) {
- 		/* GENERIC_ALL is too much permission to request
- 		   can cause unnecessary access denied on create */
-@@ -219,11 +219,16 @@ static int cifs_nt_open(const char *full_path, struct inode *inode, struct cifs_
- 	int create_options = CREATE_NOT_DIR;
- 	struct TCP_Server_Info *server = tcon->ses->server;
- 	struct cifs_open_parms oparms;
-+	int rdwr_for_fscache = 0;
- 
- 	if (!server->ops->open)
- 		return -ENOSYS;
- 
--	desired_access = cifs_convert_flags(f_flags);
-+	/* If we're caching, we need to be able to fill in around partial writes. */
-+	if (cifs_fscache_enabled(inode) && (f_flags & O_ACCMODE) == O_WRONLY)
-+		rdwr_for_fscache = 1;
-+
-+	desired_access = cifs_convert_flags(f_flags, rdwr_for_fscache);
- 
- /*********************************************************************
-  *  open flag mapping table:
-@@ -260,6 +265,7 @@ static int cifs_nt_open(const char *full_path, struct inode *inode, struct cifs_
- 	if (f_flags & O_DIRECT)
- 		create_options |= CREATE_NO_BUFFER;
- 
-+retry_open:
- 	oparms = (struct cifs_open_parms) {
- 		.tcon = tcon,
- 		.cifs_sb = cifs_sb,
-@@ -271,8 +277,16 @@ static int cifs_nt_open(const char *full_path, struct inode *inode, struct cifs_
- 	};
- 
- 	rc = server->ops->open(xid, &oparms, oplock, buf);
--	if (rc)
-+	if (rc) {
-+		if (rc == -EACCES && rdwr_for_fscache == 1) {
-+			desired_access = cifs_convert_flags(f_flags, 0);
-+			rdwr_for_fscache = 2;
-+			goto retry_open;
-+		}
- 		return rc;
-+	}
-+	if (rdwr_for_fscache == 2)
-+		cifs_invalidate_cache(inode, FSCACHE_INVAL_DIO_WRITE);
- 
- 	/* TODO: Add support for calling posix query info but with passing in fid */
- 	if (tcon->unix_ext)
-@@ -705,11 +719,11 @@ int cifs_open(struct inode *inode, struct file *file)
- use_cache:
- 	fscache_use_cookie(cifs_inode_cookie(file_inode(file)),
- 			   file->f_mode & FMODE_WRITE);
--	if (file->f_flags & O_DIRECT &&
--	    (!((file->f_flags & O_ACCMODE) != O_RDONLY) ||
--	     file->f_flags & O_APPEND))
--		cifs_invalidate_cache(file_inode(file),
--				      FSCACHE_INVAL_DIO_WRITE);
-+	if (!(file->f_flags & O_DIRECT))
-+		goto out;
-+	if ((file->f_flags & (O_ACCMODE | O_APPEND)) == O_RDONLY)
-+		goto out;
-+	cifs_invalidate_cache(file_inode(file), FSCACHE_INVAL_DIO_WRITE);
- 
- out:
- 	free_dentry_path(page);
-@@ -774,6 +788,7 @@ cifs_reopen_file(struct cifsFileInfo *cfile, bool can_flush)
- 	int disposition = FILE_OPEN;
- 	int create_options = CREATE_NOT_DIR;
- 	struct cifs_open_parms oparms;
-+	int rdwr_for_fscache = 0;
- 
- 	xid = get_xid();
- 	mutex_lock(&cfile->fh_mutex);
-@@ -837,7 +852,11 @@ cifs_reopen_file(struct cifsFileInfo *cfile, bool can_flush)
- 	}
- #endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
- 
--	desired_access = cifs_convert_flags(cfile->f_flags);
-+	/* If we're caching, we need to be able to fill in around partial writes. */
-+	if (cifs_fscache_enabled(inode) && (cfile->f_flags & O_ACCMODE) == O_WRONLY)
-+		rdwr_for_fscache = 1;
-+
-+	desired_access = cifs_convert_flags(cfile->f_flags, rdwr_for_fscache);
- 
- 	/* O_SYNC also has bit for O_DSYNC so following check picks up either */
- 	if (cfile->f_flags & O_SYNC)
-@@ -849,6 +868,7 @@ cifs_reopen_file(struct cifsFileInfo *cfile, bool can_flush)
- 	if (server->ops->get_lease_key)
- 		server->ops->get_lease_key(inode, &cfile->fid);
- 
-+retry_open:
- 	oparms = (struct cifs_open_parms) {
- 		.tcon = tcon,
- 		.cifs_sb = cifs_sb,
-@@ -874,6 +894,11 @@ cifs_reopen_file(struct cifsFileInfo *cfile, bool can_flush)
- 		/* indicate that we need to relock the file */
- 		oparms.reconnect = true;
- 	}
-+	if (rc == -EACCES && rdwr_for_fscache == 1) {
-+		desired_access = cifs_convert_flags(cfile->f_flags, 0);
-+		rdwr_for_fscache = 2;
-+		goto retry_open;
-+	}
- 
- 	if (rc) {
- 		mutex_unlock(&cfile->fh_mutex);
-@@ -882,6 +907,9 @@ cifs_reopen_file(struct cifsFileInfo *cfile, bool can_flush)
- 		goto reopen_error_exit;
- 	}
- 
-+	if (rdwr_for_fscache == 2)
-+		cifs_invalidate_cache(inode, FSCACHE_INVAL_DIO_WRITE);
-+
- #ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
- reopen_success:
- #endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
-diff --git a/fs/smb/client/fscache.h b/fs/smb/client/fscache.h
-index 67b601041f0a3..c691b98b442a6 100644
---- a/fs/smb/client/fscache.h
-+++ b/fs/smb/client/fscache.h
-@@ -108,6 +108,11 @@ static inline void cifs_readpage_to_fscache(struct inode *inode,
- 		__cifs_readpage_to_fscache(inode, page);
- }
- 
-+static inline bool cifs_fscache_enabled(struct inode *inode)
-+{
-+	return fscache_cookie_enabled(cifs_inode_cookie(inode));
-+}
-+
- #else /* CONFIG_CIFS_FSCACHE */
- static inline
- void cifs_fscache_fill_coherency(struct inode *inode,
-@@ -123,6 +128,7 @@ static inline void cifs_fscache_release_inode_cookie(struct inode *inode) {}
- static inline void cifs_fscache_unuse_inode_cookie(struct inode *inode, bool update) {}
- static inline struct fscache_cookie *cifs_inode_cookie(struct inode *inode) { return NULL; }
- static inline void cifs_invalidate_cache(struct inode *inode, unsigned int flags) {}
-+static inline bool cifs_fscache_enabled(struct inode *inode) { return false; }
- 
- static inline int cifs_fscache_query_occupancy(struct inode *inode,
- 					       pgoff_t first, unsigned int nr_pages,
+								Honza
 -- 
-2.43.0
-
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
