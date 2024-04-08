@@ -1,198 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-16332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468BC89B3F3
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 22:11:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D971A89B554
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 03:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749B32815AD
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Apr 2024 20:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD071F21439
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Apr 2024 01:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A893D993;
-	Sun,  7 Apr 2024 20:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37E917C2;
+	Mon,  8 Apr 2024 01:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oxqtcBUh"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="DvemyNyA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BE13D569
-	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Apr 2024 20:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39ED15A8
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Apr 2024 01:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712520692; cv=none; b=LR8hkqi0wWY42HutcMKajWrL4Re+A8onCLJH+rsXeIQTWowYHJ89zEa0DTD26n8fOp1b5yowEn+XllSIRul1h9nDIqkckoiC9WYkIRSwsA4o8+/t0roOC2RslrYk+Ryh6ED01mxfJfBxMOnISHpxyeJBLapv/cxWnMRduI6DIEU=
+	t=1712540391; cv=none; b=SlpEyBPoEmJM18RN4qxCGwmWohWeMY8K/IDlDhdxLeAozd7jX5yX68KJ7iR9uKNYZ6SNPZFu/CgACon2jHhnc8WmOeePly8LSHUGAjkGm5I3WN+m3w2eaPwIBr7WCRwaG9ed64424Rs2jVNDAbwJPuyUECTDDiwBQrLmMNJ/K5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712520692; c=relaxed/simple;
-	bh=HumBzKPe+RYytsEYhacEELPkiNv+7DTXfXQUcLE1Qv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t+9+95UuNrkxtRhbcWigWdq6dyfxUUC/Cs1JwsURIhTLtXZyh0cdNQJSKbi2CTMW4QH+96TjhJLXhavjMwm3PjK5AXeg1HSE4MSPHyyF+b+lMEcLcrsVaxZYv78e/JnmBZEG54r9fTw6B/jfRiEwAPh/D4c13seUaSiaCxpkmBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oxqtcBUh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=UQsOFvL5oFgV4srGasbjfHyPJshGZk1x51pSsspYdxY=; b=oxqtcBUhDSBPZDEBGm2OpZsLq0
-	FFqjpc+7u5M9XrJ0e7rzqd42GGHmfsjUdd2hF4tyuBYFiYwTjhiTQwA/LzOWpmvcbFdVOtnGI7YNC
-	vQe+Loe0axTb6dncgKtJaLNlKte20i/q7BLokpxYAXpiCyB3BYPQzEkDl+BOsa4nVFQzkez7hSSiV
-	EKGDWP8VxUjRvSD4yK0iipZ5K8pRelU3G7FG4FatU3ad9PMrVwynBOOprCNEEYb1SnMmQxPh78xou
-	iw5kvciKg4qSUwbplo6ximwob/2Gsw8T6lv05RlbXz1FkCPvyNpoff6P9hs10JtEIvenk6PK9SXLZ
-	drTfDktw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rtYrP-0000000FsMo-0Ae2;
-	Sun, 07 Apr 2024 20:11:27 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: Add FOP_HUGE_PAGES
-Date: Sun,  7 Apr 2024 21:11:20 +0100
-Message-ID: <20240407201122.3783877-1-willy@infradead.org>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1712540391; c=relaxed/simple;
+	bh=zJKJK5l/b2eY/YHFUNvSK0zGx+9rl7WxZ+zIbHlaaak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oHooLtUwZlo1pT00eAu3FSvcV0DZbkGks1vdH/6raI75AZwbosPIpxWIObKn+eOzk6j+Xc6Auyu7I5eJ1NZWzrEBc5W44JKG/1QdmbcmXR/bTdLjzGadtwmYJzio517ysiJnXC4NsFvhZLuVBsUv+8+GYSjUvkTqIfxgl8RYTTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=DvemyNyA; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-118-221.bstnma.fios.verizon.net [173.48.118.221])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4381dTjd031031
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 7 Apr 2024 21:39:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1712540370; bh=F/NXeh60kH/CKsYkDgUE+27ivtJL3MzJ1EyU4gatORM=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=DvemyNyAvfIzjgTdQ2q28WjB/CRO14UxSz0kpETLZD7J64fI8CvAu7t3OflWnWV+q
+	 UsJ2kTH8iAkdhw6zUhXfqO6sTKb2BvaV8AW33yKDAuA5f28QhfolXElbY1+gC/qiWX
+	 88Z68ekKqkZStRrTeW5Vd3CtEhAuPiNADKYe1pYpE9hquXews558z2ATs4eoi8EYkT
+	 NAAovo1Fo/2wRHnAVGUET+fQFOanBoQ/hiRolfLu50Iyt0gOa2isXyPP13QgsEuQmf
+	 DYx3nEM1nZAC9t+QOpT3FqH92jCU8bZqn0yGon9HcWu+W0VqteFMCdM6fmk1pDF1Kt
+	 7YsXxpRjw8+Vg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id E333E15C00DE; Sun,  7 Apr 2024 21:39:28 -0400 (EDT)
+Date: Sun, 7 Apr 2024 21:39:28 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: HAN Yuwei <hrx@bupt.moe>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: Questions about Unicode Normalization Form
+Message-ID: <20240408013928.GG13376@mit.edu>
+References: <AD5CD726D505B53F+46f1c811-ae13-4811-8b56-62d88dd1674a@bupt.moe>
+ <ccfe804c63cbc975b567aa79fb37002d50196215.camel@HansenPartnership.com>
+ <D445FB6AD28AA2B6+fe6a70b0-56bf-4283-ab4d-8c12fb5d377f@bupt.moe>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D445FB6AD28AA2B6+fe6a70b0-56bf-4283-ab4d-8c12fb5d377f@bupt.moe>
 
-Instead of checking for specific file_operations, add a bit to
-file_operations which denotes a file that only contain hugetlb pages.
-This lets us make hugetlbfs_file_operations static, and removes
-is_file_shm_hugepages() completely.
+On Sat, Apr 06, 2024 at 11:15:36PM +0800, HAN Yuwei wrote:
+> 
+> Sorry, I am not very familiar with Unicode nor kernel. Correct me if wrong.
+> 
+> As to what I have read, kernel seems like using NFD when processing all
+> UTF-8 related string.
+> If fs is using these helper function, then I can be sure kernel is applying
+> NFD to every UTF-8 filenames.
+> But I can't find any references to these helper function on Github mirror,
+> how are they used by fs code?
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/hugetlbfs/inode.c    |  5 +++--
- include/linux/fs.h      |  2 ++
- include/linux/hugetlb.h |  8 ++------
- include/linux/shm.h     |  5 -----
- ipc/shm.c               | 10 +++-------
- 5 files changed, 10 insertions(+), 20 deletions(-)
+For the most part, the kernel's file stysem code doesn't do anything
+special for Unicode.  The exception is that the ext4 and f2fs file
+systems can have an optional feature which is mostly only used by
+Android systems to support case insensitive lookups.  This is called
+the "casefold" feature, which is not enabled by default by most
+desktop or server systems.
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 2f4e88552d3f..412f295acebe 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -40,7 +40,7 @@
- #include <linux/sched/mm.h>
- 
- static const struct address_space_operations hugetlbfs_aops;
--const struct file_operations hugetlbfs_file_operations;
-+static const struct file_operations hugetlbfs_file_operations;
- static const struct inode_operations hugetlbfs_dir_inode_operations;
- static const struct inode_operations hugetlbfs_inode_operations;
- 
-@@ -1298,13 +1298,14 @@ static void init_once(void *foo)
- 	inode_init_once(&ei->vfs_inode);
- }
- 
--const struct file_operations hugetlbfs_file_operations = {
-+static const struct file_operations hugetlbfs_file_operations = {
- 	.read_iter		= hugetlbfs_read_iter,
- 	.mmap			= hugetlbfs_file_mmap,
- 	.fsync			= noop_fsync,
- 	.get_unmapped_area	= hugetlb_get_unmapped_area,
- 	.llseek			= default_llseek,
- 	.fallocate		= hugetlbfs_fallocate,
-+	.fop_flags		= FOP_HUGE_PAGES,
- };
- 
- static const struct inode_operations hugetlbfs_dir_inode_operations = {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 883b72478f61..736ffe2c6863 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2043,6 +2043,8 @@ struct file_operations {
- #define FOP_MMAP_SYNC		((__force fop_flags_t)(1 << 2))
- /* Supports non-exclusive O_DIRECT writes from multiple threads */
- #define FOP_DIO_PARALLEL_WRITE	((__force fop_flags_t)(1 << 3))
-+/* Contains huge pages */
-+#define FOP_HUGE_PAGES		((__force fop_flags_t)(1 << 4))
- 
- /* Wrap a directory iterator that needs exclusive inode access */
- int wrap_directory_iterator(struct file *, struct dir_context *,
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index bebf4c3a53ef..aaa11eeb939d 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -526,17 +526,13 @@ static inline struct hugetlbfs_inode_info *HUGETLBFS_I(struct inode *inode)
- 	return container_of(inode, struct hugetlbfs_inode_info, vfs_inode);
- }
- 
--extern const struct file_operations hugetlbfs_file_operations;
- extern const struct vm_operations_struct hugetlb_vm_ops;
- struct file *hugetlb_file_setup(const char *name, size_t size, vm_flags_t acct,
- 				int creat_flags, int page_size_log);
- 
--static inline bool is_file_hugepages(struct file *file)
-+static inline bool is_file_hugepages(const struct file *file)
- {
--	if (file->f_op == &hugetlbfs_file_operations)
--		return true;
--
--	return is_file_shm_hugepages(file);
-+	return file->f_op->fop_flags & FOP_HUGE_PAGES;
- }
- 
- static inline struct hstate *hstate_inode(struct inode *i)
-diff --git a/include/linux/shm.h b/include/linux/shm.h
-index c55bef0538e5..1d3d3ae958fb 100644
---- a/include/linux/shm.h
-+++ b/include/linux/shm.h
-@@ -16,7 +16,6 @@ struct sysv_shm {
- 
- long do_shmat(int shmid, char __user *shmaddr, int shmflg, unsigned long *addr,
- 	      unsigned long shmlba);
--bool is_file_shm_hugepages(struct file *file);
- void exit_shm(struct task_struct *task);
- #define shm_init_task(task) INIT_LIST_HEAD(&(task)->sysvshm.shm_clist)
- #else
-@@ -30,10 +29,6 @@ static inline long do_shmat(int shmid, char __user *shmaddr,
- {
- 	return -ENOSYS;
- }
--static inline bool is_file_shm_hugepages(struct file *file)
--{
--	return false;
--}
- static inline void exit_shm(struct task_struct *task)
- {
- }
-diff --git a/ipc/shm.c b/ipc/shm.c
-index a89f001a8bf0..3e3071252dac 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -662,8 +662,8 @@ static const struct file_operations shm_file_operations = {
- };
- 
- /*
-- * shm_file_operations_huge is now identical to shm_file_operations,
-- * but we keep it distinct for the sake of is_file_shm_hugepages().
-+ * shm_file_operations_huge is now identical to shm_file_operations
-+ * except for fop_flags
-  */
- static const struct file_operations shm_file_operations_huge = {
- 	.mmap		= shm_mmap,
-@@ -672,13 +672,9 @@ static const struct file_operations shm_file_operations_huge = {
- 	.get_unmapped_area	= shm_get_unmapped_area,
- 	.llseek		= noop_llseek,
- 	.fallocate	= shm_fallocate,
-+	.fop_flags	= FOP_HUGE_PAGES,
- };
- 
--bool is_file_shm_hugepages(struct file *file)
--{
--	return file->f_op == &shm_file_operations_huge;
--}
--
- static const struct vm_operations_struct shm_vm_ops = {
- 	.open	= shm_open,	/* callback for a new vm-area open */
- 	.close	= shm_close,	/* callback for when the vm-area is released */
--- 
-2.43.0
+The casefold feature was developed because Android has a requirement
+to support case-insensitive lookups, and it had to support Unicode
+character sets (for example, XFS has support for case insensitive
+lookups back from the Irix days, but it only supports ASCII), and the
+alternative to adding support in the kernel for case fodling was this
+terrible out-of-tree kernel module which use a file system wrapping
+that was deadlock-prone (which is why the case-folding wrapfs would
+never be accepted upstream; it was a trash fire).  Anyway, I got tired
+of being asked to debug file system deadlocks which was not the VFS's
+fault, but was rather caused by this terrible wrapfs kludge used by
+Android, so I instigated proper case-folding support (ala Windows and
+MacOS) for the file system types commonly used by Android, namely ext4
+and f2fs.
 
+So *if* you are using ext4 or f2fs, *and* the file system is specially
+created with the file system feature flag "casefold", *and* the
+directory has the casefold flag set, *then* the file system will
+support case-preserving, case-insensitive lookups.  As a side effect
+of using utf8_strcasecmp, it will also do string comparisons where
+even if you have not normalized the file banes, so that the filename
+contained some Unicode character, such as (for example) the NFC form
+of the Anstrom Sign character (00C5), and you try to look it up using
+the NFD form of the character (0041 030A), the lookup will succeed,
+because we use utf8_strcasecmp().   However, this is *only* if case
+folding is enabled, and in general, it isn't.
+
+Aside from this exception (which as I said, is in general only enabled
+for Android, because most other use cases such as for Desktop, Server,
+etc. don't really care about MacOS / Windows style case insensitive
+filename lookups), the Linux VFS in general treats UTF-8 characters as
+null-terminated byte streams.  So the kernel doesn't validate to make
+sure that a file name is composed of valid UTF-8 code points (e.g., so
+we don't prohibit the use of Klingon characters which are not
+recognized by the Unicode consortium), nor does the kernel do any kind
+of Unicode normalization.  So for example, if casefolding is not
+enabled, 0041 030A and 00C5 will be considered different, and kernel
+will not force the NFC form (00C5) to the NFD form (0041 030A) or vice
+versa.
+
+Now, because the kernel tries very hard to be blissfully ignorant
+about the nightmare which is I18N, it is up to the userspace Unicode
+libraries to normalize strings before passing them to the kernel ---
+either as data in text files, or as file names.  I am very glad that I
+don't worry about whether the standard normalization form used by the
+various GNOME, KDE, Unicode, etc., userspace libraries is NFD, NFC,
+NFKD, or NFKC.  That's someone else's problem, and if you don't have
+casefolding enabled, we will do the filename comparisons using the
+strcmp() function.
+
+Fundamentally, unicode and normalization is a userspace problem, not a
+kernel problem, except when we don't have a choice (such as for casse
+insensitive lookups).  And there we solve just the smallest part of
+the problem, and make it userspace's problem for everything else.
+
+Cheers,
+
+					- Ted
 
