@@ -1,135 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-16496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7945889E43E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 22:15:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FFD89E4F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 23:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ADB51F22FF3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 20:15:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF6BDB21079
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 21:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86E3158210;
-	Tue,  9 Apr 2024 20:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB936158A28;
+	Tue,  9 Apr 2024 21:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PZtcfELs"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GkNdKHWp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC3E157E97
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 20:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2399158A00
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 21:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712693699; cv=none; b=Otq4KoWs2z4lssSUtF+6Jgn4mEYR+n3DyNQkVdL8ezxElt5llINSFNJMtrD+QrbY4a3Ma4T5eczHRo201le3dSyvauQWfIxjUOUMIE+95VIoRL4xunGTB/K1hOwbQfGBMYdpDFgWT+y3stKd2sMR5KlXKiQthimAyzQ4TeUtnGE=
+	t=1712698142; cv=none; b=ha0mc+v9qJKexT1G5nOwwDMAxhlKkETZ9bmfGM/RCA5gRK/Bq26aUD3U1Wtu8ETjHYoVpKTbRZYPfSIuU69Vjq+fFDMK65XrBgFmXHTR2mGUU/5b+EZnuvLuZap0gexBo7p41eNiWw0WMgypJBGy6nK9IpynaXTj2p81qm1f1+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712693699; c=relaxed/simple;
-	bh=2SbgLvgPGkcDv0lCPd1iXo8d7o7QDk5hgPKEFcSWSls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CTDs1a2eGglfPtn5WENncj0jn/k2nKMUYwP21GmiibX1J++LkbSAUnwXUK+Ojndx+s8PRB2g5b9ne3qO0av5b527AGmQ4PTM5MUKe3cgs4Awr80CqbQcXTKaDbauDu20B3uotyeQ/Z5Tg1wVYCZL1dT+BjDxKUV9pcPDzn/8Mlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PZtcfELs; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dd14d8e7026so5627275276.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 13:14:57 -0700 (PDT)
+	s=arc-20240116; t=1712698142; c=relaxed/simple;
+	bh=cpqL+Hl6DXpr8zMLQSAXCRUte3LWhQQIiqBnOCk+8q0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKki1t9Vcjsgi8+Sg/508YuXSrl97fGN487g8LLKKyoSVEXgOayrLRD3mNHNGaXveyUgMyf+0H/KYC5T1VCkcA9RBMXVjGKta/OXGqf58DClel24gw24Pe0vIH6q++tptTAmSFe4ZETbKPPMU59w+hARKhCUlVo+OIQhFvvwOx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GkNdKHWp; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1e3dda73192so22333345ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 14:29:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1712693696; x=1713298496; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j0YVQ9djY2M33MWph8FPZMPtyUpc6ybsMtuQAt43J/Y=;
-        b=PZtcfELsz3rwGgDJAZIoMllf//1Z6O7akXXFVcVivFc3oFY0oUs//r3yGCUL1jyLPe
-         pi3Z628Cxz/kqdRFUZRa2QX9cSCgNVGe9wSQMLE/FYv1loD/asr64OhME59V8FzCuDqh
-         UOV1QdeJcF1CI0/+UotCzIDkxGMTx6Difn+iSiFwAOxATq1J834JiWLUiSjcWWXayEBn
-         Ymco/s4fIncJ5Yb5FDkdJ3ifL81/ldft5G/sqTvRfo8TpwhRz4FOsuFyZk4tA44StKzV
-         sQpHSnCT7Jb5iZu2G70tvRBXBRdeB68OEiUXUnMuwatpPcs1GQCwd+9jNDhjmvgzVUah
-         rn1A==
+        d=chromium.org; s=google; t=1712698140; x=1713302940; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I1EckUdhv2S0vsLHXrSpPAoBKrsnqtVxE+FzPaDR/vQ=;
+        b=GkNdKHWpHzVRjHUHYaa4Dz17qLR3IeF9Tm3SDpo2v/aWhb7gJnJGowGCG4ac0B+LJ4
+         YYpujhGFRCPEt/Mmc3jdRKWklWg1gtLO+oOS9PNMAfUmAetioAxVQN7FesJtnQQ8Vx4v
+         ochJCC9jTAVkYqqudrXye+NxGkAK0vkfJyqpE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712693696; x=1713298496;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j0YVQ9djY2M33MWph8FPZMPtyUpc6ybsMtuQAt43J/Y=;
-        b=f/nIRxzc8VJsJObOUjd/qiCUpGAzoGd6RwMggodz0BzEECAxxwZ8dtQP61/U0SlJST
-         +L6kSzsoNYaGSleqZLUZQGXBAH/UnNCRNC3l3i3WsuBw0q7asqcaEHzeCquu0expjgqU
-         2IiX7TeNcTOC+2igqI6SjBqBVcais6B7862or1xw1Gbvj0xdam/tmgleVOYX/kRKwaS4
-         M6l6GBM2da26Yf94XJXZfj28rdsW0T/NjzBuz0yd1ijT6vfQebeijpu7ynbVpzhr0w7A
-         tFot4DZ+L3sS6UkE+KW9+zBbI5GwG/nYGszgVpagpPMzafd7N/oTIjhf4S1hSNvPhH3q
-         JwNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXaW0nD/jLfAKrIan0atdYbZHAeygwtHtYiXeHu2Kpd8EPQtUN7qgxXHxYHqSJZ5SNCTpJNsCUutB21p6x7gcYJ8RA429/4ENOyw4PXBQ==
-X-Gm-Message-State: AOJu0Yw+HdrsuCBf1VqKsgWbE1zHeS1uNmEIGoTP3dFAiFSGQo2Cbfrq
-	pcPl7eD4eCvUFZ7eqiY0zFmy/W2odQ4OVLvbEhYgvCOeHmVBw5CgSBJQ55iNZEvt7jfM7NgfmEA
-	Xjf7GHsOdTzrYy9hS7S4Pqyoh5MhAFP1H3sEQ
-X-Google-Smtp-Source: AGHT+IHOHfb3Vsx0X6ltkSVRZFRT+zreJyCaHp4J4qYazQG9Rm3OCb+u4xunfbpGxaxtGsfS74W6Ks+5hyL3bJx9lHY=
-X-Received: by 2002:a05:6902:100b:b0:dc7:423c:b8aa with SMTP id
- w11-20020a056902100b00b00dc7423cb8aamr1106734ybt.12.1712693696380; Tue, 09
- Apr 2024 13:14:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712698140; x=1713302940;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I1EckUdhv2S0vsLHXrSpPAoBKrsnqtVxE+FzPaDR/vQ=;
+        b=snLvRIpisf3WCnyEYBmWicsyGZf4awil4TU7gIZ3KRY9LuWp26yetrrh2HuxGhxeM8
+         ctXxKcqc/hlJmUKmj88PQyAj9ZjI49/0I51KiPU8Ygqi+xUpyVJe1WJZlhFvJTekmOUD
+         ZVuieKZDqf42sxG739GVmTBml2vat7jhc4ButC2R/pC5hPOnjhAbWyqAm5l5G3kFUXRH
+         fS9yC92MRUN+1sFVJAh3pdDGZ4uoV+UAar1G+9Bu/AuAfLuL0dsiLZEGC0HGXQokqB2+
+         gRZkcbFc5d7gYXMvnyr+yqJUJe8wETRGnnWWdhyqfMBj5i51diPv13Hb4m4U2kTNewqD
+         Xo0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXMe5M7OaUyHv1K3FYGBMsQWSXkxC31AkqqDvtQHKZPT90jjb6PE3onJlCmjm01rpCiQkvKAQkKscSXkvukefUCbAPb5qhQe3dbQl38qw==
+X-Gm-Message-State: AOJu0YyG1jKLn+CzydwsmcJPAwFisjFJFB/rO8Od7RZJpeMduwIC1UUZ
+	TREq3TloWK43IyIJkgFUesQnyJ7wVuXjXR/lDcKmGroCgSBYMMO6L7seTIhgHQ==
+X-Google-Smtp-Source: AGHT+IGp1vHyVN9Of3ONnBmhGBURnZ2ozCtASZrjhYok6bINm0BBVqQzRg5525pvfv09CAPY6RG2ng==
+X-Received: by 2002:a17:902:a5cb:b0:1e2:adad:75f4 with SMTP id t11-20020a170902a5cb00b001e2adad75f4mr907671plq.28.1712698139910;
+        Tue, 09 Apr 2024 14:28:59 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id p18-20020a170902e35200b001e2461c52c6sm9401985plc.149.2024.04.09.14.28.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Apr 2024 14:28:59 -0700 (PDT)
+Date: Tue, 9 Apr 2024 14:28:58 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Marco Elver <elver@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH] tracing: Add new_exec tracepoint
+Message-ID: <202404091428.B95127B72@keescook>
+References: <20240408090205.3714934-1-elver@google.com>
+ <202404090840.E09789B66@keescook>
+ <ZhWIKeZuWfPOU91D@elver.google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240402141145.2685631-1-roberto.sassu@huaweicloud.com>
- <CAHk-=wgepVMJCYj9s7J50_Tpb5BWq9buBoF0J5HAa1xjet6B8A@mail.gmail.com>
- <CAHk-=wjjx3oZ55Uyaw9N_kboHdiScLkXAu05CmPF_p_UhQ-tbw@mail.gmail.com>
- <20240402210035.GI538574@ZenIV> <CAHC9VhSWiQQ3shgczkNr+xYX6G5PX+LgeP3bsMepnM_cp4Gd4g@mail.gmail.com>
- <87le5mxwry.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87le5mxwry.fsf@email.froward.int.ebiederm.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 9 Apr 2024 16:14:45 -0400
-Message-ID: <CAHC9VhTF=-Sh6w4icTPA_=A25-EL55Nt-z=mvyb1-vONoN=5wg@mail.gmail.com>
-Subject: Re: [GIT PULL] security changes for v6.9-rc3
-To: linux-security-module@vger.kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, linux-integrity@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZhWIKeZuWfPOU91D@elver.google.com>
 
-On Tue, Apr 9, 2024 at 1:38=E2=80=AFPM Eric W. Biederman <ebiederm@xmission=
-.com> wrote:
-> Paul Moore <paul@paul-moore.com> writes:
->
-> > I know it's everyone's favorite hobby to bash the LSM and LSM devs,
-> > but it's important to note that we don't add hooks without working
-> > with the associated subsystem devs to get approval.
->
-> Hah!!!!
->
-> > In the cases
-> > where we don't get an explicit ACK, there is an on-list approval, or
-> > several ignored on-list attempts over weeks/months/years.  We want to
-> > be good neighbors.
->
-> Hah!!!!
->
-> You merged a LSM hook that is only good for breaking chrome's sandbox,
-> over my expressed objections.  After I tested and verified that
-> is what it does.
->
-> I asked for testing. None was done.  It was claimed that no
-> security sensitive code would ever fail to check and deal with
-> all return codes, so no testing was necessary.  Then later a
-> whole bunch of security sensitive code that didn't was found.
->
-> The only redeeming grace has been that no-one ever actually uses
-> that misbegotten security hook.
->
-> P.S.  Sorry for this off topic rant but sheesh.   At least from
-> my perspective you deserve plenty of bashing.
+On Tue, Apr 09, 2024 at 08:25:45PM +0200, Marco Elver wrote:
+> On Tue, Apr 09, 2024 at 08:46AM -0700, Kees Cook wrote:
+> [...]
+> > > +	trace_new_exec(current, bprm);
+> > > +
+> > 
+> > All other steps in this function have explicit comments about
+> > what/why/etc. Please add some kind of comment describing why the
+> > tracepoint is where it is, etc.
+> 
+> I beefed up the tracepoint documentation, and wrote a little paragraph
+> above where it's called to reinforce what we want.
+> 
+> [...]
+> > What about binfmt_misc, and binfmt_script? You may want bprm->interp
+> > too?
+> 
+> Good points. I'll make the below changes for v2:
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index ab778ae1fc06..472b9f7b40e8 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1268,6 +1268,12 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  	if (retval)
+>  		return retval;
+>  
+> +	/*
+> +	 * This tracepoint marks the point before flushing the old exec where
+> +	 * the current task is still unchanged, but errors are fatal (point of
+> +	 * no return). The later "sched_process_exec" tracepoint is called after
+> +	 * the current task has successfully switched to the new exec.
+> +	 */
+>  	trace_new_exec(current, bprm);
+>  
+>  	/*
+> diff --git a/include/trace/events/task.h b/include/trace/events/task.h
+> index 8853dc44783d..623d9af777c1 100644
+> --- a/include/trace/events/task.h
+> +++ b/include/trace/events/task.h
+> @@ -61,8 +61,11 @@ TRACE_EVENT(task_rename,
+>   * @task:	pointer to the current task
+>   * @bprm:	pointer to linux_binprm used for new exec
+>   *
+> - * Called before flushing the old exec, but at the point of no return during
+> - * switching to the new exec.
+> + * Called before flushing the old exec, where @task is still unchanged, but at
+> + * the point of no return during switching to the new exec. At the point it is
+> + * called the exec will either succeed, or on failure terminate the task. Also
+> + * see the "sched_process_exec" tracepoint, which is called right after @task
+> + * has successfully switched to the new exec.
+>   */
+>  TRACE_EVENT(new_exec,
+>  
+> @@ -71,19 +74,22 @@ TRACE_EVENT(new_exec,
+>  	TP_ARGS(task, bprm),
+>  
+>  	TP_STRUCT__entry(
+> +		__string(	interp,		bprm->interp	)
+>  		__string(	filename,	bprm->filename	)
+>  		__field(	pid_t,		pid		)
+>  		__string(	comm,		task->comm	)
+>  	),
+>  
+>  	TP_fast_assign(
+> +		__assign_str(interp, bprm->interp);
+>  		__assign_str(filename, bprm->filename);
+>  		__entry->pid = task->pid;
+>  		__assign_str(comm, task->comm);
+>  	),
+>  
+> -	TP_printk("filename=%s pid=%d comm=%s",
+> -		  __get_str(filename), __entry->pid, __get_str(comm))
+> +	TP_printk("interp=%s filename=%s pid=%d comm=%s",
+> +		  __get_str(interp), __get_str(filename),
+> +		  __entry->pid, __get_str(comm))
+>  );
+>  
+>  #endif
 
-Just in case people are reading this email and don't recall the
-security_create_user_ns() hook discussions from 2022, I would suggest
-reading those old threads and drawing your own conclusions.  A lore
-link is below:
+Looks good; I await v2, and Steven's Ack. :)
 
-https://lore.kernel.org/linux-security-module/?q=3Ds%3Asecurity_create_user=
-_ns
-
---=20
-paul-moore.com
+-- 
+Kees Cook
 
