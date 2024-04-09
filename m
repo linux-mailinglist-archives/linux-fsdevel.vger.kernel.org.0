@@ -1,199 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-16493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C221F89E3FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 21:57:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B79A689E425
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 22:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79B3E281570
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 19:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5D51F2195A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 20:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BB61581EC;
-	Tue,  9 Apr 2024 19:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFB8158206;
+	Tue,  9 Apr 2024 20:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="wMRZbgIO"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ND4t0vU0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2107.outbound.protection.outlook.com [40.107.101.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632431581E0
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 19:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712692639; cv=none; b=V+/B2i/q21+lcBqhLXHw0fIfb7QOajV8023lPYwVxrlN4yvS9T2S7CxLH0jIuPUaTU9+Wuk97eDqV6WWjjYmyxzJ1xCiXYP3TdvziEPfIA83eQ/DO/0nSiJ8RfPA5eW+N9yURWLhw8SdzPTt+kHwxaOYMpbpgHEJzMQ4Xeli9k0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712692639; c=relaxed/simple;
-	bh=ZFU8p2UDWz+Lst45TmN3KpIzvXulf7s/dX2gWZBUyN4=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=D0Kwt0s9tpSQdjDaafRZbfOpM0A67lSZcvIcOo0ZpTApj+22eGjCLwUFodTFrJB7cHioHxI+fx8rHPxhYfMauZAy4aPW8ry7LRPsTG66v7zqcIWRhQEs5OuL3bcjBTxYreh38xTL9x4QdXErE8AMId0JggrwkDN3kbs2GtZVUeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=wMRZbgIO; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6ed2dc03df6so2285664b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 12:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1712692636; x=1713297436; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lf5oD1YJAqRWQcO+qVEbuqOOPtB538xNFgGiHmq1JF4=;
-        b=wMRZbgIOsBDVVT3EydX8zGNgmQqj78pfFQ1915OF/HjErq3PQRH83CiijGU8eCLccp
-         YO4N0hRkYe8a1o2ilQKNBlHC6S3zVyFWuaLQiP0UfdOQfbZWl60UgmM1FAnCGv964Zfl
-         B/Lq6bGOCEY206fcXmj+3QQ2YMsGnSJy+EFj0GXQTe3XBW7AhtT+zbE04Kaw4WPe/4t7
-         0XBE7t5IilbVEfv68Gks/D6eW4VRo+yIESm/ZVv2d/I+VKa+wSSGV0zZMKLtTbXEmUI/
-         WfiiFGGGAzbSPTPVleuTVr3SzVw21PMNqW0Lyt8pQ0++eCmnYksMZPdVe36f5q7I4je2
-         4hfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712692636; x=1713297436;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lf5oD1YJAqRWQcO+qVEbuqOOPtB538xNFgGiHmq1JF4=;
-        b=Y+3vW/vJ+EmEo+m5P7juLZKBsjkAciqlsv8QmWH/fFGBaBSl8wdx5er7xOG4FAif1V
-         w4W3Fhxzi22nE635mazZlMGSL1UqmEQQOYpD1L/NuJG4dsF8amwnLnawAyGU39luHjuz
-         gqkSEvA8Hl5YiYfx65HUCb4KgVKlrXIbKy6z2WV8DTQo1vssEyj9vSe0xYGVEDRpjhIV
-         WuINxBWBhvg+o2Dbl42Yt7wrH3+jlhVF8PmpVAaSEF78KWzy41ROpeW2iLTBdBnB8dem
-         8j+QWHEVHoEb2WQNxwzavyHG194gO5B6IyzVg5EkJ298y8MP0diqx6eWrKLg+CoMbfBb
-         h0Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFYWvQlDvxIjF5av4eEfUPzfyL1YQBERCTpz6B0VyVRkT7AvZmRXJMdp5QxwXEEuh+qhhXMtft2YDUC4wkUhFYOoc2WpeL6cgPedL6DA==
-X-Gm-Message-State: AOJu0YzZ2e4ZyAsQgi6trgl1+JHU6z8RDQVPiqK01q9aQA+wQC6hsYlx
-	JESgpSx0UnwBBHTP3VgzNgwE57zMUhpe8Wv7LUdKm8HuC2kaTsZX4Yk1YsLrsfc=
-X-Google-Smtp-Source: AGHT+IG6mzksh1fFDdfMTB7/ZswNaf+55up0ECCTURq8a0pTe3gjPb0pivVBQWSpzMDdMub6RG+ytA==
-X-Received: by 2002:a05:6a00:c91:b0:6e7:29dd:84db with SMTP id a17-20020a056a000c9100b006e729dd84dbmr659776pfv.31.1712692636190;
-        Tue, 09 Apr 2024 12:57:16 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id gr26-20020a056a004d1a00b006ecfc7f651bsm8734606pfb.58.2024.04.09.12.57.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Apr 2024 12:57:15 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <86369AC8-3AAF-43C4-BB46-267A3EFDD293@dilger.ca>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFCDE566;
+	Tue,  9 Apr 2024 20:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712693184; cv=fail; b=VN9PVatIY6qmc2zHTL7UkxrgDVPTlhiF2GuonQFSoR60mVJAOPYdO4DdQ+ObU+eBa63YklXU2tAtWYmySwLdOlE+UvBN1R+FiPC/8eTNn4/L3DigQFy9hxnO6JuhtrwxadMabVbk3/+Ps4ymsEXfHUgDL9zZ5o6/kvBzu+nm/+A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712693184; c=relaxed/simple;
+	bh=Mos54b4ncx5BFoj291fkTyxTjmOEQUJeYum/dUkn0FA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Izm9B08xy++DO4oxKZilJtcPR27noWsDfhfA3+QKDqF4IoCXqeZnLvu4SoKyRSAmbrt3MQQNcRoPeMK7n8gbE2aEDop5qxCVzJrql+XKQeLKx6+tw5UOk3RCA8w9rFGaMBEW7Mc6hxyAGumVLrnGEGanlvSzuQqzc+Ng9AXmytE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ND4t0vU0; arc=fail smtp.client-ip=40.107.101.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=n6eM1SXMvA79NWtimb3XHG1cnA2QNhFJWKReCnmtaBUurPa0UMn6ApkfHafGk0eNeV6z7QQQTJM1j81Qn/61o2FkL/VQPHFTlFpokJaCB9SSPJcC+qloB87BgJJ4LJNkDeg4crqrtLb5r11hMdqNPUoIAi512/nAyMqMiLHXOwN4KgbMqsOKtYD9EjnWwg747VP7HzV+2iWGMxKGuWfijhKlCZLqlkpv3cDa2aFAR6oUrXH/EqDUvMLcSwKMOPj0SSiLtBJ9tAwAzHdKoLZUR84rnPTC8ZXCNS3PLzoC7VnHpZuFZ1ytxnOJ07rHziwYXzgdBVHbtAbTPmn2MfFZtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UOcr5SRPV6K0pEdtYTw5BgNx9AcWWP/Qjzs8xDjfxKU=;
+ b=I3schSCOPF33y1RwAt9j9g+LMRk9Ldd/ELmDdgY0rNQJzs08p/XuGh9Uawtx33huj3C7EQ8Mmfbxx2dAMR0uo1nJ9c5nDLy9YjIdP2IIS6ew6vMIWee/gj1ee3U8oNkVdmWd7PeAIFJOtfTK2lLN37sDzmZJDxJbhpzHGZNzFuwgN7/+9GXPXe5lVZ39GZEvZLH3e5RR98yQtZQTs6XmW8Q7rl627AAVdg0xsL2J56KDjf6PO3pF+dE2jjRU/3+KJYJCOf/dKulo7W1zviBCl2pZlHtXLBGShI3kndy1nf4Q3KE4o5Ok0Bjszvtu/QfJqRfZuW6S9kODnCLu93maBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UOcr5SRPV6K0pEdtYTw5BgNx9AcWWP/Qjzs8xDjfxKU=;
+ b=ND4t0vU0bxaqQUDnb2/qyafTOz7umuVYC2OWqGMDMPFyzUfS7+CXC4xe75fqAvqTIPzxVpyKxnFNtuEQwgoeRw16dEpevHFHiR6fMgOUQnS/ZUiNn6dWJZYr0HsKA2tBUjL3pDhFrfXUur1ph4OuAG9uK6CJtst87o4/jDTnJqphHXvvqZdWVCUY88Tcf76f/6FHa0PU8EJIZ33DPdqVZ1ajkPXmO7t/XpAVA4Pfz5uDCZT9LBghzdsIsLFgseA3kBuW8DA4O8ODvBUJ3mNOXMcXjG1boDeMsRSnAd/4jqfisPg+35a/epMeXzWSyz1Rq/9UKlOBaR/ElqCc2+e8uA==
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
+ SJ2PR12MB8832.namprd12.prod.outlook.com (2603:10b6:a03:4d0::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7409.54; Tue, 9 Apr 2024 20:06:18 +0000
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::dc5c:2cf1:d5f5:9753]) by DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::dc5c:2cf1:d5f5:9753%6]) with mapi id 15.20.7409.053; Tue, 9 Apr 2024
+ 20:06:18 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Yin Fengwei <fengwei.yin@intel.com>,
+ Yang Shi <shy828301@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Hugh Dickins <hughd@google.com>, Yoshinori Sato <ysato@users.sourceforge.jp>,
+ Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
+ Muchun Song <muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>,
+ Naoya Horiguchi <naoya.horiguchi@nec.com>,
+ Richard Chang <richardycc@google.com>
+Subject: Re: [PATCH v1 01/18] mm: allow for detecting underflows with
+ page_mapcount() again
+Date: Tue, 09 Apr 2024 16:06:15 -0400
+X-Mailer: MailMate (1.14r6028)
+Message-ID: <918813FA-4AC4-4B36-81F4-0066C6334175@nvidia.com>
+In-Reply-To: <20240409192301.907377-2-david@redhat.com>
+References: <20240409192301.907377-1-david@redhat.com>
+ <20240409192301.907377-2-david@redhat.com>
 Content-Type: multipart/signed;
- boundary="Apple-Mail=_6FAB8924-4A79-42AF-9FD3-39EBBA23DA64";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+ boundary="=_MailMate_BFD76C58-D229-401C-8255-4BC7BD4A02AA_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+X-ClientProxiedBy: MN2PR05CA0042.namprd05.prod.outlook.com
+ (2603:10b6:208:236::11) To DS7PR12MB5744.namprd12.prod.outlook.com
+ (2603:10b6:8:73::18)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH 0/3] fiemap extension to add physical extent length
-Date: Tue, 9 Apr 2024 13:57:13 -0600
-In-Reply-To: <20240321185803.GH14596@suse.cz>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
- Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
- corbet@lwn.net,
- viro@zeniv.linux.org.uk,
- brauner@kernel.org,
- jack@suse.cz,
- linux-doc@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- linux-btrfs@vger.kernel.org,
- clm@meta.com,
- dsterba@suse.com,
- josef@toxicpanda.com,
- jbacik@toxicpanda.com,
- kernel-team@meta.com
-To: dsterba@suse.cz
-References: <cover.1709918025.git.sweettea-kernel@dorminy.me>
- <20240315030334.GQ6184@frogsfrogsfrogs> <20240321185803.GH14596@suse.cz>
-X-Mailer: Apple Mail (2.3273)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|SJ2PR12MB8832:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	xVtBSDjv0JFb9MxXxwDEle+dlls6ABllwVvcRWXOJyPC8ZMr6BHUPTBGpmBBZpwNsCV4XcMPbV+ORyPfGm7wlD/RAnH750PONAIYFczTjZD/i8FAVY85VHGkkr7n4mBSIY+dLjnoRzKVWTWEe8qED1iHdBeVG8qm6v1eN7IgWUoLsLWXwRJQ/Uwn2YqXMg1M5SKJgHNYlH6T//N20kt+okBc4GCWHRUVeqQTAD5oSTqOHHpiu77B+3L2UWGmJWpTUkyXORlgNJKxO+uikkK6G1rVxSOmzOF9gQOZAghSlX5Ogl6nE/FgDxDEzklcDpI5C1edohTrvgiONUbdjn6ynpnB02/k3op/gcPa+nCzdKbew70IYTmtqiUNCDCBMtB5FME/3AoQm+pWLFH6PhLmydjPFPJXQNM+dQLENiLARY+awAPqpASRdOX+1EbS7EZUZ3lrC9vL7FgAaPv4FeFWqxGrC/9sfKfVOIjAr66EFjRmTlF08lRGa5wnykEqM7TOMtSgYTXcYqyWBsTbI5Zt/sQ2jkekohigznn6vPU/cQPnUzPsZjv0TBa3hSjTmShiXD3IrJC/oVmE8kggyHqfl6gyjCXXwoKELRSZgqswFdZCG840I/0NgnMymImrQzMNAzqmIaX6kPP2Qfw/+y9FLGb91EyBDcguBIyRAdGHMBE=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(7416005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?svI1XBq91M9w07BCyisqXNFKPtCardxgbcdUqP9yv20dju8GCHhvDSWVHvO8?=
+ =?us-ascii?Q?1BnsRgjtLxi4/L0NQ+Oarh4ryZ8IKBUnOIxGcAjJUEmkuIIaC18e9jLg+LTd?=
+ =?us-ascii?Q?70cZJltDrkJFD8JaCmBil2QJ9GoAUj2hDhShP2jxPWLLRC2WbFWDASIyyAaI?=
+ =?us-ascii?Q?ggP+iKfSIvdzyWUoNVaRSuxWLOECKcuIImtpQShtReRLUFrbCJVkdgZ38Jlt?=
+ =?us-ascii?Q?nBS3iZRtHHqBSFbAn9HqP2r48pglSt0PdA96EVJKjwx2CZ2m8/gr3qYg3JjO?=
+ =?us-ascii?Q?QuBlClMIyAJjrBL5E5RYpNjxwnwcql8tnHARVp/vPaqBmKHzq5a/eQt0dOjL?=
+ =?us-ascii?Q?cXjBQbY3VpkeWjUZvR8a+HTPPl8SjtXbDiX4mX00JmwfNnZD8P6CrYMoizSl?=
+ =?us-ascii?Q?Z7Wkonx3VGkaaOcZYNPKU8yYEb59qEjR4r2BBXWEpEER1TaLJIkPdPkHyMz6?=
+ =?us-ascii?Q?939MZXrz1fy/2L6KjCe6Zl7f+5FI6oncG/DUdOSgZNlEQo52isxDwlvs6Lxb?=
+ =?us-ascii?Q?hAoXJmtjxuFB/wAwh5OSC2sWahHpM9sNBB74xosp8iXH6i/CpkvlUa3beaek?=
+ =?us-ascii?Q?fDvp70LsfrufnYM8WA9owme3oRavoISb1bZbvWEMraR0F+4qyG/+tQAtW407?=
+ =?us-ascii?Q?eIUoADSo+AVlsVqfBrFjvjeEouYQUv1JPEpZEwvJShvlvIJbwsRLbP01wg7Q?=
+ =?us-ascii?Q?VXG3sBDwzXH8PbV6yPpfKPzkAJXxjFeSgnRit095Uf3yH20z1abacqr7BsMx?=
+ =?us-ascii?Q?IJCPpAQPQQhbWgQw5gbsNYQJLGeidEWBIJ81oKUCIrVM3qdO9h9dXzOABil/?=
+ =?us-ascii?Q?blNZ47dAdnEeYIgWgocoJ3RZZzQP+6Wa/Yfh4OAYqJJFLRKhjMgvsfzgLm6x?=
+ =?us-ascii?Q?aBKTkE+92TLA+5mGkQ5SLMMC+YaSrp5ufASYPS7ScL4klwkSwd5d3kfpHyVo?=
+ =?us-ascii?Q?ha6hb3eYM1V3TL5GFJEndeJzoXWTfPQzejQS1AysP4XnTMhWoHtcvkpTHeEH?=
+ =?us-ascii?Q?nXeUPMVLN1zWHokEspGe7HUzwujOfCRzhiuSm5d69ruGn6AZqmxfjSjt1Mp5?=
+ =?us-ascii?Q?XtbbMo5VBzoSOuCia+eoohT2g5/tH4CMzQEFE04aySOiptmPAFSd3VZXPdbU?=
+ =?us-ascii?Q?ZhD1zzeGxeY7/oRCaYTxzL0srgDUTGkFF9p/1b0PtL5r9mGLHVk3N3oKfXm3?=
+ =?us-ascii?Q?N7js1YDTujCCq9btPXUKWyF+XHxnIBBSH9mWZ93dD0sxy3QFjIdZ7msZqrnZ?=
+ =?us-ascii?Q?m5wQlJoPm1PbSzG93fYDdVBBKC/ucVkIKHW8RjiR2DpD42E+DdcHBrJLoK38?=
+ =?us-ascii?Q?BizbzWm5fNa721uP9K4fek3Ud66X99CkvVdfrFSvWVeD0w7hCLwGdVOKHx+U?=
+ =?us-ascii?Q?voaaPRwHxW9Il46EIvP/Tl/F7hoiLnxM1aD70cs1fxnQaig3hoLM2fE99D6r?=
+ =?us-ascii?Q?MI1lBcesgSqarSzZ34pfQL1MZ2Hjk0ROwYmY2x61yMJkqVWMuVyOaPFrInDC?=
+ =?us-ascii?Q?23efQ/vgG5Revjy1HucORV2SikYl4/fnPMvnk+qgpV3ZPhSwrt502V0Oz4Km?=
+ =?us-ascii?Q?IOokuqvMGnT87HSgp1RZxK1wdbxCtd4mDjNErYaW?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b00554b-9613-4d1d-62e1-08dc58d084e4
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2024 20:06:18.6852
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ENJsijIGN1tzrX5wWirWIXlXa8oNF7O2vVEEljLhzi5CS+Ri1SfpjMKDEBFo38mR
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8832
 
+--=_MailMate_BFD76C58-D229-401C-8255-4BC7BD4A02AA_=
+Content-Type: text/plain
 
---Apple-Mail=_6FAB8924-4A79-42AF-9FD3-39EBBA23DA64
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+On 9 Apr 2024, at 15:22, David Hildenbrand wrote:
 
-On Mar 21, 2024, at 12:58 PM, David Sterba <dsterba@suse.cz> wrote:
->=20
-> On Thu, Mar 14, 2024 at 08:03:34PM -0700, Darrick J. Wong wrote:
->> On Fri, Mar 08, 2024 at 01:03:17PM -0500, Sweet Tea Dorminy wrote:
->>> For many years, various btrfs users have written programs to =
-discover
->>> the actual disk space used by files, using root-only interfaces.
->>> However, this information is a great fit for fiemap: it is =
-inherently
->>> tied to extent information, all filesystems can use it, and the
->>> capabilities required for FIEMAP make sense for this additional
->>> information also.
->>>=20
->>> Hence, this patchset adds physical extent length information to =
-fiemap,
->>> and extends btrfs to return it.  This uses some of the reserved =
-padding
->>> in the fiemap extent structure, so programs unaware of the new field
->>> will be unaffected by its presence.
->>>=20
->>> This is based on next-20240307. I've tested the btrfs part of this =
-with
->>> the standard btrfs testing matrix locally, and verified that the =
-physical extent
->>> information returned there is correct, but I'm still waiting on more
->>> tests. Please let me know what you think of the general idea!
->>=20
->> Seems useful!  Any chance you'd be willing to pick up this old =
-proposal
->> to report the dev_t through iomap?  iirc the iomap wrappers for =
-fiemap
->> can export that pretty easily.
->>=20
->> =
-https://lore.kernel.org/linux-fsdevel/20190211094306.fjr6gfehcstm7eqq@hade=
-s.usersys.redhat.com/
->=20
-> I think this is not too useful for btrfs (in general) due to the block
-> group profiles that store copies on multiple devices, we'd need more
-> than one device identifier per extent.
+> Commit 53277bcf126d ("mm: support page_mapcount() on page_has_type()
+> pages") made it impossible to detect mapcount underflows by treating
+> any negative raw mapcount value as a mapcount of 0.
+>
+> We perform such underflow checks in zap_present_folio_ptes() and
+> zap_huge_pmd(), which would currently no longer trigger.
+>
+> Let's check against PAGE_MAPCOUNT_RESERVE instead by using
+> page_type_has_type(), like page_has_type() would, so we can still catch
+> some underflows.
+>
+> Fixes: 53277bcf126d ("mm: support page_mapcount() on page_has_type() pages")
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  include/linux/mm.h | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ef34cf54c14f..0fb8a40f82dd 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1229,11 +1229,10 @@ static inline void page_mapcount_reset(struct page *page)
+>   */
+>  static inline int page_mapcount(struct page *page)
+>  {
+> -	int mapcount = atomic_read(&page->_mapcount) + 1;
+> +	int mapcount = atomic_read(&page->_mapcount);
+>
+>  	/* Handle page_has_type() pages */
+> -	if (mapcount < 0)
+> -		mapcount = 0;
+> +	mapcount = page_type_has_type(mapcount) ? 0 : mapcount + 1;
+>  	if (unlikely(PageCompound(page)))
+>  		mapcount += folio_entire_mapcount(page_folio(page));
 
-My thought would be that there are multiple overlapping extents with the
-same logical offset returned in this case.  It wouldn't just be the =
-device
-that would be different in this case, but also the physical offset may =
-be
-different on each device (depending on how allocation is done), and =
-maybe
-even the length and flags are different if one device stores compressed
-data and another one does not.
+LGTM. This could be picked up separately. Reviewed-by: Zi Yan <ziy@nvidia.com>
 
-Having multiple overlapping extents for files with built-in mirrors =
-allows
-freedom for all of the extent parameters to be different, doesn't have =
-any
-limits on the number of copies/devices that could fit in one extent, =
-etc.
+--
+Best Regards,
+Yan, Zi
 
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_6FAB8924-4A79-42AF-9FD3-39EBBA23DA64
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+--=_MailMate_BFD76C58-D229-401C-8255-4BC7BD4A02AA_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
 
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmYVnZoACgkQcqXauRfM
-H+B6rw//bAbIzB/vqxb8UHC9CPh3aICucWfOZw4nawnjo/zXA0RMJh6w2hsI43A6
-nfisuNPRkdEI/g1yZu74a46ZgdtuOUYZKB718F42iBr3I62kCJ02pgVViDUC3feM
-4+zLiW8ZOG+itmeJE8v+RP9T5c7dDpVFRb6uavHf70+eEGwPMqDjbIbusXYUuHB6
-6mv1oCCbk+naWZ+UUEvqBy63prr1diuq4Z1aL4biqG92YRNjSGM27yRsWNhZgr35
-xfasEOR0YbOgwEvGp6hdIejgFjzakIfNZpkb+wEhDordUI3IGnJyY/FEQnsxYGeA
-VFn3BKU3pGxLByGEgXHOTrjS5g4cY5EokV44UhrzL6YOk7IyhW15w9MLIATgE9AW
-AWDln7Q5mNCKA8/3U6Gn2U7ULhvIrbe6iYYvkmHAANYwyhWKHfjvG1iQSSKKjj3j
-qkpGNBqhaEYtTiIQcrDEcsWEfFvxJUALoyrr4HH4C5XkDoYZObEs0bGHK8ekkHNi
-tBV/9lfOfRk2w7A3SgkJbsqGzZIyTCQfgbEDaR3WLYQMZErEq/twfoPRmPLGHrHu
-cPzsefo4QXxYbX7Du4l1mSR7Thx+Eh4AQ19jIahNd700gtNyVcbkBFf1qfnRBQzY
-Eudtyuy7neaFge0g9T6m1Hc7W/3qvd4ABSI6bUPCKlZd0GsVlyI=
-=t5A5
+iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmYVn7gPHHppeUBudmlk
+aWEuY29tAAoJEOJ/noEUByhU468P/iMv7TtTxVFI2SJVhKEK/KA+QLDE1xG0g3C/
+cR/1hWl4EFowLLGO8vpYM8cD6cnp5ah89fvEVHpTKBhyPRs72biZRLTsnFyHUDtw
+w7yqJccqNGWIXXj2cW/STK7XWfY9hOGNHT3f4P51jeooUbX8deU1LyG/yKT9OWkm
+gkv99P90KemBzqEgkdurM5oBJHZfl1IMy4GomJSgXkvBPRL8RCOt+mLezEIBYy+s
+XkrCOLqPc/arAUleD2v6C5nEcu7RnO6KxTYUQ8tvqafJp+Ao1C/H3hcY+JZ3rDGT
+WCC7zaTt3llPThFZgfWST2Qd8gTcDH7SldwIzB9jshdR/WEKDq/c6UmmGV8MORSO
+dF94MUAT1qH5dn9CxUcrcY2MT8x4eWu/Dn9ERUwUHf8y3ZeLlbg1nwHOqMVCrmrp
+1F8Y1Rsi/6AL0Z7iHUT9lU6+OvdKJvvYaSLMfxSkLE11UFd+AXNtaanLNhGJJd1t
+fEwG5WtJYRaaSNrAk3bJrWF6wxcE0rFJ7M08QHxDXfqaTYMclXiJSV7gmbDI0Ev8
+Oh4p+bis/I8YxRt2JabThl5lzFsYcdVLc3XOhRvZ/D+RexMHkSOed734GrtX/YVR
+xVOzO5JQUTvl2fEHDgOw2YoYtJ/v/pyDcK0uQtGevvqv4CjErBcrTwJkZan8z7Re
+RZAouX9w
+=dfHW
 -----END PGP SIGNATURE-----
 
---Apple-Mail=_6FAB8924-4A79-42AF-9FD3-39EBBA23DA64--
+--=_MailMate_BFD76C58-D229-401C-8255-4BC7BD4A02AA_=--
 
