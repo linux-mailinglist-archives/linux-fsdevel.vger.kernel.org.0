@@ -1,134 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-16435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A5C89D868
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 13:46:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B2989D892
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 13:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 483E12873E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 11:46:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E89941C213F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 11:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948B712DD90;
-	Tue,  9 Apr 2024 11:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Re2MZHX5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C3712A14A;
+	Tue,  9 Apr 2024 11:53:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3284B127B4E;
-	Tue,  9 Apr 2024 11:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D96212A144;
+	Tue,  9 Apr 2024 11:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712663153; cv=none; b=njl/IZizOHf9Oy2AvUpkEgQLImugWOneEnneYLjndQlNeObg/eiCozv7bhqOyYEBjt+QMCAXbclZhfJaiwmb+P7Yr70WZ/zYkJ5QyUw7rPf7X8hobtFPj/0935KPeCmBDhCU98C4x2T950AlV69bSUdyUXqP7ClOFme8nHd/+FM=
+	t=1712663614; cv=none; b=roiZI8JDFiawiunyr0U7EbemVtSAX0ccbGYZsyJrq7MCX1h6Tld/P4TJTPFi1gxhw+NNuDPexJLJ9VFz3hC6i3JnBeijCP57lB/E8q93062huoMHic0s5DZzNPvujfU7RBGSjDMopAGUH7aaGgCbAONUZx/MV/vXBD9YEWJqjHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712663153; c=relaxed/simple;
-	bh=GFjr+qUI/xJlRfC49pDYbbQ+5mOHCUk/2gN5wZX0VPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lBIR1ZzgNFAiDhBZgiwFTJ1Hjbtgxh5r2XlqjC9uK91LBmTo0zonDD0RFLMilwlSPXoKVCFuu7RFValzVMoe7lSmHU/wR3KLx2txQVIah3cPmVakFvodIiyvfOU99UkKhMWn7HIsMlQWeYtdowO9yUrUIx5A89DElmMUefkbEi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Re2MZHX5; arc=none smtp.client-ip=52.119.213.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1712663151; x=1744199151;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GFjr+qUI/xJlRfC49pDYbbQ+5mOHCUk/2gN5wZX0VPA=;
-  b=Re2MZHX5GydCM8B6KilkbcXlSGPSLv0DHVNAFcmqvWsd0IZ1NH+wl46p
-   jp+rvzqYg9VvAX9wn3JpJghaHuXQWE2yPEhE8P08rq+2tVNxto7uD3tbV
-   QrLFtsNiMvuJGKG0kOuG7Rz2NIhkvDaaqqVhKqvF/2RhKVIbglEWBhS4x
-   g=;
-X-IronPort-AV: E=Sophos;i="6.07,189,1708387200"; 
-   d="scan'208";a="650727234"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2024 11:45:43 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:49900]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.169:2525] with esmtp (Farcaster)
- id 3f52ccb2-10c8-4639-a2de-4651f9e21034; Tue, 9 Apr 2024 11:45:42 +0000 (UTC)
-X-Farcaster-Flow-ID: 3f52ccb2-10c8-4639-a2de-4651f9e21034
-Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Tue, 9 Apr 2024 11:45:38 +0000
-Received: from [0.0.0.0] (10.253.83.51) by EX19D020UWC004.ant.amazon.com
- (10.13.138.149) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.28; Tue, 9 Apr
- 2024 11:45:22 +0000
-Message-ID: <7c82670e-6063-4b0f-9bbf-805a0d949d84@amazon.com>
-Date: Tue, 9 Apr 2024 13:45:18 +0200
+	s=arc-20240116; t=1712663614; c=relaxed/simple;
+	bh=/Vf/ZrPrZ22LUB/jznddmjfNXq2LQt/RWdYSXZn/7wI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ShqJCRjlJoC0aBAqTt+0Ph9x1Em1VOLeAye2N8jyPuMGV3WJHUPPpRwrcvWdGqxjCs7C+5wCbLjXerVFv2kLH3mUaYeju+npKJHzPgaH/Ts7NLIxp/jBTmZk2TY22cgbDg92P+JfnU0XezKnjj69ILgpDiO27nD64TlxxaHbPG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VDPVR5BcDz4f3lfQ;
+	Tue,  9 Apr 2024 19:53:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 538861A0568;
+	Tue,  9 Apr 2024 19:53:28 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgBXKBE2LBVmvDcXJg--.2082S3;
+	Tue, 09 Apr 2024 19:53:28 +0800 (CST)
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+To: Christian Brauner <brauner@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, hch@lst.de, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+ linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <20240406090930.2252838-23-yukuai1@huaweicloud.com>
+ <20240409-pavillon-lohnnebenkosten-8ba65c1fd8e0@brauner>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <f61097a3-5a39-8e9b-d0c7-77e8ac80f56a@huaweicloud.com>
+Date: Tue, 9 Apr 2024 19:53:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/25] misc: nsm: drop owner assignment
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "Michael S. Tsirkin"
-	<mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
-	<xuanzhuo@linux.alibaba.com>, Jonathan Corbet <corbet@lwn.net>, "David
- Hildenbrand" <david@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, "Richard
- Weinberger" <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>, Paolo Bonzini
-	<pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe
-	<axboe@kernel.dk>, Marcel Holtmann <marcel@holtmann.org>, "Luiz Augusto von
- Dentz" <luiz.dentz@gmail.com>, Olivia Mackall <olivia@selenic.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, Amit Shah <amit@kernel.org>, Arnd Bergmann
-	<arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gonglei
-	<arei.gonglei@huawei.com>, "David S. Miller" <davem@davemloft.net>, "Sudeep
- Holla" <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>,
-	Viresh Kumar <vireshk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, David Airlie <airlied@redhat.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Daniel Vetter
-	<daniel@ffwll.ch>, Jean-Philippe Brucker <jean-philippe@linaro.org>, "Joerg
- Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Eric Van Hensbergen
-	<ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet
-	<asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Stefano Garzarella <sgarzare@redhat.com>, Kalle Valo <kvalo@kernel.org>, "Dan
- Williams" <dan.j.williams@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ira Weiny
-	<ira.weiny@intel.com>, "Pankaj Gupta" <pankaj.gupta.linux@gmail.com>, Bjorn
- Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, "James E.J. Bottomley" <jejb@linux.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Vivek Goyal
-	<vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, "Anton Yakovlev"
-	<anton.yakovlev@opensynergy.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>
-CC: <virtualization@lists.linux.dev>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-um@lists.infradead.org>,
-	<linux-block@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-gpio@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<iommu@lists.linux.dev>, <netdev@vger.kernel.org>, <v9fs@lists.linux.dev>,
-	<kvm@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-remoteproc@vger.kernel.org>,
-	<linux-scsi@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
-References: <20240331-module-owner-virtio-v2-0-98f04bfaf46a@linaro.org>
- <20240331-module-owner-virtio-v2-15-98f04bfaf46a@linaro.org>
-From: Alexander Graf <graf@amazon.com>
-In-Reply-To: <20240331-module-owner-virtio-v2-15-98f04bfaf46a@linaro.org>
-X-ClientProxiedBy: EX19D035UWA002.ant.amazon.com (10.13.139.60) To
- EX19D020UWC004.ant.amazon.com (10.13.138.149)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: base64
+In-Reply-To: <20240409-pavillon-lohnnebenkosten-8ba65c1fd8e0@brauner>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBXKBE2LBVmvDcXJg--.2082S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZr1DZw1xtF4UCFW3Kr4rKrg_yoWruF1UpF
+	98KFZ8GrWUWry0gF4vvw15Zryaqa4093y8Ca4xJ34SkrWDKr92gF1vkr1UAFWYyFWxJFs7
+	XF42krWruryjkrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
+	04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0D
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Ck9uIDMxLjAzLjI0IDEwOjQ0LCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+IHZpcnRpbyBj
-b3JlIGFscmVhZHkgc2V0cyB0aGUgLm93bmVyLCBzbyBkcml2ZXIgZG9lcyBub3QgbmVlZCB0by4K
-Pgo+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyenlzenRvZi5rb3psb3dz
-a2lAbGluYXJvLm9yZz4KCgpSZXZpZXdlZC1ieTogQWxleGFuZGVyIEdyYWYgPGdyYWZAYW1hem9u
-LmNvbT4KCgpBbGV4CgoKCgpBbWF6b24gRGV2ZWxvcG1lbnQgQ2VudGVyIEdlcm1hbnkgR21iSApL
-cmF1c2Vuc3RyLiAzOAoxMDExNyBCZXJsaW4KR2VzY2hhZWZ0c2Z1ZWhydW5nOiBDaHJpc3RpYW4g
-U2NobGFlZ2VyLCBKb25hdGhhbiBXZWlzcwpFaW5nZXRyYWdlbiBhbSBBbXRzZ2VyaWNodCBDaGFy
-bG90dGVuYnVyZyB1bnRlciBIUkIgMTQ5MTczIEIKU2l0ejogQmVybGluClVzdC1JRDogREUgMjg5
-IDIzNyA4NzkKCgo=
+Hi,
+
+在 2024/04/09 18:23, Christian Brauner 写道:
+>> +static int __stash_bdev_file(struct block_device *bdev)
+> 
+> I've said that on the previous version. I think that this is really
+> error prone and seems overall like an unpleasant solution. I would
+> really like to avoid going down that route.
+
+Yes, I see your point, and it's indeed reasonable.
+
+> 
+> I think a chunk of this series is good though specicially simple
+> conversions of individual filesystems where file_inode() or f_mapping
+> makes sense. There's a few exceptions where we might be better of
+> replacing the current apis with something else (I think Al touched on
+> that somewhere further down the thread.).
+> 
+> I'd suggest the straightforward bd_inode removals into a separate series
+> that I can take.
+> 
+> Thanks for working on all of this. It's certainly a contentious area.
+
+How about following simple patch to expose bdev_mapping() for
+fs/buffer.c for now?
+
+Thanks,
+Kuai
+
+diff --git a/block/blk.h b/block/blk.h
+index a34bb590cce6..f8bcb43a12c6 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -428,7 +428,6 @@ static inline int blkdev_zone_mgmt_ioctl(struct 
+block_device *bdev,
+  #endif /* CONFIG_BLK_DEV_ZONED */
+
+  struct inode *bdev_inode(struct block_device *bdev);
+-struct address_space *bdev_mapping(struct block_device *bdev);
+  struct block_device *bdev_alloc(struct gendisk *disk, u8 partno);
+  void bdev_add(struct block_device *bdev, dev_t dev);
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 4f73d23c2c46..e2bd19e3fe48 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -189,8 +189,8 @@ EXPORT_SYMBOL(end_buffer_write_sync);
+  static struct buffer_head *
+  __find_get_block_slow(struct block_device *bdev, sector_t block)
+  {
+-       struct inode *bd_inode = bdev->bd_inode;
+-       struct address_space *bd_mapping = bd_inode->i_mapping;
++       struct address_space *bd_mapping = bdev_mapping(bdev);
++       struct inode *bd_inode = bd_mapping->host;
+         struct buffer_head *ret = NULL;
+         pgoff_t index;
+         struct buffer_head *bh;
+@@ -1034,12 +1034,12 @@ static sector_t folio_init_buffers(struct folio 
+*folio,
+  static bool grow_dev_folio(struct block_device *bdev, sector_t block,
+                 pgoff_t index, unsigned size, gfp_t gfp)
+  {
+-       struct inode *inode = bdev->bd_inode;
++       struct address_space *bd_mapping = bdev_mapping(bdev);
+         struct folio *folio;
+         struct buffer_head *bh;
+         sector_t end_block = 0;
+
+-       folio = __filemap_get_folio(inode->i_mapping, index,
++       folio = __filemap_get_folio(bd_mapping, index,
+                         FGP_LOCK | FGP_ACCESSED | FGP_CREAT, gfp);
+         if (IS_ERR(folio))
+                 return false;
+@@ -1073,10 +1073,10 @@ static bool grow_dev_folio(struct block_device 
+*bdev, sector_t block,
+          * lock to be atomic wrt __find_get_block(), which does not
+          * run under the folio lock.
+          */
+-       spin_lock(&inode->i_mapping->i_private_lock);
++       spin_lock(&bd_mapping->i_private_lock);
+         link_dev_buffers(folio, bh);
+         end_block = folio_init_buffers(folio, bdev, size);
+-       spin_unlock(&inode->i_mapping->i_private_lock);
++       spin_unlock(&bd_mapping->i_private_lock);
+  unlock:
+         folio_unlock(folio);
+         folio_put(folio);
+@@ -1463,7 +1463,7 @@ __bread_gfp(struct block_device *bdev, sector_t block,
+  {
+         struct buffer_head *bh;
+
+-       gfp |= mapping_gfp_constraint(bdev->bd_inode->i_mapping, ~__GFP_FS);
++       gfp |= mapping_gfp_constraint(bdev_mapping(bdev), ~__GFP_FS);
+
+         /*
+          * Prefer looping in the allocator rather than here, at least that
+@@ -1696,8 +1696,8 @@ EXPORT_SYMBOL(create_empty_buffers);
+   */
+  void clean_bdev_aliases(struct block_device *bdev, sector_t block, 
+sector_t len)
+  {
+-       struct inode *bd_inode = bdev->bd_inode;
+-       struct address_space *bd_mapping = bd_inode->i_mapping;
++       struct address_space *bd_mapping = bdev_mapping(bdev);
++       struct inode *bd_inode = bd_mapping->host;
+         struct folio_batch fbatch;
+         pgoff_t index = ((loff_t)block << bd_inode->i_blkbits) / PAGE_SIZE;
+         pgoff_t end;
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index bc840e0fb6e5..bbae55535d53 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1527,6 +1527,7 @@ void blkdev_put_no_open(struct block_device *bdev);
+
+  struct block_device *I_BDEV(struct inode *inode);
+  struct block_device *file_bdev(struct file *bdev_file);
++struct address_space *bdev_mapping(struct block_device *bdev);
+  bool disk_live(struct gendisk *disk);
+  unsigned int block_size(struct block_device *bdev);
+
+> .
+> 
 
 
