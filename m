@@ -1,157 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-16415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02DE89D24E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 08:23:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7637589D27A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 08:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87061C21F7C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 06:23:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F0E1C229F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 06:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990F07D062;
-	Tue,  9 Apr 2024 06:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FAA31A66;
+	Tue,  9 Apr 2024 06:31:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3995D7CF17;
-	Tue,  9 Apr 2024 06:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AF91773A;
+	Tue,  9 Apr 2024 06:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712643772; cv=none; b=oRMe87zzUtMxzyaQU0IcDFSkWgSJphSGNypQzaUM+ykV5k/ZJOl5Tggj6rhqO0UuMB5Kri1DW7NsZCRlDJ27IonoN60Bk5Z8bIeskOdyGBblBQTNis9xBb88fumBjz5O+WSkfcTfy8QqNXJdxbhZ99Ub9p4TkDfiXdXPCiXvGmg=
+	t=1712644280; cv=none; b=VetG4MihlOdQpOzbk/xMzO9VNYAEkVyupGvH1ImN9ar0ROhI9XNv4GrOZ2HiLLg8IPSLZdqlzzI4Kzw3LFoAmHlfBVBOk+IugGOeG6ooyftbDGI6KUv3I2MqTv2bQVe9+AC/Zhr1MHx45sGNFpFygUmLtxdgzT5ePEoOg1bKQas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712643772; c=relaxed/simple;
-	bh=5rARhv3NmHpa1Fdlvzgz/4cyVDMr6pUtaAKtNUhQ6VI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=tAa+AG+dWWVH8yJlrnq/b9pVNdCVPoNiB959C2jobFwr9m9doYoposq6w/SFfXHDTl/96uQ1GWb5VXZP96nE2s4/bx4UGg/AfmD9Vl44CF+tztJBr6ULc7nRWLXx9bhaUjepf6pyYwDg/NnAtQny1bE4JLjZV+jmkw8gLSz34Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VDG8n1WXRz4f3jR1;
-	Tue,  9 Apr 2024 14:22:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 0099B1A0568;
-	Tue,  9 Apr 2024 14:22:39 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgDHlxCu3hRmAS0CJg--.44389S3;
-	Tue, 09 Apr 2024 14:22:39 +0800 (CST)
-Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
- blcok_device
-To: Al Viro <viro@zeniv.linux.org.uk>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: jack@suse.cz, hch@lst.de, brauner@kernel.org, axboe@kernel.dk,
- linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
- <20240406090930.2252838-23-yukuai1@huaweicloud.com>
- <20240406194206.GC538574@ZenIV> <20240406202947.GD538574@ZenIV>
- <3567de30-a7ce-b639-fa1f-805a8e043e18@huaweicloud.com>
- <20240407015149.GG538574@ZenIV>
- <21d1bfd6-76f7-7ffb-34a4-2a85644674fe@huaweicloud.com>
- <20240407030610.GI538574@ZenIV>
- <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
- <20240409042643.GP538574@ZenIV>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
-Date: Tue, 9 Apr 2024 14:22:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1712644280; c=relaxed/simple;
+	bh=URqtiEJVdrnUgHUx9SUvz6al5BcQ5UgCH5Yi0/qKvuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UZy5ZCSMYTjw1EIch6BhofefKNINv2RyWAP9Ply+cEWZYc1KRRXAGqQxAHLJ/9G8w5kCQ7ncqxr0H89kyUsX+tAAtBFXwWIihp/mFTjCINCzKj6LKNK2nL8RGX7jMMACGj2/7C9CwBlgCJMZT9UhJTJsc4ZurXjSZfTtWAQ3QC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VDGKy4qgGz1GGV5;
+	Tue,  9 Apr 2024 14:30:30 +0800 (CST)
+Received: from canpemm500009.china.huawei.com (unknown [7.192.105.203])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7AB341A0172;
+	Tue,  9 Apr 2024 14:31:15 +0800 (CST)
+Received: from [10.108.234.194] (10.108.234.194) by
+ canpemm500009.china.huawei.com (7.192.105.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 9 Apr 2024 14:31:15 +0800
+Message-ID: <a2f7ae45-9e13-4b0c-a16f-637324565e14@huawei.com>
+Date: Tue, 9 Apr 2024 14:31:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240409042643.GP538574@ZenIV>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDHlxCu3hRmAS0CJg--.44389S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw4kWw4rCF4rGrWkKw1rWFg_yoW5GFWkpF
-	ZxKFWqkr4DGry8KrZ2vw43ZF1ayw13A3y5Ca4rW3sIkrZ0gw1IgFWxGr45uF98ur4kWr12
-	qrWagrZ0gry5A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
-	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] quota: don't let mark_dquot_dirty() fail silently
+To: Chao Yu <chao@kernel.org>, <jack@suse.com>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240407073128.3489785-1-chao@kernel.org>
+Content-Language: en-US
+From: "wangjianjian (C)" <wangjianjian3@huawei.com>
+In-Reply-To: <20240407073128.3489785-1-chao@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ canpemm500009.china.huawei.com (7.192.105.203)
 
-Hi,
+On 2024/4/7 15:31, Chao Yu wrote:
+> mark_dquot_dirty() will callback to specified filesystem function,
+> it may fail due to any reasons, however, no caller will check return
+> value of mark_dquot_dirty(), so, it may fail silently, let's print
+> one line message for such case.
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>   fs/quota/dquot.c | 23 +++++++++++++----------
+>   1 file changed, 13 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index dacbee455c03..c5df7863942a 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -399,21 +399,20 @@ int dquot_mark_dquot_dirty(struct dquot *dquot)
+>   EXPORT_SYMBOL(dquot_mark_dquot_dirty);
+>   
+>   /* Dirtify all the dquots - this can block when journalling */
+> -static inline int mark_all_dquot_dirty(struct dquot __rcu * const *dquots)
+> +static inline void mark_all_dquot_dirty(struct dquot __rcu * const *dquots)
+>   {
+> -	int ret, err, cnt;
+> +	int ret, cnt;
+>   	struct dquot *dquot;
+>   
+> -	ret = err = 0;
+>   	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
+>   		dquot = srcu_dereference(dquots[cnt], &dquot_srcu);
+> -		if (dquot)
+> -			/* Even in case of error we have to continue */
+> -			ret = mark_dquot_dirty(dquot);
+> -		if (!err)
+> -			err = ret;
+> +		if (!dquot)
+> +			continue;
+> +		ret = mark_dquot_dirty(dquot);
+> +		if (ret < 0)
+> +			quota_error(dquot->dq_sb,
+> +				"mark_all_dquot_dirty fails, ret: %d", ret);
+>   	}
+> -	return err;
+>   }
+>   
+>   static inline void dqput_all(struct dquot **dquot)
+> @@ -2725,6 +2724,7 @@ static int do_set_dqblk(struct dquot *dquot, struct qc_dqblk *di)
+>   {
+>   	struct mem_dqblk *dm = &dquot->dq_dqb;
+>   	int check_blim = 0, check_ilim = 0;
+> +	int ret;
+>   	struct mem_dqinfo *dqi = &sb_dqopt(dquot->dq_sb)->info[dquot->dq_id.type];
+>   
+>   	if (di->d_fieldmask & ~VFS_QC_MASK)
+> @@ -2807,7 +2807,10 @@ static int do_set_dqblk(struct dquot *dquot, struct qc_dqblk *di)
+>   	else
+>   		set_bit(DQ_FAKE_B, &dquot->dq_flags);
+>   	spin_unlock(&dquot->dq_dqb_lock);
+> -	mark_dquot_dirty(dquot);
+> +	ret = mark_dquot_dirty(dquot);
+Here it overwrite previous error.
 
-在 2024/04/09 12:26, Al Viro 写道:
-> On Sun, Apr 07, 2024 at 11:21:56AM +0800, Yu Kuai wrote:
->> Hi,
->>
->> 在 2024/04/07 11:06, Al Viro 写道:
->>> On Sun, Apr 07, 2024 at 10:34:56AM +0800, Yu Kuai wrote:
->>>
->>>> Other than raw block_device fops, other filesystems can use the opened
->>>> bdev_file directly for iomap and buffer_head, and they actually don't
->>>> need to reference block_device anymore. The point here is that whether
->>>
->>> What do you mean, "reference"?  The counting reference is to opened
->>> file; ->s_bdev is a cached pointer to associated struct block_device,
->>> and neither it nor pointers in buffer_head are valid past the moment
->>> when you close the file.  Storing (non-counting) pointers to struct
->>> file in struct buffer_head is not different in that respect - they
->>> are *still* only valid while the "master" reference is held.
->>>
->>> Again, what's the point of storing struct file * in struct buffer_head
->>> or struct iomap?  In any instances of those structures?
->>
->> Perhaps this is what you missed, like the title of this set, in order to
->> remove direct acceess of bdev->bd_inode from fs/buffer, we must store
->> bdev_file in buffer_head and iomap, and 'bdev->bd_inode' is replaced
->> with 'file_inode(bdev)' now.
-> 
-> BTW, what does that have to do with iomap?  All it passes ->bdev to is
-> 	1) bio_alloc()
-> 	2) bio_alloc_bioset()
-> 	3) bio_init()
-> 	4) bdev_logical_block_size()
-> 	5) bdev_iter_is_aligned()
-> 	6) bdev_fua()
-> 	7) bdev_write_cache()
-> 
-> None of those goes anywhere near fs/buffer.c or uses ->bd_inode, AFAICS.
-> 
-> Again, what's the point?  It feels like you are trying to replace *all*
-> uses of struct block_device with struct file, just because.
-> 
-> If that's what's going on, please don't.  Using struct file instead
-> of that bdev_handle crap - sure, makes perfect sense.  But shoving it
-> down into struct bio really, really does not.
-> 
-> I'd suggest to start with adding ->bd_mapping as the first step and
-> converting the places where mapping is all we want to using that.
-> Right at the beginning of your series.  Then let's see what gets
-> left.
-
-Thanks so much for your advice, in fact, I totally agree with this that
-adding a 'bd_mapping' or expose the helper bdev_mapping().
-
-However, I will let Christoph and Jan to make the decision, when they
-get time to take a look at this.
-
-Thanks!
-Kuai
-
-> 
-> And leave ->bd_inode there for now; don't blindly replace it with
-> ->bd_mapping->host everywhere.  It's much easier to grep for.
-> The point of the exercise is to find what do we really need ->bd_inode
-> for and what primitives are missing, not getting rid of a bad word...
-> .
-> 
+> +	if (ret < 0)
+> +		quota_error(dquot->dq_sb,
+> +			"mark_dquot_dirty fails, ret: %d", ret);
+>   
+>   	return 0;
+>   }
+-- 
+Regards
 
 
