@@ -1,181 +1,299 @@
-Return-Path: <linux-fsdevel+bounces-16448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFF489DD4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 16:51:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BA189DD5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 16:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3941C212F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 14:51:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E68E1F25D6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 14:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCB24F8B1;
-	Tue,  9 Apr 2024 14:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0949757873;
+	Tue,  9 Apr 2024 14:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="KvRY8cHu"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="cApc3IOR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF6B82D99
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 14:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7AF25570
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 14:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712674227; cv=none; b=OlO4dM06X1Alwt9SBvJHkyM9ni58D0mo6DWSAoZosRPJIIB1V6OCcF3tztskkYMcU/De+kM0wYua/oh5dLVqdQ9EHDjTx6CoV+YmHJACZ15aLvKGbeAkm4Cvu4wXT9eoOAaVyWSDaPsHBwR0Wzu463uR2HYsYlsKmco7i8ysyEk=
+	t=1712674507; cv=none; b=d+3xPixvY1rXRxmOU6/K3WuRDy1JlNRxyAo9zMB0fm8KAMTfPVbca/eF2ML2pulgDmN1IZHUNHb7fSmprOGyevVOhggeuRh3/niud9Ya0uWbXxjkoA6ZlvCGkbSGX34cncimxYxDKe9krFNcgSoAumXQ1w7RpGE7iyRneRv+ciY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712674227; c=relaxed/simple;
-	bh=i6kz3Q2dnYL0OW1aHnTfjYKIt9T0R/0xsI8bXOvteiE=;
+	s=arc-20240116; t=1712674507; c=relaxed/simple;
+	bh=h1zpcBEfo5s/qBnZyGDn5N6ppBTTOjf6Dpkf2ZJp1xA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AzoXyMNpF6HOsA+K5pCf9U6bKC7TrjXKLNww3Lk3P27v/uAvCsf8zaN6RxCVTItCku9uCEz7OUWeDvsoN7MaEu8OT3pRLbfUKM9cq9kFR9Kk+CxvH9FLHqnMnUYhNC3LLPYplywbCMqL6P13ypj1XiXM81c3pYVaMOZIDYxd94A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=KvRY8cHu; arc=none smtp.client-ip=209.85.218.45
+	 To:Cc:Content-Type; b=rTXZumfbDGG+bSA+jbwlQ/rk7VDSiJ+Vt+ew1wA6cHmop8WwPf0REGnIfvvF5RhnUuYSekriScoHq9gstMXYM9kZ9nLYxg1MLzZa53HEZqYE7hSakVIR2pHaMCcNXmFeEUgbZlA2QkEBmGpw5FmhpFFv70OeLUUtch5tdxymTq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=cApc3IOR; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a519ef3054bso521350866b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 07:50:23 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a51c37a5025so364385166b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 07:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1712674222; x=1713279022; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=evULbkEmDkE2I68uywZgrm/PKi02rLv1h8SrHCCkGGA=;
-        b=KvRY8cHuN2Enn6VTqDu9xsJMKUnF+wE8VBjjEhOPfJXXNEqqnJg3JT4zYFwpA5kYjI
-         tza3feDNrY5OdgZqCWCYgN4CL0F3tq1ikleygt2zP+Z2arCEmJY5r68XnwlnSdKjae7b
-         bMEbA6CBLgSWvvPKCftqm9wgU7PwWz1tmQxYk=
+        d=szeredi.hu; s=google; t=1712674504; x=1713279304; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5TeOnCYnarmtCuB6dBllBFGd3v/ZvhWkluiDpbsGMI=;
+        b=cApc3IORTSHiuIcex72SPWTboSIvvd3iUUxodJg77KvDDGWoynRLOrmtc6xCj1TxaN
+         hG8Wit0PvwGJqNqdl08WvhF+iYGNdlDXc9SjJOqYXbtvREVkQi0Y3sJnQf+fxL3Fg/AA
+         8phqOV+eQk0joDwL1fe6EgBMzv0JOos3sFcxk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712674222; x=1713279022;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=evULbkEmDkE2I68uywZgrm/PKi02rLv1h8SrHCCkGGA=;
-        b=hDIe8Sodc+TqL0EL0pFrJZvTYBo07JIwkRfb05sXqpeHhrPI+cWfEBG10Z4ZW9Ewsx
-         RjxUx38GgjQ1ViI64v143hJhsyqj+0UE71OgYgVe/R91jqYQ5FkqinrOv9+ji5wijJ/K
-         ot1uNRhHyFTZquka73Hj+2OhED8JTOYsq380gtNH3oBTjCfCskv7TS4s/SBz1uCruGzX
-         4BSLjoxl7CGkyTzYJ4CfJ4naMVU5kJzVm4sfHK5lCNGXUDy7eAKsb0a7Hh1Yd5Ub1sdx
-         gJ/aK3A0UFdPH0f+FeKcdfYKIQPmxRtGTbKc2oX/Vc8a02yQPslvas2IyKR1tP6rSg0Q
-         G3rA==
-X-Gm-Message-State: AOJu0Yzlzy9OUN1LhyQolTWn9leonhmpw3F1vmk01wUELjfg8s/cs89v
-	bV3s88KQJpqgunVRdgOJTh8+I8el5K7MiH/o/uybjqR/AzBBtAsYGb4SMDhtBk+EUsYuPkSeCz0
-	CzbkGXY0cDM8gTR+PYa4tJ0OzWM9O/IwDleCu7Ti6FLuW944FUag=
-X-Google-Smtp-Source: AGHT+IHc6LVv2T36wCeU0Ce+15D6rxumbeQhe6frfBp977Gr422jFSZNqO+H7kNZmfvIhKm0myPpuEe62RAzbyd8+iI=
-X-Received: by 2002:a17:907:7e97:b0:a51:ab6a:fb96 with SMTP id
- qb23-20020a1709077e9700b00a51ab6afb96mr11699755ejc.45.1712674221736; Tue, 09
- Apr 2024 07:50:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712674504; x=1713279304;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a5TeOnCYnarmtCuB6dBllBFGd3v/ZvhWkluiDpbsGMI=;
+        b=uQSUpwp5yjS12CNN28fpELQUyHQIMTCcPErojxnYZKwGCdgGsxfUICRig6RCB+cu2f
+         CoCygLqbyFyyZXDA7odzCWMDLetRbSM0kUO2IagmdUWKIaGRRcR38yzHy1GxU84HANPG
+         vJ6fnEWVNm9jrjZNVJx8M329Zr/bwXsF0A5GKxGWx0YASsxTaEPnSt/Si9lxgACIiFvd
+         O3vLcGgWxflbRG0qyyNOSo2TRIW6T+GQfS2KJifN3jB7oc4zdSz1CRrChJ99Qicyp0q2
+         RkpIXQlnHnwa8ljljg6s5fkgs1U/mg75mNM3CmZEzWWCt2f+oQCeBXpr8ieyB5NLJr12
+         gwEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYi86rlVl6Iv401e2FzVT7D8S54vLh/iL/HZuaziLM0/f0y8Opt6mV9C+KingV2ZQKxLAkw/FrvpOW132nxBBJjMrcbkvjlU8uHH1fqQ==
+X-Gm-Message-State: AOJu0YzJhFfkgyrjDXYgBDCII6U1jxIOBo9QCNg7MAp+HZTyTuGos+5P
+	ZMdgkAuX15IVitXy6IEMC7uedvPRtfcRxM7dxjPxW+4tCu+oWLZSLgLUixK+S/0B/GsqCJVMBi9
+	R1z1x2Dc6KdYCAiAcEb59cChFMjGq5Z7mONDffA==
+X-Google-Smtp-Source: AGHT+IEiT6A1b2G7RPTOaQoSZH80Ptyrx2WFoTVnMG0AGW3iTo6sJEffA9Ejf25rPzedrw9sajlMBRKDqMwYx3R12zk=
+X-Received: by 2002:a17:907:7dab:b0:a4e:2d7d:3fab with SMTP id
+ oz43-20020a1709077dab00b00a4e2d7d3fabmr9196314ejc.10.1712674503536; Tue, 09
+ Apr 2024 07:55:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240328205822.1007338-1-richardfung@google.com> <20240328205822.1007338-2-richardfung@google.com>
-In-Reply-To: <20240328205822.1007338-2-richardfung@google.com>
+References: <000000000000dc3d170615846225@google.com>
+In-Reply-To: <000000000000dc3d170615846225@google.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 9 Apr 2024 16:50:10 +0200
-Message-ID: <CAJfpegvtUywhs8vse1rZ6E=hnxUS6uo_eii-oHDmWd0hb35jjA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] fuse: Add initial support for fs-verity
-To: Richard Fung <richardfung@google.com>
-Cc: linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev, 
-	Eric Biggers <ebiggers@kernel.org>
+Date: Tue, 9 Apr 2024 16:54:52 +0200
+Message-ID: <CAJfpegtnsG99Nf-FVZV1o9Q2kuarQGO7vTTVv+yT4qfubPf+RQ@mail.gmail.com>
+Subject: Re: [syzbot] [kernfs?] possible deadlock in walk_component (3)
+To: syzbot <syzbot+fa60c773a1654e2eda40@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, 28 Mar 2024 at 21:58, Richard Fung <richardfung@google.com> wrote:
+I think this has the same underlying cause as the other
+kernfs-overlayfs deadlocks.
+
+#syz dup: possible deadlock in kernfs_fop_llseek
+
+
+On Sun, 7 Apr 2024 at 18:43, syzbot
+<syzbot+fa60c773a1654e2eda40@syzkaller.appspotmail.com> wrote:
 >
-> This adds support for the FS_IOC_ENABLE_VERITY and FS_IOC_MEASURE_VERITY
-> ioctls. The FS_IOC_READ_VERITY_METADATA is missing but from the
-> documentation, "This is a fairly specialized use case, and most fs-verity
-> users won=E2=80=99t need this ioctl."
+> Hello,
 >
-> Signed-off-by: Richard Fung <richardfung@google.com>
+> syzbot found the following issue on:
+>
+> HEAD commit:    3e92c1e6cd87 Merge tag 'selinux-pr-20240402' of git://git...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16ebae03180000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=411644804960f423
+> dashboard link: https://syzkaller.appspot.com/bug?extid=fa60c773a1654e2eda40
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-3e92c1e6.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/34cc55fbbf72/vmlinux-3e92c1e6.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/09668ee3251b/bzImage-3e92c1e6.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+fa60c773a1654e2eda40@syzkaller.appspotmail.com
+>
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.9.0-rc2-syzkaller-00042-g3e92c1e6cd87 #0 Not tainted
+> ------------------------------------------------------
+> syz-executor.2/22789 is trying to acquire lock:
+> ffff888032f275b0 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}, at: inode_lock_shared include/linux/fs.h:803 [inline]
+> ffff888032f275b0 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}, at: lookup_slow fs/namei.c:1708 [inline]
+> ffff888032f275b0 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}, at: walk_component+0x342/0x5b0 fs/namei.c:2004
+>
+> but task is already holding lock:
+> ffff888040373488 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x281/0x500 fs/kernfs/file.c:325
+>
+> which lock already depends on the new lock.
+>
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #3 (&of->mutex){+.+.}-{3:3}:
+>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>        __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+>        kernfs_fop_write_iter+0x281/0x500 fs/kernfs/file.c:325
+>        call_write_iter include/linux/fs.h:2108 [inline]
+>        iter_file_splice_write+0x906/0x10b0 fs/splice.c:743
+>        do_splice_from fs/splice.c:941 [inline]
+>        do_splice+0x12c7/0x1f10 fs/splice.c:1354
+>        __do_splice+0x327/0x360 fs/splice.c:1436
+>        __do_sys_splice fs/splice.c:1652 [inline]
+>        __se_sys_splice fs/splice.c:1634 [inline]
+>        __x64_sys_splice+0x1d2/0x260 fs/splice.c:1634
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xd2/0x260 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x72/0x7a
+>
+> -> #2 (&pipe->mutex){+.+.}-{3:3}:
+>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>        __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+>        pipe_lock fs/pipe.c:92 [inline]
+>        pipe_lock+0x64/0x80 fs/pipe.c:89
+>        iter_file_splice_write+0x1f0/0x10b0 fs/splice.c:687
+>        do_splice_from fs/splice.c:941 [inline]
+>        do_splice+0x12c7/0x1f10 fs/splice.c:1354
+>        __do_splice+0x327/0x360 fs/splice.c:1436
+>        __do_sys_splice fs/splice.c:1652 [inline]
+>        __se_sys_splice fs/splice.c:1634 [inline]
+>        __x64_sys_splice+0x1d2/0x260 fs/splice.c:1634
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xd2/0x260 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x72/0x7a
+>
+> -> #1 (sb_writers#5){.+.+}-{0:0}:
+>        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>        __sb_start_write include/linux/fs.h:1662 [inline]
+>        sb_start_write include/linux/fs.h:1798 [inline]
+>        mnt_want_write+0x6f/0x450 fs/namespace.c:409
+>        ovl_xattr_set+0x136/0x530 fs/overlayfs/xattrs.c:63
+>        ovl_own_xattr_set+0x86/0xd0 fs/overlayfs/xattrs.c:213
+>        __vfs_setxattr+0x173/0x1e0 fs/xattr.c:200
+>        __vfs_setxattr_noperm+0x127/0x5e0 fs/xattr.c:234
+>        __vfs_setxattr_locked+0x182/0x260 fs/xattr.c:295
+>        vfs_setxattr+0x146/0x350 fs/xattr.c:321
+>        do_setxattr+0x146/0x170 fs/xattr.c:629
+>        setxattr+0x15d/0x180 fs/xattr.c:652
+>        path_setxattr+0x179/0x1e0 fs/xattr.c:671
+>        __do_sys_setxattr fs/xattr.c:687 [inline]
+>        __se_sys_setxattr fs/xattr.c:683 [inline]
+>        __x64_sys_setxattr+0xc4/0x160 fs/xattr.c:683
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xd2/0x260 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x72/0x7a
+>
+> -> #0 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>        validate_chain kernel/locking/lockdep.c:3869 [inline]
+>        __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+>        lock_acquire kernel/locking/lockdep.c:5754 [inline]
+>        lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+>        down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
+>        inode_lock_shared include/linux/fs.h:803 [inline]
+>        lookup_slow fs/namei.c:1708 [inline]
+>        walk_component+0x342/0x5b0 fs/namei.c:2004
+>        lookup_last fs/namei.c:2461 [inline]
+>        path_lookupat+0x17f/0x770 fs/namei.c:2485
+>        filename_lookup+0x1e5/0x5b0 fs/namei.c:2514
+>        kern_path+0x35/0x50 fs/namei.c:2622
+>        lookup_bdev+0xd9/0x280 block/bdev.c:1079
+>        resume_store+0x1d8/0x460 kernel/power/hibernate.c:1235
+>        kobj_attr_store+0x55/0x80 lib/kobject.c:840
+>        sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:136
+>        kernfs_fop_write_iter+0x343/0x500 fs/kernfs/file.c:334
+>        call_write_iter include/linux/fs.h:2108 [inline]
+>        new_sync_write fs/read_write.c:497 [inline]
+>        vfs_write+0x6db/0x1100 fs/read_write.c:590
+>        ksys_write+0x12f/0x260 fs/read_write.c:643
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xd2/0x260 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x72/0x7a
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>   &ovl_i_mutex_dir_key[depth] --> &pipe->mutex --> &of->mutex
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&of->mutex);
+>                                lock(&pipe->mutex);
+>                                lock(&of->mutex);
+>   rlock(&ovl_i_mutex_dir_key[depth]);
+>
+>  *** DEADLOCK ***
+>
+> 4 locks held by syz-executor.2/22789:
+>  #0: ffff88802cc70ac8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xeb/0x180 fs/file.c:1191
+>  #1: ffff88802533e420 (sb_writers#9){.+.+}-{0:0}, at: ksys_write+0x12f/0x260 fs/read_write.c:643
+>  #2: ffff888040373488 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x281/0x500 fs/kernfs/file.c:325
+>  #3: ffff8880196eb5a8 (kn->active#85){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x2a4/0x500 fs/kernfs/file.c:326
+>
+> stack backtrace:
+> CPU: 0 PID: 22789 Comm: syz-executor.2 Not tainted 6.9.0-rc2-syzkaller-00042-g3e92c1e6cd87 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+>  check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+>  check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>  validate_chain kernel/locking/lockdep.c:3869 [inline]
+>  __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+>  lock_acquire kernel/locking/lockdep.c:5754 [inline]
+>  lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+>  down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
+>  inode_lock_shared include/linux/fs.h:803 [inline]
+>  lookup_slow fs/namei.c:1708 [inline]
+>  walk_component+0x342/0x5b0 fs/namei.c:2004
+>  lookup_last fs/namei.c:2461 [inline]
+>  path_lookupat+0x17f/0x770 fs/namei.c:2485
+>  filename_lookup+0x1e5/0x5b0 fs/namei.c:2514
+>  kern_path+0x35/0x50 fs/namei.c:2622
+>  lookup_bdev+0xd9/0x280 block/bdev.c:1079
+>  resume_store+0x1d8/0x460 kernel/power/hibernate.c:1235
+>  kobj_attr_store+0x55/0x80 lib/kobject.c:840
+>  sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:136
+>  kernfs_fop_write_iter+0x343/0x500 fs/kernfs/file.c:334
+>  call_write_iter include/linux/fs.h:2108 [inline]
+>  new_sync_write fs/read_write.c:497 [inline]
+>  vfs_write+0x6db/0x1100 fs/read_write.c:590
+>  ksys_write+0x12f/0x260 fs/read_write.c:643
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xd2/0x260 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x72/0x7a
+> RIP: 0033:0x7fb6a4e7dde9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fb6a5b2f0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00007fb6a4fabf80 RCX: 00007fb6a4e7dde9
+> RDX: 0000000000000012 RSI: 0000000020000000 RDI: 0000000000000007
+> RBP: 00007fb6a4eca47a R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 000000000000004d R14: 00007fb6a4fabf80 R15: 00007ffdad03fdb8
+>  </TASK>
+> PM: Image not found (code -6)
+>
+>
 > ---
->  fs/fuse/ioctl.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 >
-> diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-> index 726640fa439e..a0e86c3de48f 100644
-> --- a/fs/fuse/ioctl.c
-> +++ b/fs/fuse/ioctl.c
-> @@ -8,6 +8,7 @@
->  #include <linux/uio.h>
->  #include <linux/compat.h>
->  #include <linux/fileattr.h>
-> +#include <linux/fsverity.h>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 >
->  static ssize_t fuse_send_ioctl(struct fuse_mount *fm, struct fuse_args *=
-args,
->                                struct fuse_ioctl_out *outarg)
-> @@ -227,6 +228,57 @@ long fuse_do_ioctl(struct file *file, unsigned int c=
-md, unsigned long arg,
->                         out_iov =3D iov;
->                         out_iovs =3D 1;
->                 }
-> +
-> +               /* For fs-verity, determine iov lengths from input */
-> +               switch (cmd) {
-> +               case FS_IOC_MEASURE_VERITY: {
-> +                       __u16 digest_size;
-> +                       struct fsverity_digest __user *uarg =3D
-> +               (struct fsverity_digest __user *)arg;
-> +
-> +                       if (copy_from_user(&digest_size, &uarg->digest_si=
-ze,
-> +                                                sizeof(digest_size)))
-> +                               return -EFAULT;
-> +
-> +                       if (digest_size > SIZE_MAX - sizeof(struct fsveri=
-ty_digest))
-> +                               return -EINVAL;
-> +
-> +                       iov->iov_len =3D sizeof(struct fsverity_digest) +=
- digest_size;
-> +                       break;
-> +               }
-> +               case FS_IOC_ENABLE_VERITY: {
-> +                       struct fsverity_enable_arg enable;
-> +                       struct fsverity_enable_arg __user *uarg =3D
-> +               (struct fsverity_enable_arg __user *)arg;
-> +                       const __u32 max_buffer_len =3D FUSE_MAX_MAX_PAGES=
- * PAGE_SIZE;
-> +
-> +                       if (copy_from_user(&enable, uarg, sizeof(enable))=
-)
-> +                               return -EFAULT;
-> +
-> +                       if (enable.salt_size > max_buffer_len ||
-> +               enable.sig_size > max_buffer_len)
-> +                               return -ENOMEM;
-> +
-> +                       if (enable.salt_size > 0) {
-> +                               iov++;
-> +                               in_iovs++;
-> +
-> +                               iov->iov_base =3D u64_to_user_ptr(enable.=
-salt_ptr);
-> +                               iov->iov_len =3D enable.salt_size;
-> +                       }
-> +
-> +                       if (enable.sig_size > 0) {
-> +                               iov++;
-> +                               in_iovs++;
-> +
-> +                               iov->iov_base =3D u64_to_user_ptr(enable.=
-sig_ptr);
-> +                               iov->iov_len =3D enable.sig_size;
-> +                       }
-> +                       break;
-> +               }
-> +               default:
-> +                       break;
-> +               }
->         }
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
 >
->   retry:
-
-I'm not thrilled by having ioctl specific handling added to the
-generic fuse ioctl code.
-
-But more important is what  the fsverity folks think (CC's added).
-
-Thanks,
-Miklos
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
 
