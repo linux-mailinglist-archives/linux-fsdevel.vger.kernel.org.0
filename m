@@ -1,164 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-16500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2362F89E5B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 00:42:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECE789E616
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 01:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 527701C21986
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 22:42:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA9E71C21151
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 23:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA1F158A2B;
-	Tue,  9 Apr 2024 22:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6386E158DC6;
+	Tue,  9 Apr 2024 23:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlUcq+VC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40178433A6
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 22:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C9E158DD2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 23:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712702546; cv=none; b=IEjslSm+sObGcmTEtez5WFPRwo0FuoJwBAC2ml4msV7cM2ubzmoeQ247+JuXzlWFQCIuZHYvrTEg/8RQf6LWNqKiXfOnVQtORlZQ1oa5iS5v4Xv2jM8EytlojC7iIjcIN6PcNh63qMGRvabz9/30gNws+IzyUekYiYbb4gy9f7A=
+	t=1712705499; cv=none; b=g0yE9Dro8m8AQsYPJ3OrHhj3po7N+x1t7/E4px1R1gi5HXflpc3ZGbKKqKIhvj9Nj/rj2tdwKEnb+V3r97OwgzlE05ylV6M4jiUQTVxVxfa3eSDXw2g0YbdINhkPkIIQiMAsUKb8iRKYjtK7n/A9vgCbQFlDt1N0eUHGVisgxlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712702546; c=relaxed/simple;
-	bh=8E5bmm5Ldq3U91oDOHc/udctTNJo36vV/qKNkwvUzZ4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UO/Jd3wiMI6tH8UQ0JBeku85pkvzy0yp3Kf8BP4dws3/3eHxW18jQmljbzsVnP97HEQbG/kKEokndJfLNHw9YVGL+N/4laKOiV4DlXDaNN6jhjhKYrz8EMJKyGlvBe13doeg7An+sckBtFnV/5logcbbAuC2Yv8ebakpRfHgLoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7cc74ea9c20so742632239f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 15:42:25 -0700 (PDT)
+	s=arc-20240116; t=1712705499; c=relaxed/simple;
+	bh=3+eSqMdb0ix5SMxNX1lb137yW7NgKNVUO3ksXY/YFAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rc1IMze0NxqI260EnazndBp9z1NmT8uKPCq3FCNFcuJYtbL4bQ28ZztzumIxnDPwEDjtv5SM3uVhePsKOkijaMvkP3wow+aamJIB5msLitH32cA6DiF3dVmqSPmzTyo50C2BAUUYLUNrXYUCmVj45tITfIE+leZuFazRBsiBAsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LlUcq+VC; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6e6888358dfso3706891a34.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 16:31:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712705497; x=1713310297; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=VkwGNm4RyzOk5++2nzwpGYtLyqTAyKuRboic/aNG1d0=;
+        b=LlUcq+VCbNkkGWP9zkn252v2B43D8Bcb9qyy7XH0fIfnUaR3vCJhdKxbh+7PSVhF2m
+         Jjpi844LZeGGEiyh8ivRntenDH3Vvfgy6xS/wIY/adlzt5oNbQ/YlAhYbdXvvr+5qakj
+         XQ86nzJbP6CR/wRQ1xivOztNgIcaYDNkm0oZluHb7TBuSNw7kps6XiOFDMFBYzW2khJq
+         EgmWNbQBMUieTyAkZkClbotFRuF+ijZ8ZrhqexU14wDlz8ql/2A8DYq0nlyXSvA4d+m9
+         1XrEZiHX8KNUYI5YIqWGhCUJyp+7gZWy32kyFo8vAhngj3OTHsTzAWVaANhkXeiWrwlh
+         QkBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712702544; x=1713307344;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tbR/ywQXcXQ0J/6NWBwaaa7Su1KBjSGiK0MxQ+x6Vww=;
-        b=N2RhWTRKr6abCTSyJwJJ9PJPuok1WS9njcqsuA+rNkSqxQLTpAxW/gLnJ9HBFg5XgU
-         b44jlhLtfH1cL9uGOZh5J3gDkygxamGtN92N+rKAh1ATlUk0G+orgc3KKXlhIGkoKA2y
-         og7KSIYb6ekyGUnXvMq5b8zV5SZXtEwL1UTPAWm+pbXUZ/qLE1T0zueNL1HYDnxOmH6n
-         NYZgpFggfey2UC87nQuO6rjh+9EODilpdSi05oxJh68zZ12LoBW0sTLFQmAaXbAyQqcr
-         i41VV9qXLxuJvi8uPI0Qb6l+fYIanPIuPrSL+0Ux9uD2Cp/FmkAScgE3Dv5T67H6ZtW1
-         XRIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKKtpaV1sYp67iUwe893knyzeKCsg20bTnpG1mEwxmNbLDPp5KRfADhFL3DqIm3697Wd5gH6JmlgDzm166OSnY6m5YaV2KA396uB9itQ==
-X-Gm-Message-State: AOJu0YySB93weCW4g+etjpO27wpOfFLXgu3Ue2m3xZtWJiovZhzSsuwT
-	uytloCsaHL5ExJPDd3dRr2/SBLqmYIO3H8O70QQxUeECvJa7N9z0R8/bLnxw50+46z2JlxQQdJA
-	QUnPCEzJ2Ronm4ob/ijtIw7p47WiR34Ywh9VFCfICDip3ZiOLjehsAyA=
-X-Google-Smtp-Source: AGHT+IGpu2AtcRiOJn/rn9Yfk8HvsmyICSMz3tDbQhnHy36ixmFFckR1nl/fH9vUh6Veu1i4aDo7qWwiiTftRZ+2tLf+2ZotLjsj
+        d=1e100.net; s=20230601; t=1712705497; x=1713310297;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VkwGNm4RyzOk5++2nzwpGYtLyqTAyKuRboic/aNG1d0=;
+        b=vkw/dEu9uU/JTsvpuvgawF5e1cXTpCqaLMwWlOfmAGmF5ZcLokQpNvJL3Hec1kkDBd
+         dp7WzDzr387XYeXivDuActJ/b6xZQKDje1QOP561cUQYpn9buWxXMTn/51yiS3+ybn63
+         gDcCsMCHC0Xt0OTTxETTq3Ws64WfP/CJHR2i6Vps4fnTTEkygyzIs1Jc0phEmbXLRcXG
+         NoJq8zVU/5Xq8/iLhOsoujActVJWlvqIIf9yAyPNcR82Qrff1T0B4SZlI6DsDuN8Qr4q
+         BRf10rhzwYr+qpm+LXwc6mcVFT5c0ni4uQgvX4sQgD634G+N9DLBwunykJsKjH71AajL
+         /u7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVJWKu9/C3+LV924FdKgJT57YKPrysr/jbLOe2PeIUE5EVxCWJRe2aF763fiiEnffS3U2NQycjxYj+fPWkFjut5TrrU0X65xd7Abev3g==
+X-Gm-Message-State: AOJu0YxYRh8IJCmtRgPTGnbYjBTM0SV7E3diaZG7NAeWRs8XpMEiK/xq
+	YvrmBf9ZuEoWb0EGmGQWQIruj/Css6xYu1cRUqr4W+r8rBZAHNlK
+X-Google-Smtp-Source: AGHT+IEOEJxLN/7pjznLJ5nSRlP+okNhoJdPUM4EgviHDRb/twxiJZ8HTiEwNrDjwG7D6P4+KoUnBg==
+X-Received: by 2002:a05:6830:6d18:b0:6ea:30b9:c778 with SMTP id dz24-20020a0568306d1800b006ea30b9c778mr704262otb.24.1712705497114;
+        Tue, 09 Apr 2024 16:31:37 -0700 (PDT)
+Received: from localhost.localdomain (070-114-203-196.res.spectrum.com. [70.114.203.196])
+        by smtp.gmail.com with ESMTPSA id h6-20020a9d7986000000b006ea17d15c9dsm989532otm.59.2024.04.09.16.31.36
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 09 Apr 2024 16:31:36 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+From: John Groves <John@Groves.net>
+X-Google-Original-From: John Groves <john@groves.net>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Cc: John Groves <John@Groves.net>,
+	John Groves <jgroves@micron.com>,
+	john@jagalactic.com,
+	John Groves <john@groves.net>
+Subject: [PATCH 0/1] sget_dev() minor bug fix
+Date: Tue,  9 Apr 2024 18:31:30 -0500
+Message-Id: <cover.1712704849.git.john@groves.net>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4104:b0:482:b15b:df59 with SMTP id
- ay4-20020a056638410400b00482b15bdf59mr24897jab.2.1712702544521; Tue, 09 Apr
- 2024 15:42:24 -0700 (PDT)
-Date: Tue, 09 Apr 2024 15:42:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c5bc980615b1a25c@google.com>
-Subject: [syzbot] [ntfs3?] WARNING in do_open_execat (2)
-From: syzbot <syzbot+fe18c63ce101f2b358bb@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, brauner@kernel.org, 
-	ebiederm@xmission.com, jack@suse.cz, keescook@chromium.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+I found this small mess while working on applying Christian Brauner's
+very helpful suggestions for get_tree() handling in famfs (for which
+v2 is coming soon).
 
-syzbot found the following issue on:
+John Groves (1):
+  sget_dev() bug fix: dev_t passed by value but stored via stack address
 
-HEAD commit:    707081b61156 Merge branch 'for-next/core', remote-tracking..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=106d6d15180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=caeac3f3565b057a
-dashboard link: https://syzkaller.appspot.com/bug?extid=fe18c63ce101f2b358bb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156040bd180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=149d2ead180000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6cad68bf7532/disk-707081b6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1a27e5400778/vmlinux-707081b6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/67dfc53755d0/Image-707081b6.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/e198b7a8a7f2/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fe18c63ce101f2b358bb@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 4096
-ntfs: volume version 3.1.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6164 at fs/exec.c:940 do_open_execat+0x2bc/0x3bc
-Modules linked in:
-CPU: 0 PID: 6164 Comm: syz-executor379 Not tainted 6.8.0-rc7-syzkaller-g707081b61156 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : do_open_execat+0x2bc/0x3bc
-lr : do_open_execat+0x2b8/0x3bc fs/exec.c:939
-sp : ffff8000977a7b60
-x29: ffff8000977a7bd0 x28: 0000000000000000 x27: ffff0000d609da2c
-x26: 00000000ffffff9c x25: dfff800000000000 x24: ffff700012ef4f6c
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: fffffffffffffff3 x19: ffff0000d5ba0000 x18: ffff8000977a7100
-x17: 000000000000c791 x16: ffff80008aca6dc0 x15: 0000000000000002
-x14: 1ffff00012ef4f34 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff700012ef4f36 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d609da00 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000010
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000008000
-Call trace:
- do_open_execat+0x2bc/0x3bc
- alloc_bprm+0x44/0x934 fs/exec.c:1541
- do_execveat_common+0x158/0x814 fs/exec.c:1935
- do_execveat fs/exec.c:2069 [inline]
- __do_sys_execveat fs/exec.c:2143 [inline]
- __se_sys_execveat fs/exec.c:2137 [inline]
- __arm64_sys_execveat+0xd0/0xec fs/exec.c:2137
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 24796
-hardirqs last  enabled at (24795): [<ffff80008ae5ce28>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-hardirqs last  enabled at (24795): [<ffff80008ae5ce28>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
-hardirqs last disabled at (24796): [<ffff80008ad66988>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
-softirqs last  enabled at (24766): [<ffff80008002189c>] softirq_handle_end kernel/softirq.c:399 [inline]
-softirqs last  enabled at (24766): [<ffff80008002189c>] __do_softirq+0xac8/0xce4 kernel/softirq.c:582
-softirqs last disabled at (24737): [<ffff80008002ab48>] ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
----[ end trace 0000000000000000 ]---
+ fs/super.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: fec50db7033ea478773b159e0e2efb135270e3b7
+-- 
+2.43.0
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
