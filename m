@@ -1,111 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-16388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA13789CF97
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 02:58:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B36689D000
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 03:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29BA41C21E6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 00:58:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195281F23175
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 01:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB096FD5;
-	Tue,  9 Apr 2024 00:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AFE4EB23;
+	Tue,  9 Apr 2024 01:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Yg0oT7qs"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="O1JD9hbX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABCE2572
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 00:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2058B8F59;
+	Tue,  9 Apr 2024 01:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712624310; cv=none; b=m0Jw+pri6I2uXdLaFHC+RMYZiNUqfNeoerUKLYIyY60bs4leuD+SqlGmMTidw4UgMJb883v14ZjKeO1kCru140zQcW5gGq8zIZ9ouo1qdFHoSAxgw5ER9MrWI2fy2k98Eieuwm/6XrWOGhHiYwgYLK9zM1jbHupdVyjS7n6d0lw=
+	t=1712627285; cv=none; b=edP2i8nKhovoZ0jfJv0y5qnBpR8Sz9EDFccGPHBitWqEW3Hl4HmYfg53JKLh0Q0HFKEP7QghGN+yaZCwRxdbTN1ZVvvVO3xd62gL2NH7VhVwGsUmOx3rOeZriwcm9IGqBBPRgbowmJ+17CntHyn+vCxH28kmm549Wss9wdrcgws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712624310; c=relaxed/simple;
-	bh=V3FgUl+FC3/IXTQNHB8mnAyeNIvxhDluphd24WLUhWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zip/R8gfDXwyWyadf5PbdfoLzxYH7OK+9GpS0HRXxYsqpI96XcteNiL0onfB4mo7Vo8fiz98Ie5REzrDKk39HSfUhrGHwf3siRef+q/kWjUCWUZgUrFD8Q4PDYlhcKazKqmmwXf04RBotbn0FUI5/GIzS/4DyTePkAV49AmhPyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Yg0oT7qs; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 8 Apr 2024 20:58:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1712624306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3p52dOP2BlWsYrHqgAKRiWPR5jPclXgPdAlCcB00rdo=;
-	b=Yg0oT7qsnYRV74HSHZV+PlfEXWOlcnFzfPrvXVczJoE3Vngi7zfHZ2/ShgxuejqSLDaMMK
-	U5FGxqvfqWMQDSdwmZz3Le+3pQE/gahuOSVkMc0TjzXwTPfS204xfiJqi1B2ETV4/d0MJb
-	jYvHh/kfoPgNCoQM/NPr2GXhQRCRdz8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Philipp Stanner <pstanner@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
-	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
-	Luc Maranget <luc.maranget@inria.fr>, Akira Yokosawa <akiyks@gmail.com>, 
-	Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	elver@google.com, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <bmbsx3zfgedqo5ef6yzzvpnwx2ukhzhm33ovb6zyhq4g6vutnn@b7qlnf2pyxvj>
-References: <20240322233838.868874-1-boqun.feng@gmail.com>
- <s2jeqq22n5ef5jknaps37mfdjvuqrns4w7i22qp2r7r4bzjqs2@my3eyxoa3pl3>
- <CAHk-=whY5A=S=bLwCFL=043DoR0TTgSDUmfPDx2rXhkk3KANPQ@mail.gmail.com>
- <u2suttqa4c423q4ojehbucaxsm6wguqtgouj7vudp55jmuivq3@okzfgryarwnv>
- <CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com>
- <c51227c9a4103ad1de43fc3cda5396b1196c31d7.camel@redhat.com>
- <CAHk-=wjP1i014DGPKTsAC6TpByC3xeNHDjVA4E4gsnzUgJBYBQ@mail.gmail.com>
- <ZhQVHZnU3beOhEGU@casper.infradead.org>
- <fec60bba-e414-43d1-bc3e-870f5ffe4626@paulmck-laptop>
- <ZhQjT4xdS3h-GbtC@casper.infradead.org>
+	s=arc-20240116; t=1712627285; c=relaxed/simple;
+	bh=2xUwOxokMZcO0aIfTzGCvhfphl2NUW66BLFA0zELaKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=C51bUnzOdEc7iXK4YOcSYxyRSIUBPmw6WV/xfeWRGFLOxLz4o17+7DcCb0YMUwG/KtqeOJnkRZM6JF4h9J5D7AATTA0xrFcw9QsvrgojTu/YWPol6piUdGxfJUW7fl17ba/+Xytj3H3gEdE9pa5CMf1pmINTITS36z8Bm2iVTLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=O1JD9hbX; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1712627280; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=2xUwOxokMZcO0aIfTzGCvhfphl2NUW66BLFA0zELaKM=;
+	b=O1JD9hbXxR4yKBGX5OfSv0L5i6pQG8e4NPcHFcTFJIOD2aevY2bUdUXB2uBensVAZVMrHtwxxOeckcTDfhuSndLJe1Ba+5sP9vXWb2r+E0GVC7lo2DSrBNpX+Usb4RcwgFdlxx0fJ3TtIxwVFR2YrH+W9Z7LFaXe6/W1nWi5tUQ=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0W4Ci6VR_1712627279;
+Received: from 30.97.48.141(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W4Ci6VR_1712627279)
+          by smtp.aliyun-inc.com;
+          Tue, 09 Apr 2024 09:48:00 +0800
+Message-ID: <8b9e2dc7-adef-4a2a-8284-f4885d3361bb@linux.alibaba.com>
+Date: Tue, 9 Apr 2024 09:47:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZhQjT4xdS3h-GbtC@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [erofs?] BUG: using smp_processor_id() in preemptible
+ code in z_erofs_get_gbuf
+To: syzbot <syzbot+27cc650ef45b379dfe5a@syzkaller.appspotmail.com>,
+ chao@kernel.org, dhavale@google.com, huyue2@coolpad.com,
+ jefflexu@linux.alibaba.com, linux-erofs@lists.ozlabs.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, xiang@kernel.org
+References: <00000000000084b9dd061599e789@google.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <00000000000084b9dd061599e789@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 08, 2024 at 06:03:11PM +0100, Matthew Wilcox wrote:
-> On Mon, Apr 08, 2024 at 09:55:23AM -0700, Paul E. McKenney wrote:
-> > On Mon, Apr 08, 2024 at 05:02:37PM +0100, Matthew Wilcox wrote:
-> > > In my ideal world, the compiler would turn this into:
-> > > 
-> > > 	newfolio->flags |= folio->flags & MIGRATE_MASK;
-> > 
-> > Why not accumulate the changes in a mask, and then apply the mask the
-> > one time?  (In situations where __folio_set_foo() need not apply.)
-> 
-> But it irks me that we can't tell the compiler this is a safe
-> transformation for it to make. There are a number of places where
-> similar things happen.
-
-Same thing comes up with bignum code - you really want to be able to
-tell the compiler "you can apply x/y/z optimizations for these
-functions", e.g. replace add(mul(a, b), c) with fma(a, b, c).
-
-Compiler optimizations are just algebraic transformations, we just need
-a way to tell the compiler what the algebraic properties of our
-functions are.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev
 
