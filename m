@@ -1,98 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-16433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9DBB89D701
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 12:30:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3CC89D742
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 12:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EEBB1F22438
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 10:30:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8031C22610
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 10:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AAE83CB2;
-	Tue,  9 Apr 2024 10:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FB284D3A;
+	Tue,  9 Apr 2024 10:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EwVyzQC3"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A6+c2l4N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D076FE35;
-	Tue,  9 Apr 2024 10:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2690C823AE;
+	Tue,  9 Apr 2024 10:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712658624; cv=none; b=Voghjr7whVy/xA+qZyD+PMQd/ijw3KUWjcBWhyOyuDMD8iHY56kb6LYcSHOEiu6rWqF1VxWZqzgPDvpyVW9w3sJXRjURb6HXCbyulv7yhuxd8HH2t56dCB9l16urG4b+9KMUMHRJdvIh6Nec8hynlUq52sT+/doQFkD8wOPxs68=
+	t=1712659841; cv=none; b=h/yZy94C2zJgbCJrFFSHSJnfGvAmsGCggBYIzQzLzN0a++6ytLRmPsQs5n30WBAG4ifeQtfcCFobaTaEn+nbJEWKDdj881kKpT1I0aBhMNvmIi8JImbTN+ZJoj/yGDH0VsHtXun2zxIwCKPZiqQFd1NbUrpzZjyxykJHl33Z9ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712658624; c=relaxed/simple;
-	bh=+WsfLWPMvINV1p5eV2N/9XA7OTihbOmV8wGOocCa5qc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=spRXrWQ7rDGQeGw1kSzvRKm+dzE5xsskerB/62LZ099Unn9gJ3J06GEvqXj0XsOw+g9ZNndcm4QLKLztvLu5PaB90JxOxZYTiaP+FoI5mq8lROX2sejLa1U2vo8cxc34a8nzborpW8I1wi+cR6Rbi57ukbcrSCdG7vf7unwiP3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EwVyzQC3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5851C433F1;
-	Tue,  9 Apr 2024 10:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712658624;
-	bh=+WsfLWPMvINV1p5eV2N/9XA7OTihbOmV8wGOocCa5qc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EwVyzQC3uVh2JUZgsRjblcZ/RBS8aK/vY7BvQAYVeyh7l7oCX+CaHaUZGe5mA4qnh
-	 jiaQkT7zcpBQ+hnvdV4d73JhgjdOQnRySSUcyJqGbrOz2yVpExKMzq4KtY2rPgzHxu
-	 oa0Bowy3uG1lJM+HWWsgouCU8ECkpr+LVeUWxTmoDbDUdQIFoYWqJXtSfdotaZHlmu
-	 MuifkwOP+2KHokArRICAgMAYRiBvIaEwtJWGFCgUPnIImi72xD2F3PHgMXuWDIVBuo
-	 mdcs3WIg8wm/tw3y/sN79SgysczfXvkHu4Y0cwcDl4YYH/k33J2da5lV76vmNwW0Ya
-	 8Cr4LvLjrZHLQ==
-From: Christian Brauner <brauner@kernel.org>
-To: linke li <lilinke99@qq.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	xujianhao01@gmail.com,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/dcache: Re-use value stored to dentry->d_flags instead of re-reading
-Date: Tue,  9 Apr 2024 12:29:22 +0200
-Message-ID: <20240409-gattung-vorsehen-0187be2ab894@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <tencent_5E187BD0A61BA28605E85405F15228254D0A@qq.com>
-References: <tencent_5E187BD0A61BA28605E85405F15228254D0A@qq.com>
+	s=arc-20240116; t=1712659841; c=relaxed/simple;
+	bh=7d49H/3MDKc37vAmRfm+8BB1JMNOPrM2MZ5puWV2Yvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dy3UBQLITymu/Ecm0KDnRnu+dbOr+UcUKio5dY9Y7L0OkSD0+3Ugsd7Px5UUmJ25QKzM1YxJXjpDzxz9FdJjMQH7rZBDIqch7rYM4HcqgIfuuBXwn075pwBqSDga3RxLBIcmChy2/pjsUFKy6s/iG/LKhh5qkJ/BaZZDra1s/OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A6+c2l4N; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fdPl3WFCWHLRN70qmtNx/X3LaV4RnMmwDJdJ+T0QErQ=; b=A6+c2l4NtzCr3n9/z3r782zwiM
+	t8LFZ2Y+6asvkVk0ieqbUPKWxtF67/X0IAKbJiidA9qgUMCQu80Bd3Ys70P+z1te0VntRDE6sSgSY
+	od9Q4gM6yCXEsrnDuoAvwP49i2cA1aJ4AV5t5dJJJ9TI4oHZ6vjCMcMcrqZTcf8Xm5TXOwyzEkmJD
+	aeVg+rKtRVKRuL2YMkIfLqGYTnjFPe+NQBKSioszfByY63QFkGFeO0C4uaypuWZ4L2Qd1pDGR4ooc
+	xgsclxyA2Ldrsb2q7geUJ5Qs31a4NVyzYmJc97Jplwk1LT2VPVVjQylOoLtgQk5zMsBgGEgMjtG9B
+	zNw4txXA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ru93Q-00000007Z81-2AVo;
+	Tue, 09 Apr 2024 10:50:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0C0F630040C; Tue,  9 Apr 2024 12:50:16 +0200 (CEST)
+Date: Tue, 9 Apr 2024 12:50:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	"Bj\"orn Roy Baron" <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
+Message-ID: <20240409105015.GC21779@noisy.programming.kicks-ass.net>
+References: <20240322233838.868874-1-boqun.feng@gmail.com>
+ <ZgFVnar3nS4F8eIX@FVFF77S0Q05N>
+ <ZgHly_fioG7X4wGE@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1211; i=brauner@kernel.org; h=from:subject:message-id; bh=+WsfLWPMvINV1p5eV2N/9XA7OTihbOmV8wGOocCa5qc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSJSixTuvd5wwWt4sJlh7/t2NXmezOX7f+n53Mqrpxbc qijz/tzYEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE1LcyMvTLbUubGrfFVPu1 9+oDD/YW3tgz58OKS5Iay5w7Wd6rLGVj+Gf4Z273AebUedYL9sfEaW7rumww63mm8/WTE0MaTa1 nz2QHAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZgHly_fioG7X4wGE@boqun-archlinux>
 
-On Wed, 03 Apr 2024 10:10:08 +0800, linke li wrote:
-> Currently, the __d_clear_type_and_inode() writes the value flags to
-> dentry->d_flags, then immediately re-reads it in order to use it in a if
-> statement. This re-read is useless because no other update to
-> dentry->d_flags can occur at this point.
-> 
-> This commit therefore re-use flags in the if statement instead of
-> re-reading dentry->d_flags.
-> 
+On Mon, Mar 25, 2024 at 01:59:55PM -0700, Boqun Feng wrote:
+> On Mon, Mar 25, 2024 at 10:44:45AM +0000, Mark Rutland wrote:
 > [...]
+> > > 
+> > > * I choose to re-implement atomics in Rust `asm` because we are still
+> > >   figuring out how we can make it easy and maintainable for Rust to call
+> > >   a C function _inlinely_ (Gary makes some progress [2]). Otherwise,
+> > >   atomic primitives would be function calls, and that can be performance
+> > >   bottleneck in a few cases.
+> > 
+> > I don't think we want to maintain two copies of each architecture's atomics.
+> > This gets painful very quickly (e.g. as arm64's atomics get patched between
+> > LL/SC and LSE forms).
+> > 
+> 
+> No argument here ;-)
 
+Didn't we talk about bindgen being able to convert inline C functions
+into equivalent inline Rust functions? ISTR that getting stuck on Rust
+not having a useful inline asm.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs/dcache: Re-use value stored to dentry->d_flags instead of re-reading
-      https://git.kernel.org/vfs/vfs/c/8bfb40be31dd
+But fixing all that in a hurry seems like the much saner path forward.
 
