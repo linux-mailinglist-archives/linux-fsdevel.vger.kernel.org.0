@@ -1,159 +1,427 @@
-Return-Path: <linux-fsdevel+bounces-16390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8BE89D006
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 03:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54C289D118
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 05:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACEFBB21770
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 01:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65B84285EE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 03:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAE04EB44;
-	Tue,  9 Apr 2024 01:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480E26A00B;
+	Tue,  9 Apr 2024 03:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejqSQ8zv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4934E1BE;
-	Tue,  9 Apr 2024 01:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D64657A3;
+	Tue,  9 Apr 2024 03:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712627307; cv=none; b=Z6wBeJubztPrwvFobNelA95x0/552vjtUln8fzqk1E49Pkx4jVeKFa9CicGUxkpXBwnwnD49e+kE4Lp3Armf+t7onDfRXdeQG3i+a2oj5THFunfe20sLdec1+sGg3xKw7Qbuoe3pvVf4SOyPm4XVN2TIKPOSo90Iijhljh8Gt8g=
+	t=1712633682; cv=none; b=UqbEoDFL0XdQahSXRUHnKk1YzzmP3TSMNsOeKe5Mx4Ia8/RwFhqWhWDUgl+//NDmbiZjTPWF9cB9G/tLOdHFgnIljVs4LoRTyw3OwhMOrk6nc0o454YBWa/stx/YA5WWIxtBu7Brn67XEwMJ1ZHpxMBDAo4oCzgyKcDYwj/CNvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712627307; c=relaxed/simple;
-	bh=9HFrFIth3R0zd7PPhTEec3H/FKVeAX/QIKtgfQNhbE4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bjZ5IgaPA9QgK2Y+EtLW+rORSEY2Jp3gYgfu5Qh0q8qEjbljvI55h4vs62vj4sjyeOVr75/IYqtW3ajcTGptsL+vLfyXuhwC386FiyHvH14FQOCZaX55YEq2vcDgY3lESBAeLyL1hJWA9/MoZreIyblskWPFqz6PVo8ZUs3Oqb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VD8496jQNz4f3jkL;
-	Tue,  9 Apr 2024 09:48:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 524C81A0BD5;
-	Tue,  9 Apr 2024 09:48:14 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP3 (Coremail) with SMTP id _Ch0CgA3955YnhRmd5ZhJQ--.9921S2;
-	Tue, 09 Apr 2024 09:48:12 +0800 (CST)
-Subject: Re: [PATCH v2 0/6] virtiofs: fix the warning for ITER_KVEC dio
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
- Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>,
- Matthew Wilcox <willy@infradead.org>,
- Benjamin Coddington <bcodding@redhat.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, houtao1@huawei.com
-References: <20240228144126.2864064-1-houtao@huaweicloud.com>
- <20240408034514-mutt-send-email-mst@kernel.org>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <413bd868-a16b-f024-0098-3c70f7808d3c@huaweicloud.com>
-Date: Tue, 9 Apr 2024 09:48:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1712633682; c=relaxed/simple;
+	bh=7lLGsmW8tm03KH5MAOuOHaYBRFJCG49gSbIsENep5g8=;
+	h=Date:Subject:From:To:Cc:Message-ID:MIME-Version:Content-Type; b=TgFyN9v384F4kIKhX0jlj6VOTE6U3SZW5boFa5YMZgs58bYNyAD+BC2/oeInF9TgthQExwMawIpYqOVffiT9OvR+Ui9TtEsO38Ha0BsXuTguk4yH6NrZWrEB00KubClKSJbF+2gN4ESDd3YfkIXHFiRfKKUruUHR6e+gz4PRjDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejqSQ8zv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24F2BC433F1;
+	Tue,  9 Apr 2024 03:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712633681;
+	bh=7lLGsmW8tm03KH5MAOuOHaYBRFJCG49gSbIsENep5g8=;
+	h=Date:Subject:From:To:Cc:From;
+	b=ejqSQ8zv115fkEvXgzuOVQe36lb5IabWInTF2qpQUVweyZqpgY87kz+CLPpaKnlx5
+	 /oA9HBMK0dH1JoLrnwQXbt4XTl084kOwQwopFWsZ33dVjjoV6q5+RBudwWdkACfmgw
+	 ZLESuAzgguBUGJxFhIW20IIlRa8OgH+nhMlYcgLwnw3DyXJVWmHXlNRtgjq8BfjTwZ
+	 YoSwRJAImZTxfKPmyXrYRvM75299TC/HJ5ojPWt7q1DaLTz6dUARailIMtPKPW/nZK
+	 wLW8yZeFWzkuPFYdhwDJ80o91pQ5+9qU5A8EVnIkTb2q0Xs5Xq7LnZls6XY221sHgm
+	 hXvJ+jhJ485fw==
+Date: Mon, 08 Apr 2024 20:34:40 -0700
+Subject: [PATCHSET v30.2] xfs: atomic file content exchanges
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: djwong@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, hch@lst.de,
+ linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Message-ID: <171263348423.2978056.309570547736145336.stgit@frogsfrogsfrogs>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240408034514-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID:_Ch0CgA3955YnhRmd5ZhJQ--.9921S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFW7tw17Jw13WF4DAF43Wrg_yoW5tFyxpr
-	Wftan0grsxXFy7Arnay3Z5Cr9akws3JF17WrZ3Xw1rCFW3X3WI9r1jkF4YgFy7Ary8AF18
-	tr1Fqas29ryqv37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hi all,
 
-On 4/8/2024 3:45 PM, Michael S. Tsirkin wrote:
-> On Wed, Feb 28, 2024 at 10:41:20PM +0800, Hou Tao wrote:
->> From: Hou Tao <houtao1@huawei.com>
->>
->> Hi,
->>
->> The patch set aims to fix the warning related to an abnormal size
->> parameter of kmalloc() in virtiofs. The warning occurred when attempting
->> to insert a 10MB sized kernel module kept in a virtiofs with cache
->> disabled. As analyzed in patch #1, the root cause is that the length of
->> the read buffer is no limited, and the read buffer is passed directly to
->> virtiofs through out_args[0].value. Therefore patch #1 limits the
->> length of the read buffer passed to virtiofs by using max_pages. However
->> it is not enough, because now the maximal value of max_pages is 256.
->> Consequently, when reading a 10MB-sized kernel module, the length of the
->> bounce buffer in virtiofs will be 40 + (256 * 4096), and kmalloc will
->> try to allocate 2MB from memory subsystem. The request for 2MB of
->> physically contiguous memory significantly stress the memory subsystem
->> and may fail indefinitely on hosts with fragmented memory. To address
->> this, patch #2~#5 use scattered pages in a bio_vec to replace the
->> kmalloc-allocated bounce buffer when the length of the bounce buffer for
->> KVEC_ITER dio is larger than PAGE_SIZE. The final issue with the
->> allocation of the bounce buffer and sg array in virtiofs is that
->> GFP_ATOMIC is used even when the allocation occurs in a kworker context.
->> Therefore the last patch uses GFP_NOFS for the allocation of both sg
->> array and bounce buffer when initiated by the kworker. For more details,
->> please check the individual patches.
->>
->> As usual, comments are always welcome.
->>
->> Change Log:
-> Bernd should I just merge the patchset as is?
-> It seems to fix a real problem and no one has the
-> time to work on a better fix .... WDYT?
+This series creates a new XFS_IOC_EXCHANGE_RANGE ioctl to exchange
+ranges of bytes between two files atomically.  This differs from
+v30.1 by switching the feature bit to INCOMPAT from INCOMPAT_LOG.
 
-Sorry for the long delay. I am just start to prepare for v3. In v3, I
-plan to avoid the unnecessary memory copy between fuse args and bio_vec.
-Will post it before next week.
->
->
->> v2:
->>   * limit the length of ITER_KVEC dio by max_pages instead of the
->>     newly-introduced max_nopage_rw. Using max_pages make the ITER_KVEC
->>     dio being consistent with other rw operations.
->>   * replace kmalloc-allocated bounce buffer by using a bounce buffer
->>     backed by scattered pages when the length of the bounce buffer for
->>     KVEC_ITER dio is larger than PAG_SIZE, so even on hosts with
->>     fragmented memory, the KVEC_ITER dio can be handled normally by
->>     virtiofs. (Bernd Schubert)
->>   * merge the GFP_NOFS patch [1] into this patch-set and use
->>     memalloc_nofs_{save|restore}+GFP_KERNEL instead of GFP_NOFS
->>     (Benjamin Coddington)
->>
->> v1: https://lore.kernel.org/linux-fsdevel/20240103105929.1902658-1-houtao@huaweicloud.com/
->>
->> [1]: https://lore.kernel.org/linux-fsdevel/20240105105305.4052672-1-houtao@huaweicloud.com/
->>
->> Hou Tao (6):
->>   fuse: limit the length of ITER_KVEC dio by max_pages
->>   virtiofs: move alloc/free of argbuf into separated helpers
->>   virtiofs: factor out more common methods for argbuf
->>   virtiofs: support bounce buffer backed by scattered pages
->>   virtiofs: use scattered bounce buffer for ITER_KVEC dio
->>   virtiofs: use GFP_NOFS when enqueuing request through kworker
->>
->>  fs/fuse/file.c      |  12 +-
->>  fs/fuse/virtio_fs.c | 336 +++++++++++++++++++++++++++++++++++++-------
->>  2 files changed, 296 insertions(+), 52 deletions(-)
->>
->> -- 
->> 2.29.2
+This new functionality enables data storage programs to stage and commit
+file updates such that reader programs will see either the old contents
+or the new contents in their entirety, with no chance of torn writes.  A
+successful call completion guarantees that the new contents will be seen
+even if the system fails.
+
+The ability to exchange file fork mappings between files in this manner
+is critical to supporting online filesystem repair, which is built upon
+the strategy of constructing a clean copy of a damaged structure and
+committing the new structure into the metadata file atomically.  The
+ioctls exist to facilitate testing of the new functionality and to
+enable future application program designs.
+
+User programs will be able to update files atomically by opening an
+O_TMPFILE, reflinking the source file to it, making whatever updates
+they want to make, and exchange the relevant ranges of the temp file
+with the original file.  If the updates are aligned with the file block
+size, a new (since v2) flag provides for exchanging only the written
+areas.  Note that application software must quiesce writes to the file
+while it stages an atomic update.  This will be addressed by a
+subsequent series.
+
+This mechanism solves the clunkiness of two existing atomic file update
+mechanisms: for O_TRUNC + rewrite, this eliminates the brief period
+where other programs can see an empty file.  For create tempfile +
+rename, the need to copy file attributes and extended attributes for
+each file update is eliminated.
+
+However, this method introduces its own awkwardness -- any program
+initiating an exchange now needs to have a way to signal to other
+programs that the file contents have changed.  For file access mediated
+via read and write, fanotify or inotify are probably sufficient.  For
+mmaped files, that may not be fast enough.
+
+Here is the proposed manual page:
+
+IOCTL-XFS-EXCHANGE-RANGE(2System Calls ManuIOCTL-XFS-EXCHANGE-RANGE(2)
+
+NAME
+       ioctl_xfs_exchange_range  -  exchange  the contents of parts of
+       two files
+
+SYNOPSIS
+       #include <sys/ioctl.h>
+       #include <xfs/xfs_fs.h>
+
+       int ioctl(int file2_fd, XFS_IOC_EXCHANGE_RANGE, struct  xfs_ex‐
+       change_range *arg);
+
+DESCRIPTION
+       Given  a  range  of bytes in a first file file1_fd and a second
+       range of bytes in a second file  file2_fd,  this  ioctl(2)  ex‐
+       changes the contents of the two ranges.
+
+       Exchanges  are  atomic  with  regards to concurrent file opera‐
+       tions.  Implementations must guarantee that readers see  either
+       the old contents or the new contents in their entirety, even if
+       the system fails.
+
+       The system call parameters are conveyed in  structures  of  the
+       following form:
+
+           struct xfs_exchange_range {
+               __s32    file1_fd;
+               __u32    pad;
+               __u64    file1_offset;
+               __u64    file2_offset;
+               __u64    length;
+               __u64    flags;
+           };
+
+       The field pad must be zero.
+
+       The  fields file1_fd, file1_offset, and length define the first
+       range of bytes to be exchanged.
+
+       The fields file2_fd, file2_offset, and length define the second
+       range of bytes to be exchanged.
+
+       Both  files must be from the same filesystem mount.  If the two
+       file descriptors represent the same file, the byte ranges  must
+       not  overlap.   Most  disk-based  filesystems  require that the
+       starts of both ranges must be aligned to the file  block  size.
+       If  this  is  the  case, the ends of the ranges must also be so
+       aligned unless the XFS_EXCHANGE_RANGE_TO_EOF flag is set.
+
+       The field flags control the behavior of the exchange operation.
+
+           XFS_EXCHANGE_RANGE_TO_EOF
+                  Ignore the length parameter.  All bytes in  file1_fd
+                  from  file1_offset to EOF are moved to file2_fd, and
+                  file2's size is set to  (file2_offset+(file1_length-
+                  file1_offset)).   Meanwhile, all bytes in file2 from
+                  file2_offset to EOF are moved to file1  and  file1's
+                  size    is   set   to   (file1_offset+(file2_length-
+                  file2_offset)).
+
+           XFS_EXCHANGE_RANGE_DSYNC
+                  Ensure that all modified in-core data in  both  file
+                  ranges  and  all  metadata updates pertaining to the
+                  exchange operation are flushed to persistent storage
+                  before  the  call  returns.  Opening either file de‐
+                  scriptor with O_SYNC or O_DSYNC will have  the  same
+                  effect.
+
+           XFS_EXCHANGE_RANGE_FILE1_WRITTEN
+                  Only  exchange sub-ranges of file1_fd that are known
+                  to contain data  written  by  application  software.
+                  Each  sub-range  may  be  expanded (both upwards and
+                  downwards) to align with the file  allocation  unit.
+                  For files on the data device, this is one filesystem
+                  block.  For files on the realtime  device,  this  is
+                  the realtime extent size.  This facility can be used
+                  to implement fast atomic  scatter-gather  writes  of
+                  any  complexity for software-defined storage targets
+                  if all writes are aligned  to  the  file  allocation
+                  unit.
+
+           XFS_EXCHANGE_RANGE_DRY_RUN
+                  Check  the parameters and the feasibility of the op‐
+                  eration, but do not change anything.
+
+RETURN VALUE
+       On error, -1 is returned, and errno is set to indicate the  er‐
+       ror.
+
+ERRORS
+       Error  codes can be one of, but are not limited to, the follow‐
+       ing:
+
+       EBADF  file1_fd is not open for reading and writing or is  open
+              for  append-only  writes;  or  file2_fd  is not open for
+              reading and writing or is open for append-only writes.
+
+       EINVAL The parameters are not correct for  these  files.   This
+              error  can  also appear if either file descriptor repre‐
+              sents a device, FIFO, or socket.  Disk filesystems  gen‐
+              erally  require  the  offset  and length arguments to be
+              aligned to the fundamental block sizes of both files.
+
+       EIO    An I/O error occurred.
+
+       EISDIR One of the files is a directory.
+
+       ENOMEM The kernel was unable to allocate sufficient  memory  to
+              perform the operation.
+
+       ENOSPC There  is  not  enough  free space in the filesystem ex‐
+              change the contents safely.
+
+       EOPNOTSUPP
+              The filesystem does not support exchanging bytes between
+              the two files.
+
+       EPERM  file1_fd or file2_fd are immutable.
+
+       ETXTBSY
+              One of the files is a swap file.
+
+       EUCLEAN
+              The filesystem is corrupt.
+
+       EXDEV  file1_fd  and  file2_fd  are  not  on  the  same mounted
+              filesystem.
+
+CONFORMING TO
+       This API is XFS-specific.
+
+USE CASES
+       Several use cases are imagined for this system  call.   In  all
+       cases, application software must coordinate updates to the file
+       because the exchange is performed unconditionally.
+
+       The first is a data storage program that wants to  commit  non-
+       contiguous  updates  to a file atomically and coordinates write
+       access to that file.  This can be done by creating a  temporary
+       file, calling FICLONE(2) to share the contents, and staging the
+       updates into the temporary file.  The FULL_FILES flag is recom‐
+       mended  for this purpose.  The temporary file can be deleted or
+       punched out afterwards.
+
+       An example program might look like this:
+
+           int fd = open("/some/file", O_RDWR);
+           int temp_fd = open("/some", O_TMPFILE | O_RDWR);
+
+           ioctl(temp_fd, FICLONE, fd);
+
+           /* append 1MB of records */
+           lseek(temp_fd, 0, SEEK_END);
+           write(temp_fd, data1, 1000000);
+
+           /* update record index */
+           pwrite(temp_fd, data1, 600, 98765);
+           pwrite(temp_fd, data2, 320, 54321);
+           pwrite(temp_fd, data2, 15, 0);
+
+           /* commit the entire update */
+           struct xfs_exchange_range args = {
+               .file1_fd = temp_fd,
+               .flags = XFS_EXCHANGE_RANGE_TO_EOF,
+           };
+
+           ioctl(fd, XFS_IOC_EXCHANGE_RANGE, &args);
+
+       The second is a software-defined  storage  host  (e.g.  a  disk
+       jukebox)  which  implements an atomic scatter-gather write com‐
+       mand.  Provided the exported disk's logical block size  matches
+       the file's allocation unit size, this can be done by creating a
+       temporary file and writing the data at the appropriate offsets.
+       It  is  recommended that the temporary file be truncated to the
+       size of the regular file before any writes are  staged  to  the
+       temporary  file  to avoid issues with zeroing during EOF exten‐
+       sion.  Use this call with the FILE1_WRITTEN  flag  to  exchange
+       only  the  file  allocation  units involved in the emulated de‐
+       vice's write command.  The temporary file should  be  truncated
+       or  punched out completely before being reused to stage another
+       write.
+
+       An example program might look like this:
+
+           int fd = open("/some/file", O_RDWR);
+           int temp_fd = open("/some", O_TMPFILE | O_RDWR);
+           struct stat sb;
+           int blksz;
+
+           fstat(fd, &sb);
+           blksz = sb.st_blksize;
+
+           /* land scatter gather writes between 100fsb and 500fsb */
+           pwrite(temp_fd, data1, blksz * 2, blksz * 100);
+           pwrite(temp_fd, data2, blksz * 20, blksz * 480);
+           pwrite(temp_fd, data3, blksz * 7, blksz * 257);
+
+           /* commit the entire update */
+           struct xfs_exchange_range args = {
+               .file1_fd = temp_fd,
+               .file1_offset = blksz * 100,
+               .file2_offset = blksz * 100,
+               .length       = blksz * 400,
+               .flags        = XFS_EXCHANGE_RANGE_FILE1_WRITTEN |
+                               XFS_EXCHANGE_RANGE_FILE1_DSYNC,
+           };
+
+           ioctl(fd, XFS_IOC_EXCHANGE_RANGE, &args);
+
+NOTES
+       Some filesystems may limit the amount of data or the number  of
+       extents that can be exchanged in a single call.
+
+SEE ALSO
+       ioctl(2)
+
+XFS                           2024-02-10   IOCTL-XFS-EXCHANGE-RANGE(2)
+
+The reference implementation in XFS creates a new log incompat feature
+and log intent items to track high level progress of swapping ranges of
+two files and finish interrupted work if the system goes down.  Sample
+code can be found in the corresponding changes to xfs_io to exercise the
+use case mentioned above.
+
+Note that this function is /not/ the O_DIRECT atomic untorn file writes
+concept that has also been floating around for years.  It is also not
+the RWF_ATOMIC patchset that has been shared.  This RFC is constructed
+entirely in software, which means that there are no limitations other
+than the general filesystem limits.
+
+As a side note, the original motivation behind the kernel functionality
+is online repair of file-based metadata.  The atomic file content
+exchange is implemented as an atomic exchange of file fork mappings,
+which means that we can implement online reconstruction of extended
+attributes and directories by building a new one in another inode and
+exchanging the contents.
+
+Subsequent patchsets adapt the online filesystem repair code to use
+atomic file exchanges.  This enables repair functions to construct a
+clean copy of a directory, xattr information, symbolic links, realtime
+bitmaps, and realtime summary information in a temporary inode.  If this
+completes successfully, the new contents can be committed atomically
+into the inode being repaired.  This is essential to avoid making
+corruption problems worse if the system goes down in the middle of
+running repair.
+
+For userspace, this series also includes the userspace pieces needed to
+test the new functionality, and a sample implementation of atomic file
+updates.
+
+If you're going to start using this code, I strongly recommend pulling
+from my git trees, which are linked below.
+
+This has been running on the djcloud for months with no problems.  Enjoy!
+Comments and questions are, as always, welcome.
+
+--D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=atomic-file-updates
+
+xfsprogs git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=atomic-file-updates
+
+fstests git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=atomic-file-updates
+
+xfsdocs git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-documentation.git/log/?h=atomic-file-updates
+---
+Commits in this patchset:
+ * vfs: export remap and write check helpers
+ * xfs: introduce new file range exchange ioctl
+ * xfs: create a incompat flag for atomic file mapping exchanges
+ * xfs: introduce a file mapping exchange log intent item
+ * xfs: create deferred log items for file mapping exchanges
+ * xfs: bind together the front and back ends of the file range exchange code
+ * xfs: add error injection to test file mapping exchange recovery
+ * xfs: condense extended attributes after a mapping exchange operation
+ * xfs: condense directories after a mapping exchange operation
+ * xfs: condense symbolic links after a mapping exchange operation
+ * xfs: make file range exchange support realtime files
+ * xfs: support non-power-of-two rtextsize with exchange-range
+ * docs: update swapext -> exchmaps language
+ * xfs: enable logged file mapping exchange feature
+---
+ .../filesystems/xfs/xfs-online-fsck-design.rst     |  259 ++--
+ fs/read_write.c                                    |    1 
+ fs/remap_range.c                                   |    4 
+ fs/xfs/Makefile                                    |    3 
+ fs/xfs/libxfs/xfs_defer.c                          |    6 
+ fs/xfs/libxfs/xfs_defer.h                          |    2 
+ fs/xfs/libxfs/xfs_errortag.h                       |    4 
+ fs/xfs/libxfs/xfs_exchmaps.c                       | 1237 ++++++++++++++++++++
+ fs/xfs/libxfs/xfs_exchmaps.h                       |  123 ++
+ fs/xfs/libxfs/xfs_format.h                         |   26 
+ fs/xfs/libxfs/xfs_fs.h                             |   42 +
+ fs/xfs/libxfs/xfs_log_format.h                     |   64 +
+ fs/xfs/libxfs/xfs_log_recover.h                    |    2 
+ fs/xfs/libxfs/xfs_sb.c                             |    5 
+ fs/xfs/libxfs/xfs_symlink_remote.c                 |   47 +
+ fs/xfs/libxfs/xfs_symlink_remote.h                 |    1 
+ fs/xfs/libxfs/xfs_trans_space.h                    |    4 
+ fs/xfs/xfs_error.c                                 |    3 
+ fs/xfs/xfs_exchmaps_item.c                         |  599 ++++++++++
+ fs/xfs/xfs_exchmaps_item.h                         |   64 +
+ fs/xfs/xfs_exchrange.c                             |  769 ++++++++++++
+ fs/xfs/xfs_exchrange.h                             |   42 +
+ fs/xfs/xfs_ioctl.c                                 |   38 +
+ fs/xfs/xfs_log_recover.c                           |    2 
+ fs/xfs/xfs_mount.h                                 |    7 
+ fs/xfs/xfs_super.c                                 |   23 
+ fs/xfs/xfs_symlink.c                               |   49 -
+ fs/xfs/xfs_trace.c                                 |    2 
+ fs/xfs/xfs_trace.h                                 |  381 ++++++
+ include/linux/fs.h                                 |    1 
+ 30 files changed, 3624 insertions(+), 186 deletions(-)
+ create mode 100644 fs/xfs/libxfs/xfs_exchmaps.c
+ create mode 100644 fs/xfs/libxfs/xfs_exchmaps.h
+ create mode 100644 fs/xfs/xfs_exchmaps_item.c
+ create mode 100644 fs/xfs/xfs_exchmaps_item.h
+ create mode 100644 fs/xfs/xfs_exchrange.c
+ create mode 100644 fs/xfs/xfs_exchrange.h
 
 
