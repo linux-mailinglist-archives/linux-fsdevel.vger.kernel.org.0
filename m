@@ -1,177 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-16460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5E389E031
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 18:19:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9A589E044
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 18:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24981C2278A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 16:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60601F24011
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 16:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EE213D8A4;
-	Tue,  9 Apr 2024 16:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6334513E885;
+	Tue,  9 Apr 2024 16:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FyjCd0W7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uOf15R97"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADAE13DBB2
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 16:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34F013E3EF;
+	Tue,  9 Apr 2024 16:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712679536; cv=none; b=HRZ5iiPFScu6GxgAj3Kni5RSyCoOGFI1EevD0Y1eUo/u2MiUEluLp2sSQ+YRzv9tf/5RdOq6gkdndsq5duwghx640+9afYMObER3FhJHa5Fyuh5uwsInjhBQ5smjLyelEaqCOOQNW9R24WnUwfkUz0hR3Tx+oZB8VOnAMBG/INI=
+	t=1712679753; cv=none; b=GVIDf/Rau8FvjBI5wDdXtGAhsiQQN3hTcIGgB5toGTb+HqSmKtCTKD7Eq+zl/XclKExfkRH1qR6Juo+RO5Ggssa9nflCG2zYIsTA0mG/noQIss1IVpiwtdpB001wEIxOcOzONo0p/oqXoCN929ioc0LIeOE37ACMuPGHck1Fq58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712679536; c=relaxed/simple;
-	bh=CO0p+YK7KgyEhQWfSgbNED4ud13a2cNEHvB0bOG6pX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=De0jufO6VEttYNzX4O5iSxPGI6K+Y5YyVLUlqA28mPRGbFGvmVIqizlAMm9s6ZDCjzK9KKB/YMuxsr+4ndOJO74cArQqIl1AqBiqSEB4zqeByU6iqI774hrHfy9xWdtqFSzEPQ8ieYfqbvmg2Xqr66j3jSXaMnzFEd8vq5FA1eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FyjCd0W7; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6962e6fbf60so45546296d6.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 09:18:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712679534; x=1713284334; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LcUpxkvrOlvve5fPqRQfGZD9O5kSkS7ZKLRKI0qUmWk=;
-        b=FyjCd0W7GZmJJMCNtokPDQntMEc/Gp27+lgk28xBX89v07hTHPBuA/LvyoxTBVl3n7
-         9OszYfypsEQTEQyh5mYz7AhQJOhSPVEvbyp0qbLdjyyUxCZXzTd0TtJ65HI3+W37iJFE
-         bXajHqtlm9q7TS+HNx6QraAQUVmQE+A5R4IMl+Lz4SKRjkkihbeWcttXltNkJCL9J0/e
-         k/BNHg6nfiNZxKdZL2oXF2mihZU+i65A1km7vB5hVLi1gkDVMDCSRGCDEkZ5Lw/PCkut
-         GAeSU2+N8nCrkCSsGkDa8wYdHQpRFJzqTVTTAEWuDx2HpR0MzTLvhER58i2z9YaJQSqO
-         1uXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712679534; x=1713284334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LcUpxkvrOlvve5fPqRQfGZD9O5kSkS7ZKLRKI0qUmWk=;
-        b=aztwChTlFjRnBJ83n5LowFs2ziPqo5eaCXlCLjDi4wBnK+nS/fRw9qxWEcmS/niv6S
-         TZVQkJ54qVHNdbJkfcU6PGUST6if3arj0jTmMByFAhsuWZZlp3m1F9YCgD6vPo2AXjM/
-         oTQ6rfztp1xb68M4y38KJeOtVa9OtsCN+Lk1Yx+fugqDhyix+jLw/J0Dds/ChZ4BRah4
-         cRm4cX4O/7xnJJwOZWHdjkTPKeqKGuuK/xvKszhtTYiQ8MbReXbRRt0DFCjWXFJFgcUV
-         u9z1MtaRCn4gILJj611CkVvvVjd4GBJGb4CIMLGtOu0uA9OtjwP182Lg0/kHilsRzAJo
-         TKkg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4uMiKfHIe2sBlVziuLEAMy4KpvdxEOnq79+uwEuVBqV9MLtQfGBRYuV4v1m881Vq5u/g8L/l3qojSYdsj8K1xFz1wTVxVQgIqR0kg0g==
-X-Gm-Message-State: AOJu0YyqgnwWBuBTfL/DaPCkaSxn7VIT9hbYP8Jhm8c0lRTBDIyJf7Dv
-	tr51HGxnP7BnWPrOS/rE95qTyRt+M+gL9Ep9ZKTHlLf6+VQWbBYblPJtiiZDl9/h+AIzBcpJIMR
-	Wt/+jQU5a9oU8MxAwSQpQJaaBEaI=
-X-Google-Smtp-Source: AGHT+IFWVhY1apzQnxWWvPRedKJdIK65r6JtsmezaqmlhMzO66LmsabZxIYPhPltLWvkBNm7Z973Nku17RN89QHxg5k=
-X-Received: by 2002:ad4:5de2:0:b0:699:2782:d256 with SMTP id
- jn2-20020ad45de2000000b006992782d256mr42465qvb.11.1712679533764; Tue, 09 Apr
- 2024 09:18:53 -0700 (PDT)
+	s=arc-20240116; t=1712679753; c=relaxed/simple;
+	bh=s81ceGOY/UaeALO8XB1vF4xIKP6ybz9DnJl/IEpTMSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UIbPt3n29SPe3OM1HQr4vEBpyYGCfPIVdAkE2fllySvx4PYg/zapleLTCLHq9O7WUlasVq0hkEbOVJZCGnYCs3cXVHb4znHD7OQ39zHRu6eps8Xu2KwO2XeI2ZpU2jZjG1lXChXjVEliMPJoBvpapLfa3TBbf3yG/h6F22g5P5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uOf15R97; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 783B4C433F1;
+	Tue,  9 Apr 2024 16:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712679753;
+	bh=s81ceGOY/UaeALO8XB1vF4xIKP6ybz9DnJl/IEpTMSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uOf15R97CfO4NRrpGlR+ut/EZaH8gJePsx76fVYZ2CwpkY6p2z9oJg8boVPOdOoce
+	 WETlWuf5gfSinxoonTC04g5Kc3Sj2wZe9v17KvknHY3kunNrQaSO0L6nThQ5p/8nRJ
+	 nKKPh7+OV5XuHOCgKUobpVWsMEUosqNN+Oy7MtOavp44t3NaOWktoHNU3flF3rj12P
+	 bxvOmVWzXpwkP+BPmdlgreV35svfYgm5TTPVIxw45uz3NeIFb27nURTpm/B4vJffGz
+	 rHBMtsPRwqA5Of0yoDXPSPXCbiEUfKL6dAA1Ko3ghM2b9lkhjl0APrqbDbXL3wc/MZ
+	 nHjQ03z4Hsjsg==
+Date: Tue, 9 Apr 2024 09:22:32 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Brian Foster <bfoster@redhat.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 01/13] fs: fiemap: add physical_length field to extents
+Message-ID: <20240409162232.GA6367@frogsfrogsfrogs>
+References: <cover.1712126039.git.sweettea-kernel@dorminy.me>
+ <1ba5bfccccbf4ff792f178268badde056797d0c4.1712126039.git.sweettea-kernel@dorminy.me>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240407155758.575216-1-amir73il@gmail.com> <20240407155758.575216-2-amir73il@gmail.com>
- <CAJfpegs+Uc=hrE508Wkif6BbYOMTp3wjQwrbo==FkL2r6sr0Uw@mail.gmail.com>
- <CAOQ4uxgFBqfpU=w6qBvHCWXYzrfG6VXtxi_wMaJTtjnDAmZs3Q@mail.gmail.com> <CAJfpegtFB8k+_Bq+NB9ykewrNZ-j5vdZJ9WaBZ_P2m-_8sZ5EQ@mail.gmail.com>
-In-Reply-To: <CAJfpegtFB8k+_Bq+NB9ykewrNZ-j5vdZJ9WaBZ_P2m-_8sZ5EQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 9 Apr 2024 19:18:42 +0300
-Message-ID: <CAOQ4uxjtDAuMezRXCiVpBPoTXt6d5G0TWJxb=3QVCvp1+VN59w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] fuse: fix wrong ff->iomode state changes from
- parallel dio write
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Sweet Tea Dorminy <sweettea-kernel@dorminy.me>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ba5bfccccbf4ff792f178268badde056797d0c4.1712126039.git.sweettea-kernel@dorminy.me>
 
-On Tue, Apr 9, 2024 at 6:32=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
-rote:
->
-> On Tue, 9 Apr 2024 at 17:10, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Tue, Apr 9, 2024 at 4:33=E2=80=AFPM Miklos Szeredi <miklos@szeredi.h=
-u> wrote:
-> > >
-> > > On Sun, 7 Apr 2024 at 17:58, Amir Goldstein <amir73il@gmail.com> wrot=
-e:
-> > > >
-> > > > There is a confusion with fuse_file_uncached_io_{start,end} interfa=
-ce.
-> > > > These helpers do two things when called from passthrough open()/rel=
-ease():
-> > > > 1. Take/drop negative refcount of fi->iocachectr (inode uncached io=
- mode)
-> > > > 2. State change ff->iomode IOM_NONE <-> IOM_UNCACHED (file uncached=
- open)
-> > > >
-> > > > The calls from parallel dio write path need to take a reference on
-> > > > fi->iocachectr, but they should not be changing ff->iomode state,
-> > > > because in this case, the fi->iocachectr reference does not stick a=
-round
-> > > > until file release().
-> > >
-> > > Okay.
-> > >
-> > > >
-> > > > Factor out helpers fuse_inode_uncached_io_{start,end}, to be used f=
-rom
-> > > > parallel dio write path and rename fuse_file_*cached_io_{start,end}
-> > > > helpers to fuse_file_*cached_io_{open,release} to clarify the diffe=
-rence.
-> > > >
-> > > > Add a check of ff->iomode in mmap(), so that fuse_file_cached_io_op=
-en()
-> > > > is called only on first mmap of direct_io file.
-> > >
-> > > Is this supposed to be an optimization?
-> >
-> > No.
-> > The reason I did this is because I wanted to differentiate
-> > the refcount semantics (start/end)
-> > from the state semantics (open/release)
-> > and to make it clearer that there is only one state change
-> > and refcount increment on the first mmap().
-> >
-> > > AFAICS it's wrong, because it
-> > > moves the check outside of any relevant locks.
-> > >
-> >
-> > Aren't concurrent mmap serialized on some lock?
->
-> Only on current->mm, which doesn't serialize mmaps of the same file in
-> different processes.
->
-> >
-> > Anyway, I think that the only "bug" that this can trigger is the
-> > WARN_ON(ff->iomode !=3D IOM_NONE)
-> > so if we ....
-> >
-> > >
-> > > > @@ -56,8 +57,7 @@ int fuse_file_cached_io_start(struct inode *inode=
-, struct fuse_file *ff)
-> > > >                 return -ETXTBSY;
-> > > >         }
-> > > >
-> > > > -       WARN_ON(ff->iomode =3D=3D IOM_UNCACHED);
-> > > > -       if (ff->iomode =3D=3D IOM_NONE) {
-> > > > +       if (!WARN_ON(ff->iomode !=3D IOM_NONE)) {
-> > >
-> > > This double negation is ugly.  Just let the compiler optimize away th=
-e
-> > > second comparison.
-> >
-> > ...drop this change, we should be good.
-> >
-> > If you agree, do you need me to re-post?
->
-> Okay, but then what's the point of the unlocked check?
+On Wed, Apr 03, 2024 at 03:22:42AM -0400, Sweet Tea Dorminy wrote:
+> Some filesystems support compressed extents which have a larger logical
+> size than physical, and for those filesystems, it can be useful for
+> userspace to know how much space those extents actually use. For
+> instance, the compsize [1] tool for btrfs currently uses btrfs-internal,
+> root-only ioctl to find the actual disk space used by a file; it would
+> be better and more useful for this information to require fewer
+> privileges and to be usable on more filesystems. Therefore, use one of
+> the padding u64s in the fiemap extent structure to return the actual
+> physical length; and, for now, return this as equal to the logical
+> length.
+> 
+> [1] https://github.com/kilobyte/compsize
+> 
+> Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+> ---
+>  Documentation/filesystems/fiemap.rst | 28 +++++++++++++++++-------
+>  fs/ioctl.c                           |  3 ++-
+>  include/uapi/linux/fiemap.h          | 32 ++++++++++++++++++++++------
+>  3 files changed, 47 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/fiemap.rst b/Documentation/filesystems/fiemap.rst
+> index 93fc96f760aa..c2bfa107c8d7 100644
+> --- a/Documentation/filesystems/fiemap.rst
+> +++ b/Documentation/filesystems/fiemap.rst
+> @@ -80,14 +80,24 @@ Each extent is described by a single fiemap_extent structure as
+>  returned in fm_extents::
+>  
+>      struct fiemap_extent {
+> -	    __u64	fe_logical;  /* logical offset in bytes for the start of
+> -				* the extent */
+> -	    __u64	fe_physical; /* physical offset in bytes for the start
+> -				* of the extent */
+> -	    __u64	fe_length;   /* length in bytes for the extent */
+> -	    __u64	fe_reserved64[2];
+> -	    __u32	fe_flags;    /* FIEMAP_EXTENT_* flags for this extent */
+> -	    __u32	fe_reserved[3];
+> +            /*
+> +             * logical offset in bytes for the start of
+> +             * the extent from the beginning of the file
+> +             */
+> +            __u64 fe_logical;
+> +            /*
+> +             * physical offset in bytes for the start
+> +             * of the extent from the beginning of the disk
+> +             */
+> +            __u64 fe_physical;
+> +            /* logical length in bytes for this extent */
+> +            __u64 fe_logical_length;
+> +            /* physical length in bytes for this extent */
+> +            __u64 fe_physical_length;
+> +            __u64 fe_reserved64[1];
+> +            /* FIEMAP_EXTENT_* flags for this extent */
+> +            __u32 fe_flags;
+> +            __u32 fe_reserved[3];
+>      };
+>  
+>  All offsets and lengths are in bytes and mirror those on disk.  It is valid
+> @@ -175,6 +185,8 @@ FIEMAP_EXTENT_MERGED
+>    userspace would be highly inefficient, the kernel will try to merge most
+>    adjacent blocks into 'extents'.
+>  
+> +FIEMAP_EXTENT_HAS_PHYS_LEN
+> +  This will be set if the file system populated the physical length field.
 
-As I wrote, I just did it to emphasize the open-once
-semantics.
-If you do not like the unlocked check, feel free to remove it.
+Just out of curiosity, should filesystems set this flag and
+fe_physical_length if fe_physical_length == fe_logical_length?
+Or just leave both blank?
 
-Thanks,
-Amir.
+>  VFS -> File System Implementation
+>  ---------------------------------
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 661b46125669..8afd32e1a27a 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -138,7 +138,8 @@ int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+>  	memset(&extent, 0, sizeof(extent));
+>  	extent.fe_logical = logical;
+>  	extent.fe_physical = phys;
+> -	extent.fe_length = len;
+> +	extent.fe_logical_length = len;
+> +	extent.fe_physical_length = len;
+>  	extent.fe_flags = flags;
+>  
+>  	dest += fieinfo->fi_extents_mapped;
+> diff --git a/include/uapi/linux/fiemap.h b/include/uapi/linux/fiemap.h
+> index 24ca0c00cae3..3079159b8e94 100644
+> --- a/include/uapi/linux/fiemap.h
+> +++ b/include/uapi/linux/fiemap.h
+> @@ -14,14 +14,30 @@
+>  
+>  #include <linux/types.h>
+>  
+> +/*
+> + * For backward compatibility, where the member of the struct was called
+> + * fe_length instead of fe_logical_length.
+> + */
+> +#define fe_length fe_logical_length
+
+This #define has global scope; are you sure this isn't going to cause a
+weird build problem downstream with some program that declares an
+unrelated fe_length symbol?
+
+> +
+>  struct fiemap_extent {
+> -	__u64 fe_logical;  /* logical offset in bytes for the start of
+> -			    * the extent from the beginning of the file */
+> -	__u64 fe_physical; /* physical offset in bytes for the start
+> -			    * of the extent from the beginning of the disk */
+> -	__u64 fe_length;   /* length in bytes for this extent */
+> -	__u64 fe_reserved64[2];
+> -	__u32 fe_flags;    /* FIEMAP_EXTENT_* flags for this extent */
+> +	/*
+> +	 * logical offset in bytes for the start of
+> +	 * the extent from the beginning of the file
+> +	 */
+> +	__u64 fe_logical;
+> +	/*
+> +	 * physical offset in bytes for the start
+> +	 * of the extent from the beginning of the disk
+> +	 */
+> +	__u64 fe_physical;
+> +	/* logical length in bytes for this extent */
+> +	__u64 fe_logical_length;
+
+Or why not just leave the field name the same since the "logical length
+in bytes" comment is present both here in the header and again in the
+documentation?
+
+--D
+
+> +	/* physical length in bytes for this extent */
+> +	__u64 fe_physical_length;
+> +	__u64 fe_reserved64[1];
+> +	/* FIEMAP_EXTENT_* flags for this extent */
+> +	__u32 fe_flags;
+>  	__u32 fe_reserved[3];
+>  };
+>  
+> @@ -66,5 +82,7 @@ struct fiemap {
+>  						    * merged for efficiency. */
+>  #define FIEMAP_EXTENT_SHARED		0x00002000 /* Space shared with other
+>  						    * files. */
+> +#define FIEMAP_EXTENT_HAS_PHYS_LEN	0x00004000 /* Physical length is valid
+> +						    * and set by FS. */
+>  
+>  #endif /* _UAPI_LINUX_FIEMAP_H */
+> -- 
+> 2.43.0
+> 
+> 
 
