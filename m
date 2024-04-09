@@ -1,87 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-16498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E217089E4F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 23:30:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E24389E51A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 23:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983AA1F22E66
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 21:30:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FB21B21B9A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 21:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE55158A29;
-	Tue,  9 Apr 2024 21:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65D8158A3D;
+	Tue,  9 Apr 2024 21:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="VJCJkhDg"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ud318HAF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED1F763F1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 21:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA4D158A1E;
+	Tue,  9 Apr 2024 21:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712698194; cv=none; b=CyXtHjf9UPDNspsz/O90DweBORSO6zrkJITxj1BllcMnt4ITsHIyvjzGCVw5j+DFTDKNwJedUJBk37ebXZmMpsz+N5JirsSWqOfxb8/mIQWFW0IUXkN2R3gaS1kTLgn5N3ha/TwiFP3A7/MzRBPfmBkUpInglUkyo+uX38z3Fq8=
+	t=1712698969; cv=none; b=B/g0wp9WvgV+Od/BNwMG4GI7lPI4tHs2qnGayH2uQMVcBCJfFSAZkXKA8Sif3LYE8nNJSCQi4c0kjKW4JYQhfHMN8kXcN8FB/NdZhL5QyTpEdZDlX9VdrZ//tlpA5pymP9BCWPPIKRlxoM+kNDxNCb7AXw8BsTp2nls3ZaKKle8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712698194; c=relaxed/simple;
-	bh=Ubqqm63lKdnzIJduqL2oJ1Vi2+iIgr/cKwTszXup7q0=;
+	s=arc-20240116; t=1712698969; c=relaxed/simple;
+	bh=VnI1mV5conMscaAY6LWaUtz+ynM+a4jRDb2r1ctiVko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uAtmeF7iTvu5TWIfFqfVEtR93ftx8dChwinqslqBWNm4OCaWrpm4iWW1q46/26Kg1HzvMQD8srPu7cOsmOIfXURZ8m8mlcQS4ZcQWFlouOtepSvWiXUUy80nQsl5Iln9ssDz6Wbs36z0EtXcvFrdtj9iCkeIBlvuqn5z8W6PY7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=VJCJkhDg; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6eaf1005fcaso4202322b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 14:29:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1712698191; x=1713302991; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lppOhDLhaTktGl6lazMPAeBs02NfwHMeHSnwbowOWTw=;
-        b=VJCJkhDga/OfKWeKbdrV+Saj9YmigCMLGWF6BfgnQH3eH/S5yBIWflk+OPpwtREuOe
-         sCZzrABd56f1+kvK3UE8lUjqkbdw9/DIVfraZRmuWWGFbeUgR5nF1Jggriy2kyc8BiT3
-         WG0uqYH+QFP3PCBjxaLWrN9sbyBXT4g4Gjvx+s2sjOqCW92mtMNHWnyE+tbS9iOmvjtL
-         83ocso+vIOzA3YcvmGz8c5BsZDEQZ1yPXn1dlslF78q4D70zvWDphBajBYEfoPJVIDLd
-         tOuVrVGhru5QLUAMuspZ6FEnkvqGtKz1qHoqCWn6fMtLS5aODbw1gspxqRiPljuVMG94
-         tlxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712698191; x=1713302991;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lppOhDLhaTktGl6lazMPAeBs02NfwHMeHSnwbowOWTw=;
-        b=xO9zYC3TJvIITKijjah5LScO7y5KfvJcSmbr8i2riK6mRrS8mDgfVwh+fwcXQkix1q
-         aE+fkAx/TrsnDxBmGJqTlOdRyqbsp2uPmZoVkRzy3sk3ncuf8FkBZFHMy+zDj7XXbzuT
-         mfBYQ3oor7BJd3m/UseVQroEKdy/xwr3wXKWCKqlvYlWMd60W5B9NwBqHqcz7mvuYNZX
-         +srZL3G8zzHALcMp5m/4MeamVQBI7cC3zI0ZMCJFIwKmJEtYccqjDnMRPzQEWQQ1Qlv4
-         sRw0ZEvPL0ujA7glzySaKwz+sBAYvrHeH91/Ldm/RSp/OP4A9g78a3FFzo/XjXotJo+J
-         qqdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQj9AgV2noGItghwh40Pe0Q+VSRqfxp/QtmDsN8Ld2eb7SVnfBF7ME1r3uQ8KBUiXjduE3QMkLR1RDK9F7cYGvIP59/lsHtxe609QBww==
-X-Gm-Message-State: AOJu0Yw2ZKxhCkvq4oNjASEc0Z/y2ymgDDUsJTHYlLDdIPKuGGyOAhdc
-	Z24Teh0Gm7jEDH2ZebZznGLSF6Lc3bmvedQdohvt+lGmus6UpyHjaf3bP5G5soU=
-X-Google-Smtp-Source: AGHT+IFvOqPyH50nuc2JACoXyF6q2DKJ9ivcnsRna4tGd1/cjZ8p4v7GhrD65qleDU/qtwwIyhj4CQ==
-X-Received: by 2002:a05:6a00:14d1:b0:6ec:faef:dd28 with SMTP id w17-20020a056a0014d100b006ecfaefdd28mr932086pfu.23.1712698191116;
-        Tue, 09 Apr 2024 14:29:51 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-56-237.pa.nsw.optusnet.com.au. [49.181.56.237])
-        by smtp.gmail.com with ESMTPSA id x12-20020a056a00270c00b006ed048a7323sm8006356pfv.86.2024.04.09.14.29.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Apr 2024 14:29:50 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1ruJ2J-009xO3-3A;
-	Wed, 10 Apr 2024 07:29:47 +1000
-Date: Wed, 10 Apr 2024 07:29:47 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: syzbot <syzbot+b417f0468b73945887f0@syzkaller.appspotmail.com>
-Cc: chandan.babu@oracle.com, dwmw2@infradead.org,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-xfs@vger.kernel.org, richard@nod.at,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ext4?] [jffs2?] [xfs?] kernel BUG in
- unrefer_xattr_datum
-Message-ID: <ZhWzS47ZvqF2WriS@dread.disaster.area>
-References: <0000000000002444e20615a20456@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iil2HtdTAhX7w74xJYNazIAQAik0ZX86RJ7Wozax2ytUbpNR/vyF2H5sVAqWOXJONtcQyhrmw4JVdn6zjBgCwGGL2vX9mzzrupd5CS18JbawAZdXPFyhnz+IuUS4jb74LR+EyhytAVkhXMFttE8x67FzfRh/IIVZL1GEIaed50g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ud318HAF; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cAZm87PzI6fyQ1m2jU/2dvY7F4KiYWybRLHCj3v2RmA=; b=ud318HAFAMuxza1NMA5qxCWVYS
+	Q3RQ7jjtcx3N5nPxhhPAR0r9nI5meQpupzsoLYg/sLklNXZGNvq4mJldoHmAZlB8EiPlc66C1enlq
+	5v9zE4iPBgno4IMn85s2hY3bY/kxn2nymlq59ieFhSg6I4plV2yvY3X40V7jN6+qA4t8AL8cjDmKV
+	QL1wHhqVrLEbkmzXAyAszoqKaMDh+yZfRq646kXMiDKPVWpKg079mOaofT7ZiO68GJv1A7tl2Inw5
+	ry5F7XRa498awRyp/nbS9D2xQlZqxN9g3+IyGZhZ2iwmQQDGSZCm5jlUbR8JiU25qsEUpJwq5Ir6G
+	6HhHRSJw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ruJEb-00000002zqV-2c7l;
+	Tue, 09 Apr 2024 21:42:29 +0000
+Date: Tue, 9 Apr 2024 22:42:29 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Yin Fengwei <fengwei.yin@intel.com>, Yang Shi <shy828301@gmail.com>,
+	Zi Yan <ziy@nvidia.com>, Jonathan Corbet <corbet@lwn.net>,
+	Hugh Dickins <hughd@google.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <naoya.horiguchi@nec.com>,
+	Richard Chang <richardycc@google.com>
+Subject: Re: [PATCH v1 01/18] mm: allow for detecting underflows with
+ page_mapcount() again
+Message-ID: <ZhW2RQtKDvUrbyWA@casper.infradead.org>
+References: <20240409192301.907377-1-david@redhat.com>
+ <20240409192301.907377-2-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,43 +77,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000002444e20615a20456@google.com>
+In-Reply-To: <20240409192301.907377-2-david@redhat.com>
 
-On Mon, Apr 08, 2024 at 09:04:18PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    707081b61156 Merge branch 'for-next/core', remote-tracking..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1562c52d180000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=caeac3f3565b057a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b417f0468b73945887f0
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e74805180000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1613cca9180000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/6cad68bf7532/disk-707081b6.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/1a27e5400778/vmlinux-707081b6.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/67dfc53755d0/Image-707081b6.gz.xz
-> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/f039597bec42/mount_0.gz
-> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/b3fe5cff7c96/mount_4.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b417f0468b73945887f0@syzkaller.appspotmail.com
-> 
-> jffs2: nextblock 0x0001d000, expected at 0001f000
-> jffs2: argh. node added in wrong place at 0x0001e03c(2)
-> jffs2: nextblock 0x0001d000, expected at 0001f000
+On Tue, Apr 09, 2024 at 09:22:44PM +0200, David Hildenbrand wrote:
+> Commit 53277bcf126d ("mm: support page_mapcount() on page_has_type()
+> pages") made it impossible to detect mapcount underflows by treating
+> any negative raw mapcount value as a mapcount of 0.
 
-Nothing to do with XFS or ext4 - they are simply being mounted with
-invalid mount options at the same time.
+Yes, but I don't think this is the right place to check for underflow.
+We should be checking for that on modification, not on read.  I think
+it's more important for page_mapcount() to be fast than a debugging aid.
 
-#syz set subsystems: jffs2
-
--- 
-Dave Chinner
-david@fromorbit.com
 
