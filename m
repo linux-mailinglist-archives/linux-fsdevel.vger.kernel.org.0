@@ -1,130 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-16447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6822C89DD2B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 16:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AFF489DD4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 16:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 993C31C23752
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 14:46:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3941C212F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 14:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8CA7C6D4;
-	Tue,  9 Apr 2024 14:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCB24F8B1;
+	Tue,  9 Apr 2024 14:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="28vxQEc2"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="KvRY8cHu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD994AED6
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 14:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF6B82D99
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 14:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712673989; cv=none; b=S9wxCmVm4WP9i6rNeJZZesDtb60Hb1HKg/i4fLIJdEDeX14myVkyaeOTG1MhvFAaGFltRr03x7Js9C+j4aOmbHqL5TJ41hyr4tGE/rTLqsbbjh2RpNYzlM/SDYECNSWHsFbCtvqDdPdyBBFQ5ScpjJTJnQ8rVmTMVYJ1J/JTvGY=
+	t=1712674227; cv=none; b=OlO4dM06X1Alwt9SBvJHkyM9ni58D0mo6DWSAoZosRPJIIB1V6OCcF3tztskkYMcU/De+kM0wYua/oh5dLVqdQ9EHDjTx6CoV+YmHJACZ15aLvKGbeAkm4Cvu4wXT9eoOAaVyWSDaPsHBwR0Wzu463uR2HYsYlsKmco7i8ysyEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712673989; c=relaxed/simple;
-	bh=JNYWxfOdBLnkcSOg7S7k0lKm6pw5ifgueS2lI62IYsQ=;
+	s=arc-20240116; t=1712674227; c=relaxed/simple;
+	bh=i6kz3Q2dnYL0OW1aHnTfjYKIt9T0R/0xsI8bXOvteiE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V13AHHgNjHn1AC+YL0BTz34TrfWFvFfj1I9gpM/7REML2MQqfUOLrvMQyNIkFSufwzgtheQqE+pj+H2lXjqY+hg2TtZxM0uxMgcXt7dck8hk/dK7wCczmvZqdgEIdAEGelK85qiU00T4QJsNb8SqAuyp+0b/s3XXiC1+ZLoyOJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=28vxQEc2; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4dacb2ad01dso990210e0c.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 07:46:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=AzoXyMNpF6HOsA+K5pCf9U6bKC7TrjXKLNww3Lk3P27v/uAvCsf8zaN6RxCVTItCku9uCEz7OUWeDvsoN7MaEu8OT3pRLbfUKM9cq9kFR9Kk+CxvH9FLHqnMnUYhNC3LLPYplywbCMqL6P13ypj1XiXM81c3pYVaMOZIDYxd94A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=KvRY8cHu; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a519ef3054bso521350866b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 07:50:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1712673987; x=1713278787; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JGKKqyMnDxDe7Z88TFPiX7ZbsHcnXFBE7VSZEtRsFEI=;
-        b=28vxQEc2TfpbRqxpk93+D041AjxSexs6rYQNsHGjjZ8SP1AfWYlIvrDbgi+HSQV+NY
-         hE/csZnXhzr0uDz8wJbGZuxVlzPU3tutz+RB6QDriquBTMIkj2eS5AQvPid7Z+GAudkS
-         uUo5KnnmEnv3+VRdF6XIVXQ6mleVvgpSSx9XXITKH7VS40GSIIXRLIczF2XFhkvXOVr3
-         WclMHKAwcC22dGNNFI4TPb1YDaWKAX40dLh8EXQF7bXTuV5fM10wRgaWo3PGRbMpJeqv
-         OkxRCEEK7iChk5QM4qFrwH/ywqEsaBuDZo4045Y+le2SbaY/fkDoldJctWdf9RzuNwzK
-         /Pag==
+        d=szeredi.hu; s=google; t=1712674222; x=1713279022; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=evULbkEmDkE2I68uywZgrm/PKi02rLv1h8SrHCCkGGA=;
+        b=KvRY8cHuN2Enn6VTqDu9xsJMKUnF+wE8VBjjEhOPfJXXNEqqnJg3JT4zYFwpA5kYjI
+         tza3feDNrY5OdgZqCWCYgN4CL0F3tq1ikleygt2zP+Z2arCEmJY5r68XnwlnSdKjae7b
+         bMEbA6CBLgSWvvPKCftqm9wgU7PwWz1tmQxYk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712673987; x=1713278787;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JGKKqyMnDxDe7Z88TFPiX7ZbsHcnXFBE7VSZEtRsFEI=;
-        b=Ggrw4QnCSiCYGLahEDNH4Kdy3v7f+d3RmC2HsegzB3oJ7AMYJmUfC8u2B1/gLoXej4
-         A0ywuJMcxcI+YTk3tkccKTAqDT95O1YxnV0eaMYoeDSg6UYEE3oxk9dWBrqDEadqZfrK
-         a18w84xFoUgCCnlmvB2SBo1rS8xQIOZJ+KNybmn/IH7AkLOGiE02Xv+9GD17P6/q6tHt
-         FlVwXWV6EQ0weGlmjok1EK3VYPP+ZpiKBG/xGyHV9MkmLSiRmXbCcxxmvBb/PpoSNc0I
-         Gyt8JC+fPl+SopfSjYSlH6xrDb5QVE1FYHuT95zdYLwX4YsIPPn3fGy6OMPXgtXaJIUG
-         ezbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlhDOBHNTISfoWwgsOdC39YwZEQUScUPCfP9TlLBrwKMwRpODeVxqeeOZ0McbVnaHU0n/cuSfko1dmc3NVtn5upMF+NRIMiUcXmEmKBg==
-X-Gm-Message-State: AOJu0YyAebrdQv8XQxbMvc9cw/CFuFST3HL2B2zTrgn1Zx37kHUZ8RrO
-	GyC8hEv6apdj+VRzG+5cDkQLiFpa4Ned8n/khaWO7uXzAhfh6M3vCHBShaW/SO5B75RE8A01udK
-	U/9UtqbxjTe+qfu8boivTg+HU8UIxWZcrj0XI
-X-Google-Smtp-Source: AGHT+IG5ZyVYbzpi7MrZFfeuZePmTlO9Cj6SrZUQgNIArSjr/qGXL8vsPlsLH60WkxdNp2m4CZry4zLpVpcPiYwzY5k=
-X-Received: by 2002:a05:6122:48a:b0:4d8:74cb:e3c2 with SMTP id
- o10-20020a056122048a00b004d874cbe3c2mr33094vkn.9.1712673986727; Tue, 09 Apr
- 2024 07:46:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712674222; x=1713279022;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=evULbkEmDkE2I68uywZgrm/PKi02rLv1h8SrHCCkGGA=;
+        b=hDIe8Sodc+TqL0EL0pFrJZvTYBo07JIwkRfb05sXqpeHhrPI+cWfEBG10Z4ZW9Ewsx
+         RjxUx38GgjQ1ViI64v143hJhsyqj+0UE71OgYgVe/R91jqYQ5FkqinrOv9+ji5wijJ/K
+         ot1uNRhHyFTZquka73Hj+2OhED8JTOYsq380gtNH3oBTjCfCskv7TS4s/SBz1uCruGzX
+         4BSLjoxl7CGkyTzYJ4CfJ4naMVU5kJzVm4sfHK5lCNGXUDy7eAKsb0a7Hh1Yd5Ub1sdx
+         gJ/aK3A0UFdPH0f+FeKcdfYKIQPmxRtGTbKc2oX/Vc8a02yQPslvas2IyKR1tP6rSg0Q
+         G3rA==
+X-Gm-Message-State: AOJu0Yzlzy9OUN1LhyQolTWn9leonhmpw3F1vmk01wUELjfg8s/cs89v
+	bV3s88KQJpqgunVRdgOJTh8+I8el5K7MiH/o/uybjqR/AzBBtAsYGb4SMDhtBk+EUsYuPkSeCz0
+	CzbkGXY0cDM8gTR+PYa4tJ0OzWM9O/IwDleCu7Ti6FLuW944FUag=
+X-Google-Smtp-Source: AGHT+IHc6LVv2T36wCeU0Ce+15D6rxumbeQhe6frfBp977Gr422jFSZNqO+H7kNZmfvIhKm0myPpuEe62RAzbyd8+iI=
+X-Received: by 2002:a17:907:7e97:b0:a51:ab6a:fb96 with SMTP id
+ qb23-20020a1709077e9700b00a51ab6afb96mr11699755ejc.45.1712674221736; Tue, 09
+ Apr 2024 07:50:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240408090205.3714934-1-elver@google.com> <20240409103327.7a9012fa@gandalf.local.home>
-In-Reply-To: <20240409103327.7a9012fa@gandalf.local.home>
-From: Marco Elver <elver@google.com>
-Date: Tue, 9 Apr 2024 16:45:47 +0200
-Message-ID: <CANpmjNOv=8VBvbKBQbsBdg9y2pNsfdaA-46QB53NY-Ddmq3tmA@mail.gmail.com>
-Subject: Re: [PATCH] tracing: Add new_exec tracepoint
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Eric Biederman <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+References: <20240328205822.1007338-1-richardfung@google.com> <20240328205822.1007338-2-richardfung@google.com>
+In-Reply-To: <20240328205822.1007338-2-richardfung@google.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 9 Apr 2024 16:50:10 +0200
+Message-ID: <CAJfpegvtUywhs8vse1rZ6E=hnxUS6uo_eii-oHDmWd0hb35jjA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] fuse: Add initial support for fs-verity
+To: Richard Fung <richardfung@google.com>
+Cc: linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev, 
+	Eric Biggers <ebiggers@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 9 Apr 2024 at 16:31, Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, 28 Mar 2024 at 21:58, Richard Fung <richardfung@google.com> wrote:
 >
-> On Mon,  8 Apr 2024 11:01:54 +0200
-> Marco Elver <elver@google.com> wrote:
+> This adds support for the FS_IOC_ENABLE_VERITY and FS_IOC_MEASURE_VERITY
+> ioctls. The FS_IOC_READ_VERITY_METADATA is missing but from the
+> documentation, "This is a fairly specialized use case, and most fs-verity
+> users won=E2=80=99t need this ioctl."
 >
-> > Add "new_exec" tracepoint, which is run right after the point of no
-> > return but before the current task assumes its new exec identity.
-> >
-> > Unlike the tracepoint "sched_process_exec", the "new_exec" tracepoint
-> > runs before flushing the old exec, i.e. while the task still has the
-> > original state (such as original MM), but when the new exec either
-> > succeeds or crashes (but never returns to the original exec).
-> >
-> > Being able to trace this event can be helpful in a number of use cases:
-> >
-> >   * allowing tracing eBPF programs access to the original MM on exec,
-> >     before current->mm is replaced;
-> >   * counting exec in the original task (via perf event);
-> >   * profiling flush time ("new_exec" to "sched_process_exec").
-> >
-> > Example of tracing output ("new_exec" and "sched_process_exec"):
+> Signed-off-by: Richard Fung <richardfung@google.com>
+> ---
+>  fs/fuse/ioctl.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
 >
-> How common is this? And can't you just do the same with adding a kprobe?
+> diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
+> index 726640fa439e..a0e86c3de48f 100644
+> --- a/fs/fuse/ioctl.c
+> +++ b/fs/fuse/ioctl.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/uio.h>
+>  #include <linux/compat.h>
+>  #include <linux/fileattr.h>
+> +#include <linux/fsverity.h>
+>
+>  static ssize_t fuse_send_ioctl(struct fuse_mount *fm, struct fuse_args *=
+args,
+>                                struct fuse_ioctl_out *outarg)
+> @@ -227,6 +228,57 @@ long fuse_do_ioctl(struct file *file, unsigned int c=
+md, unsigned long arg,
+>                         out_iov =3D iov;
+>                         out_iovs =3D 1;
+>                 }
+> +
+> +               /* For fs-verity, determine iov lengths from input */
+> +               switch (cmd) {
+> +               case FS_IOC_MEASURE_VERITY: {
+> +                       __u16 digest_size;
+> +                       struct fsverity_digest __user *uarg =3D
+> +               (struct fsverity_digest __user *)arg;
+> +
+> +                       if (copy_from_user(&digest_size, &uarg->digest_si=
+ze,
+> +                                                sizeof(digest_size)))
+> +                               return -EFAULT;
+> +
+> +                       if (digest_size > SIZE_MAX - sizeof(struct fsveri=
+ty_digest))
+> +                               return -EINVAL;
+> +
+> +                       iov->iov_len =3D sizeof(struct fsverity_digest) +=
+ digest_size;
+> +                       break;
+> +               }
+> +               case FS_IOC_ENABLE_VERITY: {
+> +                       struct fsverity_enable_arg enable;
+> +                       struct fsverity_enable_arg __user *uarg =3D
+> +               (struct fsverity_enable_arg __user *)arg;
+> +                       const __u32 max_buffer_len =3D FUSE_MAX_MAX_PAGES=
+ * PAGE_SIZE;
+> +
+> +                       if (copy_from_user(&enable, uarg, sizeof(enable))=
+)
+> +                               return -EFAULT;
+> +
+> +                       if (enable.salt_size > max_buffer_len ||
+> +               enable.sig_size > max_buffer_len)
+> +                               return -ENOMEM;
+> +
+> +                       if (enable.salt_size > 0) {
+> +                               iov++;
+> +                               in_iovs++;
+> +
+> +                               iov->iov_base =3D u64_to_user_ptr(enable.=
+salt_ptr);
+> +                               iov->iov_len =3D enable.salt_size;
+> +                       }
+> +
+> +                       if (enable.sig_size > 0) {
+> +                               iov++;
+> +                               in_iovs++;
+> +
+> +                               iov->iov_base =3D u64_to_user_ptr(enable.=
+sig_ptr);
+> +                               iov->iov_len =3D enable.sig_size;
+> +                       }
+> +                       break;
+> +               }
+> +               default:
+> +                       break;
+> +               }
+>         }
+>
+>   retry:
 
-Our main use case would be to use this in BPF programs to become
-exec-aware, where using the sched_process_exec hook is too late. This
-is particularly important where the BPF program must stop inspecting
-the user space's VM when the task does exec to become a new process.
+I'm not thrilled by having ioctl specific handling added to the
+generic fuse ioctl code.
 
-kprobe (or BPF's fentry) is brittle here, because begin_new_exec()'s
-permission check can still return an error which returns to the
-original task without crashing. Only at the point of no return are we
-guaranteed that the exec either succeeds, or the task is terminated on
-failure.
-
-I don't know if "common" is the right question here, because it's a
-chicken-egg problem: no tracepoint, we give up; we have the
-tracepoint, it unlocks a range of new use cases (that require robust
-solution to make BPF programs exec-aware, and a tracepoint is the only
-option IMHO).
+But more important is what  the fsverity folks think (CC's added).
 
 Thanks,
--- Marco
+Miklos
 
