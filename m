@@ -1,62 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-16431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A670889D65F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 12:11:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C116789D6EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 12:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 608002819A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 10:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790FC28392D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 10:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0F381ABE;
-	Tue,  9 Apr 2024 10:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49B981ACA;
+	Tue,  9 Apr 2024 10:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSSLhcB1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwsmimZN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBCE1E89D;
-	Tue,  9 Apr 2024 10:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D677D3E8;
+	Tue,  9 Apr 2024 10:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712657463; cv=none; b=dKtmhjrgOEKk94dmQsmpkvsRQu9/zEy/WDeO9dh7d/BNkvNfpFUtmobMvfr70pZD+GdxGaLFOiXbN8ZpYR+dl2LDYNwU/2T8ZujI1khTSypmSdMK9gZ2CIraPjJdp0XkvDyz1r80n7lunW7jzlzltQsKp2b5E8byDdCMNu+3p5g=
+	t=1712658237; cv=none; b=WCeFBY4/kwrjgr8CFZENTRZwJc/aRk33atNyPhm5i7rxQ3MSUkWKD2dx8YqE+IfP/+aLwynZLBJ9Pl+R0rbusIWSrM/1aiCbT9Er8/sadEXAgU5Y+CKv6HhZI+QypX705YHT4HGe3Ay/N2VfAIwELncB9wMs2637F0UkB8tHvVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712657463; c=relaxed/simple;
-	bh=PEWOZXQjdfAMZp2Rg7dsCexBjTtJ/VYS56bP2lSsKBM=;
+	s=arc-20240116; t=1712658237; c=relaxed/simple;
+	bh=LjHYHlvcIvNKOMqgpeBN4KMgJFSPPgeh6oX8HGYd0nU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6ax48yr8CpmoUQEEqGlNyu0ZrVbx02PdHi2G61oy9xMXNVxkzBL4NMgFTr4ykdi2N9xNu9iC4yF32nai4fx4XM72sqvy/5idAfNd1srtJhSJ/9+aaTJ6FsERtfAgbYZE9Wzq9BfPoZP/PfEB1/thpu4iPu8Wj+O4RptGbR5x+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSSLhcB1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A04C433F1;
-	Tue,  9 Apr 2024 10:10:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nztw8O+skolIhQbBX5UmoDl+bwh1HBpWgmL/7htZwgOr9VGTPhaHbBmZ+1YlxUrP1Xfgyjf4clJMB1K30iUeccZpW+9NZAFNJM8z+7Mcs9t7PIUHV0r1/ISjGR+l++WvLltxz4P0V0PTqVh6TVzN6bI44JAuIAMQT4jJKhSUB+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwsmimZN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA52C433F1;
+	Tue,  9 Apr 2024 10:23:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712657462;
-	bh=PEWOZXQjdfAMZp2Rg7dsCexBjTtJ/VYS56bP2lSsKBM=;
+	s=k20201202; t=1712658236;
+	bh=LjHYHlvcIvNKOMqgpeBN4KMgJFSPPgeh6oX8HGYd0nU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QSSLhcB1vuFhLuBYg82dueqUzgeKNUesajJuPFEGXZo+Vq8cnQcEdPRyQWZjHFYxz
-	 lr5jQ1LWqKsRTm9l8mHLKpVKtZtnYcwJ7wH+UKBfXC5WPDpBdWq52sIAidIY7o2CKh
-	 PMIu84kRw1GSaRW+vUuKGb7cXfttm2gK+5l/Z4ywufK4Zh+uPlAl/WxnYBE2xQtwQU
-	 Gp7b6hKAWH5TM+IA6ZEGIzVSRLbd64TSVoCeGgoJ6WcT+oTa2n4R1r9bXPvYxmfzOs
-	 Wu6F0AdaTFPxeeiv1q9sxu0w8dVWP4W1zGx3pV6poGg2LXtW51cir9SXiJsq+ETebX
-	 2yB/KmIaKqQ+g==
-Date: Tue, 9 Apr 2024 12:10:55 +0200
+	b=JwsmimZN1xjKR7+t8bqCf6G2vKD+kLz5TTStcQWP6yQBh44/v9GeLOa49tDZw3NWj
+	 JgzqAvqrWs+3oAuTeahiszjuhF/zWIOAf0zeIlMnmAqnZMX6O59D+jr01XxyLfPBe6
+	 XY3MV7b/QT3y/R6Q1yAecJkOCbsLVpqTUFx0oYw4QV4wyiTU0QqMXumaVXTk98Y66B
+	 Q4gGsYHpXELW9UJnoK1zYKJ3PQBHr7O/YkIzRhK/bxSWzTGxxoPCAuqCvrhEYbdq7s
+	 3D8MBzsBjbw6hFxDA5Y7TnPwWcoFkHHBRatE9Az48SoobYZfoVdnXpfkecZwkTf54q
+	 YxbOn6v4O3Ohw==
+Date: Tue, 9 Apr 2024 12:23:49 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Namhyung Kim <namhyung@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/9] tools/include: Sync uapi/linux/fs.h with the kernel
- sources
-Message-ID: <20240409-unbezahlbar-erzwungen-a815739eb854@brauner>
-References: <20240408185520.1550865-1-namhyung@kernel.org>
- <20240408185520.1550865-3-namhyung@kernel.org>
- <20240409100439.mal6tpxdvhphoyrp@quack3>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, hch@lst.de, viro@zeniv.linux.org.uk, axboe@kernel.dk, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+Message-ID: <20240409-pavillon-lohnnebenkosten-8ba65c1fd8e0@brauner>
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <20240406090930.2252838-23-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,31 +60,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240409100439.mal6tpxdvhphoyrp@quack3>
+In-Reply-To: <20240406090930.2252838-23-yukuai1@huaweicloud.com>
 
-On Tue, Apr 09, 2024 at 12:04:39PM +0200, Jan Kara wrote:
-> On Mon 08-04-24 11:55:13, Namhyung Kim wrote:
-> > To pick up the changes from:
-> > 
-> >   41bcbe59c3b3f ("fs: FS_IOC_GETUUID")
-> >   ae8c511757304 ("fs: add FS_IOC_GETFSSYSFSPATH")
-> >   73fa7547c70b3 ("vfs: add RWF_NOAPPEND flag for pwritev2")
-> > 
-> > This should be used to beautify fs syscall arguments and it addresses
-> > these tools/perf build warnings:
-> > 
-> >   Warning: Kernel ABI header differences:
-> >     diff -u tools/include/uapi/linux/fs.h include/uapi/linux/fs.h
-> > 
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> 
-> Makes sense. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+> +static int __stash_bdev_file(struct block_device *bdev)
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+I've said that on the previous version. I think that this is really
+error prone and seems overall like an unpleasant solution. I would
+really like to avoid going down that route.
+
+I think a chunk of this series is good though specicially simple
+conversions of individual filesystems where file_inode() or f_mapping
+makes sense. There's a few exceptions where we might be better of
+replacing the current apis with something else (I think Al touched on
+that somewhere further down the thread.).
+
+I'd suggest the straightforward bd_inode removals into a separate series
+that I can take.
+
+Thanks for working on all of this. It's certainly a contentious area.
 
