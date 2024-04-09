@@ -1,80 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-16505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1997189E66E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 01:51:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4FD89E678
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 01:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE951F21ADD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 23:51:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FF42876D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 23:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9569F1591F6;
-	Tue,  9 Apr 2024 23:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F49D1591F1;
+	Tue,  9 Apr 2024 23:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DbfR4JrK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntWTdmfJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BF5158DCB;
-	Tue,  9 Apr 2024 23:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBC3158DDC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Apr 2024 23:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712706645; cv=none; b=VoXt3B1msrLjNa5U4ycNtdb3rTNDh1zMK+k08ORca0atRU1uAyoAmEpLNFV+akheF5pv6UpRaFaTv7DcvnYj1YOn60tb9vWsTNGLUcHpuaSpA3KIzpBIrgQI+eNou0rxHOoZCINYuaGGyWzbk81z63jVjK5BOCu9og4aUkCN47Y=
+	t=1712706777; cv=none; b=f9QfRGB1PZvudGLXPOr9emJPo6wkKzoI0vZ6lFnVWv1Ee3XZMBxVzUg/piB15D2hS9X+yzkTj07iKQdqpkn1+ov+mTnq0ievieXjeUiHJyQ1gzSt5N91ypOnYW6CDKy6GxTd4+q/lN1zzeBnIqpr8gZY1+VRuxi/W29xBY3Myjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712706645; c=relaxed/simple;
-	bh=kIrvOTkhKhlzHL5+y3Z29QwL0SjY19i/TuT814LkkRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n8J6Oq/tfYHYvVHWUFeuZ02ffhZQ76xUQOiTNBv8mmcr6yPVkX9o8wJh9aYtA5L/KXl3oX0LRzmlPXa2iLCpvIwH+3y9MFnyGpjPntazVtWdvKGWcT8E3jW6X9VDyAQSFcNQk44qIwnm29bZx+ZuNZ7//dm2mQhXbHWBmrcUegc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DbfR4JrK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9DD2C433C7;
-	Tue,  9 Apr 2024 23:50:43 +0000 (UTC)
+	s=arc-20240116; t=1712706777; c=relaxed/simple;
+	bh=aGOAwsjrjo3bP61sfLBWWWl30IWWZzDFTUxJ/vScs5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZNwnArlzrlI73dBS0fyjtWTecNa/d/ActFlAZ9TAAe/yN6o1BjB22idL1GdEENApEA47fkAhV1aHgo3vyjkJfyG7fs7tzJd1PPLER49Cvm7EbDL7gj7lsK5QAhqzH0TbeGTMmm5+MY6uYzng6AaIlylTfA7fFVfurr0BoGXkrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntWTdmfJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02779C433C7;
+	Tue,  9 Apr 2024 23:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712706644;
-	bh=kIrvOTkhKhlzHL5+y3Z29QwL0SjY19i/TuT814LkkRw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DbfR4JrKwzpNGR5uYsl3FzHepTKAXJ1nX7+MQT26VRs75sDGe87lef0nbXW2Dhc+7
-	 Srg4V13/L1sm1pn35iSDKN7vmBExijl94SUT7hTPfJsZDuNKEInbJz0C7ltWkO/FLY
-	 3BhVMZ6kUJmVcokEIaNq33vZrYsh6tJ9qMm1ats3ynmQRoOyno8oHhLrwd9gXaC6oY
-	 uA7AyPHjxVRcS9AEW+8J1OO6ywUNIiJmxyfZBRVn085YZT/8/r7Dpws1EUloRRicjk
-	 71EsDyWlHww0QqvhKRiXnMj0SW658SLBnoKlu4eTQy48CfoD2oiBJvcrhszyL3lB83
-	 G32Blf1JykuiQ==
-Message-ID: <a82cfa8c-1dbf-42aa-a60a-b70a5510ed73@kernel.org>
-Date: Wed, 10 Apr 2024 08:50:42 +0900
+	s=k20201202; t=1712706777;
+	bh=aGOAwsjrjo3bP61sfLBWWWl30IWWZzDFTUxJ/vScs5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ntWTdmfJ0gZ4pEKZP24/kLooKj7fln2qfbVUSAfgUTS16Pa13Vru/1XNVdCAJr/By
+	 0mJMadfSTLn4ycwMgVbaJR1gD1VNCsdE6eWXccawYk3CfKFv+fy1hABHdYsU/lwemX
+	 vAtC3BwQix8HYlB78/5zA5NRvGUID3ddp8qVQCN7TKMyG0tBkqU+5C+whfIjnYrRQe
+	 MFEqK8lxxhgBLFgLJ7R2JgUpAEK7I4DLDMzprLOmMaqWqw8UxendFP5Dj8ftKpBjtE
+	 HtX4gu3FIiOiKEbwUGA2+8+L1ddTUUTYeRjetdpKN08Km9ugmTrZ9rccB2OsFH8zUm
+	 SvsfCaL0CVdtA==
+Date: Tue, 9 Apr 2024 19:52:54 -0400
+From: Eric Biggers <ebiggers@kernel.org>
+To: Richard Fung <richardfung@google.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/1] fuse: Add initial support for fs-verity
+Message-ID: <20240409235254.GD1609@quark.localdomain>
+References: <20240328205822.1007338-1-richardfung@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] zonefs: Use str_plural() to fix Coccinelle warning
-To: Thorsten Blum <thorsten.blum@toblux.com>,
- Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240402101715.226284-2-thorsten.blum@toblux.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240402101715.226284-2-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328205822.1007338-1-richardfung@google.com>
 
-On 4/2/24 19:17, Thorsten Blum wrote:
-> Fixes the following Coccinelle/coccicheck warning reported by
-> string_choices.cocci:
+On Thu, Mar 28, 2024 at 08:58:21PM +0000, Richard Fung wrote:
+> Hi! I am trying to add fs-verity support for virtiofs.
 > 
-> 	opportunity for str_plural(zgroup->g_nr_zones)
+> The main complication is that fs-verity ioctls do not have constant
+> iovec lengths, so simply using _IOC_SIZE like with other ioctls does not
+> work.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> Note this doesn't include support for FS_IOC_READ_VERITY_METADATA.  I
+> don't know of an existing use of it and I figured it would be better
+> not to include code that wouldn't be used and tested. However if you feel
+> like it should be added let me know.
+> 
+> (Also, apologies for any mistakes as this is my first Linux patch!)
+> 
+> Richard Fung (1):
+>   fuse: Add initial support for fs-verity
+> 
+>  fs/fuse/ioctl.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
 
-Applied to for-6.9-fixes. Thanks !
+Just a process note: single patches should not use a cover letter.  The
+information should be in the patch instead, preferably in the actual commit
+message but it's also possible to put text below the scissors line of the patch.
 
-
--- 
-Damien Le Moal
-Western Digital Research
-
+- Eric
 
