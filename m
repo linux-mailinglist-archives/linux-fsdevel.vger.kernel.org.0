@@ -1,120 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-16463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CAD89E0EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 19:00:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8EE389E10F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 19:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 557081F24426
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 17:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38D01C21E1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 17:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E298115574A;
-	Tue,  9 Apr 2024 16:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1082C15382F;
+	Tue,  9 Apr 2024 17:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aotgi/mj"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OAwGOJjb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285BB152DEB;
-	Tue,  9 Apr 2024 16:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F26713E3E3;
+	Tue,  9 Apr 2024 17:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712681995; cv=none; b=g7ibty6h1z9GuDiYBSd+0+zOxHuXR4ymiaoYcr56bPpzvRLE0EwxXI/LBp95BXa1NCyGFZzbxm1Zigqw9y2Me2BdfHAd4rIJUI4xvz/aLbbYPxkRhCZ453Lny0vJfFuYsvw74LomoU/U5QrXtf4MQzerLxN17g7e4eslPfjNbr0=
+	t=1712682409; cv=none; b=Du19XjtcdNfOD78M+Qw9DVoWZiTUhc3z/C7OumDmP4CeYKcvw2H+Em9A/lCNtwGTA3n2sOUkD8kveOKOdUe1/L7JrXJCNb5cz1k2H/wYJMpJGs9mghK5nVDM0Zr0vH/mt8N5QTucVcm8jVo1cydQChOudsMSNJnIPr1KUj/4dBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712681995; c=relaxed/simple;
-	bh=FncKWsKbg/hFr6GnUHocdduFJVjZhPin/nlM8ZG9evk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wv3Ey/7TO3BWslQ+173irg2YxGx4VBimPA3IC65TMytW9YT5SB2NOxPpvdtaET7Gcz/Qjyj44dHN67fSZoOoH15FE2L1BMGSB+8lVvnkvKBOWr93ZQvmEHu9lS23VNx6BAak6vYW+tMvg5Agn6yeOOulpxraH4choKBzFdUqwk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aotgi/mj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65DAEC43394;
-	Tue,  9 Apr 2024 16:59:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712681994;
-	bh=FncKWsKbg/hFr6GnUHocdduFJVjZhPin/nlM8ZG9evk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aotgi/mjzEYHwzEVw6SPTEWRw8pgK6bl3EZbUUhiLE2wDXCzJVqGLZVPoNr/CMvgT
-	 H9TmtLLcE1bCzZaEkYCwTzITgO05jeex9m4DsVZXuD3Y8sQ+/2basDNQ+0TD4lKlCT
-	 cGAHdmD3jRpxUvKfiA6b3PdEL9gJRuNamxiGi1rNQHRm69ypMekvMNLj3gIh5DWQ+K
-	 3MQxlZl4KxdIiWu2pYBK5d2n2bQ+L9wlms3e/u5qct/dU3fuk6T1O1cYJYm9lqyMn8
-	 nlMcs3HEWsfIHLaxSP+bY9pq5qXzsIR5fa9hpFrFifzsLQ8DpGnVHFk0OV/Ayuor1W
-	 q2lPrqPTwWVxw==
-From: Will Deacon <will@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <naoya.horiguchi@nec.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Anup Patel <anup@brainfault.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Joel Granados <j.granados@samsung.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/7] sysctl: Remove sentinel elements from misc directories
-Date: Tue,  9 Apr 2024 17:59:35 +0100
-Message-Id: <171267686554.3168517.3836229489434629100.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
-References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
+	s=arc-20240116; t=1712682409; c=relaxed/simple;
+	bh=SU/lIZjorLYT/0gn8Ivk/IkYaTA7K0Unxbh+QSYRN84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rR7X/PyQ/HACnD585NxsNUgB4WEZNWlsXyK5TExNpW7D7lVzMq+XNefwAqGeyTqX2JgwPJH17zolapmKuF+PdfzI4Q/88Dxy+yN6ra+PTqyPsSEfgljufOAl78JLQtnFk1c8gGufFPGxWNgFEAIIiu+Hca9w4gkkR4sJGBA/69A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OAwGOJjb; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=SU/lIZjorLYT/0gn8Ivk/IkYaTA7K0Unxbh+QSYRN84=; b=OAwGOJjbH3VyJN6C/JQx2eHqDl
+	L6MBrNPuxjVIC/3iVlvU40CtZjaRS9iKd/G/fWJ4MwqmO5ppVaLxueAHwoOojyzqZ0moH1XmuxHtL
+	yuSVvOEjppa1fcyBL90f8sFclfNIwgQy4acr/3hlrlJGzLm632vl+fqrdrcy0tF3xmJ7+9ohSvAIs
+	/kTJyOiH9zbC+AbqCw3pIi8mgEIy6FvTTwLGJqEpogltTzljTRvsVTeNtLN7uh33DK+0bmvMUrtlD
+	GqHp0buy79XsBLsZufqboxbgT7vyi5ZN5t/3DA5OzzKMkk2gjLP8jY3MyoqOmgH3BIRYzLC4I5S0R
+	kHfYxYKg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1ruEvk-009F9r-11;
+	Tue, 09 Apr 2024 17:06:44 +0000
+Date: Tue, 9 Apr 2024 18:06:44 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] iov_iter: add copy_to_iter_full()
+Message-ID: <20240409170644.GE2118490@ZenIV>
+References: <20240409152438.77960-1-axboe@kernel.dk>
+ <20240409152438.77960-2-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240409152438.77960-2-axboe@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, 28 Mar 2024 16:57:47 +0100, Joel Granados wrote:
-> What?
-> These commits remove the sentinel element (last empty element) from the
-> sysctl arrays of all the files under the "mm/", "security/", "ipc/",
-> "init/", "io_uring/", "drivers/perf/" and "crypto/" directories that
-> register a sysctl array. The inclusion of [4] to mainline allows the
-> removal of sentinel elements without behavioral change. This is safe
-> because the sysctl registration code (register_sysctl() and friends) use
-> the array size in addition to checking for a sentinel [1].
-> 
-> [...]
+On Tue, Apr 09, 2024 at 09:22:15AM -0600, Jens Axboe wrote:
+> Add variant of copy_to_iter() that either copies the full amount asked
+> for and return success, or ensures that the iov_iter is back to where
+> it started on failure and returns false.
 
-Applied drivers/perf change to will (for-next/perf), thanks!
+FWIW, see git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.iov_iter
 
-[7/7] drivers: perf: Remove the now superfluous sentinel elements from ctl_table array
-      https://git.kernel.org/will/c/f66ae597411c
-
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+There was an open-coded instance (skb_copy_linear()) that I'd converted to
+that helper in the same commit; I can split it, of course, but I don't
+see much point in that.
 
