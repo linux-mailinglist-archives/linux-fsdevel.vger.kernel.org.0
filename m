@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-16599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7B789FA6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 16:49:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5FA89FA74
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 16:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE481F2BF5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 14:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC89828398B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 14:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362FD1836C7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ED11836F3;
 	Wed, 10 Apr 2024 14:38:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC8D16E865;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CB018132B;
 	Wed, 10 Apr 2024 14:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712759928; cv=none; b=kSyDLCFNU/3Hjl3IZFrwKUQhlUO0PyhIp9kLzy7wgrtdESD0pEjzfuaRTWT2UcrRtPrOwZgXnP+alAtF3R+T1ZBxqoU1xoqv9i1tZHvSJNLKJ1JuyhTs7+XY0yeZcRD1OQdov+nKFqZ807/RtiHmIlePsdG3nmdHVdPXM1YKDXY=
+	t=1712759929; cv=none; b=aoOylt+fX9Si1rBb13qhF1Q23xMUs8pDspNbKa8TzpjVgVAZFRQ0O0a+IA6VUtqUQ+qaftp4hTamQqyhfRxjVbldKJDAkBQBsW1O5un7uFQ/Xv+9APL3Wn5XS4FuxytOWwb5RnwjRIVTHCfNJMN7QwZYmKnCGM0uH/3N2UT9bu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712759928; c=relaxed/simple;
-	bh=a0yXsZEWte2+yhfLSEWGmnTc+medZk5RJjxW91j+Nrw=;
+	s=arc-20240116; t=1712759929; c=relaxed/simple;
+	bh=rE9Rcx+buyMmwsXHYp7x2evEfE+Nh2dJdCHXPJa71C8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rP+cFwFsuAySm6l85RR+VdlyUoh3B4gWSZe3NAyhGUc4YPbzfUIw503OgxK4Ih0VXSKfVPVmnNPMo+/BfVPR1pQ15abTG9OsY67PXE3Q7cWDAMh4UHzrl+26XxGFHjapkq0l0H9MuGnwszXEBW3GJ1PNmXLCx8sRRLk1pyPMMrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=RSi6UznCoPtZzUnkl0Vrp6O9wxxZ81eGYv/BCVD4S9+MrAO2aQZ5M/yjr8qAd7JiCk6DhUh37//F9zuvXEJIn10h3/hK36sVCj+Cw5ABsAlvujiJTzyMrrcmx6RUp+hyXKJHpxyrK/lLlBOp3X42yzisuZEVulUsyKpYsqmY7RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VF56h30y5z4f3knS;
-	Wed, 10 Apr 2024 22:38:36 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VF56l3V9Xz4f3kK0;
+	Wed, 10 Apr 2024 22:38:39 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 419FF1A0179;
+	by mail.maildlp.com (Postfix) with ESMTP id DE50F1A0175;
 	Wed, 10 Apr 2024 22:38:43 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAX6RFSpBZmcwR8Jg--.63000S31;
-	Wed, 10 Apr 2024 22:38:42 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgAX6RFSpBZmcwR8Jg--.63000S32;
+	Wed, 10 Apr 2024 22:38:43 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v4 27/34] ext4: implement zero_range iomap path
-Date: Wed, 10 Apr 2024 22:29:41 +0800
-Message-Id: <20240410142948.2817554-28-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v4 28/34] ext4: writeback partial blocks before zeroing out range
+Date: Wed, 10 Apr 2024 22:29:42 +0800
+Message-Id: <20240410142948.2817554-29-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
 References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
@@ -70,65 +70,60 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX6RFSpBZmcwR8Jg--.63000S31
-X-Coremail-Antispam: 1UD129KBjvJXoW7urW7CrW8XF1rKFW7Gr1rJFb_yoW8JFWDpr
-	n5K34UCr47Wr9F9F4IgF9rXr1Iy3W5Gw48WryfGrn8Z3yfW34xKFWrK3WFvF4jg3y7Jayj
-	qF45try8Kw17AaDanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUH214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j6r
-	xdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
-	M2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4
-	xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCa
-	FVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI4
-	02YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWDJVCq3wCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr
-	1j6rxdMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8Jr0_Cr1U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_GcCE3sUvcSsGvfC2KfnxnUUI43ZEXa7sRibyCPUUUU
-	U==
+X-CM-TRANSID:cCh0CgAX6RFSpBZmcwR8Jg--.63000S32
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrW5Aw4UXw1DtFy5XF47Jwb_yoWkZrc_Xa
+	4rJr1kWrWftr92g3s7Cry3ArWIyw409r1fuFy0y3s5ZFy5Kws2k3s5Ar4xZrZ5WFy2gry3
+	Cr4qqF48WF9rujkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbl8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
+	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
+	F7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_Gc
+	Wl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1l
+	n4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F4
+	0Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC
+	6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI
+	8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC2
+	0s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr
+	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26w1j6s0DMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJr
+	0_GcWlIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4UJVWxJr1l
+	IxAIcVC2z280aVCY1x0267AKxVW0oVCq3bIYCTnIWIevJa73UjIFyTuYvjTRtOzsDUUUU
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Add ext4_iomap_zero_range() for the zero_range iomap path, it zero out
-the mapped blocks, all work have been done in iomap_zero_range(), so
-call it directly.
+If we zero partial blocks, iomap_zero_iter() will skip zeroing out the
+IOMAP_UNWRITTEN srcmap, it works fine in xfs because this type means the
+block is pure unwritten and doesn't contain any delayed data. But it
+doesn't work in ext4, because IOMAP_UNWRITTEN may contain delayed data
+in ext4. For now it's hard to unify the meaning of this flag, so just
+fix it by writeback partial blocks before zeroing out.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/inode.c | 9 +++++++++
+ fs/ext4/extents.c | 9 +++++++++
  1 file changed, 9 insertions(+)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 9d694c780007..5af3b8acf1b9 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4144,6 +4144,13 @@ static int __ext4_block_zero_page_range(handle_t *handle,
- 	return err;
- }
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 9849947cec56..c4c38a323ff7 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4580,6 +4580,15 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+ 		if (ret)
+ 			goto out_mutex;
  
-+static int ext4_iomap_zero_range(struct inode *inode,
-+				 loff_t from, loff_t length)
-+{
-+	return iomap_zero_range(inode, from, length, NULL,
-+				&ext4_iomap_buffered_read_ops);
-+}
++		ret = filemap_write_and_wait_range(mapping,
++				round_down(offset, 1 << blkbits), offset);
++		if (ret)
++			goto out_mutex;
 +
- /*
-  * ext4_block_zero_page_range() zeros out a mapping of length 'length'
-  * starting from file offset 'from'.  The range to be zero'd must
-@@ -4169,6 +4176,8 @@ static int ext4_block_zero_page_range(handle_t *handle,
- 	if (IS_DAX(inode)) {
- 		return dax_zero_range(inode, from, length, NULL,
- 				      &ext4_iomap_ops);
-+	} else if (ext4_test_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP)) {
-+		return ext4_iomap_zero_range(inode, from, length);
++		ret = filemap_write_and_wait_range(mapping, offset + len,
++				round_up((offset + len), 1 << blkbits));
++		if (ret)
++			goto out_mutex;
  	}
- 	return __ext4_block_zero_page_range(handle, mapping, from, length);
- }
+ 
+ 	/* Zero range excluding the unaligned edges */
 -- 
 2.39.2
 
