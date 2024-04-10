@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-16552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4F589F857
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 15:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D4C89F869
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 15:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA18E1F2D2A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 13:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 770D7283120
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 13:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C88171E7B;
-	Wed, 10 Apr 2024 13:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F4217799E;
+	Wed, 10 Apr 2024 13:37:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F9716E889;
-	Wed, 10 Apr 2024 13:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069E816F0DC;
+	Wed, 10 Apr 2024 13:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712756224; cv=none; b=ZmhQi7J6s8kx39hek+CoxxjvL9e0WZXZi9/yoG/kJN8/U+XJGavGmus2jZGTUxOL8NcP9DhLdpAv59o7bXr/lkxNXN/UpbNNCku2aULeocFpyvDatjU71OoYe3xly3GP5SCEb9HzBGRdH0VpMM6jNVICaiMBQE6FmKMJ7+ZspDU=
+	t=1712756226; cv=none; b=IkTvOlToNk8i/rlm9p6Sq3s2Y+lex7eaK7xkv+3xAsjbtbSWi2bSWpu/Hjr3HQ+d/glk5ehxX1PFmo9Mfm/i3Xj0UiVGw/oWH6isqEqz6Y6BVfwUexK1fUjHWesQvXCnDySpJRt2c54qV6nAkBKsC8jQRvjcBuw63YZPV5CiJQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712756224; c=relaxed/simple;
-	bh=/tzLFxZiQKM1o33YOWMcHkn39HY4IsDvc4ej8fHwAzI=;
+	s=arc-20240116; t=1712756226; c=relaxed/simple;
+	bh=JWQTKQedlIi1E/NjDL/wLCHl3liLTmK84z71/PKoHDE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ubt6mK0sB4tYZzIImdB+96HgJ3uazIiSAp5lG7DeazE/GXKecgk4n858Y2y4kpWaareHaz7TcNng+aqwtwbmgxDRgUDDpwfYCzkhXVYZs1wnzZG7yCKRs7fdb0R1THmd+I6Z2wbqUFBEwazQLYQDg99TBrw5aqyp/z+yPIcOYN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=tlwqUO50JEXIxPFF5zyQtpnfBMgfqO8shlyVsAamO9ldCe2iKmgv+RxExjIW4DbtxKSzvc3z7D0H27vmI30elqBbG+04alZchEVFiK0SKjK7R+ufDOno896PwKG9V9AMTMjeCOGtqGvGO6YYT+DEvT45ki1HAXFf3dCHggrr4ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VF3lQ3XLtz4f3m7f;
-	Wed, 10 Apr 2024 21:36:50 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VF3lS6Sj6z4f3kG1;
+	Wed, 10 Apr 2024 21:36:52 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 2597B1A0568;
+	by mail.maildlp.com (Postfix) with ESMTP id B7D211A016E;
 	Wed, 10 Apr 2024 21:36:59 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+RHolRZmeCl4Jg--.8806S22;
-	Wed, 10 Apr 2024 21:36:58 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgAn+RHolRZmeCl4Jg--.8806S23;
+	Wed, 10 Apr 2024 21:36:59 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v4 18/34] ext4: drop ext4_es_is_delonly()
-Date: Wed, 10 Apr 2024 21:28:02 +0800
-Message-Id: <20240410132818.2812377-19-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v4 19/34] ext4: drop all delonly descriptions
+Date: Wed, 10 Apr 2024 21:28:03 +0800
+Message-Id: <20240410132818.2812377-20-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240410132818.2812377-1-yi.zhang@huaweicloud.com>
 References: <20240410132818.2812377-1-yi.zhang@huaweicloud.com>
@@ -69,10 +69,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+RHolRZmeCl4Jg--.8806S22
-X-Coremail-Antispam: 1UD129KBjvJXoWxXF18AFWxKrW3CrWUJr17Awb_yoWrKryfpF
-	Z8JF18Gr43u34DW3yxtw1UXr1rKa10qFWjgrySkF1fWFyrXryS9F10yFyrAFyrKrW8ZF13
-	XFWjy34jka17Ka7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgAn+RHolRZmeCl4Jg--.8806S23
+X-Coremail-Antispam: 1UD129KBjvJXoW3WFW8Cw43JrykWw4ftFyfCrg_yoWDXr1Upr
+	W5KF13twn8Xryv9r4ftwn7Xr1fWa4vqFWUt34fJFyFkFn5Jr1S9F1qkryFvFy8GrWxAw1q
+	qF45u34Uua1qgFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -91,133 +91,293 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Since we don't add delayed flag in unwritten extent status entry, so
-there is no difference between ext4_es_is_delayed() and
-ext4_es_is_delonly(), just drop ext4_es_is_delonly().
+Drop all delonly descriptions in parameters and comments.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/extents_status.c | 18 +++++++++---------
- fs/ext4/extents_status.h |  5 -----
- fs/ext4/inode.c          |  4 ++--
- 3 files changed, 11 insertions(+), 16 deletions(-)
+ fs/ext4/extents_status.c | 92 ++++++++++++++++++++--------------------
+ 1 file changed, 45 insertions(+), 47 deletions(-)
 
 diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index 9cac4ea57b73..062293e739cc 100644
+index 062293e739cc..926669d8eb3e 100644
 --- a/fs/ext4/extents_status.c
 +++ b/fs/ext4/extents_status.c
-@@ -561,8 +561,8 @@ static int ext4_es_can_be_merged(struct extent_status *es1,
- 	if (ext4_es_is_hole(es1))
- 		return 1;
+@@ -142,8 +142,8 @@
+  */
  
--	/* we need to check delayed extent is without unwritten status */
--	if (ext4_es_is_delayed(es1) && !ext4_es_is_unwritten(es1))
-+	/* we need to check delayed extent */
-+	if (ext4_es_is_delayed(es1))
- 		return 1;
+ struct rsvd_info {
+-	int delonly_cluster;	/* reserved clusters for delalloc es entry */
+-	int delonly_block;	/* reserved blocks for delalloc es entry */
++	int delayed_cluster;	/* reserved clusters for delalloc es entry */
++	int delayed_block;	/* reserved blocks for delalloc es entry */
+ };
  
- 	return 0;
-@@ -1137,7 +1137,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
+ static struct kmem_cache *ext4_es_cachep;
+@@ -943,10 +943,10 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+ 	 * so release the quota reservations made for any previously delayed
+ 	 * allocated clusters.
+ 	 */
+-	resv_used = rinfo.delonly_cluster + pending;
++	resv_used = rinfo.delayed_cluster + pending;
+ 	if (resv_used)
+ 		ext4_da_update_reserve_space(inode, resv_used,
+-					     rinfo.delonly_block);
++					     rinfo.delayed_block);
+ 	if (err1 || err2 || err3 < 0)
+ 		goto retry;
+ 
+@@ -1067,8 +1067,8 @@ int ext4_es_lookup_extent(struct inode *inode, ext4_lblk_t lblk,
+ }
+ 
+ struct rsvd_count {
+-	int ndelonly_cluster;
+-	int ndelonly_block;
++	int ndelayed_cluster;
++	int ndelayed_block;
+ 	bool first_do_lblk_found;
+ 	ext4_lblk_t first_do_lblk;
+ 	ext4_lblk_t last_do_lblk;
+@@ -1094,11 +1094,11 @@ static void init_rsvd(struct inode *inode, ext4_lblk_t lblk,
  	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
- 	ext4_lblk_t i, end, nclu;
+ 	struct rb_node *node;
  
--	if (!ext4_es_is_delonly(es))
-+	if (!ext4_es_is_delayed(es))
- 		return;
+-	rc->ndelonly_cluster = 0;
+-	rc->ndelonly_block = 0;
++	rc->ndelayed_cluster = 0;
++	rc->ndelayed_block = 0;
  
+ 	/*
+-	 * for bigalloc, note the first delonly block in the range has not
++	 * for bigalloc, note the first delayed block in the range has not
+ 	 * been found, record the extent containing the block to the left of
+ 	 * the region to be removed, if any, and note that there's no partial
+ 	 * cluster to track
+@@ -1118,9 +1118,8 @@ static void init_rsvd(struct inode *inode, ext4_lblk_t lblk,
+ }
+ 
+ /*
+- * count_rsvd - count the clusters containing delayed and not unwritten
+- *		(delonly) blocks in a range within an extent and add to
+- *	        the running tally in rsvd_count
++ * count_rsvd - count the clusters containing delayed blocks in a range
++ *	        within an extent and add to the running tally in rsvd_count
+  *
+  * @inode - file containing extent
+  * @lblk - first block in range
+@@ -1143,19 +1142,19 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
  	WARN_ON(len <= 0);
-@@ -1289,7 +1289,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
+ 
+ 	if (sbi->s_cluster_ratio == 1) {
+-		rc->ndelonly_cluster += (int) len;
+-		rc->ndelonly_block = rc->ndelonly_cluster;
++		rc->ndelayed_cluster += (int) len;
++		rc->ndelayed_block = rc->ndelayed_cluster;
+ 		return;
+ 	}
+ 
+ 	/* bigalloc */
+-	rc->ndelonly_block += (int)len;
++	rc->ndelayed_block += (int)len;
+ 
+ 	i = (lblk < es->es_lblk) ? es->es_lblk : lblk;
+ 	end = lblk + (ext4_lblk_t) len - 1;
+ 	end = (end > ext4_es_end(es)) ? ext4_es_end(es) : end;
+ 
+-	/* record the first block of the first delonly extent seen */
++	/* record the first block of the first delayed extent seen */
+ 	if (!rc->first_do_lblk_found) {
+ 		rc->first_do_lblk = i;
+ 		rc->first_do_lblk_found = true;
+@@ -1169,7 +1168,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
+ 	 * doesn't start with it, count it and stop tracking
+ 	 */
+ 	if (rc->partial && (rc->lclu != EXT4_B2C(sbi, i))) {
+-		rc->ndelonly_cluster++;
++		rc->ndelayed_cluster++;
+ 		rc->partial = false;
+ 	}
+ 
+@@ -1179,7 +1178,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
+ 	 */
+ 	if (EXT4_LBLK_COFF(sbi, i) != 0) {
+ 		if (end >= EXT4_LBLK_CFILL(sbi, i)) {
+-			rc->ndelonly_cluster++;
++			rc->ndelayed_cluster++;
+ 			rc->partial = false;
+ 			i = EXT4_LBLK_CFILL(sbi, i) + 1;
+ 		}
+@@ -1187,11 +1186,11 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
+ 
+ 	/*
+ 	 * if the current cluster starts on a cluster boundary, count the
+-	 * number of whole delonly clusters in the extent
++	 * number of whole delayed clusters in the extent
+ 	 */
+ 	if ((i + sbi->s_cluster_ratio - 1) <= end) {
+ 		nclu = (end - i + 1) >> sbi->s_cluster_bits;
+-		rc->ndelonly_cluster += nclu;
++		rc->ndelayed_cluster += nclu;
+ 		i += nclu << sbi->s_cluster_bits;
+ 	}
+ 
+@@ -1251,10 +1250,9 @@ static struct pending_reservation *__pr_tree_search(struct rb_root *root,
+  * @rc - pointer to reserved count data
+  *
+  * The number of reservations to be released is equal to the number of
+- * clusters containing delayed and not unwritten (delonly) blocks within
+- * the range, minus the number of clusters still containing delonly blocks
+- * at the ends of the range, and minus the number of pending reservations
+- * within the range.
++ * clusters containing delayed blocks within the range, minus the number of
++ * clusters still containing delayed blocks at the ends of the range, and
++ * minus the number of pending reservations within the range.
+  */
+ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
+ 			     struct extent_status *right_es,
+@@ -1265,33 +1263,33 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
+ 	struct ext4_pending_tree *tree = &EXT4_I(inode)->i_pending_tree;
+ 	struct rb_node *node;
+ 	ext4_lblk_t first_lclu, last_lclu;
+-	bool left_delonly, right_delonly, count_pending;
++	bool left_delayed, right_delayed, count_pending;
+ 	struct extent_status *es;
+ 
+ 	if (sbi->s_cluster_ratio > 1) {
+ 		/* count any remaining partial cluster */
+ 		if (rc->partial)
+-			rc->ndelonly_cluster++;
++			rc->ndelayed_cluster++;
+ 
+-		if (rc->ndelonly_cluster == 0)
++		if (rc->ndelayed_cluster == 0)
+ 			return 0;
+ 
+ 		first_lclu = EXT4_B2C(sbi, rc->first_do_lblk);
+ 		last_lclu = EXT4_B2C(sbi, rc->last_do_lblk);
+ 
+ 		/*
+-		 * decrease the delonly count by the number of clusters at the
+-		 * ends of the range that still contain delonly blocks -
++		 * decrease the delayed count by the number of clusters at the
++		 * ends of the range that still contain delayed blocks -
+ 		 * these clusters still need to be reserved
+ 		 */
+-		left_delonly = right_delonly = false;
++		left_delayed = right_delayed = false;
+ 
  		es = rc->left_es;
  		while (es && ext4_es_end(es) >=
  		       EXT4_LBLK_CMASK(sbi, rc->first_do_lblk)) {
--			if (ext4_es_is_delonly(es)) {
-+			if (ext4_es_is_delayed(es)) {
- 				rc->ndelonly_cluster--;
- 				left_delonly = true;
+ 			if (ext4_es_is_delayed(es)) {
+-				rc->ndelonly_cluster--;
+-				left_delonly = true;
++				rc->ndelayed_cluster--;
++				left_delayed = true;
  				break;
-@@ -1309,7 +1309,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
  			}
+ 			node = rb_prev(&es->rb_node);
+@@ -1299,7 +1297,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
+ 				break;
+ 			es = rb_entry(node, struct extent_status, rb_node);
+ 		}
+-		if (right_es && (!left_delonly || first_lclu != last_lclu)) {
++		if (right_es && (!left_delayed || first_lclu != last_lclu)) {
+ 			if (end < ext4_es_end(right_es)) {
+ 				es = right_es;
+ 			} else {
+@@ -1310,8 +1308,8 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
  			while (es && es->es_lblk <=
  			       EXT4_LBLK_CFILL(sbi, rc->last_do_lblk)) {
--				if (ext4_es_is_delonly(es)) {
-+				if (ext4_es_is_delayed(es)) {
- 					rc->ndelonly_cluster--;
- 					right_delonly = true;
+ 				if (ext4_es_is_delayed(es)) {
+-					rc->ndelonly_cluster--;
+-					right_delonly = true;
++					rc->ndelayed_cluster--;
++					right_delayed = true;
  					break;
-@@ -2230,7 +2230,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
- 	if (EXT4_B2C(sbi, lblk) == EXT4_B2C(sbi, end)) {
- 		first = EXT4_LBLK_CMASK(sbi, lblk);
- 		if (first != lblk)
--			f_del = __es_scan_range(inode, &ext4_es_is_delonly,
-+			f_del = __es_scan_range(inode, &ext4_es_is_delayed,
- 						first, lblk - 1);
- 		if (f_del) {
- 			ret = __insert_pending(inode, first, prealloc);
-@@ -2242,7 +2242,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
- 			       sbi->s_cluster_ratio - 1;
- 			if (last != end)
- 				l_del = __es_scan_range(inode,
--							&ext4_es_is_delonly,
-+							&ext4_es_is_delayed,
- 							end + 1, last);
- 			if (l_del) {
- 				ret = __insert_pending(inode, last, prealloc);
-@@ -2255,7 +2255,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
- 	} else {
- 		first = EXT4_LBLK_CMASK(sbi, lblk);
- 		if (first != lblk)
--			f_del = __es_scan_range(inode, &ext4_es_is_delonly,
-+			f_del = __es_scan_range(inode, &ext4_es_is_delayed,
- 						first, lblk - 1);
- 		if (f_del) {
- 			ret = __insert_pending(inode, first, prealloc);
-@@ -2267,7 +2267,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
- 
- 		last = EXT4_LBLK_CMASK(sbi, end) + sbi->s_cluster_ratio - 1;
- 		if (last != end)
--			l_del = __es_scan_range(inode, &ext4_es_is_delonly,
-+			l_del = __es_scan_range(inode, &ext4_es_is_delayed,
- 						end + 1, last);
- 		if (l_del) {
- 			ret = __insert_pending(inode, last, prealloc);
-diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
-index 5b49cb3b9aff..e484c60e55e3 100644
---- a/fs/ext4/extents_status.h
-+++ b/fs/ext4/extents_status.h
-@@ -184,11 +184,6 @@ static inline int ext4_es_is_mapped(struct extent_status *es)
- 	return (ext4_es_is_written(es) || ext4_es_is_unwritten(es));
+ 				}
+ 				node = rb_next(&es->rb_node);
+@@ -1325,21 +1323,21 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
+ 		/*
+ 		 * Determine the block range that should be searched for
+ 		 * pending reservations, if any.  Clusters on the ends of the
+-		 * original removed range containing delonly blocks are
++		 * original removed range containing delayed blocks are
+ 		 * excluded.  They've already been accounted for and it's not
+ 		 * possible to determine if an associated pending reservation
+ 		 * should be released with the information available in the
+ 		 * extents status tree.
+ 		 */
+ 		if (first_lclu == last_lclu) {
+-			if (left_delonly | right_delonly)
++			if (left_delayed | right_delayed)
+ 				count_pending = false;
+ 			else
+ 				count_pending = true;
+ 		} else {
+-			if (left_delonly)
++			if (left_delayed)
+ 				first_lclu++;
+-			if (right_delonly)
++			if (right_delayed)
+ 				last_lclu--;
+ 			if (first_lclu <= last_lclu)
+ 				count_pending = true;
+@@ -1350,13 +1348,13 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
+ 		/*
+ 		 * a pending reservation found between first_lclu and last_lclu
+ 		 * represents an allocated cluster that contained at least one
+-		 * delonly block, so the delonly total must be reduced by one
++		 * delayed block, so the delayed total must be reduced by one
+ 		 * for each pending reservation found and released
+ 		 */
+ 		if (count_pending) {
+ 			pr = __pr_tree_search(&tree->root, first_lclu);
+ 			while (pr && pr->lclu <= last_lclu) {
+-				rc->ndelonly_cluster--;
++				rc->ndelayed_cluster--;
+ 				node = rb_next(&pr->rb_node);
+ 				rb_erase(&pr->rb_node, &tree->root);
+ 				__free_pending(pr);
+@@ -1367,7 +1365,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
+ 			}
+ 		}
+ 	}
+-	return rc->ndelonly_cluster;
++	return rc->ndelayed_cluster;
  }
  
--static inline int ext4_es_is_delonly(struct extent_status *es)
--{
--	return (ext4_es_is_delayed(es) && !ext4_es_is_unwritten(es));
--}
--
- static inline void ext4_es_set_referenced(struct extent_status *es)
- {
- 	es->es_pblk |= ((ext4_fsblk_t)EXTENT_STATUS_REFERENCED) << ES_SHIFT;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 64bdfa9e06b2..2704dca96ee7 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1643,7 +1643,7 @@ static int ext4_da_check_clu_allocated(struct inode *inode, ext4_lblk_t lblk,
- 	int ret;
  
- 	*allocated = false;
--	if (ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk))
-+	if (ext4_es_scan_clu(inode, &ext4_es_is_delayed, lblk))
- 		return 0;
+@@ -1401,8 +1399,8 @@ static int __es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
+ 	struct rsvd_count rc;
  
- 	if (ext4_es_scan_clu(inode, &ext4_es_is_mapped, lblk))
-@@ -1760,7 +1760,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
- 		 * Delayed extent could be allocated by fallocate.
- 		 * So we need to check it.
- 		 */
--		if (ext4_es_is_delonly(&es)) {
-+		if (ext4_es_is_delayed(&es)) {
- 			map->m_flags |= EXT4_MAP_DELAYED;
- 			return 0;
- 		}
+ 	if (rinfo) {
+-		rinfo->delonly_cluster = 0;
+-		rinfo->delonly_block = 0;
++		rinfo->delayed_cluster = 0;
++		rinfo->delayed_block = 0;
+ 		if (test_opt(inode->i_sb, DELALLOC))
+ 			count_reserved = true;
+ 	}
+@@ -1504,8 +1502,8 @@ static int __es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
+ 
+ out_get_reserved:
+ 	if (count_reserved) {
+-		rinfo->delonly_cluster = get_rsvd(inode, end, es, &rc);
+-		rinfo->delonly_block = rc.ndelonly_block;
++		rinfo->delayed_cluster = get_rsvd(inode, end, es, &rc);
++		rinfo->delayed_block = rc.ndelayed_block;
+ 	}
+ out:
+ 	return err;
+@@ -1563,7 +1561,7 @@ void ext4_es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
+ 		goto retry;
+ 
+ 	ext4_es_print_tree(inode);
+-	ext4_da_release_space(inode, rinfo.delonly_cluster);
++	ext4_da_release_space(inode, rinfo.delayed_cluster);
+ 	return;
+ }
+ 
 -- 
 2.39.2
 
