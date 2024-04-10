@@ -1,229 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-16525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E1E89EAB6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 08:21:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AAC889EB95
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 09:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBEEA1C22CB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 06:21:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC661B2639F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 07:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B819636B08;
-	Wed, 10 Apr 2024 06:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC1913C917;
+	Wed, 10 Apr 2024 07:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DRH5op6+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0jV/eoo4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DRH5op6+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0jV/eoo4"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xDK9pbC9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668ED20304;
-	Wed, 10 Apr 2024 06:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4BB13C900;
+	Wed, 10 Apr 2024 07:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712730044; cv=none; b=O9Mp0poj9kWHym7tiVHOLGZlTwmcqgS/NyAqeVfHRiOUP+NcK4+pLXbKi2i48A73Fv6AUhj2Aty/8beISjwEwfpbbdmLdrBV2jmd2gbvpsxIg9l1YQzxkVWTLD1lU7ohqwuuW5rsdUYi1E74VvozmIHXKeakYwGJrVl10DnvfGQ=
+	t=1712733256; cv=none; b=asN+YMOkWdDFTc4x+evE7Zo4PJcA5V3XPNu8Mzs/CEu+Icr5WSocib6qxFJwMuHpsAoSAvwQt17+gkjAaL0S42Zcd8xJt+qtn30PcLDr3WoVR5eNKBZn6mRV4RJ5Po9FZl50wKf1EA8AQJRstyrqI0lUSj0+zh62FAc2C3mGq1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712730044; c=relaxed/simple;
-	bh=SVgnyvJn4+dftj5N9qiNFUfNLaC+N6iSxocInF85y/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JpTyfPXzWkiF/JUek0khNCnccF2tIkjLKMedKyK21Csq42rDMlIuzkHLrm3KmMT01PRftCn1sIFFcOABCnED/r3bhHHAkgXQ5thCR0cnqJjqgwb8NknwuBQYuk48kFIqqAI7XzICE7Pm3jDXN6/w1I4UGF2Qeuiep8Rez8OQopk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DRH5op6+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0jV/eoo4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DRH5op6+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0jV/eoo4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8A4D3349E5;
-	Wed, 10 Apr 2024 06:20:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1712730040; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yJIujaH3RXIktcRv88URJI4c3MW1XPtMbHZWqI5VmXc=;
-	b=DRH5op6+qgu/ZbeaZUaYpnIYWqjeWpHK8OW0+kwvqDCMEwaguq5aqaXafgAjwJ6zywhusF
-	tsgFsWgaCMMY4NaTEaGk3lDtHCR73mjQ4SRA1LnqLj9EF0l+PnSJ2BlijBLHcS98VKUP8t
-	Vf4bNVGD5TMPNXoHOH52Hod45ruzXX8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1712730040;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yJIujaH3RXIktcRv88URJI4c3MW1XPtMbHZWqI5VmXc=;
-	b=0jV/eoo4drBjtHKjxE/GtnE1W1+NVg3WllILQl+VLv9gNYfTXrOGjwpUFYpLOwg0GRsGjF
-	4Wxv4HCZCDpVodDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1712730040; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yJIujaH3RXIktcRv88URJI4c3MW1XPtMbHZWqI5VmXc=;
-	b=DRH5op6+qgu/ZbeaZUaYpnIYWqjeWpHK8OW0+kwvqDCMEwaguq5aqaXafgAjwJ6zywhusF
-	tsgFsWgaCMMY4NaTEaGk3lDtHCR73mjQ4SRA1LnqLj9EF0l+PnSJ2BlijBLHcS98VKUP8t
-	Vf4bNVGD5TMPNXoHOH52Hod45ruzXX8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1712730040;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yJIujaH3RXIktcRv88URJI4c3MW1XPtMbHZWqI5VmXc=;
-	b=0jV/eoo4drBjtHKjxE/GtnE1W1+NVg3WllILQl+VLv9gNYfTXrOGjwpUFYpLOwg0GRsGjF
-	4Wxv4HCZCDpVodDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CECBE13691;
-	Wed, 10 Apr 2024 06:20:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id InaALLYvFmaJGQAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 10 Apr 2024 06:20:38 +0000
-Message-ID: <94d6d88b-b0e7-491d-94e8-dc9e5fba5620@suse.de>
-Date: Wed, 10 Apr 2024 08:20:37 +0200
+	s=arc-20240116; t=1712733256; c=relaxed/simple;
+	bh=YmJ4s2H8wjmREoV2xAlGhvbwF7Bfw51LOFU0l1TB+EI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=fMriTQTjsRsGqq8CAtF01o8P2pgNIBdzIlb+zN9tsEe4Ot3y3+8yqGHwhOZF8aJC7GHpw6ZShPGQvHyNmXXxwebLBJS7g0IEOes46gq69tXfKRi6NN+ewLnKkkgtKbThxduBq+RjnotD1Rhcj5wopCQQvRrGOcQF1ps/Mdvhr88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xDK9pbC9; arc=none smtp.client-ip=203.205.221.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1712733251; bh=pLNFfWJZyrrjt5ug/1IiEA0s6nA/zcDIGuvnAc6EYyU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=xDK9pbC9vhrDJHlw/ChVdWteJDO1a2Co2kYL43vQB0XHJy+WZwxe1zDyrP5v1N02/
+	 uCqLt4bgGfx3FGBKc9oE8GTFjHhHkbwAaCM+af4wL3lDGporPtaNOp/dSuWqWyBknY
+	 R91wrOSCMOEVotXmFeyseZz/2JzeyBhsY64YpjXI=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id 16E9E07C; Wed, 10 Apr 2024 15:05:46 +0800
+X-QQ-mid: xmsmtpt1712732746taw9g6jm2
+Message-ID: <tencent_59925DB41938CFAC0DDEA5A40DB592425D07@qq.com>
+X-QQ-XMAILINFO: MIAHdi1iQo+z6Me8BtzExIGoq9q6kn1ilN1+Ec9Q63Jhv6qjQlpeJnwHPB3qZP
+	 fM0X6whyJCXIGus//1EjkvBvcpw1HrIZgiT1xP+6jirBUlHhvwCAW1gPMAnlku9xKbgsumlHPs/w
+	 6P0T6w8bK8ZbNPa4RzxBhzZIrCfmnvuqeX5Y7ICdI+Pb2l9+3veyUebYmFVhlzFT4Tfv+W6m2Iro
+	 SGzByP40FpR2FY0bilje3dXlxksQLrrHoYH4srDecZ2qmQWqbV+AufclGN2Kdgjbc1p1+7SdLPKI
+	 mxEgGx0Yjboonu5s5hzcZxz4sUuWjG1Tf2+qKPUiE9fY/twK2QwKwGVzLipLSyZOIllBvM8penmU
+	 cozVmNEL0t+m1bjl+lAAHq7JuIA9BSnmwsdxiWYnW1niy8/f35KXPaDuvmeiAxGvSZWoybD/MQq0
+	 5LE8Vp0In2V8X2IYI39eCvV6R4Rux1DADk7k3ly28SnSIS9qDOFHKRRwZDKQQhjY0IGAbcgYAm3g
+	 7N269nIOwsO8nrwToukukOIsw5Rrlc4jGX8yVtpJU+0CGT6lQhg1Yxn2zi0cQWEicOKT9FN0Im41
+	 MlELpxFEvHf+sXzI6wYQy5YJmOlHlBuU3rTd2Ewb7JaHkLtC5woOdXm4JFd0MF1FMgFXWFg/aZHk
+	 A9OziP1aaXB+co9psyv2MAeapUrUhufYZFS2pvKXr6BAtVRr3/TpHYmz4V/S+/mMbXT6I4Dgi2Ne
+	 ycOi2c3ad3l2qaUmtq++YkY16ny9LrW559DOFwhd9yu3ygssWBZ4Q5yYn5FsBWdHhDcn4y1QTYSu
+	 iyiaOovWrNxJLlgOLC8uqI1vfUU8WihwK/lU0LfvVNjqFuhuxVL8oWBdnYj0+kxG/cVZAHepLAyv
+	 ZzKJKNzZQ0EOs/CxPkxXvJZAO3rmVKaj29yfbiTDsdNjRYi0uQoLwwN7C5fJQ7ZnfAmtLZ3EH8SG
+	 RTuRTZdHM=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shaggy@kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] jfs: reserve the header and use freelist from second
+Date: Wed, 10 Apr 2024 15:05:47 +0800
+X-OQ-MSGID: <20240410070546.719365-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000ea6cba0615a3f177@google.com>
+References: <000000000000ea6cba0615a3f177@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/10] block atomic writes
-Content-Language: en-US
-To: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, Pankaj Raghav
- <p.raghav@samsung.com>, Daniel Gomez <da.gomez@samsung.com>,
- =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier.gonz@samsung.com>, axboe@kernel.dk,
- kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
- martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
- brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
- ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
- io-uring@vger.kernel.org, nilay@linux.ibm.com, ritesh.list@gmail.com
-References: <20240326133813.3224593-1-john.g.garry@oracle.com>
- <ZgOXb_oZjsUU12YL@casper.infradead.org>
- <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
- <Zg7Z4aJtn3SxY5w1@casper.infradead.org>
- <f3c1d321-0dfc-466f-9f6a-fe2f0513d944@oracle.com>
- <ZhQud1NbO4aMt0MH@bombadil.infradead.org>
- <ZhYQANQATz82ytl1@casper.infradead.org>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <ZhYQANQATz82ytl1@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[30];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLusjj3u5c53i6g8q6enupwtij)];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,samsung.com,kernel.dk,kernel.org,lst.de,grimberg.me,linux.ibm.com,zeniv.linux.org.uk,redhat.com,suse.cz,vger.kernel.org,lists.infradead.org,mit.edu,google.com,kvack.org,gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
-X-Spam-Score: -2.79
-X-Spam-Flag: NO
 
-On 4/10/24 06:05, Matthew Wilcox wrote:
-> On Mon, Apr 08, 2024 at 10:50:47AM -0700, Luis Chamberlain wrote:
->> On Fri, Apr 05, 2024 at 11:06:00AM +0100, John Garry wrote:
->>> On 04/04/2024 17:48, Matthew Wilcox wrote:
->>>>>> The thing is that there's no requirement for an interface as complex as
->>>>>> the one you're proposing here.  I've talked to a few database people
->>>>>> and all they want is to increase the untorn write boundary from "one
->>>>>> disc block" to one database block, typically 8kB or 16kB.
->>>>>>
->>>>>> So they would be quite happy with a much simpler interface where they
->>>>>> set the inode block size at inode creation time,
->>>>> We want to support untorn writes for bdev file operations - how can we set
->>>>> the inode block size there? Currently it is based on logical block size.
->>>> ioctl(BLKBSZSET), I guess?  That currently limits to PAGE_SIZE, but I
->>>> think we can remove that limitation with the bs>PS patches.
->>
->> I can say a bit more on this, as I explored that. Essentially Matthew,
->> yes, I got that to work but it requires a set of different patches. We have
->> what we tried and then based on feedback from Chinner we have a
->> direction on what to try next. The last effort on that front was having the
->> iomap aops for bdev be used and lifting the PAGE_SIZE limit up to the
->> page cache limits. The crux on that front was that we end requiring
->> disabling BUFFER_HEAD and that is pretty limitting, so my old
->> implementation had dynamic aops so to let us use the buffer-head aops
->> only when using filesystems which require it and use iomap aops
->> otherwise. But as Chinner noted we learned through the DAX experience
->> that's not a route we want to again try, so the real solution is to
->> extend iomap bdev aops code with buffer-head compatibility.
-> 
-> Have you tried just using the buffer_head code?  I think you heard bad
-> advice at last LSFMM.  Since then I've landed a bunch of patches which
-> remove PAGE_SIZE assumptions throughout the buffer_head code, and while
-> I haven't tried it, it might work.  And it might be easier to make work
-> than adding more BH hacks to the iomap code.
-> 
-> A quick audit for problems ...
-> 
-> __getblk_slow:
->         if (unlikely(size & (bdev_logical_block_size(bdev)-1) ||
->                          (size < 512 || size > PAGE_SIZE))) {
-> 
-> cont_expand_zero (not used by bdev code)
-> cont_write_begin (ditto)
-> 
-> That's all I spot from a quick grep for PAGE, offset_in_page() and kmap.
-> 
-> You can't do a lot of buffer_heads per folio, because you'll overrun
->          struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
-> in block_read_full_folio(), but you can certainly do _one_ buffer_head
-> per folio, and that's all you need for bs>PS.
-> 
-Indeed; I got a patch here to just restart the submission loop if one
-reaches the end of the array. But maybe submitting one bh at a time and
-using plugging should achieve that same thing. Let's see.
+[syzbot reported]
+general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 0 PID: 5061 Comm: syz-executor404 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:dtInsertEntry+0xd0c/0x1780 fs/jfs/jfs_dtree.c:3713
+...
+[Analyze]
+When the pointer h has the same value as p, after writing name in UniStrncpy_to_le(),
+p->header.flag will be cleared.
+This will cause the previously true judgment "p->header.flag & BT-LEAF" to change
+to no after writing the name operation, this leads to entering an incorrect branch
+and accessing the uninitialized object ih when judging this condition for the
+second time.
+[Fix]
+When allocating slots from the freelist, we start from the second one to preserve
+the header of p from being incorrectly modified.
 
->> I suspect this is a use case where perhaps the max folio order could be
->> set for the bdev in the future, the logical block size the min order,
->> and max order the large atomic.
-> 
-> No, that's not what we want to do at all!  Minimum writeback size needs
-> to be the atomic size, otherwise we have to keep track of which writes
-> are atomic and which ones aren't.  So, just set the logical block size
-> to the atomic size, and we're done.
-> 
-+1. My thoughts all along.
+Reported-by: syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/jfs/jfs_dtree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Cheers,
-
-Hannes
+diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
+index 031d8f570f58..deb2a5cc78d8 100644
+--- a/fs/jfs/jfs_dtree.c
++++ b/fs/jfs/jfs_dtree.c
+@@ -3618,7 +3618,8 @@ static void dtInsertEntry(dtpage_t * p, int index, struct component_name * key,
+ 	kname = key->name;
+ 
+ 	/* allocate a free slot */
+-	hsi = fsi = p->header.freelist;
++	hsi = fsi = p->header.freelist = p->header.freelist == 0 ? 
++		1 : p->header.freelist;
+ 	h = &p->slot[fsi];
+ 	p->header.freelist = h->next;
+ 	--p->header.freecnt;
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.43.0
 
 
