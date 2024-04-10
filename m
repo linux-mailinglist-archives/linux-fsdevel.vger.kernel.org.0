@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-16544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62B389F83F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 15:38:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1225489F927
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 16:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF5D283C15
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 13:38:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDDB7B27DDE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 13:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7970B16131C;
-	Wed, 10 Apr 2024 13:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804C3176FBC;
+	Wed, 10 Apr 2024 13:37:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3F015F3F1;
-	Wed, 10 Apr 2024 13:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D2516F0DB;
+	Wed, 10 Apr 2024 13:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712756220; cv=none; b=Oby5xe4QGfeJoO16yRDP9KADrgmChTC4TCNoG7BRjU3njHn2YXs5JOYiHAkzFAjmMsiB4eaoZ3vorbrbAlzEC3pL4GkZZz+BeB/mEBjitgAnySgYETJfGnSmdfEKwMovpyQcIlxtlN/I0O0Ba0CEGphjVNKWi6YoUUFUxchKXYc=
+	t=1712756225; cv=none; b=dFQRb6/rH4H0XMhlpvo0FJa9yCVeDdLayuoYWz22dyIAQK31hVRsHnlg2etkhBdGP+FRHF+C2MEnvSSeTqZsCr2Ti/Q8RdU+deU79jb0Ci1YyjlqgsSY2OCJ5QpemSHOxwxZ76ZNf9YBlW1Lci3yYJ6pR7DJaByjHcQOjjZGjbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712756220; c=relaxed/simple;
-	bh=TM4qDKZK35Fc/9JvO5v33Rd+SvYcQ16DuJ+M8p2vB+4=;
+	s=arc-20240116; t=1712756225; c=relaxed/simple;
+	bh=4tMA2vNZHD2ixLAjA/Ewoyi3qj6kIdLJZrbgH4O9fAw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dtJNE0XH/Yc2K/78dhzTihMzSSNc31KLz53TaDB8mD2zbJRShVqTMnOqP05zUid2BvAWxL1ZansnBvuE55hxLRZB0fWjrib+ILm1oD7P4FRFLHgS/pBEZEqs2uJt5THRKTSUeP5m8vCTRJ8AVdR1KwxTgjr+jSJpDvQcW5w+SBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=YKBe1jdF2cHIv5dLShbK0a8wpD/rF7q7jufQ20RlIYm9skDceZjtX2f6ZE1iZxrWCFtnrI2kyOrp7W+RuIAiir1xAl9MHeSa9pZz2SwS9ufF01zTN41J1K45znpvGVTE7fek86rFQppH37eqnlXk5svAfiUx3ZzoG+IzNHRFY5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VF3lL5KVvz4f3mHL;
-	Wed, 10 Apr 2024 21:36:46 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VF3lP1k5Jz4f3kGG;
+	Wed, 10 Apr 2024 21:36:49 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 66B571A0DEA;
-	Wed, 10 Apr 2024 21:36:55 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 162151A0568;
+	Wed, 10 Apr 2024 21:36:56 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+RHolRZmeCl4Jg--.8806S16;
+	by APP1 (Coremail) with SMTP id cCh0CgAn+RHolRZmeCl4Jg--.8806S17;
 	Wed, 10 Apr 2024 21:36:55 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -56,9 +56,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v4 12/34] ext4: don't set EXTENT_STATUS_DELAYED on allocated blocks
-Date: Wed, 10 Apr 2024 21:27:56 +0800
-Message-Id: <20240410132818.2812377-13-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v4 13/34] ext4: let __revise_pending() return newly inserted pendings
+Date: Wed, 10 Apr 2024 21:27:57 +0800
+Message-Id: <20240410132818.2812377-14-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240410132818.2812377-1-yi.zhang@huaweicloud.com>
 References: <20240410132818.2812377-1-yi.zhang@huaweicloud.com>
@@ -69,10 +69,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+RHolRZmeCl4Jg--.8806S16
-X-Coremail-Antispam: 1UD129KBjvJXoW7ury7tw17uryDWrW3uFWUCFg_yoW8KF48p3
-	sxAr1rWF4UWw1UuayI9r48ur15GayjkrWDur4rur1rWayfCrySkF1qyFW0gF9FqrW8Z3WY
-	qFWru34DCayfGa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgAn+RHolRZmeCl4Jg--.8806S17
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFyfXw47WrWkWF15AryrJFb_yoW7GF1xp3
+	yY9as8CryrXw1jg3yFyF4UZr1Yg3W8JFWDXrZakrySkFyrJFyYkF10yF1avF1rCrWxJw13
+	XFWjk34Uu3WUKaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -91,66 +91,154 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Since we always set EXT4_GET_BLOCKS_DELALLOC_RESERVE when allocating
-delalloc blocks, no matter whether allocating delayed or non-delayed
-allocated blocks. There is no need to keep delayed flag on unwritten
-extent status entry, so just drop it after blocks have been allocated.
+Let __insert_pending() return 1 after successfully inserting a new
+pending cluster, and also let __revise_pending() to return the number of
+of newly inserted pendings.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/extents_status.c |  9 +--------
- fs/ext4/inode.c          | 11 -----------
- 2 files changed, 1 insertion(+), 19 deletions(-)
+ fs/ext4/extents_status.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
 diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index 2320b0d71001..952a38eaea0f 100644
+index 952a38eaea0f..382a96c1bc5c 100644
 --- a/fs/ext4/extents_status.c
 +++ b/fs/ext4/extents_status.c
-@@ -867,14 +867,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 		return;
+@@ -885,7 +885,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+ 		es1 = __es_alloc_extent(true);
+ 	if ((err1 || err2) && !es2)
+ 		es2 = __es_alloc_extent(true);
+-	if ((err1 || err2 || err3) && revise_pending && !pr)
++	if ((err1 || err2 || err3 < 0) && revise_pending && !pr)
+ 		pr = __alloc_pending(true);
+ 	write_lock(&EXT4_I(inode)->i_es_lock);
  
- 	BUG_ON(end < lblk);
--
--	if ((status & EXTENT_STATUS_DELAYED) &&
--	    (status & EXTENT_STATUS_WRITTEN)) {
--		ext4_warning(inode->i_sb, "Inserting extent [%u/%u] as "
--				" delayed and written which can potentially "
--				" cause data loss.", lblk, len);
--		WARN_ON(1);
--	}
-+	WARN_ON_ONCE(status & EXTENT_STATUS_DELAYED);
+@@ -913,7 +913,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
  
- 	newes.es_lblk = lblk;
- 	newes.es_len = len;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index fd5a27db62c0..752fc0555dc0 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -558,12 +558,6 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
- 
- 	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
- 			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
--	if (!(flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) &&
--	    !(status & EXTENT_STATUS_WRITTEN) &&
--	    ext4_es_scan_range(inode, &ext4_es_is_delayed, map->m_lblk,
--			       map->m_lblk + map->m_len - 1))
--		status |= EXTENT_STATUS_DELAYED;
--
- 	ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
- 			      map->m_pblk, status);
- 
-@@ -682,11 +676,6 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
- 
- 		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
- 				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
--		if (!(flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) &&
--		    !(status & EXTENT_STATUS_WRITTEN) &&
--		    ext4_es_scan_range(inode, &ext4_es_is_delayed, map->m_lblk,
--				       map->m_lblk + map->m_len - 1))
--			status |= EXTENT_STATUS_DELAYED;
- 		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
- 				      map->m_pblk, status);
+ 	if (revise_pending) {
+ 		err3 = __revise_pending(inode, lblk, len, &pr);
+-		if (err3 != 0)
++		if (err3 < 0)
+ 			goto error;
+ 		if (pr) {
+ 			__free_pending(pr);
+@@ -922,7 +922,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
  	}
+ error:
+ 	write_unlock(&EXT4_I(inode)->i_es_lock);
+-	if (err1 || err2 || err3)
++	if (err1 || err2 || err3 < 0)
+ 		goto retry;
+ 
+ 	ext4_es_print_tree(inode);
+@@ -1931,7 +1931,7 @@ static struct pending_reservation *__get_pending(struct inode *inode,
+  * @lblk - logical block in the cluster to be added
+  * @prealloc - preallocated pending entry
+  *
+- * Returns 0 on successful insertion and -ENOMEM on failure.  If the
++ * Returns 1 on successful insertion and -ENOMEM on failure.  If the
+  * pending reservation is already in the set, returns successfully.
+  */
+ static int __insert_pending(struct inode *inode, ext4_lblk_t lblk,
+@@ -1975,6 +1975,7 @@ static int __insert_pending(struct inode *inode, ext4_lblk_t lblk,
+ 
+ 	rb_link_node(&pr->rb_node, parent, p);
+ 	rb_insert_color(&pr->rb_node, &tree->root);
++	ret = 1;
+ 
+ out:
+ 	return ret;
+@@ -2089,7 +2090,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
+ 		es1 = __es_alloc_extent(true);
+ 	if ((err1 || err2) && !es2)
+ 		es2 = __es_alloc_extent(true);
+-	if (err1 || err2 || err3) {
++	if (err1 || err2 || err3 < 0) {
+ 		if (lclu_allocated && !pr1)
+ 			pr1 = __alloc_pending(true);
+ 		if (end_allocated && !pr2)
+@@ -2119,7 +2120,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
+ 
+ 	if (lclu_allocated) {
+ 		err3 = __insert_pending(inode, lblk, &pr1);
+-		if (err3 != 0)
++		if (err3 < 0)
+ 			goto error;
+ 		if (pr1) {
+ 			__free_pending(pr1);
+@@ -2128,7 +2129,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
+ 	}
+ 	if (end_allocated) {
+ 		err3 = __insert_pending(inode, end, &pr2);
+-		if (err3 != 0)
++		if (err3 < 0)
+ 			goto error;
+ 		if (pr2) {
+ 			__free_pending(pr2);
+@@ -2137,7 +2138,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
+ 	}
+ error:
+ 	write_unlock(&EXT4_I(inode)->i_es_lock);
+-	if (err1 || err2 || err3)
++	if (err1 || err2 || err3 < 0)
+ 		goto retry;
+ 
+ 	ext4_es_print_tree(inode);
+@@ -2247,7 +2248,9 @@ unsigned int ext4_es_delayed_clu(struct inode *inode, ext4_lblk_t lblk,
+  *
+  * Used after a newly allocated extent is added to the extents status tree.
+  * Requires that the extents in the range have either written or unwritten
+- * status.  Must be called while holding i_es_lock.
++ * status.  Must be called while holding i_es_lock. Returns number of new
++ * inserts pending cluster on insert pendings, returns 0 on remove pendings,
++ * return -ENOMEM on failure.
+  */
+ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+ 			    ext4_lblk_t len,
+@@ -2257,6 +2260,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+ 	ext4_lblk_t end = lblk + len - 1;
+ 	ext4_lblk_t first, last;
+ 	bool f_del = false, l_del = false;
++	int pendings = 0;
+ 	int ret = 0;
+ 
+ 	if (len == 0)
+@@ -2284,6 +2288,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+ 			ret = __insert_pending(inode, first, prealloc);
+ 			if (ret < 0)
+ 				goto out;
++			pendings += ret;
+ 		} else {
+ 			last = EXT4_LBLK_CMASK(sbi, end) +
+ 			       sbi->s_cluster_ratio - 1;
+@@ -2295,6 +2300,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+ 				ret = __insert_pending(inode, last, prealloc);
+ 				if (ret < 0)
+ 					goto out;
++				pendings += ret;
+ 			} else
+ 				__remove_pending(inode, last);
+ 		}
+@@ -2307,6 +2313,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+ 			ret = __insert_pending(inode, first, prealloc);
+ 			if (ret < 0)
+ 				goto out;
++			pendings += ret;
+ 		} else
+ 			__remove_pending(inode, first);
+ 
+@@ -2318,9 +2325,10 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+ 			ret = __insert_pending(inode, last, prealloc);
+ 			if (ret < 0)
+ 				goto out;
++			pendings += ret;
+ 		} else
+ 			__remove_pending(inode, last);
+ 	}
+ out:
+-	return ret;
++	return (ret < 0) ? ret : pendings;
+ }
 -- 
 2.39.2
 
