@@ -1,235 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-16524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DEF289EA2A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 07:53:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E1E89EAB6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 08:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5377B21A8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 05:53:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBEEA1C22CB0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 06:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4D61CD3A;
-	Wed, 10 Apr 2024 05:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B819636B08;
+	Wed, 10 Apr 2024 06:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DRH5op6+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0jV/eoo4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DRH5op6+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0jV/eoo4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFFB64A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 05:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668ED20304;
+	Wed, 10 Apr 2024 06:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712728403; cv=none; b=YZ7rlGUPSzrYz1XmEgxJICb/P3u37o/P/NzmI5IBynZuSrvFEWdUJ4htARiqhJM1YeWkZhyvu3r1EQtn6VHHUzU+z6XvJKQ1dQ4lViM/cXmdiK8uLz9RxV1t+vVLMjldzlfF68YCiNp3d75+EvQgn3Hw78/MGgijzfB70Q7RtdM=
+	t=1712730044; cv=none; b=O9Mp0poj9kWHym7tiVHOLGZlTwmcqgS/NyAqeVfHRiOUP+NcK4+pLXbKi2i48A73Fv6AUhj2Aty/8beISjwEwfpbbdmLdrBV2jmd2gbvpsxIg9l1YQzxkVWTLD1lU7ohqwuuW5rsdUYi1E74VvozmIHXKeakYwGJrVl10DnvfGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712728403; c=relaxed/simple;
-	bh=BbBc/BQ5DImgORKKmiL87W83nYZ72PH9KoSuv6ECsI4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MKfXM936iMX5lKqW7kW9/UZiPUBGJ9//xVIBSiQaWvzscymyM1D/oLvuJbE4A71GWxzmp6wglUgrxU8Pz2jac5v1iNJWH+Vi7oR2OcI2PpUPmlcAIVNECzAyI3371xgOq4HYSENAhviRVKEy0ZvN7TfkPm2yURLTNXq3CzoywVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3699565f54fso62529295ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Apr 2024 22:53:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712728401; x=1713333201;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4vN47NTkxExdaEYUsqQQbRl6c378RY84tMj+NMBeuVs=;
-        b=tqEoqpAc+D432/l1ArD9gXY7Go/hNv1D7zmHwwnN5t+qjWLGT5EXHC54ToxnASjBAQ
-         txe6E+6NQbXF9B9x15Wv20Q1ijK4nWhoWbK0EvH8cjA094wSXSRIH7AlIKIS0cRhpq+U
-         FUW8HAZk/tAEjxrT2yZ7oxip+3C1MLYivvbP8lFUCFbKa4qlpSHMMYssng3u6ZpRFTsS
-         y6B2qFZj8/+XjebMVn/yrNB5OX06v2N0TXpejUaihbFMmLDN7mGFsj81jYm5p7OHB0S7
-         XwmAWjRxAK1o5qnyZN4vV3RYnNvQRQjV0Rse0HXj27qNe9LXsXtQHhqRWEBSERZy4pW1
-         1mUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmE3wDVBEGx5d3gtNhadwZ/M0Ya+X8uV1YHr+AMmOHyUNOVUvsvqWduf7Zm0Am+w2LMf8R8bynGH1zBtM6ahRFfOYPlXFEMPfmLECKSg==
-X-Gm-Message-State: AOJu0YzkdMSyxkA84rORzIoEU5/+ZpY9xcPIbD27zALOlomJFZ2bgOJ1
-	IqU0SGxrGUTBzW68sHCT/k/S8wNAZ/etNWCkPMl9/19g5m5fnNgM+4SAe0cPeLRnah7kuahqWdF
-	Y10pkgES15GCxGTfIwFEsVyxdSnVoWvVCda+7tL1zUeuC0pQNdKCngag=
-X-Google-Smtp-Source: AGHT+IE7nTgkd8wtZQH9jQZYw9r2bg79b+KmAC4v1fS+OiDlfoftjLRDJLf+wx8YXJopaKz2WGDz+yEWLW/VlON5Fd7HhZfCYDKF
+	s=arc-20240116; t=1712730044; c=relaxed/simple;
+	bh=SVgnyvJn4+dftj5N9qiNFUfNLaC+N6iSxocInF85y/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JpTyfPXzWkiF/JUek0khNCnccF2tIkjLKMedKyK21Csq42rDMlIuzkHLrm3KmMT01PRftCn1sIFFcOABCnED/r3bhHHAkgXQ5thCR0cnqJjqgwb8NknwuBQYuk48kFIqqAI7XzICE7Pm3jDXN6/w1I4UGF2Qeuiep8Rez8OQopk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DRH5op6+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0jV/eoo4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DRH5op6+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0jV/eoo4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8A4D3349E5;
+	Wed, 10 Apr 2024 06:20:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1712730040; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJIujaH3RXIktcRv88URJI4c3MW1XPtMbHZWqI5VmXc=;
+	b=DRH5op6+qgu/ZbeaZUaYpnIYWqjeWpHK8OW0+kwvqDCMEwaguq5aqaXafgAjwJ6zywhusF
+	tsgFsWgaCMMY4NaTEaGk3lDtHCR73mjQ4SRA1LnqLj9EF0l+PnSJ2BlijBLHcS98VKUP8t
+	Vf4bNVGD5TMPNXoHOH52Hod45ruzXX8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1712730040;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJIujaH3RXIktcRv88URJI4c3MW1XPtMbHZWqI5VmXc=;
+	b=0jV/eoo4drBjtHKjxE/GtnE1W1+NVg3WllILQl+VLv9gNYfTXrOGjwpUFYpLOwg0GRsGjF
+	4Wxv4HCZCDpVodDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1712730040; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJIujaH3RXIktcRv88URJI4c3MW1XPtMbHZWqI5VmXc=;
+	b=DRH5op6+qgu/ZbeaZUaYpnIYWqjeWpHK8OW0+kwvqDCMEwaguq5aqaXafgAjwJ6zywhusF
+	tsgFsWgaCMMY4NaTEaGk3lDtHCR73mjQ4SRA1LnqLj9EF0l+PnSJ2BlijBLHcS98VKUP8t
+	Vf4bNVGD5TMPNXoHOH52Hod45ruzXX8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1712730040;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJIujaH3RXIktcRv88URJI4c3MW1XPtMbHZWqI5VmXc=;
+	b=0jV/eoo4drBjtHKjxE/GtnE1W1+NVg3WllILQl+VLv9gNYfTXrOGjwpUFYpLOwg0GRsGjF
+	4Wxv4HCZCDpVodDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CECBE13691;
+	Wed, 10 Apr 2024 06:20:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id InaALLYvFmaJGQAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 10 Apr 2024 06:20:38 +0000
+Message-ID: <94d6d88b-b0e7-491d-94e8-dc9e5fba5620@suse.de>
+Date: Wed, 10 Apr 2024 08:20:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d04:b0:36a:36e7:6c01 with SMTP id
- i4-20020a056e021d0400b0036a36e76c01mr61302ila.0.1712728400782; Tue, 09 Apr
- 2024 22:53:20 -0700 (PDT)
-Date: Tue, 09 Apr 2024 22:53:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ecf68e0615b7a737@google.com>
-Subject: [syzbot] [jffs2?] possible deadlock in jffs2_do_clear_inode
-From: syzbot <syzbot+88a60d3f927e2460d4ac@syzkaller.appspotmail.com>
-To: dwmw2@infradead.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, richard@nod.at, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/10] block atomic writes
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, Pankaj Raghav
+ <p.raghav@samsung.com>, Daniel Gomez <da.gomez@samsung.com>,
+ =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier.gonz@samsung.com>, axboe@kernel.dk,
+ kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+ ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+ io-uring@vger.kernel.org, nilay@linux.ibm.com, ritesh.list@gmail.com
+References: <20240326133813.3224593-1-john.g.garry@oracle.com>
+ <ZgOXb_oZjsUU12YL@casper.infradead.org>
+ <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
+ <Zg7Z4aJtn3SxY5w1@casper.infradead.org>
+ <f3c1d321-0dfc-466f-9f6a-fe2f0513d944@oracle.com>
+ <ZhQud1NbO4aMt0MH@bombadil.infradead.org>
+ <ZhYQANQATz82ytl1@casper.infradead.org>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <ZhYQANQATz82ytl1@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[30];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLusjj3u5c53i6g8q6enupwtij)];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,samsung.com,kernel.dk,kernel.org,lst.de,grimberg.me,linux.ibm.com,zeniv.linux.org.uk,redhat.com,suse.cz,vger.kernel.org,lists.infradead.org,mit.edu,google.com,kvack.org,gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Score: -2.79
+X-Spam-Flag: NO
 
-Hello,
+On 4/10/24 06:05, Matthew Wilcox wrote:
+> On Mon, Apr 08, 2024 at 10:50:47AM -0700, Luis Chamberlain wrote:
+>> On Fri, Apr 05, 2024 at 11:06:00AM +0100, John Garry wrote:
+>>> On 04/04/2024 17:48, Matthew Wilcox wrote:
+>>>>>> The thing is that there's no requirement for an interface as complex as
+>>>>>> the one you're proposing here.  I've talked to a few database people
+>>>>>> and all they want is to increase the untorn write boundary from "one
+>>>>>> disc block" to one database block, typically 8kB or 16kB.
+>>>>>>
+>>>>>> So they would be quite happy with a much simpler interface where they
+>>>>>> set the inode block size at inode creation time,
+>>>>> We want to support untorn writes for bdev file operations - how can we set
+>>>>> the inode block size there? Currently it is based on logical block size.
+>>>> ioctl(BLKBSZSET), I guess?  That currently limits to PAGE_SIZE, but I
+>>>> think we can remove that limitation with the bs>PS patches.
+>>
+>> I can say a bit more on this, as I explored that. Essentially Matthew,
+>> yes, I got that to work but it requires a set of different patches. We have
+>> what we tried and then based on feedback from Chinner we have a
+>> direction on what to try next. The last effort on that front was having the
+>> iomap aops for bdev be used and lifting the PAGE_SIZE limit up to the
+>> page cache limits. The crux on that front was that we end requiring
+>> disabling BUFFER_HEAD and that is pretty limitting, so my old
+>> implementation had dynamic aops so to let us use the buffer-head aops
+>> only when using filesystems which require it and use iomap aops
+>> otherwise. But as Chinner noted we learned through the DAX experience
+>> that's not a route we want to again try, so the real solution is to
+>> extend iomap bdev aops code with buffer-head compatibility.
+> 
+> Have you tried just using the buffer_head code?  I think you heard bad
+> advice at last LSFMM.  Since then I've landed a bunch of patches which
+> remove PAGE_SIZE assumptions throughout the buffer_head code, and while
+> I haven't tried it, it might work.  And it might be easier to make work
+> than adding more BH hacks to the iomap code.
+> 
+> A quick audit for problems ...
+> 
+> __getblk_slow:
+>         if (unlikely(size & (bdev_logical_block_size(bdev)-1) ||
+>                          (size < 512 || size > PAGE_SIZE))) {
+> 
+> cont_expand_zero (not used by bdev code)
+> cont_write_begin (ditto)
+> 
+> That's all I spot from a quick grep for PAGE, offset_in_page() and kmap.
+> 
+> You can't do a lot of buffer_heads per folio, because you'll overrun
+>          struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
+> in block_read_full_folio(), but you can certainly do _one_ buffer_head
+> per folio, and that's all you need for bs>PS.
+> 
+Indeed; I got a patch here to just restart the submission loop if one
+reaches the end of the array. But maybe submitting one bh at a time and
+using plugging should achieve that same thing. Let's see.
 
-syzbot found the following issue on:
+>> I suspect this is a use case where perhaps the max folio order could be
+>> set for the bdev in the future, the logical block size the min order,
+>> and max order the large atomic.
+> 
+> No, that's not what we want to do at all!  Minimum writeback size needs
+> to be the atomic size, otherwise we have to keep track of which writes
+> are atomic and which ones aren't.  So, just set the logical block size
+> to the atomic size, and we're done.
+> 
++1. My thoughts all along.
 
-HEAD commit:    e8b0ccb2a787 Merge tag '9p-for-6.9-rc3' of https://github...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12f9ee15180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c2c72b264636e25
-dashboard link: https://syzkaller.appspot.com/bug?extid=88a60d3f927e2460d4ac
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+Cheers,
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-e8b0ccb2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/36cfb6ee2b7e/vmlinux-e8b0ccb2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/86b45977fab6/bzImage-e8b0ccb2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+88a60d3f927e2460d4ac@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.9.0-rc2-syzkaller-00207-ge8b0ccb2a787 #0 Not tainted
-------------------------------------------------------
-kswapd1/112 is trying to acquire lock:
-ffff888064068640 (&f->sem){+.+.}-{3:3}, at: jffs2_do_clear_inode+0x5a/0x470 fs/jffs2/readinode.c:1419
-
-but task is already holding lock:
-ffffffff8d939440 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
-       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
-       might_alloc include/linux/sched/mm.h:312 [inline]
-       slab_pre_alloc_hook mm/slub.c:3746 [inline]
-       slab_alloc_node mm/slub.c:3827 [inline]
-       kmem_cache_alloc+0x4f/0x320 mm/slub.c:3852
-       jffs2_do_read_inode+0x3e8/0x670 fs/jffs2/readinode.c:1372
-       jffs2_iget+0x2c3/0xed0 fs/jffs2/fs.c:277
-       jffs2_do_fill_super+0x44b/0xa60 fs/jffs2/fs.c:577
-       jffs2_fill_super+0x283/0x370 fs/jffs2/super.c:289
-       mtd_get_sb+0x2ce/0x490 drivers/mtd/mtdsuper.c:57
-       mtd_get_sb_by_nr drivers/mtd/mtdsuper.c:88 [inline]
-       get_tree_mtd+0x6ce/0x860 drivers/mtd/mtdsuper.c:141
-       vfs_get_tree+0x8f/0x380 fs/super.c:1779
-       do_new_mount fs/namespace.c:3352 [inline]
-       path_mount+0x6e1/0x1f10 fs/namespace.c:3679
-       do_mount fs/namespace.c:3692 [inline]
-       __do_sys_mount fs/namespace.c:3898 [inline]
-       __se_sys_mount fs/namespace.c:3875 [inline]
-       __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x7a/0x120 arch/x86/entry/common.c:321
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:346
-       entry_SYSENTER_compat_after_hwframe+0x7f/0x89
-
--> #0 (&f->sem){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
-       lock_acquire kernel/locking/lockdep.c:5754 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       jffs2_do_clear_inode+0x5a/0x470 fs/jffs2/readinode.c:1419
-       evict+0x2ed/0x6c0 fs/inode.c:667
-       dispose_list+0x117/0x1e0 fs/inode.c:700
-       prune_icache_sb+0xeb/0x150 fs/inode.c:885
-       super_cache_scan+0x375/0x550 fs/super.c:223
-       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
-       shrink_slab_memcg mm/shrinker.c:548 [inline]
-       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
-       shrink_one+0x493/0x7c0 mm/vmscan.c:4774
-       shrink_many mm/vmscan.c:4835 [inline]
-       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
-       shrink_node mm/vmscan.c:5894 [inline]
-       kswapd_shrink_node mm/vmscan.c:6704 [inline]
-       balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
-       kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
-       kthread+0x2c1/0x3a0 kernel/kthread.c:388
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&f->sem);
-                               lock(fs_reclaim);
-  lock(&f->sem);
-
- *** DEADLOCK ***
-
-2 locks held by kswapd1/112:
- #0: ffffffff8d939440 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
- #1: ffff88805e1aa0e0 (&type->s_umount_key#88){++++}-{3:3}, at: super_trylock_shared fs/super.c:561 [inline]
- #1: ffff88805e1aa0e0 (&type->s_umount_key#88){++++}-{3:3}, at: super_cache_scan+0x96/0x550 fs/super.c:196
-
-stack backtrace:
-CPU: 1 PID: 112 Comm: kswapd1 Not tainted 6.9.0-rc2-syzkaller-00207-ge8b0ccb2a787 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- jffs2_do_clear_inode+0x5a/0x470 fs/jffs2/readinode.c:1419
- evict+0x2ed/0x6c0 fs/inode.c:667
- dispose_list+0x117/0x1e0 fs/inode.c:700
- prune_icache_sb+0xeb/0x150 fs/inode.c:885
- super_cache_scan+0x375/0x550 fs/super.c:223
- do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
- shrink_slab_memcg mm/shrinker.c:548 [inline]
- shrink_slab+0xa87/0x1310 mm/shrinker.c:626
- shrink_one+0x493/0x7c0 mm/vmscan.c:4774
- shrink_many mm/vmscan.c:4835 [inline]
- lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
- shrink_node mm/vmscan.c:5894 [inline]
- kswapd_shrink_node mm/vmscan.c:6704 [inline]
- balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
- kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
- kthread+0x2c1/0x3a0 kernel/kthread.c:388
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
