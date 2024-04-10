@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-16515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54E889E891
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 05:51:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C2189E897
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 05:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A791F24F23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 03:51:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1641F24E83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 03:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA051CD25;
-	Wed, 10 Apr 2024 03:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBB026ADB;
+	Wed, 10 Apr 2024 03:50:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AC0BE62;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D68C13B;
 	Wed, 10 Apr 2024 03:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712721054; cv=none; b=BRjOgfHnaka+GZfqUjSjok+rIGQKa6/r/S+1gFbkp2IphZY7HUVySByoMU7fcS2XzGl4Rh0kuVJ/aXvuSH3gHZFCtMtX+cxg6TvXxlQJhHfwXzoHXciiWMfUj5GrfeTs6fBNx2+S7GNCVGkCYjJ9UxWnfh2Zb4DF6mal+VDj8Qk=
+	t=1712721056; cv=none; b=MnT5q+GSFUOi+Jl6OEZjlVs+PSQBB4pTnQ3ni4SVlYutjWzZGQ1tA3MGConj7a/HvWhAFbxgx77ddT/SAXVoFTMCofghyFpOUHwrOYEXKEmnl0Yx/tbUXBCzXMloMUDnF7b6YwtNJoZP7rqfx2Scsm2yQTG6wGtaFncDz6OxAZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712721054; c=relaxed/simple;
-	bh=zp8Y8W3yQMUZGx/zUI8wawzP1c/idPCnssYAOGv/w4c=;
+	s=arc-20240116; t=1712721056; c=relaxed/simple;
+	bh=NB4fXWHn4Tcd06n0yHnGM1XaWGMrwV7OP0+NM28cf2Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y8LzhkWElAmVXjKiABCIJ6ABqxTY4vY4793pzse5BpG2WFJq31w75VMQrDOwkK14jjBEqHjzxc/4/Ks8u6wbL6VmGK0QrVXCKhXa/xKpOQk0jlLNVHyNtTE+Dw1Cm3Pz/Y+LucFNztkN0OZYyPO6CT2xDfVX6JeE9de8MVqCKv8=
+	 MIME-Version; b=Y41fUNFvyy7xfb5mxU5f1yv0yrtfPj6OU+dxjyiCwpupSQQMbPxuRjQs2ficoJ4QmhNTa7TGM/JcTu5pyfMKT4aWRcf6VvmfEcKhKMlWzbcqTZjj6Ez/2rPlPthzxlJZCULJ9ioz4Ke/1zT0izptYJSSJhlp/8encR1UCNlqPIs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VDpl66cK8z4f3jXd;
-	Wed, 10 Apr 2024 11:50:42 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VDpl72W7Vz4f3kFM;
+	Wed, 10 Apr 2024 11:50:43 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B84CE1A0572;
-	Wed, 10 Apr 2024 11:50:49 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 2B7251A0568;
+	Wed, 10 Apr 2024 11:50:50 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBGADBZmy5ZTJg--.21880S11;
+	by APP1 (Coremail) with SMTP id cCh0CgBHGBGADBZmy5ZTJg--.21880S12;
 	Wed, 10 Apr 2024 11:50:49 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -48,9 +48,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com
-Subject: [PATCH v2 7/9] ext4: factor out check for whether a cluster is allocated
-Date: Wed, 10 Apr 2024 11:42:01 +0800
-Message-Id: <20240410034203.2188357-8-yi.zhang@huaweicloud.com>
+Subject: [PATCH v2 8/9] ext4: make ext4_insert_delayed_block() insert multi-blocks
+Date: Wed, 10 Apr 2024 11:42:02 +0800
+Message-Id: <20240410034203.2188357-9-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240410034203.2188357-1-yi.zhang@huaweicloud.com>
 References: <20240410034203.2188357-1-yi.zhang@huaweicloud.com>
@@ -61,10 +61,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBGADBZmy5ZTJg--.21880S11
-X-Coremail-Antispam: 1UD129KBjvJXoW7urW7CF45JrWUJw1kAr1UWrg_yoW8trWxpr
-	ZxGF4rXr43Wr97WF4Sqw1DXF1Yga10q3yUJrWa93W8Zr4fJFy5KF1qyF1rXFyrKrW8A3ZI
-	qFWUAryUCF4jka7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgBHGBGADBZmy5ZTJg--.21880S12
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw1DuF47Aw48XFW3ZF47Jwb_yoWrJFWkpr
+	Z8CF1fJrWagr92gF4Sqr1DXr1aga1ktrWDJFZIgw1rZrWfJFyfKF1DtF13XF1SkrWkJa1Y
+	vFW5A34Uuan0ka7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -82,85 +82,114 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Factor out a common helper ext4_da_check_clu_allocated(), check whether
-the cluster containing a delalloc block to be added has been delayed or
-allocated, no logic changes.
+Rename ext4_insert_delayed_block() to ext4_insert_delayed_blocks(),
+pass length parameter to make it insert multi delalloc blocks once a
+time. For non-bigalloc case, just reserve len blocks and insert delalloc
+extent. For bigalloc case, we can ensure the middle clusters are not
+allocated, but need to check whether the start and end clusters are
+delayed/allocated, if not, we should reserve more space for the start
+and/or end block(s).
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/inode.c | 52 +++++++++++++++++++++++++++++++++----------------
- 1 file changed, 35 insertions(+), 17 deletions(-)
+ fs/ext4/inode.c | 51 ++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 36 insertions(+), 15 deletions(-)
 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 1180a9eb4362..46c34baa848a 100644
+index 46c34baa848a..08e2692b7286 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -1649,6 +1649,34 @@ static void ext4_print_free_blocks(struct inode *inode)
- 	return;
+@@ -1678,24 +1678,28 @@ static int ext4_da_check_clu_allocated(struct inode *inode, ext4_lblk_t lblk,
  }
  
-+/*
-+ * Check whether the cluster containing lblk has been delayed or allocated,
-+ * if not, it means we should reserve a cluster when add delalloc, return 1,
-+ * otherwise return 0 or error code.
-+ */
-+static int ext4_da_check_clu_allocated(struct inode *inode, ext4_lblk_t lblk,
-+				       bool *allocated)
-+{
-+	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-+	int ret;
-+
-+	*allocated = false;
-+	if (ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk))
-+		return 0;
-+
-+	if (ext4_es_scan_clu(inode, &ext4_es_is_mapped, lblk))
-+		goto allocated;
-+
-+	ret = ext4_clu_mapped(inode, EXT4_B2C(sbi, lblk));
-+	if (ret < 0)
-+		return ret;
-+	if (ret == 0)
-+		return 1;
-+allocated:
-+	*allocated = true;
-+	return 0;
-+}
-+
  /*
-  * ext4_insert_delayed_block - adds a delayed block to the extents status
-  *                             tree, incrementing the reserved cluster/block
-@@ -1682,23 +1710,13 @@ static int ext4_insert_delayed_block(struct inode *inode, ext4_lblk_t lblk)
+- * ext4_insert_delayed_block - adds a delayed block to the extents status
+- *                             tree, incrementing the reserved cluster/block
+- *                             count or making a pending reservation
+- *                             where needed
++ * ext4_insert_delayed_blocks - adds a multiple delayed blocks to the extents
++ *                              status tree, incrementing the reserved
++ *                              cluster/block count or making pending
++ *                              reservations where needed
+  *
+  * @inode - file containing the newly added block
+- * @lblk - logical block to be added
++ * @lblk - start logical block to be added
++ * @len - length of blocks to be added
+  *
+  * Returns 0 on success, negative error code on failure.
+  */
+-static int ext4_insert_delayed_block(struct inode *inode, ext4_lblk_t lblk)
++static int ext4_insert_delayed_blocks(struct inode *inode, ext4_lblk_t lblk,
++				      ext4_lblk_t len)
+ {
+ 	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+-	int ret;
+-	bool allocated = false;
++	int resv_clu, ret;
++	bool lclu_allocated = false;
++	bool end_allocated = false;
++	ext4_lblk_t end = lblk + len - 1;
+ 
+ 	/*
+-	 * If the cluster containing lblk is shared with a delayed,
++	 * If the cluster containing lblk or end is shared with a delayed,
+ 	 * written, or unwritten extent in a bigalloc file system, it's
+ 	 * already been accounted for and does not need to be reserved.
+ 	 * A pending reservation must be made for the cluster if it's
+@@ -1706,21 +1710,38 @@ static int ext4_insert_delayed_block(struct inode *inode, ext4_lblk_t lblk)
+ 	 * extents status tree doesn't get a match.
+ 	 */
+ 	if (sbi->s_cluster_ratio == 1) {
+-		ret = ext4_da_reserve_space(inode, 1);
++		ret = ext4_da_reserve_space(inode, len);
  		if (ret != 0)   /* ENOSPC */
  			return ret;
  	} else {   /* bigalloc */
--		if (!ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk)) {
--			if (!ext4_es_scan_clu(inode,
--					      &ext4_es_is_mapped, lblk)) {
--				ret = ext4_clu_mapped(inode,
--						      EXT4_B2C(sbi, lblk));
--				if (ret < 0)
--					return ret;
--				if (ret == 0) {
--					ret = ext4_da_reserve_space(inode, 1);
--					if (ret != 0)   /* ENOSPC */
--						return ret;
--				} else {
--					allocated = true;
--				}
--			} else {
--				allocated = true;
--			}
-+		ret = ext4_da_check_clu_allocated(inode, lblk, &allocated);
-+		if (ret < 0)
-+			return ret;
-+		if (ret > 0) {
-+			ret = ext4_da_reserve_space(inode, 1);
-+			if (ret != 0)   /* ENOSPC */
+-		ret = ext4_da_check_clu_allocated(inode, lblk, &allocated);
++		resv_clu = EXT4_B2C(sbi, end) - EXT4_B2C(sbi, lblk) - 1;
++		if (resv_clu < 0)
++			resv_clu = 0;
++
++		ret = ext4_da_check_clu_allocated(inode, lblk, &lclu_allocated);
+ 		if (ret < 0)
+ 			return ret;
+-		if (ret > 0) {
+-			ret = ext4_da_reserve_space(inode, 1);
++		if (ret > 0)
++			resv_clu++;
++
++		if (EXT4_B2C(sbi, lblk) != EXT4_B2C(sbi, end)) {
++			ret = ext4_da_check_clu_allocated(inode, end,
++							  &end_allocated);
++			if (ret < 0)
 +				return ret;
++			if (ret > 0)
++				resv_clu++;
++		}
++
++		if (resv_clu) {
++			ret = ext4_da_reserve_space(inode, resv_clu);
+ 			if (ret != 0)   /* ENOSPC */
+ 				return ret;
  		}
  	}
  
+-	ext4_es_insert_delayed_extent(inode, lblk, 1, allocated, false);
++	ext4_es_insert_delayed_extent(inode, lblk, len, lclu_allocated,
++				      end_allocated);
+ 	return 0;
+ }
+ 
+@@ -1823,7 +1844,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
+ 		}
+ 	}
+ 
+-	retval = ext4_insert_delayed_block(inode, map->m_lblk);
++	retval = ext4_insert_delayed_blocks(inode, map->m_lblk, map->m_len);
+ 	up_write(&EXT4_I(inode)->i_data_sem);
+ 	if (retval)
+ 		return retval;
 -- 
 2.39.2
 
