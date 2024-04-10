@@ -1,188 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-16607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC1989FB3D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 17:13:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D668A89FB6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 17:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C07B51F2B71E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 15:13:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13FCF1C2301D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 15:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EFE17335F;
-	Wed, 10 Apr 2024 15:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9281116E870;
+	Wed, 10 Apr 2024 15:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOJYsqU6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458B216E86D;
-	Wed, 10 Apr 2024 15:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BC716E874
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 15:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712761918; cv=none; b=NpVPGmPM0khC8QPlIHBhr8ZOS3KH0XEHwfgOYi86YaIjSwrP0VGC6IWfW80O8lARyR6W7nziakFqw+u0QtAFdJgPV7u2MIun3npDJYyZzhUhFU+1RT7Xzius/iCkSJ81azTk63cLSOnFj9QLjkxZ15rYWL0eoHQ4rlWGrA8y2JQ=
+	t=1712762613; cv=none; b=uFTvIsHbBUMyeWPrO9d7ix0GeB7kQtIwb9No/Hn2KMX4O2OW3hm7stBe7fbyS3e2hH0lh2TYRmkQ9YekXmmpaSNxeWXzQTD41Ct64sIgm3lgls6RdsXOzBIulbhoLgntbDy8yXcmOvmlzw4rBnlxD2Vq97IhOOPV9nJc94jOE8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712761918; c=relaxed/simple;
-	bh=Py1SPSnSmM02LNWBuDSfAjgXNIjhNrL3rfUfwdnJBrY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YVOWR7apHBEkCLnAWoEGBoO3etQ9MMyJcE+DBGa9wu0pma5PiNTeIYWLqJIbySyhw1+40+gJB773w9wIfwEVXYSGz/ZF/VFpW1a1VGSp0fayVx+SxJIbLBOzl4IjinvWPWf7M4J97Mkq1MaatMQ8eLdBeD5DEujgF18fl8DfRh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VF5rx0bFsz4f3kjK;
-	Wed, 10 Apr 2024 23:11:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id E3E851A0E02;
-	Wed, 10 Apr 2024 23:11:51 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g4orBZmFSt+Jg--.51485S9;
-	Wed, 10 Apr 2024 23:11:51 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	hch@infradead.org,
-	djwong@kernel.org,
-	david@fromorbit.com,
-	willy@infradead.org,
-	zokeefe@google.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v4 34/34] ext4: add mount option for buffered IO iomap path
-Date: Wed, 10 Apr 2024 23:03:13 +0800
-Message-Id: <20240410150313.2820364-6-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
-References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1712762613; c=relaxed/simple;
+	bh=/R+bxs7aa4Yp5oegab8DgNkRt1e3UpF3q8zLXZXOz/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJ+TIucNVXvd+tXpVj1RsJn2LTdjaPEWw0sYSHkg0lNDvaiDB/SYj1IdFMEfbz1vPUMJckrqUOtQIcDBDOSWju4IYZL7nkGxpXrZ1soLRh7+fthlhVRmmgcCWEk5n0gZu+RukhfIXYULoKZad2R1rQgzt3VolEXpO2c38j+J5t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOJYsqU6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD31C433F1;
+	Wed, 10 Apr 2024 15:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712762611;
+	bh=/R+bxs7aa4Yp5oegab8DgNkRt1e3UpF3q8zLXZXOz/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kOJYsqU6HGkzqghfJv8dUY7vhQmP9bUHQNF0DEX7aE9xMd5XYFoqFTG+G154kZP8h
+	 sw6c9sVNiyzBdeEdo9T2gG5K04kLNh1QqYVBJgdZ5vJXcfqNq6cALSnqg6zp5RGvmz
+	 i257wZfy+NB9pwtd1hh5YCBbcTQsTm6EitfueeM+OL7ToTB+chKLhmzAaWE+rg14Tu
+	 TXnznIPfbNIi3/MnxbUnE1rp5b1Ij9bGxdtTTTzkqOqFRCjSZCDGF9Q4+6PwNm03yG
+	 wysCDUUHW3U4VO51Mda5xplNHjIgpueA3eD0qpyODtNivVBXP7yoJ5lyTeVvYwiBvy
+	 tojfuR3huKKvg==
+Date: Wed, 10 Apr 2024 17:23:25 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: John Groves <John@groves.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, John Groves <jgroves@micron.com>, john@jagalactic.com
+Subject: Re: [PATCH 1/1] sget_dev() bug fix: dev_t passed by value but stored
+ via stack address
+Message-ID: <20240410-umzog-neugierig-56fbce5987e4@brauner>
+References: <cover.1712704849.git.john@groves.net>
+ <7a37d4832e0c2e7cfe8000b0bf47dcc2c50d78d0.1712704849.git.john@groves.net>
+ <20240410-mitnahm-loyal-151d4312b017@brauner>
+ <6i3kr6pyyvbrcnp6pwbltn4xam6eirydficleubd4bhdlsx3uu@kh6t7zai4pai>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn9g4orBZmFSt+Jg--.51485S9
-X-Coremail-Antispam: 1UD129KBjvJXoWxCw13GF15ur4fGw47KF4kWFg_yoWrJr4xp3
-	s0gFWrGw1vvryj9FWI9Fs3Xr1Sya1Fka1UCrW09w17XFZrAryIgFyfKF1akF4aqrW8XFyI
-	qF1rKF17WFW2krDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7xvrVCFI7AF6II2Y40_Zr0_Gr1UM4x0x7Aq67
-	IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
-	v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
-	67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr1j6F4UJwCI42IY6I8E87Iv6xkF7I0E
-	14v26rxl6s0DYxBIdaVFxhVjvjDU0xZFpf9x0ziBWlDUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6i3kr6pyyvbrcnp6pwbltn4xam6eirydficleubd4bhdlsx3uu@kh6t7zai4pai>
 
-From: Zhang Yi <yi.zhang@huawei.com>
+> I don't think &dev makes sense here - it was passed by value so its
+> address won't make sense outside the current context, right?. It seems
 
-Add buffered_io_iomap mount option to enable buffered IO iomap path for
-regular file, this option is disabled by default now.
-
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/ext4.h  |  1 +
- fs/ext4/inode.c |  2 ++
- fs/ext4/super.c | 16 +++++++++++++++-
- 3 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 4e7667b21c2f..fef609e6ba7d 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1254,6 +1254,7 @@ struct ext4_inode_info {
- 						    * scanning in mballoc
- 						    */
- #define EXT4_MOUNT2_ABORT		0x00000100 /* Abort filesystem */
-+#define EXT4_MOUNT2_BUFFERED_IOMAP	0x00000200 /* Use iomap for buffered IO */
- 
- #define clear_opt(sb, opt)		EXT4_SB(sb)->s_mount_opt &= \
- 						~EXT4_MOUNT_##opt
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 269503749ef5..c930108f11dd 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5120,6 +5120,8 @@ bool ext4_should_use_buffered_iomap(struct inode *inode)
- {
- 	struct super_block *sb = inode->i_sb;
- 
-+	if (!test_opt2(sb, BUFFERED_IOMAP))
-+		return false;
- 	if (ext4_has_feature_inline_data(sb))
- 		return false;
- 	if (ext4_has_feature_verity(sb))
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 6410918161a0..c8b691e605f1 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1685,7 +1685,7 @@ enum {
- 	Opt_dioread_nolock, Opt_dioread_lock,
- 	Opt_discard, Opt_nodiscard, Opt_init_itable, Opt_noinit_itable,
- 	Opt_max_dir_size_kb, Opt_nojournal_checksum, Opt_nombcache,
--	Opt_no_prefetch_block_bitmaps, Opt_mb_optimize_scan,
-+	Opt_no_prefetch_block_bitmaps, Opt_mb_optimize_scan, Opt_buffered_iomap,
- 	Opt_errors, Opt_data, Opt_data_err, Opt_jqfmt, Opt_dax_type,
- #ifdef CONFIG_EXT4_DEBUG
- 	Opt_fc_debug_max_replay, Opt_fc_debug_force
-@@ -1828,6 +1828,7 @@ static const struct fs_parameter_spec ext4_param_specs[] = {
- 	fsparam_flag	("no_prefetch_block_bitmaps",
- 						Opt_no_prefetch_block_bitmaps),
- 	fsparam_s32	("mb_optimize_scan",	Opt_mb_optimize_scan),
-+	fsparam_flag	("buffered_iomap",	Opt_buffered_iomap),
- 	fsparam_string	("check",		Opt_removed),	/* mount option from ext2/3 */
- 	fsparam_flag	("nocheck",		Opt_removed),	/* mount option from ext2/3 */
- 	fsparam_flag	("reservation",		Opt_removed),	/* mount option from ext2/3 */
-@@ -1922,6 +1923,8 @@ static const struct mount_opts {
- 	{Opt_nombcache, EXT4_MOUNT_NO_MBCACHE, MOPT_SET},
- 	{Opt_no_prefetch_block_bitmaps, EXT4_MOUNT_NO_PREFETCH_BLOCK_BITMAPS,
- 	 MOPT_SET},
-+	{Opt_buffered_iomap, EXT4_MOUNT2_BUFFERED_IOMAP,
-+	 MOPT_SET | MOPT_2 | MOPT_EXT4_ONLY},
- #ifdef CONFIG_EXT4_DEBUG
- 	{Opt_fc_debug_force, EXT4_MOUNT2_JOURNAL_FAST_COMMIT,
- 	 MOPT_SET | MOPT_2 | MOPT_EXT4_ONLY},
-@@ -2408,6 +2411,11 @@ static int ext4_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 			return -EINVAL;
- 		}
- 		return 0;
-+	case Opt_buffered_iomap:
-+		ext4_msg(NULL, KERN_WARNING,
-+			 "iomap for buffered enabled. Warning: EXPERIMENTAL, use at your own risk");
-+		ctx_set_mount_opt2(ctx, EXT4_MOUNT2_BUFFERED_IOMAP);
-+		return 0;
- 	}
- 
- 	/*
-@@ -2838,6 +2846,12 @@ static int ext4_check_opt_consistency(struct fs_context *fc,
- 			    !(sbi->s_mount_opt2 & EXT4_MOUNT2_DAX_INODE))) {
- 			goto fail_dax_change_remount;
- 		}
-+
-+		if (ctx_test_mount_opt2(ctx, EXT4_MOUNT2_BUFFERED_IOMAP) &&
-+		    !test_opt2(sb, BUFFERED_IOMAP)) {
-+			ext4_msg(NULL, KERN_ERR, "can't enable iomap for buffered IO on remount");
-+			return -EINVAL;
-+		}
- 	}
- 
- 	return ext4_check_quota_consistency(fc, sb);
--- 
-2.39.2
-
+I don't follow, we only need that address to be valid until sget_dev()
+returns as sget_key isn't used anymore. And we store the value, not the
+address. Other than that it's a bit ugly it's fine afaict. Related
+issues would exist with fuse or gfs2 where the lifetime of the key ends
+right after the respective sget call returns. We could smooth this out
+here by storing the value in the pointer via
+#define devt_to_sget_key(dev) ((void *)((uintptr_t)(dev)))
+#define sget_key_to_devt(key) ((dev_t)((uintptr_t)(key)))
+but I'm not sure it's necessary. Unless I'm really missing something.
 
