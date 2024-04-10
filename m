@@ -1,116 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-16621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D3B8A0346
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 00:27:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8218C8A0374
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 00:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50BEE1C20A8B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 22:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22E701F2198A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 22:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF87184133;
-	Wed, 10 Apr 2024 22:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57131C132;
+	Wed, 10 Apr 2024 22:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bz/mzcdy"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nf5BVEZo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8086312FF7C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 22:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB60B138E;
+	Wed, 10 Apr 2024 22:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712788039; cv=none; b=gFteg3pjX7mWkw9VZyGL0TWAPc/1RIQPqQhb6HZGOWB3Qm+8c5Z8e9M30GtsLFlsWyxmJmiBVW8DOFha3qDGElVndFPAROIDVr1qW+dNM4MEv3lWBJeWCKcukVPjE+2Bau47+FRA9TV6EJDJOn++wOmeJY/xAnwDcmMlIeoPUuU=
+	t=1712788497; cv=none; b=Qq5AKk02Z0jqhBmTHCG8R9bCKIACgD94snvGbY+4Wq3LA8eBjFSMp+a8+0ydeOCyByi8h/taM3a2kRMg2TtmSvXl2+eZzaeMLrjXRNFibjy9p6G6oHqc+dEVYT25Gr5+UZyDrwxFVBMlttM133NWk6ukdERGHJnFaLri5a2vn18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712788039; c=relaxed/simple;
-	bh=GNSKKpbMF2d6HjHazkjSsi+nfHk+zDq0eehNnCdFE/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qKpCvnpQt63oNQgTIoAfsXWPNaF+He4tX8cx3eEansz+ZvSyeFp9fMfTM8GK0jD4xPQrngIDujMp3TZ3zR1OTdOVI/EffPQAnEsFZAUC7S5RsWO5zLNnHUmi6Ar/uVSaQ3NHsvsvBrFU3sMGCbLOWxHkJDPm5//g1+iS8tLMMEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bz/mzcdy; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7d6112ba6baso39862039f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 15:27:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712788036; x=1713392836; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9P0aMHFsVVEdLlv0SDKAm08of/R9DQjYXYCl7/2YrKs=;
-        b=bz/mzcdyOW5iC0FkNnlVirITgZp55ltOwJATvHUCyt8JvXJpNoYolTDX84OJrCdrLk
-         0H91lHurYH2hkT8qrYuvrWm5RLq6J1rAzXpi9M5duyLFaRzxxunOrZl7r24wnkhkIkLT
-         HALj59QHKNel4Q0jnU7ztk/BktHgKO9/0g7W+6aGIzeq7TYHh5lCaPpGR5txHE0Kwz96
-         l3VJIbKd/reEqR/Sif7Ue4E+KpcoIeoL/few+j6y2jUJRJshAsYAxDO3v53dO7pc03Qf
-         ydEbyOXmz7r4YFiVIFS03u3mOJ5RRRUjhBor+0WBxFHHc9voqZox8brHiM8D7MCyKxnN
-         MSMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712788036; x=1713392836;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9P0aMHFsVVEdLlv0SDKAm08of/R9DQjYXYCl7/2YrKs=;
-        b=ETn6BNnMKWbD2f+GiI5v5VPF8w8R5Sq45uOQexC5gpp+mZSCXLM+72jRl7eD+PyxGO
-         nHkOVZkCA5+gxHtNnXufsOalIQLhEvLqucH/Qf3Jc9pOcF4V6Xw7xc2/9CdxL+psj2x0
-         spSsnYjd8EbDMZYzrPMluorAAoCnSziszC9IDtdXnqE/HAXQzENX5aO8beL/M5Ya/UMK
-         BAy8cCRos0bxSvOTZ025nU/0lA6XGajgD4j2Ce2WXwbyhBct72rfRns7MkClW11Tjzv+
-         WVXEPG3qpuVg6GdyrHaxfLgvzrB39JcZ+/o09ZZxVTFn93RGDASTWk+7FZ1Nf6KkJF4y
-         fAOw==
-X-Gm-Message-State: AOJu0YyAGNRpoOr/FSIWfIjZSO7pg5YlTTF9VF0lnTd/hdPqfHtAKYhO
-	iWVqjMHPhMaRMgbUqKpqaiCZY+QJKWX9nvM5mwekmZt2+XayWq3T1HuuOxccMztIv48bTf6dSEJ
-	g
-X-Google-Smtp-Source: AGHT+IFknhgMitGGWfix0/LMn4FqxN0i1dUymZMyVcKcwvDjGy0XNNeIgTBz5EhAbDV93SKkvD2iOw==
-X-Received: by 2002:a5e:a60c:0:b0:7d5:de23:13a9 with SMTP id q12-20020a5ea60c000000b007d5de2313a9mr4122264ioi.1.1712788035906;
-        Wed, 10 Apr 2024 15:27:15 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id bt3-20020a056638430300b0047ee01746f1sm15159jab.120.2024.04.10.15.27.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Apr 2024 15:27:15 -0700 (PDT)
-Message-ID: <1a1c00fb-c83f-44e7-bc6a-cfe52d780c35@kernel.dk>
-Date: Wed, 10 Apr 2024 16:27:14 -0600
+	s=arc-20240116; t=1712788497; c=relaxed/simple;
+	bh=YwjSIF6uNkmERIG6wemPayCWKzdumqsoRdlNbYrNtq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/YSzHt3j8aB1CvpXgm5kGBPs9Alp/8ENKIwKNsevxRcDVCfP2gDnjKFgMiVG4VDKTi/u40bWFGViP3e3cTQ5DrJIOx/psGk4ljUVVWNMyxIy9zq1ty86kG56Go1MCNBrpXrUOUqBbPNFP4tr+gIo7T1aR0w3jtVg0v08Ln+YSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nf5BVEZo; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kj+przKbqCXrTRwHHIpeY1LGxOoNJlbD1H09dWLhQzE=; b=nf5BVEZoTRCF+PO83UAnMi3dGl
+	WFuTpaRHmPeAjby4OWjDvW3H1OZIZ8VCwX4xhGq7Tl1gSimArLH5a0oB4uRZRB7ufXOYdXyG8Tth0
+	gMvjlCpKocwtYPts0JDSBGSk4yKdWRjit/PJiWtjVrYnM4rdYgXxHhmkV2FYm89gaACBv4mV1W1Mz
+	ZZav6kQ49A3YGvFyY0wN0MQXe2fgliRb6UBAhG0Eju7mgBmb5vEKbRKttSJU41ZI169V708rUDik5
+	P6XMmOfJMI43nH3Qx3q++Gh6q6vVY7DbXYpWTOuSJQn+0AbRUy4+L/WJ7LWbDjGQoO7SjWA+h/58x
+	pops+QUw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rugWh-00A87p-1r;
+	Wed, 10 Apr 2024 22:34:43 +0000
+Date: Wed, 10 Apr 2024 23:34:43 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jan Kara <jack@suse.cz>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, brauner@kernel.org,
+	axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+Message-ID: <20240410223443.GG2118490@ZenIV>
+References: <20240406194206.GC538574@ZenIV>
+ <20240406202947.GD538574@ZenIV>
+ <3567de30-a7ce-b639-fa1f-805a8e043e18@huaweicloud.com>
+ <20240407015149.GG538574@ZenIV>
+ <21d1bfd6-76f7-7ffb-34a4-2a85644674fe@huaweicloud.com>
+ <20240407030610.GI538574@ZenIV>
+ <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
+ <20240409042643.GP538574@ZenIV>
+ <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
+ <20240410105911.hfxz4qh3n5ekrpqg@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] timerfd: convert to ->read_iter()
-Content-Language: en-US
-To: linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20240409152438.77960-1-axboe@kernel.dk>
- <20240409152438.77960-3-axboe@kernel.dk>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240409152438.77960-3-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240410105911.hfxz4qh3n5ekrpqg@quack3>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 4/9/24 9:22 AM, Jens Axboe wrote:
-> @@ -312,8 +313,8 @@ static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
->  		ctx->ticks = 0;
->  	}
->  	spin_unlock_irq(&ctx->wqh.lock);
-> -	if (ticks)
-> -		res = put_user(ticks, (u64 __user *) buf) ? -EFAULT: sizeof(ticks);
-> +	if (ticks && !copy_to_iter_full(&ticks, sizeof(ticks), to))
-> +		res = -EFAULT;
->  	return res;
->  }
+On Wed, Apr 10, 2024 at 12:59:11PM +0200, Jan Kara wrote:
 
-Dumb thinko here, as that should be:
+> I agree with Christian and Al - and I think I've expressed that already in
+> the previous version of the series [1] but I guess I was not explicit
+> enough :). I think the initial part of the series (upto patch 21, perhaps
+> excluding patch 20) is a nice cleanup but the latter part playing with
+> stashing struct file is not an improvement and seems pointless to me. So
+> I'd separate the initial part cleaning up the obvious places and let
+> Christian merge it and then we can figure out what (if anything) to do with
+> remaining bd_inode uses in fs/buffer.c etc. E.g. what Al suggests with
+> bd_mapping makes sense to me but I didn't check what's left after your
+> initial patches...
 
-if (ticks) {                                                            
-	res = copy_to_iter(&ticks, sizeof(ticks), to);                  
-	if (!res)                                                       
-		res = -EFAULT;                                          
-}            
+FWIW, experimental on top of -next:
+Al Viro (7):
+      block_device: add a pointer to struct address_space (page cache of bdev)
+      use ->bd_mapping instead of ->bd_inode->i_mapping
+      grow_dev_folio(): we only want ->bd_inode->i_mapping there
+      gfs2: more obvious initializations of mapping->host
+      blkdev_write_iter(): saner way to get inode and bdev
+      blk_ioctl_{discard,zeroout}(): we only want ->bd_inode->i_mapping here...
+      dm-vdo: use bdev_nr_bytes(bdev) instead of i_size_read(bdev->bd_inode)
 
-I've updated my branch, just a heads-up. Odd how it passing testing,
-guess I got stack lucky...
+Yu Kuai (4):
+      ext4: remove block_device_ejected()
+      block: move two helpers into bdev.c
+      bcachefs: remove dead function bdev_sectors()
+      block2mtd: prevent direct access of bd_inode	[slightly modified]
 
--- 
-Jens Axboe
+leaves only this:
+block/bdev.c:60:        struct inode *inode = bdev->bd_inode;
+block/bdev.c:137:       loff_t size = i_size_read(bdev->bd_inode);
+block/bdev.c:144:       bdev->bd_inode->i_blkbits = blksize_bits(bsize);
+block/bdev.c:158:       if (bdev->bd_inode->i_blkbits != blksize_bits(size)) {
+block/bdev.c:160:               bdev->bd_inode->i_blkbits = blksize_bits(size);
+block/bdev.c:415:       bdev->bd_inode = inode;
+block/bdev.c:434:       i_size_write(bdev->bd_inode, (loff_t)sectors << SECTOR_SHIFT);
+block/bdev.c:444:       bdev->bd_inode->i_rdev = dev;
+block/bdev.c:445:       bdev->bd_inode->i_ino = dev;
+block/bdev.c:446:       insert_inode_hash(bdev->bd_inode);
+block/bdev.c:974:       bdev_file = alloc_file_pseudo_noaccount(bdev->bd_inode,
+block/bdev.c:980:       ihold(bdev->bd_inode);
+block/bdev.c:1257:      return !inode_unhashed(disk->part0->bd_inode);
+block/bdev.c:1263:      return 1 << bdev->bd_inode->i_blkbits;
+block/genhd.c:659:              remove_inode_hash(part->bd_inode);
+block/genhd.c:1194:     iput(disk->part0->bd_inode);    /* frees the disk */
+block/genhd.c:1384:     iput(disk->part0->bd_inode);
+block/partitions/core.c:246:    iput(dev_to_bdev(dev)->bd_inode);
+block/partitions/core.c:472:    remove_inode_hash(part->bd_inode);
+block/partitions/core.c:658:            remove_inode_hash(part->bd_inode);
+drivers/s390/block/dasd_ioctl.c:218:            block->gdp->part0->bd_inode->i_blkbits =
+fs/buffer.c:192:        struct inode *bd_inode = bdev->bd_inode;
+fs/buffer.c:1699:       struct inode *bd_inode = bdev->bd_inode;
+fs/erofs/data.c:73:             buf->inode = sb->s_bdev->bd_inode;
+fs/nilfs2/segment.c:2793:       inode_attach_wb(nilfs->ns_bdev->bd_inode, NULL);
 
+I've got erofs patches that get rid of that instance; bdev.c is obviously priveleged
+since it sees coallocated inode directly.  Other than those we have
+	* 3 callers of remove_inode_hash()
+	* 3 callers of iput()
+	* one caller of inode_attach_wb() (nilfs2)
+	* weird shit in DASD (redundant, that; incidentally, I don't see anything
+	  that might prevent DASD format requested with mounted partitions on that
+	  disk - and won't that be fun and joy for an admin to step into...)
+	* two places in fs/buffer.c that want to convert block numbers to positions
+	  in bytes.  Either the function itself or its caller has the block size
+	  as argument; replacing that to passing block _shift_ instead of size
+	  would reduce those two to ->bd_mapping.
+And that's it.  iput() and remove_inode_hash() are obvious candidates for
+helpers (internal to block/*; no exporting those, it's private to bdev.c,
+genhd.c and paritions/core.c).
+
+fs/buffer.c ones need a bit more code audit (not quite done with that), but
+it looks at least plausible.  Which would leave us with whatever nilfs2 is
+doing and that weirdness in dasd_format() (why set ->i_blkbits but not
+->i_blocksize?  why not use set_blocksize(), for that matter?  where the
+hell is check for exclusive open?)
 
