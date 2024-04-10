@@ -1,160 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-16619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279428A0032
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 20:59:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844AF8A01E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 23:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5D78286D53
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 18:59:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50591C21FF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 21:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723921802D1;
-	Wed, 10 Apr 2024 18:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEEB1836DE;
+	Wed, 10 Apr 2024 21:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BCnb2Uh6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPvSd4AW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD7615B0E4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 18:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3BD28FD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 21:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712775549; cv=none; b=qpsHOOkHWRthuwmpZjgED1Dfqx9Z+qRbnd7A8nN8aMmYQgl95gKzohgD7pYbNjWysF8nOrm+LDaNBvVZOLZ8VGK5L989zuZ4SNmXZ4zcs5+eXntk9s/F6CgJHsQ49zeKpvTrtaXG4OnJfzycleuFHro8UxpMZ5gLZA9hnjArpKM=
+	t=1712784264; cv=none; b=nwuRV0wCyCLqW1i6/gs/5r2+z2Rpv2IBr2N2xCRlKiXOpde7sq/mWiOn2PjjK9nizgRqZkxfNgFUPmFXyivC2FeJBVA20QeFQkE6DhfDiV3UKMwRnzsgdpRemCBdx9G/5RxJ/KroaTuarg9rhKQqGpIizMrpKBxBRn+3EDRk89U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712775549; c=relaxed/simple;
-	bh=HcTvQPAA9NUPS2igJbqEH//WEl4aZTKvJGY0XkzAfiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZyOqnMtRK3P3yOA0PG1WvRwzb5F0aXhT+ozaDtymZGr/05ltVHHuCVkYiSawWu6zBe1P6zEU5MUkzcgrJRqt1Q568NmgjtmvXGV8csWvyUSnT6OHwVt3I2V81b71+T/LVS6zLIZw8gqLQJxN2YEjONhrs1ugjCG4Wo/ybBYX+Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BCnb2Uh6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712775547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XxpkuxUnIrOWR5YmuW0AIjNYXGEKvHqlxiu3ZzXtRNg=;
-	b=BCnb2Uh6fMCJOejfHM8WLfYlscTvZuKzJiWVobfJv7cJVzxOuU9xRroooT0BKAQMEIlFXY
-	172KNU43Q6Ivr8DsnqSE7PPIvXn5G2idDfYIEHs6GVPNU733P6NEN9kked83FvjDp/8xg+
-	uv6pWy+/B+dPlDsOj5U0TlE8jlHKJu8=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-647-ObNw33SHP9-kXevnODYzmA-1; Wed, 10 Apr 2024 14:59:06 -0400
-X-MC-Unique: ObNw33SHP9-kXevnODYzmA-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-69b09fe4792so49841126d6.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 11:59:05 -0700 (PDT)
+	s=arc-20240116; t=1712784264; c=relaxed/simple;
+	bh=oNj+qHG/aPlOVSAddYMjvDcCQqd46yM2ZrvuykmW7Lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WKryjF9c4pVmtVLBwpbVaYlG0H/fEIttFyA2bbXa3ANvYIz5SaRit7/c7TvxJiRWHSgF+ZReSZL0JrTNX5YhcHImWzbtsjoXSM2/Eqnj7x4yhOGHZmPfWTL6fWhjOAyYFV8SyJ402x4xprnaNq0ecZ9rwQo94z2JQoVQ+Z9uDtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPvSd4AW; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6ea1c0afd8eso1447223a34.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 14:24:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712784261; x=1713389061; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ln5qFPwIEIGBvELFnfa1z1zWEXwC8Jvw5DRkbxzLM4k=;
+        b=CPvSd4AWvvxGw8xdQpMJbhRKwo6Ip0cCBIGNS2GACak5JiZSsNy49lbOdk5j9DJQW/
+         rez3545q97E3z6lV5ms8LGVMDRt9OOyIhUaLe/2ZwzrvY83BF/mwn0GkkoXaMZyrpDHn
+         rBAgM6KQexMLdtChx6cA3cou3AusGQ5JEL0fJoiGpsxXIkfaqFgz94n2Z3F+MhGzr/sO
+         AkHhBSHLWYB+s9VjEZ6zdxe88Y523kVcEtG0wX666tCyTwNRqiuWguq7Oce+VZ6keybK
+         iUfIUGAtgJdkR+setBt9TlDnj0yrX9mz3LA0QupnYGf6QGKvSelKHFGVwlMqg3yRdYpK
+         MHKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712775545; x=1713380345;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XxpkuxUnIrOWR5YmuW0AIjNYXGEKvHqlxiu3ZzXtRNg=;
-        b=nAadi6Wp2/EI0p2rbIXBlf1UzNwYVBcYSXV+908RnBlKPG5UytabI/nLfC5FTuWo2B
-         JH07XXtspzhj695fVbUGammn7HOU6ZYyt2SuvH+fLhGVLSOulNzvVrQT+Agzpr8FC+6H
-         FHPTwPfstPVQycZiazEz85079/neF30qoiEDmy3El5bqgiKkGlj6bh/kNya/hjVw/U41
-         ILLJt/B//lZQkGk+qSZmy8NCcOBSgQfNqGrDDoHcUcXlwmWkPGcVtd4nY3saTyHNrODd
-         GPYKVq0CQphybq27AQQ7yh9nULRvDRr85gah0EEU4WtLH4pPq0lpF8u1hGDjXVGlLNT2
-         NSTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfQrGDE6re+f3DA0tcLIdm6zk0ZqcRVgI6s+zg0fxVSu5yuO2rwJ48eex0vF4UucDlqjt/KseXf27jZYm7L8AbNyKGXdrsvfUZRiZXwQ==
-X-Gm-Message-State: AOJu0YzkhXRn+6T1n6rlvOpxnSVgnHzMSE1TuwW0gGsZWnDZt8gZKHEN
-	OnW65SdRHjQa8o6nYjmRGH/Tw/2L/bM9HftvK2Z6mtyvvDV5krhTjrBHYb6weAqq7GHm2JSK/lE
-	GA5oBi2wtFdJOohbnEzJ/3nWCQUtRH/oe0ug7Rxcv67fUfHJ63oX7CAsafZaptN4=
-X-Received: by 2002:a05:6214:4111:b0:69b:1efb:9d42 with SMTP id kc17-20020a056214411100b0069b1efb9d42mr3445953qvb.6.1712775545318;
-        Wed, 10 Apr 2024 11:59:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1rZzHlFdlKErUaVzaIIBoz+uophffHDufiBosrVM2ScG6c79A0tsfU5q3lB5GUj4EtqyQxA==
-X-Received: by 2002:a05:6214:4111:b0:69b:1efb:9d42 with SMTP id kc17-20020a056214411100b0069b1efb9d42mr3445922qvb.6.1712775544953;
-        Wed, 10 Apr 2024 11:59:04 -0700 (PDT)
-Received: from [192.168.1.165] ([70.22.187.239])
-        by smtp.gmail.com with ESMTPSA id p20-20020a05621415d400b00698d06df322sm5418657qvz.122.2024.04.10.11.59.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Apr 2024 11:59:04 -0700 (PDT)
-Message-ID: <1e344d3b-1e30-6638-83c3-f743546374ec@redhat.com>
-Date: Wed, 10 Apr 2024 14:59:03 -0400
+        d=1e100.net; s=20230601; t=1712784261; x=1713389061;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ln5qFPwIEIGBvELFnfa1z1zWEXwC8Jvw5DRkbxzLM4k=;
+        b=pc1jQ1svqqNhNam1/fEn8bdxk3983oElja983IqBxY1u7+8xs21VgvAhNbq5rnul8e
+         dzqhhcOpbofayC9wFhoGxmB6aKH7H2NknPgm/2liI6ePKrGAav9zCrv+E/RKnnbz46sS
+         NuLBMNuzE20o1Oc7HZfJjsjO332C1zhQOAaqfwBy+HUR2dX7+mkwpablt+Gck4hfeMMF
+         KCvIMb68DU2V9WrJeJShuQ+iSJg/tOFgW6+hbrVXg6x+/4hcn4VolZA497t3P1Uz9zUR
+         avgkLH/O2SDKmq0lZeprafg6ZOzqti23SaZ1PULsJ1WdH4so7YRdCLMpAdUM3/0SfqAA
+         fh2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqlbAafsU/DeEiVZK6iqvreIUDTutb/ErcV56m+I0bpDKnsAeBpr9NZykih7xsqwZQxQ+GTjPwo00keI9IcvCy2lxez1k4+qJ3/6N2lw==
+X-Gm-Message-State: AOJu0Yzg6BFm9gl0KNE4M1icoth+Baxx/WNabQ3eW0PrJyfke2/8fiTk
+	twLm46onDpAIasP5rvV5yQj1ALsZAXa0y89NkzmNR3GlSeXnPkKh
+X-Google-Smtp-Source: AGHT+IGxMh0wiu4r+vKKB/TS13O0I7CmFU93VHBOfA/TJh/bU4WC/nIvyHWGcWnkz8uwksWy6km5Kg==
+X-Received: by 2002:a05:6871:7818:b0:22e:e568:7c08 with SMTP id oy24-20020a056871781800b0022ee5687c08mr3948229oac.59.1712784261538;
+        Wed, 10 Apr 2024 14:24:21 -0700 (PDT)
+Received: from Borg-9.local (070-114-203-196.res.spectrum.com. [70.114.203.196])
+        by smtp.gmail.com with ESMTPSA id qa12-20020a056871e70c00b002331322bbb6sm45732oac.29.2024.04.10.14.24.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Apr 2024 14:24:20 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Wed, 10 Apr 2024 16:24:19 -0500
+From: John Groves <John@groves.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, John Groves <jgroves@micron.com>, john@jagalactic.com
+Subject: Re: [PATCH 1/1] sget_dev() bug fix: dev_t passed by value but stored
+ via stack address
+Message-ID: <efsh2dsmeivdoyecrsj6qdflafyx2cigf6ibjgurw4u4hvslsa@2gu7dvpothiv>
+References: <cover.1712704849.git.john@groves.net>
+ <7a37d4832e0c2e7cfe8000b0bf47dcc2c50d78d0.1712704849.git.john@groves.net>
+ <20240410-mitnahm-loyal-151d4312b017@brauner>
+ <6i3kr6pyyvbrcnp6pwbltn4xam6eirydficleubd4bhdlsx3uu@kh6t7zai4pai>
+ <20240410-umzog-neugierig-56fbce5987e4@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH vfs.all 19/26] dm-vdo: convert to use bdev_file
-Content-Language: en-US
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de,
- brauner@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
- linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- yukuai3@huawei.com, dm-devel@lists.linux.dev
-References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
- <20240406090930.2252838-20-yukuai1@huaweicloud.com>
- <a8493592-2a9b-ac14-f914-c747aa4455f3@redhat.com>
- <20240410174022.GF2118490@ZenIV>
-From: Matthew Sakai <msakai@redhat.com>
-In-Reply-To: <20240410174022.GF2118490@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240410-umzog-neugierig-56fbce5987e4@brauner>
 
-
-
-On 4/10/24 13:40, Al Viro wrote:
-> On Wed, Apr 10, 2024 at 01:26:47PM -0400, Matthew Sakai wrote:
+On 24/04/10 05:23PM, Christian Brauner wrote:
+> > I don't think &dev makes sense here - it was passed by value so its
+> > address won't make sense outside the current context, right?. It seems
 > 
->>> 'dm_dev->bdev_file', it's ok to get inode from the file.
-> 
-> It can be done much easier, though -
-> 
-> [PATCH] dm-vdo: use bdev_nr_bytes(bdev) instead of i_size_read(bdev->bd_inode)
-> 
-> going to be faster, actually - shift is cheaper than dereference...
+> I don't follow, we only need that address to be valid until sget_dev()
+> returns as sget_key isn't used anymore. And we store the value, not the
+> address. Other than that it's a bit ugly it's fine afaict. Related
+> issues would exist with fuse or gfs2 where the lifetime of the key ends
+> right after the respective sget call returns. We could smooth this out
+> here by storing the value in the pointer via
+> #define devt_to_sget_key(dev) ((void *)((uintptr_t)(dev)))
+> #define sget_key_to_devt(key) ((dev_t)((uintptr_t)(key)))
 
-This does look simpler. And doing this means there's no reason to switch 
-dm-vdo from using struct block_device * to using struct file *, so the 
-rest of the original patch is unnecessary.
+That's the gist of what my patch was trying to do, but it was messy 
+because void * is 8 bytes and dev_t is 4 bytes, so casting got a bit 
+messy (not even including my fubar-ness)..
 
-Reviewed-by: Matthew Sakai <msakai@redhat.com>
+Not that my vote is important, but I would heartily vote for storing the
+dev_t in the sget_key rather than having the key be a void * to a 
+soon-to-be-reused stack. Future developers would have an easier 
+time with that, if I'm any indication.
 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> diff --git a/drivers/md/dm-vdo/dm-vdo-target.c b/drivers/md/dm-vdo/dm-vdo-target.c
-> index 5a4b0a927f56..b423bec6458b 100644
-> --- a/drivers/md/dm-vdo/dm-vdo-target.c
-> +++ b/drivers/md/dm-vdo/dm-vdo-target.c
-> @@ -878,7 +878,7 @@ static int parse_device_config(int argc, char **argv, struct dm_target *ti,
->   	}
->   
->   	if (config->version == 0) {
-> -		u64 device_size = i_size_read(config->owned_device->bdev->bd_inode);
-> +		u64 device_size = bdev_nr_bytes(config->owned_device->bdev);
->   
->   		config->physical_blocks = device_size / VDO_BLOCK_SIZE;
->   	}
-> @@ -1011,7 +1011,7 @@ static void vdo_status(struct dm_target *ti, status_type_t status_type,
->   
->   static block_count_t __must_check get_underlying_device_block_count(const struct vdo *vdo)
->   {
-> -	return i_size_read(vdo_get_backing_device(vdo)->bd_inode) / VDO_BLOCK_SIZE;
-> +	return bdev_nr_bytes(vdo_get_backing_device(vdo)) / VDO_BLOCK_SIZE;
->   }
->   
->   static int __must_check process_vdo_message_locked(struct vdo *vdo, unsigned int argc,
-> diff --git a/drivers/md/dm-vdo/indexer/io-factory.c b/drivers/md/dm-vdo/indexer/io-factory.c
-> index 515765d35794..1bee9d63dc0a 100644
-> --- a/drivers/md/dm-vdo/indexer/io-factory.c
-> +++ b/drivers/md/dm-vdo/indexer/io-factory.c
-> @@ -90,7 +90,7 @@ void uds_put_io_factory(struct io_factory *factory)
->   
->   size_t uds_get_writable_size(struct io_factory *factory)
->   {
-> -	return i_size_read(factory->bdev->bd_inode);
-> +	return bdev_nr_bytes(factory->bdev);
->   }
->   
->   /* Create a struct dm_bufio_client for an index region starting at offset. */
-> 
+> but I'm not sure it's necessary. Unless I'm really missing something.
+
+I must admit it hadn't even occurred to me that a void * to a dev_t
+would be stored long-term in fs_context even though it is only short-
+term valid. But you're right, that works provided the validity lifespan 
+isn't violated - which it isn't here.
+
+I was around in the K&R C time frame, and... well, never mind...
+
+Thanks for your patience with me on this. I guess my sget_dev() was 
+failing to find my old superblocks for a different reason - like I 
+thought they still existed but was mistaken. You may see a Q or two 
+from me on the old famfs thread soon, prior to v2 of that...
+
+Thank you,
+John
 
 
