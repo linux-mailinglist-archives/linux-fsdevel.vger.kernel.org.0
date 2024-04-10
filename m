@@ -1,206 +1,315 @@
-Return-Path: <linux-fsdevel+bounces-16538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677AF89F290
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 14:45:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5B689F82F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 15:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DC47B24932
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 12:45:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A5AC1C23336
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 13:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BE215B541;
-	Wed, 10 Apr 2024 12:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D151915EFA2;
+	Wed, 10 Apr 2024 13:36:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6863A15920D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 12:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B686158D6B;
+	Wed, 10 Apr 2024 13:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712753120; cv=none; b=rsi0WvLledRcsZMKaq9aFXQ1uNLjicqZoOBWT6GAVBoPgSub6NMYk4nnFNcewJH+3Fq0fy4YXW+1Avb1NNCWoPpB7unw0h7ns93AW7Fq2LM0z3NvL3W9olAu62ADq3QcevOrqkFV/meNtSk3s7HsDsRQHgsxvvUORbxshbTihZM=
+	t=1712756214; cv=none; b=tj1113I+uC2DIUgTTT72y9nOQ63IEA5AYpLPrLIUIpSFESlw7YbfSswL5FJs7IcrYLXIyjjdRUgFGC5uMqomlgH1l3JEEjMU+l4RJNNtzSi0HKyeJygiUwQNqm7K5HEJY1fX4312IphA+rgXAW/S3ULEKWkSyFmHenWcsBzAyKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712753120; c=relaxed/simple;
-	bh=zE0MPhiUExhhZJCSbZ04dwAd/lbO0K59CzmR1iW89P8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rZdmBIwh1LtexHtZyyigipekaxdu7eR9dMZyloh+hSDa+JYb/amVIhVVyxZUE6XZHLRtSRX1tgWgr/Ns63x070aGsbsyS0fkauDTAJeWF7A5qPxXuBgy0eCv0pgIytNQiDHW0Ku9SCEfPB2C9OWs5DNkWfOys92xgfhTw0szeHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7d5d7d6b971so414777339f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 05:45:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712753117; x=1713357917;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+kNWUMJ3DCD0K91UBuJhSyWUGhiggaPpECWUh6Le1yA=;
-        b=vqovLZPoJcE8lfnnmX1+dDHSk/dfIPv1Lw/xW2MpWmhecthrfoT2kcNrPt7PZPMlbO
-         NuNMPjaIQKwCij3aQNYEMJ54QjmS6P7CnrGHclH+u0QUbMtnqf9VNoWANmugQ16Hl2WC
-         K84Qi34y8XoXs6wB1jptVPHDc3kBqf8A76JlOjxz6UBYMEzSEMieU8IeBfUPU+3+bWZp
-         0Aio9mTgoKurot8k0PJTr0NRdK9bf9onmtBzo4V+QuG7TgYlvzga9Z/XkWpN4U/6AHFY
-         6nglu37kby+7vPVWUe3Z1FgaaL0LTnwWh3AjKdF9e1aopWycsDFvSMiyvleK++vwkpDm
-         smxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjoVRPZg6xoUcs7/zFp9Nrwl7T66iV+PTn+67/VnxKPGw2dt401t1dYw7z63u1khjYMVGtaR/n9UKcHJP8xyESwSbm9UlFDS4zhPjLgg==
-X-Gm-Message-State: AOJu0Yyge/tJcm0rq+yT7xV1MUW2CkWt2Kw0547zEQ00hD7fZaVAw6uz
-	0YXjYnMCOaPKRDBaeEY2AiAb6potE7fGhG+vPjPAlQBKkEEcniJXHrf9MfKgMqBh3ky4X7epKHM
-	8mLaKysvTjmtY3v+Ggd5wcHkOxU6vv0PqIecJdZjfuoGtWkRIfrlDuQ8=
-X-Google-Smtp-Source: AGHT+IFVEpX4wfLojEnNH7MhR90glZV/P7PZ7NGpZg5J8pV6K3Mp6rj30GZWGCBBrmgKkBAGHgk6LdRKIqLCvfqzgE3ecPhQLnC1
+	s=arc-20240116; t=1712756214; c=relaxed/simple;
+	bh=NI3hafwnkJ6oUCdoMETsCzPIX2o4YWf6XB410k1+oek=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=py2erUXgtF05e2YCehNFvF09skW562ECTjzZLCnecLmvyk1LBIHjTyMX4192iEVo1TTOKKzc5PJQXtpciW9cKeQ/KZxZk90TK8UGI1iBxxLb3NDwISgwbaDA7s2Zq7CEPR+ac1o/SbZRJ4a/nWbQhfIQPDX7BWezJM5VxrLHC+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VF3lC2tBlz4f3m6w;
+	Wed, 10 Apr 2024 21:36:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 0E9251A0175;
+	Wed, 10 Apr 2024 21:36:48 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAn+RHolRZmeCl4Jg--.8806S4;
+	Wed, 10 Apr 2024 21:36:44 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ritesh.list@gmail.com,
+	hch@infradead.org,
+	djwong@kernel.org,
+	willy@infradead.org,
+	zokeefe@google.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	wangkefeng.wang@huawei.com
+Subject: [RFC PATCH v4 00/34] ext4: use iomap for regular file's buffered IO path and enable large folio
+Date: Wed, 10 Apr 2024 21:27:44 +0800
+Message-Id: <20240410132818.2812377-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:24d3:b0:482:bdf8:f269 with SMTP id
- y19-20020a05663824d300b00482bdf8f269mr37311jat.3.1712753117683; Wed, 10 Apr
- 2024 05:45:17 -0700 (PDT)
-Date: Wed, 10 Apr 2024 05:45:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002af6530615bd6932@google.com>
-Subject: [syzbot] [xfs?] KASAN: slab-use-after-free Read in xfs_inode_item_push
-From: syzbot <syzbot+1a28995e12fd13faa44e@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn+RHolRZmeCl4Jg--.8806S4
+X-Coremail-Antispam: 1UD129KBjvJXoWfGFyDKw47WryxZF4UtF13urg_yoWDtrykpF
+	WakF13tr1kWw1UuaykAw1Utr40g3W5XF4UGw1fW3y8ZF4DCFyxuFn7KF4F9FW5ArW7Ja4Y
+	vF4Iy348uayvk37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wryl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_
+	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+	UAxhLUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hello,
+Hello!
 
-syzbot found the following issue on:
+This is the fourth version of RFC patch series that convert ext4 regular
+file's buffered IO path to iomap and enable large folio. I've rebased it
+on 6.9-rc3, it also **depends on my xfs/iomap fix series** which has
+been reviewed but not merged yet[1]. Compared to the third vesion, this
+iteration fixes an issue discovered in current ext4 code, and contains
+another two main changes, 1) add bigalloc support and 2) simplify the
+updating logic of reserved delalloc data block, both changes could be
+sent out as preliminary patch series, besides these, others are some
+small code cleanups, performance optimize and commit log improvements.
+Please take a look at this series and any comments are welcome.
 
-HEAD commit:    707081b61156 Merge branch 'for-next/core', remote-tracking..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=168b2fe3180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=caeac3f3565b057a
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a28995e12fd13faa44e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+This series supports ext4 with the default features and mount
+options(bigalloc is also supported), doesn't support non-extent(ext3),
+inline_data, dax, fs_verity, fs_crypt and data=journal mode, ext4 would
+fall back to buffer_head path automatically if you enabled those
+features or options. Although it has many limitations now, it can satisfy
+the requirements of most common cases and bring a significant performance
+benefit for large IOs.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The iomap path would be simpler than the buffer_head path to some extent,
+please note that there are 4 major differences:
+1. Always allocate unwritten extent for new blocks, it means that it's
+   not controlled by dioread_nolock mount option.
+2. Since 1, there is no risk of exposing stale data during the append
+   write, so we don't need to write back data before metadata, it's time
+   to drop 'data = ordered' mode automatically.
+3. Since 2, we don't need to reserve journal credits and use reserved
+   handle for the extent status conversion during writeback.
+4. We could postpone updating the i_disksize to the endio, it could
+   avoid exposing zero data during append write and instantaneous power
+   failure.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6cad68bf7532/disk-707081b6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1a27e5400778/vmlinux-707081b6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/67dfc53755d0/Image-707081b6.gz.xz
+Series details:
+Patch 1-9: this is the part 2 preparation series, it fix a problem
+first, and makes ext4_insert_delayed_block() call path support inserting
+multiple delalloc blocks (also support bigalloc), finally make
+ext4_da_map_blocks() buffer_head unaware, I've send it out separately[2]
+and hope this could be merged first.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1a28995e12fd13faa44e@syzkaller.appspotmail.com
+Patch 10-19: this is the part 3 prepartory changes(picked out from my
+metadata reservation series[3], these are not a strong dependency
+patches, but I'd suggested these could be merged before the iomap
+conversion). These patches moves ext4_da_update_reserve_space() to
+ext4_es_insert_extent(), and always set EXT4_GET_BLOCKS_DELALLOC_RESERVE
+when allocating delalloc blocks, no matter it's from delayed allocate or
+non-delayed allocate (fallocate) path, it makes delalloc extents always
+delonly. These can make delalloc reservation simpler and cleaner than
+before.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in xfs_inode_item_push+0x248/0x290 fs/xfs/xfs_inode_item.c:743
-Read of size 8 at addr ffff0000ddfe0bb8 by task xfsaild/loop0/7856
+Patch 20-34: These patches are the main implements of the buffered IO
+iomap conversion, It first introduce a sequence counter for extent
+status tree, then add a new iomap aops for read, write, mmap, replace
+current buffered_head path. Finally, enable iomap path besides inline
+data, non-extent, dax, fs_verity, fs_crypt, defrag and data=journal
+mode, if user specify "buffered_iomap" mount option, also enable large
+folio. Please look at the following patch for details.
 
-CPU: 0 PID: 7856 Comm: xfsaild/loop0 Not tainted 6.8.0-rc7-syzkaller-g707081b61156 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:291
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:298
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x178/0x518 mm/kasan/report.c:488
- kasan_report+0xd8/0x138 mm/kasan/report.c:601
- __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
- xfs_inode_item_push+0x248/0x290 fs/xfs/xfs_inode_item.c:743
- xfsaild_push_item fs/xfs/xfs_trans_ail.c:414 [inline]
- xfsaild_push fs/xfs/xfs_trans_ail.c:486 [inline]
- xfsaild+0xbe8/0x2c18 fs/xfs/xfs_trans_ail.c:671
- kthread+0x288/0x310 kernel/kthread.c:388
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+About Tests:
+ - Pass kvm-xfstests in auto mode, and the keep running stress tests and
+   fault injection tests.
+ - A performance tests below (tested on my version 3 series,
+   theoretically there won't be much difference in this version).
 
-Allocated by task 7816:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:575
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x74/0x8c mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3813 [inline]
- slab_alloc_node mm/slub.c:3860 [inline]
- kmem_cache_alloc+0x1dc/0x488 mm/slub.c:3867
- kmem_cache_zalloc include/linux/slab.h:701 [inline]
- xfs_inode_item_init+0x3c/0xc0 fs/xfs/xfs_inode_item.c:838
- xfs_trans_ijoin+0xd8/0x114 fs/xfs/libxfs/xfs_trans_inode.c:36
- xfs_create+0x8a4/0xf9c fs/xfs/xfs_inode.c:1040
- xfs_generic_create+0x3c8/0xb10 fs/xfs/xfs_iops.c:199
- xfs_vn_create+0x44/0x58 fs/xfs/xfs_iops.c:275
- lookup_open fs/namei.c:3500 [inline]
- open_last_lookups fs/namei.c:3569 [inline]
- path_openat+0xfb4/0x2830 fs/namei.c:3799
- do_filp_open+0x1bc/0x3cc fs/namei.c:3829
- do_sys_openat2+0x124/0x1b8 fs/open.c:1404
- do_sys_open fs/open.c:1419 [inline]
- __do_sys_openat fs/open.c:1435 [inline]
- __se_sys_openat fs/open.c:1430 [inline]
- __arm64_sys_openat+0x1f0/0x240 fs/open.c:1430
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+   Fio tests with psync on my machine with Intel Xeon Gold 6240 CPU
+   with 400GB system ram, 200GB ramdisk and 1TB nvme ssd disk.
 
-Freed by task 22:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_free_info+0x54/0x6c mm/kasan/generic.c:589
- poison_slab_object+0x124/0x18c mm/kasan/common.c:240
- __kasan_slab_free+0x3c/0x70 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2121 [inline]
- slab_free mm/slub.c:4299 [inline]
- kmem_cache_free+0x15c/0x3d4 mm/slub.c:4363
- xfs_inode_item_destroy+0x80/0x94 fs/xfs/xfs_inode_item.c:860
- xfs_inode_free_callback+0x154/0x1cc fs/xfs/xfs_icache.c:145
- rcu_do_batch kernel/rcu/tree.c:2190 [inline]
- rcu_core+0x890/0x1b34 kernel/rcu/tree.c:2465
- rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2482
- __do_softirq+0x2d8/0xce4 kernel/softirq.c:553
+   == buffer read ==
 
-The buggy address belongs to the object at ffff0000ddfe0b88
- which belongs to the cache xfs_ili of size 264
-The buggy address is located 48 bytes inside of
- freed 264-byte region [ffff0000ddfe0b88, ffff0000ddfe0c90)
+                  buffer head        iomap + large folio
+   type     bs    IOPS    BW(MiB/s)  IOPS    BW(MiB/s)
+   ----------------------------------------------------
+   hole     4K    565k    2206       811k    3167
+   hole     64K   45.1k   2820       78.1k   4879
+   hole     1M    2744    2744       4890    4891
+   ramdisk  4K    436k    1703       554k    2163
+   ramdisk  64K   29.6k   1848       44.0k   2747
+   ramdisk  1M    1994    1995       2809    2809
+   nvme     4K    306k    1196       324k    1267
+   nvme     64K   19.3k   1208       24.3k   1517
+   nvme     1M    1694    1694       2256    2256
 
-The buggy address belongs to the physical page:
-page:00000000b7c34688 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff0000ddfe0668 pfn:0x11dfe0
-flags: 0x5ffc00000000800(slab|node=0|zone=2|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 05ffc00000000800 ffff0000c559d140 dead000000000122 0000000000000000
-raw: ffff0000ddfe0668 00000000800c0004 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+   == buffer write ==
 
-Memory state around the buggy address:
- ffff0000ddfe0a80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff0000ddfe0b00: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
->ffff0000ddfe0b80: fc fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                        ^
- ffff0000ddfe0c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff0000ddfe0c80: fb fb fc fc fc fc fc fc fc fc fa fb fb fb fb fb
-==================================================================
+                                        buffer head  iomap + large folio
+   type   Overwrite Sync Writeback bs   IOPS   BW    IOPS   BW
+   ------------------------------------------------------------
+   cache    N       N    N         4K   395k   1544  415k   1621
+   cache    N       N    N         64K  30.8k  1928  80.1k  5005
+   cache    N       N    N         1M   1963   1963  5641   5642
+   cache    Y       N    N         4K   423k   1652  443k   1730
+   cache    Y       N    N         64K  33.0k  2063  80.8k  5051
+   cache    Y       N    N         1M   2103   2103  5588   5589
+   ramdisk  N       N    Y         4K   362k   1416  307k   1198
+   ramdisk  N       N    Y         64K  22.4k  1399  64.8k  4050
+   ramdisk  N       N    Y         1M   1670   1670  4559   4560
+   ramdisk  N       Y    N         4K   9830   38.4  13.5k  52.8
+   ramdisk  N       Y    N         64K  5834   365   10.1k  629
+   ramdisk  N       Y    N         1M   1011   1011  2064   2064
+   ramdisk  Y       N    Y         4K   397k   1550  409k   1598
+   ramdisk  Y       N    Y         64K  29.2k  1827  73.6k  4597
+   ramdisk  Y       N    Y         1M   1837   1837  4985   4985
+   ramdisk  Y       Y    N         4K   173k   675   182k   710
+   ramdisk  Y       Y    N         64K  17.7k  1109  33.7k  2105
+   ramdisk  Y       Y    N         1M   1128   1129  1790   1791
+   nvme     N       N    Y         4K   298k   1164  290k   1134
+   nvme     N       N    Y         64K  21.5k  1343  57.4k  3590
+   nvme     N       N    Y         1M   1308   1308  3664   3664
+   nvme     N       Y    N         4K   10.7k  41.8  12.0k  46.9
+   nvme     N       Y    N         64K  5962   373   8598   537
+   nvme     N       Y    N         1M   676    677   1417   1418
+   nvme     Y       N    Y         4K   366k   1430  373k   1456
+   nvme     Y       N    Y         64K  26.7k  1670  56.8k  3547
+   nvme     Y       N    Y         1M   1745   1746  3586   3586
+   nvme     Y       Y    N         4K   59.0k  230   61.2k  239
+   nvme     Y       Y    N         64K  13.0k  813   21.0k  1311
+   nvme     Y       Y    N         1M   683    683   1368   1369
+ 
+TODO
+ - Keep on doing stress tests and fixing.
+ - Reserve enough space for delalloc metadata blocks and try to drop
+   ext4_nonda_switch().
+ - First support defrag and then support other more unsupported features
+   and mount options.
 
+Changes since v3:
+ - Drop the part 1 prepartory patches which have been merged [4].
+ - Drop the two iomap patches since I've submitted separately [1].
+ - Fix an incorrect reserved delalloc blocks count and incorrect extent
+   status cache issue found on current ext4 code.
+ - Pick out part 2 prepartory patch series [2], it make
+   ext4_insert_delayed_block() call path support inserting multiple
+   delalloc blocks (also support bigalloc )and make ext4_da_map_blocks()
+   buffer_head unaware.
+ - Adjust and simplify the reserved delalloc blocks updating logic,
+   preparing for reserving meta data blocks for delalloc.
+ - Drop datasync dirty check in ext4_set_iomap() for buffered
+   read/write, improves the concurrent performance on small I/Os.
+ - Prevent always hold invalid_lock in page_cache_ra_order(), add
+   lockless check.
+ - Disable iomap path by default since it's experimental new, add a
+   mount option "buffered_iomap" to enable it.
+ - Some other minor fixes and change log improvements.
+Changes since v2:
+ - Update patch 1-6 to v3.
+ - iomap_zero and iomap_unshare don't need to update i_size and call
+   iomap_write_failed(), introduce a new helper iomap_write_end_simple()
+   to avoid doing that.
+ - Factor out ext4_[ext|ind]_map_blocks() parts from ext4_map_blocks(),
+   introduce a new helper ext4_iomap_map_one_extent() to allocate
+   delalloc blocks in writeback, which is always under i_data_sem in
+   write mode. This is done to prevent the writing back delalloc
+   extents become stale if it raced by truncate.
+ - Add a lock detection in mapping_clear_large_folios().
+Changes since v1:
+ - Introduce seq count for iomap buffered write and writeback to protect
+   races from extents changes, e.g. truncate, mwrite.
+ - Always allocate unwritten extents for new blocks, drop dioread_lock
+   mode, and make no distinctions between dioread_lock and
+   dioread_nolock.
+ - Don't add ditry data range to jinode, drop data=ordered mode, and
+   make no distinctions between data=ordered and data=writeback mode.
+ - Postpone updating i_disksize to endio.
+ - Allow splitting extents and use reserved space in endio.
+ - Instead of reimplement a new delayed mapping helper
+   ext4_iomap_da_map_blocks() for buffer write, try to reuse
+   ext4_da_map_blocks().
+ - Add support for disabling large folio on active inodes.
+ - Support online defragmentation, make file fall back to buffer_head
+   and disable large folio in ext4_move_extents().
+ - Move ext4_nonda_switch() in advance to prevent deadlock in mwrite.
+ - Add dirty_len and pos trace info to trace_iomap_writepage_map().
+ - Update patch 1-6 to v2.
+
+[1] https://lore.kernel.org/linux-xfs/20240320110548.2200662-1-yi.zhang@huaweicloud.com/
+[2] https://lore.kernel.org/linux-ext4/20240410034203.2188357-1-yi.zhang@huaweicloud.com/
+[3] https://lore.kernel.org/linux-ext4/20230824092619.1327976-1-yi.zhang@huaweicloud.com/
+[4] https://lore.kernel.org/linux-ext4/20240105033018.1665752-1-yi.zhang@huaweicloud.com/
+
+Thanks,
+Yi.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v3: https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
+v2: https://lore.kernel.org/linux-ext4/20240102123918.799062-1-yi.zhang@huaweicloud.com/
+v1: https://lore.kernel.org/linux-ext4/20231123125121.4064694-1-yi.zhang@huaweicloud.com/
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Zhang Yi (34):
+  ext4: factor out a common helper to query extent map
+  ext4: check the extent status again before inserting delalloc block
+  ext4: trim delalloc extent
+  ext4: drop iblock parameter
+  ext4: make ext4_es_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_reserve_space() reserve multi-clusters
+  ext4: factor out check for whether a cluster is allocated
+  ext4: make ext4_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_map_blocks() buffer_head unaware
+  ext4: factor out ext4_map_create_blocks() to allocate new blocks
+  ext4: optimize the EXT4_GET_BLOCKS_DELALLOC_RESERVE flag set
+  ext4: don't set EXTENT_STATUS_DELAYED on allocated blocks
+  ext4: let __revise_pending() return newly inserted pendings
+  ext4: count removed reserved blocks for delalloc only extent entry
+  ext4: update delalloc data reserve spcae in ext4_es_insert_extent()
+  ext4: drop ext4_es_delayed_clu()
+  ext4: use ext4_map_query_blocks() in ext4_map_blocks()
+  ext4: drop ext4_es_is_delonly()
+  ext4: drop all delonly descriptions
+  ext4: use reserved metadata blocks when splitting extent on endio
+  ext4: introduce seq counter for the extent status entry
+  ext4: add a new iomap aops for regular file's buffered IO path
+  ext4: implement buffered read iomap path
+  ext4: implement buffered write iomap path
+  ext4: implement writeback iomap path
+  ext4: implement mmap iomap path
+  ext4: implement zero_range iomap path
+  ext4: writeback partial blocks before zeroing out range
+  ext4: fall back to buffer_head path for defrag
+  ext4: partial enable iomap for regular file's buffered IO path
+  filemap: support disable large folios on active inode
+  ext4: enable large folio for regular file with iomap buffered IO path
+  ext4: don't mark IOMAP_F_DIRTY for buffer write
+  ext4: add mount option for buffered IO iomap path
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+-- 
+2.39.2
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
