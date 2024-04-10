@@ -1,133 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-16507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2685689E67B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 01:54:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A3089E697
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 02:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5BE7283CF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Apr 2024 23:54:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332D51C215CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 00:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4A61591F4;
-	Tue,  9 Apr 2024 23:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F4864A;
+	Wed, 10 Apr 2024 00:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NwojOdW2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9BZRkPP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316DC158851;
-	Tue,  9 Apr 2024 23:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBE97F;
+	Wed, 10 Apr 2024 00:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712706874; cv=none; b=UxfnAUfeVIS0i1dEM06AGUz3RUndetzFlEPrDGJtZdJxVfveNZ0mqDEldOpetpwCU2YJvnosWL/OUf3W7HU2WYE/x2TauW+0CLkKMtdoQ0jW3A1Xq0fczPTF8d4fS0uaZVSCbOi6U7YdIaL2yb2mail+CiwmgCKfHQIncFB8Pck=
+	t=1712707529; cv=none; b=bz2TaNPX5w9NLUFGsEkzLGUbPjRByAADpQ6pMCV434+Pp9KuEkqSANuYMUfhNUK1vhHNgqMQU28pO3iVCk5P5rOJdq/NRWWa9m4B+BHt7nQFO7eZo/UQxHv0tPBDxi68OxtUqV4Ccn0p1yI+A+oAN+pnx2cRPwTPDb4kjDGSv/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712706874; c=relaxed/simple;
-	bh=t1NhF4nrxdQhhoLefZQtEgoMWYKkMCdVLx8xtlo79Mw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=mxTXIlVg2YKnKjxPh6neoT4PnQdX2iPlsIelqBXtAA2rn5iK7uNr1HAcj4ppYRkSkey7C5DPiX6LJrPV7ps7IZQij4SqqSz0MNgyGSX+3EBNBu/S3lV3Dz0mvqc8rHmNZ5U0rsX45/kzgReRFVEqtS7DPXQPEMkf4ERvgC9kxGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NwojOdW2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1A9C433F1;
-	Tue,  9 Apr 2024 23:54:30 +0000 (UTC)
+	s=arc-20240116; t=1712707529; c=relaxed/simple;
+	bh=bex30GmuVItS5K9f8UWgnHnchq8hiAHRUZt+4vOdORE=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z7ZK5Mw0i75LFZeqb0NSHlxxLVXXr6XXEwgYhW39CMaD+A91D3YGYbuARF7+W1yuOok3eT1lBa10ZwO8zUm7g97XlETefkjkkYTZ1JlNTi4p6oSji8gY31748ysYAEpv9MxeZYt5uMoniSUz9pj0icKp0LoS5O4DgZ095HY+sbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9BZRkPP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB0BFC433F1;
+	Wed, 10 Apr 2024 00:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712706873;
-	bh=t1NhF4nrxdQhhoLefZQtEgoMWYKkMCdVLx8xtlo79Mw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NwojOdW2AUtmiM4odkHOSUKtAmqdBkpXq4Sienw6hV91VcOgqBhaTkP76EaYBwmvm
-	 MBkGDAY6vmhV262dis86jOzkdodmqdQOnR2F23XwGnbtXO3VsZgxs5qTAFAHqp04uA
-	 zFyIk7eMTdtL4aGRMgDaBvjZzkourZhvpq0j8eSOAUwk9zdyMZZuhjkWzeC4TVyTMc
-	 0YdNVxcu1YDvf3IxXdYZK9qX586ukiLZj9FwOM+I2YY8t/K9jUCK4bGIpvIEZ8P6zi
-	 TlOjbfmbpw23dA7/cVNp44QysvPU+TUeiWYqFr2b73mrRqrfsBQwB6ZdKdueiIl/AM
-	 4pezmDgjCkQNw==
-Date: Wed, 10 Apr 2024 08:54:28 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Eric Biederman
- <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH] tracing: Add new_exec tracepoint
-Message-Id: <20240410085428.53093333cf4d768d6b420a11@kernel.org>
-In-Reply-To: <CANpmjNOv=8VBvbKBQbsBdg9y2pNsfdaA-46QB53NY-Ddmq3tmA@mail.gmail.com>
-References: <20240408090205.3714934-1-elver@google.com>
-	<20240409103327.7a9012fa@gandalf.local.home>
-	<CANpmjNOv=8VBvbKBQbsBdg9y2pNsfdaA-46QB53NY-Ddmq3tmA@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1712707528;
+	bh=bex30GmuVItS5K9f8UWgnHnchq8hiAHRUZt+4vOdORE=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=c9BZRkPP/nSGHb8wWmHqbhh42pF4BrK6Uvjs7aMDfKa/EPcYXyjgobTzSIT6ysuYs
+	 LCDlsACvSjs6RhN4qfQC330twU0ZCh2V6DmPmuTNU4nHbzJo2TJjWYmW86jWnx/QQC
+	 ZTTIunOabsVWCZseEnC6tigh1lyHp0FpWfb5Ev9CE2IX08J4Y92oP1EQ5EfGIiWmR3
+	 Fp5EkaN6VuFNov67yKc+lScNwyjVO/FuXN5quVBtgo4OHmLHBlyQWENlO6sI/Evonz
+	 vm2QAVhJUPq/QuBJO+9iQDkzVKsc6dobfNkNBNit3JyRpvAzjudbolykeys9VyTcpI
+	 WZEcLzXYojFoQ==
+Date: Tue, 9 Apr 2024 17:05:28 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+	linux-xfs@vger.kernel.org
+Subject: [PATCH 15/14] xfs: capture inode generation numbers in the ondisk
+ exchmaps log item
+Message-ID: <20240410000528.GR6390@frogsfrogsfrogs>
+References: <171263348423.2978056.309570547736145336.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171263348423.2978056.309570547736145336.stgit@frogsfrogsfrogs>
 
-On Tue, 9 Apr 2024 16:45:47 +0200
-Marco Elver <elver@google.com> wrote:
+From: Darrick J. Wong <djwong@kernel.org>
 
-> On Tue, 9 Apr 2024 at 16:31, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Mon,  8 Apr 2024 11:01:54 +0200
-> > Marco Elver <elver@google.com> wrote:
-> >
-> > > Add "new_exec" tracepoint, which is run right after the point of no
-> > > return but before the current task assumes its new exec identity.
-> > >
-> > > Unlike the tracepoint "sched_process_exec", the "new_exec" tracepoint
-> > > runs before flushing the old exec, i.e. while the task still has the
-> > > original state (such as original MM), but when the new exec either
-> > > succeeds or crashes (but never returns to the original exec).
-> > >
-> > > Being able to trace this event can be helpful in a number of use cases:
-> > >
-> > >   * allowing tracing eBPF programs access to the original MM on exec,
-> > >     before current->mm is replaced;
-> > >   * counting exec in the original task (via perf event);
-> > >   * profiling flush time ("new_exec" to "sched_process_exec").
-> > >
-> > > Example of tracing output ("new_exec" and "sched_process_exec"):
-> >
-> > How common is this? And can't you just do the same with adding a kprobe?
-> 
-> Our main use case would be to use this in BPF programs to become
-> exec-aware, where using the sched_process_exec hook is too late. This
-> is particularly important where the BPF program must stop inspecting
-> the user space's VM when the task does exec to become a new process.
+Per some very late review comments, capture the generation numbers of
+both inodes involved in a file content exchange operation so that we
+don't accidentally target files with have been reallocated.
 
-Just out of curiousity, would you like to audit that the user-program
-is not malformed? (security tracepoint?) I think that is an interesting
-idea. What kind of information you need?
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+---
+I'm throwing this one on the pile since I guess it's not so hard to add
+the generation number to a brand new log item.
+---
+ fs/xfs/libxfs/xfs_log_format.h |    2 ++
+ fs/xfs/xfs_exchmaps_item.c     |   12 ++++++++++++
+ 2 files changed, 14 insertions(+)
 
-> 
-> kprobe (or BPF's fentry) is brittle here, because begin_new_exec()'s
-> permission check can still return an error which returns to the
-> original task without crashing. Only at the point of no return are we
-> guaranteed that the exec either succeeds, or the task is terminated on
-> failure.
-
-Just a note: That is BPF limitation, kprobe and kprobe events can put
-a probe in the function body, but that is not supported on BPF (I guess
-because it depends on kernel debuginfo.) You can add kprobe-event using
-"perf probe" tool.
-
-Thank you,
-
-> 
-> I don't know if "common" is the right question here, because it's a
-> chicken-egg problem: no tracepoint, we give up; we have the
-> tracepoint, it unlocks a range of new use cases (that require robust
-> solution to make BPF programs exec-aware, and a tracepoint is the only
-> option IMHO).
-> 
-> Thanks,
-> -- Marco
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
+index 8dbe1f997dfd5..accba2acd623d 100644
+--- a/fs/xfs/libxfs/xfs_log_format.h
++++ b/fs/xfs/libxfs/xfs_log_format.h
+@@ -896,6 +896,8 @@ struct xfs_xmi_log_format {
+ 
+ 	uint64_t		xmi_inode1;	/* inumber of first file */
+ 	uint64_t		xmi_inode2;	/* inumber of second file */
++	uint32_t		xmi_igen1;	/* generation of first file */
++	uint32_t		xmi_igen2;	/* generation of second file */
+ 	uint64_t		xmi_startoff1;	/* block offset into file1 */
+ 	uint64_t		xmi_startoff2;	/* block offset into file2 */
+ 	uint64_t		xmi_blockcount;	/* number of blocks */
+diff --git a/fs/xfs/xfs_exchmaps_item.c b/fs/xfs/xfs_exchmaps_item.c
+index a40216f33214c..3c4bb9601c3e0 100644
+--- a/fs/xfs/xfs_exchmaps_item.c
++++ b/fs/xfs/xfs_exchmaps_item.c
+@@ -231,7 +231,9 @@ xfs_exchmaps_create_intent(
+ 	xlf = &xmi_lip->xmi_format;
+ 
+ 	xlf->xmi_inode1 = xmi->xmi_ip1->i_ino;
++	xlf->xmi_igen1 = VFS_I(xmi->xmi_ip1)->i_generation;
+ 	xlf->xmi_inode2 = xmi->xmi_ip2->i_ino;
++	xlf->xmi_igen2 = VFS_I(xmi->xmi_ip2)->i_generation;
+ 	xlf->xmi_startoff1 = xmi->xmi_startoff1;
+ 	xlf->xmi_startoff2 = xmi->xmi_startoff2;
+ 	xlf->xmi_blockcount = xmi->xmi_blockcount;
+@@ -377,6 +379,14 @@ xfs_xmi_item_recover_intent(
+ 	if (error)
+ 		goto err_rele1;
+ 
++	if (VFS_I(ip1)->i_generation != xlf->xmi_igen1 ||
++	    VFS_I(ip2)->i_generation != xlf->xmi_igen2) {
++		XFS_CORRUPTION_ERROR(__func__, XFS_ERRLEVEL_LOW, mp,
++				xlf, sizeof(*xlf));
++		error = -EFSCORRUPTED;
++		goto err_rele2;
++	}
++
+ 	req->ip1 = ip1;
+ 	req->ip2 = ip2;
+ 	req->startoff1 = xlf->xmi_startoff1;
+@@ -485,6 +495,8 @@ xfs_exchmaps_relog_intent(
+ 
+ 	new_xlf->xmi_inode1	= old_xlf->xmi_inode1;
+ 	new_xlf->xmi_inode2	= old_xlf->xmi_inode2;
++	new_xlf->xmi_igen1	= old_xlf->xmi_igen1;
++	new_xlf->xmi_igen2	= old_xlf->xmi_igen2;
+ 	new_xlf->xmi_startoff1	= old_xlf->xmi_startoff1;
+ 	new_xlf->xmi_startoff2	= old_xlf->xmi_startoff2;
+ 	new_xlf->xmi_blockcount	= old_xlf->xmi_blockcount;
 
