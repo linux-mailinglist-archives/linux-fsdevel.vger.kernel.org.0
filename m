@@ -1,236 +1,500 @@
-Return-Path: <linux-fsdevel+bounces-16610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215DF89FD88
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 18:59:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54CF789FE78
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 19:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DDAC284892
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 16:59:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E541F24D02
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 17:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AB617BB03;
-	Wed, 10 Apr 2024 16:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F26817F382;
+	Wed, 10 Apr 2024 17:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="S6kmenwX";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="OnS8cqlV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PcPH038s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5B537168;
-	Wed, 10 Apr 2024 16:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712768355; cv=fail; b=feCdbepCOQUd/LvV9uj0F1oc9hZslMFL6pnJRR05ZPh9lka6IdkxLd6++b/KGhvJpMskQZW42tE/LmZP1BElPdpoqrZdybRThkcTy9GpNyBePqpv6czRgY7nJ1VoOsgGx0ClcgF0vH7DVkhcQuDMpUCf/w3fR3OafGmuAWeRTzs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712768355; c=relaxed/simple;
-	bh=gPjZ1v4buEhN5W0ewIwnhIaZ2GS1yV3mvmBN2Ull7qE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ajXv/VWa/FvPWAxc4SheG1xZ0Et+uQto/rr6xYF/3+WujZRAjOlJi+6RdB46TLS8EPIETYJXHmKuIpIi65BGzQemvDUCSn6E0w/AIrhBBAhn4AuC+CRve4q5LZl/pNXs5Fp1BhAhs7Y7QLHtiNwJ/unYznkxOR2wSBYYuJOmOMc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=S6kmenwX; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=OnS8cqlV; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43AGDjLq020552;
-	Wed, 10 Apr 2024 16:59:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=ivdBKRhvna1Rt27vfDaJ4OB6HUv+B5S8FSD5xPwN+L0=;
- b=S6kmenwXWVutMc7ticyNn+07zZ4NHWLlgs2gad45sWorwKsweiJt2gycQfEEkImEQsMP
- RQRILBHmkAYH7bgcLZ6g6MG4MxJbXIjPXqbDXl39pdy0IrZSllciogsI5d4tnX32mPfA
- cNS9RxmX9CyLrP77dGlwt5aNEP0K3wTqnMpHx/0rGvYTrfYt2M/rxNDTxbJnu4qKk3cC
- lznDi6cBUH/8YJlrK6Z3gUEHUuJeRxWmMK6BdtquG9DxIbcEl///5zDlKDbSF2lpuEkJ
- eptqGzeAuPJDfHbisPAbol//gvefPzetUyZ1Y7ogmk8QWdQPtiqBeddlU9fiTsvOe24Z Qg== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3xaw027xwk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Apr 2024 16:59:02 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 43AGUiU2032537;
-	Wed, 10 Apr 2024 16:59:01 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2040.outbound.protection.outlook.com [104.47.74.40])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3xavu901xn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Apr 2024 16:59:01 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NQHtmD7L2RSuc6Qdp16bQUsJB48LcrDEUzjKx1MryKD9nIciha6YPEOW3dLE9UiaV0jCxemN4zX5uSNW/cLXsH0/EoQi9ZHs3VlX1Gsbs2WYGb38MJzOU9DBXHTbrMMsOvQLPV39MlAfIV9MN5xkpna83uf5yVC7jMa2l+tslJa/5W6ALdrrlZ8hNzVmxgFAVQYsCUxU/50ohQikDpJeNW+kNf/yuRB6jCX2KuHqtv40LwTUn5UpW7/yNmolK4rHX7K1Vn4Nj6jPZoFb2vaL7/QzrkIPm3pLaN7WER+KF5PcDPc13LHtQOw3FovX//e1Rdmlo7k/JgF0dNi8WsMLpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ivdBKRhvna1Rt27vfDaJ4OB6HUv+B5S8FSD5xPwN+L0=;
- b=XOl9K2IrfJT31/UOcGyiYn2B0XsYvvjdeht455s1QHf5fvmi2cmfavfs4vW4evPAvY+CVsiKrfy+Q89wHKdtY4MNG85AWHwJGOZDSn2fFO3zufcaBQlPG2QNkJmzrES0zd0Kf0lj6H0gg4pSYN14+cZz0ylcJ6PUltA6DOw24gA4DA7yOCnuqGu8/dJtnql1HMPPnlHUSO+Stn+YnH9jTVWpqNAOMCbs9Klg0+KwgDs+oFiYj6NlE/RwVjVMoxW4jWKuy/V1Xm0nCiIfwGNdY3tkdeG2xxneYqsoIZygqbAEfCY2ulLc39qnVWIgKF0za9CoX4uFMihQ+YSAyE30pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ivdBKRhvna1Rt27vfDaJ4OB6HUv+B5S8FSD5xPwN+L0=;
- b=OnS8cqlVlrrxaHrJVDBGi/9ui9SnpzvNU5IxwLDYndrU5ysOXAPo31JCN8xY2Iwl4G34kHG69kzUtelmDjFrRp3MLYzbR1UWIqGuMLLmCGBga0GmnBFMDLqYdev7q3q15uhofhtIq2yCW/JWesCtLo0Y4zzMr0n/oj9yxMI7HSo=
-Received: from MW5PR10MB5738.namprd10.prod.outlook.com (2603:10b6:303:19b::14)
- by PH0PR10MB4503.namprd10.prod.outlook.com (2603:10b6:510:3a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.55; Wed, 10 Apr
- 2024 16:58:59 +0000
-Received: from MW5PR10MB5738.namprd10.prod.outlook.com
- ([fe80::1bae:2a6c:1de2:3856]) by MW5PR10MB5738.namprd10.prod.outlook.com
- ([fe80::1bae:2a6c:1de2:3856%6]) with mapi id 15.20.7409.042; Wed, 10 Apr 2024
- 16:58:59 +0000
-Message-ID: <f4f7c644-b229-486b-973b-97c55dac334f@oracle.com>
-Date: Wed, 10 Apr 2024 11:58:57 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Jfs-discussion] [PATCH] jfs: reserve the header and use freelist
- from second
-To: Edward Adam Davis <eadavis@qq.com>,
-        syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
-        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
-References: <000000000000ea6cba0615a3f177@google.com>
- <tencent_59925DB41938CFAC0DDEA5A40DB592425D07@qq.com>
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Content-Language: en-US
-In-Reply-To: <tencent_59925DB41938CFAC0DDEA5A40DB592425D07@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH5P223CA0019.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:610:1f3::6) To MW5PR10MB5738.namprd10.prod.outlook.com
- (2603:10b6:303:19b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5041417F375
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 17:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712770014; cv=none; b=j/oEJxT7eh1Ij5eTnAQjz2UmVpN2QoWhw2jdTHFHs6O7EJ4+TEMYEAJ19nQU2lBlBBtA4KzizBWHzZxpG0Avws/0VlFXqPuW+h49aMz04QLILK9jvzDYgNyvDO+WSntlWTdP/i0dE3Zw0SBybgfrGNkke/oSBfECKlJwITZVrYA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712770014; c=relaxed/simple;
+	bh=8a3DBXg7hhfdUQ3RyfxlUX1F2I1ZewtL5n+AJ7i1NO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gNxN7kNQVvaI4t9mtwCy0xPtgOnGWsw+aHLrdfruZCt5/y2VzKt9Y78dMTBsb1ajw37wKHi9GEDBFeF433GqrUOw5GucW0gQouL79YUVDsLWmZcH+SFXCiDSLYcy+1ixLttlUYT3slKbP/ExTyoxGZN9QfMlBWWmVJVA/HGWFas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PcPH038s; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1712770011;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SvrK1xeD8grMUj7IGa5lN1CzcJxYgQcYtrUkQ3eifvk=;
+	b=PcPH038s9vB+L+RZK38A8YoN0FTD8v0m4HST+0Qv0/loFge9c4WfVgB2OAXDszmWuROcu+
+	rbUZ8SzVjZQP3eJLL6S7Gj8tyVI5CzGt/VmbX8+F5ahhFbRjmWzaj0aRRez9Koyd85k+ko
+	kYkNcTKnWJshvItzezmyVIrG6jvJWeo=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-658-3kWFnip_Pr2em1p1NlKgzg-1; Wed, 10 Apr 2024 13:26:49 -0400
+X-MC-Unique: 3kWFnip_Pr2em1p1NlKgzg-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-69b197557b0so42290956d6.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 10:26:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712770009; x=1713374809;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SvrK1xeD8grMUj7IGa5lN1CzcJxYgQcYtrUkQ3eifvk=;
+        b=xMiAbw9STEAy847x87857sY8MIZ/5x7cSyMT+TJ7fMADaZf3lnUOSoerWnu58z4Wut
+         Ll0p03k38cUeXEaNsCq1+l1DIoiTj5MyYGq4mRm3ixfV56BKDmEi7l24zHJnoSLt+Uwd
+         7ZaeunYF1dMrYRAkgW1Qpde75BIESjuab/LO1YxNPSkoSuMylWhYHwGKYV/Muw9NaEiq
+         uODqRkzRV6qbNI2hjroErd2LES3+sGYJzTWA6hOxYlN30vx/p3hucsfP8TXOszrp5r04
+         OjU9co7cbJzb21FzWwjd1I577UhQe8upNH9bJ/KwHsJYkvZ4bhvT12bbG/pfKQKlpMtq
+         zHhA==
+X-Gm-Message-State: AOJu0YwOnRpMbPjd27YT1pXcbUA2Y+kuXSlnKQOI2vel0W1/drgV0ou7
+	v3qr3WArU7u8zSJJKTLTukjgKzaYveDNNcpkE7azlqK2QGHT6nlAniWllsrw16NL2xCUDj3ujfD
+	9xSnJeEYw9t2CGnw9bkhIuJzS1iPnUI2HT6Njy6qeANrlPE368R2uJM9uRChpizk=
+X-Received: by 2002:a05:6214:d6a:b0:69b:243a:46c with SMTP id 10-20020a0562140d6a00b0069b243a046cmr3689301qvs.34.1712770009393;
+        Wed, 10 Apr 2024 10:26:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENlG1Ttc7CoucrebyF8rwj5w6PnqB4FtRGniqXuoTW722Dlp/ItwidpVu+OB/JrzsrPrI9qw==
+X-Received: by 2002:a05:6214:d6a:b0:69b:243a:46c with SMTP id 10-20020a0562140d6a00b0069b243a046cmr3689277qvs.34.1712770008984;
+        Wed, 10 Apr 2024 10:26:48 -0700 (PDT)
+Received: from [192.168.1.165] ([70.22.187.239])
+        by smtp.gmail.com with ESMTPSA id l9-20020a0cc209000000b0069941839737sm5035258qvh.3.2024.04.10.10.26.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Apr 2024 10:26:48 -0700 (PDT)
+Message-ID: <a8493592-2a9b-ac14-f914-c747aa4455f3@redhat.com>
+Date: Wed, 10 Apr 2024 13:26:47 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW5PR10MB5738:EE_|PH0PR10MB4503:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	P2/aODOVMScnkuogJnWKl4D8VOGhp1SMWmYhkcUzBqhWOK0KFokG3DTm0T/RbILCGaCXAVdWIijVg5tRHm4jANfAlOV0EqqIyCj6PuVnH/FKD2vlS10OFQLrwn1qcPThME/kbTI4ccc4XAY1QmM8vofLnEIGyGBZCl5EleULF0Qyj5xFKT267Mf3hTHVM9Os6OivkhlpfRqxgU/s51D8fSL/yxmRezqH4EsRlEuQX+f0TumO4/mNNQ7BvKxKXUvp8Pdm0rby/p9uY8gP5eKocmKhlqgEXX+oEv1fhV4YvEpRXwwZa0kYxGEUoRnNR31uZ0svuG+lLP9y5edZAPPElgYxP5Idpklc/gWYkkjuityrbbdCLKUw5DLDQ8DSoVbPHr8lotOnHQCsXstdZRJzRvb7YI2l3wTlgRt0k7j6ddPGlGkmehnOQWOen1qjTgehRcXHDw4DUXg9P4kGSluDQ2aN0Hf15or9evAjvOci1oHgXJQB1iALHEPeohrHClPf0iUUfQHg/IYPeRx8YrriQCQ5BcMBLygf9HWTi5400JFtUz9PoKL//7x2n/GY3nvrJz4D1t8Q707ItmjBlVqlKo1mLbny+6eor7BepVV5y7PcsyZ4cFeWXFNMVGMjLy2HYkdJHQ7EYKjuBjYx7a3LJVOa8tRXFp0N+Kv8fnBdjRE=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR10MB5738.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ODZZM1hJSkw5ZEJzd1BwQ0lLMzBEVjh2ZHZWU2c4cy9WUysrR1lBNWpCbmZS?=
- =?utf-8?B?Y1dCMzd6cEllc0U0M0JwTy9VMlJycEMyT3BFMy9BaVFLMndBK0Y4T2tZa1Ri?=
- =?utf-8?B?QVNmZE9GOHVRNytwditHcmk5dEdJVmNSTytzclA1dzFtd3ZVa05neGVYL1lq?=
- =?utf-8?B?d0FzRFQ4ZzNHVGYrTVd6ckNCS3N0REJ6dzQvamxUTnE5ZHdYTTJTa21vKzl1?=
- =?utf-8?B?TkIxY0l2bHFua2RMSnErQXFER3FaTnd3L2ZYWkRYRHBvQXhCRlRmZk1URHRl?=
- =?utf-8?B?ODYyOU9iNmp1d25IaEtNY0FQMloyOXdET0RYa0NIWlAyYTNGZ0lzSzQ3MHJV?=
- =?utf-8?B?TmQrTlBMUWt2SkFXU205RFR5U2pPUU9peGJhbkhObi9ab1FWRXNLVUJiS2Fj?=
- =?utf-8?B?N2pDNEIrQ1ZneWRiTlVTRzUrQlo4OHBtOHRZWHUzcGFoOHNOVlV1R1pzYkxh?=
- =?utf-8?B?RnFseFVrRWZYOUtDbk1yZTZwcjlUV2RkVjhRdlNZYXU5d3VER0NPdEN2anc1?=
- =?utf-8?B?ZjFOV1N4bU84SWxtWkpsWmJnOTlHZi85RGlyTS83L3VNa2NlTUFmTFRSU1Qy?=
- =?utf-8?B?K20vWTdNYURxTU5HUk9pUFh3aXNuTTNhK1Z5RVhJOENzOTNiL0YwRWJ3S3A4?=
- =?utf-8?B?QjZlbU53bG44cGVRUXd1cjRHWjNkSlhtNHplbWpQM2sydVVFOHA5VXBzeXhj?=
- =?utf-8?B?akNtaFJmbm0xL251eFdVOFhMZlo0RWllbUJSdkhwcEx6VlZRN3QxdDFSRVBV?=
- =?utf-8?B?RjNmMjc5R2o4MkExdUlDOTZwNEdwNXBNNFVCYWhzY3ovRG5nbk5jMVFHbnBu?=
- =?utf-8?B?OHNUOVZxTHduTmd0cUN6R0hUTkxoU09wa256ZXJIRFJITEVSaG1ma1c3S3FB?=
- =?utf-8?B?enFwUjJWWlQyQjBhUER0YWNTcEEvUUFtbmhTNHBJV0kraXNIZDJYalVjUnB4?=
- =?utf-8?B?UGZzbmFsZ0sybllIQmFxa21jSTUrQXl0NnJzVkoxdEs1QlBQUDY1VDNQVnIy?=
- =?utf-8?B?ZEplUzROYlNDTVIwVVoxSUx6WE1FMU51TnR2NndpdGFaaDZ6d2VNd05acjdD?=
- =?utf-8?B?ODQ2THkwZWFWZTlxVHJsRXVnbzJyS3QrWTQ5bk5NaVRpY0JJYWlORDhEUlZ1?=
- =?utf-8?B?aGowdjBDdk1sQy9ON0ZVbXhnMUltb29oY1g3bTdxWlVPOHh3dHdwZ2tlcnFG?=
- =?utf-8?B?SmxoTFljSVhnZmREU3dRMHFhbE5PMk05Wm9WS05BbkJBNDYxL2Ztdkt6UGcw?=
- =?utf-8?B?K0tlZDdnQzk2U1h4R3I2SDUyd3l0dlhMenVQRmNHckJSemI4NVZLdW1EMnFX?=
- =?utf-8?B?YnljTnpOSVErL1JmczVoNlNhcXJtNHFrdUYrMU1uZXpOb2o0bmNoL3NDeE5H?=
- =?utf-8?B?dGtpRFZSeEFqV082eVJiKzN6SVlMUUlBRDhCYkJkd1lIZTRxSjMySndIMWU5?=
- =?utf-8?B?cUxxbENuM2RLMkMxaS9BUjJ5eDJUNEgrYXVqM1BFZlNkWlB3QnpTdVFERHhR?=
- =?utf-8?B?dkR2bS9VVXJlQXhIOFAvbnpxejZ6aFBzdnJQUkZQRjh4U1pPc0luTFlybnlr?=
- =?utf-8?B?MzIzbVQ1b0RVd0ZCQVM1dGhCcDV6T2xQdjJhVlJPV1R3OWt0UDd1MTRJVGpW?=
- =?utf-8?B?YnI1SlpGVEw3U3R0OHN5MUY5WG16Y1R6OTBVeFJibENuL3ovWUhEWW5ubStF?=
- =?utf-8?B?eWhTRzJ6WEs2N2dFSXk3OFJOTVNXVFVNWUMwdWlPNU54Z21UbWxnTHZpVTdT?=
- =?utf-8?B?WVNRaHJaQTh1cHl0dkx6RklRbTBoVUhhaklacm43NysxeCtvaW55ZjJHNjEy?=
- =?utf-8?B?a3JaMnkrSkU1Uk83Y1hvZTB2NElZNG1JRlF3aFpuQXlYaWxaYmJVUU9BNWhn?=
- =?utf-8?B?UkNXM1d4dUNGQjNrUGtpNGdJQ1U3RzVYUEtXWTkveC9jc1I0NThScllBcnN0?=
- =?utf-8?B?RUhESDB6NGJuVVlvbWJJUTQvdng5bE9HcnpyNzdCNjZGZVNDaG1VQks1amNo?=
- =?utf-8?B?ZlVCcEpTcGkxanFlNTJPck12K0M3Y0lrMm1Zc3J5bk9XdTYxeHI3elJ0UlBR?=
- =?utf-8?B?M1dwRUdSbFdVOEVBQUJHakJkbWVjcllydGRxUnJFVnM3RTNYY2dRdURmRzJQ?=
- =?utf-8?B?T05rSHpvangvUlJoV0VKNXZUWG41QjRSK0NyRjlLajJueGVNSWhKcEdSdTJ6?=
- =?utf-8?B?eFE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	YrE2l+4NBKC0kz1WV753sA3RjNdH/dGwbQ1ZlB8jqYsz8Vr/0NVyc8kn+FLH0Dr38R7UUmfWrM54PG5f8wiAO/icxkzJu1vGDCLknbsi09WQ07LKNo4Zx24EwCe3RRUNyWzpdYv8BdCy7pfUFy71kwWL/Gn17cPNR1L7dgFjc908jgNTAWMiUsGu7DzA4DJ+3voyTCd+QpU/LVzXsfH6dQYqR7K6W/hILnVlRH9+ZtkS10jcebX3vH2g7t4+XliwZGT8XHrxhgoDZDKQJoB8cyFlUULiwhwOjEBI6C30S/nG2CAM6DHgY+lDJRVo/3PDHaAdPOGYJAs6nc/Kjrzkgo40tHFIH/5rGyEvmN3zDjR7FMc4QvTaqvjjXgwVFoIbvIpJ0QLXymnlp6ixEY85tB3k9nJq+/BoHxTMl8dxp843rbUJlV7kg7Gx8DNeINJYzZfp1dpPr0Cfn8dLIDoGpMdw9dYvLuFr0l+BrK2k+6B6gAlnIrX0N6AgXYSqbpeYNrWimqkd2/n9gydotHW4chu1DGPJl5kppKx75/oGtD+zekumqqWKE6SiWvlyhYCxwdSi1p17iFddxWKgwugY1zjEJgz1rNxZdRL5DjP6WLo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19a29c12-dcd7-49ba-d678-08dc597f83f7
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR10MB5738.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2024 16:58:59.1391
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k68IvA9lii2k41St6FUpQNXHetarBDR1W3nH/NyFQeGsoyLvNg9qcdxLKcI04RhmNc7Y1fVVunJkyNHS0YydwyJ32x/SO2zgbeJdE1Cq+tk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4503
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-10_04,2024-04-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- bulkscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2404100125
-X-Proofpoint-ORIG-GUID: 7SclnFjqarE2m66dyDr_Ijf91JKzlkhl
-X-Proofpoint-GUID: 7SclnFjqarE2m66dyDr_Ijf91JKzlkhl
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH vfs.all 19/26] dm-vdo: convert to use bdev_file
+Content-Language: en-US
+To: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, axboe@kernel.dk
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com,
+ dm-devel@lists.linux.dev
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <20240406090930.2252838-20-yukuai1@huaweicloud.com>
+From: Matthew Sakai <msakai@redhat.com>
+In-Reply-To: <20240406090930.2252838-20-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 4/10/24 2:05AM, Edward Adam Davis via Jfs-discussion wrote:
-> [syzbot reported]
-> general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-> CPU: 0 PID: 5061 Comm: syz-executor404 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-> RIP: 0010:dtInsertEntry+0xd0c/0x1780 fs/jfs/jfs_dtree.c:3713
-> ...
-> [Analyze]
-> When the pointer h has the same value as p, after writing name in UniStrncpy_to_le(),
-> p->header.flag will be cleared.
-> This will cause the previously true judgment "p->header.flag & BT-LEAF" to change
-> to no after writing the name operation, this leads to entering an incorrect branch
-> and accessing the uninitialized object ih when judging this condition for the
-> second time.
-> [Fix]
-> When allocating slots from the freelist, we start from the second one to preserve
-> the header of p from being incorrectly modified.
++dm-devel
 
-The freelist is simply corrupted. It should never be set to 0. We cannot 
-assume that slot[1] is on the free list. Probably the best we can do is 
-to add more sanity checking to the freelist value, and/or any slot's 
-next & prev value. That could potentially involve a lot more checks. 
-I've been accepting patches here and there for specific syzbot failures, 
-but any comprehensive sanity checking of every data structure would be a 
-huge effort.
-
-What makes a fix a little more difficult is that dtInsertEntry returns 
-void and it would be difficult to gracefully recover. One could change 
-it to return an error and have all the callers check that. But I'm 
-afraid, just using a valid slot number would only lead to further data 
-corruption.
-
-Thanks,
-Shaggy
-
+On 4/6/24 05:09, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Reported-by: syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> Now that dm upper layer already statsh the file of opened device in
+
+                                  ^ stashes
+
+> 'dm_dev->bdev_file', it's ok to get inode from the file.
+> There are no functional changes, prepare to remove 'bd_inode' from
+> block_device.
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > ---
->   fs/jfs/jfs_dtree.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+>   drivers/md/dm-vdo/dedupe.c                |  7 ++++---
+>   drivers/md/dm-vdo/dm-vdo-target.c         |  9 +++++++--
+>   drivers/md/dm-vdo/indexer/config.c        |  2 +-
+>   drivers/md/dm-vdo/indexer/config.h        |  4 ++--
+>   drivers/md/dm-vdo/indexer/index-layout.c  |  6 +++---
+>   drivers/md/dm-vdo/indexer/index-layout.h  |  2 +-
+>   drivers/md/dm-vdo/indexer/index-session.c | 18 ++++++++++--------
+>   drivers/md/dm-vdo/indexer/index.c         |  4 ++--
+>   drivers/md/dm-vdo/indexer/index.h         |  2 +-
+>   drivers/md/dm-vdo/indexer/indexer.h       |  6 +++---
+>   drivers/md/dm-vdo/indexer/io-factory.c    | 17 +++++++++--------
+>   drivers/md/dm-vdo/indexer/io-factory.h    |  4 ++--
+>   drivers/md/dm-vdo/indexer/volume.c        |  4 ++--
+>   drivers/md/dm-vdo/indexer/volume.h        |  2 +-
+>   drivers/md/dm-vdo/vdo.c                   |  2 +-
+>   15 files changed, 49 insertions(+), 40 deletions(-)
 > 
-> diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
-> index 031d8f570f58..deb2a5cc78d8 100644
-> --- a/fs/jfs/jfs_dtree.c
-> +++ b/fs/jfs/jfs_dtree.c
-> @@ -3618,7 +3618,8 @@ static void dtInsertEntry(dtpage_t * p, int index, struct component_name * key,
->   	kname = key->name;
+> diff --git a/drivers/md/dm-vdo/dedupe.c b/drivers/md/dm-vdo/dedupe.c
+> index 117266e1b3ae..0e311989247e 100644
+> --- a/drivers/md/dm-vdo/dedupe.c
+> +++ b/drivers/md/dm-vdo/dedupe.c
+> @@ -2191,7 +2191,7 @@ static int initialize_index(struct vdo *vdo, struct hash_zones *zones)
+>   	uds_offset = ((vdo_get_index_region_start(geometry) -
+>   		       geometry.bio_offset) * VDO_BLOCK_SIZE);
+>   	zones->parameters = (struct uds_parameters) {
+> -		.bdev = vdo->device_config->owned_device->bdev,
+> +		.bdev_file = vdo->device_config->owned_device->bdev_file,
+>   		.offset = uds_offset,
+>   		.size = (vdo_get_index_region_size(geometry) * VDO_BLOCK_SIZE),
+>   		.memory_size = geometry.index_config.mem,
+> @@ -2582,8 +2582,9 @@ static void resume_index(void *context, struct vdo_completion *parent)
+>   	struct device_config *config = parent->vdo->device_config;
+>   	int result;
 >   
->   	/* allocate a free slot */
-> -	hsi = fsi = p->header.freelist;
-> +	hsi = fsi = p->header.freelist = p->header.freelist == 0 ?
-> +		1 : p->header.freelist;
->   	h = &p->slot[fsi];
->   	p->header.freelist = h->next;
->   	--p->header.freecnt;
+> -	zones->parameters.bdev = config->owned_device->bdev;
+> -	result = uds_resume_index_session(zones->index_session, zones->parameters.bdev);
+> +	zones->parameters.bdev_file = config->owned_device->bdev_file;
+> +	result = uds_resume_index_session(zones->index_session,
+> +					  zones->parameters.bdev_file);
+>   	if (result != UDS_SUCCESS)
+>   		vdo_log_error_strerror(result, "Error resuming dedupe index");
+>   
+> diff --git a/drivers/md/dm-vdo/dm-vdo-target.c b/drivers/md/dm-vdo/dm-vdo-target.c
+> index 5a4b0a927f56..79e861c2887c 100644
+> --- a/drivers/md/dm-vdo/dm-vdo-target.c
+> +++ b/drivers/md/dm-vdo/dm-vdo-target.c
+> @@ -696,6 +696,11 @@ static void handle_parse_error(struct device_config *config, char **error_ptr,
+>   	*error_ptr = error_str;
+>   }
+>   
+> +static loff_t vdo_get_device_size(const struct device_config *config)
+> +{
+> +	return i_size_read(file_inode(config->owned_device->bdev_file));
+> +}
+> +
+>   /**
+>    * parse_device_config() - Convert the dmsetup table into a struct device_config.
+>    * @argc: The number of table values.
+> @@ -878,7 +883,7 @@ static int parse_device_config(int argc, char **argv, struct dm_target *ti,
+>   	}
+>   
+>   	if (config->version == 0) {
+> -		u64 device_size = i_size_read(config->owned_device->bdev->bd_inode);
+> +		u64 device_size = vdo_get_device_size(config);
+>   
+>   		config->physical_blocks = device_size / VDO_BLOCK_SIZE;
+>   	}
+> @@ -1011,7 +1016,7 @@ static void vdo_status(struct dm_target *ti, status_type_t status_type,
+>   
+>   static block_count_t __must_check get_underlying_device_block_count(const struct vdo *vdo)
+>   {
+> -	return i_size_read(vdo_get_backing_device(vdo)->bd_inode) / VDO_BLOCK_SIZE;
+> +	return vdo_get_device_size(vdo->device_config) / VDO_BLOCK_SIZE;
+>   }
+>   
+>   static int __must_check process_vdo_message_locked(struct vdo *vdo, unsigned int argc,
+> diff --git a/drivers/md/dm-vdo/indexer/config.c b/drivers/md/dm-vdo/indexer/config.c
+> index 5532371b952f..dcf0742a6145 100644
+> --- a/drivers/md/dm-vdo/indexer/config.c
+> +++ b/drivers/md/dm-vdo/indexer/config.c
+> @@ -344,7 +344,7 @@ int uds_make_configuration(const struct uds_parameters *params,
+>   	config->volume_index_mean_delta = DEFAULT_VOLUME_INDEX_MEAN_DELTA;
+>   	config->sparse_sample_rate = (params->sparse ? DEFAULT_SPARSE_SAMPLE_RATE : 0);
+>   	config->nonce = params->nonce;
+> -	config->bdev = params->bdev;
+> +	config->bdev_file = params->bdev_file;
+>   	config->offset = params->offset;
+>   	config->size = params->size;
+>   
+> diff --git a/drivers/md/dm-vdo/indexer/config.h b/drivers/md/dm-vdo/indexer/config.h
+> index 08507dc2f7a1..8ba0cf72dec9 100644
+> --- a/drivers/md/dm-vdo/indexer/config.h
+> +++ b/drivers/md/dm-vdo/indexer/config.h
+> @@ -25,8 +25,8 @@ enum {
+>   
+>   /* A set of configuration parameters for the indexer. */
+>   struct uds_configuration {
+> -	/* Storage device for the index */
+> -	struct block_device *bdev;
+> +	/* File of opened storage device for the index */
+> +	struct file *bdev_file;
+>   
+>   	/* The maximum allowable size of the index */
+>   	size_t size;
+> diff --git a/drivers/md/dm-vdo/indexer/index-layout.c b/drivers/md/dm-vdo/indexer/index-layout.c
+> index 627adc24af3b..32eee76bc246 100644
+> --- a/drivers/md/dm-vdo/indexer/index-layout.c
+> +++ b/drivers/md/dm-vdo/indexer/index-layout.c
+> @@ -1668,7 +1668,7 @@ static int create_layout_factory(struct index_layout *layout,
+>   	size_t writable_size;
+>   	struct io_factory *factory = NULL;
+>   
+> -	result = uds_make_io_factory(config->bdev, &factory);
+> +	result = uds_make_io_factory(config->bdev_file, &factory);
+>   	if (result != UDS_SUCCESS)
+>   		return result;
+>   
+> @@ -1741,9 +1741,9 @@ void uds_free_index_layout(struct index_layout *layout)
+>   }
+>   
+>   int uds_replace_index_layout_storage(struct index_layout *layout,
+> -				     struct block_device *bdev)
+> +				     struct file *bdev_file)
+>   {
+> -	return uds_replace_storage(layout->factory, bdev);
+> +	return uds_replace_storage(layout->factory, bdev_file);
+>   }
+>   
+>   /* Obtain a dm_bufio_client for the volume region. */
+> diff --git a/drivers/md/dm-vdo/indexer/index-layout.h b/drivers/md/dm-vdo/indexer/index-layout.h
+> index e9ac6f4302d6..28f9be577631 100644
+> --- a/drivers/md/dm-vdo/indexer/index-layout.h
+> +++ b/drivers/md/dm-vdo/indexer/index-layout.h
+> @@ -24,7 +24,7 @@ int __must_check uds_make_index_layout(struct uds_configuration *config, bool ne
+>   void uds_free_index_layout(struct index_layout *layout);
+>   
+>   int __must_check uds_replace_index_layout_storage(struct index_layout *layout,
+> -						  struct block_device *bdev);
+> +						  struct file *bdev_file);
+>   
+>   int __must_check uds_load_index_state(struct index_layout *layout,
+>   				      struct uds_index *index);
+> diff --git a/drivers/md/dm-vdo/indexer/index-session.c b/drivers/md/dm-vdo/indexer/index-session.c
+> index aee0914d604a..914abf5e006b 100644
+> --- a/drivers/md/dm-vdo/indexer/index-session.c
+> +++ b/drivers/md/dm-vdo/indexer/index-session.c
+> @@ -335,7 +335,7 @@ int uds_open_index(enum uds_open_index_type open_type,
+>   		vdo_log_error("missing required parameters");
+>   		return -EINVAL;
+>   	}
+> -	if (parameters->bdev == NULL) {
+> +	if (parameters->bdev_file == NULL) {
+>   		vdo_log_error("missing required block device");
+>   		return -EINVAL;
+>   	}
+> @@ -349,7 +349,7 @@ int uds_open_index(enum uds_open_index_type open_type,
+>   		return uds_status_to_errno(result);
+>   
+>   	session->parameters = *parameters;
+> -	format_dev_t(name, parameters->bdev->bd_dev);
+> +	format_dev_t(name, file_bdev(parameters->bdev_file)->bd_dev);
+>   	vdo_log_info("%s: %s", get_open_type_string(open_type), name);
+>   
+>   	result = initialize_index_session(session, open_type);
+> @@ -460,15 +460,16 @@ int uds_suspend_index_session(struct uds_index_session *session, bool save)
+>   	return uds_status_to_errno(result);
+>   }
+>   
+> -static int replace_device(struct uds_index_session *session, struct block_device *bdev)
+> +static int replace_device(struct uds_index_session *session,
+> +			  struct file *bdev_file)
+>   {
+>   	int result;
+>   
+> -	result = uds_replace_index_storage(session->index, bdev);
+> +	result = uds_replace_index_storage(session->index, bdev_file);
+>   	if (result != UDS_SUCCESS)
+>   		return result;
+>   
+> -	session->parameters.bdev = bdev;
+> +	session->parameters.bdev_file = bdev_file;
+>   	return UDS_SUCCESS;
+>   }
+>   
+> @@ -477,7 +478,7 @@ static int replace_device(struct uds_index_session *session, struct block_device
+>    * device differs from the current backing store, the index will start using the new backing store.
+>    */
+>   int uds_resume_index_session(struct uds_index_session *session,
+> -			     struct block_device *bdev)
+> +			     struct file *bdev_file)
+>   {
+>   	int result = UDS_SUCCESS;
+>   	bool no_work = false;
+> @@ -502,8 +503,9 @@ int uds_resume_index_session(struct uds_index_session *session,
+>   	if (no_work)
+>   		return result;
+>   
+> -	if ((session->index != NULL) && (bdev != session->parameters.bdev)) {
+> -		result = replace_device(session, bdev);
+> +	if (session->index != NULL &&
+> +	    bdev_file != session->parameters.bdev_file) {
+> +		result = replace_device(session, bdev_file);
+>   		if (result != UDS_SUCCESS) {
+>   			mutex_lock(&session->request_mutex);
+>   			session->state &= ~IS_FLAG_WAITING;
+> diff --git a/drivers/md/dm-vdo/indexer/index.c b/drivers/md/dm-vdo/indexer/index.c
+> index 1ba767144426..48b16275a067 100644
+> --- a/drivers/md/dm-vdo/indexer/index.c
+> +++ b/drivers/md/dm-vdo/indexer/index.c
+> @@ -1336,9 +1336,9 @@ int uds_save_index(struct uds_index *index)
+>   	return result;
+>   }
+>   
+> -int uds_replace_index_storage(struct uds_index *index, struct block_device *bdev)
+> +int uds_replace_index_storage(struct uds_index *index, struct file *bdev_file)
+>   {
+> -	return uds_replace_volume_storage(index->volume, index->layout, bdev);
+> +	return uds_replace_volume_storage(index->volume, index->layout, bdev_file);
+>   }
+>   
+>   /* Accessing statistics should be safe from any thread. */
+> diff --git a/drivers/md/dm-vdo/indexer/index.h b/drivers/md/dm-vdo/indexer/index.h
+> index edabb239548e..6e2e203f43f7 100644
+> --- a/drivers/md/dm-vdo/indexer/index.h
+> +++ b/drivers/md/dm-vdo/indexer/index.h
+> @@ -72,7 +72,7 @@ int __must_check uds_save_index(struct uds_index *index);
+>   void uds_free_index(struct uds_index *index);
+>   
+>   int __must_check uds_replace_index_storage(struct uds_index *index,
+> -					   struct block_device *bdev);
+> +					   struct file *bdev_file);
+>   
+>   void uds_get_index_stats(struct uds_index *index, struct uds_index_stats *counters);
+>   
+> diff --git a/drivers/md/dm-vdo/indexer/indexer.h b/drivers/md/dm-vdo/indexer/indexer.h
+> index 3744aaf625b0..246ff2810e01 100644
+> --- a/drivers/md/dm-vdo/indexer/indexer.h
+> +++ b/drivers/md/dm-vdo/indexer/indexer.h
+> @@ -128,8 +128,8 @@ struct uds_volume_record {
+>   };
+>   
+>   struct uds_parameters {
+> -	/* The block_device used for storage */
+> -	struct block_device *bdev;
+> +	/* The bdev_file used for storage */
+> +	struct file *bdev_file;
+>   	/* The maximum allowable size of the index on storage */
+>   	size_t size;
+>   	/* The offset where the index should start */
+> @@ -314,7 +314,7 @@ int __must_check uds_suspend_index_session(struct uds_index_session *session, bo
+>    * start using the new backing store instead.
+>    */
+>   int __must_check uds_resume_index_session(struct uds_index_session *session,
+> -					  struct block_device *bdev);
+> +					  struct file *bdev_file);
+>   
+>   /* Wait until all outstanding index operations are complete. */
+>   int __must_check uds_flush_index_session(struct uds_index_session *session);
+> diff --git a/drivers/md/dm-vdo/indexer/io-factory.c b/drivers/md/dm-vdo/indexer/io-factory.c
+> index 515765d35794..f4dedb7b7f40 100644
+> --- a/drivers/md/dm-vdo/indexer/io-factory.c
+> +++ b/drivers/md/dm-vdo/indexer/io-factory.c
+> @@ -22,7 +22,7 @@
+>    * make helper structures that can be used to access sections of the index.
+>    */
+>   struct io_factory {
+> -	struct block_device *bdev;
+> +	struct file *bdev_file;
+>   	atomic_t ref_count;
+>   };
+>   
+> @@ -59,7 +59,7 @@ static void uds_get_io_factory(struct io_factory *factory)
+>   	atomic_inc(&factory->ref_count);
+>   }
+>   
+> -int uds_make_io_factory(struct block_device *bdev, struct io_factory **factory_ptr)
+> +int uds_make_io_factory(struct file *bdev_file, struct io_factory **factory_ptr)
+>   {
+>   	int result;
+>   	struct io_factory *factory;
+> @@ -68,16 +68,16 @@ int uds_make_io_factory(struct block_device *bdev, struct io_factory **factory_p
+>   	if (result != VDO_SUCCESS)
+>   		return result;
+>   
+> -	factory->bdev = bdev;
+> +	factory->bdev_file = bdev_file;
+>   	atomic_set_release(&factory->ref_count, 1);
+>   
+>   	*factory_ptr = factory;
+>   	return UDS_SUCCESS;
+>   }
+>   
+> -int uds_replace_storage(struct io_factory *factory, struct block_device *bdev)
+> +int uds_replace_storage(struct io_factory *factory, struct file *bdev_file)
+>   {
+> -	factory->bdev = bdev;
+> +	factory->bdev_file = bdev_file;
+>   	return UDS_SUCCESS;
+>   }
+>   
+> @@ -90,7 +90,7 @@ void uds_put_io_factory(struct io_factory *factory)
+>   
+>   size_t uds_get_writable_size(struct io_factory *factory)
+>   {
+> -	return i_size_read(factory->bdev->bd_inode);
+> +	return i_size_read(file_inode(factory->bdev_file));
+>   }
+>   
+>   /* Create a struct dm_bufio_client for an index region starting at offset. */
+> @@ -99,8 +99,9 @@ int uds_make_bufio(struct io_factory *factory, off_t block_offset, size_t block_
+>   {
+>   	struct dm_bufio_client *client;
+>   
+> -	client = dm_bufio_client_create(factory->bdev, block_size, reserved_buffers, 0,
+> -					NULL, NULL, 0);
+> +	client = dm_bufio_client_create(file_bdev(factory->bdev_file),
+> +					block_size, reserved_buffers,
+> +					0, NULL, NULL, 0);
+>   	if (IS_ERR(client))
+>   		return -PTR_ERR(client);
+>   
+> diff --git a/drivers/md/dm-vdo/indexer/io-factory.h b/drivers/md/dm-vdo/indexer/io-factory.h
+> index 7fb5a0616a79..a3ca84d62f2d 100644
+> --- a/drivers/md/dm-vdo/indexer/io-factory.h
+> +++ b/drivers/md/dm-vdo/indexer/io-factory.h
+> @@ -24,11 +24,11 @@ enum {
+>   	SECTORS_PER_BLOCK = UDS_BLOCK_SIZE >> SECTOR_SHIFT,
+>   };
+>   
+> -int __must_check uds_make_io_factory(struct block_device *bdev,
+> +int __must_check uds_make_io_factory(struct file *bdev_file,
+>   				     struct io_factory **factory_ptr);
+>   
+>   int __must_check uds_replace_storage(struct io_factory *factory,
+> -				     struct block_device *bdev);
+> +				     struct file *bdev_file);
+>   
+>   void uds_put_io_factory(struct io_factory *factory);
+>   
+> diff --git a/drivers/md/dm-vdo/indexer/volume.c b/drivers/md/dm-vdo/indexer/volume.c
+> index 655453bb276b..edbe46252657 100644
+> --- a/drivers/md/dm-vdo/indexer/volume.c
+> +++ b/drivers/md/dm-vdo/indexer/volume.c
+> @@ -1465,12 +1465,12 @@ int uds_find_volume_chapter_boundaries(struct volume *volume, u64 *lowest_vcn,
+>   
+>   int __must_check uds_replace_volume_storage(struct volume *volume,
+>   					    struct index_layout *layout,
+> -					    struct block_device *bdev)
+> +					    struct file *bdev_file)
+>   {
+>   	int result;
+>   	u32 i;
+>   
+> -	result = uds_replace_index_layout_storage(layout, bdev);
+> +	result = uds_replace_index_layout_storage(layout, bdev_file);
+>   	if (result != UDS_SUCCESS)
+>   		return result;
+>   
+> diff --git a/drivers/md/dm-vdo/indexer/volume.h b/drivers/md/dm-vdo/indexer/volume.h
+> index 8679a5e55347..1dc3561b8b43 100644
+> --- a/drivers/md/dm-vdo/indexer/volume.h
+> +++ b/drivers/md/dm-vdo/indexer/volume.h
+> @@ -130,7 +130,7 @@ void uds_free_volume(struct volume *volume);
+>   
+>   int __must_check uds_replace_volume_storage(struct volume *volume,
+>   					    struct index_layout *layout,
+> -					    struct block_device *bdev);
+> +					    struct file *bdev_file);
+>   
+>   int __must_check uds_find_volume_chapter_boundaries(struct volume *volume,
+>   						    u64 *lowest_vcn, u64 *highest_vcn,
+> diff --git a/drivers/md/dm-vdo/vdo.c b/drivers/md/dm-vdo/vdo.c
+> index fff847767755..eca9f8b51535 100644
+> --- a/drivers/md/dm-vdo/vdo.c
+> +++ b/drivers/md/dm-vdo/vdo.c
+> @@ -809,7 +809,7 @@ void vdo_load_super_block(struct vdo *vdo, struct vdo_completion *parent)
+>    */
+>   struct block_device *vdo_get_backing_device(const struct vdo *vdo)
+>   {
+> -	return vdo->device_config->owned_device->bdev;
+> +	return file_bdev(vdo->device_config->owned_device->bdev_file);
+>   }
+>   
+>   /**
+
 
