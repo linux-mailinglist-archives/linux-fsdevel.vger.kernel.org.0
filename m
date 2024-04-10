@@ -1,75 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-16526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AAC889EB95
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 09:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D796A89EBCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 09:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC661B2639F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 07:14:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6508EB232E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 07:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC1913C917;
-	Wed, 10 Apr 2024 07:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437D313CA89;
+	Wed, 10 Apr 2024 07:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xDK9pbC9"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Ic42icFt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4BB13C900;
-	Wed, 10 Apr 2024 07:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8D413CFA5;
+	Wed, 10 Apr 2024 07:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712733256; cv=none; b=asN+YMOkWdDFTc4x+evE7Zo4PJcA5V3XPNu8Mzs/CEu+Icr5WSocib6qxFJwMuHpsAoSAvwQt17+gkjAaL0S42Zcd8xJt+qtn30PcLDr3WoVR5eNKBZn6mRV4RJ5Po9FZl50wKf1EA8AQJRstyrqI0lUSj0+zh62FAc2C3mGq1Y=
+	t=1712733849; cv=none; b=VPkB34bmjg0aEfgvx1bPuEutkWApbrG39vHYpMFnOsET/TUwN+H63rlHC7J14AIgs+xGzeWqdzRfzNO1b4fU4WBYI8qyCBuAgzyJKBXEp+W83+JLlfZQ0E+tIoItZIZr8TAIjbz7roOICqoPXwXmon1PBnUKuX2glh2WYhQkYkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712733256; c=relaxed/simple;
-	bh=YmJ4s2H8wjmREoV2xAlGhvbwF7Bfw51LOFU0l1TB+EI=;
+	s=arc-20240116; t=1712733849; c=relaxed/simple;
+	bh=plKIsQqad7OUKBDvXgrgFhGbOn+DnejZorpcSCoN6rw=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=fMriTQTjsRsGqq8CAtF01o8P2pgNIBdzIlb+zN9tsEe4Ot3y3+8yqGHwhOZF8aJC7GHpw6ZShPGQvHyNmXXxwebLBJS7g0IEOes46gq69tXfKRi6NN+ewLnKkkgtKbThxduBq+RjnotD1Rhcj5wopCQQvRrGOcQF1ps/Mdvhr88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xDK9pbC9; arc=none smtp.client-ip=203.205.221.191
+	 MIME-Version; b=Gb+Fw1wGXogQEvIjEFRyuY/DSib++LJ5NMImfuS52JG6yIgFhLQniP39p37tsikRyyl3tMFB6B3JPN0K4PfCwadIJmWpATba/FxAsXFH5jq3qz7kWSl4sYNu23k1qc/lwtW9ooVhJofXHGJR1qSWWGYQxGY+mt8VMwSfunopoSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Ic42icFt; arc=none smtp.client-ip=162.62.57.210
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1712733251; bh=pLNFfWJZyrrjt5ug/1IiEA0s6nA/zcDIGuvnAc6EYyU=;
+	t=1712733842; bh=ywal0kjEywMRpEv8bhSwZ1X9+BZ/7cgHpt4FFL9X9lo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=xDK9pbC9vhrDJHlw/ChVdWteJDO1a2Co2kYL43vQB0XHJy+WZwxe1zDyrP5v1N02/
-	 uCqLt4bgGfx3FGBKc9oE8GTFjHhHkbwAaCM+af4wL3lDGporPtaNOp/dSuWqWyBknY
-	 R91wrOSCMOEVotXmFeyseZz/2JzeyBhsY64YpjXI=
+	b=Ic42icFtf62/8/91p3JiPpSy4ZPTXVOe6HfWYJMIZRDbnRj74/6FnRrDwqjCVNlj/
+	 j6PaKJdI5ektrWltMSUyvaBy+xkx05RfZEFCE16GqcjjZ5TkgdgQ7Gnqz28OXSo0j4
+	 dltNBoAAfNfpJhrJoU61/Q/cF0N0ZI6I5BVF4Q9I=
 Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 16E9E07C; Wed, 10 Apr 2024 15:05:46 +0800
-X-QQ-mid: xmsmtpt1712732746taw9g6jm2
-Message-ID: <tencent_59925DB41938CFAC0DDEA5A40DB592425D07@qq.com>
-X-QQ-XMAILINFO: MIAHdi1iQo+z6Me8BtzExIGoq9q6kn1ilN1+Ec9Q63Jhv6qjQlpeJnwHPB3qZP
-	 fM0X6whyJCXIGus//1EjkvBvcpw1HrIZgiT1xP+6jirBUlHhvwCAW1gPMAnlku9xKbgsumlHPs/w
-	 6P0T6w8bK8ZbNPa4RzxBhzZIrCfmnvuqeX5Y7ICdI+Pb2l9+3veyUebYmFVhlzFT4Tfv+W6m2Iro
-	 SGzByP40FpR2FY0bilje3dXlxksQLrrHoYH4srDecZ2qmQWqbV+AufclGN2Kdgjbc1p1+7SdLPKI
-	 mxEgGx0Yjboonu5s5hzcZxz4sUuWjG1Tf2+qKPUiE9fY/twK2QwKwGVzLipLSyZOIllBvM8penmU
-	 cozVmNEL0t+m1bjl+lAAHq7JuIA9BSnmwsdxiWYnW1niy8/f35KXPaDuvmeiAxGvSZWoybD/MQq0
-	 5LE8Vp0In2V8X2IYI39eCvV6R4Rux1DADk7k3ly28SnSIS9qDOFHKRRwZDKQQhjY0IGAbcgYAm3g
-	 7N269nIOwsO8nrwToukukOIsw5Rrlc4jGX8yVtpJU+0CGT6lQhg1Yxn2zi0cQWEicOKT9FN0Im41
-	 MlELpxFEvHf+sXzI6wYQy5YJmOlHlBuU3rTd2Ewb7JaHkLtC5woOdXm4JFd0MF1FMgFXWFg/aZHk
-	 A9OziP1aaXB+co9psyv2MAeapUrUhufYZFS2pvKXr6BAtVRr3/TpHYmz4V/S+/mMbXT6I4Dgi2Ne
-	 ycOi2c3ad3l2qaUmtq++YkY16ny9LrW559DOFwhd9yu3ygssWBZ4Q5yYn5FsBWdHhDcn4y1QTYSu
-	 iyiaOovWrNxJLlgOLC8uqI1vfUU8WihwK/lU0LfvVNjqFuhuxVL8oWBdnYj0+kxG/cVZAHepLAyv
-	 ZzKJKNzZQ0EOs/CxPkxXvJZAO3rmVKaj29yfbiTDsdNjRYi0uQoLwwN7C5fJQ7ZnfAmtLZ3EH8SG
-	 RTuRTZdHM=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id 600B4EB7; Wed, 10 Apr 2024 15:24:00 +0800
+X-QQ-mid: xmsmtpt1712733840tvm5kf4hx
+Message-ID: <tencent_616C382D056E049418E83AEE9ACCBC79060A@qq.com>
+X-QQ-XMAILINFO: OKkKo7I1HxIebw1DV93UFccpJjp+ZYS3u5weSNv9lcVPAQfvNGW/2pa9u+c2+K
+	 R9Dn+8gPk/+hP1tMlUUKAiSPBbfFwKwSJNuR+w1Yu+rKbB3kMCPJxMq3cYVBRY+YrDDwC39I4bJr
+	 4MTNHkaRfVzBfo3WMjUtH2dn7oxfrFlMC9xkgVFz5/1k1akRBFIvb/8jh3wtThKJw2yECfkk5Q0G
+	 9e4aAB+7rKgohPBUgYdgLQsnoLEx3qH4ndh+KzWKDKm3wufFLnHFVMzEW4g5Q3neGJifEbGrc+fS
+	 ZtwPD0H4nx9b+dRfDzmzX8KPeSzGq3zywBHPnlIR73fnA2bD1bMvo46Mnd3LtlGN0F6fV8AZaVjU
+	 /SwvrN97w9Zzt5LPhdNHoHVfF1HCEOUaKVWnpKOLNo3ElTGO58dwpIsjq7XvhRzI3/gX3qzhSpoM
+	 tkGCTfiA+2dQhIw7BJDiDJxCH9/6rvXPyJnxd0SuprTulIv+atbZR0YxoDH+RdMNDY6lj4F6sB9k
+	 kEj308Nb/Migro3KF2TgtKernyHWE7YNWMOwc5SZdtM8Q9CBzmlFLXcKtB80Jw9G8PoOxiwWTX+J
+	 0yFEObHNN7RrruRAb0hgr0iccS/5csM5+OcN69gVxCsJfVmO8gZZ+2iLglsJc5o0Q2kFJvfLnRVY
+	 D1X+aIfetgwovww66/vUrYt2Sk0SOL55Sl5M32KIWYWz8wqAqfKfRd6HIZj4cH9sYFGyBAqgWgDH
+	 IoTjwRSYuiY9WjhSfKOuvzhwcKgXkA4sCnj4fOSAlR0Kn4I6+MaMtU048mZVb+tnRC9IvKreWayS
+	 NLH4wJguAMBwwWcNixyUUVaPrJPV2g0KIRO2UftAfe6fhQuc1CT5JRHaxiaZdI01KlkCS/7ywxxh
+	 +VdSIflU1Gqizd4wvdYz9KPAu8bv2gEyP8UO8aEw6RWcaDL2qM7mh89OACPGLaZ/hjmC+aOvTL
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
 From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
+To: syzbot+01ade747b16e9c8030e0@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	shaggy@kernel.org,
 	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] jfs: reserve the header and use freelist from second
-Date: Wed, 10 Apr 2024 15:05:47 +0800
-X-OQ-MSGID: <20240410070546.719365-2-eadavis@qq.com>
+Subject: [PATCH] hfsplus: fix uninit-value in hfsplus_listxattr
+Date: Wed, 10 Apr 2024 15:24:01 +0800
+X-OQ-MSGID: <20240410072400.750441-2-eadavis@qq.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000ea6cba0615a3f177@google.com>
-References: <000000000000ea6cba0615a3f177@google.com>
+In-Reply-To: <000000000000fefd040615a5bef6@google.com>
+References: <000000000000fefd040615a5bef6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,43 +76,54 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 [syzbot reported]
-general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 PID: 5061 Comm: syz-executor404 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:dtInsertEntry+0xd0c/0x1780 fs/jfs/jfs_dtree.c:3713
-...
-[Analyze]
-When the pointer h has the same value as p, after writing name in UniStrncpy_to_le(),
-p->header.flag will be cleared.
-This will cause the previously true judgment "p->header.flag & BT-LEAF" to change
-to no after writing the name operation, this leads to entering an incorrect branch
-and accessing the uninitialized object ih when judging this condition for the
-second time.
-[Fix]
-When allocating slots from the freelist, we start from the second one to preserve
-the header of p from being incorrectly modified.
+BUG: KMSAN: uninit-value in strncmp+0x11e/0x180 lib/string.c:291
+ strncmp+0x11e/0x180 lib/string.c:291
+ hfsplus_listxattr+0x97d/0x1a60
+ vfs_listxattr fs/xattr.c:493 [inline]
+ listxattr+0x1f3/0x6b0 fs/xattr.c:840
+ path_listxattr fs/xattr.c:864 [inline]
+ __do_sys_listxattr fs/xattr.c:876 [inline]
+ __se_sys_listxattr fs/xattr.c:873 [inline]
+ __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
+ do_syscall_64+0xd5/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x72/0x7a
 
-Reported-by: syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3804 [inline]
+ slab_alloc_node mm/slub.c:3845 [inline]
+ kmalloc_trace+0x578/0xba0 mm/slub.c:3992
+ kmalloc include/linux/slab.h:628 [inline]
+ hfsplus_listxattr+0x4cc/0x1a60 fs/hfsplus/xattr.c:701
+ vfs_listxattr fs/xattr.c:493 [inline]
+ listxattr+0x1f3/0x6b0 fs/xattr.c:840
+ path_listxattr fs/xattr.c:864 [inline]
+ __do_sys_listxattr fs/xattr.c:876 [inline]
+ __se_sys_listxattr fs/xattr.c:873 [inline]
+ __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
+ do_syscall_64+0xd5/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x72/0x7a
+[Fix]
+When allocating memory to strbuf, initialize memory to 0.
+
+Reported-and-tested-by: syzbot+01ade747b16e9c8030e0@syzkaller.appspotmail.com
 Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
- fs/jfs/jfs_dtree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/hfsplus/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
-index 031d8f570f58..deb2a5cc78d8 100644
---- a/fs/jfs/jfs_dtree.c
-+++ b/fs/jfs/jfs_dtree.c
-@@ -3618,7 +3618,8 @@ static void dtInsertEntry(dtpage_t * p, int index, struct component_name * key,
- 	kname = key->name;
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index 9c9ff6b8c6f7..858029b1c173 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -698,7 +698,7 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
+ 		return err;
+ 	}
  
- 	/* allocate a free slot */
--	hsi = fsi = p->header.freelist;
-+	hsi = fsi = p->header.freelist = p->header.freelist == 0 ? 
-+		1 : p->header.freelist;
- 	h = &p->slot[fsi];
- 	p->header.freelist = h->next;
- 	--p->header.freecnt;
+-	strbuf = kmalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN +
++	strbuf = kzalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN +
+ 			XATTR_MAC_OSX_PREFIX_LEN + 1, GFP_KERNEL);
+ 	if (!strbuf) {
+ 		res = -ENOMEM;
 -- 
 2.43.0
 
