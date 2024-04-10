@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-16564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E0289F887
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 15:44:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AC789F886
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 15:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D556D1F30B81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 13:44:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED021F30B47
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 13:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D45517B4E3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B5B17A93C;
 	Wed, 10 Apr 2024 13:37:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BDD178CD0;
-	Wed, 10 Apr 2024 13:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBC115EFA9;
+	Wed, 10 Apr 2024 13:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712756229; cv=none; b=WOCgVS+QI7t08XmAcr4k+VNJLU5ZNVpsIlqPMR2yTn1L+TvHNNzMot4DobaFgQUz/Agw3LzstyZBAc84dlEj1Il/WSbrr0Bws4iEgJBMfoo/9jZqQwC0OVOrg1j+TTCgq+gquPfixS/eP4NMNTwLm1kEG/jqGY7HBLq1tCKXP5o=
+	t=1712756229; cv=none; b=g3sLGq8omVI74/AnYlKc9OgRCJBFrRUlylcNcXSAdi0uK+6I8jwe4XK3yMs5HzDdiong1zrXk5hR+f+SJU8m5CCv1EHrOtINYYt5aeVvfbGbhd3dcugPzEN6WDI8GZ6KOGCtkmgrjog6fFRDCPSCNVVHj40twHVwG5BKiv8tI7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1712756229; c=relaxed/simple;
-	bh=SxdNjyBOuGqpoN+UGepx1nlXvYSeOVFXJrruxO4uecY=;
+	bh=a0yXsZEWte2+yhfLSEWGmnTc+medZk5RJjxW91j+Nrw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UwXosCC+wUQvyAWFNHLLqZZSy4IcoFCl4gk4rPTogJ8/o8IvxubZb1GrfIJ7ADKXwgrAOO8Dyx6CNgXKzi0d53r/7gbJeyY90XDhMpRMuzJkp+LQ5qlmpx+Qr6XI4MYPWiXxYzlcXWZz8XbcGezBjNUK4xW++uHYLz2n1jEVLmU=
+	 MIME-Version; b=oJjT+ZQL1jw2r9blfYpebh5ySDLbLaNwdlzyZrlaeXEPo3v2vBpfelltU9tmGn0lCLqKGiOVtGUThYsXx7l9La55LbR8uQksKzd1so3gIkbFq0Y2kvNukXPXBLl7KcohE5A/AXB6Z0mwExT78Dhpj6NXkVl7Z0MFFe8FkCwe7BI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VF3lW3BR7z4f3n6X;
-	Wed, 10 Apr 2024 21:36:55 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VF3lc2Fqrz4f3jZ7;
+	Wed, 10 Apr 2024 21:37:00 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 1C14C1A0E2A;
+	by mail.maildlp.com (Postfix) with ESMTP id B14941A058E;
 	Wed, 10 Apr 2024 21:37:04 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+RHolRZmeCl4Jg--.8806S30;
-	Wed, 10 Apr 2024 21:37:03 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgAn+RHolRZmeCl4Jg--.8806S31;
+	Wed, 10 Apr 2024 21:37:04 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v4 26/34] ext4: implement mmap iomap path
-Date: Wed, 10 Apr 2024 21:28:10 +0800
-Message-Id: <20240410132818.2812377-27-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v4 27/34] ext4: implement zero_range iomap path
+Date: Wed, 10 Apr 2024 21:28:11 +0800
+Message-Id: <20240410132818.2812377-28-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240410132818.2812377-1-yi.zhang@huaweicloud.com>
 References: <20240410132818.2812377-1-yi.zhang@huaweicloud.com>
@@ -69,10 +69,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+RHolRZmeCl4Jg--.8806S30
-X-Coremail-Antispam: 1UD129KBjvJXoW7urW3tr48Kr4rGryUWrWxWFg_yoW8Ar48pF
-	9akrWrGr4xXwnI9FsagFn8ZFyYy3WrWr4UXrW3CFn5Zrnruw45Ka18WFn5ZF45J3yxZw4U
-	Jr45Cry8u34a9rDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgAn+RHolRZmeCl4Jg--.8806S31
+X-Coremail-Antispam: 1UD129KBjvJXoW7urW7CrW8XF1rKFW7Gr1rJFb_yoW8JFWDpr
+	n5K34UCr47Wr9F9F4IgF9rXr1Iy3W5Gw48WryfGrn8Z3yfW34xKFWrK3WFvF4jg3y7Jayj
+	qF45try8Kw17AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -91,58 +91,42 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Add ext4_iomap_page_mkwrite() for the mmap iomap path. It dirty folio
-and map blocks, almost all work have been done in iomap_page_mkwrite(),
-so call it directly.
+Add ext4_iomap_zero_range() for the zero_range iomap path, it zero out
+the mapped blocks, all work have been done in iomap_zero_range(), so
+call it directly.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/inode.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ fs/ext4/inode.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 55a4d293177d..9d694c780007 100644
+index 9d694c780007..5af3b8acf1b9 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -6484,6 +6484,26 @@ static int ext4_bh_unmapped(handle_t *handle, struct inode *inode,
- 	return !buffer_mapped(bh);
+@@ -4144,6 +4144,13 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+ 	return err;
  }
  
-+static vm_fault_t ext4_iomap_page_mkwrite(struct vm_fault *vmf)
++static int ext4_iomap_zero_range(struct inode *inode,
++				 loff_t from, loff_t length)
 +{
-+	struct inode *inode = file_inode(vmf->vma->vm_file);
-+	const struct iomap_ops *iomap_ops;
-+
-+	/*
-+	 * ext4_nonda_switch() could writeback this folio, so have to
-+	 * call it before lock folio.
-+	 *
-+	 * TODO: drop ext4_nonda_switch() after reserving enough sapce
-+	 * for metadata and merge delalloc and nodelalloc operations.
-+	 */
-+	if (test_opt(inode->i_sb, DELALLOC) && !ext4_nonda_switch(inode->i_sb))
-+		iomap_ops = &ext4_iomap_buffered_da_write_ops;
-+	else
-+		iomap_ops = &ext4_iomap_buffered_write_ops;
-+
-+	return iomap_page_mkwrite(vmf, iomap_ops);
++	return iomap_zero_range(inode, from, length, NULL,
++				&ext4_iomap_buffered_read_ops);
 +}
 +
- vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
-@@ -6507,6 +6527,11 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 
- 	filemap_invalidate_lock_shared(mapping);
- 
-+	if (ext4_test_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP)) {
-+		ret = ext4_iomap_page_mkwrite(vmf);
-+		goto out;
-+	}
-+
- 	err = ext4_convert_inline_data(inode);
- 	if (err)
- 		goto out_ret;
+ /*
+  * ext4_block_zero_page_range() zeros out a mapping of length 'length'
+  * starting from file offset 'from'.  The range to be zero'd must
+@@ -4169,6 +4176,8 @@ static int ext4_block_zero_page_range(handle_t *handle,
+ 	if (IS_DAX(inode)) {
+ 		return dax_zero_range(inode, from, length, NULL,
+ 				      &ext4_iomap_ops);
++	} else if (ext4_test_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP)) {
++		return ext4_iomap_zero_range(inode, from, length);
+ 	}
+ 	return __ext4_block_zero_page_range(handle, mapping, from, length);
+ }
 -- 
 2.39.2
 
