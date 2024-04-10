@@ -1,83 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-16617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D6C89FF67
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 20:08:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D29C89FFEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 20:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1142FB275B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 18:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20C51F28B2D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Apr 2024 18:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929BA17F38D;
-	Wed, 10 Apr 2024 18:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69401DA4E;
+	Wed, 10 Apr 2024 18:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YgJ3+Gdy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGySrAye"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB66168DC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 18:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F65C8FF;
+	Wed, 10 Apr 2024 18:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712772487; cv=none; b=KLP5i5PGveKFGx9/uSYW3JO70fRHBQfb7eTUgfgGjLAZtj7PGHzxtoV/3p8jci/nHxMx6Mjc2ERkcyrYrN8xIpW4CQ9RmnoNNs+FErn//dMNxg94EF4z1qTl88wEkTP1fhtMN6zrRjXGFPHIEWt2RKN7yHZTHBIcU+InD/io/uk=
+	t=1712774373; cv=none; b=uo/EXP0QOdV/2cfM5atVQNIavv6Xq0E4W1JqcNjs19I6wQHZx1WXnZmPekn37qA/DoXRN0H3d5EpFrbzTOHp0Apsw0G4aIPcf7cvIFzGu655qvZ0fc0Jgxgry2Di1RpCV7Vup5ZP04451SJexWAa27Hcv5RIsPKeNM1mtDfx7jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712772487; c=relaxed/simple;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lsFd8yiRRDIs/9NPkS2NVHYyTfpzp39irFW9NLy8abVdRMZTwfLUjOr/FHWl/GnSu0pXjAXFmQk4xS6IDA1SOzGEXkhUQaYhXaiF3EseXq4u/bYz/SbMOVVa8bnb8CWkewQIAVvW6qOHVA6QbSD+2FXvQu9Zr+2jfz4MDyaB6Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YgJ3+Gdy; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a46ea03c2a5so16401266b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 11:08:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712772484; x=1713377284; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=YgJ3+GdyqDTOsjnoFvzXnOfKCsvvZ6m3onJG/FIkWqszRRdI2uno2v9vD9jt34XU7i
-         bNmjxoHcLbZpTFiaJttDBeGiBq1VGQ4ImLfevtN305DT2Qr43T0TUt1PDefyB7ozXLgB
-         2woMJkweKD6p9TRO5yWfpCyGuLC+oADmw5zH5ksENWfObqUERlcddq0qDYglrrbIHKCH
-         k+mNkutATjNI0qoORYWeNO3kcUBnOKi6t22stfv9gAHxvv/G0WKUfliso6yzQPtC7Q7v
-         GKqETTKDENiHmtvCJITFkNGiTul8X5U9yohNK84EM3HzAn6qopc6aS/noYTGUZcvTdr1
-         wwSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712772484; x=1713377284;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=PSGws0U4GAOSNaUUvzQt6R+ki4HbvgskGMZxPthfh5QasUjrEe+fQ7b2flG2nstHz1
-         KoSZa9fnAbypJ++DfdEJbHrAdB5B2zbgdKxTLwVWOHwHqDs+4CuUExXYKMjHdH/3xqsV
-         cQGwowfxBV6xmKyCgGLmtfKi9v3VJIAnDFep69apWX8TNE84Yuwl1cEepl0ybEiTXr/a
-         HEmsqI7WnVoKhp4Hy6S4Ley0vRohE9kmY9mtDJAP/dI0SJPiaoxGZzm/7X5PCFu7yQbt
-         Irxwfl3fuGvfQIX0nqXbSeApzAhIMJcHa/mWhemMmjiOA8vQHNZqXWLFl+i+C5KAO/6y
-         1tEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWp6IJ5d0HW4cv8EUWbvVkNQRvAwak5ier7PVno9tRn6xkk03ZkZHAGpNJ5xGgTXmeHMBTLSI+iv26A/GVrKnY5OejcHpuJQDY0mVtljg==
-X-Gm-Message-State: AOJu0YzZ9DnWRyYayLiZtciKiHqJt9jE9XBuVLFd6r9VtZ2X4O+FO4cK
-	+XXBc/bziQnjZRwP5tC8YjLzd2/crJiiUa61rlp1qQpZMbpzOVvtyaWVR/Q=
-X-Google-Smtp-Source: AGHT+IH/2sTqvlOFwbJu05lZhpRYB1JnOaZyKWMHrW6tpvB1XapN5+FJ36jw/ODBttt4YwHQEtNL8w==
-X-Received: by 2002:a17:906:c79a:b0:a51:e188:bced with SMTP id cw26-20020a170906c79a00b00a51e188bcedmr218837ejb.37.1712772483557;
-        Wed, 10 Apr 2024 11:08:03 -0700 (PDT)
-Received: from p183 ([46.53.251.6])
-        by smtp.gmail.com with ESMTPSA id jy15-20020a170907762f00b00a4e26570581sm7218454ejc.108.2024.04.10.11.08.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Apr 2024 11:08:02 -0700 (PDT)
-Date: Wed, 10 Apr 2024 21:08:01 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: viro@zeniv.linux.org.uk, brauner@kernel.org
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] vfs: compile out IS_SWAPFILE() on swapless configs
-Message-ID: <39a1479a-054a-4cb9-92c8-e9a2ed77c9f0@p183>
+	s=arc-20240116; t=1712774373; c=relaxed/simple;
+	bh=bt9nE+uqm+xn3ie0EuHeXa3SkfN+5KGQxLMVr4pfyIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MpRwHg6EytbHgNn1QsR5gsN3aAdY6m+wBxBiZr1ToIEy/FYk75gqYN6YemNaflfkXuBO2tOixB81OcCZTgRNFgMUpP52lkXmJP4lIlyVjnN3rrTSPWq+7otuG+7jL0AH3v8SWbRBj2ItdW1HlGH0Bhaew4adrNSMiMsDu3qTrNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGySrAye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B483DC433C7;
+	Wed, 10 Apr 2024 18:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712774371;
+	bh=bt9nE+uqm+xn3ie0EuHeXa3SkfN+5KGQxLMVr4pfyIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oGySrAye9kFUxQolgsBjkXQ07/pV0jjs52gIUSm6kQd1VS63ndnY1KRsAxYD9Kf0x
+	 8YXU768JeaAFZFC4wbBtXy7VTSu5nMeacpR1nUJwaRMb1gXFdvTIRoSqj5ewrF46hs
+	 2eRR0t8RDNfodMoVpTPper52F4tNmVtgACDCisa5S0iA+3bz8L9HbLwwVVMT9izx2m
+	 gG4B+4L2lZfSGTlSdpEKdn5eGRplLwXEw7XiJyUKVZyU3Ah/40y4v1XNMSj1zczRTX
+	 hqgJMMxqlh8H85r1ZB29pdJrdSv93mBhwDit+02NtHMbf+W3tErQMLZBCa0L51PD5N
+	 ZcGaouzzJoKew==
+Date: Wed, 10 Apr 2024 11:39:31 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 15/14] xfs: capture inode generation numbers in the
+ ondisk exchmaps log item
+Message-ID: <20240410183931.GX6390@frogsfrogsfrogs>
+References: <171263348423.2978056.309570547736145336.stgit@frogsfrogsfrogs>
+ <20240410000528.GR6390@frogsfrogsfrogs>
+ <20240410040058.GA1883@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240410040058.GA1883@lst.de>
 
+On Wed, Apr 10, 2024 at 06:00:58AM +0200, Christoph Hellwig wrote:
+> On Tue, Apr 09, 2024 at 05:05:28PM -0700, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > Per some very late review comments, capture the generation numbers of
+> > both inodes involved in a file content exchange operation so that we
+> > don't accidentally target files with have been reallocated.
+> > 
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > ---
+> > I'm throwing this one on the pile since I guess it's not so hard to add
+> > the generation number to a brand new log item.
+> 
+> It does looks fine to me, but it leaves the question open:  why here
+> and not elsewhere.  And the answer based on the previous discussions
+> is that this is the first new log item after the problem was known
+> and we'll need to eventually rev the other ino based items as well.
+> Maybe capture this in a comment?
+
+	/*
+	 * This log intent item targets inodes, which means that it effectively
+	 * contains a file handle.  Check that the generation numbers match the
+	 * intent item like we do for other file handles.  This is the first
+	 * new log intent item to be defined after this validation weakness was
+	 * identified, which is why recovery for other items do not check this.
+	 */
+
+How about that?
+
+--D
 
