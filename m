@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-16691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5464B8A17E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 16:54:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A348A17EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 16:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3050AB21166
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 14:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3164F1C22355
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 14:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB7F10799;
-	Thu, 11 Apr 2024 14:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C7C17597;
+	Thu, 11 Apr 2024 14:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="u1cbZEye"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Gx/pmH40"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31968DDB3;
-	Thu, 11 Apr 2024 14:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6900156CF;
+	Thu, 11 Apr 2024 14:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712847234; cv=none; b=fvIVDHLYJroIxIPHBrxF0aWqt4Vr02dkN2qf0yWeqrGPwJNcZDjKb5YozGxOGbgFQ7yAFox7iqW/o+e0/dFVn1czt4ZrTYJxV4n/ftUQlzmbXaGsGx0iQtdzkt33YPjQjSvDTekSEBvxqucjtXnvS3aF3e02s72WYbVajQT3Oy4=
+	t=1712847239; cv=none; b=dwvfMiXijMIK3LLS1q8BFwJvukpEBN3Nr+m52oG8FOJOsjOZ10wr4M6oxF55/sZZDpgiAwE0BZkvCciG0ai//MHB2wWFc30sWyK7ts5O1JZi15no/yLd+pPJ3EdBE5IDcNEsk/sY0zG0CG39Efq+iWC5oNfqnWlQsRG42uzzY2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712847234; c=relaxed/simple;
-	bh=80EZziW8KOKIUy4gquzqZL9sk2+1rUCt52rAzzw5UWk=;
+	s=arc-20240116; t=1712847239; c=relaxed/simple;
+	bh=0sJklcroXx0twEuteSQyv6xJPzfQFPsElw9aR0ItkAA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=phN2fi6kn/b32e2O1H2vhZoYCbZZBaFW4ZdSJ5ige8HkIQ/CXj66m4dfd0GtFc+Bm0Wxt/Y3Olxk3dj+M1Bq1e7/WbS1SaeQfWHF9f+52VsnWo+7i5R/d6PwF0KaZ6jp004ZIlLSlzCH+fZZd5irRqN8AnV46K233Nxt6yUsQtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=u1cbZEye; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=Vp9h/pEEPoGdpgApNrbRUkjSUgBiJS493CQmKuQycASutdgjB+E/nfHkeooQKN3VxtyYjuJerlmb4VAwvy6fHBQLqpoFRNOkSu1WKJZ2eGuyFXZh7hVpJZFxLD5lChLbEUYHpcNfktcmO1pUMQ+JTZWV1TDzMASc+l3ivbvpPec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Gx/pmH40; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=MMVyWaFO2urdgbwnK6AVyd8xNuu0uM6tJv9H0qBnG9c=; b=u1cbZEye5y6lGRXcTJKJIQFlH1
-	srG6jvxwGSzNHcsL7LddYitJhObI0OPONQMmPGkjxC7EKy4k3CoEYUDZFHiLgDXfdrwpSCmyt8atX
-	J7kPyKLkBRts6+Nuw1lsmA/ns//IjEjA/D62oktRkMbqcMuxhwYK+ezxnCmsiKvJCqKv0b0iNPRCE
-	yfVYX7vG6IEe+5TPLKnAQMSWrCVNWcbfUG9vbBKDUrhJ0+EFcPIKDg1JoGd2rUOBEJS/27zmQON5R
-	iu6eq6mX6G5ySDGNs2VTwgEGTEsv4PbtQh86ojAknGV0kS7q1DAlQQtcPvJZYOY5JldEUvEVdzMcL
-	l2Y4F6OA==;
+	bh=powD30dhU5To9qd0/tLSN14LVM1RvO26QHoNbh0+HyA=; b=Gx/pmH40FLMhnlL6MY4+hiCPaX
+	r7KeziN8t37F6MlkbDhr8m0/70DHQQz+V3hRnQ/5A4S3Qi+GBaeXlwUD9r9+tJtLX2fPJPyEm1mFB
+	oxO8JzLAhOkvDa2mv4+P9Xj0m46LxsZ0qgnEwsD0AK4Na19VeQQ1PS862UJ3n4FrTkgipq1bfoLh6
+	WvsOBx9k8snK6qwhLu772w6feSSxVtWrhbCtIzyjk2zdLKNT9aYUoyAYTCxrxh9gZU/83VBwhSnh1
+	U3ydVCSEhnrJ31yFdCrJe8DN+9UzQDimnrpQMQEE0FI77ddUZD4Ka35Xvt0Xo4v/vBhA/yPnFpew9
+	1dEUTSXw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1ruvoA-00AYkX-2k;
-	Thu, 11 Apr 2024 14:53:46 +0000
+	id 1ruvoB-00AYkb-00;
+	Thu, 11 Apr 2024 14:53:47 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>,
@@ -55,9 +55,9 @@ Cc: Jan Kara <jack@suse.cz>,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com,
 	"yukuai (C)" <yukuai3@huawei.com>
-Subject: [PATCH 03/11] grow_dev_folio(): we only want ->bd_inode->i_mapping there
-Date: Thu, 11 Apr 2024 15:53:38 +0100
-Message-Id: <20240411145346.2516848-3-viro@zeniv.linux.org.uk>
+Subject: [PATCH 04/11] gfs2: more obvious initializations of mapping->host
+Date: Thu, 11 Apr 2024 15:53:39 +0100
+Message-Id: <20240411145346.2516848-4-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240411145346.2516848-1-viro@zeniv.linux.org.uk>
 References: <20240411144930.GI2118490@ZenIV>
@@ -71,43 +71,40 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
+what's going on is copying the ->host of bdev's address_space
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/buffer.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/gfs2/glock.c      | 2 +-
+ fs/gfs2/ops_fstype.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d5a0932ae68d..78a4e95ba2f2 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1034,12 +1034,12 @@ static sector_t folio_init_buffers(struct folio *folio,
- static bool grow_dev_folio(struct block_device *bdev, sector_t block,
- 		pgoff_t index, unsigned size, gfp_t gfp)
- {
--	struct inode *inode = bdev->bd_inode;
-+	struct address_space *mapping = bdev->bd_mapping;
- 	struct folio *folio;
- 	struct buffer_head *bh;
- 	sector_t end_block = 0;
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index 34540f9d011c..1ebcf6c90f2b 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -1227,7 +1227,7 @@ int gfs2_glock_get(struct gfs2_sbd *sdp, u64 number,
+ 	mapping = gfs2_glock2aspace(gl);
+ 	if (mapping) {
+                 mapping->a_ops = &gfs2_meta_aops;
+-		mapping->host = s->s_bdev->bd_inode;
++		mapping->host = s->s_bdev->bd_mapping->host;
+ 		mapping->flags = 0;
+ 		mapping_set_gfp_mask(mapping, GFP_NOFS);
+ 		mapping->i_private_data = NULL;
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index 572d58e86296..fcf7dfd14f52 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -114,7 +114,7 @@ static struct gfs2_sbd *init_sbd(struct super_block *sb)
  
--	folio = __filemap_get_folio(inode->i_mapping, index,
-+	folio = __filemap_get_folio(mapping, index,
- 			FGP_LOCK | FGP_ACCESSED | FGP_CREAT, gfp);
- 	if (IS_ERR(folio))
- 		return false;
-@@ -1073,10 +1073,10 @@ static bool grow_dev_folio(struct block_device *bdev, sector_t block,
- 	 * lock to be atomic wrt __find_get_block(), which does not
- 	 * run under the folio lock.
- 	 */
--	spin_lock(&inode->i_mapping->i_private_lock);
-+	spin_lock(&mapping->i_private_lock);
- 	link_dev_buffers(folio, bh);
- 	end_block = folio_init_buffers(folio, bdev, size);
--	spin_unlock(&inode->i_mapping->i_private_lock);
-+	spin_unlock(&mapping->i_private_lock);
- unlock:
- 	folio_unlock(folio);
- 	folio_put(folio);
+ 	address_space_init_once(mapping);
+ 	mapping->a_ops = &gfs2_rgrp_aops;
+-	mapping->host = sb->s_bdev->bd_inode;
++	mapping->host = sb->s_bdev->bd_mapping->host;
+ 	mapping->flags = 0;
+ 	mapping_set_gfp_mask(mapping, GFP_NOFS);
+ 	mapping->i_private_data = NULL;
 -- 
 2.39.2
 
