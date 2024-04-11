@@ -1,134 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-16747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B545A8A201B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 22:24:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FB88A2037
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 22:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36C8DB231FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 20:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 434621F22807
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 20:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D6621340;
-	Thu, 11 Apr 2024 20:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F553199B0;
+	Thu, 11 Apr 2024 20:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QMCudDh1"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A0OLAO0v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0B817C6A;
-	Thu, 11 Apr 2024 20:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594221CF87
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 20:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712867046; cv=none; b=IIMQHyOHU10964xjmyecUxwErI9ZpY/eI91Ixot2UDdSFdpv7jHg7H1EVzisTVU/dYlZ40M2o8xsbgGbKodzMmeTnLiqtJ82jfN9l8HVZfFgfjUEfZnGvQilGro0G5ufYaRytnNVDDzWRvtSeKYprFsYRKYgXVoIOreu3gtWaPQ=
+	t=1712867249; cv=none; b=tPEQsvtckiJfMxGpTHNYdLnQWeP+yM6uC2S46cACPS2QYIjqqdPPa8hWpTVWd9LshY0bE/GPWsKjWpDovlUTC+Wo1FDvcR1a+2GDOUqfxZVtnhbrXISV/J/iK5z0tshGjhijfRW+/KjGcB0OEA88mLo7eTJrBY02kUng3no3T6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712867046; c=relaxed/simple;
-	bh=QhmZqca6i4GwVv1XAcc9IrrgLk4abiFm/4Wl1hb/8sw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R+q9P76gGpRrO7rGHoG85kD3J5l/gsvHfEkVuueG62aNA6G1C4zDdkYK28ZIkguOhiKEKe/L2kRBWoXddGR7JsHx1jNhYT+6BVMJYCmuyDQLzw+N6Ezu3T5JAWXyM4XpHlGlQ6qQFE41Np724XIXvcodmv8Wzc+ZTMPSxT9ESbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QMCudDh1; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.18] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id v0xXr4JUAqkPUv0xYrdLi7; Thu, 11 Apr 2024 22:23:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1712867034;
-	bh=v4sYyES8feRyP/YNHQ4HOBPVocESBHJ4p6aCiQtSavI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=QMCudDh14uA+N4VCUkUhGD3njd4hP+Nm+dZR+AHIvomm17cl8lhe+OEOieTe2tfCd
-	 CSwaIP3rEU56ONRmKGTfz4ao9J8mzI9LnAVCKVmuUmS//1uy7UrVyFnucM+4esuv/T
-	 oo+W9WibJxCGBDkR1ETwHvYgNw2WqclnTcAwFFkQCDIl+7Og0xYMtfR6Ce6O1eg8Xj
-	 TprE9TDFAvWBbHv9DdeSW7gw0cL9SbIVgyxiFM+NCmvp8psAM0yRbsFF/z/qBtmvhS
-	 tk8PC6grRGcBt957JhfI8k8joswKv/XfbhH8qO5/V5krr5vlKn6DDKJ1S1Ygk95Ha3
-	 gYl5m7R2w2/OA==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 11 Apr 2024 22:23:54 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <da50e56a-cb59-4815-800d-81742e5294df@wanadoo.fr>
-Date: Thu, 11 Apr 2024 22:23:45 +0200
+	s=arc-20240116; t=1712867249; c=relaxed/simple;
+	bh=l6Zg8E5l9E7YNNsH7iIZ4LMXwRy2isDpxVf8d7paD+s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qAbKdzBt26Zmdt/7EzWcAVEp/0qnMyLAdTUf/7b76RiPL48yO3MrZmeqj0V5wmuQ2pnLSY1piRk/Wj5SFTIWxYqqMxPt8zhK/UDi5811mf7X+r7hKARPmWFkGurwxwkyA0a7GYpP+xqtexj5th4h4IsPHC/rNHPQZo+wacTjon8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A0OLAO0v; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-47a0bebeacaso100215137.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 13:27:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1712867246; x=1713472046; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PnP8JVadrwUCkWdsPrjw1n1Qkf19BHzW9gV2hIgU+kk=;
+        b=A0OLAO0vUbboK5mhCquWaRInaJmJqcCCEQhl13HPTOeNWyDWDVUuPWrkWpuFlv/alB
+         H9POk+4jcQBO/p+WZIN+3qifxrLSClSoQ9jAPMmqqAzyHRsqMeHknP3CYrz9Falh9jRk
+         HY+TeJ6tUHbwEoe5RBnK6pqIpR6A3hb1+EMEI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712867246; x=1713472046;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PnP8JVadrwUCkWdsPrjw1n1Qkf19BHzW9gV2hIgU+kk=;
+        b=DJckR0J1ZCkZ9C8vt80Nyav1T54XcQHRmQVAo4o8gyaEg1Z5rBuIPvBU9Z+7/i1sJH
+         N/lcPZukQEixuUOyvP4qM9hT03C8EDQgAk+q/Yn5gao2GKT1j8venMNoEr/QnqnPKn+B
+         bHdxR8pzNOVeZ+yi7o/FnQK2xY6cCHcurvr3+ZVPPH94EKKccnicNGpN9l6wnKVBM74k
+         MIL9Ex0CF6q9KG6W6Lg0hW8lJzxQWzN/10oDA46NejspsrWyITHQLGEv0K3CWKIYA7Ne
+         KGo4HV8n24roQQdPo1BrndUaXvI0/kHy0cfPzj/KoU07rNmNlunsLFRgzGZErt/8LM4w
+         Uayg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVog57D8NymNOXpLeeGXkr2I1UtNORYTZ3PwBg1t2okh+Yx+S/hRcFS/sA0TEMJVuR5EPV+DPRhE6K7Yga7DMRpaeRPaEPzGFn0w+2IQ==
+X-Gm-Message-State: AOJu0YxMOpwyXxFbHzNcfqV4TsXbWfWZAmcyQvBixzlTGH5FiVz2Ooeh
+	3h4VQ7QzTSS6XMPnRddf9l83IiIPzyfnc4iAnBmt8EFvhxRkW0L3sq7Iobp6qdbWaIm7gPl7O6M
+	=
+X-Google-Smtp-Source: AGHT+IENlxYltLvjgs8DVFBg0/oBNiZd44mr1JyBEV1llqmcR96Nc6b7cbZaov2STll5cb///NehhA==
+X-Received: by 2002:a05:6102:cd2:b0:47a:3ac5:c839 with SMTP id g18-20020a0561020cd200b0047a3ac5c839mr1109424vst.13.1712867246545;
+        Thu, 11 Apr 2024 13:27:26 -0700 (PDT)
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com. [209.85.160.169])
+        by smtp.gmail.com with ESMTPSA id u12-20020a0562140b0c00b00699410d2991sm1352311qvj.66.2024.04.11.13.27.25
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Apr 2024 13:27:26 -0700 (PDT)
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-43477091797so12171cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 13:27:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVW3XMd4ISjct8ME0dI2+yVjjW7LqydEkscK+2IQvQA/M4/TYN9R8HB7WIaTMN0qqtWWWZA5EmLSHcTwirrUywDkYkYo0RaCPtGSY8Iaw==
+X-Received: by 2002:a05:622a:5a13:b0:436:5ce5:cfc5 with SMTP id
+ fy19-20020a05622a5a1300b004365ce5cfc5mr71333qtb.2.1712867245457; Thu, 11 Apr
+ 2024 13:27:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] treewide: Fix common grammar mistake "the the"
-To: Thorsten Blum <thorsten.blum@toblux.com>, robin.murphy@arm.com
-Cc: cocci@inria.fr, dri-devel@lists.freedesktop.org,
- ecryptfs@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, io-uring@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-afs@lists.infradead.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-wireless@vger.kernel.org, netfs@lists.linux.dev,
- speakup@linux-speakup.org, Randy Dunlap <rdunlap@infradead.org>,
- Tyler Hicks <code@tyhicks.com>
-References: <f2d1bb68-7ab7-4bbf-a1b1-88334ba52bab@arm.com>
- <20240411171145.535123-3-thorsten.blum@toblux.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240411171145.535123-3-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <00000000000042c9190615cdb315@google.com> <20240411121319.adhz4ylacbv6ocuu@quack3>
+ <CAOQ4uxi9L_Rs7q=fcLGqJMx15jLAArOWGwGfdCL8LOUCPR3L+w@mail.gmail.com> <875xwn8zxa.fsf@mailhost.krisman.be>
+In-Reply-To: <875xwn8zxa.fsf@mailhost.krisman.be>
+From: Khazhy Kumykov <khazhy@chromium.org>
+Date: Thu, 11 Apr 2024 13:27:12 -0700
+X-Gmail-Original-Message-ID: <CACGdZYLJESbS6VCAza_V6PAeNb8k9nU2wYhBi-KmeYqYJ337mA@mail.gmail.com>
+Message-ID: <CACGdZYLJESbS6VCAza_V6PAeNb8k9nU2wYhBi-KmeYqYJ337mA@mail.gmail.com>
+Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, 
+	syzbot <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, repnop@google.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 11/04/2024 à 19:11, Thorsten Blum a écrit :
-> Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
-> occurrences of "the the" and replace them with a single "the".
-> 
-> In arch/arm/include/asm/unwind.h replace "the the" with "to the".
-> 
-> Changes only comments and documentation - no code changes.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Reviewed-by: Tyler Hicks <code@tyhicks.com>
-
-...
-
-> --- a/drivers/scsi/isci/host.h
-> +++ b/drivers/scsi/isci/host.h
-> @@ -244,7 +244,7 @@ enum sci_controller_states {
->   	SCIC_INITIALIZED,
->   
->   	/**
-> -	 * This state indicates the the controller is in the process of becoming
-
-maybe: that the?
-
-> +	 * This state indicates the controller is in the process of becoming
->   	 * ready (i.e. starting).  In this state no new IO operations are permitted.
->   	 * This state is entered from the INITIALIZED state.
->   	 */
-
-...
-
-> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> index 3aa16e27f509..503244e8470a 100644
-> --- a/io_uring/kbuf.c
-> +++ b/io_uring/kbuf.c
-> @@ -731,7 +731,7 @@ struct io_buffer_list *io_pbuf_get_bl(struct io_ring_ctx *ctx,
->   	 * going away, if someone is trying to be sneaky. Look it up under rcu
->   	 * so we know it's not going away, and attempt to grab a reference to
->   	 * it. If the ref is already zero, then fail the mapping. If successful,
-> -	 * the caller will call io_put_bl() to drop the the reference at at the
-> +	 * the caller will call io_put_bl() to drop the reference at at the
-
-Not strictly related to your patch, but "at at".
-
->   	 * end. This may then safely free the buffer_list (and drop the pages)
->   	 * at that point, vm_insert_pages() would've already grabbed the
->   	 * necessary vma references.
-
-...
-
-CJ
-
+On Thu, Apr 11, 2024 at 12:25=E2=80=AFPM Gabriel Krisman Bertazi
+<krisman@suse.de> wrote:
+>
+> Amir Goldstein <amir73il@gmail.com> writes:
+>
+> > On Thu, Apr 11, 2024 at 3:13=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> >>
+> >> On Thu 11-04-24 01:11:20, syzbot wrote:
+> >> > Hello,
+> >> >
+> >> > syzbot found the following issue on:
+> >> >
+> >> > HEAD commit:    6ebf211bb11d Add linux-next specific files for 20240=
+410
+> >> > git tree:       linux-next
+> >> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D12be955d=
+180000
+> >> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D16ca158e=
+f7e08662
+> >> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D5e3f9b2a67=
+b45f16d4e6
+> >> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils fo=
+r Debian) 2.40
+> >> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D13c911=
+75180000
+> >> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1621af9d=
+180000
+> >> >
+> >> > Downloadable assets:
+> >> > disk image: https://storage.googleapis.com/syzbot-assets/b050f81f73e=
+d/disk-6ebf211b.raw.xz
+> >> > vmlinux: https://storage.googleapis.com/syzbot-assets/412c9b9a536e/v=
+mlinux-6ebf211b.xz
+> >> > kernel image: https://storage.googleapis.com/syzbot-assets/016527216=
+c47/bzImage-6ebf211b.xz
+> >> > mounted in repro: https://storage.googleapis.com/syzbot-assets/75ad0=
+50c9945/mount_0.gz
+> >> >
+> >> > IMPORTANT: if you fix the issue, please add the following tag to the=
+ commit:
+> >> > Reported-by: syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com
+> >> >
+> >> > Quota error (device loop0): do_check_range: Getting block 0 out of r=
+ange 1-5
+> >> > EXT4-fs error (device loop0): ext4_release_dquot:6905: comm kworker/=
+u8:4: Failed to release dquot type 1
+> >> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> > BUG: KASAN: slab-use-after-free in fsnotify+0x2a4/0x1f70 fs/notify/f=
+snotify.c:539
+> >> > Read of size 8 at addr ffff88802f1dce80 by task kworker/u8:4/62
+> >> >
+> >> > CPU: 0 PID: 62 Comm: kworker/u8:4 Not tainted 6.9.0-rc3-next-2024041=
+0-syzkaller #0
+> >> > Hardware name: Google Google Compute Engine/Google Compute Engine, B=
+IOS Google 03/27/2024
+> >> > Workqueue: events_unbound quota_release_workfn
+> >> > Call Trace:
+> >> >  <TASK>
+> >> >  __dump_stack lib/dump_stack.c:88 [inline]
+> >> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+> >> >  print_address_description mm/kasan/report.c:377 [inline]
+> >> >  print_report+0x169/0x550 mm/kasan/report.c:488
+> >> >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> >> >  fsnotify+0x2a4/0x1f70 fs/notify/fsnotify.c:539
+> >> >  fsnotify_sb_error include/linux/fsnotify.h:456 [inline]
+> >> >  __ext4_error+0x255/0x3b0 fs/ext4/super.c:843
+> >> >  ext4_release_dquot+0x326/0x450 fs/ext4/super.c:6903
+> >> >  quota_release_workfn+0x39f/0x650 fs/quota/dquot.c:840
+> >> >  process_one_work kernel/workqueue.c:3218 [inline]
+> >> >  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3299
+> >> >  worker_thread+0x86d/0xd70 kernel/workqueue.c:3380
+> >> >  kthread+0x2f0/0x390 kernel/kthread.c:389
+> >> >  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> >> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> >> >  </TASK>
+> >>
+> >> Amir, I believe this happens on umount when the filesystem calls
+> >> fsnotify_sb_error() after calling fsnotify_sb_delete().
+Hmm, so we're releasing dquots after already shutting down the
+filesystem? Is that expected? This "Failed to release dquot type"
+error message only appears if we have an open handle from
+ext4_journal_start (although this filesystem was mounted without a
+journal, so we hit ext4_get_nojournal()...)
+> In theory these two
+> >> calls can even run in parallel and fsnotify() can be holding
+> >> fsnotify_sb_info pointer while fsnotify_sb_delete() is freeing it so w=
+e
+> >> need to figure out some proper synchronization for that...
+> >
+> > Is it really needed to handle any for non SB_ACTIVE sb?
+>
+> I think it should be fine to exclude volumes being teared down.  Cc'ing
+> Khazhy, who sponsored this work at the time and owned the use-case.
+In terms of real-world use case... not sure there is one - you'll
+notice the errors when you fsck/mount again later on, and any users
+who care about notifs should be gone by the time we're unmounting. But
+it seems weird to me that we can get write errors shutting everything
+down.
+>
+> --
+> Gabriel Krisman Bertazi
 
