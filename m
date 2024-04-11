@@ -1,95 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-16708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B788A1A35
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 18:42:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E06B8A197D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 18:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62D3B2DBAE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 16:29:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95D51C23E11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 16:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B5E17CD04;
-	Thu, 11 Apr 2024 15:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="xaU2NKBL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FD415E5DB;
+	Thu, 11 Apr 2024 15:35:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5271BF6CC;
-	Thu, 11 Apr 2024 15:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F6715E5BA;
+	Thu, 11 Apr 2024 15:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712849872; cv=none; b=mjjDqrDpYXNffbR9K/hmYohjcpjYafnqAEdBeCOnVTmO7v03soVaWtxtXA7eXY9eYtFD9xDv71kf36lVuofp0m6Tfc0TRDem/GFiHIEiJYW+IYkvs2YqL448Los7kai76d9036i3eFVkzrkJm03E0wOQq5zqGc4ifx7Dhv4JSHk=
+	t=1712849738; cv=none; b=JsZH16Wby2nE4vKC/8bmvBZvvF+M+cdwl3aPHhKOvrElXdwBhlVJ8n/neBkGn0lz8sLqARON+UR9tEjbauuSNkaXBgvVxY2WHrTCXqn4ihr4SJGCzw+sTuei3qlrUEoGMfnp66sUApuQMI2R7ohFeioEEiBCnLX98snP2DawPpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712849872; c=relaxed/simple;
-	bh=WE1dyOcRCkdDKHVQSE8grhwnH0jVKprFA2u7hDTWTaw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VLu35FTtkolSraV1i8RltDV5hoSRbmBL7w3KUce111GrBzSmfzBXtEBl1d4kLJx0d7cnT4tXGu3Q3LRVLZPQVWQ67+AO0OlC+xzxaVc9sG1JxLATF59r97aWz+oxpK5gd0qkbSAJQ3IssufWTmvDAugY3WyCNhetNL1jjJcKNxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=xaU2NKBL; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=WE1dyOcRCkdDKHVQSE8grhwnH0jVKprFA2u7hDTWTaw=;
-	t=1712849869; x=1714059469; b=xaU2NKBLgr7Yn2tBHn2ek+3yEF9AP7G0ybp9rH/bKy0MrDs
-	EakNHnrWExF3wu5+mAsO/bYs+RlbF/ypk3VKmFlsyDGTccEuCmu5mq9b3zXV5P6Rupkl9hO5aQoeV
-	AS2hYnG07ZFPQGesyfbZPKg13eQbyk+3XEj0iFBJqK/xt4DwkAWiTQa/PshMGcBTbKDVUyyqrsvCV
-	0bzqmEXkxPlzdq6cRG7OCU3ogUg2p6kA3KDnndD1P/X2oLebFI0M8027Tfmn9kR804FHBFRFE9U7N
-	Z2ptAqRr9jcIRRli1XQxtl7jx7vyHLDBVb+LTWNNiLlzJmMotq02CucNtbtfwdAA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1ruwUh-00000002nXW-0s48;
-	Thu, 11 Apr 2024 17:37:43 +0200
-Message-ID: <d2a0cf345c7e049ffd76acd315e6b377d94a344c.camel@sipsolutions.net>
-Subject: Re: [PATCH] treewide: Fix common grammar mistake "the the"
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Thorsten Blum <thorsten.blum@toblux.com>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-s390@vger.kernel.org, speakup@linux-speakup.org, 
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, linux-wireless@vger.kernel.org, 
- linux-scsi@vger.kernel.org, linux-afs@lists.infradead.org, 
- ecryptfs@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org,  linux-unionfs@vger.kernel.org,
- linux-arch@vger.kernel.org,  io-uring@vger.kernel.org, cocci@inria.fr,
- linux-perf-users@vger.kernel.org
-Date: Thu, 11 Apr 2024 17:37:41 +0200
-In-Reply-To: <20240411150437.496153-4-thorsten.blum@toblux.com>
-References: <20240411150437.496153-4-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1712849738; c=relaxed/simple;
+	bh=uB0xp+Cz0RemiAN93PY9Tzv4ucfdVhTCk1XXYQuInQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EREJ55XOTasscHN4e50I10QXVQlMEfHEXYyTElKbZ2ThYGYjKpW04wXSr8BgBFWaXFdvs8WOxE7QHv2qQkX+XZ2/FHHP32JOav+qSanKWHRony5OuRssM7s/XtwnVWHBuvkPrQwc5HkcMIqyM+s9mhBeb5i9XBy3tAJ0j3ylRww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A549C113CD;
+	Thu, 11 Apr 2024 15:35:36 +0000 (UTC)
+Date: Thu, 11 Apr 2024 11:38:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Marco Elver <elver@google.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+ <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Azeem Shaikh <azeemshaikh38@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH v2] tracing: Add sched_prepare_exec tracepoint
+Message-ID: <20240411113815.086de275@gandalf.local.home>
+In-Reply-To: <202404110814.B219872F76@keescook>
+References: <20240411102158.1272267-1-elver@google.com>
+	<202404110814.B219872F76@keescook>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2024-04-11 at 17:04 +0200, Thorsten Blum wrote:
-> Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
-> occurrences of "the the" and replace them with a single "the".
+On Thu, 11 Apr 2024 08:15:05 -0700
+Kees Cook <keescook@chromium.org> wrote:
 
-I estimated that this misses at least ~50 instances split across lines:
+> This looks good to me. If tracing wants to take it:
+> 
+> Acked-by: Kees Cook <keescook@chromium.org>
+> 
+> If not, I can take it in my tree if I get a tracing Ack. :)
 
-$ git grep -ih -A1 -e 'the$'|grep -vi 'the$'|grep -E -- '^[^a-zA-Z0-9]*the =
-'|wc -l
-51
+You can take it.
 
-And a bunch that have more than one space:
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-$ git grep -E '\<the\s\s+the\>'|wc -l
-20
-
-So not sure you should claim "all" ;-)
-
-johannes
+-- Steve
 
