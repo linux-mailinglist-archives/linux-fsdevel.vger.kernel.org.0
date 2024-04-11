@@ -1,132 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-16683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EF48A15C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 15:38:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AE38A163B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 15:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3092284C6A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 13:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B7D31F21915
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 13:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907E014D44D;
-	Thu, 11 Apr 2024 13:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42CD14EC69;
+	Thu, 11 Apr 2024 13:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cd76YDqR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qnr472qY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C79614D29E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 13:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621AC14E2CC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 13:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712842664; cv=none; b=Eyz2u68Ag8xcdg8WwLMwi54ewY41PgfkKqNgS7EoFoPsEslyXWF+VkJ4BJXqW1bQm2t3j9ZffldwHuxUotqs1cxc+/2i3xYR1A6U3Su/5DeZILNCZHrNl9M2YyJHWX461Fqki7+PYNN0CDEGG3zT+0SacpWolfwQJSxQucNGXL0=
+	t=1712843166; cv=none; b=HgyY/jmJL3KW8tu1JLXUoYvV6ybSQJxgyqQ677+h7GeD+v9Mw5ppD6z3YSuA/I+0fFsOfwyUqA3qBFWu0SXPavNXEK1Y06+nhLzOdX0i9oOSFmzB6Vmk9qfs19IEc6ivKbggCdZQJo+A8VHukx2zGNNhm+UkBycoF8/z+3QktTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712842664; c=relaxed/simple;
-	bh=DIAb7MBg/O79YuapLR2aNqATub3e0SOKNJsfHZ2b5E8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlIaS63g5mA0PQvezf+dEZj7W90pPRpBMoepREA1Bp1h2w7IPkA6RD+MRKpWG+g9ovZsM7FCZozMskXDjS1sI+/eFyregqNQ35SqsBZezU4kLZhJTrSLQ4pqc/ZAXb/tTFddRv2eU9Z8D8edAXA3wMaD7JznEZCm9qlRzf+SQPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cd76YDqR; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1712843166; c=relaxed/simple;
+	bh=Cbd/JWEjqPlGu1by3uygBOshRGfgss8BPdmBpj3a8d0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s9XuwLZKN31z80TgYYBaI3pU9GumfgNcsQnAy8sv+tS7aoDZ5MUSg7VKnrtLuRGGFvIB7n1wWxvWtcCZuYWCjuLv12QkEOhRA6vdOjRRlFJGykxrxkF+9sA2j0ud7yoZh20WV+c7Z+hrcfkIYoIaA/7jOyYUhmAErniFVReW+64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qnr472qY; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712842661;
+	s=mimecast20190719; t=1712843162;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dERZePAMGY5Ogff4MXaSm74/ezvcT6trwfEdO0OfoQE=;
-	b=cd76YDqRGMktNz2x+QEwyoSAkJJtepEeaklAP5rugJRWAYLN7sQQ1hzR97fbMKyxLE9UbT
-	Etp1spDaoFySssPu5YcLnXa83NAgANvX3A9/Op3TMGIzVyrSJsNZsxJFbDwWXC3qcSzUBt
-	IIk784IMXj+suUCF4f1iu/GunjPVSxg=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=F7Urs0rDzbqxItHnrZ7ae7xENmqnSenFgbOKlg0MdQ0=;
+	b=Qnr472qY2PnQgPGhTQUtcmwNobkyuNTCWxDR/mAckKUjlVqYFGiKvcOSr5FwpbcVXlFrAL
+	Lg1+UuOWZXqDIwPvgnHgRI+/z2EztkGE5ufYFTrdLbjRn0rkcfxiEojA/k5cYXA3xA3N7C
+	LNahx/CUU8WqjCV9nyVgq0HeTX6DOX8=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-580-5jkkeft0OnaIN521sky6yQ-1; Thu, 11 Apr 2024 09:37:38 -0400
-X-MC-Unique: 5jkkeft0OnaIN521sky6yQ-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-69945bfdbfdso2030816d6.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 06:37:38 -0700 (PDT)
+ us-mta-226-954Boli7Nme9rkkZabXvEA-1; Thu, 11 Apr 2024 09:46:00 -0400
+X-MC-Unique: 954Boli7Nme9rkkZabXvEA-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2d87b880861so48545561fa.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 06:46:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712842657; x=1713447457;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dERZePAMGY5Ogff4MXaSm74/ezvcT6trwfEdO0OfoQE=;
-        b=gyd0G6HwK77HDa4TE3ml7bJ/UzcHtdaGDO5vjpjGOSNMiExlaSOT2Y5nytXYDM3GXc
-         JZpRhMgyCW5GNm+je7yUxxCwFur3av5mkI75wUQeCutuGbN85Nx54h+5vyhex8n4WudH
-         DJvIwHhgda2HdpwEVTcFmN+fER6G3Zbt/V39PBsl2rAFcqCXdXBPO/xlvjBdhc7RziqP
-         GzJ4pLSVW690UAIyoODy7k2ENyezF68ISAYCw4W23B/8u60gxiVWR3hFNAZg1tWrdofC
-         3Wsm1svhY3MCjKK5wYYamtu4t4jQ6mV12uNdxNEhfDH8hsxwjJ1KdJw3sXW3enQuyVmw
-         OZ2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXrYaYbjDQ61RyeDsM/K0baEcPCApEIpvD7XX5cXoWtBdlVAgGQD+A7O4jtn12AIWosYhLuEqvjdrt5rvYEUhG5C52pLtd+ROWHkMo7UQ==
-X-Gm-Message-State: AOJu0YzmxhmgT+hSmRjcg4bHuAVfOhc2E5TiyIv0uyJHw1rRxvqbNsa5
-	LUegHqNc4pusyleqmfSt6Tr4eUILKBytIm+yYCou/ihO1l1rFfX6vB981hShceGDtP02yUoJOX6
-	8KciB1zlpYuG14tC9MopLRrVuib8v9iCXnN7V31WsdqTh41iP50dphvUzVR6Rj2Q=
-X-Received: by 2002:a05:6214:da1:b0:69b:1833:598e with SMTP id h1-20020a0562140da100b0069b1833598emr6052229qvh.6.1712842656856;
-        Thu, 11 Apr 2024 06:37:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQ6y7GR0pZzFXXvPoL0L/gLuIw2bwjbZR6CEdv4NI7c2F2dzHLnZvnROzJ8bJwU9WvPh/HLg==
-X-Received: by 2002:a05:6214:da1:b0:69b:1833:598e with SMTP id h1-20020a0562140da100b0069b1833598emr6052197qvh.6.1712842656337;
-        Thu, 11 Apr 2024 06:37:36 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id e7-20020a0cf747000000b0069943d0e5a3sm946973qvo.93.2024.04.11.06.37.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Apr 2024 06:37:35 -0700 (PDT)
-Date: Thu, 11 Apr 2024 09:37:33 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org,
-	david@fromorbit.com, dan.j.williams@intel.com, jhubbard@nvidia.com,
-	rcampbell@nvidia.com, willy@infradead.org,
-	linux-fsdevel@vger.kernel.org, jack@suse.cz, djwong@kernel.org,
-	hch@lst.de, david@redhat.com, ruansy.fnst@fujitsu.com,
-	nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, jglisse@redhat.com
-Subject: Re: [RFC 02/10] mm/hmm: Remove dead check for HugeTLB and FS DAX
-Message-ID: <ZhfnnYfqWKZn5Inh@x1n>
-References: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
- <e4a877d1f77d778a2e820b9df66f6b7422bf2276.1712796818.git-series.apopple@nvidia.com>
- <20240411122530.GQ5383@nvidia.com>
+        d=1e100.net; s=20230601; t=1712843159; x=1713447959;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=F7Urs0rDzbqxItHnrZ7ae7xENmqnSenFgbOKlg0MdQ0=;
+        b=xQ3h3aIbAg8/D9EEy7o3Xe37f7Wzt6lFxUxXmmtUo3Be0uHfyyxFSU5qgqA/wIOwMb
+         2RKMEPqS8l6VWJ6lqaV6Urv5d2om2jOYaY2hCsGJVbu5TZYXbMdBXlvxoRkI0EpJ28jM
+         iZP0pcaghjM4tEp/cDzOnAL9kGQHPft0HxDWK5zpaKoebWap2bsnkHpbriiE1KogLKeX
+         Z3hyokgWS+4zNd+5enZ/a/nES97/dEs0CKSrjZGNUKi52E8JeVo8Gd+9G2qMcOwMmCwu
+         xe8Nyp3wuptGHxWCkMntp01zscibzXhZQpffkRfYis07AlrJDg/VyxLsxihx2Ea5UULJ
+         Gm0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWGbat0ReMzY4hc5ZbzyouVEF4dWE6mC+KamO5osHsQd1tTR0eu5qCsGlVEO4LhAdJO3cqGLuj84BrHXXEnnyRsUO4ALexVP7QjKgRiGA==
+X-Gm-Message-State: AOJu0Yw6PAxNQ0sd04NMhT/sXTipYjxIB1hkB+w6PFQgsPnEBauvv9AQ
+	5kiqbHPFislmWluAaa0oYqocOawpg7r2VmWgE0tci8dVHaNiBpbUM39C6iqq+0npafRRlAX9TtK
+	u6mojrQOSKehoZuYj8PRyVUXUv/z8RstEAiXq67TfFIV8Jg4k++yXCwCzbxSSzWs=
+X-Received: by 2002:a2e:bb8f:0:b0:2d8:60a4:cfa with SMTP id y15-20020a2ebb8f000000b002d860a40cfamr3198621lje.41.1712843159356;
+        Thu, 11 Apr 2024 06:45:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFoohYbmctnHgVhi1eqtPtWYp69R/AxHOo1KVhWBe0vqP8HvCmImItbhaUhpGaoXJpn7qNHLw==
+X-Received: by 2002:a2e:bb8f:0:b0:2d8:60a4:cfa with SMTP id y15-20020a2ebb8f000000b002d860a40cfamr3198599lje.41.1712843158943;
+        Thu, 11 Apr 2024 06:45:58 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c724:4300:430f:1c83:1abc:1d66? (p200300cbc7244300430f1c831abc1d66.dip0.t-ipconnect.de. [2003:cb:c724:4300:430f:1c83:1abc:1d66])
+        by smtp.gmail.com with ESMTPSA id jh4-20020a05600ca08400b004147db8a91asm5427425wmb.40.2024.04.11.06.45.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Apr 2024 06:45:58 -0700 (PDT)
+Message-ID: <ce3ea542-9b68-4630-b437-c9daddad2e83@redhat.com>
+Date: Thu, 11 Apr 2024 15:45:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240411122530.GQ5383@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 09/10] mm/khugepage.c: Warn if trying to scan devmap pmd
+To: Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org
+Cc: david@fromorbit.com, dan.j.williams@intel.com, jhubbard@nvidia.com,
+ rcampbell@nvidia.com, willy@infradead.org, jgg@nvidia.com,
+ linux-fsdevel@vger.kernel.org, jack@suse.cz, djwong@kernel.org, hch@lst.de,
+ ruansy.fnst@fujitsu.com, nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, jglisse@redhat.com
+References: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
+ <68427031c58645ba4b751022bf032ffd6b247427.1712796818.git-series.apopple@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <68427031c58645ba4b751022bf032ffd6b247427.1712796818.git-series.apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 11, 2024 at 09:25:30AM -0300, Jason Gunthorpe wrote:
-> On Thu, Apr 11, 2024 at 10:57:23AM +1000, Alistair Popple wrote:
-> > pud_huge() returns true only for a HugeTLB page. pud_devmap() is only
-> > used by FS DAX pages. These two things are mutually exclusive so this
-> > code is dead code and can be removed.
+On 11.04.24 02:57, Alistair Popple wrote:
+> The only user of devmap PTEs is FS DAX, and khugepaged should not be
+> scanning these VMAs. This is checked by calling
+> hugepage_vma_check. Therefore khugepaged should never encounter a
+> devmap PTE. Warn if this occurs.
 > 
-> I'm not sure this is true.. pud_huge() is mostly a misspelling of pud_leaf()..
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
 > 
-> > -	if (pud_huge(pud) && pud_devmap(pud)) {
+> ---
 > 
-> I suspect this should be written as:
-> 
->    if (pud_leaf(pud) && pud_devmap(pud)) {
-> 
-> In line with Peter's work here:
-> 
-> https://lore.kernel.org/linux-mm/20240321220802.679544-1-peterx@redhat.com/
+> Note this is a transitory patch to test the above assumption both at
+> runtime and during review. I will likely remove it as the whole thing
+> gets deleted when pXX_devmap is removed.
 
-Just to provide more information for Alistair, this patch already switched
-that over to a _leaf():
-
-https://lore.kernel.org/r/20240318200404.448346-12-peterx@redhat.com
-
-That's in mm-unstable now, so should see that in a rebase.
-
-And btw it's great to see that pxx_devmap() can go away.
-
-Thanks,
+Yes, doesn't make sense for this patch to exist if it would go upstream 
+along with the next patch that removes that completely.
 
 -- 
-Peter Xu
+Cheers,
+
+David / dhildenb
 
 
