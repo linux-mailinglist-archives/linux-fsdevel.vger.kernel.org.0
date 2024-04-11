@@ -1,569 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-16722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5FC8A1D8B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 20:13:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE6F8A1DD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 20:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F9D1C23F0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 18:13:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7186C28B5D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 18:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88361E5A84;
-	Thu, 11 Apr 2024 17:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051345823A;
+	Thu, 11 Apr 2024 17:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="yLZ+PmJm"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jPtlbLJq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BBD168B0C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 17:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712855593; cv=none; b=RQxJpSYri5JE1jwjlh/qLiXE2pbkEk5/HEYAWcPjdkqD2avMqNsSs9yFfC8ZhfQolLyaQvH0DQyz9CMmYBrnSOMw1tbSeumtQNjol9j0+2zaXJBGJGAav0+R8l/3vrrrR+Vwgk8+pDAJ6yiSbIDzAb6u0qb6Gsf8ddVLcsYTeBw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712855593; c=relaxed/simple;
-	bh=rFNNBZnG14clPpSuNR3F8tLEf+LkkS0a6UaRTNBctJI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lO2OLsf2EKNr8vfJJ7lnyPNHcq+wilRUGchUPcVFEI4taQ+seXnxE7zJGlqoyZTEvD5foMjvlvCe7x8dE5BbJ/2vMz8/AMSvYuJFUNKbJsRS1w6P5Yp87kD6g2oHOZJSEQ9IJkt22eDIsClItIP6d8nvvslQPR4ArQE90GrClzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=yLZ+PmJm; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a47385a4379so205360366b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 10:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1712855587; x=1713460387; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hvFX8Zcz52PjVSzNzeS44mNpf2auNf+csb4v+mS26SM=;
-        b=yLZ+PmJmk0lvAcvKjo2Dbs7Q5Va7Bw6W2kE0y4PqV4xRgdkwkrPjE2LS99UZUe9LdK
-         9zFqHw1AhWAE6L5qlPN0KTJRl++yEpC+B6UjDMlzF/SjmVZHDMg7w6ThlZcIDdWD45aJ
-         /Zi7r2ZT3I3UxPexCZY1ASjjZZolkLNCjEMGaQmi9vOyqvt6zcU1hntO/b4rHIepiZAZ
-         y9RTyxPPfMoIOD1V6qB2mdrM8q3o7O9KPFwrqUqLVxB/JTIIDbDDfFFaXu1vfyqu9wKU
-         IqwjMv71pq4FHB8eJRlBcAqNQdOoRjNnEukrWCaIrqSTz7sO0PqtVDv0mj0RCVOwo2jx
-         K2pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712855587; x=1713460387;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hvFX8Zcz52PjVSzNzeS44mNpf2auNf+csb4v+mS26SM=;
-        b=qUxfZ0c+9Uw4HoDhT2jyKTfY+iWd3CEzy29blwGrWe09uzpBpxV3FK8eYTy8K5siAs
-         36bQHQZQ1d9OzTktgWz8TbRiVnSG8vIMQ4/XJ5QXah+5otj9kBl8WADPNBeSPNfgrrah
-         JT1/oR7qOfclBXSP2fOKv22NOeXwyvi44idLX+4cLu7savBJqignlnp1hBNUuzsrtuLO
-         elS+QtPILACYHXGF7YBdTEA1EWsGnSmfIEx0HPMHsKGYioMwTW3n3OpIQrFgr60f2bm3
-         znDVLdVsBBns7c9JPwaEOS12mi+xfv4jn31PlRLZRGwiH7U7JQ3Rmp9M5o3tZ7IXUc3k
-         JKzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrK+f+FFkZBlwMcY5uSifBb5gxdvIT58/6c6Ta4B8A0Q7u/A8lf7ysiTcvNifWAqnBM98d736/GarH2oze+K7AnMEfh01DFYKAzmaLsw==
-X-Gm-Message-State: AOJu0Yx2adjdmhF2lN6Snu/a6lrC+mH7f5GzQcrYGNE12OFNrV3UztGG
-	FtGI5Z/Dkgj1mhXCcIBM7u/o1fnSaV1mf7zCCOTJoqLe7bRQ/e7ugliotjx6f98=
-X-Google-Smtp-Source: AGHT+IFBhtL3EwHN8QLn6F8m7cRV6r1+33o4Pg84QV8nXC7s3i+NcHAHEmjm0MeoaB6rJi5Xyepv0A==
-X-Received: by 2002:a17:907:9450:b0:a52:1fe5:d1bb with SMTP id dl16-20020a170907945000b00a521fe5d1bbmr2387576ejc.11.1712855587193;
-        Thu, 11 Apr 2024 10:13:07 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-212.dynamic.mnet-online.de. [82.135.80.212])
-        by smtp.gmail.com with ESMTPSA id g4-20020a1709063b0400b00a51bbee7e55sm918610ejf.53.2024.04.11.10.13.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Apr 2024 10:13:06 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: robin.murphy@arm.com
-Cc: cocci@inria.fr,
-	dri-devel@lists.freedesktop.org,
-	ecryptfs@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	io-uring@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-afs@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	netfs@lists.linux.dev,
-	speakup@linux-speakup.org,
-	thorsten.blum@toblux.com,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Tyler Hicks <code@tyhicks.com>
-Subject: [PATCH v2] treewide: Fix common grammar mistake "the the"
-Date: Thu, 11 Apr 2024 19:11:47 +0200
-Message-ID: <20240411171145.535123-3-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <f2d1bb68-7ab7-4bbf-a1b1-88334ba52bab@arm.com>
-References: <f2d1bb68-7ab7-4bbf-a1b1-88334ba52bab@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B993858217;
+	Thu, 11 Apr 2024 17:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712856553; cv=fail; b=NobCcxjX6Ly4c5QGgmeOnWE1wuHoBSvb5JkRc6lP/+mAd8k5o6VhB55SDq9R2icxTb896wLaZfIRgoIKlkQJjmpzcYW9+pNuhc3YDK74Rcko/JLGISXtzzXDRnVkQgxXa8pEZ7TKgoBXNAT6rrk5/GVNLtFTJpRd9DTvRCUBj6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712856553; c=relaxed/simple;
+	bh=S9++cmKNM/rfK9pr5dA1AGUTHSGzVrAMCzjI17M7qRo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RCNziwYDgBDXHkFPCQpcTx7s+VApU38UQ6UzHtNp0qCFe2Xc9l2N1rZzLafYCrvzS2mub3blfND0fLTRp0jRL4+Z34c5EygFECN0nJF+mtxJhDnR4AHDTU4GK1KRs3dXty1+t0dTjh+2jc8/zJru2eEV6OpE2LZPVMQNTAAQVM4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jPtlbLJq; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712856552; x=1744392552;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=S9++cmKNM/rfK9pr5dA1AGUTHSGzVrAMCzjI17M7qRo=;
+  b=jPtlbLJqWjmpB0KnmGClYKvFk91oi+TE+Rmmx4ebOTN2JyTs0EbyTjjY
+   0uur/mNMgK0UzkoX+JoSDYbIOkY6ivB6WVBzmVIzWvMo4akK6Ksu+y81f
+   J2JsS91bVVgcs3CwrHDVVVKXigz9aLW6R8JkjyUmrdaLK9wHJbt1gFL/S
+   JxU/L1EuG4dleppMPRQjcUfpmnB4MSPANydziDy05RNlhQMMLPabWTVjY
+   7t5KE1a5RT1gh7kUOrLGTrCnqpixqA4UBSzksjx23eHCRYQX7WQKaOvqd
+   Ybe693JfnPxjsU26irbM8vrno/Q0F8wuKpYu6vC8QyQp+vojlSD34iXwS
+   w==;
+X-CSE-ConnectionGUID: YQoV2SXQT5KOsvPhpUKIqg==
+X-CSE-MsgGUID: LVGo6vfoTHiO2L0cYhj4qA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="8506394"
+X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
+   d="scan'208";a="8506394"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 10:29:11 -0700
+X-CSE-ConnectionGUID: 8QFyS1sVR6W3dZhI0DAebA==
+X-CSE-MsgGUID: oEmW3R15QZyBwkghcc0HXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
+   d="scan'208";a="21411876"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Apr 2024 10:29:11 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 11 Apr 2024 10:29:10 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 11 Apr 2024 10:29:10 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Thu, 11 Apr 2024 10:29:10 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 11 Apr 2024 10:29:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fdUR+y+IoIqvmgavyE4X9vMC0Y4u5k2S3PCn71CejsHnwJhDDcNtNRstWywJm3DkMCPmR+kans+5pGMEQnfsUseArlTyApgRtUZPkFyXNvC4NpNmqAWAMl8+7M+s+NpTetf9suWRGCprTfkLitesABAliw//6Pq2pbfzBcGBL9VFsFHKzjLdSzEU2hRQ/sSMWwtekfV/Dt9DLFi9kxL3Mjxo1R3jiUYs8AL07Ou0mEbsCvU0IrxQJajquDq3aj3b3McbfgE06OB0SDcBCg8aGdWLtkuKus4U7nOv5qV6sSI/43znm9UooNM9m23qjH+6o++YhTLOI0cofvFRnfboMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UDlisLhg/qeB79/wN7QJRy6mLSejkFg73v8CPcA6afM=;
+ b=JE7rAwI2CVrwxQKy1/KUwOBB/n/FeZLy2n9Poppp1aiZAZHrkQAOhhCP7mEe1Jpy94FHP1QuXu45KTHeJDz76zsAJZbHZ9mW3sq1JGIgDa/bCKGv2sY3MufTXV3N49cff8++MGw3ZnhzLNYF/FT1MoKPa/whvQk0+g+yJm/9UVT00q63Z2WAbFAEA9f/syJyEp14w+dOvasdMzAMjLczW/96N6YTxhL4VICj8CjM8vC5dMO1aGIA8VPeaItl7MByK/72KhxVvsRHWsW3qf8XyFpZYxqFA6pSEhhcdiVCDksDU8tEd6fhOTO/jr5Zk2+KBhfKEh9lJkUUY5f4ALnFSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by DS7PR11MB7690.namprd11.prod.outlook.com (2603:10b6:8:e6::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.21; Thu, 11 Apr
+ 2024 17:28:59 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::82fd:75df:40d7:ed71]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::82fd:75df:40d7:ed71%4]) with mapi id 15.20.7430.045; Thu, 11 Apr 2024
+ 17:28:59 +0000
+Date: Thu, 11 Apr 2024 10:28:56 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Alistair Popple <apopple@nvidia.com>, <linux-mm@kvack.org>
+CC: <david@fromorbit.com>, <dan.j.williams@intel.com>, <jhubbard@nvidia.com>,
+	<rcampbell@nvidia.com>, <willy@infradead.org>, <jgg@nvidia.com>,
+	<linux-fsdevel@vger.kernel.org>, <jack@suse.cz>, <djwong@kernel.org>,
+	<hch@lst.de>, <david@redhat.com>, <ruansy.fnst@fujitsu.com>,
+	<nvdimm@lists.linux.dev>, <linux-xfs@vger.kernel.org>,
+	<linux-ext4@vger.kernel.org>, <jglisse@redhat.com>, Alistair Popple
+	<apopple@nvidia.com>
+Subject: Re: [RFC 00/10] fs/dax: Fix FS DAX page reference counts
+Message-ID: <66181dd83f74e_15786294e8@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+References: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
+X-ClientProxiedBy: MW4PR04CA0204.namprd04.prod.outlook.com
+ (2603:10b6:303:86::29) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|DS7PR11MB7690:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63bd6b9f-9f8c-4638-ab9b-08dc5a4cdf71
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: WiRmj26CgOxN5tpZWTlzt4UGLiAkEMhFzNHmLaZ7bIBEashbOLrOEj0iWGkEOhUlerre2QA2epUp1Mi7of/5YMzZokrh0M+zqL5v8iU0hhBVe8I6yKyhGq2OuxnRaAalN7wvEPNw83OzMqDbY3FJc8cWZe7caXP5vZD53cKlZudalfoesnYaEcX8GWnnJNTd9iHFldSwDWGYuMbzveCqq3ntlIlVkUMMoD5DLBEPdAaqQnxxYYdZ0RPq6vYMIZmIAm3VF/tqm0iXa5hBvia1z6kVbgnf/3tgY8yx3FdiK3V+Aw+AygEoZJWmKog2aFgKVrZLFU0B4hHBjfv/OkY/p2uA9H0Q0kHZIT/1eFxxXlV/9GNLc5nmvAZYeY4DA+3uE2MsocrckofzfXgldHxotoPaChtEDcGz0rm5II2SoBwnDNbBj5I+vKYuh4BSGaSNmtYvc/OVNfInOBwSxQBVBwneEjNyDYDy+8CFBSv9BKusXDYt2HixvXJLpgAnDU9VBiCl6UBRLUcnzspJaDOEOxrz6byhL3XoVEooGWx2pBPZlHFyXWmfN2YCBPLUpM0pdkx7QIQcy6HMQzTIhWj934Xhx/blDda7xD6z/xsFI9EAFWuUCqzLb3oRp0i8n5LiAn1/5ZMwV378QexoQSWbRRqUbInXdBxiV2H6T5bGKXE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bEx1THEwdlZjeDlLckFqbWVNWngvcWlrTVdtM2dFSnBqU3o0d0RjempMbUxl?=
+ =?utf-8?B?c3N2NVpieXgyQnErTzY4SEVLL2p4ZVc5S2pDV0hYdjcxZnRGT3dydXpTVE4y?=
+ =?utf-8?B?VjBkMk9hSlJNM1NnMVlacWhkQitiZXgzZHlKVGdmVklhUVIrVEtldnA0RStm?=
+ =?utf-8?B?cFRlZmNCN1JENzFRWWZCRHdvckoyL2E5RjNobHVoNVVXNGZ5L2RqN0tlTXYv?=
+ =?utf-8?B?QUhyMW9hYTNuUXd2RU5ZYXpRT0lUNVpyanRaWTVGalkraVhrOTgrYiszQW9k?=
+ =?utf-8?B?NUIrODRnQlhRVVQ5eW5VRjZoQjlwV1RTRUZwZUhGVUFDZ2NZdVFBZ0hmbkpy?=
+ =?utf-8?B?dnhXdHlSa1lJNE56SjJveWIvdDltV0VZZGNkaGNwZndONDJoYUg5Y0QxOGJi?=
+ =?utf-8?B?WWVRUTdYbnlmYkw5Wjljclcvdlo0SEttRU5yTTFUcm00Um5XK0xVcFZRTHFr?=
+ =?utf-8?B?dEdrdFJERnJUeHkxenBFcGJVR1BpOHdOckhFUW0yS25CNkFKTTR3cDZhYXJw?=
+ =?utf-8?B?RFVxdC9URlF0cG02c1lXZzRXMWxMNlE4enpYdkhZTWZKM0Rqc0dyaStsV21r?=
+ =?utf-8?B?MnIwam1XSktieENMQzkxT0hKUHhHcXdONFdwTm56MWNJOE05VFoyMU9uQWdn?=
+ =?utf-8?B?QUU3MWZwM2hXZVB5c0UwRms4b245MEljcUZUZ2VvamxIRmJITnNjL0c1T0ph?=
+ =?utf-8?B?cGkyeE02Q2RqZUVTL0NYQ2V5ZkVyZHpXSWtZbi9aNitYVUR6Q3NZZ1RKSks0?=
+ =?utf-8?B?NnZ1UTBOQ24zQy9CNmR1TjAxVlBTc202QzFqbkkwSExVNlBtL1pvd1krR0x3?=
+ =?utf-8?B?WStqTUlWencxTG05aW5YOWoyRGJwdTFuOEJCTVdMWmxZTy9lOStQbVhaSlRo?=
+ =?utf-8?B?ZHpIN2tXZlVwQkZhSVpMSFZ6M0cyWi9jc0R0NzZ0azFCS1V2Um1NMGxDTWVm?=
+ =?utf-8?B?Z2wrSHpWUzRacUdMQjhITnU2czFXY1krTUVWT1BTbzBibktUOXlFL3NXQk1Z?=
+ =?utf-8?B?N08zLytDWW10SnBOY0huV1V6a3VpRDlreFloT1AwRzBINnQzcnFaU2c5dGVy?=
+ =?utf-8?B?THlyaU5hVy9hb0UxSnV0UW9MK2lvQUNEYm41U0RUZk11cVV4NGdTWXF6QUdZ?=
+ =?utf-8?B?ZU5kR25yZG5SZVlnb3dPQnR0OUwwYlNMUm1yYzRQdktrRzJGWHRnK3FDNW50?=
+ =?utf-8?B?UVEra0lKQm5ka3N4cTZON05hZXRjdWxIc3hvUENGM1FENzBMLzhHK2ZhTnlU?=
+ =?utf-8?B?aW10ek13T2FJVWl6TU1mYzlZUXpKd2o0bTRHOWk0V2dBakc4NkNzaGdrUmlT?=
+ =?utf-8?B?UWVWcGxkQ2k3aU9yVHkzQ25jUE1IV2VFd3BwTEF1dTljaTdEVVZONVZGMEVy?=
+ =?utf-8?B?bk56a0NWbDNWS1JVbU9Xc3V2eFVwSXZBQUYvL1FOaWlRWldVSDdnR2FnWnI4?=
+ =?utf-8?B?Q2NySVM5SnB2REsxZ3NkdE5ybkJXeThHZ21QYzlIVS9obDgrSVUzcUo3YVR6?=
+ =?utf-8?B?akovN0JvUTNNTDhaRnIzeDkxdmtUYVRRcm5CTHFwdmNEdlcwL3lFb1R3VWFY?=
+ =?utf-8?B?b0hEY3l5dzFyeU9FTjJqclVuNmVDN2llcDFydWpuUVpTdXV6bkJBVzQwQlpk?=
+ =?utf-8?B?clFaUFViR1EzL3Myc2VCUFJnYnF1ZWRteTF2MGwyYWRYMnJkMU5qdmJEQnB0?=
+ =?utf-8?B?R1kwWGNlOEZzMVFodXY2TVhERkpDT2hLNEpQbFdtVHo5d2tSbnpTSmpkU1NO?=
+ =?utf-8?B?Qy9DdWdiNzZTdWs4aDlFTjF2QWQ2eEIxNUhWYXJLNGlDRUpYdXhuOGpGN3VE?=
+ =?utf-8?B?QUtVNXorUk5kWDF0U2o1UWVBQ1MyaDZHcG92QnVNZWdpOWFjdFRUNHFXQXdZ?=
+ =?utf-8?B?ZlRYdGFTc2g1UXJ1OENSOTNPVXdiRllMUkRENGJVb1FxZEdXSE9mSE5jU1M3?=
+ =?utf-8?B?cjZ0Uk9ZeUVWakxrajdJNU1rMTUxcVkzY1R4MWR6VkdOZkdVbms1cmlWOHVV?=
+ =?utf-8?B?Z3YxRk12WHkrVXk5TCtaZmo3dUtZRlFrdG9YODNkc2xkTCt5Wm1VNFBHaUZS?=
+ =?utf-8?B?b1ZTNlVCcTdEQS9GTHIwU2ZxL0daeXJSY08xWXFqaTZmM1RCbVNydUJkVk85?=
+ =?utf-8?B?V1ZRZk80aHplTVBMSlI4aGQyM1BQbHJYREJtRXJvMktjeHpaREZGTW1VVFNY?=
+ =?utf-8?B?amc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63bd6b9f-9f8c-4638-ab9b-08dc5a4cdf71
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2024 17:28:59.4520
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dG7IIX+yg/cPcvIVeEK/kPEX2yMZ9aUQ/n0dWG06aAnV6fXNkTRq7OwGG7XbF7D4Gwhc+PtXxZ5869rhtrTc40tUQD2twv+JUgJNFwLdzok=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7690
+X-OriginatorOrg: intel.com
 
-Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
-occurrences of "the the" and replace them with a single "the".
+Alistair Popple wrote:
+> FS DAX pages have always maintained their own page reference counts
+> without following the normal rules for page reference counting. In
+> particular pages are considered free when the refcount hits one rather
+> than zero and refcounts are not added when mapping the page.
 
-In arch/arm/include/asm/unwind.h replace "the the" with "to the".
+> Tracking this requires special PTE bits (PTE_DEVMAP) and a secondary
+> mechanism for allowing GUP to hold references on the page (see
+> get_dev_pagemap). However there doesn't seem to be any reason why FS
+> DAX pages need their own reference counting scheme.
 
-Changes only comments and documentation - no code changes.
+This is fair. However, for anyone coming in fresh to this situation
+maybe some more "how we get here" history helps. That longer story is
+here:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Reviewed-by: Tyler Hicks <code@tyhicks.com>
----
-Changes in v2:
-- In arch/arm/include/asm/unwind.h: s/the the/to the/ as pointed out by
-  Robin Murphy
-- Preserve Reviewed-by: tags
----
- Documentation/trace/histogram.rst                 | 2 +-
- arch/arm/Kconfig                                  | 4 ++--
- arch/arm/include/asm/unwind.h                     | 2 +-
- arch/arm64/Kconfig                                | 2 +-
- arch/arm64/kernel/entry-ftrace.S                  | 2 +-
- arch/s390/kernel/perf_cpum_sf.c                   | 2 +-
- arch/s390/kernel/sthyi.c                          | 2 +-
- drivers/accessibility/speakup/speakup_soft.c      | 2 +-
- drivers/gpu/drm/i915/display/intel_crt.c          | 2 +-
- drivers/gpu/drm/i915/i915_request.c               | 2 +-
- drivers/mailbox/Kconfig                           | 2 +-
- drivers/net/wireless/intel/iwlwifi/fw/api/tx.h    | 4 ++--
- drivers/net/wireless/intel/iwlwifi/mvm/phy-ctxt.c | 2 +-
- drivers/scsi/bfa/bfa_fcs_rport.c                  | 2 +-
- drivers/scsi/fcoe/fcoe_ctlr.c                     | 2 +-
- drivers/scsi/isci/host.h                          | 2 +-
- drivers/scsi/isci/remote_device.h                 | 2 +-
- drivers/scsi/isci/remote_node_context.h           | 2 +-
- drivers/scsi/isci/task.c                          | 2 +-
- fs/afs/flock.c                                    | 2 +-
- fs/ecryptfs/keystore.c                            | 2 +-
- fs/netfs/direct_read.c                            | 2 +-
- fs/netfs/direct_write.c                           | 2 +-
- fs/overlayfs/super.c                              | 2 +-
- include/uapi/asm-generic/fcntl.h                  | 2 +-
- io_uring/kbuf.c                                   | 2 +-
- lib/zstd/common/fse_decompress.c                  | 2 +-
- lib/zstd/decompress/zstd_decompress_block.c       | 2 +-
- scripts/coccinelle/misc/badty.cocci               | 2 +-
- tools/perf/Documentation/perf-diff.txt            | 2 +-
- 30 files changed, 32 insertions(+), 32 deletions(-)
+http://lore.kernel.org/all/166579181584.2236710.17813547487183983273.stgit@dwillia2-xfh.jf.intel.com/
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 3c9b263de9c2..18a419925a08 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -840,7 +840,7 @@ Extended error information
- 
-   The compound key examples used a key and a sum value (hitcount) to
-   sort the output, but we can just as easily use two keys instead.
--  Here's an example where we use a compound key composed of the the
-+  Here's an example where we use a compound key composed of the
-   common_pid and size event fields.  Sorting with pid as the primary
-   key and 'size' as the secondary key allows us to display an
-   ordered summary of the recvfrom sizes, with counts, received by
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index b14aed3a17ab..f46fb69ff247 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1479,7 +1479,7 @@ config ARM_ATAG_DTB_COMPAT_CMDLINE_EXTEND
- 	bool "Extend with bootloader kernel arguments"
- 	help
- 	  The command-line arguments provided by the boot loader will be
--	  appended to the the device tree bootargs property.
-+	  appended to the device tree bootargs property.
- 
- endchoice
- 
-@@ -1617,7 +1617,7 @@ config DMI
- 	  continue to boot on existing non-UEFI platforms.
- 
- 	  NOTE: This does *NOT* enable or encourage the use of DMI quirks,
--	  i.e., the the practice of identifying the platform via DMI to
-+	  i.e., the practice of identifying the platform via DMI to
- 	  decide whether certain workarounds for buggy hardware and/or
- 	  firmware need to be enabled. This would require the DMI subsystem
- 	  to be enabled much earlier than we do on ARM, which is non-trivial.
-diff --git a/arch/arm/include/asm/unwind.h b/arch/arm/include/asm/unwind.h
-index d60b09a5acfc..9e4313a6309c 100644
---- a/arch/arm/include/asm/unwind.h
-+++ b/arch/arm/include/asm/unwind.h
-@@ -10,7 +10,7 @@
- 
- #ifndef __ASSEMBLY__
- 
--/* Unwind reason code according the the ARM EABI documents */
-+/* Unwind reason code according to the ARM EABI documents */
- enum unwind_reason_code {
- 	URC_OK = 0,			/* operation completed successfully */
- 	URC_CONTINUE_UNWIND = 8,
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 7b11c98b3e84..285ae4ca0b83 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -2253,7 +2253,7 @@ config CMDLINE
- 	default ""
- 	help
- 	  Provide a set of default command-line options at build time by
--	  entering them here. As a minimum, you should specify the the
-+	  entering them here. As a minimum, you should specify the
- 	  root device (e.g. root=/dev/nfs).
- 
- choice
-diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
-index f0c16640ef21..e24e7d8f8b61 100644
---- a/arch/arm64/kernel/entry-ftrace.S
-+++ b/arch/arm64/kernel/entry-ftrace.S
-@@ -94,7 +94,7 @@ SYM_CODE_START(ftrace_caller)
- 	stp	x29, x30, [sp, #FREGS_SIZE]
- 	add	x29, sp, #FREGS_SIZE
- 
--	/* Prepare arguments for the the tracer func */
-+	/* Prepare arguments for the tracer func */
- 	sub	x0, x30, #AARCH64_INSN_SIZE		// ip (callsite's BL insn)
- 	mov	x1, x9					// parent_ip (callsite's LR)
- 	mov	x3, sp					// regs
-diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-index 06efad5b4f93..3e1d8c58e4d1 100644
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -1193,7 +1193,7 @@ static void perf_event_count_update(struct perf_event *event, u64 count)
-  * combined-sampling data entry consists of a basic- and a diagnostic-sampling
-  * data entry.	The sampling function is determined by the flags in the perf
-  * event hardware structure.  The function always works with a combined-sampling
-- * data entry but ignores the the diagnostic portion if it is not available.
-+ * data entry but ignores the diagnostic portion if it is not available.
-  *
-  * Note that the implementation focuses on basic-sampling data entries and, if
-  * such an entry is not valid, the entire combined-sampling data entry is
-diff --git a/arch/s390/kernel/sthyi.c b/arch/s390/kernel/sthyi.c
-index 30bb20461db4..77e08ab92568 100644
---- a/arch/s390/kernel/sthyi.c
-+++ b/arch/s390/kernel/sthyi.c
-@@ -250,7 +250,7 @@ static void fill_diag_mac(struct sthyi_sctns *sctns,
- 	sctns->mac.infmval1 |= MAC_CNT_VLD;
- }
- 
--/* Returns a pointer to the the next partition block. */
-+/* Returns a pointer to the next partition block. */
- static struct diag204_x_part_block *lpar_cpu_inf(struct lpar_cpu_inf *part_inf,
- 						 bool this_lpar,
- 						 void *diag224_buf,
-diff --git a/drivers/accessibility/speakup/speakup_soft.c b/drivers/accessibility/speakup/speakup_soft.c
-index 6d446824677b..6549bfb96e7f 100644
---- a/drivers/accessibility/speakup/speakup_soft.c
-+++ b/drivers/accessibility/speakup/speakup_soft.c
-@@ -446,7 +446,7 @@ static int softsynth_adjust(struct spk_synth *synth, struct st_var_header *var)
- 	if (var->var_id != PUNC_LEVEL)
- 		return 0;
- 
--	/* We want to set the the speech synthesis punctuation level
-+	/* We want to set the speech synthesis punctuation level
- 	 * accordingly, so it properly tunes speaking A_PUNC characters */
- 	var_data = var->data;
- 	if (!var_data)
-diff --git a/drivers/gpu/drm/i915/display/intel_crt.c b/drivers/gpu/drm/i915/display/intel_crt.c
-index 93479db0f89f..9ee0c6e986c3 100644
---- a/drivers/gpu/drm/i915/display/intel_crt.c
-+++ b/drivers/gpu/drm/i915/display/intel_crt.c
-@@ -1114,7 +1114,7 @@ void intel_crt_init(struct drm_i915_private *dev_priv)
- 	drm_connector_helper_add(connector, &intel_crt_connector_helper_funcs);
- 
- 	/*
--	 * TODO: find a proper way to discover whether we need to set the the
-+	 * TODO: find a proper way to discover whether we need to set the
- 	 * polarity and link reversal bits or not, instead of relying on the
- 	 * BIOS.
- 	 */
-diff --git a/drivers/gpu/drm/i915/i915_request.c b/drivers/gpu/drm/i915/i915_request.c
-index 519e096c607c..e0fe24452f38 100644
---- a/drivers/gpu/drm/i915/i915_request.c
-+++ b/drivers/gpu/drm/i915/i915_request.c
-@@ -1779,7 +1779,7 @@ __i915_request_add_to_timeline(struct i915_request *rq)
- }
- 
- /*
-- * NB: This function is not allowed to fail. Doing so would mean the the
-+ * NB: This function is not allowed to fail. Doing so would mean the
-  * request is not being tracked for completion but the work itself is
-  * going to happen on the hardware. This would be a Bad Thing(tm).
-  */
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index 42940108a187..1e0a14bcdeec 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -54,7 +54,7 @@ config ARMADA_37XX_RWTM_MBOX
- 	depends on ARCH_MVEBU || COMPILE_TEST
- 	depends on OF
- 	help
--	  Mailbox implementation for communication with the the firmware
-+	  Mailbox implementation for communication with the firmware
- 	  running on the Cortex-M3 rWTM secure processor of the Armada 37xx
- 	  SOC. Say Y here if you are building for such a device (for example
- 	  the Turris Mox router).
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
-index d9e4c75403b8..b19c1d69223e 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
-@@ -191,7 +191,7 @@ enum iwl_tx_offload_assist_flags_pos {
-  *	cleared. Combination of RATE_MCS_*
-  * @sta_id: index of destination station in FW station table
-  * @sec_ctl: security control, TX_CMD_SEC_*
-- * @initial_rate_index: index into the the rate table for initial TX attempt.
-+ * @initial_rate_index: index into the rate table for initial TX attempt.
-  *	Applied if TX_CMD_FLG_STA_RATE_MSK is set, normally 0 for data frames.
-  * @reserved2: reserved
-  * @key: security key
-@@ -851,7 +851,7 @@ struct iwl_extended_beacon_notif {
- 
- /**
-  * enum iwl_dump_control - dump (flush) control flags
-- * @DUMP_TX_FIFO_FLUSH: Dump MSDUs until the the FIFO is empty
-+ * @DUMP_TX_FIFO_FLUSH: Dump MSDUs until the FIFO is empty
-  *	and the TFD queues are empty.
-  */
- enum iwl_dump_control {
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/phy-ctxt.c b/drivers/net/wireless/intel/iwlwifi/mvm/phy-ctxt.c
-index ce264b386029..4c958a4692b2 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/phy-ctxt.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/phy-ctxt.c
-@@ -31,7 +31,7 @@ u8 iwl_mvm_get_channel_width(const struct cfg80211_chan_def *chandef)
- 
- /*
-  * Maps the driver specific control channel position (relative to the center
-- * freq) definitions to the the fw values
-+ * freq) definitions to the fw values
-  */
- u8 iwl_mvm_get_ctrl_pos(const struct cfg80211_chan_def *chandef)
- {
-diff --git a/drivers/scsi/bfa/bfa_fcs_rport.c b/drivers/scsi/bfa/bfa_fcs_rport.c
-index ce52a9c88ae6..567a640c39c7 100644
---- a/drivers/scsi/bfa/bfa_fcs_rport.c
-+++ b/drivers/scsi/bfa/bfa_fcs_rport.c
-@@ -1987,7 +1987,7 @@ bfa_fcs_rport_gidpn_response(void *fcsarg, struct bfa_fcxp_s *fcxp, void *cbarg,
- 			/*
- 			 * Device's PID has changed. We need to cleanup
- 			 * and re-login. If there is another device with
--			 * the the newly discovered pid, send an scn notice
-+			 * the newly discovered pid, send an scn notice
- 			 * so that its new pid can be discovered.
- 			 */
- 			list_for_each(qe, &rport->port->rport_q) {
-diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
-index 5c8d1ba3f8f3..4050a8d99b1d 100644
---- a/drivers/scsi/fcoe/fcoe_ctlr.c
-+++ b/drivers/scsi/fcoe/fcoe_ctlr.c
-@@ -205,7 +205,7 @@ static int fcoe_sysfs_fcf_add(struct fcoe_fcf *new)
- 		 * that doesn't have a priv (fcf was deleted). However,
- 		 * libfcoe will always delete FCFs before trying to add
- 		 * them. This is ensured because both recv_adv and
--		 * age_fcfs are protected by the the fcoe_ctlr's mutex.
-+		 * age_fcfs are protected by the fcoe_ctlr's mutex.
- 		 * This means that we should never get a FCF with a
- 		 * non-NULL priv pointer.
- 		 */
-diff --git a/drivers/scsi/isci/host.h b/drivers/scsi/isci/host.h
-index 52388374cf31..e4971ca00769 100644
---- a/drivers/scsi/isci/host.h
-+++ b/drivers/scsi/isci/host.h
-@@ -244,7 +244,7 @@ enum sci_controller_states {
- 	SCIC_INITIALIZED,
- 
- 	/**
--	 * This state indicates the the controller is in the process of becoming
-+	 * This state indicates the controller is in the process of becoming
- 	 * ready (i.e. starting).  In this state no new IO operations are permitted.
- 	 * This state is entered from the INITIALIZED state.
- 	 */
-diff --git a/drivers/scsi/isci/remote_device.h b/drivers/scsi/isci/remote_device.h
-index 3ad681c4c20a..db097483ff04 100644
---- a/drivers/scsi/isci/remote_device.h
-+++ b/drivers/scsi/isci/remote_device.h
-@@ -198,7 +198,7 @@ enum sci_status sci_remote_device_reset_complete(
-  * permitted.  This state is entered from the INITIAL state.  This state
-  * is entered from the STOPPING state.
-  *
-- * @SCI_DEV_STARTING: This state indicates the the remote device is in
-+ * @SCI_DEV_STARTING: This state indicates the remote device is in
-  * the process of becoming ready (i.e. starting).  In this state no new
-  * IO operations are permitted.  This state is entered from the STOPPED
-  * state.
-diff --git a/drivers/scsi/isci/remote_node_context.h b/drivers/scsi/isci/remote_node_context.h
-index c7ee81d01125..f22950b12b8b 100644
---- a/drivers/scsi/isci/remote_node_context.h
-+++ b/drivers/scsi/isci/remote_node_context.h
-@@ -154,7 +154,7 @@ enum sci_remote_node_context_destination_state {
- /**
-  * struct sci_remote_node_context - This structure contains the data
-  *    associated with the remote node context object.  The remote node context
-- *    (RNC) object models the the remote device information necessary to manage
-+ *    (RNC) object models the remote device information necessary to manage
-  *    the silicon RNC.
-  */
- struct sci_remote_node_context {
-diff --git a/drivers/scsi/isci/task.c b/drivers/scsi/isci/task.c
-index 3a25b1a2c52d..aeb2cda92465 100644
---- a/drivers/scsi/isci/task.c
-+++ b/drivers/scsi/isci/task.c
-@@ -67,7 +67,7 @@
- /**
- * isci_task_refuse() - complete the request to the upper layer driver in
- *     the case where an I/O needs to be completed back in the submit path.
--* @ihost: host on which the the request was queued
-+* @ihost: host on which the request was queued
- * @task: request to complete
- * @response: response code for the completed task.
- * @status: status code for the completed task.
-diff --git a/fs/afs/flock.c b/fs/afs/flock.c
-index f0e96a35093f..2b1d6eb02553 100644
---- a/fs/afs/flock.c
-+++ b/fs/afs/flock.c
-@@ -151,7 +151,7 @@ static void afs_next_locker(struct afs_vnode *vnode, int error)
- }
- 
- /*
-- * Kill off all waiters in the the pending lock queue due to the vnode being
-+ * Kill off all waiters in the pending lock queue due to the vnode being
-  * deleted.
-  */
- static void afs_kill_lockers_enoent(struct afs_vnode *vnode)
-diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
-index 3fe41964c0d8..2452d6fd7062 100644
---- a/fs/ecryptfs/keystore.c
-+++ b/fs/ecryptfs/keystore.c
-@@ -878,7 +878,7 @@ struct ecryptfs_parse_tag_70_packet_silly_stack {
-  * @filename: This function kmalloc's the memory for the filename
-  * @filename_size: This function sets this to the amount of memory
-  *                 kmalloc'd for the filename
-- * @packet_size: This function sets this to the the number of octets
-+ * @packet_size: This function sets this to the number of octets
-  *               in the packet parsed
-  * @mount_crypt_stat: The mount-wide cryptographic context
-  * @data: The memory location containing the start of the tag 70
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index ad4370b3935d..a8a5323e2736 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -56,7 +56,7 @@ static ssize_t netfs_unbuffered_read_iter_locked(struct kiocb *iocb, struct iov_
- 	 * buffer for ourselves as the caller's iterator will be trashed when
- 	 * we return.
- 	 *
--	 * In such a case, extract an iterator to represent as much of the the
-+	 * In such a case, extract an iterator to represent as much of the
- 	 * output buffer as we can manage.  Note that the extraction might not
- 	 * be able to allocate a sufficiently large bvec array and may shorten
- 	 * the request.
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index bee047e20f5d..b46e34d528cd 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -57,7 +57,7 @@ static ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov
- 		/* If this is an async op and we're not using a bounce buffer,
- 		 * we have to save the source buffer as the iterator is only
- 		 * good until we return.  In such a case, extract an iterator
--		 * to represent as much of the the output buffer as we can
-+		 * to represent as much of the output buffer as we can
- 		 * manage.  Note that the extraction might not be able to
- 		 * allocate a sufficiently large bvec array and may shorten the
- 		 * request.
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index a40fc7e05525..80042bfd4b92 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -1456,7 +1456,7 @@ int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_iflags |= SB_I_SKIP_SYNC;
- 	/*
- 	 * Ensure that umask handling is done by the filesystems used
--	 * for the the upper layer instead of overlayfs as that would
-+	 * for the upper layer instead of overlayfs as that would
- 	 * lead to unexpected results.
- 	 */
- 	sb->s_iflags |= SB_I_NOUMASK;
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 80f37a0d40d7..1c7a0f6632c0 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -142,7 +142,7 @@
-  * record  locks, but are "owned" by the open file description, not the
-  * process. This means that they are inherited across fork() like BSD (flock)
-  * locks, and they are only released automatically when the last reference to
-- * the the open file against which they were acquired is put.
-+ * the open file against which they were acquired is put.
-  */
- #define F_OFD_GETLK	36
- #define F_OFD_SETLK	37
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 3aa16e27f509..503244e8470a 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -731,7 +731,7 @@ struct io_buffer_list *io_pbuf_get_bl(struct io_ring_ctx *ctx,
- 	 * going away, if someone is trying to be sneaky. Look it up under rcu
- 	 * so we know it's not going away, and attempt to grab a reference to
- 	 * it. If the ref is already zero, then fail the mapping. If successful,
--	 * the caller will call io_put_bl() to drop the the reference at at the
-+	 * the caller will call io_put_bl() to drop the reference at at the
- 	 * end. This may then safely free the buffer_list (and drop the pages)
- 	 * at that point, vm_insert_pages() would've already grabbed the
- 	 * necessary vma references.
-diff --git a/lib/zstd/common/fse_decompress.c b/lib/zstd/common/fse_decompress.c
-index 8dcb8ca39767..2de48eee3653 100644
---- a/lib/zstd/common/fse_decompress.c
-+++ b/lib/zstd/common/fse_decompress.c
-@@ -127,7 +127,7 @@ static size_t FSE_buildDTable_internal(FSE_DTable* dt, const short* normalizedCo
-             }
-         }
-         /* Now we spread those positions across the table.
--         * The benefit of doing it in two stages is that we avoid the the
-+         * The benefit of doing it in two stages is that we avoid the
-          * variable size inner loop, which caused lots of branch misses.
-          * Now we can run through all the positions without any branch misses.
-          * We unroll the loop twice, since that is what emperically worked best.
-diff --git a/lib/zstd/decompress/zstd_decompress_block.c b/lib/zstd/decompress/zstd_decompress_block.c
-index c1913b8e7c89..cd2e9acecd84 100644
---- a/lib/zstd/decompress/zstd_decompress_block.c
-+++ b/lib/zstd/decompress/zstd_decompress_block.c
-@@ -510,7 +510,7 @@ void ZSTD_buildFSETable_body(ZSTD_seqSymbol* dt,
-             }
-         }
-         /* Now we spread those positions across the table.
--         * The benefit of doing it in two stages is that we avoid the the
-+         * The benefit of doing it in two stages is that we avoid the
-          * variable size inner loop, which caused lots of branch misses.
-          * Now we can run through all the positions without any branch misses.
-          * We unroll the loop twice, since that is what emperically worked best.
-diff --git a/scripts/coccinelle/misc/badty.cocci b/scripts/coccinelle/misc/badty.cocci
-index ed3e0b8f3b1a..e3530cade156 100644
---- a/scripts/coccinelle/misc/badty.cocci
-+++ b/scripts/coccinelle/misc/badty.cocci
-@@ -4,7 +4,7 @@
- //# This makes an effort to find cases where the argument to sizeof is wrong
- //# in memory allocation functions by checking the type of the allocated memory
- //# when it is a double pointer and ensuring the sizeof argument takes a pointer
--//# to the the memory being allocated. There are false positives in cases the
-+//# to the memory being allocated. There are false positives in cases the
- //# sizeof argument is not used in constructing the return value. The result
- //# may need some reformatting.
- //
-diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
-index f3067a4af294..58efab72d2e5 100644
---- a/tools/perf/Documentation/perf-diff.txt
-+++ b/tools/perf/Documentation/perf-diff.txt
-@@ -285,7 +285,7 @@ If specified the 'Weighted diff' column is displayed with value 'd' computed as:
- 
-   - period being the hist entry period value
- 
--  - WEIGHT-A/WEIGHT-B being user supplied weights in the the '-c' option
-+  - WEIGHT-A/WEIGHT-B being user supplied weights in the '-c' option
-     behind ':' separator like '-c wdiff:1,2'.
-     - WEIGHT-A being the weight of the data file
-     - WEIGHT-B being the weight of the baseline data file
--- 
-2.44.0
+> This RFC is an initial attempt at removing the special reference
+> counting and instead refcount FS DAX pages the same as normal pages.
+> 
+> There are still a couple of rough edges - in particular I haven't
+> completely removed the devmap PTE bit references from arch specific
+> code and there is probably some more cleanup of dev_pagemap reference
+> counting that could be done, particular in mm/gup.c. I also haven't
+> yet compiled on anything other than x86_64.
+> 
+> Before continuing further with this clean-up though I would appreciate
+> some feedback on the viability of this approach and any issues I may
+> have overlooked, as I am not intimately familiar with FS DAX code (or
+> for that matter the FS layer in general).
+> 
+> I have of course run some basic testing which didn't reveal any
+> problems.
 
+FWIW I see the following with the ndctl/dax test-suite (double-checked
+that vanilla v6.6 passes). I will take a look at the patches, but in the
+meantime...
+
+# meson test -C build --suite ndctl:dax
+ninja: no work to do.
+ninja: Entering directory `/root/git/ndctl/build'
+[1/70] Generating version.h with a custom command
+ 1/13 ndctl:dax / daxdev-errors.sh          OK              14.46s
+ 2/13 ndctl:dax / multi-dax.sh              OK               2.70s
+ 3/13 ndctl:dax / sub-section.sh            OK               7.21s
+ 4/13 ndctl:dax / dax-dev                   OK               0.08s
+[5/13] 🌖 ndctl:dax / dax-ext4.sh                            0/600s
+
+...that last test crashed with:
+
+ EXT4-fs (pmem0): mounted filesystem 2adea02a-a791-4714-be40-125afd16634b r/w with ordered
+ota mode: none.
+ page:ffffea0005f00000 refcount:0 mapcount:0 mapping:ffff8882a8a6be10 index:0x5800 pfn:0x1
+
+ head:ffffea0005f00000 order:9 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+ aops:ext4_dax_aops ino:c dentry name:"image"
+ flags: 0x4ffff800004040(reserved|head|node=0|zone=4|lastcpupid=0x1ffff)
+ page_type: 0xffffffff()
+ raw: 004ffff800004040 ffff888202681520 0000000000000000 ffff8882a8a6be10
+ raw: 0000000000005800 0000000000000000 00000000ffffffff 0000000000000000
+ page dumped because: VM_BUG_ON_FOLIO(((unsigned int) folio_ref_count(folio) + 127u <= 127
+
+ ------------[ cut here ]------------
+ kernel BUG at include/linux/mm.h:1419!
+ invalid opcode: 0000 [#1] PREEMPT SMP PTI
+ CPU: 0 PID: 1415 Comm: dax-pmd Tainted: G           OE    N 6.6.0+ #209
+ Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20230524-3.fc38 05/24/2023
+ RIP: 0010:dax_insert_pfn_pmd+0x41c/0x430
+ Code: 89 c1 41 b8 01 00 00 00 48 89 ea 4c 89 e6 4c 89 f7 e8 18 8a c7 ff e9 e0 fc ff ff 48
+c b3 48 89 c7 e8 a4 53 f7 ff <0f> 0b e8 0d ba a8 00 48 8b 15 86 8a 62 01 e9 89 fc ff ff 90
+
+ RSP: 0000:ffffc90001d57b68 EFLAGS: 00010246
+ RAX: 000000000000005c RBX: ffffea0005f00000 RCX: 0000000000000000
+ RDX: 0000000000000000 RSI: ffffffffb3749a15 RDI: 00000000ffffffff
+ RBP: ffff8882982c07e0 R08: 00000000ffffdfff R09: 0000000000000001
+ R10: 00000000ffffdfff R11: ffffffffb3a771c0 R12: 800000017c0008e7
+ R13: 8000000000000025 R14: ffff888202a395f8 R15: ffffea0005f00000
+ FS:  00007fdaa00e3d80(0000) GS:ffff888477000000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00007fda9f800000 CR3: 0000000296224000 CR4: 00000000000006f0
+ DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ Call Trace:
+  <TASK>
+  ? die+0x32/0x80
+  ? do_trap+0xd6/0x100
+  ? dax_insert_pfn_pmd+0x41c/0x430
+  ? dax_insert_pfn_pmd+0x41c/0x430
+  ? do_error_trap+0x81/0x110
+  ? dax_insert_pfn_pmd+0x41c/0x430
+  ? exc_invalid_op+0x4c/0x60
+  ? dax_insert_pfn_pmd+0x41c/0x430
+  ? asm_exc_invalid_op+0x16/0x20
+  ? dax_insert_pfn_pmd+0x41c/0x430
+  ? dax_insert_pfn_pmd+0x41c/0x430
+  dax_fault_iter+0x5d0/0x700
+  dax_iomap_pmd_fault+0x212/0x450
+  ext4_dax_huge_fault+0x1dc/0x470
+  __handle_mm_fault+0x808/0x13e0
+  handle_mm_fault+0x178/0x3e0
+  do_user_addr_fault+0x186/0x830
+  exc_page_fault+0x6f/0x1d0
+  asm_exc_page_fault+0x22/0x30
+ RIP: 0033:0x7fdaa072d009
 
