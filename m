@@ -1,242 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-16741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846968A1F76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 21:25:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2338A1F8D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 21:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5EF81C2358F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:25:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72EA11F28204
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EC9168B1;
-	Thu, 11 Apr 2024 19:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8DC17559;
+	Thu, 11 Apr 2024 19:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NXai15Yc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cYarYQZN";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NXai15Yc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cYarYQZN"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WTzaXJlO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EECD13FFC;
-	Thu, 11 Apr 2024 19:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F455205E01
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 19:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712863528; cv=none; b=UX7eohrmQfMPQEZeLfexb+NUaVXCXlhNAJUb8WXs4IQlzrzn4IT8cLjfCpq4kMQI5NbdyBi/V9dfgzoxxSSnW7zWLMFzxN6eW9gUHNFrGtMhrCsG/B8FC64a5pBsyqxaDInWCOPvnWQrkgKOETYP8CM0tne2yjbOyuQg4UlrYRQ=
+	t=1712864114; cv=none; b=XKqHCpoxW/1MK5qZcZydr+9/jWdZ2o7eZAb6CVLvb9pJ4v8h63UxW80xFAZ4YKsINHPImLYuM2DBhh77C+VNvcl2niX1ROTTfWvIqCvp8D3BFXF2vZpnvmLyfxRJjz+7ZXtgGxu9LnDSCUptm93ZRs62g8HkGrwiwIUY2wA+lwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712863528; c=relaxed/simple;
-	bh=RksIQbExvaCJUcl0G0CcojxzWfnl6xUQsFg4B3A8VxM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iEb3n4FIVYCLSXbYEAwPy9ci73VZynGCAX2o4w6T9Ah+Nrz3MFGZGG+hkqYCmf/Z2stvFFKvQjTqOJjelB+y7tbQoPgRHdL+5pafSr0f0lx4AVRa2LdbLBg0pXFbjYwImwjJegb7bXr9cAMrnuSmRoS7HV+SwPfj6yffj6hT1+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NXai15Yc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cYarYQZN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NXai15Yc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cYarYQZN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A747B5D430;
-	Thu, 11 Apr 2024 19:25:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1712863523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zCHGpeVSvZ41S2YiaygRkdmX2r+S8qFcFRruOh3fP68=;
-	b=NXai15YcYjFYP8nF3KNJin/UlgLz6V+g04lF0JS8rUIaAEqdkG+o1iAi2WYuUysrSNW28E
-	y3xM1tVsDCK+nPftORBjO/9k35B+nLFgfIOexwOzXZXClqwfLC2ziaI+qXgm+shTXtij77
-	0Ohp7hQk3hvKIZ/Hlp6CE8apUan6oQg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1712863523;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zCHGpeVSvZ41S2YiaygRkdmX2r+S8qFcFRruOh3fP68=;
-	b=cYarYQZNFNpy4leSIBv43g9d6QSQkgzXwZE/8pKybhzZ7TLpKQTIE8eLfZ9y1SVcwM30VQ
-	MiaYmv+vxrvaenAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NXai15Yc;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cYarYQZN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1712863523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zCHGpeVSvZ41S2YiaygRkdmX2r+S8qFcFRruOh3fP68=;
-	b=NXai15YcYjFYP8nF3KNJin/UlgLz6V+g04lF0JS8rUIaAEqdkG+o1iAi2WYuUysrSNW28E
-	y3xM1tVsDCK+nPftORBjO/9k35B+nLFgfIOexwOzXZXClqwfLC2ziaI+qXgm+shTXtij77
-	0Ohp7hQk3hvKIZ/Hlp6CE8apUan6oQg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1712863523;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zCHGpeVSvZ41S2YiaygRkdmX2r+S8qFcFRruOh3fP68=;
-	b=cYarYQZNFNpy4leSIBv43g9d6QSQkgzXwZE/8pKybhzZ7TLpKQTIE8eLfZ9y1SVcwM30VQ
-	MiaYmv+vxrvaenAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 566B413685;
-	Thu, 11 Apr 2024 19:25:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OiHpCCM5GGZuJgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Thu, 11 Apr 2024 19:25:23 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>,  syzbot
- <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>,
-  linux-ext4@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  repnop@google.com,
-  syzkaller-bugs@googlegroups.com, khazhy@chromium.org
-Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
-In-Reply-To: <CAOQ4uxi9L_Rs7q=fcLGqJMx15jLAArOWGwGfdCL8LOUCPR3L+w@mail.gmail.com>
-	(Amir Goldstein's message of "Thu, 11 Apr 2024 19:07:00 +0300")
-Organization: SUSE
-References: <00000000000042c9190615cdb315@google.com>
-	<20240411121319.adhz4ylacbv6ocuu@quack3>
-	<CAOQ4uxi9L_Rs7q=fcLGqJMx15jLAArOWGwGfdCL8LOUCPR3L+w@mail.gmail.com>
-Date: Thu, 11 Apr 2024 15:25:21 -0400
-Message-ID: <875xwn8zxa.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1712864114; c=relaxed/simple;
+	bh=5KVFeFerRH8GLwfSRDO//pTmkAv+uv/gwR3NCKN8Cdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WyutQgUxwfsXhpSzP8RUZdr2iw1qDYQMB+OCDvT765lkOtRTvREkM3HUg5Hdf+QQsoajJY1UBnyDQgZSjNOIP9V4ukH3aE0vc0gdnpevy2EAH2qR0JQ43dACvCW0Q+plDNxw8IFH12vK+5KC9sXCSLTeEJi35Mis7STcxTMHIWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WTzaXJlO; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2d88a869ce6so1525191fa.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 12:35:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1712864110; x=1713468910; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhujaawioP0edqzESewC5qrutyIfvYKamEof/gouabc=;
+        b=WTzaXJlOO/kVxxr1UkWojPQ/xwlyFTzOJSP5b0jR/awylRo5f1TXq5e9VoMDDY3kO2
+         FFLH/bUak6hUenp9hECToGe5ICfRIfzKfk90FANs+DTVMzj3e0K5xRZ7x080OufLuOAP
+         z6rlyTv541da48Ok+wcK3uaiY64r9X/GDlcuY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712864110; x=1713468910;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qhujaawioP0edqzESewC5qrutyIfvYKamEof/gouabc=;
+        b=CwC2jnH14zGZsNzMBeXeqHujlE89xLdMcUqqcoafyALF0UTeQAdxLPN/tAQ05abVXw
+         5qjf2VJUiJB+iPn6W30fimdqQH4fmS2cNn8580YKHgNomQZPqn4TbwlWa01l0bGiN9qU
+         0BRDAMocL16kKb37ZVd94UA++XtkOLxmkYHcko0AjBm+O6rQvyIqx6C8KWJyeiaUnl3g
+         4eANn/7oB8TVfU2jbmThL5nxhrZL48aA1B8tPWI4i4FNmpiYT1cyj3TLiz1+rVqZHPuN
+         8VDsz73JLJblz/VVy+nDG0Ev9QqyVpTMZ7Rj4sGQTEJU1HIYfefrPCBf58LzblNmNbd9
+         /nLw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9UE6/H4D7xTXEOYYGk3TLn0Tsr37aHNjhm6zvYasYY60/72Floh3AEAg4bemZKjL3Tuqs3sWdx72KeGEAkZKc1cXXiwq7043WYZGudw==
+X-Gm-Message-State: AOJu0Yy6MQvf4e6VGWS+cAhH+lsfK5Np9BHtReaDKvjWhEtpdGA5RSxk
+	2I3yx0ZmtC8EcB8lQC4asOOh8p024gmlLzXmJc+Udh6w1WTgnGZ+vCqGvWQFH54mhhSR1dlbdhW
+	kkTsQuw==
+X-Google-Smtp-Source: AGHT+IEv7X8OV1l3Lfo/DvjPo1tcmFowK/N6NxsXfV3WRZZtMUGncTzMFos7nGxxRJfbX2Jb33TKow==
+X-Received: by 2002:a2e:9805:0:b0:2d8:9955:cd27 with SMTP id a5-20020a2e9805000000b002d89955cd27mr353999ljj.48.1712864110486;
+        Thu, 11 Apr 2024 12:35:10 -0700 (PDT)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id k18-20020a2ea272000000b002d4972b1658sm308475ljm.52.2024.04.11.12.35.09
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Apr 2024 12:35:09 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-516d3776334so225304e87.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 12:35:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+axzhUd6zLAHeUIfnDntVjJb3VHqJFzqJXaB2EPUTywrJM5vldrDf9GALWDBYc6dpcQhCylGo7UU/3eOPhe6IEJJI0bRnpL/CCw8sSA==
+X-Received: by 2002:a19:3855:0:b0:516:d11b:5532 with SMTP id
+ d21-20020a193855000000b00516d11b5532mr402271lfj.23.1712864109199; Thu, 11 Apr
+ 2024 12:35:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=16ca158ef7e08662];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	HAS_ORG_HEADER(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
-	TAGGED_RCPT(0.00)[5e3f9b2a67b45f16d4e6];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A747B5D430
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -2.01
+References: <20240411001012.12513-1-torvalds@linux-foundation.org>
+ <CAHk-=wiaoij30cnx=jfvg=Br3YTxhQjp4VWRc6=xYE2=+EVRPg@mail.gmail.com>
+ <20240411-alben-kocht-219170e9dc99@brauner> <CAHk-=wjrPDx=f5OSnQVbbJ4id6SZk-exB1VW9Uz3R7rKFvTQeQ@mail.gmail.com>
+ <CABe3_aGbsPHY9Z5B9WyVWakeWFtief4DpBrDxUiD00qk1irMrg@mail.gmail.com>
+ <CABe3_aGGf7kb97gE4FdGmT79Kh5OhbB_2Hqt898WZ+4XGg6j4Q@mail.gmail.com>
+ <CABe3_aE_quPE0zKe-p11DF1rBx-+ecJKORY=96WyJ_b+dbxL9A@mail.gmail.com> <CAHk-=wjuzUTH0ZiPe0dAZ4rcVeNoJxhK8Hh_WRBY-ZqM-pGBqg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjuzUTH0ZiPe0dAZ4rcVeNoJxhK8Hh_WRBY-ZqM-pGBqg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 11 Apr 2024 12:34:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgEdyUeiu=94iuJsf2vEfeyjqTXa+dSpUD6F4jvJ=87cw@mail.gmail.com>
+Message-ID: <CAHk-=wgEdyUeiu=94iuJsf2vEfeyjqTXa+dSpUD6F4jvJ=87cw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: relax linkat() AT_EMPTY_PATH - aka flink() - requirements
+To: Charles Mirabile <cmirabil@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Lutomirski <luto@kernel.org>, Peter Anvin <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Amir Goldstein <amir73il@gmail.com> writes:
-
-> On Thu, Apr 11, 2024 at 3:13=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->>
->> On Thu 11-04-24 01:11:20, syzbot wrote:
->> > Hello,
->> >
->> > syzbot found the following issue on:
->> >
->> > HEAD commit:    6ebf211bb11d Add linux-next specific files for 20240410
->> > git tree:       linux-next
->> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D12be955d18=
-0000
->> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D16ca158ef7=
-e08662
->> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D5e3f9b2a67b4=
-5f16d4e6
->> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
-Debian) 2.40
->> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D13c91175=
-180000
->> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1621af9d18=
-0000
->> >
->> > Downloadable assets:
->> > disk image: https://storage.googleapis.com/syzbot-assets/b050f81f73ed/=
-disk-6ebf211b.raw.xz
->> > vmlinux: https://storage.googleapis.com/syzbot-assets/412c9b9a536e/vml=
-inux-6ebf211b.xz
->> > kernel image: https://storage.googleapis.com/syzbot-assets/016527216c4=
-7/bzImage-6ebf211b.xz
->> > mounted in repro: https://storage.googleapis.com/syzbot-assets/75ad050=
-c9945/mount_0.gz
->> >
->> > IMPORTANT: if you fix the issue, please add the following tag to the c=
-ommit:
->> > Reported-by: syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com
->> >
->> > Quota error (device loop0): do_check_range: Getting block 0 out of ran=
-ge 1-5
->> > EXT4-fs error (device loop0): ext4_release_dquot:6905: comm kworker/u8=
-:4: Failed to release dquot type 1
->> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> > BUG: KASAN: slab-use-after-free in fsnotify+0x2a4/0x1f70 fs/notify/fsn=
-otify.c:539
->> > Read of size 8 at addr ffff88802f1dce80 by task kworker/u8:4/62
->> >
->> > CPU: 0 PID: 62 Comm: kworker/u8:4 Not tainted 6.9.0-rc3-next-20240410-=
-syzkaller #0
->> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
-S Google 03/27/2024
->> > Workqueue: events_unbound quota_release_workfn
->> > Call Trace:
->> >  <TASK>
->> >  __dump_stack lib/dump_stack.c:88 [inline]
->> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->> >  print_address_description mm/kasan/report.c:377 [inline]
->> >  print_report+0x169/0x550 mm/kasan/report.c:488
->> >  kasan_report+0x143/0x180 mm/kasan/report.c:601
->> >  fsnotify+0x2a4/0x1f70 fs/notify/fsnotify.c:539
->> >  fsnotify_sb_error include/linux/fsnotify.h:456 [inline]
->> >  __ext4_error+0x255/0x3b0 fs/ext4/super.c:843
->> >  ext4_release_dquot+0x326/0x450 fs/ext4/super.c:6903
->> >  quota_release_workfn+0x39f/0x650 fs/quota/dquot.c:840
->> >  process_one_work kernel/workqueue.c:3218 [inline]
->> >  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3299
->> >  worker_thread+0x86d/0xd70 kernel/workqueue.c:3380
->> >  kthread+0x2f0/0x390 kernel/kthread.c:389
->> >  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->> >  </TASK>
->>
->> Amir, I believe this happens on umount when the filesystem calls
->> fsnotify_sb_error() after calling fsnotify_sb_delete(). In theory these =
-two
->> calls can even run in parallel and fsnotify() can be holding
->> fsnotify_sb_info pointer while fsnotify_sb_delete() is freeing it so we
->> need to figure out some proper synchronization for that...
+On Thu, 11 Apr 2024 at 11:13, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Is it really needed to handle any for non SB_ACTIVE sb?
+> So while I understand your motivation, I actually think it's actively
+> wrong to special-case __O_TMPFILE, because it encourages a pattern
+> that is bad.
 
-I think it should be fine to exclude volumes being teared down.  Cc'ing
-Khazhy, who sponsored this work at the time and owned the use-case.
+Just to clarify: I think the ns_capable() change is a good idea and
+makes sense. The whole "limited to global root" makes no sense if the
+file was opened within a namespace, and I think it always just came
+from the better check not being obvious at the point where
+AT_EMPTY_PATH was checked for.
 
---=20
-Gabriel Krisman Bertazi
+Similarly, while the FMODE_PATH test _looks_ very similar to an
+O_TMPFILE check, I think it's fundamentally different in a conceptual
+sense: not only is FMODE_PATH filesystem-agnostic, a FMODE_PATH file
+is *only* useful as a pathname (ie no read/write semantics).
+
+And so if a FMODE_PATH file descriptor is passed in from the outside,
+I feel like the "you cannot use this to create a path" is kind of a
+fundamentally nonsensical rule.
+
+IOW, whoever is passing that FMODE_PATH file descriptor around must
+have actually thought about it, and must have opened it with O_PATH,
+and it isn't useful for anything else than as a starting point for a
+path lookup.
+
+So while I don't think the __O_TMPFILE exception would necessarily be
+wrong per se, I am afraid that it would result in people writing
+convenient code that "appears to work" in testing, but then fails when
+run in an environment where the directory is mounted over NFS (or any
+other filesystem that doesn't do ->tmpfile()).
+
+I am certainly open to be convinced otherwise, but I really think that
+the real pattern to aim for should just be "look, I opened the file
+myself, then filled in the detail, and now I'm doing a linkat() to
+expose it" and that the real protection issue should be that "my
+credentials are the same for open and linkat".
+
+The other rules (ie the capability check or the FMODE_PATH case) would
+be literally about situations where you *want* to pass things around
+between protection domains.
+
+In that context, the ns_capable() and the FMODE_PATH check make sense to me.
+
+In contrast, the __O_TMPFILE check just feels like a random detail.
+
+Hmm?
+
+Anyway, end result of that is that this is what that part of the patch
+looks like for me right now:
+
++               if (flags & LOOKUP_DFD_MATCH_CREDS) {
++                       const struct cred *cred = f.file->f_cred;
++                       if (!(f.file->f_mode & FMODE_PATH) &&
++                           cred != current_cred() &&
++                           !ns_capable(cred->user_ns, CAP_DAC_READ_SEARCH)) {
++                               fdput(f);
++                               return ERR_PTR(-ENOENT);
++                       }
++               }
+
+and that _seems_ sensible to me.
+
+But yes, this all has been something that we have failed to do right
+for at least a quarter of a century so far, so this needs a *lot* of
+thought, even if the patch itself is rather small and looks relatively
+obvious.
+
+                 Linus
 
