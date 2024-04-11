@@ -1,121 +1,242 @@
-Return-Path: <linux-fsdevel+bounces-16740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E6238A1F74
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 21:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 846968A1F76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 21:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE88D1C23254
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5EF81C2358F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382CB175A6;
-	Thu, 11 Apr 2024 19:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EC9168B1;
+	Thu, 11 Apr 2024 19:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UuT0npXS"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NXai15Yc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cYarYQZN";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NXai15Yc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cYarYQZN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743391756A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 19:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EECD13FFC;
+	Thu, 11 Apr 2024 19:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712863475; cv=none; b=JbFPZ4DMN6Su8iN2Hd6iYDtHahy92exjfjhRs/t46gE0/dWOhH/EZKVefInDLE56rLeSISBoXXCg6Pudf8XHje4xgyXd6kHzPoOvak6MYCOw21fByoK0dw1+oTkonrSTZu4HFuIP4qCy/tgrz1AFAXYjbXyx0j+rcQ00ZuHOvoo=
+	t=1712863528; cv=none; b=UX7eohrmQfMPQEZeLfexb+NUaVXCXlhNAJUb8WXs4IQlzrzn4IT8cLjfCpq4kMQI5NbdyBi/V9dfgzoxxSSnW7zWLMFzxN6eW9gUHNFrGtMhrCsG/B8FC64a5pBsyqxaDInWCOPvnWQrkgKOETYP8CM0tne2yjbOyuQg4UlrYRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712863475; c=relaxed/simple;
-	bh=DzLnX9XsQiartOGOi9eoGYyN8RsdHsWoqQTIIKeZbk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EW0ZXUgW8PkZDRwi7H1S5Yqpy9l89UH5JnZVBLuagpggU4XMX9TnA0FDBtLS0yPYrPHmo3zxTz3W7EoACGDiDXhXNLrhmcMiS7a3MssKQ5KVvqHCZWEbiAUiInATdb7x0EaqwwyTCwMb+VHKfU8D053RZiT88QwMHALm7g2DfgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UuT0npXS; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Zcd3JbmGh0UbQSyR0oz9b076V96dHCA3CnyHpKlr+pk=; b=UuT0npXS+rRO7p8tKXAdcYEI/l
-	rqSypCun03HIPGcqBlCCl2yUj0aNFXj3PaQ8sL4wEMk/KrxV1MMofFMRq1eILq+V3n8mB3QZAw48H
-	Du/JDoLMmFOoeHKThqSHKrIG7AV2GgTuBaS4cG8t0Y9vVxr2VZawXIAKZblAgpojE3my7+zYfY+ZB
-	mzxzGHOFIx07P1QZX1miXEITEqyFc4jRYdIMop54avJVeq6JmJb8g23UhOIdfhzdlm/VVD2ygHv4G
-	bwxNf7QgUG67tfy9yiCWV7pzj11GLEKxTxtexDjMG9EYUM5euZGRmpYNalWLocP80m/QVo3XP1gQg
-	JWjg01aQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rv02D-0000000Dstu-1ZNc;
-	Thu, 11 Apr 2024 19:24:33 +0000
-Date: Thu, 11 Apr 2024 12:24:33 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Leah Rumancik <leah.rumancik@gmail.com>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Filesystem testing
-Message-ID: <Zhg48VVXfQiFTAJq@bombadil.infradead.org>
-References: <87h6h4sopf.fsf@doe.com>
- <87cyrre5po.fsf@mailhost.krisman.be>
- <Zfi62v5FWDeajwLq@dread.disaster.area>
+	s=arc-20240116; t=1712863528; c=relaxed/simple;
+	bh=RksIQbExvaCJUcl0G0CcojxzWfnl6xUQsFg4B3A8VxM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iEb3n4FIVYCLSXbYEAwPy9ci73VZynGCAX2o4w6T9Ah+Nrz3MFGZGG+hkqYCmf/Z2stvFFKvQjTqOJjelB+y7tbQoPgRHdL+5pafSr0f0lx4AVRa2LdbLBg0pXFbjYwImwjJegb7bXr9cAMrnuSmRoS7HV+SwPfj6yffj6hT1+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NXai15Yc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cYarYQZN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NXai15Yc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cYarYQZN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A747B5D430;
+	Thu, 11 Apr 2024 19:25:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1712863523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zCHGpeVSvZ41S2YiaygRkdmX2r+S8qFcFRruOh3fP68=;
+	b=NXai15YcYjFYP8nF3KNJin/UlgLz6V+g04lF0JS8rUIaAEqdkG+o1iAi2WYuUysrSNW28E
+	y3xM1tVsDCK+nPftORBjO/9k35B+nLFgfIOexwOzXZXClqwfLC2ziaI+qXgm+shTXtij77
+	0Ohp7hQk3hvKIZ/Hlp6CE8apUan6oQg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1712863523;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zCHGpeVSvZ41S2YiaygRkdmX2r+S8qFcFRruOh3fP68=;
+	b=cYarYQZNFNpy4leSIBv43g9d6QSQkgzXwZE/8pKybhzZ7TLpKQTIE8eLfZ9y1SVcwM30VQ
+	MiaYmv+vxrvaenAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NXai15Yc;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cYarYQZN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1712863523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zCHGpeVSvZ41S2YiaygRkdmX2r+S8qFcFRruOh3fP68=;
+	b=NXai15YcYjFYP8nF3KNJin/UlgLz6V+g04lF0JS8rUIaAEqdkG+o1iAi2WYuUysrSNW28E
+	y3xM1tVsDCK+nPftORBjO/9k35B+nLFgfIOexwOzXZXClqwfLC2ziaI+qXgm+shTXtij77
+	0Ohp7hQk3hvKIZ/Hlp6CE8apUan6oQg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1712863523;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zCHGpeVSvZ41S2YiaygRkdmX2r+S8qFcFRruOh3fP68=;
+	b=cYarYQZNFNpy4leSIBv43g9d6QSQkgzXwZE/8pKybhzZ7TLpKQTIE8eLfZ9y1SVcwM30VQ
+	MiaYmv+vxrvaenAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 566B413685;
+	Thu, 11 Apr 2024 19:25:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OiHpCCM5GGZuJgAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 11 Apr 2024 19:25:23 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>,  syzbot
+ <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>,
+  linux-ext4@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  repnop@google.com,
+  syzkaller-bugs@googlegroups.com, khazhy@chromium.org
+Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
+In-Reply-To: <CAOQ4uxi9L_Rs7q=fcLGqJMx15jLAArOWGwGfdCL8LOUCPR3L+w@mail.gmail.com>
+	(Amir Goldstein's message of "Thu, 11 Apr 2024 19:07:00 +0300")
+Organization: SUSE
+References: <00000000000042c9190615cdb315@google.com>
+	<20240411121319.adhz4ylacbv6ocuu@quack3>
+	<CAOQ4uxi9L_Rs7q=fcLGqJMx15jLAArOWGwGfdCL8LOUCPR3L+w@mail.gmail.com>
+Date: Thu, 11 Apr 2024 15:25:21 -0400
+Message-ID: <875xwn8zxa.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zfi62v5FWDeajwLq@dread.disaster.area>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=16ca158ef7e08662];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	HAS_ORG_HEADER(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
+	TAGGED_RCPT(0.00)[5e3f9b2a67b45f16d4e6];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: A747B5D430
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -2.01
 
-On Tue, Mar 19, 2024 at 09:06:18AM +1100, Dave Chinner wrote:
-> On Mon, Mar 18, 2024 at 02:48:51PM -0400, Gabriel Krisman Bertazi wrote:
-> > +1 for the idea of having this in fstests.  Even if we
-> > lack the infrastructure to do anything useful with it in ./check,
-> > having them in fstests will improve collaboration throughout
-> > different fstests wrappers (kernelci, xfstests-bld, etc.)
-> 
-> Except that this places the maintenance burden on fstests, in
-> an environment where we can do -nothing- to validate the correctness
-> of these lists, nor have any idea of when tests should or
-> shouldn't be placed in these lists.
-> 
-> i.e. If your test runner needs to expunge tests for some reason,
-> either keep the expunge lists with the test runner, or add detection
-> to the test that automatically _notrun()s the test in enviroments
-> where it shouldn't be run....
-> 
-> I'd much prefer the improvement of _notrun detection over spreading
-> the expunge file mess further into fstests. THis helps remove the
-> technical debt (lack of proper checking in the test) rather than
-> kicking it down the road for someone else to have to deal with in
-> future.
-> 
-> Centralisation of third party expunge file management is not the
-> answer.  We should be trying to reduce our reliance on expunges and
-> the maintenance overhead they require, not driving that expunge file
-> maintaintenance overhead into fstests itself...
+Amir Goldstein <amir73il@gmail.com> writes:
 
-kdevops has been using expunges since day 1 and shared them. We have one
-per filesystem test section and parallelize each test section. While
-useful for a baseline, over time I have to agree that a desirable goal
-is to not rely on them. But that just means your test runner can deal
-with crashes automatically. That is work we've been doing for kdevops
-and hope to get there.
+> On Thu, Apr 11, 2024 at 3:13=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>>
+>> On Thu 11-04-24 01:11:20, syzbot wrote:
+>> > Hello,
+>> >
+>> > syzbot found the following issue on:
+>> >
+>> > HEAD commit:    6ebf211bb11d Add linux-next specific files for 20240410
+>> > git tree:       linux-next
+>> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D12be955d18=
+0000
+>> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D16ca158ef7=
+e08662
+>> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D5e3f9b2a67b4=
+5f16d4e6
+>> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
+Debian) 2.40
+>> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D13c91175=
+180000
+>> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1621af9d18=
+0000
+>> >
+>> > Downloadable assets:
+>> > disk image: https://storage.googleapis.com/syzbot-assets/b050f81f73ed/=
+disk-6ebf211b.raw.xz
+>> > vmlinux: https://storage.googleapis.com/syzbot-assets/412c9b9a536e/vml=
+inux-6ebf211b.xz
+>> > kernel image: https://storage.googleapis.com/syzbot-assets/016527216c4=
+7/bzImage-6ebf211b.xz
+>> > mounted in repro: https://storage.googleapis.com/syzbot-assets/75ad050=
+c9945/mount_0.gz
+>> >
+>> > IMPORTANT: if you fix the issue, please add the following tag to the c=
+ommit:
+>> > Reported-by: syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com
+>> >
+>> > Quota error (device loop0): do_check_range: Getting block 0 out of ran=
+ge 1-5
+>> > EXT4-fs error (device loop0): ext4_release_dquot:6905: comm kworker/u8=
+:4: Failed to release dquot type 1
+>> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> > BUG: KASAN: slab-use-after-free in fsnotify+0x2a4/0x1f70 fs/notify/fsn=
+otify.c:539
+>> > Read of size 8 at addr ffff88802f1dce80 by task kworker/u8:4/62
+>> >
+>> > CPU: 0 PID: 62 Comm: kworker/u8:4 Not tainted 6.9.0-rc3-next-20240410-=
+syzkaller #0
+>> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
+S Google 03/27/2024
+>> > Workqueue: events_unbound quota_release_workfn
+>> > Call Trace:
+>> >  <TASK>
+>> >  __dump_stack lib/dump_stack.c:88 [inline]
+>> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>> >  print_address_description mm/kasan/report.c:377 [inline]
+>> >  print_report+0x169/0x550 mm/kasan/report.c:488
+>> >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+>> >  fsnotify+0x2a4/0x1f70 fs/notify/fsnotify.c:539
+>> >  fsnotify_sb_error include/linux/fsnotify.h:456 [inline]
+>> >  __ext4_error+0x255/0x3b0 fs/ext4/super.c:843
+>> >  ext4_release_dquot+0x326/0x450 fs/ext4/super.c:6903
+>> >  quota_release_workfn+0x39f/0x650 fs/quota/dquot.c:840
+>> >  process_one_work kernel/workqueue.c:3218 [inline]
+>> >  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3299
+>> >  worker_thread+0x86d/0xd70 kernel/workqueue.c:3380
+>> >  kthread+0x2f0/0x390 kernel/kthread.c:389
+>> >  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>> >  </TASK>
+>>
+>> Amir, I believe this happens on umount when the filesystem calls
+>> fsnotify_sb_error() after calling fsnotify_sb_delete(). In theory these =
+two
+>> calls can even run in parallel and fsnotify() can be holding
+>> fsnotify_sb_info pointer while fsnotify_sb_delete() is freeing it so we
+>> need to figure out some proper synchronization for that...
+>
+> Is it really needed to handle any for non SB_ACTIVE sb?
 
-That does not preclude the value of a baseline for a kernel too though
-test section section. While I agree that it will depend on your
-version of fstests and userspace too, its worthwile asking if a generic
-kernel baseline is desirable. The answer to this really is about scaling
-and doing the work.
+I think it should be fine to exclude volumes being teared down.  Cc'ing
+Khazhy, who sponsored this work at the time and owned the use-case.
 
-An example of a baseline of known critical failures for v6.6:
-
-https://github.com/linux-kdevops/kdevops/blob/main/docs/xfs-bugs.md
-
-Is something like this useful? If so, should we collaborate on a central
-one? How?
-
-   Luis
+--=20
+Gabriel Krisman Bertazi
 
