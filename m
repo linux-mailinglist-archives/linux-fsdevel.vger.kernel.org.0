@@ -1,58 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-16665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A692C8A12A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 13:12:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA418A12B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 13:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82801C21DD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 11:12:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977AFB24AF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 11:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DF7147C9B;
-	Thu, 11 Apr 2024 11:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E6A148307;
+	Thu, 11 Apr 2024 11:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOnePV1W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKOO/H+r"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3893147C69;
-	Thu, 11 Apr 2024 11:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194B91474C9;
+	Thu, 11 Apr 2024 11:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712833945; cv=none; b=h98LbVEam7xRgki4XttnTZT2Iz2c64+aqFbzIrTAx/sQV6X1Rj+WzJusI+td/uNHr8T22Pi6gI7I3CnbuhUGwgTascJ24LDXMV9bXVjYFY87Zs7oYgydwYCT+ops5AwKzDI4YAlFwrKXAE7W2TA4TpI76ILol+O2fwiqpVvb8oU=
+	t=1712833978; cv=none; b=D3xMFYYLEaGgbaIWuPfPVweITJ2h8grP997KI903tyN94pjMFTj/LbEMocoRstdOYdwcvI10EQ/75X20fhXIT94cocAo9biHDECoP2chzaEr1c29KxkZcJTrh9By/5MJ5sOjtPV/0330FJROssdLRBjjMvoPhP4pemC/igdgVMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712833945; c=relaxed/simple;
-	bh=2rQtShlTQeeKDYUdJtQPvdiMpsI9pPqx8aAJuE6cUiw=;
+	s=arc-20240116; t=1712833978; c=relaxed/simple;
+	bh=bbEKjy+eSYUjL9yRB7zTbDHe8ycq4RK3pkzGPtkRb0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I4AfYUB/baMVBDQy77CUAoxws/SwnO1jrLcRLAmm4abJOHHfl0gpv5Q+mBm9iW2vYS6J8YW90z1d0tE1EeZEoE+Soi/zwb4ovqVR+fAOIggKFv4F9mEgF3VxAH8hTzqimxV9c28zc51hM41N3stlndR/aA68il8x4wvstmrl5Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOnePV1W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CB41C433C7;
-	Thu, 11 Apr 2024 11:12:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhJJ4h16vPEHrZCUU50mo8eSECVtFoDswJP44jm1wOdiJoAd9yKC4EIsc5hNzw9dZwge+MvVf6qeyVJ5d0I+5vlKQrjjMF5uAbfyapLN29wY5D4XM43OO99OoU+8Nq8jGji0TMLZBhkN5nnd29xjLqLMAozv9gt3TMC38gWZ2YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKOO/H+r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8EF4C43399;
+	Thu, 11 Apr 2024 11:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712833945;
-	bh=2rQtShlTQeeKDYUdJtQPvdiMpsI9pPqx8aAJuE6cUiw=;
+	s=k20201202; t=1712833977;
+	bh=bbEKjy+eSYUjL9yRB7zTbDHe8ycq4RK3pkzGPtkRb0U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jOnePV1WrI4jUhAwnGXmXNZFyh3Doqixw8cHtmaliwiwSRRxmhCiD08AEww2RJCJs
-	 DFANl/qE4/s9l4WNx3yncn7Gp49wil5GwcRNaSDLyZmzhs/J57pWv3kUQaxZsgOeW9
-	 x8D58thlDFq0vow4MwrVHAjDWrK/OMcf8hzHl2AHvOWm4LT9htdeiqvcSvuDWR8ids
-	 SE0X8WHtO7ypm13AAr72SShx3XiodeT+euvJvjKH5sDIdSl5+m95OkK++aGinAFhMd
-	 zLg4IZvPUrlu0g7O2K+54huuH68iPgtw8o82YzPpEgk4JTfCLxj4RbwAB6aIX5zHeo
-	 hpXHcAUeatuuA==
-Date: Thu, 11 Apr 2024 13:12:18 +0200
+	b=hKOO/H+rXXxAnPdoIb9WMdIQOAqjOfwzm0oBY0anLEYIa2l46BFS5STObdd2UPOcM
+	 WU9fptb5n9M1AslEXQLcGFtNu680YB6/xkCjrYZXp/AlnfCObZTVi+rSF/VXGv2FBm
+	 l45buWGmeRbVZ3yoLrQz03ojHlAng+bTC8nWkv9P5PaeK3IhCUj7HXwDhw+kKn609y
+	 ZNl6HnUfPnvtt+caFcBuUEqzgxXyF07kox0gfNZooFQOP2+ByeBWmRodvRMhBvoePX
+	 Mhz4oS9F1ZuD/0yTJm1Iy4w6ukGX3OkheQ5tvm+OM9g1WTOru4XS8SzXKSDtYzNYzm
+	 F91z1+/RsMicg==
+Date: Thu, 11 Apr 2024 13:12:50 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, jack@suse.cz, hch@lst.de, 
-	axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH vfs.all 04/26] block: prevent direct access of bd_inode
-Message-ID: <20240411-periodisch-luchs-95fbe85c19f8@brauner>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Matthew Sakai <msakai@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>, 
+	jack@suse.cz, hch@lst.de, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com, 
+	dm-devel@lists.linux.dev
+Subject: Re: [PATCH vfs.all 19/26] dm-vdo: convert to use bdev_file
+Message-ID: <20240411-abwinken-gesehen-a8f038f147aa@brauner>
 References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
- <20240406090930.2252838-5-yukuai1@huaweicloud.com>
- <20240407022250.GH538574@ZenIV>
- <45c32706-b599-d968-4bff-4ad8f0768275@huaweicloud.com>
+ <20240406090930.2252838-20-yukuai1@huaweicloud.com>
+ <a8493592-2a9b-ac14-f914-c747aa4455f3@redhat.com>
+ <20240410174022.GF2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,56 +62,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <45c32706-b599-d968-4bff-4ad8f0768275@huaweicloud.com>
+In-Reply-To: <20240410174022.GF2118490@ZenIV>
 
-On Sun, Apr 07, 2024 at 10:37:08AM +0800, Yu Kuai wrote:
-> Hi,
+On Wed, Apr 10, 2024 at 06:40:22PM +0100, Al Viro wrote:
+> On Wed, Apr 10, 2024 at 01:26:47PM -0400, Matthew Sakai wrote:
 > 
-> 在 2024/04/07 10:22, Al Viro 写道:
-> > On Sat, Apr 06, 2024 at 05:09:08PM +0800, Yu Kuai wrote:
-> > > @@ -669,7 +669,7 @@ static ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> > >   {
-> > >   	struct file *file = iocb->ki_filp;
-> > >   	struct block_device *bdev = I_BDEV(file->f_mapping->host);
-> > > -	struct inode *bd_inode = bdev->bd_inode;
-> > > +	struct inode *bd_inode = bdev_inode(bdev);
-> > 
-> > What you want here is this:
-> > 
-> > 	struct inode *bd_inode = file->f_mapping->host;
-> > 	struct block_device *bdev = I_BDEV(bd_inode);
+> > > 'dm_dev->bdev_file', it's ok to get inode from the file.
 > 
-> Yes, this way is better, logically.
-> > 
-> > 
-> > > --- a/block/ioctl.c
-> > > +++ b/block/ioctl.c
-> > > @@ -97,7 +97,7 @@ static int blk_ioctl_discard(struct block_device *bdev, blk_mode_t mode,
-> > >   {
-> > >   	uint64_t range[2];
-> > >   	uint64_t start, len;
-> > > -	struct inode *inode = bdev->bd_inode;
-> > > +	struct inode *inode = bdev_inode(bdev);
-> > >   	int err;
-> > 
-> > The uses of 'inode' in this function are
-> >          filemap_invalidate_lock(inode->i_mapping);
-> > and
-> >          filemap_invalidate_unlock(inode->i_mapping);
-> > 
-> > IOW, you want bdev_mapping(bdev), not bdev_inode(bdev).
-> > 
-> > > @@ -166,7 +166,7 @@ static int blk_ioctl_zeroout(struct block_device *bdev, blk_mode_t mode,
-> > >   {
-> > >   	uint64_t range[2];
-> > >   	uint64_t start, end, len;
-> > > -	struct inode *inode = bdev->bd_inode;
-> > > +	struct inode *inode = bdev_inode(bdev);
-> > 
-> > Same story.
+> It can be done much easier, though -
 > 
-> Yes.
+> [PATCH] dm-vdo: use bdev_nr_bytes(bdev) instead of i_size_read(bdev->bd_inode)
+> 
+> going to be faster, actually - shift is cheaper than dereference...
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-I've folded in those changes during applying.
+I've used that patch instead of the original one.
 
