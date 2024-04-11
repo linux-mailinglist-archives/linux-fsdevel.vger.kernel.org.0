@@ -1,244 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-16654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328968A0AE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 10:11:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400678A0AFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 10:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563E51C227B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 08:11:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CFDBB25462
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 08:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E96A140364;
-	Thu, 11 Apr 2024 08:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F9813FD9F;
+	Thu, 11 Apr 2024 08:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PgIKjItf";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="yjRYCBk3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E903713FD64
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 08:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712823082; cv=none; b=eqOWscqRhjUJFFOB7mZ9Cx8/YR1L+/nUimGoHZl3dTSkmtv4yWN1z8vYSbydpXl0dfVt5ipQ8eRk0hQ0qyOiD/wCs4i+iha8kx26MzjO7t2S/0M0Z2mwMoAMwBkglgMZOP0nT6GcqUyqJfV40cKu3WhRlI6Pxfbe1QNYQL7fcok=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712823082; c=relaxed/simple;
-	bh=fI+P6dGeFYFfCM4+1ofosvU/0Y2jvyMzK00Mc8yDf4U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HGCG/ZxXsNwsW9F0Xh8Y3G/9jU4o/wwmSlHcMyNQCXXcVvBz+zyTZvt9tgxmJfDh3B2NY5p9veDLrNJMq6zBT63kNfP0t4z67AhYdLJB/A1iYYV46T3wz4sbTrWKx1OS25SmhqmD2XKR1Ok44H9XZlc+CgIF9vAYXFSGzmhyWPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7cc7a6a043bso861899239f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 01:11:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712823080; x=1713427880;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lyVk4fZK6G5lrOMemYYGYNUgvrJEppNnpw7b6cmPbMI=;
-        b=aDwG9Fp4Mk/IY/VhYA64Dt17pbYB2OEsDO/mNiPEThfX8DFa3EaBrLg6LAFUxS3krO
-         YJp3pwi0s9ZiMaqUba1uyuc0RSiWuxyiTttBFroAnYpXZMpX6IwKp3A9c0OhhkhRoI32
-         kzCHzy+7zuF9p5e2rptsgFEEP6v7INEw6SXCwNf8MW2+10S0ANTmYgCTzzubvdBqIdty
-         81r8dos+A3t2141xsvg1XmX7kS3XPIl17yF0bytPBr3QFhfq5NpMDR+IYjbmo6eScH5r
-         ShG3dNzlUGx3M8ZGe1CUDh1zQXS/lqTU6eTHB1ccGoKK8Dmo7cXozHXwi6M4Uo/rF7Bv
-         Mhmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfdLkVonGG1TuZu+x8ORoXzmAfr6oyeo8Re5N99MknGyvQknpoYw24yeyeL3btOmYApUABpsJeNGRyMLDN3snzCepAYOTuR3wvSStkwg==
-X-Gm-Message-State: AOJu0Yy533cF5YbjgqoTdFbWIyAScOLwHm2ZuBHBL2nD//+cXLWUCjsD
-	xoFhLhlt0G+coB2zcJ8SNYCuwQCVu889dBuTYdVUw0bg/2kd1EA6igMV2X73A1RWrBNwk2boeHR
-	VrxEFgUVSWNzkD2O3HEo2egw5AG+YvFnHosdloRxI1b+AJymfhp7X/9Q=
-X-Google-Smtp-Source: AGHT+IGWSzXZ7iEjij4pEHGJLAYYCTo5dDBjl1yu2wYZQ1hEzcyBChH1yWB4PXbbMCwlw474FQ0diYwVPtpYiE4TiinUwu65vSEz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131312EAE5;
+	Thu, 11 Apr 2024 08:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712823343; cv=fail; b=VJ1fkSJWVIUazDT4+5Djh6cO70ecPqw+SRqQ4O/RV3tmcXR99dG/J1b7n7k6l2XmyyrsJy7I9w08XjXAQgXDAc+R5VzJSLq/5cq/mAsSvvZnWPdquFus+uEBITuBKO7P1PmiYV+UkwnE+NXo/GZ/j4Jp0GSfhaYl6Y0LuumJCMQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712823343; c=relaxed/simple;
+	bh=belBAIsp0NdtoiWUA2HV6URjZ4Vw42c6I/iM/AjGphA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=omn7jLLBIhagmdVQ0WGIT/eET4bewMb2WS4BY9hlNHKLAhD329Yfyuy+a4YpSD8yWbFTfW2nt1HzbI98HGKUZ2QNJinPI/TQpVeB+6Jei0b1hr6sIE07vdEqOZHyeGenHLk3NqewqiKPh06AtQ5NahO0TxsTqNdzuM9Yr5RFdso=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PgIKjItf; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=yjRYCBk3; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43B7jESX004283;
+	Thu, 11 Apr 2024 08:15:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=kvs2U4n5wCCEmmuF1BI9OBh5eqACnZJt3yUkSGWbHZg=;
+ b=PgIKjItf7n143FOaDU8qIGX44r1cU+RNq9xrjvuUEQpx8TjZcmVrssrud7w7ThoIU9fd
+ SVgT7IrBypMaZvEuQSNY2FVVdZJHnMBPhDQ3WbPI6GzNIwfbeCbB7x3RT8T3zq7BANka
+ 7h3mWwUKpOSgiFrtGlNIHFNP2m0tiZW064jnf+hF/J1VU8xVZYOz+Bknk6wNtENo6AJu
+ gE3SJKEQHnFoRLAzM1cV5q3oH1Qd2uCXmjOGBaXWHqnum6BFQhBiGOuB76C9r0rjwHhv
+ 8VOWWfB7WKPDM3ubq0CVGQTfnlf12T6AGvIyNN2EovRjAigB7TlR+vK22xfVzrbbVAzg ww== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3xax9b8y8y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Apr 2024 08:15:14 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 43B5FdYr003010;
+	Thu, 11 Apr 2024 08:15:12 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2101.outbound.protection.outlook.com [104.47.55.101])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3xavufgs5g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Apr 2024 08:15:12 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oZEQ5/pQn0D51JMmRJfp6+fVYPvT9DbFwcNzUwlw6YT3bWogkSWIvG8p6k7SDU+P9eHZdoZTewLw7SsPgyPv7hTbUkmBbB9H6Dma1cPwTg3e1FmAxW71sZ9ap7RYkIWkPy8iuACRh9BrfnJ/mWSSp2QY1XNwOeNI/wN1KZnAEUeqI4cuDrIf9K+U53afAIBrAj11u7Qi3elhNnoBGNKLOxMEO2p/k88yOASaRr55DJtjGY1tI97K1/F2f3A2LLiuV6RDJGv80d8MRLooOG0m8BVWRW9CkCdVID24PLGvYJCKthL4eIek0Wr2oIfuzO041QWeiY7zltXGph1JDAxTAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kvs2U4n5wCCEmmuF1BI9OBh5eqACnZJt3yUkSGWbHZg=;
+ b=PQr42j6xIjQLP26n31tW5eJpP+p+DgBgayU7treHZplX1r/diC4hEq11xuVxgLPZ4AagVhV/laGSGibBPF46LERcLUSHFQ1GD0JPZe9SmIr+2LQCl7eKT3uVIQp4u6UZubtCx3W9x/e7miIoD7U7IeeHBQqxdpptJLzD0cqCqzjNhxd4zFK7yZovEqx2DDo9BpJsT++B1qcN8Vzxem23YXjIMRHvsJF3fL+IKgCjWPuu57XZz6LlyoLFdoE1DDyIqLNd1kTLUnevWOvrJE6q5mcIT/j+rwPGoWgH7YMyaOWwcuT2PlegKnSLwwouxDKmFBlnI6nWO1xqx2/QXduqbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kvs2U4n5wCCEmmuF1BI9OBh5eqACnZJt3yUkSGWbHZg=;
+ b=yjRYCBk3ydFLJ1ij7omuBx4PBidrHx/DGCPWT4qAtILlFxLcNj7secnjzeXpecsD0KBMFaUHWtlxOZniM3IdiFLfMAmjPsfEW3GcpwMvMfACBj+ELah2GGquee8XH1bLarMBETqTYUsNWl1MbCJETzj7qfHECvFzCM2bYZsDuh0=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by PH0PR10MB5756.namprd10.prod.outlook.com (2603:10b6:510:146::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Thu, 11 Apr
+ 2024 08:15:09 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::ae68:7d51:133f:324]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::ae68:7d51:133f:324%4]) with mapi id 15.20.7409.042; Thu, 11 Apr 2024
+ 08:15:09 +0000
+Message-ID: <b7f35443-3b8f-4c42-9583-9944b50ef3fc@oracle.com>
+Date: Thu, 11 Apr 2024 09:15:04 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/10] block: Add core atomic write support
+To: Luis Chamberlain <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+        jack@suse.cz, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+        linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org,
+        linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
+        nilay@linux.ibm.com, ritesh.list@gmail.com, willy@infradead.org,
+        Himanshu Madhani <himanshu.madhani@oracle.com>
+References: <20240326133813.3224593-1-john.g.garry@oracle.com>
+ <20240326133813.3224593-6-john.g.garry@oracle.com>
+ <0a9fb564-7129-4153-97d6-76e9b3a1b6c1@infradead.org>
+ <Zhch-6XSPYxM4ku3@bombadil.infradead.org>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <Zhch-6XSPYxM4ku3@bombadil.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO3P265CA0029.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:387::7) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b45:b0:369:f7ca:a359 with SMTP id
- f5-20020a056e020b4500b00369f7caa359mr418020ilu.0.1712823080236; Thu, 11 Apr
- 2024 01:11:20 -0700 (PDT)
-Date: Thu, 11 Apr 2024 01:11:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000042c9190615cdb315@google.com>
-Subject: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
-From: syzbot <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, jack@suse.cz, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	repnop@google.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH0PR10MB5756:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c1a0cf0-be65-41e7-c70c-08dc59ff8101
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	f1ZLRuESO+MgaitVXGkZCj+Dn2Esz2VrmiO4jYwPQzfJR+WlcHDXOYuAEPVUBXVAka246RB97mUvRLeeSYTjar/vv2xAB1jGHcz1aXkeATH6pKtCcIx4tXUTX8EuRw8D0N/fzDbU76CiMy/gl23jCAaJZmGcPHWqIWxzGFjgN9CwRdPd948nHRCGdER4wxlSRbNeJKiaa/vOMfvhKJgccGqAeBhy+l+2IWuHGHnPmn0nr3xG0SjOumbLBwcoDZXp/DDppMmmbMJdQD8Us+9A1vW/xKd/ZqyNqzo3SPhOqeCW2/f6K58H2hCzN7RW5Ej8cYLFIldDkGqxrE35tJFySdhU4ZyLKrsFgeqPA6gkm0pm9k9pD09BIpvvf0rAViG4zyF1C/db9UfhNsrGcSrKk2JKYWaPUb1+Pi+tWiScktGEvmAnDA+SXmdmBZyLCMZV3kQV9QdXHfvvpq9z7jCq7NMuTM4/4RO/es3WO1lRDNju01UAdHd33N+D0ZUWNPtiK6CBi3SdQKj3flUEn37gP1IkONPfKcEj6Nu1CoeqBXspJt+KyBX/iicvlfpHT2ed9V2oPci+VMPINsSGHHWLe4UO0X3Tk7B6Pbhkwb/kY1C6KOij1gsqek3d5rnx4xso4WNRBOdWkuHCujC5owGtgnTNfYemg3THIC7CKfEy2mI=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?aEl6UGV1TTF3TGJQbG1hSGc0aWI4WDVSdTNEaEttdEJyZkRVRy9ZZGZYMFgz?=
+ =?utf-8?B?eVdVT1ZjYkNLS2RPN0tpUnB5SUlVNE90L3RFbGRBTXBMWllKeW1tVnpQcCto?=
+ =?utf-8?B?UjhMWEFkWEJEVkZxT1laNDBEbi9uaTN3Yzk5V3lXY0NUU2lxOEQ3Tm1Nd2dG?=
+ =?utf-8?B?NlR2VkdXb0ExOFlrazRtZ0lnUVlFNEh4RGJjZTUvcG44MjZ5anQ5VHNTeVY0?=
+ =?utf-8?B?aXAzbHkxTlRwSTQ2ZGZpbUlvc09UdkhsM1l6WVdwNzZDOW5aTHdmdkl4MmJP?=
+ =?utf-8?B?WjR3MTNvcFBsTW9mZkZIenhYaE1WcnBhQmFJZFdBT1JRYkt6aVN6TFIzYlVO?=
+ =?utf-8?B?cld5dUJuSG0xR0U0VE4zRGFYRDRneEtjTzZycXp1WHFpc2tnZzBZSmx5VURR?=
+ =?utf-8?B?ODY4L3F4bFM2Wk93R3JlemdvSEcvMnJkYW10TDZOWXhoZ21xYmt5UUN1WTZp?=
+ =?utf-8?B?bkRJZVNRTFlLSUN6MGRtVFkzanFmSVY0VW5EY2k5dnFvdXI0MUF3RkNSSFpI?=
+ =?utf-8?B?U09ONUZmeUpGT0NXY0VKa2RGVEdZNWVFdEd3OUpINXRPdTFIakJ1cm9hN3Zj?=
+ =?utf-8?B?WVc1SENibDRuUEM5MFd0djk0QzV1THBKMm0yTTNrME9mOWIvSlU0MFp3ZGUr?=
+ =?utf-8?B?cVF2d3owT2tEcGViNVg4ZUlsVzIyV3VnM2tXWkFCS3lzakExeXk1a1lwaUxl?=
+ =?utf-8?B?bmswSnVibllJR0tvUTlhOGdKTUUyU0RiU3JqMlZ0bkJ0d0FFblhzWkRJVnUv?=
+ =?utf-8?B?bVlLQmJzcFJYQVFPOGd4OVU0TWlCVzRtOGNhbC8zVnBmbGhZOTZXa0g0MTd4?=
+ =?utf-8?B?b3ZrZVNjMmR1OVNSbU5OaVVGcG4rdW5OR2dDZ3phc0ZldWh3aWpFbEJDbUd0?=
+ =?utf-8?B?YWFmamViOXg5RkJBMFpxTUNxc1hWZkhsVEQyZ1lRMWVJVVk5WGNYYzl4Rnhu?=
+ =?utf-8?B?VlFkU3dHKzFCQnIrQngzZFB6L0FuemsrbTR4VXNhTkR1SUxtMjBEMXU3VUZi?=
+ =?utf-8?B?N3VqL3pHdlA0djJXeGdnVmJjY1ZCczJ1QUxpMXN5WlhVL2ZrTmppTE16dGtP?=
+ =?utf-8?B?MGhzb1d6bVo0WTVZdVMrWW9SVXJwMlhxOVlwK3J6ZjRGRlNORHlpdmV0dzdG?=
+ =?utf-8?B?V21xTzVHNWFFWStYblhOeGhzNk9Yd1FDQ2dTVmtSeHIyU2pXMDVrUEI1NytZ?=
+ =?utf-8?B?VFpBNnpWc0ZNQ1NnVlg4cWxIdnJIY3JKSzh0Y3BsZzIxTXVnSXRwaFdGZFEr?=
+ =?utf-8?B?bWlzQXBjb3MxSVJrRDV1M1VlbHp2dVNpTjVybE8wdk4wYVNYVWdadDgrUnhL?=
+ =?utf-8?B?bDM2MDJYRU8wY2QzOFJZbkVaVVJiUUhrVTFZbGVQTEJiLzhnaGZaWlJCOFpm?=
+ =?utf-8?B?dHI0L0Jwem1OS1ErMlE5M21zRnRYSVFVWmNKNEZTSkxQNnhXdFlnWVRrYzMy?=
+ =?utf-8?B?WEFlQ3dDZ2poaUpvWXc2VlYxR284eHdKd0pXM0ljZ29HazhDeEoyZ0JJaFhq?=
+ =?utf-8?B?ZFNxb0xVcDdEdEZHd0I4Tjl6TEVNTkUwU3dZU2t1Q0huUzZkL2VvYmxaN3dt?=
+ =?utf-8?B?Q1p2MDlaOWMycENWOWpiMkxWMDEvQTAzTTZxb0xLR0VuanhiVTZ3ZkdXMk0w?=
+ =?utf-8?B?alNMeXpCcytlTHBXWkEweU1OTU14OWQvOG11Y1l1ZTJkMGUyQ1I4L2pKekVq?=
+ =?utf-8?B?NU5CK2FPMWY2ay9LbGtMc3JFWkpJRkVvMFQxblV2alZiOFNVc0ZWMmczSVdz?=
+ =?utf-8?B?alo2MXhMRXlxa0hid0JSKzBOWlJnVnpXVXRvYk1kWllLYXpLVDVNdmFCUUpw?=
+ =?utf-8?B?aVdNald5Z05tZFhHcHpGLzc5R3pTcnpINGw4YnhpaEd2RFI5Tm0wV0tpcERC?=
+ =?utf-8?B?NE1iTENGeHJHcnQ1M29kaGdNT1dtbXl6bEhyMUFxY25lME95Um1RMGNHaDJo?=
+ =?utf-8?B?VmJTK2l6UnhjaDlYSFVUYkF1ZVpIVkRESW96NGhkMURQQlJubGdCVWR0WGxG?=
+ =?utf-8?B?WTlFMGhrczZIdmNZN3dZWXVsMUkyR2pNVzdVQ1UyM2pDS2wyMXNYZEQ5MUlI?=
+ =?utf-8?B?ZjZwTzZuOGR6a3FzYUlzZnJJdm82eGlrd1VjWGFaajRDcWZ1ZHNhOUR1TzlK?=
+ =?utf-8?Q?ZNjJqC/teqjo4xoJMI2ZpT295?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	a1C/HGbYTaA3SfWPNgJ42gAkN9vTbilSsx7HNeBNgzcTTS9K0/fWsD7ual2c62RbFijY4Ee5mvgodAFYMCVVzEgeXAKSrEZnY57XWysmPylQOP9NoeJ86SeEAqVhYl36HX5beXxuG+Ak8/VwfpEKmT/MflYm96hV1IDvK/WXq/pE3jgY36YvIMcXoComrcuLmbAnvsh08TCapFFeJuBfNM4ajmIJGHC7o8slMwarQ8cRwTWPLYVetCWJ3RT4iziX9n1bXkY/dP+v2hjzhHPYIQD1aP0t0gEBQJWuitK5ndH9uU8LZ7lK1jJMRCvsp1Hls8O+dqpogs8S5j3wzhmkpY8CzKosadY5wesoXXqK8nYypJ2aaXBfL9eFOOLvUUOZRVNL+Um006nP2RHhJ9vu+dFG/LTNpp968cJSnKfbjJErWXnjHdBO6JIUTMAWsKehrqXpfkI7XnQsmRkvh2AzELuIJa4hIAaI3gJfakVv5taOWOuIRGNlA8/b0ki/1zqNIMgVic6hZSzIB6p5rLnZqftVY3/++dXt2TRwz3tlv9E2dP/S3MLlqvcxzPLO67ZjBPMEQRT/IAzYdBHKvx86aW/+J2MVm5PQwMWK9wAbJFQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c1a0cf0-be65-41e7-c70c-08dc59ff8101
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2024 08:15:09.7682
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jK7vFKkWtJoCE6tHNq3WcKK/LR63lXE1ixZqJIJeFGBSwigiSuFhOGDphKRNisigmbqj9BCtMt32jvHTpg5BgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5756
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-11_02,2024-04-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ adultscore=0 malwarescore=0 bulkscore=0 suspectscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2404110058
+X-Proofpoint-GUID: YHbePlUUmZM5jIyISx7dFsbS9woj9atJ
+X-Proofpoint-ORIG-GUID: YHbePlUUmZM5jIyISx7dFsbS9woj9atJ
 
-Hello,
+On 11/04/2024 00:34, Luis Chamberlain wrote:
+>> On 3/26/24 06:38, John Garry wrote:
+>>> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
+>>> index 1fe9a553c37b..4c775f4bdefe 100644
+>>> --- a/Documentation/ABI/stable/sysfs-block
+>>> +++ b/Documentation/ABI/stable/sysfs-block
+>>> +What:		/sys/block/<disk>/atomic_write_boundary_bytes
+>>> +Date:		February 2024
+>>> +Contact:	Himanshu Madhani<himanshu.madhani@oracle.com>
+>>> +Description:
+>>> +		[RO] A device may need to internally split I/Os which
+>>> +		straddle a given logical block address boundary. In that
+>>> +		case a single atomic write operation will be processed as
+>>> +		one of more sub-operations which each complete atomically.
+>> 		    or
+> If*or*  was meant, wouldn't it be better just to say one or more
+> operations may be processed as one atomically in this situation?
 
-syzbot found the following issue on:
+"Or" was meant (thanks Randy).
 
-HEAD commit:    6ebf211bb11d Add linux-next specific files for 20240410
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12be955d180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=16ca158ef7e08662
-dashboard link: https://syzkaller.appspot.com/bug?extid=5e3f9b2a67b45f16d4e6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c91175180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1621af9d180000
+I think that we just need to say that the write operation will not 
+complete atomically if it straddles the boundary. Whether the separate 
+parts of the write operation which straddle the boundary complete 
+atomically is undefined and irrelevant.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b050f81f73ed/disk-6ebf211b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/412c9b9a536e/vmlinux-6ebf211b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/016527216c47/bzImage-6ebf211b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/75ad050c9945/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com
-
-Quota error (device loop0): do_check_range: Getting block 0 out of range 1-5
-EXT4-fs error (device loop0): ext4_release_dquot:6905: comm kworker/u8:4: Failed to release dquot type 1
-==================================================================
-BUG: KASAN: slab-use-after-free in fsnotify+0x2a4/0x1f70 fs/notify/fsnotify.c:539
-Read of size 8 at addr ffff88802f1dce80 by task kworker/u8:4/62
-
-CPU: 0 PID: 62 Comm: kworker/u8:4 Not tainted 6.9.0-rc3-next-20240410-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Workqueue: events_unbound quota_release_workfn
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- fsnotify+0x2a4/0x1f70 fs/notify/fsnotify.c:539
- fsnotify_sb_error include/linux/fsnotify.h:456 [inline]
- __ext4_error+0x255/0x3b0 fs/ext4/super.c:843
- ext4_release_dquot+0x326/0x450 fs/ext4/super.c:6903
- quota_release_workfn+0x39f/0x650 fs/quota/dquot.c:840
- process_one_work kernel/workqueue.c:3218 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3299
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3380
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 5085:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- kmalloc_trace_noprof+0x19c/0x2b0 mm/slub.c:4109
- kmalloc_noprof include/linux/slab.h:660 [inline]
- kzalloc_noprof include/linux/slab.h:775 [inline]
- fsnotify_attach_info_to_sb fs/notify/mark.c:600 [inline]
- fsnotify_add_mark_list fs/notify/mark.c:692 [inline]
- fsnotify_add_mark_locked+0x3b2/0xe60 fs/notify/mark.c:777
- fanotify_add_new_mark fs/notify/fanotify/fanotify_user.c:1267 [inline]
- fanotify_add_mark+0xbbd/0x1330 fs/notify/fanotify/fanotify_user.c:1334
- do_fanotify_mark+0xbcc/0xd90 fs/notify/fanotify/fanotify_user.c:1896
- __do_sys_fanotify_mark fs/notify/fanotify/fanotify_user.c:1919 [inline]
- __se_sys_fanotify_mark fs/notify/fanotify/fanotify_user.c:1915 [inline]
- __x64_sys_fanotify_mark+0xb5/0xd0 fs/notify/fanotify/fanotify_user.c:1915
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 5085:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2190 [inline]
- slab_free mm/slub.c:4393 [inline]
- kfree+0x149/0x350 mm/slub.c:4514
- fsnotify_sb_delete+0x686/0x6f0 fs/notify/fsnotify.c:106
- generic_shutdown_super+0xa5/0x2d0 fs/super.c:632
- kill_block_super+0x44/0x90 fs/super.c:1675
- ext4_kill_sb+0x68/0xa0 fs/ext4/super.c:7323
- deactivate_locked_super+0xc4/0x130 fs/super.c:472
- cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0xa1b/0x27e0 kernel/exit.c:878
- do_group_exit+0x207/0x2c0 kernel/exit.c:1027
- __do_sys_exit_group kernel/exit.c:1038 [inline]
- __se_sys_exit_group kernel/exit.c:1036 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88802f1dce80
- which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 0 bytes inside of
- freed 32-byte region [ffff88802f1dce80, ffff88802f1dcea0)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2f1dc
-flags: 0xfff80000000000(node=0|zone=1|lastcpupid=0xfff)
-page_type: 0xffffefff(slab)
-raw: 00fff80000000000 ffff888015041500 ffffea000096b540 dead000000000004
-raw: 0000000000000000 0000000080400040 00000001ffffefff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 1, tgid -625457465 (swapper/0), ts 1, free_ts 0
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
- prep_new_page mm/page_alloc.c:1476 [inline]
- get_page_from_freelist+0x2ce2/0x2d90 mm/page_alloc.c:3438
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4696
- __alloc_pages_node_noprof include/linux/gfp.h:244 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:271 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2259
- allocate_slab+0x5a/0x2e0 mm/slub.c:2422
- new_slab mm/slub.c:2475 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3624
- __slab_alloc+0x58/0xa0 mm/slub.c:3714
- __slab_alloc_node mm/slub.c:3767 [inline]
- slab_alloc_node mm/slub.c:3945 [inline]
- __do_kmalloc_node mm/slub.c:4077 [inline]
- kmalloc_node_track_caller_noprof+0x286/0x440 mm/slub.c:4098
- kstrdup+0x3a/0x80 mm/util.c:62
- kobject_set_name_vargs+0x61/0x120 lib/kobject.c:274
- kobject_add_varg lib/kobject.c:368 [inline]
- kobject_init_and_add+0xde/0x190 lib/kobject.c:457
- sysfs_slab_add+0x7a/0x290 mm/slub.c:6877
- slab_sysfs_init+0x66/0x170 mm/slub.c:6961
- do_one_initcall+0x248/0x880 init/main.c:1263
- do_initcall_level+0x157/0x210 init/main.c:1325
- do_initcalls+0x3f/0x80 init/main.c:1341
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff88802f1dcd80: 00 00 05 fc fc fc fc fc 00 00 00 00 fc fc fc fc
- ffff88802f1dce00: 00 00 00 06 fc fc fc fc fa fb fb fb fc fc fc fc
->ffff88802f1dce80: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
-                   ^
- ffff88802f1dcf00: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
- ffff88802f1dcf80: fa fb fb fb fc fc fc fc 00 00 00 fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+John
 
