@@ -1,120 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-16718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F4F8A1C9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:51:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3788A1CAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556ED1F24C1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 17:51:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 170A4283ECF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 17:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2F017CBC7;
-	Thu, 11 Apr 2024 16:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468C91B75A3;
+	Thu, 11 Apr 2024 16:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b="LFrnW+gV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QjszwsZV"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="OZozFB0y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow3-smtp.messagingengine.com (flow3-smtp.messagingengine.com [103.168.172.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC183D547;
-	Thu, 11 Apr 2024 16:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648951B7596
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 16:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712852967; cv=none; b=A55tMoPpAQo7vmNMoj9PHZVivSIHyVldwlNSnnkcl9BG3F7JL5W6b8CrdwD76ZRGdOVVilZ4GFmHGHvNyrheZ65ZYsvHjQtvtUEde7XDXoTuPgAs4fPv+y9n8OGCTBHxwWNnrsPlya4KUYCDDYRdM1N3ntoEWvSb9nmDC5BLfTA=
+	t=1712853136; cv=none; b=eql/BLchIw6dw+m7Gn5I8gw10vipaRU1edQ2oAoHtaaxNPk1oNq5fBGA/qvDTdAifNe5dWNq+lwfnbBmoK1P2X9R0xP3PKfRLP2uF8aJVmOuFZTfjLORpAZCBIQ4PTjXyfHLe5AptaVZHIdZlbYT2q7ynThR3/nNpTjDKwPEATM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712852967; c=relaxed/simple;
-	bh=nG9AvDiE9iyn3GD+qkFmmatVAFhuimsNOSJez9ntW2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwwrynCnC+ifeyEMvSA5owY4P6X8wT5+JyrNTXLsVl1jcpRozvlfzJJ4sqz/60iQh2M5pOSb+aFIj8kkzrcJBHvNUBDrh6bnQvIIa875/fijsMQHv+X0JRrRWJsDUPRXnDtjvXBoowJlBVaUtxde/SdWg4cyrKbf8QcBwFN9Mno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com; spf=pass smtp.mailfrom=tyhicks.com; dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b=LFrnW+gV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QjszwsZV; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tyhicks.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 9DA22200367;
-	Thu, 11 Apr 2024 12:29:24 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 11 Apr 2024 12:29:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tyhicks.com; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1712852964; x=1712860164; bh=gqLmiSCFDE
-	hztj3oo+M3RvxGGuNWOcopRWr00SfiOXg=; b=LFrnW+gVLOjXO932zV8JFLHcU4
-	Z11oxiPjXEeIoTv+hRBxeNFBSHFRORV89RE+hDz8o/FNQfb0ZylM3LlaV7SfIbIh
-	Addzl5MtYd6DCOKuuPjLWJpx7oS4vGZa3oYfHS1M59LR0YuAs7ja3h2OT7vsqFfY
-	5lefW/nwLq1Gjc8RK3AO2aQKwckfEkr+nH8s5ZalQfAl92JZTgbm+Wg914c2UB5m
-	eNqrL2vxBMmvDGIaiYP6BCPQg3oUbh782W0RrfBe4O6nE4nSNjLpbLzpSB9hnFID
-	pXfng5Et+lGDZHZhWOFMibGKmgT0m+diqRUIayMGR5+j1SDWiOhyO1XbxcyQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1712852964; x=1712860164; bh=gqLmiSCFDEhztj3oo+M3RvxGGuNW
-	OcopRWr00SfiOXg=; b=QjszwsZVkv7GUJ0uc0dhoDjZrwffXdSQOTPWHmT4H3mj
-	sdeyyErO2JxiM/ZM7lw+G2Xjk+V8dzc0F0tFHdo6JHONeBT/ha7tRiMO+nyluWht
-	sCLk0CteXP+F0ciqwnwyEzKIhl9lFKOQejgIyx3d0knunefs6jkNYVEfPy6BfWky
-	My4ZuOyf7c/xkIXD1YnRECJRudPOX5hGDB9SeyTh2Mi6k0tMbZfTJvdXYfILZCyY
-	TMycg/iXXwbTaWErbdzYedwL/odNoQ4I/lF28UcD3TuK+QiDKYMU7xoQyKetNMnM
-	xrjf9RbU15ha6PRU4peAkTbO7efhDWd6dUDQ8SlhlA==
-X-ME-Sender: <xms:5A8YZul7kXoS-E9HTR43PZEfsjxiUGr6s04HTzfT7XGJQqRPvj-YWQ>
-    <xme:5A8YZl00B3abTQ5vNWSDYehm_cfFWxdUj6XlCR_XJIzyPSm5bvgogBrpmjNhj3AbY
-    YVU8tpnsP6EPyEyqaY>
-X-ME-Received: <xmr:5A8YZsoxOZ0l_g7S6OVUqYg1WXYzf7dlDHutUKObDutlAEQVsPctVQbFuHs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudehkedguddtvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhihl
-    vghrucfjihgtkhhsuceotghouggvsehthihhihgtkhhsrdgtohhmqeenucggtffrrghtth
-    gvrhhnpedvhedvtddthfefhfdtgfelheefgefgudejueevkeduveekvdegjedttdefgfel
-    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegtoh
-    guvgesthihhhhitghkshdrtghomh
-X-ME-Proxy: <xmx:5A8YZikbMasM7VZgHvtObLV2P9GFgJ0r470-Kc7fgEo774Qvf2Oj3g>
-    <xmx:5A8YZs0qX9ZGWE_5YIJqL-CXhvqo1qiTvKUehekqralf-0nAJJfbMQ>
-    <xmx:5A8YZpsD3ILS-9-fb0yu84z7H8q2JBo_xGPFRaXTzSzJxv8tekgNbA>
-    <xmx:5A8YZoVcbJKojpd_wm4DCcLSdUivGbr5St9mLlhRB_29tXjO_qgkvA>
-    <xmx:5A8YZt4seqo2FXF3xVRK1SddDyq4KetKDKrVv1LOiQ97qa59hBpsDkJP>
-Feedback-ID: i78e14604:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Apr 2024 12:29:22 -0400 (EDT)
-Date: Thu, 11 Apr 2024 11:29:19 -0500
-From: Tyler Hicks <code@tyhicks.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-	speakup@linux-speakup.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-wireless@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-afs@lists.infradead.org, ecryptfs@vger.kernel.org,
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-arch@vger.kernel.org,
-	io-uring@vger.kernel.org, cocci@inria.fr,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] treewide: Fix common grammar mistake "the the"
-Message-ID: <ZhgPuPVYT26SxgQW@sequoia>
-References: <20240411150437.496153-4-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1712853136; c=relaxed/simple;
+	bh=TXxB6kiWTqAInfPhaNCRZTdrQCMlHjJn5YTjVSLODLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ziq/DjePJJjfxY0MsoesfANjuFPw5Tq7s1Rvu7kXLXwpO/hJIQDI+BSwVvMQroryd/Lc92e+2gKUUE7BQYgAB2DQ2YE93z76z4c0uro2rmdH3FiEQGRbWExc3z2FORxHtaj2uh0JVU6Cv5EUrLQJDFTwpCHev94Xcc1bq8XYMhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=OZozFB0y; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7d6812b37a6so10059939f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 09:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712853134; x=1713457934; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Oy7UYOl/fNFnTeFLniF5v2aTFzXlpEmr1JZ5cOgbrD4=;
+        b=OZozFB0yDWiOPPpACsf8u5QGS2eL9Nf0b/2cq4aPJCuAu29cv9cFBC4x5II7tnmTy2
+         viHaHL91jJSkUBJ8WJpjTtmSz4lGxXddD5cIPt/f9YVjUxbG1jIbAmLawMHQMsO5tq4g
+         BqCdCwqC9TRa8yR1Oou1AfvHf1F1t14kROsXF5Aitz+xm+9lPHO+bPhf3P+vVy4omJG/
+         6FxOnjlV144sSeZ3CNxP5PFae1R2Z66xHvVVTzUz1IAxShyl8H95JHWqXw9WYx5Sq/U+
+         zal5qno5JI9RJQkTDeM+q1yakqp+wNvEUVHQMU2XRfcSXG76LE+EsuLru3eIX9b5j+kF
+         MhfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712853134; x=1713457934;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oy7UYOl/fNFnTeFLniF5v2aTFzXlpEmr1JZ5cOgbrD4=;
+        b=KXLmFw/qPCMifFwnfcPCB8uPs3h4jPIAIxkSnncSVAbOmpyX0XALB/vWx+uitJJT0n
+         65C8ruOSAIgjImhBGDTMng9h1Pk1zR29Jlo6o+3UR3LB9mB9a1sKFak75Ame2pRKKzHm
+         uHSTNW80VZArS0WUl+/HIADg85QJnXjTOvM84NcpsZdMrkHH7/vbpuOICQIXV1oJ9EXE
+         wJ0UooG2n5HnNcrxIPcuBkHHTaZhBHxN+I+A9qD7evCR6SInJIX9Ti3ulNE7HzImZg+d
+         hK3uSjKDbzuMWgmT3wSMUaqUXhdscv5Zf9Q7kNZNzQaH7nzBPKCPOPi462olQoqOopYL
+         Wspg==
+X-Forwarded-Encrypted: i=1; AJvYcCWA8xV6vZ3iS5Ow5jaewNcKhVocz/wyI3EE7ApTU22BS2KJx8Te676jYeoegP0VC7UFvCU5x4GvmFR1si+N+/v377u84pbCg9hF4M//TA==
+X-Gm-Message-State: AOJu0YxTcQHO+5UpSrm94BOutUu6RUwQukqxQjjRBT3jRQytM+mFWobb
+	PsxoYMpzKqkXTWUw87y89ZSxy1fmninNbqo6/Z4uVylj/MFEK4UMyWJOKeBgRqQ=
+X-Google-Smtp-Source: AGHT+IF7FnIFBdVgpJmIKF42aEt7swonFqyMyJf6euNzLNtg7mFozJPp8HnPzmLyt+gtTM9buj7GBQ==
+X-Received: by 2002:a05:6e02:c8f:b0:36a:f9aa:5757 with SMTP id b15-20020a056e020c8f00b0036af9aa5757mr24038ile.2.1712853134561;
+        Thu, 11 Apr 2024 09:32:14 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id dt3-20020a056e021fe300b00369fd0b4595sm458963ilb.59.2024.04.11.09.32.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Apr 2024 09:32:13 -0700 (PDT)
+Message-ID: <813d33ec-a462-48a9-b2f3-d890969dca1b@kernel.dk>
+Date: Thu, 11 Apr 2024 10:32:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240411150437.496153-4-thorsten.blum@toblux.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] timerfd: convert to ->read_iter()
+Content-Language: en-US
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-fsdevel@vger.kernel.org
+Cc: brauner@kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+References: <20240409152438.77960-1-axboe@kernel.dk>
+ <20240409152438.77960-3-axboe@kernel.dk>
+ <1a1c00fb-c83f-44e7-bc6a-cfe52d780c35@kernel.dk>
+ <CGME20240411114048eucas1p21707a2d0bfb9c5a21f3e8aa76c0d82c1@eucas1p2.samsung.com>
+ <528e184b-9cb1-40a7-b757-db11a852dd59@samsung.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <528e184b-9cb1-40a7-b757-db11a852dd59@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-04-11 17:04:40, Thorsten Blum wrote:
-> Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
-> occurrences of "the the" and replace them with a single "the".
+On 4/11/24 5:40 AM, Marek Szyprowski wrote:
+> Hi,
 > 
-> Changes only comments and documentation - no code changes.
+> On 11.04.2024 00:27, Jens Axboe wrote:
+>> On 4/9/24 9:22 AM, Jens Axboe wrote:
+>>> @@ -312,8 +313,8 @@ static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
+>>>   		ctx->ticks = 0;
+>>>   	}
+>>>   	spin_unlock_irq(&ctx->wqh.lock);
+>>> -	if (ticks)
+>>> -		res = put_user(ticks, (u64 __user *) buf) ? -EFAULT: sizeof(ticks);
+>>> +	if (ticks && !copy_to_iter_full(&ticks, sizeof(ticks), to))
+>>> +		res = -EFAULT;
+>>>   	return res;
+>>>   }
+>> Dumb thinko here, as that should be:
+>>
+>> if (ticks) {
+>> 	res = copy_to_iter(&ticks, sizeof(ticks), to);
+>> 	if (!res)
+>> 		res = -EFAULT;
+>> }
+>>
+>> I've updated my branch, just a heads-up. Odd how it passing testing,
+>> guess I got stack lucky...
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> The old version got its way into today's linux-next and bisecting the 
+> boot issues directed me here. There is nothing more to report, but I can 
+> confirm that the above change indeed fixes the problems observed on 
+> next-20240411.
 
-Reviewed-by: Tyler Hicks <code@tyhicks.com>
+Yeah sorry about that :(
 
-Tyler
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Thanks!
+
+> I hope that tomorrow's linux-next will have the correct version of this 
+> patch.
+
+It should, the branches have been updated.
+
+-- 
+Jens Axboe
+
 
