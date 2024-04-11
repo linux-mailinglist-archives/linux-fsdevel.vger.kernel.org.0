@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-16684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94AE38A163B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 15:49:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5952C8A1640
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 15:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B7D31F21915
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 13:49:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DE141C2369F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 13:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42CD14EC69;
-	Thu, 11 Apr 2024 13:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBC614D29A;
+	Thu, 11 Apr 2024 13:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qnr472qY"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X1cTHVTL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621AC14E2CC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 13:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAC314BF8D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 13:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712843166; cv=none; b=HgyY/jmJL3KW8tu1JLXUoYvV6ybSQJxgyqQ677+h7GeD+v9Mw5ppD6z3YSuA/I+0fFsOfwyUqA3qBFWu0SXPavNXEK1Y06+nhLzOdX0i9oOSFmzB6Vmk9qfs19IEc6ivKbggCdZQJo+A8VHukx2zGNNhm+UkBycoF8/z+3QktTY=
+	t=1712843244; cv=none; b=XZgAwhB4l3zNKYIwO/d4baqyOBn7WSR59pIT33YeTvlsFntEc25TGttUAxDOKAXifKVxyx5cE/sMytQ07MQ30NplWHTSa9JD3gP+kFvW1s+p3pgPVBpQMUKZkMhp3Fp7eBcH1zhyXTOzcYGF0thtPkHgUSnmmzcnQjbyO+MZx/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712843166; c=relaxed/simple;
-	bh=Cbd/JWEjqPlGu1by3uygBOshRGfgss8BPdmBpj3a8d0=;
+	s=arc-20240116; t=1712843244; c=relaxed/simple;
+	bh=tR42a/PNa1+TcvF8KzBvBv45MQqrwY8wYoE/XwnNkhk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s9XuwLZKN31z80TgYYBaI3pU9GumfgNcsQnAy8sv+tS7aoDZ5MUSg7VKnrtLuRGGFvIB7n1wWxvWtcCZuYWCjuLv12QkEOhRA6vdOjRRlFJGykxrxkF+9sA2j0ud7yoZh20WV+c7Z+hrcfkIYoIaA/7jOyYUhmAErniFVReW+64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qnr472qY; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=Y31J/BDWZILQJKRk5IF3wc67qnWGLOsCpadNvMDCb5HXI0oteFQZ/uKLDeHPHEDApqQ6l+lSEIL1zuij0bitZjKHrRODCc+EMhB8RmPSajfl5zob16OI1hTXJSkCvjs9wQ1xQna5IbSTpQqV5TEQHM4GYU9QCHzjkBkxzI4qIq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X1cTHVTL; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712843162;
+	s=mimecast20190719; t=1712843241;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=F7Urs0rDzbqxItHnrZ7ae7xENmqnSenFgbOKlg0MdQ0=;
-	b=Qnr472qY2PnQgPGhTQUtcmwNobkyuNTCWxDR/mAckKUjlVqYFGiKvcOSr5FwpbcVXlFrAL
-	Lg1+UuOWZXqDIwPvgnHgRI+/z2EztkGE5ufYFTrdLbjRn0rkcfxiEojA/k5cYXA3xA3N7C
-	LNahx/CUU8WqjCV9nyVgq0HeTX6DOX8=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=9FUpUc2CBhEdAjjelkAsFFJf9cxoKp2w6Fokfr9S7kU=;
+	b=X1cTHVTLZNP/riy0XoaoLDY5SFUPDopxYKgRR2UhYhryBDI4Lna6gao7XHaWSsRqlNpCBV
+	VfLwR8vththVsM58G+zdlqu9SAq+XpFG68dOJZ7GMgDqvU+t1KUIFGMBAYoplvnL8Lcqgo
+	Rv6PO+yyJ+puJfHyY3q1t5oFnwMrt9c=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-226-954Boli7Nme9rkkZabXvEA-1; Thu, 11 Apr 2024 09:46:00 -0400
-X-MC-Unique: 954Boli7Nme9rkkZabXvEA-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2d87b880861so48545561fa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 06:46:00 -0700 (PDT)
+ us-mta-423--A5eW6HJOmeFkd5zW3ycFQ-1; Thu, 11 Apr 2024 09:47:20 -0400
+X-MC-Unique: -A5eW6HJOmeFkd5zW3ycFQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-416ac21981dso5157115e9.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 06:47:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712843159; x=1713447959;
+        d=1e100.net; s=20230601; t=1712843239; x=1713448039;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=F7Urs0rDzbqxItHnrZ7ae7xENmqnSenFgbOKlg0MdQ0=;
-        b=xQ3h3aIbAg8/D9EEy7o3Xe37f7Wzt6lFxUxXmmtUo3Be0uHfyyxFSU5qgqA/wIOwMb
-         2RKMEPqS8l6VWJ6lqaV6Urv5d2om2jOYaY2hCsGJVbu5TZYXbMdBXlvxoRkI0EpJ28jM
-         iZP0pcaghjM4tEp/cDzOnAL9kGQHPft0HxDWK5zpaKoebWap2bsnkHpbriiE1KogLKeX
-         Z3hyokgWS+4zNd+5enZ/a/nES97/dEs0CKSrjZGNUKi52E8JeVo8Gd+9G2qMcOwMmCwu
-         xe8Nyp3wuptGHxWCkMntp01zscibzXhZQpffkRfYis07AlrJDg/VyxLsxihx2Ea5UULJ
-         Gm0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWGbat0ReMzY4hc5ZbzyouVEF4dWE6mC+KamO5osHsQd1tTR0eu5qCsGlVEO4LhAdJO3cqGLuj84BrHXXEnnyRsUO4ALexVP7QjKgRiGA==
-X-Gm-Message-State: AOJu0Yw6PAxNQ0sd04NMhT/sXTipYjxIB1hkB+w6PFQgsPnEBauvv9AQ
-	5kiqbHPFislmWluAaa0oYqocOawpg7r2VmWgE0tci8dVHaNiBpbUM39C6iqq+0npafRRlAX9TtK
-	u6mojrQOSKehoZuYj8PRyVUXUv/z8RstEAiXq67TfFIV8Jg4k++yXCwCzbxSSzWs=
-X-Received: by 2002:a2e:bb8f:0:b0:2d8:60a4:cfa with SMTP id y15-20020a2ebb8f000000b002d860a40cfamr3198621lje.41.1712843159356;
-        Thu, 11 Apr 2024 06:45:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFoohYbmctnHgVhi1eqtPtWYp69R/AxHOo1KVhWBe0vqP8HvCmImItbhaUhpGaoXJpn7qNHLw==
-X-Received: by 2002:a2e:bb8f:0:b0:2d8:60a4:cfa with SMTP id y15-20020a2ebb8f000000b002d860a40cfamr3198599lje.41.1712843158943;
-        Thu, 11 Apr 2024 06:45:58 -0700 (PDT)
+        bh=9FUpUc2CBhEdAjjelkAsFFJf9cxoKp2w6Fokfr9S7kU=;
+        b=IZftbkVtepc9HDy81sCDh+ew59ahYmPK5uUtJelvZa/BXs1Paz6mm2QlvSFOpvd4Kk
+         ic8Pgx6rQSt632+emI3b1r5DV8GWFE8Mr6YeN4V9XqTlyYu5ebtUfcI15TUKsdaT660V
+         rwzxVnsknM97qpwQDUSd9Ud+cgJKYfGDT1A5MlBzfGzUdk6xya0xhs6DOYnyZ7VCDcU9
+         PhvfGTQgHFXc1pDXBWEE+uaPJzr23UHiar424SBV85kf7vA7oD2rlkDv+XwrJK2cPBrG
+         0YfDG5Zp+dRjSnLg1qsgCYLixJa5at3Ff+9TPN6kQPjJH04YhaZo1FAcNq/9LbWR85Xr
+         ZaJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxAQ/4j7BiZfO2YULVka+/Qz3nDcdyvjn8YL75xQ3shm0cbjB2wQHpr2KOvA6dICfM9/xxhYuDrpgveJqboFtkci2+a9gDWsPTv4v0PA==
+X-Gm-Message-State: AOJu0YxkPaD3q2x2jA7tn4Q/lrGua4ug458LIHk8wHbf9lGHjMOcr/6O
+	Ct/8PcXH/BdvoF8+WLdlaQHXsGJAfDUG4YycwLHyqH/b3DIuXafXnnpvsjtYIV7QqK0BKg1y90f
+	r5+2zSxSyDKShNSHnTnAuOvt4hlPeABbbdhnpts035x0Om8eBXcathvwIR/Jn+IY=
+X-Received: by 2002:a05:600c:1551:b0:416:71ac:1bef with SMTP id f17-20020a05600c155100b0041671ac1befmr2329385wmg.13.1712843239130;
+        Thu, 11 Apr 2024 06:47:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHsUg5D0wDfuE+2Th+yVLoNTpM+9hW6exsncRgch5xzlNK868N2M64XkuZ7+meRE1F7o4ccqQ==
+X-Received: by 2002:a05:600c:1551:b0:416:71ac:1bef with SMTP id f17-20020a05600c155100b0041671ac1befmr2329358wmg.13.1712843238774;
+        Thu, 11 Apr 2024 06:47:18 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c724:4300:430f:1c83:1abc:1d66? (p200300cbc7244300430f1c831abc1d66.dip0.t-ipconnect.de. [2003:cb:c724:4300:430f:1c83:1abc:1d66])
-        by smtp.gmail.com with ESMTPSA id jh4-20020a05600ca08400b004147db8a91asm5427425wmb.40.2024.04.11.06.45.57
+        by smtp.gmail.com with ESMTPSA id h15-20020adff4cf000000b003432ffc3aeasm1818104wrp.56.2024.04.11.06.47.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Apr 2024 06:45:58 -0700 (PDT)
-Message-ID: <ce3ea542-9b68-4630-b437-c9daddad2e83@redhat.com>
-Date: Thu, 11 Apr 2024 15:45:57 +0200
+        Thu, 11 Apr 2024 06:47:18 -0700 (PDT)
+Message-ID: <f3b38a24-d252-49ea-88ea-ac12fab3c121@redhat.com>
+Date: Thu, 11 Apr 2024 15:47:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 09/10] mm/khugepage.c: Warn if trying to scan devmap pmd
+Subject: Re: [RFC 01/10] mm/gup.c: Remove redundant check for PCI P2PDMA page
 To: Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org
 Cc: david@fromorbit.com, dan.j.williams@intel.com, jhubbard@nvidia.com,
  rcampbell@nvidia.com, willy@infradead.org, jgg@nvidia.com,
@@ -91,7 +91,7 @@ Cc: david@fromorbit.com, dan.j.williams@intel.com, jhubbard@nvidia.com,
  ruansy.fnst@fujitsu.com, nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
  linux-ext4@vger.kernel.org, jglisse@redhat.com
 References: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
- <68427031c58645ba4b751022bf032ffd6b247427.1712796818.git-series.apopple@nvidia.com>
+ <ffd72e934eeae28639b636e1e61a9c5109808420.1712796818.git-series.apopple@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -139,26 +139,40 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <68427031c58645ba4b751022bf032ffd6b247427.1712796818.git-series.apopple@nvidia.com>
+In-Reply-To: <ffd72e934eeae28639b636e1e61a9c5109808420.1712796818.git-series.apopple@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 11.04.24 02:57, Alistair Popple wrote:
-> The only user of devmap PTEs is FS DAX, and khugepaged should not be
-> scanning these VMAs. This is checked by calling
-> hugepage_vma_check. Therefore khugepaged should never encounter a
-> devmap PTE. Warn if this occurs.
+> PCI P2PDMA pages are not mapped with pXX_devmap PTEs therefore the
+> check in __gup_device_huge() is redundant. Remove it
 > 
 > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> 
 > ---
+>   mm/gup.c | 5 -----
+>   1 file changed, 5 deletions(-)
 > 
-> Note this is a transitory patch to test the above assumption both at
-> runtime and during review. I will likely remove it as the whole thing
-> gets deleted when pXX_devmap is removed.
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 2f8a2d8..a9c8a09 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2683,11 +2683,6 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
+>   			break;
+>   		}
+>   
+> -		if (!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)) {
+> -			undo_dev_pagemap(nr, nr_start, flags, pages);
+> -			break;
+> -		}
+> -
+>   		SetPageReferenced(page);
+>   		pages[*nr] = page;
+>   		if (unlikely(try_grab_page(page, flags))) {
 
-Yes, doesn't make sense for this patch to exist if it would go upstream 
-along with the next patch that removes that completely.
+Rebasing on mm-unstable, you'll notice some minor conflicts, but nothing 
+earth shattering :)
+
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
