@@ -1,120 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-16739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892608A1F4F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 21:16:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6238A1F74
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 21:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FC9F1F2A2FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:16:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE88D1C23254
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED98D534;
-	Thu, 11 Apr 2024 19:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382CB175A6;
+	Thu, 11 Apr 2024 19:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PGnUDIW8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UuT0npXS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E62F9DF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 19:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743391756A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 19:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712862981; cv=none; b=gg0vW7F59HX9EXQpljtTN1ACxcXpvNBBWL+Qn2H62+TIou6tgt3v3PWeWVMgwgtcnTD49TkF6oLms+6925PTLCqFSWB+uzppIerQ+mAmO+KvZZqh1eDI7U2YEpnCcYKO0NjQPohb7tShQubXqBDPQLLgU4U8e9Nx6i4z42kELZk=
+	t=1712863475; cv=none; b=JbFPZ4DMN6Su8iN2Hd6iYDtHahy92exjfjhRs/t46gE0/dWOhH/EZKVefInDLE56rLeSISBoXXCg6Pudf8XHje4xgyXd6kHzPoOvak6MYCOw21fByoK0dw1+oTkonrSTZu4HFuIP4qCy/tgrz1AFAXYjbXyx0j+rcQ00ZuHOvoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712862981; c=relaxed/simple;
-	bh=pNGS7PL3Q3YJB0ZVZIZ0iegtesPYiF+tOfUb+pWU9rk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IdJew2Z44165Y5APXQHJzz4dhi/scHQSYpYPWeInBrV3viSeWQYBB1z71/BdFQHQO2m+lIxQIgSb1nW+sOHOubf0W65wDz5wmEnwPlQInxeyf+gMkI+kL+qdWWF1/ZLKIYZbizk4RpFFOWUN32H4qHFF5nWvqNau/6bdAnRTSRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PGnUDIW8; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-69b10c9cdf4so1217036d6.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 12:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1712862979; x=1713467779; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AhpgH9Z9qXqFvfvUioYha8hRr6JLQXv1CXZE9+U2upw=;
-        b=PGnUDIW8Das7KyDsdeah1UrsMzDg7M6t9E8y3zqVV1yF+X2YQrTqF/ChCufIzBbAXF
-         wU3hs3w8OHsFWDQjjV8iWVkuc7q3Nu/3jWW8lfBk3Qow1S7d7LznKVglpcjpZALK+RSq
-         8QAv5yK0u28aall5zqfoZcmvQrfQ6sJutJtZdwImxKKsLGFyc21dvlFHhFh84I+nsu5y
-         mFCPrVblvekNGQ2RAFku3iEUF1Q5GjQ3n//378qhIXc6IHANjiwEQXpK4nCm2PQc8hPg
-         XNcCTu+wn2ualSreP4FkiBvTx/o3ZpGX9wrPKm6pYElO6NF3gYafIaQ1FsnfzWyqBLuK
-         NVMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712862979; x=1713467779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AhpgH9Z9qXqFvfvUioYha8hRr6JLQXv1CXZE9+U2upw=;
-        b=EjAWYPBrf5+Gi50t7xnJD1eUcJnc5X4wqXtpEgZusUtH1oV1eT0+p6PHG2IuKFk4pw
-         e/rVEHgcRAcyinZzECz2sYAzPQlcWETX7tlylmYGIFVkRulcUMscbaGrH4ELLDZDLzUt
-         zZ2GpX25UjeONsDvh+rvqAxwxj7jU8mchRRhYPc86jXTzH7Ns+if+RQbZQCCCmotyn7I
-         HnGA5UHb2y5xkUyRFYvRKH8JO9KoWVVZIHV0evx5DJ+VxmiRl6HwhfNcROYS6S6Hs+Nz
-         E/Q5shZnuLF4ZzbfrstGlNF84sgbp5/zcgVQkKxfgljZXFHxazqRdNpGiJZ28/JDQpa7
-         vq3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVeUD5FnQM1YX+xXTMQtRAwh9Tn9nbbuP/u9j3unmnNPGEfgkubheMHJ1iOJAzu9X3y+9Co/gqU+lIddmf56xxldqsF08G6UDSbBwULQQ==
-X-Gm-Message-State: AOJu0Yx1+R2w/eKmnr7RjonoHbkhnPv75v/6YhpuklbabNTQntXKjK73
-	ilzAG4DN1ghYjfTLoTp7ojWJLzGxLKcKxqH3vJqqobT4LYZlG0KHnqginpV7ApRVyvIxhRqZGXs
-	5msErWGqgCzkb23uIp4OZ2erTi6serwx661z4
-X-Google-Smtp-Source: AGHT+IGfw7Fj9rJcZz0lVyRkaC000N/pbyxjhWMp0wgV0f00xMv3P+3YAc16D0UgDFqzJhTfRJb/CdCWFldQ6h4t5bU=
-X-Received: by 2002:a05:6214:5610:b0:69b:7c6:72be with SMTP id
- mg16-20020a056214561000b0069b07c672bemr730423qvb.43.1712862978616; Thu, 11
- Apr 2024 12:16:18 -0700 (PDT)
+	s=arc-20240116; t=1712863475; c=relaxed/simple;
+	bh=DzLnX9XsQiartOGOi9eoGYyN8RsdHsWoqQTIIKeZbk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EW0ZXUgW8PkZDRwi7H1S5Yqpy9l89UH5JnZVBLuagpggU4XMX9TnA0FDBtLS0yPYrPHmo3zxTz3W7EoACGDiDXhXNLrhmcMiS7a3MssKQ5KVvqHCZWEbiAUiInATdb7x0EaqwwyTCwMb+VHKfU8D053RZiT88QwMHALm7g2DfgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UuT0npXS; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Zcd3JbmGh0UbQSyR0oz9b076V96dHCA3CnyHpKlr+pk=; b=UuT0npXS+rRO7p8tKXAdcYEI/l
+	rqSypCun03HIPGcqBlCCl2yUj0aNFXj3PaQ8sL4wEMk/KrxV1MMofFMRq1eILq+V3n8mB3QZAw48H
+	Du/JDoLMmFOoeHKThqSHKrIG7AV2GgTuBaS4cG8t0Y9vVxr2VZawXIAKZblAgpojE3my7+zYfY+ZB
+	mzxzGHOFIx07P1QZX1miXEITEqyFc4jRYdIMop54avJVeq6JmJb8g23UhOIdfhzdlm/VVD2ygHv4G
+	bwxNf7QgUG67tfy9yiCWV7pzj11GLEKxTxtexDjMG9EYUM5euZGRmpYNalWLocP80m/QVo3XP1gQg
+	JWjg01aQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rv02D-0000000Dstu-1ZNc;
+	Thu, 11 Apr 2024 19:24:33 +0000
+Date: Thu, 11 Apr 2024 12:24:33 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	Leah Rumancik <leah.rumancik@gmail.com>,
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Filesystem testing
+Message-ID: <Zhg48VVXfQiFTAJq@bombadil.infradead.org>
+References: <87h6h4sopf.fsf@doe.com>
+ <87cyrre5po.fsf@mailhost.krisman.be>
+ <Zfi62v5FWDeajwLq@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240328205822.1007338-1-richardfung@google.com>
- <20240328205822.1007338-2-richardfung@google.com> <CAJfpegvtUywhs8vse1rZ6E=hnxUS6uo_eii-oHDmWd0hb35jjA@mail.gmail.com>
- <20240409235018.GC1609@quark.localdomain> <CAJfpegt9hBADfGEAdsBjNShYHB68o7c=gHN29SZHqekdnYzkNA@mail.gmail.com>
-In-Reply-To: <CAJfpegt9hBADfGEAdsBjNShYHB68o7c=gHN29SZHqekdnYzkNA@mail.gmail.com>
-From: Richard Fung <richardfung@google.com>
-Date: Thu, 11 Apr 2024 12:15:39 -0700
-Message-ID: <CAGndiTMNuzKot7fKSE5Hrcm=9XQ-0=KsQCnt4wXVtkq0bmVvXg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] fuse: Add initial support for fs-verity
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	fsverity@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zfi62v5FWDeajwLq@dread.disaster.area>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Wed, Apr 10, 2024 at 11:06=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
- wrote:
-> Ideally I'd imagine something something similar to how we handle
-> FS_IOC_GETFLAGS/SETFLAGS.
->
-> Exceptions for those were also added in commit 31070f6ccec0 ("fuse:
-> Fix parameter for FS_IOC_{GET,SET}FLAGS").  But then infrastructure
-> was added to the vfs (commit 4c5b47997521 ("vfs: add fileattr ops"))
-> so that filesystems can handle these as normal callbacks instead of
-> dealing with ioctls directly.
->
-> In the fsverity case this is not such a clear cut case, since only
-> fuse (and possible network fs?) would actually implement the vfs
-> callback, others would just set the default handler from fsverity.  So
-> I don't insist on doing this, just saying that it would be the
-> cleanest outcome.
->
-> If we do add exceptions, the requirement from me is that it's split
-> out into a separate function from fuse_do_ioctl().
->
-> Thanks,
-> Miklos
+On Tue, Mar 19, 2024 at 09:06:18AM +1100, Dave Chinner wrote:
+> On Mon, Mar 18, 2024 at 02:48:51PM -0400, Gabriel Krisman Bertazi wrote:
+> > +1 for the idea of having this in fstests.  Even if we
+> > lack the infrastructure to do anything useful with it in ./check,
+> > having them in fstests will improve collaboration throughout
+> > different fstests wrappers (kernelci, xfstests-bld, etc.)
+> 
+> Except that this places the maintenance burden on fstests, in
+> an environment where we can do -nothing- to validate the correctness
+> of these lists, nor have any idea of when tests should or
+> shouldn't be placed in these lists.
+> 
+> i.e. If your test runner needs to expunge tests for some reason,
+> either keep the expunge lists with the test runner, or add detection
+> to the test that automatically _notrun()s the test in enviroments
+> where it shouldn't be run....
+> 
+> I'd much prefer the improvement of _notrun detection over spreading
+> the expunge file mess further into fstests. THis helps remove the
+> technical debt (lack of proper checking in the test) rather than
+> kicking it down the road for someone else to have to deal with in
+> future.
+> 
+> Centralisation of third party expunge file management is not the
+> answer.  We should be trying to reduce our reliance on expunges and
+> the maintenance overhead they require, not driving that expunge file
+> maintaintenance overhead into fstests itself...
 
-Thank you all for the feedback and suggestions!
+kdevops has been using expunges since day 1 and shared them. We have one
+per filesystem test section and parallelize each test section. While
+useful for a baseline, over time I have to agree that a desirable goal
+is to not rely on them. But that just means your test runner can deal
+with crashes automatically. That is work we've been doing for kdevops
+and hope to get there.
 
-Would allowing FUSE_IOCTL_RETRY for these specific ioctls be
-possible/preferable? From my limited understanding retrying is
-designed to handle dynamically sized data. However it seems like
-that's currently only allowed for CUSE.
+That does not preclude the value of a baseline for a kernel too though
+test section section. While I agree that it will depend on your
+version of fstests and userspace too, its worthwile asking if a generic
+kernel baseline is desirable. The answer to this really is about scaling
+and doing the work.
 
-If that's not a good idea then I'll try to split it into a separate
-function if you don't feel strongly about the other approach.
+An example of a baseline of known critical failures for v6.6:
+
+https://github.com/linux-kdevops/kdevops/blob/main/docs/xfs-bugs.md
+
+Is something like this useful? If so, should we collaborate on a central
+one? How?
+
+   Luis
 
