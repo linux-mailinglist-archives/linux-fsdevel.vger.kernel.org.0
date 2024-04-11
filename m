@@ -1,62 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-16688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582278A16CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 16:10:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F608A17D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 16:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECC561F21AD5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 14:10:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79D0B1C2132C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 14:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24C814E2EA;
-	Thu, 11 Apr 2024 14:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6FADF42;
+	Thu, 11 Apr 2024 14:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oDiANBVq"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="eBNwv00S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591CB149C7F;
-	Thu, 11 Apr 2024 14:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACB28F44;
+	Thu, 11 Apr 2024 14:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712844631; cv=none; b=Dmd0OdRGFuin9SW3/ZOKDAIVMp4EeyTpTTW81+zpNg0yq2ivzFhTQP3lnQE0tW2sqm5i0GQZpEGYGcWF6hTQ787RecSHfr1wH0Dqw86KzhJj/MpdEIXSg8vC0XvU2k9dVQxQQjgleqMA36ofJhq6bdwDlOaYi3JRi1iP4B7RAFA=
+	t=1712846983; cv=none; b=UEQDur/22nHENLbIcMx9Fsz7nfqI6stdljePmV7hMt+fcYZlceMryTWbRe6bioUKXF0D0BCX12rP8ewCot51EJBxwpxXsodaxXElbsBo9NbTFss2lavJb/IxRYfbHtbHT5bJAEwXUuqLrcmrZTbrDGwFRoQWJ/AW0GrQAIB0hBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712844631; c=relaxed/simple;
-	bh=G4lNb0v3ZtHlkx0vH6AwvDqD6tsugHAe7upynelVvts=;
+	s=arc-20240116; t=1712846983; c=relaxed/simple;
+	bh=ntuuW0lE6hF+9CuNs6JVToiNPpTMLsWchpxbNlcYx0E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uR3F16TSWTQY56A12UFFUaknQzG5ZSJt3aOCkyOy6QXchUtZDQXz1Y1YugKdUAZ0d0QnW4eUZCsW2iTiKsFvtxANF3501PGq6anzlb+WsLFuhPeiRX5tBX0dFmPzGDoFGesw2Js2T8/XQkMNPAGb92KvUD9iNBQ5OOqUntjgT1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oDiANBVq; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTHxuXhDX+4aLGXe+ivDhxsP5BXvquGrkvxAXPj2BrsD1LnrALybG7UQIrAznj647Nm0TDut30PCnJshUW6+0YaWn+VMJc36v7nZcIggbhyuO2sCCHSEMm1VST0Wazv2q0jbNfpeRlAltVa1LLEyJcbN/xKLc4tH+24TEtWy7YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=eBNwv00S; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=erzRazoUFf0ozboYbu3QcZz8RyM7ffSzd+JFbM6Ge+Q=; b=oDiANBVqfwpUInZAI+qxzHiKs5
-	/Fl/0EBc8p6ZnhZkIiPrXZZ3NQ+4hVXY+UfC+oKQwgIH5215GgNWwbgLWqQIzUp2sNOQk1x8zSeje
-	BllT0miOuQz2XJa8UB0X/HC9IbPZCPR/NqQxjUeQQeIQ4jxAdwu5rK3k5swzrDN7XWoD/LnNzlCoK
-	EWR7cLFWf/Zvz3FJPiXisxDqWcR+/+ltNj1XufULs+9d7Bo896HMc9SZnHHIJZ/i+MXU02q31llB/
-	YlaCfOegPFTe5lCal2aE/znH6zb2wffKGdgbyQvb2kGnpgkQLhvA9QFjbxFFKnFKZYtFP7j6KCeNL
-	FOprjeqw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ruv8B-0000000767L-2DcS;
-	Thu, 11 Apr 2024 14:10:23 +0000
-Date: Thu, 11 Apr 2024 15:10:23 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: linux-mm@kvack.org, david@fromorbit.com, dan.j.williams@intel.com,
-	jhubbard@nvidia.com, rcampbell@nvidia.com, jgg@nvidia.com,
-	linux-fsdevel@vger.kernel.org, jack@suse.cz, djwong@kernel.org,
-	hch@lst.de, david@redhat.com, ruansy.fnst@fujitsu.com,
-	nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, jglisse@redhat.com
-Subject: Re: [RFC 07/10] mm: Allow compound zone device pages
-Message-ID: <ZhfvT6SXfCR60NAG@casper.infradead.org>
-References: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
- <9c21d7ed27117f6a2c2ef86fe9d2d88e4c8c8ad4.1712796818.git-series.apopple@nvidia.com>
+	bh=RmQ/n07ivg/dAvtDjHhesNyYG4HYYZs4sU7E0j6dTu8=; b=eBNwv00SgNFMI/UWWHbVDgCr0j
+	EOUNUfVg5m0BPFQDBVGl38SBX+cHtyKaZOX+xL0BbiVMpv5a/VbQIAwgmVKMqIcd2uXSujm3O4/5O
+	0QUuefTyjRR2rQLgQBp/WKSIFEMCJCDuB3T3oG2VlSaaaHQkkVkqSV/WBlGm+S5hX1z1ypqeiaPEU
+	dJ2PYzIbGcQG4MAsO0UKN6EaotX1HfEd+xqf5AVuN4qdmCJus94Hm9PkgPJoYRB04RcxU4vgQc32c
+	ALmFMQwNHgfeYdP6GhTLID2brblDw139Gu5x6GfomYvTBOCXg14wgLt4KT0gUXW2jBKSG8qAQW6Aq
+	hJQ9D5aA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1ruvk2-00AYbS-0K;
+	Thu, 11 Apr 2024 14:49:30 +0000
+Date: Thu, 11 Apr 2024 15:49:30 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de,
+	axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+Message-ID: <20240411144930.GI2118490@ZenIV>
+References: <20240407015149.GG538574@ZenIV>
+ <21d1bfd6-76f7-7ffb-34a4-2a85644674fe@huaweicloud.com>
+ <20240407030610.GI538574@ZenIV>
+ <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
+ <20240409042643.GP538574@ZenIV>
+ <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
+ <20240410105911.hfxz4qh3n5ekrpqg@quack3>
+ <20240410223443.GG2118490@ZenIV>
+ <20240411-logik-besorgen-b7d590d6c1e9@brauner>
+ <20240411140409.GH2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,25 +72,63 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9c21d7ed27117f6a2c2ef86fe9d2d88e4c8c8ad4.1712796818.git-series.apopple@nvidia.com>
+In-Reply-To: <20240411140409.GH2118490@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Apr 11, 2024 at 10:57:28AM +1000, Alistair Popple wrote:
-> Supporting compound zone device pages requires compound_head() to
-> distinguish between head and tail pages whilst still preserving the
-> special struct page fields that are specific to zone device pages.
+On Thu, Apr 11, 2024 at 03:04:09PM +0100, Al Viro wrote:
+> > lot slimmer and we don't need to care about messing with a lot of that
+> > code. I didn't care about making it static inline because that might've
+> > meant we need to move other stuff into the header as well. Imho, it's
+> > not that important but if it's a big deal to any of you just do the
+> > changes on top of it, please.
+> > 
+> > Pushed to
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.super
+> > 
+> > If I hear no objections that'll show up in -next tomorrow. Al, would be
+> > nice if you could do your changes on top of this, please.
 > 
-> A tail page is distinguished by having bit zero being set in
-> page->compound_head, with the remaining bits pointing to the head
-> page. For zone device pages page->compound_head is shared with
-> page->pgmap.
+> Objection: start with adding bdev->bd_mapping, next convert the really
+> obvious instances to it and most of this series becomes not needed at
+> all.
 > 
-> The page->pgmap field is common to all pages within a memory section.
-> Therefore pgmap is the same for both head and tail pages and we can
-> use the same scheme to distinguish tail pages. To obtain the pgmap for
-> a tail page a new accessor is introduced to fetch it from
-> compound_head.
+> Really.  There is no need whatsoever to push struct file down all those
+> paths.
+> 
+> And yes, erofs and buffer.c stuff belongs on top of that, no arguments here.
 
-Would it make sense at this point to move pgmap and zone_device_data
-from struct page to struct folio?  That will make any forgotten
-places fail to compile instead of getting a bogus value.
+FWIW, here's what you get if this is done in such order:
+
+block/bdev.c                           | 31 ++++++++++++++++++++++---------
+block/blk-zoned.c                      |  4 ++--
+block/fops.c                           |  4 ++--
+block/genhd.c                          |  2 +-
+block/ioctl.c                          | 14 ++++++--------
+block/partitions/core.c                |  2 +-
+drivers/md/bcache/super.c              |  2 +-
+drivers/md/dm-vdo/dm-vdo-target.c      |  4 ++--
+drivers/md/dm-vdo/indexer/io-factory.c |  2 +-
+drivers/mtd/devices/block2mtd.c        |  6 ++++--
+drivers/scsi/scsicam.c                 |  2 +-
+fs/bcachefs/util.h                     |  5 -----
+fs/btrfs/disk-io.c                     |  6 +++---
+fs/btrfs/volumes.c                     |  2 +-
+fs/btrfs/zoned.c                       |  2 +-
+fs/buffer.c                            | 10 +++++-----
+fs/cramfs/inode.c                      |  2 +-
+fs/ext4/dir.c                          |  2 +-
+fs/ext4/ext4_jbd2.c                    |  2 +-
+fs/ext4/super.c                        | 24 +++---------------------
+fs/gfs2/glock.c                        |  2 +-
+fs/gfs2/ops_fstype.c                   |  2 +-
+fs/jbd2/journal.c                      |  2 +-
+include/linux/blk_types.h              |  1 +
+include/linux/blkdev.h                 | 12 ++----------
+include/linux/buffer_head.h            |  4 ++--
+include/linux/jbd2.h                   |  4 ++--
+27 files changed, 69 insertions(+), 86 deletions(-)
+
+The bulk of the changes is straight replacements of foo->bd_inode->i_mapping
+with foo->bd_mapping.  That's completely mechanical and that takes out most
+of the bd_inode uses.  Anyway, patches in followups
 
