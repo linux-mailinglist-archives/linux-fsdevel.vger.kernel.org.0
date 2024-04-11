@@ -1,85 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-16704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D0D8A186A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 17:18:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8026E8A18AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 17:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48DF71F24B5B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 15:18:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70726B28282
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 15:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D40376FC;
-	Thu, 11 Apr 2024 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE1A1773D;
+	Thu, 11 Apr 2024 15:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RhcAV1jX"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="go+W9Que"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F4015E97
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 15:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093C614F68;
+	Thu, 11 Apr 2024 15:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712848508; cv=none; b=G4/+8UMjb36++SgRU9R5o4CCSSFi8GraL1uBrDNSzqh0YTYVwGFQRQ/YNM0BlB8kof53GSk9bH79YTVRbwAIyMT/QmYO5AA2eLoViGEJC6UEtMhXcY0gztAUyjGmKVPsyXMd+HPaTpZ2lvpWwCoqUcIIX0KNY8GA9ZJGCDz7A+s=
+	t=1712848931; cv=none; b=r+OD4dga2wOr18s+KdouyY4VzZk4moOGVUoIXBNzSX22bJcOHD+YBBZhN2w0AOB9tvk0HB8snqbXU6+4gU6NpRJ+o1q1Fj3nzVYGDbFcSyQkHWENIBVFbg3RBeia/NighFGJNg+IiL74mGtg/TSjQwjmaZKm+XL58UD8dHyfcjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712848508; c=relaxed/simple;
-	bh=ykrCsBxsPgKhyE3GYL+XJuoXa3s/bXlZI1ZvQ8tnwOY=;
+	s=arc-20240116; t=1712848931; c=relaxed/simple;
+	bh=SwE0Ntr9Q2DsPczc+O+W8VNP/sF7LKUotga+t8sd6wU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tljIeGYF4PXxbMoV6nTWX5uEE5GyZd7TUU/6I5rc4lLbhwapGcrGrFyY2YBtSixfn1kUXMZmXyrBM7K+S046DyWAAnoVTygW9dFQu3giNTBysZeIBKQAA3ugc9ddeUals/kY33WML6m95SA29bg2SYQyA77BwRSRQigtY9zYpag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RhcAV1jX; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-29e0229d6b5so6415481a91.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 08:15:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1712848507; x=1713453307; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y27o1QGaPj1N7cZ8H8ZqjEg3waA9EItOMXyHWJlIzfk=;
-        b=RhcAV1jXYquKsfeQAGdwKyX38/JQZ67w2RROeMkzd00GXyVUy2w5m1/NQ0vT9LdD6r
-         /xuwKZO/e2OD64H8Zx8VoRJSgpf8TYgtH6sFlO0XZrb2Sbrf3yQFdFO+i3tzdGmE7Lx3
-         zQxjiiydx/fkL1xsUzNnsU4dyOiRUq+Qfa+HE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712848507; x=1713453307;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y27o1QGaPj1N7cZ8H8ZqjEg3waA9EItOMXyHWJlIzfk=;
-        b=gBXFMHurkiIMkSW6HkiKjHAgjLIB1eGVy/6iryHotkPlamoqWewkqi1QNCf1cyYt5e
-         zqrxKwmY29ljvlU3zAbCRTN9wu83UJ3LIL9BOLAmPwoGIYxbBK2vu5lRaK7OQWJXug92
-         2by27X0CyXTHUZyNK9ZWpD1ZHKKgcY2LM4KujBsCRGsoa0QWT8K7KgDclY8xNWX8ZKnA
-         tZ8eeidoKbYlCPAi/Ey9aND9psXZSNbCcifTK7yP2i6pM05Q1ieDhXO1UhdDj4meLT5C
-         aGFbgK2ltK3sFAiUl98DtP/rhLhRRc1G4/uh/gAXBwEqCQg/H1gYIikUi0h8DYUQlL4y
-         41gA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPt1OBBSlDVTlPNmtI+hPMLVw6ihHh+g+mfxhjxPR9YbsRwWeTC3Wi4E9ONTcDLA/ZIQKTLTuXZ8uptpA6Phhls70Yt+gqj9A16kah1A==
-X-Gm-Message-State: AOJu0YwB6tWmtJ4IUVUGxT36h7L7fhR0WyQYZgOUAgAqZhgG6Jqdd7rC
-	bZAxlbxME7HvnOEPzbX+7rWs0G1dxc2dTVFKTPCEujjwnqiPL5jkw6qZQ8ofN8rtbBwlm8HJGG8
-	=
-X-Google-Smtp-Source: AGHT+IFXnLf46pENpWqaLeFh27xQfZIeEOpHx3elub8SYDi07FpFtNbcgpbZ5CexGlBw+CMhsVGm7Q==
-X-Received: by 2002:a17:90a:bd8e:b0:29f:7fad:ba50 with SMTP id z14-20020a17090abd8e00b0029f7fadba50mr5988643pjr.8.1712848506772;
-        Thu, 11 Apr 2024 08:15:06 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id e6-20020a17090ac20600b0029bf9969afbsm2963349pjt.53.2024.04.11.08.15.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Apr 2024 08:15:06 -0700 (PDT)
-Date: Thu, 11 Apr 2024 08:15:05 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Marco Elver <elver@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Azeem Shaikh <azeemshaikh38@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH v2] tracing: Add sched_prepare_exec tracepoint
-Message-ID: <202404110814.B219872F76@keescook>
-References: <20240411102158.1272267-1-elver@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rwlJOJnLs1NUwsiIlpWu7XMBe4/erNmqMGwYaV8ChSFG1LAXK9WhKR4frLp2hXkFlRM3YskSAQLtTPlPFL5Hqan8EAzyYP9gGwpIpPbh6q18ujxvEZqwscOFCBP+yMZ4TYx+4Cwqp4FoW9Luvvf0t2eJLjr1P50OWkGmGiPvPjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=go+W9Que; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=g5jnVkjaKMI1tklLBllrixUlSBdhkjD2GQ3QccSOE0s=; b=go+W9QueRUU674JkYzgB/7uKSK
+	FVNzAMo2c768uPAYOWpwXKXEbf86O1MGa8wx31MlYbdtFGyTn/LR1UMDQZqPkGgJE2gy34N2cx2kf
+	GJyusbvsOjdbdoLjdEvVFh9jKEx+4oY5v6mOu4T6zAZU9GRbXAkXdwL7FIdcCggeFM+BL+pvJRUpl
+	MxwD/ptBPV6GbmLHW0TsoIBgae1W9vXCy4b0b0R9siXZIFOm4VkBii2eGNS5P/8kks56wFv+u5Fme
+	mrBMjafx48HjeXK/MiUgxtMQL6WoEOgUpnfG1ul4g2l3zp5d4WLAihF/V5mjo2bkgfyAOTH42kMdw
+	sGVS5X9w==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ruwFY-00000007Ddj-1BGG;
+	Thu, 11 Apr 2024 15:22:04 +0000
+Date: Thu, 11 Apr 2024 16:22:04 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de,
+	brauner@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+Message-ID: <ZhgAHLZr6GZ-xxOM@casper.infradead.org>
+References: <20240406090930.2252838-23-yukuai1@huaweicloud.com>
+ <20240406194206.GC538574@ZenIV>
+ <20240406202947.GD538574@ZenIV>
+ <3567de30-a7ce-b639-fa1f-805a8e043e18@huaweicloud.com>
+ <20240407015149.GG538574@ZenIV>
+ <21d1bfd6-76f7-7ffb-34a4-2a85644674fe@huaweicloud.com>
+ <20240407030610.GI538574@ZenIV>
+ <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
+ <20240407045758.GK538574@ZenIV>
+ <20240407051119.GL538574@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,42 +72,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240411102158.1272267-1-elver@google.com>
+In-Reply-To: <20240407051119.GL538574@ZenIV>
 
-On Thu, Apr 11, 2024 at 12:20:57PM +0200, Marco Elver wrote:
-> Add "sched_prepare_exec" tracepoint, which is run right after the point
-> of no return but before the current task assumes its new exec identity.
+On Sun, Apr 07, 2024 at 06:11:19AM +0100, Al Viro wrote:
+> On Sun, Apr 07, 2024 at 05:57:58AM +0100, Al Viro wrote:
 > 
-> Unlike the tracepoint "sched_process_exec", the "sched_prepare_exec"
-> tracepoint runs before flushing the old exec, i.e. while the task still
-> has the original state (such as original MM), but when the new exec
-> either succeeds or crashes (but never returns to the original exec).
+> > PS: in grow_dev_folio() we probably want
+> > 	struct address_space *mapping = bdev->bd_inode->i_mapping;
+> > instead of
+> > 	struct inode *inode = bdev->bd_inode;
+> > as one of the preliminary chunks.
+> > FWIW, it really looks like address_space (== page cache of block device,
+> > not an unreasonably candidate for primitive) and block size (well,
+> > logarithm thereof) cover the majority of what remains, with device
+> > size possibly being (remote) third...
 > 
-> Being able to trace this event can be helpful in a number of use cases:
-> 
->   * allowing tracing eBPF programs access to the original MM on exec,
->     before current->mm is replaced;
->   * counting exec in the original task (via perf event);
->   * profiling flush time ("sched_prepare_exec" to "sched_process_exec").
-> 
-> Example of tracing output:
-> 
->  $ cat /sys/kernel/debug/tracing/trace_pipe
->     <...>-379  [003] .....  179.626921: sched_prepare_exec: interp=/usr/bin/sshd filename=/usr/bin/sshd pid=379 comm=sshd
->     <...>-381  [002] .....  180.048580: sched_prepare_exec: interp=/bin/bash filename=/bin/bash pid=381 comm=sshd
->     <...>-385  [001] .....  180.068277: sched_prepare_exec: interp=/usr/bin/tty filename=/usr/bin/tty pid=385 comm=bash
->     <...>-389  [006] .....  192.020147: sched_prepare_exec: interp=/usr/bin/dmesg filename=/usr/bin/dmesg pid=389 comm=bash
-> 
-> Signed-off-by: Marco Elver <elver@google.com>
+> Incidentally, how painful would it be to switch __bread_gfp() and __bread()
+> to passing *logarithm* of block size instead of block size?  And possibly
+> supply the same to clean_bdev_aliases()...
 
-This looks good to me. If tracing wants to take it:
+I've looked at it because blksize_bits() was pretty horrid.  But I got
+scared because I couldn't figure out how to make unconverted places
+fail to compile, without doing something ugly like
 
-Acked-by: Kees Cook <keescook@chromium.org>
+-__bread(struct block_device *bdev, sector_t block, unsigned size)
++__bread(unsigned shift, struct block_device *bdev, sector_t block)
 
-If not, I can take it in my tree if I get a tracing Ack. :)
-
--Kees
-
--- 
-Kees Cook
+I assume you're not talking about changing bh->b_size, just passing in
+the log and comparing bh->b_size to 1<<shift?
 
