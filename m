@@ -1,143 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-16644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8648A060A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 04:40:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CBA18A063D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 04:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861871F2462B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 02:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D873E1F25B8C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 02:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A295A13B28D;
-	Thu, 11 Apr 2024 02:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE5B13B2BA;
+	Thu, 11 Apr 2024 02:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HlRizrIc"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eSnqlqEp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220AB5F870
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 02:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B895F870;
+	Thu, 11 Apr 2024 02:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712803212; cv=none; b=X8SGk3CQxPs7jGUB2psu8XnV1eBzr4GRPE4gm0TKN5KE5qyyoL2RW98Y8RByVPZj7HC+h3IIKxkcn3XKo4mzUQpL4M4vncXny//zkO6wpoO2w6hhcZYzb/PGwoCLRuKzFYMC9hYGjrLMD0Vqb7KvWqcWKgPSZpGCza8dvchfQ/Y=
+	t=1712804077; cv=none; b=mwLX3qD6VKOCCQVhiKveeOK5LLn3EwCeSeHdM7VYJAQTKE0HFws8wANu5OsPYqc2Ba1wP/daRD5bJmwLw3QPTS6OSQ+r4xsv0qTjOMad8VDi37GKSFJ7kdgMwXANM0RD4pzgdTulwadV5yLhQ0EwQFT/KjFcqYtyqru37usDpG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712803212; c=relaxed/simple;
-	bh=nAGR3QwbwJHg0yglTUbnjyXfmhwicyQzUNh2YPI0DmI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ojIGT/yiu2bhBYPSW4jsSdKAgcQVyh7oKudQkE49HqgYzM3WQGVZvDbX7Dkk2uo1W0+CbPuBEuJcaK+nJj4lDa4jrzW3WCvhDc4h/F3Z9H+Z1RK4V6Wzvd2FG0j8Hu1ukdMLcEiDfFA8qcZTlPZ0Pr+JvlMk/twU0Z5yU9nLkKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HlRizrIc; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-56e1baf0380so8435362a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 19:40:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1712803208; x=1713408008; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZAti3DeKOVRxV5o0JR8+DzuFObIz3rfvlLJ6eRgxroM=;
-        b=HlRizrIcZiOIfOk5s2FvIiqGadh73FKZAAWv7A0W39E8VBsm20/IBL8MGo8grVIA+V
-         k9P64q+6gNlEHTIFoPJtsnl5DJX1bPNprAHsmtcG7FOmzS8nO0GZrTkB9fldDAaoFME/
-         3WogMhL+jCnctmsKBS0Cy70TM3DFA0leBVCoI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712803208; x=1713408008;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZAti3DeKOVRxV5o0JR8+DzuFObIz3rfvlLJ6eRgxroM=;
-        b=h0gcjN2kcmbClOFwJk6+yxvlHfI18pC1cHdmbNIDNpe8ZjHgnmF3/YXKm85xWNu/uw
-         uByiMCCA8En06MOqW51/B0cVNZ0XclRK+7E1W6x136ChX+xn03gtTnhhHpYmKZzjj1KX
-         6Ng5mueeNfJ+chWAVk5Bl92NlCkLhlF9yAZijgVhsGr8PK59iSBE/wOnDpIYqUQIBIXk
-         EZz+l7LthE7H55WhnczznNjiafGkTj9HpkZm0oiCnjcNQCwSDbmm0H8pNXZBL1XVwNyX
-         XVIOLXz53+RGmPuhCiUwhIClkub1/GOIDaKUEU4cnoMu4b/ezyvsMpEWe/TB3LKReXmn
-         01YA==
-X-Gm-Message-State: AOJu0YxlEzNHVoCtrO+lPlEO96t4vwkJSRiraHmPZZzNmjtXNvESq8S/
-	kwgDCHGb8M/YGE1l3vYNxFni6kTSXmbQ8pW3+nA7L5R5idKkOXwyctcMe8fMbk2fEuQgQkBc/9x
-	Ygr1LBQ==
-X-Google-Smtp-Source: AGHT+IFlWBYDyc9G+o407gGoRNZfu1DFo7OzVL5KG9IxR4AE6VSolLFJ/AH5QW5As/UzQe91j5bdEg==
-X-Received: by 2002:a17:906:250f:b0:a52:1358:c615 with SMTP id i15-20020a170906250f00b00a521358c615mr1898794ejb.7.1712803208206;
-        Wed, 10 Apr 2024 19:40:08 -0700 (PDT)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id di18-20020a170906731200b00a4e9359fbe8sm290515ejc.44.2024.04.10.19.40.06
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Apr 2024 19:40:06 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a52176b2cb6so95043566b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Apr 2024 19:40:06 -0700 (PDT)
-X-Received: by 2002:a17:906:184a:b0:a52:882:abaa with SMTP id
- w10-20020a170906184a00b00a520882abaamr2382187eje.76.1712803205798; Wed, 10
- Apr 2024 19:40:05 -0700 (PDT)
+	s=arc-20240116; t=1712804077; c=relaxed/simple;
+	bh=uXsuN4wUwAIfsSO+WFyJIu8o15W+PXoOTYaGu0BkidI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=E8hd0hjNtvniNyRx/LH4NKaN47F0pogEZFq6li6ntzJAAh0IUM0pAZfJiimcXpKmpWVfNF5Hsz8i/G/EJX8uA1unGlcVcr2Zx0kiXQ/D0YVpjn4sunEl4AODyw3VZsgZu07lVpRYo/uQc8chYQGe7DCo5d9ZohudIm6toyCVYfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eSnqlqEp; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 10 Apr 2024 22:54:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1712804070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=JaNPtXr0mm+bEAmXMp73DrXvXkWEkPC0u2C6L0pm1Wo=;
+	b=eSnqlqEpD9xe76X0eJ1LfdeRuszqbVEsG9vjQ3zGn3C1As9+jZX2I97VBot7qnL8z/Y61y
+	wjvwuV2nb8E6PphsSV4B8D3fdEAGh1nOF+gPuzf0knxdK7RL4/WLUfFCSfkXCc4Qc0kRLe
+	/eOm3FszzAZ38qX5TVr4SPZTxg5Vlnc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for rc4
+Message-ID: <woux55cy6ms6exoa43hg745ftfo6msc3bsnjge3te2c4pvdzmf@57wrbdc5pp7s>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240411001012.12513-1-torvalds@linux-foundation.org>
-In-Reply-To: <20240411001012.12513-1-torvalds@linux-foundation.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 10 Apr 2024 19:39:49 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiaoij30cnx=jfvg=Br3YTxhQjp4VWRc6=xYE2=+EVRPg@mail.gmail.com>
-Message-ID: <CAHk-=wiaoij30cnx=jfvg=Br3YTxhQjp4VWRc6=xYE2=+EVRPg@mail.gmail.com>
-Subject: Re: [PATCH] vfs: relax linkat() AT_EMPTY_PATH - aka flink() - requirements
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Lutomirski <luto@kernel.org>, Peter Anvin <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 10 Apr 2024 at 17:10, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> +               if (flags & LOOKUP_DFD_MATCH_CREDS) {
-> +                       if (f.file->f_cred != current_cred() &&
-> +                           !capable(CAP_DAC_READ_SEARCH)) {
-> +                               fdput(f);
-> +                               return ERR_PTR(-ENOENT);
-> +                       }
-> +               }
+Hi Linus, another batch of fixes for you...
 
-Side note: I suspect that this could possibly be relaxed further, by
-making the rule be that if something has been explicitly opened to be
-used as a path (ie O_PATH was used at open time), we can link to it
-even across different credentials.
+And on the subject of the rc3 announcement - yes, let's please dial back
+the excitement _just_ a bit, it's seemed a bit unhinged at times;
+bcachefs is still marked as experimental for a reason.
 
-IOW, the above could perhaps even be
+You shouldn't be running bcachefs just yet if you'll be sad if things
+are offline for a bit (where a bit has been for a few people a week or
+two); IOW, this is still very much for early adopters and people who are
+willing and able to help test and debug.
 
-+               if (flags & LOOKUP_DFD_MATCH_CREDS) {
-+                       if (!(f.file->f_mode & FMODE_PATH) &&
-+                           f.file->f_cred != current_cred() &&
-+                           !capable(CAP_DAC_READ_SEARCH)) {
-+                               fdput(f);
-+                               return ERR_PTR(-ENOENT);
-+                       }
-+               }
+Worst case scenario you're not going to lose data, as long as you can be
+patient, but I'm still debugging issues where we get stuck in recovery
+(= filesystem offline).
 
-which would _allow_ people to pass in paths as file descriptors if
-they actually wanted to.
+That said - things are coming together quite nicely. Will have more to
+say at LSF...
 
-After all, the only thing you can do with an O_PATH file descriptor is
-to use it as a path - there would be no other reason to use O_PATH in
-the first place. So if you now pass it to somebody else, clearly you
-are intentionally trying to make it available *as* a path.
+----------------------------------------------------------------
 
-So you could imagine doing something like this:
+The following changes since commit 09d4c2acbf4c864fef0f520bbcba256c9a19102e:
 
-         // Open path as root
-         int fd = open('filename", O_PATH);
+  bcachefs: reconstruct_inode() (2024-04-03 14:46:51 -0400)
 
-        // drop privileges
-        // setresuid(..) or chmod() or enter new namespace or whatever
+are available in the Git repository at:
 
-        linkat(fd, "", AT_FDCWD, "newname", AT_EMPTY_PATH);
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-04-10
 
-and it would open the path with one set of privileges, but then
-intentionally go into a more restricted mode and create a link to the
-source within that restricted environment.
+for you to fetch changes up to 1189bdda6c991cbf9342d84410042dd5f3a792e0:
 
-Sensible? Who knows. I'm just throwing this out as another "this may
-be the solution to our historical flink() issues".
+  bcachefs: Fix __bch2_btree_and_journal_iter_init_node_iter() (2024-04-10 22:28:36 -0400)
 
-           Linus
+----------------------------------------------------------------
+bcachefs fixes for v6.9-rc4
+
+Notable user impacting bugs
+
+- On multi device filesystems, recovery was looping in
+  btree_trans_too_many_iters(). This checks if a transaction has touched
+  too many btree paths (because of iteration over many keys), and isuses
+  a restart to drop unneeded paths. But it's now possible for some paths
+  to exceed the previous limit without iteration in the interior btree
+  update path, since the transaction commit will do alloc updates for
+  every old and new btree node, and during journal replay we don't use
+  the btree write buffer for locking reasons and thus those updates use
+  btree paths when they wouldn't normally.
+
+- Fix a corner case in rebalance when moving extents on a durability=0
+  device. This wouldn't be hit when a device was formatted with
+  durability=0 since in that case we'll only use it as a write through
+  cache (only cached extents will live on it), but durability can now be
+  changed on an existing device.
+
+- bch2_get_acl() could rarely forget to handle a transaction restart;
+  this manifested as the occasional missing acl that came back after
+  dropping caches.
+
+- Fix a major performance regression on high iops multithreaded write
+  workloads (only since 6.9-rc1); a previous fix for a deadlock in the
+  interior btree update path to check the journal watermark introduced a
+  dependency on the state of btree write buffer flushing that we didn't
+  want.
+
+- Assorted other repair paths and recovery fixes.
+
+----------------------------------------------------------------
+Bagas Sanjaya (2):
+      Documentation: filesystems: Add bcachefs toctree
+      MAINTAINERS: Add entry for bcachefs documentation
+
+Dan Carpenter (1):
+      bcachefs: fix ! vs ~ typo in __clear_bit_le64()
+
+Hongbo Li (1):
+      bcachefs: fix the count of nr_freed_pcpu after changing bc->freed_nonpcpu list
+
+Kent Overstreet (19):
+      bcachefs: Make snapshot_is_ancestor() safe
+      bcachefs: Bump limit in btree_trans_too_many_iters()
+      bcachefs: Move btree_updates to debugfs
+      bcachefs: Further improve btree_update_to_text()
+      bcachefs: Print shutdown journal sequence number
+      bcachefs: Fix rebalance from durability=0 device
+      bcachefs: fix rand_delete unit test
+      bcachefs: Fix BCH_IOCTL_FSCK_OFFLINE for encrypted filesystems
+      bcachefs: Disable errors=panic for BCH_IOCTL_FSCK_OFFLINE
+      bcachefs: JOURNAL_SPACE_LOW
+      bcachefs: Fix gap buffer bug in bch2_journal_key_insert_take()
+      bcachefs: fix bch2_get_acl() transaction restart handling
+      bcachefs: fix eytzinger0_find_gt()
+      bcachefs: Fix check_topology() when using node scan
+      bcachefs: Don't scan for btree nodes when we can reconstruct
+      bcachefs: btree_node_scan: Respect member.data_allowed
+      bcachefs: Fix a race in btree_update_nodes_written()
+      bcachefs: Kill read lock dropping in bch2_btree_node_lock_write_nofail()
+      bcachefs: Fix __bch2_btree_and_journal_iter_init_node_iter()
+
+Thomas Bertschinger (1):
+      bcachefs: create debugfs dir for each btree
+
+Thorsten Blum (1):
+      bcachefs: Rename struct field swap to prevent macro naming collision
+
+ Documentation/filesystems/bcachefs/index.rst |  11 +++
+ Documentation/filesystems/index.rst          |   1 +
+ MAINTAINERS                                  |   1 +
+ fs/bcachefs/acl.c                            |  30 +++----
+ fs/bcachefs/bcachefs_format.h                |  14 +++
+ fs/bcachefs/btree_gc.c                       |  13 ++-
+ fs/bcachefs/btree_iter.h                     |   2 +-
+ fs/bcachefs/btree_journal_iter.c             |  67 ++++++++++----
+ fs/bcachefs/btree_key_cache.c                |   4 +-
+ fs/bcachefs/btree_locking.c                  |  28 +-----
+ fs/bcachefs/btree_node_scan.c                |  11 ++-
+ fs/bcachefs/btree_types.h                    |  14 +++
+ fs/bcachefs/btree_update_interior.c          | 128 +++++++++++++--------------
+ fs/bcachefs/btree_update_interior.h          |   3 +-
+ fs/bcachefs/chardev.c                        |  98 +++++++++++---------
+ fs/bcachefs/data_update.c                    |  17 +++-
+ fs/bcachefs/debug.c                          |  75 ++++++++++++----
+ fs/bcachefs/eytzinger.c                      |   8 +-
+ fs/bcachefs/eytzinger.h                      |  26 ++++--
+ fs/bcachefs/journal_reclaim.c                |   2 +
+ fs/bcachefs/journal_types.h                  |   1 +
+ fs/bcachefs/recovery.c                       |  14 ---
+ fs/bcachefs/snapshot.c                       |  19 ++--
+ fs/bcachefs/super.c                          |   5 ++
+ fs/bcachefs/sysfs.c                          |   6 --
+ fs/bcachefs/tests.c                          |   2 +-
+ fs/bcachefs/util.h                           |  10 ++-
+ 27 files changed, 372 insertions(+), 238 deletions(-)
+ create mode 100644 Documentation/filesystems/bcachefs/index.rst
 
