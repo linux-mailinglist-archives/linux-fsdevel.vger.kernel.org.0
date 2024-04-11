@@ -1,144 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-16712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EA68A1C3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:42:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C9E8A1C4D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 19:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AF5B1C21F8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 17:42:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A76282EA7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Apr 2024 17:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA25215B974;
-	Thu, 11 Apr 2024 16:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23DE15E81D;
+	Thu, 11 Apr 2024 16:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pjdyPIsi"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PvpttXMq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8C243171;
-	Thu, 11 Apr 2024 16:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A26932C8B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 16:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712852032; cv=none; b=ftMFbRxq77UckKF3XO1ESlm1HX5BF4/xd5Z9EAVBHQoSF/8iHg1cgxQcfetg4q6pptzpax6NM6fyCS+mqimoCuDQT9K0PuGDu2st+7AOFHdxrN/gDK9dJYC8LEyl46sINp3jWpfwssdIHjQWp8ahotUkXvNY4a181xDypMkz/EQ=
+	t=1712852132; cv=none; b=Yqz0KVo+FCGiSDgU5ODpBoHJ0igkSwFfIXA1feft9gRneJ/vwDopvRzgHRGK2MuB8+Rduv/hwN0bOjVe8HiFJdRCA2K399WAmvCxe7mBSeMV0GdVLdYzhVK6++k8mKyN38RSIws1RLoaYEReWVpSTQCxJrrgnCyf9Wp9JDrQAbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712852032; c=relaxed/simple;
-	bh=evtsIG6x6Yz6zeuupS4HiOT3wfAwZTOiHxGTCrmvKw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XNuZ5QmSxsD0GhNYW7OBF2bPBhv5+HaQ8qJdGlBdoz5mzHJLb2PChrqDhiPQt7M4/KcdG5Q5rxgmIZdSbrdf9oOvgHVLPokJzSqburUgP6VeX6cKy5DJNQYjXhRoQSCvqUJuAa55CjWCErNSU/+Rpyb9Skud98qGt6g4fzPCDPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pjdyPIsi; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1712852025; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=i28s5n6Wi5wy2FzpIgLktF1Mrc755I0vQ0l4zk5yxBI=;
-	b=pjdyPIsi86ySuz4iqFOxMv9ZMQN2S9ni8goTD6AN2wtUNaV6jMrrvA3zhSpLy/7s6DFMm+qdGFAUR1AM/2Qekjioz2yxPoAzTfNu8EQL+/ShxJ9IaLJOjZ4/FIWTfyW6IPS3XCPkjXOxCRnCkVpiKzJckNnAzLGm5TleywQ3RcU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W4LiTJx_1712852023;
-Received: from 192.168.3.4(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W4LiTJx_1712852023)
-          by smtp.aliyun-inc.com;
-          Fri, 12 Apr 2024 00:13:44 +0800
-Message-ID: <a660a238-2b7e-423f-b5aa-6f5777259f4d@linux.alibaba.com>
-Date: Fri, 12 Apr 2024 00:13:42 +0800
+	s=arc-20240116; t=1712852132; c=relaxed/simple;
+	bh=LkGZWrwcM7i1Yw0nWiLzlJnspf96t1s3gPexteQnoII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dc4P1rfTZEWsW0Dvqnpafw+TSrS9MIvJzOjpUlqUxncMhZ4tVRVTYa2Fx2d5pyEWW+op3cGCb666wByOcQzer5d2TRo4uXj4ozod5HpbXJQv2/SPUKuE6qX7rHl5tvXWTkw9TxDq6X0DNObXyBIszLXMXxx/peb0IdL1718yHUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PvpttXMq; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d700beb60bso129171161fa.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 09:15:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1712852128; x=1713456928; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YBU5cbcti1MoT6SGDsy6z4cIdlnVeSMn7eSvY9b74qk=;
+        b=PvpttXMqhyOCJz+iu0AnVRjMW1DGLYX//13HX/uoNuQS5Db9uMZb1etPQTpC97Qkfd
+         OMFLYm/B6gbFTDPxdehxgqQ6R32+C5EgoP8xFzFpfttpk88wpS62L1ORULHm/FMK6Dzw
+         eLVf96rxuGN7ygULbg8NqgjCoStq0DLnNfMlQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712852128; x=1713456928;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YBU5cbcti1MoT6SGDsy6z4cIdlnVeSMn7eSvY9b74qk=;
+        b=WROxLf9ZQWk+RQIvkvuxl3PRyHtOqY21LfS9C14ZG0L9AqgqIzn4viagqE9QQIja0q
+         DK7GEJQ7/cIgnuhxxZHKLSitforn7R3IhHg/m8UAFsVkYYKLFvF/BBLUXhkFwSwpJspw
+         pAJ7vQepV6yAXlXRyTxRwbjKfh6V1O8ygcnefp0N1GhWLkXL7VaOmZGgN61bJ/U7ti3u
+         dqiuf+2tB0fSjMSWWo+/WGg18Ko06h40xyuz/AT4uQeUlUzXxTe3dhoncV9StMzlBO8F
+         Q86efqeOULbrZR0QFLww8BwRrkNQoQ7fTr3AwrQLTzyd7qOdI3v4gwZZd8zCBQXhVtxh
+         3ZfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFT4zwE34RiqPBTbkVzrfZzdkiPM+WST25evzl+bqSBwjkBbhGM+kk9hdz0vPqwvMhWC39sVz2CReGzSB+jcplckHVc8/N6Aa8Nsb93Q==
+X-Gm-Message-State: AOJu0YxXF5pinULo/pKHhIue+ceQQwTCUPwOmALkAszaFaUxrQvaJ568
+	sE2dvj/6fQdjytkV2QgRpmV/dygUr7myuLqgEI4Fzpc5jmn+bMUrIwU1oruK1+J8r+WM67TSfYY
+	pvih8HA==
+X-Google-Smtp-Source: AGHT+IGuPK0+YRbuk9o1p3r/Kq7fN1vH2ILJHZOi0naRzSR0RA1QEENCzCK/pvMmgC1setvKUcHbgA==
+X-Received: by 2002:a2e:8350:0:b0:2d4:94eb:e9fe with SMTP id l16-20020a2e8350000000b002d494ebe9femr88519ljh.21.1712852128147;
+        Thu, 11 Apr 2024 09:15:28 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id k23-20020a2ea277000000b002d9f8183e0esm44620ljm.81.2024.04.11.09.15.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Apr 2024 09:15:27 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d485886545so141086921fa.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Apr 2024 09:15:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX0P//BhvOmDBButANDo8XgTdaPt25W58QauI9Oi/9F3AlSVjB0MvNz1RfTWY5xaH9HNTQbtZjHOBUxybGO69UEsgJ6MIcOoRphm2rekg==
+X-Received: by 2002:a2e:b90a:0:b0:2d4:6a34:97bf with SMTP id
+ b10-20020a2eb90a000000b002d46a3497bfmr57110ljb.49.1712852127138; Thu, 11 Apr
+ 2024 09:15:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH vfs.all 08/26] erofs: prevent direct access of bd_inode
-To: Al Viro <viro@zeniv.linux.org.uk>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: jack@suse.cz, hch@lst.de, brauner@kernel.org, axboe@kernel.dk,
- linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com
-References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
- <20240406090930.2252838-9-yukuai1@huaweicloud.com>
- <20240407040531.GA1791215@ZenIV>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240407040531.GA1791215@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240411001012.12513-1-torvalds@linux-foundation.org>
+ <CAHk-=wiaoij30cnx=jfvg=Br3YTxhQjp4VWRc6=xYE2=+EVRPg@mail.gmail.com> <20240411-alben-kocht-219170e9dc99@brauner>
+In-Reply-To: <20240411-alben-kocht-219170e9dc99@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 11 Apr 2024 09:15:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjrPDx=f5OSnQVbbJ4id6SZk-exB1VW9Uz3R7rKFvTQeQ@mail.gmail.com>
+Message-ID: <CAHk-=wjrPDx=f5OSnQVbbJ4id6SZk-exB1VW9Uz3R7rKFvTQeQ@mail.gmail.com>
+Subject: Re: [PATCH] vfs: relax linkat() AT_EMPTY_PATH - aka flink() - requirements
+To: Christian Brauner <brauner@kernel.org>, Charles Mirabile <cmirabil@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andrew Lutomirski <luto@kernel.org>, Peter Anvin <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Al,
+On Thu, 11 Apr 2024 at 02:05, Christian Brauner <brauner@kernel.org> wrote:
+>
+> I had a similar discussion a while back someone requested that we relax
+> permissions so linkat can be used in containers.
 
-On 2024/4/7 12:05, Al Viro wrote:
-> On Sat, Apr 06, 2024 at 05:09:12PM +0800, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Now that all filesystems stash the bdev file, it's ok to get inode
->> for the file.
-> 
-> Looking at the only user of erofs_buf->inode (erofs_bread())...  We
-> use the inode for two things there - block size calculation (to get
-> from block number to position in bytes) and access to page cache.
-> We read in full pages anyway.  And frankly, looking at the callers,
-> we really would be better off if we passed position in bytes instead
-> of block number.  IOW, it smells like erofs_bread() having wrong type.
-> 
-> Look at the callers.  With 3 exceptions it's
-> fs/erofs/super.c:135:   ptr = erofs_bread(buf, erofs_blknr(sb, *offset), EROFS_KMAP);
-> fs/erofs/super.c:151:           ptr = erofs_bread(buf, erofs_blknr(sb, *offset), EROFS_KMAP);
-> fs/erofs/xattr.c:84:    it.kaddr = erofs_bread(&it.buf, erofs_blknr(sb, it.pos), EROFS_KMAP);
-> fs/erofs/xattr.c:105:           it.kaddr = erofs_bread(&it.buf, erofs_blknr(sb, it.pos),
-> fs/erofs/xattr.c:188:           it->kaddr = erofs_bread(&it->buf, erofs_blknr(sb, it->pos),
-> fs/erofs/xattr.c:294:           it->kaddr = erofs_bread(&it->buf, erofs_blknr(sb, it->pos),
-> fs/erofs/xattr.c:339:           it->kaddr = erofs_bread(&it->buf, erofs_blknr(it->sb, it->pos),
-> fs/erofs/xattr.c:378:           it->kaddr = erofs_bread(&it->buf, erofs_blknr(sb, it->pos),
-> fs/erofs/zdata.c:943:           src = erofs_bread(&buf, erofs_blknr(sb, pos), EROFS_KMAP);
-> 
-> and all of them actually want the return value + erofs_offset(...).  IOW,
-> we take a linear position (in bytes).  Divide it by block size (from sb).
-> Pass the factor to erofs_bread(), where we multiply that by block size
-> (from inode), see which page will that be in, get that page and return a
-> pointer *into* that page.  Then we again divide the same position
-> by block size (from sb) and add the remainder to the pointer returned
-> by erofs_bread().
-> 
-> IOW, it would be much easier to pass the position directly and to hell
-> with block size logics.  Three exceptions to that pattern:
-> 
-> fs/erofs/data.c:80:     return erofs_bread(buf, blkaddr, type);
-> fs/erofs/dir.c:66:              de = erofs_bread(&buf, i, EROFS_KMAP);
-> fs/erofs/namei.c:103:           de = erofs_bread(&buf, mid, EROFS_KMAP);
-> 
-> Those could bloody well multiply the argument by block size;
-> the first one (erofs_read_metabuf()) is also interesting - its
-> callers themselves follow the similar pattern.  So it might be
-> worth passing it a position in bytes as well...
-> 
-> In any case, all 3 have superblock reference, so they can convert
-> from blocks to bytes conveniently.  Which means that erofs_bread()
-> doesn't need to mess with block size considerations at all.
-> 
-> IOW, it might make sense to replace erofs_buf->inode with
-> pointer to address space.  And use file_mapping() instead of
-> file_inode() in that patch...
+Hmm.
 
-Just saw this again by chance, which is unexpected.
+Ok, that's different - it just wants root to be able to do it, but
+"root" being just in the container itself.
 
-Yeah, I think that is a good idea.  The story is that erofs_bread()
-was derived from a page-based interface:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/erofs/data.c?h=v5.10#n35
+I don't think that's all that useful - I think one of the issues with
+linkat(AT_EMPTY_PATH) is exactly that "it's only useful for root",
+which means that it's effectively useless. Inside a container or out.
 
-so it was once a page index number.  I think a byte offset will be
-a better interface to clean up these, thanks for your time and work
-on this!
+Because very few loads run as root-only (and fewer still run with any
+capability bits that aren't just "root or nothing").
 
-BTW, sightly off the topic:
+Before I did all this, I did a Debian code search for linkat with
+AT_EMPTY_PATH, and it's almost non-existent. And I think it's exactly
+because of this "when it's only useful for root, it's hardly useful at
+all" issue.
 
-I'm little confused why I'm not be looped for this version this time
-even:
+(Of course, my Debian code search may have been broken).
 
-  1) I explicitly asked to Cc the mailing list so that I could find
-     the latest discussion and respond in time:
-      https://lore.kernel.org/r/5e04a86d-8bbd-41da-95f6-cf1562ed04f9@linux.alibaba.com
+So I suspect your special case is actually largely useless, and what
+the container user actually wanted was what my patch does, but they
+didn't think that was possible, so they asked to just extend the
+"root" notion.
 
-  2) I sent my r-v-b tag on RFC v4 (and the tag was added on this
-     version) but I didn't receive this new version.
+I've added Charles to the Cc.
 
-Thanks,
-Gao Xiang
+But yes, with my patch, it would now be trivial to make that
+
+        capable(CAP_DAC_READ_SEARCH)
+
+test also be
+
+        ns_capable(f.file->f_cred->user_ns, CAP_DAC_READ_SEARCH)
+
+instead. I suspect not very many would care any more, but it does seem
+conceptually sensible.
+
+As to your patch - I don't like your nd->root  games in that patch at
+all. That looks odd.
+
+Yes, it makes lookup ignore the dfd (so you avoid the TOCTOU issue),
+but it also makes lookup ignore "/". Which happens to be ok with an
+empty path, but still...
+
+So it feels to me like that patch of yours mis-uses something that is
+just meant for vfs_path_lookup().
+
+It may happen to work, but it smells really odd to me.
+
+             Linus
 
