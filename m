@@ -1,124 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-16820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480228A3435
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 18:59:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4598A3453
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 19:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78B9D1C2302A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 16:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7781F22987
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 17:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE2B14BFBC;
-	Fri, 12 Apr 2024 16:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A2D14D2BD;
+	Fri, 12 Apr 2024 17:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7PAvxxF"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="PIA/i4s+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D316E5491F;
-	Fri, 12 Apr 2024 16:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C16148FE0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 17:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712941164; cv=none; b=HbfZ7nm+P1zAaTtuG+O+wxljBr5NjtFp5Qz4Z6ptUn5zUistTTrkPWbu7b7nNUv10wNGGS8fNsI/r7azta3UaK3zuqNxJ+rwGRKDv5W/EnQYR6c/q2wXoAm8nbNHzoLCtaMoN1JZQapIXCgiNP889hv8DijkwmdbLqLgnJwNYkY=
+	t=1712941536; cv=none; b=MPt7LpB0USOwk803166x334yYd25ksBgjMJ4vMLydP9HKrynJnNfhlG5qhyKG4qmiclxpO36zUVDZU2A5yYpi0Xl7ojOWPLAhQN48BRsfmSnPs6TnNkYMHfzn7ZhkTw8oHe5qZ9kIgGZ0vfv589MxFNFYQqHmzbRPoAdSenCp0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712941164; c=relaxed/simple;
-	bh=vjUt8Ss2air20ASfcUx9xukrTcaaeYFx19lixRDlmP0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=avzY5o91SyvG515X4J/gpFKl61VdZd1ydGM25lhVIo7dFYAkq/LDqOnWFi3/zP3ZwiFF/9a+wcBchmOEaEDwv5ZtDFJLzeb8IQI7NV18yN0Cy0dtIRUgJtEBOG1xNZpVDrRhv6EvED008uJXYW509V2v2BBmKX5aQrdjVNL6+Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7PAvxxF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D84F9C113CC;
-	Fri, 12 Apr 2024 16:59:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712941163;
-	bh=vjUt8Ss2air20ASfcUx9xukrTcaaeYFx19lixRDlmP0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=B7PAvxxFsSFHG7ZCnsELk3yzsJDSXiXUwUaoao8fjYeQgunNY5KA0SHMn7Mm2zdTp
-	 sVvu012C7X5XqVa215VQ+KY3HWjwFpLMeLnp1Q3ghYPc8Bq+kZMoO6fWOEQwW3XzTk
-	 heHhS7uZJYfnMqMGaZ/mJao/tGod1J5x/tbZC+2SveyvvQuBFPoNCbTtyKhckzG8OQ
-	 Kud6G/ycDucl9EMm6zAKzZ9kZ94MjqVqyM5d+nS5sv2G9+xPfotvp4oZrH/KTgQe+2
-	 LJZxaVycmHkafDql7cJYNvg5YmO8q5NcvPgvJM3v0N4uSsfqhGyWUZlmVPQP3Ynufd
-	 esHkLQ+rsTAJw==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Andreas
- Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, Conor
- Dooley <conor@kernel.org>, Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: riscv32 EXT4 splat, 6.8 regression?
-In-Reply-To: <20240412154342.GA1310856@mit.edu>
-References: <878r1ibpdn.fsf@all.your.base.are.belong.to.us>
- <20240412154342.GA1310856@mit.edu>
-Date: Fri, 12 Apr 2024 18:59:19 +0200
-Message-ID: <87a5lyecuw.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1712941536; c=relaxed/simple;
+	bh=+su7OSUJsFls4CIQXxEZl65t0clagHiB1QsWAMbAmDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dK5bywlA9EF1cus3pqnJlgwtbw8wcOkOrDeHIi9R4QoOIbPgDu8FsfUM4gXTsR/25p+Pq6miI24FJor5ZjVu4sSFqhwG9D6ILk/CKjpiZUXFHbmo1ZDkS1JRKSQmO/C0XBE/FtxLMZCdzw5hKdsctuj4XN+ZYbtCE9iCvMbvT3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=PIA/i4s+; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2228c4c5ac3so650478fac.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 10:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1712941534; x=1713546334; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/EuVGwHTxmbtDwTp4fNMFd9ojHayxYpTNJMubGDO+yg=;
+        b=PIA/i4s+83uQbaOaXto2oSszm8r4MTN8R47nuVJ5DKe7kQipQJoPAEJLySGKEaduoi
+         fBhzWW8686wJPotlI9vTyuNTFVQ1/NgKD4YGRbAwmGPCE+EW6hcRFU6vD48QyFN0oiUL
+         jrcLnNsM9nFzlKMCcrZxq0Prpz6jiiVreEg88ZC+Dk9IyK6in6rraBhlALD1hLnfPbj3
+         KyGuJBg3D5Y/7hLw1+Lo3fyfpQLwtYJ4c9QxFHdczXGO7nHr8k7m/4N1xKArcoGF+/oG
+         jeLKP3Gh7zn1JEtCgwVWkdYSNXUIayQvSZXgWtYEFlLNy0JbIHimXFCGGHd6DNop9T2f
+         0a2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712941534; x=1713546334;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/EuVGwHTxmbtDwTp4fNMFd9ojHayxYpTNJMubGDO+yg=;
+        b=NbhQXzRGKaLh59Yzlh8KSeZnhP96iiR7A8cSc0vEFEgn+fhXC6WsvXzSgduwQY/Bo2
+         99sg9l/Lk6QDZGACm58fIi8t4bwTwkhAMT5iPXYCVeMuSwnjZIBA2Hletn9afQo+xbfe
+         jjhUTRLSU8D4i3zFqTu7o9AV6cnzscpAv33Q17GvZlOK+SpRs0CcNyfFprRB1w0tvucm
+         6dJHu0z4qMMH7Nlwnku3T786syC2R5r3sUSom8hyY9u1G5V2KWWiri3VpJkJJmRy71mY
+         UTJyfOte5WSa+jObY/F4nNv9GVzxTHrpLKjGaPpLFxeqppI/3TJ9uNV+iH0VTS9V6LP4
+         U4pA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWdW73iE5NYl7M2CCCD3WwlZgCNZCy19EI0Wkz6rZQ4VKmxGPO5RYl3L4TOayr57i5Z4ng4j10e9F3fn3nnuyJumXEVM3DXVUw7TDNIw==
+X-Gm-Message-State: AOJu0YzlggVcN4PuQ5FBHlcszEwyzKAPfFVHSDxRMBs62MER/XN0Bfth
+	5oDmg/wwtu8bgd3HaV59MMt3BgDT9BaOvcQMfrYyGjhYnfTpXNWz7FhmBq2d3GlokpTm3u3GlH+
+	7UH+4mtffD1z7A6qkSL1EmB2a6PwWC6yFvgGxDw==
+X-Google-Smtp-Source: AGHT+IFFWNWDQpb4IdXMSld7uI+GGFrLl02QQNkjBBmvPtfyGISuhykwiEhQTc4Uews9+sCsYC//GV0j7fEO9UlX82A=
+X-Received: by 2002:a05:6870:1650:b0:22e:ed14:3e3d with SMTP id
+ c16-20020a056870165000b0022eed143e3dmr3334118oae.33.1712941534211; Fri, 12
+ Apr 2024 10:05:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20240220214558.3377482-1-souravpanda@google.com>
+ <20240220214558.3377482-2-souravpanda@google.com> <20240319143320.d1b1ef7f6fa77b748579ba59@linux-foundation.org>
+In-Reply-To: <20240319143320.d1b1ef7f6fa77b748579ba59@linux-foundation.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 12 Apr 2024 13:04:57 -0400
+Message-ID: <CA+CK2bDMNkCq6ts1BLAgJbAcUiq-106GCZZr_=cU0hW+jDYeiw@mail.gmail.com>
+Subject: Re: [PATCH v9 1/1] mm: report per-page metadata information
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sourav Panda <souravpanda@google.com>, corbet@lwn.net, gregkh@linuxfoundation.org, 
+	rafael@kernel.org, mike.kravetz@oracle.com, muchun.song@linux.dev, 
+	rppt@kernel.org, david@redhat.com, rdunlap@infradead.org, 
+	chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com, 
+	bhelgaas@google.com, ivan@cloudflare.com, yosryahmed@google.com, 
+	hannes@cmpxchg.org, shakeelb@google.com, kirill.shutemov@linux.intel.com, 
+	wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz, 
+	Liam.Howlett@oracle.com, surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, weixugc@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-"Theodore Ts'o" <tytso@mit.edu> writes:
-
-> On Fri, Apr 12, 2024 at 04:57:08PM +0200, Bj=C3=B6rn T=C3=B6pel wrote:
->> Hi!
->>=20
->> I've been looking at an EXT4 splat on riscv32, that LKFT found [1]:
+> >  Documentation/filesystems/proc.rst |  3 +++
+> >  fs/proc/meminfo.c                  |  4 ++++
+> >  include/linux/mmzone.h             |  4 ++++
+> >  include/linux/vmstat.h             |  4 ++++
+> >  mm/hugetlb_vmemmap.c               | 17 ++++++++++++----
+> >  mm/mm_init.c                       |  3 +++
+> >  mm/page_alloc.c                    |  1 +
+> >  mm/page_ext.c                      | 32 +++++++++++++++++++++---------
+> >  mm/sparse-vmemmap.c                |  8 ++++++++
+> >  mm/sparse.c                        |  7 ++++++-
+> >  mm/vmstat.c                        | 26 +++++++++++++++++++++++-
+> >  11 files changed, 94 insertions(+), 15 deletions(-)
 >
-> I'm getting a "page not found" for [1]?
+> And yet we offer the users basically no documentation.  The new sysfs
+> file should be documented under Documentation/ABI somewhere and
 
-You are? It's working for me!
+There are no new sysfs files in this change. The new Memmap field in
+/proc/meminfo is documented.
 
->> This was not present in 6.7. Bisection wasn't really helpful (to me at
->> least); I got it down to commit c604110e662a ("Merge tag 'vfs-6.8.misc'
->> of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs"), and when I
->> revert the commits in the vfs merge the splat went away, but I *really*
->> struggle to see how those are related...
+> perhaps we could prepare some more expansive user-facing documentation
+> elsewhere?
 >
-> It sounds like you have a reliable repro; is it something that can be
-> streamlined into a simple test program?  If so, is it something that
-> can be reproduced on other architectures?  And could you make it
-> available?
+> I'd like to hear others' views on the overall usefulness/utility of this
+> change, please?
 
-It's kind of streamlined: Linaro has this nice "tuxrun" tool, that can
-be installed via pip, e.g.
-
-  $ pipx install tuxrun
-
-if you're on Debian.
-
-Then you can get the splat by running:
-
-  $ tuxrun  --runtime docker --device qemu-riscv32 --kernel https://storage=
-.tuxsuite.com/public/linaro/lkft/builds/2esMBaAMQJpcmczj0aL94fp4QnP/Image.g=
-z --parameters SKIPFILE=3Dskipfile-lkft.yaml --parameters SHARD_NUMBER=3D10=
- --parameters SHARD_INDEX=3D1 --image docker.io/linaro/tuxrun-dispatcher:v0=
-.66.1 --tests ltp-controllers
-
-(--runtime knows "podman" as well)
-
-You can pass your own kernel to --kernel, and the config for riscv32 can
-be obtained here [2].
-
-Build with "make ARCH=3Driscv CROSS_COMPILE=3Driscv64-linux-gnu-", and make
-sure to have the riscv64 cross-compilation support (yes, same toolchain
-for rv32!).
-
-It's when the rootfs is mounted, and the kernel is looking an init.
-
-
-I'll keep debugging -- it was more if anyone had seen it before. I'll
-try to reproduce on some other 32b platform as well.
-
+Sourav, could you please consolidate the cover letter and the patch
+into one email, sync it with the upstream kernel, and send the new
+version putting the necessary background information into the stat
+area in the patch.
 
 Thanks,
-Bj=C3=B6rn
-
-[2] https://storage.tuxsuite.com/public/linaro/lkft/builds/2esMBaAMQJpcmczj=
-0aL94fp4QnP/config
+Pasha
 
