@@ -1,154 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-16763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA368A23C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 04:30:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065728A2415
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 04:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2A81F23708
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 02:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEBAC1F22EE7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 02:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3C514AA9;
-	Fri, 12 Apr 2024 02:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BDD14F7F;
+	Fri, 12 Apr 2024 02:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nQA1sdRt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E41EDDAD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 02:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EB213FF5;
+	Fri, 12 Apr 2024 02:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712889002; cv=none; b=ndee7CNIIREK5YC9Wy8FTZ0iWHL94krFMmYwjPBggSW1RC2SwUZj+9L1F830pW098jaZwBb9GHWezgNQto3c0VyfTu0tfPwfHfZZCk4NMLJZ9YnITzdyOdzv30j37tDSUnb9VLtajC6MsJGQ44hN/Jsx2ff8AX1GTikiQgrvywI=
+	t=1712890767; cv=none; b=RBG3L9gmHl7mjRT64q4BsjGHZxq/HvyNFm/9xPQASOz3wonyRYUvsjNSfzCr6O7b6awGyBm5YJYSUKwqRu96TqqqmdSCYpTFRwrOHPTQs1W0l6iWVtvhHjXsh6KLMY53rt4JgoJkbqKWV0mxcebgas1Ibsy/XTDsEE66kNA2mcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712889002; c=relaxed/simple;
-	bh=TVSczl06ljHGmzlzJtI+zJNLxrV6iLWmNLwcHUw1/20=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L1Tn5Jpw+s+ROAEMIYkX2xGCqKbvOgumRJihM0/KBFF+37q1hnI4KaNzsBvs9qMxcitX0AlwlHnrtWsOnupsEMze9WjYfiJMPrvloDmJkAtwsrjYCXoY+Rnjb7sg20d/8Sk3OpEpgSPUvjQtg1BOywMaDvz/1N9m8plz+SrIzcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VG0nc1L0vzwRwS;
-	Fri, 12 Apr 2024 10:27:00 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 77832140427;
-	Fri, 12 Apr 2024 10:29:57 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 12 Apr 2024 10:29:57 +0800
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: "Matthew Wilcox (Oracle)" <willy@infradead.org>, <linux-mm@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH 2/2] mm: filemap: batch mm counter updating in filemap_map_pages()
-Date: Fri, 12 Apr 2024 10:57:04 +0800
-Message-ID: <20240412025704.53245-3-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20240412025704.53245-1-wangkefeng.wang@huawei.com>
-References: <20240412025704.53245-1-wangkefeng.wang@huawei.com>
+	s=arc-20240116; t=1712890767; c=relaxed/simple;
+	bh=7SomgUsA1Qq2vlf1oUganfHwvlApdoZFh8j0xlO7c3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FMxJe5diYAxSqRkOzh7GF+/KLQJ8f/oukbTrQ9bLzSw3OLGPD4vUN3fYL6VzV5ko4NlcXLh4LZAyznapwfNEDsTwLhi6s3dn3WEZ8AyWKOgOtG9RAj4twbJTWduNX5eMuwjMVvqi8T8r0UmETOgWc+CkyUkZKhMnvqJ449SjCmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nQA1sdRt; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tmrFo7Ace5AT6ilsEHkjcDFgjh8yjJTquw+T2TQgMos=; b=nQA1sdRtbjSzvFSnaJaUj+h1O2
+	U/lPUC/LOqn9oJew2ZwMcGUZJj2UI/eTVFJnm3X1NkzNkHxKadLegE0M4EEBzO/KxLxThKnUlDuCN
+	vq0TDnGtUmqSVvl19tmi9VOG4JBOfFnSiBpLjSEsXxSDS2SvyBtIrqaS/uS35JEi0s5XO7JaRcygx
+	J9uJ9QqJcIVOe33cjNH7fdrJr7rjNacDIQ+zFaV/9HA+Q4hBixnQi2Emgfc57P0I2I18cxOxxGyQN
+	oR9NMJzhRXKCrpUTCF+3G1cuSHqhb8OLeaIqeAh16+R3QO7p766HfGOCnPY68FTSfjNprV2XOt+ay
+	hX7bhs0A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rv78A-00AtT3-2N;
+	Fri, 12 Apr 2024 02:59:10 +0000
+Date: Fri, 12 Apr 2024 03:59:10 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	hch@lst.de, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+Message-ID: <20240412025910.GJ2118490@ZenIV>
+References: <20240407030610.GI538574@ZenIV>
+ <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
+ <20240409042643.GP538574@ZenIV>
+ <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
+ <20240410105911.hfxz4qh3n5ekrpqg@quack3>
+ <20240410223443.GG2118490@ZenIV>
+ <20240411-logik-besorgen-b7d590d6c1e9@brauner>
+ <20240411140409.GH2118490@ZenIV>
+ <20240411144930.GI2118490@ZenIV>
+ <d89916c0-6220-449e-ff5f-f299fd4a1483@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d89916c0-6220-449e-ff5f-f299fd4a1483@huaweicloud.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Like copy_pte_range()/zap_pte_range(), make mm counter batch updating
-in filemap_map_pages(), the 'lat_pagefault -P 1 file' test from lmbench
-shows 12% improvement, and the percpu_counter_add_batch() is gone from
-perf flame graph.
+On Fri, Apr 12, 2024 at 09:38:16AM +0800, Yu Kuai wrote:
 
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- mm/filemap.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+> There really is a long history here. The beginning of the attempt to try
+> removing the filed 'bd_inode' is that I want to make a room from the
+> first cacheline(64 bytes) for a new 'unsigned long flags' field because
+> we keep adding new 'bool xxx' field [1]. And adding a new 'bd_mapping'
+> field will make that impossible.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 04b813f0146c..c8d41ab5034b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3506,7 +3506,7 @@ static struct folio *next_uptodate_folio(struct xa_state *xas,
- static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
- 			struct folio *folio, unsigned long start,
- 			unsigned long addr, unsigned int nr_pages,
--			unsigned int *mmap_miss)
-+			unsigned long *rss, unsigned int *mmap_miss)
- {
- 	vm_fault_t ret = 0;
- 	struct page *page = folio_page(folio, start);
-@@ -3540,8 +3540,7 @@ static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
- skip:
- 		if (count) {
- 			set_pte_range(vmf, folio, page, count, addr);
--			add_mm_counter(vmf->vma->vm_mm, mm_counter_file(folio),
--				       count);
-+			*rss += count;
- 			folio_ref_add(folio, count);
- 			if (in_range(vmf->address, addr, count * PAGE_SIZE))
- 				ret = VM_FAULT_NOPAGE;
-@@ -3556,7 +3555,7 @@ static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
- 
- 	if (count) {
- 		set_pte_range(vmf, folio, page, count, addr);
--		add_mm_counter(vmf->vma->vm_mm, mm_counter_file(folio), count);
-+		*rss += count;
- 		folio_ref_add(folio, count);
- 		if (in_range(vmf->address, addr, count * PAGE_SIZE))
- 			ret = VM_FAULT_NOPAGE;
-@@ -3569,7 +3568,7 @@ static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
- 
- static vm_fault_t filemap_map_order0_folio(struct vm_fault *vmf,
- 		struct folio *folio, unsigned long addr,
--		unsigned int *mmap_miss)
-+		unsigned long *rss, unsigned int *mmap_miss)
- {
- 	vm_fault_t ret = 0;
- 	struct page *page = &folio->page;
-@@ -3593,7 +3592,7 @@ static vm_fault_t filemap_map_order0_folio(struct vm_fault *vmf,
- 		ret = VM_FAULT_NOPAGE;
- 
- 	set_pte_range(vmf, folio, page, 1, addr);
--	add_mm_counter(vmf->vma->vm_mm, mm_counter_file(folio), 1);
-+	(*rss)++;
- 	folio_ref_inc(folio);
- 
- 	return ret;
-@@ -3610,6 +3609,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
- 	XA_STATE(xas, &mapping->i_pages, start_pgoff);
- 	struct folio *folio;
- 	vm_fault_t ret = 0;
-+	unsigned long rss = 0;
- 	unsigned int nr_pages = 0, mmap_miss = 0, mmap_miss_saved;
- 
- 	rcu_read_lock();
-@@ -3640,15 +3640,17 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
- 
- 		if (!folio_test_large(folio))
- 			ret |= filemap_map_order0_folio(vmf,
--					folio, addr, &mmap_miss);
-+					folio, addr, &rss, &mmap_miss);
- 		else
- 			ret |= filemap_map_folio_range(vmf, folio,
- 					xas.xa_index - folio->index, addr,
--					nr_pages, &mmap_miss);
-+					nr_pages, &rss, &mmap_miss);
- 
- 		folio_unlock(folio);
- 		folio_put(folio);
- 	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
-+
-+	add_mm_counter(vma->vm_mm, mm_counter_file(folio), rss);
- 	pte_unmap_unlock(vmf->pte, vmf->ptl);
- out:
- 	rcu_read_unlock();
--- 
-2.41.0
+Why does it need to be unsigned long?  dev_t is 32bit; what you need
+is to keep this
+        bool                    bd_read_only;   /* read-only policy */
+	u8                      bd_partno;
+	bool                    bd_write_holder;
+	bool                    bd_has_submit_bio;
 
+from blowing past u32.  Sure, you can't use test_bit() et.al. with u16,
+but what's wrong with explicit bitwise operations?  You need some protection
+for multiple writers, but you need it anyway - e.g. this
+        if (bdev->bd_disk->fops->set_read_only) {
+		ret = bdev->bd_disk->fops->set_read_only(bdev, n);
+		if (ret)
+			return ret;
+	}
+	bdev->bd_read_only = n;
+will need the exclusion over the entire "call ->set_read_only() and set
+the flag", not just for setting the flag itself.
+
+And yes, it's a real-world bug - two threads calling BLKROSET on the
+same opened file can race, with inconsistency between the flag and
+whatever state ->set_read_only() modifies.
+
+AFAICS, ->bd_write_holder is (apparently) relying upon ->open_mutex.
+Whether it would be a good solution for ->bd_read_only is a question
+to block folks, but some exclusion is obviously needed.
+
+Let's sort that out, rather than papering it over with set_bit() et.al.
 
