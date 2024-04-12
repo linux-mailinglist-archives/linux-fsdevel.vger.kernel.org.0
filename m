@@ -1,170 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-16759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765D58A2352
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 03:38:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0474E8A2354
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 03:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160791F2316B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 01:38:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287ED1C22049
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 01:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9625C82;
-	Fri, 12 Apr 2024 01:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3B26FC6;
+	Fri, 12 Apr 2024 01:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jP2cPeP3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2053.outbound.protection.outlook.com [40.107.244.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BDF2F2D;
-	Fri, 12 Apr 2024 01:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712885905; cv=none; b=t+zkLTfZIuhdIJIsb4KXnZRkze08W/sQ+A/2lQTbzNcJ8BZqBLgRBjAfKmdU1XYjwZfSB1CF/ZSZNh8QqzhOJpQz+pzO2S3kGXXXsORHxNUs1HcEBzDRfd2hzF79Oz6AZq3vAcsKi7M+bv40yiJHI/+OVvRir8NPV+9D8VIbgYw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712885905; c=relaxed/simple;
-	bh=5IEtu+qNRVlRpBTHOIA9G3EqlubXv7MitXSrPARbmAU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Wg0ebuOx6vm9FbsuCii344BPz8f3dnxM6zYim0NTg13g2KlPEc6NkPmYQkOsxwcJEWj3oWkt6rWYI1Q0B6wxM2OUxOF89RneFDBVFaPUoW5sZBgcsFIeK1JSu3/8wGHQC1ZrnDGJlBhY/FoycT6YTEizZnTKzz68IaXt2H8EqZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VFzjJ5cNkz4f3jJK;
-	Fri, 12 Apr 2024 09:38:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id ACB111A0175;
-	Fri, 12 Apr 2024 09:38:19 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgAX5g6IkBhmPNn_Jg--.44042S3;
-	Fri, 12 Apr 2024 09:38:18 +0800 (CST)
-Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
- blcok_device
-To: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de,
- axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240407015149.GG538574@ZenIV>
- <21d1bfd6-76f7-7ffb-34a4-2a85644674fe@huaweicloud.com>
- <20240407030610.GI538574@ZenIV>
- <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
- <20240409042643.GP538574@ZenIV>
- <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
- <20240410105911.hfxz4qh3n5ekrpqg@quack3> <20240410223443.GG2118490@ZenIV>
- <20240411-logik-besorgen-b7d590d6c1e9@brauner>
- <20240411140409.GH2118490@ZenIV> <20240411144930.GI2118490@ZenIV>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <d89916c0-6220-449e-ff5f-f299fd4a1483@huaweicloud.com>
-Date: Fri, 12 Apr 2024 09:38:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F294A2D;
+	Fri, 12 Apr 2024 01:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712886016; cv=fail; b=F02ElDZLx8fZrDTE9YCSUOmUy+lveLgMLJtU1y9lPP4nxxFhzPnWFWCe9HAbYg21zCWH56OJU8/0a660aLAz6Y+Um06Hvd/gJAoJEhM9n9ZhTA19UsOV6V8RggAgarSFA0/tsShEau7hDlzTfYpZJYSS15TyRGfFLg7gKiQvnso=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712886016; c=relaxed/simple;
+	bh=kYVmtYdUNEJBQZP1q2f35bPM9H8LpGujTinhAQRrL6s=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=EQ+DKyBAz1FNIM7qqhZOScHCoCQrlhIiBYIFcCd+WfT5atczIGhpAjsM0kwajoE/Ny23Uq3n4f8na3D9dQ4qbdvhXZBYJlprd+xpwpA6Cx61P4wT5AmwXBf5UtxBuGzWCpgnzS9KNByx1pGcpgxvVY5ONbJp9tUfZhLcqBIduo4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jP2cPeP3; arc=fail smtp.client-ip=40.107.244.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=M20J/8Tko+zRxbU/03ycnVAyM+DTheRgnYIZ7DhAP0fF/tXSl3M8B0/cq6CXGcRqN6n4YLNVtuI1gyOSFpGpzk04dtwj8NkW1PF67bq/jdcB6olmlIO3zjKJ3SQ2uFin65E24u753hQdoLrbZ04fVVOJVohLkH2ZmkhzayrkbeYqos2ALCST5sD7g08VGmeqgWfqWOasrmtRmtbIIRFIchIY7+Uq2qO5qPRkW/8a9rkR3FntFxIB1ZmTk0OLT+z4GIAODmguU07t+rACnLI5jBgQPGceq9SWOXaY1r4SJt+HcDG2gfu9JpJaRD7FCjU5U1odVAxiCtLFViyGhWSSOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uKb2SPEd2Jj+p7x6R+A1D/zmCbRfA/KVHa3+khj9Mzo=;
+ b=kV3zZm4OLP36zKwpKkeovbAvctjv1PH9GNiIDA2pXu3ozlFdgwf/LV98FNlOSeqDGTihTP8sB9v7AmpcYui6T5/KoJaCqF7XPuLUE8moVzCbx+Ea/knlVMB0szQY0g3aoq/2513zOPNmCMVs3nqyqOezQpiwJUX5BsOP3vdRBAQ5z+mZF8ZURFqtNk0GEmz9uyawv+3DojC0wCpipwH04tlcmKH+cP0Fc7qWhW9i1Qyp4L8yC0G70FApJXquWCm0MRqed2Gx7zfkwSnh7crsYtfJbyB/INE95kCzae+D0uOJj9RgNwu5Z5XmMQlArDDP5bH479v3hew/YU79RxkI4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uKb2SPEd2Jj+p7x6R+A1D/zmCbRfA/KVHa3+khj9Mzo=;
+ b=jP2cPeP3J3yapIMSOwBp5uh1sQRWBB6OKYuZT+dvw89GsrPtooeM37RsDO2SftHaZiHkgazBhLyrWXMQLW0oDt5ixSG8vCqjcjrNS5GH33mPjHvgRLspROGpiB2qQvDxwO2VWjtybB5kKL6xlnCIMdJSWLoXhhjhMusIhDjV/4q0XFicLClUzIBjyIZwHayrtbz/grv3DklW/utNj3hT58PPr0P762fB4XeMKLsvX5JLQEv4X3MA1OjFjyuU9NKCFtDXwop6A1TeJnR8XWH7gfzPqvOK4onqiusMV0vU/opIde8ZUH9uROqoB3YlsCaqFYI7gBh0LILBYncLHEsQeA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9)
+ by PH7PR12MB6540.namprd12.prod.outlook.com (2603:10b6:510:213::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Fri, 12 Apr
+ 2024 01:40:11 +0000
+Received: from CY8PR12MB7705.namprd12.prod.outlook.com
+ ([fe80::e71d:1645:cee5:4d61]) by CY8PR12MB7705.namprd12.prod.outlook.com
+ ([fe80::e71d:1645:cee5:4d61%7]) with mapi id 15.20.7409.042; Fri, 12 Apr 2024
+ 01:40:11 +0000
+References: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
+ <9c21d7ed27117f6a2c2ef86fe9d2d88e4c8c8ad4.1712796818.git-series.apopple@nvidia.com>
+ <ZhfvT6SXfCR60NAG@casper.infradead.org>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, david@fromorbit.com, dan.j.williams@intel.com,
+ jhubbard@nvidia.com, rcampbell@nvidia.com, jgg@nvidia.com,
+ linux-fsdevel@vger.kernel.org, jack@suse.cz, djwong@kernel.org,
+ hch@lst.de, david@redhat.com, ruansy.fnst@fujitsu.com,
+ nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, jglisse@redhat.com
+Subject: Re: [RFC 07/10] mm: Allow compound zone device pages
+Date: Fri, 12 Apr 2024 11:38:46 +1000
+In-reply-to: <ZhfvT6SXfCR60NAG@casper.infradead.org>
+Message-ID: <87jzl35pfv.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY6PR01CA0057.ausprd01.prod.outlook.com
+ (2603:10c6:10:ea::8) To CY8PR12MB7705.namprd12.prod.outlook.com
+ (2603:10b6:930:84::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240411144930.GI2118490@ZenIV>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX5g6IkBhmPNn_Jg--.44042S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw47Cry5ur43Jr1rtr48tFb_yoW5Aw48pF
-	W3tasxCr40yry3u3WfuFn7Ka4Fyw4kGay3C34akw1rAr90vFy3tF4kKrWrCFWUXrWxKr4a
-	qr17JayDWryUArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
-	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR12MB7705:EE_|PH7PR12MB6540:EE_
+X-MS-Office365-Filtering-Correlation-Id: 040de897-3c62-4e5b-9150-08dc5a917e14
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	VliyuOdsbZ+vzHz4gnwhYLDSbNgUGHzAMtyy36IpJFZa6qZI0GgnJUG33Ka8wfTQc1diuiJdNlDKi1JMh3iji3vfNroeh/69JZlENCXqjjSUSgmNhAZkgn7X14m0Na8LwqoBEOYZpZ5CWAKWWwK9qBlPMNSv0AHtPGGvEFUtlQxB78ZjXAR1vwtVgFaconpGXH92RtgCx3KPfTw8crw/zpEX74UT29dyfPcwaQ36Pv+7ALi/tBl9QGGIB8ETYbcnUF1LvAZMuHyrx7Alq97joYW6m5AGVIt1rhdmqC+IiTbguWF+wBvWFvu7tsgorq5W6ztu25XnIaUllGwxFobAjq6Tesb8S3Q6r2J59scbxdWARmNYVy6h8V3hk/1cvmoJI84trq3bXmKZj2xdviseJVWvjnk8rjt0CYzkMz35JWY/Tf4sQvps/8h91lrUcEAZH9KvW1nbo8LJ7wj4dUCmg7hqngA/q/hG3AWer+pV1RqY/NBnbSsP9VLg2W37T2TiUfEMP0zhZMIvjkpm8dt278FXeTX8lMhyVI6kGtxtE/gMP6Nsls6WIp8wIOpknVlr7aJX/FNi4i/MgEs9N2TbUwUld1voOnKTNK+20ZU2EKs06Jxf0Pv03CHKyjTIrKKHXJPuIcnfDxEKgTJtVhFVl88kKTFUvPpekd7uAI2KgTg=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7705.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NnTkUYZbFqZ/AIiBgmIexRtdaKlXMFPOD49B7U+LfoGOrXW2E3i0wBPPWpvU?=
+ =?us-ascii?Q?DCfohZDBnm48vTgKWuot+oq0dfhizMy9c8G8xIO+sT0B20/pQ4q2M5BtCsLv?=
+ =?us-ascii?Q?yoaxZ/vnRGZKnWK4Gnyayw/WAu31xLQ9fUrcN5hiUDkfiepjFUoi0QOKYzAF?=
+ =?us-ascii?Q?Vbckv5VmmgAf0/dlPu7EF6AMj3tXqlkItI4zod09IMJSEoTrV11KZmUYtxnv?=
+ =?us-ascii?Q?QVkaectua/MKXX3CakOvts5WXcWEcpSfBuj+DahAwuNt5c5Y9DSsr6Jy3rwc?=
+ =?us-ascii?Q?bto+GdFIdsYMWu6nkdZHwk5J8fHizvVJ/IMaV4vxVQqC8GDjfvMQePm1ALOW?=
+ =?us-ascii?Q?lW3gcO12HeeQ21+rkBTAKBU49N6XEqfu8CKsGMaHPZf1bAY6Zn+4YWwpkNil?=
+ =?us-ascii?Q?xFVRvrExyIXQXEUsvTXRJwc/fBKVMWSTXbpW3QCtHP9aXr19qVwnrzBuz+vZ?=
+ =?us-ascii?Q?EQhKwgCryS93t+Q3juV7cj8cq11zfoG/Li7Cn04z/UQG0feFueb7Suu6Zxjo?=
+ =?us-ascii?Q?EDO9ZHLTNtgonWtUuLTge/erlaPRgAVuWlOxzSWz8WqpXFoU8Pyjctu5Sag2?=
+ =?us-ascii?Q?F1p11tYciSsMvsceI64O1+xluc18nSI3igip2GCjdVYLGDBDEQ09rMUo15qq?=
+ =?us-ascii?Q?taNjD/2pcAyIQAu/Dle/5n1nefQo3r0w4/v4KzDn8KRM6NuqQzfZnecV2Ven?=
+ =?us-ascii?Q?RFV+wNlcYuVu1EUaH9bIa20L4kkF4ri3Py0CY9dVWr4+sdkDIqJCoJOdboU4?=
+ =?us-ascii?Q?ScSS7TcBjRY7yEclBUkpkp+S0moKE/lDxh7rRQTBffNE7Es6DZurkG2r8dMm?=
+ =?us-ascii?Q?q/xNLcQ+ewZWxqCgshuHiwy97J30CpgWKjo7ho9mXYjnlVEEQaDoXkI2Ibrb?=
+ =?us-ascii?Q?GpYbqsnjodb+JFw5upBvWDcaKvGjb5IgK5Et5ulA2PyFrL+fMtZjAg0VW9bz?=
+ =?us-ascii?Q?6Mi+AQtwnXaCH8qwBl7dSbJBvUJ/a8qn1Ef7ow5LmM/Ocym/VZNA4V0isjSC?=
+ =?us-ascii?Q?SsDyiLHYGwCYtu9k33LAKL//k2aZJCJedYMeCoj6g+CQT58h80sdz07OL2Yn?=
+ =?us-ascii?Q?kY6jJ7SiPMj1K0QWPVQYfvVfOrB975mrNv+76pbsyvOveIFAn0r7DO6FAEMV?=
+ =?us-ascii?Q?glHkhcYArIJb7Ly2OiPna+4dAIUIo8+0J4/jdyHBk2Vk9cCI3WJ6lH5sGsZE?=
+ =?us-ascii?Q?jIF8suGpTg1DpY2pyqMFcMcCrrPCmwgPsaCK0pJ5j18kCaNruTfPb+WvUTT3?=
+ =?us-ascii?Q?OcZYr/BVqmi5GjwKdqKuVkiQxhkIPpsPk2OAOy5pgNOAaPPD5Omz4i3OYCv/?=
+ =?us-ascii?Q?11d8Knml6T9/1bDbsph/rsp+nAGzl8Z4TWR/xJAsXlqLP5BDrWjS3rI8UkMn?=
+ =?us-ascii?Q?Ywc7XECOZPFYtF93hjHrdp0qJeZ8qWjywRpH7kwaBE3uKEGBcuzTsi3SRpij?=
+ =?us-ascii?Q?w7uUsHFXUpC9NGYWuu+ds1QJQbdf1nEaGdJberFCFa/G82b5mBhLCqBBtvGo?=
+ =?us-ascii?Q?xZSMUTbirD9vfIviozy8rQ2kgvLj8bLhw1/u9L4ZVWKHVDFArzWNbnROfOOQ?=
+ =?us-ascii?Q?UOSuLfXjft7X0LyAkPaMespnlUav8By7am/tWrw1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 040de897-3c62-4e5b-9150-08dc5a917e14
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2024 01:40:11.2798
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ok+i9emM/gDfDgSpd8dKpwHXm3hfVJePJAXtwJ+6DHMW4PbLi4Zqj7ZzxvMCWU13kye/Z2vbWJYoeUHfux+xlQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6540
 
-Hi,
 
-ÔÚ 2024/04/11 22:49, Al Viro Ð´µÀ:
-> On Thu, Apr 11, 2024 at 03:04:09PM +0100, Al Viro wrote:
->>> lot slimmer and we don't need to care about messing with a lot of that
->>> code. I didn't care about making it static inline because that might've
->>> meant we need to move other stuff into the header as well. Imho, it's
->>> not that important but if it's a big deal to any of you just do the
->>> changes on top of it, please.
->>>
->>> Pushed to
->>> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.super
->>>
->>> If I hear no objections that'll show up in -next tomorrow. Al, would be
->>> nice if you could do your changes on top of this, please.
->>
->> Objection: start with adding bdev->bd_mapping, next convert the really
->> obvious instances to it and most of this series becomes not needed at
->> all.
->>
->> Really.  There is no need whatsoever to push struct file down all those
->> paths.
->>
+Matthew Wilcox <willy@infradead.org> writes:
 
-There really is a long history here. The beginning of the attempt to try
-removing the filed 'bd_inode' is that I want to make a room from the
-first cacheline(64 bytes) for a new 'unsigned long flags' field because
-we keep adding new 'bool xxx' field [1]. And adding a new 'bd_mapping'
-field will make that impossible.
+> On Thu, Apr 11, 2024 at 10:57:28AM +1000, Alistair Popple wrote:
+>> Supporting compound zone device pages requires compound_head() to
+>> distinguish between head and tail pages whilst still preserving the
+>> special struct page fields that are specific to zone device pages.
+>> 
+>> A tail page is distinguished by having bit zero being set in
+>> page->compound_head, with the remaining bits pointing to the head
+>> page. For zone device pages page->compound_head is shared with
+>> page->pgmap.
+>> 
+>> The page->pgmap field is common to all pages within a memory section.
+>> Therefore pgmap is the same for both head and tail pages and we can
+>> use the same scheme to distinguish tail pages. To obtain the pgmap for
+>> a tail page a new accessor is introduced to fetch it from
+>> compound_head.
+>
+> Would it make sense at this point to move pgmap and zone_device_data
+> from struct page to struct folio?  That will make any forgotten
+> places fail to compile instead of getting a bogus value.
 
-I do like the idea of passing 'bd_mapping' here, however, will it be
-considered to expose bdev_mapping() for slow path, or to pass in bd_file
-and get it by 'f_mapping' for fast path? So that a new field in the
-first cacheline will still be possible, other than that there will be
-more code change, I don't see any difference for performance.
-
-Thanks,
-Kuai
-
-[1] 
-https://lore.kernel.org/all/20231122103103.1104589-3-yukuai1@huaweicloud.com/
->> And yes, erofs and buffer.c stuff belongs on top of that, no arguments here.
-> 
-> FWIW, here's what you get if this is done in such order:
-> 
-> block/bdev.c                           | 31 ++++++++++++++++++++++---------
-> block/blk-zoned.c                      |  4 ++--
-> block/fops.c                           |  4 ++--
-> block/genhd.c                          |  2 +-
-> block/ioctl.c                          | 14 ++++++--------
-> block/partitions/core.c                |  2 +-
-> drivers/md/bcache/super.c              |  2 +-
-> drivers/md/dm-vdo/dm-vdo-target.c      |  4 ++--
-> drivers/md/dm-vdo/indexer/io-factory.c |  2 +-
-> drivers/mtd/devices/block2mtd.c        |  6 ++++--
-> drivers/scsi/scsicam.c                 |  2 +-
-> fs/bcachefs/util.h                     |  5 -----
-> fs/btrfs/disk-io.c                     |  6 +++---
-> fs/btrfs/volumes.c                     |  2 +-
-> fs/btrfs/zoned.c                       |  2 +-
-> fs/buffer.c                            | 10 +++++-----
-> fs/cramfs/inode.c                      |  2 +-
-> fs/ext4/dir.c                          |  2 +-
-> fs/ext4/ext4_jbd2.c                    |  2 +-
-> fs/ext4/super.c                        | 24 +++---------------------
-> fs/gfs2/glock.c                        |  2 +-
-> fs/gfs2/ops_fstype.c                   |  2 +-
-> fs/jbd2/journal.c                      |  2 +-
-> include/linux/blk_types.h              |  1 +
-> include/linux/blkdev.h                 | 12 ++----------
-> include/linux/buffer_head.h            |  4 ++--
-> include/linux/jbd2.h                   |  4 ++--
-> 27 files changed, 69 insertions(+), 86 deletions(-)
-> 
-> The bulk of the changes is straight replacements of foo->bd_inode->i_mapping
-> with foo->bd_mapping.  That's completely mechanical and that takes out most
-> of the bd_inode uses.  Anyway, patches in followups
-> 
-> .
-> 
-
+Thanks for the suggestion, I think that makes a lot of sense. Will try
+it for the next version to see what it looks like.
 
