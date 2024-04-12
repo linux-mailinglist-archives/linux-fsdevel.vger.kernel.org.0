@@ -1,217 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-16787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7D58A2A48
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 11:06:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38ED8A2A49
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 11:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A06761C21F24
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 09:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78AE21F22AF7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 09:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC5B55C08;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F04955C2A;
 	Fri, 12 Apr 2024 09:00:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E093D0CD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A991554273
 	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 09:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712912434; cv=none; b=oSzkXAc6OB6Uku6dLfY0cdh8mebmnYDFXGTJEk/76gBTIyKQ6oU+/HbRHRUNNoU5F8kzf9SFdUHMl9SyLKPt/ZtFBAF53Amdhjm1NmRtJwCxZ4fXDyedRDLf7EzsA6IGgw/uFjyCPp/MCx0B1vvd6pMLNQ0vtdQ7KKz6eNG/0xE=
+	t=1712912434; cv=none; b=IUUfXarGvat+mftrNaGqEvS5/61Or0jMsUbmjiv3BMp+24C4Jdr+D2CW3253GlFYRIeL5qJ4kf5KS9jEPemfIEVfQs/qu4LrYd/QGsV0LhrzN1cXMtgeLg0oIVH5N41IpBSYw+qy2sl4NRhZlr42oKkQdWcW9dAwGAICZj0AHxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1712912434; c=relaxed/simple;
-	bh=lUR8gjpQoG75Rj0AXF/vb4V7WxkjkkemsnpsDiJ1y+8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OeV7s/orOhUP2WNlA3rvSy6lAubn42N81vi7Dh7B7cMb3m620rePSZuGF6bcCcvZ4n1Z76I3lcy4Kzug43wKMXeaLoelt25rnHsiHF/fvI6TZfnOEY2eIm5JdfdMEElKhn11yaRZj1UR1EaSeHbKR5A0TSpc6v9ajAfd53U1WzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	bh=4Q+IBaepZiLCsdOavyELBxZMYWyPvtABKlt5WpGdbyI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FKpBz1paopRlYMJ6MWhh+kJA1x/2GeAXBQHOBrGL1FfFAtygYH3XityYK2Ngl5WMb9twPekCYFVHa04FxqAnmmoTvwyBXN9Dm8NAhA/ljwiccDbhWtWTLx9P83UHEBK8CTXIn2U9n/SITld7SMHMkgiqTFqG0p0axqQTXCk4EhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36a36c04ab4so7122215ab.3
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7cc7a6a043bso88625339f.0
         for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 02:00:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712912431; x=1713517231;
+        d=1e100.net; s=20230601; t=1712912432; x=1713517232;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jVD4bGYtEQYA0AWSL1QYjeD+MyjUVeeblZwNbRgRNwc=;
-        b=XdEkeK6umaaD0zsXwA41eM/JRXSbvipeQedy+3j5FCCb0HvNBu+ZE5Aaivjox/rg9g
-         8tGv9l7tXOznbuBQQj7+OtY/nrqFMI2j5QMaJwnvhIdHL5aE6vrSnjSx4A8N3J3JEAFU
-         K/QObgh2nMQyHS+TYCZYH5PDjmu3EVJWheWm275MFFMTHX9QdiB/yJwmCXMd30ym3Xbs
-         KKuo2CstYNE8ItJEDZPDtrN7QhErLGnj8pPqB7Pk7GXqhv4ENOYdXFd/sj2oObsS8Dto
-         3gpQZ2ryUkRV5IRs06npDxSaoZr7V9eWj/8JwoZUMeCH2I6FT8tZAYyG79GCoHOn6e5U
-         9zGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCgmRe7YxLQ/fHk6IYKEPwUl9vgYgSSUpAW0YbeMK1EDPWZiURzUFGyHiVUiDXBuqxRB22ICQKUqV0RHLzwIKr2AzOhAjFgbCwfevvOA==
-X-Gm-Message-State: AOJu0Yytr9PH2vYBUsXgSaakUaeR9sjEVeodfF5YMocj2c68eUHZIHB1
-	jeRf4+uaIemhmcMlWyl47agdq+9quxC+WD725h4LgqyOwq4crjTOXXWuxbK53GIG7JlsKR9Ogux
-	Cu1A5bvtgN86KZfZ7Jp/OHpUSIEAlLXQMKhiIIKLrniknw307yrTCbJ4=
-X-Google-Smtp-Source: AGHT+IF8+U3ZUe/fDcoTVmUyOQa04e2x3lFY2i5czruXTEPUjNU6CxOwokCVIRorMwur482oS7jf1dGJCkbwQjk4sEi7BculncDX
+        bh=Y2eLb6SWzHPU4Thv2aZRk7fEazck4gWQG7xSVSBwIcg=;
+        b=Gv/zsXPxmxkDChZiLjqAfW9al81noRIOCTCvJInJg1tbW1u60pfa0rCiefFeuEfIvJ
+         zkom515+EDBp3Im2bbvvg+2CpOf95i9L70pRlfBqeZewmv+N3xeXVbBjsasanv/CIoNS
+         cnuwR0uwBF04V77fMIK0WPi7oKSozVf14YfnTe5dAqNVfOiCJ+ljOMG87lIvk9zdaSfX
+         aNtctRrqalTXbS2qT6iplOVvrkNWTdZwQUdnXzRrZGwbWeVh8w+LS3j+BK9DCTCSL47M
+         yYPBsq59RUR6fN2toztQpHcA9rTwEpINTCFQiGWB5my6MyzQyRZKujPziZHssSUTdCZO
+         Y4Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsQk0VKRQJGmUbewWkcNf/KlocnaR/qBDX2S/z4YAn7wL8Jk51iKU0eTA4TRFWIshs+zHkfxajnwx8cxEZ5C8vQNEo93gL3NLx692zZQ==
+X-Gm-Message-State: AOJu0YwLN8Z8bGi4rDR0xp8+suSKpsOQ9JqwGfGlxlWAmdyIeP/9reNd
+	9qu566jxNb6ft8WbMsk9ZkrZXVjSopunayPbk7yY3/4T4NrYcxNgz+6WBvQiUQLawGE571F7k4F
+	PkfsKbrE4eyu6YkmocRu6GmdwjKsaYIOHVT674qUhasBFeCP2GcZ3Zqg=
+X-Google-Smtp-Source: AGHT+IFUQrGsvXeelHT3hR2H1+SFhCcmND1ddFgQcrnerRqeGhQD1VgHzz4BUgjNzWevePw42HumUBdRdkmjISGuwLNxYDMrLWxW
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0d:0:b0:368:efa4:be00 with SMTP id
- j13-20020a92ca0d000000b00368efa4be00mr160157ils.3.1712912431720; Fri, 12 Apr
+X-Received: by 2002:a05:6e02:1d11:b0:36a:3ee8:b9f9 with SMTP id
+ i17-20020a056e021d1100b0036a3ee8b9f9mr163547ila.2.1712912431927; Fri, 12 Apr
  2024 02:00:31 -0700 (PDT)
 Date: Fri, 12 Apr 2024 02:00:31 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000063e340615e2811c@google.com>
-Subject: [syzbot] [gfs2?] INFO: task hung in __gfs2_lookup
-From: syzbot <syzbot+8a86bdd8c524e46ff97a@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000095d320615e2813f@google.com>
+Subject: [syzbot] [jffs2?] kernel BUG in jffs2_sum_write_sumnode
+From: syzbot <syzbot+badbb16b0a5dd4c2f676@syzkaller.appspotmail.com>
+To: dwmw2@infradead.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, richard@nod.at, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    4118d9533ff3 Add linux-next specific files for 20240411
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=101fa5cb180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=16ca158ef7e08662
-dashboard link: https://syzkaller.appspot.com/bug?extid=8a86bdd8c524e46ff97a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1509eb25180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12fbeaa3180000
+HEAD commit:    00dcf5d862e8 Merge tag 'acpi-6.9-rc4' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a98eeb180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c5a8421528fe0176
+dashboard link: https://syzkaller.appspot.com/bug?extid=badbb16b0a5dd4c2f676
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1eb8b3998228/disk-4118d953.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c17244f68cad/vmlinux-4118d953.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/df207f8c8f2a/bzImage-4118d953.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2b56e1dd3dfb/mount_0.gz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-00dcf5d8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/68de786626b3/vmlinux-00dcf5d8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dba6f0189428/bzImage-00dcf5d8.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8a86bdd8c524e46ff97a@syzkaller.appspotmail.com
+Reported-by: syzbot+badbb16b0a5dd4c2f676@syzkaller.appspotmail.com
 
-INFO: task syz-executor359:5091 blocked for more than 143 seconds.
-      Not tainted 6.9.0-rc3-next-20240411-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor359 state:D stack:24984 pid:5091  tgid:5091  ppid:5088   flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5409 [inline]
- __schedule+0x17e8/0x4a50 kernel/sched/core.c:6746
- __schedule_loop kernel/sched/core.c:6823 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6838
- bit_wait+0x12/0xd0 kernel/sched/wait_bit.c:199
- __wait_on_bit+0xb0/0x2f0 kernel/sched/wait_bit.c:49
- out_of_line_wait_on_bit+0x1d5/0x260 kernel/sched/wait_bit.c:64
- wait_on_bit include/linux/wait_bit.h:76 [inline]
- gfs2_glock_wait+0xc7/0x2b0 fs/gfs2/glock.c:1344
- gfs2_glock_nq_init fs/gfs2/glock.h:238 [inline]
- __gfs2_lookup+0x11b/0x280 fs/gfs2/inode.c:905
- __lookup_slow+0x28c/0x3f0 fs/namei.c:1692
- lookup_slow+0x53/0x70 fs/namei.c:1709
- walk_component+0x2e1/0x410 fs/namei.c:2004
- lookup_last fs/namei.c:2461 [inline]
- path_lookupat+0x16f/0x450 fs/namei.c:2485
- filename_lookup+0x256/0x610 fs/namei.c:2514
- user_path_at_empty+0x42/0x60 fs/namei.c:2921
- user_path_at include/linux/namei.h:57 [inline]
- ksys_umount fs/namespace.c:1916 [inline]
- __do_sys_umount fs/namespace.c:1924 [inline]
- __se_sys_umount fs/namespace.c:1922 [inline]
- __x64_sys_umount+0xf4/0x170 fs/namespace.c:1922
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f83e9183587
-RSP: 002b:00007fffdb5f1f68 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f83e9183587
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fffdb5f2020
-RBP: 00007fffdb5f2020 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000202 R12: 00007fffdb5f3110
-R13: 0000555562dbd740 R14: 0000555562dac338 R15: 00007fffdb5f5290
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e335ca0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #0: ffffffff8e335ca0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e335ca0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
-2 locks held by getty/4849:
- #0: ffff88802ad660a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f162f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
-1 lock held by syz-executor359/5091:
- #0: ffff888068e3d1f0 (&type->i_mutex_dir_key#6){.+.+}-{3:3}, at: inode_lock_shared include/linux/fs.h:801 [inline]
- #0: ffff888068e3d1f0 (&type->i_mutex_dir_key#6){.+.+}-{3:3}, at: lookup_slow+0x45/0x70 fs/namei.c:1708
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.9.0-rc3-next-20240411-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xfde/0x1020 kernel/hung_task.c:380
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 4529 Comm: klogd Not tainted 6.9.0-rc3-next-20240411-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:__rb_insert_augmented+0x9/0x6b0 lib/rbtree.c:458
-Code: c3 cc cc cc cc 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 41 57 41 56 <41> 55 41 54 53 48 83 ec 38 48 89 54 24 08 48 89 74 24 10 48 89 fd
-RSP: 0018:ffffc90004a4f518 EFLAGS: 00000086
-RAX: 000000052ae920a0 RBX: ffff8880b943e6c0 RCX: dffffc0000000000
-RDX: ffffffff816bbee0 RSI: ffff8880b943e710 RDI: ffff88807d890090
-RBP: 1ffff1100fb12019 R08: ffff88807d8900a7 R09: 0000000000000000
-R10: ffff88807d890098 R11: ffffed100fb12015 R12: ffff88802e575b18
-R13: dffffc0000000000 R14: ffff88807d890080 R15: ffff88807d8900c8
-FS:  00007ff2573a4380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005617143a8600 CR3: 000000002be1e000 CR4: 00000000003506f0
+------------[ cut here ]------------
+kernel BUG at fs/jffs2/summary.c:865!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 3 PID: 5545 Comm: syz-executor.3 Not tainted 6.9.0-rc3-syzkaller-00189-g00dcf5d862e8 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:jffs2_sum_write_sumnode+0x1cf6/0x2220 fs/jffs2/summary.c:865
+Code: 0f b6 04 02 84 c0 74 08 3c 03 0f 8e d7 01 00 00 8b b3 c0 05 00 00 48 c7 c2 40 b7 44 8b 48 c7 c7 40 b3 44 8b e8 ab 09 8f fe 90 <0f> 0b e8 23 6b f1 07 e8 6e b6 0a ff e9 d9 e5 ff ff 48 89 cf 48 89
+RSP: 0018:ffffc9000ca874d0 EFLAGS: 00010282
+RAX: 0000000000000045 RBX: ffff88801fb6a440 RCX: ffffffff816f3829
+RDX: 0000000000000000 RSI: ffffffff816fc366 RDI: 0000000000000005
+RBP: ffffc9000ca87650 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000003 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff88805e196898 R15: ffff888059d1a000
+FS:  0000000000000000(0000) GS:ffff88802c500000(0063) knlGS:00000000f5ea1b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 000000c001927000 CR3: 000000005fbbe000 CR4: 0000000000350ef0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- <NMI>
- </NMI>
  <TASK>
- put_prev_entity+0x62/0x210 kernel/sched/fair.c:5493
- pick_next_task_fair+0x363/0xde0 kernel/sched/fair.c:8535
- __pick_next_task+0xb0/0x2c0 kernel/sched/core.c:6030
- pick_next_task kernel/sched/core.c:6120 [inline]
- __schedule+0x729/0x4a50 kernel/sched/core.c:6702
- preempt_schedule_common+0x84/0xd0 kernel/sched/core.c:6925
- preempt_schedule+0xe1/0xf0 kernel/sched/core.c:6949
- preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
- __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
- _raw_spin_unlock_irqrestore+0x130/0x140 kernel/locking/spinlock.c:194
- spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
- __wake_up_common_lock+0x18c/0x1e0 kernel/sched/wait.c:108
- sock_def_readable+0x20f/0x5b0 net/core/sock.c:3353
- unix_dgram_sendmsg+0x148e/0x1f80 net/unix/af_unix.c:2113
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- __sys_sendto+0x3a4/0x4f0 net/socket.c:2191
- __do_sys_sendto net/socket.c:2203 [inline]
- __se_sys_sendto net/socket.c:2199 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2199
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff2575069b5
-Code: 8b 44 24 08 48 83 c4 28 48 98 c3 48 98 c3 41 89 ca 64 8b 04 25 18 00 00 00 85 c0 75 26 45 31 c9 45 31 c0 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 7a 48 8b 15 44 c4 0c 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007fff461d0318 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007ff2575069b5
-RDX: 000000000000004e RSI: 0000556259833d70 RDI: 0000000000000003
-RBP: 000055625982f910 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000004000 R11: 0000000000000246 R12: 0000000000000013
-R13: 00007ff257694212 R14: 00007fff461d0418 R15: 0000000000000000
+ jffs2_do_reserve_space+0xb52/0x1030 fs/jffs2/nodemgmt.c:388
+ jffs2_reserve_space+0x62e/0xba0 fs/jffs2/nodemgmt.c:197
+ do_jffs2_setxattr+0x1a1/0x16c0 fs/jffs2/xattr.c:1113
+ __vfs_setxattr+0x173/0x1e0 fs/xattr.c:200
+ __vfs_setxattr_noperm+0x127/0x5e0 fs/xattr.c:234
+ __vfs_setxattr_locked+0x182/0x260 fs/xattr.c:295
+ vfs_setxattr+0x146/0x350 fs/xattr.c:321
+ do_setxattr+0x146/0x170 fs/xattr.c:629
+ setxattr+0x15d/0x180 fs/xattr.c:652
+ path_setxattr+0x179/0x1e0 fs/xattr.c:671
+ __do_sys_lsetxattr fs/xattr.c:694 [inline]
+ __se_sys_lsetxattr fs/xattr.c:690 [inline]
+ __ia32_sys_lsetxattr+0xbd/0x160 fs/xattr.c:690
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:321
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:346
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf72af579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5ea15ac EFLAGS: 00000292 ORIG_RAX: 00000000000000e3
+RAX: ffffffffffffffda RBX: 00000000200001c0 RCX: 00000000200002c0
+RDX: 0000000020002040 RSI: 0000000000001009 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
  </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.937 msecs
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:jffs2_sum_write_sumnode+0x1cf6/0x2220 fs/jffs2/summary.c:865
+Code: 0f b6 04 02 84 c0 74 08 3c 03 0f 8e d7 01 00 00 8b b3 c0 05 00 00 48 c7 c2 40 b7 44 8b 48 c7 c7 40 b3 44 8b e8 ab 09 8f fe 90 <0f> 0b e8 23 6b f1 07 e8 6e b6 0a ff e9 d9 e5 ff ff 48 89 cf 48 89
+RSP: 0018:ffffc9000ca874d0 EFLAGS: 00010282
+RAX: 0000000000000045 RBX: ffff88801fb6a440 RCX: ffffffff816f3829
+RDX: 0000000000000000 RSI: ffffffff816fc366 RDI: 0000000000000005
+RBP: ffffc9000ca87650 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000003 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff88805e196898 R15: ffff888059d1a000
+FS:  0000000000000000(0000) GS:ffff88802c500000(0063) knlGS:00000000f5ea1b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 000000c001927000 CR3: 000000005fbbe000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
 
 
 ---
@@ -224,10 +184,6 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
