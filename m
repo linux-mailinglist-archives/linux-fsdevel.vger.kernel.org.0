@@ -1,106 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-16798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7367E8A2E64
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 14:36:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B328A2E85
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 14:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13BBF1F23304
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 12:36:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5331D1C21560
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 12:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671845915C;
-	Fri, 12 Apr 2024 12:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07D058AC3;
+	Fri, 12 Apr 2024 12:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="I2cTeQU7"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hMBqsBAa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8YGf30Fw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hMBqsBAa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8YGf30Fw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA8358231
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 12:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFB554F87;
+	Fri, 12 Apr 2024 12:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712925395; cv=none; b=Z6YS9xMDjynOoXw0CFTKmMYvn4tJ8anRVY4TSTeUfwdbOrtZ/TXff4e1BRWpEj3hrILZ1q9r8cYDyIb+nv4vnF+jidJvAyVoPzKnvPnUWaa451gKvqzvA0hkXha3HhPzeSrY+linh3KEel/XVUfNwmn3iBoeeAtf0mPyB/fjKos=
+	t=1712925532; cv=none; b=plIs/YDvFkfuEpKB+VtNTlbgd2KDpYxUMJj7PoEMHZhYPz7/kl2unJRpyQItN3fUaKzZxXZbDGO0de0rpCftDnpkwhzqvbDwzh3OZjhbkhABSzJNcCQkNxdN8kS+L2rHUixY4Pw6ALAOYgrHsaF2gSsCCaKoQ945GgQ4nFKx5pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712925395; c=relaxed/simple;
-	bh=q/zq68O6+sSBrl97NyQg0CjTsV0FrQQrptYSnKIK5qA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aYyum+uvQcBL+wXjBN9ZtacA87jXYDEwKDDX1znM3MJzSSs8i0ktM/2+uJdp2nobXmEm9bhuY80OXlzOkpJb9rJ+nXG6oLKtoKL3wPig1eym29aSWz45fLP/TPJ8ftvgqjfgmJHR6b26RY/KBWU5v9G0jQf9hdjg2oPrk7AJfb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=I2cTeQU7; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-56fd7df9ea9so1002739a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 05:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1712925392; x=1713530192; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q9BoxTR1JROCUR8SnlVHtABNOhFI4wAk1SS2lfIXdDc=;
-        b=I2cTeQU7a/6nht7u7IlFLRW8F3L9jO5d/Bl4jCCshuKL+u57vSgP/Zp2EOz5JH2LUw
-         VqWgpOJR3euy+da4CXbTUaWGX3f5IDN3HCtPBZmyANHYpqymjtb1mELL/fxCq/czYe4l
-         J3XfyR6j8PigD24xvPiQFbHh2gmrSC+kBtBJA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712925392; x=1713530192;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q9BoxTR1JROCUR8SnlVHtABNOhFI4wAk1SS2lfIXdDc=;
-        b=DsujEt0dldEMHR2JbvSrI+tssd1U8fTkUIH3F0BUSwiEov4P12PpgMRg8/YlPUv51c
-         L4hrrFpLNbNXVXVObvLHJ9eoTTBwxEbZakiSmWJRsWntxeC8yPJMZhXanG7vshOkDImd
-         FN26NeDM+JpN9XU+cXdmrih04ExlZqyy6hSUeEQpL84CU+h6MftDKrunlD/+au5U8wOZ
-         iG/96Hv0wPHKJSKnvVj93X/Wh7Rx3VCkLRyS+B9OzWAtdwu6RaGD/YBU05WIrdog/UDy
-         pKCSMyUGCU6jCEweorsRbpO0MEBahJr/rPrem1x5hmGNYuwdcgyAb2PovS7WqSSJ2bsW
-         K0qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxnBtBdfvJ1tR/IqojOQQ+TkYBM46aEhkN7MQ3dmfWMasa436EbuKzKJ6Y5j5y6iOLZmbBg/EHG6dh4Gd0x0Ta7t6h4AXzN1h76Hbzpw==
-X-Gm-Message-State: AOJu0Yww1o0hsWNb2J4bqrpnC/02AKZfD1yYF3FrCBxVnN0uXUjCrMXX
-	pozC1tlzTifIyCGqBIY7fvedC0nE3OcDH7CFouE7EaPjGIlr2yAGTH2+DSIpVJMUoB0sO0oBenV
-	RfwGxX4yvESihcvqUkgwM2Cq0GWbjN8BnKx+7YQ==
-X-Google-Smtp-Source: AGHT+IF0OXEoT3ZY3zlYrIJBP9t60HKo5W88sTuoOTax+N/wQVoD3KFVgeyr2E2zTF30Vq1n1+Eqqz1nG3Ytmq9tODw=
-X-Received: by 2002:a17:907:94c1:b0:a51:e5c7:55b7 with SMTP id
- dn1-20020a17090794c100b00a51e5c755b7mr1811230ejc.47.1712925392535; Fri, 12
- Apr 2024 05:36:32 -0700 (PDT)
+	s=arc-20240116; t=1712925532; c=relaxed/simple;
+	bh=b/VfblD6S05RaA1RCAGojBZh50mufHTpEjwfpHh6eQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7ZguEi8cF4gigy+3Mfs6kz5o/prFjv6iAUXw3c70k3drIAxEey0X7R3A88ISxm9WcCe47dY8zLJWfJJ9y+t/ZX+ulBxEHlvWLHvmfUlm6sU2Bdv/VdNXtV5y8FtBn7ENl/Yec4njEXinhHt9FAd8q58SCdx2h0aFseqFrwiCow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hMBqsBAa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8YGf30Fw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hMBqsBAa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8YGf30Fw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8452338262;
+	Fri, 12 Apr 2024 12:38:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1712925528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nEBw+49UxZSpAkG7MYUNf10c5mjLpsm+3+mJDHW/cro=;
+	b=hMBqsBAa/fJqI4EOM+eKmmEVPeL2Yri9Pz83j8BShmnsZprbbHTb2bPSTtU78pRO9zkNcw
+	tCVc/ycnjY4CI+B0i9V/CcobT1+P7UiaYZ2aMdgvuDNPjTT3Nf7RbSVHd/6qVv0nnh7/bM
+	NEX6Rd383BRXRO663COpAfHPkC7OF90=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1712925528;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nEBw+49UxZSpAkG7MYUNf10c5mjLpsm+3+mJDHW/cro=;
+	b=8YGf30FweZ30bzBVb21uaRIrYuQxDa6Dln3jkKvAJ4RxwLRaHrJm6oPaPBuFyy/nDUJ6r9
+	NUFYN6NDNbQp50Cw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1712925528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nEBw+49UxZSpAkG7MYUNf10c5mjLpsm+3+mJDHW/cro=;
+	b=hMBqsBAa/fJqI4EOM+eKmmEVPeL2Yri9Pz83j8BShmnsZprbbHTb2bPSTtU78pRO9zkNcw
+	tCVc/ycnjY4CI+B0i9V/CcobT1+P7UiaYZ2aMdgvuDNPjTT3Nf7RbSVHd/6qVv0nnh7/bM
+	NEX6Rd383BRXRO663COpAfHPkC7OF90=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1712925528;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nEBw+49UxZSpAkG7MYUNf10c5mjLpsm+3+mJDHW/cro=;
+	b=8YGf30FweZ30bzBVb21uaRIrYuQxDa6Dln3jkKvAJ4RxwLRaHrJm6oPaPBuFyy/nDUJ6r9
+	NUFYN6NDNbQp50Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79B571368B;
+	Fri, 12 Apr 2024 12:38:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id R3qxHVgrGWaLTgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 12 Apr 2024 12:38:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 32027A071E; Fri, 12 Apr 2024 14:38:48 +0200 (CEST)
+Date: Fri, 12 Apr 2024 14:38:48 +0200
+From: Jan Kara <jack@suse.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] reiserfs: Convert to writepages
+Message-ID: <20240412123848.mv5y56uuz4tjdyaz@quack3>
+References: <20240305185208.1200166-1-willy@infradead.org>
+ <ZedqFFiVyntHkxLZ@casper.infradead.org>
+ <ZhgnMsJ9AGAkgFXT@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240403021808.309900-1-vinicius.gomes@intel.com>
-In-Reply-To: <20240403021808.309900-1-vinicius.gomes@intel.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 12 Apr 2024 14:36:21 +0200
-Message-ID: <CAJfpeguqW4mPE9UyLmccisTex_gmwq6p9_6_EfVm-1oh6CrEBA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] overlayfs: Optimize override/revert creds
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com, 
-	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
-	lizhen.you@intel.com, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZhgnMsJ9AGAkgFXT@casper.infradead.org>
+X-Spam-Flag: NO
+X-Spam-Score: -2.31
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.31 / 50.00];
+	BAYES_HAM(-1.51)[91.79%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,infradead.org:email]
 
-On Wed, 3 Apr 2024 at 04:18, Vinicius Costa Gomes
-<vinicius.gomes@intel.com> wrote:
+On Thu 11-04-24 19:08:50, Matthew Wilcox wrote:
+> On Tue, Mar 05, 2024 at 06:53:08PM +0000, Matthew Wilcox wrote:
+> > On Tue, Mar 05, 2024 at 06:52:05PM +0000, Matthew Wilcox (Oracle) wrote:
+> > > Use buffer_migrate_folio to handle folio migration instead of writing
+> > > out dirty pages and reading them back in again.  Use writepages to write
+> > > out folios more efficiently.  We now only do that wait_on_write_block
+> > > check once per call to writepages instead of once per page.  It would be
+> > > possible to do one transaction per writeback run, but that's a bit of a
+> > > big change to do to this old filesystem, so leave it as one transaction
+> > > per folio (and leave reiserfs supporting only one page per folio).
+> > > 
+> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> 
+> This patch is not yet in linux-next.  Do I need to do anything to
+> make that happen?
 
->  - in ovl_rename() I had to manually call the "light" the overrides,
->    both using the guard() macro or using the non-light version causes
->    the workload to crash the kernel. I still have to investigate why
->    this is happening. Hints are appreciated.
+Hum, usually Andrew picks these up but he was not on CC this time. Queued
+into my tree.
 
-Don't know.  Well, there's nesting (in ovl_nlink_end()) but I don't
-see why that should be an issue.
-
-I see why Amir suggested moving away from scoped guards, but that also
-introduces the possibility of subtle bugs if we don't audit every one
-of those sites carefully...
-
-Maybe patchset should be restructured to first do the
-override_creds_light() conversion without guards, and then move over
-to guards.   Or the other way round, I don't have a preference.  But
-mixing these two independent changes doesn't sound like a great idea
-in any case.
-
-Thanks,
-Miklos
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
