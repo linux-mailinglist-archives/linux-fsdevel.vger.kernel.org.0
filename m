@@ -1,122 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-16816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15E58A328E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 17:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D8F8A3291
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 17:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7F32836D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 15:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CADF81C245D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 15:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2E014830A;
-	Fri, 12 Apr 2024 15:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999B4148308;
+	Fri, 12 Apr 2024 15:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrsNdj5K"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bvaTy03D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B1B1482F0;
-	Fri, 12 Apr 2024 15:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B8F13C9B9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 15:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712936097; cv=none; b=q1QeP9JgZKXFzP7bjiWCuzOulWt1RXVABGebiqxPrxEBAuqYnwybzw3bfm8RaKUGAJEg02tLQyPtTvIvg8T/BrDq18U8cfKtYjx14gvAXu6HbMLL4UAYzInAKb80FKiLhDqlaD21neNb06La76ySmyyYF2oWFqJ+Xjz26/t4UYQ=
+	t=1712936187; cv=none; b=rSw0sKTcO5f8/kVpSAV1BAi6uSKIf08O4LUNz4t/hegVb/HGEza13rizvpX41e4Mz8Ku9m1UMDQJ3vR5tmreyFVb3KQYyBKoKsjD9/IAhTMXvVQj2vDNCKlgNHbK7NueXStPSgyi4xbVsCaNGr0QT9n2VDbPFI/s8YFt1zPh7eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712936097; c=relaxed/simple;
-	bh=+PLPj96sUpoTTOgdxVYSW3Q/ccb69cbmqY5Wn+NgmOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpo4+lAC+AEI8TH3GX9qsw8TLarnWNg3dKBlDEuokrvpbbKWT1EI6Shvddsj2rs5Fmd2UqENYvODfDQlc14AA8O/6K+ZbdY81xrt9yEMq+Rk4A6yLzVOxOyClYfhR+oWE3Xqc3vzw9nsw/Q/4tSMq+L9D1ca14KBKLdJ1m7sV1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrsNdj5K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81960C113CC;
-	Fri, 12 Apr 2024 15:34:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712936096;
-	bh=+PLPj96sUpoTTOgdxVYSW3Q/ccb69cbmqY5Wn+NgmOA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nrsNdj5KaQjFPd3Z3ld4jlJpqwWQwgiSRcS1mnnqjkmpyp5g5A3o1lGY31ZJkYimU
-	 lQkYi0TZ7U+C0jjZTMywlYZOvRQ9U2O30Ia1WGrt59UPeqLdYg2gMt0s7TenvC0Jxr
-	 Ca2sPiDwkOHXZEy9y2/5iJRZJhn72G+rYEYzioyd1bPuuGghokDljO7DRzxFG41uY+
-	 boR1YZNn4aGwaTD5ayK8MCzOSsyIpJkpNzgFuZ98G66N6Ws3tNcWmIceOMBRQB6EA7
-	 aycPrzPJ3bC9waU9sl2zcxLauWU6TmCDqzmSs/rSdCixogxk2ms384tD1CQdvBe4aV
-	 nPD95Hnz0prbg==
-Date: Fri, 12 Apr 2024 08:34:55 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: brauner@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] iomap: convert iomap_writepages to writeack_iter
-Message-ID: <20240412153455.GA11948@frogsfrogsfrogs>
-References: <20240412061614.1511629-1-hch@lst.de>
+	s=arc-20240116; t=1712936187; c=relaxed/simple;
+	bh=zk6vSbvVLABQPy9qvih4/WpwqnOU2palNUl7YmxTXoM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HwTxaxkUN3tca3RIO63D9ow6o8msDQH3kqPNpcxXRC7904TLlbnCtmX80VSbGIHSpeCp/kJklzQ6imt/o150JuChYA8xjmWbYtRPHo5rhymA5+PcV1iEu7hl4qM8+UwKFT/0GJtEWGV13MXjdB7af3rylDEKTWZjIOmSlNLWV5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bvaTy03D; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-516d536f6f2so1174728e87.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 08:36:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1712936183; x=1713540983; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KVn7Thh2jHUPFYoXLOH9HKjtBO3lIRg/yTLKB6jzC4g=;
+        b=bvaTy03DMYBuQtOdnYMsMppbIEQqDGZelylmuXqB2viW9iRz1eoARf2UNhHHh9zObL
+         v6NMzSsA03ksrKv2NNVczfqQLoIr0SW7MFLOWUJuqWQwckZ+WB8w8bMVMFgTX1msBvXo
+         kmQUhGjfn6BYDtbiSvpVlvTX2L059oxajkGCM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712936183; x=1713540983;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KVn7Thh2jHUPFYoXLOH9HKjtBO3lIRg/yTLKB6jzC4g=;
+        b=enHg0slt6bIhVqnCJTN0gPxsphtRt2uGy11gIbNW34LAXV8GDQ5qY5NWFeWhshv1PZ
+         zNh8LR5wVPQmyLxDDPRFiW9DkGbbIjujW4v+fizFzCeCZMWF9fLwoXOOBpsP3vDF0D4+
+         GBXlg9lfmUmOLRF4MzxuudoVHKHXryVF4Vj7uTh2cvzllxu2LAs11XPxL+cHeATUpHFc
+         KZPQG/HFay2fi8gUaudorDMZuSXDfmkCYQxh4bhhqTa/2PGNunaDrsmJ8qkbZ2K9D0mF
+         6/AY5S0/81QaSHl9LILddU3nKlxvoc6JvR27u3t5ouSp989CELWOJ0VMww5QxtIWXBnD
+         b49w==
+X-Forwarded-Encrypted: i=1; AJvYcCXG5DNKj6yE1plaW/n+/0BQKfT81+Vur2zyQIv04cgJPEiT4sm2435eWfuXzOZQAUQYpJ+89TeH446dZS4C/BKwJDW2q2gdl7kgjncspw==
+X-Gm-Message-State: AOJu0Yytk3LjrcEi1LspTyuqh14ievzMH2G0cUh/6fDbbIOqWGHQA5iQ
+	jHmR9iEXp4b+OfTMQ9UORVnfmKa7t8L1hscgDmKJhgh3vrETtImJpyMPzZrMQU9i6ltkCRV/BMv
+	72qOEaw==
+X-Google-Smtp-Source: AGHT+IFHj8noFbfIBCgcHROUA66bKxHllSpmizMOvd5XUsX9qQecVE5r/V1Qs9IrdU3RXX2tdRddIw==
+X-Received: by 2002:a05:6512:312b:b0:516:d2b9:d112 with SMTP id p11-20020a056512312b00b00516d2b9d112mr2244184lfd.40.1712936182999;
+        Fri, 12 Apr 2024 08:36:22 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id h26-20020a19ca5a000000b00516beafacbcsm545319lfj.157.2024.04.12.08.36.22
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Apr 2024 08:36:22 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-516d2600569so1341576e87.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 08:36:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX9XHzAebtycVr5+rswWJS60f5/G6yir7AXGd3F7dU/TSiqTKiWGMAT3RJRPyj/wxPmuO9mTOeTeR7xddW7zfzQqupptEYZVNO65oyMHA==
+X-Received: by 2002:a05:6512:3a85:b0:516:d06b:4c5d with SMTP id
+ q5-20020a0565123a8500b00516d06b4c5dmr3115635lfu.37.1712936181752; Fri, 12 Apr
+ 2024 08:36:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240412061614.1511629-1-hch@lst.de>
+References: <20240411001012.12513-1-torvalds@linux-foundation.org>
+ <CAHk-=wiaoij30cnx=jfvg=Br3YTxhQjp4VWRc6=xYE2=+EVRPg@mail.gmail.com>
+ <20240411-alben-kocht-219170e9dc99@brauner> <CAHk-=wjrPDx=f5OSnQVbbJ4id6SZk-exB1VW9Uz3R7rKFvTQeQ@mail.gmail.com>
+ <CABe3_aGbsPHY9Z5B9WyVWakeWFtief4DpBrDxUiD00qk1irMrg@mail.gmail.com>
+ <CABe3_aGGf7kb97gE4FdGmT79Kh5OhbB_2Hqt898WZ+4XGg6j4Q@mail.gmail.com>
+ <CABe3_aE_quPE0zKe-p11DF1rBx-+ecJKORY=96WyJ_b+dbxL9A@mail.gmail.com>
+ <CAHk-=wjuzUTH0ZiPe0dAZ4rcVeNoJxhK8Hh_WRBY-ZqM-pGBqg@mail.gmail.com>
+ <CAHk-=wgEdyUeiu=94iuJsf2vEfeyjqTXa+dSpUD6F4jvJ=87cw@mail.gmail.com> <20240412-labeln-filmabend-42422ec453d7@brauner>
+In-Reply-To: <20240412-labeln-filmabend-42422ec453d7@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 12 Apr 2024 08:36:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjuHY26QgDHp7yM5hVPOzVKO2FDwSHgNEu_jN9d2B_G0g@mail.gmail.com>
+Message-ID: <CAHk-=wjuHY26QgDHp7yM5hVPOzVKO2FDwSHgNEu_jN9d2B_G0g@mail.gmail.com>
+Subject: Re: [PATCH] vfs: relax linkat() AT_EMPTY_PATH - aka flink() - requirements
+To: Christian Brauner <brauner@kernel.org>
+Cc: Charles Mirabile <cmirabil@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Lutomirski <luto@kernel.org>, Peter Anvin <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
-[adding willy to cc just in case he sees something I didn't]
+On Fri, 12 Apr 2024 at 00:46, Christian Brauner <brauner@kernel.org> wrote:
+>
+> Hm, I would like to avoid adding an exception for O_PATH.
 
-On Fri, Apr 12, 2024 at 08:16:14AM +0200, Christoph Hellwig wrote:
-> This removes one indirect function call per folio, and adds type safety
-> by not casting through a void pointer.
-> 
-> Based on a patch by Matthew Wilcox.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Ack. It's not the important or really relevant part.
 
-Looks like a straightforward conversion to me...
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> ---
->  fs/iomap/buffered-io.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 4e8e41c8b3c0e4..e09441f4fceb6f 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1958,18 +1958,13 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  	return error;
->  }
->  
-> -static int iomap_do_writepage(struct folio *folio,
-> -		struct writeback_control *wbc, void *data)
-> -{
-> -	return iomap_writepage_map(data, wbc, folio);
-> -}
-> -
->  int
->  iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
->  		struct iomap_writepage_ctx *wpc,
->  		const struct iomap_writeback_ops *ops)
->  {
-> -	int			ret;
-> +	struct folio *folio = NULL;
-> +	int error;
->  
->  	/*
->  	 * Writeback from reclaim context should never happen except in the case
-> @@ -1980,8 +1975,9 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
->  		return -EIO;
->  
->  	wpc->ops = ops;
-> -	ret = write_cache_pages(mapping, wbc, iomap_do_writepage, wpc);
-> -	return iomap_submit_ioend(wpc, ret);
-> +	while ((folio = writeback_iter(mapping, wbc, folio, &error)))
-> +		error = iomap_writepage_map(wpc, wbc, folio);
-> +	return iomap_submit_ioend(wpc, error);
->  }
->  EXPORT_SYMBOL_GPL(iomap_writepages);
->  
-> -- 
-> 2.39.2
-> 
-> 
+             Linus
 
