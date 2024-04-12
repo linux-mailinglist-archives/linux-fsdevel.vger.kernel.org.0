@@ -1,278 +1,466 @@
-Return-Path: <linux-fsdevel+bounces-16768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7508A2532
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 06:36:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A7F8A253E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 06:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D7C1C216D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 04:36:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C921F22469
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 04:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3325BC14F;
-	Fri, 12 Apr 2024 04:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866CF1BC23;
+	Fri, 12 Apr 2024 04:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bi5dC5PI"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="g/z90OwG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2070.outbound.protection.outlook.com [40.107.236.70])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7D8A41;
-	Fri, 12 Apr 2024 04:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712896568; cv=fail; b=gtNXj02WzHLGilQRimFII3twHgFKoCNwaNqy2FuggEuPHaQ7tvvADcxGdMfRoeV5haEr4SNN0BS/tavLL6Scybq5VKtwcAz7nP+JTAPgchlNRFFMnbcC13r6bDA9bFZe7XQav05ZF3g7JCH5t+K17o0VkZt3bmSZF4LoX798Ni0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712896568; c=relaxed/simple;
-	bh=SJhwciydB3QuQcZeNvB+efjoyyJBfqWsG8zjJfl0UgQ=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=fXutqNa57gwRXlkbsD4Th388FqJkhSJId2cjUqLJHetzARMsx6XXiRFlRmKI5t6eLDtoyuIfWN2VQNtqyc52QEKigRUfGjTy2heOHoSCVyD3UI6KhSkpJpiB/HnZp/KCGriaNCTwe+TiUbgApPMMQKKDaxZEgMvikJx0pUqG6yU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bi5dC5PI; arc=fail smtp.client-ip=40.107.236.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UtleGsfbPYLrLYUMqjVlyzxX+EdVV4dr+DW0EKczsx99KyNTDAfayZ6Y8wewuFRfddCNK250Y/wWes48Xo8wchKnLgWiFRaybd/WFV58m0atXAvT+arOasVz4ZANCdr9MZWBes3pe5IJideahrWfNZHHLBqaYugdY5kpaXxKB9xUrk8BeP6rkJlz5qnBFVf/PCCsgWqlJKyPzRO9YkovWJU+6zTeCvpar4rlLsbZ3xhT7Un+X1gEixftn+sYdm9fMTHxHhx+/x+8tUnfzHQ4M+cWRmEerTC0sR5b8d4LuhgSE/nUu1OEcuijGQ7SPExq+39WALwJ8QuMw3jbAWwtlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WZA9IS5VgrhZLszt9iMi7zedZar5ykx83c7gNboWD/0=;
- b=b0rl5p7gceFIlyMMTZWzJd2aTItmZH9oiaX5zGmPIEkoRjmIDOHTglD8cHABOspiKSkqbDul8W6SoupyghDj/epdkT32P1WoYKf4iTSLlpTeDf4A1d6wKbdIOj1FWYD1CeXaUGcDcXnHcJOWN1Ym0+YpQHnuoGwb6mxPoCXeEHjzX2+i9vWBiWLaqWEoiBCHvs8cg42etU0TDXLb+PKKcVBr+GYVnda8X343qz0Fb7/QO9Emz1tppwXhaFMT5hkDXrTnbpv6axetJFtVcCybVtxN5oKF0R8pk4MhbKX1oXZV+DCdMe42SxTTO0itaFCpKqJyntrBVyUC9/Kqx64IZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WZA9IS5VgrhZLszt9iMi7zedZar5ykx83c7gNboWD/0=;
- b=bi5dC5PIWtxy/PIxWmc2nFaGk2Mi1l1m5CWOoWPleEgy0sT2wZG9Oq1E/TwDagz4ih7oQn25CuJqWk79d1u/KyMBsHDayibuJjIe1xfULxgUYBV1G2rvCGjBz7p4uhHOSEiaSSRTiW88IB5N2OdO+rdrePcNzUxUBd/noaDvKroPMAKQHKHJFwbdICrbwUpxBQ8XS1bzQ6+9GONB3OBZRruaLdzra1CQcjRLrPusC43Q8Ife6A6lhfYXQUC37VIDuLR6QEum/Leg+thpSpcywiKhg8H3F3EF3SF9YQCsS4ELhjnE9CZ6sxI5PLRUMZqHWV+8NlpO2CBld1KXawoFaQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9)
- by DM4PR12MB7526.namprd12.prod.outlook.com (2603:10b6:8:112::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.55; Fri, 12 Apr
- 2024 04:36:01 +0000
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::e71d:1645:cee5:4d61]) by CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::e71d:1645:cee5:4d61%7]) with mapi id 15.20.7409.042; Fri, 12 Apr 2024
- 04:36:01 +0000
-References: <cover.fe275e9819458a4bbb9451b888cafb88af8867d4.1712796818.git-series.apopple@nvidia.com>
- <66181dd83f74e_15786294e8@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-mm@kvack.org, david@fromorbit.com, jhubbard@nvidia.com,
- rcampbell@nvidia.com, willy@infradead.org, jgg@nvidia.com,
- linux-fsdevel@vger.kernel.org, jack@suse.cz, djwong@kernel.org,
- hch@lst.de, david@redhat.com, ruansy.fnst@fujitsu.com,
- nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, jglisse@redhat.com
-Subject: Re: [RFC 00/10] fs/dax: Fix FS DAX page reference counts
-Date: Fri, 12 Apr 2024 13:54:24 +1000
-In-reply-to: <66181dd83f74e_15786294e8@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Message-ID: <87frvr5has.fsf@nvdebian.thelocal>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: SY2PR01CA0045.ausprd01.prod.outlook.com
- (2603:10c6:1:15::33) To CY8PR12MB7705.namprd12.prod.outlook.com
- (2603:10b6:930:84::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439561B5AA;
+	Fri, 12 Apr 2024 04:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712896890; cv=none; b=mf76ttY72W21sQQrtwHThf3Z9lCUFLGmsLDg1+iSVeDi8MucmSrOES1k36ruCZuby5Vyf/kn4CoEcDTvVIS4zSiMWOS8kYL5tH6kg0dMcpJs0JPkeKTh4ezX17gCCcSk7KksrO1B8ppqkdXVvOgiXuHApY3v26U68aBx2/n0K2c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712896890; c=relaxed/simple;
+	bh=z/LOpcSzeOyZbYTDmi18DQjPd0NiPfv3eoOL1VTh0P0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CBXG5XaR5zDL8S2BO97GUcXAvMWW/MOuaCKfbjlc78qTAkdcMQdLnj7YodYl35NxjfMeRIRSmOs3a2NuXr9UpMf1bQ3/Hp9+gTnI5b4fqUzpl5YBhElgldnE1m7fKOXIM0isUcBwnsyhEXC+NbsF5jFnmbhwaj7hrrh6qO6BAG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=g/z90OwG; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kxUK7vnEnWrzxvUtGitETuSyZ6Al5NMvCSvPBvG8VLc=; b=g/z90OwGy0lAqXEUuZsQMhK6P6
+	58WTJSFAscxus66wG8ENrL4XNwJxWpXXeM3yU2ppGzN1ELcXKVjEfVIbVSp+SV1uI09vBQVeeBS3v
+	VWETDtn0J/62nUrYQYiX+NLicqtHKcc7CWhQg4kRoE2VcGk9pD89hQCwy+jj4Sz/KQj6OHGJmZqGZ
+	3EgKYHgPqtd3RJaRf4ycO3o0XtAl/Fpntu9fhJppQ8TVULoAdNEJPp5IsNOkwFMcmNymw/piGOflm
+	/DzdjpJ9n0LXjmx8pHEsdNPMcSKc1JvHitIGPerGgKNO6HqSfsPFFOcLPHV4SxZ31pNeH3f1CFKbk
+	aVe4jjKA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rv8iy-00AwK6-25;
+	Fri, 12 Apr 2024 04:41:16 +0000
+Date: Fri, 12 Apr 2024 05:41:16 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	hch@lst.de, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+Message-ID: <20240412044116.GL2118490@ZenIV>
+References: <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
+ <20240409042643.GP538574@ZenIV>
+ <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
+ <20240410105911.hfxz4qh3n5ekrpqg@quack3>
+ <20240410223443.GG2118490@ZenIV>
+ <20240411-logik-besorgen-b7d590d6c1e9@brauner>
+ <20240411140409.GH2118490@ZenIV>
+ <20240411144930.GI2118490@ZenIV>
+ <d89916c0-6220-449e-ff5f-f299fd4a1483@huaweicloud.com>
+ <20240412025910.GJ2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB7705:EE_|DM4PR12MB7526:EE_
-X-MS-Office365-Filtering-Correlation-Id: 022ea168-f5e4-47de-bb0b-08dc5aaa0e44
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	L7uUD6eB0JOnEKP81h3KNzDmSY6R9dIAdriavS/CNjBI+4xK52nhgltTFJ/WiWHTqYupJcdvJFU1+ejY1HhDezUUAC2c/ed7Oinc8cI/t2pD27TmBm3qD7UzKRg/XoKsQKv/lVdsX3ofmwzG6+MqvVLwQkaixfE7cvLxRDmvkh+AX/3GonVCZzeL71bhLkfZdBXM+ROD8MqZPGhzD4lN/GZlhZ0CJwOI94D/CXQhGq+5m3fGDr58UkrU/g7FI0phVvlY4Xfup3868CeG6kxOYMAS2XhLsaJAQb4Dt9XnYlsh28wdjA3dyfB0exOgyk7aertYVrCSKZ2VjPaC+ap5KvVf+qkXZpGTPIIwGtXgZWwBVTpcVMw1MmWD/+sE+o1/X7NZpBxhu+xd22yE5wZeyaNbU9ADa5Zd20zCypOA4U/kt3cSQJFKUVjp24t/S95AUq+9FsXk56HtIRc9vO/iWcArQBEDwnYg1bdft+p66C7khCcOoPxsdcjZ6ZQ4hSTw7nY1h1dW2csBBBW02aDTUPxLBrY0sobE4C4FrYCWEPcq7EuVYq1kIJdiBKu8tEHRF+LBIxVMhKWi/ukQ4j1IZnIgmMnzWQVtl+wl8VK+x1Aiid+ZO4qUHVCpOqJE6kG9YpdNVI1KkHTQNTyVthG2gLJtrIMrcoS8DLihXtu7v5w=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7705.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aE43RWhLejRRa0dENmoyNVdBcFI5NFh3ajVXS2FNb1N2VG01MnVYYkg2Z0dj?=
- =?utf-8?B?Qm5JQVBSNjFvbWRDUXQwajY1VWhEd29jeGsxOUNYaU1oWWx4RmlHRk9ia3Zx?=
- =?utf-8?B?ZFROTkloRnJ4dFRaNmRMcXFTNlFEN1dEN3lmL0N3R0tRUkQwTVozMjZEeEg1?=
- =?utf-8?B?ZTMzdWZWQVN1Y01WVGRxWHQ2M1FWM2VWTWFRUVZNMUVIY3dsQTc3WVgvaEJv?=
- =?utf-8?B?dERHUEFaNWNtUG9VUll2NVJhc0tiNTk3NnVQNkdoV0ZsdGlMOFdJZmxzMldk?=
- =?utf-8?B?bk5wQ09SVmhHNk9zM0U1NTRQTzJTMGxJTUVOc0pyVGtTQ25HeUxmLzUvTjJi?=
- =?utf-8?B?aDZNbnVreERmZ3p2a3dNOTZMWW1rc2lnZUg5MHF6QjVuOGxoemE5cm1sYUFJ?=
- =?utf-8?B?b1Z0dHJjNHZJN2lIVWFQS0huZkJTYW5Yeng4Ti85OCtuRDNnS3Z1K1JqdTNE?=
- =?utf-8?B?aXpPRDJDQi8wQlNnbmU2NXNqM0g0dFk1cXBSQzNXY1hlb3lsSERXbW96N1dV?=
- =?utf-8?B?dXc4VlhtNGJ6alM2UFhaRU9xV2pVbDdaL3g1SVlPeUZNWmNkbnNDdEVET0Yw?=
- =?utf-8?B?d2dkNUhTMHZrbkZJd0plRkVUWWhVU0UzOU95NnBUVEhjVHdadFk4R2ZoRXdO?=
- =?utf-8?B?c1V0T0RxelNELytCd0ExZVJhNlU4VUNPZS9LMWJIMUo4S09KTjJyTlJZdGJG?=
- =?utf-8?B?ekFhNGlDTU9GYkZFMkFJeGFlREhVVU1pd29zc01XQStOblhnL0NsTWw0dzRi?=
- =?utf-8?B?VE9vQ2h6bG00TkY2M0FMd0tJZzltOU8rU2NldERFK2pQcGRyWWFJWWwyMlpH?=
- =?utf-8?B?WGVheHFSbWFEcVZSTjlaU1lMQkg4aU81Y21wODBEa3lrTlYzMjhLZ0diZnU5?=
- =?utf-8?B?ZWdPOU9rM2dMbkR1cjZDUGJSSmxwV3JvOHdqMW1tUGNuNkoxZ1dud1BnSWx6?=
- =?utf-8?B?M1pBVGRZbVE2dVVvbGd6YWVZVmxndjdaMXB5VjJ2R0loekJJcXoraEZ5NUEx?=
- =?utf-8?B?TFhUd0lyZnZWcjBUaEJqMWNCcnlYOGY3UThPYkVJUGdVUGM3VTNIYmFCTDZH?=
- =?utf-8?B?dy9QaEpMMWJqdk5EeVkweS9HdzhHVEdkV3BJYjR2SDJqVldrWVd2ZWJ6QUFS?=
- =?utf-8?B?MTdubzBnWjFpa0c3NTE5TXp5N0ticWZPU2JrWmdWazdtV2xxZ095Y01yNmRp?=
- =?utf-8?B?V05SbDc1TDAwTkNSVGNaUjE3SldrQ3pwM1FkRHoxNUdHU0RTVVhQRENUcmp4?=
- =?utf-8?B?TEVRU0pQRCsyWnlRdWU4aE1odmFQcWZucTZvVkZZVGhUK0xiVnU1ZmN2czFT?=
- =?utf-8?B?a1ZJRmYxRDlpZ1NYeWdUQnllOFhuc3ljWS9PSXNGNzIvY21IRTIxMENxUjJ3?=
- =?utf-8?B?ckxHRUJqZm5SQWVTSGNvYmpFbFdpT00wak5yc2VjQmM4eFFHVnFFeWZZZWtK?=
- =?utf-8?B?NmVoWmhDaXFrdThRN1Vac2R5Wm9yTmZ4bkhIMWpSVVR4eWRUbVVTekIxYlBE?=
- =?utf-8?B?cFZoS1lqQS9HTWtxa1BZWTRFZU85dFZIN2JFbjNXYklDTlBLdEZoS2pqRCtp?=
- =?utf-8?B?eGJCOHdMY3pvUVBJL2taYVhSQXNiTnk5bGs2eDQ2WmdkNlR2REtXdFU4cnZu?=
- =?utf-8?B?aGt1L2tUVEZ1ZHE5WVpkN3ExU2kxckdHVTZ1ekgzWjBRbi9lMUFhZ29HNXpQ?=
- =?utf-8?B?U2tyNGNJUHRuMVpodDRaUjBnYlpLU0p1WUMvNWdQY2dENGxkaTU0ZlU1TUUz?=
- =?utf-8?B?bVJCRFYrM25pSlRMbXVlUHluTDBkdzBJeCtJNEJpSnV1Slgxcy9TMjFOeTFv?=
- =?utf-8?B?aWFHUG1JQitHWDE5ODNxZXpTa0FLMzloaGVxU2x2RjB3dWJjQlRpYTNna0h3?=
- =?utf-8?B?TGVJM2hvNlF5dHRncVFIZUU2QUlPcEd3TW1xcWROaUtaSzRNSlVPWktDMFhE?=
- =?utf-8?B?S0ZZZUwvN0xRbEVseTBtOStMR20xbkNMRFBieDRFMjdnNC9FUVVKdVgyTWFm?=
- =?utf-8?B?aWVmdHZiSC9GVkRMeHA4akVKRFhyUUpvKy9kYnJsaVNaVXlrek9INEhLUURQ?=
- =?utf-8?B?NW1UQ3lLZnh2b01PRDFvWXZiV2JYZFFFd2U4MkRVTEQ5aS9HendPZkZSZ3pa?=
- =?utf-8?Q?dd/Gi/Vb7NnnlF4kfmnNfolWx?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 022ea168-f5e4-47de-bb0b-08dc5aaa0e44
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2024 04:36:01.1558
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PpxexkBbCn4bfTyEZu/XWIsVOZw1XRjDHz88lMTJP+tlurjwz7UzlAflarjjJmXvzuF6GFOw00JhSxbpvVJ20w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7526
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240412025910.GJ2118490@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Fri, Apr 12, 2024 at 03:59:10AM +0100, Al Viro wrote:
+> for multiple writers, but you need it anyway - e.g. this
+>         if (bdev->bd_disk->fops->set_read_only) {
+> 		ret = bdev->bd_disk->fops->set_read_only(bdev, n);
+> 		if (ret)
+> 			return ret;
+> 	}
+> 	bdev->bd_read_only = n;
+> will need the exclusion over the entire "call ->set_read_only() and set
+> the flag", not just for setting the flag itself.
+> 
+> And yes, it's a real-world bug - two threads calling BLKROSET on the
+> same opened file can race, with inconsistency between the flag and
+> whatever state ->set_read_only() modifies.
 
-Dan Williams <dan.j.williams@intel.com> writes:
+BLKROSET is CAP_SYS_ADMIN-only, so it's not a CVE fodder; the sky
+is not falling.  The bug is real, though.
 
-> Alistair Popple wrote:
->> FS DAX pages have always maintained their own page reference counts
->> without following the normal rules for page reference counting. In
->> particular pages are considered free when the refcount hits one rather
->> than zero and refcounts are not added when mapping the page.
->
->> Tracking this requires special PTE bits (PTE_DEVMAP) and a secondary
->> mechanism for allowing GUP to hold references on the page (see
->> get_dev_pagemap). However there doesn't seem to be any reason why FS
->> DAX pages need their own reference counting scheme.
->
-> This is fair. However, for anyone coming in fresh to this situation
-> maybe some more "how we get here" history helps. That longer story is
-> here:
->
-> http://lore.kernel.org/all/166579181584.2236710.17813547487183983273.stgi=
-t@dwillia2-xfh.jf.intel.com/
+I see Christoph's postings in that thread; the thing is, it's not
+just the flags that need to be protected.  If we end up deciding
+that serialization for different flags should not be tied to the
+same thing (which is reasonable - e.g. md_set_read_only() is not
+something you want to shove under existing lock), I would still
+suggest something along the lines of
 
-Good idea.
+	u32 __bd_flags;		// partno and flags
 
->> This RFC is an initial attempt at removing the special reference
->> counting and instead refcount FS DAX pages the same as normal pages.
->>=20
->> There are still a couple of rough edges - in particular I haven't
->> completely removed the devmap PTE bit references from arch specific
->> code and there is probably some more cleanup of dev_pagemap reference
->> counting that could be done, particular in mm/gup.c. I also haven't
->> yet compiled on anything other than x86_64.
->>=20
->> Before continuing further with this clean-up though I would appreciate
->> some feedback on the viability of this approach and any issues I may
->> have overlooked, as I am not intimately familiar with FS DAX code (or
->> for that matter the FS layer in general).
->>=20
->> I have of course run some basic testing which didn't reveal any
->> problems.
->
-> FWIW I see the following with the ndctl/dax test-suite (double-checked
-> that vanilla v6.6 passes). I will take a look at the patches, but in the
-> meantime...
+static inline u8 bd_partno(struct block_device *bdev)
+{
+	return bdev->__bd_flags & 0xff;
+}
 
-Hmmm...
+static void bd_set_flag(struct block_device *bdev, int flag)
+{
+	u32 v = bdev->__bd_flags;
 
-> # meson test -C build --suite ndctl:dax
-> ninja: no work to do.
-> ninja: Entering directory `/root/git/ndctl/build'
-> [1/70] Generating version.h with a custom command
->  1/13 ndctl:dax / daxdev-errors.sh          OK              14.46s
->  2/13 ndctl:dax / multi-dax.sh              OK               2.70s
->  3/13 ndctl:dax / sub-section.sh            OK               7.21s
->  4/13 ndctl:dax / dax-dev                   OK               0.08s
-> [5/13] =F0=9F=8C=96 ndctl:dax / dax-ext4.sh                            0/=
-600s
+	for (;;) {
+		u32 w = cmpxchg(&bdev->__bd_flags, v, v | (1 << (flag + 8)));
+		if (w == v)
+			return;
+		v = w;
+	}
+}
 
-...thanks for pasting that output. Turns out I didn't have destructive
-testing enabled during the build so hadn't noticed these tests were not
-running. It would be nice if these were reported as skipped when not
-enabled rather than hidden.
+and similar for bd_clear_flag().  Changes of ->bd_partno never
+happen - we set it at allocation time and never modify the sucker.
 
-With that fixed I'm seeing a couple of kernel warnings (and I think I
-know why), so it might be worth holding off looking at this too closely
-until I've fixed these.
+This is orthogonal to BLKROSET/BLKROSET exclusion, converting
+->bd_inode accesses, etc.
 
-> ...that last test crashed with:
->
->  EXT4-fs (pmem0): mounted filesystem 2adea02a-a791-4714-be40-125afd16634b=
- r/w with ordered
-> ota mode: none.
->  page:ffffea0005f00000 refcount:0 mapcount:0 mapping:ffff8882a8a6be10 ind=
-ex:0x5800 pfn:0x1
->
->  head:ffffea0005f00000 order:9 entire_mapcount:0 nr_pages_mapped:0 pincou=
-nt:0
->  aops:ext4_dax_aops ino:c dentry name:"image"
->  flags: 0x4ffff800004040(reserved|head|node=3D0|zone=3D4|lastcpupid=3D0x1=
-ffff)
->  page_type: 0xffffffff()
->  raw: 004ffff800004040 ffff888202681520 0000000000000000 ffff8882a8a6be10
->  raw: 0000000000005800 0000000000000000 00000000ffffffff 0000000000000000
->  page dumped because: VM_BUG_ON_FOLIO(((unsigned int) folio_ref_count(fol=
-io) + 127u <=3D 127
->
->  ------------[ cut here ]------------
->  kernel BUG at include/linux/mm.h:1419!
->  invalid opcode: 0000 [#1] PREEMPT SMP PTI
->  CPU: 0 PID: 1415 Comm: dax-pmd Tainted: G           OE    N 6.6.0+ #209
->  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20230524-3=
-.fc38 05/24/2023
->  RIP: 0010:dax_insert_pfn_pmd+0x41c/0x430
->  Code: 89 c1 41 b8 01 00 00 00 48 89 ea 4c 89 e6 4c 89 f7 e8 18 8a c7 ff =
-e9 e0 fc ff ff 48
-> c b3 48 89 c7 e8 a4 53 f7 ff <0f> 0b e8 0d ba a8 00 48 8b 15 86 8a 62 01 =
-e9 89 fc ff ff 90
->
->  RSP: 0000:ffffc90001d57b68 EFLAGS: 00010246
->  RAX: 000000000000005c RBX: ffffea0005f00000 RCX: 0000000000000000
->  RDX: 0000000000000000 RSI: ffffffffb3749a15 RDI: 00000000ffffffff
->  RBP: ffff8882982c07e0 R08: 00000000ffffdfff R09: 0000000000000001
->  R10: 00000000ffffdfff R11: ffffffffb3a771c0 R12: 800000017c0008e7
->  R13: 8000000000000025 R14: ffff888202a395f8 R15: ffffea0005f00000
->  FS:  00007fdaa00e3d80(0000) GS:ffff888477000000(0000) knlGS:000000000000=
-0000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 00007fda9f800000 CR3: 0000000296224000 CR4: 00000000000006f0
->  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->  Call Trace:
->   <TASK>
->   ? die+0x32/0x80
->   ? do_trap+0xd6/0x100
->   ? dax_insert_pfn_pmd+0x41c/0x430
->   ? dax_insert_pfn_pmd+0x41c/0x430
->   ? do_error_trap+0x81/0x110
->   ? dax_insert_pfn_pmd+0x41c/0x430
->   ? exc_invalid_op+0x4c/0x60
->   ? dax_insert_pfn_pmd+0x41c/0x430
->   ? asm_exc_invalid_op+0x16/0x20
->   ? dax_insert_pfn_pmd+0x41c/0x430
->   ? dax_insert_pfn_pmd+0x41c/0x430
->   dax_fault_iter+0x5d0/0x700
->   dax_iomap_pmd_fault+0x212/0x450
->   ext4_dax_huge_fault+0x1dc/0x470
->   __handle_mm_fault+0x808/0x13e0
->   handle_mm_fault+0x178/0x3e0
->   do_user_addr_fault+0x186/0x830
->   exc_page_fault+0x6f/0x1d0
->   asm_exc_page_fault+0x22/0x30
->  RIP: 0033:0x7fdaa072d009
+Christoph, do you have any problems with that approach?
 
+COMPLETELY UNTESTED patch along those lines follows; if it works,
+it would need to be carved up.  And I would probably switch the
+places where we do if (bdev->bd_partno) to if (bdev_is_partition(bdev)),
+for better readability.
+
+I'd converted only those 3 flags; again, this is just an untested
+illustration to the above.
+
+diff --git a/block/bdev.c b/block/bdev.c
+index 7a5f611c3d2e..9aa23620fe92 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -411,13 +411,11 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
+ 	mutex_init(&bdev->bd_fsfreeze_mutex);
+ 	spin_lock_init(&bdev->bd_size_lock);
+ 	mutex_init(&bdev->bd_holder_lock);
+-	bdev->bd_partno = partno;
++	bdev->__bd_flags = partno;
+ 	bdev->bd_inode = inode;
+ 	bdev->bd_queue = disk->queue;
+-	if (partno)
+-		bdev->bd_has_submit_bio = disk->part0->bd_has_submit_bio;
+-	else
+-		bdev->bd_has_submit_bio = false;
++	if (partno && bdev_test_flag(disk->part0, BD_HAS_SUBMIT_BIO))
++		bdev_set_flag(bdev, BD_HAS_SUBMIT_BIO);
+ 	bdev->bd_stats = alloc_percpu(struct disk_stats);
+ 	if (!bdev->bd_stats) {
+ 		iput(inode);
+@@ -624,7 +622,7 @@ static void bd_end_claim(struct block_device *bdev, void *holder)
+ 		bdev->bd_holder = NULL;
+ 		bdev->bd_holder_ops = NULL;
+ 		mutex_unlock(&bdev->bd_holder_lock);
+-		if (bdev->bd_write_holder)
++		if (bdev_test_flag(bdev, BD_WRITE_HOLDER))
+ 			unblock = true;
+ 	}
+ 	if (!whole->bd_holders)
+@@ -640,7 +638,7 @@ static void bd_end_claim(struct block_device *bdev, void *holder)
+ 	 */
+ 	if (unblock) {
+ 		disk_unblock_events(bdev->bd_disk);
+-		bdev->bd_write_holder = false;
++		bdev_clear_flag(bdev, BD_WRITE_HOLDER);
+ 	}
+ }
+ 
+@@ -892,9 +890,10 @@ int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
+ 		 * writeable reference is too fragile given the way @mode is
+ 		 * used in blkdev_get/put().
+ 		 */
+-		if ((mode & BLK_OPEN_WRITE) && !bdev->bd_write_holder &&
++		if ((mode & BLK_OPEN_WRITE) &&
++		    !bdev_test_flag(bdev, BD_WRITE_HOLDER) &&
+ 		    (disk->event_flags & DISK_EVENT_FLAG_BLOCK_ON_EXCL_WRITE)) {
+-			bdev->bd_write_holder = true;
++			bdev_set_flag(bdev, BD_WRITE_HOLDER);
+ 			unblock_events = false;
+ 		}
+ 	}
+diff --git a/block/blk-core.c b/block/blk-core.c
+index a16b5abdbbf5..6a28b6b7062a 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -615,7 +615,7 @@ static void __submit_bio(struct bio *bio)
+ 	if (unlikely(!blk_crypto_bio_prep(&bio)))
+ 		return;
+ 
+-	if (!bio->bi_bdev->bd_has_submit_bio) {
++	if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO)) {
+ 		blk_mq_submit_bio(bio);
+ 	} else if (likely(bio_queue_enter(bio) == 0)) {
+ 		struct gendisk *disk = bio->bi_bdev->bd_disk;
+@@ -723,7 +723,7 @@ void submit_bio_noacct_nocheck(struct bio *bio)
+ 	 */
+ 	if (current->bio_list)
+ 		bio_list_add(&current->bio_list[0], bio);
+-	else if (!bio->bi_bdev->bd_has_submit_bio)
++	else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
+ 		__submit_bio_noacct_mq(bio);
+ 	else
+ 		__submit_bio_noacct(bio);
+@@ -759,7 +759,7 @@ void submit_bio_noacct(struct bio *bio)
+ 	if (!bio_flagged(bio, BIO_REMAPPED)) {
+ 		if (unlikely(bio_check_eod(bio)))
+ 			goto end_io;
+-		if (bdev->bd_partno && unlikely(blk_partition_remap(bio)))
++		if (bdev_partno(bdev) && unlikely(blk_partition_remap(bio)))
+ 			goto end_io;
+ 	}
+ 
+@@ -989,7 +989,7 @@ void update_io_ticks(struct block_device *part, unsigned long now, bool end)
+ 		if (likely(try_cmpxchg(&part->bd_stamp, &stamp, now)))
+ 			__part_stat_add(part, io_ticks, end ? now - stamp : 1);
+ 	}
+-	if (part->bd_partno) {
++	if (bdev_partno(part)) {
+ 		part = bdev_whole(part);
+ 		goto again;
+ 	}
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 32afb87efbd0..1c4bd891fd6d 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -92,7 +92,7 @@ static bool blk_mq_check_inflight(struct request *rq, void *priv)
+ 	struct mq_inflight *mi = priv;
+ 
+ 	if (rq->part && blk_do_io_stat(rq) &&
+-	    (!mi->part->bd_partno || rq->part == mi->part) &&
++	    (!bdev_partno(mi->part) || rq->part == mi->part) &&
+ 	    blk_mq_rq_state(rq) == MQ_RQ_IN_FLIGHT)
+ 		mi->inflight[rq_data_dir(rq)]++;
+ 
+diff --git a/block/early-lookup.c b/block/early-lookup.c
+index 3effbd0d35e9..3fb57f7d2b12 100644
+--- a/block/early-lookup.c
++++ b/block/early-lookup.c
+@@ -78,7 +78,7 @@ static int __init devt_from_partuuid(const char *uuid_str, dev_t *devt)
+ 		 * to the partition number found by UUID.
+ 		 */
+ 		*devt = part_devt(dev_to_disk(dev),
+-				  dev_to_bdev(dev)->bd_partno + offset);
++				  bdev_partno(dev_to_bdev(dev)) + offset);
+ 	} else {
+ 		*devt = dev->devt;
+ 	}
+diff --git a/block/genhd.c b/block/genhd.c
+index bb29a68e1d67..19cd1a31fa80 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -413,7 +413,8 @@ int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
+ 	elevator_init_mq(disk->queue);
+ 
+ 	/* Mark bdev as having a submit_bio, if needed */
+-	disk->part0->bd_has_submit_bio = disk->fops->submit_bio != NULL;
++	if (disk->fops->submit_bio)
++		bdev_set_flag(disk->part0, BD_HAS_SUBMIT_BIO);
+ 
+ 	/*
+ 	 * If the driver provides an explicit major number it also must provide
+diff --git a/block/ioctl.c b/block/ioctl.c
+index 0c76137adcaa..be173e4ff43d 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -402,7 +402,10 @@ static int blkdev_roset(struct block_device *bdev, unsigned cmd,
+ 		if (ret)
+ 			return ret;
+ 	}
+-	bdev->bd_read_only = n;
++	if (n)
++		bdev_set_flag(bdev, BD_READ_ONLY);
++	else
++		bdev_clear_flag(bdev, BD_READ_ONLY);
+ 	return 0;
+ }
+ 
+diff --git a/block/partitions/core.c b/block/partitions/core.c
+index b11e88c82c8c..edd5309dc4ba 100644
+--- a/block/partitions/core.c
++++ b/block/partitions/core.c
+@@ -173,7 +173,7 @@ static struct parsed_partitions *check_partition(struct gendisk *hd)
+ static ssize_t part_partition_show(struct device *dev,
+ 				   struct device_attribute *attr, char *buf)
+ {
+-	return sprintf(buf, "%d\n", dev_to_bdev(dev)->bd_partno);
++	return sprintf(buf, "%d\n", bdev_partno(dev_to_bdev(dev)));
+ }
+ 
+ static ssize_t part_start_show(struct device *dev,
+@@ -250,7 +250,7 @@ static int part_uevent(const struct device *dev, struct kobj_uevent_env *env)
+ {
+ 	const struct block_device *part = dev_to_bdev(dev);
+ 
+-	add_uevent_var(env, "PARTN=%u", part->bd_partno);
++	add_uevent_var(env, "PARTN=%u", bdev_partno(part));
+ 	if (part->bd_meta_info && part->bd_meta_info->volname[0])
+ 		add_uevent_var(env, "PARTNAME=%s", part->bd_meta_info->volname);
+ 	return 0;
+@@ -267,7 +267,7 @@ void drop_partition(struct block_device *part)
+ {
+ 	lockdep_assert_held(&part->bd_disk->open_mutex);
+ 
+-	xa_erase(&part->bd_disk->part_tbl, part->bd_partno);
++	xa_erase(&part->bd_disk->part_tbl, bdev_partno(part));
+ 	kobject_put(part->bd_holder_dir);
+ 
+ 	device_del(&part->bd_device);
+@@ -338,8 +338,8 @@ static struct block_device *add_partition(struct gendisk *disk, int partno,
+ 	pdev->parent = ddev;
+ 
+ 	/* in consecutive minor range? */
+-	if (bdev->bd_partno < disk->minors) {
+-		devt = MKDEV(disk->major, disk->first_minor + bdev->bd_partno);
++	if (bdev_partno(bdev) < disk->minors) {
++		devt = MKDEV(disk->major, disk->first_minor + bdev_partno(bdev));
+ 	} else {
+ 		err = blk_alloc_ext_minor();
+ 		if (err < 0)
+@@ -404,7 +404,7 @@ static bool partition_overlaps(struct gendisk *disk, sector_t start,
+ 
+ 	rcu_read_lock();
+ 	xa_for_each_start(&disk->part_tbl, idx, part, 1) {
+-		if (part->bd_partno != skip_partno &&
++		if (bdev_partno(part) != skip_partno &&
+ 		    start < part->bd_start_sect + bdev_nr_sectors(part) &&
+ 		    start + length > part->bd_start_sect) {
+ 			overlap = true;
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index cb1526ec44b5..bbbcbb36fb6e 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -45,10 +45,7 @@ struct block_device {
+ 	struct request_queue *	bd_queue;
+ 	struct disk_stats __percpu *bd_stats;
+ 	unsigned long		bd_stamp;
+-	bool			bd_read_only;	/* read-only policy */
+-	u8			bd_partno;
+-	bool			bd_write_holder;
+-	bool			bd_has_submit_bio;
++	u32			__bd_flags;	// partition number + flags
+ 	dev_t			bd_dev;
+ 	struct inode		*bd_inode;	/* will die */
+ 
+@@ -86,6 +83,12 @@ struct block_device {
+ #define bdev_kobj(_bdev) \
+ 	(&((_bdev)->bd_device.kobj))
+ 
++enum {
++	BD_READ_ONLY,		// read-only policy
++	BD_WRITE_HOLDER,
++	BD_HAS_SUBMIT_BIO
++};
++
+ /*
+  * Block error status values.  See block/blk-core:blk_errors for the details.
+  * Alpha cannot write a byte atomically, so we need to use 32-bit value.
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index c3e8f7cf96be..d556cec9224b 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -720,15 +720,51 @@ void invalidate_disk(struct gendisk *disk);
+ void set_disk_ro(struct gendisk *disk, bool read_only);
+ void disk_uevent(struct gendisk *disk, enum kobject_action action);
+ 
++static inline u8 bdev_partno(const struct block_device *bdev)
++{
++	return bdev->__bd_flags & 0xff;
++}
++
++static inline bool bdev_test_flag(const struct block_device *bdev, int flag)
++{
++	return bdev->__bd_flags & (1 << (flag + 8));
++}
++
++static inline void bdev_set_flag(struct block_device *bdev, int flag)
++{
++	u32 v = bdev->__bd_flags;
++
++	for (;;) {
++		u32 w = cmpxchg(&bdev->__bd_flags, v, v | (1 << (flag + 8)));
++
++		if (v == w)
++			return;
++		v = w;
++	}
++}
++
++static inline void bdev_clear_flag(struct block_device *bdev, int flag)
++{
++	u32 v = bdev->__bd_flags;
++
++	for (;;) {
++		u32 w = cmpxchg(&bdev->__bd_flags, v, v & ~(1 << (flag + 8)));
++
++		if (v == w)
++			return;
++		v = w;
++	}
++}
++
+ static inline int get_disk_ro(struct gendisk *disk)
+ {
+-	return disk->part0->bd_read_only ||
++	return bdev_test_flag(disk->part0, BD_READ_ONLY) ||
+ 		test_bit(GD_READ_ONLY, &disk->state);
+ }
+ 
+ static inline int bdev_read_only(struct block_device *bdev)
+ {
+-	return bdev->bd_read_only || get_disk_ro(bdev->bd_disk);
++	return bdev_test_flag(bdev, BD_READ_ONLY) || get_disk_ro(bdev->bd_disk);
+ }
+ 
+ bool set_capacity_and_notify(struct gendisk *disk, sector_t size);
+@@ -1095,7 +1131,7 @@ static inline int sb_issue_zeroout(struct super_block *sb, sector_t block,
+ 
+ static inline bool bdev_is_partition(struct block_device *bdev)
+ {
+-	return bdev->bd_partno;
++	return bdev_partno(bdev) != 0;
+ }
+ 
+ enum blk_default_limits {
+diff --git a/include/linux/part_stat.h b/include/linux/part_stat.h
+index abeba356bc3f..ec7eb365b152 100644
+--- a/include/linux/part_stat.h
++++ b/include/linux/part_stat.h
+@@ -59,7 +59,7 @@ static inline void part_stat_set_all(struct block_device *part, int value)
+ 
+ #define part_stat_add(part, field, addnd)	do {			\
+ 	__part_stat_add((part), field, addnd);				\
+-	if ((part)->bd_partno)						\
++	if (bdev_partno(part))						\
+ 		__part_stat_add(bdev_whole(part), field, addnd);	\
+ } while (0)
+ 
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 552738f14275..e05583e54fa5 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -966,13 +966,13 @@ char *bdev_name(char *buf, char *end, struct block_device *bdev,
+ 
+ 	hd = bdev->bd_disk;
+ 	buf = string(buf, end, hd->disk_name, spec);
+-	if (bdev->bd_partno) {
++	if (bdev_partno(bdev)) {
+ 		if (isdigit(hd->disk_name[strlen(hd->disk_name)-1])) {
+ 			if (buf < end)
+ 				*buf = 'p';
+ 			buf++;
+ 		}
+-		buf = number(buf, end, bdev->bd_partno, spec);
++		buf = number(buf, end, bdev_partno(bdev), spec);
+ 	}
+ 	return buf;
+ }
 
