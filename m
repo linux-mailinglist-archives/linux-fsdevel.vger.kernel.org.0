@@ -1,109 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-16789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F77E8A2A5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 11:08:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3018A2B12
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 11:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0828289032
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 09:08:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C192A1F22672
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 09:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB004C602;
-	Fri, 12 Apr 2024 09:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD1B51C54;
+	Fri, 12 Apr 2024 09:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFL2n0xd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmcMEDNF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEAC205E3C;
-	Fri, 12 Apr 2024 09:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160233D3BC;
+	Fri, 12 Apr 2024 09:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712912919; cv=none; b=CJ2pF5SWV1HMLq/KM37iYKhP7b827jVmdaym2hDgH7WzWKKMkWl/odswdAKwsC6O+DVRAc0ICUidj0I+Iy0lTRnrwOUWGuKRjivf/1Jk1qKxNnRC2hedXMvDpEU9MpIp4gAxzpU9rl+0Xi6bbhU6xNYDhhZH4pipkVMAVtr2PWw=
+	t=1712913675; cv=none; b=irjrMUuhZxz7khMYNVonpoSOoTK8TC/PqPzizdKpjdSadJrw97LeKGIduQGQuiVplV5gR4jVh4BmzwOobimFjxbLrSrtkN4u9Bqh11i5gdbtU+uWUFAaAoMwcHiNHH7Ry1/Z/GAYuMff5gXsPHmel46kyK/WkFdbVCzKlh5E2NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712912919; c=relaxed/simple;
-	bh=ii/Uc392uqc7ct/GqIg5jcnCdezu834MOoemDCDL4jM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ovJcc5q2sSB5Aa7goa7CE/y2gP9Q4FRK7p8FW/ajTnaIbYTK+O7POz24r0Nf6T9ImGP6iegvgqyvp8bQojC72kJ8bi2IcoXcHf3+/sdRctmyPRiwirKxMNLm7ht5ZeWZv8+v+lEtfCvStsV9+dQ6R0ezvpRS6AFnnNP9b/NId2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFL2n0xd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B88C9C113CC;
-	Fri, 12 Apr 2024 09:08:36 +0000 (UTC)
+	s=arc-20240116; t=1712913675; c=relaxed/simple;
+	bh=4BIQToTxzepCOKbB6nkJt1qYoU3CTvJHeXqs7Y06pK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHOdSHvcVhekVm8ffHXvIrQWl32SopaKq6fIMVe5RCD8In+u/Mg56v79vjhmLedu3aEMFL1ZBZUdFBx/0ne0ugZ++Jq4/ZuNBco7oJ7spBCzpZlhykXHfeH55vs2Q/Xy0j+zjyDoc9UEtmVuLqpQEMPDlWgeV+ITM/WHdY5eRjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmcMEDNF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4268C113CC;
+	Fri, 12 Apr 2024 09:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712912919;
-	bh=ii/Uc392uqc7ct/GqIg5jcnCdezu834MOoemDCDL4jM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SFL2n0xdOY8vILWBr2XPdtHuPRvh9nxfe5aVeijcCB9ejqQkO4anyUZJ+G7pAjKaX
-	 92+ZSLFPWMbSV1rtBV5KBEZMNEvPY81SCESoV4p3Cgci4Ufvnc5/AeMHRYsR88PLw1
-	 sA+EHA3+A/gCOVBEGnMrVXtuXis4mYIOktq0KaqmzU9xVZhzf80ccnfMqhnA/h4RqW
-	 7VSccRO9yYbJdjfMzCVzzJrTfo2aDYgM5hK3xkwCoacNOZONF+0xcisQskx1XquL2o
-	 GYhjo2E6SpsqpinK3snW4f8x+LWisFwH7qp7specjcbb1maIkP8OCqeAQgkQ5rx0qA
-	 WJyi2Rf7ABRPA==
+	s=k20201202; t=1712913674;
+	bh=4BIQToTxzepCOKbB6nkJt1qYoU3CTvJHeXqs7Y06pK4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UmcMEDNF0U0OpgUziCh/lrsamzg+XhX7tU8HPW8QRcoMDYJYRtBdSOoyVYpLAV0dG
+	 TE+Wnk10xHcKm3oB+mRbDMDBpevPESBuSVTh0VN0X2f3U8rKxOrxqcnHuoes3bxXuX
+	 2M0xBu7/5lMrkyzlUNQI343hqtd5e2nSc2lp8HSr9fjMqgxdn6cVISx2f286fFHbgc
+	 bMRbYnc7B19exbBG5DQRxwDOaKWHadMR9hFvptZv5zWklNTLKSVCAeKHGtS7yQQAoK
+	 uHiHWGOiPkr//fEfNc1YQChSvybGEmBk6YHWUGgMKitBaxU8oJDIvewTNiRk88SNxC
+	 jiGhAA1l0f/yw==
+Date: Fri, 12 Apr 2024 11:21:08 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Lutomirski <luto@kernel.org>,
-	Peter Anvin <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] vfs: relax linkat() AT_EMPTY_PATH - aka flink() - requirements
-Date: Fri, 12 Apr 2024 11:07:36 +0200
-Message-ID: <20240412-vegetarisch-installieren-1152433bd1a7@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240411001012.12513-1-torvalds@linux-foundation.org>
-References: <20240411001012.12513-1-torvalds@linux-foundation.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, 
+	axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+Message-ID: <20240412-egalisieren-fernreise-71b1f21f8e64@brauner>
+References: <20240407015149.GG538574@ZenIV>
+ <21d1bfd6-76f7-7ffb-34a4-2a85644674fe@huaweicloud.com>
+ <20240407030610.GI538574@ZenIV>
+ <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
+ <20240409042643.GP538574@ZenIV>
+ <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
+ <20240410105911.hfxz4qh3n5ekrpqg@quack3>
+ <20240410223443.GG2118490@ZenIV>
+ <20240411-logik-besorgen-b7d590d6c1e9@brauner>
+ <20240411140409.GH2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1500; i=brauner@kernel.org; h=from:subject:message-id; bh=ii/Uc392uqc7ct/GqIg5jcnCdezu834MOoemDCDL4jM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRJ/LwZ0Jm5L/jxOlXntDyXCvO/Sp9nbd2tO1ns2t6fX 2WnTjs6taOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi7zYzMhzg/P30wu+TgU3p TnambTsbzPvTE3wtmlUUF+/U5Kjtm8nI8CLp6DyDyz9/xl1iNJLYffjO2hmmC3/xPxbN7Ts8NT3 GhBsA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240411140409.GH2118490@ZenIV>
 
-On Wed, 10 Apr 2024 17:10:12 -0700, Linus Torvalds wrote:
->    "The definition of insanity is doing the same thing over and over
->     again and expecting different results”
+On Thu, Apr 11, 2024 at 03:04:09PM +0100, Al Viro wrote:
+> On Thu, Apr 11, 2024 at 01:56:03PM +0200, Christian Brauner wrote:
+> > On Wed, Apr 10, 2024 at 11:34:43PM +0100, Al Viro wrote:
+> > > On Wed, Apr 10, 2024 at 12:59:11PM +0200, Jan Kara wrote:
+> > > 
+> > > > I agree with Christian and Al - and I think I've expressed that already in
+> > > > the previous version of the series [1] but I guess I was not explicit
+> > > > enough :). I think the initial part of the series (upto patch 21, perhaps
+> > > > excluding patch 20) is a nice cleanup but the latter part playing with
+> > > > stashing struct file is not an improvement and seems pointless to me. So
+> > > > I'd separate the initial part cleaning up the obvious places and let
+> > > > Christian merge it and then we can figure out what (if anything) to do with
+> > > > remaining bd_inode uses in fs/buffer.c etc. E.g. what Al suggests with
+> > > > bd_mapping makes sense to me but I didn't check what's left after your
+> > > > initial patches...
+> > > 
+> > > FWIW, experimental on top of -next:
+> > 
+> > Ok, let's move forward with this. I've applied the first 19 patches.
+> > Patch 20 is the start of what we all disliked. 21 is clearly a bugfix
+> > for current code so that'll go separately from the rest. I've replaced
+> > open-code f_mapping access with file_mapping(). The symmetry between
+> > file_inode() and file_mapping() is quite nice.
+> > 
+> > Al, your idea to switch erofs away from buf->inode can go on top of what
+> > Yu did imho. There's no real reason to throw it away imho.
+> > 
+> > I've exported bdev_mapping() because it really makes the btrfs change a
+> > lot slimmer and we don't need to care about messing with a lot of that
+> > code. I didn't care about making it static inline because that might've
+> > meant we need to move other stuff into the header as well. Imho, it's
+> > not that important but if it's a big deal to any of you just do the
+> > changes on top of it, please.
+> > 
+> > Pushed to
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.super
+> > 
+> > If I hear no objections that'll show up in -next tomorrow. Al, would be
+> > nice if you could do your changes on top of this, please.
 > 
-> We've tried to do this before, most recently with commit bb2314b47996
-> ("fs: Allow unprivileged linkat(..., AT_EMPTY_PATH) aka flink") about a
-> decade ago.
+> Objection: start with adding bdev->bd_mapping, next convert the really
+> obvious instances to it and most of this series becomes not needed at
+> all.
 > 
-> [...]
+> Really.  There is no need whatsoever to push struct file down all those
+> paths.
 
-So it seems that this might be worth trying. I've picked up the patch
-with two modifications:
+Your series just replaces bd_inode in struct block_device with
+bd_mapping. In a lot of places we do have immediate access to the bdev
+file without changing any calling conventions whatsoever. IMO it's
+perfectly fine to just use file_mapping() there. Sure, let's use
+bdev_mapping() in instances like btrfs where we'd otherwise have to
+change function signatures I'm not opposed to that. But there's no good
+reason to just replace everything with bdev->bd_mapping access. And
+really, why keep that thing in struct block_device when we can avoid it.
 
-(1) added the relaxed capability check.
-(2) renamed the flag to LOOKUP_LINKAT_EMPTY
-(3) slight adjustment to commit message
-
-Should show up in -next if I don't hear objections or you want to apply
-this directly. Fingers crossed we don't see regressions.
-
----
-
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] vfs: relax linkat() AT_EMPTY_PATH - aka flink() - requirements
-      https://git.kernel.org/vfs/vfs/c/fa75d6e377fd
+> 
+> And yes, erofs and buffer.c stuff belongs on top of that, no arguments here.
 
