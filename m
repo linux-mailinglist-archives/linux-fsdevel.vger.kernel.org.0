@@ -1,110 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-16809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449608A31C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 17:04:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E7028A3230
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 17:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D804E1F24742
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 15:04:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F2E1C2313C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Apr 2024 15:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB0D1474D9;
-	Fri, 12 Apr 2024 15:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0481487CC;
+	Fri, 12 Apr 2024 15:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="idVPleDK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z2aFTdgp";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="idVPleDK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z2aFTdgp"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="joUN0210"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16B87580A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 15:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4240F481B4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 15:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712934278; cv=none; b=jNZ0l2VFUeAhHwN1aoRUwLJvPkJMussBTgUU/hf0WWevkHH/z+R3aPS5S+1RwM9gxXq+z7d6ur2HgapeoBA6VD6ieC7q2Z0yPvsiReskQq8JKiBgoTcngUjDhBoZVkt0HCsk80/Zitb2/zpDYgRbnqAmJ9ZXxoLnWjYRsiaJWPg=
+	t=1712935037; cv=none; b=MQbVt8ob7U3CdLZj4ZbpniQBYitEr7G31Dd5IfU5glGYahmZ7pzx0zUFAhwiUxp94YF3rX7RoBIJF46Mhe5k3f9hf/SfpK/ncJWDNnAW8Rd3s+UQVDX44hGgR1zD/b+OHS+tRL1vev4oUrIGVZS0+p0jJ6Cg+0LED06liY5ltf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712934278; c=relaxed/simple;
-	bh=zYBVqTKfq+1MogARxC05jhbVxWLuS8sOaHIyQAfwjPg=;
+	s=arc-20240116; t=1712935037; c=relaxed/simple;
+	bh=+0KStpb7b5a8X8lEEZqVzAXPx047W+cfVXYsAnt1oSo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gqJaE3fA/Rphs3Zvx05WwG1lFoDOyZCEUfkFZI4VwFDp+RJwVViR3DniStkMuV2i3r//pPNBxs5Tb5oA+fScK3Ku1EKNkqdWEXR9FH0r/rjhAGSHLcqtkex6PwSeMPYoIecTyNO+5xxAzGjFzwPBiGd+eEMxYNrOpCYREfczboY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=idVPleDK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z2aFTdgp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=idVPleDK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z2aFTdgp; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1057B383D5;
-	Fri, 12 Apr 2024 15:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1712934273; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0hVNMsNyA9PVRoUtXJetJJKHKtLZbHkxz6VQTgln4Sg=;
-	b=idVPleDK4tHiOH4KWes89evLQb70n1rWE8u60beyYqfj5gg9NCRCYdMMVZkPuCVirTvEyU
-	Pxizy+xebD4YuHJ3eOhPdKaSQRwot071S0Ezfn9Q01oVM7gDTAnw5lECStDdbQfySeC/QK
-	zOUDf9dQ38FlazP6D6YBojcw+92QSwk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1712934273;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0hVNMsNyA9PVRoUtXJetJJKHKtLZbHkxz6VQTgln4Sg=;
-	b=z2aFTdgpGW5elC1TOnk9T0X7YKBQovfCBqd3ygf4z30Sjl+1c2j5hRMCstRmlQS7CzApZ8
-	CuHZ2MJDjNX8HZAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1712934273; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0hVNMsNyA9PVRoUtXJetJJKHKtLZbHkxz6VQTgln4Sg=;
-	b=idVPleDK4tHiOH4KWes89evLQb70n1rWE8u60beyYqfj5gg9NCRCYdMMVZkPuCVirTvEyU
-	Pxizy+xebD4YuHJ3eOhPdKaSQRwot071S0Ezfn9Q01oVM7gDTAnw5lECStDdbQfySeC/QK
-	zOUDf9dQ38FlazP6D6YBojcw+92QSwk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1712934273;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0hVNMsNyA9PVRoUtXJetJJKHKtLZbHkxz6VQTgln4Sg=;
-	b=z2aFTdgpGW5elC1TOnk9T0X7YKBQovfCBqd3ygf4z30Sjl+1c2j5hRMCstRmlQS7CzApZ8
-	CuHZ2MJDjNX8HZAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 020E71368B;
-	Fri, 12 Apr 2024 15:04:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BWx7AIFNGWbLfQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 12 Apr 2024 15:04:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6E6EAA071E; Fri, 12 Apr 2024 17:04:32 +0200 (CEST)
-Date: Fri, 12 Apr 2024 17:04:32 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, kernel test robot <oliver.sang@intel.com>,
-	oe-lkp@lists.linux.dev, lkp@intel.com,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-fsdevel@vger.kernel.org, ying.huang@intel.com,
-	feng.tang@intel.com, fengwei.yin@intel.com
-Subject: Re: [linux-next:master] [fsnotify] a5e57b4d37:
- stress-ng.full.ops_per_sec -17.3% regression
-Message-ID: <20240412150432.4tt3w26fsfifwx5k@quack3>
-References: <202404101624.85684be8-oliver.sang@intel.com>
- <CAOQ4uxgFAPMsD03cyez+6rMjRsX=aTo_+d2kuGG9eUwwa6P-zA@mail.gmail.com>
- <20240411115408.266zydqiwalko5k3@quack3>
- <CAOQ4uxj_KnD3uZPTt6HR3sRynsHOxqH4YcyJG5pb-12dWQNDQw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XDdx7A/AmeOReuSKzV+laZ72y5Vf5tRtxy2nbFfQ3yAgcQxLpCUfaQJ5n95x5hRnSsjE1D9IuAQU7nogCUBaJNIOzVObYRA1uFw17/giGLPauXEuL/RYdwcC9abxuZSwwQfrmpQN3CynPGs8Flt9Jaa5FVDjwWLv9O7Qm/0Pr8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=joUN0210; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VGKt65DstzB00;
+	Fri, 12 Apr 2024 17:17:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1712935022;
+	bh=+0KStpb7b5a8X8lEEZqVzAXPx047W+cfVXYsAnt1oSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=joUN0210VKBZ6myOBUpY+lc7TkAWOTz+tCIkO0bePS64Um1xmA00qjhPdv63RdXY5
+	 YaP93LS15IX8hrmAfa7xulAx0CJX2l9e2f+DifsVATNHiCeYsBNnMekebDPIlh+IHX
+	 pbvzh7RCfoJoTZMNH5XfsJ4dqMtPxjDxBXiZa5Ms=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VGKt40rWPz5Ff;
+	Fri, 12 Apr 2024 17:17:00 +0200 (CEST)
+Date: Fri, 12 Apr 2024 17:16:59 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
+	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v14 02/12] landlock: Add IOCTL access right for character
+ and block devices
+Message-ID: <20240412.autaiv1NiRiX@digikod.net>
+References: <20240405214040.101396-1-gnoack@google.com>
+ <20240405214040.101396-3-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -114,104 +66,343 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxj_KnD3uZPTt6HR3sRynsHOxqH4YcyJG5pb-12dWQNDQw@mail.gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,intel.com:email]
+In-Reply-To: <20240405214040.101396-3-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Thu 11-04-24 19:22:29, Amir Goldstein wrote:
-> On Thu, Apr 11, 2024 at 2:54 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 11-04-24 12:23:34, Amir Goldstein wrote:
-> > > On Thu, Apr 11, 2024 at 4:42 AM kernel test robot <oliver.sang@intel.com> wrote:
-> > > > for "[amir73il:fsnotify-sbconn] [fsnotify]  629f30e073: unixbench.throughput 5.8% improvement"
-> > > > (https://lore.kernel.org/all/202403141505.807a722b-oliver.sang@intel.com/)
-> > > > you requested us to test unixbench for this commit on different branches and we
-> > > > observed consistent performance improvement.
-> > > >
-> > > > now we noticed this commit is merged into linux-next/master, we still
-> > > > observed similar unixbench improvement, however, we also captured a
-> > > > stress-ng regression now. below details FYI.
-> > > >
-> > > > Hello,
-> > > >
-> > > > kernel test robot noticed a -17.3% regression of stress-ng.full.ops_per_sec on:
-> > > >
-> > > >
-> > > > commit: a5e57b4d370c6d320e5bfb0c919fe00aee29e039 ("fsnotify: optimize the case of no permission event watchers")
-> > >
-> > > Odd. This commit does add an extra fsnotify_sb_has_priority_watchers()
-> > > inline check for reads and writes, but the inline helper
-> > > fsnotify_sb_has_watchers()
-> > > already exists in fsnotify_parent() and it already accesses fsnotify_sb_info.
-> > >
-> > > It seems like stress-ng.full does read/write/mmap operations on /dev/full,
-> > > so the fsnotify_sb_info object would be that of devtmpfs.
-> > >
-> > > I think that the permission events on special files are not very relevant,
-> > > but I am not sure.
-> > >
-> > > Jan, any ideas?
-> >
-> > So I'm not 100% sure but this load simply seems to run 'stress-ng' with all
-> > the syscalls it is able to exercise (one per CPU if I'm right). Hum...
-> > looking at perf numbers I've noticed changes like:
-> >
-> >       0.43 ą  3%      -0.2        0.21 ą  5%  perf-profile.self.cycles-pp.__fsnotify_parent
-> >       0.00            +2.8        2.79 ą  5%  perf-profile.self.cycles-pp.fsnotify_open_perm
-> >
-> > or
-> >
-> >       1.77 ą 12%      +1.9        3.64 ą  8%  perf-profile.calltrace.cycles-pp.rw_verify_area.vfs_read.__x64_sys_pread64.do_syscall_64.entry_SYSCALL_64_after_hwframe
-> >       1.71 ą 15%      +1.9        3.64 ą  9%  perf-profile.calltrace.cycles-pp.rw_verify_area.vfs_read.ksys_read.do_syscall_64.entry_SYSCALL_64_after_hwframe
-> >       0.00            +2.8        2.79 ą  5%  perf-profile.calltrace.cycles-pp.fsnotify_open_perm.do_dentry_open.do_open.path_openat.do_filp_open
-> >
-> > So the savings in __fsnotify_parent() don't really outweight the costs in
-> > fsnotify_file()... I can see stress-ng exercises also inotify so maybe
-> > there's some contention on the counters which is causing the regression now
-> > that we have more of them?
-> >
-> > BTW, I'm not sure how you've arrived at the conclusing the test is using
-> > /dev/full. For all I can tell the e.g. the stress-mmap test is using a file
-> > in a subdir of CWD.
-> >
+I like this patch very much! This patch series is in linux-next and I
+don't expect it to change much. Just a few comments below and for test
+patches.
+
+The only remaining question is: should we allow non-device files to
+receive the LANDLOCK_ACCESS_FS_IOCTL_DEV right?
+
+On Fri, Apr 05, 2024 at 09:40:30PM +0000, Günther Noack wrote:
+> Introduces the LANDLOCK_ACCESS_FS_IOCTL_DEV right
+> and increments the Landlock ABI version to 5.
 > 
-> Oh, I just saw the file stress-full.c in stress-ng and wrongly assumed that
-> test stress-ng.full refers to this code.
->
-> Where do I find the code for this test?
+> This access right applies to device-custom IOCTL commands
+> when they are invoked on block or character device files.
+> 
+> Like the truncate right, this right is associated with a file
+> descriptor at the time of open(2), and gets respected even when the
+> file descriptor is used outside of the thread which it was originally
+> opened in.
+> 
+> Therefore, a newly enabled Landlock policy does not apply to file
+> descriptors which are already open.
+> 
+> If the LANDLOCK_ACCESS_FS_IOCTL_DEV right is handled, only a small
+> number of safe IOCTL commands will be permitted on newly opened device
+> files.  These include FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC, as well
+> as other IOCTL commands for regular files which are implemented in
+> fs/ioctl.c.
+> 
+> Noteworthy scenarios which require special attention:
+> 
+> TTY devices are often passed into a process from the parent process,
+> and so a newly enabled Landlock policy does not retroactively apply to
+> them automatically.  In the past, TTY devices have often supported
+> IOCTL commands like TIOCSTI and some TIOCLINUX subcommands, which were
+> letting callers control the TTY input buffer (and simulate
+> keypresses).  This should be restricted to CAP_SYS_ADMIN programs on
+> modern kernels though.
+> 
+> Known limitations:
+> 
+> The LANDLOCK_ACCESS_FS_IOCTL_DEV access right is a coarse-grained
+> control over IOCTL commands.
+> 
+> Landlock users may use path-based restrictions in combination with
+> their knowledge about the file system layout to control what IOCTLs
+> can be done.
+> 
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>  include/uapi/linux/landlock.h                |  38 +++-
+>  security/landlock/fs.c                       | 221 ++++++++++++++++++-
 
-Ah, now that I've investigated the LKP details again, you're indeed right.
-repro-script shows how stress-ng is run and when I do that with cloned
-stress-ng repository, it is the test using /dev/full.
+You contributed a lot and you may want to add a copyright in this file.
 
-So with that I'm not sure why patch adds so much cost to fsnotify_file()...
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/syscalls.c                 |   8 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+>  6 files changed, 259 insertions(+), 17 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 25c8d7677539..68625e728f43 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -128,7 +128,7 @@ struct landlock_net_port_attr {
+>   * files and directories.  Files or directories opened before the sandboxing
+>   * are not subject to these restrictions.
+>   *
+> - * A file can only receive these access rights:
+> + * The following access rights apply only to files:
+>   *
+>   * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
+>   * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note that
+> @@ -138,12 +138,13 @@ struct landlock_net_port_attr {
+>   * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
+>   * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`truncate(2)`,
+>   *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
+> - *   ``O_TRUNC``. Whether an opened file can be truncated with
+> - *   :manpage:`ftruncate(2)` is determined during :manpage:`open(2)`, in the
+> - *   same way as read and write permissions are checked during
+> - *   :manpage:`open(2)` using %LANDLOCK_ACCESS_FS_READ_FILE and
+> - *   %LANDLOCK_ACCESS_FS_WRITE_FILE. This access right is available since the
+> - *   third version of the Landlock ABI.
+> + *   ``O_TRUNC``.  This access right is available since the third version of the
+> + *   Landlock ABI.
+> + *
+> + * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or used
+> + * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same way as
+> + * read and write permissions are checked during :manpage:`open(2)` using
+> + * %LANDLOCK_ACCESS_FS_READ_FILE and %LANDLOCK_ACCESS_FS_WRITE_FILE.
+>   *
+>   * A directory can receive access rights related to files or directories.  The
+>   * following access right is applied to the directory itself, and the
+> @@ -198,13 +199,33 @@ struct landlock_net_port_attr {
+>   *   If multiple requirements are not met, the ``EACCES`` error code takes
+>   *   precedence over ``EXDEV``.
+>   *
+> + * The following access right applies both to files and directories:
+> + *
+> + * - %LANDLOCK_ACCESS_FS_IOCTL_DEV: Invoke :manpage:`ioctl(2)` commands on an opened
+> + *   character or block device.
+> + *
+> + *   This access right applies to all `ioctl(2)` commands implemented by device
+> + *   drivers.  However, the following common IOCTL commands continue to be
+> + *   invokable independent of the %LANDLOCK_ACCESS_FS_IOCTL_DEV right:
+> + *
+> + *   * IOCTL commands targeting file descriptors (``FIOCLEX``, ``FIONCLEX``),
+> + *   * IOCTL commands targeting file descriptions (``FIONBIO``, ``FIOASYNC``),
+> + *   * IOCTL commands targeting file systems (``FIFREEZE``, ``FITHAW``,
+> + *     ``FIGETBSZ``, ``FS_IOC_GETFSUUID``, ``FS_IOC_GETFSSYSFSPATH``)
+> + *   * Some IOCTL commands which do not make sense when used with devices, but
+> + *     whose implementations are safe and return the right error codes
+> + *     (``FS_IOC_FIEMAP``, ``FICLONE``, ``FICLONERANGE``, ``FIDEDUPERANGE``)
+> + *
+> + *   This access right is available since the fifth version of the Landlock
+> + *   ABI.
+> + *
+>   * .. warning::
+>   *
+>   *   It is currently not possible to restrict some file-related actions
+>   *   accessible through these syscall families: :manpage:`chdir(2)`,
+>   *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+>   *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+> - *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
+> + *   :manpage:`fcntl(2)`, :manpage:`access(2)`.
+>   *   Future Landlock evolutions will enable to restrict them.
+>   */
+>  /* clang-format off */
+> @@ -223,6 +244,7 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
+>  #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+>  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+>  /* clang-format on */
+>  
+>  /**
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index c15559432d3d..b0857541d5e0 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -7,6 +7,7 @@
+>   * Copyright © 2021-2022 Microsoft Corporation
+>   */
+>  
+> +#include <asm/ioctls.h>
+>  #include <kunit/test.h>
+>  #include <linux/atomic.h>
+>  #include <linux/bitops.h>
+> @@ -14,6 +15,7 @@
+>  #include <linux/compiler_types.h>
+>  #include <linux/dcache.h>
+>  #include <linux/err.h>
+> +#include <linux/falloc.h>
+>  #include <linux/fs.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> @@ -29,6 +31,7 @@
+>  #include <linux/types.h>
+>  #include <linux/wait_bit.h>
+>  #include <linux/workqueue.h>
+> +#include <uapi/linux/fiemap.h>
+>  #include <uapi/linux/landlock.h>
+>  
+>  #include "common.h"
+> @@ -84,6 +87,158 @@ static const struct landlock_object_underops landlock_fs_underops = {
+>  	.release = release_inode
+>  };
+>  
+> +/* IOCTL helpers */
+> +
+> +/**
+> + * is_masked_device_ioctl(): Determine whether an IOCTL command is always
+> + * permitted with Landlock for device files.  These commands can not be
+> + * restricted on device files by enforcing a Landlock policy.
+> + *
+> + * @cmd: The IOCTL command that is supposed to be run.
+> + *
+> + * By default, any IOCTL on a device file requires the
+> + * LANDLOCK_ACCESS_FS_IOCTL_DEV right.  However, we blanket-permit some
+> + * commands, if:
+> + *
+> + * 1. The command is implemented in fs/ioctl.c's do_vfs_ioctl(),
+> + *    not in f_ops->unlocked_ioctl() or f_ops->compat_ioctl().
+> + *
+> + * 2. The command is harmless when invoked on devices.
+> + *
+> + * We also permit commands that do not make sense for devices, but where the
+> + * do_vfs_ioctl() implementation returns a more conventional error code.
+> + *
+> + * Any new IOCTL commands that are implemented in fs/ioctl.c's do_vfs_ioctl()
+> + * should be considered for inclusion here.
+> + *
+> + * Returns: true if the IOCTL @cmd can not be restricted with Landlock for
+> + * device files.
+> + */
 
+Great documentation!
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +static __attribute_const__ bool is_masked_device_ioctl(const unsigned int cmd)
+> +{
+> +	switch (cmd) {
+> +	/*
+> +	 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
+> +	 * close-on-exec and the file's buffered-IO and async flags.  These
+> +	 * operations are also available through fcntl(2), and are
+> +	 * unconditionally permitted in Landlock.
+> +	 */
+> +	case FIOCLEX:
+> +	case FIONCLEX:
+> +	case FIONBIO:
+> +	case FIOASYNC:
+> +	/*
+> +	 * FIOQSIZE queries the size of a regular file, directory, or link.
+> +	 *
+> +	 * We still permit it, because it always returns -ENOTTY for
+> +	 * other file types.
+> +	 */
+> +	case FIOQSIZE:
+> +	/*
+> +	 * FIFREEZE and FITHAW freeze and thaw the file system which the
+> +	 * given file belongs to.  Requires CAP_SYS_ADMIN.
+> +	 *
+> +	 * These commands operate on the file system's superblock rather
+> +	 * than on the file itself.  The same operations can also be
+> +	 * done through any other file or directory on the same file
+> +	 * system, so it is safe to permit these.
+> +	 */
+> +	case FIFREEZE:
+> +	case FITHAW:
+> +	/*
+> +	 * FS_IOC_FIEMAP queries information about the allocation of
+> +	 * blocks within a file.
+> +	 *
+> +	 * This IOCTL command only makes sense for regular files and is
+> +	 * not implemented by devices. It is harmless to permit.
+> +	 */
+> +	case FS_IOC_FIEMAP:
+> +	/*
+> +	 * FIGETBSZ queries the file system's block size for a file or
+> +	 * directory.
+> +	 *
+> +	 * This command operates on the file system's superblock rather
+> +	 * than on the file itself.  The same operation can also be done
+> +	 * through any other file or directory on the same file system,
+> +	 * so it is safe to permit it.
+> +	 */
+> +	case FIGETBSZ:
+> +	/*
+> +	 * FICLONE, FICLONERANGE and FIDEDUPERANGE make files share
+> +	 * their underlying storage ("reflink") between source and
+> +	 * destination FDs, on file systems which support that.
+> +	 *
+> +	 * These IOCTL commands only apply to regular files
+> +	 * and are harmless to permit for device files.
+> +	 */
+> +	case FICLONE:
+> +	case FICLONERANGE:
+> +	case FIDEDUPERANGE:
+
+> +	/*
+> +	 * FIONREAD, FS_IOC_GETFLAGS, FS_IOC_SETFLAGS, FS_IOC_FSGETXATTR and
+> +	 * FS_IOC_FSSETXATTR are forwarded to device implementations.
+> +	 */
+
+The above comment should be better near the file_ioctl() one.
+
+> +
+> +	/*
+> +	 * FS_IOC_GETFSUUID and FS_IOC_GETFSSYSFSPATH both operate on
+> +	 * the file system superblock, not on the specific file, so
+> +	 * these operations are available through any other file on the
+> +	 * same file system as well.
+> +	 */
+> +	case FS_IOC_GETFSUUID:
+> +	case FS_IOC_GETFSSYSFSPATH:
+> +		return true;
+> +
+> +	/*
+> +	 * file_ioctl() commands (FIBMAP, FS_IOC_RESVSP, FS_IOC_RESVSP64,
+> +	 * FS_IOC_UNRESVSP, FS_IOC_UNRESVSP64 and FS_IOC_ZERO_RANGE) are
+> +	 * forwarded to device implementations, so not permitted.
+> +	 */
+> +
+> +	/* Other commands are guarded by the access right. */
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +/*
+> + * is_masked_device_ioctl_compat - same as the helper above, but checking the
+> + * "compat" IOCTL commands.
+> + *
+> + * The IOCTL commands with special handling in compat-mode should behave the
+> + * same as their non-compat counterparts.
+> + */
+> +static __attribute_const__ bool
+> +is_masked_device_ioctl_compat(const unsigned int cmd)
+> +{
+> +	switch (cmd) {
+> +	/* FICLONE is permitted, same as in the non-compat variant. */
+> +	case FICLONE:
+> +		return true;
+
+A new line before and after if/endif would be good.
+
+> +#if defined(CONFIG_X86_64)
+> +	/*
+> +	 * FS_IOC_RESVSP_32, FS_IOC_RESVSP64_32, FS_IOC_UNRESVSP_32,
+> +	 * FS_IOC_UNRESVSP64_32, FS_IOC_ZERO_RANGE_32: not blanket-permitted,
+> +	 * for consistency with their non-compat variants.
+> +	 */
+> +	case FS_IOC_RESVSP_32:
+> +	case FS_IOC_RESVSP64_32:
+> +	case FS_IOC_UNRESVSP_32:
+> +	case FS_IOC_UNRESVSP64_32:
+> +	case FS_IOC_ZERO_RANGE_32:
+> +#endif
+> +	/*
+> +	 * FS_IOC32_GETFLAGS, FS_IOC32_SETFLAGS are forwarded to their device
+> +	 * implementations.
+> +	 */
+> +	case FS_IOC32_GETFLAGS:
+> +	case FS_IOC32_SETFLAGS:
+> +		return false;
+> +	default:
+> +		return is_masked_device_ioctl(cmd);
+> +	}
+> +}
+> +
+>  /* Ruleset management */
+>  
+>  static struct landlock_object *get_inode_object(struct inode *const inode)
 
