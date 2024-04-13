@@ -1,190 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-16850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B5ED8A3B45
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 08:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FC28A3B58
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 08:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05953B21148
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 06:42:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF750B2141E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 06:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C67C1CA80;
-	Sat, 13 Apr 2024 06:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20E91CABA;
+	Sat, 13 Apr 2024 06:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMrZwmyK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1bIhQS+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F201B947
-	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Apr 2024 06:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB3D1802B
+	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Apr 2024 06:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712990540; cv=none; b=o79uFi71cUFvZakrTJjKerwegjmmtjvslJ8C0X2Z5rIs4mgSTd9ISH76vDZLncviIwoPEUH3ZXXxBADGdvng7954iI0u+9YGCXAh3ztagbBUhhUtnI4Si4YbIoANP3aj12+6abIqv0ELLpcqsGhnVlHjvO3QA95H1jXsDxhdBVE=
+	t=1712991057; cv=none; b=dDqBHFPSJSk8C8AAVfPPHCsXOz8VSFLvJ1KhAufLIcLcQBdHHvEYG4myPcxNZKXlWbuqK6876pE71aA7qVrflwFiXKBvxVLQLRU0Bg50FAaumS94D5qcM8MQjgCE0impky08ZqPbE545ClYQEpKFGrkHxoVpEROYqb9LRoTZ0/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712990540; c=relaxed/simple;
-	bh=DJ+iFSjOOvVlf8+X1p76vyKfNHnVTKWuMVJpf4JMOrQ=;
+	s=arc-20240116; t=1712991057; c=relaxed/simple;
+	bh=xreK+p+a49f+H6KVJdqxyZREz/rIkKzcMkolcfPee2o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dekvX6ZkPdsI8Zjw3yY3xNsIOB7v2mMN0qq7nM92/XHSWAcyyM9iPEY9UK4yeG8RNOz/WX9rkR4+LbqqBbOsK87ATmoWAXpYZUFjWw7UPzv8NxADG8XVLXNAlB52nN426PHo+3sqXUNBRhzXAdGo3lLV9T7/DjebhWl/NCQEZz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMrZwmyK; arc=none smtp.client-ip=209.85.219.44
+	 To:Cc:Content-Type; b=OcKQ9az4XoPF4HNnPXzEmQwnjrhr7yrKwj5LF2s+3ELaZXO9ECG6mN+beGJFaxtTdFfsbtlt9J82qQQJXJYbtrgBLVXZH9BxybQuQTewilRGHyJ+E47nB2GZBK9w2XtTpxyX1e40UoLbIQ67Svgx5soO4zJsDWJIBo0eqq7c4Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1bIhQS+; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6962e6fbf60so13556146d6.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 23:42:18 -0700 (PDT)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-69b514d3cf4so13235276d6.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Apr 2024 23:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712990538; x=1713595338; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDpA8Iel52+HQB06A078keX0+huxQz6XhywTfG6695k=;
-        b=AMrZwmyKyOGj5CWCiFDVLo1HDfPPHpzbgwl5+mb68pXqmtKL5MaWUn4vQxW8iCu8Hr
-         CnIjy+jKqDPDXOfsA7jfcvtdVXh+Yb3b4EQAy7IUW7RRpOXrm1PBCK9i/kYdXyVzmj04
-         51Z/CIFaZDvT7fKXDG0JfEW/7mkCL1yJxPLU/eYzhbSxBUlbBWB4HFyZYa/TPq3RLV+P
-         mlYuXf1g/biqM4BCeP6v53YBzzQkk5AKUgSNAiUn3Kl9qbmqylsGxEsEWEA+yx6sgahu
-         FjJ29VQJ9xIXZ8nkGdBQm9gc8NhxBsAcHVj4sHmEK7w4NAhECw6E5+O1rW2MXldp3fBs
-         f2Zw==
+        d=gmail.com; s=20230601; t=1712991054; x=1713595854; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qCfJQVFq+jS7iOYNSYs+3q9X46OUF9pfCNaxNst7Jbs=;
+        b=h1bIhQS+IRhsd2lhl2P3piWidm3bqFF7laPBIx8y7znZJKlbkqVHa+b1W1AV4ex8dj
+         jQDIK9ttXLi1wGPZtxneFrSdzgrA1TafsWXGZKKAe7mMCubyDA8ZjA5zEIvAHbYmjoX3
+         pST8ztAi0SSecDjN4ZrCUYB0GVmz2VSC1uX4YxzshVsEFuPo7SH1UhVcBDueqRzzIVzN
+         DHdnLGpqjYqCogWf+UbF1orGK7fwvMk8zDBeRqCRwj7M64R78GOcd9q2ZYTvh7cTqtBF
+         rp0rTC/VcS95dmqtGFCK62/2dK6eL0pVm88fkXosF+6Yvl+9ISpR+jvlz3vp+Hxaf5an
+         j1Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712990538; x=1713595338;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FDpA8Iel52+HQB06A078keX0+huxQz6XhywTfG6695k=;
-        b=c6zC6nzbhSlcyALMXQl4UBtRR5S5QCEXhUsx/ouxQ2Qu11l5ep0O2j+OPsEzZrc8vr
-         jOqc1LjbXfAlDo2xS/ntYjGEdkxVMQ2CJKUBdMhcw10qKmmjY90E8M5gCmTlpSrGd3Xt
-         KVdrpInIz2o7t61cgfcRf7vnt2C/qYIBtIjx3CJaQXF4/0QAVk/6VQSOTn5zvFissgRc
-         cdgQLyupO/S75X8GDnl8bnjtH+4IuBp389fGEaIW+0u2H4jFuy2gzERvYRB7pvdZqN2r
-         w4vm4JRMmtqzZoGEHzIqmrjpR+8PnQU4ttWqCEYjk9x2wteUwLn7UUoZkfDFXrHfKuUC
-         l57g==
-X-Forwarded-Encrypted: i=1; AJvYcCWcfTlA1ZgIGvMSnaG651evKA3lEtFZ6Ke+zbMZuyCZAyXfNTKRWbMC707HALKRlXfpUC6DjbOYmNmcNuJEEll4HaV+XGda2oXtEbPPFQ==
-X-Gm-Message-State: AOJu0YxiTejDqgeZnr6YRy/9Rg6TNWwABAYowzxjNVr0OZXTwMPj0T8g
-	7BTJ/OP9vDBNmdiLwdqb4IKA2Ov98WmRvMtLQMKI9/HE/F4wV7KwYmWQYUCjcBBeZO0KGmh01yE
-	Hf21ogOl1F6cRRdOZoXxsbfPJNCU=
-X-Google-Smtp-Source: AGHT+IH069Xyhl7ZUzs/YtiOMh82YOHfe27Kk86LcVO5u12SHiemC4wYqFiFV8QwLKuB9JP4M9TfzaOkRnW+wCInyRo=
-X-Received: by 2002:a0c:fca7:0:b0:69b:112d:2d4e with SMTP id
- h7-20020a0cfca7000000b0069b112d2d4emr5286859qvq.55.1712990538048; Fri, 12 Apr
- 2024 23:42:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712991054; x=1713595854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qCfJQVFq+jS7iOYNSYs+3q9X46OUF9pfCNaxNst7Jbs=;
+        b=vt5aV5IrSreXmjfRXkoMuR7BS3uisxvm4n0tx0A3IM5G0e/20vd/1nyuPZbDUlIEHt
+         JRyqs2tffMh7he8TPxDP6HLoWYCQNxaqwK90IhmebakoiK3Q0JS2AqiR0GSlxvIsiTPv
+         pNCSSPRNJNI3NcUfI3T+YDXW2vDyPIqIr0zsnrHFLVzfJOe8YI0u7x2MzH3gvXl/srRL
+         Sh5Qd/UWH8MUOO7CG81OU/BBRJ7vqMb85iX7mBWQafoFDyCjslU2EMAc4xHybCr9Lt4G
+         6WnRaNrpZd3gv5nHlNVkCV8aXGxqtB9wjkgUYIiQslwSjOIqL82P5wh0h4DCI5VA7AXS
+         nkVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUV9aIaft0og/23JtJYBMJDwO+J5QHAHrP7eEkth6R+8fR7e77jXAQtGjotyd7eNINRVImlFxCKIFH9J69ieQeSl2HLevZ2FTCbezQxyQ==
+X-Gm-Message-State: AOJu0Yx1tps7ZcuyFXCS4EpXyIq4lnSCV444AvTNhYDm2dCULnGcVqyr
+	NMZFlRpHYERGeGQqd4Q1fdjEyPXriLebHupuSuYc/aE97VEl4hTzK5XeqgnypdLCd3Mzt14XQRR
+	8GWLv5pBRKEOHCaqNyWX5SEBMUB8=
+X-Google-Smtp-Source: AGHT+IH2pRfnVIpRmARiBYqg4taA/i8kG/uPtgtnUgvFSZ2JfplimstGOmNSgzP30Wh9drmNtzly9Msy2YJT9GXqZvc=
+X-Received: by 2002:a05:6214:11aa:b0:699:23f8:1044 with SMTP id
+ u10-20020a05621411aa00b0069923f81044mr4915120qvv.11.1712991054613; Fri, 12
+ Apr 2024 23:50:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000042c9190615cdb315@google.com> <20240413014033.1722-1-hdanton@sina.com>
-In-Reply-To: <20240413014033.1722-1-hdanton@sina.com>
+References: <20240407155758.575216-1-amir73il@gmail.com> <20240407155758.575216-2-amir73il@gmail.com>
+ <CAJfpegs+Uc=hrE508Wkif6BbYOMTp3wjQwrbo==FkL2r6sr0Uw@mail.gmail.com>
+ <CAOQ4uxgFBqfpU=w6qBvHCWXYzrfG6VXtxi_wMaJTtjnDAmZs3Q@mail.gmail.com>
+ <CAJfpegtFB8k+_Bq+NB9ykewrNZ-j5vdZJ9WaBZ_P2m-_8sZ5EQ@mail.gmail.com> <CAOQ4uxjtDAuMezRXCiVpBPoTXt6d5G0TWJxb=3QVCvp1+VN59w@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjtDAuMezRXCiVpBPoTXt6d5G0TWJxb=3QVCvp1+VN59w@mail.gmail.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 13 Apr 2024 09:42:06 +0300
-Message-ID: <CAOQ4uxhJi_YT=AZOaJGH6tt9kM7kUoAF1uzVqfGBXjvc8S78Ug@mail.gmail.com>
-Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
-To: Hillf Danton <hdanton@sina.com>
-Cc: syzbot <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>, 
-	linux-fsdevel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="0000000000008659bc0615f4b07f"
-
---0000000000008659bc0615f4b07f
+Date: Sat, 13 Apr 2024 09:50:43 +0300
+Message-ID: <CAOQ4uxi4Sm7X6bJ44tpkZBhKm-XHGFW-EuYZHcNKMp59E+ybTg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] fuse: fix wrong ff->iomode state changes from
+ parallel dio write
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Sweet Tea Dorminy <sweettea-kernel@dorminy.me>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 13, 2024 at 4:41=E2=80=AFAM Hillf Danton <hdanton@sina.com> wro=
-te:
+On Tue, Apr 9, 2024 at 7:18=E2=80=AFPM Amir Goldstein <amir73il@gmail.com> =
+wrote:
 >
-> On Thu, 11 Apr 2024 01:11:20 -0700
-> > syzbot found the following issue on:
+> On Tue, Apr 9, 2024 at 6:32=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
+ wrote:
 > >
-> > HEAD commit:    6ebf211bb11d Add linux-next specific files for 20240410
-> > git tree:       linux-next
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1621af9d180=
-000
+> > On Tue, 9 Apr 2024 at 17:10, Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > On Tue, Apr 9, 2024 at 4:33=E2=80=AFPM Miklos Szeredi <miklos@szeredi=
+.hu> wrote:
+> > > >
+> > > > On Sun, 7 Apr 2024 at 17:58, Amir Goldstein <amir73il@gmail.com> wr=
+ote:
+> > > > >
+> > > > > There is a confusion with fuse_file_uncached_io_{start,end} inter=
+face.
+> > > > > These helpers do two things when called from passthrough open()/r=
+elease():
+> > > > > 1. Take/drop negative refcount of fi->iocachectr (inode uncached =
+io mode)
+> > > > > 2. State change ff->iomode IOM_NONE <-> IOM_UNCACHED (file uncach=
+ed open)
+> > > > >
+> > > > > The calls from parallel dio write path need to take a reference o=
+n
+> > > > > fi->iocachectr, but they should not be changing ff->iomode state,
+> > > > > because in this case, the fi->iocachectr reference does not stick=
+ around
+> > > > > until file release().
+> > > >
+> > > > Okay.
+> > > >
+> > > > >
+> > > > > Factor out helpers fuse_inode_uncached_io_{start,end}, to be used=
+ from
+> > > > > parallel dio write path and rename fuse_file_*cached_io_{start,en=
+d}
+> > > > > helpers to fuse_file_*cached_io_{open,release} to clarify the dif=
+ference.
+> > > > >
+> > > > > Add a check of ff->iomode in mmap(), so that fuse_file_cached_io_=
+open()
+> > > > > is called only on first mmap of direct_io file.
+> > > >
+> > > > Is this supposed to be an optimization?
+> > >
+> > > No.
+> > > The reason I did this is because I wanted to differentiate
+> > > the refcount semantics (start/end)
+> > > from the state semantics (open/release)
+> > > and to make it clearer that there is only one state change
+> > > and refcount increment on the first mmap().
+> > >
+> > > > AFAICS it's wrong, because it
+> > > > moves the check outside of any relevant locks.
+> > > >
+> > >
+> > > Aren't concurrent mmap serialized on some lock?
+> >
+> > Only on current->mm, which doesn't serialize mmaps of the same file in
+> > different processes.
+> >
+> > >
+> > > Anyway, I think that the only "bug" that this can trigger is the
+> > > WARN_ON(ff->iomode !=3D IOM_NONE)
+> > > so if we ....
+> > >
+> > > >
+> > > > > @@ -56,8 +57,7 @@ int fuse_file_cached_io_start(struct inode *ino=
+de, struct fuse_file *ff)
+> > > > >                 return -ETXTBSY;
+> > > > >         }
+> > > > >
+> > > > > -       WARN_ON(ff->iomode =3D=3D IOM_UNCACHED);
+> > > > > -       if (ff->iomode =3D=3D IOM_NONE) {
+> > > > > +       if (!WARN_ON(ff->iomode !=3D IOM_NONE)) {
+> > > >
+> > > > This double negation is ugly.  Just let the compiler optimize away =
+the
+> > > > second comparison.
+> > >
+> > > ...drop this change, we should be good.
+> > >
+> > > If you agree, do you need me to re-post?
+> >
+> > Okay, but then what's the point of the unlocked check?
 >
-> #syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
-.git  6ebf211bb11d
->
-> --- x/fs/notify/fsnotify.c
-> +++ y/fs/notify/fsnotify.c
-> @@ -101,8 +101,8 @@ void fsnotify_sb_delete(struct super_blo
->         wait_var_event(fsnotify_sb_watched_objects(sb),
->                        !atomic_long_read(fsnotify_sb_watched_objects(sb))=
-);
->         WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_CONTE=
-NT));
-> -       WARN_ON(fsnotify_sb_has_priority_watchers(sb,
-> -                                                 FSNOTIFY_PRIO_PRE_CONTE=
-NT));
-> +       WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_PRE_C=
-ONTENT));
-> +       synchronize_srcu(&fsnotify_mark_srcu);
->         kfree(sbinfo);
->  }
->
-> @@ -499,7 +499,7 @@ int fsnotify(__u32 mask, const void *dat
->  {
->         const struct path *path =3D fsnotify_data_path(data, data_type);
->         struct super_block *sb =3D fsnotify_data_sb(data, data_type);
-> -       struct fsnotify_sb_info *sbinfo =3D fsnotify_sb_info(sb);
-> +       struct fsnotify_sb_info *sbinfo;
->         struct fsnotify_iter_info iter_info =3D {};
->         struct mount *mnt =3D NULL;
->         struct inode *inode2 =3D NULL;
-> @@ -529,6 +529,8 @@ int fsnotify(__u32 mask, const void *dat
->                 inode2_type =3D FSNOTIFY_ITER_TYPE_PARENT;
->         }
->
-> +       iter_info.srcu_idx =3D srcu_read_lock(&fsnotify_mark_srcu);
-> +       sbinfo =3D fsnotify_sb_info(sb);
->         /*
->          * Optimization: srcu_read_lock() has a memory barrier which can
->          * be expensive.  It protects walking the *_fsnotify_marks lists.
+> As I wrote, I just did it to emphasize the open-once
+> semantics.
+> If you do not like the unlocked check, feel free to remove it.
 
+Miklos,
 
-See comment above. This kills the optimization.
-It is not worth letting all the fsnotify hooks suffer the consequence
-for the edge case of calling fsnotify hook during fs shutdown.
+I see that you removed the unlocked check in the fix staged for-next.
+Please also remove this from commit message:
 
-Also, fsnotify_sb_info(sb) in fsnotify_sb_has_priority_watchers()
-is also not protected and using srcu_read_lock() there completely
-nullifies the purpose of fsnotify_sb_info.
-
-Here is a simplified fix for fsnotify_sb_error() rebased on the
-pending mm fixes for this syzbot boot failure:
-
-#syz test: https://github.com/amir73il/linux fsnotify-fixes
-
-Jan,
-
-I think that all the functions called from fs shutdown context
-should observe that SB_ACTIVE is cleared but wasn't sure?
+    Add a check of ff->iomode in mmap(), so that fuse_file_cached_io_open()=
+ is
+    called only on first mmap of direct_io file.
 
 Thanks,
 Amir.
-
---0000000000008659bc0615f4b07f
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-fsnotify-do-not-handle-events-on-a-shutting-down-fil.patch"
-Content-Disposition: attachment; 
-	filename="0001-fsnotify-do-not-handle-events-on-a-shutting-down-fil.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_luxq8od70>
-X-Attachment-Id: f_luxq8od70
-
-RnJvbSA5ZTU4OTc4NjVjNGJhODI5NmE4MWY0NTFkMjQ2M2RiZDZiNDlmYjNjIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
-YXRlOiBUaHUsIDExIEFwciAyMDI0IDE4OjU5OjA4ICswMzAwClN1YmplY3Q6IFtQQVRDSF0gZnNu
-b3RpZnk6IGRvIG5vdCBoYW5kbGUgZXZlbnRzIG9uIGEgc2h1dHRpbmcgZG93biBmaWxlc3lzdGVt
-CgpQcm90ZWN0IGFnYWluc3QgdXNlIGFmdGVyIGZyZWUgd2hlbiBmaWxlc3lzdGVtIGNhbGxzIGZz
-bm90aWZ5X3NiX2Vycm9yKCkKZHVyaW5nIGZzIHNodXRkb3duLgoKUmVwb3J0ZWQtYnk6IHN5emJv
-dCs1ZTNmOWIyYTY3YjQ1ZjE2ZDRlNkBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tCkZpeGVzOiAw
-N2EzYjhkMGJmNzIgKCJmc25vdGlmeTogbGF6eSBhdHRhY2ggZnNub3RpZnlfc2JfaW5mbyBzdGF0
-ZSB0byBzYiIpClNpZ25lZC1vZmYtYnk6IEFtaXIgR29sZHN0ZWluIDxhbWlyNzNpbEBnbWFpbC5j
-b20+Ci0tLQogaW5jbHVkZS9saW51eC9mc25vdGlmeS5oIHwgNCArKysrCiAxIGZpbGUgY2hhbmdl
-ZCwgNCBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9mc25vdGlmeS5o
-IGIvaW5jbHVkZS9saW51eC9mc25vdGlmeS5oCmluZGV4IDRkYTgwZTkyZjgwNC4uNjY1MTJhOTY1
-ODI0IDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2Zzbm90aWZ5LmgKKysrIGIvaW5jbHVkZS9s
-aW51eC9mc25vdGlmeS5oCkBAIC00NTMsNiArNDUzLDEwIEBAIHN0YXRpYyBpbmxpbmUgaW50IGZz
-bm90aWZ5X3NiX2Vycm9yKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHN0cnVjdCBpbm9kZSAqaW5v
-ZGUsCiAJCS5zYiA9IHNiLAogCX07CiAKKwkvKiBmcyBtYXkgYmUgY2FsbGluZyB0aGlzIGhvb2sg
-ZnJvbSB3aXRob3V0IHNodXRkb3duICovCisJaWYgKHVubGlrZWx5KCEoc2ItPnNfZmxhZ3MgJiBT
-Ql9BQ1RJVkUpKSkKKwkJcmV0dXJuIDA7CisKIAlyZXR1cm4gZnNub3RpZnkoRlNfRVJST1IsICZy
-ZXBvcnQsIEZTTk9USUZZX0VWRU5UX0VSUk9SLAogCQkJTlVMTCwgTlVMTCwgTlVMTCwgMCk7CiB9
-Ci0tIAoyLjM0LjEKCg==
---0000000000008659bc0615f4b07f--
 
