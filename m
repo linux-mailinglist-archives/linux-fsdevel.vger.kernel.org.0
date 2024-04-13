@@ -1,55 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-16847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14CAA8A3A28
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 03:41:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C498A3A29
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 03:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D382839F8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 01:41:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 270691F22BFE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 01:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2722C10962;
-	Sat, 13 Apr 2024 01:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6F115E89;
+	Sat, 13 Apr 2024 01:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6UEd6VX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAD2101CA
-	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Apr 2024 01:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB82714290
+	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Apr 2024 01:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712972456; cv=none; b=n5g8n4Y4LjxvRgso86cTMwDvLzf4+ytVvmGxiYNyguMJSWStQMzV0C7+H5K5E0o7J4Z7S2n6WGHGrmKwjs4teAMaQhve8iAMgFceg+fwDmkUr5o7SQsvrNEUFlPbrXtFbHbbICUA4eH/9F7CHuHqxDxRP05+YZPtd128QA3Yrd0=
+	t=1712972466; cv=none; b=TbYoZctpCZyR/wSYeFfF7RRPP/RgsEu4KmxjB0nO3kQH0zd8bWm8tMjZs/sIGufE5bo4n73+vpTe60/U9TNfXznvowVf4Cb/KBdc99y18KEJI2UroJH5NIvXX2MN3H7zcLfEVJB/M4Jz4qmRayXNWutd3p5lZgXeTl9pZwY3Khk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712972456; c=relaxed/simple;
-	bh=bz0+oPtGBjfMkgGoL8I+HbISwkkff7vifr/1n+scTpA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jAfgfjku+rsYI4lsDr+yW5Ha5KD5l+fArg8ivea15BLZrRR13smqH2XTaMtK1S0PH3TZAnDcOahBlmg5qFaHd6IBXEk6A+GEZpuQH21vHqeYRBF9coD7SbMGNXAI0ltbSNfiSuaZzW2l0HizOCtXTzRT/uIdUI8NjZ+mcJGEaMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.51.22])
-	by sina.com (172.16.235.25) with ESMTP
-	id 6619E29500006D13; Sat, 13 Apr 2024 09:40:40 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7155934210732
-X-SMAIL-UIID: AA27BBA74A44434FB6E7EDF800AF513A-20240413-094040-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
-Date: Sat, 13 Apr 2024 09:40:33 +0800
-Message-Id: <20240413014033.1722-1-hdanton@sina.com>
-In-Reply-To: <00000000000042c9190615cdb315@google.com>
-References: 
+	s=arc-20240116; t=1712972466; c=relaxed/simple;
+	bh=sRSiRQPpRSx0rbz3OfBDZA15EHTV7b0yg+Crq/zkQ70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sy81i1069pVYQC07BuDykThSeItHOQKwSwqvuwJ3U5yuyLa7q9GeQFRUQtqWH67XmCNqlXoPiyrHEaRuAjrP8yDUaO7jyMqd5N1xXrTuanJqgVQHijg1iIqFGNyTBCSPjInZwwoX0HWYRYROtBxdwP87xeYMVxOL9c8E0gOpG+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6UEd6VX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C143C113CC;
+	Sat, 13 Apr 2024 01:41:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712972466;
+	bh=sRSiRQPpRSx0rbz3OfBDZA15EHTV7b0yg+Crq/zkQ70=;
+	h=From:To:Cc:Subject:Date:From;
+	b=o6UEd6VXNU8x3exg6o6j4WJo8+rifVpGFscR5O5MJy4Ry6C5Q9O6Q7dE2NL0VxvPi
+	 xELWK8Zcpqv+1ZPa09Jl2ryN7fAHtO6zVyDBPMyM4aw8eHX7Ub7zdRjLMPxRUoiGmO
+	 RWVy1QCQ+Uzk6rM2bhBLOfenGr4JwTJ68kUVNteQpjq1xsjUcf0ROx0LHmmQyBc0sd
+	 uVVRTEl076EZwkyugoduK6K6eJzzeLgaXRVRYuJPGfYnpWPnTqUyz+iCuAOtFzP6cX
+	 fRoxspWpt3ycTrQ47WeM+djpa2FJjL+pZL1sigtLbNzdckK3+yiz9SCArZTyXv9FSz
+	 oJk+o9sE9fPQw==
+From: Damien Le Moal <dlemoal@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] zonefs fixes for 6.9-rc4
+Date: Sat, 13 Apr 2024 10:41:04 +0900
+Message-ID: <20240413014104.1099579-1-dlemoal@kernel.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,73 +55,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Thu, 11 Apr 2024 01:11:20 -0700
-> syzbot found the following issue on:
-> 
-> HEAD commit:    6ebf211bb11d Add linux-next specific files for 20240410
-> git tree:       linux-next
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1621af9d180000
+From: Damien Le Moal <damien.lemoal@opensource.wdc.com>
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git  6ebf211bb11d
+Linus,
 
---- x/fs/notify/fsnotify.c
-+++ y/fs/notify/fsnotify.c
-@@ -101,8 +101,8 @@ void fsnotify_sb_delete(struct super_blo
- 	wait_var_event(fsnotify_sb_watched_objects(sb),
- 		       !atomic_long_read(fsnotify_sb_watched_objects(sb)));
- 	WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_CONTENT));
--	WARN_ON(fsnotify_sb_has_priority_watchers(sb,
--						  FSNOTIFY_PRIO_PRE_CONTENT));
-+	WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_PRE_CONTENT));
-+	synchronize_srcu(&fsnotify_mark_srcu);
- 	kfree(sbinfo);
- }
- 
-@@ -499,7 +499,7 @@ int fsnotify(__u32 mask, const void *dat
- {
- 	const struct path *path = fsnotify_data_path(data, data_type);
- 	struct super_block *sb = fsnotify_data_sb(data, data_type);
--	struct fsnotify_sb_info *sbinfo = fsnotify_sb_info(sb);
-+	struct fsnotify_sb_info *sbinfo;
- 	struct fsnotify_iter_info iter_info = {};
- 	struct mount *mnt = NULL;
- 	struct inode *inode2 = NULL;
-@@ -529,6 +529,8 @@ int fsnotify(__u32 mask, const void *dat
- 		inode2_type = FSNOTIFY_ITER_TYPE_PARENT;
- 	}
- 
-+	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
-+	sbinfo = fsnotify_sb_info(sb);
- 	/*
- 	 * Optimization: srcu_read_lock() has a memory barrier which can
- 	 * be expensive.  It protects walking the *_fsnotify_marks lists.
-@@ -539,8 +541,10 @@ int fsnotify(__u32 mask, const void *dat
- 	if ((!sbinfo || !sbinfo->sb_marks) &&
- 	    (!mnt || !mnt->mnt_fsnotify_marks) &&
- 	    (!inode || !inode->i_fsnotify_marks) &&
--	    (!inode2 || !inode2->i_fsnotify_marks))
--		return 0;
-+	    (!inode2 || !inode2->i_fsnotify_marks)) {
-+		ret = 0;
-+		goto out;
-+	}
- 
- 	marks_mask = sb->s_fsnotify_mask;
- 	if (mnt)
-@@ -558,10 +562,10 @@ int fsnotify(__u32 mask, const void *dat
- 	 * Otherwise, return if none of the marks care about this type of event.
- 	 */
- 	test_mask = (mask & ALL_FSNOTIFY_EVENTS);
--	if (!(test_mask & marks_mask))
--		return 0;
--
--	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
-+	if (!(test_mask & marks_mask)) {
-+		ret = 0;
-+		goto out;
-+	}
- 
- 	if (sbinfo) {
- 		iter_info.marks[FSNOTIFY_ITER_TYPE_SB] =
---
+The following changes since commit 2c71fdf02a95b3dd425b42f28fd47fb2b1d22702:
+
+  Merge tag 'drm-fixes-2024-04-09' of https://gitlab.freedesktop.org/drm/kernel (2024-04-09 09:24:37 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs tags/zonefs-6.9-rc4
+
+for you to fetch changes up to 60b703c71fa80de0c2e14af66e57e234019b7da2:
+
+  zonefs: Use str_plural() to fix Coccinelle warning (2024-04-10 07:23:47 +0900)
+
+----------------------------------------------------------------
+zonefs fixes for 6.9-rc4
+
+ - Suppress a coccicheck warning using str_plural().
+
+----------------------------------------------------------------
+Thorsten Blum (1):
+      zonefs: Use str_plural() to fix Coccinelle warning
+
+ fs/zonefs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
