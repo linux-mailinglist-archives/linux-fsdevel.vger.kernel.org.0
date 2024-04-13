@@ -1,59 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-16864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F89F8A3D2E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 17:16:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625188A3D6A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 17:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D6B1F2182C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 15:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECC2CB216FD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 15:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95DB45C04;
-	Sat, 13 Apr 2024 15:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EE248CD4;
+	Sat, 13 Apr 2024 15:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4z+86AH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PG/ETt95"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EDF42A96;
-	Sat, 13 Apr 2024 15:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BE947A52;
+	Sat, 13 Apr 2024 15:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713021390; cv=none; b=QK9lCPRVrekkQeKID9z7VVOiG23VrQ/3CvM1Qy7/VETdZoUmvfNggoCPX/PZ/pru06U0RF2yOktu9nD5ijIN/ow19SMi6uT23cM0bNf+UB9usqPZO5q76BiWL/0JMhRAlL8Ee9FiPe8rFW5nY/QtHpYmKFRlNmU3q0VcrYXCe7E=
+	t=1713021908; cv=none; b=JMN5h/Tb+3nATMegqJHz4+9u+XZ9HiNYrc77t9IlZANLaKl2nIOJWK+49/xjiB/pU3oyJkse9U+V4o4Ln1Ku19EQfeK4V62lWEbQjqEzMLf9Pbryepud/yj2dFMl47WuEpvbZkTbR/Qu+WDvfqNCuRc2/YchjoI03qacG7EmDj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713021390; c=relaxed/simple;
-	bh=29YarKc0WYNTWP1PNRSnD3A3fcc5Wb6BU/OaAvyB/hA=;
+	s=arc-20240116; t=1713021908; c=relaxed/simple;
+	bh=VoaAhMD+KhsHLDJ/g0q7xTIV6soPlt6qxpZCLZTQ61s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U/9HK+zxGxkkYnx4einnpfV9TSb+Pq5zgeqfapZXTNWbnXp3GeM16q2r+jHV6LWessZqMQOnI0AI8MIwgpftrrAQEnYVQML7LEu/qAH0gy1pu9L69fOVgGBI8A+p9DRfg2mi3snWcz+Cz5JxDaGqUh3VxLjtYRRSHyOykhUyuWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4z+86AH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A026C113CD;
-	Sat, 13 Apr 2024 15:16:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QHvfw2GD/GL8FXe1IP3O3b1waELUT8sIgTVGYMygg2I+vJMyfvPlgS9M1MjtSIbA0OX5gutJJrjk/yEA/9cRj7iq7h2DZkimAnSpbjG+bwpaoHn2vyPndxTmUWL0j+vQJpte/nw38kR8Ag49kk5RV4ErravPKh0jeM7KGy2jAJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PG/ETt95; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF490C2BBFC;
+	Sat, 13 Apr 2024 15:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713021389;
-	bh=29YarKc0WYNTWP1PNRSnD3A3fcc5Wb6BU/OaAvyB/hA=;
+	s=k20201202; t=1713021907;
+	bh=VoaAhMD+KhsHLDJ/g0q7xTIV6soPlt6qxpZCLZTQ61s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N4z+86AH0nG+BT1F1V4YYCbQR4fb/rU0cC4UJPobP/ZgaWUvZtMILOxRC5lE2ijJ3
-	 2ZdA2ADpZ/XDl2Z3VafgsCqzB2EqwSo9DZkg9kfHnnz60Qnv/81xem4W3j+eZj3ioU
-	 tLEfkV99gj9E/SM8KqenvLn0RUEt/UVtG+ECerTuLyBLTqBBP+C7qkAIFlMKVxUUvq
-	 14Fz4iCKIuIOaHOe7ixIgYpcByeAAON5VpMUs/glzbgp5X+rLThZ4Y952cU6S5v6tr
-	 YG3tqkBrKGMTt45/tQeYWOH4x5tTj4RBguxgIXEbn51A+HyzB1YjkuhT/nb2RBeTYP
-	 eXuC86M6sFU+g==
-Date: Sat, 13 Apr 2024 17:16:24 +0200
+	b=PG/ETt954ndwXloFe6YoQGeaE9A44q1ZaLxGo9xhrEeCu1gR4vuVIeqVDbNJQNouV
+	 RDPpcunKwbCPjZETe3XOvJ3o99wt9VD/f5fD8chLW88cKaNR00D21YfnF4FR3vWCyi
+	 xjkKPADpXtI9xUR3OFIQZ5lmNQ1M0Rhgk3orUcpwzh/Rec1OXot3GHHe9Gs9z7IMoL
+	 3PyLenEYqgd0nzUquSxCmfWLRXvey2GeY9LmUigaFTw7RAPIwCx+eqoqBkvrxWcHEe
+	 RP2x7gykwk49eNA28Ea3/PuCbmDOXPZqcdvoXdoXjDFhxEGBAWTREkxsKVYwxuzZrq
+	 XEZakMEeCu/NA==
+Date: Sat, 13 Apr 2024 17:25:01 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Lutomirski <luto@kernel.org>, Peter Anvin <hpa@zytor.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] vfs: relax linkat() AT_EMPTY_PATH - aka flink() -
- requirements
-Message-ID: <20240413-armbrust-specht-394d58f53f0f@brauner>
-References: <20240411001012.12513-1-torvalds@linux-foundation.org>
- <20240412-vegetarisch-installieren-1152433bd1a7@brauner>
- <CAHk-=wiYnnv7Kw7v+Cp2xU6_Fd-qxQMZuuxZ61LgA2=Gtftw-A@mail.gmail.com>
- <20240413-aufgaben-feigen-e61a1ec3668f@brauner>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, 
+	axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
+ blcok_device
+Message-ID: <20240413-hievt-zweig-2e40ac6443aa@brauner>
+References: <20240407030610.GI538574@ZenIV>
+ <8f414bc5-44c6-fe71-4d04-6aef3de8c5e3@huaweicloud.com>
+ <20240409042643.GP538574@ZenIV>
+ <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
+ <20240410105911.hfxz4qh3n5ekrpqg@quack3>
+ <20240410223443.GG2118490@ZenIV>
+ <20240411-logik-besorgen-b7d590d6c1e9@brauner>
+ <20240411140409.GH2118490@ZenIV>
+ <20240412-egalisieren-fernreise-71b1f21f8e64@brauner>
+ <20240412112919.GN2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,66 +68,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240413-aufgaben-feigen-e61a1ec3668f@brauner>
+In-Reply-To: <20240412112919.GN2118490@ZenIV>
 
-On Sat, Apr 13, 2024 at 11:41:57AM +0200, Christian Brauner wrote:
-> On Fri, Apr 12, 2024 at 10:43:06AM -0700, Linus Torvalds wrote:
-> > Side note: I'd really like to relax another unrelated AT_EMPTY_PATH
-> > issue: we should just allow a NULL path for that case.
-> > 
-> > The requirement that you pass an actual empty string is insane. It's
-> > wrong. And it adds a noticeable amount of expense to this path,
-> > because just getting the single byte and looking it up is fairly
-> > expensive.
-> > 
-> > This was more noticeable because glibc at one point (still?) did
-> > 
-> >         newfstatat(6, "", buf, AT_EMPTY_PATH)
-> > 
-> > when it should have just done a simple "fstat()".
-> > 
-> > So there were (are?) a *LOT* of AT_EMPTY_PATH users, and they all do a
-> > pointless "let's copy a string from user space".
-> > 
-> > And yes, I know exactly why AT_EMPTY_PATH exists: because POSIX
-> > traditionally says that a path of "" has to return -ENOENT, not the
-> > current working directory. So AT_EMPTY_PATH basically says "allow the
-> > empty path for lookup".
-> > 
-> > But while it *allows* the empty path, it does't *force* it, so it
-> > doesn't mean "avoid the lookup", and we really end up doing a lot of
-> > extra work just for this case. Just the user string copy is a big deal
-> > because of the whole overhead of accessing user space, but it's also
-> > the whole "allocate memory for the path etc".
-> > 
-> > If we either said "a NULL path with AT_EMPTY_PATH means empty", or
-> > even just added a new AT_NULL_PATH thing that means "path has to be
-> > NULL, and it means the same as AT_EMPTY_PATH with an empty path", we'd
-> > be able to avoid quite a bit of pointless work.
+On Fri, Apr 12, 2024 at 12:29:19PM +0100, Al Viro wrote:
+> On Fri, Apr 12, 2024 at 11:21:08AM +0200, Christian Brauner wrote:
 > 
-> It also causes issues for sandboxed enviroments (most recently for the
-> Chrome sandbox) because AT_EMPTY_PATH doesn't actually mean
-> AT_EMPTY_PATH unless the string is actually empty. Otherwise
-> AT_EMPTY_PATH is ignored. So I'm all on board for this. I need to think
-> a bit whether AT_NULL_PATH or just allowing NULL would be nicer. Mostly
-> because I want to ensure that userspace can easily detect this new
-> feature.
+> > Your series just replaces bd_inode in struct block_device with
+> > bd_mapping. In a lot of places we do have immediate access to the bdev
+> > file without changing any calling conventions whatsoever. IMO it's
+> > perfectly fine to just use file_mapping() there. Sure, let's use
+> > bdev_mapping() in instances like btrfs where we'd otherwise have to
+> > change function signatures I'm not opposed to that. But there's no good
+> > reason to just replace everything with bdev->bd_mapping access. And
+> > really, why keep that thing in struct block_device when we can avoid it.
+> 
+> Because having to have struct file around in the places where we want to
+> get to page cache of block device fast is often inconvenient (see fs/buffer.c,
+> if nothing else).
 
-I think it should be ok to allow AT_EMPTY_PATH with NULL because
-userspace can detect whether the kernel allows that by passing
-AT_EMPTY_PATH with a NULL path argument and they would get an error back
-that would tell them that this kernel doesn't support NULL paths.
+Yes, agreed. But my point is why can't we expose bdev_mapping() for
+exactly that purpose without having to have that bd_mapping member in
+struct block_device? We don't want to trade bd_inode for bd_mapping in
+that struct imho. IOW, if we can avoid bloating struct block device with
+additional members then we should do that. Is there some performance
+concern that I'm missing and if so are there numbers to back this?
 
-I'd like to try a patch for this next week. It's a good opportunity to
-get into some of the more gritty details of this area.
+> It also simplifies the hell out of the patch series - it's one obviously
+> safe automatic change in a single commit.
 
-From a rough first glance most AT_EMPTY_PATH users should be covered by
-adapting getname_flags() accordingly.
+It's trivial to fold the simple file_mapping() conversion into a single
+patch as well. It's a pure artifact of splitting the patches per
+subsystem/driver. That's just because people have wildly different
+opinions on how to do such conversion. But really, that can be trivially
+dealt with.
 
-Imho, this could likely be done by introducing a single struct filename
-null_filename. That also takes care of audit that reuses the pathname.
-That thing would basically never go away and the refcnt remain fixed at
-one. Kind of similar to what we did for struct mnt_idmap nop_mnt_idmap.
-That's at least what I naively hope for but I haven't yet starting
-looking into all the dark corners.
+> And AFAICS the flags-related rationale can be dealt with in a much simpler
+> way - see #bf_flags in my tree.
+
+That's certainly worth doing independent of this discussion.
 
