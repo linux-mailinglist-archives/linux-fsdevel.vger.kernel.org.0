@@ -1,177 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-16846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680538A3A1F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 03:30:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CAA8A3A28
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 03:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ACC01F230D2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 01:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D382839F8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 01:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9358A954;
-	Sat, 13 Apr 2024 01:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzstgtCA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2722C10962;
+	Sat, 13 Apr 2024 01:40:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBA063C8;
-	Sat, 13 Apr 2024 01:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAD2101CA
+	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Apr 2024 01:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712971828; cv=none; b=MBNwKn6J6UA6OHtAQN06P7XxzWXmJ1qj5RzNy9/btmF5XJGoRGrjhMpQlqr6Plzg2kn9no5APSWR95HXQgop2/dVT/GS64wxNGuQ8uuMhVj5duuaqFF3ILTISZTXonyXASwIRpxjho3hdWann0soSquGYPwNn6ySjSP0gnQ1iWY=
+	t=1712972456; cv=none; b=n5g8n4Y4LjxvRgso86cTMwDvLzf4+ytVvmGxiYNyguMJSWStQMzV0C7+H5K5E0o7J4Z7S2n6WGHGrmKwjs4teAMaQhve8iAMgFceg+fwDmkUr5o7SQsvrNEUFlPbrXtFbHbbICUA4eH/9F7CHuHqxDxRP05+YZPtd128QA3Yrd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712971828; c=relaxed/simple;
-	bh=d2icaWJTTOCZ5p+K61BPO2+gXckymnqiwHcjN9WUKe0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EzXmH94mKSxo0c9J1oWCAOFBleHXrMg8UkY1Rb40hhkM5dH4DTsbP2DXgr3i/v51L2LNwvF24Jgx4LENoXNoQ38M7EpUbkpG9YDKqrMc1glgNLS9rxRnImhyXQXCqkbwtwihe7QSuJwjAfEswzHvU8BPFtHwE4BQmaObzbenc4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzstgtCA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEA4C113CC;
-	Sat, 13 Apr 2024 01:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712971827;
-	bh=d2icaWJTTOCZ5p+K61BPO2+gXckymnqiwHcjN9WUKe0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nzstgtCALFZLYrHVuB/4ho0QONvxViQK41ZeNBgY1MirDR3BM9reA6wzV3ztKn/4Y
-	 7olDDQ2OiPSG4aBWP6FQKq5GkNFvseLFwAhIKCfOaSTndLaiGXXwbg6YiB/Vf3RwrU
-	 s/6cgMFMYGdfFB9DeQ+VHSdeB5+llLPq4peH4z7be9HlFEbjJ9na80l5IZVYTSJYxk
-	 MYZloJslfAW5QblF1coreliXQcwNQiKovAm2Tljv5rxT1ZASKHUg1fiIubF+y8C+RN
-	 u0U57Vzcoyd256Shgr/BihKR91Jb76oIKFTpxFqSoqd15BItGAeSvWhACmaPxcvarH
-	 N6H4FU+hy7O6A==
-Message-ID: <43f55f4b-cb2a-4845-9ded-40ce68f3351c@kernel.org>
-Date: Sat, 13 Apr 2024 09:30:22 +0800
+	s=arc-20240116; t=1712972456; c=relaxed/simple;
+	bh=bz0+oPtGBjfMkgGoL8I+HbISwkkff7vifr/1n+scTpA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jAfgfjku+rsYI4lsDr+yW5Ha5KD5l+fArg8ivea15BLZrRR13smqH2XTaMtK1S0PH3TZAnDcOahBlmg5qFaHd6IBXEk6A+GEZpuQH21vHqeYRBF9coD7SbMGNXAI0ltbSNfiSuaZzW2l0HizOCtXTzRT/uIdUI8NjZ+mcJGEaMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.51.22])
+	by sina.com (172.16.235.25) with ESMTP
+	id 6619E29500006D13; Sat, 13 Apr 2024 09:40:40 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7155934210732
+X-SMAIL-UIID: AA27BBA74A44434FB6E7EDF800AF513A-20240413-094040-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
+Date: Sat, 13 Apr 2024 09:40:33 +0800
+Message-Id: <20240413014033.1722-1-hdanton@sina.com>
+In-Reply-To: <00000000000042c9190615cdb315@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] quota: fix to propagate error of mark_dquot_dirty() to
- caller
-To: Jan Kara <jack@suse.cz>
-Cc: Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240412094942.2131243-1-chao@kernel.org>
- <20240412121517.dydwqiqkdzvwpwf5@quack3>
- <20240412130130.m4msohzpiojtve7r@quack3>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240412130130.m4msohzpiojtve7r@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/4/12 21:01, Jan Kara wrote:
-> On Fri 12-04-24 14:15:17, Jan Kara wrote:
->> On Fri 12-04-24 17:49:42, Chao Yu wrote:
->>> in order to let caller be aware of failure of mark_dquot_dirty().
->>>
->>> Signed-off-by: Chao Yu <chao@kernel.org>
->>
->> Thanks. I've added the patch to my tree.
+On Thu, 11 Apr 2024 01:11:20 -0700
+> syzbot found the following issue on:
 > 
-> So this patch was buggy because mark_all_dquots() dirty was returning 1 in
-> case some dquot was indeed dirtied which resulted in e.g.
-> dquot_alloc_inode() to return 1 and consequently __ext4_new_inode() to fail
+> HEAD commit:    6ebf211bb11d Add linux-next specific files for 20240410
+> git tree:       linux-next
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1621af9d180000
 
-Correct, I missed that case.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git  6ebf211bb11d
 
-> and eventually we've crashed in ext4_create().  I've fixed up the patch to
-> make mark_all_dquots() return 0 or error.
-
-Thank you for catching and fixing it.
-
-Thanks,
-
-> 
-> 								Honza
-> 
->>> ---
->>>   fs/quota/dquot.c | 21 ++++++++++++++-------
->>>   1 file changed, 14 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
->>> index dacbee455c03..b2a109d8b198 100644
->>> --- a/fs/quota/dquot.c
->>> +++ b/fs/quota/dquot.c
->>> @@ -1737,7 +1737,7 @@ int __dquot_alloc_space(struct inode *inode, qsize_t number, int flags)
->>>   
->>>   	if (reserve)
->>>   		goto out_flush_warn;
->>> -	mark_all_dquot_dirty(dquots);
->>> +	ret = mark_all_dquot_dirty(dquots);
->>>   out_flush_warn:
->>>   	srcu_read_unlock(&dquot_srcu, index);
->>>   	flush_warnings(warn);
->>> @@ -1786,7 +1786,7 @@ int dquot_alloc_inode(struct inode *inode)
->>>   warn_put_all:
->>>   	spin_unlock(&inode->i_lock);
->>>   	if (ret == 0)
->>> -		mark_all_dquot_dirty(dquots);
->>> +		ret = mark_all_dquot_dirty(dquots);
->>>   	srcu_read_unlock(&dquot_srcu, index);
->>>   	flush_warnings(warn);
->>>   	return ret;
->>> @@ -1990,7 +1990,7 @@ int __dquot_transfer(struct inode *inode, struct dquot **transfer_to)
->>>   	qsize_t inode_usage = 1;
->>>   	struct dquot __rcu **dquots;
->>>   	struct dquot *transfer_from[MAXQUOTAS] = {};
->>> -	int cnt, index, ret = 0;
->>> +	int cnt, index, ret = 0, err;
->>>   	char is_valid[MAXQUOTAS] = {};
->>>   	struct dquot_warn warn_to[MAXQUOTAS];
->>>   	struct dquot_warn warn_from_inodes[MAXQUOTAS];
->>> @@ -2087,8 +2087,12 @@ int __dquot_transfer(struct inode *inode, struct dquot **transfer_to)
->>>   	 * mark_all_dquot_dirty().
->>>   	 */
->>>   	index = srcu_read_lock(&dquot_srcu);
->>> -	mark_all_dquot_dirty((struct dquot __rcu **)transfer_from);
->>> -	mark_all_dquot_dirty((struct dquot __rcu **)transfer_to);
->>> +	err = mark_all_dquot_dirty((struct dquot __rcu **)transfer_from);
->>> +	if (err < 0)
->>> +		ret = err;
->>> +	err = mark_all_dquot_dirty((struct dquot __rcu **)transfer_to);
->>> +	if (err < 0)
->>> +		ret = err;
->>>   	srcu_read_unlock(&dquot_srcu, index);
->>>   
->>>   	flush_warnings(warn_to);
->>> @@ -2098,7 +2102,7 @@ int __dquot_transfer(struct inode *inode, struct dquot **transfer_to)
->>>   	for (cnt = 0; cnt < MAXQUOTAS; cnt++)
->>>   		if (is_valid[cnt])
->>>   			transfer_to[cnt] = transfer_from[cnt];
->>> -	return 0;
->>> +	return ret;
->>>   over_quota:
->>>   	/* Back out changes we already did */
->>>   	for (cnt--; cnt >= 0; cnt--) {
->>> @@ -2726,6 +2730,7 @@ static int do_set_dqblk(struct dquot *dquot, struct qc_dqblk *di)
->>>   	struct mem_dqblk *dm = &dquot->dq_dqb;
->>>   	int check_blim = 0, check_ilim = 0;
->>>   	struct mem_dqinfo *dqi = &sb_dqopt(dquot->dq_sb)->info[dquot->dq_id.type];
->>> +	int ret;
->>>   
->>>   	if (di->d_fieldmask & ~VFS_QC_MASK)
->>>   		return -EINVAL;
->>> @@ -2807,7 +2812,9 @@ static int do_set_dqblk(struct dquot *dquot, struct qc_dqblk *di)
->>>   	else
->>>   		set_bit(DQ_FAKE_B, &dquot->dq_flags);
->>>   	spin_unlock(&dquot->dq_dqb_lock);
->>> -	mark_dquot_dirty(dquot);
->>> +	ret = mark_dquot_dirty(dquot);
->>> +	if (ret < 0)
->>> +		return ret;
->>>   
->>>   	return 0;
->>>   }
->>> -- 
->>> 2.40.1
->>>
->> -- 
->> Jan Kara <jack@suse.com>
->> SUSE Labs, CR
->>
+--- x/fs/notify/fsnotify.c
++++ y/fs/notify/fsnotify.c
+@@ -101,8 +101,8 @@ void fsnotify_sb_delete(struct super_blo
+ 	wait_var_event(fsnotify_sb_watched_objects(sb),
+ 		       !atomic_long_read(fsnotify_sb_watched_objects(sb)));
+ 	WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_CONTENT));
+-	WARN_ON(fsnotify_sb_has_priority_watchers(sb,
+-						  FSNOTIFY_PRIO_PRE_CONTENT));
++	WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_PRE_CONTENT));
++	synchronize_srcu(&fsnotify_mark_srcu);
+ 	kfree(sbinfo);
+ }
+ 
+@@ -499,7 +499,7 @@ int fsnotify(__u32 mask, const void *dat
+ {
+ 	const struct path *path = fsnotify_data_path(data, data_type);
+ 	struct super_block *sb = fsnotify_data_sb(data, data_type);
+-	struct fsnotify_sb_info *sbinfo = fsnotify_sb_info(sb);
++	struct fsnotify_sb_info *sbinfo;
+ 	struct fsnotify_iter_info iter_info = {};
+ 	struct mount *mnt = NULL;
+ 	struct inode *inode2 = NULL;
+@@ -529,6 +529,8 @@ int fsnotify(__u32 mask, const void *dat
+ 		inode2_type = FSNOTIFY_ITER_TYPE_PARENT;
+ 	}
+ 
++	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
++	sbinfo = fsnotify_sb_info(sb);
+ 	/*
+ 	 * Optimization: srcu_read_lock() has a memory barrier which can
+ 	 * be expensive.  It protects walking the *_fsnotify_marks lists.
+@@ -539,8 +541,10 @@ int fsnotify(__u32 mask, const void *dat
+ 	if ((!sbinfo || !sbinfo->sb_marks) &&
+ 	    (!mnt || !mnt->mnt_fsnotify_marks) &&
+ 	    (!inode || !inode->i_fsnotify_marks) &&
+-	    (!inode2 || !inode2->i_fsnotify_marks))
+-		return 0;
++	    (!inode2 || !inode2->i_fsnotify_marks)) {
++		ret = 0;
++		goto out;
++	}
+ 
+ 	marks_mask = sb->s_fsnotify_mask;
+ 	if (mnt)
+@@ -558,10 +562,10 @@ int fsnotify(__u32 mask, const void *dat
+ 	 * Otherwise, return if none of the marks care about this type of event.
+ 	 */
+ 	test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+-	if (!(test_mask & marks_mask))
+-		return 0;
+-
+-	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
++	if (!(test_mask & marks_mask)) {
++		ret = 0;
++		goto out;
++	}
+ 
+ 	if (sbinfo) {
+ 		iter_info.marks[FSNOTIFY_ITER_TYPE_SB] =
+--
 
