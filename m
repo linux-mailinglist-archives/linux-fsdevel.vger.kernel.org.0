@@ -1,171 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-16863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7738A3D05
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 16:43:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F89F8A3D2E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 17:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A945B215B2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 14:43:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D6B1F2182C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 15:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E962446BA;
-	Sat, 13 Apr 2024 14:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95DB45C04;
+	Sat, 13 Apr 2024 15:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0b1WjH7d";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TGTnmWCA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4z+86AH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE51DDF1;
-	Sat, 13 Apr 2024 14:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EDF42A96;
+	Sat, 13 Apr 2024 15:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713019406; cv=none; b=b1AV9WOjGDqAsyiSYqJeGWy6oEp4/Xb1Cu60d0mKGAUqWQb0A+CX7acdpDK9DJ9lQbVTpAgJ92B3+Q4t87IaQeP+oUfHJ1tGp+IUeLXSnP4yyK++f3mtHD207liJAstyepCDbMi07rex6Ibc1tR/bCdBbGrrckvEQAqUmtciwVI=
+	t=1713021390; cv=none; b=QK9lCPRVrekkQeKID9z7VVOiG23VrQ/3CvM1Qy7/VETdZoUmvfNggoCPX/PZ/pru06U0RF2yOktu9nD5ijIN/ow19SMi6uT23cM0bNf+UB9usqPZO5q76BiWL/0JMhRAlL8Ee9FiPe8rFW5nY/QtHpYmKFRlNmU3q0VcrYXCe7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713019406; c=relaxed/simple;
-	bh=F3WSVlUVeB9L++bk4Ow6JCLg2bFHCz7po4reWSuVgdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mTc/b6uf5MdDkKUZvH8GbWguY1+VDGvkckr4qN6tZ6aMS8g4Ll+fwkwpcgHVjGxyfWuQCI/EOtuCZ3yfT95ohE3f2cVD5wT+xmIMyrn3kp31VPU3UdvmjiLKZrvVohPYcYzeu0J/kn2rPZcUh69QTWseMpDrw2ZiSMDkmAt7v1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0b1WjH7d; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TGTnmWCA; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 13 Apr 2024 16:43:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1713019401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=94QYgK1moV3EtlUcP69QNbkfRF65WDHcbcu3aXuhzMA=;
-	b=0b1WjH7dMokMw4gA5sphaavop2jbUouwWon4BETiEJ3Auh4mkbDA6CaWbyUNg2HXh5x6sV
-	ONFBFVjW0E764jN462mFwDfHi2QRFkYfyeIHxJcy3VbT1aBnTVP5C58iksUwVE6rUrLEKJ
-	5MlqE2iqe6pljzIGKfUbctAoWA2M34tOOrMm3oVsdNYvuv4Pxq5J39z0MKV5uCYzKKqh3U
-	80jVJeaID7Ii+A4CUhy9Q4fzgdYP/hww5l96idQt9myulM92AIR61c34rdO2vrrS2KQlcV
-	/KP8sifRsZXoC18ILZxYH35jCImumZRAwqv918IPuYpQQPJGbQyHNSiefxQk3w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1713019401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=94QYgK1moV3EtlUcP69QNbkfRF65WDHcbcu3aXuhzMA=;
-	b=TGTnmWCAiCLkdCMHYZVFT8OBvD3zVHceh/mgLEaqFERDP2BwWHD5eEVTI9rdWYMR4gvfxq
-	35B6dGXcXkTn8uDA==
-From: Nam Cao <namcao@linutronix.de>
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, "Theodore
- Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
- linux-ext4@vger.kernel.org, Conor Dooley <conor@kernel.org>
-Subject: Re: riscv32 EXT4 splat, 6.8 regression?
-Message-ID: <20240413164318.7260c5ef@namcao>
-In-Reply-To: <878r1ibpdn.fsf@all.your.base.are.belong.to.us>
-References: <878r1ibpdn.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1713021390; c=relaxed/simple;
+	bh=29YarKc0WYNTWP1PNRSnD3A3fcc5Wb6BU/OaAvyB/hA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/9HK+zxGxkkYnx4einnpfV9TSb+Pq5zgeqfapZXTNWbnXp3GeM16q2r+jHV6LWessZqMQOnI0AI8MIwgpftrrAQEnYVQML7LEu/qAH0gy1pu9L69fOVgGBI8A+p9DRfg2mi3snWcz+Cz5JxDaGqUh3VxLjtYRRSHyOykhUyuWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4z+86AH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A026C113CD;
+	Sat, 13 Apr 2024 15:16:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713021389;
+	bh=29YarKc0WYNTWP1PNRSnD3A3fcc5Wb6BU/OaAvyB/hA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N4z+86AH0nG+BT1F1V4YYCbQR4fb/rU0cC4UJPobP/ZgaWUvZtMILOxRC5lE2ijJ3
+	 2ZdA2ADpZ/XDl2Z3VafgsCqzB2EqwSo9DZkg9kfHnnz60Qnv/81xem4W3j+eZj3ioU
+	 tLEfkV99gj9E/SM8KqenvLn0RUEt/UVtG+ECerTuLyBLTqBBP+C7qkAIFlMKVxUUvq
+	 14Fz4iCKIuIOaHOe7ixIgYpcByeAAON5VpMUs/glzbgp5X+rLThZ4Y952cU6S5v6tr
+	 YG3tqkBrKGMTt45/tQeYWOH4x5tTj4RBguxgIXEbn51A+HyzB1YjkuhT/nb2RBeTYP
+	 eXuC86M6sFU+g==
+Date: Sat, 13 Apr 2024 17:16:24 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Lutomirski <luto@kernel.org>, Peter Anvin <hpa@zytor.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] vfs: relax linkat() AT_EMPTY_PATH - aka flink() -
+ requirements
+Message-ID: <20240413-armbrust-specht-394d58f53f0f@brauner>
+References: <20240411001012.12513-1-torvalds@linux-foundation.org>
+ <20240412-vegetarisch-installieren-1152433bd1a7@brauner>
+ <CAHk-=wiYnnv7Kw7v+Cp2xU6_Fd-qxQMZuuxZ61LgA2=Gtftw-A@mail.gmail.com>
+ <20240413-aufgaben-feigen-e61a1ec3668f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240413-aufgaben-feigen-e61a1ec3668f@brauner>
 
-On 2024-04-12 Bj=C3=B6rn T=C3=B6pel wrote:
-> Hi!
->=20
-> I've been looking at an EXT4 splat on riscv32, that LKFT found [1]:
->=20
->   | EXT4-fs (vda): mounted filesystem 13697a42-d10e-4a9e-8e56-cb9083be92f=
-9 ro with ordered data mode. Quota mode: disabled.
->   | VFS: Mounted root (ext4 filesystem) readonly on device 254:0.
->   | Unable to handle kernel NULL pointer dereference at virtual address 0=
-0000006
->   | Oops [#1]
->   | Modules linked in:
->   | CPU: 1 PID: 1 Comm: swapper/0 Not tainted 6.8.0 #41
->   | Hardware name: riscv-virtio,qemu (DT)
->   | epc : ext4_search_dir+0x52/0xe4
->   |  ra : __ext4_find_entry+0x1d6/0x578
->   | epc : c035b60e ra : c035b876 sp : c253fc10
->   |  gp : c21a7380 tp : c25c8000 t0 : 44c0657f
->   |  t1 : 0000000c t2 : 1de5b089 s0 : c253fc50
->   |  s1 : 00000000 a0 : fffffffc a1 : fffff000
->   |  a2 : 00000000 a3 : c29c04f8 a4 : c253fd00
->   |  a5 : 00000000 a6 : c253fcfc a7 : fffffff3
->   |  s2 : 00001000 s3 : 00000000 s4 : 00001000
->   |  s5 : c29c04f8 s6 : c292db40 s7 : c253fcfc
->   |  s8 : fffffff7 s9 : c253fd00 s10: fffff000
->   |  s11: c292db40 t3 : 00000007 t4 : 5e8b4525
->   |  t5 : 00000000 t6 : 00000000
->   | status: 00000120 badaddr: 00000006 cause: 0000000d
->   | [<c035b60e>] ext4_search_dir+0x52/0xe4
->   | [<c035b876>] __ext4_find_entry+0x1d6/0x578
->   | [<c035bcaa>] ext4_lookup+0x92/0x200
->   | [<c0295c14>] __lookup_slow+0x8e/0x142
->   | [<c029943a>] walk_component+0x104/0x174
->   | [<c0299f18>] path_lookupat+0x78/0x182
->   | [<c029b24c>] filename_lookup+0x96/0x158
->   | [<c029b346>] kern_path+0x38/0x56
->   | [<c0c1bee4>] init_mount+0x46/0x96
->   | [<c0c2ae1c>] devtmpfs_mount+0x44/0x7a
->   | [<c0c01c26>] prepare_namespace+0x226/0x27c
->   | [<c0c01130>] kernel_init_freeable+0x27e/0x2a0
->   | [<c0b78402>] kernel_init+0x2a/0x158
->   | [<c0b82bf2>] ret_from_fork+0xe/0x20
->   | Code: 84ae a809 d303 0044 949a 0f63 0603 991a fd63 0584 (c603) 0064=20
->   | ---[ end trace 0000000000000000 ]---
->   | Kernel panic - not syncing: Attempted to kill init! exitcode=3D0x0000=
-000b
->=20
-> This was not present in 6.7. Bisection wasn't really helpful (to me at
-> least); I got it down to commit c604110e662a ("Merge tag 'vfs-6.8.misc'
-> of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs"), and when I
-> revert the commits in the vfs merge the splat went away, but I *really*
-> struggle to see how those are related...
->=20
-> What I see in ext4_search_dir() is that search_buf is 0xfffff000, and at
-> some point the address wraps to zero, and boom. I doubt that 0xfffff000
-> is a sane address.
+On Sat, Apr 13, 2024 at 11:41:57AM +0200, Christian Brauner wrote:
+> On Fri, Apr 12, 2024 at 10:43:06AM -0700, Linus Torvalds wrote:
+> > Side note: I'd really like to relax another unrelated AT_EMPTY_PATH
+> > issue: we should just allow a NULL path for that case.
+> > 
+> > The requirement that you pass an actual empty string is insane. It's
+> > wrong. And it adds a noticeable amount of expense to this path,
+> > because just getting the single byte and looking it up is fairly
+> > expensive.
+> > 
+> > This was more noticeable because glibc at one point (still?) did
+> > 
+> >         newfstatat(6, "", buf, AT_EMPTY_PATH)
+> > 
+> > when it should have just done a simple "fstat()".
+> > 
+> > So there were (are?) a *LOT* of AT_EMPTY_PATH users, and they all do a
+> > pointless "let's copy a string from user space".
+> > 
+> > And yes, I know exactly why AT_EMPTY_PATH exists: because POSIX
+> > traditionally says that a path of "" has to return -ENOENT, not the
+> > current working directory. So AT_EMPTY_PATH basically says "allow the
+> > empty path for lookup".
+> > 
+> > But while it *allows* the empty path, it does't *force* it, so it
+> > doesn't mean "avoid the lookup", and we really end up doing a lot of
+> > extra work just for this case. Just the user string copy is a big deal
+> > because of the whole overhead of accessing user space, but it's also
+> > the whole "allocate memory for the path etc".
+> > 
+> > If we either said "a NULL path with AT_EMPTY_PATH means empty", or
+> > even just added a new AT_NULL_PATH thing that means "path has to be
+> > NULL, and it means the same as AT_EMPTY_PATH with an empty path", we'd
+> > be able to avoid quite a bit of pointless work.
+> 
+> It also causes issues for sandboxed enviroments (most recently for the
+> Chrome sandbox) because AT_EMPTY_PATH doesn't actually mean
+> AT_EMPTY_PATH unless the string is actually empty. Otherwise
+> AT_EMPTY_PATH is ignored. So I'm all on board for this. I need to think
+> a bit whether AT_NULL_PATH or just allowing NULL would be nicer. Mostly
+> because I want to ensure that userspace can easily detect this new
+> feature.
 
-I have zero knowledge about file system, but I think it's an integer
-overflow problem. The calculation of "dlimit" overflow and dlimit wraps
-around, this leads to wrong comparison later on.
+I think it should be ok to allow AT_EMPTY_PATH with NULL because
+userspace can detect whether the kernel allows that by passing
+AT_EMPTY_PATH with a NULL path argument and they would get an error back
+that would tell them that this kernel doesn't support NULL paths.
 
-I guess that explains why your bisect and Conor's bisect results are
-strange: the bug has been here for quite some time, but it only appears
-when "dlimit" happens to overflow.
+I'd like to try a patch for this next week. It's a good opportunity to
+get into some of the more gritty details of this area.
 
-It can be fixed by re-arrange the comparisons a bit. Can you give the
-below patch a try?
+From a rough first glance most AT_EMPTY_PATH users should be covered by
+adapting getname_flags() accordingly.
 
-Best regards,
-Nam
-
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 05b647e6bc19..71b88b33b676 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1532,15 +1532,13 @@ int ext4_search_dir(struct buffer_head *bh, char *s=
-earch_buf, int buf_size,
- 		    unsigned int offset, struct ext4_dir_entry_2 **res_dir)
- {
- 	struct ext4_dir_entry_2 * de;
--	char * dlimit;
- 	int de_len;
-=20
- 	de =3D (struct ext4_dir_entry_2 *)search_buf;
--	dlimit =3D search_buf + buf_size;
--	while ((char *) de < dlimit - EXT4_BASE_DIR_LEN) {
-+	while ((char *) de - search_buf < buf_size - EXT4_BASE_DIR_LEN) {
- 		/* this code is executed quadratically often */
- 		/* do minimal checking `by hand' */
--		if (de->name + de->name_len <=3D dlimit &&
-+		if (de->name + de->name_len - search_buf <=3D buf_size &&
- 		    ext4_match(dir, fname, de)) {
- 			/* found a match - just to be sure, do
- 			 * a full check */
+Imho, this could likely be done by introducing a single struct filename
+null_filename. That also takes care of audit that reuses the pathname.
+That thing would basically never go away and the refcnt remain fixed at
+one. Kind of similar to what we did for struct mnt_idmap nop_mnt_idmap.
+That's at least what I naively hope for but I haven't yet starting
+looking into all the dark corners.
 
