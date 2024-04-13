@@ -1,392 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-16873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B5828A3EEE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 23:57:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 191438A3F37
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 00:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 556381C20B70
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 21:57:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81F63B21625
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Apr 2024 22:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D8456B71;
-	Sat, 13 Apr 2024 21:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED1656773;
+	Sat, 13 Apr 2024 22:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Df6LVOUv"
+	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="wDETBzqT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+Received: from mail-40136.proton.ch (mail-40136.proton.ch [185.70.40.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4660556471
-	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Apr 2024 21:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48F81865
+	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Apr 2024 22:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713045459; cv=none; b=ErR9LFnK6JBJnzX4cz3ZXloXmNHr6SGaC8JRU6EB1Y9yfBNuuOuvOUtSdvriIuWM7bf5FplVB9R3FH8cT+a8+TV6HjCJ4oHLsbufWMTmh20WdwrsYwEYILOUmDTyzGzQQTigxM9AhfeXxrjjJx2F09IOZ4jr3KpaLEIuaPYljBk=
+	t=1713045608; cv=none; b=MoRT1t1t+hOKVOOW+7hrf1ZVYmXT7PdZkJbOCAAOLEsXze9JPiV4R4xUyDiJetJrXhOz+diiQyMK700Drl2UbukODiWZKeIhAOPFrAhmNakhjNVTHoBBRlUiMixOGGhZAq5H0/b4d2ICY4pf1VMDqiLQXvdjBJGL98/zd6kKG7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713045459; c=relaxed/simple;
-	bh=ZYt+JrrA19PAL3Fl1HccTbWDuqAj/fi63LEWADRDCng=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mCrdSS/MhVPGU9VxeME9uZ3fqeDPV30EgHDAEELPJ2bektub6griCZjWNzkGaeMy64qX48bWFoC29lM3bLFgPXV6LPk8ora3P8CV8UCoOV4ME2QllM48q8NVkIFsRh9RwQ95b1JpCNda/6JcDIC+yTH7Bm7FNlszGRpnoiIcXUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Df6LVOUv; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1713045453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wkpUeiOk2Yuc6TxmI+UXGtxq4IJggJpO/UawJZIGG/A=;
-	b=Df6LVOUvUhIP9STTl8MbicB+Ktr4AEDZLLQZ2NokaqRCr6dgFWHKMb9hly9OzWNmh5/gOo
-	oRqw8wpjmyYAVSz1BcamJDDKupeDONqhvvUMf4NJ+qRN1uO9kmJrxdDHBSEKDRjliIXjti
-	xJfWOACZCZYvU20943wHQzGJQ0VuKz8=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH] bcachefs: bch_member.btree_allocated_bitmap
-Date: Sat, 13 Apr 2024 17:57:23 -0400
-Message-ID: <20240413215723.1543569-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1713045608; c=relaxed/simple;
+	bh=esXBYGqq/qMSfCxYB3tN+zEPEVo0kQQaCv9LwpRJ444=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HST0IEUPcfk+P6YB6QVdDxzE/Z7CWRDLgmdP9nGUCLNWs0mlv0gDWVD1yCYEfFleEkGvmQ5Edyy7q4ZYTP6aZwUQxMdfmr19n5KfElzh8+JgDcYu+gF17ig/TzQSJs1/n2pAffAw8EfgZ9NoCDsrL4ljx7WjN4jIrL35yevLcSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=wDETBzqT; arc=none smtp.client-ip=185.70.40.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
+	s=protonmail; t=1713045596; x=1713304796;
+	bh=esXBYGqq/qMSfCxYB3tN+zEPEVo0kQQaCv9LwpRJ444=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=wDETBzqTeki4m48VAl9E7k37RPVHOZlmxFUXT7hTVUS4K6fY8wcZNyniDSzQd/7qe
+	 0Et1KY7ohEWTVVS3UgDAtuyyfeHRcw4Wq2ZIXCLhjrq+qadrZkHEtyYpS26n6Cmx/a
+	 iACRUhhPRMCrxiZdJyiuV0mj/Ucgglwsm7FD9OSQZsVz647VutFxlwEArusE22gXuy
+	 f9sDxnI1jXnhYF3BXLf/AxqPrfSUQ6TcQGFuzQ0qa69U6nhisj3n7Dn/uiIXzHwH8i
+	 noWoW1chQb7+hupM5eh3Ci/poHDFWszFF1XaGM7+zg4hNuuH/2mA2WOx0EXWhupjqp
+	 HwVMZNs+ICzJQ==
+Date: Sat, 13 Apr 2024 21:59:49 +0000
+To: Amir Goldstein <amir73il@gmail.com>
+From: Antonio SJ Musumeci <trapexit@spawn.link>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bernd.schubert@fastmail.fm>, Sweet Tea Dorminy <sweettea-kernel@dorminy.me>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: passthrough question
+Message-ID: <Fqj2n-eKCjb0dH3kYjvOkIPnDr7D36XgK59hlvgbnOQ1i1lJ07Cdrec0-7uEfn5Lp7u76rYm30CVLtrkQ-0D9jMj31q8wnKSHZ_csn2KdB0=@spawn.link>
+In-Reply-To: <CAOQ4uxiw+VNJmthwjQx5-NEZ6yaZbeO4HOiuzOaG33DE=YBm7A@mail.gmail.com>
+References: <67785da6-b8fb-44ae-be05-97a4e4dd14a2@spawn.link> <CAOQ4uxjOYcNxNf2S0yFxBgV9zPMhOQOxY72v5ToCxCPJ2S0e+g@mail.gmail.com> <03958bec-d387-494a-bd6a-fcd3b7842c6d@spawn.link> <CAOQ4uxjNF4Kdae5uos4Ch9qBvmAC2kSH58+wVr=F865XhVZsNQ@mail.gmail.com> <a54405ff-d552-420c-88e9-941007c7f0cb@spawn.link> <CAOQ4uxhnSDshQmjn-39Q9TbMJLZiWiYXf+8YLVqB7nPW1L5fBw@mail.gmail.com> <G2XhehibMSoDHBWhAJVS3UfIT1-OlMgYkwAgTu5v2ys1BIUCznJ1B475OEKLBFf6M9gnlpXqFIkrsWRmofllLba2b7cRogWLODZQ5Ma748w=@spawn.link> <CAOQ4uxiR7BHP4+PNx0EBo8Pg4S9po7sDP50ZMVq1aN3zpk=z0Q@mail.gmail.com> <CAJfpegukxxb7SOYW_9T5zto9nUgzRgaxVFDzEi_qz1z9A0zkMg@mail.gmail.com> <CAOQ4uxiw+VNJmthwjQx5-NEZ6yaZbeO4HOiuzOaG33DE=YBm7A@mail.gmail.com>
+Feedback-ID: 55718373:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-For those interested, this is a good tour of the facilities for rolling
-out new on disk format features.
+On Friday, April 12th, 2024 at 5:08 AM, Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>=20
+>=20
+> Sounds good, except returning ENOENT to user for open with zero backing i=
+d
+> is confusing, so I think it has to be EIO like all the other illegal
+> passthrough open replies.
+>=20
+> Thanks,
+> Amir.
 
--- >8 --
+Been at the Texas Linux Fest past couple days so I've not really had time t=
+o look at what you've done for lookup yet. Will do so soon.
 
-This adds a small (64 bit) per-device bitmap that tracks ranges that
-have btree nodes, for accelerating btree node scan if it is ever needed.
+RE fh: I think adding a "fh" to more of the protocol could be useful. I fin=
+d it extremely convenient with file lifecycle management and if it could ex=
+ist for node lifecycle too that could simplify server code. This just came =
+to mind while trying to rework my server to use passthrough and haven't dug=
+ into the code to see how plausible it is.
 
-- New helpers, bch2_dev_btree_bitmap_marked() and
-  bch2_dev_bitmap_mark(), for checking and updating the bitmap
-
-- Interior btree update path updates the bitmaps when required
-
-- The check_allocations pass has a new fsck_err check,
-  btree_bitmap_not_marked
-
-- New on disk format version, mi_btree_mitmap, which indicates the new
-  bitmap is present
-
-- Upgrade table lists the required recovery pass and expected fsck error
-
-- Btree node scan uses the bitmap to skip ranges if we're on the new
-  version
-
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- fs/bcachefs/bcachefs_format.h       |  7 ++--
- fs/bcachefs/btree_gc.c              | 13 +++++++
- fs/bcachefs/btree_node_scan.c       |  9 +++--
- fs/bcachefs/btree_update_interior.c | 24 +++++++++++++
- fs/bcachefs/sb-downgrade.c          |  5 ++-
- fs/bcachefs/sb-errors_types.h       |  3 +-
- fs/bcachefs/sb-members.c            | 53 +++++++++++++++++++++++++++++
- fs/bcachefs/sb-members.h            | 21 ++++++++++++
- fs/bcachefs/sb-members_types.h      |  2 ++
- 9 files changed, 131 insertions(+), 6 deletions(-)
-
-diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-index 9480f1b44f07..085987435a5e 100644
---- a/fs/bcachefs/bcachefs_format.h
-+++ b/fs/bcachefs/bcachefs_format.h
-@@ -578,7 +578,8 @@ struct bch_member {
- 	__le64			nbuckets;	/* device size */
- 	__le16			first_bucket;   /* index of first bucket used */
- 	__le16			bucket_size;	/* sectors */
--	__le32			pad;
-+	__u8			btree_bitmap_shift;
-+	__u8			pad[3];
- 	__le64			last_mount;	/* time_t */
- 
- 	__le64			flags;
-@@ -587,6 +588,7 @@ struct bch_member {
- 	__le64			errors_at_reset[BCH_MEMBER_ERROR_NR];
- 	__le64			errors_reset_time;
- 	__le64			seq;
-+	__le64			btree_allocated_bitmap;
- };
- 
- #define BCH_MEMBER_V1_BYTES	56
-@@ -876,7 +878,8 @@ struct bch_sb_field_downgrade {
- 	x(rebalance_work,		BCH_VERSION(1,  3))		\
- 	x(member_seq,			BCH_VERSION(1,  4))		\
- 	x(subvolume_fs_parent,		BCH_VERSION(1,  5))		\
--	x(btree_subvolume_children,	BCH_VERSION(1,  6))
-+	x(btree_subvolume_children,	BCH_VERSION(1,  6))		\
-+	x(mi_btree_bitmap,		BCH_VERSION(1,  7))
- 
- enum bcachefs_metadata_version {
- 	bcachefs_metadata_version_min = 9,
-diff --git a/fs/bcachefs/btree_gc.c b/fs/bcachefs/btree_gc.c
-index 10c41cf89212..a77c723a9cef 100644
---- a/fs/bcachefs/btree_gc.c
-+++ b/fs/bcachefs/btree_gc.c
-@@ -822,6 +822,7 @@ static int bch2_gc_mark_key(struct btree_trans *trans, enum btree_id btree_id,
- 	struct bch_fs *c = trans->c;
- 	struct bkey deleted = KEY(0, 0, 0);
- 	struct bkey_s_c old = (struct bkey_s_c) { &deleted, NULL };
-+	struct printbuf buf = PRINTBUF;
- 	int ret = 0;
- 
- 	deleted.p = k->k->p;
-@@ -842,11 +843,23 @@ static int bch2_gc_mark_key(struct btree_trans *trans, enum btree_id btree_id,
- 	if (ret)
- 		goto err;
- 
-+	if (mustfix_fsck_err_on(level && !bch2_dev_btree_bitmap_marked(c, *k),
-+				c, btree_bitmap_not_marked,
-+				"btree ptr not marked in member info btree allocated bitmap\n  %s",
-+				(bch2_bkey_val_to_text(&buf, c, *k),
-+				 buf.buf))) {
-+		mutex_lock(&c->sb_lock);
-+		bch2_dev_btree_bitmap_mark(c, *k);
-+		bch2_write_super(c);
-+		mutex_unlock(&c->sb_lock);
-+	}
-+
- 	ret = commit_do(trans, NULL, NULL, 0,
- 			bch2_key_trigger(trans, btree_id, level, old,
- 					 unsafe_bkey_s_c_to_s(*k), BTREE_TRIGGER_gc));
- fsck_err:
- err:
-+	printbuf_exit(&buf);
- 	bch_err_fn(c, ret);
- 	return ret;
- }
-diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
-index 20f2b37c4474..866bd278439f 100644
---- a/fs/bcachefs/btree_node_scan.c
-+++ b/fs/bcachefs/btree_node_scan.c
-@@ -205,8 +205,13 @@ static int read_btree_nodes_worker(void *p)
- 				last_print = jiffies;
- 			}
- 
--			try_read_btree_node(w->f, ca, bio, buf,
--					    bucket * ca->mi.bucket_size + bucket_offset);
-+			u64 sector = bucket * ca->mi.bucket_size + bucket_offset;
-+
-+			if (c->sb.version_upgrade_complete >= bcachefs_metadata_version_mi_btree_bitmap &&
-+			    !bch2_dev_btree_bitmap_marked_sectors(ca, sector, btree_sectors(c)))
-+				continue;
-+
-+			try_read_btree_node(w->f, ca, bio, buf, sector);
- 		}
- err:
- 	bio_put(bio);
-diff --git a/fs/bcachefs/btree_update_interior.c b/fs/bcachefs/btree_update_interior.c
-index 593241b15aa8..12ce6287416f 100644
---- a/fs/bcachefs/btree_update_interior.c
-+++ b/fs/bcachefs/btree_update_interior.c
-@@ -21,6 +21,7 @@
- #include "keylist.h"
- #include "recovery_passes.h"
- #include "replicas.h"
-+#include "sb-members.h"
- #include "super-io.h"
- #include "trace.h"
- 
-@@ -644,6 +645,26 @@ static int btree_update_nodes_written_trans(struct btree_trans *trans,
- 	return 0;
- }
- 
-+static bool btree_update_new_nodes_marked_sb(struct btree_update *as)
-+{
-+	for_each_keylist_key(&as->new_keys, k)
-+		if (!bch2_dev_btree_bitmap_marked(as->c, bkey_i_to_s_c(k)))
-+			return false;
-+	return true;
-+}
-+
-+static void btree_update_new_nodes_mark_sb(struct btree_update *as)
-+{
-+	struct bch_fs *c = as->c;
-+
-+	mutex_lock(&c->sb_lock);
-+	for_each_keylist_key(&as->new_keys, k)
-+		bch2_dev_btree_bitmap_mark(c, bkey_i_to_s_c(k));
-+
-+	bch2_write_super(c);
-+	mutex_unlock(&c->sb_lock);
-+}
-+
- static void btree_update_nodes_written(struct btree_update *as)
- {
- 	struct bch_fs *c = as->c;
-@@ -664,6 +685,9 @@ static void btree_update_nodes_written(struct btree_update *as)
- 	if (ret)
- 		goto err;
- 
-+	if (!btree_update_new_nodes_marked_sb(as))
-+		btree_update_new_nodes_mark_sb(as);
-+
- 	/*
- 	 * Wait for any in flight writes to finish before we free the old nodes
- 	 * on disk:
-diff --git a/fs/bcachefs/sb-downgrade.c b/fs/bcachefs/sb-downgrade.c
-index 56ac8f35cdc3..90b06f8aa1df 100644
---- a/fs/bcachefs/sb-downgrade.c
-+++ b/fs/bcachefs/sb-downgrade.c
-@@ -51,7 +51,10 @@
- 	  BCH_FSCK_ERR_subvol_fs_path_parent_wrong)		\
- 	x(btree_subvolume_children,				\
- 	  BIT_ULL(BCH_RECOVERY_PASS_check_subvols),		\
--	  BCH_FSCK_ERR_subvol_children_not_set)
-+	  BCH_FSCK_ERR_subvol_children_not_set)			\
-+	x(mi_btree_bitmap,					\
-+	  BIT_ULL(BCH_RECOVERY_PASS_check_allocations),		\
-+	  BCH_FSCK_ERR_btree_bitmap_not_marked)
- 
- #define DOWNGRADE_TABLE()
- 
-diff --git a/fs/bcachefs/sb-errors_types.h b/fs/bcachefs/sb-errors_types.h
-index d7d609131030..5b600c6d7aca 100644
---- a/fs/bcachefs/sb-errors_types.h
-+++ b/fs/bcachefs/sb-errors_types.h
-@@ -270,7 +270,8 @@
- 	x(btree_ptr_v2_min_key_bad,				262)	\
- 	x(btree_root_unreadable_and_scan_found_nothing,		263)	\
- 	x(snapshot_node_missing,				264)	\
--	x(dup_backpointer_to_bad_csum_extent,			265)
-+	x(dup_backpointer_to_bad_csum_extent,			265)	\
-+	x(btree_bitmap_not_marked,				266)
- 
- enum bch_sb_error_id {
- #define x(t, n) BCH_FSCK_ERR_##t = n,
-diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
-index 9b7a2f300182..d5937aba0910 100644
---- a/fs/bcachefs/sb-members.c
-+++ b/fs/bcachefs/sb-members.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include "bcachefs.h"
-+#include "btree_cache.h"
- #include "disk_groups.h"
- #include "opts.h"
- #include "replicas.h"
-@@ -378,3 +379,55 @@ void bch2_dev_errors_reset(struct bch_dev *ca)
- 	bch2_write_super(c);
- 	mutex_unlock(&c->sb_lock);
- }
-+
-+/*
-+ * Per member "range has btree nodes" bitmap:
-+ *
-+ * This is so that if we ever have to run the btree node scan to repair we don't
-+ * have to scan full devices:
-+ */
-+
-+bool bch2_dev_btree_bitmap_marked(struct bch_fs *c, struct bkey_s_c k)
-+{
-+	bkey_for_each_ptr(bch2_bkey_ptrs_c(k), ptr)
-+		if (!bch2_dev_btree_bitmap_marked_sectors(bch2_dev_bkey_exists(c, ptr->dev),
-+							  ptr->offset, btree_sectors(c)))
-+			return false;
-+	return true;
-+}
-+
-+static void __bch2_dev_btree_bitmap_mark(struct bch_sb_field_members_v2 *mi, unsigned dev,
-+				u64 start, unsigned sectors)
-+{
-+	struct bch_member *m = __bch2_members_v2_get_mut(mi, dev);
-+	u64 bitmap = le64_to_cpu(m->btree_allocated_bitmap);
-+
-+	u64 end = start + sectors;
-+
-+	int resize = ilog2(roundup_pow_of_two(end)) - (m->btree_bitmap_shift + 6);
-+	if (resize > 0) {
-+		u64 new_bitmap = 0;
-+
-+		for (unsigned i = 0; i < 64; i++)
-+			if (bitmap & BIT_ULL(i))
-+				new_bitmap |= BIT_ULL(i >> resize);
-+		bitmap = new_bitmap;
-+		m->btree_bitmap_shift += resize;
-+	}
-+
-+	for (unsigned bit = sectors >> m->btree_bitmap_shift;
-+	     bit << m->btree_bitmap_shift < end;
-+	     bit++)
-+		bitmap |= BIT_ULL(bit);
-+
-+	m->btree_allocated_bitmap = cpu_to_le64(bitmap);
-+}
-+
-+void bch2_dev_btree_bitmap_mark(struct bch_fs *c, struct bkey_s_c k)
-+{
-+	lockdep_assert_held(&c->sb_lock);
-+
-+	struct bch_sb_field_members_v2 *mi = bch2_sb_field_get(c->disk_sb.sb, members_v2);
-+	bkey_for_each_ptr(bch2_bkey_ptrs_c(k), ptr)
-+		__bch2_dev_btree_bitmap_mark(mi, ptr->dev, ptr->offset, btree_sectors(c));
-+}
-diff --git a/fs/bcachefs/sb-members.h b/fs/bcachefs/sb-members.h
-index bc3bcfef7b3a..8bbad30a4370 100644
---- a/fs/bcachefs/sb-members.h
-+++ b/fs/bcachefs/sb-members.h
-@@ -3,6 +3,7 @@
- #define _BCACHEFS_SB_MEMBERS_H
- 
- #include "darray.h"
-+#include "bkey_types.h"
- 
- extern char * const bch2_member_error_strs[];
- 
-@@ -234,6 +235,8 @@ static inline struct bch_member_cpu bch2_mi_to_cpu(struct bch_member *mi)
- 			: 1,
- 		.freespace_initialized = BCH_MEMBER_FREESPACE_INITIALIZED(mi),
- 		.valid		= bch2_member_alive(mi),
-+		.btree_bitmap_shift	= mi->btree_bitmap_shift,
-+		.btree_allocated_bitmap = le64_to_cpu(mi->btree_allocated_bitmap),
- 	};
- }
- 
-@@ -242,4 +245,22 @@ void bch2_sb_members_from_cpu(struct bch_fs *);
- void bch2_dev_io_errors_to_text(struct printbuf *, struct bch_dev *);
- void bch2_dev_errors_reset(struct bch_dev *);
- 
-+static inline bool bch2_dev_btree_bitmap_marked_sectors(struct bch_dev *ca, u64 start, unsigned sectors)
-+{
-+	u64 end = start + sectors;
-+
-+	if (end > 64 << ca->mi.btree_bitmap_shift)
-+		return false;
-+
-+	for (unsigned bit = sectors >> ca->mi.btree_bitmap_shift;
-+	     bit << ca->mi.btree_bitmap_shift < end;
-+	     bit++)
-+		if (!(ca->mi.btree_allocated_bitmap & BIT_ULL(bit)))
-+			return false;
-+	return true;
-+}
-+
-+bool bch2_dev_btree_bitmap_marked(struct bch_fs *, struct bkey_s_c);
-+void bch2_dev_btree_bitmap_mark(struct bch_fs *, struct bkey_s_c);
-+
- #endif /* _BCACHEFS_SB_MEMBERS_H */
-diff --git a/fs/bcachefs/sb-members_types.h b/fs/bcachefs/sb-members_types.h
-index 3f915536d554..c0eda888fe39 100644
---- a/fs/bcachefs/sb-members_types.h
-+++ b/fs/bcachefs/sb-members_types.h
-@@ -14,6 +14,8 @@ struct bch_member_cpu {
- 	u8			durability;
- 	u8			freespace_initialized;
- 	u8			valid;
-+	u8			btree_bitmap_shift;
-+	u64			btree_allocated_bitmap;
- };
- 
- #endif /* _BCACHEFS_SB_MEMBERS_H */
--- 
-2.43.0
-
+RE FOPEN_PASSTHROUGH and complications I've found: I've found another pract=
+ical issue. Granted this is a "me" problem in how mergerfs was designed but=
+ none the less a, I think, serious issue for me. mergerfs is multiuser. It =
+runs at root, multithreaded, and will seteuid to ensure the syscalls it mak=
+es are in the user context of the client app (where appropriate.) Unless th=
+ere is some API I'm unfamiliar with there is no way in Linux to open an exi=
+sting fd. Instead you are expected to open /proc/self/fd/%d. But in my case=
+ since the process is running as root /proc/self/fd/ is owned by root:root =
+and mode 0500. While a chown will return success on /proc/self/fd/ it has n=
+o effect and a chmod fails with EPERM. So non-root can't open the file. The=
+ only thing I can think of to do is to store all the details about the file=
+ and on future opens open the filepath and ensure it is the same file befor=
+e returning back to the kernel otherwise return an error.
 
