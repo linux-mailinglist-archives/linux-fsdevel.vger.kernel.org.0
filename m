@@ -1,108 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-16875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18D18A3FC1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 02:25:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702EF8A3FC7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 02:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7949F1F214F5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 00:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15E391F215D2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 00:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1136322A;
-	Sun, 14 Apr 2024 00:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B992F4E2;
+	Sun, 14 Apr 2024 00:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="gMW+j/eE"
+	dkim=pass (2048-bit key) header.d=orbstack.dev header.i=@orbstack.dev header.b="T3CaZWKs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD3217F8
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Apr 2024 00:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3F5C142
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Apr 2024 00:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713054298; cv=none; b=UgU0Iw5PBqpqJ1MwhAA6iLRjbA5blu7xE5FrMTMo31P5T3I3NK3K9dfvb4RuBetKuIjxuzvm7c1P3HQwi0GYHDWlr1lfnRQiREvjTvvBSSBRUFCJE22OWuOeR0U4Dun2Bo5NvkdORYMIL9I4yNbxL4g61wjxlQMIuwXyxzEHJLs=
+	t=1713054882; cv=none; b=CRyCAW1i0LZ4Rdx6VgRc7FvpHFMumqmvJKpJzcyHejnMKQj0CVSkmanaj4/f2gpkU6x4ER8dWo1iS3VaNfs5FM4hFyx1gius/UuDebl5gu/CPPLGjN2v8vtYBKglekPvOlTZVOM6sBh+IgFsI6x1jirB3s39zJdB/C6u8gqCCpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713054298; c=relaxed/simple;
-	bh=6cwz7sq9/Ry/X3YPf1XJMdD/vYMuqKwjtDLDys1bQog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bYYVO1m1S1ANuZZANbktRu3x5SET1/QwN9eSzoQ8WhJzPKW6P+oSn2pHqEoqiaYiDBcBNGMOiVnHtm5GNTJzg30nXnwp6GoeU8VQbxtgVGASZam4ow3s7MbUP0XZ0Trom7Er2lm0afwbMZKF7NQVXgXfluQ7RLlIa2Qz5kjtvlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=gMW+j/eE; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 43E0OBpU010410
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Apr 2024 20:24:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1713054255; bh=qb/AK26peA9M1+LO1ejrXo5H1qOcrwEngc2lVcRQn9M=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=gMW+j/eEZZ227dKTw8qgb3SuQZg06xUa58esbWcXoX8dpUZB1en0reXXGStK9DAcq
-	 2NGcjQX+f5Uxytao5c/IPST/8CAmKWJQ8J6giqwWVbMycz+Bs3AkizauEhbKqhSYdN
-	 DxSIOVCkhv9XEe+HuIh81hyJ1XtcdtxK9wOdZWilsJ1GPXStJy9yi4B33K7Ic86xFj
-	 n7WqCj8j1P4UC/ednNZ22PYaGCw73K4CnGamuueyD9KjtGgqHil7hhIblz97bVYW+d
-	 0Ys+GZuvSoQtAVvgck4WiGfLlErZ9Tm9PdwdNLSM9aBxKsUrVPpzmw+NIFnS5NBnw5
-	 ycfENAmksYO9A==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 611C115C0CB5; Sat, 13 Apr 2024 20:24:11 -0400 (EDT)
-Date: Sat, 13 Apr 2024 20:24:11 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Nam Cao <namcao@linutronix.de>
-Cc: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        Conor Dooley <conor@kernel.org>
-Subject: Re: riscv32 EXT4 splat, 6.8 regression?
-Message-ID: <20240414002411.GG187181@mit.edu>
-References: <878r1ibpdn.fsf@all.your.base.are.belong.to.us>
- <20240413164318.7260c5ef@namcao>
+	s=arc-20240116; t=1713054882; c=relaxed/simple;
+	bh=L+hcPMDz664CiSzjx5vCeaIpcd0SuW4AkOW1T87ubao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ddrNZF0RvlWsoD6r8u8Rf8b7M4uWNBzh8R8GQTO+Mjnr+ROZUqQZsgD5ugwNX+qd9BVyU/TwEuMjY0NkVztZTyHlFVIUU4+bvmyZElO/oY2gvr+4nBLEL7/YFNePG48CHFAvLBLp51rjLaT5CMOnv1Nj52k/ovJPBckrQKHdohA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=orbstack.dev; spf=pass smtp.mailfrom=orbstack.dev; dkim=pass (2048-bit key) header.d=orbstack.dev header.i=@orbstack.dev header.b=T3CaZWKs; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=orbstack.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orbstack.dev
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5d862e8b163so357435a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Apr 2024 17:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=orbstack.dev; s=google; t=1713054881; x=1713659681; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sPkffr7oJwwppX/b4yHu5vHFxXVuD8HMrnwiaJycajs=;
+        b=T3CaZWKs9FZtNf1QuBReuhNmCdB2z6KwCLivsVd8+Tj+JNeBLndh8WoFUHGdSUEfe9
+         eUT11iYt1fyYF0ZVZCLJUbv8geY5QA20HiNDmDvHOLXvdi45M/MZvQw4tO1bKwRE2cuC
+         3yS50l1RJJtPvLg3xRVDFjwfkYpcfAds/iZEU/hGwFOIHkGnJmyDXM72fAsb8zeGOIMg
+         P4jCM+xdCKC2lucEWueigZF9Hr52sn2Fqymm6Pg+h6vyqKhPh9F2GKfMn63Gs59YEYNc
+         QWZhKIswb4doWlCuUU0nPtY3dPPxR3N6Y0zt29CJaYN6lMo7JmCnqrY4tDudas3wo3pW
+         cVrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713054881; x=1713659681;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sPkffr7oJwwppX/b4yHu5vHFxXVuD8HMrnwiaJycajs=;
+        b=ZNWc/o2fNBttdZZXMoGQiKc1TC3kDEvisXruT8JTH7lLfUfq0Y3e6IcI5jdwD48ldM
+         7hyHS4+JcHcSouhJJyGtJ4GOJyx5tOWuh1naVfT8kjOVTI7iHfSDRM/tuyFpntwHZa/E
+         hdQdmC8TME7z56mbEH+CTgeL94LlkKcFsuW1PuLaVLgCGm/J25Zv6iWFid6t+2jkS+Ai
+         49PB4FU+Ol+QnMsoQbaYwgH9rqR5jpKqK1YIflFRDnpHwW1uPTs2t041/wHxxXUcJDvq
+         yVFj6/dV/naH+g7PrjzUmUd+rLe4EBM6KlLJnY7fsp137O6A6/qJAzvg7674yTksqLbN
+         IxfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbWC20a0HoF2AECft2BngBELhuM+1DxQ+pqXoB5SkCsiWRpq1mKXitBbIRu8CVzfka84BL4U1fHlR96XsNfhJx9U1lSRUTn2oQ9NshuQ==
+X-Gm-Message-State: AOJu0YwYjR3UvXF51n5HNrj4Tw0L9QiaKpOzLQopFisHJsVa8PbQRd6i
+	sUiTjFQjKtLnfXGmAiSqH4KbQTnNIlx6/mMxkn/wEvI7/4DW3LM6wpWOtjZwRG/JKXnpFVvWcEm
+	b
+X-Google-Smtp-Source: AGHT+IGZ6S8G0CCgNd4/Hh9ER28bC30ZT6Nn8CO+e7t8gmRLHN84YqdmTld2xWVSDkY17bs6yi8PWg==
+X-Received: by 2002:a17:902:f682:b0:1dd:e128:16b1 with SMTP id l2-20020a170902f68200b001dde12816b1mr7760259plg.6.1713054880697;
+        Sat, 13 Apr 2024 17:34:40 -0700 (PDT)
+Received: from arch.. ([68.65.175.34])
+        by smtp.gmail.com with ESMTPSA id n16-20020a17090aab9000b002a46c730a5csm4646143pjq.39.2024.04.13.17.34.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Apr 2024 17:34:40 -0700 (PDT)
+From: Danny Lin <danny@orbstack.dev>
+To: danny@orbstack.dev
+Cc: stable@vger.kernel.org,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fuse: fix leaked ENOSYS error on first statx call
+Date: Sat, 13 Apr 2024 17:34:31 -0700
+Message-ID: <20240414003434.2659-1-danny@orbstack.dev>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240413164318.7260c5ef@namcao>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 13, 2024 at 04:43:18PM +0200, Nam Cao wrote:
-> 
-> I have zero knowledge about file system, but I think it's an integer
-> overflow problem. The calculation of "dlimit" overflow and dlimit wraps
-> around, this leads to wrong comparison later on.
-> 
-> I guess that explains why your bisect and Conor's bisect results are
-> strange: the bug has been here for quite some time, but it only appears
-> when "dlimit" happens to overflow.
+FUSE attempts to detect server support for statx by trying it once and
+setting no_statx=1 if it fails with ENOSYS, but consider the following
+scenario:
 
-So the problem with that theory is that for that to be the case
-buf_size would have to be invalid, and it's unclear how could have
-happened.  We can try to test that theory by putting something like
-this at the beginning of ext4_search_dir():
+- Userspace (e.g. sh) calls stat() on a file
+  * succeeds
+- Userspace (e.g. lsd) calls statx(BTIME) on the same file
+  - request_mask = STATX_BASIC_STATS | STATX_BTIME
+  - first pass: sync=true due to differing cache_mask
+  - statx fails and returns ENOSYS
+  - set no_statx and retry
+  - retry sets mask = STATX_BASIC_STATS
+  - now mask == cache_mask; sync=false (time_before: still valid)
+  - so we take the "else if (stat)" path
+  - "err" is still ENOSYS from the failed statx call
 
-	if (buf_size < 0 || buf_size > dir->i_sb->s_blocksize) {
-		/* should never happen */
-		EXT4_ERROR_INODE(dir, "insane buf_size %d", buf_size);
-		WARN_ON(1)
-		return -EFSCORRUPTED;
-	}
+Fix this by zeroing "err" before retrying the failed call.
 
-Just to confirm, this file system is not one that has been fuzzed or
-is being dynamically modified while mounted, right?  Even if that were
-the case, looking at the stack trace, I don't see how this could have
-happened.  (I could imagine some scenario involving inline directoreis
-and fuzzed or dynamically modified file systems might be a potential
-problem=, or at least one that involve much more careful; code review,
-since that code is not as battle tested as other parts of ext4; but
-the stack trace reported at the beginning of this thread doesn't seem
-to indicate that inline directories were involved.)
+Fixes: d3045530bdd2 ("fuse: implement statx")
+Cc: stable@vger.kernel.org # v6.6
+Signed-off-by: Danny Lin <danny@orbstack.dev>
+---
+ fs/fuse/dir.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-   	    	 		    - Ted
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index de452cdbf3cf..a63125ce70a4 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1362,6 +1362,7 @@ static int fuse_update_get_attr(struct inode *inode, struct file *file,
+ 			err = fuse_do_statx(inode, file, stat);
+ 			if (err == -ENOSYS) {
+ 				fc->no_statx = 1;
++				err = 0;
+ 				goto retry;
+ 			}
+ 		} else {
+-- 
+2.44.0
+
 
