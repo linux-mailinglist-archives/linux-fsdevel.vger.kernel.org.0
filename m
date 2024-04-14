@@ -1,67 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-16878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3898A3FE4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 04:05:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902038A3FE9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 04:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D8FE1C20AC8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 02:05:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 226571F21682
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 02:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD465134D1;
-	Sun, 14 Apr 2024 02:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F5814AA0;
+	Sun, 14 Apr 2024 02:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="gm3P5WlG"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ARI3Q+Sv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BAD12E5B
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Apr 2024 02:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7031D2901;
+	Sun, 14 Apr 2024 02:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713060345; cv=none; b=iankDZydDJiYpt6HgrPdUB3OekP10FO0pqr0THp8WAtyqwu1tZTmAVP9MpMMFHRS6cEKeQqVspSJjM0XP/YTXwCjqLM4y+BDglZtJWZwoSdljNlikEYYd0hZcXbw01/RKWB6MzQ0qm/vFPJw1tOYs+eg/kXarQJP+0oqTT79If4=
+	t=1713060965; cv=none; b=JhAv4pDs7Zkj5V+vNSYS8dkZ1Tw+mwHIZpQ/h8maf9fXcYhSaC3ZI71xjsGRDklzzVWdRvsAi7QCMM9d8pJc3baKpMIRHdzYf3Fx5D+vayeQCxptunoxRX/T/zA0DoTwMSqJRvRsAe3tF9vI8h3wsrxGx2+u0UiY6hcvorb9+aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713060345; c=relaxed/simple;
-	bh=MGA7H4Ak7JA9w5IRIFq0xzZptOoFSfbXSg3Cr7bmVbI=;
+	s=arc-20240116; t=1713060965; c=relaxed/simple;
+	bh=RKv3vsToLCa2YjZhl5JpuLBfQUujma9u0MCR9555bBs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nHn+KwH1abMlHhYI2A6dqBxzzbUI13QcWR0lsOIE43q5LufTMPETvSQINXQ8DypORocHzwABwqAMaRsPh1WrPmmGcCXWnFNBzLdXzonFzRG6UVqauyPJDaPniClHFuqYEpoUxuKbX9peoyDnNMQh0vMvt+E+ssI6rbDSIoeEQJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=gm3P5WlG; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 43E24vOI017915
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Apr 2024 22:04:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1713060302; bh=FXSMfOuJHvgzP8fvH4L0dhdvcbQaONOy8jw0JVIAXwY=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=gm3P5WlGyVoxRXP+9V0+YSIDP2kbuJVkylgPM0ppChEX+mShuq2ApJQwm4LJi6JiM
-	 XAJeqmaIk2fkUcSKpL5sWI34RcX4YiBVnM2qqJzYkvx1p01d140S7MzfDGW7YQLv4u
-	 b/xa4LsfcgXuHrl0IBj0V429c2XtwgobI2g5ZaW/RhJnQX/Xv9HtIJPA+ufw+oCj61
-	 +DWfJqm/U35Fiq3YmCB0hMqHTg4BhpKBzLGjUVLkAG8c3iX1XTNM7TTSSfs1NqvRlN
-	 QtwqUZmHuek5X6bCtWIveyFW45QyozNCugTcV7FKP8v9Z5Sw93aWz3tm0ooVa1xX5U
-	 z8YFtBqJbxLAw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 8F3FD15C0CB5; Sat, 13 Apr 2024 22:04:57 -0400 (EDT)
-Date: Sat, 13 Apr 2024 22:04:57 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBgK/GzeZqmrOx0ewrD/3peaM1b676i9ElZh6eyrOADe1n8vezweu0alJEOrByyFXdzhJt4FeLWAfurkA/WJ5rsnRaZPke/+gqeTQP1N2D0i8AXI3m8XzJcmVnZ+behTScF5IUQRSuyZjgsa4CxySQtpBquske2JUkGxD4gPANc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ARI3Q+Sv; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5V6xLcv+SsxTZP7oJclkFu6nQWt0ZpiIb5AqX82jvD8=; b=ARI3Q+SvOz6qC0vz7y43WZP8uU
+	RNYEQPok23aMqE1n9XOIj6Dr5tMt4lfz4oQOoLXAlLYRTrqB52NJNs1Gkx4NLrjr8w5mrpVxzIpVx
+	opoZFDLoGieAzjpayVi3Vki5mwyafXKzSb8xGXKiUNCH65n9LMWhwq1e4+PeyCGw1WBb1uEwh1AeX
+	LZOg0mszXMxVLyuyTITFh4Xx23W2LpVPxyEt2gqJbUSLYNRQKZ5+F6XoNTAWX3Dm0WHDWcuLm4aou
+	rQDRNQrZQgQhDi4byyeJ1PAXjoSAGkYmPMbCERWj48IB44PaDGnk4BJMy6LZ687QJ6/j3eJP9uvUO
+	aeWH9f7g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rvpPP-00BsG6-0B;
+	Sun, 14 Apr 2024 02:15:55 +0000
+Date: Sun, 14 Apr 2024 03:15:55 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
 To: Andreas Dilger <adilger@dilger.ca>
 Cc: Nam Cao <namcao@linutronix.de>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Conor Dooley <conor@kernel.org>
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, Theodore Ts'o <tytso@mit.edu>,
+	Ext4 Developers List <linux-ext4@vger.kernel.org>,
+	Conor Dooley <conor@kernel.org>
 Subject: Re: riscv32 EXT4 splat, 6.8 regression?
-Message-ID: <20240414020457.GI187181@mit.edu>
+Message-ID: <20240414021555.GQ2118490@ZenIV>
 References: <878r1ibpdn.fsf@all.your.base.are.belong.to.us>
  <20240413164318.7260c5ef@namcao>
  <22E65CA5-A2C0-44A3-AB01-7514916A18FC@dilger.ca>
@@ -74,21 +69,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <22E65CA5-A2C0-44A3-AB01-7514916A18FC@dilger.ca>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
 On Sat, Apr 13, 2024 at 07:46:03PM -0600, Andreas Dilger wrote:
-> This looks like a straight-forward mathematical substitution of "dlimit"
-> with "search_buf + buf_size" and rearranging of the terms to make the
-> while loop offset "zero based" rather than "address based" and would
-> avoid overflow if "search_buf" was within one 4kB block of overflow:
-> 
->    dlimit = search_buf + buf_size = 0xfffff000 + 0x1000 = 0x00000000
 
-Umm... maybe, but does riscv32 actually have a memory map where a
-kernel page would actually have an address in high memory like that?
-That seems.... unusual.
+> As to whether the 0xfffff000 address itself is valid for riscv32 is
+> outside my realm, but given that RAM is cheap it doesn't seem unlikely
+> to have 4GB+ of RAM and want to use it all.  The riscv32 might consider
+> reserving this page address from allocation to avoid similar issues in
+> other parts of the code, as is done with the NULL/0 page address.
 
-If we have a reliable reproduction, can someone actually printk the
-address or test to see if this theory is correct?
+Not a chance.  *Any* page mapped there is a serious bug on any 32bit
+box.  Recall what ERR_PTR() is...
 
-	   	       	       - Ted
+On any architecture the virtual addresses in range (unsigned long)-512..
+(unsigned long)-1 must never resolve to valid kernel objects.
+In other words, any kind of wraparound here is asking for an oops on
+attempts to access the elements of buffer - kernel dereference of
+(char *)0xfffff000 on a 32bit box is already a bug.
+
+It might be getting an invalid pointer, but arithmetical overflows
+are irrelevant.
 
