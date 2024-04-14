@@ -1,92 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-16885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291C18A4150
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 10:41:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2058A41FF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 13:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4312820DE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 08:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0841E1F2132C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 11:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C9F225D6;
-	Sun, 14 Apr 2024 08:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0963610A;
+	Sun, 14 Apr 2024 11:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="McePP7BR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B1C15E9B
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Apr 2024 08:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C5A23759
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Apr 2024 11:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713084066; cv=none; b=tVJ5VDH3Cu5oXhQbaozHMbJ9i+dYh8IgzwMOCG05F0jI9ZJpOtYN+5OdcgVMoNT7Hpuj8o17KI1qUcCzT8BNcH7HOPQ3eJt0F5zqCV/STgMU01sc5PzlbKaWnCnqgYGD4Kk6Q/oXvAmQYbqRjxGVGdgIMF0LtNI+y17gGyrpfuE=
+	t=1713092971; cv=none; b=H/x3Vd/vzM4tj3hrKZxGua8ZMJBd5mET7A9+otksXSO2iZPE7NcJoE4JQkJpDS2E3qhY7S/kRShu+JwutViILRJ6f/t5RDuHV/vRGRPqgJxWE3meKJdBN0GziBzvDPJf/+VwsCFfgfSUNvO8wZHlCETnPNUaoqqOTJlQFeDoIJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713084066; c=relaxed/simple;
-	bh=dZAnNFSFXpH82xQIjtfXvnRg328Zk2sD5+LoAz3HECw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=n9x8Owl9+razpuNZqN7TIntCtGASjoD1M5bcHoqi3ZdrWXGi5PK/WbwffTH3GcmETnH+QVEteui/XJEwXalwxleh3hnXVByMsUMt2g9HDsVsosLioHhUE7ib8HIzasIjsoNZeY1wBKeYX8aKYzDz3Vc4NlpYFCvedWW4fNuzrXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7d6bf30c9e3so182455339f.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Apr 2024 01:41:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713084064; x=1713688864;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rLBkUcPmuLzb3F8ivPr5HzBIa58niQNYwzeMWHMDr4=;
-        b=rEIYtAYs1uGixfBUXMXAPI0VXsck8KP0MhxJmbPaTKRYRS+sxDyhCZ4wi/BvAE+haC
-         G73ZyjBVTT4oyNPfGlZ4YWdow6qEE9M+aWshrV/VVE33hOTD6Issyo3Qg7AlBwXWxUOz
-         k/467+ALfp6VUKVxtINeJ24N45jy0mhm0qdpJ/AQIhP2v3Hv+oqoOsfb1eAwrZ9ZLt/n
-         dxBgyIKsLfA+0gW4szojFWPr02w716d+i271K+3lC80o5CmchRQfbNixCc5RWo1e7crU
-         OyzdJYuQl+rCF24FKyDqI76L7XxiJZyAo2V3SLNlo4YkYuxzhX7cK2ktaGOEQJH78iDP
-         EzjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4mKZ8f0fDL/9xUheMHYNW0B0MhfIxRCYWzZZ6x7+y1iDcM1/GJCILR7+siPz57U//XFkk+Rb8z8dsDg29b4cQkjD3MBAUy83vmtp+2Q==
-X-Gm-Message-State: AOJu0YwjE/o3wYR+sYBp+UvL1JyqcgHBc2s+2ZE66jpvJQVpvVQEqGoh
-	FKW4QmHgmi6nwqZT2FWS2Ajl7fxDBfe55F4tGWd+iMzQ/6k7e5sJru231KIETtVz591ngyYJkD9
-	OLk7yWwGm7wQR++xHGsMZfcvefl2rZUESOTjId8uEX+2SVqCEgQoUHe8=
-X-Google-Smtp-Source: AGHT+IGY7ePPYppgtdO3jmP9A+EE39pQbXeoHylEBaXuVHNz7j0jnXeYz7Rdw489ll2vV7cDrFRmcDCoGjq9frsx5BdPhmNy8v5Y
+	s=arc-20240116; t=1713092971; c=relaxed/simple;
+	bh=seFK/L5TpeVanGLobB6XLc7+Hnht6QgMMY0Q8XYqJnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=a/zItvvKGdS6h6Ci+YQVy9n4jp5Qj9/wfmKaeVXvXxLmqV8B6ESgk8M7gbSJDf56wa32irbL20LDmdyhlhcET8exbG+oUda68ghL2LBUJAqjv1ePxxzAZY2Zz0aI+IW7IIH899DbHb/gdjeFVqLED2trdSWsh0qCUeXI7h4cnDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=McePP7BR; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=vZG5wWPPgn+Ywzu2fSLro+xyXEKnLiAa5+PAkmLidVM=; b=McePP7BRdJYbzGhfidcm0awRFC
+	nZmw+ytJcZW8GH2FmDG50Q03QPA75qMmx5PgIXnjCdf8p7PWKUyNZvhCIziWRGIC+Y+3gvYN+Qu2u
+	fnyVCyPBdhDAXW+1+PLQ/EnjuiZUuoNhIOSsEVZ6g8d+iw7rQL/34ihpg/OKt7i3LWQVxg2B/VuOO
+	/8wC75+o7SJ71cqZOsOYJzMGjaEwLf/+BRDq2gTGGPP0Bm4v/0lPplao3k7d1qn7tv1Jxjb3rBPPD
+	c9/YTd4f7DnTPw6BWyqL81Y9gwNNJPAudPkqEG2pJsj+INmMyvMjGeJg1PrOCIm04Y3ssRpjZ9TsS
+	bJHTZYqA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rvxjh-00C6ds-2N;
+	Sun, 14 Apr 2024 11:09:25 +0000
+Date: Sun, 14 Apr 2024 12:09:25 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: [git pull] fix lockdep false positives around sysfs/overlayfs
+ interactions
+Message-ID: <20240414110925.GS2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1985:b0:36a:3dda:d71c with SMTP id
- g5-20020a056e02198500b0036a3ddad71cmr508822ilf.5.1713084063013; Sun, 14 Apr
- 2024 01:41:03 -0700 (PDT)
-Date: Sun, 14 Apr 2024 01:41:02 -0700
-In-Reply-To: <0000000000000946cf05f34e12c2@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000bef2806160a776f@google.com>
-Subject: Re: [syzbot] [btrfs?] INFO: task hung in lock_extent
-From: syzbot <syzbot+eaa05fbc7563874b7ad2@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, fdmanana@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-syzbot suspects this issue was fixed by commit:
+syzbot has uncovered a class of lockdep false positives for
+setups with sysfs being one of the backing layers in overlayfs.
+The root cause is that of->mutex allocated when opening
+a sysfs file read-only (which overlayfs might do) is confused
+with of->mutex of a file opened writable (held in write to sysfs
+file, which overlayfs won't do).
 
-commit b0ad381fa7690244802aed119b478b4bdafc31dd
-Author: Josef Bacik <josef@toxicpanda.com>
-Date:   Mon Feb 12 16:56:02 2024 +0000
+Assigning them separate lockdep classes fixes that bunch and it's
+obviously safe.
 
-    btrfs: fix deadlock with fiemap and extent locking
+The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=101316f5180000
-start commit:   7521f258ea30 Merge tag 'mm-hotfixes-stable-2024-02-10-11-1..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=89a5d896b14c4565
-dashboard link: https://syzkaller.appspot.com/bug?extid=eaa05fbc7563874b7ad2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c0d1e0180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10aff5b8180000
+  Linux 6.9-rc3 (2024-04-07 13:22:46 -0700)
 
-If the result looks correct, please mark the issue as fixed by replying with:
+are available in the Git repository at:
 
-#syz fix: btrfs: fix deadlock with fiemap and extent locking
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-sysfs-annotation-fix
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+for you to fetch changes up to 16b52bbee4823b01ab7fe3919373c981a38f3797:
+
+  kernfs: annotate different lockdep class for of->mutex of writable files (2024-04-14 06:55:46 -0400)
+
+----------------------------------------------------------------
+	Get rid of lockdep false positives around sysfs/overlayfs
+
+----------------------------------------------------------------
+Amir Goldstein (1):
+      kernfs: annotate different lockdep class for of->mutex of writable files
+
+ fs/kernfs/file.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
