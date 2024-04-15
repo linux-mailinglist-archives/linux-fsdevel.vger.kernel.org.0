@@ -1,54 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-16943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A0D8A5586
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 16:48:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6888A55A2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 16:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6588C1F22909
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 14:48:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F26E11C21F19
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 14:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8661EEE3;
-	Mon, 15 Apr 2024 14:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA74874E3A;
+	Mon, 15 Apr 2024 14:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLtcVAHw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyS0H7E3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02DA6CDBA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 14:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F522433C9;
+	Mon, 15 Apr 2024 14:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713192493; cv=none; b=Bfhn+Wnwx9XX5ZinGf8PlpWZFxUNOS4Yz4QwUxDxlZ9Fo++DOtp/ryEuZTqzxgE4Cpzy1FcV6hE0YMjRSXFFIg9ZWDtBpxoCXDh8L/vGpgrZkt5Ekw0vZ4hfOGFnFcISJzHvrUATH1r1HA8ZrxsNs96ec3mIh/rvQR8/HMH7T6s=
+	t=1713192829; cv=none; b=iVH8PZzDmLYW+U7uPOCXirZ+YghrLcJjmsQRC+5sVEjsVuunldGMisLwL6A2GfgbcwtQGCjUEKYEPiRW628ylE+uv0WMkajM5Qc6icEKQ2bluDU4onvv0+HEiEymmsBSxUu+pYV47SG4X0HxDswwvXgsez6cC7tDO23IbUvxgL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713192493; c=relaxed/simple;
-	bh=dk3g34zDF+RgmPe2sp7iEYG0Bd2vOKhongDBGq6RZWc=;
+	s=arc-20240116; t=1713192829; c=relaxed/simple;
+	bh=RnxLzAEkXSaKiwpNETr4zwu6nWkTxfTBo96/CP3i0PY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JHo7lPKZTrOTrkWow1hPP93M6ObqiZDM4hvpFEr55gd0NDLSKal4bu7+phspDvXVVyrQ2Eah3DCrohrWE/O16f9r/BBzWO3ZOlOVZSxb7vwazUgzCFL85+AOLosKtooJYqnfEfzVK2HlFWkP1to4AQ64RUrrAjb3KhtEDlA+XgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLtcVAHw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225F4C113CC;
-	Mon, 15 Apr 2024 14:48:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tCaod5pTjJ0bGRlbWt9fu7O99fP+v+NJkdwmuZ0pDMNVYfl8HU3HeutwxXPhpa4mJ/FYLWOu6E5gdIDGhmyO/ghJp7wpzyhtMNlZqUQSv2VH1XiDQUqiXwMDhfOvwkmFyr85FedQ1FIo3RvxiaTaNahJ+b8ZXvJ2B2fNY1eKFJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyS0H7E3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C46C113CC;
+	Mon, 15 Apr 2024 14:53:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713192493;
-	bh=dk3g34zDF+RgmPe2sp7iEYG0Bd2vOKhongDBGq6RZWc=;
+	s=k20201202; t=1713192828;
+	bh=RnxLzAEkXSaKiwpNETr4zwu6nWkTxfTBo96/CP3i0PY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FLtcVAHwhksdTnf9GbV+kMMaZemaUwhO+xYGvMoEBH/9EKjwIei8DRGnrfP7uw5rA
-	 q0wApLy7iA8Xx1MfQRpD3HySl6zhdFJTf6ilcGLMWI6ZivqtFhTnXE/gOCbsnWl1Pw
-	 DDxUdBq45Co5+GWToL+6Dr+N4Htq28ns8U4jaHJ8JW/my9tamyPiEMnzaWnACIGQdW
-	 zmK4WmNn2FCxa5/xuKA5yLLIzQhxv9ruIvI6ybdEijYe6d7hZzakRm7LvdaLubX7dU
-	 qrClrkx3JNnbGMYiqC2zYfN0LVx8+TQLXAu5jSR/4PzRdL1lG+UJ9YQEaQow9lJ1Dw
-	 LCf/QqDaU8fcg==
-Date: Mon, 15 Apr 2024 16:48:09 +0200
+	b=HyS0H7E3bDxAj5JL40daKZsxMQ3N0wG9udAe7Er0biMIpT2uVlD+hYtNWYbuwv1ns
+	 eMNQraTE+5ZVEA74XkRi+X+IOqUOffxIzA00s6rwoJ8eQnvGXlOOL6EkMv3sUGmHtd
+	 GHL5wYWuUsmxC8gMofEFHpqEam3Pf5ifli5KjG8o3WpISc1nWe6GLvIBUu9wP1Yqvg
+	 m/qg5lHLWBPoGi+1s5HXrZbwxyN4KBp9HrH1R/rM8JYAk6K+SLtzWjt38pQ20ECVl4
+	 lyfV3XNhTocKEHsOn8Z1V9gGxUxGIHKe7qvy11SwNzZDTu9p0K+XoG15zitObrMRbD
+	 YEFccTbjmn81w==
+Date: Mon, 15 Apr 2024 16:53:42 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: cel@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] Fix shmem_rename2 directory offset calculation
-Message-ID: <20240415-ratten-verifizieren-62efe5e9df74@brauner>
-References: <20240411182611.203328-1-cel@kernel.org>
- <ZhlFQ6HFF5p9qUaX@tissot.1015granger.net>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>, 
+	dm-devel@lists.linux.dev, Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH v2 04/34] md: port block device access to file
+Message-ID: <20240415-neujahr-schummeln-c334634ab5ad@brauner>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-4-adbd023e19cc@kernel.org>
+ <Zhzyu6pQYkSNgvuh@fedora>
+ <20240415-haufen-demolieren-8c6da8159586@brauner>
+ <Zh07Sc3lYStOWK8J@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,34 +63,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZhlFQ6HFF5p9qUaX@tissot.1015granger.net>
+In-Reply-To: <Zh07Sc3lYStOWK8J@fedora>
 
-On Fri, Apr 12, 2024 at 10:29:23AM -0400, Chuck Lever wrote:
-> On Thu, Apr 11, 2024 at 02:26:09PM -0400, cel@kernel.org wrote:
-> > From: Chuck Lever <chuck.lever@oracle.com>
+On Mon, Apr 15, 2024 at 10:35:53PM +0800, Ming Lei wrote:
+> On Mon, Apr 15, 2024 at 02:35:17PM +0200, Christian Brauner wrote:
+> > On Mon, Apr 15, 2024 at 05:26:19PM +0800, Ming Lei wrote:
+> > > Hello,
+> > > 
+> > > On Tue, Jan 23, 2024 at 02:26:21PM +0100, Christian Brauner wrote:
+> > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > > ---
+> > > >  drivers/md/dm.c               | 23 +++++++++++++----------
+> > > >  drivers/md/md.c               | 12 ++++++------
+> > > >  drivers/md/md.h               |  2 +-
+> > > >  include/linux/device-mapper.h |  2 +-
+> > > >  4 files changed, 21 insertions(+), 18 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > > > index 8dcabf84d866..87de5b5682ad 100644
+> > > > --- a/drivers/md/dm.c
+> > > > +++ b/drivers/md/dm.c
+> > > 
+> > > ...
+> > > 
+> > > > @@ -775,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
+> > > >  {
+> > > >  	if (md->disk->slave_dir)
+> > > >  		bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
+> > > > -	bdev_release(td->dm_dev.bdev_handle);
+> > > > +	fput(td->dm_dev.bdev_file);
+> > > 
+> > > The above change caused regression on 'dmsetup remove_all'.
+> > > 
+> > > blkdev_release() is delayed because of fput(), so dm_lock_for_deletion
+> > > returns -EBUSY, then this dm disk is skipped in remove_all().
+> > > 
+> > > Force to mark DMF_DEFERRED_REMOVE might solve it, but need our device
+> > > mapper guys to check if it is safe.
+> > > 
+> > > Or other better solution?
 > > 
-> > The existing code in shmem_rename2() allocates a fresh directory
-> > offset value when renaming over an existing destination entry. User
-> > space does not expect this behavior. In particular, applications
-> > that rename while walking a directory can loop indefinitely because
-> > they never reach the end of the directory.
-> > 
-> > The first patch in this series corrects that problem, which exists
-> > in v6.6 - current. The second patch is a clean-up and can be deferred
-> > until v6.10.
-> > 
-> > Chuck Lever (2):
-> >   shmem: Fix shmem_rename2()
-> >   libfs: Clean up the simple_offset API
-> > 
-> >  fs/libfs.c         | 89 ++++++++++++++++++++++++++++++++++------------
-> >  include/linux/fs.h | 10 +++---
-> >  mm/shmem.c         | 17 +++++----
-> >  3 files changed, 81 insertions(+), 35 deletions(-)
+> > Yeah, I think there is. You can just switch all fput() instances in
+> > device mapper to bdev_fput() which is mainline now. This will yield the
+> > device and make it able to be reclaimed. Should be as simple as the
+> > patch below. Could you test this and send a patch based on this (I'm on
+> > a prolonged vacation so I don't have time right now.):
 > 
-> A cursory pass with fstests seemed to work fine, but a number of
-> tests in the git regression suite are failing. Please feel free
-> to send review comments, but do not merge this series yet.
+> Unfortunately it doesn't work.
+> 
+> Here the problem is that blkdev_release() is delayed, which changes
+> 'dmsetup remove_all' behavior, and causes that some of dm disks aren't
+> removed.
+> 
+> Please see dm_lock_for_deletion() and dm_blk_open()/dm_blk_close().
 
-Ok!
+So you really need blkdev_release() itself to be synchronous? Groan, in
+that case use __fput_sync() instead of fput() which ensures that this
+file is closed synchronously.
 
