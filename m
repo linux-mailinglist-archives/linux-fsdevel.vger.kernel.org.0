@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-16996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475418A5EA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:44:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3168A5EAB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04797285004
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:44:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65854285022
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C101598E7;
-	Mon, 15 Apr 2024 23:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF04B159206;
+	Mon, 15 Apr 2024 23:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqDCb3Y/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThlyF6c6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB1D156974;
-	Mon, 15 Apr 2024 23:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE301DA21;
+	Mon, 15 Apr 2024 23:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713224637; cv=none; b=kgbgiFp3swi7LB3U1XqPq0P/Wgt+rGCKChTdcvmnpAWZ+0lUe4X43p+hEfaPi72H2jHHSlWTG2BP1slUrUwZsDxhHhJpgdW/Xq+WJYUnuagnQ7JDFV1YapdtYLHndm9605fqSMkNzd5Mpe6NX10J+i87aNyq9ohNduWER+NtqTE=
+	t=1713224652; cv=none; b=aOfXa7nYbS5pmfzePBNartQw1c+RW7HqyV0HSlV9ewUU7xTIYZ65zFLXB8n+C8p95hspFsZ4phFeAbMesB44gOTS/NobumCOuHZjRGs1rVIn+dl/6bJ6kKFP9iE5rnbQ+4l4swyVl+bnrg63i1nfK55WQfHbsGlSldPt1vuF+dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713224637; c=relaxed/simple;
-	bh=I1OroHR2iUihbZ6Q1Ddoxzz8UtHzYd2KwBUbDMzUnQU=;
+	s=arc-20240116; t=1713224652; c=relaxed/simple;
+	bh=31/dOC20N1uJAGlaHA/vRg03Sa20UmnxA8pmCW1tYds=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NO1ixWE1lCnCjaYdQDEyIqc6m1EDnWjZvkqBGvx/NYkmIcwvYhCrxiyFH+ejZZrPs+D5MeemVf16JBwo+32hz5Q4fRhV1uIEHP+8OMmCyZcLDgKktrvmqxu/2fWrwOE6Rfs+p4Bz83c0BJFfUiYGDxO1ZTAK5T2kjK7SK/Fvle0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqDCb3Y/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 687A8C113CC;
-	Mon, 15 Apr 2024 23:43:56 +0000 (UTC)
+	 MIME-Version:Content-Type; b=gcr8OjZwFybsuP7uiXCwplG1rhwmwiisiwxdM2oNSye0ACkJfd5Axe/u9YduYUWqsFcxYwyJMy8Qf4f7dqChCayBYJt440I79GoTyRrg9DwqDPPBEk23O3eKwwN8aKd3Phxi297m/RwFC4SGSeESV7AfaiwnKepF4AOZIObNS3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThlyF6c6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 152E4C113CC;
+	Mon, 15 Apr 2024 23:44:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713224636;
-	bh=I1OroHR2iUihbZ6Q1Ddoxzz8UtHzYd2KwBUbDMzUnQU=;
+	s=k20201202; t=1713224652;
+	bh=31/dOC20N1uJAGlaHA/vRg03Sa20UmnxA8pmCW1tYds=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=BqDCb3Y/MT57ztK2HuMz24qTRNciJzqoGiO+6DbU47Y2gqrCvpR7bLRPCdih7Qo5w
-	 Y94wgvBZ/rXPY1mg6pFd98UKYB3e9bEnTU9Q0uy/DbuEno5XxJ/VUDzrtN5pQO40Gb
-	 DEOau6GwqV4yvjRBXxTZ+5qrlB9sts/3/P/nQprbfAZgR3M1BP9NV7ha37+NFnjBkk
-	 x5yWx6NqcxXPdL6epdJrdqNAa2YArQ/zFe+2WTznUvoWTa+89FrdzvI20S500cTu9C
-	 jOivlfMtZA1+G5nAhe9smQxyuYP5kebhtU11BRv1XBGOOwX9iNU+zilS5RLpPf6rjC
-	 kKtN+Td7WZt+A==
-Date: Mon, 15 Apr 2024 16:43:55 -0700
-Subject: [PATCH 12/15] xfs: support non-power-of-two rtextsize with
- exchange-range
+	b=ThlyF6c6WLYzqEsKz5jKn4QDFggUHj8AZr8VEikrAP++G7JI3tiFHYTsI1lhWpL+Q
+	 rIxum/66ZXtLnBQk+G06qeEVZYQtwK5IwVL/RIEnifpW6dTSYIlXaF0xbGgPLdmCPB
+	 UkXb6holiPUdSa937hGcYnd7sXvP2+TkYdSTJiBHtIAudfG57dF2NSFp+1chccW83j
+	 g7/UVPVXlgF+RnUkFZ9HlXuy12vWbWAjiw3uX5xE5jSAMbgi2hoiyCZh4V1mMS46tZ
+	 bg3EZ5ughu9BGPQjevjFlKbxHwfC/bJKWkHdsubg7rmYw66U4H5FJw90uVnJZ+0NwV
+	 DuUay4yXiK4Dw==
+Date: Mon, 15 Apr 2024 16:44:11 -0700
+Subject: [PATCH 13/15] xfs: capture inode generation numbers in the ondisk
+ exchmaps log item
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: chandanbabu@kernel.org, djwong@kernel.org
 Cc: Christoph Hellwig <hch@lst.de>, hch@lst.de, linux-fsdevel@vger.kernel.org,
  linux-xfs@vger.kernel.org
-Message-ID: <171322381424.87355.16122396919554607590.stgit@frogsfrogsfrogs>
+Message-ID: <171322381440.87355.12149121920420626034.stgit@frogsfrogsfrogs>
 In-Reply-To: <171322381182.87355.15534989930482135103.stgit@frogsfrogsfrogs>
 References: <171322381182.87355.15534989930482135103.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -63,133 +63,141 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-The generic exchange-range alignment checks use (fast) bitmasking
-operations to perform block alignment checks on the exchange parameters.
-Unfortunately, bitmasks require that the alignment size be a power of
-two.  This isn't true for realtime devices with a non-power-of-two
-extent size, so we have to copy-pasta the generic checks using long
-division for this to work properly.
+Per some very late review comments, capture the generation numbers of
+both inodes involved in a file content exchange operation so that we
+don't accidentally target files with have been reallocated.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/xfs/xfs_exchrange.c |   89 ++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 82 insertions(+), 7 deletions(-)
+ fs/xfs/libxfs/xfs_log_format.h  |    2 ++
+ fs/xfs/libxfs/xfs_log_recover.h |    2 ++
+ fs/xfs/xfs_exchmaps_item.c      |   25 ++++++++++++++++++++-----
+ fs/xfs/xfs_log_recover.c        |   31 +++++++++++++++++++++++++++++++
+ 4 files changed, 55 insertions(+), 5 deletions(-)
 
 
-diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
-index 90baf12bd97f..c8a655c92c92 100644
---- a/fs/xfs/xfs_exchrange.c
-+++ b/fs/xfs/xfs_exchrange.c
-@@ -504,6 +504,75 @@ xfs_exchange_range_finish(
- 	return file_remove_privs(fxr->file2);
+diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
+index 8dbe1f997dfd..accba2acd623 100644
+--- a/fs/xfs/libxfs/xfs_log_format.h
++++ b/fs/xfs/libxfs/xfs_log_format.h
+@@ -896,6 +896,8 @@ struct xfs_xmi_log_format {
+ 
+ 	uint64_t		xmi_inode1;	/* inumber of first file */
+ 	uint64_t		xmi_inode2;	/* inumber of second file */
++	uint32_t		xmi_igen1;	/* generation of first file */
++	uint32_t		xmi_igen2;	/* generation of second file */
+ 	uint64_t		xmi_startoff1;	/* block offset into file1 */
+ 	uint64_t		xmi_startoff2;	/* block offset into file2 */
+ 	uint64_t		xmi_blockcount;	/* number of blocks */
+diff --git a/fs/xfs/libxfs/xfs_log_recover.h b/fs/xfs/libxfs/xfs_log_recover.h
+index 47b758b49cb3..521d327e4c89 100644
+--- a/fs/xfs/libxfs/xfs_log_recover.h
++++ b/fs/xfs/libxfs/xfs_log_recover.h
+@@ -123,6 +123,8 @@ bool xlog_is_buffer_cancelled(struct xlog *log, xfs_daddr_t blkno, uint len);
+ 
+ int xlog_recover_iget(struct xfs_mount *mp, xfs_ino_t ino,
+ 		struct xfs_inode **ipp);
++int xlog_recover_iget_handle(struct xfs_mount *mp, xfs_ino_t ino, uint32_t gen,
++		struct xfs_inode **ipp);
+ void xlog_recover_release_intent(struct xlog *log, unsigned short intent_type,
+ 		uint64_t intent_id);
+ int xlog_alloc_buf_cancel_table(struct xlog *log);
+diff --git a/fs/xfs/xfs_exchmaps_item.c b/fs/xfs/xfs_exchmaps_item.c
+index a40216f33214..264a121c5e16 100644
+--- a/fs/xfs/xfs_exchmaps_item.c
++++ b/fs/xfs/xfs_exchmaps_item.c
+@@ -231,7 +231,9 @@ xfs_exchmaps_create_intent(
+ 	xlf = &xmi_lip->xmi_format;
+ 
+ 	xlf->xmi_inode1 = xmi->xmi_ip1->i_ino;
++	xlf->xmi_igen1 = VFS_I(xmi->xmi_ip1)->i_generation;
+ 	xlf->xmi_inode2 = xmi->xmi_ip2->i_ino;
++	xlf->xmi_igen2 = VFS_I(xmi->xmi_ip2)->i_generation;
+ 	xlf->xmi_startoff1 = xmi->xmi_startoff1;
+ 	xlf->xmi_startoff2 = xmi->xmi_startoff2;
+ 	xlf->xmi_blockcount = xmi->xmi_blockcount;
+@@ -368,14 +370,25 @@ xfs_xmi_item_recover_intent(
+ 	/*
+ 	 * Grab both inodes and set IRECOVERY to prevent trimming of post-eof
+ 	 * mappings and freeing of unlinked inodes until we're totally done
+-	 * processing files.
++	 * processing files.  The ondisk format of this new log item contains
++	 * file handle information, which is why recovery for other items do
++	 * not check the inode generation number.
+ 	 */
+-	error = xlog_recover_iget(mp, xlf->xmi_inode1, &ip1);
+-	if (error)
++	error = xlog_recover_iget_handle(mp, xlf->xmi_inode1, xlf->xmi_igen1,
++			&ip1);
++	if (error) {
++		XFS_CORRUPTION_ERROR(__func__, XFS_ERRLEVEL_LOW, mp, xlf,
++				sizeof(*xlf));
+ 		return ERR_PTR(error);
+-	error = xlog_recover_iget(mp, xlf->xmi_inode2, &ip2);
+-	if (error)
++	}
++
++	error = xlog_recover_iget_handle(mp, xlf->xmi_inode2, xlf->xmi_igen2,
++			&ip2);
++	if (error) {
++		XFS_CORRUPTION_ERROR(__func__, XFS_ERRLEVEL_LOW, mp, xlf,
++				sizeof(*xlf));
+ 		goto err_rele1;
++	}
+ 
+ 	req->ip1 = ip1;
+ 	req->ip2 = ip2;
+@@ -485,6 +498,8 @@ xfs_exchmaps_relog_intent(
+ 
+ 	new_xlf->xmi_inode1	= old_xlf->xmi_inode1;
+ 	new_xlf->xmi_inode2	= old_xlf->xmi_inode2;
++	new_xlf->xmi_igen1	= old_xlf->xmi_igen1;
++	new_xlf->xmi_igen2	= old_xlf->xmi_igen2;
+ 	new_xlf->xmi_startoff1	= old_xlf->xmi_startoff1;
+ 	new_xlf->xmi_startoff2	= old_xlf->xmi_startoff2;
+ 	new_xlf->xmi_blockcount	= old_xlf->xmi_blockcount;
+diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
+index 1e5ba95adf2c..b445e8ce4a7d 100644
+--- a/fs/xfs/xfs_log_recover.c
++++ b/fs/xfs/xfs_log_recover.c
+@@ -1767,6 +1767,37 @@ xlog_recover_iget(
+ 	return 0;
  }
  
 +/*
-+ * Check the alignment of an exchange request when the allocation unit size
-+ * isn't a power of two.  The generic file-level helpers use (fast)
-+ * bitmask-based alignment checks, but here we have to use slow long division.
++ * Get an inode so that we can recover a log operation.
++ *
++ * Log intent items that target inodes effectively contain a file handle.
++ * Check that the generation number matches the intent item like we do for
++ * other file handles.  Log intent items defined after this validation weakness
++ * was identified must use this function.
 + */
-+static int
-+xfs_exchrange_check_rtalign(
-+	const struct xfs_exchrange	*fxr,
-+	struct xfs_inode		*ip1,
-+	struct xfs_inode		*ip2,
-+	unsigned int			alloc_unit)
++int
++xlog_recover_iget_handle(
++	struct xfs_mount	*mp,
++	xfs_ino_t		ino,
++	uint32_t		gen,
++	struct xfs_inode	**ipp)
 +{
-+	uint64_t			length = fxr->length;
-+	uint64_t			blen;
-+	loff_t				size1, size2;
++	struct xfs_inode	*ip;
++	int			error;
 +
-+	size1 = i_size_read(VFS_I(ip1));
-+	size2 = i_size_read(VFS_I(ip2));
++	error = xlog_recover_iget(mp, ino, &ip);
++	if (error)
++		return error;
 +
-+	/* The start of both ranges must be aligned to a rt extent. */
-+	if (!isaligned_64(fxr->file1_offset, alloc_unit) ||
-+	    !isaligned_64(fxr->file2_offset, alloc_unit))
-+		return -EINVAL;
++	if (VFS_I(ip)->i_generation != gen) {
++		xfs_irele(ip);
++		return -EFSCORRUPTED;
++	}
 +
-+	if (fxr->flags & XFS_EXCHANGE_RANGE_TO_EOF)
-+		length = max_t(int64_t, size1 - fxr->file1_offset,
-+					size2 - fxr->file2_offset);
-+
-+	/*
-+	 * If the user wanted us to exchange up to the infile's EOF, round up
-+	 * to the next rt extent boundary for this check.  Do the same for the
-+	 * outfile.
-+	 *
-+	 * Otherwise, reject the range length if it's not rt extent aligned.
-+	 * We already confirmed the starting offsets' rt extent block
-+	 * alignment.
-+	 */
-+	if (fxr->file1_offset + length == size1)
-+		blen = roundup_64(size1, alloc_unit) - fxr->file1_offset;
-+	else if (fxr->file2_offset + length == size2)
-+		blen = roundup_64(size2, alloc_unit) - fxr->file2_offset;
-+	else if (!isaligned_64(length, alloc_unit))
-+		return -EINVAL;
-+	else
-+		blen = length;
-+
-+	/* Don't allow overlapped exchanges within the same file. */
-+	if (ip1 == ip2 &&
-+	    fxr->file2_offset + blen > fxr->file1_offset &&
-+	    fxr->file1_offset + blen > fxr->file2_offset)
-+		return -EINVAL;
-+
-+	/*
-+	 * Ensure that we don't exchange a partial EOF rt extent into the
-+	 * middle of another file.
-+	 */
-+	if (isaligned_64(length, alloc_unit))
-+		return 0;
-+
-+	blen = length;
-+	if (fxr->file2_offset + length < size2)
-+		blen = rounddown_64(blen, alloc_unit);
-+
-+	if (fxr->file1_offset + blen < size1)
-+		blen = rounddown_64(blen, alloc_unit);
-+
-+	return blen == length ? 0 : -EINVAL;
++	*ipp = ip;
++	return 0;
 +}
 +
- /* Prepare two files to have their data exchanged. */
- STATIC int
- xfs_exchrange_prep(
-@@ -511,6 +580,7 @@ xfs_exchrange_prep(
- 	struct xfs_inode	*ip1,
- 	struct xfs_inode	*ip2)
- {
-+	struct xfs_mount	*mp = ip2->i_mount;
- 	unsigned int		alloc_unit = xfs_inode_alloc_unitsize(ip2);
- 	int			error;
- 
-@@ -520,13 +590,18 @@ xfs_exchrange_prep(
- 	if (XFS_IS_REALTIME_INODE(ip1) != XFS_IS_REALTIME_INODE(ip2))
- 		return -EINVAL;
- 
--	/*
--	 * The alignment checks in the generic helpers cannot deal with
--	 * allocation units that are not powers of 2.  This can happen with the
--	 * realtime volume if the extent size is set.
--	 */
--	if (!is_power_of_2(alloc_unit))
--		return -EOPNOTSUPP;
-+	/* Check non-power of two alignment issues, if necessary. */
-+	if (!is_power_of_2(alloc_unit)) {
-+		error = xfs_exchrange_check_rtalign(fxr, ip1, ip2, alloc_unit);
-+		if (error)
-+			return error;
-+
-+		/*
-+		 * Do the generic file-level checks with the regular block
-+		 * alignment.
-+		 */
-+		alloc_unit = mp->m_sb.sb_blocksize;
-+	}
- 
- 	error = xfs_exchange_range_prep(fxr, alloc_unit);
- 	if (error || fxr->length == 0)
+ /******************************************************************************
+  *
+  *		Log recover routines
 
 
