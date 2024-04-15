@@ -1,68 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-16975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E568A5E46
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:29:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 728398A5E59
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9160B22349
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:29:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2921A1F216EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E281591F8;
-	Mon, 15 Apr 2024 23:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57B7159202;
+	Mon, 15 Apr 2024 23:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMHpyaLW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H91za7sf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF34156F35;
-	Mon, 15 Apr 2024 23:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E39315749D;
+	Mon, 15 Apr 2024 23:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713223734; cv=none; b=cXWA0Qmg4894u/D2WBfLslmT6b/BetLh6jnQNhtWcJofLYjaJ0fAH2uzN9NvE8HEO4YvAERK/8LceJj2r1C7o6Z3nPdduXBR69Jeb/w6kIpneIeGcUgTGjf1FBT+W17+bTVxK+y+lOEPEcfsSGT+h/bJVH1Y1fZtonI4Pczu6YI=
+	t=1713224042; cv=none; b=bE+BdjNFixTuTCr3KxX8P9BCPd4j3plKfqKEhjMVdQUE7vTvny4GlYN0sQV5YVNjJg8mP/I2Q/wFklG6phIxIboSCae/kcPQTMQz3/pFKzJSRBsLXINhoDdcI4wQ5uSW0xRT5217aEEhQbMcSdzdBguFbOkai+0bfQGE+tMRFsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713223734; c=relaxed/simple;
-	bh=t8z87Ip4jFRpsn1iMjSMQLbePeEqhnJSK8LyQ97WBXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Yo0Ja3v8IaEUvEwDNrsdaQNdgTQAQ6mHIFIil8BBXXsCjI/iu9N0O3hldqKSBmCp/53LlMfzas2Gubn1Or63cZzgWUqgi85OqE/vxxWBMQ2FgVF03DlKmHVVreOep0Pb5HE0RrTjS7cboza1PadiGhmP+Ii37k4v17JfkD92FV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMHpyaLW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F49C113CC;
-	Mon, 15 Apr 2024 23:28:53 +0000 (UTC)
+	s=arc-20240116; t=1713224042; c=relaxed/simple;
+	bh=9wjkw4K2cO9LzwYifdhmRt96sjojvF9SAKcBGEWXJ04=;
+	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L1pGWbo+oQ/eodBByglQNGvOzWzdcqqOgvnZXuUFbP2kv7//0uDRsHfK1ldiTrHVT6/e3aI9Qmg13qVPufOq+Xy8tF2LGb5NUnrnRf+lFWMcSf/LKwgX2ggRoQw4p1YPW8bV7MpGO7MFhbuJIW2zaVL9TsLiCQPMBPLK7wYKFGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H91za7sf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D6F6C113CC;
+	Mon, 15 Apr 2024 23:34:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713223733;
-	bh=t8z87Ip4jFRpsn1iMjSMQLbePeEqhnJSK8LyQ97WBXI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kMHpyaLWfdgm8seb2tFe/E2XQTAl3NfBJ1BVEg46Lgi43Q4/AZiqdF0RQV+qEZ4V3
-	 B21r+SD0D6RC0l/ckxTJ7gMNOGJ3j1ICxlEr/bpUyKhNtfxSO0x+v7myjjQ0mfj6AF
-	 SBETdBKGnTLmCI5X8hQg8kSGkX9v723zaBLdBD7okBbMDPGc3EJ3ciD9BjenOPMZPC
-	 dnZ/yWN5fZMl6eUnDos3oNw/N1M/k+oTSIPwVh6nnSdSE1hGr3omoG8hXzCYTZ5EfW
-	 lsY1mcsVnPcdyj6aXmviPWciciJLz444sq5dOyyIq/Nx4LzFkivQ0Dc6xLxyCGls7h
-	 C3t4F2/lD8iyA==
-Date: Mon, 15 Apr 2024 16:28:53 -0700
+	s=k20201202; t=1713224042;
+	bh=9wjkw4K2cO9LzwYifdhmRt96sjojvF9SAKcBGEWXJ04=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=H91za7sfhn4T6jaPhPnyTVlawuRGHQmPrrLT0snbzRqSsWt+C9A8jhUviLlO19YM9
+	 iAKj2MeLu2GreEa+0kitUyfQxpHZN6UfOayMpmRnMCCrFE76W873SAUUGwEQnhPm+0
+	 tm9CFgiFneuN1GFqYhR1U4z8CwezRO0a7KkMA8UQWaubghDjhDmCM4PWHBe3XNwQYF
+	 xReB/e9AsbW6Nj2pr1s5+Kcp3PmyaGqbZkaoLo9XQJUraeWPLJYfuBHRqtCZ2qIl+n
+	 QrY8+bhlQpwgPSFl4v/0RPkbaEYRtI3dhxzvLlW8ElyCySiE9GOAD4TIkZ4AxyCn0h
+	 1okrGVu1G93Lw==
+Date: Mon, 15 Apr 2024 16:34:01 -0700
+Subject: [PATCHSET v30.3 02/16] xfs: refactorings for atomic file content
+ exchanges
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Chandan Babu R <chandanbabu@kernel.org>
-Cc: xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCHBOMB v30.3] xfs: online repair, part 1 is done
-Message-ID: <20240415232853.GE11948@frogsfrogsfrogs>
+To: chandanbabu@kernel.org, djwong@kernel.org
+Cc: Christoph Hellwig <hch@lst.de>, hch@lst.de, linux-fsdevel@vger.kernel.org,
+ linux-xfs@vger.kernel.org
+Message-ID: <171322380710.87068.4499164955656161226.stgit@frogsfrogsfrogs>
+In-Reply-To: <20240415232853.GE11948@frogsfrogsfrogs>
+References: <20240415232853.GE11948@frogsfrogsfrogs>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi everyone,
+Hi all,
 
-I'm about to send pull requests to Chandan for all the fully reviewed
-patchsets that I have in my development tree.  Due to all the recent
-design changes, I have decided to resend all patches to that the list
-can record the final versions of these patches with complete tagging.
+This series applies various cleanups and refactorings to file IO
+handling code ahead of the main series to implement atomic file content
+exchanges.
+
+If you're going to start using this code, I strongly recommend pulling
+from my git trees, which are linked below.
+
+This has been running on the djcloud for months with no problems.  Enjoy!
+Comments and questions are, as always, welcome.
 
 --D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=file-exchange-refactorings-6.10
+---
+Commits in this patchset:
+ * xfs: move inode lease breaking functions to xfs_inode.c
+ * xfs: move xfs_iops.c declarations out of xfs_inode.h
+ * xfs: declare xfs_file.c symbols in xfs_file.h
+ * xfs: create a new helper to return a file's allocation unit
+ * xfs: hoist multi-fsb allocation unit detection to a helper
+ * xfs: refactor non-power-of-two alignment checks
+ * xfs: constify xfs_bmap_is_written_extent
+---
+ fs/xfs/libxfs/xfs_bmap.h |    2 +
+ fs/xfs/xfs_bmap_util.c   |    4 +-
+ fs/xfs/xfs_file.c        |   88 ++++------------------------------------------
+ fs/xfs/xfs_file.h        |   15 ++++++++
+ fs/xfs/xfs_inode.c       |   75 +++++++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_inode.h       |   16 +++++---
+ fs/xfs/xfs_ioctl.c       |    1 +
+ fs/xfs/xfs_iops.c        |    1 +
+ fs/xfs/xfs_iops.h        |    7 ++--
+ fs/xfs/xfs_linux.h       |    5 +++
+ 10 files changed, 121 insertions(+), 93 deletions(-)
+ create mode 100644 fs/xfs/xfs_file.h
+
 
