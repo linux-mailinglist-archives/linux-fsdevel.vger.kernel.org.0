@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-16983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566418A5E88
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:40:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B068A5E8A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B814DB2109E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:40:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F80B1C20A33
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4947A159210;
-	Mon, 15 Apr 2024 23:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89411159208;
+	Mon, 15 Apr 2024 23:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ig08t2Lf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4ZphCCs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DD7156967;
-	Mon, 15 Apr 2024 23:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60FF156974;
+	Mon, 15 Apr 2024 23:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713224433; cv=none; b=VMmcVoT7+7+Fef2oN8+o2HjlU05Ua/wQJRwYp+ODFP3ME+LrS+HTXYM5K7riq/aO7monNeo0By50qa2BTof7ET9fDfbNUOcHzKm1ppfro5Y9ZN1rLRcFEBVMXG1mmEwm9kdXM4VYf6ZLAuDxqmW+6H6s+N81d2Cg1fejOlGtHyY=
+	t=1713224449; cv=none; b=R9r1QJWkUQ6wdA29CscwIMkFfdBXTErVZpBuXQ52jq+1IEHkqKPmTYGPzBbEfpPZLrYlY7IIXg4KvbBtiuCsSlVTJwkuW+XTtsv0r4P08jysNf4fjOJEEY6WGQhV38KlcvvOxh5Xm72sFOUmKdn5SSPw4T31g52iZejq86i1TH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713224433; c=relaxed/simple;
-	bh=s9Lrin2PDZHmLMJblPo0jKJyeb8hr7q2u4ke3Gax8cE=;
+	s=arc-20240116; t=1713224449; c=relaxed/simple;
+	bh=HZkXKS0k4m9TwOFEmNgVrgvvVnPZFP1r1oDEwMc9+pk=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nwSB6KkA89Kz8zLCopntKCyinZtuLrHjVjX9neLvg44k7nWMqLxhpALlDYag6ebdUUn5wIN2E1JYfpy6T/PLA/CQwrJJfUFayWr00dKbeWGqO3ThEubgPyIE6Jac4eCQONh91wbiWUOhTUHL7AsbaFjNr1anoA60tVYS8MOb5K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ig08t2Lf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A77DC113CC;
-	Mon, 15 Apr 2024 23:40:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=KrZlcZ/Wf6NDHIuSGUogc6j7NsJE+nAmA3J6JiGxMUns4Xge7j86GqjynvUb1WRYXSqwVjtU4h+kT///vQ6eRriANPjQFier9ppl3cdA7HK/xOqeJqyPQ0sRm1o1cfuRHVycP985ZrN20/iIl8ZcdTLzZ8gNdNKAVL+NK2CpFVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4ZphCCs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E96C113CC;
+	Mon, 15 Apr 2024 23:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713224433;
-	bh=s9Lrin2PDZHmLMJblPo0jKJyeb8hr7q2u4ke3Gax8cE=;
+	s=k20201202; t=1713224448;
+	bh=HZkXKS0k4m9TwOFEmNgVrgvvVnPZFP1r1oDEwMc9+pk=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=ig08t2LfgC5rprFLDBIu7wwuU7OM8JJHtqXviaKGbYfpYXU9qPLDuiPudTk+g+BHp
-	 ywKXSMJ7pVzCy+TdI6Oh81RilP3Fq9Sf2ftOiDnSRyz2h28x+QgFT25YemZZ4STxyo
-	 nWrEX/r24QTwS9v4TnddLJ/BQ/wBO5NH31P+Su00cHBLu9IBgk1MeI5JVMsgNGKURZ
-	 emoU+/IbW6c3NL877vmZbtQFU76eEwFrecFFMqyLrJTOKouZLSDk4NArGW7E5b7wBR
-	 XAP0J9XrYjze61G6Ty5t6BgvsJ2FCDdAOzTPNkfVweiptwxMKIlrLpL96UjwHKFOee
-	 Dl/UtLQaw3pWg==
-Date: Mon, 15 Apr 2024 16:40:32 -0700
-Subject: [PATCH 6/7] xfs: refactor non-power-of-two alignment checks
+	b=f4ZphCCsY89UWLPJ6gBCEjq/3w1ZOQxo/KhTDd91R/wSru+ZShJLnJZgUL2i09ci+
+	 7e2JFaFleLCfsG6J1DVMUzWKb9+V7XoRKz7sMckC2eiI2MjzkyITMFmIWCRtlMqjcm
+	 5S3TMICyXPw51gM9fRF9QAWSUcxwPjDrM8UaueIBS+9kD4TqwaOvTCLL3f8B2q5MWS
+	 K/y3zSZxMYKf7jl8Df6Qek1RkiOrMrYUScrgs5qUKf7dnCKwT3wM9xyIJybGGG5Cb9
+	 3u7WbIekR65c5f/qF5mj15N0SKUmn5QYM/iI9JNVq++ejIwzRygAb491lkeSJHExhw
+	 DQscIVbdz5Epw==
+Date: Mon, 15 Apr 2024 16:40:48 -0700
+Subject: [PATCH 7/7] xfs: constify xfs_bmap_is_written_extent
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: chandanbabu@kernel.org, djwong@kernel.org
 Cc: Christoph Hellwig <hch@lst.de>, hch@lst.de, linux-fsdevel@vger.kernel.org,
  linux-xfs@vger.kernel.org
-Message-ID: <171322380829.87068.17230248734549992834.stgit@frogsfrogsfrogs>
+Message-ID: <171322380846.87068.9673983859392153004.stgit@frogsfrogsfrogs>
 In-Reply-To: <171322380710.87068.4499164955656161226.stgit@frogsfrogsfrogs>
 References: <171322380710.87068.4499164955656161226.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,58 +62,28 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Create a helper function that can compute if a 64-bit number is an
-integer multiple of a 32-bit number, where the 32-bit number is not
-required to be an even power of two.  This is needed for some new code
-for the realtime device, where we can set 37k allocation units and then
-have to remap them.
+This predicate doesn't modify the structure that's being passed in, so
+we can mark it const.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/xfs/xfs_file.c  |   12 +++---------
- fs/xfs/xfs_linux.h |    5 +++++
- 2 files changed, 8 insertions(+), 9 deletions(-)
+ fs/xfs/libxfs/xfs_bmap.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 64278f8acaee..d1d4158441bd 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -47,15 +47,9 @@ xfs_is_falloc_aligned(
+diff --git a/fs/xfs/libxfs/xfs_bmap.h b/fs/xfs/libxfs/xfs_bmap.h
+index f7662595309d..b8bdbf1560e6 100644
+--- a/fs/xfs/libxfs/xfs_bmap.h
++++ b/fs/xfs/libxfs/xfs_bmap.h
+@@ -158,7 +158,7 @@ static inline bool xfs_bmap_is_real_extent(const struct xfs_bmbt_irec *irec)
+  * Return true if the extent is a real, allocated extent, or false if it is  a
+  * delayed allocation, and unwritten extent or a hole.
+  */
+-static inline bool xfs_bmap_is_written_extent(struct xfs_bmbt_irec *irec)
++static inline bool xfs_bmap_is_written_extent(const struct xfs_bmbt_irec *irec)
  {
- 	unsigned int		alloc_unit = xfs_inode_alloc_unitsize(ip);
- 
--	if (!is_power_of_2(alloc_unit)) {
--		u32	mod;
--
--		div_u64_rem(pos, alloc_unit, &mod);
--		if (mod)
--			return false;
--		div_u64_rem(len, alloc_unit, &mod);
--		return mod == 0;
--	}
-+	if (!is_power_of_2(alloc_unit))
-+		return isaligned_64(pos, alloc_unit) &&
-+		       isaligned_64(len, alloc_unit);
- 
- 	return !((pos | len) & (alloc_unit - 1));
- }
-diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-index 8f07c9f6157f..ac355328121a 100644
---- a/fs/xfs/xfs_linux.h
-+++ b/fs/xfs/xfs_linux.h
-@@ -198,6 +198,11 @@ static inline uint64_t howmany_64(uint64_t x, uint32_t y)
- 	return x;
- }
- 
-+static inline bool isaligned_64(uint64_t x, uint32_t y)
-+{
-+	return do_div(x, y) == 0;
-+}
-+
- /* If @b is a power of 2, return log2(b).  Else return -1. */
- static inline int8_t log2_if_power2(unsigned long b)
- {
+ 	return xfs_bmap_is_real_extent(irec) &&
+ 	       irec->br_state != XFS_EXT_UNWRITTEN;
 
 
