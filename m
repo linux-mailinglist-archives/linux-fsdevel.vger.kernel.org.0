@@ -1,63 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-16952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCCF8A565C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 17:27:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE6D8A56BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 17:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B392E281341
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 15:27:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BEA21C2123D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 15:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE9D78C8A;
-	Mon, 15 Apr 2024 15:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E899F7C085;
+	Mon, 15 Apr 2024 15:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t4Xb2I1z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZHIt/LJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE2A78C76;
-	Mon, 15 Apr 2024 15:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F68278C7B;
+	Mon, 15 Apr 2024 15:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713194852; cv=none; b=FvcNSx9DE96KhH90YLD4LF9IqQ568I7TRbBZQAUhT1akhegBfFBN+H8OqkRVw2ICcYBPVMIgcoEcFWB/zJBIOQpRbM2k6J+Fhu593M2yWjFVfK30VZhjy7Rt00WbH/O65FENxEV89+d92iHqfubS4Au0lJSizENyfPT0pD9pcE4=
+	t=1713196046; cv=none; b=rq2c63rxSpN/+3RHneBm78Y+30a4S8nVOZ+vpgb+71s+0lP80cTOmAlp3OSkVytLq5ogmBwRmLKM8yWt1bKZR52jshskPtpG7esBq1aiChEumfHqz00hb6+thg6Rl6ePJuHkR/zZcAuSDeQ0cC5cvTQBEh2a9KQV8Ucr0FkRsCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713194852; c=relaxed/simple;
-	bh=E/E6uPhEQFTDXKNsZdTcJGdhj+vgxMgRtVlDrOkU9tU=;
+	s=arc-20240116; t=1713196046; c=relaxed/simple;
+	bh=kqmdoARUi+zYJ/sz9hO4Rz/kqq9WqkoTBom+XH8kNBg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iYnZ/hpdVhC9hb6Gc/JTC5wK8rDdn9zh3JKuHjVd1lybDTHeslHGK+g6MDam6WD3/gI5heHBxCOasm5VzhD7azGnPxR0uQnSa1y2jP+QJw6Q5+aY3jJMWs/28s7hSRZrmJrUR+aV3izcXbClm51HkB1HRRFyY1W8NVAUU3CfUxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=t4Xb2I1z; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uOrEsRLhKT6ZKVtPRnTeUpJwpod8q+jzfgJFwajhhYI=; b=t4Xb2I1zIQ+nHD8XpAUxr6peIt
-	yTVdzlk2Z51Z1B941Ni1dtCjKVs4YelQrv4MOpKn8RNNIsGoVo8MYTZGPN+jUwKrkuzL4kxchJtj8
-	ZKjpVi4AxqMn3Bhf96fNAK5zLocoPjflNZoOqvKKEqcJ4n5WAb3iosv9esAU6jU7BN9nHgW6Kinel
-	8WrBD/3jMcXOC5OFcfsiXiF8NpP8Ihd/83n+wXXGiN+P74WY5SVHKTVAkE3uUuSyy6qu5ZV+j6Fso
-	PjgSVauXJdaAVlP0G4xzam8ImRsILxmpuynQut7iA8/4M2+DNbZALq3bHfGkepRROVjsWMR3kRYx9
-	1POAhrkA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rwOEw-0000000Fy1B-3I56;
-	Mon, 15 Apr 2024 15:27:26 +0000
-Date: Mon, 15 Apr 2024 16:27:26 +0100
-From: Matthew Wilcox <willy@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iydtlqcVOrWmzpGOM7ajrMWH7AMUbutY7tg8SYYr8aMekdPgpF6ymWN+QViGH8vKsdTMauJQ3hnZR0NcKOOz7xRN1tJdI0aOb6ZrkN7Z6/2pCSN7Er2Q1rgu0TCV2gBIk6SgTvwDYHuHP9b/ZU1pncyoiPoQw52vMYOLDPQYcRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZHIt/LJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD1AC2BD11;
+	Mon, 15 Apr 2024 15:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713196045;
+	bh=kqmdoARUi+zYJ/sz9hO4Rz/kqq9WqkoTBom+XH8kNBg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tZHIt/LJWow2GjwyaUJxdKlHEbLpW4MCyLzbZrXPZqxETYEFYarHOAwxDtv+m7u3P
+	 PWUMlJ9x0W8B8OMWNmFr7yQRsJ8THDb72j3n7Qr83sJVzSExcwHNNQnT+zIIiwab7H
+	 jau74tOiEP+dEmS3lDJvrqK9ArLErNfj8hYTFN9SjTwfET0vKBRo0vSGTo9SA3l+TS
+	 hnyh/YNs+LR0ZWW0JXuef17x2sxBrTt5ohH/ciJ2GBp4pxXx/tRGiQCcKjxWZp6JTf
+	 lZQz3Tct11TOq7siYkaEPrm/0ptKbLzBWGu8fNBkYVrkW7ShhKtqTjzl5rrRQxwY/F
+	 uW9W7kEX+5n5g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1rwOYF-000000007iH-3KuV;
+	Mon, 15 Apr 2024 17:47:23 +0200
+Date: Mon, 15 Apr 2024 17:47:23 +0200
+From: Johan Hovold <johan@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	Anton Altaparmakov <anton@tuxera.com>,
 	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
 	Linux regressions mailing list <regressions@lists.linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Namjae Jeon <linkinjeon@kernel.org>,
 	"ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
 	Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-	"linux-ntfs-dev@lists.sourceforge.net" <linux-ntfs-dev@lists.sourceforge.net>,
-	Johan Hovold <johan@kernel.org>
+	"linux-ntfs-dev@lists.sourceforge.net" <linux-ntfs-dev@lists.sourceforge.net>
 Subject: Re: [PATCH 2/2] ntfs3: remove warning
-Message-ID: <Zh1HXjcluA0dXycM@casper.infradead.org>
+Message-ID: <Zh1MCw7Q0VIKrrMi@hovoldconsulting.com>
 References: <ZgFN8LMYPZzp6vLy@hovoldconsulting.com>
  <20240325-shrimps-ballverlust-dc44fa157138@brauner>
  <a417b52b-d1c0-4b7d-9d8f-f1b2cd5145f6@leemhuis.info>
@@ -90,17 +91,33 @@ On Mon, Apr 15, 2024 at 08:23:46AM -0700, Linus Torvalds wrote:
 > I think that if just registering it under the same name solves the
 > immediate issue, that's the one we should just go for.
 
-I agree.
+I also tend to agree, but...
 
 > >     To make it fully compatible
 > >     we also need to make sure it's persistently mounted read-only.
 > 
 > My reaction to that is "only if it turns out we really need to".
+> 
+> It sounds unlikely that somebody has an old ntfs setup and then tries
+> to mount things rw which didn't use to work and things go sideways if
+> that then suddenly works.
+> 
+> But "unlikely" isn't "impossible", of course - it's just that I'd
+> suggest we actually wait for that report to happen and ask what the
+> heck they were doing and why they were doing that...
 
-Unfortunately, we do.  It seems that ntfs3 has some bugs, and (according
-to Anton, the ntfs-classic maintainer) it's actually corrupting perfectly
-good filesystems.  I'd expected that this kind of bug would have been
-shaken out by now (it's been in the kernel for over two and a half years!)
-but it seems like people just haven't been using it.
+I think the "ntfs" alias must always be mounted read-only because you
+can currently have an fstab entry which does not specify "ro" and this
+mount would suddenly become writeable when updating to 6.9 (possibly by
+a non-privileged user, etc).
 
+We also need to do something about the ntfs3 driver spamming the logs
+about broken corrections also when mounted read-only even if it doesn't
+eat your filesystem then.
+
+And it seems write-support should be disabled in the driver by default
+until someone has tracked down why listing a directory can currently
+corrupt your filesystem.
+
+Johan
 
