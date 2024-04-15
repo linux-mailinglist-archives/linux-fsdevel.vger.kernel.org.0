@@ -1,136 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-16941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE648A54B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 16:39:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245868A5584
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 16:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0E47B243A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 14:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 908141F22945
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 14:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095BB745C9;
-	Mon, 15 Apr 2024 14:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0ED73163;
+	Mon, 15 Apr 2024 14:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PzgsGIgO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWlTAD6A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51D02A8D3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 14:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8F1433AD;
+	Mon, 15 Apr 2024 14:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713191774; cv=none; b=fDkpQf8Kelijnrrjzeh8zxQAx3kBMmV50T3ZhMK61jj38X44CgN483aF3BHTAi+8KT1nkrBgLzsi67dpqzWe4ieijmXlcEovTVMkGiPNGPT3TaCihyzB2jEsDJE4YHssa658wzjIT9r9ZPiA4JMwpjtuwEu4aICPRzfYP6AA4RA=
+	t=1713192481; cv=none; b=JJMKoflwG2TEjLWeEk7PJhAjeAE1tuM5JtzvoyedmpO8f2n91KCDc2YfW8yBLC9PtQMFgSaCLUdLo0ENFAgMkGciOAhbl3rrfxO75cIoffezRyQbONSwXfZLKrKGlfXPM8rSFeW+v3Z9f/b9twwKhMG/qsm3st5pQioQInKEqb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713191774; c=relaxed/simple;
-	bh=YMv48aXULq+P+Zfe6u92CCqGqs7nverst/BByaD+MJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRnlmYC5K8EIQ46lVfKCOmuBlpaG42r0NHW8mTG9y7RlXoQNRF9MUqtUHV74jDXnu1xoQ6a8aV1crrhbL1oJzTM4k7gnoTHtu9eXiO8OWBW0nwRZYRmyXLjCfcz0zkDARHcrtv7qc9KRu5SzQSevM9XEeSgM1RG+bAkDXs5GZ/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PzgsGIgO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713191770;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Fpco6JyEqxSHVCGXvAnj47X9HVqOOy7QTJFx9DYGrE=;
-	b=PzgsGIgODAYbgmfYTSW2HJi3oW63GuinZlNBA01TVUW6EzYiQ6+6aYWmw2vokpsy4q5esn
-	Etx/Mga8ZYBbuSl6T/aqGQZPx1K4wDRwEesXgoAVE07Xqm3qhos25gI3E5pv19H6zw/PIU
-	3bEe95Y3EjMW6j8A/7xH5kMqVwY8P0w=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-O5C2w4qgPzGIwjnOkYKvtQ-1; Mon,
- 15 Apr 2024 10:36:07 -0400
-X-MC-Unique: O5C2w4qgPzGIwjnOkYKvtQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B3F4A380350C;
-	Mon, 15 Apr 2024 14:36:06 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.13])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FC5F51EF;
-	Mon, 15 Apr 2024 14:36:01 +0000 (UTC)
-Date: Mon, 15 Apr 2024 22:35:53 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev,
-	Mikulas Patocka <mpatocka@redhat.com>
-Subject: Re: [PATCH v2 04/34] md: port block device access to file
-Message-ID: <Zh07Sc3lYStOWK8J@fedora>
-References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
- <20240123-vfs-bdev-file-v2-4-adbd023e19cc@kernel.org>
- <Zhzyu6pQYkSNgvuh@fedora>
- <20240415-haufen-demolieren-8c6da8159586@brauner>
+	s=arc-20240116; t=1713192481; c=relaxed/simple;
+	bh=I13XM/oOMXTIWSLViq/vlsHE+oDy5NBL3yk6E0aLyX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=blYwTfSPGi/HFwBsdRlrwliQS2O2Ssq0kBQGRXXJowEwbKAMG6gnyo2pjD/y3l1xrnp3cQNvfCt+nXCT+uEFeq1dgp6/7/tIAIjKVhirMzqATSiMIlt45VKq/MmXfcEEG00F3ih48ZFQaqj9CgQ2hOw8Qia6WHiW1STiFkHS/Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWlTAD6A; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-78ebcfcd3abso278468685a.1;
+        Mon, 15 Apr 2024 07:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713192478; x=1713797278; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wdP5OuUUDcs87pXh/dw1Deyj8T0mk9wfjCCCqRUMku0=;
+        b=PWlTAD6AgUdCqrd9mKWrym9nNSbxJSpwp2Wqx/s3cV5ae1576Tm5VKWUNvavciH8E3
+         rN4qyXanjSLACPNo5GdcJfJ64qDhrQoeaRZ2pGQ8MWR8JdakdOj7eP9pQtJGf3KMh87U
+         nWCqQ9vfgIduOksdulCSJbZUE3/0WBfOJJ4ql+tsBVpWw4ZELfKk1wYRs+NL6OP83c4g
+         AwpvtysylL01kUPWKRPPuYP/esv6HYhA8i3l3edHrceqtLeVJIEsWRUx8DblsZuUI7iu
+         YckREVVkJnsjapbmF1Aq205Z3O3PWE0wzXRhd+/yVDv+8qwanCoL/DIztUY/hgfBoLKc
+         Og0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713192478; x=1713797278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wdP5OuUUDcs87pXh/dw1Deyj8T0mk9wfjCCCqRUMku0=;
+        b=WYoONwEDRYECvlGQFbQgJnEiaWS3939eWQjNjnnx0twg/lyJLUB/6tsBHItzPZo7lS
+         YogsOZQbn0g28R1M6470XIRRgCm2SU5oFfuEChVxIgXw430x2ym3ulOXtR6yh28YL5RM
+         u2QfKkPMx0VHoI3EDsylyOY4fbjHCs+8UHduVuIO1iyQglUC97r32B//WHIy4/np45tC
+         8H157j/fRZJQcGBsbcu/dpCCv+VP5+vduPRUStkY078X0CH8TCoZKxp/L0q09o7+Fiv5
+         +thAOj8sN5DNHbOEaWt3orfy+rZNGPmIEK2S72+Sf9oNu6qOYRN3EJZX0AKOimwzok4K
+         kzog==
+X-Forwarded-Encrypted: i=1; AJvYcCWBjyLrdcGW2wv+L7SKlJbsTXz88JDufd5T3bGg1srSJLS0xV9alOWP030iQR+xeBV2c9aFE+JrO4gGX0SmCDEukJi+POLVQQOKEsRMUi5WiOhPNDi9fjGPhLpM0C0nB+d90EDTWzhWZxt+PQ==
+X-Gm-Message-State: AOJu0Ywl7ST/duNnetCWbI6/owvMS8USA6GLh9Co1aB9jBIRgejyYHpa
+	TSTwve3Ir7hG4F1zzqKgtBR+A2nhAgDoLJly0DpVV+HLTKYW7NemzsZqIqSm0oRwVCEQcmQogd1
+	2Zc5f3TXJCYvHf8wXuA+zXf5lsqk=
+X-Google-Smtp-Source: AGHT+IFXBXviIp8bhU13C8T8lSfHKPASLhMZCZr5YCmvZvKkE8Sp56JW7pcBIf1nVRHkDz/Van/bYQPDwNtNoDtbkzo=
+X-Received: by 2002:a0c:fc06:0:b0:69b:2897:4fc4 with SMTP id
+ z6-20020a0cfc06000000b0069b28974fc4mr8856089qvo.58.1713192478430; Mon, 15 Apr
+ 2024 07:47:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240415-haufen-demolieren-8c6da8159586@brauner>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+References: <00000000000095bb400615f4b0ed@google.com> <20240413084519.1774-1-hdanton@sina.com>
+ <CAOQ4uxhh4Tm6j+Hh+F2aQFuHfpCh_kJ10FYTfXo+AxoP4m01ag@mail.gmail.com> <20240415140333.y44rk5ggbadv4oej@quack3>
+In-Reply-To: <20240415140333.y44rk5ggbadv4oej@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 15 Apr 2024 17:47:45 +0300
+Message-ID: <CAOQ4uxiG_7HGESMNkrJ7QmsXbgOneUGpMjx8vob87kntwTzUTQ@mail.gmail.com>
+Subject: Re: [syzbot] Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
+To: Jan Kara <jack@suse.cz>
+Cc: Hillf Danton <hdanton@sina.com>, 
+	syzbot <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>, 
+	linux-fsdevel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 15, 2024 at 02:35:17PM +0200, Christian Brauner wrote:
-> On Mon, Apr 15, 2024 at 05:26:19PM +0800, Ming Lei wrote:
-> > Hello,
-> > 
-> > On Tue, Jan 23, 2024 at 02:26:21PM +0100, Christian Brauner wrote:
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > ---
-> > >  drivers/md/dm.c               | 23 +++++++++++++----------
-> > >  drivers/md/md.c               | 12 ++++++------
-> > >  drivers/md/md.h               |  2 +-
-> > >  include/linux/device-mapper.h |  2 +-
-> > >  4 files changed, 21 insertions(+), 18 deletions(-)
-> > > 
-> > > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> > > index 8dcabf84d866..87de5b5682ad 100644
-> > > --- a/drivers/md/dm.c
-> > > +++ b/drivers/md/dm.c
-> > 
-> > ...
-> > 
-> > > @@ -775,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
-> > >  {
-> > >  	if (md->disk->slave_dir)
-> > >  		bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
-> > > -	bdev_release(td->dm_dev.bdev_handle);
-> > > +	fput(td->dm_dev.bdev_file);
-> > 
-> > The above change caused regression on 'dmsetup remove_all'.
-> > 
-> > blkdev_release() is delayed because of fput(), so dm_lock_for_deletion
-> > returns -EBUSY, then this dm disk is skipped in remove_all().
-> > 
-> > Force to mark DMF_DEFERRED_REMOVE might solve it, but need our device
-> > mapper guys to check if it is safe.
-> > 
-> > Or other better solution?
-> 
-> Yeah, I think there is. You can just switch all fput() instances in
-> device mapper to bdev_fput() which is mainline now. This will yield the
-> device and make it able to be reclaimed. Should be as simple as the
-> patch below. Could you test this and send a patch based on this (I'm on
-> a prolonged vacation so I don't have time right now.):
+On Mon, Apr 15, 2024 at 5:03=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Sat 13-04-24 12:32:32, Amir Goldstein wrote:
+> > On Sat, Apr 13, 2024 at 11:45=E2=80=AFAM Hillf Danton <hdanton@sina.com=
+> wrote:
+> > > On Fri, 12 Apr 2024 23:42:19 -0700 Amir Goldstein
+> > > > On Sat, Apr 13, 2024 at 4:41=3DE2=3D80=3DAFAM Hillf Danton <hdanton=
+@sina.com> wrote:
+> > > > > On Thu, 11 Apr 2024 01:11:20 -0700
+> > > > > > syzbot found the following issue on:
+> > > > > >
+> > > > > > HEAD commit:    6ebf211bb11d Add linux-next specific files for =
+20240410
+> > > > > > git tree:       linux-next
+> > > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D3D1=
+621af9d180000
+> > > > >
+> > > > > #syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/li=
+nux-next.git  6ebf211bb11d
+> > > > >
+> > > > > --- x/fs/notify/fsnotify.c
+> > > > > +++ y/fs/notify/fsnotify.c
+> > > > > @@ -101,8 +101,8 @@ void fsnotify_sb_delete(struct super_blo
+> > > > >         wait_var_event(fsnotify_sb_watched_objects(sb),
+> > > > >                        !atomic_long_read(fsnotify_sb_watched_obje=
+cts(sb)));
+> > > > >         WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PR=
+IO_CONTENT));
+> > > > > -       WARN_ON(fsnotify_sb_has_priority_watchers(sb,
+> > > > > -                                                 FSNOTIFY_PRIO_P=
+RE_CONTENT));
+> > > > > +       WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PR=
+IO_PRE_CONTENT));
+> > > > > +       synchronize_srcu(&fsnotify_mark_srcu);
+> > > > >         kfree(sbinfo);
+> > > > >  }
+> > > > >
+> > > > > @@ -499,7 +499,7 @@ int fsnotify(__u32 mask, const void *dat
+> > > > >  {
+> > > > >         const struct path *path =3D3D fsnotify_data_path(data, da=
+ta_type);
+> > > > >         struct super_block *sb =3D3D fsnotify_data_sb(data, data_=
+type);
+> > > > > -       struct fsnotify_sb_info *sbinfo =3D3D fsnotify_sb_info(sb=
+);
+> > > > > +       struct fsnotify_sb_info *sbinfo;
+> > > > >         struct fsnotify_iter_info iter_info =3D {};
+> > > > >         struct mount *mnt =3D3D NULL;
+> > > > >         struct inode *inode2 =3D3D NULL;
+> > > > > @@ -529,6 +529,8 @@ int fsnotify(__u32 mask, const void *dat
+> > > > >                 inode2_type =3D3D FSNOTIFY_ITER_TYPE_PARENT;
+> > > > >         }
+> > > > >
+> > > > > +       iter_info.srcu_idx =3D3D srcu_read_lock(&fsnotify_mark_sr=
+cu);
+> > > > > +       sbinfo =3D3D fsnotify_sb_info(sb);
+> > > > >         /*
+> > > > >          * Optimization: srcu_read_lock() has a memory barrier wh=
+ich can
+> > > > >          * be expensive.  It protects walking the *_fsnotify_mark=
+s lists.
+> > > >
+> > > >
+> > > > See comment above. This kills the optimization.
+> > > > It is not worth letting all the fsnotify hooks suffer the consequen=
+ce
+> > > > for the edge case of calling fsnotify hook during fs shutdown.
+> > >
+> > > Say nothing before reading your fix.
+> > > >
+> > > > Also, fsnotify_sb_info(sb) in fsnotify_sb_has_priority_watchers()
+> > > > is also not protected and using srcu_read_lock() there completely
+> > > > nullifies the purpose of fsnotify_sb_info.
+> > > >
+> > > > Here is a simplified fix for fsnotify_sb_error() rebased on the
+> > > > pending mm fixes for this syzbot boot failure:
+> > > >
+> > > > #syz test: https://github.com/amir73il/linux fsnotify-fixes
+> > >
+> > > Feel free to post your patch at lore because not everyone has
+> > > access to sites like github.
+> > > >
+> > > > Jan,
+> > > >
+> > > > I think that all the functions called from fs shutdown context
+> > > > should observe that SB_ACTIVE is cleared but wasn't sure?
+> > >
+> > > If you composed fix based on SB_ACTIVE that is cleared in
+> > > generic_shutdown_super() with &sb->s_umount held for write,
+> > > I wonder what simpler serialization than srcu you could
+> > > find/create in fsnotify.
+> >
+> > As far as I can tell there is no need for serialisation.
+> >
+> > The problem is that fsnotify_sb_error() can be called from the
+> > context of ->put_super() call from generic_shutdown_super().
+> >
+> > It's true that in the repro the thread calling fsnotify_sb_error()
+> > in the worker thread running quota deferred work from put_super()
+> > but I think there are sufficient barriers for this worker thread to
+> > observer the cleared SB_ACTIVE flag.
+> >
+> > Anyway, according to syzbot, repro does not trigger the UAF
+> > with my last fix.
+> >
+> > To be clear, any fsnotify_sb_error() that is a result of a user operati=
+on
+> > would be holding an active reference to sb so cannot race with
+> > fsnotify_sb_delete(), but I am not sure that same is true for ext4
+> > worker threads.
+> >
+> > Jan,
+> >
+> > You wrote that "In theory these two calls can even run in parallel
+> > and fsnotify() can be holding fsnotify_sb_info pointer while
+> > fsnotify_sb_delete() is freeing".
+> >
+> > Can you give an example of this case?
+>
+> Yeah, basically what Hilf writes:
+>
+> Task 1                                  Task 2
+>   umount()                              some delayed work, transaction
+>                                           commit, whatever is still runni=
+ng
+>                                           before ext4_put_super() complet=
+es
+>     ...                                     ext4_error()
+>                                               fsnotify_sb_error()
+>                                                 fsnotify()
+>                                                   fetches fsnotify_sb_inf=
+o
+>     generic_shutdown_super()
+>       fsnotify_sb_delete()
+>         frees fsnotify_sb_info
 
-Unfortunately it doesn't work.
+OK, so what do you say about Hillf's fix patch?
 
-Here the problem is that blkdev_release() is delayed, which changes
-'dmsetup remove_all' behavior, and causes that some of dm disks aren't
-removed.
+Maybe it is ok to let go of the optimization in fsnotify(), considering
+that we now have stronger optimizations in the inline hooks and
+in __fsnotify_parent()?
 
-Please see dm_lock_for_deletion() and dm_blk_open()/dm_blk_close().
+I think that Hillf's patch is missing setting s_fsnotify_info to NULL?
+
+ @@ -101,8 +101,8 @@ void fsnotify_sb_delete(struct super_blo
+         wait_var_event(fsnotify_sb_watched_objects(sb),
+                        !atomic_long_read(fsnotify_sb_watched_objects(sb)))=
+;
+         WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_CONTEN=
+T));
++       WRITE_ONCE(sb->s_fsnotify_info, NULL);
++       synchronize_srcu(&fsnotify_mark_srcu);
+         kfree(sbinfo);
+ }
 
 Thanks,
-Ming
-
+Amir.
 
