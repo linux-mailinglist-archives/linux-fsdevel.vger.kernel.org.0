@@ -1,118 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-16911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383FA8A4B69
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 11:27:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B308A4C02
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 11:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF9C6B22483
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 09:27:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A212890D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 09:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB763FB99;
-	Mon, 15 Apr 2024 09:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A7B481DE;
+	Mon, 15 Apr 2024 09:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ug/yB1Pc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlGYN0Cz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C384E3FB1D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 09:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E03E45944;
+	Mon, 15 Apr 2024 09:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713173217; cv=none; b=iExH1vHAYt6HkTERzE1WsEXocr9ORKU/3F7MXBuWEPXcnuxmx8Tf66/4doJAJVV/g5qB/A6yYArpOymb2xlu/6/8Z9cR64chO8yUNP/bOCIEiDEFSFoJ0VJKuPYgiAPAZsADXyTRbgrb9qSoXKmD/mNBamkiOF8M8vftMwZ2x1o=
+	t=1713174862; cv=none; b=I8v097bspnOT90FlJKoDyw6EeO5T7WSz1AdH61wTo5pcLPejmulsauhQoo/cblRxqxRTzqEEYCq0EBYXmlcL7HYek5uqLO1H1RYJfpM2j0JFF6FHPb9yq4N/dIS82oEg7ZRQbMLV6ZbFqXCkDrSl/G335Q5tpVNDQAOVBc/hJk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713173217; c=relaxed/simple;
-	bh=sA5fgX9HWhMU42nF38m0dAA/l+qdQMZG3Q8ualuuI4g=;
+	s=arc-20240116; t=1713174862; c=relaxed/simple;
+	bh=NoEbOkT6xpKcfcjZdRZo7iJAnVMKsEeObPkosVfORFc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IsjdoiD5xIfT6Jqaa68WUVd7BxOHi85TQ9c7hMiknO8Ybp5rmczDabscEiz0LMAVWH3M0AETwQiX6G3z8DInsiyZOtBvu3RfejOZBn9Su4iWAbffdyEAEaxEBwkbC3AapU0Pebh0Om9TKQ+ybHXFlfh2MQbMIIPt9jKRC8o++2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ug/yB1Pc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713173214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JKW7sMkNKvCDKzXl0a+7+sB/76+8oNdGXWP00zBOyoM=;
-	b=Ug/yB1PcFZfr+hxdnC9WLmJL5cBmnLWoKT1VhV9m17BIlRRhSD2oy8kmhJQ/M1TTn0V6aq
-	VA6c1ARm1JA7SZJgSc9ruSBRf89JWJ/E6Od9T1azo75lKS5hp340twWnCSB82hqwyX7WUE
-	l+vJYGxTLRX9aKZNDusImE84y13dT/Q=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-208-b4_-Er1KM7i5HB7d0PL9cw-1; Mon, 15 Apr 2024 05:26:49 -0400
-X-MC-Unique: b4_-Er1KM7i5HB7d0PL9cw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D9C35830E77;
-	Mon, 15 Apr 2024 09:26:48 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.13])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 774E92BA;
-	Mon, 15 Apr 2024 09:26:43 +0000 (UTC)
-Date: Mon, 15 Apr 2024 17:26:19 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev,
-	Mikulas Patocka <mpatocka@redhat.com>
-Subject: Re: [PATCH v2 04/34] md: port block device access to file
-Message-ID: <Zhzyu6pQYkSNgvuh@fedora>
-References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
- <20240123-vfs-bdev-file-v2-4-adbd023e19cc@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kMNX+qvLI+52G8r8EIhGeuTZmxUrQfFJ+rxWBvOTPVW9n+x+DDjFZjE+MsDhxkZu1LyExxmx7kfkItwR6pu61Eu4Gw4XxceBJMgL9R+wUB7fLdsPaMReiUgHIotklRjGR7OLiS5Ti0lmEUQIVoW9WkqRE7Ly5sj8Yr0gect4cb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlGYN0Cz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9E07C113CC;
+	Mon, 15 Apr 2024 09:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713174861;
+	bh=NoEbOkT6xpKcfcjZdRZo7iJAnVMKsEeObPkosVfORFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NlGYN0CzRlOADAIXkZNUaiy1RbCw72AsWmRqt0l9v/IDG9KKoEyYEXW0b2BzHZ8hu
+	 Mbofryhvu9KtrKdKg72efLeeCZ0tdc66jtTV8H3lRq91amjot5uwr4gw2V7qrgCLyo
+	 g2kneAcIZS49T3dAD90kvrWnMOGAuTufUByPZEMEZAa2OMM563rRmMMbjJsP1lFZkj
+	 MzLBLHHB8sLWELwb07k9vSimPP5iUAF9oKzBohzUtj2TI/aceQvoV64PLtZKuLs1tE
+	 A5RVyVTds0uKDPPwj7h/yRqoHorS3YLfhZRUwzg/fL/AmgbwK4E54i15jZvQRdmGvg
+	 d7Ia7QEEOVYNg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1rwJ2Z-000000002OA-1ayb;
+	Mon, 15 Apr 2024 11:54:19 +0200
+Date: Mon, 15 Apr 2024 11:54:19 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+	Christian Brauner <brauner@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Anton Altaparmakov <anton@tuxera.com>,
+	Namjae Jeon <linkinjeon@kernel.org>, ntfs3@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net
+Subject: Re: [PATCH 2/2] ntfs3: remove warning
+Message-ID: <Zhz5S3TA-Nd_8LY8@hovoldconsulting.com>
+References: <Zf2zPf5TO5oYt3I3@hovoldconsulting.com>
+ <20240325-faucht-kiesel-82c6c35504b3@brauner>
+ <ZgFN8LMYPZzp6vLy@hovoldconsulting.com>
+ <20240325-shrimps-ballverlust-dc44fa157138@brauner>
+ <a417b52b-d1c0-4b7d-9d8f-f1b2cd5145f6@leemhuis.info>
+ <b0fa3c40-443b-4b89-99e9-678cbb89a67e@paragon-software.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240123-vfs-bdev-file-v2-4-adbd023e19cc@kernel.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b0fa3c40-443b-4b89-99e9-678cbb89a67e@paragon-software.com>
 
-Hello,
+On Thu, Apr 11, 2024 at 02:03:52PM +0300, Konstantin Komarov wrote:
+> On 04.04.2024 11:06, Linux regression tracking (Thorsten Leemhuis) wrote:
+> > On 25.03.24 13:05, Christian Brauner wrote:
+> >> On Mon, Mar 25, 2024 at 11:12:00AM +0100, Johan Hovold wrote:
+> >>> On Mon, Mar 25, 2024 at 09:34:38AM +0100, Christian Brauner wrote:
+> >>>> This causes visible changes for users that rely on ntfs3 to serve as an
+> >>>> alternative for the legacy ntfs driver. Print statements such as this
+> >>>> should probably be made conditional on a debug config option or similar.
+> >>>>
+> >>>> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> >>>> Cc: Johan Hovold <johan@kernel.org>
+> >>>> Link: https://lore.kernel.org/r/Zf2zPf5TO5oYt3I3@hovoldconsulting.com
+> >>>> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> >>> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> >>>
+> >>> I also see a
+> >>>
+> >>> 	ntfs3: Max link count 4000
+> >>>
+> >>> message on mount which wasn't there with NTFS legacy. Is that benign
+> >>> and should be suppressed too perhaps?
+> >> We need a reply from the ntfs3 maintainers here.
 
-On Tue, Jan 23, 2024 at 02:26:21PM +0100, Christian Brauner wrote:
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  drivers/md/dm.c               | 23 +++++++++++++----------
->  drivers/md/md.c               | 12 ++++++------
->  drivers/md/md.h               |  2 +-
->  include/linux/device-mapper.h |  2 +-
->  4 files changed, 21 insertions(+), 18 deletions(-)
+> There is no problem in suppressing the output of any messages during 
+> mounting, like:
+
+> Messages like this:
 > 
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 8dcabf84d866..87de5b5682ad 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
+> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+> index eb7a8c9fba01..8cc94a6a97ed 100644
+> --- a/fs/ntfs3/inode.c
+> +++ b/fs/ntfs3/inode.c
+> @@ -424,7 +424,6 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+>      if (names != le16_to_cpu(rec->hard_links)) {
+>          /* Correct minor error on the fly. Do not mark inode as dirty. */
+> -        ntfs_inode_warn(inode, "Correct links count -> %u.", names);
+>          rec->hard_links = cpu_to_le16(names);
+>          ni->mi.dirty = true;
+>      }
+> 
+> can also be suppressed for the sake of seamless transition from a remote 
+> NTFS driver.
+> However, I believe that file system corrections should be reported to 
+> the user.
 
-...
+A colleague of mine also tracked down a failed boot to the removal of
+the ntfs driver and reported seeing similar warnings with the ntfs3
+driver.
 
-> @@ -775,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
->  {
->  	if (md->disk->slave_dir)
->  		bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
-> -	bdev_release(td->dm_dev.bdev_handle);
-> +	fput(td->dm_dev.bdev_file);
+We're both accessing an NTFS partition on a Windows on Arm device, but
+it makes you wonder whether these warnings (corrections) are correct or
+indicative of a problem in the driver?
 
-The above change caused regression on 'dmsetup remove_all'.
-
-blkdev_release() is delayed because of fput(), so dm_lock_for_deletion
-returns -EBUSY, then this dm disk is skipped in remove_all().
-
-Force to mark DMF_DEFERRED_REMOVE might solve it, but need our device
-mapper guys to check if it is safe.
-
-Or other better solution?
-
-thanks,
-Ming
-
+Johan
 
