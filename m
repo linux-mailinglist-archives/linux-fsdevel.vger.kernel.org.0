@@ -1,103 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-16923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79C78A4F13
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 14:33:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD91D8A4F1D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 14:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF901F21E06
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 12:33:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F683B20DD2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 12:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CB46CDD5;
-	Mon, 15 Apr 2024 12:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AAE6CDCA;
+	Mon, 15 Apr 2024 12:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="FB7CdJGo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="beCzbxVH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFD6EEBB;
-	Mon, 15 Apr 2024 12:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713184405; cv=none; b=rzsFTX1z5vvjhduVycGBFZIP144GsXFJZrotPuoOfFTMNQCbpLSDbdC8YTN4ip9bNK6kIHMHwE+IgLQcn3M0uXvsQWu3Ju1trxSp7JIVcIdrpd3GbkvsqmSs3Tfe6noCoPNF7JQ9wTqpcsMV/vUeVugwIe18oE/4At1/glGFeJQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713184405; c=relaxed/simple;
-	bh=HfptntNOfLHxb9wL0IOVawcV6uR4l3OZGayJ1zAWzo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpM90FjiQG6c817fZcYG1KfQQyKWD1qrAj+1edg3cXIfGmWyEUT7OISK1g25zswX3P18IDfuOAW2Cp3Qgd44kSMGCEfp+p95u+mBtUD05OW2qUq0Db/6mc9hbxp4Z3EjIbd4AFPQCLIkKYHenOikPRnX/4CW3+/DeOPNsSiNyQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=FB7CdJGo; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe0bdf.dip0.t-ipconnect.de [79.254.11.223])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 1427F1C68D0;
-	Mon, 15 Apr 2024 14:33:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1713184399;
-	bh=HfptntNOfLHxb9wL0IOVawcV6uR4l3OZGayJ1zAWzo4=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B7E1FA1;
+	Mon, 15 Apr 2024 12:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713184523; cv=none; b=FUlmXe9hdhtjqowbYguSvvM4n7TVd4j/NvE3x0ULd9fi5t8OQ18AFNjkMTG0ZJeTYM5k4W/ojJ9ehGGLLo1s/CCX9RP0FFVk6+NV+ZatSJVNoYYqhnvVdvmZh6axoyWLyGMoc/Lrk46SHN+2KJNq4izd4AiCjU0KIS+z5mKeKHQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713184523; c=relaxed/simple;
+	bh=hrnNKsiFl4HrCM3TEdZKXvsxysJvx4sIVZWM4gkhccg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oIkPItrUqxrxpESssdz0ZV888jnObNeYAAtQoGftd39X1i9T+Nl7To7uyC52TtzncTfcGzhWb+HMuP2OpjNJIpHeoClonkE52zoxAoRbxHt7+D+hY5tVBpCV0qNkVYRisvAEBBq20WmSVUGnzPB0Z+7lCgWtpSjVwHd4mv3rSdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=beCzbxVH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57D5DC113CC;
+	Mon, 15 Apr 2024 12:35:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713184523;
+	bh=hrnNKsiFl4HrCM3TEdZKXvsxysJvx4sIVZWM4gkhccg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FB7CdJGoYiLUXNXxPvv8kxRp0MDw5ZnPm7BIK3ADkbk8oSMbIlG1dOJST10Ys0iVG
-	 0qH7FXMf173WxTDGWYAj57PHdCnXDNhPtGD9jDi61cO/bs1sgIAfqFxvSoK9m2A9ss
-	 V9SsvwyT4trOUwcVoattW6RpORUYGkpdOaQm3KBj4D4r/W12fVXjh9qkHjlwypEZMm
-	 wZyw+pBBc2Nxoj847ZC+5GLtJO11Cj8rX2d0KMsV/1lstgG3Zpav64UvQflXFDpjD3
-	 cZkiC/AZwyMk/jjcSbeCrSYgzIuKoCKCfVPm6zDqV7hVX7mY/mCvW+dsSHn/oXe8DJ
-	 dyfbkCVsl9bHg==
-Date: Mon, 15 Apr 2024 14:33:17 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com,
-	alyssa@rosenzweig.io, asahi@lists.linux.dev,
-	baolu.lu@linux.intel.com, bhelgaas@google.com,
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com,
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de,
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com,
-	jonathanh@nvidia.com, krzysztof.kozlowski@linaro.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
-	marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com,
-	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com,
-	samuel@sholland.org, suravee.suthikulpanit@amd.com,
-	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org,
-	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org,
-	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com,
-	bagasdotme@gmail.com, mkoutny@suse.com
-Subject: Re: [PATCH v6 00/11] IOMMU memory observability
-Message-ID: <Zh0ejbLiZT4gI3EG@8bytes.org>
-References: <20240413002522.1101315-1-pasha.tatashin@soleen.com>
+	b=beCzbxVHD0KSF6IlXcqzWnvyQsFgKqqyNa42tkPJ1v0qHbFZOFVacn5vOSsYXFcV9
+	 9FPxAgyB26IPW05giFQmiNz31Lkos5n4MRSy2koozhWoBDIKxjOPP2wExS3IhGpIzR
+	 npoNcbw3dHd5r5ehN0ZCl8xZ0HTwKXY8ZncgiN1bQ1rBGz2tLuZG1GVvHcDaCtVhYh
+	 mlU4sAdQeHAclRp91/9wkljjmrh+1E6GQ2k7zFK1uSKOcEE2UOJGRXtWnKSlVu5B+3
+	 Df9GOwFhz9rkKV8j6Mu2a8WdNX6XmiC+vjG8d7mDkBNzI169I7pkbq3lU+TOJ97WmX
+	 q8jvYITMT5U0w==
+Date: Mon, 15 Apr 2024 14:35:17 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>, 
+	dm-devel@lists.linux.dev, Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH v2 04/34] md: port block device access to file
+Message-ID: <20240415-haufen-demolieren-8c6da8159586@brauner>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-4-adbd023e19cc@kernel.org>
+ <Zhzyu6pQYkSNgvuh@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240413002522.1101315-1-pasha.tatashin@soleen.com>
+In-Reply-To: <Zhzyu6pQYkSNgvuh@fedora>
 
-On Sat, Apr 13, 2024 at 12:25:11AM +0000, Pasha Tatashin wrote:
-> Pasha Tatashin (11):
->   iommu/vt-d: add wrapper functions for page allocations
->   iommu/dma: use iommu_put_pages_list() to releae freelist
->   iommu/amd: use page allocation function provided by iommu-pages.h
->   iommu/io-pgtable-arm: use page allocation function provided by
->     iommu-pages.h
->   iommu/io-pgtable-dart: use page allocation function provided by
->     iommu-pages.h
->   iommu/exynos: use page allocation function provided by iommu-pages.h
->   iommu/rockchip: use page allocation function provided by iommu-pages.h
->   iommu/sun50i: use page allocation function provided by iommu-pages.h
->   iommu/tegra-smmu: use page allocation function provided by
->     iommu-pages.h
->   iommu: observability of the IOMMU allocations
->   iommu: account IOMMU allocated memory
+On Mon, Apr 15, 2024 at 05:26:19PM +0800, Ming Lei wrote:
+> Hello,
+> 
+> On Tue, Jan 23, 2024 at 02:26:21PM +0100, Christian Brauner wrote:
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  drivers/md/dm.c               | 23 +++++++++++++----------
+> >  drivers/md/md.c               | 12 ++++++------
+> >  drivers/md/md.h               |  2 +-
+> >  include/linux/device-mapper.h |  2 +-
+> >  4 files changed, 21 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > index 8dcabf84d866..87de5b5682ad 100644
+> > --- a/drivers/md/dm.c
+> > +++ b/drivers/md/dm.c
+> 
+> ...
+> 
+> > @@ -775,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
+> >  {
+> >  	if (md->disk->slave_dir)
+> >  		bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
+> > -	bdev_release(td->dm_dev.bdev_handle);
+> > +	fput(td->dm_dev.bdev_file);
+> 
+> The above change caused regression on 'dmsetup remove_all'.
+> 
+> blkdev_release() is delayed because of fput(), so dm_lock_for_deletion
+> returns -EBUSY, then this dm disk is skipped in remove_all().
+> 
+> Force to mark DMF_DEFERRED_REMOVE might solve it, but need our device
+> mapper guys to check if it is safe.
+> 
+> Or other better solution?
 
-Applied to the temporary 'memory-observability' branch and part of
-iommu-next. Thanks Pasha.
+Yeah, I think there is. You can just switch all fput() instances in
+device mapper to bdev_fput() which is mainline now. This will yield the
+device and make it able to be reclaimed. Should be as simple as the
+patch below. Could you test this and send a patch based on this (I'm on
+a prolonged vacation so I don't have time right now.):
+
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 56aa2a8b9d71..0f681a1e70af 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -765,7 +765,7 @@ static struct table_device *open_table_device(struct mapped_device *md,
+        return td;
+
+ out_blkdev_put:
+-       fput(bdev_file);
++       bdev_fput(bdev_file);
+ out_free_td:
+        kfree(td);
+        return ERR_PTR(r);
+@@ -778,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
+ {
+        if (md->disk->slave_dir)
+                bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
+-       fput(td->dm_dev.bdev_file);
++       bdev_fput(td->dm_dev.bdev_file);
+        put_dax(td->dm_dev.dax_dev);
+        list_del(&td->list);
+        kfree(td);
 
 
