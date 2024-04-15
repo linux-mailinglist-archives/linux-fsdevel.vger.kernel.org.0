@@ -1,172 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-16892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01FF28A45F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 00:32:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316B18A4644
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 02:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1266C281AF9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Apr 2024 22:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B235F1F218A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 00:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4D9433AD;
-	Sun, 14 Apr 2024 22:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XNHVuFXM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB0B33C9;
+	Mon, 15 Apr 2024 00:11:21 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55361101EC
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Apr 2024 22:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C934632
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 00:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713133934; cv=none; b=ajJHVS479+3COmXtG90GlkZaxbQCuqgaLaQzUOp+56GVz2vlcoQcQ7HBS0qq7ePaMmmmIIRaEJ+aG3aJNCRCEJjW0UYRPSagX+kHJ5RjnFM3OjFVToHrLzZwRobfEwtHNQooPZvHVYEC2eXPK+aMO+khiDiem1twB0V227V5lUA=
+	t=1713139881; cv=none; b=r5l8c+6vd3bQ7yMMfDUnxvOBOJuC/WHCvOYxFaqL7Vkm5iH3rVDfbffdQEFCYEg4HjbxmDLeaMQe9bK0cUkBPz2JoMG7fMj9CeODLRhnKivXffGdWbpWYAHtvedcVua52MuHj2np6y+Nerqh+1nIRaQQqNsLDqEZiU8fBu4/K20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713133934; c=relaxed/simple;
-	bh=MnYksIqvb5FtaeoglclkXGEgkSgT6ycUtxodaz3XLgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TUS37kKzar7sjQK1zwjljkqXTOqgRE7+8OoE946VkMJUNhHNZqNbjhxEII8BO8ZuWsX3F5JrbgAUZxFj+Av5c3BrkMIWsPFqDpF1jH+5GmZTfCTfGvG6u7QFH1eCRCTRhEBjTipjx27j3SnLLBHnhfB8sgYM4lFOvrJzXtR3C7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XNHVuFXM; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 14 Apr 2024 18:32:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1713133930;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=KiyLn6RhoZasL+FS6LenVdQAJyHGH6C0x6+1YBj1+g4=;
-	b=XNHVuFXMPoDHtMGbDkL0Sa/VOnws7xo16dQBrDLMtK2N16jtoP3JqGfFwGbNA2jaX0JTgG
-	MY+YDGPBFK9yY161N9cTqHcLW2p7nU6yI368ey/f75Mqf5J2Lkap8BpLaGZ4x8Jh8rl0vW
-	plRrfGvrrs170Egck8gOa9nXD79w7mU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Johannes Berg <johannes.berg@intel.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: debugfs revoke broken?
-Message-ID: <nxucitm2agdzdodrkm5rjyuwnnf6keivjiqlp5rn6poxkpkye6@yor2lprsxh7x>
+	s=arc-20240116; t=1713139881; c=relaxed/simple;
+	bh=C/Iu6C+EcnfYBh/f7HXhOOXESwUAXBibk9rsEmyREWw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kbaqcuXWiHA/D+/4urWpqCh3KQoZGwAEYF5yEWCQj9EubOT/ylGrW5nQfvicydrnql33RXYDAAGmc/+pBdbbtkcqq2j1J5C7SpDj23jEqGAxlKjRizX7AaJrsC4G2koO76SqqlpzD4DqhiEorhTyXb5WNARHh8u6eLiGEXQI1gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7d5e487d194so196883139f.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Apr 2024 17:11:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713139879; x=1713744679;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EU0hVL6DfpMlcjjVDEdakS6ZSrs74/GbIpJ9Y08C8GI=;
+        b=OWm8M9gr1LVmnHZaskIVdR0P6dq0MuglkpjHP2+6we04QBGDBJbuX9IfMVFKUiBUy8
+         Cuhxv3uFnmDDWCX1a1TsEqD7tAJbCQ9aNz5LIfQcDQe+2dElue9nRZewreUG5f6z6N9K
+         3FwiwyQTwzW1YhZv+68J9oT4VLqndpEH3kDIj9WtlZuZrrQMWyak3ioYpsT3aFmJ/omK
+         CjknbEEEJJGvSpcvIft/u4k291ssjPeLMQERARjvPtzoTDCTaFrc+jxRYUWyVYoqEyTG
+         MBgpqMujMt4frxjAAuNYut6VjpgH1n0b8a4rh+kiXhq/iJbLIihZ6Q6WdXITIQmRreA8
+         sSZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCAnYK78klSBaWtj63msId0caxLsAXF6msBYSRmhzmLdCH56n2MBpa9eqxFwX0G+ljLVgNxqrWLaF+bc0ykbbT3MvJvIoE1agLOnynow==
+X-Gm-Message-State: AOJu0Yxy9MSlzHl/QO7pUxp9/2wOxyc5R+6OSBknDJZIItQj+W/6IcWl
+	6TnMZymUM9OvdFPYVfk3JowKJKdwMyPKxdMrbSQnRGR0scpuecD/XjgJxx6sMZzFOOyziCMrr1o
+	kPDIydzEkeiHuRxZuCilv/oLxIbWQ3uDxJ3H/HafC9S49Xt7PyTr4hO0=
+X-Google-Smtp-Source: AGHT+IEUm1UkcYM/sIzxXDzHrbNcEpR3pcZf4v+sdN5pTv9AT4AiMUbEOpRb9EeYJuCnjMrfVj551rccxhb3hSmgI4DyUrvieT8s
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6638:8504:b0:482:ead5:4f5d with SMTP id
+ is4-20020a056638850400b00482ead54f5dmr321024jab.1.1713139878632; Sun, 14 Apr
+ 2024 17:11:18 -0700 (PDT)
+Date: Sun, 14 Apr 2024 17:11:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000eab13906161775e8@google.com>
+Subject: [syzbot] [nilfs?] kernel BUG in submit_bh_wbc
+From: syzbot <syzbot+3a841e887ad90c07541a@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, konishi.ryusuke@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-I recently started seeing test failures like the following; from the
-"shutdown complete" line we're well after the point where we called
-debugfs_remove_recursive() - yet from the backtrace we were still able
-to call into debugfs.
+Hello,
 
-And I see from the history the remove path has been getting tweaked,
-so...
+syzbot found the following issue on:
 
-00091 ========= TEST   generic/001
-00091 
-00092 Setting up swapspace version 1, size = 2 GiB (2147479552 bytes)
-00092 no label, UUID=73a80295-2b03-4512-aae1-785187926ce3
-00092 Adding 2097148k swap on /dev/vde.  Priority:-2 extents:1 across:2097148k 
-00092 configuration error - unknown item 'NONEXISTENT' (notify administrator)
-00092 configuration error - unknown item 'PREVENT_NO_AUTH' (notify administrator)
-00094 configuration error - unknown item 'NONEXISTENT' (notify administrator)
-00094 configuration error - unknown item 'PREVENT_NO_AUTH' (notify administrator)
-00094 configuration error - unknown item 'NONEXISTENT' (notify administrator)
-00094 configuration error - unknown item 'PREVENT_NO_AUTH' (notify administrator)
-00101 building 001... done
-00101 bcachefs (vdb): mounting version 1.7: mi_btree_bitmap
-00101 bcachefs (vdb): initializing new filesystem
-00101 bcachefs (vdb): going read-write
-00101 bcachefs (vdb): marking superblocks
-00101 bcachefs (vdb): initializing freespace
-00101 bcachefs (vdb): done initializing freespace
-00101 bcachefs (vdb): reading snapshots table
-00101 bcachefs (vdb): reading snapshots done
-00101 bcachefs (vdb): done starting filesystem
-00102 FSTYP         -- bcachefs
-00102 PLATFORM      -- Linux/aarch64 Debian-1103-bullseye-arm64-base-kvm 6.9.0-rc2-ktest-g2719f811ae24 #18142 SMP Sun Apr 14 16:26:05 NZST 2024
-00102 MKFS_OPTIONS  -- --encrypted --no_passphrase /dev/vdc
-00102 MOUNT_OPTIONS -- /dev/vdc /mnt/scratch
-00102 
-00102 bcachefs (vdc): mounting version 1.7: mi_btree_bitmap
-00102 bcachefs (vdc): initializing new filesystem
-00102 bcachefs (vdc): going read-write
-00102 bcachefs (vdc): marking superblocks
-00102 bcachefs (vdc): initializing freespace
-00102 bcachefs (vdc): done initializing freespace
-00102 bcachefs (vdc): reading snapshots table
-00102 bcachefs (vdc): reading snapshots done
-00102 bcachefs (vdc): done starting filesystem
-00102 bcachefs (vdc): shutting down
-00102 bcachefs (vdc): going read-only
-00102 bcachefs (vdc): finished waiting for writes to stop
-00102 bcachefs (vdc): flushing journal and stopping allocators, journal seq 3
-00102 bcachefs (vdc): flushing journal and stopping allocators complete, journal seq 5
-00102 bcachefs (vdc): shutdown complete, journal seq 6
-00102 bcachefs (vdc): marking filesystem clean
-00102 bcachefs (vdc): shutdown complete
-00102 bcachefs (vdb): shutting down
-00102 bcachefs (vdb): going read-only
-00102 bcachefs (vdb): finished waiting for writes to stop
-00102 bcachefs (vdb): flushing journal and stopping allocators, journal seq 6
-00102 bcachefs (vdb): flushing journal and stopping allocators complete, journal seq 7
-00102 bcachefs (vdb): shutdown complete, journal seq 8
-00102 bcachefs (vdb): marking filesystem clean
-00102 bcachefs (vdb): shutdown complete
-00102 Unable to handle kernel NULL pointer dereference at virtual address 0000000000000010
-00102 Mem abort info:
-00102   ESR = 0x0000000096000004
-00102   EC = 0x25: DABT (current EL), IL = 32 bits
-00102   SET = 0, FnV = 0
-00102   EA = 0, S1PTW = 0
-00102   FSC = 0x04: level 0 translation fault
-00102 Data abort info:
-00102   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-00102   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-00102   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-00102 user pgtable: 4k pages, 48-bit VAs, pgdp=000000011585c000
-00102 [0000000000000010] pgd=0000000000000000, p4d=0000000000000000
-00102 Internal error: Oops: 0000000096000004 [#1] SMP
-00102 Modules linked in:
-00102 CPU: 7 PID: 1805 Comm: cat Not tainted 6.9.0-rc2-ktest-g2719f811ae24 #18142
-00102 Hardware name: linux,dummy-virt (DT)
-00102 pstate: 00001005 (nzcv daif -PAN -UAO -TCO -DIT +SSBS BTYPE=--)
-00102 pc : bch2_journal_seq_pins_to_text+0x100/0x208
-00102 lr : bch2_journal_seq_pins_to_text+0xf0/0x208
-00102 sp : ffff0000d6dd3c80
-00102 x29: ffff0000d6dd3c80 x28: ffff0000ca361f00 x27: 0000000000000000
-00102 x26: 0000000000000000 x25: ffff0000da0002c0 x24: ffff0000da0002f0
-00102 x23: ffff0000d50668c0 x22: ffff800080998950 x21: ffff0000da0002c0
-00102 x20: ffff0000c46165c0 x19: 0000000000000000 x18: 00000000fffffffe
-00102 x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-00102 x14: ffffffffffffffff x13: ffff0000c0ada1df x12: ffff0000c0ada1d9
-00102 x11: 0000000000000000 x10: 0000000000000000 x9 : ffff800080400ec8
-00102 x8 : 0000000000000000 x7 : 20746e756f63203a x6 : 0000000000000000
-00102 x5 : 0000000000000020 x4 : 000000000000000d x3 : ffff0000c0ada1d0
-00102 x2 : 0000000000000010 x1 : ffff0000c0ada1d0 x0 : 0000000000000012
-00102 Call trace:
-00102  bch2_journal_seq_pins_to_text+0x100/0x208
-00102  bch2_journal_pins_read+0x48/0xd0
-00102  full_proxy_read+0x64/0xb8
-00102  vfs_read+0xd0/0x2d0
-00102  ksys_read+0x5c/0xe0
-00102  __arm64_sys_read+0x20/0x30
-00102  invoke_syscall.constprop.0+0x50/0xe0
-00102  do_el0_svc+0x44/0xc8
-00102  el0_svc+0x18/0x58
-00102  el0t_64_sync_handler+0xb8/0xc0
-00102  el0t_64_sync+0x14c/0x150
-00102 Code: f94002b3 eb15027f 54000180 d503201f (f9400a63) 
-00102 ---[ end trace 0000000000000000 ]---
-00102 Kernel panic - not syncing: Oops: Fatal exception
-00102 SMP: stopping secondary CPUs
-00102 Kernel Offset: disabled
-00102 CPU features: 0x0,00000003,80000008,4240500b
-00102 Memory Limit: none
-00102 ---[ end Kernel panic - not syncing: Oops: Fatal exception ]---
-00107 ========= FAILED TIMEOUT generic.001 in 1200s
+HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13f8135b180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
+dashboard link: https://syzkaller.appspot.com/bug?extid=3a841e887ad90c07541a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a7a983180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c5a29d180000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/72ab73815344/disk-fe46a7dd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2d6d6b0d7071/vmlinux-fe46a7dd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/48e275e5478b/bzImage-fe46a7dd.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/12d8fad50ce0/mount_0.gz
+
+The issue was bisected to:
+
+commit 602ce7b8e1343b19c0cf93a3dd1926838ac5a1cc
+Author: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date:   Fri Jan 27 13:22:02 2023 +0000
+
+    nilfs2: prevent WARNING in nilfs_dat_commit_end()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=128df913180000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=118df913180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=168df913180000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3a841e887ad90c07541a@syzkaller.appspotmail.com
+Fixes: 602ce7b8e134 ("nilfs2: prevent WARNING in nilfs_dat_commit_end()")
+
+NILFS (loop0): discard dirty block: blocknr=18446744073709551615, size=1024
+NILFS (loop0): nilfs_get_block (ino=18): a race condition while inserting a data block at offset=0
+------------[ cut here ]------------
+kernel BUG at fs/buffer.c:2768!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 PID: 5056 Comm: syz-executor429 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:submit_bh_wbc+0x543/0x560 fs/buffer.c:2768
+Code: 07 7d ff be 00 10 00 00 48 c7 c7 80 f8 26 8e 4c 89 fa e8 f0 cd be 02 e9 98 fe ff ff e8 86 07 7d ff 90 0f 0b e8 7e 07 7d ff 90 <0f> 0b e8 76 07 7d ff 90 0f 0b e8 6e 07 7d ff 90 0f 0b e8 66 07 7d
+RSP: 0018:ffffc9000399f838 EFLAGS: 00010293
+RAX: ffffffff8217ecd2 RBX: 0000000000000000 RCX: ffff88807cfe3c00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff8217e833 R09: 1ffff1100f095cae
+R10: dffffc0000000000 R11: ffffed100f095caf R12: 0000000000000000
+R13: ffff8880784ae570 R14: 0000000000000000 R15: 1ffff1100f095cae
+FS:  00005555917ee380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000066c7e0 CR3: 000000007f430000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ submit_bh fs/buffer.c:2809 [inline]
+ __bh_read fs/buffer.c:3074 [inline]
+ bh_read_nowait include/linux/buffer_head.h:417 [inline]
+ __block_write_begin_int+0x12d0/0x1a70 fs/buffer.c:2134
+ __block_write_begin fs/buffer.c:2154 [inline]
+ block_write_begin+0x9b/0x1e0 fs/buffer.c:2213
+ nilfs_write_begin+0xa0/0x110 fs/nilfs2/inode.c:262
+ generic_perform_write+0x322/0x640 mm/filemap.c:3930
+ __generic_file_write_iter+0x1b8/0x230 mm/filemap.c:4022
+ generic_file_write_iter+0xaf/0x310 mm/filemap.c:4051
+ call_write_iter include/linux/fs.h:2108 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa84/0xcb0 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_64+0xfb/0x240
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+RIP: 0033:0x7f3d6ccdd9f9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc74baec58 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0073746e6576652e RCX: 00007f3d6ccdd9f9
+RDX: 0000000000000020 RSI: 0000000020000140 RDI: 0000000000000005
+RBP: 652e79726f6d656d R08: 00000000000b15f8 R09: 00000000000b15f8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc74baee28 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:submit_bh_wbc+0x543/0x560 fs/buffer.c:2768
+Code: 07 7d ff be 00 10 00 00 48 c7 c7 80 f8 26 8e 4c 89 fa e8 f0 cd be 02 e9 98 fe ff ff e8 86 07 7d ff 90 0f 0b e8 7e 07 7d ff 90 <0f> 0b e8 76 07 7d ff 90 0f 0b e8 6e 07 7d ff 90 0f 0b e8 66 07 7d
+RSP: 0018:ffffc9000399f838 EFLAGS: 00010293
+RAX: ffffffff8217ecd2 RBX: 0000000000000000 RCX: ffff88807cfe3c00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff8217e833 R09: 1ffff1100f095cae
+R10: dffffc0000000000 R11: ffffed100f095caf R12: 0000000000000000
+R13: ffff8880784ae570 R14: 0000000000000000 R15: 1ffff1100f095cae
+FS:  00005555917ee380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000066c7e0 CR3: 000000007f430000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
