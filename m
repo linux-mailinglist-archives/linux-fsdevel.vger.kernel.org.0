@@ -1,48 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-16915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467C88A4DA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 13:25:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B6F8A4DB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 13:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18601F23127
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 11:25:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4185F1C2237C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 11:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433A7627E8;
-	Mon, 15 Apr 2024 11:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36D460EF9;
+	Mon, 15 Apr 2024 11:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpMOULT/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A37xRoHm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CAA5DF05;
-	Mon, 15 Apr 2024 11:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB985FB82;
+	Mon, 15 Apr 2024 11:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713180333; cv=none; b=Iv3t+XRA3wrTbWy1dOJGEgxJSIZXzRM3E0HdNr0PE2vNSLxaPd7WC6tz8jWuBcoK5Qo0hDeYIjGErXBTZOk7/UtGAco74/Ou+JzzcujkvHMBDl067nDIYxT/Ls2avKAWj+4o0o69yaylXNBGsUQqhmlJ8dBi0pDjHdf82R57+98=
+	t=1713180523; cv=none; b=gBDy44Ndv8q4a4dPm0Mrjxt4uzZNi69izEnhgUfRXlIE/7fwfI4YgIPhTmuEkpV3zZnzXLjAuBcM4DCABnD3muTq6ds8vfgAoiuDnnwT4qZdm/Dc7O7mwBAq3xArWAtW4McAx5qq3wVprKJB2NEK5OWaelrlb6gt1TcRQEWK1eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713180333; c=relaxed/simple;
-	bh=FtNmlcR5RtTte2uzIYZUjvHh2y9nr+AuBWLBdYeMuwE=;
+	s=arc-20240116; t=1713180523; c=relaxed/simple;
+	bh=TG42rIrQfWF4z2sZmAiaCSliYPZceJ0d0h6ysyx3JE4=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=otsBEOQwOFQ4OT31DJ4n5WAwqWAU8naewwGrZgRsi3uJs+pPCsdB8KIVKs3BOh22hMaIDp4+8iKF+uLeq7oIuufxXpQ601BxgNnJgGPYLmQBMyJpL6RjKfv3Mzl5CqcdydMjOTRLeD4/JS00iNvPDbK1k5YL0G00kh4yoew6zfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpMOULT/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D430AC113CC;
-	Mon, 15 Apr 2024 11:25:30 +0000 (UTC)
+	 Content-Type:MIME-Version; b=iXazzwb1N842mVRF59BI0XOoqKT6yBIM5ubFoXbUU+iL8Z+ljxhD0T3irg0pPbeoO6sU+so/DAveRLmhRnZpgx8aZ3tmrInrA281EoznrkhE0tKuAmXqMo9Wyi1Q91XYVuWixI4ImlRLW269c38ARFvnxD5Bzq9hB5b42Ha2DlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A37xRoHm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 531ADC2BD10;
+	Mon, 15 Apr 2024 11:28:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713180333;
-	bh=FtNmlcR5RtTte2uzIYZUjvHh2y9nr+AuBWLBdYeMuwE=;
+	s=k20201202; t=1713180522;
+	bh=TG42rIrQfWF4z2sZmAiaCSliYPZceJ0d0h6ysyx3JE4=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=HpMOULT/93CCL3rnf54afrqg7qTTiVw/3MFIPIJQNnZE1Gb7Nk3LC3aVd2UqDQcBO
-	 0Uuv5KPQ8ledMobX6tyyTLZregZtv+AWyhzHmybAoDCt/4/apq1C78izvGyaCKsTYv
-	 YdliFyz2ztUW8UMw4DLf9ugt4bR2ALkZ4dUv0GlNKqPppat2zwv9mQgTWjV0oLgUo4
-	 101zfE5DCRBhaNiFE6JV2l67tyhdO6Xay3L/voRwDPdAxVwBAj+5ZWx8L5tS+PhKuy
-	 ATaQBB2AZSGY93HzFUXhq3G/JcI/y85yQ0M0NIoYgs35UQZwhbOfxBhLUcm1edMmCX
-	 A7avYWtR1g0TQ==
-Message-ID: <39de1e2ac2ae6a535e23faccd304d7c5459054a2.camel@kernel.org>
-Subject: Re: [PATCH 01/26] cifs: Fix duplicate fscache cookie warnings
+	b=A37xRoHmKA7lWk5GsPUJftJMYwECPgS939Fn8JhIZrEHMF+cWTJEJTNHXZuLIOVvB
+	 +s97UOUpcmQZbD9nb0lYK9w0ekw1xLDSZaho3qVHxhyAKdIvQ6K2ki1qTpnoQ87vAE
+	 FerIM62mOKn9OcgsM9jFjgoOvf4OczPKruSuQtuhT67IFYgaKDyM8BwCEztlI6Ukgu
+	 5uNdE7xD91rR/4jDV9Z73qqc1dn7nrROo3ZYp8TDrwxWzf/JL6BcC16PG2PHRQrM7P
+	 Jtc0hKTRK0GdBOjTLhNk3+OOnYxLuyRdDJ52LDN+j4Z+xboIrDrkqF6VG3tf2g98C8
+	 gedABam14S7Tg==
+Message-ID: <b6b6f41b9de1fc4128c3b3fe5aefc82d07a2347b.camel@kernel.org>
+Subject: Re: [PATCH 03/26] netfs: Update i_blocks when write committed to
+ pagecache
 From: Jeff Layton <jlayton@kernel.org>
 To: David Howells <dhowells@redhat.com>, Christian Brauner
 	 <christian@brauner.io>, Gao Xiang <hsiangkao@linux.alibaba.com>, Dominique
@@ -59,10 +60,10 @@ Cc: Matthew Wilcox <willy@infradead.org>, Steve French <smfrench@gmail.com>,
  linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>, Shyam
  Prasad N <nspmangalore@gmail.com>, Rohith Surabattula
  <rohiths.msft@gmail.com>
-Date: Mon, 15 Apr 2024 07:25:29 -0400
-In-Reply-To: <20240328163424.2781320-2-dhowells@redhat.com>
+Date: Mon, 15 Apr 2024 07:28:39 -0400
+In-Reply-To: <20240328163424.2781320-4-dhowells@redhat.com>
 References: <20240328163424.2781320-1-dhowells@redhat.com>
-	 <20240328163424.2781320-2-dhowells@redhat.com>
+	 <20240328163424.2781320-4-dhowells@redhat.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/
 	r0kmR/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2BrQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRIONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZWf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQOlDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7RjiR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27XiQQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBMYXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9qLqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoac8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3FLpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx
@@ -83,18 +84,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Thu, 2024-03-28 at 16:33 +0000, David Howells wrote:
-> fscache emits a lot of duplicate cookie warnings with cifs because the
-> index key for the fscache cookies does not include everything that the
-> cifs_find_inode() function does.  The latter is used with iget5_locked() =
-to
-> distinguish between inodes in the local inode cache.
+> Update i_blocks when i_size is updated when we finish making a write to t=
+he
+> pagecache to reflect the amount of space we think will be consumed.
 >=20
-> Fix this by adding the creation time and file type to the fscache cookie
-> key.
->=20
-> Additionally, add a couple of comments to note that if one is changed the
-> other must be also.
->=20
+
+Umm ok, but why? I get that the i_size and i_blocks would be out of sync
+until we get back new attrs from the server, but is that a problem? I'm
+mainly curious as to what's paying attention to the i_blocks during this
+window.
+
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > cc: Steve French <sfrench@samba.org>
 > cc: Shyam Prasad N <nspmangalore@gmail.com>
@@ -103,77 +102,80 @@ to
 > cc: linux-cifs@vger.kernel.org
 > cc: netfs@lists.linux.dev
 > cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
 > ---
->  fs/smb/client/fscache.c | 16 +++++++++++++++-
->  fs/smb/client/inode.c   |  2 ++
->  2 files changed, 17 insertions(+), 1 deletion(-)
+>  fs/netfs/buffered_write.c | 45 +++++++++++++++++++++++++++++----------
+>  1 file changed, 34 insertions(+), 11 deletions(-)
 >=20
-> diff --git a/fs/smb/client/fscache.c b/fs/smb/client/fscache.c
-> index c4a3cb736881..340efce8f052 100644
-> --- a/fs/smb/client/fscache.c
-> +++ b/fs/smb/client/fscache.c
-> @@ -12,6 +12,16 @@
->  #include "cifs_fs_sb.h"
->  #include "cifsproto.h"
+> diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+> index 9a0d32e4b422..c194655a6dcf 100644
+> --- a/fs/netfs/buffered_write.c
+> +++ b/fs/netfs/buffered_write.c
+> @@ -130,6 +130,37 @@ static struct folio *netfs_grab_folio_for_write(stru=
+ct address_space *mapping,
+>  				   mapping_gfp_mask(mapping));
+>  }
 > =20
 > +/*
-> + * Key for fscache inode.  [!] Contents must match comparisons in cifs_f=
-ind_inode().
+> + * Update i_size and estimate the update to i_blocks to reflect the addi=
+tional
+> + * data written into the pagecache until we can find out from the server=
+ what
+> + * the values actually are.
 > + */
-> +struct cifs_fscache_inode_key {
+> +static void netfs_update_i_size(struct netfs_inode *ctx, struct inode *i=
+node,
+> +				loff_t i_size, loff_t pos, size_t copied)
+> +{
+> +	blkcnt_t add;
+> +	size_t gap;
 > +
-> +	__le64  uniqueid;	/* server inode number */
-> +	__le64  createtime;	/* creation time on server */
-> +	u8	type;		/* S_IFMT file type */
-> +} __packed;
+> +	if (ctx->ops->update_i_size) {
+> +		ctx->ops->update_i_size(inode, pos);
+> +		return;
+> +	}
 > +
-
-Interesting. So the uniqueid of the inode is not unique within the fs?
-Or are the clients are mounting shares that span multiple filesystems?
-Or, are we looking at a situation where the uniqueid is being quickly
-reused for new inodes after the original inode is unlinked?
-
-Should we be mixing in a fsid (or whatever the windows equivalent is)?
-
->  static void cifs_fscache_fill_volume_coherency(
->  	struct cifs_tcon *tcon,
->  	struct cifs_fscache_volume_coherency_data *cd)
-> @@ -97,15 +107,19 @@ void cifs_fscache_release_super_cookie(struct cifs_t=
-con *tcon)
->  void cifs_fscache_get_inode_cookie(struct inode *inode)
->  {
->  	struct cifs_fscache_inode_coherency_data cd;
-> +	struct cifs_fscache_inode_key key;
->  	struct cifsInodeInfo *cifsi =3D CIFS_I(inode);
->  	struct cifs_sb_info *cifs_sb =3D CIFS_SB(inode->i_sb);
->  	struct cifs_tcon *tcon =3D cifs_sb_master_tcon(cifs_sb);
-> =20
-> +	key.uniqueid	=3D cpu_to_le64(cifsi->uniqueid);
-> +	key.createtime	=3D cpu_to_le64(cifsi->createtime);
-> +	key.type	=3D (inode->i_mode & S_IFMT) >> 12;
->  	cifs_fscache_fill_coherency(&cifsi->netfs.inode, &cd);
-> =20
->  	cifsi->netfs.cache =3D
->  		fscache_acquire_cookie(tcon->fscache, 0,
-> -				       &cifsi->uniqueid, sizeof(cifsi->uniqueid),
-> +				       &key, sizeof(key),
->  				       &cd, sizeof(cd),
->  				       i_size_read(&cifsi->netfs.inode));
->  	if (cifsi->netfs.cache)
-> diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-> index d28ab0af6049..91b07ef9e25c 100644
-> --- a/fs/smb/client/inode.c
-> +++ b/fs/smb/client/inode.c
-> @@ -1351,6 +1351,8 @@ cifs_find_inode(struct inode *inode, void *opaque)
->  {
->  	struct cifs_fattr *fattr =3D opaque;
-> =20
-> +	/* [!] The compared values must be the same in struct cifs_fscache_inod=
-e_key. */
+> +	i_size_write(inode, pos);
+> +#if IS_ENABLED(CONFIG_FSCACHE)
+> +	fscache_update_cookie(ctx->cache, NULL, &pos);
+> +#endif
 > +
->  	/* don't match inode with different uniqueid */
->  	if (CIFS_I(inode)->uniqueid !=3D fattr->cf_uniqueid)
->  		return 0;
+> +	gap =3D SECTOR_SIZE - (i_size & (SECTOR_SIZE - 1));
+> +	if (copied > gap) {
+> +		add =3D DIV_ROUND_UP(copied - gap, SECTOR_SIZE);
+> +
+> +		inode->i_blocks =3D min_t(blkcnt_t,
+> +					DIV_ROUND_UP(pos, SECTOR_SIZE),
+> +					inode->i_blocks + add);
+> +	}
+> +}
+> +
+>  /**
+>   * netfs_perform_write - Copy data into the pagecache.
+>   * @iocb: The operation parameters
+> @@ -352,18 +383,10 @@ ssize_t netfs_perform_write(struct kiocb *iocb, str=
+uct iov_iter *iter,
+>  		trace_netfs_folio(folio, trace);
+> =20
+>  		/* Update the inode size if we moved the EOF marker */
+> -		i_size =3D i_size_read(inode);
+>  		pos +=3D copied;
+> -		if (pos > i_size) {
+> -			if (ctx->ops->update_i_size) {
+> -				ctx->ops->update_i_size(inode, pos);
+> -			} else {
+> -				i_size_write(inode, pos);
+> -#if IS_ENABLED(CONFIG_FSCACHE)
+> -				fscache_update_cookie(ctx->cache, NULL, &pos);
+> -#endif
+> -			}
+> -		}
+> +		i_size =3D i_size_read(inode);
+> +		if (pos > i_size)
+> +			netfs_update_i_size(ctx, inode, i_size, pos, copied);
+>  		written +=3D copied;
+> =20
+>  		if (likely(!wreq)) {
 >=20
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
