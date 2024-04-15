@@ -1,376 +1,487 @@
-Return-Path: <linux-fsdevel+bounces-16899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A268A46A7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 03:55:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84BCA8A470E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 04:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83DAB1C214BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 01:55:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8EC2B2113A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 02:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33F6EEDD;
-	Mon, 15 Apr 2024 01:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63C317BAA;
+	Mon, 15 Apr 2024 02:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4OeN4gr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EAB639;
-	Mon, 15 Apr 2024 01:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713146103; cv=none; b=hiaOOLHN7w0r2D8PKvfJL3ccTYYbMBJCEC4LarPYS9Ij/5w5Ehm2tLn4wDUWUNolQyAF5kWaAzLRUzjXbWrY7e6xiSq9i5lWKRhPk7TRMxjvmZ1lUTUoC1t3jGVNPvMJeRgdjXWLxWq6lhN2E/b70IEBNbJRYN11XVgx0LwVSnU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713146103; c=relaxed/simple;
-	bh=DpQeuB0z3AIkPjsarzCBqVmXPH4fK8PnzTpCF3lUDec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nZVf3M2ZHHMN9pxRga7orL8Y9eisu4ZryYo2PMyFyt11mZqcm8qyLj1ig4JTS7N50+DYcOuhwkcrIY7d5nY4PYCpzzaquea9bVHTCwigUvcWZbXiU7yYbiM+P0GVRSkwqqtK4PktrQ4Li7mAzJlqhybRdNnVio99HxDN+emi84Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VHqst0Tq4z2CcSV;
-	Mon, 15 Apr 2024 09:52:02 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 119F61A0172;
-	Mon, 15 Apr 2024 09:54:58 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC9C17556;
+	Mon, 15 Apr 2024 02:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713148973; cv=fail; b=XdkAJ0Oxz7P3SfzhMWHbN+XYRxBoJHJ+PQMj4EYwpDogOyk2ug7hw0e4BImLv2AL00FNZlwo1OA1Dt9uJTTYbqHEBdWel74jcDdZG8MMkL2n8KUiIeWXoZaI0FF4pJYC1QKiK3tHU/sOGFpS6SE31jgEJDEJgL19Ln2l36Hj1fw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713148973; c=relaxed/simple;
+	bh=IvXziEMakqLfLp19eNC08sj44TC74viLs3V+mDMaSPA=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=NOJXFDX4Fge0cfXVMKy96p58y43RQQtK7J5ulyaomCgn2ZfizYG0Xmk2jhNp1stw3pgdQKFIsSQKl9hLHnTSHgmIHT0undmM3reCSrY3ddDMHagrtLGzscGMdTxU8CEIlWwuxQttOKZK5DPBoc8WrsRNCpd+IDdqRtGugsEaK4Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4OeN4gr; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1713148970; x=1744684970;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=IvXziEMakqLfLp19eNC08sj44TC74viLs3V+mDMaSPA=;
+  b=l4OeN4gr02jSq9v0PyzP1rqPtcY6t2C6kCpntEPgoPmYB/P3wItkmoFn
+   TWVtxkHMZK9eXksAp7TJpG18wM0UZarhHK26rXSK2oP2zrFsOIwQqpajs
+   f5CB6KTS3QKi+P9C3G7CwPy6QJyX7NR4gfm5Cu7q5TKOV4nwAJxyA6AfY
+   HcElJiqKWtzdQjWGQXNx/aFA7Guys6wIkThQOs3La10msaJL0mENVhsux
+   ld2McopuV/CC7hrpt8h0IXeoO3kem7B4f1XYrdfmBseLmEvOPFZzLM5EV
+   fEvyzsj9q1IKuIgzvpQebJ86WfgWcNawA3sXmtjrMkpqE6j03F+uBsvCT
+   A==;
+X-CSE-ConnectionGUID: XxRidbYuTTuVoyOTDsVikA==
+X-CSE-MsgGUID: p7bqjY3MQ0CyGu0xi0Nvmw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11044"; a="12299143"
+X-IronPort-AV: E=Sophos;i="6.07,202,1708416000"; 
+   d="scan'208";a="12299143"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2024 19:42:50 -0700
+X-CSE-ConnectionGUID: rt0di2EAT8iTtdxFVOqn1A==
+X-CSE-MsgGUID: wuOLIa9RQqSjEioOiqud+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,202,1708416000"; 
+   d="scan'208";a="21762118"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Apr 2024 19:42:49 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Sun, 14 Apr 2024 19:42:48 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Sun, 14 Apr 2024 19:42:48 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Sun, 14 Apr 2024 19:42:48 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.171)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 15 Apr 2024 09:54:57 +0800
-Message-ID: <8d7022f6-8fcc-469c-b43c-64fb30dc0595@huawei.com>
-Date: Mon, 15 Apr 2024 09:54:57 +0800
+ 15.1.2507.35; Sun, 14 Apr 2024 19:42:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CV33E4pcGHxttHuRYWWOktAp/RZD5QzQIsE8WHffixfCZILcUqKYbGY17n83RxtJvIR9ZtPInoexs//jSJknZDu8+LzLhRn6qk8LGjYtoJFID+5z+NM4eiYWEvtcU1PPE3blyD9ScGukzjhkw96OzdQgfvXEg7viISYwZTGKHnm0Y8EMWpZKHTbBX6CIjsE7iyNW/TH3RADNeMq0tqanGeCzL8kjC+FTEi2QsnTPzhnHGNVoDHKvmtrGrdpVfJBzOYfLZpLdB1CmMnuBl8FZqWlBx+pI3PwfzunNvyIJHdyVer1gMDsXlRGAPe8MO8JpeH9ZT8MGB5ODzCjwAke9kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GzgUVmoOI5k7z6YbzR/q44TvcjK1F1QeEQJ5/VSxZ4E=;
+ b=lPj2TbElDGNN7fMevgk+a0Lx3xHwaiKEANJ3RVmmj6EDhQqOR3nj/mhaLYiLTE00lyZ1TYJVPtOJyUVBLC9i+g7FRF+N+e3Ph3mIPE9o8bfTALp6XEiUHNs33Xy0IDOpT7aJ7ntXCgOm1wEwVfOEwrPxsV2APER6SxsId/NC2eEsio8ZTsNNk6qrkIEU1nhHbI6eh845+Y3/iKETmZudZ3T7KSLfzTmQhFvmnfJ3qOYmfoG8LVB6M9tEcxIGtnJ/kRM3GjGtQPGLRxJjmLILn06Z/ynPOQY+TXTa0zhPKOv2PfKyZmMPZw7c5l5dWxJPCPPWUTd+8pb/JRS/48pMxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by IA0PR11MB7862.namprd11.prod.outlook.com (2603:10b6:208:3dc::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7430.46; Mon, 15 Apr
+ 2024 02:42:46 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::58dd:99ca:74a6:2e3e]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::58dd:99ca:74a6:2e3e%3]) with mapi id 15.20.7472.025; Mon, 15 Apr 2024
+ 02:42:46 +0000
+Date: Mon, 15 Apr 2024 10:42:37 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Kairui Song <kasong@tencent.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<oliver.sang@intel.com>
+Subject: [akpm-mm:mm-unstable] [lib/xarray]  ecc70b3e0b:
+ WARNING:suspicious_RCU_usage
+Message-ID: <202404151046.448e2d6e-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SG2PR03CA0120.apcprd03.prod.outlook.com
+ (2603:1096:4:91::24) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bcachefs: bch_member.btree_allocated_bitmap
-Content-Language: en-US
-To: Kent Overstreet <kent.overstreet@linux.dev>
-CC: <linux-bcachefs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240413215723.1543569-1-kent.overstreet@linux.dev>
- <d7e9f196-c3bd-47ca-87fb-b21f28f1680a@huawei.com>
- <ciib47ljt667csv2m37wj2ci72tps3lvsjwedclpyl7qqoaic2@3tl2vbzh2osg>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <ciib47ljt667csv2m37wj2ci72tps3lvsjwedclpyl7qqoaic2@3tl2vbzh2osg>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|IA0PR11MB7862:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2607b378-b1bf-4902-a4de-08dc5cf5bb1f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vCjEnlQW2Orzb2qGKvB+1lSuJw6DRZPJY7pZXCgmrtIR/Syyefg+AlQUBvbw3o0LTtB/9igvG3wR5gmKNB3KpqeBz22sRfIhVyWYEKdfJv57LpzyAVItp4uRNFF2BlMWiXavd4By1mGQxFo5udaVC97//pJtYmwthJNPjWXySODlDxKVxraveAuP8dH/nmROByKfSkY39JubuV+KxCBafdNlDog0g2y2Wkkgyuxa+pbaDBO3eBHo9xrF8VgP6afIS8QXZX+tlouRsOTIRRxSKnZE+L53sEyl2PSNjwvFTlQlZGFt3RqzV+cHp7LOfT1vWQTfqIRz5gU8bw61oloL88xDYnubL0/MtuE427xF9QRe1zGKAkcD9KT/jGoWZN7iZxf7/AQD2rMFStUd1iVehjavHczi9A+wzZmLwRylFlbDo3n7G1HVkU+kqFIpwt5kvnm1UJ0xJ0fOHichDy7yQLYRlLA/sJSND5X9eXZAsVw0GUY2rTYo+cZO4mfZHTxBq9ubaUq9HG7v1cJZSF/W+3e/0lrnROMIdQetetP3ptos0IDack8T1sVskdN8wgllaZBZzlGv1bt+CCuMd7HGN8OuQ7D0uFeqLkIOqJ8ezKcsR88k9LgjLKvDV+IXRNaB
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?brjqnkZAuUUq6ZZmMvyLcDSuRcgCs+F525qG4Ph808l6DKWThzV6HHXh6pbI?=
+ =?us-ascii?Q?6jLzVryF6Jq8S31rD4iNJk5Pe0RivhlE2JFTz162elyHUvV2JXRqlHgHW22C?=
+ =?us-ascii?Q?8yfMzvgMw8f3cUa8IT77hNQOAdPA1eIPpR+g9ol9Uc0roLHgoOjxeEDHPru+?=
+ =?us-ascii?Q?+GlEOLJhSxMJAEKN5FlstzC2BHYF6Cq6pPA8IJlIeZ7Ni5YCTlHtCvvtj4TN?=
+ =?us-ascii?Q?Z3QxfLlnC9lyB6mfhg2ZZu+ycel+9WnIxhjNgSfiynZB5vkjIcXnSr0tfRmD?=
+ =?us-ascii?Q?7VThgQe73mubM/7MysnDNknyGPPiNKal4hURETPdDSvRtQER5YTZ/n9NafB5?=
+ =?us-ascii?Q?LqVA4gDpoxse4QB2KPKETGzKduFShRr1ADHQ+LYSiHTdgrmg6G0FTaDXHEZJ?=
+ =?us-ascii?Q?LZXkrkYDdNFIo9LAfUiOFUFRLNxJLC//uMcttSuyPatfTZyhPN1N0gIxBzLv?=
+ =?us-ascii?Q?UX9O6mjAkpmZntGYBkCmkL07cFFVqbJtzHFdur3VgyHTy1ayLsTX1ChVVn9Z?=
+ =?us-ascii?Q?O9ldCoubPnO9DDiYg8yq7mxDdeLsjlT1ikIkLIhq+R6ElqtJ5auOI/gxkbSu?=
+ =?us-ascii?Q?eq1g14qu4oYLcr6QimL9h4Sz8i0+jVFcWRMOI/Q3xu0GtLnbU2WP1LZobxmy?=
+ =?us-ascii?Q?afdg6QTzCZoEFvca+HOC53Snt/c8sX5iT0ycJq4LaCkXSV0tuiP+kel2tDEV?=
+ =?us-ascii?Q?GXj394TekxpguL9EKHQKqFmdcjeRVNmJmoBkbqoBOYsGfyKicl03SyLbbAWF?=
+ =?us-ascii?Q?W/ivR8QhkFhu9fhYYqA0VOa5nAlRGOOO4X37MKrSq5t1y3+dXL7YZNx9SD9c?=
+ =?us-ascii?Q?0r1axTKMEnEh7n3UwLSNjhvV7/kW8kMNXz5H0FBArVfGJQxDIvVy7P1tZTUI?=
+ =?us-ascii?Q?nC/EIyv5yim59kMek3B+PhP2FPFd9pnBuzdi+i9L3f3ZKQccxMEPb5KUD20j?=
+ =?us-ascii?Q?EqTN+TMWOO4yRKrawgG/DQZceGz6OPlTLgYpSeUMJJsG+m9doBVAMDbi9h9U?=
+ =?us-ascii?Q?9+CbiZLvpxOv4OhB2cV8TPyxvycO3kfCPLnRFNRQaK0QZk+j9kmUQA1bF5Ld?=
+ =?us-ascii?Q?MS54b6441JlYHaAOCy28l1w4MVwr/aFzPB8dBGx4+dkfHE31Hjl0YUm1rC9l?=
+ =?us-ascii?Q?dLYCJEf4qiGf10zeWrzkyCa8oZbLjdwceWNWYWqYJ1FtayyTm4hogoRqyzod?=
+ =?us-ascii?Q?pgpvBLrV2fGJ0o6+5zYcT8j4TRTSsHfOg8eakHIbx+WXeEia3tjISOYCAC1F?=
+ =?us-ascii?Q?2yskkjxziVsnWd99414XeQaMrnu1/Ix0jJF4rFwqpxdMV5Jov62pIQSCqlJ8?=
+ =?us-ascii?Q?GiWGGAtvFslKpI4Oyq5oghZlnR9yXIxFW3wJuhYtpbcT3v1tASew4jAUKUoM?=
+ =?us-ascii?Q?CFnEj0ydqnIChPuiz0tDJbO01KBkP9awT+rNhZiU4xY+d8bjere9L3aeaSAa?=
+ =?us-ascii?Q?vBslHCPiMLw/m7yUemtIN3jagAQjwqsX97KVNRYIRqumvFlI+5A2DYFX5M/O?=
+ =?us-ascii?Q?SREQwOp9f2QqiL+ZqYVw4z/M6u0XhtSDcqRX73nEyJ0AxgoyevNOY/wgEF8v?=
+ =?us-ascii?Q?2aLsgHvKJX3h++Gv40FbhjHU4wqxf0B0T8iWz7OKLj9jyp3NFBYyJ0SJNZia?=
+ =?us-ascii?Q?Fw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2607b378-b1bf-4902-a4de-08dc5cf5bb1f
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2024 02:42:45.9213
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gv6gWMLVaRjLHnS/qrXFF8ZKmq6P1TZxSpCvTVhT7FAWndyX10nRyTkGWjv8k6/qIrtngAEHxw8SVsI2ea587Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7862
+X-OriginatorOrg: intel.com
 
 
 
-On 2024/4/15 9:30, Kent Overstreet wrote:
-> On Mon, Apr 15, 2024 at 09:12:11AM +0800, Hongbo Li wrote:
->>
->>
->> On 2024/4/14 5:57, Kent Overstreet wrote:
->>> For those interested, this is a good tour of the facilities for rolling
->>> out new on disk format features.
->>>
->>> -- >8 --
->>>
->>> This adds a small (64 bit) per-device bitmap that tracks ranges that
->>> have btree nodes, for accelerating btree node scan if it is ever needed.
->>>
->>> - New helpers, bch2_dev_btree_bitmap_marked() and
->>>     bch2_dev_bitmap_mark(), for checking and updating the bitmap
->>>
->>> - Interior btree update path updates the bitmaps when required
->>>
->>> - The check_allocations pass has a new fsck_err check,
->>>     btree_bitmap_not_marked
->>>
->>> - New on disk format version, mi_btree_mitmap, which indicates the new
->>>     bitmap is present
->>>
->>> - Upgrade table lists the required recovery pass and expected fsck error
->>>
->>> - Btree node scan uses the bitmap to skip ranges if we're on the new
->>>     version
->>>
->>> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
->>> ---
->>>    fs/bcachefs/bcachefs_format.h       |  7 ++--
->>>    fs/bcachefs/btree_gc.c              | 13 +++++++
->>>    fs/bcachefs/btree_node_scan.c       |  9 +++--
->>>    fs/bcachefs/btree_update_interior.c | 24 +++++++++++++
->>>    fs/bcachefs/sb-downgrade.c          |  5 ++-
->>>    fs/bcachefs/sb-errors_types.h       |  3 +-
->>>    fs/bcachefs/sb-members.c            | 53 +++++++++++++++++++++++++++++
->>>    fs/bcachefs/sb-members.h            | 21 ++++++++++++
->>>    fs/bcachefs/sb-members_types.h      |  2 ++
->>>    9 files changed, 131 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
->>> index 9480f1b44f07..085987435a5e 100644
->>> --- a/fs/bcachefs/bcachefs_format.h
->>> +++ b/fs/bcachefs/bcachefs_format.h
->>> @@ -578,7 +578,8 @@ struct bch_member {
->>>    	__le64			nbuckets;	/* device size */
->>>    	__le16			first_bucket;   /* index of first bucket used */
->>>    	__le16			bucket_size;	/* sectors */
->>> -	__le32			pad;
->>> +	__u8			btree_bitmap_shift;
->>> +	__u8			pad[3];
->>>    	__le64			last_mount;	/* time_t */
->>>    	__le64			flags;
->>> @@ -587,6 +588,7 @@ struct bch_member {
->>>    	__le64			errors_at_reset[BCH_MEMBER_ERROR_NR];
->>>    	__le64			errors_reset_time;
->>>    	__le64			seq;
->>> +	__le64			btree_allocated_bitmap;
->>>    };
->>>    #define BCH_MEMBER_V1_BYTES	56
->>> @@ -876,7 +878,8 @@ struct bch_sb_field_downgrade {
->>>    	x(rebalance_work,		BCH_VERSION(1,  3))		\
->>>    	x(member_seq,			BCH_VERSION(1,  4))		\
->>>    	x(subvolume_fs_parent,		BCH_VERSION(1,  5))		\
->>> -	x(btree_subvolume_children,	BCH_VERSION(1,  6))
->>> +	x(btree_subvolume_children,	BCH_VERSION(1,  6))		\
->>> +	x(mi_btree_bitmap,		BCH_VERSION(1,  7))
->>>    enum bcachefs_metadata_version {
->>>    	bcachefs_metadata_version_min = 9,
->>> diff --git a/fs/bcachefs/btree_gc.c b/fs/bcachefs/btree_gc.c
->>> index 10c41cf89212..a77c723a9cef 100644
->>> --- a/fs/bcachefs/btree_gc.c
->>> +++ b/fs/bcachefs/btree_gc.c
->>> @@ -822,6 +822,7 @@ static int bch2_gc_mark_key(struct btree_trans *trans, enum btree_id btree_id,
->>>    	struct bch_fs *c = trans->c;
->>>    	struct bkey deleted = KEY(0, 0, 0);
->>>    	struct bkey_s_c old = (struct bkey_s_c) { &deleted, NULL };
->>> +	struct printbuf buf = PRINTBUF;
->>>    	int ret = 0;
->>>    	deleted.p = k->k->p;
->>> @@ -842,11 +843,23 @@ static int bch2_gc_mark_key(struct btree_trans *trans, enum btree_id btree_id,
->>>    	if (ret)
->>>    		goto err;
->>> +	if (mustfix_fsck_err_on(level && !bch2_dev_btree_bitmap_marked(c, *k),
->>> +				c, btree_bitmap_not_marked,
->>> +				"btree ptr not marked in member info btree allocated bitmap\n  %s",
->>> +				(bch2_bkey_val_to_text(&buf, c, *k),
->>> +				 buf.buf))) {
->>> +		mutex_lock(&c->sb_lock);
->>> +		bch2_dev_btree_bitmap_mark(c, *k);
->>> +		bch2_write_super(c);
->>> +		mutex_unlock(&c->sb_lock);
->>> +	}
->>> +
->>>    	ret = commit_do(trans, NULL, NULL, 0,
->>>    			bch2_key_trigger(trans, btree_id, level, old,
->>>    					 unsafe_bkey_s_c_to_s(*k), BTREE_TRIGGER_gc));
->>>    fsck_err:
->>>    err:
->>> +	printbuf_exit(&buf);
->>>    	bch_err_fn(c, ret);
->>>    	return ret;
->>>    }
->>> diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
->>> index 20f2b37c4474..866bd278439f 100644
->>> --- a/fs/bcachefs/btree_node_scan.c
->>> +++ b/fs/bcachefs/btree_node_scan.c
->>> @@ -205,8 +205,13 @@ static int read_btree_nodes_worker(void *p)
->>>    				last_print = jiffies;
->>>    			}
->>> -			try_read_btree_node(w->f, ca, bio, buf,
->>> -					    bucket * ca->mi.bucket_size + bucket_offset);
->>> +			u64 sector = bucket * ca->mi.bucket_size + bucket_offset;
->>> +
->>> +			if (c->sb.version_upgrade_complete >= bcachefs_metadata_version_mi_btree_bitmap &&
->>> +			    !bch2_dev_btree_bitmap_marked_sectors(ca, sector, btree_sectors(c)))
->>> +				continue;
->>> +
->>> +			try_read_btree_node(w->f, ca, bio, buf, sector);
->>>    		}
->>>    err:
->>>    	bio_put(bio);
->>> diff --git a/fs/bcachefs/btree_update_interior.c b/fs/bcachefs/btree_update_interior.c
->>> index 593241b15aa8..12ce6287416f 100644
->>> --- a/fs/bcachefs/btree_update_interior.c
->>> +++ b/fs/bcachefs/btree_update_interior.c
->>> @@ -21,6 +21,7 @@
->>>    #include "keylist.h"
->>>    #include "recovery_passes.h"
->>>    #include "replicas.h"
->>> +#include "sb-members.h"
->>>    #include "super-io.h"
->>>    #include "trace.h"
->>> @@ -644,6 +645,26 @@ static int btree_update_nodes_written_trans(struct btree_trans *trans,
->>>    	return 0;
->>>    }
->>> +static bool btree_update_new_nodes_marked_sb(struct btree_update *as)
->>> +{
->>> +	for_each_keylist_key(&as->new_keys, k)
->>> +		if (!bch2_dev_btree_bitmap_marked(as->c, bkey_i_to_s_c(k)))
->>> +			return false;
->>> +	return true;
->>> +}
->>> +
->>> +static void btree_update_new_nodes_mark_sb(struct btree_update *as)
->>> +{
->>> +	struct bch_fs *c = as->c;
->>> +
->>> +	mutex_lock(&c->sb_lock);
->>> +	for_each_keylist_key(&as->new_keys, k)
->>> +		bch2_dev_btree_bitmap_mark(c, bkey_i_to_s_c(k));
->>> +
->>> +	bch2_write_super(c);
->>> +	mutex_unlock(&c->sb_lock);
->>> +}
->>> +
->>>    static void btree_update_nodes_written(struct btree_update *as)
->>>    {
->>>    	struct bch_fs *c = as->c;
->>> @@ -664,6 +685,9 @@ static void btree_update_nodes_written(struct btree_update *as)
->>>    	if (ret)
->>>    		goto err;
->>> +	if (!btree_update_new_nodes_marked_sb(as))
->>> +		btree_update_new_nodes_mark_sb(as);
->>> +
->>>    	/*
->>>    	 * Wait for any in flight writes to finish before we free the old nodes
->>>    	 * on disk:
->>> diff --git a/fs/bcachefs/sb-downgrade.c b/fs/bcachefs/sb-downgrade.c
->>> index 56ac8f35cdc3..90b06f8aa1df 100644
->>> --- a/fs/bcachefs/sb-downgrade.c
->>> +++ b/fs/bcachefs/sb-downgrade.c
->>> @@ -51,7 +51,10 @@
->>>    	  BCH_FSCK_ERR_subvol_fs_path_parent_wrong)		\
->>>    	x(btree_subvolume_children,				\
->>>    	  BIT_ULL(BCH_RECOVERY_PASS_check_subvols),		\
->>> -	  BCH_FSCK_ERR_subvol_children_not_set)
->>> +	  BCH_FSCK_ERR_subvol_children_not_set)			\
->>> +	x(mi_btree_bitmap,					\
->>> +	  BIT_ULL(BCH_RECOVERY_PASS_check_allocations),		\
->>> +	  BCH_FSCK_ERR_btree_bitmap_not_marked)
->>>    #define DOWNGRADE_TABLE()
->>> diff --git a/fs/bcachefs/sb-errors_types.h b/fs/bcachefs/sb-errors_types.h
->>> index d7d609131030..5b600c6d7aca 100644
->>> --- a/fs/bcachefs/sb-errors_types.h
->>> +++ b/fs/bcachefs/sb-errors_types.h
->>> @@ -270,7 +270,8 @@
->>>    	x(btree_ptr_v2_min_key_bad,				262)	\
->>>    	x(btree_root_unreadable_and_scan_found_nothing,		263)	\
->>>    	x(snapshot_node_missing,				264)	\
->>> -	x(dup_backpointer_to_bad_csum_extent,			265)
->>> +	x(dup_backpointer_to_bad_csum_extent,			265)	\
->>> +	x(btree_bitmap_not_marked,				266)
->>>    enum bch_sb_error_id {
->>>    #define x(t, n) BCH_FSCK_ERR_##t = n,
->>> diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
->>> index 9b7a2f300182..d5937aba0910 100644
->>> --- a/fs/bcachefs/sb-members.c
->>> +++ b/fs/bcachefs/sb-members.c
->>> @@ -1,6 +1,7 @@
->>>    // SPDX-License-Identifier: GPL-2.0
->>>    #include "bcachefs.h"
->>> +#include "btree_cache.h"
->>>    #include "disk_groups.h"
->>>    #include "opts.h"
->>>    #include "replicas.h"
->>> @@ -378,3 +379,55 @@ void bch2_dev_errors_reset(struct bch_dev *ca)
->>>    	bch2_write_super(c);
->>>    	mutex_unlock(&c->sb_lock);
->>>    }
->>> +
->>> +/*
->>> + * Per member "range has btree nodes" bitmap:
->>> + *
->>> + * This is so that if we ever have to run the btree node scan to repair we don't
->>> + * have to scan full devices:
->>> + */
->>> +
->>> +bool bch2_dev_btree_bitmap_marked(struct bch_fs *c, struct bkey_s_c k)
->>> +{
->>> +	bkey_for_each_ptr(bch2_bkey_ptrs_c(k), ptr)
->>> +		if (!bch2_dev_btree_bitmap_marked_sectors(bch2_dev_bkey_exists(c, ptr->dev),
->>> +							  ptr->offset, btree_sectors(c)))
->>> +			return false;
->>> +	return true;
->>> +}
->>> +
->>> +static void __bch2_dev_btree_bitmap_mark(struct bch_sb_field_members_v2 *mi, unsigned dev,
->>> +				u64 start, unsigned sectors)
->>> +{
->>> +	struct bch_member *m = __bch2_members_v2_get_mut(mi, dev);
->>> +	u64 bitmap = le64_to_cpu(m->btree_allocated_bitmap);
->>> +
->>> +	u64 end = start + sectors;
->>> +
->>> +	int resize = ilog2(roundup_pow_of_two(end)) - (m->btree_bitmap_shift + 6);
->>> +	if (resize > 0) {
->>> +		u64 new_bitmap = 0;
->>> +
->>> +		for (unsigned i = 0; i < 64; i++)
->>> +			if (bitmap & BIT_ULL(i))
->>> +				new_bitmap |= BIT_ULL(i >> resize);
->>> +		bitmap = new_bitmap;
->>> +		m->btree_bitmap_shift += resize;
->>> +	}
->>> +
->>> +	for (unsigned bit = sectors >> m->btree_bitmap_shift;
->>> +	     bit << m->btree_bitmap_shift < end;
->>> +	     bit++)
->>> +		bitmap |= BIT_ULL(bit);
->>> +
->>> +	m->btree_allocated_bitmap = cpu_to_le64(bitmap);
->>> +}
->>> +
->>> +void bch2_dev_btree_bitmap_mark(struct bch_fs *c, struct bkey_s_c k)
->>> +{
->>> +	lockdep_assert_held(&c->sb_lock);
->>> +
->>> +	struct bch_sb_field_members_v2 *mi = bch2_sb_field_get(c->disk_sb.sb, members_v2);
->>> +	bkey_for_each_ptr(bch2_bkey_ptrs_c(k), ptr)
->>> +		__bch2_dev_btree_bitmap_mark(mi, ptr->dev, ptr->offset, btree_sectors(c));
->>> +}
->>> diff --git a/fs/bcachefs/sb-members.h b/fs/bcachefs/sb-members.h
->>> index bc3bcfef7b3a..8bbad30a4370 100644
->>> --- a/fs/bcachefs/sb-members.h
->>> +++ b/fs/bcachefs/sb-members.h
->>> @@ -3,6 +3,7 @@
->>>    #define _BCACHEFS_SB_MEMBERS_H
->>>    #include "darray.h"
->>> +#include "bkey_types.h"
->>>    extern char * const bch2_member_error_strs[];
->>> @@ -234,6 +235,8 @@ static inline struct bch_member_cpu bch2_mi_to_cpu(struct bch_member *mi)
->>>    			: 1,
->>>    		.freespace_initialized = BCH_MEMBER_FREESPACE_INITIALIZED(mi),
->>>    		.valid		= bch2_member_alive(mi),
->>> +		.btree_bitmap_shift	= mi->btree_bitmap_shift,
->>> +		.btree_allocated_bitmap = le64_to_cpu(mi->btree_allocated_bitmap),
->>>    	};
->>>    }
->>> @@ -242,4 +245,22 @@ void bch2_sb_members_from_cpu(struct bch_fs *);
->>>    void bch2_dev_io_errors_to_text(struct printbuf *, struct bch_dev *);
->>>    void bch2_dev_errors_reset(struct bch_dev *);
->>> +static inline bool bch2_dev_btree_bitmap_marked_sectors(struct bch_dev *ca, u64 start, unsigned sectors)
->>> +{
->>> +	u64 end = start + sectors;
->>> +
->>> +	if (end > 64 << ca->mi.btree_bitmap_shift)
->>> +		return false;
->>> +
->>> +	for (unsigned bit = sectors >> ca->mi.btree_bitmap_shift;
->>> +	     bit << ca->mi.btree_bitmap_shift < end;
->>> +	     bit++)
->>> +		if (!(ca->mi.btree_allocated_bitmap & BIT_ULL(bit)))
->> Should it be transferred by le64_to_cpu?
-> 
-> no, ca->mi is bch_member_cpu, a different type that has everything in
-> native byte order
+Hello,
 
-Sorry, I made a mistake in reading it.
+kernel test robot noticed "WARNING:suspicious_RCU_usage" on:
 
-```c
-struct bch_dev {
-...
-     struct bch_member_cpu   mi;
-...
-```
+commit: ecc70b3e0b318995571df44b14e05ff75aed9c71 ("lib/xarray: introduce a new helper xas_get_order")
+https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-unstable
+
+in testcase: boot
+
+compiler: gcc-13
+test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
++---------------------------------------------------------------------+------------+------------+
+|                                                                     | 24b488a793 | ecc70b3e0b |
++---------------------------------------------------------------------+------------+------------+
+| WARNING:suspicious_RCU_usage                                        | 0          | 18         |
+| include/linux/xarray.h:#suspicious_rcu_dereference_check()usage     | 0          | 18         |
+| include/linux/xarray.h:#suspicious_rcu_dereference_protected()usage | 0          | 18         |
++---------------------------------------------------------------------+------------+------------+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202404151046.448e2d6e-lkp@intel.com
+
+
+[    9.238389][    T1] WARNING: suspicious RCU usage
+[    9.238967][    T1] 6.9.0-rc2-00175-gecc70b3e0b31 #1 Not tainted
+[    9.239710][    T1] -----------------------------
+[    9.240287][    T1] include/linux/xarray.h:1200 suspicious rcu_dereference_check() usage!
+[    9.241252][    T1]
+[    9.241252][    T1] other info that might help us debug this:
+[    9.241252][    T1]
+[    9.242399][    T1]
+[    9.242399][    T1] rcu_scheduler_active = 2, debug_locks = 1
+[    9.243291][    T1] no locks held by swapper/1.
+[    9.243821][    T1]
+[    9.243821][    T1] stack backtrace:
+[    9.244507][    T1] CPU: 0 PID: 1 Comm: swapper Not tainted 6.9.0-rc2-00175-gecc70b3e0b31 #1
+[    9.245242][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[    9.245242][    T1] Call Trace:
+[ 9.245242][ T1] dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1) lib/dump_stack.c:97 (discriminator 1)) 
+[ 9.245242][ T1] dump_stack (lib/dump_stack.c:124) 
+[ 9.245242][ T1] lockdep_rcu_suspicious (include/linux/context_tracking.h:153 kernel/locking/lockdep.c:6713) 
+[ 9.245242][ T1] xas_start (include/linux/xarray.h:1200 (discriminator 11) include/linux/xarray.h:1198 (discriminator 11) lib/xarray.c:190 (discriminator 11)) 
+[ 9.245242][ T1] xas_load (lib/xarray.c:237) 
+[ 9.245242][ T1] xas_store (lib/xarray.c:789) 
+[ 9.245242][ T1] ? check_xas_get_order+0xab/0xd8 
+[ 9.245242][ T1] ? lock_release (kernel/locking/lockdep.c:467 (discriminator 4) kernel/locking/lockdep.c:5776 (discriminator 4)) 
+[ 9.245242][ T1] check_xas_get_order+0xbf/0xd8 
+[ 9.245242][ T1] xarray_checks (lib/test_xarray.c:2070) 
+[ 9.245242][ T1] do_one_initcall (init/main.c:1238) 
+[ 9.245242][ T1] ? parameq (include/linux/fortify-string.h:250 kernel/params.c:99) 
+[ 9.245242][ T1] ? check_move+0xbe8/0xbe8 
+[ 9.245242][ T1] do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 9.245242][ T1] ? rest_init (init/main.c:1429) 
+[ 9.245242][ T1] kernel_init_freeable (init/main.c:1552) 
+[ 9.245242][ T1] kernel_init (init/main.c:1439) 
+[ 9.245242][ T1] ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 9.245242][ T1] ? rest_init (init/main.c:1429) 
+[ 9.245242][ T1] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 9.245242][ T1] entry_INT80_32 (arch/x86/entry/entry_32.S:944) 
+[    9.258425][    T1]
+[    9.258700][    T1] =============================
+[    9.259264][    T1] WARNING: suspicious RCU usage
+[    9.259829][    T1] 6.9.0-rc2-00175-gecc70b3e0b31 #1 Not tainted
+[    9.260521][    T1] -----------------------------
+[    9.261082][    T1] include/linux/xarray.h:1216 suspicious rcu_dereference_check() usage!
+[    9.262017][    T1]
+[    9.262017][    T1] other info that might help us debug this:
+[    9.262017][    T1]
+[    9.263197][    T1]
+[    9.263197][    T1] rcu_scheduler_active = 2, debug_locks = 1
+[    9.264126][    T1] no locks held by swapper/1.
+[    9.264678][    T1]
+[    9.264678][    T1] stack backtrace:
+[    9.265386][    T1] CPU: 0 PID: 1 Comm: swapper Not tainted 6.9.0-rc2-00175-gecc70b3e0b31 #1
+[    9.266369][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[    9.267564][    T1] Call Trace:
+[ 9.267954][ T1] dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1) lib/dump_stack.c:97 (discriminator 1)) 
+[ 9.268481][ T1] dump_stack (lib/dump_stack.c:124) 
+[ 9.268937][ T1] lockdep_rcu_suspicious (include/linux/context_tracking.h:153 kernel/locking/lockdep.c:6713) 
+[ 9.269375][ T1] xas_load (include/linux/xarray.h:1216 (discriminator 11) include/linux/xarray.h:1212 (discriminator 11) lib/xarray.c:206 (discriminator 11) lib/xarray.c:244 (discriminator 11)) 
+[ 9.269375][ T1] xas_store (lib/xarray.c:789) 
+[ 9.269375][ T1] ? check_xas_get_order+0xab/0xd8 
+[ 9.269375][ T1] ? lock_release (kernel/locking/lockdep.c:467 (discriminator 4) kernel/locking/lockdep.c:5776 (discriminator 4)) 
+[ 9.269375][ T1] check_xas_get_order+0xbf/0xd8 
+[ 9.269375][ T1] xarray_checks (lib/test_xarray.c:2070) 
+[ 9.269375][ T1] do_one_initcall (init/main.c:1238) 
+[ 9.269375][ T1] ? parameq (include/linux/fortify-string.h:250 kernel/params.c:99) 
+[ 9.269375][ T1] ? check_move+0xbe8/0xbe8 
+[ 9.269375][ T1] do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 9.269375][ T1] ? rest_init (init/main.c:1429) 
+[ 9.269375][ T1] kernel_init_freeable (init/main.c:1552) 
+[ 9.269375][ T1] kernel_init (init/main.c:1439) 
+[ 9.269375][ T1] ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 9.269375][ T1] ? rest_init (init/main.c:1429) 
+[ 9.269375][ T1] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 9.269375][ T1] entry_INT80_32 (arch/x86/entry/entry_32.S:944) 
+[    9.278798][    T1]
+[    9.279064][    T1] =============================
+[    9.279608][    T1] WARNING: suspicious RCU usage
+[    9.280153][    T1] 6.9.0-rc2-00175-gecc70b3e0b31 #1 Not tainted
+[    9.280831][    T1] -----------------------------
+[    9.281417][    T1] include/linux/xarray.h:1225 suspicious rcu_dereference_protected() usage!
+[    9.282418][    T1]
+[    9.282418][    T1] other info that might help us debug this:
+[    9.282418][    T1]
+[    9.283603][    T1]
+[    9.283603][    T1] rcu_scheduler_active = 2, debug_locks = 1
+[    9.284523][    T1] no locks held by swapper/1.
+[    9.285076][    T1]
+[    9.285076][    T1] stack backtrace:
+[    9.285746][    T1] CPU: 0 PID: 1 Comm: swapper Not tainted 6.9.0-rc2-00175-gecc70b3e0b31 #1
+[    9.286734][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[    9.287903][    T1] Call Trace:
+[ 9.288288][ T1] dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1) lib/dump_stack.c:97 (discriminator 1)) 
+[ 9.288812][ T1] dump_stack (lib/dump_stack.c:124) 
+[ 9.289065][ T1] lockdep_rcu_suspicious (include/linux/context_tracking.h:153 kernel/locking/lockdep.c:6713) 
+[ 9.289065][ T1] xas_store (include/linux/xarray.h:1225 (discriminator 7) lib/xarray.c:835 (discriminator 7)) 
+[ 9.289065][ T1] check_xas_get_order+0xbf/0xd8 
+[ 9.289065][ T1] xarray_checks (lib/test_xarray.c:2070) 
+[ 9.289065][ T1] do_one_initcall (init/main.c:1238) 
+[ 9.289065][ T1] ? parameq (include/linux/fortify-string.h:250 kernel/params.c:99) 
+[ 9.289065][ T1] ? check_move+0xbe8/0xbe8 
+[ 9.289065][ T1] do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 9.289065][ T1] ? rest_init (init/main.c:1429) 
+[ 9.289065][ T1] kernel_init_freeable (init/main.c:1552) 
+[ 9.289065][ T1] kernel_init (init/main.c:1439) 
+[ 9.289065][ T1] ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 9.289065][ T1] ? rest_init (init/main.c:1429) 
+[ 9.289065][ T1] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 9.289065][ T1] entry_INT80_32 (arch/x86/entry/entry_32.S:944) 
+[    9.297406][    T1]
+[    9.297671][    T1] =============================
+[    9.298216][    T1] WARNING: suspicious RCU usage
+[    9.298766][    T1] 6.9.0-rc2-00175-gecc70b3e0b31 #1 Not tainted
+[    9.299454][    T1] -----------------------------
+[    9.300019][    T1] include/linux/xarray.h:1241 suspicious rcu_dereference_protected() usage!
+[    9.301031][    T1]
+[    9.301031][    T1] other info that might help us debug this:
+[    9.301031][    T1]
+[    9.302212][    T1]
+[    9.302212][    T1] rcu_scheduler_active = 2, debug_locks = 1
+[    9.303143][    T1] no locks held by swapper/1.
+[    9.303682][    T1]
+[    9.303682][    T1] stack backtrace:
+[    9.304357][    T1] CPU: 0 PID: 1 Comm: swapper Not tainted 6.9.0-rc2-00175-gecc70b3e0b31 #1
+[    9.305021][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[    9.305021][    T1] Call Trace:
+[ 9.305021][ T1] dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1) lib/dump_stack.c:97 (discriminator 1)) 
+[ 9.305021][ T1] dump_stack (lib/dump_stack.c:124) 
+[ 9.305021][ T1] lockdep_rcu_suspicious (include/linux/context_tracking.h:153 kernel/locking/lockdep.c:6713) 
+[ 9.305021][ T1] xas_store (include/linux/xarray.h:1241 (discriminator 7) lib/xarray.c:492 (discriminator 7) lib/xarray.c:759 (discriminator 7) lib/xarray.c:844 (discriminator 7)) 
+[ 9.305021][ T1] check_xas_get_order+0xbf/0xd8 
+[ 9.305021][ T1] xarray_checks (lib/test_xarray.c:2070) 
+[ 9.305021][ T1] do_one_initcall (init/main.c:1238) 
+[ 9.305021][ T1] ? parameq (include/linux/fortify-string.h:250 kernel/params.c:99) 
+[ 9.305021][ T1] ? check_move+0xbe8/0xbe8 
+[ 9.305021][ T1] do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 9.305021][ T1] ? rest_init (init/main.c:1429) 
+[ 9.305021][ T1] kernel_init_freeable (init/main.c:1552) 
+[ 9.305021][ T1] kernel_init (init/main.c:1439) 
+[ 9.305021][ T1] ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 9.305021][ T1] ? rest_init (init/main.c:1429) 
+[ 9.305021][ T1] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 9.305021][ T1] entry_INT80_32 (arch/x86/entry/entry_32.S:944) 
+[   10.414008][    T1] XArray: 6781276 of 6781276 tests passed
+[   10.414757][    T1]
+[   10.414757][    T1] TEST STARTING
+[   10.414757][    T1]
+[   94.791459][    T1] maple_tree: 3808238 of 3808238 tests passed
+[   94.792303][    T1] test_free_pages: Testing with GFP_KERNEL
+[  109.502131][    T1] test_free_pages: Testing with GFP_KERNEL | __GFP_COMP
+[  115.289105][    T1] test_free_pages: Test completed
+[  115.289894][    T1] ref_tracker: reference already released.
+[  115.290608][    T1] ref_tracker: allocated in:
+[ 115.291146][ T1] alloctest_ref_tracker_alloc1+0x14/0x18 
+[ 115.291955][ T1] test_ref_tracker_init (lib/test_ref_tracker.c:74) 
+[ 115.292546][ T1] do_one_initcall (init/main.c:1238) 
+[ 115.292922][ T1] do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 115.292922][ T1] kernel_init_freeable (init/main.c:1552) 
+[ 115.292922][ T1] kernel_init (init/main.c:1439) 
+[ 115.292922][ T1] ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 115.292922][ T1] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 115.292922][ T1] restore_all_switch_stack (arch/x86/entry/entry_32.S:944) 
+[  115.292922][    T1] ref_tracker: freed in:
+[ 115.292922][ T1] alloctest_ref_tracker_free+0xf/0x14 
+[ 115.292922][ T1] test_ref_tracker_init (lib/test_ref_tracker.c:93 (discriminator 1)) 
+[ 115.292922][ T1] do_one_initcall (init/main.c:1238) 
+[ 115.292922][ T1] do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 115.292922][ T1] kernel_init_freeable (init/main.c:1552) 
+[ 115.292922][ T1] kernel_init (init/main.c:1439) 
+[ 115.292922][ T1] ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 115.292922][ T1] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 115.292922][ T1] restore_all_switch_stack (arch/x86/entry/entry_32.S:944) 
+[  115.302044][    T1] ------------[ cut here ]------------
+[ 115.302692][ T1] WARNING: CPU: 0 PID: 1 at lib/ref_tracker.c:255 ref_tracker_free (lib/ref_tracker.c:255 (discriminator 1)) 
+[  115.303724][    T1] Modules linked in:
+[  115.304188][    T1] CPU: 0 PID: 1 Comm: swapper Not tainted 6.9.0-rc2-00175-gecc70b3e0b31 #1
+[  115.305200][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[ 115.306397][ T1] EIP: ref_tracker_free (lib/ref_tracker.c:255 (discriminator 1)) 
+[ 115.307007][ T1] Code: e8 43 54 fc ff eb 96 68 8c dd f0 c1 e8 ef e4 d1 ff 8b 47 0c 5b 85 c0 75 4d 8b 57 10 85 d2 75 31 8b 55 b0 89 f0 e8 4a 9a 4c 00 <0f> 0b b8 ea ff ff ff e9 69 ff ff ff 8d 4e 28 b8 ff ff ff ff 0f c1
+All code
+========
+   0:	e8 43 54 fc ff       	call   0xfffffffffffc5448
+   5:	eb 96                	jmp    0xffffffffffffff9d
+   7:	68 8c dd f0 c1       	push   $0xffffffffc1f0dd8c
+   c:	e8 ef e4 d1 ff       	call   0xffffffffffd1e500
+  11:	8b 47 0c             	mov    0xc(%rdi),%eax
+  14:	5b                   	pop    %rbx
+  15:	85 c0                	test   %eax,%eax
+  17:	75 4d                	jne    0x66
+  19:	8b 57 10             	mov    0x10(%rdi),%edx
+  1c:	85 d2                	test   %edx,%edx
+  1e:	75 31                	jne    0x51
+  20:	8b 55 b0             	mov    -0x50(%rbp),%edx
+  23:	89 f0                	mov    %esi,%eax
+  25:	e8 4a 9a 4c 00       	call   0x4c9a74
+  2a:*	0f 0b                	ud2		<-- trapping instruction
+  2c:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+  31:	e9 69 ff ff ff       	jmp    0xffffffffffffff9f
+  36:	8d 4e 28             	lea    0x28(%rsi),%ecx
+  39:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
+  3e:	0f                   	.byte 0xf
+  3f:	c1                   	.byte 0xc1
+
+Code starting with the faulting instruction
+===========================================
+   0:	0f 0b                	ud2
+   2:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+   7:	e9 69 ff ff ff       	jmp    0xffffffffffffff75
+   c:	8d 4e 28             	lea    0x28(%rsi),%ecx
+   f:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
+  14:	0f                   	.byte 0xf
+  15:	c1                   	.byte 0xc1
+[  115.309186][    T1] EAX: 091e2aa9 EBX: c1f0dd8c ECX: 00000000 EDX: 00000000
+[  115.309982][    T1] ESI: c2dc76c0 EDI: c3787200 EBP: c0209edc ESP: c0209e88
+[  115.310795][    T1] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010246
+[  115.311659][    T1] CR0: 80050033 CR2: ffbff000 CR3: 024a0000 CR4: 000406b0
+[  115.312468][    T1] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+[  115.313308][    T1] DR6: fffe0ff0 DR7: 00000400
+[  115.313846][    T1] Call Trace:
+[ 115.314236][ T1] ? show_regs (arch/x86/kernel/dumpstack.c:479) 
+[ 115.314744][ T1] ? ref_tracker_free (lib/ref_tracker.c:255 (discriminator 1)) 
+[ 115.315318][ T1] ? __warn (kernel/panic.c:694) 
+[ 115.315788][ T1] ? ref_tracker_free (lib/ref_tracker.c:255 (discriminator 1)) 
+[ 115.316375][ T1] ? report_bug (lib/bug.c:201 lib/bug.c:219) 
+[ 115.316886][ T1] ? exc_overflow (arch/x86/kernel/traps.c:252) 
+[ 115.317426][ T1] ? handle_bug (arch/x86/kernel/traps.c:218) 
+[ 115.317938][ T1] ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1)) 
+[ 115.318487][ T1] ? handle_exception (arch/x86/entry/entry_32.S:1047) 
+[ 115.319063][ T1] ? tcp_net_metrics_exit_batch (net/ipv4/tcp_metrics.c:1032) 
+[ 115.319705][ T1] ? exc_overflow (arch/x86/kernel/traps.c:252) 
+[ 115.320206][ T1] ? ref_tracker_free (lib/ref_tracker.c:255 (discriminator 1)) 
+[ 115.320784][ T1] ? exc_overflow (arch/x86/kernel/traps.c:252) 
+[ 115.321327][ T1] ? ref_tracker_free (lib/ref_tracker.c:255 (discriminator 1)) 
+[ 115.321902][ T1] ? alloctest_ref_tracker_free+0xf/0x14 
+[ 115.322651][ T1] ? test_ref_tracker_init (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/atomic/atomic-instrumented.h:33 lib/test_ref_tracker.c:99) 
+[ 115.323267][ T1] ? do_one_initcall (init/main.c:1238) 
+[ 115.323834][ T1] ? do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 115.324359][ T1] ? kernel_init_freeable (init/main.c:1552) 
+[ 115.325001][ T1] ? kernel_init (init/main.c:1439) 
+[ 115.325523][ T1] ? ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 115.326035][ T1] ? ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 115.326587][ T1] ? entry_INT80_32 (arch/x86/entry/entry_32.S:944) 
+[ 115.327143][ T1] alloctest_ref_tracker_free+0xf/0x14 
+[ 115.327913][ T1] test_ref_tracker_init (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/atomic/atomic-instrumented.h:33 lib/test_ref_tracker.c:99) 
+[ 115.328534][ T1] do_one_initcall (init/main.c:1238) 
+[ 115.329118][ T1] ? parameq (include/linux/fortify-string.h:250 kernel/params.c:99) 
+[ 115.329609][ T1] ? maple_tree_seed (lib/test_ref_tracker.c:64) 
+[ 115.330189][ T1] do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 115.330717][ T1] ? rest_init (init/main.c:1429) 
+[ 115.331253][ T1] kernel_init_freeable (init/main.c:1552) 
+[ 115.331867][ T1] kernel_init (init/main.c:1439) 
+[ 115.332370][ T1] ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 115.332868][ T1] ? rest_init (init/main.c:1429) 
+[ 115.333404][ T1] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 115.333966][ T1] entry_INT80_32 (arch/x86/entry/entry_32.S:944) 
+[  115.334513][    T1] irq event stamp: 152972385
+[ 115.335040][ T1] hardirqs last enabled at (152972393): console_unlock (arch/x86/include/asm/irqflags.h:42 arch/x86/include/asm/irqflags.h:77 arch/x86/include/asm/irqflags.h:135 kernel/printk/printk.c:341 kernel/printk/printk.c:2731 kernel/printk/printk.c:3050) 
+[ 115.336083][ T1] hardirqs last disabled at (152972400): console_unlock (kernel/printk/printk.c:339 (discriminator 3) kernel/printk/printk.c:2731 (discriminator 3) kernel/printk/printk.c:3050 (discriminator 3)) 
+[ 115.337125][ T1] softirqs last enabled at (152972420): __do_softirq (kernel/softirq.c:401 (discriminator 2) kernel/softirq.c:583 (discriminator 2)) 
+[ 115.338129][ T1] softirqs last disabled at (152972409): do_softirq_own_stack (arch/x86/kernel/irq_32.c:57 arch/x86/kernel/irq_32.c:147) 
+[  115.339208][    T1] ---[ end trace 0000000000000000 ]---
+[  115.339922][    T1] ref_tracker: selftest@(ptrval) has 1/2 users at
+[ 115.339922][ T1] test_ref_tracker_timer_func (lib/test_ref_tracker.c:61) 
+[ 115.339922][ T1] call_timer_fn (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:260 include/linux/jump_label.h:270 include/trace/events/timer.h:127 kernel/time/timer.c:1794) 
+[ 115.339922][ T1] __run_timers (kernel/time/timer.c:1845 kernel/time/timer.c:2418) 
+[ 115.339922][ T1] run_timer_softirq (kernel/time/timer.c:2430 kernel/time/timer.c:2438 kernel/time/timer.c:2448) 
+[ 115.339922][ T1] __do_softirq (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:260 include/linux/jump_label.h:270 include/trace/events/irq.h:142 kernel/softirq.c:555) 
+[  115.339922][    T1]
+[  115.341107][    T1] ref_tracker: selftest@(ptrval) has 1/2 users at
+[ 115.341107][ T1] alloctest_ref_tracker_alloc1+0x14/0x18 
+[ 115.341107][ T1] test_ref_tracker_init (lib/test_ref_tracker.c:73) 
+[ 115.341107][ T1] do_one_initcall (init/main.c:1238) 
+[ 115.341107][ T1] do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 115.341107][ T1] kernel_init_freeable (init/main.c:1552) 
+[ 115.341107][ T1] kernel_init (init/main.c:1439) 
+[ 115.341107][ T1] ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 115.341107][ T1] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 115.341107][ T1] restore_all_switch_stack (arch/x86/entry/entry_32.S:944) 
+[  115.341107][    T1]
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240415/202404151046.448e2d6e-lkp@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
