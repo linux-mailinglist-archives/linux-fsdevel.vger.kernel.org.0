@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-16979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABDE8A5E7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:39:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 746A98A5E7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269D3286333
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:39:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30FBE2862DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592DF15920B;
-	Mon, 15 Apr 2024 23:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0997A15921E;
+	Mon, 15 Apr 2024 23:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZkV558E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LsBVMpIp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B991D1DA21;
-	Mon, 15 Apr 2024 23:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C221591F9;
+	Mon, 15 Apr 2024 23:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713224370; cv=none; b=IS0rWM/MG5P+Tkk3ROZLOHxlN5LB/dvsRCsCVGPVeG3KoluTpYYBTkaFWsqChJAW0XbnR/sK+Xj1bErdMM1KoKnQ60bXq9B/DKCqnC9MflNEfnWseTT45f0sn6vBqQ3s6xnYRysUrddAw8oVn0kGccAJc9uA1fK9hXCN+Ly9Le0=
+	t=1713224386; cv=none; b=jgEpliiAZyUS0A9rhAEbVpVEevikg7pZ01U4cShI1lLPsSONRE1gm+gSq6qLWtYrMv2u8GBmUXpSmsqjq2LIsYZU5KVVzLc9BnbQg5MfEVWY6aO7kaQk6TlSqPAr0QUGfY0E7QKdI6RwsXjCXYQJT3vKfLLCWs9KB4gmItfzgMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713224370; c=relaxed/simple;
-	bh=Y6f9XXbuASfk5okp7bMYS8EWOHBRzxH5IrJwh40v+08=;
+	s=arc-20240116; t=1713224386; c=relaxed/simple;
+	bh=HwhKuSfEnBb2nKmPWFNwOlZVyDXCDh7JlKVoRY7oNfc=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oytOZSBBQxEm0srZPNBU0odkv2yb0ylVCECEuEFMtBOL1ll2SO9Sg4CI1AhPwapvH6C0Bvjwd6hpv9nGoG8lFsqqGA+AXs4IS7GYEQiMO8wXCFEsAPiovT3OpPd2XVyWf6cYa2J7NRGaESZqa8wTKxOBwuPcEsno5wcODMOS7/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZkV558E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9013AC113CC;
-	Mon, 15 Apr 2024 23:39:30 +0000 (UTC)
+	 MIME-Version:Content-Type; b=s4O9As75O1zXdtZzaKpc/DFCPjfMhRM8g7r+R3Kc1ySxiCG0J775fqoAD2f77MlqphwqXMQGxRNDlwHZngWrX/f5iLW2z3pf6yKmwNkQMLIwoN+W8WPHHqs8STnQXXgQvYN2qZdhYPP7wgFyyQfUSxLqgju+boJQ+iUqWb0ha8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LsBVMpIp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347E8C2BD11;
+	Mon, 15 Apr 2024 23:39:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713224370;
-	bh=Y6f9XXbuASfk5okp7bMYS8EWOHBRzxH5IrJwh40v+08=;
+	s=k20201202; t=1713224386;
+	bh=HwhKuSfEnBb2nKmPWFNwOlZVyDXCDh7JlKVoRY7oNfc=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=VZkV558E+32r4xuD6JUIyjxj/jBOkPVuPP3TQUtqcVYkWSoQeopXpwHyWLJcPrI18
-	 +h4s92kwk7kZh+APFyoMpmlL8B/IcA9Y9vn0tncLDlfor12e3xWdFyma59WMjNJNrt
-	 MIxCysE4+TVa1eazt1iv1vavCfi0aVQ5F3GWtjvSK3eKSztsuo/ZjBnipWeBtRf2+F
-	 QWBfMIXg7DUrAcmzMyOdsayge9ucrm/QIXBTvsusHvLBZYxmx8MVmomzuCczu0vFZM
-	 YKW/Akh1DspKR61WbzVE47XPAKyNGG71+GPe0XvGSc9ZAcUkYQrURzhyXmRzV9rgpa
-	 L269tthCWT1+w==
-Date: Mon, 15 Apr 2024 16:39:30 -0700
-Subject: [PATCH 2/7] xfs: move xfs_iops.c declarations out of xfs_inode.h
+	b=LsBVMpIpJDm2wLut0YPnIFpzRt3dKat+pT54exNYMwmlbOotqIwsuK0Cb73l1zsQH
+	 itKNHODB0/5mik+p3LQefmPC6sgLjOOa5VMXW59hjuanNLAENmn6ZFatsodfaUw+XX
+	 q8qBBrbhReUTxGz7zd3BqTYXeGGAt4onC4YdkzjFt+A+MVMOPzkARibomJgSL8KEWe
+	 ZRhPhG7gxb9YDuF50zN242P9c0YGe+RKjrHZQgqvYZeahjzVWJhKXZTwJRqNU6Ap7o
+	 mwEYVN/GoWgu/45qTV+ZluBxWsCafBlrMixx2gPKaWqM88INg67YxlZu6HlThu4mf9
+	 ILguwVnceFihQ==
+Date: Mon, 15 Apr 2024 16:39:45 -0700
+Subject: [PATCH 3/7] xfs: declare xfs_file.c symbols in xfs_file.h
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: chandanbabu@kernel.org, djwong@kernel.org
 Cc: Christoph Hellwig <hch@lst.de>, hch@lst.de, linux-fsdevel@vger.kernel.org,
  linux-xfs@vger.kernel.org
-Message-ID: <171322380761.87068.18235427530614561380.stgit@frogsfrogsfrogs>
+Message-ID: <171322380778.87068.12250779360411108918.stgit@frogsfrogsfrogs>
 In-Reply-To: <171322380710.87068.4499164955656161226.stgit@frogsfrogsfrogs>
 References: <171322380710.87068.4499164955656161226.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -62,45 +62,89 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Similarly, move declarations of public symbols of xfs_iops.c from
-xfs_inode.h to xfs_iops.h.
+Move the two public symbols in xfs_file.c to xfs_file.h.  We're about to
+add more public symbols in that source file, so let's finally create the
+header file.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/xfs/xfs_inode.h |    5 -----
- fs/xfs/xfs_iops.h  |    4 ++++
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ fs/xfs/xfs_file.c  |    1 +
+ fs/xfs/xfs_file.h  |   12 ++++++++++++
+ fs/xfs/xfs_ioctl.c |    1 +
+ fs/xfs/xfs_iops.c  |    1 +
+ fs/xfs/xfs_iops.h  |    3 ---
+ 5 files changed, 15 insertions(+), 3 deletions(-)
+ create mode 100644 fs/xfs/xfs_file.h
 
 
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 5164c5d3e549..b2dde0e0f265 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -569,11 +569,6 @@ int	xfs_break_dax_layouts(struct inode *inode, bool *retry);
- int	xfs_break_layouts(struct inode *inode, uint *iolock,
- 		enum layout_break_reason reason);
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 40b778415f5f..9961d4b5efbe 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -24,6 +24,7 @@
+ #include "xfs_pnfs.h"
+ #include "xfs_iomap.h"
+ #include "xfs_reflink.h"
++#include "xfs_file.h"
  
--/* from xfs_iops.c */
--extern void xfs_setup_inode(struct xfs_inode *ip);
--extern void xfs_setup_iops(struct xfs_inode *ip);
--extern void xfs_diflags_to_iflags(struct xfs_inode *ip, bool init);
--
- static inline void xfs_update_stable_writes(struct xfs_inode *ip)
- {
- 	if (bdev_stable_writes(xfs_inode_buftarg(ip)->bt_bdev))
+ #include <linux/dax.h>
+ #include <linux/falloc.h>
+diff --git a/fs/xfs/xfs_file.h b/fs/xfs/xfs_file.h
+new file mode 100644
+index 000000000000..7d39e3eca56d
+--- /dev/null
++++ b/fs/xfs/xfs_file.h
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2000-2005 Silicon Graphics, Inc.
++ * All Rights Reserved.
++ */
++#ifndef __XFS_FILE_H__
++#define __XFS_FILE_H__
++
++extern const struct file_operations xfs_file_operations;
++extern const struct file_operations xfs_dir_file_operations;
++
++#endif /* __XFS_FILE_H__ */
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index d0e2cec6210d..1397edea20f1 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -39,6 +39,7 @@
+ #include "xfs_ioctl.h"
+ #include "xfs_xattr.h"
+ #include "xfs_rtbitmap.h"
++#include "xfs_file.h"
+ 
+ #include <linux/mount.h>
+ #include <linux/namei.h>
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 66f8c47642e8..55ed2d1023d6 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -25,6 +25,7 @@
+ #include "xfs_error.h"
+ #include "xfs_ioctl.h"
+ #include "xfs_xattr.h"
++#include "xfs_file.h"
+ 
+ #include <linux/posix_acl.h>
+ #include <linux/security.h>
 diff --git a/fs/xfs/xfs_iops.h b/fs/xfs/xfs_iops.h
-index 7f84a0843b24..8a38c3e2ed0e 100644
+index 8a38c3e2ed0e..3c1a2605ffd2 100644
 --- a/fs/xfs/xfs_iops.h
 +++ b/fs/xfs/xfs_iops.h
-@@ -19,4 +19,8 @@ int xfs_vn_setattr_size(struct mnt_idmap *idmap,
- int xfs_inode_init_security(struct inode *inode, struct inode *dir,
- 		const struct qstr *qstr);
+@@ -8,9 +8,6 @@
  
-+extern void xfs_setup_inode(struct xfs_inode *ip);
-+extern void xfs_setup_iops(struct xfs_inode *ip);
-+extern void xfs_diflags_to_iflags(struct xfs_inode *ip, bool init);
-+
- #endif /* __XFS_IOPS_H__ */
+ struct xfs_inode;
+ 
+-extern const struct file_operations xfs_file_operations;
+-extern const struct file_operations xfs_dir_file_operations;
+-
+ extern ssize_t xfs_vn_listxattr(struct dentry *, char *data, size_t size);
+ 
+ int xfs_vn_setattr_size(struct mnt_idmap *idmap,
 
 
