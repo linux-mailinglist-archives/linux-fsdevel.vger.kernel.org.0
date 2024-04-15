@@ -1,204 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-16933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEED8A5210
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 15:45:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D797F8A5269
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 15:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB69E1C22AAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 13:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 019661C21CB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 13:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3165B73500;
-	Mon, 15 Apr 2024 13:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GmQUOqQM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5402B7351A;
+	Mon, 15 Apr 2024 13:56:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912B471B45;
-	Mon, 15 Apr 2024 13:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FED1E896
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 13:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713188659; cv=none; b=XUia/Y3T6eDK8GJl7LGjnJ8yI/GjuGC3WO06lRCSPBL5y6vlGrBSLDlGphN03/Eh+gRtzP6NHLOyWS1hStJr8iocqA6S71PkDYgISjJ7DjdUjXE33Hmq1B2sH4L1NDJp9WxSGhHDvdQ4dBEfPMNNuFYA0rTX0Iz8y+XJSOmmRWQ=
+	t=1713189394; cv=none; b=gtPlI9/uhU0GKoY3OSQKzfUdJIh1xJbfcM+/8CGE8v6BKlhPJUVUXVf+Yn0bB8DtVxZP4IqUrKrwD5zNj0fBcF46m7JY00Tkt7UTGvrB7cc14OuHKDUeIBHdLLznJQmpgLeKN1sIYDVRcPkFBo4zjfTWgDlkoPsII8g4/BSCmNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713188659; c=relaxed/simple;
-	bh=ZvNyBDTtGOhsFAqdOLjRzSyoKu4RMa5m4+b0d7iOP6k=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=hZ+9jeVsRSoU5z2R32goWWT3h0W8f171QjsQXjCxa8gqgAMFLtlBNfERiSghQVKO044mTOjjrTjerHVCrxlKDl3dAUf0GHLwRY1Ll1lzRZY5XH4Q/02v23M4dgnfze5IAalsEKH9Vbjw32oLuX2u1psTnsBIudN/vTJL+Q7vWbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GmQUOqQM; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240415134414euoutp0297d8f98bc92bb6ff864c94e374c7eec6~GeAEOwxGg2821928219euoutp02k;
-	Mon, 15 Apr 2024 13:44:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240415134414euoutp0297d8f98bc92bb6ff864c94e374c7eec6~GeAEOwxGg2821928219euoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1713188654;
-	bh=ZvNyBDTtGOhsFAqdOLjRzSyoKu4RMa5m4+b0d7iOP6k=;
-	h=Date:From:To:Subject:In-Reply-To:References:From;
-	b=GmQUOqQM7o6bjsC22pyUHLVaOsoT93RV618NOsBpAbzPNHZ6j2861bf5MaKl/cKsw
-	 j7+MhrH3FUEqrAX9Jxg9FnzWTwhAyYUeQr203UEEXIn+ANm0pxi+wuuWA4F9tA3feT
-	 d87MPbknncddCQfILpgxP9r4OVHoVB74++gYlDRc=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240415134413eucas1p1083d673739f18b6d571ad70336b76efd~GeAEBZ3J30676906769eucas1p1k;
-	Mon, 15 Apr 2024 13:44:13 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id F9.A2.09875.D2F2D166; Mon, 15
-	Apr 2024 14:44:13 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240415134413eucas1p1077a3baa096cb382c62768ea968a477b~GeADh-LkK0753307533eucas1p1k;
-	Mon, 15 Apr 2024 13:44:13 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240415134413eusmtrp1d53d9c801232f076ee155c4a5c3be4f1~GeADg3WW13030130301eusmtrp1y;
-	Mon, 15 Apr 2024 13:44:13 +0000 (GMT)
-X-AuditID: cbfec7f4-9acd8a8000002693-3b-661d2f2d85a3
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 6B.E6.09010.D2F2D166; Mon, 15
-	Apr 2024 14:44:13 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240415134413eusmtip2a3107c689cd960919bc653278802044d~GeADOocSP0156501565eusmtip2O;
-	Mon, 15 Apr 2024 13:44:13 +0000 (GMT)
-Received: from localhost (106.210.248.128) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Mon, 15 Apr 2024 14:44:12 +0100
-Date: Mon, 15 Apr 2024 15:44:06 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Muchun Song
-	<muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
-	<naoya.horiguchi@nec.com>, John Johansen <john.johansen@canonical.com>, Paul
-	Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, David Howells <dhowells@redhat.com>, Jarkko
-	Sakkinen <jarkko@kernel.org>, Kees Cook <keescook@chromium.org>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Jens
-	Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, Atish
-	Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>, Will Deacon
-	<will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Luis Chamberlain <mcgrof@kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
-	<linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <io-uring@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/7] security: Remove the now superfluous sentinel
- element from ctl_table array
-Message-ID: <20240415134406.5l6ygkl55yvioxgs@joelS2.panther.com>
+	s=arc-20240116; t=1713189394; c=relaxed/simple;
+	bh=+VVV7sQD/TURqBaQ3o4+GnmR1SYFSqIiY2IQytgOeyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nwS7mrk10ZrBX/XXSuIpYQSZ3bt9mukoTjSvMdnLnU4UC+r6qFm7kvDWQwGS/JStGaoHi1J87MyVKmbY5QXFHSSpGFvyZDGC7VV53i9Act8J7W8oGdfgWRu/1whyj8LsXz4JVP2pTBKK3TIUSVW82GC+1GIyT/VohClBzuQ2Cvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=snitzer.net; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=snitzer.net
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-78d677dca70so245502785a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 06:56:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713189390; x=1713794190;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A8W/huyXe05bmHkZ7p3zhmV/PsnRvwctPQtMd0KsVdw=;
+        b=eb6vPP6CAEqGpp0V+7O+EsInL09/s7beznlAJBjdDrkj4kpDJ8OpeheuciilqXWTxd
+         BtCdMlcKiM+jPf+WLldQ337Faf/gXYf9h5Zb5/T3VGAAzxoPkav4U6J05XOsCfxEyzCO
+         lS1EWGDaLwE3vmxNgDf6nxW38/OCo2WoFsKA6BcQh5XHEJ2dNT/R4HlRqrIpX2+iPhoH
+         pIw3g3jDLHisur9wcheNFce0/AnNlAQqlWohzAm/KQkLOhspzKWsFh1upWO+pX0/Smol
+         CrIwc1YMr745AqgKM5oE8rdE0znf666V6RkmiyQCCXUpKz9fs9YakwAe7opOxQVymEjG
+         7Phg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMine7L5sdO4cbfVDXSJQYhPOhujbyLROdQ+XF8xU5vcxeyyHojel5D4H0S9tWXEW4hwO/DJONDGqGr/8Xegw36vZlsaWD/QFJtcbMTQ==
+X-Gm-Message-State: AOJu0YyiLx04stJ80+7a3N8aV2KuiswcZAwJNXOUvC/Y9sfgicLF9qiy
+	tpRDsQPU24ILG1VzyPd3ClbxNpoVq0c0/DQiRM7JYd9CT5Ac2H6vSv+HVZmKbSk=
+X-Google-Smtp-Source: AGHT+IGyhwxIGf0/tZcTU4Qo6zY7NFezwol5Iq8ThT/YVXI3g8yDqaQ6a06haDbA8lDnpkm4O991xA==
+X-Received: by 2002:ae9:f718:0:b0:78d:5f83:4f77 with SMTP id s24-20020ae9f718000000b0078d5f834f77mr10863669qkg.37.1713189390431;
+        Mon, 15 Apr 2024 06:56:30 -0700 (PDT)
+Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
+        by smtp.gmail.com with ESMTPSA id x10-20020ae9e90a000000b0078d6d22a0c3sm6383346qkf.90.2024.04.15.06.56.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Apr 2024 06:56:29 -0700 (PDT)
+Date: Mon, 15 Apr 2024 09:56:28 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH v2 04/34] md: port block device access to file
+Message-ID: <Zh0yDCvqO8rXcXpz@redhat.com>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-4-adbd023e19cc@kernel.org>
+ <Zhzyu6pQYkSNgvuh@fedora>
+ <20240415-haufen-demolieren-8c6da8159586@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="qw2zqgk5lfspo27e"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA2VTfUxTVxzltve9lo7i42PjiphJHYtxfGnGdhdwURnsLWok+8N9hc1KH+AG
-	RV+p0yUSqMUBopKig1XiYFsBaUXtoAOUyQA/EGjBTkQtDAskwKCglCl2Y7M8tpnsv3N+v3Ny
-	fucmV8j3zREECnfLMxlWLk2TkCJoujpvDguLWJkcqS6PwmXnDCRWzzgIXO/SCnDO1XICl9WY
-	AM4zx2P9wHESl1nUEDtULoiPTARhR64ZYs18EcC1577j4evOXBJ3HUnH9TYVifMf6SA2DvcR
-	+NfBeR6+1NwBsbWpjMSDhr8IbJpVk3im0E5i3e1eHu4vGgW4svE+xL05LQCPWwv5+LB2Gb6n
-	KYHY0mMWYLUtamMwbThtAHRf3gVIn3R1QVqbfZSkT2X3QnpyfBzSdWfu8Oi2PKeAbtQOCGhT
-	Swjdd/EDWt0+RdDWbiVtrMknaeNDjYC+XuqCCcs/FMXImLTd+xg24s2dolSL/new5454f0e/
-	BWSDXK8CIBQi6lV0szqgAIiEvlQ1QNP1vXyOOAHKO3ELcmQWoLH5PwUFwHPRodE4lhZVAD1o
-	KCH/Vc2ZKwBH6gE6WWwn3CGQCkFnzdvdbpIKRZZJ22KGP1UmRAOmMcJNPCgdQDaTBrpVfhSD
-	HuVbSDcWUxtReYOKx2Ef1PH1yKKGT+1H9hIr3x3Ap1agqgWhe+xJbUXfjk/xuVNXI5X9e4LD
-	B9GNurs8dxaiSp9DR50/kdziLTT6uBlw2A9NXKtb6hmEOosLIWcoBujywoyAI3qAKnPmeJwq
-	Gql/GVlybELHnxgI7l29Uf+UD3eoN9KYSvjcWIzyDvty6peRfnASFoHV2meqaZ+ppv2vGjcO
-	ReUXH5L/G7+CKit+43N4A6qtnYblQFADAhilIj2FUayXM5+HK6TpCqU8JTwpI90Inv6MzoVr
-	zgZQNfEgvBXwhKAVvPTUbD+v7wGBUJ4hZyT+YrXfymRfsUx64AuGzfiEVaYxilawQgglAeIQ
-	2YuML5UizWQ+Y5g9DPvPlif0DMzmNZ33tA6cYWe6b29RZO90pcDO8dg2LVZl5mYxuWsSRM/r
-	7x5q6nFmwMdJsujgxMLXE680DbyRmjHblli796yqx8PBBrTvMBoqC5JcaGgzEbc2S3RZfyXo
-	tZuTxcoL31R4Y/36hj9+fOdU1yFHPur00W5KWBcSX+gXHhMqcgyZiegZ2p/4ctXmTyO96EtZ
-	rOSj5ey+oUhzbOz2sZGUY/fCoC3r45ZbjTLJu28HKg0ewe8HHwt7Ic5ioIf11I4fpkfNTPWy
-	Rl1MQ1zy8JO59vdczZIbstHK02umdD+vSnLuddzv1h1kG7dadwnjI7ZFeRnVX20JYakNUaWO
-	A7ZtzIldEqhIla5by2cV0r8BoM6paJQEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA2VSf1CTdRjv++7duxd05+vA/EZyhwvvOBqDjY2+JNjsCt6K1D84u+QKl7yA
-	wTZuP7DMctBMfkxGQ1EGIaBAIvHrGAcad0oeyYX8WoIIjIOiHMlkQXFAYKzZ5V3/fZ7P8/l8
-	nueee0gWr5zwI48qtYxaKU/nE974D+vf20NCQv2Tw8aqKVTWWE8gw7yTjayrFg7K6q5go7K6
-	NoBy+mLQ1QkTgcr6DThyZq/iKH92B3Ke6sORebkQoIbGSxi6vXiKQL35CmQdzyZQ7lI1jlp+
-	GmajSfsyhr7t7MGR7VoZgez1j9mobcFAoHnjNIGqRwYxdK9wBqCajikcDWbdAMhhM7LQF5Yt
-	aMx8Hkf9A30cZBiXynbS9eX1gB7Oacbpc6u9OG3RnyHoUv0gTj90OHC69cooRn+Xs8ihOywT
-	HLrtxi56+Pq7tOHWHJu23dHRLXW5BN3yu5lD376wih947pAwSq3SaZmAVJVGG81PECGxUBSJ
-	hGJJpFAU/tJ7L4ul/NA9UUlM+tFMRh2657Awtdw+ys4Y4X7UebaR0IPPN+cBLxJSEmg2O/E8
-	4E3yqGoA1/T5mKexAzYv3mV7sA/8aziP8IhcAA4XDT0prAAWuB5sOEgSp3bBb/r2uw0EJYD9
-	D8dZbo0vVUbCpfZSjrt4xj1ivM2Mu1U+FAOXcvsJN+ZSMljRno15UqcAtBovsj2NrbCn5Od/
-	DCwqE+Y+WGS7p7Go52HtOummvag4WOWYY3lWfQFmT19+svancGHtF1AIfCxPJVmeSrL8l+Sh
-	g+G9dQf2P/pFWFP5G8uDo2FDwyO8AnDqgC+j0yhSFBqxUCNXaHTKFOERlaIFbDxnW/dyazu4
-	MusSdgGMBF0gcMM53XR1APjhSpWS4ftyDT7+yTxukvzj44xalajWpTOaLiDdOOOXLL9tR1Qb
-	n67UJooiwqQiSURkmDQyIpy/nftGRo6cR6XItUwaw2Qw6n99GOnlp8dOZNnuJvHK07aF9Ba/
-	b7+Qds66MmOvmn02wTxkE1SN7T1QLPuQu3WmNfak3buWUpCjqfFa3cH19MslfX5TkqGV6BOC
-	gP3O3XWzEc38iRJsMD7u8SfGPy8qEsOTZRzwipR+tVdgjN8nwMVBk1aK39S46TXXwB+q4k5D
-	tKLGoT/dHaMq3nR2fG/lakD3tZ6b1awuoijux+vzb2ee9o0pCsw+v++dAt1ioGxtxvRm7ElV
-	p8u0knJwp8F+SXJoeTJoRDOT4BUbbCot6NisaTq8+5H1GO++/C2Rtf5rE+rSeWFzVcdqb4EF
-	kjL6b6kMuhnhvP/V9s9+NUVRH7Cp18Gd4xI+rkmVi4JZao38b8Kw6I4xBAAA
-X-CMS-MailID: 20240415134413eucas1p1077a3baa096cb382c62768ea968a477b
-X-Msg-Generator: CA
-X-RootMTR: 20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483
-References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
-	<CGME20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483@eucas1p2.samsung.com>
-	<20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com>
+In-Reply-To: <20240415-haufen-demolieren-8c6da8159586@brauner>
 
---qw2zqgk5lfspo27e
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Apr 15 2024 at  8:35P -0400,
+Christian Brauner <brauner@kernel.org> wrote:
 
-Hey
+> On Mon, Apr 15, 2024 at 05:26:19PM +0800, Ming Lei wrote:
+> > Hello,
+> > 
+> > On Tue, Jan 23, 2024 at 02:26:21PM +0100, Christian Brauner wrote:
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > ---
+> > >  drivers/md/dm.c               | 23 +++++++++++++----------
+> > >  drivers/md/md.c               | 12 ++++++------
+> > >  drivers/md/md.h               |  2 +-
+> > >  include/linux/device-mapper.h |  2 +-
+> > >  4 files changed, 21 insertions(+), 18 deletions(-)
+> > > 
+> > > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > > index 8dcabf84d866..87de5b5682ad 100644
+> > > --- a/drivers/md/dm.c
+> > > +++ b/drivers/md/dm.c
+> > 
+> > ...
+> > 
+> > > @@ -775,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
+> > >  {
+> > >  	if (md->disk->slave_dir)
+> > >  		bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
+> > > -	bdev_release(td->dm_dev.bdev_handle);
+> > > +	fput(td->dm_dev.bdev_file);
+> > 
+> > The above change caused regression on 'dmsetup remove_all'.
+> > 
+> > blkdev_release() is delayed because of fput(), so dm_lock_for_deletion
+> > returns -EBUSY, then this dm disk is skipped in remove_all().
+> > 
+> > Force to mark DMF_DEFERRED_REMOVE might solve it, but need our device
+> > mapper guys to check if it is safe.
+> > 
+> > Or other better solution?
+> 
+> Yeah, I think there is. You can just switch all fput() instances in
+> device mapper to bdev_fput() which is mainline now. This will yield the
+> device and make it able to be reclaimed. Should be as simple as the
+> patch below. Could you test this and send a patch based on this (I'm on
+> a prolonged vacation so I don't have time right now.):
+> 
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 56aa2a8b9d71..0f681a1e70af 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -765,7 +765,7 @@ static struct table_device *open_table_device(struct mapped_device *md,
+>         return td;
+> 
+>  out_blkdev_put:
+> -       fput(bdev_file);
+> +       bdev_fput(bdev_file);
+>  out_free_td:
+>         kfree(td);
+>         return ERR_PTR(r);
+> @@ -778,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
+>  {
+>         if (md->disk->slave_dir)
+>                 bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
+> -       fput(td->dm_dev.bdev_file);
+> +       bdev_fput(td->dm_dev.bdev_file);
+>         put_dax(td->dm_dev.dax_dev);
+>         list_del(&td->list);
+>         kfree(td);
+> 
+> 
 
-This is the only patch that I have not seen added to the next tree.
-I'll put this in the sysctl-next
-https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log/?h=3D=
-sysctl-next
-for testing. Please let me know if It is lined up to be upstream through
-another path.
-
-Best
-
-On Thu, Mar 28, 2024 at 04:57:49PM +0100, Joel Granados via B4 Relay wrote:
-> From: Joel Granados <j.granados@samsung.com>
->=20
-> This commit comes at the tail end of a greater effort to remove the
-> empty elements at the end of the ctl_table arrays (sentinels) which will
-> reduce the overall build time size of the kernel and run time memory
-> bloat by ~64 bytes per sentinel (further information Link :
-> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
->=20
-=2E..
-
---=20
-
-Joel Granados
-
---qw2zqgk5lfspo27e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmYdLyYACgkQupfNUreW
-QU/Z+Qv+MoFmIQO7v4dtD+a9DTbUrllY4Dt8XcDo9bLc+AW59PtH7KPP2RNwklOg
-uIwqgCxi+ERswmjFodCCEkyxjNShbXE14ig9pB63iMWGvgd6pyeta6IntBWQGtDS
-jHDW72wnd67ATBG5Rs8N6lh2RZLx/oP4aGTV0GmcN55+LQrNxLbb+yoVh5CR6a8V
-eD1AdG6QC4HggTof5/OwvU68hO6g+SPSzv/rm5ukU0RpzvH4iOMZ3jHLJX09Vbcy
-pVwCg46kmK6Z7plLaG/jdYZdg8rss6kTGHQVi6q1lOeRj6h8gFjXjE54idNOOESs
-Si/Q17wuejaRfBlvr8VNvz05nzCzlshasz2iSis2Rq2+xDSoZfQ7s/tGgtli0Yhd
-TFvF3qGr3mufAsLNVHPQO2ygs9AZgodjG035XcgpDU5iodz9sxjFcVylksVlit16
-9gNv1GMof9ZqEfXwM5c6FBSHi8gbwxiGugietf95SeKoHNIiglwDZlJssIrJ90SC
-EdWFHI6W
-=nkVv
------END PGP SIGNATURE-----
-
---qw2zqgk5lfspo27e--
+Thanks. I'll work with Ming and others to take care of it. Have a great vacation!
 
