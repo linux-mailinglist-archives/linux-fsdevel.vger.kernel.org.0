@@ -1,108 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-16972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794EA8A5C8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:00:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE568A5CD1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 23:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4F5BB2290D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 21:00:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D46F1C20F0D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 21:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC6615698D;
-	Mon, 15 Apr 2024 21:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2909156F57;
+	Mon, 15 Apr 2024 21:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="T3D/TTc6"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k1gFawta"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB037154452;
-	Mon, 15 Apr 2024 21:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88FB25601;
+	Mon, 15 Apr 2024 21:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713214841; cv=none; b=CFcl5i2M6ohMaw9nsGnsakfBxullHdt1YcKWkTt5H7DEyK1Zco2XYKCzjXxULBhXjW+Lg0o+gdqDJhZNBbGUMbOZj2GCXssciZU38YLeysp5mjKMF3CbVJIb2Rf0K7Vq9aybvNsnTkmJn3hAeRq5PwwEcUq7t+gMad4a+Gt5Ho8=
+	t=1713215927; cv=none; b=ICTQH6RfwE2lrHU1YC78CNwH2tyXc6TcI5yoAZJ4al6LTbWtVc+c+phf2lpWiZMqK8H2EDHsdamrK8Hao3GDXPl8UKKPjFX3dsj4ke6z+gYlxN6hMoemVBK7W7n8Fo4WKd5Gov/ldS6CKXN0CAUDFVroLoAar/k/wfD2I+twvjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713214841; c=relaxed/simple;
-	bh=SUdVdoOMMcKuE6T44gDXZc9Du5rZohlYcfTiT1o0FTM=;
+	s=arc-20240116; t=1713215927; c=relaxed/simple;
+	bh=EIMA/Lom4s4J3a8zeR2nuXbkOuAimmCY/e6T8tXxKbQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DbzWxYyhbchYn1FLp4ygRQGxdf45AXS/e+VVRX505bn5znP4nenGtvq5vrZOu+fr9NWooXwARjXkVR6SQMwlu19bPwKHqNKEe3KLuZo08KIoAYvpWFimanVp2kz3vf2a8o3xIjcdc7IBPcLdW4xezXYRLaUTJJM+ZaOnTGWYJmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=T3D/TTc6; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=QAQZfdA0ESSUJFjI7K/EXmRtYcSbObQnArbvU+QX8aZ14ZxoE2f+/vX5boEtGipBI2AfrurQfNggeUsV6Rp+maAQ+OiSnJJXyDvN0VUYRTf98YUcRl4UNKrgSChZ/lVjzQ+xq/hv5Jcdp/7seK/kGTHtIq4cdsfEME5gp+lsSnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k1gFawta; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=YtPwJPZSjzsq4Aj/scT6HbP0Qc6Mf3kzhzhzkus5EP4=; b=T3D/TTc60g+XvgrjxjXkGQ8mq/
-	TFP+ivSh8MZ4hzKCWDtW21By0e5UV2ccTJaw5OO7ecqi00Y1IhDtAbO9/fugrsItm7HgaSFAQQNgE
-	yaBWmHfDf9ov3jTAjO2DazEk2HReBwa2rmGnmE/UsQcHinQIuTA26ms5j1XpbKGbvcVuXDf8x/8Lo
-	jiJsXXuqNqRbqmtAbLyXMLv7RgJ/NLYw5lZPtLETz/qzu4YXdOzPkLqBU6kSSCvfjpLFQSPWMSvSy
-	mlwhChPgZ1BH0K/x8prUBnlrn5CQTNULv1WZYtrRCClnSLPmGQIXWoOTvlpTcrUmraVkSGhv0sXWW
-	VAkhM63w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rwTRL-00D0xQ-13;
-	Mon, 15 Apr 2024 21:00:35 +0000
-Date: Mon, 15 Apr 2024 22:00:35 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] seq_file: Optimize seq_puts()
-Message-ID: <20240415210035.GW2118490@ZenIV>
-References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
- <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oq3OSv09Zcq3l/SCWQSioSa37PYcwwKSz6uiDlE9w/E=; b=k1gFawtalSNyx93OW2ft4AbbZm
+	mL+127agePKR7DWE1EgzM8K2Sdu0btd1XQeD8Wzl2tmTNdgWmn92sRrCehFh8u/+qHAagyvQyrV+I
+	wglcZ0HQmPiryp3ay1AfYi9TzgEYQTdT7rPBLPlWeJzkacLKZXrdbwV9HsWzpaSjGI3Si8Mpfr2S0
+	0hiTTpWQOGyNpghwLESRQBYRaWfsk2cg6KJWgLE1zDszdu8yt8sfPIvBeNWyhWxqIe1CYWPFC33pc
+	4OQTnxL2Sln3ZByHLOn89dz27uUzxYSHVKBEuo/ChmtRraFlSsjkqf650IGawzGSeX5oHG74Pa4Vl
+	djp37vKQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rwTig-0000000GWYM-3AgF;
+	Mon, 15 Apr 2024 21:18:30 +0000
+Date: Mon, 15 Apr 2024 22:18:30 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
+	axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, nilay@linux.ibm.com,
+	ritesh.list@gmail.com
+Subject: Re: [PATCH v6 00/10] block atomic writes
+Message-ID: <Zh2ZptLxnwa_jtSk@casper.infradead.org>
+References: <20240326133813.3224593-1-john.g.garry@oracle.com>
+ <ZgOXb_oZjsUU12YL@casper.infradead.org>
+ <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
+ <Zg7Z4aJtn3SxY5w1@casper.infradead.org>
+ <f3c1d321-0dfc-466f-9f6a-fe2f0513d944@oracle.com>
+ <ZhQud1NbO4aMt0MH@bombadil.infradead.org>
+ <ZhYQANQATz82ytl1@casper.infradead.org>
+ <ZhxBiLSHuW35aoLB@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <ZhxBiLSHuW35aoLB@bombadil.infradead.org>
 
-On Mon, Apr 15, 2024 at 10:47:59PM +0200, Christophe JAILLET wrote:
-> Le 04/01/2024 à 14:29, Christophe JAILLET a écrit :
-> > Most of seq_puts() usages are done with a string literal. In such cases,
-> > the length of the string car be computed at compile time in order to save
-> > a strlen() call at run-time. seq_write() can then be used instead.
-> > 
-> > This saves a few cycles.
-> > 
-> > To have an estimation of how often this optimization triggers:
-> >     $ git grep seq_puts.*\" | wc -l
-> >     3391
-> > 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Sun, Apr 14, 2024 at 01:50:16PM -0700, Luis Chamberlain wrote:
+> On Wed, Apr 10, 2024 at 05:05:20AM +0100, Matthew Wilcox wrote:
+> > Have you tried just using the buffer_head code?  I think you heard bad
+> > advice at last LSFMM.  Since then I've landed a bunch of patches which
+> > remove PAGE_SIZE assumptions throughout the buffer_head code, and while
+> > I haven't tried it, it might work.  And it might be easier to make work
+> > than adding more BH hacks to the iomap code.
 > 
-> Hi,
-> 
-> any feed-back on this small optimisation of seq_puts()?
+> I have considered it but the issue is that *may work* isn't good enough and
+> without a test plan for buffer-heads on a real filesystem this may never
+> suffice. Addressing a buffere-head iomap compat for the block device cache
+> is less error prone here for now.
 
-> > +#define seq_puts(m, s)						\
-> > +do {								\
-> > +	if (__builtin_constant_p(s))				\
-> > +		seq_write(m, s, __builtin_strlen(s));		\
-> > +	else							\
-> > +		__seq_puts(m, s);				\
-> > +} while (0)
-> > +
+Is it really your position that testing the code I already wrote is
+harder than writing and testing some entirely new code?  Surely the
+tests are the same for both.
 
-No need to make it a macro, actually.  And I would suggest going
-a bit further:
-
-static inline void seq_puts(struct seq_file *m, const char *s)
-{
-        if (!__builtin_constant_p(*s))
-		__seq_puts(m, s);
-	else if (s[0] && !s[1])
-		seq_putc(m, s[0]);
-	else
-		seq_write(m, s, __builtin_strlen(s));
-}
+Besides, we aren't talking about a filesystem on top of the bdev here.
+We're talking about accessing the bdev's page cache directly.
 
