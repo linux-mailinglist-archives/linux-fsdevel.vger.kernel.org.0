@@ -1,116 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-16954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19068A56C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 17:51:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CD58A56CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 17:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A5591C20F33
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 15:51:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1E1AB211D1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 15:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BC07E576;
-	Mon, 15 Apr 2024 15:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J4q/wv/L"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBF280035;
+	Mon, 15 Apr 2024 15:53:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4943C78C8A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 15:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A11C7F7E4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 15:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713196294; cv=none; b=tdGodiUFfGut7Zhs1uIdptKEVE14tR0UduTj8SfYLRfG+ra11EUFrxRoo4ybARBboc9kKqy+7T6xq454oqnGMWU/Xeb7s9FTMqpLZ7j6UOwwJZvzumnefwXY7QlfOxmMJAkTNZO/UkWKwrIXucWT06t7L7eaEN36NexflaaljAY=
+	t=1713196424; cv=none; b=a6A6WLj6aYnm1FOOztnfo/5SoJ3S8CvhOVgaBQyza3CW86HDIh74lP2V3MfHtLIu3lgGkRHpRzeobAv2rPtuV6hyCkt60YetC6jSjE8zBcIpZH1qg179w6EGxqGEP86WMeoomOLI54vVgVctVLQvybrWOUgyK/iKKlQ6V6Z4NKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713196294; c=relaxed/simple;
-	bh=09xE/LFlf8yGYO0Vt3dT8wJS2zUG1ebrtZmNDTnLH1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WzyfR45+OVUPhCyuGj4AZpY6dg4pP0HkO7UheZdfI2Yfo9m0v3tQQRBnljk2HIl9f3rxekQdEmngc6MOaD8jpet79xLR1r0RF5e4TmkyISCDYi0P2VtdOBfgkcpAF4iJEzdhMp0qpPjkqMYStiiw03kpqbMRmmKVNxRCjHPylYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=J4q/wv/L; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-518a56cdbcfso3311041e87.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 08:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1713196291; x=1713801091; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SUbBz+0Pa/+6Pdxji7ckXlL4204e0k2uOmCa11XX1Xk=;
-        b=J4q/wv/LydA/JLf15o9eqZFU9bJZpQG1fSkPEAH228hCVlNyJhbIe9uCBzhyO+n9o4
-         qCsZWx+u/f5GvFYtkb9fqtwQbS5Vs0u34poTsFiLwsoOuMl3FiSPae8B2dfb8ovTsXev
-         AymyNhk+WJFQawpUJmtT+3OfcEfNCO0Z26oqI=
+	s=arc-20240116; t=1713196424; c=relaxed/simple;
+	bh=YiQjWJpzdavvT8xdQ9oAiiYmz0r9Ih+L53BAr+/F5Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRueHLAt+QE9K666jSADfyQ4YRB3CXmwSOf9fg73rZ3RX6/8Yova62PLUfVak/w0vo0wo+GYmsv8tPP4gBFp3+HClyI/Mh+Xn6e5bNtRhtWeqgiiHoFB3c7R1htfwObGmNl7y892yfDlokPeAQhH0iIWVmHNxS1448v6VSZCgqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-69b50b8239fso29448846d6.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 08:53:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713196291; x=1713801091;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SUbBz+0Pa/+6Pdxji7ckXlL4204e0k2uOmCa11XX1Xk=;
-        b=vr238Tw73KCStwsmmyx0pKPzuCT+l5wGi6f6eS4aUdOZOR4EjkdqPZvtbX0oOhjY7o
-         6xI6wLy/QjC7n65VTDN9qgIyu7hXSSSLxJ67T4KBQsrKkA8e+W2jhIyeAYgwW6MEjPLr
-         ZCwx+VNB2fy4FAvSMsLg6DfhWaZ7uzcuKxTfN6qmXPqSa5eGbXYI1+yQMPuhUqlIMiu0
-         u4+RTKt1rj8CFK7fOHJaHOFldESZfGIxRmtvrD1c5y+ZPWrhLgRqp7j2t4Y2hmHHyZNg
-         JcTtdoXDXAK1qCLkSH0NuXdn4I59V5GVI+7NX07r8aPQs5mxJWutokXFlKA9WLjHnNAm
-         C31g==
-X-Forwarded-Encrypted: i=1; AJvYcCXveG1ZgnUkuTGidkZLG04VuiFAsN+DMgPDGpS2mNSDNtQQ+Ne2M+D163gXrDvvDxlJoYa6GXfhEU66SWtbhTbCl7zxV911jF/zfLgEaw==
-X-Gm-Message-State: AOJu0YwZoWY+N2O1l6UEA4RMDyvRooTu4PgizlN73SRa8VVdg6X+zzrZ
-	4Hdgo4xQiXkG+MQuhULPhCn5sqYSunAJEphNVRljRBMXY1cxmw1J3SQ1q9AkxjS+VOXfnkGvgB7
-	NuazNVg==
-X-Google-Smtp-Source: AGHT+IH7PeC6gfcCrcbmEiMqD376bnZv+Tg2tG1/SJBTHyYov/fd7DgDrarw2OrAGrJ5Gj9B5KHnug==
-X-Received: by 2002:ac2:4888:0:b0:518:d376:3c6 with SMTP id x8-20020ac24888000000b00518d37603c6mr2884156lfc.45.1713196291250;
-        Mon, 15 Apr 2024 08:51:31 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id m6-20020ac24ac6000000b00517737b4d5dsm1289490lfp.151.2024.04.15.08.51.30
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Apr 2024 08:51:30 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-518a56cdbcfso3310949e87.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 08:51:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXo10SJxCHaicHQxv24/KOKwOCl3jreTbHxIEc98fJqIFqMQta8oIvpdeSWhOWzL4BBAbf23YP9tMOGZX5HIXOE0qOSSkeowFaCSCTqUg==
-X-Received: by 2002:a05:6512:110d:b0:518:b409:ba09 with SMTP id
- l13-20020a056512110d00b00518b409ba09mr5784322lfg.19.1713196289845; Mon, 15
- Apr 2024 08:51:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713196421; x=1713801221;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pZq59D7CN8IyAio+UrGCoszHZ95ZUk1m4Cy8JPSP7JY=;
+        b=DWfMLz6AvIQG/Rf048b40tFmzRkYAGFvyx/M1ncWAp2/FhWY6pFHZHhzrBQkfT4PBY
+         /2V7cWnQ3kDtKHChkQup87EiauEkOgPcbk90vuHalz8MtRpbOgrD9cjnC5Ni57QLBtXX
+         OAvfAXOoArhHzw3++3y+V2zTbkBrwdzQhLx8vN2jHP1pfT/oOcCsXo4DgLDIEUIwrgi0
+         RIBKnsRQte4c7pw1VYedlpSdMve633SsR5L4ZA53eXwBtd3IAA3LcAR7gbZa7EXuq/yE
+         1t+KeCsz24j21RBxYBrpZqx3ETM3v7pn00zEzRvd5O3jMMX15sEgeQQt+hfCe3qfTAVH
+         FUuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRKAa7EGmMRNWNaFCla342wBO3vJIWNzUX0OrK5j6vLODTFYFqI86DJ79kUSicAC1NQg025L/YZvcA2ulTrxHSXftaq1imjEEnHBRmPA==
+X-Gm-Message-State: AOJu0YzimdOZct66ENZS2kj9nofi0/DgZDsfcOgP+Ns7uAT7y8KHHn7C
+	XRGSK5yejnolvUz5IiOZCixr9vcfWnFNDHwuCJBveOgWEWlQfqDzGCN4FGLpuA==
+X-Google-Smtp-Source: AGHT+IG47NcQiFkABQEss43aPCNBl6bAMBkER4pxXkwkNBWvGUcY2M2YjQz7yfo8xKZy4ihq6yrasw==
+X-Received: by 2002:a05:6214:2b49:b0:696:4086:5e1 with SMTP id jy9-20020a0562142b4900b00696408605e1mr151924qvb.2.1713196421499;
+        Mon, 15 Apr 2024 08:53:41 -0700 (PDT)
+Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
+        by smtp.gmail.com with ESMTPSA id kr5-20020a0562142b8500b0069b7929cdfcsm1794585qvb.111.2024.04.15.08.53.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Apr 2024 08:53:41 -0700 (PDT)
+Date: Mon, 15 Apr 2024 11:53:40 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH v2 04/34] md: port block device access to file
+Message-ID: <Zh1NhM1ow11I03hX@redhat.com>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-4-adbd023e19cc@kernel.org>
+ <Zhzyu6pQYkSNgvuh@fedora>
+ <20240415-haufen-demolieren-8c6da8159586@brauner>
+ <Zh07Sc3lYStOWK8J@fedora>
+ <20240415-neujahr-schummeln-c334634ab5ad@brauner>
+ <Zh1Dtvs8nst9P4J2@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZgFN8LMYPZzp6vLy@hovoldconsulting.com> <20240325-shrimps-ballverlust-dc44fa157138@brauner>
- <a417b52b-d1c0-4b7d-9d8f-f1b2cd5145f6@leemhuis.info> <b0fa3c40-443b-4b89-99e9-678cbb89a67e@paragon-software.com>
- <Zhz5S3TA-Nd_8LY8@hovoldconsulting.com> <Zhz_axTjkJ6Aqeys@hovoldconsulting.com>
- <8FE8DF1E-C216-4A56-A16E-450D2AED7F5E@tuxera.com> <Zh0SicjFHCkMaOc0@hovoldconsulting.com>
- <20240415-warzen-rundgang-ce78bedb5f19@brauner> <CAHk-=whPTEYv3F9tgvJf-OakOxyGw2jzRVD0BMkXmC5ANPj0YA@mail.gmail.com>
- <Zh1MCw7Q0VIKrrMi@hovoldconsulting.com>
-In-Reply-To: <Zh1MCw7Q0VIKrrMi@hovoldconsulting.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 15 Apr 2024 08:51:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whN3V4Jzy+Mv8UZGTJ5VEk_ihCS8tu3VskW-HCfBg6r=g@mail.gmail.com>
-Message-ID: <CAHk-=whN3V4Jzy+Mv8UZGTJ5VEk_ihCS8tu3VskW-HCfBg6r=g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ntfs3: remove warning
-To: Johan Hovold <johan@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Anton Altaparmakov <anton@tuxera.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-	"ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>, 
-	Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>, 
-	"linux-ntfs-dev@lists.sourceforge.net" <linux-ntfs-dev@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zh1Dtvs8nst9P4J2@fedora>
 
-On Mon, 15 Apr 2024 at 08:47, Johan Hovold <johan@kernel.org> wrote:
->
-> I think the "ntfs" alias must always be mounted read-only because you
-> can currently have an fstab entry which does not specify "ro" and this
-> mount would suddenly become writeable when updating to 6.9 (possibly by
-> a non-privileged user, etc).
+On Mon, Apr 15, 2024 at 11:11:50PM +0800, Ming Lei wrote:
+> On Mon, Apr 15, 2024 at 04:53:42PM +0200, Christian Brauner wrote:
+> > On Mon, Apr 15, 2024 at 10:35:53PM +0800, Ming Lei wrote:
+> > > On Mon, Apr 15, 2024 at 02:35:17PM +0200, Christian Brauner wrote:
+> > > > On Mon, Apr 15, 2024 at 05:26:19PM +0800, Ming Lei wrote:
+> > > > > Hello,
+> > > > > 
+> > > > > On Tue, Jan 23, 2024 at 02:26:21PM +0100, Christian Brauner wrote:
+> > > > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > > > > ---
+> > > > > >  drivers/md/dm.c               | 23 +++++++++++++----------
+> > > > > >  drivers/md/md.c               | 12 ++++++------
+> > > > > >  drivers/md/md.h               |  2 +-
+> > > > > >  include/linux/device-mapper.h |  2 +-
+> > > > > >  4 files changed, 21 insertions(+), 18 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > > > > > index 8dcabf84d866..87de5b5682ad 100644
+> > > > > > --- a/drivers/md/dm.c
+> > > > > > +++ b/drivers/md/dm.c
+> > > > > 
+> > > > > ...
+> > > > > 
+> > > > > > @@ -775,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
+> > > > > >  {
+> > > > > >  	if (md->disk->slave_dir)
+> > > > > >  		bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
+> > > > > > -	bdev_release(td->dm_dev.bdev_handle);
+> > > > > > +	fput(td->dm_dev.bdev_file);
+> > > > > 
+> > > > > The above change caused regression on 'dmsetup remove_all'.
+> > > > > 
+> > > > > blkdev_release() is delayed because of fput(), so dm_lock_for_deletion
+> > > > > returns -EBUSY, then this dm disk is skipped in remove_all().
+> > > > > 
+> > > > > Force to mark DMF_DEFERRED_REMOVE might solve it, but need our device
+> > > > > mapper guys to check if it is safe.
+> > > > > 
+> > > > > Or other better solution?
+> > > > 
+> > > > Yeah, I think there is. You can just switch all fput() instances in
+> > > > device mapper to bdev_fput() which is mainline now. This will yield the
+> > > > device and make it able to be reclaimed. Should be as simple as the
+> > > > patch below. Could you test this and send a patch based on this (I'm on
+> > > > a prolonged vacation so I don't have time right now.):
+> > > 
+> > > Unfortunately it doesn't work.
+> > > 
+> > > Here the problem is that blkdev_release() is delayed, which changes
+> > > 'dmsetup remove_all' behavior, and causes that some of dm disks aren't
+> > > removed.
+> > > 
+> > > Please see dm_lock_for_deletion() and dm_blk_open()/dm_blk_close().
+> > 
+> > So you really need blkdev_release() itself to be synchronous? Groan, in
+> 
+> At least the current dm implementation relies on this way sort of, and
+> it could be addressed by forcing to mark DMF_DEFERRED_REMOVE in
+> remove_all().
 
-Well, it would be fairly easy to do particularly if we just do it for
-the old legacy case.
+You floated that earlier in this thread, etc: no, that would change
+the interface.  DMF_DEFERRED_REMOVE gives people options to allow for
+async device closes, etc.  But I don't want to impose it as some faux
+equivalent to the sync model remove_all has always provided.
 
-Of course, even the legacy case had that CONFIG_NTFS_RW option, so
-people who depended on _that_ would want to be able to remount...
+And what about simple 'dmsetup remove'? remove_all just loops doing
+remove... so isn't 'dmsetup remove' also being forced to be async as
+of commit a28d893eb3270 ("md: port block device access to file")?
 
-               Linus
+dm.c:dm_put_device -> dm_put_table_device -> close_table_device
+
+> > that case use __fput_sync() instead of fput() which ensures that this
+> > file is closed synchronously.
+> 
+> I tried __fput_sync(), but the following panic is caused:
+
+Ok, so more work needed.  But we need to preserve the existing sync
+interface for DM device removal.
+
+Mike
 
