@@ -1,101 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-16940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC7A8A5420
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 16:34:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE648A54B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 16:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1EE1C21366
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 14:34:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0E47B243A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 14:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2592780C04;
-	Mon, 15 Apr 2024 14:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095BB745C9;
+	Mon, 15 Apr 2024 14:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pTCvqqa1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PzgsGIgO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3767D82D7C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 14:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51D02A8D3
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 14:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713191476; cv=none; b=uWth3LZY7JNjg5K/7TxB3zdEoXMJkb6Kfsd2Uid8OLaPAwLlXWoAUQmlXbgb948cO0pigXYEh3s+YarW/AzkyPluLt77XnJ9nW/fEKQP7fOOM2VSzL/SWmUNCUR1Ebo/RWXsg2as3LkRoyXdE+KsSBB9vG2sNVMuZXuNVSmbHqs=
+	t=1713191774; cv=none; b=fDkpQf8Kelijnrrjzeh8zxQAx3kBMmV50T3ZhMK61jj38X44CgN483aF3BHTAi+8KT1nkrBgLzsi67dpqzWe4ieijmXlcEovTVMkGiPNGPT3TaCihyzB2jEsDJE4YHssa658wzjIT9r9ZPiA4JMwpjtuwEu4aICPRzfYP6AA4RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713191476; c=relaxed/simple;
-	bh=HqcXRnFyce4t6qwtROljrSsa/5ZmP0WlXQyFVrryB3A=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LPhwoNEh4wp+8oxe1VH2zC6d/6fg0fLjXUhcyHhJDhcRV6C9LvD3g+PKVespQzEm0EL/XpT6rIMne0JGAVg9G0dg3ZI90JcJGLqDQHUOdy6xTTbMATmvQg8CO6YyNdSXEUAhGwtAW2MASUVQK/LbE6oEIhqP3aGyTT4R9yOpkP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pTCvqqa1; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7d5ed700c2dso15325139f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 07:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1713191474; x=1713796274; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OnyTUnI7yjOjaMRaS9jTa0qNIFpYhtFJ/FJeohWZYZ8=;
-        b=pTCvqqa1YGZFhKo4ZTRdU8zW5RCFBoqBKmnvgh4cnWy331LViylg21Hl2KvPV1yTls
-         l4bnb345PFdQqO60qjRHMw4Lg5gZeI4GkrDM/yewXNtzmI5Iqdkw6AguiUvKCbZ2lB57
-         zXi9Hnm1+SmWPx5wLUOYO7CS4WjJBat3nY+UdRPbkgoKL/8WpR+wvOVoX3e5evJ2bY0e
-         Rl5WHizsqKC4UNEOynZNUe/+EuVY8MLoa9M5EN2/QA2eVaevC3HtdezEjFNneEFSFlt4
-         R8V5xgwWWnpgv9xoucMln38BWHQq8Wz5l3z6VGpjKoCEgW3mdlYkjktrT7L1yJKHozyO
-         pquA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713191474; x=1713796274;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OnyTUnI7yjOjaMRaS9jTa0qNIFpYhtFJ/FJeohWZYZ8=;
-        b=itAlJ+c5WzcjJ5j1cSIDxnTFRXXtO5ieFASMND87moY+dTjwqBVOLz6XxeEL6UepdC
-         U92x2bClfLj6YFRQUIw9HfpNJeNB0/Kz6Tx9YIXYo7OsbsAS6oQiCaihpmj5XDE8row8
-         9KdGaVVnDREAEstaJfksGhsDKyporpPa2BBhcPOoop/hleMpwc1c0MS5HuukenWskt1s
-         qwmwz7QpCp63Tj8XnEAV/R1638lKwnVhmdv3HwH7kKLCxxMr1DM1ulVcm/Q4uZ4dTOoH
-         Y9OvvRM60v8+r7qv0OQxbXkmFIMAq++JVGi/DCTOhkpIf4VKtK8JE6xBh24xmkNfdceV
-         2p1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCn3jvQiQF0bQ3HRWW2O8kA9YRip6N6NwWGA9NLUV7dmJ6absPfkK2siTdMvTHE325CFRsE+6zafO7cJod/BDjz2lhu71COI1tMhwKEw==
-X-Gm-Message-State: AOJu0YxEiwoZKP5vU2l/6NVftZxmf6kuAjYfHEg4VsROlSmlA7AjTF8P
-	Tqo6mal387CgHkH9kBvdRMNg/q6cGB3kfBbiPC570WjZr0HImtsCjJFmxARFUo5zquv7tWoNqZA
-	5
-X-Google-Smtp-Source: AGHT+IGxjV6l3osWhSBMqMq8bHa6oq22HWgvV00Vl7O88jIAahhIDnE/sRlw5ymP4XlITqHuj3e8aw==
-X-Received: by 2002:a92:c14d:0:b0:36a:3ee8:b9f0 with SMTP id b13-20020a92c14d000000b0036a3ee8b9f0mr8165771ilh.0.1713191474351;
-        Mon, 15 Apr 2024 07:31:14 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id j10-20020a056e02218a00b0036577f79570sm2634837ila.54.2024.04.15.07.31.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Apr 2024 07:31:13 -0700 (PDT)
-Message-ID: <a81c7a79-44ce-44fb-8b33-4753d491bcec@kernel.dk>
-Date: Mon, 15 Apr 2024 08:31:13 -0600
+	s=arc-20240116; t=1713191774; c=relaxed/simple;
+	bh=YMv48aXULq+P+Zfe6u92CCqGqs7nverst/BByaD+MJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LRnlmYC5K8EIQ46lVfKCOmuBlpaG42r0NHW8mTG9y7RlXoQNRF9MUqtUHV74jDXnu1xoQ6a8aV1crrhbL1oJzTM4k7gnoTHtu9eXiO8OWBW0nwRZYRmyXLjCfcz0zkDARHcrtv7qc9KRu5SzQSevM9XEeSgM1RG+bAkDXs5GZ/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PzgsGIgO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713191770;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Fpco6JyEqxSHVCGXvAnj47X9HVqOOy7QTJFx9DYGrE=;
+	b=PzgsGIgODAYbgmfYTSW2HJi3oW63GuinZlNBA01TVUW6EzYiQ6+6aYWmw2vokpsy4q5esn
+	Etx/Mga8ZYBbuSl6T/aqGQZPx1K4wDRwEesXgoAVE07Xqm3qhos25gI3E5pv19H6zw/PIU
+	3bEe95Y3EjMW6j8A/7xH5kMqVwY8P0w=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-O5C2w4qgPzGIwjnOkYKvtQ-1; Mon,
+ 15 Apr 2024 10:36:07 -0400
+X-MC-Unique: O5C2w4qgPzGIwjnOkYKvtQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B3F4A380350C;
+	Mon, 15 Apr 2024 14:36:06 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.13])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FC5F51EF;
+	Mon, 15 Apr 2024 14:36:01 +0000 (UTC)
+Date: Mon, 15 Apr 2024 22:35:53 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev,
+	Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH v2 04/34] md: port block device access to file
+Message-ID: <Zh07Sc3lYStOWK8J@fedora>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-4-adbd023e19cc@kernel.org>
+ <Zhzyu6pQYkSNgvuh@fedora>
+ <20240415-haufen-demolieren-8c6da8159586@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [syzbot] [fs?] [io-uring?] general protection fault in
- __ep_remove
-To: syzbot <syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, io-uring@vger.kernel.org, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <0000000000002d631f0615918f1e@google.com>
-Content-Language: en-US
-In-Reply-To: <0000000000002d631f0615918f1e@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240415-haufen-demolieren-8c6da8159586@brauner>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-This isn't related to io_uring at all, not sure why syzbot has this idea
-that anything that involves task_work is iouring.
+On Mon, Apr 15, 2024 at 02:35:17PM +0200, Christian Brauner wrote:
+> On Mon, Apr 15, 2024 at 05:26:19PM +0800, Ming Lei wrote:
+> > Hello,
+> > 
+> > On Tue, Jan 23, 2024 at 02:26:21PM +0100, Christian Brauner wrote:
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > ---
+> > >  drivers/md/dm.c               | 23 +++++++++++++----------
+> > >  drivers/md/md.c               | 12 ++++++------
+> > >  drivers/md/md.h               |  2 +-
+> > >  include/linux/device-mapper.h |  2 +-
+> > >  4 files changed, 21 insertions(+), 18 deletions(-)
+> > > 
+> > > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > > index 8dcabf84d866..87de5b5682ad 100644
+> > > --- a/drivers/md/dm.c
+> > > +++ b/drivers/md/dm.c
+> > 
+> > ...
+> > 
+> > > @@ -775,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
+> > >  {
+> > >  	if (md->disk->slave_dir)
+> > >  		bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
+> > > -	bdev_release(td->dm_dev.bdev_handle);
+> > > +	fput(td->dm_dev.bdev_file);
+> > 
+> > The above change caused regression on 'dmsetup remove_all'.
+> > 
+> > blkdev_release() is delayed because of fput(), so dm_lock_for_deletion
+> > returns -EBUSY, then this dm disk is skipped in remove_all().
+> > 
+> > Force to mark DMF_DEFERRED_REMOVE might solve it, but need our device
+> > mapper guys to check if it is safe.
+> > 
+> > Or other better solution?
+> 
+> Yeah, I think there is. You can just switch all fput() instances in
+> device mapper to bdev_fput() which is mainline now. This will yield the
+> device and make it able to be reclaimed. Should be as simple as the
+> patch below. Could you test this and send a patch based on this (I'm on
+> a prolonged vacation so I don't have time right now.):
 
-#syz set subsystems: fs
+Unfortunately it doesn't work.
 
--- 
-Jens Axboe
+Here the problem is that blkdev_release() is delayed, which changes
+'dmsetup remove_all' behavior, and causes that some of dm disks aren't
+removed.
+
+Please see dm_lock_for_deletion() and dm_blk_open()/dm_blk_close().
+
+Thanks,
+Ming
 
 
