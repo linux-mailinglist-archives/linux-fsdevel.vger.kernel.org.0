@@ -1,394 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-16956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-16957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B099E8A56DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 17:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B668A56DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 17:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A74F28457C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 15:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C931B2845AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Apr 2024 15:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B787F492;
-	Mon, 15 Apr 2024 15:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050D37F464;
+	Mon, 15 Apr 2024 15:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmZ1//Ib"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IMyj6PQ8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A081D556;
-	Mon, 15 Apr 2024 15:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1214D8BF8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 15:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713196706; cv=none; b=XdaDarU7q+daNDiQE3h7cHG89qoD4PFgYr1hhmw2nZF8dz6S3TdkX/D5zT+X/JANCOdX5pdxzTYIpBfTpsW18Jw2ggVCeZ16GwsJVQA+/PK2xRNSg3hMWZu7IUnJHCEG+7vnIoEpA76up+SRdJy+rgn2RByKq664InTKxddaBUQ=
+	t=1713196773; cv=none; b=Ji2HRPfvt5N0HosYymTLt6Kmyd3U4DSDaMOt2OQGJQRumKq53+h9AHf4nC59iDX+B2lBREG9M4EMD28gtwglqMX56CXlI1Ekmtyrltkgzl9t+CI163uZ5gHBg6HPTvIYoV3hifKdQaAd4sloeSwwS9rw5AWKuC/xLW/wPiBHMwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713196706; c=relaxed/simple;
-	bh=sUQBpgSyUBZlM66UyHHOKPx3i5wfe4drA8tsjM+tnzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgjjQutx3mQmfVnH54jHRjD4mRibabNsR2JXKftHsSSALUoOj+Jl+2RdLGyrju5Gib7CpPBvyVWbZ9xj37b0tm+gT1Q9SFAUCINv3KQC22duPBMleKThKxiZ7Retet43LfP/ib0DqHyE1i7H5LbiHwr/euk2i45Wo0WGQzeBofw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmZ1//Ib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C4BC113CC;
-	Mon, 15 Apr 2024 15:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713196706;
-	bh=sUQBpgSyUBZlM66UyHHOKPx3i5wfe4drA8tsjM+tnzc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dmZ1//IbatG5VVmZj0HFpruiwGMNf1VAY9hGDZZemVXe3AUoXDEwV816mHhKVH7BQ
-	 ySBuEEFBcAxFWD8PM6ZEO1Le2E2M3jokY/m7Q9urj4i7j/OjacVkrX8CAmHzcVSzzB
-	 2p+10cjvC/bsS705ClPX6uGnxQUzcn59gBKiZqYZ9jIHoYiz8xRi6QbGcEXFXCsvwv
-	 rFQGCI7F5rXWt5xIekjV8LCgMX2Lm/Y2++81B70FtedObx9QCVyqKpUcaYWzo5Dj+5
-	 GlBeFv443nG6ySXo5ZmcA7gMrfaUcUpHcB6V8YIsSfGV2CQzUM2cXxsSVmIdcZniQR
-	 IZfJudkf8384w==
-Date: Mon, 15 Apr 2024 08:58:25 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	willy@infradead.org, p.raghav@samsung.com, da.gomez@samsung.com,
-	hare@suse.de, john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [RFC] fstests: add mmap page boundary tests
-Message-ID: <20240415155825.GC11948@frogsfrogsfrogs>
-References: <20240415081054.1782715-1-mcgrof@kernel.org>
+	s=arc-20240116; t=1713196773; c=relaxed/simple;
+	bh=gs6BlBTHOo5I4mCngOIQ4cX4RE8Dv2NGNd2CY60TgSc=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=PF9dcQx9WxnGEHpN6RBg3eEB4n9KfzYMPA6ssT5SxOhdWm63t70i9yTiXPJyBlaDOuhqLa/7o8/v6BqHWq7RQr3soQpJKF+p/8lWSjJDyfp8AMoQoGhxemhLS3lAy6IlbNylq35iupucL4mIskNrPdvzw6w7a8e22y8rR2aClg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IMyj6PQ8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713196770;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gs6BlBTHOo5I4mCngOIQ4cX4RE8Dv2NGNd2CY60TgSc=;
+	b=IMyj6PQ8N+jhV3w4jLl10aoDFCSiHKKQLBB60G0lvmoUDMOhhU3aFpYTkwt96DzdCq7rg8
+	85lc8MPppP2PEvIKuNZs2mVHCkIDtAPw/P/nzM4wItQLU/sih+DKKqQjwmOEZQhIBXZxaS
+	PAvOAFl+QRHjA4xVAIl+bQSgfP2Etfw=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-557-NwT1aKwFPzqmaphH2fQL3Q-1; Mon, 15 Apr 2024 11:59:28 -0400
+X-MC-Unique: NwT1aKwFPzqmaphH2fQL3Q-1
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7d663e01e24so365382639f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 08:59:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713196767; x=1713801567;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gs6BlBTHOo5I4mCngOIQ4cX4RE8Dv2NGNd2CY60TgSc=;
+        b=wOkEBWYrvIlvsFmRZda9nbnjKPyToPqWHa1ZianuCoqJeBCYwr8+hOHaM+KRpSEvf2
+         TCr5242tYt8p9/ZM9af5HxTZwScz7NKN1dOut52MDxHXH9H0UORDUcahHUGszS+R3GTn
+         5JwIWYJ+mWcphBogIdkjMGKrI/ebWIRa9tCBgkvlS8CDr1VW0DhTiDGWw5368d4cCBz1
+         7SqmmHyrhG1Rogy+SAtWa3/htd0ICN75tFM/jksM2tY+Dlbl/ssPjj6hk6AN8CklItwD
+         TW7R/IAuka2NFK2ND+UaLW5yvxClzJFxbgZ2bl/5w0JS3bgGEO8NjHxtfF61dWfAIiLH
+         +VUA==
+X-Gm-Message-State: AOJu0YyAe+wfzoZrvg6nGZfyDucpBffYmyTF/D10zKdUBjzZ0/2SIyAG
+	gFRx+KwJ0eu17frYl11fM+562k9vwkf4LKrauddPp/oAmYfGZc4OAo3qfQi2EfYZjmqzDorkKfI
+	TrKnBp4yJF+aSu+DEAAQS4ljTI+hVvptUbV5fDp1GZFt77JrH/fIF3eKSfWRsjIPz+TMTHKU0sX
+	YZnYXoCya13TQT51cXpbvqM336/zVmjqJn4UeTtirsrD/pMQ==
+X-Received: by 2002:a05:6602:389b:b0:7d0:3e4e:242d with SMTP id br27-20020a056602389b00b007d03e4e242dmr14099656iob.5.1713196767318;
+        Mon, 15 Apr 2024 08:59:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErKcOY4RISo9ufHy46goqGn2DftZm8n1pLsPEmd67bRwoRGWjGekjkEa+NDfCtywW2znA7pw==
+X-Received: by 2002:a05:6602:389b:b0:7d0:3e4e:242d with SMTP id br27-20020a056602389b00b007d03e4e242dmr14099641iob.5.1713196766967;
+        Mon, 15 Apr 2024 08:59:26 -0700 (PDT)
+Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
+        by smtp.gmail.com with ESMTPSA id t36-20020a05663834a400b00482d033889csm2894421jal.171.2024.04.15.08.59.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Apr 2024 08:59:26 -0700 (PDT)
+Message-ID: <12d50bb6-7238-466b-8b67-c4ae42586818@redhat.com>
+Date: Mon, 15 Apr 2024 10:59:25 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240415081054.1782715-1-mcgrof@kernel.org>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-fsdevel@vger.kernel.org, lsf-pc <lsf-pc@lists.linux-foundation.org>
+From: Eric Sandeen <sandeen@redhat.com>
+Subject: [LSF/MM/BPF TOPIC] finishing up mount API conversions; consistency &
+ logging
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 15, 2024 at 01:10:54AM -0700, Luis Chamberlain wrote:
-> mmap() POSIX compliance says we should zero fill data beyond a file
-> size up to page boundary, and issue a SIGBUS if we go beyond. While fsx
-> helps us test zero-fill sometimes, fsstress also let's us sometimes test
-> for SIGBUS however that is based on a random value and its not likley we
-> always test it. Dedicate a specic test for this to make testing for
-> this specific situation and to easily expand on other corner cases.
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
-> 
-> Does enough to get us to use to test this, however I'm aware of a bit
-> more polishing up to do:
-> 
->   * maybe moving mread to common as generic/574 did it first
->   * sharing round_up_to_page_boundary() as well
-> 
-> generic/574 is special, it was just testing for correctness of
-> integrity if we muck with mmap() however if you don't have verity
-> stuff available obviously you won't end up testing it.
-> 
-> This generalizes mmap() zero-fill and SIGBUS corner case tests.
-> 
-> I've tested so far only 4k and it works well there. For 16k bs on LBS
-> just the SIGBUS issue exists, I'll test smaller block sizes later like
-> 512, 1k, 2k as well. We'll fix triggering the SIBGUS when LBS is used,
-> we'll address that in the next iteration.
-> 
-> Is this a worthy test as a generic test?
-> 
->  common/filter         |   6 ++
->  tests/generic/740     | 231 ++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/740.out |   2 +
->  3 files changed, 239 insertions(+)
->  create mode 100755 tests/generic/740
->  create mode 100644 tests/generic/740.out
-> 
-> diff --git a/common/filter b/common/filter
-> index 36d51bd957dd..d7add06f3be7 100644
-> --- a/common/filter
-> +++ b/common/filter
-> @@ -194,6 +194,12 @@ _filter_xfs_io_unique()
->      common_line_filter | _filter_xfs_io
->  }
->  
-> +_filter_xfs_io_data_unique()
-> +{
-> +    _filter_xfs_io_offset | sed -e 's| |\n|g' | egrep -v "\.|XX|\*" | \
-> +	sort | uniq | tr -d '\n'
-> +}
-> +
->  _filter_xfs_io_units_modified()
->  {
->  	UNIT=$1
-> diff --git a/tests/generic/740 b/tests/generic/740
-> new file mode 100755
-> index 000000000000..cbb823014600
-> --- /dev/null
-> +++ b/tests/generic/740
-> @@ -0,0 +1,231 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) Luis Chamberlain. All Rights Reserved.
-> +#
-> +# FS QA Test 740
-> +#
-> +# As per POSIX NOTES mmap(2) maps multiples of the system page size, but if the
-> +# data mapped is not multiples of the page size the remaining bytes are zeroed
-> +# out when mapped and modifications to that region are not written to the file.
-> +# On Linux when you write data to such partial page after the end of the
-> +# object, the data stays in the page cache even after the file is closed and
-> +# unmapped and  even  though  the data  is never written to the file itself,
-> +# subsequent mappings may see the modified content. If you go *beyond* this
-> +# page, you should get a SIGBUS. This test verifies we zero-fill to page
-> +# boundary and ensures we get a SIGBUS if we write to data beyond the system
-> +# page size even if the block size is greater than the system page size.
-> +. ./common/preamble
-> +. ./common/rc
-> +_begin_fstest auto quick
-> +
-> +# Override the default cleanup function.
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -r -f $tmp.*
-> +}
-> +
-> +# Import common functions.
-> +. ./common/filter
-> +
-> +# real QA test starts here
-> +_supported_fs generic
-> +_require_scratch_nocheck
-> +_require_test
-> +
-> +setup_zeroed_file()
-> +{
-> +	local file_len=$1
-> +	local sparse=$2
-> +
-> +	if $sparse; then
-> +		$XFS_IO_PROG -f -c "truncate $file_len" $test_file
-> +	else
-> +		$XFS_IO_PROG -f -c "falloc 0 $file_len" $test_file
-> +	fi
-> +}
-> +
-> +round_up_to_page_boundary()
-> +{
-> +	local n=$1
-> +	local page_size=$(_get_page_size)
-> +
-> +	echo $(( (n + page_size - 1) & ~(page_size - 1) ))
+In case this is of interest to anyone I'll propose it.
 
-Does iomap put a large folio into the pagecache that crosses EOF, or
-does it back down to base page size?
+The "new" mount API was merged about 5 years ago, but not all filesystems
+were converted, so we still have the legacy helpers in place. There has been
+a slow trickle of conversions, with a renewed interest in completing this
+task.
 
-> +}
-> +
-> +mread()
-> +{
-> +	local file=$1
-> +	local map_len=$2
-> +	local offset=$3
-> +	local length=$4
-> +
-> +	# Some callers expect xfs_io to crash with SIGBUS due to the mread,
-> +	# causing the shell to print "Bus error" to stderr.  To allow this
-> +	# message to be redirected, execute xfs_io in a new shell instance.
-> +	# However, for this to work reliably, we also need to prevent the new
-> +	# shell instance from optimizing out the fork and directly exec'ing
-> +	# xfs_io.  The easiest way to do that is to append 'true' to the
-> +	# commands, so that xfs_io is no longer the last command the shell sees.
-> +	bash -c "trap '' SIGBUS; $XFS_IO_PROG -r $file \
-> +		-c 'mmap -r 0 $map_len' \
-> +		-c 'mread $offset $length'; true"
+The remaining conversions are of varying complexity (bcachefs might
+be "fun!") but other questions remain around how userspace expects to use
+the informational messages the API provides, what types of messages those
+should be, and whether those messages should also go to the kernel dmesg.
+Last I checked, userspace is not yet doing anything with those messages,
+so any inconsistencies probably aren't yet apparent.
 
-Please hoist the mread() function with generic/574 to common; your copy
-is out of date with the original.
+There's also the remaining task of getting the man pages completed.
 
-> +}
-> +
-> +do_mmap_tests()
-> +{
-> +	local block_size=$1
-> +	local file_len=$2
-> +	local offset=$3
-> +	local len=$4
-> +	local use_sparse_file=${5:-false}
-> +	local new_filelen=0
-> +	local map_len=0
-> +	local csum=0
-> +	local fs_block_size=$(_get_block_size $SCRATCH_MNT)
-> +
-> +	echo -en "\n\n==> Testing blocksize $block_size " >> $seqres.full
-> +	echo -en "file_len: $file_len offset: $offset " >> $seqres.full
-> +	echo -e "len: $len sparse: $use_sparse_file" >> $seqres.full
-> +
-> +	if ((fs_block_size != block_size)); then
-> +		echo "Block size created ($block_size) doesn't match _get_block_size on mount ($fs_block_size)"
-> +		_fail
+There were also some recent questions and suggestions about how to handle
+unknown mount options, see Miklos' FSOPEN_REJECT_UNKNOWN suggestion. [1]
 
-_fail "Block size created..."
+I'm not sure if this warrants a full session, as it's actually quite
+an old topic. If nothing else, a BOF for those interested might be
+worthwhile.
 
-> +	fi
-> +
-> +	rm -rf "${SCRATCH_MNT:?}"/*
-> +
-> +	# This let's us also test against sparse files
-> +	setup_zeroed_file $file_len $use_sparse_file
-> +
-> +	# This will overwrite the old data, the file size is the
-> +	# delta between offset and len now.
-> +	$XFS_IO_PROG -f -c "pwrite -S 0xaa -b 512 $offset $len" \
-> +		$test_file >> $seqres.full
-> +
-> +	sync
-> +	new_filelen=$(_get_filesize $test_file)
-> +	map_len=$(round_up_to_page_boundary $new_filelen)
-> +	csum_orig="$(_md5_checksum $test_file)"
-> +
-> +	# A couple of mmap() tests:
-> +	#
-> +	# We are allowed to mmap() up to the boundary of the page size of a
-> +	# data object, but there a few rules to follow we must check for:
-> +	#
-> +	# a) zero-fill test for the data: POSIX says we should zero fill any
-> +	#    partial page after the end of the object. Verify zero-fill.
-> +	# b) do not write this bogus data to disk: on Linux, if we write data
-> +	#    to a partially filled page, it will stay in the page cache even
-> +	#    after the file is closed and unmapped even if it never reaches the
-> +	#    file. Subsequent mappings *may* see the modified content, but it
-> +	#    also can get other data. Since the data read after the actual
+Thanks,
+-Eric
 
-What does "other data" mean?
+[1] https://lore.kernel.org/linux-fsdevel/CAJfpeguCKgMPBbD_ESD+Voxq5ChS9nGQFdYrA4+YWBz17yFADA@mail.gmail.com/
 
-> +	#    object data can vary we just verify the filesize does not change.
-> +	#    This is not true for tmpfs.
-
-Er... is this file size change a bug?
-
-> +	if [[ $map_len -gt $new_filelen ]]; then
-> +		zero_filled_data_len=$((map_len - new_filelen))
-> +		_scratch_cycle_mount
-> +		expected_zero_data="00"
-> +		zero_filled_data=$($XFS_IO_PROG -r $test_file \
-> +			-c "mmap -r 0 $map_len" \
-> +			-c "mread -v $new_filelen $zero_filled_data_len" \
-> +			-c "munmap" | \
-> +			_filter_xfs_io_data_unique)
-> +		if [[ "$zero_filled_data" != "$expected_zero_data" ]]; then
-> +			echo "Expected data: $expected_zero_data"
-> +			echo "  Actual data: $zero_filled_data"
-> +			echo "Zero-fill broken see mmap() requirements"
-> +			_fail
-> +		fi
-> +
-> +		if [[ "$FSTYP" != "tmpfs" ]]; then
-> +			_scratch_cycle_mount
-> +			$XFS_IO_PROG $test_file \
-> +				-c "mmap -w 0 $map_len" \
-> +				-c "mwrite $new_filelen $zero_filled_data_len" \
-> +				-c "munmap"
-> +			sync
-> +			csum_post="$(_md5_checksum $test_file)"
-> +			if [[ "$csum_orig" != "$csum_post" ]]; then
-> +				echo "Expected csum: $csum_orig"
-> +				echo " Actual  csum: $csum_post"
-> +				_fail
-> +			fi
-> +
-> +			local filelen_test=$(_get_filesize $test_file)
-> +			if [[ "$filelen_test" != "$new_filelen" ]]; then
-> +				echo "Expected file length: $new_filelen"
-> +				echo " Actual  file length: $filelen_test"
-> +				_fail
-> +			fi
-> +		fi
-> +	fi
-> +
-> +	# Now lets ensure we get SIGBUS when we go beyond the page boundary
-> +	if [[ "$FSTYP" != "tmpfs" ]]; then
-> +		_scratch_cycle_mount
-> +		new_filelen=$(_get_filesize $test_file)
-> +		map_len=$(round_up_to_page_boundary $new_filelen)
-> +		csum_orig="$(_md5_checksum $test_file)"
-> +		mread $test_file $map_len 0 $map_len >> $seqres.full  2>$tmp.err
-> +		if grep -q 'Bus error' $tmp.err; then
-> +			echo "Not expecting SIGBUS when reading up to page boundary"
-> +			cat $tmp.err
-> +			_fail
-> +		fi
-> +
-> +		# This should just work
-> +		mread $test_file $map_len 0 $map_len >> $seqres.full  2>$tmp.err
-> +		if [[ $? -ne 0 ]]; then
-> +			_fail
-> +		fi
-> +
-> +		# If we mmap() on the boundary but try to read beyond it just
-> +		# fails, we don't get a SIGBUS
-> +		$XFS_IO_PROG -r $test_file \
-> +			-c "mmap -r 0 $map_len" \
-> +			-c "mread 0 $((map_len + 10))" >> $seqres.full  2>$tmp.err
-> +		local mread_err=$?
-> +		if [[ $mread_err -eq 0 ]]; then
-> +			echo "mmap() to page boundary works as expected but reading beyond should fail"
-> +			echo "err: $?"
-> +			_fail
-> +		fi
-> +
-> +		# Now let's go beyond the allowed mmap() page boundary
-> +		mread $test_file $((map_len + 10)) 0 $((map_len + 10)) >> $seqres.full  2>$tmp.err
-> +		if ! grep -q 'Bus error' $tmp.err; then
-> +			echo "Expected SIGBUS when mmap() reading beyond page boundary"
-> +			_fail
-> +		fi
-> +		local filelen_test=$(_get_filesize $test_file)
-> +		if [[ "$filelen_test" != "$new_filelen" ]]; then
-> +			echo "Expected file length: $new_filelen"
-> +			echo " Actual  file length: $filelen_test"
-> +			_fail
-> +		fi
-> +	fi
-> +}
-> +
-> +test_block_size()
-> +{
-> +	local block_size=$1
-> +
-> +	do_mmap_tests $block_size 512 3 5
-> +	do_mmap_tests $block_size 16k 0 $((16384+3))
-> +	do_mmap_tests $block_size 16k $((16384-10)) $((16384+20))
-> +	do_mmap_tests $block_size 64k 0 $((65536+3))
-> +	do_mmap_tests $block_size 4k 4090 30 true
-> +}
-> +
-> +_scratch_mkfs >> $seqres.full 2>&1 || _fail "mkfs failed"
-> +_scratch_mount
-> +test_file=$SCRATCH_MNT/file
-> +block_size=$(_get_block_size "$SCRATCH_MNT")
-
-_get_file_block_size ?
-
-> +test_block_size $block_size
-> +_scratch_unmount
-> +_check_scratch_fs
-
-This work is done for you automatically if you simply exit the test
-with the scratch fs still mounted.
-
---D
-
-> +
-> +echo "Silence is golden"
-> +status=0
-> +exit
-> diff --git a/tests/generic/740.out b/tests/generic/740.out
-> new file mode 100644
-> index 000000000000..3f841e600ed3
-> --- /dev/null
-> +++ b/tests/generic/740.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 740
-> +Silence is golden
-> -- 
-> 2.43.0
-> 
-> 
 
