@@ -1,157 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-17081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D9D8A77D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 00:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E12708A77D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 00:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE781F2306C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 22:36:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CE91F23206
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 22:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D72133291;
-	Tue, 16 Apr 2024 22:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79191132803;
+	Tue, 16 Apr 2024 22:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Te4SEjdi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1JReEmpz"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ctM1BE2A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3C339FCF;
-	Tue, 16 Apr 2024 22:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78065B201;
+	Tue, 16 Apr 2024 22:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713307005; cv=none; b=tm4sBpkVgDSYSRjEVakhNiod1gJxOOdMuBKgXHVJnnGeY+MiLSp+pWUFis/AnLm7shEys67oM4bgGnsUYRqjNtgNZcu9wiGGmq5fY3nDT12/52UuHfNPSIrKg5cI3dffcWYNpS8C5RHvG6ZkpNvCr1ctGTn1gXpgmNNE/yebkDY=
+	t=1713307117; cv=none; b=DjYHVf1M5b+9R1YNdJ/fEqqMWk/nfu1q+f2Hcyp61qFPqdjT3JmYr9DlLl16dV+NiY1ltXiz9HtZBgYCdMjSPf2a/O25N6puuEjzIbQxJowrLzT9JPG0+lqPAtUOC/8yASlmHM8mYv53qvQSQW+ZzxPSw0fN/3lEE77qPRgnPHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713307005; c=relaxed/simple;
-	bh=cSZY4ae4WAsue7NUAkAfbZWkSc+q0D62ObnXm+tgL3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SgPbXCljHZ7oLoPKirQ0K7lA/0DlF2HrrUOYrwD/tddxxqibJtQwmlhmeJ1eRSbRoHPNdSZ3WfCHm+yl15NG5OYjxDA1uG7kZaVJYNU1qtBeIiYclaYdDD+53UImNp94NthJS9CckibZC6q2OdBbLMO64a9/YE5GN//J/3itbec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Te4SEjdi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1JReEmpz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 17 Apr 2024 00:36:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1713307001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZvuIWFJvCJMoa+9u4CC8L6s+esR9l0aMrumFrkL3xew=;
-	b=Te4SEjdiIAtRl+sEaU2CE61/pWstSBJTyTvMhF0hRKt8Wb0II71K0I5eG60ljuA0kMImWq
-	KKyacGeI2WuzzTMdaJJ8MZe8SHKLLYhuzudTyxKuF+BtfxH1/2Ro1FT/EGVLWPxSVJpPCN
-	gQaCZC2X1aCeyUjRILimEQQmdYe93+dFDoADfCE8OCkq1a9uc0HeRrLvDYd/NVTT7Us+cX
-	xcWl6fRlolFTM+jNzsJ21OrVltzZcx073fs5K8/brt9q27dRRLN7LkLMS0xKSY77/+owMi
-	fGTD1V45mheTt9xeiXzrhDhQ9QLaLJDn1bIdJAnkUAL5eAnnRHSiuKQh1ZPKgw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1713307001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZvuIWFJvCJMoa+9u4CC8L6s+esR9l0aMrumFrkL3xew=;
-	b=1JReEmpzYenEyEPAqS7pF0uHMdoMdU/dE8wUr66hmDgCzsuooa4j1F8ymBqQjiWzrxxjf+
-	eXAqVLKEyOsjtuDA==
-From: Nam Cao <namcao@linutronix.de>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@kernel.org>, Christian Brauner <brauner@kernel.org>, Andreas Dilger
- <adilger@dilger.ca>, Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel
- <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>,
- linux-riscv@lists.infradead.org, Theodore Ts'o <tytso@mit.edu>, Ext4
- Developers List <linux-ext4@vger.kernel.org>, Conor Dooley
- <conor@kernel.org>, Anders Roxell <anders.roxell@linaro.org>, Alexandre
- Ghiti <alex@ghiti.fr>
-Subject: Re: riscv32 EXT4 splat, 6.8 regression?
-Message-ID: <20240417003639.13bfd801@namcao>
-In-Reply-To: <Zh7Ey507KXIak8NW@kernel.org>
-References: <20240416-deppen-gasleitung-8098fcfd6bbd@brauner>
-	<8734rlo9j7.fsf@all.your.base.are.belong.to.us>
-	<Zh6KNglOu8mpTPHE@kernel.org>
-	<20240416171713.7d76fe7d@namcao>
-	<20240416173030.257f0807@namcao>
-	<87v84h2tee.fsf@all.your.base.are.belong.to.us>
-	<20240416181944.23af44ee@namcao>
-	<Zh6n-nvnQbL-0xss@kernel.org>
-	<Zh6urRin2-wVxNeq@casper.infradead.org>
-	<Zh7Ey507KXIak8NW@kernel.org>
+	s=arc-20240116; t=1713307117; c=relaxed/simple;
+	bh=S7sE9brjfV8uQBeIEy6QZVeO3w3xji1TwLL3sVqLSxE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=X8aCsGOmXdkSlvmzn6L/5C8wIOd0IeaLHbcbT6iKPhvdGuag2jo+4/Xbp3bEeJoJLpWavdjDeGEmtiaj7F1dmXzYh/gaJ55sl2ZirQaE1M0ZqFI/60v8F6ZNFzWvMd35BDZVW+Ked0VVNvuuDNu2pc/+bGxjVdXSrRuoZQdGiPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ctM1BE2A; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=KfsmsJ6C4WEujGSKO21oMe1mj3YNpyS/QO6bqt4zXM4=; b=ctM1BE2AsNOAM4hw0CuLWaoeqJ
+	1lQQ/eJqSuSmtDvrIK6JvP6N326ZnkSIniIE7hWafNbp3FCL0iFtyb5m+KQUzaKzU9xR8UuU8Bbz/
+	YYjBAsqlQrPDt6bCiismzxsUJuKtEsST/I6YNAD15wJHsxMcU3+t15NaksL1kD/ybGoNqFfOicP8Q
+	UstMTYx8BJBzwlvivnWN+0O3oxXOAUt9HfqCt1hZNCjxaoLlSrMHuN8iMvBaeAcEQdO1uDtQ8kitb
+	YPV0jQhZ4vwz9c2Lt6szcDymRH996jDHZt11O1Wyrl1V9GIheMkedSFOz/zxn7iPB44TUAhGbJIbA
+	uAKSGJ6g==;
+Received: from [50.53.2.121] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rwrRi-0000000E4dT-3GT1;
+	Tue, 16 Apr 2024 22:38:34 +0000
+Message-ID: <ae28ae0f-c1ca-4afe-89e4-cc5d66b998b2@infradead.org>
+Date: Tue, 16 Apr 2024 15:38:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 8/8] doc: Split buffer.rst out of api-summary.rst
+From: Randy Dunlap <rdunlap@infradead.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240416031754.4076917-1-willy@infradead.org>
+ <20240416031754.4076917-9-willy@infradead.org>
+ <5b1938bc-e675-4f1c-810b-dd91f6915f1d@infradead.org>
+Content-Language: en-US
+In-Reply-To: <5b1938bc-e675-4f1c-810b-dd91f6915f1d@infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024-04-16 Mike Rapoport wrote:
-> On Tue, Apr 16, 2024 at 06:00:29PM +0100, Matthew Wilcox wrote:
-> > On Tue, Apr 16, 2024 at 07:31:54PM +0300, Mike Rapoport wrote:
-> > > > -	if (!IS_ENABLED(CONFIG_64BIT)) {
-> > > > -		max_mapped_addr = __pa(~(ulong)0);
-> > > > -		if (max_mapped_addr == (phys_ram_end - 1))
-> > > > -			memblock_set_current_limit(max_mapped_addr - 4096);
-> > > > -	}
-> > > > +	memblock_reserve(__pa(-PAGE_SIZE), PAGE_SIZE);
-> > > 
-> > > Ack.
-> > 
-> > Can this go to generic code instead of letting architecture maintainers
-> > fall over it?
+
+
+On 4/16/24 3:18 PM, Randy Dunlap wrote:
 > 
-> Yes, it's just have to happen before setup_arch() where most architectures
-> enable memblock allocations.
+> 
+> On 4/15/24 8:17 PM, Matthew Wilcox (Oracle) wrote:
+>> Buffer heads are no longer a generic filesystem API but an optional
+>> filesystem support library.  Make the documentation structure reflect
+>> that, and include the fine documentation kept in buffer_head.h.
+>> We could give a better overview of what buffer heads are all about,
+>> but my enthusiasm for documenting it is limited.
+>>
+>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>> ---
+>>  Documentation/filesystems/api-summary.rst | 3 ---
+>>  Documentation/filesystems/index.rst       | 1 +
+>>  2 files changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/filesystems/api-summary.rst b/Documentation/filesystems/api-summary.rst
+>> index 98db2ea5fa12..cc5cc7f3fbd8 100644
+>> --- a/Documentation/filesystems/api-summary.rst
+>> +++ b/Documentation/filesystems/api-summary.rst
+>> @@ -56,9 +56,6 @@ Other Functions
+>>  .. kernel-doc:: fs/namei.c
+>>     :export:
+>>  
+>> -.. kernel-doc:: fs/buffer.c
+>> -   :export:
+>> -
+>>  .. kernel-doc:: block/bio.c
+>>     :export:
+>>  
+>> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+>> index 1f9b4c905a6a..8f5c1ee02e2f 100644
+>> --- a/Documentation/filesystems/index.rst
+>> +++ b/Documentation/filesystems/index.rst
+>> @@ -50,6 +50,7 @@ filesystem implementations.
+>>  .. toctree::
+>>     :maxdepth: 2
+>>  
+>> +   buffer
+> 
+> This causes:
+> 
+> Documentation/filesystems/index.rst:50: WARNING: toctree contains reference to nonexisting document 'filesystems/buffer'
 
-This also works, the reported problem disappears.
+I added a simple/minimal new buffer.rst file for testing:
+(needs an SPDX line)
 
-However, I am confused about one thing: doesn't this make one page of
-physical memory inaccessible?
 
-Is it better to solve this by setting max_low_pfn instead? Then at
-least the page is still accessible as high memory.
 
-Best regards,
-Nam
+---
+ Documentation/filesystems/buffer.rst |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index fa34cf55037b..6e3130cae675 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -197,7 +197,6 @@ early_param("mem", early_mem);
- static void __init setup_bootmem(void)
- {
- 	phys_addr_t vmlinux_end = __pa_symbol(&_end);
--	phys_addr_t max_mapped_addr;
- 	phys_addr_t phys_ram_end, vmlinux_start;
- 
- 	if (IS_ENABLED(CONFIG_XIP_KERNEL))
-@@ -235,23 +234,9 @@ static void __init setup_bootmem(void)
- 	if (IS_ENABLED(CONFIG_64BIT))
- 		kernel_map.va_pa_offset = PAGE_OFFSET - phys_ram_base;
- 
--	/*
--	 * memblock allocator is not aware of the fact that last 4K bytes of
--	 * the addressable memory can not be mapped because of IS_ERR_VALUE
--	 * macro. Make sure that last 4k bytes are not usable by memblock
--	 * if end of dram is equal to maximum addressable memory.  For 64-bit
--	 * kernel, this problem can't happen here as the end of the virtual
--	 * address space is occupied by the kernel mapping then this check must
--	 * be done as soon as the kernel mapping base address is determined.
--	 */
--	if (!IS_ENABLED(CONFIG_64BIT)) {
--		max_mapped_addr = __pa(~(ulong)0);
--		if (max_mapped_addr == (phys_ram_end - 1))
--			memblock_set_current_limit(max_mapped_addr - 4096);
--	}
--
- 	min_low_pfn = PFN_UP(phys_ram_base);
--	max_low_pfn = max_pfn = PFN_DOWN(phys_ram_end);
-+	max_pfn = PFN_DOWN(phys_ram_end);
-+	max_low_pfn = min(max_pfn, PFN_DOWN(__pa(-PAGE_SIZE)));
- 	high_memory = (void *)(__va(PFN_PHYS(max_low_pfn)));
- 
- 	dma32_phys_limit = min(4UL * SZ_1G, (unsigned long)PFN_PHYS(max_low_pfn));
+diff -- /dev/null b/Documentation/filesystems/buffer.rst
+--- /dev/null
++++ b/Documentation/filesystems/buffer.rst
+@@ -0,0 +1,11 @@
++
++===========================
++Filesystem buffer head APIs
++===========================
++
++.. kernel-doc:: include/linux/buffer_head.h
++   :internal:
++
++.. kernel-doc:: fs/buffer.c
++   :export:
++
 
