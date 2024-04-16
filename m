@@ -1,209 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-17070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0388A72E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 20:12:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D99E8A72E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 20:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36AC8284DE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 18:12:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DB511C21920
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 18:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF561369B8;
-	Tue, 16 Apr 2024 18:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE95134CE8;
+	Tue, 16 Apr 2024 18:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heJ3p54w"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+oxJ45r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD378134CD4;
-	Tue, 16 Apr 2024 18:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0209A84A32
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 18:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713291151; cv=none; b=gwAsldPZOciEMa6ihtz7MGCR6DN9bnk1RvqkFN6VPbBwSctV9N/Uk9wBXBrxzruM9cC7yKLjZoi+W3XTDOaSgedwGx+63ymyGF0TTNV1eWJmEBokK3FBI3AP/lg+T9Dv+q07lO4ltlRQXHNl4EdA3poeUcoMS2NnPrnxVOilr68=
+	t=1713291299; cv=none; b=POf/+BA7MyRcaJMFQNzPBRy3F6iKCMYDAqMa6SPXBY2MpSJb81CDd9Wa/WoIIn3QbISxNkzQRZ9mbGwDcl70l/iMcnwFYpB7p1V0aT9pmBgFXJwnMAghMBWzkRanLrr+aYOE7ck6b7wRByY2tr7WIGOOa44Hx0ps5Ux3qYUQw5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713291151; c=relaxed/simple;
-	bh=o/Pz18+RKaep+hg8mtEP9kW2B/vTbdfUmQG+bVJKW20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nfmRvLYL57p3HBjgfcfW7THHcpfvYtPFlAPtqx0u6W2CN2XnogLXMuZAqwB71HCRElvOetnMW8YUd1y1+nKeLIz0iQMGHgdOLDWEE63t1YbV9mLBmkRFEDP/Y5NE3X76SAJJrFq+Sh4v1krrgXUdTjsLDahZKOej658jPBi3Ckc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=heJ3p54w; arc=none smtp.client-ip=209.85.210.45
+	s=arc-20240116; t=1713291299; c=relaxed/simple;
+	bh=AVYrPoNvk4js8zd8p+EK0y4viuIINfCvEKHXV3XG3iA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PpPDw33FDoXv/LEAamcXE439+2Np//oBO68qs7HKY9hgg1rEDSoprhTPKagciLnmiqqNEE7T3v0Rh04uVLhp6DO3wS9Y8bB5/i6MewiI+kN17cH/aIv9bxTZzlTMr4GHVfmpyoSxQZxFFbuFCw/ulwHPTxOpwxTBY/iMRB9ap64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+oxJ45r; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6eb8ae9b14eso1044890a34.0;
-        Tue, 16 Apr 2024 11:12:29 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41884f8f35bso10193905e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 11:14:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713291149; x=1713895949; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iKA01nHZWWeCUMwezGVKQPv6dB8WRSswCOMzscXKYBI=;
-        b=heJ3p54wCh+Vu5wIz2uayiU9dyUbZxLrWAv1WTjzFOCjbiE79JFK3LDV8PipJALN/6
-         e568ozu5vwDOZPG4C3m7OgW1Hxs85oxEUaU8/GoZlfd629aqLNDnu79R2StPeI98ZpLF
-         DhHCjTdPVYLS5a1uc1//P8SGODC5AJ56KOCaFMinIR3aw+iYlxW0TUldIGQqXExDUkin
-         8A9BmDCxHvAWq8JekbzDW50Ddh/0AAVL5E/ExYURIdOebDKiSUHdPyJypbw0WBYplt7c
-         2MZPG0VE/xFTPAYoE+Pf88YB77TJp/Sr73rDYymTsIBkCvDEHbOrnZ04+slgMzJFpX5v
-         W59g==
+        d=gmail.com; s=20230601; t=1713291296; x=1713896096; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GpVsDlwp9tGKX1bl16eoCf4bz5m9UbDIO1/efocPpaM=;
+        b=m+oxJ45rkvFrzTEaQBl/HgAeNJ7neYtB2taHT/qizjdYiUM9O8FvlcKIKcU8PL1aOf
+         3hm+NACB7rX1afcbeXyWTx539emvX2auHxQKSm+b0dvTrm5qMnG2g1YshVPtL2p/Ct90
+         2ehI9ri1L2B/YtqULVWLfWH1DtbQtNyoiEO3RgLjPbdpoSNt66ltGgkPOgnwN/YoVhU2
+         LWS62DbTX7Y99tO+9bB8Au+MFba16bikiTaMD+UPnyUoY6pZm35+TMPhBUfU8zbeJ7rF
+         jy7X04ymnqNJZ70vbtdazYBgc3lmMCc2/d7UrjiPOmeHhKSvtTg3fRv/8cd0vWtbaGj7
+         s/rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713291149; x=1713895949;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iKA01nHZWWeCUMwezGVKQPv6dB8WRSswCOMzscXKYBI=;
-        b=r7qq5R0bPw8EB3XuKBw13g6HPMmG0ZulezUlfQfTZD0bIHwfvq1DWd2PmRfzc+YXG7
-         edtDnSxUILsMVTe3RTQ7Szt5Ahy4UKl97Kkislmv9I2MNLZxfaBstsV+Q7y9YruISvPf
-         P4aquINR3hOWoy4raPX5kMFh5DS3q4nBXW1R9fFeXQqCVVPWaxfyJb6iZM4nYSWqWnjB
-         G8DfRS6cVdYSZV0orDyW7h5iXi227WyDRo6VEpJn95PZg4XL5rlZWfgwCGFxV8CEVQjs
-         KaG+LN0m7WWzyEfdUHhetlyiSsnx5nftduGNXLY+9roI6EJTdOlX4tkkIAqvaZ36KzFI
-         14oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbffWMoZDWX+piLgzm4VLzZNITVKNVIa2wvj4l1Yv7VVva6KiuYT241OeQrPmDrpM9kLFKy7nt4urxGTfNLO9gEah04Bzj/KDzTd30CBa08kNTF5Id1+GvsSVLSb3+a9P2R30iNzDB8uLL7RBmdq1hAwzT1yW7CbRTQLOxKt03sHG8fTF+d/Z+x4IiLuCQ1ObCmdK9loDgtJ9pv+JaUUlS9tbUPZunCA==
-X-Gm-Message-State: AOJu0YxSApu6IvetWOUq4FjnBRZL2004FGG8CoHEPXpCiIoJtVAYaYUf
-	QUYogQew185tUZr4TzYpxUNaus2WLH3Cz1o0jbszacnHV2bQ0wrS
-X-Google-Smtp-Source: AGHT+IEsvpJ9PHMdwG/Acyze2YUbjWscWF8ldU9oec4TpSg6OiR2NDXpJYNLstl4DLb3bNX7ulcKpA==
-X-Received: by 2002:a9d:4d95:0:b0:6eb:7bc3:12a5 with SMTP id u21-20020a9d4d95000000b006eb7bc312a5mr7305200otk.32.1713291148792;
-        Tue, 16 Apr 2024 11:12:28 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id c25-20020a05620a135900b0078edf6393edsm3676965qkl.73.2024.04.16.11.12.27
+        d=1e100.net; s=20230601; t=1713291296; x=1713896096;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GpVsDlwp9tGKX1bl16eoCf4bz5m9UbDIO1/efocPpaM=;
+        b=Rdp9wzFySOYEUKZOztwMLUfJxTlb33s9GzKPigaTXa/By+wAHbUN1nBPEZOp5MjUjD
+         6uyw3G3COLrSb7QHeTpp3iJ3ZkfdOuaOuIoch4qqytIIOEG7YPHxa36Eh5uiu7fNeStN
+         wCMpTeoE2gDgZXCORqmlkSOwEN+jDouvWV838Yg3y5yGv1TT0GlZU6jlLXKntH9v2TH/
+         P31mDAakTPuq6VEJ5ByscXrYe+yYO6P6A5ExBIvy8xiGA2FnrVDfIjxebGeQhEuUorP6
+         f/apd71iuxU3u9HgpBbJQRHOOfk213Ygvks9T4+mm9bTreUu3SXCr0Baia7gXwkhM6wC
+         Tz3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVEuTVP4xBpYDb7qBXQwWOadb7pU7LjqJsGpIKu1XUVVTfSF6gIKHVO5lhuJj0ZtjS8Af6uQwBvpqi1CYqntmsS+wbLcPsIqRw5qdyNlw==
+X-Gm-Message-State: AOJu0YynVGQUbWvL4TH5Oy3+wqZ9VzC9Nx6nYahIcacDzsLbEBGSYDKH
+	Qmw8p3ze8s8OEFIWRBoM3BjfxkNiBgk63BfD6AWZlz1l6o4DZdaV
+X-Google-Smtp-Source: AGHT+IElfGmSRjM14+eiR7Cs2PHDbYNcON+X7sYCQ4YmVf1aXdJoxf8Y8+3DCj3sja3C60MNPhS1eQ==
+X-Received: by 2002:a05:600c:19c9:b0:418:9941:c977 with SMTP id u9-20020a05600c19c900b004189941c977mr1895464wmq.3.1713291296275;
+        Tue, 16 Apr 2024 11:14:56 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan (85-250-214-4.bb.netvision.net.il. [85.250.214.4])
+        by smtp.gmail.com with ESMTPSA id bi27-20020a05600c3d9b00b004187c57e161sm5778209wmb.0.2024.04.16.11.14.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Apr 2024 11:12:28 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 028C71200077;
-	Tue, 16 Apr 2024 14:12:27 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Tue, 16 Apr 2024 14:12:27 -0400
-X-ME-Sender: <xms:ir8eZgbEqxjfyHkI9qB6eRHZtvYXA4CtzwbfjRa8Q9nQWC1N5sjDCg>
-    <xme:ir8eZrb2vQTeWI0X7Cgm8I1_h9eZ_azk6RYDQZwGdjAgFWUPWz2sMDBoBJpE1i8mN
-    _PnYtt-AwnaAXB2RA>
-X-ME-Received: <xmr:ir8eZq_nseswGJfnz61rVpvbjRq6ebg_nJ6t-u9aaEFSnOUchA8Tr1r6beQs5Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudejiedgiedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeethfejhfekjeffueegieejudegjeetveeuhfelhfevvdfgfeekkeevkeel
-    veekgfenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhgnhhurdhorhhgnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgv
-    shhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehhe
-    ehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:ir8eZqpLHs0k5ul5Kl4J28dibHTNjP5Vh5cyp9QHQJQd6yPUbs_FNg>
-    <xmx:ir8eZrq33PYRO9PrGL2Yfs8a7lJGFjsKKbnSWmqOANo95-kfzbZrTQ>
-    <xmx:ir8eZoTyaZUzqZWAFPHRd6_-J5x-ZoqDEyCPR7Fw_thdspTrBtD85Q>
-    <xmx:ir8eZrprTEoLpgQxmH34yK7TRsic4zq1awIzCuzXq0KRGHL30-39mg>
-    <xmx:ir8eZg7He--6XEZRAbQoK6NRHu9hhc_fg22dV2jkYR8ZhJ7QNBonEKn4>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Apr 2024 14:12:26 -0400 (EDT)
-Date: Tue, 16 Apr 2024 11:12:07 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	"Bj\"orn Roy Baron" <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
- linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org
-Subject: Re: [WIP 0/3] Memory model and atomic API in Rust
-Message-ID: <Zh6_d1T48qpANoCk@boqun-archlinux>
-References: <20240322233838.868874-1-boqun.feng@gmail.com>
- <ZgFVnar3nS4F8eIX@FVFF77S0Q05N>
- <ZgHly_fioG7X4wGE@boqun-archlinux>
- <20240409105015.GC21779@noisy.programming.kicks-ass.net>
+        Tue, 16 Apr 2024 11:14:55 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Hillf Danton <hdanton@sina.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fsnotify: fix UAF from FS_ERROR event on a shutting down filesystem
+Date: Tue, 16 Apr 2024 21:14:52 +0300
+Message-Id: <20240416181452.567070-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240409105015.GC21779@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 09, 2024 at 12:50:15PM +0200, Peter Zijlstra wrote:
-> On Mon, Mar 25, 2024 at 01:59:55PM -0700, Boqun Feng wrote:
-> > On Mon, Mar 25, 2024 at 10:44:45AM +0000, Mark Rutland wrote:
-> > [...]
-> > > > 
-> > > > * I choose to re-implement atomics in Rust `asm` because we are still
-> > > >   figuring out how we can make it easy and maintainable for Rust to call
-> > > >   a C function _inlinely_ (Gary makes some progress [2]). Otherwise,
-> > > >   atomic primitives would be function calls, and that can be performance
-> > > >   bottleneck in a few cases.
-> > > 
-> > > I don't think we want to maintain two copies of each architecture's atomics.
-> > > This gets painful very quickly (e.g. as arm64's atomics get patched between
-> > > LL/SC and LSE forms).
-> > > 
-> > 
-> > No argument here ;-)
-> 
-> Didn't we talk about bindgen being able to convert inline C functions
-> into equivalent inline Rust functions? ISTR that getting stuck on Rust
+Protect against use after free when filesystem calls fsnotify_sb_error()
+during fs shutdown.
 
-Yes, we did.
+Move freeing of sb->s_fsnotify_info to destroy_super_work(), because it
+may be accessed from fs shutdown context.
 
-> not having a useful inline asm.
-> 
+Reported-by: syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com
+Suggested-by: Jan Kara <jack@suse.cz>
+Link: https://lore.kernel.org/linux-fsdevel/20240416173211.4lnmgctyo4jn5fha@quack3/
+Fixes: 07a3b8d0bf72 ("fsnotify: lazy attach fsnotify_sb_info state to sb")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/notify/fsnotify.c             | 6 +++++-
+ fs/super.c                       | 1 +
+ include/linux/fsnotify_backend.h | 4 ++++
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-Mostly two features were missing: 1) asm goto and 2) memory operands,
-#1 gets implemented[1] by Gary, and should be available in Rust 1.78
-(plan to release at May 2, 2024); For #2, my understanding is that
-arch-specific effort is needed (since different architectures may have
-different contraints on memory operands), I haven't yet found anyone is
-working on this.
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 2ae965ef37e8..ff69ae24c4e8 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -103,7 +103,11 @@ void fsnotify_sb_delete(struct super_block *sb)
+ 	WARN_ON(fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_CONTENT));
+ 	WARN_ON(fsnotify_sb_has_priority_watchers(sb,
+ 						  FSNOTIFY_PRIO_PRE_CONTENT));
+-	kfree(sbinfo);
++}
++
++void fsnotify_sb_free(struct super_block *sb)
++{
++	kfree(sb->s_fsnotify_info);
+ }
+ 
+ /*
+diff --git a/fs/super.c b/fs/super.c
+index 69ce6c600968..b72f1d288e95 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -274,6 +274,7 @@ static void destroy_super_work(struct work_struct *work)
+ {
+ 	struct super_block *s = container_of(work, struct super_block,
+ 							destroy_work);
++	fsnotify_sb_free(s);
+ 	security_sb_free(s);
+ 	put_user_ns(s->s_user_ns);
+ 	kfree(s->s_subtype);
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 7f1ab8264e41..4dd6143db271 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -576,6 +576,7 @@ extern int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data
+ extern void __fsnotify_inode_delete(struct inode *inode);
+ extern void __fsnotify_vfsmount_delete(struct vfsmount *mnt);
+ extern void fsnotify_sb_delete(struct super_block *sb);
++extern void fsnotify_sb_free(struct super_block *sb);
+ extern u32 fsnotify_get_cookie(void);
+ 
+ static inline __u32 fsnotify_parent_needed_mask(__u32 mask)
+@@ -880,6 +881,9 @@ static inline void __fsnotify_vfsmount_delete(struct vfsmount *mnt)
+ static inline void fsnotify_sb_delete(struct super_block *sb)
+ {}
+ 
++static inline void fsnotify_sb_free(struct super_block *sb)
++{}
++
+ static inline void fsnotify_update_flags(struct dentry *dentry)
+ {}
+ 
+-- 
+2.34.1
 
-(background explanation for broader audience: in GCC's inline asm, you
-can specify an memory location, other than a register location, as an
-input or output of an asm block's operand[2], but current Rust inline
-asm doesn't provide this functionality, by default, without option
-"pure", "nomem", etc, every asm block in Rust can be thought as a C asm
-block with "memory" clobber)
-
-That being said, if you look at the link I shared or this gist from
-Gary:
-
-	https://gist.github.com/nbdd0121/d4bf7dd7f9b6d6b50fa18b1092f45a3c
-
-there is another way (yeah, we probably also have discussed this
-previously), basically what it does is compiling the functions in a C
-file as LLVM IR, so that Rust can call these functions at LLVM IR level.
-This in theory is doing some local LTO, and I've tested that it works
-for asm blocks. We still need to tweak our build system to make this
-work, but should it work, it would mean that Rust can call a C function
-in a pretty efficient way.
-
-> But fixing all that in a hurry seems like the much saner path forward.
-
-So a sane plan to me is wiring our atomics into Rust functions via what
-Mark has (i.e. starting off as FFI calls), then we can switch to the
-"local LTO" approach when it's ready. In case that "local LTO" needs
-more work and we do have performance need, we can always either 1)
-manually implement some primitives in Rust asm, or 2) look into how
-bindgen or other tools can translate simple C functions (asm blocks)
-into Rust.
-
-Regards,
-Boqun
-
-[1]: https://github.com/rust-lang/rust/pull/119365
-[2]: https://gcc.gnu.org/onlinedocs/gcc/Simple-Constraints.html#index-m-in-constraint
 
