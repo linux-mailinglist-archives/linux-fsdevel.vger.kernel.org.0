@@ -1,122 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-17056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D6A8A71C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 18:59:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C4C8A71CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 19:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6973284309
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 16:59:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218ED283CE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 17:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F48131723;
-	Tue, 16 Apr 2024 16:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8191327ED;
+	Tue, 16 Apr 2024 17:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PIXy075l"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nt9mrA1v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A0A2EAF9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 16:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F6112AAE3;
+	Tue, 16 Apr 2024 17:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713286734; cv=none; b=nssBWhPrph2jYwpMy474mv9WRhK5icBVJAflykZPIjv6U6MU4HSjmpWyfTJbPdHLjrnczJdr8y6e3ds945rpu/zJRpm/ko/Os7htrA7fBGQzclkVnyClqRuoCgmEo6rccdm0Y9AtYiGGWd0y/QEbG6VckGx5LvAHpwby+1IKsv8=
+	t=1713286834; cv=none; b=AwYV2HB1lRHn0SvCCuHpZXnl3nCZTKIkxmKHDIi6rEy3ZkTe4Ov5+N4mx2oO6ypjUcctm3t8SCmctXS3J0PSfNtIwWcE6PiU/RisEqE3MYdVjQx7TytL3Mmrn6n51HDQiyOcbCxsmAqGeplGL6aJSYzub6TtyKhnSdmXq54hhMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713286734; c=relaxed/simple;
-	bh=opPCA+XHxeV0l/Z0FrPaAC14zh+S8xVA6FNWxr5aA8w=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=DzFhcKcFh9av3hklgIWk2wE7p44KqjTP9RHGqvwzP64RbAa07nD5QYXyOWvuvp+egdOEr58bCppYkM6AWdi6l+UaV+VP0dWT47LkPPRPSzEfNFiHoRSt5a2YSXdhCVBFTCC8C6+BLFfyCeqbV4z/q2v/PLghws8NZXUQ/Iz8jk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PIXy075l; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713286732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ACuK1BwAPedfa6Ho4auLQQiF3JZp7pyLXmhg4dg7VCQ=;
-	b=PIXy075lXq05oo2BlaaFbFgHxXQ04dZ4B8FqCP91kT3NRVMkUl3eZZ8uFQx0wvsVKdq48S
-	gfXnJxQInGopSwLGtukIdQ/EeawsVo7bM3BctXoIwy69KUZsWdXgoXXq0NKhcX2kPzR3tz
-	4qpb4o0itwCCuGgLZwopiFBntBcXzy4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-135-B2DbH90MP86kOa52DZy_Jg-1; Tue, 16 Apr 2024 12:58:49 -0400
-X-MC-Unique: B2DbH90MP86kOa52DZy_Jg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7F11180591B;
-	Tue, 16 Apr 2024 16:58:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.10])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 796A12124E4D;
-	Tue, 16 Apr 2024 16:58:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <14e66691a65e3d05d3d8d50e74dfb366@manguebit.com>
-References: <14e66691a65e3d05d3d8d50e74dfb366@manguebit.com> <3756406.1712244064@warthog.procyon.org.uk>
-To: Paulo Alcantara <pc@manguebit.com>
-Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
-    Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Fix reacquisition of volume cookie on still-live connection
+	s=arc-20240116; t=1713286834; c=relaxed/simple;
+	bh=+eKfqkqGNqkcZA+3CL0j3nQn92dxN0Kh6lLW/1pOGwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b73xnWD2C8HNFDyQPm8n6TECcBbUTUi416YzV5zvtBmMFGTLex6IFEHi+sJqiPffF9GBi60O6R3M1JVSs1c1cZLtV54svYtnVkF3qeMTdABcb5EXZqRt4c8a9Vgu6FwIa1iGenrBDUtN0wje2Y8+fJPiLp6URnMxLEDHkjpzuak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nt9mrA1v; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KRNBS/nNdDiPqgsHkyKzXY05QuyaoZshBLw+Rc9FXMA=; b=nt9mrA1vsAaOvdbNnhltvUwu9v
+	eWZR64hdT0sHaVKkAKmAe02tetl0haDxBjBnAHLphqFzp/yy5osgH3yZyN6EMx70yH1d9DLHOvVrz
+	dlRSWUeki4/Q/6FdINSaH5XHgpn18Dmc7bkQlSk/Sg9c13cunns8wBOiCeumO9xQ5x0BAtn5G/uU/
+	xnQs8dh9gnYgu2MH0woQlj+GOoe6kRJfmSNBff0Hup94JBNpjrNs0La/eiMr7DSYEkpv1GiMYVo3T
+	yqk61h9eHqECcuvHQGIgfFsTqPQCz0ZDqgjczHx4LBks0gwP9I1Os4OQf9wpGT5Ee1lDF7iiYEL7s
+	zChMYYyQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rwmAX-00000000yWu-3TaB;
+	Tue, 16 Apr 2024 17:00:29 +0000
+Date: Tue, 16 Apr 2024 18:00:29 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Nam Cao <namcao@linutronix.de>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andreas Dilger <adilger@dilger.ca>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, Theodore Ts'o <tytso@mit.edu>,
+	Ext4 Developers List <linux-ext4@vger.kernel.org>,
+	Conor Dooley <conor@kernel.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Subject: Re: riscv32 EXT4 splat, 6.8 regression?
+Message-ID: <Zh6urRin2-wVxNeq@casper.infradead.org>
+References: <20240416-deppen-gasleitung-8098fcfd6bbd@brauner>
+ <8734rlo9j7.fsf@all.your.base.are.belong.to.us>
+ <Zh6KNglOu8mpTPHE@kernel.org>
+ <20240416171713.7d76fe7d@namcao>
+ <20240416173030.257f0807@namcao>
+ <87v84h2tee.fsf@all.your.base.are.belong.to.us>
+ <20240416181944.23af44ee@namcao>
+ <Zh6n-nvnQbL-0xss@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2713339.1713286722.1@warthog.procyon.org.uk>
-Date: Tue, 16 Apr 2024 17:58:42 +0100
-Message-ID: <2713340.1713286722@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zh6n-nvnQbL-0xss@kernel.org>
 
-Paulo Alcantara <pc@manguebit.com> wrote:
+On Tue, Apr 16, 2024 at 07:31:54PM +0300, Mike Rapoport wrote:
+> > @@ -238,17 +237,9 @@ static void __init setup_bootmem(void)
+> >  	/*
+> >  	 * memblock allocator is not aware of the fact that last 4K bytes of
+> >  	 * the addressable memory can not be mapped because of IS_ERR_VALUE
+> > -	 * macro. Make sure that last 4k bytes are not usable by memblock
+> > -	 * if end of dram is equal to maximum addressable memory.  For 64-bit
+> > -	 * kernel, this problem can't happen here as the end of the virtual
+> > -	 * address space is occupied by the kernel mapping then this check must
+> > -	 * be done as soon as the kernel mapping base address is determined.
+> > +	 * macro. Make sure that last 4k bytes are not usable by memblock.
+> >  	 */
+> 
+> It's not only memblock, but buddy as well, so maybe
+> 
+> 	/*
+> 	 * The last 4K bytes of the addressable memory can not be used
+> 	 * because of IS_ERR_VALUE macro. Make sure that last 4K bytes are
+> 	 * not usable by kernel memory allocators.
+> 	 */
+> 
+> > -	if (!IS_ENABLED(CONFIG_64BIT)) {
+> > -		max_mapped_addr = __pa(~(ulong)0);
+> > -		if (max_mapped_addr == (phys_ram_end - 1))
+> > -			memblock_set_current_limit(max_mapped_addr - 4096);
+> > -	}
+> > +	memblock_reserve(__pa(-PAGE_SIZE), PAGE_SIZE);
+> 
+> Ack.
 
-> Can't we just move the cookie acquisition to cifs_get_tcon() before it
-> gets added to list @ses->tcon_list.  This way we'll guarantee that the
-> cookie is set only once for the new tcon.
-
-cifs_get_tcon() is used from more than one place and I'm not sure the second
-place (__cifs_construct_tcon()) actually wants a cookie.  I'm not sure what
-that path is for.  Could all the (re)setting up being done in
-cifs_mount_get_tcon() be pushed back into cifs_get_tcon()?
-
-> Besides, do we want to share a tcon with two different superblocks that
-> have 'fsc' and 'nofsc', respectively?  If not, it would be better to fix
-> match_tcon() as well to handle such case.
-
-Maybe?  What does a tcon *actually* represent?  I note that in
-cifs_match_super(), it's not the only criterion matched upon - so you can, at
-least in apparent theory, get different superblocks for the same tcon anyway.
-
-This suggests that the tcon might not be the best place for the fscache volume
-cookie as you can have multiple inodes wishing to use the same file cookie if
-there are multiple mounts mounting the same tcon but, say, with different
-mount parameters.
-
-I'm not sure what the right way around this is.  The root of the problem is
-coherency management.  If we make a change to an inode on one mounted
-superblock and this bounces a change notification over to the server that then
-pokes an inode in another mounted superblock on the same machine and causes it
-to be invalidated, you lose your local cache if both inodes refer to the same
-fscache cookie.
-
-Remember: fscache does not do this for you!  It's just a facility by which
-which data can be stored and retrieved.  The netfs is responsible for telling
-it when to invalidate and handling coherency.
-
-That said, it might be possible to time-share a cookie on cifs with leases,
-but the local superblocks would have to know about each other - in which case,
-why are they separate superblocks?
-
-David
-
+Can this go to generic code instead of letting architecture maintainers
+fall over it?
 
