@@ -1,140 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-17082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12708A77D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 00:38:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A26278A77EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 00:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CE91F23206
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 22:38:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432E61F23413
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 22:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79191132803;
-	Tue, 16 Apr 2024 22:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5291613A41B;
+	Tue, 16 Apr 2024 22:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ctM1BE2A"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jk4tJJuf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78065B201;
-	Tue, 16 Apr 2024 22:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610B21384A8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 22:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713307117; cv=none; b=DjYHVf1M5b+9R1YNdJ/fEqqMWk/nfu1q+f2Hcyp61qFPqdjT3JmYr9DlLl16dV+NiY1ltXiz9HtZBgYCdMjSPf2a/O25N6puuEjzIbQxJowrLzT9JPG0+lqPAtUOC/8yASlmHM8mYv53qvQSQW+ZzxPSw0fN/3lEE77qPRgnPHM=
+	t=1713307256; cv=none; b=LYHRCG6pG2ZA0wjcvnsXcSUBo69sZ1Uck6YBLEo9f//bijSJ7lcl2gfILdJVAgB5H7tkYUeSdeLuPix5Bj87GrKPGSJ6w6XiaSQV6AsUOGcSVBlU4rbV3YucZFx4gYzNoztRaxL4m82WD58yCpsNLPTIYSWqFm8UDrSK1Z7aiKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713307117; c=relaxed/simple;
-	bh=S7sE9brjfV8uQBeIEy6QZVeO3w3xji1TwLL3sVqLSxE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=X8aCsGOmXdkSlvmzn6L/5C8wIOd0IeaLHbcbT6iKPhvdGuag2jo+4/Xbp3bEeJoJLpWavdjDeGEmtiaj7F1dmXzYh/gaJ55sl2ZirQaE1M0ZqFI/60v8F6ZNFzWvMd35BDZVW+Ked0VVNvuuDNu2pc/+bGxjVdXSrRuoZQdGiPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ctM1BE2A; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=KfsmsJ6C4WEujGSKO21oMe1mj3YNpyS/QO6bqt4zXM4=; b=ctM1BE2AsNOAM4hw0CuLWaoeqJ
-	1lQQ/eJqSuSmtDvrIK6JvP6N326ZnkSIniIE7hWafNbp3FCL0iFtyb5m+KQUzaKzU9xR8UuU8Bbz/
-	YYjBAsqlQrPDt6bCiismzxsUJuKtEsST/I6YNAD15wJHsxMcU3+t15NaksL1kD/ybGoNqFfOicP8Q
-	UstMTYx8BJBzwlvivnWN+0O3oxXOAUt9HfqCt1hZNCjxaoLlSrMHuN8iMvBaeAcEQdO1uDtQ8kitb
-	YPV0jQhZ4vwz9c2Lt6szcDymRH996jDHZt11O1Wyrl1V9GIheMkedSFOz/zxn7iPB44TUAhGbJIbA
-	uAKSGJ6g==;
-Received: from [50.53.2.121] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rwrRi-0000000E4dT-3GT1;
-	Tue, 16 Apr 2024 22:38:34 +0000
-Message-ID: <ae28ae0f-c1ca-4afe-89e4-cc5d66b998b2@infradead.org>
-Date: Tue, 16 Apr 2024 15:38:33 -0700
+	s=arc-20240116; t=1713307256; c=relaxed/simple;
+	bh=N5nwDmbhe++pDB3bapq0vGCRdzBr3y4GS9c/nfTtZFY=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=lBFND1E5iq7bM/UsI3q6BtTuYgbBykNyMO2v+GK7h5YSUWWIQ7v1OxNR+OwymK4sGCE+psIJPtzkP9hvW+xltw8ECQIevUeFxJq9KqZKP/J6t40jdPjyRjXrToBiIRd/gSdnVFNx6cNSNZo8UKStAnwHlIc3D0ltIz8Ds9gkoz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jk4tJJuf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713307254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N5nwDmbhe++pDB3bapq0vGCRdzBr3y4GS9c/nfTtZFY=;
+	b=Jk4tJJufgQknmnMhP5+X/FfuNKSApglDE0HCFWXGQ5CLF5YltzWETjuiEe8T1ocR0vvMh4
+	9VRQhht1g6JhqR2PnxRp7VuZuSD+vy+s+2/fBVZy3uSbubMyEKozPel1Ws+wLBABPGq10r
+	2/v5pQCg6NBxxiI7/F61B7dbZ8BwXbw=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-282-Ck5vkIIGNTuza5woUV3wRQ-1; Tue,
+ 16 Apr 2024 18:40:49 -0400
+X-MC-Unique: Ck5vkIIGNTuza5woUV3wRQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F39E21C05149;
+	Tue, 16 Apr 2024 22:40:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.10])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 6583339DCA;
+	Tue, 16 Apr 2024 22:40:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAH2r5msFoGAE79pS5bEt5T8a60LU82mdjNdpfe0bG4YpvY8t-g@mail.gmail.com>
+References: <CAH2r5msFoGAE79pS5bEt5T8a60LU82mdjNdpfe0bG4YpvY8t-g@mail.gmail.com> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-2-dhowells@redhat.com> <39de1e2ac2ae6a535e23faccd304d7c5459054a2.camel@kernel.org> <2345944.1713186234@warthog.procyon.org.uk>
+To: Steve French <smfrench@gmail.com>
+Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    Christian Brauner <christian@brauner.io>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Matthew Wilcox <willy@infradead.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
+    Shyam Prasad N <nspmangalore@gmail.com>,
+    Rohith Surabattula <rohiths.msft@gmail.com>
+Subject: Re: [PATCH 01/26] cifs: Fix duplicate fscache cookie warnings
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] doc: Split buffer.rst out of api-summary.rst
-From: Randy Dunlap <rdunlap@infradead.org>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240416031754.4076917-1-willy@infradead.org>
- <20240416031754.4076917-9-willy@infradead.org>
- <5b1938bc-e675-4f1c-810b-dd91f6915f1d@infradead.org>
-Content-Language: en-US
-In-Reply-To: <5b1938bc-e675-4f1c-810b-dd91f6915f1d@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2754965.1713307239.1@warthog.procyon.org.uk>
+Date: Tue, 16 Apr 2024 23:40:39 +0100
+Message-ID: <2754966.1713307239@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
+Steve French <smfrench@gmail.com> wrote:
 
+> Should this be merged independently (and sooner? in rc5?)
 
-On 4/16/24 3:18 PM, Randy Dunlap wrote:
-> 
-> 
-> On 4/15/24 8:17 PM, Matthew Wilcox (Oracle) wrote:
->> Buffer heads are no longer a generic filesystem API but an optional
->> filesystem support library.  Make the documentation structure reflect
->> that, and include the fine documentation kept in buffer_head.h.
->> We could give a better overview of what buffer heads are all about,
->> but my enthusiasm for documenting it is limited.
->>
->> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
->> ---
->>  Documentation/filesystems/api-summary.rst | 3 ---
->>  Documentation/filesystems/index.rst       | 1 +
->>  2 files changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/Documentation/filesystems/api-summary.rst b/Documentation/filesystems/api-summary.rst
->> index 98db2ea5fa12..cc5cc7f3fbd8 100644
->> --- a/Documentation/filesystems/api-summary.rst
->> +++ b/Documentation/filesystems/api-summary.rst
->> @@ -56,9 +56,6 @@ Other Functions
->>  .. kernel-doc:: fs/namei.c
->>     :export:
->>  
->> -.. kernel-doc:: fs/buffer.c
->> -   :export:
->> -
->>  .. kernel-doc:: block/bio.c
->>     :export:
->>  
->> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
->> index 1f9b4c905a6a..8f5c1ee02e2f 100644
->> --- a/Documentation/filesystems/index.rst
->> +++ b/Documentation/filesystems/index.rst
->> @@ -50,6 +50,7 @@ filesystem implementations.
->>  .. toctree::
->>     :maxdepth: 2
->>  
->> +   buffer
-> 
-> This causes:
-> 
-> Documentation/filesystems/index.rst:50: WARNING: toctree contains reference to nonexisting document 'filesystems/buffer'
+It's already upstream through the cifs tree and I've dropped it from my
+branch.
 
-I added a simple/minimal new buffer.rst file for testing:
-(needs an SPDX line)
+David
 
-
-
----
- Documentation/filesystems/buffer.rst |   11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff -- /dev/null b/Documentation/filesystems/buffer.rst
---- /dev/null
-+++ b/Documentation/filesystems/buffer.rst
-@@ -0,0 +1,11 @@
-+
-+===========================
-+Filesystem buffer head APIs
-+===========================
-+
-+.. kernel-doc:: include/linux/buffer_head.h
-+   :internal:
-+
-+.. kernel-doc:: fs/buffer.c
-+   :export:
-+
 
