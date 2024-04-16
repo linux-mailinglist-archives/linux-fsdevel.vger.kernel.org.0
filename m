@@ -1,183 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-17043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD62E8A6E36
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 16:29:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C21E8A6EFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 16:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A0A71C20621
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 14:29:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4E9C1F21FE9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 14:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B4D12F598;
-	Tue, 16 Apr 2024 14:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60A312FF89;
+	Tue, 16 Apr 2024 14:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6i63qqj"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TRnSuzYY";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xr59GWro"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D90412EBF4;
-	Tue, 16 Apr 2024 14:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713277566; cv=none; b=Sou2Vt5mTw0T+xqYfXPdUuh+4h7pUvaN5+5EQv+3PiyH32kboSEjfCRt78DMEBgFNZgx4+c/ZI+MYMXZwNDzhwy8Uw60rMmgbAR1iqTWLtk3Ws9AknbcaP4QL7gK678k6n8alKnp7uhiCUjXvrnbQwPy2Preyh7HzswCS7xeDTU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713277566; c=relaxed/simple;
-	bh=+WyAEAGU6dHhLinGMVbyeKjBMJ0Y7Iab03XXzCxzVcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jk2k11QhWCJRWmzcT6sV1lFBCJfQvyQYy/AD4umkEz1Q5Zw52UTM2qkDNDYF66ii0Iq1aHaal0E/ze7/tRtO3i3Kpba+n6JZoylZxKwNffK4uIj+nGK3VFAtX6DKXsfcbclam+Zj+M+xnYDFv2NHM+5bOEraT0xYij+7SuJrK1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6i63qqj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B21F3C113CE;
-	Tue, 16 Apr 2024 14:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713277565;
-	bh=+WyAEAGU6dHhLinGMVbyeKjBMJ0Y7Iab03XXzCxzVcU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o6i63qqjHVahoY2VfNPDCyb0QK609jpzZ/ri34IbAojt+ypV2GQclA9EITdH1PB/Z
-	 M6f8dRbuu+3UifYh6LaZZAU8NXsVs3918Oe/xEACVlJZnr1BEi0Bp18OB3yZTZD/1Q
-	 CgPcVUq2chF13nYnivPvDrSQWN6QLKgMyFfPrVkPCPM0Uu5ZfUGUXdk6KC6yAdQH0O
-	 pVt/OdihXNnSPfO9iZyELa9gsZxYDc+iDQm5q0Jf1cI/aud0daCHBfrqyM2zCmhLqP
-	 T4q+nEaE/5R7XyW1/jr/PUBeRWiBAWD6LGFmA984CU5+4TqxGGnaTCtnvdzgtT9ude
-	 +8314dIjlCCTw==
-Date: Tue, 16 Apr 2024 17:24:54 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Nam Cao <namcao@linutronix.de>,
-	Andreas Dilger <adilger@dilger.ca>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-riscv@lists.infradead.org, Theodore Ts'o <tytso@mit.edu>,
-	Ext4 Developers List <linux-ext4@vger.kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Subject: Re: riscv32 EXT4 splat, 6.8 regression?
-Message-ID: <Zh6KNglOu8mpTPHE@kernel.org>
-References: <20240416-deppen-gasleitung-8098fcfd6bbd@brauner>
- <8734rlo9j7.fsf@all.your.base.are.belong.to.us>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C63E12DDBD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 14:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713278971; cv=fail; b=d2+LahUA6asha5Blv9lu8A7X2BywTVgywwW7C2qib5cxmbkyTr+OokVRm3FmTXIuaN63I5xK0SJESBrDeN+E9POAI5E0j0EaTepE7lb/ZO5PaJ8CaINudMqbJMavofnNoAxkGauImoRwjM6owfOXhlfthuQuMCzixVIvbrLrvwY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713278971; c=relaxed/simple;
+	bh=kaWQdzCJvqIxM1stujLwhCDNWMVqBIgaFw1WtszU3jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RyD3YGRBs0yvELVM32qt/NkkGjr7BzgmSNQwC1mtitM6WJBEMEc6CgFsKgpZwKg+rMnfIz8Sb3qYy6TI6XpGgby3JuLY2S3VuN7yhbmNazLzcvtPLaXMCPRipSipYy0uBiV6y7B6QzhoZLlqV6LxBasQ0lqSt6x5AjnGhBY6YfU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TRnSuzYY; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xr59GWro; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43GENnUg013840;
+	Tue, 16 Apr 2024 14:49:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-11-20;
+ bh=D+luyAa5UV7ira1kjNaw9696cpQahUkJScKUE3cE6yg=;
+ b=TRnSuzYYzBRIgLOkAj/DKuof+XoDKSEcTZQBo11Y79o6TUhjOFwQlsDlWUC6SfmYFVoU
+ w1PPtjle8QQMCARm4jk5EBBPorsF5ymK4hZRxD4uSwOunJGXWc0YARp19OXPGLC6jJdS
+ ijqTrGExZz0qu5QoZS1G7POsdX0FtICa4FKw4mV6hhOaxelO6gIBvX2x+X9lqjLmevjp
+ wn5KfmSBa5rSU7FEddJ+hVEXc5e/aON0KRmK4IjPJlKfVdu7ldtzQMlCjWSMc6b942co
+ +k4gS6VqQtZyijRRI+eSrywxoD33DDU7qNhUpOuBef1JOk1prQj5H/3x/0wn3+abUox3 Hg== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3xfj3e5j1m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Apr 2024 14:49:14 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 43GEaT15004283;
+	Tue, 16 Apr 2024 14:49:13 GMT
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2169.outbound.protection.outlook.com [104.47.73.169])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3xfggdkrh8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Apr 2024 14:49:13 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ddoLCtSGXtemcHVxfbTs09jllxF8SFs0ISiwWMHeDnYfpRMtohOuE/HKPghbypAZ+cMP9uee7rF54aTpqjLT3wKvl7MKEt1e0j1L5KjkBUvh0FxFNGy7eu2IFFnb4GxyZgPXf/ckE7j8TvqzWKbGxlaRmi6YDQLS//aWoU1/34zsltop7+3DITYGjsX2hhpMIcXjkudLwIVlc3TsJTK9PLu+8WgrkP/EWZNSGX9IVMoZQgUG6YqojYGGFCg7v08qHHoE4vzMKJGHIBYa/hbHSZJ7llSE2OCu2cZnVEUlCQhMWYyOBPcYSVH7Ojpal0cia15m1CXmVtxJ4zZ/eic7/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D+luyAa5UV7ira1kjNaw9696cpQahUkJScKUE3cE6yg=;
+ b=lYINXytz7ywlBwGDnE1IEfZtfxEdJLe8tvSXxZaIh7KAvAXc9KMkfSSulTgNHJbKyqTkRP6RTD9XUMdwTctrOc0PQN11PkS/bBRT6r2XPjEoXwgEK8WwN2icQHIQgGT6Ew4jgjGYWs0ne9XOanuljiUNpy9cwhj+2XPVOTk7TwLSAZ6VGIX4ZvX85vOX4Acxo6z+TBorDbNSIC3r7JEuL5vm3rF7IdsaUCPb/EiWJ0iu8FwibBa26AXhFyF7Cs2NbkCuu0WwzDR8tAzQshm1sNTDg7+WWjIcoEqCQmoedxNYROMDx0cXeISA/1a5LuX3gudEnQTq+bn+9/GyBCTKdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D+luyAa5UV7ira1kjNaw9696cpQahUkJScKUE3cE6yg=;
+ b=xr59GWroDvpnicxgfnwpv6JRiDWb46aVYs4yeDWVEtl648eh8AdcaCf41Jwa821ErkiQWIldJ1oQ97ZP7A3w0Ojk+rDrrKbrTVZqOt44G1s+8Qk69Co/1VQA2Bf7Dc7X+w74pryUa2aLgl3S7oduUl4jz2OcA9ASO00TV0v+1ZU=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by BY5PR10MB4307.namprd10.prod.outlook.com (2603:10b6:a03:212::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.50; Tue, 16 Apr
+ 2024 14:49:10 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.7452.049; Tue, 16 Apr 2024
+ 14:49:10 +0000
+Date: Tue, 16 Apr 2024 10:49:08 -0400
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, cel@kernel.org
+Subject: Re: [PATCH v2 0/3] Fix shmem_rename2 directory offset calculation
+Message-ID: <Zh6P5AIANliv5Ona@tissot.1015granger.net>
+References: <20240415152057.4605-1-cel@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240415152057.4605-1-cel@kernel.org>
+X-ClientProxiedBy: CH0PR03CA0271.namprd03.prod.outlook.com
+ (2603:10b6:610:e6::6) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8734rlo9j7.fsf@all.your.base.are.belong.to.us>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|BY5PR10MB4307:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59bc692b-30af-4772-0449-08dc5e246038
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	1w0V00UKe4g90bUXAzvD+VcrHJy9XkdKEAz2Q/c4+HFantEhi7g/kUIN6cw2E9E2mR2FBWwgxgLlrGyt1ecAOwOA935f8l1iGUkFUm6q1VPuojY2OxJkF7ttmXhpsJzedJIw5pym7tYRHuwWOdvkTEDMGUYCq50ivkhTw5YFF2Jng7voli9COMabHcwgh4gHlnb/bti1wlqZ/nVkLMMLgzsQwfzS073pCf1w2sNs/4oyTFSGfgJJJktsKzFPeknTKxkSOXGyKRs2ohGvAcpvNqwsSiOCJb9vIJzlDCrvyy6MaFiRVGQExXyM9yzlmaalm1If0D3L9O/Gf48FUOQK++DWtH6s6ugR/uoUqGR6ydC90havlSv8safEWQvRTu3j2NRyHiGGXFcRibF/ougQsvVZn5ZdnxZ91ABNuat+JZc82RsQduDufMBN+7RHFGlC3T2SZ5RS615NPwDzGu9N8rK6m/9jle7mAxTXqC62uUS/Le25KrT969QOOACHR/2OVqyIwySI9XB1n49Qj2wspEzqSgXJZWH7VRn11Cv0DfHGkotfFBg2Df/6vKAuzYbpi0xPcDHiw9/1g9a60Pxd+qB/wEB2CpBZW5OFIkSLQauUXC0QFFKsgBHpmHmQUwHFQNIrdZnWDwMTN2YiCvGV9Bg4f9/jsUQwhXt/V98bDDo=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?JMX3l32ueL9sjgfhPeDQxUHzIuu/kynBpjiJRNBRHucapUHdqbNj3T2lArRa?=
+ =?us-ascii?Q?TWvFxC9QNy0Difw1v/YvU+Kju2wX33Mw1ZkxqA3XkItlHVDb1kdEQI5sLHu2?=
+ =?us-ascii?Q?Dpyd73u0V3DK4Ol8q2OT2liFD1B+Fp/jQm0YydXN33MH2iTKNgYArSEJfTr4?=
+ =?us-ascii?Q?CViaIgQOgYr2wKsXuN11D5i0Hj8DexwXGCb6YrHS2gA5IjjJTldWFujIe6Ks?=
+ =?us-ascii?Q?HdAghXuU6u0eUevZ3kmXShscld3ulHIC9gUfRrLtcW0cDMVuKwFRxuKXJvPg?=
+ =?us-ascii?Q?Yd/4Mst/oE61fNUbnff9S4ba7T/PlWpFPMzULDTmqUf1TNBM6b04BFIMiQ02?=
+ =?us-ascii?Q?4VDcT10RfREzzq1LIn7MNHBPnac1Ut1BcWNeQyBIZNhfDp6SHX6Q4M6aTaGv?=
+ =?us-ascii?Q?iHXhN/g8UykOD7r/BXSm3Ocl4izOW7UBf4ZhiLPEeI9LDvpCK+kXbd+4wm5p?=
+ =?us-ascii?Q?PYnYEGv2jOPX6DFkZLfUUTdwtG7aD1t2EMRjXxAAKXJREkX6FYgaYxXxkrRf?=
+ =?us-ascii?Q?J6FyQpk7djC1jSzt6CDDvxIXFRj0MbI5A5qQ7lrPX4EdVrT8QbjXXWqDAIat?=
+ =?us-ascii?Q?LfDrgXgoLj6Buua3+m8TTfSi0PVrH9IHu82rqE3yCFo+GV37xceglyJzubae?=
+ =?us-ascii?Q?c66rIWSxFveaEUH2XNia9YpEI+YeUwC1O1u+g9lhqIMAGFSriHXnYAU6Qzl8?=
+ =?us-ascii?Q?kxGxLCdowlquIfzH3nS21VT8lkyoXPLJoyJCHHdJKvHJXjnJOGdz/+FomtA0?=
+ =?us-ascii?Q?wF9tO4Zv+X5GMMQ3VD2MQShaHcoNYiauLe4BKhcEmO207bhR+hQ7xHqm/yk8?=
+ =?us-ascii?Q?qT+b0Vum5xn0n7PO2s94xlb7iODm2mGXnA6pWYxNhCCe5JYZcW4HNuqSZhGK?=
+ =?us-ascii?Q?yRfFdNH5pSNE990K/6xWYN1vmGTyEZZm2i3ckkZdU19ipM5PVzJtr6KE/Ka6?=
+ =?us-ascii?Q?/+/hGIpIDlOTayE2G43Rw1FNJT4HNd82C4KDqoVC9gX6aBrVSvkUo43WwR6r?=
+ =?us-ascii?Q?dSmIxIZLxYITX8Zarea1z2GCzgkjw8mcqDlLFYktCw0rQA/V0v5eENVlMQj7?=
+ =?us-ascii?Q?vKbrYW7bPwmiXtF5IAyZkMnXrSkuJzBkBda9bBni3RFm38PpQ6xTw32i3Ua7?=
+ =?us-ascii?Q?8UTnNhx+EVgStSafdfIMczGGesZBvMZIiRHZaYlQPbHDD9zPHxiaFmkoECYj?=
+ =?us-ascii?Q?0B2+eKiPh3gK8TGIT9fUamgnEncr43DQtL2CtrQnCRyaq3Za6Q0KPlKtPbZS?=
+ =?us-ascii?Q?6g1/FEMLT4a9fq+Sdk0dQexcVHNJbI006g5/Cug1poMKDkQcLAaJfFA/RDxf?=
+ =?us-ascii?Q?JaLilbIwFEe5frNXNXSPucasOvChoAvQB7AJh1Xs8WPSqhuvkYcq3JhNJVTd?=
+ =?us-ascii?Q?PUv1JWZ2RGKSEC2gnM7gZT8B+gwNXNiYQOV+25CaTv9ht3MPm3zKJoAKqjpr?=
+ =?us-ascii?Q?/hsq0XWkgUqFhk0KeIOegPaV3uyCyX5XZztqP1iAzs6uf7nO9t0l7Bvp26HS?=
+ =?us-ascii?Q?wm7WpzczOGjv9ndl1QYwaqTFbfZ0eSsgDb0jePBbSJM0Up8kHMBW8k6yPPSt?=
+ =?us-ascii?Q?4FQJm73s2EamtLFKiYvYdYtVLz/0CeUupPrUNNzWzTS5QLWuIvbcpxFCp/Pd?=
+ =?us-ascii?Q?Dw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	ZkfLVAo7/tCl+/eAIUu8u9M6wXpOCiSLJ0dVdG5D7CSMPQBp4ozn2g7fORyr2fQuB/bDFSlNuFje1l7GUfqu/Rbi6Xr6T8OewrvWrGbl+HGvgvEuvkegB8rokhfX2LcXqPKr/j8I8O1QoT6lGCGIWbwj/UXwQpX1qPe8EpKUPoASLLrQMNoUnvLfBSxoesJgsRib5QcgKnBsxe4/jOu59DWNEhTP+ip6wOzH7Vd1fkwmkNUar98mgj+JxMtdwKKgsIK5vOQ8cgnMQuWE0NAuLbG4r64YbiI9NgiRTsJKf0t3sLQrLm7tLgQ3VtnaNrl/qKQu32nqwxq55E71Sd3JJ1LhIf2LaRahxquwPjEfmZ7eoHhwVOUBk6MHiRAvskz0/X56uaNyo60KYFD7usBA+PR7qpjkKN+RA9VDbtBQj9XGtDmpqvVPVoiBuJZApInWCw6PU+gTs+9J08FxWAukHgToTeTn/g+d2O5P12R+DsQ+hW7yWZQYCzq40FPMX98bYoZ4NJ0PpBl4YTSxgNj/G7sT5MadXXAnO1oulx6DrdH/Q7Mh7JtCtcuZGB1HfceACX7HyPYPxyp/a5Z3dAhYJJj2VuZhCe3BeKV8hD/pq/s=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59bc692b-30af-4772-0449-08dc5e246038
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2024 14:49:10.7328
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LwH9AwQ31WaRmDvO1tPjesrhLc1TZoDPv/apPGBAze7eXVd8fZziJOWcV7AMpNR3AfV0BgS59u5yWe8gWfrCnw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4307
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-16_10,2024-04-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
+ mlxlogscore=999 suspectscore=0 bulkscore=0 spamscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2404160090
+X-Proofpoint-GUID: E5KXz2oQ09tIO_NP7nZ9Q0wJm-S8WV-0
+X-Proofpoint-ORIG-GUID: E5KXz2oQ09tIO_NP7nZ9Q0wJm-S8WV-0
 
-Hi,
+On Mon, Apr 15, 2024 at 11:20:53AM -0400, cel@kernel.org wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
+> 
+> The existing code in shmem_rename2() allocates a fresh directory
+> offset value when renaming over an existing destination entry. User
+> space does not expect this behavior. In particular, applications
+> that rename while walking a directory can loop indefinitely because
+> they never reach the end of the directory.
+> 
+> The only test that is problematic at the moment is generic/449,
+> which live-locks (interruptibly). I don't have a baseline yet, so
+> I can't say whether the fix introduces this behavior or pre-dates
+> the shmem conversion to simple_offset.
 
-On Tue, Apr 16, 2024 at 01:02:20PM +0200, Björn Töpel wrote:
-> Christian Brauner <brauner@kernel.org> writes:
-> 
-> > [Adding Mike who's knowledgeable in this area]
-> 
-> >> > Further, it seems like riscv32 indeed inserts a page like that to the
-> >> > buddy allocator, when the memblock is free'd:
-> >> > 
-> >> >   | [<c024961c>] __free_one_page+0x2a4/0x3ea
-> >> >   | [<c024a448>] __free_pages_ok+0x158/0x3cc
-> >> >   | [<c024b1a4>] __free_pages_core+0xe8/0x12c
-> >> >   | [<c0c1435a>] memblock_free_pages+0x1a/0x22
-> >> >   | [<c0c17676>] memblock_free_all+0x1ee/0x278
-> >> >   | [<c0c050b0>] mem_init+0x10/0xa4
-> >> >   | [<c0c1447c>] mm_core_init+0x11a/0x2da
-> >> >   | [<c0c00bb6>] start_kernel+0x3c4/0x6de
-> >> > 
-> >> > Here, a page with VA 0xfffff000 is a added to the freelist. We were just
-> >> > lucky (unlucky?) that page was used for the page cache.
-> >> 
-> >> I just educated myself about memory mapping last night, so the below
-> >> may be complete nonsense. Take it with a grain of salt.
-> >> 
-> >> In riscv's setup_bootmem(), we have this line:
-> >> 	max_low_pfn = max_pfn = PFN_DOWN(phys_ram_end);
-> >> 
-> >> I think this is the root cause: max_low_pfn indicates the last page
-> >> to be mapped. Problem is: nothing prevents PFN_DOWN(phys_ram_end) from
-> >> getting mapped to the last page (0xfffff000). If max_low_pfn is mapped
-> >> to the last page, we get the reported problem.
-> >> 
-> >> There seems to be some code to make sure the last page is not used
-> >> (the call to memblock_set_current_limit() right above this line). It is
-> >> unclear to me why this still lets the problem slip through.
-> >> 
-> >> The fix is simple: never let max_low_pfn gets mapped to the last page.
-> >> The below patch fixes the problem for me. But I am not entirely sure if
-> >> this is the correct fix, further investigation needed.
-> >> 
-> >> Best regards,
-> >> Nam
-> >> 
-> >> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> >> index fa34cf55037b..17cab0a52726 100644
-> >> --- a/arch/riscv/mm/init.c
-> >> +++ b/arch/riscv/mm/init.c
-> >> @@ -251,7 +251,8 @@ static void __init setup_bootmem(void)
-> >>  	}
-> >>  
-> >>  	min_low_pfn = PFN_UP(phys_ram_base);
-> >> -	max_low_pfn = max_pfn = PFN_DOWN(phys_ram_end);
-> >> +	max_low_pfn = PFN_DOWN(memblock_get_current_limit());
-> >> +	max_pfn = PFN_DOWN(phys_ram_end);
-> >>  	high_memory = (void *)(__va(PFN_PHYS(max_low_pfn)));
-> >>  
-> >>  	dma32_phys_limit = min(4UL * SZ_1G, (unsigned long)PFN_PHYS(max_low_pfn));
-> 
-> Yeah, AFAIU memblock_set_current_limit() only limits the allocation from
-> memblock. The "forbidden" page (PA 0xc03ff000 VA 0xfffff000) will still
-> be allowed in the zone.
-> 
-> I think your patch requires memblock_set_current_limit() is
-> unconditionally called, which currently is not done.
-> 
-> The hack I tried was (which seems to work):
-> 
+v6.5 exhibits the same behavior, so this fix did not introduce this
+issue. IMO these patches are ready.
+
+
 > --
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index fe8e159394d8..3a1f25d41794 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -245,8 +245,10 @@ static void __init setup_bootmem(void)
->          */
->         if (!IS_ENABLED(CONFIG_64BIT)) {
->                 max_mapped_addr = __pa(~(ulong)0);
-> -               if (max_mapped_addr == (phys_ram_end - 1))
-> +               if (max_mapped_addr == (phys_ram_end - 1)) {
->                         memblock_set_current_limit(max_mapped_addr - 4096);
-> +                       phys_ram_end -= 4096;
-> +               }
->         }
-
-You can just memblock_reserve() the last page of the first gigabyte, e.g.
-
-	if (!IS_ENABLED(CONFIG_64BIT)
-		memblock_reserve(SZ_1G - PAGE_SIZE, PAGE_SIZE);
-
-The page will still be mapped, but it will never make it to the page
-allocator.
-
-The nice thing about it is, that memblock lets you to reserve regions that are
-not necessarily populated, so there's no need to check where the actual RAM
-ends.
-
->  
->         min_low_pfn = PFN_UP(phys_ram_base);
-> --
+> Changes since v1:
+> - Patches reorganized for easier review and backport
+> - Passes git regression and fstests (with scratch device)
+> - Dropped the API clean-up patch for now
 > 
-> I'd really like to see an actual MM person (Mike or Alex?) have some
-> input here, and not simply my pasta-on-wall approach. ;-)
+> Chuck Lever (3):
+>   libfs: Fix simple_offset_rename_exchange()
+>   libfs: Add simple_offset_rename() API
+>   shmem: Fix shmem_rename2()
+> 
+>  fs/libfs.c         | 55 +++++++++++++++++++++++++++++++++++++++++-----
+>  include/linux/fs.h |  2 ++
+>  mm/shmem.c         |  3 +--
+>  3 files changed, 52 insertions(+), 8 deletions(-)
 > 
 > 
-> Björn
+> base-commit: fec50db7033ea478773b159e0e2efb135270e3b7
+> -- 
+> 2.44.0
 
 -- 
-Sincerely yours,
-Mike.
+Chuck Lever
 
