@@ -1,194 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-17001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57C48A5F24
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 02:18:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E44A8A5F35
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 02:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1FF281846
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 00:18:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39E5E1F21B8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 00:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461AA816;
-	Tue, 16 Apr 2024 00:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17435A35;
+	Tue, 16 Apr 2024 00:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GtDRPPde"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fOsxXbjA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FB717E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 00:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104A14C74
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 00:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713226680; cv=none; b=M9PzItVX7eCmOeLPbMfOVvGIDStorc+t9zsifT0rXAEP8xK/b4CB/wMAdnZ8pTcO8LVr4P1IkYmqfwA2+SIm9O9loNAC97y8Q5eklvIU7kB7qlIDjmcbPkk88Em2OJnNTvOlXN1YKRuTg4bIJk8RWaobrgf/97gX6v7lGho80xM=
+	t=1713227264; cv=none; b=EO29c551WdaUnf6Ut/bpgxJiVv0oAusQi3cwYYwkyn4/tvnEEBA9gOqX71M+G4pOOAr/fMfLbvUTlMgM/1IknTbEymZrECki1lbmZ8H3aRaVRXxyTOj8IfFcfgHI4QGE0jgt/BXsjb4GszJp6lrwDrzrOtPIAzIg1P6gDx9VsWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713226680; c=relaxed/simple;
-	bh=3/B7vWRvtl8aIFH3hKbhQRfODs9XZZsKXmwpTHvU13w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Oo73mY1I8m/D95rrQ2OC96r8nd55P5/LXRbvLTm2Zoo3j/954qcuaQTGrRYNfT9Jh0IVOaAW1EjbRV7YWs+1HN+6/CTa3GWGc/SHCkZWe63rFClbvEBw9V/We8WwCFabVjimKYHH07H4O6TW3+B1T5GW7CcnHDFJIhahz8jZyuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--richardfung.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GtDRPPde; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--richardfung.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc3645a6790so6878222276.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Apr 2024 17:17:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1713226678; x=1713831478; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NDPBbN30ZyY8UoIY8djlTeTTFaUIobcz6dPBP5TgibQ=;
-        b=GtDRPPdem0XsBnL8eoI0MT+wVkrLoGT6pas4rDA/VBhY0ZFM630vG4OKq7C846BLnb
-         8/+0kvVTx7nija4ezjCMKxeXVd/yKcnHbqXJ+V3sFzvZZeQnA1pQyxysReky6ebvGKHG
-         QpjfuAqE9Da1fBjGSNvMCaYfLAOAaqEYbi9oqwGM7S+ypMuUZqZwzdM1tuHnLysywgFp
-         MWMxAqCL8HIsExzpHVW3FPNKyG+bf92+rWubrlDsLz+HBk3lOn2M7/c69CuwfpXXCxI7
-         IRdUzUuURdQJcaDOXZhG++wcLG9M4ABgchQ/o1GMoorUviByUJIj1FLsmTJBao54b3wj
-         8r8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713226678; x=1713831478;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NDPBbN30ZyY8UoIY8djlTeTTFaUIobcz6dPBP5TgibQ=;
-        b=kPPp1As6ro0WOhBW2qYt4jzsZutZYU8RFt3QRt44cH7BdqIrsj4L7OPC9RApcIWALe
-         NM48iHlciLGjnAiDAZ2rdqyOWlrMFY7uaIMhfQrcfwu02KDLpp6WkWXMstDKsNdGRxrc
-         DGdzjPkov8jkoJSMPPa6lMsGv+xgYC2RTqBT+Xiy5wrylLjd915EfAC/PJzdSIYP1f5N
-         uKTR9Da6DN6rg7hhPDV+f+YfhBSTaYvazvVH+4XcEXDvQY5Bzw7qSJtLGV7C8Lyl7yss
-         nxlaO2CbSDOHjkLpEEbb44HTL8IPg2cfx2pyREOmXE+s925bzExbsKnhs1EU3T87ykM1
-         FNCw==
-X-Gm-Message-State: AOJu0Yxgme1q0wrhhp69JTtju5KV4hSgWkhQj/GwiLO8Oo4QOp44TJtU
-	kSdSuHdC+4pihTOmzZZySzuABxNg+w5G6PH0WeRSfsNDiusogSJ8LvHwjm39FQXNPKPoY9v6mkA
-	/+gRZMudpQrSC4itOn9PA6Q==
-X-Google-Smtp-Source: AGHT+IEFs8S7fF1QpMnQnAC+kmqFQmfo80Y1WQ0kEcu5yg8AmrzI1xpvYGzVs0pY7o3M8wl96F5ZI35J1UHXIXplQg==
-X-Received: from richardfung.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:2a5c])
- (user=richardfung job=sendgmr) by 2002:a05:6902:709:b0:dcc:50ca:e153 with
- SMTP id k9-20020a056902070900b00dcc50cae153mr3880572ybt.7.1713226678341; Mon,
- 15 Apr 2024 17:17:58 -0700 (PDT)
-Date: Tue, 16 Apr 2024 00:16:39 +0000
-In-Reply-To: <20240328205822.1007338-1-richardfung@google.com>
+	s=arc-20240116; t=1713227264; c=relaxed/simple;
+	bh=nWMh2AAT2ENJC3oskCzD9My+7gvgkOWPnCBWTqrEttk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJBboIVTTbtVeBBZDlUIT7p+1y2S9RjuQ4CQfJ5x6GVPTc6SEWVM9BZrXQYrTgCWFzU3WNPZ5eJPSrDFW19+CX92jqhCp5cZ9Vmq/fnm9KzNyCzW6i+wlb1Ame/wa1y0WiGVP/t0bfZSepaPkTqvdjgNUFnronXWBYBrJP0JoQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fOsxXbjA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713227262;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HPwh9VINljuHhg0//cSxsSBfaGykarxyPhh5vJg/F44=;
+	b=fOsxXbjA3T06wRbE00XyQhjvEzjJ47rDvl1o12NMqWoWv8Xr5doEq3aME2BPKyDj8XppxP
+	DkdljGCKXk9qbQkohvP058snMoD6Z4RpngvW9HiJtL+zH0SraLqlM0IncdCF4hT0WdGiwN
+	PSud2B7xqH8yJUW8F4dlllh+7nU4Mnk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-516-DRhFFx2MNymlYr12d2L5GQ-1; Mon,
+ 15 Apr 2024 20:27:36 -0400
+X-MC-Unique: DRhFFx2MNymlYr12d2L5GQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5EEE61C3F0EC;
+	Tue, 16 Apr 2024 00:27:36 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.28])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id CBB9FC13FA1;
+	Tue, 16 Apr 2024 00:27:30 +0000 (UTC)
+Date: Tue, 16 Apr 2024 08:27:22 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev,
+	Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH v2 04/34] md: port block device access to file
+Message-ID: <Zh3F6saW9O7pWB5n@fedora>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-4-adbd023e19cc@kernel.org>
+ <Zhzyu6pQYkSNgvuh@fedora>
+ <20240415-haufen-demolieren-8c6da8159586@brauner>
+ <Zh07Sc3lYStOWK8J@fedora>
+ <20240415-neujahr-schummeln-c334634ab5ad@brauner>
+ <Zh1Dtvs8nst9P4J2@fedora>
+ <20240415162210.zyoolbj27usnhk56@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240328205822.1007338-1-richardfung@google.com>
-X-Mailer: git-send-email 2.44.0.683.g7961c838ac-goog
-Message-ID: <20240416001639.359059-1-richardfung@google.com>
-Subject: [PATCH v2] fuse: Add initial support for fs-verity
-From: Richard Fung <richardfung@google.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, ebiggers@kernel.org, 
-	fsverity@lists.linux.dev, ynaffit@google.com, 
-	Richard Fung <richardfung@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240415162210.zyoolbj27usnhk56@quack3>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-This adds support for the FS_IOC_ENABLE_VERITY and FS_IOC_MEASURE_VERITY
-ioctls. The FS_IOC_READ_VERITY_METADATA is missing but from the
-documentation, "This is a fairly specialized use case, and most fs-verity
-users won=E2=80=99t need this ioctl."
+On Mon, Apr 15, 2024 at 06:22:10PM +0200, Jan Kara wrote:
+> On Mon 15-04-24 23:11:50, Ming Lei wrote:
+> > On Mon, Apr 15, 2024 at 04:53:42PM +0200, Christian Brauner wrote:
+> > > On Mon, Apr 15, 2024 at 10:35:53PM +0800, Ming Lei wrote:
+> > > > On Mon, Apr 15, 2024 at 02:35:17PM +0200, Christian Brauner wrote:
+> > > > > On Mon, Apr 15, 2024 at 05:26:19PM +0800, Ming Lei wrote:
+> > > > > > Hello,
+> > > > > > 
+> > > > > > On Tue, Jan 23, 2024 at 02:26:21PM +0100, Christian Brauner wrote:
+> > > > > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > > > > > ---
+> > > > > > >  drivers/md/dm.c               | 23 +++++++++++++----------
+> > > > > > >  drivers/md/md.c               | 12 ++++++------
+> > > > > > >  drivers/md/md.h               |  2 +-
+> > > > > > >  include/linux/device-mapper.h |  2 +-
+> > > > > > >  4 files changed, 21 insertions(+), 18 deletions(-)
+> > > > > > > 
+> > > > > > > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > > > > > > index 8dcabf84d866..87de5b5682ad 100644
+> > > > > > > --- a/drivers/md/dm.c
+> > > > > > > +++ b/drivers/md/dm.c
+> > > > > > 
+> > > > > > ...
+> > > > > > 
+> > > > > > > @@ -775,7 +778,7 @@ static void close_table_device(struct table_device *td, struct mapped_device *md
+> > > > > > >  {
+> > > > > > >  	if (md->disk->slave_dir)
+> > > > > > >  		bd_unlink_disk_holder(td->dm_dev.bdev, md->disk);
+> > > > > > > -	bdev_release(td->dm_dev.bdev_handle);
+> > > > > > > +	fput(td->dm_dev.bdev_file);
+> > > > > > 
+> > > > > > The above change caused regression on 'dmsetup remove_all'.
+> > > > > > 
+> > > > > > blkdev_release() is delayed because of fput(), so dm_lock_for_deletion
+> > > > > > returns -EBUSY, then this dm disk is skipped in remove_all().
+> > > > > > 
+> > > > > > Force to mark DMF_DEFERRED_REMOVE might solve it, but need our device
+> > > > > > mapper guys to check if it is safe.
+> > > > > > 
+> > > > > > Or other better solution?
+> > > > > 
+> > > > > Yeah, I think there is. You can just switch all fput() instances in
+> > > > > device mapper to bdev_fput() which is mainline now. This will yield the
+> > > > > device and make it able to be reclaimed. Should be as simple as the
+> > > > > patch below. Could you test this and send a patch based on this (I'm on
+> > > > > a prolonged vacation so I don't have time right now.):
+> > > > 
+> > > > Unfortunately it doesn't work.
+> > > > 
+> > > > Here the problem is that blkdev_release() is delayed, which changes
+> > > > 'dmsetup remove_all' behavior, and causes that some of dm disks aren't
+> > > > removed.
+> > > > 
+> > > > Please see dm_lock_for_deletion() and dm_blk_open()/dm_blk_close().
+> > > 
+> > > So you really need blkdev_release() itself to be synchronous? Groan, in
+> > 
+> > At least the current dm implementation relies on this way sort of, and
+> > it could be addressed by forcing to mark DMF_DEFERRED_REMOVE in
+> > remove_all().
+> > 
+> > > that case use __fput_sync() instead of fput() which ensures that this
+> > > file is closed synchronously.
+> > 
+> > I tried __fput_sync(), but the following panic is caused:
+> > 
+> > [  113.486522] ------------[ cut here ]------------
+> > [  113.486524] kernel BUG at fs/file_table.c:453!
+> > [  113.486531] invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> > [  113.488878] CPU: 6 PID: 1919 Comm: dmsetup Kdump: loaded Not tainted 5.14.0+ #23
+> 
+> Wait, how come this is 5.14 kernel? Apparently you're crashing on:
+> 
+> BUG_ON(!(task->flags & PF_KTHREAD));
+> 
+> but that is not present in current upstream (BUG_ON was removed in 6.6-rc1
+> by commit 021a160abf62c).
 
-Signed-off-by: Richard Fung <richardfung@google.com>
----
- fs/fuse/ioctl.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+Indeed, just tried the change on v6.9-rc3, looks it does work. 
 
-diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-index 726640fa439e..01638784972a 100644
---- a/fs/fuse/ioctl.c
-+++ b/fs/fuse/ioctl.c
-@@ -8,6 +8,7 @@
- #include <linux/uio.h>
- #include <linux/compat.h>
- #include <linux/fileattr.h>
-+#include <linux/fsverity.h>
-=20
- static ssize_t fuse_send_ioctl(struct fuse_mount *fm, struct fuse_args *ar=
-gs,
- 			       struct fuse_ioctl_out *outarg)
-@@ -118,6 +119,63 @@ static int fuse_copy_ioctl_iovec(struct fuse_conn *fc,=
- struct iovec *dst,
- }
-=20
-=20
-+/* For fs-verity, determine iov lengths from input */
-+static long fuse_setup_verity_ioctl(unsigned int cmd, unsigned long arg,
-+				    struct iovec *iov, unsigned int *in_iovs)
-+{
-+	switch (cmd) {
-+	case FS_IOC_MEASURE_VERITY: {
-+		__u16 digest_size;
-+		struct fsverity_digest __user *uarg =3D
-+				(struct fsverity_digest __user *)arg;
-+
-+		if (copy_from_user(&digest_size, &uarg->digest_size,
-+				sizeof(digest_size)))
-+			return -EFAULT;
-+
-+		if (digest_size > SIZE_MAX - sizeof(struct fsverity_digest))
-+			return -EINVAL;
-+
-+		iov->iov_len =3D sizeof(struct fsverity_digest) + digest_size;
-+		break;
-+	}
-+	case FS_IOC_ENABLE_VERITY: {
-+		struct fsverity_enable_arg enable;
-+		struct fsverity_enable_arg __user *uarg =3D
-+				(struct fsverity_enable_arg __user *)arg;
-+		const __u32 max_buffer_len =3D FUSE_MAX_MAX_PAGES * PAGE_SIZE;
-+
-+		if (copy_from_user(&enable, uarg, sizeof(enable)))
-+			return -EFAULT;
-+
-+		if (enable.salt_size > max_buffer_len ||
-+				enable.sig_size > max_buffer_len)
-+			return -ENOMEM;
-+
-+		if (enable.salt_size > 0) {
-+			iov++;
-+			(*in_iovs)++;
-+
-+			iov->iov_base =3D u64_to_user_ptr(enable.salt_ptr);
-+			iov->iov_len =3D enable.salt_size;
-+		}
-+
-+		if (enable.sig_size > 0) {
-+			iov++;
-+			(*in_iovs)++;
-+
-+			iov->iov_base =3D u64_to_user_ptr(enable.sig_ptr);
-+			iov->iov_len =3D enable.sig_size;
-+		}
-+		break;
-+	}
-+	default:
-+		break;
-+	}
-+	return 0;
-+}
-+
-+
- /*
-  * For ioctls, there is no generic way to determine how much memory
-  * needs to be read and/or written.  Furthermore, ioctls are allowed
-@@ -227,6 +285,12 @@ long fuse_do_ioctl(struct file *file, unsigned int cmd=
-, unsigned long arg,
- 			out_iov =3D iov;
- 			out_iovs =3D 1;
- 		}
-+
-+		if (cmd =3D=3D FS_IOC_MEASURE_VERITY || cmd =3D=3D FS_IOC_ENABLE_VERITY)=
- {
-+			err =3D fuse_setup_verity_ioctl(cmd, arg, iov, &in_iovs);
-+			if (err)
-+				goto out;
-+		}
- 	}
-=20
-  retry:
---=20
-2.44.0.683.g7961c838ac-goog
+
+Thanks,
+Ming
 
 
