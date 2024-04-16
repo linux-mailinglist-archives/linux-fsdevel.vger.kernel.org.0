@@ -1,127 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-17079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CED8A7625
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 23:11:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3488A77B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 00:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD931F232C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 21:11:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0761F23EAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 22:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A509B6BFA1;
-	Tue, 16 Apr 2024 21:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C6784DF6;
+	Tue, 16 Apr 2024 22:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e/VN90jy"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="afuGsyg7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08915A4CF;
-	Tue, 16 Apr 2024 21:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582F97FBC4;
+	Tue, 16 Apr 2024 22:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713301871; cv=none; b=KHmkV4StHvAcVJ7aj4cYEFBCRNniO4LCJCvCJpw5EcbNv06FVon5tKRuvN7j/bjs2+PWjsHh5IUt86Byq6k0iQS/Ycgok8tF5YjlfONXeyqS8kF9afSYQxeayJtLNkJee8jsviGH/DgoqLgxJvvwWyC5MxFOCk+a0WrTOZZRhis=
+	t=1713305942; cv=none; b=RYtxFWDAQwbNYJQGvPjPrmo88S0ee/sPYomuaw+TmMc1twHYhd6EP/6p57KXbxfArcRD8CeO9HvBJT+w0GPW76HPfhOXzTz4cb+ryfwuUy0P3ueW1tyKUfRL97WKfUoZ/OZW0zNf7byuDPmHKZvmCrj3ZkjMDKAPE3UWkyF482o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713301871; c=relaxed/simple;
-	bh=8FNV3zbi4W0+s5iELgnOQOr6ZJQLzz3pHFBU0pDSGJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J1n/8/c3XiYz9hEBVubiDSH96+nPSyQ8y/7ZbvectoBIahUA2m5Wu/nUZ3eTcwDIlw3vFXL6/6L+tGuwdx3x5ogjiYDzxD3K7wXgGuv+lnytbxlLmvu0p7CfcmJUdljUMemf6SbdRCaJfjsG9L9GCi1H6KqHPb8w+9U7rBx3s2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e/VN90jy; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1713305942; c=relaxed/simple;
+	bh=bW2XiDJ/DqQxbh79M+R3dEriHWCoVS8f5WkUD5glCqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=madhiBDC/HEYbZGnhnXA/uE+2/Fg2sLtyhlw103JyIHkWkevM2NfXkc+xo0pEU+v21Ofqsp4PjIgUxJrTyEx4Eur3nxFTCcnE+t9JRPPCpgMbePJBFRywj2ywxFBcNtRIu/5kC3Gck2WfvizGRgZ08b+yhxGEH//gQzP1WPzGX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=afuGsyg7; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FRN0S0UrdEiWG4B5xuc/QvC+4jIMUlM9ivvZ43mxxCA=; b=e/VN90jySWq7d6XlyBQgn7rs3s
-	AB6sQMjNqGP7kHOZRUxvLv1PlxeTKJU1QlDocHcG7Sk6ezLyKIZLtFc1Kv01cBGJCYbKrkBGhppnz
-	RdCDVzplL6GgCvgY9WxCkdNOk0db7H9pR5PCWaG6viMfEi/NWo9vYJsHICdP1374dGYBb+Hg9zg7C
-	d/c7mYXYvYTX+uzESF+M4iIf4TzuqsN9oBNYY40MhgyypVIlbBZLLJS2v99LboMM3MKOcQi9Uq07T
-	3WhvCC9iOEV0Un8JNpAiRR7JMuzQRPCufe7TnGJPkZPUHXDDn8KP75jb+dXzq/DYlmzLcSVrvkCpI
-	DBZ09n7A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rwq4z-0000000Dp1F-3nSD;
-	Tue, 16 Apr 2024 21:11:01 +0000
-Date: Tue, 16 Apr 2024 14:11:01 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-	axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v6 00/10] block atomic writes
-Message-ID: <Zh7pZUwmQXF-qC6D@bombadil.infradead.org>
-References: <20240326133813.3224593-1-john.g.garry@oracle.com>
- <ZgOXb_oZjsUU12YL@casper.infradead.org>
- <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
- <Zg7Z4aJtn3SxY5w1@casper.infradead.org>
- <f3c1d321-0dfc-466f-9f6a-fe2f0513d944@oracle.com>
- <ZhQud1NbO4aMt0MH@bombadil.infradead.org>
- <ZhYQANQATz82ytl1@casper.infradead.org>
- <ZhxBiLSHuW35aoLB@bombadil.infradead.org>
- <Zh2ZptLxnwa_jtSk@casper.infradead.org>
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=lpmxt/5MIvA45UosU7v5VkKnZE4VtxUJy2lOAA317go=; b=afuGsyg7g6WxXbTtwUNFVEFqP2
+	Cu98aJVx8WT9+r3qY4ASQOnsSrwbXxb2yAhQp7JuTuRZrBbu1foJ57OpV2VmPnGj06XLThWajRTqc
+	ojGiDNUBNiMafRZ134Di/AxT00uwzklAmQyIb13qpL0WO8LGtHlOIWMA25pP7dBmwzRNw6G+T84H/
+	jgpOQjeQS1BXZajLt9WsU9FcKOOTTDAsQWgHHEJc9RKhmHAPYCCy87+uHB3KQxJMAkhXALwT69Ws2
+	tKnBvLnlQO1lWJoXTVchvmrEnu+xsv7M3p7kQ5YA7O0lFX6HtmJFVKaKRF0AO5/dYB2awp9qTdSJM
+	33+8it4w==;
+Received: from [50.53.2.121] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rwr8l-0000000E1xY-2iG7;
+	Tue, 16 Apr 2024 22:18:59 +0000
+Message-ID: <5b1938bc-e675-4f1c-810b-dd91f6915f1d@infradead.org>
+Date: Tue, 16 Apr 2024 15:18:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zh2ZptLxnwa_jtSk@casper.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 8/8] doc: Split buffer.rst out of api-summary.rst
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240416031754.4076917-1-willy@infradead.org>
+ <20240416031754.4076917-9-willy@infradead.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240416031754.4076917-9-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 15, 2024 at 10:18:30PM +0100, Matthew Wilcox wrote:
-> On Sun, Apr 14, 2024 at 01:50:16PM -0700, Luis Chamberlain wrote:
-> > On Wed, Apr 10, 2024 at 05:05:20AM +0100, Matthew Wilcox wrote:
-> > > Have you tried just using the buffer_head code?  I think you heard bad
-> > > advice at last LSFMM.  Since then I've landed a bunch of patches which
-> > > remove PAGE_SIZE assumptions throughout the buffer_head code, and while
-> > > I haven't tried it, it might work.  And it might be easier to make work
-> > > than adding more BH hacks to the iomap code.
-> > 
-> > I have considered it but the issue is that *may work* isn't good enough and
-> > without a test plan for buffer-heads on a real filesystem this may never
-> > suffice. Addressing a buffere-head iomap compat for the block device cache
-> > is less error prone here for now.
+
+
+On 4/15/24 8:17 PM, Matthew Wilcox (Oracle) wrote:
+> Buffer heads are no longer a generic filesystem API but an optional
+> filesystem support library.  Make the documentation structure reflect
+> that, and include the fine documentation kept in buffer_head.h.
+> We could give a better overview of what buffer heads are all about,
+> but my enthusiasm for documenting it is limited.
 > 
-> Is it really your position that testing the code I already wrote is
-> harder than writing and testing some entirely new code?  Surely the
-> tests are the same for both.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  Documentation/filesystems/api-summary.rst | 3 ---
+>  Documentation/filesystems/index.rst       | 1 +
+>  2 files changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/api-summary.rst b/Documentation/filesystems/api-summary.rst
+> index 98db2ea5fa12..cc5cc7f3fbd8 100644
+> --- a/Documentation/filesystems/api-summary.rst
+> +++ b/Documentation/filesystems/api-summary.rst
+> @@ -56,9 +56,6 @@ Other Functions
+>  .. kernel-doc:: fs/namei.c
+>     :export:
+>  
+> -.. kernel-doc:: fs/buffer.c
+> -   :export:
+> -
+>  .. kernel-doc:: block/bio.c
+>     :export:
+>  
+> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+> index 1f9b4c905a6a..8f5c1ee02e2f 100644
+> --- a/Documentation/filesystems/index.rst
+> +++ b/Documentation/filesystems/index.rst
+> @@ -50,6 +50,7 @@ filesystem implementations.
+>  .. toctree::
+>     :maxdepth: 2
+>  
+> +   buffer
 
-The compat code would only allow large folios for iomap, and use
-buffer-heads for non-large folios, so nothing much would change except
-a special wrapper.
+This causes:
 
-> Besides, we aren't talking about a filesystem on top of the bdev here.
-> We're talking about accessing the bdev's page cache directly.
+Documentation/filesystems/index.rst:50: WARNING: toctree contains reference to nonexisting document 'filesystems/buffer'
 
-Sure, but my concern was the lack of testing for buffer-head large
-folios. While for iomap we'd at least have done the ton of work to
-stress test testing large folios while testing XFS with it.
 
-While the block device cache is not a proper full blown filesystem,
-it just means since no filesystem has been tested with buffer heads with
-large folios its a possible minefield waiting to explode due to lack of
-testing.
+>     journalling
+>     fscrypt
+>     fsverity
 
-Is writing a proper test plan for the block device cache code with
-buffer-heads with large folios less work than writing the compat code
-for the block device cache? I concede that I'm not sure.
-
-I'm happy to try it out to see what blows up.
-
-  Luis
+-- 
+#Randy
+https://people.kernel.org/tglx/notes-about-netiquette
+https://subspace.kernel.org/etiquette.html
 
