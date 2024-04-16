@@ -1,214 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-17024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF9A8A65D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 10:14:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2141A8A6611
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 10:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F4191B24AF4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 08:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE29328611C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 08:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA9C156873;
-	Tue, 16 Apr 2024 08:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BCF156652;
+	Tue, 16 Apr 2024 08:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DjfBfnCe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKHWYhR5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889CD8665B;
-	Tue, 16 Apr 2024 08:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF393B78D;
+	Tue, 16 Apr 2024 08:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713255235; cv=none; b=Bo/VO32gKEp/cQNXWiOm70qcDMlA02cenALcE6z6l2oQq1bn8M0loXAOsQkcvLLCNhQWf17j2nMruLHfHxedMt9sENrLUe+88n6R+ELmzat6/l3rncBx3nfmmZW4llL3weF7YqcnQo00IlGcIvPC165G7yKRDcrCuTVElOAvP8o=
+	t=1713255966; cv=none; b=AgkhBHO6IKtr5SP7nKddLXqBI3HX7TDv7wElh8eVYzYrMo5gfZlGwiVOELih2ZHxBjax2wXWJgLAGvG7I+6+87Z8C22lALA6kYEdC1QRP4c0BzR1VWWNEqvrcqDCEEvXtYQqWr17+e83cwejmEwz3JsFJdoU1/nWY/7kyqfsXlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713255235; c=relaxed/simple;
-	bh=YqgOG9P2hP+Vazd20A7MBz6h2MRJHFt4LF2ghAPYO2E=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=k21OssrUmmuuo1y9eotbeHsjvdyJUkxEdiQ8UBShV4sw94s4UGOCFhnw3oRXRtKujCnYTzPAnMxWjwin+unHVYl5rbHJhOdR3sAQDpGbgV1dwEHq2/ggtoCBQIfO1cnPytLQtA6087WaK6+RbW28B0PjgLxiZYE6KpZ8mvaF6hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DjfBfnCe; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240416081348euoutp01e986ae0c0420cbaa6fc619f69deca38c~GtI2QdGVB1646716467euoutp01L;
-	Tue, 16 Apr 2024 08:13:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240416081348euoutp01e986ae0c0420cbaa6fc619f69deca38c~GtI2QdGVB1646716467euoutp01L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1713255228;
-	bh=bIsb30PZaSLB5OiZcM1+QbJIYYQGcYX6Ld4HuDawoik=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=DjfBfnCeczMwC9VGzREMUcny6hjKUIOJoo9UY/piJvcw7sh4r6U0qajsOpPBvf5/a
-	 Am3tENqHGcwHVkdAyNnMNbfN0nb5zgR2HXcAz+cdr5eruKji3XZlXhuBFe53cTSFKr
-	 W7mDC4fAmyjv0YJa7FWCt6cSAqXOWsc+9rtiMLp4=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240416081348eucas1p21cb60b08f416405e6a309e4ef595fa28~GtI1_WOdJ1606116061eucas1p26;
-	Tue, 16 Apr 2024 08:13:48 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id D9.06.09620.B333E166; Tue, 16
-	Apr 2024 09:13:47 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240416081347eucas1p2328252cc35f468c42c0954eaa09d59eb~GtI1f3yuF1895218952eucas1p2U;
-	Tue, 16 Apr 2024 08:13:47 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240416081347eusmtrp140e4080a0a0dac1890e78f8bb14248ff~GtI1dsrEb2457724577eusmtrp1W;
-	Tue, 16 Apr 2024 08:13:47 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-a1-661e333b54e0
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 18.75.09010.B333E166; Tue, 16
-	Apr 2024 09:13:47 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240416081347eusmtip12c7c7c247154a41e8dc385754f42215a~GtI1M5Wo13269232692eusmtip1G;
-	Tue, 16 Apr 2024 08:13:47 +0000 (GMT)
-Received: from localhost (106.210.248.128) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 16 Apr 2024 09:13:46 +0100
-Date: Tue, 16 Apr 2024 09:53:36 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Paul Moore <paul@paul-moore.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, Muchun Song
-	<muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
-	<naoya.horiguchi@nec.com>, John Johansen <john.johansen@canonical.com>,
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Kees Cook <keescook@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>, Pavel
-	Begunkov <asml.silence@gmail.com>, Atish Patra <atishp@atishpatra.org>, Anup
-	Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Luis
-	Chamberlain <mcgrof@kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-	<keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<io-uring@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/7] security: Remove the now superfluous sentinel
- element from ctl_table array
-Message-ID: <20240416075336.stuemtkatjdz4rqe@joelS2.panther.com>
+	s=arc-20240116; t=1713255966; c=relaxed/simple;
+	bh=dU7PkEFRm93LBS1Z28p9N1XSH6G5tnTgOH3s9Y4nZt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=uXzfKjBalvINkwB0RIsdxA/Exytxc5/UPmmPYtpIiaxLJvvaO6yM6vZUUxv17t+hgE9i8nymoR2eWMOuKVrznKB0Zt6SkJYoKK2m3DywRbY5xpFQ9UFklm7SLCfX2SuY3XtjeZGGqJSRcCd9XmXa3f3heYQMhbQjbnsAQdMhVf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKHWYhR5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3887C113CE;
+	Tue, 16 Apr 2024 08:26:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713255965;
+	bh=dU7PkEFRm93LBS1Z28p9N1XSH6G5tnTgOH3s9Y4nZt4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=WKHWYhR5mbbNVzGbhCPf7kl3oB3jDL3oHMn4Q3PKGa5PZXdSv3F82AMPzTnllqrB4
+	 eZBDrqWP3HqjL+d8FxqNuISmb9y7y4WCaIE1AKWLLrnaaF0NASBwhgLGvWRYLecpTO
+	 ttEfbAtfQ8AJvE0g7ukarqYG4cu6ptpkcv9VPL9XAGDJtrUvUjgz3YtAF7LDMUgrDa
+	 s/zksYEOphxkiemLTBFR2/kTS9c5z3U4A2SCiAAxhWpDiRw6Bwmz98kZLETHOr9Bg7
+	 eyAiL1mqWCvwl0QT9oRiiwzTJzltC9q8nqukrrPuz9rMas7Qhl8FYpTAxdzmV9SdoI
+	 9XFSIr6NmMG1Q==
+Date: Tue, 16 Apr 2024 10:25:58 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Nam Cao <namcao@linutronix.de>, Mike Rapoport <rppt@kernel.org>
+Cc: Andreas Dilger <adilger@dilger.ca>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-riscv@lists.infradead.org, Theodore Ts'o <tytso@mit.edu>, 
+	Ext4 Developers List <linux-ext4@vger.kernel.org>, Conor Dooley <conor@kernel.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: riscv32 EXT4 splat, 6.8 regression?
+Message-ID: <20240416-deppen-gasleitung-8098fcfd6bbd@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="zfniyufgrrisfuqi"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhT1ykCKnijSbsgPXO9o-5_LHAtSm=q=cdQ8N9QH+WA+tw@mail.gmail.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WTfVBUVRjGO/eevXdBgctHcUCzXKQUFGyIPKOSMCrdP/zDoqYxJnODKzDC
-	wuyKkdEItNIuH4Igs7au8ikou4EtsCpiEQlCIggkrMQugW7Fp8iHRNtgbBfL/vs97/s8M897
-	Zo6QdHlCeQpjJIc5qUQcK6LsoaFloWPTtoA1Bzf/2rcFa6p1FJZPTQpwnVVN49SWIgHWVBoA
-	VnSEYq0ph8KaTjnEk2lWiDNHV+PJ4x0Q5y3kAlxVXUrg1tnjFG7PjMN1A2kUVs6fh1h/v1eA
-	B80LBG643gZxT72GwmbdEwE2zMgpPJU1TOHzfV0ENuZaAC6/OgRxV2ojwCM9WSROVzvhn/NU
-	EHfe6aCxfCAweC2rO6cDbK/iG8gWWNshq07JptgzKV2QHR8ZgWztxXsE+4Nilmavqk00a2j0
-	Znuv7WPlNyYEbM/tRFZfqaRY/XQezbaetsK9Hh/Yb4/kYmOOcFL/Nw/YR2dOyImEbKeka3Ny
-	IgVMr8wAdkLEvI7qzUoyA9gLXZgLAPW1DVO8mAWoK/Ux5MUMQH+11hBPI/ON3TS/qABo4Pb3
-	1L+umeIbAl7UAVSY3QJtEch4o0nDCGljitmIOscH/mE3Zh0qtVQDG5NMoR1q/jrGxq4Mh+aV
-	nZSNHZhgpMo9KeDZGbV99QDy/iR0vfn+EguXeBWqWBTa0I55G/2RxfBFvVDacJmA58/Rj7X9
-	hK0aYk6tQKbC9OXFLpR71wh5dkWjN2tpnlejW/lZkA/kA/Td4hTNCy1A5alzy2+xDcl/erCc
-	CEE5f+oEthaIcUTGCWe+pyPKM6hIfuyAFOkuvPsVpDWPw1zgpX7mMvUzl6n/u4zHDai63v9/
-	U5vZF5UXj5E8B6GqqoewCNCVwJ1LlMVFcbIACfeJn0wcJ0uURPlFxMfpwdK/uLV4c+4KuDD6
-	yK8JEELQBNYthYcvae8ATyiJl3AiNwe564sHXRwixZ8e5aTxH0kTYzlZE1glhCJ3B+/IlzgX
-	Jkp8mDvEcQmc9OmWENp5phDvzEZt3Kr9bZNkopjMnJ0ym77ITl5vfW775SBL6bHwiApLWdDY
-	LxEPvUK6Q5nPRkP0ycSXDW2qoaEwUcKezYPRRSWPj5xs1pcwZFpTXfDLpNZpPGil4/r3usL0
-	SBYWSM1EtkV/23k3y/joqNKDe0twdj51Q8jg1v72feFKY8GhAxMnnqeNSWaf0/kvSKpMOwfm
-	h/yDfUtO0GyY3bvuY9M71vQrM1pnYk7VuJ/dD+5d7rAPf0M4new4/THrI67Z0uMbVBX1amhE
-	Q5/zlWiPvTpF/Ic7QsMvWQJ81Wuz2/cPZ2pWuDlfVHkk7vp99zFloDWnSEmY4lRJBbsrFf5N
-	ZcXv7+kWQVm0+DUfUioT/w3sC6XnkgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA2WSbUxTVxiAc3pvb1szxl0p41iVQQXNYBRaKB6QEseSefWHDMiybMBYA7eA
-	0hb74cY2F8TCgGJWiAbXNcKGhYEEhEAjc4sMFxSElo+AcxQWUDBFRJxExAqs0C0z2b/nvB/P
-	++bkZWNcM8Fn5yq1tFopyxMQ2/Bb6zcmw/ZH+ssjOs74IXNrM4H0S4tM1OkysdCp3lomMjdZ
-	ASq1vYsuTX5DILNdj6PFIheODPM70WKxDUdVq0aAWlrrGOjmcjGBBgwK1OkoIlDZigVH7XfH
-	mejPqVUG+vmXPhyN/mQm0FTzBhNZn+gJtFQxQyDL7WEG+t04C1B91zSOhk91A+QcrcBQickb
-	TVRV48g+ZGMhvUNyIJBqvtAMqPHSNpw65xrAKVPhGYL6rnAYpxacTpzqaLzDoK6XLrOoLtMk
-	i7J2B1PjVz+k9L89ZFKjgzqqvamMoNr/qmJRN8+78Pe2fySMU6t0WjogR6XRSgWpIiQWimKQ
-	UBwVIxRF7kuPFUsE4fFxWXRe7glaHR7/iTDn/rVFLN/g/VlXDa8QLL1SDjhsSEbBle4RVjnY
-	xuaSFgBLr/YRnsRO2LY8xvSwD3wxXk54ih4DOL1mwjyPTgAnvl7GN6twMhguWp3YJhPkW9C+
-	4NhiHhkE62ZbwWYDRtZw4IOuwS2tD0nDlTL71jgv8gCsNlYyPdZ6DLZ1FgJP4jXY9+29rQkY
-	eQL2N/e4rWw374AN6+xN5JBJ8FkF6dl0NyyaufjP1ifhk7U5YAQ+ppdEppdEpv9EnvBe+OLC
-	yP/DobD++weYh6WwpeURXgtYTYBH6zSKbIVGLNTIFBqdMluYqVK0A/dpWntXO66AxvnHwh7A
-	YIMeEOTunLl8aQjwcaVKSQt4XnqfXXKuV5as4HNarcpQ6/JoTQ+QuH+xEuP7Zqrcd67UZoii
-	IySiqOiYCElMdKTAz+tQfqmMS2bLtPQxms6n1f/2MdgcfiGjZuRgdpyjsvaN7csnMx3Pn6XP
-	cVPuWn9th0cXDtZZshpe95N4BdhW9xy22YPjGMf0az8MKnM+vciXPsJ2DIWNpHGS/phZOU7a
-	05PW/davBDSk7sl2vb+voqVE0ZtQHHtt/5Gze2efHr8/JZYaePKVRE7o6YxkueOGI7ZoY+rj
-	8FjX00NBIe8UXLeGGjZWv8q99eVt//w034LGkqW0DNv0wFD887bilIcVvBFHSpOxNbkkskr2
-	BU8eVkl3wMRX55x3TGNs/5AsnU9CdbX6vNXCCowXefu+3S8/fMTCT3pzgnfUeU6qTZQuGO71
-	X07OEvYOnN7N25UwJk6dPzv945T5g0ABrsmRiUIwtUb2Ny6p+ksvBAAA
-X-CMS-MailID: 20240416081347eucas1p2328252cc35f468c42c0954eaa09d59eb
-X-Msg-Generator: CA
-X-RootMTR: 20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483
-References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
-	<CGME20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483@eucas1p2.samsung.com>
-	<20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com>
-	<20240415134406.5l6ygkl55yvioxgs@joelS2.panther.com>
-	<CAHC9VhTE+85xLytWD8LYrmdV8xcXdi-Tygy5fVvokaLCfk9bUQ@mail.gmail.com>
-	<CAHC9VhT1ykCKnijSbsgPXO9o-5_LHAtSm=q=cdQ8N9QH+WA+tw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87le5e393x.fsf@all.your.base.are.belong.to.us>
+ <20240416084417.569356d3@namcao>
 
---zfniyufgrrisfuqi
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[Adding Mike who's knowledgeable in this area]
 
-On Mon, Apr 15, 2024 at 03:02:43PM -0400, Paul Moore wrote:
-> On Mon, Apr 15, 2024 at 10:17=E2=80=AFAM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > On Mon, Apr 15, 2024 at 9:44=E2=80=AFAM Joel Granados <j.granados@samsu=
-ng.com> wrote:
-> > >
-> > > Hey
-> > >
-> > > This is the only patch that I have not seen added to the next tree.
-> > > I'll put this in the sysctl-next
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log=
-/?h=3Dsysctl-next
-> > > for testing. Please let me know if It is lined up to be upstream thro=
-ugh
-> > > another path.
+On Mon, Apr 15, 2024 at 06:04:50PM +0200, Björn Töpel wrote:
+> Christian Brauner <brauner@kernel.org> writes:
+> 
+> > On Sun, Apr 14, 2024 at 04:08:11PM +0200, Björn Töpel wrote:
+> >> Andreas Dilger <adilger@dilger.ca> writes:
+> >> 
+> >> > On Apr 13, 2024, at 8:15 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >> >> 
+> >> >> On Sat, Apr 13, 2024 at 07:46:03PM -0600, Andreas Dilger wrote:
+> >> >> 
+> >> >>> As to whether the 0xfffff000 address itself is valid for riscv32 is
+> >> >>> outside my realm, but given that RAM is cheap it doesn't seem unlikely
+> >> >>> to have 4GB+ of RAM and want to use it all.  The riscv32 might consider
+> >> >>> reserving this page address from allocation to avoid similar issues in
+> >> >>> other parts of the code, as is done with the NULL/0 page address.
+> >> >> 
+> >> >> Not a chance.  *Any* page mapped there is a serious bug on any 32bit
+> >> >> box.  Recall what ERR_PTR() is...
+> >> >> 
+> >> >> On any architecture the virtual addresses in range (unsigned long)-512..
+> >> >> (unsigned long)-1 must never resolve to valid kernel objects.
+> >> >> In other words, any kind of wraparound here is asking for an oops on
+> >> >> attempts to access the elements of buffer - kernel dereference of
+> >> >> (char *)0xfffff000 on a 32bit box is already a bug.
+> >> >> 
+> >> >> It might be getting an invalid pointer, but arithmetical overflows
+> >> >> are irrelevant.
+> >> >
+> >> > The original bug report stated that search_buf = 0xfffff000 on entry,
+> >> > and I'd quoted that at the start of my email:
+> >> >
+> >> > On Apr 12, 2024, at 8:57 AM, Björn Töpel <bjorn@kernel.org> wrote:
+> >> >> What I see in ext4_search_dir() is that search_buf is 0xfffff000, and at
+> >> >> some point the address wraps to zero, and boom. I doubt that 0xfffff000
+> >> >> is a sane address.
+> >> >
+> >> > Now that you mention ERR_PTR() it definitely makes sense that this last
+> >> > page HAS to be excluded.
+> >> >
+> >> > So some other bug is passing the bad pointer to this code before this
+> >> > error, or the arch is not correctly excluding this page from allocation.
+> >> 
+> >> Yeah, something is off for sure.
+> >> 
+> >> (FWIW, I manage to hit this for Linus' master as well.)
+> >> 
+> >> I added a print (close to trace_mm_filemap_add_to_page_cache()), and for
+> >> this BT:
+> >> 
+> >>   [<c01e8b34>] __filemap_add_folio+0x322/0x508
+> >>   [<c01e8d6e>] filemap_add_folio+0x54/0xce
+> >>   [<c01ea076>] __filemap_get_folio+0x156/0x2aa
+> >>   [<c02df346>] __getblk_slow+0xcc/0x302
+> >>   [<c02df5f2>] bdev_getblk+0x76/0x7a
+> >>   [<c03519da>] ext4_getblk+0xbc/0x2c4
+> >>   [<c0351cc2>] ext4_bread_batch+0x56/0x186
+> >>   [<c036bcaa>] __ext4_find_entry+0x156/0x578
+> >>   [<c036c152>] ext4_lookup+0x86/0x1f4
+> >>   [<c02a3252>] __lookup_slow+0x8e/0x142
+> >>   [<c02a6d70>] walk_component+0x104/0x174
+> >>   [<c02a793c>] path_lookupat+0x78/0x182
+> >>   [<c02a8c7c>] filename_lookup+0x96/0x158
+> >>   [<c02a8d76>] kern_path+0x38/0x56
+> >>   [<c0c1cb7a>] init_mount+0x5c/0xac
+> >>   [<c0c2ba4c>] devtmpfs_mount+0x44/0x7a
+> >>   [<c0c01cce>] prepare_namespace+0x226/0x27c
+> >>   [<c0c011c6>] kernel_init_freeable+0x286/0x2a8
+> >>   [<c0b97ab8>] kernel_init+0x2a/0x156
+> >>   [<c0ba22ca>] ret_from_fork+0xe/0x20
+> >> 
+> >> I get a folio where folio_address(folio) == 0xfffff000 (which is
+> >> broken).
+> >> 
+> >> Need to go into the weeds here...
 > >
-> > I was hoping to see some ACKs from the associated LSM maintainers, but
-> > it's minor enough I'll go ahead and pull it into the lsm/dev tree this
-> > week.  I'll send a note later when I do the merge.
->=20
-> ... and now it's merged, it should be in the next cut of the
-> linux-next tree.  Thanks!
+> > I don't see anything obvious that could explain this right away. Did you
+> > manage to reproduce this on any other architecture and/or filesystem?
+> >
+> > Fwiw, iirc there were a bunch of fs/buffer.c changes that came in
+> > through the mm/ layer between v6.7 and v6.8 that might also be
+> > interesting. But really I'm poking in the dark currently.
+> 
+> Thanks for getting back! Spent some more time one it today.
+> 
+> It seems that the buddy allocator *can* return a page with a VA that can
+> wrap (0xfffff000 -- pointed out by Nam and myself).
+> 
+> Further, it seems like riscv32 indeed inserts a page like that to the
+> buddy allocator, when the memblock is free'd:
+> 
+>   | [<c024961c>] __free_one_page+0x2a4/0x3ea
+>   | [<c024a448>] __free_pages_ok+0x158/0x3cc
+>   | [<c024b1a4>] __free_pages_core+0xe8/0x12c
+>   | [<c0c1435a>] memblock_free_pages+0x1a/0x22
+>   | [<c0c17676>] memblock_free_all+0x1ee/0x278
+>   | [<c0c050b0>] mem_init+0x10/0xa4
+>   | [<c0c1447c>] mm_core_init+0x11a/0x2da
+>   | [<c0c00bb6>] start_kernel+0x3c4/0x6de
+> 
+> Here, a page with VA 0xfffff000 is a added to the freelist. We were just
+> lucky (unlucky?) that page was used for the page cache.
+> 
+> A nasty patch like:
+> --8<--
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index 549e76af8f82..a6a6abbe71b0 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -2566,6 +2566,9 @@ void __init set_dma_reserve(unsigned long new_dma_reserve)
+>  void __init memblock_free_pages(struct page *page, unsigned long pfn,
+>  							unsigned int order)
+>  {
+> +	if ((long)page_address(page) == 0xfffff000L) {
+> +		return; // leak it
+> +	}
+>  
+>  	if (IS_ENABLED(CONFIG_DEFERRED_STRUCT_PAGE_INIT)) {
+>  		int nid = early_pfn_to_nid(pfn);
+> --8<--
+> 
+> ...and it's gone.
+> 
+> I need to think more about what a proper fix is. Regardless; Christian,
+> Al, and Ted can all relax. ;-)
+> 
+> 
+> Björn
 
-Awesome. I'll remove it from sysctl-next then to avoid any potential
-crashes.
-
-Thx
-
---=20
-
-Joel Granados
-
---zfniyufgrrisfuqi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmYeLoAACgkQupfNUreW
-QU+Ongv9G1IzPsRmO5Fp8LNQGL3RVW2HEJRFRdhkpCF3CIV4X8DYxzsnolosycOY
-2BNak77S7o9TcL6MXnhQXS2tS8WNNdo1Yk9lpBb7Y1YlZhkjpXgaVj0lhoJiLskG
-tuFbgn+QlMbWUmTPbHcX5Y0ZMp/zA28aWtUEY7b3UD1o7RzOvio6Im7IchVCl3Mw
-xFsdxWtgzXO4dEsrwNg8RczshBE2lKLAiHAo5l8/EOw0bvdl8EtWP4wHnDlIWnkQ
-p6Ms7mmp/iSOogETWZ9pxejUaZvcnX1mL2TBTAKnsqw9/JNA5vOjgdrP1O37DEs1
-iUIVKlY8UqoUBYskAzCfwJFe5O5Unl4Y/hzWTTu0Vq75ZfkD9RN09R/ZUem1NxrZ
-5rZ5yYTloIANF7PhUkTmYQKqoNInjtY1m3VUdw9rypOjJQ80cdwOOpYdE5xMS1O9
-g+Ad9WDVhpCWhCsjONZ+GrRodtRsMlzOpQEd5HRqFWD8ciyCtWbcHgCBCffWLU0D
-R6qovg//
-=QO0O
------END PGP SIGNATURE-----
-
---zfniyufgrrisfuqi--
+On Tue, Apr 16, 2024 at 08:44:17AM +0200, Nam Cao wrote:
+> On 2024-04-15 Björn Töpel wrote:
+> > Thanks for getting back! Spent some more time one it today.
+> > 
+> > It seems that the buddy allocator *can* return a page with a VA that can
+> > wrap (0xfffff000 -- pointed out by Nam and myself).
+> > 
+> > Further, it seems like riscv32 indeed inserts a page like that to the
+> > buddy allocator, when the memblock is free'd:
+> > 
+> >   | [<c024961c>] __free_one_page+0x2a4/0x3ea
+> >   | [<c024a448>] __free_pages_ok+0x158/0x3cc
+> >   | [<c024b1a4>] __free_pages_core+0xe8/0x12c
+> >   | [<c0c1435a>] memblock_free_pages+0x1a/0x22
+> >   | [<c0c17676>] memblock_free_all+0x1ee/0x278
+> >   | [<c0c050b0>] mem_init+0x10/0xa4
+> >   | [<c0c1447c>] mm_core_init+0x11a/0x2da
+> >   | [<c0c00bb6>] start_kernel+0x3c4/0x6de
+> > 
+> > Here, a page with VA 0xfffff000 is a added to the freelist. We were just
+> > lucky (unlucky?) that page was used for the page cache.
+> 
+> I just educated myself about memory mapping last night, so the below
+> may be complete nonsense. Take it with a grain of salt.
+> 
+> In riscv's setup_bootmem(), we have this line:
+> 	max_low_pfn = max_pfn = PFN_DOWN(phys_ram_end);
+> 
+> I think this is the root cause: max_low_pfn indicates the last page
+> to be mapped. Problem is: nothing prevents PFN_DOWN(phys_ram_end) from
+> getting mapped to the last page (0xfffff000). If max_low_pfn is mapped
+> to the last page, we get the reported problem.
+> 
+> There seems to be some code to make sure the last page is not used
+> (the call to memblock_set_current_limit() right above this line). It is
+> unclear to me why this still lets the problem slip through.
+> 
+> The fix is simple: never let max_low_pfn gets mapped to the last page.
+> The below patch fixes the problem for me. But I am not entirely sure if
+> this is the correct fix, further investigation needed.
+> 
+> Best regards,
+> Nam
+> 
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index fa34cf55037b..17cab0a52726 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -251,7 +251,8 @@ static void __init setup_bootmem(void)
+>  	}
+>  
+>  	min_low_pfn = PFN_UP(phys_ram_base);
+> -	max_low_pfn = max_pfn = PFN_DOWN(phys_ram_end);
+> +	max_low_pfn = PFN_DOWN(memblock_get_current_limit());
+> +	max_pfn = PFN_DOWN(phys_ram_end);
+>  	high_memory = (void *)(__va(PFN_PHYS(max_low_pfn)));
+>  
+>  	dma32_phys_limit = min(4UL * SZ_1G, (unsigned long)PFN_PHYS(max_low_pfn));
 
