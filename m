@@ -1,106 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-17087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DFC8A784D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 01:04:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E818A78A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 01:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9345728583F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 23:04:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4C7282E61
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 23:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1882013B280;
-	Tue, 16 Apr 2024 23:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB97713A894;
+	Tue, 16 Apr 2024 23:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eG8slGxK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9fOjStt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3361813A40D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 23:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECA54AEE9;
+	Tue, 16 Apr 2024 23:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713308605; cv=none; b=Zyrv/rKAkan4OxYH1YIBwmPzRXm7miYC8URG7DDlIPjIwOzmoJlmjriZL2jfE/VH5WSzv/OxVtFMmA8ws6AVqwJm7Q8hhoXQm+DX3bNlEwJ8LNtqMruvtBcdMG0/2BebwwTtjfahVN4FNIoXyy24BsfCNk4EUMZrxBqgcJMOnJM=
+	t=1713310707; cv=none; b=NMg7AnGvgBXzrPO0HY8eorxRCKoCVUYFfihW714vx5Uu9bGavpWcSAz+AL5SJqx2fZn84RnCP4Xre9vsddaTwZf+BVuL4eDQEbWFNMHZkV/7yt1Y8j+HOdWpORZLtF9w04PImbs7SksNk3eG+eIW9ozMaQNcM03PkaPVp3H1ju4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713308605; c=relaxed/simple;
-	bh=DNSKqIczlyBwuQ67ZFkxtx1MZSnOD27Vgyxg6uryKIE=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=iR+wZmL4xw0obc1JYfOBJIKaff/p6OfDsqc5FSeOrmyY+5Rlt6p5M+z0KXR2TiDArCQluqOig0r6Ac9z3XTn/+fN8D6WStjr/VRVtYkwcXLE3bF5AZ2pM0442fF1c0aLkpjdeee2Lp+kVDTIj622CkB2Wl+PntlL67Y2w7KNbNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eG8slGxK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713308603;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=omkePlcDB8enwqcFXRle7B6BhP/V3w40pUO+LmEoCqU=;
-	b=eG8slGxKfbwUr18HLRV3eAhgH0p4gX7NXa1pWoaqp1ONuQmawVxDd7RcQ3pCfExjpCKtJL
-	BYuMFV9WdhklmXW4P39axMRC+K6T5uUqfGchGrmMVn6D0QODER1zdqBZ2yLAgu5kBZYbuU
-	jwekeP/HrVw5xmfa5dtC6P6d3rZ22zo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-435-HZB_5gEsP8-Mrh_g6kWHzA-1; Tue, 16 Apr 2024 19:03:20 -0400
-X-MC-Unique: HZB_5gEsP8-Mrh_g6kWHzA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ADE98803513;
-	Tue, 16 Apr 2024 23:03:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.10])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 0C3961BDAA;
-	Tue, 16 Apr 2024 23:03:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <9b7de2417924192fb411744171015877c1d4c677.camel@kernel.org>
-References: <9b7de2417924192fb411744171015877c1d4c677.camel@kernel.org> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-12-dhowells@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Matthew Wilcox <willy@infradead.org>,
-    Steve French <smfrench@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
-    Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH 11/26] 9p: Use alternative invalidation to using launder_folio
+	s=arc-20240116; t=1713310707; c=relaxed/simple;
+	bh=X610+sNJI8FMaAeRTOdd7+DjjBHt0Eg6QzTcPtUj/yM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qv+oufj9FFRPlRtUqml9emSMk6hGV2Xo0AGU3qM634RP5P9nnwKLa+jFnzIHKonOMhG+hCoGQ29bYxE/Qa7wY7WIX1WMS58NvjYgatZLIov45fqe4lgTDUc+Yx1d2/mwzLQvvqjpqs11pxoM4QTLI6qFAab+QA/koRqZczM+biI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9fOjStt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF7CDC113CE;
+	Tue, 16 Apr 2024 23:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713310706;
+	bh=X610+sNJI8FMaAeRTOdd7+DjjBHt0Eg6QzTcPtUj/yM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z9fOjSttTz6t3HrcUirQXxY6ARYaZOuD+Duc/HAYF2cSpeVz2TiYu58MsGLp5Ha+L
+	 jNVQK5RMw/yukLX9ZR6Df1QRq824G2D5gqaLq3KkhCr2gBc+xe7ywCZtz5SOX7plYQ
+	 TCy1OOjkNiVb6qHAJzofkwNaExrxiEWUZkmLnExXP2c+CF7y/4IG8grbNTNxLDebHR
+	 MP6Z+WN5THcfI9zsTwhHqX7/v5fii1NbBc/WzGGMx88VX7HHFol+SrqIkfnmIEZDu4
+	 FBHBYgvum0DEEwAMJpVoO7oXN8T1W9A1sbgP5B1NKrUZ/uKM2nJXpFKMIppH1hfwSU
+	 xFQsBJSGptACA==
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3bbd6ea06f5so185182b6e.1;
+        Tue, 16 Apr 2024 16:38:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpo/XRgyIryt0RhbRe7/ufgnT+SRkfDZjNcx/bFzk0xJlVtmmj2WpVItwNrRL08EY1pHyxOMIc9/drfTpXJPZU1Z24RyMSnrCViA0zwGRNUtZX/L0LqkHX8NuaqkIy6IOnFNkI2UcWUv0oWA==
+X-Gm-Message-State: AOJu0Yy7kaSKS69ltsDe26F0pi6kuJhOgH764U2dmKIGUNioWKfqp1ih
+	2kBHN11sZcOSG+btJvags3mpFFTTRIelOJ1QHtEqzjrUSJiYsVs2OeNcUDiGnEFvcl/ijjc3kNK
+	M/ToyVWsLH63y/7FOcKy1JfTPBJc=
+X-Google-Smtp-Source: AGHT+IGLHw02QuJoUe1h4tht3h/r8lOSVIlHuWF8RGTAvSq3mUdvi6f1umYqSBOvTHJKucOim4NV1/qNf+6vS6/AepE=
+X-Received: by 2002:a05:6808:2013:b0:3c7:2d71:6272 with SMTP id
+ q19-20020a056808201300b003c72d716272mr272428oiw.29.1713310706173; Tue, 16 Apr
+ 2024 16:38:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2756051.1713308590.1@warthog.procyon.org.uk>
-Date: Wed, 17 Apr 2024 00:03:10 +0100
-Message-ID: <2756052.1713308590@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+References: <000000000000145ce00616368490@google.com> <Zh8DP48j0ECw5BeN@dread.disaster.area>
+In-Reply-To: <Zh8DP48j0ECw5BeN@dread.disaster.area>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 17 Apr 2024 08:38:15 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_1v7sCwy0UYiixXOBA7xUkQK0EPtJcLOC0LYuJ9cHyfg@mail.gmail.com>
+Message-ID: <CAKYAXd_1v7sCwy0UYiixXOBA7xUkQK0EPtJcLOC0LYuJ9cHyfg@mail.gmail.com>
+Subject: Re: [syzbot] [exfat?] possible deadlock in exfat_page_mkwrite
+To: Dave Chinner <david@fromorbit.com>
+Cc: syzbot <syzbot+d88216a7af9446d57d59@syzkaller.appspotmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Jeff Layton <jlayton@kernel.org> wrote:
-
-> Shouldn't this include a call to filemap_invalidate_inode? Is just
-> removing launder_folio enough to do this?
-
-Good point.  netfs_unbuffered_write_iter() calls kiocb_invalidate_pages() -
-which uses invalidate_inode_pages2_range() to discard the pagecache.  It
-should probably use filemap_invalidate_inode() instead.
-
-David
-
+2024=EB=85=84 4=EC=9B=94 17=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:02, D=
+ave Chinner <david@fromorbit.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> On Tue, Apr 16, 2024 at 06:14:20AM -0700, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    66e4190e92ce Add linux-next specific files for 20240416
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D15817767180=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc247afaa437=
+e6409
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd88216a7af944=
+6d57d59
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/86891dae5f9c/d=
+isk-66e4190e.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/1ca383660bf2/vmli=
+nux-66e4190e.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/bf6ff37d3fcc=
+/bzImage-66e4190e.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+d88216a7af9446d57d59@syzkaller.appspotmail.com
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > WARNING: possible circular locking dependency detected
+> > 6.9.0-rc4-next-20240416-syzkaller #0 Not tainted
+> > ------------------------------------------------------
+> > syz-executor.0/17125 is trying to acquire lock:
+> > ffff88805e616b38 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: inode_l=
+ock include/linux/fs.h:791 [inline]
+> > ffff88805e616b38 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: exfat_p=
+age_mkwrite+0x43a/0xea0 fs/exfat/file.c:629
+>
+> exfat_page_mkwrite() is taking the inode_lock() in the page fault
+> handler:
+>
+>         folio_lock(folio);
+>         .....
+>         if (ei->valid_size < folio_pos(folio)) {
+>                 inode_lock(inode);
+>                 err =3D exfat_extend_valid_size(file, ei->valid_size, fol=
+io_pos(folio));
+>                 inode_unlock(inode);
+>                 if (err < 0) {
+>                         ret =3D vmf_fs_error(err);
+>                         goto out;
+>                 }
+>         }
+>
+> This is can deadlock in a couple of ways:
+>
+> 1. page faults nest inside the inode lock (e.g. read/write IO path)
+> 2. folio locks nest inside the inode lock (e.g. truncate)
+> 3. IIUC, exfat_extend_valid_size() will allocate, lock and zero new
+> folios and call balance_dirty_pages_ratelimited(). None of these
+> things should be done with some other folio already held locked.
+>
+> As I've previously said: doing sparse file size extension in page
+> fault context is complex and difficult to do correctly. It is far
+> easier and safer to do it when the file is actually extended, and in
+> that case the context doing the extension takes the perf penalty of
+> allocaiton and zeroing, not the downstream application doing mmap()
+> operations on the (extended) file....
+Okay, Let me take a look.
+Thanks for your comment.
+>
+> -Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
 
