@@ -1,140 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-17084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D8E08A7824
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 00:50:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1008B8A782D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 00:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ECBB1C20400
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 22:50:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A297E1F239D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 22:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC0A13B2B9;
-	Tue, 16 Apr 2024 22:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HWfjcK5T"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BB513A24D;
+	Tue, 16 Apr 2024 22:50:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9949913A24A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 22:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9581137C33
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 22:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713307694; cv=none; b=K7MQAvwyQW2rAeOKAasPJcG6BgBLjuW4GD1QPHjw/pJ1JvI4/hb7HdYf1hj1ibaFUpnRYCfE+vjGSbJ4BJ2MxgDDVh9gn3FUh2P0eycfGhaWcX58+7J3GozYRUj1h7HBrVhiEAxyVED5HmSR8ufyUH/avNuZ9kpJCihAQOn65K4=
+	t=1713307843; cv=none; b=GVOmo52IakwVneUDp7QK/vrgSAuo+i1BqCd9QAkzgJsXqLjESsZXHMxXN542blrwhb+HBiaFqvhLTHcS0tvpnkWjINfxNhYVokn5CvHEcLBTq4GL1+/dZTVRVW2eyrAUgBStWB2/8IJapAY97Yu0Zw+EqUUPdOR974+SiSnmmUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713307694; c=relaxed/simple;
-	bh=e0f7bSzmGtIK19I0RYLYT2KkAAvf40uPWF4pZ8AJVio=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=Gl9mDt69fX03uhruNgf5E9lSllmbYSHZqAAqiTklX3508UABrtIbl7UDeoJIYjUPONDt4DWOYaW8RMK5ySvwzieCy+M8UNzwPCHYKfeuJYKmJIN4RxCroggDk/kSRdiqAZE87/x/BjzUAERGnTPKJu3BuzBmMwiet5GBFqCq0lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HWfjcK5T; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713307691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dQOrgp2MD172t9l6XQGW4lrZCkMqV6c2thjTwzveTuc=;
-	b=HWfjcK5TqBkg6eEhTpJLXnV/zuMAhEMKWXaj7+RGN/tI6gwgDUq39EnNSBqreiz7jPYawu
-	otIlyL798AuSDiRSv0ZwHpPCR5ZpMW2A/cSqTk1HmbLljPfd/i5MIc37b9eTmCuNQl18fL
-	KNgxjUj6D9KGplfxXpgHdtlHzpZC6DY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-587-dt0tRQhmPu-rFZtjV6hU-A-1; Tue, 16 Apr 2024 18:48:08 -0400
-X-MC-Unique: dt0tRQhmPu-rFZtjV6hU-A-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C46DD80A1B9;
-	Tue, 16 Apr 2024 22:48:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.10])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id DCEA51BDAA;
-	Tue, 16 Apr 2024 22:48:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <b6b6f41b9de1fc4128c3b3fe5aefc82d07a2347b.camel@kernel.org>
-References: <b6b6f41b9de1fc4128c3b3fe5aefc82d07a2347b.camel@kernel.org> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-4-dhowells@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Matthew Wilcox <willy@infradead.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
-    Shyam Prasad N <nspmangalore@gmail.com>,
-    Rohith Surabattula <rohiths.msft@gmail.com>
-Subject: Re: [PATCH 03/26] netfs: Update i_blocks when write committed to pagecache
+	s=arc-20240116; t=1713307843; c=relaxed/simple;
+	bh=YeW+c02zlbQb6rsuXkQfr7/IYDgDntYzr/uY8KhNTu8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=enCXjm9Cd8WCe0mFWPFDdL+0SzbPE+xxH6HPiI87tKc+AujMknc5S3F3PLdu/5TUyDVmzJQadfOHuDykR4zTtInBpFWPqjXag/3ysJb6gFqvLsw6jQai6Lu8gkrTqP2kifB+w6pR7ZChWW+zdrups2fDX9gFp6JWzAWNbCt8yn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.8.68])
+	by sina.com (172.16.235.25) with ESMTP
+	id 661F00B40000621C; Tue, 17 Apr 2024 06:50:31 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7612834210511
+X-SMAIL-UIID: E08D810DB814446B87925F5D9CD96290-20240417-065031-1
+From: Hillf Danton <hdanton@sina.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	syzbot <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [syzbot] Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
+Date: Wed, 17 Apr 2024 06:50:27 +0800
+Message-Id: <20240416225027.2499-1-hdanton@sina.com>
+In-Reply-To: <20240416173211.4lnmgctyo4jn5fha@quack3>
+References: <00000000000095bb400615f4b0ed@google.com> <20240413084519.1774-1-hdanton@sina.com> <CAOQ4uxhh4Tm6j+Hh+F2aQFuHfpCh_kJ10FYTfXo+AxoP4m01ag@mail.gmail.com> <20240415140333.y44rk5ggbadv4oej@quack3> <CAOQ4uxiG_7HGESMNkrJ7QmsXbgOneUGpMjx8vob87kntwTzUTQ@mail.gmail.com> <20240416132207.idn7rjzq4d4rayaz@quack3> <CAOQ4uxjJK3YT1+s_OwtM+=p_C8RCvXaAm6v5V+atyqvRKuKp+g@mail.gmail.com> <20240416173211.4lnmgctyo4jn5fha@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2755235.1713307678.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 16 Apr 2024 23:47:58 +0100
-Message-ID: <2755236.1713307678@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+Content-Transfer-Encoding: 8bit
 
-Jeff Layton <jlayton@kernel.org> wrote:
-
-> > Update i_blocks when i_size is updated when we finish making a write t=
-o the
-> > pagecache to reflect the amount of space we think will be consumed.
-> > =
-
-> =
-
-> Umm ok, but why? I get that the i_size and i_blocks would be out of sync
-> until we get back new attrs from the server, but is that a problem? I'm
-> mainly curious as to what's paying attention to the i_blocks during this
-> window.
-
-This is taking over from a cifs patch that does the same thing - but in co=
-de
-that is removed by my cifs-netfs branch, so I should probably let Steve sp=
-eak
-to that, though I think the problem with cifs is that these fields aren't
-properly updated until the closure occurs and the server is consulted.
-
-    commit dbfdff402d89854126658376cbcb08363194d3cd
-    Author: Steve French <stfrench@microsoft.com>
-    Date:   Thu Feb 22 00:26:52 2024 -0600
-
-    smb3: update allocation size more accurately on write completion
-
-    Changes to allocation size are approximated for extending writes of ca=
-ched
-    files until the server returns the actual value (on SMB3 close or quer=
-y info
-    for example), but it was setting the estimated value for number of blo=
-cks
-    to larger than the file size even if the file is likely sparse which
-    breaks various xfstests (e.g. generic/129, 130, 221, 228).
-    =
-
-    When i_size and i_blocks are updated in write completion do not increa=
-se
-    allocation size more than what was written (rounded up to 512 bytes).
-
-David
-
+On Tue, 16 Apr 2024 19:32:11 +0200 Jan Kara <jack@suse.cz>
+>
+> Hum, thinking about this some more - what if we just freed sb_info from
+> destroy_super_work()? By then we definitely are not getting fsnotify()
+> calls for the superblock so all the problems are solved.
+>
+Sounds better :)
 
