@@ -1,236 +1,381 @@
-Return-Path: <linux-fsdevel+bounces-17028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816C08A672A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 11:32:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DDC8A68A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 12:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B736AB21500
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 09:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F1B286433
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 10:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C121F85937;
-	Tue, 16 Apr 2024 09:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A33127E27;
+	Tue, 16 Apr 2024 10:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hlAZphxn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD8784E0A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 09:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF337E0F4;
+	Tue, 16 Apr 2024 10:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713259937; cv=none; b=AZ8s6uGMagnEOgrQX0qarivLktBmsonJrGiQRpRKLQs+os8HQoA67EqtE5xp/c1YhLRYZCXUZrf3LKjYFX5BwWjoeaeCyIblNLYeml8q5AdW8XVPaLOJSJ162yfBWZsmYozIlK9196yZXovRddcfuCm0V6v/azwTBYpLJ75SFx0=
+	t=1713263944; cv=none; b=eo8p8d8HKM3cTFBjRvgfHVdiHwfMu/tIHvzqeJrrWZCDn0ICnM2CwzgngRmjLGFYrHTUs0ppWXK3bTTncABZat0Hh75mHj2uZ5q5h5YXxZr9+EzJf/MNqHuN5D1oehcpCzt3iRDWYlyn1JwTKxKKtLUYS0br1NvKE5oMAi5VkRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713259937; c=relaxed/simple;
-	bh=tn/GBnRICcJdeKMYnrg62lH25ltqM035b4xvTJV5wYw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u6uKFE3YIKp2uFfxMvgIbElXb0B1xGObbgWrqD6fRpXYRwjcMBjNr3DStCjcvK3FMWfJDmkhArPDJ9fynqfcefd/ZdMAvXKwJ+qzkCSl8dm0ok6i8wT/eRoMOrV/BrZNCgpholinBIO2XiFffkNSk808QQkkUhlanFwJAKfyRBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 43G9VWfo079005;
-	Tue, 16 Apr 2024 17:31:32 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VJdyt6hZzz2K65Zj;
-	Tue, 16 Apr 2024 17:29:10 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Tue, 16 Apr 2024 17:31:30 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: <antal.nemes@hycu.com>
-CC: <dqminh@cloudflare.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <steve.kang@unisoc.com>,
-        <huangzhaoyang@gmail.com>
-Subject: [PATCH 1/1] mm: protect xa split stuff under lruvec->lru_lock during migration
-Date: Tue, 16 Apr 2024 17:31:21 +0800
-Message-ID: <20240416093121.313486-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <95d6033195a781f81e6ad5bd46026aae@hycu.com>
-References: <95d6033195a781f81e6ad5bd46026aae@hycu.com>
+	s=arc-20240116; t=1713263944; c=relaxed/simple;
+	bh=Jd5MpXhP+qK+dsdHRsCDInhYD1pfcATdgiBO7gOn1zA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g8NIxpfYVX+1zMQuraiLWCtLM4KoxWEq2gijLYbOseMY5f3pn225c3QRuGSoKYT3u/6GoPFugXvA7g/RvlGRvC+tzJxFveexsxL4lg0Y58PoGOnLcSkI1iZ3533x6dzO7g7SPadt6z8Y1CQInXbxgt/ksBIlAU55ACPfb49GYec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hlAZphxn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA9C8C113CE;
+	Tue, 16 Apr 2024 10:38:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713263943;
+	bh=Jd5MpXhP+qK+dsdHRsCDInhYD1pfcATdgiBO7gOn1zA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hlAZphxnzI+e4qo37V7HdMS+DRAlCOAFQXzK1WwoNlq21Ad1TMDzW/gjlmVfcgdjq
+	 ddINeNgeW14SZrhLKkC1rq6eOzNndI/pfPZZNBwqZaSAY65xs0dg7Lwa2MOv96YnXD
+	 CRLcr8dCc9kQZmtm6xYTQctmIMgloXsIAh3Anox+maQIqzQZN2T1tCiPpoXoaoM0RL
+	 2wfgGIt6ddjLaMSi/yHgN8KiLS71WqLtEEvL1FV87l+WWlrM4PWjA50aD05UUvgBJ8
+	 nQPfyRGL1tJxVAkFswthCUMWiWkWs6i6IuINW9Y3CZxx/jmz2oicEvtA/dtvsO5aIs
+	 Wp4RDYIfvX0uw==
+Date: Tue, 16 Apr 2024 12:38:56 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Johan Hovold <johan@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Anton Altaparmakov <anton@tuxera.com>, Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Namjae Jeon <linkinjeon@kernel.org>, "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>, 
+	Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>, 
+	"linux-ntfs-dev@lists.sourceforge.net" <linux-ntfs-dev@lists.sourceforge.net>
+Subject: Re: [PATCH 2/2] ntfs3: remove warning
+Message-ID: <20240416-genutzt-bestleistung-f76707a9ddba@brauner>
+References: <b0fa3c40-443b-4b89-99e9-678cbb89a67e@paragon-software.com>
+ <Zhz5S3TA-Nd_8LY8@hovoldconsulting.com>
+ <Zhz_axTjkJ6Aqeys@hovoldconsulting.com>
+ <8FE8DF1E-C216-4A56-A16E-450D2AED7F5E@tuxera.com>
+ <Zh0SicjFHCkMaOc0@hovoldconsulting.com>
+ <20240415-warzen-rundgang-ce78bedb5f19@brauner>
+ <CAHk-=whPTEYv3F9tgvJf-OakOxyGw2jzRVD0BMkXmC5ANPj0YA@mail.gmail.com>
+ <Zh1MCw7Q0VIKrrMi@hovoldconsulting.com>
+ <CAHk-=whN3V4Jzy+Mv8UZGTJ5VEk_ihCS8tu3VskW-HCfBg6r=g@mail.gmail.com>
+ <Zh1Qa2aB2Dg_-mW4@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 43G9VWfo079005
+Content-Type: multipart/mixed; boundary="4fboor3uxgqjpnzm"
+Content-Disposition: inline
+In-Reply-To: <Zh1Qa2aB2Dg_-mW4@hovoldconsulting.com>
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-Livelock in [1] is reported multitimes since v515, where the zero-ref
-folio is repeatly found on the page cache by find_get_entry. A possible
-timing sequence is proposed in [2], which can be described briefly as
-the lockless xarray operation could get harmed by an illegal folio
-remaining on the slot[offset]. This commit would like to protect
-the xa split stuff(folio_ref_freeze and __split_huge_page) under
-lruvec->lock to remove the race window.
+--4fboor3uxgqjpnzm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-[1]
-[167789.800297] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[167726.780305] rcu: Tasks blocked on level-0 rcu_node (CPUs 0-7): P155
-[167726.780319] (detected by 3, t=17256977 jiffies, g=19883597, q=2397394)
-[167726.780325] task:kswapd0         state:R  running task     stack:   24 pid:  155 ppid:     2 flags:0x00000008
-[167789.800308] rcu: Tasks blocked on level-0 rcu_node (CPUs 0-7): P155
-[167789.800322] (detected by 3, t=17272732 jiffies, g=19883597, q=2397470)
-[167789.800328] task:kswapd0         state:R  running task     stack:   24 pid:  155 ppid:     2 flags:0x00000008
-[167789.800339] Call trace:
-[167789.800342]  dump_backtrace.cfi_jt+0x0/0x8
-[167789.800355]  show_stack+0x1c/0x2c
-[167789.800363]  sched_show_task+0x1ac/0x27c
-[167789.800370]  print_other_cpu_stall+0x314/0x4dc
-[167789.800377]  check_cpu_stall+0x1c4/0x36c
-[167789.800382]  rcu_sched_clock_irq+0xe8/0x388
-[167789.800389]  update_process_times+0xa0/0xe0
-[167789.800396]  tick_sched_timer+0x7c/0xd4
-[167789.800404]  __run_hrtimer+0xd8/0x30c
-[167789.800408]  hrtimer_interrupt+0x1e4/0x2d0
-[167789.800414]  arch_timer_handler_phys+0x5c/0xa0
-[167789.800423]  handle_percpu_devid_irq+0xbc/0x318
-[167789.800430]  handle_domain_irq+0x7c/0xf0
-[167789.800437]  gic_handle_irq+0x54/0x12c
-[167789.800445]  call_on_irq_stack+0x40/0x70
-[167789.800451]  do_interrupt_handler+0x44/0xa0
-[167789.800457]  el1_interrupt+0x34/0x64
-[167789.800464]  el1h_64_irq_handler+0x1c/0x2c
-[167789.800470]  el1h_64_irq+0x7c/0x80
-[167789.800474]  xas_find+0xb4/0x28c
-[167789.800481]  find_get_entry+0x3c/0x178
-[167789.800487]  find_lock_entries+0x98/0x2f8
-[167789.800492]  __invalidate_mapping_pages.llvm.3657204692649320853+0xc8/0x224
-[167789.800500]  invalidate_mapping_pages+0x18/0x28
-[167789.800506]  inode_lru_isolate+0x140/0x2a4
-[167789.800512]  __list_lru_walk_one+0xd8/0x204
-[167789.800519]  list_lru_walk_one+0x64/0x90
-[167789.800524]  prune_icache_sb+0x54/0xe0
-[167789.800529]  super_cache_scan+0x160/0x1ec
-[167789.800535]  do_shrink_slab+0x20c/0x5c0
-[167789.800541]  shrink_slab+0xf0/0x20c
-[167789.800546]  shrink_node_memcgs+0x98/0x320
-[167789.800553]  shrink_node+0xe8/0x45c
-[167789.800557]  balance_pgdat+0x464/0x814
-[167789.800563]  kswapd+0xfc/0x23c
-[167789.800567]  kthread+0x164/0x1c8
-[167789.800573]  ret_from_fork+0x10/0x20
+On Mon, Apr 15, 2024 at 06:06:03PM +0200, Johan Hovold wrote:
+> On Mon, Apr 15, 2024 at 08:51:13AM -0700, Linus Torvalds wrote:
+> > On Mon, 15 Apr 2024 at 08:47, Johan Hovold <johan@kernel.org> wrote:
+> > >
+> > > I think the "ntfs" alias must always be mounted read-only because you
+> > > can currently have an fstab entry which does not specify "ro" and this
+> > > mount would suddenly become writeable when updating to 6.9 (possibly by
+> > > a non-privileged user, etc).
+> > 
+> > Well, it would be fairly easy to do particularly if we just do it for
+> > the old legacy case.
+> > 
+> > Of course, even the legacy case had that CONFIG_NTFS_RW option, so
+> > people who depended on _that_ would want to be able to remount...
+> 
+> Ah, right, I forgot about CONFIG_NTFS_RW as I've never enabled it.
+> 
+> Judging from the now removed Kconfig entry perhaps not that many people
+> did:
+> 
+> 	The only supported operation is overwriting existing files,
+> 	without changing the file length.  No file or directory
+> 	creation, deletion or renaming is possible. 
+> 
+> but I guess it still makes my argument above mostly moot.
+> 
+> At least if we disable write support in ntfs3 by default for now...
 
-[2]
-Thread_isolate:
-1. alloc_contig_range->isolate_migratepages_block isolate a certain of
-pages to cc->migratepages via pfn
-       (folio has refcount: 1 + n (alloc_pages, page_cache))
+I think we can disable write support in ntfs3 for now. I've picked up
+the patch to make ntfs3 serve I sent some time ago that Johan tested
+now.
 
-2. alloc_contig_range->migrate_pages->folio_ref_freeze(folio, 1 +
-extra_pins) set the folio->refcnt to 0
+The only thing left is to disable write support for ntfs3 as legacy ntfs
+driver for now. I took a stab at this. The following two patches
+I'm appending _should_ be enough iiuc. Johan, please take a look and
+please test.
 
-3. alloc_contig_range->migrate_pages->xas_split split the folios to
-each slot as folio from slot[offset] to slot[offset + sibs]
+This is also available on:
 
-4. alloc_contig_range->migrate_pages->__split_huge_page->folio_lruvec_lock
-failed which have the folio be failed in setting refcnt to 2
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.fixes
 
-5. Thread_kswapd enter the livelock by the chain below
-      rcu_read_lock();
-   retry:
-        find_get_entry
-            folio = xas_find
-            if(!folio_try_get_rcu)
-                xas_reset;
-            goto retry;
-      rcu_read_unlock();
+So feel free to pull from there and look there as well.
 
-5'. Thread_holdlock as the lruvec->lru_lock holder could be stalled in
-the same core of Thread_kswapd.
+--4fboor3uxgqjpnzm
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-ntfs3-enforce-read-only-when-used-as-legacy-ntfs-dri.patch"
 
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+From 1a2af5ca9b66bd3d4040f9987c78faff128e552f Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 16 Apr 2024 12:08:51 +0200
+Subject: [PATCH 1/2] ntfs3: enforce read-only when used as legacy ntfs driver
+
+Ensure that ntfs3 is mounted read-only when it is used to provide the
+legacy ntfs driver.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- mm/huge_memory.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ fs/ntfs3/ntfs_fs.h |  2 ++
+ fs/ntfs3/super.c   | 34 ++++++++++++++++++++++++++++++----
+ 2 files changed, 32 insertions(+), 4 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 9859aa4f7553..418e8d03480a 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2891,7 +2891,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 79356fd29a14..184c8bc76b92 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -1154,4 +1154,6 @@ static inline void le64_sub_cpu(__le64 *var, u64 val)
+ 	*var = cpu_to_le64(le64_to_cpu(*var) - val);
+ }
+ 
++bool is_legacy_ntfs(struct super_block *sb);
++
+ #endif /* _LINUX_NTFS3_NTFS_FS_H */
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 8d2e51bae2cb..d7f3e03a4010 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -408,6 +408,12 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
+ 	struct ntfs_mount_options *new_opts = fc->fs_private;
+ 	int ro_rw;
+ 
++	/* If ntfs3 is used as legacy ntfs enforce read-only mode. */
++	if (is_legacy_ntfs(sb)) {
++		fc->sb_flags |= SB_RDONLY;
++		goto out;
++	}
++
+ 	ro_rw = sb_rdonly(sb) && !(fc->sb_flags & SB_RDONLY);
+ 	if (ro_rw && (sbi->flags & NTFS_FLAGS_NEED_REPLAY)) {
+ 		errorf(fc,
+@@ -427,8 +433,6 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
+ 			fc,
+ 			"ntfs3: Cannot use different iocharset when remounting!");
+ 
+-	sync_filesystem(sb);
+-
+ 	if (ro_rw && (sbi->volume.flags & VOLUME_FLAG_DIRTY) &&
+ 	    !new_opts->force) {
+ 		errorf(fc,
+@@ -436,6 +440,8 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
+ 		return -EINVAL;
+ 	}
+ 
++out:
++	sync_filesystem(sb);
+ 	swap(sbi->options, fc->fs_private);
+ 
+ 	return 0;
+@@ -1730,7 +1736,7 @@ static const struct fs_context_operations ntfs_context_ops = {
+  * This will called when mount/remount. We will first initialize
+  * options so that if remount we can use just that.
+  */
+-static int ntfs_init_fs_context(struct fs_context *fc)
++static int __ntfs_init_fs_context(struct fs_context *fc)
  {
- 	struct folio *folio = page_folio(page);
- 	struct page *head = &folio->page;
--	struct lruvec *lruvec;
-+	struct lruvec *lruvec = folio_lruvec(folio);
- 	struct address_space *swap_cache = NULL;
- 	unsigned long offset = 0;
- 	int i, nr_dropped = 0;
-@@ -2908,8 +2908,6 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 		xa_lock(&swap_cache->i_pages);
- 	}
+ 	struct ntfs_mount_options *opts;
+ 	struct ntfs_sb_info *sbi;
+@@ -1778,6 +1784,11 @@ static int ntfs_init_fs_context(struct fs_context *fc)
+ 	return -ENOMEM;
+ }
  
--	/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
--	lruvec = folio_lruvec_lock(folio);
- 
- 	ClearPageHasHWPoisoned(head);
- 
-@@ -2942,7 +2940,6 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 
- 		folio_set_order(new_folio, new_order);
- 	}
--	unlock_page_lruvec(lruvec);
- 	/* Caller disabled irqs, so they are still disabled here */
- 
- 	split_page_owner(head, order, new_order);
-@@ -2961,7 +2958,6 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 		folio_ref_add(folio, 1 + new_nr);
- 		xa_unlock(&folio->mapping->i_pages);
- 	}
--	local_irq_enable();
- 
- 	if (nr_dropped)
- 		shmem_uncharge(folio->mapping->host, nr_dropped);
-@@ -3048,6 +3044,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 	int extra_pins, ret;
- 	pgoff_t end;
- 	bool is_hzp;
-+	struct lruvec *lruvec;
- 
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
-@@ -3159,6 +3156,14 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 
- 	/* block interrupt reentry in xa_lock and spinlock */
- 	local_irq_disable();
++static int ntfs_init_fs_context(struct fs_context *fc)
++{
++	return __ntfs_init_fs_context(fc);
++}
 +
-+	/*
-+	 * take lruvec's lock before freeze the folio to prevent the folio
-+	 * remains in the page cache with refcnt == 0, which could lead to
-+	 * find_get_entry enters livelock by iterating the xarray.
-+	 */
-+	lruvec = folio_lruvec_lock(folio);
-+
- 	if (mapping) {
- 		/*
- 		 * Check if the folio is present in page cache.
-@@ -3203,12 +3208,16 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		}
+ static void ntfs3_kill_sb(struct super_block *sb)
+ {
+ 	struct ntfs_sb_info *sbi = sb->s_fs_info;
+@@ -1800,10 +1811,20 @@ static struct file_system_type ntfs_fs_type = {
+ };
  
- 		__split_huge_page(page, list, end, new_order);
-+		unlock_page_lruvec(lruvec);
-+		local_irq_enable();
- 		ret = 0;
- 	} else {
- 		spin_unlock(&ds_queue->split_queue_lock);
- fail:
- 		if (mapping)
- 			xas_unlock(&xas);
+ #if IS_ENABLED(CONFIG_NTFS_FS)
++static int ntfs_legacy_init_fs_context(struct fs_context *fc)
++{
++	int ret;
 +
-+		unlock_page_lruvec(lruvec);
- 		local_irq_enable();
- 		remap_page(folio, folio_nr_pages(folio));
- 		ret = -EAGAIN;
++	ret = __ntfs_init_fs_context(fc);
++	/* If ntfs3 is used as legacy ntfs enforce read-only mode. */
++	fc->sb_flags |= SB_RDONLY;
++	return ret;
++}
++
+ static struct file_system_type ntfs_legacy_fs_type = {
+ 	.owner			= THIS_MODULE,
+ 	.name			= "ntfs",
+-	.init_fs_context	= ntfs_init_fs_context,
++	.init_fs_context	= ntfs_legacy_init_fs_context,
+ 	.parameters		= ntfs_fs_parameters,
+ 	.kill_sb		= ntfs3_kill_sb,
+ 	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+@@ -1821,9 +1842,14 @@ static inline void unregister_as_ntfs_legacy(void)
+ {
+ 	unregister_filesystem(&ntfs_legacy_fs_type);
+ }
++bool is_legacy_ntfs(struct super_block *sb)
++{
++	return sb->s_type == &ntfs_legacy_fs_type;
++}
+ #else
+ static inline void register_as_ntfs_legacy(void) {}
+ static inline void unregister_as_ntfs_legacy(void) {}
++bool is_legacy_ntfs(struct super_block *sb) { return false; }
+ #endif
+ 
+ 
 -- 
-2.25.1
+2.43.0
 
+
+--4fboor3uxgqjpnzm
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0002-ntfs3-add-legacy-ntfs-file-operations.patch"
+
+From 5e646f22f0e9d5268d902dfd33a39154c0b5f578 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 16 Apr 2024 12:20:50 +0200
+Subject: [PATCH 2/2] ntfs3: add legacy ntfs file operations
+
+To ensure that ioctl()s can't be used to circumvent write restrictions.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/ntfs3/dir.c     |  7 +++++++
+ fs/ntfs3/file.c    |  8 ++++++++
+ fs/ntfs3/inode.c   | 20 ++++++++++++++++----
+ fs/ntfs3/ntfs_fs.h |  2 ++
+ 4 files changed, 33 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
+index 5cf3d9decf64..263635199b60 100644
+--- a/fs/ntfs3/dir.c
++++ b/fs/ntfs3/dir.c
+@@ -616,4 +616,11 @@ const struct file_operations ntfs_dir_operations = {
+ 	.compat_ioctl   = ntfs_compat_ioctl,
+ #endif
+ };
++
++const struct file_operations ntfs_legacy_dir_operations = {
++	.llseek		= generic_file_llseek,
++	.read		= generic_read_dir,
++	.iterate_shared	= ntfs_readdir,
++	.open		= ntfs_file_open,
++};
+ // clang-format on
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 5418662c80d8..b73969e05052 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -1236,4 +1236,12 @@ const struct file_operations ntfs_file_operations = {
+ 	.fallocate	= ntfs_fallocate,
+ 	.release	= ntfs_file_release,
+ };
++
++const struct file_operations ntfs_legacy_file_operations = {
++	.llseek		= generic_file_llseek,
++	.read_iter	= ntfs_file_read_iter,
++	.splice_read	= ntfs_file_splice_read,
++	.open		= ntfs_file_open,
++	.release	= ntfs_file_release,
++};
+ // clang-format on
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index eb7a8c9fba01..d273eda1cf45 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -440,7 +440,10 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+ 		 * Usually a hard links to directories are disabled.
+ 		 */
+ 		inode->i_op = &ntfs_dir_inode_operations;
+-		inode->i_fop = &ntfs_dir_operations;
++		if (is_legacy_ntfs(inode->i_sb))
++			inode->i_fop = &ntfs_legacy_dir_operations;
++		else
++			inode->i_fop = &ntfs_dir_operations;
+ 		ni->i_valid = 0;
+ 	} else if (S_ISLNK(mode)) {
+ 		ni->std_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
+@@ -450,7 +453,10 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+ 	} else if (S_ISREG(mode)) {
+ 		ni->std_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
+ 		inode->i_op = &ntfs_file_inode_operations;
+-		inode->i_fop = &ntfs_file_operations;
++		if (is_legacy_ntfs(inode->i_sb))
++			inode->i_fop = &ntfs_legacy_file_operations;
++		else
++			inode->i_fop = &ntfs_file_operations;
+ 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
+ 							      &ntfs_aops;
+ 		if (ino != MFT_REC_MFT)
+@@ -1614,7 +1620,10 @@ struct inode *ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 
+ 	if (S_ISDIR(mode)) {
+ 		inode->i_op = &ntfs_dir_inode_operations;
+-		inode->i_fop = &ntfs_dir_operations;
++		if (is_legacy_ntfs(inode->i_sb))
++			inode->i_fop = &ntfs_legacy_dir_operations;
++		else
++			inode->i_fop = &ntfs_dir_operations;
+ 	} else if (S_ISLNK(mode)) {
+ 		inode->i_op = &ntfs_link_inode_operations;
+ 		inode->i_fop = NULL;
+@@ -1623,7 +1632,10 @@ struct inode *ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 		inode_nohighmem(inode);
+ 	} else if (S_ISREG(mode)) {
+ 		inode->i_op = &ntfs_file_inode_operations;
+-		inode->i_fop = &ntfs_file_operations;
++		if (is_legacy_ntfs(inode->i_sb))
++			inode->i_fop = &ntfs_legacy_file_operations;
++		else
++			inode->i_fop = &ntfs_file_operations;
+ 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
+ 							      &ntfs_aops;
+ 		init_rwsem(&ni->file.run_lock);
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 184c8bc76b92..5f4d288c6adf 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -493,6 +493,7 @@ struct inode *dir_search_u(struct inode *dir, const struct cpu_str *uni,
+ 			   struct ntfs_fnd *fnd);
+ bool dir_is_empty(struct inode *dir);
+ extern const struct file_operations ntfs_dir_operations;
++extern const struct file_operations ntfs_legacy_dir_operations;
+ 
+ /* Globals from file.c */
+ int ntfs_getattr(struct mnt_idmap *idmap, const struct path *path,
+@@ -507,6 +508,7 @@ long ntfs_compat_ioctl(struct file *filp, u32 cmd, unsigned long arg);
+ extern const struct inode_operations ntfs_special_inode_operations;
+ extern const struct inode_operations ntfs_file_inode_operations;
+ extern const struct file_operations ntfs_file_operations;
++extern const struct file_operations ntfs_legacy_file_operations;
+ 
+ /* Globals from frecord.c */
+ void ni_remove_mi(struct ntfs_inode *ni, struct mft_inode *mi);
+-- 
+2.43.0
+
+
+--4fboor3uxgqjpnzm--
 
