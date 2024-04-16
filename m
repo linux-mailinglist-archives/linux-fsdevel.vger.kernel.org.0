@@ -1,57 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-17076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402A18A75C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 22:34:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6C18A75FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 22:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710621C214EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 20:34:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56638B224DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 20:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272D239FD7;
-	Tue, 16 Apr 2024 20:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582B46996A;
+	Tue, 16 Apr 2024 20:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ieY/hx57"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MeZrTq7d"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29872231C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 20:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EE05A4D8;
+	Tue, 16 Apr 2024 20:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713299693; cv=none; b=Apmm5gWtOEM9C+dy7oDcPiyzIYFuh6xAwXXHL/EhOJqeHTMUV+euIJTt9+IofGUKs9NTJUvSF4MKJKWGQ7SdvZDvIvy0KKw58g+TGnddw+xCYNP0l50+MIGlW7YN/uKL4IYQWKcVXGvvH+Qf7eY2rLWeMjPXiy6bzSHZU4Xh9U0=
+	t=1713300875; cv=none; b=QJ05PsZ+pB3/UhwOjurEObKJJevfbgbdC28XfD3lPsFK4CTH7q94SgNLyBRT7cZ5l5qXlIhfH/dA4RpaOYaynjXEiCL1lm4dLeHffwnHaCblFYnZtPG0aMfr1wSu9zZiL4JwFZsCnIx6yNK8XHIPNpODqXU5T1ETk1yso72Aub0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713299693; c=relaxed/simple;
-	bh=j4GqYjyfZYMKCoR1MV7vDkfNuAN6ZiWzdoEcn+XTNK0=;
+	s=arc-20240116; t=1713300875; c=relaxed/simple;
+	bh=znt09ZKf/WSyDQZxpbQsoP4CergUzZbVINbdKDx3s4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZbEFAGrAx/qivo2F/fxAVxhLnQKV5mtpchAbT+Q1G6MQ3o/+m/LWkCR7IivMxQxj0pdLc6pAaHy5m4L3XgScBBh59ZnWleoZWYR5OtjxCJk3aNW33vZlOxnUjs0WIPAGfdmp6hSLuB8zQuZvdRND5ED2ZWUOp3ZSKP9yuHrxj5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ieY/hx57; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=PrD9E5qyvLMeaTRwCLzi8anKs/zfe7rUufI8w65HbmYMfVfX9FxDVlRc8CKT8tmG/p/x1NQDnYO0GTOkWefRReMFiLqgpzoIQE/nWHiwd7FKDl2jGB8qb/CrS7MhvhGV+cyOY6V85Fsn8P69204FqBeSENhnu91B0tPEighXwus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MeZrTq7d; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9DeQTmM8FoZNqg2QsrAj0oLeScI3DUeKZM3w+WOh2DA=; b=ieY/hx57joU5EdwlOlrqqW2fzS
-	Vh0zmd+5+y6mj5+IZKFuprw5qm9rny7BxZly+rtPy4LRTuTsL8Jko/MQVRFUe51CTHVfHjQmrsIv7
-	dVf0g9iWcHYn3kMchmYjf32wgYEN2o6/a6MECpicul3POveIt+q3kQvs8CurC6vs91lSNUkVJ03kJ
-	XMybyV5a0h7DuVpKiQOVNiAIwFe5ZYiShrSZEUwF8keLBL2D23ePVVDPVoXo08+nHxrhrcMc3/T5s
-	6xQB/GGo5v+RlCLIgkzBR1PcOpR4Rrtnj6PDcz4rwgLXkd+hslU5kO+2DIo7Uq6mxUwpW2fklL3Nn
-	B3VtDJtw==;
+	bh=CvfKII9Ey67SD+8qh7yMsDVcRpvNqlMhWe2P/D6dDSQ=; b=MeZrTq7dInM0fW1d4LyApMradW
+	diRVdeeO0287HG7lWB08jMShf06reiRYo6cQXffE+rHrAMCkn52vV9rcs/rMSoiBdQr/Ek+ws/3Kj
+	nUuOPSxy3MBHZjJQgaT+4uqXcXiuVpVymhp9M7I4sCcOk789C3LKz02aK8WBtuxZOVCkCE+5eSeMa
+	z31e0OtWV0T8rXKhEqznvlezTzD0YWbfI21SDNJ4E08jsIzRslNWZ/0mcn5w+7lvsSuGAIYy9PsWL
+	9YSb0glxtmA4yR/KzKYB4I//Tkz0NkzU3fv/gQOj0TSg8Qe7NTWTLhjSappGg9728TN0X/lNjDGOm
+	WowEWrJw==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rwpVv-00000001Mc1-3ICT;
-	Tue, 16 Apr 2024 20:34:47 +0000
-Date: Tue, 16 Apr 2024 21:34:47 +0100
+	id 1rwpmk-00000001OPN-2QDc;
+	Tue, 16 Apr 2024 20:52:10 +0000
+Date: Tue, 16 Apr 2024 21:52:10 +0100
 From: Matthew Wilcox <willy@infradead.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
-	kernel-team@fb.com
-Subject: Re: [LSF/MM/BPF TOPIC] Changing how we do file system maintenance
-Message-ID: <Zh7g5ws68IkJ1vo3@casper.infradead.org>
-References: <20240416180414.GA2100066@perftesting>
+To: Sourav Panda <souravpanda@google.com>
+Cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org,
+	akpm@linux-foundation.org, mike.kravetz@oracle.com,
+	muchun.song@linux.dev, rppt@kernel.org, david@redhat.com,
+	rdunlap@infradead.org, chenlinxuan@uniontech.com,
+	yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com,
+	bhelgaas@google.com, ivan@cloudflare.com, pasha.tatashin@soleen.com,
+	yosryahmed@google.com, hannes@cmpxchg.org, shakeelb@google.com,
+	kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com,
+	adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com,
+	surenb@google.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, weixugc@google.com
+Subject: Re: [PATCH v10] mm: report per-page metadata information
+Message-ID: <Zh7k-jFRTe9RN2Lr@casper.infradead.org>
+References: <20240416201335.3551099-1-souravpanda@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,25 +70,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240416180414.GA2100066@perftesting>
+In-Reply-To: <20240416201335.3551099-1-souravpanda@google.com>
 
-On Tue, Apr 16, 2024 at 02:04:14PM -0400, Josef Bacik wrote:
-> I would like to propose we organize ourselves more akin to the other
-> large subsystems.  We are one of the few where everybody sends their
-> own PR to Linus, so oftentimes the first time we're testing eachothers
-> code is when we all rebase our respective trees onto -rc1.  I think
-> we could benefit from getting more organized amongst ourselves, having
-> a single tree we all flow into, and then have that tree flow into Linus.
+On Tue, Apr 16, 2024 at 08:13:35PM +0000, Sourav Panda wrote:
+> +++ b/include/linux/mmzone.h
+> @@ -217,6 +217,10 @@ enum node_stat_item {
+>  	PGDEMOTE_KSWAPD,
+>  	PGDEMOTE_DIRECT,
+>  	PGDEMOTE_KHUGEPAGED,
+> +	NR_MEMMAP,		/* Page metadata size (struct page and page_ext)
+> +				 * in pages
+> +				 */
 
-This sounds like a great idea to me.  As someone who does a lot of
-changes that touch a lot of filesystems, I'd benefit from this model.
-It's very frustrating to be told "Oh, submit patches against tree X
-which isn't included in linux-next".
-
-A potential downside is that it increases the risk of an ntfs3 style
-disaster where the code is essentially dumped on all other fs maintainers.
-But I like the idea of a maintainer group which allows people to slide
-in and out of the "patch pumpkin" role.  Particularly if it lets more
-junior developers take a turn at wrangling patches.
+This is not how we write comments in the kernel ...
 
 
