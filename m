@@ -1,122 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-17008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A860B8A605F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 03:34:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCA58A6068
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 03:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447D11F21A3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:34:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A4CA281C10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 01:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815EA6FC7;
-	Tue, 16 Apr 2024 01:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACFB7484;
+	Tue, 16 Apr 2024 01:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aFDOW72q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125487464;
-	Tue, 16 Apr 2024 01:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E49C81F;
+	Tue, 16 Apr 2024 01:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713231288; cv=none; b=DH1w5mCBmGVlWiY7qkCS5ogKLAxfVvSFAz/OvOs7piJNI5o1oTULkuIBLKJqU/QUS5Omj4v9KGUVhT0aFbkNgJkshIkSna1mArin4FTO1kXd5LILLN6QnJh3MlqCrlFeZdlj+/GlM7ZO+tXb1w5fnXD3sq7IyF/lruS7hWyIr8Q=
+	t=1713231362; cv=none; b=Imjdvu+KMn50lWQXdJ0unLpdL4soV5rqEOmQfKq+egYRRsuqkbera42MR8QZVFhy0kUqiAxjvoE31e2txoyGmDBNXSVGea386W/wJTt8HxE+fFkUpLr6fXvu/X/NaGj6UWy1QEgYykuaP7RN1Pn09zgTGW94vMgKnHoEWr1na/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713231288; c=relaxed/simple;
-	bh=mJem2Ufbl9Ew2/f7xgNNLsKEvT9e4WkGZGTdtTMWaTk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XODnLMxgmGM7K6ZPj838D+DoSbZjK66zHagpPxmZwwcj3Hh+BaGaKORCr5jcO4wkP/r7y9yQEdV29qC77+lr3qLCCh2ysSqtqKXxPiJln1zL/r/jXXgLbgFVPfUkP7zA65Ms87NVdIQaeS8eyJ14D5xXOlqm8xpkdMmViYGOuaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4VJRQJ1YQ9z1ws14;
-	Tue, 16 Apr 2024 09:33:44 +0800 (CST)
-Received: from kwepemi500009.china.huawei.com (unknown [7.221.188.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2049E1400D5;
-	Tue, 16 Apr 2024 09:34:42 +0800 (CST)
-Received: from localhost (10.175.127.227) by kwepemi500009.china.huawei.com
- (7.221.188.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 16 Apr
- 2024 09:34:41 +0800
-Date: Tue, 16 Apr 2024 09:35:20 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: <willy@infradead.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>, <houtao1@huawei.com>,
-	<yangerkun@huawei.com>
-Subject: Re: [PATCH] xarray: inline xas_descend to improve performance
-Message-ID: <20240416013520.GA506789@ceph-admin>
-References: <20240415012136.3636671-1-leo.lilong@huawei.com>
- <20240415131053.051e60135eacf281df6921f6@linux-foundation.org>
+	s=arc-20240116; t=1713231362; c=relaxed/simple;
+	bh=jsmBFiYdJ39p4AypnhPt3gVPTdgbWiZEaDsPwo+slsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LABVkaIpLp586EnC5Qm+ny/LdcCNdTUmvrjDMaJAK7zKyTWTiE76DEq9oUvru3KhC1ayz/vU9lSkmQHA02an/bYlqdN4l3RngALK1wNp16ELPHcEhVHFwbt46rAQlMMkzu67F+4o2WWqllEVb8/9ubFVC9qTuTa7suZrWnkNerw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aFDOW72q; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Skx+tWSgaqX1mfAd0brbPN+dNPOOuoIWRe8tqmg9+LI=; b=aFDOW72qa1X3x4T+c2iWWA9TlW
+	GA7brWjDSCVTdtzXKiDUwxpgxm4PPrFE7vl41OKWKh+CCk4LwpOcxVMKIKNPz6WW9sXNeNOKseI6c
+	N44wNxjJweVL/Y9kR0PjIZBtgUb81EySL63ClnFcGxZrFxN8uDxIGzX6HNIIOzqiQVfO3EWDnxm/N
+	9A7yyGQRDuy8x7oZmOq5xjRRJ/tmZedksRxsVB0myYcPZACStuTAgvbkNmOQlkZDK7noBVZzWmEkB
+	swHBzq1BnhjrQckigMCU8aviNzoxfDIVN/zCi4pKX8MebF6H/v/RxDp7q1aumPFaAdP+wAaHeBXo4
+	ba5KPXsw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rwXjn-00D8Ru-2Y;
+	Tue, 16 Apr 2024 01:35:55 +0000
+Date: Tue, 16 Apr 2024 02:35:55 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-s390@vger.kernel.org
+Cc: jack@suse.cz, hch@lst.de, brauner@kernel.org, axboe@kernel.dk,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com,
+	Yu Kuai <yukuai1@huaweicloud.com>
+Subject: Re: [PATCH vfs.all 15/26] s390/dasd: use bdev api in dasd_format()
+Message-ID: <20240416013555.GZ2118490@ZenIV>
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <20240406090930.2252838-16-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240415131053.051e60135eacf281df6921f6@linux-foundation.org>
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemi500009.china.huawei.com (7.221.188.199)
+In-Reply-To: <20240406090930.2252838-16-yukuai1@huaweicloud.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Apr 15, 2024 at 01:10:53PM -0700, Andrew Morton wrote:
-> On Mon, 15 Apr 2024 09:21:36 +0800 Long Li <leo.lilong@huawei.com> wrote:
+On Sat, Apr 06, 2024 at 05:09:19PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> > The commit 63b1898fffcd ("XArray: Disallow sibling entries of nodes")
-> > modified the xas_descend function in such a way that it was no longer
-> > being compiled as an inline function, because it increased the size of
-> > xas_descend(), and the compiler no longer optimizes it as inline. This
-> > had a negative impact on performance, xas_descend is called frequently
-> > to traverse downwards in the xarray tree, making it a hot function.
-> > 
-> > Inlining xas_descend has been shown to significantly improve performance
-> > by approximately 4.95% in the iozone write test.
-> > 
-> >   Machine: Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz
-> >   #iozone i 0 -i 1 -s 64g -r 16m -f /test/tmptest
-> > 
-> > Before this patch:
-> > 
-> >        kB    reclen    write   rewrite     read    reread
-> >  67108864     16384  2230080   3637689 6 315197   5496027
-> > 
-> > After this patch:
-> > 
-> >        kB    reclen    write   rewrite     read    reread
-> >  67108864     16384  2340360   3666175  6272401   5460782
-> > 
-> > Percentage change:
-> >                        4.95%     0.78%   -0.68%    -0.64%
-> > 
-> > This patch introduces inlining to the xas_descend function. While this
-> > change increases the size of lib/xarray.o, the performance gains in
-> > critical workloads make this an acceptable trade-off.
-> > 
-> > Size comparison before and after patch:
-> > .text		.data		.bss		file
-> > 0x3502		    0		   0		lib/xarray.o.before
-> > 0x3602		    0		   0		lib/xarray.o.after
-> > 
-> > ...
-> >
-> > --- a/lib/xarray.c
-> > +++ b/lib/xarray.c
-> > @@ -200,7 +200,7 @@ static void *xas_start(struct xa_state *xas)
-> >  	return entry;
-> >  }
-> >  
-> > -static void *xas_descend(struct xa_state *xas, struct xa_node *node)
-> > +static inline void *xas_descend(struct xa_state *xas, struct xa_node *node)
-> >  {
-> >  	unsigned int offset = get_offset(xas->xa_index, node);
-> >  	void *entry = xa_entry(xas->xa, node, offset);
+> Avoid to access bd_inode directly, prepare to remove bd_inode from
+> block_devcie.
 > 
-> I thought gcc nowadays treats `inline' as avisory and still makes up
-> its own mind?
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> ---
+>  drivers/s390/block/dasd_ioctl.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Perhaps we should use __always_inline here?
+> diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
+> index 7e0ed7032f76..c1201590f343 100644
+> --- a/drivers/s390/block/dasd_ioctl.c
+> +++ b/drivers/s390/block/dasd_ioctl.c
+> @@ -215,8 +215,9 @@ dasd_format(struct dasd_block *block, struct format_data_t *fdata)
+>  	 * enabling the device later.
+>  	 */
+>  	if (fdata->start_unit == 0) {
+> -		block->gdp->part0->bd_inode->i_blkbits =
+> -			blksize_bits(fdata->blksize);
+> +		rc = set_blocksize(block->gdp->part0, fdata->blksize);
 
-Yes, I agree with you, I will send a new version. thanks!
+Could somebody (preferably s390 folks) explain what is going on in
+dasd_format()?  The change in this commit is *NOT* an equivalent
+transformation - mainline does not evict the page cache of device.
+
+Is that
+	* intentional behaviour in mainline version, possibly broken
+by this patch
+	* a bug in mainline accidentally fixed by this patch
+	* something else?
+
+And shouldn't there be an exclusion between that and having a filesystem
+on a partition of that disk currently mounted?
 
