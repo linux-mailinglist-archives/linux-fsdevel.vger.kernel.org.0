@@ -1,146 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-17039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B158A6B88
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 14:55:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC898A6BF1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 15:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4BD5B22713
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 12:55:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A1801C216AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Apr 2024 13:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AE412BF1F;
-	Tue, 16 Apr 2024 12:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHT+3klZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EA712C485;
+	Tue, 16 Apr 2024 13:14:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A20A5FEE3;
-	Tue, 16 Apr 2024 12:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B09E12BF29
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 13:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713272143; cv=none; b=noHRNfGLAbQuYaojFjqTeQgfRg2SZK62yGb1OmdSfFcFpaMmfKOAZO6pbDgYU9xYe1NqqbG0IJQMrv3Ozh9bz5nVswpIhYQlDT/EAD13qfryo4cGoVkqLL7+KDEUlzCVd8TR3BxrQ7nzSv2MakcE9c6d45c/1rSFuxh0Xca6e9Q=
+	t=1713273262; cv=none; b=KJH1rNZrlwt03LmHvKhYFF3nEvpmRTaLKDKJ2Wq0iHE2EEmEZkoPHqW0vkKZ85lfww4aNDVNBdJqgF5RRO8RVtb4BB6JQjc2ggC3/1KfO8NVymK+4HaL1lK9l5cPXXAV6ufbeQfinACl1v+CW1iVR43w/CBT5Vd4iNaJqhoKpdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713272143; c=relaxed/simple;
-	bh=vS50xrw5prwzj+VNQBlQu3Y5Io9p8bmnxxpzPj+x/Vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RO52COkF+s/cNv4tmHKEUIDfp0Ik/+4eUGpLfNfj6SpAog0bA2mrXH55Ity5Sskn5HmMfnLf7oNn631hjtMH6N1coqCiOzg0LjSuv1nYOW/ns0J6VbXKpHWtPvD4vuj/llcVpOzBCTgYmCIZbomHGUUjILF7P2cjP0Fbc0DWoe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHT+3klZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06064C2BD10;
-	Tue, 16 Apr 2024 12:55:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713272143;
-	bh=vS50xrw5prwzj+VNQBlQu3Y5Io9p8bmnxxpzPj+x/Vw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BHT+3klZ7SSMK9w5c++xbc6dBTQiAJ15T8aUAzrEzEyS8TGK+mBkp+Mjjrb7s6H46
-	 yc0BaGFcO6BO5c/HNtHeZQPsJSmMtcmIplh5mzzHhbqFiDoBXjqf7OplY20brwHPYM
-	 vjWmkofxRZLgD7IsaN1NBftoz4tMKK3sIcNNjhURja2Z3T4hBhGJT6ixRz+slWDTyb
-	 T7POWEtN7URTTkwJMMydiv502MCDXvrcTC3aN+/ObM4AQZJ2zsfuL/saoSXx+FoZCW
-	 EUR6IpZZb2pCkFvzkRp2xpZTW1i3GMwd4OieQoHt3yXiwJgTvLu9UB/er9PTLur/e4
-	 EAKeOJEXrQ7/w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1rwiLe-0000000037N-12tc;
-	Tue, 16 Apr 2024 14:55:42 +0200
-Date: Tue, 16 Apr 2024 14:55:42 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Anton Altaparmakov <anton@tuxera.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	"ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
-	Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-	"linux-ntfs-dev@lists.sourceforge.net" <linux-ntfs-dev@lists.sourceforge.net>
-Subject: Re: [PATCH 2/2] ntfs3: remove warning
-Message-ID: <Zh51TvFSlXhTGPJy@hovoldconsulting.com>
-References: <Zhz5S3TA-Nd_8LY8@hovoldconsulting.com>
- <Zhz_axTjkJ6Aqeys@hovoldconsulting.com>
- <8FE8DF1E-C216-4A56-A16E-450D2AED7F5E@tuxera.com>
- <Zh0SicjFHCkMaOc0@hovoldconsulting.com>
- <20240415-warzen-rundgang-ce78bedb5f19@brauner>
- <CAHk-=whPTEYv3F9tgvJf-OakOxyGw2jzRVD0BMkXmC5ANPj0YA@mail.gmail.com>
- <Zh1MCw7Q0VIKrrMi@hovoldconsulting.com>
- <CAHk-=whN3V4Jzy+Mv8UZGTJ5VEk_ihCS8tu3VskW-HCfBg6r=g@mail.gmail.com>
- <Zh1Qa2aB2Dg_-mW4@hovoldconsulting.com>
- <20240416-genutzt-bestleistung-f76707a9ddba@brauner>
+	s=arc-20240116; t=1713273262; c=relaxed/simple;
+	bh=0h0/p87CiwSlulYJ7Vq9HEXjOCO3hXlKliBnh07+Rj0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kFy29nCVKDDw9ewV3DwlcJUrCGCxilY+MSfuRPOXO0JF/EF2+UcD47Jg3xs7Cbfx2OP3jDF27s8L8e5RRkLTrhCinGvT13aZaHQArPw/2BqdMPEWbL4tO/VsWGonuQTCHIvUzhaz6ogsnLUwtTEA0+6LkQcl2bPDYehe/kWSZYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7cc7a6a04d9so546576739f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 06:14:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713273260; x=1713878060;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aGftuxyuYCT1hAdzMTqOM9zYvkUin2a2cUCJ3awfpHY=;
+        b=nyvtwYg33JRbgAZF45+mt9L6TZdBUIB1DWZyzYjwXAf4km+rdcGbfkn11F9OYZDZJK
+         1wRe1Q46hrZF22eCiLBGK+ALtMX3k6h9tIN3sc/qHIXHD3TsxQ2NDXCebBtn9tG9lP9g
+         VV0FbklMHQ0zb0zGDxfiaBaX6RhjhW7gUtGdILLYprw/e7FGca+hd9XyWm3O9X3/xnSR
+         A+bVYQhyTFOBKEXz1MRtmHqRDwSW/K/UqAhrFDx/swHMSmCZvdyJdolPRON2bPsLgRNx
+         9SRGVsmsVjS6FY9vuaK+USO6gzuTYJwen8O1vovwwyaZSqKcn6R8oYRp3xY2hQ9Wx4Qf
+         aKdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhfNbrot1fuNq3jk4O11xVu+1wiuRwWpzWsVm4M9/94mks53N423UrEhURm7GBtda964WNkJ4L/eK1dq1VQmW3oh5czpa19zhu7WMMjw==
+X-Gm-Message-State: AOJu0YzArZ0xG709uz2EvS+48HuOOinqv1DlTW0Y4f0d3+8mfCrgX1mI
+	+lfmPX9WKFMslTOgbFtZLYbjlxxWLWwiO00xeaqZYaYo1b3k9matC2id/MJaxxGJopb7pOOHKDJ
+	VUREL/Cg7jusMDSFW/0mcE8IYohOXghIMry+/avH5GO4OnhHGT7gM6XA=
+X-Google-Smtp-Source: AGHT+IGUbrGbiGRAhFv1LD6mc/kqP+MY7ym/nVA3dB34WCSzC+iOKcFFdWtqXb9a3XXiNaFYF/DpMP7esiJLZPT3SMO4xAW910UG
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240416-genutzt-bestleistung-f76707a9ddba@brauner>
+X-Received: by 2002:a05:6638:3786:b0:482:ffee:c6e6 with SMTP id
+ w6-20020a056638378600b00482ffeec6e6mr659468jal.3.1713273260563; Tue, 16 Apr
+ 2024 06:14:20 -0700 (PDT)
+Date: Tue, 16 Apr 2024 06:14:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000196a39061636840a@google.com>
+Subject: [syzbot] [btrfs?] KMSAN: kernel-infoleak in btrfs_ioctl_logical_to_ino
+ (2)
+From: syzbot <syzbot+510a1abbb8116eeb341d@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 16, 2024 at 12:38:56PM +0200, Christian Brauner wrote:
-> On Mon, Apr 15, 2024 at 06:06:03PM +0200, Johan Hovold wrote:
+Hello,
 
-> > Ah, right, I forgot about CONFIG_NTFS_RW as I've never enabled it.
-> > 
-> > Judging from the now removed Kconfig entry perhaps not that many people
-> > did:
-> > 
-> > 	The only supported operation is overwriting existing files,
-> > 	without changing the file length.  No file or directory
-> > 	creation, deletion or renaming is possible. 
-> > 
-> > but I guess it still makes my argument above mostly moot.
-> > 
-> > At least if we disable write support in ntfs3 by default for now...
-> 
-> I think we can disable write support in ntfs3 for now. I've picked up
-> the patch to make ntfs3 serve I sent some time ago that Johan tested
-> now.
+syzbot found the following issue on:
 
-Note that I actually meant that write support should be disabled
-completely in ntfs3 for now.
+HEAD commit:    cef27048e5c2 Merge tag 'bcachefs-2024-04-15' of https://ev..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a1fec7180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=87a805e655619c64
+dashboard link: https://syzkaller.appspot.com/bug?extid=510a1abbb8116eeb341d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-After this first encounter I have zero confidence in that driver and
-pushing people towards using it (by removing the old, read-only one) is
-just gonna result in further corrupted filesystems. At least make sure
-it can't modify anything by default and mark write-support as
-experimental and broken or something as that's apparently what it is.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> The only thing left is to disable write support for ntfs3 as legacy ntfs
-> driver for now. I took a stab at this. The following two patches
-> I'm appending _should_ be enough iiuc. Johan, please take a look and
-> please test.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fce0439cf562/disk-cef27048.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/99540e71cf72/vmlinux-cef27048.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/65fbfc2c486f/bzImage-cef27048.xz
 
-I skimmed them and gave them a quick spin. It seems that not specifying
-either "ro" or "rw" in fstab now results in a ro mount, but I can still
-specify "rw" explicitly (in fstab or command line) and end up with:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+510a1abbb8116eeb341d@syzkaller.appspotmail.com
 
-	/dev/nvme0n1p3 on /mnt/windows type ntfs (rw,relatime,uid=0,gid=0,iocharset=iso8859-1)
+BTRFS info (device loop1): first mount of filesystem c9fe44da-de57-406a-8241-57ec7d4412cf
+BTRFS info (device loop1): using crc32c (crc32c-generic) checksum algorithm
+BTRFS info (device loop1): using free-space-tree
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:40
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ _copy_to_user+0xbc/0x110 lib/usercopy.c:40
+ copy_to_user include/linux/uaccess.h:191 [inline]
+ btrfs_ioctl_logical_to_ino+0x440/0x750 fs/btrfs/ioctl.c:3499
+ btrfs_ioctl+0x714/0x1260
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:904 [inline]
+ __se_sys_ioctl+0x261/0x450 fs/ioctl.c:890
+ __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:890
+ x64_sys_call+0x1883/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:17
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-For obvious reasons, I did not dare listing the root directory or write
-anything, but it looks like it's not read-only.
+Uninit was created at:
+ __kmalloc_large_node+0x231/0x370 mm/slub.c:3921
+ __do_kmalloc_node mm/slub.c:3954 [inline]
+ __kmalloc_node+0xb07/0x1060 mm/slub.c:3973
+ kmalloc_node include/linux/slab.h:648 [inline]
+ kvmalloc_node+0xc0/0x2d0 mm/util.c:634
+ kvmalloc include/linux/slab.h:766 [inline]
+ init_data_container+0x49/0x1e0 fs/btrfs/backref.c:2779
+ btrfs_ioctl_logical_to_ino+0x17c/0x750 fs/btrfs/ioctl.c:3480
+ btrfs_ioctl+0x714/0x1260
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:904 [inline]
+ __se_sys_ioctl+0x261/0x450 fs/ioctl.c:890
+ __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:890
+ x64_sys_call+0x1883/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:17
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Using just my naive temporary hack from yesterday:
+Bytes 40-65535 of 65536 are uninitialized
+Memory access of size 65536 starts at ffff888045a40000
 
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 8d2e51bae2cb..26be6c6d1032 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -1177,6 +1177,9 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
-        sb->s_xattr = ntfs_xattr_handlers;
-        sb->s_d_op = options->nocase ? &ntfs_dentry_ops : NULL;
+CPU: 0 PID: 5428 Comm: syz-executor.1 Not tainted 6.9.0-rc4-syzkaller-00028-gcef27048e5c2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+=====================================================
 
-+       ntfs_warn(sb, "ntfs3 driver is broken, mounting read only");
-+       sb->s_flags |= SB_RDONLY;
-+
-        options->nls = ntfs_load_nls(options->nls_name);
-        if (IS_ERR(options->nls)) {
-                options->nls = NULL;
 
-seems to prevent also explicit rw mounts (but judging from your patches
-it is not necessarily sufficient to prevent all modifications).
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Johan
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
