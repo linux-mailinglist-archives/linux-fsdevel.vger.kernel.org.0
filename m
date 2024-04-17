@@ -1,57 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-17185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1496F8A8A92
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:57:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AAEA8A8AAD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E7528438E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:57:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302141F251F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB48173355;
-	Wed, 17 Apr 2024 17:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673CF173339;
+	Wed, 17 Apr 2024 17:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qIO3xfIy"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vgcdcrxB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD91172BCA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 17:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86382175558
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 17:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713376623; cv=none; b=c6Zx8OFqzzTxaWTYgR08aGECDt+L+98IlJ0HScKb0/EjekSvFA30D1SM/IcdwpVzu42bLyIDiiusjJ2mXvAz5BXykD4GludCbogjBadXvnn/zjx6/6akLg5HmQ21dk00frpqFhmlWMJJXkz9JNhFd7HPfDasxK3eaDBa5kWtTaE=
+	t=1713376626; cv=none; b=jCTVY1jeXHVTcJco92ILTj5J2hnq9yguKKAWfY+SFzFbw0+qxXTSVoLHnw9gdiaM82R0YcIk1R0Gu+12Q0+WAuCk+M9PCTpC9PVxnxlB89yDk9BcFwS3OFxdk4YPNJeA/xclcpvIzXCE9hxYxSw2vvjK2Hthl7+GJMSuAdMqABU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713376623; c=relaxed/simple;
-	bh=n57jzba+Gfbvg1uOXbMVNTMAFabp2509sfnvSq/Uyew=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RswaAj007LM30Yz2D3Bg+vSTgWOW5Zvi31a38nIVsom6v1KAfZgpuBtmprk1u3y+a7M+ple5iIKgty0+vgZhFBmxYtfvvVpQoJvFHXN7TH4bVZVJrHD5iMvZNg3ozqzo0fSsh6X2Bpcpd/H2lXvOUGme8CWfE8CtwhE4DzBLhZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qIO3xfIy; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1713376626; c=relaxed/simple;
+	bh=0pgZAWjuqFQyQjPX6F27SlJdStSQ28iBvPXL+HBVAnQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P7T7JgMD+Qu4y6VWQ7TvfpSdWwjk/n7r3dJooxDDJnRiiB2S3dKy0wDsqlWQ+Urf9VhNAIiCJ+t02c+ovBgc7hI4aiv4uhdzp55hIig5RQwJhb4IVMixo0aASl4L1ddDHxZDKzxphqOJplZqLepBNis3z+b7cuccgnGC/EVCZ08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vgcdcrxB; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=368AqJWBal9TUQCrUQFqs/NdTKLLVAvptgY7mzFVvjc=; b=qIO3xfIyPpkuK2l2RyiBv21xIs
-	tvZlS98dv77eWMXSrElKvZCuecb9jw6gUbCU70TOTH7+J+90Y8HRJre2Lr1GUsngTJGQDRv250U+6
-	uo4CVS11Av2kdpz1zFiOaIzv5QgPT1eK4DsaUF01rFRkzh83OsKnUsKSOf5zZeG517u8IBlg10WmW
-	wqcfygtVoKs2qVJ+iqpxYqNanPBwCVDT2u8aZG215fsUnn7Y+v0tlzlLU81YGW+MgX1cZjPxq3BZu
-	13qp//0Y2Z4t/HJiGo+Wkq7vF0bNG65eryB5k5P7HY1btn4ok9yDnjP2R4iqHynsntm+iZJgAcNKF
-	u+XUY7iQ==;
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description;
+	bh=tuAP8Pj11A6vSLLksQ3sdzEDeykXyvIK9phb2ySpPEM=; b=vgcdcrxBtHehy2RcT2TwJyfETJ
+	E/z8u0bmwPu/oXYtLIDVeNhVOh/PUwR2G39v7IibHpQ3ugGAfsXUCempOsHw9DSV19xo+Ez2GlGK/
+	Htm8CLQNS3MUUnROGh1dLGBeXsKPzgOiiuZT709kDd0XkoLUq+B1wrfiyQpeilGtG0h9k0zAGWiOy
+	D9ZHjRhb0+U+2ikdBj10dbP75RkJLF/pUEuPHI8XO4nPjaAr5OIzfDwaIIfufk2YlXA+lo0w8fc1k
+	E7DeKeYZx/63gkfigLNodpMoY5wnkMqYKwBg145CThoIJWgR/J5eWigeo/25e/x40nL15isAlzW8I
+	BWnO3Yag==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rx9Wm-00000003Qsf-3GW3;
+	id 1rx9Wm-00000003Qsh-3mnh;
 	Wed, 17 Apr 2024 17:57:00 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Dave Kleikamp <shaggy@kernel.org>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	jfs-discussion@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 00/13] JFS folio conversion
-Date: Wed, 17 Apr 2024 18:56:44 +0100
-Message-ID: <20240417175659.818299-1-willy@infradead.org>
+Subject: [PATCH v2 01/13] jfs: Convert metapage_read_folio to use folio APIs
+Date: Wed, 17 Apr 2024 18:56:45 +0100
+Message-ID: <20240417175659.818299-2-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240417175659.818299-1-willy@infradead.org>
+References: <20240417175659.818299-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,43 +63,106 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patchset removes uses of struct page from the I/O paths of JFS.
-write_begin and write_end are still passed a struct page, but they convert
-to a folio as their first thing.  The logmgr still uses a struct page,
-but I think that's one we actually don't want to convert since it's
-never inserted into the page cache.
+Use bio_add_folio_nofail() as we just allocated the bio and know
+it cannot fail.  Other than that, this is a 1:1 conversion from
+page APIs to folio APIs.
 
-I've included the removal of i_blocks_per_page() in this series as JFS
-is the last user.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/jfs/jfs_metapage.c | 35 +++++++++++++----------------------
+ 1 file changed, 13 insertions(+), 22 deletions(-)
 
-Tested with xfstests; some failures observed, but they don't seem to be
-related to these patches.  I haven't tried with PAGE_SIZE > 4kB, so the
-MPS_PER_PAGE > 1 paths are untested.
-
-v2:
- - Fix build errors on machines with PAGE_SIZE > 4096
-
-Matthew Wilcox (Oracle) (13):
-  jfs: Convert metapage_read_folio to use folio APIs
-  jfs: Convert metapage_writepage to metapage_write_folio
-  jfs: Convert __get_metapage to use a folio
-  jfs: Convert insert_metapage() to take a folio
-  jfs; Convert release_metapage to use a folio
-  jfs: Convert drop_metapage and remove_metapage to take a folio
-  jfs: Convert dec_io to take a folio
-  jfs; Convert __invalidate_metapages to use a folio
-  jfs: Convert page_to_mp to folio_to_mp
-  jfs: Convert inc_io to take a folio
-  jfs: Convert force_metapage to use a folio
-  jfs: Change metapage->page to metapage->folio
-  fs: Remove i_blocks_per_page
-
- fs/jfs/jfs_logmgr.c     |   2 +-
- fs/jfs/jfs_metapage.c   | 299 ++++++++++++++++++++--------------------
- fs/jfs/jfs_metapage.h   |  16 +--
- include/linux/pagemap.h |   6 -
- 4 files changed, 156 insertions(+), 167 deletions(-)
-
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index 961569c11159..8266c43ec728 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -266,14 +266,14 @@ static void last_read_complete(struct page *page)
+ 
+ static void metapage_read_end_io(struct bio *bio)
+ {
+-	struct page *page = bio->bi_private;
++	struct folio *folio = bio->bi_private;
+ 
+ 	if (bio->bi_status) {
+ 		printk(KERN_ERR "metapage_read_end_io: I/O error\n");
+-		SetPageError(page);
++		folio_set_error(folio);
+ 	}
+ 
+-	dec_io(page, last_read_complete);
++	dec_io(&folio->page, last_read_complete);
+ 	bio_put(bio);
+ }
+ 
+@@ -469,20 +469,18 @@ static int metapage_writepage(struct page *page, struct writeback_control *wbc)
+ 
+ static int metapage_read_folio(struct file *fp, struct folio *folio)
+ {
+-	struct page *page = &folio->page;
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = folio->mapping->host;
+ 	struct bio *bio = NULL;
+ 	int block_offset;
+-	int blocks_per_page = i_blocks_per_page(inode, page);
++	int blocks_per_page = i_blocks_per_folio(inode, folio);
+ 	sector_t page_start;	/* address of page in fs blocks */
+ 	sector_t pblock;
+ 	int xlen;
+ 	unsigned int len;
+ 	int offset;
+ 
+-	BUG_ON(!PageLocked(page));
+-	page_start = (sector_t)page->index <<
+-		     (PAGE_SHIFT - inode->i_blkbits);
++	BUG_ON(!folio_test_locked(folio));
++	page_start = folio_pos(folio) >> inode->i_blkbits;
+ 
+ 	block_offset = 0;
+ 	while (block_offset < blocks_per_page) {
+@@ -490,9 +488,9 @@ static int metapage_read_folio(struct file *fp, struct folio *folio)
+ 		pblock = metapage_get_blocks(inode, page_start + block_offset,
+ 					     &xlen);
+ 		if (pblock) {
+-			if (!PagePrivate(page))
+-				insert_metapage(page, NULL);
+-			inc_io(page);
++			if (!folio->private)
++				insert_metapage(&folio->page, NULL);
++			inc_io(&folio->page);
+ 			if (bio)
+ 				submit_bio(bio);
+ 
+@@ -501,11 +499,10 @@ static int metapage_read_folio(struct file *fp, struct folio *folio)
+ 			bio->bi_iter.bi_sector =
+ 				pblock << (inode->i_blkbits - 9);
+ 			bio->bi_end_io = metapage_read_end_io;
+-			bio->bi_private = page;
++			bio->bi_private = folio;
+ 			len = xlen << inode->i_blkbits;
+ 			offset = block_offset << inode->i_blkbits;
+-			if (bio_add_page(bio, page, len, offset) < len)
+-				goto add_failed;
++			bio_add_folio_nofail(bio, folio, len, offset);
+ 			block_offset += xlen;
+ 		} else
+ 			block_offset++;
+@@ -513,15 +510,9 @@ static int metapage_read_folio(struct file *fp, struct folio *folio)
+ 	if (bio)
+ 		submit_bio(bio);
+ 	else
+-		unlock_page(page);
++		folio_unlock(folio);
+ 
+ 	return 0;
+-
+-add_failed:
+-	printk(KERN_ERR "JFS: bio_add_page failed unexpectedly\n");
+-	bio_put(bio);
+-	dec_io(page, last_read_complete);
+-	return -EIO;
+ }
+ 
+ static bool metapage_release_folio(struct folio *folio, gfp_t gfp_mask)
 -- 
 2.43.0
 
