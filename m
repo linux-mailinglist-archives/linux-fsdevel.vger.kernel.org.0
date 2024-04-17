@@ -1,102 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-17156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F058A878B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:26:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BEB8A87A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A252E1C21B8A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 15:26:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6301F23D74
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 15:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B091474C7;
-	Wed, 17 Apr 2024 15:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A486147C7F;
+	Wed, 17 Apr 2024 15:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/bhcD49"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="nMtnDykE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCAD13A265
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 15:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA9E147C6B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 15:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713367598; cv=none; b=QJvEKux1f0Jbv9F7Ff5oUNztcbPa+vcB9c5bq3Ny0f/j2G23NhSSCdjgQc8InDabHUXQPvZ+TdJz3M/+6ax4YT0XZUtwMNdx0jPwQlZmeQ7NEATQoSeZBRIKqQGOb+96tc5lPZRNP8LKBy7A5mWeQJspnmOxem5uhGZsnHkchlM=
+	t=1713367927; cv=none; b=KVdpKOuRNFOvtD+zDsePGFZVqdn58fyK9qKK1nurSfcoJX7OCBGrs3QxQFdt3Msta+wMpjkS7Hi1otxJkKR9FmPXQ/5BHhM9e0E95/PjUDhi0HIaMpo8nm5Kz6wtR6O15oJSC42gbodWZpO2oGavIzS0i8eN5Xxdz6qfyRZjORw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713367598; c=relaxed/simple;
-	bh=vKlmk1nBYASgDXwdaXU1+s/rUCo+YuReb/17Xw/rnWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=myKd9zKUU5ysqM1oMzxLbvDJ+1CS8bShuIDtB/wjal4HYBEywci7M67BZG58Gm+RhtSpdO3q86frheLlwSBKSTQ37IICr/XbxTNm2nJLepFNuRIcBxexLwf4rnaThhR/TlwygFSLLTkCeBXTS9Nd3PgOkrXco/zBmYersWuni8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/bhcD49; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D0F8C072AA;
-	Wed, 17 Apr 2024 15:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713367597;
-	bh=vKlmk1nBYASgDXwdaXU1+s/rUCo+YuReb/17Xw/rnWo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H/bhcD49Xf4504DEvoanCaw/63tbWbF3do3H/+AfznQXfjg+BECrIbZBQbfs3j8+W
-	 DfivWy1t4lDtW2UXPiK2e8LbS7MJ0ez9JuEkoh8bKb9rDKYGtvvLnots2bBLyaAicL
-	 6nLOgjdb/wBr6EpFm/Evk04sDHKUFfpVTc8L4xa0jkO7RZPhtf9svyJfsD+MEsPGUO
-	 nMeZ3B6ck0XhIkyeuqc2VpLW4+Dt/Wqt/lm9UiwvIYlOKtpxr489iFvlZ7D4yJwyKy
-	 dmGp5AC2Qjs7EeGADFO8huxM/qzKDPSICvg+51yPX3/hIIo2KGD+60HBnrR11HlhL/
-	 MgnujEES1+AIg==
-From: Christian Brauner <brauner@kernel.org>
-To: cel@kernel.org
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: [PATCH v2 0/3] Fix shmem_rename2 directory offset calculation
-Date: Wed, 17 Apr 2024 17:26:13 +0200
-Message-ID: <20240417-anfassen-kennt-2042c8e29bef@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240415152057.4605-1-cel@kernel.org>
-References: <20240415152057.4605-1-cel@kernel.org>
+	s=arc-20240116; t=1713367927; c=relaxed/simple;
+	bh=uLgeUL+C/7Ff/mPtDOJn/RgT0bHJZ8IcFtXcqbCQ+lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MtMNC95uVxNidi/WT3L3+TKTysmVlXZ7pQpCyIi5MurSTjNGd0oGBSDuSfuTmPMZSpOqvTl2Ic4y9tP9MJIaePCFIFzy5clq4vZpXqnN52U62VJxM1FdRN81lwohgMoysK1Y6EDk5iIlRfnpqNNFie7PKy0DSl1IQkJf7Iu/ass=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=nMtnDykE; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 43HFVM8p016211
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Apr 2024 11:31:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1713367886; bh=OUs4KkgaD/FpvJ+2NJzXqe7hy3aMJMIJWA9eaTknY8E=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=nMtnDykE1F1kxHm5GQfr4ZqPYU3K4i+JZ44Je1xsc+SeP+WWSIb60AnjNISDIjdih
+	 Ih4ucOoOEjpm2vxAnjhJ6FsWtcVeJx/4+61j2OCSOnhDxtJuhT/msapmB/CpV6dEEP
+	 4VQkk+Z1IczSdfxuRpDsu8XRMsZa6amXUgmYalqB6t87sglA+Br/ICuZj5cNWgkjsp
+	 KGaxCjs7zVfxQl0u0k3rz3bW/2Ke7eGq5wze71vflPSO16lggQ3nIY0rm7UN7lQqm8
+	 9HHg4MjglepgvNC8tSaEZlRyUQIeT6Lbochp4uvZ5bpYbfZlbduMxUTKurUDQCHaYa
+	 09ARNt790bi+A==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 91D7115C0CBA; Wed, 17 Apr 2024 11:31:22 -0400 (EDT)
+Date: Wed, 17 Apr 2024 11:31:22 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Mike Rapoport <rppt@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Andreas Dilger <adilger@dilger.ca>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Conor Dooley <conor@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Alexandre Ghiti <alex@ghiti.fr>
+Subject: Re: riscv32 EXT4 splat, 6.8 regression?
+Message-ID: <20240417153122.GE2277619@mit.edu>
+References: <8734rlo9j7.fsf@all.your.base.are.belong.to.us>
+ <Zh6KNglOu8mpTPHE@kernel.org>
+ <20240416171713.7d76fe7d@namcao>
+ <20240416173030.257f0807@namcao>
+ <87v84h2tee.fsf@all.your.base.are.belong.to.us>
+ <20240416181944.23af44ee@namcao>
+ <Zh6n-nvnQbL-0xss@kernel.org>
+ <Zh6urRin2-wVxNeq@casper.infradead.org>
+ <Zh7Ey507KXIak8NW@kernel.org>
+ <20240417003639.13bfd801@namcao>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1419; i=brauner@kernel.org; h=from:subject:message-id; bh=vKlmk1nBYASgDXwdaXU1+s/rUCo+YuReb/17Xw/rnWo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTJvxJb/UiBnTflxmo+y4fdngsOiYfUxN38MLs82vlXs mH4ml1hHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMxn8bw38l48SvOWBf5lkz3 hatzb845IJn/hyH2ROzvyVETxLtNNjH84ZzZ58jle6l1UQObtZF6+eSUoCdH+tLiuuble9xxss/ jBgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240417003639.13bfd801@namcao>
 
-On Mon, 15 Apr 2024 11:20:53 -0400, cel@kernel.org wrote:
-> From: Chuck Lever <chuck.lever@oracle.com>
+On Wed, Apr 17, 2024 at 12:36:39AM +0200, Nam Cao wrote:
 > 
-> The existing code in shmem_rename2() allocates a fresh directory
-> offset value when renaming over an existing destination entry. User
-> space does not expect this behavior. In particular, applications
-> that rename while walking a directory can loop indefinitely because
-> they never reach the end of the directory.
-> 
-> [...]
+> However, I am confused about one thing: doesn't this make one page of
+> physical memory inaccessible?
 
-Thanks for fixing this!
+So are these riscv32 systems really having multiple terabytes of
+memory?  Why is this page in the physical memory map in the first
+place?
 
----
+Inquiring minds what to know,
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/3] libfs: Fix simple_offset_rename_exchange()
-      https://git.kernel.org/vfs/vfs/c/23cdd0eed3f1
-[2/3] libfs: Add simple_offset_rename() API
-      https://git.kernel.org/vfs/vfs/c/5a1a25be995e
-[3/3] shmem: Fix shmem_rename2()
-      https://git.kernel.org/vfs/vfs/c/ad191eb6d694
+						- Ted
 
