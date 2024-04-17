@@ -1,212 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-17144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE808A850D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 15:43:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B058A8599
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 16:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11326281998
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 13:43:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3618A1F236DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 14:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689C813FD85;
-	Wed, 17 Apr 2024 13:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AD61411DB;
+	Wed, 17 Apr 2024 14:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SJV/Gm1m";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OhQ0RcqQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SJV/Gm1m";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OhQ0RcqQ"
+	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="iTYVQPlS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C43D13C8FB;
-	Wed, 17 Apr 2024 13:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713361396; cv=none; b=fAjGhYFdWr+ixwdBe9148zJM7NU50Kft0qBLgLay6pcILzptBMbAafiYt6g4zidUXYPh9SD8T43dTlVY8xUvMgdYZnDudWkd090eKWjU5gOQH8QHO8VS2K67QDoREKVbkuQ94hYQUaP9sClSQYWwUdrk/NvZDp+4AuVUF7rTlqQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713361396; c=relaxed/simple;
-	bh=3H4ANiCsN9vuljSv/DqAZaqSlensjliUrkwh8tlFjp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kt2NXuUr9RaQdPJ14ovV4Y4yH48oOl2PloP9V+WaFFhI8sgCULbPjy/VTV74hx5e0i9obfsnwmnnRu1Mt6UNtVJjDfd3zoSwmJKeElWgmDfMRBr+bQmNEPTPwc3SbsyFHtTcFC1peTHJuVMm2p2X10H0yn7PjFC7ZMPIxhxTwp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SJV/Gm1m; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OhQ0RcqQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SJV/Gm1m; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OhQ0RcqQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4890E33D09;
-	Wed, 17 Apr 2024 13:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1713361393; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088E113F444;
+	Wed, 17 Apr 2024 14:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=167.235.159.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713362984; cv=pass; b=Y65RszjLSlGMaqIPSxQG6bpKsFD0o3MGub3MZyc1RfrT/yC/d+B3k8FLo4eotEJPmiuJ1WAhMaIEsMG6OTMtdf8nxIfAJUPgm8bvAiEkZ3AzFlRuSuHOcd2f3PoZSXlyqid91Dn3Hk691wxA7lk9ROlrcJ3i1Yk755SY/JMNb7Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713362984; c=relaxed/simple;
+	bh=H72tLTn+tWh4iBVxWF+IWpBSQiW9MHUNPXx+EST5u0M=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=iZw/dz731dNgOqPRLlrRJLGv4U+2lH+HCjE9BTEimvBkiQXVcm9RGV6SgCZ0uk6tGVNxBCnyUIGCFsvYciR3mUkRCxe0toVv1NPu5CiXbnffQ53NtDbLO1FeUFlcGYgWg6kVengL0bXvFXKaWi49+DJ9ZxvnKss3f7dP327ADLQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=iTYVQPlS; arc=pass smtp.client-ip=167.235.159.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
+Message-ID: <1a94a15e6863d3844f0bcb58b7b1e17a@manguebit.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1713362970;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l93s1tMIBD4qUa8mQMUmv38tl90X6yeBgo1RaoSIoi4=;
-	b=SJV/Gm1mQ+RdB8s7p7OUH2nXpmsDfiGhS9dVvxMad4xpbYHVagIZLHrssNe6EPgZCzB10B
-	K/wcA3hvaZ7N5N4kIrWx7MfjCbXUM8MgYMk4nAQPhXcQDVtn0JJmd5KElEGs0WCHYp8qq7
-	MW0DVMqwDgk8kvVPYPBch9FXtcWjFfk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1713361393;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=4NcQc5OWiwLGuJmRXBj5L2SzigKuTXfrhVqalxKbG7I=;
+	b=iTYVQPlSQXvYnVvF9DHSaoux8qzgCkS7i8jKr5tR2PEaJqZnpWTSDJ7r2JxPla1uYhmVwS
+	AJToe7ezCYx7N+FCGDcc1+W0qzvPDrC6ujlsPar0UMoqYT/2wfupZuAmDyczHSgyF+VHS7
+	FSAArrkiwk5FlIGD876+2hsoDiNgxLSmzzOJqtxiBIsP7mwhhraHVX6ZVXHCLvAlFOW/Ku
+	wVAdt3ww8GcX2Vs+1eekGrF7xJYxKVhKRDvoF8rfiBOIEWBIrXnQPLTaCSziIAzzb8u9Yz
+	PdqfSr1jcIpr6i1kXi5kwGHMI6Egv5YMTJcNufuElHRPbDaLahznU9Qth3z5bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1713362970; h=from:from:sender:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l93s1tMIBD4qUa8mQMUmv38tl90X6yeBgo1RaoSIoi4=;
-	b=OhQ0RcqQaScpZ32zgS+P8RrogShR5G0SWFIuICpo2L6QAx1usP9T3IWpo9xhDQYroWIqJy
-	XNyZ1S4urS1eaGCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1713361393; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l93s1tMIBD4qUa8mQMUmv38tl90X6yeBgo1RaoSIoi4=;
-	b=SJV/Gm1mQ+RdB8s7p7OUH2nXpmsDfiGhS9dVvxMad4xpbYHVagIZLHrssNe6EPgZCzB10B
-	K/wcA3hvaZ7N5N4kIrWx7MfjCbXUM8MgYMk4nAQPhXcQDVtn0JJmd5KElEGs0WCHYp8qq7
-	MW0DVMqwDgk8kvVPYPBch9FXtcWjFfk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1713361393;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l93s1tMIBD4qUa8mQMUmv38tl90X6yeBgo1RaoSIoi4=;
-	b=OhQ0RcqQaScpZ32zgS+P8RrogShR5G0SWFIuICpo2L6QAx1usP9T3IWpo9xhDQYroWIqJy
-	XNyZ1S4urS1eaGCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 32FCA13957;
-	Wed, 17 Apr 2024 13:43:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CoRyDPHRH2aXOQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Apr 2024 13:43:13 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CA9FCA082E; Wed, 17 Apr 2024 15:43:12 +0200 (CEST)
-Date: Wed, 17 Apr 2024 15:43:12 +0200
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH vfs.all 22/26] block: stash a bdev_file to read/write raw
- blcok_device
-Message-ID: <20240417134312.mntxg6iju4aalxpy@quack3>
-References: <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
- <20240410105911.hfxz4qh3n5ekrpqg@quack3>
- <20240410223443.GG2118490@ZenIV>
- <20240411-logik-besorgen-b7d590d6c1e9@brauner>
- <20240411140409.GH2118490@ZenIV>
- <20240412-egalisieren-fernreise-71b1f21f8e64@brauner>
- <20240412112919.GN2118490@ZenIV>
- <20240413-hievt-zweig-2e40ac6443aa@brauner>
- <20240415204511.GV2118490@ZenIV>
- <20240416063253.GA2118490@ZenIV>
+	bh=4NcQc5OWiwLGuJmRXBj5L2SzigKuTXfrhVqalxKbG7I=;
+	b=g5SlQfIg7qyItlFMAB8wRrSeuLG/e2Z6fGelUhfLg2/e6ia6OrkFXzUpyQFZlt6NEEhV8O
+	xUpi793zP4VjMn6XtonhWnQoHdXXzuyLQJVoJG1lP1mk8j0aafkhD0o9MieYMTFXLyF1Zi
+	DLZx/nSFyb6k6ws01XO1TruzFjyg8+UDY/phZj45xXSVZ3JpwXVMZa77GMcoxtmQKjRExB
+	gXvp/xwbnC333EXaCohJ8VFDF6UIFtuiidzRY7EVcvJ0aMZ3tIWSO8vSPZ40EqItVPOYi9
+	xZpnBTqX6jOPI4pKIxIDm1etdkpqaQLIP6vJYo01WgHwRidA+H5ptnEEPxjl+Q==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.mailfrom=pc@manguebit.com
+ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1713362971; a=rsa-sha256;
+	cv=none;
+	b=eTTAKlGFj10Rh/eoPObR+VqOpiGFPeu8c+9/AArcgN+ZoasyMtOo3K3SDzeWQYEAePPqZx
+	aubDeVPSEQk9/szK6ypV/iIf0XpYugetuuJSxJE5gc1n4vRPr5UdVvkmEgBP3XOjX703Tk
+	0gmsWd574A0Z2ARWIxvlDEwioDJRmUv8ZAlazujyl9PpeovNLGWVK9Ld7gbwJ78dO2jPNW
+	SIEuzjmIyAmvwvZuCgcqvBfQUTrTrum9qO9QW3KnbQ4RxGyX8XtDDrIu/XcXEoT7QLj8Ou
+	AE74eLM+1BGd1BjWySUIGGld5w62a1PDf0rA9NoxPTAwCXUWU85b1Zp9oG/HAA==
+From: Paulo Alcantara <pc@manguebit.com>
+To: David Howells <dhowells@redhat.com>
+Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>, Shyam Prasad N
+ <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Fix reacquisition of volume cookie on still-live
+ connection
+In-Reply-To: <2713340.1713286722@warthog.procyon.org.uk>
+References: <14e66691a65e3d05d3d8d50e74dfb366@manguebit.com>
+ <3756406.1712244064@warthog.procyon.org.uk>
+ <2713340.1713286722@warthog.procyon.org.uk>
+Date: Wed, 17 Apr 2024 11:09:27 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240416063253.GA2118490@ZenIV>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Type: text/plain
 
-On Tue 16-04-24 07:32:53, Al Viro wrote:
-> On Mon, Apr 15, 2024 at 09:45:11PM +0100, Al Viro wrote:
-> > On Sat, Apr 13, 2024 at 05:25:01PM +0200, Christian Brauner wrote:
-> > 
-> > > > It also simplifies the hell out of the patch series - it's one obviously
-> > > > safe automatic change in a single commit.
-> > > 
-> > > It's trivial to fold the simple file_mapping() conversion into a single
-> > > patch as well.
-> > 
-> > ... after a bunch of patches that propagate struct file to places where
-> > it has no business being.  Compared to a variant that doesn't need those
-> > patches at all.
-> > 
-> > > It's a pure artifact of splitting the patches per
-> > > subsystem/driver.
-> > 
-> > No, it is not.  ->bd_mapping conversion can be done without any
-> > preliminaries.  Note that it doesn't need messing with bdev_read_folio(),
-> > it doesn't need this journal->j_fs_dev_file thing, etc.
-> > 
-> > One thing I believe is completely wrong in this series is bdev_inode()
-> > existence.  It (and equivalent use of file_inode() on struct file is
-> > even worse) is papering over the real interface deficiencies.  And
-> > extra file_inode() uses are just about impossible to catch ;-/
-> > 
-> > IMO we should *never* use file_inode() on opened block devices.
-> > At all.  It's brittle, it's asking for trouble as soon as somebody
-> > passes a normally opened struct file to one of the functions using it
-> > and it papers over the missing primitives.
-> 
-> BTW, speaking of the things where opened struct file would be a good
-> idea - set_blocksize() should take an opened struct file, and it should
-> have non-NULL ->private_data.
-> 
-> Changing block size under e.g. a mounted filesystem should never happen;
-> doing that is asking for serious breakage.
-> 
-> Looking through the current callers (mainline), most are OK (and easy
-> to switch).  However,
-> 	
-> drivers/block/pktcdvd.c:2285:           set_blocksize(disk->part0, CD_FRAMESIZE);
-> drivers/block/pktcdvd.c:2529:   set_blocksize(file_bdev(bdev_file), CD_FRAMESIZE);
-> 	Might be broken; pktcdvd.c being what it is...
-> 
-> drivers/md/bcache/super.c:2558: if (set_blocksize(file_bdev(bdev_file), 4096))
-> 	Almost certainly broken; hit register_bcache() with pathname of a mounted
-> block device, and if the block size on filesystem in question is not 4K, the things
-> will get interesting.
+David Howells <dhowells@redhat.com> writes:
 
-Agreed. Furthermore that set_blocksize() seems to be completely pointless
-these days AFAICT because we use read_cache_page_gfp() to read in the data
-from the device. Sure we may be creating more bhs per page than necessary
-but who cares?
+> Paulo Alcantara <pc@manguebit.com> wrote:
+>
+>> Can't we just move the cookie acquisition to cifs_get_tcon() before it
+>> gets added to list @ses->tcon_list.  This way we'll guarantee that the
+>> cookie is set only once for the new tcon.
+>
+> cifs_get_tcon() is used from more than one place and I'm not sure the second
+> place (__cifs_construct_tcon()) actually wants a cookie.  I'm not sure what
+> that path is for.
 
-> fs/btrfs/volumes.c:485: ret = set_blocksize(bdev, BTRFS_BDEV_BLOCKSIZE);
-> 	Some of the callers do not bother with exclusive open;
-> in particular, if btrfs_get_dev_args_from_path() ever gets a pathname
-> of a mounted device with something other than btrfs on it, it won't
-> be pretty.
+__cifs_construct_tcon() is used for creating sessions and tcons under
+multiuser mounts.  Whenever an user accesses a multiuser mount and the
+client can't find a credential for it, a new session and tcon will be
+created for the user accessing the mount -- new accesses from same user
+will end up reusing the created session and tcon.
 
-Yeah and frankly reading through btrfs_read_dev_super() I'm not sure which
-code needs the block size set either. We use read_cache_page_gfp() for the
-IO there as well.
+And yes, I don't think we'll need a cookie for those tcons as the client
+seems to get the fscache cookie from master tcon (the one created from
+mount credentials).
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Could all the (re)setting up being done in cifs_mount_get_tcon() be
+> pushed back into cifs_get_tcon()?
+
+AFAICT, yes.  I'd need to look into it to make sure that's safe.
+
+>> Besides, do we want to share a tcon with two different superblocks that
+>> have 'fsc' and 'nofsc', respectively?  If not, it would be better to fix
+>> match_tcon() as well to handle such case.
+>
+> Maybe?  What does a tcon *actually* represent?  I note that in
+> cifs_match_super(), it's not the only criterion matched upon - so you can, at
+> least in apparent theory, get different superblocks for the same tcon anyway.
+
+tcon simply represents a tree connected SMB share.  It can be either an
+IPC share (\\srv\IPC$) or the actual share (\\srv\share) we're accessing
+the files from.
+
+Consider the following example where a tcon is reused from different
+CIFS superblocks:
+
+  mount.cifs //srv/share /mnt/1 -o ${opts} # new super, new tcon
+  mount.cifs //srv/share/dir /mnt/2 -o ${opts} # new super, reused tcon
+
+So, /mnt/1/dir/foo and /mnt/2/foo will lead to different inodes.
+
+The two mounts are accessing the same tcon (\\srv\share) but the new
+superblock was created because the prefix path "\dir" didn't match in
+cifs_match_super().  Trust me, that's a very common scenario.
+
+> This suggests that the tcon might not be the best place for the fscache volume
+> cookie as you can have multiple inodes wishing to use the same file cookie if
+> there are multiple mounts mounting the same tcon but, say, with different
+> mount parameters.
+
+We're not supposed to allow mounts with different parameters reusing
+servers, sessions or tcons, so that should be no issue.
+
+> I'm not sure what the right way around this is.  The root of the problem is
+> coherency management.  If we make a change to an inode on one mounted
+> superblock and this bounces a change notification over to the server that then
+> pokes an inode in another mounted superblock on the same machine and causes it
+> to be invalidated, you lose your local cache if both inodes refer to the same
+> fscache cookie.
+
+Yes, that could be a problem.  Perhaps placing the fscache cookie in the
+superblock would be a way to go, so we can handle the different fscache
+cookies for the superblocks that contain different prefix paths and
+access same tcon.
+
+> Remember: fscache does not do this for you!  It's just a facility by which
+> which data can be stored and retrieved.  The netfs is responsible for telling
+> it when to invalidate and handling coherency.
+
+ACK.
+
+> That said, it might be possible to time-share a cookie on cifs with leases,
+> but the local superblocks would have to know about each other - in which case,
+> why are they separate superblocks?
+
+See above why they could be separate superblocks.
 
