@@ -1,150 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-17118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49608A80D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 12:23:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E948A810D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 12:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811B72874EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 10:23:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4DA31C20A78
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 10:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC34213C9B2;
-	Wed, 17 Apr 2024 10:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92FF13BC18;
+	Wed, 17 Apr 2024 10:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="d+OxPeNv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qYsTlNEr";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="d+OxPeNv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qYsTlNEr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eRL0KbW8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E7613BC3E;
-	Wed, 17 Apr 2024 10:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C0D13BC1B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 10:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713349285; cv=none; b=BMf+KEP1xl+90ii2/vwslnHiAoRWbie+GXIxyyxOnWvRRpzoppfyNrP+O+WOGaUsIP8MoFhRYAlMh2KTgY89XalfM7aKhXCoNosDz+zj3N7othASEXZHZJJ1evP23hbwWJf8OLwj3zV01Syavfh2m3/qYG+JtHt9iZuEzTHk7tY=
+	t=1713350190; cv=none; b=HHjvqgy8lgxvU7ARYl3CO6huDzzEczCwmnZiC5Y/aTjIQaxoSllR/7KMSslERcLEZEbnf6/8qsEK5UlHlDphvLmJEMbuvOViuX3660tlH5qtelC9Z837VIz/tn8sJv0nAh4/vs7a0CghyeFLy6+QDi8JOvPxrk9829/I6uuwNto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713349285; c=relaxed/simple;
-	bh=MIuiJiecMNYop1J5gyfn17kW3mM6Q47w9aU6e2zL69Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aokYbtTEF6H+ng8W05nr/sdlM1qA1QUQfLh4Er/yf8wOZXwAEw7XXroTXaUgaIvClbhbuLjYmXwAgtLshoHlebWudRblf/e/w0n+wAPf1k4T95eO3PrNqw0lj5n5ypVJrYb98oby76+xKrn/FOBpFJKx0AQv79kAYgPVivZlK4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=d+OxPeNv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qYsTlNEr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=d+OxPeNv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qYsTlNEr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	s=arc-20240116; t=1713350190; c=relaxed/simple;
+	bh=l3AYSJ/+mdg3v48SneVucrIzOcn2/tdaJ1WQ9uXh3tk=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Wos8O+8k1Y/ILNBzRq7oGqVK+uSrMSw3CKJkp7C1si8dp57h91+TLc9nvNsFkmJCLb5Y1UxWD7J2jK1rFalo5SpDOG7CrFSNVRJtmc7L5HMGuaFqt+pVHbzs46tNIEbQia94AXTdLji0XYo0Wm8EpDCjOPrW5KyE5O3Qt9Ow9lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eRL0KbW8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713350188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oIJdAoOJD1/uhXCiQOPpdfvotOmhyFiedfiW/yeHsWQ=;
+	b=eRL0KbW89Ztk9vb0p5alR/Zgg6mdJS2P2Bf2TTQPMlDXnJ4ZwjHWEFUJXJRqiUFinByxyf
+	dWENAj0IErApDeVAuGodmiFHfh0JWfE/0picOnQtJSxOLEsM1aofeR9G9vu10HxGfq/n3g
+	iFXgzjU7WVeLUSojUlmElDgrjyNsiUI=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-361-tzkEwGWLMWac2hfcSazMmA-1; Wed,
+ 17 Apr 2024 06:36:24 -0400
+X-MC-Unique: tzkEwGWLMWac2hfcSazMmA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A62ED33AE8;
-	Wed, 17 Apr 2024 10:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1713349275; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fh/JsAx365b5+9LhCKoSfw3empGDkEaoXILqTfsoTCk=;
-	b=d+OxPeNvL9YZMckUpJ0g7mpky2kuucuY0AHSf+tnU7LMVcSFi3BNZYTuRv5xAE8Y3S0DPZ
-	/B9XizzXL43tJPuukB/oJdSIdC1GRmUA43BPEtIuMrddLMIIgY0SqDMnPU4EjqSJPZjjo7
-	Xo4Ghgcls8EmtbRCoE0BsTMce50IQco=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1713349275;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fh/JsAx365b5+9LhCKoSfw3empGDkEaoXILqTfsoTCk=;
-	b=qYsTlNEr0szT8LVQsX4hafElClV5lnrbsMjMbFD7CsWOZ6ZmYNhkp1jGoNA1St2DEoueVm
-	JOdgAIM37OF31WBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1713349275; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fh/JsAx365b5+9LhCKoSfw3empGDkEaoXILqTfsoTCk=;
-	b=d+OxPeNvL9YZMckUpJ0g7mpky2kuucuY0AHSf+tnU7LMVcSFi3BNZYTuRv5xAE8Y3S0DPZ
-	/B9XizzXL43tJPuukB/oJdSIdC1GRmUA43BPEtIuMrddLMIIgY0SqDMnPU4EjqSJPZjjo7
-	Xo4Ghgcls8EmtbRCoE0BsTMce50IQco=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1713349275;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fh/JsAx365b5+9LhCKoSfw3empGDkEaoXILqTfsoTCk=;
-	b=qYsTlNEr0szT8LVQsX4hafElClV5lnrbsMjMbFD7CsWOZ6ZmYNhkp1jGoNA1St2DEoueVm
-	JOdgAIM37OF31WBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C569B1384C;
-	Wed, 17 Apr 2024 10:21:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kadzKJqiH2bVawAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 17 Apr 2024 10:21:14 +0000
-Date: Wed, 17 Apr 2024 12:21:12 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH v1 1/2] fs/proc/task_mmu: convert pagemap_hugetlb_range()
- to work on folios
-Message-ID: <Zh-imMfMzCEgD1Ao@localhost.localdomain>
-References: <20240417092313.753919-1-david@redhat.com>
- <20240417092313.753919-2-david@redhat.com>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 65AB738041CC;
+	Wed, 17 Apr 2024 10:36:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.200])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 2FDF82026962;
+	Wed, 17 Apr 2024 10:36:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <87d451ff8cd030a380b522b4dfc56ca42c9de444.camel@kernel.org>
+References: <87d451ff8cd030a380b522b4dfc56ca42c9de444.camel@kernel.org> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-25-dhowells@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Matthew Wilcox <willy@infradead.org>,
+    Steve French <smfrench@gmail.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
+    Christian Schoenebeck <linux_oss@crudebyte.com>
+Subject: Re: [PATCH 24/26] netfs: Remove the old writeback code
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240417092313.753919-2-david@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <98240.1713350175.1@warthog.procyon.org.uk>
+Date: Wed, 17 Apr 2024 11:36:15 +0100
+Message-ID: <98241.1713350175@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-On Wed, Apr 17, 2024 at 11:23:12AM +0200, David Hildenbrand wrote:
-> Let's get rid of another page_mapcount() check and simply use
-> folio_likely_mapped_shared(), which is precise for hugetlb folios.
-> 
-> While at it, also check for PMD table sharing, like we do in
-> smaps_hugetlb_range().
-> 
-> No functional change intended, except that we would now detect hugetlb
-> folios shared via PMD table sharing correctly.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> #23 and #24 should probably be merged. I don't see any reason to do the
+> two-step of ifdef'ing out the code and then removing it. Just go for it
+> at this point in the series.
 
- 
+I would prefer to keep the ~500 line patch that's rearranging the plumbing
+separate from the ~1200 line patch that just deletes a load of lines to make
+the cutover patch easier to review.  I guess that comes down to a matter of
+preference.
 
--- 
-Oscar Salvador
-SUSE Labs
+David
+
 
