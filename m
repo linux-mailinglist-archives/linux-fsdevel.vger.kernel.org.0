@@ -1,86 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-17172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6541C8A89A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:02:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357F68A89F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9096D1C23C8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:02:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7E51C21A10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5616171E5A;
-	Wed, 17 Apr 2024 17:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FBC172787;
+	Wed, 17 Apr 2024 17:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XxHSYhkP"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NuI7rYMy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12890171079;
-	Wed, 17 Apr 2024 17:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171171474DB;
+	Wed, 17 Apr 2024 17:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713373266; cv=none; b=KuUpTbLAhdi0bqnh3FqwQGQhfJd2IgMfekBXTwn5Q+DHwfuaYWzj6NMWV7a2cnhQQbEx69mFDbCauXSg3e5bVGzqM1v2nE9Pqx5uIoqyuwY/Cwr0bpCyO/6awHGNvIE2VXic4oPA21Rut6X1Uv1Istci53GSjLJUl/3plPRqZzY=
+	t=1713373791; cv=none; b=B6HaZkl5CcP7sgbC8tYeIELPv6c3DhccRN+zXGmVGq5+79SMBjefy8vFdPpnKQAeOd1SgCEf3+bGFCxcX+dcsQzOWc4xn8ZImuvx2z1+Yx7zPm+rrv9pMV1O1CEw6AFDw+U9i0XuQzl6cxMYRRvFpZhN9fcxAcjTBLjecvvcFcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713373266; c=relaxed/simple;
-	bh=nKeVeNgCcSI+26qQh+IsYhy1VrdQuFRSqA7SFnpQJeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TxCixQNk0hmc2bJbvmtvX30tMrF+4DSn7knxXFsqXfstXY2czCY5fYFIFNbJm/9BDwP23oLzwM+1If+U083OduGgvEOl+/yqnXBKDyLSd+JrvrIPCFPJfF27OS53NMZfaYYnGznXA2Uyv/asaWinIjE6JIedhS8C20x0Lmmor2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XxHSYhkP; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1713373791; c=relaxed/simple;
+	bh=DW6JlRAmz29yAGaJgq0ObRQBK8QgVwlYF9/qzwutMf4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sm3gxOgpPaSyzGhHHUoQQoRI98WgNpJVSpDyXq9fsS1JYZqHzWFwO8cjYecZ1TaDSamWwcmzagRadh3t9o1YgSX9LzNQ9k4islM2Gj0qkSs9TGyAEj73v7wfmOlSo4OoV0nAqw0/rsZD+rH1tXnMwzW5/7jvaxQaqbig6csgy/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NuI7rYMy; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
 	Content-Description:In-Reply-To:References;
-	bh=8vdoC1n4NAGT51zT+XjZG+byDRcMNbmlIj/N6lUsVwg=; b=XxHSYhkP78vnJXr5/ru9AvKGXA
-	lONfc7ZJWmnQXT3d5x5ISPQdxCHO8rKYhbxpKj9pWh3ovmQdYcFg78TedrrV5/5xzTxEhqiVrBiog
-	WnxvR/ra+zuLcI4ns7qg45glSwti8l0u1LSAGewJxEm3UgYi+LFYX563hQw1MJexJB6BhCkeDH9Me
-	3TYfDZ4zWAA5utfC+3Ki8UzUlzi26APyPUUxj0y0X86HCnWD8+uIxoopV+hAJ9WtPvLjFhgk4Xvoq
-	5JUUyAyM8wA6QfYjm1HJN5uS0DKHEc5Ofc51brgBoWOuhNzFflnOTpz5o/b9zE+BDE+vzC8ENuSWt
-	2PPTNetQ==;
+	bh=TPcTRvYAVJvGgWEdC2RwuYPJ3+0NOl/B/leUs9Y+eBA=; b=NuI7rYMyF+HL0+DIMRpSoi6qzq
+	a/F9/pomwaBUleC8MR0T8CaqmA1RJWGkn2FNHqHZJfVNMHxDwCtfly3xlwU3nF/weI8+Ik0dBubMU
+	nUWXS84uDBgun0FOfN5QC9M6oDyKDE6V1/8OUDXN8QXI6l+tROhL7qXTj67SDCwFVLfPsbA9O3YFJ
+	2r0DLdR/Eu5k5FvYmXPu6M9niy5sJQ+rXbbr1KcCtRnan+UIC8DxJT3QfjuUAT7hD7gp8JMVSNN/l
+	gH7G6AK5/640TOL5xfIklWdpWGYPP2N1RzI+0J7DQA0OyOqjjqnScY8BBOCJ83631ldIN2SfsWwTM
+	IzbULjFA==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rx8ea-00000003KIC-220d;
-	Wed, 17 Apr 2024 17:01:00 +0000
-Date: Wed, 17 Apr 2024 18:01:00 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org,
-	bpf@vger.kernel.org
-Cc: lsf-pc@lists.linux-foundation.org
-Subject: [LSF/MM/BPF TOPIC] Running BOF
-Message-ID: <ZiAATJkOF-FulDyS@casper.infradead.org>
+	id 1rx8n5-00000003LN2-0LHc;
+	Wed, 17 Apr 2024 17:09:47 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	ntfs3@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 00/10] ntfs3: Convert (most of) ntfs3 to use folios
+Date: Wed, 17 Apr 2024 18:09:28 +0100
+Message-ID: <20240417170941.797116-1-willy@infradead.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-As in previous years, I'll be heading out for a run each morning and I'd
-be delighted to have company.  Assuming our normal start time (breakfast
-at 8am, sessions at 9am), I'll aim for a 6:30am start so we can go
-for an hour, have half an hour to shower etc, then get to breakfast.
-We'll meet just outside the Hilton main lobby on Temple Street.
+I'm not making any attempt here to support large folios.  This is just
+to remove uses of the page-based APIs.  There are still a number of
+places in ntfs3 which use a struct page, but this is a good start on
+the conversions.
 
-I don't know Salt Lake City at all.  I'll be arriving a few days in
-advance, so I'll scout various routes then.  It seems inevitable that
-we'll head up Ensign Peak one day (6 mile round trip from the Hilton
-with 348m of elevation) and probably do something involving City Creek /
-Bonneville Boulevard another day.  If anyone does know the various trails,
-I'd be delighted to listen to your advice.
+Matthew Wilcox (Oracle) (10):
+  ntfs3: Convert ntfs_read_folio to use a folio
+  ntfs3: Convert ntfs_write_begin to use a folio
+  ntfs3: Convert attr_data_read_resident() to take a folio
+  ntfs3: Convert ntfs_write_end() to work on a folio
+  ntfs3: Convert attr_data_write_resident to use a folio
+  ntfs3: Convert attr_make_nonresident to use a folio
+  ntfs3: Convert reading $AttrDef to use folios
+  ntfs3: Use a folio to read UpCase
+  ntfs3: Remove inode_write_data()
+  ntfs3: Remove ntfs_map_page and ntfs_unmap_page
 
-Running pace will be negotiated by whoever shows up; I'll be tapering for
-the Ottawa marathon two weeks later, so I'm not going to be pushing for
-a fast pace.  This is a social group run, not a training opportunity.
-People who want to do more or less are welcome to start with us and
-break off as they choose.
+ fs/ntfs3/attrib.c       | 65 +++++++++++++---------------------
+ fs/ntfs3/inode.c        | 77 +++++++++++++----------------------------
+ fs/ntfs3/ntfs_fs.h      | 21 ++---------
+ fs/ntfs3/super.c        | 43 ++++++++++++-----------
+ include/linux/highmem.h | 31 +++++++++++++++++
+ 5 files changed, 104 insertions(+), 133 deletions(-)
 
-You don't need to sign up for this, but if you let me know whether you're
-showing up, I might wait a few extra minutes for you if you're late ;-)
+-- 
+2.43.0
+
 
