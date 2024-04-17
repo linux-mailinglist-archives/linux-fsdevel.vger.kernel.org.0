@@ -1,126 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-17114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24808A7F8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 11:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BAB8A7FFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 11:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E33501C20DEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 09:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EDEC1F226D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 09:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2AB132C39;
-	Wed, 17 Apr 2024 09:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958D612F59A;
+	Wed, 17 Apr 2024 09:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vw9cpU46"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZB6hfLpo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="U3zn0NZY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZB6hfLpo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="U3zn0NZY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2CA130A50
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 09:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9AB130499
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 09:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713345811; cv=none; b=ttx8Dkzf8GPaPqX3E4uNxJKyGEXO+ZAxtac0m2SziNYrGEj63gR+SezN6B3Q93m/zKKiBp9RcMzf5a5q9CgOPCiAoYJv3CT7NtGxJNL9r6UBpSBPbg94f5O+xj4fTHH1m5jgMgUSSES2vp3THnV2utz5wtCcxoVDWZRBJwq3UdA=
+	t=1713346778; cv=none; b=Ovusi9pfo/rEQIufL5BNhXo8QpSY8d7Jdnb3Nw7nLMln4xpms+2GTlaWvamY53PFqLMuB4fE+Y0hR9gCD0VHudUbZF71oGmGlqSRtcsLC60D1Y+LAkivbgvjEtv2CO8BmMZZN8rVQUifj6JXuVX7yRhUew1XZWKDUzeAOjv1/4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713345811; c=relaxed/simple;
-	bh=6/aOw9dUqBfjPQSRan8VN1NA3JWXNdX0DKCTq/jBgsY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UAOSRWGRI6trbAkse4WiAXtt25/Gl8Qi6Q4G0fjjtNYOwjN37zwJi6ngBsw4AbPDOZ7GoZk01d8rgvd6AZV4ab5xofA5aeaP5hManZZAmV+aYItgnOGVLtsSEWZM2gO5D3qX36l8uEa7XKuHFYzLFqYSgRgbOZWlvDTddDU7ync=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vw9cpU46; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713345808;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0KJlX59pWoV+9ju0XmT0Dv5XXIefdKD1ijqlf4oKq4Q=;
-	b=Vw9cpU46y2hTURrcIT2GKbfwqcM+6DcxQPHzIkOwZtnzccuZfKSMTmyfxYF0Hf2Z7NrbsE
-	9B/VBkaVPdZwxxZyS+TgbgIB/hV5t4gdBGUo+8bu3IRNKEcGK0Z78/kVWtcM3dfriYwZ4U
-	44KKx3pP/p6gM+VEa1y+/ZrmQUpmFbA=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-439-Tteg5mGVN_yPaHS7lxTX6w-1; Wed,
- 17 Apr 2024 05:23:25 -0400
-X-MC-Unique: Tteg5mGVN_yPaHS7lxTX6w-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	s=arc-20240116; t=1713346778; c=relaxed/simple;
+	bh=F0GRBvg4Uv00Pp+1Xr/FR03rcoKUzlhwmfV3bDEQ7r4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DEEkHgWJ2icnKU5rwjPAV7VP1qCUAKz57mqb7zJ/WIR20poAVlUyxGBWUWVbsV4lBv7A2BA48iwLAlICR82rfUFP/S576LJNqIGUjhD38Yhklw6FaBDzPa9fFBodNEb/IDdw9hzdbHQ07HeMuOmaTO1vqfhCFPDIyexbMpsqgLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZB6hfLpo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=U3zn0NZY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZB6hfLpo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=U3zn0NZY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D1D1938116ED;
-	Wed, 17 Apr 2024 09:23:24 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.39.193.252])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id F31922166B32;
-	Wed, 17 Apr 2024 09:23:22 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>
-Subject: [PATCH v1 2/2] fs/proc/task_mmu: convert smaps_hugetlb_range() to work on folios
-Date: Wed, 17 Apr 2024 11:23:13 +0200
-Message-ID: <20240417092313.753919-3-david@redhat.com>
-In-Reply-To: <20240417092313.753919-1-david@redhat.com>
-References: <20240417092313.753919-1-david@redhat.com>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5F1E52065E;
+	Wed, 17 Apr 2024 09:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1713346774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Clq/MY3EBsb8V6KxiJub0cW84kcxlN42/ve81yNyQw=;
+	b=ZB6hfLpoDbPvkTXKuBi8QB/knJ0I5lWitHhuv6NW44G/dJ+AUPkX1+OznJ4nnO+z1Iypr4
+	BaoV5k93XF6vjIw+N4GNR4lxac2RSY53qDs7KcmFD6BXY3E+ySxkLvMURh3crbjlsYD8DO
+	uaH81IHuwJfti/YfuR15ogoSpuJGmYU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1713346774;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Clq/MY3EBsb8V6KxiJub0cW84kcxlN42/ve81yNyQw=;
+	b=U3zn0NZY/zjLh43opCcHuXNi9MOMTWv785czbO4yfjKmOC5Y+9JcVzCGwenA0cMmSO57WY
+	nKMtCi1xJb7FrHCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1713346774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Clq/MY3EBsb8V6KxiJub0cW84kcxlN42/ve81yNyQw=;
+	b=ZB6hfLpoDbPvkTXKuBi8QB/knJ0I5lWitHhuv6NW44G/dJ+AUPkX1+OznJ4nnO+z1Iypr4
+	BaoV5k93XF6vjIw+N4GNR4lxac2RSY53qDs7KcmFD6BXY3E+ySxkLvMURh3crbjlsYD8DO
+	uaH81IHuwJfti/YfuR15ogoSpuJGmYU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1713346774;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Clq/MY3EBsb8V6KxiJub0cW84kcxlN42/ve81yNyQw=;
+	b=U3zn0NZY/zjLh43opCcHuXNi9MOMTWv785czbO4yfjKmOC5Y+9JcVzCGwenA0cMmSO57WY
+	nKMtCi1xJb7FrHCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 54F9213957;
+	Wed, 17 Apr 2024 09:39:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id edS4FNaYH2auXAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Apr 2024 09:39:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id F06FCA082E; Wed, 17 Apr 2024 11:39:33 +0200 (CEST)
+Date: Wed, 17 Apr 2024 11:39:33 +0200
+From: Jan Kara <jack@suse.cz>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
+	kernel-team@fb.com
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Changing how we do file system
+ maintenance
+Message-ID: <20240417093933.e6mwtdjpibxu67lu@quack3>
+References: <20240416180414.GA2100066@perftesting>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240416180414.GA2100066@perftesting>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-Let's get rid of another page_mapcount() check and simply use
-folio_likely_mapped_shared(), which is precise for hugetlb folios.
+Hello!
 
-While at it, use huge_ptep_get() + pte_page() instead of ptep_get() +
-vm_normal_page(), just like we do in pagemap_hugetlb_range().
+On Tue 16-04-24 14:04:14, Josef Bacik wrote:
+> I would like to propose we organize ourselves more akin to the other large
+> subsystems.  We are one of the few where everybody sends their own PR to Linus,
+> so oftentimes the first time we're testing eachothers code is when we all rebase
+> our respective trees onto -rc1.  I think we could benefit from getting more
+> organized amongst ourselves, having a single tree we all flow into, and then
+> have that tree flow into Linus.
+> 
+> I'm also not a fan of single maintainers in general, much less for this large of
+> an undertaking.  I would also propose that we have a maintainership group where
+> we rotate the responsibilities of the mechanics of running a tree like this.
+> I'm nothing if not unreliable so I wouldn't be part of this group per se, but I
+> don't think we should just make Christian do it.  This would be a big job, and
+> it would need to be shared.
+> 
+> I would also propose that along with this single tree and group maintainership
+> we organize some guidelines about the above problems and all collectively agree
+> on how we're going to address them.  Having clear guidelines for adding new file
+> systems, clear guidelines for removing them.  Giving developers the ability to
+> make big API changes outside of the individual file systems trees to make it
+> easier to get things merged instead of having to base against 4 or 5 different
+> trees.  Develop some guidelines about how we want patches to look, how we want
+> testing to be done, etc. so people can move through our different communities
+> and not have drastically different experiences.
+> 
+> This is a massive proposal, and not one that we're going to be able to nail down
+> and implement quickly or easily.  But I think in the long term it'll make
+> working in our community simpler, more predictable, and less frustrating for
+> everybody.  Thanks,
 
-No functional change intended.
+I think this is good discussion for the FS track. I'd be certainly
+interested in this.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- fs/proc/task_mmu.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index cd6e45e0cde8e..f4259b7edfded 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -730,19 +730,20 @@ static int smaps_hugetlb_range(pte_t *pte, unsigned long hmask,
- {
- 	struct mem_size_stats *mss = walk->private;
- 	struct vm_area_struct *vma = walk->vma;
--	struct page *page = NULL;
--	pte_t ptent = ptep_get(pte);
-+	pte_t ptent = huge_ptep_get(pte);
-+	struct folio *folio = NULL;
- 
- 	if (pte_present(ptent)) {
--		page = vm_normal_page(vma, addr, ptent);
-+		folio = page_folio(pte_page(ptent));
- 	} else if (is_swap_pte(ptent)) {
- 		swp_entry_t swpent = pte_to_swp_entry(ptent);
- 
- 		if (is_pfn_swap_entry(swpent))
--			page = pfn_swap_entry_to_page(swpent);
-+			folio = pfn_swap_entry_folio(swpent);
- 	}
--	if (page) {
--		if (page_mapcount(page) >= 2 || hugetlb_pmd_shared(pte))
-+	if (folio) {
-+		if (folio_likely_mapped_shared(folio) ||
-+		    hugetlb_pmd_shared(pte))
- 			mss->shared_hugetlb += huge_page_size(hstate_vma(vma));
- 		else
- 			mss->private_hugetlb += huge_page_size(hstate_vma(vma));
+									Honza
 -- 
-2.44.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
