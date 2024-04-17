@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-17183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726038A89FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:10:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D038A89FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65DA5B271B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 550921C222DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B0D171E41;
-	Wed, 17 Apr 2024 17:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27773172BBA;
+	Wed, 17 Apr 2024 17:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wVteX4Ez"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ENoXTYFU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511DC172BC3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533BD172BC4;
 	Wed, 17 Apr 2024 17:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713373797; cv=none; b=BVjE8rYr5kHuupZt3KRxbcKskIq9qkAQvSStHSst3oV+aOZmnP6FHIzP8vwHxnPPw62USQYQtHbjhSN0Hcebfq4SCE47g2kVL0nYdqdR1v4ml2wAabs7OwrdPlRxjtr0NfJlcXF4Du4IrssCbYY7BE0m8Z/b/mZ5+Q/5bxWB7dc=
+	t=1713373796; cv=none; b=SYMrZSRiJZ9FX3tbjmSJhRbCxBIlMgo3Ei2izPCod1cHKkXNjQWP8SGktU4+EN8bgLYlIAwK/RIXw+OBqf3nzjXxxCvija2UcbX0WDzjg/JkgE3o9uGmYHGUI5/FA8mY53CCpiXIc+EwTAczbAd0nPMQx9o3OU+xm9Xr5D9/1FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713373797; c=relaxed/simple;
-	bh=dENt5TGLtcqwH8n2n6+/ROVruoKRRQ0LEMgNut1PvKA=;
+	s=arc-20240116; t=1713373796; c=relaxed/simple;
+	bh=hhyT8NyjB+05U7DjUTa8gI8Gwbdxanhqbs9YNcx1xNQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OtoodMaoHOhd7BICdt+MIzbOFRd22Knv7sVV1OcRgqDnv2rOVHkD00cnWjMqMbyE9Vey2+2DilQnQvuUFDmWK/rlIFpONR7bw5HiRPGrFYRc/3y1EbbA5gfWiZqliWhknyf+ChtErG+2VQAzdwRun+lxqoIR/haAMBni3dnVKJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wVteX4Ez; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=fa92abCSWeLpNZcm7XG3zovtxZQOhM8zS9PfuWKORuPY3AZyhZZ8l/aIxCnNRES5BxSrMvbArlbpGo5xnPy/HDLV9NmXXSe5W4Y/CwB2XoeK031SJx0QLMyvFdjx6qLZ1/Dh87sAH/w97cjqoTpbeXWlE6CBN9recq6G06SbiuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ENoXTYFU; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=BcwRdNxr+GiV+q3NXyqNKiazMO4WpYoF8YYTvyFIEjM=; b=wVteX4Ez2wlaKoEBLTUG5gCboI
-	ngICImHPkm9hNFVv2MCEI0/MvZk5+sJNJWpK/DZmDMtK2XWJJ+c5KQ/xBXjXCcZsD5COHujZIWsd/
-	I0yMKD0mTPZKraai32/4yhMByJIcqvbjFjlQvpWA4wIXyEPzblUjUdx/HuE4ohiD+hMIn48TGogml
-	bukd5NH4cE8z/icZkv71cLiAAuYvmEFvFUoB41o+01SOsBHv7WzzpbdJ+M7nQ95I6qoQ7qCDS3BmL
-	cVDXH4G0wFX/kD16jnXu5dC9q5mFTivjBSs3W1YseECQy9MQ9Sn7Uz+Spm2tfP0l5TjMR5NQFjGmL
-	vygCtB7w==;
+	bh=fpKWg49bgezfZO5bk51+dX+JEDPDXpjRn8QsOv7hfOw=; b=ENoXTYFU6E2FrjCDoEwrWsVUdp
+	TFdDmTmCnLFGhA1IvQk2JeQy/z2VLu92JJ9JhfL16Vi91HBJLbZv4eGCexHYT9uWyB3663asRiZYA
+	wg2HvWKpmqJZ73wA3lJwJVgkuoD+mivojtHkToKG+j/h1JFXBLAFTU8oU5c2PH557zaNnO65HP44O
+	fapPIMU0WE+XUj8yksctQ3DKt1/+8wbZD2pG+PilOkMkzYWkZe84lymSgxU/hMpuJWeQOjxKiDrx1
+	c0e8fCgGEZRCO5bgBVHIf3FpLVxsgwFGw2v7PzwKDq61AEa3TXxDB2sjgysVKNEhFcw+MAAfZoWIS
+	YnqBCoOw==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rx8nA-00000003LNx-3ad3;
+	id 1rx8nB-00000003LO3-29MZ;
 	Wed, 17 Apr 2024 17:09:53 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	ntfs3@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 09/10] ntfs3: Remove inode_write_data()
-Date: Wed, 17 Apr 2024 18:09:37 +0100
-Message-ID: <20240417170941.797116-10-willy@infradead.org>
+Subject: [PATCH 10/10] ntfs3: Remove ntfs_map_page and ntfs_unmap_page
+Date: Wed, 17 Apr 2024 18:09:38 +0100
+Message-ID: <20240417170941.797116-11-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240417170941.797116-1-willy@infradead.org>
 References: <20240417170941.797116-1-willy@infradead.org>
@@ -63,67 +63,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This function has no callers, so remove it.
+These functions have no more callers, so remove them.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ntfs3/inode.c   | 30 ------------------------------
- fs/ntfs3/ntfs_fs.h |  1 -
- 2 files changed, 31 deletions(-)
+ fs/ntfs3/ntfs_fs.h | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index cd634398d770..693e8b2f562e 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -1086,36 +1086,6 @@ int ntfs_flush_inodes(struct super_block *sb, struct inode *i1,
- 	return ret;
- }
- 
--int inode_write_data(struct inode *inode, const void *data, size_t bytes)
--{
--	pgoff_t idx;
--
--	/* Write non resident data. */
--	for (idx = 0; bytes; idx++) {
--		size_t op = bytes > PAGE_SIZE ? PAGE_SIZE : bytes;
--		struct page *page = ntfs_map_page(inode->i_mapping, idx);
--
--		if (IS_ERR(page))
--			return PTR_ERR(page);
--
--		lock_page(page);
--		WARN_ON(!PageUptodate(page));
--		ClearPageUptodate(page);
--
--		memcpy(page_address(page), data, op);
--
--		flush_dcache_page(page);
--		SetPageUptodate(page);
--		unlock_page(page);
--
--		ntfs_unmap_page(page);
--
--		bytes -= op;
--		data = Add2Ptr(data, PAGE_SIZE);
--	}
--	return 0;
--}
--
- /*
-  * ntfs_reparse_bytes
-  *
 diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index d35dc001c2c0..1582cde21988 100644
+index 1582cde21988..c3f71a47fd17 100644
 --- a/fs/ntfs3/ntfs_fs.h
 +++ b/fs/ntfs3/ntfs_fs.h
-@@ -713,7 +713,6 @@ int ntfs3_write_inode(struct inode *inode, struct writeback_control *wbc);
- int ntfs_sync_inode(struct inode *inode);
- int ntfs_flush_inodes(struct super_block *sb, struct inode *i1,
- 		      struct inode *i2);
--int inode_write_data(struct inode *inode, const void *data, size_t bytes);
- struct inode *ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
- 				struct dentry *dentry,
- 				const struct cpu_str *uni, umode_t mode,
+@@ -907,22 +907,6 @@ static inline bool ntfs_is_meta_file(struct ntfs_sb_info *sbi, CLST rno)
+ 	       rno == sbi->usn_jrnl_no;
+ }
+ 
+-static inline void ntfs_unmap_page(struct page *page)
+-{
+-	kunmap(page);
+-	put_page(page);
+-}
+-
+-static inline struct page *ntfs_map_page(struct address_space *mapping,
+-					 unsigned long index)
+-{
+-	struct page *page = read_mapping_page(mapping, index, NULL);
+-
+-	if (!IS_ERR(page))
+-		kmap(page);
+-	return page;
+-}
+-
+ static inline size_t wnd_zone_bit(const struct wnd_bitmap *wnd)
+ {
+ 	return wnd->zone_bit;
 -- 
 2.43.0
 
