@@ -1,63 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-17140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FBC8A83D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 15:08:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D388A83DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 15:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD39C28029E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 13:08:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9BB31F2461B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 13:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD09EDC;
-	Wed, 17 Apr 2024 13:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC61EDC;
+	Wed, 17 Apr 2024 13:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="c9rld15O";
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="ajzIORTs"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="rnCYxvs0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D7613C9BF;
-	Wed, 17 Apr 2024 13:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E880013BAFB;
+	Wed, 17 Apr 2024 13:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713359311; cv=none; b=FFd5dmusEBexO7jQG64/AY4wd8botLR/P7cVSb5b6Oruy0GXyzthrVKuVrLjQYu6Y3pqsU76PCno8wGBh0E4tfVjudehxYD9OP27Ky8j+sKa57PQJGyznvt7GCGpCJs1VtUZe1EJ7g5JkX7VWK+qP0jIXLXYMWQv/IdOj1oPMh8=
+	t=1713359346; cv=none; b=b572aq8dTQmAZIqqySVP633DgNveoWLiOnRLwjt/0rVDC7lAN0grrLcS6C21an3nfmT/8T+pinoEHXUh47AXH5OmPd4+fyMWsRBtcCrveBvp2fyRgB6IJyZ8SeejYK/My27OkSSOE71ytDMC7x4tuuTAuWbrt35ghTZ8BgLIqbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713359311; c=relaxed/simple;
-	bh=8lhml+YZgdjn8NhCBVBuvir1Lph3FMmzF6dbSgoTgss=;
+	s=arc-20240116; t=1713359346; c=relaxed/simple;
+	bh=DatEFLCOpw+NbDuENy+FYJ2ABAdky5Z6lhP8M4gukFg=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=BK5cnDEdMebMqkCxt1hi8b7zv4EuTlbm9lx3oc2mgNAp1kD/3YVSvofRQmZg19yKtonvkC37vtuB1HfbrEa5ipEvdooYw4tUGoDbWI24cMuiXbQUfPIQz5r3wDVYvjQxgpxr1Yr1JO0cUxEmQ0/hh4pblQAAt3/ui6tc7GTjoo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=c9rld15O; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=ajzIORTs; arc=none smtp.client-ip=35.157.23.187
+	 In-Reply-To:Content-Type; b=QZR9poAEGAEbvM+dg+R/yOAx4w9LQtxB4t0Jqy6bCNldHfaUKmYRMrNTKp0YNPnaUrBsMKtSdydDPwMxKwW8L95WgNOcYctTxiyEhDLYfOxtLf3oQ1AMJ22tnUjxb+5Xg4aNR86tM1Sc22ERnix7os4+m+5zbuny8XRA/q+cfek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=rnCYxvs0; arc=none smtp.client-ip=35.157.23.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 219912126;
-	Wed, 17 Apr 2024 13:00:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1713358857;
-	bh=prgkscqEDLQIeu/yy6QwD13KMz4blk3DXnk7Gem4noY=;
-	h=Date:Subject:From:To:References:In-Reply-To;
-	b=c9rld15O0zHZUUGxuKxM0t1kmvjmqY4rRlwvalNxKTGbsow0UKEtLGmm2sfudolIs
-	 HFu5G+h7qRIi/cDx2+24gAz+uGWq2ng3O4kYcO8FjrKA0SKnx19EeYYq2jBjScBIBn
-	 oEXHiqfbklD32UDiGOau6WM26LzYQXDQSHNxbpL0=
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 138AB35D;
-	Wed, 17 Apr 2024 13:08:26 +0000 (UTC)
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 120BF2126;
+	Wed, 17 Apr 2024 13:01:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1713359306;
-	bh=prgkscqEDLQIeu/yy6QwD13KMz4blk3DXnk7Gem4noY=;
+	d=paragon-software.com; s=mail; t=1713358892;
+	bh=MOOj/f32Isl8H3mG7B5vylZH6udxOz6XAGuNohryItc=;
 	h=Date:Subject:From:To:References:In-Reply-To;
-	b=ajzIORTsFNjLVBZjpm9z0L7PWxTDZFVnIkONSEV13XxtlnyMT2DdFCeZJUdOcGFe3
-	 7LNXEEszrbs5pdseE/pHmJJXViqJ8bFzqRVKNLQIUBGMnCiFkKl4ZVrRsP6wEhVBXS
-	 GoLX9PUSfPx4GpUKo0TmiPSFAO/Pp6AERY4t41VM=
+	b=rnCYxvs0Dbuue93udczCqEBBKnJpqbKEvt1OlSql5WaaVIR85ojHVyhtQaNpEfiyQ
+	 ZejcHoT++YsK461jmTz7+ZoUT3LzlisE58FGBvGu8nJiRAwvpnxJH/swpfnV51YgxL
+	 PnkhCmbDHiBqlEYIxZcdTUxl2cH7m5xh6aZzkI0M=
 Received: from [192.168.211.39] (192.168.211.39) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Wed, 17 Apr 2024 16:08:25 +0300
-Message-ID: <a3158bb9-4ef6-482f-ad1c-b251a93f661a@paragon-software.com>
-Date: Wed, 17 Apr 2024 16:08:25 +0300
+ 15.1.2375.7; Wed, 17 Apr 2024 16:09:00 +0300
+Message-ID: <890cc224-fdb8-4c5e-a22e-b96dc86e6908@paragon-software.com>
+Date: Wed, 17 Apr 2024 16:09:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,8 +54,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 09/11] fs/ntfs3: Optimize to store sorted attribute definition
- table
+Subject: [PATCH 10/11] fs/ntfs3: Remove cached label from sbi
 From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To: <ntfs3@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>,
 	Linux-fsdevel <linux-fsdevel@vger.kernel.org>
@@ -78,453 +66,290 @@ Content-Transfer-Encoding: 8bit
 X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
  vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-0x18 bytes instead of 0xa0
+Add more checks using $AttrDef.
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/fsntfs.c  | 60 ++++++++++++++++++++++++++++-
-  fs/ntfs3/inode.c   | 30 +++++++--------
-  fs/ntfs3/ntfs.h    |  4 --
-  fs/ntfs3/ntfs_fs.h | 40 ++++++++++---------
-  fs/ntfs3/super.c   | 95 +++++++++++++++-------------------------------
-  fs/ntfs3/xattr.c   |  6 +--
-  6 files changed, 126 insertions(+), 109 deletions(-)
+  fs/ntfs3/attrib.c  | 71 ++++++++++++++++++++++++++++++++++++++++++++++
+  fs/ntfs3/fsntfs.c  | 17 ++++-------
+  fs/ntfs3/ntfs_fs.h | 27 +++++++++++++++++-
+  fs/ntfs3/super.c   | 49 +++++++++++++++++++-------------
+  4 files changed, 132 insertions(+), 32 deletions(-)
 
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index aedae36b91d0..acee4644fd8d 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -228,6 +228,7 @@ int attr_make_nonresident(struct ntfs_inode *ni, 
+struct ATTRIB *attr,
+                u64 new_size, struct runs_tree *run,
+                struct ATTRIB **ins_attr, struct page *page)
+  {
++    const struct ATTR_DEF_ENTRY_SMALL *q;
+      struct ntfs_sb_info *sbi;
+      struct ATTRIB *attr_s;
+      struct MFT_REC *rec;
+@@ -243,6 +244,22 @@ int attr_make_nonresident(struct ntfs_inode *ni, 
+struct ATTRIB *attr,
+      }
+
+      sbi = mi->sbi;
++
++    /* Check if we can use nonresident form. */
++    q = ntfs_query_def(sbi, attr->type);
++    if (!q) {
++        ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
++        return -EINVAL;
++    }
++
++    /* Check resident form. */
++    if (q->flags & NTFS_ATTR_MUST_BE_RESIDENT) {
++        ntfs_warn(sbi->sb,
++              "attribute %x is not allowed to be nonresident",
++              le32_to_cpu(attr->type));
++        return -EINVAL;
++    }
++
+      rec = mi->mrec;
+      attr_s = NULL;
+      used = le32_to_cpu(rec->used);
+@@ -2589,4 +2606,58 @@ int attr_force_nonresident(struct ntfs_inode *ni)
+      up_write(&ni->file.run_lock);
+
+      return err;
++}
++
++/*
++ * Returns true if attribute is ok
++ */
++bool attr_check(const struct ATTRIB *attr, struct ntfs_sb_info *sbi,
++        struct ntfs_inode *ni)
++{
++    u64 size;
++    const char *hint;
++    const struct ATTR_DEF_ENTRY_SMALL *q = ntfs_query_def(sbi, attr->type);
++
++    if (!q) {
++        hint = "unknown";
++        goto out;
++    }
++
++    /* Check resident form. */
++    if ((q->flags & NTFS_ATTR_MUST_BE_RESIDENT) && attr->non_res) {
++        hint = "must be resident";
++        goto out;
++    }
++
++    /* Check name. */
++    if ((q->flags & NTFS_ATTR_MUST_BE_NAMED) && !attr->name_len) {
++        hint = "must be named";
++        goto out;
++    }
++
++    /* Check size. */
++    size = attr_size(attr);
++    if (size < q->min_sz) {
++        hint = "minimum size";
++        goto out;
++    }
++
++    if (size > q->max_sz) {
++        hint = "maximum size";
++        goto out;
++    }
++
++    /* ok. */
++    return true;
++
++out:
++    if (ni)
++        ntfs_inode_err(&ni->vfs_inode, "attribute type=%x, %s",
++                   le32_to_cpu(attr->type), hint);
++    else
++        ntfs_err(sbi->sb, "attribute type=%x, %s",
++             le32_to_cpu(attr->type), hint);
++
++    ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
++    return false;
+  }
+\ No newline at end of file
 diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
-index ae2ef5c11868..f9c60f3cadaf 100644
+index f9c60f3cadaf..5dacb8301202 100644
 --- a/fs/ntfs3/fsntfs.c
 +++ b/fs/ntfs3/fsntfs.c
-@@ -2698,4 +2698,62 @@ int ntfs_set_label(struct ntfs_sb_info *sbi, u8 
+@@ -2650,8 +2650,8 @@ int ntfs_set_label(struct ntfs_sb_info *sbi, u8 
 *label, int len)
-  out:
-      __putname(uni);
-      return err;
--}
-\ No newline at end of file
-+}
-+
-+/*
-+ * Check $AttrDef content and store sorted small $AttrDef entries
-+ */
-+int ntfs_check_attr_def(struct ntfs_sb_info *sbi,
-+            const struct ATTR_DEF_ENTRY *raw, u32 bytes)
-+{
-+    const struct ATTR_DEF_ENTRY *de_s;
-+    struct ATTR_DEF_ENTRY_SMALL *de_d;
-+    u32 i, j;
-+    u32 max_attr_type;
-+    u32 n = (bytes / sizeof(*raw)) * sizeof(*raw);
-+
-+    for (i = 0, max_attr_type = 0, de_s = raw; i < n; i++, de_s++) {
-+        u64 sz;
-+        u32 attr_type = le32_to_cpu(de_s->type);
-+
-+        if (!attr_type)
-+            break;
-+
-+        if ((attr_type & 0xf) || (!i && ATTR_STD != de_s->type) ||
-+            (i && le32_to_cpu(de_s[-1].type) >= attr_type)) {
-+            return -EINVAL;
-+        }
-+
-+        max_attr_type = attr_type;
-+
-+        sz = le64_to_cpu(de_s->max_sz);
-+        if (de_s->type == ATTR_REPARSE)
-+            sbi->attrdef.rp_max_size = sz;
-+        else if (de_s->type == ATTR_EA)
-+            sbi->attrdef.ea_max_size = sz;
-+        else if (de_s->type == ATTR_LABEL)
-+            sbi->attrdef.label_max_size = sz;
-+    }
-+
-+    /* Last known attribute type is 0x100. */
-+    if (!max_attr_type || max_attr_type > 0x200)
-+        return -EINVAL;
-+
-+    n = max_attr_type >> 4;
-+    sbi->attrdef.table = kcalloc(n, sizeof(*de_d), GFP_KERNEL);
-+    if (!sbi->attrdef.table)
-+        return -ENOMEM;
-+
-+    for (j = 0, de_s = raw; j < i; j++, de_s++) {
-+        u32 idx = (le32_to_cpu(de_s->type) >> 4) - 1;
-+        de_d = sbi->attrdef.table + idx;
-+
-+        de_d->type = de_s->type;
-+        de_d->flags = de_s->flags;
-+        de_d->min_sz = le64_to_cpu(de_s->min_sz);
-+        de_d->max_sz = le64_to_cpu(de_s->max_sz);
-+    }
-+    sbi->attrdef.entries = n;
-+
-+    return 0;
-+}
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 94177c1dd818..ae4465bf099f 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -18,7 +18,7 @@
-  #include "ntfs_fs.h"
-
-  /*
-- * ntfs_read_mft - Read record and parses MFT.
-+ * ntfs_read_mft - Read record and parse MFT.
-   */
-  static struct inode *ntfs_read_mft(struct inode *inode,
-                     const struct cpu_str *name,
-@@ -1090,29 +1090,27 @@ int ntfs_flush_inodes(struct super_block *sb, 
-struct inode *i1,
-      return ret;
-  }
-
--int inode_write_data(struct inode *inode, const void *data, size_t bytes)
-+/*
-+ * Helper function to read file.
-+ */
-+int inode_read_data(struct inode *inode, void *data, size_t bytes)
   {
-      pgoff_t idx;
-+    struct address_space *mapping = inode->i_mapping;
+      int err;
+      struct ATTRIB *attr;
++    u32 uni_bytes;
+      struct ntfs_inode *ni = sbi->volume.ni;
+-    const u8 max_ulen = 0x80; /* TODO: use attrdef to get maximum length */
+      /* Allocate PATH_MAX bytes. */
+      struct cpu_str *uni = __getname();
 
--    /* Write non resident data. */
-      for (idx = 0; bytes; idx++) {
-          size_t op = bytes > PAGE_SIZE ? PAGE_SIZE : bytes;
--        struct page *page = ntfs_map_page(inode->i_mapping, idx);
-+        struct page *page = read_mapping_page(mapping, idx, NULL);
-+        void *kaddr;
+@@ -2663,7 +2663,8 @@ int ntfs_set_label(struct ntfs_sb_info *sbi, u8 
+*label, int len)
+      if (err < 0)
+          goto out;
 
-          if (IS_ERR(page))
-              return PTR_ERR(page);
-
--        lock_page(page);
--        WARN_ON(!PageUptodate(page));
--        ClearPageUptodate(page);
--
--        memcpy(page_address(page), data, op);
--
--        flush_dcache_page(page);
--        SetPageUptodate(page);
--        unlock_page(page);
-+        kaddr = kmap_atomic(page);
-+        memcpy(data, kaddr, op);
-+        kunmap_atomic(kaddr);
-
--        ntfs_unmap_page(page);
-+        put_page(page);
-
-          bytes -= op;
-          data = Add2Ptr(data, PAGE_SIZE);
-@@ -1160,7 +1158,7 @@ ntfs_create_reparse_buffer(struct ntfs_sb_info 
-*sbi, const char *symname,
-      /* err = the length of unicode name of symlink. */
-      *nsize = ntfs_reparse_bytes(err);
-
--    if (*nsize > sbi->reparse.max_size) {
-+    if (*nsize > sbi->attrdef.rp_max_size) {
+-    if (uni->len > max_ulen) {
++    uni_bytes = uni->len * sizeof(u16);
++    if (uni_bytes > sbi->attrdef.label_max_size) {
+          ntfs_warn(sbi->sb, "new label is too long");
           err = -EFBIG;
           goto out;
-      }
-@@ -1954,7 +1952,7 @@ static noinline int ntfs_readlink_hlp(const struct 
-dentry *link_de,
-          rp = NULL;
-      }
+@@ -2674,19 +2675,13 @@ int ntfs_set_label(struct ntfs_sb_info *sbi, u8 
+*label, int len)
+      /* Ignore any errors. */
+      ni_remove_attr(ni, ATTR_LABEL, NULL, 0, false, NULL);
 
--    if (size > sbi->reparse.max_size || size <= sizeof(u32))
-+    if (size > sbi->attrdef.rp_max_size || size <= sizeof(u32))
-          goto out;
+-    err = ni_insert_resident(ni, uni->len * sizeof(u16), ATTR_LABEL, NULL,
+-                 0, &attr, NULL, NULL);
++    err = ni_insert_resident(ni, uni_bytes, ATTR_LABEL, NULL, 0, &attr,
++                 NULL, NULL);
+      if (err < 0)
+          goto unlock_out;
 
-      if (!rp) {
-diff --git a/fs/ntfs3/ntfs.h b/fs/ntfs3/ntfs.h
-index 3d6143c7abc0..1dd03ba1dc93 100644
---- a/fs/ntfs3/ntfs.h
-+++ b/fs/ntfs3/ntfs.h
-@@ -817,7 +817,6 @@ struct VOLUME_INFO {
-
-  #define SIZEOF_ATTRIBUTE_VOLUME_INFO 0xc
-
--#define NTFS_LABEL_MAX_LENGTH        (0x100 / sizeof(short))
-  #define NTFS_ATTR_INDEXABLE        cpu_to_le32(0x00000002)
-  #define NTFS_ATTR_DUPALLOWED        cpu_to_le32(0x00000004)
-  #define NTFS_ATTR_MUST_BE_INDEXED    cpu_to_le32(0x00000010)
-@@ -1002,9 +1001,6 @@ struct REPARSE_POINT {
-
-  static_assert(sizeof(struct REPARSE_POINT) == 0x18);
-
--/* Maximum allowed size of the reparse data. */
--#define MAXIMUM_REPARSE_DATA_BUFFER_SIZE    (16 * 1024)
+      /* write new label in on-disk struct. */
+-    memcpy(resident_data(attr), uni->name, uni->len * sizeof(u16));
 -
-  /*
-   * The value of the following constant needs to satisfy the following
-   * conditions:
+-    /* update cached value of current label. */
+-    if (len >= ARRAY_SIZE(sbi->volume.label))
+-        len = ARRAY_SIZE(sbi->volume.label) - 1;
+-    memcpy(sbi->volume.label, label, len);
+-    sbi->volume.label[len] = 0;
++    memcpy(resident_data(attr), uni->name, uni_bytes);
+      mark_inode_dirty_sync(&ni->vfs_inode);
+
+  unlock_out:
 diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index 00dec0ec5648..1d4fb6f87dea 100644
+index 1d4fb6f87dea..12c392db5b08 100644
 --- a/fs/ntfs3/ntfs_fs.h
 +++ b/fs/ntfs3/ntfs_fs.h
-@@ -201,6 +201,15 @@ struct ntfs_index {
-      u8 type; // index_mutex_classed
-  };
+@@ -293,7 +293,6 @@ struct ntfs_sb_info {
+          __le16 flags; // Cached current VOLUME_INFO::flags, 
+VOLUME_FLAG_DIRTY.
+          u8 major_ver;
+          u8 minor_ver;
+-        char label[256];
+          bool real_dirty; // Real fs state.
+      } volume;
 
-+/* NOT ondisk!. Just a small copy of $AttrDef file entry. */
-+struct ATTR_DEF_ENTRY_SMALL {
-+    enum ATTR_TYPE type;
-+    __le32 flags;
-+    u64 min_sz;
-+    u64 max_sz;
-+};
-+static_assert(sizeof(struct ATTR_DEF_ENTRY_SMALL) == 0x18);
-+
-  /* Minimum MFT zone. */
-  #define NTFS_MIN_MFT_ZONE 100
-  /* Step to increase the MFT. */
-@@ -242,9 +251,13 @@ struct ntfs_sb_info {
-      CLST reparse_no;
-      CLST usn_jrnl_no;
+@@ -465,6 +464,8 @@ int attr_collapse_range(struct ntfs_inode *ni, u64 
+vbo, u64 bytes);
+  int attr_insert_range(struct ntfs_inode *ni, u64 vbo, u64 bytes);
+  int attr_punch_hole(struct ntfs_inode *ni, u64 vbo, u64 bytes, u32 
+*frame_size);
+  int attr_force_nonresident(struct ntfs_inode *ni);
++bool attr_check(const struct ATTRIB *attr, struct ntfs_sb_info *sbi,
++        struct ntfs_inode *ni);
 
--    struct ATTR_DEF_ENTRY *def_table; // Attribute definition table.
--    u32 def_entries;
--    u32 ea_max_size;
-+    struct {
-+        u64 rp_max_size; // 16K
-+        u32 entries;
-+        u32 ea_max_size;
-+        u32 label_max_size;
-+        struct ATTR_DEF_ENTRY_SMALL *table; // 'entries'.
-+    } attrdef;
-
-      struct MFT_REC *new_rec;
-
-@@ -296,7 +309,6 @@ struct ntfs_sb_info {
-      struct {
-          struct ntfs_index index_r;
-          struct ntfs_inode *ni;
--        u64 max_size; // 16K
-      } reparse;
-
-      struct {
-@@ -658,6 +670,8 @@ int run_deallocate(struct ntfs_sb_info *sbi, const 
-struct runs_tree *run,
-             bool trim);
-  bool valid_windows_name(struct ntfs_sb_info *sbi, const struct le_str 
-*name);
-  int ntfs_set_label(struct ntfs_sb_info *sbi, u8 *label, int len);
-+int ntfs_check_attr_def(struct ntfs_sb_info *sbi,
-+            const struct ATTR_DEF_ENTRY *raw, u32 bytes);
-
-  /* Globals from index.c */
-  int indx_used_bit(struct ntfs_index *indx, struct ntfs_inode *ni, 
-size_t *bit);
-@@ -714,7 +728,7 @@ int ntfs3_write_inode(struct inode *inode, struct 
-writeback_control *wbc);
-  int ntfs_sync_inode(struct inode *inode);
-  int ntfs_flush_inodes(struct super_block *sb, struct inode *i1,
-                struct inode *i2);
--int inode_write_data(struct inode *inode, const void *data, size_t bytes);
-+int inode_read_data(struct inode *inode, void *data, size_t bytes);
-  int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
-                struct dentry *dentry, const struct cpu_str *uni,
-                umode_t mode, dev_t dev, const char *symname, u32 size,
-@@ -908,22 +922,6 @@ static inline bool ntfs_is_meta_file(struct 
-ntfs_sb_info *sbi, CLST rno)
-             rno == sbi->usn_jrnl_no;
+  /* Functions from attrlist.c */
+  void al_destroy(struct ntfs_inode *ni);
+@@ -1152,4 +1153,28 @@ static inline void le64_sub_cpu(__le64 *var, u64 val)
+      *var = cpu_to_le64(le64_to_cpu(*var) - val);
   }
 
--static inline void ntfs_unmap_page(struct page *page)
--{
--    kunmap(page);
--    put_page(page);
--}
--
--static inline struct page *ntfs_map_page(struct address_space *mapping,
--                     unsigned long index)
--{
--    struct page *page = read_mapping_page(mapping, index, NULL);
--
--    if (!IS_ERR(page))
--        kmap(page);
--    return page;
--}
--
-  static inline size_t wnd_zone_bit(const struct wnd_bitmap *wnd)
-  {
-      return wnd->zone_bit;
++/*
++ * Attributes types: 0x10, 0x20, 0x30....
++ * indexes in attribute table:  0, 1, 2...
++ */
++static inline const struct ATTR_DEF_ENTRY_SMALL *
++ntfs_query_def(const struct ntfs_sb_info *sbi, enum ATTR_TYPE type)
++{
++    const struct ATTR_DEF_ENTRY_SMALL *q;
++    u32 idx = (le32_to_cpu(type) >> 4) - 1;
++
++    if (idx >= sbi->attrdef.entries) {
++        /* such attribute is not allowed in this ntfs. */
++        return NULL;
++    }
++
++    q = sbi->attrdef.table + idx;
++    if (!q->type) {
++        /* such attribute is not allowed in this ntfs. */
++        return NULL;
++    }
++
++    return q;
++}
++
+  #endif /* _LINUX_NTFS3_NTFS_FS_H */
 diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index ac4722011140..8beefbca5769 100644
+index 8beefbca5769..dae961d2d6f8 100644
 --- a/fs/ntfs3/super.c
 +++ b/fs/ntfs3/super.c
-@@ -624,7 +624,7 @@ static void ntfs3_free_sbi(struct ntfs_sb_info *sbi)
+@@ -481,11 +481,39 @@ static int ntfs3_volinfo_open(struct inode *inode, 
+struct file *file)
+  /* read /proc/fs/ntfs3/<dev>/label */
+  static int ntfs3_label_show(struct seq_file *m, void *o)
   {
-      kfree(sbi->new_rec);
-      kvfree(ntfs_put_shared(sbi->upcase));
--    kvfree(sbi->def_table);
-+    kfree(sbi->attrdef.table);
-      kfree(sbi->compress.lznt);
-  #ifdef CONFIG_NTFS3_LZX_XPRESS
-      xpress_free_decompressor(sbi->compress.xpress);
-@@ -1157,8 +1157,6 @@ static int ntfs_fill_super(struct super_block *sb, 
-struct fs_context *fc)
-      CLST vcn, lcn, len;
-      struct ATTRIB *attr;
-      const struct VOLUME_INFO *info;
--    u32 idx, done, bytes;
--    struct ATTR_DEF_ENTRY *t;
-      u16 *shared;
-      struct MFT_REF ref;
-      bool ro = sb_rdonly(sb);
-@@ -1199,7 +1197,7 @@ static int ntfs_fill_super(struct super_block *sb, 
-struct fs_context *fc)
-
-      /*
-       * Load $Volume. This should be done before $LogFile
--     * 'cause 'sbi->volume.ni' is used 'ntfs_set_state'.
-+     * 'cause 'sbi->volume.ni' is used in 'ntfs_set_state'.
-       */
-      ref.low = cpu_to_le32(MFT_REC_VOL);
-      ref.seq = cpu_to_le16(MFT_REC_VOL);
-@@ -1422,54 +1420,28 @@ static int ntfs_fill_super(struct super_block 
-*sb, struct fs_context *fc)
-          goto put_inode_out;
-      }
-
--    bytes = inode->i_size;
--    sbi->def_table = t = kvmalloc(bytes, GFP_KERNEL);
--    if (!t) {
--        err = -ENOMEM;
--        goto put_inode_out;
--    }
--
--    for (done = idx = 0; done < bytes; done += PAGE_SIZE, idx++) {
--        unsigned long tail = bytes - done;
--        struct page *page = ntfs_map_page(inode->i_mapping, idx);
--
--        if (IS_ERR(page)) {
--            err = PTR_ERR(page);
--            ntfs_err(sb, "Failed to read $AttrDef (%d).", err);
-+    {
-+        u32 bytes = inode->i_size;
-+        struct ATTR_DEF_ENTRY *def_table = kmalloc(bytes, GFP_KERNEL);
-+        if (!def_table) {
-+            err = -ENOMEM;
-              goto put_inode_out;
-          }
--        memcpy(Add2Ptr(t, done), page_address(page),
--               min(PAGE_SIZE, tail));
--        ntfs_unmap_page(page);
-
--        if (!idx && ATTR_STD != t->type) {
--            ntfs_err(sb, "$AttrDef is corrupted.");
--            err = -EINVAL;
--            goto put_inode_out;
-+        /* Read the entire file. */
-+        err = inode_read_data(inode, def_table, bytes);
-+        if (err) {
-+            ntfs_err(sb, "Failed to read $AttrDef (%d).", err);
-+        } else {
-+            /* Check content and store sorted array. */
-+            err = ntfs_check_attr_def(sbi, def_table, bytes);
-+            if (err)
-+                ntfs_err(sb, "$AttrDef is corrupted.");
-          }
--    }
--
--    t += 1;
--    sbi->def_entries = 1;
--    done = sizeof(struct ATTR_DEF_ENTRY);
--    sbi->reparse.max_size = MAXIMUM_REPARSE_DATA_BUFFER_SIZE;
--    sbi->ea_max_size = 0x10000; /* default formatter value */
--
--    while (done + sizeof(struct ATTR_DEF_ENTRY) <= bytes) {
--        u32 t32 = le32_to_cpu(t->type);
--        u64 sz = le64_to_cpu(t->max_sz);
--
--        if ((t32 & 0xF) || le32_to_cpu(t[-1].type) >= t32)
--            break;
--
--        if (t->type == ATTR_REPARSE)
--            sbi->reparse.max_size = sz;
--        else if (t->type == ATTR_EA)
--            sbi->ea_max_size = sz;
-
--        done += sizeof(struct ATTR_DEF_ENTRY);
--        t += 1;
--        sbi->def_entries += 1;
-+        kfree(def_table);
-+        if (err)
-+            goto put_inode_out;
-      }
-      iput(inode);
-
-@@ -1489,27 +1461,22 @@ static int ntfs_fill_super(struct super_block 
-*sb, struct fs_context *fc)
-          goto put_inode_out;
-      }
-
--    for (idx = 0; idx < (0x10000 * sizeof(short) >> PAGE_SHIFT); idx++) {
--        const __le16 *src;
--        u16 *dst = Add2Ptr(sbi->upcase, idx << PAGE_SHIFT);
--        struct page *page = ntfs_map_page(inode->i_mapping, idx);
--
--        if (IS_ERR(page)) {
--            err = PTR_ERR(page);
--            ntfs_err(sb, "Failed to read $UpCase (%d).", err);
--            goto put_inode_out;
--        }
--
--        src = page_address(page);
-+    /* Read the entire file. */
-+    err = inode_read_data(inode, sbi->upcase, 0x10000 * sizeof(short));
-+    if (err) {
-+        ntfs_err(sb, "Failed to read $UpCase (%d).", err);
-+        goto put_inode_out;
++    int len;
+      struct super_block *sb = m->private;
+      struct ntfs_sb_info *sbi = sb->s_fs_info;
++    struct ATTRIB *attr;
++    u8 *label = kmalloc(PAGE_SIZE, GFP_NOFS);
++
++    if (!label)
++        return -ENOMEM;
++
++    attr = ni_find_attr(sbi->volume.ni, NULL, NULL, ATTR_LABEL, NULL, 0,
++                NULL, NULL);
++
++    if (!attr) {
++        /* It is ok if no ATTR_LABEL */
++        label[0] = 0;
++        len = 0;
++    } else if (!attr_check(attr, sbi, sbi->volume.ni)) {
++        len = sprintf(label, "%pg: failed to get label", sb->s_bdev);
++    } else {
++        len = ntfs_utf16_to_nls(sbi, resident_data(attr),
++                    le32_to_cpu(attr->res.data_size) >> 1,
++                    label, PAGE_SIZE);
++        if (len < 0) {
++            label[0] = 0;
++            len = 0;
++        } else if (len >= PAGE_SIZE) {
++            len = PAGE_SIZE - 1;
++        }
 +    }
 
-  #ifdef __BIG_ENDIAN
--        for (i = 0; i < PAGE_SIZE / sizeof(u16); i++)
-+    {
-+        const __le16 *src = sbi->upcase;
-+        u16 *dst = sbi->upcase;
-+
-+        for (i = 0; i < 0x10000; i++)
-              *dst++ = le16_to_cpu(*src++);
--#else
--        memcpy(dst, src, PAGE_SIZE);
--#endif
--        ntfs_unmap_page(page);
-      }
-+#endif
+-    seq_printf(m, "%s\n", sbi->volume.label);
++    seq_printf(m, "%.*s\n", len, label);
 
-      shared = ntfs_set_shared(sbi->upcase, 0x10000 * sizeof(short));
-      if (shared && sbi->upcase != shared) {
-diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-index 872df2197202..a7f122e51c04 100644
---- a/fs/ntfs3/xattr.c
-+++ b/fs/ntfs3/xattr.c
-@@ -99,12 +99,12 @@ static int ntfs_read_ea(struct ntfs_inode *ni, 
-struct EA_FULL **ea,
++    kfree(label);
+      return 0;
+  }
 
-      /* Check Ea limit. */
-      size = le32_to_cpu((*info)->size);
--    if (size > sbi->ea_max_size) {
-+    if (size > sbi->attrdef.ea_max_size) {
-          err = -EFBIG;
-          goto out;
-      }
+@@ -1210,25 +1238,6 @@ static int ntfs_fill_super(struct super_block 
+*sb, struct fs_context *fc)
 
--    if (attr_size(attr_ea) > sbi->ea_max_size) {
-+    if (attr_size(attr_ea) > sbi->attrdef.ea_max_size) {
-          err = -EFBIG;
-          goto out;
-      }
-@@ -430,7 +430,7 @@ static noinline int ntfs_set_ea(struct inode *inode, 
-const char *name,
-       * 1. Check ea_info.size_pack for overflow.
-       * 2. New attribute size must fit value from $AttrDef
-       */
--    if (new_pack > 0xffff || size > sbi->ea_max_size) {
-+    if (new_pack > 0xffff || size > sbi->attrdef.ea_max_size) {
-          ntfs_inode_warn(
-              inode,
-              "The size of extended attributes must not exceed 64KiB");
+      ni = ntfs_i(inode);
+
+-    /* Load and save label (not necessary). */
+-    attr = ni_find_attr(ni, NULL, NULL, ATTR_LABEL, NULL, 0, NULL, NULL);
+-
+-    if (!attr) {
+-        /* It is ok if no ATTR_LABEL */
+-    } else if (!attr->non_res && !is_attr_ext(attr)) {
+-        /* $AttrDef allows labels to be up to 128 symbols. */
+-        err = utf16s_to_utf8s(resident_data(attr),
+-                      le32_to_cpu(attr->res.data_size) >> 1,
+-                      UTF16_LITTLE_ENDIAN, sbi->volume.label,
+-                      sizeof(sbi->volume.label));
+-        if (err < 0)
+-            sbi->volume.label[0] = 0;
+-    } else {
+-        /* Should we break mounting here? */
+-        //err = -EINVAL;
+-        //goto put_inode_out;
+-    }
+-
+      attr = ni_find_attr(ni, attr, NULL, ATTR_VOL_INFO, NULL, 0, NULL, 
+NULL);
+      if (!attr || is_attr_ext(attr) ||
+          !(info = resident_data_ex(attr, SIZEOF_ATTRIBUTE_VOLUME_INFO))) {
 -- 
 2.34.1
 
