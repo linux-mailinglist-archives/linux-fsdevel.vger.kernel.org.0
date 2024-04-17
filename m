@@ -1,95 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-17094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067A58A7A4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 04:03:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8FC8A7A59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 04:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DCB028316A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 02:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ED341F222A3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 02:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4140946B8;
-	Wed, 17 Apr 2024 02:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1534C8C;
+	Wed, 17 Apr 2024 02:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xuHAJxkU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9625464C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 02:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDA2184F;
+	Wed, 17 Apr 2024 02:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713319384; cv=none; b=oNjpfJJ+l19HGDCvkUUa+KymPhXHiXlmraryCUK4OoCtwz5d34ClqEYdTmTubxs2UMVVExnjz0ei8fmiAZuRcIssTpDn+yQhQ0nd9BVmGeDJ3/L5hRl9pXy05rSyCGqQ6z8M6BYAEO9el8LudBT3YgfrnXcbNkO/412KV9BnjtY=
+	t=1713319829; cv=none; b=Ci0UGnESgkLVbCfCiEg9qHX4hE6MKcKzX9KgwOcKAxKa7vkHvdBG03qN6z1fAjqg1g/2ghVpUTp2ZoX3mxFEBLVJT+mFbmRu1x0uA6liygrP/qKhizYz1hcaiNAjnayiWRtvPg3ARMiUfWyvivma5xipEHBtwYGyAdw334QviJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713319384; c=relaxed/simple;
-	bh=7R5fFoaVMO58nLKlC8ofNl99FYUCmZ9nMK3uFXMrBiE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=X9fVQhlzjNdyQXW6WdnyGJ1mlLK7Q0cARaEiHi6xe0YvVeVCIX24VSOXQ8ZfhMirrTMbnjv/3Ee1clDyRdLqH+gAygXvINz434ortX2ZWbfA2HS6w2NRSsIrc6xIj9AUKO+ddQhkqPVL4ShRQFQNqmomkPw1nCS1VAd9t8+Z0bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7d5f08fdba8so34062939f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 19:03:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713319383; x=1713924183;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K7YdGzxIuIhIClLP3KBEn3c7sTLVSJtp6QQ8NED0sW0=;
-        b=fjziJ2MLlwgRb3z4xm+ATmp5awKcg7Nj40d90OzBBDBDpcX6x1HYfFGysdwuNoFOij
-         u2sZGid67MfwvX8Qn1gQ/FLxU+ZHUcBio6Z439sjZ7gNoT5p+iJMuk24HM59sSjt3P9o
-         4H685G8qKnGXMiwXOTN7QgnfNR8lgZT75w8KbcGkVBaVnLlceKteXL3CJlgw1QEZg8GW
-         eMQWp7Scf4nyMzrwJPOPMEzv/xFvIrkTqUDECM0TXKVY4R6oyPH6Spaiq8Wh24Uu7GKN
-         aI5YH2Nd/5NbVHO1m/VeYdAnd8w2Jv8yavKftGyEDY7yU1GLEOlVe/oyZuduWTN6Auez
-         o3JA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3vW8SBttYIFrzn84fqHqrEL61H5uF5Xm03X+pEwnrqNfvTNh1iSLPunhry6j9n0GwmvgClAdmIapZjdvPKto2CAiar93U4yom90KeGA==
-X-Gm-Message-State: AOJu0YyU0fjF0VsGMfRAATb/bgKptPNVkjDnISMf8+ElKtREXWtbiHTt
-	ysFoauV2fdoX+xVLm0IDhsaVCdlKvsr+lEmVvRfp1iwESx+uB5IG9kqlw2qp5w//fCZ+e8kOhWm
-	DVww6CP/wUanxJCCwM64VGeQ/VzxV0Y2CLiTP+5rS52PBvupAdTcVNEE=
-X-Google-Smtp-Source: AGHT+IH9W3j+txljAd4Ru1fIjaEdLExekzA9d7bphDz7e0hhfAnQYUjYjLwhqL197IxJl5EegTqPzJSU3rdbWNiVPEotT1y7wWUN
+	s=arc-20240116; t=1713319829; c=relaxed/simple;
+	bh=3CdtMLsVYPvE+QPBDfYFzHlrUviqieHd3T6YRtHWp5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B0zOFYXstlnoSA8OfwYayw3PbETJQ5NJqyGSfJGZgXXDxG3j4uFzLYPpvERrCdh8wmreNCsFuB4jcnapmDr2W2gvbDYppTODICV3h7L8+YrvrrMNKZg1pmDdduD6T8I+RLz3AIgXHzOpalr0+byjBszxeiKeYrIoFYPB6qT5orE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xuHAJxkU; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=IQVqMjFZf7h0tzU201NRPSpyAfFLwp6EhBUnUvkXK40=; b=xuHAJxkUQXDVnUFTw9IwIrd/KJ
+	3jyA2VD0BB1kerTJ1Y94EuW2WOaStdvNyLnkXe3SIfzpuIyO+MnXhh8ayJzbHvXPSXFbyAI78aZaM
+	HKysz1F64vvpAzn4cE7vBJDdssHJ0aI0V1psvLxft2k7o1+o9tT4SvPFys7Zz6gq+6TuF45G//NqR
+	Al8fGztEBM7yTKFxoRxCCher5oosvQrPQWSFn00nBCAB5+P+FH+sDm01HpGhQsBvYDQKld5q5zaWd
+	Li4gQw2uKM+O+eHyuLPec1qWsNaFTj426FPEfpxbqVCbNjCFM1e+YAMUckKXVM/Z8eRc+Ct7bV/eq
+	rUxUafZw==;
+Received: from [50.53.2.121] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rwukg-0000000ER6N-2WVI;
+	Wed, 17 Apr 2024 02:10:25 +0000
+Message-ID: <68f40ed0-ecf0-4152-b634-db8ed6d688be@infradead.org>
+Date: Tue, 16 Apr 2024 19:10:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8622:b0:482:e8c4:6eb0 with SMTP id
- iu34-20020a056638862200b00482e8c46eb0mr325174jab.0.1713319382875; Tue, 16 Apr
- 2024 19:03:02 -0700 (PDT)
-Date: Tue, 16 Apr 2024 19:03:02 -0700
-In-Reply-To: <CAOQ4uxg_qkqos7pXaTRAL++wYfuWZCWVcn64XK2g=GKR3zpOzQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000340f260616414106@google.com>
-Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
-From: syzbot <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, hdanton@sina.com, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-failed to apply patch:
-checking file fs/notify/fsnotify.c
-Hunk #1 FAILED at 103.
-Hunk #2 succeeded at 510 (offset 4 lines).
-Hunk #3 succeeded at 540 (offset 4 lines).
-Hunk #4 succeeded at 569 (offset 4 lines).
-1 out of 4 hunks FAILED
-checking file include/linux/fsnotify_backend.h
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] buffer: Add kernel-doc for block_dirty_folio()
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Pankaj Raghav <p.raghav@samsung.com>
+References: <20240416031754.4076917-1-willy@infradead.org>
+ <20240416031754.4076917-3-willy@infradead.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240416031754.4076917-3-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-Tested on:
+On 4/15/24 8:17 PM, Matthew Wilcox (Oracle) wrote:
+> Turn the excellent documentation for this function into kernel-doc.
+> Replace 'page' with 'folio' and make a few other minor updates.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
 
-commit:         2f012b22 fsnotify: fix UAF from FS_ERROR event on a sh..
-git tree:       https://github.com/amir73il/linux fsnotify-fixes
-kernel config:  https://syzkaller.appspot.com/x/.config?x=16ca158ef7e08662
-dashboard link: https://syzkaller.appspot.com/bug?extid=5e3f9b2a67b45f16d4e6
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10103657180000
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Thanks.
 
+> ---
+>  fs/buffer.c | 55 ++++++++++++++++++++++++++++++-----------------------
+>  1 file changed, 31 insertions(+), 24 deletions(-)
+> 
+
+-- 
+#Randy
+https://people.kernel.org/tglx/notes-about-netiquette
+https://subspace.kernel.org/etiquette.html
 
