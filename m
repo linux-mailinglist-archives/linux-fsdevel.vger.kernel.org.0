@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-17101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B7D8A7B14
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 05:27:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B448A7B68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 06:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 155BFB225B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 03:27:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F13284082
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 04:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDAEBE55;
-	Wed, 17 Apr 2024 03:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D62B282E1;
+	Wed, 17 Apr 2024 04:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mzUxtU4l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4912F79D8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 03:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C651170F;
+	Wed, 17 Apr 2024 04:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713324453; cv=none; b=Mk1godOyYqVJlRvSdp9f6bDN977ySQ/t8tui/pLCw20m4ZK4SfDRKQwY6vudkPlhyw2Z114jmXwh391Q794JfN8ua2n8DHlOU/K6RIfTzixvcOeTJLC0arYtR3CjbGs0rd4tuErSX/0DyaZ2XE5zx00yUc7gfEd2X8qg1+Kjv/w=
+	t=1713328542; cv=none; b=vA43f+n3+epl0nCbGg+4eQ3HZPfSYP58cC9PE2tYEAkYFXDIQCcYfAsatQsmwXEREUhHtTqlJIZvQc3vD40Ng+jgV0VTwWl4ERfXSWygEcznDBthWPqtDaQjLndfnZEWojP0pSImi2/cd3DVYTbW1Zzk0Ru9sctW850eRSMz0F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713324453; c=relaxed/simple;
-	bh=Uw2R24Py98brGt7b/weB6cxxd4FY06m8YxBoSEGLooU=;
+	s=arc-20240116; t=1713328542; c=relaxed/simple;
+	bh=+iCfkqjUsgO1ZDGIbFr8GYdF2Rs6z6Z+S4k3UrB9408=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bm7cE6pDWTJctu+V1urMWQT4ZtGz4PQHRHv2Mzcy5xS/U2elzgkptVf9e+ZYEXECmD0K34DDZT/o0uPZo5/3PFyuD+7tKuYh30Uy9Plu+9YTL62H3HIgT+Gaj1AoDUyxaLzgWw8NnW8G04L8CQ0jgsnrZj6cyBJjqslXr+F6rg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-78efd533a00so29832185a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 20:27:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713324451; x=1713929251;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EtdjqEfW/2woy7OCdpCAz+N9Ae1HYHEY3m85tFluymc=;
-        b=X57aFaxA+N4PZRa6ujKRAYRwPxnJhSRMNzu/iRYv5Ct0tO+SpDlYI66oenLEDkurKW
-         czdGJTb1HEwoUukg1k5blCc8VgXdzpqVoqESYzey07OyzB291f/RU/Jp0SQmxbA9BMTQ
-         5faXWfPdzXECJKKyd3S0wzU07ble0RT4p5AKPFSsWC1UgPXrpqHBC3Ri09wLRo9hiHMA
-         Yzp+GuenAibg+KqxpNyPQ87PvB1rL405URRz7Mnf/TRvhDDcHDZsdoxlEt/27h1AvWgM
-         LdvPA68cYGYE9Qzb/KPoutT2Tkhvkz9m+EU21z1bprpBndyWuP3XAeX2Sotmv+Srd0a9
-         i/RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuAWRc9pOnQtlXXSeKIO/TvFOsKUorb3R7uKL9kkv8cRTL5CLPMaoiJgCIoqebyIf11mNtlhln7Cx5pmP2wWwWGrHt2dJIQjDAitEdIA==
-X-Gm-Message-State: AOJu0YyNQOTZZztv9YwKfeE9PJsjXCcoQ+HVlf2nLYE5KsUzEVsJB3FB
-	2bQ8J5rgxuvv6oz4aYNRyMUcO08FgF1f0uNeS4JV+P6hAhMwi94pzLSzPginGA==
-X-Google-Smtp-Source: AGHT+IFhhJCgtb+aKD5SydFS1pgunohDDskmrkf47yrZS5w+D0UxN/7lafCWrHzapkwk+JUyh4goAg==
-X-Received: by 2002:a05:620a:1094:b0:78d:5d99:953c with SMTP id g20-20020a05620a109400b0078d5d99953cmr14893635qkk.28.1713324451268;
-        Tue, 16 Apr 2024 20:27:31 -0700 (PDT)
-Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
-        by smtp.gmail.com with ESMTPSA id d14-20020a05620a240e00b0078ec3f23519sm7644803qkn.8.2024.04.16.20.27.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Apr 2024 20:27:30 -0700 (PDT)
-Date: Tue, 16 Apr 2024 23:27:29 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: brauner@kernel.org, czhong@redhat.com, dm-devel@lists.linux.dev,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] dm: restore synchronous close of device mapper block
- device
-Message-ID: <Zh9BoXRYu_ZWrOsg@redhat.com>
-References: <20240416005633.877153-1-ming.lei@redhat.com>
- <20240416152842.13933-1-snitzer@kernel.org>
- <Zh8mx4yIGyv2InCq@fedora>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VHpu8YnCs1HLy3Jj/iMdRu1ROc3cAUyx5qmcZbp0eFjRGcDAGTeZdZT91neQLWzckeY1rBFCq/7ZQpg9/GVzkzOF7bpLAwhQYg5yFmG5PF4Qq7e+T7QP3TU8ZR2zNh9YCFh4M9prDJGhZ5nG61ZjJ/RlGQUxQLrMXhXdR0k1cDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mzUxtU4l; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iXIykWGQJpDXFJ+SQPt3FgFx7ryUGPRR4FBRYWESyMI=; b=mzUxtU4l0NNFUHX5mkoyXWNs8U
+	GyEONlam9xOofQDVKIWaFGXjTyicdEu+M9CWxSsgz1+y0DdCcmXUCsqUYcXHbz0RbDk15FgCiVv/Y
+	H0RSxN/J0QQ7am8VWK8V0alKv+w1DxQl2VesZTzdPbJNwdgI9uw86qyqj0v/en2FpqDKsWrOaZQnK
+	o97xHh/bkoNxY8vNj4c8/JDB/9jKc+08tueOnQ2W+Y5CnrW7OLuqjonJGZoRx/cJ2GYGNJ5DbYIdi
+	OgwrhfG/FYajJh2429fYyy4cEmyFEK8hqBqE21ErTCZX13036z7HIu37KaidENnny15/C+9QjCsp8
+	U1/XnnAg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rwx1A-00E2jv-0T;
+	Wed, 17 Apr 2024 04:35:32 +0000
+Date: Wed, 17 Apr 2024 05:35:32 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: axboe@kernel.dk
+Cc: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH][RFC] set_blocksize() in pktcdvd (was Re: [PATCH vfs.all
+ 22/26] block: stash a bdev_file to read/write raw blcok_device)
+Message-ID: <20240417043532.GA3337808@ZenIV>
+References: <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
+ <20240410105911.hfxz4qh3n5ekrpqg@quack3>
+ <20240410223443.GG2118490@ZenIV>
+ <20240411-logik-besorgen-b7d590d6c1e9@brauner>
+ <20240411140409.GH2118490@ZenIV>
+ <20240412-egalisieren-fernreise-71b1f21f8e64@brauner>
+ <20240412112919.GN2118490@ZenIV>
+ <20240413-hievt-zweig-2e40ac6443aa@brauner>
+ <20240415204511.GV2118490@ZenIV>
+ <20240416063253.GA2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,35 +73,92 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zh8mx4yIGyv2InCq@fedora>
+In-Reply-To: <20240416063253.GA2118490@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Apr 17, 2024 at 09:32:55AM +0800, Ming Lei wrote:
-> On Tue, Apr 16, 2024 at 11:28:42AM -0400, Mike Snitzer wrote:
-> > From: Ming Lei <ming.lei@redhat.com>
-> > 
-> > 'dmsetup remove' and 'dmsetup remove_all' require synchronous bdev
-> > release. Otherwise dm_lock_for_deletion() may return -EBUSY if the open
-> > count is > 0, because the open count is dropped in dm_blk_close()
-> > which occurs after fput() completes.
-> > 
-> > So if dm_blk_close() is delayed because of asynchronous fput(), this
-> > device mapper device is skipped during remove, which is a regression.
-> > 
-> > Fix the issue by using __fput_sync().
-> > 
-> > Also: DM device removal has long supported being made asynchronous by
-> > setting the DMF_DEFERRED_REMOVE flag on the DM device. So leverage
-> > using async fput() in close_table_device() if DMF_DEFERRED_REMOVE flag
-> > is set.
-> 
-> IMO, this way isn't necessary, because the patch is one bug fix, and we are
-> supposed to recover into exact previous behavior before commit a28d893eb327
-> ("md: port block device access to file") for minimizing regression risk.
-> 
-> But the extra change seems work.
+On Tue, Apr 16, 2024 at 07:32:53AM +0100, Al Viro wrote:
 
-I normally would agree but I see no real reason to avoid leveraging
-async fput() for the async DM device removal use-case ;)
+> drivers/block/pktcdvd.c:2285:           set_blocksize(disk->part0, CD_FRAMESIZE);
 
-Mike
+	We had hardsect_size set to that 2Kb from the very beginning
+(well, logical_block_size these days).	And the first ->open() is
+(and had been since before the pktcdvd went into mainline) followed by
+setting block size anyway, so any effects of that set_blocksize() had
+always been lost.  Candidate block sizes start at logical_block_size...
+Rudiment of something from 2000--2004 when it existed out of tree?
+<checks>  That logic into the tree in 2.5.13; May 2002...
+
+	AFAICS, this one can be simply removed.  Jens, do you have
+any objections to that?  It's safe, but really pointless...
+
+> drivers/block/pktcdvd.c:2529:   set_blocksize(file_bdev(bdev_file), CD_FRAMESIZE);
+
+	This, OTOH, is not safe at all - we don't have the underlying device
+exclusive, and it's possible that it is in use with e.g. 4Kb block size (e.g.
+from ext* read-only mount, with 4Kb blocks).  This set_blocksize() will screw
+the filesystem very badly - block numbers mapping to LBA will change, for starters.
+
+	We are setting a pktcdvd device up here, and that set_blocksize()
+is done to the underlying device.  It does *not* prevent changes of block
+size of the underlying device by the time we actually open the device
+we'd set up - set_blocksize() in ->open() is done to pktcdvd device,
+not the underlying one.  So... what is it for?
+
+	It might make sense to move it into ->open(), where we do have
+the underlying device claimed.	But doing that at the setup time looks
+very odd...
+
+	Do you have any objections against this:
+
+commit d1d93f2c26f70fbcd714615d1a3ea7a104fc0f43
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Wed Apr 17 00:28:03 2024 -0400
+
+    pktcdvd: sort set_blocksize() calls out
+    
+    1) it doesn't make any sense to have ->open() call set_blocksize() on the
+    device being opened - the caller will override that anyway.
+    
+    2) setting block size on underlying device, OTOH, ought to be done when
+    we are opening it exclusive - i.e. as part of pkt_open_dev().  Having
+    it done at setup time doesn't guarantee us anything about the state
+    at the time we start talking to it.  Worse, if you happen to have
+    the underlying device containing e.g. ext2 with 4Kb blocks that
+    is currently mounted r/o, that set_blocksize() will confuse the hell
+    out of filesystem.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 21728e9ea5c3..05933f25b397 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -2215,6 +2215,7 @@ static int pkt_open_dev(struct pktcdvd_device *pd, bool write)
+ 		}
+ 		dev_info(ddev, "%lukB available on disc\n", lba << 1);
+ 	}
++	set_blocksize(file_bdev(bdev_file), CD_FRAMESIZE);
+ 
+ 	return 0;
+ 
+@@ -2278,11 +2279,6 @@ static int pkt_open(struct gendisk *disk, blk_mode_t mode)
+ 		ret = pkt_open_dev(pd, mode & BLK_OPEN_WRITE);
+ 		if (ret)
+ 			goto out_dec;
+-		/*
+-		 * needed here as well, since ext2 (among others) may change
+-		 * the blocksize at mount time
+-		 */
+-		set_blocksize(disk->part0, CD_FRAMESIZE);
+ 	}
+ 	mutex_unlock(&ctl_mutex);
+ 	mutex_unlock(&pktcdvd_mutex);
+@@ -2526,7 +2522,6 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
+ 	__module_get(THIS_MODULE);
+ 
+ 	pd->bdev_file = bdev_file;
+-	set_blocksize(file_bdev(bdev_file), CD_FRAMESIZE);
+ 
+ 	atomic_set(&pd->cdrw.pending_bios, 0);
+ 	pd->cdrw.thread = kthread_run(kcdrwd, pd, "%s", pd->disk->disk_name);
 
