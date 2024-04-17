@@ -1,153 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-17200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83848A8AD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 20:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8118A8B47
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 20:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D93A1F219D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 18:09:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA951F250EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 18:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88619173335;
-	Wed, 17 Apr 2024 18:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99A51E52F;
+	Wed, 17 Apr 2024 18:42:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69F6172BD0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 18:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78D21D540
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 18:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713377370; cv=none; b=p+0hSnZqRLw9B5CVPdohpW+Z+S5hC9bas4dQRmPCde5Ed+8yVYfLtjcqVxf/0NaRc35P5Lnag/4YVdW8viOXaQFRyH0UUfHE9KBUliCj8bq4DmcMTnnZX+OviyOAcCyM5c0IJzxHldqikLLN+cS802oaCL27bLZy6Dx0m417IYo=
+	t=1713379343; cv=none; b=QPDdrCZXuFvCsg+7dsYbmpz3/6VQMtSsSKtimN2WVX0C5DmETFZT7zzhLMHXKm6MyaR0A98oPapCaxrGnGIo1ANZZX9zHw/PZ2cM0y+61I3DjT6I75598jHwCaPvIS10CugCZdKF4MC7PkNSIrKROreBR3wtHavav2bT/IVA/YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713377370; c=relaxed/simple;
-	bh=uJZvxmFKtLbzPHlrk0I977kVT1m7O4GOnTK9btIiG0o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=im6ChH9nECiWeSgiUebwCFOlLya59x0tDTml+7Im5eRIJlkCcr9eRPpMdPaLnsCBee0YWw27PjDG4sS/vzlbo0uQN6L9O4kzxHrM3PnlD7x8YyMF5MSgcMhX4QniQTVlZ7sOwJWWsuDFkQTZiIzVxEQHDah9jEJS+k+2sTxkCi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+	s=arc-20240116; t=1713379343; c=relaxed/simple;
+	bh=DK0MorCy2bMqQFN6AMrEBngq+fs1pfNW+hOa2B6iPRA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VzWPmNWW9c63lSgkW0NJ+SpPH0J4DvctoUjCHdzSgK+pJ7qGS0K4HcDJPoEfmITdExquANJVIShCZ65LE4FFbVHDTPHPxSgdXTMkth8dfz7knxjcLPafruyXBh96+CVVG5/azkN9XfQO0NUDNCN6VCbou1DRMnf7Wf2QtTzcH68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7cc78077032so249739f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 11:09:28 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36a20206746so133065ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 11:42:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713377368; x=1713982168;
+        d=1e100.net; s=20230601; t=1713379341; x=1713984141;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bgoOlL2fESOvBxvRK7t4PjZmp7cUv/sb40qUsKsVrjs=;
-        b=J2M6Zd5P8bqU/C6RvoQTIWsJ2kUU8u/OLgOb9n92gVm7OWqO0wiqWYyxE6Q1G048KW
-         JJKlYoMtUv8iQvyoPv9FDbsdeROE7lLXjwRIWDPSTI3wDQhCadPNTO3Jr6g9MXrsXaif
-         aHUtJXJNSsRILE3/6rNGEaaxs/jCiYOs9E4xZ9u7NIQtuHiuYD5N0a9XqSVvtCisYdY5
-         wF0+oM0XddXQrXoD3vw4wq2aGmSfutUN3O2kVH+jmZkUHPIkw5zxGVifuf90Beo5zSge
-         MWGz3XbCiRexpyzzKbflhVHsjnNS/KpfNw4qFPAnLhYgnybPiPi9qAZM7MZFo7rRo5gS
-         hMMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXd537SHaq85egTfCzIiM7niEc9VOCZ/1OpsxrcGr+TN3GTu+iRtECG0AVN4R6QbMUM5YBQ58NE7YDfO1OYxOvtjP67ddffCahdhLdfYQ==
-X-Gm-Message-State: AOJu0YxAZKcrkY6lKYsXq6E10wqCoqJUam0g4p3rHEr3cUJQw5v+U68+
-	P6Nxs4I0v/bMFFdpB8/dCRFuRnpCGSB9e1j1Yy3Kip61hpBUG/6yMJGvRBe5ahlaI8qtErfJ5g3
-	wlLUv9boRxe5MUw1ndi9FjAUjR2sbTeXRhbEfRFZhtdkr/dyo6SIXCCU=
-X-Google-Smtp-Source: AGHT+IFJ0rbZ1nZ8kzNKwTqY8QhyPCOoX/AZHwAz/dcDC4F0HtQtGuzwLK00qAhr+xFduzLQTrRaD8T6w5qZKmBF8UPXmP7pQkFo
+        bh=9YDf9JjlxpbJ+tt2eQd5WUSwtdToxmwgvq2MusOFBCA=;
+        b=kK95uU0+lzBLgZ9gCvIB0J65NTb4a4MfC07Z+xc5/4qE59Rc2B2rEL7G4OvVwmEKgo
+         ozBG8w9tdeXjCP+LAC5dCDM7WzJrA2zmIFG1nmAiZ3UR2tblmEF6FVr463E2nA+2vANJ
+         Oos7vjLH4Uc71UqficaOY51yh10/lCaZpM8khUAbnZ/uX/bk7Fy9BNiPNcp09K2Ia6pV
+         ybpG8u1o0ke9A+Z792bBx/7pvrv679KzDOUE/+3lRVj43WvzAoLwHxTtfp8Py9VntX4i
+         bOJuFIePgDSevTaaZz/SJ6aoFca4DLILsmqTaqvoIwvP7uJO5JYwU0uQ/t+vGXsYJAoS
+         uVQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBt2P3oCZo+Wx38PfCTAC71sOfcKoMnHvPDF1E0MhkglJu/0C4Q73gzgPjp2ynBjVUIItbDKmEq3CVBxMIZ/7S3FUZelGuOOX8HR8mXg==
+X-Gm-Message-State: AOJu0Yzw56ZoQDRtgAf9jct0Forg2MH0bzd5OgzL0aGHJZ3cZZut8lxL
+	ReYYU358MX3t1b7Kv0CxGwGMYVi6JsKM8Zq4cLr+mi6KWPI7JRW6SlPdwn85XFDwKKzfOT7GxZD
+	rTEA+oL5Zy1fmAEf62vfXPwtQ3SeuTwL0C55aAeVQGbI8fotwKDKF6tk=
+X-Google-Smtp-Source: AGHT+IGzsWZ9XDZ7RgCW6w73IrP9C34zCDhrNRhrAYgEqhSiQKHPrm2baYnC6CXZ6sFt4HRy5EB2nM/UcE+HnBSIRc3NQI02iC6x
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:13cf:b0:476:d09e:478 with SMTP id
- i15-20020a05663813cf00b00476d09e0478mr902386jaj.5.1713377367961; Wed, 17 Apr
- 2024 11:09:27 -0700 (PDT)
-Date: Wed, 17 Apr 2024 11:09:27 -0700
+X-Received: by 2002:a05:6e02:1c8e:b0:36b:2731:5fb6 with SMTP id
+ w14-20020a056e021c8e00b0036b27315fb6mr17257ill.0.1713379340966; Wed, 17 Apr
+ 2024 11:42:20 -0700 (PDT)
+Date: Wed, 17 Apr 2024 11:42:20 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006249a406164ec138@google.com>
-Subject: [syzbot] [fs?] WARNING: ODEBUG bug in bdev_super_lock (2)
-From: syzbot <syzbot+3acccbed6f1454bf337c@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
+Message-ID: <000000000000fbf10e06164f3695@google.com>
+Subject: [syzbot] [xfs?] possible deadlock in xfs_qm_flush_one
+From: syzbot <syzbot+4a799ff34dbbb5465776@syzkaller.appspotmail.com>
+To: chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10572a93180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
-dashboard link: https://syzkaller.appspot.com/bug?extid=3acccbed6f1454bf337c
+HEAD commit:    9ed46da14b9b Add linux-next specific files for 20240412
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a4a1dd180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7ea0abc478c49859
+dashboard link: https://syzkaller.appspot.com/bug?extid=4a799ff34dbbb5465776
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151a9857180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1184b7db180000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/72ab73815344/disk-fe46a7dd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2d6d6b0d7071/vmlinux-fe46a7dd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/48e275e5478b/bzImage-fe46a7dd.xz
-
-The issue was bisected to:
-
-commit f3a608827d1f8de0dd12813e8d9c6803fe64e119
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Thu Feb 8 17:47:35 2024 +0000
-
-    bdev: open block device as files
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12a83eaf180000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11a83eaf180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a83eaf180000
+disk image: https://storage.googleapis.com/syzbot-assets/fc649744d68c/disk-9ed46da1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/11eab7b9945d/vmlinux-9ed46da1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e7885afd198d/bzImage-9ed46da1.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3acccbed6f1454bf337c@syzkaller.appspotmail.com
-Fixes: f3a608827d1f ("bdev: open block device as files")
+Reported-by: syzbot+4a799ff34dbbb5465776@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-ODEBUG: activate active (active state 1) object: ffff88807c80a880 object type: rcu_head hint: 0x0
-WARNING: CPU: 0 PID: 7353 at lib/debugobjects.c:517 debug_print_object+0x17a/0x1f0 lib/debugobjects.c:514
-Modules linked in:
-CPU: 0 PID: 7353 Comm: syz-executor265 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-rc3-next-20240412-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor.1/7036 is trying to acquire lock:
+ffffffff8e429e80 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:334 [inline]
+ffffffff8e429e80 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:3847 [inline]
+ffffffff8e429e80 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:3937 [inline]
+ffffffff8e429e80 (fs_reclaim){+.+.}-{0:0}, at: kmalloc_trace_noprof+0x3d/0x2b0 mm/slub.c:4104
+
+but task is already holding lock:
+ffff888011c298a8 (&xfs_dquot_project_class){+.+.}-{3:3}, at: xfs_dqlock fs/xfs/xfs_dquot.h:125 [inline]
+ffff888011c298a8 (&xfs_dquot_project_class){+.+.}-{3:3}, at: xfs_qm_flush_one+0xd9/0x430 fs/xfs/xfs_qm.c:1250
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&xfs_dquot_project_class){+.+.}-{3:3}:
+       reacquire_held_locks+0x3eb/0x690 kernel/locking/lockdep.c:5279
+       __lock_release kernel/locking/lockdep.c:5468 [inline]
+       lock_release+0x379/0x9f0 kernel/locking/lockdep.c:5774
+       __mutex_unlock_slowpath+0xe2/0x750 kernel/locking/mutex.c:912
+       xfs_qm_dqget_cache_lookup+0x340/0x8c0 fs/xfs/xfs_dquot.c:802
+       xfs_qm_dqget_inode+0x308/0xaf0 fs/xfs/xfs_dquot.c:994
+       xfs_qm_dqattach_one+0x181/0x640 fs/xfs/xfs_qm.c:278
+       xfs_qm_dqattach_locked+0x42c/0x4e0 fs/xfs/xfs_qm.c:345
+       xfs_qm_vop_dqalloc+0x3fd/0xf10 fs/xfs/xfs_qm.c:1710
+       xfs_create+0x578/0x1320 fs/xfs/xfs_inode.c:1041
+       xfs_generic_create+0x495/0xd70 fs/xfs/xfs_iops.c:199
+       lookup_open fs/namei.c:3497 [inline]
+       open_last_lookups fs/namei.c:3566 [inline]
+       path_openat+0x1425/0x3280 fs/namei.c:3796
+       do_filp_open+0x235/0x490 fs/namei.c:3826
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+       do_sys_open fs/open.c:1421 [inline]
+       __do_sys_openat fs/open.c:1437 [inline]
+       __se_sys_openat fs/open.c:1432 [inline]
+       __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
+       do_syscall_x64 arch/x86/entry/common.c:74 [inline]
+       do_syscall_64+0xfa/0x250 arch/x86/entry/common.c:105
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&xfs_dir_ilock_class){++++}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       down_write_nested+0x3d/0x50 kernel/locking/rwsem.c:1695
+       xfs_reclaim_inode fs/xfs/xfs_icache.c:945 [inline]
+       xfs_icwalk_process_inode fs/xfs/xfs_icache.c:1631 [inline]
+       xfs_icwalk_ag+0x120e/0x1ad0 fs/xfs/xfs_icache.c:1713
+       xfs_icwalk fs/xfs/xfs_icache.c:1762 [inline]
+       xfs_reclaim_inodes_nr+0x257/0x360 fs/xfs/xfs_icache.c:1011
+       super_cache_scan+0x40f/0x4b0 fs/super.c:227
+       do_shrink_slab+0x705/0x1160 mm/shrinker.c:435
+       shrink_slab+0x1092/0x14d0 mm/shrinker.c:662
+       shrink_one+0x453/0x880 mm/vmscan.c:4809
+       shrink_many mm/vmscan.c:4870 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4970 [inline]
+       shrink_node+0x3b17/0x4310 mm/vmscan.c:5929
+       kswapd_shrink_node mm/vmscan.c:6741 [inline]
+       balance_pgdat mm/vmscan.c:6932 [inline]
+       kswapd+0x1882/0x38a0 mm/vmscan.c:7201
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 (fs_reclaim){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __fs_reclaim_acquire mm/page_alloc.c:3825 [inline]
+       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3839
+       might_alloc include/linux/sched/mm.h:334 [inline]
+       slab_pre_alloc_hook mm/slub.c:3847 [inline]
+       slab_alloc_node mm/slub.c:3937 [inline]
+       kmalloc_trace_noprof+0x3d/0x2b0 mm/slub.c:4104
+       kmalloc_noprof include/linux/slab.h:660 [inline]
+       add_stack_record_to_list mm/page_owner.c:177 [inline]
+       inc_stack_record_count mm/page_owner.c:219 [inline]
+       __set_page_owner+0x561/0x810 mm/page_owner.c:334
+       set_page_owner include/linux/page_owner.h:32 [inline]
+       post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1474
+       prep_new_page mm/page_alloc.c:1482 [inline]
+       get_page_from_freelist+0x2ce2/0x2d90 mm/page_alloc.c:3444
+       __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4702
+       alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4650
+       xfs_buf_alloc_pages+0x1a8/0x880 fs/xfs/xfs_buf.c:398
+       xfs_buf_find_insert+0x19a/0x1540 fs/xfs/xfs_buf.c:650
+       xfs_buf_get_map+0x149c/0x1ae0 fs/xfs/xfs_buf.c:755
+       xfs_buf_read_map+0x111/0xa60 fs/xfs/xfs_buf.c:860
+       xfs_trans_read_buf_map+0x260/0xad0 fs/xfs/xfs_trans_buf.c:289
+       xfs_trans_read_buf fs/xfs/xfs_trans.h:210 [inline]
+       xfs_qm_dqflush+0x2eb/0x16d0 fs/xfs/xfs_dquot.c:1271
+       xfs_qm_flush_one+0x129/0x430 fs/xfs/xfs_qm.c:1285
+       xfs_qm_dquot_walk+0x232/0x4a0 fs/xfs/xfs_qm.c:88
+       xfs_qm_quotacheck+0x41a/0x6f0 fs/xfs/xfs_qm.c:1375
+       xfs_qm_mount_quotas+0x345/0x630 fs/xfs/xfs_qm.c:1488
+       xfs_mountfs+0x1849/0x1eb0 fs/xfs/xfs_mount.c:963
+       xfs_fs_fill_super+0x114b/0x13c0 fs/xfs/xfs_super.c:1730
+       get_tree_bdev+0x3f7/0x570 fs/super.c:1614
+       vfs_get_tree+0x90/0x2a0 fs/super.c:1779
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+       do_mount fs/namespace.c:3692 [inline]
+       __do_sys_mount fs/namespace.c:3898 [inline]
+       __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+       do_syscall_x64 arch/x86/entry/common.c:74 [inline]
+       do_syscall_64+0xfa/0x250 arch/x86/entry/common.c:105
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  fs_reclaim --> &xfs_dir_ilock_class --> &xfs_dquot_project_class
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&xfs_dquot_project_class);
+                               lock(&xfs_dir_ilock_class);
+                               lock(&xfs_dquot_project_class);
+  lock(fs_reclaim);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor.1/7036:
+ #0: ffff888183b720e0 (&type->s_umount_key#64/1){+.+.}-{3:3}, at: alloc_super+0x221/0x9d0 fs/super.c:343
+ #1: ffff8881874c9958 (&qinf->qi_tree_lock){+.+.}-{3:3}, at: xfs_qm_dquot_walk+0x136/0x4a0 fs/xfs/xfs_qm.c:75
+ #2: ffff888011c298a8 (&xfs_dquot_project_class){+.+.}-{3:3}, at: xfs_dqlock fs/xfs/xfs_dquot.h:125 [inline]
+ #2: ffff888011c298a8 (&xfs_dquot_project_class){+.+.}-{3:3}, at: xfs_qm_flush_one+0xd9/0x430 fs/xfs/xfs_qm.c:1250
+
+stack backtrace:
+CPU: 1 PID: 7036 Comm: syz-executor.1 Not tainted 6.9.0-rc3-next-20240412-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:debug_print_object+0x17a/0x1f0 lib/debugobjects.c:514
-Code: e8 ab 36 50 fd 4c 8b 0b 48 c7 c7 c0 08 fe 8b 48 8b 74 24 08 48 89 ea 44 89 e1 4d 89 f8 ff 34 24 e8 cb 09 b3 fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 4c 82 e1 0a 48 83 c4 10 5b 41 5c 41 5d 41 5e 41
-RSP: 0018:ffffc90009877938 EFLAGS: 00010282
-RAX: 82e222ecc4018000 RBX: ffffffff8babd760 RCX: ffff88807cf28000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff8bfe0a40 R08: ffffffff8157cb22 R09: 1ffff9200130eec4
-R10: dffffc0000000000 R11: fffff5200130eec5 R12: 0000000000000001
-R13: ffffffff8bfe0958 R14: dffffc0000000000 R15: ffff88807c80a880
-FS:  00007f71121a16c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f71121a1d58 CR3: 0000000015ac6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- debug_object_activate+0x357/0x510 lib/debugobjects.c:732
- debug_rcu_head_queue kernel/rcu/rcu.h:227 [inline]
- __call_rcu_common kernel/rcu/tree.c:2719 [inline]
- call_rcu+0x97/0xa70 kernel/rcu/tree.c:2838
- put_super fs/super.c:424 [inline]
- bdev_super_lock+0x1ea/0x360 fs/super.c:1384
- fs_bdev_mark_dead+0x1e/0xe0 fs/super.c:1401
- bdev_mark_dead+0x89/0x1b0 block/bdev.c:1109
- disk_force_media_change+0x145/0x1c0 block/disk-events.c:298
- nbd_clear_sock_ioctl drivers/block/nbd.c:1477 [inline]
- __nbd_ioctl drivers/block/nbd.c:1504 [inline]
- nbd_ioctl+0x47d/0xf40 drivers/block/nbd.c:1564
- blkdev_ioctl+0x5e5/0x740 block/ioctl.c:640
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:904 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:890
- do_syscall_64+0xfb/0x240
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-RIP: 0033:0x7f711220b419
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f71121a1168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f71122923d8 RCX: 00007f711220b419
-RDX: 0000000000000003 RSI: 000000000000ab04 RDI: 0000000000000004
-RBP: 00007f71122923d0 R08: 00007ffc232c4387 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f71122923dc
-R13: 000000000000006e R14: 00007ffc232c42a0 R15: 00007ffc232c4388
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ __fs_reclaim_acquire mm/page_alloc.c:3825 [inline]
+ fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3839
+ might_alloc include/linux/sched/mm.h:334 [inline]
+ slab_pre_alloc_hook mm/slub.c:3847 [inline]
+ slab_alloc_node mm/slub.c:3937 [inline]
+ kmalloc_trace_noprof+0x3d/0x2b0 mm/slub.c:4104
+ kmalloc_noprof include/linux/slab.h:660 [inline]
+ add_stack_record_to_list mm/page_owner.c:177 [inline]
+ inc_stack_record_count mm/page_owner.c:219 [inline]
+ __set_page_owner+0x561/0x810 mm/page_owner.c:334
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1474
+ prep_new_page mm/page_alloc.c:1482 [inline]
+ get_page_from_freelist+0x2ce2/0x2d90 mm/page_alloc.c:3444
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4702
+ alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4650
+ xfs_buf_alloc_pages+0x1a8/0x880 fs/xfs/xfs_buf.c:398
+ xfs_buf_find_insert+0x19a/0x1540 fs/xfs/xfs_buf.c:650
+ xfs_buf_get_map+0x149c/0x1ae0 fs/xfs/xfs_buf.c:755
+ xfs_buf_read_map+0x111/0xa60 fs/xfs/xfs_buf.c:860
+ xfs_trans_read_buf_map+0x260/0xad0 fs/xfs/xfs_trans_buf.c:289
+ xfs_trans_read_buf fs/xfs/xfs_trans.h:210 [inline]
+ xfs_qm_dqflush+0x2eb/0x16d0 fs/xfs/xfs_dquot.c:1271
+ xfs_qm_flush_one+0x129/0x430 fs/xfs/xfs_qm.c:1285
+ xfs_qm_dquot_walk+0x232/0x4a0 fs/xfs/xfs_qm.c:88
+ xfs_qm_quotacheck+0x41a/0x6f0 fs/xfs/xfs_qm.c:1375
+ xfs_qm_mount_quotas+0x345/0x630 fs/xfs/xfs_qm.c:1488
+ xfs_mountfs+0x1849/0x1eb0 fs/xfs/xfs_mount.c:963
+ xfs_fs_fill_super+0x114b/0x13c0 fs/xfs/xfs_super.c:1730
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1614
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1779
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:74 [inline]
+ do_syscall_64+0xfa/0x250 arch/x86/entry/common.c:105
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fcda6a7f56a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fcda77c4ef8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fcda77c4f80 RCX: 00007fcda6a7f56a
+RDX: 0000000020009800 RSI: 0000000020009840 RDI: 00007fcda77c4f40
+RBP: 0000000020009800 R08: 00007fcda77c4f80 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020009840
+R13: 00007fcda77c4f40 R14: 000000000000985b R15: 0000000020000240
  </TASK>
+XFS (loop1): Quotacheck: Done.
 
 
 ---
@@ -157,14 +290,9 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
