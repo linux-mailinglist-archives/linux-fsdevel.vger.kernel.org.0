@@ -1,128 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-17093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358CD8A7A48
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 03:59:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067A58A7A4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 04:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DB331C214ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 01:59:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DCB028316A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 02:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483414685;
-	Wed, 17 Apr 2024 01:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jvX/klM9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4140946B8;
+	Wed, 17 Apr 2024 02:03:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97D31860;
-	Wed, 17 Apr 2024 01:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9625464C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 02:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713319186; cv=none; b=dmUZI7PgkY9sHggwPG/zKrJ/oNKW/3xjdQatlc+aWnqSbPp0H3LYSVjEgAq3kBbgTb+yw4Bd3kFODQNU1c6p+X4knP6rsaxO1NEoby/AHiv9EM/UrMx9uQdaTk+ePRCcFG6gdOox2y7QyuYq9cGK8FaQR93kR7X9Q/tja9Trwz0=
+	t=1713319384; cv=none; b=oNjpfJJ+l19HGDCvkUUa+KymPhXHiXlmraryCUK4OoCtwz5d34ClqEYdTmTubxs2UMVVExnjz0ei8fmiAZuRcIssTpDn+yQhQ0nd9BVmGeDJ3/L5hRl9pXy05rSyCGqQ6z8M6BYAEO9el8LudBT3YgfrnXcbNkO/412KV9BnjtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713319186; c=relaxed/simple;
-	bh=xeypXJ2Q9SFCnMjfSlsBKbWmqmK+siVkxTj7D11imCQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=brNkJrmc/vVBBE0YWHhY8TAWthTw+4s/78feVJ1mWn4pYi5b8s1C3oasYSBU0WHmc9fKagGaXHihPC7fGLI/7RGcxCawL8FcpishI8nHdo59KuufZeCgtNqZvXnf4J3Q1upgrGAWTudtaW1lRayCen6NeH5lipIgoPAsy8khW54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jvX/klM9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=Kv3VfAk1BQu5/cwkBbfz4nnBYslqYgF87PHMpfFu3gA=; b=jvX/klM9FdrtR/1KSEzfu8CvP+
-	CtLuIU6DAEccvpT6Ei3RLpiaXaLskisGiA0Kchj2/4JcC2AdAPeF1U8lWzoZ3K5RzPUz97/C/ga+d
-	hkxKct9oGGcqKEtf0vgsbiLIhM8eJqPtclthMD/yJjRvto4G2mB7nG4K0Rr5P+ioctUZwyMCcngvH
-	xBi2KJrZSCjg8I0kTCx6qExlYwJlSp9Wc+41Xu2XFJEPCJjczlNBbz6bk3tuxDb/1itbJf67aDsga
-	EYKAucqC20KYTJbw9+72YRC64zm9kO2ijqPhvmn0QlITp4dNLNk3eI8x0VHsncwNtjTXKBYAtq00J
-	Kadns6eg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rwuaF-00000001u4A-29MN;
-	Wed, 17 Apr 2024 01:59:35 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH v3 8a/8] doc: Split buffer.rst out of api-summary.rst
-Date: Wed, 17 Apr 2024 02:57:46 +0100
-Message-ID: <20240417015933.453505-1-willy@infradead.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240416031754.4076917-1-willy@infradead.org>
-References: <20240416031754.4076917-1-willy@infradead.org>
+	s=arc-20240116; t=1713319384; c=relaxed/simple;
+	bh=7R5fFoaVMO58nLKlC8ofNl99FYUCmZ9nMK3uFXMrBiE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=X9fVQhlzjNdyQXW6WdnyGJ1mlLK7Q0cARaEiHi6xe0YvVeVCIX24VSOXQ8ZfhMirrTMbnjv/3Ee1clDyRdLqH+gAygXvINz434ortX2ZWbfA2HS6w2NRSsIrc6xIj9AUKO+ddQhkqPVL4ShRQFQNqmomkPw1nCS1VAd9t8+Z0bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7d5f08fdba8so34062939f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Apr 2024 19:03:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713319383; x=1713924183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K7YdGzxIuIhIClLP3KBEn3c7sTLVSJtp6QQ8NED0sW0=;
+        b=fjziJ2MLlwgRb3z4xm+ATmp5awKcg7Nj40d90OzBBDBDpcX6x1HYfFGysdwuNoFOij
+         u2sZGid67MfwvX8Qn1gQ/FLxU+ZHUcBio6Z439sjZ7gNoT5p+iJMuk24HM59sSjt3P9o
+         4H685G8qKnGXMiwXOTN7QgnfNR8lgZT75w8KbcGkVBaVnLlceKteXL3CJlgw1QEZg8GW
+         eMQWp7Scf4nyMzrwJPOPMEzv/xFvIrkTqUDECM0TXKVY4R6oyPH6Spaiq8Wh24Uu7GKN
+         aI5YH2Nd/5NbVHO1m/VeYdAnd8w2Jv8yavKftGyEDY7yU1GLEOlVe/oyZuduWTN6Auez
+         o3JA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3vW8SBttYIFrzn84fqHqrEL61H5uF5Xm03X+pEwnrqNfvTNh1iSLPunhry6j9n0GwmvgClAdmIapZjdvPKto2CAiar93U4yom90KeGA==
+X-Gm-Message-State: AOJu0YyU0fjF0VsGMfRAATb/bgKptPNVkjDnISMf8+ElKtREXWtbiHTt
+	ysFoauV2fdoX+xVLm0IDhsaVCdlKvsr+lEmVvRfp1iwESx+uB5IG9kqlw2qp5w//fCZ+e8kOhWm
+	DVww6CP/wUanxJCCwM64VGeQ/VzxV0Y2CLiTP+5rS52PBvupAdTcVNEE=
+X-Google-Smtp-Source: AGHT+IH9W3j+txljAd4Ru1fIjaEdLExekzA9d7bphDz7e0hhfAnQYUjYjLwhqL197IxJl5EegTqPzJSU3rdbWNiVPEotT1y7wWUN
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8622:b0:482:e8c4:6eb0 with SMTP id
+ iu34-20020a056638862200b00482e8c46eb0mr325174jab.0.1713319382875; Tue, 16 Apr
+ 2024 19:03:02 -0700 (PDT)
+Date: Tue, 16 Apr 2024 19:03:02 -0700
+In-Reply-To: <CAOQ4uxg_qkqos7pXaTRAL++wYfuWZCWVcn64XK2g=GKR3zpOzQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000340f260616414106@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in fsnotify
+From: syzbot <syzbot+5e3f9b2a67b45f16d4e6@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, hdanton@sina.com, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Buffer heads are no longer a generic filesystem API but an optional
-filesystem support library.  Make the documentation structure reflect
-that, and include the fine documentation kept in buffer_head.h.
-We could give a better overview of what buffer heads are all about,
-but my enthusiasm for documenting it is limited.
+Hello,
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- Documentation/filesystems/api-summary.rst |  3 ---
- Documentation/filesystems/buffer.rst      | 13 +++++++++++++
- Documentation/filesystems/index.rst       |  1 +
- 3 files changed, 14 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/filesystems/buffer.rst
+syzbot tried to test the proposed patch but the build/boot failed:
 
-diff --git a/Documentation/filesystems/api-summary.rst b/Documentation/filesystems/api-summary.rst
-index 98db2ea5fa12..cc5cc7f3fbd8 100644
---- a/Documentation/filesystems/api-summary.rst
-+++ b/Documentation/filesystems/api-summary.rst
-@@ -56,9 +56,6 @@ Other Functions
- .. kernel-doc:: fs/namei.c
-    :export:
- 
--.. kernel-doc:: fs/buffer.c
--   :export:
--
- .. kernel-doc:: block/bio.c
-    :export:
- 
-diff --git a/Documentation/filesystems/buffer.rst b/Documentation/filesystems/buffer.rst
-new file mode 100644
-index 000000000000..b8e42a3bec44
---- /dev/null
-+++ b/Documentation/filesystems/buffer.rst
-@@ -0,0 +1,13 @@
-+Buffer Heads
-+============
-+
-+Linux uses buffer heads to maintain state about individual filesystem blocks.
-+Buffer heads are deprecated and new filesystems should use iomap instead.
-+
-+Functions
-+---------
-+
-+.. kernel-doc:: include/linux/buffer_head.h
-+.. kernel-doc:: fs/buffer.c
-+   :export:
-+
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 1f9b4c905a6a..8f5c1ee02e2f 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -50,6 +50,7 @@ filesystem implementations.
- .. toctree::
-    :maxdepth: 2
- 
-+   buffer
-    journalling
-    fscrypt
-    fsverity
--- 
-2.43.0
+failed to apply patch:
+checking file fs/notify/fsnotify.c
+Hunk #1 FAILED at 103.
+Hunk #2 succeeded at 510 (offset 4 lines).
+Hunk #3 succeeded at 540 (offset 4 lines).
+Hunk #4 succeeded at 569 (offset 4 lines).
+1 out of 4 hunks FAILED
+checking file include/linux/fsnotify_backend.h
+
+
+
+Tested on:
+
+commit:         2f012b22 fsnotify: fix UAF from FS_ERROR event on a sh..
+git tree:       https://github.com/amir73il/linux fsnotify-fixes
+kernel config:  https://syzkaller.appspot.com/x/.config?x=16ca158ef7e08662
+dashboard link: https://syzkaller.appspot.com/bug?extid=5e3f9b2a67b45f16d4e6
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10103657180000
 
 
