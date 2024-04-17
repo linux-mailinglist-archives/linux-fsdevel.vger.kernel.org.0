@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-17181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3108E8A89F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:10:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726038A89FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5AC21F226EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:10:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65DA5B271B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C090171640;
-	Wed, 17 Apr 2024 17:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B0D171E41;
+	Wed, 17 Apr 2024 17:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wGxSJXSO"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wVteX4Ez"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789DB172BA8;
-	Wed, 17 Apr 2024 17:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511DC172BC3;
+	Wed, 17 Apr 2024 17:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713373795; cv=none; b=qk+mIBYWrTj0Hw4DkdMpCR8wjpoPNj24RB/MBsXd91OBwjMPVUNYGw14vedfo0fMf42iOBvqRwfcZ5cSFN8KYTdLdvcX/RuXVtQ5P2C76gklVx+sGwXkk26cUuqsxlkwaJB6FM8AMOw8pGvpVvHl7ND+88jgY+t9Dj23dUIw16Y=
+	t=1713373797; cv=none; b=BVjE8rYr5kHuupZt3KRxbcKskIq9qkAQvSStHSst3oV+aOZmnP6FHIzP8vwHxnPPw62USQYQtHbjhSN0Hcebfq4SCE47g2kVL0nYdqdR1v4ml2wAabs7OwrdPlRxjtr0NfJlcXF4Du4IrssCbYY7BE0m8Z/b/mZ5+Q/5bxWB7dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713373795; c=relaxed/simple;
-	bh=IsgfukMEwJW9jhqCmijzm0Xn8L9yo1SpFpxIm0dhqIw=;
+	s=arc-20240116; t=1713373797; c=relaxed/simple;
+	bh=dENt5TGLtcqwH8n2n6+/ROVruoKRRQ0LEMgNut1PvKA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nitdmjx7mvUAWJtAGYQbAE9vzwhhIBjqGGSN6gMZyqh2IvbNEmUFqx3XwvLvSS3dwv+H6e5fdGkls2/4YIRYziKHukVcvOuHftvbDKvZP0NSzX0BTSAcoxN6Pd9M+E+Aaizg5xM17DBbE1ROPIM8wX3azkYFyzwESmXW+e1lj/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wGxSJXSO; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=OtoodMaoHOhd7BICdt+MIzbOFRd22Knv7sVV1OcRgqDnv2rOVHkD00cnWjMqMbyE9Vey2+2DilQnQvuUFDmWK/rlIFpONR7bw5HiRPGrFYRc/3y1EbbA5gfWiZqliWhknyf+ChtErG+2VQAzdwRun+lxqoIR/haAMBni3dnVKJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wVteX4Ez; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=sVLC2SOQAmPn3AChIpktUkfkcZacBQhX9T6iZ3X49dw=; b=wGxSJXSOGxb7ow+NiJGvKONh3s
-	0n4bEC3355TGPgFtN5HQX0ri6WwWKTI5xek/APzDRZZPQnuhTzZGx64Zr++JKB2f6M7PSkZRb8/9T
-	JQih9FMPY2cAhtNvjMRebOiXudwawExikjuNQPdKj+7qmftk/pzCv6uVcFTc1Bnm3fo5f4808ByES
-	F8O/G7mmAu7nkkbQfJ/SFNv37RqIuJSyxl7FCZ7CKTE0ucs21vvr2OVTDziwpKCeaTkHYp0a6WF1A
-	ONBHHZdTF3qJxrz6Wzg2zQPnjTHNPky7Ww9ZIKra9Xybaji5V50hgCrhv2+lsqq9r7zXPPPXvHVhi
-	tNmSSL1A==;
+	bh=BcwRdNxr+GiV+q3NXyqNKiazMO4WpYoF8YYTvyFIEjM=; b=wVteX4Ez2wlaKoEBLTUG5gCboI
+	ngICImHPkm9hNFVv2MCEI0/MvZk5+sJNJWpK/DZmDMtK2XWJJ+c5KQ/xBXjXCcZsD5COHujZIWsd/
+	I0yMKD0mTPZKraai32/4yhMByJIcqvbjFjlQvpWA4wIXyEPzblUjUdx/HuE4ohiD+hMIn48TGogml
+	bukd5NH4cE8z/icZkv71cLiAAuYvmEFvFUoB41o+01SOsBHv7WzzpbdJ+M7nQ95I6qoQ7qCDS3BmL
+	cVDXH4G0wFX/kD16jnXu5dC9q5mFTivjBSs3W1YseECQy9MQ9Sn7Uz+Spm2tfP0l5TjMR5NQFjGmL
+	vygCtB7w==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rx8nA-00000003LNq-15py;
-	Wed, 17 Apr 2024 17:09:52 +0000
+	id 1rx8nA-00000003LNx-3ad3;
+	Wed, 17 Apr 2024 17:09:53 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	ntfs3@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 08/10] ntfs3: Use a folio to read UpCase
-Date: Wed, 17 Apr 2024 18:09:36 +0100
-Message-ID: <20240417170941.797116-9-willy@infradead.org>
+Subject: [PATCH 09/10] ntfs3: Remove inode_write_data()
+Date: Wed, 17 Apr 2024 18:09:37 +0100
+Message-ID: <20240417170941.797116-10-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240417170941.797116-1-willy@infradead.org>
 References: <20240417170941.797116-1-willy@infradead.org>
@@ -63,99 +63,67 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a memcpy_from_folio_le16() which does the byteswapping.
-This is now large folio safe and avoids kmap().
+This function has no callers, so remove it.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ntfs3/super.c        | 25 +++++++++++--------------
- include/linux/highmem.h | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 42 insertions(+), 14 deletions(-)
+ fs/ntfs3/inode.c   | 30 ------------------------------
+ fs/ntfs3/ntfs_fs.h |  1 -
+ 2 files changed, 31 deletions(-)
 
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index f6a9ab0f5cad..00700598a717 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -1493,26 +1493,23 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 		goto put_inode_out;
- 	}
- 
--	for (idx = 0; idx < (0x10000 * sizeof(short) >> PAGE_SHIFT); idx++) {
--		const __le16 *src;
-+	idx = 0;
-+	while (idx < (0x10000 * sizeof(u16) >> PAGE_SHIFT)) {
- 		u16 *dst = Add2Ptr(sbi->upcase, idx << PAGE_SHIFT);
--		struct page *page = ntfs_map_page(inode->i_mapping, idx);
-+		struct folio *folio = read_mapping_folio(inode->i_mapping,
-+				idx, NULL);
-+		size_t limit = 0x10000 * sizeof(u16) - idx * PAGE_SIZE;
- 
--		if (IS_ERR(page)) {
--			err = PTR_ERR(page);
-+		if (IS_ERR(folio)) {
-+			err = PTR_ERR(folio);
- 			ntfs_err(sb, "Failed to read $UpCase (%d).", err);
- 			goto put_inode_out;
- 		}
- 
--		src = page_address(page);
--
--#ifdef __BIG_ENDIAN
--		for (i = 0; i < PAGE_SIZE / sizeof(u16); i++)
--			*dst++ = le16_to_cpu(*src++);
--#else
--		memcpy(dst, src, PAGE_SIZE);
--#endif
--		ntfs_unmap_page(page);
-+		memcpy_from_folio_le16(dst, folio, 0,
-+				min(limit, folio_size(folio)));
-+		idx += folio_nr_pages(folio);
-+		folio_put(folio);
- 	}
- 
- 	shared = ntfs_set_shared(sbi->upcase, 0x10000 * sizeof(short));
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index 00341b56d291..20b5d5a5feaf 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -467,6 +467,37 @@ static inline void memcpy_from_folio(char *to, struct folio *folio,
- 	} while (len > 0);
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index cd634398d770..693e8b2f562e 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1086,36 +1086,6 @@ int ntfs_flush_inodes(struct super_block *sb, struct inode *i1,
+ 	return ret;
  }
  
-+#ifdef __BIG_ENDIAN
-+static inline void memcpy_from_folio_le16(u16 *to, struct folio *folio,
-+		size_t offset, size_t len)
-+{
-+	VM_BUG_ON(offset + len > folio_size(folio));
-+
-+	do {
-+		const __le16 *from = kmap_local_folio(folio, offset);
-+		size_t chunk = len;
-+
-+		if (folio_test_highmem(folio) &&
-+		    chunk > PAGE_SIZE - offset_in_page(offset))
-+			chunk = PAGE_SIZE - offset_in_page(offset);
-+
-+		for (i = 0; i < chunk / sizeof(*to); i++)
-+			*to++ = le16_to_cpu(*from++);
-+		kunmap_local(from);
-+
-+		to += chunk / sizeof(*to);
-+		offset += chunk;
-+		len -= chunk;
-+	} while (len > 0);
-+}
-+#else
-+static inline void memcpy_from_folio_le16(u16 *to, struct folio *folio,
-+		size_t offset, size_t len)
-+{
-+	memcpy_from_folio((char *)to, folio, offset, len);
-+}
-+#endif
-+
- /**
-  * memcpy_to_folio - Copy a range of bytes to a folio.
-  * @folio: The folio to write to.
+-int inode_write_data(struct inode *inode, const void *data, size_t bytes)
+-{
+-	pgoff_t idx;
+-
+-	/* Write non resident data. */
+-	for (idx = 0; bytes; idx++) {
+-		size_t op = bytes > PAGE_SIZE ? PAGE_SIZE : bytes;
+-		struct page *page = ntfs_map_page(inode->i_mapping, idx);
+-
+-		if (IS_ERR(page))
+-			return PTR_ERR(page);
+-
+-		lock_page(page);
+-		WARN_ON(!PageUptodate(page));
+-		ClearPageUptodate(page);
+-
+-		memcpy(page_address(page), data, op);
+-
+-		flush_dcache_page(page);
+-		SetPageUptodate(page);
+-		unlock_page(page);
+-
+-		ntfs_unmap_page(page);
+-
+-		bytes -= op;
+-		data = Add2Ptr(data, PAGE_SIZE);
+-	}
+-	return 0;
+-}
+-
+ /*
+  * ntfs_reparse_bytes
+  *
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index d35dc001c2c0..1582cde21988 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -713,7 +713,6 @@ int ntfs3_write_inode(struct inode *inode, struct writeback_control *wbc);
+ int ntfs_sync_inode(struct inode *inode);
+ int ntfs_flush_inodes(struct super_block *sb, struct inode *i1,
+ 		      struct inode *i2);
+-int inode_write_data(struct inode *inode, const void *data, size_t bytes);
+ struct inode *ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 				struct dentry *dentry,
+ 				const struct cpu_str *uni, umode_t mode,
 -- 
 2.43.0
 
