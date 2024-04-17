@@ -1,169 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-17170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0088A88FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 18:37:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B44B38A8962
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 18:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E552814C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 16:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D798E1C23117
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 16:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4142B16FF4A;
-	Wed, 17 Apr 2024 16:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lep17+Kd"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4470917106F;
+	Wed, 17 Apr 2024 16:54:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21D815FA7C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 16:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797CB16FF3D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 16:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713371813; cv=none; b=mvNkNREwKDvQkFxogXsqoh33r0wlQqQQP+Nsgb8oBwBc8HAaeNT9FwUc9tTWG1g02ijANAu9o6NTNBV6kv6sI9WWBxNUtsvlIpk2evjjHDQkEf+ts4OFY+ZY7M272aPdDuXFy18OMaFF45/dtzQunZa8SRXyKryu/xhpCHcnaYw=
+	t=1713372866; cv=none; b=rxmYQJLX4c360/hPVCCepgYJPa7GGvgLHL0FvTnTTtxfhTUzmChYELFc/qmMYfSTqtHMfJBGvX9FhXulCv7CZ++XaU5Z9SxpGVCUUZ1LmPJy7VverT93Ka97QAQXlrL8vXaXxOVGvTi/mFSPnI285sMCWjYBxPj19hgb/ttiB4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713371813; c=relaxed/simple;
-	bh=MidJNy96A94Te4IZoNdgPV29Xs+5+pPh/tNpIy97X+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6GJItMRX1JNUC39T+DkLxhGSdtNVkdOOHCMJVsG2f5I40tV/Dxpujw2JTvWDe2LkHLtyZeNX/NrOYt0h7j+txrtMfJT1s/m2cfMVv0awkErHnDgyPrpSJvkQWgx1hU1FD3vIlLSqc02bPU3Mhnm83Uy3K98chsTdzSgRvHjLxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lep17+Kd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF97FC072AA;
-	Wed, 17 Apr 2024 16:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713371813;
-	bh=MidJNy96A94Te4IZoNdgPV29Xs+5+pPh/tNpIy97X+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lep17+KdVCIFSAlj5kgw07avaZnA3ZtT1a1GedZcQt4fo/RjSsMNZvzxpXY1wEtrW
-	 mXBt5ONNNri/OD47eUzIuFT8vb6fcZSFwVRGMFDYTs2zTEmTlaB5OZlwd3QUVQij2e
-	 7SrUrkd7NlerqYTLSCU4jxce2DXOYQqXMipaGwJmpGZr1jlqbfy7CbYG6EwOoJVhXf
-	 67ySvHJwhlWSDh0WLottz5uMBBW1NOaYm7CXxQB4LJ+PAvY30Ac5SQN+Tg5DbpbIGl
-	 66fad93GPEf4G7V22FwQsz563QGDIoocLCXBRQwjk62Gjmvzvo9burq7f/KAD5klxG
-	 JOozCwOBO9ygw==
-Date: Wed, 17 Apr 2024 18:36:48 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, 
-	kernel-team@fb.com, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Changing how we do file system maintenance
-Message-ID: <20240417-guthaben-dekret-b2d079ef0d21@brauner>
-References: <20240416180414.GA2100066@perftesting>
+	s=arc-20240116; t=1713372866; c=relaxed/simple;
+	bh=zlO3QyLU6T6kAPgF315577WoowuqF+crHU62sbLQ95M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BQV68EfUmaZk/0jea1DCEoH1py8FBpxVXz+Mpg/au4Gtb9VyhvfLdE5H4oFdJvUhkZPuBhgXoIiiCmNcb8JWCIHBo6NaybN7TpSza0AOndvVDkCDz5c6m3+fAqWHgpE4GHnD2S9xpHuUW6roOrl2ajKhP1u4zbV5qE52VAn7zqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7cc7a6a043bso787161839f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 09:54:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713372864; x=1713977664;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=94AERZMjJPIAPdPJbcKSLmYY89yKeD6SgqSo1jdF7OA=;
+        b=l1bJAZLNDsb8Bw2/nCwkv11wX9v2tkQOfYNcFuxDnyAdX9CpNIpbfoQW/sCVdW6h6h
+         KVdmuQcCPaYrXnaS8jyCm16GUjgW7OWbTdc93du+AX3sytyLhlreM6rl/Ei+cn0qINhg
+         EiMp5E/uwsqJbvIhiIHSRyVUmQCQTeg8jyP9YswmMp4dllDMuTBjq6LQ7o3NJuvJP8Mw
+         BRTBdo7CKL3NV4R81Y8evsllAGlqmIKXjsx5Z+BR+1EFBv0zOmM7T6jYGpkGv7bGVXag
+         omeiyUx7zOIHWH9lvIrseiDDSid0KaVGOsX2er3yUhkxyN+mqQ7scL1JyJbxoh2X6/f4
+         upjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYzSz30cbFTDOSBBX5ni5oYjWWwrYHuAGd5jh7fDN8+g6dptx+B5CCp7WkEt+k2xXR3GhDNGxRF2qtV2tpme/focxpKn+s5sN0XKDWqQ==
+X-Gm-Message-State: AOJu0Yz3Nw+1StW9SPloEwuHLt1jJVogMX2PiHgWCby+eaXHgIai9uFV
+	vYbxnYoB9NuPrtitlSKr8FOU10VImYtoeY7LfzSxyONtfDAhfGVb0/djIR2BdFK09O7HvKKIATJ
+	Or6LLbBMsv5zIRycZy53386OPHJBLh5ADE0ZRiI7KZdCO7pnZiTF8bTE=
+X-Google-Smtp-Source: AGHT+IFNX1QrBClN+f+KBHQMg3tx/9A1nlzXeU4PiLf7pH9u6E//ldPrxBgPGlqAVdW7tvAnyXmEqGbtDVq6eeqyVtLfl9hRuoeu
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240416180414.GA2100066@perftesting>
+X-Received: by 2002:a05:6638:8917:b0:482:fa6f:78fd with SMTP id
+ jc23-20020a056638891700b00482fa6f78fdmr839217jab.0.1713372864804; Wed, 17 Apr
+ 2024 09:54:24 -0700 (PDT)
+Date: Wed, 17 Apr 2024 09:54:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f987ff06164db4f6@google.com>
+Subject: [syzbot] [gfs2?] INFO: task hung in gfs2_glock_nq
+From: syzbot <syzbot+dbb72d38131e90dc1f66@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 16, 2024 at 02:04:14PM -0400, Josef Bacik wrote:
-> Hello,
-> 
-> There have been a few common themes that have come up over the years that I feel
-> like we should address.
-> 
-> 1. Adding new file systems.  This is a long and painful process, and I think it
->    should be more painful in order to encourage more FUSE use cases.  However, a
->    lot of the reason it's painful is because it's a "send to Linus and see what
->    happens" sort of process.  Obviously a lot of us get a say, but there's a
->    sort of arbitrary point where it becomes "well send a PR to Linus and see
->    what he thinks."  This is annoying for people who review stuff who may have
->    legitimate concerns, and it's annoying for new file systems who aren't sure
->    what feedback they're supposed to take seriously and what feedback is safe to
->    ignore.
-> 
-> 2. Removing file systems.  We've gotten some good guidance from Greg and others
->    on this, but this still becomes a thing where nobody feels particularly
->    empowered to send the first patch of actually removing a file system.  In
->    super obvious cases it's easier, but there's a lot of non-obvious cases where
->    we kind of sit here and talk about it without doing anything.
-> 
-> 3. API changes.  Sometimes we make API changes in the core code and then
->    provided helpers for the other file systems to use until they're converted,
->    and that long tail goes on forever.  We generally avoid doing work that
->    touches all the file systems because we have to coordinate with at least 4
->    major trees. I'm particularly guilty of this one, I didn't even notice when
->    the new mount API went in, and then I wasn't sufficiently motivated to work
->    on it until it intersected with some other work I was doing.  I was easily
->    halfway through the work when I found out that Christian had done all of the
->    work for us previously, which brings me to #4.
-> 
-> 4. We all have our own ways of doing things, but we're all really similar at the
->    same time.  In btrfs land we prefer small, bitesize patches.  This makes it
->    easier for review, easier for bisecting, etc.  This exists because we take in
->    3x the number of changes as any other file system, we have been bitten
->    several times by some 6'4" jackass with a swearing problem with a 6000 line
->    patch with an unhelpful changelog.  I've had developers get frustrated with
->    our way of running our tree because it's setup differently than others. At
->    the end of the day however a lot of our policies exist to make it as easy as
->    possible for everybody involved to understand what is going on, and to make
->    sure we don't repeat previous mistakes.  At the same time we all do a lot of
->    the same things, emphasize patch review and testing.
-> 
-> There are other related problems, but these are the big ones as I see them.
-> 
-> I would like to propose we organize ourselves more akin to the other large
-> subsystems.  We are one of the few where everybody sends their own PR to Linus,
-> so oftentimes the first time we're testing eachothers code is when we all rebase
-> our respective trees onto -rc1.  I think we could benefit from getting more
-> organized amongst ourselves, having a single tree we all flow into, and then
-> have that tree flow into Linus.
-> 
-> I'm also not a fan of single maintainers in general, much less for this large of
-> an undertaking.  I would also propose that we have a maintainership group where
-> we rotate the responsibilities of the mechanics of running a tree like this.
-> I'm nothing if not unreliable so I wouldn't be part of this group per se, but I
-> don't think we should just make Christian do it.  This would be a big job, and
-> it would need to be shared.
+Hello,
 
-Context here is that some of us discussed this idea off-list a while
-ago. Various aspects of this sounded appealing to me.
+syzbot found the following issue on:
 
-One of my crucial points is that the current fs/ maintainers are
-responsible and will decide on the addition of any new maintainers. As
-of v6.8 Jan Kara has been added as co-maintainer of fs/.
+HEAD commit:    b5d2afe8745b Merge branches 'for-next/kbuild', 'for-next/m..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=139e600b180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=560f5db1d0b3f6d0
+dashboard link: https://syzkaller.appspot.com/bug?extid=dbb72d38131e90dc1f66
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1745f177180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17509b6d180000
 
-The number of trees merged into vfs/vfs.git has slowly increased.
-There's already a few people that send pulls and there'll be another
-tree addition during this cycle.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/50bff35e1638/disk-b5d2afe8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4eeaa73e7ed1/vmlinux-b5d2afe8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8e796b089aa9/Image-b5d2afe8.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/3f56655953c4/mount_0.gz
 
-New subtrees are also now formalized in MAINTAINERS similar to other
-hierarchical trees. New trees that are added and that get sent to fs/
-are marked with FILESYSTEMS [subsystem] and we've gotten a few of those
-last year actually.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dbb72d38131e90dc1f66@syzkaller.appspotmail.com
 
-I'm generally supportive of moving into this direction. But I have no
-interest in this being decided over the heads of the current fs/
-maintainers (or individual filesystem maintainers for that matter).
+INFO: task syz-executor105:6284 blocked for more than 143 seconds.
+      Not tainted 6.9.0-rc3-syzkaller-gb5d2afe8745b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor105 state:D stack:0     pid:6284  tgid:6284  ppid:6282   flags:0x00000004
+Call trace:
+ __switch_to+0x314/0x560 arch/arm64/kernel/process.c:553
+ context_switch kernel/sched/core.c:5409 [inline]
+ __schedule+0x14bc/0x24ec kernel/sched/core.c:6746
+ __schedule_loop kernel/sched/core.c:6823 [inline]
+ schedule+0xbc/0x238 kernel/sched/core.c:6838
+ bit_wait+0x1c/0xac kernel/sched/wait_bit.c:199
+ __wait_on_bit kernel/sched/wait_bit.c:49 [inline]
+ out_of_line_wait_on_bit+0x208/0x334 kernel/sched/wait_bit.c:64
+ wait_on_bit include/linux/wait_bit.h:76 [inline]
+ gfs2_glock_wait+0xb8/0x298 fs/gfs2/glock.c:1354
+ gfs2_glock_nq+0xcc8/0x169c fs/gfs2/glock.c:1616
+ gfs2_glock_nq_init fs/gfs2/glock.h:238 [inline]
+ __gfs2_lookup+0x124/0x270 fs/gfs2/inode.c:905
+ gfs2_lookup+0x2c/0x3c fs/gfs2/inode.c:930
+ __lookup_slow+0x250/0x374 fs/namei.c:1692
+ lookup_slow+0x60/0x84 fs/namei.c:1709
+ walk_component+0x280/0x36c fs/namei.c:2004
+ lookup_last fs/namei.c:2461 [inline]
+ path_lookupat+0x13c/0x3d0 fs/namei.c:2485
+ filename_lookup+0x1d4/0x4e0 fs/namei.c:2514
+ user_path_at_empty+0x5c/0x84 fs/namei.c:2921
+ user_path_at include/linux/namei.h:57 [inline]
+ ksys_umount fs/namespace.c:1916 [inline]
+ __do_sys_umount fs/namespace.c:1924 [inline]
+ __se_sys_umount fs/namespace.c:1922 [inline]
+ __arm64_sys_umount+0xf8/0x17c fs/namespace.c:1922
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
 
-This should be voluntary. Individual fses or subsystems are welcome to
-send pulls. If there's bigger fses that want to start doing this then a
-conversations on expectations from both sides needs to happen. If we do
-this then we start with one or two non-trivial fses and then go from
-there. And it also needs to work for Linus obviously.
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffff80008f057880 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0xc/0x44 include/linux/rcupdate.h:328
+2 locks held by getty/6006:
+ #0: ffff0000ccbde0a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
+ #1: ffff800097b9b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x41c/0x1228 drivers/tty/n_tty.c:2201
+1 lock held by syz-executor105/6284:
+ #0: ffff0000df4da9a0 (&type->i_mutex_dir_key#6){.+.+}-{3:3}, at: inode_lock_shared include/linux/fs.h:805 [inline]
+ #0: ffff0000df4da9a0 (&type->i_mutex_dir_key#6){.+.+}-{3:3}, at: lookup_slow+0x50/0x84 fs/namei.c:1708
 
-Rotating tree management for a cycle seems fine to me once we've reached
-a point where it's really more than can be handled. Might actually mean
-one can get some work on something bigger done. Writing pidfs on the
-side while maintaining was certainly fun.
+=============================================
 
-> I would also propose that along with this single tree and group maintainership
-> we organize some guidelines about the above problems and all collectively agree
-> on how we're going to address them.  Having clear guidelines for adding new file
-> systems, clear guidelines for removing them.  Giving developers the ability to
-> make big API changes outside of the individual file systems trees to make it
-> easier to get things merged instead of having to base against 4 or 5 different
-> trees.  Develop some guidelines about how we want patches to look, how we want
-> testing to be done, etc. so people can move through our different communities
-> and not have drastically different experiences.
-> 
-> This is a massive proposal, and not one that we're going to be able to nail down
-> and implement quickly or easily.  But I think in the long term it'll make
-> working in our community simpler, more predictable, and less frustrating for
-> everybody.  Thanks,
-> 
-> Josef
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
