@@ -1,306 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-17201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8118A8B47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 20:42:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E888A8BC3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 21:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA951F250EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 18:42:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99CBE281B45
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99A51E52F;
-	Wed, 17 Apr 2024 18:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FDF28DD5;
+	Wed, 17 Apr 2024 18:59:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2130.outbound.protection.outlook.com [40.107.243.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78D21D540
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 18:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713379343; cv=none; b=QPDdrCZXuFvCsg+7dsYbmpz3/6VQMtSsSKtimN2WVX0C5DmETFZT7zzhLMHXKm6MyaR0A98oPapCaxrGnGIo1ANZZX9zHw/PZ2cM0y+61I3DjT6I75598jHwCaPvIS10CugCZdKF4MC7PkNSIrKROreBR3wtHavav2bT/IVA/YA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713379343; c=relaxed/simple;
-	bh=DK0MorCy2bMqQFN6AMrEBngq+fs1pfNW+hOa2B6iPRA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VzWPmNWW9c63lSgkW0NJ+SpPH0J4DvctoUjCHdzSgK+pJ7qGS0K4HcDJPoEfmITdExquANJVIShCZ65LE4FFbVHDTPHPxSgdXTMkth8dfz7knxjcLPafruyXBh96+CVVG5/azkN9XfQO0NUDNCN6VCbou1DRMnf7Wf2QtTzcH68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36a20206746so133065ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 11:42:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713379341; x=1713984141;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9YDf9JjlxpbJ+tt2eQd5WUSwtdToxmwgvq2MusOFBCA=;
-        b=kK95uU0+lzBLgZ9gCvIB0J65NTb4a4MfC07Z+xc5/4qE59Rc2B2rEL7G4OvVwmEKgo
-         ozBG8w9tdeXjCP+LAC5dCDM7WzJrA2zmIFG1nmAiZ3UR2tblmEF6FVr463E2nA+2vANJ
-         Oos7vjLH4Uc71UqficaOY51yh10/lCaZpM8khUAbnZ/uX/bk7Fy9BNiPNcp09K2Ia6pV
-         ybpG8u1o0ke9A+Z792bBx/7pvrv679KzDOUE/+3lRVj43WvzAoLwHxTtfp8Py9VntX4i
-         bOJuFIePgDSevTaaZz/SJ6aoFca4DLILsmqTaqvoIwvP7uJO5JYwU0uQ/t+vGXsYJAoS
-         uVQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBt2P3oCZo+Wx38PfCTAC71sOfcKoMnHvPDF1E0MhkglJu/0C4Q73gzgPjp2ynBjVUIItbDKmEq3CVBxMIZ/7S3FUZelGuOOX8HR8mXg==
-X-Gm-Message-State: AOJu0Yzw56ZoQDRtgAf9jct0Forg2MH0bzd5OgzL0aGHJZ3cZZut8lxL
-	ReYYU358MX3t1b7Kv0CxGwGMYVi6JsKM8Zq4cLr+mi6KWPI7JRW6SlPdwn85XFDwKKzfOT7GxZD
-	rTEA+oL5Zy1fmAEf62vfXPwtQ3SeuTwL0C55aAeVQGbI8fotwKDKF6tk=
-X-Google-Smtp-Source: AGHT+IGzsWZ9XDZ7RgCW6w73IrP9C34zCDhrNRhrAYgEqhSiQKHPrm2baYnC6CXZ6sFt4HRy5EB2nM/UcE+HnBSIRc3NQI02iC6x
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0D21DFF3;
+	Wed, 17 Apr 2024 18:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.130
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713380398; cv=fail; b=DnAL94tlN42U6zOeU7WsRYSbP3MY82ZLrE+XwAK97i+O0ZKsS8me8G33em9MXlv6nWUKPXhKuN+VVjR/0BniwxenYEXT6zFANLSkCdTmUiDIKRwUnJKvIsk+NWEXwTN44TD/UARXrjAKGqj3VEqXD1F5W+t73Hsb3qkmPESZuPA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713380398; c=relaxed/simple;
+	bh=6efT8j3Ol15qRg0PJRIGIDgZtNQIeTGQIoOfx5nsxvA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ijX5fSMSnwC16+4Y73BBnwyYkZp8CtFagfYMy9QNJHJSt/KZ1P07Mkj4vpGAsNsvfrd7VTD1r2Mo79mFKPICF1DZl46MofkN/uqbAleX0xXmT0P4nx6oX17HNsLttUoREqD1mUgi6bqjY+q9g6oYMaKYEn8P5B+svBfniEVvtDQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com; spf=pass smtp.mailfrom=talpey.com; arc=fail smtp.client-ip=40.107.243.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=talpey.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kQuF01Hj1riem9C+zCGKA+ALywO5S1gqEbOzag7JmESBlqPQuKlIQczwdQfJcsYnLpHU29nFWGqMpqqegl5s0t9fHyzl6P6fLj8bvl/x6JhM+mv4dDIyxWq4Joew9dhp9FtR3H+hI3aJ3v8y+OX0Vm1EWXmfzro5D+5PS5Bzg1iEAxnWHNnohITUsMsKw1xZHg9lh3EjoNSZxXqz2PprLxDemgbSDgrNkRdYbfnEG4xT1S/TPHdEx7LzTxuIKIMPNhiSZ8j5nqS31D9YLbINpY/9DjuKXdjyHouff45GjAulEkpM5kcLBoHA84WpbgLkD0XfYTds/v/6JQ8ULm9/fQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IpDebR9NtUL5YhX00pDTxW061235RMhGzzgqwL/hkps=;
+ b=ZL7kSuF3q5Xsva0Cf/bGu97XoqGVAyFyz+qhnPHjCY562RhEbZlnoFtWka7ReATTOV61+OhYbSpMQ/rLb4ZGZ17xq2QRbyycR2CHKhMIxDlgkhiSZjNXxjihKDaJhwXun5uhhQNg2dy7zB0VXCgMXZ3yjf3SR6SfoVkyYAleryawn32AWkytjjOvqNM2047fIK6Z1TZvEqlfAc1TBdLyULPAPdSobLxUJigoNqEI7/U+iM/GsIxeimAN9UrckRvYvQ1+tSjv0hfE77FY56GRxodKckIPliM44ryP8qio/NWTLEixCXGoFkxlMxyZdZTRHPAw+8IIVKvGjEaBnyYvYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
+ dkim=pass header.d=talpey.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=talpey.com;
+Received: from CH0PR01MB7170.prod.exchangelabs.com (2603:10b6:610:f8::12) by
+ MW6PR01MB8368.prod.exchangelabs.com (2603:10b6:303:246::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7452.50; Wed, 17 Apr 2024 18:59:53 +0000
+Received: from CH0PR01MB7170.prod.exchangelabs.com
+ ([fe80::260f:c1b2:616a:af0]) by CH0PR01MB7170.prod.exchangelabs.com
+ ([fe80::260f:c1b2:616a:af0%6]) with mapi id 15.20.7452.049; Wed, 17 Apr 2024
+ 18:59:53 +0000
+Message-ID: <e33d0b65-fc0b-49ab-ba48-7a13327d88aa@talpey.com>
+Date: Wed, 17 Apr 2024 14:59:50 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cifs: Fix reacquisition of volume cookie on still-live
+ connection
+To: David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.com>
+Cc: Steve French <sfrench@samba.org>, Shyam Prasad N <sprasad@microsoft.com>,
+ linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1a94a15e6863d3844f0bcb58b7b1e17a@manguebit.com>
+ <14e66691a65e3d05d3d8d50e74dfb366@manguebit.com>
+ <3756406.1712244064@warthog.procyon.org.uk>
+ <2713340.1713286722@warthog.procyon.org.uk>
+ <277920.1713364693@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Tom Talpey <tom@talpey.com>
+In-Reply-To: <277920.1713364693@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0298.namprd13.prod.outlook.com
+ (2603:10b6:208:2bc::33) To CH0PR01MB7170.prod.exchangelabs.com
+ (2603:10b6:610:f8::12)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c8e:b0:36b:2731:5fb6 with SMTP id
- w14-20020a056e021c8e00b0036b27315fb6mr17257ill.0.1713379340966; Wed, 17 Apr
- 2024 11:42:20 -0700 (PDT)
-Date: Wed, 17 Apr 2024 11:42:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fbf10e06164f3695@google.com>
-Subject: [syzbot] [xfs?] possible deadlock in xfs_qm_flush_one
-From: syzbot <syzbot+4a799ff34dbbb5465776@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB7170:EE_|MW6PR01MB8368:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c8ab250-5da6-4f93-7b28-08dc5f1090b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	JwoEO7pEKlmxog3CLp+2y4eBvBMz1mOgJ8YC/maCVSO6XkodF/m3SZncwIZF/vc0eScP/U6VBjSg7q0yBGm8ZGG+kE94Q14Pkh9roz14W50xDsfiLhsxqMVM/JE+e79Y246hmtEChwgy5S7VpwICCruqVv/FvMoxXXcXptB6kynYLOP9lich/aNuWVYjminc+co4HnWMTA4IIIRlp+B7WnLX4Ag2CslvnIN+fua5J7GSPo5yvxAIVafPp8qSZw5l3/VyGR6AuxSehZqoNwVRScU9wq2pMi4hWheto5eqk9fTwqp26JtLNK6yTJpJPYO45WdBaZBvAMGbgwncNcZ8eD0bpQmT8CdEUH93KKd78+unvFkZv6fXePFjr3mZKYRCjoUENTFao9eSD3brqbsSOSFiKz7yjAbQUuiNDEqxmhGQcfVTF7zeeeLLgTv6VVeqVrPJqwXj7EhywEWihzpRLMHe/yTBtd1E46MU6z/gNl9COaiSz3ySTc3HnvyT6zuwXeh9K4ZRyLyG/YU73nO5Gt6pqqlJ2YatqhADnJlOvF8pGtY7XoXhqd+7/Z/NaEK0fYMKvzbFDRGPH5zw3kNxU30d/h/FB55oJCtWSSUJzRrZe3jT9FEwqcOz/HLAjQtj+lyWxVdxeycc2bJlWq7Iq0L1YY4SlrzPhkRh0f0CGjg=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB7170.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b2tmR3NrRUJyZ09XR0lwcXpST0pERGU0ZHNZK1VWcnpkNzVoaGdqV0IyNXBq?=
+ =?utf-8?B?cXVrTHYvQmdVWWNUNEZoV2Jick95UlZJZDNZaFFkSitWc1VHRjBnVFpBWkt6?=
+ =?utf-8?B?d0hOaFJmNC9Eemx6eGgzT1pkUWJiSmIwOG5XUzMwaGpFWFFkUTdEVEF2aktJ?=
+ =?utf-8?B?cXdWaWFBTUZObTROWnFvTmZ5UUwwZmxVTWZpYXV2SmhKakE5TitONDVWTEV1?=
+ =?utf-8?B?aVkxM3puMFRqdmVWU2d1NmlwWU84Si92UVFEcDByYkNJM1dvMW9uSWltSEVj?=
+ =?utf-8?B?VDEyMzc1T21GbFF3eFJVSjJ3OHlrenZmOUFGa2NyS29xaDY5TDZXQTVVbHU0?=
+ =?utf-8?B?bFh3TGw3NUJnUzlVb0NpTFhOT29hQkY4VzNnMjVnbFZxQTN4YW82ZTBtcW1n?=
+ =?utf-8?B?YkhSSjNIaDhNZm5uN3I0TEh5TjJHVVVONk8yWlV3N3B0NlFkSEs0Ull2WVhq?=
+ =?utf-8?B?bCs2aWpTM21aNThZVTFPbEVSWXJQUjVuWlBpVjdCWjI4RzJ0bFpIWjNaN2lU?=
+ =?utf-8?B?dGMwMGRrRGlCQXdvOUpNNGxoczZGa29KeG9LUkxKRWdnVFVDWERkNVBic1lK?=
+ =?utf-8?B?dm54QWNLQ09MeXNnWldvNzRIeVNmaDY0WlhuNkkrSkZFT0hML3FYVUJaSk0w?=
+ =?utf-8?B?bjlGVkxqTDFleWhRYzFPUGhFNFhEL3pCYWdqaHhkL0xMRHpqRDFaa3hkQ1Zr?=
+ =?utf-8?B?RG9TdUxzbnJvL2lITUNLeEdjcWtSZ2pkQVlVNnNlclBUL1JkT0MrSlNpdEVW?=
+ =?utf-8?B?Y2ZFcnNGVm56TDRsSFFrWGpuUDFkRVp1Y3M0ZGpiNWlPeHJBdUhrNlBuTGRj?=
+ =?utf-8?B?clZhYjRxVkczNnc4QWh4YW5OZGVVZXE2WWRrZFhaVnJaWk9oZXRTc3ZMNXZR?=
+ =?utf-8?B?eVFOY2xJek1nanBuQXYvby9kemxMckFaSEZXVzdtZkFXTW92ZjAvSXkwSm04?=
+ =?utf-8?B?UEI2NWsyWjc0YXkwVVltUk9ueEs3V1dkUytkQzNpcXI3cHczWHRNZTY1Qmtq?=
+ =?utf-8?B?OEJKWTNUZHRXbDVvbVFsUHp6ck9semlHQThhVnlDYis5ZTRQemRjUlRHaVlJ?=
+ =?utf-8?B?RmU4U0hpenNjbkpWekNXZnFpVUE3dFZSaXVUTVdiV3hPWXRaQkY4RGZCWjNT?=
+ =?utf-8?B?c29pdVExdUx4WDRvQ0Fmc1ZLSWQzNU0zVmIrOE4zUTVvcmE3YStiYk1mTGhr?=
+ =?utf-8?B?U0JLbERVRXVxejV4TGFtazlDQW0wQkZXRnJ4VHo2RERRUmJza09rOTNBVmtJ?=
+ =?utf-8?B?bnNld29oL1FDOXZ4VDIrMzYwYnAvOGpoaW1SNW95YjVpMmNGaGJJTHp3WGFv?=
+ =?utf-8?B?RytKK0xOcGdXNlE4VUhXMktvcVlNeG9PUjk0UEJ4bUFUVWkrdDRBYmVaM1NH?=
+ =?utf-8?B?STU3c0Evb3RISVN2a0J3eldmWEZkaWZENkZXQjVCa3NlRVJHQjlKRlBRVlFx?=
+ =?utf-8?B?STZHV2hBRDd0T0tjWkR0dHY4ZVVNTXozbFRMQmZNRjJMRFJNUzJrM2JvQVJ2?=
+ =?utf-8?B?RDc1azZkNmorU1NyQWNmK0RoNWFaaW0vTnhNamM4THFrc0svVGE4Yk1ROCtY?=
+ =?utf-8?B?Mi9QRFhRMG1tMkpqbDFWTlF6VEtGN1BETHdFOGtNR3pldzdLMjU3dFNaRFhY?=
+ =?utf-8?B?SG1kVFhEWWxYU3NzWHQwWXBHM3pUc3BxNFM5azg0ZHlZZHpOQ211V1VBbXBQ?=
+ =?utf-8?B?TnY0anAveEhJVm12bXdoa3RxUzU0Zmw5KzcyREtzdG1yR3p4T3lNM2J3MkJ6?=
+ =?utf-8?B?cXhmYXV3ekV0QWVZWjdnZzJSR2xtTDkyVUkrMk95TUdsL29BWHZRbGZ2M3Ay?=
+ =?utf-8?B?ZFlzd1ZRdCtZV2N3L0VOa3hLZUQxNy9na2docjhRQTlOU29qOVlxU2M4NHkv?=
+ =?utf-8?B?YzBOT2R1MkZrRUcxRjJKdnhkQXZKNlBVL1V0blBYVmZxeDcwbEFsZHJWZnY2?=
+ =?utf-8?B?SGFvZm5ZbzRUYXpvL2RhQmU1ckl2YnZDdWhISG5nRjN4d2Z2d0lKNmtsL28r?=
+ =?utf-8?B?cVhQMlVRM3N3OGppSERvNDZoajhGcVhtZG04STNkZUJmNjNZbnBRdis5UEp0?=
+ =?utf-8?B?ZkpNUzNKUjZVUWExdjVnOFV6azhvTWEzdU1TWDFPK1huWkthejZQbGNZb05Q?=
+ =?utf-8?Q?0JuacblR4bqk2RBp3C5uYDAgs?=
+X-OriginatorOrg: talpey.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c8ab250-5da6-4f93-7b28-08dc5f1090b4
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB7170.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2024 18:59:53.2800
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZYPI4yhb2OplAO/E3r6sNX8IR+9OAaIewlCZjNuj83jsNOJw+MS0B8vLGwZaiBA2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR01MB8368
 
-Hello,
+On 4/17/2024 10:38 AM, David Howells wrote:
+> Paulo Alcantara <pc@manguebit.com> wrote:
+> 
+>> Consider the following example where a tcon is reused from different
+>> CIFS superblocks:
+>>
+>>    mount.cifs //srv/share /mnt/1 -o ${opts} # new super, new tcon
+>>    mount.cifs //srv/share/dir /mnt/2 -o ${opts} # new super, reused tcon
+>>
+>> So, /mnt/1/dir/foo and /mnt/2/foo will lead to different inodes.
+>>
+>> The two mounts are accessing the same tcon (\\srv\share) but the new
+>> superblock was created because the prefix path "\dir" didn't match in
+>> cifs_match_super().  Trust me, that's a very common scenario.
+> 
+> Why does it need to lead to a different superblock, assuming ${opts} is the
 
-syzbot found the following issue on:
+The tcon is a property of the SMB3 session, it's not shared nor is
+it necessarily created at mount time.
 
-HEAD commit:    9ed46da14b9b Add linux-next specific files for 20240412
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a4a1dd180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7ea0abc478c49859
-dashboard link: https://syzkaller.appspot.com/bug?extid=4a799ff34dbbb5465776
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Tom.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fc649744d68c/disk-9ed46da1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/11eab7b9945d/vmlinux-9ed46da1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e7885afd198d/bzImage-9ed46da1.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4a799ff34dbbb5465776@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.9.0-rc3-next-20240412-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.1/7036 is trying to acquire lock:
-ffffffff8e429e80 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:334 [inline]
-ffffffff8e429e80 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:3847 [inline]
-ffffffff8e429e80 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:3937 [inline]
-ffffffff8e429e80 (fs_reclaim){+.+.}-{0:0}, at: kmalloc_trace_noprof+0x3d/0x2b0 mm/slub.c:4104
-
-but task is already holding lock:
-ffff888011c298a8 (&xfs_dquot_project_class){+.+.}-{3:3}, at: xfs_dqlock fs/xfs/xfs_dquot.h:125 [inline]
-ffff888011c298a8 (&xfs_dquot_project_class){+.+.}-{3:3}, at: xfs_qm_flush_one+0xd9/0x430 fs/xfs/xfs_qm.c:1250
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&xfs_dquot_project_class){+.+.}-{3:3}:
-       reacquire_held_locks+0x3eb/0x690 kernel/locking/lockdep.c:5279
-       __lock_release kernel/locking/lockdep.c:5468 [inline]
-       lock_release+0x379/0x9f0 kernel/locking/lockdep.c:5774
-       __mutex_unlock_slowpath+0xe2/0x750 kernel/locking/mutex.c:912
-       xfs_qm_dqget_cache_lookup+0x340/0x8c0 fs/xfs/xfs_dquot.c:802
-       xfs_qm_dqget_inode+0x308/0xaf0 fs/xfs/xfs_dquot.c:994
-       xfs_qm_dqattach_one+0x181/0x640 fs/xfs/xfs_qm.c:278
-       xfs_qm_dqattach_locked+0x42c/0x4e0 fs/xfs/xfs_qm.c:345
-       xfs_qm_vop_dqalloc+0x3fd/0xf10 fs/xfs/xfs_qm.c:1710
-       xfs_create+0x578/0x1320 fs/xfs/xfs_inode.c:1041
-       xfs_generic_create+0x495/0xd70 fs/xfs/xfs_iops.c:199
-       lookup_open fs/namei.c:3497 [inline]
-       open_last_lookups fs/namei.c:3566 [inline]
-       path_openat+0x1425/0x3280 fs/namei.c:3796
-       do_filp_open+0x235/0x490 fs/namei.c:3826
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
-       do_sys_open fs/open.c:1421 [inline]
-       __do_sys_openat fs/open.c:1437 [inline]
-       __se_sys_openat fs/open.c:1432 [inline]
-       __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
-       do_syscall_x64 arch/x86/entry/common.c:74 [inline]
-       do_syscall_64+0xfa/0x250 arch/x86/entry/common.c:105
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&xfs_dir_ilock_class){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       down_write_nested+0x3d/0x50 kernel/locking/rwsem.c:1695
-       xfs_reclaim_inode fs/xfs/xfs_icache.c:945 [inline]
-       xfs_icwalk_process_inode fs/xfs/xfs_icache.c:1631 [inline]
-       xfs_icwalk_ag+0x120e/0x1ad0 fs/xfs/xfs_icache.c:1713
-       xfs_icwalk fs/xfs/xfs_icache.c:1762 [inline]
-       xfs_reclaim_inodes_nr+0x257/0x360 fs/xfs/xfs_icache.c:1011
-       super_cache_scan+0x40f/0x4b0 fs/super.c:227
-       do_shrink_slab+0x705/0x1160 mm/shrinker.c:435
-       shrink_slab+0x1092/0x14d0 mm/shrinker.c:662
-       shrink_one+0x453/0x880 mm/vmscan.c:4809
-       shrink_many mm/vmscan.c:4870 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4970 [inline]
-       shrink_node+0x3b17/0x4310 mm/vmscan.c:5929
-       kswapd_shrink_node mm/vmscan.c:6741 [inline]
-       balance_pgdat mm/vmscan.c:6932 [inline]
-       kswapd+0x1882/0x38a0 mm/vmscan.c:7201
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (fs_reclaim){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __fs_reclaim_acquire mm/page_alloc.c:3825 [inline]
-       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3839
-       might_alloc include/linux/sched/mm.h:334 [inline]
-       slab_pre_alloc_hook mm/slub.c:3847 [inline]
-       slab_alloc_node mm/slub.c:3937 [inline]
-       kmalloc_trace_noprof+0x3d/0x2b0 mm/slub.c:4104
-       kmalloc_noprof include/linux/slab.h:660 [inline]
-       add_stack_record_to_list mm/page_owner.c:177 [inline]
-       inc_stack_record_count mm/page_owner.c:219 [inline]
-       __set_page_owner+0x561/0x810 mm/page_owner.c:334
-       set_page_owner include/linux/page_owner.h:32 [inline]
-       post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1474
-       prep_new_page mm/page_alloc.c:1482 [inline]
-       get_page_from_freelist+0x2ce2/0x2d90 mm/page_alloc.c:3444
-       __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4702
-       alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4650
-       xfs_buf_alloc_pages+0x1a8/0x880 fs/xfs/xfs_buf.c:398
-       xfs_buf_find_insert+0x19a/0x1540 fs/xfs/xfs_buf.c:650
-       xfs_buf_get_map+0x149c/0x1ae0 fs/xfs/xfs_buf.c:755
-       xfs_buf_read_map+0x111/0xa60 fs/xfs/xfs_buf.c:860
-       xfs_trans_read_buf_map+0x260/0xad0 fs/xfs/xfs_trans_buf.c:289
-       xfs_trans_read_buf fs/xfs/xfs_trans.h:210 [inline]
-       xfs_qm_dqflush+0x2eb/0x16d0 fs/xfs/xfs_dquot.c:1271
-       xfs_qm_flush_one+0x129/0x430 fs/xfs/xfs_qm.c:1285
-       xfs_qm_dquot_walk+0x232/0x4a0 fs/xfs/xfs_qm.c:88
-       xfs_qm_quotacheck+0x41a/0x6f0 fs/xfs/xfs_qm.c:1375
-       xfs_qm_mount_quotas+0x345/0x630 fs/xfs/xfs_qm.c:1488
-       xfs_mountfs+0x1849/0x1eb0 fs/xfs/xfs_mount.c:963
-       xfs_fs_fill_super+0x114b/0x13c0 fs/xfs/xfs_super.c:1730
-       get_tree_bdev+0x3f7/0x570 fs/super.c:1614
-       vfs_get_tree+0x90/0x2a0 fs/super.c:1779
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3352
-       do_mount fs/namespace.c:3692 [inline]
-       __do_sys_mount fs/namespace.c:3898 [inline]
-       __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
-       do_syscall_x64 arch/x86/entry/common.c:74 [inline]
-       do_syscall_64+0xfa/0x250 arch/x86/entry/common.c:105
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  fs_reclaim --> &xfs_dir_ilock_class --> &xfs_dquot_project_class
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&xfs_dquot_project_class);
-                               lock(&xfs_dir_ilock_class);
-                               lock(&xfs_dquot_project_class);
-  lock(fs_reclaim);
-
- *** DEADLOCK ***
-
-3 locks held by syz-executor.1/7036:
- #0: ffff888183b720e0 (&type->s_umount_key#64/1){+.+.}-{3:3}, at: alloc_super+0x221/0x9d0 fs/super.c:343
- #1: ffff8881874c9958 (&qinf->qi_tree_lock){+.+.}-{3:3}, at: xfs_qm_dquot_walk+0x136/0x4a0 fs/xfs/xfs_qm.c:75
- #2: ffff888011c298a8 (&xfs_dquot_project_class){+.+.}-{3:3}, at: xfs_dqlock fs/xfs/xfs_dquot.h:125 [inline]
- #2: ffff888011c298a8 (&xfs_dquot_project_class){+.+.}-{3:3}, at: xfs_qm_flush_one+0xd9/0x430 fs/xfs/xfs_qm.c:1250
-
-stack backtrace:
-CPU: 1 PID: 7036 Comm: syz-executor.1 Not tainted 6.9.0-rc3-next-20240412-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __fs_reclaim_acquire mm/page_alloc.c:3825 [inline]
- fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3839
- might_alloc include/linux/sched/mm.h:334 [inline]
- slab_pre_alloc_hook mm/slub.c:3847 [inline]
- slab_alloc_node mm/slub.c:3937 [inline]
- kmalloc_trace_noprof+0x3d/0x2b0 mm/slub.c:4104
- kmalloc_noprof include/linux/slab.h:660 [inline]
- add_stack_record_to_list mm/page_owner.c:177 [inline]
- inc_stack_record_count mm/page_owner.c:219 [inline]
- __set_page_owner+0x561/0x810 mm/page_owner.c:334
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1474
- prep_new_page mm/page_alloc.c:1482 [inline]
- get_page_from_freelist+0x2ce2/0x2d90 mm/page_alloc.c:3444
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4702
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4650
- xfs_buf_alloc_pages+0x1a8/0x880 fs/xfs/xfs_buf.c:398
- xfs_buf_find_insert+0x19a/0x1540 fs/xfs/xfs_buf.c:650
- xfs_buf_get_map+0x149c/0x1ae0 fs/xfs/xfs_buf.c:755
- xfs_buf_read_map+0x111/0xa60 fs/xfs/xfs_buf.c:860
- xfs_trans_read_buf_map+0x260/0xad0 fs/xfs/xfs_trans_buf.c:289
- xfs_trans_read_buf fs/xfs/xfs_trans.h:210 [inline]
- xfs_qm_dqflush+0x2eb/0x16d0 fs/xfs/xfs_dquot.c:1271
- xfs_qm_flush_one+0x129/0x430 fs/xfs/xfs_qm.c:1285
- xfs_qm_dquot_walk+0x232/0x4a0 fs/xfs/xfs_qm.c:88
- xfs_qm_quotacheck+0x41a/0x6f0 fs/xfs/xfs_qm.c:1375
- xfs_qm_mount_quotas+0x345/0x630 fs/xfs/xfs_qm.c:1488
- xfs_mountfs+0x1849/0x1eb0 fs/xfs/xfs_mount.c:963
- xfs_fs_fill_super+0x114b/0x13c0 fs/xfs/xfs_super.c:1730
- get_tree_bdev+0x3f7/0x570 fs/super.c:1614
- vfs_get_tree+0x90/0x2a0 fs/super.c:1779
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:74 [inline]
- do_syscall_64+0xfa/0x250 arch/x86/entry/common.c:105
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcda6a7f56a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fcda77c4ef8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fcda77c4f80 RCX: 00007fcda6a7f56a
-RDX: 0000000020009800 RSI: 0000000020009840 RDI: 00007fcda77c4f40
-RBP: 0000000020009800 R08: 00007fcda77c4f80 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020009840
-R13: 00007fcda77c4f40 R14: 000000000000985b R15: 0000000020000240
- </TASK>
-XFS (loop1): Quotacheck: Done.
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> same in both cases?  Can we not do as NFS does and share the superblock,
+> walking during the mount process through the directory prefix to the root
+> object?
+> 
+> In other words, why does:
+> 
+>      mount.cifs //srv/share /mnt/1 -o ${opts}
+>      mount.cifs //srv/share/dir /mnt/2 -o ${opts}
+> 
+> give you a different result to:
+> 
+>      mount.cifs //srv/share /mnt/1 -o ${opts}
+>      mount --bind /mnt/1/dir /mnt/2
+> 
+> David
+> 
+> 
+> 
 
