@@ -1,70 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-17205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5746A8A8D33
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 22:45:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DF48A8D7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 23:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088C91F2297D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 20:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E14FE2836A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 21:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE8247F63;
-	Wed, 17 Apr 2024 20:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867B04CB5B;
+	Wed, 17 Apr 2024 21:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="au2DcBRj"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f3YACdPB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF5644C7B;
-	Wed, 17 Apr 2024 20:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB89D481A8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 21:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713386717; cv=none; b=jDH5xuLJbG6r20B3n2TKYje3AqesRpXvVO14WZOltwBqFmWSrGieeypIul6zYr4obzIm9UsTZfK1hbSttOatNxUrlXYfb4wDfqXFh5SB9OKbazGHR0Qv8cYc2CjVcsw1TVNJqKyTaL7jKNhspz1P8qk62sGOCCizqbMbr2RzEzw=
+	t=1713388097; cv=none; b=soxrErT9+uXem/exZ4UO3H17JLyk0p46F9o6gafDdDLZxMsang6wJWeDJSQWRDUYowYF4/EzuKfQJ5YeLO7yxnyPQXf+vhOdeyIeeBJzh+Xu5ClRrfqsnyrE/jGoT8Gjl8d/TyJ+aoHtxppAyoUac1z3V7B7Rruo1WPdEeqCOUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713386717; c=relaxed/simple;
-	bh=wlIgsqiPUF9bkmZTjmmRjmIDrDC3JSbRWMjul89Oki8=;
+	s=arc-20240116; t=1713388097; c=relaxed/simple;
+	bh=Dzk1ZvwM61CnWwCmlm9LN5b+eODMlo7uCq+ekDMxnac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgeGLye2Tw3wUn1nzHJysjkfFWAkQgSmpsg/C1WZjyEWIHQd8rYTYpFrEmV8jeiIV7a0QZr9kotucruZyFeLKSZk3BGNWE2sPvPY8fSKIQQW63oUy0jE6qLnau5DJL4VAp+hfSPeF8OdERoP+3Oqq3h9+tIOj8xvvixHnW6YJ8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=au2DcBRj; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BvHSSwDgZvfid1sqlQ1o/inIrOdXBqnLwTqg0dZSKDY=; b=au2DcBRjLagu7riDaYwmuhQlr8
-	1sN/vD6VJwfFlUQEDBtksahdUlaFRNeq7KD8l4pO+a5xnsn7CYm6uxK4mZwvxxnTuPJYYfWH3RssR
-	8ZOZRlGfQvUTbuxz8mQT596e8AQZX2nQp+ZEDi1Vd0wVmAvquUPxnbz5uYoyBna+UIW8vTzgFF08w
-	YZr7C+F35vr+O+nLFUUSktfpoEgGd4IVaVwIt+zV6HsNapeXMGxQZWV+rK0FWrIzgrFHAhD7xmeh6
-	S+T8rLkiEcNIReTcDGXGCwqddPljPoZKqnn3BLcn/N01SZOcICi1zTgx1IsnQb84lk0Btz9r/tWM4
-	4zSWze/w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rxC9P-00EdzQ-24;
-	Wed, 17 Apr 2024 20:45:03 +0000
-Date: Wed, 17 Apr 2024 21:45:03 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de,
-	axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>,
-	Christian Brauner <brauner@kernel.org>, linux-pm@vger.kernel.org
-Subject: [RFC] set_blocksize() in kernel/power/swap.c (was Re: [PATCH vfs.all
- 22/26] block: stash a bdev_file to read/write raw blcok_device)
-Message-ID: <20240417204503.GD2118490@ZenIV>
-References: <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
- <20240410105911.hfxz4qh3n5ekrpqg@quack3>
- <20240410223443.GG2118490@ZenIV>
- <20240411-logik-besorgen-b7d590d6c1e9@brauner>
- <20240411140409.GH2118490@ZenIV>
- <20240412-egalisieren-fernreise-71b1f21f8e64@brauner>
- <20240412112919.GN2118490@ZenIV>
- <20240413-hievt-zweig-2e40ac6443aa@brauner>
- <20240415204511.GV2118490@ZenIV>
- <20240416063253.GA2118490@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JP6P4D3t5W194ELvslCK/XLNGtcVwLMmgyclQCkLFtBZUqDz4nl647CV7BhVKPc+Bsx2kGuhC130D5RiB02WkEB4J0xJFh4cbNQF59mEJDDRmtjMtkMYy39lvuNIz8Ppk/iHVgBGEZbT3d/+7YHxiXHxElKtjQwkgH0qQiPXQo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f3YACdPB; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 17 Apr 2024 17:08:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1713388092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PKCCqyrQSQVqll4wIMyErhi0FHa0a9AXkGURxmziZuk=;
+	b=f3YACdPB+2vWCj8f16+SJ/SWg0w2YHyvlr5Lj8UGABu15Jr8/KPXIswqiJD8kujihU4Kob
+	DZ2QMztcYz1FNirII8gSl49u+9upkPjAOVaX7s2R8KBuC9CNQ6FylqpTYL6n2j1bqr3nP4
+	3w/6ob6t/mhrkaSlL24Fg4CtYHHRzYI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	lsf-pc@lists.linux-foundation.org, kernel-team@fb.com
+Subject: Re: [LSF/MM/BPF TOPIC] Changing how we do file system maintenance
+Message-ID: <c7jgzgwy74tr4e2l53mrp7p76kmtthkexnydtuigipmqzgjuu4@edux2yftjn7p>
+References: <20240416180414.GA2100066@perftesting>
+ <Zh7g5ws68IkJ1vo3@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,20 +58,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240416063253.GA2118490@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <Zh7g5ws68IkJ1vo3@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Apr 16, 2024 at 07:32:53AM +0100, Al Viro wrote:
+On Tue, Apr 16, 2024 at 09:34:47PM +0100, Matthew Wilcox wrote:
+> On Tue, Apr 16, 2024 at 02:04:14PM -0400, Josef Bacik wrote:
+> > I would like to propose we organize ourselves more akin to the other
+> > large subsystems.  We are one of the few where everybody sends their
+> > own PR to Linus, so oftentimes the first time we're testing eachothers
+> > code is when we all rebase our respective trees onto -rc1.  I think
+> > we could benefit from getting more organized amongst ourselves, having
+> > a single tree we all flow into, and then have that tree flow into Linus.
+> 
+> This sounds like a great idea to me.  As someone who does a lot of
+> changes that touch a lot of filesystems, I'd benefit from this model.
+> It's very frustrating to be told "Oh, submit patches against tree X
+> which isn't included in linux-next".
 
-> kernel/power/swap.c:371:        res = set_blocksize(file_bdev(hib_resume_bdev_file), PAGE_SIZE);
-> kernel/power/swap.c:1577:               set_blocksize(file_bdev(hib_resume_bdev_file), PAGE_SIZE);
-> 	Special cases (for obvious reasons); said that, why do we bother
-> with set_blocksize() on those anyway?
+I think an even better starting point would just be (more) common test
+infrastructure. We've already got fstests, what we need is a shared
+cluster (two racks of machines?) that is dedicated to automated testing
+on _any_ kernel filesystem.
 
-AFAICS, we really don't need either - all IO is done via hib_submit_io(),
-which sets a single-page bio and feeds it to submit_bio{,_wait}()
-directly.  We are *not* using the page cache of the block device
-in question, let alone any buffer_head instances.
+I've got the code for this all ready to go, as soon as someone is
+willing to pony up on hardware.
 
-Could swsusp folks comment?
+That would mean people like Willy who are doing cross filesystem testing
+would have a _lot_ less manual work to do, and having a cluster that
+watches our git branches and kicks off tests when someone pushes (i.e.
+what I already have, just on a bigger scale) would mean that we'd be
+full test suite results back in 5-10 minutes after writing the code and
+pushing. That sort of thing is amazing for productivity... no more
+sitting around twiddling thumbs waiting for the evening test run...
 
