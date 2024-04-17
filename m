@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-17193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC8E8A8AA9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:57:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A96DC8A8AAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2139A1F2520A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64576287132
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CF4175548;
-	Wed, 17 Apr 2024 17:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87658177983;
+	Wed, 17 Apr 2024 17:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j5DtCS6X"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DkOHoJG3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3737C173340
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6415317334F
 	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 17:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713376625; cv=none; b=sYpLfXMRz+qJlUR08be6/g80e4ZeBP17OgxEhw4fFsl7Msy4hi0AbdzqabgfcmSnTcS80PFbo0MZMALnvgaXhCpuCldEXtJ9Ro/G8e3CnhOFe+BQGV3DAXQ77LVNVkaIsTxGgk9FeiWlOD3zh71uZ+ox16OHq3h0dWIJYyVwZwo=
+	t=1713376627; cv=none; b=Elzdn/6uho8hEpj1KUQfAd1Q2BpFugFd+A6u5BlYPd4zk7lp4tX06KlmFwZ0TKbh/cK+je7qpBKbk0ZVP4qEg562d2GoenpRnVBlct0Ymb31QaTwpVdWWj/BUg0je6IzNRicDR5EefK5b4oJlu7kxV9cwTDAA6xGdtMu6p1W7bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713376625; c=relaxed/simple;
-	bh=fpESyOj4y1fTuiIoUg4XUYeOXa1cDdUDPxGzlyc66lc=;
+	s=arc-20240116; t=1713376627; c=relaxed/simple;
+	bh=OxDhZvC9Amw+hMKnDgjDSanKx8dE/+7jO0T9i9ELEuw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JkciP49gmlThnws9052u+RRS5vosPuPboAkokHWdhU7UR6pK60ef4v5HffMPth7XclaKCm459SG2SGq8KiCOcHmxYq/MbdP+KyuBEBkzGrNUGqE3nSzXMtf7W4yEYn4h+nt/8YDhqr/HPiJJi/MLrrpq6j7N5KuqG3cCjchxysE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j5DtCS6X; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=l2GtG7VVJoVWd77FppzfL544k6IX92ChSnn4C0g+UrPlFe/gXXmjGN1qwHt8ug2MAfVXv2BC+eaaKBLn4hjLEljvVTaToStCEKQq9hsB+GhU62yFrCf+VxNcMpXikxDwEbyNJkKHNhe+YJZqxI5oFqF0dP8+c1v+JjTe/pJr7AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DkOHoJG3; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=LAnZW6GCFcQwsNj6nTs+m0g546UgN80/wr24RLPyHvw=; b=j5DtCS6Xx16WXXXgSfaUpeRV8y
-	6gpKKTuf++yKQ7q1czBb1K3FRLW0wtQtgvxluWCQgzRbjIs/iwfM4xh2F4SlfVL3HfRi6T559Jk5U
-	/ysmYPD3mwW0BOALVDbiuYuSbP5SVjRq0YSl11c1FMal+oNDFsYDC3WgRwBre7jR5Z61XzuTCMVcR
-	2DrK+h/rl4qZbw9Apd58By9iC4hD8NOhtGPmsVjuIcMktQNav3d5H9lBBkth7QEHsZufrSN59zy+u
-	W8heZf/HWQFnpY+unUwd85uE8WR/XV+FCzvFV6QMGeEG50hb/pAerkn6MS/XISnKB/mHtf558D0Xc
-	V1gKYkIg==;
+	bh=3F2REPprGFU3NAO/d/I198nnDhbiMS319KeFMfWiBPg=; b=DkOHoJG3mlz7vONEam1pM4aTTe
+	q2GT0LreR2yevYFYSlTL/V+tjIxSsC+nk7VjqD+8zXX5H36XjoUZzEXMI6rdrIXehMTjvM3KXEdeZ
+	GGse1/srcJ/ECYGUpUfMkvj1qZuNNBfueSNXFJB+FfvNd6V80fJRzLLHW5Oc2NV+1DSUrlc5oBGaC
+	p5p0EB70kFnyOJ4jC4LHRj2kpxaVJr6iWRRM4KULHsMWTGYG94B+WJ+cMqg8Sl1yesPrmg3q0ytjQ
+	S9PGbQfxykyYgg7TLIOd6b0UuMRe8n6VYnrkgpie3BhDt3ULvzlJsstec7lQsXRFEdYRNLoq6wdVe
+	8CiW2/Rg==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rx9Wo-00000003Qtj-2Pde;
+	id 1rx9Wo-00000003Qtq-31jc;
 	Wed, 17 Apr 2024 17:57:02 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Dave Kleikamp <shaggy@kernel.org>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	jfs-discussion@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 10/13] jfs: Convert inc_io to take a folio
-Date: Wed, 17 Apr 2024 18:56:54 +0100
-Message-ID: <20240417175659.818299-11-willy@infradead.org>
+Subject: [PATCH v2 11/13] jfs: Convert force_metapage to use a folio
+Date: Wed, 17 Apr 2024 18:56:55 +0100
+Message-ID: <20240417175659.818299-12-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240417175659.818299-1-willy@infradead.org>
 References: <20240417175659.818299-1-willy@infradead.org>
@@ -63,76 +63,63 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All their callers now have a folio, so pass it in.  Remove mp_anchor()
-as inc_io() was the last user.  No savings here, just cleaning up some
-remnants.
+Convert the mp->page to a folio and operate on it.  That lets us
+convert metapage_write_one() to take a folio.  Replaces five calls to
+compound_head() with one.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/jfs/jfs_metapage.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ fs/jfs/jfs_metapage.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 67d5d417fe01..f03e217ec1cb 100644
+index f03e217ec1cb..c88a7bc3f736 100644
 --- a/fs/jfs/jfs_metapage.c
 +++ b/fs/jfs/jfs_metapage.c
-@@ -78,7 +78,6 @@ struct meta_anchor {
- 	atomic_t io_count;
- 	struct metapage *mp[MPS_PER_PAGE];
- };
--#define mp_anchor(page) ((struct meta_anchor *)page_private(page))
+@@ -689,9 +689,8 @@ void grab_metapage(struct metapage * mp)
+ 	unlock_page(mp->page);
+ }
  
- static inline struct metapage *folio_to_mp(struct folio *folio, int offset)
+-static int metapage_write_one(struct page *page)
++static int metapage_write_one(struct folio *folio)
  {
-@@ -132,9 +131,11 @@ static inline void remove_metapage(struct folio *folio, struct metapage *mp)
- 	}
- }
+-	struct folio *folio = page_folio(page);
+ 	struct address_space *mapping = folio->mapping;
+ 	struct writeback_control wbc = {
+ 		.sync_mode = WB_SYNC_ALL,
+@@ -720,17 +719,17 @@ static int metapage_write_one(struct page *page)
  
--static inline void inc_io(struct page *page)
-+static inline void inc_io(struct folio *folio)
+ void force_metapage(struct metapage *mp)
  {
--	atomic_inc(&mp_anchor(page)->io_count);
-+	struct meta_anchor *anchor = folio->private;
-+
-+	atomic_inc(&anchor->io_count);
+-	struct page *page = mp->page;
++	struct folio *folio = page_folio(mp->page);
+ 	jfs_info("force_metapage: mp = 0x%p", mp);
+ 	set_bit(META_forcewrite, &mp->flag);
+ 	clear_bit(META_sync, &mp->flag);
+-	get_page(page);
+-	lock_page(page);
+-	set_page_dirty(page);
+-	if (metapage_write_one(page))
++	folio_get(folio);
++	folio_lock(folio);
++	folio_mark_dirty(folio);
++	if (metapage_write_one(folio))
+ 		jfs_error(mp->sb, "metapage_write_one() failed\n");
+ 	clear_bit(META_forcewrite, &mp->flag);
+-	put_page(page);
++	folio_put(folio);
  }
  
- static inline void dec_io(struct folio *folio, void (*handler) (struct folio *))
-@@ -166,7 +167,7 @@ static inline void remove_metapage(struct folio *folio, struct metapage *mp)
- 	kunmap(&folio->page);
- }
- 
--#define inc_io(page) do {} while(0)
-+#define inc_io(folio) do {} while(0)
- #define dec_io(folio, handler) handler(folio)
- 
- #endif
-@@ -395,14 +396,14 @@ static int metapage_write_folio(struct folio *folio,
- 			 * Increment counter before submitting i/o to keep
- 			 * count from hitting zero before we're through
- 			 */
--			inc_io(&folio->page);
-+			inc_io(folio);
- 			if (!bio->bi_iter.bi_size)
- 				goto dump_bio;
- 			submit_bio(bio);
- 			nr_underway++;
- 			bio = NULL;
- 		} else
--			inc_io(&folio->page);
-+			inc_io(folio);
- 		xlen = (folio_size(folio) - offset) >> inode->i_blkbits;
- 		pblock = metapage_get_blocks(inode, lblock, &xlen);
- 		if (!pblock) {
-@@ -496,7 +497,7 @@ static int metapage_read_folio(struct file *fp, struct folio *folio)
- 		if (pblock) {
- 			if (!folio->private)
- 				insert_metapage(folio, NULL);
--			inc_io(&folio->page);
-+			inc_io(folio);
- 			if (bio)
- 				submit_bio(bio);
- 
+ void hold_metapage(struct metapage *mp)
+@@ -771,7 +770,7 @@ void release_metapage(struct metapage * mp)
+ 		folio_mark_dirty(folio);
+ 		if (test_bit(META_sync, &mp->flag)) {
+ 			clear_bit(META_sync, &mp->flag);
+-			if (metapage_write_one(&folio->page))
++			if (metapage_write_one(folio))
+ 				jfs_error(mp->sb, "metapage_write_one() failed\n");
+ 			folio_lock(folio);
+ 		}
 -- 
 2.43.0
 
