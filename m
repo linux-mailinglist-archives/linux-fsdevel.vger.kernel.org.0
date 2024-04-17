@@ -1,99 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-17157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BEB8A87A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:32:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D364B8A8870
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 18:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6301F23D74
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 15:32:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FBC2B21780
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 16:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A486147C7F;
-	Wed, 17 Apr 2024 15:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EB21487F9;
+	Wed, 17 Apr 2024 16:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="nMtnDykE"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="aGuzyX+B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA9E147C6B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 15:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8891C1487D2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 16:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713367927; cv=none; b=KVdpKOuRNFOvtD+zDsePGFZVqdn58fyK9qKK1nurSfcoJX7OCBGrs3QxQFdt3Msta+wMpjkS7Hi1otxJkKR9FmPXQ/5BHhM9e0E95/PjUDhi0HIaMpo8nm5Kz6wtR6O15oJSC42gbodWZpO2oGavIzS0i8eN5Xxdz6qfyRZjORw=
+	t=1713370033; cv=none; b=Ovmr3oiRvcAOnG5qxE6z4rBLXWjv3+xQ6wNfN38rWU8x3SiYSBRJ+Rc/bRPdumtTKNOAU/NslO8Iyjji2KZkrcQsWCad5DcHxHcxdodprqT2DC7k4i/jzH2eo03qJ0VYgaIXE3hpxPgPQXOzb17pnwj1jnWJ2dqbrgPS6XfaFVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713367927; c=relaxed/simple;
-	bh=uLgeUL+C/7Ff/mPtDOJn/RgT0bHJZ8IcFtXcqbCQ+lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MtMNC95uVxNidi/WT3L3+TKTysmVlXZ7pQpCyIi5MurSTjNGd0oGBSDuSfuTmPMZSpOqvTl2Ic4y9tP9MJIaePCFIFzy5clq4vZpXqnN52U62VJxM1FdRN81lwohgMoysK1Y6EDk5iIlRfnpqNNFie7PKy0DSl1IQkJf7Iu/ass=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=nMtnDykE; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 43HFVM8p016211
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Apr 2024 11:31:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1713367886; bh=OUs4KkgaD/FpvJ+2NJzXqe7hy3aMJMIJWA9eaTknY8E=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=nMtnDykE1F1kxHm5GQfr4ZqPYU3K4i+JZ44Je1xsc+SeP+WWSIb60AnjNISDIjdih
-	 Ih4ucOoOEjpm2vxAnjhJ6FsWtcVeJx/4+61j2OCSOnhDxtJuhT/msapmB/CpV6dEEP
-	 4VQkk+Z1IczSdfxuRpDsu8XRMsZa6amXUgmYalqB6t87sglA+Br/ICuZj5cNWgkjsp
-	 KGaxCjs7zVfxQl0u0k3rz3bW/2Ke7eGq5wze71vflPSO16lggQ3nIY0rm7UN7lQqm8
-	 9HHg4MjglepgvNC8tSaEZlRyUQIeT6Lbochp4uvZ5bpYbfZlbduMxUTKurUDQCHaYa
-	 09ARNt790bi+A==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 91D7115C0CBA; Wed, 17 Apr 2024 11:31:22 -0400 (EDT)
-Date: Wed, 17 Apr 2024 11:31:22 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Mike Rapoport <rppt@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Andreas Dilger <adilger@dilger.ca>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Conor Dooley <conor@kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Alexandre Ghiti <alex@ghiti.fr>
-Subject: Re: riscv32 EXT4 splat, 6.8 regression?
-Message-ID: <20240417153122.GE2277619@mit.edu>
-References: <8734rlo9j7.fsf@all.your.base.are.belong.to.us>
- <Zh6KNglOu8mpTPHE@kernel.org>
- <20240416171713.7d76fe7d@namcao>
- <20240416173030.257f0807@namcao>
- <87v84h2tee.fsf@all.your.base.are.belong.to.us>
- <20240416181944.23af44ee@namcao>
- <Zh6n-nvnQbL-0xss@kernel.org>
- <Zh6urRin2-wVxNeq@casper.infradead.org>
- <Zh7Ey507KXIak8NW@kernel.org>
- <20240417003639.13bfd801@namcao>
+	s=arc-20240116; t=1713370033; c=relaxed/simple;
+	bh=JMdImt1rqEG+anLm+o4q9u965rHrPHelnM1X6Rzf8tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sUvEcGPbnj5Qd6EvZf2jt/K+bzhGBYvmbA1jKX+0tjoLQEGh7CqY4JXgPEBvhyXWC8/VXDIHID9hBe8M8ymAKC/6rFoMTNEgmb8r7p9pFLnrgZFkkxIf/aV5TIH+reTrQaYVJKz8Zyu0UoUqlADLjkQupHi9aPtF+8ijVwi9yMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=aGuzyX+B; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 2F7E71FE9;
+	Wed, 17 Apr 2024 15:59:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1713369579;
+	bh=5HR+GG9SCNa/Fu4bWlTHqrfnklhDGqCwal0cb0yJpso=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=aGuzyX+Bef2BO+H53d4nZxDdDBmpoTpsESG8PiUklBG1ssfJtmzLjyKe4yDu2OtkN
+	 UFkgRYAbeC1f9VZYgxcKAKfoq0LIO0XMB+nQ96m7hBTsS3w1TThJ5mr8KAdqfJQyvF
+	 hDAScC9s8paOXd7SwVWsrLdTUkCvNlSXawQFUAJg=
+Received: from [192.168.211.17] (192.168.211.17) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Wed, 17 Apr 2024 19:07:07 +0300
+Message-ID: <015aa42b-abac-4810-8743-43913ab8e2d9@paragon-software.com>
+Date: Wed, 17 Apr 2024 19:07:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240417003639.13bfd801@namcao>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ntfs3: remove warning
+To: Christian Brauner <brauner@kernel.org>, Johan Hovold <johan@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Anton Altaparmakov
+	<anton@tuxera.com>, Namjae Jeon <linkinjeon@kernel.org>,
+	<ntfs3@lists.linux.dev>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-ntfs-dev@lists.sourceforge.net>,
+	<regressions@lists.linux.dev>
+References: <Zf2zPf5TO5oYt3I3@hovoldconsulting.com>
+ <20240325-faucht-kiesel-82c6c35504b3@brauner>
+Content-Language: en-US
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20240325-faucht-kiesel-82c6c35504b3@brauner>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Wed, Apr 17, 2024 at 12:36:39AM +0200, Nam Cao wrote:
-> 
-> However, I am confused about one thing: doesn't this make one page of
-> physical memory inaccessible?
+On 25.03.2024 11:34, Christian Brauner wrote:
+> This causes visible changes for users that rely on ntfs3 to serve as an
+> alternative for the legacy ntfs driver. Print statements such as this
+> should probably be made conditional on a debug config option or similar.
+>
+> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Cc: Johan Hovold <johan@kernel.org>
+> Link: https://lore.kernel.org/r/Zf2zPf5TO5oYt3I3@hovoldconsulting.com
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>   fs/ntfs3/inode.c | 1 -
+>   1 file changed, 1 deletion(-)
+>
+> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+> index eb7a8c9fba01..8cc94a6a97ed 100644
+> --- a/fs/ntfs3/inode.c
+> +++ b/fs/ntfs3/inode.c
+> @@ -424,7 +424,6 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+>   
+>   	if (names != le16_to_cpu(rec->hard_links)) {
+>   		/* Correct minor error on the fly. Do not mark inode as dirty. */
+> -		ntfs_inode_warn(inode, "Correct links count -> %u.", names);
+>   		rec->hard_links = cpu_to_le16(names);
+>   		ni->mi.dirty = true;
+>   	}
+Hello Christian, all,
 
-So are these riscv32 systems really having multiple terabytes of
-memory?  Why is this page in the physical memory map in the first
-place?
+The initial and true reason for multiple warnings is the disregard of 
+short (DOS) names when counting hard links.
 
-Inquiring minds what to know,
+This patch should fixes this bug:
+https://lore.kernel.org/ntfs3/0cb0b314-e4f6-40a2-9628-0fe7d905a676@paragon-software.com/T/#u
 
-						- Ted
+There is no longer a need to suppress the message itself.
+
+
 
