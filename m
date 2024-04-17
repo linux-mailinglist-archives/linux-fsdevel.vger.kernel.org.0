@@ -1,164 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-17102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B448A7B68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 06:35:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6658A7B7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 06:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F13284082
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 04:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBC581C2193B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 04:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D62B282E1;
-	Wed, 17 Apr 2024 04:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D144245949;
+	Wed, 17 Apr 2024 04:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mzUxtU4l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gT8CmgOi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C651170F;
-	Wed, 17 Apr 2024 04:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F81F40847;
+	Wed, 17 Apr 2024 04:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713328542; cv=none; b=vA43f+n3+epl0nCbGg+4eQ3HZPfSYP58cC9PE2tYEAkYFXDIQCcYfAsatQsmwXEREUhHtTqlJIZvQc3vD40Ng+jgV0VTwWl4ERfXSWygEcznDBthWPqtDaQjLndfnZEWojP0pSImi2/cd3DVYTbW1Zzk0Ru9sctW850eRSMz0F0=
+	t=1713329119; cv=none; b=DRZgnHIf3ZqJt0hfS1kZEHZQ80nV9gW7rshRlU8zFarXAvTYY0UcXKjOEcTjg5cDm6VUIRkpciCViOOyzAsdNEHLXZYhQFxYlAVQ9ld1ISVkrwFU9evouuBRg5kAMFUhgyuQnRoyCVBZL4iYobcoPmhS9jZZX0+vzzLU6MdZPB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713328542; c=relaxed/simple;
-	bh=+iCfkqjUsgO1ZDGIbFr8GYdF2Rs6z6Z+S4k3UrB9408=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VHpu8YnCs1HLy3Jj/iMdRu1ROc3cAUyx5qmcZbp0eFjRGcDAGTeZdZT91neQLWzckeY1rBFCq/7ZQpg9/GVzkzOF7bpLAwhQYg5yFmG5PF4Qq7e+T7QP3TU8ZR2zNh9YCFh4M9prDJGhZ5nG61ZjJ/RlGQUxQLrMXhXdR0k1cDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mzUxtU4l; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iXIykWGQJpDXFJ+SQPt3FgFx7ryUGPRR4FBRYWESyMI=; b=mzUxtU4l0NNFUHX5mkoyXWNs8U
-	GyEONlam9xOofQDVKIWaFGXjTyicdEu+M9CWxSsgz1+y0DdCcmXUCsqUYcXHbz0RbDk15FgCiVv/Y
-	H0RSxN/J0QQ7am8VWK8V0alKv+w1DxQl2VesZTzdPbJNwdgI9uw86qyqj0v/en2FpqDKsWrOaZQnK
-	o97xHh/bkoNxY8vNj4c8/JDB/9jKc+08tueOnQ2W+Y5CnrW7OLuqjonJGZoRx/cJ2GYGNJ5DbYIdi
-	OgwrhfG/FYajJh2429fYyy4cEmyFEK8hqBqE21ErTCZX13036z7HIu37KaidENnny15/C+9QjCsp8
-	U1/XnnAg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rwx1A-00E2jv-0T;
-	Wed, 17 Apr 2024 04:35:32 +0000
-Date: Wed, 17 Apr 2024 05:35:32 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: axboe@kernel.dk
-Cc: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH][RFC] set_blocksize() in pktcdvd (was Re: [PATCH vfs.all
- 22/26] block: stash a bdev_file to read/write raw blcok_device)
-Message-ID: <20240417043532.GA3337808@ZenIV>
-References: <49f99e7b-3983-8074-bb09-4b093c1269d1@huaweicloud.com>
- <20240410105911.hfxz4qh3n5ekrpqg@quack3>
- <20240410223443.GG2118490@ZenIV>
- <20240411-logik-besorgen-b7d590d6c1e9@brauner>
- <20240411140409.GH2118490@ZenIV>
- <20240412-egalisieren-fernreise-71b1f21f8e64@brauner>
- <20240412112919.GN2118490@ZenIV>
- <20240413-hievt-zweig-2e40ac6443aa@brauner>
- <20240415204511.GV2118490@ZenIV>
- <20240416063253.GA2118490@ZenIV>
+	s=arc-20240116; t=1713329119; c=relaxed/simple;
+	bh=d3UI7TPsKQ6hePG28+svcxqObPL4Pt/HEcBjwPLGNzU=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=CcoUSmau8hC3gPjZ5ngf1b0lKKCGOLdysbohWuBnW/OQp+b+UsxcxSURB2vqnHla0UmZOh2EM6v/cWzCAuUM2q6zAHpnMpVIhLDr1ClKYQkWqaDi5AhNrKEBYBI9856GA53R/eAqivmOTV2zssWVCIE2cE7T7eMVuLdblfciWF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gT8CmgOi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35EEBC072AA;
+	Wed, 17 Apr 2024 04:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713329118;
+	bh=d3UI7TPsKQ6hePG28+svcxqObPL4Pt/HEcBjwPLGNzU=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:From;
+	b=gT8CmgOiOdcbtHflAEjF4Qw72KcTh3+J5vJQTBS7Ri/styB0ktHbpFDHnusUDABSn
+	 +If5NL10FHgBc+RHv8+nZKY8XRIKNixeNhO4+ep/770XcCEHxaTnEOuLYBRJCq79jV
+	 Yai3a3Twt1B0wwUZLrESU7Y+O9XdgBTXMZQaQOZga8ax7OnZO4bZPexCsgXe8XdpLf
+	 P8b/xXOoff+gSfIcvJ+5xvZxkurKPu3LGtCERLR5O2G/gwaLLgxuO5ERi7vDGVvdtm
+	 mL8K0gcdjtZYt3LAlciLpoFUM/Df0zVL2P3xDCzSQE6e2tkrLfNV4gM53iUpy4J3Z0
+	 lEYva8Sfduj6Q==
+References: <20240320110548.2200662-1-yi.zhang@huaweicloud.com>
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+ brauner@kernel.org, david@fromorbit.com, tytso@mit.edu, jack@suse.cz,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v4 0/9] xfs/iomap: fix non-atomic clone operation and
+ don't update size when zeroing range post eof
+Date: Wed, 17 Apr 2024 10:12:10 +0530
+In-reply-to: <20240320110548.2200662-1-yi.zhang@huaweicloud.com>
+Message-ID: <87ttk0d2ck.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240416063253.GA2118490@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain
 
-On Tue, Apr 16, 2024 at 07:32:53AM +0100, Al Viro wrote:
+On Wed, Mar 20, 2024 at 07:05:39 PM +0800, Zhang Yi wrote:
+> Changes since v3:
+>  - Improve some git message comments and do some minor code cleanup, no
+>    logic changes.
+>
+> Changes since v2:
+>  - Merge the patch for dropping of xfs_convert_blocks() and the patch
+>    for modifying xfs_bmapi_convert_delalloc().
+>  - Reword the commit message of the second patch.
+>
+> Changes since v1:
+>  - Make xfs_bmapi_convert_delalloc() to allocate the target offset and
+>    drop the writeback helper xfs_convert_blocks().
+>  - Don't use xfs_iomap_write_direct() to convert delalloc blocks for
+>    zeroing posteof case, use xfs_bmapi_convert_delalloc() instead.
+>  - Fix two off-by-one issues when converting delalloc blocks.
+>  - Add a separate patch to drop the buffered write failure handle in
+>    zeroing and unsharing.
+>  - Add a comments do emphasize updating i_size should under folio lock.
+>  - Make iomap_write_end() to return a boolean, and do some cleanups in
+>    buffered write begin path.
+>
+> This patch series fix a problem of exposing zeroed data on xfs since the
+> non-atomic clone operation. This problem was found while I was
+> developing ext4 buffered IO iomap conversion (ext4 is relying on this
+> fix [1]), the root cause of this problem and the discussion about the
+> solution please see [2]. After fix the problem, iomap_zero_range()
+> doesn't need to update i_size so that ext4 can use it to zero partial
+> block, e.g. truncate eof block [3].
+>
+> [1] https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
+> [2] https://lore.kernel.org/linux-ext4/9b0040ef-3d9d-6246-4bdd-82b9a8f55fa2@huaweicloud.com/
+> [3] https://lore.kernel.org/linux-ext4/9c9f1831-a772-299b-072b-1c8116c3fb35@huaweicloud.com/
+>
+> Thanks,
+> Yi.
+>
+> Zhang Yi (9):
+>   xfs: match lock mode in xfs_buffered_write_iomap_begin()
+>   xfs: make the seq argument to xfs_bmapi_convert_delalloc() optional
+>   xfs: make xfs_bmapi_convert_delalloc() to allocate the target offset
+>   xfs: convert delayed extents to unwritten when zeroing post eof blocks
+>   iomap: drop the write failure handles when unsharing and zeroing
+>   iomap: don't increase i_size if it's not a write operation
+>   iomap: use a new variable to handle the written bytes in
+>     iomap_write_iter()
+>   iomap: make iomap_write_end() return a boolean
+>   iomap: do some small logical cleanup in buffered write
+>
 
-> drivers/block/pktcdvd.c:2285:           set_blocksize(disk->part0, CD_FRAMESIZE);
+Hi all,
 
-	We had hardsect_size set to that 2Kb from the very beginning
-(well, logical_block_size these days).	And the first ->open() is
-(and had been since before the pktcdvd went into mainline) followed by
-setting block size anyway, so any effects of that set_blocksize() had
-always been lost.  Candidate block sizes start at logical_block_size...
-Rudiment of something from 2000--2004 when it existed out of tree?
-<checks>  That logic into the tree in 2.5.13; May 2002...
+I have picked up this patchset for inclusion into XFS' 6.10-rc1 patch
+queue. Please let me know if there are any objections.
 
-	AFAICS, this one can be simply removed.  Jens, do you have
-any objections to that?  It's safe, but really pointless...
-
-> drivers/block/pktcdvd.c:2529:   set_blocksize(file_bdev(bdev_file), CD_FRAMESIZE);
-
-	This, OTOH, is not safe at all - we don't have the underlying device
-exclusive, and it's possible that it is in use with e.g. 4Kb block size (e.g.
-from ext* read-only mount, with 4Kb blocks).  This set_blocksize() will screw
-the filesystem very badly - block numbers mapping to LBA will change, for starters.
-
-	We are setting a pktcdvd device up here, and that set_blocksize()
-is done to the underlying device.  It does *not* prevent changes of block
-size of the underlying device by the time we actually open the device
-we'd set up - set_blocksize() in ->open() is done to pktcdvd device,
-not the underlying one.  So... what is it for?
-
-	It might make sense to move it into ->open(), where we do have
-the underlying device claimed.	But doing that at the setup time looks
-very odd...
-
-	Do you have any objections against this:
-
-commit d1d93f2c26f70fbcd714615d1a3ea7a104fc0f43
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Wed Apr 17 00:28:03 2024 -0400
-
-    pktcdvd: sort set_blocksize() calls out
-    
-    1) it doesn't make any sense to have ->open() call set_blocksize() on the
-    device being opened - the caller will override that anyway.
-    
-    2) setting block size on underlying device, OTOH, ought to be done when
-    we are opening it exclusive - i.e. as part of pkt_open_dev().  Having
-    it done at setup time doesn't guarantee us anything about the state
-    at the time we start talking to it.  Worse, if you happen to have
-    the underlying device containing e.g. ext2 with 4Kb blocks that
-    is currently mounted r/o, that set_blocksize() will confuse the hell
-    out of filesystem.
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 21728e9ea5c3..05933f25b397 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -2215,6 +2215,7 @@ static int pkt_open_dev(struct pktcdvd_device *pd, bool write)
- 		}
- 		dev_info(ddev, "%lukB available on disc\n", lba << 1);
- 	}
-+	set_blocksize(file_bdev(bdev_file), CD_FRAMESIZE);
- 
- 	return 0;
- 
-@@ -2278,11 +2279,6 @@ static int pkt_open(struct gendisk *disk, blk_mode_t mode)
- 		ret = pkt_open_dev(pd, mode & BLK_OPEN_WRITE);
- 		if (ret)
- 			goto out_dec;
--		/*
--		 * needed here as well, since ext2 (among others) may change
--		 * the blocksize at mount time
--		 */
--		set_blocksize(disk->part0, CD_FRAMESIZE);
- 	}
- 	mutex_unlock(&ctl_mutex);
- 	mutex_unlock(&pktcdvd_mutex);
-@@ -2526,7 +2522,6 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- 	__module_get(THIS_MODULE);
- 
- 	pd->bdev_file = bdev_file;
--	set_blocksize(file_bdev(bdev_file), CD_FRAMESIZE);
- 
- 	atomic_set(&pd->cdrw.pending_bios, 0);
- 	pd->cdrw.thread = kthread_run(kcdrwd, pd, "%s", pd->disk->disk_name);
+-- 
+Chandan
 
