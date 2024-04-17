@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-17186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136A58A8A93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:57:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B518A8A94
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 19:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1B2F2850B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:57:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B23A7285F47
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Apr 2024 17:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C74E174EC1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AA4174ECF;
 	Wed, 17 Apr 2024 17:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CEdoqhRI"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wBRSrmZj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2256172BCF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8926172BD5
 	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 17:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713376624; cv=none; b=lyOgD5mGFlsrAYwOKfj8K6mLQqdk+LxIsfp0NU9GGp5GJ6oTuvqfyE/4R4tB1IsB2g4eAVieBelxpqQaR9S6KCrrM5lE9cKOE7jE8ATdaKSlmEVFqnP+386Ij/5I0e5NFp4bQ0SS67BoFaGT5GK6Ay7/uqBko51P2QjzT3f2mjg=
+	t=1713376624; cv=none; b=kQhG7PC8vqOynWCQuQqhaBmCfCZ4HgijRWTz0ddM5zMuF7o17nlmIwoi/AUdf8oXcwtLuSiNgb1qXdqONHutanc4GlEIEWLOi8O1AlqgLeMXLeJuiJlZZ5TJJB+HnUT1by8ny7w0m1sSve58sBtuFtdeCqmTjfy3z8hahk6CGx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1713376624; c=relaxed/simple;
-	bh=4b3G/+T3wt+YVnTF1aSwniBeH1KOIEVwE1fET7SzUXI=;
+	bh=9UfGXYFJaXiX/QPVwGbZJBnefvErg/xze3xXY2rgbts=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iTeKPrF+TzRDFl3AF/5F4OTcCm8/pFowaalkc7kUPWzs4MLkh+P5ghwpK6mDo1PzLRxwey5+8Krh0NxOtq59wftr9qN1Q2iiNf8saspCpnU91H6y4lfIstWumYK2vPaNiL0QRD4qGulf1hlFkkWEFt8BH/4XE0CP0x1wY+lE8X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CEdoqhRI; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=dA/FxWUv4uJMP9gx69lEmUSbQN9foXR6HUMYJCGTvc0VC3bAGvvtu8yIKee98BX9jPp+Ir0EUG4DPPCuej7MmWBm+9T0wPGuJhA2RND2xtaWtUIcYP1R78y6hOqC4Mv6EylAEojYearfDdbbbJ/oTFnTeoROUGKoe03U/3yVxv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wBRSrmZj; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=1hiBfCsxHjQnrQb499TeqPNt73gL1h2Ah7TqxU7+CxY=; b=CEdoqhRIG3rbUmX+HBTnIVn6li
-	SK0HQpAFyLD3gWNDbBu3VHF2GOotjGc7JTjX4B9vBZDkXMPLM4Hai40Ru4xJmCHiuIxnPcvSFtHhH
-	D2sfCYPTglSO8QjvAYW5B8LVTXpgLH/y/3NUrlM3ZYydB30wu+ESEZqW9PVe35iGxMzPEfS7LsyQh
-	Ax/RQqqIK//JwknJ6AiRVif6dMuinatvQl9t2v4h+ds/dSFAaI8Z9YWN8CME54fCA45xulWj3hD0j
-	SeJ5Xe35fZOuZ1tl9XbII2VwxBpSWLCLfH3GD2wZhxBP5pOJBRMNiinnKGSlfHMtbi5+3t8kyNaXG
-	kkLnII7Q==;
+	bh=0PCgY0pKLRJKEtVUcAJOm71vipyZh1XinEayZbDdllk=; b=wBRSrmZj7H5v53cuCpt7dhDGvF
+	7dtIPP9HiqsHJlioKZugckk3kdpqdA6TmimP2JD7Bl+THXU4Lb42LjxEr11e/poxNoRQR004amI7P
+	Vtmf0BJEn7hVRLwqWWMlXoB06lS4XIvfVGTah+QJeA6v8hp/KN5bS8tBwZlKRWcByvT9vIJPqkwfe
+	ht7tFCFZA0/6omv0d0i10VsFGeXC3v5yM5Z0NeR1dtb8hn5q1+XGHSwzjEyMR8TRFLwmP+ED47hkk
+	TqmFBpaPCR2DOPWTKxPiitnlj/oX4QOrSvMF5KdE9rRNS/vSljgbTYqgxTM0sljciBDbmpnMF1f+t
+	jv0x63fQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rx9Wn-00000003Qss-0eVL;
+	id 1rx9Wn-00000003Qsz-1DxV;
 	Wed, 17 Apr 2024 17:57:01 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Dave Kleikamp <shaggy@kernel.org>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	jfs-discussion@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 03/13] jfs: Convert __get_metapage to use a folio
-Date: Wed, 17 Apr 2024 18:56:47 +0100
-Message-ID: <20240417175659.818299-4-willy@infradead.org>
+Subject: [PATCH v2 04/13] jfs: Convert insert_metapage() to take a folio
+Date: Wed, 17 Apr 2024 18:56:48 +0100
+Message-ID: <20240417175659.818299-5-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240417175659.818299-1-willy@infradead.org>
 References: <20240417175659.818299-1-willy@infradead.org>
@@ -63,92 +63,104 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove four hidden calls to compound_head().
+Both of its callers now have a folio, so convert this function.
+Use folio_attach_private() instead of manually setting folio->private.
+This also gets the expected refcount of the folio correct.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/jfs/jfs_metapage.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ fs/jfs/jfs_metapage.c | 31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
 
 diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index beecc9ad656e..4ef85e264f51 100644
+index 4ef85e264f51..6fa7023f5bc9 100644
 --- a/fs/jfs/jfs_metapage.c
 +++ b/fs/jfs/jfs_metapage.c
-@@ -577,7 +577,7 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
- 	int l2bsize;
- 	struct address_space *mapping;
- 	struct metapage *mp = NULL;
--	struct page *page;
-+	struct folio *folio;
- 	unsigned long page_index;
- 	unsigned long page_offset;
+@@ -87,25 +87,23 @@ static inline struct metapage *page_to_mp(struct page *page, int offset)
+ 	return mp_anchor(page)->mp[offset >> L2PSIZE];
+ }
  
-@@ -608,22 +608,22 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
+-static inline int insert_metapage(struct page *page, struct metapage *mp)
++static inline int insert_metapage(struct folio *folio, struct metapage *mp)
+ {
+ 	struct meta_anchor *a;
+ 	int index;
+ 	int l2mp_blocks;	/* log2 blocks per metapage */
+ 
+-	if (PagePrivate(page))
+-		a = mp_anchor(page);
+-	else {
++	a = folio->private;
++	if (!a) {
+ 		a = kzalloc(sizeof(struct meta_anchor), GFP_NOFS);
+ 		if (!a)
+ 			return -ENOMEM;
+-		set_page_private(page, (unsigned long)a);
+-		SetPagePrivate(page);
+-		kmap(page);
++		folio_attach_private(folio, a);
++		kmap(&folio->page);
  	}
  
- 	if (new && (PSIZE == PAGE_SIZE)) {
--		page = grab_cache_page(mapping, page_index);
--		if (!page) {
--			jfs_err("grab_cache_page failed!");
-+		folio = filemap_grab_folio(mapping, page_index);
-+		if (IS_ERR(folio)) {
-+			jfs_err("filemap_grab_folio failed!");
- 			return NULL;
- 		}
--		SetPageUptodate(page);
-+		folio_mark_uptodate(folio);
- 	} else {
--		page = read_mapping_page(mapping, page_index, NULL);
--		if (IS_ERR(page)) {
-+		folio = read_mapping_folio(mapping, page_index, NULL);
-+		if (IS_ERR(folio)) {
- 			jfs_err("read_mapping_page failed!");
- 			return NULL;
- 		}
--		lock_page(page);
-+		folio_lock(folio);
- 	}
- 
--	mp = page_to_mp(page, page_offset);
-+	mp = page_to_mp(&folio->page, page_offset);
  	if (mp) {
- 		if (mp->logical_size != size) {
- 			jfs_error(inode->i_sb,
-@@ -649,16 +649,16 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
- 		mp = alloc_metapage(GFP_NOFS);
- 		if (!mp)
- 			goto unlock;
--		mp->page = page;
-+		mp->page = &folio->page;
- 		mp->sb = inode->i_sb;
- 		mp->flag = 0;
- 		mp->xflag = COMMIT_PAGE;
- 		mp->count = 1;
- 		mp->nohomeok = 0;
+-		l2mp_blocks = L2PSIZE - page->mapping->host->i_blkbits;
++		l2mp_blocks = L2PSIZE - folio->mapping->host->i_blkbits;
+ 		index = (mp->index >> l2mp_blocks) & (MPS_PER_PAGE - 1);
+ 		a->mp_count++;
+ 		a->mp[index] = mp;
+@@ -127,8 +125,7 @@ static inline void remove_metapage(struct page *page, struct metapage *mp)
+ 	a->mp[index] = NULL;
+ 	if (--a->mp_count == 0) {
+ 		kfree(a);
+-		set_page_private(page, 0);
+-		ClearPagePrivate(page);
++		detach_page_private(page);
+ 		kunmap(page);
+ 	}
+ }
+@@ -150,20 +147,18 @@ static inline struct metapage *page_to_mp(struct page *page, int offset)
+ 	return PagePrivate(page) ? (struct metapage *)page_private(page) : NULL;
+ }
+ 
+-static inline int insert_metapage(struct page *page, struct metapage *mp)
++static inline int insert_metapage(struct folio *folio, struct metapage *mp)
+ {
+ 	if (mp) {
+-		set_page_private(page, (unsigned long)mp);
+-		SetPagePrivate(page);
+-		kmap(page);
++		folio_attach_private(folio, mp);
++		kmap(&folio->page);
+ 	}
+ 	return 0;
+ }
+ 
+ static inline void remove_metapage(struct page *page, struct metapage *mp)
+ {
+-	set_page_private(page, 0);
+-	ClearPagePrivate(page);
++	detach_page_private(page);
+ 	kunmap(page);
+ }
+ 
+@@ -496,7 +491,7 @@ static int metapage_read_folio(struct file *fp, struct folio *folio)
+ 					     &xlen);
+ 		if (pblock) {
+ 			if (!folio->private)
+-				insert_metapage(&folio->page, NULL);
++				insert_metapage(folio, NULL);
+ 			inc_io(&folio->page);
+ 			if (bio)
+ 				submit_bio(bio);
+@@ -658,7 +653,7 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
  		mp->logical_size = size;
--		mp->data = page_address(page) + page_offset;
-+		mp->data = folio_address(folio) + page_offset;
+ 		mp->data = folio_address(folio) + page_offset;
  		mp->index = lblock;
--		if (unlikely(insert_metapage(page, mp))) {
-+		if (unlikely(insert_metapage(&folio->page, mp))) {
+-		if (unlikely(insert_metapage(&folio->page, mp))) {
++		if (unlikely(insert_metapage(folio, mp))) {
  			free_metapage(mp);
  			goto unlock;
  		}
-@@ -670,12 +670,12 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
- 		memset(mp->data, 0, PSIZE);
- 	}
- 
--	unlock_page(page);
-+	folio_unlock(folio);
- 	jfs_info("__get_metapage: returning = 0x%p data = 0x%p", mp, mp->data);
- 	return mp;
- 
- unlock:
--	unlock_page(page);
-+	folio_unlock(folio);
- 	return NULL;
- }
- 
 -- 
 2.43.0
 
