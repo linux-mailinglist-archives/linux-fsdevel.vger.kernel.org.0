@@ -1,102 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-17257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627C18AA1C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 20:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2078AA1F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 20:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DB51F222C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 18:08:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DD1E2811AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 18:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8969D178CEC;
-	Thu, 18 Apr 2024 18:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C334217AD63;
+	Thu, 18 Apr 2024 18:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vTYxqrUz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6uD5kMbc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vTYxqrUz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6uD5kMbc"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T62taqkf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D0C16191A;
-	Thu, 18 Apr 2024 18:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C3283A07;
+	Thu, 18 Apr 2024 18:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713463709; cv=none; b=l3gyRum3X26d7KzYcH/d6l51U337maxYQSSsJO4yjVWV2p1yOGTWjNtBYU+np5GCgKNtJzDPKALVl08qRbx7o66WhP0qxiV2k87LnsuDOocOL08CBGF8kgOxpOcX/bEkQR2FWc0gsjuZJ24LIOCRWjNY728UgJcPg/dbl6X9ogc=
+	t=1713464516; cv=none; b=lxkLWyZIGj+DffkfbZK2/RJdZg4wjgrRNgOycyET2ZPc/9coekmoI6K6kgQwm1OqHc3brbQyiCAUKKYRrOUZRMB7XNVnxGLHHnlw9A0QFDF/OsSL+4TXSq+yq6kLpHqurlmNI9NqPamWHFJ6MO+tT0FR1WHZYvua5Y9Q60DdngQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713463709; c=relaxed/simple;
-	bh=RGPXkkJpHlNFiQkPPtBdHl4aeqecg9CyLmPJaY+UM8Y=;
+	s=arc-20240116; t=1713464516; c=relaxed/simple;
+	bh=di7AEMML3XBmS6NNk5yHpV2YGbf6QjEDD4R85XDT5mo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eV30Rwe6XXgtljPZoUG+0A2ECQrwCbqYDuLL/H+oz0NifoBu29LunfdHzp2CBoaPMuDYZHZHIdo56dC1BrVWgo68GaOvHKGPq+JZ5c7kHBcHXZM/Qdgmr2Fav8rWgaCnIUZeWqjdIA5ngRrOCnLm7+CMm9xpitXZEceef4I0u7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vTYxqrUz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6uD5kMbc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vTYxqrUz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6uD5kMbc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9F0C3224C6;
-	Thu, 18 Apr 2024 18:08:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1713463702;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCxX8aSlqkopKSrHIL5Z8rd+gRSiOqZSK+6bvh96kPA=;
-	b=vTYxqrUz6L9HP4SJab/Qux7BRVOLe9gVvzvyYWKt2OubHDbTXHMZq3r8fn0Ki1RPID6pnj
-	xhDHdaMVo/xxoVUVShdso3Uy+scmr5bY2q9th2BkzTsmM2MCYSCxoQAOWDwoTheE/LAxvT
-	vRk2kPT+0fIqFcmvEQyc4cHNJ0PnAQ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1713463702;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCxX8aSlqkopKSrHIL5Z8rd+gRSiOqZSK+6bvh96kPA=;
-	b=6uD5kMbc5AtMbEndwj2qyFMWELfxF2WT4+OoZYHuLNq2b3tSlnxkF9gOv5Yyn6yzQp0OFA
-	iZOt6MiBmAo6PNCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vTYxqrUz;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6uD5kMbc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1713463702;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCxX8aSlqkopKSrHIL5Z8rd+gRSiOqZSK+6bvh96kPA=;
-	b=vTYxqrUz6L9HP4SJab/Qux7BRVOLe9gVvzvyYWKt2OubHDbTXHMZq3r8fn0Ki1RPID6pnj
-	xhDHdaMVo/xxoVUVShdso3Uy+scmr5bY2q9th2BkzTsmM2MCYSCxoQAOWDwoTheE/LAxvT
-	vRk2kPT+0fIqFcmvEQyc4cHNJ0PnAQ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1713463702;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCxX8aSlqkopKSrHIL5Z8rd+gRSiOqZSK+6bvh96kPA=;
-	b=6uD5kMbc5AtMbEndwj2qyFMWELfxF2WT4+OoZYHuLNq2b3tSlnxkF9gOv5Yyn6yzQp0OFA
-	iZOt6MiBmAo6PNCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C5AE13687;
-	Thu, 18 Apr 2024 18:08:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A2IxHpZhIWZqbgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 18 Apr 2024 18:08:22 +0000
-Date: Thu, 18 Apr 2024 20:00:51 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: Re: Removing PG_error use from btrfs
-Message-ID: <20240418180051.GX3492@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <ZiFbWx6o-hQ38QyZ@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ij5iXbEUWHSxK6EhluAofAudkALBtt/xZWGoFTpsPjlFyu0tpBONLTHqn6nvkXnEtJBCL++cg+M36D9ngSN10ylI664prGfuHgianNna4EheDPLL/klEboZhjXUZR4kH8UWvKq7tqgl3413owA7MhwY5je0yTJgvrEvT/Ddztvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T62taqkf; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1713464514; x=1745000514;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=di7AEMML3XBmS6NNk5yHpV2YGbf6QjEDD4R85XDT5mo=;
+  b=T62taqkfFat9gpksDnMh8APP/37qV7ucPb2P7cVWPrhwtkJrNsE2GKjw
+   8iV1lBqyRmuhoXqCVNT68tmX3oNFyd6FxZMZg7dpNHG5UanjE+Edj+5Pa
+   O9QracNts7YwboQcz0a85ZA6ByHENfTI8fxJ+GK//jAQdNaId5W11dVBN
+   CDcXYy52fmLDwEoBlcc0qQqTl0CJjcRBqYyIUm3n8lLlREfV1R89brUoW
+   zACrfN5rDZK4UmzeACLvvVFrqM2Z8LZJIAq7gllSoznmeXroawQVS4qeT
+   IGbU3midrcmbhTapFePhAiW7nIHSNy2AVIcEO10l8ydPR5NyEPnnOU7l6
+   Q==;
+X-CSE-ConnectionGUID: ij1xVX3BRtSGKa/BN7U7PA==
+X-CSE-MsgGUID: wkXhNfWpRguTRl+NXL5w0g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11047"; a="8898352"
+X-IronPort-AV: E=Sophos;i="6.07,212,1708416000"; 
+   d="scan'208";a="8898352"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2024 11:21:53 -0700
+X-CSE-ConnectionGUID: W6zduy+0QkW3zModnl3a/g==
+X-CSE-MsgGUID: JpytdpXORt2rOjRS5AKkpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,212,1708416000"; 
+   d="scan'208";a="27531776"
+Received: from unknown (HELO 23c141fc0fd8) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 18 Apr 2024 11:21:49 -0700
+Received: from kbuild by 23c141fc0fd8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rxWOJ-00095q-0X;
+	Thu, 18 Apr 2024 18:21:47 +0000
+Date: Fri, 19 Apr 2024 02:21:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>,
+	Barry Song <v-songbaohua@oppo.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>,
+	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Subject: Re: [PATCH 8/8] mm/swap: reduce swap cache search space
+Message-ID: <202404190258.wljFnvCL-lkp@intel.com>
+References: <20240417160842.76665-9-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,238 +87,156 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZiFbWx6o-hQ38QyZ@casper.infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:replyto];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 9F0C3224C6
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.21
+In-Reply-To: <20240417160842.76665-9-ryncsn@gmail.com>
 
-On Thu, Apr 18, 2024 at 06:41:47PM +0100, Matthew Wilcox wrote:
-> We're down to just JFS and btrfs using the PG_error flag.  I sent a
-> patch earlier to remove PG_error from JFS, so now it's your turn ...
-> 
-> btrfs currently uses it to indicate superblock writeback errors.
-> This proposal moves that information to a counter in the btrfs_device.
-> Maybe this isn't the best approach.  What do you think?
+Hi Kairui,
 
-Tracking the number of errors in the device is a good approach.  The
-superblock write is asynchronous but it's not necessary to track the
-error in the page, we have the device structure in the end io callback.
-Also it's guaranteed that this is running only from one place so not
-even the atomics are needed.
+kernel test robot noticed the following build errors:
 
-> I'm currently running fstests against it and it hasn't blown up yet.
-> 
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 3d512b041977..5f6f8472ecec 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -3627,28 +3627,24 @@ ALLOW_ERROR_INJECTION(open_ctree, ERRNO);
->  static void btrfs_end_super_write(struct bio *bio)
->  {
->  	struct btrfs_device *device = bio->bi_private;
-> -	struct bio_vec *bvec;
-> -	struct bvec_iter_all iter_all;
-> -	struct page *page;
-> -
-> -	bio_for_each_segment_all(bvec, bio, iter_all) {
-> -		page = bvec->bv_page;
-> +	struct folio_iter fi;
+[auto build test ERROR on ceph-client/testing]
+[also build test ERROR on ceph-client/for-linus trondmy-nfs/linux-next konis-nilfs2/upstream jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev cifs/for-next linus/master v6.9-rc4]
+[cannot apply to akpm-mm/mm-everything next-20240418]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I'd rather make the conversion from pages to folios a separate patch
-from the error counting change. I haven't seen anything obviously wrong
-but the superblock write is a critical action so it's a matter of
-precaution.
+url:    https://github.com/intel-lab-lkp/linux/commits/Kairui-Song/NFS-remove-nfs_page_lengthg-and-usage-of-page_index/20240418-001343
+base:   https://github.com/ceph/ceph-client.git testing
+patch link:    https://lore.kernel.org/r/20240417160842.76665-9-ryncsn%40gmail.com
+patch subject: [PATCH 8/8] mm/swap: reduce swap cache search space
+config: i386-buildonly-randconfig-002-20240419 (https://download.01.org/0day-ci/archive/20240419/202404190258.wljFnvCL-lkp@intel.com/config)
+compiler: gcc-9 (Ubuntu 9.5.0-4ubuntu2) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240419/202404190258.wljFnvCL-lkp@intel.com/reproduce)
 
-> +	bio_for_each_folio_all(fi, bio) {
->  		if (bio->bi_status) {
->  			btrfs_warn_rl_in_rcu(device->fs_info,
-> -				"lost page write due to IO error on %s (%d)",
-> +				"lost sb write due to IO error on %s (%d)",
->  				btrfs_dev_name(device),
->  				blk_status_to_errno(bio->bi_status));
-> -			ClearPageUptodate(page);
-> -			SetPageError(page);
->  			btrfs_dev_stat_inc_and_print(device,
->  						     BTRFS_DEV_STAT_WRITE_ERRS);
-> -		} else {
-> -			SetPageUptodate(page);
-> +			/* Ensure failure if a primary sb fails */
-> +			if (bio->bi_opf & REQ_FUA)
-> +				atomic_set(&device->sb_wb_errors, INT_MAX / 2);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202404190258.wljFnvCL-lkp@intel.com/
 
-This is using some magic constant so it would be better defined
-separately and documented what it means.
+All errors (new ones prefixed by >>):
 
-> +			else
-> +				atomic_inc(&device->sb_wb_errors);
->  		}
-> -
-> -		put_page(page);
-> -		unlock_page(page);
-> +		folio_unlock(fi.folio);
-> +		folio_put(fi.folio);
->  	}
->  
->  	bio_put(bio);
-> @@ -3750,19 +3746,21 @@ static int write_dev_supers(struct btrfs_device *device,
->  	struct address_space *mapping = device->bdev->bd_mapping;
->  	SHASH_DESC_ON_STACK(shash, fs_info->csum_shash);
->  	int i;
-> -	int errors = 0;
->  	int ret;
->  	u64 bytenr, bytenr_orig;
->  
-> +	atomic_set(&device->sb_wb_errors, 0);
-> +
->  	if (max_mirrors == 0)
->  		max_mirrors = BTRFS_SUPER_MIRROR_MAX;
->  
->  	shash->tfm = fs_info->csum_shash;
->  
->  	for (i = 0; i < max_mirrors; i++) {
-> -		struct page *page;
-> +		struct folio *folio;
->  		struct bio *bio;
->  		struct btrfs_super_block *disk_super;
-> +		size_t offset;
->  
->  		bytenr_orig = btrfs_sb_offset(i);
->  		ret = btrfs_sb_log_location(device, i, WRITE, &bytenr);
-> @@ -3772,7 +3770,7 @@ static int write_dev_supers(struct btrfs_device *device,
->  			btrfs_err(device->fs_info,
->  				"couldn't get super block location for mirror %d",
->  				i);
-> -			errors++;
-> +			atomic_inc(&device->sb_wb_errors);
->  			continue;
->  		}
->  		if (bytenr + BTRFS_SUPER_INFO_SIZE >=
-> @@ -3785,20 +3783,18 @@ static int write_dev_supers(struct btrfs_device *device,
->  				    BTRFS_SUPER_INFO_SIZE - BTRFS_CSUM_SIZE,
->  				    sb->csum);
->  
-> -		page = find_or_create_page(mapping, bytenr >> PAGE_SHIFT,
-> -					   GFP_NOFS);
-> -		if (!page) {
-> +		folio = __filemap_get_folio(mapping, bytenr >> PAGE_SHIFT,
-> +				FGP_LOCK | FGP_ACCESSED | FGP_CREAT, GFP_NOFS);
-> +		if (IS_ERR(folio)) {
->  			btrfs_err(device->fs_info,
->  			    "couldn't get super block page for bytenr %llu",
->  			    bytenr);
-> -			errors++;
-> +			atomic_inc(&device->sb_wb_errors);
->  			continue;
->  		}
->  
-> -		/* Bump the refcount for wait_dev_supers() */
-> -		get_page(page);
-> -
-> -		disk_super = page_address(page);
-> +		offset = offset_in_folio(folio, bytenr);
-> +		disk_super = folio_address(folio) + offset;
->  		memcpy(disk_super, sb, BTRFS_SUPER_INFO_SIZE);
->  
->  		/*
-> @@ -3812,8 +3808,7 @@ static int write_dev_supers(struct btrfs_device *device,
->  		bio->bi_iter.bi_sector = bytenr >> SECTOR_SHIFT;
->  		bio->bi_private = device;
->  		bio->bi_end_io = btrfs_end_super_write;
-> -		__bio_add_page(bio, page, BTRFS_SUPER_INFO_SIZE,
-> -			       offset_in_page(bytenr));
-> +		bio_add_folio_nofail(bio, folio, BTRFS_SUPER_INFO_SIZE, offset);
->  
->  		/*
->  		 * We FUA only the first super block.  The others we allow to
-> @@ -3825,9 +3820,9 @@ static int write_dev_supers(struct btrfs_device *device,
->  		submit_bio(bio);
->  
->  		if (btrfs_advance_sb_log(device, i))
-> -			errors++;
-> +			atomic_inc(&device->sb_wb_errors);
->  	}
-> -	return errors < i ? 0 : -1;
-> +	return atomic_read(&device->sb_wb_errors) < i ? 0 : -1;
->  }
->  
->  /*
-> @@ -3849,7 +3844,7 @@ static int wait_dev_supers(struct btrfs_device *device, int max_mirrors)
->  		max_mirrors = BTRFS_SUPER_MIRROR_MAX;
->  
->  	for (i = 0; i < max_mirrors; i++) {
-> -		struct page *page;
-> +		struct folio *folio;
->  
->  		ret = btrfs_sb_log_location(device, i, READ, &bytenr);
->  		if (ret == -ENOENT) {
-> @@ -3864,29 +3859,19 @@ static int wait_dev_supers(struct btrfs_device *device, int max_mirrors)
->  		    device->commit_total_bytes)
->  			break;
->  
-> -		page = find_get_page(device->bdev->bd_mapping,
-> +		folio = filemap_get_folio(device->bdev->bd_mapping,
->  				     bytenr >> PAGE_SHIFT);
-> -		if (!page) {
-> -			errors++;
-> -			if (i == 0)
-> -				primary_failed = true;
-> +		/* If the folio has been removed, then we know it completed */
-> +		if (IS_ERR(folio))
->  			continue;
-> -		}
-> -		/* Page is submitted locked and unlocked once the IO completes */
-> -		wait_on_page_locked(page);
-> -		if (PageError(page)) {
-> -			errors++;
-> -			if (i == 0)
-> -				primary_failed = true;
-> -		}
-> -
-> -		/* Drop our reference */
-> -		put_page(page);
-> -
-> -		/* Drop the reference from the writing run */
-> -		put_page(page);
-> +		/* Folio is unlocked once the IO completes */
-> +		folio_wait_locked(folio);
-> +		folio_put(folio);
->  	}
->  
-> +	errors += atomic_read(&device->sb_wb_errors);
-> +	if (errors >= INT_MAX / 2)
-> +		primary_failed = true;
+   mm/huge_memory.c: In function '__split_huge_page':
+>> mm/huge_memory.c:2906:12: error: implicit declaration of function 'swap_cache_index' [-Werror=implicit-function-declaration]
+    2906 |   offset = swap_cache_index(folio->swap);
+         |            ^~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
-Alternatively a flag can be set in the device if the primary superblock
-write fails but I think encoding that in the error count also works, as
-long as it's a named constant.
+
+vim +/swap_cache_index +2906 mm/huge_memory.c
+
+  2888	
+  2889	static void __split_huge_page(struct page *page, struct list_head *list,
+  2890			pgoff_t end, unsigned int new_order)
+  2891	{
+  2892		struct folio *folio = page_folio(page);
+  2893		struct page *head = &folio->page;
+  2894		struct lruvec *lruvec;
+  2895		struct address_space *swap_cache = NULL;
+  2896		unsigned long offset = 0;
+  2897		int i, nr_dropped = 0;
+  2898		unsigned int new_nr = 1 << new_order;
+  2899		int order = folio_order(folio);
+  2900		unsigned int nr = 1 << order;
+  2901	
+  2902		/* complete memcg works before add pages to LRU */
+  2903		split_page_memcg(head, order, new_order);
+  2904	
+  2905		if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
+> 2906			offset = swap_cache_index(folio->swap);
+  2907			swap_cache = swap_address_space(folio->swap);
+  2908			xa_lock(&swap_cache->i_pages);
+  2909		}
+  2910	
+  2911		/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
+  2912		lruvec = folio_lruvec_lock(folio);
+  2913	
+  2914		ClearPageHasHWPoisoned(head);
+  2915	
+  2916		for (i = nr - new_nr; i >= new_nr; i -= new_nr) {
+  2917			__split_huge_page_tail(folio, i, lruvec, list, new_order);
+  2918			/* Some pages can be beyond EOF: drop them from page cache */
+  2919			if (head[i].index >= end) {
+  2920				struct folio *tail = page_folio(head + i);
+  2921	
+  2922				if (shmem_mapping(folio->mapping))
+  2923					nr_dropped++;
+  2924				else if (folio_test_clear_dirty(tail))
+  2925					folio_account_cleaned(tail,
+  2926						inode_to_wb(folio->mapping->host));
+  2927				__filemap_remove_folio(tail, NULL);
+  2928				folio_put(tail);
+  2929			} else if (!PageAnon(page)) {
+  2930				__xa_store(&folio->mapping->i_pages, head[i].index,
+  2931						head + i, 0);
+  2932			} else if (swap_cache) {
+  2933				__xa_store(&swap_cache->i_pages, offset + i,
+  2934						head + i, 0);
+  2935			}
+  2936		}
+  2937	
+  2938		if (!new_order)
+  2939			ClearPageCompound(head);
+  2940		else {
+  2941			struct folio *new_folio = (struct folio *)head;
+  2942	
+  2943			folio_set_order(new_folio, new_order);
+  2944		}
+  2945		unlock_page_lruvec(lruvec);
+  2946		/* Caller disabled irqs, so they are still disabled here */
+  2947	
+  2948		split_page_owner(head, order, new_order);
+  2949	
+  2950		/* See comment in __split_huge_page_tail() */
+  2951		if (folio_test_anon(folio)) {
+  2952			/* Additional pin to swap cache */
+  2953			if (folio_test_swapcache(folio)) {
+  2954				folio_ref_add(folio, 1 + new_nr);
+  2955				xa_unlock(&swap_cache->i_pages);
+  2956			} else {
+  2957				folio_ref_inc(folio);
+  2958			}
+  2959		} else {
+  2960			/* Additional pin to page cache */
+  2961			folio_ref_add(folio, 1 + new_nr);
+  2962			xa_unlock(&folio->mapping->i_pages);
+  2963		}
+  2964		local_irq_enable();
+  2965	
+  2966		if (nr_dropped)
+  2967			shmem_uncharge(folio->mapping->host, nr_dropped);
+  2968		remap_page(folio, nr);
+  2969	
+  2970		if (folio_test_swapcache(folio))
+  2971			split_swap_cluster(folio->swap);
+  2972	
+  2973		/*
+  2974		 * set page to its compound_head when split to non order-0 pages, so
+  2975		 * we can skip unlocking it below, since PG_locked is transferred to
+  2976		 * the compound_head of the page and the caller will unlock it.
+  2977		 */
+  2978		if (new_order)
+  2979			page = compound_head(page);
+  2980	
+  2981		for (i = 0; i < nr; i += new_nr) {
+  2982			struct page *subpage = head + i;
+  2983			struct folio *new_folio = page_folio(subpage);
+  2984			if (subpage == page)
+  2985				continue;
+  2986			folio_unlock(new_folio);
+  2987	
+  2988			/*
+  2989			 * Subpages may be freed if there wasn't any mapping
+  2990			 * like if add_to_swap() is running on a lru page that
+  2991			 * had its mapping zapped. And freeing these pages
+  2992			 * requires taking the lru_lock so we do the put_page
+  2993			 * of the tail pages after the split is complete.
+  2994			 */
+  2995			free_page_and_swap_cache(subpage);
+  2996		}
+  2997	}
+  2998	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
