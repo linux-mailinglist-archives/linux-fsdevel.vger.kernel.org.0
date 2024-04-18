@@ -1,155 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-17260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567D58AA239
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 20:44:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D018AA240
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 20:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FBE1C20EC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 18:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11F728213F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 18:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A53E17AD74;
-	Thu, 18 Apr 2024 18:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470C717AD76;
+	Thu, 18 Apr 2024 18:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SvQfS8Vx"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ecy8tcAC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45AD17AD64;
-	Thu, 18 Apr 2024 18:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8010C168B17;
+	Thu, 18 Apr 2024 18:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713465852; cv=none; b=mVuSu/K83UKk5HvaPrBRRRR8Yf1XHHB+pGLgLhsQkDXxIw/sG8Cu7A7tNqiYp9b2aYe4xHjbct88LIChxZb1PMxbZmnVfJm98LBH2Fbct8+KI3cv3ZocsVidEiHFWqmUYCwwk8BExOXzLYsDbF3zPD5NnEa3wCVIOezfyP3pGgo=
+	t=1713465953; cv=none; b=CWLtRfx3qwImfv84U9phP1qnmu2+VQ7PGAXpcLqKxoYC1L2I3DpRXeC4BNI/dk4Zjw9BCSQMG770UmzgmHsrcJRdLCIkGvtqlH3SFhpEeMcGIP9hG6w1FM6OEJO5Z2XNZQ4YeIIiUj5hLoflG1Gs7S7Mny9u3aNTTrW+2K4nV1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713465852; c=relaxed/simple;
-	bh=kUsQR+VGi9VA365WkzSziP4+P51fPUAYTZqTSXcvJMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2bZPMFLM8E742rUgdmntDno2m8FreRDG0oITVjakmKBEc3bA98HbBMkjJbiHtOJEZ5gV3LKF2LSnoFRgMLnT/cb5SooLotkKiXMkPFgAsa/KZhh239dGrEgYOQTuVgRN8wdtv/3RsknNZFYCzYHJOJkuN8VBaKxA+5MFLYR3wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SvQfS8Vx; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713465851; x=1745001851;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kUsQR+VGi9VA365WkzSziP4+P51fPUAYTZqTSXcvJMA=;
-  b=SvQfS8VxJzWbfpiamrl/Zd9FCWvEYmeFMYWbjPJcj1KezcwZG6QYLLxZ
-   dzQSMPOmGjjhGLz+J6Flk5gjmfU+OY/hygy/KblQ080Z//X2OKSURF2u8
-   cP0Sccw0bmMJITyR5dXpzpwuhpCHBbk0Dl/qUEJZRCyOaasejE9tNtzLG
-   Q1NW2f9rj6HVfvNXbv/QfoeZPqK8/P890qoM8bxqHoWQc2xhvuuETzDa4
-   i7NB/+SiHER4enEnZQTdIWHeIAvc8ety16ahscO6I4kNQ+t7iiC6k63zr
-   LT2kFh0RBkaHCqkRFdEC3iIXTYoY2ul5XAN9js4tntAWzctFqEVc0+zS8
-   w==;
-X-CSE-ConnectionGUID: yXEusdL/RvePgUPmFtnUYw==
-X-CSE-MsgGUID: 4F3muI1ATWyQccqREN2aug==
-X-IronPort-AV: E=McAfee;i="6600,9927,11047"; a="20460464"
-X-IronPort-AV: E=Sophos;i="6.07,213,1708416000"; 
-   d="scan'208";a="20460464"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2024 11:43:54 -0700
-X-CSE-ConnectionGUID: 2MTt0cwISmqHbGHHuvZ73A==
-X-CSE-MsgGUID: en64Xcu0Qyq0Xdm5EpcPjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,213,1708416000"; 
-   d="scan'208";a="23595768"
-Received: from unknown (HELO 23c141fc0fd8) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 18 Apr 2024 11:43:50 -0700
-Received: from kbuild by 23c141fc0fd8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rxWjb-00096U-1P;
-	Thu, 18 Apr 2024 18:43:47 +0000
-Date: Fri, 19 Apr 2024 02:43:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>,
-	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH 6/8] mm/swap: get the swap file offset directly
-Message-ID: <202404190204.cy1pBxFg-lkp@intel.com>
-References: <20240417160842.76665-7-ryncsn@gmail.com>
+	s=arc-20240116; t=1713465953; c=relaxed/simple;
+	bh=W8o14b9zqC5o69tPtupPPEamGQd/0JcbwSSq9zR6UjU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=o1t9B6Qb8Lj43UqnJf4pMOENekfWdBKsQiXztHYVznvWMdfxHb6cAnToa3E61TQ5QFR8SXLGc0RCvRsCPHYP73e4ieOsfHnXNSu9sun0OjvWLLJzM5BxaH4YqFNPeDGFucn+bNp55wbK/6THAGZJtbhqbcByswFmJkxiBypia3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ecy8tcAC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A264EC113CC;
+	Thu, 18 Apr 2024 18:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1713465953;
+	bh=W8o14b9zqC5o69tPtupPPEamGQd/0JcbwSSq9zR6UjU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ecy8tcACaBBZYtTQtaSv4afHuYux6aIVXFJjkdZHQNXsv1P4FKVcCxi3zxl9ID7U9
+	 TTpNiY9wrkpOWj2dbyKCiBiZBSqAdj4V0bCxeB9moRcJUvSJqR95JbP13j2ZrcGFbm
+	 I6PvgfQlvHk2GOhSxXP9TWAv88o9mCFvM3ceCEVw=
+Date: Thu, 18 Apr 2024 11:45:52 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christoph Hellwig <hch@infradead.org>, Matthew Wilcox
+ <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ fstests@vger.kernel.org, kdevops@lists.linux.dev,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, david@redhat.com, linmiaohe@huawei.com,
+ muchun.song@linux.dev, osalvador@suse.de
+Subject: Re: [PATCH] fstests: add fsstress + compaction test
+Message-Id: <20240418114552.37e9cc827d68e3c4781dd61a@linux-foundation.org>
+In-Reply-To: <d0d118ed-88dd-4757-8693-f0730dc9727c@suse.cz>
+References: <20240418001356.95857-1-mcgrof@kernel.org>
+	<ZiB5x-EKrmb1ZPuf@casper.infradead.org>
+	<ZiDEYrY479OdZBq2@infradead.org>
+	<d0d118ed-88dd-4757-8693-f0730dc9727c@suse.cz>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240417160842.76665-7-ryncsn@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Kairui,
+On Thu, 18 Apr 2024 11:19:33 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
 
-kernel test robot noticed the following build errors:
+> On 4/18/24 08:57, Christoph Hellwig wrote:
+> > On Thu, Apr 18, 2024 at 02:39:19AM +0100, Matthew Wilcox wrote:
+> >>> Running compaction while we run fsstress can crash older kernels as per
+> >>> korg#218227 [0], the fix for that [0] has been posted [1] but that patch
+> >>> is not yet on v6.9-rc4 and the patch requires changes for v6.9.
+> >>
+> >> It doesn't require changes, it just has prerequisites:
+> >>
+> >> https://lore.kernel.org/all/ZgHhcojXc9QjynUI@casper.infradead.org/
+> > 
+> > How can we expedite getting this fix in?
+> 
+> It means moving patches 2,4,5 from the above (with their fixups) from
+> mm-unstable to mm-hotfixes-unstable so they are on track to mainline
+> before 6.9.
+> 
+> A quick local rebase of mm-unstable with reordering said patches to the
+> front (v6.9-rc4) suggests this is possible without causing conflicts,
+> and the intermediate result compiles, at least.
 
-[auto build test ERROR on ceph-client/testing]
-[also build test ERROR on ceph-client/for-linus trondmy-nfs/linux-next konis-nilfs2/upstream jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev cifs/for-next linus/master v6.9-rc4 next-20240418]
-[cannot apply to akpm-mm/mm-everything]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks for the reminder, this fell through cracks.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kairui-Song/NFS-remove-nfs_page_lengthg-and-usage-of-page_index/20240418-001343
-base:   https://github.com/ceph/ceph-client.git testing
-patch link:    https://lore.kernel.org/r/20240417160842.76665-7-ryncsn%40gmail.com
-patch subject: [PATCH 6/8] mm/swap: get the swap file offset directly
-config: alpha-defconfig (https://download.01.org/0day-ci/archive/20240419/202404190204.cy1pBxFg-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240419/202404190204.cy1pBxFg-lkp@intel.com/reproduce)
+It indeed appears that I can move
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202404190204.cy1pBxFg-lkp@intel.com/
+mm-create-folio_flag_false-and-folio_type_ops-macros.patch
+mm-support-page_mapcount-on-page_has_type-pages.patch
+mm-turn-folio_test_hugetlb-into-a-pagetype.patch
+mm-turn-folio_test_hugetlb-into-a-pagetype-fix.patch
 
-All errors (new ones prefixed by >>):
+without merge or build issues.  I added
 
-   In file included from mm/shmem.c:43:
-   mm/swap.h: In function 'swap_file_pos':
->> mm/swap.h:12:25: error: implicit declaration of function 'swp_offset'; did you mean 'pmd_offset'? [-Werror=implicit-function-declaration]
-      12 |         return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
-         |                         ^~~~~~~~~~
-         |                         pmd_offset
-   In file included from mm/shmem.c:68:
-   include/linux/swapops.h: At top level:
->> include/linux/swapops.h:107:23: error: conflicting types for 'swp_offset'; have 'long unsigned int(swp_entry_t)'
-     107 | static inline pgoff_t swp_offset(swp_entry_t entry)
-         |                       ^~~~~~~~~~
-   mm/swap.h:12:25: note: previous implicit declaration of 'swp_offset' with type 'int()'
-      12 |         return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
-         |                         ^~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   In file included from mm/show_mem.c:19:
-   mm/swap.h: In function 'swap_file_pos':
->> mm/swap.h:12:25: error: implicit declaration of function 'swp_offset'; did you mean 'pmd_offset'? [-Werror=implicit-function-declaration]
-      12 |         return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
-         |                         ^~~~~~~~~~
-         |                         pmd_offset
-   cc1: some warnings being treated as errors
+Fixes: 9c5ccf2db04b ("mm: remove HUGETLB_PAGE_DTOR")
+Cc: <stable@vger.kernel.org>
 
+to all patches.
 
-vim +12 mm/swap.h
+But a question: 9c5ccf2db04b is from August 2023.  Why are we seeing
+this issue now?
 
-     9	
-    10	static inline loff_t swap_file_pos(swp_entry_t entry)
-    11	{
-  > 12		return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
-    13	}
-    14	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
