@@ -1,142 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-17218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D9A8A9133
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 04:32:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD198A9138
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 04:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05C64B22025
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 02:32:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D32F6B21ADB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 02:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E6638F94;
-	Thu, 18 Apr 2024 02:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72AF4F1E0;
+	Thu, 18 Apr 2024 02:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvU/ncvk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171781EB46
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Apr 2024 02:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887252AC29;
+	Thu, 18 Apr 2024 02:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713407556; cv=none; b=rxxFajinuC4dALgHPN+Q2egPO01uI40nG8SICohYuaFPzPW9UyEKtkJKj7VlDYoeZ6s+WpU9PNQOQeUZzzSt641a4bUKuBgwRD4+7pL/EwFhoO7qYY5ZgvSZ/xEQ1ZvAEGP9opOJKtcQgAK/KSvFIBjo2fUIm2MSdq8E9rtdoxI=
+	t=1713408176; cv=none; b=jww+KGpDaT58YaPxAaUJ+RCraOp+Z2jlLSk7/JooobksBs9PRYI5rlrpr1SV6+AUZ5LovxjgsyXqF/7KpsMdif6FDA/MjDH8h1SMAiXjssTru7UrDKNWXTZlIAWYC7y7zG/2GA+yMGNQoG5Jg+XPECtimgMOwQoF/G0bAkBztt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713407556; c=relaxed/simple;
-	bh=bLTfARLRi1VnFvpSmO1paVdHKGKasgiFf67eUFGMyP4=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=DUK/ItCye2ZGu1F60N6p/dBR5OYGBmWM/GPohD6KY4rglrVba9/PYlZtYSi2hurnq8cBFuL0secSgdV/MTH1H0g0/Jvui3KO4cNzx0MHnNvxOeyU68SvCaYoF08kLE1rMR9kcxKm36B3tFEttdx8QcYxUPCFUtc2Mq0OXMGD1Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VKhYl3qMQz1hwQx;
-	Thu, 18 Apr 2024 10:29:31 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id 046111402CF;
-	Thu, 18 Apr 2024 10:32:30 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 18 Apr 2024 10:32:29 +0800
-Subject: Re: [PATCH v1 04/11] mm: migrate: remove migrate_folio_extra()
-To: Kefeng Wang <wangkefeng.wang@huawei.com>
-CC: Tony Luck <tony.luck@intel.com>, Naoya Horiguchi
-	<naoya.horiguchi@nec.com>, Matthew Wilcox <willy@infradead.org>, David
- Hildenbrand <david@redhat.com>, Muchun Song <muchun.song@linux.dev>, Benjamin
- LaHaise <bcrl@kvack.org>, <jglisse@redhat.com>, <linux-aio@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>, Zi Yan <ziy@nvidia.com>, Jiaqi Yan
-	<jiaqiyan@google.com>, Hugh Dickins <hughd@google.com>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
-References: <20240321032747.87694-1-wangkefeng.wang@huawei.com>
- <20240321032747.87694-5-wangkefeng.wang@huawei.com>
- <c89ed21c-4068-9668-aede-a68c6a2ef7d2@huawei.com>
- <dc5feae2-11fa-446d-a23c-7cfd6541fd6c@huawei.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <daeae886-7222-5a4f-45a1-b1b5abd7b6ed@huawei.com>
-Date: Thu, 18 Apr 2024 10:32:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1713408176; c=relaxed/simple;
+	bh=nc0l6I8uY2Sfpbn0gl6LiAY4AgSqwND6FWwyoGGgez4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hF/HhLm+HrPTNS3RkQ009hlEuDsPCR7qEwrt7jufSZyEd2X3SgCf/bkoqh+X7LMV2hnL+3ObMKQr07GV6NPcgxCVxup9VXVafDkZ/fQu1k48RiyXY0eJ+a89/3RtjmZkDs29g2jQ1AD2VmRBDaHZwP4TGrjUGNunHxgPxCWfwlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvU/ncvk; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2d715638540so4336601fa.3;
+        Wed, 17 Apr 2024 19:42:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713408173; x=1714012973; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/TQOSEIxhOk2cmOktSZ5shcHbGjzSHGcTvMcNwlLnO0=;
+        b=TvU/ncvknU4OO7x/d+H/i7v+aVx0L4D2OZ5zKHQhLaNO33awmWPMK/F9pjnMgS1Hmr
+         qd4o5rbk++VlBWiiWbHKhvT6bqNGKbEUUXRxBfgS68vq7T6P6RzzwhNzOJhPAQVZmfEt
+         sNGiSUzbwz159WYJlBz/iHOkGQ4XZ7bARxbRABTfLQiTYRXZvGc/5+3k0UYmhYi9fDNQ
+         t9GnUXG5k3xtsNWuZVwM2XTdcPQpQFvE2bMhZXIUxGTgk82EnM8Rv/RFdTH/F76zhIgF
+         H7DG609LeFN4bjgYHWG78vAyPw8tlZysa8shkAX/bLPHJJbbzhCoQSFD9w7CYV1vE/OV
+         KPYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713408173; x=1714012973;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/TQOSEIxhOk2cmOktSZ5shcHbGjzSHGcTvMcNwlLnO0=;
+        b=ZLiYNu7afm3FQNdME3Da3dIB3GkQh5L1wf0hBOSNvszRpUor56k7OcyoJSQNU+JDd1
+         Vz8GnRbaQY7Ijt8weQ0ARuxQxvYLULKT0NniLorJZ43GuEyL3bPlGf4gOBb2zie7oDHU
+         TPo1L5b5ASv/XY7wUHJaowOnaxbIssa12jwvoZBp/gMHO9cvSWy8XgG0erz+OeszHzGO
+         5F8Sr+2tqAIaTpjxW3u1fJoNVaI7zmUBEyIEurhL2+wTOzAMmW7VJyeHl40Yr9hlhPo6
+         lOYz6ZK2YEOMlDwN0rusXcUAAFRyN0v7VIXgjSAj0fl6uLO8VMAQOgUmVZkmJa05EG6O
+         R1yA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWmnpWN93NxUjLqUlquJRxPfQy1/pM/Mueq8hc2d3id7/rgkLZ8ldeQ3zjFuZlB41wkUFPtxhmGaYTce2JYA4FFraJ/DIz02yGoNQNIUhXSdd9WtnlbEyC2CxvCZpWDAP1HjFgt86W7I4WBg==
+X-Gm-Message-State: AOJu0YzmrKpBnJBPOBtLvQCNc3HIYFMgnKnDk5sxm/JfI0wqjkw43mRG
+	Q/TeIoXrw9EDGljmPhbGV5EsZ03bCTKe96dTcqPHRUmD7wugny/VmBgBqq24sZUQgDqjeOb8/Pa
+	EqyQy3BXERFRuLmYYTaKGvPIRSI0=
+X-Google-Smtp-Source: AGHT+IGUEZNaH1Nq5WQddmFU8g1mQEhzGkckKwS8KO/2Erjlf+2TGH5g2oFxff0F3SECj/jdoY4ESxgMVnXuKs22ShI=
+X-Received: by 2002:a2e:9402:0:b0:2da:d964:fc2b with SMTP id
+ i2-20020a2e9402000000b002dad964fc2bmr435026ljh.49.1713408172451; Wed, 17 Apr
+ 2024 19:42:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <dc5feae2-11fa-446d-a23c-7cfd6541fd6c@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- canpemm500002.china.huawei.com (7.192.104.244)
+References: <20240417160842.76665-1-ryncsn@gmail.com> <20240417160842.76665-8-ryncsn@gmail.com>
+ <CAGsJ_4xv8m-Xjih0PmKD1PcUSGVRsti8EH0cbStZOFmX+YhnFA@mail.gmail.com>
+In-Reply-To: <CAGsJ_4xv8m-Xjih0PmKD1PcUSGVRsti8EH0cbStZOFmX+YhnFA@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Thu, 18 Apr 2024 10:42:35 +0800
+Message-ID: <CAMgjq7Am+5ftvAW4X2xOhAZ+zotSR8gD8oG+_CV=pJvsqy2Oyw@mail.gmail.com>
+Subject: Re: [PATCH 7/8] mm: drop page_index/page_file_offset and convert swap
+ helpers to use folio
+To: Barry Song <21cnbao@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	"Huang, Ying" <ying.huang@intel.com>, Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, 
+	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/4/17 9:43, Kefeng Wang wrote:
-> 
-> 
-> On 2024/4/16 20:40, Miaohe Lin wrote:
->> On 2024/3/21 11:27, Kefeng Wang wrote:
->>> The migrate_folio_extra() only called in migrate.c now, convert it
->>> a static function and take a new src_private argument which could
->>> be shared by migrate_folio() and filemap_migrate_folio() to simplify
->>> code a bit.
->>>
->>> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->>> ---
->>>   include/linux/migrate.h |  2 --
->>>   mm/migrate.c            | 33 +++++++++++----------------------
->>>   2 files changed, 11 insertions(+), 24 deletions(-)
->>>
->>> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
->>> index 2ce13e8a309b..517f70b70620 100644
->>> --- a/include/linux/migrate.h
->>> +++ b/include/linux/migrate.h
->>> @@ -63,8 +63,6 @@ extern const char *migrate_reason_names[MR_TYPES];
->>>   #ifdef CONFIG_MIGRATION
->>>     void putback_movable_pages(struct list_head *l);
->>> -int migrate_folio_extra(struct address_space *mapping, struct folio *dst,
->>> -        struct folio *src, enum migrate_mode mode, int extra_count);
->>>   int migrate_folio(struct address_space *mapping, struct folio *dst,
->>>           struct folio *src, enum migrate_mode mode);
->>>   int migrate_pages(struct list_head *l, new_folio_t new, free_folio_t free,
->>> diff --git a/mm/migrate.c b/mm/migrate.c
->>> index cb4cbaa42a35..c006b0b44013 100644
->>> --- a/mm/migrate.c
->>> +++ b/mm/migrate.c
->>> @@ -658,18 +658,19 @@ EXPORT_SYMBOL(folio_migrate_copy);
->>>    *                    Migration functions
->>>    ***********************************************************/
->>>   -int migrate_folio_extra(struct address_space *mapping, struct folio *dst,
->>> -        struct folio *src, enum migrate_mode mode, int extra_count)
->>> +static int __migrate_folio(struct address_space *mapping, struct folio *dst,
->>> +               struct folio *src, void *src_private,
->>> +               enum migrate_mode mode)
->>>   {
->>>       int rc;
->>>   -    BUG_ON(folio_test_writeback(src));    /* Writeback must be complete */
->>> -
->>> -    rc = folio_migrate_mapping(mapping, dst, src, extra_count);
->>> -
->>> +    rc = folio_migrate_mapping(mapping, dst, src, 0);
->>>       if (rc != MIGRATEPAGE_SUCCESS)
->>>           return rc;
->>>   +    if (src_private)
->>
->> src_private seems unneeded. It can be replaced with folio_get_private(src)?
->>
-> 
-> __migrate_folio() is used by migrate_folio() and filemap_migrate_folio(),
-> but migrate_folio() is for LRU folio, when swapcache folio, the
-> folio->private is handled from folio_migrate_mapping(), we should not
-> try to call folio_detach_private/folio_attach_private().
+On Thu, Apr 18, 2024 at 9:55=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Thu, Apr 18, 2024 at 4:12=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
+ote:
+> >
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > When applied on swap cache pages, page_index / page_file_offset was use=
+d
+> > to retrieve the swap cache index or swap file offset of a page, and the=
+y
+> > have their folio equivalence version: folio_index / folio_file_pos.
+> >
+> > We have eliminated all users for page_index / page_file_offset, everyth=
+ing
+> > is using folio_index / folio_file_pos now, so remove the old helpers.
+> >
+> > Then convert the implementation of folio_index / folio_file_pos to
+> > to use folio natively.
+> >
+> > After this commit, all users that might encounter mixed usage of swap
+> > cache and page cache will only use following two helpers:
+> >
+> > folio_index (calls __folio_swap_cache_index)
+> > folio_file_pos (calls __folio_swap_file_pos)
+> >
+> > The offset in swap file and index in swap cache is still basically the
+> > same thing at this moment, but will be different in following commits.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+>
+> Hi Kairui, thanks !
+>
+> I also find it rather odd that folio_file_page() is utilized for both
+> swp and file.
+>
+> mm/memory.c <<do_swap_page>>
+>              page =3D folio_file_page(folio, swp_offset(entry));
+> mm/swap_state.c <<swapin_readahead>>
+>              return folio_file_page(folio, swp_offset(entry));
+> mm/swapfile.c <<unuse_pte>>
+>              page =3D folio_file_page(folio, swp_offset(entry));
+>
+> Do you believe it's worthwhile to tidy up?
+>
 
-I see. Swapcache folio will use private field while without using PagePrivate/PagePrivate2.
-We can't handle this case if src_private is removed.
-Thanks.
-.
+Hi Barry,
 
-> 
->> Thanks.
->> .
-> .
-
+I'm not sure about this. Using folio_file_page doesn't look too bad,
+and it will be gone once we convert them to always use folio, this
+shouldn't take too long.
 
