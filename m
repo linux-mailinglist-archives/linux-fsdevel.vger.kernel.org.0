@@ -1,118 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-17250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94A28A9B83
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 15:44:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FD78A9D3E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 16:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7260CB2306A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 13:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D49286A7C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 14:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220C9161311;
-	Thu, 18 Apr 2024 13:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88741DFD8;
+	Thu, 18 Apr 2024 14:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YnIPayUH"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ugFWRl7H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BC715B961
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Apr 2024 13:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF83137761
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Apr 2024 14:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713447847; cv=none; b=NtFBG/YGnTa96wyWJo1TQrwn4j3dpt0pmQNsVGtWdgh/Q9ckG636qrewkgBZXvm69RjAE7oRA/ZMKL6SPA00FXiOsLXbPUQV86mcD017yOJHpP4eqRymf42pPbxeL6UyO2kPzuicXzlkf/1ZL5cg2gvMA8uEtIpRUp7wUZg8pfc=
+	t=1713451083; cv=none; b=IDkpO+RKVB/pj2JVAQRVBGQUoktSbPl9N7tGVjXnA6gWd1NE22iNc8Jtb8IFQ90SdpXcbfEdk5CXyiKm7gZlQoR5fT8YzTRcyYwIp+Gxfl39lXorQ1FxREEFWD6qG2Mu+qv5w8mm+j6ML6CtKkA9o/ZKcPbrFofbpMGUy0U0QfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713447847; c=relaxed/simple;
-	bh=Iwmm4vK6K8VJ12C1Oel8qG6yhGbv1FUmWa6BqBjk/1c=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=d8fXykmpb0ZlXLPtlm3ob7sPwAISdgcrRl1fYaK+8gKLXZqS1/pQ5bgqsjiQqJA3y0+eTE3ep8JHIG1y+Y0QFsog6VSW5OD6IktXf3CjkH6MO3Ck5d4snCkPr62lW7NsicRVl8CHiyERF2NbkHWerkBnu/o2C6idBzYHyDZxeXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YnIPayUH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713447845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S0S8YregP25P1OBV5UbC9sms8BvW3U0pJ4XCK6GLxag=;
-	b=YnIPayUHqITU2m24NhRVv8T0JbGS7sslBRsgGnFzsNrT56TP5nq1tmO7KZDC42JLeHdOts
-	Atejm/YgidaUzZJLJnPATVlabTCb8uHEb45mIvBXJeyNQKiarTCJbw/d2R/nEf+P+V4/Yp
-	IPp1eJZelnVYJ7IcxWviNtQu3XOfIeA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-257-0B34hqk0Pq6zo_RaertJrg-1; Thu, 18 Apr 2024 09:44:01 -0400
-X-MC-Unique: 0B34hqk0Pq6zo_RaertJrg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 56B1B18B1847;
-	Thu, 18 Apr 2024 13:44:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.200])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 36B4E2166B32;
-	Thu, 18 Apr 2024 13:44:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <59c322dc49c3cc76a4b6a2de35106c61@manguebit.com>
-References: <59c322dc49c3cc76a4b6a2de35106c61@manguebit.com> <1a94a15e6863d3844f0bcb58b7b1e17a@manguebit.com> <14e66691a65e3d05d3d8d50e74dfb366@manguebit.com> <3756406.1712244064@warthog.procyon.org.uk> <2713340.1713286722@warthog.procyon.org.uk> <277920.1713364693@warthog.procyon.org.uk>
-To: Paulo Alcantara <pc@manguebit.com>
-Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
-    Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Fix reacquisition of volume cookie on still-live connection
+	s=arc-20240116; t=1713451083; c=relaxed/simple;
+	bh=eKT0YaMllCNQB6rz3VP0XVmqW5UyK3WdeT2JU79gv4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ijoQkH+XkWOfVT7BtS9ymAow30NyReIbpcc26u9BpHSjKb76/XKcGJFXJY2k70cxcxsD8T0E4tuOzRzF2byDEhg/SYjIsWBi7STGkPTSDCHwbNeNj6xtpuf4IPWXoN13gHIZQKVpAmzmM4DgNE8MW5VFIL6Az6GErenn05zrY7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ugFWRl7H; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QmzrnFm2hYgFZI9nVWXU3Upsx9CwQLwwmsJrr2bs+0E=; b=ugFWRl7HzO/eGM2/AYgWdIgtNr
+	W/fjYU0Ti6h5xMhS/GptgLhp5u14Ux2NMpwU3t5V9f4KlLPsuBX+MtCTOeUbTVuJn6KP2jYN2ugLR
+	tOJ2i86ZZZuNPShGSlFz5lQrzw/822ykcewe3Z+L7rIL4h41P6sJliEvBfPdd0E44ikDe38yakR1Q
+	wcCY4BQ0IR6iMXmqz6mmIuP3ZdPAjQ/yYzs5qgW1M/3tyH9dYg4gjQOBZEVm44FPMKptgHyENwT+k
+	STlt0i1aSTNM/nxfYRY2lxRmzGam4krf3yHnRAtctKWuwGYi77D9obLiMxysjKBK+d9ApUvETBvzB
+	uGcn6Gnw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rxStj-00000005X6O-2dI2;
+	Thu, 18 Apr 2024 14:37:59 +0000
+Date: Thu, 18 Apr 2024 15:37:59 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Dave Kleikamp <shaggy@kernel.org>
+Cc: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH v2 14/13] jfs: Stop using PG_error
+Message-ID: <ZiEwRzu_H3pfs5pa@casper.infradead.org>
+References: <20240417175659.818299-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <564519.1713447839.1@warthog.procyon.org.uk>
-Date: Thu, 18 Apr 2024 14:43:59 +0100
-Message-ID: <564520.1713447839@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240417175659.818299-1-willy@infradead.org>
 
-Paulo Alcantara <pc@manguebit.com> wrote:
+Jan pointed out that I'm really close to being able to remove PG_error
+entirely with just jfs and btrfs still testing the flag.  So here's an
+attempt to remove use of the PG_error from JFS.  We only need to
+remember the 'status' if we have multiple metapage blocks per host page,
+so I keep it in the meta_anchor.
 
-> I don't know why it was designed that way, but the reason we have two
-> different superblocks with ${opts} being the same is because cifs.ko
-> relies on the value of cifs_sb_info::prepath to build paths out of
-> dentries.  See build_path_from_dentry().  So, when you access
-> /mnt/2/foo, cifs.ko will build a path like '[optional tree name prefix]
-> + cifs_sb_info::prepath + \foo' and then reuse connections
-> (server+session+tcon) from first superblock to perform I/O on that file.
+What do you think?
 
-Yep.  You don't *need* prepath.  You could always build from the sb->s_root
-without a prepath and have mnt->mnt_root offset the place the VFS thinks you
-are:
-
-	[rootdir]/	<--- s_root points here
-	|
-	v
-	foo/
-	|
-	v
-	bar/		<--- mnt_root points here
-	|
-	v
-	a
-
-Without prepath, you build back up the tree { a, bar/, foo/, [rootdir] } with
-prepath you insert the prepath at the end.
-
-Bind mounts just make the VFS think it's starting midway down, but you build
-up back to s_root.
-
-Think of a mount as just referring to a subtree of the tree inside the
-superblock.  The prepath is just an optimisation - but possibly one that makes
-sense for cifs if you're having to do pathname fabrication a lot.
-
-David
-
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index 19854bd8dfea..df575a873ec6 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -76,6 +76,7 @@ static mempool_t *metapage_mempool;
+ struct meta_anchor {
+ 	int mp_count;
+ 	atomic_t io_count;
++	blk_status_t status;
+ 	struct metapage *mp[MPS_PER_PAGE];
+ };
+ 
+@@ -138,12 +139,16 @@ static inline void inc_io(struct folio *folio)
+ 	atomic_inc(&anchor->io_count);
+ }
+ 
+-static inline void dec_io(struct folio *folio, void (*handler) (struct folio *))
++static inline void dec_io(struct folio *folio, blk_status_t status,
++		void (*handler)(struct folio *, blk_status_t))
+ {
+ 	struct meta_anchor *anchor = folio->private;
+ 
++	if (anchor->status == BLK_STS_OK)
++		anchor->status = status;
++
+ 	if (atomic_dec_and_test(&anchor->io_count))
+-		handler(folio);
++		handler(folio, anchor->status);
+ }
+ 
+ #else
+@@ -168,7 +173,7 @@ static inline void remove_metapage(struct folio *folio, struct metapage *mp)
+ }
+ 
+ #define inc_io(folio) do {} while(0)
+-#define dec_io(folio, handler) handler(folio)
++#define dec_io(folio, status, handler) handler(folio, status)
+ 
+ #endif
+ 
+@@ -258,23 +263,20 @@ static sector_t metapage_get_blocks(struct inode *inode, sector_t lblock,
+ 	return lblock;
+ }
+ 
+-static void last_read_complete(struct folio *folio)
++static void last_read_complete(struct folio *folio, blk_status_t status)
+ {
+-	if (!folio_test_error(folio))
+-		folio_mark_uptodate(folio);
+-	folio_unlock(folio);
++	if (status)
++		printk(KERN_ERR "Read error %d at %#llx\n", status,
++				folio_pos(folio));
++
++	folio_end_read(folio, status == 0);
+ }
+ 
+ static void metapage_read_end_io(struct bio *bio)
+ {
+ 	struct folio *folio = bio->bi_private;
+ 
+-	if (bio->bi_status) {
+-		printk(KERN_ERR "metapage_read_end_io: I/O error\n");
+-		folio_set_error(folio);
+-	}
+-
+-	dec_io(folio, last_read_complete);
++	dec_io(folio, bio->bi_status, last_read_complete);
+ 	bio_put(bio);
+ }
+ 
+@@ -300,11 +302,17 @@ static void remove_from_logsync(struct metapage *mp)
+ 	LOGSYNC_UNLOCK(log, flags);
+ }
+ 
+-static void last_write_complete(struct folio *folio)
++static void last_write_complete(struct folio *folio, blk_status_t status)
+ {
+ 	struct metapage *mp;
+ 	unsigned int offset;
+ 
++	if (status) {
++		int err = blk_status_to_errno(status);
++		printk(KERN_ERR "metapage_write_end_io: I/O error\n");
++		mapping_set_error(folio->mapping, err);
++	}
++
+ 	for (offset = 0; offset < PAGE_SIZE; offset += PSIZE) {
+ 		mp = folio_to_mp(folio, offset);
+ 		if (mp && test_bit(META_io, &mp->flag)) {
+@@ -326,12 +334,7 @@ static void metapage_write_end_io(struct bio *bio)
+ 
+ 	BUG_ON(!folio->private);
+ 
+-	if (bio->bi_status) {
+-		int err = blk_status_to_errno(bio->bi_status);
+-		printk(KERN_ERR "metapage_write_end_io: I/O error\n");
+-		mapping_set_error(folio->mapping, err);
+-	}
+-	dec_io(folio, last_write_complete);
++	dec_io(folio, bio->bi_status, last_write_complete);
+ 	bio_put(bio);
+ }
+ 
+@@ -454,10 +457,10 @@ static int metapage_write_folio(struct folio *folio,
+ 		       4, bio, sizeof(*bio), 0);
+ 	bio_put(bio);
+ 	folio_unlock(folio);
+-	dec_io(folio, last_write_complete);
++	dec_io(folio, BLK_STS_OK, last_write_complete);
+ err_out:
+ 	while (bad_blocks--)
+-		dec_io(folio, last_write_complete);
++		dec_io(folio, BLK_STS_OK, last_write_complete);
+ 	return -EIO;
+ }
+ 
 
