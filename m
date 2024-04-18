@@ -1,246 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-17214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4798A90C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 03:39:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFFD8A90CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 03:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E5A1C21B89
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 01:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D872D283A5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Apr 2024 01:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE14481A7;
-	Thu, 18 Apr 2024 01:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134DD37149;
+	Thu, 18 Apr 2024 01:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XSoUtPdh"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OUYyNaE5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2663A267;
-	Thu, 18 Apr 2024 01:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AD83D54C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Apr 2024 01:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713404367; cv=none; b=UeWoV9Kh05Paq9TILbHefLJdH9ss6Xo4EeMFW1Iov3gAnvQjF2IzDPqA+x8bWSAXS6V4egvX3n/h+nUkeasxeVIuI3wVP44mT1BaYImKXB34tCUptMSSUBih3ExqNZgSUT85eHjdKjvUyV5ePmMtt3Eg6/375WJrqILwaTjGKRs=
+	t=1713404417; cv=none; b=CEpMxVCRTXJAS+rf/Z1FT1H5HMVaS50zUtdnIjcGy33AVqMemDq4Egc519Ja49xL2AeHAz0ouFcqGdyUhNeLylU7+pSKQXoSn+oHg7UujJxOdw3xbh6y7NzPSwA26LDO3AtQ5bpbRGFVJiqK1R6opaB52OJvmhJyo2MMYMS62Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713404367; c=relaxed/simple;
-	bh=f2Dq5guPuEqsQiTvFbgl4H4Q2lmEymOK0U/6BUFRhag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bkObwh54dT8G3m7jMwtAmDgMh+o+7riMbGK8W00rdQ6gqgRn6SyORYablH4PFSZIaXzUxbZ94KsTtmuK7W+XPcr5r0d74wNM/8vTtkGHfWE/z8T6+/A99q5sfnnmUdRrdvLu1A6i9zmfRbg6laewkX91Z1LM0x2mWI/QUXtutHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XSoUtPdh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nPQW+PhTfzyYpqrNWwtHYFjE/ppW5K9b7LVALH2CUbw=; b=XSoUtPdhF00S40gBsQwATN/3XT
-	CnvglDPefCM2L3t0WX4necLIz5bEyMigX6zqeLM0zda4jE9nRkB8K/dtIFwikK+eGnCF0zT8t29kO
-	Mw+VgiqxvX+U2gmvFHIAIJr7nFTZcClJ/dgJ5cNLEiQJ3QYPa0D1AgDk51uHA0rS5G1cXCCXe2ywm
-	p2x2bhS0+CeddI3Ivo5uE/oWlTFOGyPU9hPZEkPnPkcsLCAv+ZOxPrhKCHZKZb3Sdc7f+/soUvuNx
-	CSRRY/+clV4HihWR5oBpOzc3Iq4QGLDxijsyq48FQWIfDCqzVUT1NRA2YPfB7SRMtTuCv6ctsiawl
-	le7qMwMw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rxGkB-00000004Ejb-3VEf;
-	Thu, 18 Apr 2024 01:39:20 +0000
-Date: Thu, 18 Apr 2024 02:39:19 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: fstests@vger.kernel.org, kdevops@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, david@redhat.com,
-	linmiaohe@huawei.com, muchun.song@linux.dev, osalvador@suse.de
-Subject: Re: [PATCH] fstests: add fsstress + compaction test
-Message-ID: <ZiB5x-EKrmb1ZPuf@casper.infradead.org>
-References: <20240418001356.95857-1-mcgrof@kernel.org>
+	s=arc-20240116; t=1713404417; c=relaxed/simple;
+	bh=e3bCTdtHrF2UnBnEbVCk1MkmyVmZb9X8WMo8KFpypjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GUnr+PI19ypTVV1wT94dm7xl0KbadtZI9+JGGvHN1MH4lVc9y7WuuV0yG4zqU0X+tUwdrGURO/1CY0g/CMdUx5J5cYDMe2UZv7Wmc+Rc3BIawZAOlHxQ/ClulwwH9FOzlYcI7DpQoqYf8Lg1prEG9jroRIh34ajuiZCk900R5us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OUYyNaE5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713404415;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JVgKAS9nz/LG4ge1C9xAdcQzyy8X8VEwsLz7Mq7LgFw=;
+	b=OUYyNaE59nhX1hFemxN7JRcAnh4LboeS+3TooRZrV3qx/Jzr66JtjjKwG/BIUk8ElLDofC
+	c0oPfXEuYoatmr7TzibhVHN0AmyKtwxLGZ34ElR6CgFlfIJPs+XB1jrWWvCllpM6JMeEv/
+	TPHBfqFH+S8NQqsLQ/cPFV3H81PNsMo=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-92-p59r5BM9PBumS_Al7VGz0w-1; Wed, 17 Apr 2024 21:40:13 -0400
+X-MC-Unique: p59r5BM9PBumS_Al7VGz0w-1
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1e2ae0153e2so4970315ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Apr 2024 18:40:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713404412; x=1714009212;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JVgKAS9nz/LG4ge1C9xAdcQzyy8X8VEwsLz7Mq7LgFw=;
+        b=BpQKlertSmbLOn3tW9wrtlMNXa0d0X8w2+Bp729Qizxwu2OTOoeSceZIPG5a2ZqArb
+         vfgEWJ0PQZTIOfoW5rHf2f+jheef5aH2g6laG8rWVoTHqGfP0OrnKCPsvK8z0vgxdMex
+         UwM3sN5v5Ir4YOjChLvnr3NfjYewPdUPCB9wVUIwaYmoIKZ3CqaPp6BmqszC+UhY6PBC
+         4hy797FxOYoX9hnYtyHHNMJ5JcdqOluqxi+THldPyNkkJ8kWdYEwszU+PmEuLVm5K7C/
+         e55DOX/1KDWQM1Q4l9G9z4IBleJC1sVFhAvruIe+srg504HP08ZOSo3qB9cIvt/HcgzM
+         +FeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIh9HaLvr5txMTJ2bj8Sm3esordnU13IqR4ePg+iX9d7jpmRJH3dX3q/9lPOQ9krpkgHMdPbJ8GT4npusvi5bEQ6zDHuVQwsS0Cx9nhA==
+X-Gm-Message-State: AOJu0YyxWIydtQ/Nk9dYYMDIrebyFT7cMS1kf9iCnto2FhA+skf0zEKM
+	sx8fAoSJJXvli8/zbe2sc+0bG1FO33+dI0kCcy5VyEyGtSjkMSScBsCpX2x/LbpLeeoJlxjN3XD
+	pRLfgLw31fpWWjZTrzgEKr5t1+ICNudnXhlRIkRSKwCrk4rGvIQqO1yS2Ecb0mxA=
+X-Received: by 2002:a17:903:228b:b0:1e4:55d8:dfae with SMTP id b11-20020a170903228b00b001e455d8dfaemr1685039plh.4.1713404412279;
+        Wed, 17 Apr 2024 18:40:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6VvtdAGo5TIQeytuXP1dbMJEhF6NhbLbnVJumMJQ8ijnoQzNd5M6jQzcmCzrBaveFaQNpmw==
+X-Received: by 2002:a17:903:228b:b0:1e4:55d8:dfae with SMTP id b11-20020a170903228b00b001e455d8dfaemr1685010plh.4.1713404411924;
+        Wed, 17 Apr 2024 18:40:11 -0700 (PDT)
+Received: from [10.72.116.40] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id t20-20020a170902b21400b001e3e081dea1sm314514plr.0.2024.04.17.18.40.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Apr 2024 18:40:11 -0700 (PDT)
+Message-ID: <e5b9172c-3123-4926-bd1d-1c1c93f610bb@redhat.com>
+Date: Thu, 18 Apr 2024 09:40:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240418001356.95857-1-mcgrof@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/8] ceph: drop usage of page_index
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>, "Huang, Ying"
+ <ying.huang@intel.com>, Chris Li <chrisl@kernel.org>,
+ Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Neil Brown <neilb@suse.de>, Minchan Kim <minchan@kernel.org>,
+ Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>,
+ Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+ Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+References: <20240417160842.76665-1-ryncsn@gmail.com>
+ <20240417160842.76665-5-ryncsn@gmail.com>
+ <fc89e5b9-cfc4-4303-b3ff-81f00a891488@redhat.com>
+ <ZiB3rp6m4oWCdszj@casper.infradead.org>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <ZiB3rp6m4oWCdszj@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 17, 2024 at 05:13:56PM -0700, Luis Chamberlain wrote:
-> Running compaction while we run fsstress can crash older kernels as per
-> korg#218227 [0], the fix for that [0] has been posted [1] but that patch
-> is not yet on v6.9-rc4 and the patch requires changes for v6.9.
 
-It doesn't require changes, it just has prerequisites:
+On 4/18/24 09:30, Matthew Wilcox wrote:
+> On Thu, Apr 18, 2024 at 08:28:22AM +0800, Xiubo Li wrote:
+>> Thanks for you patch and will it be doable to switch to folio_index()
+>> instead ?
+> No.  Just use folio->index.  You only need folio_index() if the folio
+> might belong to the swapcache instead of a file.
+>
+Hmm, Okay.
 
-https://lore.kernel.org/all/ZgHhcojXc9QjynUI@casper.infradead.org/
+Thanks
 
-> Today I find that v6.9-rc4 is also hitting an unrecoverable hung task
-> between compaction and fsstress while running generic/476 on the
-> following kdevops test sections [2]:
-> 
->   * xfs_nocrc
->   * xfs_nocrc_2k
->   * xfs_nocrc_4k
-> 
-> Analyzing the trace I see the guest uses loopback block devices for the
-> fstests TEST_DEV, the loopback file uses sparsefiles on a btrfs
-> partition. The contention based on traces [3] [4] seems to be that we
-> have somehow have fsstress + compaction race on folio_wait_bit_common().
+- Xiubo
 
-What do you mean by "race"?  Here's what I see:
-
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel: INFO: task kcompactd0:72 blocked for more than 120 seconds.
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel:       Not tainted 6.9.0-rc4 #4
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel: task:kcompactd0      state:D stack:0     pid:72    tgid:72    ppid:2      flags:0x00004000
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel: Call Trace:
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel:  <TASK>
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel:  __schedule+0x3d9/0xaf0
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel:  schedule+0x26/0xf0
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel:  io_schedule+0x42/0x70
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel:  folio_wait_bit_common+0x123/0x370
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel:  ? __pfx_wake_page_function+0x10/0x10
-Apr 16 23:06:11 base-xfs-nocrc-2k kernel:  migrate_pages_batch+0x69a/0xd70
-
-But you didn't run the backtrace through scripts/decode_stacktrace.sh
-so I can't figure out what we're waiting on.
-
-> We have this happening:
-> 
->   a) kthread compaction --> migrate_pages_batch()
->                 --> folio_wait_bit_common()
->   b) workqueue on btrfs writeback wb_workfn  --> extent_write_cache_pages()
->                 --> folio_wait_bit_common()
->   c) workqueue on loopback loop_rootcg_workfn() --> filemap_fdatawrite_wbc()
->                 --> folio_wait_bit_common()
->   d) kthread xfsaild --> blk_mq_submit_bio() --> wbt_wait()
-> 
-> I tried to reproduce but couldn't easily do so, so I wrote this test
-> to help, and with this I have 100% failure rate so far out of 2 runs.
-> 
-> Given we also have korg#218227 and that patch likely needing
-> backporting, folks will want a reproducer for this issue. This should
-> hopefully help with that case and this new separate issue.
-> 
-> To reproduce with kdevops just:
-> 
-> make defconfig-xfs_nocrc_2k  -j $(nproc)
-> make -j $(nproc)
-> make fstests
-> make linux
-> make fstests-baseline TESTS=generic/733
-> tail -f guestfs/*-xfs-nocrc-2k/console.log
-> 
-> [0] https://bugzilla.kernel.org/show_bug.cgi?id=218227
-> [1] https://lore.kernel.org/all/7ee2bb8c-441a-418b-ba3a-d305f69d31c8@suse.cz/T/#u
-> [2] https://github.com/linux-kdevops/kdevops/blob/main/playbooks/roles/fstests/templates/xfs/xfs.config
-> [3] https://gist.github.com/mcgrof/4dfa3264f513ce6ca398414326cfab84
-> [4] https://gist.github.com/mcgrof/f40a9f31a43793dac928ce287cfacfeb
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
-> 
-> Note: kdevops uses its own fork of fstests which has this merged
-> already, so the above should just work. If it's your first time using
-> kdevops be sure to just read the README for the first time users:
-> 
-> https://github.com/linux-kdevops/kdevops/blob/main/docs/kdevops-first-run.md
-> 
->  common/rc             |  7 ++++++
->  tests/generic/744     | 56 +++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/744.out |  2 ++
->  3 files changed, 65 insertions(+)
->  create mode 100755 tests/generic/744
->  create mode 100644 tests/generic/744.out
-> 
-> diff --git a/common/rc b/common/rc
-> index b7b77ac1b46d..d4432f5ce259 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -120,6 +120,13 @@ _require_hugepages()
->  		_notrun "Kernel does not report huge page size"
->  }
->  
-> +# Requires CONFIG_COMPACTION
-> +_require_compaction()
-> +{
-> +	if [ ! -f /proc/sys/vm/compact_memory ]; then
-> +	    _notrun "Need compaction enabled CONFIG_COMPACTION=y"
-> +	fi
-> +}
->  # Get hugepagesize in bytes
->  _get_hugepagesize()
->  {
-> diff --git a/tests/generic/744 b/tests/generic/744
-> new file mode 100755
-> index 000000000000..2b3c0c7e92fb
-> --- /dev/null
-> +++ b/tests/generic/744
-> @@ -0,0 +1,56 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2024 Luis Chamberlain.  All Rights Reserved.
-> +#
-> +# FS QA Test 744
-> +#
-> +# fsstress + compaction test
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto rw long_rw stress soak smoketest
-> +
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -f $tmp.*
-> +	$KILLALL_PROG -9 fsstress > /dev/null 2>&1
-> +}
-> +
-> +# Import common functions.
-> +
-> +# real QA test starts here
-> +
-> +# Modify as appropriate.
-> +_supported_fs generic
-> +
-> +_require_scratch
-> +_require_compaction
-> +_require_command "$KILLALL_PROG" "killall"
-> +
-> +echo "Silence is golden."
-> +
-> +_scratch_mkfs > $seqres.full 2>&1
-> +_scratch_mount >> $seqres.full 2>&1
-> +
-> +nr_cpus=$((LOAD_FACTOR * 4))
-> +nr_ops=$((25000 * nr_cpus * TIME_FACTOR))
-> +fsstress_args=(-w -d $SCRATCH_MNT -n $nr_ops -p $nr_cpus)
-> +
-> +# start a background getxattr loop for the existing xattr
-> +runfile="$tmp.getfattr"
-> +touch $runfile
-> +while [ -e $runfile ]; do
-> +	echo 1 > /proc/sys/vm/compact_memory
-> +	sleep 15
-> +done &
-> +getfattr_pid=$!
-> +
-> +test -n "$SOAK_DURATION" && fsstress_args+=(--duration="$SOAK_DURATION")
-> +
-> +$FSSTRESS_PROG $FSSTRESS_AVOID "${fsstress_args[@]}" >> $seqres.full
-> +
-> +rm -f $runfile
-> +wait > /dev/null 2>&1
-> +
-> +status=0
-> +exit
-> diff --git a/tests/generic/744.out b/tests/generic/744.out
-> new file mode 100644
-> index 000000000000..205c684fa995
-> --- /dev/null
-> +++ b/tests/generic/744.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 744
-> +Silence is golden
-> -- 
-> 2.43.0
-> 
 
