@@ -1,136 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-17313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAED18AB554
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 20:59:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B4F8AB5DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 22:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9276F281EA4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 18:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286E91F21CBF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 20:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B619E13C3D4;
-	Fri, 19 Apr 2024 18:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AE013D24E;
+	Fri, 19 Apr 2024 20:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Sd1KqtwO"
+	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="MndrY2dl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E3ED268;
-	Fri, 19 Apr 2024 18:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713553174; cv=none; b=FrpM4YgSASJ4+Iu1tgHQOykOjn2z4EEdF/vdKgUYF/utibCwWr20ncq+/tnn6bdzH691NuCnZtZA4IRLw/OUB+J9fJDBeGi7qsHqxeqEzdn4TbmPbzf0tzgmgUzm1KhOeNA7biuQ1hQkMnzglT7ucvQ8nIE8tdXZt0F8DhhmbTU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713553174; c=relaxed/simple;
-	bh=zc7hK6FmhDFh36aYZYPV5/Mr9PUKXJd7kPS4zb4mMvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ejrSaHGlUKFsq4xjPw/yFbzHs27eFU2xryV9jgMqWnV8j8r9/xSHHdkT05xvjWbq3KchIUWn/++nYzwUOz7NBr0lwWMIGLWQCDfW7ZJKptZHmoQj9lxAz4MU6dEgLQqtNIEwn8BqaCR/iH5OkTWdEE/D7QZEttxsd/L1O5dX/Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Sd1KqtwO; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.18] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id xtSDrOsn5GyaxxtSDrHjJe; Fri, 19 Apr 2024 20:59:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713553162;
-	bh=2I3jLva1wdiI0o0x25jMo1zPcjOqTppfHxbSiAlKjg8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Sd1KqtwO/Rb4T0qw82HGSZsYRymMWG/5jYRmGBZgv1LBFxlxicVu5Y/KiDq0UxPtA
-	 FZ3zbI5ji/wXRqwW2faLWd4iU/gBxGWhx8othrjCdlWXsjgR01nM3vjgrdopg3y1J3
-	 jVoyJTP5WyXwTxT0JmicNp80aUB2jTk4JQZOkWg4yRg+af9FnPeRKHWdyHuasH5vnt
-	 L7/peiyJJzfDMIlDJpxmIB+sk4TOmyzRZoa6UZGTgo/h+pLM/anuGSJRmMXO3pMYT3
-	 gK8ukZhFObXuVPfxBx25BWo3NjfSb3K9uUtcHGCkKaxhoBwjsHOSC9JADxF9gjS+Rj
-	 /frL5tAsu9qAw==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 19 Apr 2024 20:59:22 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <86920c17-13a7-4cc3-8603-ab6d757fef56@wanadoo.fr>
-Date: Fri, 19 Apr 2024 20:59:20 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CA764F;
+	Fri, 19 Apr 2024 20:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=167.235.159.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713557059; cv=pass; b=H+1gpRA7tiu0mc9Iw/j7CohxUEnDO4d0GnFFsgwzl3v1xI/oE13qWkkIMJMWk/eza1aVJb/4tDfsNSsjVTNywRCVCeukKi0iI5Tl18ymJUGrnc5mGNaSar3v87rPyEENVbUTdrnjg8aMhBcsFIG6Sa5T0ycA6rH6cJ9lVgSD6KQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713557059; c=relaxed/simple;
+	bh=nQRHbFf+whsAutgS8E/DEWI1hSQ98s6TxkcRXoiAsaw=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=UjNILivOAPShxuG8onYczUWfn6vYXpaa95VonD61D+W4DWDEhEl3G2TrWAzevNsUwBFNRmq8N+7NG7CFMX1tyzzQK5j545TF7+tu5XzzPpYZeKQgyh5bSuljXNAnPt12hOXxn8U2aQZKqCfSgp329URvgeWJgJS8Sxz8KG7/M6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=MndrY2dl; arc=pass smtp.client-ip=167.235.159.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
+Message-ID: <5d354377e2ba2f8f4ed249bf7633fd71@manguebit.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1713557054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xrV4npIoXrOukeNblskQI/a7RrbB6geAAv/9nYneVY8=;
+	b=MndrY2dlBclKUU00zjjlwYecdn6Yf3Gr+rCrQuMUENn95CjZ0EM5vxFh2VS/V0DK+hKwhJ
+	CXHZKDcsfMRoPpkpDnjLLzTiIO8j9v7jzfBnByI1xFwACv62OMyWIV0RDK6OLzU0374lbc
+	ntppXYiygNOd40PECVRFMliM/TXW8uhMBKOgDdSzHyTNXbv5Q8e6y0an4Te9V2/XR6b2X4
+	pUOooqkwZbJeqG0LF/sbFcxuyIfLVwBZkLhbA0UFFz3HzoWgX7tZ8NC6fQWh2Ao79gYrno
+	n90xWTdv4sx5qFcsUkg8CeoBJVQiNmmsLHkOp4yOftarkE4m4dC02UtlUk5RAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1713557054; h=from:from:sender:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xrV4npIoXrOukeNblskQI/a7RrbB6geAAv/9nYneVY8=;
+	b=eic3Li+gaORjGGNXtWjzNpGkcOinIzBZbkO+HFgDDxfbgk6OCNssWIIWKGl3sc03HxY8Zh
+	fYvtm40swjUirgUKrN9Rk/LtzXmdjutMkD2BqkAAGgJMWKoJRVf07YmWsbG7/gw9La06pQ
+	i2n0gFMq5IOaXLMgamtXGEJQcn2KTontt1ciJhj4hDW6RvcHFPfdJVpTXzPMmnjpoK2DxD
+	axWyOT6PboT6j69YCpmRboDdeLEG89IvtsjdINfV2msGo5qxp/do1igC8yLbYfsKUZOo+C
+	hvUMuXD/ufk+1Xb1kV9ROPp3cUCrQ/cUQacjHSnhVEtoMYT+uFtKQiuYbdYWPg==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.mailfrom=pc@manguebit.com
+ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1713557054; a=rsa-sha256;
+	cv=none;
+	b=EEOh5ZIo+qn/E/U+YuyEsSXtxoNM3/Ot32BrkhnY2l0t/54cywhXFucFm9s08I/OiC0Efm
+	kBtd3thicAe/Mc4vy2N9zxjxxQXE6+LBd7DX4ZyCaRoFIu1Pxr1TX5QyQZYgPHhSwowTfo
+	hvvXmIYaLvDDZ66ygJd04jy15cnPMRQjuddxBCcCjBYGwbsj1ap2N0sH49BeL/+bB0bl7d
+	TmquLpz0lMLteLK1lj9qDOCB7PaecYmIhR03EJZ1k4/KwW5Ce3oiOGqcd0MEJ7Beto7be7
+	eoVtKfG2vJdmV2dLcejnzaSULAwxGqrP+y5vne46Twrx49IBEUgtpDKXjPbW/w==
+From: Paulo Alcantara <pc@manguebit.com>
+To: David Howells <dhowells@redhat.com>
+Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>, Shyam Prasad N
+ <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Fix reacquisition of volume cookie on still-live
+ connection
+In-Reply-To: <564520.1713447839@warthog.procyon.org.uk>
+References: <59c322dc49c3cc76a4b6a2de35106c61@manguebit.com>
+ <1a94a15e6863d3844f0bcb58b7b1e17a@manguebit.com>
+ <14e66691a65e3d05d3d8d50e74dfb366@manguebit.com>
+ <3756406.1712244064@warthog.procyon.org.uk>
+ <2713340.1713286722@warthog.procyon.org.uk>
+ <277920.1713364693@warthog.procyon.org.uk>
+ <564520.1713447839@warthog.procyon.org.uk>
+Date: Fri, 19 Apr 2024 17:04:11 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] seq_file: Optimize seq_puts()
-To: Al Viro <viro@zeniv.linux.org.uk>, David Laight <David.Laight@aculab.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
- <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
- <20240415210035.GW2118490@ZenIV>
- <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
- <20240417010430.GB2118490@ZenIV>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240417010430.GB2118490@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Le 17/04/2024 à 03:04, Al Viro a écrit :
-> On Tue, Apr 16, 2024 at 08:56:51PM +0000, David Laight wrote:
-> 
->>> static inline void seq_puts(struct seq_file *m, const char *s)
->>
->> That probably needs to be 'always_inline'.
-> 
-> What for?  If compiler fails to inline it (and I'd be very surprised
-> if that happened - if s is not a constant string, we get a straight call
-> of __seq_puts() and for constant strings it boils down to call of
-> seq_putc(m, constant) or seq_write(m, s, constant)), nothing bad
-> would happen; we'd still get correct behaviour.
-> 
->>> {
->>> 	if (!__builtin_constant_p(*s))
->>> 		__seq_puts(m, s);
->>> 	else if (s[0] && !s[1])
->>> 		seq_putc(m, s[0]);
->>> 	else
->>> 		seq_write(m, s, __builtin_strlen(s));
->>> }
->>
->> You missed seq_puts(m, "");
-> 
-> Where have you seen one?
+David Howells <dhowells@redhat.com> writes:
 
-Based on results from:
-    git grep seq_puts.*\"\"
+> Paulo Alcantara <pc@manguebit.com> wrote:
+>
+>> I don't know why it was designed that way, but the reason we have two
+>> different superblocks with ${opts} being the same is because cifs.ko
+>> relies on the value of cifs_sb_info::prepath to build paths out of
+>> dentries.  See build_path_from_dentry().  So, when you access
+>> /mnt/2/foo, cifs.ko will build a path like '[optional tree name prefix]
+>> + cifs_sb_info::prepath + \foo' and then reuse connections
+>> (server+session+tcon) from first superblock to perform I/O on that file.
+>
+> Yep.  You don't *need* prepath.  You could always build from the sb->s_root
+> without a prepath and have mnt->mnt_root offset the place the VFS thinks you
+> are:
+>
+> 	[rootdir]/	<--- s_root points here
+> 	|
+> 	v
+> 	foo/
+> 	|
+> 	v
+> 	bar/		<--- mnt_root points here
+> 	|
+> 	v
+> 	a
+>
+> Without prepath, you build back up the tree { a, bar/, foo/, [rootdir] } with
+> prepath you insert the prepath at the end.
+>
+> Bind mounts just make the VFS think it's starting midway down, but you build
+> up back to s_root.
+>
+> Think of a mount as just referring to a subtree of the tree inside the
+> superblock.  The prepath is just an optimisation - but possibly one that makes
+> sense for cifs if you're having to do pathname fabrication a lot.
 
-there is no such cases.
+Thanks alot Dave!  Great explanation.  We also need to remember that
+those prefix paths can also be changed over reconnect.  That is, if
+you're currently mounted to a DFS link target '\srv1\share' and client
+failovers to next target '\srv2\share\foo\bar', cifs_sb_info::prepath
+will be set to '\foo\bar'.  And if you mounted the DFS link as
+`mount.cifs //dfs/link/some/dir`, cifs_sb_info::prepath would be set to
+'\some\dir\foo\bar'.  Yeah, a lot of corner cases to handle...
 
+Anyways, don't worry much about all of this as we can handle in
+follow-up patches.
 
->  And if it gets less than optimal, who cares?
-> 
->> Could you do:
->> 	size_t len = __builtin_strlen(s);
->> 	if (!__builtin_constant_p(len))
->> 		__seq_puts(m, s);
->> 	else switch (len){
->> 	case 0: break;
->> 	case 1: seq_putc(m, s[0]);
+FWIW, patch looks good:
 
-missing break;
-
->> 	default: seq_write(m, s, len);
->> 	}
-> 
-> Umm...  That's probably OK, but I wonder how useful would that
-> be...
-> 
-
-Thanks all for your feedback.
-
-I'll send a v2.
-
-CJ
-
-> 
-
+Acked-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
 
