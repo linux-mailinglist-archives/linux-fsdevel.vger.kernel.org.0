@@ -1,218 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-17282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80418AA985
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 09:51:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF678AA9E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 10:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8C361C2166E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 07:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C78C61F22D06
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 08:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973944AECF;
-	Fri, 19 Apr 2024 07:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uQjM7/u0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CFFwG3cb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XwhsQfmb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8Xk8/6aR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2C14EB5E;
+	Fri, 19 Apr 2024 08:14:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6F94596B;
-	Fri, 19 Apr 2024 07:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB28A55;
+	Fri, 19 Apr 2024 08:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713513103; cv=none; b=g3SahVe9wqtSQnHxD5wkeqcTnNYdQZnP3+NLJ8MxXMvfta80AVgrSvOL7x7m+C7NXEBtKVj3AeJJ8vShAkoDTKSpGcnyw00N2Cd/TcDKUb7Mm+2nuDRtllN82zIjPqvDcwXmYd0Axy5sqW1S++tyvrQ996U2YWrjcXRA0NCdJFA=
+	t=1713514497; cv=none; b=WkmQdZnLEK+WS02XmTEZzIji2XF293bPSJpspYdt8kH2j+4hbHU0wDjmJPqOXfM7ut0yQa82xTZ1yPwBjzGD7KXYy6wFPb14MKJquzNBhG38r1X+UPwAoiCIo+7u5XViOEulzPKKC7JTstdQCJGdteNuC4EG0Jgjb3rtcToXD5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713513103; c=relaxed/simple;
-	bh=xC8tOVdoSvmRXP9FDmN+GWkpBkXfpFpevNJ6HtTvgj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5bo3FF68LSOrOyytHkkugmUgdxsZlS5XRrbhvnsoglKUKCE8UyaPv1e6fqiPZza+11N56NBvFrdcMuTIql4q5dXQ3YUleuKS+wN3+GyelqgJCCLaBIU19KPRq68mQFTpaeEkJ2frl2GUMw2QVSGe1U2RMembDdOHRPJBHTKuu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uQjM7/u0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CFFwG3cb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XwhsQfmb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8Xk8/6aR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 336E33753D;
-	Fri, 19 Apr 2024 07:51:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1713513097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r9lgyvgFGhM0wyhAG46ik4nnJpii/WIMIE2U5BN6Ktw=;
-	b=uQjM7/u0luVfiVv/JKrsU5iluRqDjf/3KiPnx2aR7POoW30VZRohNIiltzv41s2H6JDQR4
-	/dqotdPkpib+D0p3RzMiTHXMoKbHRaZJpp2pVfv5Q29PWT0+MUi89C/iorNK2iTT+8e4He
-	fEbuq8/n5YHJSdapE034RNZpFjX+s7k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1713513097;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r9lgyvgFGhM0wyhAG46ik4nnJpii/WIMIE2U5BN6Ktw=;
-	b=CFFwG3cbA6TcQ0LG0k+d2yuzLJfghpyuxOjwWg3uhc62zbZqTUTKTjKPFmDmyRQxEDLPHU
-	z7KVC2TyqD36tiDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XwhsQfmb;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="8Xk8/6aR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1713513096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r9lgyvgFGhM0wyhAG46ik4nnJpii/WIMIE2U5BN6Ktw=;
-	b=XwhsQfmb3QosDhOAW749uCLqZUagX+8Dd07CDWnYziPAju2zCHDB3f0kfhnEueFjOutAAw
-	FBuHZbCozTh3OEJ8PyllnFhN/cDPuWoOdy1LNC5ZPSNR/AuX/jdbiMQrqF2iUwKOJ9UmmH
-	x4ruy7f70eL9LXQnCze1z4sKHdh9s8s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1713513096;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r9lgyvgFGhM0wyhAG46ik4nnJpii/WIMIE2U5BN6Ktw=;
-	b=8Xk8/6aR9pygpecA6t1h1B2hTtoKnc5tQnZxIRRFhP3PZy0xYCmRcHTMn5U97C2w2GrAjv
-	qu7aW+s1h7s0GxDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 171E1136CF;
-	Fri, 19 Apr 2024 07:51:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9YA+BYgiImb8WwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 19 Apr 2024 07:51:36 +0000
-Message-ID: <3d4eac1f-8f33-4fbb-8c9f-5d7b2c50b6dd@suse.cz>
-Date: Fri, 19 Apr 2024 09:51:35 +0200
+	s=arc-20240116; t=1713514497; c=relaxed/simple;
+	bh=oFL++jQKoc5OIkNRR7zRzPuCLaMahie017AaPrS2TVk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=FWbYXjpwpi2ngY3Dqkz0JO1r20zJ0kAd3+7NBbU+OteB3QdYbn7lYYOkZyMzwpndq8HaEES+KmBYeOarsBIVXckew6WmctaW+NKNaroz09n5DYSjAggja5u7jxUhxb12oFRz6fVsmELAkxAuTOqILM+G0F3dgfJQhuRkRk12tnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VLS9c1Nftz4f3knt;
+	Fri, 19 Apr 2024 16:14:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 73C851A016E;
+	Fri, 19 Apr 2024 16:14:51 +0800 (CST)
+Received: from [10.174.176.34] (unknown [10.174.176.34])
+	by APP1 (Coremail) with SMTP id cCh0CgAX6RH5JyJmdbiGKQ--.20192S3;
+	Fri, 19 Apr 2024 16:14:51 +0800 (CST)
+Subject: Re: [PATCH v4 6/9] iomap: don't increase i_size if it's not a write
+ operation
+To: Chandan Babu R <chandanbabu@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+ brauner@kernel.org, david@fromorbit.com, tytso@mit.edu, jack@suse.cz,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240320110548.2200662-1-yi.zhang@huaweicloud.com>
+ <20240320110548.2200662-7-yi.zhang@huaweicloud.com>
+ <87edb13ms8.fsf@debian-BULLSEYE-live-builder-AMD64>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <4dd51853-1707-8d5f-1286-baa3126c162b@huaweicloud.com>
+Date: Fri, 19 Apr 2024 16:14:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fstests: add fsstress + compaction test
-To: Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
- Luis Chamberlain <mcgrof@kernel.org>, fstests@vger.kernel.org,
- kdevops@lists.linux.dev, linux-xfs@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, david@redhat.com, linmiaohe@huawei.com,
- muchun.song@linux.dev, osalvador@suse.de
-References: <20240418001356.95857-1-mcgrof@kernel.org>
- <ZiB5x-EKrmb1ZPuf@casper.infradead.org> <ZiDEYrY479OdZBq2@infradead.org>
- <d0d118ed-88dd-4757-8693-f0730dc9727c@suse.cz>
- <20240418114552.37e9cc827d68e3c4781dd61a@linux-foundation.org>
- <ZiFt8uGMLIWuTh4g@casper.infradead.org>
+In-Reply-To: <87edb13ms8.fsf@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
- ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
- Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
- AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
- V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
- PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
- KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
- Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
- ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
- h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
- De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
- 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
- EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
- tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
- eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
- PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
- HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
- 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
- w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
- 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
- EP+ylKVEKb0Q2A==
-In-Reply-To: <ZiFt8uGMLIWuTh4g@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 336E33753D
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.50
+X-CM-TRANSID:cCh0CgAX6RH5JyJmdbiGKQ--.20192S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFWxGr17tF43KF4UXr4UCFg_yoW8XrWfpF
+	WfW3WIqrs5Kr1xtF9rXr15X3WrZF45Xry3uFyUGrW5AFnxAF4fJFs2grWDZrWUtayDAw1F
+	qw4kuFZ8Jry5urJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 4/18/24 9:01 PM, Matthew Wilcox wrote:
-> On Thu, Apr 18, 2024 at 11:45:52AM -0700, Andrew Morton wrote:
->> It indeed appears that I can move
->> 
->> mm-create-folio_flag_false-and-folio_type_ops-macros.patch
->> mm-support-page_mapcount-on-page_has_type-pages.patch
->> mm-turn-folio_test_hugetlb-into-a-pagetype.patch
->> mm-turn-folio_test_hugetlb-into-a-pagetype-fix.patch
->> 
->> without merge or build issues.  I added
->> 
->> Fixes: 9c5ccf2db04b ("mm: remove HUGETLB_PAGE_DTOR")
->> Cc: <stable@vger.kernel.org>
->> 
->> to all patches.
->> 
->> But a question: 9c5ccf2db04b is from August 2023.  Why are we seeing
->> this issue now?
+On 2024/4/19 14:07, Chandan Babu R wrote:
+> On Wed, Mar 20, 2024 at 07:05:45 PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Increase i_size in iomap_zero_range() and iomap_unshare_iter() is not
+>> needed, the caller should handle it. Especially, when truncate partial
+>> block, we should not increase i_size beyond the new EOF here. It doesn't
+>> affect xfs and gfs2 now because they set the new file size after zero
+>> out, it doesn't matter that a transient increase in i_size, but it will
+>> affect ext4 because it set file size before truncate. So move the i_size
+>> updating logic to iomap_write_iter().
+>>
 > 
-> We saw it earlier, we just didn't know how to fix it.
-> eg December 2023:
-> https://lore.kernel.org/all/ZXNhGsX32y19a2Xv@casper.infradead.org/
+> This patch causes generic/522 to consistently fail when using the following
+> fstest configuration,
 > 
-> I think there were earlier reports, but I'm not finding them now.
+> TEST_DEV=/dev/loop16
+> TEST_LOGDEV=/dev/loop13
+> SCRATCH_DEV_POOL="/dev/loop5 /dev/loop6 /dev/loop7 /dev/loop8 /dev/loop9 /dev/loop10 /dev/loop11 /dev/loop12"
+> MKFS_OPTIONS='-f -m reflink=1,rmapbt=1, -i sparse=1, -lsize=1g'
+> MOUNT_OPTIONS='-o usrquota,grpquota,prjquota'
+> TEST_FS_MOUNT_OPTS="$TEST_FS_MOUNT_OPTS -o usrquota,grpquota,prjquota"
+> TEST_FS_MOUNT_OPTS="-o logdev=/dev/loop13"
+> SCRATCH_LOGDEV=/dev/loop15
+> USE_EXTERNAL=yes
+> LOGWRITES_DEV=/dev/loop15
+> 
 
-It's a race and needs CONFIG_DEBUG_VM to be visible, which probably makes it
-rare. What seems to be new are the stress tests that have more "luck" at
-hitting it? Or maybe also the changes towards more high-order folio usage
-make it more likely.
+Sorry for the regression, I didn't notice this issue last time I ran
+this test. It looks like the 004 patch doesn't work for some cases.
+I can reproduce it on my machine now, and I'll take a look at this
+and fix it soon.
+
+Thanks,
+Yi.
+
 
