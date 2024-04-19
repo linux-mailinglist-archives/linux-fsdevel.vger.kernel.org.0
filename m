@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-17285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E17A8AAB42
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 11:14:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 364208AAB57
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 11:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB772827A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 09:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592011C21D9D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 09:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980FA79DC5;
-	Fri, 19 Apr 2024 09:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F4377F1B;
+	Fri, 19 Apr 2024 09:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OMXjs/Ac"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OKt/sl2V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1F17B3FA
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Apr 2024 09:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D8177F13
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Apr 2024 09:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713518066; cv=none; b=FyOSI/N+Citw9y2F80Pdjw0VBFyeEJ30SXlVF1ckMyRk1lk2tGrp1CWZ0aw40ugCqv+IZgdsdgJ+Aggy2AdxaRyxFuWBgmWNlndIGBhh3Yc/OVmtWM79xWqeCJ1atwmCPHPMJGCnWsE+B/au+0oDvB29wXFC3cqQdGP57M9j4pc=
+	t=1713518397; cv=none; b=CCXS6mvq10XBKd9dvmoNnYGd1RG/l0fvjSalxQHSJ3TRJE5UvVd6isQEbVVBfhoJc080vxBy7oBcK90m3jNNBj/l8eCXsMtPqafzZz6HzAJHBMHp9va7ijTzzqPzbFj+KcfCbegU062VS1/zU/uWGA3jtOgukZwP8R7JNRZHAFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713518066; c=relaxed/simple;
-	bh=Xp2EiSEdIviNVxs+Qz+eQmTpkeDvxnaGWVXfC1igFFE=;
+	s=arc-20240116; t=1713518397; c=relaxed/simple;
+	bh=h9BYhlKg+vumdt1ARoFTJU+t44ZUoUKysyc8mq2QlNA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kvM5J+Dw0DIgpros+ORqdaBwHknjg9we9X7E0n/eVDVY3xr22PIC5tY4QyQgHyKqykjx4E/G6LiM4U/QHI1sgPQEE3qQFqf6+vuWteRf3+dWqLJYlEelnIhVEq+rkJ7HV2dVV3JQFnTqblLCpAg8DvQiI6qkUPoF8fKO9/SgAvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OMXjs/Ac; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=cJnHLlKnx9EpjUmcpp1i9Idm62Vmwr2VcSPINVWrIlJEMTJKnvNeYOmQzwBsZEjVKUdLZgJ44ZKxw0TpCC90H4w/mMT1U5u3bwxX0zzdzwd0TZ/gBXj2Unn9XIv26Ys+t8mZnqO2ZzHA4JROnCKn98RxNrtSE/xIK/8SLn8Lmao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OKt/sl2V; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713518063;
+	s=mimecast20190719; t=1713518394;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EqwO0572yowA0TBakaonePZNHGnWtzDXOOjoM1DutVs=;
-	b=OMXjs/AcDnlzE8Fg8DdXZdl/HWq3t1iz+OHCSaTzsdNSjvpw+ReyEa4elfLS8gVoHxamBM
-	bxX8WVNZrSjoICtNaeZT6KZwLen96xnoIzWRiKhGqKTmKd4862j6oaUiRogyIWty/G+Zcg
-	D9tvYE9beibbK1WIfNe7oRBjGZGwCFc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=vBx7bZBlgkTdQZODtbhF/Nyidu5C3R6hcUpumcfFwlE=;
+	b=OKt/sl2VfLGC7ii7bDAliS4tQO3lJ5/0GRXCJ1NBUW/jdtk0KV2LXd3vk+bpfTeH1hc3oO
+	2QRUXiB51r8h/NmkpUyLuDggKX5PnPs280rm5Cd96q1PQf1ZHpfFUEn7gJzX99x5n84yhI
+	6bg4Mh/K+QLFjy/TNBvtZTE7pRKciuU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-572-4UTARJjPMqq4aCgokdjTLA-1; Fri, 19 Apr 2024 05:14:21 -0400
-X-MC-Unique: 4UTARJjPMqq4aCgokdjTLA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4155db7b58cso10346785e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Apr 2024 02:14:21 -0700 (PDT)
+ us-mta-425-R_oIcZJPN7Kn5-2ErjVAaw-1; Fri, 19 Apr 2024 05:19:52 -0400
+X-MC-Unique: R_oIcZJPN7Kn5-2ErjVAaw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-346c08df987so1017352f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Apr 2024 02:19:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713518061; x=1714122861;
+        d=1e100.net; s=20230601; t=1713518392; x=1714123192;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=EqwO0572yowA0TBakaonePZNHGnWtzDXOOjoM1DutVs=;
-        b=Vc9+pPKRAYdHxbgsEkFrQ+O/cd2BDqnFR6UCtsrtLIDJHl0ux8v6LrcOGY8dYSOY2s
-         Y3id6aCCCcLaqjn1NPkDjQk2mfAQoFBKZi71445z2jIynYTYvfu1e8IrNrxgeV1OYNfY
-         blcokGc1pknKruKBPhxXGQ2XC1Bu1qpAc/ueTRFyQVyXhfpW/tUC+YlT7+geNUDjmg/L
-         diHKUlWxZAaLPTsK9SglctVXR/tX0KxaeyFfUkyeVkC0f7QxrD5B4EJoN1JbxxCrUvmn
-         C573K9NCUX3TZZgNQHwMNRV/ir8o/ECrNlN8Hn3LK1bdeimXT640WzES7c8ZFP9k9jkM
-         ntpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjnV101XCQTuO0tQkCe+oyOtCYArI/4GknbimdH8n04bXHo9VpxP1zsIs5De3opobYNKLp5vsFCYX+KPbpZGW34CIRjnZ7kq9iVdqd9g==
-X-Gm-Message-State: AOJu0YxZLOYcYGtkeqMWbJ5d9ct5D80BtcJ3Zvhc9EhT1DMq7oD2Yf7t
-	DdLxdxnUnm2ksIO7mK7zUwD4Xh3NNVf0UK+cAXUZiyM+jm4olD3jZOxy0KlUStePH3ZxcjzDQXC
-	FYXTcGl2x24TxTdkBqsyJTwSBB1TNmaopPtxWjsD2bZ+5UlC/b11ZQwvWgeH80us=
-X-Received: by 2002:a05:600c:c16:b0:418:fdcc:7080 with SMTP id fm22-20020a05600c0c1600b00418fdcc7080mr1087538wmb.12.1713518060726;
-        Fri, 19 Apr 2024 02:14:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5KCUiiuZF9OZuh6RkThz19zIB1mi9FMS0XWUZ94xu1t5eHJnPpGKa3Ly3AFrnJLxt6FqYug==
-X-Received: by 2002:a05:600c:c16:b0:418:fdcc:7080 with SMTP id fm22-20020a05600c0c1600b00418fdcc7080mr1087525wmb.12.1713518060295;
-        Fri, 19 Apr 2024 02:14:20 -0700 (PDT)
+        bh=vBx7bZBlgkTdQZODtbhF/Nyidu5C3R6hcUpumcfFwlE=;
+        b=vcPkbdLy49LvhjGIRyGv1kuZ+HOGjVhc3bWLxlTlFVbJxpPpX2GiCMLikPFDDdl0Ha
+         vGGFMPWwbX7jishhYHYj7lksosF6a2u1GaT/iIAlvvWCu2MQ3V+0XJlcw5a/N5Wk/OTK
+         saU+V8X47c9gFW9iM2HNg95wAL0yt0zUie0K/SGiV1e+/CTnbLAq0KaBpaNg6klAReFO
+         wjqCJvTIx9S/H3AI4VR26J/2niccEcylbxxhOp2OWsSEifUjTxL5nEArJC4fhxHgjJWL
+         HkEvq+R4qAgpYS6pCOUmUeHgmiKKQXqNDuzoa6S5fYMZjjmO7rydHt8UmxBJyihycdQF
+         COGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUV1SZ6Ju9SKacr8azqXctCfBDhAZA4gobE6LJlnUdiFlo2zHiyYXZ3qMpDuGII+pVMa4l831hKqTbro+vdKWrOUAMAsHNhbKBr7HiG5A==
+X-Gm-Message-State: AOJu0YwtNCZ4MP7O/FhlWjcnYqVQ3PpqnB7HuyJ4kPWCBRobWaRd9fiP
+	mtP5FYICqdDqReZXkT+NbghfJkSfazj/SlDdYMkSHnBYNHvgoIIT0XDLHXWn4zuGHt+1vDocob9
+	bDThZqYXdmSX+R4ZYXmS7vrSdgYR9Rsvs3Shh+puF50XAi2oRF+un3+j1Y00OfGY=
+X-Received: by 2002:adf:f1ca:0:b0:348:cd2c:d2fe with SMTP id z10-20020adff1ca000000b00348cd2cd2femr1318290wro.13.1713518391694;
+        Fri, 19 Apr 2024 02:19:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdgPxrnSjfa5aRbxskK70u5lHmtIZqomcgKmujnOgZiEWjrwgS65s7JSljRGJ+B1tJFoKB3Q==
+X-Received: by 2002:adf:f1ca:0:b0:348:cd2c:d2fe with SMTP id z10-20020adff1ca000000b00348cd2cd2femr1318261wro.13.1713518391167;
+        Fri, 19 Apr 2024 02:19:51 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c716:f300:c9f0:f643:6aa2:16? (p200300cbc716f300c9f0f6436aa20016.dip0.t-ipconnect.de. [2003:cb:c716:f300:c9f0:f643:6aa2:16])
-        by smtp.gmail.com with ESMTPSA id p15-20020a05600c358f00b00418ef96472asm4398962wmq.0.2024.04.19.02.14.18
+        by smtp.gmail.com with ESMTPSA id e5-20020adfe385000000b003455e5d2569sm4015124wrm.0.2024.04.19.02.19.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Apr 2024 02:14:19 -0700 (PDT)
-Message-ID: <bcd887c8-9830-42ed-b43a-2fdaa11dc837@redhat.com>
-Date: Fri, 19 Apr 2024 11:14:18 +0200
+        Fri, 19 Apr 2024 02:19:50 -0700 (PDT)
+Message-ID: <7a8eb8c0-35e5-4f45-bdd5-11a775ae752d@redhat.com>
+Date: Fri, 19 Apr 2024 11:19:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,8 +83,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/18] mm/rmap: always inline anon/file rmap
- duplication of a single PTE
+Subject: Re: [PATCH v1 05/18] mm: improve folio_likely_mapped_shared() using
+ the mapcount of large folios
 To: "Yin, Fengwei" <fengwei.yin@intel.com>, linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, cgroups@vger.kernel.org,
  linux-sh@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
@@ -100,8 +100,8 @@ Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, cgroups@vger.kernel.org,
  Naoya Horiguchi <naoya.horiguchi@nec.com>,
  Richard Chang <richardycc@google.com>
 References: <20240409192301.907377-1-david@redhat.com>
- <20240409192301.907377-3-david@redhat.com>
- <c5c2ae26-d405-4b0f-8bf6-281abcdb3239@intel.com>
+ <20240409192301.907377-6-david@redhat.com>
+ <b05cdac2-84f2-4727-af6c-3b666e6add14@intel.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -149,32 +149,42 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <c5c2ae26-d405-4b0f-8bf6-281abcdb3239@intel.com>
+In-Reply-To: <b05cdac2-84f2-4727-af6c-3b666e6add14@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19.04.24 04:25, Yin, Fengwei wrote:
+On 19.04.24 04:29, Yin, Fengwei wrote:
 > 
 > 
 > On 4/10/2024 3:22 AM, David Hildenbrand wrote:
->> As we grow the code, the compiler might make stupid decisions and
->> unnecessarily degrade fork() performance. Let's make sure to always inline
->> functions that operate on a single PTE so the compiler will always
->> optimize out the loop and avoid a function call.
->>
->> This is a preparation for maintining a total mapcount for large folios.
->>
->> Signed-off-by: David Hildenbrand<david@redhat.com>
-> The patch looks good to me. Just curious: Is this change driven by code
-> reviewing or performance data profiling? Thanks.
+>> @@ -2200,7 +2200,22 @@ static inline size_t folio_size(struct folio *folio)
+>>     */
+>>    static inline bool folio_likely_mapped_shared(struct folio *folio)
+>>    {
+>> -	return page_mapcount(folio_page(folio, 0)) > 1;
+>> +	int mapcount = folio_mapcount(folio);
+>> +
+>> +	/* Only partially-mappable folios require more care. */
+>> +	if (!folio_test_large(folio) || unlikely(folio_test_hugetlb(folio)))
+>> +		return mapcount > 1;
+> My understanding is that mapcount > folio_nr_pages(folio) can cover
+> order 0 folio. And also folio_entire_mapcount() can cover hugetlb (I am
+> not 100% sure for this one).  I am wondering whether we can drop above
+> two lines? Thanks.
 
-It was identified while observing an performance degradation with small 
-folios in the fork() microbenchmark discussed in the cover letter 
-(mentioned here as "unnecessarily degrade fork() performance").
+folio_entire_mapcount() does not apply to small folios, so we must not 
+call that for small folios.
 
-The added atomic_add() was sufficient for the compiler not inline and 
-optimize-out nr_pages, inserting a function call to a function where 
-nr_pages is not optimized out.
+Regarding hugetlb, subpage mapcounts are completely unused, except 
+subpage 0 mapcount, which is now *always* negative (storing a page type) 
+-- so there is no trusting on that value at all.
+
+So in the end, it all looked cleanest when only special-casing on 
+partially-mappable folios where we know the entire mapcount exists and 
+we know that subapge mapcount 0 actually stores something reasonable 
+(not a type).
+
+Thanks!
 
 -- 
 Cheers,
