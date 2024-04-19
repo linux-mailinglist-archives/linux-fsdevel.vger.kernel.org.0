@@ -1,123 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-17319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5098AB670
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 23:29:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0988AB67B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 23:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEADB1F2178B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 21:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11C061F21BE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 21:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CDF137779;
-	Fri, 19 Apr 2024 21:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D78113CF83;
+	Fri, 19 Apr 2024 21:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="PxIgxQQK"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="itVp2F74"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4022.proton.ch (mail-4022.proton.ch [185.70.40.22])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8879107B2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Apr 2024 21:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0F612DD97;
+	Fri, 19 Apr 2024 21:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713562187; cv=none; b=VKbVGwM/3w3b6OR4QlE0loKusecCSKzPTAKWDydSD//aFL0Ww13UeTOIAkI7/TxbI9EnySSPd0Z6NRQmKZPDv6CytR+xhXsBHPtTuS/AwDvJ/MtZqyhGj4+24TW7Yi/K33ruNgA7CXQYmZdHQcRRqp5fBrUAp+kua1jxDX09/5Q=
+	t=1713562371; cv=none; b=B1IAbTiQvjxtXjKcZqXhKJaXFa4uUvAOeGQjOTNXvhBDHqAbYX39Mokr91Th+dp488O3InC6g9ejMr1WhuX8onElNb8FSe5pf6kZZ+JrQHBri/y82k2an8Q3h6BZlRDX1lkbvfkweZsq3FsKxUbVJIYJdl9WctGDFvEQ+uPeVYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713562187; c=relaxed/simple;
-	bh=eI8Wm6s4gWpfQCuME8j6SaegNZSJ7ySN/NVWK11v7WI=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MviDPAo+kmlEuZU4+ksXRxytJJfRL0Wqd18xkp0OTqIkyXkRYNoT4HkI/q0VcrauO9s4wycRjNPyYY7eY/7KaAl0K9Kgtob1IANV7JSAsIZdZeKSf5ziizfZDTr5CeqfIFXINUGk98WpvdIXRezEpiOysuiR/vy0PlSHbzSTrPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=PxIgxQQK; arc=none smtp.client-ip=185.70.40.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
-	s=protonmail; t=1713562176; x=1713821376;
-	bh=/5Ay99VDFGjpaFPbCNU0yVz0uJQnWEHz8RxzAQ1T3Ho=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=PxIgxQQKMkPKKXVI3FpzxciA8NavHVob+nOXuKQWZJUEwqnfes7hIer4INHJT+lLH
-	 9oLzcgvszLEIc3qeuKT/LDz9LEx/PtzQ0ql+d1Ag1LTWnZfEGUZUJS7xeBpVAu1Tfn
-	 xfooWMmyXjQqThmigESFs8HvzovWXt7bHBI6hIiR1P+0Je43/zoOco+mlM0b3MQJ/H
-	 RdmDrADSxrGWB+i6QY7kyO3WSNazeyfhHKE0futXBM8WgxbK41zH/y19nVPPTwTKlg
-	 8+/SGM0Nr4V7F+Yic/icpOAhlTjRNASDctjjw1+k6johmJf+ju9Boexd7M5YvXeJ3L
-	 awRceLAFVfV4A==
-Date: Fri, 19 Apr 2024 21:29:27 +0000
-To: The 8472 <kernel@infinite-source.de>, linux-fsdevel@vger.kernel.org
-From: Antonio SJ Musumeci <trapexit@spawn.link>
-Subject: Re: EBADF returned from close() by FUSE
-Message-ID: <032cfe2c-a595-4371-a70b-f6d208974b0f@spawn.link>
-In-Reply-To: <f7c97360-8f5e-45f4-876c-3dcbf9522a3a@infinite-source.de>
-References: <1b946a20-5e8a-497e-96ef-f7b1e037edcb@infinite-source.de> <fcc874be-38d4-4af8-87c8-56d52bcec0a9@spawn.link> <0a0a1218-a513-419b-b977-5757a146deb3@infinite-source.de> <8c7552b1-f371-4a75-98cc-f2c89816becb@spawn.link> <ff9b490d-421f-4092-8497-84f545a47e6a@infinite-source.de> <1db87cbf-0465-4226-81a8-3b288d6f47e4@spawn.link> <f7c97360-8f5e-45f4-876c-3dcbf9522a3a@infinite-source.de>
-Feedback-ID: 55718373:user:proton
-X-Pm-Message-ID: c58f834c1e6be58b7370924c92b6bb9e14b172f9
+	s=arc-20240116; t=1713562371; c=relaxed/simple;
+	bh=B2iZnJTC4U4cJAnQgyN7BqEuOSFQX6ioLbcIUsDWQ2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LK1cRnpdWoko1wQXhkuPA8GnXKk+QDk9q2gl/8JE/8tJF+nQ1p0AtJ/ZTb3HkbsNxAwJbtJ3BnE+/s4EmUOx5lV338G2/qxV1EEW7F347ovgkO7DYcYJuac6NWc5qiW3volo/En+LqjucSuI7jlUiZC3Zg2dPDoICpeRL45nY7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=itVp2F74; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=BSbfcQ7mq/v3QwnrqUlPv0jIW1VWZRhaDa+hlEmn1xA=; b=itVp2F74WuIvR2DEge0CZPHYjJ
+	e7rw8X2SioMwT2jsL0nciCUwrmGrq/4G/alY0u+k34cNqlsEKRpCuFoIr9owJGypggKiecCetAi2O
+	dI1C4SyAQzzfKfB7W8WQ/CQopIALH+mz1jscTSt+iv1nTIscnGhZJJszVrHSiteykrnulu4dN0Y95
+	Y49qyBhuhT+ojpaCUsf+vTCjA+fgrdmS8Cvs+I/O3d03nLeUMuIJD41CXBCkXzNWyGSWC7X9qDIDO
+	Z2C8yxjfbLHVmRJzxyOraaBuylRqFCjOi3i+Q8hDLGnszBPkvRrTTZ9Uos0OQjugRTDQGqbREw/RB
+	WJWMiFBw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rxvqa-00GgxV-1E;
+	Fri, 19 Apr 2024 21:32:40 +0000
+Date: Fri, 19 Apr 2024 22:32:40 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: David Laight <David.Laight@aculab.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] seq_file: Optimize seq_puts()
+Message-ID: <20240419213240.GE2118490@ZenIV>
+References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
+ <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
+ <20240415210035.GW2118490@ZenIV>
+ <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
+ <5e5cde3e-f3ad-4a9b-bc02-1c473affdcb1@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5e5cde3e-f3ad-4a9b-bc02-1c473affdcb1@wanadoo.fr>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 4/19/24 15:45, The 8472 wrote:
-> Syscalls have documentation. Errors and their semantics are part
-> of the documentation. If the kernel cannot actually provide
-> the documented semantics because it passes errors through without
-> sanitizing them then this should at least be documented
-> for each affected syscall.
-And that documentation is *different* depending on the platform. The=20
-clean vision you seem to have about errnos is not real. There are=20
-conventions... not strong contracts. I had this exact debate days ago=20
-about `link`. The claim that if link isn't supported by the OS FUSE=20
-should return EPERM. But this just isn't standard the way people think=20
-it is. Not on paper. And if a FUSE server wants to return EPERM then it=20
-can. I don't see why the kernel needs to get in the business of reading=20
-the mind of the server author.
->
-> Proper API documentation and stability guarantees are important
-> so we can write robust software against them.
->
-> Note that write(2) documents
->
->      Other errors may occur, depending on the object connected to fd.
->
-> close(2) has no such note.
+On Fri, Apr 19, 2024 at 10:38:15PM +0200, Christophe JAILLET wrote:
+> Le 16/04/2024 à 22:56, David Laight a écrit :
+> > From: Al Viro
+> > > Sent: 15 April 2024 22:01
+> > ...
+> > > No need to make it a macro, actually.  And I would suggest going
+> > > a bit further:
+> > > 
+> > > static inline void seq_puts(struct seq_file *m, const char *s)
+> > 
+> > That probably needs to be 'always_inline'.
+> > 
+> > > {
+> > > 	if (!__builtin_constant_p(*s))
+> > > 		__seq_puts(m, s);
+> > > 	else if (s[0] && !s[1])
+> > > 		seq_putc(m, s[0]);
+> > > 	else
+> > > 		seq_write(m, s, __builtin_strlen(s));
+> > > }
+> > 
+> > You missed seq_puts(m, "");
+> > 
+> > I did wonder about checking sizeof(s) <= 2 in the #define version.
+> 
+> git grep seq_puts.*\"[^\\].\" | wc -l
+> 77
+> 
+> What would you do in this case?
+> 2 seq_putc() in order to save a memcpy(..., 2), that's it?
 
-Your idea is laudable but not realistic. errnos are not even fully=20
-consistent across devices or filesystem. Yes, there are norms and some=20
-standards but they are not enforced by some central arbiter across all=20
-forms of *nix.
-
-> That does not mean userspace should be exposed to the entirety
-> of the mess. And in my opinion EIO is better than EBADF because
-> the former "merely" indicates that something went wrong relating
-> to a particular file. EBADF indicates that the file descriptor
-> table of the process may have been corrupted.
-
-"should"... but it is exposed to it. *Most* software doesn't even=20
-attempt to handle errors intelligently and just return the error up the=20
-stack blindly. EIO is about as generic as can be and I've seen it used=20
-many times as the "catch all" error making it meaningless. Further=20
-incentivizing client software to behave as they do... not paying=20
-attention. I will again point out that I've seen EXDEV treated like any=20
-random other error several times in my career by important pieces of=20
-software made by major vendors.
-
-> Will try. But the kernel should imo also do its part fulfilling its API
-> contract.
-Then you are barking up the wrong tree. This isn't an issue unique to=20
-FUSE. FUSE just makes it more obvious to you because anyone can write a=20
-FUSE server and return (almost) anything they want.
-> That it requires perhaps some thought to do it properly does not seem
-> sufficient to me to dismiss the request to provide a proper
-> abstraction boundary with reliable semantics that match its documentation=
-.
-
-I simply don't see what you could do to "do it properly." I am trying to=20
-argue there is no such thing. And again it would require breaking every=20
-single FUSE server.
-
-
+Not a damn thing - just have it call seq_write().  Note that
+	if (s[0] && !s[1])
+which triggers only on single-character strings.
 
