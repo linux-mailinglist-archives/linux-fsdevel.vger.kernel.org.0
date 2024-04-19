@@ -1,107 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-17273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6B78AA738
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 05:32:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5688AA752
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 05:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A22A1F2167D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 03:32:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B4662824AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 03:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EFAB66C;
-	Fri, 19 Apr 2024 03:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="zfvMzZ2v"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B226BA41;
+	Fri, 19 Apr 2024 03:44:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BD2EC2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Apr 2024 03:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C855C6110
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Apr 2024 03:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713497432; cv=none; b=UtDRjnpkl/rF05kwRnwzCJD4OK4zbdMeQdFWRoErIEcHTT99cvdqpfFzqjydh14apX7a7dQkcqEor3G4NStLPkMKNuB3IuQo7wklqhfuVnadPg2Jqt+g5I2OOgp0ym/Aykjj2FRtxYf4Jyovsu6cHPQaC3+rlMkRbZ9oddcWLec=
+	t=1713498255; cv=none; b=s2UEiO9SffNtLHzWYerhD75yLOmb7XXSPH+YERceu3Yn7vnPOD/tB3GYaOOuKp1sLwFs9Z83HrUU44kOSo7UXACdIfiaAj8cewsqfj6QoMyU/3IjEApQJz88gfh61PLiv6qCIeHae+iUfzoelaMQar9Ig6sn+WvPLh72IcKXynw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713497432; c=relaxed/simple;
-	bh=mnvukGsXXcqSK9FQIb1/hwawkxVofpm0mLfqVVBnsJ4=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eEf6s92Jv7yHhzXm0pLXvkWGgXQDPJFPPi9VMns0jr8NmMrLN02ZTQYMy9V0ieFNkyxSxsB69fHYirtIAj9obLuqJG2MwqGrueuTMSARvbfd++yuMGKgabc11Mi1qaFrgB95ncT7G1QUTyqXZyzAkqwdI+/svD2aSwOoQ0pbTOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=zfvMzZ2v; arc=none smtp.client-ip=185.70.43.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
-	s=protonmail; t=1713497426; x=1713756626;
-	bh=mnvukGsXXcqSK9FQIb1/hwawkxVofpm0mLfqVVBnsJ4=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=zfvMzZ2vr9eFwBBBoG7oLOxuas360+BHB9A8LaGmhqVzb1Pni0L1uE4SXTJ8Z+S50
-	 VxSwEvTj6xpPrDoLoz5aI5T1c4NCP1H8RVckCoaFs0QnqyuqJ7y0yEQGYfBHJEWV0K
-	 smsjzHK6uibVFy59l6WzSa4jR3/jFOuEFSlOSprsb29VVHsf3WZy3FfiQiEFn/4AYN
-	 scHyyp4EzoSjevQ/A1kh8zzwwfsZIO8Umn63vkuXxP+cfMbAnViEMOPO7TdIgnByDX
-	 4FkFXDTIjb9YGdLn2KuylkDdKptZ3CQRDnTUekNRxAXBYOp5TevdDkdUKdkZigQFgz
-	 KxPBOk9Cuedtw==
-Date: Fri, 19 Apr 2024 03:30:21 +0000
-To: The 8472 <kernel@infinite-source.de>, linux-fsdevel@vger.kernel.org
-From: Antonio SJ Musumeci <trapexit@spawn.link>
-Subject: Re: EBADF returned from close() by FUSE
-Message-ID: <fcc874be-38d4-4af8-87c8-56d52bcec0a9@spawn.link>
-In-Reply-To: <1b946a20-5e8a-497e-96ef-f7b1e037edcb@infinite-source.de>
-References: <1b946a20-5e8a-497e-96ef-f7b1e037edcb@infinite-source.de>
-Feedback-ID: 55718373:user:proton
-X-Pm-Message-ID: 580955c485f6629bcc11b6b1d5177881a1bbcb73
+	s=arc-20240116; t=1713498255; c=relaxed/simple;
+	bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hIpVF4qhGIM+Y2ng9wOlU8peY4fZmuU2DZVuKKKX/vORQPZHqeF8DE6R1ZGyE66H9rN3H/uNOeB+k4Cz1J+wPAPQJtnsN9k2fZF6vyv8nLBg+bVvQ8OggqSBrlPTWM/kNIVzkbhv3bTx+7jYtgzDBnb3Z/tCcVfwqExhGmwqRvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7d5f08fdba8so280192439f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Apr 2024 20:44:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713498252; x=1714103052;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+        b=wPeYt+ISwtddNxpCe4kdEoxNtnxoe6wara0Ink0KI+Wq6RaHxFgba7vmInLD4bWtwm
+         IJhD7LwlS1hiSL4NwHbSOkKRgbEDYH1aboTEgHY9d9omia9d7ptiii6pZF9ckqIcgpHp
+         0A8WiEaJyE3inoM+NHbH/aHS5mKJPwk++iCaTvNnwEp3dHdvNZ1JEAiODuuHcF1xNCHd
+         G3GI19JCnXcCYmZvYVwdzDvgyoAVbRCVpxgg6o5x6voaIgDXfss7tTf+h6nDgIueyKD7
+         XaWtjsuC7qFYGHIDZvZvGFi8mfHhbqKs8nEDgT2SMbXFP0+wZXy0C2vINzApz+cjUGH3
+         wudQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWU4kg1DV03tTQVEUaSGXxfwtrcPdWwcf+ULo9CvmvMsL8PBmSFiJlwpq8LeenEv7//8jN4Ro7HXzMMoWHrLpGSH3HugBZrDhgBQLX2nA==
+X-Gm-Message-State: AOJu0YzW1u7JuS5CSKbOy1Jz3YqFYnKg/pRR6nhP1niwgd5BHx6wWLXN
+	WqAlrzTxiZ6oIJLzyZoWrm32C+73LzPGlnSNjjkPjC7pMl58K0kg0f+hTzG8WVvrYuVhLUwFQbj
+	EyHzr42zR17mCssAqJq0IP14IzTlAnlNjb12NsYgUws4mlJubEH76+iA=
+X-Google-Smtp-Source: AGHT+IH3iHj+p778Prfz/op9yzVlc6IHlFlrPUAXxBsVYGX2Oi9UKR/mPnmrlFcE5vwiibiZppLH/ePr4F6EWdAQHqQL9B0e0mpp
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6638:37a6:b0:482:fa6e:648c with SMTP id
+ w38-20020a05663837a600b00482fa6e648cmr91745jal.3.1713498251939; Thu, 18 Apr
+ 2024 20:44:11 -0700 (PDT)
+Date: Thu, 18 Apr 2024 20:44:11 -0700
+In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a1618b06166ae6d9@google.com>
+Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
+From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/18/24 17:10, The 8472 wrote:
-> Hello, first time mailing the kernel mailing lists here, I hope got the r=
-ight one.
->
-> I'm investigating a bug report against the Rust standard library about er=
-ror handling
-> when closing file descriptors[0].
-> Testing shows that a FUSE flush request can be answered with a EBADF erro=
-r
-> and this is surfaced to the close() call.
->
-> I am asking if it is intended behavior that filesystems can pass arbitrar=
-y error codes.
->
-> Specifically a EBADF returned from close() and other syscalls that only u=
-se that code
-> to indicate that it's not an open FD number is concerning since attemptin=
-g to use
-> an incorrect FD number would normally indicate a double-drop or some othe=
-r part
-> of the program trampling over file descriptors it is not supposed to touc=
-h.
->
-> But if FUSE or other filesystems can pass arbitrary error codes into sysc=
-all results
-> then it becomes impossible to distinguish fatally broken invariants (file=
- descriptor ownership
-> within a program) from merely questionable fileystem behavior.
-> Since file descriptors are densely allocated (no equivalent to ASLR or gu=
-ard pages)
-> there are very little guard rails against accidental ownership violations=
-.
->
->
-> - The 8472
->
-> [0] https://github.com/rust-lang/rust/issues/124105
+This bug is marked as fixed by commit:
+ext4: fix race condition between buffer write and page_mkwrite
 
-I can't see how the kernel could meaningfully know of or limit errors=20
-coming from the FUSE server without compromising the nature of the=20
-technology. So in that sense... yes, it is intentional.
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
+#syz fix: exact-commit-title
 
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
+
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
+
+---
+[1] I expect the commit to be present in:
+
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 9 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
