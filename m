@@ -1,130 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-17323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8354F8AB767
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 01:04:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE97F8AB8DD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 04:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A236F1C20B9D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Apr 2024 23:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2A51F21599
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 02:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E333813D63F;
-	Fri, 19 Apr 2024 23:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E396FD9;
+	Sat, 20 Apr 2024 02:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b="NudW0h+B";
-	dkim=permerror (0-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b="UNaejFFc"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CSFQb9dk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.221])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634CB7D416
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Apr 2024 23:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.221
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713567853; cv=pass; b=VhSV4pAjzzI9l9Zwm94aABw7IO0+Hgmu/95kMYqke2QbBHshf5eJlgiWL7lIF8/Wi59xdfUoIwVqd6yqOAAwi9ww84cdsUWvMP2bnsgvOOnMnu5TECxOyHvOfDdT/rPnES23vEeDvXGAhYTAtjy9eKYcQRUjxaGClNprHO9talM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713567853; c=relaxed/simple;
-	bh=mricqxdh4nUPzdctX29L+9fpuqfexvjUnuik613Ho7s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EYsC7yWOKTw3ao4e69QWRz1+vhO1xAuWfamNqA1ytoUxEmRy8D6R0ESdSWrzfUa4YJSI143PZ4CdWFIDuhZzjC9chk7LhxlRVYaOpCqdhKCqDt1FVNMRIJtMVG+DdXO5BSl8i4EnKQni9HC4jmcfKELHFwF0/U8YqRuK+RK64jE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infinite-source.de; spf=none smtp.mailfrom=infinite-source.de; dkim=pass (2048-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b=NudW0h+B; dkim=permerror (0-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b=UNaejFFc; arc=pass smtp.client-ip=81.169.146.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infinite-source.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infinite-source.de
-ARC-Seal: i=1; a=rsa-sha256; t=1713567845; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=peAJmZ3qhSpLklXMA8qTXMFImkBptkQe1pn7g6WtsbQN2nGziTxhT4FHVzB6AZGvTD
-    NFy1/9AZox4i9NVPszNTlV/oMYw47VHK0xQI4ZdrbAL/RZn8Be68HKxlx5VcduZym/CV
-    bmCRN8gBqdx0cvkDttPfgij5w60fDTVpTdH5PZFCeh37vS2wlfEaEvcGzIjg6/tmgrpf
-    ZDSkTaot4TYTToHGyTLfmiPMnRTfB5enIwJItuayD7p3pD6xwOjC30hm0OYYrqFitVNx
-    ZglyrZNf4Gv7AD5DJKaCiNmsujS+ZICoB1V4LaDXl44Sguq2l/1gnB3eLPz7TqEESbU5
-    2A4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1713567845;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:To:Subject:Date:Message-ID:Cc:Date:From:
-    Subject:Sender;
-    bh=mricqxdh4nUPzdctX29L+9fpuqfexvjUnuik613Ho7s=;
-    b=spHeGZPJC2yoflEV2vaXmVAkJhshgd11yF/gKgB8+77WCSAtgGLQ+RL8NN8y5ELFNK
-    GrX1+vuegR4IGKma72Gz+N2KMntyTNrP7Ww5lSY9zITCyNgezO5HO/SYtV7g/wxkOykn
-    M17Ept4FN1FBIezFjg5FsH4kcBFQf1gENdw01l84tFpGo+rCxIhJOZZQkfBKNHkJq9pQ
-    xNJkk5WpYHMIEDQkR0wvgMRxPLLTLY9fyIcOYJ9EHMYJoiJ+HA4Wyad8w+b0Cdjfjrrb
-    7QNi1dzQriuQzf7zysn6ZQVaB2weoqypYS6gR0qA5iQW6mJQA0klSLsdkulPOa/y9r+J
-    HNGQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1713567845;
-    s=strato-dkim-0002; d=infinite-source.de;
-    h=In-Reply-To:From:References:To:Subject:Date:Message-ID:Cc:Date:From:
-    Subject:Sender;
-    bh=mricqxdh4nUPzdctX29L+9fpuqfexvjUnuik613Ho7s=;
-    b=NudW0h+Bs0/lpwRN+N37F7av/RANEp15Np/v9EJgmCVAt9d/cRHMzLrFNN1Yn9D9Y4
-    UCiRurddL4NCCEj3eO3kHk7EvbBx0DU2mJsaTu793D+Wc7EZzHFFX+ga6gYVGwvATdiT
-    gbozZsaTDwyYmxtWs47l8q0nUeswQp4RSBKfIboppSbbF38V9US00N36dooPGi0ppF1I
-    Cvyc1SD/TQvk9Tlv3nu1GAuV8/VHChXhN+K2Cb441s+a/wXlM4bPrHMEJ4JQFL6GpDEu
-    d+1gJ33NtytTjiwtIeMMRhpM4WcCTrwuG0Kbb3AL9hg7U1NC7FHAJ6sRon2hQcyQ9WWQ
-    Og5g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1713567845;
-    s=strato-dkim-0003; d=infinite-source.de;
-    h=In-Reply-To:From:References:To:Subject:Date:Message-ID:Cc:Date:From:
-    Subject:Sender;
-    bh=mricqxdh4nUPzdctX29L+9fpuqfexvjUnuik613Ho7s=;
-    b=UNaejFFcKstz+1meUXyH2/I8TU0vyOm4KuLkuQGogVgyd3Weai8KuVyUGbiENvlMMM
-    vmuWjGd/CNpRdplbjsBA==
-X-RZG-AUTH: ":LW0Wek7mfO1Vkr5kPgWDvaJNkQpNEn8ylntakOISso1hE0McXX1lsX682SOpskKNgu1vdp7pXN2ayNAkQW4xSV/VuPB8g/jrf+fgOZAiP5qKuiDjps0="
-Received: from [IPV6:2003:de:f746:1600:cb3:28a:2d4e:f26f]
-    by smtp.strato.de (RZmta 50.3.2 AUTH)
-    with ESMTPSA id 26f4d103JN45z4v
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Sat, 20 Apr 2024 01:04:05 +0200 (CEST)
-Message-ID: <58766a27-e6ff-4d73-a7aa-625f3aa5f7d3@infinite-source.de>
-Date: Sat, 20 Apr 2024 01:04:05 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F3D524A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 20 Apr 2024 02:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713581447; cv=none; b=RhqZmcFugMtSgfPR72V8YaPEMmYfYOWziiyE1q+/i25rfiD7Qkr2p9GZgu2zTKRWGG6D4wtjm3s6SbqXuL8ameRmaVj89klqALsSzMMM7dQUUW+Z2cgRhp9dspCcampMzwGdI0aU1r47W5zNQigPxBx2A4EpElijbDr8uxw2caE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713581447; c=relaxed/simple;
+	bh=YpJ3mZy6TPAy0hoaqE7CMg5t2A7eRdqjOp+9+mYz0tY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qtf4M9PovDNqOE75NYFg9RLSOEXAFM4MuasZlX3XDUvS5O/5JW0vFTXl3rd34ti61HtClku2Agd4iXcowNAeuEywa+P6awC9t37EELDNFPEmt4W6JNe4J+oaPRMVX1f2pmCU6FYR5MHyeyvccYJq1gy/HOeun7K00S2xGYD6vdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CSFQb9dk; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=0/iJQC2gSE+9kcnMHymBAExdB8KrkSaHPKjiArToVU4=; b=CSFQb9dkDlQHPCusHYq5jDYbxl
+	1rWnYh7Pk34LZ3DaXehWY9etxa7iMB5mUSwOPSSNjW+kKQkDBwlaYFvm3uJAhlK7gqHEWYHnxA3EU
+	VgbchiXfJ5iU0rnxk5nGqP3+QrvN6ChFpyQPYEAyt57uDcGBMy9SBWqTC5IQJIJ0p7KuCaFl5XzG5
+	JsIdQTnZL5LJFfbP/V5lKfJDjL8IZUs+RDaGJbL4+yI0LIiD2HfE0I5+r1T6d0a97+i+6jinJoBB/
+	nDgsdDeTzVNRmksD4TCTPH7+fvgjyD30gPaZxqWy6eZDOtbmnVbdvlXV3QyRUqBzAl84Acb7MJMOu
+	TkDunwmQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ry0oJ-000000095dB-1ad7;
+	Sat, 20 Apr 2024 02:50:39 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 00/30] Remove PG_error flag
+Date: Sat, 20 Apr 2024 03:49:55 +0100
+Message-ID: <20240420025029.2166544-1-willy@infradead.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: EBADF returned from close() by FUSE
-To: Antonio SJ Musumeci <trapexit@spawn.link>,
- The 8472 <kernel@infinite-source.de>, linux-fsdevel@vger.kernel.org
-References: <1b946a20-5e8a-497e-96ef-f7b1e037edcb@infinite-source.de>
- <fcc874be-38d4-4af8-87c8-56d52bcec0a9@spawn.link>
- <0a0a1218-a513-419b-b977-5757a146deb3@infinite-source.de>
- <8c7552b1-f371-4a75-98cc-f2c89816becb@spawn.link>
- <ff9b490d-421f-4092-8497-84f545a47e6a@infinite-source.de>
- <1db87cbf-0465-4226-81a8-3b288d6f47e4@spawn.link>
- <f7c97360-8f5e-45f4-876c-3dcbf9522a3a@infinite-source.de>
- <032cfe2c-a595-4371-a70b-f6d208974b0f@spawn.link>
- <f764ac09-bd84-41f0-847b-bc89016a4613@infinite-source.de>
- <aaabfbe6-2c61-46dc-ab82-b8d555f30238@spawn.link>
-Content-Language: en-US
-From: The 8472 <kernel@infinite-source.de>
-In-Reply-To: <aaabfbe6-2c61-46dc-ab82-b8d555f30238@spawn.link>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20-04-2024 00:47, Antonio SJ Musumeci wrote:
-> On 4/19/24 17:04, The 8472 wrote:
->> I'm writing to a linux mailing list, am I not? And referring to linux-specific
->> manpages, not the POSIX ones. The way the linux kernel chooses to pass
->> what FUSE sends to userspace is under its control.
->>
->> I would like linux to adhere more closely to its own API contract or improve its
->> documentation.
-> And you're talking about FUSE which is a cross platform (Linux, FreeBSD,
-> MacOS, Windows) protocol. And that protocol defacto includes what
-> happens when the FUSE server returns and error. If Linux suddenly
-> changes what happens when the server returns an error it will affect
-> everyone.
 
-If it is the official position that the whims of FUSE servers have
-primacy over current kernel API guarantees then please update
-the documentation of all affected syscalls and relax those
-guarantees, similar to the note on the write(2) manpage.
+We've been steadily reducing the number of places which rely on
+PG_error.  There are only two left, so the first five patches remove
+those dependencies.
+
+Every patch after the jfs patch is independent, and can be taken by the
+respective maintainer immediately.  They might depend on patches I sent
+in the last week or two (eg jfs, ntfs3).
+
+Obviously I've done no testing beyond compilation.  All patches can
+be found on linux-fsdevel.  I've bcc'd this cover letter to all the
+maintainers, and cc'd each patch to whoever's listed in the MAINTAINERS
+file.
+
+Matthew Wilcox (Oracle) (30):
+  btrfs: Use a folio in wait_dev_supers()
+  btrfs: Use a folio in write_dev_supers()
+  btrfs: Use the folio iterator in btrfs_end_super_write()
+  btrfs: Remove use of the folio error flag
+  jfs: Remove use of folio error flag
+  bcachefs: Remove calls to folio_set_error
+  befs: Convert befs_symlink_read_folio() to use folio_end_read()
+  coda: Convert coda_symlink_filler() to use folio_end_read()
+  ext2: Remove call to folio_set_error()
+  ext4: Remove calls to to set/clear the folio error flag
+  fuse: Convert fuse_readpages_end() to use folio_end_read()
+  hostfs: Convert hostfs_read_folio() to use a folio
+  isofs: Remove calls to set/clear the error flag
+  jffs2: Remove calls to set/clear the folio error flag
+  nfs: Remove calls to folio_set_error
+  nilfs2: Remove calls to folio_set_error() and folio_clear_error()
+  ntfs3: Remove calls to set/clear the error flag
+  orangefs: Remove calls to set/clear the error flag
+  reiserfs: Remove call to folio_set_error()
+  romfs: Convert romfs_read_folio() to use a folio
+  smb: Remove calls to set folio error flag
+  squashfs: Convert squashfs_symlink_read_folio to use folio APIs
+  squashfs: Remove calls to set the folio error flag
+  ufs: Remove call to set the folio error flag
+  vboxsf: Convert vboxsf_read_folio() to use a folio
+  mm/memory-failure: Stop setting the folio error flag
+  iomap: Remove calls to set and clear folio error flag
+  buffer: Remove calls to set and clear the folio error flag
+  fs: Remove calls to set and clear the folio error flag
+  mm: Remove PG_error
+
+ Documentation/filesystems/vfs.rst      |  3 +-
+ fs/bcachefs/fs-io-buffered.c           | 12 +---
+ fs/befs/linuxvfs.c                     | 10 ++-
+ fs/btrfs/disk-io.c                     | 84 +++++++++++---------------
+ fs/btrfs/extent_io.c                   |  2 +-
+ fs/btrfs/volumes.h                     |  5 ++
+ fs/buffer.c                            |  7 +--
+ fs/coda/symlink.c                      | 10 +--
+ fs/ext2/dir.c                          |  1 -
+ fs/ext4/move_extent.c                  |  4 +-
+ fs/ext4/page-io.c                      |  3 -
+ fs/ext4/readpage.c                     |  1 -
+ fs/fuse/file.c                         | 10 +--
+ fs/hostfs/hostfs_kern.c                | 23 ++-----
+ fs/iomap/buffered-io.c                 |  8 ---
+ fs/isofs/compress.c                    |  4 --
+ fs/jffs2/file.c                        | 14 +----
+ fs/jfs/jfs_metapage.c                  | 47 +++++++-------
+ fs/mpage.c                             | 13 +---
+ fs/nfs/read.c                          |  2 -
+ fs/nfs/symlink.c                       | 12 +---
+ fs/nfs/write.c                         |  1 -
+ fs/nilfs2/dir.c                        |  1 -
+ fs/nilfs2/segment.c                    |  8 +--
+ fs/ntfs3/frecord.c                     |  4 --
+ fs/orangefs/inode.c                    | 13 +---
+ fs/orangefs/orangefs-bufmap.c          |  4 +-
+ fs/proc/page.c                         |  1 -
+ fs/reiserfs/inode.c                    |  1 -
+ fs/romfs/super.c                       | 22 ++-----
+ fs/smb/client/file.c                   |  2 -
+ fs/squashfs/file.c                     |  6 +-
+ fs/squashfs/file_direct.c              |  3 +-
+ fs/squashfs/symlink.c                  | 35 +++++------
+ fs/ufs/dir.c                           |  1 -
+ fs/vboxsf/file.c                       | 18 ++----
+ include/linux/page-flags.h             |  6 +-
+ include/trace/events/mmflags.h         |  1 -
+ include/uapi/linux/kernel-page-flags.h |  2 +-
+ mm/filemap.c                           |  8 ---
+ mm/memory-failure.c                    | 29 ---------
+ mm/migrate.c                           |  2 -
+ 42 files changed, 129 insertions(+), 314 deletions(-)
+
+-- 
+2.43.0
 
 
