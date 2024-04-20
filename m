@@ -1,58 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-17332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1498AB8EC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 04:51:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6C78AB8F9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 04:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55093281BB8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 02:51:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4701F21AA2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 02:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87C913ADC;
-	Sat, 20 Apr 2024 02:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD818F6A;
+	Sat, 20 Apr 2024 02:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oswz8Xuq"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S5+TgAjD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF9CDF6C;
-	Sat, 20 Apr 2024 02:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906F4175B1
+	for <linux-fsdevel@vger.kernel.org>; Sat, 20 Apr 2024 02:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713581454; cv=none; b=oHCCX03eh1NYAwx2KPS1NFlsvzEk3g7VbxT5qrFRyJpxFPSfHo4waL249BHbSox5dpB5UgncEXMgW4Kw/TtqyRxfYnx38w6gdQy8jmEXWpknBYQsg+gijnBjke9NjQaHcFi1gBvaqG/6pZJ2wUm9hcRZPqJKPPQR4Od5ZeIaOCY=
+	t=1713581461; cv=none; b=uiGh8sMdJlN5Kb65IWUPoO8EHnjNgv2yaK2caEWk87QgRZzx11DQq09nmJgioDBMsipJjWlDOzQoy9KCfcBFD5JSlANmiMCnh4yh8RK5Q0Xn6uGWPmvInYIy0EfL3v2Ygc4FcuY0+QeiZowgAiy6ih4i4d9lv3EoUGQBi2dF8to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713581454; c=relaxed/simple;
-	bh=0pUhsRmxI57MJbaxxpksnWkU0obUAmCXJosmad6eEok=;
+	s=arc-20240116; t=1713581461; c=relaxed/simple;
+	bh=TvqLSu2qo0lh/b1fZFV6UNHbkBv75iclu0kdDFZ9yG0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=owcWlQ1sw9NL7cbUQrLk8XviA6JXBKQxfVNyt3+8c7j64/ZGtVKWryX6WMVtHJD1fdvdkoBcdyupfRs+hgdrj/okksMGv6TNmBZFODCzEqTT3ioSsJBPeC88Je0gPDhCxv4a3P5vC0EhIYW9spGr1eZ46vPbSuSTFOkHgUozUnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oswz8Xuq; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=GGhK7A6Mu/VH1F8Z22ZCVkBhUNs25zf5Rn3jrLjkNasuxNdUwzFhUlIrWnVEWx483M5zg2B+yuSzTbOGEYeDjBYbXBrT2sEG504+OS6qwZxONj2eIMBAbJsomaJIQAg5qrcGNAJZLsucCvgB6VwedJYSwNwnw2q8AQHKl1lKth4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S5+TgAjD; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=dNECBjnrSSu5e/nvTW6lm2Csp1lUOxKAeyT8FWOeI68=; b=oswz8Xuq7L0CKI1a3NqA3G3jRw
-	VcrviRBG60j7Fk2f/5UKOMBIE8SK70zDo7Lnoo66jGDqMwttPRKz5cAaDAygba1D0tHEho3mGqyGt
-	N/Aqc5xPlBK3LAkTL+skBwE+RYzFk7uBw91W4OOP3PcgQeveAs9o9Y9kN7i8/qunDdduWOC1P8lg6
-	vo13HtktVbS6UNojDReIhWkDBnWBXbPkP0V56hDajxZUtKOGGdsv+o89hw48bqo/GB3T365GITcPG
-	v+GUdLPnbHhWIY2nZUBiMwxTqT6+T5aWVi6bsgVwV+Q65G4RyjTdHjGQVuG5YdW/4u7pcECE7H+Ar
-	/r7HmNSA==;
+	bh=FOaktHNmxMd+cZ/fUyKcI80t1QsvXs7Jj3EI/hp2RVs=; b=S5+TgAjD6hrJluFct7n5ncCee3
+	IAY5RChLf4XDLdw0Ip2ZpGIosRDF8zrKPgGAz7o87C+ox353HukxEGo8Oa3RYAjxg1bsyz8XnY1/M
+	V6o05uFf/YvLk5suAvLSnBbConzUa1TS+xWZPWbLDZraIYez0hAvMImTcN9S39kAOrxgObNtNOhmX
+	xFOv+TeEtTsEfQPP/SaqRJF4Hy19E3qTobzGipD3KTmDMdxosETWa4Lvy/OJzgtpqONb+PYYdfXZv
+	VcwkHmWznwtIeqhEBJKAlphgyZxjCz5kVmjYrHRo4fNSlutVMw3imD7VVdzybWuOkha9WuCOivoAt
+	z5wm97Pg==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ry0oT-000000095es-3oI4;
+	id 1ry0oU-000000095ey-1okc;
 	Sat, 20 Apr 2024 02:50:50 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH 10/30] ext4: Remove calls to to set/clear the folio error flag
-Date: Sat, 20 Apr 2024 03:50:05 +0100
-Message-ID: <20240420025029.2166544-11-willy@infradead.org>
+	Miklos Szeredi <miklos@szeredi.hu>
+Subject: [PATCH 11/30] fuse: Convert fuse_readpages_end() to use folio_end_read()
+Date: Sat, 20 Apr 2024 03:50:06 +0100
+Message-ID: <20240420025029.2166544-12-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240420025029.2166544-1-willy@infradead.org>
 References: <20240420025029.2166544-1-willy@infradead.org>
@@ -64,67 +62,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Nobody checks this flag on ext4 folios, stop setting and clearing it.
+Nobody checks the error flag on fuse folios, so stop setting it.
+Optimise the (optional) setting of the uptodate flag and clearing
+of the lock flag by using folio_end_read().
 
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-ext4@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ext4/move_extent.c | 4 +---
- fs/ext4/page-io.c     | 3 ---
- fs/ext4/readpage.c    | 1 -
- 3 files changed, 1 insertion(+), 7 deletions(-)
+ fs/fuse/file.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index 7cd4afa4de1d..204f53b23622 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -199,10 +199,8 @@ mext_page_mkuptodate(struct folio *folio, unsigned from, unsigned to)
- 			continue;
- 		if (!buffer_mapped(bh)) {
- 			err = ext4_get_block(inode, block, bh, 0);
--			if (err) {
--				folio_set_error(folio);
-+			if (err)
- 				return err;
--			}
- 			if (!buffer_mapped(bh)) {
- 				folio_zero_range(folio, block_start, blocksize);
- 				set_buffer_uptodate(bh);
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 312bc6813357..ad5543866d21 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -117,7 +117,6 @@ static void ext4_finish_bio(struct bio *bio)
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index b57ce4157640..f39456c65ed7 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -935,14 +935,10 @@ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
+ 	}
  
- 		if (bio->bi_status) {
- 			int err = blk_status_to_errno(bio->bi_status);
--			folio_set_error(folio);
- 			mapping_set_error(folio->mapping, err);
- 		}
- 		bh = head = folio_buffers(folio);
-@@ -441,8 +440,6 @@ int ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *folio,
- 	BUG_ON(!folio_test_locked(folio));
- 	BUG_ON(folio_test_writeback(folio));
+ 	for (i = 0; i < ap->num_pages; i++) {
+-		struct page *page = ap->pages[i];
++		struct folio *folio = page_folio(ap->pages[i]);
  
--	folio_clear_error(folio);
--
- 	/*
- 	 * Comments copied from block_write_full_folio:
- 	 *
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index 21e8f0aebb3c..8494492582ab 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -289,7 +289,6 @@ int ext4_mpage_readpages(struct inode *inode,
- 
- 				if (ext4_map_blocks(NULL, inode, &map, 0) < 0) {
- 				set_error_page:
--					folio_set_error(folio);
- 					folio_zero_segment(folio, 0,
- 							  folio_size(folio));
- 					folio_unlock(folio);
+-		if (!err)
+-			SetPageUptodate(page);
+-		else
+-			SetPageError(page);
+-		unlock_page(page);
+-		put_page(page);
++		folio_end_read(folio, !err);
++		folio_put(folio);
+ 	}
+ 	if (ia->ff)
+ 		fuse_file_put(ia->ff, false);
 -- 
 2.43.0
 
