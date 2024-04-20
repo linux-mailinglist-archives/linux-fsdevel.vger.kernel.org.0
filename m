@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-17335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6CA8AB8EF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 04:52:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F5D8AB8F4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 04:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBBDB21C65
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 02:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55F7280FA2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Apr 2024 02:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A9614F65;
-	Sat, 20 Apr 2024 02:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235D917582;
+	Sat, 20 Apr 2024 02:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OKYm/Al+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dtLWcxJ4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E992E13AEE
-	for <linux-fsdevel@vger.kernel.org>; Sat, 20 Apr 2024 02:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F30E14A8D;
+	Sat, 20 Apr 2024 02:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713581456; cv=none; b=XsxlJMXguhf1JRC36qYabjxs7kQClgml0Rn+jyira47j6O429l2OqHnaeBrhgjW8pK02OiCVQI6nf+U0blPCnJOqWr4EJkhDVZ5YybO5ag+jVXas/bzOaFPeeF0gcWfUOQxZu1KR/A46dQ5duNXriCo+TQ89/fMTt01dXd+yew8=
+	t=1713581457; cv=none; b=S6arKXVoANlrm7W7sQWZ17ylQK8oHOzH4cOdGf+GBtZRCdam2HNjD2b4v8M0xNiMWwZEAS2f5Zejd0lx5pY2l/Qz0eP4LQh39aGsdNql3z5bIKl8vp7+od5XPVPSCSQIhkAlZ7QxCxedzwL8mUU8VgqGnnWuIVSQtpXX932l/Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713581456; c=relaxed/simple;
-	bh=dhMsOeZOEa/T0OHb4fPd3ZQCyJ7E97FVD7eKfaEcI4I=;
+	s=arc-20240116; t=1713581457; c=relaxed/simple;
+	bh=GTTE/6QERROoY8vZDm/RpX/2qBuGiPz4JEzyCyMc3t4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jRav+XPAGpAqNzqn8Oh8y7pFhSLv1TcdXhqY8QNX238ObhBy4NDtwH2CjybPDmqZlmLUIQfINyu9tUf9gax4z2mAhcPD6gJxqvji7AswoBfBe2dBDCm/5X0WyEsNkJqNclF4vGdfDliLMv7b08s03iNV75Si4R9FQUbXgSOn00w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OKYm/Al+; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=DI9WaOZy6xHV6jyxMwxl4jvh0qi+8RwY6PxmirQoPam8Gn+5vcVQpXIbss99fIPsr/41R86Mpgyy0C+Kpx8SO91tae0HDJ6ca90Pj8vPWk2PiouLAQSxHjT0VgWsWUQ4tXWjcYWJl9Etc4GX8OhnGZ4hYuGQnFQoOWvMcYyKXaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dtLWcxJ4; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=FtvvbXv86623ovyWG3cSTC9dm4lYYmfgrBjy1npS59Q=; b=OKYm/Al+FwhYahzTOGgwhqD5Nc
-	I7/4fwWzcvjgc4gR8MjmGgTN7Em91EXe+XXle6Wb7xYQQ8PakkUQkaczbbVMZJdEtv2kEyp3w0liZ
-	m9AuySHX1XYgAmWu9iqTTjKKcNtzqSiakDEsBBAgbo8oL5D/2djPp2TP0KryuY7xBMfeRC4KW2/M0
-	rG6igylk3pdL4du0dET5/zTKNrCw3Pwfr28VVpc9xasaxVBDPBmUTwvp9TJL+5hK/2qrtaR2ThtgO
-	7Wsy8kX2FIiX8ZeVdm11TkkvcCbKRnRbl72ASEnKJYc1nrVFWq5UlOQgvPwAryKWU0er5yLmC0Wrb
-	RYxpXWWA==;
+	bh=c6SDuXJXlko5thNqbkIQf6N/gYuuZjZ0Ic3NpLHdQ5k=; b=dtLWcxJ4OWxvYGWQHmIs4GDQVZ
+	To1sbmpOROnX7Eyc6Whm3uQ/jCnrBWWHEIzTs6kEYx1roTMDmUUZquDcnX+H5FIXNo/eWYDmokJvH
+	R9+Ka9v4ZG+5umpMWVJ0fShP/BRjlV21bGHzPY37Ivh53eX/H3aFWIOWh4HExnDwme9dxx+p2pcoA
+	gJbsBpc4kyMHi1ixPFJ7Zqbm2qlKcb9GZnjjqi40zmAj5I/blcMaPqk2doeDChieY44XZ2qPxlBb3
+	fnHMnDd7XsE6PdIXSpwH6iycvLRCNvpYtXpXoU/FLjnnBL/w/Ov3brcz8CkvHjRc3z9YZ11FFEf+V
+	+XHQpxag==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ry0oW-000000095fJ-2VQl;
-	Sat, 20 Apr 2024 02:50:52 +0000
+	id 1ry0oX-000000095fT-1Khq;
+	Sat, 20 Apr 2024 02:50:53 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	linux-mtd@lists.infradead.org
-Subject: [PATCH 14/30] jffs2: Remove calls to set/clear the folio error flag
-Date: Sat, 20 Apr 2024 03:50:09 +0100
-Message-ID: <20240420025029.2166544-15-willy@infradead.org>
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH 15/30] nfs: Remove calls to folio_set_error
+Date: Sat, 20 Apr 2024 03:50:10 +0100
+Message-ID: <20240420025029.2166544-16-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240420025029.2166544-1-willy@infradead.org>
 References: <20240420025029.2166544-1-willy@infradead.org>
@@ -64,61 +64,68 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Nobody checks the error flag on jffs2 folios, so stop setting and
-clearing it.  We can also remove the call to clear the uptodate
-flag; it will already be clear.
+Common code doesn't test the error flag, so we don't need to set it in
+nfs.  We can use folio_end_read() to combine the setting (or not)
+of the uptodate flag and clearing the lock flag.
 
-Convert one of these into a call to mapping_set_error() which will
-actually be checked by other parts of the kernel.
-
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: linux-mtd@lists.infradead.org
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/jffs2/file.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ fs/nfs/read.c    |  2 --
+ fs/nfs/symlink.c | 12 ++----------
+ fs/nfs/write.c   |  1 -
+ 3 files changed, 2 insertions(+), 13 deletions(-)
 
-diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
-index 62ea76da7fdf..e12cb145147e 100644
---- a/fs/jffs2/file.c
-+++ b/fs/jffs2/file.c
-@@ -95,13 +95,8 @@ static int jffs2_do_readpage_nolock (struct inode *inode, struct page *pg)
- 	ret = jffs2_read_inode_range(c, f, pg_buf, pg->index << PAGE_SHIFT,
- 				     PAGE_SIZE);
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index a142287d86f6..cca80b5f54e0 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -122,8 +122,6 @@ static void nfs_readpage_release(struct nfs_page *req, int error)
+ {
+ 	struct folio *folio = nfs_page_to_folio(req);
  
--	if (ret) {
--		ClearPageUptodate(pg);
--		SetPageError(pg);
--	} else {
-+	if (!ret)
- 		SetPageUptodate(pg);
--		ClearPageError(pg);
--	}
+-	if (nfs_error_is_fatal_on_server(error) && error != -ETIMEDOUT)
+-		folio_set_error(folio);
+ 	if (nfs_page_group_sync_on_bit(req, PG_UNLOCKPAGE))
+ 		if (nfs_netfs_folio_unlock(folio))
+ 			folio_unlock(folio);
+diff --git a/fs/nfs/symlink.c b/fs/nfs/symlink.c
+index 0e27a2e4e68b..1c62a5a9f51d 100644
+--- a/fs/nfs/symlink.c
++++ b/fs/nfs/symlink.c
+@@ -32,16 +32,8 @@ static int nfs_symlink_filler(struct file *file, struct folio *folio)
+ 	int error;
  
- 	flush_dcache_page(pg);
- 	kunmap(pg);
-@@ -304,10 +299,8 @@ static int jffs2_write_end(struct file *filp, struct address_space *mapping,
+ 	error = NFS_PROTO(inode)->readlink(inode, &folio->page, 0, PAGE_SIZE);
+-	if (error < 0)
+-		goto error;
+-	folio_mark_uptodate(folio);
+-	folio_unlock(folio);
+-	return 0;
+-
+-error:
+-	folio_set_error(folio);
+-	folio_unlock(folio);
+-	return -EIO;
++	folio_end_read(folio, error == 0);
++	return error;
+ }
  
- 	kunmap(pg);
+ static const char *nfs_get_link(struct dentry *dentry,
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 2329cbb0e446..a91463ab87a0 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -311,7 +311,6 @@ static void nfs_mapping_set_error(struct folio *folio, int error)
+ {
+ 	struct address_space *mapping = folio_file_mapping(folio);
  
--	if (ret) {
--		/* There was an error writing. */
--		SetPageError(pg);
--	}
-+	if (ret)
-+		mapping_set_error(mapping, ret);
- 
- 	/* Adjust writtenlen for the padding we did, so we don't confuse our caller */
- 	writtenlen -= min(writtenlen, (start - aligned_start));
-@@ -330,7 +323,6 @@ static int jffs2_write_end(struct file *filp, struct address_space *mapping,
- 		   it gets reread */
- 		jffs2_dbg(1, "%s(): Not all bytes written. Marking page !uptodate\n",
- 			__func__);
--		SetPageError(pg);
- 		ClearPageUptodate(pg);
- 	}
- 
+-	folio_set_error(folio);
+ 	filemap_set_wb_err(mapping, error);
+ 	if (mapping->host)
+ 		errseq_set(&mapping->host->i_sb->s_wb_err,
 -- 
 2.43.0
 
