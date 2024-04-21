@@ -1,87 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-17362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7348ABDD5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Apr 2024 02:21:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1BA8AC03F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Apr 2024 19:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A08281346
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Apr 2024 00:21:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FA75B20A98
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Apr 2024 17:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B06F1C33;
-	Sun, 21 Apr 2024 00:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XoKjUqkb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD3A3717B;
+	Sun, 21 Apr 2024 17:22:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC6036C;
-	Sun, 21 Apr 2024 00:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7079D2942F
+	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Apr 2024 17:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713658898; cv=none; b=T6kGX6u04cHyQvoQIqO6yDBuBj4/oHtFXLFz0DNNr/T8J3p7ukDMTS++w8r/HMVBS5FRzInbPgT0OD80m47nC9YqQNhV++DYRw+DJj+GRrXfAihSrs27398nFv8qnOR2f0F/oj7DfvqUq8WzDP0JgBwr3pnc9A/mErH1/Ea/GRQ=
+	t=1713720140; cv=none; b=RQGKEOy4zdyXFlMOzKFhhSkDGdDZ24c4fpnTGNXepe2zyvpisw5rX1XnbbkEkTZvLpXYsiGv81pBhb5vL3iD11HgmqhK90wTOC1qGrKrqi7mIgfUFKf6QTBFhPsjYxUO0M/ATWRokNPrG7QgOzsR+bWQk2QrKoY9nxqRwJEwEco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713658898; c=relaxed/simple;
-	bh=bWhEB44EU+xCR31GHSqW8y0nOZf3Pfvhbwo2n9eiZUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aye+fr8LtCWFQ8UqOXc2V/ftREHpFso6lZ95eUzbUczSO7Uw+bhEnNGFSIAn79bhisj0sjM16Z+E8odzrGnNcaqpFVKuluB11iTmiihWIRPKZtAvcAIxzVzhI3aw8i4EbQfuugOLE+VmVKQrmscFdEXL3V7jT/Y2MMXct+OG3Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XoKjUqkb; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cXdj4Y/fti/COs7xn/VBIILsxCDjiWFHrNpqQP0RP+U=; b=XoKjUqkbexemjpVQe9KdnickZD
-	3kN3WplxDHu3+zlEcmP5J5Ono+lrmr6cMnOnkb7ItX5CKD9zcHN/Mxrq2qwEI/Jlm+ihBBqEOTUEI
-	8Ru5oY/Lpq2rQKf7X8M7X4i8aAbb2bQFqi3UkXpDIKN8Ry75fssZ2wJKVn60rNq4OTt0rxnxyZarM
-	ZOTQluByd+WvAmx2R/B/uiVZmoe8Hw1EHt0zbpCKRwpYy7ZP4sk8VPFDCcYk1+zaWO9hyCxouiSBP
-	2REjEBr7WWjqt33Pfmd7wCfrfzUVJtAN9zowvkYiEtH7on3hrBGuNjU/gYmuVXEUEAurpoW0g2XbU
-	byHd0ZZQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1ryKxV-0009aU-0g;
-	Sun, 21 Apr 2024 00:21:29 +0000
-Date: Sun, 21 Apr 2024 01:21:29 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: syzbot <syzbot+5ad5425056304cbce654@syzkaller.appspotmail.com>
-Cc: amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [overlayfs?] possible deadlock in ovl_nlink_start
-Message-ID: <20240421002129.GF2118490@ZenIV>
-References: <0000000000002615fd06166c7b16@google.com>
+	s=arc-20240116; t=1713720140; c=relaxed/simple;
+	bh=E1Nho4TNCkRiQ+1z/eEfslZqH0CAmLGWXWNzWODCxYU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=ej/xfVqYdOA7r5I1EhJZkZdxGYIrS5ZHKaPpFwsXxcADmOTKAe99u2dW8t0GUuBNgzzAxu0dtKfwiA0xvFNotsXoqJEBAAq38+jK3VhK1M0IRkxvxqigDlkAjy28zprOxzjLL96YNZ9d6HJOvoHFf+JPpldnHt7ZJhFS0Q6nkO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-130-wqOpvSleMPWkRxXpPk1rMw-1; Sun, 21 Apr 2024 18:22:05 +0100
+X-MC-Unique: wqOpvSleMPWkRxXpPk1rMw-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 21 Apr
+ 2024 18:21:32 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 21 Apr 2024 18:21:32 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>, 'Al Viro'
+	<viro@zeniv.linux.org.uk>
+CC: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH] seq_file: Optimize seq_puts()
+Thread-Topic: [PATCH] seq_file: Optimize seq_puts()
+Thread-Index: AQHaj3fscOebCwNNKkWKivYclXgg7bFrX8CggASjjoCAAvw6MA==
+Date: Sun, 21 Apr 2024 17:21:32 +0000
+Message-ID: <e3b8b5d4c43d4d6d88bc8e6d516c1d41@AcuMS.aculab.com>
+References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
+ <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
+ <20240415210035.GW2118490@ZenIV>
+ <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
+ <5e5cde3e-f3ad-4a9b-bc02-1c473affdcb1@wanadoo.fr>
+In-Reply-To: <5e5cde3e-f3ad-4a9b-bc02-1c473affdcb1@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000002615fd06166c7b16@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Thu, Apr 18, 2024 at 10:37:18PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=106c9fa3180000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5ad5425056304cbce654
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/72ab73815344/disk-fe46a7dd.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/2d6d6b0d7071/vmlinux-fe46a7dd.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/48e275e5478b/bzImage-fe46a7dd.xz
+RnJvbTogQ2hyaXN0b3BoZSBKQUlMTEVUDQo+IFNlbnQ6IDE5IEFwcmlsIDIwMjQgMjE6MzgNCi4u
+Lg0KPiA+IEkgZGlkIHdvbmRlciBhYm91dCBjaGVja2luZyBzaXplb2YocykgPD0gMiBpbiB0aGUg
+I2RlZmluZSB2ZXJzaW9uLg0KPiANCj4gZ2l0IGdyZXAgc2VxX3B1dHMuKlwiW15cXF0uXCIgfCB3
+YyAtbA0KPiA3Nw0KPiANCj4gV2hhdCB3b3VsZCB5b3UgZG8gaW4gdGhpcyBjYXNlPw0KPiAyIHNl
+cV9wdXRjKCkgaW4gb3JkZXIgdG8gc2F2ZSBhIG1lbWNweSguLi4sIDIpLCB0aGF0J3MgaXQ/DQo+
+IA0KPiBJdCB3b3VsZCBhbHNvIHNsaWdodGx5IGNoYW5nZSB0aGUgYmVoYXZpb3VyLCBhcyBvbmx5
+IHRoZSAxc3QgY2hhciBjb3VsZA0KPiBiZSBhZGRlZC4gQWN0dWFsbHksIGl0IGlzIGFsbCBvciBu
+b3RoaW5nLg0KDQpEb2luZzoNCglpZiAoc2l6ZW9mKHN0cikgPT0gMiAmJiBzdHJbMF0pDQoJCXNl
+cV9wdXRjKG0uIHN0clswXSk7DQoJZWxzZQ0KCQlfX3NlcV9wdXRzKG0sIHN0cik7DQpXb3VsZCBw
+aWNrIHVwIGxvb3BzIHRoYXQgZG86DQoJY2hhciBzZXBbMl0gPSAiIjsNCg0KCWZvciAoOzsgc2Vw
+WzBdID0gJywnKSB7DQoJCS4uLg0KCQlzZXFfcHV0cyhtLCBzZXApOw0KCQkuLi4NCgl9DQphcyB3
+ZWxsIGFzIHNlcV9wdXRzKG0sICJ4Iik7DQoNCldoZXRoZXIgdGhhdCBpcyB3b3J0aHdoaWxlIGlz
+IGFub3RoZXIgbWF0dGVyLg0KQnV0IGl0IG1pZ2h0IGJlIHVzZWQuDQoNCglEYXZpZA0KDQotDQpS
+ZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWls
+dG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMp
+DQo=
 
-Should be fixed in mainline since 72374d71c315
 
