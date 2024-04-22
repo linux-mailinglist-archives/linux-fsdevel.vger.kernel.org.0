@@ -1,194 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-17387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3B58ACB8A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 13:00:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A598ACBB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 13:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DFBD1C220D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 11:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C1FC1C2264E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 11:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6251145FF8;
-	Mon, 22 Apr 2024 10:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030D714659A;
+	Mon, 22 Apr 2024 11:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U7CbiFjs"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="mqmUocXs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886FC1448C6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 10:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82D2481DD;
+	Mon, 22 Apr 2024 11:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713783591; cv=none; b=atT7O2Yso16frrK9pxB8DBwAddQ8JfJKvRC8uQeO9ykoYoAoED2LZjKhihmdlBsLKZTBQQShtN+du3pzUrjbs9Vu9GZeTCiteiGyAGEs8FPyrqOZ76+iz6esplCFx/CSSMesyfUlZ3/0zlQP8L9+ZtsWGNCKnzO4yyqpCykEz8E=
+	t=1713784325; cv=none; b=oFbM8sGy9hUBSHaSYcQzw/9qeer5nEX85sC3TTK9oAG+Tk+UQXQtAfbdXhyNicgHhdr+N/6JYUZ1VBknvm3GxZql2MCZ06jlC4VXmgPDMqVAWAw7qy2/exOZCASm8E3TduG78h3TqRnjMZ19g8zbalJOunhA6fdFeceGOfqCB7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713783591; c=relaxed/simple;
-	bh=ByV4wx53F+Bj/sWnR1/+e1rmbKucboVx+VWJQOUFgV0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GT5qt8bF4f5oQiNeph1ivgNfp4/lHstUO8vkiSA9d5oBJzWSv6DMlC4SzLKYQlyudnE75vnFPUd8DlIz2BqwI0V8ce3pc5odFyPEQk9OKcid+T5wC9Qvm47yoO3E8YGgDARwjq7rbeTUQU3g2ZwOxZ1k6kBI3JBZkMniGbhhsQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U7CbiFjs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713783588;
+	s=arc-20240116; t=1713784325; c=relaxed/simple;
+	bh=dAPocxet1Oe850nbPG3d6+xiuiTaILe0wrclc0bquhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOwJfAi7g1qpOInmGfKF2mAOZxZnPk10zlgAW1W94PxKqQa2xVBKuM2bytiCay8uzhEYQyMESY9/NUx3rdO0OcnY48TGnjEbhvVn+9o5lmg/cvN8o0mqQFnlFCMGIIIbyC69K7nwMfstEL3RxRsdV1PF7sAiSQmq0NKVPDTLZ0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=mqmUocXs; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4VNMnK3Nksz9svZ;
+	Mon, 22 Apr 2024 13:03:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1713783829;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JkaTsvApX7Y5+uul/atpw/w4VkhhXsSJVcui3j6Wmlw=;
-	b=U7CbiFjsdcChlAcXQKkhg5e3PBMhsbulpLnAhN2U+/YIJ0M9PCoXya57Q68kVken0/RO+/
-	GLRbPhkL9SWEaBEXa5vI0phTgdbhKn+yE+EJnG6DNivd3T+J2z2MvO1cEa9WjHovmIzTOM
-	4sGBiKLKtQh80F6Vm5dRZcO/m2kB9Ms=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-416-H5fi2Hq1McG1tNYKLu7MuA-1; Mon, 22 Apr 2024 06:59:46 -0400
-X-MC-Unique: H5fi2Hq1McG1tNYKLu7MuA-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a5217f85620so221405266b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 03:59:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713783585; x=1714388385;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JkaTsvApX7Y5+uul/atpw/w4VkhhXsSJVcui3j6Wmlw=;
-        b=FBEp6zRp4zNERzTub8JVYL1nyfMfuEICCgwXLrMhLB+P6nbCQIDub9tfbeZ0J+Wu5k
-         rXKlfdRo8ADKZMfg5ghgfk9DoRYMQwgfgADI5N01E0pZvv8SC8uBEyQGz9OAzbeKfawj
-         vJC4jZl8EQHcxHfcZq2p939KNLm2k1lUXWSxFt3PBWhy9XDs5rXOGeU6VrplX5RtCyb8
-         G17Pdt5CMtA+YQCuV6WCMJbptgtPX56doY5vyLkt0ppjwmtqrIrC1MtQWr1skkQ/wW4M
-         PBSRmwMpy7sEtOfXRlB0CsC4C3+ciwDFNNioI0VKmylwsC5DtvvsyDd8fXRF/Vhs3Nwf
-         CLSA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2ni+pbA/L/FO2QuSiiR73scgI8bwPEhELQdXWFMeQ6c8sr0HfDqJTDam8pfcMufednohA19kdjcR03P28Y8hVAJww8oLwmySXNmXC7g==
-X-Gm-Message-State: AOJu0YzFD8KdlLnzwlzFtNeYTjXJ7lvSuelI/ZdKZRqAHcb5Zeyn6vGy
-	AYyTc8h86dzAgIJNjyUwjnghvjt673uAbUUREB79rPXf9PmXPgTQD6Tcz9pbAlwC6FAf6LSX1bK
-	WHhO9DYJWGwC/IhdkkpPjkNA9RdGo1pFnbr//5pQnon7Q1O5y/X02mPRNwJShp9xf+HI+CgayUQ
-	==
-X-Received: by 2002:a17:906:c290:b0:a52:1e53:febf with SMTP id r16-20020a170906c29000b00a521e53febfmr5730574ejz.69.1713783585269;
-        Mon, 22 Apr 2024 03:59:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEow5wFlraT79dbPyyqpKfukpAIzRPIWgxDZUxghIBeayl6l6hWtQULh11HV6BKBunNeV2UzQ==
-X-Received: by 2002:a17:906:c290:b0:a52:1e53:febf with SMTP id r16-20020a170906c29000b00a521e53febfmr5730558ejz.69.1713783584919;
-        Mon, 22 Apr 2024 03:59:44 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id q21-20020a170906771500b00a51d408d446sm5631153ejm.26.2024.04.22.03.59.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Apr 2024 03:59:44 -0700 (PDT)
-Message-ID: <dfb466f0-fc09-491b-af35-9c315ebd74eb@redhat.com>
-Date: Mon, 22 Apr 2024 12:59:44 +0200
+	bh=gcKvfN037TA7hZSa4d4wVaW0uvAV7xIvSo/LgCapk+E=;
+	b=mqmUocXsR3w50nQdtWP075s0eXt8c5DeM+rfi3aUvt846NgO+qnHJo4yQ7QUkHZi+6M1XA
+	oJO0688sir/I+srkC0WLRug6oq1qkVdQAPXuW2ps6tHah0BNuNNq8jh+9+Oy68WDLOiO3o
+	H2fpseCkE5oUuy5GwzGd4m40QKDQ/6Da8cnRhlU0QX17oh6vxC18/hmPqh9nMI3Vq3nyOW
+	lvs5sKHvUnLlcjKR0ZYBIGV+xraV5tvf4//IYSXPvFSP3Sfr3X88gVh5VQBcLAPsMws0Tc
+	0EsYRbVASkL/dJ/7VA9ofv/A1nGnv3IhjqN1K+E+RQaxfTQGpL8w0sogSRT+rw==
+Date: Mon, 22 Apr 2024 13:03:45 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	gost.dev@samsung.com, chandan.babu@oracle.com, hare@suse.de, mcgrof@kernel.org, 
+	djwong@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	david@fromorbit.com, akpm@linux-foundation.org, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3 05/11] readahead: allocate folios with
+ mapping_min_order in readahead
+Message-ID: <i4c6xe6jdei2to6kah4kgjehpjlanaqfulju2jzsu5ny2gmegv@2b2oh44oilnj>
+References: <20240313170253.2324812-1-kernel@pankajraghav.com>
+ <20240313170253.2324812-6-kernel@pankajraghav.com>
+ <ZgHJxiYHvN9DfD15@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 25/30] vboxsf: Convert vboxsf_read_folio() to use a folio
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- linux-fsdevel@vger.kernel.org
-References: <20240420025029.2166544-1-willy@infradead.org>
- <20240420025029.2166544-26-willy@infradead.org>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240420025029.2166544-26-willy@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZgHJxiYHvN9DfD15@casper.infradead.org>
 
-Hi Matthew,
-
-On 4/20/24 4:50 AM, Matthew Wilcox (Oracle) wrote:
-> Remove conversion to a page and use folio APIs throughout.  This includes
-> a removal of setting the error flag as nobody checks the error flag on
-> vboxsf folios.  This does not include large folio support as we would
-> have to map each page individually.
+> > @@ -515,7 +562,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
+> >  		if (index & ((1UL << order) - 1))
+> >  			order = __ffs(index);
+> >  		/* Don't allocate pages past EOF */
+> > -		while (index + (1UL << order) - 1 > limit)
+> > +		while (order > min_order && index + (1UL << order) - 1 > limit)
+> >  			order--;
 > 
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/vboxsf/file.c | 18 +++++-------------
->  1 file changed, 5 insertions(+), 13 deletions(-)
+> This raises an interesting question that I don't know if we have a test
+> for.  POSIX says that if we mmap, let's say, the first 16kB of a 10kB
+> file, then we can store into offset 0-12287, but stores to offsets
+> 12288-16383 get a signal (I forget if it's SEGV or BUS).  Thus far,
+> we've declined to even create folios in the page cache that would let us
+> create PTEs for offset 12288-16383, so I haven't paid too much attention
+> to this.  Now we're going to have folios that extend into that range, so
+> we need to be sure that when we mmap(), we only create PTEs that go as
+> far as 12287.
 > 
-> diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
-> index 118dedef8ebe..e149158b105d 100644
-> --- a/fs/vboxsf/file.c
-> +++ b/fs/vboxsf/file.c
-> @@ -228,26 +228,19 @@ const struct inode_operations vboxsf_reg_iops = {
->  
->  static int vboxsf_read_folio(struct file *file, struct folio *folio)
->  {
-> -	struct page *page = &folio->page;
->  	struct vboxsf_handle *sf_handle = file->private_data;
-> -	loff_t off = page_offset(page);
-> +	loff_t off = folio_pos(folio);
->  	u32 nread = PAGE_SIZE;
->  	u8 *buf;
->  	int err;
->  
-> -	buf = kmap(page);
-> +	buf = kmap_local_folio(folio, 0);
->  
->  	err = vboxsf_read(sf_handle->root, sf_handle->handle, off, &nread, buf);
-> -	if (err == 0) {
-> -		memset(&buf[nread], 0, PAGE_SIZE - nread);
-> -		flush_dcache_page(page);
-> -		SetPageUptodate(page);
-> -	} else {
-> -		SetPageError(page);
-> -	}
-> +	buf = folio_zero_tail(folio, nread, buf);
->  
-> -	kunmap(page);
-> -	unlock_page(page);
-> +	kunmap_local(buf);
-> +	folio_end_read(folio, err == 0);
->  	return err;
->  }
->  
+> Can you check that we have such an fstest, and that we still pass it
+> with your patches applied and a suitably large block size?
+> 
 
-Thanks you for the patch.
+So the mmap is giving the correct SIGBUS error when we try to do this:
+dd if=/dev/zero of=./test bs=10k count=1; 
+xfs_io -c "mmap -w 0 16384" -c "mwrite 13000 10" test
 
-I have this a test spin, but I got all 0 content for the kernel's README when trying
-to read that from a directory shared through vboxsf.
+Logs on bs=64k ps=4k system:
+root@debian:/media/test# dd if=/dev/zero of=./test bs=10k count=1;
+root@debian:/media/test# du -sh test 
+64K     test
+root@debian:/media/test# ls -l --block-size=k test 
+-rw-r--r-- 1 root root 10K Apr 22 10:42 test
+root@debian:/media/test# xfs_io -c "mmap  0 16384" -c "mwrite 13000 10" test
+Bus error
 
-I came up with the following fix for this, which I assume is the correct fix,
-but please check:
+The check in filemap_fault takes care of this:
 
---- a/fs/vboxsf/file.c
-+++ b/fs/vboxsf/file.c
-@@ -237,7 +237,7 @@ static int vboxsf_read_folio(struct file *file, struct folio *folio)
- 	buf = kmap_local_folio(folio, 0);
+max_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+if (unlikely(index >= max_idx))
+        return VM_FAULT_SIGBUS;
+
+The same operation for read should also give a bus error, but it didn't.
+Further investigation pointed out that the fault_around() does not take
+this condition into account for LBS configuration. When I set fault_around_bytes
+to 4096, things worked as expected as we skip fault_around for reads. 
+
+I have a patch that return SIGBUS also for the following read operation:
+dd if=/dev/zero of=./test bs=10k count=1; 
+xfs_io -c "mmap -r 0 16384" -c "mread 13000 10" test
+
+This is the patch I have for now that fixes fault_around() logic for LBS
+configuration:
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index f0c0cfbbd134..259531dd297b 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3600,12 +3600,15 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+        }
+        do {
+                unsigned long end;
++               unsigned long i_size;
  
- 	err = vboxsf_read(sf_handle->root, sf_handle->handle, off, &nread, buf);
--	buf = folio_zero_tail(folio, nread, buf);
-+	buf = folio_zero_tail(folio, nread, buf + nread);
+                addr += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
+                vmf->pte += xas.xa_index - last_pgoff;
+                last_pgoff = xas.xa_index;
+                end = folio_next_index(folio) - 1;
+-               nr_pages = min(end, end_pgoff) - xas.xa_index + 1;
++               i_size = DIV_ROUND_UP(i_size_read(mapping->host),
++                                     PAGE_SIZE) - 1;
++               nr_pages = min3(end, end_pgoff, i_size) - xas.xa_index + 1;
  
- 	kunmap_local(buf);
- 	folio_end_read(folio, err == 0);
+                if (!folio_test_large(folio))
+                        ret |= filemap_map_order0_folio(vmf,
 
-
-With this fix squashed in, this looks good to me and you can add:
-
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Feel free to merge this together with the other folio patches from this series.
-
-Regards,
-
-Hans
-
-
-
-
-
-
-> @@ -295,7 +288,6 @@ static int vboxsf_writepage(struct page *page, struct writeback_control *wbc)
->  	kref_put(&sf_handle->refcount, vboxsf_handle_release);
->  
->  	if (err == 0) {
-> -		ClearPageError(page);
->  		/* mtime changed */
->  		sf_i->force_restat = 1;
->  	} else {
-
+I will send a new version of the series this week after doing some more
+testing.
 
