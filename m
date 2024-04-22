@@ -1,62 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-17418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C478AD383
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 19:51:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5198AD3D1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 20:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0020D2864F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 17:51:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE1B1F21941
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 18:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F674154421;
-	Mon, 22 Apr 2024 17:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E81C154BF8;
+	Mon, 22 Apr 2024 18:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lCOsRmTz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UGaLkm9Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E51C153BF2;
-	Mon, 22 Apr 2024 17:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6808315443D;
+	Mon, 22 Apr 2024 18:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713808301; cv=none; b=hPJ3tBd01pZN+H1wrZKSHO2P4WJMdL6DH7kw3nisRND+UYQ3Kai8HpOzEyr+ae0x0UxJO/1SRjcBzYT5zByy71FpfvCs53NNWQwMB6rfNE2yDWRQDvjardauuRZaVg8XAUwriq2yh8xRn3Qz845EGrmYXfH/ld8oStA4Tqi+2c4=
+	t=1713810203; cv=none; b=MTt3s2kMDfkBikh2TL2cQ9Qc3U4VuJO1EeT6y4Ekmza1deVr12mZv1VaHVuNzK3M4dR3v15crArXQEWixCJWEQbRZ7yUEwHMsrxaSe3ifPaFVr9b0gMdx1FSl4t5gsakeLrlBSLGz/Vwm0swGdLCr+wmvQ20T1rv7AkOzHPsYWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713808301; c=relaxed/simple;
-	bh=tcf7LtMc1iHHWuaCXNBYUda1jDDRLHAk7qCytm0ssq4=;
+	s=arc-20240116; t=1713810203; c=relaxed/simple;
+	bh=5hx0hqmTvtMnwuIiUwzkB2NqB8TtTkY1m/tzpLOBOa8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dmRcvyy+i/SqF8TZILuWOrydyOE8+ZCXjcCnLQoD/XYuybi0wE/ritOreelnnmVFk9iBbgYksWK8Km5gDvLcTE0mDiE7EKXkhPbw/0iKm5wpKsNDaXyW4zH7dReUIR1JRGLFDOukokwrPLDH7+lJ0b34YLGKpPr1D20PdT9EKIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lCOsRmTz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=owoNbbq/4Oa3wX8a4pMKvLe3fxSRVjBq0pacla7xhpQ=; b=lCOsRmTzxgMHbDgAwc1ovGatqm
-	LqiEMBykFU2AKz1wuIr1yToMgeOZHqZ/5gZ1OINwJNM5vYSA61XJ/QvK48MmACHkNJbORcU5pDG9p
-	aDUpu5SlfiDPzpK0ut9Kz1cGfPuaxGXkDyu81ksAg9WYU5tKGVlrE7ay00n/0ss13NMBbXML3vav4
-	64FpEI0x9+SH/i6lZfA4P87cmZBiZD5eQmaasM2OyAZd+R9BZxe0MwIG233FkL1D/PF14gIJWzX/u
-	jV0ygpqaa7EVnJ8LFmHp5Y33QvZd7uJoh5rhz2FpciUZPKCnrPhDBZU0Mvz+NMIceufua7bKVOBCM
-	A04dQNsQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ryxpK-0000000EgZQ-0MtG;
-	Mon, 22 Apr 2024 17:51:38 +0000
-Date: Mon, 22 Apr 2024 18:51:37 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 27/30] iomap: Remove calls to set and clear folio error
- flag
-Message-ID: <ZiajqYd305U8njo5@casper.infradead.org>
-References: <20240420025029.2166544-1-willy@infradead.org>
- <20240420025029.2166544-28-willy@infradead.org>
- <ZiYAoTnn8bO26sK3@infradead.org>
- <ZiZ817PiBFqDYo1T@casper.infradead.org>
- <ZiaBqiYUx5NrunTO@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mTv+ocprymdW8D+3IJ1pEAvQ8s5WN/eHTNUBWKA/AxTIcHefVHJfQL0ewfOywJASekO0HGC/SBgcA5RtQCIk1RPQxIs/o2cUbfUS/pfY0vbV1wm5PfnqfToGLf/srRvhl5lzR/TLk12libP0DzfKb+NSqLZ3sP6GO6QYaQtM/aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UGaLkm9Z; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1e4266673bbso42815735ad.2;
+        Mon, 22 Apr 2024 11:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713810202; x=1714415002; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xUsfrPuknVn2eEWdEAnXH6GuTxJPhPcdp068aUQPL6g=;
+        b=UGaLkm9Z2re0epmt6klamknfMFFWzuVc7mqXBipyePZsDXdE2wORmYOtcX3rX1k4nN
+         XIckwVBis5zTyroZ0q4Ui4Utdj/7qDFqZhGbFJZQ1ThBVAxBdIWNjE9ajSSr981DyK6o
+         RIUlOIZ2KdAGnnVgwUnSj2L6F8ssiA4MycVEnex2kKdVOpv/VDxR5KyQAUx+YfXc3Gag
+         v7MkEZ4QnE5/fHk1uzlqWPe3rEeNF63rjA0SAhUXPIaALqh5cLB+1M46AWN+g/F5pk6E
+         YW2/TQ6XGoSAXBpkrZJO4k3FHNvRxHkliSLLdOxJdRVyQ3n9nhegrZ1/Ro8EPhBPsZd5
+         5CyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713810202; x=1714415002;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xUsfrPuknVn2eEWdEAnXH6GuTxJPhPcdp068aUQPL6g=;
+        b=SoeCQLRmVFwHBB35/JcvDxGxXfb7bNAQ7GlhjIC7FCZ3cEqo1AyU9ctvHGPw/g95/k
+         OtX1mTFHFil9n2I+kR7o3N1twTEqrDc4d1tmesiGv37SlcwgY5vgPEUZTD6Yr2uLH+fe
+         bVMKamrloeYRNWaHhhgvr7ij2sq/RwETcNJJnBYN3OigM7VMgh6oyRNq8c5mNyzCF27e
+         sJ9QdIEKUVpxx7Kt7UeNgOFctRovO3mfPMDP++1TleJ8ZpcV+VwJzqkeLEjRycQBX9PU
+         Hy+FiWbEqklYVtXzzwSw0IrEesZv9ornw6lmvK29C30/769XcG+JPr6Zahw9+KEp7vYP
+         /91g==
+X-Forwarded-Encrypted: i=1; AJvYcCWcBXaAgnVYTL3k89E+ISbB3qiv+nHc/xVBa5xPyfSvB7K9CU4CEjGidrY4g8zZwf95SFhcDSjwCfR6zSHgPVw+FpS2TfHIb649j8WIgquXsrdyPPJ9Z9guOT5UJ+UifURuPK7/zi8+597sFQ==
+X-Gm-Message-State: AOJu0YwJr8LfNyIkmC8MEovALT2VbEB2YQ6ET7+VZraKZfcALrPlqIhb
+	rHot1495hwF0LARSWhgVMuRuH1ow/QlgKxwB7S2M/eoGVO1geQjvGXm8n98q
+X-Google-Smtp-Source: AGHT+IGl2na+Kyu0mq52tGR00SH6ZD7tOAk3YfMFtBzHcVw5HMV3aXGaOENqOKZ/Wql9wnBHRG0HKQ==
+X-Received: by 2002:a17:902:7489:b0:1e7:ad7a:6a81 with SMTP id h9-20020a170902748900b001e7ad7a6a81mr10287853pll.49.1713810201435;
+        Mon, 22 Apr 2024 11:23:21 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::5:6f51])
+        by smtp.gmail.com with ESMTPSA id e13-20020a170902ed8d00b001e4464902bcsm8432872plj.60.2024.04.22.11.23.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Apr 2024 11:23:20 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 22 Apr 2024 08:23:19 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, jack@suse.cz,
+	bfoster@redhat.com, dsterba@suse.com, mjguzik@gmail.com,
+	dhowells@redhat.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] writeback: collect stats of all wb of bdi in
+ bdi_debug_stats_show
+Message-ID: <ZiarF2wxWecJ1vTE@slm.duckdns.org>
+References: <20240422164808.13627-1-shikemeng@huaweicloud.com>
+ <20240422164808.13627-2-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,29 +88,60 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZiaBqiYUx5NrunTO@infradead.org>
+In-Reply-To: <20240422164808.13627-2-shikemeng@huaweicloud.com>
 
-On Mon, Apr 22, 2024 at 08:26:34AM -0700, Christoph Hellwig wrote:
-> On Mon, Apr 22, 2024 at 04:05:59PM +0100, Matthew Wilcox wrote:
-> > On Sun, Apr 21, 2024 at 11:16:01PM -0700, Christoph Hellwig wrote:
-> > > On Sat, Apr 20, 2024 at 03:50:22AM +0100, Matthew Wilcox (Oracle) wrote:
-> > > > The folio error flag is not checked anywhere, so we can remove the calls
-> > > > to set and clear it.
-> > > 
-> > > This patch on it's own looks good, but seeing this is a 27/30 I have
-> > > no chance to actually fully review it.
-> > 
-> > You were bcc'd on 0/30 which fully explained this.
+On Tue, Apr 23, 2024 at 12:48:05AM +0800, Kemeng Shi wrote:
+> /sys/kernel/debug/bdi/xxx/stats is supposed to show writeback information
+> of whole bdi, but only writeback information of bdi in root cgroup is
+> collected. So writeback information in non-root cgroup are missing now.
+> To be more specific, considering following case:
 > 
-> Not on the XFS list through which I'm reading this at least.  If it
-> was to me personally those all go to >/dev/null anyway for mails
-> Cced to mailing lists.
+> /* create writeback cgroup */
+> cd /sys/fs/cgroup
+> echo "+memory +io" > cgroup.subtree_control
+> mkdir group1
+> cd group1
+> echo $$ > cgroup.procs
+> /* do writeback in cgroup */
+> fio -name test -filename=/dev/vdb ...
+> /* get writeback info of bdi */
+> cat /sys/kernel/debug/bdi/xxx/stats
+> The cat result unexpectedly implies that there is no writeback on target
+> bdi.
 > 
-> Please always send the damn series to everyone, fishing individual
-> mails out of it is just a giant pain in the butt.
+> Fix this by collecting stats of all wb in bdi instead of only wb in
+> root cgroup.
+> 
+> Following domain hierarchy is tested:
+>                 global domain (320G)
+>                 /                 \
+>         cgroup domain1(10G)     cgroup domain2(10G)
+>                 |                 |
+> bdi            wb1               wb2
+> 
+> /* all writeback info of bdi is successfully collected */
+> cat stats
+> BdiWriteback:             2912 kB
+> BdiReclaimable:        1598464 kB
+> BdiDirtyThresh:      167479028 kB
+> DirtyThresh:         195038532 kB
+> BackgroundThresh:     32466728 kB
+> BdiDirtied:           19141696 kB
+> BdiWritten:           17543456 kB
+> BdiWriteBandwidth:     1136172 kBps
+> b_dirty:                     2
+> b_io:                        0
+> b_more_io:                   1
+> b_dirty_time:                0
+> bdi_list:                    1
+> state:                       1
+> 
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-If I do that then half the mailing lists bounce them for having too
-many recipients.  b4 can fetch the entire series for you if you've
-decided to break your email workflow.  And yes, 0/30 was bcc'd to
-linux-xfs as well.
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
+
+-- 
+tejun
 
