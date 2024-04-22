@@ -1,136 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-17435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38668AD547
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 21:54:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FDE8AD54B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 21:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64A591F211FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 19:54:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE921F21846
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 19:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D267C155748;
-	Mon, 22 Apr 2024 19:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0AB1553A6;
+	Mon, 22 Apr 2024 19:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NsfrRM7n"
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="qFvFBWZe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CCD15535E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 19:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8041552E4;
+	Mon, 22 Apr 2024 19:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713815534; cv=none; b=Vz1z9RWrh+ZG9A3XLBJBa9pYdnw6oWt9HmCv8wxVrtp5FOtA7Ia/PuAMrhlJD5t67aPtYOJYYvSqR84PggflL62SWXCCCvbcmvhUISXoMfiIxrpbd9KuU8iyCtv+JJ6Tq9SecAs73ftX2Zsl+h5zsLymIxPKnGCaZbxbXF5xvRM=
+	t=1713815609; cv=none; b=Wb7WzxeUPcVHx4C660txyqITUIIaIMhT4kwnEXDqKoi2xMLbEnbGzhUgmK1ZdlwdBz8Nc8cASaf/pWnXiE3lY2tDHuuT1JeGF4o+EJzqPd6w0EMY5wBoTgEkULEFvbTc+OkYiYVA1WJaZZttFuoddqlZw9Ys6NJrTZW2vHlNkNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713815534; c=relaxed/simple;
-	bh=EK1EZzGAtYGUjl2hyFST+YG4uALloruxlOHlWlLPKhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NYDA5qG0kTAy/uFah7oru+MqMTXN3pUQIwBeXRn7oHfRH8eslpcUSyUmf1yCm7vJWYaUcveAZlFp1i654lY2OoWK/21z8VknuJy2gOg2jJWuzEbxV9OVhgoQqsGqgozv4VpCGpRj9yZHpb5EUt5Dx70WB5PuArCDvQfI7+lD91s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NsfrRM7n; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 22 Apr 2024 15:52:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1713815530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=2GMQSjZim3LKV3Y1Miu61pAhsMImS7IiK2sA4UPpM/Y=;
-	b=NsfrRM7nU9HcXCA9rhNE6cw8+Nm43qOk5NEEv9VJ6pcm7wkWDZjt6x+7OD39iaf8Y8NGLG
-	lO1cosqkssc9MdPNzsuCxWmz/tMGMlCsHG/b6xrUoO2VD9+JmA1AM/EmUtL6psJxQjxmGV
-	LdQUnp/p5S+G1SwReSTd8gIvncywGLI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes fro 6.9-rc6
-Message-ID: <fwtvoxp2ktrhst5rm2yk4uk5atjuvnfpg7wjrozg2zd5p7tqzo@mca5izehz5fx>
+	s=arc-20240116; t=1713815609; c=relaxed/simple;
+	bh=QHYMX6tdJG+mRM0qyDMI2R+TdZ5IUc9W/NIaN57xmYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LE2UDnnuYMvDAKYvf178taQ1xn8F55Zw9VuHIAlqI2dKQ2ObDL3TVJ+UOYQ483MZMbUv9gxKk9dKPfhSN3LVDWRc1O7nJtSM8IKghNCe3yBZGkfhfzNTS1E26h/Q1uDpT0aR1gSd1v0QCfAonZP0CxUuhMUMj3KH105Xe/jySTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=qFvFBWZe; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=rv+66gcI4sXsOSXmrSarZddjvUON0HTal1+nUFh2yhs=; b=qFvFBWZeuTqFnTwW/02h0Smt6D
+	z8SQnRRIgbuZQe2/2qdCn+5dG/L7zXp5VGm206s+FvoGJH7n2z7gAPPsFIkL3aUz3ImK7AGa32jqB
+	rF7eNRfaD6wdXMlOSE/uPQ2pj25pp/pxXIIFvY6gs31YJhsT1UTfHNPsVx4iP/BUxN79o+oFSYPqc
+	Sxyj383bNpgpDExmmJ6OD85tZtfqZd0sq/3oGteCF3VoQ4gAUr2hdnwqShOBpj5pZ0gJzhddz3R9s
+	8OtLNsxm97/yLRCBnFq41uJQnNraOvye0/ynR83usz2qtLfStXoKsIOlRUhWE5rTlIhH9Y3vzcZGW
+	ExRBF6RcsViBdrqc/5aOLYnGCoxSWyDik6HovoPF7vxSH/HEKZUx0y0/B9/NeSZHF1hV4TZoF7K+y
+	dlUo6iUJJ4jmeaLq68o8dTF99VG7y+vqA5tgeRvfgMgQM/ccVfmRud5fh2p/dXmkSKXJRSLH7GekF
+	cC2nc6E2dd/kPPY9Vr+fZhg+;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1ryzj1-007kbw-2m;
+	Mon, 22 Apr 2024 19:53:15 +0000
+Message-ID: <81ab6c6a-0a9e-4f2f-b455-7585283acf53@samba.org>
+Date: Mon, 22 Apr 2024 21:53:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] openat2: add OA2_INHERIT_CRED flag
+To: Stas Sergeev <stsp2@yandex.ru>, linux-kernel@vger.kernel.org
+Cc: Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+ Jens Axboe <axboe@kernel.dk>
+References: <20240422084505.3465238-1-stsp2@yandex.ru>
+ <20240422084505.3465238-2-stsp2@yandex.ru>
+Content-Language: en-US, de-DE
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <20240422084505.3465238-2-stsp2@yandex.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Linus, another batch of bcachefs fixes.
+Am 22.04.24 um 10:45 schrieb Stas Sergeev:
+> This flag performs the open operation with the fsuid/fsgid that
+> were in effect when dir_fd was opened.
+> This allows the process to pre-open some directories and then
+> change eUID (and all other UIDs/GIDs) to a less-privileged user,
+> retaining the ability to open/create files within these directories.
+> 
+> Design goal:
+> The idea is to provide a very light-weight sandboxing, where the
+> process, without the use of any heavy-weight techniques like chroot
+> within namespaces, can restrict the access to the set of pre-opened
+> directories.
+> This patch is just a first step to such sandboxing. If things go
+> well, in the future the same extension can be added to more syscalls.
+> These should include at least unlinkat(), renameat2() and the
+> not-yet-upstreamed setxattrat().
+> 
+> Security considerations:
+> To avoid sandboxing escape, this patch makes sure the restricted
+> lookup modes are used. Namely, RESOLVE_BENEATH or RESOLVE_IN_ROOT.
+> To avoid leaking creds across exec, this patch requires O_CLOEXEC
+> flag on a directory.
+> 
+> Use cases:
+> Virtual machines that deal with untrusted code, can use that
+> instead of a more heavy-weighted approaches.
+> Currently the approach is being tested on a dosemu2 VM.
+> 
+> Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+> 
+> CC: Eric Biederman <ebiederm@xmission.com>
+> CC: Alexander Viro <viro@zeniv.linux.org.uk>
+> CC: Andy Lutomirski <luto@kernel.org>
+> CC: Christian Brauner <brauner@kernel.org>
+> CC: Jan Kara <jack@suse.cz>
+> CC: Jeff Layton <jlayton@kernel.org>
+> CC: Chuck Lever <chuck.lever@oracle.com>
+> CC: Alexander Aring <alex.aring@gmail.com>
+> CC: linux-fsdevel@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> CC: Paolo Bonzini <pbonzini@redhat.com>
+> CC: Christian Göttsche <cgzones@googlemail.com>
+> ---
+>   fs/file_table.c              |  2 ++
+>   fs/internal.h                |  2 +-
+>   fs/namei.c                   | 54 ++++++++++++++++++++++++++++++++++--
+>   fs/open.c                    |  2 +-
+>   include/linux/fcntl.h        |  2 ++
+>   include/linux/fs.h           |  2 ++
+>   include/uapi/linux/openat2.h |  3 ++
+>   7 files changed, 63 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index 4f03beed4737..9991bdd538e9 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -160,6 +160,8 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
+>   	mutex_init(&f->f_pos_lock);
+>   	f->f_flags = flags;
+>   	f->f_mode = OPEN_FMODE(flags);
+> +	f->f_fsuid = cred->fsuid;
+> +	f->f_fsgid = cred->fsgid;
+>   	/* f->f_version: 0 */
+>   
+>   	/*
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 7ca738904e34..692b53b19aad 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -169,7 +169,7 @@ static inline void sb_end_ro_state_change(struct super_block *sb)
+>    * open.c
+>    */
+>   struct open_flags {
+> -	int open_flag;
+> +	u64 open_flag;
+>   	umode_t mode;
+>   	int acc_mode;
+>   	int intent;
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 2fde2c320ae9..d1db6ceee4bd 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -586,6 +586,8 @@ struct nameidata {
+>   	int		dfd;
+>   	vfsuid_t	dir_vfsuid;
+>   	umode_t		dir_mode;
+> +	kuid_t		dir_open_fsuid;
+> +	kgid_t		dir_open_fsgid;
+>   } __randomize_layout;
+>   
+>   #define ND_ROOT_PRESET 1
+> @@ -2414,6 +2416,8 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+>   			get_fs_pwd(current->fs, &nd->path);
+>   			nd->inode = nd->path.dentry->d_inode;
+>   		}
+> +		nd->dir_open_fsuid = current_cred()->fsuid;
+> +		nd->dir_open_fsgid = current_cred()->fsgid;
 
-Nothing too crazy in this one, and it looks like (fingers crossed) the
-recovery and repair issues are settling down - although there's going to
-be a long tail there, as we've still yet to really ramp up on error
-injection or syzbot.
+I'm wondering if it would be better to capture the whole cred structure.
 
-For users - if anyone is seeing bugs that impact filesystem
-availability, make sure you're reporting those and be noisy about it;
-all the non critical stuff should be reported too, but are lower
-priority for now.
+Similar to io_register_personality(), which uses get_current_cred().
 
-Cheers,
-Kent
+Only using uid and gid, won't reflect any group memberships or capabilities...
 
-The following changes since commit ad29cf999a9161e7849aa229d2028854f90728c2:
-
-  bcachefs: set_btree_iter_dontneed also clears should_be_locked (2024-04-15 13:31:15 -0400)
-
-are available in the Git repository at:
-
-  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-04-22
-
-for you to fetch changes up to e858beeddfa3a400844c0e22d2118b3b52f1ea5e:
-
-  bcachefs: If we run merges at a lower watermark, they must be nonblocking (2024-04-22 01:26:51 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.9-rc6
-
-- fix a few more deadlocks in recovery
-- fix u32/u64 issues in mi_btree_bitmap
-- btree key cache shrinker now actually frees, with more instrumentation
-  coming so we can verify that it's working correctly more easily in the
-  future
-
-----------------------------------------------------------------
-Kent Overstreet (14):
-      bcachefs: Fix null ptr deref in twf from BCH_IOCTL_FSCK_OFFLINE
-      bcachefs: node scan: ignore multiple nodes with same seq if interior
-      bcachefs: make sure to release last journal pin in replay
-      bcachefs: Fix bch2_dev_btree_bitmap_marked_sectors() shift
-      bcachefs: KEY_TYPE_error is allowed for reflink
-      bcachefs: fix leak in bch2_gc_write_reflink_key
-      bcachefs: Fix bio alloc in check_extent_checksum()
-      bcachefs: Check for journal entries overruning end of sb clean section
-      bcachefs: Fix missing call to bch2_fs_allocator_background_exit()
-      bcachefs: bkey_cached.btree_trans_barrier_seq needs to be a ulong
-      bcachefs: Tweak btree key cache shrinker so it actually frees
-      bcachefs: Fix deadlock in journal write path
-      bcachefs: Fix inode early destruction path
-      bcachefs: If we run merges at a lower watermark, they must be nonblocking
-
-Nathan Chancellor (1):
-      bcachefs: Fix format specifier in validate_bset_keys()
-
- fs/bcachefs/backpointers.c          |  2 +-
- fs/bcachefs/bcachefs_format.h       |  3 +-
- fs/bcachefs/btree_gc.c              |  3 +-
- fs/bcachefs/btree_io.c              |  2 +-
- fs/bcachefs/btree_key_cache.c       | 19 +++---------
- fs/bcachefs/btree_node_scan.c       |  2 ++
- fs/bcachefs/btree_types.h           |  2 +-
- fs/bcachefs/btree_update_interior.c |  6 +++-
- fs/bcachefs/chardev.c               |  4 ++-
- fs/bcachefs/fs.c                    |  9 ++++--
- fs/bcachefs/journal_io.c            | 60 ++++++++++++++++++++++++++-----------
- fs/bcachefs/recovery.c              |  5 +++-
- fs/bcachefs/sb-clean.c              |  8 +++++
- fs/bcachefs/sb-errors_types.h       |  3 +-
- fs/bcachefs/sb-members.c            |  4 +--
- fs/bcachefs/sb-members.h            |  6 ++--
- fs/bcachefs/super.c                 |  1 +
- fs/bcachefs/thread_with_file.c      | 15 ++++++++--
- fs/bcachefs/thread_with_file.h      |  3 ++
- 19 files changed, 105 insertions(+), 52 deletions(-)
+metze
 
