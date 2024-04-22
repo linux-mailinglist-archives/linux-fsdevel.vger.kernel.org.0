@@ -1,117 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-17412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D404B8AD102
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 17:35:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FF28AD12F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 17:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F6ADB20CED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 15:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D410B281E8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 15:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053B5153518;
-	Mon, 22 Apr 2024 15:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGiVSfI/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54500153585;
+	Mon, 22 Apr 2024 15:46:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABDC152523;
-	Mon, 22 Apr 2024 15:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1B4153561
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 15:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713800101; cv=none; b=l5j3uJARGOk3Y0KtwF+QvavWD0dgrcpRCx/iwax/e6Rq0kVo6oexHMYRdDhuYMp3o1Q9qV8eDdkHcmzOZx0kUW4tibA0macx0tIWKW1EBaI5nt653quKdRiER7MLBhi/kbWLtzr9F5OfM02+YmbgBEZIEiYh4WzEJ5Gf2cFopa4=
+	t=1713800787; cv=none; b=fmxwNfPuAXRkW7wcuWhLOraqbccgSNn5NTpgsjHm35OzxTzk9D805a52ZGVLsAP9k+6ItvIeaQOcHivlYdQ0r+y2FAnymG1/Pd/7AJHecYbfV1QfresQnJvNyHphcrfsR/bmZLvCzPyF9CqYX1G7OE3i8fecOn89DKgKp+XYAqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713800101; c=relaxed/simple;
-	bh=k+hbCfeBQPRpXXeKDg3W6ZAq2kwbOldMPCT7MKeU7xA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iWUoin+6i1tPvpPa5U5yTGvslnTvMKvvPH4k6X8K3brb7WfVvPmOmvyyss6acJYqHlMzJ2QdRb7OGmsLtTZetqJi4Jq1Tt+XRDEMqjrAQ6BynJwTuaCWUnoFX1sHtrDdpz41gWMU2U34SNEk0B0/Oc0qWBSMpnKIdk32Aw5i2v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGiVSfI/; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2d872102372so42289411fa.0;
-        Mon, 22 Apr 2024 08:34:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713800098; x=1714404898; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wN70iPYr3n9W1U+WIrHwJM/MMTxEMvnw8AZRwUzGnOI=;
-        b=gGiVSfI/J/bKvPkIxlMn4IXC37a3foRqSwz8mGuQkE2dW6J5TpcgoM8LvVpzGtW2mw
-         CMGYG4WBR2tPXkl8ndggSz6nTBqlHr7A2VNV4mKGby1JSolLELa2yfDZun4ytfFuiLmK
-         L/0v1+3i47yJ4ojOPK8+AVQeCDDNrFVtdkZ5gXoxHyE8PoKTIlqIcCF2nBqUuJzNBTBz
-         m5kDn/OM6u23MIMtrvn9ttCJIcY5g4O+BNwQNzbnPKd+j9pBNsdiI1JUqVf1BjDTNzzm
-         Hf5aM69xQ5PA3zATxtOJE5XJIxsSWDTi/TLWA++I4/YS+hrJ9XbSjZ5HU5tRtAneKuyR
-         1M8Q==
+	s=arc-20240116; t=1713800787; c=relaxed/simple;
+	bh=99jWSURdElXqjltBDycI0VysY0rM88Y/35jVpXhh56Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CL9LisjnSSYIj/LhXRZDNcJt1iCEetQHo5Zl6l42wxz1ZKDMrQhh45dH4JycElFOptHgTnP6W1boyhWUBeeW3uTJHi7EEEcM7hDskZbTMgkxdIgaHO9BZwOIInnQvEW+vbhnllVuhU+CAsR+OXfHi4DIsrf5MMX6fDIxF9LmLRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7dabcf2a2e8so145365039f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 08:46:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713800098; x=1714404898;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wN70iPYr3n9W1U+WIrHwJM/MMTxEMvnw8AZRwUzGnOI=;
-        b=XREIp95U6huwDAIKiwhoWggc5bSnBN0tiGlH8hV86Cec1tlBoqonV0zFdaoozWm4zj
-         dP87ouBMZh5DyXzmUwluIAn9QHXV10yblgCvtAx3uzr73NAAabCxr+muoz0OaMJI7gzS
-         npY/Sta0fZJZunCwDNgO4zypPGJsjVFOfUyK6ISkVbgImDG1t/k+KTMVFHTYIMPwV8ex
-         68YsKPxvCZam9o8+3sy3MXLj7w+3S/yt/OAuV0x6WDXy3psEpTStlSAMCLsEr4L+frIT
-         IY4sjDUqnToQY5UlXUMB9NmxkSqRCIbrhiCZcIM7acsDhxYBONSJBcDNsrIty33VCWV3
-         juqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlpQcHZQ2GPtZxVj3Pf1dzYqjj78iQlBiR+RuIP08ZcgOwBgZMo7m0OilnRYRA0BdC+JOqtFJ/VkeyoYiIVlEAaGnVRes8LA/X6Y2dw1w22lYBz9teoP8CXOFoOncrTEZUbo+nC7SQ5YUQD1lTTz5EO8G6jbvxmTOIo8FZUci0phcpd/V+2vM=
-X-Gm-Message-State: AOJu0Yw+Sh4l6qO0w7z8Q7zmC6NnW6uGsr4CYyJM3jVd9yzRpt+p+i95
-	yDN6WoEG/H+FKEZeKz8J676LAYlgmcb7RnKiIsgg509fVberDqSuzsi4s0IB42DrG8Wd8oAHfKn
-	PCYc7v4N79Oj2xQySWd4fwTmsWL4=
-X-Google-Smtp-Source: AGHT+IFVaXdFYTTUUh/Ynnj3KGqzpi6jgLFcOLxDKW0sdOvKDfA0SAHpCjiqna5bFgyiQX7G5wZqnnHNc+OwlBR8vKc=
-X-Received: by 2002:a2e:86ca:0:b0:2d8:606d:c797 with SMTP id
- n10-20020a2e86ca000000b002d8606dc797mr7960ljj.10.1713800097720; Mon, 22 Apr
- 2024 08:34:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713800785; x=1714405585;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HgSoz0wJSTmNhqMe2ut0HiEScT+ZiSLQfXLEB96LFJk=;
+        b=AfQoyni7mZGagJKV5X0w9ISZ69PYZSCEme55OO08QbASaOsVH0GDtOwUNp52PvnAhs
+         ZyG34yORQkueSfMIQR44rB1W/N/oxkYCJzFOF9KErFhppF5cVp5xkv8zatW6Wh9+qapf
+         Rm2bmhx5cIshTBWgZPWmzDcusxSWHhByeEM+TNxsWIyK9wOcX5oVmUPVcPf5bvnjODqa
+         tg5bjHU9jK6o26PjwCUIJ00gGRT21qEN0b7OMQY+p/6WA8RiEsRuMJduH8r4v6CSnjug
+         4TT3KWal+VnRGItpsXOI2kWgzltvihm3HtBI+pV8W+3n98pp8FjofduHpGM27aPzTMy1
+         DBHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJinAnwPgJFtM/APUlYcUfFSJua0PzL9yBvgh3kekjBhiRRDljhO57KLi+dyh9U6S6g0blHncy0Opsar20wVFNMHit8l7dtskwuhp14g==
+X-Gm-Message-State: AOJu0YyKPuQ9gkKieVkQ4aALtPBFCfK5iFGBKx6iD7YgIEiNKORNrmuW
+	4j/VK+7eRaFL2H7knum7t5uJG83Mtsv7noJbQuCC70Hln1Vjdz9g5ljE7P+FKTgavUGVgK2ED79
+	5H86E5lByGmOHhP7LM2iun+cE3tp9WtlC/4X7oDZsqF8z/zSFc6lkOfs=
+X-Google-Smtp-Source: AGHT+IEvso29/YmG0tiGf7AAZJ58PHPb0owoJoqLxqQ2dtUfR7uhw83Q2jRn4tzrRpzK4h/BF3jLY6wbWa1fhAYLt7lrM3U0roFk
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417160842.76665-1-ryncsn@gmail.com> <20240417160842.76665-5-ryncsn@gmail.com>
- <fc89e5b9-cfc4-4303-b3ff-81f00a891488@redhat.com> <ZiB3rp6m4oWCdszj@casper.infradead.org>
- <e5b9172c-3123-4926-bd1d-1c1c93f610bb@redhat.com>
-In-Reply-To: <e5b9172c-3123-4926-bd1d-1c1c93f610bb@redhat.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 22 Apr 2024 23:34:40 +0800
-Message-ID: <CAMgjq7AKwxBkw+tP0GhmLh8aRqXA81i1QOgoqyJ2LP5xqeeJWA@mail.gmail.com>
-Subject: Re: [PATCH 4/8] ceph: drop usage of page_index
-To: Xiubo Li <xiubli@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, "Huang, Ying" <ying.huang@intel.com>, 
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, Minchan Kim <minchan@kernel.org>, 
-	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+X-Received: by 2002:a05:6638:238b:b0:485:67be:97d0 with SMTP id
+ q11-20020a056638238b00b0048567be97d0mr64340jat.1.1713800785766; Mon, 22 Apr
+ 2024 08:46:25 -0700 (PDT)
+Date: Mon, 22 Apr 2024 08:46:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000d3cfa0616b1576a@google.com>
+Subject: [syzbot] [fs?] WARNING in netdev_queue_update_kobjects (2)
+From: syzbot <syzbot+41cf3f847df2c5f600a3@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, rafael@kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 18, 2024 at 9:40=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
-> On 4/18/24 09:30, Matthew Wilcox wrote:
-> > On Thu, Apr 18, 2024 at 08:28:22AM +0800, Xiubo Li wrote:
-> >> Thanks for you patch and will it be doable to switch to folio_index()
-> >> instead ?
-> > No.  Just use folio->index.  You only need folio_index() if the folio
-> > might belong to the swapcache instead of a file.
-> >
-> Hmm, Okay.
->
-> Thanks
->
-> - Xiubo
->
+Hello,
 
-Hi Xiubo
+syzbot found the following issue on:
 
-Thanks for the comment,
+HEAD commit:    f99c5f563c17 Merge tag 'nf-24-03-21' of git://git.kernel.o..
+git tree:       net
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=152c0d20980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fb1be60a193d440
+dashboard link: https://syzkaller.appspot.com/bug?extid=41cf3f847df2c5f600a3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d3d1fd180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141dd66f180000
 
-As Matthew mentioned there is no need to use folio_index unless you
-are access swapcache. And I found that ceph is not using folios
-internally yet, needs a lot of conversions. So I think I'll just keep
-using page->index here, later conversions may change it to
-folio->index.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/65d3f3eb786e/disk-f99c5f56.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/799cf7f28ff8/vmlinux-f99c5f56.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ab26c60c3845/bzImage-f99c5f56.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+41cf3f847df2c5f600a3@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+sysfs group 'byte_queue_limits' not found for kobject 'tx-0'
+WARNING: CPU: 0 PID: 5073 at fs/sysfs/group.c:284 sysfs_remove_group+0x17f/0x2b0 fs/sysfs/group.c:282
+Modules linked in:
+CPU: 0 PID: 5073 Comm: kbnepd bnep0 Not tainted 6.8.0-syzkaller-05271-gf99c5f563c17 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:sysfs_remove_group+0x17f/0x2b0 fs/sysfs/group.c:282
+Code: 36 4c 89 e0 48 c1 e8 03 80 3c 28 00 74 08 4c 89 e7 e8 b5 f4 c2 ff 49 8b 14 24 48 c7 c7 c0 33 bb 8b 4c 89 f6 e8 b2 87 22 ff 90 <0f> 0b 90 90 48 83 c4 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc
+RSP: 0018:ffffc90003a3f8a0 EFLAGS: 00010246
+RAX: 665251c6ceee3200 RBX: ffff888076fb7050 RCX: ffff88802254bc00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffffffff8157cc12 R09: 1ffff92000747e68
+R10: dffffc0000000000 R11: fffff52000747e69 R12: ffff888076fb7020
+R13: 1ffffffff1941fac R14: ffffffff8ca10560 R15: ffff88802d2fc740
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffdbcd9e8a8 CR3: 000000002bf2a000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netdev_queue_update_kobjects+0x532/0x5f0 net/core/net-sysfs.c:1852
+ remove_queue_kobjects net/core/net-sysfs.c:1951 [inline]
+ netdev_unregister_kobject+0x110/0x250 net/core/net-sysfs.c:2104
+ unregister_netdevice_many_notify+0x11d4/0x16d0 net/core/dev.c:11129
+ unregister_netdevice_many net/core/dev.c:11157 [inline]
+ unregister_netdevice_queue+0x303/0x370 net/core/dev.c:11036
+ unregister_netdevice include/linux/netdevice.h:3115 [inline]
+ unregister_netdev+0x1c/0x30 net/core/dev.c:11175
+ bnep_session+0x2e09/0x3000 net/bluetooth/bnep/core.c:525
+ kthread+0x2f0/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
