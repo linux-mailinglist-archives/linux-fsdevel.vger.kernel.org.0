@@ -1,86 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-17440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9EE8AD648
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 23:05:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D18D8AD64B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 23:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A9C282F52
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 21:05:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A257B1F217C0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 21:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06551C69C;
-	Mon, 22 Apr 2024 21:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABAD1CABF;
+	Mon, 22 Apr 2024 21:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="THwxUERf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfCreGeQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4FA1BC44
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 21:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F441BF24;
+	Mon, 22 Apr 2024 21:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713819853; cv=none; b=UnaLHysV4u4Xlqt7crpY+ObfNnxd2sQvFPP6HfeaBpaF8Nbhic831zc7C9VmDhSVSKgTilaK/iLbDMwmDRsRcTYUErC26I+jmzmC3ca9eXw044roSQcgGLr2S+guwdmdiLfH8NShsHu+xaxYn+qe88E4syKLCQohs0u4Aa1x2ck=
+	t=1713819968; cv=none; b=qK1XSkMvqIBdyjJke2kM3uAqtdC2fEQwNDReM+TgYxhCNTgy2n7F6feU/yaPNtMtx+2IHhq8cbU4+g4AzEQKS3pomevIm3Zv3N6gpj+ftFapUltv/E7sxVvK7Y6P1lnW4RwCvo/R3Ecojn/CewJKxrqpQaT02Mba40sHuBkMMSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713819853; c=relaxed/simple;
-	bh=i+AsQI7Y8ABqQ8l7E2JUAaUunz9klDfREkVt16QywZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hxDHgQjBccUsEHH3XVlKuw9zV6VCY+SnvvY4ZCF8NEIvwsv/NWvHq4AYOYqCG8eRd+QNRaaGzauDms17n6QE6BbqJ/ktznllmJTMucZS0vN4uGEP1y2k9v8tqHyeAk9ABlT2q0nSYwFRvVCPSS4TKeYuo6aHYzJ33JXeZw2CKLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=THwxUERf; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 22 Apr 2024 17:04:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1713819849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=Iatde8BcB8zqicLv77Cl6Hl7+uMV8vbeql13AWI3gAQ=;
-	b=THwxUERfPIWHQGnz0Xs/lDnlanPsXHeby1voz1+KXgJrWm/UBuoBVrMM/H9VOqLkd8pUxD
-	ubpZZUy4EgDzf4TleNbs36uEQLm7DljcGwEoq+82r38OMqUeqD19gRoltcyF33h8TF6g+N
-	FLF6CBPghhYLo032FVARAo/bDWtUOcA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Subject: weekly bcachefs meeting, 1PM EST
-Message-ID: <xeezdsisgeku5sjoqlpgkijgxxsqcy6lu5fz563khmr72armns@xu2jqclpz2rv>
+	s=arc-20240116; t=1713819968; c=relaxed/simple;
+	bh=nfHFn+fp0jJA9vJHQNg24nHe9qmEopBNGPoI8993+9A=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Ua636NtbYEK+gJXIVrlSKyOHob1Xs+2+xAjEJ4+WcEmuukxvLvDv29lF7MgS1CSNRJhr8zKMGJ0hFRfAneL6P1FGaPeiBcHIzuwdr3edv8/k+XiHq4Ttu5aIB8+147Rd4euWzMdA+jsC83gfJbY9oKtyjt0jsW/8s2vX8Pwh84k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfCreGeQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 27FEEC3277B;
+	Mon, 22 Apr 2024 21:06:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713819968;
+	bh=nfHFn+fp0jJA9vJHQNg24nHe9qmEopBNGPoI8993+9A=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=rfCreGeQhW31EY1YVnbOQqmWxkYguAdNvpZjQ9rAWGhPSzSa1b30PkcIBCMnA+WCX
+	 YNwBUZLhVhDLuL7O7YDiCc39CUJcpKRCRj7IYHbK7qOav8RFhQTiBttgb/Dwd62idM
+	 0EwJ+W78BgXdbgOuKzrxBVsdAsOBPXyNN9+YQ7P3xxi4gEAZv/sNVWp9DoBlJoBWDe
+	 55xTS1u8MNIOB5uEUUAIRtYcW2f0DIezxhl9UrYjTbwbbDM1i/yAmvBsCxztv57PfC
+	 NtyvEAo2EgxgO6FU0PhKAzmFwyf6OfLI1HxHSFMdf0LSAuTLkX69ceMeh+aZCAf8Q5
+	 wMvzJkS266Z6g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1B3AEC43440;
+	Mon, 22 Apr 2024 21:06:08 +0000 (UTC)
+Subject: Re: [GIT PULL] bcachefs fixes fro 6.9-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <fwtvoxp2ktrhst5rm2yk4uk5atjuvnfpg7wjrozg2zd5p7tqzo@mca5izehz5fx>
+References: <fwtvoxp2ktrhst5rm2yk4uk5atjuvnfpg7wjrozg2zd5p7tqzo@mca5izehz5fx>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <fwtvoxp2ktrhst5rm2yk4uk5atjuvnfpg7wjrozg2zd5p7tqzo@mca5izehz5fx>
+X-PR-Tracked-Remote: https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-04-22
+X-PR-Tracked-Commit-Id: e858beeddfa3a400844c0e22d2118b3b52f1ea5e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a2c63a3f3d687ac4f63bf4ffa04d7458a2db350b
+Message-Id: <171381996810.20649.10594661367668434204.pr-tracker-bot@kernel.org>
+Date: Mon, 22 Apr 2024 21:06:08 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
 
-Shoot me an email if you'd like to come, and something about what you're
-interested in or would like to talk about.
+The pull request you sent on Mon, 22 Apr 2024 15:52:06 -0400:
 
-Good topics:
-- bugs you're working on, behaviour that needs explaining, or
-  better introspection/debug tooling
-- short code walkthroughs
-- short, focused code review
-- design questions for things being actively worked on
-- support issues that may need my attention
+> https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-04-22
 
-i.e., let's keep everyone abreast of each other's work and help each
-other stay productive.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a2c63a3f3d687ac4f63bf4ffa04d7458a2db350b
 
-And as always, the best place to meet and discuss is on IRC. We've now
-got two channels:
+Thank you!
 
-irc.oftc.net#bcache - the general and oldest channel (hence the name);
-this is more user focused - debugging, some support, as users popping up
-saying "hey, I noticed something interesting".
-
-#bcachefs-dev - this one is dev focused; it's quieter so that us devs
-can say "here's this thing I'm currently banging my head against" and
-hopefully get a response :)
-
-Cheers,
-Kent
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
