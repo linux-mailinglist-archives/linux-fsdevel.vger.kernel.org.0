@@ -1,194 +1,269 @@
-Return-Path: <linux-fsdevel+bounces-17409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650E48AD07D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 17:20:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5875C8AD08A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 17:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40511F21B3B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 15:20:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B307DB23E08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 15:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A488152E1F;
-	Mon, 22 Apr 2024 15:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXSm9DE+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791C31534E2;
+	Mon, 22 Apr 2024 15:24:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BE8152180;
-	Mon, 22 Apr 2024 15:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E0D15216C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 15:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713799240; cv=none; b=L2/MRJ1PwwT1fAt3mrpwK3b+gGpx+OHbQUkaYm8ADrHEyftlCeUnj8BYqOv8gcA2vE2qFLU6CfBZfT2Kg+44vHC2O5p513d60RIVXgToW5ZAWilEuJeaLxHvrKj5oVwemGMDKfZqu6undKmfPaKgIhXsBZwYYk+jQxB9qu4jeps=
+	t=1713799477; cv=none; b=E3vxJxZbkoGnXzB+OtLFKN/ggoRlbUm7SMgYSh1PNqV4gMN6GAHCB9gIlmyDsKEzGxge8O/nt4Xj1qDDr3YI5KjD3vyMojfYG0zQsYLe3YAqJZqYDs9Q49MsdgSn7mB9rQCHwTRixNPm4TyO4JTSTubpi4E+MgM44wgaYilLZXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713799240; c=relaxed/simple;
-	bh=Mwaw02jUeFGzhexemdEHDycW4vgz4Ywj3HSwss/wKGI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OXgYMy4eSSPBjSUm+TIl75/u+rN4rG8xqmrJm9NrHxHS5BOgrpjhWfhzyXa8FYECBPqX4wH2QuqcIWA7y4fnDaiVjui3xseGnLm81ztDCafsiNrlwbXEwBVCu15MQ6YG0zFH/UFfYt/iBxlOv+wguWKtzKzb8n29/B7OGYDCkl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXSm9DE+; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2dde561f852so2800461fa.2;
-        Mon, 22 Apr 2024 08:20:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713799236; x=1714404036; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vuzvRER/eRgyRC6zF+Dn/+Ln6gq/IXAuegKQubeLgkk=;
-        b=NXSm9DE+8j9PA5Kz40ujPfl8k10XRD4Sv9DuAKZRSKLtTvK/dYoxI27vyY38RK0gM9
-         85R0j4AAvVi/UbwEFfFCd0I/Esy+EdTDPfuJK/YNOEyHOrueidKoUUCfCYfW6fD+l1SB
-         elJCSp2g/p58ZxMrrp51DMtkBFb/pFloe0yXKUPir1+8COKQGfpA+Ym4YVgXcJrtsx8g
-         vM+3WGj9iSij/h3iCqzBSUMmI0Bss+brXc0IXcVZZ7bmKd4OCDZ02PK7GzkDl57tqYNZ
-         D3LcSB/8BIsyv6prffLdqfgWZrVeLkvXDhYTxjEybhXKERl1WzWPmllgJQsCmtHMzyFz
-         fAQg==
+	s=arc-20240116; t=1713799477; c=relaxed/simple;
+	bh=wtU1V2qBYhrcZoyYgVqxeMt6QBiWQdSn1ZxPDdaKx7g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E9muxTzPnkvdHST/1O7d5wVBgkuN0hLquU/IM5GkXthK4niv42GcZkA1w4WUd3pj6wOHVuzdr3+UmEPrdLsgYAIZIVhy/vqENpwcYAehghaCw/BJUJANgzuDyQSQlipH53o0SVEnSRLVODTYPDzHu8arUY3v8xPfVS2FHxVKX2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7d6bf30c9e3so640958139f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 08:24:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713799236; x=1714404036;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vuzvRER/eRgyRC6zF+Dn/+Ln6gq/IXAuegKQubeLgkk=;
-        b=hzBTB/72bEhBGfbY7Ovj74TYPbQSCZBt7YK/4tRP0ZFPXmLR17q9d8moNQIqEURG6X
-         pQc7MkrGFOueGO8hTomsw4thH1mtK5PpmeJvN0sjCbiU2wswEecXTmHFE8eniQAGgdjb
-         dQLDo78eIbeD8ynDrBGzHymjdZwpeAPLIpXRYToZgNo3SXG/ITxTJrII1wTfil87kmX6
-         /2dG4RR6o6kZz7zi9G/mTvPHXPaze0QzML+XPXLzCPGuV8YLGdVEn0vqIFds9k2D8ejO
-         63+wzHIDnI5Vdg53fgF2/a1gnUpsz+7E3fo7e06rvfY7JWZTggsS5+7Ar1H1GvTzxByT
-         8oMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyuFZu1SYn+VE4Qj2okfJVe4fcic+ctihOUx8T68PuvsELO8aYF3rcvMBeFoeNa7ZUCHln5EyO3sdSb8xznOQ3Dsc2xaoKX96xzI5fp3NDRMSZRlVDcTxLHbnnzndEmxQ2AtEjDVQSYEE3+g==
-X-Gm-Message-State: AOJu0YxsUzRX9QCyQRD+tNNteFTu8WOIHY1H7Ng7WoI33DYcwC0zKfEW
-	/Mb3zibvYnaS+7CEuEp2SFMeau5+OYP63RubEvbXpGSU7NR98xGk26/YDiHQNKrLNTLDykhi6cE
-	H8cFD3G3bnWRJZz2fjt1z2Bf2PQs=
-X-Google-Smtp-Source: AGHT+IGmn/mToNtPSu8NqpDUFrNYhzadt7vHWmwuQWYgdxJO4KVqIZ51GyywFjqOjpCMtpoxvPmrN5nQYIoT0qz/nL4=
-X-Received: by 2002:a2e:97d4:0:b0:2d8:74c6:c44c with SMTP id
- m20-20020a2e97d4000000b002d874c6c44cmr6429232ljj.46.1713799236152; Mon, 22
- Apr 2024 08:20:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713799475; x=1714404275;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dHtHnTi6FxG4AKp2BrDxT0ps7y/v6TGifGe1GDJVlwI=;
+        b=FnGr5Z/9Z1LS/lGa1KOrD045PG/+6OO2SjZDfE+5sboYoY2ojsUzPadOIj36tTCYMN
+         QjjI4ZTvo7M90xXv45yAeLh02SKLFNqyorZZhY4M5tt01FyDfuG6tShwJtDq/RUhcdxj
+         i3OWu61/tdexVwX9pSEuVBAOnr93ZiOJCn/rxRK8OSezkXAsPkRCTLguZEU7l02vMviV
+         86iBF/G/k7QMBYqClYX6UxlfdlPUHshYMQNmEC9Mudbm2mKI28HD2UcduSIJTeGY+7Bf
+         tg/8oqZXMN0pmVgaKF5YbNp4PQb3pZVWKx+UKnTkHseIWQmcjGzYX+yfKjkMXT/lZthx
+         eHiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtqmT4IR7AvZHX19qaNm0+jTlTBQ3nTY5N8DjkpAbaY4RUSam00ABWjstZyNBUlGfGixxMGsEPjZxzllinCLfNbz4TRUPIbQnqgKjsxQ==
+X-Gm-Message-State: AOJu0YwXr1mH9WVbd+3VcmHDwkQgfxsyGyfRp0dsdu1A1nV6q/K/IAUi
+	8odURv+5cTlZ5/NM1xfewlxcjU33lI+T9wDddkcJT3QwKSiNaValN1ykKotvRmygF5TyumArpQL
+	UFiNV+HScLAffZcyIJxCLAxqVXY9O7t3CEMptmhb+UhQxFUZPhk2Yitc=
+X-Google-Smtp-Source: AGHT+IGl6Ue9oyreAaIvve6ID07ZW18+KQQqr5hGPCdua2O7ZOqSiTjhF1+00xDTdCOgttfxHkYDUS9utudEzi4T5cRATUgjkqaJ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417160842.76665-1-ryncsn@gmail.com> <87zftlx25p.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87zftlx25p.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 22 Apr 2024 23:20:19 +0800
-Message-ID: <CAMgjq7B1YTrvZOrnbtVYfVMVAmtMkkwiqcqc1AGup4=gvgxKhQ@mail.gmail.com>
-Subject: Re: [PATCH 0/8] mm/swap: optimize swap cache search space
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, 
-	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6638:1683:b0:485:65de:892 with SMTP id
+ f3-20020a056638168300b0048565de0892mr60509jat.5.1713799474811; Mon, 22 Apr
+ 2024 08:24:34 -0700 (PDT)
+Date: Mon, 22 Apr 2024 08:24:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e9a7c40616b108ba@google.com>
+Subject: [syzbot] [jfs?] possible deadlock in diFree
+From: syzbot <syzbot+ff2b5414e8547b96ad2e@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 22, 2024 at 3:56=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Hi, Kairui,
->
-> Kairui Song <ryncsn@gmail.com> writes:
->
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Currently we use one swap_address_space for every 64M chunk to reduce l=
-ock
-> > contention, this is like having a set of smaller swap files inside one
-> > big swap file. But when doing swap cache look up or insert, we are
-> > still using the offset of the whole large swap file. This is OK for
-> > correctness, as the offset (key) is unique.
-> >
-> > But Xarray is specially optimized for small indexes, it creates the
-> > redix tree levels lazily to be just enough to fit the largest key
-> > stored in one Xarray. So we are wasting tree nodes unnecessarily.
-> >
-> > For 64M chunk it should only take at most 3 level to contain everything=
-.
-> > But we are using the offset from the whole swap file, so the offset (ke=
-y)
-> > value will be way beyond 64M, and so will the tree level.
-> >
-> > Optimize this by reduce the swap cache search space into 64M scope.
->
+Hello,
 
-Hi,
+syzbot found the following issue on:
 
-Thanks for the comments!
+HEAD commit:    8cd26fd90c1a Merge tag 'for-6.9-rc4-tag' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17246653180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2dc5adfa93a8cfac
+dashboard link: https://syzkaller.appspot.com/bug?extid=ff2b5414e8547b96ad2e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-> In general, I think that it makes sense to reduce the depth of the
-> xarray.
->
-> One concern is that IIUC we make swap cache behaves like file cache if
-> possible.  And your change makes swap cache and file cache diverge more.
-> Is it possible for us to keep them similar?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-So far in this series, I think there is no problem for that, the two
-main helpers for retrieving file & cache offset: folio_index and
-folio_file_pos will work fine and be compatible with current users.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-8cd26fd9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7f65e88496b8/vmlinux-8cd26fd9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/cc0f0ec3d904/bzImage-8cd26fd9.xz
 
-And if we convert to share filemap_* functions for swap cache / page
-cache, they are mostly already accepting index as an argument so no
-trouble at all.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ff2b5414e8547b96ad2e@syzkaller.appspotmail.com
 
->
-> For example,
->
-> Is it possible to return the offset inside 64M range in
-> __page_file_index() (maybe rename it)?
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-rc4-syzkaller-00038-g8cd26fd90c1a #0 Not tainted
+------------------------------------------------------
+kswapd0/111 is trying to acquire lock:
+ffff88801e3e8920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diFree+0x2ff/0x2770 fs/jfs/jfs_imap.c:886
 
-Not sure what you mean by this, __page_file_index will be gone as we
-convert to folio.
-And this series did delete / rename it (it might not be easy to see
-this, the usage of these helpers is not very well organized before
-this series so some clean up is involved).
-It was previously only used through page_index (deleted) /
-folio_index, and, now folio_index will be returning the offset inside
-the 64M range.
+but task is already holding lock:
+ffffffff8d9373c0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
 
-I guess I just did what you wanted? :)
-
-My cover letter and commit message might be not clear enough, I can update =
-it.
-
->
-> Is it possible to add "start_offset" support in xarray, so "index"
-> will subtract "start_offset" before looking up / inserting?
-
-xarray struct seems already very full, and this usage doesn't look
-generic to me, might be better to fix this kind of issue case by case.
-
->
-> Is it possible to use multiple range locks to protect one xarray to
-> improve the lock scalability?  This is why we have multiple "struct
-> address_space" for one swap device.  And, we may have same lock
-> contention issue for large files too.
-
-Good question, this series can improve the tree depth issue for swap
-cache, but contention in address space is still a thing.
-
-A more generic solution might involve changes of xarray API or use
-some other data struct?
-
-(BTW I think reducing the search space and resolving lock contention
-is not necessarily related, reducing the search space by having a
-large table of small trees should still perform better for swap
-cache).
+which lock already depends on the new lock.
 
 
->
-> I haven't look at the code in details.  So, my idea may not make sense
-> at all.  If so, sorry about that.
->
-> Hi, Matthew,
->
-> Can you teach me on this too?
->
-> --
-> Best Regards,
-> Huang, Ying
+the existing dependency chain (in reverse order) is:
+
+-> #2 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
+       might_alloc include/linux/sched/mm.h:312 [inline]
+       prepare_alloc_pages.constprop.0+0x155/0x560 mm/page_alloc.c:4346
+       __alloc_pages+0x194/0x2460 mm/page_alloc.c:4564
+       __alloc_pages_node include/linux/gfp.h:238 [inline]
+       alloc_pages_node include/linux/gfp.h:261 [inline]
+       __kmalloc_large_node+0x7f/0x1a0 mm/slub.c:3911
+       kmalloc_large+0x1c/0x70 mm/slub.c:3928
+       kmalloc include/linux/slab.h:625 [inline]
+       diMount+0x29/0x8d0 fs/jfs/jfs_imap.c:105
+       jfs_mount_rw+0x238/0x700 fs/jfs/jfs_mount.c:240
+       jfs_remount+0x51f/0x650 fs/jfs/super.c:454
+       legacy_reconfigure+0x119/0x180 fs/fs_context.c:685
+       reconfigure_super+0x44f/0xb20 fs/super.c:1071
+       vfs_cmd_reconfigure fs/fsopen.c:267 [inline]
+       vfs_fsconfig_locked fs/fsopen.c:296 [inline]
+       __do_sys_fsconfig+0x991/0xb90 fs/fsopen.c:476
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:321
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:346
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #1 (&jfs_ip->rdwrlock/1){++++}-{3:3}:
+       down_read_nested+0x9e/0x330 kernel/locking/rwsem.c:1651
+       diAlloc+0x3ea/0x1a70 fs/jfs/jfs_imap.c:1385
+       ialloc+0x84/0x9e0 fs/jfs/jfs_inode.c:56
+       jfs_create+0x23e/0xb40 fs/jfs/namei.c:92
+       lookup_open.isra.0+0x10a1/0x13c0 fs/namei.c:3497
+       open_last_lookups fs/namei.c:3566 [inline]
+       path_openat+0x92f/0x2990 fs/namei.c:3796
+       do_filp_open+0x1dc/0x430 fs/namei.c:3826
+       do_sys_openat2+0x17a/0x1e0 fs/open.c:1406
+       do_sys_open fs/open.c:1421 [inline]
+       __do_compat_sys_openat fs/open.c:1481 [inline]
+       __se_compat_sys_openat fs/open.c:1479 [inline]
+       __ia32_compat_sys_openat+0x16e/0x210 fs/open.c:1479
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:321
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:346
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #0 (&(imap->im_aglock[index])){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       diFree+0x2ff/0x2770 fs/jfs/jfs_imap.c:886
+       jfs_evict_inode+0x3d4/0x4b0 fs/jfs/inode.c:156
+       evict+0x2ed/0x6c0 fs/inode.c:667
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+       shrink_many mm/vmscan.c:4835 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+       shrink_node mm/vmscan.c:5894 [inline]
+       kswapd_shrink_node mm/vmscan.c:6704 [inline]
+       balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+       kthread+0x2c1/0x3a0 kernel/kthread.c:388
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  &(imap->im_aglock[index]) --> &jfs_ip->rdwrlock/1 --> fs_reclaim
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&jfs_ip->rdwrlock/1);
+                               lock(fs_reclaim);
+  lock(&(imap->im_aglock[index]));
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd0/111:
+ #0: ffffffff8d9373c0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
+ #1: ffff88804a6d80e0 (&type->s_umount_key#65){++++}-{3:3}, at: super_trylock_shared fs/super.c:561 [inline]
+ #1: ffff88804a6d80e0 (&type->s_umount_key#65){++++}-{3:3}, at: super_cache_scan+0x96/0x550 fs/super.c:196
+
+stack backtrace:
+CPU: 3 PID: 111 Comm: kswapd0 Not tainted 6.9.0-rc4-syzkaller-00038-g8cd26fd90c1a #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ diFree+0x2ff/0x2770 fs/jfs/jfs_imap.c:886
+ jfs_evict_inode+0x3d4/0x4b0 fs/jfs/inode.c:156
+ evict+0x2ed/0x6c0 fs/inode.c:667
+ iput_final fs/inode.c:1741 [inline]
+ iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+ iput+0x5c/0x80 fs/inode.c:1757
+ dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+ __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+ shrink_kill fs/dcache.c:1048 [inline]
+ shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+ prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+ super_cache_scan+0x32a/0x550 fs/super.c:221
+ do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+ shrink_slab_memcg mm/shrinker.c:548 [inline]
+ shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+ shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+ shrink_many mm/vmscan.c:4835 [inline]
+ lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+ shrink_node mm/vmscan.c:5894 [inline]
+ kswapd_shrink_node mm/vmscan.c:6704 [inline]
+ balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+ kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+ kthread+0x2c1/0x3a0 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
