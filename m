@@ -1,91 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-17438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881998AD5BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 22:19:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300EA8AD600
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 22:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2609C1F21A73
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 20:19:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0D1F283324
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 20:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF658155725;
-	Mon, 22 Apr 2024 20:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9477E1BDDC;
+	Mon, 22 Apr 2024 20:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="aTzO+K0y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8NIHaco"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward502c.mail.yandex.net (forward502c.mail.yandex.net [178.154.239.210])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED70315380B;
-	Mon, 22 Apr 2024 20:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F681BC41;
+	Mon, 22 Apr 2024 20:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713817147; cv=none; b=E5EsyKikvysvUDOHXeppyHku6oDa+UScs9LnAKCtnDWrIFCqvLRarIVGsEDv4bIjEnzUz6PB3Bfowj8penSjOod5+ntVLU5Xh7hHmHW/v8zD2W/eMXTH9F9HqFR37S4VOvwng8GVUwSzptLMrVRvlIJBeK7YxO3e9NHX+CAinnE=
+	t=1713818547; cv=none; b=UVx3E0MoBBlbMiX10qBJRBtTIiwUd6MWkYtHvDHqLQ34r5ootuUFIxqMlnqyvkfAQC4tBJzYWCrAxssOfmyIyN3sZ/C1vnLXlDP0X/LeCX/Oe3MCbdwrlWpgR7m2EnWT6KbyZmYCt9TjvNFF40s5X0NSGKAvTE4yPrC+5+HwVWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713817147; c=relaxed/simple;
-	bh=F1mNmWXaUViPOcI3rhPMLRbySTqw2L7HBr5ZyZBfc28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WaJ5Qk29nUboiBTJfJBuIpnqgSalJOONrTOCjrhrzplZRc8BtslUJAC27OKaQ/zpTActlsurptIljmHDRvMIS+WvXslkXpCy/+FAqOXDpZ1camJE7wBy9ZKQUV1yr+1gULrE0prJRoLMz7NMGP9FRkD38F1szfbi1pWQCNGt4MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=aTzO+K0y; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1a14:0:640:8120:0])
-	by forward502c.mail.yandex.net (Yandex) with ESMTPS id C661360FB7;
-	Mon, 22 Apr 2024 23:18:55 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id rIQbX18oBGk0-arB2myDQ;
-	Mon, 22 Apr 2024 23:18:54 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1713817134; bh=HDviXqLc5+bKGGY93odn/n8dV5Y9Ee3imq7rHYSlhCc=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=aTzO+K0yVNw9Br3tyYBmqgSmifd+pO3NGxMZGia1hJr1G7Z9NEJh0F+2TES5Xv47p
-	 gIKMyHtU7Y8ZcqLXLJoplv/wGNjHiN//nGOBKLfkXMrbal1FYpywvydwCHLNuTJQEd
-	 vTQj9Z740ANV2IhX0CBPcdNcXzYlerYM+x1y408g=
-Authentication-Results: mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <8cb28ed5-b094-4b80-9373-40f93323250e@yandex.ru>
-Date: Mon, 22 Apr 2024 23:18:52 +0300
+	s=arc-20240116; t=1713818547; c=relaxed/simple;
+	bh=qhK/xyI0znuaULfWmCQs605RLjIK84N6jBnKTLXgc9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=khVBTBYbZ+dJz4G+wflpC7QOzyvAqNZZRTSp1YmsSxMlkfuTrAseHAXJbBUuZ5+fF5KsDwAJODQB5XmY8NarxS7Os7BR2tIALZKX6veKyLiXKPBGgzCkli0Diw9z2Y9q/3tjR5RRcXnLjEBCi6oO4WiXn3hTuinqZulVNnqI+OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8NIHaco; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F6D3C113CC;
+	Mon, 22 Apr 2024 20:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713818546;
+	bh=qhK/xyI0znuaULfWmCQs605RLjIK84N6jBnKTLXgc9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u8NIHaco8Lh+wWUK53bG85Cl7txTWMyWoo8o4kEpZemgV96kdOgSOOvlFHpUCvZN2
+	 9zWha28gPiHGE1Jks74qG0oOYpJGyhGrnsbcPtDqdg+SyWlHoJW+tYLM3BUr8WWEwY
+	 JXgSvmUze9igyfEQyqINKNkSFGc9h6D6time6KCE9/uJSeChzOzrpzKN9AYCJovVm5
+	 uJCFOOuoXlL5MvcDNwy15jCfdVZ7g1862Y4JVzqirsP6gf5kFpFbOHmIGuBvuojS7y
+	 YoUI8lumh7Th/36frzx0j4//sKOHB7eXXwyvFA16WFE/Vw+p5ZEF/+UHZUr4/EzFIz
+	 zx0lUkN8zx3zw==
+Date: Mon, 22 Apr 2024 13:42:24 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	Linux-fsdevel <linux-fsdevel@vger.kernel.org>, llvm@lists.linux.dev
+Subject: Re: [PATCH 10/11] fs/ntfs3: Remove cached label from sbi
+Message-ID: <20240422204224.GA770800@dev-arch.thelio-3990X>
+References: <6c99c1bd-448d-4301-8404-50df34e8df8e@paragon-software.com>
+ <890cc224-fdb8-4c5e-a22e-b96dc86e6908@paragon-software.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] openat2: add OA2_INHERIT_CRED flag
-Content-Language: en-US
-To: Stefan Metzmacher <metze@samba.org>, linux-kernel@vger.kernel.org
-Cc: Eric Biederman <ebiederm@xmission.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org,
- Paolo Bonzini <pbonzini@redhat.com>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- Jens Axboe <axboe@kernel.dk>
-References: <20240422084505.3465238-1-stsp2@yandex.ru>
- <20240422084505.3465238-2-stsp2@yandex.ru>
- <81ab6c6a-0a9e-4f2f-b455-7585283acf53@samba.org>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <81ab6c6a-0a9e-4f2f-b455-7585283acf53@samba.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <890cc224-fdb8-4c5e-a22e-b96dc86e6908@paragon-software.com>
 
-22.04.2024 22:53, Stefan Metzmacher Ð¿Ð¸ÑˆÐµÑ‚:
-> I'm wondering if it would be better to capture the whole cred structure.
->
-> Similar to io_register_personality(), which uses get_current_cred().
->
-> Only using uid and gid, won't reflect any group memberships or 
-> capabilities...
-Hmm, I thought about that, but was
-under an impression that with get_current_cred()
-you only increment a refcount.
-But I guess the trick here is that due
-to an RCU machinery, you can actually
-get your local copy if someone else
-changes it?
+Hi Konstantin,
 
-I'll try what you say, thanks.
+On Wed, Apr 17, 2024 at 04:09:00PM +0300, Konstantin Komarov wrote:
+> Add more checks using $AttrDef.
+> 
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+
+<snip>
+
+> diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+> index 8beefbca5769..dae961d2d6f8 100644
+> --- a/fs/ntfs3/super.c
+> +++ b/fs/ntfs3/super.c
+> @@ -481,11 +481,39 @@ static int ntfs3_volinfo_open(struct inode *inode,
+> struct file *file)
+>  /* read /proc/fs/ntfs3/<dev>/label */
+>  static int ntfs3_label_show(struct seq_file *m, void *o)
+>  {
+> +    int len;
+>      struct super_block *sb = m->private;
+>      struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +    struct ATTRIB *attr;
+> +    u8 *label = kmalloc(PAGE_SIZE, GFP_NOFS);
+> +
+> +    if (!label)
+> +        return -ENOMEM;
+> +
+> +    attr = ni_find_attr(sbi->volume.ni, NULL, NULL, ATTR_LABEL, NULL, 0,
+> +                NULL, NULL);
+> +
+> +    if (!attr) {
+> +        /* It is ok if no ATTR_LABEL */
+> +        label[0] = 0;
+> +        len = 0;
+> +    } else if (!attr_check(attr, sbi, sbi->volume.ni)) {
+> +        len = sprintf(label, "%pg: failed to get label", sb->s_bdev);
+> +    } else {
+> +        len = ntfs_utf16_to_nls(sbi, resident_data(attr),
+> +                    le32_to_cpu(attr->res.data_size) >> 1,
+> +                    label, PAGE_SIZE);
+> +        if (len < 0) {
+> +            label[0] = 0;
+> +            len = 0;
+> +        } else if (len >= PAGE_SIZE) {
+> +            len = PAGE_SIZE - 1;
+> +        }
+> +    }
+> 
+> -    seq_printf(m, "%s\n", sbi->volume.label);
+> +    seq_printf(m, "%.*s\n", len, label);
+> 
+> +    kfree(label);
+>      return 0;
+>  }
+> 
+> @@ -1210,25 +1238,6 @@ static int ntfs_fill_super(struct super_block *sb,
+> struct fs_context *fc)
+> 
+>      ni = ntfs_i(inode);
+> 
+> -    /* Load and save label (not necessary). */
+> -    attr = ni_find_attr(ni, NULL, NULL, ATTR_LABEL, NULL, 0, NULL, NULL);
+> -
+> -    if (!attr) {
+> -        /* It is ok if no ATTR_LABEL */
+> -    } else if (!attr->non_res && !is_attr_ext(attr)) {
+> -        /* $AttrDef allows labels to be up to 128 symbols. */
+> -        err = utf16s_to_utf8s(resident_data(attr),
+> -                      le32_to_cpu(attr->res.data_size) >> 1,
+> -                      UTF16_LITTLE_ENDIAN, sbi->volume.label,
+> -                      sizeof(sbi->volume.label));
+> -        if (err < 0)
+> -            sbi->volume.label[0] = 0;
+> -    } else {
+> -        /* Should we break mounting here? */
+> -        //err = -EINVAL;
+> -        //goto put_inode_out;
+> -    }
+> -
+
+The attr initialization above causes the use in the ni_find_attr() to be
+uninitialized, which results in the following clang warning (or error
+when CONFIG_WERROR is enabled):
+
+  fs/ntfs3/super.c:1247:26: error: variable 'attr' is uninitialized when used here [-Werror,-Wuninitialized]
+   1247 |         attr = ni_find_attr(ni, attr, NULL, ATTR_VOL_INFO, NULL, 0, NULL, NULL);
+        |                                 ^~~~
+  fs/ntfs3/super.c:1192:21: note: initialize the variable 'attr' to silence this warning
+   1192 |         struct ATTRIB *attr;
+        |                            ^
+        |                             = NULL
+  1 error generated.
+
+Please either fix this quickly (as this isn't the first time an ntfs3
+change has broken us for some time in -next for a similar reason [1]) or
+remove this series from -next. Given the issues that Johan has brought
+up in other comments in this thread, I feel like the latter may be
+better, as this series is clearly not ready for Linus (which is one of
+-next's general requirements AFAIUI).
+
+>      attr = ni_find_attr(ni, attr, NULL, ATTR_VOL_INFO, NULL, 0, NULL,
+> NULL);
+>      if (!attr || is_attr_ext(attr) ||
+>          !(info = resident_data_ex(attr, SIZEOF_ATTRIBUTE_VOLUME_INFO))) {
+
+[1]: https://github.com/ClangBuiltLinux/linux/issues/1729
+
+Cheers,
+Nathan
 
