@@ -1,153 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-17430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 927448AD4E7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 21:32:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38668AD547
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 21:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E5FA28394B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 19:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64A591F211FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 19:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F191553B5;
-	Mon, 22 Apr 2024 19:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D267C155748;
+	Mon, 22 Apr 2024 19:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ee7aJteb"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NsfrRM7n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD111155339;
-	Mon, 22 Apr 2024 19:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CCD15535E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 19:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713814331; cv=none; b=QHAbt6H7Zw39ymHVPvv4PkbKc/DQszw3/ewcj90VIycPNDNRqYrJMsfKDgjkS25OuAVH/5rUwyWu58az0Yqaq+QA+ip+Cykz+Yc56iKiHlG5s2LFZFrBNV5eNDnkx3yzqVRVKyJcwkGz1NHum397lweax+0Lpsv3hUaFRDYInk0=
+	t=1713815534; cv=none; b=Vz1z9RWrh+ZG9A3XLBJBa9pYdnw6oWt9HmCv8wxVrtp5FOtA7Ia/PuAMrhlJD5t67aPtYOJYYvSqR84PggflL62SWXCCCvbcmvhUISXoMfiIxrpbd9KuU8iyCtv+JJ6Tq9SecAs73ftX2Zsl+h5zsLymIxPKnGCaZbxbXF5xvRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713814331; c=relaxed/simple;
-	bh=LpZc72gzqE/Pv0ySlYm5ZvuYOTORD1siYYa8+QQwGGg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DgyTlI9yiYHmC/eVOednC01sJaUoszVTb24z61GoRxHbqihdqsI8PfLa5jOJ3jyqetJuIJll/xwTnAAIU4oJ2sYsS6SQa2icWOr6Xn4BJzZDHNQaBOAIlu9kD8MvbhYNsfx8wdc63hzwxmgVTonumYlHVdCYp9yg1U61fkrLHbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ee7aJteb; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=awc5S9zitEVRfBIVdnQPa9cbPN2/bjCfocFocfbIYXM=; b=ee7aJtebYNTdZtG9Ms6bpPAYGZ
-	2tAZ0gSYMm74xYOD9JbRvAWcSXfibUb1wReLuDEbF799EqW6i16diJth/NdL2k5PMnnup4UJq721y
-	FI7pmf3XCUPFetDdg8zUElQ3MR6rSvwRRkmE9TEw5cvVB1hVeNwwIICbwxdy57UAsdOwir6z82eI6
-	RmqKoa+j32CH0lfFbbRfEGYAzfVp93eA7CiRdZZG3PP/2rltevyqHvTXOQykNv0dn3hG5k8Jsp8Ri
-	NY2r410UZFuhmf+gzSBMM3AW97jHbVSmBxpPphN7/BjbO9qDdmgdiHVQP2bpBJ6h0JAgnjkwBJRiM
-	7ZwzDM/g==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ryzOa-0000000EpP1-0sNJ;
-	Mon, 22 Apr 2024 19:32:08 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	ntfs3@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 11/11] ntfs3: Convert ni_readpage_cmpr() to take a folio
-Date: Mon, 22 Apr 2024 20:32:01 +0100
-Message-ID: <20240422193203.3534108-12-willy@infradead.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240422193203.3534108-1-willy@infradead.org>
-References: <20240422193203.3534108-1-willy@infradead.org>
+	s=arc-20240116; t=1713815534; c=relaxed/simple;
+	bh=EK1EZzGAtYGUjl2hyFST+YG4uALloruxlOHlWlLPKhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NYDA5qG0kTAy/uFah7oru+MqMTXN3pUQIwBeXRn7oHfRH8eslpcUSyUmf1yCm7vJWYaUcveAZlFp1i654lY2OoWK/21z8VknuJy2gOg2jJWuzEbxV9OVhgoQqsGqgozv4VpCGpRj9yZHpb5EUt5Dx70WB5PuArCDvQfI7+lD91s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NsfrRM7n; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 22 Apr 2024 15:52:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1713815530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=2GMQSjZim3LKV3Y1Miu61pAhsMImS7IiK2sA4UPpM/Y=;
+	b=NsfrRM7nU9HcXCA9rhNE6cw8+Nm43qOk5NEEv9VJ6pcm7wkWDZjt6x+7OD39iaf8Y8NGLG
+	lO1cosqkssc9MdPNzsuCxWmz/tMGMlCsHG/b6xrUoO2VD9+JmA1AM/EmUtL6psJxQjxmGV
+	LdQUnp/p5S+G1SwReSTd8gIvncywGLI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes fro 6.9-rc6
+Message-ID: <fwtvoxp2ktrhst5rm2yk4uk5atjuvnfpg7wjrozg2zd5p7tqzo@mca5izehz5fx>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-We still use an array of pages for the decompression, but this removes
-a few calls to compound_head().
+Hi Linus, another batch of bcachefs fixes.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/ntfs3/frecord.c | 13 +++++++------
- fs/ntfs3/inode.c   |  2 +-
- fs/ntfs3/ntfs_fs.h |  2 +-
- 3 files changed, 9 insertions(+), 8 deletions(-)
+Nothing too crazy in this one, and it looks like (fingers crossed) the
+recovery and repair issues are settling down - although there's going to
+be a long tail there, as we've still yet to really ramp up on error
+injection or syzbot.
 
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index b9b3f1bf1bc4..8b1139fd5359 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -2085,12 +2085,12 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
-  * When decompressing, we typically obtain more than one page per reference.
-  * We inject the additional pages into the page cache.
-  */
--int ni_readpage_cmpr(struct ntfs_inode *ni, struct page *page)
-+int ni_readpage_cmpr(struct ntfs_inode *ni, struct folio *folio)
- {
- 	int err;
- 	struct ntfs_sb_info *sbi = ni->mi.sbi;
--	struct address_space *mapping = page->mapping;
--	pgoff_t index = page->index;
-+	struct address_space *mapping = folio->mapping;
-+	pgoff_t index = folio->index;
- 	u64 frame_vbo, vbo = (u64)index << PAGE_SHIFT;
- 	struct page **pages = NULL; /* Array of at most 16 pages. stack? */
- 	u8 frame_bits;
-@@ -2100,7 +2100,8 @@ int ni_readpage_cmpr(struct ntfs_inode *ni, struct page *page)
- 	struct page *pg;
- 
- 	if (vbo >= i_size_read(&ni->vfs_inode)) {
--		SetPageUptodate(page);
-+		folio_zero_range(folio, 0, folio_size(folio));
-+		folio_mark_uptodate(folio);
- 		err = 0;
- 		goto out;
- 	}
-@@ -2124,7 +2125,7 @@ int ni_readpage_cmpr(struct ntfs_inode *ni, struct page *page)
- 		goto out;
- 	}
- 
--	pages[idx] = page;
-+	pages[idx] = &folio->page;
- 	index = frame_vbo >> PAGE_SHIFT;
- 	gfp_mask = mapping_gfp_mask(mapping);
- 
-@@ -2154,7 +2155,7 @@ int ni_readpage_cmpr(struct ntfs_inode *ni, struct page *page)
- out:
- 	/* At this point, err contains 0 or -EIO depending on the "critical" page. */
- 	kfree(pages);
--	unlock_page(page);
-+	folio_unlock(folio);
- 
- 	return err;
- }
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 4791a002500b..ef32be41b860 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -727,7 +727,7 @@ static int ntfs_read_folio(struct file *file, struct folio *folio)
- 
- 	if (is_compressed(ni)) {
- 		ni_lock(ni);
--		err = ni_readpage_cmpr(ni, &folio->page);
-+		err = ni_readpage_cmpr(ni, folio);
- 		ni_unlock(ni);
- 		return err;
- 	}
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index fbd14776bd28..3b50c4357a46 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -577,7 +577,7 @@ int ni_write_inode(struct inode *inode, int sync, const char *hint);
- #define _ni_write_inode(i, w) ni_write_inode(i, w, __func__)
- int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
- 	      __u64 vbo, __u64 len);
--int ni_readpage_cmpr(struct ntfs_inode *ni, struct page *page);
-+int ni_readpage_cmpr(struct ntfs_inode *ni, struct folio *folio);
- int ni_decompress_file(struct ntfs_inode *ni);
- int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
- 		  u32 pages_per_frame);
--- 
-2.43.0
+For users - if anyone is seeing bugs that impact filesystem
+availability, make sure you're reporting those and be noisy about it;
+all the non critical stuff should be reported too, but are lower
+priority for now.
 
+Cheers,
+Kent
+
+The following changes since commit ad29cf999a9161e7849aa229d2028854f90728c2:
+
+  bcachefs: set_btree_iter_dontneed also clears should_be_locked (2024-04-15 13:31:15 -0400)
+
+are available in the Git repository at:
+
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-04-22
+
+for you to fetch changes up to e858beeddfa3a400844c0e22d2118b3b52f1ea5e:
+
+  bcachefs: If we run merges at a lower watermark, they must be nonblocking (2024-04-22 01:26:51 -0400)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.9-rc6
+
+- fix a few more deadlocks in recovery
+- fix u32/u64 issues in mi_btree_bitmap
+- btree key cache shrinker now actually frees, with more instrumentation
+  coming so we can verify that it's working correctly more easily in the
+  future
+
+----------------------------------------------------------------
+Kent Overstreet (14):
+      bcachefs: Fix null ptr deref in twf from BCH_IOCTL_FSCK_OFFLINE
+      bcachefs: node scan: ignore multiple nodes with same seq if interior
+      bcachefs: make sure to release last journal pin in replay
+      bcachefs: Fix bch2_dev_btree_bitmap_marked_sectors() shift
+      bcachefs: KEY_TYPE_error is allowed for reflink
+      bcachefs: fix leak in bch2_gc_write_reflink_key
+      bcachefs: Fix bio alloc in check_extent_checksum()
+      bcachefs: Check for journal entries overruning end of sb clean section
+      bcachefs: Fix missing call to bch2_fs_allocator_background_exit()
+      bcachefs: bkey_cached.btree_trans_barrier_seq needs to be a ulong
+      bcachefs: Tweak btree key cache shrinker so it actually frees
+      bcachefs: Fix deadlock in journal write path
+      bcachefs: Fix inode early destruction path
+      bcachefs: If we run merges at a lower watermark, they must be nonblocking
+
+Nathan Chancellor (1):
+      bcachefs: Fix format specifier in validate_bset_keys()
+
+ fs/bcachefs/backpointers.c          |  2 +-
+ fs/bcachefs/bcachefs_format.h       |  3 +-
+ fs/bcachefs/btree_gc.c              |  3 +-
+ fs/bcachefs/btree_io.c              |  2 +-
+ fs/bcachefs/btree_key_cache.c       | 19 +++---------
+ fs/bcachefs/btree_node_scan.c       |  2 ++
+ fs/bcachefs/btree_types.h           |  2 +-
+ fs/bcachefs/btree_update_interior.c |  6 +++-
+ fs/bcachefs/chardev.c               |  4 ++-
+ fs/bcachefs/fs.c                    |  9 ++++--
+ fs/bcachefs/journal_io.c            | 60 ++++++++++++++++++++++++++-----------
+ fs/bcachefs/recovery.c              |  5 +++-
+ fs/bcachefs/sb-clean.c              |  8 +++++
+ fs/bcachefs/sb-errors_types.h       |  3 +-
+ fs/bcachefs/sb-members.c            |  4 +--
+ fs/bcachefs/sb-members.h            |  6 ++--
+ fs/bcachefs/super.c                 |  1 +
+ fs/bcachefs/thread_with_file.c      | 15 ++++++++--
+ fs/bcachefs/thread_with_file.h      |  3 ++
+ 19 files changed, 105 insertions(+), 52 deletions(-)
 
