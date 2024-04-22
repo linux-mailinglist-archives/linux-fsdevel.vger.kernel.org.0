@@ -1,191 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-17390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA6B8ACF43
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 16:23:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47E28ACF5A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 16:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F8801C215BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 14:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650091F21494
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 14:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EC11514F0;
-	Mon, 22 Apr 2024 14:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13321514DF;
+	Mon, 22 Apr 2024 14:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="aqck/wF7"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AvRcdhh6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F261514E3;
-	Mon, 22 Apr 2024 14:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4FC1509AF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 14:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713795789; cv=none; b=Z1KtpHA341FczgMVm8YtF/xrs2REBDo2JGcNSzjAzU0+5Zy8qGZGp9Xa3NFYD1fa2dQxFgE2DCWQjEiRayw6eDK9X49fy34keD39ai9yg8grwm7ZCRC8oQbBLCDjVR4tZXgg4Mcg+/yeF3+47PFOKb3DdmL+7U7fun33Bz1Chng=
+	t=1713796077; cv=none; b=a5sMXNs06n9bx/Y0TKMyDD6q15eNn57nFm9Yzflux9FE7u5jLcQFB5PDCC1+ZQtwVH/IYkknmbPBZWM5XttfDLtUe66YNC0ylae1Bk6402CizH1sJmevE4eDjlGtG72OnnWFQOCwfGjGZp2uFmblHJmMEW297kGttzncfNJVWNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713795789; c=relaxed/simple;
-	bh=kIUZhHXjEVfH89M7nP58Ng1lTx2knM+2pUZBTbgvVT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIluStVMiZddZloUb7AtbdUmT2rxB7Qx8Zae+2AGCIj2/lAGVlscvhB5tjDzGn+RajHU/b/lWWEfxtrrpu3CFc79g6IugX4wokr6R8ubN4pErUD1X2Nax4I/tup1Ly21IIJscdaOYLLjwmRr1Tdbk0fiQu5kWpOIKKkPpOqG5gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=aqck/wF7; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4VNRzd1NzNz9smg;
-	Mon, 22 Apr 2024 16:13:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1713795181;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2fn+fkItYrtFhHWLrzL9UxC0oz2DQmib0IIGep25rEs=;
-	b=aqck/wF7YSC/YDylTK/FcHTeWKrgG1Npt9mqhibqTMZu6/yX3Si4LF5erTKf9XMPJe13Si
-	7oGhGc7banDEcJgu4m2gIKodhToraxT/ufXWqmOe1NB6ZfTLMa0JjifrtfGWZgBs887er0
-	rtcOZh2RUyYwz7vvUXbBEbVIJ+h9emNftV6w6hdQNzuFljmxjG3VzedXyAr5bWmFErh+rd
-	VahIJn4ReXkuU7v6rzTkQYYCUp7KCX1oiaFJiKQ5R6CABjBQdqUTXJ5GQ6CAPQ9+WBrM+F
-	MTR3scBjjRktiNxvcJ1HtgiPtXIcEAsOTch+7ZPabcqbekH30AiPGFyBm6DUfQ==
-Date: Mon, 22 Apr 2024 16:12:56 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	willy@infradead.org, p.raghav@samsung.com, da.gomez@samsung.com, hare@suse.de, 
-	john.g.garry@oracle.com, linux-xfs@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [RFC] fstests: add mmap page boundary tests
-Message-ID: <5xt5ultarn7rkidw66ii2kceobb3t2d4pqtfvzogmuk23zcdqh@dzvknx352vsg>
-References: <20240415081054.1782715-1-mcgrof@kernel.org>
+	s=arc-20240116; t=1713796077; c=relaxed/simple;
+	bh=UNBjOTY0qs0uiF8EORx5BtyTGJtQ6MyutJpELBAOp5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oJGv+BrS+bJ5feQ/dHT5FZjhog41dwWnWnsihaAVpjAapFLoO9gx5yUKLCjFZCSO6HTbGDHfI7s7sTHCFHpKm/XOWHREacwoOefYuaIPramuxYtlOYXm/T9LRUOF7FGiV8QTV6iTSsg4iiELF/fPaduZJ4ZVZUr+rSds222P0Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AvRcdhh6; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51aff651083so1974952e87.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 07:27:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713796072; x=1714400872; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UNBjOTY0qs0uiF8EORx5BtyTGJtQ6MyutJpELBAOp5E=;
+        b=AvRcdhh6bssrwby6uQ53USsUaKKfA+EIjVX759zcaKj7AUOyOVcb5e+Gds//W8ik/P
+         5eJf9yOG2L6bWP60UKgMm61rwbzoWkWZLYigGPhAfGDqy9kao664Tjs5dmvX9EIccXVw
+         uOtWZM92YdGqraWkksh+1ibfbv1kwFVdR1kFnPCGvBy719BZ5Mykhtp2V0VFlLdT/1+2
+         Ev3PlMbAsuz3Cu97Aos2IWeCW8Y4wwl51tee9K2Ct0OQ2BB5exzpelb6+XoMLtAkM/s1
+         ztNZT6H9z7X+3cWolCjRGbkIOC5aZYow7I6ZvEWXg2MmyEa5BihCupNafaKfF1Upekju
+         qpYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713796072; x=1714400872;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UNBjOTY0qs0uiF8EORx5BtyTGJtQ6MyutJpELBAOp5E=;
+        b=sZJOdY3zNHotQWbl96AgsNHubVVbyRbT878DQZK+bybG0FIGvcgXhRYk15LOVDrV8A
+         yhLG3wPe2swFbrd6DWOp8W2K5V16ubEcbNqxG4ner7F6x+50UFm1tZoYw5KvhBFnt2Q0
+         YuxE3Kj3lyfVhNnDtAT64E6sSR9Oxgctd1hnTlKVMY8auXlw4xlxkdq/dlbIEHfoHoPX
+         7R7UuPDbdI0tnc0/4jvbW+rEhCDpAKP0N3LunDANEP7n3fZ+G58KZtJMi4e6+FUBpnN4
+         14v5LOwwWby2a3lHOfHkY4NokgVKsV/nMsxqLXrbNrnmkVJ7/YgtNS5fqzZGUUdTsHT4
+         xd5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXs/jAbHYTZsnTHkHO1gfdlmy3bNVli3TMaAROxR8Olu7/jtz1siqPWzlKF2WE918LQXLUUyLjcQEIvxU9X+dKCTlxTazho3b3Slpb0OQ==
+X-Gm-Message-State: AOJu0Yw+zX3nLi697s2+MPxgFohEdsZ9eVkqoRxAxdY/I/SkCda+lt6a
+	h8oKOjNh6iEf6YqMmHgX/tRjK/otk++9QHGrjdLO/6z38teTmW0KR4+fuTH1bDg=
+X-Google-Smtp-Source: AGHT+IEkN6CNdQTBKxKxXZBn2HlML3rafBsTIUTuTxt2ocrHVbXK17h0QDhg5Z61h1NNgJ6JKtrQow==
+X-Received: by 2002:a2e:805a:0:b0:2db:99e4:dbdd with SMTP id p26-20020a2e805a000000b002db99e4dbddmr5541085ljg.53.1713796072319;
+        Mon, 22 Apr 2024 07:27:52 -0700 (PDT)
+Received: from [172.30.205.46] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id p5-20020a2e93c5000000b002dce3eab848sm1076631ljh.47.2024.04.22.07.27.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Apr 2024 07:27:51 -0700 (PDT)
+Message-ID: <36a1ea2f-92c2-4183-a892-00c5b48c419b@linaro.org>
+Date: Mon, 22 Apr 2024 16:27:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240415081054.1782715-1-mcgrof@kernel.org>
-X-Rspamd-Queue-Id: 4VNRzd1NzNz9smg
-
-On Mon, Apr 15, 2024 at 01:10:54AM -0700, Luis Chamberlain wrote:
-> mmap() POSIX compliance says we should zero fill data beyond a file
-> size up to page boundary, and issue a SIGBUS if we go beyond. While fsx
-> helps us test zero-fill sometimes, fsstress also let's us sometimes test
-> for SIGBUS however that is based on a random value and its not likley we
-> always test it. Dedicate a specic test for this to make testing for
-> this specific situation and to easily expand on other corner cases.
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
-> 
-> Does enough to get us to use to test this, however I'm aware of a bit
-> more polishing up to do:
-> 
->   * maybe moving mread to common as generic/574 did it first
->   * sharing round_up_to_page_boundary() as well
-> 
-> generic/574 is special, it was just testing for correctness of
-> integrity if we muck with mmap() however if you don't have verity
-> stuff available obviously you won't end up testing it.
-> 
-> This generalizes mmap() zero-fill and SIGBUS corner case tests.
-> 
-> I've tested so far only 4k and it works well there. For 16k bs on LBS
-> just the SIGBUS issue exists, I'll test smaller block sizes later like
-> 512, 1k, 2k as well. We'll fix triggering the SIBGUS when LBS is used,
-> we'll address that in the next iteration.
-> 
-> Is this a worthy test as a generic test?
-> 
->  common/filter         |   6 ++
->  tests/generic/740     | 231 ++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/740.out |   2 +
->  3 files changed, 239 insertions(+)
->  create mode 100755 tests/generic/740
->  create mode 100644 tests/generic/740.out
-> 
-We could also extend the test to include mmap writes. 
-
-I took the lazy approach here but I think we can make the code look 
-prettier by adding some more functions that can do both mmap read and writes.
-
-diff --git a/tests/generic/740 b/tests/generic/740
-index cbb82301..93663964 100755
---- a/tests/generic/740
-+++ b/tests/generic/740
-@@ -53,6 +53,25 @@ round_up_to_page_boundary()
-        echo $(( (n + page_size - 1) & ~(page_size - 1) ))
- }
- 
-+mwrite()
-+{
-+       local file=$1
-+       local map_len=$2
-+       local offset=$3
-+       local length=$4
-+
-+       # Some callers expect xfs_io to crash with SIGBUS due to the mread,
-+       # causing the shell to print "Bus error" to stderr.  To allow this
-+       # message to be redirected, execute xfs_io in a new shell instance.
-+       # However, for this to work reliably, we also need to prevent the new
-+       # shell instance from optimizing out the fork and directly exec'ing
-+       # xfs_io.  The easiest way to do that is to append 'true' to the
-+       # commands, so that xfs_io is no longer the last command the shell sees.
-+       bash -c "trap '' SIGBUS; $XFS_IO_PROG $file \
-+               -c 'mmap -w 0 $map_len' \
-+               -c 'mwrite $offset $length'; true"
-+}
-+
- mread()
- {
-        local file=$1
-@@ -180,6 +199,12 @@ do_mmap_tests()
-                        _fail
-                fi
- 
-+               # This should just work
-+               mwrite $test_file $map_len 0 $map_len >> $seqres.full  2>$tmp.err
-+               if [[ $? -ne 0 ]]; then
-+                       _fail
-+               fi
-+
-                # If we mmap() on the boundary but try to read beyond it just
-                # fails, we don't get a SIGBUS
-                $XFS_IO_PROG -r $test_file \
-@@ -192,12 +217,29 @@ do_mmap_tests()
-                        _fail
-                fi
- 
-+               $XFS_IO_PROG -w $test_file \
-+                       -c "mmap -w 0 $map_len" \
-+                       -c "mwrite 0 $((map_len + 10))" >> $seqres.full  2>$tmp.err
-+               local mwrite_err=$?
-+               if [[ $mwrite_err -eq 0 ]]; then
-+                       echo "mmap() to page boundary works as expected but writing beyond should fail"
-+                       echo "err: $?"
-+                       _fail
-+               fi
-+
-                # Now let's go beyond the allowed mmap() page boundary
-                mread $test_file $((map_len + 10)) 0 $((map_len + 10)) >> $seqres.full  2>$tmp.err
-                if ! grep -q 'Bus error' $tmp.err; then
-                        echo "Expected SIGBUS when mmap() reading beyond page boundary"
-                        _fail
-                fi
-+
-+               mwrite $test_file $((map_len + 10)) 0 $((map_len + 10)) >> $seqres.full  2>$tmp.err
-+               if ! grep -q 'Bus error' $tmp.err; then
-+                       echo "Expected SIGBUS when mmap() writing beyond page boundary"
-+                       _fail
-+               fi
-+
-                local filelen_test=$(_get_filesize $test_file)
-                if [[ "$filelen_test" != "$new_filelen" ]]; then
-                        echo "Expected file length: $new_filelen"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/10] sysctl: Remove sentinel elements from kernel dir
+To: Joel Granados <j.granados@samsung.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, josh@joshtriplett.org,
+ Kees Cook <keescook@chromium.org>, Eric Biederman <ebiederm@xmission.com>,
+ Iurii Zaikin <yzaikin@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+ Will Drewry <wad@chromium.org>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>, Petr Mladek <pmladek@suse.com>,
+ John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Balbir Singh
+ <bsingharora@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, tools@kernel.org
+References: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-0-285d273912fe@samsung.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-0-285d273912fe@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---
-Pankaj
+
+On 3/28/24 16:44, Joel Granados wrote:
+> What?
+> These commits remove the sentinel element (last empty element) from the
+> sysctl arrays of all the files under the "kernel/" directory that use a
+> sysctl array for registration. The merging of the preparation patches
+> [1] to mainline allows us to remove sentinel elements without changing
+> behavior. This is safe because the sysctl registration code
+> (register_sysctl() and friends) use the array size in addition to
+> checking for a sentinel [2].
+
+Hi,
+
+looks like *this* "patch" made it to the sysctl tree [1], breaking b4
+for everyone else (as there's a "--- b4-submit-tracking ---" magic in
+the tree history now) on next-20240422
+
+Please drop it (again, I'm only talking about this empty cover letter).
+
+Konrad
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/commit/?h=sysctl-next&id=ec04a7fa09ddedc1d6c8b86ae281897256c7fdf0
 
