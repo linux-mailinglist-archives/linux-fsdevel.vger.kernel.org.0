@@ -1,117 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-17402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0DB8AD000
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 16:57:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2068AD027
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 17:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED5AB1C20BE0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 14:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 638641F22A11
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 15:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0192315250B;
-	Mon, 22 Apr 2024 14:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913F1152507;
+	Mon, 22 Apr 2024 15:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="erWA+QCB"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o7QGfXhh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBB2152190;
-	Mon, 22 Apr 2024 14:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F296152523;
+	Mon, 22 Apr 2024 15:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713797845; cv=none; b=aIjhA3PpHViGc0RNfAWE+1XdLii0xbpXSu/51PWYG/Py0tXTMW+3o0vv7jkzrHQMQz8l5q/cM9ZUwgJEjORB79Yr/ntxlbtyu5kuho4J3NMF7Z+o+7PLLE3QmfiS5rlHWUY0WRaI5VwtPpx1nmWehsJSvoiKNxnl3KbLVN0sTY4=
+	t=1713798249; cv=none; b=gkqNUGPjBV+DKpwrn5H7rsnOdzU9cFuNDQT8J37iX84h7TTDWPGFJx8JwDtvCjdeLYcgr/om1PqmDNdK0/xFKkZQPIu2o/oLOgNaEX9cK31LWLLTQJkXFJxoVzQCCjBysIsH0SbAMA6xWcbn6jxd7CNZvQ78uDLlLgPfcUlOftY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713797845; c=relaxed/simple;
-	bh=/ys6Pzra7IEywMh4hBfA5xJtu9C9b7qcLANvkfE5cJk=;
+	s=arc-20240116; t=1713798249; c=relaxed/simple;
+	bh=VZp1ze4DEOu4wpjMf4hEXpSipiJP0UAh6yOnK1vmw4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=riGM8UWfDPLCZnJ2v7QQNU3mO5f/vIKZ5eJNOf4cIXNdGPkSv5BUv3yIHPs9xZ3Sx1IOw1Mgoa1f0HQnBljnNHsxj8gsl+cIlgf19ql8LEsOS7G4pSJVIba/B15mI7TWtmmBhEVCZd6geNsx8sELihVJBuaoBa1zuJRpIEtUjmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=erWA+QCB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4B11C113CC;
-	Mon, 22 Apr 2024 14:57:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1713797844;
-	bh=/ys6Pzra7IEywMh4hBfA5xJtu9C9b7qcLANvkfE5cJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=erWA+QCBdHASSENTMbmbCLszQVLSQvPHDCWgfW4TwFE/GVWL7ruM5SR//WtQ1W6QM
-	 d12zJ3HocPCG90okjpoCMBPNiZ4C2wMBghXJf7jiZrH+0zwnbBY2X6rvcNM+wESAuT
-	 kBqxDZqGDGm1bi25Y/5iM9IhfADZv/lx70kLTU88=
-Date: Mon, 22 Apr 2024 10:57:23 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Joel Granados <j.granados@samsung.com>, Luis Chamberlain <mcgrof@kernel.org>, josh@joshtriplett.org, 
-	Kees Cook <keescook@chromium.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Iurii Zaikin <yzaikin@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
-	Will Drewry <wad@chromium.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, 
-	Balbir Singh <bsingharora@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org, kexec@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	tools@kernel.org
-Subject: Re: [PATCH v3 00/10] sysctl: Remove sentinel elements from kernel dir
-Message-ID: <20240422-sensible-sambar-of-plenty-ae8afc@lemur>
-References: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-0-285d273912fe@samsung.com>
- <36a1ea2f-92c2-4183-a892-00c5b48c419b@linaro.org>
- <311c8b64-be13-4740-a659-3a14cf68774a@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fiy8aJF29qygWG0N2ZB16dEPApEbqNhQcoSOOzB/mQfS4/zjnIUBZbOFC/z8ML1TPENa45uj7hJfR2SlbpzKasIG5UX/fcon/dbBbv/u5fFWQ0qjKFuYRxKxf3aMYRsoLsrfHE4PaWZDMzJR0UvtgcEl6LHdEAoNSB3y2DAxEfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o7QGfXhh; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9wOxkCOVRUK81zz0hYioTjDzHLgukrv7N/ab7G/DRNA=; b=o7QGfXhheNbrl27ixrfNEePXFu
+	4EC2dL/ybNPCi8XDCdOuhFFL0X9/z3IYjbr+zsZK5siFquEowAhkX6PMaZCtL5DhkbNXpMtiJyC7B
+	scW9a4mVAaSDGxZXHh+U3DpyXXhFuUZ82vPnPl71Q2eIylZmpzJKjGm58lHVYt1LzesNH4H7qgROa
+	JQmZC6JyjbGTZ7FVcqdanxUsEyo/EFUtFe3PFlgw+L+n4kdHWoUdDU3UcoY/sKUGaet3ButT4lFOr
+	Hc1atYWmqG+TVDNf0nyOfSRo827jxVKj+8DDeKCps++KJa56x0zmR2wpBc8Wy9l0/ogfdbIh/xMHN
+	tCfZ7WSQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ryvD2-0000000ERS1-3CAX;
+	Mon, 22 Apr 2024 15:03:56 +0000
+Date: Mon, 22 Apr 2024 16:03:56 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, akpm@linux-foundation.org,
+	dchinner@redhat.com, tytso@mit.edu, hch@lst.de,
+	martin.petersen@oracle.com, nilay@linux.ibm.com,
+	ritesh.list@gmail.com, mcgrof@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, ojaswin@linux.ibm.com, p.raghav@samsung.com,
+	jbongio@google.com, okiselev@amazon.com
+Subject: Re: [PATCH RFC 5/7] fs: iomap: buffered atomic write support
+Message-ID: <ZiZ8XGZz46D3PRKr@casper.infradead.org>
+References: <20240422143923.3927601-1-john.g.garry@oracle.com>
+ <20240422143923.3927601-6-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <311c8b64-be13-4740-a659-3a14cf68774a@kernel.org>
+In-Reply-To: <20240422143923.3927601-6-john.g.garry@oracle.com>
 
-On Mon, Apr 22, 2024 at 04:49:27PM +0200, Krzysztof Kozlowski wrote:
-> >> These commits remove the sentinel element (last empty element) from 
-> >> the
-> >> sysctl arrays of all the files under the "kernel/" directory that use a
-> >> sysctl array for registration. The merging of the preparation patches
-> >> [1] to mainline allows us to remove sentinel elements without changing
-> >> behavior. This is safe because the sysctl registration code
-> >> (register_sysctl() and friends) use the array size in addition to
-> >> checking for a sentinel [2].
-> > 
-> > Hi,
-> > 
-> > looks like *this* "patch" made it to the sysctl tree [1], breaking b4
-> > for everyone else (as there's a "--- b4-submit-tracking ---" magic in
-> > the tree history now) on next-20240422
-> > 
-> > Please drop it (again, I'm only talking about this empty cover letter).
+On Mon, Apr 22, 2024 at 02:39:21PM +0000, John Garry wrote:
+> Add special handling of PG_atomic flag to iomap buffered write path.
 > 
-> Just to clarify, in case it is not obvious:
-> Please *do not merge your own trees* into kernel.org repos. Instead use
-> b4 shazam to pick up entire patchset, even if it is yours. b4 allows to
-> merge/apply also the cover letter, if this is your intention.
+> To flag an iomap iter for an atomic write, set IOMAP_ATOMIC.
 > 
-> With b4 shazam you would get proper Link tags and not break everyone's
-> b4 workflow on next. :/
+> For a folio associated with a write which has IOMAP_ATOMIC set, set
+> PG_atomic.
+> 
+> Otherwise, when IOMAP_ATOMIC is unset, clear PG_atomic.
+> 
+> This means that for an "atomic" folio which has not been written back, it
+> loses it "atomicity". So if userspace issues a write with RWF_ATOMIC set
+> and another write with RWF_ATOMIC unset and which fully or partially
+> overwrites that same region as the first write, that folio is not written
+> back atomically. For such a scenario to occur, it would be considered a
+> userspace usage error.
+> 
+> To ensure that a buffered atomic write is written back atomically when
+> the write syscall returns, RWF_SYNC or similar needs to be used (in
+> conjunction with RWF_ATOMIC).
+> 
+> As a safety check, when getting a folio for an atomic write in
+> iomap_get_folio(), ensure that the length matches the inode mapping folio
+> order-limit.
+> 
+> Only a single BIO should ever be submitted for an atomic write. So modify
+> iomap_add_to_ioend() to ensure that we don't try to write back an atomic
+> folio as part of a larger mixed-atomicity BIO.
+> 
+> In iomap_alloc_ioend(), handle an atomic write by setting REQ_ATOMIC for
+> the allocated BIO.
+> 
+> When a folio is written back, again clear PG_atomic, as it is no longer
+> required. I assume it will not be needlessly written back a second time...
 
-I was expecting this to happen at some point. :/
+I'm not taking a position on the mechanism yet; need to think about it
+some more.  But there's a hole here I also don't have a solution to,
+so we can all start thinking about it.
 
-Note, that you can still use b4 and merge your own trees, but you need 
-to switch to using a different cover letter strategy:
+In iomap_write_iter(), we call copy_folio_from_iter_atomic().  Through no
+fault of the application, if the range crosses a page boundary, we might
+partially copy the bytes from the first page, then take a page fault on
+the second page, hence doing a short write into the folio.  And there's
+nothing preventing writeback from writing back a partially copied folio.
 
-  [b4]
-  prep-cover-strategy = branch-description
+Now, if it's not dirty, then it can't be written back.  So if we're
+doing an atomic write, we could clear the dirty bit after calling
+iomap_write_begin() (given the usage scenarios we've discussed, it should
+always be clear ...)
 
--K
+We need to prevent the "fall back to a short copy" logic in
+iomap_write_iter() as well.  But then we also need to make sure we don't
+get stuck in a loop, so maybe go three times around, and if it's still
+not readable as a chunk, -EFAULT?
 
