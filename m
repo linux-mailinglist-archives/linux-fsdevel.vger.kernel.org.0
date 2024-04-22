@@ -1,137 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-17381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7868AC620
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 09:57:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158238AC4CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 09:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 761B4B21EFC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 07:57:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9E7281BB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 07:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48AE4DA0F;
-	Mon, 22 Apr 2024 07:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VpTDjf5j"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F134DA0C;
+	Mon, 22 Apr 2024 07:10:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986C24CB35;
-	Mon, 22 Apr 2024 07:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB76487A7;
+	Mon, 22 Apr 2024 07:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713772616; cv=none; b=uSRrlcOBnt1kHFQwvgQ0v+fQ5AYy8De4BBs4JWvqmLgBXoEjZdVFzQ5JUMo728c/4zXK6B4jsTWVF34xn3jd6JU8WEhDR7/YPLqHhe3sy9fdceMMf9FP5ubS+mh436Jl6eoUPvm+9LcFh2oIzIIDDXr6VTtJau9Cg8ywzzGcL/0=
+	t=1713769821; cv=none; b=W54IBnj/8yYTPJF8X2Foj19SI53vzvilOo1eu7n1+naBb5tdDHJDAcYof5TL2/qJnMm53kBf9zx0YNffoahqe7AK4E7Ch1vyJIQMo7NPNSjXV8yj5VXA1jhuTE45yjd3yzo3qszj+scDmQIqSeDv8zx5kNFKq+skxbvbGsjU85Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713772616; c=relaxed/simple;
-	bh=ReeVKZSFAA2TgPLpJsgH6vWWoeK6ccoz8J1wehOOJc4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fHivx7rH1uZVi+bigB0Q83O7mLJ+JCG3NP9gV0OC8shPSZ78E9Kn1FitJbHwSQr7NH9QaI1CeothHiVRxzhg8/mAmsgqjoc6G9N/hqsYSG9JSmrkmWWhh3T8KGzecv9ERtDStiwq2Kd+MS6WZNQa7pFKu4+aaCaQgDa2pBs8qv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VpTDjf5j; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713772614; x=1745308614;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=ReeVKZSFAA2TgPLpJsgH6vWWoeK6ccoz8J1wehOOJc4=;
-  b=VpTDjf5jE4SdFYGRJM1J5rjJFewlkwVgYKOoDNkjsUitV5+rhDzDkeRZ
-   F9zB2mUDGlTWV9d8n+R2KMX/CvHw8Chc58elj0wG0koL7fDd76yCCOWz3
-   hFqxEnx6/ZwkliKRgTWKrF8wTGVGyn8iRC9+nWQDdTmkNak2Q3UmOfxJR
-   ImESskXZmtx4ZBzLf9twbsPGVNj+qJdrdOEzc4WXq63dyTdcT7RvTFRd+
-   0loWMjZrDryplXjUuYXxWqc0Nl4rzLMc+riGTBI6d94j4N9p6AjSkla4c
-   SJm9nUY6tGNpzvyR/sRiBzzS60bJH89QqJInBz+zyGn1qazohsabtVWOj
-   Q==;
-X-CSE-ConnectionGUID: i94jb0COSDOmwVJLm0wqqQ==
-X-CSE-MsgGUID: B3vzWeF3QDeEqHqxIBV06g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11051"; a="20437638"
-X-IronPort-AV: E=Sophos;i="6.07,220,1708416000"; 
-   d="scan'208";a="20437638"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2024 00:56:53 -0700
-X-CSE-ConnectionGUID: MMO+r1HCTdmStEKaAQMcDw==
-X-CSE-MsgGUID: svSs77+HQy2ghrhGboEg2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,220,1708416000"; 
-   d="scan'208";a="24015095"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2024 00:56:50 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Kairui Song <ryncsn@gmail.com>, Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org,  Kairui Song <kasong@tencent.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Chris Li <chrisl@kernel.org>,  Barry Song
- <v-songbaohua@oppo.com>,  Ryan Roberts <ryan.roberts@arm.com>,  Neil Brown
- <neilb@suse.de>,  Minchan Kim <minchan@kernel.org>,  Hugh Dickins
- <hughd@google.com>,  David Hildenbrand <david@redhat.com>,  Yosry Ahmed
- <yosryahmed@google.com>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] mm/swap: optimize swap cache search space
-In-Reply-To: <20240417160842.76665-1-ryncsn@gmail.com> (Kairui Song's message
-	of "Thu, 18 Apr 2024 00:08:34 +0800")
-References: <20240417160842.76665-1-ryncsn@gmail.com>
-Date: Mon, 22 Apr 2024 15:54:58 +0800
-Message-ID: <87zftlx25p.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1713769821; c=relaxed/simple;
+	bh=XowVtGgelGFc4QmiSD5yQB6xMeJZKd1nfm7oDiLP2Yw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tbVSztaCadJdE+9SYzrS8qqJUD9USMQcCe+CnXPDCe8RmxJvj9LwK4H/UDx/az9wZttfatG/S1fgOtrUjzHxHphTG2Yp+WuhleXmgUBeYaGtjXEVv8CnGNd97WNnKbx0cCwzKcZKWI+sOPRnopAQXFnQ0/KIWXWJDF9BhN3K4w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VNGbf2SnYz4f3jYC;
+	Mon, 22 Apr 2024 15:10:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id C0E8E1A016E;
+	Mon, 22 Apr 2024 15:10:13 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.6])
+	by APP2 (Coremail) with SMTP id Syh0CgAHdwpTDSZmt5eIKw--.7343S2;
+	Mon, 22 Apr 2024 15:10:13 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	willy@infradead.org,
+	jack@suse.cz,
+	bfoster@redhat.com,
+	tj@kernel.org
+Cc: dsterba@suse.com,
+	mjguzik@gmail.com,
+	dhowells@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [ATCH v3 0/4] Improve visibility of writeback
+Date: Tue, 23 Apr 2024 00:05:35 +0800
+Message-Id: <20240422160539.3340-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgAHdwpTDSZmt5eIKw--.7343S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFy5ur1UAF43ZrWUAw47urg_yoW5uw4rpF
+	Z5Aw15tr1UZw1xAFn3Ca42gry5K3y8tFy7Xr9xZrW2q3Z0qr1Dtr95Wa4rAr15C3sayFy3
+	JFsxZry8Gr4v9F7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
+	8lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E
+	3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r
+	xl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv
+	0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z2
+	80aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v
+	6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI
+	8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
+	xVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI
+	8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxUIf-PUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Hi, Kairui,
+v2->v3:
+-Drop patches to protect non-exist race and to define GDTC_INIT_NO_WB to
+null.
+-Add wb_tryget to wb from which we collect stats to bdi stats.
+-Create wb_stats when CONFIG_CGROUP_WRITEBACK is no enabled.
+-Add a blank line between two wb stats in wb_stats.
 
-Kairui Song <ryncsn@gmail.com> writes:
+v1->v2:
+-Send cleanup to wq_monitor.py separately.
+-Add patch to avoid use after free of bdi.
+-Rename wb_calc_cg_thresh to cgwb_calc_thresh as Tejun suggested.
+-Use rcu walk to avoid use after free.
+-Add debug output to each related patches.
 
-> From: Kairui Song <kasong@tencent.com>
->
-> Currently we use one swap_address_space for every 64M chunk to reduce lock
-> contention, this is like having a set of smaller swap files inside one
-> big swap file. But when doing swap cache look up or insert, we are
-> still using the offset of the whole large swap file. This is OK for
-> correctness, as the offset (key) is unique.
->
-> But Xarray is specially optimized for small indexes, it creates the
-> redix tree levels lazily to be just enough to fit the largest key
-> stored in one Xarray. So we are wasting tree nodes unnecessarily.
->
-> For 64M chunk it should only take at most 3 level to contain everything.
-> But we are using the offset from the whole swap file, so the offset (key)
-> value will be way beyond 64M, and so will the tree level.
->
-> Optimize this by reduce the swap cache search space into 64M scope.
+This series tries to improve visilibity of writeback. Patch 1 make
+/sys/kernel/debug/bdi/xxx/stats show writeback info of whole bdi
+instead of only writeback info in root cgroup. Patch 2 add a new
+debug file /sys/kernel/debug/bdi/xxx/wb_stats to show per wb writeback
+info. Patch 3 add wb_monitor.py to monitor basic writeback info
+of running system, more info could be added on demand. Patch 4
+is a random cleanup. More details can be found in respective
+patches. Thanks!
 
-In general, I think that it makes sense to reduce the depth of the
-xarray.
+Following domain hierarchy is tested:
+                global domain (320G)
+                /                 \
+        cgroup domain1(10G)     cgroup domain2(10G)
+                |                 |
+bdi            wb1               wb2
 
-One concern is that IIUC we make swap cache behaves like file cache if
-possible.  And your change makes swap cache and file cache diverge more.
-Is it possible for us to keep them similar?
+/* all writeback info of bdi is successfully collected */
+cat stats
+BdiWriteback:             4704 kB
+BdiReclaimable:        1294496 kB
+BdiDirtyThresh:      204208088 kB
+DirtyThresh:         195259944 kB
+BackgroundThresh:     32503588 kB
+BdiDirtied:           48519296 kB
+BdiWritten:           47225696 kB
+BdiWriteBandwidth:     1173892 kBps
+b_dirty:                     1
+b_io:                        0
+b_more_io:                   1
+b_dirty_time:                0
+bdi_list:                    1
+state:                       1
 
-For example,
+/* per wb writeback info of bdi is collected */
+cat /sys/kernel/debug/bdi/252:16/wb_stats
+WbCgIno:                    1
+WbWriteback:                0 kB
+WbReclaimable:              0 kB
+WbDirtyThresh:              0 kB
+WbDirtied:                  0 kB
+WbWritten:                  0 kB
+WbWriteBandwidth:      102400 kBps
+b_dirty:                    0
+b_io:                       0
+b_more_io:                  0
+b_dirty_time:               0
+state:                      1
 
-Is it possible to return the offset inside 64M range in
-__page_file_index() (maybe rename it)?
+WbCgIno:                 4208
+WbWriteback:            59808 kB
+WbReclaimable:         676480 kB
+WbDirtyThresh:        6004624 kB
+WbDirtied:           23348192 kB
+WbWritten:           22614592 kB
+WbWriteBandwidth:      593204 kBps
+b_dirty:                    1
+b_io:                       1
+b_more_io:                  0
+b_dirty_time:               0
+state:                      7
 
-Is it possible to add "start_offset" support in xarray, so "index"
-will subtract "start_offset" before looking up / inserting?
+WbCgIno:                 4249
+WbWriteback:           144256 kB
+WbReclaimable:         432096 kB
+WbDirtyThresh:        6004344 kB
+WbDirtied:           25727744 kB
+WbWritten:           25154752 kB
+WbWriteBandwidth:      577904 kBps
+b_dirty:                    0
+b_io:                       1
+b_more_io:                  0
+b_dirty_time:               0
+state:                      7
 
-Is it possible to use multiple range locks to protect one xarray to
-improve the lock scalability?  This is why we have multiple "struct
-address_space" for one swap device.  And, we may have same lock
-contention issue for large files too.
+The wb_monitor.py script output is as following:
+./wb_monitor.py 252:16 -c
+                  writeback  reclaimable   dirtied   written    avg_bw
+252:16_1                  0            0         0         0    102400
+252:16_4284             672       820064   9230368   8410304    685612
+252:16_4325             896       819840  10491264   9671648    652348
+252:16                 1568      1639904  19721632  18081952   1440360
 
-I haven't look at the code in details.  So, my idea may not make sense
-at all.  If so, sorry about that.
+                  writeback  reclaimable   dirtied   written    avg_bw
+252:16_1                  0            0         0         0    102400
+252:16_4284             672       820064   9230368   8410304    685612
+252:16_4325             896       819840  10491264   9671648    652348
+252:16                 1568      1639904  19721632  18081952   1440360
+...
 
-Hi, Matthew,
+Kemeng Shi (4):
+  writeback: collect stats of all wb of bdi in bdi_debug_stats_show
+  writeback: support retrieving per group debug writeback stats of bdi
+  writeback: add wb_monitor.py script to monitor writeback info on bdi
+  writeback: rename nr_reclaimable to nr_dirty in balance_dirty_pages
 
-Can you teach me on this too?
+ include/linux/writeback.h     |   1 +
+ mm/backing-dev.c              | 174 +++++++++++++++++++++++++++++-----
+ mm/page-writeback.c           |  27 +++++-
+ tools/writeback/wb_monitor.py | 172 +++++++++++++++++++++++++++++++++
+ 4 files changed, 345 insertions(+), 29 deletions(-)
+ create mode 100644 tools/writeback/wb_monitor.py
 
---
-Best Regards,
-Huang, Ying
+-- 
+2.30.0
+
 
