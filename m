@@ -1,90 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-17407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68EC18AD077
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 17:19:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303278AD078
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 17:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E00289F3C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 15:19:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB6141F21AA2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 15:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84D0153505;
-	Mon, 22 Apr 2024 15:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E82152DFF;
+	Mon, 22 Apr 2024 15:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="I1uDYXcw"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="LlBIseLJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BB31534EF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 15:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E29015250F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 15:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713799170; cv=none; b=ZNnlG3HPZg7Py8SHbSHPdGns1QYfeq5WKef9ETjch5U0FLGTpb48TaJy6VfIQEIjW13HyWjf29ssTF1lxWdjUuKYVysV+zL4fo+ouv2U9z7/ocSep1YDaFqfQ/1aOoBMS642WKuEdgMal7AxNq6tgqFvCjXkUetZH9eBU7r8Jm4=
+	t=1713799219; cv=none; b=eyezGN9zFhvbjzeCkRkbYn/CV8R6O97tYb1ChjibzWxo5ZazRGKXvKRCdK91pQbFe/qtXIEgDIPr+lBflJRqQZEAohTlg6NVCiF18Nb9AXIR+FJ47RTcfZCBRCQxEpPkf+R5g6uPlQVVmzFfvOcyuO81J500EEAkNPUsQn4Axek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713799170; c=relaxed/simple;
-	bh=J/L1wGSJw3wYTnWnsSxFTup1IHi4LPWiAUS491ylDsE=;
+	s=arc-20240116; t=1713799219; c=relaxed/simple;
+	bh=ceTlaihZkUB7r3BdzQ9PxIa5zGUfK1QACod8hUerT/w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sdjsbxNtwvOhC3W7q1TwebCezoHRJnAyfBK0p66T0aHum4Ag+LxBloj97LK5bhFvcWeobjpIfF4Wj+Nbus0/nUDaRSpa7HE6IfS5qCtrTI+VV0QT6SqIuTRzTlf8fz82NspRTIDRfsPmCF5n7jUUSLV88oUxbALnFGwY/9iaKqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=I1uDYXcw; arc=none smtp.client-ip=209.85.218.48
+	 To:Cc:Content-Type; b=KShSIWRJGjunCw18Hu8HA1Y7H2IjgJlrA7bEAf5myRJHGfUK4lQDOuLxATMkWi5CAupfBd58Ogkl1qe3Z9T+6JRYlf7VB/sPtd6X6lOCe1hVrhI7pVS942G6pqz+/g3RRLelnv3u6vdcjA/KJt5o6vuhydR2jGjL+bpIo3kkh+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=LlBIseLJ; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a55ab8e8766so169146266b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 08:19:26 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51967f75729so5214250e87.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Apr 2024 08:20:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1713799165; x=1714403965; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1713799215; x=1714404015; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=J/L1wGSJw3wYTnWnsSxFTup1IHi4LPWiAUS491ylDsE=;
-        b=I1uDYXcwhkuN8lSFVv/MJhXw9f7yPs15Y6oqeaPr4gXv1lEvVTTH7Lr0AeG2fOdOfP
-         xgu7QneCKy1Yd4Cle/LWH4RopfFbt10ypgOGhw/Rt4c7hg2Vvm8+tNVTBiQ87fLtSWZ8
-         Qlu5R6rMrtbwI/KzuSJ3KlHngtSSuAv89TxFY=
+        bh=ceTlaihZkUB7r3BdzQ9PxIa5zGUfK1QACod8hUerT/w=;
+        b=LlBIseLJtsZo4mpMc08UeL1XqueRrX+t/OnsmKsswgl4hFy5tD2bLkbABpy5kcyWRo
+         HalWFLofJK74/iogW7p5gXH2Ji2TrQfKxQ9rtFg9ttxuFKSCa6AkdosZYuAKN0E+hyEC
+         p7z3xNGTzek0euAZNRZs1rlqQWLPQZgD4hzUg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713799165; x=1714403965;
+        d=1e100.net; s=20230601; t=1713799215; x=1714404015;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=J/L1wGSJw3wYTnWnsSxFTup1IHi4LPWiAUS491ylDsE=;
-        b=hmC+puTYMbDFQyg+In4TZOA+XGJE8fZc1vJOgNZZLNqGOlqrpuLiezFMSvW1V6VFtk
-         nnUB+SW57dQLp8o9YX1HEjDWgcs84J9EabMTLG7RbWcNOYRJ1g2Sj+JPF4fvxiPq6+Yh
-         rpqQKoANz9aCMbW6md+rYyslJ0oRXfpTTLNe8c/vOJ4/mYSTIPscoYNwL/6JEIdlJp3/
-         riNZ+C2ygz0OOSxuRuuFmIQ/kEUra9zQNdW3Gf7YKivWI6n0rOLfysikYiH70ADeFiSA
-         eiRuqHAu4VpRkoNoUTIpNEJpNchX4fwciAjw5NoGx3kvn+YE+4TCmBFu9rLxgHxqfJxv
-         ocIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRXbfHGZo+2f9DRUC9qThhMaOPCaTwog2wRqLM3Jk9tiCNwI5YEVGkNh/U2emDiNbJUv5jy/GsflETpB3MI0EXHzuUJx9wJCbVM8/ypw==
-X-Gm-Message-State: AOJu0Yy1F638JxzBMwishJbVEau0zcFuJxY1a6fR42lc7J9RKk5YTgnx
-	oJ8KWfaXMB9HmjGijiIshydKuVkgNAT5lfCDfwxAZXNTvr48XjrVrThYlm3H+ww6lQfjH8w4N4L
-	gTFSuhMdQvS8e64tDZQ1g/LIW97U31Se3F5VjVw==
-X-Google-Smtp-Source: AGHT+IEVg4uJdVmXxw7Iq/Jw91tIuuwRuH+uF8vJTwTF/ZZhhKDWs0/JKaXQdBhFDDYppdH3JCa+a4R1v1Hr4yiJ/z0=
-X-Received: by 2002:a17:906:6092:b0:a52:387b:8391 with SMTP id
- t18-20020a170906609200b00a52387b8391mr6020148ejj.34.1713799164751; Mon, 22
- Apr 2024 08:19:24 -0700 (PDT)
+        bh=ceTlaihZkUB7r3BdzQ9PxIa5zGUfK1QACod8hUerT/w=;
+        b=WUmbW+k3IhH07WOqPTPMDDUBS/FwB3AIjI+54puyV79fX3BPAbfVHf4j1jueX3v8hM
+         gUwXYym+H287vB2YjIVL5LqrW+Rvjz/QsT0cFHSfV04SSnVF3GHRerV5YTyoSuVRJ7IC
+         47myg/4ZyZWGZuA/jtj5/3XCHrFiYpyVkOPM+M4BHT7XVr/cstd2RznvWdazQ5o06gDY
+         o3077EwPSru5Gyk2gI0CAFrND7rmSweAAfmPA7dW5EfKM4BiZTT7x3P0k5GjUl3s6YLl
+         eTxP3TV7IZT06gl8/zMzgBKJJ4XDcvE2IGBe/ffXDxPP96zAnDfjS8fhMV664OG57FL1
+         4iaQ==
+X-Gm-Message-State: AOJu0YxyqMg5HXvByEKD0Wxt6UdThIKtmb86Iq3U5tMYPuYjx49ZCkeh
+	zDfj9G8JgEBbSDKyIwBcILahbsmQY0gGWN6TxkfN2Q/xUSLHkYM3fnr2Mc/tK1v2PI/yIVY0U42
+	IN8f6n1NSbbqpA8Oks4Pdbu9IZZCER+SO0vbyng==
+X-Google-Smtp-Source: AGHT+IHaZO2vak3JC4aAocWfqUIkNpwXSJhtu9quEUw0go2VnVP6IIq5HgcYyC3i6hfM9ZR/Z5p+JEoulFVliEwn46U=
+X-Received: by 2002:a19:5f07:0:b0:51b:567e:7ea4 with SMTP id
+ t7-20020a195f07000000b0051b567e7ea4mr1586365lfb.26.1713799215361; Mon, 22 Apr
+ 2024 08:20:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240422064008.936525-1-amir73il@gmail.com>
-In-Reply-To: <20240422064008.936525-1-amir73il@gmail.com>
+References: <20240420025029.2166544-1-willy@infradead.org> <20240420025029.2166544-12-willy@infradead.org>
+In-Reply-To: <20240420025029.2166544-12-willy@infradead.org>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 22 Apr 2024 17:19:13 +0200
-Message-ID: <CAJfpegsT1WS+5wpxu60b0yX1gOTuKiHxNUQaWPxtnJcZJG+QFA@mail.gmail.com>
-Subject: Re: [PATCH] fuse: verify zero padding in fuse_backing_map
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Sweet Tea Dorminy <sweettea-kernel@dorminy.me>, Daniel Rosenberg <drosen@google.com>, 
-	linux-fsdevel@vger.kernel.org
+Date: Mon, 22 Apr 2024 17:20:03 +0200
+Message-ID: <CAJfpeguAxKAHhDj+WxMQf5T_=2anZzodi+ripJy+ak8hD5Po8A@mail.gmail.com>
+Subject: Re: [PATCH 11/30] fuse: Convert fuse_readpages_end() to use folio_end_read()
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 22 Apr 2024 at 08:40, Amir Goldstein <amir73il@gmail.com> wrote:
+On Sat, 20 Apr 2024 at 04:50, Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
 >
-> To allow us extending the interface in the future.
+> Nobody checks the error flag on fuse folios, so stop setting it.
+> Optimise the (optional) setting of the uptodate flag and clearing
+> of the lock flag by using folio_end_read().
 >
-> Fixes: 44350256ab94 ("fuse: implement ioctls to manage backing files")
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
 Applied, thanks.
 
