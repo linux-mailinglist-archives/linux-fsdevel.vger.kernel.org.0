@@ -1,66 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-17388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A598ACBB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 13:12:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F538ACEFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 16:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C1FC1C2264E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 11:12:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42623B237C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Apr 2024 14:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030D714659A;
-	Mon, 22 Apr 2024 11:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EEF1509A1;
+	Mon, 22 Apr 2024 14:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="mqmUocXs"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="L5B7yx4f"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82D2481DD;
-	Mon, 22 Apr 2024 11:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC39E15099E;
+	Mon, 22 Apr 2024 14:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713784325; cv=none; b=oFbM8sGy9hUBSHaSYcQzw/9qeer5nEX85sC3TTK9oAG+Tk+UQXQtAfbdXhyNicgHhdr+N/6JYUZ1VBknvm3GxZql2MCZ06jlC4VXmgPDMqVAWAw7qy2/exOZCASm8E3TduG78h3TqRnjMZ19g8zbalJOunhA6fdFeceGOfqCB7E=
+	t=1713794982; cv=none; b=D0d3BOAq704KKk3tJ6mN6oSzqGweir11DhPRb/a0Iadv7mq/eNVgK+A2DZsBFdny0TIkmvtIlJ+/lOeBk+oBZkcbf3YqnGdaRDkPHzCP+7Oma5pkNzDP7HAU0JUx7PVlxSQbjWmRzAEOO9Nd69d8HyOR4iC5++jiaQpAPRL/WoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713784325; c=relaxed/simple;
-	bh=dAPocxet1Oe850nbPG3d6+xiuiTaILe0wrclc0bquhQ=;
+	s=arc-20240116; t=1713794982; c=relaxed/simple;
+	bh=N3QI/yvfE9mMO9UX56rE9oNZSYLeaFSevm4oA3XFCiM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WOwJfAi7g1qpOInmGfKF2mAOZxZnPk10zlgAW1W94PxKqQa2xVBKuM2bytiCay8uzhEYQyMESY9/NUx3rdO0OcnY48TGnjEbhvVn+9o5lmg/cvN8o0mqQFnlFCMGIIIbyC69K7nwMfstEL3RxRsdV1PF7sAiSQmq0NKVPDTLZ0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=mqmUocXs; arc=none smtp.client-ip=80.241.56.151
+	 Content-Type:Content-Disposition:In-Reply-To; b=rl4GfYr3D8woOMutEROa9MBT4fvGjLD074iCfrCRmXUoovmt/js1zOogETcM7bpRXvIX4VvY4P1xNhv6TlOs3popcUYqtUzcN0dRTMP6p9jiCny5Z+vIBhB8Azq1JFDC6Q6htKeOB8q+xo6pJHdjqiEIoOLifaShti6JTP3BBrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=L5B7yx4f; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4VNMnK3Nksz9svZ;
-	Mon, 22 Apr 2024 13:03:49 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4VNRvj25tqz9sqs;
+	Mon, 22 Apr 2024 16:09:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1713783829;
+	s=MBO0001; t=1713794977;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gcKvfN037TA7hZSa4d4wVaW0uvAV7xIvSo/LgCapk+E=;
-	b=mqmUocXsR3w50nQdtWP075s0eXt8c5DeM+rfi3aUvt846NgO+qnHJo4yQ7QUkHZi+6M1XA
-	oJO0688sir/I+srkC0WLRug6oq1qkVdQAPXuW2ps6tHah0BNuNNq8jh+9+Oy68WDLOiO3o
-	H2fpseCkE5oUuy5GwzGd4m40QKDQ/6Da8cnRhlU0QX17oh6vxC18/hmPqh9nMI3Vq3nyOW
-	lvs5sKHvUnLlcjKR0ZYBIGV+xraV5tvf4//IYSXPvFSP3Sfr3X88gVh5VQBcLAPsMws0Tc
-	0EsYRbVASkL/dJ/7VA9ofv/A1nGnv3IhjqN1K+E+RQaxfTQGpL8w0sogSRT+rw==
-Date: Mon, 22 Apr 2024 13:03:45 +0200
+	bh=hiZJhujvPgZHkOD9PJsqHhFuCGuUZLC3pFCvmi4/afs=;
+	b=L5B7yx4f8IdB/n8OlpIVFYN0mwK6BIUitWtyeu8ipcinpiwhr5BZvd5G0hNIXI2szK0Vcq
+	JIIxqRKqLOpCNoOtruRt4CfsDwJNH2kbg7bIuDgm2lcSBetJEz8DPeHwKhWGG/5E+/GrmS
+	QDJ0r3Qo6nSHqpI9paq3DunEWYXYYWC41cK53Cry93r5OykdW3O7H99csdK28YmAmwlnSb
+	Fy1+GTnYRJpZqNXB4//IQQp7ATHEo25V1Vf0yrtrbphhlHHwmC+4YeAyYcIUdGvB9z2jHv
+	Df7WjB1BxNxCQHksvPD1HQbUNkx2TdHuLaNnaR6TDN6TL1g55iZHC057JMtRgw==
+Date: Mon, 22 Apr 2024 16:09:33 +0200
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	gost.dev@samsung.com, chandan.babu@oracle.com, hare@suse.de, mcgrof@kernel.org, 
-	djwong@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	david@fromorbit.com, akpm@linux-foundation.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v3 05/11] readahead: allocate folios with
- mapping_min_order in readahead
-Message-ID: <i4c6xe6jdei2to6kah4kgjehpjlanaqfulju2jzsu5ny2gmegv@2b2oh44oilnj>
-References: <20240313170253.2324812-1-kernel@pankajraghav.com>
- <20240313170253.2324812-6-kernel@pankajraghav.com>
- <ZgHJxiYHvN9DfD15@casper.infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, fstests@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, willy@infradead.org, p.raghav@samsung.com, da.gomez@samsung.com, 
+	hare@suse.de, john.g.garry@oracle.com, linux-xfs@vger.kernel.org, 
+	patches@lists.linux.dev
+Subject: Re: [RFC] fstests: add mmap page boundary tests
+Message-ID: <ldgz6z4r6bt44evqe46ngmd5w5ienxjnrk446ktxpdpksqxsl4@fw4sjusyq6ub>
+References: <20240415081054.1782715-1-mcgrof@kernel.org>
+ <20240415155825.GC11948@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,83 +67,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZgHJxiYHvN9DfD15@casper.infradead.org>
+In-Reply-To: <20240415155825.GC11948@frogsfrogsfrogs>
+X-Rspamd-Queue-Id: 4VNRvj25tqz9sqs
 
-> > @@ -515,7 +562,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
-> >  		if (index & ((1UL << order) - 1))
-> >  			order = __ffs(index);
-> >  		/* Don't allocate pages past EOF */
-> > -		while (index + (1UL << order) - 1 > limit)
-> > +		while (order > min_order && index + (1UL << order) - 1 > limit)
-> >  			order--;
+> > +setup_zeroed_file()
+> > +{
+> > +	local file_len=$1
+> > +	local sparse=$2
+> > +
+> > +	if $sparse; then
+> > +		$XFS_IO_PROG -f -c "truncate $file_len" $test_file
+> > +	else
+> > +		$XFS_IO_PROG -f -c "falloc 0 $file_len" $test_file
+> > +	fi
+> > +}
+> > +
+> > +round_up_to_page_boundary()
+> > +{
+> > +	local n=$1
+> > +	local page_size=$(_get_page_size)
+> > +
+> > +	echo $(( (n + page_size - 1) & ~(page_size - 1) ))
 > 
-> This raises an interesting question that I don't know if we have a test
-> for.  POSIX says that if we mmap, let's say, the first 16kB of a 10kB
-> file, then we can store into offset 0-12287, but stores to offsets
-> 12288-16383 get a signal (I forget if it's SEGV or BUS).  Thus far,
-> we've declined to even create folios in the page cache that would let us
-> create PTEs for offset 12288-16383, so I haven't paid too much attention
-> to this.  Now we're going to have folios that extend into that range, so
-> we need to be sure that when we mmap(), we only create PTEs that go as
-> far as 12287.
-> 
-> Can you check that we have such an fstest, and that we still pass it
-> with your patches applied and a suitably large block size?
-> 
+> Does iomap put a large folio into the pagecache that crosses EOF, or
+> does it back down to base page size?
 
-So the mmap is giving the correct SIGBUS error when we try to do this:
-dd if=/dev/zero of=./test bs=10k count=1; 
-xfs_io -c "mmap -w 0 16384" -c "mwrite 13000 10" test
-
-Logs on bs=64k ps=4k system:
-root@debian:/media/test# dd if=/dev/zero of=./test bs=10k count=1;
-root@debian:/media/test# du -sh test 
-64K     test
-root@debian:/media/test# ls -l --block-size=k test 
--rw-r--r-- 1 root root 10K Apr 22 10:42 test
-root@debian:/media/test# xfs_io -c "mmap  0 16384" -c "mwrite 13000 10" test
-Bus error
-
-The check in filemap_fault takes care of this:
-
-max_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-if (unlikely(index >= max_idx))
-        return VM_FAULT_SIGBUS;
-
-The same operation for read should also give a bus error, but it didn't.
-Further investigation pointed out that the fault_around() does not take
-this condition into account for LBS configuration. When I set fault_around_bytes
-to 4096, things worked as expected as we skip fault_around for reads. 
-
-I have a patch that return SIGBUS also for the following read operation:
-dd if=/dev/zero of=./test bs=10k count=1; 
-xfs_io -c "mmap -r 0 16384" -c "mread 13000 10" test
-
-This is the patch I have for now that fixes fault_around() logic for LBS
-configuration:
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index f0c0cfbbd134..259531dd297b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3600,12 +3600,15 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
-        }
-        do {
-                unsigned long end;
-+               unsigned long i_size;
- 
-                addr += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
-                vmf->pte += xas.xa_index - last_pgoff;
-                last_pgoff = xas.xa_index;
-                end = folio_next_index(folio) - 1;
--               nr_pages = min(end, end_pgoff) - xas.xa_index + 1;
-+               i_size = DIV_ROUND_UP(i_size_read(mapping->host),
-+                                     PAGE_SIZE) - 1;
-+               nr_pages = min3(end, end_pgoff, i_size) - xas.xa_index + 1;
- 
-                if (!folio_test_large(folio))
-                        ret |= filemap_map_order0_folio(vmf,
-
-I will send a new version of the series this week after doing some more
-testing.
+No, we back it down to the base page size if the higher order folio
+crosses EOF. But this changes when we have the LBS support as we need to
+guarantee the base folio order that will be based on the filesystem BS.
 
