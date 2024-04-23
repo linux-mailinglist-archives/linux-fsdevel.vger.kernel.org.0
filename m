@@ -1,175 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-17552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D008AF8FE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 23:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93248AFBAD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 00:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF94EB2782A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 21:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F841F23EBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 22:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADE4143888;
-	Tue, 23 Apr 2024 21:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b="nmQU4JJf";
-	dkim=permerror (0-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b="W4jem5C6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A996F143C48;
+	Tue, 23 Apr 2024 22:25:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EC420B3E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Apr 2024 21:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.218
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713908329; cv=pass; b=dnQHzWSS+fv7fcecSQ/eDcMcTHEGozL8dFw8mksbhHDW5GjGYXpuJwWXdh+tSc/6pJJTtdRRn54PlUukp/09j2u9Xsr3SDBqN/+8Z3GpiAGyl0k+ni5D+pOomkf9JWXeJf6WLTSHbYEOaQiGuxJgkpGtal5OkC2FpErgUq5vHmY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713908329; c=relaxed/simple;
-	bh=Zk5njJSVJa074qupboCbzMWQwLFpVYWpJz1hq7jPNIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b22H6CDEErgVTaaEszsEqqbFvaJHU4LpX573XEluC6BdMx23WTMT8ic3Yrg2rpIwBS5iJm+wn+HieflAlFFDp1k4sovlHUlcPZp0M5WGkDZbZ8hHcvL4nl+eo2abioLLbX4JIEtsh9XlijKUywVUZEASHJt+fvAsUy3jDP3rtPY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infinite-source.de; spf=none smtp.mailfrom=infinite-source.de; dkim=pass (2048-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b=nmQU4JJf; dkim=permerror (0-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b=W4jem5C6; arc=pass smtp.client-ip=81.169.146.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infinite-source.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infinite-source.de
-ARC-Seal: i=1; a=rsa-sha256; t=1713908324; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=JCYbZwGu9AgW2prGR7oq8RdGFuKIBqpaoIHHIFp/o0t1Wv6pHPMTEQxjqYoX5Oitkd
-    mcc1XW/x6bO6elu5FtqjO6+MpJ6xItmR2THxwNRrXdMGf/I93Mi2ql0W1p+IH0pMOMSQ
-    LokuzkohD2uR7xV704sJvdqK79szLV32n4I4vsz2ZkbZlmYEUKOtZxlNdxPYHSeeDlD4
-    ypC9FXvOk0rQfeGeZVSbjB4lxRavehbM9tSoj9yb2QQ2tKYkKkAPX7s/SZnh9ZuB2oCI
-    aE0pKKCzFsyVULXp4eHpnOJZLCUHK+0B1u9nFEKeEtqGmP7EzWF052OcMi1j8u/oTU1R
-    dSsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1713908324;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=fMIc8ZZP0KaBdMmo//JfV9xAkzBPVEo9lwsDsR/39Ws=;
-    b=AOE5Jd8hptYde1NLUiTxTCWxU9pjZTEajoaItUlMU64mQl0fd4LEidjY9Z0cq3mEcB
-    ZPeVQztnt25toGxkmOTXYvGjuKP1ad+IVKhm9AM48wgk/t7dep1+TVTxJNnsJjigCn6T
-    euZ6duEZ06fefS+Hcmp/UcKuFxzf98xqkFKT9kNexP7rcwbGq7mo76/7m9/9gNfMP8b5
-    LZ6xbR/EMADBmisciEqvU2PIVKW87zznGGVj4PbGZ5F6BHYN9h7XNU/hdG9jLN1PcXqE
-    v371lAqbxvVBUaiRSysTo7TtFqQg8aDKT8mZH0oCguOmzTmImBRddtzp5FWMrBQusWFH
-    9zGw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1713908324;
-    s=strato-dkim-0002; d=infinite-source.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=fMIc8ZZP0KaBdMmo//JfV9xAkzBPVEo9lwsDsR/39Ws=;
-    b=nmQU4JJf5CUWOC7qCeKPKlUeuw9weaU7cSXdtR/ZviNvbQ0QrztDoIFvBy3wMQMvqR
-    rKFxfZmU7BqPsZyv5jPbZkePsbrPXfk2ml0JO37snxFXj73qTlUos1YRx8L31Yr4A5DP
-    HmuD4Bh4Z3+WG6StWbGTnyCkBaW7jAop36NV1AK3JWk+DIFpaI2m2w7h32W4b2d7/WzM
-    JY9c0wNooycDsJz/fvviZMidyq7fikkjA6XtOky16iN8Ubw7b7AmqxKaiDf5+yyo8fh+
-    LqIyW+xa5T4aZnoHBJmOVaDiGKk0aVa/vH8gaQz86uL9fLebycJ6laX5PThMcX2iDs3g
-    r7Zw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1713908324;
-    s=strato-dkim-0003; d=infinite-source.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=fMIc8ZZP0KaBdMmo//JfV9xAkzBPVEo9lwsDsR/39Ws=;
-    b=W4jem5C6CatIkWd+l3DvW1/HVKfLkVDRDZWa6PUWex/Z20WuQ/rXOTwnAF45iKsSqt
-    FETOm5qe1MvHICJ8WqDw==
-X-RZG-AUTH: ":LW0Wek7mfO1Vkr5kPgWDvaJNkQpNEn8ylntakOISso1hE0McXX1lsX682SOpskKNgu1vdp7pXN2ayNAkQW4xSV/VuPAs06jowu1ddU/LM/lzJb1ov/T2gg=="
-Received: from [IPV6:2003:de:f746:1600:32c9:e069:ee89:9310]
-    by smtp.strato.de (RZmta 50.5.0 AUTH)
-    with ESMTPSA id 2e087803NLci2Kn
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Tue, 23 Apr 2024 23:38:44 +0200 (CEST)
-Message-ID: <d862407f-640a-4fa0-833d-c2fa35eff119@infinite-source.de>
-Date: Tue, 23 Apr 2024 23:38:43 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72D285274
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Apr 2024 22:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713911131; cv=none; b=D6CiZf5qV2X2ISvwMtBUHB1eFdulBCdy/9EGPB07tBM2CWdIY1euuBUOnt0WdXG44QYLtR5PCDIj4mVfpdjA7HU44BY2V2La/fcC0nAyb21iHqOTzteDZFQITiB5MrxJE/PX9CNdJkn40zIzU4c7zcoxdHLV8EBJYvSjDf5EWvk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713911131; c=relaxed/simple;
+	bh=5NKc+KzJv4XeC9iiJoL21wYs9nyIBRjvAj5KvZ1W4A4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cWDslsz6kWDCizeAQN7hndwJmmiFtdKW7Cg1rd5A+I80ovTOnYNIu2bL1YVMZjjg4tf6flQyy5Y/4APsd36TVL7r/hwlLN9q4DQPKvxIO5j/vUxIn0WwIPs9aL4XMbow4UraORBASTK4easRotOH9V1rrFKCuu5uNvlBEcN/wzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7d9d0936d6aso812626839f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Apr 2024 15:25:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713911129; x=1714515929;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sedmCRB2uj77q0fSKeZqXQWSbzSs2fuWMeWh1CFXBaM=;
+        b=FllNHA0eAUwzbdOngBuEWsfcMdqmiPyuDXnSz+/GQxEynxVmYBoyLjP6x5/XbsPZy7
+         DIYKimeJo49mp8rsSQky6viF7aAibu3BH3h3APrL876y4BMErBJI//4mrT3epuVuiTv+
+         S++G5JxpqUhDyHOR6J6e1FGxZrL6jWvolvzDn7XnCEku17tOHAztPieswGcAjGWMh9GI
+         FHKb4BoH8o2ZXzfM5H4P660HZmOas0rKqL4QeqvwF5U9NzRzmxyYcWulCAgcjeW9O7a4
+         SpdQM4b0DMF5mqrn6ETf47ErXpx0zPoTT/DyiJGGQXazgHo+AJoTjCkTEDWWB5bEov4M
+         z8dA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBXA3kcEui1c266p3A1vOsdyA9hoPELhTx5RY712pnYm9Q6D2knQ5sajUN77EVbawaw8hnaj7vS4Qaw20hQxJbe3/0VFow9IL7yWR4jQ==
+X-Gm-Message-State: AOJu0YxsQOWQBD0srwLEYnBv58B0mEGn7rHrlGl/DyBmWbdAemZ4aOfm
+	Gad8jixeBPCzc69lOmy7tQyvnRXZ0fVcfbNi+m1fETtkPWyU5dklDKtetrh3hmGoBj5g5wo2x1v
+	d3ZuB4chGKAY8+rodYHTp2j0kU3UUE/Qn3vIXCM43c0Xpk4NdsbSTBJs=
+X-Google-Smtp-Source: AGHT+IE67aMdA0tSXgLd6wNUNc5Qs/GVAVjjQKKTFh1BI8qt4IDBG2m2u4C2yNjHtD6EgyroMTQPGZidXRrviYu5qquW6nUdqssa
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: EBADF returned from close() by FUSE
-To: The 8472 <kernel@infinite-source.de>, Miklos Szeredi <miklos@szeredi.hu>,
- Antonio SJ Musumeci <trapexit@spawn.link>
-Cc: linux-fsdevel@vger.kernel.org
-References: <1b946a20-5e8a-497e-96ef-f7b1e037edcb@infinite-source.de>
- <ff9b490d-421f-4092-8497-84f545a47e6a@infinite-source.de>
- <1db87cbf-0465-4226-81a8-3b288d6f47e4@spawn.link>
- <f7c97360-8f5e-45f4-876c-3dcbf9522a3a@infinite-source.de>
- <032cfe2c-a595-4371-a70b-f6d208974b0f@spawn.link>
- <f764ac09-bd84-41f0-847b-bc89016a4613@infinite-source.de>
- <aaabfbe6-2c61-46dc-ab82-b8d555f30238@spawn.link>
- <58766a27-e6ff-4d73-a7aa-625f3aa5f7d3@infinite-source.de>
- <CAJfpegv1K-sF6rq-jXGJX12+K38PwvQNsGTP-H64K5a2tkxiPA@mail.gmail.com>
- <9f991dcc-8921-434c-90f2-30dd0e5ec5bc@spawn.link>
- <CAJfpegsJ47o=KwvW6KQV5byo7OtmUys9jh-xtzhvR6u8RAD=aA@mail.gmail.com>
- <692a9f0b-9c2b-4850-b8bc-48f09fe41762@infinite-source.de>
-Content-Language: en-US
-From: The 8472 <kernel@infinite-source.de>
-In-Reply-To: <692a9f0b-9c2b-4850-b8bc-48f09fe41762@infinite-source.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:840a:b0:482:e78a:899c with SMTP id
+ iq10-20020a056638840a00b00482e78a899cmr72874jab.3.1713911129199; Tue, 23 Apr
+ 2024 15:25:29 -0700 (PDT)
+Date: Tue, 23 Apr 2024 15:25:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000866ea0616cb082c@google.com>
+Subject: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in diFree
+From: syzbot <syzbot+241c815bda521982cb49@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 23-04-2024 15:38, Miklos Szeredi wrote:
-> On Tue, 23 Apr 2024 at 15:24, Antonio SJ Musumeci<trapexit@spawn.link>  wrote:
->
->>   From the write(2) manpage (at least on Ubuntu):
->>
->> "Other errors may occur, depending on the object connected to fd."
->>
->> My argument has been that this note is defacto true generally.
-> Yes.
+Hello,
 
-In some places we do rely on error codes having exactly the documented meaning
-and no other. E.g. fcntl(..., F_GETFD) failing with EBADF is treated as fatal,
-other codes are not.
-Or openat(..., O_NOFOLLOW | O_DIRECTORY) returning ENOTDIR is trusted to mean
-that the file is in fact not a directory and can be unlinked instead of rmdir'd
+syzbot found the following issue on:
 
->> The specifics of this thread stem from close() returning EBADF to the
->> client app while talking to a FUSE server after the open() succeeded
->> and, from the point of view of the client app, returned a valid file
->> descriptor. Sounds like a bug in the FUSE server rather than something
->> FUSE itself needs to worry about.
-> Return value from close is ignored in 99% of cases.  It is quite hard
-> to imagine this making real difference to an application. The basic
-> philosophy of the linux kernel is pragmatism: if it matters in a real
-> world use case, then we care, otherwise we don't.   I don't think a
-> server returning EBADF matters in real life, but if it is, then we do
-> need to take care of it.
+HEAD commit:    3cdb45594619 Merge tag 's390-6.9-4' of git://git.kernel.or..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=115a2547180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f47e5e015c177e57
+dashboard link: https://syzkaller.appspot.com/bug?extid=241c815bda521982cb49
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109bb8f7180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e54bab180000
 
-Current Rust versions unwind if closedir() is not successful since
-directories aren't writable and aren't expected to have writeback
-errors. That's what lead to this thread.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4befd8e98bed/disk-3cdb4559.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/efc09f95602f/vmlinux-3cdb4559.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/29a54be03694/bzImage-3cdb4559.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/784deb2bb8a2/mount_0.gz
 
-If that had returned an EIO that would have been annoying but
-would clearly point at unreliable storage. If it returns
-EBADF that is more concerning because it could be a double-close or
-something similar within the process clobbering FDs.
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
->> This is not unlike a recent complaint that when link() is not
->> implemented libfuse returns ENOSYS rather than EPERM. As I pointed out
->> in that situation EPERM is not universally defined as meaning "not
->> implemented by filesystem" like used in Linux. Doesn't mean it isn't
->> used (I didn't check) but it isn't defined as such in docs.
-> ENOSYS is a good example where fuse does need to filter out errors,
-> since applications do interpret ENOSYS  as "kernel doesn't implement
-> this syscall" and fuse actually uses ENOSYS for a different purpose.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14dc8b53180000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16dc8b53180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12dc8b53180000
 
-Yes, we use ENOSYS a lot for feature detection. Bogus ones would result
-result in loss of performance and minor functionality.
-Due to old docker seccomp filters returning EPERM instead of ENOSYS
-on filtered syscalls we sometimes also have to treat EPERM like ENOSYS
-on syscalls where EPERM is not documented as one of the valid return codes.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+241c815bda521982cb49@syzkaller.appspotmail.com
 
-Also, "not universally defined" is not relevant, we consult a platform's
-manpages to understand platform-specific behavior, not just the posix ones.
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_imap.c:886:2
+index 524288 is out of range for type 'struct mutex[128]'
+CPU: 1 PID: 111 Comm: jfsCommit Not tainted 6.9.0-rc4-syzkaller-00173-g3cdb45594619 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:217 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:415
+ diFree+0x21c3/0x2fb0 fs/jfs/jfs_imap.c:886
+ jfs_evict_inode+0x32d/0x440 fs/jfs/inode.c:156
+ evict+0x2a8/0x630 fs/inode.c:667
+ txUpdateMap+0x829/0x9f0 fs/jfs/jfs_txnmgr.c:2367
+ txLazyCommit fs/jfs/jfs_txnmgr.c:2664 [inline]
+ jfs_lazycommit+0x49a/0xb80 fs/jfs/jfs_txnmgr.c:2733
+ kthread+0x2f0/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+---[ end trace ]---
+Kernel panic - not syncing: UBSAN: panic_on_warn set ...
+CPU: 1 PID: 111 Comm: jfsCommit Not tainted 6.9.0-rc4-syzkaller-00173-g3cdb45594619 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ panic+0x349/0x860 kernel/panic.c:348
+ check_panic_on_warn+0x86/0xb0 kernel/panic.c:241
+ ubsan_epilogue lib/ubsan.c:222 [inline]
+ __ubsan_handle_out_of_bounds+0x141/0x150 lib/ubsan.c:415
+ diFree+0x21c3/0x2fb0 fs/jfs/jfs_imap.c:886
+ jfs_evict_inode+0x32d/0x440 fs/jfs/inode.c:156
+ evict+0x2a8/0x630 fs/inode.c:667
+ txUpdateMap+0x829/0x9f0 fs/jfs/jfs_txnmgr.c:2367
+ txLazyCommit fs/jfs/jfs_txnmgr.c:2664 [inline]
+ jfs_lazycommit+0x49a/0xb80 fs/jfs/jfs_txnmgr.c:2733
+ kthread+0x2f0/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-So if linux implements its fuse client in a way that propagates arbitrary
-error codes to syscalls for which the linux-specific documentation says that only
-a certain set of error codes with specific meanings would be returned then
-either the documentation is wrong or those errors should be mangled before
-they bubble up to the syscall.
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
