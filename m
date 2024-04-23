@@ -1,126 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-17543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4239C8AF645
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 20:06:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E278AF699
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 20:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 653FF1C21844
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 18:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7365A1F25B74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 18:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D7013F45D;
-	Tue, 23 Apr 2024 18:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCD813F459;
+	Tue, 23 Apr 2024 18:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="RFLwoUE+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WfiCVzYk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4121013E3FA;
-	Tue, 23 Apr 2024 18:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA751DDC5;
+	Tue, 23 Apr 2024 18:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713895554; cv=none; b=X07r0eR/Ls+YcEUB4NhE8He2ky4p7dWn5VEf/gWWkYEXE+PaCm3FwLAmQ036DQQ8EC76zaLOgwcR97MIDHDcSCI8H0V/pYowsu5Z8Ywu9d0bUwDBrmpEwLNZYSZx3pFeC6O+UKpFPYb5TqyXGZmxv4qQQEZdvwKvYI9spCJvBVk=
+	t=1713897108; cv=none; b=na4g+41QcKKUfAUVIVfgS47Xqo5jjlr+WdTFRhS9vKR6s+5mQb7nBMLxbUPDiyj1X604PH0Vh9cxVnLkBSuH6OceENWw5B7DCxC7fxEsRhL7/x0cB+QCvMHW3y7I5V/XNtj+ySeyhr0cf2xY2Oen+mjYV9nH9mrTZQjPtxonWao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713895554; c=relaxed/simple;
-	bh=cLmdiFJGIPbJIGlD75Kc+63tuL2Yo4mblrORZE2KIGw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MEIYd1T9xGHGyGPMEWKx/Wr2l9ahcEalAuOysl93Vu0ftHSwcSLMHAbuCPACWC/UOuvaV1D8bc1l38caiNc4JrMdgNVH/50xcHG3lEOxf5BOhz6SeGHqcFGqe/B7Bkxbb2MZsRYA0jKyzqqg0zkz+j+lRY2Wacba9JZx3W0CPjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=RFLwoUE+; arc=none smtp.client-ip=178.154.239.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1a14:0:640:8120:0])
-	by forward502b.mail.yandex.net (Yandex) with ESMTPS id 6AA705EFBE;
-	Tue, 23 Apr 2024 21:05:42 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id d5Pu8ZKo7Os0-yyoYSl4F;
-	Tue, 23 Apr 2024 21:05:41 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1713895541; bh=glKFAk+N6amMEPICwdwbwvr3K4LhVCrg+bBmsDo+ia0=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=RFLwoUE+qG5ib7z005EuxVvB/+ijx1A+4g4h5j0gRFh2sl/tgRwJS0KwED3GNWvTx
-	 X1t9gaPnplbBl3pp9b8+Oue3z537Nvx32xWaRg6o5GZ2LRgRX2eeV1wXvXNw5AJfL4
-	 4w53QR7PCLlAjCSTIj2Tgi37z2iEfh5N3AmKs/00=
-Authentication-Results: mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <bcc5c69a-fdb7-4835-bd1f-4093d360822c@yandex.ru>
-Date: Tue, 23 Apr 2024 21:05:39 +0300
+	s=arc-20240116; t=1713897108; c=relaxed/simple;
+	bh=zCEHlyKJhhK4MvhJVSRGGSCDG0oxF0tC8ADUk82NkVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bfRq5v77AOHR8aaGY6eV8O+t4obBkrmNNQ7UZr5mkx1KRud0on5EW8Th/1x6gZNv4CIsmrcPxMemhMvacMK0q4VuGTyc0tyiFQ6k3WkB1jtv5bpJZZWCSoec0Z418b+IwL4cLm2rxS+fXaHMUM/K6XuSCnm8GJ3Tp8SKroRPu+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WfiCVzYk; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=Rogg05ztOu4aP2/pn8CD75vsgL5H5uwqaxXujjk6r6E=; b=WfiCVzYkyj37KGe/1NcuIa1Hgk
+	I9gAfHu6MCMw7NSXSor84TLrOU+mUG0ndyfzjVt0moZbaiRHo/8L+p3QYdcySteGNhcAPGJCKkoWj
+	g/687Hepcmtf5PZKpuZ7znbxvUnMDD43qnPnbu67zfXVJS8SML5AtXvgw73tSyJkv3Nhg5awIIQnq
+	1JNMkoOZN3LoUHS53IUhOaxE7wP++2K6T0ediCLJbAhO11cNq5v9xJzhveqww2JPt0aKNdvm5A/Y5
+	rB55b5NewsYDat/UO4lQuhE8Q3txZ3JjdTGVGjV+Hgo05PhOwNnuMGRbC0LVs1cOtEcnZeCVZdr0F
+	79Ap4ebA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rzKvd-000000018V6-22Td;
+	Tue, 23 Apr 2024 18:31:41 +0000
+Date: Tue, 23 Apr 2024 11:31:41 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Joel Granados <j.granados@samsung.com>,
+	Kees Cook <keescook@chromium.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, kexec@lists.infradead.org,
+	linux-hardening@vger.kernel.org, bridge@lists.linux.dev,
+	lvs-devel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org,
+	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <Zif-jf8Takojtq7x@bombadil.infradead.org>
+References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] implement OA2_INHERIT_CRED flag for openat2()
-Content-Language: en-US
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
- Eric Biederman <ebiederm@xmission.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-References: <20240423110148.13114-1-stsp2@yandex.ru>
- <4D2A1543-273F-417F-921B-E9F994FBF2E8@amacapital.net>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <4D2A1543-273F-417F-921B-E9F994FBF2E8@amacapital.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-23.04.2024 19:44, Andy Lutomirski пишет:
->> On Apr 23, 2024, at 4:02 AM, Stas Sergeev <stsp2@yandex.ru> wrote:
->>
->> ﻿This patch-set implements the OA2_INHERIT_CRED flag for openat2() syscall.
->> It is needed to perform an open operation with the creds that were in
->> effect when the dir_fd was opened. This allows the process to pre-open
->> some dirs and switch eUID (and other UIDs/GIDs) to the less-privileged
->> user, while still retaining the possibility to open/create files within
->> the pre-opened directory set.
-> I like the concept, as it’s a sort of move toward a capability system. But I think that making a dirfd into this sort of capability would need to be much more explicit. Right now, any program could do this entirely by accident, and applying OA2_INHERIT_CRED to an fd fished out of /proc seems hazardous.
+On Tue, Apr 23, 2024 at 09:54:35AM +0200, Thomas Wei�schuh wrote:
+> * Patch 1 is a bugfix for the stack_erasing sysctl handler
+> * Patches 2-10 change various helper functions throughout the kernel to
+>   be able to handle 'const ctl_table'.
+> * Patch 11 changes the signatures of all proc handlers through the tree.
+>   Some other signatures are also adapted, for details see the commit
+>   message.
+> 
+> Only patch 1 changes any code at all.
+> 
+> The series was compile-tested on top of next-20230423 for
+> i386, x86_64, arm, arm64, riscv, loongarch, s390 and m68k.
+> 
+> The series was split from my larger series sysctl-const series [0].
+> It only focusses on the proc_handlers but is an important step to be
+> able to move all static definitions of ctl_table into .rodata.
+> 
+> [0] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net/
+> 
+> Signed-off-by: Thomas Wei�schuh <linux@weissschuh.net>
 
-Could you please clarify this a bit?
-I think if you open someone else's
-fd via /proc, then your current creds
-would be stored in a struct file, rather
-than the creds of the process from
-which you open. I don't think creds
-can be stolen that way, as I suppose
-opening via proc is similar to open
-via some symlink.
-Or is there some magic going on
-so that the process's creds can
-actually be leaked this way?
+Cover letters don't need SOBS we only use them for patches.
 
-> So perhaps if an open file description for a directory could have something like FMODE_CRED, and if OA2_INHERIT_CRED also blocked .., magic links, symlinks to anywhere above the dirfd (or maybe all symlinks) and absolute path lookups, then this would be okay.
+But anyway:
 
-This is already there.
-My fault is that I put a short description
-in a cover letter and a long description
-in a patch itself. I should probably swap
-them, as you only read the cover letter.
-My patch takes care about possible escape
-scenarios by working only with restricted
-lookup modes: RESOLVE_BENEATH, RESOLVE_IN_ROOT.
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-I made sure that symlinks leading outside
-of a sandbox, are rejected.
-Also note that my patch requires O_CLOEXEC
-on a dir_fd to avoid the cred leakage over
-exec syscall.
-
-> Also, there are lots of ways that f_cred could be relevant: fsuid/fsgid, effective capabilities and security labels. And it gets more complex if this ever gets extended to support connecting or sending to a socket or if someone opens a device node.  Does CAP_SYS_ADMIN carry over?
-Hmm, I don't know.
-The v1 version of a patch only changed
-fsuid/fsgid. Stefan Metzmacher suggested
-to use the full creds instead, but I haven't
-considered the implications of that change
-just yet.
-So if using the full creds is too much because
-it can carry things like CAP_SYS_ADMIN, then
-should I get back to v1 and only change
-fsuid/fsgid?
+  Luis
 
