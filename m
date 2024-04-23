@@ -1,110 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-17544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E278AF699
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 20:32:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A6C8AF6BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 20:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7365A1F25B74
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 18:32:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC53F1F228F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 18:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCD813F459;
-	Tue, 23 Apr 2024 18:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FDA13CA9A;
+	Tue, 23 Apr 2024 18:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WfiCVzYk"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XoD9dZtM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA751DDC5;
-	Tue, 23 Apr 2024 18:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4035512B77
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Apr 2024 18:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713897108; cv=none; b=na4g+41QcKKUfAUVIVfgS47Xqo5jjlr+WdTFRhS9vKR6s+5mQb7nBMLxbUPDiyj1X604PH0Vh9cxVnLkBSuH6OceENWw5B7DCxC7fxEsRhL7/x0cB+QCvMHW3y7I5V/XNtj+ySeyhr0cf2xY2Oen+mjYV9nH9mrTZQjPtxonWao=
+	t=1713897714; cv=none; b=Ui+Y6HqxpSqMNj/nLbuoUyxW0WHvNnVW+cuBHme9wue2IpYCUvvQlV+ycjWSA9zzKwJJnWYKRh1UX7lucRfksSQZ/vhHDWXS+SuoUVG5qBXuiiYd8BI0iMx97Z0ktrAZ787Yek0any35jgpG/gWmJA4lYlKPQk4EAGvcWymXGUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713897108; c=relaxed/simple;
-	bh=zCEHlyKJhhK4MvhJVSRGGSCDG0oxF0tC8ADUk82NkVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bfRq5v77AOHR8aaGY6eV8O+t4obBkrmNNQ7UZr5mkx1KRud0on5EW8Th/1x6gZNv4CIsmrcPxMemhMvacMK0q4VuGTyc0tyiFQ6k3WkB1jtv5bpJZZWCSoec0Z418b+IwL4cLm2rxS+fXaHMUM/K6XuSCnm8GJ3Tp8SKroRPu+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WfiCVzYk; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=Rogg05ztOu4aP2/pn8CD75vsgL5H5uwqaxXujjk6r6E=; b=WfiCVzYkyj37KGe/1NcuIa1Hgk
-	I9gAfHu6MCMw7NSXSor84TLrOU+mUG0ndyfzjVt0moZbaiRHo/8L+p3QYdcySteGNhcAPGJCKkoWj
-	g/687Hepcmtf5PZKpuZ7znbxvUnMDD43qnPnbu67zfXVJS8SML5AtXvgw73tSyJkv3Nhg5awIIQnq
-	1JNMkoOZN3LoUHS53IUhOaxE7wP++2K6T0ediCLJbAhO11cNq5v9xJzhveqww2JPt0aKNdvm5A/Y5
-	rB55b5NewsYDat/UO4lQuhE8Q3txZ3JjdTGVGjV+Hgo05PhOwNnuMGRbC0LVs1cOtEcnZeCVZdr0F
-	79Ap4ebA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rzKvd-000000018V6-22Td;
-	Tue, 23 Apr 2024 18:31:41 +0000
-Date: Tue, 23 Apr 2024 11:31:41 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Joel Granados <j.granados@samsung.com>,
-	Kees Cook <keescook@chromium.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, kexec@lists.infradead.org,
-	linux-hardening@vger.kernel.org, bridge@lists.linux.dev,
-	lvs-devel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org,
-	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
-Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
- of sysctl handlers
-Message-ID: <Zif-jf8Takojtq7x@bombadil.infradead.org>
-References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+	s=arc-20240116; t=1713897714; c=relaxed/simple;
+	bh=rkZmDBZZcJhVN6mPuWy4uMyeYcqDYd3E+rQp4e4pMmA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KOXmBm+RrOMfP7BcU18yHPJPlW5JrBk6rP7HfWgbIOBrwGhHjXVCmAqy77DH3Fp9bjIxiDrurCsVqfL6BdIMSsvEElPK9J0RtpDEBsP/iNOt7Q5JHyjkfLfTnDISVjkHyK2GK8tHSuqEBQ/xg9OREnd+jS8TA6gT2azcB6s/PZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XoD9dZtM; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6a04bb4f6d5so31124436d6.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Apr 2024 11:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1713897712; x=1714502512; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rkZmDBZZcJhVN6mPuWy4uMyeYcqDYd3E+rQp4e4pMmA=;
+        b=XoD9dZtMwMMVixUiVnpHJZlH3LD8HiDdgR+0rot1KyBoR0r3SQx1Rsaew/1AopEzgP
+         iU5xD60PXMvyF6T6CxHv+wMs/sNXHXO7VpR7AhOYO2B1FlZNVHjsGGjda0iE5zySAwJr
+         jJIHI9rArYIxGFDZzo6z9abIIqbGPZknPxZEsTVk0hmzKS4vyL2J8LOdTsQ38ESWu9gH
+         u/2Bw7dUUAuy20Fxv7gxl7qG8ehGZaWbzHgmxAJVmU9EJ8+P9CV88+PmF2C6Z/rD4sUj
+         jLTuqIDjej2yL4qC2WZLUZkJJh6YLVC3p8LWAGV/VTHFENRtKtgeTE1wkZUOgzHsmDYh
+         t2dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713897712; x=1714502512;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rkZmDBZZcJhVN6mPuWy4uMyeYcqDYd3E+rQp4e4pMmA=;
+        b=au5M2YU7sVMrdnOofUA6DkPDCFn6h5xoJmxyKkgdv73zgoMrnpWW2s4ed0FWqFSPnj
+         4tl8YZrqRtKvLy1hLsGOaBbYTpM5ripletfTUiQK31hthx1vNDDtidpcARf06vIswsoi
+         0BOvQMgSi1h6CPWHXAIObJdIT3O7Sjde5zBYiOG8vk2VGsNUg5pIefhJC4M2Ok1tvOel
+         /QwsdCppudTpfBqKNBFfMfDI0xRcl1hYh5Z3IJZhJyIVnvq4nuiQO/TnpUwCtUL2YwaW
+         GPgt+/ZnFXV1eGIi66fGYPzigvzXNdHGAp4RCIF/Z6cbhqsAchJNRP7f92LgoUPS4YIc
+         zfwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXF8tiJGhnyaBk9+eFpw03MemWi0geZzaRT0Y5l8zxXpWIHzXwVbwI49IfR9fhtTzluJfTipTDVp1H058uQXaN9iOoEUv/YcpuxIIISkg==
+X-Gm-Message-State: AOJu0YwLW4pUTKt+yRem9PZQdnYlRzwPndkjc6XL7dEEHaDvtTl0QQLI
+	Isghq0jc0pEqpmL/abSuYDZTu7HikK4z1Nf31eWtMR92EaDOBDl/iC4vfNPniKMi+I0RBqT/zA5
+	xnDRl8U2T/2t6KDZL0qRa41capM1BMUJ87W0yNsgOZ7yJ3FN6fg==
+X-Google-Smtp-Source: AGHT+IHkHCY0nAsTRn0X1AxyqTY/RSGMHd2W96s8+CnN0R0bF8TOmL0E6rUwoyEuLSPM0fhjc1ltCOp/0oJQdiys1B8=
+X-Received: by 2002:a0c:c591:0:b0:6a0:5f8f:d753 with SMTP id
+ a17-20020a0cc591000000b006a05f8fd753mr190211qvj.49.1713897712026; Tue, 23 Apr
+ 2024 11:41:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <20240328205822.1007338-1-richardfung@google.com>
+ <20240416001639.359059-1-richardfung@google.com> <20240419170511.GB1131@sol.localdomain>
+ <CAGndiTNW=AAy8p6520Q2dDoGJbstN5LAvvbO9ELHHtqGbQZAzQ@mail.gmail.com> <CAJfpegs=J5x_0DfiiXcEtsRxkoVq+ZGv_FhxFo9Vk8B++e_P3A@mail.gmail.com>
+In-Reply-To: <CAJfpegs=J5x_0DfiiXcEtsRxkoVq+ZGv_FhxFo9Vk8B++e_P3A@mail.gmail.com>
+From: Richard Fung <richardfung@google.com>
+Date: Tue, 23 Apr 2024 11:41:13 -0700
+Message-ID: <CAGndiTNRvHGtYZ3-Q7TJDCAYcFNLTypzgnGf3bCcithjwKV0tw@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: Add initial support for fs-verity
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	fsverity@lists.linux.dev, ynaffit@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 23, 2024 at 09:54:35AM +0200, Thomas Weiﬂschuh wrote:
-> * Patch 1 is a bugfix for the stack_erasing sysctl handler
-> * Patches 2-10 change various helper functions throughout the kernel to
->   be able to handle 'const ctl_table'.
-> * Patch 11 changes the signatures of all proc handlers through the tree.
->   Some other signatures are also adapted, for details see the commit
->   message.
-> 
-> Only patch 1 changes any code at all.
-> 
-> The series was compile-tested on top of next-20230423 for
-> i386, x86_64, arm, arm64, riscv, loongarch, s390 and m68k.
-> 
-> The series was split from my larger series sysctl-const series [0].
-> It only focusses on the proc_handlers but is an important step to be
-> able to move all static definitions of ctl_table into .rodata.
-> 
-> [0] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net/
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> Please verify that I didn't mess anything up.
 
-Cover letters don't need SOBS we only use them for patches.
-
-But anyway:
-
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-
-  Luis
+Tested it and it works! Thanks for updating the patch
 
