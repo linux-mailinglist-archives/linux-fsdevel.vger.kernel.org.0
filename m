@@ -1,91 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-17567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFCE8AFC55
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 00:59:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFBB8AFC58
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 00:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419AC28531B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 22:59:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 834A9B2387D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 22:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5A32E859;
-	Tue, 23 Apr 2024 22:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAB92E859;
+	Tue, 23 Apr 2024 22:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NfHZ0wWx"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="HgKLZ9dd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from forward502c.mail.yandex.net (forward502c.mail.yandex.net [178.154.239.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BB62E62F;
-	Tue, 23 Apr 2024 22:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956602E62F;
+	Tue, 23 Apr 2024 22:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713913149; cv=none; b=eZ7qG0g0vMxcXhM+d59m3bEfVIYEnec6UGCoRSbzXDUVZDXY6mPh1RdgES8PKq/YXvz5HdMi0o9oz9lR0wweYz4nyOoaVBRt6NUe1bmxGohG1R8c+AKLTN4hSozgEcpPyWJYJp+QLAl/n6QtRxoNLorO8tsQM55MYB8Hu7KhpMQ=
+	t=1713913164; cv=none; b=X3uomWWYYWu86B1cNCHSPm7FDJodMtebJJQzYPfz0N1aeGbVO3A6atxU/0r7LeprEmYqG0ww/JhlFUdDQAggvQmZpU1a1bIT/+k/tpZ3VumISsrDd1P5KBmjD8axFrZ5qlyAEXe+mGD2ZqIcZF5RbaHKAhH+Kqbtk0YC62GSSZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713913149; c=relaxed/simple;
-	bh=s8o3DPkfp3k+tdnCglc/unIS8LkRb0yjxyWkklbBA6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dX44DmB/BavFgMRrcoOycUF4kuYMZ/eaTrfe11vs4RynxGkA8qWyLy/i0vnhUKKcQO/2ml0oFxfUQThpqfJ8qvgVMgFciY/hoqcYKEHgstZSP2ZDmWyrnhIW7AV4OSr9r+dAeq/juFpXE5snpsxILOqWpDBnLrA5G2jLlg4/3TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NfHZ0wWx; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vs2mxITFBV+nRdHIV1uS98AGVTfpM4tELm97x05ajm0=; b=NfHZ0wWx8GsndEQHkBQc5Ztki1
-	+thI/9cbCmFDfsBKQdJhpY9sdYrV/3LG4b9EaxZ0lQ9V30/cPkhT3QlooLztHyMRN0CXpRp3xNP46
-	x4cp4efIgNLFzO5QRLE3Q5J1Axh70ssti9HIPvCLDgDRJ6ZlOZMOIeD7MQdzG43fH26hzdZ6DeMnX
-	iYYsZmvc+gaKlIlop7wT1ysPbtC6FwsO+/CDxp8D60K0LK8ef7xSNgaJzqYS8rfLG8Gwak/hUZuRt
-	YFxaII764S2palC6DlSP+PhM5yULs8nvv0FSPVcWpRz6TmGmlLPH7/umzcJ+2ccIKSYRnRP2pgL4x
-	qDIkZ1SQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rzP64-0000000HGFU-0pot;
-	Tue, 23 Apr 2024 22:58:44 +0000
-Date: Tue, 23 Apr 2024 23:58:44 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	"Huang, Ying" <ying.huang@intel.com>, Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>,
-	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2 3/8] f2fs: drop usage of page_index
-Message-ID: <Zig9JCrhky9JieRS@casper.infradead.org>
-References: <20240423170339.54131-1-ryncsn@gmail.com>
- <20240423170339.54131-4-ryncsn@gmail.com>
+	s=arc-20240116; t=1713913164; c=relaxed/simple;
+	bh=DhW+flUhzLchgxh0ybt4z6c9Y5DfRjQUnP8fxX0ABo8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bW+m1IebjsUnmaoyWkC4/+NgxatO7sCmPj3e5hXdFu/rA9aX9tJpqAUlTyMkfX0fkICntehoH+udU0Mfhseu6hoLhr52qzoh/nL4okLJYR7NLYIcD5rcznUbxv7FLuKeoukWEjYT1YnACxIMBeQxWEBLNGkD21xTVKKgv4vDQUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=HgKLZ9dd; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-29.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-29.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:5b8b:0:640:df05:0])
+	by forward502c.mail.yandex.net (Yandex) with ESMTPS id 39B6861308;
+	Wed, 24 Apr 2024 01:59:14 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-29.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id CxTYgsOoBiE0-MoiKJb1W;
+	Wed, 24 Apr 2024 01:59:13 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1713913153; bh=dSFGkrbMp3MN5zZhL4zbEW6tvfQBxICR8WWedgCEtgA=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=HgKLZ9ddzAkgMSxnE1R7ILGyuE/XJ1feN2MgTxwdHNarRlzYcmd/EmsxZzZoXa+LM
+	 CpCmTu/+hRkolEr8wus/8kFsC2IxcYrftouh8N6MlePYLLGaZyk155SFk0HE7k9imF
+	 ydYfNu0S8T6B+lr0PTMGsrodc+jMYM0P84uEIZSA=
+Authentication-Results: mail-nwsmtp-smtp-production-main-29.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <8b3777bc-4cd5-4bf9-b8f2-f7ba1d596769@yandex.ru>
+Date: Wed, 24 Apr 2024 01:59:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240423170339.54131-4-ryncsn@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] openat2: add OA2_INHERIT_CRED flag
+Content-Language: en-US
+To: Stefan Metzmacher <metze@samba.org>, linux-kernel@vger.kernel.org
+Cc: Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+ Jens Axboe <axboe@kernel.dk>
+References: <20240422084505.3465238-1-stsp2@yandex.ru>
+ <20240422084505.3465238-2-stsp2@yandex.ru>
+ <81ab6c6a-0a9e-4f2f-b455-7585283acf53@samba.org>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <81ab6c6a-0a9e-4f2f-b455-7585283acf53@samba.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 24, 2024 at 01:03:34AM +0800, Kairui Song wrote:
-> @@ -4086,8 +4086,7 @@ void f2fs_clear_page_cache_dirty_tag(struct page *page)
->  	unsigned long flags;
->  
->  	xa_lock_irqsave(&mapping->i_pages, flags);
-> -	__xa_clear_mark(&mapping->i_pages, page_index(page),
-> -						PAGECACHE_TAG_DIRTY);
-> +	__xa_clear_mark(&mapping->i_pages, page->index, PAGECACHE_TAG_DIRTY);
->  	xa_unlock_irqrestore(&mapping->i_pages, flags);
->  }
+22.04.2024 22:53, Stefan Metzmacher пишет:
+> I'm wondering if it would be better to capture the whole cred structure.
+>
+> Similar to io_register_personality(), which uses get_current_cred().
+>
+> Only using uid and gid, won't reflect any group memberships or 
+> capabilities... 
+I ended up posting v3 where the
+group memberships are added but
+the rest, including capabilities, is
+omitted to avoid security risks.
 
-I just sent a patch which is going to conflict with this:
-
-https://lore.kernel.org/linux-mm/20240423225552.4113447-3-willy@infradead.org/
-
-Chao Yu, Jaegeuk Kim; what are your plans for converting f2fs to use
-folios?  This is getting quite urgent.
+Does adding just a groupinfo to the
+set of overridden members (which is
+now: fsuid, fsgid and group_info) address
+your concern?
+I really think that raising caps is far
+out of the scope for my approach, which
+aims to be safe and simple. Someone
+else can do that later, if need be.
 
