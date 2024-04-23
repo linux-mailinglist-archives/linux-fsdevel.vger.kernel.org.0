@@ -1,200 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-17499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165548AE3D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 13:27:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1518AE3EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 13:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9D6B283E3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 11:26:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3441C222DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 11:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511937E761;
-	Tue, 23 Apr 2024 11:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9420483CAA;
+	Tue, 23 Apr 2024 11:30:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D2F60279;
-	Tue, 23 Apr 2024 11:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A624D7E118;
+	Tue, 23 Apr 2024 11:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713871612; cv=none; b=SwW95kWZyndz6ZRe1kyVZa9QPQCrFPBJtPEswc+n1WlMp1Lr91yE6pJraWxO+04c3xPBhb5MRCsx9uFWJ/SvwqBHzClzuq1H1SRosZmIXY2gw8WGddUFQ0SPQ18M2+dNWwEMCh8Cmd6eHXUoL+yWJwZvbPeuw/7rv7FVE2QUl6U=
+	t=1713871813; cv=none; b=mqDyD241hIvgwHiSHH9oUSDPvWUwEEa78d8wrOfZLaZYupj9toH66MvyED3aWgq7VsIyBfVvbXz2AjYis/P5mCHkn39NB0l5hJUxhRrBfEXIiXsm35O3lcssHRJAWomtePstlvMuuoBf/jpt4p4cQ668KMBeDQqCq8h4KBjyOx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713871612; c=relaxed/simple;
-	bh=yIru4Dpy+UCxrypB9Zbcrt6rwL+AC++o7HQ7EHMSuTY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kL337ZAR3vZmZPcQf0qDsZeKLnDA11lbfuGbalwQr5sr35sXTvyXGGaXs/x+ydyhSn0x+206zBaFdUpFPu77R3vEb48J+Q78VPYtYtcxx1nSiId9AU2hVAsZu1xu0FF7cfTQvIR0rwSdfpZhznu4LJFTFIbT8KqB/R+z/0eoq30=
+	s=arc-20240116; t=1713871813; c=relaxed/simple;
+	bh=IjrLm+jHCQEXdyCv6CiIzEcP94pKJ2KOwDyAUcgLU+g=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=B24Kpeq4rnprIF5GwItdnojIEv0cRZAA4/HNvqick2TVK28i+7+hTh+V33QYH3ZOQ7Lb5JS4mZKNOOKO/TOKHKupdsIPrvWCTJfWoxdOF8f39ZI4xUkgwiy3SYubNUK0VRry50BtuhRKsfryZ3ksLgvuj+psdqObFvRH3k5Wj9Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VP0F84QTsz4f3nKM;
-	Tue, 23 Apr 2024 19:26:36 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VP0K15qDFz4f3pHY;
+	Tue, 23 Apr 2024 19:29:57 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id C08ED1A0175;
-	Tue, 23 Apr 2024 19:26:45 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBHymidmAnH7Kg--.30599S4;
-	Tue, 23 Apr 2024 19:26:45 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id F0F241A10D4;
+	Tue, 23 Apr 2024 19:30:06 +0800 (CST)
+Received: from [10.174.176.34] (unknown [10.174.176.34])
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBG4mydm6qX7Kg--.45038S3;
+	Tue, 23 Apr 2024 19:30:02 +0800 (CST)
+Subject: Re: [PATCH v4 6/9] iomap: don't increase i_size if it's not a write
+ operation
+To: Chandan Babu R <chandanbabu@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+ brauner@kernel.org, david@fromorbit.com, tytso@mit.edu, jack@suse.cz,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240320110548.2200662-1-yi.zhang@huaweicloud.com>
+ <20240320110548.2200662-7-yi.zhang@huaweicloud.com>
+ <87edb13ms8.fsf@debian-BULLSEYE-live-builder-AMD64>
 From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	tytso@mit.edu,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v5 4/9] xfs: convert delayed extents to unwritten when zeroing post eof blocks
-Date: Tue, 23 Apr 2024 19:17:35 +0800
-Message-Id: <20240423111735.1298851-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240320110548.2200662-5-yi.zhang@huaweicloud.com>
-References: <20240320110548.2200662-5-yi.zhang@huaweicloud.com>
+Message-ID: <c9c51d1b-70aa-103f-d580-07ac3ec545e2@huaweicloud.com>
+Date: Tue, 23 Apr 2024 19:30:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBHymidmAnH7Kg--.30599S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw47Kw4fCw4UJF4DuryDKFg_yoWrGrW8pF
-	Zagw15GrsrKw1fZw4fAF1agr1F93Z5Cr4UJryrXrs3Za4Yqr4IgryIy3Wjqry8Cws3A3Wj
-	vF4jgas2934qvaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1
-	a9aPUUUUU==
+In-Reply-To: <87edb13ms8.fsf@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgBnOBG4mydm6qX7Kg--.45038S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFWxGr17tF43KF4UXr4UCFg_yoW8AF1fpF
+	WfWa4Fqr4UKw1xKFW7XryUX3W8X3W5Xr9xuryUGrWYyFnxAF1fArs2grWUurWUtFZ7Cw1F
+	qw4kCFWkGry5urDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUrR6zUUUUU
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On 2024/4/19 14:07, Chandan Babu R wrote:
+> On Wed, Mar 20, 2024 at 07:05:45 PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Increase i_size in iomap_zero_range() and iomap_unshare_iter() is not
+>> needed, the caller should handle it. Especially, when truncate partial
+>> block, we should not increase i_size beyond the new EOF here. It doesn't
+>> affect xfs and gfs2 now because they set the new file size after zero
+>> out, it doesn't matter that a transient increase in i_size, but it will
+>> affect ext4 because it set file size before truncate. So move the i_size
+>> updating logic to iomap_write_iter().
+>>
+> 
+> This patch causes generic/522 to consistently fail when using the following
+> fstest configuration,
+> 
+> TEST_DEV=/dev/loop16
+> TEST_LOGDEV=/dev/loop13
+> SCRATCH_DEV_POOL="/dev/loop5 /dev/loop6 /dev/loop7 /dev/loop8 /dev/loop9 /dev/loop10 /dev/loop11 /dev/loop12"
+> MKFS_OPTIONS='-f -m reflink=1,rmapbt=1, -i sparse=1, -lsize=1g'
+> MOUNT_OPTIONS='-o usrquota,grpquota,prjquota'
+> TEST_FS_MOUNT_OPTS="$TEST_FS_MOUNT_OPTS -o usrquota,grpquota,prjquota"
+> TEST_FS_MOUNT_OPTS="-o logdev=/dev/loop13"
+> SCRATCH_LOGDEV=/dev/loop15
+> USE_EXTERNAL=yes
+> LOGWRITES_DEV=/dev/loop15
+> 
 
-Current clone operation could be non-atomic if the destination of a file
-is beyond EOF, user could get a file with corrupted (zeroed) data on
-crash.
+Hello!
 
-The problem is about preallocations. If you write some data into a file:
+The root cause of the problem is caused by patch 4/9, this patch is fine,
+I've revised the patch 4/9 and send it out separately in reply to v4. I've
+tested that on my machine for over 100 rounds on generic/522 and it hasn't
+failed again. Please take a look at the v5 patch for details and test it
+on your machine.
 
-	[A...B)
+https://lore.kernel.org/linux-xfs/20240423111735.1298851-1-yi.zhang@huaweicloud.com/T/#m2da33e643b642071aa20077321e2c431f5a64e38
 
-and XFS decides to preallocate some post-eof blocks, then it can create
-a delayed allocation reservation:
-
-	[A.........D)
-
-The writeback path tries to convert delayed extents to real ones by
-allocating blocks. If there aren't enough contiguous free space, we can
-end up with two extents, the first real and the second still delalloc:
-
-	[A....C)[C.D)
-
-After that, both the in-memory and the on-disk file sizes are still B.
-If we clone into the range [E...F) from another file:
-
-	[A....C)[C.D)      [E...F)
-
-then xfs_reflink_zero_posteof() calls iomap_zero_range() to zero out the
-range [B, E) beyond EOF and flush it. Since [C, D) is still a delalloc
-extent, its pagecache will be zeroed and both the in-memory and on-disk
-size will be updated to D after flushing but before cloning. This is
-wrong, because the user can see the size change and read the zeroes
-while the clone operation is ongoing.
-
-We need to keep the in-memory and on-disk size before the clone
-operation starts, so instead of writing zeroes through the page cache
-for delayed ranges beyond EOF, we convert these ranges to unwritten and
-invalidate any cached data over that range beyond EOF.
-
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
-Changes since v4:
-
-Move the delalloc converting hunk before searching the COW fork. Because
-if the file has been reflinked and copied on write,
-xfs_bmap_extsize_align() aligned the range of COW delalloc extent, after
-the writeback, there might be some unwritten extents left over in the
-COW fork that overlaps the delalloc extent we found in data fork.
-
-  data fork  ...wwww|dddddddddd...
-  cow fork          |uuuuuuuuuu...
-                    ^
-                  i_size
-
-In my v4, we search the COW fork before checking the delalloc extent,
-goto found_cow tag and return unconverted delalloc srcmap in the above
-case, so the delayed extent in the data fork will have no chance to
-convert to unwritten, it will lead to delalloc extent residue and break
-generic/522 after merging patch 6.
-
- fs/xfs/xfs_iomap.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 236ee78aa75b..ab398cb3680a 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1022,6 +1022,23 @@ xfs_buffered_write_iomap_begin(
- 		goto out_unlock;
- 	}
- 
-+	/*
-+	 * For zeroing, trim a delalloc extent that extends beyond the EOF
-+	 * block.  If it starts beyond the EOF block, convert it to an
-+	 * unwritten extent.
-+	 */
-+	if ((flags & IOMAP_ZERO) && imap.br_startoff <= offset_fsb &&
-+	    isnullstartblock(imap.br_startblock)) {
-+		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-+
-+		if (offset_fsb >= eof_fsb)
-+			goto convert_delay;
-+		if (end_fsb > eof_fsb) {
-+			end_fsb = eof_fsb;
-+			xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
-+		}
-+	}
-+
- 	/*
- 	 * Search the COW fork extent list even if we did not find a data fork
- 	 * extent.  This serves two purposes: first this implements the
-@@ -1167,6 +1184,17 @@ xfs_buffered_write_iomap_begin(
- 	xfs_iunlock(ip, lockmode);
- 	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0, seq);
- 
-+convert_delay:
-+	xfs_iunlock(ip, lockmode);
-+	truncate_pagecache(inode, offset);
-+	error = xfs_bmapi_convert_delalloc(ip, XFS_DATA_FORK, offset,
-+					   iomap, NULL);
-+	if (error)
-+		return error;
-+
-+	trace_xfs_iomap_alloc(ip, offset, count, XFS_DATA_FORK, &imap);
-+	return 0;
-+
- found_cow:
- 	seq = xfs_iomap_inode_sequence(ip, 0);
- 	if (imap.br_startoff <= offset_fsb) {
--- 
-2.39.2
+Thanks,
+Yi.
 
 
