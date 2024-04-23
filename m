@@ -1,88 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-17520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9D48AE9C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 16:44:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00948AE9DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 16:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA011F22BF7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 14:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 921A31C21583
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 14:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE1713BAEE;
-	Tue, 23 Apr 2024 14:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A781D13AD36;
+	Tue, 23 Apr 2024 14:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="HibwSwcl"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="XVkeJNM6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAC613B5BD;
-	Tue, 23 Apr 2024 14:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3BC8F5E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Apr 2024 14:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713883429; cv=none; b=XcEv/XoOdU07Eom5mK4qhKlvWQsaKCpCkdc6C1cMOzCwL5nZ3J5PooxiumabvMfLFO+EvkK2sllf05BBiO8I0aM/6BVERUm6CqYgVk5LYUMcTn0vTavqKd5owvCx4qMPput51nl64rBPyzRX3gMeVuC2ITl/t99CmAmSjzv0KG4=
+	t=1713883888; cv=none; b=XTHMZPhfYtOdi0dsq84qlm5kw9gSjL9Lvz8AVjcCIxnr6kq9bqy9gpB4yyJWvAvVHMxkGjBYxrFpz6FX1hXUfL0vSE6a2OmNBIG143QgtAJSruaz3tEr42MzEL6HkesiFS6C/GqqWpb7zsfdj48mooRVdqiMGY80oaPfxg0MeN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713883429; c=relaxed/simple;
-	bh=XjKJ9cLPbWFBOZsNXXBPcqV1Ya2McS+Q6Xy1f/KErb4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=prYQEmsrQ1SO4kwurutUyFCaWofvIZZv0f4NNrjDdHHXwOk7PFh+ELosXZvGkGlTOg0Jg7rJSktW1cDwZaLpAmuXDJjPsW2+JV8YgigeQ7BJNZKfJiPhzeSrnaUkA8ZUgZhIztk0raFes5c+Qe/uf11UwyaZaUwd3JN42P8E0LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=HibwSwcl; arc=none smtp.client-ip=35.157.23.187
+	s=arc-20240116; t=1713883888; c=relaxed/simple;
+	bh=YbQ9e9tApjawQ5Nk84S9pyUgLTtGWTzpkvusLEc8/fM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UglYt6GOnTAt5mV5caZIchZEQZrkGTWItAv1SIMmhIHEebA7X47A7lkaXMnO+yv2jayhNtyKWdjCeTRhbQ3xA9e2xNIpaWqCXuDejtlQ0Xt91istEw4bH7c5/At3LZsAgqHK+svuwBz2O7zv0+hUqs2vwqtLVCw51wYEvys4kqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=XVkeJNM6; arc=none smtp.client-ip=35.157.23.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id DED952157;
-	Tue, 23 Apr 2024 14:36:13 +0000 (UTC)
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id E96C82111;
+	Tue, 23 Apr 2024 14:43:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1713882973;
-	bh=GXL3SuBTg6ZAty/153VtafEhziwahLcJ1d1KPZtrhV8=;
-	h=From:To:CC:Subject:Date;
-	b=HibwSwclvfzATE1ZEDcDLEJYjfTqDbxR/4/MfXUsakjGbpnr5bNoWPk//0Rd41j2E
-	 tyIVRPpfyY43+wjFUnXmIHm25ZV6CVncxqC62wcq5SkRJzPc250uEA5YJGrbqiDKmO
-	 4hJ1xZV2v6DbeaAUHWNZ3ZMNP6xNNBNDAwMahF2s=
-Received: from ntfs3vm.paragon-software.com (192.168.211.186) by
+	d=paragon-software.com; s=mail; t=1713883433;
+	bh=5uYFnvgPiUl6XMEmFp4LcliQX+HRnjXT+LHZjpgVvEs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=XVkeJNM6mRBdfz17fEHpUJkHaKExfmDKzmwsAnb+KxpYWl+mKNpyP959ZJ2BMTaws
+	 Ti6zpEF2DTycBxEiwIoVBniwGJETHHOiyqzrkUMOBGpEWi9bVXNfJVZ55vC3jUt/6J
+	 lzqcnBuxQbx/DrJo2BUvb/hKq4xfTh9FXPFCY1a8=
+Received: from [192.168.211.186] (192.168.211.186) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 23 Apr 2024 17:43:45 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <ntfs3@lists.linux.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] fs/ntfs3: Break dir enumeration if directory contents error
-Date: Tue, 23 Apr 2024 17:41:55 +0300
-Message-ID: <20240423144155.10219-2-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.34.1
+ 15.1.2375.7; Tue, 23 Apr 2024 17:51:24 +0300
+Message-ID: <85317479-4f03-4896-a2e1-d16b912e8b91@paragon-software.com>
+Date: Tue, 23 Apr 2024 17:51:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/11] Convert (most of) ntfs3 to use folios
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>
+References: <20240422193203.3534108-1-willy@infradead.org>
+Content-Language: en-US
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20240422193203.3534108-1-willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
  vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: stable@vger.kernel.org
----
- fs/ntfs3/dir.c | 1 +
- 1 file changed, 1 insertion(+)
+On 22.04.2024 22:31, Matthew Wilcox (Oracle) wrote:
+> I'm not making any attempt here to support large folios.  This is just
+> to remove uses of the page-based APIs.  There are still a number of
+> places in ntfs3 which use a struct page, but this is a good start on
+> the conversions.
+>
+> v2:
+>   - Rebase on next-20240422
+>   - Drop "Convert reading $AttrDef to use folios", "Use a folio to read
+>     UpCase", "Remove inode_write_data()" and "Remove ntfs_map_page and
+>     ntfs_unmap_page" due to changes.
+>   - Add "Convert inode_read_data() to use folios", "Remove calls to
+>     set/clear the error flag", "Convert attr_wof_frame_info() to use a
+>     folio", "Convert ntfs_get_frame_pages() to use a folio", "Convert
+>     ni_readpage_cmpr() to take a folio"
+>
+> Matthew Wilcox (Oracle) (11):
+>    ntfs3: Convert ntfs_read_folio to use a folio
+>    ntfs3: Convert ntfs_write_begin to use a folio
+>    ntfs3: Convert attr_data_read_resident() to take a folio
+>    ntfs3: Convert ntfs_write_end() to work on a folio
+>    ntfs3: Convert attr_data_write_resident to use a folio
+>    ntfs3: Convert attr_make_nonresident to use a folio
+>    ntfs3: Convert inode_read_data() to use folios
+>    ntfs3: Remove calls to set/clear the error flag
+>    ntfs3: Convert attr_wof_frame_info() to use a folio
+>    ntfs3: Convert ntfs_get_frame_pages() to use a folio
+>    ntfs3: Convert ni_readpage_cmpr() to take a folio
+>
+>   fs/ntfs3/attrib.c  | 94 ++++++++++++++++++++--------------------------
+>   fs/ntfs3/file.c    | 17 +++++----
+>   fs/ntfs3/frecord.c | 29 +++++++-------
+>   fs/ntfs3/inode.c   | 73 ++++++++++++++++++-----------------
+>   fs/ntfs3/ntfs_fs.h |  8 ++--
+>   5 files changed, 102 insertions(+), 119 deletions(-)
+>
+Hi Matthew,
 
-diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
-index 5cf3d9decf64..45e556fd7c54 100644
---- a/fs/ntfs3/dir.c
-+++ b/fs/ntfs3/dir.c
-@@ -475,6 +475,7 @@ static int ntfs_readdir(struct file *file, struct dir_context *ctx)
- 		vbo = (u64)bit << index_bits;
- 		if (vbo >= i_size) {
- 			ntfs_inode_err(dir, "Looks like your dir is corrupt");
-+			ctx->pos = eod;
- 			err = -EINVAL;
- 			goto out;
- 		}
--- 
-2.34.1
+We have started testing the switch to folio as you proposed in v1.
+Some of our tests went down.
+
+After adapting I will add your patches with some minor changes.
 
 
