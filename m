@@ -1,70 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-17527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734B48AF4DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 19:04:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B28F8AF4E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 19:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3059E287BEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 17:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B598D1F2392C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 17:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A466313DDA3;
-	Tue, 23 Apr 2024 17:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C59813DDC6;
+	Tue, 23 Apr 2024 17:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4yTDI5/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZykjQRt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFF713D635;
-	Tue, 23 Apr 2024 17:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C0713D635;
+	Tue, 23 Apr 2024 17:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713891833; cv=none; b=UcTpHlnERdV2fJlaLUthdI/JbvGJTMW7R90wsIoXLo0+W0ik4fAVAYQYJ/g+mNIURAfQvM3RHIsAKzOvIMcSHbwPepsW4KbIxAidRReq2lm39PJUcckfrE1xJWXvsOJMMUHvgTK1h6Zo/3CYAuNvlIgkix3Q+z+MX81OB6maZSQ=
+	t=1713891838; cv=none; b=ZgdSY2bMJy5Ej6YOPEwMsqR3mZ3DOzMSZlaAhY2nb5pSzx6Bf9CGSjmp05ifo3iD2qeSUVTghvsgckWBawzRoid725HE6fbgj0z95pC8Fe9EKdYvDHY2QMnQrIA8dvTXHrJmN+FNEw9xJIW/qIYBipjxvdglTcwQK9x1ajJ/EDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713891833; c=relaxed/simple;
-	bh=MlaQWLl7duyXfxYen2igLXYiF4SjPRIXLKzR79MAJjI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=slrLQWfkE51i8EXRqx3jdrLpqCvE4RtXMqA/hCtBXgJNhNbjhl8HtzxiVoXU72dDwIT3MnTn1ghleSeDHIpX9uJlkggnnBvIhsHaw0fNmnzkwB8Kxkax21JlnztJVUAiq4gNLo6lyrLf7yZZCxRw4is6MHQvVo5/nXJ+JZ3QPgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N4yTDI5/; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1713891838; c=relaxed/simple;
+	bh=pMXBuRSYRvxJ/Pm5/D0Ih9VGkrkcDFfmsJy8ADz5Yxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tALBB1kQ3qA6ZHOi/6cPi9ds7dR8pqTYB1gftb2HXxLY2VZ6ykQRN9FugPjVE7F4qC8NHI5nW5nptKV3XgMtlZF95wEoNEFNTr+t5yFK+Dnt7ct5O8xva/1HKmBMDGdWNXDjLn8isz38Wtrjon/B7TUydwLyPjPasJEQkHDq/cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZykjQRt; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2a87bd53dc3so4797410a91.2;
-        Tue, 23 Apr 2024 10:03:51 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2a559928f46so3877789a91.0;
+        Tue, 23 Apr 2024 10:03:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713891831; x=1714496631; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZQvlEY7MT0+SgdPdpEHB8TaD1H3HfXPQY1TqoLowYww=;
-        b=N4yTDI5/nXssi/UH8gV/Vy+RySAQIhIJwhdpEazeMG5DWf9g1ZnLPjVvFzbysLxNvB
-         7dr6jFYtiP3esAZ+o4Ix81IZmS8/I3HADGyCIXJ//JIs0sqyV6XcH/+Zc+sfsC13ej/J
-         JR+GLeOTKDA45nnFZ8SPoISeAwLfL1enph30XAjbI5skuCKDkS7xEBfo/pI6vzrVlrTD
-         u1XLNnCUA+7Mc3I6bmjKgm979/GLW5PE5uCUIwfEYjigm3NTtZL8ByceU8ii9ykxNxLQ
-         I95AAtobmalQFpsG0OPA4zqFvMMGx0w+1w1vMBIA2I2XfFhzZFkIcaYvfBy6TBxql9so
-         TtHg==
+        d=gmail.com; s=20230601; t=1713891836; x=1714496636; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BixicrujN2w/NN7W8Yk1bOtYDD16jf87ysiCrI+mjZw=;
+        b=jZykjQRtlxsp8nD4pOJ5uzQhDja3LTfe9CXKa8lo7w/ZlAUf7TJrOBMK+9wuogOR1B
+         SuyZYseHTkKj6qwJ6auL0Uyz0axVqqpWVwg4LZGNWkhVT/n52E2ux8PBgLlqYpmyBA05
+         Cg8Q6IFDt3xW1hkUDarpp6xystB9/4W9A2OB4sj+mDckPcIX8BqfuEQ2lJ0YODLSrKL0
+         9M+iEvn1TqSD75CgrQC2bHwnQWBI2aB2e5qfgd5Kg/2WErQJfqiWnXUaATIoh6a62P2/
+         q5vWLTHxrrLlhMt/RDrWPjSSk1LvjDCLLWD7my4IhCarwOXpOOvJMDRussGKYQENBm2c
+         oqqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713891831; x=1714496631;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZQvlEY7MT0+SgdPdpEHB8TaD1H3HfXPQY1TqoLowYww=;
-        b=W4SVztzCPzrItE/BTmzGWktsvmkSxk2o24aQsmqoEl/7XcTT+P9hnGwrfVUBe9dxdu
-         JUBYIbH+PEJvIYp5ROv00GAPBc6r2m28rNCH2VVynw37xtaD5CulPGTDKEnqb0HZLbVi
-         KMrDpm3KgNONiJutOg3gqMcs8pVC7V42Y+rN3WJaFa0m2tpe5sl+GRqRT+m3qjZ5pSqw
-         GOkaNEnOgl0AVBSjl/PkVc6b7Z0rq37Ly1CMrbx75z5JRFsj5tNLSjLtRTzEHJnuuqOO
-         78nUGqvcBxgSDDYmnV8ApJDZwtXc9/+XN6PH+nWqwYvS9wYaTgmJG9PXFLrstGIQfgeo
-         uKuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVix38LnamlSGExoZ396EcMwNhgvEN8CWUVTenutO2gT87MccIfGe0yPKkb8TtfJPuAGeIxoqZhqNFThrz3p6ti1wyqYXc0Aq4FWOS9G2Km/RHr07SWZodU3RN8E/OTiTMYW1BTarB8RecERA==
-X-Gm-Message-State: AOJu0YyLNshCE0Prd0tMvv+ZFJ2VqCrlHsUuhljcRD13f6CbrwErEutV
-	sE00JkkEWIyAJSA7XSkQpnOauamAK4/BtefywMnMFeqndfMrBMCi
-X-Google-Smtp-Source: AGHT+IHxLzzi7qfZC4OU3sFngJ45YhHz1ewqpnb9m+rSrCflIEH50ZdrdabDX/V8A+ZyXPuKO434FA==
-X-Received: by 2002:a17:90b:3844:b0:2a2:71c7:7e26 with SMTP id nl4-20020a17090b384400b002a271c77e26mr3964431pjb.28.1713891830659;
-        Tue, 23 Apr 2024 10:03:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713891836; x=1714496636;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BixicrujN2w/NN7W8Yk1bOtYDD16jf87ysiCrI+mjZw=;
+        b=NFc48+q07nvxQI/nNZxeHmlp4TZUhaDhIyX2tMUDBoPpBoNPeULccPApPYdPPyx/XH
+         DXxnj/+RszA0NjX/CpEhGKfWh0xERdlpt0mAuf4Lh24+GWcSdHTMfYq5Js1IxQTPlyc8
+         3pJDBvwKk5FQ8ZHVAXFKHMHFfBNS3AJdeQpK8TDNfPaa72b6VyarwOq9bGyutlIVphXe
+         Sn4Iw8J6LbFUAULUVCwocp1PX30+bNNKOtZiE21qJiJjhxVk85fa5yWiwBl0ZYYFAzJb
+         EHZgDa1XoHFyKLsf+tiN+Sq4yfkloNvGp6XF0cQDwLgwsmw/Rjn5+3zMONNei7n2QqWx
+         U/bA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWYXrGV6gqEvqvggbN0U+gYOyFCJaYcMf3rfSxjbJcNHF+9ozSYg5PPqtP49BZlB7AT6tgQzk1JpO9o5bMARckq7ZDKt7Cpq0JACD736u6+yHYZq6okokNdBHbWYZiXAQFHVWy7GKDdN2hgYgUBwdriJmy1+qQEmFTEecj6aCg+YhYqlHeHA==
+X-Gm-Message-State: AOJu0YyJBSfaeO7F9e65v0ZNCCBv/vWdYjO9LE1AaiRcpnz+jyja3R/m
+	/LMRvYHbV1+UgG1Wu0slK0EjJP0Er4mt+95061mUyNlmOHpfNEyP
+X-Google-Smtp-Source: AGHT+IEZ4GKNo+ZGTgIioZ6E8Q2/FLCJDMv5q/lYaYPH5b0i9NhmaYmcUV6iKdtOBuu19Rf+VfV0Ww==
+X-Received: by 2002:a17:90b:1205:b0:2ad:c098:ebca with SMTP id gl5-20020a17090b120500b002adc098ebcamr7093107pjb.20.1713891835397;
+        Tue, 23 Apr 2024 10:03:55 -0700 (PDT)
 Received: from KASONG-MB2.tencent.com ([1.203.116.31])
-        by smtp.gmail.com with ESMTPSA id s19-20020a17090a881300b002a5d684a6a7sm9641148pjn.10.2024.04.23.10.03.46
+        by smtp.gmail.com with ESMTPSA id s19-20020a17090a881300b002a5d684a6a7sm9641148pjn.10.2024.04.23.10.03.51
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 23 Apr 2024 10:03:50 -0700 (PDT)
+        Tue, 23 Apr 2024 10:03:54 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -80,11 +82,16 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Yosry Ahmed <yosryahmed@google.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v2 0/8] mm/swap: optimize swap cache search space
-Date: Wed, 24 Apr 2024 01:03:31 +0800
-Message-ID: <20240423170339.54131-1-ryncsn@gmail.com>
+	Kairui Song <kasong@tencent.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH v2 1/8] NFS: remove nfs_page_lengthg and usage of page_index
+Date: Wed, 24 Apr 2024 01:03:32 +0800
+Message-ID: <20240423170339.54131-2-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240423170339.54131-1-ryncsn@gmail.com>
+References: <20240423170339.54131-1-ryncsn@gmail.com>
 Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -96,121 +103,49 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-Currently we use one swap_address_space for every 64M chunk to reduce lock
-contention, this is like having a set of smaller swap files inside one
-big swap file. But when doing swap cache look up or insert, we are
-still using the offset of the whole large swap file. This is OK for
-correctness, as the offset (key) is unique.
+This function is no longer used after
+commit 4fa7a717b432 ("NFS: Fix up nfs_vm_page_mkwrite() for folios"),
+all users have been converted to use folio instead, just delete it to
+remove usage of page_index.
 
-But Xarray is specially optimized for small indexes, it creates the
-redix tree levels lazily to be just enough to fit the largest key
-stored in one Xarray. So we are wasting tree nodes unnecessarily.
+Signed-off-by: Kairui Song <kasong@tencent.com>
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org
+---
+ fs/nfs/internal.h | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-For 64M chunk it should only take at most 3 level to contain everything.
-But we are using the offset from the whole swap file, so the offset (key)
-value will be way beyond 64M, and so will the tree level.
-
-Optimize this by reduce the swap cache search space into 64M scope.
-
-Test with `time memhog 128G` inside a 8G memcg using 128G swap (ramdisk
-with SWP_SYNCHRONOUS_IO dropped, tested 3 times, results are stable. The
-test result is similar but the improvement is smaller if SWP_SYNCHRONOUS_IO
-is enabled, as swap out path can never skip swap cache):
-
-Before:
-6.07user 250.74system 4:17.26elapsed 99%CPU (0avgtext+0avgdata 8373376maxresident)k
-0inputs+0outputs (55major+33555018minor)pagefaults 0swaps
-
-After (+1.8% faster):
-6.08user 246.09system 4:12.58elapsed 99%CPU (0avgtext+0avgdata 8373248maxresident)k
-0inputs+0outputs (54major+33555027minor)pagefaults 0swaps
-
-Similar result with MySQL and sysbench using swap:
-Before:
-94055.61 qps
-
-After (+0.8% faster):
-94834.91 qps
-
-There is alse a very slight drop of radix tree node slab usage:
-Before: 303952K
-After:  302224K
-
-
-For this series:
-
-There are multiple places that expect mixed type of pages (page cache or
-swap cache), eg. migration, huge memory split; There are four helpers
-for that:
-
-- page_index
-- page_file_offset
-- folio_index
-- folio_file_pos
-
-To keep the code clean and compatible, this series first cleaned up
-usage of page_index and page_file_offset, then convert folio_index
-and folio_file_pos to be compatible with separate offsets.
-Current users won't be effected. And introduce two new helper
-swap_cache_index and swap_dev_pos for swap internal usage.
-Replace swp_offset with swap_cache_index when used to retrieve
-folio from swap cache, and use swap_dev_pos when needed to retrieve
-the device position of a swap entry.
-
-Idealy, in the future, we may want to reduce SWAP_ADDRESS_SPACE_SHIFT
-from 14 to 12: Default Xarray chunk offset is 6, so we have 3 level
-trees instead of 2 level trees just for 2 extra bits. But swap cache
-is based on address_space struct, with 4 times more metadata sparsely
-distributed in memory it waste more cacheline, the performance gain
-from this series is almost canceled according to my test. So first,
-just have a cleaner seperation of offsets and smaller search space.
-
-Patch 1/8 - 6/8: Clean up usage of page_index and page_file_offset
-Patch 7/8: Convert folio_index and folio_dev_pos to be compatible with
-  separate offset.
-Patch 8/8: Introduce swap_cache_index and use it when doing lookup in
-  swap cache.
-
-V1: https://lore.kernel.org/all/20240417160842.76665-1-ryncsn@gmail.com/
-Update from V1:
-- Convert more users to use folio directly when possible [Matthew Wilcox]
-- Rename swap_file_pos to swap_dev_pos [Huang, Ying]
-- Update comments and commit message.
-- Adjust headers and add dummy function to fix build error.
-
-This series is part of effort to reduce swap cache overhead, and ultimately
-remove SWP_SYNCHRONOUS_IO and unify swap cache usage as proposed before:
-https://lore.kernel.org/lkml/20240326185032.72159-1-ryncsn@gmail.com/
-
-Kairui Song (8):
-  NFS: remove nfs_page_lengthg and usage of page_index
-  nilfs2: drop usage of page_index
-  f2fs: drop usage of page_index
-  ceph: drop usage of page_index
-  cifs: drop usage of page_file_offset
-  mm/swap: get the swap file offset directly
-  mm: drop page_index/page_file_offset and convert swap helpers to use
-    folio
-  mm/swap: reduce swap cache search space
-
- fs/ceph/dir.c           |  2 +-
- fs/ceph/inode.c         |  2 +-
- fs/f2fs/data.c          |  5 ++---
- fs/nfs/internal.h       | 19 -------------------
- fs/nilfs2/bmap.c        |  3 +--
- fs/smb/client/file.c    |  2 +-
- include/linux/mm.h      | 13 -------------
- include/linux/pagemap.h | 19 +++++++++----------
- mm/huge_memory.c        |  2 +-
- mm/memcontrol.c         |  2 +-
- mm/mincore.c            |  2 +-
- mm/page_io.c            |  6 +++---
- mm/shmem.c              |  2 +-
- mm/swap.h               | 24 ++++++++++++++++++++++++
- mm/swap_state.c         | 12 ++++++------
- mm/swapfile.c           | 17 +++++++++++------
- 16 files changed, 63 insertions(+), 69 deletions(-)
-
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index 06253695fe53..deac98dce6ac 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -790,25 +790,6 @@ static inline void nfs_folio_mark_unstable(struct folio *folio,
+ 	}
+ }
+ 
+-/*
+- * Determine the number of bytes of data the page contains
+- */
+-static inline
+-unsigned int nfs_page_length(struct page *page)
+-{
+-	loff_t i_size = i_size_read(page_file_mapping(page)->host);
+-
+-	if (i_size > 0) {
+-		pgoff_t index = page_index(page);
+-		pgoff_t end_index = (i_size - 1) >> PAGE_SHIFT;
+-		if (index < end_index)
+-			return PAGE_SIZE;
+-		if (index == end_index)
+-			return ((i_size - 1) & ~PAGE_MASK) + 1;
+-	}
+-	return 0;
+-}
+-
+ /*
+  * Determine the number of bytes of data the page contains
+  */
 -- 
 2.44.0
 
