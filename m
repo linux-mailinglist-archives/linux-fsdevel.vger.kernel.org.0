@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-17530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 936AC8AF4E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 19:05:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA73C8AF4EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 19:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BB75284E45
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 17:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FC771F2389C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 17:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D22213E8B5;
-	Tue, 23 Apr 2024 17:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96B113FD61;
+	Tue, 23 Apr 2024 17:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUtsxvPc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hssLaR8M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CA14CB55;
-	Tue, 23 Apr 2024 17:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD1013DBBD;
+	Tue, 23 Apr 2024 17:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713891846; cv=none; b=MtS1tw1sAFUwVwPonDL2D/rAcD1NK+Y6DEypY/t6/biSUHCiG7GX1CuUqM/El/eW+oRof1N04Tp4k6HO7EXAWM74dxYF9CfSMYn9vsk2EcKGskMU1vy4w1qBIOQAPtiYkl47fUqa/EHtnEwW+oL9EsU285cdybCtVz9yCWxoHEQ=
+	t=1713891852; cv=none; b=ee2TKrxYujMYhuYqVs6ccpbYvzispaz8hLmQ48ev/O3jMSBmoCO1Z81IiJ8aNk5B8St3cvIV27S7FuCzeg+eTyc1FCf5vO8jqQXAXQaGkvyEsWAP5pn48IQaTn2octElxjIoHsfiXu46tm78rNUirvnrmMR9X8C4yjTC81gn/Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713891846; c=relaxed/simple;
-	bh=UaTaQyDAPYJXzxuGE+S2wWuP7fLVM+PYcfLn2sBx5RA=;
+	s=arc-20240116; t=1713891852; c=relaxed/simple;
+	bh=gNeowpHLn3XanGMjOPlcSsZZHe5AP0lM6lADWQVCs4I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bjqM7LS2Nf3qz96CZpm3uM2aawgjmZxtOR4msuPps9rUpGJ8kzMZIjCSfeBxM4aGyMCxcE6Xt8rHDk6XgWU3AeUYX9HW1868vJG3l85VGb+cmKJhIpCxhFJkCZz4J5yJGW9dHX7kJwGte885iBXZ4RO4AHp7FrYwH9uoEiGSvD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUtsxvPc; arc=none smtp.client-ip=209.85.216.43
+	 MIME-Version; b=VUJbxRKusAwoHyeNKNoTj9zr4z5MO6LLOW5dXZ1HQ04nnvv3F9JtxrPtrSWb9K3w3Q+o8lpPj5BSE1MDmg48Yjdw4BotGlJkYTfOIRtcNHcf8AhQ7mE7SGtR3Ot30NykAZzSQu3bvzN4c/8NCuWfYX5ji+2HVyuhDctK+RjI1XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hssLaR8M; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2a58209b159so3913749a91.3;
-        Tue, 23 Apr 2024 10:04:04 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2a528e7f2b6so4175372a91.0;
+        Tue, 23 Apr 2024 10:04:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713891844; x=1714496644; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1713891849; x=1714496649; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ccxP7TY1LZd03lAzTUSjd/WMiiw2l1TFGZjibmTvaRo=;
-        b=gUtsxvPc/b7Tv8Lie0u04p+EHBvjcwrWMZl/IfuAh41zxDpsMykv3ToPAWt1o/15ig
-         xamnLWhwnuVI99FCWuSd/r5HfIoDm38gs70uaxRKwKeoF/bboOr0nafzdDGt3tem9dcu
-         xy8q9B+YkxNmznJ7CJOpUYyInJX4JfA5VRhnEZ9xHTN4zq0CH4HwPkoc/mj9dOpumnvL
-         BxzRsQlRSYY6+QKJsbOYfqYb/gCexIll7jObAoD62DB4tvl9bx3nmSodMBHm1ky/ZgPO
-         AUlfpvteMLuyPBJIjzb6p3wLLOM6jS5QSZNuNMWYV4M9of89DLIjC8E591EDt8r+pDNR
-         cQkA==
+        bh=5+IkB3+J9K42d+V5Wi+AdhWpwnXMtEpYhZXm/5fw+dM=;
+        b=hssLaR8M2lcyrOpNUFlmgrj2Y1T5SXrRUj1lifpeOb+bkPn5xghGzVuGTD0fcwFw/C
+         unEJ27qIxjTra/3Yq4pIlQq0KOj7GOdTeQTHlfzoLmaw0cq1RfaENtJuMSa8Ylxeib3m
+         N/651MyY4GhWYmnbq/KzY5S9EUeiIpNQ0S+Z917obAvPFZ+zzczLtH8fA7Oyw5q636UB
+         fzVk997y+XC14gNlnQDn0O8AEksrF0Twtd5h7JVclZWQZky7KR39XWMyjLYZlT5hYCB0
+         ANm5XYqs336VFDPVV6n/bdiNVZt8os+DjX2m5xLurp5VERemGO4BXKii4NkIFZsrSRcq
+         LjFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713891844; x=1714496644;
+        d=1e100.net; s=20230601; t=1713891849; x=1714496649;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ccxP7TY1LZd03lAzTUSjd/WMiiw2l1TFGZjibmTvaRo=;
-        b=f7+5QtPTW3N36DioN/woV2DFMCCVjjR1tayr63YWBO8nqfA3ngYZNbK9rt3PS8LM9t
-         twgV5wKUNjpM3JF7x+pIYb5fEhK/tFDdxp+uKtEDAJFpWcgiMkFQzgy7czl+7IYuPia+
-         rVmAFQSxP42KA62kRyDKgMJeo/3qKpr4vgWbQ56vsYod1DuLhAOpGn41hCZ9smDlL7Wg
-         fHNw8ju8CdbBEJ2PegVimIpm9AmVKDR31Ub7C7Q7gXzZ0Noaj9/a2Y1GqmW0WxmeZQVF
-         rwWyR8UkGg/8TRE7yrwdQR/KPrgfGNZ3VHEm9nH7oZi5UBHT/FquBqytD3Fs15swcVeU
-         9C0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXBK8sYVBardR6kj4bT1Y1ZUq5CDVgnwppcKnMxYE6mMXhIuf5Fj2F6AyQnid2WbNYIGqBWcWlcA1p0wdmvs1iPjczXsNN/wLCjvkwMnMtT35C/nCiqvDdn1fNsFk1fYm+sx69wufLj/xDrlA==
-X-Gm-Message-State: AOJu0YwSN6Gtpxn2B/KiuvfXYvkPh8jLyHol87O9851DK71+0j6xf0We
-	XFMyp79K7R8t/CCCJGYiSKmTn4A+zQkNgYT0VMxLODar/28rvQ7R
-X-Google-Smtp-Source: AGHT+IFl9PJyw3gV5yMYnps/pmPpaL5DbNMyQbbzhrOpZIakLlc/OOAGq7K0pRF3PyTBE2M2iwLZlw==
-X-Received: by 2002:a17:90b:238b:b0:2af:15db:c741 with SMTP id mr11-20020a17090b238b00b002af15dbc741mr325358pjb.13.1713891844299;
-        Tue, 23 Apr 2024 10:04:04 -0700 (PDT)
+        bh=5+IkB3+J9K42d+V5Wi+AdhWpwnXMtEpYhZXm/5fw+dM=;
+        b=n3Xz/dpmak/UPdzX3OBml2IqWyoXZVOnhnLNv/yOJE9RJouqJXnVtc3yxCBS0Rrjah
+         mZU1V0uNDdbREPmjgpf9HPvivsYpXxZZhIYruh+/ZLDPtljWVpsQkJEhz/CZRUcUtQ9D
+         WnFxaMYGS49PNlvhfkq1kzFVBfVhT24jJJ9hmeUYTJL1vA4PIAHnJQKBepnDPrdlKGRI
+         DR2UGhl4FD56oauDfFCHvR0V5YFDW8V3aaJL8vGVbGHPxF6PfjBLfyDNqVRZdcgh58ED
+         8hEir4weJ7IqakGwR85vD073QK0ovDC4+lid4amx9/ffb32KTQ7mmJDEfU9G4u89UCP5
+         N4kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZMGJVDmXK6Kbcs7ht7RgFAcux9fBEfZRkC6PT4KwxvzzeGR/2fTNKoTMgO+xW0wFBt5ATrkp/Rzl6OAWV9k2BqCJfKz5DJpica/yRqSxOmc4WF4+ZwKoqzMTGaYq2TyreGPFhrODa1aKyDm7+Ylrosz+heG9a9BOlJJ0r8AQyUsISEuP8NvM=
+X-Gm-Message-State: AOJu0YyZtYEy1AAdgeB5uPALHWiptbSB4lsVLLwDLt3YBf9WwJzFgi6D
+	pkl0Dk/+TCGRSfby7SJ2juQue2TrLHW2XG8agkUjp6XFEbJBUGsV
+X-Google-Smtp-Source: AGHT+IGWT+ho4KjjKYkt4pXE9QMNwfjSrpJN8MJZvcmr2D9GT4W4gI0wGDBUlpVmvv4mlpFse7FLPw==
+X-Received: by 2002:a17:90a:cc0c:b0:2a5:d979:8eb2 with SMTP id b12-20020a17090acc0c00b002a5d9798eb2mr10816827pju.19.1713891849092;
+        Tue, 23 Apr 2024 10:04:09 -0700 (PDT)
 Received: from KASONG-MB2.tencent.com ([1.203.116.31])
-        by smtp.gmail.com with ESMTPSA id s19-20020a17090a881300b002a5d684a6a7sm9641148pjn.10.2024.04.23.10.04.00
+        by smtp.gmail.com with ESMTPSA id s19-20020a17090a881300b002a5d684a6a7sm9641148pjn.10.2024.04.23.10.04.04
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 23 Apr 2024 10:04:03 -0700 (PDT)
+        Tue, 23 Apr 2024 10:04:08 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -83,12 +83,13 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>,
-	Chao Yu <chao@kernel.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v2 3/8] f2fs: drop usage of page_index
-Date: Wed, 24 Apr 2024 01:03:34 +0800
-Message-ID: <20240423170339.54131-4-ryncsn@gmail.com>
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	ceph-devel@vger.kernel.org
+Subject: [PATCH v2 4/8] ceph: drop usage of page_index
+Date: Wed, 24 Apr 2024 01:03:35 +0800
+Message-ID: <20240423170339.54131-5-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240423170339.54131-1-ryncsn@gmail.com>
 References: <20240423170339.54131-1-ryncsn@gmail.com>
@@ -109,36 +110,41 @@ for pure page cache usage, the caller can just use page->index instead.
 It can't be a swap cache page here, so just drop it.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
-Cc: Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Xiubo Li <xiubli@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: ceph-devel@vger.kernel.org
 ---
- fs/f2fs/data.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/ceph/dir.c   | 2 +-
+ fs/ceph/inode.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d9494b5fc7c1..12d5bbd18755 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2057,7 +2057,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 	sector_t block_nr;
- 	int ret = 0;
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 0e9f56eaba1e..570a9d634cc5 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -141,7 +141,7 @@ __dcache_find_get_entry(struct dentry *parent, u64 idx,
+ 	if (ptr_pos >= i_size_read(dir))
+ 		return NULL;
  
--	block_in_file = (sector_t)page_index(page);
-+	block_in_file = (sector_t)page->index;
- 	last_block = block_in_file + nr_pages;
- 	last_block_in_file = bytes_to_blks(inode,
- 			f2fs_readpage_limit(inode) + blocksize - 1);
-@@ -4086,8 +4086,7 @@ void f2fs_clear_page_cache_dirty_tag(struct page *page)
- 	unsigned long flags;
+-	if (!cache_ctl->page || ptr_pgoff != page_index(cache_ctl->page)) {
++	if (!cache_ctl->page || ptr_pgoff != cache_ctl->page->index) {
+ 		ceph_readdir_cache_release(cache_ctl);
+ 		cache_ctl->page = find_lock_page(&dir->i_data, ptr_pgoff);
+ 		if (!cache_ctl->page) {
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 7b2e77517f23..1f92d3faaa6b 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1861,7 +1861,7 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
+ 	unsigned idx = ctl->index % nsize;
+ 	pgoff_t pgoff = ctl->index / nsize;
  
- 	xa_lock_irqsave(&mapping->i_pages, flags);
--	__xa_clear_mark(&mapping->i_pages, page_index(page),
--						PAGECACHE_TAG_DIRTY);
-+	__xa_clear_mark(&mapping->i_pages, page->index, PAGECACHE_TAG_DIRTY);
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
- }
- 
+-	if (!ctl->page || pgoff != page_index(ctl->page)) {
++	if (!ctl->page || pgoff != ctl->page->index) {
+ 		ceph_readdir_cache_release(ctl);
+ 		if (idx == 0)
+ 			ctl->page = grab_cache_page(&dir->i_data, pgoff);
 -- 
 2.44.0
 
