@@ -1,291 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-17509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592278AE839
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 15:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 004DC8AE845
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 15:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7E3F1F212A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 13:31:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1361F229FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 13:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D3E13664A;
-	Tue, 23 Apr 2024 13:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A16D136658;
+	Tue, 23 Apr 2024 13:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9/IEe2I"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9p8qZQD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444CF1353E0;
-	Tue, 23 Apr 2024 13:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5839818E28;
+	Tue, 23 Apr 2024 13:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713879073; cv=none; b=eBjBQ9eK7gObwE855AMJe78v7MSn+NdJx/xdd9boMeUNuqfot75FoxjCSmvCtIwQ/lci1BakAIpAP/USBMWPzlFhCsnQMBbocECwCZlf/ws7rjHUx5wIaZQf63F8SSoaOB/6UI25DRTgAbc8QV3Q65I51SCKpbwKwYGxe8HVQQg=
+	t=1713879255; cv=none; b=vDuIMIpt0/qvl5c2wVd06CI9kXGtXR7JQhrsYpqPNwOlXdwxkE92iuakit4byfkAnGsDVWLfJ1bxvqayiXXe0tq9veAZ7YAhkjs1LdOg61psPVdWS0ZKzt7DZZS0RucmLGR07iJ2MwT5ez2WHOLue3BppASs6x16G01kAejFEmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713879073; c=relaxed/simple;
-	bh=IxPKUCzl68GmqyGXvxuy/DA5ZjDtg4FgIO2Z9g8hUmc=;
+	s=arc-20240116; t=1713879255; c=relaxed/simple;
+	bh=eg6CHXM+1oDdRKlyGE4oIWweBZixWe12oxL3KrdPI2Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tz6dM5/ztgzFUx6ocu/R4xU9Kuhf+VKdmkbXMK6lZXXOVf1E7nDVSIbnxYlr0nI03FxRuHLw/wSegNZrBw2FKiOnzXjfKi/+GwFmLPtdU6wNAyFpikBP1XPMs/SevTeO10OVnZkggD2hY803qBF5jRtbM44iO88qavEiTY3bM2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f9/IEe2I; arc=none smtp.client-ip=209.85.219.45
+	 To:Cc:Content-Type; b=HFxG82h2AZpMQhIo1WEsNDGPkGDLUxX2rEn4vkrxmz14PPp33UC2ZxUOqDLqg61HO/IAFlFa49mxY0mtH9Yu5u8sF96DNsidlur7tw4vV3YvPooJHuDFukCzNTGtOxKzDYKDrwGDoG5n2+vhOAZuwdyNp7ieai7QpaAJRC6eDdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9p8qZQD; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-69b5a87505cso22019156d6.2;
-        Tue, 23 Apr 2024 06:31:12 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2dd6c14d000so29955771fa.0;
+        Tue, 23 Apr 2024 06:34:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713879071; x=1714483871; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1713879251; x=1714484051; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UlzWX69uBnN1f6I1MGifs0qgiAW4SxcxpA314BcskT4=;
-        b=f9/IEe2ITqaN0Wdvsc4o3HgW7Sj2qj69zrgJ9fjx1lPQONZTGDs6JcSqb09diwuIWM
-         Q4/yezWux6oHZQuNB9lUDdE2tgc5C3dJg/fB0/uUbvDLFUfnhzOzryOWHF7N2HHKd5F0
-         l2A5iUDsBO6z/ByQdx/on1KG/ZvxKQGR1xoYKLkXY/jlLr9sVNL64SOLHunU/9yzovla
-         PPREe/3XWAgBGQt30dkcfy85JfLG1zTi7Q5LZpb3tdTyOEX4STEwFmF+Ws9Ir62hKzNw
-         B+JacLrVoNZfnJgLKdPhOWOXNOTewh2DGOb5oJ71Nk7IXzCFKI8C9cTY4/fqn2GWUvl6
-         rPEg==
+        bh=4bc0c4MIvRavnylcD7Rjn0guOwInCRxicWBFGidWWE0=;
+        b=C9p8qZQDb7b+1lsRlH1KWfEivrzri4xjAzwLruURaXLYYtrxh23+8Dq0BFbWDgP9VB
+         dvzTe+E7fglEIYhG7CZUFQId76jNA1U2pnnV/hZeoTZFLdLtAIHFe0v7nHyt0Qo6JCwK
+         qYnlpd4hYc32KptEIK0+SmfvD9CQjW2gh7c/6xM90ERstaAhL3PxNvX++mtZb57fP34x
+         DXA99oV1aUhVO3Kdk5IWhiZAEyY7CMwItAErprNpA1hRlUHQ8FmM3WrAZPm4FQ1DHus5
+         COaDm1G5NnRXDOK98MK9p5ArbI42hlxVlSglRY57CBmSqe1dqEgUMV5AEea6s5O1jLmU
+         gYMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713879071; x=1714483871;
+        d=1e100.net; s=20230601; t=1713879251; x=1714484051;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UlzWX69uBnN1f6I1MGifs0qgiAW4SxcxpA314BcskT4=;
-        b=E9SfV+daoED7v97i0FlaSKWMDTp6cJDLV5ChFsQ7NH1/FekLOV1nNMgaVcLDo3ZPXr
-         obiFGrFs+KWfS/lYPS7zvS+EussLGvLKjjpqp+cKflZ6zrxaWyfMRnJAQO1/zphmoPmx
-         /C8svuQpcfGXOoLCZifdSMX3GKIHJnBZmj7WoxsXO/yl4nNzWRFqyuePgK6LTsQOGd1v
-         qiduI0O7/aIJ4ZvZbb8XIHiwmLanfEEChG5RgMKHYxR967hYUm6n0mGS11cogHheBoMp
-         jMMQa5pSUNXDXu+OO6LVVpj2EjLJn5gx4A5Iyt4TAVFJVNsfkjdbJVrPiRMSWTtZ45eC
-         cMug==
-X-Forwarded-Encrypted: i=1; AJvYcCVcUNOth/neMOyeIABOu/yzo+p9cA2Ioxn6LvrHodL3fqkQOwzhOv56pDh00deSBWLVsp1ofz4nY2SusjlZ90sfFBuzWjws9Fp2nCrX+xeUnP7EmAG1hAemVw7LJ9lwn/d1pzju9urh5g==
-X-Gm-Message-State: AOJu0YxwAiBdxwT/oBcll2FMacbERGN1bywEVkC8Ust1cezH5xBbr1sx
-	Y1qMwn0PIcVR0vjBYsktEU49KQzhT7DHy5KTVg1uJ2EcgRFnxJ4qT1SngoqJsjV79ivUNW/rmd7
-	Nj4uUcQkaBgy67YOzps0AxcVPjro=
-X-Google-Smtp-Source: AGHT+IGm9PNtptdr4RC0D9B0O/GNda/2xKMhHsdXlitZa7C3oPcFsgf+fpwsTHPA9gPA2XyfPZbLeP9q4GqY5s1m4TM=
-X-Received: by 2002:a0c:e909:0:b0:69b:76f7:3653 with SMTP id
- a9-20020a0ce909000000b0069b76f73653mr13626939qvo.27.1713879071065; Tue, 23
- Apr 2024 06:31:11 -0700 (PDT)
+        bh=4bc0c4MIvRavnylcD7Rjn0guOwInCRxicWBFGidWWE0=;
+        b=mv2OBuDEunIFvkMSHFZh9HiwnbYRfvWB/JbZMx2sm+u0/dUWTm439M5qHB6kEdCvUD
+         GCXIS9K/qchiJmsffiWBVDiOUXvNx/ulvjaN+BInbPWU0RDZWws3rSE6neyslK0A2o8U
+         U4iceh4HYUiWs/xnritXPKqVC+1RmBATOQELE3siK8J454yp1BvXpPcpkpiBelgYVB1u
+         d6mboZ2uqr4wu0tv3mUVdEtY4RQAdHdAWlPvjHwk4b/2bBod68WdzVhwjksNyAjENTvK
+         BQIfV2dj9Nmh3uI9vk1b4e5GEWBSt4XLNlfjMOZGCHCWek+BSLtrb9Jzh3fpqRAtVzvy
+         ALVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgkJJdnf0PraJQDcBGJfe64M51/iupBhRnlAdniLCjk2gsrwVf6df5zx1gWbWnJY0gElp6LFLXZREIv3SFA5HJMrbWzcPYYUU8FgzBt/V8Brp6wbP1dnCtFSL32Z3HbYWpYEac5cW73sy0Xw==
+X-Gm-Message-State: AOJu0YzC5UIURx62rywDnAE/9bpGVbW+FxzBLtshVAd12rlfqGM0a0bp
+	GTU3sr1kLqECfVvlpUg/FRZj0D1jT9tWFUy4GSBUvjiJKYQYv3F7OYB285WwZDq2LXnmSOb60xj
+	DM5IVuEhhvaa4kXyWI1LltwMMDGw=
+X-Google-Smtp-Source: AGHT+IHcGTmZHEOrIhZSVAH27HOvMiVHDiMwPl5ZaJV4e+FbQeZnWOfsfMYvzZFDGpBxKFn26o7uZbAMkFAw1v26gqU=
+X-Received: by 2002:a2e:9699:0:b0:2d9:e54d:81eb with SMTP id
+ q25-20020a2e9699000000b002d9e54d81ebmr9744299lji.12.1713879251195; Tue, 23
+ Apr 2024 06:34:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240229002020.85535-1-john@groves.net>
-In-Reply-To: <20240229002020.85535-1-john@groves.net>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 23 Apr 2024 16:30:59 +0300
-Message-ID: <CAOQ4uxi83HUUmMmNs9NeeOOfVVXhpWAdeAEDq8r31p0tK1sA2A@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Famfs: shared memory file system for
- disaggregated memory [LSF/MM/BPF ATTEND]
-To: John Groves <John@groves.net>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: lsf-pc@lists.linux-foundation.org, Jonathan Corbet <corbet@lwn.net>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, Randy Dunlap <rdunlap@infradead.org>, 
-	Jon Grimm <jon.grimm@amd.com>, Dave Chinner <david@fromorbit.com>, john@jagalactic.com, 
-	Bharata B Rao <bharata@amd.com>, Jerome Glisse <jglisse@google.com>, gregory.price@memverge.com, 
-	Ajay Joshi <ajayjoshi@micron.com>, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, 
-	Alistair Popple <apopple@nvidia.com>, Christoph Hellwig <hch@infradead.org>, Zi Yan <ziy@nvidia.com>, 
-	David Rientjes <rientjes@google.com>, Ravi Shankar <venkataravis@micron.com>, 
-	dave.hansen@linux.intel.com, John Hubbard <jhubbard@nvidia.com>, mykolal@meta.com, 
-	Brian Morris <bsmorris@google.com>, Eishan Mirakhur <emirakhur@micron.com>, Wei Xu <weixugc@google.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Srinivasulu Thanneeru <sthanneeru@micron.com>, John Groves <jgroves@micron.com>, 
-	Christoph Lameter <cl@gentwo.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Aravind Ramesh <arramesh@micron.com>
+References: <20240417160842.76665-1-ryncsn@gmail.com> <20240417160842.76665-7-ryncsn@gmail.com>
+ <87mspkx3cy.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87mspkx3cy.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 23 Apr 2024 21:33:54 +0800
+Message-ID: <CAMgjq7CH0xCEXF6nwsNZYW7Rcx0YF1+7Sb_ycXe2k10hbZc_tA@mail.gmail.com>
+Subject: Re: [PATCH 6/8] mm/swap: get the swap file offset directly
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, 
+	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 29, 2024 at 2:20=E2=80=AFAM John Groves <John@groves.net> wrote=
-:
+On Tue, Apr 23, 2024 at 9:43=E2=80=AFAM Huang, Ying <ying.huang@intel.com> =
+wrote:
 >
-> John Groves, Micron
+> Kairui Song <ryncsn@gmail.com> writes:
 >
-> Micron recently released the first RFC for famfs [1]. Although famfs is n=
-ot
-> CXL-specific in any way, it aims to enable hosts to share data sets in sh=
-ared
-> memory (such as CXL) by providing a memory-mappable fs-dax file system
-> interface to the memory.
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > folio_file_pos and page_file_offset are for mixed usage of swap cache
+> > and page cache, it can't be page cache here, so introduce a new helper
+> > to get the swap offset in swap file directly.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> >  mm/page_io.c | 6 +++---
+> >  mm/swap.h    | 5 +++++
+> >  2 files changed, 8 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/mm/page_io.c b/mm/page_io.c
+> > index ae2b49055e43..93de5aadb438 100644
+> > --- a/mm/page_io.c
+> > +++ b/mm/page_io.c
+> > @@ -279,7 +279,7 @@ static void sio_write_complete(struct kiocb *iocb, =
+long ret)
+> >                * be temporary.
+> >                */
+> >               pr_err_ratelimited("Write error %ld on dio swapfile (%llu=
+)\n",
+> > -                                ret, page_file_offset(page));
+> > +                                ret, swap_file_pos(page_swap_entry(pag=
+e)));
+> >               for (p =3D 0; p < sio->pages; p++) {
+> >                       page =3D sio->bvec[p].bv_page;
+> >                       set_page_dirty(page);
+> > @@ -298,7 +298,7 @@ static void swap_writepage_fs(struct folio *folio, =
+struct writeback_control *wbc
+> >       struct swap_iocb *sio =3D NULL;
+> >       struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
+> >       struct file *swap_file =3D sis->swap_file;
+> > -     loff_t pos =3D folio_file_pos(folio);
+> > +     loff_t pos =3D swap_file_pos(folio->swap);
+> >
+> >       count_swpout_vm_event(folio);
+> >       folio_start_writeback(folio);
+> > @@ -429,7 +429,7 @@ static void swap_read_folio_fs(struct folio *folio,=
+ struct swap_iocb **plug)
+> >  {
+> >       struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
+> >       struct swap_iocb *sio =3D NULL;
+> > -     loff_t pos =3D folio_file_pos(folio);
+> > +     loff_t pos =3D swap_file_pos(folio->swap);
+> >
+> >       if (plug)
+> >               sio =3D *plug;
+> > diff --git a/mm/swap.h b/mm/swap.h
+> > index fc2f6ade7f80..2de83729aaa8 100644
+> > --- a/mm/swap.h
+> > +++ b/mm/swap.h
+> > @@ -7,6 +7,11 @@ struct mempolicy;
+> >  #ifdef CONFIG_SWAP
+> >  #include <linux/blk_types.h> /* for bio_end_io_t */
+> >
+> > +static inline loff_t swap_file_pos(swp_entry_t entry)
+> > +{
+> > +     return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
+> > +}
+> > +
+> >  /* linux/mm/page_io.c */
+> >  int sio_pool_init(void);
+> >  struct swap_iocb;
 >
-> Sharable disaggregated memory already exists in the lab, and will be poss=
-ible
-> in the wild soon. Famfs aims to do the following:
+> I feel that the file concept for swap is kind of confusing.  From the
+> file cache point of view, one "struct address space" conresponds to one
+> file.  If so, we have a simple file system on a swap device (block
+> device backed or file backed), where the size of each file is 64M.  The
+> swap entry encode the file system (swap_type), the file name
+> (swap_offset >> SWAP_ADDRESS_SPACE_SHIFT), and the offset in file (lower
+> bits of swap_offset).
 >
-> * Provide an access method that provides isolation between files, and doe=
-s not
->   tempt developers to mmap all the memory writable on every host.
-> * Provide an an access method that can be used by unmodified apps.
->
-> Without something like famfs, enabling the use of sharable memory will in=
-volve
-> the temptation to do things that may destabilize systems, such as
-> mapping large shared, writable global memory ranges and hooking allocator=
-s to
-> use it (potentially sacrificing isolation), and forcing the same virtual
-> address ranges in every host/process (compromising security).
->
-> The most obvious candidate app categories are data analytics and data lak=
-es.
-> Both make heavy use of "zero-copy" data frames - column oriented data tha=
-t
-> is laid out for efficient use via (MAP_SHARED) mmap. Moreover, these use =
-case
-> categories are generally driven by python code that wrangles data into
-> appropriate data frames - making it straightforward to put the data frame=
-s
-> into famfs. Furthermore, these use cases usually involve the shared data =
-being
-> read-only during computation or query jobs - meaning they are often free =
-of
-> cache coherency concerns.
->
-> Workloads such as these often deal with data sets that are too large to f=
-it
-> in a single server's memory, so the data gets sharded - requiring movemen=
-t via
-> a network. Sharded apps also sometimes have to do expensive reshuffling -
-> moving data to nodes with available compute resources. Avoiding the shard=
-ing
-> overheads by accessing such data sets in disaggregated shared memory look=
-s
-> promising to make make better use of memory and compute resources, and by
-> effectively de-duplicating data sets in memory.
->
-> About sharable memory
->
-> * Shared memory is pmem-like, in that hosts will connect in order to acce=
-ss
->   pre-existing contents
-> * Onlining sharable memory as system-ram is nonsense; system-ram gets zer=
-oed...
-> * CXL 3 provides for optionally-supported hardware-managed cache coherenc=
-y
-> * But "multiple-readers, no writers" use cases don't need hardware suppor=
-t
->   for coherency
-> * CXL 3.1 dynamic capacity devices (DCDs) should be thought of as devices=
- with
->   an allocator built in.
-> * When sharable capacity is allocated, each host that has access will see=
- a
->   /dev/dax device that can be found by the "tag" of the allocation. The t=
-ag is
->   just a uuid.
-> * CXL 3.1 also allows the capacity associated with any allocated tag to b=
-e
->   provided to each host (or host group) as either writable or read-only.
->
-> About famfs
->
-> Famfs is an append-only log-structured file system that places many limit=
-s
-> on what can be done. This allows famfs to tolerate clients with a stale c=
-opy
-> of metadata. All memory allocation and log maintenance is performed from =
-user
-> space, but file extent lists are cached in the kernel for fast fault
-> resolution. The current limitations are fairly extreme, but many can be r=
-elaxed
-> by writing more code, managing Byzantine generals, etc. ;)
->
-> A famfs-enabled kernel can be cloned at [3], and the user space repo can =
-be
-> cloned at [4]. Even with major functional limitations in its current form
-> (e.g. famfs does not currently support deleting files), it is sufficient =
-to
-> use in data analytics workloads - in which you 1) create a famfs file sys=
-tem,
-> 2) dump data sets into it, 3) run clustered jobs that consume the shared =
-data
-> sets, and 4) dismount and deallocate the memory containing the file syste=
-m.
->
-> Famfs Open Issues
->
-> * Volatile CXL memory is exposed as character dax devices; the famfs patc=
-h
->   set adds the iomap API, which is required for fs-dax but until now miss=
-ing
->   from character dax.
-> * (/dev/pmem devices are block, and support the iomap api for fs-dax file
->   systems)
-> * /dev/pmem devices can be converted to /dev/dax mode, but native /dev/da=
-x
->   devices cannot be converted to pmem mode.
-> * /dev/dax devices lack the iomap api that fs-dax uses with pmem, so the =
-famfs
->   patch set adds that.
-> * VFS layer hooks for a file system on a character device may be needed.
-> * Famfs has uncovered some previously latent bugs in the /dev/dax mmap
->   machinery that probably require attention.
-> * Famfs currently works with either pmem or devdax devices, but our
->   inclination is to drop pmem support to, reduce the complexity of suppor=
-ting
->   two different underlying device types - particularly since famfs is not
->   intended for actual pmem.
->
->
-> Required :-
-> Dan Williams
-> Christian Brauner
-> Jonathan Cameron
-> Dave Hansen
->
-> [LSF/MM + BPF ATTEND]
->
-> I am the author of the famfs file system. Famfs was first introduced at L=
-PC
-> 2023 [2]. I'm also Micron's voting member on the Software and Systems Wor=
-king
-> Group (SSWG) of the CXL Consortium, and a co-author of the CXL 3.1
-> specification.
->
->
-> References
->
-> [1] https://lore.kernel.org/linux-fsdevel/cover.1708709155.git.john@grove=
-s.net/#t
-> [2] https://lpc.events/event/17/contributions/1455/
-> [3] https://www.computeexpresslink.org/download-the-specification
-> [4] https://github.com/cxl-micron-reskit/famfs-linux
->
+> If the above definition is good, it's better to rename swap_file_pos()
+> to swap_dev_pos(), because it returns the swap device position of the
+> swap entry.
 
-Hi John,
+Good suggestion! The definition looks good to me, swap_dev_pos also
+looks better, "swap_file" looks confusing indeed.
 
-Following our correspondence on your patch set [1], I am not sure that the
-details of famfs file system itself are an interesting topic for the
-LSFMM crowd??
-What I would like to do is schedule a session on:
-"Famfs: new userspace filesystem driver vs. improving FUSE/DAX"
-
-I am hoping that Miklos and Bernd will be able to participate in this
-session remotely.
-
-You see the last time that someone tried to introduce a specialized
-faster FUSE replacement [2], the comments from the community were
-that FUSE protocol can and should be improved instead of introducing
-another "filesystem in userspace" protocol.
-
-Since 2019, FUSE has gained virtiofs/dax support, it recently gained
-FUSE passthrough support and Bernd is working on FUSE uring [3].
-
-My hope is that you will be able to list the needed improvements
-to /dev/dax iomap and FUSE so that you could use the existing
-kernel infrastructure and FUSE libraries to implement famfs.
-
-How does that sound for a discussion?
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/3jwluwrqj6rwsxdsksfvdeo5uccgmnkh7=
-rgefaeyxf2gu75344@ybhwncywkftx/
-[2] https://lore.kernel.org/linux-fsdevel/8d119597-4543-c6a4-917f-14f4f4a6a=
-855@netapp.com/
-[3] https://lore.kernel.org/linux-fsdevel/20230321011047.3425786-1-bschuber=
-t@ddn.com/
+>
+> And, when we reaches consensus on the swap file related concept, we may
+> document it somewhere and review all naming in swap code to cleanup.
+>
+> --
+> Best Regards,
+> Huang, Ying
 
