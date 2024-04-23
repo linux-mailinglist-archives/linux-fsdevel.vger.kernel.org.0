@@ -1,113 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-17507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111508AE804
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 15:24:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B37CB8AE808
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 15:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EA35B2675D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 13:24:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BB51C224E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Apr 2024 13:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3260135A4D;
-	Tue, 23 Apr 2024 13:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="2T7Le/2X"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C295135A65;
+	Tue, 23 Apr 2024 13:25:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-40136.proton.ch (mail-40136.proton.ch [185.70.40.136])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1638E135403
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Apr 2024 13:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414D4135A40;
+	Tue, 23 Apr 2024 13:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713878678; cv=none; b=WoGg+fdJW9mz7fySNdL9wr+LUtrWToWCWRTPP1KCxMWazO/Vr7iPvvY7roXQXYCUxmrdsxlr4m1z6DQFVoufw+5SZt/IOcd5gGXlBiqEm7TaOf6bicckZi3VWA/oIW5r8e1AeOm1/hJKK5lF+7xGOEH6DX4CY3PO7Vvlgirdlog=
+	t=1713878744; cv=none; b=mObamySBxAgG/AGVKffpEueud4+Rvn1OakNPqtiI557jPbPBUyUS0lY0kA4gZn5DHCJ+t3xz2IIHwM8IKJKsOIeiOCcHmoAWIkb2F0dO27HaTjyd6SDh5QDYga3Trawjnu5zwUZCoA1Qd5ebItg79R2j6g6J9YhvBKXV+s4AevY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713878678; c=relaxed/simple;
-	bh=aadGFMTxQQqOojUyHsIb18QL71Y6heNSckLB50I+m+0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nKOzbhHuB3YK1hBel6h3NQK3nHlqjZPGr9XrXWYomxsyrog6BYvm7YOTMnAF+DWmAxO7YVVY1AI0R4PL7UXvVSzPIKwz6MNK7b94/oCw8wfrJ1+8zD7YwD1qVglre1ovkXPpiAJQL8a0g3mFspgZgckSPO738035cTbNgReApw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=2T7Le/2X; arc=none smtp.client-ip=185.70.40.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
-	s=protonmail; t=1713878667; x=1714137867;
-	bh=6dJjTH74N9XLJTYjisx3SbPvyzJ3e7sIYbHKqgQYjvk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=2T7Le/2XpNlw9TbTRidbFrz8u+VtoAE874E8ixMW9JJQKkBQk9BM2x1ICDRqZ+0vn
-	 xuaR1pZDmTiV6DTRtznHKr3tSqZ0KsI1+vNikbzEvkd04UwJrCYYyKCdoy5Rtthmom
-	 Ij1j8n+27h+hGQiHmnjnga2MJa4G8Rcn3gE7BTSWC+/mpzOfsbSnC11xZGJqAm2avY
-	 6aT7IZE4veEDzvBM3iQ/fJi45zoE0NCCJrwo3ee3vbGjwoagOaZGjzdoqC5R9OpETu
-	 KrhJztp6opzY70UFmFcYfKM2Azebso66Ak2RoQiaIpSWXvroX+Wcg7TsFY8jqVQfYS
-	 87QEF28HrPKXg==
-Date: Tue, 23 Apr 2024 13:24:22 +0000
-To: Miklos Szeredi <miklos@szeredi.hu>, The 8472 <kernel@infinite-source.de>
-From: Antonio SJ Musumeci <trapexit@spawn.link>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: EBADF returned from close() by FUSE
-Message-ID: <9f991dcc-8921-434c-90f2-30dd0e5ec5bc@spawn.link>
-In-Reply-To: <CAJfpegv1K-sF6rq-jXGJX12+K38PwvQNsGTP-H64K5a2tkxiPA@mail.gmail.com>
-References: <1b946a20-5e8a-497e-96ef-f7b1e037edcb@infinite-source.de> <ff9b490d-421f-4092-8497-84f545a47e6a@infinite-source.de> <1db87cbf-0465-4226-81a8-3b288d6f47e4@spawn.link> <f7c97360-8f5e-45f4-876c-3dcbf9522a3a@infinite-source.de> <032cfe2c-a595-4371-a70b-f6d208974b0f@spawn.link> <f764ac09-bd84-41f0-847b-bc89016a4613@infinite-source.de> <aaabfbe6-2c61-46dc-ab82-b8d555f30238@spawn.link> <58766a27-e6ff-4d73-a7aa-625f3aa5f7d3@infinite-source.de> <CAJfpegv1K-sF6rq-jXGJX12+K38PwvQNsGTP-H64K5a2tkxiPA@mail.gmail.com>
-Feedback-ID: 55718373:user:proton
-X-Pm-Message-ID: 0a8cf370dcc74214d50393345affcdb4f7b614b1
+	s=arc-20240116; t=1713878744; c=relaxed/simple;
+	bh=5a4bb9B//8XIDmTV7hGB8eIJiBmSaKE7suGLchtgKZU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=P+uacGBWZinr7gIC3vU5TG95OZVW0fjkUP7xiBmg6VCPibJWNdem4s35x0bY+d9kfogWWDqV5C9Uf5V1qeBHWx6DBAOgA1Gz+7HaagBR0WBZYswYrPd+6r/9++rl8YvepTNe5sYYUgo+eMmg1bDKiARfaIIFq1o0OIM4QegMEnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VP2tK4gz5z4f3nTY;
+	Tue, 23 Apr 2024 21:25:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id CBA661A016E;
+	Tue, 23 Apr 2024 21:25:38 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP2 (Coremail) with SMTP id Syh0CgCH6v3NtidmQDz9Kw--.51257S2;
+	Tue, 23 Apr 2024 21:25:37 +0800 (CST)
+Subject: Re: [PATCH v2 0/6] virtiofs: fix the warning for ITER_KVEC dio
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+ Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>,
+ Matthew Wilcox <willy@infradead.org>,
+ Benjamin Coddington <bcodding@redhat.com>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, houtao1@huawei.com
+References: <20240228144126.2864064-1-houtao@huaweicloud.com>
+ <20240408034514-mutt-send-email-mst@kernel.org>
+ <413bd868-a16b-f024-0098-3c70f7808d3c@huaweicloud.com>
+ <20240422160615-mutt-send-email-mst@kernel.org>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <3a287e9b-55ad-dda9-5f53-c12536bad31d@huaweicloud.com>
+Date: Tue, 23 Apr 2024 21:25:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240422160615-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID:Syh0CgCH6v3NtidmQDz9Kw--.51257S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGryfKrWUZFy7GFWDWFy5twb_yoWrXry5pr
+	Wftan8trsrXFy3Arn2y3Z5urnakws3JFy7Wr9xXw1ruFZIq3Wxur47tFyY9Fy7Ary8AFy8
+	tr1FqasF9r1qv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU1zuWJUUUUU==
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-On 4/23/24 07:46, Miklos Szeredi wrote:
-> On Sat, 20 Apr 2024 at 01:04, The 8472 <kernel@infinite-source.de> wrote:
+
+
+On 4/23/2024 4:06 AM, Michael S. Tsirkin wrote:
+> On Tue, Apr 09, 2024 at 09:48:08AM +0800, Hou Tao wrote:
+>> Hi,
+>>
+>> On 4/8/2024 3:45 PM, Michael S. Tsirkin wrote:
+>>> On Wed, Feb 28, 2024 at 10:41:20PM +0800, Hou Tao wrote:
+>>>> From: Hou Tao <houtao1@huawei.com>
+>>>>
+>>>> Hi,
+>>>>
+>>>> The patch set aims to fix the warning related to an abnormal size
+>>>> parameter of kmalloc() in virtiofs. The warning occurred when attempting
+>>>> to insert a 10MB sized kernel module kept in a virtiofs with cache
+>>>> disabled. As analyzed in patch #1, the root cause is that the length of
+>>>> the read buffer is no limited, and the read buffer is passed directly to
+>>>> virtiofs through out_args[0].value. Therefore patch #1 limits the
+>>>> length of the read buffer passed to virtiofs by using max_pages. However
+>>>> it is not enough, because now the maximal value of max_pages is 256.
+>>>> Consequently, when reading a 10MB-sized kernel module, the length of the
+>>>> bounce buffer in virtiofs will be 40 + (256 * 4096), and kmalloc will
+>>>> try to allocate 2MB from memory subsystem. The request for 2MB of
+>>>> physically contiguous memory significantly stress the memory subsystem
+>>>> and may fail indefinitely on hosts with fragmented memory. To address
+>>>> this, patch #2~#5 use scattered pages in a bio_vec to replace the
+>>>> kmalloc-allocated bounce buffer when the length of the bounce buffer for
+>>>> KVEC_ITER dio is larger than PAGE_SIZE. The final issue with the
+>>>> allocation of the bounce buffer and sg array in virtiofs is that
+>>>> GFP_ATOMIC is used even when the allocation occurs in a kworker context.
+>>>> Therefore the last patch uses GFP_NOFS for the allocation of both sg
+>>>> array and bounce buffer when initiated by the kworker. For more details,
+>>>> please check the individual patches.
+>>>>
+>>>> As usual, comments are always welcome.
+>>>>
+>>>> Change Log:
+>>> Bernd should I just merge the patchset as is?
+>>> It seems to fix a real problem and no one has the
+>>> time to work on a better fix .... WDYT?
+>> Sorry for the long delay. I am just start to prepare for v3. In v3, I
+>> plan to avoid the unnecessary memory copy between fuse args and bio_vec.
+>> Will post it before next week.
+> Didn't happen before this week apparently.
+
+Sorry for failing to make it this week. Being busy these two weeks. Hope
+to send v3 out before the end of April.
 >
->> If it is the official position that the whims of FUSE servers have
->> primacy over current kernel API guarantees then please update
->> the documentation of all affected syscalls and relax those
->> guarantees, similar to the note on the write(2) manpage.
-> Which note are you referring to?
->
-> I can see some merit to both sides.
->
-> If it's an issue that can be fixed in the fuse server ("Doctor, it
-> hurts when I do this." "Then don't do that!=E2=80=9D) adding complexity t=
-o the
-> fuse client is not warranted.
->
-> Obviously most fuse servers don't want to actively confuse caller, but
-> if such behavior can be used to exploit a weakness in an application,
-> then it becomes more than just a correctness issue.  If you came up
-> with such a scenario, then this would turn into a serious bug.
->
-> Thanks,
-> Miklos
-
- From the write(2) manpage (at least on Ubuntu):
-
-"Other errors may occur, depending on the object connected to fd."
-
-My argument has been that this note is defacto true generally.
-
-The specifics of this thread stem from close() returning EBADF to the=20
-client app while talking to a FUSE server after the open() succeeded=20
-and, from the point of view of the client app, returned a valid file=20
-descriptor. Sounds like a bug in the FUSE server rather than something=20
-FUSE itself needs to worry about. Besides removing some classes of usage=20
-of FUSE it would be rather complicated, if not impossible, to assume the=20
-meaning of returned errors from the server and translate them into=20
-"approved" values for the client. It will mask server bugs and/or=20
-confuse server authors at best IMO. Error handling in FUSE is already a=20
-bit difficult to manage.
-
-This is not unlike a recent complaint that when link() is not=20
-implemented libfuse returns ENOSYS rather than EPERM. As I pointed out=20
-in that situation EPERM is not universally defined as meaning "not=20
-implemented by filesystem" like used in Linux. Doesn't mean it isn't=20
-used (I didn't check) but it isn't defined as such in docs.
-
+>>>
+>>>> v2:
+>>>>   * limit the length of ITER_KVEC dio by max_pages instead of the
+>>>>     newly-introduced max_nopage_rw. Using max_pages make the ITER_KVEC
+>>>>     dio being consistent with other rw operations.
+>>>>   * replace kmalloc-allocated bounce buffer by using a bounce buffer
+>>>>     backed by scattered pages when the length of the bounce buffer for
+>>>>     KVEC_ITER dio is larger than PAG_SIZE, so even on hosts with
+>>>>     fragmented memory, the KVEC_ITER dio can be handled normally by
+>>>>     virtiofs. (Bernd Schubert)
+>>>>   * merge the GFP_NOFS patch [1] into this patch-set and use
+>>>>     memalloc_nofs_{save|restore}+GFP_KERNEL instead of GFP_NOFS
+>>>>     (Benjamin Coddington)
+>>>>
+>>>> v1: https://lore.kernel.org/linux-fsdevel/20240103105929.1902658-1-houtao@huaweicloud.com/
+>>>>
+>>>> [1]: https://lore.kernel.org/linux-fsdevel/20240105105305.4052672-1-houtao@huaweicloud.com/
+>>>>
+>>>> Hou Tao (6):
+>>>>   fuse: limit the length of ITER_KVEC dio by max_pages
+>>>>   virtiofs: move alloc/free of argbuf into separated helpers
+>>>>   virtiofs: factor out more common methods for argbuf
+>>>>   virtiofs: support bounce buffer backed by scattered pages
+>>>>   virtiofs: use scattered bounce buffer for ITER_KVEC dio
+>>>>   virtiofs: use GFP_NOFS when enqueuing request through kworker
+>>>>
+>>>>  fs/fuse/file.c      |  12 +-
+>>>>  fs/fuse/virtio_fs.c | 336 +++++++++++++++++++++++++++++++++++++-------
+>>>>  2 files changed, 296 insertions(+), 52 deletions(-)
+>>>>
+>>>> -- 
+>>>> 2.29.2
 
 
