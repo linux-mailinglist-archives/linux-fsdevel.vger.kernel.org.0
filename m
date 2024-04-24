@@ -1,121 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-17663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE87C8B131B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 21:02:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2688B131F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 21:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9CE01C22D94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 19:02:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C211A1F282AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 19:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF1D1DA20;
-	Wed, 24 Apr 2024 19:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BBE20B0F;
+	Wed, 24 Apr 2024 19:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K8jCInls"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="peNbFt+7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944561CD23;
-	Wed, 24 Apr 2024 19:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B116A1DDF4;
+	Wed, 24 Apr 2024 19:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713985320; cv=none; b=TxfrnL6ivfSkLpxun9Gnbz30n6vpQSBXK/qhrBNjUcZzZviyZAn/ZDRbtBnr4Zw7m/cmfZA4PKd46W7gMZIlH3hu6WDwwaXNVh2yT+QwwBeKZ32jvwsPXpQKyafYx4gEKBTYp+LnaRes4vHSdniL2Ru6G/SKX1X3FozofIzeEcA=
+	t=1713985367; cv=none; b=m9WHYzeIt2NHhkgL0/jZjKmhztQ32IkAHh62oLjACoAz4wmTJO7aoQxKcoW0XyCos1ZQJ88y+DP9dBb2DEQlsN33/TbaiVU+moHfzqnruhI5aXf6mOH3GtAUgk8yFfrDzY2DOEbho6Bhve/+jDha8kZDnmUgnSPSKtCGQFjpsXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713985320; c=relaxed/simple;
-	bh=Q29+WUKSF1/TImyYIfU6qDFvpXG3ngAxtBKm3rf53yo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WBm6cm+dznZ8lGNT4Ft8LhPgu4Zu7ZNBp+5YoApMpkvQh5SYBiXuYbO9BlSOs0swJzeygixHQm6XyT+BYLh21Ri06+LzY134uRt18FBH+F8kvJ6sNaVFf6lJJyP33ekqlir1oDICB+BC1MHPoBEZBAvmGVs30aOVAwYcd1o5+0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K8jCInls; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713985318; x=1745521318;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=Q29+WUKSF1/TImyYIfU6qDFvpXG3ngAxtBKm3rf53yo=;
-  b=K8jCInlsDGfHGLBmaM3hKBGRYTMg8rFSZZan5ZjRuGPTAPCIUIYuQEix
-   u7tFCBXQlCDsyBX59uAW60wUKm87oA/+vQLvkhvCf0b3p9IDrx4eM8Pn0
-   HsQujXak9s2EwJUQDezrn+x9XqH/ze0r5S1DEuoO3lKQEK6qYg0JyqsPo
-   WFpdmQr7R+IuX4664vNs2+6cC4mk1FgYSQLqv8/rvgAP+M4OiHdupdqxW
-   lTgQ/hBkmxuA44YlB2ymu5J6np/8wIWHV5lMs8x1FO2qVQblWFCPhYUJ3
-   g8V/xY8GtgMY/qwlbKSI3LLdatdF5m0XEol7jB/sZ9OUBb0JOYwlOtwkI
-   A==;
-X-CSE-ConnectionGUID: Up/6OtC3TKG+7TrC0LfiIA==
-X-CSE-MsgGUID: DwCI+BOwTVinKy4nJvQFJg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11054"; a="12573097"
-X-IronPort-AV: E=Sophos;i="6.07,227,1708416000"; 
-   d="scan'208";a="12573097"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2024 12:01:57 -0700
-X-CSE-ConnectionGUID: So5rGAlLTeCbfb1cfq4ejw==
-X-CSE-MsgGUID: gU70sMFeQ+iD9/Gl28NoFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,227,1708416000"; 
-   d="scan'208";a="29291859"
-Received: from unknown (HELO vcostago-mobl3) ([10.124.220.153])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2024 12:01:55 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com,
- malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
- lizhen.you@intel.com, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] overlayfs: Optimize override/revert creds
-In-Reply-To: <CAJfpeguqW4mPE9UyLmccisTex_gmwq6p9_6_EfVm-1oh6CrEBA@mail.gmail.com>
-References: <20240403021808.309900-1-vinicius.gomes@intel.com>
- <CAJfpeguqW4mPE9UyLmccisTex_gmwq6p9_6_EfVm-1oh6CrEBA@mail.gmail.com>
-Date: Wed, 24 Apr 2024 12:01:54 -0700
-Message-ID: <87frvay47x.fsf@intel.com>
+	s=arc-20240116; t=1713985367; c=relaxed/simple;
+	bh=bpScCuSOD6I7HPErlxMDhSP8i32n5CZR6oNHqgULV4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnEQbIltOQmelShHcZg6CA9VoSH6pL5q/C7iyenm1Z3cOfLBx01ZVZuZoVk0G3nxKhB67jSr5+fHwqxe3EMDOV7XWwa32/kFnc7mGWx18A3z9cOqR1N7Kvc4Bb1ak1sycGKyZMNmFhYiSWpqPXcKKrvnXlmj9jJ76t0gE11xbJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=peNbFt+7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44888C113CD;
+	Wed, 24 Apr 2024 19:02:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713985367;
+	bh=bpScCuSOD6I7HPErlxMDhSP8i32n5CZR6oNHqgULV4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=peNbFt+7duPR2YwHyaqmGswWQ/sFqMFQ7lBHcsNMH82tZ9V5/9/RFEFxbSXsIddT8
+	 7KqmCFVqkvu0N1+wkmkGJhPPzjQ3ph0Aol1MfrWiS2rR1Wek7/kz46XBE7vo9To1Ws
+	 0kWYdDLE6IuyMEvxvyh+hBe1Yby1qMqQ1HJH/tY8CG1f+u60KwLPDIH8unF8DuUDu4
+	 35ndI8I5Raf7B5763swDabI40V48xolaJVeg6Iguy7q5qGN0j42pw0NX8zlH4fLs/G
+	 skEbxccveU8+DGN6bl3NQYAFYSyGt58JlW47bRnF34DNdEhsOM7bj0YwXx8STQ5orM
+	 2ngT9W0++am8g==
+Date: Wed, 24 Apr 2024 12:02:46 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: aalbersh@redhat.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
+Subject: Re: [PATCH 10/13] fsverity: pass the zero-hash value to the
+ implementation
+Message-ID: <20240424190246.GL360919@frogsfrogsfrogs>
+References: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
+ <171175868031.1987804.13138670908694064691.stgit@frogsfrogsfrogs>
+ <20240405025750.GH1958@quark.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240405025750.GH1958@quark.localdomain>
 
-Miklos Szeredi <miklos@szeredi.hu> writes:
+On Thu, Apr 04, 2024 at 10:57:50PM -0400, Eric Biggers wrote:
+> On Fri, Mar 29, 2024 at 05:35:17PM -0700, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > Compute the hash of a data block full of zeros, and then supply this to
+> > the merkle tree read and write methods.  A subsequent xfs patch will use
+> 
+> This should say "hash of a block", not "hash of a data block".  What you
+> actually care about is the hash of a Merkle tree block, not the hash of a data
+> block.  Yet, there is no difference in how the hashes are calculated for the two
+> types of blocks, so we should simply write "hash of a block".
 
-> On Wed, 3 Apr 2024 at 04:18, Vinicius Costa Gomes
-> <vinicius.gomes@intel.com> wrote:
->
->>  - in ovl_rename() I had to manually call the "light" the overrides,
->>    both using the guard() macro or using the non-light version causes
->>    the workload to crash the kernel. I still have to investigate why
->>    this is happening. Hints are appreciated.
->
-> Don't know.  Well, there's nesting (in ovl_nlink_end()) but I don't
-> see why that should be an issue.
->
-> I see why Amir suggested moving away from scoped guards, but that also
-> introduces the possibility of subtle bugs if we don't audit every one
-> of those sites carefully...
->
-> Maybe patchset should be restructured to first do the
-> override_creds_light() conversion without guards, and then move over
-> to guards.   Or the other way round, I don't have a preference.  But
-> mixing these two independent changes doesn't sound like a great idea
-> in any case.
+I think I could go further with the precision of the description --
 
-Sounds good. Here's I am thinking:
+"Compute the hash of one filesystem block's worth of zeroes.  Any merkle
+tree block containing only this hash can be elided at write time, and
+its contents synthesized at read time."
 
-patch 1: introduce *_creds_light()
-patch 2: move backing-file.c to *_creds_light()
-patch 3: move overlayfs to *_creds_light()
-patch 4: introduce the guard helpers
-patch 5: move backing-file.c to the guard helpers
-patch 6: move overlayfs to the guard helpers
+I don't think this is going to happen very often above the leaf levels
+of the merkle tree, but as written there's nothing to prevent the
+elision of internal nodes.  Also note that the elision can happen for
+internal nodes even when merkle tree blocksize != i_blocksize.
 
-(and yeah, the subject of the patches will be better than these ;-)
+> > diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+> > index de8798f141d4a..195a92f203bba 100644
+> > --- a/fs/verity/fsverity_private.h
+> > +++ b/fs/verity/fsverity_private.h
+> > @@ -47,6 +47,8 @@ struct merkle_tree_params {
+> >  	u64 tree_size;			/* Merkle tree size in bytes */
+> >  	unsigned long tree_pages;	/* Merkle tree size in pages */
+> >  
+> > +	u8 zero_digest[FS_VERITY_MAX_DIGEST_SIZE]; /* hash of zeroed data block */
+> 
+> Similarly, "block" instead of "data block".
 
-Is this what you had in mind?
+How about "the hash of an i_blocksize-sized buffer of zeroes" for all
+three?
 
+--D
 
-Cheers,
--- 
-Vinicius
+> > diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+> > index 5dacd30d65353..761a0b76eefec 100644
+> > --- a/include/linux/fsverity.h
+> > +++ b/include/linux/fsverity.h
+> > @@ -66,6 +66,8 @@ struct fsverity_blockbuf {
+> >   *		if the page at @block->offset isn't already cached.
+> >   *		Implementations may ignore this argument; it's only a
+> >   *		performance optimization.
+> > + * @zero_digest: the hash for a data block of zeroes
+> 
+> Likewise.
+> 
+> >  /**
+> > @@ -81,12 +85,16 @@ struct fsverity_readmerkle {
+> >   * @level: level of the block; level 0 are the leaves
+> >   * @num_levels: number of levels in the tree total
+> >   * @log_blocksize: log2 of the size of the block
+> > + * @zero_digest: the hash for a data block of zeroes
+> > + * @digest_size: size of zero_digest
+> 
+> Likewise.
+> 
+> - Eric
+> 
 
