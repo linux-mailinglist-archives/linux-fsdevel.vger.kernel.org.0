@@ -1,138 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-17656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401AC8B1177
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 19:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3C78B11A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 20:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B151C242E6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 17:50:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34DAF1F26817
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 18:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CD616D4F5;
-	Wed, 24 Apr 2024 17:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6010E16D9A8;
+	Wed, 24 Apr 2024 18:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="mF8Y3dzK"
+	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="3cXLBL2J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9622616D4E2;
-	Wed, 24 Apr 2024 17:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D9316D9A0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 18:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713981043; cv=none; b=A2aoLh9t0Bfv+/lpkoFerxUe4+dBhonwREWxSDglXqmYtaaGlXdNf7lEBsDWAeR9bA9dGyKhPcBYifsSdti54pCIPv33XZ16lBOaRyUA0FxV+sSuSFSpYUbXCF9lzdOeHiYz08Ociq3kd6P6CDY2ZgkECsa2dAV5vFUEC9aq380=
+	t=1713981775; cv=none; b=YvDgadr+KED93Sk25ob6knfE0zMX/3ZT3GmmtxYQ+XTcN06QpHFNK9QpmiHV5M6WxZob1O/Kl4SAd5IjOW4k47ZXBDq/A7pvgU8iov83Xmvv4qRQLnnUB6W+YrrhfeMNwXpzcbOzZhDtllf+r3AGa1XG9pYo4PXM+YrxyDCN6v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713981043; c=relaxed/simple;
-	bh=o8jKNpnbE9BafJeDbh3SGBlwwtmgAmcgcxUn8SzIL/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UowArBdePEH3qJY+mTANqrwmostS0d3QMWUaqLpqmpHum2SpGWKZDTPWlE3eMeyGePLOuKzz/w+iL7gZqzi37NLPF91669C7vcmTS8qF8ZxSbLgrWl2Rqw00beVK2RZ3C4Y57sCqOJIFwFT+bo5yrIrvOtj4ioI6bi5Cxxazrgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=mF8Y3dzK; arc=none smtp.client-ip=178.154.239.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0d:2a02:0:640:77d9:0])
-	by forward501a.mail.yandex.net (Yandex) with ESMTPS id F043C61C52;
-	Wed, 24 Apr 2024 20:50:36 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id UoPFOVO1PCg0-scmYXfpm;
-	Wed, 24 Apr 2024 20:50:32 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1713981032; bh=FsAH7dX/dutCxtwW5Qi7X0NyAfR1DP1iFwg1kpXF4So=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=mF8Y3dzKtk7GK8J2sNnlE4Ivnl6zPyjuyzrw7qLAGwIiaDFmPt3X6XMM1uGPpxVWb
-	 pJlLAzBXp4ymZ5B4NWCAkjLw/IOQ83M8d+7eTp00hwnSLVoJSFSbin2UGCbMkdAUSO
-	 Z+Jsd21zqLRQV3Y2G1EwnzJHpLVYlJpZSKIN/0X0=
-Authentication-Results: mail-nwsmtp-smtp-production-main-51.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <6b46528a-965f-410a-9e6f-9654c5e9dba2@yandex.ru>
-Date: Wed, 24 Apr 2024 20:50:30 +0300
+	s=arc-20240116; t=1713981775; c=relaxed/simple;
+	bh=q6S5pmCASJyGUUG0ulRx4SOz+3MV38xuPYwg1VcCAtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ewRBcJc4YfvfF7RL/5QZu5Jy819Xr8mov4g0XAcPpvLURs1Ce1mBkHE4/6AWrkAX5Md06BmDKDuvTd3U7z6ML/kS6Mf+qfdpj3tZKEWzUzLzmQRGiCzatmgNNhJDu7tdeHZWapEI7kd7vmATGkSpjI/76R+YwCp043IzMUmUBcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=3cXLBL2J; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-43716c1616dso866571cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 11:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1713981772; x=1714586572; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nevhvd1meTfPIZE67PSZAMSBr8400hsjebaOAXqzKS4=;
+        b=3cXLBL2JyEaUNe+oVM5SlueT7Fml/lpMNY+liJosBuV6KCEwk/QxI+qH7+NzmFesEW
+         yuZicY8SZnEmnVrPX02EOfuSVVNTJUXgq0SfEzUESIH5u6AAJi1vmzUZtQcp3NuXNg0W
+         6oz41nE5YYs8+3yxbBDMVqe2e9dXAzhXI+hS5Ic7iRmzvTr9l81ymFaamb6gk198rQTX
+         P9s8AwQBi6FamyVQB1YS5jaKw39vfEPbQR0NLBlaiD+VNpQVVR85rQY76exBQ9TOFpo/
+         O2vOd29vB8WeJ94L8SyL0SvCT1qeGuYsH3Phne20H2Tlo2vhQCozZcyXAmSDyS2grjbS
+         512A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713981772; x=1714586572;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nevhvd1meTfPIZE67PSZAMSBr8400hsjebaOAXqzKS4=;
+        b=k+CU2MXux9b5QaPmP4mfO0LFPa/PHJxUFPcYZLi9wRGpilzVUlz4L42zNMsKhP4Im/
+         i1EWKkFnefHEwaJ2rLZ9JEW0g3hAMLvfMyffbJiNZ9V8/Kqtn8QdowPTdvAser73RY90
+         cpA1sEoulYO6ymqxE1j1JMHcV82D772z1P2cQMlKm0h57FEjhLEpY04D42CmvgHK7vB6
+         ZIBf7mlnkwQDkSAn2EHnRu+JrVx8Wcud10HXhI2A5BGQ0l/OUvZyaKxK6hOzUkKezSSP
+         SCoYAhnU/z2Ph4rT5HouOx48eM0kyvacdPfYvnneOZuVAXn2wSgphrl6gZqtTMvITnFr
+         KVeA==
+X-Gm-Message-State: AOJu0YzHCO/nQ1BObUzycBjjbE3JkmGOdABCOENuUogQ42emhy6cQP9n
+	wE/sIHjlgIyS8NvhnZN/4m/1bGFbsL7n4NVUDi37/AYpSmTfv9zYlPDB0D+xFzD3sPiGWTY7p28
+	OpYVYMq0b+9Y+cYr61kGknfRIYz0GpK7j2iqN
+X-Google-Smtp-Source: AGHT+IEZLEzW3ErvXOcewusmOzUnrSjq9J/ZI/oRg4C/1s4sDda5QLQZ0cDtCyJKmkp6UYic0DRuHkQ5H49IAP+pnu0=
+X-Received: by 2002:a05:622a:2c2:b0:432:dd26:e1db with SMTP id
+ a2-20020a05622a02c200b00432dd26e1dbmr4728651qtx.59.1713981771923; Wed, 24 Apr
+ 2024 11:02:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] implement OA2_INHERIT_CRED flag for openat2()
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
- Eric Biederman <ebiederm@xmission.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
- Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
- Chuck Lever <chuck.lever@oracle.com>, Alexander Aring
- <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- Paolo Bonzini <pbonzini@redhat.com>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-References: <20240424105248.189032-1-stsp2@yandex.ru>
- <20240424-schummeln-zitieren-9821df7cbd49@brauner>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <20240424-schummeln-zitieren-9821df7cbd49@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240420025029.2166544-1-willy@infradead.org> <20240420025029.2166544-19-willy@infradead.org>
+In-Reply-To: <20240420025029.2166544-19-willy@infradead.org>
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Wed, 24 Apr 2024 14:02:40 -0400
+Message-ID: <CAOg9mSQtqXWF400L9K4=FC453vBwrvj6Ps3PUM_V0Q5-TGoP8w@mail.gmail.com>
+Subject: Re: [PATCH 18/30] orangefs: Remove calls to set/clear the error flag
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, Martin Brandenburg <martin@omnibond.com>, 
+	devel@lists.orangefs.org, Mike Marshall <hubcap@omnibond.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-24.04.2024 19:09, Christian Brauner пишет:
-> This smells ripe enough to serve as an attack vector in non-obvious
-> ways. And in general this has the potential to confuse the hell out
-> unsuspecting userspace.
+I added this patch to 6.9.0-rc5 and ran it through xfstests with no problem=
+s...
 
-Unsuspecting user-space will simply
-not use this flag. What do you mean?
+-Mike
 
-
->   They can now suddenly get sent such
-> special-sauce files
-
-There are no any special files.
-This flag helps you to open a file on
-which you currently have no perms
-to open, but had those in the past.
-
-
->   such as this that they have no way of recognizing as
-> there's neither an FMODE_* flag nor is the OA2_* flag recorded so it's
-> not available in F_GETFL.
+On Fri, Apr 19, 2024 at 10:50=E2=80=AFPM Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
 >
-> There's not even a way to restrict that new flag because no LSM ever
-> sees it. So that behavior might break LSM assumptions as well.
+> Nobody checks the error flag on orangefs folios, so stop setting and
+> clearing it.  We can also use folio_end_read() to simplify
+> orangefs_read_folio().
 >
-> And it is effectively usable to steal credentials. If process A opens a
-> directory with uid/gid 0 then sends that directory fd via AF_UNIX or
-> something to process B then process B can inherit the uid/gid of process
-
-No, it doesn't inherit anything.
-The inheritance happens only for
-a duration of an open() call, helping
-open() to succeed. The creds are
-reverted when open() completed.
-
-The only theoretically possible attack
-would be to open some file you'd never
-intended to open. Also note that a
-very minimal sed of creds is overridden:
-fsuid, fsgid, groupinfo.
-
-> A by specifying OA2_* with no way for process A to prevent this - not
-> even through an LSM.
-
-If process B doesn't use that flag, it
-inherits nothing, no matter what process
-A did or passed via a socket.
-So an unaware process that doesn't
-use that flag, is completely unaffected.
-
-> The permission checking model that we have right now is already baroque.
-> I see zero reason to add more complexity for the sake of "lightweight
-> sandboxing". We have LSMs and namespaces for stuff like this.
+> Cc: Mike Marshall <hubcap@omnibond.com>
+> Cc: Martin Brandenburg <martin@omnibond.com>
+> Cc: devel@lists.orangefs.org
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/orangefs/inode.c           | 13 +++----------
+>  fs/orangefs/orangefs-bufmap.c |  4 +---
+>  2 files changed, 4 insertions(+), 13 deletions(-)
 >
-> NAK.
-
-I don't think it is fair to say NAK
-without actually reading the patch
-or asking its author for clarifications.
-Even though you didn't ask, I provided
-my clarifications above, as I find that
-a polite action.
-
+> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> index 085912268442..fdb9b65db1de 100644
+> --- a/fs/orangefs/inode.c
+> +++ b/fs/orangefs/inode.c
+> @@ -56,7 +56,6 @@ static int orangefs_writepage_locked(struct page *page,
+>         ret =3D wait_for_direct_io(ORANGEFS_IO_WRITE, inode, &off, &iter,=
+ wlen,
+>             len, wr, NULL, NULL);
+>         if (ret < 0) {
+> -               SetPageError(page);
+>                 mapping_set_error(page->mapping, ret);
+>         } else {
+>                 ret =3D 0;
+> @@ -119,7 +118,6 @@ static int orangefs_writepages_work(struct orangefs_w=
+ritepages *ow,
+>             0, &wr, NULL, NULL);
+>         if (ret < 0) {
+>                 for (i =3D 0; i < ow->npages; i++) {
+> -                       SetPageError(ow->pages[i]);
+>                         mapping_set_error(ow->pages[i]->mapping, ret);
+>                         if (PagePrivate(ow->pages[i])) {
+>                                 wrp =3D (struct orangefs_write_range *)
+> @@ -303,15 +301,10 @@ static int orangefs_read_folio(struct file *file, s=
+truct folio *folio)
+>         iov_iter_zero(~0U, &iter);
+>         /* takes care of potential aliasing */
+>         flush_dcache_folio(folio);
+> -       if (ret < 0) {
+> -               folio_set_error(folio);
+> -       } else {
+> -               folio_mark_uptodate(folio);
+> +       if (ret > 0)
+>                 ret =3D 0;
+> -       }
+> -       /* unlock the folio after the ->read_folio() routine completes */
+> -       folio_unlock(folio);
+> -        return ret;
+> +       folio_end_read(folio, ret =3D=3D 0);
+> +       return ret;
+>  }
+>
+>  static int orangefs_write_begin(struct file *file,
+> diff --git a/fs/orangefs/orangefs-bufmap.c b/fs/orangefs/orangefs-bufmap.=
+c
+> index b501dc07f922..edcca4beb765 100644
+> --- a/fs/orangefs/orangefs-bufmap.c
+> +++ b/fs/orangefs/orangefs-bufmap.c
+> @@ -274,10 +274,8 @@ orangefs_bufmap_map(struct orangefs_bufmap *bufmap,
+>                 gossip_err("orangefs error: asked for %d pages, only got =
+%d.\n",
+>                                 bufmap->page_count, ret);
+>
+> -               for (i =3D 0; i < ret; i++) {
+> -                       SetPageError(bufmap->page_array[i]);
+> +               for (i =3D 0; i < ret; i++)
+>                         unpin_user_page(bufmap->page_array[i]);
+> -               }
+>                 return -ENOMEM;
+>         }
+>
+> --
+> 2.43.0
+>
 
