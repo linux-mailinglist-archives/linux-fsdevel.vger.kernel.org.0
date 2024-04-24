@@ -1,226 +1,322 @@
-Return-Path: <linux-fsdevel+bounces-17614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF74E8B05A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 11:14:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32BB8B03EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 10:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 535911F26504
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 09:14:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D71A21C22DC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 08:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05106158DB9;
-	Wed, 24 Apr 2024 09:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aSAwhV0B"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96A615885C;
+	Wed, 24 Apr 2024 08:12:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AE3158D6B;
-	Wed, 24 Apr 2024 09:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937AB15749E;
+	Wed, 24 Apr 2024 08:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713950038; cv=none; b=IHzhoPABdwtnkTg7dQwJiL4Ztbygn1xYBk6T9Kx1YajDFzr7gER7gjh7rV5scQXoDESLGOgWKOS/Fu1InO9TNDRgCHHDpvrSFLz1lqrdXHxzR9aKIT7Uz7pDe2krwAFTPOqY+GzUolHEDrUeVIUI75IXH5NA/oV6J2mPetCSDjg=
+	t=1713946363; cv=none; b=F3w+KuyIqYk/WQJpNTf11v1YKqloeQB7VsxKmxvmVZZTWUfXW2C9ZtvXfTEYe5aWi/IZM+zXrxzLbwzcBxcstlH1UefXxONHxUYn0Hn93XmCAD3VNvmhZkfxeKe25PBoW/JZiPkeES7MKoNPTAIYUUxoouNwfjLtLiYGljVNw9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713950038; c=relaxed/simple;
-	bh=kwOToCx5Xooe3aJqkybANNPjfaU/VyfvyRqvIPXQRH4=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=HHTu0kWfFcRd3GQG6jrhMjncdAlTCce8z+E16E+hK4YMv7kKSFm4Xvlc1G38k+w8lNo55wetkPUg2L46h9AK8lIuI6QWXKiU5xr3/teHazWX+R02ZiS2KJk4oCjCZzANIArDWLR/o9bh3bZsyab9b4fqSUUfAj+qV2GSmC224Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=aSAwhV0B; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240424091353euoutp02a99f231124e7c37c8b8a49a9232b77f9~JLHl1sgmH1862118621euoutp020;
-	Wed, 24 Apr 2024 09:13:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240424091353euoutp02a99f231124e7c37c8b8a49a9232b77f9~JLHl1sgmH1862118621euoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1713950033;
-	bh=kwOToCx5Xooe3aJqkybANNPjfaU/VyfvyRqvIPXQRH4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=aSAwhV0BgLj4HlzR9RkxKUIlKO6mdH+qDlcJnc3WQqvvbUEEu9rE5tdbfzAf3CCKG
-	 LMJ5j7IlxtSxWYK2OgflVwchXJUAt+SEljM12rLnj+ixER6dRPvEAkh5jxiubbM7YU
-	 y+vsHzDfhMaVwDt5VCCH2fjZ1joktXWYCMO6tnok=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240424091353eucas1p2d064d779024946aee4f8181509c2f5da~JLHlozUYn1487814878eucas1p23;
-	Wed, 24 Apr 2024 09:13:53 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id E5.96.09624.05DC8266; Wed, 24
-	Apr 2024 10:13:52 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240424091352eucas1p1c0d02929537ba08fee15fd7fd0517813~JLHlALEqg2217522175eucas1p19;
-	Wed, 24 Apr 2024 09:13:52 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240424091352eusmtrp1d9ccae9cde2c168d9a3fb3babdbf8d26~JLHk_vwxq2021920219eusmtrp1y;
-	Wed, 24 Apr 2024 09:13:52 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-d2-6628cd50483d
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id DE.D4.08810.05DC8266; Wed, 24
-	Apr 2024 10:13:52 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240424091352eusmtip1fa4b115f07c557f8f6f3537efb4e8058~JLHktoFeI2178721787eusmtip1L;
-	Wed, 24 Apr 2024 09:13:52 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Wed, 24 Apr 2024 10:13:51 +0100
-Date: Wed, 24 Apr 2024 09:52:38 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: Luis Chamberlain <mcgrof@kernel.org>, <josh@joshtriplett.org>, Kees Cook
-	<keescook@chromium.org>, Eric Biederman <ebiederm@xmission.com>, Iurii
-	Zaikin <yzaikin@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami
-	Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thomas
-	Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, Stephen
-	Boyd <sboyd@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry
-	<wad@chromium.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
-	<peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel
-	Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider
-	<vschneid@redhat.com>, Petr Mladek <pmladek@suse.com>, John Ogness
-	<john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Anil S Keshavamurthy
-	<anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
-	Balbir Singh <bsingharora@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
-	<john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
-	KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song
-	<yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
-	<sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<bpf@vger.kernel.org>, <tools@kernel.org>
-Subject: Re: [PATCH v3 00/10] sysctl: Remove sentinel elements from kernel
- dir
-Message-ID: <20240424075238.g7dwzjt7nqajcdgk@joelS2.panther.com>
+	s=arc-20240116; t=1713946363; c=relaxed/simple;
+	bh=P8ELnR1PBrPAkgCQQ7OHyLqdbjil/Iqd/SSOKcXC2Lk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Fzly91knSJREHcAD+O0KBLXt8Y1SFNDVrS2RmPp121SFFOU7cJokAGTRS2vaoOiEe80QTrI4nfk2QlLMeNP4XAY6Ct1YoZx8Xu+uUPGw2czhjRtoAYYzQY7SJWgJUeOuFI/laQpbVADD2M0rcRKkAHFh4k7JX1ejw0LO+f0Qzpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VPWtl0dmkz4f3jq6;
+	Wed, 24 Apr 2024 16:12:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 379011A11B9;
+	Wed, 24 Apr 2024 16:12:35 +0800 (CST)
+Received: from [10.174.176.34] (unknown [10.174.176.34])
+	by APP1 (Coremail) with SMTP id cCh0CgCXaBHuvihm7R5JKw--.13223S3;
+	Wed, 24 Apr 2024 16:12:32 +0800 (CST)
+Subject: Re: [RESEND RFC PATCH v4 00/34] ext4: use iomap for regular file's
+ buffered IO path and enable large folio
+To: linux-ext4@vger.kernel.org, tytso@mit.edu, jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
+ david@fromorbit.com, willy@infradead.org, zokeefe@google.com,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ wangkefeng.wang@huawei.com
+References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <493ab4c5-505c-a351-eefa-7d2677cdf800@huaweicloud.com>
+Date: Wed, 24 Apr 2024 16:12:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="c3mjqeq3spx6dpjw"
-Content-Disposition: inline
-In-Reply-To: <36a1ea2f-92c2-4183-a892-00c5b48c419b@linaro.org>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA2WTe1BUZRjG5zvncM6CLR4Wwk/AHBAZBgE1dPwgISvHjs1UVM5UTqOucgQC
-	FmYXSMUmICRYUUhABgRZIK6LKBeX+wIr10BuEnETUERBUEJcCWXZgIPlTP+97/v8nu993j8+
-	Hi5opEx4niJ/ViwSeluQeoSicaHDzvW29ckdl+87oflXV3BUOTFIoOcLgxSaq28iUffYHyRK
-	mAwhUPJkG4Uy0l7gKLkjjEDjMTdxpFWEUUjVVEOh0LIcDCl6UgGqj0taFmS+aLG5kER3o+MJ
-	1HbeB1W2qjEUEVtKoEfKCxiqqm4h0J2KZBLVX79NIPm1YB2U+WcXhvIjc3VQX8w4QLFPHwKU
-	kW2FumtlGJLHaSjUdKEWQ9oxtQ5SRoxiaKm3kEDdf08RqLIwnURN2RoSFRfF46i98B6OIuqX
-	s95smKfQoFRLoVG5QgdllX+2bzszMq0hmPyr+YC5EtxFMCW5/RhTnnSXYsKUAxQjKwpginNs
-	mIyqSYyR9nXjzMCUM1OUF0kyQ71VJPO0vZ1i0oLjcSYmvRa4Gh/W2+vGensGsuLtLsf0PDp/
-	UQI/pcGpshfhRDA4t14KdHmQ3gWz8xNIKdDjCegcAFsePcS55jmA54qb15Q5ADXSOPK1pSIm
-	EeOEbAAXOyewf6nyxB7ANcUAyruGiBULQW+F0UMjq3aStoUd00PLS3g8o+U6Ml6ywuN0Ax92
-	xHWs8oa0K4zv7aZWGD69DwaHbFoZ82kD2JL4YBXB6VNwdky7iuC0Kcxe4q2MdWkXuCDrIbig
-	5lCdMbxW/wh/LxlYzQnpmXWwvWF8NQKk90NNqRvHGMLHTSUUV5vB1tgoguNjAaxZ+oviGjmA
-	WSFqjKPeg2E9D9YcH8Dw4RmCe1Qf9j0x4HLqw0uKhLVdfBgRLuBoKygfniZiwJakNy5LeuOy
-	pP8u48a2UFb5jPzfeBvMSpvCudoZFhTMEDJA5YENbIDEx52V7BSxP9hLhD6SAJG7/QlfnyKw
-	/L1al5qelYGUx7P2KoDxgApYLpvv35B3AhNC5CtiLYz4LxctTwr4bsLTZ1ix71FxgDcrUQFT
-	HmGxgb/VbTMroN2F/qwXy/qx4tcqxtM1Cca+DDxbJ7jnWXvoYpk25qD1nsBOZdTnjsP2pbFt
-	31uVrE/10m9WzCnXjdineFQd33/++Ca/vBnvI7kDm+00BVc/CSk6bKqWRu96aeswvdQ2Yb6o
-	c9D6oy17y68hlXfLNrv+0t2DTidoZeQX3wlOG77TanP91pmgj3sSg4xveDn4yS7V/NT4qbOb
-	OZ5ZbPJ2aHpVVJDjxu666sYPn/yGp1eYGR117T9bPRvq3mg2Z6z2rjuimx9npBDTqQcm56Xa
-	GTq8YbTW8qtvyKSJy3Y/q60yHeM1hxzKdvjL+75uabloMuaacuddibb6VYnBxl95eZ18lz2q
-	WP+3KlW979/69thuO6fwPJ8OkQUh8RDutMHFEuE/XTuYVtkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA2WTe0xTVxzHd+69vbewFS+FsRsciTaMGaaFIoVTIh1ZNrkui+EPyTKcQieX
-	xwYta8GgCaY44kqJoUxxUhBaQRBhaHnKc11XBwryEhlPAZ3yTJUhOt5r7ZaZ7L9Pvuf7/Z5f
-	fjmHjXIncXd2vDSZkUslCTzcEevcbB/fE3Z3V4xvU50LfLmWj8LmmVEMPl8ZJeCSuR2H/Y/u
-	4/DH2XQMFsx2EbBY/wKFBT0ZGHysqUPhVn0GAU3tPxPw9M2rCKwfKALQfF5rPdDJ4HqHAYfj
-	2bkY7MpKhM2dywhUnWvA4HTbWQS2tN7G4L2mAhyar9/FYMVPSha88nsfAiszy1lwSPMYwHOW
-	JwAWl3nBfqMOgRXnNwjYftaIwK1HyyzYpppE4OagAYP9f81jsNlwGYftZRs4rKnORWG3YQqF
-	KrN11rpbLwk4qt4i4GRFPQuWNh4M8aEnFjYwurKwEtD5yj6Mri0fRuhG7ThBZ7SNELSuOoWu
-	uepNF7fMIrR6qB+lR+aD6eprmTg9NtiC05buboLWK3NRWnPZCMLcIvj75LKUZGZHnEyRHMw7
-	LIB+fIEI8v38RXzB3sAjQX5Cno94XzSTEH+ckfuIo/hxW88+SmpxTtW01uJK8N02NXBgU6Q/
-	1aTJQ2zMJa8AamRjh11/lzI8v8+yswu1PqjG1cDR6lkE1GyOnrAHagBlzAq0MUa+R2WPTeA2
-	xsndVM/CGKoGbLarlTNzFbYsSt7iUEPTRa88LuRBauwHI2bzcMgQSpnuYe+fBNRwdfarizmk
-	M3U77w/Mxih5nOoyXAA2P0pup8o22TbZgRRTK7oBzD7nTmq5+ME/nEYtbTwBGuCifa1J+1qT
-	9r8mu+xNDW3OIv+TP6BK9fOonYOpqqqnmA4Q14Ark6JIjE1UCPgKSaIiRRrLPyZLrAbW513/
-	20rNTVA4t8g3AYQNTMDTmnx4o6IXuGNSmZThuXJW1z1juJxoyYmTjFwWKU9JYBQmILQuMQd1
-	f/uYzPpXpMmRggBfocA/QOQrFAXs5b3DOZCkknDJWEky8w3DJDHyf3MI28FdiWQronxLzxvf
-	MJ1Uxe8fDmVzG9y+kI8NRFWGz3Ssdn6I+zqmx/d7hkfeQXb3rdYVihpqY9p3mk2iT3dZDrhn
-	72HpXScP8T4+80z8PZ//yftpzpI3N+suVsfOWWIixLoQ4sbRwPTDRVHBAQX6X3tXzc1eoZp5
-	C136taX8BTK1eoLcxnJi8lyL5goH3Es+H+/9ih6simmOFlZ4THv0uJzRRXeUlHt+ebRFm3mn
-	9dJE1kXJocW33L7l/PnZ6dwjM70TDYUPFLlP2criknwx956rZ7gwbdg4HaBPXQpaOxXhPBXk
-	NNita3T+pZy/kFTmtRY6HJnqVNB4SnVpf44qbHX78sPrizxMEScReKNyheRvqkITNnMEAAA=
-X-CMS-MailID: 20240424091352eucas1p1c0d02929537ba08fee15fd7fd0517813
-X-Msg-Generator: CA
-X-RootMTR: 20240422142758eucas1p26e94cf6fbbbc99b27e941a172e8a4e41
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240422142758eucas1p26e94cf6fbbbc99b27e941a172e8a4e41
-References: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-0-285d273912fe@samsung.com>
-	<CGME20240422142758eucas1p26e94cf6fbbbc99b27e941a172e8a4e41@eucas1p2.samsung.com>
-	<36a1ea2f-92c2-4183-a892-00c5b48c419b@linaro.org>
+In-Reply-To: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgCXaBHuvihm7R5JKw--.13223S3
+X-Coremail-Antispam: 1UD129KBjvJXoWfGFyDKw4ftw4UAF13Kr4fGrg_yoWkWrWkpF
+	ZIkF47Kr1DWw1Uua97Aw13tr40g3W5JF4UGw1fW3y8ZF4UCF1fuF97KF4FvFW3ArZrGryY
+	vF4Sy348uas0y3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UZ18PUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
---c3mjqeq3spx6dpjw
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Ted and Jan,
 
-On Mon, Apr 22, 2024 at 04:27:47PM +0200, Konrad Dybcio wrote:
->=20
->=20
-> On 3/28/24 16:44, Joel Granados wrote:
-> > What?
-> > These commits remove the sentinel element (last empty element) from the
-> > sysctl arrays of all the files under the "kernel/" directory that use a
-> > sysctl array for registration. The merging of the preparation patches
-> > [1] to mainline allows us to remove sentinel elements without changing
-> > behavior. This is safe because the sysctl registration code
-> > (register_sysctl() and friends) use the array size in addition to
-> > checking for a sentinel [2].
->=20
-> Hi,
->=20
-> looks like *this* "patch" made it to the sysctl tree [1], breaking b4
-> for everyone else (as there's a "--- b4-submit-tracking ---" magic in
-> the tree history now) on next-20240422
->=20
-> Please drop it (again, I'm only talking about this empty cover letter).
-Here do you mean revert? or do you mean force-push without the cover
-letter commit?
+I'm almost done with the first phase of this iomap conversion for
+regular file's buffered IO path, could you please take time to take
+a look at this series, I'd appreciated if I could get some feedback
+and comments before the next phase of development, or is there any
+plan to merge this series?
 
-I did the later, but if the former is necessary I can always go back to
-the old HEAD, add a revert commit and then push that.
+Thanks,
+Yi.
 
-Best
+On 2024/4/10 22:29, Zhang Yi wrote:
+> Hello!
+> 
+> This is the fourth version of RFC patch series that convert ext4 regular
+> file's buffered IO path to iomap and enable large folio. I've rebased it
+> on 6.9-rc3, it also **depends on my xfs/iomap fix series** which has
+> been reviewed but not merged yet[1]. Compared to the third vesion, this
+> iteration fixes an issue discovered in current ext4 code, and contains
+> another two main changes, 1) add bigalloc support and 2) simplify the
+> updating logic of reserved delalloc data block, both changes could be
+> sent out as preliminary patch series, besides these, others are some
+> small code cleanups, performance optimize and commit log improvements.
+> Please take a look at this series and any comments are welcome.
+> 
+> This series supports ext4 with the default features and mount
+> options(bigalloc is also supported), doesn't support non-extent(ext3),
+> inline_data, dax, fs_verity, fs_crypt and data=journal mode, ext4 would
+> fall back to buffer_head path automatically if you enabled those
+> features or options. Although it has many limitations now, it can satisfy
+> the requirements of most common cases and bring a significant performance
+> benefit for large IOs.
+> 
+> The iomap path would be simpler than the buffer_head path to some extent,
+> please note that there are 4 major differences:
+> 1. Always allocate unwritten extent for new blocks, it means that it's
+>    not controlled by dioread_nolock mount option.
+> 2. Since 1, there is no risk of exposing stale data during the append
+>    write, so we don't need to write back data before metadata, it's time
+>    to drop 'data = ordered' mode automatically.
+> 3. Since 2, we don't need to reserve journal credits and use reserved
+>    handle for the extent status conversion during writeback.
+> 4. We could postpone updating the i_disksize to the endio, it could
+>    avoid exposing zero data during append write and instantaneous power
+>    failure.
+> 
+> Series details:
+> Patch 1-9: this is the part 2 preparation series, it fix a problem
+> first, and makes ext4_insert_delayed_block() call path support inserting
+> multiple delalloc blocks (also support bigalloc), finally make
+> ext4_da_map_blocks() buffer_head unaware, I've send it out separately[2]
+> and hope this could be merged first.
+> 
+> Patch 10-19: this is the part 3 prepartory changes(picked out from my
+> metadata reservation series[3], these are not a strong dependency
+> patches, but I'd suggested these could be merged before the iomap
+> conversion). These patches moves ext4_da_update_reserve_space() to
+> ext4_es_insert_extent(), and always set EXT4_GET_BLOCKS_DELALLOC_RESERVE
+> when allocating delalloc blocks, no matter it's from delayed allocate or
+> non-delayed allocate (fallocate) path, it makes delalloc extents always
+> delonly. These can make delalloc reservation simpler and cleaner than
+> before.
+> 
+> Patch 20-34: These patches are the main implements of the buffered IO
+> iomap conversion, It first introduce a sequence counter for extent
+> status tree, then add a new iomap aops for read, write, mmap, replace
+> current buffered_head path. Finally, enable iomap path besides inline
+> data, non-extent, dax, fs_verity, fs_crypt, defrag and data=journal
+> mode, if user specify "buffered_iomap" mount option, also enable large
+> folio. Please look at the following patch for details.
+> 
+> About Tests:
+>  - Pass kvm-xfstests in auto mode, and the keep running stress tests and
+>    fault injection tests.
+>  - A performance tests below (tested on my version 3 series,
+>    theoretically there won't be much difference in this version).
+> 
+>    Fio tests with psync on my machine with Intel Xeon Gold 6240 CPU
+>    with 400GB system ram, 200GB ramdisk and 1TB nvme ssd disk.
+> 
+>    == buffer read ==
+> 
+>                   buffer head        iomap + large folio
+>    type     bs    IOPS    BW(MiB/s)  IOPS    BW(MiB/s)
+>    ----------------------------------------------------
+>    hole     4K    565k    2206       811k    3167
+>    hole     64K   45.1k   2820       78.1k   4879
+>    hole     1M    2744    2744       4890    4891
+>    ramdisk  4K    436k    1703       554k    2163
+>    ramdisk  64K   29.6k   1848       44.0k   2747
+>    ramdisk  1M    1994    1995       2809    2809
+>    nvme     4K    306k    1196       324k    1267
+>    nvme     64K   19.3k   1208       24.3k   1517
+>    nvme     1M    1694    1694       2256    2256
+> 
+>    == buffer write ==
+> 
+>                                         buffer head  iomap + large folio
+>    type   Overwrite Sync Writeback bs   IOPS   BW    IOPS   BW
+>    ------------------------------------------------------------
+>    cache    N       N    N         4K   395k   1544  415k   1621
+>    cache    N       N    N         64K  30.8k  1928  80.1k  5005
+>    cache    N       N    N         1M   1963   1963  5641   5642
+>    cache    Y       N    N         4K   423k   1652  443k   1730
+>    cache    Y       N    N         64K  33.0k  2063  80.8k  5051
+>    cache    Y       N    N         1M   2103   2103  5588   5589
+>    ramdisk  N       N    Y         4K   362k   1416  307k   1198
+>    ramdisk  N       N    Y         64K  22.4k  1399  64.8k  4050
+>    ramdisk  N       N    Y         1M   1670   1670  4559   4560
+>    ramdisk  N       Y    N         4K   9830   38.4  13.5k  52.8
+>    ramdisk  N       Y    N         64K  5834   365   10.1k  629
+>    ramdisk  N       Y    N         1M   1011   1011  2064   2064
+>    ramdisk  Y       N    Y         4K   397k   1550  409k   1598
+>    ramdisk  Y       N    Y         64K  29.2k  1827  73.6k  4597
+>    ramdisk  Y       N    Y         1M   1837   1837  4985   4985
+>    ramdisk  Y       Y    N         4K   173k   675   182k   710
+>    ramdisk  Y       Y    N         64K  17.7k  1109  33.7k  2105
+>    ramdisk  Y       Y    N         1M   1128   1129  1790   1791
+>    nvme     N       N    Y         4K   298k   1164  290k   1134
+>    nvme     N       N    Y         64K  21.5k  1343  57.4k  3590
+>    nvme     N       N    Y         1M   1308   1308  3664   3664
+>    nvme     N       Y    N         4K   10.7k  41.8  12.0k  46.9
+>    nvme     N       Y    N         64K  5962   373   8598   537
+>    nvme     N       Y    N         1M   676    677   1417   1418
+>    nvme     Y       N    Y         4K   366k   1430  373k   1456
+>    nvme     Y       N    Y         64K  26.7k  1670  56.8k  3547
+>    nvme     Y       N    Y         1M   1745   1746  3586   3586
+>    nvme     Y       Y    N         4K   59.0k  230   61.2k  239
+>    nvme     Y       Y    N         64K  13.0k  813   21.0k  1311
+>    nvme     Y       Y    N         1M   683    683   1368   1369
+>  
+> TODO
+>  - Keep on doing stress tests and fixing.
+>  - Reserve enough space for delalloc metadata blocks and try to drop
+>    ext4_nonda_switch().
+>  - First support defrag and then support other more unsupported features
+>    and mount options.
+> 
+> Changes since v3:
+>  - Drop the part 1 prepartory patches which have been merged [4].
+>  - Drop the two iomap patches since I've submitted separately [1].
+>  - Fix an incorrect reserved delalloc blocks count and incorrect extent
+>    status cache issue found on current ext4 code.
+>  - Pick out part 2 prepartory patch series [2], it make
+>    ext4_insert_delayed_block() call path support inserting multiple
+>    delalloc blocks (also support bigalloc )and make ext4_da_map_blocks()
+>    buffer_head unaware.
+>  - Adjust and simplify the reserved delalloc blocks updating logic,
+>    preparing for reserving meta data blocks for delalloc.
+>  - Drop datasync dirty check in ext4_set_iomap() for buffered
+>    read/write, improves the concurrent performance on small I/Os.
+>  - Prevent always hold invalid_lock in page_cache_ra_order(), add
+>    lockless check.
+>  - Disable iomap path by default since it's experimental new, add a
+>    mount option "buffered_iomap" to enable it.
+>  - Some other minor fixes and change log improvements.
+> Changes since v2:
+>  - Update patch 1-6 to v3.
+>  - iomap_zero and iomap_unshare don't need to update i_size and call
+>    iomap_write_failed(), introduce a new helper iomap_write_end_simple()
+>    to avoid doing that.
+>  - Factor out ext4_[ext|ind]_map_blocks() parts from ext4_map_blocks(),
+>    introduce a new helper ext4_iomap_map_one_extent() to allocate
+>    delalloc blocks in writeback, which is always under i_data_sem in
+>    write mode. This is done to prevent the writing back delalloc
+>    extents become stale if it raced by truncate.
+>  - Add a lock detection in mapping_clear_large_folios().
+> Changes since v1:
+>  - Introduce seq count for iomap buffered write and writeback to protect
+>    races from extents changes, e.g. truncate, mwrite.
+>  - Always allocate unwritten extents for new blocks, drop dioread_lock
+>    mode, and make no distinctions between dioread_lock and
+>    dioread_nolock.
+>  - Don't add ditry data range to jinode, drop data=ordered mode, and
+>    make no distinctions between data=ordered and data=writeback mode.
+>  - Postpone updating i_disksize to endio.
+>  - Allow splitting extents and use reserved space in endio.
+>  - Instead of reimplement a new delayed mapping helper
+>    ext4_iomap_da_map_blocks() for buffer write, try to reuse
+>    ext4_da_map_blocks().
+>  - Add support for disabling large folio on active inodes.
+>  - Support online defragmentation, make file fall back to buffer_head
+>    and disable large folio in ext4_move_extents().
+>  - Move ext4_nonda_switch() in advance to prevent deadlock in mwrite.
+>  - Add dirty_len and pos trace info to trace_iomap_writepage_map().
+>  - Update patch 1-6 to v2.
+> 
+> [1] https://lore.kernel.org/linux-xfs/20240320110548.2200662-1-yi.zhang@huaweicloud.com/
+> [2] https://lore.kernel.org/linux-ext4/20240410034203.2188357-1-yi.zhang@huaweicloud.com/
+> [3] https://lore.kernel.org/linux-ext4/20230824092619.1327976-1-yi.zhang@huaweicloud.com/
+> [4] https://lore.kernel.org/linux-ext4/20240105033018.1665752-1-yi.zhang@huaweicloud.com/
+> 
+> Thanks,
+> Yi.
+> 
+> ---
+> v3: https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
+> v2: https://lore.kernel.org/linux-ext4/20240102123918.799062-1-yi.zhang@huaweicloud.com/
+> v1: https://lore.kernel.org/linux-ext4/20231123125121.4064694-1-yi.zhang@huaweicloud.com/
+> 
+> Zhang Yi (34):
+>   ext4: factor out a common helper to query extent map
+>   ext4: check the extent status again before inserting delalloc block
+>   ext4: trim delalloc extent
+>   ext4: drop iblock parameter
+>   ext4: make ext4_es_insert_delayed_block() insert multi-blocks
+>   ext4: make ext4_da_reserve_space() reserve multi-clusters
+>   ext4: factor out check for whether a cluster is allocated
+>   ext4: make ext4_insert_delayed_block() insert multi-blocks
+>   ext4: make ext4_da_map_blocks() buffer_head unaware
+>   ext4: factor out ext4_map_create_blocks() to allocate new blocks
+>   ext4: optimize the EXT4_GET_BLOCKS_DELALLOC_RESERVE flag set
+>   ext4: don't set EXTENT_STATUS_DELAYED on allocated blocks
+>   ext4: let __revise_pending() return newly inserted pendings
+>   ext4: count removed reserved blocks for delalloc only extent entry
+>   ext4: update delalloc data reserve spcae in ext4_es_insert_extent()
+>   ext4: drop ext4_es_delayed_clu()
+>   ext4: use ext4_map_query_blocks() in ext4_map_blocks()
+>   ext4: drop ext4_es_is_delonly()
+>   ext4: drop all delonly descriptions
+>   ext4: use reserved metadata blocks when splitting extent on endio
+>   ext4: introduce seq counter for the extent status entry
+>   ext4: add a new iomap aops for regular file's buffered IO path
+>   ext4: implement buffered read iomap path
+>   ext4: implement buffered write iomap path
+>   ext4: implement writeback iomap path
+>   ext4: implement mmap iomap path
+>   ext4: implement zero_range iomap path
+>   ext4: writeback partial blocks before zeroing out range
+>   ext4: fall back to buffer_head path for defrag
+>   ext4: partial enable iomap for regular file's buffered IO path
+>   filemap: support disable large folios on active inode
+>   ext4: enable large folio for regular file with iomap buffered IO path
+>   ext4: don't mark IOMAP_F_DIRTY for buffer write
+>   ext4: add mount option for buffered IO iomap path
+> 
 
->=20
-> Konrad
->=20
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/com=
-mit/?h=3Dsysctl-next&id=3Dec04a7fa09ddedc1d6c8b86ae281897256c7fdf0
-
---=20
-
-Joel Granados
-
---c3mjqeq3spx6dpjw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmYoukYACgkQupfNUreW
-QU9vQAv+Lne9ZN0yGMA1Mmfcb0fp2lW2SntP3+HHJYiKmz98mwTHJrsNLqgRg9Sp
-18WTHY2ZF0t/6poR3F6+6ScGSdk9IjzwNzyLJeaH9iGQq8xU7PcIdcvgvXp5GWnw
-PeDW28bZ74r2vGa9sDRmzqEHmJ6zxGAsIRopraO5iCjsX/xZQILsbj3McgnQ1Mf8
-usn7eJbiUgpWPfc6Xp4oylK/5vZYwkds3ktFT0bCOO+QoP3bIS6xVkRBDS7K9cJS
-0yPRvkmICkjOL11n4PYKeev+5NHxAUbFwrD3HJ8bKkDIN0GQCsd98nucM2q32fcA
-aQnsxdnHVPeCf42ZSZWEpm3GtTqXJuBespmD78k3DqQMOElbGs3XWck0/17kTNRo
-3k53VVirXDs7xWx8KtGPt17sQLTjoR5ETNbS6OO+XLmZvzA8XHDvVLUVOKGvHcSC
-pXvKil3C7em0Yuea0ioAKeNRBr8SRsGXD6VazvCUX6eSAeYWVopJscUJY7c5FWuS
-wDWSrhNX
-=iaui
------END PGP SIGNATURE-----
-
---c3mjqeq3spx6dpjw--
 
