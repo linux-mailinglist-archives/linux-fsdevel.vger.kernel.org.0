@@ -1,156 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-17666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246E38B1355
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 21:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3818B1375
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 21:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B892C1F2193A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 19:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2BA284A44
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 19:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC4774420;
-	Wed, 24 Apr 2024 19:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D066A84FB3;
+	Wed, 24 Apr 2024 19:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SgPqxNSS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhkDwy2E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21CE2D058;
-	Wed, 24 Apr 2024 19:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383B384D04;
+	Wed, 24 Apr 2024 19:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713986129; cv=none; b=inMOEjWR9ZVfYdAPEakuoUunjyG7xsmSpKtcL5QeVBBpOtXNCpjumGfS6GVSURXH0awo/ieHQUz1DMvLopiLa5vD+j+JYCOzzdp3pq0r3pydJ7bYs56iFsX9E1niPq1aReKiTCE7WCncTljJ8TPhNxOrjge1NSQkYIfZOgIBTmQ=
+	t=1713986392; cv=none; b=mhy9aA81Ijfjcxj9Juk8edM3iu79nvBn9oShGdjWyV+6sCixJ1sNkMbwEfcjZhjwpLxf/kyAkMk93P2jXXp/nKCv9C4iHU46/e+iOIG+uI2DTWdkXItMUFnf2JNf1oQ9dsu4G+39MY/a6yz0PPZSOzK0T2AJ95SO6/P3RXCXIFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713986129; c=relaxed/simple;
-	bh=lOEH5OW0djs2D1y/2qbmQpF/LbkgEdvTCeeoT+uKu5Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=M9SRRntr1/79dnSvECv5zKc3PRIOB7NZqnoLOakXjj5GqVqp7v/Ek/tnwLyCKtjip8ZUnb6P9cFrqPOqxXBo5QoYD9gdsQTHpw8ygK+O1zujgvpYdxZjOob/o2SXXESMdr/cv6+RmheVL8TARFNN24inGl7byOQOGUavaiHA5ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SgPqxNSS; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713986128; x=1745522128;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=lOEH5OW0djs2D1y/2qbmQpF/LbkgEdvTCeeoT+uKu5Y=;
-  b=SgPqxNSS6Dyg6lmiEO1VjEEOb2s6judy/efH0JXYcpYOt3DCH9PzBt02
-   gnkdxjmAVANoIHF6dYjaY6teFCza/92+60cZovC2I5Fd9raD0UOVdq6SV
-   wafiBEZDoLsN1M0eM6W6UvnOehp7VCweaSCRokTb3Bjl4f9D+t2qQ45YT
-   R+XfrIWOsF4qAsayCSW9Ylzazfux2eavWb6SbpIt1cfbmHQhBzyqUJVB8
-   QFDj0ywEwYDTGWDR5uk8++aI4U7/e6xt5Gz6Hx2rATX7U+eAZM6xmsthH
-   p7bIWubKX5pwLZRR/s9ztiXb5x/MILsMU9lmHWh4KiKuoC2sqRsy2EVIF
-   g==;
-X-CSE-ConnectionGUID: wVfTZXczSnuOA2BZ0Mmspg==
-X-CSE-MsgGUID: YGaXZQXzRr+ySGNMWkAk8Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11054"; a="21052415"
-X-IronPort-AV: E=Sophos;i="6.07,227,1708416000"; 
-   d="scan'208";a="21052415"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2024 12:15:27 -0700
-X-CSE-ConnectionGUID: X0N0OLMuReuSRx/PRcj7Bw==
-X-CSE-MsgGUID: e/ijHY5+TLyvOAkq7nwXgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,227,1708416000"; 
-   d="scan'208";a="29447834"
-Received: from unknown (HELO vcostago-mobl3) ([10.124.220.153])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2024 12:15:26 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: amir73il@gmail.com, hu1.chen@intel.com, miklos@szeredi.hu,
- malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
- lizhen.you@intel.com, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] overlayfs: Optimize override/revert creds
-In-Reply-To: <20240424-befund-unantastbar-9b0154bec6e7@brauner>
-References: <20240403021808.309900-1-vinicius.gomes@intel.com>
- <20240424-befund-unantastbar-9b0154bec6e7@brauner>
-Date: Wed, 24 Apr 2024 12:15:25 -0700
-Message-ID: <87a5liy3le.fsf@intel.com>
+	s=arc-20240116; t=1713986392; c=relaxed/simple;
+	bh=SG4Lo4rIx0jK9AyJvfk3b3JplxqCs2y9vsJcG+z8OAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQPK7B40TagwJl4Qre7VJsMc5pYbB46TvMy1pWvb3aqsi3dKy96BGUUPFuuGdBQzb7ETrCAZfGspa4le8LvrimFAhUX840ZyvdchwJ2Emzl4ASyxXG8lKoF8juz9asX79/P84K7kxP1iOdHZtohyLR/F9sUlpXIbuFmzLfec1VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IhkDwy2E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9718FC113CD;
+	Wed, 24 Apr 2024 19:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713986391;
+	bh=SG4Lo4rIx0jK9AyJvfk3b3JplxqCs2y9vsJcG+z8OAg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IhkDwy2E5Sp/2EIyCvai21RmJiQghHwApl+U1e7VVx/1T22gEcEhBZ2KtPBPmpXn4
+	 S4vJSNcC9bGcPBxQHXDFqgNL2ro9FK7Vgm3QIt1MCjfAw3EbsDR60zaycTJ+o5kmyW
+	 4tpgrqZnEgLJLPkPhYfE///Khp/IAY39qTFYtafe+YVkB0L8yKqUnnBHOtNidpic9/
+	 1triYxSXquy3ogOlLrTyURNlhYYLf0fp3GinUHf/XV1yiwFCd79IgX8CxiTgiQHfjN
+	 027/d4lbTlK6owYBlxQSnPUTkZqVbZ2e5XHKYGMmnOxck+uq8GkAphut0dHKRK4QP9
+	 mDLiRl4YPmtGQ==
+Date: Wed, 24 Apr 2024 19:19:50 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: aalbersh@redhat.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
+Subject: Re: [PATCH 10/13] fsverity: pass the zero-hash value to the
+ implementation
+Message-ID: <20240424191950.GA749176@google.com>
+References: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
+ <171175868031.1987804.13138670908694064691.stgit@frogsfrogsfrogs>
+ <20240405025750.GH1958@quark.localdomain>
+ <20240424190246.GL360919@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240424190246.GL360919@frogsfrogsfrogs>
 
-Christian Brauner <brauner@kernel.org> writes:
+On Wed, Apr 24, 2024 at 12:02:46PM -0700, Darrick J. Wong wrote:
+> On Thu, Apr 04, 2024 at 10:57:50PM -0400, Eric Biggers wrote:
+> > On Fri, Mar 29, 2024 at 05:35:17PM -0700, Darrick J. Wong wrote:
+> > > From: Darrick J. Wong <djwong@kernel.org>
+> > > 
+> > > Compute the hash of a data block full of zeros, and then supply this to
+> > > the merkle tree read and write methods.  A subsequent xfs patch will use
+> > 
+> > This should say "hash of a block", not "hash of a data block".  What you
+> > actually care about is the hash of a Merkle tree block, not the hash of a data
+> > block.  Yet, there is no difference in how the hashes are calculated for the two
+> > types of blocks, so we should simply write "hash of a block".
+> 
+> I think I could go further with the precision of the description --
+> 
+> "Compute the hash of one filesystem block's worth of zeroes.  Any merkle
+> tree block containing only this hash can be elided at write time, and
+> its contents synthesized at read time."
+> 
+> I don't think this is going to happen very often above the leaf levels
+> of the merkle tree, but as written there's nothing to prevent the
+> elision of internal nodes.  Also note that the elision can happen for
+> internal nodes even when merkle tree blocksize != i_blocksize.
+> 
+> > > diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+> > > index de8798f141d4a..195a92f203bba 100644
+> > > --- a/fs/verity/fsverity_private.h
+> > > +++ b/fs/verity/fsverity_private.h
+> > > @@ -47,6 +47,8 @@ struct merkle_tree_params {
+> > >  	u64 tree_size;			/* Merkle tree size in bytes */
+> > >  	unsigned long tree_pages;	/* Merkle tree size in pages */
+> > >  
+> > > +	u8 zero_digest[FS_VERITY_MAX_DIGEST_SIZE]; /* hash of zeroed data block */
+> > 
+> > Similarly, "block" instead of "data block".
+> 
+> How about "the hash of an i_blocksize-sized buffer of zeroes" for all
+> three?
 
-> On Tue, Apr 02, 2024 at 07:18:05PM -0700, Vinicius Costa Gomes wrote:
->> Hi,
->> 
->> Changes from RFC v3:
->>  - Removed the warning "fixes" patches, as they could hide potencial
->>    bugs (Christian Brauner);
->>  - Added "cred-specific" macros (Christian Brauner), from my side,
->>    added a few '_' to the guards to signify that the newly introduced
->>    helper macros are preferred.
->>  - Changed a few guard() to scoped_guard() to fix the clang (17.0.6)
->>    compilation error about 'goto' bypassing variable initialization;
->> 
->> Link to RFC v3:
->> 
->> https://lore.kernel.org/r/20240216051640.197378-1-vinicius.gomes@intel.com/
->> 
->> Changes from RFC v2:
->>  - Added separate patches for the warnings for the discarded const
->>    when using the cleanup macros: one for DEFINE_GUARD() and one for
->>    DEFINE_LOCK_GUARD_1() (I am uncertain if it's better to squash them
->>    together);
->>  - Reordered the series so the backing file patch is the first user of
->>    the introduced helpers (Amir Goldstein);
->>  - Change the definition of the cleanup "class" from a GUARD to a
->>    LOCK_GUARD_1, which defines an implicit container, that allows us
->>    to remove some variable declarations to store the overriden
->>    credentials (Amir Goldstein);
->>  - Replaced most of the uses of scoped_guard() with guard(), to reduce
->>    the code churn, the remaining ones I wasn't sure if I was changing
->>    the behavior: either they were nested (overrides "inside"
->>    overrides) or something calls current_cred() (Amir Goldstein).
->> 
->> New questions:
->>  - The backing file callbacks are now called with the "light"
->>    overriden credentials, so they are kind of restricted in what they
->>    can do with their credentials, is this acceptable in general?
->
-> Until we grow additional users, I think yes. Just needs to be
-> documented.
->
+It's the Merkle tree block size, not the filesystem block size.  Or did you
+actually intend for this to use the filesystem block size?
 
-Will add some documentation for it, then.
+In struct merkle_tree_params, the "block size" is always the Merkle tree block
+size, so the type of block size seems clear in that context.  My complaint was
+just that it used the term "data block" to mean a block that is not necessarily
+a file contents block (which is what "data block" means elsewhere).
 
->>  - in ovl_rename() I had to manually call the "light" the overrides,
->>    both using the guard() macro or using the non-light version causes
->>    the workload to crash the kernel. I still have to investigate why
->>    this is happening. Hints are appreciated.
->
-> Do you have a reproducer? Do you have a splat from dmesg?
-
-Just to be sure, with this version of the series the crash doesn't
-happen. It was only happening when I was using the guard() macro
-everywhere.
-
-I just looked at my crash collection and couldn't find the splats, from
-what I remember I lost connection to the machine, and wasn't able to
-retrieve the splat.
-
-I believe the crash and clang 17 compilation error point to the same
-problem, that in ovl_rename() some 'goto' skips the declaration of the
-(implicit) variable that the guard() macro generates. And it ends up
-doing a revert_creds_light() on garbage memory when ovl_rename()
-returns.
-
-(if you want I can try and go back to "guard() everywhere" and try a bit
-harder to get a splat)
-
-Does that make sense?
-
-
-Cheers,
--- 
-Vinicius
+- Eric
 
