@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-17658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E631B8B11AF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 20:06:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C598B1280
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 20:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D4C1F27A1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 18:06:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A73EB2F956
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 18:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB97E16D9C7;
-	Wed, 24 Apr 2024 18:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC96716E863;
+	Wed, 24 Apr 2024 18:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efB4MlTY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NySPGZnP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E02A16D4E5;
-	Wed, 24 Apr 2024 18:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB3916DEA7;
+	Wed, 24 Apr 2024 18:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713981921; cv=none; b=nIAYAeERa9d7LzEanQXNBcB/wqbfl1ginK2Qya15fdAtW/83vFswcq6sxMK/spbdb7iCPrl8z4nuBd+zkjF+ne7beSoG+QL0/gg5mrBsx0gb/vTCOY3fsPpwzWfPLIFQALw0DABy6QM8lR43G6xb9289pN4DBKCtdscrfbWTU0s=
+	t=1713982707; cv=none; b=N6ir+zMPI1eurpuDo42nTqYiM0Kh50vg8hJSr78VFTU5INeCrCua+QeuliYMD5VPmbb5h/19dh4urFsP257DeujjnAXTYtyVhItHCHA9KDOBtprECCfIgxIN9JqEcNJO8nAztvL9ksWdSubnW0EdiQVJyyWEYEUimXGdUwqne7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713981921; c=relaxed/simple;
-	bh=zq0zHx53sTHh6Nsl6y6RNxf2hPcfnIHynYrrmGqJJgc=;
+	s=arc-20240116; t=1713982707; c=relaxed/simple;
+	bh=FOWq/3p+B1FPL+NRzxNchjjgo2vnC2244vADQod+z18=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6pPmckEvKuMF4ReZmi5/vmVRhPzM7fU6uU1Sk3EDEt1LCdxD5pNpGQurxdOSML3p8Rf5VQXSGq3k8bK2kucau9yuOExqR9ohbRHTF+jhcGwlDabmkoAs0emc6EQcgcsV1QJKWH3bGOBaSUCp3pgDx7YZxu/FJGbJyerdeo1AkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efB4MlTY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B919BC113CD;
-	Wed, 24 Apr 2024 18:05:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOShdc9TAfg0UMpi82q9aHGXw/+Jug/jP3WWtsMQZGNzJ3c29whze570xGxAalJEeX7aH9i0M7RGBhLlPpKl1l4qkp4BxzUw5M8QE/1AJsV4S1GCf84C4oghMfoc8cyo1Qv8xdNFZ4MdfmL/grHxZ2s+poPLNCC9fYj7hhWjKgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NySPGZnP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5B2DC113CD;
+	Wed, 24 Apr 2024 18:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713981920;
-	bh=zq0zHx53sTHh6Nsl6y6RNxf2hPcfnIHynYrrmGqJJgc=;
+	s=k20201202; t=1713982706;
+	bh=FOWq/3p+B1FPL+NRzxNchjjgo2vnC2244vADQod+z18=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=efB4MlTYeTwU/9WwZRvNGuCeNTtOoLkTBH7D0+kPf90N/hJjHAwoDS8ZArAT2+WoR
-	 aa+a7sOQzJ+Zxnhxii1rsunX+rrRZy3ZoRRI8rDqQ2rahWnjCEhdrxbioDjaJagEnG
-	 EgJMPVxG5Ki9LXOMdUxe5VXz9hSMCH9T2TGZWxy6frWUyuAMabBGcbevNBLxz6oRgj
-	 X4WC2V835o4bISKSS33WHp/nISpcD5wG+VvBckf11V1pme0dxXlsG+jmXI1FpmCGDh
-	 A09uKNZw+9lO2uBYmtc+MDpWTWPhuMGWUThHP4qPr05q1yHM6Gzdd8KT4Jv62IelRB
-	 mYDQhp0yEPxZA==
-Date: Wed, 24 Apr 2024 11:05:20 -0700
+	b=NySPGZnP4R61Tr+jKFalwtQboENZtJF/b8hzYq9a6h5MZPrUl0CXXcmROcPG1l82N
+	 ZMO8rpb8A/9aQ4rXo2uTRAM1mUB7WHpyZ2WdhpfPmG+h0gSUd91H0i91DI/fI34Jcg
+	 AxnBbirg7QJB2Ec94q2hrFTliTzrfMK+a7YyGEP+JtPtF6UoobRIZXf87fVaFg5NJi
+	 Qquialy/jw8weDiWeJCHPF0M9M/boGyB6Xfxv+lnPoY2TbAL942NQ+qPn4lHt6+XNj
+	 8KX32u6dWtp6QL5adnk43mJT+viCYOB6PZUBZM1op6GaT/UUfqKg2ev3PCGPuY2Env
+	 vNfQ8DEvIe2PA==
+Date: Wed, 24 Apr 2024 11:18:26 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: aalbersh@redhat.com, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
-Subject: Re: [PATCH 12/13] fsverity: remove system-wide workqueue
-Message-ID: <20240424180520.GJ360919@frogsfrogsfrogs>
+Subject: Re: [PATCH 11/13] fsverity: report validation errors back to the
+ filesystem
+Message-ID: <20240424181826.GK360919@frogsfrogsfrogs>
 References: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
- <171175868064.1987804.7068231057141413548.stgit@frogsfrogsfrogs>
- <20240405031407.GJ1958@quark.localdomain>
+ <171175868048.1987804.2771715174385554090.stgit@frogsfrogsfrogs>
+ <20240405030911.GI1958@quark.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,74 +60,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240405031407.GJ1958@quark.localdomain>
+In-Reply-To: <20240405030911.GI1958@quark.localdomain>
 
-On Thu, Apr 04, 2024 at 11:14:07PM -0400, Eric Biggers wrote:
-> On Fri, Mar 29, 2024 at 05:35:48PM -0700, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > Now that we've made the verity workqueue per-superblock, we don't need
-> > the systemwide workqueue.  Get rid of the old implementation.
+On Thu, Apr 04, 2024 at 11:09:11PM -0400, Eric Biggers wrote:
+> On Fri, Mar 29, 2024 at 05:35:32PM -0700, Darrick J. Wong wrote:
+> > +	/**
+> > +	 * Notify the filesystem that file data validation failed
+> > +	 *
+> > +	 * @inode: the inode being validated
+> > +	 * @pos: the file position of the invalid data
+> > +	 * @len: the length of the invalid data
+> > +	 *
+> > +	 * This is called when fs-verity cannot validate the file contents.
+> > +	 */
+> > +	void (*fail_validation)(struct inode *inode, loff_t pos, size_t len);
 > 
-> This commit message needs to be rephrased because this commit isn't just
-> removing unused code.  It's also converting ext4 and f2fs over to the new
-> workqueue type.  (Maybe these two parts belong as separate patches?)
+> There is a difference between the file actually being corrupt (mismatching
+> hashes) and other problems like disk errors reading from the Merkle tree.
+> "Validation failed" is a bit ambiguous, and "cannot validate the file contents"
+> even more so.  Do you want only file corruption errors?  If so it may be a good
+> idea to call this 'file_corrupt', which would be consistent with the
+> "FILE CORRUPTED" error message in fs/verity/verify.c.  Or do you actually want
+> all errors?  Either way, it needs to be clarified what is actually meant.
 
-Yes, will fix that.
+I only want actual file corruption errors -- XFS can handle disk errors
+from reading merkle tree blocks on its own.  I'll change this to
+file_corrupt.  How's this?
 
-> Also, if there are any changes in the workqueue flags that are being used for
-> ext4 and f2fs, that needs to be documented.
-
-Hmm.  The current codebase does this:
-
-	fsverity_read_workqueue = alloc_workqueue("fsverity_read_queue",
-						  WQ_HIGHPRI,
-						  num_online_cpus());
-
-Looking at commit f959325e6ac3 ("fsverity: Remove WQ_UNBOUND from
-fsverity read workqueue"), I guess you want a bound workqueue so that
-the CPU that handles the readahead ioend will also handle the verity
-validation?
-
-Why do you set max_active to num_online_cpus()?  Is that because the
-verity hash is (probably?) being computed on the CPUs, and there's only
-so many of those to go around, so there's little point in making more?
-Or is it to handle systems with more than WQ_DFL_ACTIVE (~256) CPUs?
-Maybe there's a different reason?
-
-If you add more CPUs to the system later, does this now constrain the
-number of CPUs that can be participating in verity validation?  Why not
-let the system try to process as many read ioends as are ready to be
-processed, rather than introducing a constraint here?
-
-As for WQ_HIGHPRI, I wish Dave or Andrey would chime in on why this
-isn't appropriate for XFS.  I think they have a reason for this, but the
-most I can do is speculate that it's to avoid blocking other things in
-the system.
-
-In Andrey's V5 patch, XFS creates its own the workqueue like this:
-https://lore.kernel.org/linux-xfs/20240304191046.157464-10-aalbersh@redhat.com/
-
-	struct workqueue_struct *wq = alloc_workqueue(
-		"pread/%s", (WQ_FREEZABLE | WQ_MEM_RECLAIM), 0, sb->s_id);
-
-I don't grok this either -- read ioend workqueues aren't usually
-involved in memory reclaim at all, and I can't see why you'd want to
-freeze the verity workqueue during suspend.  Reads are allowed on frozen
-filesystems, so I don't see why verity would be any different.
-
-In the end, I think I might change this to:
-
-int __fsverity_init_verify_wq(struct super_block *sb,
-			      unsigned int wq_flags,
-			      int max_active)
-{
-	wq = alloc_workqueue("fsverity/%s", wq_flags, max_active, sb->s_id);
-	...
-}
-
-So that XFS can have what I think makes sense (wq_flags == 0,
-max_active == 0), and ext4/f2fs can continue the same way they do now.
+	/**
+	 * Notify the filesystem that file data is corrupt.
+	 *
+	 * @inode: the inode being validated
+	 * @pos: the file position of the invalid data
+	 * @len: the length of the invalid data
+	 *
+	 * This function is called when fs-verity cannot validate the file
+	 * contents against the merkle tree hashes and logs a FILE CORRUPTED
+	 * error message.
+	 */
+	void (*file_corrupt)(struct inode *inode, loff_t pos, size_t len);
 
 --D
 
