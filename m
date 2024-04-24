@@ -1,140 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-17613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296518B04B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 10:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE648B05E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 11:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BB19B25E34
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 08:49:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68CE4B25A3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 09:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B449158A14;
-	Wed, 24 Apr 2024 08:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2NwAL2I"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76935158DA0;
+	Wed, 24 Apr 2024 09:18:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DE3D29E;
-	Wed, 24 Apr 2024 08:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FC7158876
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 09:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713948546; cv=none; b=eg9oNKez8vw5UKjMxhmDL1efWhMox1hNlRcOu/m2NZCHm7PHX8tDwnqr0LyRGL4DB1aJkw6uv+XbMWgFb/MIdWAZQ0WF88PQ0NOCZrxexenV/MJBYp4rAOTV9El6yXl0nFkNJrSkPGFKt2VU58il4s5JAFzgGuyGuoNWTxxYvoI=
+	t=1713950317; cv=none; b=HQm9AZ0T0kY/VdlVPv1GvYSVkOsUyYdOyVRAKE6JrqTf1sl5GufeffTsCd8GETe2DhviZwSVh0/+7IOou8tyAvXoaUr3CE2SgYfZzjWrBXCIYXKvf/Tid0PtdmUdcc3eVOmnl5x2I/zjghzKd1JVxe0gdoRI3gy4FlyOZrvbE6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713948546; c=relaxed/simple;
-	bh=Xm6NxcEd3ZnINqVPRreRGDQC7HahRju6fclnxD6CacM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hjoBwVNNH2qujTnA+4Kc86f70rgcbFSgqm4PtGKkxQLnEwuENAcPXsXnUYaCS5GyasyapCRNATURy3QjNLYp2NODQNrkx9qt7F6Ymo5f4b+EZWqkoPBgr4crDiUqT9KER9gKgJaqnidFwxmEEYpoRemIQTJ5BmTrchVu0+84ROY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2NwAL2I; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2db6f5977e1so86973121fa.2;
-        Wed, 24 Apr 2024 01:49:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713948543; x=1714553343; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/kFQR8E+rQp7uC9yW6Ow4kuJJBmzBQxe59gx0jzroTg=;
-        b=J2NwAL2IXzafeNEeZfNuHkYmff6fq82dIPFvHh31C19LgwZhSCI1I65otlzlQMhGst
-         uWNTwuN9osJ0lTyr9KpwrUltg510uX7Q4AjORJUCCOfQmUIanBLiWVAijQuHv4KsFZBv
-         VsnSB1ocGPwyOuEo+7TwCFM25y4d9JWM+J7JPbB3TFIkjzU5w+OKNH74lAC+3wIcYU9E
-         0NFsfMRZKUhjLfzAbQ9JRAGzrnQAVNlTvAhGR0cKYmn0iUZpMkTEp1sdDgVVpcOeQ0IS
-         J/hjevR3Y2nu6a+zVqeno72OjEEVjT37RCQvH0RjEGmsmvW5vcejepJf0Vgl6jQAI06M
-         +oqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713948543; x=1714553343;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/kFQR8E+rQp7uC9yW6Ow4kuJJBmzBQxe59gx0jzroTg=;
-        b=kh9GM9Bd6Lj5FygFbl4/7nmP6v/sYrUZIty0N0ACgJdO5QdKQup8S10duj/xwwJ9fB
-         /j37u3xHdX+SWDR9qY6KAKYdFXCQHzH2R47A3c6XTmxdTWQ9mCMkf6Ren0mK6EDiH/oC
-         r2PUsaYqqWNVK6lZKfBxc9wMKvWW8U3e72UfhL0KnWgDeXUy+W/FgRUQqMGOONIqFA0L
-         kXbZUL4DaMl9vbafr1Hj8k4jej2/85W2KXnndLs+BxWnlIhZ0XejodzJTTR26R2cRXuU
-         M3yc0WH4/K78p23vRxc0/3e5VvJuclbTfNS85bLBaEE8C5YVEjLXv2LaGFMKQMlCJeF+
-         Jnmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpSAoFsx0M+D/5Gcv1E/NGT54GwqB4/joAxzf3CMbxpvMAxSTwK1Xs0+Z2DckS6ncu/m1KrB2JG52kPS9VM5iOiMO+JGMbq7dHzeCTBWnAeEJs7SP0etVTRylfsDU8u17WUQ6YKNOIxn67jRdNTCebxxCEf0g/LnLnuVFlr52pE/8I4O+N9g==
-X-Gm-Message-State: AOJu0YzyfLy8u/ZZCK5Tu1q6hZTDgqNN52lm3erj2h7ZCS+mIJ/O9FST
-	OP/vTvUfdaClaT1sdpKuoIKvDahJ7BKlMNfq3qhnE+761GXHB7HZu8hcIgf9enbH/n9JfZWDihQ
-	wf4meYSzkZ98iHY22GOVejSgZFv0=
-X-Google-Smtp-Source: AGHT+IHWBLhdfxJmQz/AuelJzR0hT0UyUTcb1wFB00Jyxy3z+kUkHuir+BrO9+R3ccWtp+R2htlrw6iIzlqkMNtzqWs=
-X-Received: by 2002:a05:651c:49d:b0:2d8:3d69:b066 with SMTP id
- s29-20020a05651c049d00b002d83d69b066mr978648ljc.7.1713948543126; Wed, 24 Apr
- 2024 01:49:03 -0700 (PDT)
+	s=arc-20240116; t=1713950317; c=relaxed/simple;
+	bh=KhTHcR7I5jCU4l8yeRDg/wvW4kgeyIkmektcoNJMinA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=EqjRgxmd46mtI7PapxiDqEZC7JWvBT5rUNg4uurydI2p5OLCqOEy2CZYfzxPrJlyzNR7+LQsqd613VybdR78qVF/Dw5Sfol8RadbuWFtYGoJnj7VrzR1W4fcAr8RaZOHX+21AS/kHIkXC1KknNXYfbCbz6rl+LiYBUChSqZM6eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-102-z5LuMkZlMxSOMqakJ5rlUg-1; Wed, 24 Apr 2024 10:18:25 +0100
+X-MC-Unique: z5LuMkZlMxSOMqakJ5rlUg-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 24 Apr
+ 2024 10:17:57 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 24 Apr 2024 10:17:57 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Stas Sergeev' <stsp2@yandex.ru>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Eric Biederman <ebiederm@xmission.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, Andy Lutomirski <luto@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] fs: reorganize path_openat()
+Thread-Topic: [PATCH 1/2] fs: reorganize path_openat()
+Thread-Index: AQHalJJk8Yta93gecEuTWlpT1K4OxbF3JeNw
+Date: Wed, 24 Apr 2024 09:17:57 +0000
+Message-ID: <858f6fb6afcd450d85d1ff900f82d396@AcuMS.aculab.com>
+References: <20240422084505.3465238-1-stsp2@yandex.ru>
+In-Reply-To: <20240422084505.3465238-1-stsp2@yandex.ru>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423170339.54131-1-ryncsn@gmail.com> <20240423170339.54131-8-ryncsn@gmail.com>
- <87sezbsdwf.fsf@yhuang6-desk2.ccr.corp.intel.com> <ZiiFHTwgu8FGio1k@casper.infradead.org>
-In-Reply-To: <ZiiFHTwgu8FGio1k@casper.infradead.org>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 24 Apr 2024 16:48:46 +0800
-Message-ID: <CAMgjq7Cu8q9ed_HY2K_iHwm7gKvYWkadS+Zj-GR1CaVwDMwqNQ@mail.gmail.com>
-Subject: Re: [PATCH v2 7/8] mm: drop page_index/page_file_offset and convert
- swap helpers to use folio
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, 
-	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, 
-	linux-afs@lists.infradead.org, David Howells <dhowells@redhat.com>, 
-	Marc Dionne <marc.dionne@auristor.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 24, 2024 at 12:06=E2=80=AFPM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Wed, Apr 24, 2024 at 10:17:04AM +0800, Huang, Ying wrote:
-> > Kairui Song <ryncsn@gmail.com> writes:
-> > >  static inline loff_t folio_file_pos(struct folio *folio)
-> > >  {
-> > > -   return page_file_offset(&folio->page);
-> > > +   if (unlikely(folio_test_swapcache(folio)))
-> > > +           return __folio_swap_dev_pos(folio);
-> > > +   return ((loff_t)folio->index << PAGE_SHIFT);
-> >
-> > This still looks confusing for me.  The function returns the byte
-> > position of the folio in its file.  But we returns the swap device
-> > position of the folio.
-> >
-> > Tried to search folio_file_pos() usage.  The 2 usage in page_io.c is
-> > swap specific, we can use swap_dev_pos() directly.
-> >
-> > There are also other file system users (NFS and AFS) of
-> > folio_file_pos(), I don't know why they need to work with swap
-> > cache. Cced file system maintainers for help.
->
-> Time for a history lesson!
->
-> In d56b4ddf7781 (2012) we introduced page_file_index() and
-> page_file_mapping() to support swap-over-NFS.  Writes to the swapfile wen=
-t
-> through ->direct_IO but reads went through ->readpage.  So NFS was change=
-d
-> to remove direct references to page->mapping and page->index because
-> those aren't right for anon pages (or shmem pages being swapped out).
->
-> In e1209d3a7a67 (2022), we stopped using ->readpage in favour of using
-> ->swap_rw.  Now we don't need to use page_file_*(); we get the swap_file
-> and ki_pos directly in the swap_iocb.  But there are still relics in NFS
-> that nobody has dared rip out.  And there are all the copy-and-pasted
-> filesystems that use page_file_* because they don't know any better.
->
-> We should delete page_file_*() and folio_file_*().  They shouldn't be
-> needed any more.
+From: Stas Sergeev
+> Sent: 22 April 2024 09:45
 
-Thanks for the explanation! I'll update the series, and just delete
-paeg_file_offset and folio_file_pos with more auditing, to make the
-code cleaner. Should I add a suggest-by for the removal?
+I seem to have 5 copies of this patch.....
+
+> This patch moves the call to alloc_empty_file() below the call to
+> path_init(). That changes is needed for the next patch, which adds
+> a cred override for alloc_empty_file(). The needed cred info is only
+> available after the call to path_init().
+>=20
+> No functional changes are intended by that patch.
+...
+> ---
+>  fs/namei.c | 26 +++++++++++++++++---------
+>  1 file changed, 17 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/fs/namei.c b/fs/namei.c
+> index c5b2a25be7d0..2fde2c320ae9 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3782,22 +3782,30 @@ static struct file *path_openat(struct nameidata =
+*nd,
+>  =09struct file *file;
+>  =09int error;
+>=20
+> -=09file =3D alloc_empty_file(op->open_flag, current_cred());
+> -=09if (IS_ERR(file))
+> -=09=09return file;
+> -
+> -=09if (unlikely(file->f_flags & __O_TMPFILE)) {
+> +=09if (unlikely(op->open_flag & __O_TMPFILE)) {
+> +=09=09file =3D alloc_empty_file(op->open_flag, current_cred());
+> +=09=09if (IS_ERR(file))
+> +=09=09=09return file;
+>  =09=09error =3D do_tmpfile(nd, flags, op, file);
+> -=09} else if (unlikely(file->f_flags & O_PATH)) {
+> +=09} else if (unlikely(op->open_flag & O_PATH)) {
+> +=09=09file =3D alloc_empty_file(op->open_flag, current_cred());
+> +=09=09if (IS_ERR(file))
+> +=09=09=09return file;
+>  =09=09error =3D do_o_path(nd, flags, file);
+
+You probably ought to merge the two 'unlikely' tests.
+Otherwise there'll be two conditionals in the 'hot path'.
+(There probably always were.)
+So something like:
+=09if (unlikely(op->open_flag & (__O_TMPFILE | O_PATH))) {
+=09=09file =3D alloc_empty_file(op->open_flag, current_cred());
+=09=09if (IS_ERR(file))
+=09=09=09return file;
+=09=09if (op->open_flag & __O_TMFILE)
+=09=09=09error =3D do_tmpfile(nd, flags, op, file);
+=09=09else
+=09=09=09error =3D do_o_path(nd, flags, file);
+=09} else {
+Copying op->open_flag to a local may also generate better code.
+
+=09David
+=09=09
+>  =09} else {
+>  =09=09const char *s =3D path_init(nd, flags);
+> -=09=09while (!(error =3D link_path_walk(s, nd)) &&
+> -=09=09       (s =3D open_last_lookups(nd, file, op)) !=3D NULL)
+> -=09=09=09;
+> +=09=09file =3D alloc_empty_file(op->open_flag, current_cred());
+> +=09=09error =3D PTR_ERR_OR_ZERO(file);
+> +=09=09if (!error) {
+> +=09=09=09while (!(error =3D link_path_walk(s, nd)) &&
+> +=09=09=09       (s =3D open_last_lookups(nd, file, op)) !=3D NULL)
+> +=09=09=09=09;
+> +=09=09}
+>  =09=09if (!error)
+>  =09=09=09error =3D do_open(nd, file, op);
+>  =09=09terminate_walk(nd);
+> +=09=09if (IS_ERR(file))
+> +=09=09=09return file;
+>  =09}
+>  =09if (likely(!error)) {
+>  =09=09if (likely(file->f_mode & FMODE_OPENED))
+> --
+> 2.44.0
+>=20
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
