@@ -1,114 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-17662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B918B12E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 20:52:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE87C8B131B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 21:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3849C1F21183
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 18:52:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9CE01C22D94
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 19:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02D81AACA;
-	Wed, 24 Apr 2024 18:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF1D1DA20;
+	Wed, 24 Apr 2024 19:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miO2nvr7"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K8jCInls"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061761CD13;
-	Wed, 24 Apr 2024 18:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944561CD23;
+	Wed, 24 Apr 2024 19:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713984752; cv=none; b=NxoZP2HMDqbpRd5qo79w6AC8agEYRB1jKfkNLzN2jXDLdEbU9RhLPtThGfOHZ61U6a6slk4T0Cob3DHJ5nVjcxmt8ROBLs3rsUVEGS5HX8dh9jbwvYVL/ax4SHn57o3iWq3j+vUp7fjBRksCnzeDKp+0VMAb11+n5yb5CL5uZA0=
+	t=1713985320; cv=none; b=TxfrnL6ivfSkLpxun9Gnbz30n6vpQSBXK/qhrBNjUcZzZviyZAn/ZDRbtBnr4Zw7m/cmfZA4PKd46W7gMZIlH3hu6WDwwaXNVh2yT+QwwBeKZ32jvwsPXpQKyafYx4gEKBTYp+LnaRes4vHSdniL2Ru6G/SKX1X3FozofIzeEcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713984752; c=relaxed/simple;
-	bh=csF033P0Iegx1PQkAyo0WKuKXVyqATtEopDLBESCLSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A9EVDEDc4TTQ333RODNqWszrGjsUmB6bIVEBfbmJTN/F2iNyYcRCCm8gdaczTaBB6wLb8kjQyVbmzDBcTiM2tfuNc1+4yc3SXqBP7aGKWeaHsLibt6qYkRKV36PKQO83MvPr00+d+7aXbavmIjZkTczr1lhCBJs4Oezbb7sQ/HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miO2nvr7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C73C113CD;
-	Wed, 24 Apr 2024 18:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713984751;
-	bh=csF033P0Iegx1PQkAyo0WKuKXVyqATtEopDLBESCLSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=miO2nvr7XJh+30y0M8t94mmLI9Hejev2CCfNGs9kRPp5qPIgEVgnJcGt+fZDsP3d7
-	 H8Q1DyaheO0JBYyjRW6X2tAs0ck/L3ryqmj3IIMrTF8gZL6pMpw+uragbrPMAYx5O5
-	 m/fvtSNeJGaq8NE+ErpEJYg4HbMhm9a/9f4zrrKL/YmgaLc0drO+eZbAsWmKvQFDvr
-	 2nCEiPNO1U2Pcn0LQ4cw6o3a0SQ5GOl9kOIOQB7l737B82UoXFLrbtDUEkH6J9/2uo
-	 jfm4JQW9lnNf2H9w+nc9z/HmDeUK3EpfB25CdS5SlBCKWviRJKcD8NYGK/ndxtm8Uf
-	 Omc4RDMnNv3Kg==
-Date: Wed, 24 Apr 2024 18:52:30 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: aalbersh@redhat.com, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
-Subject: Re: [PATCH 11/13] fsverity: report validation errors back to the
- filesystem
-Message-ID: <20240424185230.GB693059@google.com>
-References: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
- <171175868048.1987804.2771715174385554090.stgit@frogsfrogsfrogs>
- <20240405030911.GI1958@quark.localdomain>
- <20240424181826.GK360919@frogsfrogsfrogs>
+	s=arc-20240116; t=1713985320; c=relaxed/simple;
+	bh=Q29+WUKSF1/TImyYIfU6qDFvpXG3ngAxtBKm3rf53yo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WBm6cm+dznZ8lGNT4Ft8LhPgu4Zu7ZNBp+5YoApMpkvQh5SYBiXuYbO9BlSOs0swJzeygixHQm6XyT+BYLh21Ri06+LzY134uRt18FBH+F8kvJ6sNaVFf6lJJyP33ekqlir1oDICB+BC1MHPoBEZBAvmGVs30aOVAwYcd1o5+0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K8jCInls; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1713985318; x=1745521318;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=Q29+WUKSF1/TImyYIfU6qDFvpXG3ngAxtBKm3rf53yo=;
+  b=K8jCInlsDGfHGLBmaM3hKBGRYTMg8rFSZZan5ZjRuGPTAPCIUIYuQEix
+   u7tFCBXQlCDsyBX59uAW60wUKm87oA/+vQLvkhvCf0b3p9IDrx4eM8Pn0
+   HsQujXak9s2EwJUQDezrn+x9XqH/ze0r5S1DEuoO3lKQEK6qYg0JyqsPo
+   WFpdmQr7R+IuX4664vNs2+6cC4mk1FgYSQLqv8/rvgAP+M4OiHdupdqxW
+   lTgQ/hBkmxuA44YlB2ymu5J6np/8wIWHV5lMs8x1FO2qVQblWFCPhYUJ3
+   g8V/xY8GtgMY/qwlbKSI3LLdatdF5m0XEol7jB/sZ9OUBb0JOYwlOtwkI
+   A==;
+X-CSE-ConnectionGUID: Up/6OtC3TKG+7TrC0LfiIA==
+X-CSE-MsgGUID: DwCI+BOwTVinKy4nJvQFJg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11054"; a="12573097"
+X-IronPort-AV: E=Sophos;i="6.07,227,1708416000"; 
+   d="scan'208";a="12573097"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2024 12:01:57 -0700
+X-CSE-ConnectionGUID: So5rGAlLTeCbfb1cfq4ejw==
+X-CSE-MsgGUID: gU70sMFeQ+iD9/Gl28NoFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,227,1708416000"; 
+   d="scan'208";a="29291859"
+Received: from unknown (HELO vcostago-mobl3) ([10.124.220.153])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2024 12:01:55 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com,
+ malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
+ lizhen.you@intel.com, linux-unionfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] overlayfs: Optimize override/revert creds
+In-Reply-To: <CAJfpeguqW4mPE9UyLmccisTex_gmwq6p9_6_EfVm-1oh6CrEBA@mail.gmail.com>
+References: <20240403021808.309900-1-vinicius.gomes@intel.com>
+ <CAJfpeguqW4mPE9UyLmccisTex_gmwq6p9_6_EfVm-1oh6CrEBA@mail.gmail.com>
+Date: Wed, 24 Apr 2024 12:01:54 -0700
+Message-ID: <87frvay47x.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240424181826.GK360919@frogsfrogsfrogs>
+Content-Type: text/plain
 
-On Wed, Apr 24, 2024 at 11:18:26AM -0700, Darrick J. Wong wrote:
-> On Thu, Apr 04, 2024 at 11:09:11PM -0400, Eric Biggers wrote:
-> > On Fri, Mar 29, 2024 at 05:35:32PM -0700, Darrick J. Wong wrote:
-> > > +	/**
-> > > +	 * Notify the filesystem that file data validation failed
-> > > +	 *
-> > > +	 * @inode: the inode being validated
-> > > +	 * @pos: the file position of the invalid data
-> > > +	 * @len: the length of the invalid data
-> > > +	 *
-> > > +	 * This is called when fs-verity cannot validate the file contents.
-> > > +	 */
-> > > +	void (*fail_validation)(struct inode *inode, loff_t pos, size_t len);
-> > 
-> > There is a difference between the file actually being corrupt (mismatching
-> > hashes) and other problems like disk errors reading from the Merkle tree.
-> > "Validation failed" is a bit ambiguous, and "cannot validate the file contents"
-> > even more so.  Do you want only file corruption errors?  If so it may be a good
-> > idea to call this 'file_corrupt', which would be consistent with the
-> > "FILE CORRUPTED" error message in fs/verity/verify.c.  Or do you actually want
-> > all errors?  Either way, it needs to be clarified what is actually meant.
-> 
-> I only want actual file corruption errors -- XFS can handle disk errors
-> from reading merkle tree blocks on its own.  I'll change this to
-> file_corrupt.  How's this?
-> 
-> 	/**
-> 	 * Notify the filesystem that file data is corrupt.
-> 	 *
-> 	 * @inode: the inode being validated
-> 	 * @pos: the file position of the invalid data
-> 	 * @len: the length of the invalid data
-> 	 *
-> 	 * This function is called when fs-verity cannot validate the file
-> 	 * contents against the merkle tree hashes and logs a FILE CORRUPTED
-> 	 * error message.
-> 	 */
-> 	void (*file_corrupt)(struct inode *inode, loff_t pos, size_t len);
+Miklos Szeredi <miklos@szeredi.hu> writes:
 
-It looks good except for the last sentence, which still has the potentially
-misleading "cannot validate the file contents" wording.  How about something
-like the following:
+> On Wed, 3 Apr 2024 at 04:18, Vinicius Costa Gomes
+> <vinicius.gomes@intel.com> wrote:
+>
+>>  - in ovl_rename() I had to manually call the "light" the overrides,
+>>    both using the guard() macro or using the non-light version causes
+>>    the workload to crash the kernel. I still have to investigate why
+>>    this is happening. Hints are appreciated.
+>
+> Don't know.  Well, there's nesting (in ovl_nlink_end()) but I don't
+> see why that should be an issue.
+>
+> I see why Amir suggested moving away from scoped guards, but that also
+> introduces the possibility of subtle bugs if we don't audit every one
+> of those sites carefully...
+>
+> Maybe patchset should be restructured to first do the
+> override_creds_light() conversion without guards, and then move over
+> to guards.   Or the other way round, I don't have a preference.  But
+> mixing these two independent changes doesn't sound like a great idea
+> in any case.
 
-"This function is called when fs-verity detects that a portion of a file's data
-is inconsistent with the Merkle tree, or a Merkle tree block needed to validate
-the data is inconsistent with the level above it."
+Sounds good. Here's I am thinking:
 
-- Eric
+patch 1: introduce *_creds_light()
+patch 2: move backing-file.c to *_creds_light()
+patch 3: move overlayfs to *_creds_light()
+patch 4: introduce the guard helpers
+patch 5: move backing-file.c to the guard helpers
+patch 6: move overlayfs to the guard helpers
+
+(and yeah, the subject of the patches will be better than these ;-)
+
+Is this what you had in mind?
+
+
+Cheers,
+-- 
+Vinicius
 
