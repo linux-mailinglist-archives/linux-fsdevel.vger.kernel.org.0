@@ -1,137 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-17632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F388B0AD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 15:27:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAF28B0BBC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 15:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F20A4284B7F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 13:27:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347E91F26C3B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 13:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298CE15B98B;
-	Wed, 24 Apr 2024 13:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="bZxiilOM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A6A15DBC3;
+	Wed, 24 Apr 2024 13:59:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9D515A4B0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 13:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A52415CD7F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 13:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713965264; cv=none; b=ksLLImm6Y9CRLE4y1YeGuiaViDlHyuRJSR8VrGFxgVQcZeNW7YAxup0FLBPDNAmdfnQJsLDyvsMicJcy083TMcFzXU/gPrzjA/gJys0P8DBpyapVH1+ruh5pe82hbrVmjFPIfDQN/agdMmxA6kWOtKJQ1VYZDqach4q599am+l0=
+	t=1713967180; cv=none; b=pEKUul+oQvYdJAERnoT5DFvI+kSQTIPFVXCG0BRNmFr4Tczv4fgiacc4JImBvNvn2Pc3GpQRBMjqEp//Mf3MHEKS7A95LlYaZugr7hNwbNn5tn7GB9z6SDZoPHXCkRRTl5wjKCIsN0LwYWhdFszZOsEuTHLSPY3CFMo94wbG3ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713965264; c=relaxed/simple;
-	bh=hVCiT3cVeoDPw8o5TxOi/tzoJPcyStCe54BZO09DgLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZmeeFdP7s+93nBU5/NoESi6aky39dFHO5APMbvtHFzAC7A99iFZR39foHkjmmgpbTUapRPBm9JLP/wzLtXmhYs/OgMf0siAoF1HHyt7pBJHouPJKr4fNI05krivX8hPFlUjP2O1q99T37q/ZiW2JFCadyewcl4wX5amq0NhsUq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=bZxiilOM; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-78f0592309aso481125485a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 06:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1713965261; x=1714570061; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bmaQzf01ImU89PHQrVzq0PujKy/T2pnrZwcrGlSMcAM=;
-        b=bZxiilOMgQRR/kRrdlzRTfJzePsgEX5EzxwWMgF/l+ll5TFMAg6WfVXqXlKKbYbEac
-         6PNLN6uV72EeJrJJjrRuuXMXy1+nIVu/VbloaOoOggFO+XU0ovbZ/ajz/zUh08TrP1Tc
-         315xySGk/H6Q9AUcnQMVCa+FS/EXXOZX7wjx55KUj8sKrhR6ifV+NAjS1hp4lGygvTT1
-         QNYkbufwuxaPaEotEP7FJpb1Z/TnxbEs8oqcpnqzlbnJpcrp/LK9czAbdSW/OP0Ni0m/
-         wRVBYasNeBx+DcVVRd4vOyJ9zDn4RX1dr4JXzdjfD0IPzRGJmA9HWXz/KJfVnMNsgC71
-         iSQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713965261; x=1714570061;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bmaQzf01ImU89PHQrVzq0PujKy/T2pnrZwcrGlSMcAM=;
-        b=wQZ+2h1Gat6WAEJ/VvjKdTFb51nMAw96oL5DT+XSjaL3Fvv0aSyyOX9WaokgFDm5wZ
-         y8i6IER8Sh/yKyn9y7UjdqQKu+JrtJ2+yP+4D4Dh4ryLkY4IpOsb93Lj0r+ZI6pW0yLV
-         eVFX94tcp3lGGtHxGIk1avoCXSglx1nucG0c407MxoVUzZX8kMik437+s5wImp9ybdtb
-         HYl1W2KU23VLHwRbIHWEL1mgPs0xcFplfCYiidca/ZK+Z1c9+cCnSMSvQgV8cJpmkfv1
-         eb0MEwnJapg4dr1MCGJ9x63CVAAA/i1YKYbHOT7Tbg2X734AelanWkGE/4T3e7UOMg2Q
-         zz0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWeQ+ddZKqVm2k34n4rHeO1Op+TXLv1fDtf9KfDOYTRjEXl8gJSKqsWrkzp/0I0vdS60Mvrv1PyQl5HRFJ+Tefy9y5Qyy/e2M9uRKs16w==
-X-Gm-Message-State: AOJu0Yzyzff7Q8lJYH/oYc46pPUA+0xgMCHjT6oV++9+LKtzVVDyapsu
-	qNUVQLhBYU1OYxNdDEZmOsdUGLEy4R9uBmP7TmIAHquQT8efMk65+6vfActjtOk=
-X-Google-Smtp-Source: AGHT+IG10JNnau66mb0W0bLsv7g+fqp1h/1IvnkN/qI5c9owHC6AC7QHVsin4Z6bVve3680gH3MsyA==
-X-Received: by 2002:a05:620a:40d5:b0:78e:db54:e5fe with SMTP id g21-20020a05620a40d500b0078edb54e5femr3078820qko.11.1713965261163;
-        Wed, 24 Apr 2024 06:27:41 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:400::5:9cfb])
-        by smtp.gmail.com with ESMTPSA id h6-20020a05620a13e600b0078f044ff474sm6146095qkl.35.2024.04.24.06.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Apr 2024 06:27:40 -0700 (PDT)
-Date: Wed, 24 Apr 2024 09:27:39 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, jack@suse.cz,
-	bfoster@redhat.com, tj@kernel.org, dsterba@suse.com,
-	mjguzik@gmail.com, dhowells@redhat.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 3/5] writeback: fix build problems of "writeback:
- support retrieving per group debug writeback stats of bdi"
-Message-ID: <20240424132739.GD318022@cmpxchg.org>
-References: <20240423034643.141219-1-shikemeng@huaweicloud.com>
- <20240423034643.141219-4-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1713967180; c=relaxed/simple;
+	bh=ILYTkdyyOFKC/LDbfJwPDprJRLXf8w9VhX/Yj+HJUfI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FYUbIHJCEjexO1K5448L0RJdmDWEF3XB62pzi3kiZX7f9uyX+kL+5ceO89gvABzlhIbujR7mG54g/3XXOdHO88sqyZj0h+/DkxYn6f6KjfZsPZHgOC4iPXQAleDLKucyacjXUdrs4fqpu4X5FMdYIiEqkuXoMEc3cNEeeEYxDu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VPgW76fqgzXlLD;
+	Wed, 24 Apr 2024 21:56:03 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 96A00140156;
+	Wed, 24 Apr 2024 21:59:33 +0800 (CST)
+Received: from localhost.localdomain (10.175.112.125) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 24 Apr 2024 21:59:32 +0800
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+To: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>
+CC: Tony Luck <tony.luck@intel.com>, Miaohe Lin <linmiaohe@huawei.com>, Naoya
+ Horiguchi <nao.horiguchi@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>, Muchun Song <muchun.song@linux.dev>,
+	Benjamin LaHaise <bcrl@kvack.org>, <jglisse@redhat.com>,
+	<linux-aio@kvack.org>, <linux-fsdevel@vger.kernel.org>, Zi Yan
+	<ziy@nvidia.com>, Jiaqi Yan <jiaqiyan@google.com>, Hugh Dickins
+	<hughd@google.com>, Vishal Moola <vishal.moola@gmail.com>, Kefeng Wang
+	<wangkefeng.wang@huawei.com>
+Subject: [PATCH v2 00/10] mm: migrate: support poison recover from migrate folio
+Date: Wed, 24 Apr 2024 21:59:19 +0800
+Message-ID: <20240424135929.2847185-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240423034643.141219-4-shikemeng@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-Hi Kemeng,
+The folio migration is widely used in kernel, memory compaction, memory
+hotplug, soft offline page, numa balance, memory demote/promotion, etc,
+but once access a poisoned source folio when migrating, the kerenl will
+panic.
 
-On Tue, Apr 23, 2024 at 11:46:41AM +0800, Kemeng Shi wrote:
-> Fix two build problems:
-> 1. implicit declaration of function 'cgroup_ino'.
+There is a mechanism in the kernel to recover from uncorrectable memory
+errors, ARCH_HAS_COPY_MC(Machine Check Safe Memory Copy), which is already
+used in NVDIMM or core-mm paths(eg, CoW, khugepaged, coredump, ksm copy),
+see copy_mc_to_{user,kernel}, copy_mc_{user_}highpage callers.
 
-I just ran into this as well, with defconfig on mm-everything:
+This series of patches provide the recovery mechanism from folio copy for
+the widely used folio migration. Please note, because folio migration is
+no guarantee of success, so we could chose to make folio migration tolerant
+of memory failures, adding folio_mc_copy() which is a #MC versions of
+folio_copy(), once accessing a poisoned source folio, we could return error
+and make the folio migration fail, and this could avoid the similar panic
+shown below.
 
-/home/hannes/src/linux/linux/mm/backing-dev.c: In function 'wb_stats_show':
-/home/hannes/src/linux/linux/mm/backing-dev.c:175:33: error: 'struct bdi_writeback' has no member named 'memcg_css'
-  175 |                    cgroup_ino(wb->memcg_css->cgroup),
-      |                                 ^~
-make[3]: *** [/home/hannes/src/linux/linux/scripts/Makefile.build:244: mm/backing-dev.o] Error 1
+  CPU: 1 PID: 88343 Comm: test_softofflin Kdump: loaded Not tainted 6.6.0
+  pc : copy_page+0x10/0xc0
+  lr : copy_highpage+0x38/0x50
+  ...
+  Call trace:
+   copy_page+0x10/0xc0
+   folio_copy+0x78/0x90
+   migrate_folio_extra+0x54/0xa0
+   move_to_new_folio+0xd8/0x1f0
+   migrate_folio_move+0xb8/0x300
+   migrate_pages_batch+0x528/0x788
+   migrate_pages_sync+0x8c/0x258
+   migrate_pages+0x440/0x528
+   soft_offline_in_use_page+0x2ec/0x3c0
+   soft_offline_page+0x238/0x310
+   soft_offline_page_store+0x6c/0xc0
+   dev_attr_store+0x20/0x40
+   sysfs_kf_write+0x4c/0x68
+   kernfs_fop_write_iter+0x130/0x1c8
+   new_sync_write+0xa4/0x138
+   vfs_write+0x238/0x2d8
+   ksys_write+0x74/0x110
 
-> ---
->  mm/backing-dev.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 6ecd11bdce6e..e61bbb1bd622 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -172,7 +172,11 @@ static void wb_stats_show(struct seq_file *m, struct bdi_writeback *wb,
->  		   "b_more_io:         %10lu\n"
->  		   "b_dirty_time:      %10lu\n"
->  		   "state:             %10lx\n\n",
-> +#ifdef CONFIG_CGROUP_WRITEBACK
->  		   cgroup_ino(wb->memcg_css->cgroup),
-> +#else
-> +		   1ul,
-> +#endif
->  		   K(stats->nr_writeback),
->  		   K(stats->nr_reclaimable),
->  		   K(stats->wb_thresh),
-> @@ -192,7 +196,6 @@ static int cgwb_debug_stats_show(struct seq_file *m, void *v)
->  	unsigned long background_thresh;
->  	unsigned long dirty_thresh;
->  	struct bdi_writeback *wb;
-> -	struct wb_stats stats;
->  
->  	global_dirty_limits(&background_thresh, &dirty_thresh);
+v2:
+- remove patch11 since fio don't support large folio
+- add RB
+- rebased on next-20240424
 
-The fix looks right to me, but it needs to be folded into the previous
-patch. No patch should knowingly introduce an issue that is fixed
-later on. This will break bisection.
+v1:
+- no change, resend and rebased on 6.9-rc1
+
+rfcv2:
+- Separate __migrate_device_pages() cleanup from patch "remove 
+  migrate_folio_extra()", suggested by Matthew
+- Split folio_migrate_mapping(), move refcount check/freeze out
+  of folio_migrate_mapping(), suggested by Matthew
+- add RB
+
+Kefeng Wang (10):
+  mm: migrate: simplify __buffer_migrate_folio()
+  mm: migrate_device: use more folio in __migrate_device_pages()
+  mm: migrate_device: unify migrate folio for MIGRATE_SYNC_NO_COPY
+  mm: migrate: remove migrate_folio_extra()
+  mm: remove MIGRATE_SYNC_NO_COPY mode
+  mm: migrate: split folio_migrate_mapping()
+  mm: add folio_mc_copy()
+  mm: migrate: support poisoned recover from migrate folio
+  fs: hugetlbfs: support poison recover from hugetlbfs_migrate_folio()
+  mm: migrate: remove folio_migrate_copy()
+
+ fs/aio.c                     |  15 +---
+ fs/hugetlbfs/inode.c         |   5 +-
+ include/linux/migrate.h      |   3 -
+ include/linux/migrate_mode.h |   5 --
+ include/linux/mm.h           |   1 +
+ mm/balloon_compaction.c      |   8 --
+ mm/migrate.c                 | 157 +++++++++++++++++------------------
+ mm/migrate_device.c          |  28 +++----
+ mm/util.c                    |  20 +++++
+ mm/zsmalloc.c                |   8 --
+ 10 files changed, 113 insertions(+), 137 deletions(-)
+
+-- 
+2.27.0
+
 
