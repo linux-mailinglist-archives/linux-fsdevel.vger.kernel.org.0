@@ -1,177 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-17604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B869B8B009E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 06:35:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5141D8B0058
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 06:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A063B21CD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 04:35:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE3F2868B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 04:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4247152DE3;
-	Wed, 24 Apr 2024 04:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA45E14430E;
+	Wed, 24 Apr 2024 04:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LYy9NT/n"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h4Fe0VR3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E7028EB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 04:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969C0142E9D;
+	Wed, 24 Apr 2024 04:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713933313; cv=none; b=pXRItlEKc4CkPfT7SEqw3MZIqPunxb/2CnbSuS7z9tueug/QM2EupGCJakWHZ2jSsEubNPsYQ11O/vNKpFvpj3NPK9dOJTeM1wIE1yKPzZ7Lz/McJLa3z17Wm6vd09wmwgQ05nx+0f6gmJbFYffXjmUNTukXD1ZR4ZULeFogcJI=
+	t=1713931576; cv=none; b=VFt+KCSS4rWeOGcnvLle41O+HK/Vt6AHdQLTe+p+pmNv9ikrKamhzBrMdmKEKEuvYBkZjq27uV03zxyKjoAYPlIOnAmMmVa8AujcWejmuwGjd2yw6K9+dymRfEmcS3SgLYuOZTbRTnpfdxjP2t7gpODfgj6cHrBFONdi4bDaaJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713933313; c=relaxed/simple;
-	bh=nRIlR3YY0/EXo2YWJ7vYwJVLixWDLqgHflBXoYuhvpI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=pt/eflWoWgROTwCHG5V9H99+sdT5vNQeiSb8G+D/DV5Z4GojsGHUi+kP5E3dSdKRFX7yo9Al7Ir2YRXAIba4dols/2zzRI9KlSQT8KjRPa+TWSdfaB4wsLa/HSDJBTsvN2T/8rbiInPTCx6HJz0wCCHYh3jXqgYUP2OS1yaEKm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LYy9NT/n; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240424043502epoutp01f0e28cb7baeb540c4897551a532d9cd1~JHUIDYVHy2463324633epoutp01q
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 04:35:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240424043502epoutp01f0e28cb7baeb540c4897551a532d9cd1~JHUIDYVHy2463324633epoutp01q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1713933302;
-	bh=GRx4dAvvfNXS0Tb8wvoOFG2WOcplrAX0F1UjzsY8W0k=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=LYy9NT/nRGpEnV8WYMo/ZWn0bFOruSohaPdJvhKqjaRksHRhjv+xZtId4IPr50MHg
-	 jwrIV8AC6nIPv5zuJriqhkR4N2OxKGmyv64lVR1YoTynXitKIC8EL9EkAqEW6xFM28
-	 GKA7age+4RUVceRvC1T0le4S3tucVeG70aYv8dic=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240424043502epcas1p11a7590c18f190d9c63a92441291cfa2b~JHUHml5zr3007430074epcas1p1P;
-	Wed, 24 Apr 2024 04:35:02 +0000 (GMT)
-Received: from epcpadp3 (unknown [182.195.40.17]) by epsnrtp3.localdomain
-	(Postfix) with ESMTP id 4VPR3p0F1Xz4x9Qc; Wed, 24 Apr 2024 04:35:02 +0000
-	(GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240424022323epcas1p35a4abc34ca3f84d48557310c60326c0e~JFhLzq8CX0678506785epcas1p3C;
-	Wed, 24 Apr 2024 02:23:23 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240424022323epsmtrp1bd153e3e18c9dc6729aa6427cc478d4f~JFhLy-YBR1710617106epsmtrp1K;
-	Wed, 24 Apr 2024 02:23:23 +0000 (GMT)
-X-AuditID: b6c32a28-0ebf970000001d75-36-66286d1b4a7b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	52.68.07541.B1D68266; Wed, 24 Apr 2024 11:23:23 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240424022323epsmtip258e8e42c68c661beff283c7ae1fbfcbf~JFhLlhb412386623866epsmtip2E;
-	Wed, 24 Apr 2024 02:23:23 +0000 (GMT)
-From: "Sungjong Seo" <sj1557.seo@samsung.com>
-To: <Yuezhang.Mo@sony.com>, <linkinjeon@kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>, <Andy.Wu@sony.com>,
-	<Wataru.Aoyama@sony.com>, <cpgs@samsung.com>, <sj1557.seo@samsung.com>
-In-Reply-To: <PUZPR04MB63168EFB1C670A913C42E80981112@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Subject: RE: [PATCH v1] exfat: zero the reserved fields of file and stream
- extension dentries
-Date: Wed, 24 Apr 2024 11:23:22 +0900
-Message-ID: <1891546521.01713933302009.JavaMail.epsvc@epcpadp3>
+	s=arc-20240116; t=1713931576; c=relaxed/simple;
+	bh=uQR45cFMjtlCHmxT79KIysG9mZOqnQ9+qd3qqsml7x0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fz7gEAe67xHxj3g9p0sWBG4FvKpajdh9xoDU0ugtEk8Vfh/7Ti/78sjbeuu55oqcb7feTVeZFOslpvTnY5PewoXamn11bbd2xbTpSfIy1ml78zZW1QcaHCIlPvGkOY0LBAv09SCrSFFTo9GdsuADQnjBEqd+ZUcKEHghlRoAQKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h4Fe0VR3; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EuETJtGZxu1owesI989Ljeb319SuE+6AMj187CcAyGU=; b=h4Fe0VR3cSeC3HLANTcVKxyO/i
+	B06vSJffXjewy57PoJgnUcyyBRkwUMt8vwuZzwXPAPX/udjrDvsPCNFQzhONrXdtyLHXfbOJ3B19K
+	G4cRQtmYMqTvPrqT5/VHDUveVUmupBCQy1DVO5WfA8wGGpm8/ic5HV0FkHTTDKg3mdgmo9HuGlteL
+	dcOe9STGScruYnrnJTVB/SzBLNbp4V+Ao8QGX2RO3DBO9G8mERgnhc1SvA84Cy+T4EM6m+089hhc3
+	ZvygtNcQZxBN46XczDC7C/g2Bhq+rZtbyN6BQWKKWNsoskDTrqwacWtSXRrdNeiFV+92BjMO6/pnQ
+	x1RO0NIA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rzTtG-00000000894-0JOS;
+	Wed, 24 Apr 2024 04:05:50 +0000
+Date: Wed, 24 Apr 2024 05:05:49 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org,
+	Kairui Song <kasong@tencent.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>,
+	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>, linux-afs@lists.infradead.org,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>
+Subject: Re: [PATCH v2 7/8] mm: drop page_index/page_file_offset and convert
+ swap helpers to use folio
+Message-ID: <ZiiFHTwgu8FGio1k@casper.infradead.org>
+References: <20240423170339.54131-1-ryncsn@gmail.com>
+ <20240423170339.54131-8-ryncsn@gmail.com>
+ <87sezbsdwf.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQIYb7jVRJLYLEtRTVxvT7Lp6UXOnAHATqsHsOz1DqA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSvK50rkaawZxmbYvWI/sYLV4e0rSY
-	OG0ps8WevSdZLLb8O8Jq8fHBbkaL628esjqwe2xa1cnm0bdlFaNH+4SdzB6fN8kFsERx2aSk
-	5mSWpRbp2yVwZbRufcNScEyoYtfE9awNjD38XYycHBICJhLts18wdTFycQgJ7GaU6DndxN7F
-	yAGUkJI4uE8TwhSWOHy4GKLkOaPEn08bWUF62QR0JZ7c+MkMYosImEp8uXyCDcRmFmhnlHj3
-	LRaiYR2jxL0V98ESnAKxEj9evGYHsYWB7GM9t5hBFrAIqEosvZoMYvIKWEr8n10LUsErIChx
-	cuYTFpAws4CeRNtGRojp8hLb385hhrheQWL3p6OsEBdYSTRsu88MUSMiMbuzjXkCo/AsJJNm
-	IUyahWTSLCQdCxhZVjFKphYU56bnJhsWGOallusVJ+YWl+al6yXn525iBEeOlsYOxnvz/+kd
-	YmTiYDzEKMHBrCTC++uPSpoQb0piZVVqUX58UWlOavEhRmkOFiVxXsMZs1OEBNITS1KzU1ML
-	UotgskwcnFINTBOuHvj+93foxnWzeWy/nI8KePti6U/1mP3HXIVLMpTVhaS2b/3VyitxyF05
-	5rWdi3mQrVLg2YcPeK+FVkgeSTjO3Z77aILS1wzRNef38u+vOeZ638I0JDp83h/pzbvMSsIn
-	79JneOo4bceaL8v+quwWsV/7JKFSIKujuF13+rGUH7e3W/9bJBoV4ndhUXfjuu8hYR3LMw43
-	arhdamN5odF0fuoqtjdpwkH9c+yMpn4SmMm93/hNgv9BwY0+C+SCJGdu/dkpPl1DTGzGkrOi
-	vFsNlI849hh8PVT8U/b3wknJmU1V65dnXjy26eh2/8ofnibc4kcNZvh7eHlc/ZDSphwSXfN4
-	neEryYgdb2v0piixFGckGmoxFxUnAgD7W5uoCwMAAA==
-X-CMS-MailID: 20240424022323epcas1p35a4abc34ca3f84d48557310c60326c0e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-CPGSPASS: Y
-X-ArchiveUser: EV
-X-Hop-Count: 3
-X-CMS-RootMailID: 20240423022908epcas1p2e3f94bde4decfd8dca233031f0177f58
-References: <CGME20240423022908epcas1p2e3f94bde4decfd8dca233031f0177f58@epcas1p2.samsung.com>
-	<PUZPR04MB63168EFB1C670A913C42E80981112@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sezbsdwf.fsf@yhuang6-desk2.ccr.corp.intel.com>
 
-> From exFAT specification, the reserved fields should initialize
-> to zero and should not use for any purpose.
+On Wed, Apr 24, 2024 at 10:17:04AM +0800, Huang, Ying wrote:
+> Kairui Song <ryncsn@gmail.com> writes:
+> >  static inline loff_t folio_file_pos(struct folio *folio)
+> >  {
+> > -	return page_file_offset(&folio->page);
+> > +	if (unlikely(folio_test_swapcache(folio)))
+> > +		return __folio_swap_dev_pos(folio);
+> > +	return ((loff_t)folio->index << PAGE_SHIFT);
 > 
-> If create a new dentry set in the UNUSED dentries, all fields
-> had been zeroed when allocating cluster to parent directory.
+> This still looks confusing for me.  The function returns the byte
+> position of the folio in its file.  But we returns the swap device
+> position of the folio.
 > 
-> But if create a new dentry set in the DELETED dentries, the
-> reserved fields in file and stream extension dentries may be
-> non-zero. Because only the valid bit of the type field of the
-> dentry is cleared in exfat_remove_entries(), if the type of
-> dentry is different from the original(For example, a dentry that
-> was originally a file name dentry, then set to deleted dentry,
-> and then set as a file dentry), the reserved fields is non-zero.
+> Tried to search folio_file_pos() usage.  The 2 usage in page_io.c is
+> swap specific, we can use swap_dev_pos() directly.
 > 
-> So this commit zeroes the reserved fields when createing file
-> dentry and stream extension dentry.
-> 
-> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-> Reviewed-by: Andy Wu <Andy.Wu@sony.com>
-> Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
-> ---
->  fs/exfat/dir.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-> index 077944d3c2c0..cbdd9b59053d 100644
-> --- a/fs/exfat/dir.c
-> +++ b/fs/exfat/dir.c
-> @@ -428,6 +428,10 @@ static void exfat_init_stream_entry(struct
-> exfat_dentry *ep,
->  	ep->dentry.stream.start_clu = cpu_to_le32(start_clu);
->  	ep->dentry.stream.valid_size = cpu_to_le64(size);
->  	ep->dentry.stream.size = cpu_to_le64(size);
-> +
-> +	ep->dentry.stream.reserved1 = 0;
-> +	ep->dentry.stream.reserved2 = 0;
-> +	ep->dentry.stream.reserved3 = 0;
+> There are also other file system users (NFS and AFS) of
+> folio_file_pos(), I don't know why they need to work with swap
+> cache. Cced file system maintainers for help.
 
-The comment explains the problem well! And the patch you just sent
-seems to solve the mentioned problem.
+Time for a history lesson!
 
-BTW, what about initializing the entire ep (fixed size of 32 bytes)
-to 0 before setting the value of ep in each init function? This is the
-simplest way to ensure that all other values are zero except for the
-intentionally set value.
+In d56b4ddf7781 (2012) we introduced page_file_index() and
+page_file_mapping() to support swap-over-NFS.  Writes to the swapfile went
+through ->direct_IO but reads went through ->readpage.  So NFS was changed
+to remove direct references to page->mapping and page->index because
+those aren't right for anon pages (or shmem pages being swapped out).
 
->  }
-> 
->  static void exfat_init_name_entry(struct exfat_dentry *ep,
-> @@ -474,6 +478,9 @@ void exfat_init_dir_entry(struct exfat_entry_set_cache
-> *es,
->  			&ep->dentry.file.access_date,
->  			NULL);
-> 
-> +	ep->dentry.file.reserved1 = 0;
-> +	memset(ep->dentry.file.reserved2, 0, sizeof(ep-
-> >dentry.file.reserved2));
-> +
->  	ep = exfat_get_dentry_cached(es, ES_IDX_STREAM);
->  	exfat_init_stream_entry(ep, start_clu, size);
->  }
-> --
-> 2.34.1
+In e1209d3a7a67 (2022), we stopped using ->readpage in favour of using
+->swap_rw.  Now we don't need to use page_file_*(); we get the swap_file
+and ki_pos directly in the swap_iocb.  But there are still relics in NFS
+that nobody has dared rip out.  And there are all the copy-and-pasted
+filesystems that use page_file_* because they don't know any better.
 
-
+We should delete page_file_*() and folio_file_*().  They shouldn't be
+needed any more.
 
