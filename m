@@ -1,102 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-17670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C5B8B1416
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 22:07:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC0B8B147E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 22:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC63EB290C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 20:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F8851C22BE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 20:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00A3143C60;
-	Wed, 24 Apr 2024 20:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D9813DB99;
+	Wed, 24 Apr 2024 20:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CPEOH5RD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3899cT1M";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CPEOH5RD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3899cT1M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="If7mRMhf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3D11BF37;
-	Wed, 24 Apr 2024 20:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3CD1EB30;
+	Wed, 24 Apr 2024 20:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713989155; cv=none; b=KgEYtTO9l2hmDtdi1sgHvAGn6eZ8NFTcIJFHsgTWhUMsIqnlY5bg3IojXwXvOzK7i1CcjTN2AVfYsrpVPECZ+88wzzvki2HNPxpCVgiQjLc2AAg0F4NW5oNQ3ZwEpjF4a6t0Cy4IAY7B4ZOUjvAIuBFuLd34AhqUP43kvcvnKK0=
+	t=1713990229; cv=none; b=ps3QVjkfrxhOPt3QkEvr8J1H7yFxL29fGOJcdAZbiTwVtl9au2MmN1t0QWglOcm/TaeVkvBCGNN7FgASopD9WMhi1js81XaoUDkAAGq6OqTDLvJ86J4+Y+1fwtbb6SbPVDTl/Vr8at2Sjq8r/NfKU4gkhx/qCK2aun8BZh8QYK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713989155; c=relaxed/simple;
-	bh=5rF9RlXB7+KkpqpKW4JSymiF96fM7MCeEwU+aTpnkNU=;
+	s=arc-20240116; t=1713990229; c=relaxed/simple;
+	bh=AY+kv4CITXE38z705BVDYbLbsQ+iL0lnoEffZj3nC+Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kddo7vIDSRk/5yG00g+5aA0OQ/7hCDXEPYBTlH2DnaO9r2fpspeNqJ1YaQ6/BafWNGh6aoKbfAAprHtI0vT+LF9taygfj5qQiMEyyfNU7xWRUtM+82IVL9Us54/OORTpBK5vOqXMfapq7OuOVPSurwoqfUfnwhbkmi0hMnSLgv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CPEOH5RD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3899cT1M; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CPEOH5RD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3899cT1M; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9030B1FCDB;
-	Wed, 24 Apr 2024 20:05:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1713989148; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xzGehy/paReXul/fV4mWdadBQEyh7gAyY0i3Qs9cVtQ=;
-	b=CPEOH5RDLOyneutqTlOFznCr6gRhJPOOldBLbmW5L1w0J/iN6fNkVOK3iucm23jPEpQGyh
-	aS8HyNnEeQhuYXfJ/Q9YIlQL6ZgFBLmAJ9xrqwOx4pCapIv8GINu5ysv3Yo5JLrNhcro5f
-	V3vIu5zhxe740aIWHIE1P1HTNMlwQJY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1713989148;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xzGehy/paReXul/fV4mWdadBQEyh7gAyY0i3Qs9cVtQ=;
-	b=3899cT1MarzNZIHdI4DZ0d49TF7brOC4kFH5aT3nU0t3otEmMdvAeAPnaNKvn5rrmjeTOq
-	BFKF4v6FfJOYLUCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1713989148; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xzGehy/paReXul/fV4mWdadBQEyh7gAyY0i3Qs9cVtQ=;
-	b=CPEOH5RDLOyneutqTlOFznCr6gRhJPOOldBLbmW5L1w0J/iN6fNkVOK3iucm23jPEpQGyh
-	aS8HyNnEeQhuYXfJ/Q9YIlQL6ZgFBLmAJ9xrqwOx4pCapIv8GINu5ysv3Yo5JLrNhcro5f
-	V3vIu5zhxe740aIWHIE1P1HTNMlwQJY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1713989148;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xzGehy/paReXul/fV4mWdadBQEyh7gAyY0i3Qs9cVtQ=;
-	b=3899cT1MarzNZIHdI4DZ0d49TF7brOC4kFH5aT3nU0t3otEmMdvAeAPnaNKvn5rrmjeTOq
-	BFKF4v6FfJOYLUCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8708C13690;
-	Wed, 24 Apr 2024 20:05:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oqn0IBxmKWakcgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 24 Apr 2024 20:05:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 55055A0861; Wed, 24 Apr 2024 22:05:44 +0200 (CEST)
-Date: Wed, 24 Apr 2024 22:05:44 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 1/9] ext4: factor out a common helper to query extent
- map
-Message-ID: <20240424200544.gegdyfidy4xvjlsz@quack3>
-References: <20240410034203.2188357-1-yi.zhang@huaweicloud.com>
- <20240410034203.2188357-2-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7S8dBphGvvC3XhMpu5lSVEaXec+HygSyMm29UUqNHc82eIiUchA5Dx9JqeMTPEiDUtdn6tly9cymYGazYWnjxBC1Y0vd5COeolCvyZHfV3aeSKNS2DB991YlvyZ6j0N4Iv093oE6jcJFnqo7f+HGuN2tj3MPSJKCgpHSstPIDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=If7mRMhf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F20C113CD;
+	Wed, 24 Apr 2024 20:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713990229;
+	bh=AY+kv4CITXE38z705BVDYbLbsQ+iL0lnoEffZj3nC+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=If7mRMhf8neTeFjRouh9LZkqI9WH6v/XhJNaPdDsMxfU/g5eoekKHRXQQWfDsvvxM
+	 6ri1cTbycJy0Zzpzm19quHI7zWxaREFpDGw7oj0LOvbACU5WNBUvviFrSjwTwkKGmq
+	 +JM7H0qT92AFD2CPD3bOpvZY5z7RW3uo2nPhBHcjQaP6gRW4uq0ahi/hHaRV1Hx9ut
+	 Rp8Bb59S8arcARdlkCLV1sL9O2o44f7KWfwxhjZNITg5xwrqDfh/d1sfFKr5JktTBh
+	 Dz70oyqnT8wDbE8xehY7a8nOKP0tmcXzBV2fLKlPRKKRNIGEDvpsjzDrbiKh+qgW49
+	 YsG1j08wycOAw==
+Date: Wed, 24 Apr 2024 13:23:48 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: aalbersh@redhat.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
+Subject: Re: [PATCH 10/13] fsverity: pass the zero-hash value to the
+ implementation
+Message-ID: <20240424202348.GN360919@frogsfrogsfrogs>
+References: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
+ <171175868031.1987804.13138670908694064691.stgit@frogsfrogsfrogs>
+ <20240405025750.GH1958@quark.localdomain>
+ <20240424190246.GL360919@frogsfrogsfrogs>
+ <20240424191950.GA749176@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,131 +62,121 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240410034203.2188357-2-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+In-Reply-To: <20240424191950.GA749176@google.com>
 
-On Wed 10-04-24 11:41:55, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Wed, Apr 24, 2024 at 07:19:50PM +0000, Eric Biggers wrote:
+> On Wed, Apr 24, 2024 at 12:02:46PM -0700, Darrick J. Wong wrote:
+> > On Thu, Apr 04, 2024 at 10:57:50PM -0400, Eric Biggers wrote:
+> > > On Fri, Mar 29, 2024 at 05:35:17PM -0700, Darrick J. Wong wrote:
+> > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > > 
+> > > > Compute the hash of a data block full of zeros, and then supply this to
+> > > > the merkle tree read and write methods.  A subsequent xfs patch will use
+> > > 
+> > > This should say "hash of a block", not "hash of a data block".  What you
+> > > actually care about is the hash of a Merkle tree block, not the hash of a data
+> > > block.  Yet, there is no difference in how the hashes are calculated for the two
+> > > types of blocks, so we should simply write "hash of a block".
+> > 
+> > I think I could go further with the precision of the description --
+> > 
+> > "Compute the hash of one filesystem block's worth of zeroes.  Any merkle
+> > tree block containing only this hash can be elided at write time, and
+> > its contents synthesized at read time."
+> > 
+> > I don't think this is going to happen very often above the leaf levels
+> > of the merkle tree, but as written there's nothing to prevent the
+> > elision of internal nodes.  Also note that the elision can happen for
+> > internal nodes even when merkle tree blocksize != i_blocksize.
+> > 
+> > > > diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+> > > > index de8798f141d4a..195a92f203bba 100644
+> > > > --- a/fs/verity/fsverity_private.h
+> > > > +++ b/fs/verity/fsverity_private.h
+> > > > @@ -47,6 +47,8 @@ struct merkle_tree_params {
+> > > >  	u64 tree_size;			/* Merkle tree size in bytes */
+> > > >  	unsigned long tree_pages;	/* Merkle tree size in pages */
+> > > >  
+> > > > +	u8 zero_digest[FS_VERITY_MAX_DIGEST_SIZE]; /* hash of zeroed data block */
+> > > 
+> > > Similarly, "block" instead of "data block".
+> > 
+> > How about "the hash of an i_blocksize-sized buffer of zeroes" for all
+> > three?
 > 
-> Factor out a new common helper ext4_map_query_blocks() from the
-> ext4_da_map_blocks(), it query and return the extent map status on the
-> inode's extent path, no logic changes.
+> It's the Merkle tree block size, not the filesystem block size.  Or did you
+> actually intend for this to use the filesystem block size?
+
+I actually did intend for this to be the fs block size, not the merkle
+tree block size.  It's the bottom level that I care about shrinking.
+Let's say that data[0-B] are the data blocks:
+
+root
+ +-internal0
+ |   +-leaf0
+ |   |   +-data0
+ |   |   +-data1
+ |   |   `-data2
+ |   `-leaf1
+ |       +-data3
+ |       +-data4
+ |       `-data5
+ `-internal1
+     +-leaf2
+     |   +-data6
+     |   +-data7
+     |   `-data8
+     `-leaf3
+         +-data9
+         +-dataA
+         `-dataB
+
+(thanks to https://arthursonzogni.com/Diagon/#Tree )
+
+If data[3-5] are completely zeroes (unwritten blocks, sparse holes,
+etc.) then I want to skip writing leaf1 of the merkle tree to disk.
+
+If it happens that the hashes of leaf[0-1] match hash(data3) then it's
+frosting on top (as it were) that we can also skip internal0.  However,
+the merkle tree has a high fanout factor (4096/32==128 in the common
+case), so I care /much/ less about eliding those levels.
+
+> In struct merkle_tree_params, the "block size" is always the Merkle tree block
+> size, so the type of block size seems clear in that context.  My complaint was
+> just that it used the term "data block" to mean a block that is not necessarily
+> a file contents block (which is what "data block" means elsewhere).
+
+Hm.  Given the confusion, would it help if I said that zero_digest
+should only be used to elide leaf nodes of the merkle tree that hash the
+contents of file content blocks?  Or is "the hash of an
+i_blocksize-sized buffer of zeroes" sufficient?
+
+What do you think of the commit message saying:
+
+"Compute the hash of one filesystem block's worth of zeroes.  Any merkle
+tree leaf block containing only this hash can be elided at write time,
+and its contents synthesized at read time.
+
+"Let's pretend that there's a file containing six data blocks and whose
+merkle tree looks roughly like this:
+
+root
+ +--leaf0
+ |   +--data0
+ |   +--data1
+ |   `--data2
+ `--leaf1
+     +--data3
+     +--data4
+     `--data5
+
+"If data[0-2] are sparse holes, then leaf0 will contain a repeating
+sequence of @zero_digest.  Therefore, leaf0 need not be written to disk
+because its contents can be synthesized."
+
+--D
+
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/inode.c | 57 +++++++++++++++++++++++++++----------------------
->  1 file changed, 32 insertions(+), 25 deletions(-)
+> - Eric
 > 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 537803250ca9..6a41172c06e1 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -453,6 +453,35 @@ static void ext4_map_blocks_es_recheck(handle_t *handle,
->  }
->  #endif /* ES_AGGRESSIVE_TEST */
->  
-> +static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
-> +				 struct ext4_map_blocks *map)
-> +{
-> +	unsigned int status;
-> +	int retval;
-> +
-> +	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-> +		retval = ext4_ext_map_blocks(handle, inode, map, 0);
-> +	else
-> +		retval = ext4_ind_map_blocks(handle, inode, map, 0);
-> +
-> +	if (retval <= 0)
-> +		return retval;
-> +
-> +	if (unlikely(retval != map->m_len)) {
-> +		ext4_warning(inode->i_sb,
-> +			     "ES len assertion failed for inode "
-> +			     "%lu: retval %d != map->m_len %d",
-> +			     inode->i_ino, retval, map->m_len);
-> +		WARN_ON(1);
-> +	}
-> +
-> +	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
-> +			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
-> +	ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
-> +			      map->m_pblk, status);
-> +	return retval;
-> +}
-> +
->  /*
->   * The ext4_map_blocks() function tries to look up the requested blocks,
->   * and returns if the blocks are already mapped.
-> @@ -1744,33 +1773,11 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
->  	down_read(&EXT4_I(inode)->i_data_sem);
->  	if (ext4_has_inline_data(inode))
->  		retval = 0;
-> -	else if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-> -		retval = ext4_ext_map_blocks(NULL, inode, map, 0);
->  	else
-> -		retval = ext4_ind_map_blocks(NULL, inode, map, 0);
-> -	if (retval < 0) {
-> -		up_read(&EXT4_I(inode)->i_data_sem);
-> -		return retval;
-> -	}
-> -	if (retval > 0) {
-> -		unsigned int status;
-> -
-> -		if (unlikely(retval != map->m_len)) {
-> -			ext4_warning(inode->i_sb,
-> -				     "ES len assertion failed for inode "
-> -				     "%lu: retval %d != map->m_len %d",
-> -				     inode->i_ino, retval, map->m_len);
-> -			WARN_ON(1);
-> -		}
-> -
-> -		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
-> -				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
-> -		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
-> -				      map->m_pblk, status);
-> -		up_read(&EXT4_I(inode)->i_data_sem);
-> -		return retval;
-> -	}
-> +		retval = ext4_map_query_blocks(NULL, inode, map);
->  	up_read(&EXT4_I(inode)->i_data_sem);
-> +	if (retval)
-> +		return retval;
->  
->  add_delayed:
->  	down_write(&EXT4_I(inode)->i_data_sem);
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
