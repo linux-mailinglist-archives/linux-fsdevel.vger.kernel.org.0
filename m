@@ -1,201 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-17610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2488B036C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 09:45:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B778B0387
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 09:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB83BB26320
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 07:45:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1383285659
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 07:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380A01581E4;
-	Wed, 24 Apr 2024 07:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C13C158200;
+	Wed, 24 Apr 2024 07:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="DEIWZAoA"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JxxltQf+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F19157E79
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 07:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713944711; cv=fail; b=ly5jQb1orxip7IaMmmc5D/91IzoSV9R8DXxVl+a1lY28j5+J/H0UXJqwDgfeIz7u6Qu+rdkFndUKUntwqd2rqegzVIwsbiG1+Sh/lkv4tAw7sq8cn1OXkPtDUO68ArY58K53WmvzjLxQoCQEndRHfVACNLXHervJymoQX0Qb3Dw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713944711; c=relaxed/simple;
-	bh=FVcQ5cMLi6O1+N9d/Nqt1wR60cV4Qc4EJjKCXXivSnU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=FRipMA/KBp8t6ls71JuGHMUjp1MdyGlQyQtfgT3iFHmxk8jqo89/WPO5ZuALe0V+QuhopeLtDUN0DBrjjQGcX7MCBWJG0fN1Ilp1QVZzebZmdhQFAw2aJt9dWvcKvULSAlErsRzf85V1FctbAydQTqPClXqDqcGhS22qcmdhwb8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=DEIWZAoA; arc=fail smtp.client-ip=185.183.30.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209318.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43O4AOlm016847;
-	Wed, 24 Apr 2024 07:44:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : mime-version :
- content-type : content-transfer-encoding; s=S1;
- bh=FVcQ5cMLi6O1+N9d/Nqt1wR60cV4Qc4EJjKCXXivSnU=;
- b=DEIWZAoA5tVtPY28dnpJb0G5ceLIt4DrWdc/WTvluHqwy65LX6/ZxNVdkzAjIgOSmyxL
- Y1K6dxVedL8FrwSoheqcVCD1LFoa50uWG+8ybrfrqG6I/EQiWdlmZyVNSgk0+dbdE261
- tGFO4UwoxP3LbOf++glGbRTzOyzHKeqkoz92eG69fdaUqQ49DErF0K6RjvaVwpAXcKjJ
- 8gsDKPPz45qttXPV+TD5BgybiyoEI3ErUJvDop34srduriwetd5Atu0IqOQF8aqbDaT7
- P1sCY6vWcCWuT9Bpg6H5j6/thF5PGYgY7dKiJNxcr+c8UCL/ZfRiQ2njcu4ivCv6Tsdj fQ== 
-Received: from apc01-tyz-obe.outbound.protection.outlook.com (mail-tyzapc01lp2041.outbound.protection.outlook.com [104.47.110.41])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3xm496kxhr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Apr 2024 07:44:47 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aEJEcVuTPjWWHhkfzVwl6Qoo1nZ7mkhl+DJn/jYGv/YTh2mwLIE1iTFDDYfk+5TuSbSDyVg0dB5CoIZ1fTb7CgIe6wpALawi/kBTTk7Xefvn/CGBrj6lpgw3u1uHHT7FlUVXK0HC4UsCjJ2US5QlTSFs6W42bIsNY19qmcRsMVMXgF6nTutJZanPWOrnaZ+YX/QD8J6+6MzNnUKxcajDm/k+emMCHOBcc6QQuzcUTbRhC8A58+Ahc0nj1t6rTqW+qO+ca/D73y5oRtgaHMRXi3mrnVbcGHTFs2o0bO+IGTYD2JCZvRrH8qwbMMNHCu2JxZEKNYY/6vNbxkYa5NJWOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FVcQ5cMLi6O1+N9d/Nqt1wR60cV4Qc4EJjKCXXivSnU=;
- b=m5AVjZXhtuQwlNe/pDIStNf9zGKuAsghCbm7i6TF1zKqsYCzARwMraO2t+757Vm/Tl/7EsnxueJYnjZ8Rp4b/EPwDCV9zshHevmHyIarLaHwvUijrZMsjd8DmYcmUAcS0N6ufwnrlhDqZ7kRtEXV17E3DtefWRvWRUbIw4dQHLBT+oQMN2HMVDQc/DFwZncZ2Z5GvvfpfTKxRmc9DxpEYOdzDDpHvOhq1/TAH+NEjmMX2SZmqkLGBDpuqfFmfxDfVAxBJBoggFyIiz+S0YhczU5JUxBeZSjl4zkUt8NxqVFLp9RNHM0RhpowCKoeG58bJVPWkO3YE+34+XJ+0SyelQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
- by PUZPR04MB6868.apcprd04.prod.outlook.com (2603:1096:301:116::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.22; Wed, 24 Apr
- 2024 07:44:39 +0000
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06]) by PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06%2]) with mapi id 15.20.7472.044; Wed, 24 Apr 2024
- 07:44:38 +0000
-From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To: Sungjong Seo <sj1557.seo@samsung.com>,
-        "linkinjeon@kernel.org"
-	<linkinjeon@kernel.org>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-        "Wataru.Aoyama@sony.com"
-	<Wataru.Aoyama@sony.com>,
-        "cpgs@samsung.com" <cpgs@samsung.com>
-Subject: Re: [PATCH v1] exfat: zero the reserved fields of file and stream
- extension dentries
-Thread-Topic: [PATCH v1] exfat: zero the reserved fields of file and stream
- extension dentries
-Thread-Index: AQHalSVihLmFn4H720eTr8GfTnzOoLF2snYAgABEMu4=
-Date: Wed, 24 Apr 2024 07:44:38 +0000
-Message-ID: 
- <PUZPR04MB6316B43EC39999D94F8F011E81102@PUZPR04MB6316.apcprd04.prod.outlook.com>
-References: 
- <CGME20240423022908epcas1p2e3f94bde4decfd8dca233031f0177f58@epcas1p2.samsung.com>
-	<PUZPR04MB63168EFB1C670A913C42E80981112@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <1891546521.01713933302009.JavaMail.epsvc@epcpadp3>
-In-Reply-To: <1891546521.01713933302009.JavaMail.epsvc@epcpadp3>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|PUZPR04MB6868:EE_
-x-ms-office365-filtering-correlation-id: 1b548971-57ee-4ee2-1285-08dc6432653c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info: 
- =?iso-8859-1?Q?rhnWGFgS17wEBfMcDKXKWfXJi1JvLdv9SYb9fUoelUkOwhU+upkDtuAji8?=
- =?iso-8859-1?Q?alMjHSFNk43WrSCra8apvBsDRaIsJNtvymmDMU9QTsTrxVCw2hzLQTfhZw?=
- =?iso-8859-1?Q?46VzFtjEoauTMmUnkkATgTQYFWksJzgOS2PgQz4vsBtX9zBmqshNaUDlmZ?=
- =?iso-8859-1?Q?CJ9i8/LjDQjt2WRbTvNHGs0cH6vMkgbOgrWX9EtK0bootl94BSxPxokAeD?=
- =?iso-8859-1?Q?T4U8LmzX+bSC2zqlEBnhrPfbfrIDYnnA8wswgd8gcBa1tKonNLMsFxAbbs?=
- =?iso-8859-1?Q?DWewwxPM4DlfajSBUFzPDgVCP1Gt1ucFZwZXuM6WJRPDxeDwBlG77TjwQk?=
- =?iso-8859-1?Q?ssFpU1TJFayFZdlxs2J+P/HF6Kv6nw14XchRgscsUhwpNd4pE0qtc09ssJ?=
- =?iso-8859-1?Q?iBCDmj206d/0X1QdTApJGoRwxEIVqsMWJ0hBSYnMSnKWkgcjufH3+KBQKX?=
- =?iso-8859-1?Q?eu1gbj8PAWontJQVYam2PZYp+kyIiR69LxOvOyJeHR4bqwQQdC5nVIdddh?=
- =?iso-8859-1?Q?A87z5daoCqch4U2L9ONFif/7a0HNIKjZNHsFgehK3GWqkMpzTl4JvQ8x5W?=
- =?iso-8859-1?Q?aZJ3BRg414BFIYFf+NHMua0ERAhu2/24wp1j8/dYiQxkb1LjsuZ0+7smQk?=
- =?iso-8859-1?Q?0eNJclk7q0cRqqH0FOYxCCwxXWyybdlSb8FengUuxCsGK0hsT/amKsabeh?=
- =?iso-8859-1?Q?FsCJ7DWPrUG3AJuAQhqup3EA1J/pqFvzneyjPr2hl6+xaadWSCfR4m44iI?=
- =?iso-8859-1?Q?sC/h/pKyKHZBe3TGKY9AsYe8XquqV6WxyXZvUxdqRXGZOtjY6xRQkJc/qB?=
- =?iso-8859-1?Q?Y7hJo3KKMz8z5gc6o1+tOp5qOc88GGB3bbBiLK3AVfCcWoZKKsXwhw52IW?=
- =?iso-8859-1?Q?E4JoinXZdCgwpwGnQPP0GRgHylTHPCvNXppIWESVkBhz71oWeiu6Dw+/2d?=
- =?iso-8859-1?Q?awHe+it6rTSapb1yaubcq1R66wDwh50FQYJQmW7y1Xt5JiJKiK0X+xB+DI?=
- =?iso-8859-1?Q?5S0XQPUz5beDr4u5tyksyb1USH8TWjrTp3/rSXc6gT0P6wWPXVMuceCekU?=
- =?iso-8859-1?Q?oGEoXdI01kdN9ELZC4kUr7i9mXgoZ9UXOGmT1BzzsTcuq6qndagHev4+mM?=
- =?iso-8859-1?Q?teddvLo+ko0AneQ7WCgQyF3e2MeRs4YyOQ7Zv/qeINEUbfe5iUZ0lQL3i0?=
- =?iso-8859-1?Q?M4hI2OqsTARoUY/IwCw8I8/v2bldwESyQi25Av9Vy9VERMir/wn5t2KOn4?=
- =?iso-8859-1?Q?zAcV67RACnrVvP10PjgSRcaE/ta7wesiOmJhIGcB+S0NH/wg3UUPcQb4yc?=
- =?iso-8859-1?Q?O68UHiFNwEJW7XyCdsrMF0WYI9YJmw4xX4zzl1HE2dQ20MCxKbdbo3Dzam?=
- =?iso-8859-1?Q?utKL/6Vwzj5fYYi7wAmNZ5pqqNhmwB9w=3D=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-8859-1?Q?HSuzcPqsIyKe+ptuMD+BQHZc6KfOVD+WQdDFcmLU4rT0tLFGY7n85nJP72?=
- =?iso-8859-1?Q?clbIAk6MJB+MscCM/yMEz3GVxA/az0rfPjf5Lk+Duc8LBJUN6Flkiqrc4/?=
- =?iso-8859-1?Q?a6SuoUbVKgIrXAyCfOpniyDJqzj5NeefdIxS5EwZEWNXG+tiJwAWitSobX?=
- =?iso-8859-1?Q?5+CVwv3BEV1+a6+isakuaym0j1wUBvtaSMjayixP2kxyVZwTZauGdhX8SI?=
- =?iso-8859-1?Q?qZR9YvsO8vVZa2TJ7ddXcOOuIWuaQSQxQ5/khxvaNsyc8nbeB/g3fHeecK?=
- =?iso-8859-1?Q?GluAFmE2Vv2xOo/mEPihMSB5kk9ZiilVtTodKS3dI2cSDUbpYFTkrODP5N?=
- =?iso-8859-1?Q?I1TFfHbi5N4PMylQoJln4T8kvGM4xVfKtb2IkacgwWJ/ypu20/IhqUT+oU?=
- =?iso-8859-1?Q?nHubkYKjW1XV4vJHzDunc6TxZXrFXyuuXifl7RdK6TweQNT5KZk6YDaBTz?=
- =?iso-8859-1?Q?dyrEuh/OIJBX7fN/cY8lCZ5m0HZIKBXlY6pSG0CnWKv9vmm1pzWpo9cT2g?=
- =?iso-8859-1?Q?dpW5YcWj+zEMKVfbYjTltFVYFotxjxa3eGTnm7zrufEdyXaGfDd3pOp3Cs?=
- =?iso-8859-1?Q?O5WjGZaCFvo56Mmw6cBD2tHCxN2M6TybhBOQQkz7/o3qjuDXAnaLbKXfvS?=
- =?iso-8859-1?Q?qBhGRDSqlg358e1QIwrl5yTFZZs/CYgC/OuHucB7BDDxr9OTnxKXhso5i/?=
- =?iso-8859-1?Q?eMXjOe1uqcctYHA7UWJi1vPEdfRl8w1Rj1tFg2Jb7DIa7HOeUGAbUgk46q?=
- =?iso-8859-1?Q?jIqogqR64+cjQYdwhulRr/EW3irwzmRXvjXolrimjzikvwUHbIbcEbEUfM?=
- =?iso-8859-1?Q?1jsQKRs0JgbbPFizybi7uBVrMIqJCB1+APfUKEbylH1e6hCshw86y3TJ2o?=
- =?iso-8859-1?Q?JSXf3PWJJjFiKGlgJWx74u2Xg49748P6KKGeJYqZMoRBOevuXPLV3NZDqB?=
- =?iso-8859-1?Q?Of0PJVhXrBE9Oje2cFzHy+KPEOQdHQrzPDJqObp+zm1oreTB1nf5NDz3Wo?=
- =?iso-8859-1?Q?0QCc/eW9eXEymy7GveOr4CNfI+pUUVFrCdVFjV0JW3RFuaaj7bsZ0vOAq+?=
- =?iso-8859-1?Q?rY3ooWU3UeZcEV4xc7sOmIslfkLfAg5EB5TTG05TM6zYLwLvtDH2+PdNQF?=
- =?iso-8859-1?Q?5TjrtWcahkkKaNgDMrKp8S6uVQ4ZBLtnodhEXfmO2/GKL2bb8lpZKohoHx?=
- =?iso-8859-1?Q?CZj++vafr4OiWiBc6vMMQqZuv0hge5i7Piroobqt/NeJYmJu6pkC+L9B62?=
- =?iso-8859-1?Q?0wVzgaYHdPLbQNH3zGGdVVbEyLn47G4M/+AnXHO/c5il40qK+F+unZFP5b?=
- =?iso-8859-1?Q?J7PgrcjTUZ/RspCLBbs1R+W8CNcyQ6fjOVQVmBCcyrF/JSD01vxEcTsfS1?=
- =?iso-8859-1?Q?5MmIMwdrXD9W8YJuxqhKoe1bxMvKYYe7rtANeu8UH5DmyiuJgjmsUX3PeG?=
- =?iso-8859-1?Q?MzKMSWtGLgCtzhekvCv79j0zgWYhqC6p0ascSO/Tc+pqE5MRHSFvOu05b3?=
- =?iso-8859-1?Q?0mUYUJYpBUsOOj5pX/b0unnuvuibS/5m7Ro9mTrN5TepjE3iLFsRr67El+?=
- =?iso-8859-1?Q?sQfjOXpgOYvrODva23HaEWTeTkaH9kEg1MSTIhQeMVBaqVhrs7Tz3yUEjD?=
- =?iso-8859-1?Q?b6qorsyDfH7J/eCjDEtnA1+DI3XpGdkb6rK1WraKyMtP5WvEB3CsSlQOp8?=
- =?iso-8859-1?Q?osCa61RFS7QbHdy2z5A=3D?=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591D4158204;
+	Wed, 24 Apr 2024 07:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713945324; cv=none; b=LpD+87a3HJrz+QaZ05KvSj5KUd26ED02Qox0h9ZTJseVXXk3ZsQDT09APKumHAzmSkb8ij41udfaVDaSSymPA0tHUIlDQRjgWSqW7IFVeu7/WHommCXtEAf2uUxnHolztfMlHZjpiE2SvZ9uZOnrTu0cGzx9fupc/ABDHYGuFqc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713945324; c=relaxed/simple;
+	bh=854/E/3WlV5L2HlVhvqn4Cpxbq0+moLFrvaCOnjxA/g=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=uAM19zTUncUdEDLQRjMHzobjR8dufJrBHyK9y0KhPWV1zh7qqHT94gxPHCnqLIqFnaBr9r06+K8apsbgIUFZxFE3UIY8+kI0aYaPGtlmfNhvaKGTUj5MbrNtiJbqCFAqDzmwe+yzWnEbR6e7gGUhbjyLGd+26c7DYT4588UXLNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JxxltQf+; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240424075518euoutp0197d40c301283da644655615a37656105~JKC_VtpW92450024500euoutp01d;
+	Wed, 24 Apr 2024 07:55:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240424075518euoutp0197d40c301283da644655615a37656105~JKC_VtpW92450024500euoutp01d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1713945318;
+	bh=13Crf8Dw1GdmPTClarxewW31SdTx+PFVwsFMGKkjJ2s=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=JxxltQf+qwyB2mCsZ3vOJEn2PHIwy1raoBUfIMVd+jfpvXRH95oN+ceqxh92svjTX
+	 4i3xJ+2TzTWVqswUbSQuMdBeI7Y+X4vnvq1nUXhwL6UKZCygbxrws8ghEdzUV/Dah8
+	 KOTwccoayMTSWn30So8Sx23xoy8yQicm9MDDNu+0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240424075517eucas1p1c119b4f0f864c1a3b8f5d1a90eec5aaf~JKC98GKvG1445914459eucas1p1G;
+	Wed, 24 Apr 2024 07:55:17 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id D4.D7.09620.5EAB8266; Wed, 24
+	Apr 2024 08:55:17 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240424075516eucas1p1e0334417fd06c1443c325723a2f08c9c~JKC9RIfbS0143501435eucas1p1C;
+	Wed, 24 Apr 2024 07:55:16 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240424075516eusmtrp2a20c2bc21c42ecff63616a3e68737e50~JKC9M8Uq-1702017020eusmtrp2n;
+	Wed, 24 Apr 2024 07:55:16 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-62-6628bae529dd
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id EB.73.08810.4EAB8266; Wed, 24
+	Apr 2024 08:55:16 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240424075516eusmtip2d500b32a0b1125da635221646781374e~JKC87ZNaL1353413534eusmtip2B;
+	Wed, 24 Apr 2024 07:55:16 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 24 Apr 2024 08:55:15 +0100
+Date: Wed, 24 Apr 2024 09:55:07 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Konstantin Ryabitsev <konstantin@linuxfoundation.org>, Konrad Dybcio
+	<konrad.dybcio@linaro.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	<josh@joshtriplett.org>, Kees Cook <keescook@chromium.org>, Eric Biederman
+	<ebiederm@xmission.com>, Iurii Zaikin <yzaikin@google.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, John Stultz
+	<jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Andy Lutomirski
+	<luto@amacapital.net>, Will Drewry <wad@chromium.org>, Ingo Molnar
+	<mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel Bristot de
+	Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
+	Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>, "Naveen N. Rao"
+	<naveen.n.rao@linux.ibm.com>, Anil S Keshavamurthy
+	<anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
+	Balbir Singh <bsingharora@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+	<john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+	KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song
+	<yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <tools@kernel.org>
+Subject: Re: [PATCH v3 00/10] sysctl: Remove sentinel elements from kernel
+ dir
+Message-ID: <20240424075507.ggdmj7hg2xihmbq6@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	xTwF24HdL2d6MK1JKuzcgye1CxpuyoG4+qiW1M5HwoR8986rzu+J3YfqJUur6BF7+cHfjunQa042jcxpYXgb+im6nUt4VRAe+AKIGCgvoaHNvRkiDBJa6mXTx5eGbIs1tORVZpjwlEZeJfeqgWlSu2Q3imSqKQUOsDoJRpnkWjALtf4iKlgg+UsZlK7PBkWHkcihSHAtZtvdCx1CNiff4nd8ry/C4t8zg69MmKTgcDNHWT/mjfUot1qhCj9TOl7TTyaB4k6BatYvz83XnNyOPiRUdyIU74f08C2ZaHZMBOVKFsxhadIVE3c7ErY4MigCpUdzlXlh61m/VzysY8CX36qAMzApHY65pcR4btD2097oK2wmaZ9+7+GLT3k3xPRIgF6O2nrKXpOBgbIgkKH2RGuxsrFXHxEDMcpBS3jLYth5ZIPDIcXHRXf9QSmgMvcDhe0c0pgcFdclIguDHV3IgTBUNUePe2Rs4RYw1afxYAAjW7qi2YSPQkAqtNL7FPYX8v4UkC8nXh6IvBP7oRXbc+nFPFhPuhUiPoH/ckpzwQOB6hb2wyzL0xpLUHeGfVl+4oh8v8r7+8bKbn8eqfQavcEmVVUCSg8W7Gd4T4V8T7CqyavtFlPYoQmf8yMuVXSv
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b548971-57ee-4ee2-1285-08dc6432653c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2024 07:44:38.8742
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hcPDTf96UiFl/yuUyNEpAxQPG1x7+mO6KQETUV3ahI7PMeJtcaAB7Gkvejuh+0VufiOjPt5Y4ZR+V/N3GTrufA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR04MB6868
-X-Proofpoint-ORIG-GUID: NzopdVUtdtxaB9Yr-zpAnu5tY2Mj3gsw
-X-Proofpoint-GUID: NzopdVUtdtxaB9Yr-zpAnu5tY2Mj3gsw
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-Sony-Outbound-GUID: NzopdVUtdtxaB9Yr-zpAnu5tY2Mj3gsw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-24_05,2024-04-23_02,2023-05-22_02
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="5scxkb2uvfn4vufj"
+Content-Disposition: inline
+In-Reply-To: <1804aebc-68a5-4bd8-b42e-e06ce82f7355@kernel.org>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA2WTe0xTZxjG853zcU7BAYdL4AuYXZgwJopzM+bbmIaZmZ25jJnMv9wcFjkg
+	GRfTinMuEGxwQBmRjRIZIhQ6rsUC5TLLtTaMgkLRitxhKrdxH4PKZbaM5uBmsv9+7/O8T77n
+	/eMTkM5G2kMQEX2eE0ULI70oO1jXtm7YO1HvG/bWgswTr/59ncQNfwxBvLI+ROPlVj2FjWMP
+	KXxt+jLEOdOdNFbkPyVxTncixBPptSTerEuksU7fQmPJrRIC1/XkAdwqy94y5DH4WXsVhUeu
+	ZkLcmRqFG+6aCJyc8SvEmuUVgKea0wjc3V1J48amDogf1OdQuLWiC2LlzQQbXNh3n8DlKaU2
+	uD99AuCMhUmAFcU+2KiVE1gpM9NYn6Yl8OaYyQY3Jz8isKW3CmLj2izEDVUFFNYXmylcrc4k
+	saHqMYmTW7da1/62SuMh6SaNHynrbHCRJihwP/v7nBmy5bnlgL2ecB+yNaUDBKvJHqHZxOZB
+	mpWrY9nqkt2sonGaYKX9RpIdnD3EqstSKHa4t5FiFwwGms1PyCTZ9AItOO5+0u79UC4y4gIn
+	2nf4tN3Z+h8t1DkZuri4HpIAUl2lwFaAmAOoYmmAlAI7gTNTAlBSRg/NDysAZbb1bjvLAE0t
+	3rB5HnmSMQt5oxignLZ2+O/WxJh5O1INUO6IBlgjkPFG1fNrlJUpZg/qnhsmrezKvIn6zKs2
+	1gDJlDmgwqQ2wmq4MMdRZq+RtrI9E4geSg0kz06o4+dxaGWSuYiSr0xu6YIt9kTFFoFVtmUO
+	o6WJHIqv+hoyKUYhz3HoTs0gYX0LMRs7UEpZ7fY9H6KN3O7tJRc0o6+hed6JNjV524EMgFos
+	f9L8oASo6LKJ4LcCUGLP+HbiA2Tuu01YGyHGAfXPO/FFHdBPdddIXrZHyd8789s+SDk6B9PB
+	69kvnJb9wmnZ/53Gy3uQvOEv6n+yHyrKnyV5PoRUqkUoB3QZcOdixVHhnPidaO4bf7EwShwb
+	He5/JiZKDba+2l2L3nQLlMws+esAIQA6sGsr/KRSeQ94wOiYaM7L1X7j2a4wZ/tQ4beXOFFM
+	sCg2khPrgKcAernbe4e+wjkz4cLz3Nccd44TPXcJga1HAuHoeczNnKSQUH5R4wcVRu+QrK8q
+	317SSm7Iuw4SkibaL7hMdrOg6Is0F4MlcF/xAwpczevvWtnZMoEnm9yh372uDvNemWr+VHyW
+	7tVlzuvSZIO2ia77aGqcipdcCKYr4JnSA6JluHSk0W09tWQ08nPfH7JaPkn9zifoJelJpnDH
+	qc2ZkSP5IyrHQLOrtvPdvi99tSf6yv3f6Jz9+JhDeKUsSlap1of2PFU97tkgak0qZYBjXJn9
+	5FD48lEdECVZwjRx3l7U0ewBx/d+kc+MuQVFeCMgnW+/rR6+E1LRtkacblL1xMcPf5qwOJd3
+	QiUZv1JiUDm9PJ6jCp7Z+CzAC4rPCvfvJkVi4T+O5zTt5QQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA2WTeVCUZRzH53nfd993MbAVSN5WpoyjBGRhOX80QFg589YfajE2pRJu8nJM
+	sMvswaClUGHBlkUcIccgSLLAggHLIYcbbZtkcgjFIYcoV8KiDQMEJru0O1tjM/33eZ7vMb/5
+	zfNwcfslks9NEMtZqViU6EJuI26Yum97z7bvifXtbfKA9UfFOHTcGydg9eE4BSv6bhIGZ4ZI
+	KFj4iICShR4KKsr/xKGkP4OAuexmHLZaMijQdX9PwcdXqjBo+e0CAn1ekVkok8Dmzw0kTH6V
+	T0DP50nQcWMNg8zcVgLaVlYR/K49h0F/fz0FnVevE/BrewkJ+u96CVDXpXPg0sgABrVZ1RwY
+	zZ5DkPtgHkGF6nkY7CrDQJ1npKD7XBcGWzNrHNBm3sHANNxAwOCGgYCOhoskdKuMJGga83Ho
+	a7iLQ6bePHXzT+sUjCu3KLijbuFAZduBCCEztWQkmNrSWsQUpw8QTFP1LYxpK5qkmAztGMWU
+	NSoYTZUnU9G5gDHK0UGcGTOEMY01WSQzMdxJMg/6+iimPD0fZ7IvdqFDTkcEoVKJQs7ujpfI
+	5GEuR4XgJxCGgMAvIEQg9A+OetEv0MUnPDSGTUxIYaU+4ccF8e39mSg5h0790UiloyxHJbLh
+	0rwAejrXQCjRNq497xKi+wo2OFbBmW5YHfqHHejNYSVpNS0jurq8jrIeNIheme0iLC6C505r
+	7m+QFiZ5e+n+pQncwo48D3rEuM6xBHBezXZ6K6uKsggOvAP0RI41bMeLoIeUfbi1dROjPysx
+	4FZhB329cNZs4prTKfS3q/5W3EWrTFyLw4YXTi/PlZDWSZ+j1ypuE1Y+Ta8Y51E2cij6T1HR
+	46Kix0UWB87zpEdNC9j/rr3oynIDbuUw+vLlP4gyRNUgR1YhS4pLkgkFMlGSTCGOE5yQJDUi
+	81NvufZQcwWVLi4LdAjjIh1yMyen69U3EZ8QS8Ssi6PdX5tusfZ2MaKTp1ipJFqqSGRlOhRo
+	XuLXOP+pExLzvxHLo4VBvoHCgKAQ38CQIH8XJ7vXkjNF9rw4kZx9n2WTWem/OYxrw0/HFF8+
+	ObPgyce0BZOF7suvR3DffLvO54xOsOg1j2KLg9lvBirfYiOzfHrecYayqGtc2/dsBuWb+3fZ
+	HTz86BV1et3pUPmEaSRqauugaud2V3WZ27675TeNzZ01umcN4e8GNDntjlxPinE4fl4jNe1o
+	c7tQ37jRHs2Zf2b4fExeOIzFRTSe9VZFTpcee5mizqyMVdeVTn2Qu8/9XqvX2S9ueY9sOpdc
+	rVanCu0Oqb0+PfaEwDXVs52r0O4/cnQ3Sm0OVofb8nfKxuwDPKapHzgvjYceXv4kQ7uSe/9U
+	6964lEXtG6qcLI3rXJpH8R5VQnIE/svJDwULaa/qB235Tyv1aYUv9LoQsniR0BOXykR/A8K3
+	mgJ/BAAA
+X-CMS-MailID: 20240424075516eucas1p1e0334417fd06c1443c325723a2f08c9c
+X-Msg-Generator: CA
+X-RootMTR: 20240422150814eucas1p273f4eedd9082763e57ea53f16e5ac7f1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240422150814eucas1p273f4eedd9082763e57ea53f16e5ac7f1
+References: <20240328-jag-sysctl_remove_empty_elem_kernel-v3-0-285d273912fe@samsung.com>
+	<36a1ea2f-92c2-4183-a892-00c5b48c419b@linaro.org>
+	<311c8b64-be13-4740-a659-3a14cf68774a@kernel.org>
+	<20240422-sensible-sambar-of-plenty-ae8afc@lemur>
+	<CGME20240422150814eucas1p273f4eedd9082763e57ea53f16e5ac7f1@eucas1p2.samsung.com>
+	<1804aebc-68a5-4bd8-b42e-e06ce82f7355@kernel.org>
 
-> BTW, what about initializing the entire ep (fixed size of 32 bytes)=0A=
-> to 0 before setting the value of ep in each init function? This is the=0A=
-> simplest way to ensure that all other values are zero except for the=0A=
-> intentionally set value.=0A=
-=0A=
-Yes, initializing the entire directory entry to 0 is simplest way.=0A=
-But 48 more bytes are set to 0 (the total size of the reserved fields is=0A=
-16 bytes).=0A=
-=0A=
-I think both ways are acceptable. If you think initializing the entire ep t=
-o=0A=
-0 is better, I'll update this patch.=
+--5scxkb2uvfn4vufj
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 22, 2024 at 05:07:59PM +0200, Krzysztof Kozlowski wrote:
+> On 22/04/2024 16:57, Konstantin Ryabitsev wrote:
+> > On Mon, Apr 22, 2024 at 04:49:27PM +0200, Krzysztof Kozlowski wrote:
+> >>>> These commits remove the sentinel element (last empty element) from=
+=20
+> >>>> the
+> >>>> sysctl arrays of all the files under the "kernel/" directory that us=
+e a
+> >>>> sysctl array for registration. The merging of the preparation patches
+> >>>> [1] to mainline allows us to remove sentinel elements without changi=
+ng
+> >>>> behavior. This is safe because the sysctl registration code
+> >>>> (register_sysctl() and friends) use the array size in addition to
+> >>>> checking for a sentinel [2].
+> >>>
+> >>> Hi,
+> >>>
+> >>> looks like *this* "patch" made it to the sysctl tree [1], breaking b4
+> >>> for everyone else (as there's a "--- b4-submit-tracking ---" magic in
+> >>> the tree history now) on next-20240422
+> >>>
+> >>> Please drop it (again, I'm only talking about this empty cover letter=
+).
+> >>
+> >> Just to clarify, in case it is not obvious:
+> >> Please *do not merge your own trees* into kernel.org repos. Instead use
+> >> b4 shazam to pick up entire patchset, even if it is yours. b4 allows to
+> >> merge/apply also the cover letter, if this is your intention.
+> >>
+> >> With b4 shazam you would get proper Link tags and not break everyone's
+> >> b4 workflow on next. :/
+> >=20
+> > I was expecting this to happen at some point. :/
+> >=20
+> > Note, that you can still use b4 and merge your own trees, but you need=
+=20
+> > to switch to using a different cover letter strategy:
+> >=20
+> >   [b4]
+> >   prep-cover-strategy =3D branch-description
+>=20
+> Yes, but you still won't have:
+> 1. Link tags
+> 2. Nice thank-you letters
+> 3. Auto-collecting review/tested/ack tags
+>=20
+> So sure, maintainer can even cherry-pick patches, use patch or manually
+> edit git objects and then update git refs, but that's not the point. :)
+>=20
+> Just use b4 shazam, it's so awesome tool.
+I'll try this out going forward (instead of chaning the cover letter
+strategy)
+
+Thx again.
+
+Best
+
+--=20
+
+Joel Granados
+
+--5scxkb2uvfn4vufj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmYoutcACgkQupfNUreW
+QU+F2Av/QqbfQttykaAD7KNkB5kok78Ab5AkiiDAM8lFgJvBZN1h8U7IueUGwXBr
+n0i2wBPUZRDZ4k2OYMltTAhLdVXGNqAfJDmWChJpxRKSpCh+CNK5l1FImfM7I9Hg
+wbAXyzgEJofNgic+s75BLSbyC8SQB/4xHZ8HXD5xV7rT5nyxk6FKTU+1CHM0wcMJ
+BRRl0JzlPSkfJ9soQFrr0JMosSK/zJfhqQMT8/lYmMWoJfT8u/X6xSiFfOWl3yKD
+T/E/zJphjpNN1RVwFGln4I0AAZ1T3bu211IX05ekhYZepQHgx0bhv6/vsqXp1LbG
+TB++mNPYhhW0UA7N8OvJCcZHOxTP/KW3bybjDyVBZilmqzhCeIukm/svXIL3t2zV
++yLZIPGFi3anx0l7TBhlWzuLb4BqjOt9sGuJnnzcb421bXtBDTWo6wbrxjvbqXdr
+QVauUByn/c8ZYnJkw6j1VhrY39EXSjkcYOC5Li9L1dXfKwgB3daeQ8ZPn3g8TcNn
+Aw0xDsib
+=jM5G
+-----END PGP SIGNATURE-----
+
+--5scxkb2uvfn4vufj--
 
