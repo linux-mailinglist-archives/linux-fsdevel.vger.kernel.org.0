@@ -1,114 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-17667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3818B1375
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 21:21:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C298B1379
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 21:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2BA284A44
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 19:21:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E36728442C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 19:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D066A84FB3;
-	Wed, 24 Apr 2024 19:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A10378C89;
+	Wed, 24 Apr 2024 19:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhkDwy2E"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Roi+baR/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383B384D04;
-	Wed, 24 Apr 2024 19:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794D9745D9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 19:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713986392; cv=none; b=mhy9aA81Ijfjcxj9Juk8edM3iu79nvBn9oShGdjWyV+6sCixJ1sNkMbwEfcjZhjwpLxf/kyAkMk93P2jXXp/nKCv9C4iHU46/e+iOIG+uI2DTWdkXItMUFnf2JNf1oQ9dsu4G+39MY/a6yz0PPZSOzK0T2AJ95SO6/P3RXCXIFU=
+	t=1713986500; cv=none; b=HDOR/k7xsHEonVWHpxR3YbQD7nDfHSlaGGxiR3kjB6sTXx471wusdKV9qcQ/9cWRc2RTgJArP9zadLdVl6L/6MSphDCZNArFqpcyLUmB/Bxd6taS1g7eaUdxyqIFZ9Q2IzJlx7RSiqNLuzHzH0aQbHwzKYm840sqzTJ0QZBYdFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713986392; c=relaxed/simple;
-	bh=SG4Lo4rIx0jK9AyJvfk3b3JplxqCs2y9vsJcG+z8OAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQPK7B40TagwJl4Qre7VJsMc5pYbB46TvMy1pWvb3aqsi3dKy96BGUUPFuuGdBQzb7ETrCAZfGspa4le8LvrimFAhUX840ZyvdchwJ2Emzl4ASyxXG8lKoF8juz9asX79/P84K7kxP1iOdHZtohyLR/F9sUlpXIbuFmzLfec1VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IhkDwy2E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9718FC113CD;
-	Wed, 24 Apr 2024 19:19:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713986391;
-	bh=SG4Lo4rIx0jK9AyJvfk3b3JplxqCs2y9vsJcG+z8OAg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IhkDwy2E5Sp/2EIyCvai21RmJiQghHwApl+U1e7VVx/1T22gEcEhBZ2KtPBPmpXn4
-	 S4vJSNcC9bGcPBxQHXDFqgNL2ro9FK7Vgm3QIt1MCjfAw3EbsDR60zaycTJ+o5kmyW
-	 4tpgrqZnEgLJLPkPhYfE///Khp/IAY39qTFYtafe+YVkB0L8yKqUnnBHOtNidpic9/
-	 1triYxSXquy3ogOlLrTyURNlhYYLf0fp3GinUHf/XV1yiwFCd79IgX8CxiTgiQHfjN
-	 027/d4lbTlK6owYBlxQSnPUTkZqVbZ2e5XHKYGMmnOxck+uq8GkAphut0dHKRK4QP9
-	 mDLiRl4YPmtGQ==
-Date: Wed, 24 Apr 2024 19:19:50 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: aalbersh@redhat.com, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
-Subject: Re: [PATCH 10/13] fsverity: pass the zero-hash value to the
- implementation
-Message-ID: <20240424191950.GA749176@google.com>
-References: <171175867829.1987804.15934006844321506283.stgit@frogsfrogsfrogs>
- <171175868031.1987804.13138670908694064691.stgit@frogsfrogsfrogs>
- <20240405025750.GH1958@quark.localdomain>
- <20240424190246.GL360919@frogsfrogsfrogs>
+	s=arc-20240116; t=1713986500; c=relaxed/simple;
+	bh=tTJKTCZK+7MUJMSSp7o23DoKoVGNAUDPQk8v0lL9B64=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mjDBBGhOyNl+WxvrtgZZnft2Nxpc7rq8rsZFEbdOTlk6npxO6drcLR6JTJUjzTsUNCn8ZF6zat/iQhF51C3XJcrZOXUs5LXvAbicsSlAojIIt+7dNsAsElvYboH+TgYhB20QkyfxKkmT0mByN3EWV2XMrWM72ynITL/zFM9Gl3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Roi+baR/; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6ea26393116so178308a34.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 12:21:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1713986497; x=1714591297; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rNHLJopld4jqnJrZ1oiAAgxTAlpul98lFx9bY2o4kLg=;
+        b=Roi+baR/9NehB/DEa7wTeBDHVdkwYBUdQYGWKE5QRbrth+AMF2nWrsHrwAOPUtMjN6
+         dEV4o6+6Z08gitDVs6x8SErCBK0EEn7JB7nS296WtxFqv7bnukDlnUAbMCzG0P2YHNTt
+         tj92DpS9LgbMAGdRbsioaSu2w9rlMenjpHbjE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713986497; x=1714591297;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rNHLJopld4jqnJrZ1oiAAgxTAlpul98lFx9bY2o4kLg=;
+        b=sNWYR5ri86Stn4938/RsxgAsJCec5AKKL9zbi3NQrOX2Q1ElNIeHmo+RAD53h0Yymz
+         eAL40XPQgvGN/3mQsUjEw2qXhwBXzVrh53JUCCYcBMLYB6C41A1s+YfWGlTZp65Qy5py
+         0jxFD+07AXI0L1rIZbv1Lqd57EyH0m6uikOZEdAKY4Sb2FgV7U/JHVxPxIBbvjPvyUHB
+         xPO6FPBZR9VTrCzFOM5ifRIFXTsZfd95IVsLwPms6MSkWyeGAopA4rRQbwwTCNapN3Ez
+         igujOhu1a9rz8URXNcRkEN+t/EdAmkwB/mGEomK0sFd5R/c9G5qipUEstWzGXqOQQdO5
+         gszQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVr1A2voK0aq7kavfB+IZ6bDw/1DUuiw14IB+aVZPiM5DyQ5bd2UNgvDBBKAJf2P5OQUU3gwLWhVe1cOqkG8arMbwQp/oqRKZ89tPQiug==
+X-Gm-Message-State: AOJu0Yy8cAook/cOF1ooW12ujsvTQ+YCe4DNUJ7k31gfCisB+HpljUBJ
+	wilbbEqRUuIstSjalMpWU4gcARsQwRoGyBExMgQI5mHLv/tP0NdVGOZKe7LihQ==
+X-Google-Smtp-Source: AGHT+IFuqgGNw1ep4y54aPm4dQmLi99sxiEQ9YbOo91SW07Q3tBMI8FSl2WHIOI7cdyQhNEZyiSynw==
+X-Received: by 2002:a05:6830:1d6f:b0:6eb:7685:b00 with SMTP id l15-20020a0568301d6f00b006eb76850b00mr4093982oti.28.1713986497681;
+        Wed, 24 Apr 2024 12:21:37 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id l26-20020a65681a000000b00606506a95bbsm1425110pgt.13.2024.04.24.12.21.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Apr 2024 12:21:37 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+To: Jiri Kosina <jikos@kernel.org>,
+	Kees Cook <keescook@chromium.org>
+Cc: y0un9n132@gmail.com,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Tony Battersby <tonyb@cybernetics.com>,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: (subset) [PATCH 2/2] binfmt_elf: Leave a gap between .bss and brk
+Date: Wed, 24 Apr 2024 12:20:58 -0700
+Message-Id: <171398645483.3089364.2691527690120638755.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240217062545.1631668-2-keescook@chromium.org>
+References: <20240217062035.work.493-kees@kernel.org> <20240217062545.1631668-2-keescook@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240424190246.GL360919@frogsfrogsfrogs>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 24, 2024 at 12:02:46PM -0700, Darrick J. Wong wrote:
-> On Thu, Apr 04, 2024 at 10:57:50PM -0400, Eric Biggers wrote:
-> > On Fri, Mar 29, 2024 at 05:35:17PM -0700, Darrick J. Wong wrote:
-> > > From: Darrick J. Wong <djwong@kernel.org>
-> > > 
-> > > Compute the hash of a data block full of zeros, and then supply this to
-> > > the merkle tree read and write methods.  A subsequent xfs patch will use
-> > 
-> > This should say "hash of a block", not "hash of a data block".  What you
-> > actually care about is the hash of a Merkle tree block, not the hash of a data
-> > block.  Yet, there is no difference in how the hashes are calculated for the two
-> > types of blocks, so we should simply write "hash of a block".
+On Fri, 16 Feb 2024 22:25:44 -0800, Kees Cook wrote:
+> Currently the brk starts its randomization immediately after .bss,
+> which means there is a chance that when the random offset is 0, linear
+> overflows from .bss can reach into the brk area. Leave at least a single
+> page gap between .bss and brk (when it has not already been explicitly
+> relocated into the mmap range).
 > 
-> I think I could go further with the precision of the description --
 > 
-> "Compute the hash of one filesystem block's worth of zeroes.  Any merkle
-> tree block containing only this hash can be elided at write time, and
-> its contents synthesized at read time."
-> 
-> I don't think this is going to happen very often above the leaf levels
-> of the merkle tree, but as written there's nothing to prevent the
-> elision of internal nodes.  Also note that the elision can happen for
-> internal nodes even when merkle tree blocksize != i_blocksize.
-> 
-> > > diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-> > > index de8798f141d4a..195a92f203bba 100644
-> > > --- a/fs/verity/fsverity_private.h
-> > > +++ b/fs/verity/fsverity_private.h
-> > > @@ -47,6 +47,8 @@ struct merkle_tree_params {
-> > >  	u64 tree_size;			/* Merkle tree size in bytes */
-> > >  	unsigned long tree_pages;	/* Merkle tree size in pages */
-> > >  
-> > > +	u8 zero_digest[FS_VERITY_MAX_DIGEST_SIZE]; /* hash of zeroed data block */
-> > 
-> > Similarly, "block" instead of "data block".
-> 
-> How about "the hash of an i_blocksize-sized buffer of zeroes" for all
-> three?
+> [...]
 
-It's the Merkle tree block size, not the filesystem block size.  Or did you
-actually intend for this to use the filesystem block size?
+Patch 1/2 was already applied via x86 tip, so I'll grab this one for the execve/binfmt tree.
 
-In struct merkle_tree_params, the "block size" is always the Merkle tree block
-size, so the type of block size seems clear in that context.  My complaint was
-just that it used the term "data block" to mean a block that is not necessarily
-a file contents block (which is what "data block" means elsewhere).
+Applied to for-next/execve.
 
-- Eric
+[2/2] binfmt_elf: Leave a gap between .bss and brk
+      https://git.kernel.org/kees/c/2a5eb9995528
+
+Take care,
+
+-- 
+Kees Cook
+
 
