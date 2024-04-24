@@ -1,160 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-17616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE648B05E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 11:18:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58CB8B05F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 11:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68CE4B25A3A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 09:18:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7761F23B92
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 09:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76935158DA0;
-	Wed, 24 Apr 2024 09:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12852158D9C;
+	Wed, 24 Apr 2024 09:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="s9nIIatB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FC7158876
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 09:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D041F1E4A9;
+	Wed, 24 Apr 2024 09:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713950317; cv=none; b=HQm9AZ0T0kY/VdlVPv1GvYSVkOsUyYdOyVRAKE6JrqTf1sl5GufeffTsCd8GETe2DhviZwSVh0/+7IOou8tyAvXoaUr3CE2SgYfZzjWrBXCIYXKvf/Tid0PtdmUdcc3eVOmnl5x2I/zjghzKd1JVxe0gdoRI3gy4FlyOZrvbE6s=
+	t=1713950703; cv=none; b=gEw6OH7N1w08MDcz8KqPrbHTx2pSVcKhsa8cFW+uURa7+fhT60fF6dIEHiW4uM8K05PXVSFBXf5t59+C38enCAPZU4a3QCZKPK82xcUV6Uson6ZPB3KGMj93CMwStNQo+W7pzI2UVYA7zEZc9n8sE6rKWygL3kYp1iUtv4VOesg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713950317; c=relaxed/simple;
-	bh=KhTHcR7I5jCU4l8yeRDg/wvW4kgeyIkmektcoNJMinA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=EqjRgxmd46mtI7PapxiDqEZC7JWvBT5rUNg4uurydI2p5OLCqOEy2CZYfzxPrJlyzNR7+LQsqd613VybdR78qVF/Dw5Sfol8RadbuWFtYGoJnj7VrzR1W4fcAr8RaZOHX+21AS/kHIkXC1KknNXYfbCbz6rl+LiYBUChSqZM6eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-102-z5LuMkZlMxSOMqakJ5rlUg-1; Wed, 24 Apr 2024 10:18:25 +0100
-X-MC-Unique: z5LuMkZlMxSOMqakJ5rlUg-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 24 Apr
- 2024 10:17:57 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 24 Apr 2024 10:17:57 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Stas Sergeev' <stsp2@yandex.ru>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Eric Biederman <ebiederm@xmission.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, Andy Lutomirski <luto@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH 1/2] fs: reorganize path_openat()
-Thread-Topic: [PATCH 1/2] fs: reorganize path_openat()
-Thread-Index: AQHalJJk8Yta93gecEuTWlpT1K4OxbF3JeNw
-Date: Wed, 24 Apr 2024 09:17:57 +0000
-Message-ID: <858f6fb6afcd450d85d1ff900f82d396@AcuMS.aculab.com>
-References: <20240422084505.3465238-1-stsp2@yandex.ru>
-In-Reply-To: <20240422084505.3465238-1-stsp2@yandex.ru>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1713950703; c=relaxed/simple;
+	bh=W20kwssXX+k6F27oa/QR8qY77T2GYkiFI95znuilYbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fj13OQc7nK0xaln4qqPR0E0fFKbDJ8YuTH1EiipsuvLqWlJx0vvFzEb7NURqvynCv3TBMXvWGejFoEktuw023Bt65Ey3/ebBCAJA9o7Ki3ByZPQOlJ+fb0hBEnPLq9ikWKKL7LNZ7awvq7LqdwIDw9xS0xJIDhg8G9nfvoftp2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=s9nIIatB; arc=none smtp.client-ip=178.154.239.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0d:193:0:640:a325:0])
+	by forward502a.mail.yandex.net (Yandex) with ESMTPS id F1DD261136;
+	Wed, 24 Apr 2024 12:24:51 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id oOHRLuOIlOs0-Wj71FBxI;
+	Wed, 24 Apr 2024 12:24:51 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1713950691; bh=W20kwssXX+k6F27oa/QR8qY77T2GYkiFI95znuilYbU=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=s9nIIatBSNRVyZWfhwOL1gcyFqYaW6uPcg0gU2ANhN8UybGw/STAJvNRhOHnyqF04
+	 mIdig5PWwMsn8UAUhmxZDXtHpmwUGte3O9N4BSPN8sphhd3I7wstlA0ty1LF33eeMd
+	 3bjkGnDIMBx372iGUfYqv8mu6bUG2aZzGTqWld0w=
+Authentication-Results: mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <80e72876-da81-4694-86a2-835c049ed30f@yandex.ru>
+Date: Wed, 24 Apr 2024 12:24:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] fs: reorganize path_openat()
+To: David Laight <David.Laight@ACULAB.COM>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Andy Lutomirski <luto@kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20240422084505.3465238-1-stsp2@yandex.ru>
+ <858f6fb6afcd450d85d1ff900f82d396@AcuMS.aculab.com>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <858f6fb6afcd450d85d1ff900f82d396@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Stas Sergeev
-> Sent: 22 April 2024 09:45
+24.04.2024 12:17, David Laight пишет:
+> From: Stas Sergeev
+>> Sent: 22 April 2024 09:45
+> I seem to have 5 copies of this patch.....
 
-I seem to have 5 copies of this patch.....
+Yep, its re-sent with every new iteartion,
+but doesn't change by itself (the other
+one changes).
+Is there anything I can do to avoid
+unneeded duplicates of an unchanged
+patch?
+Manually reduce Cc list until the patch
+changes? That looks too much of a trouble
+though.
 
-> This patch moves the call to alloc_empty_file() below the call to
-> path_init(). That changes is needed for the next patch, which adds
-> a cred override for alloc_empty_file(). The needed cred info is only
-> available after the call to path_init().
->=20
-> No functional changes are intended by that patch.
-...
-> ---
->  fs/namei.c | 26 +++++++++++++++++---------
->  1 file changed, 17 insertions(+), 9 deletions(-)
->=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index c5b2a25be7d0..2fde2c320ae9 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3782,22 +3782,30 @@ static struct file *path_openat(struct nameidata =
-*nd,
->  =09struct file *file;
->  =09int error;
->=20
-> -=09file =3D alloc_empty_file(op->open_flag, current_cred());
-> -=09if (IS_ERR(file))
-> -=09=09return file;
-> -
-> -=09if (unlikely(file->f_flags & __O_TMPFILE)) {
-> +=09if (unlikely(op->open_flag & __O_TMPFILE)) {
-> +=09=09file =3D alloc_empty_file(op->open_flag, current_cred());
-> +=09=09if (IS_ERR(file))
-> +=09=09=09return file;
->  =09=09error =3D do_tmpfile(nd, flags, op, file);
-> -=09} else if (unlikely(file->f_flags & O_PATH)) {
-> +=09} else if (unlikely(op->open_flag & O_PATH)) {
-> +=09=09file =3D alloc_empty_file(op->open_flag, current_cred());
-> +=09=09if (IS_ERR(file))
-> +=09=09=09return file;
->  =09=09error =3D do_o_path(nd, flags, file);
+> You probably ought to merge the two 'unlikely' tests.
 
-You probably ought to merge the two 'unlikely' tests.
-Otherwise there'll be two conditionals in the 'hot path'.
-(There probably always were.)
-So something like:
-=09if (unlikely(op->open_flag & (__O_TMPFILE | O_PATH))) {
-=09=09file =3D alloc_empty_file(op->open_flag, current_cred());
-=09=09if (IS_ERR(file))
-=09=09=09return file;
-=09=09if (op->open_flag & __O_TMFILE)
-=09=09=09error =3D do_tmpfile(nd, flags, op, file);
-=09=09else
-=09=09=09error =3D do_o_path(nd, flags, file);
-=09} else {
-Copying op->open_flag to a local may also generate better code.
+Ok.
 
-=09David
-=09=09
->  =09} else {
->  =09=09const char *s =3D path_init(nd, flags);
-> -=09=09while (!(error =3D link_path_walk(s, nd)) &&
-> -=09=09       (s =3D open_last_lookups(nd, file, op)) !=3D NULL)
-> -=09=09=09;
-> +=09=09file =3D alloc_empty_file(op->open_flag, current_cred());
-> +=09=09error =3D PTR_ERR_OR_ZERO(file);
-> +=09=09if (!error) {
-> +=09=09=09while (!(error =3D link_path_walk(s, nd)) &&
-> +=09=09=09       (s =3D open_last_lookups(nd, file, op)) !=3D NULL)
-> +=09=09=09=09;
-> +=09=09}
->  =09=09if (!error)
->  =09=09=09error =3D do_open(nd, file, op);
->  =09=09terminate_walk(nd);
-> +=09=09if (IS_ERR(file))
-> +=09=09=09return file;
->  =09}
->  =09if (likely(!error)) {
->  =09=09if (likely(file->f_mode & FMODE_OPENED))
-> --
-> 2.44.0
->=20
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+> Copying op->open_flag to a local may also generate better code.
+
+Can't gcc deduce this on its own?
+But ok, will do.
 
 
