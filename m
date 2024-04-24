@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-17628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BEAB8B08BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 13:55:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844E98B08C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 13:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 142782881D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 11:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4043C28837C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 11:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7E515AAA7;
-	Wed, 24 Apr 2024 11:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709E515AAB3;
+	Wed, 24 Apr 2024 11:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cc4K0p6g"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KYqRr83H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7244715A4A3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 11:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953DF15AAA3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 11:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713959697; cv=none; b=hVlnzMp3S+lhTn2W8fObD8sz095cxaetDMD2HGZ3H6xDGLfdNGsZlGAa1Nswy7nTjwN9Z61nGcn1WNYCPjbQ+fXKMOSXMUPf4SiLsqKlWE72OLTN5tGY+sBRNwomNpiz/XxwkL3rGgyRb9m6dnYCmHpX3MhAWMaEyRuIoQeCs7c=
+	t=1713959727; cv=none; b=uPHdr5ZtJV4Nyutea3ACztFcFnGweWaSqwIZuC4skUhFQMwAX71Yb7f0gmXXGZUT2b3BfXN+zi/G3c7tK8ec4/MkjYsmgrHHYXb6isr1XiBzEeV1MCT8t2FYPFdOBDT1/c0S5FMIaN6uiMCPo0y0TQebXd28RJic+nAS8h3BqzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713959697; c=relaxed/simple;
-	bh=t16TwmfZQRf8TxMfy7Hq780aI7ZFzy/MRzbxLfJ3w1Q=;
+	s=arc-20240116; t=1713959727; c=relaxed/simple;
+	bh=8K5zhx6yDCvJm1l41BT/kCYCU/emBpn32GX9Yy3CM9I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a20QKDpukSg2e+OnQMmy8KSD/PktRwS3uKiXoLhWgs1fyl/bN/hE+vs8BAL13wcYJzZSXCcgiZ2KKzWtYhEetzgSGYIqdplxZhd1hOoyBZzx9XvOfbrtCgjVrTfCfwMTEBW0HjTRUJpTBJGSM21tf6GjDK7nJyC+Qqxw1+jKHFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cc4K0p6g; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=Ema90lAH5uyWYn53d/6TzP9rFCaLSu6TXys8uD3iDhMztyDQyiTQpvCFtNnEEY5zu1Aw/uf1vFx/aBUMkEqaeF5w3Y1q+tf8GHF3s53GcMKhvM64QDZ8+4X2976Uot/cWFxOhoMbHdvXvMC0RYWgMtNQyj3RRHGdJ3cIJuUtngQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KYqRr83H; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713959695;
+	s=mimecast20190719; t=1713959725;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=o/g2/UC+Qje9QaJR5m8snaCNqazDqqIhBRIym+PZEk0=;
-	b=cc4K0p6gxHms5tjvu8Watjmw4BoN9BDC0mXCoHsuWInL3z/wDFRTuSNvX1ycggGQer4w3H
-	CxNMU4rAheZcQWkfjP4+8hSl/2Hsv/8G68T0bS8b2mtaqty/pC4ajqpP5Rc1GLNCFABj+h
-	tEtvom3L4bLj9/NXi6jY99P3yoQUf9c=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=9zT0IFJDVsNKakGu1Yx/bEyqtl1wWoC8Kg4VpGAhahg=;
+	b=KYqRr83HABtkncSHwuQVf1dpNgXD2OnaVkzV8Ifun3mkE6xN9u67XPd3lbooIPIybCqXAz
+	EB1UknnNYq7LkaXHNAZZO53al8OZTvnq3rEtZPWKXGHfGX5RRZN7+yy43GtnYijt+dudAO
+	EGtefxRGzCDW2fnMjySuqNoktTUNM2E=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-G1DM7uduOUmvkTDi0qaxCg-1; Wed, 24 Apr 2024 07:54:53 -0400
-X-MC-Unique: G1DM7uduOUmvkTDi0qaxCg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4183d08093bso38750655e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 04:54:53 -0700 (PDT)
+ us-mta-177-H_KKcxxoN6SG9iyXhcYSiQ-1; Wed, 24 Apr 2024 07:55:24 -0400
+X-MC-Unique: H_KKcxxoN6SG9iyXhcYSiQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-41a1eb33994so16113205e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 04:55:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713959692; x=1714564492;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=o/g2/UC+Qje9QaJR5m8snaCNqazDqqIhBRIym+PZEk0=;
-        b=nruPf+QZOtiTN94ko4bgDdLE7SSB1lSNJ6ohd9IMUSVNcgAzT2oWT0ZCo3KQVVs8+w
-         3LxZxaIGT/1vOgJv29nZq0aqXJ36MAC7WC4j9OKeUV4swEVdiHzzoSiG0Y4f1T63qouW
-         RKo6MCQTMK8u2Y8REnjEYsjlN3p6QUwz54q7fZj3QIhNAYNpdp9r5j4Px9X3YwNcJQUv
-         FBlPP1yg3hMkvrrmH8HOnXK9PexIDzpaOQiaSZWEOGZFjeuN9T7wwjQAWaiiUxGPphsq
-         TOtdWXnST0Iet6oVbSLlsUD4EJOJLPXWapYVpvaog570Jq4MKhTI6K4dVhdMGGkoNc67
-         qgeg==
-X-Gm-Message-State: AOJu0YzNUHkSVM5i4uZfW67v9oABLLQ4thfdMJ89TLLG/g6MmBxql3yj
-	MaJrAs3k9iBQf+P4W8q0jFvl11H86IViGGWCyBb93c6X4m4Rqp7EPCHbYPlCYkGZh+zrS2evEX8
-	YESJGKeerio9vCKUY84bVNZlslgkQtD0zLbuvC2bvy+kXYCXYIpMv0jFB5XYP2Rg=
-X-Received: by 2002:a05:600c:5107:b0:418:d077:2cbd with SMTP id o7-20020a05600c510700b00418d0772cbdmr1528937wms.40.1713959692742;
-        Wed, 24 Apr 2024 04:54:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGUBvlxAmoxjlaiMh//MyFbN3TugdeR/mJ1CsO1qWR48AZINKJVYj8LKvycJ6b2KKHRQbLutQ==
-X-Received: by 2002:a05:600c:5107:b0:418:d077:2cbd with SMTP id o7-20020a05600c510700b00418d0772cbdmr1528920wms.40.1713959692321;
-        Wed, 24 Apr 2024 04:54:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713959723; x=1714564523;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9zT0IFJDVsNKakGu1Yx/bEyqtl1wWoC8Kg4VpGAhahg=;
+        b=E3YXFJqSDp8MpDk3/faKu1CEGw4/ZI2GLm90WuBP2Gv/uEgSQuBGuPunQ6n0PiE97X
+         ZYRY12/cEyF6WeA1UB2Qfr0YaowpMe/BKwhMk3N4pZYl5rkyt/WS/Vc8EpdJM3hhUkRh
+         7iYQl5LeamxYmb5BbQ7Jbo2NSA/2m4K3QxuyAItrySWW63JEFn56VxIgPcE5NHA3vErF
+         auLJCjLd93heOthyeJje0TBT3gcD2t5f/CTYitb3SOxrESztDdyyBrzwFLRZLaMHMbdd
+         wWH3dwVY9kAY9pF9dJawIfSTR1fYG2lT6dCvPJNUX9n48VWTKqkoxqhYwlQynF6NKSbM
+         xbDQ==
+X-Gm-Message-State: AOJu0Yz5xJHIzRqUKoGxUgwgKXPtJVl1qNH1rGpaEdilB/vncGksObah
+	IiNCdfKfzcWHEPKTMO7xd+zriQPUArYkjGzC93HlDUD2Ar2J4qvUqMcTtyvtQskwHlnRvh7a+DH
+	G/ti2X56OeLQSWvZO/KcK2Xf+zsPvWCYVuj/WCqbZwAKmp1ApXYa5Nylt0AN/RRW3cfkhZOA=
+X-Received: by 2002:a05:600c:511c:b0:41a:3369:6179 with SMTP id o28-20020a05600c511c00b0041a33696179mr2289442wms.26.1713959723168;
+        Wed, 24 Apr 2024 04:55:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFXZl+JvrX7Y7hTJQvM6mjeENPIODbxA04L5q02+eXTh0mx7u7TnzM1+bHZyOFXAJ6wYhbXtQ==
+X-Received: by 2002:a05:600c:511c:b0:41a:3369:6179 with SMTP id o28-20020a05600c511c00b0041a33696179mr2289427wms.26.1713959722844;
+        Wed, 24 Apr 2024 04:55:22 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c70d:1f00:7a4e:8f21:98db:baef? (p200300cbc70d1f007a4e8f2198dbbaef.dip0.t-ipconnect.de. [2003:cb:c70d:1f00:7a4e:8f21:98db:baef])
-        by smtp.gmail.com with ESMTPSA id w17-20020a05600c475100b004162d06768bsm27443188wmo.21.2024.04.24.04.54.51
+        by smtp.gmail.com with ESMTPSA id iv20-20020a05600c549400b00418e4cc9de7sm23283826wmb.7.2024.04.24.04.55.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Apr 2024 04:54:51 -0700 (PDT)
-Message-ID: <8c6f78c8-8326-41f3-a477-395d89de445d@redhat.com>
-Date: Wed, 24 Apr 2024 13:54:51 +0200
+        Wed, 24 Apr 2024 04:55:22 -0700 (PDT)
+Message-ID: <e1ac21f7-06df-4c24-bbf2-c49e72328db1@redhat.com>
+Date: Wed, 24 Apr 2024 13:55:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,16 +82,16 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] migrate: Expand the use of folio in
- __migrate_device_pages()
+Subject: Re: [PATCH 5/6] userfault; Expand folio use in
+ mfill_atomic_install_pte()
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 References: <20240423225552.4113447-1-willy@infradead.org>
- <20240423225552.4113447-5-willy@infradead.org>
-From: David Hildenbrand <david@redhat.com>
+ <20240423225552.4113447-6-willy@infradead.org>
 Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
  dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
@@ -137,12 +137,13 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240423225552.4113447-5-willy@infradead.org>
+In-Reply-To: <20240423225552.4113447-6-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 24.04.24 00:55, Matthew Wilcox (Oracle) wrote:
-> Removes a few calls to compound_head() and a call to page_mapping().
+> Call page_folio() a little earlier so we can use folio_mapping()
+> instead of page_mapping(), saving a call to compound_head().
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
