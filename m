@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-17640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80108B0BC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 16:00:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8588B0BC4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 16:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6538928CDFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 14:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E089E1F270F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 14:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0667615E1F3;
-	Wed, 24 Apr 2024 13:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1708F15E809;
+	Wed, 24 Apr 2024 13:59:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B456E15DBB6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 13:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED5015E210
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 13:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713967182; cv=none; b=Jjo4PhXCnLw0O7GpXW6W0God2IekVQ7TgJPNkyGRZW30RErVUg0UUMT5Y01VuNVlxvcpiZbg0EuLEw5vfRccbzdY1x37kBYjxMxAG7g9bbY6MYPeMGSGVT+Yx8zBC9gkYWvemfNBu1aL4CLSI2i2u+6N3cLH0Uv+TOTLDS/miCU=
+	t=1713967183; cv=none; b=RLIuAduObyOg/uvR5nofowLlhk79wZmNJRjSupQN9yWvb+msie26R2bL2hk6q8XXYqTeG6f7146Ega3egtsxXwn0JNiZCI4U29VIDN4z+Mi97hVfR+We3bXbh7Y0i1fRYIpzyieYm89l8QsDD5KYvAYyEkeWBC/4uvh0YpuRNeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713967182; c=relaxed/simple;
-	bh=IjPvKPb1BdhTCDwrbjzez9OGjFfA36cAe3+vFCtDPiE=;
+	s=arc-20240116; t=1713967183; c=relaxed/simple;
+	bh=P789ho92uNEUmncRaYTfDOLcjGEobGtCeSNP6Cyu9wY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WKDJP0+QboPZfd13O8R9CsZh2FqHvMvA7KwQkhbXDJLMFGWIl6Da0NIKgQPfTRo+jtZG5km8sV4lQOEw+h7U+sVKZgA8Q2E+Ab0DTHYXlIr+IkHntj5iIi7EyJ/IQTvbCvbaU0YCN5hPKTW5E5Dd+A+iZM+T1UFsvCtQNHJtCoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=cEaDUp+EEti8EsZIB58Gbx01QPIBlFVR4SBKr4amjWeN9X8HkSmpgkvuvlZ5qsKpne8+tVd5Nu5wjSCnl2Zu2Bhkq0AxKu+gMrQU6kCsufmuKWemizXLcJPbknsEwfzvXboFsGy5nWBEfW8/qCE9sFpTPs+LyH1giowrO266B1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VPgWb5tC8zwSJR;
-	Wed, 24 Apr 2024 21:56:27 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VPgZ25zHVzShMx;
+	Wed, 24 Apr 2024 21:58:34 +0800 (CST)
 Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id BBADA14011F;
-	Wed, 24 Apr 2024 21:59:38 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 7B3F418006B;
+	Wed, 24 Apr 2024 21:59:39 +0800 (CST)
 Received: from localhost.localdomain (10.175.112.125) by
  dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 24 Apr 2024 21:59:37 +0800
+ 15.1.2507.35; Wed, 24 Apr 2024 21:59:38 +0800
 From: Kefeng Wang <wangkefeng.wang@huawei.com>
 To: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>
 CC: Tony Luck <tony.luck@intel.com>, Miaohe Lin <linmiaohe@huawei.com>, Naoya
@@ -49,9 +49,9 @@ CC: Tony Luck <tony.luck@intel.com>, Miaohe Lin <linmiaohe@huawei.com>, Naoya
 	<ziy@nvidia.com>, Jiaqi Yan <jiaqiyan@google.com>, Hugh Dickins
 	<hughd@google.com>, Vishal Moola <vishal.moola@gmail.com>, Kefeng Wang
 	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v2 07/10] mm: add folio_mc_copy()
-Date: Wed, 24 Apr 2024 21:59:26 +0800
-Message-ID: <20240424135929.2847185-8-wangkefeng.wang@huawei.com>
+Subject: [PATCH v2 08/10] mm: migrate: support poisoned recover from migrate folio
+Date: Wed, 24 Apr 2024 21:59:27 +0800
+Message-ID: <20240424135929.2847185-9-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20240424135929.2847185-1-wangkefeng.wang@huawei.com>
 References: <20240424135929.2847185-1-wangkefeng.wang@huawei.com>
@@ -66,58 +66,83 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  dggpemm100001.china.huawei.com (7.185.36.93)
 
-Add a variant of folio_copy() which use copy_mc_highpage() to support
-machine check safe copy when folio copy.
+The folio migration is widely used in kernel, memory compaction, memory
+hotplug, soft offline page, numa balance, memory demote/promotion, etc,
+but once access a poisoned source folio when migrating, the kerenl will
+panic.
+
+There is a mechanism in the kernel to recover from uncorrectable memory
+errors, ARCH_HAS_COPY_MC, which is already used in other core-mm paths,
+eg, CoW, khugepaged, coredump, ksm copy, see copy_mc_to_{user,kernel},
+copy_mc_{user_}highpage callers.
+
+In order to support poisoned folio copy recover from migrate folio, we
+chose to make folio migration tolerant of memory failures and return
+error for folio migration, because folio migration is no guarantee
+of success, this could avoid the similar panic shown below.
+
+  CPU: 1 PID: 88343 Comm: test_softofflin Kdump: loaded Not tainted 6.6.0
+  pc : copy_page+0x10/0xc0
+  lr : copy_highpage+0x38/0x50
+  ...
+  Call trace:
+   copy_page+0x10/0xc0
+   folio_copy+0x78/0x90
+   migrate_folio_extra+0x54/0xa0
+   move_to_new_folio+0xd8/0x1f0
+   migrate_folio_move+0xb8/0x300
+   migrate_pages_batch+0x528/0x788
+   migrate_pages_sync+0x8c/0x258
+   migrate_pages+0x440/0x528
+   soft_offline_in_use_page+0x2ec/0x3c0
+   soft_offline_page+0x238/0x310
+   soft_offline_page_store+0x6c/0xc0
+   dev_attr_store+0x20/0x40
+   sysfs_kf_write+0x4c/0x68
+   kernfs_fop_write_iter+0x130/0x1c8
+   new_sync_write+0xa4/0x138
+   vfs_write+0x238/0x2d8
+   ksys_write+0x74/0x110
 
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- include/linux/mm.h |  1 +
- mm/util.c          | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
+ mm/migrate.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 326a4ce0cff8..89bbb2064a97 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1317,6 +1317,7 @@ void put_pages_list(struct list_head *pages);
+diff --git a/mm/migrate.c b/mm/migrate.c
+index b27c66af385d..60d4e29c5186 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -698,16 +698,25 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
+ 			   struct folio *src, void *src_private,
+ 			   enum migrate_mode mode)
+ {
+-	int rc;
++	int rc, expected_cnt = folio_expected_refs(mapping, src);
  
- void split_page(struct page *page, unsigned int order);
- void folio_copy(struct folio *dst, struct folio *src);
-+int folio_mc_copy(struct folio *dst, struct folio *src);
+-	rc = folio_migrate_mapping(mapping, dst, src, 0);
+-	if (rc != MIGRATEPAGE_SUCCESS)
++	rc = folio_refs_check_and_freeze(mapping, src, expected_cnt);
++	if (rc)
+ 		return rc;
  
- unsigned long nr_free_buffer_pages(void);
- 
-diff --git a/mm/util.c b/mm/util.c
-index c9e519e6811f..9462dbf7ce02 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -828,6 +828,26 @@ void folio_copy(struct folio *dst, struct folio *src)
- }
- EXPORT_SYMBOL(folio_copy);
- 
-+int folio_mc_copy(struct folio *dst, struct folio *src)
-+{
-+	long nr = folio_nr_pages(src);
-+	long i = 0;
-+	int ret = 0;
-+
-+	for (;;) {
-+		if (copy_mc_highpage(folio_page(dst, i), folio_page(src, i))) {
-+			ret = -EFAULT;
-+			break;
-+		}
-+		if (++i == nr)
-+			break;
-+		cond_resched();
++	rc = folio_mc_copy(dst, src);
++	if (rc) {
++		if (mapping)
++			folio_ref_unfreeze(src, expected_cnt);
++		return rc;
 +	}
 +
-+	return ret;
-+}
-+EXPORT_SYMBOL(folio_mc_copy);
++	folio_replace_mapping_and_unfreeze(mapping, dst, src, expected_cnt);
 +
- int sysctl_overcommit_memory __read_mostly = OVERCOMMIT_GUESS;
- int sysctl_overcommit_ratio __read_mostly = 50;
- unsigned long sysctl_overcommit_kbytes __read_mostly;
+ 	if (src_private)
+ 		folio_attach_private(dst, folio_detach_private(src));
+ 
+-	folio_migrate_copy(dst, src);
++	folio_migrate_flags(dst, src);
+ 	return MIGRATEPAGE_SUCCESS;
+ }
+ 
 -- 
 2.27.0
 
