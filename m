@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-17629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844E98B08C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 13:55:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7674C8B08C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 13:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4043C28837C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 11:55:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8D0E1C23474
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 11:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709E515AAB3;
-	Wed, 24 Apr 2024 11:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFDF15AAAA;
+	Wed, 24 Apr 2024 11:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KYqRr83H"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="itiUPYTz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953DF15AAA3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 11:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EC815AAA7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 11:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713959727; cv=none; b=uPHdr5ZtJV4Nyutea3ACztFcFnGweWaSqwIZuC4skUhFQMwAX71Yb7f0gmXXGZUT2b3BfXN+zi/G3c7tK8ec4/MkjYsmgrHHYXb6isr1XiBzEeV1MCT8t2FYPFdOBDT1/c0S5FMIaN6uiMCPo0y0TQebXd28RJic+nAS8h3BqzU=
+	t=1713959738; cv=none; b=B6lTI7vlF9AzxzJcMneSWp/dampq2qXoDq/UY+qJbxTdy+jGAomzGn54MTllA/pZUojCAU4uOBBsJ0QEJDnAzuZg4iGRLhkJrGj54sDa6p+4g+xgaDWwPRus6P23lE6CNfybKSiBkZGuRVYjcQ9IaPlIkWpnJs8XkAGDCgOxQqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713959727; c=relaxed/simple;
-	bh=8K5zhx6yDCvJm1l41BT/kCYCU/emBpn32GX9Yy3CM9I=;
+	s=arc-20240116; t=1713959738; c=relaxed/simple;
+	bh=x0ulmsdl5RuhYqdg6GD1eT7t+LIW/ozJ7a/1sk7ZCXQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ema90lAH5uyWYn53d/6TzP9rFCaLSu6TXys8uD3iDhMztyDQyiTQpvCFtNnEEY5zu1Aw/uf1vFx/aBUMkEqaeF5w3Y1q+tf8GHF3s53GcMKhvM64QDZ8+4X2976Uot/cWFxOhoMbHdvXvMC0RYWgMtNQyj3RRHGdJ3cIJuUtngQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KYqRr83H; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=EYRnNzanjRVGx3BT3qDwzDeVnQtTnnovJOMc1Z85guvy86SIsxaO/VMwCMooIpLSRTxfHIz6qeTnVAsh5Wc2JTfUfRitG2tQHSTGeTeMXTvT9vRumbkIQD9zx02V94PpmdnCR9/2my0qe0SylDP8KH/u+0ta2eCeV7vhp1Gw10k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=itiUPYTz; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713959725;
+	s=mimecast20190719; t=1713959736;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9zT0IFJDVsNKakGu1Yx/bEyqtl1wWoC8Kg4VpGAhahg=;
-	b=KYqRr83HABtkncSHwuQVf1dpNgXD2OnaVkzV8Ifun3mkE6xN9u67XPd3lbooIPIybCqXAz
-	EB1UknnNYq7LkaXHNAZZO53al8OZTvnq3rEtZPWKXGHfGX5RRZN7+yy43GtnYijt+dudAO
-	EGtefxRGzCDW2fnMjySuqNoktTUNM2E=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=shY7D2Xkj39HblvBkB6u0hIcRZjO+25LFPaiz5EXkkE=;
+	b=itiUPYTzLBSbENgYhsgIkTSUJ4d+AUVwaU12GMPcX5NsoD5ntwpjnxs7zV7/KQ5Zno4g+s
+	Noy2fB3HqfW+c3Q/dWkGNX77RX3etRbP60X8mDO3eEU0MNHUNSQqWLwuVyeHZaFnvvBx71
+	3VUVtzer0TmzSQlAeFK4XRCr6Z5Uo/E=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-177-H_KKcxxoN6SG9iyXhcYSiQ-1; Wed, 24 Apr 2024 07:55:24 -0400
-X-MC-Unique: H_KKcxxoN6SG9iyXhcYSiQ-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-41a1eb33994so16113205e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 04:55:24 -0700 (PDT)
+ us-mta-688-eTAFVa1qNt-aAwCM9GJytA-1; Wed, 24 Apr 2024 07:55:35 -0400
+X-MC-Unique: eTAFVa1qNt-aAwCM9GJytA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-343c6bb1f21so4273691f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 04:55:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713959723; x=1714564523;
+        d=1e100.net; s=20230601; t=1713959734; x=1714564534;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9zT0IFJDVsNKakGu1Yx/bEyqtl1wWoC8Kg4VpGAhahg=;
-        b=E3YXFJqSDp8MpDk3/faKu1CEGw4/ZI2GLm90WuBP2Gv/uEgSQuBGuPunQ6n0PiE97X
-         ZYRY12/cEyF6WeA1UB2Qfr0YaowpMe/BKwhMk3N4pZYl5rkyt/WS/Vc8EpdJM3hhUkRh
-         7iYQl5LeamxYmb5BbQ7Jbo2NSA/2m4K3QxuyAItrySWW63JEFn56VxIgPcE5NHA3vErF
-         auLJCjLd93heOthyeJje0TBT3gcD2t5f/CTYitb3SOxrESztDdyyBrzwFLRZLaMHMbdd
-         wWH3dwVY9kAY9pF9dJawIfSTR1fYG2lT6dCvPJNUX9n48VWTKqkoxqhYwlQynF6NKSbM
-         xbDQ==
-X-Gm-Message-State: AOJu0Yz5xJHIzRqUKoGxUgwgKXPtJVl1qNH1rGpaEdilB/vncGksObah
-	IiNCdfKfzcWHEPKTMO7xd+zriQPUArYkjGzC93HlDUD2Ar2J4qvUqMcTtyvtQskwHlnRvh7a+DH
-	G/ti2X56OeLQSWvZO/KcK2Xf+zsPvWCYVuj/WCqbZwAKmp1ApXYa5Nylt0AN/RRW3cfkhZOA=
-X-Received: by 2002:a05:600c:511c:b0:41a:3369:6179 with SMTP id o28-20020a05600c511c00b0041a33696179mr2289442wms.26.1713959723168;
-        Wed, 24 Apr 2024 04:55:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXZl+JvrX7Y7hTJQvM6mjeENPIODbxA04L5q02+eXTh0mx7u7TnzM1+bHZyOFXAJ6wYhbXtQ==
-X-Received: by 2002:a05:600c:511c:b0:41a:3369:6179 with SMTP id o28-20020a05600c511c00b0041a33696179mr2289427wms.26.1713959722844;
-        Wed, 24 Apr 2024 04:55:22 -0700 (PDT)
+        bh=shY7D2Xkj39HblvBkB6u0hIcRZjO+25LFPaiz5EXkkE=;
+        b=Y8sc/SuJMNer8tHTwE8x36GZPAgKT++JwvgxlYdW9Z9sm8oaBAumAAZ9lMHzndvdAF
+         N/bATfjV37wuzKJH7SSJ7ILl4haLIw/UIW1JyVF9K58TzwoINofdrVo31boHkvmCCNvf
+         rC2iq7C1tm4q8SFqQRH4CuANkgkJERgDU/BgwlnoaWYgZL8RHrlGfbfZvOMfDBLrNd9I
+         6WBbPYVnd1KeZrwgI4b/9ZgbH5mur++D2LWgQ5C+yPbQDsMR5rc1Rr4W0ORQKBYhP8fC
+         m1ZCTcajO69/XK1qmM3BVHPuocm33SPSvpaUe9v4nNCW/ICGPpEd7ItGWAq6RRFW5VjP
+         PeUQ==
+X-Gm-Message-State: AOJu0YysJZ+wR/38qMyTl5ltqp+YjgxCeDgyVOKKbeN5bcfuUnA6W/1c
+	fafHpXvKeaNLUHD60ysHHoTnAIqRZLzOdQUVB+mlOdyxgp4WRkqHpSAZxcQLkbjPedkf2dZ+tWJ
+	rlPosmkYW8bUM6TbCveVjYxJ2c2Hxx/QNjJqFHbD8Ety0SJQqyMN+Dc0AkBrcZqY=
+X-Received: by 2002:adf:f404:0:b0:343:a6fc:b2e8 with SMTP id g4-20020adff404000000b00343a6fcb2e8mr1528182wro.26.1713959734284;
+        Wed, 24 Apr 2024 04:55:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHra7RXL6CvmI80rpOQzWmziqfED09Pw5xpeVTp+VRYu0eXdYaseI+50tOqQTeJA45mfepL4Q==
+X-Received: by 2002:adf:f404:0:b0:343:a6fc:b2e8 with SMTP id g4-20020adff404000000b00343a6fcb2e8mr1528165wro.26.1713959733807;
+        Wed, 24 Apr 2024 04:55:33 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c70d:1f00:7a4e:8f21:98db:baef? (p200300cbc70d1f007a4e8f2198dbbaef.dip0.t-ipconnect.de. [2003:cb:c70d:1f00:7a4e:8f21:98db:baef])
-        by smtp.gmail.com with ESMTPSA id iv20-20020a05600c549400b00418e4cc9de7sm23283826wmb.7.2024.04.24.04.55.22
+        by smtp.gmail.com with ESMTPSA id t14-20020adff60e000000b0034599eca6c9sm16971570wrp.41.2024.04.24.04.55.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Apr 2024 04:55:22 -0700 (PDT)
-Message-ID: <e1ac21f7-06df-4c24-bbf2-c49e72328db1@redhat.com>
-Date: Wed, 24 Apr 2024 13:55:21 +0200
+        Wed, 24 Apr 2024 04:55:33 -0700 (PDT)
+Message-ID: <7c52ae2a-8f72-4c3c-b4b3-24b50bdb5486@redhat.com>
+Date: Wed, 24 Apr 2024 13:55:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,14 +82,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] userfault; Expand folio use in
- mfill_atomic_install_pte()
+Subject: Re: [PATCH 6/6] mm: Remove page_mapping()
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 References: <20240423225552.4113447-1-willy@infradead.org>
- <20240423225552.4113447-6-willy@infradead.org>
+ <20240423225552.4113447-7-willy@infradead.org>
 Content-Language: en-US
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
@@ -137,16 +136,48 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240423225552.4113447-6-willy@infradead.org>
+In-Reply-To: <20240423225552.4113447-7-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 24.04.24 00:55, Matthew Wilcox (Oracle) wrote:
-> Call page_folio() a little earlier so we can use folio_mapping()
-> instead of page_mapping(), saving a call to compound_head().
+> All callers are now converted, delete this compatibility wrapper.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
+>   include/linux/pagemap.h | 1 -
+>   mm/folio-compat.c       | 6 ------
+>   2 files changed, 7 deletions(-)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index b6f14e9a2d98..941f7ed714b9 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -399,7 +399,6 @@ static inline void filemap_nr_thps_dec(struct address_space *mapping)
+>   #endif
+>   }
+>   
+> -struct address_space *page_mapping(struct page *);
+>   struct address_space *folio_mapping(struct folio *);
+>   struct address_space *swapcache_mapping(struct folio *);
+>   
+> diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+> index f31e0ce65b11..f05906006b3c 100644
+> --- a/mm/folio-compat.c
+> +++ b/mm/folio-compat.c
+> @@ -10,12 +10,6 @@
+>   #include <linux/swap.h>
+>   #include "internal.h"
+>   
+> -struct address_space *page_mapping(struct page *page)
+> -{
+> -	return folio_mapping(page_folio(page));
+> -}
+> -EXPORT_SYMBOL(page_mapping);
+> -
+>   void unlock_page(struct page *page)
+>   {
+>   	return folio_unlock(page_folio(page));
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
 
