@@ -1,113 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-17679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07EC98B169B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 00:56:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E1C8B16B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 01:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58AF5B260D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 22:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A39288024
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 23:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8900216F0F0;
-	Wed, 24 Apr 2024 22:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B573716EC0B;
+	Wed, 24 Apr 2024 23:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aUxgXy7O"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="czhOw+D/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1303616F0D1
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 22:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85F816D9DE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 23:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713999359; cv=none; b=dMIiGUGwr7CAnBma1qO+01jXCB2eZbjzOOe7PpHk89tWwtJWI++d8zlGSu8BPBfMxR7lPU0ULPgHW8PJ6FnmXb13bQhCcHskz9eD6swOSYC4aH1cnowl4mTKlTGZ158V15bnVYt/DvG1WAbBWdW5wSz6w5aeBk+0foDi+vA4Vgo=
+	t=1713999709; cv=none; b=bLPPmUxcdBFvwQr/41SQ4OjzvBdK/m13ad/jnCeM5h5xPJgntQZSJmd6dSvgRtfZfL4jyYiv4QCRIwjVuZxb13ABZaWP0WMsESJXY459Kx0gMS0FX4WpzfihetbYOpYsHNk8taOpNT2gpMxcAkTh3MicLL430LEM0kPCU00PuwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713999359; c=relaxed/simple;
-	bh=NuyleERn9RTaJ6vM0GogmLDMo9hWEnQBetMIdltGBQc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Da4fC63YESV4qkoDFknbJYGcO2R2KZO7rJCJbMEy+5MvtIDuDX0o0QEYNdGNb3GM7ZkQUlfekpUZM+ZZZC2jPQcvVHYNMUG9xcAobum9rDeR5ad97XxVLnye6130K6hoAdvgrAQVNnQzILsBHdLjo4gMpZo9NzKWOvenfOiK0cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aUxgXy7O; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1713999709; c=relaxed/simple;
+	bh=84wVBgNYByei2AoFJYl9oJG8YIj6VGg9zdZNNuKXOfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ugoOLD/7yqt9LEZFHWpMmxc06lh6yLI4c22TsrECFwxLA9gcnNwXdOjyv7Ld/PArMiQO+/smtAFWu69clcytN6TZodJdmGLa2aWK7R8yzrRr7GAGR9NNWkal0k57+dBDf+Ogh7mLnom1kYY84v5wnHtwo2rjgglU0R0TONZcSBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=czhOw+D/; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1e8fce77bb2so2888235ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 15:55:56 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1e4f341330fso3671925ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 16:01:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1713999356; x=1714604156; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GmG+fEHBP8gIP1ZYSdwFfbBD/WbACGMT2ciJ+XzN0e0=;
-        b=aUxgXy7OTjS07+Mpfyl+3y4VwkOmWc9BK1OLpeOsXqTgBpcFE1qblTPRRtb3Q5j08H
-         uUhMrGHSYAl/Qnp9yGEj/LTFj9JImc0yjTanDZsH4FSHJ24zaTyqoeflu+ktvsZtSo0q
-         KCzfeZ3s7EPqomcKS/onsO8dYTtxx8zboh1tg=
+        d=chromium.org; s=google; t=1713999707; x=1714604507; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aTTJDYIl1+ZY3XTIQUGDvgnIzsFLuN0wJDzru5PPah0=;
+        b=czhOw+D/w6cQ5tn3SAdi1dr4RbUdffq8G8xAX8HCCwj8FK3GxfVkYKE1wYrT5sx/ul
+         XKWCPAT9kSKooxgBN3segHOlIOcaM0MYNMrGiwrOLRsLRF/PutxE1FikLOeO/n5T7kjh
+         cAC9+QiTZ89WWALqo6GqkyUMjhYVj91CP8AhU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713999356; x=1714604156;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GmG+fEHBP8gIP1ZYSdwFfbBD/WbACGMT2ciJ+XzN0e0=;
-        b=OQi2O1cQaghi8NsFjFSMyQGWo31rqIiSg3w4M7tHnF63VeRPIXnEtylIpchE3tjSMN
-         fYG9UOJui/qRWN48NxeIZkmFtoHIhAMev2bUQ+aGgKTvk0cy1vDWzzHNk4RGbPEpi+Uw
-         BtBNV5EmCuXxXuoGf4GoBIGlFzqNQsaCjqOPDGfh8LJG9SQppVH6tVZsDApTTh5hitkv
-         9/GaFAmvMlEzg8Q2i1TmiNM5Htay7A4NtOmP4pBh1/l+6wfL3KQ5duz0481infLLIq54
-         EjsQMpJkp0uNR0QoC/Aw/a3gWRaJMF1O6SItnwgmY9UaE0yFNOxVuiNWBwRDJLlXJFi6
-         x4hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsVLBkdv7aTxwo2GNdXyZl3TTeBop0usJjo/YN5xftslHqYkWfJp/XVEZhZThOqHpKrg34TupgwQYLhZAf5uxexlBi7x2mfT+O8buguA==
-X-Gm-Message-State: AOJu0Yw8uG6BnAr7NfvXmw7doc3i0TWDFG0pV5eMJCd/3YI9zTFbK9f2
-	SMSc4UoWZKoH7vY6WE2q+LBqzQh6jE64Y2D198XN6p2CV7ui4cobMOGQGcgsSA==
-X-Google-Smtp-Source: AGHT+IES3WvX2pVqJeL4yTDreo8etDtCdNWcnd0JVJ3wJluHIFmHzrhcFFQzqHe6VOya0h1XAiV08A==
-X-Received: by 2002:a17:903:32c1:b0:1e5:5041:b18a with SMTP id i1-20020a17090332c100b001e55041b18amr5506877plr.40.1713999356407;
-        Wed, 24 Apr 2024 15:55:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713999707; x=1714604507;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aTTJDYIl1+ZY3XTIQUGDvgnIzsFLuN0wJDzru5PPah0=;
+        b=B0yTsHFQGPRgLevrIJT/l49NuwJaE2oocp3pHUPfEZP6Wna3klO+mbyl8focQX8Hiy
+         eFeKLMae0evXO7GkJuY7ZV02pRai/jcv5bRDiG8B+80hq02DPBSTgd8b2j4eqA6pOhWp
+         0I8Ve9cZwtEU6sJY+UUgqhIYatDSl9noc8znMXEu9tvmZN/nR8HIEsOSWuH0GAWHluhe
+         J9Jke6Ic4U21oOIpZp88dXQF9eojYrOGikM3reYehAXP8GdqscnQMZ5V7jW7B970Zowr
+         HW+espBKtpqomqfqPLfS4/ao9A2ZQDeoT0j4dvdaapsAD4pnoVwQy6LqkBwMDtE3jxMX
+         5BmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVHmcJOYZFsf7TXDpFkZaEOxq+nmmKRvG6wpTPmSjiZNQyrrLM/uOKQ5GYkKHyy334oRy9SF9WC+y+2c/SgBmy7Ytu2ShYWP7RKWYEdQ==
+X-Gm-Message-State: AOJu0YzlTPb9od2w9UUTYxYiuCCL+raioszjQEXv3TwA7UEHZSadO+Vl
+	3Y7DJ+OX1qKFj1SXHVkVaIDU6qmBEXmj7PpB61gFsM98ErK3rIXfEiSly6P7vUnbPScRZyIVzzI
+	=
+X-Google-Smtp-Source: AGHT+IFyYVHaUDZdYBSAJ1KOUOQ8gMm1YSC+JLwv5oQtTWLj2MuAeAtXlnAI7HNBKqeCyg6uW+8NsQ==
+X-Received: by 2002:a17:90a:348b:b0:2a2:672f:ef6d with SMTP id p11-20020a17090a348b00b002a2672fef6dmr3375472pjb.49.1713999706766;
+        Wed, 24 Apr 2024 16:01:46 -0700 (PDT)
 Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id o4-20020a1709026b0400b001e81c778784sm12396820plk.67.2024.04.24.15.55.55
+        by smtp.gmail.com with ESMTPSA id o10-20020a17090a420a00b002ad059491f6sm8073479pjg.5.2024.04.24.16.01.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Apr 2024 15:55:55 -0700 (PDT)
+        Wed, 24 Apr 2024 16:01:46 -0700 (PDT)
+Date: Wed, 24 Apr 2024 16:01:45 -0700
 From: Kees Cook <keescook@chromium.org>
-To: linux-kernel@vger.kernel.org,
-	Max Filippov <jcmvbkbc@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Eric Biederman <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] binfmt_elf_fdpic: fix /proc/<pid>/auxv
-Date: Wed, 24 Apr 2024 15:55:49 -0700
-Message-Id: <171399934703.3282693.5984373700910072392.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240322195418.2160164-1-jcmvbkbc@gmail.com>
-References: <20240322195418.2160164-1-jcmvbkbc@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] Saner typechecking for closures
+Message-ID: <202404241559.D41E91F8@keescook>
+References: <Zic7USbiliQtnKZr@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zic7USbiliQtnKZr@casper.infradead.org>
 
-On Fri, 22 Mar 2024 12:54:18 -0700, Max Filippov wrote:
-> Althought FDPIC linux kernel provides /proc/<pid>/auxv files they are
-> empty because there's no code that initializes mm->saved_auxv in the
-> FDPIC ELF loader.
+On Tue, Apr 23, 2024 at 05:38:41AM +0100, Matthew Wilcox wrote:
+> What would you think to this?
 > 
-> Synchronize FDPIC ELF aux vector setup with ELF. Replace entry-by-entry
-> aux vector copying to userspace with initialization of mm->saved_auxv
-> first and then copying it to userspace as a whole.
+> +++ b/include/linux/delayed_call.h
+> @@ -14,13 +14,12 @@ struct delayed_call {
 > 
-> [...]
+>  #define DEFINE_DELAYED_CALL(name) struct delayed_call name = {NULL, NULL}
+> 
+> -/* I really wish we had closures with sane typechecking... */
+> -static inline void set_delayed_call(struct delayed_call *call,
+> -               void (*fn)(void *), void *arg)
+> -{
+> -       call->fn = fn;
+> -       call->arg = arg;
+> -}
+> +/* Typecheck the arg is appropriate for the function */
+> +#define set_delayed_call(call, _fn, _arg) do {                         \
+> +       (void)sizeof(_fn(_arg));                                        \
+> +       (call)->fn = (void (*)(void *))(_fn);                           \
+> +       (call)->arg = (_arg);                                           \
+> +} while (0)
+> 
+>  static inline void do_delayed_call(struct delayed_call *call)
+>  {
+> 
+> 
+> That should give us the possibility of passing any pointer
+> to the function, but gets us away from void pointers.  I did this as a
 
-Applied to for-next/execve, thanks!
+This just means KCFI will freak out now, since it will see a mismatch
+between call->fn's type and the target function's type. :(
 
-[1/1] binfmt_elf_fdpic: fix /proc/<pid>/auxv
-      https://git.kernel.org/kees/c/10e29251be0e
+And instead of args like this, can't we use the regular container_of()
+tricks to get at the pointer we want? i.e. make "call" a member of the
+strut doing the delayed call?
 
-Take care,
+-Kees
+
+> followup:
+> 
+> -extern void page_put_link(void *);
+> +extern void page_put_link(struct folio *);
+> 
+> ...
+> 
+> -void page_put_link(void *arg)
+> +void page_put_link(struct folio *folio)
+>  {
+> -       put_page(arg);
+> +       folio_put(folio);
+>  }
+>  EXPORT_SYMBOL(page_put_link);
+> 
+> and similar changes to the three callers.
+> 
+> Or is there something newer and shinier we should be using instead of
+> delayed_call?
 
 -- 
 Kees Cook
-
 
