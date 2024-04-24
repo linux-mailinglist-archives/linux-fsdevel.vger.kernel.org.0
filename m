@@ -1,160 +1,321 @@
-Return-Path: <linux-fsdevel+bounces-17645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316F58B0C92
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 16:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EA68B0D57
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 16:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 504C41C23D18
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 14:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E68E31C24A1C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 14:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33A515EFB6;
-	Wed, 24 Apr 2024 14:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5992015EFAE;
+	Wed, 24 Apr 2024 14:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PN7hgq7t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFA9143878
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 14:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4392F15ECED
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 14:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713969038; cv=none; b=RyhJAWJAfvc/giXaOe9gNqwEpCpqDmwWyloWYMht7BvibGtjXSsGgxWL9BaWa/ufrmWmKMM++XF0LP3UPElhfkyMrJTp+RSgGWLHhsUzBqjMjVm6Ok13mi/pISEF95aP4gJjZfT9rk0GWCXkf2QWqoBHeZwDkz3OH+qoHmCmjWc=
+	t=1713970567; cv=none; b=Yk0bIdbRvKj3bBB8Nz7QREbdikK9OGqndC5QscTLL+KlvgmI7Mza8miUUUY3cmKVT/l4T7pZ0R38DYE7r61wLtiOC70TD/mdHkFsLDPqujHifSr1C5ZWMqZope2kuJmysHY+/wXfd31MKJH+Xwc/NTtiyItNwQO5Btkd+WajwWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713969038; c=relaxed/simple;
-	bh=RRYczo61DKfwox/IZZwkcuhLSiGOKb5E9N3mdAb4v9A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hfBQpnXc0/ITgsj9eHHVHU56Ql8tPS95rtwM1lBZnWqQioAH6uJBOUy5/nJ3JgOLIjWT/vmpFyA7T7qapIcvmXGlBFWmhkREIkvZyx3pjzdwrvjknRDJRhAj1GFOYiuZ+ICx3p513L1tIDHYKYDa/NrYx7NMPiy3Uusg38K1mSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7dabcf2a2e8so373614439f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 07:30:36 -0700 (PDT)
+	s=arc-20240116; t=1713970567; c=relaxed/simple;
+	bh=r/bsG+DahccY41ogyHB98lQZDw4WLzeIB6IRxnU5Iu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a61movllivYjWR0tn0RvNo3aOK2mK+6jidlyDhHAWWpU42P3lcyEfc6T7X55L2fKH6EpZjWVuKO9ZjLq2348p6mBpQxXGoHCfO1HnUV/uo9Nz0OHlfQ6vOYNm8c8xyVDH31bUuQbLHbiP14zNxlGUdp85R6Nv16Oqf61Mguoa8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PN7hgq7t; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-5e152c757a5so3978922a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 07:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1713970564; x=1714575364; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+odfKIGSy18T3DcDdkmUycI8heuMSJ2q7o06nJf9qrc=;
+        b=PN7hgq7tjmwIoaK32SrPpf9JI8upIPMz1X17buhMznmmOj2BP2UtqVUfWF2Xu+fk7B
+         Y2NbmQUG7Q8exwehTab7/pDALy9dml3JC/AU+9iSfxweoaBzhis3dJCwjo9yLbTl9+3i
+         uSSRnNtQFQXKp09+qGLbsxggguTXEjqu9dw/XXmzEbFe6bRQgedMQlozNozqEKukNs8F
+         08B2825Fi+wOrSlIfLpQtPMCuuovGM/QwgbJ84BMOJlWg7zGiUfwY5Yx/Tqd9+wrHhAi
+         vSg5si8VykdyqjumSk8lWjzjpSr2eTlb8XqDIaN2FCLjZAtAk1DX5OTfQSzEGI+8QhXR
+         qEwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713969036; x=1714573836;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5Bxh+v1QEHdGeL/W1U++CTQKILrpMJ/B7+jPozfFTLM=;
-        b=Az4drWQjZSvJGjnSH7zJQ/irHilwlUf1x/dfXDj+OMN5Ixc+FYbFWA538/+W4fmYRj
-         Rf2PbMzFZWto/DA69oCW7m2oA9ppBIywdIDTSVO0HhsM/ZoSotIEI7AS8knUhPcGmRKi
-         bj06Gtbc9F3zYDeXlthLv520prTXRTHNo+Q+lgOl3ELPGVm0W6dI7SK/1O6GZZeMXm4j
-         cvFbD17KEQ2y6JO1UEFiI8vcaIhUJltglCfZuvbVxKpAqZz3gBkwfVp6535UTMC8lGiK
-         5tBKKpyWzsl/5tvIeYZShUhafy0R14WExfKgY+MWoXKXmRbchPtIejgD867Cm0jM5lYq
-         Z2Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWP8o3mTtMJuAgseppjSV2Vi1OpKNbd8+XeGZEHhnu7s7ihlqQrzqPUEJLmYW930wTLsoy4znInyiavhHjBfPiQek1Pi5WvbvIDToFKSA==
-X-Gm-Message-State: AOJu0Yyr9ghX8qUeLxGF+sV7Sd2sQ8d8t8397Hk2kQ0BK+e2DUTLCg43
-	A5L239Q17YKTe0K5glWELvXTjiisqD56Zm7jwNjvwMagPQ7d3ohKx8LZVbeTJr2BBarvP8o1HVU
-	IRVwKUmTcL6WJaCE67NnrzfApSNqrxfA7CRo8nneSx6jF0i9SIChD2XE=
-X-Google-Smtp-Source: AGHT+IFp7bpSB5L0XnxC/4nNsZjF8MLb7zlHsxmaNw0MNvLvm6oeRmUw9P5rjpoemtfOE41sJ+OhcpR0KV2xar6m82Ij8TvjjCV9
+        d=1e100.net; s=20230601; t=1713970564; x=1714575364;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+odfKIGSy18T3DcDdkmUycI8heuMSJ2q7o06nJf9qrc=;
+        b=h1QP1hI/le/MaFOIpv8RazEsN5zGtBA3UCnjwZddRpkMIgsNdw6k/wclUh/PjFs+o6
+         ICr1v8cEcDHH61cxw7Qe5xkine5e09sOcNOLBopTQRleXJDP0+4icQjz6NrptqN/IVJA
+         VjzGajzNR1y1yOjlDvsb11JKhCeFwXWWPqK9rdIj/wj5RmuubNfLAkyUwrl1dEJVzPRX
+         YPi3wNwelSf3FX2F64wPP/phRPcFgDMwx+p+4OddA7/rin4swNJ1o9aGzrsEBnXqdHjS
+         EWoQQMJgR6AlSyoiVB8AnIxG3dWwb/6y3fhaTLhZajUHWekiLOAwTNFkM9KY86Hm72e8
+         5TvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVjlPntEJVoNFgQDG4gUinQan4qWg+0ImLPGBmzhGRTUpOf9QGBys67iptjF20N5xdeiGSJ9ZJWPojWaxUKgws9Q+RRO1S6V6bQ10GIg==
+X-Gm-Message-State: AOJu0YzsmaiOfey6Bd9v1Imufc6Yss+ZmR3wpAtYMXlc0GQXOaZZdink
+	f726MW0iMCFflIBvOYYuTfed2+gV/xI+CdBbXLDY1L1XVEvOP+SDYPVYJrnBABU=
+X-Google-Smtp-Source: AGHT+IEaYo53TqZJYopBLHdHK0tVDo70MrJ3tDzgWV/fvnuFTB4b7aoeWM4Uy8iIZd0mOtysPisPkw==
+X-Received: by 2002:a05:6a20:979a:b0:1aa:a421:4239 with SMTP id hx26-20020a056a20979a00b001aaa4214239mr2575550pzc.15.1713970564438;
+        Wed, 24 Apr 2024 07:56:04 -0700 (PDT)
+Received: from [10.3.132.118] ([61.213.176.5])
+        by smtp.gmail.com with ESMTPSA id j17-20020aa783d1000000b006ecf00c1dd5sm11524186pfn.120.2024.04.24.07.56.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Apr 2024 07:56:03 -0700 (PDT)
+Message-ID: <34ba3b5c-638c-4622-8bcb-a2ef74b22f69@bytedance.com>
+Date: Wed, 24 Apr 2024 22:55:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:24d4:b0:485:67be:97d0 with SMTP id
- y20-20020a05663824d400b0048567be97d0mr349993jat.1.1713969036190; Wed, 24 Apr
- 2024 07:30:36 -0700 (PDT)
-Date: Wed, 24 Apr 2024 07:30:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008ef08f0616d88373@google.com>
-Subject: [syzbot] [ext4?] WARNING in ext4_journal_check_start
-From: syzbot <syzbot+3325329a0e08fe68bace@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    7b4f2bc91c15 Add linux-next specific files for 20240418
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1469d1fd180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ae644165a243bf62
-dashboard link: https://syzkaller.appspot.com/bug?extid=3325329a0e08fe68bace
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123c72bf180000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/524a18e6c5be/disk-7b4f2bc9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/029f1b84d653/vmlinux-7b4f2bc9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c02d1542e886/bzImage-7b4f2bc9.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/8423191c8b73/mount_9.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3325329a0e08fe68bace@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 10063 at fs/ext4/ext4_jbd2.c:73 ext4_journal_check_start+0x1ed/0x250 fs/ext4/ext4_jbd2.c:73
-Modules linked in:
-CPU: 1 PID: 10063 Comm: syz-executor.3 Not tainted 6.9.0-rc4-next-20240418-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:ext4_journal_check_start+0x1ed/0x250 fs/ext4/ext4_jbd2.c:73
-Code: 41 bf e2 ff ff ff 44 89 f8 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 b1 e4 43 ff 41 bf fb ff ff ff eb e2 e8 a4 e4 43 ff 90 <0f> 0b 90 eb d1 e8 99 e4 43 ff 90 0f 0b 90 43 80 7c 25 00 00 0f 85
-RSP: 0018:ffffc90003e976a0 EFLAGS: 00010293
-RAX: ffffffff825278ec RBX: 0000000000000001 RCX: ffff888027b01e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffffffff825277c0 R09: 1ffff1100f837070
-R10: dffffc0000000000 R11: ffffed100f837071 R12: dffffc0000000000
-R13: 1ffff1100c880cc7 R14: ffff888064406000 R15: ffff888064406638
-FS:  00007f52763386c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff27a379198 CR3: 00000000796d6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __ext4_journal_start_sb+0x181/0x600 fs/ext4/ext4_jbd2.c:105
- ext4_sample_last_mounted fs/ext4/file.c:837 [inline]
- ext4_file_open+0x53e/0x760 fs/ext4/file.c:866
- do_dentry_open+0x95a/0x1720 fs/open.c:955
- do_open fs/namei.c:3650 [inline]
- path_openat+0x289f/0x3280 fs/namei.c:3807
- do_filp_open+0x235/0x490 fs/namei.c:3834
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
- do_sys_open fs/open.c:1420 [inline]
- __do_sys_openat fs/open.c:1436 [inline]
- __se_sys_openat fs/open.c:1431 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f527567dea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f52763380c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f52757ac050 RCX: 00007f527567dea9
-RDX: 0000000000000000 RSI: 0000000020000100 RDI: ffffffffffffff9c
-RBP: 00007f52756ca4a4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f52757ac050 R15: 00007ffda916c8d8
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/12] cachefiles: fix slab-use-after-free in
+ cachefiles_ondemand_get_fd()
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, jefflexu@linux.alibaba.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>,
+ Hou Tao <houtao1@huawei.com>, zhujia.zj@bytedance.com
+References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
+ <20240424033916.2748488-4-libaokun@huaweicloud.com>
+From: Jia Zhu <zhujia.zj@bytedance.com>
+In-Reply-To: <20240424033916.2748488-4-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+在 2024/4/24 11:39, libaokun@huaweicloud.com 写道:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> We got the following issue in a fuzz test of randomly issuing the restore
+> command:
+> 
+> ==================================================================
+> BUG: KASAN: slab-use-after-free in cachefiles_ondemand_daemon_read+0x609/0xab0
+> Write of size 4 at addr ffff888109164a80 by task ondemand-04-dae/4962
+> 
+> CPU: 11 PID: 4962 Comm: ondemand-04-dae Not tainted 6.8.0-rc7-dirty #542
+> Call Trace:
+>   kasan_report+0x94/0xc0
+>   cachefiles_ondemand_daemon_read+0x609/0xab0
+>   vfs_read+0x169/0xb50
+>   ksys_read+0xf5/0x1e0
+> 
+> Allocated by task 626:
+>   __kmalloc+0x1df/0x4b0
+>   cachefiles_ondemand_send_req+0x24d/0x690
+>   cachefiles_create_tmpfile+0x249/0xb30
+>   cachefiles_create_file+0x6f/0x140
+>   cachefiles_look_up_object+0x29c/0xa60
+>   cachefiles_lookup_cookie+0x37d/0xca0
+>   fscache_cookie_state_machine+0x43c/0x1230
+>   [...]
+> 
+> Freed by task 626:
+>   kfree+0xf1/0x2c0
+>   cachefiles_ondemand_send_req+0x568/0x690
+>   cachefiles_create_tmpfile+0x249/0xb30
+>   cachefiles_create_file+0x6f/0x140
+>   cachefiles_look_up_object+0x29c/0xa60
+>   cachefiles_lookup_cookie+0x37d/0xca0
+>   fscache_cookie_state_machine+0x43c/0x1230
+>   [...]
+> ==================================================================
+> 
+> Following is the process that triggers the issue:
+> 
+>       mount  |   daemon_thread1    |    daemon_thread2
+> ------------------------------------------------------------
+>   cachefiles_ondemand_init_object
+>    cachefiles_ondemand_send_req
+>     REQ_A = kzalloc(sizeof(*req) + data_len)
+>     wait_for_completion(&REQ_A->done)
+> 
+>              cachefiles_daemon_read
+>               cachefiles_ondemand_daemon_read
+>                REQ_A = cachefiles_ondemand_select_req
+>                cachefiles_ondemand_get_fd
+>                copy_to_user(_buffer, msg, n)
+>              process_open_req(REQ_A)
+>                                    ------ restore ------
+>                                    cachefiles_ondemand_restore
+>                                    xas_for_each(&xas, req, ULONG_MAX)
+>                                     xas_set_mark(&xas, CACHEFILES_REQ_NEW);
+> 
+>                                    cachefiles_daemon_read
+>                                     cachefiles_ondemand_daemon_read
+>                                      REQ_A = cachefiles_ondemand_select_req
+> 
+>               write(devfd, ("copen %u,%llu", msg->msg_id, size));
+>               cachefiles_ondemand_copen
+>                xa_erase(&cache->reqs, id)
+>                complete(&REQ_A->done)
+>     kfree(REQ_A)
+>                                      cachefiles_ondemand_get_fd(REQ_A)
+>                                       fd = get_unused_fd_flags
+>                                       file = anon_inode_getfile
+>                                       fd_install(fd, file)
+>                                       load = (void *)REQ_A->msg.data;
+>                                       load->fd = fd;
+>                                       // load UAF !!!
+> 
+> This issue is caused by issuing a restore command when the daemon is still
+> alive, which results in a request being processed multiple times thus
+> triggering a UAF. So to avoid this problem, add an additional reference
+> count to cachefiles_req, which is held while waiting and reading, and then
+> released when the waiting and reading is over.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Hi Baokun,
+Thank you for catching this issue. Shall we fix this by following steps:
+cachefiles_ondemand_fd_release()
+     xas_for_each(req)
+         if req is not CACHEFILES_OP_READ
+             flush
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+cachefiles_ondemand_restore()
+     xas_for_each(req)
+         if req is not CACHEFILES_REQ_NEW && op is (OPEN or CLOSE)
+             reset req to CACHEFILES_REQ_NEW
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+By implementing these steps:
+1. In real daemon failover case： only pending read reqs will be
+reserved. cachefiles_ondemand_select_req will reopen the object by
+processing READ req.
+2. In daemon alive case： Only read reqs will be reset to
+CACHEFILES_REQ_NEW.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> Note that since there is only one reference count for waiting, we need to
+> avoid the same request being completed multiple times, so we can only
+> complete the request if it is successfully removed from the xarray.
+> 
+> Fixes: e73fa11a356c ("cachefiles: add restore command to recover inflight ondemand read requests")
+> Suggested-by: Hou Tao <houtao1@huawei.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>   fs/cachefiles/internal.h |  1 +
+>   fs/cachefiles/ondemand.c | 44 ++++++++++++++++++++++------------------
+>   2 files changed, 25 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+> index d33169f0018b..7745b8abc3aa 100644
+> --- a/fs/cachefiles/internal.h
+> +++ b/fs/cachefiles/internal.h
+> @@ -138,6 +138,7 @@ static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
+>   struct cachefiles_req {
+>   	struct cachefiles_object *object;
+>   	struct completion done;
+> +	refcount_t ref;
+>   	int error;
+>   	struct cachefiles_msg msg;
+>   };
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index fd49728d8bae..56d12fe4bf73 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -4,6 +4,12 @@
+>   #include <linux/uio.h>
+>   #include "internal.h"
+>   
+> +static inline void cachefiles_req_put(struct cachefiles_req *req)
+> +{
+> +	if (refcount_dec_and_test(&req->ref))
+> +		kfree(req);
+> +}
+> +
+>   static int cachefiles_ondemand_fd_release(struct inode *inode,
+>   					  struct file *file)
+>   {
+> @@ -299,7 +305,6 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>   {
+>   	struct cachefiles_req *req;
+>   	struct cachefiles_msg *msg;
+> -	unsigned long id = 0;
+>   	size_t n;
+>   	int ret = 0;
+>   	XA_STATE(xas, &cache->reqs, cache->req_id_next);
+> @@ -330,41 +335,39 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>   
+>   	xas_clear_mark(&xas, CACHEFILES_REQ_NEW);
+>   	cache->req_id_next = xas.xa_index + 1;
+> +	refcount_inc(&req->ref);
+>   	xa_unlock(&cache->reqs);
+>   
+> -	id = xas.xa_index;
+> -
+>   	if (msg->opcode == CACHEFILES_OP_OPEN) {
+>   		ret = cachefiles_ondemand_get_fd(req);
+>   		if (ret) {
+>   			cachefiles_ondemand_set_object_close(req->object);
+> -			goto error;
+> +			goto out;
+>   		}
+>   	}
+>   
+> -	msg->msg_id = id;
+> +	msg->msg_id = xas.xa_index;
+>   	msg->object_id = req->object->ondemand->ondemand_id;
+>   
+>   	if (copy_to_user(_buffer, msg, n) != 0) {
+>   		ret = -EFAULT;
+>   		if (msg->opcode == CACHEFILES_OP_OPEN)
+>   			close_fd(((struct cachefiles_open *)msg->data)->fd);
+> -		goto error;
+>   	}
+> -
+> -	/* CLOSE request has no reply */
+> -	if (msg->opcode == CACHEFILES_OP_CLOSE) {
+> -		xa_erase(&cache->reqs, id);
+> -		complete(&req->done);
+> +out:
+> +	/* Remove error request and CLOSE request has no reply */
+> +	if (ret || msg->opcode == CACHEFILES_OP_CLOSE) {
+> +		xas_reset(&xas);
+> +		xas_lock(&xas);
+> +		if (xas_load(&xas) == req) {
+> +			req->error = ret;
+> +			complete(&req->done);
+> +			xas_store(&xas, NULL);
+> +		}
+> +		xas_unlock(&xas);
+>   	}
+> -
+> -	return n;
+> -
+> -error:
+> -	xa_erase(&cache->reqs, id);
+> -	req->error = ret;
+> -	complete(&req->done);
+> -	return ret;
+> +	cachefiles_req_put(req);
+> +	return ret ? ret : n;
+>   }
+>   
+>   typedef int (*init_req_fn)(struct cachefiles_req *req, void *private);
+> @@ -394,6 +397,7 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
+>   		goto out;
+>   	}
+>   
+> +	refcount_set(&req->ref, 1);
+>   	req->object = object;
+>   	init_completion(&req->done);
+>   	req->msg.opcode = opcode;
+> @@ -455,7 +459,7 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
+>   	wake_up_all(&cache->daemon_pollwq);
+>   	wait_for_completion(&req->done);
+>   	ret = req->error;
+> -	kfree(req);
+> +	cachefiles_req_put(req);
+>   	return ret;
+>   out:
+>   	/* Reset the object to close state in error handling path.
 
