@@ -1,115 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-17602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5141D8B0058
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 06:06:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69B18B008D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 06:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE3F2868B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 04:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86D51C232DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 04:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA45E14430E;
-	Wed, 24 Apr 2024 04:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D36143860;
+	Wed, 24 Apr 2024 04:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h4Fe0VR3"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ghP3DquY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969C0142E9D;
-	Wed, 24 Apr 2024 04:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1960A142E69;
+	Wed, 24 Apr 2024 04:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713931576; cv=none; b=VFt+KCSS4rWeOGcnvLle41O+HK/Vt6AHdQLTe+p+pmNv9ikrKamhzBrMdmKEKEuvYBkZjq27uV03zxyKjoAYPlIOnAmMmVa8AujcWejmuwGjd2yw6K9+dymRfEmcS3SgLYuOZTbRTnpfdxjP2t7gpODfgj6cHrBFONdi4bDaaJI=
+	t=1713932991; cv=none; b=dgVvKymaJMR8hfYDfn/YUPH1elI7FjqkPpPmMdQJtZEdoTvCWnwgVuWDwfbBUHi1sB6Z4itPGGx41V2cmyVR7o5nZXogib0BNYwmSllaWvXW7LTn9/Afbo9Q760gNAtJMh0SJ6XJSdS02fxel0GarV9sMPio/u1SbDvmT7ychXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713931576; c=relaxed/simple;
-	bh=uQR45cFMjtlCHmxT79KIysG9mZOqnQ9+qd3qqsml7x0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fz7gEAe67xHxj3g9p0sWBG4FvKpajdh9xoDU0ugtEk8Vfh/7Ti/78sjbeuu55oqcb7feTVeZFOslpvTnY5PewoXamn11bbd2xbTpSfIy1ml78zZW1QcaHCIlPvGkOY0LBAv09SCrSFFTo9GdsuADQnjBEqd+ZUcKEHghlRoAQKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h4Fe0VR3; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EuETJtGZxu1owesI989Ljeb319SuE+6AMj187CcAyGU=; b=h4Fe0VR3cSeC3HLANTcVKxyO/i
-	B06vSJffXjewy57PoJgnUcyyBRkwUMt8vwuZzwXPAPX/udjrDvsPCNFQzhONrXdtyLHXfbOJ3B19K
-	G4cRQtmYMqTvPrqT5/VHDUveVUmupBCQy1DVO5WfA8wGGpm8/ic5HV0FkHTTDKg3mdgmo9HuGlteL
-	dcOe9STGScruYnrnJTVB/SzBLNbp4V+Ao8QGX2RO3DBO9G8mERgnhc1SvA84Cy+T4EM6m+089hhc3
-	ZvygtNcQZxBN46XczDC7C/g2Bhq+rZtbyN6BQWKKWNsoskDTrqwacWtSXRrdNeiFV+92BjMO6/pnQ
-	x1RO0NIA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rzTtG-00000000894-0JOS;
-	Wed, 24 Apr 2024 04:05:50 +0000
-Date: Wed, 24 Apr 2024 05:05:49 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org,
-	Kairui Song <kasong@tencent.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>,
-	Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Anna Schumaker <anna@kernel.org>, linux-afs@lists.infradead.org,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>
-Subject: Re: [PATCH v2 7/8] mm: drop page_index/page_file_offset and convert
- swap helpers to use folio
-Message-ID: <ZiiFHTwgu8FGio1k@casper.infradead.org>
-References: <20240423170339.54131-1-ryncsn@gmail.com>
- <20240423170339.54131-8-ryncsn@gmail.com>
- <87sezbsdwf.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	s=arc-20240116; t=1713932991; c=relaxed/simple;
+	bh=/CE1ga0bQu85DlhG1yON8BpABcc2bBmdR5TCzDeQvFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NSY8+gjLc2Qg/FTwjr1dvh0wB1TLVuoh9/XkrhWFoj/dktkvGgAmiCwz4Z4Q4zGtb5dL2yw8YYZZQfOigF77Et9xk7INrkwMJqD6IIq2eLO8yJJJ4opfV946gxJ7jIRbHJ2KkDs+1y/8aCpggpPfMTzyJN/FOH8ZytrXuY9iKlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ghP3DquY; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1713932986; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=IM9801pvB5uZHmd1rEJHc3tA7W/DHFfufzGQLjxpri4=;
+	b=ghP3DquYWy/lKk3CFOb5B9MNGC/zFnrWcvDWCiNSEyLAiGYj3CLNcnIrWsjwOzQgs+LMJQzTaLHTyPYw6+XEn3R+QafhmyM2+GzdM9eg7hA/RwcWCmo3VilBgQXf7j0BrPg8sz7tBu2EK16SOeKSQ3CfvGEHV5pAfTWI7W/n4mw=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R371e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W5B7uD2_1713932984;
+Received: from 30.97.48.214(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W5B7uD2_1713932984)
+          by smtp.aliyun-inc.com;
+          Wed, 24 Apr 2024 12:29:45 +0800
+Message-ID: <de9d403c-c4ed-46c5-a572-18dc48bbd204@linux.alibaba.com>
+Date: Wed, 24 Apr 2024 12:29:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sezbsdwf.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] cachefiles: add missing lock protection when polling
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
+ jefflexu@linux.alibaba.com, linux-cachefs@redhat.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Baokun Li <libaokun1@huawei.com>
+References: <20240424033409.2735257-1-libaokun@huaweicloud.com>
+ <20240424033409.2735257-6-libaokun@huaweicloud.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240424033409.2735257-6-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 24, 2024 at 10:17:04AM +0800, Huang, Ying wrote:
-> Kairui Song <ryncsn@gmail.com> writes:
-> >  static inline loff_t folio_file_pos(struct folio *folio)
-> >  {
-> > -	return page_file_offset(&folio->page);
-> > +	if (unlikely(folio_test_swapcache(folio)))
-> > +		return __folio_swap_dev_pos(folio);
-> > +	return ((loff_t)folio->index << PAGE_SHIFT);
+Hi Baokun,
+
+On 2024/4/24 11:34, libaokun@huaweicloud.com wrote:
+> From: Jingbo Xu <jefflexu@linux.alibaba.com>
 > 
-> This still looks confusing for me.  The function returns the byte
-> position of the folio in its file.  But we returns the swap device
-> position of the folio.
+> Add missing lock protection in poll routine when iterating xarray,
+> otherwise:
 > 
-> Tried to search folio_file_pos() usage.  The 2 usage in page_io.c is
-> swap specific, we can use swap_dev_pos() directly.
+> Even with RCU read lock held, only the slot of the radix tree is
+> ensured to be pinned there, while the data structure (e.g. struct
+> cachefiles_req) stored in the slot has no such guarantee.  The poll
+> routine will iterate the radix tree and dereference cachefiles_req
+> accordingly.  Thus RCU read lock is not adequate in this case and
+> spinlock is needed here.
 > 
-> There are also other file system users (NFS and AFS) of
-> folio_file_pos(), I don't know why they need to work with swap
-> cache. Cced file system maintainers for help.
+> Fixes: b817e22b2e91 ("cachefiles: narrow the scope of triggering EPOLLIN events in ondemand mode")
+> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+> Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-Time for a history lesson!
+I'm not sure why this patch didn't send upstream,
+https://gitee.com/anolis/cloud-kernel/commit/324ecaaa10fefb0e3d94b547e3170e40b90cda1f
 
-In d56b4ddf7781 (2012) we introduced page_file_index() and
-page_file_mapping() to support swap-over-NFS.  Writes to the swapfile went
-through ->direct_IO but reads went through ->readpage.  So NFS was changed
-to remove direct references to page->mapping and page->index because
-those aren't right for anon pages (or shmem pages being swapped out).
+But since we're now working on upstreaming, so let's drop
+the previous in-house review tags..
 
-In e1209d3a7a67 (2022), we stopped using ->readpage in favour of using
-->swap_rw.  Now we don't need to use page_file_*(); we get the swap_file
-and ki_pos directly in the swap_iocb.  But there are still relics in NFS
-that nobody has dared rip out.  And there are all the copy-and-pasted
-filesystems that use page_file_* because they don't know any better.
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-We should delete page_file_*() and folio_file_*().  They shouldn't be
-needed any more.
+Thanks,
+Gao Xiang
+
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>   fs/cachefiles/daemon.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
+> index 6465e2574230..73ed2323282a 100644
+> --- a/fs/cachefiles/daemon.c
+> +++ b/fs/cachefiles/daemon.c
+> @@ -365,14 +365,14 @@ static __poll_t cachefiles_daemon_poll(struct file *file,
+>   
+>   	if (cachefiles_in_ondemand_mode(cache)) {
+>   		if (!xa_empty(&cache->reqs)) {
+> -			rcu_read_lock();
+> +			xas_lock(&xas);
+>   			xas_for_each_marked(&xas, req, ULONG_MAX, CACHEFILES_REQ_NEW) {
+>   				if (!cachefiles_ondemand_is_reopening_read(req)) {
+>   					mask |= EPOLLIN;
+>   					break;
+>   				}
+>   			}
+> -			rcu_read_unlock();
+> +			xas_unlock(&xas);
+>   		}
+>   	} else {
+>   		if (test_bit(CACHEFILES_STATE_CHANGED, &cache->flags))
 
