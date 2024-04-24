@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-17597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB618B0024
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 05:51:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17398B0023
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 05:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72DEE28A8FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 03:51:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3EEB1C23874
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Apr 2024 03:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F5C1465A5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0336E145FFC;
 	Wed, 24 Apr 2024 03:48:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B757F1448C7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D19144313;
 	Wed, 24 Apr 2024 03:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713930518; cv=none; b=bc9kloz+JoWED3kxP/F1e2Yri/bBofIhTkwjkzWAZaimH14T7wp8IzU/63CNylDy1Jh1XklkiF/2qm0T/UxPnEmEQ4MXk13Gqy5bp8nr8tvTp1VAxIw5LaaSYcDBCB8FWFtMoz0eVewk8IIhukRJmvozBqoM4RYuZgLifwiY0aM=
+	t=1713930518; cv=none; b=Ypf3TcSJDhDeRc9ICINzkVUIfuQYPQvxpuMylIQVxkLYtKjBJDuZvI0sPgw7qNpdMmg7HeCU/T5Knty3l4UHglE6uKhHg40FZb4jNTTspKrePpbvxqLoLVKza7hxcOwnW6SuqEYbJcbKS5hO84FtIYitx59qct6Tctd1wC7XlIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1713930518; c=relaxed/simple;
-	bh=RFZzPZeAQQRAwgBMGJ9qDgdkRj8av+xVjFOH01UuRXI=;
+	bh=PwNqDD70BexKGmDdhHalU+iOW4RHuPA9PSloObR5YF4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QWsnuRJ2R1D2BcLxAQNbXJNNKs9C73KWBLkOtpiugYGlbInaTDt4w+ED2Q7iSlo0C1VRavnZVBDmMBOlU8dUeuja6Di9DIJ5EDXZeD7nRX7R+T09Mv+X7LGwsEMknbgb0pM5RNyW1OVGCYqDsHUR8TEK4U7bIUGNpe1Fr0WVG9s=
+	 MIME-Version; b=fdHMEhQ+K+TE5bfqpADO7m61b7pLkHndgcUqU1TQgSBSspKy4J4DEv/HPT36eWeyl4HQr19XwT1VlUKzjbkYBgLd8KL2RhI1TcV1uxK1rm5/nYLfcuK86QvAxVwDJ3mZCycSfmuWswKrzclRU8V/KK+65GRgpuXuLVio2PJcSPE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VPQ201mBTz4f3lDW;
-	Wed, 24 Apr 2024 11:48:24 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VPQ25104bz4f3k6m;
+	Wed, 24 Apr 2024 11:48:29 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 6EE621A0B30;
+	by mail.maildlp.com (Postfix) with ESMTP id F0BF81A0568;
 	Wed, 24 Apr 2024 11:48:33 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgCXaBELgShmKXE4Kw--.6143S11;
+	by APP1 (Coremail) with SMTP id cCh0CgCXaBELgShmKXE4Kw--.6143S12;
 	Wed, 24 Apr 2024 11:48:33 +0800 (CST)
 From: libaokun@huaweicloud.com
 To: netfs@lists.linux.dev
@@ -49,9 +49,9 @@ Cc: dhowells@redhat.com,
 	linux-kernel@vger.kernel.org,
 	libaokun@huaweicloud.com,
 	Baokun Li <libaokun1@huawei.com>
-Subject: [PATCH 07/12] cachefiles: add spin_lock for cachefiles_ondemand_info
-Date: Wed, 24 Apr 2024 11:39:11 +0800
-Message-Id: <20240424033916.2748488-8-libaokun@huaweicloud.com>
+Subject: [PATCH 08/12] cachefiles: never get a new anon fd if ondemand_id is valid
+Date: Wed, 24 Apr 2024 11:39:12 +0800
+Message-Id: <20240424033916.2748488-9-libaokun@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240424033916.2748488-1-libaokun@huaweicloud.com>
 References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
@@ -62,10 +62,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCXaBELgShmKXE4Kw--.6143S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFy5Zr18tFWUZw1UJFykGrg_yoWrGr4UpF
-	WayFy7KryxuF1IgrZ7Aan5JrWFy34UuFnFgw1Yq34rAF90vryrZr1UtryfZFy5A343Krsx
-	tw48Casrtw1qy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgCXaBELgShmKXE4Kw--.6143S12
+X-Coremail-Antispam: 1UD129KBjvJXoWxAr1DJryUKF48CFyDKrW8tFb_yoW5Cw48pF
+	WakF9xKryxuF4xWrZ7Aan5XryFy3ykZFnrWa4ag34rAFn0gr1rZr1Utr13ZF15A3sIgrsr
+	ta1UWF9xtw1qk3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUQI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWUWVWUuwAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -77,115 +77,107 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxZFy5Zr18tFWUZw1UJFykGrg_yoWrGr4UpF
 	kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAKzI0EY4vE52x082I5MxAIw28IcxkI7VAKI48J
 	MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
 	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8V
+	0xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8V
 	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
 	14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUUNBMtUUUUU==
 X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
 From: Baokun Li <libaokun1@huawei.com>
 
-The following concurrency may cause a read request to fail to be completed
-and result in a hung:
+Now every time the daemon reads an open request, it requests a new anon fd
+and ondemand_id. With the introduction of "restore", it is possible to read
+the same open request more than once, and therefore have multiple anon fd's
+for the same object.
 
-           t1             |             t2
----------------------------------------------------------
-                            cachefiles_ondemand_copen
-                              req = xa_erase(&cache->reqs, id)
-// Anon fd is maliciously closed.
-cachefiles_ondemand_fd_release
-  xa_lock(&cache->reqs)
-  cachefiles_ondemand_set_object_close(object)
-  xa_unlock(&cache->reqs)
-                              cachefiles_ondemand_set_object_open
-                              // No one will ever close it again.
-cachefiles_ondemand_daemon_read
-  cachefiles_ondemand_select_req
-  // Get a read req but its fd is already closed.
-  // The daemon can't issue a cread ioctl with an closed fd, then hung.
-
-So add spin_lock for cachefiles_ondemand_info to protect ondemand_id and
-state, thus we can avoid the above problem in cachefiles_ondemand_copen()
-by using ondemand_id to determine if fd has been released.
+To avoid this, allocate a new anon fd only if no anon fd has been allocated
+(ondemand_id == 0) or if the previously allocated anon fd has been closed
+(ondemand_id == -1). Returns an error if ondemand_id is valid, letting the
+daemon know that the current userland restore logic is abnormal and needs
+to be checked.
 
 Signed-off-by: Baokun Li <libaokun1@huawei.com>
 ---
- fs/cachefiles/internal.h |  1 +
- fs/cachefiles/ondemand.c | 16 +++++++++++++++-
- 2 files changed, 16 insertions(+), 1 deletion(-)
+ fs/cachefiles/ondemand.c | 34 ++++++++++++++++++++++++++++------
+ 1 file changed, 28 insertions(+), 6 deletions(-)
 
-diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 7745b8abc3aa..45c8bed60538 100644
---- a/fs/cachefiles/internal.h
-+++ b/fs/cachefiles/internal.h
-@@ -55,6 +55,7 @@ struct cachefiles_ondemand_info {
- 	int				ondemand_id;
- 	enum cachefiles_object_state	state;
- 	struct cachefiles_object	*object;
-+	spinlock_t			lock;
- };
- 
- /*
 diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-index 898fab68332b..b5e6a851ef04 100644
+index b5e6a851ef04..0cf63bfedc9e 100644
 --- a/fs/cachefiles/ondemand.c
 +++ b/fs/cachefiles/ondemand.c
-@@ -16,13 +16,16 @@ static int cachefiles_ondemand_fd_release(struct inode *inode,
+@@ -14,11 +14,18 @@ static int cachefiles_ondemand_fd_release(struct inode *inode,
+ 					  struct file *file)
+ {
  	struct cachefiles_object *object = file->private_data;
- 	struct cachefiles_cache *cache = object->volume->cache;
- 	struct cachefiles_ondemand_info *info = object->ondemand;
--	int object_id = info->ondemand_id;
-+	int object_id;
+-	struct cachefiles_cache *cache = object->volume->cache;
+-	struct cachefiles_ondemand_info *info = object->ondemand;
++	struct cachefiles_cache *cache;
++	struct cachefiles_ondemand_info *info;
+ 	int object_id;
  	struct cachefiles_req *req;
- 	XA_STATE(xas, &cache->reqs, 0);
+-	XA_STATE(xas, &cache->reqs, 0);
++	XA_STATE(xas, NULL, 0);
++
++	if (!object)
++		return 0;
++
++	info = object->ondemand;
++	cache = object->volume->cache;
++	xas.xa = &cache->reqs;
  
  	xa_lock(&cache->reqs);
-+	spin_lock(&info->lock);
-+	object_id = info->ondemand_id;
- 	info->ondemand_id = CACHEFILES_ONDEMAND_ID_CLOSED;
- 	cachefiles_ondemand_set_object_close(object);
-+	spin_unlock(&info->lock);
- 
- 	/* Only flush CACHEFILES_REQ_NEW marked req to avoid race with daemon_read */
- 	xas_for_each_marked(&xas, req, ULONG_MAX, CACHEFILES_REQ_NEW) {
-@@ -127,6 +130,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- {
- 	struct cachefiles_req *req;
- 	struct fscache_cookie *cookie;
-+	struct cachefiles_ondemand_info *info;
- 	char *pid, *psize;
- 	unsigned long id;
- 	long size;
-@@ -185,6 +189,14 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- 		goto out;
+ 	spin_lock(&info->lock);
+@@ -269,22 +276,39 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+ 		goto err_put_fd;
  	}
  
-+	info = req->object->ondemand;
-+	spin_lock(&info->lock);
-+	/* The anonymous fd was closed before copen ? */
-+	if (info->ondemand_id == CACHEFILES_ONDEMAND_ID_CLOSED) {
-+		spin_unlock(&info->lock);
-+		req->error = -EBADFD;
-+		goto out;
++	spin_lock(&object->ondemand->lock);
++	if (object->ondemand->ondemand_id > 0) {
++		spin_unlock(&object->ondemand->lock);
++		ret = -EEXIST;
++		/* Avoid performing cachefiles_ondemand_fd_release(). */
++		file->private_data = NULL;
++		goto err_put_file;
 +	}
- 	cookie = req->object->cookie;
- 	cookie->object_size = size;
- 	if (size)
-@@ -194,6 +206,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- 	trace_cachefiles_ondemand_copen(req->object, id, size);
++
+ 	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+ 	fd_install(fd, file);
  
- 	cachefiles_ondemand_set_object_open(req->object);
-+	spin_unlock(&info->lock);
- 	wake_up_all(&cache->daemon_pollwq);
+ 	load = (void *)req->msg.data;
+ 	load->fd = fd;
+ 	object->ondemand->ondemand_id = object_id;
++	spin_unlock(&object->ondemand->lock);
  
- out:
-@@ -596,6 +609,7 @@ int cachefiles_ondemand_init_obj_info(struct cachefiles_object *object,
- 		return -ENOMEM;
- 
- 	object->ondemand->object = object;
-+	spin_lock_init(&object->ondemand->lock);
- 	INIT_WORK(&object->ondemand->ondemand_work, ondemand_object_worker);
+ 	cachefiles_get_unbind_pincount(cache);
+ 	trace_cachefiles_ondemand_open(object, &req->msg, load);
  	return 0;
+ 
++err_put_file:
++	fput(file);
+ err_put_fd:
+ 	put_unused_fd(fd);
+ err_free_id:
+ 	xa_erase(&cache->ondemand_ids, object_id);
+ err:
++	spin_lock(&object->ondemand->lock);
++	/* Avoid marking an opened object as closed. */
++	if (object->ondemand->ondemand_id <= 0)
++		cachefiles_ondemand_set_object_close(object);
++	spin_unlock(&object->ondemand->lock);
+ 	cachefiles_put_object(object, cachefiles_obj_put_ondemand_fd);
+ 	return ret;
  }
+@@ -367,10 +391,8 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+ 
+ 	if (msg->opcode == CACHEFILES_OP_OPEN) {
+ 		ret = cachefiles_ondemand_get_fd(req);
+-		if (ret) {
+-			cachefiles_ondemand_set_object_close(req->object);
++		if (ret)
+ 			goto out;
+-		}
+ 	}
+ 
+ 	msg->msg_id = xas.xa_index;
 -- 
 2.39.2
 
