@@ -1,82 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-17761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E758B2206
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 14:54:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845EA8B222E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 15:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E774DB286EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 12:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4049128348A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 13:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7963F149C68;
-	Thu, 25 Apr 2024 12:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E6B149C41;
+	Thu, 25 Apr 2024 13:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pSBnG9S5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJE3B9yH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4CE1494D8;
-	Thu, 25 Apr 2024 12:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422541494D8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 13:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714049606; cv=none; b=kNZ9R2KNPY3019MXaFL3yzxg9RA80YDd/7woaqLOOgkaztwz4yT/grHU72lJqJ/W15QYVzrJ8YsN74sXBBtIUT9sICu/CpuGOUPtugD/gpyiRFGCiPkbCghPx+Fnb0zDsmyKhe0cZUs/GFLgXJ/2jej4oX15KnmSDBhZ6B3nnpg=
+	t=1714050354; cv=none; b=oaiq5JyuqA4TMNv8obrRWwCLnMht6LId0wlRbeVtv1t/APy/qSE0mjkrJuNwqaTiASAFDY+inxpw4cAHaF+6CLmD2exrSTurcUgHnrDrNNo/UK+Rqk63qnUSZTKeUCdDPIqJOKs0RLo2HfreCbbFWIKUW+NifNSy/b+Z1w5KiQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714049606; c=relaxed/simple;
-	bh=fy8j5zTS5R9p5dLel/NsA3+rvhAU+p9UzfYeBFb2gz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p7vqkIuYnBl1wTWUajJ5pWYFVF8GkDy339Hke4F8KY1r6g+6DbPGcKpPBQ2dEcfOKI4irgaW9KUV0E6vD9ThBsl4yhiM/jVGQdNyQ18soZ8ETFlLZfE6JFZK0OsnFDUhwwTiDA0qDqZVQGer1MC4KPirciR61qj+AprpqUQsa2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pSBnG9S5; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KAaKjBOmTmKtiwXbnEwj76/jYmsGdqRarPPNKoQCzpQ=; b=pSBnG9S50M2h95Gw323PvYrCgU
-	eS3udHqR1Aurzel+p6jTZ6oKATg1OaRBD1LcpDgbeVilplQdGrZbWJY8VQrMpK9MeDRKbqZTLzJYK
-	IAkhW223WdCj1azUPJ2lNZu9lsdB/kPXanRPhTAsbsiQ/HMrHuo0mIT5MqyqgLrcStQi8lLtxWdzn
-	0/vlJ6WPiUc4BgNOtOpETbKz2+VpO6mStBkqx0OsgBBY7FFBdIV345P+vxJTCIiYOpWsVg6Tki0Sx
-	QY0QucCSuYkWnSX/Kb9e/irflumoOnJirnxvx5RCZr8p4m8QnCAPuS4EgY8jdZmsZyvHoR0y5INSW
-	f3n+YjHw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rzybD-000000033Bg-24jW;
-	Thu, 25 Apr 2024 12:53:15 +0000
-Date: Thu, 25 Apr 2024 13:53:15 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: brauner@kernel.org, eadavis@qq.com,
-	jfs-discussion@lists.sourceforge.net, jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	shaggy@kernel.org,
-	syzbot+241c815bda521982cb49@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] jfs: Fix array-index-out-of-bounds in diFree
-Message-ID: <ZipSO4ITxuy2faKx@casper.infradead.org>
-References: <ZilEXC3qLiqMTs29@casper.infradead.org>
- <20240425124433.28645-1-aha310510@gmail.com>
+	s=arc-20240116; t=1714050354; c=relaxed/simple;
+	bh=uDoGrBVCGBf/mZWc2r3+d5ChWxJt/eB5nZMpgOJc0Eg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FNKCs+RllkAHhSUAMUC3WLlX6ncs9J1Jlh10YL0wBE4QefmZ/ju3sGvAlASK7ADTGfgNYLm7JYtUFprKPbAES7hlPgz3xjFzITVHYtqLU22qbo2VNhjgFdQVrHsueUc21SHZoMH4SlURAo+Xz4+MbkhtJZn1ES7zM6Q95xJ+AyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJE3B9yH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B27F7C113CC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 13:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714050353;
+	bh=uDoGrBVCGBf/mZWc2r3+d5ChWxJt/eB5nZMpgOJc0Eg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EJE3B9yHsqiEl2XbSGpwAvcVxozwYVKLUjmIia/PXIaWG0u56dUxwdJSl7bCM5DAc
+	 ZmwQEo9WCtwAdeSK5Z05DxzHpbqy5AlT3luROiThOqtrSTrGN2fLRWmgkm5ofYC4E/
+	 JKXKW7gKoqAjHfSUXDaLxtLDU8mVVKnzuR95Jk4SxBfsvYx4dRNqPtGw7J0fsQz6Uh
+	 6OKqA4nGRtqsm1vaVrZktmmBocJHqHD0cJ9ZjExU8Iyi0KqUR8/EoWJdjfUXypl8L5
+	 h3nrpRvZkf6jy6a5wjPJMFJpLTTNrYx55MWyhUdstFu94QMddz/BFy2Btl0cYxdodP
+	 jnKGOLDihlIJg==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ac90ad396dso559185eaf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 06:05:53 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxKJS2dYkbeDGdN/js06x3xJLIKg2Gn5L0VY0fyuuL5wSXuAY7t
+	A8jDvDqcZkD1Ar2Ua2F3QVccEsB9jb3JJP109RzKE43K0bikBV3nGX19NPl4VJf+INckPHZENZq
+	Z50FLHkPaKb5eedzlIViiTDrM9Zc=
+X-Google-Smtp-Source: AGHT+IHS0IrTEbeJp3Z5CyAn/KdRPJQssid3W/HyqTKUyYmFl1j5qDJhDjfWeCbYswTYd0xMLI5Vv2Hf7RX8bz9z3OI=
+X-Received: by 2002:a4a:301:0:b0:5af:24de:7f1 with SMTP id 1-20020a4a0301000000b005af24de07f1mr6084899ooi.7.1714050353031;
+ Thu, 25 Apr 2024 06:05:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240425124433.28645-1-aha310510@gmail.com>
+References: <CGME20240425045525epcas1p1052d7d89d9ced86a34dbe5f6a7dcad39@epcas1p1.samsung.com>
+ <PUZPR04MB6316FDC76BB5D2818276D39581172@PUZPR04MB6316.apcprd04.prod.outlook.com>
+ <664457955.21714026181854.JavaMail.epsvc@epcpadp4>
+In-Reply-To: <664457955.21714026181854.JavaMail.epsvc@epcpadp4>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 25 Apr 2024 22:05:41 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_n6SkodLP9+_S3tNL12W=3uH-jvOHrvtSq0_KW30vw9Q@mail.gmail.com>
+Message-ID: <CAKYAXd_n6SkodLP9+_S3tNL12W=3uH-jvOHrvtSq0_KW30vw9Q@mail.gmail.com>
+Subject: Re: [PATCH v2] exfat: zero the reserved fields of file and stream
+ extension dentries
+To: Sungjong Seo <sj1557.seo@samsung.com>, "Yuezhang.Mo" <Yuezhang.Mo@sony.com>
+Cc: linux-fsdevel@vger.kernel.org, Andy.Wu@sony.com, Wataru.Aoyama@sony.com, 
+	cpgs@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 25, 2024 at 09:44:33PM +0900, Jeongjun Park wrote:
-> Through direct testing and debugging, I've determined that this 
-> vulnerability occurs when mounting an incorrect image, leading to 
-> the potential passing of an excessively large value to 
-> 'sbi->bmap->db_agl2size'. Importantly, there have been no instances 
-> of memory corruption observed within 'sbi->bmap->db_agl2size'. 
-> 
-> Therefore, I think implementing a patch that terminates the 
-> function in cases where an invalid value is detected.
-
-If that's the problem then the correct place to detect & reject this is
-during mount, not at inode free time.
+2024=EB=85=84 4=EC=9B=94 25=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 3:23, S=
+ungjong Seo <sj1557.seo@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> > From exFAT specification, the reserved fields should initialize
+> > to zero and should not use for any purpose.
+> >
+> > If create a new dentry set in the UNUSED dentries, all fields
+> > had been zeroed when allocating cluster to parent directory.
+> >
+> > But if create a new dentry set in the DELETED dentries, the
+> > reserved fields in file and stream extension dentries may be
+> > non-zero. Because only the valid bit of the type field of the
+> > dentry is cleared in exfat_remove_entries(), if the type of
+> > dentry is different from the original(For example, a dentry that
+> > was originally a file name dentry, then set to deleted dentry,
+> > and then set as a file dentry), the reserved fields is non-zero.
+> >
+> > So this commit initializes the dentry to 0 before createing file
+> > dentry and stream extension dentry.
+> >
+> > Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+> > Reviewed-by: Andy Wu <Andy.Wu@sony.com>
+> > Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
+>
+> Looks good. Thanks for your patch.
+> Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+Applied it to #dev.
+Thanks!
 
