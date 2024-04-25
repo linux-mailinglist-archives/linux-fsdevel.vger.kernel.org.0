@@ -1,420 +1,312 @@
-Return-Path: <linux-fsdevel+bounces-17785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26AA48B22CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 15:30:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAFEE8B2305
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 15:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A57F1C21985
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 13:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 547CB1F21F3A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 13:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D9814A62B;
-	Thu, 25 Apr 2024 13:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43321149C79;
+	Thu, 25 Apr 2024 13:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sbv6z1kR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LsjeUUXX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FE6149C5E;
-	Thu, 25 Apr 2024 13:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9559912BE8C;
+	Thu, 25 Apr 2024 13:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714051771; cv=none; b=IgzavEUF3eTFnrpUX5JLBRsrMl1MuvMhXTf0a6DGPOjmQJMnKQHlv/LIfoebnVWj46LfVAH84HZRL75J4+ruFEbAZuKMiDQSOTw4o3wA4bq14LF9XPCFD4okikhyqRzFCyYbi95oLKliV6My9Ey8jVpI3lNcQojA0ZR9Ho3XWDU=
+	t=1714052651; cv=none; b=PgFTi3QNeV8A6mLewNbgtd8sccEpadCDOh1eSvKF5BzJwewko2Jc5YrZm4xmHKJ5Hmj19keD8MGFR8NsmnIRZ44dJa4k0X6D4xiGLZlDRiJkF82v0dwCJo8X0i/J76OQM+R0Ko0fdPTUGfYZJxGowUgCD9O27cmxMqL4JHOdHJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714051771; c=relaxed/simple;
-	bh=mXwhomWyRGbw6y94ChOUxJcx7nd/wj3RuraEiiLl0WQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kEjGKrBotMB6xpGgAQpNx0ICmQ65vkF/1JNI8PYscSALSzqsFoffXP51fNA+QOhSbW1BVvKFqD/E54AD76ipYdtdUhJYGAY5bflLLWtzVH7UGH0QQOxGJ4YZVuNmIQ92/9piV4YL0h9NUD/IMxaaWEms1i0XcjGXIA+PRdr5ZQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sbv6z1kR; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f043f9e6d7so1044409b3a.3;
-        Thu, 25 Apr 2024 06:29:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714051768; x=1714656568; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QRED1FXDeH08jKI4Y85H1+m9zHcF9yp/Q4DUuv7pi/8=;
-        b=Sbv6z1kR5nZpnFP5sCwuN36E6Ct1UmgXrQNAo5HokBABhq8IfDToZUIZmL9gbw12Vy
-         9MbLKNAOUydfFj3iVMQ5oa894fJ4adL4lDTa+bkcKU/Jq7ww9u1m+ZBfa0LUF5qmcwjj
-         nGMtv/+D0DIi6KGUJPcCXEClSqWxTUgGDbHAGIQG1bQ3FAcdyVeR2Nh5BOIAHwLSgrNi
-         HJMZ9n79TFCHOc9NkkcwxtRG7Oeg7wqOmgf0ah3edMDiGQ/9R2+Mc/aoNKgOvvS/45yj
-         Zu79iYnm0qK9OAPYJhMgAsLae6DPPD9yTCfGy6GS7QqmGfSJmWqwx6g36cpOvEnLvP3P
-         frfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714051768; x=1714656568;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QRED1FXDeH08jKI4Y85H1+m9zHcF9yp/Q4DUuv7pi/8=;
-        b=ES6uAIy0g6gNXERMGG0uUNZm2wD+/2jhVa8reT82A021GZu7+q4E96MDRecLpjTGfc
-         B8zEZQtStL9zQMHlkR7MAoRn2WUVyOGZI/B6MQSQiGpiJsUOg8M4QnPAzmaR5kZiZOjV
-         vKLIbidnzidgXlm8Ih1AQMErmINP+wjVTI9CwsbnUj+4fwJY666PoPHkOI3Bx5+RG8TL
-         ZdWDWvZ9PqVHOiRbsAwcnBs4QRb9ZpCL97cTifvQlr6kuMNBGFSGmSbnmKrhLrWkwpff
-         Cdt8vceBlfBdaOt8r25mLorMYth/i8Zq5Fc8WjHYxoOQQNuJu1+W0Ya/QEWoXdxFrmSs
-         HYtw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4VI7uG3EqO3BCxWHjgwbv5qzcdDHH2UGGnrsBUwTlwrPFbDWvSZKUyTYVVQGRKfSlEDrQkwBg9vmjDw4IFR+YSvLJtU6VgUMO
-X-Gm-Message-State: AOJu0YyjPUXIYAAW1T4kA8Hu8UVc0NPted2azA9VLFoRD3yInEcxB9zb
-	ETUlTJ0A9en1E0nHFqMWGj+Zh08aLlqk+jfgits+LmtXKuVNCP1llQ02q1+Z
-X-Google-Smtp-Source: AGHT+IE842vOw+suDWOfmSI5f9x78evzQ+L8isXlOhD7js0Dp8z+R/MmRtyCTAHPH/QacsH85G29vg==
-X-Received: by 2002:a05:6a00:a93:b0:6e6:843f:1d05 with SMTP id b19-20020a056a000a9300b006e6843f1d05mr7305784pfl.25.1714051768374;
-        Thu, 25 Apr 2024 06:29:28 -0700 (PDT)
-Received: from dw-tp.in.ibm.com ([129.41.58.7])
-        by smtp.gmail.com with ESMTPSA id s15-20020a62e70f000000b006f260fb17e5sm9764518pfh.141.2024.04.25.06.29.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Apr 2024 06:29:27 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Jan Kara <jack@suse.cz>
-Subject: [RFCv3 7/7] iomap: Optimize data access patterns for filesystems with indirect mappings
-Date: Thu, 25 Apr 2024 18:58:51 +0530
-Message-ID: <4e2752e99f55469c4eb5f2fe83e816d529110192.1714046808.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1714046808.git.ritesh.list@gmail.com>
-References: <cover.1714046808.git.ritesh.list@gmail.com>
+	s=arc-20240116; t=1714052651; c=relaxed/simple;
+	bh=2fEgbRDowaTm66qyV4Co8XGrR2VhH1xyHIFbs/OS0Q4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=U4susaeIW8jS9q+M0fjBJx2p0iF3q0rVeNOCd5jjayZPCogPnmvYMe0Hu3+voHFge5jSu1o92nSXXiaNOqpBwxMJ5W8WnIFxE6sWrtlaYYzYWGoqomiCa1B/v7Vxj784w1jot6FI+zCECaS5BFcZ/0uBlqy7kD8VgTWIM64XdDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LsjeUUXX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C93E6C113CC;
+	Thu, 25 Apr 2024 13:44:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714052651;
+	bh=2fEgbRDowaTm66qyV4Co8XGrR2VhH1xyHIFbs/OS0Q4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=LsjeUUXXpQ9/E4/09WzwDePFO9pMndUSgV4uvTuMgfBOb5rpMBxR1oA2XQPBhtjWn
+	 oDebhKR4QdFUXzoyjjyWgRWYkH1La9/dmg28FczkPHEUgQQZSJcRCCIk6KDR5atSgF
+	 Wu/aMiH/Wg2E49h7XoUXjLVJhnJVNmR27LhG+5o9HA6xEtcfb2s9NkP8KSczR2K/mc
+	 hegYGpxqHFz5NlFfcHJO+wMwQRmmwWYw7iDFW4QAko6wi7hB19cN9zFU3muPk0yzAv
+	 NcPOoGWbs08DVFk4wAoBm8ZCtIQdgJ22pfO3FA3Qmd0B5JqF+Hre5N1rdsJg9X4Hdq
+	 gjLBFzCmaGWOg==
+Message-ID: <bf941367-5efc-4e79-8cac-208016e5a9b4@kernel.org>
+Date: Thu, 25 Apr 2024 21:44:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [f2fs?] KASAN: slab-out-of-bounds Read in
+ f2fs_get_node_info
+To: syzbot <syzbot+3694e283cf5c40df6d14@syzkaller.appspotmail.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <00000000000094036c0616e72a1d@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <00000000000094036c0616e72a1d@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch optimizes the data access patterns for filesystems with
-indirect block mapping by implementing BH_Boundary handling within
-iomap.
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/syzbot
 
-Currently the bios for reads within iomap are only submitted at
-2 places -
-1. If we cannot merge the new req. with previous bio, only then we
-   submit the previous bio.
-2. Submit the bio at the end of the entire read processing.
-
-This means for filesystems with indirect block mapping, we call into
-->iomap_begin() again w/o submitting the previous bios. That causes
-unoptimized data access patterns for blocks which are of BH_Boundary type.
-
-For e.g. consider the file mapping
-logical block(4k) 		physical block(4k)
-0-11 				1000-1011
-12-15 				1013-1016
-
-In above physical block 1012 is an indirect metadata block which has the
-mapping information for next set of indirect blocks (1013-1016).
-With iomap buffered reads for reading 1st 16 logical blocks of a file
-(0-15), we get below I/O pattern
-	- submit a bio for 1012
-	- complete the bio for 1012
-	- submit a bio for 1000-1011
-	- submit a bio for 1013-1016
-	- complete the bios for 1000-1011
-	- complete the bios for 1013-1016
-
-So as we can see, above is an non-optimal I/O access pattern and also we
-get 3 bio completions instead of 2.
-
-This patch changes this behavior by doing submit_bio() if there are any
-bios already processed, before calling ->iomap_begin() again.
-That means if there are any blocks which are already processed, gets
-submitted for I/O earlier and then within ->iomap_begin(), if we get a
-request for reading an indirect metadata block, then block layer can merge
-those bios with the already submitted read request to reduce the no. of bio
-completions.
-
-Now, for bs < ps or for large folios, this patch requires proper handling
-of "ifs->read_bytes_pending". In that we first set ifs->read_bytes_pending
-to folio_size. Then handle all the cases where we need to subtract
-ifs->read_bytes_pending either during the submission side
-(if we don't need to submit any I/O - for e.g. for uptodate sub blocks),
-or during an I/O error, or at the completion of an I/O.
-
-Here is the ftrace output of iomap and block layer with ext2 iomap
-conversion patches -
-
-root# filefrag -b512 -v /mnt1/test/f1
-Filesystem type is: ef53
-Filesystem cylinder groups approximately 32
-File size of /mnt1/test/f1 is 65536 (128 blocks of 512 bytes)
- ext:     logical_offset:        physical_offset: length:   expected: flags:
-   0:        0..      95:      98304..     98399:     96:             merged
-   1:       96..     127:      98408..     98439:     32:      98400: last,merged,eof
-/mnt1/test/f1: 2 extents found
-
-root# #This reads 4 blocks starting from lblk 10, 11, 12, 13
-root# xfs_io -c "pread -b$((4*4096)) $((10*4096)) $((4*4096))" /mnt1/test/f1
-
-w/o this patch - (indirect block is submitted before and does not get merged, resulting in 3 bios completion)
-      xfs_io-907     [002] .....   185.608791: iomap_readahead: dev 8:16 ino 0xc nr_pages 4
-      xfs_io-907     [002] .....   185.608819: iomap_iter: dev 8:16 ino 0xc pos 0xa000 length 0x4000 processed 0 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x9d/0x2c0
-      xfs_io-907     [002] .....   185.608823: iomap_iter_dstmap: dev 8:16 ino 0xc bdev 8:16 addr 0x300a000 offset 0xa000 length 0x2000 type MAPPED flags MERGED
-      xfs_io-907     [002] .....   185.608831: iomap_iter: dev 8:16 ino 0xc pos 0xa000 length 0x2000 processed 8192 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x1e1/0x2c0
-      xfs_io-907     [002] .....   185.608859: block_bio_queue: 8,16 R 98400 + 8 [xfs_io]
-      xfs_io-907     [002] .....   185.608865: block_getrq: 8,16 R 98400 + 8 [xfs_io]
-      xfs_io-907     [002] .....   185.608867: block_io_start: 8,16 R 4096 () 98400 + 8 [xfs_io]
-      xfs_io-907     [002] .....   185.608869: block_plug: [xfs_io]
-      xfs_io-907     [002] .....   185.608872: block_unplug: [xfs_io] 1
-      xfs_io-907     [002] .....   185.608874: block_rq_insert: 8,16 R 4096 () 98400 + 8 [xfs_io]
-kworker/2:1H-198     [002] .....   185.608908: block_rq_issue: 8,16 R 4096 () 98400 + 8 [kworker/2:1H]
-      <idle>-0       [002] d.h2.   185.609579: block_rq_complete: 8,16 R () 98400 + 8 [0]
-      <idle>-0       [002] dNh2.   185.609631: block_io_done: 8,16 R 0 () 98400 + 0 [swapper/2]
-      xfs_io-907     [002] .....   185.609694: iomap_iter_dstmap: dev 8:16 ino 0xc bdev 8:16 addr 0x300d000 offset 0xc000 length 0x2000 type MAPPED flags MERGED
-      xfs_io-907     [002] .....   185.609704: block_bio_queue: 8,16 RA 98384 + 16 [xfs_io]
-      xfs_io-907     [002] .....   185.609718: block_getrq: 8,16 RA 98384 + 16 [xfs_io]
-      xfs_io-907     [002] .....   185.609721: block_io_start: 8,16 RA 8192 () 98384 + 16 [xfs_io]
-      xfs_io-907     [002] .....   185.609726: block_plug: [xfs_io]
-      xfs_io-907     [002] .....   185.609735: iomap_iter: dev 8:16 ino 0xc pos 0xc000 length 0x2000 processed 8192 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x1e1/0x2c0
-      xfs_io-907     [002] .....   185.609736: block_bio_queue: 8,16 RA 98408 + 16 [xfs_io]
-      xfs_io-907     [002] .....   185.609740: block_getrq: 8,16 RA 98408 + 16 [xfs_io]
-      xfs_io-907     [002] .....   185.609741: block_io_start: 8,16 RA 8192 () 98408 + 16 [xfs_io]
-      xfs_io-907     [002] .....   185.609756: block_rq_issue: 8,16 RA 8192 () 98408 + 16 [xfs_io]
-      xfs_io-907     [002] .....   185.609769: block_rq_issue: 8,16 RA 8192 () 98384 + 16 [xfs_io]
-      <idle>-0       [002] d.H2.   185.610280: block_rq_complete: 8,16 RA () 98408 + 16 [0]
-      <idle>-0       [002] d.H2.   185.610289: block_io_done: 8,16 RA 0 () 98408 + 0 [swapper/2]
-      <idle>-0       [002] d.H2.   185.610292: block_rq_complete: 8,16 RA () 98384 + 16 [0]
-      <idle>-0       [002] dNH2.   185.610301: block_io_done: 8,16 RA 0 () 98384 + 0 [swapper/2]
-
-v/s with the patch - (optimzed I/O access pattern and bio gets merged resulting in only 2 bios completion)
-      xfs_io-944     [005] .....    99.926187: iomap_readahead: dev 8:16 ino 0xc nr_pages 4
-      xfs_io-944     [005] .....    99.926208: iomap_iter: dev 8:16 ino 0xc pos 0xa000 length 0x4000 processed 0 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x9d/0x2c0
-      xfs_io-944     [005] .....    99.926211: iomap_iter_dstmap: dev 8:16 ino 0xc bdev 8:16 addr 0x300a000 offset 0xa000 length 0x2000 type MAPPED flags MERGED
-      xfs_io-944     [005] .....    99.926222: block_bio_queue: 8,16 RA 98384 + 16 [xfs_io]
-      xfs_io-944     [005] .....    99.926232: block_getrq: 8,16 RA 98384 + 16 [xfs_io]
-      xfs_io-944     [005] .....    99.926233: block_io_start: 8,16 RA 8192 () 98384 + 16 [xfs_io]
-      xfs_io-944     [005] .....    99.926234: block_plug: [xfs_io]
-      xfs_io-944     [005] .....    99.926235: iomap_iter: dev 8:16 ino 0xc pos 0xa000 length 0x2000 processed 8192 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x1f9/0x2c0
-      xfs_io-944     [005] .....    99.926261: block_bio_queue: 8,16 R 98400 + 8 [xfs_io]
-      xfs_io-944     [005] .....    99.926266: block_bio_backmerge: 8,16 R 98400 + 8 [xfs_io]
-      xfs_io-944     [005] .....    99.926271: block_unplug: [xfs_io] 1
-      xfs_io-944     [005] .....    99.926272: block_rq_insert: 8,16 RA 12288 () 98384 + 24 [xfs_io]
-kworker/5:1H-234     [005] .....    99.926314: block_rq_issue: 8,16 RA 12288 () 98384 + 24 [kworker/5:1H]
-      <idle>-0       [005] d.h2.    99.926905: block_rq_complete: 8,16 RA () 98384 + 24 [0]
-      <idle>-0       [005] dNh2.    99.926931: block_io_done: 8,16 RA 0 () 98384 + 0 [swapper/5]
-      xfs_io-944     [005] .....    99.926971: iomap_iter_dstmap: dev 8:16 ino 0xc bdev 8:16 addr 0x300d000 offset 0xc000 length 0x2000 type MAPPED flags MERGED
-      xfs_io-944     [005] .....    99.926981: block_bio_queue: 8,16 RA 98408 + 16 [xfs_io]
-      xfs_io-944     [005] .....    99.926989: block_getrq: 8,16 RA 98408 + 16 [xfs_io]
-      xfs_io-944     [005] .....    99.926989: block_io_start: 8,16 RA 8192 () 98408 + 16 [xfs_io]
-      xfs_io-944     [005] .....    99.926991: block_plug: [xfs_io]
-      xfs_io-944     [005] .....    99.926993: iomap_iter: dev 8:16 ino 0xc pos 0xc000 length 0x2000 processed 8192 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x1f9/0x2c0
-      xfs_io-944     [005] .....    99.927001: block_rq_issue: 8,16 RA 8192 () 98408 + 16 [xfs_io]
-      <idle>-0       [005] d.h2.    99.927397: block_rq_complete: 8,16 RA () 98408 + 16 [0]
-      <idle>-0       [005] dNh2.    99.927414: block_io_done: 8,16 RA 0 () 98408 + 0 [swapper/5]
-
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/iomap/buffered-io.c | 112 +++++++++++++++++++++++++++++++----------
- 1 file changed, 85 insertions(+), 27 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 0a4269095ae2..a1d50086a3f5 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -30,7 +30,7 @@ typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
-  */
- struct iomap_folio_state {
- 	spinlock_t		state_lock;
--	unsigned int		read_bytes_pending;
-+	size_t			read_bytes_pending;
- 	atomic_t		write_bytes_pending;
-
- 	/*
-@@ -380,6 +380,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	loff_t orig_pos = pos;
- 	size_t poff, plen;
- 	sector_t sector;
-+	bool rbp_finished = false;
-
- 	if (iomap->type == IOMAP_INLINE)
- 		return iomap_read_inline_data(iter, folio);
-@@ -387,21 +388,39 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	/* zero post-eof blocks as the page may be mapped */
- 	ifs = ifs_alloc(iter->inode, folio, iter->flags);
- 	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
-+
-+	if (ifs) {
-+		loff_t to_read = min_t(loff_t, iter->len - offset,
-+			folio_size(folio) - offset_in_folio(folio, orig_pos));
-+		size_t padjust;
-+
-+		spin_lock_irq(&ifs->state_lock);
-+		if (!ifs->read_bytes_pending)
-+			ifs->read_bytes_pending = to_read;
-+		padjust = pos - orig_pos;
-+		ifs->read_bytes_pending -= padjust;
-+		if (!ifs->read_bytes_pending)
-+			rbp_finished = true;
-+		spin_unlock_irq(&ifs->state_lock);
-+	}
-+
- 	if (plen == 0)
- 		goto done;
-
- 	if (iomap_block_needs_zeroing(iter, pos)) {
-+		if (ifs) {
-+			spin_lock_irq(&ifs->state_lock);
-+			ifs->read_bytes_pending -= plen;
-+			if (!ifs->read_bytes_pending)
-+				rbp_finished = true;
-+			spin_unlock_irq(&ifs->state_lock);
-+		}
- 		folio_zero_range(folio, poff, plen);
- 		iomap_set_range_uptodate(folio, poff, plen);
- 		goto done;
- 	}
-
- 	ctx->cur_folio_in_bio = true;
--	if (ifs) {
--		spin_lock_irq(&ifs->state_lock);
--		ifs->read_bytes_pending += plen;
--		spin_unlock_irq(&ifs->state_lock);
--	}
-
- 	sector = iomap_sector(iomap, pos);
- 	if (!ctx->bio ||
-@@ -435,6 +454,14 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	}
-
- done:
-+	/*
-+	 * If there is no bio prepared and if rbp is finished and
-+	 * this was the last offset within this folio then mark
-+	 * cur_folio_in_bio to false.
-+	 */
-+	if (!ctx->bio && rbp_finished &&
-+			offset_in_folio(folio, pos + plen) == 0)
-+		ctx->cur_folio_in_bio = false;
- 	/*
- 	 * Move the caller beyond our range so that it keeps making progress.
- 	 * For that, we have to include any leading non-uptodate ranges, but
-@@ -459,9 +486,43 @@ static loff_t iomap_read_folio_iter(const struct iomap_iter *iter,
- 			return ret;
- 	}
-
-+	if (ctx->bio) {
-+		submit_bio(ctx->bio);
-+		WARN_ON_ONCE(!ctx->cur_folio_in_bio);
-+		ctx->bio = NULL;
-+	}
-+	if (offset_in_folio(folio, iter->pos + done) == 0 &&
-+			!ctx->cur_folio_in_bio) {
-+		folio_unlock(ctx->cur_folio);
-+	}
-+
- 	return done;
- }
-
-+static void iomap_handle_read_error(struct iomap_readpage_ctx *ctx,
-+		struct iomap_iter *iter)
-+{
-+	struct folio *folio = ctx->cur_folio;
-+	struct iomap_folio_state *ifs;
-+	unsigned long flags;
-+	bool rbp_finished = false;
-+	size_t rbp_adjust = folio_size(folio) - offset_in_folio(folio,
-+				iter->pos);
-+	ifs = folio->private;
-+	if (!ifs || !ifs->read_bytes_pending)
-+		goto unlock;
-+
-+	spin_lock_irqsave(&ifs->state_lock, flags);
-+	ifs->read_bytes_pending -= rbp_adjust;
-+	if (!ifs->read_bytes_pending)
-+		rbp_finished = true;
-+	spin_unlock_irqrestore(&ifs->state_lock, flags);
-+
-+unlock:
-+	if (rbp_finished || !ctx->cur_folio_in_bio)
-+		folio_unlock(folio);
-+}
-+
- int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
- {
- 	struct iomap_iter iter = {
-@@ -479,15 +540,9 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
- 		iter.processed = iomap_read_folio_iter(&iter, &ctx);
-
--	if (ret < 0)
-+	if (ret < 0) {
- 		folio_set_error(folio);
--
--	if (ctx.bio) {
--		submit_bio(ctx.bio);
--		WARN_ON_ONCE(!ctx.cur_folio_in_bio);
--	} else {
--		WARN_ON_ONCE(ctx.cur_folio_in_bio);
--		folio_unlock(folio);
-+		iomap_handle_read_error(&ctx, &iter);
- 	}
-
- 	/*
-@@ -506,12 +561,6 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
- 	loff_t done, ret;
-
- 	for (done = 0; done < length; done += ret) {
--		if (ctx->cur_folio &&
--		    offset_in_folio(ctx->cur_folio, iter->pos + done) == 0) {
--			if (!ctx->cur_folio_in_bio)
--				folio_unlock(ctx->cur_folio);
--			ctx->cur_folio = NULL;
--		}
- 		if (!ctx->cur_folio) {
- 			ctx->cur_folio = readahead_folio(ctx->rac);
- 			ctx->cur_folio_in_bio = false;
-@@ -519,6 +568,17 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
- 		ret = iomap_readpage_iter(iter, ctx, done);
- 		if (ret <= 0)
- 			return ret;
-+		if (ctx->cur_folio && offset_in_folio(ctx->cur_folio,
-+					iter->pos + done + ret) == 0) {
-+			if (!ctx->cur_folio_in_bio)
-+				folio_unlock(ctx->cur_folio);
-+			ctx->cur_folio = NULL;
-+		}
-+	}
-+
-+	if (ctx->bio) {
-+		submit_bio(ctx->bio);
-+		ctx->bio = NULL;
- 	}
-
- 	return done;
-@@ -549,18 +609,16 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
- 	struct iomap_readpage_ctx ctx = {
- 		.rac	= rac,
- 	};
-+	int ret = 0;
-
- 	trace_iomap_readahead(rac->mapping->host, readahead_count(rac));
-
--	while (iomap_iter(&iter, ops) > 0)
-+	while ((ret = iomap_iter(&iter, ops)) > 0)
- 		iter.processed = iomap_readahead_iter(&iter, &ctx);
-
--	if (ctx.bio)
--		submit_bio(ctx.bio);
--	if (ctx.cur_folio) {
--		if (!ctx.cur_folio_in_bio)
--			folio_unlock(ctx.cur_folio);
--	}
-+	if (ret < 0 && ctx.cur_folio)
-+		iomap_handle_read_error(&ctx, &iter);
-+
- }
- EXPORT_SYMBOL_GPL(iomap_readahead);
-
---
-2.44.0
-
+On 2024/4/25 15:59, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    ed30a4a51bb1 Linux 6.9-rc5
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1116bc30980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5a05c230e142f2bc
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3694e283cf5c40df6d14
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1128486b180000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1516bc30980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/7a2e1a02882c/disk-ed30a4a5.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/329966999344/vmlinux-ed30a4a5.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/1befbdf4dcac/bzImage-ed30a4a5.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/42ddf2738cf7/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+3694e283cf5c40df6d14@syzkaller.appspotmail.com
+> 
+> F2FS-fs (loop0): Mounted with checkpoint version = 48b305e4
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in f2fs_test_bit fs/f2fs/f2fs.h:2933 [inline]
+> BUG: KASAN: slab-out-of-bounds in current_nat_addr fs/f2fs/node.h:213 [inline]
+> BUG: KASAN: slab-out-of-bounds in f2fs_get_node_info+0xece/0x1200 fs/f2fs/node.c:600
+> Read of size 1 at addr ffff88807a58c76c by task syz-executor280/5076
+> 
+> CPU: 1 PID: 5076 Comm: syz-executor280 Not tainted 6.9.0-rc5-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+> Call Trace:
+>   <TASK>
+>   __dump_stack lib/dump_stack.c:88 [inline]
+>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>   print_address_description mm/kasan/report.c:377 [inline]
+>   print_report+0x169/0x550 mm/kasan/report.c:488
+>   kasan_report+0x143/0x180 mm/kasan/report.c:601
+>   f2fs_test_bit fs/f2fs/f2fs.h:2933 [inline]
+>   current_nat_addr fs/f2fs/node.h:213 [inline]
+>   f2fs_get_node_info+0xece/0x1200 fs/f2fs/node.c:600
+>   f2fs_xattr_fiemap fs/f2fs/data.c:1848 [inline]
+>   f2fs_fiemap+0x55d/0x1ee0 fs/f2fs/data.c:1925
+>   ioctl_fiemap fs/ioctl.c:220 [inline]
+>   do_vfs_ioctl+0x1c07/0x2e50 fs/ioctl.c:838
+>   __do_sys_ioctl fs/ioctl.c:902 [inline]
+>   __se_sys_ioctl+0x81/0x170 fs/ioctl.c:890
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f60d34ae739
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffc9f2f1148 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007ffc9f2f1318 RCX: 00007f60d34ae739
+> RDX: 0000000020000040 RSI: 00000000c020660b RDI: 0000000000000004
+> RBP: 00007f60d3527610 R08: 0000000000000000 R09: 00007ffc9f2f1318
+> R10: 000000000000551a R11: 0000000000000246 R12: 0000000000000001
+> R13: 00007ffc9f2f1308 R14: 0000000000000001 R15: 0000000000000001
+>   </TASK>
+> 
+> Allocated by task 5076:
+>   kasan_save_stack mm/kasan/common.c:47 [inline]
+>   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>   poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+>   __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+>   kasan_kmalloc include/linux/kasan.h:211 [inline]
+>   __do_kmalloc_node mm/slub.c:3966 [inline]
+>   __kmalloc_node_track_caller+0x24e/0x4e0 mm/slub.c:3986
+>   kmemdup+0x2a/0x60 mm/util.c:131
+>   init_node_manager fs/f2fs/node.c:3268 [inline]
+>   f2fs_build_node_manager+0x8cc/0x2870 fs/f2fs/node.c:3329
+>   f2fs_fill_super+0x583c/0x8120 fs/f2fs/super.c:4540
+>   mount_bdev+0x20a/0x2d0 fs/super.c:1658
+>   legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+>   vfs_get_tree+0x90/0x2a0 fs/super.c:1779
+>   do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+>   do_mount fs/namespace.c:3692 [inline]
+>   __do_sys_mount fs/namespace.c:3898 [inline]
+>   __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> The buggy address belongs to the object at ffff88807a58c700
+>   which belongs to the cache kmalloc-64 of size 64
+> The buggy address is located 44 bytes to the right of
+>   allocated 64-byte region [ffff88807a58c700, ffff88807a58c740)
+> 
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7a58c
+> flags: 0xfff80000000800(slab|node=0|zone=1|lastcpupid=0xfff)
+> page_type: 0xffffffff()
+> raw: 00fff80000000800 ffff888015041640 ffffea0000aa6400 dead000000000004
+> raw: 0000000000000000 0000000000200020 00000001ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY), pid 4536, tgid 106643948 (udevd), ts 4536, free_ts 43042041281
+>   set_page_owner include/linux/page_owner.h:32 [inline]
+>   post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1534
+>   prep_new_page mm/page_alloc.c:1541 [inline]
+>   get_page_from_freelist+0x3410/0x35b0 mm/page_alloc.c:3317
+>   __alloc_pages+0x256/0x6c0 mm/page_alloc.c:4575
+>   __alloc_pages_node include/linux/gfp.h:238 [inline]
+>   alloc_pages_node include/linux/gfp.h:261 [inline]
+>   alloc_slab_page+0x5f/0x160 mm/slub.c:2175
+>   allocate_slab mm/slub.c:2338 [inline]
+>   new_slab+0x84/0x2f0 mm/slub.c:2391
+>   ___slab_alloc+0xc73/0x1260 mm/slub.c:3525
+>   __slab_alloc mm/slub.c:3610 [inline]
+>   __slab_alloc_node mm/slub.c:3663 [inline]
+>   slab_alloc_node mm/slub.c:3835 [inline]
+>   __do_kmalloc_node mm/slub.c:3965 [inline]
+>   __kmalloc+0x2e5/0x4a0 mm/slub.c:3979
+>   kmalloc include/linux/slab.h:632 [inline]
+>   kzalloc include/linux/slab.h:749 [inline]
+>   tomoyo_encode2 security/tomoyo/realpath.c:45 [inline]
+>   tomoyo_encode+0x26f/0x540 security/tomoyo/realpath.c:80
+>   tomoyo_realpath_from_path+0x59e/0x5e0 security/tomoyo/realpath.c:283
+>   tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+>   tomoyo_path_number_perm+0x23a/0x880 security/tomoyo/file.c:723
+>   tomoyo_path_mknod+0x176/0x1b0 security/tomoyo/tomoyo.c:252
+>   security_path_mknod+0xf8/0x150 security/security.c:1791
+>   may_o_create fs/namei.c:3319 [inline]
+>   lookup_open fs/namei.c:3460 [inline]
+>   open_last_lookups fs/namei.c:3566 [inline]
+>   path_openat+0xc7c/0x3240 fs/namei.c:3796
+>   do_filp_open+0x235/0x490 fs/namei.c:3826
+>   do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+>   do_sys_open fs/open.c:1421 [inline]
+>   __do_sys_openat fs/open.c:1437 [inline]
+>   __se_sys_openat fs/open.c:1432 [inline]
+>   __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
+> page last free pid 4528 tgid 4528 stack trace:
+>   reset_page_owner include/linux/page_owner.h:25 [inline]
+>   free_pages_prepare mm/page_alloc.c:1141 [inline]
+>   free_unref_page_prepare+0x97b/0xaa0 mm/page_alloc.c:2347
+>   free_unref_page+0x37/0x3f0 mm/page_alloc.c:2487
+>   __slab_free+0x31b/0x3d0 mm/slub.c:4192
+>   qlink_free mm/kasan/quarantine.c:163 [inline]
+>   qlist_free_all+0x5e/0xc0 mm/kasan/quarantine.c:179
+>   kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+>   __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
+>   kasan_slab_alloc include/linux/kasan.h:201 [inline]
+>   slab_post_alloc_hook mm/slub.c:3798 [inline]
+>   slab_alloc_node mm/slub.c:3845 [inline]
+>   __do_kmalloc_node mm/slub.c:3965 [inline]
+>   __kmalloc+0x1e2/0x4a0 mm/slub.c:3979
+>   kmalloc include/linux/slab.h:632 [inline]
+>   kzalloc include/linux/slab.h:749 [inline]
+>   tomoyo_encode2 security/tomoyo/realpath.c:45 [inline]
+>   tomoyo_encode+0x26f/0x540 security/tomoyo/realpath.c:80
+>   tomoyo_realpath_from_path+0x59e/0x5e0 security/tomoyo/realpath.c:283
+>   tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+>   tomoyo_path_number_perm+0x23a/0x880 security/tomoyo/file.c:723
+>   tomoyo_path_mknod+0x176/0x1b0 security/tomoyo/tomoyo.c:252
+>   security_path_mknod+0xf8/0x150 security/security.c:1791
+>   may_o_create fs/namei.c:3319 [inline]
+>   lookup_open fs/namei.c:3460 [inline]
+>   open_last_lookups fs/namei.c:3566 [inline]
+>   path_openat+0xc7c/0x3240 fs/namei.c:3796
+>   do_filp_open+0x235/0x490 fs/namei.c:3826
+>   do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+>   do_sys_open fs/open.c:1421 [inline]
+>   __do_sys_openat fs/open.c:1437 [inline]
+>   __se_sys_openat fs/open.c:1432 [inline]
+>   __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
+> 
+> Memory state around the buggy address:
+>   ffff88807a58c600: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+>   ffff88807a58c680: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+>> ffff88807a58c700: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+>                                                            ^
+>   ffff88807a58c780: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+>   ffff88807a58c800: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+> ==================================================================
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
