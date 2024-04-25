@@ -1,106 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-17837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D631E8B2B3B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 23:47:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343748B2CAE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 00:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 147F81C23DB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 21:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD35B1F285F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 22:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3D1155A53;
-	Thu, 25 Apr 2024 21:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F4D15AAD0;
+	Thu, 25 Apr 2024 21:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="M8vrWQ71"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBDD155A47
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 21:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1582135A;
+	Thu, 25 Apr 2024 21:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714081517; cv=none; b=QRPfAkV/ccEiqKQX3nqEWkrdJ5gbAmGRCIoJ2huZezLj5F/oaGOWdBP3WH7qwBdmNv2CyDjcK/AfYqFJ8AiTG9eKUE/e8A7W2iMdE2Ufo8UMLlGp3dDU7Ro4ATmzRKc/eYL6xIymrwU7ojUcG3j3dRSyT6psgFudlGeS93fIR78=
+	t=1714082226; cv=none; b=FiJF+LU/tT2NaY/gLMx1swkG+UcyeaX0VM+Hf8YgN7E+JG9/hG6rcjqi9aCBXKkMqdEnPltRFwkSNgZnOls/0pBD1He1ps+cda21OJ91TgeHSNSS+hcUcxWT+Gket/jz9aubqEYm8AdnBgzHewl7FCG5TXckw4WDfyN83sJizz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714081517; c=relaxed/simple;
-	bh=54TmoJLahOSFohzjFA5WN4CsmAqEDwDW1crUpuVdjYw=;
+	s=arc-20240116; t=1714082226; c=relaxed/simple;
+	bh=3ZV5smop/lPyYIXEXoCUHn82p3Cb7VEDXtcEeatmiBk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rzxys7srD6J1palww7ntE1h9nCAPYOQkq0gmrOu3DkV4lANk4nYyw/Fege4K3sWE0atFU07ENfk8ruXdrA+pQikBiteqBr8DQGr5gXN3GKJ+dPpH+MpcFkhm/mgBC04PV8/AbLXEK8IJiVVjBknrvTdfoYWWpjSTRePC5G0Qwh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osuchow.ski; spf=none smtp.mailfrom=osuchow.ski; arc=none smtp.client-ip=91.198.250.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osuchow.ski
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osuchow.ski
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4VQTsz43q0z9scj;
-	Thu, 25 Apr 2024 23:45:11 +0200 (CEST)
-Message-ID: <f9fb4d8b-1aa6-4223-91c0-eba4b79a8975@osuchow.ski>
-Date: Thu, 25 Apr 2024 23:45:09 +0200
+	 In-Reply-To:Content-Type; b=m5CXvuFottjnyaj8H9dCP4fDfAspjJHCyVQAo4wbZniyMmFE876Lw1OvOTM7TwVmI/L9eiCrT8wMZcamNvyTpfs38CyllYZpOKrJu5aoRVyOGCeSu/1fqTattJm/OuwF9ucNf30CJDdUPl9KA8+1Dnta2Jzc/bXuArXni5Q82U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=M8vrWQ71; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1714082215; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=V92ffFYenJ+D/klo7VNY7AiRuYJPKbryKeaFLPKmcfI=;
+	b=M8vrWQ71Sw8WVSjL6UeWXbzM9qOVcD2vFlgi61QtBCiVxR/eSoSZd+CdKd0T8F18/kuF4XG+SrYE3vfdGD74mTdER8kBAN9w1JXZQboTBNoGUDwLmGBArnvIWdeMPXgcVMDYMZbXoy4tx+AuvBCwrZiTUUTs9el+RYfBzsGpVB4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W5GUHhL_1714082213;
+Received: from 192.168.3.4(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W5GUHhL_1714082213)
+          by smtp.aliyun-inc.com;
+          Fri, 26 Apr 2024 05:56:54 +0800
+Message-ID: <22fccbef-1cf2-4579-a015-936f5ef40782@linux.alibaba.com>
+Date: Fri, 26 Apr 2024 05:56:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] fs: Create anon_inode_getfile_fmode()
-To: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz
-References: <20240424233859.7640-1-linux@osuchow.ski>
- <20240425-wohltat-galant-16b3360118d0@brauner>
- <20240425202550.GL2118490@ZenIV>
-Content-Language: en-US
-From: Dawid Osuchowski <linux@osuchow.ski>
-In-Reply-To: <20240425202550.GL2118490@ZenIV>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH vfs.all 08/26] erofs: prevent direct access of bd_inode
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de,
+ brauner@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ yukuai3@huawei.com
+References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
+ <20240406090930.2252838-9-yukuai1@huaweicloud.com>
+ <20240407040531.GA1791215@ZenIV>
+ <a660a238-2b7e-423f-b5aa-6f5777259f4d@linux.alibaba.com>
+ <20240425195641.GJ2118490@ZenIV> <20240425200846.GK2118490@ZenIV>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240425200846.GK2118490@ZenIV>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4VQTsz43q0z9scj
 
-On 4/25/24 22:25, Al Viro wrote:
-> On Thu, Apr 25, 2024 at 11:57:12AM +0200, Christian Brauner wrote:
->> On Thu, Apr 25, 2024 at 01:38:59AM +0200, Dawid Osuchowski wrote:
->>> Creates an anon_inode_getfile_fmode() function that works similarly to
->>> anon_inode_getfile() with the addition of being able to set the fmode
->>> member.
->>
->> And for what use-case exactly?
-> 
-> There are several places where we might want that -
-> arch/powerpc/platforms/pseries/papr-vpd.c:488:  file = anon_inode_getfile("[papr-vpd]", &papr_vpd_handle_ops,
-> fs/cachefiles/ondemand.c:233:   file = anon_inode_getfile("[cachefiles]", &cachefiles_ondemand_fd_fops,
-> fs/eventfd.c:412:       file = anon_inode_getfile("[eventfd]", &eventfd_fops, ctx, flags);
-> in addition to vfio example Dawid mentions, as well as a couple of
-> borderline cases in
-> virt/kvm/kvm_main.c:4404:       file = anon_inode_getfile(name, &kvm_vcpu_stats_fops, vcpu, O_RDONLY);
-> virt/kvm/kvm_main.c:5092:       file = anon_inode_getfile("kvm-vm-stats",
-> 
-> So something of that sort is probably a good idea.  Said that,
-> what the hell is __anon_inode_getfile_fmode() for?  It's identical
-> to exported variant, AFAICS. 
+Hi Al,
 
-Thank you for the feedback. I tried emulating what I saw in the other 
-functions (which was clearly wrong). Will address this is in next revision.
+On 2024/4/26 04:08, Al Viro wrote:
+> On Thu, Apr 25, 2024 at 08:56:41PM +0100, Al Viro wrote:
+> 
+>> FWIW, see #misc.erofs and #more.erofs in my tree; the former is the
+>> minimal conversion of erofs_read_buf() and switch from buf->inode
+>> to buf->mapping, the latter follows that up with massage for
+>> erofs_read_metabuf().
+> 
+> First two and last four patches resp.  BTW, what are the intended rules
+> for inline symlinks?  "Should fit within the same block as the last
 
-  And then there's this:
-> 
-> 	if (IS_ERR(file))
-> 		goto err;
-> 
-> 	file->f_mode |= f_mode;
-> 
-> 	return file;
-> 
-> err:
-> 	return file;
-> 
-> a really odd way to spell
-> 
-> 	if (!IS_ERR(file))
-> 		file->f_mode |= f_mode;
-> 	return file;
+symlink on-disk layout follows the same rule of regular files.  The last
+logical block can be inlined right after the on-disk inode (called tail
+packing inline) or use a separate fs block to keep the symlink if tail
+packing inline doesn't fit.
 
-Same for this, will rewrite it based on your suggestion.
+> byte of on-disk erofs_inode_{compact,extended}"?  Feels like
+> erofs_read_inode() might be better off if it did copying the symlink
+> body instead of leaving it to erofs_fill_symlink(), complete with
+> the sanity checks...  I'd left that logics alone, though - I'm nowhere
+> near familiar enough with erofs layout.
+If I understand correctly, do you mean just fold erofs_fill_symlink()
+into the caller?  That is fine with me, I can change this in the
+future.
 
--- Dawid
-
+Thanks,
+Gao Xiang
 
