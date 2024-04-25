@@ -1,70 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-17699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754378B188B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 03:44:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679E18B18AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 03:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BFB42854F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 01:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C921F24BB1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 01:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7902710A14;
-	Thu, 25 Apr 2024 01:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9852107A6;
+	Thu, 25 Apr 2024 01:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="l192Y4uT"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DKH8/s3J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E8410A0A;
-	Thu, 25 Apr 2024 01:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0414107A8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 01:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714009450; cv=none; b=SxXfg2DSXtS2IUinH83zg3IQMypDf2q4atZ7czslBtm3B6tkUeq/OAZBBHUQmYf7z9re0000XiLn+7BACvmVbRucgNw1ytGBYqmvCEflNH/s1bbSMlNLn1raAMaNng/ZGgs2DDAI2WWsNz1NcjlxC/5cdXOCPw2vk5B/xUmSB44=
+	t=1714010344; cv=none; b=fSJ7ktSzCRV6c4oPvwA5Fz+/OZoASPfDsQxgNWW9PeLMUeEspoD9FgB+xsaQG/c0PR3gtxWh/zPSjPkHFgyQ1DYIIKbYK5UvhQlPo1j7Rh9kgfYhlYsN/Oyye/4MsU93BRS2yVo/T5eAcv6jFuSKqsB+MA2BFkytUKRbpeYpcfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714009450; c=relaxed/simple;
-	bh=rV/A03jIZW1y0g5q45g9NzDUZlMGGsmwEFTnMP9wheQ=;
+	s=arc-20240116; t=1714010344; c=relaxed/simple;
+	bh=p/cGThLZ3QnfmTN7NW9NTr5bcTYchPjUIQ6WCPhs4IQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SmNFIGCmmDq/9Ni+lVlXvoYeLS0m5A4plP/0wr/h9qybartA2n6wTdBuwN1C6UA2P+jTNH6QcIcgLIl6Dsic8nOmqohcR5srQ8IT2JLQ1+DQj5Mns2iLRNCAQWo9+IOtOGJ9FeEJCmBt54Lxk7Pj/XeeaxrYt9YHqt/r0HXKiNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=l192Y4uT; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0QPUxVsvhoTHhWPZA9B73OH+l2QpvxncXISUjO3pjIA=; b=l192Y4uTA9QaUOpENAX93/ZlAf
-	cQ4W9w9FnI+vCPocvnaUvJfDLyChWOKc8zYq2u5gBG1sXvrd6Gtvr2eRQ96LOx14c7kDWx61eRhxH
-	9A6mhpbMOTTQJzG1+KxDO5dMBcNBRjt9UJYdzX3c0OGd5KTYLCE1FDrn1sO249FgU6upKrfrV/4xS
-	IgYOgx0Mxd/AcqdJJqIBObfoDAEvHbSPFVfzvkSmJ+a14E22nmVw7AqDiiM9dv5TE9TmgVywATpV6
-	Jt6VAP+mloeSbSHHxw8beiQGymTAm9tiYVeKFTngaXs+LeUQME2Xw/70Y9uNTu3MOgNqm46OQdr8I
-	y1chXGMg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rzo9W-003GR2-0S;
-	Thu, 25 Apr 2024 01:43:58 +0000
-Date: Thu, 25 Apr 2024 02:43:58 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: stsp <stsp2@yandex.ru>, linux-kernel@vger.kernel.org,
-	Stefan Metzmacher <metze@samba.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH v2 0/2] implement OA2_INHERIT_CRED flag for openat2()
-Message-ID: <20240425014358.GG2118490@ZenIV>
-References: <20240423110148.13114-1-stsp2@yandex.ru>
- <4D2A1543-273F-417F-921B-E9F994FBF2E8@amacapital.net>
- <0e2e48be-86a8-418c-95b1-e8ca17469198@yandex.ru>
- <CALCETrWswr5jAzD9BkdCqLX=d8vReO8O9dVmZfL7HXdvwkft9g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L7qGIqFE5RJQn4LHzclEYqqwzN0TsERQxOl5LFfzXE0ELiJXABDmPt2N9AuDAks+DuO2usNhcOjhpuxwcbRp8YrDZV5/aHQ6aORm4xA4tULnoJNXJbTpTgcN5menaIK8kqY3EVhgniigScaoPIOszJkHS3Jd6Nch6q2YL5va7IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DKH8/s3J; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1e65a1370b7so4360335ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 18:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1714010342; x=1714615142; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S4qlJ+DG6HoUrdCik4e+F/ZipKmWdndDCcmvcXd31J0=;
+        b=DKH8/s3JRXewO3uRlUu4fCoood6Fz58WtrLazwyrSzra0mwJ9mITfxLQXdn+2npsKd
+         AatPjRBUoHypnwwljhYrMkOBSBRQ25yB0gdmKwZCLwWouMGpc1BCWIwfh3ujF+UbXo0+
+         jbQQehQ52/2q73gd0IoDWpbdw+s06PcKXfokQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714010342; x=1714615142;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S4qlJ+DG6HoUrdCik4e+F/ZipKmWdndDCcmvcXd31J0=;
+        b=dJ+cQUBWT/tsT5FG/+DcWjD0Rkn4R5VRpUzrUMR0vT3KYGcekvMwLQSSs/BZi9XY7z
+         8upJeiCEd6bMgF/8Nq5Bz89x5D7TaDsWMT5R7h567zoPLXz9wzDRbFGndElDG0Lz9alI
+         Ch9c+YWqh1hxsdyvej11eXGB+yahHIZftBZxf731GC0pIhzZ6RsoYxVhJBW9PyfdKdr2
+         ewT6bvDuKcoYdmyfOqI5J4uJ8pgpQ9o3VSWgoMXUjEoqO6aD3xA7EpwXntb5/9SFghoE
+         nrBDWQzdQkKH3G4VcwsEyokOJ+wX0iUt+mf5i7Hij3sxvPIdvlrIvYo5/2mpM6J6ABbe
+         8W0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWAGiND+69/zMKjgCL/Qubd+y4LUz7AIuHpqu5TYRpGyH7z+TkykGVRmEiw2peXEv3ULwqSl2tcZkIDCXe+CljUxQn3ufwlDNQqAv3ojA==
+X-Gm-Message-State: AOJu0YynxFJRS8FR8mMNmoPf1+ck0VFgOh+jf+LArTjeEJOj2qd4MV6w
+	J2iPUjAQ1zfLQ4oWOMbnzSP7ZW2o5KnX5uidfzG7iYjrCJufOOP18EJ+kWvsxQ==
+X-Google-Smtp-Source: AGHT+IFgnziqKVsPlDFcaVY3O1lcKny/l/El36yYFOjaOKnKn279lG8Ph9ngGazPAxyRWX6j+oUVIg==
+X-Received: by 2002:a17:903:2290:b0:1e8:92:c5e2 with SMTP id b16-20020a170903229000b001e80092c5e2mr6592452plh.47.1714010342304;
+        Wed, 24 Apr 2024 18:59:02 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id g2-20020a170902934200b001e25da6f2f2sm12553004plp.68.2024.04.24.18.59.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Apr 2024 18:59:01 -0700 (PDT)
+Date: Wed, 24 Apr 2024 18:59:01 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
+	liam.howlett@oracle.com, penguin-kernel@i-love.sakura.ne.jp,
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+	jhubbard@nvidia.com, tj@kernel.org, muchun.song@linux.dev,
+	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+	hughd@google.com, andreyknvl@gmail.com, ndesaulniers@google.com,
+	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com,
+	ytcoode@gmail.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+	glider@google.com, elver@google.com, dvyukov@google.com,
+	songmuchun@bytedance.com, jbaron@akamai.com, aliceryhl@google.com,
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+	kernel-team@android.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-modules@vger.kernel.org,
+	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v6 00/37] Memory allocation profiling
+Message-ID: <202404241852.DC4067B7@keescook>
+References: <20240321163705.3067592-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,29 +104,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWswr5jAzD9BkdCqLX=d8vReO8O9dVmZfL7HXdvwkft9g@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20240321163705.3067592-1-surenb@google.com>
 
-On Wed, Apr 24, 2024 at 05:43:02PM -0700, Andy Lutomirski wrote:
+On Thu, Mar 21, 2024 at 09:36:22AM -0700, Suren Baghdasaryan wrote:
+> Low overhead [1] per-callsite memory allocation profiling. Not just for
+> debug kernels, overhead low enough to be deployed in production.
 
-> I like that, but you're blocking it the wrong way.  My concern is that
-> someone does dfd = open("/proc/PID/fd/3") and then openat(dfd, ...,
-> OA2_INHERIT_CRED);  IIRC open("/proc/PID/fd/3") is extremely magical
-> and returns the _same open file description_ (struct file) as PID's fd
-> 3.
+Okay, I think I'm holding it wrong. With next-20240424 if I set:
 
-No, it doesn't.  We could implement that, but if we do that'll be
-*not* a part of procfs and it's going to be limited to current task
-only.
+CONFIG_CODE_TAGGING=y
+CONFIG_MEM_ALLOC_PROFILING=y
+CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y
 
-There are two different variants of /dev/fd/* semantics - one is
-"opening /dev/fd/42 is an equivalent of dup(42)", another is
-"opening /dev/fd/42 is an equivalent of opening the same fs object
-that is currently accessed via descriptor 42".  Linux is doing the
-latter, and we can't switch - that would break a lot of userland
-software, including a lot of scripts.
+My test system totally freaks out:
 
-I'm not saying I like the series, but this particular objection is bogus -
-open via procfs symlinks is *not* an equivalent of dup() and that is not
-going to change.
+...
+SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+Oops: general protection fault, probably for non-canonical address 0xc388d881e4808550: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 0 PID: 0 Comm: swapper Not tainted 6.9.0-rc5-next-20240424 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+RIP: 0010:__kmalloc_node_noprof+0xcd/0x560
+
+Which is:
+
+__kmalloc_node_noprof+0xcd/0x560:
+__slab_alloc_node at mm/slub.c:3780 (discriminator 2)
+(inlined by) slab_alloc_node at mm/slub.c:3982 (discriminator 2)
+(inlined by) __do_kmalloc_node at mm/slub.c:4114 (discriminator 2)
+(inlined by) __kmalloc_node_noprof at mm/slub.c:4122 (discriminator 2)
+
+Which is:
+
+        tid = READ_ONCE(c->tid);
+
+I haven't gotten any further than that; I'm EOD. Anyone seen anything
+like this with this series?
+
+-Kees
+
+-- 
+Kees Cook
 
