@@ -1,84 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-17757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA86C8B21D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 14:45:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 984798B21EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 14:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7F402894A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 12:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E6D281D4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 12:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3F21494C7;
-	Thu, 25 Apr 2024 12:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U3ka5y23"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3CF1494D1;
+	Thu, 25 Apr 2024 12:49:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBD615AF6;
-	Thu, 25 Apr 2024 12:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF6A1494C4;
+	Thu, 25 Apr 2024 12:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714049093; cv=none; b=D77XQweJOTT2lxWMJh3D+62KFnzO5hF3zx8nZDEnezVq0yPZi1meA63C4L4/sHCeduVuztpf9PUHSXH9x2nK6GWD+33BuHZsy3b15oGA1sLv9YrkfqZCdkrqJNvMgdU+P0ptkz4Md30qfl0wdIvNzH6srjQWhsaSRwJXTLXxKFE=
+	t=1714049368; cv=none; b=jrs5ds9Sy8ngV3LcbpKjtYZW5uWRCpucFTq/HNxGMJytmVankLamptNrDRrj94yVP3w1aO39IXsiejTDWfIAnJO2FqqduQt1BUa2uO3amFm+exNxzK4RMgi3jD8eWcZWqcNya2xGkZuFhDR1weYW4fn4khZMbP3nxiECmZASIEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714049093; c=relaxed/simple;
-	bh=FKP4rwK5HVxu4BI9BqHwkO0GA561653oDDY27Kaxpm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KlShN+Enlvasu3ReWDSfvsL4sWrI+B9Q0pR1Z6UHiTNB9gUMN42KyIAGAxjrBqU2cBzDA/N8UfG/F9dqoNCq96JCtg3sdObKb0E5xVQcm0eG1jiU6DulsG0EsPXZTWG7QshncU4cWJdtvRxshiPRfctu4u6CSrzGqNrm+thIxnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=U3ka5y23; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=bib3CrkpXPZh3fL7KWT/QVmeJRtookIbtMqUYQFAvRw=; b=U3ka5y23JWwQ0p+XkRvJa0pXZU
-	RDIQYifjcjrxeWOakx/oGJ5IKNSxnv/omV3jk2DrH8ylwR3NTKjjof86xtrSUxLh2BEoke9x++ujH
-	3L9wJOPdUcIaBl/vCYNH7DEHTRbwXTA1TLcQ9l2M33vX/MUKdKZ30Be5rANx8oU39vhPGauV96pOK
-	LOve1fsHpBVqUyfbUXtFWbu4ZSNuxZjxn7ypqPCLYI6a21CuwxnVaEoD9hvevBWkC4JbIjwDAYkxQ
-	8TjZf5JuJQHP1VDz7xgXwhw7gGj0DjrbsT3xIVYbzkYFtmM79E7aj08faYfJClP62yGCduBbPFozb
-	rcPYzQkA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rzyT3-000000032Ji-3Ug1;
-	Thu, 25 Apr 2024 12:44:49 +0000
-Date: Thu, 25 Apr 2024 13:44:49 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 27/30] iomap: Remove calls to set and clear folio error
- flag
-Message-ID: <ZipQQYPLuFuh3ui6@casper.infradead.org>
-References: <20240420025029.2166544-1-willy@infradead.org>
- <20240420025029.2166544-28-willy@infradead.org>
- <ZiYAoTnn8bO26sK3@infradead.org>
- <ZiZ817PiBFqDYo1T@casper.infradead.org>
- <ZiaBqiYUx5NrunTO@infradead.org>
- <ZiajqYd305U8njo5@casper.infradead.org>
- <ZipLUF3cZkXctvGG@infradead.org>
+	s=arc-20240116; t=1714049368; c=relaxed/simple;
+	bh=18cQvZb4ODs7lrECMHCH9NKnIsA3RHnLJppWoKGsy6Q=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=HyxXKzSgOVC45Iuliy2RWT9RGXOefmOTmjQ2dbblLvlMpllWqbvYHTlMZEjuHl+JIk5/bKx9ZkzJ7j4snqdUW7e+IPhMhos9XmKEjdFgHPnriZM4rZgBBTzv3RulurOXGs3JmHfo/Ro0VEEXHX6vCePe6CsMeXZgPrQTyDfYDI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VQFzZ0Crpz8XrS3;
+	Thu, 25 Apr 2024 20:49:14 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 43PCnC15071050;
+	Thu, 25 Apr 2024 20:49:12 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp03[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 25 Apr 2024 20:49:15 +0800 (CST)
+Date: Thu, 25 Apr 2024 20:49:15 +0800 (CST)
+X-Zmail-TransId: 2afb662a514b6fd-99358
+X-Mailer: Zmail v1.0
+Message-ID: <202404252049158858OT9IpNshMmQC1itDY1B1@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZipLUF3cZkXctvGG@infradead.org>
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <akpm@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <shr@devkernel.io>, <david@redhat.com>, <xu.xin16@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIGtzbTogYWRkIGtzbSBpbnZvbHZlbWVudCBpbmZvcm1hdGlvbiBmb3IgZWFjaCBwcm9jZXNz?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 43PCnC15071050
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 662A514A.000/4VQFzZ0Crpz8XrS3
 
-On Thu, Apr 25, 2024 at 05:23:44AM -0700, Christoph Hellwig wrote:
-> On Mon, Apr 22, 2024 at 06:51:37PM +0100, Matthew Wilcox wrote:
-> > If I do that then half the mailing lists bounce them for having too
-> > many recipients.  b4 can fetch the entire series for you if you've
-> > decided to break your email workflow.  And yes, 0/30 was bcc'd to
-> > linux-xfs as well.
-> 
-> I can't find it on linux-xfs still.  And please just don't make up
-> your own workflow or require odd tools.
+From: xu xin <xu.xin16@zte.com.cn>
 
-You even quoted the bit where I explained that the workflow you insist I
-follow doesn't work.
+In /proc/<pid>/ksm_stat, Add two extra ksm involvement items including
+MMF_VM_MERGEABLE and MMF_VM_MERGE_ANY. It helps administrators to
+better know the system's KSM behavior at process level.
+
+MMF_VM_MERGEABLE: yes/no
+	whether a process'mm is added by madvise() into the candidate list
+	of KSM or not.
+MMF_VM_MERGE_ANY: yes/no
+	whether a process'mm is added by prctl at process level into the
+candidate list of KSM or not.
+
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+---
+ fs/proc/base.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 18550c071d71..421594b8510c 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3217,6 +3217,10 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+ 		seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
+ 		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
+ 		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
++		seq_printf(m, "MMF_VM_MERGEABLE: %s\n",
++				test_bit(MMF_VM_MERGEABLE, &mm->flags) ? "yes" : "no");
++		seq_printf(m, "MMF_VM_MERGE_ANY: %s\n",
++				test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? "yes" : "no");
+ 		mmput(mm);
+ 	}
+
+-- 
+2.15.2
 
