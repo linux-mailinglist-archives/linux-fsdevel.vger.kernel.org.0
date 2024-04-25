@@ -1,144 +1,331 @@
-Return-Path: <linux-fsdevel+bounces-17697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A328B1868
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 03:23:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C847B8B1877
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 03:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB86E2855B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 01:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 533EF28466D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 01:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA845F9CC;
-	Thu, 25 Apr 2024 01:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A78F9F5;
+	Thu, 25 Apr 2024 01:33:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15CFE545;
-	Thu, 25 Apr 2024 01:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE90E5672;
+	Thu, 25 Apr 2024 01:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714008184; cv=none; b=CZ4ixMlVgpBQs4Cn8RwvODbkFmnYm5LCVX/nxmiNTP7DlxQgVToFozQ/OvU5lpi4JfxuitNyogP7eCDabEmZlWAI9Q9o/3miZ+BMjBH5UHMSe6V5RsqjFim4YzP2markg9Fh0prq4Os2E1bIwfEZkYn2azD26ml2NuOHY560VP8=
+	t=1714008834; cv=none; b=WRflkUoBpJ5i8GGwds56xEC+mh7pBFhQKn35OpWdpizJFi6fQ0qgnerTCuOlcJf76D+p0CLuUje64lPcu0aiN0it0Va34cMz/z803ceM3luYA3cVHqPUtYK3Y3QBvKfUmqbnr6eM9efzQMnKx/+7KuhspM+fWgNBZ5/0+HcfB9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714008184; c=relaxed/simple;
-	bh=YIHEoWGRRl7K692oqnAxxTuhe6uaULTZlph26PTJi4Y=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cW/w2JUJB6nPDvm+3VCYmIYAGrt6DyHxX3rBJQnLod/vjwr32A/qLrKk5NzeXjv5mGZ327C2INL1dLwxZLmNZd2I1DgxbB1qVoaeRegHSnoA4hQRo9c7ONmQduaG+oEBxwWhzctGtXctU+o1wp10FZUiDB4p9YKJfmap9UH4ihA=
+	s=arc-20240116; t=1714008834; c=relaxed/simple;
+	bh=DcnxWmmVrEIylMJfh7DRC8qVuxH3wDzB1vf+74ofhAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rZyLSTUg8hMpW65EsYRBdRlCjtl0tKmeuOMMtqMXkd7Gsqk1bN/Ag7/sPH1pB+HIZrafD4SeJvjGJFt4jSr28Wr/lX1buwzDo1XBFfncYmA+z0bOb67B4Z9HtxQ9OljOqEM2+xeEMcHAv+f6ewagbI8xXFu0OpbxOB5EUX8MTDg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VPylW1PdVz4f3k6f;
-	Thu, 25 Apr 2024 09:22:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 131501A016E;
-	Thu, 25 Apr 2024 09:22:52 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP4 (Coremail) with SMTP id gCh0CgB3x2lqsClmubRULA--.62798S2;
-	Thu, 25 Apr 2024 09:22:51 +0800 (CST)
-Subject: Re: [PATCH v5 3/5] writeback: fix build problems of "writeback:
- support retrieving per group debug writeback stats of bdi"
-To: Johannes Weiner <hannes@cmpxchg.org>, akpm@linux-foundation.org
-Cc: willy@infradead.org, jack@suse.cz, bfoster@redhat.com, tj@kernel.org,
- dsterba@suse.com, mjguzik@gmail.com, dhowells@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-References: <20240423034643.141219-1-shikemeng@huaweicloud.com>
- <20240423034643.141219-4-shikemeng@huaweicloud.com>
- <20240424132739.GD318022@cmpxchg.org>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <9de3d0ca-7d51-84d5-3c69-c3de95686f88@huaweicloud.com>
-Date: Thu, 25 Apr 2024 09:22:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VPz0720PBz4f3jZ6;
+	Thu, 25 Apr 2024 09:33:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 2699A1A0568;
+	Thu, 25 Apr 2024 09:33:48 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBH4silm_UuKKw--.41818S3;
+	Thu, 25 Apr 2024 09:33:47 +0800 (CST)
+Message-ID: <178d23c8-40cc-f975-7043-68c0d5e15786@huaweicloud.com>
+Date: Thu, 25 Apr 2024 09:33:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240424132739.GD318022@cmpxchg.org>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgB3x2lqsClmubRULA--.62798S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw4UAFyDuFy3Jr18uF1xKrg_yoW8tFW3pa
-	y5G3WrGF4Utry8GasxCFW5Wry5tw48tryUJFykKryjyr15Wrn3KFyxurWFvryUurZ3Cw12
-	qF4Fvas3WrWjkaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH 03/12] cachefiles: fix slab-use-after-free in
+ cachefiles_ondemand_get_fd()
+Content-Language: en-US
+To: Jia Zhu <zhujia.zj@bytedance.com>, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, jefflexu@linux.alibaba.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>,
+ Hou Tao <houtao1@huawei.com>, libaokun@huaweicloud.com
+References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
+ <20240424033916.2748488-4-libaokun@huaweicloud.com>
+ <34ba3b5c-638c-4622-8bcb-a2ef74b22f69@bytedance.com>
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <34ba3b5c-638c-4622-8bcb-a2ef74b22f69@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBnOBH4silm_UuKKw--.41818S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3ZrWDWw48tF4ftw18uF1Utrb_yoWDuryDpF
+	ZayFy7Jry8WrykGr1UJr1UJryrJryUJ3WDXr18XFy8Ar4DAr1Yqr1UXr1jgF1UGr48Ar4U
+	Jr1UGr9rZr17JrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUWVWUuwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
+	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
+Hi Jia,
 
-Hi Johannes,
-on 4/24/2024 9:27 PM, Johannes Weiner wrote:
-> Hi Kemeng,
-> 
-> On Tue, Apr 23, 2024 at 11:46:41AM +0800, Kemeng Shi wrote:
->> Fix two build problems:
->> 1. implicit declaration of function 'cgroup_ino'.
-> 
-> I just ran into this as well, with defconfig on mm-everything:
-Sorry for this.
-> 
-> /home/hannes/src/linux/linux/mm/backing-dev.c: In function 'wb_stats_show':
-> /home/hannes/src/linux/linux/mm/backing-dev.c:175:33: error: 'struct bdi_writeback' has no member named 'memcg_css'
->   175 |                    cgroup_ino(wb->memcg_css->cgroup),
->       |                                 ^~
-> make[3]: *** [/home/hannes/src/linux/linux/scripts/Makefile.build:244: mm/backing-dev.o] Error 1
-> 
->> ---
->>  mm/backing-dev.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
+On 2024/4/24 22:55, Jia Zhu wrote:
+>
+>
+> 在 2024/4/24 11:39, libaokun@huaweicloud.com 写道:
+>> From: Baokun Li <libaokun1@huawei.com>
 >>
->> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
->> index 6ecd11bdce6e..e61bbb1bd622 100644
->> --- a/mm/backing-dev.c
->> +++ b/mm/backing-dev.c
->> @@ -172,7 +172,11 @@ static void wb_stats_show(struct seq_file *m, struct bdi_writeback *wb,
->>  		   "b_more_io:         %10lu\n"
->>  		   "b_dirty_time:      %10lu\n"
->>  		   "state:             %10lx\n\n",
->> +#ifdef CONFIG_CGROUP_WRITEBACK
->>  		   cgroup_ino(wb->memcg_css->cgroup),
->> +#else
->> +		   1ul,
->> +#endif
->>  		   K(stats->nr_writeback),
->>  		   K(stats->nr_reclaimable),
->>  		   K(stats->wb_thresh),
->> @@ -192,7 +196,6 @@ static int cgwb_debug_stats_show(struct seq_file *m, void *v)
->>  	unsigned long background_thresh;
->>  	unsigned long dirty_thresh;
->>  	struct bdi_writeback *wb;
->> -	struct wb_stats stats;
->>  
->>  	global_dirty_limits(&background_thresh, &dirty_thresh);
-> 
-> The fix looks right to me, but it needs to be folded into the previous
-> patch. No patch should knowingly introduce an issue that is fixed
-> later on. This will break bisection.
-As I'm not sure if previous patch is already applied to tree, so I
-make this fix a individual patch and mentioned in cover letter that
-this could be folded if previous patch is not in tree or this could
-be applied individually to fix the introduced issue. As Androw told
-me that little fixups would be preferred instead of entire resend in
-current stage, I guess a new series with this patch foled should not
-be necessary. If a new series is still needed, please let me konw.
-I would like to it.
+>> We got the following issue in a fuzz test of randomly issuing the 
+>> restore
+>> command:
+>>
+>> ==================================================================
+>> BUG: KASAN: slab-use-after-free in 
+>> cachefiles_ondemand_daemon_read+0x609/0xab0
+>> Write of size 4 at addr ffff888109164a80 by task ondemand-04-dae/4962
+>>
+>> CPU: 11 PID: 4962 Comm: ondemand-04-dae Not tainted 6.8.0-rc7-dirty #542
+>> Call Trace:
+>>   kasan_report+0x94/0xc0
+>>   cachefiles_ondemand_daemon_read+0x609/0xab0
+>>   vfs_read+0x169/0xb50
+>>   ksys_read+0xf5/0x1e0
+>>
+>> Allocated by task 626:
+>>   __kmalloc+0x1df/0x4b0
+>>   cachefiles_ondemand_send_req+0x24d/0x690
+>>   cachefiles_create_tmpfile+0x249/0xb30
+>>   cachefiles_create_file+0x6f/0x140
+>>   cachefiles_look_up_object+0x29c/0xa60
+>>   cachefiles_lookup_cookie+0x37d/0xca0
+>>   fscache_cookie_state_machine+0x43c/0x1230
+>>   [...]
+>>
+>> Freed by task 626:
+>>   kfree+0xf1/0x2c0
+>>   cachefiles_ondemand_send_req+0x568/0x690
+>>   cachefiles_create_tmpfile+0x249/0xb30
+>>   cachefiles_create_file+0x6f/0x140
+>>   cachefiles_look_up_object+0x29c/0xa60
+>>   cachefiles_lookup_cookie+0x37d/0xca0
+>>   fscache_cookie_state_machine+0x43c/0x1230
+>>   [...]
+>> ==================================================================
+>>
+>> Following is the process that triggers the issue:
+>>
+>>       mount  |   daemon_thread1    |    daemon_thread2
+>> ------------------------------------------------------------
+>>   cachefiles_ondemand_init_object
+>>    cachefiles_ondemand_send_req
+>>     REQ_A = kzalloc(sizeof(*req) + data_len)
+>>     wait_for_completion(&REQ_A->done)
+>>
+>>              cachefiles_daemon_read
+>>               cachefiles_ondemand_daemon_read
+>>                REQ_A = cachefiles_ondemand_select_req
+>>                cachefiles_ondemand_get_fd
+>>                copy_to_user(_buffer, msg, n)
+>>              process_open_req(REQ_A)
+>>                                    ------ restore ------
+>>                                    cachefiles_ondemand_restore
+>>                                    xas_for_each(&xas, req, ULONG_MAX)
+>>                                     xas_set_mark(&xas, 
+>> CACHEFILES_REQ_NEW);
+>>
+>>                                    cachefiles_daemon_read
+>> cachefiles_ondemand_daemon_read
+>>                                      REQ_A = 
+>> cachefiles_ondemand_select_req
+>>
+>>               write(devfd, ("copen %u,%llu", msg->msg_id, size));
+>>               cachefiles_ondemand_copen
+>>                xa_erase(&cache->reqs, id)
+>>                complete(&REQ_A->done)
+>>     kfree(REQ_A)
+>> cachefiles_ondemand_get_fd(REQ_A)
+>>                                       fd = get_unused_fd_flags
+>>                                       file = anon_inode_getfile
+>>                                       fd_install(fd, file)
+>>                                       load = (void *)REQ_A->msg.data;
+>>                                       load->fd = fd;
+>>                                       // load UAF !!!
+>>
+>> This issue is caused by issuing a restore command when the daemon is 
+>> still
+>> alive, which results in a request being processed multiple times thus
+>> triggering a UAF. So to avoid this problem, add an additional reference
+>> count to cachefiles_req, which is held while waiting and reading, and 
+>> then
+>> released when the waiting and reading is over.
+>
+> Hi Baokun,
+> Thank you for catching this issue. Shall we fix this by following steps:
+> cachefiles_ondemand_fd_release()
+>     xas_for_each(req)
+>         if req is not CACHEFILES_OP_READ
+>             flush
+>
+> cachefiles_ondemand_restore()
+>     xas_for_each(req)
+>         if req is not CACHEFILES_REQ_NEW && op is (OPEN or CLOSE)
+>             reset req to CACHEFILES_REQ_NEW
+>
+> By implementing these steps:
+> 1. In real daemon failover case： only pending read reqs will be
+> reserved. cachefiles_ondemand_select_req will reopen the object by
+> processing READ req.
+> 2. In daemon alive case： Only read reqs will be reset to
+> CACHEFILES_REQ_NEW.
+>
+This way, in the fialover case, some processes that are being mounted
+will fail, which is contrary to our intention of making the user senseless.
+In my opinion, it's better to keep making users senseless.
 
-Thanks.
+Thanks,
+Baokun
+>
+>>
+>> Note that since there is only one reference count for waiting, we 
+>> need to
+>> avoid the same request being completed multiple times, so we can only
+>> complete the request if it is successfully removed from the xarray.
+>>
+>> Fixes: e73fa11a356c ("cachefiles: add restore command to recover 
+>> inflight ondemand read requests")
+>> Suggested-by: Hou Tao <houtao1@huawei.com>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> ---
+>>   fs/cachefiles/internal.h |  1 +
+>>   fs/cachefiles/ondemand.c | 44 ++++++++++++++++++++++------------------
+>>   2 files changed, 25 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+>> index d33169f0018b..7745b8abc3aa 100644
+>> --- a/fs/cachefiles/internal.h
+>> +++ b/fs/cachefiles/internal.h
+>> @@ -138,6 +138,7 @@ static inline bool 
+>> cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
+>>   struct cachefiles_req {
+>>       struct cachefiles_object *object;
+>>       struct completion done;
+>> +    refcount_t ref;
+>>       int error;
+>>       struct cachefiles_msg msg;
+>>   };
+>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>> index fd49728d8bae..56d12fe4bf73 100644
+>> --- a/fs/cachefiles/ondemand.c
+>> +++ b/fs/cachefiles/ondemand.c
+>> @@ -4,6 +4,12 @@
+>>   #include <linux/uio.h>
+>>   #include "internal.h"
+>>   +static inline void cachefiles_req_put(struct cachefiles_req *req)
+>> +{
+>> +    if (refcount_dec_and_test(&req->ref))
+>> +        kfree(req);
+>> +}
+>> +
+>>   static int cachefiles_ondemand_fd_release(struct inode *inode,
+>>                         struct file *file)
+>>   {
+>> @@ -299,7 +305,6 @@ ssize_t cachefiles_ondemand_daemon_read(struct 
+>> cachefiles_cache *cache,
+>>   {
+>>       struct cachefiles_req *req;
+>>       struct cachefiles_msg *msg;
+>> -    unsigned long id = 0;
+>>       size_t n;
+>>       int ret = 0;
+>>       XA_STATE(xas, &cache->reqs, cache->req_id_next);
+>> @@ -330,41 +335,39 @@ ssize_t cachefiles_ondemand_daemon_read(struct 
+>> cachefiles_cache *cache,
+>>         xas_clear_mark(&xas, CACHEFILES_REQ_NEW);
+>>       cache->req_id_next = xas.xa_index + 1;
+>> +    refcount_inc(&req->ref);
+>>       xa_unlock(&cache->reqs);
+>>   -    id = xas.xa_index;
+>> -
+>>       if (msg->opcode == CACHEFILES_OP_OPEN) {
+>>           ret = cachefiles_ondemand_get_fd(req);
+>>           if (ret) {
+>> cachefiles_ondemand_set_object_close(req->object);
+>> -            goto error;
+>> +            goto out;
+>>           }
+>>       }
+>>   -    msg->msg_id = id;
+>> +    msg->msg_id = xas.xa_index;
+>>       msg->object_id = req->object->ondemand->ondemand_id;
+>>         if (copy_to_user(_buffer, msg, n) != 0) {
+>>           ret = -EFAULT;
+>>           if (msg->opcode == CACHEFILES_OP_OPEN)
+>>               close_fd(((struct cachefiles_open *)msg->data)->fd);
+>> -        goto error;
+>>       }
+>> -
+>> -    /* CLOSE request has no reply */
+>> -    if (msg->opcode == CACHEFILES_OP_CLOSE) {
+>> -        xa_erase(&cache->reqs, id);
+>> -        complete(&req->done);
+>> +out:
+>> +    /* Remove error request and CLOSE request has no reply */
+>> +    if (ret || msg->opcode == CACHEFILES_OP_CLOSE) {
+>> +        xas_reset(&xas);
+>> +        xas_lock(&xas);
+>> +        if (xas_load(&xas) == req) {
+>> +            req->error = ret;
+>> +            complete(&req->done);
+>> +            xas_store(&xas, NULL);
+>> +        }
+>> +        xas_unlock(&xas);
+>>       }
+>> -
+>> -    return n;
+>> -
+>> -error:
+>> -    xa_erase(&cache->reqs, id);
+>> -    req->error = ret;
+>> -    complete(&req->done);
+>> -    return ret;
+>> +    cachefiles_req_put(req);
+>> +    return ret ? ret : n;
+>>   }
+>>     typedef int (*init_req_fn)(struct cachefiles_req *req, void 
+>> *private);
+>> @@ -394,6 +397,7 @@ static int cachefiles_ondemand_send_req(struct 
+>> cachefiles_object *object,
+>>           goto out;
+>>       }
+>>   +    refcount_set(&req->ref, 1);
+>>       req->object = object;
+>>       init_completion(&req->done);
+>>       req->msg.opcode = opcode;
+>> @@ -455,7 +459,7 @@ static int cachefiles_ondemand_send_req(struct 
+>> cachefiles_object *object,
+>>       wake_up_all(&cache->daemon_pollwq);
+>>       wait_for_completion(&req->done);
+>>       ret = req->error;
+>> -    kfree(req);
+>> +    cachefiles_req_put(req);
+>>       return ret;
+>>   out:
+>>       /* Reset the object to close state in error handling path.
+
 
 
