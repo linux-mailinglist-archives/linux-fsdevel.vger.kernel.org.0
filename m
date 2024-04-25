@@ -1,42 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-17768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5EE8B2276
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 15:23:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 731548B227D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 15:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10FF81C2114D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 13:23:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 280A6B23CB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 13:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4308149DF2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA17149E0A;
 	Thu, 25 Apr 2024 13:23:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DE8149C66;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B33149C6F;
 	Thu, 25 Apr 2024 13:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714051388; cv=none; b=kjrw+60Q9sOpmyxCkMPWt4v0yu6C9GjK3WckABiW29WFnAy4Y77EmlDu9FL1snfS2IhNXCoV2++c1qleO/A9dOMYS019x+64Tk2Pdw1GAN9tDjeHXyXm9niXjmFm0SRVUgzxzQhbnvTQZlpYm1SOoUfEGodrozj7rvlgMgv8aa0=
+	t=1714051388; cv=none; b=iq/je82E5cnk8mZ+Rn0gLdGr3pLgDgJGpp5hUAeiznXIvZoXG4gsM90vnH4c6Tf35R4b4hCWb9H/mRhaAgv4i+PefcXzLAnATIit5FERrwqKusD7MNERqjkSGXBEZiDURwy4LbjMUagpNBhJ2j/DcOg96kBkQKpe2pGBAGps75Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1714051388; c=relaxed/simple;
-	bh=YIeyc2rs/L/mmWn560rSiI949EjkmDH3k+JZWsMuzTY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NmhQSlnVTzNkYqbvqYNCwUfef9t22MasNDsMMUOVhzyeJ3zsoVdRWZr113aJ+RQ8Osh3p/B/4pDOcjVTvO1h4SSJ0nadJuH3hYplypPm+5O0OpDQYQL9qrSs3WTtdvKYEXnRJYumHLZMHchrWhRtKY6+X/SCsk0LmYwudFaRe5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	bh=mYB4cFXRObkdFIe0Jj7buZre0nnGhVmuslvweIRKqtY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QDez+V8qBTlEIqezqkTQz4mbJozIvtyNpsLYueQBHUukyqmG3Y32GoicG7leanEb46IwdJkdfEvKmcCHbTggW+3CPZ4AmKvop/aY9294wtYcnwDKpyPpMiwc6U30GAcTwpkbuC7KQ6k7Z1EuK0Zl5etuaQqfgU0BvVKGzszOL7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VQGkR4fsxz4f3khT;
-	Thu, 25 Apr 2024 21:22:55 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VQGkQ3qpdz4f3n6Y;
+	Thu, 25 Apr 2024 21:22:54 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 3FF741A016E;
+	by mail.maildlp.com (Postfix) with ESMTP id C26EF1A0568;
 	Thu, 25 Apr 2024 21:23:03 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgCXaBEqWSpmHu+2Kw--.61462S4;
-	Thu, 25 Apr 2024 21:23:01 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgCXaBEqWSpmHu+2Kw--.61462S5;
+	Thu, 25 Apr 2024 21:23:03 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -52,10 +53,12 @@ Cc: linux-kernel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com
-Subject: [PATCH v5 0/9] xfs/iomap: fix non-atomic clone operation and don't update size when zeroing range post eof
-Date: Thu, 25 Apr 2024 21:13:26 +0800
-Message-Id: <20240425131335.878454-1-yi.zhang@huaweicloud.com>
+Subject: [PATCH v5 1/9] xfs: match lock mode in xfs_buffered_write_iomap_begin()
+Date: Thu, 25 Apr 2024 21:13:27 +0800
+Message-Id: <20240425131335.878454-2-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240425131335.878454-1-yi.zhang@huaweicloud.com>
+References: <20240425131335.878454-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,84 +66,84 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCXaBEqWSpmHu+2Kw--.61462S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrW5WF47AF17XF1rurWxJFb_yoW5Xw45pF
-	ZxKwsxKrs5Kr1fZrnayF45Xw1rK3Z3Gr4UCr1xJws3Z3y5ZF1xZa1IgF1F9rWUAr93W3Wj
-	qF4jyF97Cr1DAa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	fUoOJ5UUUUU
+X-CM-TRANSID:cCh0CgCXaBEqWSpmHu+2Kw--.61462S5
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF43tw1xXrW7trWrAryUtrb_yoW8uryDpr
+	n7K3yDW39agrn0vF10gryYyw1Ik3W7Jw18Ar1rWa93uw1ktr43KF40va1rC3W8JrsFya4v
+	gF4UCr1kua43AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
+	x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
+	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
+	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
+	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
+	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
+	xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
+	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
+	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
+	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
+	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU4T5dUUUUU
+	=
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Changes since v4:
- - For zeroing range in xfs, move the delalloc check to before searching
-   the COW fork when zeroing range. Only modify patch 04, please see it
-   for details, not modify other patches.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Changes since v3:
- - Improve some git message comments and do some minor code cleanup, no
-   logic changes.
+Commit 1aa91d9c9933 ("xfs: Add async buffered write support") replace
+xfs_ilock(XFS_ILOCK_EXCL) with xfs_ilock_for_iomap() when locking the
+writing inode, and a new variable lockmode is used to indicate the lock
+mode. Although the lockmode should always be XFS_ILOCK_EXCL, it's still
+better to use this variable instead of useing XFS_ILOCK_EXCL directly
+when unlocking the inode.
 
-Changes since v2:
- - Merge the patch for dropping of xfs_convert_blocks() and the patch
-   for modifying xfs_bmapi_convert_delalloc().
- - Reword the commit message of the second patch.
+Fixes: 1aa91d9c9933 ("xfs: Add async buffered write support")
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/xfs/xfs_iomap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Changes since v1:
- - Make xfs_bmapi_convert_delalloc() to allocate the target offset and
-   drop the writeback helper xfs_convert_blocks().
- - Don't use xfs_iomap_write_direct() to convert delalloc blocks for
-   zeroing posteof case, use xfs_bmapi_convert_delalloc() instead.
- - Fix two off-by-one issues when converting delalloc blocks.
- - Add a separate patch to drop the buffered write failure handle in
-   zeroing and unsharing.
- - Add a comments do emphasize updating i_size should under folio lock.
- - Make iomap_write_end() to return a boolean, and do some cleanups in
-   buffered write begin path.
-
-This patch series fix a problem of exposing zeroed data on xfs since the
-non-atomic clone operation. This problem was found while I was
-developing ext4 buffered IO iomap conversion (ext4 is relying on this
-fix [1]), the root cause of this problem and the discussion about the
-solution please see [2]. After fix the problem, iomap_zero_range()
-doesn't need to update i_size so that ext4 can use it to zero partial
-block, e.g. truncate eof block [3].
-
-[1] https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
-[2] https://lore.kernel.org/linux-ext4/9b0040ef-3d9d-6246-4bdd-82b9a8f55fa2@huaweicloud.com/
-[3] https://lore.kernel.org/linux-ext4/9c9f1831-a772-299b-072b-1c8116c3fb35@huaweicloud.com/
-
-Thanks,
-Yi.
-
-Zhang Yi (9):
-  xfs: match lock mode in xfs_buffered_write_iomap_begin()
-  xfs: make the seq argument to xfs_bmapi_convert_delalloc() optional
-  xfs: make xfs_bmapi_convert_delalloc() to allocate the target offset
-  xfs: convert delayed extents to unwritten when zeroing post eof blocks
-  iomap: drop the write failure handles when unsharing and zeroing
-  iomap: don't increase i_size if it's not a write operation
-  iomap: use a new variable to handle the written bytes in
-    iomap_write_iter()
-  iomap: make iomap_write_end() return a boolean
-  iomap: do some small logical cleanup in buffered write
-
- fs/iomap/buffered-io.c   | 105 ++++++++++++++++++++++-----------------
- fs/xfs/libxfs/xfs_bmap.c |  40 +++++++++++++--
- fs/xfs/xfs_aops.c        |  54 ++++++--------------
- fs/xfs/xfs_iomap.c       |  39 +++++++++++++--
- 4 files changed, 144 insertions(+), 94 deletions(-)
-
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 4087af7f3c9f..236ee78aa75b 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -1158,13 +1158,13 @@ xfs_buffered_write_iomap_begin(
+ 	 * them out if the write happens to fail.
+ 	 */
+ 	seq = xfs_iomap_inode_sequence(ip, IOMAP_F_NEW);
+-	xfs_iunlock(ip, XFS_ILOCK_EXCL);
++	xfs_iunlock(ip, lockmode);
+ 	trace_xfs_iomap_alloc(ip, offset, count, allocfork, &imap);
+ 	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, IOMAP_F_NEW, seq);
+ 
+ found_imap:
+ 	seq = xfs_iomap_inode_sequence(ip, 0);
+-	xfs_iunlock(ip, XFS_ILOCK_EXCL);
++	xfs_iunlock(ip, lockmode);
+ 	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0, seq);
+ 
+ found_cow:
+@@ -1174,17 +1174,17 @@ xfs_buffered_write_iomap_begin(
+ 		if (error)
+ 			goto out_unlock;
+ 		seq = xfs_iomap_inode_sequence(ip, IOMAP_F_SHARED);
+-		xfs_iunlock(ip, XFS_ILOCK_EXCL);
++		xfs_iunlock(ip, lockmode);
+ 		return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags,
+ 					 IOMAP_F_SHARED, seq);
+ 	}
+ 
+ 	xfs_trim_extent(&cmap, offset_fsb, imap.br_startoff - offset_fsb);
+-	xfs_iunlock(ip, XFS_ILOCK_EXCL);
++	xfs_iunlock(ip, lockmode);
+ 	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, 0, seq);
+ 
+ out_unlock:
+-	xfs_iunlock(ip, XFS_ILOCK_EXCL);
++	xfs_iunlock(ip, lockmode);
+ 	return error;
+ }
+ 
 -- 
 2.39.2
 
