@@ -1,97 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-17838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343748B2CAE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 00:08:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57CB8B2CB2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 00:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD35B1F285F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 22:08:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D74E91C213F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 22:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F4D15AAD0;
-	Thu, 25 Apr 2024 21:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="M8vrWQ71"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C071C16130A;
+	Thu, 25 Apr 2024 21:58:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1582135A;
-	Thu, 25 Apr 2024 21:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D36E15ECF0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 21:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714082226; cv=none; b=FiJF+LU/tT2NaY/gLMx1swkG+UcyeaX0VM+Hf8YgN7E+JG9/hG6rcjqi9aCBXKkMqdEnPltRFwkSNgZnOls/0pBD1He1ps+cda21OJ91TgeHSNSS+hcUcxWT+Gket/jz9aubqEYm8AdnBgzHewl7FCG5TXckw4WDfyN83sJizz0=
+	t=1714082338; cv=none; b=aEvTjDq3TgY/Bj4TOobNg6ymPnCGQFSsjCk44suTAz/JMDh1ARd+rZaBzPdSqt6IbYLW1bFadfmWYx95FlzMFfGA5lBwmQ32w8f7ldmE5D6RM2GKaJ/6fC3v6SgpCA6qTFI7ZAwAPCPd0hom1ix7J1Ap7sEPGiOdL4oWy8VUzOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714082226; c=relaxed/simple;
-	bh=3ZV5smop/lPyYIXEXoCUHn82p3Cb7VEDXtcEeatmiBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m5CXvuFottjnyaj8H9dCP4fDfAspjJHCyVQAo4wbZniyMmFE876Lw1OvOTM7TwVmI/L9eiCrT8wMZcamNvyTpfs38CyllYZpOKrJu5aoRVyOGCeSu/1fqTattJm/OuwF9ucNf30CJDdUPl9KA8+1Dnta2Jzc/bXuArXni5Q82U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=M8vrWQ71; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1714082215; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=V92ffFYenJ+D/klo7VNY7AiRuYJPKbryKeaFLPKmcfI=;
-	b=M8vrWQ71Sw8WVSjL6UeWXbzM9qOVcD2vFlgi61QtBCiVxR/eSoSZd+CdKd0T8F18/kuF4XG+SrYE3vfdGD74mTdER8kBAN9w1JXZQboTBNoGUDwLmGBArnvIWdeMPXgcVMDYMZbXoy4tx+AuvBCwrZiTUUTs9el+RYfBzsGpVB4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W5GUHhL_1714082213;
-Received: from 192.168.3.4(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W5GUHhL_1714082213)
-          by smtp.aliyun-inc.com;
-          Fri, 26 Apr 2024 05:56:54 +0800
-Message-ID: <22fccbef-1cf2-4579-a015-936f5ef40782@linux.alibaba.com>
-Date: Fri, 26 Apr 2024 05:56:52 +0800
+	s=arc-20240116; t=1714082338; c=relaxed/simple;
+	bh=fiX4Ks47gnMeXb4hW0Vuokaij51BPH7dBFctRD13Eeg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ajz6spDxwiMoJEGow09Lcz+Ewj4KZhCKIxY8tWhUM5XnbfQsJzhek+6gWrhZTyO4LHYufFFtEcOpZcfw9zJqv7N/N8NU7f1Ad8JSY67H3Xv/xTqEMWbjQEsOf7Cd5oY/+iep0LqvAZE/N37syWOSXcEqC63TlFmfjK94/nxRe60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osuchow.ski; spf=none smtp.mailfrom=osuchow.ski; arc=none smtp.client-ip=91.198.250.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osuchow.ski
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osuchow.ski
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4VQV9m4wBLz9txn;
+	Thu, 25 Apr 2024 23:58:52 +0200 (CEST)
+From: Dawid Osuchowski <linux@osuchow.ski>
+To: linux-fsdevel@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	Dawid Osuchowski <linux@osuchow.ski>
+Subject: [PATCH v2] fs: Create anon_inode_getfile_fmode()
+Date: Thu, 25 Apr 2024 23:58:03 +0200
+Message-ID: <20240425215803.24267-1-linux@osuchow.ski>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH vfs.all 08/26] erofs: prevent direct access of bd_inode
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, hch@lst.de,
- brauner@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
- linux-block@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- yukuai3@huawei.com
-References: <20240406090930.2252838-1-yukuai1@huaweicloud.com>
- <20240406090930.2252838-9-yukuai1@huaweicloud.com>
- <20240407040531.GA1791215@ZenIV>
- <a660a238-2b7e-423f-b5aa-6f5777259f4d@linux.alibaba.com>
- <20240425195641.GJ2118490@ZenIV> <20240425200846.GK2118490@ZenIV>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240425200846.GK2118490@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4VQV9m4wBLz9txn
 
-Hi Al,
+Creates an anon_inode_getfile_fmode() function that works similarly to
+anon_inode_getfile() with the addition of being able to set the fmode
+member.
 
-On 2024/4/26 04:08, Al Viro wrote:
-> On Thu, Apr 25, 2024 at 08:56:41PM +0100, Al Viro wrote:
-> 
->> FWIW, see #misc.erofs and #more.erofs in my tree; the former is the
->> minimal conversion of erofs_read_buf() and switch from buf->inode
->> to buf->mapping, the latter follows that up with massage for
->> erofs_read_metabuf().
-> 
-> First two and last four patches resp.  BTW, what are the intended rules
-> for inline symlinks?  "Should fit within the same block as the last
+Signed-off-by: Dawid Osuchowski <linux@osuchow.ski>
+---
+Changes since v1:
+* removed __anon_inode_create_getfile_fmode()
+* streamlined if statement and got rid of goto
+---
+ fs/anon_inodes.c            | 33 +++++++++++++++++++++++++++++++++
+ include/linux/anon_inodes.h |  3 +++
+ 2 files changed, 36 insertions(+)
 
-symlink on-disk layout follows the same rule of regular files.  The last
-logical block can be inlined right after the on-disk inode (called tail
-packing inline) or use a separate fs block to keep the symlink if tail
-packing inline doesn't fit.
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 0496cb5b6eab..42bd1cb7c9cd 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -148,6 +148,38 @@ struct file *anon_inode_getfile(const char *name,
+ }
+ EXPORT_SYMBOL_GPL(anon_inode_getfile);
+ 
++/**
++ * anon_inode_getfile_fmode - creates a new file instance by hooking it up to an
++ *                      anonymous inode, and a dentry that describe the "class"
++ *                      of the file
++ *
++ * @name:    [in]    name of the "class" of the new file
++ * @fops:    [in]    file operations for the new file
++ * @priv:    [in]    private data for the new file (will be file's private_data)
++ * @flags:   [in]    flags
++ * @f_mode:  [in]    fmode
++ *
++ * Creates a new file by hooking it on a single inode. This is useful for files
++ * that do not need to have a full-fledged inode in order to operate correctly.
++ * All the files created with anon_inode_getfile() will share a single inode,
++ * hence saving memory and avoiding code duplication for the file/inode/dentry
++ * setup. Allows setting the fmode. Returns the newly created file* or an error
++ * pointer.
++ */
++struct file *anon_inode_getfile_fmode(const char *name,
++				const struct file_operations *fops,
++				void *priv, int flags, fmode_t f_mode)
++{
++	struct file *file;
++
++	file = __anon_inode_getfile(name, fops, priv, flags, NULL, false);
++	if (!IS_ERR(file))
++		file->f_mode |= f_mode;
++
++	return file;
++}
++EXPORT_SYMBOL_GPL(anon_inode_getfile_fmode);
++
+ /**
+  * anon_inode_create_getfile - Like anon_inode_getfile(), but creates a new
+  *                             !S_PRIVATE anon inode rather than reuse the
+@@ -271,6 +303,7 @@ int anon_inode_create_getfd(const char *name, const struct file_operations *fops
+ 	return __anon_inode_getfd(name, fops, priv, flags, context_inode, true);
+ }
+ 
++
+ static int __init anon_inode_init(void)
+ {
+ 	anon_inode_mnt = kern_mount(&anon_inode_fs_type);
+diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+index 93a5f16d03f3..ee55f9c11a16 100644
+--- a/include/linux/anon_inodes.h
++++ b/include/linux/anon_inodes.h
+@@ -15,6 +15,9 @@ struct inode;
+ struct file *anon_inode_getfile(const char *name,
+ 				const struct file_operations *fops,
+ 				void *priv, int flags);
++struct file *anon_inode_getfile_fmode(const char *name,
++				const struct file_operations *fops,
++				void *priv, int flags, unsigned int f_mode);
+ struct file *anon_inode_create_getfile(const char *name,
+ 				       const struct file_operations *fops,
+ 				       void *priv, int flags,
+-- 
+2.44.0
 
-> byte of on-disk erofs_inode_{compact,extended}"?  Feels like
-> erofs_read_inode() might be better off if it did copying the symlink
-> body instead of leaving it to erofs_fill_symlink(), complete with
-> the sanity checks...  I'd left that logics alone, though - I'm nowhere
-> near familiar enough with erofs layout.
-If I understand correctly, do you mean just fold erofs_fill_symlink()
-into the caller?  That is fine with me, I can change this in the
-future.
-
-Thanks,
-Gao Xiang
 
