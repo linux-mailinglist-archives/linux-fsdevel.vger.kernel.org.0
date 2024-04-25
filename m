@@ -1,102 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-17762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845EA8B222E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 15:06:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5EE8B2276
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 15:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4049128348A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 13:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10FF81C2114D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 13:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E6B149C41;
-	Thu, 25 Apr 2024 13:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJE3B9yH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4308149DF2;
+	Thu, 25 Apr 2024 13:23:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422541494D8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 13:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DE8149C66;
+	Thu, 25 Apr 2024 13:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714050354; cv=none; b=oaiq5JyuqA4TMNv8obrRWwCLnMht6LId0wlRbeVtv1t/APy/qSE0mjkrJuNwqaTiASAFDY+inxpw4cAHaF+6CLmD2exrSTurcUgHnrDrNNo/UK+Rqk63qnUSZTKeUCdDPIqJOKs0RLo2HfreCbbFWIKUW+NifNSy/b+Z1w5KiQU=
+	t=1714051388; cv=none; b=kjrw+60Q9sOpmyxCkMPWt4v0yu6C9GjK3WckABiW29WFnAy4Y77EmlDu9FL1snfS2IhNXCoV2++c1qleO/A9dOMYS019x+64Tk2Pdw1GAN9tDjeHXyXm9niXjmFm0SRVUgzxzQhbnvTQZlpYm1SOoUfEGodrozj7rvlgMgv8aa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714050354; c=relaxed/simple;
-	bh=uDoGrBVCGBf/mZWc2r3+d5ChWxJt/eB5nZMpgOJc0Eg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FNKCs+RllkAHhSUAMUC3WLlX6ncs9J1Jlh10YL0wBE4QefmZ/ju3sGvAlASK7ADTGfgNYLm7JYtUFprKPbAES7hlPgz3xjFzITVHYtqLU22qbo2VNhjgFdQVrHsueUc21SHZoMH4SlURAo+Xz4+MbkhtJZn1ES7zM6Q95xJ+AyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJE3B9yH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B27F7C113CC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 13:05:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714050353;
-	bh=uDoGrBVCGBf/mZWc2r3+d5ChWxJt/eB5nZMpgOJc0Eg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EJE3B9yHsqiEl2XbSGpwAvcVxozwYVKLUjmIia/PXIaWG0u56dUxwdJSl7bCM5DAc
-	 ZmwQEo9WCtwAdeSK5Z05DxzHpbqy5AlT3luROiThOqtrSTrGN2fLRWmgkm5ofYC4E/
-	 JKXKW7gKoqAjHfSUXDaLxtLDU8mVVKnzuR95Jk4SxBfsvYx4dRNqPtGw7J0fsQz6Uh
-	 6OKqA4nGRtqsm1vaVrZktmmBocJHqHD0cJ9ZjExU8Iyi0KqUR8/EoWJdjfUXypl8L5
-	 h3nrpRvZkf6jy6a5wjPJMFJpLTTNrYx55MWyhUdstFu94QMddz/BFy2Btl0cYxdodP
-	 jnKGOLDihlIJg==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ac90ad396dso559185eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 06:05:53 -0700 (PDT)
-X-Gm-Message-State: AOJu0YxKJS2dYkbeDGdN/js06x3xJLIKg2Gn5L0VY0fyuuL5wSXuAY7t
-	A8jDvDqcZkD1Ar2Ua2F3QVccEsB9jb3JJP109RzKE43K0bikBV3nGX19NPl4VJf+INckPHZENZq
-	Z50FLHkPaKb5eedzlIViiTDrM9Zc=
-X-Google-Smtp-Source: AGHT+IHS0IrTEbeJp3Z5CyAn/KdRPJQssid3W/HyqTKUyYmFl1j5qDJhDjfWeCbYswTYd0xMLI5Vv2Hf7RX8bz9z3OI=
-X-Received: by 2002:a4a:301:0:b0:5af:24de:7f1 with SMTP id 1-20020a4a0301000000b005af24de07f1mr6084899ooi.7.1714050353031;
- Thu, 25 Apr 2024 06:05:53 -0700 (PDT)
+	s=arc-20240116; t=1714051388; c=relaxed/simple;
+	bh=YIeyc2rs/L/mmWn560rSiI949EjkmDH3k+JZWsMuzTY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NmhQSlnVTzNkYqbvqYNCwUfef9t22MasNDsMMUOVhzyeJ3zsoVdRWZr113aJ+RQ8Osh3p/B/4pDOcjVTvO1h4SSJ0nadJuH3hYplypPm+5O0OpDQYQL9qrSs3WTtdvKYEXnRJYumHLZMHchrWhRtKY6+X/SCsk0LmYwudFaRe5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VQGkR4fsxz4f3khT;
+	Thu, 25 Apr 2024 21:22:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 3FF741A016E;
+	Thu, 25 Apr 2024 21:23:03 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgCXaBEqWSpmHu+2Kw--.61462S4;
+	Thu, 25 Apr 2024 21:23:01 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	brauner@kernel.org,
+	david@fromorbit.com,
+	chandanbabu@kernel.org,
+	tytso@mit.edu,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v5 0/9] xfs/iomap: fix non-atomic clone operation and don't update size when zeroing range post eof
+Date: Thu, 25 Apr 2024 21:13:26 +0800
+Message-Id: <20240425131335.878454-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240425045525epcas1p1052d7d89d9ced86a34dbe5f6a7dcad39@epcas1p1.samsung.com>
- <PUZPR04MB6316FDC76BB5D2818276D39581172@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <664457955.21714026181854.JavaMail.epsvc@epcpadp4>
-In-Reply-To: <664457955.21714026181854.JavaMail.epsvc@epcpadp4>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 25 Apr 2024 22:05:41 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_n6SkodLP9+_S3tNL12W=3uH-jvOHrvtSq0_KW30vw9Q@mail.gmail.com>
-Message-ID: <CAKYAXd_n6SkodLP9+_S3tNL12W=3uH-jvOHrvtSq0_KW30vw9Q@mail.gmail.com>
-Subject: Re: [PATCH v2] exfat: zero the reserved fields of file and stream
- extension dentries
-To: Sungjong Seo <sj1557.seo@samsung.com>, "Yuezhang.Mo" <Yuezhang.Mo@sony.com>
-Cc: linux-fsdevel@vger.kernel.org, Andy.Wu@sony.com, Wataru.Aoyama@sony.com, 
-	cpgs@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgCXaBEqWSpmHu+2Kw--.61462S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGrW5WF47AF17XF1rurWxJFb_yoW5Xw45pF
+	ZxKwsxKrs5Kr1fZrnayF45Xw1rK3Z3Gr4UCr1xJws3Z3y5ZF1xZa1IgF1F9rWUAr93W3Wj
+	qF4jyF97Cr1DAa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	fUoOJ5UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-2024=EB=85=84 4=EC=9B=94 25=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 3:23, S=
-ungjong Seo <sj1557.seo@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> > From exFAT specification, the reserved fields should initialize
-> > to zero and should not use for any purpose.
-> >
-> > If create a new dentry set in the UNUSED dentries, all fields
-> > had been zeroed when allocating cluster to parent directory.
-> >
-> > But if create a new dentry set in the DELETED dentries, the
-> > reserved fields in file and stream extension dentries may be
-> > non-zero. Because only the valid bit of the type field of the
-> > dentry is cleared in exfat_remove_entries(), if the type of
-> > dentry is different from the original(For example, a dentry that
-> > was originally a file name dentry, then set to deleted dentry,
-> > and then set as a file dentry), the reserved fields is non-zero.
-> >
-> > So this commit initializes the dentry to 0 before createing file
-> > dentry and stream extension dentry.
-> >
-> > Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-> > Reviewed-by: Andy Wu <Andy.Wu@sony.com>
-> > Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
->
-> Looks good. Thanks for your patch.
-> Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-Applied it to #dev.
-Thanks!
+Changes since v4:
+ - For zeroing range in xfs, move the delalloc check to before searching
+   the COW fork when zeroing range. Only modify patch 04, please see it
+   for details, not modify other patches.
+
+Changes since v3:
+ - Improve some git message comments and do some minor code cleanup, no
+   logic changes.
+
+Changes since v2:
+ - Merge the patch for dropping of xfs_convert_blocks() and the patch
+   for modifying xfs_bmapi_convert_delalloc().
+ - Reword the commit message of the second patch.
+
+Changes since v1:
+ - Make xfs_bmapi_convert_delalloc() to allocate the target offset and
+   drop the writeback helper xfs_convert_blocks().
+ - Don't use xfs_iomap_write_direct() to convert delalloc blocks for
+   zeroing posteof case, use xfs_bmapi_convert_delalloc() instead.
+ - Fix two off-by-one issues when converting delalloc blocks.
+ - Add a separate patch to drop the buffered write failure handle in
+   zeroing and unsharing.
+ - Add a comments do emphasize updating i_size should under folio lock.
+ - Make iomap_write_end() to return a boolean, and do some cleanups in
+   buffered write begin path.
+
+This patch series fix a problem of exposing zeroed data on xfs since the
+non-atomic clone operation. This problem was found while I was
+developing ext4 buffered IO iomap conversion (ext4 is relying on this
+fix [1]), the root cause of this problem and the discussion about the
+solution please see [2]. After fix the problem, iomap_zero_range()
+doesn't need to update i_size so that ext4 can use it to zero partial
+block, e.g. truncate eof block [3].
+
+[1] https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
+[2] https://lore.kernel.org/linux-ext4/9b0040ef-3d9d-6246-4bdd-82b9a8f55fa2@huaweicloud.com/
+[3] https://lore.kernel.org/linux-ext4/9c9f1831-a772-299b-072b-1c8116c3fb35@huaweicloud.com/
+
+Thanks,
+Yi.
+
+Zhang Yi (9):
+  xfs: match lock mode in xfs_buffered_write_iomap_begin()
+  xfs: make the seq argument to xfs_bmapi_convert_delalloc() optional
+  xfs: make xfs_bmapi_convert_delalloc() to allocate the target offset
+  xfs: convert delayed extents to unwritten when zeroing post eof blocks
+  iomap: drop the write failure handles when unsharing and zeroing
+  iomap: don't increase i_size if it's not a write operation
+  iomap: use a new variable to handle the written bytes in
+    iomap_write_iter()
+  iomap: make iomap_write_end() return a boolean
+  iomap: do some small logical cleanup in buffered write
+
+ fs/iomap/buffered-io.c   | 105 ++++++++++++++++++++++-----------------
+ fs/xfs/libxfs/xfs_bmap.c |  40 +++++++++++++--
+ fs/xfs/xfs_aops.c        |  54 ++++++--------------
+ fs/xfs/xfs_iomap.c       |  39 +++++++++++++--
+ 4 files changed, 144 insertions(+), 94 deletions(-)
+
+-- 
+2.39.2
+
 
