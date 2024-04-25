@@ -1,169 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-17695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18788B1853
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 03:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2803B8B185F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 03:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AE17285F22
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 01:07:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A1F284E62
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 01:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D3711720;
-	Thu, 25 Apr 2024 01:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63856DDBD;
+	Thu, 25 Apr 2024 01:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svTg5EEU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4521097B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 01:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C6BAD2D;
+	Thu, 25 Apr 2024 01:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714007254; cv=none; b=kxSigLWvwTtKKjq+YeK55KDyg5GO9bB5mQzwe9hAuotAo/U6q4fCxUCBbgpHw6cEPSUQnhG1fG3GRSKMejHkFsRMybukYckCimEf2roF+CHAqbFQHaxgQDZT4bogsShEyFf6TF1jNi2dziOn8aLYmpDF0GIoNGAOIJshYn1+Qj0=
+	t=1714007670; cv=none; b=qMULW27Yg+ZEpOJIcU73hgmRZiQ/UpNSskvQbgggqg0k/j90UTpKbarUbK5LKvaQcwvciSJBv+xypgSm/tVUzFeHdxYCe/bRu9kBtnrku9ld96pu58HZ/p+XTuPsE1guW3pMR+ZRj6bgg9lAf3voMdeBgxZHNwcFxtsImNeUWUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714007254; c=relaxed/simple;
-	bh=oXD77TlEA+KoDVeVhKX9xrXf+Cy7+f6lUcx09x4ptI0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZU798ftJaSuTKjbTN+6nHJV3qxcKhSX3t+umEprUMLEM8bphGMq7LEZJwJX265XRisMFZh0Ojn5uKv2l6k0LufSncOuOWeas8hJjeBDm3o5LOeH6yhQmfa7e06K5wg+eLH8v3K0BSNlUo369rr1eP8xJZ41lbMEoP3LBx5LHUFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7dd8cd201d6so49335339f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 18:07:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714007252; x=1714612052;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CN7foOohRk9vq2WfV4A1ZYhtMDIkqy+Gz3ButiULe+w=;
-        b=Ng4qhR3D8hCNaocu02NMb7Eyo8ZLkUI3QMjQh+DAB0amB6S6aejelSkzDf/eeKWmzi
-         Zi9preeqaUGHgOosY3h03dw7ghhaZSNSFTPSWgyvedI4ZcnuLbu42knytVqX/d//rTmA
-         HQRwhid8S7/LUdETb3QC41p9o8ViUNpdQtLoqkuPIdKGLneu0roVL3O22cxUHLzn4w+N
-         fzyGj2XoPYk9e+qD3yoeHH9cVeZiLkhjlFmEFFhosL8L7K1kfCJvD0av/hAwBhtAVxSm
-         2hQ/gJCx5DxZY2ulSgWeN4COnet3uSvtdw2Sx5UCfeOD6uJq/ezFB2+vHkbEpVZPZaDv
-         K+DA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbH4pJmxWQ8tu5ArwLkeTGcMezGLIDLZIuQ8y4sAArlsd1tRC1vkWSS+RiaCqB4H4c6fsYNH/OXJKe82duQ05aLYv8PskyrPQW+FKXYA==
-X-Gm-Message-State: AOJu0Yz/500TyQzPqCaD+PT/eUvzVOyvC5M2QY0t64yWdd5pD47ilPko
-	TBYBvOaC6fVFbZdNBBrMpHD6Hb/7WVbstGHTFhRN6DMLr83P8IPCD3oShOxPCl3j1CxT2B2bNK9
-	rcEIywRIs/Pm8hni3ByvX6AGxKR4vm6sPElPSJclQbKjgrtotLeHZox4=
-X-Google-Smtp-Source: AGHT+IE3a2tP38RQ+zKNUzmeTK0UIwp2l4ksdYXzw9xJQwy2OVsrBiLsWJ+Nuyem1mhBpOOsQXBG83GjM0e6TYwvz5SWMHufRCuN
+	s=arc-20240116; t=1714007670; c=relaxed/simple;
+	bh=6SmXZw96DsK9jTk5dicyOATJBdCQzVp6690ZLqjDqa4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KRjQKrM87+xYb5CjfStV3PsHca/v/vrcNAk6CoJbKnB7A6gIhvmTWXLQbxKatJpvfc460dcuS+rwh4SPcmC+JwP+n9V78ax6QtnbKL5nRT+0E9dlenoAqyEse43xvUwjIC5sm4V7N4MrfdXErdMwp+dFEtsmHb7I2ZdWG0OZWqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svTg5EEU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18CDAC113CD;
+	Thu, 25 Apr 2024 01:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714007670;
+	bh=6SmXZw96DsK9jTk5dicyOATJBdCQzVp6690ZLqjDqa4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=svTg5EEUf3Fz9BKUCsVwaYV4bEskmwIvflyUgrDRcRT4luoC4CwM+2Px1f9OKzgMi
+	 MDVfl/Ru5ZRJaEaY7HwScOYTsH+y1tD2Y9a2WUBJ/U2qUHdZnC9hcGr9Q8Yvhllvkz
+	 G0N2RhSbhVX5nlgkd/dH9JA/zxraW62F572+aIy5uiu4dLrTqN+dHSztdmJ+5G4EnL
+	 oYqTBOkeuoUPC97+FiRyGjDeyWy72jWeuioA1PVSL5yOrUZGwxwhgZ57of4Zyk7gRp
+	 kilbInVD46VrypUUF/cTTwocjxDsE9YStpy3nMgOl9llnuv7akmRD83zqHF/YhIDKa
+	 T2wGMBL+tNXTA==
+Date: Wed, 24 Apr 2024 18:14:29 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: ebiggers@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
+	hch@infradead.org
+Subject: Re: [PATCH 13/29] xfs: add fs-verity support
+Message-ID: <20240425011429.GY360919@frogsfrogsfrogs>
+References: <171175868489.1988170.9803938936906955260.stgit@frogsfrogsfrogs>
+ <171175868775.1988170.1235485201931301190.stgit@frogsfrogsfrogs>
+ <r72bz6xc5h2iz2jko35mcfdxs7etgznywv25hfovyv24rvvv4q@jrxihodinndr>
+ <20240402163453.GB6390@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2dc9:b0:7d5:d9ec:2ea1 with SMTP id
- l9-20020a0566022dc900b007d5d9ec2ea1mr185239iow.4.1714007252664; Wed, 24 Apr
- 2024 18:07:32 -0700 (PDT)
-Date: Wed, 24 Apr 2024 18:07:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007010c50616e169f4@google.com>
-Subject: [syzbot] [ext4?] WARNING: locking bug in find_lock_lowest_rq
-From: syzbot <syzbot+9a3a26ce3bf119f0190b@syzkaller.appspotmail.com>
-To: jack@suse.com, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240402163453.GB6390@frogsfrogsfrogs>
 
-Hello,
+On Tue, Apr 02, 2024 at 09:34:53AM -0700, Darrick J. Wong wrote:
+> On Tue, Apr 02, 2024 at 10:42:44AM +0200, Andrey Albershteyn wrote:
+> > On 2024-03-29 17:39:27, Darrick J. Wong wrote:
+> > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > > 
+> > > Add integration with fs-verity. The XFS store fs-verity metadata in
+> > > the extended file attributes. The metadata consist of verity
+> > > descriptor and Merkle tree blocks.
+> > > 
+> > > The descriptor is stored under "vdesc" extended attribute. The
+> > > Merkle tree blocks are stored under binary indexes which are offsets
+> > > into the Merkle tree.
+> > > 
+> > > When fs-verity is enabled on an inode, the XFS_IVERITY_CONSTRUCTION
+> > > flag is set meaning that the Merkle tree is being build. The
+> > > initialization ends with storing of verity descriptor and setting
+> > > inode on-disk flag (XFS_DIFLAG2_VERITY).
+> > > 
+> > > The verification on read is done in read path of iomap.
+> > > 
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > [djwong: replace caching implementation with an xarray, other cleanups]
+> > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > > ---
+> > >  fs/xfs/Makefile               |    2 
+> > >  fs/xfs/libxfs/xfs_attr.c      |   41 +++
+> > >  fs/xfs/libxfs/xfs_attr.h      |    1 
+> > >  fs/xfs/libxfs/xfs_da_format.h |   14 +
+> > >  fs/xfs/libxfs/xfs_ondisk.h    |    3 
+> > >  fs/xfs/libxfs/xfs_verity.c    |   58 ++++
+> > >  fs/xfs/libxfs/xfs_verity.h    |   13 +
+> > >  fs/xfs/xfs_fsverity.c         |  559 +++++++++++++++++++++++++++++++++++++++++
+> > >  fs/xfs/xfs_fsverity.h         |   20 +
+> > >  fs/xfs/xfs_icache.c           |    4 
+> > >  fs/xfs/xfs_inode.h            |    5 
+> > >  fs/xfs/xfs_super.c            |   17 +
+> > >  fs/xfs/xfs_trace.h            |   32 ++
+> > >  13 files changed, 769 insertions(+)
+> > >  create mode 100644 fs/xfs/libxfs/xfs_verity.c
+> > >  create mode 100644 fs/xfs/libxfs/xfs_verity.h
+> > >  create mode 100644 fs/xfs/xfs_fsverity.c
+> > >  create mode 100644 fs/xfs/xfs_fsverity.h
+> > > 
+> > > 
+> 
+> <snip>
+> 
+> > > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> > > index 5a202706fc4a4..70c5700132b3e 100644
+> > > --- a/fs/xfs/xfs_inode.h
+> > > +++ b/fs/xfs/xfs_inode.h
+> > > @@ -96,6 +96,9 @@ typedef struct xfs_inode {
+> > >  	spinlock_t		i_ioend_lock;
+> > >  	struct work_struct	i_ioend_work;
+> > >  	struct list_head	i_ioend_list;
+> > > +#ifdef CONFIG_FS_VERITY
+> > > +	struct xarray		i_merkle_blocks;
+> > > +#endif
+> > 
+> > So, is this fine like this or do you plan to change it to per-ag
+> > mapping? I suppose Christoph against adding it to inodes [1]
+> > 
+> > [1]: https://lore.kernel.org/linux-xfs/ZfecSzBoVDW5328l@infradead.org/
+> 
+> Still working on it.  hch and I have been nitpicking the parent pointers
+> patchset.  I think a per-ag rhashtable would work in principle, but I
+> don't know how well it will handle a 128-bit key.
 
-syzbot found the following issue on:
+Update: works fine, and now we don't need to add 16 bytes of overhead to
+every xfs_inode everywhere.
 
-HEAD commit:    977b1ef51866 Merge tag 'block-6.9-20240420' of git://git.k..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1455666f180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d239903bd07761e5
-dashboard link: https://syzkaller.appspot.com/bug?extid=9a3a26ce3bf119f0190b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d69c27180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d5920d180000
+--D
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/08d7b6e107aa/disk-977b1ef5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9c5e543ffdcf/vmlinux-977b1ef5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/04a6d79d2f69/bzImage-977b1ef5.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9a3a26ce3bf119f0190b@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 11 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 0 PID: 11 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4773 [inline]
-WARNING: CPU: 0 PID: 11 at kernel/locking/lockdep.c:232 __lock_acquire+0x573/0x1fd0 kernel/locking/lockdep.c:5087
-Modules linked in:
-CPU: 0 PID: 11 Comm: kworker/u8:1 Not tainted 6.9.0-rc4-syzkaller-00266-g977b1ef51866 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Workqueue: ext4-rsv-conversion ext4_end_io_rsv_work
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4773 [inline]
-RIP: 0010:__lock_acquire+0x573/0x1fd0 kernel/locking/lockdep.c:5087
-Code: 00 00 83 3d ee 8f 36 0e 00 75 23 90 48 c7 c7 40 b7 ca 8b 48 c7 c6 e0 b9 ca 8b e8 f8 f6 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0018:ffffc900001070d0 EFLAGS: 00010046
-RAX: 006b76d8e1927600 RBX: 0000000000001b80 RCX: ffff8880172abc00
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 000000000000001e R08: ffffffff81588072 R09: 1ffff1101728519a
-R10: dffffc0000000000 R11: ffffed101728519b R12: 0000000000000001
-R13: ffff8880172abc00 R14: 000000000000001e R15: ffff8880172ac7e8
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdb8988bb8 CR3: 000000002e4fc000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
- raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
- _double_lock_balance kernel/sched/sched.h:2714 [inline]
- double_lock_balance kernel/sched/sched.h:2759 [inline]
- find_lock_lowest_rq+0x1e1/0x670 kernel/sched/rt.c:1942
- push_rt_task+0x13f/0x7f0 kernel/sched/rt.c:2075
- push_rt_tasks kernel/sched/rt.c:2125 [inline]
- task_woken_rt+0x14c/0x220 kernel/sched/rt.c:2425
- ttwu_do_activate+0x338/0x7e0 kernel/sched/core.c:3805
- ttwu_queue kernel/sched/core.c:4057 [inline]
- try_to_wake_up+0x88b/0x1470 kernel/sched/core.c:4378
- autoremove_wake_function+0x16/0x110 kernel/sched/wait.c:384
- __wake_up_common kernel/sched/wait.c:89 [inline]
- __wake_up_common_lock+0x132/0x1e0 kernel/sched/wait.c:106
- sub_reserved_credits fs/jbd2/transaction.c:213 [inline]
- start_this_handle+0x1db0/0x22a0 fs/jbd2/transaction.c:442
- jbd2_journal_start_reserved+0xe8/0x300 fs/jbd2/transaction.c:624
- __ext4_journal_start_reserved+0x237/0x460 fs/ext4/ext4_jbd2.c:161
- ext4_convert_unwritten_io_end_vec+0x34/0x170 fs/ext4/extents.c:4877
- ext4_end_io_end fs/ext4/page-io.c:186 [inline]
- ext4_do_flush_completed_IO fs/ext4/page-io.c:259 [inline]
- ext4_end_io_rsv_work+0x36c/0x6f0 fs/ext4/page-io.c:273
- process_one_work kernel/workqueue.c:3254 [inline]
- process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
- kthread+0x2f2/0x390 kernel/kthread.c:388
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> --D
+> 
+> > >  } xfs_inode_t;
+> > >  
+> > >  static inline bool xfs_inode_on_unlinked_list(const struct xfs_inode *ip)
+> > > @@ -391,6 +394,8 @@ static inline bool xfs_inode_needs_cow_around(struct xfs_inode *ip)
+> > >   */
+> > >  #define XFS_IREMAPPING		(1U << 15)
+> > >  
+> > > +#define XFS_VERITY_CONSTRUCTION	(1U << 16) /* merkle tree construction */
+> > > +
+> > >  /* All inode state flags related to inode reclaim. */
+> > >  #define XFS_ALL_IRECLAIM_FLAGS	(XFS_IRECLAIMABLE | \
+> > >  				 XFS_IRECLAIM | \
+> > > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> > > index 42a1e1f23d3b3..4e398884c46ae 100644
+> > > --- a/fs/xfs/xfs_super.c
+> > > +++ b/fs/xfs/xfs_super.c
+> > > @@ -30,6 +30,7 @@
+> > >  #include "xfs_filestream.h"
+> > >  #include "xfs_quota.h"
+> > >  #include "xfs_sysfs.h"
+> > > +#include "xfs_fsverity.h"
+> > >  #include "xfs_ondisk.h"
+> > >  #include "xfs_rmap_item.h"
+> > >  #include "xfs_refcount_item.h"
+> > > @@ -53,6 +54,7 @@
+> > >  #include <linux/fs_context.h>
+> > >  #include <linux/fs_parser.h>
+> > >  #include <linux/fsverity.h>
+> > > +#include <linux/iomap.h>
+> > >  
+> > >  static const struct super_operations xfs_super_operations;
+> > >  
+> > > @@ -672,6 +674,8 @@ xfs_fs_destroy_inode(
+> > >  	ASSERT(!rwsem_is_locked(&inode->i_rwsem));
+> > >  	XFS_STATS_INC(ip->i_mount, vn_rele);
+> > >  	XFS_STATS_INC(ip->i_mount, vn_remove);
+> > > +	if (fsverity_active(inode))
+> > > +		xfs_fsverity_cache_drop(ip);
+> > >  	fsverity_cleanup_inode(inode);
+> > >  	xfs_inode_mark_reclaimable(ip);
+> > >  }
+> > > @@ -1534,6 +1538,9 @@ xfs_fs_fill_super(
+> > >  	sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP | QTYPE_MASK_PRJ;
+> > >  #endif
+> > >  	sb->s_op = &xfs_super_operations;
+> > > +#ifdef CONFIG_FS_VERITY
+> > > +	sb->s_vop = &xfs_fsverity_ops;
+> > > +#endif
+> > >  
+> > >  	/*
+> > >  	 * Delay mount work if the debug hook is set. This is debug
+> > > @@ -1775,10 +1782,20 @@ xfs_fs_fill_super(
+> > >  		xfs_warn(mp,
+> > >  	"EXPERIMENTAL parent pointer feature enabled. Use at your own risk!");
+> > >  
+> > > +	if (xfs_has_verity(mp))
+> > > +		xfs_alert(mp,
+> > > +	"EXPERIMENTAL fsverity feature in use. Use at your own risk!");
+> > > +
+> > >  	error = xfs_mountfs(mp);
+> > >  	if (error)
+> > >  		goto out_filestream_unmount;
+> > >  
+> > > +#ifdef CONFIG_FS_VERITY
+> > > +	error = iomap_init_fsverity(mp->m_super);
+> > > +	if (error)
+> > > +		goto out_unmount;
+> > > +#endif
+> > > +
+> > >  	root = igrab(VFS_I(mp->m_rootip));
+> > >  	if (!root) {
+> > >  		error = -ENOENT;
+> > > diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+> > > index e2992b0115ad2..86a8702c1e27c 100644
+> > > --- a/fs/xfs/xfs_trace.h
+> > > +++ b/fs/xfs/xfs_trace.h
+> > > @@ -5908,6 +5908,38 @@ TRACE_EVENT(xfs_growfs_check_rtgeom,
+> > >  );
+> > >  #endif /* CONFIG_XFS_RT */
+> > >  
+> > > +#ifdef CONFIG_FS_VERITY
+> > > +DECLARE_EVENT_CLASS(xfs_fsverity_cache_class,
+> > > +	TP_PROTO(struct xfs_inode *ip, unsigned long key, unsigned long caller_ip),
+> > > +	TP_ARGS(ip, key, caller_ip),
+> > > +	TP_STRUCT__entry(
+> > > +		__field(dev_t, dev)
+> > > +		__field(xfs_ino_t, ino)
+> > > +		__field(unsigned long, key)
+> > > +		__field(void *, caller_ip)
+> > > +	),
+> > > +	TP_fast_assign(
+> > > +		__entry->dev = ip->i_mount->m_super->s_dev;
+> > > +		__entry->ino = ip->i_ino;
+> > > +		__entry->key = key;
+> > > +		__entry->caller_ip = (void *)caller_ip;
+> > > +	),
+> > > +	TP_printk("dev %d:%d ino 0x%llx key 0x%lx caller %pS",
+> > > +		  MAJOR(__entry->dev), MINOR(__entry->dev),
+> > > +		  __entry->ino,
+> > > +		  __entry->key,
+> > > +		  __entry->caller_ip)
+> > > +)
+> > > +
+> > > +#define DEFINE_XFS_FSVERITY_CACHE_EVENT(name) \
+> > > +DEFINE_EVENT(xfs_fsverity_cache_class, name, \
+> > > +	TP_PROTO(struct xfs_inode *ip, unsigned long key, unsigned long caller_ip), \
+> > > +	TP_ARGS(ip, key, caller_ip))
+> > > +DEFINE_XFS_FSVERITY_CACHE_EVENT(xfs_fsverity_cache_load);
+> > > +DEFINE_XFS_FSVERITY_CACHE_EVENT(xfs_fsverity_cache_store);
+> > > +DEFINE_XFS_FSVERITY_CACHE_EVENT(xfs_fsverity_cache_drop);
+> > > +#endif /* CONFIG_XFS_VERITY */
+> > > +
+> > >  #endif /* _TRACE_XFS_H */
+> > >  
+> > >  #undef TRACE_INCLUDE_PATH
+> > > 
+> > 
+> > -- 
+> > - Andrey
+> > 
+> > 
+> 
 
