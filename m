@@ -1,615 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-17804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422488B2551
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 17:39:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB928B2558
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 17:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EC20B22E19
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 15:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC55D1F24CF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 15:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649E214B093;
-	Thu, 25 Apr 2024 15:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813C614B080;
+	Thu, 25 Apr 2024 15:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8Jve8IU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lu6K1LeB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D768374F5;
-	Thu, 25 Apr 2024 15:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF21149E0C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 15:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714059574; cv=none; b=f1i6x61cQxP0z2XNALEAKgfE7UtHOLpGhbz2rblMdc8CSFjg8qXl1vnodKuJW+BoH9+pPliLzRQTBF0vcOhYVNEoCHW6GiFppVY61xQKebmO/jPCMDOuBDbMEHmZfrC6WmujvIR/uJKcuAfSaZRqVRUrcURoEUafW6eXEsR5TG0=
+	t=1714059592; cv=none; b=BQdPPGfJKf+9iICdKi6rNSyaqtM+tOjhS8LLye0SqTf9BbPC8dBwuNPRISr83WoLotIKw5Mqo4HpJJid7x63gQ4atMUclzmPxzDlHA+0jOcHfLhDGgc1DZbp9gWAETyr2knwP5nGDC+zlHIUb67nOHP3hlW2IU2kzlCWUB/tzug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714059574; c=relaxed/simple;
-	bh=bSUclU2izGheTwXd8keft4MC8P1yEhM3Sj2Ld4U8jgs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IyhoxdNY/hSs/YJAUQeMUY2nTyq2EYSdDvdor341GTkHjuZLW9xQy/9mhdP6pvxrRWZPvEtstowiET3fmzrzuVi5JDianrunmmsU0yRb9RAShCjLztpnj3kxqspbvwAjLYD3agEkyAyJX1MsL0wLwcoAYNvlnFLvQtMFav9HjJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8Jve8IU; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1eac92f7c74so5363915ad.3;
-        Thu, 25 Apr 2024 08:39:31 -0700 (PDT)
+	s=arc-20240116; t=1714059592; c=relaxed/simple;
+	bh=WF+dlvX2I/JhfKIJrRxXQkXnpq+LBXuSxxxOJYIm9Ew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nUWmx1EWIG6riEXoKOMdJNfSjFyPPUL0wE5d9RNPRW7kUck+e8BHcY75VvkXTI96mPt0HqghZgQaxNAQp5bhxF8OqOTUldYCkFIqHOH6n30+mJmJCT79v3hBgdPcU+NNstmHoXhXs4hHKPhSuh8KbRNaEHzVeXrCT2jQoMlqXb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lu6K1LeB; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-d9b9adaf291so1229680276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 08:39:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714059571; x=1714664371; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1714059590; x=1714664390; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A+WR63U8nKmZFg5g3cntUB4B81Edur+hAEfQ73A5aFQ=;
-        b=Z8Jve8IUcGvV4EU+PDG/ZyD7cxIJBMR6MuFQbqPEDoDjuDM5VDsErX3ru0Of1d4gUR
-         B2r++/CdJaj46G2x0ra4boPcEfoXskRs4Ot0X5NR2MX7xaLC3Fa9tvOTYWc07yOiJyFM
-         uTZIqdJRkZ6oj9ENiIKcVcOnVP+gci6iL8YYoZh0KVbQC4rWYp8Z4DVIsz66N4DMQNDG
-         HWIcofPPzAAfFzHYdpSGcjSxAAlyVy7qiACaNVBhVZmviDlVn0jcOw6153M2xasFNiZT
-         w4AfZZJMPNCcwlwwJqq3JJ57+/050gJex7UDYNMY1a7DxCBdNX9G84Q4kVnf7KJVkdig
-         zvGA==
+        bh=e0BChCss6w1nIzeILAtQLE3LhBpW3YXUB4HhPqTq7zU=;
+        b=Lu6K1LeBSNBNuTVNCNhOq9CVfWCgWKfOOjLOuPvMlbZ4TbQX9Y6s3T3Dfquhqvq1gF
+         mSGKoXEglg6vdgTDr5v9G47Ub46LTi7qUsk9DMx4zz8NmC2nBp58STboK2hpJPK6D8vG
+         o+k4gfJ4LMFLggYdCwnnrRUKnZBBA4vmXiIPPSCwSNsbpdnV+ZvkvC1X8/O9rc+7Ft5w
+         BDqipbhrArlE1vJtRM3CYBzMarSxplWxzeMnYt3vsxsEkfrb0jSHO8Nssq7cY4Ni3EIp
+         ivIsN7Lhc03KWHjEh+harc3wwEVQW9cNDWot+8WGoPk7E/RremVKM910I6z8wswDBghp
+         OxJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714059571; x=1714664371;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1714059590; x=1714664390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A+WR63U8nKmZFg5g3cntUB4B81Edur+hAEfQ73A5aFQ=;
-        b=CzHzqbd4k5TnDjP9VDVWHTToMobEGwk7Ds2/qvzbx/llXpypT5MtgcoaWF8bBrAWkI
-         Nc3XGyH9ru3fIhjpUPLXlpRrFwUSv87rx4IHLFi8G+U2bxOPeXMMpXV7bEnc2anhhUky
-         ev6iVIeGmAIZg1owTksT9Rf99DT+QcsssOe/ijhumYQx0xjpfIjrfoLiaosm5a+AJYcs
-         DKTaScKA/ovrFamO1yE8jXYt2m/pxhQsjwj/i/aVadStTWscYfELziGSNJ+h5ZUAfUCc
-         dwt4cVWSLneKnAmOZolPaRevOA5JsT7DqtMJTegLpjcqxeimLREdgrXITguoaHWwO9zs
-         VNzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNuakBrCGteM5ZJ7FKE5xWh9V1Xu0iqj/Dt1wUS7Bo8liQxdIdRGmFapQqsHwxuQod30XVXMrnmwjHKKF/zMyhS73tz7qBVlrAuQCw
-X-Gm-Message-State: AOJu0YwJ2ul+TNoX+GAK5f4/aGeqTgkywGb/0WbfqNdtER6qVdD2eTh7
-	5hh4tZmvL+Y/JJB1+ma3xOMLPPNNEtOX3AJjdKNtir6ojJKeA0ZzoaWzz7/nz7M=
-X-Google-Smtp-Source: AGHT+IEFO3xhTACsvdmGVlWDvmqEjDEnK2363p/Rd2lSHhywT8HZksTpJxIvxSeo/d+NqC6K4Jj1iQ==
-X-Received: by 2002:a17:903:2451:b0:1ea:9585:a1d7 with SMTP id l17-20020a170903245100b001ea9585a1d7mr4790869pls.37.1714059571146;
-        Thu, 25 Apr 2024 08:39:31 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id y14-20020a1709027c8e00b001e3e244e5c0sm13853843pll.78.2024.04.25.08.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Apr 2024 08:39:30 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+325b61d3c9a17729454b@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	willy@infradead.org,
-	jlayton@kernel.org,
-	brauner@kernel.org,
-	jack@suse.cz,
-	akpm@linux-foundation.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] hfsplus: Fix deadlock in hfsplus filesystem
-Date: Fri, 26 Apr 2024 00:39:24 +0900
-Message-Id: <20240425153924.47962-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <00000000000044243d05eed3fc71@google.com>
-References: <00000000000044243d05eed3fc71@google.com>
+        bh=e0BChCss6w1nIzeILAtQLE3LhBpW3YXUB4HhPqTq7zU=;
+        b=IoN3MiCWlYls9QAWB8hIOaktTbT6mYIzbwmozQSc+IDQfkPUqKU9fSoUnRYXBZZaHb
+         CSH3nFYRDozdVqQlsKM6D0eBbfaH5IBUX1FQKvbKaVGuKQN29RZ1t6i2cUs1zOd+T2A+
+         C3L5kn7y6f8bPaay0vHGXZhJQJFjZDE4qp7nYxOKyE+ISC6jOfzbfLF5h3bh67/eLqhm
+         BR/hwoprdMoYH5Zyje0nFjryWeBvipTcRDRoaXrTLuNGt03ebGhsbq5e533x6bw4kWDV
+         ho9Im3CzwI4AOXKdix7+DRz3es17QQaNVQIHPfSyiIJQlVo/3w8+KkkumTPrQ1Ie2L5R
+         qKTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqk9E04AtYavkqsrZwZCM8RbjfNwV37DOwz3HPNAA8OJeaC/WhldmYKFpjEjrFou194tdySaIFEQgxLb92BLDUB9YD8i9CV0nSPTQ9HQ==
+X-Gm-Message-State: AOJu0Yy7CZqOQMvDDsdPx/nJJYgRi7ugIEpET5hN+cZFwUNugotEh/XH
+	0apxjhqgVig3JgV4RiSo5r9XmXo7dNKRxQFymhTfFw2aHQ88iJ7KfPzNB1LrWgj0HW0p2ZUr88l
+	MAGkXksKcT7SmKGao7D7w6o/OuudjW9M6mqR0
+X-Google-Smtp-Source: AGHT+IHMmrQCod73kiqRAvCkDsnHTcOLVG7U0Dhn6OWsLE5Eza4GBBk8ZEiq+Ddus8vlXjyfwMqyLLjmcyn5VeI1piA=
+X-Received: by 2002:a05:6902:54b:b0:de1:849:a6f3 with SMTP id
+ z11-20020a056902054b00b00de10849a6f3mr5525501ybs.7.1714059589879; Thu, 25 Apr
+ 2024 08:39:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240321163705.3067592-1-surenb@google.com> <202404241852.DC4067B7@keescook>
+ <3eyvxqihylh4st6baagn6o6scw3qhcb6lapgli4wsic2fvbyzu@h66mqxcikmcp>
+In-Reply-To: <3eyvxqihylh4st6baagn6o6scw3qhcb6lapgli4wsic2fvbyzu@h66mqxcikmcp>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 25 Apr 2024 08:39:37 -0700
+Message-ID: <CAJuCfpFtj7MVY+9FaKfq0w7N1qw8=jYifC0sBUAySk=AWBhK6Q@mail.gmail.com>
+Subject: Re: [PATCH v6 00/37] Memory allocation profiling
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Kees Cook <keescook@chromium.org>, akpm@linux-foundation.org, mhocko@suse.com, 
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, jhubbard@nvidia.com, tj@kernel.org, 
+	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, 
+	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
+	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
+	elver@google.com, dvyukov@google.com, songmuchun@bytedance.com, 
+	jbaron@akamai.com, aliceryhl@google.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[syz report]
-======================================================
-WARNING: possible circular locking dependency detected
-6.9.0-rc5-syzkaller-00036-g9d1ddab261f3 #0 Not tainted
-------------------------------------------------------
-syz-executor343/5074 is trying to acquire lock:
-ffff8880482187c8 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfsplus_file_extend+0x21b/0x1b70 fs/hfsplus/extents.c:457
+On Wed, Apr 24, 2024 at 8:26=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> On Wed, Apr 24, 2024 at 06:59:01PM -0700, Kees Cook wrote:
+> > On Thu, Mar 21, 2024 at 09:36:22AM -0700, Suren Baghdasaryan wrote:
+> > > Low overhead [1] per-callsite memory allocation profiling. Not just f=
+or
+> > > debug kernels, overhead low enough to be deployed in production.
+> >
+> > Okay, I think I'm holding it wrong. With next-20240424 if I set:
+> >
+> > CONFIG_CODE_TAGGING=3Dy
+> > CONFIG_MEM_ALLOC_PROFILING=3Dy
+> > CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=3Dy
+> >
+> > My test system totally freaks out:
+> >
+> > ...
+> > SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D4, Nodes=3D1
+> > Oops: general protection fault, probably for non-canonical address 0xc3=
+88d881e4808550: 0000 [#1] PREEMPT SMP NOPTI
+> > CPU: 0 PID: 0 Comm: swapper Not tainted 6.9.0-rc5-next-20240424 #1
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06=
+/2015
+> > RIP: 0010:__kmalloc_node_noprof+0xcd/0x560
+> >
+> > Which is:
+> >
+> > __kmalloc_node_noprof+0xcd/0x560:
+> > __slab_alloc_node at mm/slub.c:3780 (discriminator 2)
+> > (inlined by) slab_alloc_node at mm/slub.c:3982 (discriminator 2)
+> > (inlined by) __do_kmalloc_node at mm/slub.c:4114 (discriminator 2)
+> > (inlined by) __kmalloc_node_noprof at mm/slub.c:4122 (discriminator 2)
+> >
+> > Which is:
+> >
+> >         tid =3D READ_ONCE(c->tid);
+> >
+> > I haven't gotten any further than that; I'm EOD. Anyone seen anything
+> > like this with this series?
+>
+> I certainly haven't. That looks like some real corruption, we're in slub
+> internal data structures and derefing a garbage address. Check kasan and
+> all that?
 
-but task is already holding lock:
-ffff88807dadc0b0 (&tree->tree_lock){+.+.}-{3:3}, at: hfsplus_find_init+0x14a/0x1c0
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&tree->tree_lock){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       hfsplus_file_truncate+0x811/0xb50 fs/hfsplus/extents.c:595
-       hfsplus_delete_inode+0x174/0x220
-       hfsplus_unlink+0x512/0x790 fs/hfsplus/dir.c:405
-       vfs_unlink+0x365/0x600 fs/namei.c:4335
-       do_unlinkat+0x4ae/0x830 fs/namei.c:4399
-       __do_sys_unlinkat fs/namei.c:4442 [inline]
-       __se_sys_unlinkat fs/namei.c:4435 [inline]
-       __x64_sys_unlinkat+0xce/0xf0 fs/namei.c:4435
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       hfsplus_file_extend+0x21b/0x1b70 fs/hfsplus/extents.c:457
-       hfsplus_bmap_reserve+0x105/0x4e0 fs/hfsplus/btree.c:358
-       hfsplus_rename_cat+0x1d0/0x1050 fs/hfsplus/catalog.c:456
-       hfsplus_rename+0x12e/0x1c0 fs/hfsplus/dir.c:552
-       vfs_rename+0xbdb/0xf00 fs/namei.c:4880
-       do_renameat2+0xd94/0x13f0 fs/namei.c:5037
-       __do_sys_rename fs/namei.c:5084 [inline]
-       __se_sys_rename fs/namei.c:5082 [inline]
-       __x64_sys_rename+0x86/0xa0 fs/namei.c:5082
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&tree->tree_lock);
-                               lock(&HFSPLUS_I(inode)->extents_lock);
-                               lock(&tree->tree_lock);
-  lock(&HFSPLUS_I(inode)->extents_lock);
-
- *** DEADLOCK ***
- ==================================================
-
-I wrote a patch to eliminate the deadlock that has been occurring 
-continuously in hfsplus for a long time. This patch prevents deadlock 
-caused by recursion and ABBA deadlock.
-
-Reported-by: syzbot+325b61d3c9a17729454b@syzkaller.appspotmail.com
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- fs/hfsplus/attributes.c | 33 +++++++++++++++--
- fs/hfsplus/btree.c      | 14 ++++++-
- fs/hfsplus/catalog.c    | 45 ++++++++++++++++++++--
- fs/hfsplus/extents.c    | 82 ++++++++++++++++++++++++++++++-----------
- fs/hfsplus/xattr.c      | 17 +++++++--
- 5 files changed, 159 insertions(+), 32 deletions(-)
-
-diff --git a/fs/hfsplus/attributes.c b/fs/hfsplus/attributes.c
-index eeebe80c6be4..af142e458ac2 100644
---- a/fs/hfsplus/attributes.c
-+++ b/fs/hfsplus/attributes.c
-@@ -198,8 +198,11 @@ int hfsplus_create_attr(struct inode *inode,
- 	struct super_block *sb = inode->i_sb;
- 	struct hfs_find_data fd;
- 	hfsplus_attr_entry *entry_ptr;
-+	atomic_long_t owner;
-+	unsigned long curr = (unsigned long)current;
-+	struct inode *fd_inode;
- 	int entry_size;
--	int err;
-+	int err, locked = 0;
- 
- 	hfs_dbg(ATTR_MOD, "create_attr: %s,%ld\n",
- 		name ? name : NULL, inode->i_ino);
-@@ -216,9 +219,19 @@ int hfsplus_create_attr(struct inode *inode,
- 	err = hfs_find_init(HFSPLUS_SB(sb)->attr_tree, &fd);
- 	if (err)
- 		goto failed_init_create_attr;
--
-+	
-+	fd_inode = fd.tree->inode;
-+	locked = mutex_trylock(&HFSPLUS_I(fd_inode)->extents_lock);
-+
-+	if(!locked){
-+		owner = HFSPLUS_I(fd_inode)->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return -EAGAIN;
-+	}
- 	/* Fail early and avoid ENOSPC during the btree operation */
- 	err = hfs_bmap_reserve(fd.tree, fd.tree->depth + 1);
-+	if(locked)
-+		mutex_unlock(&HFSPLUS_I(fd_inode)->extents_lock);
- 	if (err)
- 		goto failed_create_attr;
- 
-@@ -306,7 +319,10 @@ static int __hfsplus_delete_attr(struct inode *inode, u32 cnid,
- 
- int hfsplus_delete_attr(struct inode *inode, const char *name)
- {
--	int err = 0;
-+	int err = 0, locked = 0;
-+	atomic_long_t owner;
-+	unsigned long curr = (unsigned long)current;
-+	struct inode *fd_inode;
- 	struct super_block *sb = inode->i_sb;
- 	struct hfs_find_data fd;
- 
-@@ -321,9 +337,18 @@ int hfsplus_delete_attr(struct inode *inode, const char *name)
- 	err = hfs_find_init(HFSPLUS_SB(sb)->attr_tree, &fd);
- 	if (err)
- 		return err;
--
-+	
-+	fd_inode = fd.tree->inode;
-+	locked = mutex_trylock(&HFSPLUS_I(fd_inode)->extents_lock);
-+	if(!locked){
-+		owner = HFSPLUS_I(fd_inode)->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return -EAGAIN;
-+	}
- 	/* Fail early and avoid ENOSPC during the btree operation */
- 	err = hfs_bmap_reserve(fd.tree, fd.tree->depth);
-+	if(locked)
-+		mutex_unlock(&HFSPLUS_I(fd_inode)->extents_lock);
- 	if (err)
- 		goto out;
- 
-diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
-index 9e1732a2b92a..aea695c4cfb8 100644
---- a/fs/hfsplus/btree.c
-+++ b/fs/hfsplus/btree.c
-@@ -380,9 +380,21 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree *tree)
- 	u16 off16;
- 	u16 len;
- 	u8 *data, byte, m;
--	int i, res;
-+	int i, res, locked = 0;
-+	struct inode *inode = tree->inode;
-+	atomic_long_t owner;
-+	unsigned long curr = (unsigned long)current;
-+
-+	locked = mutex_trylock(&HFSPLUS_I(inode)->extents_lock);
- 
-+	if(!locked){
-+		owner = HFSPLUS_I(inode)->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return ERR_PTR(-MAX_ERRNO);
-+	}
- 	res = hfs_bmap_reserve(tree, 1);
-+	if (locked)
-+		mutex_unlock(&HFSPLUS_I(inode)->extents_lock);
- 	if (res)
- 		return ERR_PTR(res);
- 
-diff --git a/fs/hfsplus/catalog.c b/fs/hfsplus/catalog.c
-index 1995bafee839..b5cd01bce6ea 100644
---- a/fs/hfsplus/catalog.c
-+++ b/fs/hfsplus/catalog.c
-@@ -257,7 +257,10 @@ int hfsplus_create_cat(u32 cnid, struct inode *dir,
- 	struct hfs_find_data fd;
- 	hfsplus_cat_entry entry;
- 	int entry_size;
--	int err;
-+	int err, locked = 0;
-+	atomic_long_t owner;
-+	struct inode *fd_inode;
-+	unsigned long curr = (unsigned long)current;
- 
- 	hfs_dbg(CAT_MOD, "create_cat: %s,%u(%d)\n",
- 		str->name, cnid, inode->i_nlink);
-@@ -269,7 +272,17 @@ int hfsplus_create_cat(u32 cnid, struct inode *dir,
- 	 * Fail early and avoid ENOSPC during the btree operations. We may
- 	 * have to split the root node at most once.
- 	 */
-+	fd_inode = fd.tree->inode;
-+	locked = mutex_trylock(&HFSPLUS_I(fd_inode)->extents_lock);
-+
-+	if(!locked){
-+		owner = HFSPLUS_I(fd_inode)->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return -EAGAIN;
-+	}
- 	err = hfs_bmap_reserve(fd.tree, 2 * fd.tree->depth);
-+	if (locked)
-+		mutex_unlock(&HFSPLUS_I(fd_inode)->extents_lock);
- 	if (err)
- 		goto err2;
- 
-@@ -333,7 +346,10 @@ int hfsplus_delete_cat(u32 cnid, struct inode *dir, const struct qstr *str)
- 	struct hfs_find_data fd;
- 	struct hfsplus_fork_raw fork;
- 	struct list_head *pos;
--	int err, off;
-+	struct inode *fd_inode;
-+	int err, off, locked = 0;
-+	atomic_long_t owner;
-+	unsigned long curr = (unsigned long)current;
- 	u16 type;
- 
- 	hfs_dbg(CAT_MOD, "delete_cat: %s,%u\n", str ? str->name : NULL, cnid);
-@@ -345,7 +361,17 @@ int hfsplus_delete_cat(u32 cnid, struct inode *dir, const struct qstr *str)
- 	 * Fail early and avoid ENOSPC during the btree operations. We may
- 	 * have to split the root node at most once.
- 	 */
-+	fd_inode = fd.tree->inode;
-+	locked = mutex_trylock(&HFSPLUS_I(fd_inode)->extents_lock);
-+
-+	if(!locked){
-+		owner = HFSPLUS_I(fd_inode)->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return -EAGAIN;
-+	}
- 	err = hfs_bmap_reserve(fd.tree, 2 * (int)fd.tree->depth - 2);
-+	if (locked)
-+		mutex_unlock(&HFSPLUS_I(fd_inode)->extents_lock);
- 	if (err)
- 		goto out;
- 
-@@ -439,7 +465,10 @@ int hfsplus_rename_cat(u32 cnid,
- 	struct hfs_find_data src_fd, dst_fd;
- 	hfsplus_cat_entry entry;
- 	int entry_size, type;
--	int err;
-+	int err, locked = 0;
-+	struct inode *fd_inode;
-+	atomic_long_t owner;
-+	unsigned long curr = (unsigned long)current;
- 
- 	hfs_dbg(CAT_MOD, "rename_cat: %u - %lu,%s - %lu,%s\n",
- 		cnid, src_dir->i_ino, src_name->name,
-@@ -453,7 +482,17 @@ int hfsplus_rename_cat(u32 cnid,
- 	 * Fail early and avoid ENOSPC during the btree operations. We may
- 	 * have to split the root node at most twice.
- 	 */
-+	fd_inode = src_fd.tree->inode;
-+	locked = mutex_trylock(&HFSPLUS_I(fd_inode)->extents_lock);
-+
-+	if(!locked){
-+		owner = HFSPLUS_I(fd_inode)->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return -EAGAIN;
-+	}
- 	err = hfs_bmap_reserve(src_fd.tree, 4 * (int)src_fd.tree->depth - 1);
-+	if (locked)
-+		mutex_unlock(&HFSPLUS_I(fd_inode)->extents_lock);
- 	if (err)
- 		goto out;
- 
-diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
-index 3c572e44f2ad..933c4409618a 100644
---- a/fs/hfsplus/extents.c
-+++ b/fs/hfsplus/extents.c
-@@ -88,7 +88,10 @@ static int __hfsplus_ext_write_extent(struct inode *inode,
- 		struct hfs_find_data *fd)
- {
- 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
--	int res;
-+	int res, locked = 0;
-+	atomic_long_t owner;
-+	unsigned long curr = (unsigned long)current;
-+	struct inode *fd_inode;
- 
- 	WARN_ON(!mutex_is_locked(&hip->extents_lock));
- 
-@@ -97,6 +100,15 @@ static int __hfsplus_ext_write_extent(struct inode *inode,
- 				HFSPLUS_TYPE_RSRC : HFSPLUS_TYPE_DATA);
- 
- 	res = hfs_brec_find(fd, hfs_find_rec_by_key);
-+
-+	fd_inode = fd->tree->inode;
-+	locked = mutex_trylock(&HFSPLUS_I(fd_inode)->extents_lock);
-+
-+	if(!locked){
-+		owner = HFSPLUS_I(fd_inode)->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return -EAGAIN;
-+	}
- 	if (hip->extent_state & HFSPLUS_EXT_NEW) {
- 		if (res != -ENOENT)
- 			return res;
-@@ -115,6 +127,8 @@ static int __hfsplus_ext_write_extent(struct inode *inode,
- 		hip->extent_state &= ~HFSPLUS_EXT_DIRTY;
- 	}
- 
-+	if (locked)
-+		mutex_unlock(&HFSPLUS_I(fd_inode)->extents_lock);
- 	/*
- 	 * We can't just use hfsplus_mark_inode_dirty here, because we
- 	 * also get called from hfsplus_write_inode, which should not
-@@ -228,36 +242,51 @@ int hfsplus_get_block(struct inode *inode, sector_t iblock,
- 	struct super_block *sb = inode->i_sb;
- 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
- 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
-+	unsigned long curr = (unsigned long)current;
- 	int res = -EIO;
- 	u32 ablock, dblock, mask;
-+	atomic_long_t owner;
- 	sector_t sector;
--	int was_dirty = 0;
-+	int was_dirty = 0, locked = 0;
- 
- 	/* Convert inode block to disk allocation block */
- 	ablock = iblock >> sbi->fs_shift;
- 
-+	locked = mutex_trylock(&hip->extents_lock);
-+	if(!locked){
-+		owner = hip->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return -EAGAIN;
-+	}
-+
- 	if (iblock >= hip->fs_blocks) {
--		if (!create)
--			return 0;
--		if (iblock > hip->fs_blocks)
--			return -EIO;
-+		if (!create){
-+			res = 0;
-+			goto out;
-+		}
-+		if (iblock > hip->fs_blocks){
-+			res = -EIO;
-+			goto out;
-+		}	
- 		if (ablock >= hip->alloc_blocks) {
- 			res = hfsplus_file_extend(inode, false);
- 			if (res)
--				return res;
-+				goto out;
- 		}
- 	} else
- 		create = 0;
- 
- 	if (ablock < hip->first_blocks) {
- 		dblock = hfsplus_ext_find_block(hip->first_extents, ablock);
-+		if (locked)
-+			mutex_unlock(&hip->extents_lock);
- 		goto done;
- 	}
- 
--	if (inode->i_ino == HFSPLUS_EXT_CNID)
--		return -EIO;
--
--	mutex_lock(&hip->extents_lock);
-+	if (inode->i_ino == HFSPLUS_EXT_CNID){
-+		res = -EIO;
-+		goto out;
-+	}	
- 
- 	/*
- 	 * hfsplus_ext_read_extent will write out a cached extent into
-@@ -267,12 +296,13 @@ int hfsplus_get_block(struct inode *inode, sector_t iblock,
- 	was_dirty = (hip->extent_state & HFSPLUS_EXT_DIRTY);
- 	res = hfsplus_ext_read_extent(inode, ablock);
- 	if (res) {
--		mutex_unlock(&hip->extents_lock);
--		return -EIO;
-+		res = -EIO;
-+		goto out;
- 	}
- 	dblock = hfsplus_ext_find_block(hip->cached_extents,
- 					ablock - hip->cached_start);
--	mutex_unlock(&hip->extents_lock);
-+	if (locked)
-+		mutex_unlock(&hip->extents_lock);
- 
- done:
- 	hfs_dbg(EXTENT, "get_block(%lu): %llu - %u\n",
-@@ -292,6 +322,10 @@ int hfsplus_get_block(struct inode *inode, sector_t iblock,
- 	if (create || was_dirty)
- 		mark_inode_dirty(inode);
- 	return 0;
-+out:
-+	if (locked)
-+		mutex_unlock(&hip->extents_lock);
-+	return res;
- }
- 
- static void hfsplus_dump_extent(struct hfsplus_extent *extent)
-@@ -454,7 +488,6 @@ int hfsplus_file_extend(struct inode *inode, bool zeroout)
- 		return -ENOSPC;
- 	}
- 
--	mutex_lock(&hip->extents_lock);
- 	if (hip->alloc_blocks == hip->first_blocks)
- 		goal = hfsplus_ext_lastblock(hip->first_extents);
- 	else {
-@@ -515,11 +548,9 @@ int hfsplus_file_extend(struct inode *inode, bool zeroout)
- out:
- 	if (!res) {
- 		hip->alloc_blocks += len;
--		mutex_unlock(&hip->extents_lock);
- 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_ALLOC_DIRTY);
- 		return 0;
- 	}
--	mutex_unlock(&hip->extents_lock);
- 	return res;
- 
- insert_extent:
-@@ -546,7 +577,9 @@ void hfsplus_file_truncate(struct inode *inode)
- 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
- 	struct hfs_find_data fd;
- 	u32 alloc_cnt, blk_cnt, start;
--	int res;
-+	int res, locked = 0;
-+	unsigned long curr = (unsigned long)current;
-+	atomic_long_t owner;
- 
- 	hfs_dbg(INODE, "truncate: %lu, %llu -> %llu\n",
- 		inode->i_ino, (long long)hip->phys_size, inode->i_size);
-@@ -573,7 +606,12 @@ void hfsplus_file_truncate(struct inode *inode)
- 	blk_cnt = (inode->i_size + HFSPLUS_SB(sb)->alloc_blksz - 1) >>
- 			HFSPLUS_SB(sb)->alloc_blksz_shift;
- 
--	mutex_lock(&hip->extents_lock);
-+	locked = mutex_trylock(&hip->extents_lock);
-+	if(!locked){
-+		owner = hip->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return;
-+	}
- 
- 	alloc_cnt = hip->alloc_blocks;
- 	if (blk_cnt == alloc_cnt)
-@@ -581,7 +619,8 @@ void hfsplus_file_truncate(struct inode *inode)
- 
- 	res = hfs_find_init(HFSPLUS_SB(sb)->ext_tree, &fd);
- 	if (res) {
--		mutex_unlock(&hip->extents_lock);
-+		if (locked)
-+			mutex_unlock(&hip->extents_lock);
- 		/* XXX: We lack error handling of hfsplus_file_truncate() */
- 		return;
- 	}
-@@ -619,7 +658,8 @@ void hfsplus_file_truncate(struct inode *inode)
- 
- 	hip->alloc_blocks = blk_cnt;
- out_unlock:
--	mutex_unlock(&hip->extents_lock);
-+	if (locked)
-+		mutex_unlock(&hip->extents_lock);
- 	hip->phys_size = inode->i_size;
- 	hip->fs_blocks = (inode->i_size + sb->s_blocksize - 1) >>
- 		sb->s_blocksize_bits;
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 9c9ff6b8c6f7..d3f8c0352a24 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -130,7 +130,9 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
- 	int index, written;
- 	struct address_space *mapping;
- 	struct page *page;
--	int old_state = HFSPLUS_EMPTY_ATTR_TREE;
-+	atomic_long_t owner;
-+	unsigned long curr = (unsigned long)current;
-+	int old_state = HFSPLUS_EMPTY_ATTR_TREE, locked = 0;
- 
- 	hfs_dbg(ATTR_MOD, "create_attr_file: ino %d\n", HFSPLUS_ATTR_CNID);
- 
-@@ -181,9 +183,14 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
- 						    sbi->sect_count,
- 						    HFSPLUS_ATTR_CNID);
- 
--	mutex_lock(&hip->extents_lock);
-+	locked = mutex_trylock(&hip->extents_lock);
-+	if(!locked){
-+		owner = hip->extents_lock.owner;
-+		if((unsigned long)atomic_long_cmpxchg(&owner, 0, 0) != curr)
-+			return -EAGAIN;
-+	}
-+
- 	hip->clump_blocks = clump_size >> sbi->alloc_blksz_shift;
--	mutex_unlock(&hip->extents_lock);
- 
- 	if (sbi->free_blocks <= (hip->clump_blocks << 1)) {
- 		err = -ENOSPC;
-@@ -194,6 +201,8 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
- 		err = hfsplus_file_extend(attr_file, false);
- 		if (unlikely(err)) {
- 			pr_err("failed to extend attributes file\n");
-+			if(locked)
-+				mutex_unlock(&hip->extents_lock);
- 			goto end_attr_file_creation;
- 		}
- 		hip->phys_size = attr_file->i_size =
-@@ -201,6 +210,8 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
- 		hip->fs_blocks = hip->alloc_blocks << sbi->fs_shift;
- 		inode_set_bytes(attr_file, attr_file->i_size);
- 	}
-+	if (locked)
-+		mutex_unlock(&hip->extents_lock);
- 
- 	buf = kzalloc(node_size, GFP_NOFS);
- 	if (!buf) {
--- 
-2.34.1
+Hi Kees,
+I tested next-20240424 yesterday with defconfig and
+CONFIG_MEM_ALLOC_PROFILING enabled but didn't see any issue like that.
+Could you share your config file please?
+Thanks,
+Suren.
 
