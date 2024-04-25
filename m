@@ -1,63 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-17810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683548B26CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 18:48:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A37F8B26E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 18:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A082C1C2213C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 16:48:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EC3285236
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 16:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCF914D702;
-	Thu, 25 Apr 2024 16:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FC314D451;
+	Thu, 25 Apr 2024 16:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEB3TvT9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxlI2MKg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BC6149E0E;
-	Thu, 25 Apr 2024 16:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0467131746;
+	Thu, 25 Apr 2024 16:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714063669; cv=none; b=RdS0vn3kg0dGojTbXKadyezdi9IViYD6ZDFfhTifMr91w/7pSfmYwXV0VvmCPt3RB/TblRxecBTSNPFnZzGFYUEcs1u6DBRpuqwIFojOfF/FDuSAfffp06L7RL3ZoMyN8wtO0Ji0ZX4b46rojGmO8E63DfXp4yeWzg0VRI6mjDE=
+	t=1714064124; cv=none; b=WOiN9gEluTmHw96ZJ3GXvXG2IXSLLfpCvmS/KRx26oxkU0OT21o+jXorypzYH7FZT3T1LYjk2JW7zQluoPE3Pn8evwwRD5jDgWrweQV1+xbM0549dnLfPLQA1mQFPp2r2iej7VgnA4PhE58f8QzRButwy98SzUvYhoKFyGs/jyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714063669; c=relaxed/simple;
-	bh=2TM29JgVQLJFL9dQlAmJk0xwen5XvbcnRn6DsGNkuYA=;
+	s=arc-20240116; t=1714064124; c=relaxed/simple;
+	bh=spomJ+a/wob9Uwtaio77gXEhScUHFtHTYV3kW94eQoA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9p8eHybzdie5CYgnI4wxEHkK7Rn2mJEFav73ewDj3QYQTFLyHuFCYdg8YcYjacUzZs2lg6++Bz4W3t7sIfxp+D9SGpIehQSPHkhTISrC/FLGz7O2ejc8yZ2tjHkQ9Ky1EidXlDQ3jxo17YrwaOd8qZZvwxRDsPYrxQTs1a39ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEB3TvT9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1415C113CC;
-	Thu, 25 Apr 2024 16:47:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXDjhUmbT1Rg52Bc3MXNOpmREapqGQRjLCxU2z2WRzuUqlXoGHCHDlSnDZbWws324t1j2hGHE8YdhlVk5dUcgurRyxyj7lpAIy/Q0tzTiASEMTNW6nN2MnipCs4IC8uuKLl+OlqmndGnHATWCbmUXCkdOwILcacPbdtmDd3ihrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxlI2MKg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16046C113CC;
+	Thu, 25 Apr 2024 16:55:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714063668;
-	bh=2TM29JgVQLJFL9dQlAmJk0xwen5XvbcnRn6DsGNkuYA=;
+	s=k20201202; t=1714064124;
+	bh=spomJ+a/wob9Uwtaio77gXEhScUHFtHTYV3kW94eQoA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vEB3TvT9y7TCfsNglmGkXEkbZeR8Tu8OemhEr3q1pi0H3d6dU56IF3VSlILC/fk16
-	 gUMnqppINsTN3/e8+BVvNeC/SwWtURWkmy/va7TIwR9tzH6HXl1FI7qxBfqhROmnOC
-	 v9TI0mo2q3xNEK93BRTRMmOHIaV84JMz2NiJVIcO0Oei4tE5yVRXt76YIMTCdcs1ir
-	 w0fYTKvnYK+2u+sy4vhtIRpV4YQlZIC3vQ3jjZm1mMGxB6d4XWLS1EBwtjPz+T5R7P
-	 7+USPbY0Uv+cC1JfklEjGQoUD7HmHSsIUFrHutcZLXfWEx6409c+dVYk8l2pNzEdqa
-	 0bX+ReYK5cR7g==
-Date: Thu, 25 Apr 2024 09:47:48 -0700
+	b=jxlI2MKgQyMg6IF7lPjYV9tOd7J+RWsmL5/hN9rSHeHkOJK8peg4d6kZhI26i5VBD
+	 oj8k+pfmbaf603cP4zVG12ayPxYY/oGvkHbe1jXAD3d8AhFprIiix7YeIOEbr+BvJJ
+	 eNdYTIofP4QSBELqBCMprtkI0Wt2y6XE+iB/iA8njkcayBn9O9+nyjYRqnKgH3bJXY
+	 LarEANd56itUxB00uszt8qVK4aC4hS6t3gu2PoYVrFZgghzLwJCaMtLLBYnR4j3cgn
+	 Yn2jMApggD4UVbwFc2o3HTMJQ8AAWRlndw4WUIijnhgrO0S5iaattp8MohvPxJkhQq
+	 vy8fEnzdAMu0Q==
+Date: Thu, 25 Apr 2024 09:55:23 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	linux-xfs@vger.kernel.org
 Subject: Re: [PATCH 27/30] iomap: Remove calls to set and clear folio error
  flag
-Message-ID: <20240425164748.GA360898@frogsfrogsfrogs>
+Message-ID: <20240425165523.GB360898@frogsfrogsfrogs>
 References: <20240420025029.2166544-1-willy@infradead.org>
  <20240420025029.2166544-28-willy@infradead.org>
- <ZiYAoTnn8bO26sK3@infradead.org>
- <ZiZ817PiBFqDYo1T@casper.infradead.org>
- <ZiaBqiYUx5NrunTO@infradead.org>
- <ZiajqYd305U8njo5@casper.infradead.org>
- <ZipLUF3cZkXctvGG@infradead.org>
- <ZipQQYPLuFuh3ui6@casper.infradead.org>
- <ZipR4evzudGl-AgP@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,40 +59,68 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZipR4evzudGl-AgP@infradead.org>
+In-Reply-To: <20240420025029.2166544-28-willy@infradead.org>
 
-On Thu, Apr 25, 2024 at 05:51:45AM -0700, Christoph Hellwig wrote:
-> On Thu, Apr 25, 2024 at 01:44:49PM +0100, Matthew Wilcox wrote:
-> > On Thu, Apr 25, 2024 at 05:23:44AM -0700, Christoph Hellwig wrote:
-> > > On Mon, Apr 22, 2024 at 06:51:37PM +0100, Matthew Wilcox wrote:
-> > > > If I do that then half the mailing lists bounce them for having too
-> > > > many recipients.  b4 can fetch the entire series for you if you've
-> > > > decided to break your email workflow.  And yes, 0/30 was bcc'd to
-> > > > linux-xfs as well.
-> > > 
-> > > I can't find it on linux-xfs still.  And please just don't make up
-> > > your own workflow or require odd tools.
-> > 
-> > You even quoted the bit where I explained that the workflow you insist I
-> > follow doesn't work.
+On Sat, Apr 20, 2024 at 03:50:22AM +0100, Matthew Wilcox (Oracle) wrote:
+> The folio error flag is not checked anywhere, so we can remove the calls
+> to set and clear it.
 > 
-> I've regularly sent series to more list than you'd need for 30
-> patches even if they were entirely unrelated.  But if they are
-> entirely unrelated it shouldn't be a series to start with..
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Darrick J. Wong <djwong@kernel.org>
+> Cc: linux-xfs@vger.kernel.org
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-One thing I didn't realize until willy pointed this out separately is
-that some of the list processing softwares will silently ignore an email
-if it has too many entries (~10) in the to/cc list, because spam
-heuristics.  I think vger/linux.dev is fairly forgiving about that, but
-indie listservs might not be, and that adds friction to treewide
-changes.
-
-At least the whole series made it to fsdevel, but fsdevel is such a
-firehose now that I can't keep up with it.  It's too bad that linux-xfs
-can't simply mirror patchsets sent to mm/fsdevel with "xfs:" in the
-title, and then I wouldn't have to look at the firehose.
-
-All I'm really trying to say is, patchbombs are crap for collaboration.
+Looks fine to me,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
+
+> ---
+>  fs/iomap/buffered-io.c | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 4e8e41c8b3c0..41352601f939 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -306,8 +306,6 @@ static void iomap_finish_folio_read(struct folio *folio, size_t off,
+>  		spin_unlock_irqrestore(&ifs->state_lock, flags);
+>  	}
+>  
+> -	if (error)
+> -		folio_set_error(folio);
+>  	if (finished)
+>  		folio_end_read(folio, uptodate);
+>  }
+> @@ -460,9 +458,6 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
+>  	while ((ret = iomap_iter(&iter, ops)) > 0)
+>  		iter.processed = iomap_readpage_iter(&iter, &ctx, 0);
+>  
+> -	if (ret < 0)
+> -		folio_set_error(folio);
+> -
+>  	if (ctx.bio) {
+>  		submit_bio(ctx.bio);
+>  		WARN_ON_ONCE(!ctx.cur_folio_in_bio);
+> @@ -697,7 +692,6 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>  
+>  	if (folio_test_uptodate(folio))
+>  		return 0;
+> -	folio_clear_error(folio);
+>  
+>  	do {
+>  		iomap_adjust_read_range(iter->inode, folio, &block_start,
+> @@ -1528,8 +1522,6 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+>  
+>  	/* walk all folios in bio, ending page IO on them */
+>  	bio_for_each_folio_all(fi, bio) {
+> -		if (error)
+> -			folio_set_error(fi.folio);
+>  		iomap_finish_folio_write(inode, fi.folio, fi.length);
+>  		folio_count++;
+>  	}
+> -- 
+> 2.43.0
+> 
+> 
 
