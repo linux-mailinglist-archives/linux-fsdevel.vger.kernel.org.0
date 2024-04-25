@@ -1,59 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-17816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8558B2826
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 20:29:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86C58B2883
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 20:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3DC1C209A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 18:29:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D841C21BD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 18:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675C715099C;
-	Thu, 25 Apr 2024 18:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA921514DD;
+	Thu, 25 Apr 2024 18:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzEl2DPB"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jxve/Ywx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE9837152;
-	Thu, 25 Apr 2024 18:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9480B14D717;
+	Thu, 25 Apr 2024 18:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714069745; cv=none; b=o4zXg68unLlCrpgb+AMBlqQNapfvbfZehY/V2nnosMozkzifwCf2pzLCBKj1PFrv2JtOOwWPjERthviScikZOft++YMOpIouWHBty2dm52UEBEb3xgv7+kCySKra8vp5abtg6hECmqWeqsG7s3MnKXhlZtqAWVQxOK9Ek2i5MXw=
+	t=1714071250; cv=none; b=pw5d/U4B7Xm94q0ju7Dp1KJEVuJQNTwIhx238oc6o0PO9aVk3n1XQjD+Bn7PqyMLHbTcIssBDe+RP6bedHG2qYo+DE2e+Rt3YlZGBQmPH+nvJS42doyAHyPbBMoCRKuls0LVdE979zHYO9cUfjlyrHs6mLtkNwJjH4PHgb1VRHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714069745; c=relaxed/simple;
-	bh=OjxtnIQqi9aFP14zSB3IGsqrO8gHisSDjKe8KENwCio=;
+	s=arc-20240116; t=1714071250; c=relaxed/simple;
+	bh=EmD01qjkuxsGFRwgYYLCHqdE8rYkUVWUDM7DxHmc0AU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efGnblDlSh133lar6S8DYChUHZhU1LTjN2LUKi/RywHtcBA3pVbHaK4QHr2OfxRbDI8+ESa+iP+hyIZyCVs4aU08ybVPZZkEEqU3ve74TUsUckhRRMeCzI1DO8O0344QEEBVWNFu32KIqcc3qeEkapiuZJ1B5Agdwv+O3+UXBIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzEl2DPB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B5A7C113CC;
-	Thu, 25 Apr 2024 18:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714069745;
-	bh=OjxtnIQqi9aFP14zSB3IGsqrO8gHisSDjKe8KENwCio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BzEl2DPBRHB0UySCs9wigyeH0aWNCdavF127izSUNeOSg1PrSkI3v6OzhS8zMYTLH
-	 C+Ca9cJNPgeZOIcmwB2swbAPB+oclc7ibWYLIYKd8Hper5KPXVNOzEsLo/cNtJFgRg
-	 Nbqa4g6DHAI/yzRZnOhZ6X0vJ7rpzRtmTMNUpxWosQ50HLhe7LaF3R1wjuPb+kB0WN
-	 oYnmIbE9asaNG+OR9TOg5t/5JhPy0ciLw69L1ZeUlwpBKuoljQwFMgDPkDYXDb9vPF
-	 cYTkvZWnbUBGKsQebiJxSAWjPKYXUcR1iytGkFHAFnuvQYepz5+9WzN0TZZ6NtA4+C
-	 q2q32WLJaHbtQ==
-Date: Thu, 25 Apr 2024 11:29:04 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
-	david@fromorbit.com, chandanbabu@kernel.org, tytso@mit.edu,
-	jack@suse.cz, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: Re: [PATCH v5 4/9] xfs: convert delayed extents to unwritten when
- zeroing post eof blocks
-Message-ID: <20240425182904.GA360919@frogsfrogsfrogs>
-References: <20240425131335.878454-1-yi.zhang@huaweicloud.com>
- <20240425131335.878454-5-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=vFDOoJQ4IfNMt3rGUTJ1IpPAKIyFoyPSuF7+aWi6ADY7w5BrMX0Q9OLhy76/8tRzl4tkZpQsUs8BcTYJe2sU0U3Y5z/5FcdoQEa+FyILWy+kmcJg2Atsuub7sTxVbkXArL/MTlgp755lpZwARQDszn8Q2aiCZxjIvUzE6pAcc+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jxve/Ywx; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oyktM7E7M+KuWF5/aH7rtY519Fb1ZAYOKfjC4XC5Z9w=; b=Jxve/YwxL+dQtqIlLtYdKWLJMs
+	UbHt8PJvUuKGgFbyB3H/5NK/iatBxYjqomlid8oQOKtjGb/7lMi/9+lVr06WliZh0NZyxuEalolj4
+	vyNiKjVObuqv2rnIgkltCLSW29eDwOXj5WiF+di6I1l0zKXkRkt6SbG8OqH6+NCnCtxQMd9ZLPXNg
+	ov2w1wl4w5UwEqDCzwWnAYQrrNeYzO6BDIAiN/tuRCVA/yuz1EEKLRpk6xav/3RT81EL3RmVvwAgF
+	kNBk9P0Y7DcOxH1NZPnqVX+0LNpHA1jrI7WovPoDfiyCwIPnEKRyzRIoKDgJTy55B+TnC6F/ATIlt
+	pPpvhqJg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s04EG-00000003apA-0XsP;
+	Thu, 25 Apr 2024 18:53:56 +0000
+Date: Thu, 25 Apr 2024 19:53:56 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
+	chandan.babu@oracle.com, akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-xfs@vger.kernel.org, mcgrof@kernel.org, gost.dev@samsung.com,
+	p.raghav@samsung.com
+Subject: Re: [PATCH v4 04/11] readahead: allocate folios with
+ mapping_min_order in readahead
+Message-ID: <ZiqmxCn0ks_GUq5-@casper.infradead.org>
+References: <20240425113746.335530-1-kernel@pankajraghav.com>
+ <20240425113746.335530-5-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,135 +66,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240425131335.878454-5-yi.zhang@huaweicloud.com>
+In-Reply-To: <20240425113746.335530-5-kernel@pankajraghav.com>
 
-On Thu, Apr 25, 2024 at 09:13:30PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Current clone operation could be non-atomic if the destination of a file
-> is beyond EOF, user could get a file with corrupted (zeroed) data on
-> crash.
-> 
-> The problem is about preallocations. If you write some data into a file:
-> 
-> 	[A...B)
-> 
-> and XFS decides to preallocate some post-eof blocks, then it can create
-> a delayed allocation reservation:
-> 
-> 	[A.........D)
-> 
-> The writeback path tries to convert delayed extents to real ones by
-> allocating blocks. If there aren't enough contiguous free space, we can
-> end up with two extents, the first real and the second still delalloc:
-> 
-> 	[A....C)[C.D)
-> 
-> After that, both the in-memory and the on-disk file sizes are still B.
-> If we clone into the range [E...F) from another file:
-> 
-> 	[A....C)[C.D)      [E...F)
-> 
-> then xfs_reflink_zero_posteof() calls iomap_zero_range() to zero out the
-> range [B, E) beyond EOF and flush it. Since [C, D) is still a delalloc
-> extent, its pagecache will be zeroed and both the in-memory and on-disk
-> size will be updated to D after flushing but before cloning. This is
-> wrong, because the user can see the size change and read the zeroes
-> while the clone operation is ongoing.
-> 
-> We need to keep the in-memory and on-disk size before the clone
-> operation starts, so instead of writing zeroes through the page cache
-> for delayed ranges beyond EOF, we convert these ranges to unwritten and
-> invalidate any cached data over that range beyond EOF.
-> 
-> Suggested-by: Dave Chinner <david@fromorbit.com>
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
-> Changes since v4:
-> 
-> Move the delalloc converting hunk before searching the COW fork. Because
-> if the file has been reflinked and copied on write,
-> xfs_bmap_extsize_align() aligned the range of COW delalloc extent, after
-> the writeback, there might be some unwritten extents left over in the
-> COW fork that overlaps the delalloc extent we found in data fork.
-> 
->   data fork  ...wwww|dddddddddd...
->   cow fork          |uuuuuuuuuu...
->                     ^
->                   i_size
-> 
-> In my v4, we search the COW fork before checking the delalloc extent,
-> goto found_cow tag and return unconverted delalloc srcmap in the above
-> case, so the delayed extent in the data fork will have no chance to
-> convert to unwritten, it will lead to delalloc extent residue and break
-> generic/522 after merging patch 6.
+On Thu, Apr 25, 2024 at 01:37:39PM +0200, Pankaj Raghav (Samsung) wrote:
+> +	unsigned long index = readahead_index(ractl), ra_folio_index;
 
-Hmmm.  I suppose that works, but it feels a little funny to convert the
-delalloc mapping in the data fork to unwritten /while/ there's unwritten
-extents in the cow fork too.  Would it make more sense to remap the cow
-fork extents here?
+This is confusing.  Uninitialised variables should go before initialised
+ones.  So either:
 
-OTOH unwritten extents in the cow fork get changed to written ones by
-all the cow remapping functions.  Soooo maybe we don't want to go
-digging /that/ deep into the system.
+	unsigned long ra_folio_index, index = readahead_index(ractl);
+or
+	unsigned long index = readahead_index(ractl);
+	unsigned long ra_folio_index;
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> +	unsigned long i = 0, mark;
 
---D
+ditto
 
-> 
->  fs/xfs/xfs_iomap.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 236ee78aa75b..2857ef1b0272 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1022,6 +1022,24 @@ xfs_buffered_write_iomap_begin(
->  		goto out_unlock;
->  	}
->  
-> +	/*
-> +	 * For zeroing, trim a delalloc extent that extends beyond the EOF
-> +	 * block.  If it starts beyond the EOF block, convert it to an
-> +	 * unwritten extent.
-> +	 */
-> +	if ((flags & IOMAP_ZERO) && imap.br_startoff <= offset_fsb &&
-> +	    isnullstartblock(imap.br_startblock)) {
-> +		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> +
-> +		if (offset_fsb >= eof_fsb)
-> +			goto convert_delay;
-> +		if (end_fsb > eof_fsb) {
-> +			end_fsb = eof_fsb;
-> +			xfs_trim_extent(&imap, offset_fsb,
-> +					end_fsb - offset_fsb);
-> +		}
-> +	}
-> +
->  	/*
->  	 * Search the COW fork extent list even if we did not find a data fork
->  	 * extent.  This serves two purposes: first this implements the
-> @@ -1167,6 +1185,17 @@ xfs_buffered_write_iomap_begin(
->  	xfs_iunlock(ip, lockmode);
->  	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0, seq);
->  
-> +convert_delay:
-> +	xfs_iunlock(ip, lockmode);
-> +	truncate_pagecache(inode, offset);
-> +	error = xfs_bmapi_convert_delalloc(ip, XFS_DATA_FORK, offset,
-> +					   iomap, NULL);
-> +	if (error)
-> +		return error;
-> +
-> +	trace_xfs_iomap_alloc(ip, offset, count, XFS_DATA_FORK, &imap);
-> +	return 0;
-> +
->  found_cow:
->  	seq = xfs_iomap_inode_sequence(ip, 0);
->  	if (imap.br_startoff <= offset_fsb) {
-> -- 
-> 2.39.2
-> 
-> 
 
