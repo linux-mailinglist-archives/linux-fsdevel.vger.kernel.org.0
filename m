@@ -1,158 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-17802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A4FC8B2465
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 16:52:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E89C8B244C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 16:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF2D1F24547
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 14:52:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431891C21BC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 14:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCECA14A600;
-	Thu, 25 Apr 2024 14:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279F914A615;
+	Thu, 25 Apr 2024 14:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DLqnk9jj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PjFH6c8J";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DLqnk9jj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PjFH6c8J"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hO8QjXa9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE3114A4F3;
-	Thu, 25 Apr 2024 14:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D4014A4CC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 14:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714056702; cv=none; b=AoDa2+oHyAgfGlbvPnl9TPwEyiLDVm++T3Gay+cvDr10f4Fq4Zm1xxZWCc5vhJLxfyNi6XxrHgMEz5Px79HBUeGJ2JgSJAMxO96NV3oQkEVyDMeBnHlO6XLlMA4OmNaTqlFUuoiqM89zQld9bC1MEYf6FEA1D+9QMu6N2lPWkcQ=
+	t=1714056329; cv=none; b=bF4LvgT1rQFBHwmf61VYDKDCZWlHvGmCBBVJL1EQ3oZzPDU1JAWYj4f1fUgEJ7IYyUYXvX+ci8lG0ZrNQXY4z5vYtK0OkFeWhThtzE59Eb0s8a1Wl8GphAlAqT2FwOKIQysFyC+T+77XuYNLoC73As8FtZBDSJB0awVqFaH2994=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714056702; c=relaxed/simple;
-	bh=Zucwudz612hd27b6C0HsYBcki2eesBG2akernFmMeew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JnjYC41HlImWEZ+06EoXfMMV9DZJIHn9Z1k+SGNbkCPatTDWz/kwPeJbPA5LJfoRO6Ew7I2HysR626Qdv6O9SInJEzBCBQCddypxQ17tqzahwys1CWk3uszWzFT1jFgKvT6lYUhSoJHsdR3GtAZRQ/0AQXTsK3p3pS909w5OfbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DLqnk9jj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PjFH6c8J; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DLqnk9jj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PjFH6c8J; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 12F5A33DC0;
-	Thu, 25 Apr 2024 14:51:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1714056698;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DH8Qt7y91O7e10TF4B6+mtgFX7Yt+aZGRDAj8mYFVXA=;
-	b=DLqnk9jj7ae2cIgZ8R7najSUa5E1flzNeK+z9ggI6Hddq7Fe9hGpd4BNUmhzsN9ku3s3Dd
-	TfCMEH8k7+rrz9UHPHl3vW6rrFeuqAYjcB9MFymaiQfeRbyn6g2hBubF4C/H8acRi0dEJl
-	yD6K/JQ1Mchxny2hwxHt/bndVV7sw3w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1714056698;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DH8Qt7y91O7e10TF4B6+mtgFX7Yt+aZGRDAj8mYFVXA=;
-	b=PjFH6c8JzTMwKv+ruBVmSVClglZkstUiHaGR1h7mWP75OFtp3VjBVgxfEjCvcSHleBM891
-	+VGM5cR+ZVU991DQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DLqnk9jj;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=PjFH6c8J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1714056698;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DH8Qt7y91O7e10TF4B6+mtgFX7Yt+aZGRDAj8mYFVXA=;
-	b=DLqnk9jj7ae2cIgZ8R7najSUa5E1flzNeK+z9ggI6Hddq7Fe9hGpd4BNUmhzsN9ku3s3Dd
-	TfCMEH8k7+rrz9UHPHl3vW6rrFeuqAYjcB9MFymaiQfeRbyn6g2hBubF4C/H8acRi0dEJl
-	yD6K/JQ1Mchxny2hwxHt/bndVV7sw3w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1714056698;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DH8Qt7y91O7e10TF4B6+mtgFX7Yt+aZGRDAj8mYFVXA=;
-	b=PjFH6c8JzTMwKv+ruBVmSVClglZkstUiHaGR1h7mWP75OFtp3VjBVgxfEjCvcSHleBM891
-	+VGM5cR+ZVU991DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF98613991;
-	Thu, 25 Apr 2024 14:51:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CnNQOvltKmaMCAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 25 Apr 2024 14:51:37 +0000
-Date: Thu, 25 Apr 2024 16:44:03 +0200
-From: David Sterba <dsterba@suse.cz>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 02/30] btrfs: Use a folio in write_dev_supers()
-Message-ID: <20240425144403.GQ3492@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240420025029.2166544-1-willy@infradead.org>
- <20240420025029.2166544-3-willy@infradead.org>
+	s=arc-20240116; t=1714056329; c=relaxed/simple;
+	bh=IJ3J9+qMMc5AcpPKGPwrAuPLaO9e0GfSfZ8R0+bwFng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mJ3WKU3Ky3+oXatjWqhhmnzONbf8899kFYgz267hBNJsptB55Eim8ocrlfTN+xVXcydb5plu/yVSVoxfrMIMghQEtgN6gXW6vDiQjatTTbN9l6wcWvmvl40aYZlqiClWVnJCUmrj8wfRUnuWJDCzdF+3qQnOrg+xCmjup+gJ/RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hO8QjXa9; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f013c304bbso81493b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 07:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1714056328; x=1714661128; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Upe9hXc85SfykUK8OSJyDQtUplWhtMiTd1jA3tMRXuo=;
+        b=hO8QjXa9lALXbwUsKXaff/iSO59Zbkn009rIlqZSCTTs5fi3iWw7w0869tbnDvi0rr
+         uVk4tKOMW8eURFiwROT9wn9tu1s/k4yyjGRr4TfEno57Ab9msTY+G7tLLBikp7Djbv0K
+         VEmmMQ1Ob3RkrKeZUGT3O07/ag/h4VifsNM+E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714056328; x=1714661128;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Upe9hXc85SfykUK8OSJyDQtUplWhtMiTd1jA3tMRXuo=;
+        b=EmfFHRXJjN12vK3I6E8XfxdZOLeMmkflhNtosXRtIJ9v8IABV0GM+Iy+u+ei7utvZ8
+         GzcRPMY6mzcblATixqzMVbYMpA9RjtRYjnig6sx9DU/Vp9NGYBEqJ+zLBf2D51x+6pjl
+         LWABxt7Any24rJJ2D8eZloHDYN9ZEUOka9t3IVgV1QIF+/9kKXHHXIG6wof34DkvuFzT
+         6wVTf2BMLUsgBobtlIO5xzITX48/xG5vHAKWwY3jzQRf5KP9LsIwBjfYYeAeiPI51gVC
+         6tZnK+wOC3E4CfRiubGPyhS+kvyPZGKSoOfteuGn5XeoFLAGXoNshrDjeqyF433n+wB0
+         CGWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMDpsdx6VBZ6nfi9hPHD0j795uetUt0Rzpm7k9jVpJMsQsqSgF/W+OOaUtoxgnerxfTb3u1PzBpM86EB3czb0X+Ofoh3JjbeeJYXisLA==
+X-Gm-Message-State: AOJu0YxJyQgmMPYAKJODg+mwm6Ol4wsIPOTP5YJlWw7pL0ZSOvt8xydi
+	uL9/Hp2Vv04IgLx25/DN1eRODFuoHxNxE0dOqU/X98562q2rfGEN3tZn6qJHzrA=
+X-Google-Smtp-Source: AGHT+IH2ZWIxVnWGlxZ14mWcvRqLtKyE6u0gRzo1WyBlfFhqv5treC26C0VPwnpQrTOD05hYIY1E7A==
+X-Received: by 2002:a05:6a00:731:b0:6ea:ba47:a63b with SMTP id 17-20020a056a00073100b006eaba47a63bmr6568081pfm.0.1714056327589;
+        Thu, 25 Apr 2024 07:45:27 -0700 (PDT)
+Received: from [192.168.43.82] ([223.185.79.208])
+        by smtp.gmail.com with ESMTPSA id k124-20020a633d82000000b005f7d61ec8afsm11351461pga.91.2024.04.25.07.45.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Apr 2024 07:45:27 -0700 (PDT)
+Message-ID: <3848a9ad-07aa-48da-a2b7-264c4a990b5b@linuxfoundation.org>
+Date: Thu, 25 Apr 2024 08:45:07 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240420025029.2166544-3-willy@infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Flag: NO
-X-Spam-Score: -3.58
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 12F5A33DC0
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.58 / 50.00];
-	BAYES_HAM(-2.37)[97.07%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_FIVE(0.00)[6]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 25/35] KVM: selftests: Convert lib's mem regions to
+ KVM_SET_USER_MEMORY_REGION2
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>,
+ Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Anish Moorthy <amoorthy@google.com>, David Matlack <dmatlack@google.com>,
+ Yu Zhang <yu.c.zhang@linux.intel.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
+ =?UTF-8?Q?n?= <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>,
+ Vishal Annapurve <vannapurve@google.com>,
+ Ackerley Tng <ackerleytng@google.com>,
+ Maciej Szmigiero <mail@maciej.szmigiero.name>,
+ David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>,
+ Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
+ Liam Merwick <liam.merwick@oracle.com>,
+ Isaku Yamahata <isaku.yamahata@gmail.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>,
+ Benjamin Copeland <ben.copeland@linaro.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20231027182217.3615211-1-seanjc@google.com>
+ <20231027182217.3615211-26-seanjc@google.com>
+ <69ae0694-8ca3-402c-b864-99b500b24f5d@moroto.mountain>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <69ae0694-8ca3-402c-b864-99b500b24f5d@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Apr 20, 2024 at 03:49:57AM +0100, Matthew Wilcox (Oracle) wrote:
-> @@ -3812,8 +3814,7 @@ static int write_dev_supers(struct btrfs_device *device,
->  		bio->bi_iter.bi_sector = bytenr >> SECTOR_SHIFT;
->  		bio->bi_private = device;
->  		bio->bi_end_io = btrfs_end_super_write;
-> -		__bio_add_page(bio, page, BTRFS_SUPER_INFO_SIZE,
-> -			       offset_in_page(bytenr));
-> +		bio_add_folio_nofail(bio, folio, BTRFS_SUPER_INFO_SIZE, offset);
+On 4/25/24 08:12, Dan Carpenter wrote:
+> On Fri, Oct 27, 2023 at 11:22:07AM -0700, Sean Christopherson wrote:
+>> Use KVM_SET_USER_MEMORY_REGION2 throughout KVM's selftests library so that
+>> support for guest private memory can be added without needing an entirely
+>> separate set of helpers.
+>>
+>> Note, this obviously makes selftests backwards-incompatible with older KVM
+>    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>> versions from this point forward.
+>    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> Is there a way we could disable the tests on older kernels instead of
+> making them fail?  Check uname or something?  There is probably a
+> standard way to do this...  It's these tests which fail.
 
-Compilation fails when btrfs is built as a module, bio_add_folio_nofail()
-is not exported. I can keep __bio_add_page() and the conversion can be
-done later.
+They shouldn't fail - the tests should be skipped on older kernels.
+If it is absolutely necessary to dd uname to check kernel version,
+refer to zram/zram_lib.sh for an example.
+
+thanks,
+-- Shuah
 
