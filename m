@@ -1,62 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-17750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B5F8B218B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 14:22:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555228B2193
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 14:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928B01F22279
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 12:22:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87AB11C21F55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 12:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A1C12C460;
-	Thu, 25 Apr 2024 12:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8250512BF3E;
+	Thu, 25 Apr 2024 12:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4TbXn6nB"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="By0548us"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BFA12AAC5;
-	Thu, 25 Apr 2024 12:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D580312BF26;
+	Thu, 25 Apr 2024 12:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714047757; cv=none; b=fOKL2HLt/30kLbUZ5oAsqu2O8GT0OnV3bF+1UsqVtwyUzf5NXkBbYMUves9SxkFpj6ICJW0rjbdhkXVYtZud2icLc4CXxNomAkxHbnSljOi5QoDf9Vq5RjNwdDkpJHXTgVfeT4UCqPS8smfxen5omz3Z/kpH0Ou4sKtNMLCyA8Q=
+	t=1714047826; cv=none; b=uoeS6dWQXpHLQK2pXbXMoRtjrG6B3V5ZlrCEo9l1djkpKiLCOHlWom147UVeONw2lDe0Tnh8paKhUd6A41xKUeOnTunfWfsQlEyLOPrJLJkYLzQv+38aJ3ANCEVraI/6pzIsnxO7Puqh339KRxXUfjBiqZvKmRzzEpJI+DFIYZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714047757; c=relaxed/simple;
-	bh=ac90Xptu+LlZdA2H1bGYh9aUekchXQrWaju28h5LvBk=;
+	s=arc-20240116; t=1714047826; c=relaxed/simple;
+	bh=UMZs5NOna9+KiMtGkQpw4EENhSINQqJWkQsUH6QLnTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MSuDLOgUpcTysxOxNN5ViLTe8nsCEFtRcHv0m1yW0zUlOl2Sq24c4N0AC0vdbeuyir2iZXhyGX3Z3EcpUkon5RYOscM17mjZX8FcZ+/C9q0dQP7VQ0oS0QIvwwk4kTjxDjyGtbRwEGawNP5szfyMhnAKpOw/b9oMCzFDZKH88Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4TbXn6nB; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=hlboOdXAWxSB1PT5y4KsO1hTmCAuLy2f2Z9CA/CAyC4k/RCDD6sf+s80Y3kS/qoptBPxDsyS3+G/t/a+smKHSn9dB6XieKVVffaLefkHfJNtzm+TbGD/1iMpTKxYJ/Fv86OTO1MmElaO21IhlaG7wA0q8r6panc6KZ/Xvx0XgS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=By0548us; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5kmdkkgmxltKWTQk4TRnBXqD+WYMw+Ii9wmT2IhgF+M=; b=4TbXn6nBSXtbGSFyjPidJ1dkTq
-	kz/vOUst+cMP+R+woJCvf0tZuMWXcuOX0colAum5jIVBfBm/SXHNXBeeceqHvotdSH/HILVeE6koe
-	cX9y+AEKR1R2rJaUaQ3oHb1hnnteqOY0OehYypL2iAbMc+DXeL7fQMDSYtD8WInPgX3Dw7QNR7sD7
-	odBbDcjEWk5tVXeTaaj/0WXRP5Th7DYNboCY4dgxJ093XmvKw/c12GYHXui/ikYmMTr65HG28mqvr
-	VsPCzIHWpTW2W1cKeCAlGmQONjP4Jp0T1sDxHWDRAzdxKdjxxUWQwdkGZ48Wfkv8iZZKxHHNiCap7
-	iFlZDxNg==;
+	bh=0ChaMVAjQ0oQE+nAKRlnzoREfXTW6cSwuIx4Wk/Tr2c=; b=By0548ussQBy5HAf2r92MUtdI2
+	oITI1aob/WVMWsl6hWcqtdypKu09hbZOJxhfnEtGtiLdcRYNbU3eMvbVOYI6dabaIrjo58pttPHtR
+	U0cFn3WjKryfC/Gub3vdo4dKZkxp2NRP8ILH6/BuOe+Jx7UGcBDpK3LMCoKqilHWeZ9w5NspOVYyY
+	ozM8kbLf8VJm0sWHTvILjJb0sYD7PtoxmZvofb7fuNOkdphcQLTIJw9rX7rtxUcRBVTFybrZdTiXf
+	tu3GMdVdLCq2GSSlvg3T954fOkTbMImQYsT40oIFZ7jaGF3dTRfKhtzKMYVhiCEIrF3IlB71Pmqsy
+	aKdCx4AQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rzy7W-00000008CMg-2JzU;
-	Thu, 25 Apr 2024 12:22:34 +0000
-Date: Thu, 25 Apr 2024 05:22:34 -0700
+	id 1rzy8e-00000008Cco-1Pzz;
+	Thu, 25 Apr 2024 12:23:44 +0000
+Date: Thu, 25 Apr 2024 05:23:44 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	tytso@mit.edu, jack@suse.cz, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v5 4/9] xfs: convert delayed extents to unwritten when
- zeroing post eof blocks
-Message-ID: <ZipLCm2N-fYKCuGv@infradead.org>
-References: <20240320110548.2200662-5-yi.zhang@huaweicloud.com>
- <20240423111735.1298851-1-yi.zhang@huaweicloud.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 27/30] iomap: Remove calls to set and clear folio error
+ flag
+Message-ID: <ZipLUF3cZkXctvGG@infradead.org>
+References: <20240420025029.2166544-1-willy@infradead.org>
+ <20240420025029.2166544-28-willy@infradead.org>
+ <ZiYAoTnn8bO26sK3@infradead.org>
+ <ZiZ817PiBFqDYo1T@casper.infradead.org>
+ <ZiaBqiYUx5NrunTO@infradead.org>
+ <ZiajqYd305U8njo5@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,25 +67,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240423111735.1298851-1-yi.zhang@huaweicloud.com>
+In-Reply-To: <ZiajqYd305U8njo5@casper.infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Apr 23, 2024 at 07:17:35PM +0800, Zhang Yi wrote:
-> +	if ((flags & IOMAP_ZERO) && imap.br_startoff <= offset_fsb &&
-> +	    isnullstartblock(imap.br_startblock)) {
-> +		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> +
-> +		if (offset_fsb >= eof_fsb)
-> +			goto convert_delay;
-> +		if (end_fsb > eof_fsb) {
-> +			end_fsb = eof_fsb;
-> +			xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
+On Mon, Apr 22, 2024 at 06:51:37PM +0100, Matthew Wilcox wrote:
+> If I do that then half the mailing lists bounce them for having too
+> many recipients.  b4 can fetch the entire series for you if you've
+> decided to break your email workflow.  And yes, 0/30 was bcc'd to
+> linux-xfs as well.
 
-Nit: overly long line here.
+I can't find it on linux-xfs still.  And please just don't make up
+your own workflow or require odd tools.
 
-I've also tried to to a more comprehensive review, but this depends on
-the rest of the series, which isn't in my linux-xfs folder for April.
-
-I've your're not doing and instant revision it's usually much easier to
-just review the whole series.
 
