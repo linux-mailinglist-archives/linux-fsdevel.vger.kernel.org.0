@@ -1,113 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-17728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A078B1DF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 11:27:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B1B8B1E86
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 11:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775BD282E91
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 09:27:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C12328920F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 09:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F97128803;
-	Thu, 25 Apr 2024 09:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E862F8528D;
+	Thu, 25 Apr 2024 09:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="cHLvtu41"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8YA98lt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9258528F;
-	Thu, 25 Apr 2024 09:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7498005B;
+	Thu, 25 Apr 2024 09:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714037022; cv=none; b=isAwv/x8agu8jbfvNpCxq1eCCh4mwUhaEbgKU6Y9gmhY0Q60/M0Wgz/u0Mi+6etoe7VGOILhbTW/HZyO9DtBcxzlMwly+rl6XNBpv5DCw0LTIVwgVBx/tZVMoBkgDlqk+4PzOeKnV5/rjR1XzdAaE8FhpmQIDKrF6zWZh/TODWg=
+	t=1714038880; cv=none; b=s6lmNnML70stmfUGi3+EWRFOBOTpodZgblAltrpzyi/aocLgBlI+qhWzsBIBmDceNGlN+YE1MJkgfOgX7Mr/wr4b9vqlkMW/giEsb0bUYgi5xm721NPlpmKgfCtS6GNlnX5P2l9In1RjJyYG9OBGBHSYDB0vrtWzx5CCrIqjnpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714037022; c=relaxed/simple;
-	bh=A4N62TDY2FnhU4Mk1kWS3SEqpge5O5/RVzJOoVq2uAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qVT+0dCkzedS6YiSbxmVgc3+4m675iEAfoXT49z3KbgZdmnonCiQp9BvD4d/15kT+nkqXqcwY3rVQnhWWPoPObxg/M+AdJTFTTwTBwY4aRxWVuQrwVoarsJoVOfIRsULPeSDMiNdJuIUZJxxmn2HD0XsBaiBACYjV/1q34VZdOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=cHLvtu41; arc=none smtp.client-ip=178.154.239.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-36.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-36.sas.yp-c.yandex.net [IPv6:2a02:6b8:c37:629:0:640:2d57:0])
-	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 0FDE061514;
-	Thu, 25 Apr 2024 12:23:30 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-36.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id RNIjJAN3UCg0-gn0GTDkf;
-	Thu, 25 Apr 2024 12:23:29 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1714037009; bh=ZuVO93ildlmJKltNuYp5AwhW1NHN300nQCPjAg9zoVk=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=cHLvtu413lU2yWwn0h6RTVFreAZNKIX/viLf9e8seYfZEF7MUvHzd4YPvbS7hs87V
-	 WWjl2varW8TWEqeb6VGFa6uYD8H4y6RSj1HtihUVz/lugJOAwwQCJmeje8ZRP1LAVh
-	 cWaBdXX/DEvAijV2WOryDgpM8EwXxjE9yRxCh4w8=
-Authentication-Results: mail-nwsmtp-smtp-production-main-36.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <7c620151-be12-4580-818e-86e8b7f46e09@yandex.ru>
-Date: Thu, 25 Apr 2024 12:23:27 +0300
+	s=arc-20240116; t=1714038880; c=relaxed/simple;
+	bh=Hdtl/Gl5j4mz5TOTXpgnpl6AGib4dz13JCTXnJ9K0IQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hOiunMD/Z/D0mKrP4LChKtysgTXHPzRdrunNfj/yYRY78GmE0E6X5RYgPc/vdrU+ZF1ppFaeNsHFOm2MyDKFO8JcUrOuCn0jraE5WRmQYh5yurYMZwZZ/zyt1vnINfZf1rkVG1vQCJKkh+Trz7Zl9eTP3WfMGLXTAktLGtQKkKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8YA98lt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B87C113CC;
+	Thu, 25 Apr 2024 09:54:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714038879;
+	bh=Hdtl/Gl5j4mz5TOTXpgnpl6AGib4dz13JCTXnJ9K0IQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k8YA98ltaLXaJTJqkcZkD545MewKPful8f3DJvecUQ2AXDbIXGi/tNhNzJi7Cpq6q
+	 TtFnRyIaTVNi7vAGNYLZSb0jbqijAMGOtFGtj+bWZA9xbG82+lRoRquboibW8RrK6Q
+	 6R4CZjiCkOSqhr83X3hq0pAhj+VMq4y/tOPKKFkEmUWhrKXNG+gjKz/e3EGs+2x1YC
+	 6zHP5iH5YvKvCQKyKOfCgQkpddE8DdKZCSvB5t7QLtSqkKPlN/D5wHHloGxN0vVnLH
+	 JfM1RHpkNZQ6NM3+U9p/72vo7tqYi/N1l4HG8jQA8XgTnx4NVlp7PWnRQKQXJRqUde
+	 ocfS5j046avvA==
+Date: Thu, 25 Apr 2024 11:54:28 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: stsp <stsp2@yandex.ru>
+Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>, 
+	Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
+	David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
+Subject: Re: [PATCH v4 0/2] implement OA2_INHERIT_CRED flag for openat2()
+Message-ID: <20240425-ausfiel-beabsichtigen-a2ef9126ebda@brauner>
+References: <20240424105248.189032-1-stsp2@yandex.ru>
+ <20240424-schummeln-zitieren-9821df7cbd49@brauner>
+ <6b46528a-965f-410a-9e6f-9654c5e9dba2@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] openat2: add OA2_INHERIT_CRED flag
-Content-Language: en-US
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
- Eric Biederman <ebiederm@xmission.com>, Andy Lutomirski <luto@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>,
- David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-References: <20240424105248.189032-1-stsp2@yandex.ru>
- <20240424105248.189032-3-stsp2@yandex.ru> <20240425023127.GH2118490@ZenIV>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <20240425023127.GH2118490@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <6b46528a-965f-410a-9e6f-9654c5e9dba2@yandex.ru>
 
-25.04.2024 05:31, Al Viro пишет:
-> Incidentally, suppose you have the same process run with stdin opened
-> (r/o) by root.  F_SETFD it to O_CLOEXEC, then use your open with
-> dirfd being 0, pathname - "" and flags - O_RDWR.
-I actually checked this with the test-case.
-It seems to return ENOENT:
+On Wed, Apr 24, 2024 at 08:50:30PM +0300, stsp wrote:
+> 24.04.2024 19:09, Christian Brauner пишет:
+> > This smells ripe enough to serve as an attack vector in non-obvious
+> > ways. And in general this has the potential to confuse the hell out
+> > unsuspecting userspace.
+> 
+> Unsuspecting user-space will simply
+> not use this flag. What do you mean?
+> 
+> 
+> >   They can now suddenly get sent such
+> > special-sauce files
+> 
+> There are no any special files.
+> This flag helps you to open a file on
+> which you currently have no perms
+> to open, but had those in the past.
+> 
+> 
+> >   such as this that they have no way of recognizing as
+> > there's neither an FMODE_* flag nor is the OA2_* flag recorded so it's
+> > not available in F_GETFL.
+> > 
+> > There's not even a way to restrict that new flag because no LSM ever
+> > sees it. So that behavior might break LSM assumptions as well.
+> > 
+> > And it is effectively usable to steal credentials. If process A opens a
+> > directory with uid/gid 0 then sends that directory fd via AF_UNIX or
+> > something to process B then process B can inherit the uid/gid of process
+> 
+> No, it doesn't inherit anything.
+> The inheritance happens only for
+> a duration of an open() call, helping
+> open() to succeed. The creds are
+> reverted when open() completed.
+> 
+> The only theoretically possible attack
+> would be to open some file you'd never
+> intended to open. Also note that a
+> very minimal sed of creds is overridden:
+> fsuid, fsgid, groupinfo.
+> 
+> > A by specifying OA2_* with no way for process A to prevent this - not
+> > even through an LSM.
+> 
+> If process B doesn't use that flag, it
+> inherits nothing, no matter what process
+> A did or passed via a socket.
+> So an unaware process that doesn't
+> use that flag, is completely unaffected.
 
+The point is that the original opener has no way to prevent his creds
+being abused by a completely unrelated process later on. Something I've
+clearly explained in my mail.
 
-Breakpoint 1, openat2 (dirfd=0, pathname=0x7fffffffdbee "",
-     how=0x7fffffffd5e0, size=24) at tst.c:13
-13        return syscall(SYS_openat2, dirfd, pathname, how, size);
-(gdb) fin
-Run till exit from #0  openat2 (dirfd=0, pathname=0x7fffffffdbee "",
-     how=0x7fffffffd5e0, size=24) at tst.c:13
-0x000000000040167b in main (argc=3, argv=0x7fffffffd7b8) at tst.c:140
-140        fd = openat2(0, efile, &how1, sizeof(how1));
-Value returned is $1 = -1
-(gdb) list
-135        err = fcntl(0, F_SETFD, O_CLOEXEC);
-136        if (err) {
-137            perror("fcntl(F_SETFD)");
-138            return EXIT_FAILURE;
-139        }
-140        fd = openat2(0, efile, &how1, sizeof(how1));
-141        if (fd == -1) {
-142            perror("openat2(1)");
-143    //        return EXIT_FAILURE;
-144        } else {
-(gdb) p errno
-$2 = 2
+> 
+> > The permission checking model that we have right now is already baroque.
+> > I see zero reason to add more complexity for the sake of "lightweight
+> > sandboxing". We have LSMs and namespaces for stuff like this.
+> > 
+> > NAK.
+> 
+> I don't think it is fair to say NAK
+> without actually reading the patch
+> or asking its author for clarifications.
+> Even though you didn't ask, I provided
+> my clarifications above, as I find that
+> a polite action.
 
+I'm not sure what you don't understand or why you need further
+clarification. Your patch allows any opener using your new flag to steal
+the uid/gid/whatever from the original opener. It was even worse in the
+first version where the whole struct cred of the original opener was
+used. It's obviously a glaring security hole that's opened up by this.
 
-So it seems the creds can't be stolen
-from a non-dir fd, but I wonder why
-ENOENT is returned instead of ENOTDIR.
-Such ENOENT is not dicumented in a
-man page of openat2(), so I guess there
-is some problem here even w/o my patch. :)
+Let alone that the justification "It's useful for some lightweight
+sandboxing" is absolutely not sufficient to justify substantial shifts
+in the permission model.
 
+The NAK stands.
 
