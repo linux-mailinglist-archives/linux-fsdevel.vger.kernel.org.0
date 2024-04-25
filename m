@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-17741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA748B2075
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 13:39:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA4028B20A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 13:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08531F2548B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 11:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495C41F25207
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 11:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E11812C54A;
-	Thu, 25 Apr 2024 11:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D5E12BEB6;
+	Thu, 25 Apr 2024 11:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="jCmWig6I"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="0i4j7ORW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B62D12A17F;
-	Thu, 25 Apr 2024 11:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7F312AACE;
+	Thu, 25 Apr 2024 11:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714045099; cv=none; b=nk4ClGAkRRedCtku/hyQZI4k5emACBmcifEuqgrB5HHBXd3S4Mbu2pBwQk22fPo+NGekmrud32diuiD1y5rJJFPbIkGnACCphYkwcGbKjULcW2YWrPkk2bskCqD4V1fwTtV+kjC/C/ANzrnG9hKhhIf12GKh2S9R3nF+QAUu+6Q=
+	t=1714045638; cv=none; b=cr95Oe86v/v+2tX9fjANMxoqisgb9+E4/l7oy4rL8df+gbmq3yYDaacQJ7e3a9n5YIwS2RUIXx5jCtQHhWczovVlhVspGgpnmFcUut5AF3X1FtAkxy4Q2OHpx8UkgGT5LWSU5ZlxDIKw13o5H7Bb4vAp+PMKEmqbunSRhVi8CDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714045099; c=relaxed/simple;
-	bh=2qjEihRuFxVVTsaAMCqdiZD7PcLnHkfVOtFWGATkUL0=;
+	s=arc-20240116; t=1714045638; c=relaxed/simple;
+	bh=e1JMgJ3VA2izblNM3szg9lbs5qSkv4SB6uOxM51vUqw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CZbTwbSwWjYvOBZF4a54Q0UzIgW5DwgXqStxSy9a0KPrw6lfxxNGp8GbmCXeZVPF+GNpjGZwsrOvarFyguq3ZE0Mt3yuDH5RwcpPyMsnD4f0Tqf3G+qlF05swRr5er1KrM/9jVZVUMW41KIwR8U/IksDUK2MLAkhMd9zrD1BZyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=jCmWig6I; arc=none smtp.client-ip=80.241.56.151
+	 MIME-Version; b=ZbCLRDZiM+Q0mZSOZViEZSLaZur0uI88LJYf3u2mvZL4OnaFQWzTGYU0/jXKELycPLWnFayk1OLmz6+QceicGRL1DWXe9SMeBysics5DucRDnB1pYVluaqmm4WTYNaahi3I+OsgtVIBsiVysltmUEDLSFYGfJoQPqzpXwQPAyY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=0i4j7ORW; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4VQDPd5S7kz9sc2;
-	Thu, 25 Apr 2024 13:38:13 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4VQDPj4W0lz9st9;
+	Thu, 25 Apr 2024 13:38:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1714045093;
+	s=MBO0001; t=1714045097;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=czSPhYVZqlifLCbGSVD4LN8Jicbe+9jxrg74bkE8W+M=;
-	b=jCmWig6I8MmC4tVVnlqLI5vW94Wwlz9pRSUJiLooHMkOOe7ErsyVoFx2VhJY/WmdTxbbRT
-	3dzg1UBlN4MP4RmAdPxL20o+ed6dhEyL92yPfrr/KbjbRfO3NVL1umnag6JzyRlRB6r5zC
-	q4tIjG3KF/flynDrsYPmLRPtC8lMuVFbc3cQXAl6p3O/gubiU3hUBvII5ArCSxnWG3PUIL
-	SCX71g1J51gObsRKmh9vM7WMGb8WM5/CcZazYgw6T63Kl7NB5sOhnSNIvvGue/BhWjHzoo
-	P4xXrijI969rMXgdWqBJooEzEPQorZWYJq7MfcKRzA79aD6/EfPrL4zxXw/Skw==
+	bh=SZEgKM6QrgoQBOd+qQrQCeNmZ9w7P0QsYqZWksJ5EHk=;
+	b=0i4j7ORWzhspfs9ixeGdeOd0r1Eo3pwU4BtbEF6woZni4V5L14YKa90J2IqEZYFdXLtLwQ
+	d095+992gOcqpTpvDmkxs9wjY7M3TnyMW+njvxML8bzJAjWem3m3XsWdSnSWuFuh+Sj2Qj
+	CGfTbZEvR/uGNDzP9Z4zzf/tKBzDsE6Ugs0w6iwnqs2ybQsAfmPk1e45Pn0ZYURDU6HqQs
+	gsvloW/OFuuUMDj24VJs5qlh3CmNhbyAybQzf8AuK0YnrBAsRuGirf1A4SpVy33vZBe5H0
+	nWRJZVwpcGRXpRVNm+x4Y29XeSpONlxWjPDS1jg0b1WOaVJEhEi9gXgIZO+4IQ==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: willy@infradead.org,
 	djwong@kernel.org,
@@ -64,9 +64,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	mcgrof@kernel.org,
 	gost.dev@samsung.com,
 	p.raghav@samsung.com
-Subject: [PATCH v4 06/11] filemap: cap PTE range to be created to i_size in folio_map_range()
-Date: Thu, 25 Apr 2024 13:37:41 +0200
-Message-Id: <20240425113746.335530-7-kernel@pankajraghav.com>
+Subject: [PATCH v4 07/11] iomap: fix iomap_dio_zero() for fs bs > system page size
+Date: Thu, 25 Apr 2024 13:37:42 +0200
+Message-Id: <20240425113746.335530-8-kernel@pankajraghav.com>
 In-Reply-To: <20240425113746.335530-1-kernel@pankajraghav.com>
 References: <20240425113746.335530-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -76,48 +76,57 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4VQDPj4W0lz9st9
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-Usually the page cache does not extend beyond the size of the inode,
-therefore, no PTEs are created for folios that extend beyond the size.
+iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
+< fs block size. iomap_dio_zero() has an implicit assumption that fs block
+size < page_size. This is true for most filesystems at the moment.
 
-But with LBS support, we might extend page cache beyond the size of the
-inode as we need to guarantee folios of minimum order. Cap the PTE range
-to be created for the page cache by i_size.
+If the block size > page size, this will send the contents of the page
+next to zero page(as len > PAGE_SIZE) to the underlying block device,
+causing FS corruption.
 
-A fstest has been created to trigger this edge case[1].
-
-[1]https://lore.kernel.org/fstests/20240415081054.1782715-1-mcgrof@kernel.org/
+iomap is a generic infrastructure and it should not make any assumptions
+about the fs block size and the page size of the system.
 
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-Co-Developed-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 ---
- mm/filemap.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/iomap/direct-io.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index f0c0cfbbd134..259531dd297b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3600,12 +3600,15 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
- 	}
- 	do {
- 		unsigned long end;
-+		unsigned long i_size;
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index f3b43d223a46..5f481068de5b 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -239,14 +239,23 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+ 	struct page *page = ZERO_PAGE(0);
+ 	struct bio *bio;
  
- 		addr += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
- 		vmf->pte += xas.xa_index - last_pgoff;
- 		last_pgoff = xas.xa_index;
- 		end = folio_next_index(folio) - 1;
--		nr_pages = min(end, end_pgoff) - xas.xa_index + 1;
-+		i_size = DIV_ROUND_UP(i_size_read(mapping->host),
-+				      PAGE_SIZE) - 1;
-+		nr_pages = min3(end, end_pgoff, i_size) - xas.xa_index + 1;
+-	bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
++	WARN_ON_ONCE(len > (BIO_MAX_VECS * PAGE_SIZE));
++
++	bio = iomap_dio_alloc_bio(iter, dio, BIO_MAX_VECS,
++				  REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
+ 	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+ 				  GFP_KERNEL);
++
+ 	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
+ 	bio->bi_private = dio;
+ 	bio->bi_end_io = iomap_dio_bio_end_io;
  
- 		if (!folio_test_large(folio))
- 			ret |= filemap_map_order0_folio(vmf,
+-	__bio_add_page(bio, page, len, 0);
++	while (len) {
++		unsigned int io_len = min_t(unsigned int, len, PAGE_SIZE);
++
++		__bio_add_page(bio, page, io_len, 0);
++		len -= io_len;
++	}
+ 	iomap_dio_submit_bio(iter, dio, bio, pos);
+ }
+ 
 -- 
 2.34.1
 
