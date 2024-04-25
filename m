@@ -1,112 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-17749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6843D8B215D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 14:09:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B5F8B218B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 14:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 981831C21754
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 12:09:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928B01F22279
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 12:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E47912BF12;
-	Thu, 25 Apr 2024 12:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A1C12C460;
+	Thu, 25 Apr 2024 12:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOlIw5E4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4TbXn6nB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8164712B159;
-	Thu, 25 Apr 2024 12:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BFA12AAC5;
+	Thu, 25 Apr 2024 12:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714046915; cv=none; b=QWqdNrGscKe2IglXrq23o3IRj64wOkFGP5ANY87zKCS93kGCYPj9iJWXlMcG5PwCiAu5+iY+IcJoawmoKU2VLTZSUMSejj15cQf+9rNNddz1n2AmexrFtqYVdrZXE2xCCAoJORuO+IiJt7QgGWkDYMeaQuPNmfXgf6PIKYO1ICI=
+	t=1714047757; cv=none; b=fOKL2HLt/30kLbUZ5oAsqu2O8GT0OnV3bF+1UsqVtwyUzf5NXkBbYMUves9SxkFpj6ICJW0rjbdhkXVYtZud2icLc4CXxNomAkxHbnSljOi5QoDf9Vq5RjNwdDkpJHXTgVfeT4UCqPS8smfxen5omz3Z/kpH0Ou4sKtNMLCyA8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714046915; c=relaxed/simple;
-	bh=QJ/+TaI7LYFNkVXAUM2e6kETsZ4oE7E3AR7EDPAymsw=;
+	s=arc-20240116; t=1714047757; c=relaxed/simple;
+	bh=ac90Xptu+LlZdA2H1bGYh9aUekchXQrWaju28h5LvBk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/tobfTsLJfzLUqz6vvT7+5wW9Q1Mvf96a9j1y/CjzDpFOozgNd/mi3DDWPeSkgzMIvhXXua8d61F3rvLl1Zyn+dODRBvZLzXG+GW01JcS6/EalyZlCw5hLGOMASFe5yEAa1IMqEy+XYJRllugiU4ciKy0EVsBl3z4yiG+3Cydg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOlIw5E4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 906E8C113CC;
-	Thu, 25 Apr 2024 12:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714046915;
-	bh=QJ/+TaI7LYFNkVXAUM2e6kETsZ4oE7E3AR7EDPAymsw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bOlIw5E4WknFvh5vVANsGtX1zP9GNXAj6BdyeFZYv8CKMxB183hLztSJqBenWQ/BQ
-	 VuHJIcAAWKPbrFGOKmH59x+jTcyKdR4pqdOgTjLulMKF0SxVx3SrTz1s3L1O1UTE4v
-	 9sse07Qg4KSV1x/h+1dhdbZKaGCsltSz6MA16Ywe4tnbEYmmvQyD2uHpwHFzJ7jaKY
-	 6D9GRcLCnD2PCnyrzC86OEdS6CJ+NQFUkkYeR2bjI1nT1q1QVBVP3BmLOpJpynYMGC
-	 QG2x92cZrbHu+RASqcDR9fqkM7Z5j7LEwpYLQ3vrnOmUXOR6ErVKqVX63QDErb5ZBY
-	 84HK+TIsDyZhA==
-Date: Thu, 25 Apr 2024 14:08:24 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: stsp <stsp2@yandex.ru>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
-Subject: Re: [PATCH v4 0/2] implement OA2_INHERIT_CRED flag for openat2()
-Message-ID: <20240425-loslassen-hexen-a1664a579ea1@brauner>
-References: <20240424105248.189032-1-stsp2@yandex.ru>
- <20240424-schummeln-zitieren-9821df7cbd49@brauner>
- <6b46528a-965f-410a-9e6f-9654c5e9dba2@yandex.ru>
- <20240425-ausfiel-beabsichtigen-a2ef9126ebda@brauner>
- <df51f2fd-385a-47bf-a072-a8988a801d52@yandex.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MSuDLOgUpcTysxOxNN5ViLTe8nsCEFtRcHv0m1yW0zUlOl2Sq24c4N0AC0vdbeuyir2iZXhyGX3Z3EcpUkon5RYOscM17mjZX8FcZ+/C9q0dQP7VQ0oS0QIvwwk4kTjxDjyGtbRwEGawNP5szfyMhnAKpOw/b9oMCzFDZKH88Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4TbXn6nB; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5kmdkkgmxltKWTQk4TRnBXqD+WYMw+Ii9wmT2IhgF+M=; b=4TbXn6nBSXtbGSFyjPidJ1dkTq
+	kz/vOUst+cMP+R+woJCvf0tZuMWXcuOX0colAum5jIVBfBm/SXHNXBeeceqHvotdSH/HILVeE6koe
+	cX9y+AEKR1R2rJaUaQ3oHb1hnnteqOY0OehYypL2iAbMc+DXeL7fQMDSYtD8WInPgX3Dw7QNR7sD7
+	odBbDcjEWk5tVXeTaaj/0WXRP5Th7DYNboCY4dgxJ093XmvKw/c12GYHXui/ikYmMTr65HG28mqvr
+	VsPCzIHWpTW2W1cKeCAlGmQONjP4Jp0T1sDxHWDRAzdxKdjxxUWQwdkGZ48Wfkv8iZZKxHHNiCap7
+	iFlZDxNg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rzy7W-00000008CMg-2JzU;
+	Thu, 25 Apr 2024 12:22:34 +0000
+Date: Thu, 25 Apr 2024 05:22:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	tytso@mit.edu, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v5 4/9] xfs: convert delayed extents to unwritten when
+ zeroing post eof blocks
+Message-ID: <ZipLCm2N-fYKCuGv@infradead.org>
+References: <20240320110548.2200662-5-yi.zhang@huaweicloud.com>
+ <20240423111735.1298851-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <df51f2fd-385a-47bf-a072-a8988a801d52@yandex.ru>
+In-Reply-To: <20240423111735.1298851-1-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-> But I am sure you still don't understand
-> what exactly the patch does, so why not
-> to ask instead of asserting?
-> You say uid/gid can be stolen, but no,
-> it can't: the creds are reverted. Only
-> fsuid/fsgid (and caps in v2 of the patch)
-> actually affect openat2(), but nothing is
-> "leaked" after openat2() finished.
+On Tue, Apr 23, 2024 at 07:17:35PM +0800, Zhang Yi wrote:
+> +	if ((flags & IOMAP_ZERO) && imap.br_startoff <= offset_fsb &&
+> +	    isnullstartblock(imap.br_startblock)) {
+> +		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
+> +
+> +		if (offset_fsb >= eof_fsb)
+> +			goto convert_delay;
+> +		if (end_fsb > eof_fsb) {
+> +			end_fsb = eof_fsb;
+> +			xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
 
-I say "stolen" because the original opener has no say in this. You're
-taking their fsuid/fsgid and groups and overriding creds for the
-duration of the lookup and open. Something the original opener never
-consented to. But let's call it "borrowed" if you're hung up on
-terminology here.
+Nit: overly long line here.
 
-But ultimately it's the same complaint: the original opener has no way
-of controlling this behavior. Once ignored in my first reply, and now
-again conveniently cut off again. Let alone all the other objections.
+I've also tried to to a more comprehensive review, but this depends on
+the rest of the series, which isn't in my linux-xfs folder for April.
 
-And fwiw, the same way you somehow feel like I haven't read your patch
-it seems you to consistently underestimate the implications of this
-change. Which is really strange because it's pretty obvious. It's
-effectively temporary setuid/setgid with some light limitations.
-
-Leaking directory descriptors across security boundaries becomes a lot
-more interesting with this patch applied. Something which has happened
-multiple times already and heavily figures in container escapes. And the
-RESOLVE_BENEATH/IN_ROOT restrictions only stave off symlink (and magic
-link) attacks. If a directory fd is leaked a container can take the
-fsuid/fsgid/groups from the original opener of that directory and write
-to disk with whatever it resolves to in that namespace's idmapping. It's
-basically a nice way to puzzle together arbitrary fsuid/fsgid and
-idmapping pairs in whatever namespace the opener happens to be in.
-
-And again it also messes with LSMs because you're changing credentials
-behind their back.
-
-And to the "unsuspecting userspace" point you dismissed earlier.
-Providing a dirfd to a lesser privileged process isn't horrendously
-dangerous right now. But with this change it sure is. For stuff like
-libpathrs or systemd's fdstore this change has immediate security
-implications.
+I've your're not doing and instant revision it's usually much easier to
+just review the whole series.
 
