@@ -1,103 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-17832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16218B29CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 22:28:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E91C8B29F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 22:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871F51F21A69
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 20:28:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E09B8B24C8A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 20:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2029115573A;
-	Thu, 25 Apr 2024 20:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA35153BD7;
+	Thu, 25 Apr 2024 20:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="e7FJMtWM"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Z+gqGa8P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C9F153BD0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 20:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D89C18EAB;
+	Thu, 25 Apr 2024 20:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714076758; cv=none; b=byxkWX6fCt0JC5KYztyqCVRR+c7i0beruHioPzUPB8lfWV4ihS3Km8PSzp2svWxl1MYX97hfSKAGqyaJFBgq4LO+W8ksQQyFAkHFI1MQp3n5t38iZkxGvEW4rEVqG8DIgVnVFW7AY4B+PqQABTfkgkxUJ6J2h3Y7dWjIoOgn8GE=
+	t=1714077298; cv=none; b=YjbEIPA5ZQ3mGIn4jdMOZR4+KmHM+0oRUPUnWZlndMqz4cHzuTq4wbqEqyidD8Wo+gES6PwThNWpgy1vywzWZml8GTmNNOoDxpVeO54OF86YwWY8zYysI5rizDQGXGidhOtF2Tblp9A/ml/c+AENXNWw1WNowVwt/4NvLs+d6Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714076758; c=relaxed/simple;
-	bh=Y8qHNrV7cXcb4+6m8eAsD639d+gNTwbr10Jd9WtSyiw=;
+	s=arc-20240116; t=1714077298; c=relaxed/simple;
+	bh=bZqtcMhFx7TDPaIgrLqyfpl0/OfmMPAKopBgZDQprIg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDetCDNMADnonkcmNBkgxWzFrI4wmd4gVIvW5rsc2eVoYvO+fFDLrTAYII5kGTbUobZXakjMZga5L9dJx6bOwDnmJTs0qiZIBcAGVwPQ0KO4ttfDfOwCZiE4iEE/XhsCqtH+Dbr20ZdDbNbB/eTpEjL3jn3RIwiqXix1W0CqqzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=e7FJMtWM; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eU4ScZ1Fc7yDTQrlp07KSRzAiZJJFKlSUXrLyEO6OLg=; b=e7FJMtWMoloHjsssDZKushJDXo
-	crb9Xg4yTY5+8ztWBnuPVuUfprMKD4/q/iGNQDJDfjqpDLwpiIK8M2xCbjWRVudhSxXGkwu5gxCLs
-	KJGGpZ5lUlk8IkUSnrCPQ2z1xLz6NUkxyMgxYOte1sd3+2P6rm3qNaIEPn/gUuTeT0Q7ymN8181vx
-	L8T3+dIy3yqNiUPWh3WafIfLJnrolJtjTHznzBAaY3TiLvfpg8NvP/eMF3bvR0m5+1IwHInZTNq7j
-	yEN/FtHqjf/HjSf3c7AGYQIN/6EI/EF1yCM+yO7Ow+RGM6aEhAvF76IF2hUenEOgVQfxdGAsxwY3O
-	qghLSF1Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s05fC-004LHq-0a;
-	Thu, 25 Apr 2024 20:25:50 +0000
-Date: Thu, 25 Apr 2024 21:25:50 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Dawid Osuchowski <linux@osuchow.ski>, linux-fsdevel@vger.kernel.org,
-	jack@suse.cz
-Subject: Re: [PATCH] fs: Create anon_inode_getfile_fmode()
-Message-ID: <20240425202550.GL2118490@ZenIV>
-References: <20240424233859.7640-1-linux@osuchow.ski>
- <20240425-wohltat-galant-16b3360118d0@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tDTYRMm3ZJvyyo+JHX4346bHXwQk4zKH+Px/X2onJEJ5G1ZTJY86z5gwgO4Pk/C8HdqIMEKVQcbYl9VYu/L8H9xGbpqj2BAgVmHgk20Tn0rsKhomwQ+zr/X2wdCYjeJUrJTGjactRQqDGjQMSVbKVAG5nDnHLmEojx579uWTEWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Z+gqGa8P; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1714077293;
+	bh=bZqtcMhFx7TDPaIgrLqyfpl0/OfmMPAKopBgZDQprIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z+gqGa8PD+3BrRxF+Exe+s/+n1FrcsSYPFeQUrvoT2UUvEiGsEXMDYuXjYQJDYiRJ
+	 9/0fJxtI2lDBLEHhkegO15rObvRhgIuWQMhE+D085PPIsVKHmI/z9Zz6qr7xUxUgOg
+	 gdOVIytSYg1zquf83mxdxD8VyvGj7mHBMGjmlG8k=
+Date: Thu, 25 Apr 2024 22:34:52 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Eric Dumazet <edumazet@google.com>, 
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kexec@lists.infradead.org, 
+	linux-hardening@vger.kernel.org, bridge@lists.linux.dev, lvs-devel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <d11f875e-4fb5-46dd-a412-84818208c575@t-8ch.de>
+References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+ <CGME20240425031241eucas1p1fb0790e0d03ccbe4fca2b5f6da83d6db@eucas1p1.samsung.com>
+ <20240424201234.3cc2b509@kernel.org>
+ <20240425110412.2n5d27smecfncsfa@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240425-wohltat-galant-16b3360118d0@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240425110412.2n5d27smecfncsfa@joelS2.panther.com>
 
-On Thu, Apr 25, 2024 at 11:57:12AM +0200, Christian Brauner wrote:
-> On Thu, Apr 25, 2024 at 01:38:59AM +0200, Dawid Osuchowski wrote:
-> > Creates an anon_inode_getfile_fmode() function that works similarly to
-> > anon_inode_getfile() with the addition of being able to set the fmode
-> > member.
+Hi Joel,
+
+On 2024-04-25 13:04:12+0000, Joel Granados wrote:
+> On Wed, Apr 24, 2024 at 08:12:34PM -0700, Jakub Kicinski wrote:
+> > On Tue, 23 Apr 2024 09:54:35 +0200 Thomas Weißschuh wrote:
+> > > The series was split from my larger series sysctl-const series [0].
+> > > It only focusses on the proc_handlers but is an important step to be
+> > > able to move all static definitions of ctl_table into .rodata.
+> > 
+> > Split this per subsystem, please.
+> It is tricky to do that because it changes the first argument (ctl*) to
+> const in the proc_handler function type defined in sysclt.h:
+> "
+> -typedef int proc_handler(struct ctl_table *ctl, int write, void *buffer,
+> +typedef int proc_handler(const struct ctl_table *ctl, int write, void *buffer,
+>                 size_t *lenp, loff_t *ppos);
+> "
+> This means that all the proc_handlers need to change at the same time.
 > 
-> And for what use-case exactly?
+> However, there is an alternative way to do this that allows chunking. We
+> first define the proc_handler as a void pointer (casting it where it is
+> being used) [1]. Then we could do the constification by subsystem (like
+> Jakub proposes). Finally we can "revert the void pointer change so we
+> don't have one size fit all pointer as our proc_handler [2].
+> 
+> Here are some comments about the alternative:
+> 1. We would need to make the first argument const in all the derived
+>    proc_handlers [3] 
+> 2. There would be no undefined behavior for two reasons:
+>    2.1. There is no case where we change the first argument. We know
+>         this because there are no compile errors after we make it const.
+>    2.2. We would always go from non-const to const. This is the case
+>         because all the stuff that is unchanged in non-const.
+> 3. If the idea sticks, it should go into mainline as one patchset. I
+>    would not like to have a void* proc_handler in a kernel release.
+> 4. I think this is a "win/win" solution were the constification goes
+>    through and it is divided in such a way that it is reviewable.
+> 
+> I would really like to hear what ppl think about this "heretic"
+> alternative. @Thomas, @Luis, @Kees @Jakub?
 
-There are several places where we might want that -
-arch/powerpc/platforms/pseries/papr-vpd.c:488:  file = anon_inode_getfile("[papr-vpd]", &papr_vpd_handle_ops,
-fs/cachefiles/ondemand.c:233:   file = anon_inode_getfile("[cachefiles]", &cachefiles_ondemand_fd_fops,
-fs/eventfd.c:412:       file = anon_inode_getfile("[eventfd]", &eventfd_fops, ctx, flags);
-in addition to vfio example Dawid mentions, as well as a couple of
-borderline cases in
-virt/kvm/kvm_main.c:4404:       file = anon_inode_getfile(name, &kvm_vcpu_stats_fops, vcpu, O_RDONLY);
-virt/kvm/kvm_main.c:5092:       file = anon_inode_getfile("kvm-vm-stats",
+Thanks for that alternative, I'm not a big fan though.
 
-So something of that sort is probably a good idea.  Said that,
-what the hell is __anon_inode_getfile_fmode() for?  It's identical
-to exported variant, AFAICS.  And then there's this:
+Besides the wonky syntax, Control Flow Integrity should trap on
+this construct. Functions are called through different pointers than
+their actual types which is exactly what CFI is meant to prevent.
 
-	if (IS_ERR(file))
-		goto err;
+Maybe people find it easier to review when using
+"--word-diff" and/or "-U0" with git diff/show.
+There is really nothing going an besides adding a few "const"s.
 
-	file->f_mode |= f_mode;
+But if the consensus prefers this solution, I'll be happy to adopt it.
 
-	return file;
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/commit/?h=jag/constfy_treewide_alternative&id=4a383503b1ea650d4e12c1f5838974e879f5aa6f
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/commit/?h=jag/constfy_treewide_alternative&id=a3be65973d27ec2933b9e81e1bec60be3a9b460d
+> [3] proc_dostring, proc_dobool, proc_dointvec....
 
-err:
-	return file;
 
-a really odd way to spell
-
-	if (!IS_ERR(file))
-		file->f_mode |= f_mode;
-	return file;
+Thomas
 
