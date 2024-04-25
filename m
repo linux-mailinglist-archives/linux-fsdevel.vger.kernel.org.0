@@ -1,133 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-17704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D178B1952
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 05:17:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3043F8B195E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 05:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87539B22DD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 03:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0DC01F22FD3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Apr 2024 03:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EC81CFB2;
-	Thu, 25 Apr 2024 03:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DA51CAA6;
+	Thu, 25 Apr 2024 03:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="P16Apjv7"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uM0Tao45"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AF117984
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 03:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4933D17984
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Apr 2024 03:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714015036; cv=none; b=uCzgl7HOR1Buda5dM/aMSjpJOfNOiysvyS4Sup7ENFqEHYrtDew5iDb9EEPGgGi4dViP3Jlf9NKvjd33gaNz76j6Fdkxrs/6iWFE1VggpWNS+pSuEaiI0LeAik3zm3+/TURf9fuZQ3Z+l5aCzol9FPXgcIh2HGZ6lN9Rd7ND4GI=
+	t=1714015193; cv=none; b=A0Fdi3+TpNKUmLXu7pWFG2ru2RiBzTZM84PVYgKjyazH5ZYhrbeQFixEj0dUb5gJ4i3eYF07MrH8sMbWQntI1L84gBn5bY4S6Q7r672W1JoEkZzOT3DCSGBb1krk+2Oy1/rMjGJAqgFymaMGpJrlG6AoKjM2qHHrQNshxPVGnXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714015036; c=relaxed/simple;
-	bh=pL8OHOWHZcsyFmPcEjc+fBoaOnXJeZNW3DcIFx6MFus=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=asjMZqGgir/TKpDaeRTkk70AcYskwbcAJemN153Fm3ryx0dd01XmFavANZm1WiD502upHWKqtCmI7nTtMOsUgw2AFsr9kbQfKVl2qykQeDO5OgwFRTK2xHE1DcAV9484FC7ELmgqWxp0RyuI4BNFB4NolREge/QR7gedl/geIiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=P16Apjv7; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f074520c8cso627201b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Apr 2024 20:17:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1714015034; x=1714619834; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rDC6+MkZwtTiyGD4zhDwbs6EKw+Azk2OsJsJxDq9WIg=;
-        b=P16Apjv79ZDKsMeWquK73sSlQg9s8QgWLu0QI/QT0qP8hoMn3Ji5qdzct0Y170RN0V
-         dgBiOxTGZdWGB8Lkm0xtrFNI2fmUm44Q5s/H1Hmh6mSReBjB0U8t1Ix7ZFGiRzyHhYrR
-         /92FG/iQFHLe6Rv4CLdyn26CHZ18sVGZJxlqvcLni8JrDaqLdurYOLMCawMgvaLqUcj7
-         ce2F0rYK5nXlSgxyMEouxx9KXOqPDJqqmvkTzyODyqu92RIJWwIw6fn4P+rDU5pK9dUl
-         RoJyZd2c4ogQNrQS5aYBSoxwITj7rV9ZsrshAgAemNbrV3qamH2UYfwz4Yldb0B5Kr2z
-         F/jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714015034; x=1714619834;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rDC6+MkZwtTiyGD4zhDwbs6EKw+Azk2OsJsJxDq9WIg=;
-        b=MgVbDl11VFGay7TwGkoBw08QdamtRUUBqA/yE+YlwhW7Hlz8bDGEh3IGloOTa5JSWc
-         zA1EtTqTJAFYu64aMO710pf7fNg3tyB/ZkknWxPM8FJgM+dPhfTVEQwfmiMcjdFhcUo8
-         09q8Jw1qwvz5ejJLBAJQK7+ADr0UNuc8WLH2DZBmkAKyjd0oPguzzgXIwUzc9I3RdZqb
-         XksDkRM210fqbFklgQrJiBcIeqTFvFSD/LKo/vUUZWB8Jl6ojzR5C/msnLjJkKoLA72M
-         ty9JHWQSYNwt/mCWZw4bbYniZ9HRt/hB/oSxF32hBtmomu8KYJ+KM9jN1+Wt+JJSj7NT
-         HQYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfGlgH8vZwmeGlHLnydpoNGTHs5QSzk+WaY3t4DY/uJ6wZrNaBLEczQBzZScy2ilDb68n8xUZe4P9FpBTfCyDFDdAgSdNt2HiGrIqy6w==
-X-Gm-Message-State: AOJu0Yw1foBcfyJcuDf1zp/+ghJ7cc5Z0ELEM/lh6fwL0V2ALPAGq4zh
-	2EsRFSiteoLAy8Nk3GTNynraif4609Q3Zj7a6cXqP73rQVIUg1ZPkQgKDWyYBgo=
-X-Google-Smtp-Source: AGHT+IFsDUKcepwhTMfngbtOJkYdquZcdm/7+0FnSBhsRuUAiazYGUUz8MH7tc0XTEkAcFEoXbsTQw==
-X-Received: by 2002:a05:6a21:3d89:b0:1ac:dead:1370 with SMTP id bj9-20020a056a213d8900b001acdead1370mr4849697pzc.21.1714015034157;
-        Wed, 24 Apr 2024 20:17:14 -0700 (PDT)
-Received: from [10.3.132.118] ([61.213.176.12])
-        by smtp.gmail.com with ESMTPSA id x23-20020a056a00189700b006edadf8058asm12160586pfh.23.2024.04.24.20.17.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Apr 2024 20:17:13 -0700 (PDT)
-Message-ID: <9228a873-8250-4b63-bf75-473e9a87ab80@bytedance.com>
-Date: Thu, 25 Apr 2024 11:17:08 +0800
+	s=arc-20240116; t=1714015193; c=relaxed/simple;
+	bh=fD8T3dLEgtWYXQ7cIqDNZgxuaW2HPHX5IkAoXjBakDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k20bMqp2lmGBA1wVl0Mhfsuuh8icarWNAxlz0gTTy/WTUOxGhHfQkH/3dd00x+Y0XPKfjPE/0H7BKyhtv3v/+yL4yFZrio14PZyyc0i+tc3ykuSvKuBpdkfrnxAREM2qu6j4skofDLyUFzY7r4MbBGZ6F68RpEJ41ASUyQa8CKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uM0Tao45; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/z3wKLosr/vdejz9o0/hXx3uSH2XaPNYhwXaZQ3tMN4=; b=uM0Tao45uuz4HYtKk4gdEWWQAg
+	uLxtlBcLEzTeKc4/+jklkROD/Cul9ocDH/VbgjBF5H9SEV7aH29E0U/uu4TrVgjhVKcq5Rjl9DWD0
+	xHcRtOQ4DMWuK+JRi8lT7sFaYTuV/zFlBI/kPpj/aDSY/HSOlcDw7jjFbPBDe0ymiLBdTI2U6yPbP
+	x+y94nnfqK8i/zK++evZTTnJgq1dtssrMy/K96Lgm20oerC6F4RWdYp8XSc72SF8aUEAxfnPwZ3ce
+	21uFzbYfoB/tQ0idPv5BsIjFy3ux3vqofTojOi+Zrxamt040p9aqTYr7s+jX9puT3iIY6uAFxv5aC
+	qqZtinew==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rzpeF-003Kgv-2s;
+	Thu, 25 Apr 2024 03:19:48 +0000
+Date: Thu, 25 Apr 2024 04:19:47 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Kees Cook <keescook@chromium.org>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] Saner typechecking for closures
+Message-ID: <20240425031947.GI2118490@ZenIV>
+References: <Zic7USbiliQtnKZr@casper.infradead.org>
+ <202404241559.D41E91F8@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/12] cachefiles: remove err_put_fd tag in
- cachefiles_ondemand_daemon_read()
-To: libaokun@huaweicloud.com, netfs@lists.linux.dev
-Cc: dhowells@redhat.com, jlayton@kernel.org, jefflexu@linux.alibaba.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
-References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
- <20240424033916.2748488-3-libaokun@huaweicloud.com>
-From: Jia Zhu <zhujia.zj@bytedance.com>
-In-Reply-To: <20240424033916.2748488-3-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202404241559.D41E91F8@keescook>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Wed, Apr 24, 2024 at 04:01:45PM -0700, Kees Cook wrote:
 
-
-在 2024/4/24 11:39, libaokun@huaweicloud.com 写道:
-> From: Baokun Li <libaokun1@huawei.com>
+> > That should give us the possibility of passing any pointer
+> > to the function, but gets us away from void pointers.  I did this as a
 > 
-> The err_put_fd tag is only used once, so remove it to make the code more
-> readable.
+> This just means KCFI will freak out now, since it will see a mismatch
+> between call->fn's type and the target function's type. :(
 > 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> And instead of args like this, can't we use the regular container_of()
+> tricks to get at the pointer we want? i.e. make "call" a member of the
+> strut doing the delayed call?
 
-Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
+Huh?   A typical situation is (kfree, void *) or (put_page, struct page *).
+We are most certainly *not* embedding anything of that sort into struct
+page...
 
-> ---
->   fs/cachefiles/ondemand.c | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-> index 4ba42f1fa3b4..fd49728d8bae 100644
-> --- a/fs/cachefiles/ondemand.c
-> +++ b/fs/cachefiles/ondemand.c
-> @@ -347,7 +347,9 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->   
->   	if (copy_to_user(_buffer, msg, n) != 0) {
->   		ret = -EFAULT;
-> -		goto err_put_fd;
-> +		if (msg->opcode == CACHEFILES_OP_OPEN)
-> +			close_fd(((struct cachefiles_open *)msg->data)->fd);
-> +		goto error;
->   	}
->   
->   	/* CLOSE request has no reply */
-> @@ -358,9 +360,6 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->   
->   	return n;
->   
-> -err_put_fd:
-> -	if (msg->opcode == CACHEFILES_OP_OPEN)
-> -		close_fd(((struct cachefiles_open *)msg->data)->fd);
->   error:
->   	xa_erase(&cache->reqs, id);
->   	req->error = ret;
+What we want is (T -> void) x T : whenever is_pointer(T), but C doesn't
+give that kind of polymorphism.  We can do (void * -> void) x void *,
+with callbacks converting their arguments to desired types, but that
+means that type mismatches are on your head - compiler won't catch
+them.
+
+It could be done with lambdas as
+	(void)sizeof(f(p)),	// p is a valid argument for f
+	call->fn = [](void *v){f((typeof(p))v);},
+	call->arg = p
+
+but AFAICS we don't have that implemented sanely - neither in gcc nor in clang.
+As the result, we have things like
+        set_delayed_call(callback, page_put_link, page);
+...
+void page_put_link(void *arg)
+{
+        put_page(arg);
+}
+and there's nothing to catch you if 'page' above is not struct page *.
+
+It shouldn't need any kind of runtime checks, executable stack, etc. -
+everything here can be done statically at compile time.  Oh, well...
 
