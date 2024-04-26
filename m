@@ -1,116 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-17938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749A28B4014
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 21:20:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDE28B406C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 21:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96960B24271
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 19:20:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25C31F21233
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 19:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E68182AE;
-	Fri, 26 Apr 2024 19:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDC223765;
+	Fri, 26 Apr 2024 19:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r4HaL18d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMC0F65B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481FC381B1;
-	Fri, 26 Apr 2024 19:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4037FBE4A;
+	Fri, 26 Apr 2024 19:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714159191; cv=none; b=QRPWIIqJWwvSAvUeLtmZDcfmtXdLIjIZL/o7AwNEkjRxNMADeK6PIcBIEnXVY+D4Sa1PL81zMu4i+BeWrd05ED2zgTQfLQuD9CvbvPjxat9F8pXwMHcwghyEbZIrlAT5BNsa/ez/YdMtKvB1pgSII827Nx5nJZjNO3USSR+CjPA=
+	t=1714161028; cv=none; b=ZV5CWFkO1NUdE4yx/CjHRTmRK9Zsza4gprbw4zQx5SfohfP2KihMNhMhDQ6TkIKwTZ7qkg7aWyspGmJw0WdEZWte/G6JplHc1Kexhz/PgVzThKuThHEuK6j91nF7eOWeHMf65Q9AX9+rX6Elkr9pDeaHzwzUqZeEsBZVbHTZ+fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714159191; c=relaxed/simple;
-	bh=TC7LQlrCZB3uq+KXiSH49G5kN/E4xe/gRBFwdygPLX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8Wq91ZamYz2l5SUKOMJdWjcU8Ncg2HN9UI6bMdo8FRlP1W68bC03MElwmPWDzWxYFgYA1Gs77dWU9ltkgo+ZS4DiojxIM7H4IwYVFVZ/42+fXZlu7nggEPwfBxwKb8mkwGAVGyC9GB/W+GSttSHRb0I7GyHLv1ckueGdgd+vMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=r4HaL18d; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=B3nzzU3zrnIN/j3XnmTMNrndFTXY08gHY8Wi6J3W1B4=; b=r4HaL18d8TtYOoQLK75q8eFCGs
-	hO7VC1e+GhgCqw0e8lFnF+a/X5ytoFZVfxhNwbtYBWC30z1fp2tbbHTpmPXydfyBWERbN1GKihEgx
-	5jiMxyZVFrq05iUvg6694kgBL/+2TyZCpar74oW9QrIIwZYINpicdrhzh04kc5/D3OX46H73VS2Mk
-	fYQ2UFeLXyViwgsKyA99N/lgY9upT/BJmGZrMjr6nQa/vDzV9orWFsX1xiKSjiNfOAjtD86OaYkZ/
-	+BTLTfE5di9EgqtlHMPaTOUvEPcEtvXVcx7VPLzS9YohDoY0AdTkmg2Mt65N56oO+BYFeoR2RY+2Q
-	oN65hFjA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s0R6p-00000005qwN-3Hjn;
-	Fri, 26 Apr 2024 19:19:47 +0000
-Date: Fri, 26 Apr 2024 20:19:47 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFCv3 7/7] iomap: Optimize data access patterns for filesystems
- with indirect mappings
-Message-ID: <Ziv-U8-Rt9md-Npv@casper.infradead.org>
-References: <Zivu0gzb4aiazSNu@casper.infradead.org>
- <871q6symrz.fsf@gmail.com>
+	s=arc-20240116; t=1714161028; c=relaxed/simple;
+	bh=MvhargL3ylJyOzWeH24MNc5xj2ittPCGif/aZcR1FPs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=S0lb1llFE+aSQOPP/73ZPkHjh+qQPv+XuyqPuzyTFkUBxVrVTfpzfp119FdZxeQ8e/gy2Kv+RLCqD74X2x5O5KFVhlmLiADHbJy7+o3/c1FmmlGNlsRAMId8LKjvy/LD7qoAUZVcX2wn5jyakvmqU57hRJXCTlgO2J2gms0KMsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMC0F65B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B76F1C2BD10;
+	Fri, 26 Apr 2024 19:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714161027;
+	bh=MvhargL3ylJyOzWeH24MNc5xj2ittPCGif/aZcR1FPs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=cMC0F65BXmJWlJe5+NgUBesegKZxh2ig+8v5Ys4vQHMoApRPFwxAkty8BQra0hE+D
+	 0KfB+g7Q54YQ9rb8m6DAT2O3Vjxte6qGjNFja5SwnNp8KwTrk8uRvBpRwTWuIf3awV
+	 zz6d5mpi5gNIan2CVlCHC+OpcLNoMWKfzc9kR8kXUKFCgVmrZmXl3x3Ze/4xRH866N
+	 BJKOtJXpYkWge93EyGCZoVBgIpo7dw/9EzT+/9yY+uB6EyBG8T3F44G1AhN03NAX5C
+	 9mE1zk80MVWhaEPkfJKt4oNt/lMZNMvbyFcK+0hvOoPRjMBUyikoLhwQPDxiN4230s
+	 /BZEDU+d7ZHxQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A20CFC433F2;
+	Fri, 26 Apr 2024 19:50:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871q6symrz.fsf@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] Fix a potential infinite loop in extract_user_to_sg()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171416102765.32161.2308930891250088286.git-patchwork-notify@kernel.org>
+Date: Fri, 26 Apr 2024 19:50:27 +0000
+References: <1967121.1714034372@warthog.procyon.org.uk>
+In-Reply-To: <1967121.1714034372@warthog.procyon.org.uk>
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, jlayton@kernel.org, sfrench@samba.org,
+ herbert@gondor.apana.org.au, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netfs@lists.linux.dev,
+ linux-crypto@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 27, 2024 at 12:27:52AM +0530, Ritesh Harjani wrote:
-> Matthew Wilcox <willy@infradead.org> writes:
-> > @@ -79,6 +79,7 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
-> >  	if (ifs) {
-> >  		spin_lock_irqsave(&ifs->state_lock, flags);
-> >  		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
-> > +		ifs->read_bytes_pending -= len;
-> >  		spin_unlock_irqrestore(&ifs->state_lock, flags);
-> >  	}
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 25 Apr 2024 09:39:32 +0100 you wrote:
+> Fix extract_user_to_sg() so that it will break out of the loop if
+> iov_iter_extract_pages() returns 0 rather than looping around forever.
 > 
-> iomap_set_range_uptodate() gets called from ->write_begin() and
-> ->write_end() too. So what we are saying is we are updating
-> the state of read_bytes_pending even though we are not in
-> ->read_folio() or ->readahead() call?
-
-Exactly.
-
-> >  
-> > @@ -208,6 +209,8 @@ static struct iomap_folio_state *ifs_alloc(struct inode *inode,
-> >  	spin_lock_init(&ifs->state_lock);
-> >  	if (folio_test_uptodate(folio))
-> >  		bitmap_set(ifs->state, 0, nr_blocks);
-> > +	else
-> > +		ifs->read_bytes_pending = folio_size(folio);
+> [Note that I've included two fixes lines as the function got moved to a
+> different file and renamed]
 > 
-> We might not come till here during ->read_folio -> ifs_alloc(). Since we
-> might have a cached ifs which was allocated during write to this folio.
+> Fixes: 85dd2c8ff368 ("netfs: Add a function to extract a UBUF or IOVEC into a BVEC iterator")
+> Fixes: f5f82cd18732 ("Move netfs_extract_iter_to_sg() to lib/scatterlist.c")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Steve French <sfrench@samba.org>
+> cc: Herbert Xu <herbert@gondor.apana.org.au>
+> cc: "David S. Miller" <davem@davemloft.net>
+> cc: Eric Dumazet <edumazet@google.com>
+> cc: Jakub Kicinski <kuba@kernel.org>
+> cc: Paolo Abeni <pabeni@redhat.com>
+> cc: netfs@lists.linux.dev
+> cc: linux-crypto@vger.kernel.org
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> cc: netdev@vger.kernel.org
 > 
-> But unless you are saying that during writes, we would have set
-> ifs->r_b_p to folio_size() and when the read call happens, we use
-> the same value of the cached ifs.
-> Ok, I see. I was mostly focusing on updating ifs->r_b_p value only when
-> the reads bytes are actually pending during ->read_folio() or
-> ->readahead() and not updating r_b_p during writes.
+> [...]
 
-I see why you might want to think that way ... but this way is much less
-complex, don't you think?  ;-)
+Here is the summary with links:
+  - [net] Fix a potential infinite loop in extract_user_to_sg()
+    https://git.kernel.org/netdev/net/c/6a30653b604a
 
-> ...One small problem which I see with this approach is - we might have
-> some non-zero value in ifs->r_b_p when ifs_free() gets called and it
-> might give a warning of non-zero ifs->r_b_p, because we updated
-> ifs->r_b_p during writes to a non-zero value, but the reads
-> never happend. Then during a call to ->release_folio, it will complain
-> of a non-zero ifs->r_b_p.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Yes, we'll have to remove that assertion.  I don't think that's a
-problem, do you?
 
 
