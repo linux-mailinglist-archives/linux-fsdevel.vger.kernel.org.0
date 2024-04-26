@@ -1,110 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-17847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61A18B2E62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 03:43:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADF18B2E71
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 03:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC001F22020
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 01:43:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E54091F22EA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 01:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560FE6FB6;
-	Fri, 26 Apr 2024 01:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHuk+JSJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F1917F7;
+	Fri, 26 Apr 2024 01:47:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mxde.zte.com.cn (mxde.zte.com.cn [209.9.37.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC365227;
-	Fri, 26 Apr 2024 01:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C719CEDC;
+	Fri, 26 Apr 2024 01:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.9.37.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714095768; cv=none; b=k8zMRZQB72+nhkLXI+21E5OMSV22inYRIhXzxBh3B3aBbqqqAt1sFMoTK+8lnJ/uwB5J9nU+2dby1MBehFIl3DcEYb4yVbyV7aagLOZSRLwjpO1Qay8ah78oKv7x0aiXoqZ6kwMQWd6321oS5H8phYHPhz25oddIEluK98cmfjc=
+	t=1714096077; cv=none; b=dy4CaHeCCEvLMkaZTS2fhWgDGT6Y1yepnYZVvqyjKO7z3Ihd1w8w+PWmHLZ+UvHlE1+AtaDfGoNWfenPPJGRfl2278rkDrSGHJsEtGWC8+QTMGLrMp68umlHYfT/9+p6TxnWXgR8z3bJh6GJ4qJwyxofSMh6J/GBm7YUDJVSL5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714095768; c=relaxed/simple;
-	bh=HVwkjenx9A1lf6NBB9XvYk1sKkeGhgxNJO17SZNMT0k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MqoVpmkj/mcqKJkE+S9x2xpGhC6j7EByI8u/oQdyi1n++ecfARgYP2+uVV6GcXdyrRMe1tVQGhNB+qGTYrZ7jXemHYEjSr4s183Uts//a1Gfpxp9zrmn3z+rYS4lSEhnNZhKeqhT4GrPA2wxnhGWQmqZ38MM+ta/vADCzqcriBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHuk+JSJ; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3c6f6c5bc37so865994b6e.1;
-        Thu, 25 Apr 2024 18:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714095766; x=1714700566; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HVwkjenx9A1lf6NBB9XvYk1sKkeGhgxNJO17SZNMT0k=;
-        b=cHuk+JSJy+Jvz3GGJvxCJr525sJ0Pc1ZlDt5gmRjPfcHn96hB46Q7k19v6igpNB3GH
-         GLcCJRyFOJ5pqdLg0ccWg+9WUOw5lBIsGflopFEVvK1Gq/jGwEb0PyoUkEI3tqwLvdre
-         eUR/xp2m/jdpD9vGkAgYbJkxPCRkE+0EGj1GUbnMIwW2hyQ4IPKJ+DRgzalpoxaXDlMK
-         3xbVNHd8WN6RcKMwyeBy4KV6P6ZTU7LX8kiyRmpEu5PShKZB4dS+rMxphhTRhEP+iZGV
-         +gczaSh/FymT4xhC8kEs9RR30j02T/U67STd4rNTMiRSbnCkmkZYYmXwdM6GiHUVsJsD
-         PbFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714095766; x=1714700566;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HVwkjenx9A1lf6NBB9XvYk1sKkeGhgxNJO17SZNMT0k=;
-        b=Gmr2ey+V8LP4RYZg23AfsNK/6lv0zxLrmD/Tphqfkwd4kFJ6BTMhj/AoR0TcdGbD5V
-         HBhD0Hi0FypMPPZtO43THlWTKhJLGVnkpqCchS1o4VOYlVGJxjvHXhiUj+GTRnj0i6E6
-         1J0MaOcdnVR/1vvrhLESyg+YoWWfDWnEqH2TtZ2v5B8OoXXm8ZaNVAcV+OkMVUBKfL7B
-         CgUEP2ZyDThqgbqzLOdxbV4LVns5SAWo5GJ5IOVmDVUpe5AruMbksTQTsbj6FEfzXZ3S
-         Xol0P5FaqFF0todfWXO1SxZg2dotOtAzDHjvdjzeZEP/AiwLI4ufJFJ1uARaPDYXEdlq
-         hx+w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4vi1JXKZOP5RGuNvqAxGMMOXBgF/BB4eiFhMrywuyvUDxpeFRAY9qfvj4maYAlDVmNaaoQ/j6Cn2eJXGaepqCLpb7INDf8VldO06huJO0zbF+QXBDtqqNdUv/8Hzg7bO8ep+oQFSnmkKz7A==
-X-Gm-Message-State: AOJu0YwNdNlNbo2U9SBLTRqum7hMcKCnKJlGV6LkC2TXoOIzRtTdQpNr
-	pmO1JwIUzbqCiACLQ0LyVmJouRV9vu3zgESIc0vdmcqSuLasfvPR
-X-Google-Smtp-Source: AGHT+IFJ2YQlOAQva6WMbhQM5ztMAWWdfHO92djEjAbTw8X7PtnS0eyTm17L8xvnS61GMAoX5Ak7ew==
-X-Received: by 2002:a05:6808:6343:b0:3c7:12d0:9bdb with SMTP id eb3-20020a056808634300b003c712d09bdbmr1518756oib.23.1714095766509;
-        Thu, 25 Apr 2024 18:42:46 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id s17-20020a056a00195100b006e664031f10sm13768259pfk.51.2024.04.25.18.42.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Apr 2024 18:42:46 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: willy@infradead.org
-Cc: brauner@kernel.org,
-	jfs-discussion@lists.sourceforge.net,
-	jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shaggy@kernel.org,
-	syzbot+241c815bda521982cb49@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] jfs: Fix array-index-out-of-bounds in diFree
-Date: Fri, 26 Apr 2024 10:42:41 +0900
-Message-Id: <20240426014241.51894-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ZiqNMLWFIvf43Mr-@casper.infradead.org>
-References: <ZiqNMLWFIvf43Mr-@casper.infradead.org>
+	s=arc-20240116; t=1714096077; c=relaxed/simple;
+	bh=nRLNLg/Asrg+hntPItw/WD1R1FN0NMP2xzP/J61TePI=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=JaZStBomcqUUrOgDNIN+plppsIDO261JmH6ep8j4Eb3VSj8TzNtD5uMyIW9FV2TZFDKzASxcBfHq6HJSycizmpbvDAVSnXenxHzpIQIwP9sXyoZr3DEDi5kwl424sS7PgEnEBWFS1uq//OgfTNl06yzGfo8jdJtEs44edO0348E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=209.9.37.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mxde.zte.com.cn (FangMail) with ESMTPS id 4VQbFp2tPWz4xBV4;
+	Fri, 26 Apr 2024 09:47:42 +0800 (CST)
+Received: from mxct.zte.com.cn (unknown [192.168.251.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VQbFc4t9xz4xPBZ;
+	Fri, 26 Apr 2024 09:47:32 +0800 (CST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4VQbF32nhVz50yRx;
+	Fri, 26 Apr 2024 09:47:03 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 43Q1kI9M001841;
+	Fri, 26 Apr 2024 09:46:18 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Fri, 26 Apr 2024 09:46:19 +0800 (CST)
+Date: Fri, 26 Apr 2024 09:46:19 +0800 (CST)
+X-Zmail-TransId: 2af9662b076bffffffff86b-1264c
+X-Mailer: Zmail v1.0
+Message-ID: <20240426094619962AxIC6CSpfpJNeiy8HRA9h@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <akpm@linux-foundation.org>, <david@redhat.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <shr@devkernel.io>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjJdIGtzbTogYWRkIGtzbSBpbnZvbHZlbWVudCBpbmZvcm1hdGlvbiBmb3IgZWFjaCBwcm9jZXNz?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 43Q1kI9M001841
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 662B07BD.000/4VQbFp2tPWz4xBV4
 
-Matthew Wilcox wrote:
-> In your earlier mail, you said the large value was found in db_agl2size.
-> If the problem is in agstart then diRead() is the right place to check it.
+From: xu xin <xu.xin16@zte.com.cn>
 
-Oh, I was so distracted last time that I wrote the explanation
-incorrectly. I'm sorry.
+In /proc/<pid>/ksm_stat, Add two extra ksm involvement items including
+MMF_VM_MERGEABLE and MMF_VM_MERGE_ANY. It helps administrators to
+better know the system's KSM behavior at process level.
 
-To explain it accurately, if you pass a very large value to agstart
-and set the value passed to db_agl2size to be small, it can be
-manipulated so that a value greater than MAXAG is output when the
-"agstart >> db_agl2size" operation is performed.
-This results in an out-of-bounds vulnerability.
+KSM_mergeable: yes/no
+	whether the process'mm is added by madvise() into the candidate list
+	of KSM or not.
+KSM_merge_any: yes/no
+	whether the process'mm is added by prctl() into the candidate list
+	of KSM or not, and fully enabled at process level.
 
-And the final patch before is the one that fixes diRead().
+Changelog
+=========
+v1 -> v2:
+	replace the internal flag names with straightforward strings.
+	* MMF_VM_MERGEABLE -> KSM_mergeable
+	* MMF_VM_MERGE_ANY -> KSM_merge_any
 
-Thanks.
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+---
+ fs/proc/base.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 18550c071d71..50e808ffcda4 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3217,6 +3217,10 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+ 		seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
+ 		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
+ 		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
++		seq_printf(m, "KSM_mergeable: %s\n",
++				test_bit(MMF_VM_MERGEABLE, &mm->flags) ? "yes" : "no");
++		seq_printf(m, "KSM_merge_any: %s\n",
++				test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? "yes" : "no");
+ 		mmput(mm);
+ 	}
+
+-- 
+2.15.2
 
