@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-17909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6568B3B0C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 17:20:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC0C8B3B10
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 17:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA1E1F21153
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 15:20:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 754B0B25102
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 15:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AA414D43E;
-	Fri, 26 Apr 2024 15:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA29150994;
+	Fri, 26 Apr 2024 15:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ti3q8L3p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWzOlfNd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB8B148FE2;
-	Fri, 26 Apr 2024 15:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDFD14884A;
+	Fri, 26 Apr 2024 15:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714144543; cv=none; b=XamIpr65J/XX5KjLqjsBmiA1qm0p2Sjt64xMXbDGNUg36nekBf/WE3KeaWnSKnJXDw+QX/opr+bgLLZ2tSl9Xx3zUwE897Dk6s+HonCMvUKhg+0taPGWfd8MrIlgEHaDVIwBEKm9fWYgqls6ZFNRKm1r8ObDQv4oZzNJ4U1jMn8=
+	t=1714144580; cv=none; b=pfLRZMG5ygTafu66dsTK/fmSCk+RJivU10Qkh99PilcGn6TLnkg2pub5MXeexTppZvyIg9Gh/HBtaGjy3BHMSLdlTkspA9bjIKuVv4x6A+3sHg4c3E0Y8FT1fr3sGyDy+BbbaDULllV/GQsKtajGDlpRlZ5pEZgXADhD/oT9guM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714144543; c=relaxed/simple;
-	bh=JtWLiBEE0MYykclQ9qosZ0yssrcJ73QSVvIgrP7pgsY=;
+	s=arc-20240116; t=1714144580; c=relaxed/simple;
+	bh=6O55S30yhSxrufIxUQivUWS2HXmNr/eDu8y7coHNiko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MbUf8/LKeJyNn90V/4AW/iHxXG0+uljilotpfm2KHMlscF09T/lqga/M83ABxkPXNz1o02Oh/Ag+FIRNJo3IMZdrBcYIhNq91I/mNnqarkPUe0HhbSd7udPrnrswnd1tdOREkMThGIVFxc7lHnWGIVSVIEBMutc4/O2fbboGQsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ti3q8L3p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BADF5C113CD;
-	Fri, 26 Apr 2024 15:15:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RbELHZRXenY9PBP8AQIjcncyx8aFLzwzOTO+Qbgu99Y9wt4SUiLASgJefWkpMHL2P+ayEJmuKMxqIWG0PtgaM/QQ+JZumnn3qWGtmkK2aRD2IxQaNGZiYdYUMKcR6DRo4ovvnG0KglNxDXfSBUGlkWqtXWQbHJ9+3GafSE3Aju8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWzOlfNd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9827EC113CD;
+	Fri, 26 Apr 2024 15:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714144542;
-	bh=JtWLiBEE0MYykclQ9qosZ0yssrcJ73QSVvIgrP7pgsY=;
+	s=k20201202; t=1714144579;
+	bh=6O55S30yhSxrufIxUQivUWS2HXmNr/eDu8y7coHNiko=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ti3q8L3puZFymuhMqmUVIbsLhYTYUlL7mBfESqoSRiKAsoFFsbdfoXSD2aj5pGpJx
-	 jgAYUQA7bbte0IKNAhmMBy2U3ZI6SVlUZIssgPZ7J6DIaEROICXhhUTTAHjN5/QC4d
-	 RDsfWbUJtAChfuc/XdOGHkmbaf5H1Wrc2hAI0egBna3je2n9M9Drwb4N702Tt9HvpI
-	 yzFOolF2WcRhoNeGOeGvIV6HsW/iUz2ixfGGwX4t/bFzzacF3EP3jXlw424h4IWPB8
-	 nV5o7r38FcX68JD8BmcCBjjmzfR0QyZK+iJJYXw3usS2X6qGz1t7DOivKBHqkDi6/P
-	 em30UbQ32m4ag==
-Date: Fri, 26 Apr 2024 08:15:42 -0700
+	b=QWzOlfNdDph2jErkCnqNMCbQeWTzFhb2h4H1oYGTesbJPcQh8LSQpUKKE205Jcb/h
+	 iq08eAB/2LjOYi2aO0WdTHjGqGFGM2fT+AxUqZrrA1/Vx284yxMk8O10R7990N1yzQ
+	 0FmNOa1nA8H9RIGLGZPaz2CN9KCdUrkbPyhcVeLPKAPFbQjTxZ657KjXyJyQ+4QFeF
+	 4BtJLDH5OkHBwrIBK9i1oOL+PzxwBiYHrvtScoa+yX4GSem3ha0AOTwy7AdnpWsnva
+	 aWlMqV6Cqmo5+cZplCJBxOCI01Vtn5pJvQFi92otmTH7uKBSbDSyh1lINOGayFfOIy
+	 UYRlMRIC/uXLA==
+Date: Fri, 26 Apr 2024 08:16:19 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 Cc: willy@infradead.org, brauner@kernel.org, david@fromorbit.com,
@@ -50,10 +50,11 @@ Cc: willy@infradead.org, brauner@kernel.org, david@fromorbit.com,
 	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	linux-xfs@vger.kernel.org, mcgrof@kernel.org, gost.dev@samsung.com,
 	p.raghav@samsung.com
-Subject: Re: [PATCH v4 09/11] xfs: expose block size in stat
-Message-ID: <20240426151542.GE360919@frogsfrogsfrogs>
+Subject: Re: [PATCH v4 10/11] xfs: make the calculation generic in
+ xfs_sb_validate_fsb_count()
+Message-ID: <20240426151619.GF360919@frogsfrogsfrogs>
 References: <20240425113746.335530-1-kernel@pankajraghav.com>
- <20240425113746.335530-10-kernel@pankajraghav.com>
+ <20240425113746.335530-11-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,47 +63,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240425113746.335530-10-kernel@pankajraghav.com>
+In-Reply-To: <20240425113746.335530-11-kernel@pankajraghav.com>
 
-On Thu, Apr 25, 2024 at 01:37:44PM +0200, Pankaj Raghav (Samsung) wrote:
+On Thu, Apr 25, 2024 at 01:37:45PM +0200, Pankaj Raghav (Samsung) wrote:
 > From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> For block size larger than page size, the unit of efficient IO is
-> the block size, not the page size. Leaving stat() to report
-> PAGE_SIZE as the block size causes test programs like fsx to issue
-> illegal ranges for operations that require block size alignment
-> (e.g. fallocate() insert range). Hence update the preferred IO size
-> to reflect the block size in this case.
-> 
-> This change is based on a patch originally from Dave Chinner.[1]
-> 
-> [1] https://lwn.net/ml/linux-fsdevel/20181107063127.3902-16-david@fromorbit.com/
+> Instead of assuming that PAGE_SHIFT is always higher than the blocklog,
+> make the calculation generic so that page cache count can be calculated
+> correctly for LBS.
 > 
 > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Seems reasonable to me...
+Looks ok,
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/xfs/xfs_iops.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/xfs/xfs_mount.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 66f8c47642e8..77b198a33aa1 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -543,7 +543,7 @@ xfs_stat_blksize(
->  			return 1U << mp->m_allocsize_log;
->  	}
+> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+> index df370eb5dc15..56d71282972a 100644
+> --- a/fs/xfs/xfs_mount.c
+> +++ b/fs/xfs/xfs_mount.c
+> @@ -133,9 +133,16 @@ xfs_sb_validate_fsb_count(
+>  {
+>  	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
+>  	ASSERT(sbp->sb_blocklog >= BBSHIFT);
+> +	uint64_t max_index;
+> +	uint64_t max_bytes;
+> +
+> +	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
+> +		return -EFBIG;
 >  
-> -	return PAGE_SIZE;
-> +	return max_t(uint32_t, PAGE_SIZE, mp->m_sb.sb_blocksize);
+>  	/* Limited by ULONG_MAX of page cache index */
+> -	if (nblocks >> (PAGE_SHIFT - sbp->sb_blocklog) > ULONG_MAX)
+> +	max_index = max_bytes >> PAGE_SHIFT;
+> +
+> +	if (max_index > ULONG_MAX)
+>  		return -EFBIG;
+>  	return 0;
 >  }
->  
->  STATIC int
 > -- 
 > 2.34.1
 > 
