@@ -1,114 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-17873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB65E8B3310
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 10:38:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E578B3341
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 10:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A481F216EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 08:38:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F00128285C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 08:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2490613DDC1;
-	Fri, 26 Apr 2024 08:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605C313CAB7;
+	Fri, 26 Apr 2024 08:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wb9WHzoN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3J/Wyo2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2313313D632
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Apr 2024 08:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB3C14293;
+	Fri, 26 Apr 2024 08:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714120454; cv=none; b=BYoit97oHi+EZON0krwkKItYy86adbYQsnffLRt7MZ+dHZ24yfIq8p9N02Y9NqfEKAm4/+eBP7IE4gvY7AYxI8+8rk7hgRPG4vONlZnuwyklz4HU+xmvIc7Yr5qgtbwsSYdmdAWo27C6ct2axaNRLHjnqTHnu8+hKe6X1LMJUXg=
+	t=1714121419; cv=none; b=T5sNx7KANcQIUF+mq44NVFnO+KYAq/OH2Iiy2V/cQLjo/3Q20np6OSAcpwCPv9aXsVflqnUVR/mX+0zIwjHH4qt/CEgFbvs9l1xCuhr0deBdtSFpKiitIxN74OvnENVL52W5oL0blju649wTAfyx4LfwbR7DK1WpgXqEaVIhWGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714120454; c=relaxed/simple;
-	bh=kt1qirSnBIx/luYlP/mepOvqv1Q7ipxYPxOcDHHjLLU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=STFcUmvCD3+pF8HQU7nlwQDqSF6iON/ZayURSHLwMnuk184ls2ErNy81Q5H6I/zZampjxsdAW80aH1UneT0Owvxyl7IzdkSBW/BzUHb7583TqaUhAc6PEOTxCkxduCM4EopN5o3o4cqsCNp8/gz5+kdudHxbYqYDO/MYevxPXvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wb9WHzoN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714120452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JX0C/eE8/IhmRZdY4t48yInlwmvvYIOtx58avujDOfw=;
-	b=Wb9WHzoNxlOkWimWkzTPJg57jX9NdYRDaFgx4zyW4c32Esovw73TiuHfYqoBkyVA5o18cY
-	4S7aj7s1LcDGfQAuK0swpE6zm3GOlN9hJgvwe+B+QTBA34pRtL6ZuKHi/imgbzfKdr+/oH
-	pr5dKSCLlBbgf4jXpNg/MabZSz6FwNw=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-318-5-xSqQlbNLWhSxB61eaJVg-1; Fri,
- 26 Apr 2024 04:34:05 -0400
-X-MC-Unique: 5-xSqQlbNLWhSxB61eaJVg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F0C228C97CB;
-	Fri, 26 Apr 2024 08:34:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.200])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id A70B32024511;
-	Fri, 26 Apr 2024 08:34:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <Zin4G2VYUiaYxsKQ@xsang-OptiPlex-9020>
-References: <Zin4G2VYUiaYxsKQ@xsang-OptiPlex-9020> <202404161031.468b84f-oliver.sang@intel.com> <164954.1713356321@warthog.procyon.org.uk>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: dhowells@redhat.com, oe-lkp@lists.linux.dev, lkp@intel.com,
-    Steve French <sfrench@samba.org>,
-    Shyam Prasad N <nspmangalore@gmail.com>,
-    "Rohith
- Surabattula" <rohiths.msft@gmail.com>,
-    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-    samba-technical@lists.samba.org
-Subject: Re: [dhowells-fs:cifs-netfs] [cifs] b4834f12a4: WARNING:at_fs/netfs/write_collect.c:#netfs_writeback_lookup_folio
+	s=arc-20240116; t=1714121419; c=relaxed/simple;
+	bh=DYNyroIVKSZ0unmnVFHuxmgLOubVibFZ/fyc8X1R8f8=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=nBa8HN9FbuPH+pPbwAoTyRtOF7qih+nxh3tI3aDESwJ5pvD1uaQjDXTOcpW8iS1xCEfSjKTnaWzVm00GDAnD7PKbaTk1xAnUhWHDhbEo1u4KYs9I5Yc+7TKHAIYwo3PtD44gpuLmZanDC/4sBECZFkjxTTaHjlXNmIMh0LjybSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3J/Wyo2; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-60c49bdbcd3so517982a12.0;
+        Fri, 26 Apr 2024 01:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714121418; x=1714726218; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cJFMMSFWa30LVDJuI+U3h4eLS4EveVUZvpWPDq6Pib4=;
+        b=A3J/Wyo2xwjgOMWyBdMtUfVWXPYA6+GmPoGaMsicZkZffLBVmdokLub+mMMKE/eF7Z
+         8rfnpUYxIbaJaLsKmVaNngPrELRs2EhS1EVNV4m7ZsCiBKmmFqAvlWfICkwdZQD06ipY
+         9KK7PQAixruu6ApvyGCBs66B+G37h4ANd/cdBELHQo8d4gib0QZTkNoeSS4sVwzDk6cv
+         EgfS/aVINe5gn0d2p79KJbMdvngXiJqVZ7NbP4jOvVlxw6MD0CJ4Mrqh0ZVF0duiRP9N
+         3IvQlDbyWg7CnkDTDKXrYIG9MiwhMhRBEeu5+sN9TGrYyK4YSMcG3J8jvWKTYrD9vTgp
+         YX6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714121418; x=1714726218;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cJFMMSFWa30LVDJuI+U3h4eLS4EveVUZvpWPDq6Pib4=;
+        b=qXOzJbOUsx67hxYg2d3uWE2Z+4xeh5ZPZYYHy6zftA8aJpiVbWDwjqnNXKmTUiI4RK
+         /MvxQM46MTavg/OWGr4R1quE2/rSYtFNyb0+Iwkc16p5rJkPOX3+yhSZ5Faj3orpuHeu
+         hcNocAIUjQ8FshVJbEM9JSSC9L51baTqMXRrYsoUDbuPKGDBmyPuxpmHxINm5JCo4Kiv
+         9ik5twUDJWxzHQDuvdu5YxFSh3KvyUPtrTOlvQI4ZPWyxESUfkjnnkAF15u8BLCL40AG
+         0j+B6boz5AKHDUGkqDuiI+FPM2TP92NYCmbJp2E5H8BhUXKQfRKqr33ZJKYpP4KwdUVM
+         M+Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxvkGf9EnQNtaQZenyKfn+3cwx5Voiy7oPudqQ5UNQvM4ZYAKRVgKkzcpTSiVSlu6Df4fbA03N86e99SJG47CV80goc4VObOay3NEsf9C49Yx0vWuP939U10ubBvGtwHUzw8HWHeyIOA==
+X-Gm-Message-State: AOJu0YyiBJ7TAsxdhZOdinnA8JDQ0F9Cg5ytRk1PsErymro9uIpNP6Dr
+	Y/zSnNUoUba2ScELgOFG/jvjSvPdbf6xrHj2M4GYKb57PZji6GTs
+X-Google-Smtp-Source: AGHT+IGxZ62PmQ42Oa+TlKbuThlX/EEh+sLT9Dn2wqRaG7974BD0kJBa+ZEsvaggtj4RBRD4Ah+VfA==
+X-Received: by 2002:a05:6a20:daa7:b0:1ad:7e4d:6dae with SMTP id iy39-20020a056a20daa700b001ad7e4d6daemr2613505pzb.6.1714121417750;
+        Fri, 26 Apr 2024 01:50:17 -0700 (PDT)
+Received: from dw-tp ([171.76.87.172])
+        by smtp.gmail.com with ESMTPSA id 192-20020a6301c9000000b0060795a08227sm3694145pgb.37.2024.04.26.01.50.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Apr 2024 01:50:17 -0700 (PDT)
+Date: Fri, 26 Apr 2024 14:20:05 +0530
+Message-Id: <87wmokik3m.fsf@gmail.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, "Darrick J . Wong" <djwong@kernel.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFCv3 6/7] iomap: Optimize iomap_read_folio
+In-Reply-To: <ZitPUH20e-jOb0n-@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 26 Apr 2024 09:34:02 +0100
-Message-ID: <2145544.1714120442@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-Oliver Sang <oliver.sang@intel.com> wrote:
+Christoph Hellwig <hch@infradead.org> writes:
 
-> I can pass "sudo bin/lkp install job.yaml" on my local machine with fedor=
-a 39
-> now.
+> On Thu, Apr 25, 2024 at 06:58:50PM +0530, Ritesh Harjani (IBM) wrote:
+>> iomap_readpage_iter() handles "uptodate blocks" and "not uptodate blocks"
+>> within a folio separately. This makes iomap_read_folio() to call into
+>> ->iomap_begin() to request for extent mapping even though it might already
+>> have an extent which is not fully processed.
+>> 
+>> This happens when we either have a large folio or with bs < ps. In these
+>> cases we can have sub blocks which can be uptodate (say for e.g. due to
+>> previous writes). With iomap_read_folio_iter(), this is handled more
+>> efficiently by not calling ->iomap_begin() call until all the sub blocks
+>> with the current folio are processed.
+>
+> Maybe throw in a sentence here that this copies what
+> iomap_readahead_iter already does?
 
-Note that this causes:
+Does this sound any better?
 
-systemd-sysv-generator[23561]: SysV service '/etc/rc.d/init.d/network' lack=
-s a native systemd unit file. =E2=99=BB=EF=B8=8F Automatically generating a=
- unit file for compatibility. Please update package to include a native sys=
-temd unit file, in order to make it safe, robust and future-proof. =E2=9A=
-=A0=EF=B8=8F This compatibility logic is deprecated, expect removal soon. =
-=E2=9A=A0=EF=B8=8F
+iomap_read_folio_iter() handles multiple sub blocks within a given
+folio but it's implementation logic is similar to how
+iomap_readahead_iter() handles multiple folios within a single mapped
+extent. Both of them iterate over a given range of folio/mapped extent
+and call iomap_readpage_iter() for reading.
 
-to appear.  What's it doing to the networking settings?  It shouldn't be
-touching those.
 
-Also, does it have to install its own cifs server?  Can it not be directed =
-to
-my test server that's already set up on another machine?  And does it have =
-to
-build a kernel?  Can it not use the one that's already running on the machi=
-ne?
+>
+> Otherwise this looks good to me modulo the offset comment from willy.
 
-David
+Yes, I will address willy's comment too. 
+Thanks for the review!
 
+-ritesh
 
