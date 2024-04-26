@@ -1,122 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-17864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 147EE8B3134
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 09:18:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F418B316D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 09:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5964282DF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 07:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9D41F2269E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 07:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3492F13BC2B;
-	Fri, 26 Apr 2024 07:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65AB13C667;
+	Fri, 26 Apr 2024 07:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6EVUWWW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA8513AD33;
-	Fri, 26 Apr 2024 07:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB8313BC2B;
+	Fri, 26 Apr 2024 07:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714115908; cv=none; b=O77Aux72EoStra9NtVK1WBhK0USG+T9w4YZAWNhwFtOMn0tDW5esjDQCJ6stR+hFBWRr7/RKA2uRq554WxWqIotzGXhSVeIWo0AVQoHPnTj42PHCikCpBuYTif9GABARFZTu+lKxkTEyMDBG5g5K46//gJjDxU0GjXml+jlg364=
+	t=1714116840; cv=none; b=DxGqRVGP92GH5PlWbKy+xoyHBGoVeohpsLcVO0cU5uTjuizVWX14TsYgGX6GUuEZbmIsdmOomBNzsTv9t5f+KGdxZVDM3mTS+g3t3ITV1vvQOmKuaI1Ydieby3t9k0Fm8iOM9XslsoReeXjFOQjM3aAMAwRxOqKhKhfJnd55RSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714115908; c=relaxed/simple;
-	bh=WTCpI6h/TMPgfa/2HXkNHaaRz2yWWL9Ipkowo/sAKNE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CWlNKA5N0chVEn0+rh0lygQwORuhlX4p0isHSWpOPlj1khgm0i+7TZmDY6CG33EE0rdPtSpWD3RaKVutO8iToQ1Iz0hqvb77s2ssFkQi66HhURXBXxXAZfSLP+MqLEifED+fSUCZr9wxfenwbwUlOTq/O2+diDzrgRhgBxhQQas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VQkbC05Mwz4f3jdD;
-	Fri, 26 Apr 2024 15:18:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A20D31A1340;
-	Fri, 26 Apr 2024 15:18:22 +0800 (CST)
-Received: from [10.174.176.34] (unknown [10.174.176.34])
-	by APP4 (Coremail) with SMTP id gCh0CgAXHG45VStmmbjILA--.23366S3;
-	Fri, 26 Apr 2024 15:18:19 +0800 (CST)
-Subject: Re: [PATCH v5 4/9] xfs: convert delayed extents to unwritten when
- zeroing post eof blocks
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
- tytso@mit.edu, jack@suse.cz, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240425131335.878454-1-yi.zhang@huaweicloud.com>
- <20240425131335.878454-5-yi.zhang@huaweicloud.com>
- <20240425182904.GA360919@frogsfrogsfrogs>
- <3be86418-e629-c7e6-fd73-f59f97a73a89@huaweicloud.com>
- <ZitKncYr0cCmU0NG@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <5b6228ce-c553-3387-dfc4-2db78e3bd810@huaweicloud.com>
-Date: Fri, 26 Apr 2024 15:18:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1714116840; c=relaxed/simple;
+	bh=gksl38yx9eZzDHDXbUKTYhZmDGqlaFTVA8MzoHCjPSQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=hK2bnoeCZoVdT08nfXK04YIJzhD3hdQAngLjqGbpUaF5Vw74jGyPpqimK0QS512Zeuzjk7Tb8wyXf7m3tAMsJehbnhUDlZkS0iIfff1DWOsWfVJkiTsgti5z+n4pK/eQPh0LPM4ECOWo8m9ydm9uE0kPlCiSScUHk+8uZj4usCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6EVUWWW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91A6EC113CD;
+	Fri, 26 Apr 2024 07:33:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714116839;
+	bh=gksl38yx9eZzDHDXbUKTYhZmDGqlaFTVA8MzoHCjPSQ=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=r6EVUWWWwqWuB2/4TPNdaGpUi5w/svatLiUkQPW7jg/Kqfz+v9PjTsqhHX0V5+EAd
+	 O9Q7MLhBBw+u+yC3YJdVVaI93yGyVAyg60gYgQw+aYYn1jycUg0XiChWp0Iu1VFKMv
+	 DwPywl0dLcmeXRt7ZEBqHGpgzLkfbaLNMsfQI9WfrWSOqgHI+raXZsInlkpmvx5zN2
+	 Aw4iSz/F3PrrMtthz0B2wb3NwCnmeHWiHSYEJZOSeSYq9iQITvYdPXRUZEGz3Zp6OT
+	 dsVslJOA6lLCpSJkkdCeyvYqDh4fWotWkzTVM/CVN72PQmXal5hJg3KuZB1fRSHKNY
+	 lVwcEZNrXTKCg==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <ZitKncYr0cCmU0NG@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAXHG45VStmmbjILA--.23366S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw45XF1UAr1fGFW3Wry5CFg_yoW8Wr17p3
-	s3K345KanxGw1kZw1xZwsruryrZw43Wa15GrWYqrySvas8XF1Skws7KF4YgFyqyrWkW3Wj
-	vFW2934xtFZ8Zw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
-	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUrR6zUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 26 Apr 2024 10:33:40 +0300
+Message-Id: <D0TVP8ILJMO0.HERRWR4PA7N6@kernel.org>
+Cc: "Dan Carpenter" <dan.carpenter@linaro.org>, "Shuah Khan"
+ <shuah@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Paolo Bonzini" <pbonzini@redhat.com>, "Marc Zyngier" <maz@kernel.org>,
+ "Oliver Upton" <oliver.upton@linux.dev>, "Huacai Chen"
+ <chenhuacai@kernel.org>, "Michael Ellerman" <mpe@ellerman.id.au>, "Anup
+ Patel" <anup@brainfault.org>, "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
+ <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>, <kvm@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
+ <linux-mips@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <kvm-riscv@lists.infradead.org>, <linux-riscv@lists.infradead.org>,
+ <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, "Xiaoyao Li" <xiaoyao.li@intel.com>, "Xu
+ Yilun" <yilun.xu@intel.com>, "Chao Peng" <chao.p.peng@linux.intel.com>,
+ "Fuad Tabba" <tabba@google.com>, "Anish Moorthy" <amoorthy@google.com>,
+ "David Matlack" <dmatlack@google.com>, "Yu Zhang"
+ <yu.c.zhang@linux.intel.com>, "Isaku Yamahata" <isaku.yamahata@intel.com>,
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, "Vlastimil Babka"
+ <vbabka@suse.cz>, "Vishal Annapurve" <vannapurve@google.com>, "Ackerley
+ Tng" <ackerleytng@google.com>, "Maciej Szmigiero"
+ <mail@maciej.szmigiero.name>, "David Hildenbrand" <david@redhat.com>,
+ "Quentin Perret" <qperret@google.com>, "Michael Roth"
+ <michael.roth@amd.com>, "Wang" <wei.w.wang@intel.com>, "Liam Merwick"
+ <liam.merwick@oracle.com>, "Isaku Yamahata" <isaku.yamahata@gmail.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, "Naresh Kamboju"
+ <naresh.kamboju@linaro.org>, "Anders Roxell" <anders.roxell@linaro.org>,
+ "Benjamin Copeland" <ben.copeland@linaro.org>
+Subject: Re: [PATCH v13 25/35] KVM: selftests: Convert lib's mem regions to
+ KVM_SET_USER_MEMORY_REGION2
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Sean Christopherson" <seanjc@google.com>, "Shuah Khan"
+ <skhan@linuxfoundation.org>
+X-Mailer: aerc 0.17.0
+References: <20231027182217.3615211-1-seanjc@google.com>
+ <20231027182217.3615211-26-seanjc@google.com>
+ <69ae0694-8ca3-402c-b864-99b500b24f5d@moroto.mountain>
+ <3848a9ad-07aa-48da-a2b7-264c4a990b5b@linuxfoundation.org>
+ <ZipyPYR8Nv_usoU4@google.com>
+In-Reply-To: <ZipyPYR8Nv_usoU4@google.com>
 
-On 2024/4/26 14:33, Christoph Hellwig wrote:
-> On Fri, Apr 26, 2024 at 02:24:19PM +0800, Zhang Yi wrote:
->> Yeah, it looks more reasonable. But from the original scene, the
->> xfs_bmap_extsize_align() aligned the new extent that added to the cow fork
->> could overlaps the unreflinked range, IIUC, I guess that spare range is
->> useless exactly, is there any situation that would use it?
-> 
-> I've just started staring at this (again) half an hour ago, and I fail
-> to understand the (pre-existing) logic in xfs_reflink_zero_posteof.
-> 
-> We obviously need to ensure data between i_size and the end of the
-> block that i_size sits in is zeroed (but IIRC we already do that
-> in write and truncate anyway).  But what is the point of zeroing
-> any speculative preallocation beyond the last block that actually
-> contains data?  Just truncating the preallocation and freeing
-> the delalloc and unwritten blocks seems like it would be way
-> more efficient.
-> 
+On Thu Apr 25, 2024 at 6:09 PM EEST, Sean Christopherson wrote:
+> +       __TEST_REQUIRE(kvm_has_cap(KVM_CAP_USER_MEMORY2),
+> +                      "KVM selftests from v6.8+ require KVM_SET_USER_MEM=
+ORY_REGION2");
 
-I've had the same idea before, I asked Dave and he explained that Linux
-could leak data beyond EOF page for some cases, e.g. mmap() can write to
-the EOF page beyond EOF without failing, and the data in that EOF page
-could be non-zeroed by mmap(), so the zeroing is still needed now.
+This would work also for casual (but not seasoned) visitor in KVM code
+as additionl documentation.
 
-OTOH, if we free the delalloc and unwritten blocks beyond EOF blocks, he
-said it could lead to some performance problems and make thinks
-complicated to deal with the trimming of EOF block. Please see [1]
-for details and maybe Dave could explain more.
-
-[1] https://lore.kernel.org/linux-xfs/ZeERAob9Imwh01bG@dread.disaster.area/
-
-Thanks,
-Yi.
-
+BR, Jarkko
 
