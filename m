@@ -1,173 +1,368 @@
-Return-Path: <linux-fsdevel+bounces-17927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-17928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F588B3CFD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 18:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEAD8B3DBA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 19:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A8521C227F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 16:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 425CC1C21FE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Apr 2024 17:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00916152E1C;
-	Fri, 26 Apr 2024 16:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED2615D5A2;
+	Fri, 26 Apr 2024 17:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbnzfCGM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JDvEfbBc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928B16BFB1;
-	Fri, 26 Apr 2024 16:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63F714535A;
+	Fri, 26 Apr 2024 17:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714149571; cv=none; b=Q/2m+2qnzmCbv+mq5jox3OscknNaz0m2V4DYBC3Cg8TkqPJd58SLJ4Sc7ZFo18NgFDUk9x58H9TSPI4BUzCeaSwL72rHBdeQeS6F7EMyGljVZadK4VSiFuO8O1J0BKsTl2rJC44Dt0SZ/Vq6b6cWX61bfIbOpzga/E0sHY+VJl4=
+	t=1714151846; cv=none; b=li/3t+h1XHPxVuTq0oKWTyUnE+S/NXpoYqCSxpRL8pcfOwLXs/GNrP4C6QRRuVp9e5i5yu7ZXfz6abo3feKjopcAZbkV167r9u1gYfHGYahz/SbDatoDedeTGvPANCZ9y8LQzZJ50kNN+4j0woKSPDC0g1M4I/C4Zc58ksKPeHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714149571; c=relaxed/simple;
-	bh=w/gBi3edSmNDW/znJg1vZKFL1LvFh9km4CBTyDCZ8D0=;
-	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=d6+akkOA8x8ZNCUjPyPjS3datlnpxQZGWUicZDQZJlHEwvkft53/Pl7BSqD9ULf0Q81IdlmmabcbnzovflH/J3P39J7/bj69hegIX1BkjFD56l/UVlW3/K0Fx4RvHdIGaGa+LmqIkgJKpZLbPMNq22sFgyzN9564xjg0iEjX5vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbnzfCGM; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1714151846; c=relaxed/simple;
+	bh=43K21NVugR7olhdf/XVPl3PduwEQQFMAOsy/y4bZ6kY=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=DYMFC0D8aJwzoX/fEqme+0rjytNeSHdo/09M5hV3mWRaBbFdGKQxOtmYr6X/3BG2RNyQcku1PLvm1lXHy1K4qUETnzKCaO5JjLWjZARr0zStoY7rSBRSLVQ6nx66P/gMsoT5/glF5vm94caMmWgkvOQ+XOYoDxuAFxz4R2O3TGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JDvEfbBc; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e3ff14f249so18017175ad.1;
-        Fri, 26 Apr 2024 09:39:29 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e8fce77bb2so18527795ad.0;
+        Fri, 26 Apr 2024 10:17:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714149569; x=1714754369; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714151844; x=1714756644; darn=vger.kernel.org;
         h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=5vdb3yhYZF5PVXMwqqX9zuy/qHRdeg9Flas2P2+YbpY=;
-        b=bbnzfCGMXVLjPaJoB5S1TCy3ZEXQ3W0PzadUKI4mu4nmS7Bgf6+znRrckhC/y8FxRL
-         z+YznnN/TIcJIazzBYzuqR3T9Ntla8Jk090MQHN4EE6lY2Jgx2TN1XWcaZUIDZbjiy1G
-         tKyPEXyWffON2vQmuefjmLllyberL/7F+E5AN5MSN4J4h7lvvWzyUc6YJHwWJa+fgaNU
-         GwvV44EDS0ugV7f9tHaM9s3M7nMwvOBmqx7Aco0V5P7nYypkh4+klZpaQJQMubCV1WWs
-         6xV4m6pHmKICscAK5LdmgntMtvPTRY8iV2kjcyNsO+mSmT9NA1QgRz7fY/K2lYbXETO9
-         ItJg==
+        bh=NDk1ORLAlOduxf65lYeAiQbsYq9G63dLVEfUvKFhtX4=;
+        b=JDvEfbBc+w7Kmk8U6wP2b9XBQaLxwt1bPPhN0yb8p6E9hhWmrVb3uPsjLHT9XnHDmv
+         8nxIQfGTKFjQaiHntq9Lb4Th+n3kPips6o4qmk1Y3RwKD06mP+YJNSE+v9iYF+7+wfo7
+         i4NnIwOtqCcicoVJREp7WSeFq4z/fR4EFfbKrCqtIuCh1Q9+p2RmX5pyG65i3xVatWGZ
+         XkGQdVJT0TaZbIftuUqbYCfDeHMCParU8YM9gkQGMzybtscQbWnsDvcQTqf20s3u00VA
+         o0vbSEbtWPVwjJPS4dpDptY4YgzGQm7Xe+78gRl7Pfs/mLY4YyY7TmZqZq3Z9cST01c4
+         Tlmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714149569; x=1714754369;
+        d=1e100.net; s=20230601; t=1714151844; x=1714756644;
         h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5vdb3yhYZF5PVXMwqqX9zuy/qHRdeg9Flas2P2+YbpY=;
-        b=eSJ9jX/SS4y+yTNOyYGz7neeS0e/sZ32Ec06HNZSEhacEpD5X3r3PbTigyaaHCVEWr
-         tHRtbt776g33HMhfw/w0Gg4/jR2FIAMpcrgrKAWjbfajfsqZv1sDP02bWXrppsqAisaL
-         tFf53tXLoZaznXBTPrY7QeHUpm+OXqbmBU3dnf3DM08bfpF2u1xitMmt7HshuEk/Pme+
-         aHgXxL7H2srzUpA/EQbXKS6F3KMjLApFj1Mf0jIZB8ZT1bYXgveKPPAhJqqYYFIK1sH7
-         CngMSXPDnpCqdV2e3MpobSTx3JJ8D5xeyly2rlGfyaquR+F4F3D405ujPUlNCnC3YKmO
-         Crfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHJ0RuaR4mIB+rmUvH0MdyJqIg4iu2dWZ/3iXuR1tpSPNqKe3w/hDUkbsRPuj4o78j29JFnEGxG867PEOFzX13MkFIWUomNAGxeUyXV4gTDZDpg3nQTaLbrnfDL/+RCBN1ads+yWNIMw==
-X-Gm-Message-State: AOJu0Yx2EzWe8PzlFHxSQsF/CEVwpW4K9xkFzgPgZHxXxv9tzm8veW7v
-	UBbf3xwfA033zvG0VRjvcLNzZXqkx34JUWj0eIVQgdR58pjxtDyB
-X-Google-Smtp-Source: AGHT+IEymwytHhWcAtyIhw1i68RqqiL4j2SDBBwBfiMs1KrBO+LxIoTewEe2hXkZc6FjNkC9DbUTtQ==
-X-Received: by 2002:a17:902:e802:b0:1e0:c0b9:589e with SMTP id u2-20020a170902e80200b001e0c0b9589emr308917plg.25.1714149568671;
-        Fri, 26 Apr 2024 09:39:28 -0700 (PDT)
+        bh=NDk1ORLAlOduxf65lYeAiQbsYq9G63dLVEfUvKFhtX4=;
+        b=iKANOJxg/vj/Vo8KKi5UOfIsA3rcZQRbccNXkSZE4ldMCD8BZh+Yt+abcDOjy8oXCR
+         XmD+lJYo+Q1T54uR3Ty7yr1SEzhywVFsZhgEskV0fWlnTrThwSD+uPZJeO6WAYrngK3w
+         Lq4JxdfcD6wTteWzfQ0+RmcVWHNPxURDGBLEeNVQJjBs6mvaVGR7hKerU8rIp1B+ayYR
+         nkvAVlemTdVpyP0XQK4sEyjCUP8Cn52NJLfTEIjd1+zkkm/v05/OkdJBih4HhQv/7rmk
+         X06dQB2WG5xgcgLZKy+GsK47lAlNpDAx1DkEHX4llHSpWU7br38HGHGeaVU225Cw1TLl
+         YGkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOZSXWjtJIvgEnVPpvhyC3J/RhgIYH7zEMIS9nNXLXRmK0ZbbfxcqA+k0nF1l8Fajw4DH3PsOgz8Ks5nJJp1JERdGJyFk+QKMJ+lQDNyUB4h2EOGOU288Nx34oIYc+In+xxLIjWgsk2Q==
+X-Gm-Message-State: AOJu0Yx+1zElQ+Is02xtqpi3dde3+oCT1oeqq0AMSNAq7gTvjPqjIUGK
+	WtEbl/lJyNvKfSo3X7SKsj6eb9KtFeey62FmIXoy15mb20j53y4iz1efHw==
+X-Google-Smtp-Source: AGHT+IEtiiwcX8Qk7b5BPV4CbdX+KmnEkVy8p+c3RXbflvpK1wFPcMxXR5kK5py4b8W1FMpaZG1zOw==
+X-Received: by 2002:a17:902:d2c5:b0:1e2:bdfa:9c15 with SMTP id n5-20020a170902d2c500b001e2bdfa9c15mr3814267plc.41.1714151843797;
+        Fri, 26 Apr 2024 10:17:23 -0700 (PDT)
 Received: from dw-tp ([171.76.87.172])
-        by smtp.gmail.com with ESMTPSA id lf13-20020a170902fb4d00b001ea374c5099sm6545823plb.197.2024.04.26.09.39.23
+        by smtp.gmail.com with ESMTPSA id u17-20020a17090341d100b001eb3d459143sm247735ple.48.2024.04.26.10.17.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Apr 2024 09:39:27 -0700 (PDT)
-Date: Fri, 26 Apr 2024 22:09:22 +0530
-Message-Id: <87cyqcyt6t.fsf@gmail.com>
+        Fri, 26 Apr 2024 10:17:23 -0700 (PDT)
+Date: Fri, 26 Apr 2024 22:47:19 +0530
+Message-Id: <87a5lgyrfk.fsf@gmail.com>
 From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, hch@infradead.org, djwong@kernel.org, david@fromorbit.com, willy@infradead.org, zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com, wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v4 02/34] ext4: check the extent status again before inserting delalloc block
-In-Reply-To: <185a0d75-558e-a1ae-9415-c3eed4def60f@huaweicloud.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFCv3 7/7] iomap: Optimize data access patterns for filesystems with indirect mappings
+In-Reply-To: <20240426162417.GN360919@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-Zhang Yi <yi.zhang@huaweicloud.com> writes:
+"Darrick J. Wong" <djwong@kernel.org> writes:
 
-> On 2024/4/26 20:57, Ritesh Harjani (IBM) wrote:
->> Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
+> On Thu, Apr 25, 2024 at 06:58:51PM +0530, Ritesh Harjani (IBM) wrote:
+>> This patch optimizes the data access patterns for filesystems with
+>> indirect block mapping by implementing BH_Boundary handling within
+>> iomap.
 >> 
->>> Zhang Yi <yi.zhang@huaweicloud.com> writes:
->>>
->>>> From: Zhang Yi <yi.zhang@huawei.com>
->>>>
->>>> Now we lookup extent status entry without holding the i_data_sem before
->>>> inserting delalloc block, it works fine in buffered write path and
->>>> because it holds i_rwsem and folio lock, and the mmap path holds folio
->>>> lock, so the found extent locklessly couldn't be modified concurrently.
->>>> But it could be raced by fallocate since it allocate block whitout
->>>> holding i_rwsem and folio lock.
->>>>
->>>> ext4_page_mkwrite()             ext4_fallocate()
->>>>  block_page_mkwrite()
->>>>   ext4_da_map_blocks()
->>>>    //find hole in extent status tree
->>>>                                  ext4_alloc_file_blocks()
->>>>                                   ext4_map_blocks()
->>>>                                    //allocate block and unwritten extent
->>>>    ext4_insert_delayed_block()
->>>>     ext4_da_reserve_space()
->>>>      //reserve one more block
->>>>     ext4_es_insert_delayed_block()
->>>>      //drop unwritten extent and add delayed extent by mistake
->>>>
->>>> Then, the delalloc extent is wrong until writeback, the one more
->>>> reserved block can't be release any more and trigger below warning:
->>>>
->>>>  EXT4-fs (pmem2): Inode 13 (00000000bbbd4d23): i_reserved_data_blocks(1) not cleared!
->>>>
->>>> Hold i_data_sem in write mode directly can fix the problem, but it's
->>>> expansive, we should keep the lockless check and check the extent again
->>>> once we need to add an new delalloc block.
->>>
->>> Hi Zhang, 
->>>
->>> It's a nice finding. I was wondering if this was caught in any of the
->>> xfstests?
->>>
+>> Currently the bios for reads within iomap are only submitted at
+>> 2 places -
+>> 1. If we cannot merge the new req. with previous bio, only then we
+>>    submit the previous bio.
+>> 2. Submit the bio at the end of the entire read processing.
+>> 
+>> This means for filesystems with indirect block mapping, we call into
+>> ->iomap_begin() again w/o submitting the previous bios. That causes
+>> unoptimized data access patterns for blocks which are of BH_Boundary type.
+>> 
+>> For e.g. consider the file mapping
+>> logical block(4k) 		physical block(4k)
+>> 0-11 				1000-1011
+>> 12-15 				1013-1016
+>> 
+>> In above physical block 1012 is an indirect metadata block which has the
+>> mapping information for next set of indirect blocks (1013-1016).
+>> With iomap buffered reads for reading 1st 16 logical blocks of a file
+>> (0-15), we get below I/O pattern
+>> 	- submit a bio for 1012
+>> 	- complete the bio for 1012
+>> 	- submit a bio for 1000-1011
+>> 	- submit a bio for 1013-1016
+>> 	- complete the bios for 1000-1011
+>> 	- complete the bios for 1013-1016
+>> 
+>> So as we can see, above is an non-optimal I/O access pattern and also we
+>> get 3 bio completions instead of 2.
+>> 
+>> This patch changes this behavior by doing submit_bio() if there are any
+>> bios already processed, before calling ->iomap_begin() again.
+>> That means if there are any blocks which are already processed, gets
+>> submitted for I/O earlier and then within ->iomap_begin(), if we get a
+>> request for reading an indirect metadata block, then block layer can merge
+>> those bios with the already submitted read request to reduce the no. of bio
+>> completions.
+>> 
+>> Now, for bs < ps or for large folios, this patch requires proper handling
+>> of "ifs->read_bytes_pending". In that we first set ifs->read_bytes_pending
+>> to folio_size. Then handle all the cases where we need to subtract
+>> ifs->read_bytes_pending either during the submission side
+>> (if we don't need to submit any I/O - for e.g. for uptodate sub blocks),
+>> or during an I/O error, or at the completion of an I/O.
+>> 
+>> Here is the ftrace output of iomap and block layer with ext2 iomap
+>> conversion patches -
+>> 
+>> root# filefrag -b512 -v /mnt1/test/f1
+>> Filesystem type is: ef53
+>> Filesystem cylinder groups approximately 32
+>> File size of /mnt1/test/f1 is 65536 (128 blocks of 512 bytes)
+>>  ext:     logical_offset:        physical_offset: length:   expected: flags:
+>>    0:        0..      95:      98304..     98399:     96:             merged
+>>    1:       96..     127:      98408..     98439:     32:      98400: last,merged,eof
+>> /mnt1/test/f1: 2 extents found
+>> 
+>> root# #This reads 4 blocks starting from lblk 10, 11, 12, 13
+>> root# xfs_io -c "pread -b$((4*4096)) $((10*4096)) $((4*4096))" /mnt1/test/f1
+>> 
+>> w/o this patch - (indirect block is submitted before and does not get merged, resulting in 3 bios completion)
+>>       xfs_io-907     [002] .....   185.608791: iomap_readahead: dev 8:16 ino 0xc nr_pages 4
+>>       xfs_io-907     [002] .....   185.608819: iomap_iter: dev 8:16 ino 0xc pos 0xa000 length 0x4000 processed 0 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x9d/0x2c0
+>>       xfs_io-907     [002] .....   185.608823: iomap_iter_dstmap: dev 8:16 ino 0xc bdev 8:16 addr 0x300a000 offset 0xa000 length 0x2000 type MAPPED flags MERGED
+>>       xfs_io-907     [002] .....   185.608831: iomap_iter: dev 8:16 ino 0xc pos 0xa000 length 0x2000 processed 8192 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x1e1/0x2c0
+>>       xfs_io-907     [002] .....   185.608859: block_bio_queue: 8,16 R 98400 + 8 [xfs_io]
+>>       xfs_io-907     [002] .....   185.608865: block_getrq: 8,16 R 98400 + 8 [xfs_io]
+>>       xfs_io-907     [002] .....   185.608867: block_io_start: 8,16 R 4096 () 98400 + 8 [xfs_io]
+>>       xfs_io-907     [002] .....   185.608869: block_plug: [xfs_io]
+>>       xfs_io-907     [002] .....   185.608872: block_unplug: [xfs_io] 1
+>>       xfs_io-907     [002] .....   185.608874: block_rq_insert: 8,16 R 4096 () 98400 + 8 [xfs_io]
+>> kworker/2:1H-198     [002] .....   185.608908: block_rq_issue: 8,16 R 4096 () 98400 + 8 [kworker/2:1H]
+>>       <idle>-0       [002] d.h2.   185.609579: block_rq_complete: 8,16 R () 98400 + 8 [0]
+>>       <idle>-0       [002] dNh2.   185.609631: block_io_done: 8,16 R 0 () 98400 + 0 [swapper/2]
+>>       xfs_io-907     [002] .....   185.609694: iomap_iter_dstmap: dev 8:16 ino 0xc bdev 8:16 addr 0x300d000 offset 0xc000 length 0x2000 type MAPPED flags MERGED
+>>       xfs_io-907     [002] .....   185.609704: block_bio_queue: 8,16 RA 98384 + 16 [xfs_io]
+>>       xfs_io-907     [002] .....   185.609718: block_getrq: 8,16 RA 98384 + 16 [xfs_io]
+>>       xfs_io-907     [002] .....   185.609721: block_io_start: 8,16 RA 8192 () 98384 + 16 [xfs_io]
+>>       xfs_io-907     [002] .....   185.609726: block_plug: [xfs_io]
+>>       xfs_io-907     [002] .....   185.609735: iomap_iter: dev 8:16 ino 0xc pos 0xc000 length 0x2000 processed 8192 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x1e1/0x2c0
+>>       xfs_io-907     [002] .....   185.609736: block_bio_queue: 8,16 RA 98408 + 16 [xfs_io]
+>>       xfs_io-907     [002] .....   185.609740: block_getrq: 8,16 RA 98408 + 16 [xfs_io]
+>>       xfs_io-907     [002] .....   185.609741: block_io_start: 8,16 RA 8192 () 98408 + 16 [xfs_io]
+>>       xfs_io-907     [002] .....   185.609756: block_rq_issue: 8,16 RA 8192 () 98408 + 16 [xfs_io]
+>>       xfs_io-907     [002] .....   185.609769: block_rq_issue: 8,16 RA 8192 () 98384 + 16 [xfs_io]
+>>       <idle>-0       [002] d.H2.   185.610280: block_rq_complete: 8,16 RA () 98408 + 16 [0]
+>>       <idle>-0       [002] d.H2.   185.610289: block_io_done: 8,16 RA 0 () 98408 + 0 [swapper/2]
+>>       <idle>-0       [002] d.H2.   185.610292: block_rq_complete: 8,16 RA () 98384 + 16 [0]
+>>       <idle>-0       [002] dNH2.   185.610301: block_io_done: 8,16 RA 0 () 98384 + 0 [swapper/2]
 >
-> Hi, Ritesh
+> Could this be shortened to ... the iomap calls and
+> block_bio_queue/backmerge?  It's a bit difficult to see the point you're
+> getting at with all the other noise.
+
+I will remove this log and move it to cover letter and will just extend
+the simple example I considered before in this commit message,
+to show the difference with and w/o patch.
+
 >
-> I caught this issue when I tested my iomap series in generic/344 and
-> generic/346. It's easy to reproduce because the iomap's buffered write path
-> doesn't hold folio lock while inserting delalloc blocks, so it could be raced
-> by the mmap page fault path. But the buffer_head's buffered write path can't
-> trigger this problem,
-
-ya right! That's the difference between how ->map_blocks() is called
-between buffer_head v/s iomap path. In iomap the ->map_blocks() call
-happens first to map a large extent and then it iterate over all the
-locked folios covering the mapped extent for doing writes.
-Whereas in buffer_head while iterating, we first instantiate/lock the
-folio and then call ->map_blocks() to map an extent for the given folio.
-
-... So this opens up this window for a race between iomap buffered write
-path v/s page mkwrite path for inserting delalloc blocks entries.
-
-> the race between buffered write path and fallocate path
-> was discovered while I was analyzing the code, so I'm not sure if it could
-> be caught by xfstests now, at least I haven't noticed this problem so far.
+> I think you're trying to say that the access pattern here is 98400 ->
+> 98408 -> 98384, which is not sequential?
 >
 
-Did you mean the race between page fault path and fallocate path here?
-Because buffered write path and fallocate path should not have any race
-since both takes the inode_lock. I guess you meant page fault path and
-fallocate path for which you wrote this patch too :)
+it's (98400,8 ==> metadata block) -> (98384,16 == lblk 10 & 11) -> (98408,16 ==> lblk 12 & 13)
+... w/o the patch
 
-I am surprised, why we cannot see the this race between page mkwrite and
-fallocate in fstests for inserting da entries to extent status cache.
-Because the race you identified looks like a legitimate race and is
-mostly happening since ext4_da_map_blocks() was not doing the right
-thing.
-... looking at the src/holetest, it doesn't really excercise this path.
-So maybe we can writing such fstest to trigger this race.
-
-
->>> I have reworded some of the commit message, feel free to use it if you
->>> think this version is better. The use of which path uses which locks was
->>> a bit confusing in the original commit message.
->>>
+>> v/s with the patch - (optimzed I/O access pattern and bio gets merged resulting in only 2 bios completion)
+>>       xfs_io-944     [005] .....    99.926187: iomap_readahead: dev 8:16 ino 0xc nr_pages 4
+>>       xfs_io-944     [005] .....    99.926208: iomap_iter: dev 8:16 ino 0xc pos 0xa000 length 0x4000 processed 0 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x9d/0x2c0
+>>       xfs_io-944     [005] .....    99.926211: iomap_iter_dstmap: dev 8:16 ino 0xc bdev 8:16 addr 0x300a000 offset 0xa000 length 0x2000 type MAPPED flags MERGED
+>>       xfs_io-944     [005] .....    99.926222: block_bio_queue: 8,16 RA 98384 + 16 [xfs_io]
+>>       xfs_io-944     [005] .....    99.926232: block_getrq: 8,16 RA 98384 + 16 [xfs_io]
+>>       xfs_io-944     [005] .....    99.926233: block_io_start: 8,16 RA 8192 () 98384 + 16 [xfs_io]
+>>       xfs_io-944     [005] .....    99.926234: block_plug: [xfs_io]
+>>       xfs_io-944     [005] .....    99.926235: iomap_iter: dev 8:16 ino 0xc pos 0xa000 length 0x2000 processed 8192 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x1f9/0x2c0
+>>       xfs_io-944     [005] .....    99.926261: block_bio_queue: 8,16 R 98400 + 8 [xfs_io]
+>>       xfs_io-944     [005] .....    99.926266: block_bio_backmerge: 8,16 R 98400 + 8 [xfs_io]
+>>       xfs_io-944     [005] .....    99.926271: block_unplug: [xfs_io] 1
+>>       xfs_io-944     [005] .....    99.926272: block_rq_insert: 8,16 RA 12288 () 98384 + 24 [xfs_io]
+>> kworker/5:1H-234     [005] .....    99.926314: block_rq_issue: 8,16 RA 12288 () 98384 + 24 [kworker/5:1H]
+>>       <idle>-0       [005] d.h2.    99.926905: block_rq_complete: 8,16 RA () 98384 + 24 [0]
+>>       <idle>-0       [005] dNh2.    99.926931: block_io_done: 8,16 RA 0 () 98384 + 0 [swapper/5]
+>>       xfs_io-944     [005] .....    99.926971: iomap_iter_dstmap: dev 8:16 ino 0xc bdev 8:16 addr 0x300d000 offset 0xc000 length 0x2000 type MAPPED flags MERGED
+>>       xfs_io-944     [005] .....    99.926981: block_bio_queue: 8,16 RA 98408 + 16 [xfs_io]
+>>       xfs_io-944     [005] .....    99.926989: block_getrq: 8,16 RA 98408 + 16 [xfs_io]
+>>       xfs_io-944     [005] .....    99.926989: block_io_start: 8,16 RA 8192 () 98408 + 16 [xfs_io]
+>>       xfs_io-944     [005] .....    99.926991: block_plug: [xfs_io]
+>>       xfs_io-944     [005] .....    99.926993: iomap_iter: dev 8:16 ino 0xc pos 0xc000 length 0x2000 processed 8192 flags  (0x0) ops 0xffffffff82242160 caller iomap_readahead+0x1f9/0x2c0
+>>       xfs_io-944     [005] .....    99.927001: block_rq_issue: 8,16 RA 8192 () 98408 + 16 [xfs_io]
+>>       <idle>-0       [005] d.h2.    99.927397: block_rq_complete: 8,16 RA () 98408 + 16 [0]
+>>       <idle>-0       [005] dNh2.    99.927414: block_io_done: 8,16 RA 0 () 98408 + 0 [swapper/5]
+>> 
+>> Suggested-by: Matthew Wilcox <willy@infradead.org>
+>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>> cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>> ---
+>>  fs/iomap/buffered-io.c | 112 +++++++++++++++++++++++++++++++----------
+>>  1 file changed, 85 insertions(+), 27 deletions(-)
+>> 
+>> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+>> index 0a4269095ae2..a1d50086a3f5 100644
+>> --- a/fs/iomap/buffered-io.c
+>> +++ b/fs/iomap/buffered-io.c
+>> @@ -30,7 +30,7 @@ typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
+>>   */
+>>  struct iomap_folio_state {
+>>  	spinlock_t		state_lock;
+>> -	unsigned int		read_bytes_pending;
+>> +	size_t			read_bytes_pending;
+>>  	atomic_t		write_bytes_pending;
+>> 
+>>  	/*
+>> @@ -380,6 +380,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+>>  	loff_t orig_pos = pos;
+>>  	size_t poff, plen;
+>>  	sector_t sector;
+>> +	bool rbp_finished = false;
 >
-> Thanks for the message improvement, it looks more clear then mine, I will
-> use it.
+> What is "rbp"?  My assembly programmer brain says x64 frame pointer, but
+> that's clearly wrong here.  Maybe I'm confused...
 >
 
-Glad, it was helpful.
+rbp == read_bytes_pending ;)
+
+>>  	if (iomap->type == IOMAP_INLINE)
+>>  		return iomap_read_inline_data(iter, folio);
+>> @@ -387,21 +388,39 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+>>  	/* zero post-eof blocks as the page may be mapped */
+>>  	ifs = ifs_alloc(iter->inode, folio, iter->flags);
+>>  	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
+>> +
+>> +	if (ifs) {
+>> +		loff_t to_read = min_t(loff_t, iter->len - offset,
+>> +			folio_size(folio) - offset_in_folio(folio, orig_pos));
+>> +		size_t padjust;
+>> +
+>> +		spin_lock_irq(&ifs->state_lock);
+>> +		if (!ifs->read_bytes_pending)
+>> +			ifs->read_bytes_pending = to_read;
+>> +		padjust = pos - orig_pos;
+>> +		ifs->read_bytes_pending -= padjust;
+>> +		if (!ifs->read_bytes_pending)
+>> +			rbp_finished = true;
+>> +		spin_unlock_irq(&ifs->state_lock);
+>> +	}
+>> +
+>>  	if (plen == 0)
+>>  		goto done;
+>> 
+>>  	if (iomap_block_needs_zeroing(iter, pos)) {
+>> +		if (ifs) {
+>> +			spin_lock_irq(&ifs->state_lock);
+>> +			ifs->read_bytes_pending -= plen;
+>> +			if (!ifs->read_bytes_pending)
+>> +				rbp_finished = true;
+>> +			spin_unlock_irq(&ifs->state_lock);
+>> +		}
+>>  		folio_zero_range(folio, poff, plen);
+>>  		iomap_set_range_uptodate(folio, poff, plen);
+>>  		goto done;
+>>  	}
+>> 
+>>  	ctx->cur_folio_in_bio = true;
+>> -	if (ifs) {
+>> -		spin_lock_irq(&ifs->state_lock);
+>> -		ifs->read_bytes_pending += plen;
+>> -		spin_unlock_irq(&ifs->state_lock);
+>> -	}
+>> 
+>>  	sector = iomap_sector(iomap, pos);
+>>  	if (!ctx->bio ||
+>> @@ -435,6 +454,14 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+>>  	}
+>> 
+>>  done:
+>> +	/*
+>> +	 * If there is no bio prepared and if rbp is finished and
+>> +	 * this was the last offset within this folio then mark
+>> +	 * cur_folio_in_bio to false.
+>> +	 */
+>> +	if (!ctx->bio && rbp_finished &&
+>> +			offset_in_folio(folio, pos + plen) == 0)
+>> +		ctx->cur_folio_in_bio = false;
+>
+> ...yes, I think I am confused.  When would ctx->bio be NULL but
+> cur_folio_in_bio is true?
+
+Previously we had the bio submitted and so we make it null, but we still
+have ctx->cur_folio & ctx->cur_folio_in_bio to true, since we haven't
+completely processed the folio.
+
+>
+> I /think/ what you're doing here is using read_bytes_pending to figure
+> out if you've processed the folio up to the end of the mapping?  But
+> then you submit the bio unconditionally below for each readpage_iter
+> call?
+>
+
+yes, that's right.
+
+> Why not add an IOMAP_BOUNDARY flag that means "I will have to do some IO
+> if you call ->iomap_begin again"?  Then if we get to this point in
+> readpage_iter with a ctx->bio, we can submit the bio, clear
+> cur_folio_in_bio, and return?  And then you don't need this machinery?
+
+TBH, I initially didn't think the approach taken in the patch would
+require such careful handling of r_b_p. It was because of all of this
+corner cases when we don't need to read the update blocks and/or in case
+of an error we need to ensure we reduce r_b_p carefully so that we could
+unlock the folio and when extent spans beyond i_size.
+
+So it's all about how do we know if we could unlock the folio and that it's
+corresponding blocks/mapping has been all processed or submitted for
+I/O. 
+
+Assume we have a folio which spans over multiple extents. In such a
+case, 
+-> we process a bio for 1st extent, 
+-> then we go back to iomap_iter() to get new extent mapping, 
+-> We now increment the r_b_p with this new plen to be processed. 
+-> We then submit the previous bio, since this new mapping couldn't be
+merged due to discontinuous extents. 
+So by first incrementing the r_b_p before doing submit_bio(), we don't
+unlock the folio at bio completion.
+
+Maybe, it would be helpful if we have an easy mechanism to keep some state
+from the time of submit_bio() till the bio completion to know that the
+corresponding folio is still being processed and it shouldn't be
+unlocked.
+ -> This currently is what we are doing by making r_b_p to the value of
+ folio_size() and then carefully reducing r_b_p for all the cases I
+ mentioned above.
+
+Let me think if adding a IOMAP_BH_BOUNDARY flag could be helpful or not.
+Say if we have a pagesize of 64k that means all first 16 blocks belongs
+to same page. So even with IOMAP_BH_BOUNDARY flag the problem that still
+remains is that, even if we submit the bio at block 11 (bh_boundary
+block), how will the bio completion side know that the folio is not
+completely processed and so we shouldn't unlock the folio?
+
 
 -ritesh
 
